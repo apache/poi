@@ -24,6 +24,7 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Removal;
 
 /**
  * Common abstract class for {@link EscherOptRecord} and
@@ -96,18 +97,13 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
         return 8 + getPropertiesSize();
     }
 
-    public <T extends EscherProperty> T lookup( int propId )
-    {
-        for ( EscherProperty prop : properties )
-        {
-            if ( prop.getPropertyNumber() == propId )
-            {
-                @SuppressWarnings( "unchecked" )
-                final T result = (T) prop;
-                return result;
-            }
-        }
-        return null;
+    public <T extends EscherProperty> T lookup( EscherPropertyTypes propType ) {
+        return lookup(propType.propNumber);
+    }
+
+    @SuppressWarnings( "unchecked" )
+    public <T extends EscherProperty> T lookup( int propId ) {
+        return (T)properties.stream().filter(p -> p.getPropertyNumber() == propId).findFirst().orElse(null);
     }
 
     @Override
@@ -140,8 +136,7 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
     }
 
     /**
-     * Set an escher property. If a property with given propId already
-     exists it is replaced.
+     * Set an escher property. If a property with given propId already exists it is replaced.
      *
      * @param value the property to set.
      */
@@ -151,32 +146,22 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
         sortProperties();
     }
 
+    @Deprecated
+    @Removal(version = "5.0.0")
     public void removeEscherProperty(int num){
         properties.removeIf(prop -> prop.getPropertyNumber() == num);
     }
 
-    @Override
-    protected Object[][] getAttributeMap() {
-        List<Object> attrList = new ArrayList<>(properties.size() * 2 + 2);
-        attrList.add("properties");
-        attrList.add(properties.size());
-        for ( EscherProperty property : properties ) {
-            attrList.add(property.getName());
-            attrList.add(property);
-        }
-        
-        return new Object[][]{
-            { "isContainer", isContainerRecord() },
-            { "numchildren", getChildRecords().size() },
-            attrList.toArray()
-        };
+    public void removeEscherProperty(EscherPropertyTypes type){
+        properties.removeIf(prop -> prop.getPropertyNumber() == type.propNumber);
     }
 
     @Override
     public Map<String, Supplier<?>> getGenericProperties() {
         return GenericRecordUtil.getGenericProperties(
             "base", super::getGenericProperties,
-            "isContainer", this::isContainerRecord
+            "isContainer", this::isContainerRecord,
+            "properties", this::getEscherProperties
         );
     }
 }

@@ -27,8 +27,7 @@ import java.util.List;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherProperties;
-import org.apache.poi.ddf.EscherProperty;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.sl.draw.binding.CTAdjPoint2D;
 import org.apache.poi.sl.draw.binding.CTCustomGeometry2D;
@@ -72,6 +71,19 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
 
     private static final BitField PATH_INFO = BitFieldFactory.getInstance(0xE000);
     private static final BitField ESCAPE_INFO = BitFieldFactory.getInstance(0x1F00);
+
+    private static final EscherPropertyTypes[] ADJUST_VALUES = {
+        EscherPropertyTypes.GEOMETRY__ADJUSTVALUE,
+        EscherPropertyTypes.GEOMETRY__ADJUST2VALUE,
+        EscherPropertyTypes.GEOMETRY__ADJUST3VALUE,
+        EscherPropertyTypes.GEOMETRY__ADJUST4VALUE,
+        EscherPropertyTypes.GEOMETRY__ADJUST5VALUE,
+        EscherPropertyTypes.GEOMETRY__ADJUST6VALUE,
+        EscherPropertyTypes.GEOMETRY__ADJUST7VALUE,
+        EscherPropertyTypes.GEOMETRY__ADJUST8VALUE,
+        EscherPropertyTypes.GEOMETRY__ADJUST9VALUE,
+        EscherPropertyTypes.GEOMETRY__ADJUST10VALUE
+    };
 
     enum PathInfo {
         lineTo(0),curveTo(1),moveTo(2),close(3),end(4),escape(5),clientEscape(6);
@@ -153,14 +165,14 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
         setShapeType(shapeType);
 
         //set default properties for an autoshape
-        setEscherProperty(EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 0x40000);
-        setEscherProperty(EscherProperties.FILL__FILLCOLOR, 0x8000004);
-        setEscherProperty(EscherProperties.FILL__FILLCOLOR, 0x8000004);
-        setEscherProperty(EscherProperties.FILL__FILLBACKCOLOR, 0x8000000);
-        setEscherProperty(EscherProperties.FILL__NOFILLHITTEST, 0x100010);
-        setEscherProperty(EscherProperties.LINESTYLE__COLOR, 0x8000001);
-        setEscherProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x80008);
-        setEscherProperty(EscherProperties.SHADOWSTYLE__COLOR, 0x8000002);
+        setEscherProperty(EscherPropertyTypes.PROTECTION__LOCKAGAINSTGROUPING, 0x40000);
+        setEscherProperty(EscherPropertyTypes.FILL__FILLCOLOR, 0x8000004);
+        setEscherProperty(EscherPropertyTypes.FILL__FILLCOLOR, 0x8000004);
+        setEscherProperty(EscherPropertyTypes.FILL__FILLBACKCOLOR, 0x8000000);
+        setEscherProperty(EscherPropertyTypes.FILL__NOFILLHITTEST, 0x100010);
+        setEscherProperty(EscherPropertyTypes.LINESTYLE__COLOR, 0x8000001);
+        setEscherProperty(EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH, 0x80008);
+        setEscherProperty(EscherPropertyTypes.SHADOWSTYLE__COLOR, 0x8000002);
 
         return ecr;
     }
@@ -184,8 +196,7 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
      */
     public int getAdjustmentValue(int idx){
         if(idx < 0 || idx > 9) throw new IllegalArgumentException("The index of an adjustment value must be in the [0, 9] range");
-
-        return getEscherProperty((short)(EscherProperties.GEOMETRY__ADJUSTVALUE + idx));
+        return getEscherProperty(ADJUST_VALUES[idx]);
     }
 
     /**
@@ -200,8 +211,7 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
      */
     public void setAdjustmentValue(int idx, int val){
         if(idx < 0 || idx > 9) throw new IllegalArgumentException("The index of an adjustment value must be in the [0, 9] range");
-
-        setEscherProperty((short)(EscherProperties.GEOMETRY__ADJUSTVALUE + idx), val);
+        setEscherProperty(ADJUST_VALUES[idx], val);
     }
 
     @Override
@@ -219,8 +229,8 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
 
         final AbstractEscherOptRecord opt = getEscherOptRecord();
 
-        EscherArrayProperty verticesProp = getShapeProp(opt, EscherProperties.GEOMETRY__VERTICES);
-        EscherArrayProperty segmentsProp = getShapeProp(opt, EscherProperties.GEOMETRY__SEGMENTINFO);
+        EscherArrayProperty verticesProp = getEscherProperty(opt, EscherPropertyTypes.GEOMETRY__VERTICES);
+        EscherArrayProperty segmentsProp = getEscherProperty(opt, EscherPropertyTypes.GEOMETRY__SEGMENTINFO);
 
         // return empty path if either GEOMETRY__VERTICES or GEOMETRY__SEGMENTINFO is missing, see Bugzilla 54188
 
@@ -299,17 +309,17 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
             }
         }
 
-        EscherSimpleProperty shapePath = getShapeProp(opt, EscherProperties.GEOMETRY__SHAPEPATH);
+        EscherSimpleProperty shapePath = getEscherProperty(opt, EscherPropertyTypes.GEOMETRY__SHAPEPATH);
         HSLFFreeformShape.ShapePath sp = HSLFFreeformShape.ShapePath.valueOf(shapePath == null ? 1 : shapePath.getPropertyValue());
         if ((sp == HSLFFreeformShape.ShapePath.LINES_CLOSED || sp == HSLFFreeformShape.ShapePath.CURVES_CLOSED) && !isClosed) {
             moveLst.add(of.createCTPath2DClose());
             path2D.closePath();
         }
 
-        EscherSimpleProperty geoLeft = getShapeProp(opt, EscherProperties.GEOMETRY__LEFT);
-        EscherSimpleProperty geoRight = getShapeProp(opt, EscherProperties.GEOMETRY__RIGHT);
-        EscherSimpleProperty geoTop = getShapeProp(opt, EscherProperties.GEOMETRY__TOP);
-        EscherSimpleProperty geoBottom = getShapeProp(opt, EscherProperties.GEOMETRY__BOTTOM);
+        EscherSimpleProperty geoLeft = getEscherProperty(opt, EscherPropertyTypes.GEOMETRY__LEFT);
+        EscherSimpleProperty geoRight = getEscherProperty(opt, EscherPropertyTypes.GEOMETRY__RIGHT);
+        EscherSimpleProperty geoTop = getEscherProperty(opt, EscherPropertyTypes.GEOMETRY__TOP);
+        EscherSimpleProperty geoBottom = getEscherProperty(opt, EscherPropertyTypes.GEOMETRY__BOTTOM);
 
         final Rectangle2D bounds;
         if (geoLeft != null && geoRight != null && geoTop != null && geoBottom != null) {
@@ -437,14 +447,6 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
         return HSLFFreeformShape.EscapeInfo.valueOf(escInfo);
     }
 
-
-    private static <T extends EscherProperty> T getShapeProp(AbstractEscherOptRecord opt, int propId) {
-        T prop = getEscherProperty(opt, (short)(propId + 0x4000));
-        if (prop == null) {
-            prop = getEscherProperty(opt, propId);
-        }
-        return prop;
-    }
 
     private CTAdjPoint2D fillPoint(byte[] xyMaster, int[] xyPoints) {
         if (xyMaster == null || xyPoints == null) {

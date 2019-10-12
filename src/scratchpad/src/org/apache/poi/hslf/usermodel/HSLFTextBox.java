@@ -18,7 +18,7 @@
 package org.apache.poi.hslf.usermodel;
 
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.TextBox;
@@ -76,12 +76,12 @@ public class HSLFTextBox extends HSLFTextShape implements TextBox<HSLFShape,HSLF
         setShapeType(ShapeType.TEXT_BOX);
 
         //set default properties for a TextBox
-        setEscherProperty(EscherProperties.FILL__FILLCOLOR, 0x8000004);
-        setEscherProperty(EscherProperties.FILL__FILLBACKCOLOR, 0x8000000);
-        setEscherProperty(EscherProperties.FILL__NOFILLHITTEST, 0x100000);
-        setEscherProperty(EscherProperties.LINESTYLE__COLOR, 0x8000001);
-        setEscherProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x80000);
-        setEscherProperty(EscherProperties.SHADOWSTYLE__COLOR, 0x8000002);
+        setEscherProperty(EscherPropertyTypes.FILL__FILLCOLOR, 0x8000004);
+        setEscherProperty(EscherPropertyTypes.FILL__FILLBACKCOLOR, 0x8000000);
+        setEscherProperty(EscherPropertyTypes.FILL__NOFILLHITTEST, 0x100000);
+        setEscherProperty(EscherPropertyTypes.LINESTYLE__COLOR, 0x8000001);
+        setEscherProperty(EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH, 0x80000);
+        setEscherProperty(EscherPropertyTypes.SHADOWSTYLE__COLOR, 0x8000002);
 
         // init paragraphs
         getTextParagraphs();
@@ -92,6 +92,6 @@ public class HSLFTextBox extends HSLFTextShape implements TextBox<HSLFShape,HSLF
     @Override
     protected void setDefaultTextProperties(HSLFTextParagraph _txtrun){
         setVerticalAlignment(VerticalAlignment.TOP);
-        setEscherProperty(EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 0x20002);
+        setEscherProperty(EscherPropertyTypes.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 0x20002);
     }
 }

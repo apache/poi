@@ -63,18 +63,18 @@ public final class TestEscherSpgrRecord {
 
     @Test
     public void testToString() {
-        String nl = System.getProperty("line.separator");
         String expected =
-            "org.apache.poi.ddf.EscherSpgrRecord (Spgr):" + nl +
-            "  RecordId: 0xF009" + nl +
-            "  Version: 0x0000" + nl +
-            "  Instance: 0x0001" + nl +
-            "  Options: 0x0010" + nl +
-            "  Record Size: 24" + nl +
-            "  RectX: 0x00000001" + nl +
-            "  RectY: 0x00000002" + nl +
-            "  RectWidth: 0x00000003" + nl +
-            "  RectHeight: 0x00000004";
+            "{   /* SPGR */\n" +
+            "\t  recordId: -4087 /* 0xf009 */\n" +
+            "\t, version: 0\n" +
+            "\t, instance: 1\n" +
+            "\t, options: 16 /* 0x0010 */\n" +
+            "\t, recordSize: 24 /* 0x00000018 */\n" +
+            "\t, rectX1: 1\n" +
+            "\t, rectY1: 2\n" +
+            "\t, rectX2: 3\n" +
+            "\t, rectY2: 4\n" +
+            "}";
         assertEquals( expected, createRecord().toString() );
     }
 

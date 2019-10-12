@@ -150,20 +150,15 @@ public final class TestUnknownEscherRecord {
         r.setRecordId( (short) 0xF112 );
         byte[] data = new byte[8];
         r.serialize( 0, data, new NullEscherSerializationListener() );
-        String nl = System.getProperty("line.separator");
         String expected =
-            "org.apache.poi.ddf.UnknownEscherRecord (Unknown 0xF112):" + nl +
-            "  RecordId: 0xF112" + nl +
-            "  Version: 0x0004" + nl +
-            "  Instance: 0x0123" + nl +
-            "  Options: 0x1234" + nl +
-            "  Record Size: 8" + nl +
-            "  isContainer: false" + nl +
-            "  children: 0x00000000" + nl +
-            "  Extra Data: " + nl +
-            "     : 0";
-        
-        
+            "{   /* UNKNOWN */\n" +
+            "\t  recordId: -3822 /* 0xf112 */\n" +
+            "\t, version: 4\n" +
+            "\t, instance: 291 /* 0x0123 */\n" +
+            "\t, options: 4660 /* 0x1234 */\n" +
+            "\t, recordSize: 8\n" +
+            "\t, data: \"\"\n" +
+            "}";
         assertEquals(expected, r.toString() );
     }
 }

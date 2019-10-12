@@ -64,19 +64,18 @@ public final class TestEscherChildAnchorRecord {
 
     @Test
     public void testToString(){
-        String nl = System.getProperty( "line.separator" );
-
         String expected =
-            "org.apache.poi.ddf.EscherChildAnchorRecord (ChildAnchor):" + nl +
-            "  RecordId: 0xF00F" + nl +
-            "  Version: 0x0001" + nl +
-            "  Instance: 0x0000" + nl +
-            "  Options: 0x0001" + nl +
-            "  Record Size: 24" + nl +
-            "  X1: 0x00000001" + nl +
-            "  Y1: 0x00000002" + nl +
-            "  X2: 0x00000003" + nl +
-            "  Y2: 0x00000004";
+            "{   /* CHILD_ANCHOR */\n" +
+            "\t  recordId: -4081 /* 0xf00f */\n" +
+            "\t, version: 1\n" +
+            "\t, instance: 0\n" +
+            "\t, options: 1\n" +
+            "\t, recordSize: 24 /* 0x00000018 */\n" +
+            "\t, x1: 1\n" +
+            "\t, y1: 2\n" +
+            "\t, x2: 3\n" +
+            "\t, y2: 4\n" +
+            "}";
         assertEquals( expected, createRecord().toString() );
     }
 

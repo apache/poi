@@ -17,8 +17,22 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.ddf.DefaultEscherRecordFactory;
+import org.apache.poi.ddf.EscherBoolProperty;
+import org.apache.poi.ddf.EscherClientDataRecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherPropertyTypes;
+import org.apache.poi.ddf.EscherRGBProperty;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.ddf.EscherTextboxRecord;
+import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
+import org.apache.poi.hssf.record.EndSubRecord;
+import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.hssf.record.TextObjectRecord;
 
 /**
  * A textbox is a shape that may hold a rich text string.
@@ -94,23 +108,23 @@ public class HSSFTextbox extends HSSFSimpleShape {
 
         sp.setFlags(EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HASSHAPETYPE);
         opt.setRecordId(EscherOptRecord.RECORD_ID);
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__TEXTID, 0));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__WRAPTEXT, 0));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__ANCHORTEXT, 0));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__PRINT, 0x00080000));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.TEXT__TEXTID, 0));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.TEXT__WRAPTEXT, 0));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.TEXT__ANCHORTEXT, 0));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.GROUPSHAPE__FLAGS, 0x00080000));
 
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__TEXTLEFT, 0));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__TEXTRIGHT, 0));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__TEXTTOP, 0));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.TEXT__TEXTBOTTOM, 0));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.TEXT__TEXTLEFT, 0));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.TEXT__TEXTRIGHT, 0));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.TEXT__TEXTTOP, 0));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.TEXT__TEXTBOTTOM, 0));
 
-        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEDASHING, LINESTYLE_SOLID));
-        opt.setEscherProperty(new EscherBoolProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
-        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEWIDTH, LINEWIDTH_DEFAULT));
-        opt.setEscherProperty(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, FILL__FILLCOLOR_DEFAULT));
-        opt.setEscherProperty(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, LINESTYLE__COLOR_DEFAULT));
-        opt.setEscherProperty(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, NO_FILLHITTEST_FALSE));
-        opt.setEscherProperty(new EscherBoolProperty(EscherProperties.GROUPSHAPE__PRINT, 0x080000));
+        opt.setEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.LINESTYLE__LINEDASHING, LINESTYLE_SOLID));
+        opt.setEscherProperty(new EscherBoolProperty(EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
+        opt.setEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.LINESTYLE__LINEWIDTH, LINEWIDTH_DEFAULT));
+        opt.setEscherProperty(new EscherRGBProperty(EscherPropertyTypes.FILL__FILLCOLOR, FILL__FILLCOLOR_DEFAULT));
+        opt.setEscherProperty(new EscherRGBProperty(EscherPropertyTypes.LINESTYLE__COLOR, LINESTYLE__COLOR_DEFAULT));
+        opt.setEscherProperty(new EscherBoolProperty(EscherPropertyTypes.FILL__NOFILLHITTEST, NO_FILLHITTEST_FALSE));
+        opt.setEscherProperty(new EscherBoolProperty(EscherPropertyTypes.GROUPSHAPE__FLAGS, 0x080000));
 
         EscherRecord anchor = getAnchor().getEscherAnchor();
         clientData.setRecordId(EscherClientDataRecord.RECORD_ID);
@@ -140,7 +154,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
      * @return Returns the left margin within the textbox.
      */
     public int getMarginLeft() {
-        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.TEXT__TEXTLEFT);
+        EscherSimpleProperty property = getOptRecord().lookup(EscherPropertyTypes.TEXT__TEXTLEFT);
         return property == null ? 0 : property.getPropertyValue();
     }
 
@@ -148,14 +162,14 @@ public class HSSFTextbox extends HSSFSimpleShape {
      * Sets the left margin within the textbox.
      */
     public void setMarginLeft(int marginLeft) {
-        setPropertyValue(new EscherSimpleProperty(EscherProperties.TEXT__TEXTLEFT, marginLeft));
+        setPropertyValue(new EscherSimpleProperty(EscherPropertyTypes.TEXT__TEXTLEFT, marginLeft));
     }
 
     /**
      * @return returns the right margin within the textbox.
      */
     public int getMarginRight() {
-        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.TEXT__TEXTRIGHT);
+        EscherSimpleProperty property = getOptRecord().lookup(EscherPropertyTypes.TEXT__TEXTRIGHT);
         return property == null ? 0 : property.getPropertyValue();
     }
 
@@ -163,14 +177,14 @@ public class HSSFTextbox extends HSSFSimpleShape {
      * Sets the right margin within the textbox.
      */
     public void setMarginRight(int marginRight) {
-        setPropertyValue(new EscherSimpleProperty(EscherProperties.TEXT__TEXTRIGHT, marginRight));
+        setPropertyValue(new EscherSimpleProperty(EscherPropertyTypes.TEXT__TEXTRIGHT, marginRight));
     }
 
     /**
      * @return returns the top margin within the textbox.
      */
     public int getMarginTop() {
-        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.TEXT__TEXTTOP);
+        EscherSimpleProperty property = getOptRecord().lookup(EscherPropertyTypes.TEXT__TEXTTOP);
         return property == null ? 0 : property.getPropertyValue();
     }
 
@@ -178,14 +192,14 @@ public class HSSFTextbox extends HSSFSimpleShape {
      * Sets the top margin within the textbox.
      */
     public void setMarginTop(int marginTop) {
-        setPropertyValue(new EscherSimpleProperty(EscherProperties.TEXT__TEXTTOP, marginTop));
+        setPropertyValue(new EscherSimpleProperty(EscherPropertyTypes.TEXT__TEXTTOP, marginTop));
     }
 
     /**
      * Gets the bottom margin within the textbox.
      */
     public int getMarginBottom() {
-        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.TEXT__TEXTBOTTOM);
+        EscherSimpleProperty property = getOptRecord().lookup(EscherPropertyTypes.TEXT__TEXTBOTTOM);
         return property == null ? 0 : property.getPropertyValue();
     }
 
@@ -193,7 +207,7 @@ public class HSSFTextbox extends HSSFSimpleShape {
      * Sets the bottom margin within the textbox.
      */
     public void setMarginBottom(int marginBottom) {
-        setPropertyValue(new EscherSimpleProperty(EscherProperties.TEXT__TEXTBOTTOM, marginBottom));
+        setPropertyValue(new EscherSimpleProperty(EscherPropertyTypes.TEXT__TEXTBOTTOM, marginBottom));
     }
 
     /**

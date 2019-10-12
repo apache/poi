@@ -29,8 +29,8 @@ import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ddf.EscherComplexProperty;
 import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherProperty;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hwpf.model.PICF;
 import org.apache.poi.hwpf.model.PICFAndOfficeArtData;
@@ -468,11 +468,11 @@ public final class Picture {
      */
     public String getDescription()
     {
-       for(EscherRecord escherRecord : _picfAndOfficeArtData.getShape().getChildRecords()){
+       for(EscherRecord escherRecord : _picfAndOfficeArtData.getShape()){
           if(escherRecord instanceof EscherOptRecord){
              EscherOptRecord escherOptRecord = (EscherOptRecord) escherRecord;
              for(EscherProperty property : escherOptRecord.getEscherProperties()){
-                if(EscherProperties.GROUPSHAPE__DESCRIPTION == property.getPropertyNumber()){
+                if (EscherPropertyTypes.GROUPSHAPE__DESCRIPTION.propNumber == property.getPropertyNumber()){
                    byte[] complexData = ((EscherComplexProperty)property).getComplexData();
                    return StringUtil.getFromUnicodeLE(complexData,0,complexData.length/2-1);
                 }

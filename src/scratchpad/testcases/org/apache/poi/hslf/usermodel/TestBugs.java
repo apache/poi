@@ -53,7 +53,7 @@ import org.apache.poi.common.usermodel.fonts.FontGroup;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherColorRef;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 import org.apache.poi.hslf.model.HeadersFooters;
@@ -600,7 +600,7 @@ public final class TestBugs {
         HSLFSlideShow ppt = open("bug46441.ppt");
         HSLFAutoShape as = (HSLFAutoShape)ppt.getSlides().get(0).getShapes().get(0);
         AbstractEscherOptRecord opt = as.getEscherOptRecord();
-        EscherArrayProperty ep = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__SHADECOLORS);
+        EscherArrayProperty ep = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__SHADECOLORS);
         double[][] exp = {
                 // r, g, b, position
                 {94, 158, 255, 0},

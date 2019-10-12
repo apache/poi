@@ -335,26 +335,6 @@ public final class EscherDggRecord extends EscherRecord {
         
         return shapeId;
     }    
-    
-    
-    @Override
-    protected Object[][] getAttributeMap() {
-        List<Object> fldIds = new ArrayList<>();
-        fldIds.add("FileId Clusters");
-        fldIds.add(field_5_fileIdClusters.size());
-        for (FileIdCluster fic : field_5_fileIdClusters) {
-            fldIds.add("Group"+fic.field_1_drawingGroupId);
-            fldIds.add(fic.field_2_numShapeIdsUsed);
-        }
-        
-        return new Object[][] {
-            { "ShapeIdMax", field_1_shapeIdMax },
-            { "NumIdClusters", getNumIdClusters() },
-            { "NumShapesSaved", field_3_numShapesSaved },
-            { "DrawingsSaved", field_4_drawingsSaved },
-            fldIds.toArray()
-        };
-    }
 
     @Override
     public Enum getGenericRecordType() {

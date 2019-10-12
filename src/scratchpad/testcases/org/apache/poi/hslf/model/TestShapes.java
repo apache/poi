@@ -38,7 +38,7 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.ddf.EscherDggRecord;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.hslf.usermodel.HSLFAutoShape;
 import org.apache.poi.hslf.usermodel.HSLFGroupShape;
@@ -407,12 +407,12 @@ public final class TestShapes {
         HSLFSimpleShape sh = new HSLFAutoShape(ShapeType.RT_TRIANGLE);
 
         AbstractEscherOptRecord opt = sh.getEscherOptRecord();
-        EscherSimpleProperty prop = HSLFSimpleShape.getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
+        EscherSimpleProperty prop = HSLFSimpleShape.getEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINEWIDTH);
         assertNull(prop);
         assertEquals(HSLFSimpleShape.DEFAULT_LINE_WIDTH, sh.getLineWidth(), 0);
 
         sh.setLineWidth(1.0);
-        prop = HSLFSimpleShape.getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
+        prop = HSLFSimpleShape.getEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINEWIDTH);
         assertNotNull(prop);
         assertEquals(1.0, sh.getLineWidth(), 0);
     }

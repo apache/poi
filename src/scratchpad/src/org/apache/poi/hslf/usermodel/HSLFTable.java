@@ -30,7 +30,7 @@ import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.sl.usermodel.ShapeContainer;
@@ -101,8 +101,8 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
         EscherContainerRecord spCont = (EscherContainerRecord) getSpContainer().getChild(0);
         AbstractEscherOptRecord opt = new EscherOptRecord();
         opt.setRecordId(EscherRecordTypes.USER_DEFINED.typeID);
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__TABLEPROPERTIES, 1));
-        EscherArrayProperty p = new EscherArrayProperty((short)(0x4000 | EscherProperties.GROUPSHAPE__TABLEROWPROPERTIES), false, null);
+        opt.addEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.GROUPSHAPE__TABLEPROPERTIES, 1));
+        EscherArrayProperty p = new EscherArrayProperty(EscherPropertyTypes.GROUPSHAPE__TABLEROWPROPERTIES, true, 0);
         p.setSizeOfElements(0x0004);
         p.setNumberOfElementsInArray(numRows);
         p.setNumberOfElementsInMemory(numRows);
@@ -368,7 +368,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
 
         // update row height in the table properties
         AbstractEscherOptRecord opt = getEscherChild(EscherRecordTypes.USER_DEFINED);
-        EscherArrayProperty p = opt.lookup(EscherProperties.GROUPSHAPE__TABLEROWPROPERTIES);
+        EscherArrayProperty p = opt.lookup(EscherPropertyTypes.GROUPSHAPE__TABLEROWPROPERTIES);
         byte[] masterBytes = p.getElement(row);
         double currentHeight = Units.masterToPoints(LittleEndian.getInt(masterBytes, 0));
         LittleEndian.putInt(masterBytes, 0, Units.pointsToMaster(height));
@@ -461,7 +461,7 @@ implements HSLFShapeContainer, TableShape<HSLFShape,HSLFTextParagraph> {
 
     private void updateRowHeightsProperty() {
         AbstractEscherOptRecord opt = getEscherChild(EscherRecordTypes.USER_DEFINED);
-        EscherArrayProperty p = opt.lookup(EscherProperties.GROUPSHAPE__TABLEROWPROPERTIES);
+        EscherArrayProperty p = opt.lookup(EscherPropertyTypes.GROUPSHAPE__TABLEROWPROPERTIES);
         byte[] val = new byte[4];
         for (int rowIdx = 0; rowIdx < cells.length; rowIdx++) {
             int rowHeight = Units.pointsToMaster(cells[rowIdx][0].getAnchor().getHeight());

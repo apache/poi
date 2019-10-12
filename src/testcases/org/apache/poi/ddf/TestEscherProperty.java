@@ -31,22 +31,24 @@ public class TestEscherProperty {
      */
     @Test
     public void testPropertyNames() throws Exception {
-        EscherProperty p1 = new EscherSimpleProperty( EscherProperties.GROUPSHAPE__SHAPENAME, 0);
+        EscherProperty p1 = new EscherSimpleProperty( EscherPropertyTypes.GROUPSHAPE__SHAPENAME, 0);
         assertEquals("groupshape.shapename", p1.getName());
-        assertEquals(EscherProperties.GROUPSHAPE__SHAPENAME, p1.getPropertyNumber());
+        assertEquals(EscherPropertyTypes.GROUPSHAPE__SHAPENAME.propNumber, p1.getPropertyNumber());
         assertFalse(p1.isComplex());
 
-        EscherProperty p2 = new EscherComplexProperty(
-                EscherProperties.GROUPSHAPE__SHAPENAME, false, new byte[10]);
+        EscherComplexProperty p2 = new EscherComplexProperty(
+                EscherPropertyTypes.GROUPSHAPE__SHAPENAME, false, 10);
+        p2.setComplexData(new byte[10]);
         assertEquals("groupshape.shapename", p2.getName());
-        assertEquals(EscherProperties.GROUPSHAPE__SHAPENAME, p2.getPropertyNumber());
+        assertEquals(EscherPropertyTypes.GROUPSHAPE__SHAPENAME.propNumber, p2.getPropertyNumber());
         assertTrue(p2.isComplex());
         assertFalse(p2.isBlipId());
 
-        EscherProperty p3 = new EscherComplexProperty(
-                EscherProperties.GROUPSHAPE__SHAPENAME, true, new byte[10]);
+        EscherComplexProperty p3 = new EscherComplexProperty(
+                EscherPropertyTypes.GROUPSHAPE__SHAPENAME, true, 10);
+        p2.setComplexData(new byte[10]);
         assertEquals("groupshape.shapename", p3.getName());
-        assertEquals(EscherProperties.GROUPSHAPE__SHAPENAME, p3.getPropertyNumber());
+        assertEquals(EscherPropertyTypes.GROUPSHAPE__SHAPENAME.propNumber, p3.getPropertyNumber());
         assertTrue(p3.isComplex());
         assertTrue(p3.isBlipId());
     }

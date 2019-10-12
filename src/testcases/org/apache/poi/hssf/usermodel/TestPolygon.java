@@ -25,7 +25,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 
 import org.apache.poi.ddf.EscherArrayProperty;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.ObjRecord;
@@ -85,16 +85,20 @@ public class TestPolygon {
         polygon.setPolygonDrawArea( 100, 100 );
         polygon.setPoints( new int[]{0, 90, 50, 90}, new int[]{5, 5, 44, 88} );
 
-        EscherArrayProperty verticesProp1 = polygon.getOptRecord().lookup(EscherProperties.GEOMETRY__VERTICES);
+        EscherArrayProperty verticesProp1 = polygon.getOptRecord().lookup(EscherPropertyTypes.GEOMETRY__VERTICES);
 
         String expected =
-            "<EscherArrayProperty id=\"0x8145\" name=\"geometry.vertices\" blipId=\"false\">"+
-            "<Element>[00, 00, 05, 00]</Element>"+
-            "<Element>[5A, 00, 05, 00]</Element>"+
-            "<Element>[32, 00, 2C, 00]</Element>"+
-            "<Element>[5A, 00, 58, 00]</Element>"+
-            "<Element>[00, 00, 05, 00]</Element>"+
-            "</EscherArrayProperty>";
+            "<record type=\"GEOMETRY__VERTICES\" id=\"-32443\" name=\"geometry.vertices\" propertyNumber=\"325\" propertySize=\"32\" numElements=\"5\" numElementsInMemory=\"5\" sizeOfElements=\"-16\">" +
+            "<flags flag=\"0x8145\" description=\"IS_COMPLEX\"/>" +
+            "<data>BQAFAPD/AAAFAFoABQAyACwAWgBYAAAABQA=</data>" +
+            "<elements>" +
+            "<item>>AAAFAA==</item>" +
+            "<item>>WgAFAA==</item>" +
+            "<item>>MgAsAA==</item>" +
+            "<item>>WgBYAA==</item>" +
+            "<item>>AAAFAA==</item>" +
+            "</elements>" +
+            "</record>";
         String actual = verticesProp1.toXml("").replaceAll("[\r\n\t]","");
         
         assertEquals(verticesProp1.getNumberOfElementsInArray(), 5);
@@ -104,15 +108,18 @@ public class TestPolygon {
         assertArrayEquals(polygon.getXPoints(), new int[]{1, 2, 3});
         assertArrayEquals(polygon.getYPoints(), new int[]{4, 5, 6});
 
-        verticesProp1 = polygon.getOptRecord().lookup(EscherProperties.GEOMETRY__VERTICES);
+        verticesProp1 = polygon.getOptRecord().lookup(EscherPropertyTypes.GEOMETRY__VERTICES);
 
         expected =
-            "<EscherArrayProperty id=\"0x8145\" name=\"geometry.vertices\" blipId=\"false\">" +
-            "<Element>[01, 00, 04, 00]</Element>" +
-            "<Element>[02, 00, 05, 00]</Element>" +
-            "<Element>[03, 00, 06, 00]</Element>" +
-            "<Element>[01, 00, 04, 00]</Element>" +
-            "</EscherArrayProperty>";
+            "<record type=\"GEOMETRY__VERTICES\" id=\"-32443\" name=\"geometry.vertices\" propertyNumber=\"325\" propertySize=\"28\" numElements=\"4\" numElementsInMemory=\"4\" sizeOfElements=\"-16\">" +
+            "<flags flag=\"0x8145\" description=\"IS_COMPLEX\"/>" +
+            "<data>BAAEAPD/AQAEAAIABQADAAYAAQAEAA==</data>" +
+            "<elements>" +
+            "<item>>AQAEAA==</item>" +
+            "<item>>AgAFAA==</item>" +
+            "<item>>AwAGAA==</item>" +
+            "<item>>AQAEAA==</item>" +
+            "</elements></record>";
         actual = verticesProp1.toXml("").replaceAll("[\r\n\t]","");
         
         assertEquals(verticesProp1.getNumberOfElementsInArray(), 4);
@@ -261,7 +268,7 @@ public class TestPolygon {
 
         EscherSpRecord spRecord = polygon1.getEscherContainer().getChildById(EscherSpRecord.RECORD_ID);
 
-        spRecord.setShapeType((short)77/**RANDOM**/);
+        spRecord.setShapeType((short)77/*RANDOM*/);
 
         HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
         wb2.close();

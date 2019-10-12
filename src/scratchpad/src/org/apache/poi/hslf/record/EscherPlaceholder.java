@@ -94,16 +94,6 @@ public class EscherPlaceholder extends EscherRecord {
     }
 
     @Override
-    protected Object[][] getAttributeMap() {
-        return new Object[][] {
-            { "position", position },
-            { "placementId", placementId },
-            { "placehoder size", size },
-            { "unused", unused }
-        };
-    }
-
-    @Override
     public Map<String, Supplier<?>> getGenericProperties() {
         return GenericRecordUtil.getGenericProperties(
             "base", super::getGenericProperties,

@@ -21,7 +21,7 @@ import java.lang.reflect.Method;
 
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherComplexProperty;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherTertiaryOptRecord;
 import org.apache.poi.hslf.usermodel.HSLFShape;
 import org.apache.poi.sl.usermodel.Shape;
@@ -60,7 +60,7 @@ public class HSLFMetroShape<T extends Shape<?,?>> {
     
     private EscherComplexProperty getMetroProp() {
         AbstractEscherOptRecord opt = shape.getEscherChild(EscherTertiaryOptRecord.RECORD_ID);
-        return (opt == null) ? null : (EscherComplexProperty)opt.lookup(EscherProperties.GROUPSHAPE__METROBLOB);
+        return (opt == null) ? null : (EscherComplexProperty)opt.lookup(EscherPropertyTypes.GROUPSHAPE__METROBLOB.propNumber);
     }
     
     /**

@@ -108,13 +108,6 @@ public class EscherBlipRecord extends EscherRecord {
     }
 
     @Override
-    protected Object[][] getAttributeMap() {
-        return new Object[][] {
-            { "Extra Data", getPicturedata() }
-        };
-    }
-
-    @Override
     public Map<String, Supplier<?>> getGenericProperties() {
         return GenericRecordUtil.getGenericProperties(
             "base", super::getGenericProperties,

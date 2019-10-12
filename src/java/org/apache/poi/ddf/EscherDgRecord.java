@@ -145,14 +145,6 @@ public class EscherDgRecord extends EscherRecord {
     }
 
     @Override
-    protected Object[][] getAttributeMap() {
-        return new Object[][] {
-            { "NumShapes", field_1_numShapes },
-            { "LastMSOSPID", field_2_lastMSOSPID }
-        };
-    }
-
-    @Override
     public Map<String, Supplier<?>> getGenericProperties() {
         return GenericRecordUtil.getGenericProperties(
             "base", super::getGenericProperties,

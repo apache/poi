@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 
 /**
@@ -245,15 +244,6 @@ public class EscherSpRecord extends EscherRecord {
     public void setShapeType( short value )
     {
         setInstance( value );
-    }
-
-    @Override
-    protected Object[][] getAttributeMap() {
-        return new Object[][] {
-            { "ShapeType", getShapeType() },
-            { "ShapeId", field_1_shapeId },
-            { "Flags", decodeFlags(field_2_flags)+" (0x"+HexDump.toHex(field_2_flags)+")" }
-        };
     }
 
     @Override

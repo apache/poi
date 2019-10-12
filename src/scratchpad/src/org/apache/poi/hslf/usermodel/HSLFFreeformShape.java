@@ -28,7 +28,7 @@ import java.util.List;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.sl.usermodel.FreeformShape;
 import org.apache.poi.sl.usermodel.ShapeContainer;
@@ -162,9 +162,9 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
         segInfo.add(SEGMENTINFO_END);
 
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__SHAPEPATH, 0x4));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.GEOMETRY__SHAPEPATH, 0x4));
 
-        EscherArrayProperty verticesProp = new EscherArrayProperty((short)(EscherProperties.GEOMETRY__VERTICES + 0x4000), false, null);
+        EscherArrayProperty verticesProp = new EscherArrayProperty(EscherPropertyTypes.GEOMETRY__VERTICES, true, 0);
         verticesProp.setNumberOfElementsInArray(pntInfo.size());
         verticesProp.setNumberOfElementsInMemory(pntInfo.size());
         verticesProp.setSizeOfElements(8);
@@ -177,7 +177,7 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
         }
         opt.addEscherProperty(verticesProp);
 
-        EscherArrayProperty segmentsProp = new EscherArrayProperty((short)(EscherProperties.GEOMETRY__SEGMENTINFO + 0x4000), false, null);
+        EscherArrayProperty segmentsProp = new EscherArrayProperty(EscherPropertyTypes.GEOMETRY__SEGMENTINFO, true, 0);
         segmentsProp.setNumberOfElementsInArray(segInfo.size());
         segmentsProp.setNumberOfElementsInMemory(segInfo.size());
         segmentsProp.setSizeOfElements(0x2);
@@ -187,8 +187,8 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
         }
         opt.addEscherProperty(segmentsProp);
 
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__RIGHT, Units.pointsToMaster(bounds.getWidth())));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__BOTTOM, Units.pointsToMaster(bounds.getHeight())));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.GEOMETRY__RIGHT, Units.pointsToMaster(bounds.getWidth())));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.GEOMETRY__BOTTOM, Units.pointsToMaster(bounds.getHeight())));
 
         opt.sortProperties();
 

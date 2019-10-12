@@ -22,7 +22,7 @@ import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.ShapeType;
@@ -81,11 +81,11 @@ public final class HSLFTableCell extends HSLFTextBox implements TableCell<HSLFSh
     protected EscherContainerRecord createSpContainer(boolean isChild){
         EscherContainerRecord ecr = super.createSpContainer(isChild);
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        setEscherProperty(opt, EscherProperties.TEXT__TEXTID, 0);
-        setEscherProperty(opt, EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 0x20000);
-        setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x150001);
-        setEscherProperty(opt, EscherProperties.SHADOWSTYLE__SHADOWOBSURED, 0x20000);
-        setEscherProperty(opt, EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 0x40000);
+        setEscherProperty(opt, EscherPropertyTypes.TEXT__TEXTID, 0);
+        setEscherProperty(opt, EscherPropertyTypes.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 0x20000);
+        setEscherProperty(opt, EscherPropertyTypes.FILL__NOFILLHITTEST, 0x150001);
+        setEscherProperty(opt, EscherPropertyTypes.SHADOWSTYLE__SHADOWOBSURED, 0x20000);
+        setEscherProperty(opt, EscherPropertyTypes.PROTECTION__LOCKAGAINSTGROUPING, 0x40000);
 
         return ecr;
     }
@@ -390,10 +390,10 @@ public final class HSLFTableCell extends HSLFTextBox implements TableCell<HSLFSh
         table.addShape(line);
 
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        setEscherProperty(opt, EscherProperties.GEOMETRY__SHAPEPATH, -1);
-        setEscherProperty(opt, EscherProperties.GEOMETRY__FILLOK, -1);
-        setEscherProperty(opt, EscherProperties.SHADOWSTYLE__SHADOWOBSURED, 0x20000);
-        setEscherProperty(opt, EscherProperties.THREED__LIGHTFACE, 0x80000);
+        setEscherProperty(opt, EscherPropertyTypes.GEOMETRY__SHAPEPATH, -1);
+        setEscherProperty(opt, EscherPropertyTypes.GEOMETRY__FILLOK, -1);
+        setEscherProperty(opt, EscherPropertyTypes.SHADOWSTYLE__SHADOWOBSURED, 0x20000);
+        setEscherProperty(opt, EscherPropertyTypes.THREED__LIGHTFACE, 0x80000);
 
         anchorBorder(edge, line);
 

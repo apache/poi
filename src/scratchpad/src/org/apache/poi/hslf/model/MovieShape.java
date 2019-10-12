@@ -18,7 +18,7 @@
 package org.apache.poi.hslf.model;
 
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.hslf.record.AnimationInfo;
 import org.apache.poi.hslf.record.AnimationInfoAtom;
 import org.apache.poi.hslf.record.ExMCIMovie;
@@ -90,8 +90,8 @@ public final class MovieShape extends HSLFPictureShape {
     protected EscherContainerRecord createSpContainer(int idx, boolean isChild) {
         EscherContainerRecord ecr = super.createSpContainer(idx, isChild);
 
-        setEscherProperty(EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 0x1000100);
-        setEscherProperty(EscherProperties.FILL__NOFILLHITTEST, 0x10001);
+        setEscherProperty(EscherPropertyTypes.PROTECTION__LOCKAGAINSTGROUPING, 0x1000100);
+        setEscherProperty(EscherPropertyTypes.FILL__NOFILLHITTEST, 0x10001);
 
         ExObjRefAtom oe = new ExObjRefAtom();
         InteractiveInfo info = new InteractiveInfo();

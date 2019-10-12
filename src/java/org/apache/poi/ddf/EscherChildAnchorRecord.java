@@ -177,16 +177,6 @@ public class EscherChildAnchorRecord extends EscherRecord {
     }
 
     @Override
-    protected Object[][] getAttributeMap() {
-        return new Object[][] {
-            { "X1", field_1_dx1 },
-            { "Y1", field_2_dy1 },
-            { "X2", field_3_dx2 },
-            { "Y2", field_4_dy2 }
-        };
-    }
-
-    @Override
     public Map<String, Supplier<?>> getGenericProperties() {
         return GenericRecordUtil.getGenericProperties(
             "base", super::getGenericProperties,

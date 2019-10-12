@@ -349,22 +349,6 @@ public class EscherClientAnchorRecord extends EscherRecord {
     }
 
     @Override
-    protected Object[][] getAttributeMap() {
-        return new Object[][] {
-            { "Flag", field_1_flag },
-            { "Col1", field_2_col1 },
-            { "DX1", field_3_dx1 },
-            { "Row1", field_4_row1 },
-            { "DY1", field_5_dy1 },
-            { "Col2", field_6_col2 },
-            { "DX2", field_7_dx2 },
-            { "Row2", field_8_row2 },
-            { "DY2", field_9_dy2 },
-            { "Extra Data", remainingData }
-        };
-    }
-
-    @Override
     public Map<String, Supplier<?>> getGenericProperties() {
         final Map<String,Supplier<?>> m = new LinkedHashMap<>(super.getGenericProperties());
         m.put("flag", this::getFlag);

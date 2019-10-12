@@ -28,18 +28,11 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.record.Document;
-import org.apache.poi.hslf.usermodel.HSLFAutoShape;
-import org.apache.poi.hslf.usermodel.HSLFFill;
-import org.apache.poi.hslf.usermodel.HSLFPictureData;
-import org.apache.poi.hslf.usermodel.HSLFShape;
-import org.apache.poi.hslf.usermodel.HSLFSheet;
-import org.apache.poi.hslf.usermodel.HSLFSlide;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.junit.Test;
@@ -209,7 +202,7 @@ public final class TestBackground {
 
     private int getFillPictureRefCount(HSLFShape shape, HSLFFill fill) {
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
-        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
+        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__PATTERNTEXTURE);
         if(p != null) {
             int idx = p.getPropertyValue();
 

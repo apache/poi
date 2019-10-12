@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hslf.record.ExEmbed;
 import org.apache.poi.hslf.record.ExObjList;
@@ -86,7 +86,7 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
      * @return the unique identifier for the OLE object
      */
     public int getObjectID(){
-        return getEscherProperty(EscherProperties.BLIP__PICTUREID);
+        return getEscherProperty(EscherPropertyTypes.BLIP__PICTUREID);
     }
 
     /**
@@ -96,7 +96,7 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
      * @param objectId the unique identifier for the OLE object
      */
     public void setObjectID(int objectId){
-    	setEscherProperty(EscherProperties.BLIP__PICTUREID, objectId);
+    	setEscherProperty(EscherPropertyTypes.BLIP__PICTUREID, objectId);
 
     	EscherContainerRecord ecr = getSpContainer();
     	EscherSpRecord spRecord = ecr.getChildById(EscherSpRecord.RECORD_ID);

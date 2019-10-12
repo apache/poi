@@ -17,11 +17,10 @@
 
 package org.apache.poi.ddf;
 
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
 
 public class EscherBitmapBlip extends EscherBlipRecord {
@@ -114,20 +113,12 @@ public class EscherBitmapBlip extends EscherBlipRecord {
     }
 
     @Override
-    protected Object[][] getAttributeMap() {
-        return new Object[][] {
-            { "Marker", field_2_marker },
-            { "Extra Data", getPicturedata() }
-        };
-    }
-
-
-    @Override
     public Map<String, Supplier<?>> getGenericProperties() {
-        final Map<String, Supplier<?>> m = new LinkedHashMap<>(super.getGenericProperties());
-        m.put("uid", this::getUID);
-        m.put("marker", this::getMarker);
-        return Collections.unmodifiableMap(m);
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "uid", this::getUID,
+            "marker", this::getMarker
+        );
     }
 
 }

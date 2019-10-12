@@ -21,18 +21,17 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.poi.ddf.EscherTertiaryOptRecord;
-
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherBlipRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordFactory;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.ddf.EscherTertiaryOptRecord;
 import org.apache.poi.hwpf.model.EscherRecordHolder;
 import org.apache.poi.hwpf.model.FSPA;
 import org.apache.poi.hwpf.model.FSPATable;
@@ -125,8 +124,7 @@ public class OfficeDrawingsImpl implements OfficeDrawings
         {
             public HorizontalPositioning getHorizontalPositioning()
             {
-                int value = getTertiaryPropertyValue(
-                        EscherProperties.GROUPSHAPE__POSH, -1 );
+                int value = getTertiaryPropertyValue(EscherPropertyTypes.GROUPSHAPE__POSH );
 
                 switch ( value )
                 {
@@ -149,8 +147,7 @@ public class OfficeDrawingsImpl implements OfficeDrawings
 
             public HorizontalRelativeElement getHorizontalRelative()
             {
-                int value = getTertiaryPropertyValue(
-                        EscherProperties.GROUPSHAPE__POSRELH, -1 );
+                int value = getTertiaryPropertyValue( EscherPropertyTypes.GROUPSHAPE__POSRELH );
 
                 switch ( value )
                 {
@@ -184,7 +181,7 @@ public class OfficeDrawingsImpl implements OfficeDrawings
                     return null;
 
                 EscherSimpleProperty escherProperty = escherOptRecord
-                        .lookup( EscherProperties.BLIP__BLIPTODISPLAY );
+                        .lookup( EscherPropertyTypes.BLIP__BLIPTODISPLAY );
                 if ( escherProperty == null )
                     return null;
 
@@ -221,30 +218,25 @@ public class OfficeDrawingsImpl implements OfficeDrawings
                 return fspa.getSpid();
             }
 
-            private int getTertiaryPropertyValue( int propertyId,
-                    int defaultValue )
-            {
+            private int getTertiaryPropertyValue( EscherPropertyTypes type ) {
                 EscherContainerRecord shapeDescription = getEscherShapeRecordContainer( getShapeId() );
-                if ( shapeDescription == null )
-                    return defaultValue;
+                if ( shapeDescription == null ) {
+                    return -1;
+                }
 
                 EscherTertiaryOptRecord escherTertiaryOptRecord = shapeDescription
                         .getChildById( EscherTertiaryOptRecord.RECORD_ID );
-                if ( escherTertiaryOptRecord == null )
-                    return defaultValue;
+                if ( escherTertiaryOptRecord == null ) {
+                    return -1;
+                }
 
-                EscherSimpleProperty escherProperty = escherTertiaryOptRecord
-                        .lookup( propertyId );
-                if ( escherProperty == null )
-                    return defaultValue;
-
-                return escherProperty.getPropertyValue();
+                EscherSimpleProperty escherProperty = escherTertiaryOptRecord.lookup( type );
+                return ( escherProperty == null ) ? -1 : escherProperty.getPropertyValue();
             }
 
             public VerticalPositioning getVerticalPositioning()
             {
-                int value = getTertiaryPropertyValue(
-                        EscherProperties.GROUPSHAPE__POSV, -1 );
+                int value = getTertiaryPropertyValue( EscherPropertyTypes.GROUPSHAPE__POSV );
 
                 switch ( value )
                 {
@@ -267,8 +259,7 @@ public class OfficeDrawingsImpl implements OfficeDrawings
 
             public VerticalRelativeElement getVerticalRelativeElement()
             {
-                int value = getTertiaryPropertyValue(
-                        EscherProperties.GROUPSHAPE__POSV, -1 );
+                int value = getTertiaryPropertyValue( EscherPropertyTypes.GROUPSHAPE__POSV );
 
                 switch ( value )
                 {

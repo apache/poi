@@ -29,7 +29,7 @@ import org.apache.poi.ddf.EscherClientAnchorRecord;
 import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.ddf.EscherSpRecord;
@@ -104,8 +104,8 @@ public class HSSFShapeGroup extends HSSFShape implements HSSFShapeContainer {
         }
         opt.setRecordId(EscherOptRecord.RECORD_ID);
         opt.setOptions((short) 0x0023);
-        opt.addEscherProperty(new EscherBoolProperty(EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 0x00040004));
-        opt.addEscherProperty(new EscherBoolProperty(EscherProperties.GROUPSHAPE__PRINT, 0x00080000));
+        opt.addEscherProperty(new EscherBoolProperty(EscherPropertyTypes.PROTECTION__LOCKAGAINSTGROUPING, 0x00040004));
+        opt.addEscherProperty(new EscherBoolProperty(EscherPropertyTypes.GROUPSHAPE__FLAGS, 0x00080000));
 
         anchor = getAnchor().getEscherAnchor();
         clientData.setRecordId(EscherClientDataRecord.RECORD_ID);

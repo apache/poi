@@ -57,16 +57,17 @@ public final class TestEscherDgRecord {
 
     @Test
     public void testToString() {
-        String nl = System.getProperty("line.separator");
         String expected =
-            "org.apache.poi.ddf.EscherDgRecord (Dg):" + nl +
-            "  RecordId: 0xF008" + nl +
-            "  Version: 0x0000" + nl +
-            "  Instance: 0x0001" + nl +
-            "  Options: 0x0010" + nl +
-            "  Record Size: 16" + nl +
-            "  NumShapes: 0x00000002" + nl +
-            "  LastMSOSPID: 0x00000401";
+            "{   /* DG */\n" +
+            "\t  recordId: -4088 /* 0xf008 */\n" +
+            "\t, version: 0\n" +
+            "\t, instance: 1\n" +
+            "\t, options: 16 /* 0x0010 */\n" +
+            "\t, recordSize: 16 /* 0x00000010 */\n" +
+            "\t, numShapes: 2\n" +
+            "\t, lastMSOSPID: 1025 /* 0x00000401 */\n" +
+            "\t, drawingGroupId: 1\n" +
+            "}";
         assertEquals( expected, createRecord().toString() );
     }
 

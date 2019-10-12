@@ -86,6 +86,6 @@ public class HwmfColorRef implements Cloneable, GenericRecord {
 
     @Override
     public Map<String, Supplier<?>> getGenericProperties() {
-        return GenericRecordUtil.getGenericProperties("color", colorRef::getRGB);
+        return GenericRecordUtil.getGenericProperties("color", this::getColor);
     }
 }

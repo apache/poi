@@ -24,7 +24,16 @@ import org.junit.Test;
 public final class TestEscherBoolProperty {
     @Test
     public void testToString() {
-        EscherBoolProperty p = new EscherBoolProperty((short)1, 1);
-        assertEquals("propNum: 1, RAW: 0x0001, propName: unknown, complex: false, blipId: false, value: 1 (0x00000001)", p.toString());
+        EscherBoolProperty p = new EscherBoolProperty(EscherPropertyTypes.GEOMETRY__FILLOK, 1);
+        String expected =
+            "{   /* GEOMETRY__FILLOK */\n" +
+            "\t  id: 383 /* 0x017f */\n" +
+            "\t, name: \"geometry.fillok\"\n" +
+            "\t, propertyNumber: 383 /* 0x017f */\n" +
+            "\t, propertySize: 6\n" +
+            "\t, flags: 0x17f /*  */ \n" +
+            "\t, value: 1\n" +
+            "}";
+        assertEquals(expected, p.toString());
     }
 }

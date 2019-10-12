@@ -38,7 +38,7 @@ public interface PictureData {
         /** GIF image format */
         GIF(-1,8,"image/gif",".gif"),
         /** Tag Image File (.tiff) */
-        TIFF(-1,9,"image/tiff",".tif"),
+        TIFF(17,9,"image/tiff",".tif"),
         /** Encapsulated Postscript (.eps) */
         EPS(-1,10,"image/x-eps",".eps"),
         /** Windows Bitmap (.bmp) */
@@ -48,7 +48,15 @@ public interface PictureData {
         /** Microsoft Windows Media Photo image (.wdp) */
         WDP(-1,13,"image/vnd.ms-photo",".wdp"),
         /** Scalable vector graphics (.svg) - supported by Office 2016 and higher */
-        SVG(-1, -1, "image/svg+xml", ".svg")
+        SVG(-1, -1, "image/svg+xml", ".svg"),
+        /** Unknown picture type - specific to escher bse record */
+        UNKNOWN(1, -1, "", ".dat"),
+        /** Picture type error - specific to escher bse record */
+        ERROR(0, -1, "", ".dat"),
+        /** JPEG in the YCCK or CMYK color space. */
+        CMYKJPEG( 18, -1, "image/jpeg", ".jpg"),
+        /** client defined blip type - native-id 32 to 255 */
+        CLIENT( 32, -1, "", ".dat")
         ;
         
         public final int nativeId, ooxmlId;
@@ -65,7 +73,7 @@ public interface PictureData {
             for (PictureType ans : values()) {
                 if (ans.nativeId == nativeId) return ans;
             }
-            return null;
+            return nativeId >= CLIENT.nativeId ? CLIENT : UNKNOWN;
         }
 
         public static PictureType forOoxmlID(int ooxmlId) {

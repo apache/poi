@@ -26,8 +26,8 @@ import org.apache.poi.ddf.EscherClientAnchorRecord;
 import org.apache.poi.ddf.EscherComplexProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherProperty;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherRGBProperty;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
@@ -222,7 +222,7 @@ public abstract class HSSFShape implements Shape {
      * The color applied to the lines of this shape.
      */
     public int getLineStyleColor() {
-        EscherRGBProperty rgbProperty = _optRecord.lookup(EscherProperties.LINESTYLE__COLOR);
+        EscherRGBProperty rgbProperty = _optRecord.lookup(EscherPropertyTypes.LINESTYLE__COLOR);
         return rgbProperty == null ? LINESTYLE__COLOR_DEFAULT : rgbProperty.getRgbColor();
     }
 
@@ -230,20 +230,20 @@ public abstract class HSSFShape implements Shape {
      * The color applied to the lines of this shape.
      */
     public void setLineStyleColor(int lineStyleColor) {
-        setPropertyValue(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, lineStyleColor));
+        setPropertyValue(new EscherRGBProperty(EscherPropertyTypes.LINESTYLE__COLOR, lineStyleColor));
     }
 
     @Override
     public void setLineStyleColor(int red, int green, int blue) {
         int lineStyleColor = ((blue) << 16) | ((green) << 8) | red;
-        setPropertyValue(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, lineStyleColor));
+        setPropertyValue(new EscherRGBProperty(EscherPropertyTypes.LINESTYLE__COLOR, lineStyleColor));
     }
 
     /**
      * The color used to fill this shape.
      */
     public int getFillColor() {
-        EscherRGBProperty rgbProperty = _optRecord.lookup(EscherProperties.FILL__FILLCOLOR);
+        EscherRGBProperty rgbProperty = _optRecord.lookup(EscherPropertyTypes.FILL__FILLCOLOR);
         return rgbProperty == null ? FILL__FILLCOLOR_DEFAULT : rgbProperty.getRgbColor();
     }
 
@@ -251,20 +251,20 @@ public abstract class HSSFShape implements Shape {
      * The color used to fill this shape.
      */
     public void setFillColor(int fillColor) {
-        setPropertyValue(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, fillColor));
+        setPropertyValue(new EscherRGBProperty(EscherPropertyTypes.FILL__FILLCOLOR, fillColor));
     }
 
     @Override
     public void setFillColor(int red, int green, int blue) {
         int fillColor = ((blue) << 16) | ((green) << 8) | red;
-        setPropertyValue(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, fillColor));
+        setPropertyValue(new EscherRGBProperty(EscherPropertyTypes.FILL__FILLCOLOR, fillColor));
     }
 
     /**
      * @return returns with width of the line in EMUs.  12700 = 1 pt.
      */
     public int getLineWidth() {
-        EscherSimpleProperty property = _optRecord.lookup(EscherProperties.LINESTYLE__LINEWIDTH);
+        EscherSimpleProperty property = _optRecord.lookup(EscherPropertyTypes.LINESTYLE__LINEWIDTH);
         return property == null ? LINEWIDTH_DEFAULT: property.getPropertyValue();
     }
 
@@ -275,14 +275,14 @@ public abstract class HSSFShape implements Shape {
      * @see HSSFShape#LINEWIDTH_ONE_PT
      */
     public void setLineWidth(int lineWidth) {
-        setPropertyValue(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEWIDTH, lineWidth));
+        setPropertyValue(new EscherSimpleProperty(EscherPropertyTypes.LINESTYLE__LINEWIDTH, lineWidth));
     }
 
     /**
      * @return One of the constants in LINESTYLE_*
      */
     public int getLineStyle() {
-        EscherSimpleProperty property = _optRecord.lookup(EscherProperties.LINESTYLE__LINEDASHING);
+        EscherSimpleProperty property = _optRecord.lookup(EscherPropertyTypes.LINESTYLE__LINEDASHING);
         if (null == property){
             return LINESTYLE_DEFAULT;
         }
@@ -295,26 +295,26 @@ public abstract class HSSFShape implements Shape {
      * @param lineStyle One of the constants in LINESTYLE_*
      */
     public void setLineStyle(int lineStyle) {
-        setPropertyValue(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEDASHING, lineStyle));
+        setPropertyValue(new EscherSimpleProperty(EscherPropertyTypes.LINESTYLE__LINEDASHING, lineStyle));
         if (getLineStyle() != HSSFShape.LINESTYLE_SOLID) {
-            setPropertyValue(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEENDCAPSTYLE, 0));
+            setPropertyValue(new EscherSimpleProperty(EscherPropertyTypes.LINESTYLE__LINEENDCAPSTYLE, 0));
             if (getLineStyle() == HSSFShape.LINESTYLE_NONE){
-                setPropertyValue(new EscherBoolProperty( EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080000));
+                setPropertyValue(new EscherBoolProperty( EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH, 0x00080000));
             } else {
-                setPropertyValue( new EscherBoolProperty( EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
+                setPropertyValue( new EscherBoolProperty( EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
             }
         }
     }
 
     @Override
     public boolean isNoFill() {
-        EscherBoolProperty property = _optRecord.lookup(EscherProperties.FILL__NOFILLHITTEST);
+        EscherBoolProperty property = _optRecord.lookup(EscherPropertyTypes.FILL__NOFILLHITTEST);
         return property == null ? NO_FILL_DEFAULT : property.getPropertyValue() == NO_FILLHITTEST_TRUE;
     }
 
     @Override
     public void setNoFill(boolean noFill) {
-        setPropertyValue(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, noFill ? NO_FILLHITTEST_TRUE : NO_FILLHITTEST_FALSE));
+        setPropertyValue(new EscherBoolProperty(EscherPropertyTypes.FILL__NOFILLHITTEST, noFill ? NO_FILLHITTEST_TRUE : NO_FILLHITTEST_FALSE));
     }
 
     protected void setPropertyValue(EscherProperty property){
@@ -366,7 +366,7 @@ public abstract class HSSFShape implements Shape {
      */
     public int getRotationDegree(){
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.TRANSFORM__ROTATION);
+        EscherSimpleProperty property = getOptRecord().lookup(EscherPropertyTypes.TRANSFORM__ROTATION);
         if (null == property){
             return 0;
         }
@@ -388,7 +388,7 @@ public abstract class HSSFShape implements Shape {
      * @param value
      */
     public void setRotationDegree(short value){
-        setPropertyValue(new EscherSimpleProperty(EscherProperties.TRANSFORM__ROTATION , (value << 16)));
+        setPropertyValue(new EscherSimpleProperty(EscherPropertyTypes.TRANSFORM__ROTATION , (value << 16)));
     }
 
     /**
@@ -420,7 +420,7 @@ public abstract class HSSFShape implements Shape {
         if (eor == null) {
             return null;
         }
-        EscherProperty ep = eor.lookup(EscherProperties.GROUPSHAPE__SHAPENAME);
+        EscherProperty ep = eor.lookup(EscherPropertyTypes.GROUPSHAPE__SHAPENAME);
         if (ep instanceof EscherComplexProperty) {
             return StringUtil.getFromUnicodeLE(((EscherComplexProperty)ep).getComplexData());
         }

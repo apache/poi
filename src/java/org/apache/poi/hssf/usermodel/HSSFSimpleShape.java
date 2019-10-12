@@ -17,12 +17,15 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.apache.poi.hssf.record.TextObjectRecord.HORIZONTAL_TEXT_ALIGNMENT_CENTERED;
+import static org.apache.poi.hssf.record.TextObjectRecord.VERTICAL_TEXT_ALIGNMENT_CENTER;
+
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBoolProperty;
 import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherRGBProperty;
 import org.apache.poi.ddf.EscherShapePathProperty;
 import org.apache.poi.ddf.EscherSimpleProperty;
@@ -35,9 +38,6 @@ import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.record.TextObjectRecord;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.SimpleShape;
-
-import static org.apache.poi.hssf.record.TextObjectRecord.HORIZONTAL_TEXT_ALIGNMENT_CENTERED;
-import static org.apache.poi.hssf.record.TextObjectRecord.VERTICAL_TEXT_ALIGNMENT_CENTER;
 
 /**
  * Represents a simple shape such as a line, rectangle or oval.
@@ -121,16 +121,16 @@ public class HSSFSimpleShape extends HSSFShape implements SimpleShape
         clientData.setOptions( (short) (0x0000) );
 
         EscherOptRecord optRecord = new EscherOptRecord();
-        optRecord.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEDASHING, LINESTYLE_SOLID));
-        optRecord.setEscherProperty( new EscherBoolProperty( EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
+        optRecord.setEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.LINESTYLE__LINEDASHING, LINESTYLE_SOLID));
+        optRecord.setEscherProperty( new EscherBoolProperty( EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
 //        optRecord.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEWIDTH, LINEWIDTH_DEFAULT));
-        optRecord.setEscherProperty(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, FILL__FILLCOLOR_DEFAULT));
-        optRecord.setEscherProperty(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, LINESTYLE__COLOR_DEFAULT));
-        optRecord.setEscherProperty(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, NO_FILLHITTEST_FALSE));
-        optRecord.setEscherProperty( new EscherBoolProperty( EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
+        optRecord.setEscherProperty(new EscherRGBProperty(EscherPropertyTypes.FILL__FILLCOLOR, FILL__FILLCOLOR_DEFAULT));
+        optRecord.setEscherProperty(new EscherRGBProperty(EscherPropertyTypes.LINESTYLE__COLOR, LINESTYLE__COLOR_DEFAULT));
+        optRecord.setEscherProperty(new EscherBoolProperty(EscherPropertyTypes.FILL__NOFILLHITTEST, NO_FILLHITTEST_FALSE));
+        optRecord.setEscherProperty( new EscherBoolProperty( EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
 
-        optRecord.setEscherProperty( new EscherShapePathProperty( EscherProperties.GEOMETRY__SHAPEPATH, EscherShapePathProperty.COMPLEX ) );
-        optRecord.setEscherProperty(new EscherBoolProperty( EscherProperties.GROUPSHAPE__PRINT, 0x080000));
+        optRecord.setEscherProperty( new EscherShapePathProperty( EscherPropertyTypes.GEOMETRY__SHAPEPATH, EscherShapePathProperty.COMPLEX ) );
+        optRecord.setEscherProperty(new EscherBoolProperty( EscherPropertyTypes.GROUPSHAPE__FLAGS, 0x080000));
         optRecord.setRecordId( EscherOptRecord.RECORD_ID );
 
         EscherTextboxRecord escherTextbox = new EscherTextboxRecord();
@@ -189,7 +189,7 @@ public class HSSFSimpleShape extends HSSFShape implements SimpleShape
         TextObjectRecord txo = getOrCreateTextObjRecord();
         txo.setStr(rtr);
         if (string.getString() != null){
-            setPropertyValue(new EscherSimpleProperty(EscherProperties.TEXT__TEXTID, string.getString().hashCode()));
+            setPropertyValue(new EscherSimpleProperty(EscherPropertyTypes.TEXT__TEXTID, string.getString().hashCode()));
         }
     }
 
@@ -233,12 +233,12 @@ public class HSSFSimpleShape extends HSSFShape implements SimpleShape
     }
 
     public int getWrapText(){
-        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.TEXT__WRAPTEXT);
+        EscherSimpleProperty property = getOptRecord().lookup(EscherPropertyTypes.TEXT__WRAPTEXT);
         return null == property ? WRAP_SQUARE : property.getPropertyValue();
     }
 
     public void setWrapText(int value){
-        setPropertyValue(new EscherSimpleProperty(EscherProperties.TEXT__WRAPTEXT, false, false, value));
+        setPropertyValue(new EscherSimpleProperty(EscherPropertyTypes.TEXT__WRAPTEXT, false, false, value));
     }
 
     /**

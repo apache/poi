@@ -17,8 +17,6 @@
 
 package org.apache.poi.ddf;
 
-import org.apache.poi.util.HexDump;
-
 /**
  * A color property.
  */
@@ -26,10 +24,26 @@ public class EscherRGBProperty
         extends EscherSimpleProperty
 {
 
-    public EscherRGBProperty( short propertyNumber, int rgbColor )
-    {
+    /**
+     * Create an instance of an escher boolean property.
+     *
+     * @param propertyNumber The property number (or id)
+     * @param rgbColor      The 24 bit value of this rgb property
+     */
+    public EscherRGBProperty( short propertyNumber, int rgbColor ) {
         super( propertyNumber, rgbColor );
     }
+
+    /**
+     * Create an instance of an escher boolean property.
+     *
+     * @param propertyNumber The property type
+     * @param rgbColor      The 24 bit value of this rgb property
+     */
+    public EscherRGBProperty( EscherPropertyTypes propertyType, int rgbColor ) {
+        super(propertyType.propNumber, rgbColor );
+    }
+
 
     /**
      * @return the rgb color as int value
@@ -61,14 +75,5 @@ public class EscherRGBProperty
     public byte getBlue()
     {
         return (byte) ( (getRgbColor() >> 16) & 0xFF );
-    }
-
-    @Override
-    public String toXml(String tab){
-        StringBuilder builder = new StringBuilder();
-        builder.append(tab).append("<").append(getClass().getSimpleName()).append(" id=\"0x").append(HexDump.toHex(getId()))
-                .append("\" name=\"").append(getName()).append("\" blipId=\"")
-                .append(isBlipId()).append("\" value=\"0x").append(HexDump.toHex(getRgbColor())).append("\"/>");
-        return builder.toString();
     }
 }

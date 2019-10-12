@@ -17,8 +17,21 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.ddf.EscherBoolProperty;
+import org.apache.poi.ddf.EscherClientDataRecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherPropertyTypes;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
+import org.apache.poi.hssf.record.EndSubRecord;
+import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.hssf.record.FtCblsSubRecord;
+import org.apache.poi.hssf.record.LbsDataSubRecord;
+import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.hssf.record.TextObjectRecord;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 
 /**
@@ -56,10 +69,10 @@ public class HSSFCombobox extends HSSFSimpleShape {
 
         sp.setFlags(EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HASSHAPETYPE);
         opt.setRecordId(EscherOptRecord.RECORD_ID);
-        opt.addEscherProperty(new EscherBoolProperty(EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 17039620));
-        opt.addEscherProperty(new EscherBoolProperty(EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 0x00080008));
-        opt.addEscherProperty(new EscherBoolProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080000));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__PRINT, 0x00020000));
+        opt.addEscherProperty(new EscherBoolProperty(EscherPropertyTypes.PROTECTION__LOCKAGAINSTGROUPING, 17039620));
+        opt.addEscherProperty(new EscherBoolProperty(EscherPropertyTypes.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 0x00080008));
+        opt.addEscherProperty(new EscherBoolProperty(EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH, 0x00080000));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.GROUPSHAPE__FLAGS, 0x00020000));
 
         HSSFClientAnchor userAnchor = (HSSFClientAnchor) getAnchor();
         userAnchor.setAnchorType(AnchorType.DONT_MOVE_DO_RESIZE);

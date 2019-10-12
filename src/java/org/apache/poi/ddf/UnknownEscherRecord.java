@@ -145,24 +145,6 @@ public final class UnknownEscherRecord extends EscherRecord implements Cloneable
     }
 
     @Override
-    protected Object[][] getAttributeMap() {
-        int numCh = getChildRecords().size();
-        List<Object> chLst = new ArrayList<>(numCh * 2 + 2);
-        chLst.add("children");
-        chLst.add(numCh);
-        for (EscherRecord er : _childRecords) {
-            chLst.add(er.getRecordName());
-            chLst.add(er);
-        }
-        
-        return new Object[][] {
-            { "isContainer", isContainerRecord() },
-            chLst.toArray(),
-            { "Extra Data", thedata }
-        };
-    }
-
-    @Override
     public Map<String, Supplier<?>> getGenericProperties() {
         return GenericRecordUtil.getGenericProperties(
             "base", super::getGenericProperties,

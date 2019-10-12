@@ -49,9 +49,10 @@ public final class TestEscherOptRecord {
         assertEquals( (short) 0x0033, r.getOptions() );
         assertEquals( (short) 0xF00B, r.getRecordId() );
         assertEquals( 3, r.getEscherProperties().size() );
-        EscherBoolProperty prop1 = new EscherBoolProperty( EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 1 );
-        EscherComplexProperty prop2 = new EscherComplexProperty( (short) 1, false, new byte[] { 0x01, 0x02 } );
-        EscherBoolProperty prop3 = new EscherBoolProperty( EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 1 );
+        EscherBoolProperty prop1 = new EscherBoolProperty( EscherPropertyTypes.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 1 );
+        EscherComplexProperty prop2 = new EscherComplexProperty( EscherPropertyTypes.TEXT__SIZE_TEXT_TO_FIT_SHAPE, false, 2);
+        prop2.setComplexData(new byte[] { 0x01, 0x02 });
+        EscherBoolProperty prop3 = new EscherBoolProperty( EscherPropertyTypes.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 1 );
         assertEquals( prop1, r.getEscherProperty( 0 ) );
         assertEquals( prop2, r.getEscherProperty( 1 ) );
         assertEquals( prop3, r.getEscherProperty( 2 ) );
@@ -71,9 +72,9 @@ public final class TestEscherOptRecord {
         assertEquals( (short) 0x0033, r.getOptions() );
         assertEquals( (short) 0xF00B, r.getRecordId() );
         assertEquals( 3, r.getEscherProperties().size() );
-        EscherBoolProperty prop1 = new EscherBoolProperty( EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 524296 );
-        EscherRGBProperty prop2 = new EscherRGBProperty( EscherProperties.FILL__FILLCOLOR, 0x08000009 );
-        EscherRGBProperty prop3 = new EscherRGBProperty( EscherProperties.LINESTYLE__COLOR, 0x08000040 );
+        EscherBoolProperty prop1 = new EscherBoolProperty( EscherPropertyTypes.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 524296 );
+        EscherRGBProperty prop2 = new EscherRGBProperty( EscherPropertyTypes.FILL__FILLCOLOR, 0x08000009 );
+        EscherRGBProperty prop3 = new EscherRGBProperty( EscherPropertyTypes.LINESTYLE__COLOR, 0x08000040 );
         assertEquals( prop1, r.getEscherProperty( 0 ) );
         assertEquals( prop2, r.getEscherProperty( 1 ) );
         assertEquals( prop3, r.getEscherProperty( 2 ) );
@@ -91,9 +92,10 @@ public final class TestEscherOptRecord {
         EscherOptRecord r = new EscherOptRecord();
         r.setOptions( (short) 0x0033 );
         r.setRecordId( (short) 0xF00B );
-        EscherBoolProperty prop1 = new EscherBoolProperty( EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 1 );
-        EscherComplexProperty prop2 = new EscherComplexProperty( (short) 1, false, new byte[] { 0x01, 0x02 } );
-        EscherBoolProperty prop3 = new EscherBoolProperty( EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 1 );
+        EscherBoolProperty prop1 = new EscherBoolProperty( EscherPropertyTypes.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 1 );
+        EscherComplexProperty prop2 = new EscherComplexProperty( EscherPropertyTypes.TEXT__SIZE_TEXT_TO_FIT_SHAPE, false, 2);
+        prop2.setComplexData(new byte[] { 0x01, 0x02 });
+        EscherBoolProperty prop3 = new EscherBoolProperty( EscherPropertyTypes.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 1 );
         r.addEscherProperty( prop1 );
         r.addEscherProperty( prop2 );
         r.addEscherProperty( prop3 );
@@ -105,7 +107,7 @@ public final class TestEscherOptRecord {
                 "0B, F0, " +
                 "14, 00, 00, 00, " +
                 "BF, 00, 01, 00, 00, 00, " +
-                "01, 80, 02, 00, 00, 00, " +
+                "BF, 80, 02, 00, 00, 00, " +
                 "BF, 00, 01, 00, 00, 00, " +
                 "01, 02]";
         assertEquals( dataStr, HexDump.toHex(data) );
@@ -117,9 +119,9 @@ public final class TestEscherOptRecord {
         EscherOptRecord r = new EscherOptRecord();
         r.setOptions( (short) 0x0033 );
         r.setRecordId( (short) 0xF00B );
-        EscherBoolProperty prop1 = new EscherBoolProperty( EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 1 );
-        EscherRGBProperty prop2 = new EscherRGBProperty( EscherProperties.FILL__FILLCOLOR, 0x08000009 );
-        EscherRGBProperty prop3 = new EscherRGBProperty( EscherProperties.LINESTYLE__COLOR, 0x08000040 );
+        EscherBoolProperty prop1 = new EscherBoolProperty( EscherPropertyTypes.TEXT__SIZE_TEXT_TO_FIT_SHAPE, 1 );
+        EscherRGBProperty prop2 = new EscherRGBProperty( EscherPropertyTypes.FILL__FILLCOLOR, 0x08000009 );
+        EscherRGBProperty prop3 = new EscherRGBProperty( EscherPropertyTypes.LINESTYLE__COLOR, 0x08000040 );
         r.addEscherProperty( prop1 );
         r.addEscherProperty( prop2 );
         r.addEscherProperty( prop3 );
@@ -138,24 +140,31 @@ public final class TestEscherOptRecord {
 
     @Test
     public void testToString() {
-        String nl = System.getProperty("line.separator");
         EscherOptRecord r = new EscherOptRecord();
         // don't try to shoot in foot, please -- vlsergey
         // r.setOptions((short)0x000F);
         r.setRecordId(EscherOptRecord.RECORD_ID);
-        EscherProperty prop1 = new EscherBoolProperty((short)1, 1);
+        EscherProperty prop1 = new EscherBoolProperty(EscherPropertyTypes.GEOMETRY__FILLOK, 1);
         r.addEscherProperty(prop1);
         String expected =
-            "org.apache.poi.ddf.EscherOptRecord (Opt):" + nl +
-            "  RecordId: 0xF00B" + nl +
-            "  Version: 0x0003" + nl +
-            "  Instance: 0x0001" + nl +
-            "  Options: 0x0013" + nl +
-            "  Record Size: 14" + nl +
-            "  isContainer: false" + nl +
-            "  numchildren: 0x00000000" + nl +
-            "  properties: 0x00000001" + nl +
-            "  unknown:   propNum: 1, RAW: 0x0001, propName: unknown, complex: false, blipId: false, value: 1 (0x00000001)";
+            "{   /* OPT */\n" +
+            "\t  recordId: -4085 /* 0xf00b */\n" +
+            "\t, version: 3\n" +
+            "\t, instance: 1\n" +
+            "\t, options: 19 /* 0x0013 */\n" +
+            "\t, recordSize: 14 /* 0x0000000e */\n" +
+            "\t, isContainer: false\n" +
+            "\t, properties: [\n" +
+            "\n" +
+            "\t{   /* GEOMETRY__FILLOK */\n" +
+            "\t\t  id: 383 /* 0x017f */\n" +
+            "\t\t, name: \"geometry.fillok\"\n" +
+            "\t\t, propertyNumber: 383 /* 0x017f */\n" +
+            "\t\t, propertySize: 6\n" +
+            "\t\t, flags: 0x17f /*  */ \n" +
+            "\t\t, value: 1\n" +
+            "\t}]\n" +
+            "}";
         assertEquals( expected, r.toString());
     }
 
@@ -255,7 +264,7 @@ public final class TestEscherOptRecord {
 
     /**
      * Test read/write against an OPT record from a real ppt file.
-     * In PowerPoint is is legal to have array properties with empty complex part.
+     * In PowerPoint it is legal to have array properties with empty complex part.
      * In Glen's original implementation complex part is always 6 bytes which resulted
      * in +6 extra bytes when writing back out. As the result the ppt becomes unreadable.
      *
@@ -295,7 +304,7 @@ public final class TestEscherOptRecord {
     @Test
     public void testEmptyArrayProperty() {
         EscherOptRecord r = new EscherOptRecord();
-        EscherArrayProperty p = new EscherArrayProperty((short)(EscherProperties.FILL__SHADECOLORS + 0x8000), new byte[0] );
+        EscherArrayProperty p = new EscherArrayProperty(EscherPropertyTypes.FILL__SHADECOLORS, false, 0);
         assertEquals(0, p.getNumberOfElementsInArray());
         r.addEscherProperty(p);
 

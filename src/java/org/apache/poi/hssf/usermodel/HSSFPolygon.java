@@ -17,8 +17,22 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.ddf.EscherArrayProperty;
+import org.apache.poi.ddf.EscherBoolProperty;
+import org.apache.poi.ddf.EscherClientDataRecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherPropertyTypes;
+import org.apache.poi.ddf.EscherRGBProperty;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherShapePathProperty;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
+import org.apache.poi.hssf.record.EndSubRecord;
+import org.apache.poi.hssf.record.EscherAggregate;
+import org.apache.poi.hssf.record.ObjRecord;
+import org.apache.poi.hssf.record.TextObjectRecord;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -66,24 +80,24 @@ public class HSSFPolygon  extends HSSFSimpleShape {
             sp.setFlags(EscherSpRecord.FLAG_CHILD | EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HASSHAPETYPE);
         }
         opt.setRecordId(EscherOptRecord.RECORD_ID);
-        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.TRANSFORM__ROTATION, false, false, 0));
-        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__RIGHT, false, false, 100));
-        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__BOTTOM, false, false, 100));
-        opt.setEscherProperty(new EscherShapePathProperty(EscherProperties.GEOMETRY__SHAPEPATH, EscherShapePathProperty.COMPLEX));
+        opt.setEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.TRANSFORM__ROTATION, false, false, 0));
+        opt.setEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.GEOMETRY__RIGHT, false, false, 100));
+        opt.setEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.GEOMETRY__BOTTOM, false, false, 100));
+        opt.setEscherProperty(new EscherShapePathProperty(EscherPropertyTypes.GEOMETRY__SHAPEPATH, EscherShapePathProperty.COMPLEX));
 
-        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__FILLOK, false, false, 0x00010001));
-        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINESTARTARROWHEAD, false, false, 0x0));
-        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEENDARROWHEAD, false, false, 0x0));
-        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEENDCAPSTYLE, false, false, 0x0));
+        opt.setEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.GEOMETRY__FILLOK, false, false, 0x00010001));
+        opt.setEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.LINESTYLE__LINESTARTARROWHEAD, false, false, 0x0));
+        opt.setEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.LINESTYLE__LINEENDARROWHEAD, false, false, 0x0));
+        opt.setEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.LINESTYLE__LINEENDCAPSTYLE, false, false, 0x0));
 
-        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEDASHING, LINESTYLE_SOLID));
-        opt.setEscherProperty( new EscherBoolProperty( EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
-        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.LINESTYLE__LINEWIDTH, LINEWIDTH_DEFAULT));
-        opt.setEscherProperty(new EscherRGBProperty(EscherProperties.FILL__FILLCOLOR, FILL__FILLCOLOR_DEFAULT));
-        opt.setEscherProperty(new EscherRGBProperty(EscherProperties.LINESTYLE__COLOR, LINESTYLE__COLOR_DEFAULT));
-        opt.setEscherProperty(new EscherBoolProperty(EscherProperties.FILL__NOFILLHITTEST, 1));
+        opt.setEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.LINESTYLE__LINEDASHING, LINESTYLE_SOLID));
+        opt.setEscherProperty( new EscherBoolProperty( EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH, 0x00080008));
+        opt.setEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.LINESTYLE__LINEWIDTH, LINEWIDTH_DEFAULT));
+        opt.setEscherProperty(new EscherRGBProperty(EscherPropertyTypes.FILL__FILLCOLOR, FILL__FILLCOLOR_DEFAULT));
+        opt.setEscherProperty(new EscherRGBProperty(EscherPropertyTypes.LINESTYLE__COLOR, LINESTYLE__COLOR_DEFAULT));
+        opt.setEscherProperty(new EscherBoolProperty(EscherPropertyTypes.FILL__NOFILLHITTEST, 1));
 
-        opt.setEscherProperty(new EscherBoolProperty( EscherProperties.GROUPSHAPE__PRINT, 0x080000));
+        opt.setEscherProperty(new EscherBoolProperty( EscherPropertyTypes.GROUPSHAPE__FLAGS, 0x080000));
 
         EscherRecord anchor = getAnchor().getEscherAnchor();
         clientData.setRecordId(EscherClientDataRecord.RECORD_ID);
@@ -123,7 +137,7 @@ public class HSSFPolygon  extends HSSFSimpleShape {
      * @return array of x coordinates
      */
     public int[] getXPoints() {
-        EscherArrayProperty verticesProp = getOptRecord().lookup(EscherProperties.GEOMETRY__VERTICES);
+        EscherArrayProperty verticesProp = getOptRecord().lookup(EscherPropertyTypes.GEOMETRY__VERTICES);
         if (null == verticesProp){
             return new int[]{};
         }
@@ -140,7 +154,7 @@ public class HSSFPolygon  extends HSSFSimpleShape {
      * @return array of y coordinates
      */
     public int[] getYPoints() {
-        EscherArrayProperty verticesProp = getOptRecord().lookup(EscherProperties.GEOMETRY__VERTICES);
+        EscherArrayProperty verticesProp = getOptRecord().lookup(EscherPropertyTypes.GEOMETRY__VERTICES);
         if (null == verticesProp){
             return new int[]{};
         }
@@ -165,7 +179,7 @@ public class HSSFPolygon  extends HSSFSimpleShape {
         if (xPoints.length == 0){
         	logger.log( POILogger.ERROR, "HSSFPolygon must have at least one point");
         }
-        EscherArrayProperty verticesProp = new EscherArrayProperty(EscherProperties.GEOMETRY__VERTICES, false, new byte[0] );
+        EscherArrayProperty verticesProp = new EscherArrayProperty(EscherPropertyTypes.GEOMETRY__VERTICES, false, 0);
         verticesProp.setNumberOfElementsInArray(xPoints.length+1);
         verticesProp.setNumberOfElementsInMemory(xPoints.length+1);
         verticesProp.setSizeOfElements(0xFFF0);
@@ -183,7 +197,7 @@ public class HSSFPolygon  extends HSSFSimpleShape {
         verticesProp.setElement(point, data);
         setPropertyValue(verticesProp);
 
-        EscherArrayProperty segmentsProp = new EscherArrayProperty(EscherProperties.GEOMETRY__SEGMENTINFO, false, null );
+        EscherArrayProperty segmentsProp = new EscherArrayProperty(EscherPropertyTypes.GEOMETRY__SEGMENTINFO, false, 0);
         segmentsProp.setSizeOfElements(0x0002);
         segmentsProp.setNumberOfElementsInArray(xPoints.length * 2 + 4);
         segmentsProp.setNumberOfElementsInMemory(xPoints.length * 2 + 4);
@@ -205,15 +219,15 @@ public class HSSFPolygon  extends HSSFSimpleShape {
      * @param height
      */
     public void setPolygonDrawArea(int width, int height) {
-        setPropertyValue(new EscherSimpleProperty(EscherProperties.GEOMETRY__RIGHT, width));
-        setPropertyValue(new EscherSimpleProperty(EscherProperties.GEOMETRY__BOTTOM, height));
+        setPropertyValue(new EscherSimpleProperty(EscherPropertyTypes.GEOMETRY__RIGHT, width));
+        setPropertyValue(new EscherSimpleProperty(EscherPropertyTypes.GEOMETRY__BOTTOM, height));
     }
 
     /**
      * @return shape width
      */
     public int getDrawAreaWidth() {
-        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.GEOMETRY__RIGHT);
+        EscherSimpleProperty property = getOptRecord().lookup(EscherPropertyTypes.GEOMETRY__RIGHT);
         return property == null ? 100: property.getPropertyValue();
     }
 
@@ -221,7 +235,7 @@ public class HSSFPolygon  extends HSSFSimpleShape {
      * @return shape height
      */
     public int getDrawAreaHeight() {
-        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.GEOMETRY__BOTTOM);
+        EscherSimpleProperty property = getOptRecord().lookup(EscherPropertyTypes.GEOMETRY__BOTTOM);
         return property == null ? 100: property.getPropertyValue();
     }
 }

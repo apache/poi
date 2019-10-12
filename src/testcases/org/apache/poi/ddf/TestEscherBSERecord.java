@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 
 import org.apache.poi.poifs.storage.RawDataUtil;
+import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 import org.junit.Test;
@@ -37,8 +38,8 @@ public final class TestEscherBSERecord {
         int bytesWritten = r.fillFields( HexRead.readFromString( data ), 0, new DefaultEscherRecordFactory() );
         assertEquals( 44, bytesWritten );
         assertEquals( (short) 0x0001, r.getOptions() );
-        assertEquals( EscherBSERecord.BT_JPEG, r.getBlipTypeWin32() );
-        assertEquals( EscherBSERecord.BT_JPEG, r.getBlipTypeMacOS() );
+        assertEquals( PictureData.PictureType.JPEG.nativeId, r.getBlipTypeWin32() );
+        assertEquals( PictureData.PictureType.JPEG.nativeId, r.getBlipTypeMacOS() );
         assertEquals( "[01, 02, 03, 04, 05, 06, 07, 08, 09, 0A, 0B, 0C, 0D, 0E, 0F, 00]", HexDump.toHex( r.getUid() ) );
         assertEquals( (short) 1, r.getTag() );
         assertEquals( 2, r.getRef() );
@@ -65,8 +66,8 @@ public final class TestEscherBSERecord {
     private EscherBSERecord createRecord() {
         EscherBSERecord r = new EscherBSERecord();
         r.setOptions( (short) 0x0001 );
-        r.setBlipTypeWin32( EscherBSERecord.BT_JPEG );
-        r.setBlipTypeMacOS( EscherBSERecord.BT_JPEG );
+        r.setBlipTypeWin32( (byte)PictureData.PictureType.JPEG.nativeId );
+        r.setBlipTypeMacOS( (byte)PictureData.PictureType.JPEG.nativeId );
         r.setUid( HexRead.readFromString( "01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 00" ) );
         r.setTag( (short) 1 );
         r.setRef( 2 );
@@ -82,29 +83,31 @@ public final class TestEscherBSERecord {
 
     @Test
     public void testToString() {
-        String nl = System.getProperty("line.separator");
         EscherBSERecord record = createRecord();
         String expected =
-            "org.apache.poi.ddf.EscherBSERecord (BSE):" + nl +
-            "  RecordId: 0xF007" + nl +
-            "  Version: 0x0001" + nl +
-            "  Instance: 0x0000" + nl +
-            "  Options: 0x0001" + nl +
-            "  Record Size: 44" + nl +
-            "  BlipTypeWin32: 0x05" + nl +
-            "  BlipTypeMacOS: 0x05" + nl +
-            "  SUID: " + nl +
-            "     00: 01, 02, 03, 04, 05, 06, 07, 08, 09, 0A, 0B, 0C, 0D, 0E, 0F, 00" + nl +
-            "  Tag: 0x0001" + nl +
-            "  Size: 0x00000000" + nl +
-            "  Ref: 0x00000002" + nl +
-            "  Offset: 0x00000003" + nl +
-            "  Usage: 0x04" + nl +
-            "  Name: 0x05" + nl +
-            "  Unused2: 0x06" + nl +
-            "  Unused3: 0x07" + nl +
-            "  Extra Data: " + nl +
-            "     : 0";                
+            "{   /* BSE */\n" +
+            "\t  recordId: -4089 /* 0xf007 */\n" +
+            "\t, version: 1\n" +
+            "\t, instance: 0\n" +
+            "\t, options: 1\n" +
+            "\t, recordSize: 44 /* 0x0000002c */\n" +
+            "\t, blipTypeWin32: 5\n" +
+            "\t, pictureTypeWin32: \"JPEG\"\n" +
+            "\t, blipTypeMacOS: 5\n" +
+            "\t, pictureTypeMacOS: \"JPEG\"\n" +
+            "\t, suid: \"AQIDBAUGBwgJCgsMDQ4PAA==\"\n" +
+            "\t, tag: 1\n" +
+            "\t, size: 0\n" +
+            "\t, ref: 2\n" +
+            "\t, offset: 3\n" +
+            "\t, usage: 4\n" +
+            "\t, name: 5\n" +
+            "\t, unused2: 6\n" +
+            "\t, unused3: 7\n" +
+            "\t, blipRecord: null\n" +
+            "\t, remainingData: \"\"\n" +
+            "}";
+
         String actual = record.toString();
         assertEquals( expected, actual );
     }

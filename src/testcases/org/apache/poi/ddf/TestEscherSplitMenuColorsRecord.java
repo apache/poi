@@ -63,18 +63,18 @@ public final class TestEscherSplitMenuColorsRecord {
 
     @Test
     public void testToString() {
-        String nl = System.getProperty("line.separator");
         String expected =
-            "org.apache.poi.ddf.EscherSplitMenuColorsRecord (SplitMenuColors):" + nl +
-            "  RecordId: 0xF11E" + nl +
-            "  Version: 0x0000" + nl +
-            "  Instance: 0x0004" + nl +
-            "  Options: 0x0040" + nl +
-            "  Record Size: 24" + nl +
-            "  Color1: 0x00000402" + nl +
-            "  Color2: 0x00000002" + nl +
-            "  Color3: 0x00000002" + nl +
-            "  Color4: 0x00000001";
+            "{   /* SPLIT_MENU_COLORS */\n" +
+            "\t  recordId: -3810 /* 0xf11e */\n" +
+            "\t, version: 0\n" +
+            "\t, instance: 4\n" +
+            "\t, options: 64 /* 0x0040 */\n" +
+            "\t, recordSize: 24 /* 0x00000018 */\n" +
+            "\t, color1: 1026 /* 0x00000402 */\n" +
+            "\t, color2: 2\n" +
+            "\t, color3: 2\n" +
+            "\t, color4: 1\n" +
+            "}";
         assertEquals( expected, createRecord().toString() );
     }
 

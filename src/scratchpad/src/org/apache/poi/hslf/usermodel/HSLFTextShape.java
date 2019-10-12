@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
@@ -377,7 +377,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      */
     /* package */ HSLFTextAnchor getAlignment(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__ANCHORTEXT);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherPropertyTypes.TEXT__ANCHORTEXT);
         final HSLFTextAnchor align;
         if (prop == null){
             /**
@@ -416,7 +416,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
                 (hta.vAlign == vAlign) &&
                 (hta.baseline == null || hta.baseline == baseline)
             ) {
-                setEscherProperty(EscherProperties.TEXT__ANCHORTEXT, hta.nativeId);
+                setEscherProperty(EscherPropertyTypes.TEXT__ANCHORTEXT, hta.nativeId);
                 break;
             }
         }
@@ -467,7 +467,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      * @return the botom margin
      */
     public double getBottomInset(){
-        return getInset(EscherProperties.TEXT__TEXTBOTTOM, .05);
+        return getInset(EscherPropertyTypes.TEXT__TEXTBOTTOM, .05);
     }
 
     /**
@@ -477,7 +477,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      * @param margin    the bottom margin
      */
     public void setBottomInset(double margin){
-        setInset(EscherProperties.TEXT__TEXTBOTTOM, margin);
+        setInset(EscherPropertyTypes.TEXT__TEXTBOTTOM, margin);
     }
 
     /**
@@ -489,7 +489,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      * @return the left margin
      */
     public double getLeftInset(){
-        return getInset(EscherProperties.TEXT__TEXTLEFT, .1);
+        return getInset(EscherPropertyTypes.TEXT__TEXTLEFT, .1);
     }
 
     /**
@@ -499,7 +499,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      * @param margin    the left margin
      */
     public void setLeftInset(double margin){
-        setInset(EscherProperties.TEXT__TEXTLEFT, margin);
+        setInset(EscherPropertyTypes.TEXT__TEXTLEFT, margin);
     }
 
     /**
@@ -511,7 +511,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      * @return the right margin
      */
     public double getRightInset(){
-        return getInset(EscherProperties.TEXT__TEXTRIGHT, .1);
+        return getInset(EscherPropertyTypes.TEXT__TEXTRIGHT, .1);
     }
 
     /**
@@ -521,7 +521,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      * @param margin    the right margin
      */
     public void setRightInset(double margin){
-        setInset(EscherProperties.TEXT__TEXTRIGHT, margin);
+        setInset(EscherPropertyTypes.TEXT__TEXTRIGHT, margin);
     }
 
      /**
@@ -532,7 +532,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      * @return the top margin
      */
     public double getTopInset(){
-        return getInset(EscherProperties.TEXT__TEXTTOP, .05);
+        return getInset(EscherPropertyTypes.TEXT__TEXTTOP, .05);
     }
 
    /**
@@ -542,7 +542,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      * @param margin    the top margin
      */
     public void setTopInset(double margin){
-        setInset(EscherProperties.TEXT__TEXTTOP, margin);
+        setInset(EscherPropertyTypes.TEXT__TEXTTOP, margin);
     }
 
     /**
@@ -550,22 +550,22 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      * and the edge of the inscribed rectangle of the shape that contains the text.
      * Default value is 1/20 inch.
      *
-     * @param propId the id of the inset edge
+     * @param type the type of the inset edge
      * @return the inset in points
      */
-    private double getInset(short propId, double defaultInch) {
+    private double getInset(EscherPropertyTypes type, double defaultInch) {
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, propId);
+        EscherSimpleProperty prop = getEscherProperty(opt, type);
         int val = prop == null ? (int)(Units.toEMU(Units.POINT_DPI)*defaultInch) : prop.getPropertyValue();
         return Units.toPoints(val);
     }
 
     /**
-     * @param propId the id of the inset edge
+     * @param type the type of the inset edge
      * @param margin the inset in points
      */
-    private void setInset(short propId, double margin){
-        setEscherProperty(propId, Units.toEMU(margin));
+    private void setInset(EscherPropertyTypes type, double margin){
+        setEscherProperty(type, Units.toEMU(margin));
     }
 
     /**
@@ -578,7 +578,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      */
     public int getWordWrapEx() {
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__WRAPTEXT);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherPropertyTypes.TEXT__WRAPTEXT);
         return prop == null ? WrapSquare : prop.getPropertyValue();
     }
 
@@ -589,7 +589,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      *  Must be one of the <code>Wrap*</code> constants defined in this class.
      */
     public void setWordWrapEx(int wrap){
-        setEscherProperty(EscherProperties.TEXT__WRAPTEXT, wrap);
+        setEscherProperty(EscherPropertyTypes.TEXT__WRAPTEXT, wrap);
     }
 
     @Override
@@ -608,7 +608,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      */
     public int getTextId(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__TEXTID);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherPropertyTypes.TEXT__TEXTID);
         return prop == null ? 0 : prop.getPropertyValue();
     }
 
@@ -618,7 +618,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
      * @param id of the text
      */
     public void setTextId(int id){
-        setEscherProperty(EscherProperties.TEXT__TEXTID, id);
+        setEscherProperty(EscherPropertyTypes.TEXT__TEXTID, id);
     }
 
     @Override
@@ -732,7 +732,7 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     public TextDirection getTextDirection() {
         // see 2.4.5 MSOTXFL
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__TEXTFLOW);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherPropertyTypes.TEXT__TEXTFLOW);
         int msotxfl = (prop == null) ? 0 : prop.getPropertyValue();
         switch (msotxfl) {
             default:
@@ -774,14 +774,14 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
                     break;
             }
         }
-        setEscherProperty(opt, EscherProperties.TEXT__TEXTFLOW, msotxfl);
+        setEscherProperty(opt, EscherPropertyTypes.TEXT__TEXTFLOW, msotxfl);
     }
 
     @Override
     public Double getTextRotation() {
         // see 2.4.6 MSOCDIR
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.TEXT__FONTROTATION);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherPropertyTypes.TEXT__FONTROTATION);
         return (prop == null) ? null : (90. * prop.getPropertyValue());
     }
 
@@ -789,10 +789,10 @@ implements TextShape<HSLFShape,HSLFTextParagraph> {
     public void setTextRotation(Double rotation) {
         AbstractEscherOptRecord opt = getEscherOptRecord();
         if (rotation == null) {
-            opt.removeEscherProperty(EscherProperties.TEXT__FONTROTATION);
+            opt.removeEscherProperty(EscherPropertyTypes.TEXT__FONTROTATION);
         } else {
             int rot = (int)(Math.round(rotation / 90.) % 4L);
-            setEscherProperty(EscherProperties.TEXT__FONTROTATION, rot);
+            setEscherProperty(EscherPropertyTypes.TEXT__FONTROTATION, rot);
         }
     }
 

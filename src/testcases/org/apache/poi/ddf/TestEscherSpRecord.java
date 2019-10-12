@@ -57,18 +57,17 @@ public class TestEscherSpRecord {
 
     @Test
     public void testToString() {
-        String nl = System.getProperty("line.separator");
-
         String expected =
-            "org.apache.poi.ddf.EscherSpRecord (Sp):" + nl +
-            "  RecordId: 0xF00A" + nl +
-            "  Version: 0x0002" + nl +
-            "  Instance: 0x0000" + nl +
-            "  Options: 0x0002" + nl +
-            "  Record Size: 16" + nl +
-            "  ShapeType: 0x0000" + nl +
-            "  ShapeId: 0x00000400" + nl +
-            "  Flags: GROUP|PATRIARCH (0x00000005)";
+            "{   /* SP */\n" +
+            "\t  recordId: -4086 /* 0xf00a */\n" +
+            "\t, version: 2\n" +
+            "\t, instance: 0\n" +
+            "\t, options: 2\n" +
+            "\t, recordSize: 16 /* 0x00000010 */\n" +
+            "\t, shapeType: 0\n" +
+            "\t, shapeId: 1024 /* 0x00000400 */\n" +
+            "\t, flags: 0x5 /* GROUP | PATRIARCH */ \n" +
+            "}";
         assertEquals( expected, createRecord().toString() );
     }
 

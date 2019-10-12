@@ -19,6 +19,7 @@ package org.apache.poi.hssf.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -27,7 +28,16 @@ import static org.junit.Assert.assertTrue;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.poi.ddf.*;
+import org.apache.poi.ddf.EscherBoolProperty;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherDgRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherProperty;
+import org.apache.poi.ddf.EscherPropertyTypes;
+import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.ddf.EscherSpRecord;
+import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
@@ -101,10 +111,10 @@ public class TestDrawingShapes {
         EscherOptRecord opt = shape.getOptRecord();
 
         assertEquals(7, opt.getEscherProperties().size());
-        assertTrue(((EscherBoolProperty) opt.lookup(EscherProperties.GROUPSHAPE__PRINT)).isTrue());
-        assertTrue(((EscherBoolProperty) opt.lookup(EscherProperties.LINESTYLE__NOLINEDRAWDASH)).isTrue());
-        assertEquals(0x00000004, ((EscherSimpleProperty) opt.lookup(EscherProperties.GEOMETRY__SHAPEPATH)).getPropertyValue());
-        assertNull(opt.lookup(EscherProperties.TEXT__SIZE_TEXT_TO_FIT_SHAPE));
+        assertNotEquals(((EscherSimpleProperty) opt.lookup(EscherPropertyTypes.GROUPSHAPE__FLAGS)).getPropertyValue(), 0);
+        assertTrue(((EscherBoolProperty) opt.lookup(EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH)).isTrue());
+        assertEquals(0x00000004, ((EscherSimpleProperty) opt.lookup(EscherPropertyTypes.GEOMETRY__SHAPEPATH)).getPropertyValue());
+        assertNull(opt.lookup(EscherPropertyTypes.TEXT__SIZE_TEXT_TO_FIT_SHAPE));
     }
 
     @Test
@@ -153,7 +163,6 @@ public class TestDrawingShapes {
         HSSFClientAnchor anchor = new HSSFClientAnchor(10, 10, 50, 50, (short) 2, 2, (short) 4, 4);
         anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
         assertEquals(AnchorType.MOVE_DONT_RESIZE, anchor.getAnchorType());
-        //noinspection deprecation
         anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
         assertEquals(AnchorType.MOVE_DONT_RESIZE, anchor.getAnchorType());
 
@@ -175,10 +184,10 @@ public class TestDrawingShapes {
         assertNotNull(escherContainer);
         EscherRecord childById = escherContainer.getChildById(EscherOptRecord.RECORD_ID);
         assertNotNull(childById);
-        EscherProperty lookup = ((EscherOptRecord) childById).lookup(EscherProperties.TEXT__TEXTID);
+        EscherProperty lookup = ((EscherOptRecord) childById).lookup(EscherPropertyTypes.TEXT__TEXTID);
         assertNotNull(lookup);
         assertEquals(((EscherSimpleProperty) lookup).getPropertyValue(), "teeeest".hashCode());
-        assertEquals(rectangle.isNoFill(), true);
+        assertTrue(rectangle.isNoFill());
         assertEquals(rectangle.getWrapText(), HSSFSimpleShape.WRAP_NONE);
         assertEquals(rectangle.getString().getString(), "teeeest");
 
@@ -197,7 +206,7 @@ public class TestDrawingShapes {
         assertEquals(anchor, rectangle2.getAnchor());
         assertEquals(rectangle2.getLineStyleColor(), 1111);
         assertEquals(rectangle2.getFillColor(), 777);
-        assertEquals(rectangle2.isNoFill(), true);
+        assertTrue(rectangle2.isNoFill());
         assertEquals(rectangle2.getString().getString(), "teeeest");
         assertEquals(rectangle.getWrapText(), HSSFSimpleShape.WRAP_NONE);
 
@@ -229,7 +238,7 @@ public class TestDrawingShapes {
         assertEquals(rectangle2.getAnchor().getDx2(), 3);
         assertEquals(rectangle2.getAnchor().getDy1(), 4);
         assertEquals(rectangle2.getAnchor().getDy2(), 5);
-        assertEquals(rectangle2.isNoFill(), false);
+        assertFalse(rectangle2.isNoFill());
         assertEquals(rectangle2.getString().getString(), "test22");
 
         HSSFSimpleShape rect3 = drawing.createSimpleShape(new HSSFClientAnchor());
@@ -255,7 +264,7 @@ public class TestDrawingShapes {
         assertEquals(picture.getFillColor(), 0x5DC943);
         assertEquals(picture.getLineWidth(), HSSFShape.LINEWIDTH_DEFAULT);
         assertEquals(picture.getLineStyle(), HSSFShape.LINESTYLE_DEFAULT);
-        assertEquals(picture.isNoFill(), false);
+        assertFalse(picture.isNoFill());
 
         picture.setPictureIndex(2);
         assertEquals(picture.getPictureIndex(), 2);
@@ -272,7 +281,7 @@ public class TestDrawingShapes {
         assertEquals(1, drawing.getChildren().size());
 
         HSSFSimpleShape shape = (HSSFSimpleShape) drawing.getChildren().get(0);
-        assertEquals(shape.isNoFill(), false);
+        assertFalse(shape.isNoFill());
         assertEquals(shape.getLineStyle(), HSSFShape.LINESTYLE_DASHDOTGEL);
         assertEquals(shape.getLineStyleColor(), 0x616161);
         assertEquals(HexDump.toHex(shape.getFillColor()), shape.getFillColor(), 0x2CE03D);
@@ -332,10 +341,8 @@ public class TestDrawingShapes {
         HSSFSheet sheet = wb.getSheetAt(0);
         HSSFPatriarch patriarch = sheet.getDrawingPatriarch();
 
-        /**
-         * 2048 - main SpContainer id
-         * 2049 - existing shape id
-         */
+        // 2048 - main SpContainer id
+        // 2049 - existing shape id
         assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 2050);
         assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 2051);
         assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 2052);
@@ -343,10 +350,8 @@ public class TestDrawingShapes {
         sheet = wb.getSheetAt(1);
         patriarch = sheet.getDrawingPatriarch();
 
-        /**
-         * 3072 - main SpContainer id
-         * 3073 - existing shape id
-         */
+        // 3072 - main SpContainer id
+        // 3073 - existing shape id
         assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 3074);
         assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 3075);
         assertEquals(HSSFTestHelper.allocateNewShapeId(patriarch), 3076);
@@ -617,13 +622,13 @@ public class TestDrawingShapes {
         HSSFSimpleShape rectangle = patriarch.createSimpleShape(new HSSFClientAnchor());
         rectangle.setShapeType(HSSFSimpleShape.OBJECT_TYPE_RECTANGLE);
 
-        assertEquals(rectangle.isFlipVertical(), false);
-        assertEquals(rectangle.isFlipHorizontal(), false);
+        assertFalse(rectangle.isFlipVertical());
+        assertFalse(rectangle.isFlipHorizontal());
 
         rectangle.setFlipVertical(true);
-        assertEquals(rectangle.isFlipVertical(), true);
+        assertTrue(rectangle.isFlipVertical());
         rectangle.setFlipHorizontal(true);
-        assertEquals(rectangle.isFlipHorizontal(), true);
+        assertTrue(rectangle.isFlipHorizontal());
 
         HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
         wb1.close();
@@ -632,13 +637,13 @@ public class TestDrawingShapes {
 
         rectangle = (HSSFSimpleShape) patriarch.getChildren().get(0);
 
-        assertEquals(rectangle.isFlipHorizontal(), true);
+        assertTrue(rectangle.isFlipHorizontal());
         rectangle.setFlipHorizontal(false);
-        assertEquals(rectangle.isFlipHorizontal(), false);
+        assertFalse(rectangle.isFlipHorizontal());
 
-        assertEquals(rectangle.isFlipVertical(), true);
+        assertTrue(rectangle.isFlipVertical());
         rectangle.setFlipVertical(false);
-        assertEquals(rectangle.isFlipVertical(), false);
+        assertFalse(rectangle.isFlipVertical());
 
         HSSFWorkbook wb3 = HSSFTestDataSamples.writeOutAndReadBack(wb2);
         wb2.close();
@@ -647,8 +652,8 @@ public class TestDrawingShapes {
 
         rectangle = (HSSFSimpleShape) patriarch.getChildren().get(0);
 
-        assertEquals(rectangle.isFlipVertical(), false);
-        assertEquals(rectangle.isFlipHorizontal(), false);
+        assertFalse(rectangle.isFlipVertical());
+        assertFalse(rectangle.isFlipHorizontal());
         wb3.close();
     }
 
@@ -735,8 +740,7 @@ public class TestDrawingShapes {
     
     @Test
     public void testBug45312() throws Exception {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        try {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
             HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
     
@@ -768,16 +772,7 @@ public class TestDrawingShapes {
                 shape1.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
             }
             
-            /*OutputStream stream = new FileOutputStream("/tmp/45312.xls");
-            try {
-                wb.write(stream);
-            } finally {
-                stream.close();
-            }*/
-            
             checkWorkbookBack(wb);
-        } finally {
-            wb.close();
         }
     }
 

@@ -387,22 +387,6 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
     }
 
     @Override
-    protected Object[][] getAttributeMap() {
-        return new Object[][]{
-            // record, version, instance are directly fetched
-            { "UID", field_1_UID, "UID2", field_2_UID },
-            { "Uncompressed Size", field_2_cb },
-            { "Bounds", getBounds().toString() },
-            { "Size in EMU", getSizeEMU().toString() },
-            { "Compressed Size", field_5_cbSave },
-            { "Compression", field_6_fCompression },
-            { "Filter", field_7_fFilter },
-            { "Extra Data", "" },
-            { "Remaining Data", remainingData }
-        };
-    }
-
-    @Override
     public Map<String, Supplier<?>> getGenericProperties() {
         final Map<String, Supplier<?>> m = new LinkedHashMap<>(super.getGenericProperties());
         m.put("uid", this::getUID);

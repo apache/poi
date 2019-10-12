@@ -20,7 +20,7 @@ import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.EndSubRecord;
@@ -98,11 +98,11 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     protected EscherContainerRecord createSpContainer() {
         EscherContainerRecord spContainer = super.createSpContainer();
         EscherOptRecord opt = spContainer.getChildById(EscherOptRecord.RECORD_ID);
-        opt.removeEscherProperty(EscherProperties.TEXT__TEXTLEFT);
-        opt.removeEscherProperty(EscherProperties.TEXT__TEXTRIGHT);
-        opt.removeEscherProperty(EscherProperties.TEXT__TEXTTOP);
-        opt.removeEscherProperty(EscherProperties.TEXT__TEXTBOTTOM);
-        opt.setEscherProperty(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__PRINT, false, false, GROUP_SHAPE_PROPERTY_DEFAULT_VALUE));
+        opt.removeEscherProperty(EscherPropertyTypes.TEXT__TEXTLEFT);
+        opt.removeEscherProperty(EscherPropertyTypes.TEXT__TEXTRIGHT);
+        opt.removeEscherProperty(EscherPropertyTypes.TEXT__TEXTTOP);
+        opt.removeEscherProperty(EscherPropertyTypes.TEXT__TEXTBOTTOM);
+        opt.setEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.GROUPSHAPE__FLAGS, false, false, GROUP_SHAPE_PROPERTY_DEFAULT_VALUE));
         return spContainer;
     }
 
@@ -290,34 +290,34 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     }
     
     public void setBackgroundImage(int pictureIndex){
-        setPropertyValue(new EscherSimpleProperty( EscherProperties.FILL__PATTERNTEXTURE, false, true, pictureIndex));
-        setPropertyValue(new EscherSimpleProperty( EscherProperties.FILL__FILLTYPE, false, false, FILL_TYPE_PICTURE));
+        setPropertyValue(new EscherSimpleProperty( EscherPropertyTypes.FILL__PATTERNTEXTURE, false, true, pictureIndex));
+        setPropertyValue(new EscherSimpleProperty( EscherPropertyTypes.FILL__FILLTYPE, false, false, FILL_TYPE_PICTURE));
         EscherBSERecord bse = getPatriarch().getSheet().getWorkbook().getWorkbook().getBSERecord(pictureIndex);
         bse.setRef(bse.getRef() + 1);
     }
     
     public void resetBackgroundImage(){
-        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.FILL__PATTERNTEXTURE);
+        EscherSimpleProperty property = getOptRecord().lookup(EscherPropertyTypes.FILL__PATTERNTEXTURE);
         if (null != property){
             EscherBSERecord bse = getPatriarch().getSheet().getWorkbook().getWorkbook().getBSERecord(property.getPropertyValue());
             bse.setRef(bse.getRef() - 1);
-            getOptRecord().removeEscherProperty(EscherProperties.FILL__PATTERNTEXTURE);
+            getOptRecord().removeEscherProperty(EscherPropertyTypes.FILL__PATTERNTEXTURE);
         }
-        setPropertyValue(new EscherSimpleProperty( EscherProperties.FILL__FILLTYPE, false, false, FILL_TYPE_SOLID));
+        setPropertyValue(new EscherSimpleProperty( EscherPropertyTypes.FILL__FILLTYPE, false, false, FILL_TYPE_SOLID));
     }
     
     public int getBackgroundImageId(){
-        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.FILL__PATTERNTEXTURE);
+        EscherSimpleProperty property = getOptRecord().lookup(EscherPropertyTypes.FILL__PATTERNTEXTURE);
         return property == null ? 0 : property.getPropertyValue();
     }
 
     private void setHidden(boolean value){
-        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.GROUPSHAPE__PRINT);
+        EscherSimpleProperty property = getOptRecord().lookup(EscherPropertyTypes.GROUPSHAPE__FLAGS);
         // see http://msdn.microsoft.com/en-us/library/dd949807(v=office.12).aspx
         if (value){
-            setPropertyValue(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__PRINT, false, false, property.getPropertyValue() | GROUP_SHAPE_HIDDEN_MASK));
+            setPropertyValue(new EscherSimpleProperty(EscherPropertyTypes.GROUPSHAPE__FLAGS, false, false, property.getPropertyValue() | GROUP_SHAPE_HIDDEN_MASK));
         } else {
-            setPropertyValue(new EscherSimpleProperty(EscherProperties.GROUPSHAPE__PRINT, false, false, property.getPropertyValue() & GROUP_SHAPE_NOT_HIDDEN_MASK));
+            setPropertyValue(new EscherSimpleProperty(EscherPropertyTypes.GROUPSHAPE__FLAGS, false, false, property.getPropertyValue() & GROUP_SHAPE_NOT_HIDDEN_MASK));
         }
     }
 

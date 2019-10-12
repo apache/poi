@@ -17,8 +17,6 @@
 
 package org.apache.poi.ddf;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -137,24 +135,6 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
     @Override
     public String getRecordName() {
         return EscherRecordTypes.CLIENT_TEXTBOX.recordName;
-    }
-
-    @Override
-    protected Object[][] getAttributeMap() {
-        int numCh = getChildRecords().size();
-        List<Object> chLst = new ArrayList<>(numCh * 2 + 2);
-        chLst.add("children");
-        chLst.add(numCh);
-        for (EscherRecord er : getChildRecords()) {
-            chLst.add(er.getRecordName());
-            chLst.add(er);
-        }
-        
-        return new Object[][] {
-            { "isContainer", isContainerRecord() },
-            chLst.toArray(),
-            { "Extra Data", thedata }
-        };
     }
 
     @Override

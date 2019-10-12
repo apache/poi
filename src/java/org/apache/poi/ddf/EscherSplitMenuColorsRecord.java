@@ -159,16 +159,6 @@ public class EscherSplitMenuColorsRecord extends EscherRecord {
     }
 
     @Override
-    protected Object[][] getAttributeMap() {
-        return new Object[][] {
-            { "Color1", field_1_color1 },
-            { "Color2", field_2_color2 },
-            { "Color3", field_3_color3 },
-            { "Color4", field_4_color4 }
-        };
-    }
-
-    @Override
     public Map<String, Supplier<?>> getGenericProperties() {
         return GenericRecordUtil.getGenericProperties(
             "base", super::getGenericProperties,

@@ -19,7 +19,7 @@ package org.apache.poi.hslf.usermodel;
 
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.sl.usermodel.Line;
 import org.apache.poi.sl.usermodel.ShapeContainer;
@@ -58,12 +58,12 @@ public final class HSLFLine extends HSLFTextShape implements Line<HSLFShape,HSLF
         AbstractEscherOptRecord opt = getEscherOptRecord();
 
         //default line properties
-        setEscherProperty(opt, EscherProperties.GEOMETRY__SHAPEPATH, 4);
-        setEscherProperty(opt, EscherProperties.GEOMETRY__FILLOK, 0x10000);
-        setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, 0x100000);
-        setEscherProperty(opt, EscherProperties.LINESTYLE__COLOR, 0x8000001);
-        setEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0xA0008);
-        setEscherProperty(opt, EscherProperties.SHADOWSTYLE__COLOR, 0x8000002);
+        setEscherProperty(opt, EscherPropertyTypes.GEOMETRY__SHAPEPATH, 4);
+        setEscherProperty(opt, EscherPropertyTypes.GEOMETRY__FILLOK, 0x10000);
+        setEscherProperty(opt, EscherPropertyTypes.FILL__NOFILLHITTEST, 0x100000);
+        setEscherProperty(opt, EscherPropertyTypes.LINESTYLE__COLOR, 0x8000001);
+        setEscherProperty(opt, EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH, 0xA0008);
+        setEscherProperty(opt, EscherPropertyTypes.SHADOWSTYLE__COLOR, 0x8000002);
 
         return ecr;
     }

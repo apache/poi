@@ -168,16 +168,6 @@ public class EscherSpgrRecord extends EscherRecord {
     }
 
     @Override
-    protected Object[][] getAttributeMap() {
-        return new Object[][] {
-            { "RectX", field_1_rectX1 },
-            { "RectY", field_2_rectY1 },
-            { "RectWidth", field_3_rectX2 },
-            { "RectHeight", field_4_rectY2 }
-        };
-    }
-
-    @Override
     public Map<String, Supplier<?>> getGenericProperties() {
         return GenericRecordUtil.getGenericProperties(
             "base", super::getGenericProperties,

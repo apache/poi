@@ -23,6 +23,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.sl.usermodel.PictureData;
 import org.junit.Test;
 
 /**
@@ -41,8 +42,8 @@ public final class TestEscherBlipRecord {
         record.fillFields(data, 0, new DefaultEscherRecordFactory());
         EscherContainerRecord bstore = (EscherContainerRecord)record.getChild(1);
         EscherBSERecord bse1 = (EscherBSERecord)bstore.getChild(0);
-        assertEquals(EscherBSERecord.BT_PNG, bse1.getBlipTypeWin32());
-        assertEquals(EscherBSERecord.BT_PNG, bse1.getBlipTypeMacOS());
+        assertEquals(PictureData.PictureType.PNG.nativeId, bse1.getBlipTypeWin32());
+        assertEquals(PictureData.PictureType.PNG.nativeId, bse1.getBlipTypeMacOS());
         assertArrayEquals(new byte[]{
             0x65, 0x07, 0x4A, (byte)0x8D, 0x3E, 0x42, (byte)0x8B, (byte)0xAC,
             0x1D, (byte)0x89, 0x35, 0x4F, 0x48, (byte)0xFA, 0x37, (byte)0xC2
@@ -88,8 +89,8 @@ public final class TestEscherBlipRecord {
         EscherContainerRecord bstore = (EscherContainerRecord)record.getChild(1);
         EscherBSERecord bse1 = (EscherBSERecord)bstore.getChild(1);
         //System.out.println(bse1);
-        assertEquals(EscherBSERecord.BT_WMF, bse1.getBlipTypeWin32());
-        assertEquals(EscherBSERecord.BT_PICT, bse1.getBlipTypeMacOS());
+        assertEquals(PictureData.PictureType.WMF.nativeId, bse1.getBlipTypeWin32());
+        assertEquals(PictureData.PictureType.PICT.nativeId, bse1.getBlipTypeMacOS());
         assertArrayEquals(new byte[]{
             (byte)0xC7, 0x15, 0x69, 0x2D, (byte)0xE5, (byte)0x89, (byte)0xA3, 0x6F,
             0x66, 0x03, (byte)0xD6, 0x24, (byte)0xF7, (byte)0xDB, 0x1D, 0x13

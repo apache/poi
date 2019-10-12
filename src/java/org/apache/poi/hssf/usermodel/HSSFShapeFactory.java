@@ -23,8 +23,8 @@ import java.util.Map;
 import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherProperty;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
@@ -110,7 +110,7 @@ public class HSSFShapeFactory {
                     if(optRecord == null) {
                     	shape = new HSSFSimpleShape(container, objRecord, txtRecord);
                     } else {
-                        EscherProperty property = optRecord.lookup(EscherProperties.GEOMETRY__VERTICES);
+                        EscherProperty property = optRecord.lookup(EscherPropertyTypes.GEOMETRY__VERTICES);
                         if (null != property) {
                             shape = new HSSFPolygon(container, objRecord, txtRecord);
                         } else {

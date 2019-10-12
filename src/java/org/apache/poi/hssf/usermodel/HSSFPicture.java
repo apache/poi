@@ -27,7 +27,7 @@ import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherComplexProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherTextboxRecord;
 import org.apache.poi.hssf.model.InternalWorkbook;
@@ -72,7 +72,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
 
     public int getPictureIndex()
     {
-        EscherSimpleProperty property = getOptRecord().lookup(EscherProperties.BLIP__BLIPTODISPLAY);
+        EscherSimpleProperty property = getOptRecord().lookup(EscherPropertyTypes.BLIP__BLIPTODISPLAY);
         if (null == property){
             return -1;
         }
@@ -81,15 +81,15 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
 
     public void setPictureIndex( int pictureIndex )
     {
-        setPropertyValue(new EscherSimpleProperty( EscherProperties.BLIP__BLIPTODISPLAY, false, true, pictureIndex));
+        setPropertyValue(new EscherSimpleProperty( EscherPropertyTypes.BLIP__BLIPTODISPLAY, false, true, pictureIndex));
     }
 
     @Override
     protected EscherContainerRecord createSpContainer() {
         EscherContainerRecord spContainer = super.createSpContainer();
         EscherOptRecord opt = spContainer.getChildById(EscherOptRecord.RECORD_ID);
-        opt.removeEscherProperty(EscherProperties.LINESTYLE__LINEDASHING);
-        opt.removeEscherProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH);
+        opt.removeEscherProperty(EscherPropertyTypes.LINESTYLE__LINEDASHING);
+        opt.removeEscherProperty(EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH);
         spContainer.removeChildRecord(spContainer.getChildById(EscherTextboxRecord.RECORD_ID));
         return spContainer;
     }
@@ -247,8 +247,7 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
      * The filename of the embedded image
      */
     public String getFileName() {
-        EscherComplexProperty propFile = getOptRecord().lookup(
-                      EscherProperties.BLIP__BLIPFILENAME);
+        EscherComplexProperty propFile = getOptRecord().lookup(EscherPropertyTypes.BLIP__BLIPFILENAME);
         return (null == propFile)
             ? ""
             : StringUtil.getFromUnicodeLE(propFile.getComplexData()).trim();
@@ -257,7 +256,8 @@ public class HSSFPicture extends HSSFSimpleShape implements Picture {
     public void setFileName(String data){
         // TODO: add trailing \u0000? 
         byte[] bytes = StringUtil.getToUnicodeLE(data);
-        EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.BLIP__BLIPFILENAME, true, bytes);
+        EscherComplexProperty prop = new EscherComplexProperty(EscherPropertyTypes.BLIP__BLIPFILENAME, true, bytes.length);
+        prop.setComplexData(bytes);
         setPropertyValue(prop);
     }
 

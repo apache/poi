@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.HSLFEscherClientDataRecord;
@@ -96,7 +96,7 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
         spRecord.setFlags(flags);
 
         // Placeholders can't be grouped
-        shape.setEscherProperty(EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, (placeholder == null ? -1 : 262144));
+        shape.setEscherProperty(EscherPropertyTypes.PROTECTION__LOCKAGAINSTGROUPING, (placeholder == null ? -1 : 262144));
 
         if (placeholder == null) {
             removePlaceholder();

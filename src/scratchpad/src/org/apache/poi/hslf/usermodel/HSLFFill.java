@@ -27,7 +27,7 @@ import org.apache.poi.ddf.EscherArrayProperty;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherColorRef;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.ddf.EscherSimpleProperty;
@@ -258,14 +258,14 @@ public final class HSLFFill {
         // NOFILLHITTEST can be in the normal escher opt record but also in the tertiary record
         // the extended bit fields seem to be in the second
         AbstractEscherOptRecord opt = shape.getEscherChild(EscherRecordTypes.USER_DEFINED);
-        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
+        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__NOFILLHITTEST);
         int propVal = (p == null) ? 0 : p.getPropertyValue();
         return FILL_USE_USE_SHAPE_ANCHOR.isSet(propVal) && FILL_USE_SHAPE_ANCHOR.isSet(propVal);
     }
 
     private GradientPaint getGradientPaint(final GradientType gradientType) {
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
-        final EscherArrayProperty ep = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__SHADECOLORS);
+        final EscherArrayProperty ep = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__SHADECOLORS);
         final int colorCnt = (ep == null) ? 0 : ep.getNumberOfElementsInArray();
 
         return new GradientPaint() {
@@ -274,7 +274,7 @@ public final class HSLFFill {
                 // A value of type FixedPoint, as specified in [MS-OSHARED] section 2.2.1.6,
                 // that specifies the angle of the gradient fill. Zero degrees represents a vertical vector from
                 // bottom to top. The default value for this property is 0x00000000.
-                int rot = shape.getEscherProperty(EscherProperties.FILL__ANGLE);
+                int rot = shape.getEscherProperty(EscherPropertyTypes.FILL__ANGLE);
                 return 90-Units.fixedPointToDouble(rot);
             }
             
@@ -348,7 +348,7 @@ public final class HSLFFill {
 
             @Override
             public int getAlpha() {
-                return (int)(shape.getAlpha(EscherProperties.FILL__FILLOPACITY)*100000.0);
+                return (int)(shape.getAlpha(EscherPropertyTypes.FILL__FILLOPACITY)*100000.0);
             }
 
             @Override
@@ -366,13 +366,13 @@ public final class HSLFFill {
      */
     public int getFillType(){
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
-        EscherSimpleProperty prop = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__FILLTYPE);
+        EscherSimpleProperty prop = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__FILLTYPE);
         return prop == null ? FILL_SOLID : prop.getPropertyValue();
     }
 
     void afterInsert(HSLFSheet sh){
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
-        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
+        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__PATTERNTEXTURE);
         if(p != null) {
             int idx = p.getPropertyValue();
             EscherBSERecord bse = getEscherBSERecord(idx);
@@ -409,7 +409,7 @@ public final class HSLFFill {
      */
     public void setFillType(int type){
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
-        HSLFShape.setEscherProperty(opt, EscherProperties.FILL__FILLTYPE, type);
+        HSLFShape.setEscherProperty(opt, EscherPropertyTypes.FILL__FILLTYPE, type);
     }
 
     /**
@@ -417,11 +417,11 @@ public final class HSLFFill {
      */
     public Color getForegroundColor(){
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
-        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
+        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__NOFILLHITTEST);
         int propVal = (p == null) ? 0 : p.getPropertyValue();
 
         return (FILL_USE_FILLED.isSet(propVal) && FILL_FILLED.isSet(propVal))
-            ? shape.getColor(EscherProperties.FILL__FILLCOLOR, EscherProperties.FILL__FILLOPACITY)
+            ? shape.getColor(EscherPropertyTypes.FILL__FILLCOLOR, EscherPropertyTypes.FILL__FILLOPACITY)
             : null;
     }
 
@@ -430,20 +430,20 @@ public final class HSLFFill {
      */
     public void setForegroundColor(Color color){
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
-        opt.removeEscherProperty(EscherProperties.FILL__FILLOPACITY);
-        opt.removeEscherProperty(EscherProperties.FILL__FILLCOLOR);
+        opt.removeEscherProperty(EscherPropertyTypes.FILL__FILLOPACITY);
+        opt.removeEscherProperty(EscherPropertyTypes.FILL__FILLCOLOR);
 
         if (color != null) {
             int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 0).getRGB();
-            HSLFShape.setEscherProperty(opt, EscherProperties.FILL__FILLCOLOR, rgb);
+            HSLFShape.setEscherProperty(opt, EscherPropertyTypes.FILL__FILLCOLOR, rgb);
             int alpha = color.getAlpha();
             if (alpha < 255) {
                 int alphaFP = Units.doubleToFixedPoint(alpha/255d);
-                HSLFShape.setEscherProperty(opt, EscherProperties.FILL__FILLOPACITY, alphaFP);
+                HSLFShape.setEscherProperty(opt, EscherPropertyTypes.FILL__FILLOPACITY, alphaFP);
             }
         }
         
-        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
+        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__NOFILLHITTEST);
         int propVal = (p == null) ? 0 : p.getPropertyValue();
         propVal = FILL_FILLED.setBoolean(propVal, color != null);
         propVal = FILL_NO_FILL_HIT_TEST.setBoolean(propVal, color != null);
@@ -453,7 +453,7 @@ public final class HSLFFill {
         // TODO: check why we always clear this ...
         propVal = FILL_FILL_SHAPE.clear(propVal);
 
-        HSLFShape.setEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST, propVal);
+        HSLFShape.setEscherProperty(opt, EscherPropertyTypes.FILL__NOFILLHITTEST, propVal);
     }
 
     /**
@@ -461,11 +461,11 @@ public final class HSLFFill {
      */
     public Color getBackgroundColor(){
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
-        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__NOFILLHITTEST);
+        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__NOFILLHITTEST);
         int propVal = (p == null) ? 0 : p.getPropertyValue();
 
         return (FILL_USE_FILLED.isSet(propVal) && FILL_FILLED.isSet(propVal))
-            ? shape.getColor(EscherProperties.FILL__FILLBACKCOLOR, EscherProperties.FILL__FILLOPACITY)
+            ? shape.getColor(EscherPropertyTypes.FILL__FILLBACKCOLOR, EscherPropertyTypes.FILL__FILLOPACITY)
             : null;
     }
 
@@ -475,11 +475,11 @@ public final class HSLFFill {
     public void setBackgroundColor(Color color){
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         if (color == null) {
-            HSLFShape.setEscherProperty(opt, EscherProperties.FILL__FILLBACKCOLOR, -1);
+            HSLFShape.setEscherProperty(opt, EscherPropertyTypes.FILL__FILLBACKCOLOR, -1);
         }
         else {
             int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 0).getRGB();
-            HSLFShape.setEscherProperty(opt, EscherProperties.FILL__FILLBACKCOLOR, rgb);
+            HSLFShape.setEscherProperty(opt, EscherPropertyTypes.FILL__FILLBACKCOLOR, rgb);
         }
     }
 
@@ -489,7 +489,7 @@ public final class HSLFFill {
     @SuppressWarnings("resource")
     public HSLFPictureData getPictureData(){
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
-        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherProperties.FILL__PATTERNTEXTURE);
+        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__PATTERNTEXTURE);
         if (p == null) {
             return null;
         }
@@ -524,7 +524,7 @@ public final class HSLFFill {
      */
     public void setPictureData(HSLFPictureData data){
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
-        HSLFShape.setEscherProperty(opt, (short)(EscherProperties.FILL__PATTERNTEXTURE + 0x4000), (data == null ? 0 : data.getIndex()));
+        HSLFShape.setEscherProperty(opt, EscherPropertyTypes.FILL__PATTERNTEXTURE, true, (data == null ? 0 : data.getIndex()));
         if(data != null && shape.getSheet() != null) {
             EscherBSERecord bse = getEscherBSERecord(data.getIndex());
             if (bse != null) {

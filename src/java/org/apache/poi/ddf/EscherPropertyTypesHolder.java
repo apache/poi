@@ -17,28 +17,14 @@
 
 package org.apache.poi.ddf;
 
-/**
- * Defines the constants for the various possible shape paths.
- */
-public class EscherShapePathProperty extends EscherSimpleProperty {
+import org.apache.poi.util.Internal;
 
-    public static final int LINE_OF_STRAIGHT_SEGMENTS = 0;
-    public static final int CLOSED_POLYGON = 1;
-    public static final int CURVES = 2;
-    public static final int CLOSED_CURVES = 3;
-    public static final int COMPLEX = 4;
-
-    /**
-     * Create an instance of an escher shape path property.
-     *
-     * @param propertyNumber
-     * @param shapePath
-     */
-    public EscherShapePathProperty( short propertyNumber, int shapePath ) {
-        super( propertyNumber, false, false, shapePath );
-    }
-
-    public EscherShapePathProperty( EscherPropertyTypes type, int shapePath ) {
-        super( type, false, false, shapePath );
-    }
+@Internal
+public enum EscherPropertyTypesHolder {
+    UNKNOWN,
+    BOOLEAN,
+    RGB,
+    SHAPE_PATH,
+    SIMPLE,
+    ARRAY
 }

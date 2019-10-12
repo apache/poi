@@ -24,8 +24,8 @@ import org.apache.poi.ddf.EscherChildAnchorRecord;
 import org.apache.poi.ddf.EscherClientAnchorRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherProperty;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
@@ -61,6 +61,19 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
     private static final POILogger LOG = POILogFactory.getLogger(HSLFSimpleShape.class);
 
     public final static double DEFAULT_LINE_WIDTH = 0.75;
+
+    private static final EscherPropertyTypes[] ADJUST_VALUES = {
+            EscherPropertyTypes.GEOMETRY__ADJUSTVALUE,
+            EscherPropertyTypes.GEOMETRY__ADJUST2VALUE,
+            EscherPropertyTypes.GEOMETRY__ADJUST3VALUE,
+            EscherPropertyTypes.GEOMETRY__ADJUST4VALUE,
+            EscherPropertyTypes.GEOMETRY__ADJUST5VALUE,
+            EscherPropertyTypes.GEOMETRY__ADJUST6VALUE,
+            EscherPropertyTypes.GEOMETRY__ADJUST7VALUE,
+            EscherPropertyTypes.GEOMETRY__ADJUST8VALUE,
+            EscherPropertyTypes.GEOMETRY__ADJUST9VALUE,
+            EscherPropertyTypes.GEOMETRY__ADJUST10VALUE
+    };
 
     /**
      * Hyperlink
@@ -124,7 +137,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
      */
     public double getLineWidth(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINEWIDTH);
         return (prop == null) ? DEFAULT_LINE_WIDTH : Units.toPoints(prop.getPropertyValue());
     }
 
@@ -134,7 +147,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
      */
     public void setLineWidth(double width){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        setEscherProperty(opt, EscherProperties.LINESTYLE__LINEWIDTH, Units.toEMU(width));
+        setEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINEWIDTH, Units.toEMU(width));
     }
 
     /**
@@ -145,11 +158,11 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
     public void setLineColor(Color color){
         AbstractEscherOptRecord opt = getEscherOptRecord();
         if (color == null) {
-            setEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x80000);
+            setEscherProperty(opt, EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH, 0x80000);
         } else {
             int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 0).getRGB();
-            setEscherProperty(opt, EscherProperties.LINESTYLE__COLOR, rgb);
-            setEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x180018);
+            setEscherProperty(opt, EscherPropertyTypes.LINESTYLE__COLOR, rgb);
+            setEscherProperty(opt, EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH, 0x180018);
         }
     }
 
@@ -159,13 +172,12 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
     public Color getLineColor(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
 
-        EscherSimpleProperty p = getEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH);
+        EscherSimpleProperty p = getEscherProperty(opt, EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH);
         if(p != null && (p.getPropertyValue() & 0x8) == 0) {
             return null;
         }
 
-        Color clr = getColor(EscherProperties.LINESTYLE__COLOR, EscherProperties.LINESTYLE__OPACITY);
-        return clr == null ? null : clr;
+        return getColor(EscherPropertyTypes.LINESTYLE__COLOR, EscherPropertyTypes.LINESTYLE__OPACITY);
     }
 
     /**
@@ -174,13 +186,12 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
     public Color getLineBackgroundColor(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
 
-        EscherSimpleProperty p = getEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH);
+        EscherSimpleProperty p = getEscherProperty(opt, EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH);
         if(p != null && (p.getPropertyValue() & 0x8) == 0) {
             return null;
         }
 
-        Color clr = getColor(EscherProperties.LINESTYLE__BACKCOLOR, EscherProperties.LINESTYLE__OPACITY);
-        return clr == null ? null : clr;
+        return getColor(EscherPropertyTypes.LINESTYLE__BACKCOLOR, EscherPropertyTypes.LINESTYLE__OPACITY);
     }
 
     /**
@@ -191,12 +202,12 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
     public void setLineBackgroundColor(Color color){
         AbstractEscherOptRecord opt = getEscherOptRecord();
         if (color == null) {
-            setEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x80000);
-            opt.removeEscherProperty(EscherProperties.LINESTYLE__BACKCOLOR);
+            setEscherProperty(opt, EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH, 0x80000);
+            opt.removeEscherProperty(EscherPropertyTypes.LINESTYLE__BACKCOLOR);
         } else {
             int rgb = new Color(color.getBlue(), color.getGreen(), color.getRed(), 0).getRGB();
-            setEscherProperty(opt, EscherProperties.LINESTYLE__BACKCOLOR, rgb);
-            setEscherProperty(opt, EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x180018);
+            setEscherProperty(opt, EscherPropertyTypes.LINESTYLE__BACKCOLOR, rgb);
+            setEscherProperty(opt, EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH, 0x180018);
         }
     }
 
@@ -207,7 +218,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
      */
     public LineCap getLineCap(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDCAPSTYLE);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINEENDCAPSTYLE);
         return (prop == null) ? LineCap.FLAT : LineCap.fromNativeId(prop.getPropertyValue());
     }
 
@@ -218,7 +229,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
      */
     public void setLineCap(LineCap pen){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        setEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDCAPSTYLE, pen == LineCap.FLAT ? -1 : pen.nativeId);
+        setEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINEENDCAPSTYLE, pen == LineCap.FLAT ? -1 : pen.nativeId);
     }
 
     /**
@@ -228,7 +239,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
      */
     public LineDash getLineDash(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINEDASHING);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINEDASHING);
         return (prop == null) ? LineDash.SOLID : LineDash.fromNativeId(prop.getPropertyValue());
     }
 
@@ -239,7 +250,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
      */
     public void setLineDash(LineDash pen){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        setEscherProperty(opt, EscherProperties.LINESTYLE__LINEDASHING, pen == LineDash.SOLID ? -1 : pen.nativeId);
+        setEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINEDASHING, pen == LineDash.SOLID ? -1 : pen.nativeId);
     }
 
     /**
@@ -249,7 +260,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
      */
     public LineCompound getLineCompound() {
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINESTYLE);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINESTYLE);
         return (prop == null) ? LineCompound.SINGLE : LineCompound.fromNativeId(prop.getPropertyValue());
     }
 
@@ -260,7 +271,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
      */
     public void setLineCompound(LineCompound style){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        setEscherProperty(opt, EscherProperties.LINESTYLE__LINESTYLE, style == LineCompound.SINGLE ? -1 : style.nativeId);
+        setEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINESTYLE, style == LineCompound.SINGLE ? -1 : style.nativeId);
     }
 
     /**
@@ -295,7 +306,6 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
             public double getLineWidth() {
                 return HSLFSimpleShape.this.getLineWidth();
             }
-
         };
     }
 
@@ -322,21 +332,12 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         }
 
         final int adjInt = Integer.parseInt(name);
-
-        short escherProp;
-        switch (adjInt) {
-            case 1: escherProp = EscherProperties.GEOMETRY__ADJUSTVALUE; break;
-            case 2: escherProp = EscherProperties.GEOMETRY__ADJUST2VALUE; break;
-            case 3: escherProp = EscherProperties.GEOMETRY__ADJUST3VALUE; break;
-            case 4: escherProp = EscherProperties.GEOMETRY__ADJUST4VALUE; break;
-            case 5: escherProp = EscherProperties.GEOMETRY__ADJUST5VALUE; break;
-            case 6: escherProp = EscherProperties.GEOMETRY__ADJUST6VALUE; break;
-            case 7: escherProp = EscherProperties.GEOMETRY__ADJUST7VALUE; break;
-            case 8: escherProp = EscherProperties.GEOMETRY__ADJUST8VALUE; break;
-            case 9: escherProp = EscherProperties.GEOMETRY__ADJUST9VALUE; break;
-            case 10: escherProp = EscherProperties.GEOMETRY__ADJUST10VALUE; break;
-            default: throw new HSLFException();
+        if (adjInt < 1 || adjInt > 10) {
+            throw new HSLFException("invalid adjust value: "+adjInt);
         }
+
+
+        EscherPropertyTypes escherProp = ADJUST_VALUES[adjInt];
 
         int adjval = getEscherProperty(escherProp, -1);
 
@@ -389,18 +390,18 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
     public double getShadowAngle() {
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.SHADOWSTYLE__OFFSETX);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherPropertyTypes.SHADOWSTYLE__OFFSETX);
         int offX = (prop == null) ? 0 : prop.getPropertyValue();
-        prop = getEscherProperty(opt, EscherProperties.SHADOWSTYLE__OFFSETY);
+        prop = getEscherProperty(opt, EscherPropertyTypes.SHADOWSTYLE__OFFSETY);
         int offY = (prop == null) ? 0 : prop.getPropertyValue();
         return Math.toDegrees(Math.atan2(offY, offX));
     }
 
     public double getShadowDistance() {
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.SHADOWSTYLE__OFFSETX);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherPropertyTypes.SHADOWSTYLE__OFFSETX);
         int offX = (prop == null) ? 0 : prop.getPropertyValue();
-        prop = getEscherProperty(opt, EscherProperties.SHADOWSTYLE__OFFSETY);
+        prop = getEscherProperty(opt, EscherPropertyTypes.SHADOWSTYLE__OFFSETY);
         int offY = (prop == null) ? 0 : prop.getPropertyValue();
         return Units.toPoints((long)Math.hypot(offX, offY));
     }
@@ -409,7 +410,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
      * @return color of the line. If color is not set returns <code>java.awt.Color.black</code>
      */
     public Color getShadowColor(){
-        Color clr = getColor(EscherProperties.SHADOWSTYLE__COLOR, EscherProperties.SHADOWSTYLE__OPACITY);
+        Color clr = getColor(EscherPropertyTypes.SHADOWSTYLE__COLOR, EscherPropertyTypes.SHADOWSTYLE__OPACITY);
         return clr == null ? Color.black : clr;
     }
 
@@ -419,7 +420,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         if (opt == null) {
             return null;
         }
-        EscherProperty shadowType = opt.lookup(EscherProperties.SHADOWSTYLE__TYPE);
+        EscherProperty shadowType = opt.lookup(EscherPropertyTypes.SHADOWSTYLE__TYPE);
         if (shadowType == null) {
             return null;
         }
@@ -456,68 +457,68 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
     public DecorationShape getLineHeadDecoration(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINESTARTARROWHEAD);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINESTARTARROWHEAD);
         return (prop == null) ? null : DecorationShape.fromNativeId(prop.getPropertyValue());
     }
 
     public void setLineHeadDecoration(DecorationShape decoShape){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        setEscherProperty(opt, EscherProperties.LINESTYLE__LINESTARTARROWHEAD, decoShape == null ? -1 : decoShape.nativeId);
+        setEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINESTARTARROWHEAD, decoShape == null ? -1 : decoShape.nativeId);
     }
 
     public DecorationSize getLineHeadWidth(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINESTARTARROWWIDTH);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINESTARTARROWWIDTH);
         return (prop == null) ? null : DecorationSize.fromNativeId(prop.getPropertyValue());
     }
 
     public void setLineHeadWidth(DecorationSize decoSize){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        setEscherProperty(opt, EscherProperties.LINESTYLE__LINESTARTARROWWIDTH, decoSize == null ? -1 : decoSize.nativeId);
+        setEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINESTARTARROWWIDTH, decoSize == null ? -1 : decoSize.nativeId);
     }
 
     public DecorationSize getLineHeadLength(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINESTARTARROWLENGTH);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINESTARTARROWLENGTH);
         return (prop == null) ? null : DecorationSize.fromNativeId(prop.getPropertyValue());
     }
 
     public void setLineHeadLength(DecorationSize decoSize){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        setEscherProperty(opt, EscherProperties.LINESTYLE__LINESTARTARROWLENGTH, decoSize == null ? -1 : decoSize.nativeId);
+        setEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINESTARTARROWLENGTH, decoSize == null ? -1 : decoSize.nativeId);
     }
 
     public DecorationShape getLineTailDecoration(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDARROWHEAD);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINEENDARROWHEAD);
         return (prop == null) ? null : DecorationShape.fromNativeId(prop.getPropertyValue());
     }
 
     public void setLineTailDecoration(DecorationShape decoShape){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        setEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDARROWHEAD, decoShape == null ? -1 : decoShape.nativeId);
+        setEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINEENDARROWHEAD, decoShape == null ? -1 : decoShape.nativeId);
     }
 
     public DecorationSize getLineTailWidth(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDARROWWIDTH);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINEENDARROWWIDTH);
         return (prop == null) ? null : DecorationSize.fromNativeId(prop.getPropertyValue());
     }
 
     public void setLineTailWidth(DecorationSize decoSize){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        setEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDARROWWIDTH, decoSize == null ? -1 : decoSize.nativeId);
+        setEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINEENDARROWWIDTH, decoSize == null ? -1 : decoSize.nativeId);
     }
 
     public DecorationSize getLineTailLength(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDARROWLENGTH);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINEENDARROWLENGTH);
         return (prop == null) ? null : DecorationSize.fromNativeId(prop.getPropertyValue());
     }
 
     public void setLineTailLength(DecorationSize decoSize){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        setEscherProperty(opt, EscherProperties.LINESTYLE__LINEENDARROWLENGTH, decoSize == null ? -1 : decoSize.nativeId);
+        setEscherProperty(opt, EscherPropertyTypes.LINESTYLE__LINEENDARROWLENGTH, decoSize == null ? -1 : decoSize.nativeId);
     }
 
 

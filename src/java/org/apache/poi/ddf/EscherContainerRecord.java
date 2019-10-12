@@ -273,23 +273,6 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
     }
 
     @Override
-    protected Object[][] getAttributeMap() {
-        List<Object> chList = new ArrayList<>(_childRecords.size() * 2 + 2);
-        chList.add("children");
-        chList.add(_childRecords.size());
-        int count = 0;
-        for ( EscherRecord record : this ) {
-            chList.add("Child "+count);
-            chList.add(record);
-            count++;
-        }
-        return new Object[][] {
-        	{ "isContainer", isContainerRecord() },
-            chList.toArray()
-        };
-    }
-
-    @Override
     public Map<String, Supplier<?>> getGenericProperties() {
         return GenericRecordUtil.getGenericProperties(
             "base", super::getGenericProperties,

@@ -53,17 +53,15 @@ public class TestEscherClientDataRecord {
 
     @Test
     public void testToString() {
-        String nl = System.getProperty("line.separator");
-
         String expected =
-            "org.apache.poi.ddf.EscherClientDataRecord (ClientData):" + nl +
-            "  RecordId: 0xF011" + nl +
-            "  Version: 0x0002" + nl +
-            "  Instance: 0x0000" + nl +
-            "  Options: 0x0002" + nl +
-            "  Record Size: 8" + nl +
-            "  Extra Data: " + nl +
-            "     : 0";
+            "{   /* CLIENT_DATA */\n" +
+            "\t  recordId: -4079 /* 0xf011 */\n" +
+            "\t, version: 2\n" +
+            "\t, instance: 0\n" +
+            "\t, options: 2\n" +
+            "\t, recordSize: 8\n" +
+            "\t, remainingData: \"\"\n" +
+            "}";
         assertEquals( expected, createRecord().toString() );
     }
 

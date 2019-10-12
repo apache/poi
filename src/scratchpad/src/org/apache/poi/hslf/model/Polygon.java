@@ -17,14 +17,21 @@
 
 package org.apache.poi.hslf.model;
 
-import org.apache.poi.ddf.*;
-import org.apache.poi.hslf.usermodel.*;
+import java.awt.geom.Point2D;
+
+import org.apache.poi.ddf.AbstractEscherOptRecord;
+import org.apache.poi.ddf.EscherArrayProperty;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherPropertyTypes;
+import org.apache.poi.ddf.EscherSimpleProperty;
+import org.apache.poi.hslf.usermodel.HSLFAutoShape;
+import org.apache.poi.hslf.usermodel.HSLFGroupShape;
+import org.apache.poi.hslf.usermodel.HSLFShape;
+import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.sl.usermodel.ShapeContainer;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.Units;
-
-import java.awt.geom.Point2D;
 
 /**
  * A simple closed polygon shape
@@ -76,8 +83,8 @@ public final class Polygon extends HSLFAutoShape {
         float top    = findSmallest(yPoints);
 
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__RIGHT, Units.pointsToMaster(right - left)));
-        opt.addEscherProperty(new EscherSimpleProperty(EscherProperties.GEOMETRY__BOTTOM, Units.pointsToMaster(bottom - top)));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.GEOMETRY__RIGHT, Units.pointsToMaster(right - left)));
+        opt.addEscherProperty(new EscherSimpleProperty(EscherPropertyTypes.GEOMETRY__BOTTOM, Units.pointsToMaster(bottom - top)));
 
         for (int i = 0; i < xPoints.length; i++) {
             xPoints[i] += -left;
@@ -86,7 +93,7 @@ public final class Polygon extends HSLFAutoShape {
 
         int numpoints = xPoints.length;
 
-        EscherArrayProperty verticesProp = new EscherArrayProperty(EscherProperties.GEOMETRY__VERTICES, false, new byte[0] );
+        EscherArrayProperty verticesProp = new EscherArrayProperty(EscherPropertyTypes.GEOMETRY__VERTICES, false, 0);
         verticesProp.setNumberOfElementsInArray(numpoints+1);
         verticesProp.setNumberOfElementsInMemory(numpoints+1);
         verticesProp.setSizeOfElements(0xFFF0);
@@ -103,7 +110,7 @@ public final class Polygon extends HSLFAutoShape {
         verticesProp.setElement(numpoints, data);
         opt.addEscherProperty(verticesProp);
 
-        EscherArrayProperty segmentsProp = new EscherArrayProperty(EscherProperties.GEOMETRY__SEGMENTINFO, false, null );
+        EscherArrayProperty segmentsProp = new EscherArrayProperty(EscherPropertyTypes.GEOMETRY__SEGMENTINFO, false, 0);
         segmentsProp.setSizeOfElements(0x0002);
         segmentsProp.setNumberOfElementsInArray(numpoints * 2 + 4);
         segmentsProp.setNumberOfElementsInMemory(numpoints * 2 + 4);

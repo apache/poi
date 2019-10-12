@@ -20,7 +20,7 @@ package org.apache.poi.hslf.model;
 import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherComplexProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.Document;
@@ -79,11 +79,11 @@ public final class ActiveXShape extends HSLFPictureShape {
         spRecord.setFlags(EscherSpRecord.FLAG_HAVEANCHOR | EscherSpRecord.FLAG_HASSHAPETYPE | EscherSpRecord.FLAG_OLESHAPE);
 
         setShapeType(ShapeType.HOST_CONTROL);
-        setEscherProperty(EscherProperties.BLIP__PICTUREID, idx);
-        setEscherProperty(EscherProperties.LINESTYLE__COLOR, 0x8000001);
-        setEscherProperty(EscherProperties.LINESTYLE__NOLINEDRAWDASH, 0x80008);
-        setEscherProperty(EscherProperties.SHADOWSTYLE__COLOR, 0x8000002);
-        setEscherProperty(EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, -1);
+        setEscherProperty(EscherPropertyTypes.BLIP__PICTUREID, idx);
+        setEscherProperty(EscherPropertyTypes.LINESTYLE__COLOR, 0x8000001);
+        setEscherProperty(EscherPropertyTypes.LINESTYLE__NOLINEDRAWDASH, 0x80008);
+        setEscherProperty(EscherPropertyTypes.SHADOWSTYLE__COLOR, 0x8000002);
+        setEscherProperty(EscherPropertyTypes.PROTECTION__LOCKAGAINSTGROUPING, -1);
 
         HSLFEscherClientDataRecord cldata = getClientData(true);
         cldata.addChild(new ExObjRefAtom());
@@ -155,7 +155,8 @@ public final class ActiveXShape extends HSLFPictureShape {
 
         String name = ctrl.getProgId() + "-" + getControlIndex() + '\u0000';
         byte[] data = StringUtil.getToUnicodeLE(name);
-        EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.GROUPSHAPE__SHAPENAME, false, data);
+        EscherComplexProperty prop = new EscherComplexProperty(EscherPropertyTypes.GROUPSHAPE__SHAPENAME, false, data.length);
+        prop.setComplexData(data);
         AbstractEscherOptRecord opt = getEscherOptRecord();
         opt.addEscherProperty(prop);
     }

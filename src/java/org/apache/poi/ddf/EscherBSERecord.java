@@ -22,6 +22,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 
@@ -38,15 +39,6 @@ public final class EscherBSERecord extends EscherRecord {
     private static final int MAX_RECORD_LENGTH = 100_000;
 
     public static final short RECORD_ID = EscherRecordTypes.BSE.typeID;
-
-    public static final byte BT_ERROR = 0;
-    public static final byte BT_UNKNOWN = 1;
-    public static final byte BT_EMF = 2;
-    public static final byte BT_WMF = 3;
-    public static final byte BT_PICT = 4;
-    public static final byte BT_JPEG = 5;
-    public static final byte BT_PNG = 6;
-    public static final byte BT_DIB = 7;
 
     private byte field_1_blipTypeWin32;
     private byte field_2_blipTypeMacOS;
@@ -164,6 +156,10 @@ public final class EscherBSERecord extends EscherRecord {
         return field_1_blipTypeWin32;
     }
 
+    public PictureType getPictureTypeWin32() {
+        return PictureType.forNativeID(field_1_blipTypeWin32);
+    }
+
     /**
      * Set the expected win32 blip type
      * 
@@ -181,6 +177,10 @@ public final class EscherBSERecord extends EscherRecord {
      */
     public byte getBlipTypeMacOS() {
         return field_2_blipTypeMacOS;
+    }
+
+    public PictureType getPictureTypeMacOS() {
+        return PictureType.forNativeID(field_2_blipTypeMacOS);
     }
 
     /**
@@ -363,54 +363,13 @@ public final class EscherBSERecord extends EscherRecord {
         _remainingData = (remainingData == null) ? new byte[0] : remainingData.clone();
     }
 
-    /**
-     * Retrieve the string representation given a blip id.
-     * 
-     * @param b the blip type byte-encoded
-     * 
-     * @return the blip type as string
-     */
-    public static String getBlipType(byte b) {
-        switch (b) {
-            case BT_ERROR:   return " ERROR";
-            case BT_UNKNOWN: return " UNKNOWN";
-            case BT_EMF:     return " EMF";
-            case BT_WMF:     return " WMF";
-            case BT_PICT:    return " PICT";
-            case BT_JPEG:    return " JPEG";
-            case BT_PNG:     return " PNG";
-            case BT_DIB:     return " DIB";
-        }
-        if ( b < 32 ) {
-            return " NotKnown";
-        }
-        return " Client";
-    }
-
-    @Override
-    protected Object[][] getAttributeMap() {
-        return new Object[][] {
-            { "BlipTypeWin32", field_1_blipTypeWin32 },
-            { "BlipTypeMacOS", field_2_blipTypeMacOS },
-            { "SUID", field_3_uid },
-            { "Tag", field_4_tag },
-            { "Size", field_5_size },
-            { "Ref", field_6_ref },
-            { "Offset", field_7_offset },
-            { "Usage", field_8_usage },
-            { "Name", field_9_name },
-            { "Unused2", field_10_unused2 },
-            { "Unused3", field_11_unused3 },
-            { "Blip Record", field_12_blipRecord },
-            { "Extra Data", _remainingData }
-        };
-    }
-
     @Override
     public Map<String, Supplier<?>> getGenericProperties() {
         final Map<String, Supplier<?>> m = new LinkedHashMap<>(super.getGenericProperties());
         m.put("blipTypeWin32", this::getBlipTypeWin32);
+        m.put("pictureTypeWin32", this::getPictureTypeWin32);
         m.put("blipTypeMacOS", this::getBlipTypeMacOS);
+        m.put("pictureTypeMacOS", this::getPictureTypeMacOS);
         m.put("suid", this::getUid);
         m.put("tag", this::getTag);
         m.put("size", this::getSize);

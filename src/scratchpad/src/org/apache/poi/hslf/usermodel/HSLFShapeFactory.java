@@ -23,9 +23,9 @@ import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
-import org.apache.poi.ddf.EscherProperties;
 import org.apache.poi.ddf.EscherProperty;
 import org.apache.poi.ddf.EscherPropertyFactory;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.ddf.EscherSimpleProperty;
@@ -71,7 +71,7 @@ public final class HSLFShapeFactory {
             EscherPropertyFactory f = new EscherPropertyFactory();
             List<EscherProperty> props = f.createProperties( opt.serialize(), 8, opt.getInstance() );
             for (EscherProperty ep : props) {
-                if (ep.getPropertyNumber() == EscherProperties.GROUPSHAPE__TABLEPROPERTIES
+                if (ep.getPropertyNumber() == EscherPropertyTypes.GROUPSHAPE__TABLEPROPERTIES.propNumber
                     && ep instanceof EscherSimpleProperty
                     && (((EscherSimpleProperty)ep).getPropertyValue() & 1) == 1) {
                     isTable = true;
@@ -150,7 +150,7 @@ public final class HSLFShapeFactory {
     
     private static HSLFShape createNonPrimitive(EscherContainerRecord spContainer, ShapeContainer<HSLFShape,HSLFTextParagraph> parent) {
         AbstractEscherOptRecord opt = HSLFShape.getEscherChild(spContainer, EscherOptRecord.RECORD_ID);
-        EscherProperty prop = HSLFShape.getEscherProperty(opt, EscherProperties.GEOMETRY__VERTICES);
+        EscherProperty prop = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.GEOMETRY__VERTICES);
         if(prop != null) {
             return new HSLFFreeformShape(spContainer, parent);
         }

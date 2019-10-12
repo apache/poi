@@ -25,7 +25,7 @@ import org.apache.poi.ddf.AbstractEscherOptRecord;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherComplexProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
-import org.apache.poi.ddf.EscherProperties;
+import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherSimpleProperty;
 import org.apache.poi.ddf.EscherSpRecord;
@@ -86,7 +86,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
      */
     public int getPictureIndex(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherSimpleProperty prop = getEscherProperty(opt, EscherProperties.BLIP__BLIPTODISPLAY);
+        EscherSimpleProperty prop = getEscherProperty(opt, EscherPropertyTypes.BLIP__BLIPTODISPLAY);
         return prop == null ? 0 : prop.getPropertyValue();
     }
 
@@ -104,10 +104,10 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
 
         //set default properties for a picture
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        setEscherProperty(opt, EscherProperties.PROTECTION__LOCKAGAINSTGROUPING, 0x800080);
+        setEscherProperty(opt, EscherPropertyTypes.PROTECTION__LOCKAGAINSTGROUPING, 0x800080);
 
         //another weird feature of powerpoint: for picture id we must add 0x4000.
-        setEscherProperty(opt, (short)(EscherProperties.BLIP__BLIPTODISPLAY + 0x4000), idx);
+        setEscherProperty(opt, EscherPropertyTypes.BLIP__BLIPTODISPLAY, true, idx);
 
         return ecr;
     }
@@ -158,7 +158,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
      */
     public String getPictureName(){
         AbstractEscherOptRecord opt = getEscherOptRecord();
-        EscherComplexProperty prop = getEscherProperty(opt, EscherProperties.BLIP__BLIPFILENAME);
+        EscherComplexProperty prop = getEscherProperty(opt, EscherPropertyTypes.BLIP__BLIPFILENAME);
         if (prop == null) return null;
         String name = StringUtil.getFromUnicodeLE(prop.getComplexData());
         return name.trim();
@@ -172,7 +172,8 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
     public void setPictureName(String name){
         AbstractEscherOptRecord opt = getEscherOptRecord();
         byte[] data = StringUtil.getToUnicodeLE(name + '\u0000');
-        EscherComplexProperty prop = new EscherComplexProperty(EscherProperties.BLIP__BLIPFILENAME, false, data);
+        EscherComplexProperty prop = new EscherComplexProperty(EscherPropertyTypes.BLIP__BLIPFILENAME, false, data.length);
+        prop.setComplexData(data);
         opt.addEscherProperty(prop);
     }
 
@@ -199,10 +200,10 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
         // i.e. the size of the already clipped image
         AbstractEscherOptRecord opt = getEscherOptRecord();
         
-        double top    = getFractProp(opt, EscherProperties.BLIP__CROPFROMTOP);
-        double bottom = getFractProp(opt, EscherProperties.BLIP__CROPFROMBOTTOM);
-        double left   = getFractProp(opt, EscherProperties.BLIP__CROPFROMLEFT);
-        double right  = getFractProp(opt, EscherProperties.BLIP__CROPFROMRIGHT);
+        double top    = getFractProp(opt, EscherPropertyTypes.BLIP__CROPFROMTOP);
+        double bottom = getFractProp(opt, EscherPropertyTypes.BLIP__CROPFROMBOTTOM);
+        double left   = getFractProp(opt, EscherPropertyTypes.BLIP__CROPFROMLEFT);
+        double right  = getFractProp(opt, EscherPropertyTypes.BLIP__CROPFROMRIGHT);
         
         // if all crop values are zero (the default) then no crop rectangle is set, return null
         return (top==0 && bottom==0 && left==0 && right==0)
@@ -220,8 +221,8 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
     /**
      * @return the fractional property or 0 if not defined
      */
-    private static double getFractProp(AbstractEscherOptRecord opt, short propertyId) {
-        EscherSimpleProperty prop = getEscherProperty(opt, propertyId);
+    private static double getFractProp(AbstractEscherOptRecord opt, EscherPropertyTypes type) {
+        EscherSimpleProperty prop = getEscherProperty(opt, type);
         if (prop == null) return 0;
         int fixedPoint = prop.getPropertyValue();
         return Units.fixedPointToDouble(fixedPoint);

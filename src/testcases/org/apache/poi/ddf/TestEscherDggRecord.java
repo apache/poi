@@ -68,20 +68,24 @@ public final class TestEscherDggRecord {
 
     @Test
     public void testToString() {
-        String nl = System.getProperty("line.separator");
         String expected =
-            "org.apache.poi.ddf.EscherDggRecord (Dgg):" + nl +
-            "  RecordId: 0xF006" + nl +
-            "  Version: 0x0000" + nl +
-            "  Instance: 0x0000" + nl +
-            "  Options: 0x0000" + nl +
-            "  Record Size: 32" + nl +
-            "  ShapeIdMax: 0x00000402" + nl +
-            "  NumIdClusters: 0x00000002" + nl +
-            "  NumShapesSaved: 0x00000002" + nl +
-            "  DrawingsSaved: 0x00000001" + nl +
-            "  FileId Clusters: 0x00000001" + nl +
-            "  Group1: 0x00000002";
+            "{   /* DGG */\n" +
+            "\t  recordId: -4090 /* 0xf006 */\n" +
+            "\t, version: 0\n" +
+            "\t, instance: 0\n" +
+            "\t, options: 0\n" +
+            "\t, recordSize: 32 /* 0x00000020 */\n" +
+            "\t, fileIdClusters: [\n" +
+            "\n" +
+            "\t{   /* FileIdCluster */\n" +
+            "\t\t  drawingGroupId: 1\n" +
+            "\t\t, numShapeIdUsed: 2\n" +
+            "\t}]\n" +
+            "\t, shapeIdMax: 1026 /* 0x00000402 */\n" +
+            "\t, numIdClusters: 2\n" +
+            "\t, numShapesSaved: 2\n" +
+            "\t, drawingsSaved: 1\n" +
+            "}";
         assertEquals( expected, createRecord().toString() );
     }
 
