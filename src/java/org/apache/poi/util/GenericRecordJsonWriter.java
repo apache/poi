@@ -96,27 +96,7 @@ public class GenericRecordJsonWriter implements Closeable {
     }
 
     public GenericRecordJsonWriter(Appendable buffer) {
-        fw = new PrintWriter(new Writer(){
-            @Override
-            public void write(char[] cbuf, int off, int len) throws IOException {
-                buffer.append(String.valueOf(cbuf), off, len);
-            }
-
-            @Override
-            public void flush() throws IOException {
-                if (buffer instanceof Flushable) {
-                    ((Flushable)buffer).flush();
-                }
-            }
-
-            @Override
-            public void close() throws IOException {
-                flush();
-                if (buffer instanceof Closeable) {
-                    ((Closeable)buffer).close();
-                }
-            }
-        });
+        fw = new PrintWriter(new AppendableWriter(buffer));
     }
 
     public static String marshal(GenericRecord record) {
@@ -267,10 +247,9 @@ public class GenericRecordJsonWriter implements Closeable {
 
     private void printList(Object o) {
         fw.println('[');
-        final int[] c = new int[1];
-        //noinspection unchecked
         int oldChildIndex = childIndex;
         childIndex = 0;
+        //noinspection unchecked
         ((List)o).forEach(e -> { writeValue(e); childIndex++; });
         childIndex = oldChildIndex;
         fw.write(']');
@@ -430,14 +409,14 @@ public class GenericRecordJsonWriter implements Closeable {
         fw.write(']');
     }
 
-    private String trimHex(final long l, final int size) {
+    static String trimHex(final long l, final int size) {
         final String b = Long.toHexString(l);
         int len = b.length();
         return ZEROS.substring(0, Math.max(0,size-len)) + b.substring(Math.max(0,len-size), len);
     }
 
-    private static class NullOutputStream extends OutputStream {
-        private NullOutputStream() {
+    static class NullOutputStream extends OutputStream {
+        NullOutputStream() {
         }
 
         @Override
@@ -450,6 +429,35 @@ public class GenericRecordJsonWriter implements Closeable {
 
         @Override
         public void write(byte[] b) {
+        }
+    }
+
+    static class AppendableWriter extends Writer {
+        private Appendable buffer;
+
+        AppendableWriter(Appendable buffer) {
+            super(buffer);
+            this.buffer = buffer;
+        }
+
+        @Override
+        public void write(char[] cbuf, int off, int len) throws IOException {
+            buffer.append(String.valueOf(cbuf), off, len);
+        }
+
+        @Override
+        public void flush() throws IOException {
+            if (buffer instanceof Flushable) {
+                ((Flushable)buffer).flush();
+            }
+        }
+
+        @Override
+        public void close() throws IOException {
+            flush();
+            if (buffer instanceof Closeable) {
+                ((Closeable)buffer).close();
+            }
         }
     }
 }
