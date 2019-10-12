@@ -472,7 +472,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
             @Override
             public FlipMode getFlipMode() {
                 CTTileInfoProperties tile = blipFill.getTile();
-                switch (tile == null ? STTileFlipMode.INT_NONE : tile.getFlip().intValue()) {
+                switch (tile == null || tile.getFlip() == null ? STTileFlipMode.INT_NONE : tile.getFlip().intValue()) {
                     default:
                     case STTileFlipMode.INT_NONE:
                         return FlipMode.NONE;

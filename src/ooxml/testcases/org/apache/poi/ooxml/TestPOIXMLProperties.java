@@ -308,7 +308,7 @@ public final class TestPOIXMLProperties {
     }
 
     private static String zeroPad(long i) {
-        if (i >= 0 && i <=9) {
+        if (i >= 0 && i <= 9) {
             return "0" + i;
         } else {
             return String.valueOf(i);
