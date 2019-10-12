@@ -84,6 +84,14 @@ public class TestXSLFShape {
     }
 
     @Test
+    public void testProblemFile() throws IOException {
+        try (XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("ececapstonespring2012.pptx")) {
+            List<XSLFSlide> slides = ppt.getSlides();
+            assertEquals(24, slides.size());
+        }
+    }
+
+    @Test
     public void testCreateShapes() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
