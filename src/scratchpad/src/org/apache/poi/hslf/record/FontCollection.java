@@ -24,8 +24,10 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.common.usermodel.fonts.FontHeader;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.common.usermodel.fonts.FontPitch;
@@ -41,7 +43,7 @@ import org.apache.poi.util.POILogger;
 
 @SuppressWarnings("WeakerAccess")
 public final class FontCollection extends RecordContainer {
-    private final Map<String,HSLFFontInfo> fonts = new LinkedHashMap<>();
+    private final Map<Integer,HSLFFontInfo> fonts = new LinkedHashMap<>();
     private byte[] _header;
 
 	/* package */ FontCollection(byte[] source, int start, int len) {
@@ -53,7 +55,7 @@ public final class FontCollection extends RecordContainer {
 		for (Record r : _children){
 			if(r instanceof FontEntityAtom) {
                 HSLFFontInfo fi = new HSLFFontInfo((FontEntityAtom) r);
-                fonts.put(fi.getTypeface(), fi);
+                fonts.put(fi.getIndex(), fi);
             } else if (r instanceof FontEmbeddedData) {
                 FontEmbeddedData fed = (FontEmbeddedData)r;
 			    FontHeader fontHeader = fed.getFontHeader();
@@ -93,14 +95,14 @@ public final class FontCollection extends RecordContainer {
      * @return the register HSLFFontInfo object
      */
     public HSLFFontInfo addFont(FontInfo fontInfo) {
-        HSLFFontInfo fi = getFontInfo(fontInfo.getTypeface());
+        HSLFFontInfo fi = getFontInfo(fontInfo.getTypeface(), fontInfo.getCharset());
         if (fi != null) {
             return fi;
         }
 
         fi = new HSLFFontInfo(fontInfo);
         fi.setIndex(fonts.size());
-        fonts.put(fi.getTypeface(), fi);
+        fonts.put(fi.getIndex(), fi);
 
         FontEntityAtom fnt = fi.createRecord();
 
@@ -172,7 +174,23 @@ public final class FontCollection extends RecordContainer {
      * @return the HSLFFontInfo for the given name or {@code null} if not found
      */
     public HSLFFontInfo getFontInfo(String typeface) {
-        return fonts.get(typeface);
+        return getFontInfo(typeface, null);
+    }
+
+    /**
+     * Lookup a FontInfo object by its typeface
+     *
+     * @param typeface the full font name
+     * @param charset the charset
+     *
+     * @return the HSLFFontInfo for the given name or {@code null} if not found
+     */
+    public HSLFFontInfo getFontInfo(String typeface, FontCharset charset) {
+        return fonts.values().stream().filter(findFont(typeface, charset)).findFirst().orElse(null);
+    }
+
+    private static Predicate<HSLFFontInfo> findFont(String typeface, FontCharset charset) {
+        return (fi) -> typeface.equals(fi.getTypeface()) && (charset == null || charset.equals(fi.getCharset()));
     }
 
     /**

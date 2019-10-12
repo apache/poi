@@ -89,37 +89,49 @@ public final class HSLFSlideMaster extends HSLFMasterSheet {
      */
     @Override
     public TextPropCollection getPropCollection(final int txtype, final int level, final String name, final boolean isCharacter) {
-        if (txtype < _txmaster.length) {
-            final TxMasterStyleAtom t = _txmaster[txtype];
-            final List<TextPropCollection> styles = isCharacter ? t.getCharacterStyles() : t.getParagraphStyles();
-            // TODO: what is the reaction for readOnly=false and styles.isEmpty()?
-            final int minLevel = Math.min(level, styles.size()-1);
-            if ("*".equals(name)) {
-                return styles.get(minLevel);
-            }
-            
-            for (int i=minLevel; i >= 0; i--) {
-                final TextPropCollection col = styles.get(i);
-                final TextProp tp = col.findByName(name);
-                if (tp != null) {
-                    return col;
-                }
-            }
+        TextPropCollection tpc = getPropHelper(txtype, level, name, isCharacter);
+        if (tpc != null) {
+            return tpc;
         }
 
-        switch (TextPlaceholder.fromNativeId(txtype)) {
+        TextPlaceholder tp = TextPlaceholder.fromNativeId(txtype);
+        switch (tp == null ? TextPlaceholder.BODY : tp) {
             case BODY:
             case CENTER_BODY:
             case HALF_BODY:
             case QUARTER_BODY:
-                return getPropCollection(TextPlaceholder.BODY.nativeId, level, name, isCharacter);
+                return getPropHelper(TextPlaceholder.BODY.nativeId, level, name, isCharacter);
             case TITLE:
             case CENTER_TITLE:
-                return getPropCollection(TextPlaceholder.TITLE.nativeId, level, name, isCharacter);
+                return getPropHelper(TextPlaceholder.TITLE.nativeId, level, name, isCharacter);
             default:
                 return null;
         }
     }
+
+    private TextPropCollection getPropHelper(final int txtype, final int level, final String name, final boolean isCharacter) {
+        if (txtype >= _txmaster.length) {
+            return null;
+        }
+        final TxMasterStyleAtom t = _txmaster[txtype];
+        final List<TextPropCollection> styles = isCharacter ? t.getCharacterStyles() : t.getParagraphStyles();
+        // TODO: what is the reaction for readOnly=false and styles.isEmpty()?
+        final int minLevel = Math.min(level, styles.size()-1);
+        if ("*".equals(name)) {
+            return styles.get(minLevel);
+        }
+
+        for (int i=minLevel; i >= 0; i--) {
+            final TextPropCollection col = styles.get(i);
+            final TextProp tp = col.findByName(name);
+            if (tp != null) {
+                return col;
+            }
+        }
+
+        return null;
+    }
+
 
     /**
      * Assign SlideShow for this slide master.

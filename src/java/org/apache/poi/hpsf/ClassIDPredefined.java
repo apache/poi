@@ -84,7 +84,9 @@ public enum ClassIDPredefined {
     /** AcroExch.Document */
     PDF                  ("{B801CA65-A1FC-11D0-85AD-444553540000}", ".pdf", "application/pdf"),
     /** Plain Text Persistent Handler **/
-    TXT_ONLY             ("{5e941d80-bf96-11cd-b579-08002b30bfeb}", ".txt", "text/plain")
+    TXT_ONLY             ("{5e941d80-bf96-11cd-b579-08002b30bfeb}", ".txt", "text/plain"),
+    /** Microsoft Paint **/
+    PAINT                ("{0003000A-0000-0000-C000-000000000046}", null, null)
     ;
     
     private static final Map<String,ClassIDPredefined> LOOKUP = new HashMap<>();
