@@ -86,6 +86,7 @@ public final class TestEscherDggRecord {
             "\t, numShapesSaved: 2\n" +
             "\t, drawingsSaved: 1\n" +
             "}";
+        expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals( expected, createRecord().toString() );
     }
 

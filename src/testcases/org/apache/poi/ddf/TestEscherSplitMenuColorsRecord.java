@@ -75,6 +75,7 @@ public final class TestEscherSplitMenuColorsRecord {
             "\t, color3: 2\n" +
             "\t, color4: 1\n" +
             "}";
+        expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals( expected, createRecord().toString() );
     }
 

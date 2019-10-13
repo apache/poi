@@ -159,6 +159,7 @@ public final class TestUnknownEscherRecord {
             "\t, recordSize: 8\n" +
             "\t, data: \"\"\n" +
             "}";
+        expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals(expected, r.toString() );
     }
 }

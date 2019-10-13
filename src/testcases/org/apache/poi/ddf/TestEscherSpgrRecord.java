@@ -75,6 +75,7 @@ public final class TestEscherSpgrRecord {
             "\t, rectX2: 3\n" +
             "\t, rectY2: 4\n" +
             "}";
+        expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals( expected, createRecord().toString() );
     }
 

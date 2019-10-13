@@ -88,6 +88,7 @@ public class TestEscherClientAnchorRecord {
             "\t, dy2: 66 /* 0x0042 */\n" +
             "\t, remainingData: \"/90=\"\n" +
             "}";
+        expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals( expected, createRecord().toString() );
     }
 

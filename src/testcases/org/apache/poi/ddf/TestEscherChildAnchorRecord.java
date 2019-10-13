@@ -76,6 +76,7 @@ public final class TestEscherChildAnchorRecord {
             "\t, x2: 3\n" +
             "\t, y2: 4\n" +
             "}";
+        expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals( expected, createRecord().toString() );
     }
 

@@ -62,6 +62,7 @@ public class TestEscherClientDataRecord {
             "\t, recordSize: 8\n" +
             "\t, remainingData: \"\"\n" +
             "}";
+        expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals( expected, createRecord().toString() );
     }
 

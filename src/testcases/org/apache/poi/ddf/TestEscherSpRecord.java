@@ -68,6 +68,7 @@ public class TestEscherSpRecord {
             "\t, shapeId: 1024 /* 0x00000400 */\n" +
             "\t, flags: 0x5 /* GROUP | PATRIARCH */ \n" +
             "}";
+        expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals( expected, createRecord().toString() );
     }
 
