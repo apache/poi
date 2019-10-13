@@ -90,6 +90,7 @@ public final class TestEscherContainerRecord {
 			"\t, recordSize: 8\n" +
 			"\t, isContainer: true\n" +
 			"}";
+		expected = expected.replace("\n", System.getProperty("line.separator"));
 		assertEquals(expected, r.toString());
 
 		EscherOptRecord r2 = new EscherOptRecord();
@@ -119,7 +120,8 @@ public final class TestEscherContainerRecord {
 			"\t\t}\n" +
 			"\t]\n" +
 			"}";
-        assertEquals(expected, r.toString());
+		expected = expected.replace("\n", System.getProperty("line.separator"));
+		assertEquals(expected, r.toString());
 
 		r.addChildRecord(r2);
 		expected =
@@ -154,6 +156,7 @@ public final class TestEscherContainerRecord {
 			"\t\t}\n" +
 			"\t]\n" +
 			"}";
+		expected = expected.replace("\n", System.getProperty("line.separator"));
 		assertEquals(expected, r.toString());
     }
 

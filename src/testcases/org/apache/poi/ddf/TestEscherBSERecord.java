@@ -107,7 +107,7 @@ public final class TestEscherBSERecord {
             "\t, blipRecord: null\n" +
             "\t, remainingData: \"\"\n" +
             "}";
-
+        expected = expected.replace("\n", System.getProperty("line.separator"));
         String actual = record.toString();
         assertEquals( expected, actual );
     }

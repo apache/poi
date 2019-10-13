@@ -165,6 +165,7 @@ public final class TestEscherOptRecord {
             "\t\t, value: 1\n" +
             "\t}]\n" +
             "}";
+        expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals( expected, r.toString());
     }
 
