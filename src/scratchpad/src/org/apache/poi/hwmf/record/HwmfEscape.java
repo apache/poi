@@ -205,7 +205,7 @@ public class HwmfEscape implements HwmfRecord {
         int byteCount = leis.readUShort();
         int size = 2*LittleEndianConsts.SHORT_SIZE;
 
-        escapeData = escapeFunction.constructor.get();
+        escapeData = (escapeFunction == null) ? new WmfEscapeUnknownData() : escapeFunction.constructor.get();
         size += escapeData.init(leis, byteCount, escapeFunction);
 
         return size;

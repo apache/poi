@@ -341,6 +341,9 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
     private void handleEscapeInfo(CTPath2D pathCT, Path2D path2D, byte[] segElem, Iterator<byte[]> vertIter) {
         final ObjectFactory of = new ObjectFactory();
         HSLFFreeformShape.EscapeInfo ei = getEscapeInfo(segElem);
+        if (ei == null) {
+            return;
+        }
         switch (ei) {
             case EXTENSION:
                 break;

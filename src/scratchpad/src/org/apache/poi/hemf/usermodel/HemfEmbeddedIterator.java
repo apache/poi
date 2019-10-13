@@ -17,15 +17,7 @@
 
 package org.apache.poi.hemf.usermodel;
 
-import java.awt.Transparency;
-import java.awt.color.ColorSpace;
 import java.awt.image.BufferedImage;
-import java.awt.image.ComponentColorModel;
-import java.awt.image.DataBuffer;
-import java.awt.image.DataBufferByte;
-import java.awt.image.PixelInterleavedSampleModel;
-import java.awt.image.Raster;
-import java.awt.image.WritableRaster;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayDeque;
@@ -38,7 +30,6 @@ import org.apache.poi.hemf.record.emf.HemfComment;
 import org.apache.poi.hemf.record.emf.HemfRecord;
 import org.apache.poi.hemf.record.emfplus.HemfPlusImage.EmfPlusBitmapDataType;
 import org.apache.poi.hemf.record.emfplus.HemfPlusImage.EmfPlusImage;
-import org.apache.poi.hemf.record.emfplus.HemfPlusImage.EmfPlusPixelFormat;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObject;
 import org.apache.poi.hwmf.record.HwmfBitmapDib;
@@ -209,9 +200,12 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
         EmfPlusImage img = epo.getObjectData();
         assert(img.getImageDataType() != null);
 
-        HwmfEmbedded emb = getEmfPlusImageData();
+        final HwmfEmbedded emb = getEmfPlusImageData();
+        if (emb == null) {
+            return null;
+        }
 
-        HwmfEmbeddedType et;
+        final HwmfEmbeddedType et;
         switch (img.getImageDataType()) {
             case BITMAP:
                 if (img.getBitmapType() == EmfPlusBitmapDataType.COMPRESSED) {

@@ -39,6 +39,8 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
 
 /**
@@ -46,6 +48,7 @@ import org.apache.poi.util.RecordFormatException;
  */
 @Internal
 public class HemfComment {
+    private static final POILogger logger = POILogFactory.getLogger(HemfComment.class);
     private static final int MAX_RECORD_LENGTH = HwmfPicture.MAX_RECORD_LENGTH;
 
     public enum HemfCommentRecordType {
@@ -557,7 +560,11 @@ public class HemfComment {
 
             wmfData = IOUtils.safelyAllocate(winMetafileSize, MAX_RECORD_LENGTH);
             // some emf comments are truncated, so we don't use readFully here
-            leis.read(wmfData);
+            int readBytes = leis.read(wmfData);
+            if (readBytes < wmfData.length) {
+                logger.log(POILogger.INFO, "Emf comment with WMF: expected "+wmfData.length+
+                        " bytes - received only "+readBytes+" bytes.");
+            }
 
             return leis.getReadIndex()-startIdx;
         }
