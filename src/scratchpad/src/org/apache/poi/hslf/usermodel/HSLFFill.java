@@ -20,6 +20,8 @@ package org.apache.poi.hslf.usermodel;
 import java.awt.Color;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.ddf.AbstractEscherOptRecord;
@@ -229,6 +231,19 @@ public final class HSLFFill {
         return new FillStyle() {
             @Override
             public PaintStyle getPaint() {
+                AbstractEscherOptRecord opt = shape.getEscherOptRecord();
+
+                EscherSimpleProperty hitProp = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__NOFILLHITTEST);
+                int propVal = (hitProp == null) ? 0 : hitProp.getPropertyValue();
+
+                EscherSimpleProperty masterProp = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.SHAPE__MASTER);
+
+                if (!FILL_USE_FILLED.isSet(propVal) && masterProp != null) {
+                    int masterId = masterProp.getPropertyValue();
+                    HSLFShape o = shape.getSheet().getMasterSheet().getShapes().stream().filter(s -> s.getShapeId() == masterId).findFirst().orElse(null);
+                    return o != null ? o.getFillStyle().getPaint() : null;
+                }
+
                 final int fillType = getFillType();
                 // TODO: fix gradient types, this mismatches with the MS-ODRAW definition ...
                 // need to handle (not only) the type (radial,rectangular,linear),
@@ -265,8 +280,60 @@ public final class HSLFFill {
 
     private GradientPaint getGradientPaint(final GradientType gradientType) {
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
+
+        EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__NOFILLHITTEST);
+        int propVal = (p == null) ? 0 : p.getPropertyValue();
+
+        if (FILL_USE_FILLED.isSet(propVal) && !FILL_FILLED.isSet(propVal)) {
+            return null;
+        }
+
+
         final EscherArrayProperty ep = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__SHADECOLORS);
         final int colorCnt = (ep == null) ? 0 : ep.getNumberOfElementsInArray();
+
+        final List<Color> colors = new ArrayList<>();
+        final List<Float> fractions = new ArrayList<>();
+
+        // TODO: handle palette colors and alpha(?) value
+        if (colorCnt == 0) {
+            colors.add(getBackgroundColor());
+            colors.add(getForegroundColor());
+            fractions.add(0f);
+            fractions.add(1f);
+        } else {
+            ep.forEach(data -> {
+                EscherColorRef ecr = new EscherColorRef(data, 0, 4);
+                colors.add(shape.getColor(ecr));
+                double pos = Units.fixedPointToDouble(LittleEndian.getInt(data, 4));
+                fractions.add((float)pos);
+            });
+        }
+
+        int focus = getFillFocus();
+        if (focus == 100 || focus == -100) {
+            Collections.reverse(colors);
+        } else if (focus != 0) {
+            if (focus < 0) {
+                focus = 100+focus;
+            }
+            // TODO: depending on fill focus, rotation with shape and other escher properties
+            // there are still a lot of cases where we get the gradients wrong
+            List<Color> reflectedColors = new ArrayList<>(colors.subList(1,colors.size()));
+            Collections.reverse(reflectedColors);
+            colors.addAll(0, reflectedColors);
+
+            final List<Float> fractRev = new ArrayList<>();
+            for (int i=fractions.size()-2; i >= 0; i--) {
+                float val = (float)(1 - fractions.get(i) * focus / 100.);
+                fractRev.add(val);
+            }
+            for (int i=0; i<fractions.size(); i++) {
+                float val = (float)(fractions.get(i) * focus / 100.);
+                fractions.set(i, val);
+            }
+            fractions.addAll(fractRev);
+        }
 
         return new GradientPaint() {
             @Override
@@ -277,24 +344,10 @@ public final class HSLFFill {
                 int rot = shape.getEscherProperty(EscherPropertyTypes.FILL__ANGLE);
                 return 90-Units.fixedPointToDouble(rot);
             }
-            
+
             @Override
             public ColorStyle[] getGradientColors() {
-                ColorStyle[] cs;
-                if (colorCnt == 0) {
-                    cs = new ColorStyle[2];
-                    cs[0] = wrapColor(getBackgroundColor());
-                    cs[1] = wrapColor(getForegroundColor());
-                } else {
-                    cs = new ColorStyle[colorCnt];
-                    int idx = 0;
-                    // TODO: handle palette colors and alpha(?) value 
-                    for (byte[] data : ep) {
-                        EscherColorRef ecr = new EscherColorRef(data, 0, 4);
-                        cs[idx++] = wrapColor(shape.getColor(ecr));
-                    }
-                }
-                return cs;
+                return colors.stream().map(this::wrapColor).toArray(ColorStyle[]::new);
             }
             
             private ColorStyle wrapColor(Color col) {
@@ -303,16 +356,9 @@ public final class HSLFFill {
             
             @Override
             public float[] getGradientFractions() {
-                float[] frc;
-                if (colorCnt == 0) {
-                    frc = new float[]{0, 1};
-                } else {
-                    frc = new float[colorCnt];
-                    int idx = 0;
-                    for (byte[] data : ep) {
-                        double pos = Units.fixedPointToDouble(LittleEndian.getInt(data, 4));
-                        frc[idx++] = (float)pos;
-                    }
+                float[] frc = new float[fractions.size()];
+                for (int i = 0; i<fractions.size(); i++) {
+                    frc[i] = fractions.get(i);
                 }
                 return frc;
             }
@@ -370,6 +416,20 @@ public final class HSLFFill {
         return prop == null ? FILL_SOLID : prop.getPropertyValue();
     }
 
+    /**
+     * The fillFocus property specifies the relative position of the last color in the shaded fill.
+     * Its used to specify the center of an reflected fill. 0 = no reflection, 50 = reflected in the middle.
+     * If fillFocus is less than 0, the relative position of the last color is outside the shape,
+     * and the relative position of the first color is within the shape.
+     *
+     * @return a percentage in the range of -100 .. 100; defaults to 0
+     */
+    public int getFillFocus() {
+        AbstractEscherOptRecord opt = shape.getEscherOptRecord();
+        EscherSimpleProperty prop = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__FOCUS);
+        return prop == null ? 0 : prop.getPropertyValue();
+    }
+
     void afterInsert(HSLFSheet sh){
         AbstractEscherOptRecord opt = shape.getEscherOptRecord();
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__PATTERNTEXTURE);
@@ -420,7 +480,7 @@ public final class HSLFFill {
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__NOFILLHITTEST);
         int propVal = (p == null) ? 0 : p.getPropertyValue();
 
-        return (FILL_USE_FILLED.isSet(propVal) && FILL_FILLED.isSet(propVal))
+        return (!FILL_USE_FILLED.isSet(propVal) || (FILL_USE_FILLED.isSet(propVal) && FILL_FILLED.isSet(propVal)))
             ? shape.getColor(EscherPropertyTypes.FILL__FILLCOLOR, EscherPropertyTypes.FILL__FILLOPACITY)
             : null;
     }
@@ -464,7 +524,7 @@ public final class HSLFFill {
         EscherSimpleProperty p = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__NOFILLHITTEST);
         int propVal = (p == null) ? 0 : p.getPropertyValue();
 
-        return (FILL_USE_FILLED.isSet(propVal) && FILL_FILLED.isSet(propVal))
+        return (!FILL_USE_FILLED.isSet(propVal) || (FILL_USE_FILLED.isSet(propVal) && FILL_FILLED.isSet(propVal)))
             ? shape.getColor(EscherPropertyTypes.FILL__FILLBACKCOLOR, EscherPropertyTypes.FILL__FILLOPACITY)
             : null;
     }

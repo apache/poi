@@ -26,6 +26,7 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 
 import org.apache.poi.sl.draw.binding.CTPath2DArcTo;
+import org.apache.poi.util.Internal;
 
 /**
  * ArcTo command within a shape path in DrawingML:
@@ -89,15 +90,16 @@ public class ArcToCommand implements PathCommand {
      *            |270/-90                     |90/-270 (5400000)
      * </pre>
      *
-     * @param ooAngle the angle in OOXML units
-     * @param width the half width of the bounding box
-     * @param height the half height of the bounding box
+     * @param ooAngle the angle in OOXML units divided by 60000
+     * @param width the width of the bounding box
+     * @param height the height of the bounding box
      *
      * @return the angle in degrees
      *
      * @see <a href="http://www.onlinemathe.de/forum/Problem-bei-Winkelberechnungen-einer-Ellipse">unskew angle</a>
      **/
-    private double convertOoxml2AwtAngle(double ooAngle, double width, double height) {
+    @Internal
+    public static double convertOoxml2AwtAngle(double ooAngle, double width, double height) {
         double aspect = (height / width);
         // reverse angle for awt
         double awtAngle = -ooAngle;

@@ -17,11 +17,27 @@
 
 package org.apache.poi.sl.draw;
 
-import java.awt.*;
+import java.awt.AlphaComposite;
+import java.awt.BasicStroke;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.LinearGradientPaint;
 import java.awt.MultipleGradientPaint.ColorSpaceType;
 import java.awt.MultipleGradientPaint.CycleMethod;
-import java.awt.geom.*;
-import java.awt.image.*;
+import java.awt.Paint;
+import java.awt.PaintContext;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
+import java.awt.Shape;
+import java.awt.geom.AffineTransform;
+import java.awt.geom.Area;
+import java.awt.geom.IllegalPathStateException;
+import java.awt.geom.Point2D;
+import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 
 import org.apache.poi.util.Internal;
 
@@ -174,14 +190,17 @@ class PathGradientPaint implements Paint {
             int[] rgb = new int[cm.getNumComponents()];
 
             for (int i = gradientSteps-1; i>=0; i--) {
-                img2.getPixel(i, 0, rgb);
+                img2.getPixel(gradientSteps-i-1, 0, rgb);
                 Color c = new Color(rgb[0],rgb[1],rgb[2]);
                 if (rgb.length == 4) {
                     // it doesn't work to use just a color with transparency ...
-                    graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC, rgb[3]/255.0f));                           
+                    graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC, rgb[3]/255.0f));
                 }
                 graphics.setStroke(new BasicStroke(i+1, capStyle, joinStyle));
                 graphics.setColor(c);
+                if (i == gradientSteps-1) {
+                    graphics.fill(shape);
+                }
                 graphics.draw(shape);
             }
             

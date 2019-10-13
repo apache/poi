@@ -507,21 +507,21 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
         // a different color type
         switch (sis) {
             case FILL_COLOR: {
-                return getFill().getForegroundColor();
+                return getColor(EscherPropertyTypes.FILL__FILLCOLOR, EscherPropertyTypes.FILL__FILLOPACITY);
             }
             case LINE_OR_FILL_COLOR: {
                 Color col = null;
                 if (this instanceof HSLFSimpleShape) {
-                    col = ((HSLFSimpleShape)this).getLineColor();
+                    col = getColor(EscherPropertyTypes.LINESTYLE__COLOR, EscherPropertyTypes.LINESTYLE__OPACITY);
                 }
                 if (col == null) {
-                    col = getFill().getForegroundColor();
+                    col = getColor(EscherPropertyTypes.FILL__FILLCOLOR, EscherPropertyTypes.FILL__FILLOPACITY);
                 }
                 return col;
             }
             case LINE_COLOR: {
                 if (this instanceof HSLFSimpleShape) {
-                    return ((HSLFSimpleShape)this).getLineColor();
+                    return getColor(EscherPropertyTypes.LINESTYLE__COLOR, EscherPropertyTypes.LINESTYLE__OPACITY);
                 }
                 break;
             }
@@ -536,7 +536,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
                 break;
             }
             case FILL_BACKGROUND_COLOR: {
-                return getFill().getBackgroundColor();
+                return getColor(EscherPropertyTypes.FILL__FILLBACKCOLOR, EscherPropertyTypes.FILL__FILLOPACITY);
             }
             case LINE_BACKGROUND_COLOR: {
                 if (this instanceof HSLFSimpleShape) {
@@ -545,9 +545,9 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
                 break;
             }
             case FILL_OR_LINE_COLOR: {
-                Color col = getFill().getForegroundColor();
+                Color col = getColor(EscherPropertyTypes.FILL__FILLCOLOR, EscherPropertyTypes.FILL__FILLOPACITY);
                 if (col == null && this instanceof HSLFSimpleShape) {
-                    col = ((HSLFSimpleShape)this).getLineColor();
+                    col = getColor(EscherPropertyTypes.LINESTYLE__COLOR, EscherPropertyTypes.LINESTYLE__OPACITY);
                 }
                 return col;
             }

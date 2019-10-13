@@ -225,7 +225,7 @@ public class PPTX2PNG {
                 proxy.setSlideNo(slideNo);
                 if (!quiet) {
                     String title = proxy.getTitle();
-                    System.out.println("Rendering slide " + (slideNo + 1) + (title == null ? "" : ": " + title.trim()));
+                    System.out.println("Rendering slide " + slideNo + (title == null ? "" : ": " + title.trim()));
                 }
 
                 GenericRecord gr = proxy.getRoot();
@@ -301,8 +301,6 @@ public class PPTX2PNG {
 
     private interface MFProxy extends Closeable {
         void parse(File file) throws IOException;
-//        boolean isEmpty();
-//        void dumpRecords(Writer writer) throws IOException;
 //        Iterable<HwmfEmbedded> getEmbeddings();
         Dimension2D getSize();
 

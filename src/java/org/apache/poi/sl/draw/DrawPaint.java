@@ -17,6 +17,8 @@
 
 package org.apache.poi.sl.draw;
 
+import static org.apache.poi.sl.draw.geom.ArcToCommand.convertOoxml2AwtAngle;
+
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
@@ -442,6 +444,8 @@ public class DrawPaint {
         }
 
         Rectangle2D anchor = DrawShape.getAnchor(graphics, shape);
+
+        angle = convertOoxml2AwtAngle(-angle, anchor.getWidth(), anchor.getHeight());
 
         AffineTransform at = AffineTransform.getRotateInstance(Math.toRadians(angle), anchor.getCenterX(), anchor.getCenterY());
 
