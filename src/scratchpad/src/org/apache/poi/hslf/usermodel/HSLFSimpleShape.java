@@ -337,7 +337,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         }
 
 
-        EscherPropertyTypes escherProp = ADJUST_VALUES[adjInt];
+        EscherPropertyTypes escherProp = ADJUST_VALUES[adjInt-1];
 
         int adjval = getEscherProperty(escherProp, -1);
 
