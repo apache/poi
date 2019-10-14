@@ -41,6 +41,22 @@ public final class TestFractionFormat {
         String ret = f.format(val);
         assertEquals("26027/81", ret);
     }
+    
+    @Test
+    public void testWithBigWholePart() throws Exception {
+        FractionFormat f = new FractionFormat("#", "???/???");
+        
+        assertEquals("10100136259702", f.format(10100136259702d));
+        assertEquals("-10100136259702", f.format(-10100136259702d));
+        
+        // Excel displays fraction: 51/512
+        assertEquals("10100136259702 10/100", f.format(10100136259702.1d));
+        assertEquals("-10100136259702 10/100", f.format(-10100136259702.1d));
+        
+        // Excel displays fraction: 461/512
+        assertEquals("10100136259702 90/100", f.format(10100136259702.9d));
+        assertEquals("-10100136259702 90/100", f.format(-10100136259702.9d));
+    }
      
     @Test
     public void testTruthFile() throws Exception {

@@ -16,6 +16,8 @@
  */
 
 package org.apache.poi.ss.usermodel;
+
+import java.math.BigDecimal;
 import java.text.FieldPosition;
 import java.text.Format;
 import java.text.ParsePosition;
@@ -99,14 +101,15 @@ public class FractionFormat extends Format {
 
     public String format(Number num) {
 
-        final double doubleValue = num.doubleValue();
+        final BigDecimal doubleValue = new BigDecimal(num.doubleValue());
         
-        final boolean isNeg = (doubleValue < 0.0f) ? true : false;
-        final double absDoubleValue = Math.abs(doubleValue);
-        
-        final double wholePart = Math.floor(absDoubleValue);
-        final double decPart = absDoubleValue - wholePart;
-        if (wholePart + decPart == 0) {
+        final boolean isNeg = doubleValue.compareTo(BigDecimal.ZERO) < 0;
+
+        final BigDecimal absValue = doubleValue.abs();
+        final BigDecimal wholePart = new BigDecimal(absValue.toBigInteger());
+        final BigDecimal decPart = absValue.remainder(BigDecimal.ONE);
+
+        if (wholePart.add(decPart).compareTo(BigDecimal.ZERO) == 0) {
             return "0";
         }
         
@@ -119,13 +122,13 @@ public class FractionFormat extends Format {
         // }
         
         //this is necessary to prevent overflow in the maxDenom calculation
-        if (Double.compare(decPart, 0) == 0){
+        if (decPart.compareTo(BigDecimal.ZERO) == 0){
             
             StringBuilder sb = new StringBuilder();
             if (isNeg){
                 sb.append("-");
             }
-            sb.append((int)wholePart);
+            sb.append(wholePart);
             return sb.toString();
         }
         
@@ -133,13 +136,13 @@ public class FractionFormat extends Format {
         try{
             //this should be the case because of the constructor
             if (exactDenom > 0){
-                fract = SimpleFraction.buildFractionExactDenominator(decPart, exactDenom);
+                fract = SimpleFraction.buildFractionExactDenominator(decPart.doubleValue(), exactDenom);
             } else {
-                fract = SimpleFraction.buildFractionMaxDenominator(decPart, maxDenom);
+                fract = SimpleFraction.buildFractionMaxDenominator(decPart.doubleValue(), maxDenom);
             }
         } catch (RuntimeException e){
             LOGGER.log(POILogger.WARN, "Can't format fraction", e);
-            return Double.toString(doubleValue);
+            return Double.toString(doubleValue.doubleValue());
         }
 
         StringBuilder sb = new StringBuilder();
@@ -151,23 +154,25 @@ public class FractionFormat extends Format {
         
         //if whole part has to go into the numerator
         if (wholePartFormatString == null || wholePartFormatString.isEmpty()){
-            int trueNum = (fract.getDenominator()*(int)wholePart)+fract.getNumerator();
-            sb.append(trueNum).append("/").append(fract.getDenominator());
+            final int fden = fract.getDenominator();
+            final int fnum = fract.getNumerator();
+            BigDecimal trueNum = wholePart.multiply(new BigDecimal(fden)).add(new BigDecimal(fnum));
+            sb.append(trueNum.toBigInteger()).append("/").append(fden);
             return sb.toString();
         }
         
         
         //short circuit if fraction is 0 or 1
         if (fract.getNumerator() == 0){
-            sb.append(Integer.toString((int)wholePart));
+            sb.append(wholePart);
             return sb.toString();
         } else if (fract.getNumerator() == fract.getDenominator()){
-            sb.append(Integer.toString((int)wholePart+1));
+            sb.append(wholePart.add(BigDecimal.ONE));
             return sb.toString();
         }
        //as mentioned above, this ignores the exact space formatting in Excel
-        if (wholePart > 0){
-            sb.append(Integer.toString((int)wholePart)).append(" ");
+        if (wholePart.compareTo(BigDecimal.ZERO) > 0){
+            sb.append(wholePart).append(" ");
         }
         sb.append(fract.getNumerator()).append("/").append(fract.getDenominator());
         return sb.toString();
