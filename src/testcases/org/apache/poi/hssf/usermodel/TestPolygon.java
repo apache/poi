@@ -92,11 +92,11 @@ public class TestPolygon {
             "<flags flag=\"0x8145\" description=\"IS_COMPLEX\"/>" +
             "<data>BQAFAPD/AAAFAFoABQAyACwAWgBYAAAABQA=</data>" +
             "<elements>" +
-            "<item>>AAAFAA==</item>" +
-            "<item>>WgAFAA==</item>" +
-            "<item>>MgAsAA==</item>" +
-            "<item>>WgBYAA==</item>" +
-            "<item>>AAAFAA==</item>" +
+            "<item>AAAFAA==</item>" +
+            "<item>WgAFAA==</item>" +
+            "<item>MgAsAA==</item>" +
+            "<item>WgBYAA==</item>" +
+            "<item>AAAFAA==</item>" +
             "</elements>" +
             "</record>";
         String actual = verticesProp1.toXml("").replaceAll("[\r\n\t]","");
@@ -115,10 +115,10 @@ public class TestPolygon {
             "<flags flag=\"0x8145\" description=\"IS_COMPLEX\"/>" +
             "<data>BAAEAPD/AQAEAAIABQADAAYAAQAEAA==</data>" +
             "<elements>" +
-            "<item>>AQAEAA==</item>" +
-            "<item>>AgAFAA==</item>" +
-            "<item>>AwAGAA==</item>" +
-            "<item>>AQAEAA==</item>" +
+            "<item>AQAEAA==</item>" +
+            "<item>AgAFAA==</item>" +
+            "<item>AwAGAA==</item>" +
+            "<item>AQAEAA==</item>" +
             "</elements></record>";
         actual = verticesProp1.toXml("").replaceAll("[\r\n\t]","");
         

@@ -27,12 +27,12 @@ public final class TestEscherBoolProperty {
         EscherBoolProperty p = new EscherBoolProperty(EscherPropertyTypes.GEOMETRY__FILLOK, 1);
         String expected =
             "{   /* GEOMETRY__FILLOK */\n" +
-            "\t  id: 383 /* 0x017f */\n" +
-            "\t, name: \"geometry.fillok\"\n" +
-            "\t, propertyNumber: 383 /* 0x017f */\n" +
-            "\t, propertySize: 6\n" +
-            "\t, flags: 0x17f /*  */ \n" +
-            "\t, value: 1\n" +
+            "\t  \"id\": 383 /* 0x017f */\n" +
+            "\t, \"name\": \"geometry.fillok\"\n" +
+            "\t, \"propertyNumber\": 383 /* 0x017f */\n" +
+            "\t, \"propertySize\": 6\n" +
+            "\t, \"flags\": 383 /*  */ \n" +
+            "\t, \"value\": 1\n" +
             "}";
         expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals(expected, p.toString());

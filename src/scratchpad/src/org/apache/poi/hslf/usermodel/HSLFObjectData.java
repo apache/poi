@@ -20,11 +20,13 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hslf.record.ExOleObjStg;
-import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.FileMagic;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.ObjectData;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -32,7 +34,7 @@ import org.apache.poi.util.POILogger;
 /**
  * A class that represents object data embedded in a slide show.
  */
-public class HSLFObjectData implements ObjectData {
+public class HSLFObjectData implements ObjectData, GenericRecord {
     private static final POILogger LOG = POILogFactory.getLogger(HSLFObjectData.class);
     
     /**
@@ -90,5 +92,15 @@ public class HSLFObjectData implements ObjectData {
     @Override
     public String getFileName() {
         return null;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return null;
+    }
+
+    @Override
+    public List<? extends GenericRecord> getGenericChildren() {
+        return Collections.singletonList(getExOleObjStg());
     }
 }

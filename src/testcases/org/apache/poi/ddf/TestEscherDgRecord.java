@@ -59,14 +59,14 @@ public final class TestEscherDgRecord {
     public void testToString() {
         String expected =
             "{   /* DG */\n" +
-            "\t  recordId: -4088 /* 0xf008 */\n" +
-            "\t, version: 0\n" +
-            "\t, instance: 1\n" +
-            "\t, options: 16 /* 0x0010 */\n" +
-            "\t, recordSize: 16 /* 0x00000010 */\n" +
-            "\t, numShapes: 2\n" +
-            "\t, lastMSOSPID: 1025 /* 0x00000401 */\n" +
-            "\t, drawingGroupId: 1\n" +
+            "\t  \"recordId\": -4088 /* 0xf008 */\n" +
+            "\t, \"version\": 0\n" +
+            "\t, \"instance\": 1\n" +
+            "\t, \"options\": 16 /* 0x0010 */\n" +
+            "\t, \"recordSize\": 16 /* 0x00000010 */\n" +
+            "\t, \"numShapes\": 2\n" +
+            "\t, \"lastMSOSPID\": 1025 /* 0x00000401 */\n" +
+            "\t, \"drawingGroupId\": 1\n" +
             "}";
         expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals( expected, createRecord().toString() );

@@ -83,12 +83,12 @@ public final class TestEscherContainerRecord {
 		r.setOptions((short) 0x000F);
         String expected =
             "{   /* SP_CONTAINER */\n" +
-			"\t  recordId: -4092 /* 0xf004 */\n" +
-			"\t, version: 15 /* 0x000f */\n" +
-			"\t, instance: 0\n" +
-			"\t, options: 15 /* 0x000f */\n" +
-			"\t, recordSize: 8\n" +
-			"\t, isContainer: true\n" +
+			"\t  \"recordId\": -4092 /* 0xf004 */\n" +
+			"\t, \"version\": 15 /* 0x000f */\n" +
+			"\t, \"instance\": 0\n" +
+			"\t, \"options\": 15 /* 0x000f */\n" +
+			"\t, \"recordSize\": 8\n" +
+			"\t, \"isContainer\": true\n" +
 			"}";
 		expected = expected.replace("\n", System.getProperty("line.separator"));
 		assertEquals(expected, r.toString());
@@ -101,22 +101,22 @@ public final class TestEscherContainerRecord {
 		r.addChildRecord(r2);
 		expected =
 	        "{   /* SP_CONTAINER */\n" +
-			"\t  recordId: -4092 /* 0xf004 */\n" +
-			"\t, version: 15 /* 0x000f */\n" +
-			"\t, instance: 0\n" +
-			"\t, options: 15 /* 0x000f */\n" +
-			"\t, recordSize: 16 /* 0x00000010 */\n" +
-			"\t, isContainer: true\n" +
-			"\t, children: [\n" +
+			"\t  \"recordId\": -4092 /* 0xf004 */\n" +
+			"\t, \"version\": 15 /* 0x000f */\n" +
+			"\t, \"instance\": 0\n" +
+			"\t, \"options\": 15 /* 0x000f */\n" +
+			"\t, \"recordSize\": 16 /* 0x00000010 */\n" +
+			"\t, \"isContainer\": true\n" +
+			"\t, \"children\": [\n" +
 			"\t\t{   /* OPT */\n" +
-			"\t\t\t  recordId: -4085 /* 0xf00b */\n" +
-			"\t\t\t, version: 3\n" +
-			"\t\t\t, instance: 0\n" +
-			"\t\t\t, options: 3\n" +
-			"\t\t\t, recordSize: 8\n" +
-			"\t\t\t, isContainer: false\n" +
-			"\t\t\t, properties: [\n" +
-			"]\n" +
+			"\t\t\t  \"recordId\": -4085 /* 0xf00b */\n" +
+			"\t\t\t, \"version\": 3\n" +
+			"\t\t\t, \"instance\": 0\n" +
+			"\t\t\t, \"options\": 3\n" +
+			"\t\t\t, \"recordSize\": 8\n" +
+			"\t\t\t, \"isContainer\": false\n" +
+			"\t\t\t, \"properties\": [\n" +
+			"\t\t\t]\n" +
 			"\t\t}\n" +
 			"\t]\n" +
 			"}";
@@ -126,33 +126,31 @@ public final class TestEscherContainerRecord {
 		r.addChildRecord(r2);
 		expected =
 	        "{   /* SP_CONTAINER */\n" +
-			"\t  recordId: -4092 /* 0xf004 */\n" +
-			"\t, version: 15 /* 0x000f */\n" +
-			"\t, instance: 0\n" +
-			"\t, options: 15 /* 0x000f */\n" +
-			"\t, recordSize: 24 /* 0x00000018 */\n" +
-			"\t, isContainer: true\n" +
-			"\t, children: [\n" +
+			"\t  \"recordId\": -4092 /* 0xf004 */\n" +
+			"\t, \"version\": 15 /* 0x000f */\n" +
+			"\t, \"instance\": 0\n" +
+			"\t, \"options\": 15 /* 0x000f */\n" +
+			"\t, \"recordSize\": 24 /* 0x00000018 */\n" +
+			"\t, \"isContainer\": true\n" +
+			"\t, \"children\": [\n" +
 			"\t\t{   /* OPT */\n" +
-			"\t\t\t  recordId: -4085 /* 0xf00b */\n" +
-			"\t\t\t, version: 3\n" +
-			"\t\t\t, instance: 0\n" +
-			"\t\t\t, options: 3\n" +
-			"\t\t\t, recordSize: 8\n" +
-			"\t\t\t, isContainer: false\n" +
-			"\t\t\t, properties: [\n" +
-			"]\n" +
-			"\t\t},\n" +
-			"\n" +
-			"\t\t{   /* OPT - index: 1 */\n" +
-			"\t\t\t  recordId: -4085 /* 0xf00b */\n" +
-			"\t\t\t, version: 3\n" +
-			"\t\t\t, instance: 0\n" +
-			"\t\t\t, options: 3\n" +
-			"\t\t\t, recordSize: 8\n" +
-			"\t\t\t, isContainer: false\n" +
-			"\t\t\t, properties: [\n" +
-			"]\n" +
+			"\t\t\t  \"recordId\": -4085 /* 0xf00b */\n" +
+			"\t\t\t, \"version\": 3\n" +
+			"\t\t\t, \"instance\": 0\n" +
+			"\t\t\t, \"options\": 3\n" +
+			"\t\t\t, \"recordSize\": 8\n" +
+			"\t\t\t, \"isContainer\": false\n" +
+			"\t\t\t, \"properties\": [\n" +
+			"\t\t\t]\n" +
+			"\t\t},\t\t{   /* OPT - index: 1 */\n" +
+			"\t\t\t  \"recordId\": -4085 /* 0xf00b */\n" +
+			"\t\t\t, \"version\": 3\n" +
+			"\t\t\t, \"instance\": 0\n" +
+			"\t\t\t, \"options\": 3\n" +
+			"\t\t\t, \"recordSize\": 8\n" +
+			"\t\t\t, \"isContainer\": false\n" +
+			"\t\t\t, \"properties\": [\n" +
+			"\t\t\t]\n" +
 			"\t\t}\n" +
 			"\t]\n" +
 			"}";

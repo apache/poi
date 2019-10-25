@@ -66,15 +66,15 @@ public final class TestEscherChildAnchorRecord {
     public void testToString(){
         String expected =
             "{   /* CHILD_ANCHOR */\n" +
-            "\t  recordId: -4081 /* 0xf00f */\n" +
-            "\t, version: 1\n" +
-            "\t, instance: 0\n" +
-            "\t, options: 1\n" +
-            "\t, recordSize: 24 /* 0x00000018 */\n" +
-            "\t, x1: 1\n" +
-            "\t, y1: 2\n" +
-            "\t, x2: 3\n" +
-            "\t, y2: 4\n" +
+            "\t  \"recordId\": -4081 /* 0xf00f */\n" +
+            "\t, \"version\": 1\n" +
+            "\t, \"instance\": 0\n" +
+            "\t, \"options\": 1\n" +
+            "\t, \"recordSize\": 24 /* 0x00000018 */\n" +
+            "\t, \"x1\": 1\n" +
+            "\t, \"y1\": 2\n" +
+            "\t, \"x2\": 3\n" +
+            "\t, \"y2\": 4\n" +
             "}";
         expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals( expected, createRecord().toString() );

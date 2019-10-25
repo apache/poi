@@ -72,21 +72,21 @@ public class TestEscherClientAnchorRecord {
     public void testToString() {
         String expected =
             "{   /* CLIENT_ANCHOR */\n" +
-            "\t  recordId: -4080 /* 0xf010 */\n" +
-            "\t, version: 1\n" +
-            "\t, instance: 0\n" +
-            "\t, options: 1\n" +
-            "\t, recordSize: 28 /* 0x0000001c */\n" +
-            "\t, flag: 77 /* 0x004d */\n" +
-            "\t, col1: 55 /* 0x0037 */\n" +
-            "\t, dx1: 33 /* 0x0021 */\n" +
-            "\t, row1: 88 /* 0x0058 */\n" +
-            "\t, dy1: 11 /* 0x000b */\n" +
-            "\t, col2: 44 /* 0x002c */\n" +
-            "\t, dx2: 22 /* 0x0016 */\n" +
-            "\t, row2: 99 /* 0x0063 */\n" +
-            "\t, dy2: 66 /* 0x0042 */\n" +
-            "\t, remainingData: \"/90=\"\n" +
+            "\t  \"recordId\": -4080 /* 0xf010 */\n" +
+            "\t, \"version\": 1\n" +
+            "\t, \"instance\": 0\n" +
+            "\t, \"options\": 1\n" +
+            "\t, \"recordSize\": 28 /* 0x0000001c */\n" +
+            "\t, \"flag\": 77 /* 0x004d */\n" +
+            "\t, \"col1\": 55 /* 0x0037 */\n" +
+            "\t, \"dx1\": 33 /* 0x0021 */\n" +
+            "\t, \"row1\": 88 /* 0x0058 */\n" +
+            "\t, \"dy1\": 11 /* 0x000b */\n" +
+            "\t, \"col2\": 44 /* 0x002c */\n" +
+            "\t, \"dx2\": 22 /* 0x0016 */\n" +
+            "\t, \"row2\": 99 /* 0x0063 */\n" +
+            "\t, \"dy2\": 66 /* 0x0042 */\n" +
+            "\t, \"remainingData\": \"/90=\"\n" +
             "}";
         expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals( expected, createRecord().toString() );

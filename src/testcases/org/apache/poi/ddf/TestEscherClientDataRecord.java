@@ -55,12 +55,12 @@ public class TestEscherClientDataRecord {
     public void testToString() {
         String expected =
             "{   /* CLIENT_DATA */\n" +
-            "\t  recordId: -4079 /* 0xf011 */\n" +
-            "\t, version: 2\n" +
-            "\t, instance: 0\n" +
-            "\t, options: 2\n" +
-            "\t, recordSize: 8\n" +
-            "\t, remainingData: \"\"\n" +
+            "\t  \"recordId\": -4079 /* 0xf011 */\n" +
+            "\t, \"version\": 2\n" +
+            "\t, \"instance\": 0\n" +
+            "\t, \"options\": 2\n" +
+            "\t, \"recordSize\": 8\n" +
+            "\t, \"remainingData\": \"\"\n" +
             "}";
         expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals( expected, createRecord().toString() );

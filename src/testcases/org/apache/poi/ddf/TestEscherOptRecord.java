@@ -148,22 +148,21 @@ public final class TestEscherOptRecord {
         r.addEscherProperty(prop1);
         String expected =
             "{   /* OPT */\n" +
-            "\t  recordId: -4085 /* 0xf00b */\n" +
-            "\t, version: 3\n" +
-            "\t, instance: 1\n" +
-            "\t, options: 19 /* 0x0013 */\n" +
-            "\t, recordSize: 14 /* 0x0000000e */\n" +
-            "\t, isContainer: false\n" +
-            "\t, properties: [\n" +
-            "\n" +
+            "\t  \"recordId\": -4085 /* 0xf00b */\n" +
+            "\t, \"version\": 3\n" +
+            "\t, \"instance\": 1\n" +
+            "\t, \"options\": 19 /* 0x0013 */\n" +
+            "\t, \"recordSize\": 14 /* 0x0000000e */\n" +
+            "\t, \"isContainer\": false\n" +
+            "\t, \"properties\": [\n" +
             "\t{   /* GEOMETRY__FILLOK */\n" +
-            "\t\t  id: 383 /* 0x017f */\n" +
-            "\t\t, name: \"geometry.fillok\"\n" +
-            "\t\t, propertyNumber: 383 /* 0x017f */\n" +
-            "\t\t, propertySize: 6\n" +
-            "\t\t, flags: 0x17f /*  */ \n" +
-            "\t\t, value: 1\n" +
-            "\t}]\n" +
+            "\t\t  \"id\": 383 /* 0x017f */\n" +
+            "\t\t, \"name\": \"geometry.fillok\"\n" +
+            "\t\t, \"propertyNumber\": 383 /* 0x017f */\n" +
+            "\t\t, \"propertySize\": 6\n" +
+            "\t\t, \"flags\": 383 /*  */ \n" +
+            "\t\t, \"value\": 1\n" +
+            "\t}\t]\n" +
             "}";
         expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals( expected, r.toString());

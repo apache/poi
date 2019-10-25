@@ -59,14 +59,14 @@ public class TestEscherSpRecord {
     public void testToString() {
         String expected =
             "{   /* SP */\n" +
-            "\t  recordId: -4086 /* 0xf00a */\n" +
-            "\t, version: 2\n" +
-            "\t, instance: 0\n" +
-            "\t, options: 2\n" +
-            "\t, recordSize: 16 /* 0x00000010 */\n" +
-            "\t, shapeType: 0\n" +
-            "\t, shapeId: 1024 /* 0x00000400 */\n" +
-            "\t, flags: 0x5 /* GROUP | PATRIARCH */ \n" +
+            "\t  \"recordId\": -4086 /* 0xf00a */\n" +
+            "\t, \"version\": 2\n" +
+            "\t, \"instance\": 0\n" +
+            "\t, \"options\": 2\n" +
+            "\t, \"recordSize\": 16 /* 0x00000010 */\n" +
+            "\t, \"shapeType\": 0\n" +
+            "\t, \"shapeId\": 1024 /* 0x00000400 */\n" +
+            "\t, \"flags\": 5 /* GROUP | PATRIARCH */ \n" +
             "}";
         expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals( expected, createRecord().toString() );

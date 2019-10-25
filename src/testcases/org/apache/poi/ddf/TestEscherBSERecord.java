@@ -86,26 +86,26 @@ public final class TestEscherBSERecord {
         EscherBSERecord record = createRecord();
         String expected =
             "{   /* BSE */\n" +
-            "\t  recordId: -4089 /* 0xf007 */\n" +
-            "\t, version: 1\n" +
-            "\t, instance: 0\n" +
-            "\t, options: 1\n" +
-            "\t, recordSize: 44 /* 0x0000002c */\n" +
-            "\t, blipTypeWin32: 5\n" +
-            "\t, pictureTypeWin32: \"JPEG\"\n" +
-            "\t, blipTypeMacOS: 5\n" +
-            "\t, pictureTypeMacOS: \"JPEG\"\n" +
-            "\t, suid: \"AQIDBAUGBwgJCgsMDQ4PAA==\"\n" +
-            "\t, tag: 1\n" +
-            "\t, size: 0\n" +
-            "\t, ref: 2\n" +
-            "\t, offset: 3\n" +
-            "\t, usage: 4\n" +
-            "\t, name: 5\n" +
-            "\t, unused2: 6\n" +
-            "\t, unused3: 7\n" +
-            "\t, blipRecord: null\n" +
-            "\t, remainingData: \"\"\n" +
+            "\t  \"recordId\": -4089 /* 0xf007 */\n" +
+            "\t, \"version\": 1\n" +
+            "\t, \"instance\": 0\n" +
+            "\t, \"options\": 1\n" +
+            "\t, \"recordSize\": 44 /* 0x0000002c */\n" +
+            "\t, \"blipTypeWin32\": 5\n" +
+            "\t, \"pictureTypeWin32\": \"JPEG\"\n" +
+            "\t, \"blipTypeMacOS\": 5\n" +
+            "\t, \"pictureTypeMacOS\": \"JPEG\"\n" +
+            "\t, \"suid\": \"AQIDBAUGBwgJCgsMDQ4PAA==\"\n" +
+            "\t, \"tag\": 1\n" +
+            "\t, \"size\": 0\n" +
+            "\t, \"ref\": 2\n" +
+            "\t, \"offset\": 3\n" +
+            "\t, \"usage\": 4\n" +
+            "\t, \"name\": 5\n" +
+            "\t, \"unused2\": 6\n" +
+            "\t, \"unused3\": 7\n" +
+            "\t, \"blipRecord\": null\n" +
+            "\t, \"remainingData\": \"\"\n" +
             "}";
         expected = expected.replace("\n", System.getProperty("line.separator"));
         String actual = record.toString();

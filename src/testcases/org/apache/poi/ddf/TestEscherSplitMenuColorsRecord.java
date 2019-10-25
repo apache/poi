@@ -65,15 +65,15 @@ public final class TestEscherSplitMenuColorsRecord {
     public void testToString() {
         String expected =
             "{   /* SPLIT_MENU_COLORS */\n" +
-            "\t  recordId: -3810 /* 0xf11e */\n" +
-            "\t, version: 0\n" +
-            "\t, instance: 4\n" +
-            "\t, options: 64 /* 0x0040 */\n" +
-            "\t, recordSize: 24 /* 0x00000018 */\n" +
-            "\t, color1: 1026 /* 0x00000402 */\n" +
-            "\t, color2: 2\n" +
-            "\t, color3: 2\n" +
-            "\t, color4: 1\n" +
+            "\t  \"recordId\": -3810 /* 0xf11e */\n" +
+            "\t, \"version\": 0\n" +
+            "\t, \"instance\": 4\n" +
+            "\t, \"options\": 64 /* 0x0040 */\n" +
+            "\t, \"recordSize\": 24 /* 0x00000018 */\n" +
+            "\t, \"color1\": 1026 /* 0x00000402 */\n" +
+            "\t, \"color2\": 2\n" +
+            "\t, \"color3\": 2\n" +
+            "\t, \"color4\": 1\n" +
             "}";
         expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals( expected, createRecord().toString() );

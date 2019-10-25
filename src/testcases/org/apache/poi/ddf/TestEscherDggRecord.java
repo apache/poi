@@ -70,21 +70,20 @@ public final class TestEscherDggRecord {
     public void testToString() {
         String expected =
             "{   /* DGG */\n" +
-            "\t  recordId: -4090 /* 0xf006 */\n" +
-            "\t, version: 0\n" +
-            "\t, instance: 0\n" +
-            "\t, options: 0\n" +
-            "\t, recordSize: 32 /* 0x00000020 */\n" +
-            "\t, fileIdClusters: [\n" +
-            "\n" +
+            "\t  \"recordId\": -4090 /* 0xf006 */\n" +
+            "\t, \"version\": 0\n" +
+            "\t, \"instance\": 0\n" +
+            "\t, \"options\": 0\n" +
+            "\t, \"recordSize\": 32 /* 0x00000020 */\n" +
+            "\t, \"fileIdClusters\": [\n" +
             "\t{   /* FileIdCluster */\n" +
-            "\t\t  drawingGroupId: 1\n" +
-            "\t\t, numShapeIdUsed: 2\n" +
-            "\t}]\n" +
-            "\t, shapeIdMax: 1026 /* 0x00000402 */\n" +
-            "\t, numIdClusters: 2\n" +
-            "\t, numShapesSaved: 2\n" +
-            "\t, drawingsSaved: 1\n" +
+            "\t\t  \"drawingGroupId\": 1\n" +
+            "\t\t, \"numShapeIdUsed\": 2\n" +
+            "\t}\t]\n" +
+            "\t, \"shapeIdMax\": 1026 /* 0x00000402 */\n" +
+            "\t, \"numIdClusters\": 2\n" +
+            "\t, \"numShapesSaved\": 2\n" +
+            "\t, \"drawingsSaved\": 1\n" +
             "}";
         expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals( expected, createRecord().toString() );

@@ -65,15 +65,15 @@ public final class TestEscherSpgrRecord {
     public void testToString() {
         String expected =
             "{   /* SPGR */\n" +
-            "\t  recordId: -4087 /* 0xf009 */\n" +
-            "\t, version: 0\n" +
-            "\t, instance: 1\n" +
-            "\t, options: 16 /* 0x0010 */\n" +
-            "\t, recordSize: 24 /* 0x00000018 */\n" +
-            "\t, rectX1: 1\n" +
-            "\t, rectY1: 2\n" +
-            "\t, rectX2: 3\n" +
-            "\t, rectY2: 4\n" +
+            "\t  \"recordId\": -4087 /* 0xf009 */\n" +
+            "\t, \"version\": 0\n" +
+            "\t, \"instance\": 1\n" +
+            "\t, \"options\": 16 /* 0x0010 */\n" +
+            "\t, \"recordSize\": 24 /* 0x00000018 */\n" +
+            "\t, \"rectX1\": 1\n" +
+            "\t, \"rectY1\": 2\n" +
+            "\t, \"rectX2\": 3\n" +
+            "\t, \"rectY2\": 4\n" +
             "}";
         expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals( expected, createRecord().toString() );

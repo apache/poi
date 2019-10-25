@@ -39,27 +39,41 @@ import java.nio.charset.StandardCharsets;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import javax.xml.bind.DatatypeConverter;
-
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.GenericRecordJsonWriter.AppendableWriter;
 import org.apache.poi.util.GenericRecordJsonWriter.NullOutputStream;
 
+@SuppressWarnings("WeakerAccess")
 public class GenericRecordXmlWriter implements Closeable {
     private static final String TABS;
     private static final String ZEROS = "0000000000000000";
     private static final Pattern ESC_CHARS = Pattern.compile("[<>&'\"\\p{Cntrl}]");
 
-    private static final List<Map.Entry<Class, BiConsumer<GenericRecordXmlWriter,Object>>> handler = new ArrayList<>();
+    @FunctionalInterface
+    protected interface GenericRecordHandler {
+        /**
+         * Handler method
+         *
+         * @param record the parent record, applied via instance method reference
+         * @param name the name of the property
+         * @param object the value of the property
+         * @return {@code true}, if the element was handled and output produced,
+         *   The provided methods can be overridden and a implementation can return {@code false},
+         *   if the element hasn't been written to the stream
+         */
+        boolean print(GenericRecordXmlWriter record, String name, Object object);
+    }
+
+    private static final List<Map.Entry<Class, GenericRecordHandler>> handler = new ArrayList<>();
 
     static {
         char[] t = new char[255];
@@ -83,7 +97,7 @@ public class GenericRecordXmlWriter implements Closeable {
         handler(Object.class, GenericRecordXmlWriter::printObject);
     }
 
-    private static void handler(Class c, BiConsumer<GenericRecordXmlWriter,Object> printer) {
+    private static void handler(Class c, GenericRecordHandler printer) {
         handler.add(new AbstractMap.SimpleEntry<>(c, printer));
     }
 
@@ -126,15 +140,15 @@ public class GenericRecordXmlWriter implements Closeable {
         fw.close();
     }
 
-    private String tabs() {
+    protected String tabs() {
         return TABS.substring(0, Math.min(indent, TABS.length()));
     }
 
     public void write(GenericRecord record) {
-        write(record, "record");
+        write("record", record);
     }
 
-    private void write(GenericRecord record, final String name) {
+    protected void write(final String name, GenericRecord record) {
         final String tabs = tabs();
         Enum type = record.getGenericRecordType();
         String recordName = (type != null) ? type.name() : record.getClass().getSimpleName();
@@ -148,49 +162,16 @@ public class GenericRecordXmlWriter implements Closeable {
             fw.append("\"");
         }
 
-        boolean hasChildren = false;
 
-        Map<String, Supplier<?>> prop = record.getGenericProperties();
-        if (prop != null) {
-            final int oldChildIndex = childIndex;
-            childIndex = 0;
-            attributePhase = true;
-            List<Map.Entry<String,Supplier<?>>> complex = prop.entrySet().stream().flatMap(this::writeProp).collect(Collectors.toList());
-            attributePhase = false;
-            if (!complex.isEmpty()) {
-                hasChildren = true;
-                fw.println(">");
-                indent++;
-                complex.forEach(this::writeProp);
-                indent--;
-            }
-            childIndex = oldChildIndex;
-        } else {
-            fw.print(">");
-        }
+        attributePhase = true;
+
+        boolean hasComplex = writeProperties(record);
 
         attributePhase = false;
 
-        List<? extends GenericRecord> list = record.getGenericChildren();
-        if (list != null && !list.isEmpty()) {
-            hasChildren = true;
-            indent++;
-            fw.println();
-            fw.append(tabs());
-            fw.println("<children>");
-            indent++;
-            final int oldChildIndex = childIndex;
-            childIndex = 0;
-            list.forEach(l -> { writeValue("record", l); childIndex++; });
-            childIndex = oldChildIndex;
-            fw.println();
-            indent--;
-            fw.append(tabs());
-            fw.println("</children>");
-            indent--;
-        }
+        hasComplex |= writeChildren(record, hasComplex);
 
-        if (hasChildren) {
+        if (hasComplex) {
             fw.append(tabs);
             fw.println("</" + name + ">");
         } else {
@@ -198,13 +179,61 @@ public class GenericRecordXmlWriter implements Closeable {
         }
     }
 
-    public void writeError(String errorMsg) {
-        fw.append("<error>");
-        printObject(errorMsg);
-        fw.append("</error>");
+    protected boolean writeProperties(GenericRecord record) {
+        Map<String, Supplier<?>> prop = record.getGenericProperties();
+        if (prop == null || prop.isEmpty()) {
+            return false;
+        }
+
+        final int oldChildIndex = childIndex;
+        childIndex = 0;
+        List<Map.Entry<String,Supplier<?>>> complex = prop.entrySet().stream().flatMap(this::writeProp).collect(Collectors.toList());
+
+        attributePhase = false;
+        if (!complex.isEmpty()) {
+            fw.println(">");
+            indent++;
+            complex.forEach(this::writeProp);
+            indent--;
+        }
+        childIndex = oldChildIndex;
+
+        return !complex.isEmpty();
     }
 
-    private Stream<Map.Entry<String,Supplier<?>>> writeProp(Map.Entry<String,Supplier<?>> me) {
+    protected boolean writeChildren(GenericRecord record, boolean hasComplexProperties) {
+        List<? extends GenericRecord> list = record.getGenericChildren();
+        if (list == null || list.isEmpty()) {
+            return false;
+        }
+        if (!hasComplexProperties) {
+            fw.print(">");
+        }
+
+        indent++;
+        fw.println();
+        fw.println(tabs()+"<children>");
+        indent++;
+        final int oldChildIndex = childIndex;
+        childIndex = 0;
+        list.forEach(l -> {
+            writeValue("record", l);
+            childIndex++;
+        });
+        childIndex = oldChildIndex;
+        fw.println();
+        indent--;
+        fw.println(tabs()+"</children>");
+        indent--;
+
+        return true;
+    }
+
+    public void writeError(String errorMsg) {
+        printObject("error", errorMsg);
+    }
+
+    protected Stream<Map.Entry<String,Supplier<?>>> writeProp(Map.Entry<String,Supplier<?>> me) {
         Object obj = me.getValue().get();
         if (obj == null) {
             return Stream.empty();
@@ -223,7 +252,7 @@ public class GenericRecordXmlWriter implements Closeable {
         return Stream.empty();
     }
 
-    private static boolean isComplex(Object obj) {
+    protected static boolean isComplex(Object obj) {
         return !(
             obj instanceof Number ||
             obj instanceof Boolean ||
@@ -233,100 +262,101 @@ public class GenericRecordXmlWriter implements Closeable {
             obj instanceof Enum);
     }
 
-    private void writeValue(String key, Object o) {
-        assert(key != null);
-        if (o instanceof GenericRecord) {
-            printGenericRecord((GenericRecord)o, key);
-        } else if (o != null) {
-            if (key.endsWith(">")) {
+    protected void writeValue(String name, Object value) {
+        assert(name != null);
+        if (value instanceof GenericRecord) {
+            printGenericRecord(name, value);
+        } else if (value != null) {
+            if (name.endsWith(">")) {
                 fw.print("\t");
             }
 
-            fw.print(attributePhase ? " " + key + "=\"" : tabs()+"<" + key);
-            if (key.endsWith(">")) {
-                fw.println();
-            }
-
             handler.stream().
-                filter(h -> matchInstanceOrArray(h.getKey(), o)).
+                filter(h -> matchInstanceOrArray(h.getKey(), value)).
                 findFirst().
-                ifPresent(h -> h.getValue().accept(this, o));
+                ifPresent(h -> h.getValue().print(this, name, value));
 
-            if (attributePhase) {
-                fw.append("\"");
-            }
-
-            if (key.endsWith(">")) {
-                fw.println(tabs()+"\t</"+key);
-            } else if (o instanceof List || o.getClass().isArray()) {
-                fw.println(tabs()+"</"+key+">");
-            }
         }
     }
 
-    private static boolean matchInstanceOrArray(Class key, Object instance) {
+    protected static boolean matchInstanceOrArray(Class key, Object instance) {
         return key.isInstance(instance) || (Array.class.equals(key) && instance.getClass().isArray());
     }
-    private void printNumber(Object o) {
+
+    protected void openName(String name) {
+        name = name.replace(">>", ">");
+        if (attributePhase) {
+            fw.print(" " + name.replace('>',' ').trim() + "=\"");
+        } else {
+            fw.print(tabs() + "<" + name);
+            if (name.endsWith(">")) {
+                fw.println();
+            }
+        }
+    }
+
+    protected void closeName(String name) {
+        name = name.replace(">>", ">");
+        if (attributePhase) {
+            fw.append("\"");
+        } else {
+            if (name.endsWith(">")) {
+                fw.println(tabs() + "\t</" + name);
+            } else {
+                fw.println("/>");
+            }
+        }
+    }
+
+    protected boolean printNumber(String name, Object o) {
         assert(attributePhase);
+
+        openName(name);
         Number n = (Number)o;
         fw.print(n.toString());
+        closeName(name);
 
-        if (attributePhase) {
-            return;
-        }
-
-        final int size;
-        if (n instanceof Byte) {
-            size = 2;
-        } else if (n instanceof Short) {
-            size = 4;
-        } else if (n instanceof Integer) {
-            size = 8;
-        } else if (n instanceof Long) {
-            size = 16;
-        } else {
-            size = -1;
-        }
-
-        long l = n.longValue();
-        if (withComments && size > 0 && (l < 0 || l > 9)) {
-            fw.write(" /* 0x");
-            fw.write(trimHex(l, size));
-            fw.write(" */");
-        }
+        return true;
     }
 
-    private void printBoolean(Object o) {
+    protected boolean printBoolean(String name, Object o) {
+        assert (attributePhase);
+        openName(name);
         fw.write(((Boolean)o).toString());
+        closeName(name);
+        return true;
     }
 
-    private void printList(Object o) {
+    protected boolean printList(String name, Object o) {
         assert (!attributePhase);
-        fw.println(">");
+        openName(name+">");
         int oldChildIndex = childIndex;
         childIndex = 0;
         //noinspection unchecked
         ((List)o).forEach(e -> { writeValue("item>", e); childIndex++; });
         childIndex = oldChildIndex;
+        closeName(name+">");
+        return true;
     }
 
-    private void printArray(Object o) {
+    protected boolean printArray(String name, Object o) {
         assert (!attributePhase);
-        fw.println(">");
+        openName(name+">");
         int length = Array.getLength(o);
         final int oldChildIndex = childIndex;
         for (childIndex=0; childIndex<length; childIndex++) {
             writeValue("item>", Array.get(o, childIndex));
         }
         childIndex = oldChildIndex;
+        closeName(name+">");
+        return true;
     }
 
-    private void printGenericRecord(Object o, String name) {
-        write((GenericRecord) o, name);
+    protected void printGenericRecord(String name, Object value) {
+        write(name, (GenericRecord) value);
     }
 
-    private void printAnnotatedFlag(Object o) {
+    protected boolean printAnnotatedFlag(String name, Object o) {
         assert (!attributePhase);
         GenericRecordUtil.AnnotatedFlag af = (GenericRecordUtil.AnnotatedFlag) o;
         Number n = af.getValue().get();
@@ -341,6 +371,7 @@ public class GenericRecordXmlWriter implements Closeable {
             len = 16;
         }
 
+        openName(name);
         fw.print(" flag=\"0x");
         fw.print(trimHex(n.longValue(), len));
         fw.print('"');
@@ -349,35 +380,50 @@ public class GenericRecordXmlWriter implements Closeable {
             fw.print(af.getDescription());
             fw.print("\"");
         }
-        fw.println("/>");
+        closeName(name);
+        return true;
     }
 
-    private void printBytes(Object o) {
+    protected boolean printBytes(String name, Object o) {
         assert (!attributePhase);
-        fw.write(">");
-        fw.write(DatatypeConverter.printBase64Binary((byte[]) o));
+        openName(name+">");
+        fw.write(Base64.getEncoder().encodeToString((byte[]) o));
+        closeName(name+">");
+        return true;
     }
 
-    private void printPoint(Object o) {
+    protected boolean printPoint(String name, Object o) {
         assert (!attributePhase);
+        openName(name);
         Point2D p = (Point2D)o;
         fw.println(" x=\""+p.getX()+"\" y=\""+p.getY()+"\"/>");
+        closeName(name);
+        return true;
     }
 
-    private void printDimension(Object o) {
+    protected boolean printDimension(String name, Object o) {
         assert (!attributePhase);
+        openName(name);
         Dimension2D p = (Dimension2D)o;
         fw.println(" width=\""+p.getWidth()+"\" height=\""+p.getHeight()+"\"/>");
+        closeName(name);
+        return true;
     }
 
-    private void printRectangle(Object o) {
+    protected boolean printRectangle(String name, Object o) {
         assert (!attributePhase);
+        openName(name);
         Rectangle2D p = (Rectangle2D)o;
         fw.println(" x=\""+p.getX()+"\" y=\""+p.getY()+"\" width=\""+p.getWidth()+"\" height=\""+p.getHeight()+"\"/>");
+        closeName(name);
+        return true;
     }
 
-    private void printPath(Object o) {
+    protected boolean printPath(String name, Object o) {
         assert (!attributePhase);
+
+        openName(name+">");
+
         final PathIterator iter = ((Path2D)o).getPathIterator(null);
         final double[] pnts = new double[6];
 
@@ -385,10 +431,8 @@ public class GenericRecordXmlWriter implements Closeable {
         String t = tabs();
         indent -= 2;
 
-        boolean isNext = false;
         while (!iter.isDone()) {
             fw.print(t);
-            isNext = true;
             final int segType = iter.currentSegment(pnts);
             fw.print("<pathelement ");
             switch (segType) {
@@ -412,9 +456,12 @@ public class GenericRecordXmlWriter implements Closeable {
             iter.next();
         }
 
+        closeName(name+">");
+        return true;
     }
 
-    private void printObject(Object o) {
+    protected boolean printObject(String name, Object o) {
+        openName(name+">");
         final Matcher m = ESC_CHARS.matcher(o.toString());
         final StringBuffer sb = new StringBuffer();
         while (m.find()) {
@@ -444,34 +491,44 @@ public class GenericRecordXmlWriter implements Closeable {
         }
         m.appendTail(sb);
         fw.write(sb.toString());
+        closeName(name+">");
+        return true;
     }
 
-    private void printAffineTransform(Object o) {
+    protected boolean printAffineTransform(String name, Object o) {
         assert (!attributePhase);
+        openName(name);
         AffineTransform xForm = (AffineTransform)o;
-        fw.write(
+        fw.write("<"+name+
             " scaleX=\""+xForm.getScaleX()+"\" "+
             "shearX=\""+xForm.getShearX()+"\" "+
             "transX=\""+xForm.getTranslateX()+"\" "+
             "scaleY=\""+xForm.getScaleY()+"\" "+
             "shearY=\""+xForm.getShearY()+"\" "+
             "transY=\""+xForm.getTranslateY()+"\"/>");
+        closeName(name);
+        return true;
     }
 
-    private void printColor(Object o) {
+    protected boolean printColor(String name, Object o) {
         assert (attributePhase);
+        openName(name);
         final int rgb = ((Color)o).getRGB();
-        fw.print("0x");
-        fw.print(trimHex(rgb, 8));
+        fw.print("0x"+trimHex(rgb, 8));
+        closeName(name);
+        return true;
     }
 
-    private void printBufferedImage(Object o) {
+    protected boolean printBufferedImage(String name, Object o) {
         assert (!attributePhase);
+        openName(name);
         BufferedImage bi = (BufferedImage)o;
-        fw.println(" width=\""+bi.getWidth()+"\" height=\""+bi.getHeight()+"\" bands=\""+bi.getColorModel().getNumComponents()+"\"/>");
+        fw.println(" width=\""+bi.getWidth()+"\" height=\""+bi.getHeight()+"\" bands=\""+bi.getColorModel().getNumComponents()+"\"");
+        closeName(name);
+        return true;
     }
 
-    private String trimHex(final long l, final int size) {
+    protected String trimHex(final long l, final int size) {
         final String b = Long.toHexString(l);
         int len = b.length();
         return ZEROS.substring(0, Math.max(0,size-len)) + b.substring(Math.max(0,len-size), len);

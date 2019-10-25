@@ -40,25 +40,39 @@ import java.nio.charset.StandardCharsets;
 import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiConsumer;
 import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.xml.bind.DatatypeConverter;
-
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.GenericRecordUtil.AnnotatedFlag;
 
+@SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})
 @Beta
 public class GenericRecordJsonWriter implements Closeable {
     private static final String TABS;
     private static final String ZEROS = "0000000000000000";
     private static final Pattern ESC_CHARS = Pattern.compile("[\"\\p{Cntrl}\\\\]");
 
-    private static final List<Map.Entry<Class,BiConsumer<GenericRecordJsonWriter,Object>>> handler = new ArrayList<>();
+    @FunctionalInterface
+    protected interface GenericRecordHandler {
+        /**
+         * Handler method
+         *
+         * @param record the parent record, applied via instance method reference
+         * @param name the name of the property
+         * @param object the value of the property
+         * @return {@code true}, if the element was handled and output produced,
+         *   The provided methods can be overridden and a implementation can return {@code false},
+         *   if the element hasn't been written to the stream
+         */
+        boolean print(GenericRecordJsonWriter record, String name, Object object);
+    }
+
+    private static final List<Map.Entry<Class,GenericRecordHandler>> handler = new ArrayList<>();
 
     static {
         char[] t = new char[255];
@@ -81,22 +95,25 @@ public class GenericRecordJsonWriter implements Closeable {
         handler(Object.class, GenericRecordJsonWriter::printObject);
     }
 
-    private static void handler(Class c, BiConsumer<GenericRecordJsonWriter,Object> printer) {
+    private static void handler(Class c, GenericRecordHandler printer) {
         handler.add(new AbstractMap.SimpleEntry<>(c,printer));
     }
 
-    private final PrintWriter fw;
-    private int indent = 0;
-    private boolean withComments = true;
-    private int childIndex = 0;
+    protected final AppendableWriter aw;
+    protected final PrintWriter fw;
+    protected int indent = 0;
+    protected boolean withComments = true;
+    protected int childIndex = 0;
 
     public GenericRecordJsonWriter(File fileName) throws IOException {
         OutputStream os = ("null".equals(fileName.getName())) ? new NullOutputStream() : new FileOutputStream(fileName);
-        fw = new PrintWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
+        aw = new AppendableWriter(new OutputStreamWriter(os, StandardCharsets.UTF_8));
+        fw = new PrintWriter(aw);
     }
 
     public GenericRecordJsonWriter(Appendable buffer) {
-        fw = new PrintWriter(new AppendableWriter(buffer));
+        aw = new AppendableWriter(buffer);
+        fw = new PrintWriter(aw);
     }
 
     public static String marshal(GenericRecord record) {
@@ -123,7 +140,7 @@ public class GenericRecordJsonWriter implements Closeable {
         fw.close();
     }
 
-    private String tabs() {
+    protected String tabs() {
         return TABS.substring(0, Math.min(indent, TABS.length()));
     }
 
@@ -144,81 +161,103 @@ public class GenericRecordJsonWriter implements Closeable {
         }
         fw.println();
 
-        Map<String, Supplier<?>> prop = record.getGenericProperties();
-        if (prop != null) {
-            final int oldChildIndex = childIndex;
-            childIndex = 0;
-            prop.forEach(this::writeProp);
-            childIndex = oldChildIndex;
-        }
-
+        boolean hasProperties = writeProperties(record);
         fw.println();
-        List<? extends GenericRecord> list = record.getGenericChildren();
-        if (list != null && !list.isEmpty()) {
-            indent++;
-            fw.append(tabs());
-            if (prop != null && !prop.isEmpty()) {
-                fw.append(", ");
-            }
-            fw.append("children: [");
-            final int oldChildIndex = childIndex;
-            childIndex = 0;
-            list.forEach(l -> { writeValue(l); childIndex++; });
-            childIndex = oldChildIndex;
-            fw.println();
-            fw.append(tabs());
-            fw.append("]");
-            fw.println();
-            indent--;
-        }
+
+        writeChildren(record, hasProperties);
 
         fw.append(tabs);
         fw.append("}");
     }
 
+    protected boolean writeProperties(GenericRecord record) {
+        Map<String, Supplier<?>> prop = record.getGenericProperties();
+        if (prop == null || prop.isEmpty()) {
+            return false;
+        }
+
+        final int oldChildIndex = childIndex;
+        childIndex = 0;
+        long cnt = prop.entrySet().stream().filter(e -> writeProp(e.getKey(),e.getValue())).count();
+        childIndex = oldChildIndex;
+
+        return cnt > 0;
+    }
+
+
+    protected boolean writeChildren(GenericRecord record, boolean hasProperties) {
+        List<? extends GenericRecord> list = record.getGenericChildren();
+        if (list == null || list.isEmpty()) {
+            return false;
+        }
+
+        indent++;
+        aw.setHoldBack(tabs() + (hasProperties ? ", " : "") + "\"children\": [\n");
+        final int oldChildIndex = childIndex;
+        childIndex = 0;
+        long cnt = list.stream().filter(l -> writeValue(null, l) && ++childIndex > 0).count();
+        childIndex = oldChildIndex;
+        aw.setHoldBack(null);
+
+        if (cnt > 0) {
+            fw.println();
+            fw.println(tabs() + "]");
+        }
+        indent--;
+
+        return cnt > 0;
+    }
+
     public void writeError(String errorMsg) {
         fw.append("{ error: ");
-        printObject(errorMsg);
+        printObject("error", errorMsg);
         fw.append(" }");
     }
 
-    private void writeProp(String k, Supplier<?> v) {
-        final boolean isNext = (childIndex++>0);
-        if (isNext) {
-            fw.println();
-        }
-        fw.write(tabs());
-        fw.write('\t');
-        fw.write(isNext ? ", " : "  ");
-        fw.write(k);
-        fw.write(": ");
+    protected boolean writeProp(String name, Supplier<?> value) {
+        final boolean isNext = (childIndex>0);
+        aw.setHoldBack(isNext ? "\n" + tabs() + "\t, " : tabs() + "\t  ");
         final int oldChildIndex = childIndex;
         childIndex = 0;
-        writeValue(v.get());
-        childIndex = oldChildIndex;
+        boolean written = writeValue(name, value.get());
+        childIndex = oldChildIndex + (written ? 1 : 0);
+        aw.setHoldBack(null);
+        return written;
     }
 
-    private void writeValue(Object o) {
+    protected boolean writeValue(String name, Object o) {
         if (childIndex > 0) {
-            fw.println(',');
+            aw.setHoldBack(",");
         }
-        if (o == null) {
-            fw.write("null");
-        } else {
-            handler.stream().
-                filter(h -> matchInstanceOrArray(h.getKey(), o)).
-                findFirst().
-                ifPresent(h -> h.getValue().accept(this, o));
-        }
+
+        GenericRecordHandler grh = (o == null)
+            ? GenericRecordJsonWriter::printNull
+            : handler.stream().filter(h -> matchInstanceOrArray(h.getKey(), o)).
+            findFirst().map(Map.Entry::getValue).orElse(null);
+
+        boolean result = grh != null && grh.print(this, name, o);
+        aw.setHoldBack(null);
+        return result;
     }
 
-    private static boolean matchInstanceOrArray(Class key, Object instance) {
+    protected static boolean matchInstanceOrArray(Class key, Object instance) {
         return key.isInstance(instance) || (Array.class.equals(key) && instance.getClass().isArray());
     }
 
-    private void printNumber(Object o) {
+    protected void printName(String name) {
+        fw.print(name != null ? "\""+name+"\": " : "");
+    }
+
+    protected boolean printNull(String name, Object o) {
+        printName(name);
+        fw.write("null");
+        return true;
+    }
+
+    protected boolean printNumber(String name, Object o) {
         Number n = (Number)o;
-        fw.print(n.toString());
+        printName(name);
+        fw.print(n.longValue());
 
         final int size;
         if (n instanceof Byte) {
@@ -239,65 +278,81 @@ public class GenericRecordJsonWriter implements Closeable {
             fw.write(trimHex(l, size));
             fw.write(" */");
         }
+        return true;
     }
 
-    private void printBoolean(Object o) {
+    protected boolean printBoolean(String name, Object o) {
+        printName(name);
         fw.write(((Boolean)o).toString());
+        return true;
     }
 
-    private void printList(Object o) {
-        fw.println('[');
+    protected boolean printList(String name, Object o) {
+        printName(name);
+        fw.println("[");
         int oldChildIndex = childIndex;
         childIndex = 0;
         //noinspection unchecked
-        ((List)o).forEach(e -> { writeValue(e); childIndex++; });
+        ((List)o).forEach(e -> { writeValue(null, e); childIndex++; });
         childIndex = oldChildIndex;
-        fw.write(']');
+        fw.write(tabs() + "\t]");
+        return true;
     }
 
-    private void printGenericRecord(Object o) {
-        fw.println();
+    protected boolean printGenericRecord(String name, Object o) {
+        printName(name);
         this.indent++;
         write((GenericRecord) o);
         this.indent--;
+        return true;
     }
 
-    private void printAnnotatedFlag(Object o) {
+    protected boolean printAnnotatedFlag(String name, Object o) {
+        printName(name);
         AnnotatedFlag af = (AnnotatedFlag) o;
-        fw.write("0x");
-        fw.write(Long.toHexString(af.getValue().get().longValue()));
+        fw.print(af.getValue().get().longValue());
         if (withComments) {
             fw.write(" /* ");
             fw.write(af.getDescription());
             fw.write(" */ ");
         }
+        return true;
     }
 
-    private void printBytes(Object o) {
+    protected boolean printBytes(String name, Object o) {
+        printName(name);
         fw.write('"');
-        fw.write(DatatypeConverter.printBase64Binary((byte[]) o));
+        fw.write(Base64.getEncoder().encodeToString((byte[]) o));
         fw.write('"');
+        return true;
     }
 
-    private void printPoint(Object o) {
+    protected boolean printPoint(String name, Object o) {
+        printName(name);
         Point2D p = (Point2D)o;
-        fw.write("{ x: "+p.getX()+", y: "+p.getY()+" }");
+        fw.write("{ \"x\": "+p.getX()+", \"y\": "+p.getY()+" }");
+        return true;
     }
 
-    private void printDimension(Object o) {
+    protected boolean printDimension(String name, Object o) {
+        printName(name);
         Dimension2D p = (Dimension2D)o;
-        fw.write("{ width: "+p.getWidth()+", height: "+p.getHeight()+" }");
+        fw.write("{ \"width\": "+p.getWidth()+", \"height\": "+p.getHeight()+" }");
+        return true;
     }
 
-    private void printRectangle(Object o) {
+    protected boolean printRectangle(String name, Object o) {
+        printName(name);
         Rectangle2D p = (Rectangle2D)o;
-        fw.write("{ x: "+p.getX()+", y: "+p.getY()+", width: "+p.getWidth()+", height: "+p.getHeight()+" }");
+        fw.write("{ \"x\": "+p.getX()+", \"y\": "+p.getY()+", \"width\": "+p.getWidth()+", \"height\": "+p.getHeight()+" }");
+        return true;
     }
 
-    private void printPath(Object o) {
+    protected boolean printPath(String name, Object o) {
+        printName(name);
         final PathIterator iter = ((Path2D)o).getPathIterator(null);
         final double[] pnts = new double[6];
-        fw.print("[");
+        fw.write("[");
 
         indent += 2;
         String t = tabs();
@@ -309,19 +364,19 @@ public class GenericRecordJsonWriter implements Closeable {
             fw.print(t);
             isNext = true;
             final int segType = iter.currentSegment(pnts);
-            fw.append("{ type: ");
+            fw.append("{ \"type\": ");
             switch (segType) {
                 case PathIterator.SEG_MOVETO:
-                    fw.write("'move', x: "+pnts[0]+", y: "+pnts[1]);
+                    fw.write("'move', \"x\": "+pnts[0]+", \"y\": "+pnts[1]);
                     break;
                 case PathIterator.SEG_LINETO:
-                    fw.write("'lineto', x: "+pnts[0]+", y: "+pnts[1]);
+                    fw.write("'lineto', \"x\": "+pnts[0]+", \"y\": "+pnts[1]);
                     break;
                 case PathIterator.SEG_QUADTO:
-                    fw.write("'quad', x1: "+pnts[0]+", y1: "+pnts[1]+", x2: "+pnts[2]+", y2: "+pnts[3]);
+                    fw.write("'quad', \"x1\": "+pnts[0]+", \"y1\": "+pnts[1]+", \"x2\": "+pnts[2]+", \"y2\": "+pnts[3]);
                     break;
                 case PathIterator.SEG_CUBICTO:
-                    fw.write("'cubic', x1: "+pnts[0]+", y1: "+pnts[1]+", x2: "+pnts[2]+", y2: "+pnts[3]+", x3: "+pnts[4]+", y3: "+pnts[5]);
+                    fw.write("'cubic', \"x1\": "+pnts[0]+", \"y1\": "+pnts[1]+", \"x2\": "+pnts[2]+", \"y2\": "+pnts[3]+", \"x3\": "+pnts[4]+", \"y3\": "+pnts[5]);
                     break;
                 case PathIterator.SEG_CLOSE:
                     fw.write("'close'");
@@ -332,9 +387,11 @@ public class GenericRecordJsonWriter implements Closeable {
         }
 
         fw.write("]");
+        return true;
     }
 
-    private void printObject(Object o) {
+    protected boolean printObject(String name, Object o) {
+        printName(name);
         fw.write('"');
 
         final Matcher m = ESC_CHARS.matcher(o.toString());
@@ -374,20 +431,25 @@ public class GenericRecordJsonWriter implements Closeable {
         fw.write(sb.toString());
 
         fw.write('"');
+        return true;
     }
 
-    private void printAffineTransform(Object o) {
+    protected boolean printAffineTransform(String name, Object o) {
+        printName(name);
         AffineTransform xForm = (AffineTransform)o;
         fw.write(
-            "{ scaleX: "+xForm.getScaleX()+
-            ", shearX: "+xForm.getShearX()+
-            ", transX: "+xForm.getTranslateX()+
-            ", scaleY: "+xForm.getScaleY()+
-            ", shearY: "+xForm.getShearY()+
-            ", transY: "+xForm.getTranslateY()+" }");
+            "{ \"scaleX\": "+xForm.getScaleX()+
+            ", \"shearX\": "+xForm.getShearX()+
+            ", \"transX\": "+xForm.getTranslateX()+
+            ", \"scaleY\": "+xForm.getScaleY()+
+            ", \"shearY\": "+xForm.getShearY()+
+            ", \"transY\": "+xForm.getTranslateY()+" }");
+        return true;
     }
 
-    private void printColor(Object o) {
+    protected boolean printColor(String name, Object o) {
+        printName(name);
+
         final int rgb = ((Color)o).getRGB();
         fw.print(rgb);
 
@@ -396,17 +458,20 @@ public class GenericRecordJsonWriter implements Closeable {
             fw.write(trimHex(rgb, 8));
             fw.write(" */");
         }
+        return true;
     }
 
-    private void printArray(Object o) {
-        fw.println('[');
+    protected boolean printArray(String name, Object o) {
+        printName(name);
+        fw.write("[");
         int length = Array.getLength(o);
         final int oldChildIndex = childIndex;
         for (childIndex=0; childIndex<length; childIndex++) {
-            writeValue(Array.get(o, childIndex));
+            writeValue(null, Array.get(o, childIndex));
         }
         childIndex = oldChildIndex;
-        fw.write(']');
+        fw.write(tabs() + "\t]");
+        return true;
     }
 
     static String trimHex(final long l, final int size) {
@@ -433,30 +498,58 @@ public class GenericRecordJsonWriter implements Closeable {
     }
 
     static class AppendableWriter extends Writer {
-        private Appendable buffer;
+        private final Appendable appender;
+        private final Writer writer;
+        private String holdBack;
 
         AppendableWriter(Appendable buffer) {
             super(buffer);
-            this.buffer = buffer;
+            this.appender = buffer;
+            this.writer = null;
+        }
+
+        AppendableWriter(Writer writer) {
+            super(writer);
+            this.appender = null;
+            this.writer = writer;
+        }
+
+        void setHoldBack(String holdBack) {
+            this.holdBack = holdBack;
         }
 
         @Override
         public void write(char[] cbuf, int off, int len) throws IOException {
-            buffer.append(String.valueOf(cbuf), off, len);
+            if (holdBack != null) {
+                if (appender != null) {
+                    appender.append(holdBack);
+                } else {
+                    writer.write(holdBack);
+                }
+                holdBack = null;
+            }
+
+            if (appender != null) {
+                appender.append(String.valueOf(cbuf), off, len);
+            } else {
+                writer.write(cbuf, off, len);
+            }
         }
 
         @Override
         public void flush() throws IOException {
-            if (buffer instanceof Flushable) {
-                ((Flushable)buffer).flush();
+            Object o = (appender != null) ? appender : writer;
+            if (o instanceof Flushable) {
+                ((Flushable)o).flush();
             }
         }
 
         @Override
         public void close() throws IOException {
             flush();
-            if (buffer instanceof Closeable) {
-                ((Closeable)buffer).close();
+            Object o = (appender != null) ? appender : writer;
+            if (o instanceof Closeable) {
+                ((Closeable)o).close();
             }
         }
     }

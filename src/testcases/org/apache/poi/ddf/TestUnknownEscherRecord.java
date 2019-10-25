@@ -152,12 +152,12 @@ public final class TestUnknownEscherRecord {
         r.serialize( 0, data, new NullEscherSerializationListener() );
         String expected =
             "{   /* UNKNOWN */\n" +
-            "\t  recordId: -3822 /* 0xf112 */\n" +
-            "\t, version: 4\n" +
-            "\t, instance: 291 /* 0x0123 */\n" +
-            "\t, options: 4660 /* 0x1234 */\n" +
-            "\t, recordSize: 8\n" +
-            "\t, data: \"\"\n" +
+            "\t  \"recordId\": -3822 /* 0xf112 */\n" +
+            "\t, \"version\": 4\n" +
+            "\t, \"instance\": 291 /* 0x0123 */\n" +
+            "\t, \"options\": 4660 /* 0x1234 */\n" +
+            "\t, \"recordSize\": 8\n" +
+            "\t, \"data\": \"\"\n" +
             "}";
         expected = expected.replace("\n", System.getProperty("line.separator"));
         assertEquals(expected, r.toString() );

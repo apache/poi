@@ -53,6 +53,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
@@ -1168,7 +1169,10 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 
 	@Override
 	public Map<String, Supplier<?>> getGenericProperties() {
-		return null;
+		return GenericRecordUtil.getGenericProperties(
+			"pictures", this::getPictureData,
+			"embeddedObjects", this::getEmbeddedObjects
+		);
 	}
 
 	@Override

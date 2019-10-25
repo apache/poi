@@ -21,17 +21,28 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.MessageDigest;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
-import org.apache.poi.hslf.blip.*;
+import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.hslf.blip.DIB;
+import org.apache.poi.hslf.blip.EMF;
+import org.apache.poi.hslf.blip.JPEG;
+import org.apache.poi.hslf.blip.PICT;
+import org.apache.poi.hslf.blip.PNG;
+import org.apache.poi.hslf.blip.WMF;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.sl.usermodel.PictureData;
-import org.apache.poi.util.*;
+import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Units;
 
 /**
  * A class that represents image data contained in a slide show.
  */
-public abstract class HSLFPictureData implements PictureData {
+public abstract class HSLFPictureData implements PictureData, GenericRecord {
 
     /**
      * Size of the image checksum calculated using MD5 algorithm.
@@ -225,5 +236,20 @@ public abstract class HSLFPictureData implements PictureData {
             Units.pointsToPixel(dim.getWidth()),
             Units.pointsToPixel(dim.getHeight())
         );
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("type", this::getType);
+        m.put("imageDimension", this::getImageDimension);
+        m.put("signature", this::getSignature);
+        m.put("uidInstanceCount", this::getUIDInstanceCount);
+        m.put("offset", this::getOffset);
+        m.put("uid", this::getUID);
+        m.put("checksum", this::getChecksum);
+        m.put("index", this::getIndex);
+        m.put("rawData", this::getRawData);
+        return Collections.unmodifiableMap(m);
     }
 }
