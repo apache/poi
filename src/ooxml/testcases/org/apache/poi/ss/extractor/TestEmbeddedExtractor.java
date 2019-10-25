@@ -25,9 +25,8 @@ import java.io.InputStream;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
@@ -109,7 +108,7 @@ public class TestEmbeddedExtractor {
         try {
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] hash = md.digest(input);
-            return DatatypeConverter.printBase64Binary(hash);
+            return Base64.getEncoder().encodeToString(hash);
         } catch (NoSuchAlgorithmException e) {
             // doesn't happen
             throw new RuntimeException(e);

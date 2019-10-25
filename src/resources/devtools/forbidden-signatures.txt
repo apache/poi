@@ -134,3 +134,6 @@ java.lang.String#toString()
 #@defaultMessage Deprecated Java APIs
 #java.lang.StringBuffer
 #java.util.Hashtable
+
+@defaultMessage DatatypeConverter is not available in Java 9+ without adding add-opens - use java.util.Base64
+javax.xml.bind.DatatypeConverter

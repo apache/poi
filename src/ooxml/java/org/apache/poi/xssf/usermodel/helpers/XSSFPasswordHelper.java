@@ -21,15 +21,14 @@ package org.apache.poi.xssf.usermodel.helpers;
 
 import java.security.SecureRandom;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Locale;
 
-import javax.xml.bind.DatatypeConverter;
 import javax.xml.namespace.QName;
 
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.StringUtil;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
@@ -77,10 +76,12 @@ public final class XSSFPasswordHelper {
             // --> In this third stage, the reversed byte order legacy hash from the second stage shall
             //     be converted to Unicode hex string representation
             byte[] hash = CryptoFunctions.hashPassword(password, hashAlgo, salt, spinCount, false);
-            
+
+            Base64.Encoder enc64 = Base64.getEncoder();
+
             cur.insertAttributeWithValue(getAttrName(prefix, "algorithmName"), hashAlgo.jceId); 
-            cur.insertAttributeWithValue(getAttrName(prefix, "hashValue"), DatatypeConverter.printBase64Binary(hash));
-            cur.insertAttributeWithValue(getAttrName(prefix, "saltValue"), DatatypeConverter.printBase64Binary(salt));
+            cur.insertAttributeWithValue(getAttrName(prefix, "hashValue"), enc64.encodeToString(hash));
+            cur.insertAttributeWithValue(getAttrName(prefix, "saltValue"), enc64.encodeToString(salt));
             cur.insertAttributeWithValue(getAttrName(prefix, "spinCount"), ""+spinCount);
         }
         cur.dispose();
@@ -118,9 +119,11 @@ public final class XSSFPasswordHelper {
                 return false;
             }
 
-            byte[] hash1 = DatatypeConverter.parseBase64Binary(hashVal);
+            Base64.Decoder dec64 = Base64.getDecoder();
+
+            byte[] hash1 = dec64.decode(hashVal);
             HashAlgorithm hashAlgo = HashAlgorithm.fromString(algoName);
-            byte[] salt = DatatypeConverter.parseBase64Binary(saltVal);
+            byte[] salt = dec64.decode(saltVal);
             int spinCnt = Integer.parseInt(spinCount);
             byte[] hash2 = CryptoFunctions.hashPassword(password, hashAlgo, salt, spinCnt, false);
             return Arrays.equals(hash1, hash2);

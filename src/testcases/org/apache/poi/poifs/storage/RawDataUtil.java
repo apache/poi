@@ -20,9 +20,8 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.zip.GZIPInputStream;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
@@ -96,7 +95,7 @@ public final class RawDataUtil {
      * @throws IOException if you copy and pasted the data wrong
      */
     public static byte[] decompress(String data) throws IOException {
-        byte[] base64Bytes = DatatypeConverter.parseBase64Binary(data);
+        byte[] base64Bytes = Base64.getDecoder().decode(data);
         return IOUtils.toByteArray(new GZIPInputStream(new ByteArrayInputStream(base64Bytes)));
     }
     
@@ -112,6 +111,6 @@ public final class RawDataUtil {
         java.util.zip.GZIPOutputStream gz = new java.util.zip.GZIPOutputStream(bos);
         gz.write(data);
         gz.finish();
-        return DatatypeConverter.printBase64Binary(bos.toByteArray());        
+        return Base64.getEncoder().encodeToString(bos.toByteArray());
     }
 }

@@ -22,11 +22,10 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
-import java.util.Calendar;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.concurrent.TimeUnit;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.util.CodePageUtil;
@@ -453,10 +452,10 @@ public class Property {
                 String str = String.format(Locale.ROOT, "%02d:%02d:%02d.%03d",hr,min,sec,ms);
                 b.append(str);
             } else {
-                Calendar cal = Calendar.getInstance(LocaleUtil.TIMEZONE_UTC, Locale.ROOT);
-                cal.setTime(d);
                 // use ISO-8601 timestamp format
-                b.append(DatatypeConverter.printDateTime(cal));
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.ROOT);
+                df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
+                b.append(df.format(d));
             }
         } else if (type == Variant.VT_EMPTY || type == Variant.VT_NULL || value == null) {
             b.append("null");

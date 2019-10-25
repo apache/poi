@@ -19,8 +19,7 @@ package org.apache.poi.poifs.crypt.dsig;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-
-import javax.xml.bind.DatatypeConverter;
+import java.util.Base64;
 
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.junit.Ignore;
@@ -53,7 +52,7 @@ public class TestSignatureConfig {
         for (final String[] check : checks) {
             final HashAlgorithm ha = HashAlgorithm.valueOf(check[0]);
             try (final DigestOutputStream dos = new DigestOutputStream(ha, null)) {
-                final String magic = DatatypeConverter.printBase64Binary(dos.getHashMagic());
+                final String magic = Base64.getEncoder().encodeToString(dos.getHashMagic());
                 assertEquals("hash digest magic mismatches", check[1], magic);
             }
         }

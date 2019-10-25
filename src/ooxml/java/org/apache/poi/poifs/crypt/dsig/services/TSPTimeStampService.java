@@ -38,12 +38,11 @@ import java.security.MessageDigest;
 import java.security.SecureRandom;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.xml.bind.DatatypeConverter;
 
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
@@ -131,7 +130,7 @@ public class TSPTimeStampService implements TimeStampService {
         try {
             if (signatureConfig.getTspUser() != null) {
                 String userPassword = signatureConfig.getTspUser() + ":" + signatureConfig.getTspPass();
-                String encoding = DatatypeConverter.printBase64Binary(userPassword.getBytes(StandardCharsets.ISO_8859_1));
+                String encoding = Base64.getEncoder().encodeToString(userPassword.getBytes(StandardCharsets.ISO_8859_1));
                 huc.setRequestProperty("Authorization", "Basic " + encoding);
             }
 

@@ -32,13 +32,13 @@ import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
-import javax.xml.bind.DatatypeConverter;
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.URIDereferencer;
 import javax.xml.crypto.XMLStructure;
@@ -58,6 +58,7 @@ import org.apache.jcp.xml.dsig.internal.dom.DOMReference;
 import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
 import org.apache.jcp.xml.dsig.internal.dom.DOMSubTreeData;
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -72,11 +73,9 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig.SignatureConfigurable;
 import org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
-import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.xml.security.Init;
-import org.apache.xml.security.utils.Base64;
 import org.apache.xml.security.utils.XMLUtils;
 import org.apache.xmlbeans.XmlOptions;
 import org.w3.x2000.x09.xmldsig.SignatureDocument;
@@ -239,7 +238,11 @@ public class SignatureInfo implements SignatureConfigurable {
         final PrivateKey key = signatureConfig.getKey();
         final HashAlgorithm algo = signatureConfig.getDigestAlgo();
 
-        if (algo.hashSize*4/3 > Base64.BASE64DEFAULTLENGTH && !XMLUtils.ignoreLineBreaks()) {
+        // taken from org.apache.xml.security.utils.Base64
+        final int BASE64DEFAULTLENGTH = 76;
+
+
+        if (algo.hashSize*4/3 > BASE64DEFAULTLENGTH && !XMLUtils.ignoreLineBreaks()) {
             throw new EncryptedDocumentException("The hash size of the choosen hash algorithm ("+algo+" = "+algo.hashSize+" bytes), "+
                 "will motivate XmlSec to add linebreaks to the generated digest, which results in an invalid signature (... at least "+
                 "for Office) - please persuade it otherwise by adding '-Dorg.apache.xml.security.ignoreLineBreaks=true' to the JVM "+
@@ -254,7 +257,7 @@ public class SignatureInfo implements SignatureConfigurable {
             final DOMSubTreeData subTree = new DOMSubTreeData(el, true);
             signedInfo.getCanonicalizationMethod().transform(subTree, xmlSignContext, dos);
 
-            return DatatypeConverter.printBase64Binary(dos.sign());
+            return Base64.getEncoder().encodeToString(dos.sign());
         } catch (GeneralSecurityException|IOException|TransformException e) {
             throw new EncryptedDocumentException(e);
         }
