@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 
 import org.apache.poi.util.HexDump;
 import org.junit.Test;
@@ -152,7 +153,7 @@ public final class TestExpandedDouble {
 		BigDecimal bd = new BigDecimal(hd.getSignificand()).divide(new BigDecimal(BigInteger.ONE.shiftLeft(gg)));
 		int excessPrecision = bd.precision() - 23;
 		if (excessPrecision > 0) {
-			bd = bd.setScale(bd.scale() - excessPrecision, BigDecimal.ROUND_HALF_UP);
+			bd = bd.setScale(bd.scale() - excessPrecision, RoundingMode.HALF_UP);
 		}
 		return bd.unscaledValue().toString();
 	}
@@ -189,7 +190,7 @@ public final class TestExpandedDouble {
 		}
 		int excessPrecision = bd.precision() - nDec;
 		if (excessPrecision > 0) {
-			bd = bd.setScale(bd.scale() - excessPrecision, BigDecimal.ROUND_HALF_UP);
+			bd = bd.setScale(bd.scale() - excessPrecision, RoundingMode.HALF_UP);
 		}
 		return bd.unscaledValue();
 	}

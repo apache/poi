@@ -28,6 +28,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -789,7 +790,7 @@ public class HemfPlusDraw {
 
 
     static double round10(double d) {
-        return new BigDecimal(d).setScale(10, BigDecimal.ROUND_HALF_UP).doubleValue();
+        return new BigDecimal(d).setScale(10, RoundingMode.HALF_UP).doubleValue();
     }
 
     static int readRectS(LittleEndianInputStream leis, Rectangle2D bounds) {
