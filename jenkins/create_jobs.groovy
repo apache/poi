@@ -603,7 +603,7 @@ echo '<?xml version="1.0"?><project name="POI Build" default="test"><target name
 
                     shell(
                             '''which mvn || true
-mvn -version
+mvn -version || true
 echo '<project><modelVersion>4.0.0</modelVersion><groupId>org.apache.poi</groupId><artifactId>build-tst</artifactId><version>1.0.0</version></project> > pom.xml
 ''')
                     maven {
