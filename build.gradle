@@ -52,7 +52,20 @@ ant.taskdef(name: "junit",
         classname: "org.apache.tools.ant.taskdefs.optional.junit.JUnitTask",
         classpath: configurations.antLibs.asPath)
 
-ant.importBuild 'build.xml'
+wrapper {
+	gradleVersion = '5.6'
+}
+
+task adjustWrapperPropertiesFile {
+	doLast {
+		ant.replaceregexp(match:'^#.*', replace:'', flags:'g', byline:true) {
+			fileset(dir: project.projectDir, includes: 'gradle/wrapper/gradle-wrapper.properties')
+		}
+		new File(project.projectDir, 'gradle/wrapper/gradle-wrapper.properties').with { it.text = it.readLines().findAll { it }.sort().join('\n') }
+		ant.fixcrlf(file: 'gradle/wrapper/gradle-wrapper.properties', eol: 'lf')
+	}
+}
+wrapper.finalizedBy adjustWrapperPropertiesFile
 
 /**
 
@@ -61,21 +74,6 @@ Define properties for all projects, including this one
 */
 allprojects {
     apply plugin: 'eclipse'
-
-    task wrapper(type: Wrapper) {
-        gradleVersion = '4.10.3'
-    }
-
-    task adjustWrapperPropertiesFile {
-        doLast {
-            ant.replaceregexp(match:'^#.*', replace:'', flags:'g', byline:true) {
-                fileset(dir: project.projectDir, includes: 'gradle/wrapper/gradle-wrapper.properties')
-            }
-            new File(project.projectDir, 'gradle/wrapper/gradle-wrapper.properties').with { it.text = it.readLines().findAll { it }.sort().join('\n') }
-            ant.fixcrlf(file: 'gradle/wrapper/gradle-wrapper.properties', eol: 'lf')
-        }
-    }
-    wrapper.finalizedBy adjustWrapperPropertiesFile
 }
 
 /**
