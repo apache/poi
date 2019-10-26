@@ -68,8 +68,7 @@ public final class TestEscherDgRecord {
             "\t, \"lastMSOSPID\": 1025 /* 0x00000401 */\n" +
             "\t, \"drawingGroupId\": 1\n" +
             "}";
-        expected = expected.replace("\n", System.getProperty("line.separator"));
-        assertEquals( expected, createRecord().toString() );
+        assertEquals( expected, createRecord().toString().replace("\r", "") );
     }
 
     private static EscherDgRecord createRecord()
