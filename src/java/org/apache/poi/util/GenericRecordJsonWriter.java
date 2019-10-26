@@ -56,6 +56,7 @@ public class GenericRecordJsonWriter implements Closeable {
     private static final String TABS;
     private static final String ZEROS = "0000000000000000";
     private static final Pattern ESC_CHARS = Pattern.compile("[\"\\p{Cntrl}\\\\]");
+    private static final String NL = System.getProperty("line.separator");
 
     @FunctionalInterface
     protected interface GenericRecordHandler {
@@ -192,7 +193,7 @@ public class GenericRecordJsonWriter implements Closeable {
         }
 
         indent++;
-        aw.setHoldBack(tabs() + (hasProperties ? ", " : "") + "\"children\": [\n");
+        aw.setHoldBack(tabs() + (hasProperties ? ", " : "") + "\"children\": [" + NL);
         final int oldChildIndex = childIndex;
         childIndex = 0;
         long cnt = list.stream().filter(l -> writeValue(null, l) && ++childIndex > 0).count();
@@ -216,7 +217,7 @@ public class GenericRecordJsonWriter implements Closeable {
 
     protected boolean writeProp(String name, Supplier<?> value) {
         final boolean isNext = (childIndex>0);
-        aw.setHoldBack(isNext ? "\n" + tabs() + "\t, " : tabs() + "\t  ");
+        aw.setHoldBack(isNext ? NL + tabs() + "\t, " : tabs() + "\t  ");
         final int oldChildIndex = childIndex;
         childIndex = 0;
         boolean written = writeValue(name, value.get());
