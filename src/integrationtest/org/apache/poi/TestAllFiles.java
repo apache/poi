@@ -120,6 +120,7 @@ public class TestAllFiles {
 
         // Powerpoint
         HANDLERS.put(".ppt", IGNORE_SCRATCHPAD ? new HPSFFileHandler() : new HSLFFileHandler());
+        HANDLERS.put(".pot", IGNORE_SCRATCHPAD ? new HPSFFileHandler() : new HSLFFileHandler());
         HANDLERS.put(".pptx", new XSLFFileHandler());
         HANDLERS.put(".pptm", new XSLFFileHandler());
         HANDLERS.put(".ppsm", new XSLFFileHandler());
