@@ -42,7 +42,7 @@ under the License.
 
     <description>The Apache POI project Ant build.</description>
 
-    <property name="version.id" value="4.1.2"/>
+    <property name="version.id" value="4.1.2-SNAPSHOT"/>
     <property name="release.rc" value="RC1"/>
 
     <property environment="env"/>
@@ -2869,6 +2869,13 @@ under the License.
                replace=" version = '${version.id}'">
 			<fileset dir=".">
 				<include name="build.gradle"/>
+			</fileset>
+        </replaceregexp>
+		<replaceregexp
+               match="version.id&quot; value=&quot;[0-9.]+(?:-SNAPSHOT)?&quot;/>"
+               replace="version.id&quot; value=&quot;${version.id}&quot;/>">
+			<fileset dir=".">
+				<include name="osgi/build.xml"/>
 			</fileset>
         </replaceregexp>
 	</target>
