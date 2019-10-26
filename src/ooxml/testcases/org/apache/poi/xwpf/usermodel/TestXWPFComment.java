@@ -16,43 +16,22 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTComment;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import org.apache.poi.xwpf.XWPFTestDataSamples;
+import org.junit.Test;
 
-/**
- * Sketch of XWPF comment class
- *
- * @author Yury Batrakov (batrakov at gmail.com)
- */
-public class XWPFComment {
-    protected String id;
-    protected String author;
-    protected StringBuilder text;
+import java.io.IOException;
 
-    public XWPFComment(CTComment comment, XWPFDocument document) {
-        text = new StringBuilder(64);
-        id = comment.getId().toString();
-        author = comment.getAuthor();
+import static org.junit.Assert.assertEquals;
 
-        for (CTP ctp : comment.getPArray()) {
-            if(text.length() > 0) {
-                text.append("\n");
-            }
-
-            XWPFParagraph p = new XWPFParagraph(ctp, document);
-            text.append(p.getText());
+public class TestXWPFComment {
+    @Test
+    public void testText() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("comment.docx")) {
+            assertEquals(1, doc.getComments().length);
+            XWPFComment comment = doc.getComments()[0];
+            assertEquals("Unbekannter Autor", comment.getAuthor());
+            assertEquals("0", comment.getId());
+            assertEquals("This is the first line\n\nThis is the second line", comment.getText());
         }
-    }
-
-    public String getId() {
-        return id;
-    }
-
-    public String getAuthor() {
-        return author;
-    }
-
-    public String getText() {
-        return text.toString();
     }
 }
