@@ -447,8 +447,7 @@ public final class InternalWorkbook {
         }
         if (index > (numfonts - 1)) {
             throw new ArrayIndexOutOfBoundsException(
-            "There are only " + numfonts
-            + " font records, you asked for " + idx);
+            "There are only " + numfonts + " font records, but you asked for index " + idx);
         }
 
         return ( FontRecord ) records.get((records.getFontpos() - (numfonts - 1)) + index);
