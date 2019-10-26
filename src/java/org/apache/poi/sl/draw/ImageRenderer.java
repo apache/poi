@@ -111,13 +111,13 @@ public interface ImageRenderer {
     void setAlpha(double alpha);
 
     /**
-     * @return the image as buffered image
+     * @return the image as buffered image or null if image could not be loaded
      */
     BufferedImage getImage();
 
     /**
      * @param dim the dimension in pixels of the returned image
-     * @return the image as buffered image
+     * @return the image as buffered image or null if image could not be loaded
      * 
      * @since POI 3.15-beta2
      */

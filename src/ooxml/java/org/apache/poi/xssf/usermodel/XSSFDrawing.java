@@ -113,11 +113,8 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         XmlOptions options = new XmlOptions(DEFAULT_XML_OPTIONS);
         // Removing root element
         options.setLoadReplaceDocumentElement(null);
-        InputStream is = part.getInputStream();
-        try {
+        try (InputStream is = part.getInputStream()) {
             drawing = CTDrawing.Factory.parse(is, options);
-        } finally {
-            is.close();
         }
     }
 
@@ -255,6 +252,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
      *            sheet.
      * @return the newly created chart
      */
+
     public XSSFChart createChart(ClientAnchor anchor) {
         return createChart((XSSFClientAnchor) anchor);
     }
@@ -265,11 +263,9 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
      * @param srcChart
      *            the source chart to be cloned into this drawing.
      * @return the newly created chart.
-     * @throws XmlException
-     * @throws IOException
      * @since 4.0.0
      */
-    public XSSFChart importChart(XSSFChart srcChart) throws IOException, XmlException {
+    public XSSFChart importChart(XSSFChart srcChart) {
         CTTwoCellAnchor anchor = ((XSSFDrawing) srcChart.getParent()).getCTDrawing().getTwoCellAnchorArray(0);
         CTMarker from = (CTMarker) anchor.getFrom().copy();
         CTMarker to = (CTMarker) anchor.getTo().copy();
@@ -284,13 +280,9 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
     /**
      * Add the indexed picture to this drawing relations
      *
-     * @param pictureIndex
-     *            the index of the picture in the workbook collection of
-     *            pictures,
-     *            {@link org.apache.poi.xssf.usermodel.XSSFWorkbook#getAllPictures()}
-     *            .
+     * @param pictureIndex the index of the picture in the workbook collection of pictures,
+     *            {@link org.apache.poi.xssf.usermodel.XSSFWorkbook#getAllPictures()}           .
      */
-    @SuppressWarnings("resource")
     protected PackageRelationship addPictureReference(int pictureIndex) {
         XSSFWorkbook wb = (XSSFWorkbook) getParent().getParent();
         XSSFPictureData data = wb.getAllPictures().get(pictureIndex);
