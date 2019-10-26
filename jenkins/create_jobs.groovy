@@ -89,7 +89,7 @@ def defaultTrigger = 'H/15 * * * *'     // check SCM every 60/15 = 4 minutes
 def defaultEmail = 'dev@poi.apache.org'
 def defaultAnt = 'Ant 1.9 (Latest)'
 def defaultAntWindows = 'Ant 1.9 (Latest Windows)'
-def defaultMaven = 'maven-3.2.1'
+def defaultMaven = 'Maven 3 (latest)'
 // currently a lot of H?? slaves don't have Ant installed ... H21 seems to have a SVN problem
 // H35 fails with ImageIO create cache file errors, although the java.io.tmpdir is writable
 def defaultSlaves = '(ubuntu)&&!beam&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21&&!H35'
@@ -604,7 +604,7 @@ echo '<?xml version="1.0"?><project name="POI Build" default="test"><target name
                     shell(
                             '''which mvn || true
 mvn -version || true
-echo '<project><modelVersion>4.0.0</modelVersion><groupId>org.apache.poi</groupId><artifactId>build-tst</artifactId><version>1.0.0</version></project> > pom.xml
+echo '<project><modelVersion>4.0.0</modelVersion><groupId>org.apache.poi</groupId><artifactId>build-tst</artifactId><version>1.0.0</version></project>' > pom.xml
 ''')
                     maven {
                         goals('package')
