@@ -89,6 +89,7 @@ def defaultTrigger = 'H/15 * * * *'     // check SCM every 60/15 = 4 minutes
 def defaultEmail = 'dev@poi.apache.org'
 def defaultAnt = 'Ant 1.9 (Latest)'
 def defaultAntWindows = 'Ant 1.9 (Latest Windows)'
+def defaultMaven = 'maven-3.2.1'
 // currently a lot of H?? slaves don't have Ant installed ... H21 seems to have a SVN problem
 // H35 fails with ImageIO create cache file errors, although the java.io.tmpdir is writable
 def defaultSlaves = '(ubuntu)&&!beam&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21&&!H35'
@@ -290,7 +291,7 @@ poijobs.each { poijob ->
                     goals('clean')
                     rootPOM('sonar/pom.xml')
                     localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
-                    mavenInstallation('maven-3.2.1')
+                    mavenInstallation(defaultMaven)
                 }
                 /* Currently not done, let's see if it is still necessary:
                     # Maven-Download fails for strange reasons, try to workaround...
@@ -307,7 +308,7 @@ poijobs.each { poijob ->
                     mavenOpts('-Xms256m')
                     mavenOpts('-XX:-OmitStackTraceInFastThrow')
                     localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
-                    mavenInstallation('maven-3.2.1')
+                    mavenInstallation(defaultMaven)
                 }
             }
             publishers {
@@ -570,13 +571,13 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'OpenJDK 8 (on Ubuntu only) ',   // blank is required here until the name in the Jenkins instance is fixed!
                 'IBM 1.8 64-bit (on Ubuntu only)',
 
-                'JDK 10 (latest)',
-
                 'JDK 11 (latest)',
 
                 'JDK 12 (latest)',
 
-                'JDK 13 (latest)'
+                'JDK 13 (latest)',
+
+                'JDK 14 (latest)'
         )
         elasticAxis {
             name('Nodes')
@@ -600,6 +601,15 @@ echo '<?xml version="1.0"?><project name="POI Build" default="test"><target name
                         antInstallation(defaultAnt)
                     }
 
+                    shell(
+                            '''which mvn || true
+mvn -version
+echo '<project><modelVersion>4.0.0</modelVersion><groupId>org.apache.poi</groupId><artifactId>build-tst</artifactId><version>1.0.0</version></project> > pom.xml
+''')
+                    maven {
+                        goals('package')
+                        mavenInstallation(defaultMaven)
+                    }
                 }
             }
         }
