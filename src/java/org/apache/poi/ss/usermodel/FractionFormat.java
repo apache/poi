@@ -61,13 +61,15 @@ public class FractionFormat extends Format {
     private final int maxDenom;
 
     private final String wholePartFormatString;
+
     /**
      * Single parameter ctor
      * @param denomFormatString The format string for the denominator
      */
     public FractionFormat(String wholePartFormatString, String denomFormatString) {
         this.wholePartFormatString = wholePartFormatString;
-        //init exactDenom and maxDenom
+
+        // initialize exactDenom and maxDenom
         Matcher m = DENOM_FORMAT_PATTERN.matcher(denomFormatString);
         int tmpExact = -1;
         int tmpMax = -1;
@@ -81,7 +83,10 @@ public class FractionFormat extends Format {
                         tmpExact = -1;
                     }
                 } catch (NumberFormatException e){
-                    //should never happen
+                    // should not happen because the pattern already verifies that this is a number,
+                    // but a number larger than Integer.MAX_VALUE can cause it,
+                    // so throw an exception if we somehow end up here
+                    throw new IllegalStateException(e);
                 }
             } else if (m.group(1) != null) {
                 int len = m.group(1).length();
@@ -132,8 +137,8 @@ public class FractionFormat extends Format {
             return sb.toString();
         }
         
-        SimpleFraction fract = null;
-        try{
+        final SimpleFraction fract;
+        try {
             //this should be the case because of the constructor
             if (exactDenom > 0){
                 fract = SimpleFraction.buildFractionExactDenominator(decPart.doubleValue(), exactDenom);

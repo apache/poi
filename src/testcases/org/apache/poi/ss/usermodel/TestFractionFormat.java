@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.util.LocaleUtil;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -35,15 +36,34 @@ import org.junit.Test;
  */
 public final class TestFractionFormat {
     @Test
-    public void testSingle() throws Exception {
+    public void testSingle() {
         FractionFormat f = new FractionFormat("", "##");
         double val = 321.321;
         String ret = f.format(val);
         assertEquals("26027/81", ret);
     }
-    
+
+    @Test(expected = IllegalStateException.class)
+    public void testInvalid() {
+        FractionFormat f = new FractionFormat("", "9999999999999999999999999999");
+        double val = 321.321;
+        String ret = f.format(val);
+        assertEquals("26027/81", ret);
+    }
+
+    @Ignore("Runs for some longer time")
     @Test
-    public void testWithBigWholePart() throws Exception {
+    public void microBenchmark() {
+        FractionFormat f = new FractionFormat("", "##");
+        double val = 321.321;
+        for(int i = 0;i < 1000000;i++) {
+            String ret = f.format(val);
+            assertEquals("26027/81", ret);
+        }
+    }
+
+    @Test
+    public void testWithBigWholePart() {
         FractionFormat f = new FractionFormat("#", "???/???");
         
         assertEquals("10100136259702", f.format(10100136259702d));
