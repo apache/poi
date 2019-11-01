@@ -30,13 +30,15 @@ import java.io.InputStream;
 
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.usermodel.HemfPicture;
+import org.apache.poi.hwmf.draw.HwmfImageRenderer;
 import org.apache.poi.sl.draw.BitmapImageRenderer;
+import org.apache.poi.sl.draw.EmbeddedExtractor;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.util.Units;
 
 @SuppressWarnings("unused")
-public class HemfImageRenderer implements ImageRenderer {
+public class HemfImageRenderer implements ImageRenderer, EmbeddedExtractor {
     HemfPicture image;
     double alpha;
 
@@ -112,5 +114,10 @@ public class HemfImageRenderer implements ImageRenderer {
     @Override
     public GenericRecord getGenericRecord() {
         return image;
+    }
+
+    @Override
+    public Iterable<EmbeddedPart> getEmbeddings() {
+        return HwmfImageRenderer.getEmbeddings(image.getEmbeddings());
     }
 }

@@ -26,6 +26,8 @@ import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -49,6 +51,7 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -312,25 +315,35 @@ public class HemfPlusBrush {
 
     /** The EmfPlusBrush object specifies a graphics brush for filling regions. */
     public static class EmfPlusBrush implements EmfPlusObjectData {
+        private static final int MAX_OBJECT_SIZE = 1_000_000;
+
         private final EmfPlusGraphicsVersion graphicsVersion = new EmfPlusGraphicsVersion();
         private EmfPlusBrushType brushType;
-        private EmfPlusBrushData brushData;
+        private byte[] brushBytes;
 
         @Override
         public long init(LittleEndianInputStream leis, long dataSize, EmfPlusObjectType objectType, int flags) throws IOException {
+            leis.mark(LittleEndianConsts.INT_SIZE);
             long size = graphicsVersion.init(leis);
 
-            brushType = EmfPlusBrushType.valueOf(leis.readInt());
-            size += LittleEndianConsts.INT_SIZE;
-            assert(brushType != null);
+            if (isContinuedRecord()) {
+                leis.reset();
+                size = 0;
+            } else {
+                int brushInt = leis.readInt();
+                brushType = EmfPlusBrushType.valueOf(brushInt);
+                assert(brushType != null);
+                size += LittleEndianConsts.INT_SIZE;
+            }
 
-            size += (brushData = brushType.constructor.get()).init(leis, dataSize-size);
+            brushBytes = IOUtils.toByteArray(leis, dataSize-size, MAX_OBJECT_SIZE);
 
-            return size;
+            return dataSize;
         }
 
         @Override
         public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
+            EmfPlusBrushData brushData = getBrushData(continuedObjectData);
             brushData.applyObject(ctx, continuedObjectData);
         }
 
@@ -344,9 +357,37 @@ public class HemfPlusBrush {
             return GenericRecordJsonWriter.marshal(this);
         }
 
-        public EmfPlusBrushData getBrushData() {
+        public byte[] getBrushBytes() {
+            return brushBytes;
+        }
+
+        public EmfPlusBrushData getBrushData(List<? extends EmfPlusObjectData> continuedObjectData) {
+            EmfPlusBrushData brushData = brushType.constructor.get();
+            byte[] buf = getRawData(continuedObjectData);
+            try {
+                brushData.init(new LittleEndianInputStream(new ByteArrayInputStream(buf)), buf.length);
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
             return brushData;
         }
+
+
+        public byte[] getRawData(List<? extends EmfPlusObjectData> continuedObjectData) {
+            ByteArrayOutputStream bos = new ByteArrayOutputStream();
+            try {
+                bos.write(getBrushBytes());
+                if (continuedObjectData != null) {
+                    for (EmfPlusObjectData od : continuedObjectData) {
+                        bos.write(((EmfPlusBrush)od).getBrushBytes());
+                    }
+                }
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+            return bos.toByteArray();
+        }
+
 
         @Override
         public EmfPlusBrushType getGenericRecordType() {
@@ -357,7 +398,8 @@ public class HemfPlusBrush {
         public Map<String, Supplier<?>> getGenericProperties() {
             return GenericRecordUtil.getGenericProperties(
                 "graphicsVersion", this::getGraphicsVersion,
-                "brushData", this::getBrushData
+                /* only return the first object data ... enough for now */
+                "brushData", () -> getBrushData(null)
             );
         }
     }
@@ -375,6 +417,8 @@ public class HemfPlusBrush {
         public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
             HemfDrawProperties prop = ctx.getProperties();
             prop.setBackgroundColor(new HwmfColorRef(solidColor));
+            prop.setBrushTransform(null);
+            prop.setBrushStyle(HwmfBrushStyle.BS_SOLID);
         }
 
         @Override
@@ -696,10 +740,11 @@ public class HemfPlusBrush {
 
         @Override
         public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
-            image.applyObject(ctx, continuedObjectData);
             HemfDrawProperties prop = ctx.getProperties();
+            image.applyObject(ctx, null);
             prop.setBrushBitmap(prop.getEmfPlusImage());
             prop.setBrushStyle(HwmfBrushStyle.BS_PATTERN);
+            prop.setBrushTransform(transform);
         }
 
         @Override

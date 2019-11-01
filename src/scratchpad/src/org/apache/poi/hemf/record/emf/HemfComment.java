@@ -90,6 +90,13 @@ public class HemfComment {
 
         long init(LittleEndianInputStream leis, long dataSize) throws IOException;
 
+        /**
+         * Apply the record settings to the graphics context
+         *
+         * @param ctx the graphics context to modify
+         */
+        default void draw(HemfGraphics ctx) {};
+
         @Override
         default Enum getGenericRecordType() {
             return getCommentRecordType();
@@ -117,13 +124,7 @@ public class HemfComment {
 
         @Override
         public void draw(HemfGraphics ctx) {
-            if (data instanceof EmfCommentDataPlus) {
-                if (ctx.getRenderState() == HemfGraphics.EmfRenderState.INITIAL) {
-                    ctx.setRenderState(HemfGraphics.EmfRenderState.EMFPLUS_ONLY);
-                }
-
-                ((EmfCommentDataPlus)data).draw(ctx);
-            }
+            data.draw(ctx);
         }
 
         @Override
@@ -297,7 +298,12 @@ public class HemfComment {
             return Collections.unmodifiableList(records);
         }
 
+        @Override
         public void draw(HemfGraphics ctx) {
+            if (ctx.getRenderState() == HemfGraphics.EmfRenderState.INITIAL) {
+                ctx.setRenderState(HemfGraphics.EmfRenderState.EMFPLUS_ONLY);
+            }
+
             records.forEach(ctx::draw);
         }
 

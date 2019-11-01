@@ -224,7 +224,8 @@ public class HemfPlusObject {
             return GenericRecordUtil.getGenericProperties(
                 "flags", getBitsAsString(this::getFlags, FLAGS_MASKS, FLAGS_NAMES),
                 "objectId", this::getObjectId,
-                "continuedObjectData", this::getContinuedObject,
+                "objectData", () -> objectData.isContinuedRecord() ? null : getObjectData(),
+                "continuedObject", objectData::isContinuedRecord,
                 "totalObjectSize", () -> totalObjectSize
             );
         }

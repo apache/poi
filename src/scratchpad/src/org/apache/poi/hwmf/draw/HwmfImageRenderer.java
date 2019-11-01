@@ -27,20 +27,24 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Iterator;
 
 import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.hwmf.usermodel.HwmfEmbedded;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.sl.draw.BitmapImageRenderer;
 import org.apache.poi.sl.draw.DrawPictureShape;
+import org.apache.poi.sl.draw.EmbeddedExtractor;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
 
 /**
  * Helper class which is instantiated by {@link DrawPictureShape}
  * via reflection
  */
-public class HwmfImageRenderer implements ImageRenderer {
+public class HwmfImageRenderer implements ImageRenderer, EmbeddedExtractor {
     HwmfPicture image;
     double alpha;
 
@@ -116,5 +120,34 @@ public class HwmfImageRenderer implements ImageRenderer {
     @Override
     public GenericRecord getGenericRecord() {
         return image;
+    }
+
+
+    @Override
+    public Iterable<EmbeddedExtractor.EmbeddedPart> getEmbeddings() {
+        return getEmbeddings(image.getEmbeddings());
+    }
+
+    @Internal
+    public static Iterable<EmbeddedPart> getEmbeddings(Iterable<HwmfEmbedded> embs) {
+        return () -> {
+            final Iterator<HwmfEmbedded> embit = embs.iterator();
+            final int[] idx = { 1 };
+            return new Iterator<EmbeddedExtractor.EmbeddedPart>() {
+                @Override
+                public boolean hasNext() {
+                    return embit.hasNext();
+                }
+
+                @Override
+                public EmbeddedExtractor.EmbeddedPart next() {
+                    EmbeddedExtractor.EmbeddedPart ep = new EmbeddedExtractor.EmbeddedPart();
+                    HwmfEmbedded emb = embit.next();
+                    ep.setData(emb::getRawData);
+                    ep.setName("embed_"+(idx[0]++)+emb.getEmbeddedType().extension);
+                    return ep;
+                }
+            };
+        };
     }
 }

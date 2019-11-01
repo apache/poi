@@ -18,7 +18,7 @@
 package org.apache.poi.hemf.record.emf;
 
 import static org.apache.poi.hwmf.record.HwmfDraw.normalizeBounds;
-import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+import static org.apache.poi.util.GenericRecordUtil.getEnumBitsAsString;
 
 import java.awt.Shape;
 import java.awt.geom.Arc2D;
@@ -97,7 +97,7 @@ public class HemfDraw {
         @Override
         public Map<String, Supplier<?>> getGenericProperties() {
             return GenericRecordUtil.getGenericProperties(
-                "objectIndex", getBitsAsString(this::getObjectIndex, IDX_MASKS, IDX_NAMES)
+                "objectIndex", getEnumBitsAsString(this::getObjectIndex, IDX_MASKS, IDX_NAMES)
             );
         }
 

@@ -17,13 +17,17 @@
 
 package org.apache.poi.hemf.draw;
 
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.poi.hemf.record.emfplus.HemfPlusBrush.EmfPlusHatchStyle;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 
 public class HemfDrawProperties extends HwmfDrawProperties {
+    enum TransOperand { left, right }
 
     /** Path for path bracket operations */
     protected Path2D path = null;
@@ -31,6 +35,8 @@ public class HemfDrawProperties extends HwmfDrawProperties {
     private EmfPlusHatchStyle emfPlusBrushHatch;
     private BufferedImage emfPlusImage;
 
+    private final List<AffineTransform> transXForm = new ArrayList<>();
+    private final List<TransOperand> transOper = new ArrayList<>();
 
     public HemfDrawProperties() {
     }
@@ -43,6 +49,8 @@ public class HemfDrawProperties extends HwmfDrawProperties {
         // TODO: check how to clone
         clip = other.clip;
         emfPlusImage = other.emfPlusImage;
+        transXForm.addAll(other.transXForm);
+        transOper.addAll(other.transOper);
     }
 
     /**
@@ -87,5 +95,28 @@ public class HemfDrawProperties extends HwmfDrawProperties {
 
     public void setEmfPlusImage(BufferedImage emfPlusImage) {
         this.emfPlusImage = emfPlusImage;
+    }
+
+    public void addLeftTransform(AffineTransform transform) {
+        transXForm.add(transform);
+        transOper.add(TransOperand.left);
+    }
+
+    public void addRightTransform(AffineTransform transform) {
+        transXForm.add(transform);
+        transOper.add(TransOperand.right);
+    }
+
+    public void clearTransform() {
+        transXForm.clear();
+        transOper.clear();
+    }
+
+    List<AffineTransform> getTransXForm() {
+        return transXForm;
+    }
+
+    List<TransOperand> getTransOper() {
+        return transOper;
     }
 }

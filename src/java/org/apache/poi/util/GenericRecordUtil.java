@@ -107,17 +107,23 @@ public final class GenericRecordUtil {
     }
 
     public static Supplier<AnnotatedFlag> getBitsAsString(Supplier<Number> flags, final int[] masks, final String[] names) {
-        return () -> new AnnotatedFlag(flags, masks, names);
+        return () -> new AnnotatedFlag(flags, masks, names, false);
+    }
+
+    public static Supplier<AnnotatedFlag> getEnumBitsAsString(Supplier<Number> flags, final int[] masks, final String[] names) {
+        return () -> new AnnotatedFlag(flags, masks, names, true);
     }
 
     public static class AnnotatedFlag {
         private final Supplier<Number> value;
         private final Map<Integer,String> masks = new LinkedHashMap<>();
+        private final boolean exactMatch;
 
-        AnnotatedFlag(Supplier<Number> value, int[] masks, String[] names) {
+        AnnotatedFlag(Supplier<Number> value, int[] masks, String[] names, boolean exactMatch) {
             assert(masks.length == names.length);
 
             this.value = value;
+            this.exactMatch = exactMatch;
             for (int i=0; i<masks.length; i++) {
                 this.masks.put(masks[i], names[i]);
             }
@@ -135,8 +141,8 @@ public final class GenericRecordUtil {
                 collect(Collectors.joining(" | "));
         }
 
-        private static boolean match(final int val, int mask) {
-            return (val & mask) == mask;
+        private boolean match(final int val, int mask) {
+            return exactMatch ? (val == mask) : ((val & mask) == mask);
         }
     }
 }

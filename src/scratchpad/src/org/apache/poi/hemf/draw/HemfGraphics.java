@@ -23,11 +23,14 @@ import static org.apache.poi.hwmf.record.HwmfBrushStyle.BS_SOLID;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Paint;
+import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.List;
 import java.util.function.Consumer;
 
+import org.apache.poi.hemf.draw.HemfDrawProperties.TransOperand;
 import org.apache.poi.hemf.record.emf.HemfComment.EmfComment;
 import org.apache.poi.hemf.record.emf.HemfRecord;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecord;
@@ -335,5 +338,28 @@ public class HemfGraphics extends HwmfGraphics {
     protected Paint getHatchedFill() {
         // TODO: use EmfPlusHatchBrushData
         return super.getHatchedFill();
+    }
+
+    @Override
+    public void updateWindowMapMode() {
+        super.updateWindowMapMode();
+        HemfDrawProperties prop = getProperties();
+
+        List<AffineTransform> transXform = prop.getTransXForm();
+        List<TransOperand> transOper = prop.getTransOper();
+        assert(transXform.size() == transOper.size());
+
+        AffineTransform tx = graphicsCtx.getTransform();
+        for (int i=0; i<transXform.size(); i++) {
+            AffineTransform tx2 = transXform.get(i);
+            if (transOper.get(i) == TransOperand.left) {
+                tx.concatenate(tx2);
+            } else {
+
+                tx.preConcatenate(tx2);
+            }
+        }
+
+        graphicsCtx.setTransform(tx);
     }
 }

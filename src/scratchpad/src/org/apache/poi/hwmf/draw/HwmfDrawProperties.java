@@ -31,8 +31,8 @@ import java.util.List;
 
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfColorRef;
-import org.apache.poi.hwmf.record.HwmfFont;
 import org.apache.poi.hwmf.record.HwmfFill.WmfSetPolyfillMode.HwmfPolyfillMode;
+import org.apache.poi.hwmf.record.HwmfFont;
 import org.apache.poi.hwmf.record.HwmfHatchStyle;
 import org.apache.poi.hwmf.record.HwmfMapMode;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
@@ -52,6 +52,7 @@ public class HwmfDrawProperties {
     private HwmfColorRef brushColor;
     private HwmfHatchStyle brushHatch;
     private BufferedImage brushBitmap;
+    private final AffineTransform brushTransform = new AffineTransform();
     private double penWidth;
     private HwmfPenStyle penStyle;
     private HwmfColorRef penColor;
@@ -112,6 +113,7 @@ public class HwmfDrawProperties {
             WritableRaster raster = other.brushBitmap.copyData(null);
             this.brushBitmap = new BufferedImage(cm, raster, isAlphaPremultiplied, null);            
         }
+        this.brushTransform.setTransform(other.brushTransform);
         this.penWidth = other.penWidth;
         this.penStyle = (other.penStyle == null) ? null : other.penStyle.clone();
         this.penColor = (other.penColor == null) ? null : other.penColor.clone();
@@ -410,5 +412,17 @@ public class HwmfDrawProperties {
 
     public void setClip(Shape clip) {
         this.clip = clip;
+    }
+
+    public AffineTransform getBrushTransform() {
+        return brushTransform;
+    }
+
+    public void setBrushTransform(AffineTransform brushTransform) {
+        if (brushTransform == null) {
+            this.brushTransform.setToIdentity();
+        } else {
+            this.brushTransform.setTransform(brushTransform);
+        }
     }
 }

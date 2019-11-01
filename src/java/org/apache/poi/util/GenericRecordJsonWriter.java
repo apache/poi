@@ -368,19 +368,19 @@ public class GenericRecordJsonWriter implements Closeable {
             fw.append("{ \"type\": ");
             switch (segType) {
                 case PathIterator.SEG_MOVETO:
-                    fw.write("'move', \"x\": "+pnts[0]+", \"y\": "+pnts[1]);
+                    fw.write("\"move\", \"x\": "+pnts[0]+", \"y\": "+pnts[1]);
                     break;
                 case PathIterator.SEG_LINETO:
-                    fw.write("'lineto', \"x\": "+pnts[0]+", \"y\": "+pnts[1]);
+                    fw.write("\"lineto\", \"x\": "+pnts[0]+", \"y\": "+pnts[1]);
                     break;
                 case PathIterator.SEG_QUADTO:
-                    fw.write("'quad', \"x1\": "+pnts[0]+", \"y1\": "+pnts[1]+", \"x2\": "+pnts[2]+", \"y2\": "+pnts[3]);
+                    fw.write("\"quad\", \"x1\": "+pnts[0]+", \"y1\": "+pnts[1]+", \"x2\": "+pnts[2]+", \"y2\": "+pnts[3]);
                     break;
                 case PathIterator.SEG_CUBICTO:
-                    fw.write("'cubic', \"x1\": "+pnts[0]+", \"y1\": "+pnts[1]+", \"x2\": "+pnts[2]+", \"y2\": "+pnts[3]+", \"x3\": "+pnts[4]+", \"y3\": "+pnts[5]);
+                    fw.write("\"cubic\", \"x1\": "+pnts[0]+", \"y1\": "+pnts[1]+", \"x2\": "+pnts[2]+", \"y2\": "+pnts[3]+", \"x3\": "+pnts[4]+", \"y3\": "+pnts[5]);
                     break;
                 case PathIterator.SEG_CLOSE:
-                    fw.write("'close'");
+                    fw.write("\"close\"");
                     break;
             }
             fw.append(" }");

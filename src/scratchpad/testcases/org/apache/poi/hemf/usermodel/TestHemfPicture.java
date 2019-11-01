@@ -56,9 +56,10 @@ public class TestHemfPicture {
     private static final POIDataSamples ss_samples = POIDataSamples.getSpreadSheetInstance();
     private static final POIDataSamples sl_samples = POIDataSamples.getSlideShowInstance();
 
-/*    @Test
+    /*
+    @Test
     @Ignore("Only for manual tests - need to add org.tukaani:xz:1.8 for this to work")
-    public void paint() throws IOException {
+    public void paint() throws Exception {
         final byte buf[] = new byte[50_000_000];
 
         // good test samples to validate rendering:
@@ -67,161 +68,56 @@ public class TestHemfPicture {
         // emfs/govdocs1/844/844795.ppt_2.emf
         // emfs/commoncrawl2/TO/TOYZSTNUSW5OFCFUQ6T5FBLIDLCRF3NH_0.emf
 
-        final boolean writeLog = false;
-        final boolean dumpRecords = false;
-        final boolean savePng = true;
-        final boolean dumpEmbedded = false;
+        // ISS3ANIX2PL4PXR7SZSJSPBZI7YQQE3U_6 - map of italy - stroke problem
+        // 3QKAPISTXYHSFCTV6QTKTYLK6JTWJHQU_2 - text misplaced
+        // KEEDHN6XES4EKK52E3AJHKCARNTQF7PO_0 - dito
+        // KWG4VAU5GM3POSA4BPG6RSVQVS44SXOL_1.emf - processing freezes
 
-        Set<String> passed = new HashSet<>();
+        // F7GK5XOLERFURVTQALOCX3GJ6FH45LNQ strange colors
+        // ISS3ANIX2PL4PXR7SZSJSPBZI7YQQE3U stroke wrong
+        // KWG4VAU5GM3POSA4BPG6RSVQVS44SXOL_1
 
-        try (BufferedWriter sucWrite = parseEmfLog(passed, "emf-success.txt")
-            ;BufferedWriter parseError = parseEmfLog(passed, "emf-parse.txt")
-            ;BufferedWriter renderError = parseEmfLog(passed, "emf-render.txt")
-            ;SevenZFile sevenZFile = new SevenZFile(new File("tmp/plus_emf.7z"))
+        try (SevenZFile sevenZFile = new SevenZFile(new File("tmp/plus_emf.7z"))
             ) {
             for (int idx=0;;idx++) {
                 SevenZArchiveEntry entry = sevenZFile.getNextEntry();
                 if (entry == null) break;
                 final String etName = entry.getName();
 
-                if (entry.isDirectory() || !etName.endsWith(".emf") || passed.contains(etName)) continue;
+                if (entry.isDirectory() || !etName.endsWith(".emf")) continue;
 
+                if (!(etName.contains("3QKAPISTXYHSFCTV6QTKTYLK6JTWJHQU_2")
+                )) continue;
 
-                // KEEDHN6XES4EKK52E3AJHKCARNTQF7PO_0.emf takes ages, time is spent while drawing paths
-//                if (!etName.contains("KEEDHN6XES4EKK52E3AJHKCARNTQF7PO_0.emf")) continue;
-
-                // F7GK5XOLERFURVTQALOCX3GJ6FH45LNQ strange colors
-                // ISS3ANIX2PL4PXR7SZSJSPBZI7YQQE3U stroke wrong
-//                if (!etName.contains("ISS3ANIX2PL4PXR7SZSJSPBZI7YQQE3U")) continue;
+//                || etName.contains("ISS3ANIX2PL4PXR7SZSJSPBZI7YQQE3U_6")
+//                        || etName.contains("KWG4VAU5GM3POSA4BPG6RSVQVS44SXOL_1")
 
 
                 System.out.println(etName);
 
                 int size = sevenZFile.read(buf);
+                ByteArrayInputStream bis = new ByteArrayInputStream(buf, 0, size);
+                System.setIn(bis);
 
-                HemfPicture emf = null;
-                try {
-                    emf = new HemfPicture(new ByteArrayInputStream(buf, 0, size));
+                String lastName = etName.replaceFirst(".+/", "");
 
-                    // initialize parsing
-                    emf.getRecords();
-                } catch (Exception|AssertionError e) {
-                    if (writeLog) {
-                        parseError.write(etName+" "+hashException(e)+"\n");
-                        parseError.flush();
-                    }
-                    System.out.println("parse error");
-                    // continue with the read records up to the error anyway
-                    if (emf.getRecords().isEmpty()) {
-                        continue;
-                    }
-                }
-
-                if (dumpRecords) {
-                    dumpRecords(emf);
-                }
-
-                if (dumpEmbedded) {
-                    int embIdx = 0;
-                    for (HwmfEmbedded emb : emf.getEmbeddings()) {
-                        final File embName = new File("build/tmp", "emb_"+etName.replaceFirst(".+/", "").replace(".emf", "_"+embIdx + emb.getEmbeddedType().extension) );
-                        try (FileOutputStream fos = new FileOutputStream(embName)) {
-                            fos.write(emb.getRawData());
-                        }
-                        embIdx++;
-                    }
-                }
-
-
-                Graphics2D g = null;
-                try {
-                    Dimension2D dim = emf.getSize();
-                    double width = Units.pointsToPixel(dim.getWidth());
-                    // keep aspect ratio for height
-                    double height = Units.pointsToPixel(dim.getHeight());
-                    double max = Math.max(width, height);
-                    if (max > 1500.) {
-                        width *= 1500. / max;
-                        height *= 1500. / max;
-                    }
-                    width = Math.ceil(width);
-                    height = Math.ceil(height);
-
-                    BufferedImage bufImg = new BufferedImage((int)width, (int)height, BufferedImage.TYPE_INT_ARGB);
-                    g = bufImg.createGraphics();
-                    g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                    g.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_SPEED);
-                    g.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
-                    g.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_NEAREST_NEIGHBOR);
-                    g.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-
-                    g.setComposite(AlphaComposite.Clear);
-                    g.fillRect(0, 0, (int)width, (int)height);
-                    g.setComposite(AlphaComposite.Src);
-
-                    final File pngName = new File("build/tmp", etName.replaceFirst(".+/", "").replace(".emf", ".png"));
-
-                    emf.draw(g, new Rectangle2D.Double(0, 0, width, height));
-
-                    if (savePng) {
-                        ImageIO.write(bufImg, "PNG", pngName);
-                    }
-                } catch (Exception|AssertionError e) {
-                    System.out.println("render error");
-                    if (writeLog) {
-                        // dumpRecords(emf.getRecords());
-                        renderError.write(etName+" "+hashException(e)+"\n");
-                        renderError.flush();
-                    }
-                    continue;
-                } finally {
-                    if (g != null) g.dispose();
-                }
-
-                if (writeLog) {
-                    sucWrite.write(etName + "\n");
-                    sucWrite.flush();
-                }
+                String[] args = {
+                    "-format", "png", // png,gif,jpg or null for test
+                    "-outdir", new File("build/tmp/").getCanonicalPath(),
+                    "-outfile", lastName.replace(".emf", ".png"),
+                    "-fixside", "long",
+                    "-scale", "800",
+                    "-ignoreParse",
+                     "-dump", new File("build/tmp/", lastName.replace(".emf",".json")).getCanonicalPath(),
+                    // "-quiet",
+                    // "-extractEmbedded",
+                    "stdin"
+                };
+                PPTX2PNG.main(args);
             }
         }
     }
-
-    private static int hashException(Throwable e) {
-        StringBuilder sb = new StringBuilder();
-        for (StackTraceElement se : e.getStackTrace()) {
-            sb.append(se.getClassName()+":"+se.getLineNumber());
-        }
-        return sb.toString().hashCode();
-    }
-
-    private static void dumpRecords(HemfPicture emf) throws IOException {
-        FileWriter fw = new FileWriter("record-list.txt");
-        int i = 0;
-        for (HemfRecord r : emf.getRecords()) {
-            if (r.getEmfRecordType() != HemfRecordType.comment) {
-                fw.write(i + " " + r.getEmfRecordType() + " " + r.toString() + "\n");
-            }
-            i++;
-        }
-        fw.close();
-    }
-
-    private static BufferedWriter parseEmfLog(Set<String> passed, String logFile) throws IOException {
-        Path log = Paths.get(logFile);
-
-        StandardOpenOption soo;
-        if (Files.exists(log)) {
-            soo = StandardOpenOption.APPEND;
-            try (Stream<String> stream = Files.lines(log)) {
-                stream.filter(s -> !s.startsWith("#")).forEach((s) -> passed.add(s.split("\\s")[0]));
-            }
-        } else {
-            soo = StandardOpenOption.CREATE;
-        }
-
-        return Files.newBufferedWriter(log, StandardCharsets.UTF_8, soo);
-    }*/
-
+*/
     @Test
     public void testBasicWindows() throws Exception {
         try (InputStream is = ss_samples.openResourceAsStream("SimpleEMF_windows.emf")) {

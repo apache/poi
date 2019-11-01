@@ -161,6 +161,8 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
 
             HemfGraphics g = new HemfGraphics(ctx, emfBounds);
             HemfDrawProperties prop = g.getProperties();
+            prop.setWindowOrg(emfBounds.getX(), emfBounds.getY());
+            prop.setWindowExt(emfBounds.getWidth(), emfBounds.getHeight());
             prop.setViewportOrg(emfBounds.getX(), emfBounds.getY());
             prop.setViewportExt(emfBounds.getWidth(), emfBounds.getHeight());
 

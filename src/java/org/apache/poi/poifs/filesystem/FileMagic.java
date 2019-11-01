@@ -94,12 +94,21 @@ public enum FileMagic {
     PNG(new byte[]{ (byte)0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A }),
     /** TIFF Image */
     TIFF("II*\u0000", "MM\u0000*" ),
+    /** WMF image with a placeable header */
+    WMF(new byte[]{ (byte)0xD7, (byte)0xCD, (byte)0xC6, (byte)0x9A }),
+    /** EMF image */
+    EMF(new byte[]{
+        1, 0, 0, 0,
+        '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?',
+        '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?',
+        ' ', 'E', 'M', 'F'
+    }),
     // keep UNKNOWN always as last enum!
     /** UNKNOWN magic */
     UNKNOWN(new byte[0]);
 
     // update this if a longer pattern is added
-    final static int MAX_PATTERN_LENGTH = 12;
+    final static int MAX_PATTERN_LENGTH = 44;
 
     final byte[][] magic;
     

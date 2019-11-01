@@ -17,7 +17,6 @@
 
 package org.apache.poi.hemf.record.emfplus;
 
-import static org.apache.poi.hemf.record.emf.HemfMisc.adaptXForm;
 import static org.apache.poi.hemf.record.emfplus.HemfPlusDraw.readRectF;
 import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
 
@@ -28,6 +27,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emf.HemfFill;
 import org.apache.poi.util.BitField;
@@ -174,6 +174,12 @@ public class HemfPlusMisc {
      * The EmfPlusResetWorldTransform record resets the current world space transform to the identify matrix.
      */
     public static class EmfPlusResetWorldTransform extends EmfPlusFlagOnly {
+        @Override
+        public void draw(HemfGraphics ctx) {
+            HemfDrawProperties prop = ctx.getProperties();
+            prop.clearTransform();
+            ctx.updateWindowMapMode();
+        }
     }
 
 
@@ -208,10 +214,10 @@ public class HemfPlusMisc {
 
         @Override
         public void draw(HemfGraphics ctx) {
+            HemfDrawProperties prop = ctx.getProperties();
+            prop.clearTransform();
+            prop.addLeftTransform(getMatrixData());
             ctx.updateWindowMapMode();
-            AffineTransform tx = ctx.getTransform();
-            tx.concatenate(getMatrixData());
-            ctx.setTransform(tx);
         }
 
         @Override
@@ -235,11 +241,9 @@ public class HemfPlusMisc {
 
         @Override
         public void draw(HemfGraphics ctx) {
+            HemfDrawProperties prop = ctx.getProperties();
+            prop.addLeftTransform(getMatrixData());
             ctx.updateWindowMapMode();
-            AffineTransform tx = ctx.getTransform();
-            tx.preConcatenate(adaptXForm(getMatrixData(), tx));
-            tx.concatenate(getMatrixData());
-            ctx.setTransform(tx);
         }
     }
 

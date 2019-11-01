@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.apache.poi.hemf.draw.HemfDrawProperties;
@@ -754,10 +753,10 @@ public class HemfMisc {
 
         @Override
         public void draw(HemfGraphics ctx) {
+            HemfDrawProperties prop = ctx.getProperties();
+            prop.clearTransform();
+            prop.addLeftTransform(xForm);
             ctx.updateWindowMapMode();
-            AffineTransform tx = ctx.getTransform();
-            tx.concatenate(xForm);
-            ctx.setTransform(tx);
         }
 
         @Override
@@ -812,28 +811,23 @@ public class HemfMisc {
 
             final HemfDrawProperties prop = ctx.getProperties();
 
-            final AffineTransform tx;
             switch (modifyWorldTransformMode) {
                 case MWT_LEFTMULTIPLY:
-                    tx = ctx.getTransform();
-                    tx.concatenate(adaptXForm(xForm, ctx.getTransform()));
+                    prop.addLeftTransform(xForm);
                     break;
                 case MWT_RIGHTMULTIPLY:
-                    tx = ctx.getTransform();
-                    tx.preConcatenate(adaptXForm(xForm, tx));
+                    prop.addRightTransform(xForm);
                     break;
                 case MWT_IDENTITY:
-                    ctx.updateWindowMapMode();
-                    tx = ctx.getTransform();
+                    prop.clearTransform();
                     break;
                 default:
                 case MWT_SET:
-                    ctx.updateWindowMapMode();
-                    tx = ctx.getTransform();
-                    tx.concatenate(adaptXForm(xForm, tx));
+                    prop.clearTransform();
+                    prop.addLeftTransform(xForm);
                     break;
             }
-            ctx.setTransform(tx);
+            ctx.updateWindowMapMode();
         }
 
         @Override
@@ -950,22 +944,4 @@ public class HemfMisc {
         }
     }
 
-
-    /**
-     * adapt xform depending on the base transformation (... experimental ...)
-     */
-    public static AffineTransform adaptXForm(AffineTransform xForm, AffineTransform other) {
-        // normalize signed zero
-        Function<Double,Double> nn = (d) -> (d == 0. ? 0. : d);
-        double yDiff = Math.signum(nn.apply(xForm.getTranslateY())) == Math.signum(nn.apply(other.getTranslateY())) ? 1. : -1.;
-        double xDiff = Math.signum(nn.apply(xForm.getTranslateX())) == Math.signum(nn.apply(other.getTranslateX())) ? 1. : -1.;
-        return new AffineTransform(
-                xForm.getScaleX() == 0 ? 1. : xForm.getScaleX(),
-                yDiff * xForm.getShearY(),
-                xDiff * xForm.getShearX(),
-                xForm.getScaleY() == 0. ? 1. : xForm.getScaleY(),
-                xForm.getTranslateX(),
-                xForm.getTranslateY()
-        );
-    }
 }

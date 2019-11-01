@@ -219,7 +219,8 @@ public class HemfText {
             return GenericRecordUtil.getGenericProperties(
                 "base", super::getGenericProperties,
                 "boundsIgnored", () -> boundsIgnored,
-                "graphicsMode", this::getGraphicsMode
+                "graphicsMode", this::getGraphicsMode,
+                "scale", this::getScale
             );
         }
 

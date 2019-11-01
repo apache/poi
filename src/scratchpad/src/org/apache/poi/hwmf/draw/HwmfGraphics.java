@@ -238,9 +238,11 @@ public class HwmfGraphics {
     }
 
     protected Paint getPatternPaint() {
-        BufferedImage bi = getProperties().getBrushBitmap();
-        return (bi == null) ? null
-            : new TexturePaint(bi, new Rectangle(0,0,bi.getWidth(),bi.getHeight()));
+        HwmfDrawProperties prop = getProperties();
+        BufferedImage bi = prop.getBrushBitmap();
+        Rectangle2D rect = new Rectangle2D.Double(0, 0, bi.getWidth(), bi.getHeight());
+        rect = prop.getBrushTransform().createTransformedShape(rect).getBounds2D();
+        return (bi == null) ? null : new TexturePaint(bi, rect);
     }
 
     /**
@@ -355,7 +357,7 @@ public class HwmfGraphics {
         Rectangle2D win = getProperties().getWindow();
         Rectangle2D view = getProperties().getViewport();
         HwmfMapMode mapMode = getProperties().getMapMode();
-        graphicsCtx.setTransform(initialAT);
+        graphicsCtx.setTransform(getInitTransform());
 
         switch (mapMode) {
         default:
@@ -673,7 +675,7 @@ public class HwmfGraphics {
     public void setClip(Shape clip, HwmfRegionMode regionMode, boolean useInitialAT) {
         final AffineTransform at = graphicsCtx.getTransform();
         if (useInitialAT) {
-            graphicsCtx.setTransform(initialAT);
+            graphicsCtx.setTransform(getInitTransform());
         }
 
         final Shape oldClip = graphicsCtx.getClip();
