@@ -300,10 +300,6 @@ public class HemfComment {
 
         @Override
         public void draw(HemfGraphics ctx) {
-            if (ctx.getRenderState() == HemfGraphics.EmfRenderState.INITIAL) {
-                ctx.setRenderState(HemfGraphics.EmfRenderState.EMFPLUS_ONLY);
-            }
-
             records.forEach(ctx::draw);
         }
 

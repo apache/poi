@@ -25,10 +25,9 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.WritableRaster;
 import java.util.List;
 
+import org.apache.poi.hwmf.draw.HwmfGraphics.BufferedImageRenderer;
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfColorRef;
 import org.apache.poi.hwmf.record.HwmfFill.WmfSetPolyfillMode.HwmfPolyfillMode;
@@ -41,6 +40,7 @@ import org.apache.poi.hwmf.record.HwmfPenStyle;
 import org.apache.poi.hwmf.record.HwmfTernaryRasterOp;
 import org.apache.poi.hwmf.record.HwmfText.HwmfTextAlignment;
 import org.apache.poi.hwmf.record.HwmfText.HwmfTextVerticalAlignment;
+import org.apache.poi.sl.draw.ImageRenderer;
 
 public class HwmfDrawProperties {
     private final Rectangle2D window;
@@ -51,7 +51,7 @@ public class HwmfDrawProperties {
     private HwmfBrushStyle brushStyle;
     private HwmfColorRef brushColor;
     private HwmfHatchStyle brushHatch;
-    private BufferedImage brushBitmap;
+    private ImageRenderer brushBitmap;
     private final AffineTransform brushTransform = new AffineTransform();
     private double penWidth;
     private HwmfPenStyle penStyle;
@@ -107,12 +107,7 @@ public class HwmfDrawProperties {
         this.brushStyle = other.brushStyle;
         this.brushColor = other.brushColor.clone();
         this.brushHatch = other.brushHatch;
-        if (other.brushBitmap != null) {
-            ColorModel cm = other.brushBitmap.getColorModel();
-            boolean isAlphaPremultiplied = cm.isAlphaPremultiplied();
-            WritableRaster raster = other.brushBitmap.copyData(null);
-            this.brushBitmap = new BufferedImage(cm, raster, isAlphaPremultiplied, null);            
-        }
+        this.brushBitmap = other.brushBitmap;
         this.brushTransform.setTransform(other.brushTransform);
         this.penWidth = other.penWidth;
         this.penStyle = (other.penStyle == null) ? null : other.penStyle.clone();
@@ -280,14 +275,17 @@ public class HwmfDrawProperties {
         this.polyfillMode = polyfillMode;
     }
 
-    public BufferedImage getBrushBitmap() {
+    public ImageRenderer getBrushBitmap() {
         return brushBitmap;
     }
 
-    public void setBrushBitmap(BufferedImage brushBitmap) {
+    public void setBrushBitmap(ImageRenderer brushBitmap) {
         this.brushBitmap = brushBitmap;
     }
 
+    public void setBrushBitmap(BufferedImage brushBitmap) {
+        this.brushBitmap = new BufferedImageRenderer(brushBitmap);
+    }
 
     /**
      * Gets the last stored region

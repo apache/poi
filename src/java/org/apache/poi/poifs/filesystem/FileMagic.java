@@ -103,6 +103,8 @@ public enum FileMagic {
         '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?',
         ' ', 'E', 'M', 'F'
     }),
+    /** BMP image */
+    BMP(new byte[]{'B','M'}),
     // keep UNKNOWN always as last enum!
     /** UNKNOWN magic */
     UNKNOWN(new byte[0]);

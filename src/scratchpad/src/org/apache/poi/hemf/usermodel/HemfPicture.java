@@ -171,7 +171,6 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
                 try {
                     g.draw(r);
                 } catch (RuntimeException ignored) {
-
                 }
                 idx++;
             }

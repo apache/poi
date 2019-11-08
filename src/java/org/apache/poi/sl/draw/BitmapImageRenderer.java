@@ -322,4 +322,9 @@ public class BitmapImageRenderer implements ImageRenderer {
 
         return true;
     }
+
+    @Override
+    public Rectangle2D getNativeBounds() {
+        return new Rectangle2D.Double(0, 0, img.getWidth(), img.getHeight());
+    }
 }

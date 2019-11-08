@@ -23,7 +23,6 @@ import static org.junit.Assume.assumeFalse;
 
 import java.io.File;
 import java.util.Collection;
-import java.util.Locale;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -83,7 +82,7 @@ public class TestPPTX2PNG {
             "-slide", "-1", // -1 for all
             "-outdir", new File("build/tmp/").getCanonicalPath(),
             "-outpat", "${basename}-${slideno}-${ext}.${format}",
-            // "-dump", new File("build/tmp/", pptFile+".dump").getCanonicalPath(),
+            // "-dump", new File("build/tmp/", pptFile+".json").getCanonicalPath(),
             "-dump", "null",
             "-quiet",
             "-fixside", "long",

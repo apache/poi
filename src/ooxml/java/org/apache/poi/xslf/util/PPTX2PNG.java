@@ -225,8 +225,8 @@ public final class PPTX2PNG {
 
             final Dimension2D dim = new Dimension2DDouble();
             final double lenSide = getDimensions(proxy, dim);
-            final int width = (int)Math.rint(dim.getWidth());
-            final int height = (int)Math.rint(dim.getHeight());
+            final int width = Math.max((int)Math.rint(dim.getWidth()),1);
+            final int height = Math.max((int)Math.rint(dim.getHeight()),1);
 
             for (int slideNo : slidenum) {
                 proxy.setSlideNo(slideNo);
@@ -309,7 +309,11 @@ public final class PPTX2PNG {
             return;
         }
         GenericRecord gr = proxy.getRoot();
-        try (GenericRecordJsonWriter fw = new GenericRecordJsonWriter(dumpfile)) {
+        try (GenericRecordJsonWriter fw = new GenericRecordJsonWriter(dumpfile) {
+            protected boolean printBytes(String name, Object o) {
+                return false;
+            }
+        }) {
             if (gr == null) {
                 fw.writeError(file.getName()+" doesn't support GenericRecord interface and can't be dumped to a file.");
             } else {

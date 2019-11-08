@@ -159,6 +159,10 @@ public class HemfPlusObject {
             return (T)objectData;
         }
 
+        public int getTotalObjectSize() {
+            return totalObjectSize;
+        }
+
         @Override
         public long init(LittleEndianInputStream leis, long dataSize, long recordId, int flags) throws IOException {
             this.flags = flags;
@@ -190,17 +194,19 @@ public class HemfPlusObject {
 
         @Override
         public void draw(HemfGraphics ctx) {
-            HwmfObjectTableEntry entry = ctx.getObjectTableEntry(getObjectId());
             if (objectData.isContinuedRecord()) {
                 EmfPlusObject other;
-                if (entry instanceof EmfPlusObject && objectData.getClass().isInstance((other = (EmfPlusObject)entry).getObjectData())) {
+                HwmfObjectTableEntry entry = ctx.getObjectTableEntry(getObjectId());
+                if (entry instanceof EmfPlusObject &&
+                    objectData.getClass().isInstance((other = (EmfPlusObject)entry).getObjectData())
+                ) {
                     other.linkContinuedObject(objectData);
-                    return;
                 } else {
                     throw new RuntimeException("can't find previous record for continued record");
                 }
+            } else {
+                ctx.addObjectTableEntry(this, getObjectId());
             }
-            ctx.addObjectTableEntry(this, getObjectId());
         }
 
         @Override
@@ -226,7 +232,7 @@ public class HemfPlusObject {
                 "objectId", this::getObjectId,
                 "objectData", () -> objectData.isContinuedRecord() ? null : getObjectData(),
                 "continuedObject", objectData::isContinuedRecord,
-                "totalObjectSize", () -> totalObjectSize
+                "totalObjectSize", this::getTotalObjectSize
             );
         }
 

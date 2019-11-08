@@ -32,6 +32,7 @@ import java.util.function.Supplier;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
+import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
@@ -616,8 +617,7 @@ public class HwmfFill {
                                                    prop.getBkMode() == HwmfBkMode.TRANSPARENT);
                 ctx.drawImage(bi, srcBounds, dstBounds);
             } else if (!dstBounds.isEmpty()) {
-                BufferedImage bi = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
-                ctx.drawImage(bi, new Rectangle2D.Double(0,0,100,100), dstBounds);
+                ctx.drawImage((ImageRenderer)null, new Rectangle2D.Double(0,0,1,1), dstBounds);
             }
         }
 
@@ -915,13 +915,13 @@ public class HwmfFill {
             prop.setRasterOp(rasterOperation);
             // TODO: implement second operation based on playback device context
             if (target != null) {
-                HwmfBkMode mode = prop.getBkMode();
+                HwmfBkMode oldMode = prop.getBkMode();
                 prop.setBkMode(HwmfBkMode.TRANSPARENT);
                 Color fgColor = prop.getPenColor().getColor();
                 Color bgColor = prop.getBackgroundColor().getColor();
                 BufferedImage bi = target.getImage(fgColor, bgColor, true);
                 ctx.drawImage(bi, srcBounds, dstBounds);
-                prop.setBkMode(mode);
+                prop.setBkMode(oldMode);
             }
         }
 

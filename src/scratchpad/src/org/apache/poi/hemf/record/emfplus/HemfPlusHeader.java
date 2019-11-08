@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.draw.HemfGraphics.EmfRenderState;
 import org.apache.poi.util.BitField;
@@ -105,7 +106,7 @@ public class HemfPlusHeader implements HemfPlusRecord {
      * @return {@code true} if dual-mode is enabled
      */
     public boolean isEmfPlusDualMode() {
-        return (emfPlusFlags & 1) == 1;
+        return (flags & 1) == 1;
     }
 
     public long getEmfPlusFlags() {
@@ -124,7 +125,7 @@ public class HemfPlusHeader implements HemfPlusRecord {
     public void draw(HemfGraphics ctx) {
         // currently EMF is better supported than EMF+ ... so if there's a complete set of EMF records available,
         // disable EMF+ rendering for now
-        ctx.setRenderState(isEmfPlusDualMode() ? EmfRenderState.EMF_ONLY : EmfRenderState.EMFPLUS_ONLY);
+        ctx.setRenderState(isEmfPlusDualMode() ? EmfRenderState.EMF_ONLY : EmfRenderState.EMF_DCONTEXT);
     }
 
     @Override
@@ -143,7 +144,7 @@ public class HemfPlusHeader implements HemfPlusRecord {
         );
     }
 
-    public static class EmfPlusGraphicsVersion {
+    public static class EmfPlusGraphicsVersion implements GenericRecord {
         private static final BitField METAFILE_SIGNATURE = BitFieldFactory.getInstance(0xFFFFF000);
 
         private static final BitField GRAPHICS_VERSION = BitFieldFactory.getInstance(0x00000FFF);
@@ -172,8 +173,15 @@ public class HemfPlusHeader implements HemfPlusRecord {
         }
 
         public String toString() {
-            return "{ metafileSignature=0x"+Integer.toHexString(metafileSignature)+
-                    " , graphicsVersion='"+graphicsVersion+"' }";
+            return GenericRecordJsonWriter.marshal(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "metafileSignature", this::getMetafileSignature,
+                "graphicsVersion", this::getGraphicsVersion
+            );
         }
     }
 }

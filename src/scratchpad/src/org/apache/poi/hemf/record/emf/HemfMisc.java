@@ -24,7 +24,6 @@ import static org.apache.poi.hemf.record.emf.HemfRecordIterator.HEADER_SIZE;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -913,8 +912,7 @@ public class HemfMisc {
             }
             HwmfDrawProperties props = ctx.getProperties();
             props.setBrushStyle(HwmfBrushStyle.BS_PATTERN);
-            BufferedImage bmp = bitmap.getImage();
-            props.setBrushBitmap(bmp);
+            props.setBrushBitmap(bitmap.getImage());
         }
 
         @Override

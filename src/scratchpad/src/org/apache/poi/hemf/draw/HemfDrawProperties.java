@@ -19,21 +19,30 @@ package org.apache.poi.hemf.draw;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
-import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.BiConsumer;
 
 import org.apache.poi.hemf.record.emfplus.HemfPlusBrush.EmfPlusHatchStyle;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
+import org.apache.poi.sl.draw.ImageRenderer;
 
 public class HemfDrawProperties extends HwmfDrawProperties {
-    enum TransOperand { left, right }
+    enum TransOperand {
+        left(AffineTransform::concatenate),
+        right(AffineTransform::preConcatenate);
+
+        BiConsumer<AffineTransform,AffineTransform> fun;
+        TransOperand(BiConsumer<AffineTransform,AffineTransform> fun) {
+            this.fun = fun;
+        }
+    }
 
     /** Path for path bracket operations */
     protected Path2D path = null;
     protected boolean usePathBracket = false;
     private EmfPlusHatchStyle emfPlusBrushHatch;
-    private BufferedImage emfPlusImage;
+    private ImageRenderer emfPlusImage;
 
     private final List<AffineTransform> transXForm = new ArrayList<>();
     private final List<TransOperand> transOper = new ArrayList<>();
@@ -89,22 +98,33 @@ public class HemfDrawProperties extends HwmfDrawProperties {
         this.emfPlusBrushHatch = emfPlusBrushHatch;
     }
 
-    public BufferedImage getEmfPlusImage() {
+    public ImageRenderer getEmfPlusImage() {
         return emfPlusImage;
     }
 
-    public void setEmfPlusImage(BufferedImage emfPlusImage) {
+    public void setEmfPlusImage(ImageRenderer emfPlusImage) {
         this.emfPlusImage = emfPlusImage;
     }
 
     public void addLeftTransform(AffineTransform transform) {
-        transXForm.add(transform);
-        transOper.add(TransOperand.left);
+        addLRTransform(transform, TransOperand.left);
     }
 
     public void addRightTransform(AffineTransform transform) {
+        addLRTransform(transform, TransOperand.right);
+    }
+
+    private static <T> T last(List<T> list) {
+        return list.isEmpty() ? null : list.get(list.size()-1);
+    }
+
+    private void addLRTransform(AffineTransform transform, TransOperand lr) {
+        if (transform.isIdentity() || (transform.equals(last(transXForm)) && lr.equals(last(transOper)))) {
+            // some EMFs add duplicated transformations - ignore them
+            return;
+        }
         transXForm.add(transform);
-        transOper.add(TransOperand.right);
+        transOper.add(lr);
     }
 
     public void clearTransform() {

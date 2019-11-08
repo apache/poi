@@ -540,8 +540,13 @@ public class HwmfMisc {
             }
             HwmfDrawProperties prop = ctx.getProperties();
             prop.setBrushStyle(style);
-            prop.setBrushBitmap(getImage(prop.getBrushColor().getColor(), prop.getBackgroundColor().getColor(),
-                                         prop.getBkMode() == HwmfBkMode.TRANSPARENT));
+
+            BufferedImage bufImg = getImage(
+                prop.getBrushColor().getColor(),
+                prop.getBackgroundColor().getColor(),
+                prop.getBkMode() == HwmfBkMode.TRANSPARENT);
+
+            prop.setBrushBitmap(bufImg);
         }
 
         @Override

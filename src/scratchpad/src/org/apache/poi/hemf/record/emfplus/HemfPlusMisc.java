@@ -157,9 +157,7 @@ public class HemfPlusMisc {
     public static class EmfPlusGetDC extends EmfPlusFlagOnly {
         @Override
         public void draw(HemfGraphics ctx) {
-            if (ctx.getRenderState() == HemfGraphics.EmfRenderState.EMFPLUS_ONLY) {
-                ctx.setRenderState(HemfGraphics.EmfRenderState.EMF_DCONTEXT);
-            }
+            ctx.setRenderState(HemfGraphics.EmfRenderState.EMF_DCONTEXT);
         }
     }
 
@@ -242,8 +240,11 @@ public class HemfPlusMisc {
         @Override
         public void draw(HemfGraphics ctx) {
             HemfDrawProperties prop = ctx.getProperties();
-            prop.addLeftTransform(getMatrixData());
-            ctx.updateWindowMapMode();
+
+            AffineTransform tx = ctx.getInitTransform();
+            tx.concatenate(getMatrixData());
+            ctx.setTransform(tx);
+            // don't call ctx.updateWindowMapMode();
         }
     }
 

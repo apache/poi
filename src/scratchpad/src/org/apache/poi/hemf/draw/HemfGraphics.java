@@ -27,6 +27,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
 
@@ -85,12 +86,12 @@ public class HemfGraphics extends HwmfGraphics {
     }
 
     public void draw(HemfRecord r) {
-        switch (renderState) {
+        switch (getRenderState()) {
             case EMF_DCONTEXT:
-                // keep the dcontext state, if the next record is an EMF+ record
-                // only reset it, when we are processing EMF records again
-                if (!(r instanceof EmfComment)) {
-                    renderState = EmfRenderState.INITIAL;
+                // This state specifies that subsequent EMF records encountered in the metafile SHOULD be processed.
+                // EMF records cease being processed when the next EMF+ record is encountered.
+                if (r instanceof EmfComment) {
+                    setRenderState(EmfRenderState.EMFPLUS_ONLY);
                 }
                 r.draw(this);
                 break;
@@ -98,8 +99,12 @@ public class HemfGraphics extends HwmfGraphics {
                 r.draw(this);
                 break;
             case EMF_ONLY:
+                if (!(r instanceof EmfComment)) {
+                    r.draw(this);
+                }
+                break;
             case EMFPLUS_ONLY:
-                if ((r instanceof EmfComment) == (renderState == EmfRenderState.EMFPLUS_ONLY)) {
+                if (r instanceof EmfComment) {
                     r.draw(this);
                 }
                 break;
@@ -109,16 +114,7 @@ public class HemfGraphics extends HwmfGraphics {
     }
 
     public void draw(HemfPlusRecord r) {
-        switch (renderState) {
-            case EMFPLUS_ONLY:
-            case EMF_DCONTEXT:
-            case INITIAL:
-                r.draw(this);
-                break;
-            case EMF_ONLY:
-            default:
-                break;
-        }
+        r.draw(this);
     }
 
     @Internal
@@ -202,7 +198,7 @@ public class HemfGraphics extends HwmfGraphics {
     }
 
     private void checkTableEntryIndex(int index) {
-        if (renderState != EmfRenderState.EMFPLUS_ONLY) {
+        if (renderState != EmfRenderState.EMFPLUS_ONLY && renderState != EmfRenderState.EMF_DCONTEXT) {
             // in EMF the index must > 0
             if (index < 1) {
                 throw new IndexOutOfBoundsException("Object table entry index in EMF must be > 0 - invalid index: "+index);
@@ -350,15 +346,8 @@ public class HemfGraphics extends HwmfGraphics {
         assert(transXform.size() == transOper.size());
 
         AffineTransform tx = graphicsCtx.getTransform();
-        for (int i=0; i<transXform.size(); i++) {
-            AffineTransform tx2 = transXform.get(i);
-            if (transOper.get(i) == TransOperand.left) {
-                tx.concatenate(tx2);
-            } else {
-
-                tx.preConcatenate(tx2);
-            }
-        }
+        Iterator<AffineTransform> iter = transXform.iterator();
+        transOper.forEach(to -> to.fun.accept(tx, iter.next()));
 
         graphicsCtx.setTransform(tx);
     }

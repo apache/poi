@@ -22,10 +22,10 @@ import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
+import java.awt.geom.Dimension2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -43,13 +43,12 @@ import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emf.HemfFill;
-import org.apache.poi.hemf.record.emfplus.HemfPlusImage.EmfPlusImage;
 import org.apache.poi.hemf.record.emfplus.HemfPlusMisc.EmfPlusObjectId;
-import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObject;
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfColorRef;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
 import org.apache.poi.hwmf.record.HwmfTernaryRasterOp;
+import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordJsonWriter;
@@ -314,6 +313,7 @@ public class HemfPlusDraw {
             return GenericRecordUtil.getGenericProperties(
                 "flags", this::getFlags,
                 "brushId", this::getBrushId,
+                "brushColor", this::getSolidColor,
                 "rectData", this::getRectData
             );
         }
@@ -429,31 +429,35 @@ public class HemfPlusDraw {
             ctx.applyObjectTableEntry(imageAttributesID);
             ctx.applyObjectTableEntry(getObjectId());
 
-            AffineTransform txSaved = ctx.getTransform(), tx = new AffineTransform(txSaved);
+            final ImageRenderer ir = prop.getEmfPlusImage();
+            if (ir == null) {
+                return;
+            }
+
+
+            AffineTransform txSaved = ctx.getTransform();
+            AffineTransform tx = new AffineTransform(txSaved);
             try {
                 tx.concatenate(trans);
                 ctx.setTransform(tx);
 
-                EmfPlusObject imgObj = (EmfPlusObject)ctx.getObjectTableEntry(getObjectId());
-                EmfPlusImage img = imgObj.getObjectData();
-                Rectangle2D srcBounds = img.getBounds(imgObj.getContinuedObject());
-                BufferedImage bi = prop.getEmfPlusImage();
+                final Rectangle2D srcBounds = ir.getNativeBounds();
+                final Dimension2D dim = ir.getDimension();
 
                 prop.setRasterOp(HwmfTernaryRasterOp.SRCCOPY);
                 prop.setBkMode(HwmfBkMode.TRANSPARENT);
 
                 // the buffered image might be rescaled, so we need to calculate a new src rect to take
                 // the image data from
-                AffineTransform srcTx = new AffineTransform();
+                final AffineTransform srcTx = new AffineTransform();
                 srcTx.translate(-srcBounds.getX(), srcBounds.getY());
-                srcTx.scale(bi.getWidth()/srcBounds.getWidth(), bi.getHeight()/srcBounds.getHeight());
-                srcTx.translate(bi.getMinX(), bi.getMinY());
+                srcTx.scale(dim.getWidth()/srcBounds.getWidth(), dim.getHeight()/srcBounds.getHeight());
 
-                Rectangle2D biRect = srcTx.createTransformedShape(srcRect).getBounds2D();
+                final Rectangle2D biRect = srcTx.createTransformedShape(srcRect).getBounds2D();
 
                 // TODO: handle srcUnit
                 Rectangle2D destRect = new Rectangle2D.Double(0, 0, biRect.getWidth(), biRect.getHeight());
-                ctx.drawImage(bi, srcRect, destRect);
+                ctx.drawImage(ir, srcRect, destRect);
             } finally {
                 ctx.setTransform(txSaved);
             }

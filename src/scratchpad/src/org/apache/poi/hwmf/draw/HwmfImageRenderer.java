@@ -21,6 +21,7 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.RenderingHints;
+import java.awt.Shape;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -111,10 +112,33 @@ public class HwmfImageRenderer implements ImageRenderer, EmbeddedExtractor {
     public boolean drawImage(Graphics2D graphics, Rectangle2D anchor, Insets clip) {
         if (image == null) {
             return false;
-        } else {
-            image.draw(graphics, anchor);
-            return true;
         }
+
+        boolean isClipped = true;
+        if (clip == null) {
+            isClipped = false;
+            clip = new Insets(0,0,0,0);
+        }
+
+        Shape clipOld = graphics.getClip();
+        if (isClipped) {
+            graphics.clip(anchor);
+        }
+
+        image.draw(graphics, getOuterBounds(anchor, clip));
+
+        graphics.setClip(clipOld);
+
+        return true;
+    }
+
+    @Internal
+    public static Rectangle2D getOuterBounds(Rectangle2D anchor, Insets clip) {
+        double outerWidth = anchor.getWidth() / ((100_000.-clip.left-clip.right)/100_000.);
+        double outerHeight = anchor.getHeight() / ((100_000.-clip.top-clip.bottom)/100_000.);
+        double outerX = anchor.getX() - (clip.left / 100_000.) * outerWidth;
+        double outerY = anchor.getY() - (clip.top / 100_000.) * outerHeight;
+        return new Rectangle2D.Double(outerX, outerY, outerWidth, outerHeight);
     }
 
     @Override
@@ -149,5 +173,10 @@ public class HwmfImageRenderer implements ImageRenderer, EmbeddedExtractor {
                 }
             };
         };
+    }
+
+    @Override
+    public Rectangle2D getNativeBounds() {
+        return image.getBounds();
     }
 }

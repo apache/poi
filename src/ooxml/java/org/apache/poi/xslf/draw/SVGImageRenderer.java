@@ -151,4 +151,9 @@ public class SVGImageRenderer implements ImageRenderer {
     public boolean canRender(String contentType) {
         return PictureData.PictureType.SVG.contentType.equalsIgnoreCase(contentType);
     }
+
+    @Override
+    public Rectangle2D getNativeBounds() {
+        return svgRoot.getPrimitiveBounds();
+    }
 }

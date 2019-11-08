@@ -101,6 +101,11 @@ public interface ImageRenderer {
     void loadImage(byte[] data, String contentType) throws IOException;
 
     /**
+     * @return the format-specific / not-normalized bounds of the image
+     */
+    Rectangle2D getNativeBounds();
+
+    /**
      * @return the dimension of the buffered image in pixel
      */
     Dimension2D getDimension();

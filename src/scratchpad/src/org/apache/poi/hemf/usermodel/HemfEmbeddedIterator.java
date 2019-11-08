@@ -37,8 +37,11 @@ import org.apache.poi.hwmf.record.HwmfFill;
 import org.apache.poi.hwmf.usermodel.HwmfEmbedded;
 import org.apache.poi.hwmf.usermodel.HwmfEmbeddedType;
 import org.apache.poi.poifs.filesystem.FileMagic;
+import org.apache.poi.util.IOUtils;
 
 public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000_000;
 
     private final Deque<Iterator<?>> iterStack = new ArrayDeque<>();
     private Object current;
@@ -282,10 +285,13 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
 
         HwmfEmbedded emb = new HwmfEmbedded();
 
-        EmfPlusImage img = (EmfPlusImage)epo.getObjectData();
+        EmfPlusImage img = epo.getObjectData();
         assert(img.getImageDataType() != null);
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        int totalSize = epo.getTotalObjectSize();
+        IOUtils.safelyAllocateCheck(totalSize, MAX_RECORD_LENGTH);
+
+        ByteArrayOutputStream bos = new ByteArrayOutputStream(epo.getTotalObjectSize());
         try {
             for (;;) {
                 bos.write(img.getImageData());
@@ -294,9 +300,10 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
                 //noinspection ConstantConditions
                 if (hasNext() &&
                     (current instanceof EmfPlusObject) &&
-                    ((epo = (EmfPlusObject) current).getObjectId() == objectId)
+                    ((epo = (EmfPlusObject) current).getObjectId() == objectId) &&
+                    bos.size() < totalSize-16
                 ) {
-                    img = (EmfPlusImage)epo.getObjectData();
+                    img = epo.getObjectData();
                 } else {
                     return emb;
                 }

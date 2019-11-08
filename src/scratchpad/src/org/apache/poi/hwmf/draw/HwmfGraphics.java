@@ -23,6 +23,7 @@ import java.awt.Color;
 import java.awt.Composite;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
+import java.awt.Insets;
 import java.awt.Paint;
 import java.awt.Rectangle;
 import java.awt.Shape;
@@ -60,9 +61,13 @@ import org.apache.poi.hwmf.record.HwmfPenStyle.HwmfLineDash;
 import org.apache.poi.hwmf.record.HwmfRegionMode;
 import org.apache.poi.hwmf.record.HwmfText;
 import org.apache.poi.hwmf.record.HwmfText.WmfExtTextOutOptions;
+import org.apache.poi.sl.draw.BitmapImageRenderer;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawFontManager;
 import org.apache.poi.sl.draw.DrawFontManagerDefault;
+import org.apache.poi.sl.draw.DrawPictureShape;
+import org.apache.poi.sl.draw.ImageRenderer;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 
 public class HwmfGraphics {
@@ -239,10 +244,16 @@ public class HwmfGraphics {
 
     protected Paint getPatternPaint() {
         HwmfDrawProperties prop = getProperties();
-        BufferedImage bi = prop.getBrushBitmap();
-        Rectangle2D rect = new Rectangle2D.Double(0, 0, bi.getWidth(), bi.getHeight());
+        ImageRenderer bb = prop.getBrushBitmap();
+        if (bb == null) {
+            return null;
+        }
+
+        Dimension2D dim = bb.getDimension();
+        Rectangle2D rect = new Rectangle2D.Double(0, 0, dim.getWidth(), dim.getHeight());
         rect = prop.getBrushTransform().createTransformedShape(rect).getBounds2D();
-        return (bi == null) ? null : new TexturePaint(bi, rect);
+
+        return new TexturePaint(bb.getImage(), rect);
     }
 
     /**
@@ -428,7 +439,15 @@ public class HwmfGraphics {
             }
         }
 
-        String textString = new String(text, charset).trim();
+        int trimLen;
+        for (trimLen=0; trimLen<text.length-1; trimLen+=2) {
+            if ((text[trimLen] == -1 && text[trimLen+1] == -1) ||
+                ((text[trimLen] & 0xE0) == 0 && text[trimLen+1] == 0)) {
+                break;
+            }
+        }
+
+        String textString = new String(text, 0, trimLen, charset);
         textString = textString.substring(0, Math.min(textString.length(), length));
 
         if (textString.isEmpty()) {
@@ -581,6 +600,13 @@ public class HwmfGraphics {
     }
 
     public void drawImage(BufferedImage img, Rectangle2D srcBounds, Rectangle2D dstBounds) {
+        drawImage(new BufferedImageRenderer(img), srcBounds, dstBounds);
+    }
+
+    public void drawImage(ImageRenderer img, Rectangle2D srcBounds, Rectangle2D dstBounds) {
+        if (srcBounds.isEmpty()) {
+            return;
+        }
         HwmfDrawProperties prop = getProperties();
 
         // handle raster op
@@ -606,41 +632,62 @@ public class HwmfGraphics {
                 break;
             default:
             case SRCCOPY:
-                final Shape clip = graphicsCtx.getClip();
+                if (img == null) {
+                    return;
+                }
+
+                final Shape oldClip = graphicsCtx.getClip();
+                final AffineTransform oldTrans = graphicsCtx.getTransform();
 
                 // add clipping in case of a source subimage, i.e. a clipped source image
                 // some dstBounds are horizontal or vertical flipped, so we need to normalize the images
-                Rectangle2D normalized = new Rectangle2D.Double(
-                    dstBounds.getWidth() >= 0 ? dstBounds.getMinX() : dstBounds.getMaxX(),
-                    dstBounds.getHeight() >= 0 ? dstBounds.getMinY() : dstBounds.getMaxY(),
-                    Math.abs(dstBounds.getWidth()),
-                    Math.abs(dstBounds.getHeight()));
-                graphicsCtx.clip(normalized);
-                final AffineTransform at = graphicsCtx.getTransform();
-
-                final Rectangle2D imgBounds = new Rectangle2D.Double(0,0,img.getWidth(),img.getHeight());
-                final boolean isImgBounds = (srcBounds.equals(new Rectangle2D.Double()));
-                final Rectangle2D srcBounds2 = isImgBounds ? imgBounds : srcBounds;
-
-                // TODO: apply emf transform
-                graphicsCtx.translate(dstBounds.getX(), dstBounds.getY());
-                graphicsCtx.scale(dstBounds.getWidth()/srcBounds2.getWidth(), dstBounds.getHeight()/srcBounds2.getHeight());
-                graphicsCtx.translate(-srcBounds2.getX(), -srcBounds2.getY());
+                Rectangle2D normBounds = normalizeRect(dstBounds);
+                // graphicsCtx.clip(normBounds);
 
                 if (prop.getBkMode() == HwmfBkMode.OPAQUE) {
-                    graphicsCtx.drawImage(img, 0, 0, prop.getBackgroundColor().getColor(), null);
-                } else {
-                    Composite old = graphicsCtx.getComposite();
-                    graphicsCtx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
-                    graphicsCtx.drawImage(img, 0, 0, null);
-                    graphicsCtx.setComposite(old);
+                    Paint oldPaint = graphicsCtx.getPaint();
+                    graphicsCtx.setPaint(prop.getBackgroundColor().getColor());
+                    graphicsCtx.fill(dstBounds);
+                    graphicsCtx.setPaint(oldPaint);
                 }
 
-                graphicsCtx.setTransform(at);
-                graphicsCtx.setClip(clip);
+                graphicsCtx.translate(normBounds.getCenterX(), normBounds.getCenterY());
+                graphicsCtx.scale(Math.signum(dstBounds.getWidth()), Math.signum(dstBounds.getHeight()));
+                graphicsCtx.translate(-normBounds.getCenterX(), -normBounds.getCenterY());
+
+                // this is similar to drawing bitmaps with a clipping
+                // see {@link BitmapImageRenderer#drawImage(Graphics2D,Rectangle2D,Insets)}
+                // the difference is, that clippings are 0-based, whereas the srcBounds are absolute in the user-space
+                // of the referenced image and can be also negative
+                Composite old = graphicsCtx.getComposite();
+                graphicsCtx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+                img.drawImage(graphicsCtx, normBounds, getSubImageInsets(srcBounds, img.getNativeBounds()));
+                graphicsCtx.setComposite(old);
+
+                graphicsCtx.setTransform(oldTrans);
+                graphicsCtx.setClip(oldClip);
                 break;
         }
 
+    }
+
+    private static Rectangle2D normalizeRect(Rectangle2D dstBounds) {
+        return new Rectangle2D.Double(
+            dstBounds.getWidth() >= 0 ? dstBounds.getMinX() : dstBounds.getMaxX(),
+            dstBounds.getHeight() >= 0 ? dstBounds.getMinY() : dstBounds.getMaxY(),
+            Math.abs(dstBounds.getWidth()),
+            Math.abs(dstBounds.getHeight()));
+    }
+
+    private static Insets getSubImageInsets(Rectangle2D srcBounds, Rectangle2D nativeBounds) {
+        // Todo: check if we need to normalize srcBounds x/y, in case of flipped images
+        // for now we assume the width/height is positive
+        int left = (int)Math.round((srcBounds.getX()-nativeBounds.getX())/nativeBounds.getWidth()*100_000.);
+        int top = (int)Math.round((srcBounds.getY()-nativeBounds.getY())/nativeBounds.getWidth()*100_000.);
+        int right = (int)Math.round((nativeBounds.getMaxX()-srcBounds.getMaxX())/nativeBounds.getWidth()*100_000.);
+        int bottom = (int)Math.round((nativeBounds.getMaxY()-srcBounds.getMaxY())/nativeBounds.getWidth()*100_000.);
+
+        return new Insets(top, left, bottom, right);
     }
 
     /**
@@ -688,5 +735,18 @@ public class HwmfGraphics {
             graphicsCtx.setTransform(at);
         }
         prop.setClip(graphicsCtx.getClip());
+    }
+
+    public ImageRenderer getImageRenderer(String contentType) {
+        // TODO: refactor DrawPictureShape method to POI Common
+        return DrawPictureShape.getImageRenderer(graphicsCtx, contentType);
+    }
+
+
+    @Internal
+    static class BufferedImageRenderer extends BitmapImageRenderer {
+        public BufferedImageRenderer(BufferedImage img) {
+            this.img = img;
+        }
     }
 }

@@ -17,7 +17,15 @@
 
 package org.apache.poi.util;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
+import java.io.EOFException;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PushbackInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.util.zip.CRC32;
@@ -561,6 +569,11 @@ public final class IOUtils {
     }
 
     public static byte[] safelyAllocate(long length, int maxLength) {
+        safelyAllocateCheck(length, maxLength);
+        return new byte[(int)length];
+    }
+
+    public static void safelyAllocateCheck(long length, int maxLength) {
         if (length < 0L) {
             throw new RecordFormatException("Can't allocate an array of length < 0, but had " + length + " and " + maxLength);
         }
@@ -568,7 +581,6 @@ public final class IOUtils {
             throw new RecordFormatException("Can't allocate an array > "+Integer.MAX_VALUE);
         }
         checkLength(length, maxLength);
-        return new byte[(int)length];
     }
 
     /**
