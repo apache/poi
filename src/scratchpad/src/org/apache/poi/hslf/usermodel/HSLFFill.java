@@ -228,45 +228,44 @@ public final class HSLFFill {
 
 
     public FillStyle getFillStyle() {
-        return new FillStyle() {
-            @Override
-            public PaintStyle getPaint() {
-                AbstractEscherOptRecord opt = shape.getEscherOptRecord();
+        return this::getPaintStyle;
+    }
 
-                EscherSimpleProperty hitProp = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__NOFILLHITTEST);
-                int propVal = (hitProp == null) ? 0 : hitProp.getPropertyValue();
+    private PaintStyle getPaintStyle() {
+        AbstractEscherOptRecord opt = shape.getEscherOptRecord();
 
-                EscherSimpleProperty masterProp = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.SHAPE__MASTER);
+        EscherSimpleProperty hitProp = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.FILL__NOFILLHITTEST);
+        int propVal = (hitProp == null) ? 0 : hitProp.getPropertyValue();
 
-                if (!FILL_USE_FILLED.isSet(propVal) && masterProp != null) {
-                    int masterId = masterProp.getPropertyValue();
-                    HSLFShape o = shape.getSheet().getMasterSheet().getShapes().stream().filter(s -> s.getShapeId() == masterId).findFirst().orElse(null);
-                    return o != null ? o.getFillStyle().getPaint() : null;
-                }
+        EscherSimpleProperty masterProp = HSLFShape.getEscherProperty(opt, EscherPropertyTypes.SHAPE__MASTER);
 
-                final int fillType = getFillType();
-                // TODO: fix gradient types, this mismatches with the MS-ODRAW definition ...
-                // need to handle (not only) the type (radial,rectangular,linear),
-                // the direction, e.g. top right, and bounds (e.g. for rectangular boxes)
-                switch (fillType) {
-                    case FILL_SOLID:
-                        return DrawPaint.createSolidPaint(getForegroundColor());
-                    case FILL_SHADE_SHAPE:
-                        return getGradientPaint(GradientType.shape);
-                    case FILL_SHADE_CENTER:
-                    case FILL_SHADE_TITLE:
-                        return getGradientPaint(GradientType.circular);
-                    case FILL_SHADE:
-                    case FILL_SHADE_SCALE:
-                        return getGradientPaint(GradientType.linear);
-                    case FILL_PICTURE:
-                        return getTexturePaint();
-                    default:
-                        LOG.log(POILogger.WARN, "unsuported fill type: " + fillType);
-                        return null;
-                }
-            }
-        };
+        if (!FILL_USE_FILLED.isSet(propVal) && masterProp != null) {
+            int masterId = masterProp.getPropertyValue();
+            HSLFShape o = shape.getSheet().getMasterSheet().getShapes().stream().filter(s -> s.getShapeId() == masterId).findFirst().orElse(null);
+            return o != null ? o.getFillStyle().getPaint() : null;
+        }
+
+        final int fillType = getFillType();
+        // TODO: fix gradient types, this mismatches with the MS-ODRAW definition ...
+        // need to handle (not only) the type (radial,rectangular,linear),
+        // the direction, e.g. top right, and bounds (e.g. for rectangular boxes)
+        switch (fillType) {
+            case FILL_SOLID:
+                return DrawPaint.createSolidPaint(getForegroundColor());
+            case FILL_SHADE_SHAPE:
+                return getGradientPaint(GradientType.shape);
+            case FILL_SHADE_CENTER:
+            case FILL_SHADE_TITLE:
+                return getGradientPaint(GradientType.circular);
+            case FILL_SHADE:
+            case FILL_SHADE_SCALE:
+                return getGradientPaint(GradientType.linear);
+            case FILL_PICTURE:
+                return getTexturePaint();
+            default:
+                LOG.log(POILogger.WARN, "unsuported fill type: " + fillType);
+                return null;
+        }
     }
     
     private boolean isRotatedWithShape() {

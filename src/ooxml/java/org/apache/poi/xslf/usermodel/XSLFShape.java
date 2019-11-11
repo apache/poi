@@ -20,40 +20,26 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.Graphics2D;
-import java.awt.geom.Dimension2D;
-import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Arrays;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawPaint;
-import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.PaintStyle;
-import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
-import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
 import org.apache.poi.sl.usermodel.PlaceableShape;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.PlaceholderDetails;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.SimpleShape;
 import org.apache.poi.util.Beta;
-import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.PropertyFetcher;
 import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFFillProperties;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientFillProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientStop;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
@@ -62,9 +48,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrix;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTileInfoProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.STPathShadeType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTileFlipMode;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperties;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
@@ -153,6 +136,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
     protected PaintStyle getFillPaint() {
         final XSLFTheme theme = getSheet().getTheme();
         final boolean hasPlaceholder = getPlaceholder() != null;
+
         PropertyFetcher<PaintStyle> fetcher = new PropertyFetcher<PaintStyle>() {
             @Override
             public boolean fetch(XSLFShape shape) {
@@ -411,159 +395,12 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
 
     @SuppressWarnings("WeakerAccess")
     protected static PaintStyle selectPaint(final CTBlipFillProperties blipFill, final PackagePart parentPart) {
-        final CTBlip blip = blipFill.getBlip();
-        return new TexturePaint() {
-            private PackagePart getPart() {
-                try {
-                    String blipId = blip.getEmbed();
-                    PackageRelationship rel = parentPart.getRelationship(blipId);
-                    return parentPart.getRelatedPart(rel);
-                } catch (InvalidFormatException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            @Override
-            public InputStream getImageData() {
-                try {
-                    return getPart().getInputStream();
-                } catch (IOException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-
-            @Override
-            public String getContentType() {
-                if (blip == null || !blip.isSetEmbed() || blip.getEmbed().isEmpty()) {
-                    return null;
-                }
-                /* TOOD: map content-type */
-                return getPart().getContentType();
-            }
-
-            @Override
-            public int getAlpha() {
-                return (blip.sizeOfAlphaModFixArray() > 0)
-                    ? blip.getAlphaModFixArray(0).getAmt()
-                    : 100000;
-            }
-
-            @Override
-            public boolean isRotatedWithShape() {
-                return blipFill.isSetRotWithShape() && blipFill.getRotWithShape();
-            }
-
-            @Override
-            public Dimension2D getScale() {
-                CTTileInfoProperties tile = blipFill.getTile();
-                return (tile == null) ? null : new Dimension2DDouble(
-                    tile.isSetSx() ? tile.getSx()/100_000. : 1,
-                    tile.isSetSy() ? tile.getSy()/100_000. : 1);
-            }
-
-            @Override
-            public Point2D getOffset() {
-                CTTileInfoProperties tile = blipFill.getTile();
-                return (tile == null) ? null : new Point2D.Double(
-                        tile.isSetTx() ? Units.toPoints(tile.getTx()) : 0,
-                        tile.isSetTy() ? Units.toPoints(tile.getTy()) : 0);
-            }
-
-            @Override
-            public FlipMode getFlipMode() {
-                CTTileInfoProperties tile = blipFill.getTile();
-                switch (tile == null || tile.getFlip() == null ? STTileFlipMode.INT_NONE : tile.getFlip().intValue()) {
-                    default:
-                    case STTileFlipMode.INT_NONE:
-                        return FlipMode.NONE;
-                    case STTileFlipMode.INT_X:
-                        return FlipMode.X;
-                    case STTileFlipMode.INT_Y:
-                        return FlipMode.Y;
-                    case STTileFlipMode.INT_XY:
-                        return FlipMode.XY;
-                }
-            }
-
-            @Override
-            public TextureAlignment getAlignment() {
-                CTTileInfoProperties tile = blipFill.getTile();
-                return (tile == null || !tile.isSetAlgn()) ? null
-                    : TextureAlignment.fromOoxmlId(tile.getAlgn().toString());
-            }
-        };
+        return new XSLFTexturePaint(blipFill, parentPart);
     }
 
     @SuppressWarnings("WeakerAccess")
     protected static PaintStyle selectPaint(final CTGradientFillProperties gradFill, CTSchemeColor phClr, final XSLFTheme theme) {
-
-        @SuppressWarnings("deprecation")
-        final CTGradientStop[] gs = gradFill.getGsLst() == null ?
-                new CTGradientStop[0] : gradFill.getGsLst().getGsArray();
-
-        Arrays.sort(gs, (o1, o2) -> {
-            int pos1 = o1.getPos();
-            int pos2 = o2.getPos();
-            return Integer.compare(pos1, pos2);
-        });
-
-        final ColorStyle[] cs = new ColorStyle[gs.length];
-        final float[] fractions = new float[gs.length];
-
-        int i=0;
-        for (CTGradientStop cgs : gs) {
-            CTSchemeColor phClrCgs = phClr;
-            if (phClrCgs == null && cgs.isSetSchemeClr()) {
-                phClrCgs = cgs.getSchemeClr();
-            }
-            cs[i] = new XSLFColor(cgs, theme, phClrCgs).getColorStyle();
-            fractions[i] = cgs.getPos() / 100000.f;
-            i++;
-        }
-
-        return new GradientPaint() {
-
-            @Override
-            public double getGradientAngle() {
-                return (gradFill.isSetLin())
-                    ? gradFill.getLin().getAng() / 60000.d
-                    : 0;
-            }
-
-            @Override
-            public ColorStyle[] getGradientColors() {
-                return cs;
-            }
-
-            @Override
-            public float[] getGradientFractions() {
-                return fractions;
-            }
-
-            @Override
-            public boolean isRotatedWithShape() {
-                return gradFill.getRotWithShape();
-            }
-
-            @Override
-            public GradientType getGradientType() {
-                if (gradFill.isSetLin()) {
-                    return GradientType.linear;
-                }
-
-                if (gradFill.isSetPath()) {
-                    /* TODO: handle rect path */
-                    STPathShadeType.Enum ps = gradFill.getPath().getPath();
-                    if (ps == STPathShadeType.CIRCLE) {
-                        return GradientType.circular;
-                    } else if (ps == STPathShadeType.SHAPE) {
-                        return GradientType.shape;
-                    }
-                }
-
-                return GradientType.linear;
-            }
-        };
+        return new XSLFGradientPaint(gradFill, phClr, theme);
     }
 
     @SuppressWarnings("WeakerAccess")

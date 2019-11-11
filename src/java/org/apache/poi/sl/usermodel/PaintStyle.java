@@ -138,5 +138,37 @@ public interface PaintStyle {
 
 
         default TextureAlignment getAlignment() { return null; }
+
+        /**
+         * Specifies the portion of the blip or image that is used for the fill.<p>
+         *
+         * Each edge of the image is defined by a percentage offset from the edge of the bounding box.
+         * A positive percentage specifies an inset and a negative percentage specifies an outset.<p>
+         *
+         * The percentage are ints based on 100000, so 100% = 100000.<p>
+         *
+         * So, for example, a left offset of 25% specifies that the left edge of the image is located
+         * to the right of the bounding box's left edge by 25% of the bounding box's width.
+         *
+         * @return the cropping insets of the source image
+         */
+        default Insets2D getInsets() {
+            return null;
+        }
+
+        /**
+         * The stretch specifies the edges of a fill rectangle.<p>
+         *
+         * Each edge of the fill rectangle is defined by a perentage offset from the corresponding edge
+         * of the picture's bounding box. A positive percentage specifies an inset and a negative percentage
+         * specifies an outset.<p>
+         *
+         * The percentage are ints based on 100000, so 100% = 100000.
+         *
+         * @return the stretching in the destination image
+         */
+        default Insets2D getStretch() {
+            return null;
+        }
     }
 }
