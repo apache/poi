@@ -297,20 +297,20 @@ poijobs.each { poijob ->
                     # Maven-Download fails for strange reasons, try to workaround...
                     mkdir -p sonar/ooxml-schema-security/target/schemas && wget -O sonar/ooxml-schema-security/target/schemas/xmldsig-core-schema.xsd http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd
                 */
-                maven {
-                    if(poijob.sonar) {
-                        withCredentials([string(credentialsId: 'sonarcloud-poi', variable: 'SONAR_TOKEN')]) {
+                withCredentials([string(credentialsId: 'sonarcloud-poi', variable: 'SONAR_TOKEN')]) {
+                    maven {
+                        if (poijob.sonar) {
                             goals('compile sonar:sonar -Dsonar.login=${SONAR_TOKEN} ' + sonarOptions)
+                        } else {
+                            goals('package')
                         }
-                    } else {
-                        goals('package')
+                        rootPOM('sonar/pom.xml')
+                        mavenOpts('-Xmx2g')
+                        mavenOpts('-Xms256m')
+                        mavenOpts('-XX:-OmitStackTraceInFastThrow')
+                        localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
+                        mavenInstallation(defaultMaven)
                     }
-                    rootPOM('sonar/pom.xml')
-                    mavenOpts('-Xmx2g')
-                    mavenOpts('-Xms256m')
-                    mavenOpts('-XX:-OmitStackTraceInFastThrow')
-                    localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
-                    mavenInstallation(defaultMaven)
                 }
             }
             publishers {
