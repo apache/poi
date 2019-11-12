@@ -71,7 +71,7 @@ public final class FinanceLib {
      * @param n num of periods
      * @param y pmt per period
      * @param p future value
-     * @param t type (true=pmt at end of period, false=pmt at begining of period)
+     * @param t type (true=pmt at begining of period, false=pmt at end of period)
      */
     public static double fv(double r, double n, double y, double p, boolean t) {
         double retval = 0;
