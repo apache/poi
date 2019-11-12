@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Objects;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
@@ -200,7 +201,7 @@ public class WordToHtmlConverter extends AbstractWordConverter
         Triplet triplet = getCharacterRunTriplet( characterRun );
 
         if ( AbstractWordUtils.isNotEmpty( triplet.fontName )
-                && !AbstractWordUtils.equals( triplet.fontName,
+                && !Objects.equals( triplet.fontName,
                         blockProperies.pFontName ) )
         {
             style.append("font-family:").append(triplet.fontName).append(";");

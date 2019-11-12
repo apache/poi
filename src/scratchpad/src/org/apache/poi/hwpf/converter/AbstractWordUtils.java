@@ -20,10 +20,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
@@ -101,8 +98,8 @@ public class AbstractWordUtils
         Element element1 = (Element) node1;
         Element element2 = (Element) node2;
 
-        if ( !equals( requiredTagName, element1.getTagName() )
-                || !equals( requiredTagName, element2.getTagName() ) )
+        if ( !Objects.equals( requiredTagName, element1.getTagName() )
+                || !Objects.equals( requiredTagName, element2.getTagName() ) )
             return false;
 
         NamedNodeMap attributes1 = element1.getAttributes();
@@ -122,7 +119,7 @@ public class AbstractWordUtils
                 attr2 = (Attr) attributes2.getNamedItem( attr1.getName() );
 
             if ( attr2 == null
-                    || !equals( attr1.getTextContent(), attr2.getTextContent() ) )
+                    || !Objects.equals( attr1.getTextContent(), attr2.getTextContent() ) )
                 return false;
         }
 
@@ -155,11 +152,6 @@ public class AbstractWordUtils
                 compactChildNodesR( (Element) child, childTagName );
             }
         }
-    }
-
-    static boolean equals( String str1, String str2 )
-    {
-        return str1 == null ? str2 == null : str1.equals( str2 );
     }
 
     public static String getBorderType( BorderCode borderCode )
