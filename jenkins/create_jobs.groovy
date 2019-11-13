@@ -125,7 +125,7 @@ for more details about the DSL.</b>
 
 def apicheckDesc = '''
 <p>
-<b><a href="https://builds.apache.org/analysis/dashboard?id=org.apache.poi%3Apoi-parent&did=1" target="_blank">Sonar reports</a></b> -
+<b><a href="https://sonarcloud.io/dashboard?id=poi-parent" target="_blank">Sonar reports</a></b> -
 <p>
 <b><a href="lastSuccessfulBuild/artifact/build/main/build/reports/japi.html">API Check POI</a></b>
 <b><a href="lastSuccessfulBuild/artifact/build/ooxml/build/reports/japi.html">API Check POI-OOXML</a></b>
@@ -140,7 +140,7 @@ def sonarOptions = '-Dsonar.projectKey=poi-parent -Dsonar.organization=apache -D
 def sonarDesc = '''
 <p>
 <b><a href="lastSuccessfulBuild/findbugsResult/" target="_blank">Findbugs report of latest build</a></b> -
-<b><a href="https://builds.apache.org/analysis/dashboard?id=org.apache.poi%3Apoi-parent&did=1" target="_blank">Sonar reports</a></b> -
+<b><a href="https://sonarcloud.io/dashboard?id=poi-parent" target="_blank">Sonar reports</a></b> -
 <b><a href="lastSuccessfulBuild/artifact/build/coverage/index.html" target="_blank">Coverage of latest build</a></b>
 </p>
 '''
@@ -668,7 +668,7 @@ dashboardView("P/POI-new") {
             "      </p>\n" +
             "      <p>\n" +
             "      <b><a href=\"job/POI-DSL-1.8/lastSuccessfulBuild/findbugsResult/\" target=\"_blank\">Findbugs report of latest build</a></b> -\n" +
-            "      <b><a href=\"https://builds.apache.org/analysis/dashboard?id=org.apache.poi%3Apoi-parent&did=1\" target=\"_blank\">Sonar reports</a></b> -\n" +
+            "      <b><a href=\"https://sonarcloud.io/dashboard?id=poi-parent\" target=\"_blank\">Sonar reports</a></b> -\n" +
             "      <b><a href=\"job/POI-DSL-1.8/lastSuccessfulBuild/artifact/build/coverage/index.html\" target=\"_blank\">Coverage of latest build</a></b>\n" +
             "      </p>\n" +
             "    </td>\n" +
