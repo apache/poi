@@ -229,6 +229,9 @@ poijobs.each { poijob ->
                 includePattern('**/ooxml-lib/ooxml*.jar')
             }
             if(poijob.sonar) {
+                credentialsBinding {
+                    string('POI_SONAR_TOKEN', 'sonarcloud-poi')
+                }
                 configure { project ->
                     project / buildWrappers << 'hudson.plugins.sonar.SonarBuildWrapper' {}
                 }
@@ -286,31 +289,29 @@ poijobs.each { poijob ->
         // Create steps and publishers depending on the type of Job that is selected
         if(poijob.maven) {
             steps {
-                withCredentials(bindings: [string(credentialsId: 'sonarcloud-poi', variable: 'SONAR_TOKEN')]) {
-                    shellEx(delegate, shellcmds, poijob)
-                    maven {
-                        goals('clean')
-                        rootPOM('sonar/pom.xml')
-                        localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
-                        mavenInstallation(defaultMaven)
+                shellEx(delegate, shellcmds, poijob)
+                maven {
+                    goals('clean')
+                    rootPOM('sonar/pom.xml')
+                    localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
+                    mavenInstallation(defaultMaven)
+                }
+                /* Currently not done, let's see if it is still necessary:
+                    # Maven-Download fails for strange reasons, try to workaround...
+                    mkdir -p sonar/ooxml-schema-security/target/schemas && wget -O sonar/ooxml-schema-security/target/schemas/xmldsig-core-schema.xsd http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd
+                */
+                maven {
+                    if (poijob.sonar) {
+                        goals('compile sonar:sonar -Dsonar.login=${POI_SONAR_TOKEN} ' + sonarOptions)
+                    } else {
+                        goals('package')
                     }
-                    /* Currently not done, let's see if it is still necessary:
-                        # Maven-Download fails for strange reasons, try to workaround...
-                        mkdir -p sonar/ooxml-schema-security/target/schemas && wget -O sonar/ooxml-schema-security/target/schemas/xmldsig-core-schema.xsd http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd
-                    */
-                    maven {
-                        if (poijob.sonar) {
-                            goals('compile sonar:sonar -Dsonar.login=${SONAR_TOKEN} ' + sonarOptions)
-                        } else {
-                            goals('package')
-                        }
-                        rootPOM('sonar/pom.xml')
-                        mavenOpts('-Xmx2g')
-                        mavenOpts('-Xms256m')
-                        mavenOpts('-XX:-OmitStackTraceInFastThrow')
-                        localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
-                        mavenInstallation(defaultMaven)
-                    }
+                    rootPOM('sonar/pom.xml')
+                    mavenOpts('-Xmx2g')
+                    mavenOpts('-Xms256m')
+                    mavenOpts('-XX:-OmitStackTraceInFastThrow')
+                    localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
+                    mavenInstallation(defaultMaven)
                 }
             }
             publishers {
@@ -367,15 +368,13 @@ poijobs.each { poijob ->
             }
         } else if(poijob.sonar) {
             steps {
-                withCredentials(bindings: [string(credentialsId: 'sonarcloud-poi', variable: 'SONAR_TOKEN')]) {
-                    shellEx(delegate, shellcmds, poijob)
+                shellEx(delegate, shellcmds, poijob)
 
-                    gradle {
-                        switches('-PenableSonar')
-                        switches('-Dsonar.login=${SONAR_TOKEN} ' + sonarOptions)
-                        tasks('sonarqube')
-                        useWrapper(false)
-                    }
+                gradle {
+                    switches('-PenableSonar')
+                    switches('-Dsonar.login=${POI_SONAR_TOKEN} ' + sonarOptions)
+                    tasks('sonarqube')
+                    useWrapper(false)
                 }
             }
             publishers {
