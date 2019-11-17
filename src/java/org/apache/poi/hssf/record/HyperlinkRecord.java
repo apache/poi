@@ -159,9 +159,7 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
 			int d0 = (parseShort(cc, 0) << 16) + (parseShort(cc, 4) << 0);
 			int d1 = parseShort(cc, 9);
 			int d2 = parseShort(cc, 14);
-			for (int i = 23; i > 19; i--) {
-				cc[i] = cc[i - 1];
-			}
+            System.arraycopy(cc, 19, cc, 20, 4);
 			long d3 = parseLELong(cc, 20);
 
 			return new GUID(d0, d1, d2, d3);

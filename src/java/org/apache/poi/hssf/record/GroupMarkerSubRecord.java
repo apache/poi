@@ -77,8 +77,7 @@ public final class GroupMarkerSubRecord extends SubRecord implements Cloneable {
     public GroupMarkerSubRecord clone() {
         GroupMarkerSubRecord rec = new GroupMarkerSubRecord();
         rec.reserved = new byte[reserved.length];
-        for ( int i = 0; i < reserved.length; i++ )
-            rec.reserved[i] = reserved[i];
+        System.arraycopy(reserved, 0, rec.reserved, 0, reserved.length);
         return rec;
     }
 }

@@ -57,7 +57,7 @@ public abstract class EscherPart extends HPBFPart {
 			ec.add(er);
 		}
 
-		records = ec.toArray(new EscherRecord[ec.size()]);
+		records = ec.toArray(new EscherRecord[0]);
 	}
 
 	public EscherRecord[] getEscherRecords() {

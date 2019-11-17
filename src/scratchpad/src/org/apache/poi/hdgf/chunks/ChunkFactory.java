@@ -109,7 +109,7 @@ public final class ChunkFactory {
     				defsL.add(def);
     			}
     
-    			CommandDefinition[] defs = defsL.toArray(new CommandDefinition[defsL.size()]);
+    			CommandDefinition[] defs = defsL.toArray(new CommandDefinition[0]);
     
     			// Add to the map
     			chunkCommandDefinitions.put(Integer.valueOf(chunkType), defs);

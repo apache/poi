@@ -57,7 +57,7 @@ public final class OldFontTable {
             startOffset += oldFfn.getLength();
 
         }
-        _fontNames = ffns.toArray(new OldFfn[ffns.size()]);
+        _fontNames = ffns.toArray(new OldFfn[0]);
     }
 
 

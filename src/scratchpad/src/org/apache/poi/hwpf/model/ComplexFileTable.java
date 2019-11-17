@@ -61,7 +61,7 @@ public class ComplexFileTable {
             SprmBuffer sprmBuffer = new SprmBuffer(bs, false, 0);
             sprmBuffers.add(sprmBuffer);
         }
-        this._grpprls = sprmBuffers.toArray(new SprmBuffer[sprmBuffers.size()]);
+        this._grpprls = sprmBuffers.toArray(new SprmBuffer[0]);
 
         if (tableStream[offset] != TEXT_PIECE_TABLE_TYPE) {
             throw new IOException("The text piece table is corrupted");

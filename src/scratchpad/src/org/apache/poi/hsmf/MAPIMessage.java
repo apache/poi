@@ -167,8 +167,8 @@ public class MAPIMessage extends POIReadOnlyDocument {
             attachments.add( (AttachmentChunks)group );
          }
       }
-      attachmentChunks = attachments.toArray(new AttachmentChunks[attachments.size()]);
-      recipientChunks  = recipients.toArray(new RecipientChunks[recipients.size()]);
+      attachmentChunks = attachments.toArray(new AttachmentChunks[0]);
+      recipientChunks  = recipients.toArray(new RecipientChunks[0]);
 
       // Now sort these chunks lists so they're in ascending order,
       //  rather than in random filesystem order

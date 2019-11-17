@@ -84,7 +84,7 @@ public final class FSPATable
         {
             result.add( new FSPA( propertyNode.getBytes(), 0 ) );
         }
-        return result.toArray( new FSPA[result.size()] );
+        return result.toArray(new FSPA[0]);
     }
 
     public String toString()

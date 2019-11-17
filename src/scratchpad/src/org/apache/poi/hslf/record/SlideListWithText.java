@@ -107,7 +107,7 @@ public final class SlideListWithText extends RecordContainer {
 		}
 
 		// Turn the list into an array
-		slideAtomsSets = sets.toArray( new SlideAtomsSet[sets.size()] );
+		slideAtomsSets = sets.toArray(new SlideAtomsSet[0]);
 	}
 
 	/**

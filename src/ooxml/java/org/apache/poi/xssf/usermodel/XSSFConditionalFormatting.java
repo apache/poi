@@ -61,7 +61,7 @@ public class XSSFConditionalFormatting implements ConditionalFormatting {
                 lst.add(CellRangeAddress.valueOf(region));
             }
         }
-        return lst.toArray(new CellRangeAddress[lst.size()]);
+        return lst.toArray(new CellRangeAddress[0]);
     }
 
     @Override

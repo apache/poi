@@ -79,7 +79,7 @@ public class AbstractWordUtils
             }
         }
 
-        Integer[] sorted = edges.toArray( new Integer[edges.size()] );
+        Integer[] sorted = edges.toArray(new Integer[0]);
         int[] result = new int[sorted.length];
         for ( int i = 0; i < sorted.length; i++ )
         {

@@ -125,9 +125,7 @@ public class RelationshipTransformService extends TransformService {
             throw new InvalidAlgorithmParameterException();
         }
         RelationshipTransformParameterSpec relParams = (RelationshipTransformParameterSpec) params;
-        for (String sourceId : relParams.sourceIds) {
-            this.sourceIds.add(sourceId);
-        }
+        this.sourceIds.addAll(relParams.sourceIds);
     }
 
     @Override

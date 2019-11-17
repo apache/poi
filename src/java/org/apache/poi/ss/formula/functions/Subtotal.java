@@ -141,6 +141,6 @@ public class Subtotal implements Function {
 			}
 		}
 
-		return innerFunc.evaluate(list.toArray(new ValueEval[list.size()]), srcRowIndex, srcColumnIndex);
+		return innerFunc.evaluate(list.toArray(new ValueEval[0]), srcRowIndex, srcColumnIndex);
 	}
 }

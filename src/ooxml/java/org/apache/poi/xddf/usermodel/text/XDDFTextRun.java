@@ -365,7 +365,7 @@ public class XDDFTextRun {
             .map(font -> new XDDFFont(FontGroup.SYMBOL, font))
             .ifPresent(font -> list.add(font));
 
-        return list.toArray(new XDDFFont[list.size()]);
+        return list.toArray(new XDDFFont[0]);
     }
 
     /**

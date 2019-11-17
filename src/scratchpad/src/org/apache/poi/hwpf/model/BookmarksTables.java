@@ -194,7 +194,7 @@ public class BookmarksTables
         }
 
         int start = tableStream.size();
-        SttbUtils.writeSttbfBkmk( names.toArray( new String[names.size()] ),
+        SttbUtils.writeSttbfBkmk( names.toArray(new String[0]),
                 tableStream );
         int end = tableStream.size();
 

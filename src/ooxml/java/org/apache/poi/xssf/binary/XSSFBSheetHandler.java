@@ -312,9 +312,7 @@ public class XSSFBSheetHandler extends XSSFBParser {
         b0 &= ~(1<<1);
 
         rkBuffer[4] = b0;
-        for (int i = 1; i < 4; i++) {
-            rkBuffer[i+4] = data[offset+i];
-        }
+        System.arraycopy(data, offset + 1, rkBuffer, 5, 3);
         double d = 0.0;
         if (floatingPoint) {
             d = LittleEndian.getDouble(rkBuffer);

@@ -163,7 +163,7 @@ public final class PlexOfCps {
         if (_props == null || _props.isEmpty())
             return new GenericPropertyNode[0];
 
-        return _props.toArray(new GenericPropertyNode[_props.size()]);
+        return _props.toArray(new GenericPropertyNode[0]);
     }
 
     @Override

@@ -122,10 +122,7 @@ public class POIFSDocumentPath
             this.components =
                 new String[ path.components.length + components.length ];
         }
-        for (int j = 0; j < path.components.length; j++)
-        {
-            this.components[ j ] = path.components[ j ];
-        }
+        System.arraycopy(path.components, 0, this.components, 0, path.components.length);
         if (components != null)
         {
             for (int j = 0; j < components.length; j++)

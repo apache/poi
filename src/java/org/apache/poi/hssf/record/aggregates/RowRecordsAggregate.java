@@ -195,7 +195,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
         int startIndex = block * DBCellRecord.BLOCK_SIZE;
 
         if (_rowRecordValues == null) {
-            _rowRecordValues = _rowRecords.values().toArray(new RowRecord[_rowRecords.size()]);
+            _rowRecordValues = _rowRecords.values().toArray(new RowRecord[0]);
         }
 
         try {
@@ -212,7 +212,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
             endIndex = _rowRecords.size()-1;
 
         if (_rowRecordValues == null){
-            _rowRecordValues = _rowRecords.values().toArray(new RowRecord[_rowRecords.size()]);
+            _rowRecordValues = _rowRecords.values().toArray(new RowRecord[0]);
         }
 
         try {

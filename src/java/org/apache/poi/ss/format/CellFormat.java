@@ -154,11 +154,7 @@ public class CellFormat {
      * @return A {@link CellFormat} that applies the given format.
      */
     public static synchronized CellFormat getInstance(Locale locale, String format) {
-        Map<String, CellFormat> formatMap = formatCache.get(locale);
-        if (formatMap == null) {
-            formatMap = new WeakHashMap<>();
-            formatCache.put(locale, formatMap);
-        }
+        Map<String, CellFormat> formatMap = formatCache.computeIfAbsent(locale, k -> new WeakHashMap<>());
         CellFormat fmt = formatMap.get(format);
         if (fmt == null) {
             if (format.equals("General") || format.equals("@"))

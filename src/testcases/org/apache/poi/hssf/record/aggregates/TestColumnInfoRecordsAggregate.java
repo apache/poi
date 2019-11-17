@@ -74,7 +74,7 @@ public final class TestColumnInfoRecordsAggregate {
 		public static ColumnInfoRecord[] getRecords(ColumnInfoRecordsAggregate agg) {
 			CIRCollector circ = new CIRCollector();
 			agg.visitContainedRecords(circ);
-            return circ._list.toArray(new ColumnInfoRecord[circ._list.size()]);
+            return circ._list.toArray(new ColumnInfoRecord[0]);
 		}
 	}
 

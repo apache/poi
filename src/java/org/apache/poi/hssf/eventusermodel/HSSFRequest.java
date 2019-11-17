@@ -55,12 +55,9 @@ public class HSSFRequest {
 	 *        for example req.addListener(myListener, BOFRecord.sid)
 	 */
 	public void addListener(HSSFListener lsnr, short sid) {
-		List<HSSFListener> list = _records.get(Short.valueOf(sid));
+		List<HSSFListener> list = _records.computeIfAbsent(Short.valueOf(sid), k -> new ArrayList<>(1));
 
-		if (list == null) {
-			list = new ArrayList<>(1); // probably most people will use one listener
-			_records.put(Short.valueOf(sid), list);
-		}
+		// probably most people will use one listener
 		list.add(lsnr);
 	}
 

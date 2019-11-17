@@ -258,7 +258,7 @@ public final class Chunk {
 
 		// Save the commands we liked the look of
 		this.commands = commandList.toArray(
-							new Command[commandList.size()] );
+                new Command[0]);
 
 		// Now build up the blocks, if we had a command that tells
 		//  us where a block is

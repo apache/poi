@@ -177,7 +177,7 @@ public final class TextSpecInfoAtom extends RecordAtom {
         while (bis.getReadIndex() < _data.length) {
             lst.add(new TextSpecInfoRun(bis));
         }
-        return lst.toArray(new TextSpecInfoRun[lst.size()]);
+        return lst.toArray(new TextSpecInfoRun[0]);
     }
 
     @Override

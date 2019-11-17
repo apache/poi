@@ -99,7 +99,7 @@ public final class POIFSChunkParser {
       }
       
       // Finish
-      return groups.toArray(new ChunkGroup[groups.size()]);
+      return groups.toArray(new ChunkGroup[0]);
    }
    
    /**

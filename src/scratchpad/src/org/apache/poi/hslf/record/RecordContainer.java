@@ -150,7 +150,7 @@ public abstract class RecordContainer extends Record
                 rm = r;
             }
         }
-        _children = lst.toArray(new Record[lst.size()]);
+        _children = lst.toArray(new Record[0]);
         return rm;
     }
 

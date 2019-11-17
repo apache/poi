@@ -231,12 +231,7 @@ public class BookmarksImpl implements Bookmarks
             GenericPropertyNode property = bookmarksTables
                     .getDescriptorFirst( b );
             Integer positionKey = Integer.valueOf( property.getStart() );
-            List<GenericPropertyNode> atPositionList = result.get( positionKey );
-            if ( atPositionList == null )
-            {
-                atPositionList = new LinkedList<>();
-                result.put( positionKey, atPositionList );
-            }
+            List<GenericPropertyNode> atPositionList = result.computeIfAbsent(positionKey, k -> new LinkedList<>());
             atPositionList.add( property );
         }
 

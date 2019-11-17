@@ -71,7 +71,7 @@ public final class CollaboratingWorkbooksEnvironment {
             throw new IllegalArgumentException("Must provide at least one collaborating worbook");
         }
         WorkbookEvaluator[] evaluators = 
-                evaluatorsByName.values().toArray(new WorkbookEvaluator[evaluatorsByName.size()]); 
+                evaluatorsByName.values().toArray(new WorkbookEvaluator[0]); 
         new CollaboratingWorkbooksEnvironment(evaluatorsByName, evaluators);
     }
     public static void setupFormulaEvaluator(Map<String,FormulaEvaluator> evaluators) {

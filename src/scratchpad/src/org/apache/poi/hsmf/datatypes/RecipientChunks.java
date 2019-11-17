@@ -172,7 +172,7 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
     }
 
     public Chunk[] getAll() {
-        return allChunks.toArray(new Chunk[allChunks.size()]);
+        return allChunks.toArray(new Chunk[0]);
     }
 
     @Override

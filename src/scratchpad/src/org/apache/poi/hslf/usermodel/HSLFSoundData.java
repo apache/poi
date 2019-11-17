@@ -89,6 +89,6 @@ public final class HSLFSoundData {
             }
 
         }
-        return lst.toArray(new HSLFSoundData[lst.size()]);
+        return lst.toArray(new HSLFSoundData[0]);
     }
 }

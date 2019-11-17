@@ -149,9 +149,7 @@ public final class Trend implements Function {
         }
         double[] oneD = new double[twoD.length * twoD[0].length];
         for (int i = 0; i < twoD.length; i++) {
-            for (int j = 0; j < twoD[0].length; j++) {
-                oneD[i * twoD[0].length + j] = twoD[i][j];
-            }
+            System.arraycopy(twoD[i], 0, oneD, i * twoD[0].length + 0, twoD[0].length);
         }
         return oneD;
     }

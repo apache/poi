@@ -17,6 +17,7 @@
 package org.apache.poi.hssf.eventusermodel;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
@@ -69,9 +70,7 @@ public class EventWorkbookBuilder {
 
 		// Core Workbook records go first
 		if(bounds != null) {
-			for (BoundSheetRecord bound : bounds) {
-				wbRecords.add(bound);
-			}
+			Collections.addAll(wbRecords, bounds);
 		}
 		if(sst != null) {
 			wbRecords.add(sst);
@@ -82,9 +81,7 @@ public class EventWorkbookBuilder {
 		if(externs != null) {
 			wbRecords.add(SupBookRecord.createInternalReferences(
 					(short)externs.length));
-			for (ExternSheetRecord extern : externs) {
-				wbRecords.add(extern);
-			}
+			Collections.addAll(wbRecords, externs);
 		}
 
 		// Finally we need an EoF record
@@ -125,12 +122,12 @@ public class EventWorkbookBuilder {
 
 		public BoundSheetRecord[] getBoundSheetRecords() {
 			return boundSheetRecords.toArray(
-					new BoundSheetRecord[boundSheetRecords.size()]
+					new BoundSheetRecord[0]
 			);
 		}
 		public ExternSheetRecord[] getExternSheetRecords() {
 			return externSheetRecords.toArray(
-					new ExternSheetRecord[externSheetRecords.size()]
+					new ExternSheetRecord[0]
 			);
 		}
 		public SSTRecord getSSTRecord() {

@@ -82,8 +82,8 @@ public final class MainMaster extends SheetContainer {
 			}
 
 		}
-		txmasters = tx.toArray(new TxMasterStyleAtom[tx.size()]);
-		clrscheme = clr.toArray(new ColorSchemeAtom[clr.size()]);
+		txmasters = tx.toArray(new TxMasterStyleAtom[0]);
+		clrscheme = clr.toArray(new ColorSchemeAtom[0]);
 	}
 
 	/**

@@ -103,7 +103,7 @@ public final class ExtSSTRecord extends ContinuableRecord {
                 in.nextRecord();
             }
         }
-        _sstInfos = lst.toArray(new InfoSubRecord[lst.size()]);
+        _sstInfos = lst.toArray(new InfoSubRecord[0]);
     }
 
     public void setNumStringsPerBucket(short numStrings) {

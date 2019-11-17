@@ -149,7 +149,7 @@ public abstract class Record implements GenericRecord
 		}
 
 		// Turn the vector into an array, and return
-        return children.toArray( new Record[children.size()] );
+        return children.toArray(new Record[0]);
 	}
 
 	/**

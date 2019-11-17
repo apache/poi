@@ -91,7 +91,7 @@ public final class StyleTextProp9Atom extends RecordAtom {
                 break;
             }
         }
-        this.autoNumberSchemes = schemes.toArray(new TextPFException9[schemes.size()]);
+        this.autoNumberSchemes = schemes.toArray(new TextPFException9[0]);
     }
 
     /**

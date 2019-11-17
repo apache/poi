@@ -219,7 +219,7 @@ public final class EscherDggRecord extends EscherRecord {
      * @return the file id clusters
      */
     public FileIdCluster[] getFileIdClusters() {
-        return field_5_fileIdClusters.toArray(new FileIdCluster[field_5_fileIdClusters.size()]);
+        return field_5_fileIdClusters.toArray(new FileIdCluster[0]);
     }
 
     /**

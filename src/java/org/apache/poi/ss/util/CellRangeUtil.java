@@ -18,6 +18,7 @@
 package org.apache.poi.ss.util;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -173,9 +174,7 @@ public final class CellRangeUtil {
     }
     private static List<CellRangeAddress> toList(CellRangeAddress[] temp) {
         List<CellRangeAddress> result = new ArrayList<>(temp.length);
-        for (CellRangeAddress range : temp) {
-            result.add(range);
-        }
+        Collections.addAll(result, temp);
         return result;
     }
 

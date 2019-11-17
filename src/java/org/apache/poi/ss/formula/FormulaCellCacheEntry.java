@@ -17,6 +17,7 @@
 
 package org.apache.poi.ss.formula;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
@@ -94,9 +95,7 @@ final class FormulaCellCacheEntry extends CellCacheEntry {
 			usedSet = Collections.emptySet();
 		} else {
 			usedSet = new HashSet<>(nUsed * 3 / 2);
-			for (int i = 0; i < nUsed; i++) {
-				usedSet.add(usedCells[i]);
-			}
+			usedSet.addAll(Arrays.asList(usedCells).subList(0, nUsed));
 		}
 		for (int i = 0; i < nPrevUsed; i++) {
 			CellCacheEntry prevUsed = prevUsedCells[i];

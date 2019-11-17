@@ -452,7 +452,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
             recordMap.remove(oldOffset);
         }
 
-        return recordMap.values().toArray(new Record[recordMap.size()]);
+        return recordMap.values().toArray(new Record[0]);
     }
 
 
@@ -496,7 +496,7 @@ public class HSLFSlideShowEncrypted implements Closeable {
 
         uea.setMaxPersistWritten(maxSlideId);
 
-        records = recordList.toArray(new Record[recordList.size()]);
+        records = recordList.toArray(new Record[0]);
 
         return records;
     }

@@ -110,7 +110,7 @@ public final class Chunks implements ChunkGroupWithProperties {
         for (List<Chunk> c : allChunks.values()) {
             chunks.addAll(c);
         }
-        return chunks.toArray(new Chunk[chunks.size()]);
+        return chunks.toArray(new Chunk[0]);
     }
 
     public StringChunk getMessageClass() {
@@ -239,9 +239,7 @@ public final class Chunks implements ChunkGroupWithProperties {
         }
 
         // And add to the main list
-        if (allChunks.get(prop) == null) {
-            allChunks.put(prop, new ArrayList<>());
-        }
+        allChunks.computeIfAbsent(prop, k -> new ArrayList<>());
         allChunks.get(prop).add(chunk);
     }
 

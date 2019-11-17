@@ -50,7 +50,7 @@ public class ExObjList extends RecordContainer {
 			}
 		}
 
-		return links.toArray(new ExHyperlink[links.size()]);
+		return links.toArray(new ExHyperlink[0]);
 	}
 
 	/** 

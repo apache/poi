@@ -58,7 +58,7 @@ public class Vector {
             }
             values.add(value);
         }
-        _values = values.toArray(new TypedPropertyValue[values.size()]);
+        _values = values.toArray(new TypedPropertyValue[0]);
     }
 
     public TypedPropertyValue[] getValues(){

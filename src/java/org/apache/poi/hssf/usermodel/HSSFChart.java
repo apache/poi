@@ -273,7 +273,7 @@ public final class HSSFChart {
 			}
 		}
 
-		return charts.toArray( new HSSFChart[charts.size()] );
+		return charts.toArray(new HSSFChart[0]);
 	}
 
 	/** Get the X offset of the chart */
@@ -298,7 +298,7 @@ public final class HSSFChart {
 	 * Returns the series of the chart
 	 */
 	public HSSFSeries[] getSeries() {
-		return series.toArray(new HSSFSeries[series.size()]);
+		return series.toArray(new HSSFSeries[0]);
 	}
 
 	/**
@@ -1153,7 +1153,7 @@ public final class HSSFChart {
 				}
 			}
 			
-			linkedDataRecord.setFormulaOfLink(ptgList.toArray(new Ptg[ptgList.size()]));
+			linkedDataRecord.setFormulaOfLink(ptgList.toArray(new Ptg[0]));
 			
 			return rowCount * colCount;
 		}

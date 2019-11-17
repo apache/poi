@@ -49,10 +49,7 @@ public final class TestPOIFSDocumentPath extends TestCase {
         {
             String[] params = new String[ j ];
 
-            for (int k = 0; k < j; k++)
-            {
-                params[ k ] = components[ k ];
-            }
+            System.arraycopy(components, 0, params, 0, j);
             POIFSDocumentPath path = new POIFSDocumentPath(params);
 
             assertEquals(j, path.length());
@@ -116,10 +113,7 @@ public final class TestPOIFSDocumentPath extends TestCase {
         {
             String[] initialParams = new String[ n ];
 
-            for (int k = 0; k < n; k++)
-            {
-                initialParams[ k ] = initialComponents[ k ];
-            }
+            System.arraycopy(initialComponents, 0, initialParams, 0, n);
             POIFSDocumentPath base       =
                 new POIFSDocumentPath(initialParams);
             String[]          components =
@@ -131,10 +125,7 @@ public final class TestPOIFSDocumentPath extends TestCase {
             {
                 String[] params = new String[ j ];
 
-                for (int k = 0; k < j; k++)
-                {
-                    params[ k ] = components[ k ];
-                }
+                System.arraycopy(components, 0, params, 0, j);
                 POIFSDocumentPath path = new POIFSDocumentPath(base, params);
 
                 assertEquals(j + n, path.length());

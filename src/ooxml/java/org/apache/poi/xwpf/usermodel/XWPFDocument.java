@@ -445,7 +445,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     public XWPFHyperlink[] getHyperlinks() {
-        return hyperlinks.toArray(new XWPFHyperlink[hyperlinks.size()]);
+        return hyperlinks.toArray(new XWPFHyperlink[0]);
     }
 
     public XWPFComment getCommentByID(String id) {
@@ -459,7 +459,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     public XWPFComment[] getComments() {
-        return comments.toArray(new XWPFComment[comments.size()]);
+        return comments.toArray(new XWPFComment[0]);
     }
 
     /**
@@ -1423,11 +1423,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     void registerPackagePictureData(XWPFPictureData picData) {
-        List<XWPFPictureData> list = packagePictures.get(picData.getChecksum());
-        if (list == null) {
-            list = new ArrayList<>(1);
-            packagePictures.put(picData.getChecksum(), list);
-        }
+        List<XWPFPictureData> list = packagePictures.computeIfAbsent(picData.getChecksum(), k -> new ArrayList<>(1));
         if (!list.contains(picData)) {
             list.add(picData);
         }

@@ -89,8 +89,8 @@ public class PieChartDemo {
 	                listCategories.add(vals[0]);
 	                listValues.add(Double.valueOf(vals[1]));
 	            }
-	            String[] categories = listCategories.toArray(new String[listCategories.size()]);
-	            Double[] values = listValues.toArray(new Double[listValues.size()]);
+	            String[] categories = listCategories.toArray(new String[0]);
+	            Double[] values = listValues.toArray(new Double[0]);
 
 	            final int numOfPoints = categories.length;
 	            final String categoryDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 0, 0));

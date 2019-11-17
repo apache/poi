@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.util.LittleEndianOutput;
@@ -40,9 +41,7 @@ public final class PaletteRecord extends StandardRecord {
     public PaletteRecord() {
       PColor[] defaultPalette = createDefaultPalette();
       _colors    = new ArrayList<>(defaultPalette.length);
-      for (PColor element : defaultPalette) {
-        _colors.add(element);
-      }
+      Collections.addAll(_colors, defaultPalette);
     }
 
     public PaletteRecord(RecordInputStream in) {

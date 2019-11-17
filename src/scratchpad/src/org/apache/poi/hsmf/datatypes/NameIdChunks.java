@@ -30,7 +30,7 @@ public final class NameIdChunks implements ChunkGroup {
     private List<Chunk> allChunks = new ArrayList<>();
 
     public Chunk[] getAll() {
-        return allChunks.toArray(new Chunk[allChunks.size()]);
+        return allChunks.toArray(new Chunk[0]);
     }
 
     @Override

@@ -78,9 +78,9 @@ public class BarChartExample {
                 listSpeakers.add(Double.valueOf(vals[1]));
                 listLanguages.add(vals[2]);
             }
-            String[] categories = listLanguages.toArray(new String[listLanguages.size()]);
-            Double[] values1 = listCountries.toArray(new Double[listCountries.size()]);
-            Double[] values2 = listSpeakers.toArray(new Double[listSpeakers.size()]);
+            String[] categories = listLanguages.toArray(new String[0]);
+            Double[] values1 = listCountries.toArray(new Double[0]);
+            Double[] values2 = listSpeakers.toArray(new Double[0]);
 
             try (XWPFDocument doc = new XWPFDocument(argIS)) {
                 XWPFChart chart = doc.getCharts().get(0);

@@ -235,6 +235,6 @@ public final class TestTxMasterStyleAtom extends TestCase {
             }
         }
 
-        return lst.toArray(new TxMasterStyleAtom[lst.size()]);
+        return lst.toArray(new TxMasterStyleAtom[0]);
     }
 }
