@@ -16,11 +16,6 @@ def xercesLib = './xercesImpl-2.6.1.jar'
 def poijobs = [
         [ name: 'POI-DSL-1.8', trigger: 'H */12 * * *'
         ],
-        [ name: 'POI-DSL-OpenJDK', jdk: 'OpenJDK', trigger: 'H */12 * * *',
-          // only a limited set of nodes still have OpenJDK 8 (on Ubuntu) installed
-          slaves: 'H5||H6||H44||H48||H49||H50',
-          skipcigame: true
-        ],
         [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays, skipcigame: true
         ],
         [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true
@@ -98,8 +93,6 @@ def jdkMapping = [
         '1.11': 'JDK 11 (latest)',
         '1.12': 'JDK 12 (latest)',
         '1.13': 'JDK 13 (latest)',
-        // trailing blank is required here until the name in the Jenkins instance is fixed!
-        'OpenJDK': 'OpenJDK 8 (on Ubuntu only) ',
         'IBMJDK': 'IBM 1.8 64-bit (on Ubuntu only)',
 ]
 
@@ -572,8 +565,6 @@ Unfortunately we often see builds break because of changes/new machines...''')
     axes {
         jdk(
                 'JDK 1.8 (latest)',
-                // blank is required here until the name in the Jenkins instance is fixed!
-                'OpenJDK 8 (on Ubuntu only) ',
                 'IBM 1.8 64-bit (on Ubuntu only)',
                 'JDK 11 (latest)',
                 'JDK 12 (latest)',
