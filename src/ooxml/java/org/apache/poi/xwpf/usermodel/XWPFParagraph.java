@@ -22,7 +22,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
-import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.wp.usermodel.Paragraph;
 import org.apache.xmlbeans.XmlCursor;
@@ -90,7 +89,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                             footnoteText.append(p.getText());
                         }
                     } else {
-                        footnoteText.append("!!! End note with ID \"" + ftn.getId() + "\" not found in document.");
+                        footnoteText.append("!!! End note with ID \"").append(ftn.getId()).append("\" not found in document.");
                     }
                     footnoteText.append("] ");
 
@@ -608,7 +607,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * </p>
      * <b>This border can only be a line border.</b>
      *
-     * @param border
+     * @param border one of the defined Border styles, see {@link Borders}
      * @see Borders for a list of all types of borders
      */
     public void setBorderTop(Borders border) {
@@ -667,7 +666,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * </p>
      * <b>This border can only be a line border.</b>
      *
-     * @param border
+     * @param border one of the defined Border styles, see {@link Borders}
      * @see Borders a list of all types of borders
      */
     public void setBorderBottom(Borders border) {
@@ -717,7 +716,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * </p>
      * <b>This border can only be a line border.</b>
      *
-     * @param border
+     * @param border one of the defined Border styles, see {@link Borders}
      * @see Borders for a list of all possible borders
      */
     public void setBorderLeft(Borders border) {
@@ -767,7 +766,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * </p>
      * <b>This border can only be a line border.</b>
      *
-     * @param border
+     * @param border one of the defined Border styles, see {@link Borders}
      * @see Borders for a list of all possible borders
      */
     public void setBorderRight(Borders border) {
@@ -821,7 +820,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * </p>
      * <b>This border can only be a line border.</b>
      *
-     * @param border
+     * @param border one of the defined Border styles, see {@link Borders}
      * @see Borders for a list of all possible borders
      */
     public void setBorderBetween(Borders border) {
@@ -855,24 +854,23 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         if (ctPageBreak == null) {
             return false;
         }
-        return isTruelike(ctPageBreak.getVal(), false);
+        return isTruelike(ctPageBreak.getVal());
     }
 
-    private static boolean isTruelike(final STOnOff.Enum value, boolean defaultValue) {
+    private static boolean isTruelike(final STOnOff.Enum value) {
         if (value == null) {
-            return defaultValue;
+            return false;
         }
         switch (value.intValue()) {
             case STOnOff.INT_TRUE:
             case STOnOff.INT_X_1:
             case STOnOff.INT_ON:
                 return true;
-            case STOnOff.INT_FALSE:
-            case STOnOff.INT_X_0:
-            case STOnOff.INT_OFF:
-                return false;
+            /*STOnOff.INT_FALSE:
+            STOnOff.INT_X_0:
+            STOnOff.INT_OFF:*/
             default:
-                return defaultValue;
+                return false;
         }
     }
 
@@ -922,8 +920,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * specified, then this attribute value is ignored.
      * </p>
      *
-     * @param spaces -
-     *               a positive whole number, whose contents consist of a
+     * @param spaces a positive whole number, whose contents consist of a
      *               measurement in twentieths of a point.
      */
     public void setSpacingAfter(int spaces) {
@@ -960,8 +957,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * (if needed)
      * </p>
      *
-     * @param spaces -
-     *               a positive whole number, whose contents consist of a
+     * @param spaces a positive whole number, whose contents consist of a
      *               measurement in hundredths of a line
      */
     public void setSpacingAfterLines(int spaces) {
@@ -990,7 +986,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * specified, then this attribute value is ignored.
      * </p>
      *
-     * @param spaces
+     * @param spaces a positive whole number, whose contents consist of a
+     *               measurement in twentieths of a point.
      */
     public void setSpacingBefore(int spaces) {
         CTSpacing spacing = getCTSpacing(true);
@@ -1021,7 +1018,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * hierarchy, then its value shall be zero.
      * </p>
      *
-     * @param spaces
+     * @param spaces a positive whole number, whose contents consist of a
+     *               measurement in hundredths of a line
      */
     public void setSpacingBeforeLines(int spaces) {
         CTSpacing spacing = getCTSpacing(true);
@@ -1049,7 +1047,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * line attribute. If this attribute is omitted, then it shall be assumed to
      * be of a value auto if a line attribute value is present.
      *
-     * @param rule
+     * @param rule one of the defined rules, see {@link LineSpacingRule}
      * @see LineSpacingRule
      */
      // TODO Fix this to convert line to equivalent value, or deprecate this in
@@ -1093,11 +1091,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public void setSpacingBetween(double spacing, LineSpacingRule rule) {
         CTSpacing ctSp = getCTSpacing(true);
-        switch (rule) {
-        case AUTO:
+        if (rule == LineSpacingRule.AUTO) {
             ctSp.setLine(new BigInteger(String.valueOf(Math.round(spacing * 240.0))));
-            break;
-        default:
+        } else {
             ctSp.setLine(new BigInteger(String.valueOf(Math.round(spacing * 20.0))));
         }
         ctSp.setLineRule(STLineSpacingRule.Enum.forInt(rule.getValue()));
@@ -1123,7 +1119,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * positive values move the text inside the text margin.
      * </p>
      *
-     * @return indentation or null if indentation is not set
+     * @return indentation in twips or null if indentation is not set
      */
     public int getIndentationLeft() {
         CTInd indentation = getCTInd(false);
@@ -1142,7 +1138,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * positive values move the text inside the text margin.
      * </p>
      *
-     * @param indentation
+     * @param indentation in twips
      */
     public void setIndentationLeft(int indentation) {
         CTInd indent = getCTInd(true);
@@ -1161,7 +1157,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * positive values move the text inside the text margin.
      * </p>
      *
-     * @return indentation or null if indentation is not set
+     * @return indentation in twips or null if indentation is not set
      */
 
     public int getIndentationRight() {
@@ -1181,7 +1177,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * positive values move the text inside the text margin.
      * </p>
      *
-     * @param indentation
+     * @param indentation in twips
      */
     public void setIndentationRight(int indentation) {
         CTInd indent = getCTInd(true);
@@ -1200,7 +1196,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * attributes are mutually exclusive, if both are specified, then the
      * firstLine value is ignored.
      *
-     * @return indentation or null if indentation is not set
+     * @return indentation in twips or null if indentation is not set
      */
     public int getIndentationHanging() {
         CTInd indentation = getCTInd(false);
@@ -1218,7 +1214,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * firstLine value is ignored.
      * </p>
      *
-     * @param indentation
+     * @param indentation in twips
      */
 
     public void setIndentationHanging(int indentation) {
@@ -1240,7 +1236,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * If this attribute is omitted, then its value shall be
      * assumed to be zero (if needed).
      *
-     * @return indentation or null if indentation is not set
+     * @return indentation in twips or null if indentation is not set
      */
     public int getIndentationFirstLine() {
         CTInd indentation = getCTInd(false);
@@ -1260,7 +1256,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * value is ignored. If this attribute is omitted, then its value shall be
      * assumed to be zero (if needed).
      *
-     * @param indentation
+     * @param indentation in twips
      */
     public void setIndentationFirstLine(int indentation) {
         CTInd indent = getCTInd(true);
@@ -1311,9 +1307,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         CTOnOff wordWrap = getCTPPr().isSetWordWrap() ? getCTPPr()
                 .getWordWrap() : null;
         if (wordWrap != null) {
-            return (wordWrap.getVal() == STOnOff.ON
-                    || wordWrap.getVal() == STOnOff.TRUE || wordWrap.getVal() == STOnOff.X_1) ? true
-                    : false;
+            return isTruelike(wordWrap.getVal());
         }
         return false;
     }
@@ -1385,7 +1379,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     private CTSpacing getCTSpacing(boolean create) {
         CTPPr pr = getCTPPr();
-        CTSpacing ct = pr.getSpacing() == null ? null : pr.getSpacing();
+        CTSpacing ct = pr.getSpacing();
         if (create && ct == null) {
             ct = pr.addNewSpacing();
         }
@@ -1398,7 +1392,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     private CTInd getCTInd(boolean create) {
         CTPPr pr = getCTPPr();
-        CTInd ct = pr.getInd() == null ? null : pr.getInd();
+        CTInd ct = pr.getInd();
         if (create && ct == null) {
             ct = pr.addNewInd();
         }
@@ -1527,7 +1521,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         
         CTR[] rArray = paragraph.getRArray();
         for (int runPos = startRun; runPos < rArray.length; runPos++) {
-            int beginTextPos = 0, beginCharPos = 0, textPos = 0, charPos = 0;
+            int beginTextPos = 0, beginCharPos = 0, textPos = 0, charPos;
             CTR ctRun = rArray[runPos];
             XmlCursor c = ctRun.newCursor();
             c.selectPath("./*");
