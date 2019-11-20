@@ -32,7 +32,7 @@ public final class NumberRecord extends CellRecord implements Cloneable {
 
     /** Creates new NumberRecord */
     public NumberRecord() {
-    	// fields uninitialised
+        // fields uninitialised
     }
 
     /**
@@ -63,12 +63,12 @@ public final class NumberRecord extends CellRecord implements Cloneable {
 
     @Override
     protected String getRecordName() {
-    	return "NUMBER";
+        return "NUMBER";
     }
 
     @Override
     protected void appendValueText(StringBuilder sb) {
-    	sb.append("  .value= ").append(NumberToTextConverter.toText(field_4_value));
+        sb.append("  .value= ").append(NumberToTextConverter.toText(field_4_value));
     }
 
     @Override
@@ -78,7 +78,7 @@ public final class NumberRecord extends CellRecord implements Cloneable {
 
     @Override
     protected int getValueDataSize() {
-    	return 8;
+        return 8;
     }
 
     @Override

@@ -76,7 +76,7 @@ public final class ObjectProtectRecord extends StandardRecord implements Cloneab
         StringBuilder buffer = new StringBuilder();
 
         buffer.append("[SCENARIOPROTECT]\n");
-	    buffer.append("    .protect         = ").append(getProtect())
+        buffer.append("    .protect         = ").append(getProtect())
             .append("\n");
         buffer.append("[/SCENARIOPROTECT]\n");
         return buffer.toString();
