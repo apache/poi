@@ -60,7 +60,7 @@ public class Rept extends Fixed2ArgFunction  {
         }
 
         int numberOfTimeInt = (int)numberOfTime;
-        StringBuffer strb = new StringBuffer(strText1.length() * numberOfTimeInt);
+        StringBuilder strb = new StringBuilder(strText1.length() * numberOfTimeInt);
         for(int i = 0; i < numberOfTimeInt; i++) {
             strb.append(strText1);
         }

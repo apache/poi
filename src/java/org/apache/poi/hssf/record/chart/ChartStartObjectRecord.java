@@ -66,7 +66,7 @@ public final class ChartStartObjectRecord extends StandardRecord {
 
 	public String toString() {
 
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		buffer.append("[STARTOBJECT]\n");
 		buffer.append("    .rt              =").append(HexDump.shortToHex(rt)).append('\n');

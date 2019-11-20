@@ -51,7 +51,7 @@ public final class GreaterThanPtg extends ValueOperatorPtg {
      */  
     public String toFormulaString(String[] operands) 
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append(operands[ 0 ]);
         buffer.append(GREATERTHAN);

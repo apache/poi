@@ -57,7 +57,7 @@ public final class CategorySeriesAxisRecord extends StandardRecord implements Cl
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[CATSERRANGE]\n");
         buffer.append("    .crossingPoint        = ")

@@ -95,7 +95,7 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
     @Override
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[ftCmo]\n");
         buffer.append("    .objectType           = ")

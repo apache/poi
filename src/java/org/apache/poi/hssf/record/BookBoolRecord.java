@@ -69,7 +69,7 @@ public final class BookBoolRecord
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[BOOKBOOL]\n");
         buffer.append("    .savelinkvalues  = ")

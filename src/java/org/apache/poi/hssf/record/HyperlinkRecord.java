@@ -676,7 +676,7 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
 
     @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[HYPERLINK RECORD]\n");
         buffer.append("    .range   = ").append(_range.formatAsString()).append("\n");

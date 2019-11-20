@@ -69,7 +69,7 @@ public final class BackupRecord
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[BACKUP]\n");
         buffer.append("    .backup          = ")

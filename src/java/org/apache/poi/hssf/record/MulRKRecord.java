@@ -102,7 +102,7 @@ public final class MulRKRecord extends StandardRecord {
 
 	@Override
     public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		buffer.append("[MULRK]\n");
 		buffer.append("	.row	 = ").append(HexDump.shortToHex(getRow())).append("\n");

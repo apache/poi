@@ -53,7 +53,7 @@ public final class ViewSourceRecord extends StandardRecord {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		buffer.append("[SXVS]\n");
 		buffer.append("    .vs      =").append(HexDump.shortToHex(vs)).append('\n');

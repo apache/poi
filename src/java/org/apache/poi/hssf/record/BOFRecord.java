@@ -225,7 +225,7 @@ public final class BOFRecord extends StandardRecord implements Cloneable {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[BOF RECORD]\n");
         buffer.append("    .version  = ").append(HexDump.shortToHex(getVersion())).append("\n");

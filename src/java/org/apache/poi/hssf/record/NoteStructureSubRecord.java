@@ -68,7 +68,7 @@ public final class NoteStructureSubRecord extends SubRecord implements Cloneable
     @Override
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[ftNts ]").append("\n");
         buffer.append("  size     = ").append(getDataSize()).append("\n");

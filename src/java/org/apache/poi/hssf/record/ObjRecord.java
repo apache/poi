@@ -135,7 +135,7 @@ public final class ObjRecord extends Record implements Cloneable {
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append("[OBJ]\n");
 		if(subrecords != null) {	// there are special cases where this can be, see comments in constructor above

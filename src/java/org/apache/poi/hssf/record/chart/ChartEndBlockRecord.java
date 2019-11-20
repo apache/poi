@@ -73,7 +73,7 @@ public final class ChartEndBlockRecord extends StandardRecord implements Cloneab
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		buffer.append("[ENDBLOCK]\n");
 		buffer.append("    .rt         =").append(HexDump.shortToHex(rt)).append('\n');

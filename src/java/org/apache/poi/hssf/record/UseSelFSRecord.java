@@ -49,7 +49,7 @@ public final class UseSelFSRecord extends StandardRecord {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[USESELFS]\n");
         buffer.append("    .options = ").append(HexDump.shortToHex(_options)).append("\n");

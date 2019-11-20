@@ -48,7 +48,7 @@ public final class FtrHeader implements Cloneable {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(" [FUTURE HEADER]\n");
         buffer.append("   Type " + recordType);
         buffer.append("   Flags " + grbitFrt);

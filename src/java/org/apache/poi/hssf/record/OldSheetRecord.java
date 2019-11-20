@@ -74,7 +74,7 @@ public final class OldSheetRecord {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[BOUNDSHEET]\n");
         buffer.append("    .bof        = ").append(HexDump.intToHex(getPositionOfBof())).append("\n");

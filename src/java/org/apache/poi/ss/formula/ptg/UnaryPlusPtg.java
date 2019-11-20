@@ -43,7 +43,7 @@ public final class UnaryPlusPtg extends ValueOperatorPtg {
     
    /** implementation of method from OperationsPtg*/  
     public String toFormulaString(String[] operands) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append(ADD);
         buffer.append(operands[ 0]);
         return buffer.toString();

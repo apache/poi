@@ -138,7 +138,7 @@ public final class Countif extends Fixed2ArgFunction {
         }
         @Override
         public String toString() {
-            StringBuffer sb = new StringBuffer(64);
+            StringBuilder sb = new StringBuilder(64);
             sb.append(getClass().getName());
             sb.append(" [").append(_representation).append("]");
             return sb.toString();

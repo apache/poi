@@ -95,7 +95,7 @@ public final class DefaultRowHeightRecord extends StandardRecord implements Clon
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[DEFAULTROWHEIGHT]\n");
         buffer.append("    .optionflags    = ")

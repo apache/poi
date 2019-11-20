@@ -91,7 +91,7 @@ public final class ChartFRTInfoRecord extends StandardRecord {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		buffer.append("[CHARTFRTINFO]\n");
 		buffer.append("    .rt           =").append(HexDump.shortToHex(rt)).append('\n');

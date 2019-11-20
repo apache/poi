@@ -64,7 +64,7 @@ public final class IterationRecord extends StandardRecord implements Cloneable {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[ITERATION]\n");
         buffer.append("    .flags      = ").append(HexDump.shortToHex(_flags)).append("\n");

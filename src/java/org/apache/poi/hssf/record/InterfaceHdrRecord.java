@@ -44,7 +44,7 @@ public final class InterfaceHdrRecord extends StandardRecord {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[INTERFACEHDR]\n");
         buffer.append("    .codepage = ").append(HexDump.shortToHex(_codepage)).append("\n");

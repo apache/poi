@@ -38,7 +38,7 @@ public final class TopMarginRecord extends StandardRecord implements Margin {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append( "[TopMargin]\n" );
         buffer.append( "    .margin               = " ).append( " (" ).append( getMargin() ).append( " )\n" );
         buffer.append( "[/TopMargin]\n" );

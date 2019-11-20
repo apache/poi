@@ -45,7 +45,7 @@ public final class UncalcedRecord extends StandardRecord  {
 	}
 
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("[UNCALCED]\n");
         buffer.append("    _reserved: ").append(_reserved).append('\n');
 		buffer.append("[/UNCALCED]\n");

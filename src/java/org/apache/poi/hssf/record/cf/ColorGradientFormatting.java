@@ -119,7 +119,7 @@ public final class ColorGradientFormatting implements Cloneable {
     }    
     
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("    [Color Gradient Formatting]\n");
         buffer.append("          .clamp     = ").append(isClampToCurve()).append("\n");
         buffer.append("          .background= ").append(isAppliesToBackground()).append("\n");

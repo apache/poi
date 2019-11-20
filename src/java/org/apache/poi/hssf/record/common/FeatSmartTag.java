@@ -46,7 +46,7 @@ public final class FeatSmartTag implements SharedFeature {
 	}
 
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(" [FEATURE SMART TAGS]\n");
 		buffer.append(" [/FEATURE SMART TAGS]\n");
 		return buffer.toString();

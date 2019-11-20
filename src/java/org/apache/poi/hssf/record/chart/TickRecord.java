@@ -76,7 +76,7 @@ public final class TickRecord extends StandardRecord {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[TICK]\n");
         buffer.append("    .majorTickType        = ")

@@ -52,7 +52,7 @@ public final class DSFRecord extends StandardRecord {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[DSF]\n");
         buffer.append("    .options = ").append(HexDump.shortToHex(_options)).append("\n");

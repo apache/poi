@@ -50,7 +50,7 @@ public final class AreaRecord extends StandardRecord implements Cloneable {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[AREA]\n");
         buffer.append("    .formatFlags          = ")

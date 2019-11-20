@@ -65,7 +65,7 @@ public final class MemAreaPtg extends OperandPtg {
 
 	@Override
 	public final String toString() {
-		StringBuffer sb = new StringBuffer(64);
+		StringBuilder sb = new StringBuilder(64);
 		sb.append(getClass().getName()).append(" [len=");
 		sb.append(field_2_subex_len);
 		sb.append("]");

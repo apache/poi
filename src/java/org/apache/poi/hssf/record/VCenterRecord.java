@@ -63,7 +63,7 @@ public final class VCenterRecord extends StandardRecord {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[VCENTER]\n");
         buffer.append("    .vcenter        = ").append(getVCenter())

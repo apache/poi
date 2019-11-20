@@ -112,7 +112,7 @@ public final class NameCommentRecord extends StandardRecord {
 
   @Override
   public String toString() {
-    final StringBuffer sb = new StringBuffer();
+    final StringBuilder sb = new StringBuilder();
 
     sb.append("[NAMECMT]\n");
     sb.append("    .record type            = ").append(HexDump.shortToHex(field_1_record_type)).append("\n");

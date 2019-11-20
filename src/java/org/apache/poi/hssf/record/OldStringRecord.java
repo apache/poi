@@ -92,7 +92,7 @@ public final class OldStringRecord {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[OLD STRING]\n");
         buffer.append("    .string            = ")

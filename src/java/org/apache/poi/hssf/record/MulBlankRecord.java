@@ -100,7 +100,7 @@ public final class MulBlankRecord extends StandardRecord {
 	}
 
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		buffer.append("[MULBLANK]\n");
 		buffer.append("row  = ").append(Integer.toHexString(getRow())).append("\n");

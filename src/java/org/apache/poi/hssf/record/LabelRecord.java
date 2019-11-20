@@ -145,7 +145,7 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
     @Override
     public String toString()
     {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 		sb.append("[LABEL]\n");
 		sb.append("    .row       = ").append(HexDump.shortToHex(getRow())).append("\n");
 		sb.append("    .column    = ").append(HexDump.shortToHex(getColumn())).append("\n");

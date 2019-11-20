@@ -43,7 +43,7 @@ public final class PlotAreaRecord extends StandardRecord {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[PLOTAREA]\n");
 

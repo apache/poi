@@ -220,7 +220,7 @@ public class InCellLists {
             buffer.append(listItem);
             buffer.append("\n");
         }
-        // The StringBuffer's contents are the source for the contents
+        // The StringBuilder's contents are the source for the contents
         // of the cell.
         cell.setCellValue(new HSSFRichTextString(buffer.toString().trim()));
         cell.setCellStyle(wrapStyle);
@@ -260,7 +260,7 @@ public class InCellLists {
             buffer.append("\n");
             itemNumber += increment;
         }
-        // The StringBuffer's contents are the source for the contents
+        // The StringBuilder's contents are the source for the contents
         // of the cell.
         cell.setCellValue(new HSSFRichTextString(buffer.toString().trim()));
         cell.setCellStyle(wrapStyle);
@@ -292,7 +292,7 @@ public class InCellLists {
             buffer.append(listItem);
             buffer.append("\n");
         }
-        // The StringBuffer's contents are the source for the contents
+        // The StringBuilder's contents are the source for the contents
         // of the cell.
         cell.setCellValue(new HSSFRichTextString(buffer.toString().trim()));
         cell.setCellStyle(wrapStyle);
@@ -338,7 +338,7 @@ public class InCellLists {
                 }
             }
         }
-        // The StringBuffer's contents are the source for the contents
+        // The StringBuilder's contents are the source for the contents
         // of the cell.
         cell.setCellValue(new HSSFRichTextString(buffer.toString().trim()));
         cell.setCellStyle(wrapStyle);
@@ -409,7 +409,7 @@ public class InCellLists {
             }
             highLevelItemNumber += highLevelIncrement;
         }
-        // The StringBuffer's contents are the source for the contents
+        // The StringBuilder's contents are the source for the contents
         // of the cell.
         cell.setCellValue(new HSSFRichTextString(buffer.toString().trim()));
         cell.setCellStyle(wrapStyle);
@@ -459,7 +459,7 @@ public class InCellLists {
                 }
             }
         }
-        // The StringBuffer's contents are the source for the contents
+        // The StringBuilder's contents are the source for the contents
         // of the cell.
         cell.setCellValue(new HSSFRichTextString(buffer.toString().trim()));
         cell.setCellStyle(wrapStyle);

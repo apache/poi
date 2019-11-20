@@ -266,7 +266,7 @@ public class LbsDataSubRecord extends SubRecord {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer(256);
+        StringBuilder sb = new StringBuilder(256);
 
         sb.append("[ftLbsData]\n");
         sb.append("    .unknownShort1 =").append(HexDump.shortToHex(_cbFContinued)).append("\n");
@@ -404,7 +404,7 @@ public class LbsDataSubRecord extends SubRecord {
 
         @Override
         public String toString(){
-            StringBuffer sb = new StringBuffer();
+            StringBuilder sb = new StringBuilder();
             sb.append("[LbsDropData]\n");
             sb.append("  ._wStyle:  ").append(_wStyle).append('\n');
             sb.append("  ._cLine:  ").append(_cLine).append('\n');

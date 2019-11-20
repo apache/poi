@@ -71,7 +71,7 @@ public final class LineFormatRecord extends StandardRecord implements Cloneable 
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[LINEFORMAT]\n");
         buffer.append("    .lineColor            = ")

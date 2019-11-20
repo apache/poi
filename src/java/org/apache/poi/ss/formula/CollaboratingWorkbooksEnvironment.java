@@ -175,7 +175,7 @@ public final class CollaboratingWorkbooksEnvironment {
         }
         WorkbookEvaluator result = _evaluatorsByName.get(workbookName);
         if (result == null) {
-            StringBuffer sb = new StringBuffer(256);
+            StringBuilder sb = new StringBuilder(256);
             sb.append("Could not resolve external workbook name '").append(workbookName).append("'.");
             if (_evaluators.length < 1) {
                 sb.append(" Workbook environment has not been set up.");

@@ -56,7 +56,7 @@ public final class SheetPropertiesRecord extends StandardRecord {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[SHTPROPS]\n");
         buffer.append("    .flags                = ").append(HexDump.shortToHex(field_1_flags)).append('\n');

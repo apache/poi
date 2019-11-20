@@ -52,7 +52,7 @@ public final class CRNRecord extends StandardRecord {
 
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(getClass().getName()).append(" [CRN");
 		sb.append(" rowIx=").append(field_3_row_index);
 		sb.append(" firstColIx=").append(field_2_first_column_index);

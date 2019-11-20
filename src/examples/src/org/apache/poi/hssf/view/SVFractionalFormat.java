@@ -140,9 +140,9 @@ public class SVFractionalFormat extends Format {
           break;
         }
         Precision = AllowedError / Diff;
-        // This calcualtion of Precision does not always provide results within
+        // This calculation of Precision does not always provide results within
         // Allowed Error. It compensates for loss of significant digits that occurs.
-        // It helps to round the inprecise reciprocal values to i.
+        // It helps to round the imprecise reciprocal values to i.
         B = A;
         A = Num;
       }
@@ -161,7 +161,7 @@ public class SVFractionalFormat extends Format {
         Whole = -Whole;
       }
     }
-    return new StringBuffer().append(Whole).append(" ").append(Num).append("/").append(Den).toString();
+    return new StringBuilder().append(Whole).append(" ").append(Num).append("/").append(Den).toString();
   }
 
   /** This method formats the double in the units specified.
@@ -173,7 +173,7 @@ public class SVFractionalFormat extends Format {
     f -= Whole;
     long Num = Math.round(f * units);
 
-    return new StringBuffer().append(Whole).append(" ").append(Num).append("/").append(units).toString();
+    return new StringBuilder().append(Whole).append(" ").append(Num).append("/").append(units).toString();
   }
 
   public final String format(double val) {

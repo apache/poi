@@ -69,7 +69,7 @@ public final class DefaultColWidthRecord extends StandardRecord implements Clone
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[DEFAULTCOLWIDTH]\n");
         buffer.append("    .colwidth      = ")

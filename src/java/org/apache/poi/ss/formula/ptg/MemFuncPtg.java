@@ -66,7 +66,7 @@ public final class MemFuncPtg extends OperandPtg {
 	}
 	@Override
 	public final String toString() {
-		StringBuffer sb = new StringBuffer(64);
+		StringBuilder sb = new StringBuilder(64);
 		sb.append(getClass().getName()).append(" [len=");
 		sb.append(field_1_len_ref_subexpression);
 		sb.append("]");

@@ -65,7 +65,7 @@ public final class FeatProtection implements SharedFeature {
 	}
 
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(" [FEATURE PROTECTION]\n");
 		buffer.append("   Self Relative = " + fSD); 
 		buffer.append("   Password Verifier = " + passwordVerifier);

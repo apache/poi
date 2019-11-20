@@ -84,7 +84,7 @@ public abstract class AbstractEscherHolderRecord extends Record implements Clone
     @Override
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         final String nl = System.getProperty("line.separator");
         buffer.append('[' + getRecordName() + ']' + nl);

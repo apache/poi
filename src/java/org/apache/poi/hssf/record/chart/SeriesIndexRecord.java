@@ -42,7 +42,7 @@ public final class SeriesIndexRecord extends StandardRecord {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[SINDEX]\n");
         buffer.append("    .index                = ")

@@ -100,7 +100,7 @@ public final class FileSharingRecord extends StandardRecord implements Cloneable
 
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[FILESHARING]\n");
         buffer.append("    .readonly       = ")

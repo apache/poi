@@ -68,7 +68,7 @@ public final class CalcCountRecord extends StandardRecord implements Cloneable {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[CALCCOUNT]\n");
         buffer.append("    .iterations     = ")

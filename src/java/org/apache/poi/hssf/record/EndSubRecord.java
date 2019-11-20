@@ -53,7 +53,7 @@ public final class EndSubRecord extends SubRecord implements Cloneable {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[ftEnd]\n");
 

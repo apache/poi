@@ -37,7 +37,7 @@ public final class HeaderRecord extends HeaderFooterBase implements Cloneable {
 	}
 
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		buffer.append("[HEADER]\n");
 		buffer.append("    .header = ").append(getText()).append("\n");

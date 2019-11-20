@@ -45,7 +45,7 @@ public final class BeginRecord extends StandardRecord implements Cloneable {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[BEGIN]\n");
         buffer.append("[/BEGIN]\n");

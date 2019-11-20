@@ -32,7 +32,7 @@ public class NameIdentifier {
         return _isQuoted;
     }
     public String toString() {
-        StringBuffer sb = new StringBuffer(64);
+        StringBuilder sb = new StringBuilder(64);
         sb.append(getClass().getName());
         sb.append(" [");
         if (_isQuoted) {

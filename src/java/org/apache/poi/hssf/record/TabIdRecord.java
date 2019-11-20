@@ -52,7 +52,7 @@ public final class TabIdRecord extends StandardRecord {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[TABID]\n");
         buffer.append("    .elements        = ").append(_tabids.length).append("\n");

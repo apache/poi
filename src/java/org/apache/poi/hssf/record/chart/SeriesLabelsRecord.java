@@ -53,7 +53,7 @@ public final class SeriesLabelsRecord extends StandardRecord {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[ATTACHEDLABEL]\n");
         buffer.append("    .formatFlags          = ")

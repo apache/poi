@@ -44,7 +44,7 @@ public final class AddPtg extends ValueOperatorPtg {
        
    /** implementation of method from OperationsPtg*/  
     public String toFormulaString(String[] operands) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append(operands[ 0 ]);
         buffer.append(ADD);

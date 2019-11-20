@@ -72,7 +72,7 @@ public final class TblPtg extends ControlPtg {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer("[Data Table - Parent cell is an interior cell in a data table]\n");
+        StringBuilder buffer = new StringBuilder("[Data Table - Parent cell is an interior cell in a data table]\n");
         buffer.append("top left row = ").append(getRow()).append("\n");
         buffer.append("top left col = ").append(getColumn()).append("\n");
         return buffer.toString();

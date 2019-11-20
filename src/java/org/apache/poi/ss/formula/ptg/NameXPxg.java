@@ -45,7 +45,7 @@ public final class NameXPxg extends OperandPtg implements Pxg {
     }
 
     public String toString(){
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(getClass().getName());
         sb.append(" [");
         if (externalWorkbookNumber >= 0) {

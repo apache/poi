@@ -75,7 +75,7 @@ public final class FnGroupCountRecord
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[FNGROUPCOUNT]\n");
         buffer.append("    .count            = ").append(getCount())

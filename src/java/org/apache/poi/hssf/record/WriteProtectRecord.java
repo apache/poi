@@ -44,7 +44,7 @@ public final class WriteProtectRecord extends StandardRecord {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[WRITEPROTECT]\n");
         buffer.append("[/WRITEPROTECT]\n");

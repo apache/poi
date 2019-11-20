@@ -75,7 +75,7 @@ public final class DataItemRecord extends StandardRecord {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		
 		buffer.append("[SXDI]\n");
 		buffer.append("  .isxvdData = ").append(HexDump.shortToHex(isxvdData)).append("\n");

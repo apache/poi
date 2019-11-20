@@ -117,7 +117,7 @@ public final class WriteAccessRecord extends StandardRecord {
 	}
 
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		buffer.append("[WRITEACCESS]\n");
 		buffer.append("    .name = ").append(field_1_username).append("\n");

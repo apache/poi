@@ -144,7 +144,7 @@ public final class DimensionsRecord extends StandardRecord implements Cloneable 
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[DIMENSIONS]\n");
         buffer.append("    .firstrow       = ")

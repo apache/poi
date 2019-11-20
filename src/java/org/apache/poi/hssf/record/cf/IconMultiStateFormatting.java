@@ -97,7 +97,7 @@ public final class IconMultiStateFormatting implements Cloneable {
     }
     
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("    [Icon Formatting]\n");
         buffer.append("          .icon_set = ").append(iconSet).append("\n");
         buffer.append("          .icon_only= ").append(isIconOnly()).append("\n");

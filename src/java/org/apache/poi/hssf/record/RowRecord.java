@@ -366,7 +366,7 @@ public final class RowRecord extends StandardRecord {
     }
     
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
 
         sb.append("[ROW]\n");
         sb.append("    .rownumber      = ").append(Integer.toHexString(getRowNumber()))

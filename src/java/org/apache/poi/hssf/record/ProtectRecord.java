@@ -66,7 +66,7 @@ public final class ProtectRecord extends StandardRecord {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[PROTECT]\n");
         buffer.append("    .options = ").append(HexDump.shortToHex(_options)).append("\n");

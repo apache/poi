@@ -45,7 +45,7 @@ public final class DefaultDataLabelTextPropertiesRecord extends StandardRecord i
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[DEFAULTTEXT]\n");
         buffer.append("    .categoryDataType     = ")

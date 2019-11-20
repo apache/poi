@@ -34,7 +34,7 @@ public final class FooterRecord extends HeaderFooterBase implements Cloneable {
 	}
 
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		buffer.append("[FOOTER]\n");
 		buffer.append("    .footer = ").append(getText()).append("\n");

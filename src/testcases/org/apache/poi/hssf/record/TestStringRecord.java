@@ -67,7 +67,7 @@ public final class TestStringRecord {
 		int MAX_BIFF_DATA = RecordInputStream.MAX_RECORD_DATA_SIZE;
 		int TEXT_LEN = MAX_BIFF_DATA + 1000; // deliberately over-size
 		String textChunk = "ABCDEGGHIJKLMNOP"; // 16 chars
-		StringBuffer sb = new StringBuffer(16384);
+		StringBuilder sb = new StringBuilder(16384);
 		while (sb.length() < TEXT_LEN) {
 			sb.append(textChunk);
 		}

@@ -44,7 +44,7 @@ public final class SeriesToChartGroupRecord extends StandardRecord {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[SeriesToChartGroup]\n");
         buffer.append("    .chartGroupIndex      = ")

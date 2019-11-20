@@ -57,7 +57,7 @@ public final class PasswordRecord extends StandardRecord {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[PASSWORD]\n");
         buffer.append("    .password = ").append(HexDump.shortToHex(field_1_password)).append("\n");

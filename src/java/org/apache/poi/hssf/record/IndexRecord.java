@@ -107,7 +107,7 @@ public final class IndexRecord extends StandardRecord implements Cloneable {
     @Override
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[INDEX]\n");
         buffer.append("    .firstrow       = ")

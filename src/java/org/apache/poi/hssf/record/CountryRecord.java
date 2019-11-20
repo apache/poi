@@ -96,7 +96,7 @@ public final class CountryRecord
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[COUNTRY]\n");
         buffer.append("    .defaultcountry  = ")

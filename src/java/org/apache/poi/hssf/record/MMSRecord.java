@@ -93,7 +93,7 @@ public final class MMSRecord
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[MMS]\n");
         buffer.append("    .addMenu        = ")

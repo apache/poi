@@ -53,7 +53,7 @@ public final class ContinueRecord extends StandardRecord implements Cloneable {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[CONTINUE RECORD]\n");
         buffer.append("    .data = ").append(HexDump.toHex(_data)).append("\n");

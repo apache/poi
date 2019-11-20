@@ -103,7 +103,7 @@ public final class ViewFieldsRecord extends StandardRecord {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("[SXVD]\n");
 		buffer.append("    .sxaxis    = ").append(HexDump.shortToHex(_sxaxis)).append('\n');
 		buffer.append("    .cSub      = ").append(HexDump.shortToHex(_cSub)).append('\n');

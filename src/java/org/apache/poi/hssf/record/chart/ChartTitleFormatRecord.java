@@ -102,7 +102,7 @@ public class ChartTitleFormatRecord extends StandardRecord {
 	}
 	
 	public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[CHARTTITLEFORMAT]\n");
         buffer.append("    .format_runs       = ").append(_formats.length).append("\n");

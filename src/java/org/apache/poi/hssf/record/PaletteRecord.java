@@ -54,7 +54,7 @@ public final class PaletteRecord extends StandardRecord {
 
     @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[PALETTE]\n");
         buffer.append("  numcolors     = ").append(_colors.size()).append('\n');
@@ -233,7 +233,7 @@ public final class PaletteRecord extends StandardRecord {
 
         @Override
         public String toString() {
-            StringBuffer buffer = new StringBuffer();
+            StringBuilder buffer = new StringBuilder();
             buffer.append("  red   = ").append(_red & 0xff).append('\n');
             buffer.append("  green = ").append(_green & 0xff).append('\n');
             buffer.append("  blue  = ").append(_blue & 0xff).append('\n');

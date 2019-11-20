@@ -58,7 +58,7 @@ public final class Replace extends Fixed4ArgFunction {
 		if (startNum < 1 || numChars < 0) {
 			return ErrorEval.VALUE_INVALID;
 		}
-		StringBuffer strBuff = new StringBuffer(oldStr);
+		StringBuilder strBuff = new StringBuilder(oldStr);
 		// remove any characters that should be replaced
 		if (startNum <= oldStr.length() && numChars != 0) {
 			strBuff.delete(startNum - 1, startNum - 1 + numChars);

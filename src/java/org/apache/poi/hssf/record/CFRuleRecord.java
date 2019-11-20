@@ -136,7 +136,7 @@ public final class CFRuleRecord extends CFRuleBase implements Cloneable {
 
     @Override
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("[CFRULE]\n");
         buffer.append("    .condition_type   =").append(getConditionType()).append("\n");
         buffer.append("    OPTION FLAGS=0x").append(Integer.toHexString(getOptions())).append("\n");

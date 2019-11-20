@@ -102,7 +102,7 @@ public abstract class Threshold {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("    [CF Threshold]\n");
         buffer.append("          .type    = ").append(Integer.toHexString(type)).append("\n");
         buffer.append("          .formula = ").append(Arrays.toString(formula.getTokens())).append("\n");

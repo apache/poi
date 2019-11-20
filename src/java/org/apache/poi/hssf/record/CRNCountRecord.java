@@ -55,7 +55,7 @@ public final class CRNCountRecord extends StandardRecord {
 
 
 	public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(getClass().getName()).append(" [XCT");
         sb.append(" nCRNs=").append(field_1_number_crn_records);
         sb.append(" sheetIx=").append(field_2_sheet_table_index);

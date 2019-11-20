@@ -67,7 +67,7 @@ public final class DateWindow1904Record
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[1904]\n");
         buffer.append("    .is1904          = ")

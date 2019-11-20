@@ -430,7 +430,7 @@ public final class BorderFormatting implements Cloneable {
 
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("    [Border Formatting]\n");
         buffer.append("          .lftln     = ").append(Integer.toHexString(getBorderLeft())).append("\n");
         buffer.append("          .rgtln     = ").append(Integer.toHexString(getBorderRight())).append("\n");

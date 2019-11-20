@@ -101,7 +101,7 @@ public final class FeatRecord extends StandardRecord implements Cloneable  {
 	}
 
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append("[SHARED FEATURE]\n");
 		
 		// TODO ...

@@ -56,7 +56,7 @@ public final class BarRecord extends StandardRecord implements Cloneable {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[BAR]\n");
         buffer.append("    .barSpace             = ")

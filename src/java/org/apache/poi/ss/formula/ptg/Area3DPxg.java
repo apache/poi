@@ -61,7 +61,7 @@ public final class Area3DPxg extends AreaPtgBase implements Pxg3D {
 
     @Override
     public String toString() {
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         sb.append(getClass().getName());
         sb.append(" [");
         if (externalWorkbookNumber >= 0) {

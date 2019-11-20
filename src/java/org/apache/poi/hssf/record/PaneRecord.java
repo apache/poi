@@ -54,7 +54,7 @@ public final class PaneRecord extends StandardRecord {
     @Override
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[PANE]\n");
         buffer.append("    .x                    = ")

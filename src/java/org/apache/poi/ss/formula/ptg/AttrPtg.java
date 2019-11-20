@@ -168,7 +168,7 @@ public final class AttrPtg extends ControlPtg {
     }
 
     public String toString() {
-        StringBuffer sb = new StringBuffer(64);
+        StringBuilder sb = new StringBuilder(64);
         sb.append(getClass().getName()).append(" [");
 
         if(isSemiVolatile()) {

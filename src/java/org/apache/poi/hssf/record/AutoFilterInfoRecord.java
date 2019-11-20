@@ -68,7 +68,7 @@ public final class AutoFilterInfoRecord extends StandardRecord implements Clonea
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[AUTOFILTERINFO]\n");
         buffer.append("    .numEntries          = ")

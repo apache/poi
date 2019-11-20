@@ -315,7 +315,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord implements Clone
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append("[ftPictFmla]\n");
 		sb.append("    .f2unknown     = ").append(HexDump.intToHex(field_1_unknown_int)).append("\n");
 		if (field_2_refPtg == null) {

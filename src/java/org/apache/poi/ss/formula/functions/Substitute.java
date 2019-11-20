@@ -64,9 +64,9 @@ public final class Substitute extends Var3or4ArgFunction {
 	}
 
 	private static String replaceAllOccurrences(String oldStr, String searchStr, String newStr) {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		int startIndex = 0;
-		int nextMatch = -1;
+		int nextMatch;
 		while (true) {
 			nextMatch = oldStr.indexOf(searchStr, startIndex);
 			if (nextMatch < 0) {
@@ -96,7 +96,7 @@ public final class Substitute extends Var3or4ArgFunction {
 			}
 			count++;
 			if (count == instanceNumber) {
-				StringBuffer sb = new StringBuffer(oldStr.length() + newStr.length());
+				StringBuilder sb = new StringBuilder(oldStr.length() + newStr.length());
 				sb.append(oldStr, 0, nextMatch);
 				sb.append(newStr);
 				sb.append(oldStr.substring(nextMatch + searchStr.length()));

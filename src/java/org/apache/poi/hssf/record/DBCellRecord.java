@@ -77,7 +77,7 @@ public final class DBCellRecord extends StandardRecord implements Cloneable {
 
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[DBCELL]\n");
         buffer.append("    .rowoffset = ").append(HexDump.intToHex(field_1_row_offset)).append("\n");

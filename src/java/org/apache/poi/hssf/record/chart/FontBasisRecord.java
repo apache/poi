@@ -50,7 +50,7 @@ public final class FontBasisRecord extends StandardRecord implements Cloneable {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[FBI]\n");
         buffer.append("    .xBasis               = ")

@@ -53,7 +53,7 @@ public final class SeriesTextRecord extends StandardRecord {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append("[SERIESTEXT]\n");
 		sb.append("  .id     =").append(HexDump.shortToHex(getId())).append('\n');

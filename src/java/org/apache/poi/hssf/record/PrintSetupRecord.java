@@ -279,7 +279,7 @@ public final class PrintSetupRecord extends StandardRecord {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[PRINTSETUP]\n");
         buffer.append("    .papersize      = ").append(getPaperSize())

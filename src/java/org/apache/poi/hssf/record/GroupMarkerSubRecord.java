@@ -49,7 +49,7 @@ public final class GroupMarkerSubRecord extends SubRecord implements Cloneable {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         String nl = System.getProperty("line.separator");
         buffer.append("[ftGmo]" + nl);

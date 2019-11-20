@@ -55,7 +55,7 @@ public final class AxisRecord extends StandardRecord implements Cloneable {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[AXIS]\n");
         buffer.append("    .axisType             = ")

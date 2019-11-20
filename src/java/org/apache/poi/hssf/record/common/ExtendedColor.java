@@ -136,7 +136,7 @@ public final class ExtendedColor implements Cloneable {
     }
     
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("    [Extended Color]\n");
         buffer.append("          .type  = ").append(type).append("\n");
         buffer.append("          .tint  = ").append(tint).append("\n");

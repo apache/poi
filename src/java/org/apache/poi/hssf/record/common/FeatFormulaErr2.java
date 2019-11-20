@@ -58,7 +58,7 @@ public final class FeatFormulaErr2 implements SharedFeature {
 	}
 
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 		buffer.append(" [FEATURE FORMULA ERRORS]\n");
 		buffer.append("  checkCalculationErrors    = "); 
 		buffer.append("  checkEmptyCellRef         = "); 

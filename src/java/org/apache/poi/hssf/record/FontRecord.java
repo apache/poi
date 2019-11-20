@@ -359,7 +359,7 @@ public final class FontRecord extends StandardRecord {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append("[FONT]\n");
 		sb.append("    .fontheight    = ").append(HexDump.shortToHex(getFontHeight())).append("\n");

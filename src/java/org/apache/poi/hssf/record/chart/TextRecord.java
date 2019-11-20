@@ -109,7 +109,7 @@ public final class TextRecord extends StandardRecord {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[TEXT]\n");
         buffer.append("    .horizontalAlignment  = ")

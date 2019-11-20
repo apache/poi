@@ -53,7 +53,7 @@ public final class StreamIDRecord extends StandardRecord {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		buffer.append("[SXIDSTM]\n");
 		buffer.append("    .idstm      =").append(HexDump.shortToHex(idstm)).append('\n');

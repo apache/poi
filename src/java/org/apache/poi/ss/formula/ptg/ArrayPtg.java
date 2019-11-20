@@ -107,7 +107,7 @@ public final class ArrayPtg extends Ptg {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer("[ArrayPtg]\n");
+		StringBuilder sb = new StringBuilder("[ArrayPtg]\n");
 
 		sb.append("nRows = ").append(getRowCount()).append("\n");
 		sb.append("nCols = ").append(getColumnCount()).append("\n");
@@ -167,7 +167,7 @@ public final class ArrayPtg extends Ptg {
 	}
 
 	public String toFormulaString() {
-		StringBuffer b = new StringBuffer();
+		StringBuilder b = new StringBuilder();
 		b.append("{");
 		for (int y = 0; y < _nRows; y++) {
 			if (y > 0) {

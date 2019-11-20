@@ -119,7 +119,7 @@ public final class DataBarFormatting implements Cloneable {
     }
     
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append("    [Data Bar Formatting]\n");
         buffer.append("          .icon_only= ").append(isIconOnly()).append("\n");
         buffer.append("          .reversed = ").append(isReversed()).append("\n");

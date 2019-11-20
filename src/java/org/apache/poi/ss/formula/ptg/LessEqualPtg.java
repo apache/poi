@@ -44,7 +44,7 @@ public final class LessEqualPtg extends ValueOperatorPtg {
     }
 
     public String toFormulaString(String[] operands) {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
         buffer.append( operands[0] );
         buffer.append("<=");
         buffer.append( operands[1] );

@@ -128,7 +128,7 @@ public final class ViewDefinitionRecord extends StandardRecord {
 
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		buffer.append("[SXVIEW]\n");
 		buffer.append("    .rwFirst      =").append(HexDump.shortToHex(rwFirst)).append('\n');

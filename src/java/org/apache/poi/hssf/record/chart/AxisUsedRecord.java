@@ -44,7 +44,7 @@ public final class AxisUsedRecord extends StandardRecord implements Cloneable {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[AXISUSED]\n");
         buffer.append("    .numAxis              = ")

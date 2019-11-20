@@ -64,7 +64,7 @@ public final class ProtectionRev4Record extends StandardRecord {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[PROT4REV]\n");
         buffer.append("    .options = ").append(HexDump.shortToHex(_options)).append("\n");

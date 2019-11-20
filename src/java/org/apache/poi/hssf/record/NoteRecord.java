@@ -125,7 +125,7 @@ public final class NoteRecord extends StandardRecord implements Cloneable {
 	 * Used by BiffViewer and other utilities.
 	 */
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		buffer.append("[NOTE]\n");
 		buffer.append("    .row    = ").append(field_1_row).append("\n");

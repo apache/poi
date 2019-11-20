@@ -54,7 +54,7 @@ public abstract class Area2DPtgBase extends AreaPtgBase {
 	}
 
 	public final String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 		sb.append(getClass().getName());
 		sb.append(" [");
 		sb.append(formatReferenceAsString());

@@ -74,7 +74,7 @@ public final class RefModeRecord
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[REFMODE]\n");
         buffer.append("    .mode           = ")

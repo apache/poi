@@ -57,7 +57,7 @@ public final class ChartFormatRecord extends StandardRecord {
     }
 
     public String toString() {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[CHARTFORMAT]\n");
         buffer.append("    .xPosition       = ").append(getXPosition()).append("\n");

@@ -46,7 +46,7 @@ public final class EndRecord extends StandardRecord implements Cloneable {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[END]\n");
         buffer.append("[/END]\n");

@@ -73,7 +73,7 @@ public final class LegendRecord extends StandardRecord implements Cloneable {
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer();
+        StringBuilder buffer = new StringBuilder();
 
         buffer.append("[LEGEND]\n");
         buffer.append("    .xAxisUpperLeft       = ")
