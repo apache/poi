@@ -158,7 +158,7 @@ final class FormulaUsedBlankCellSet {
 		}
 		@Override
         public String toString() {
-			StringBuffer sb = new StringBuffer(64);
+			StringBuilder sb = new StringBuilder(64);
 			CellReference crA = new CellReference(_firstRowIndex, _firstColumnIndex, false, false);
 			CellReference crB = new CellReference(_lastRowIndex, _lastColumnIndex, false, false);
 			sb.append(getClass().getName());

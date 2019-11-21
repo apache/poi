@@ -40,7 +40,7 @@ final class CellEvaluationFrame {
 	}
 
 	public String toString() {
-		StringBuffer sb = new StringBuffer(64);
+		StringBuilder sb = new StringBuilder(64);
 		sb.append(getClass().getName()).append(" [");
 		sb.append("]");
 		return sb.toString();

@@ -55,7 +55,7 @@ public class HexRead {
      */
     public static byte[] readData(InputStream stream, String section ) throws IOException {
         try {
-            StringBuffer sectionText = new StringBuffer();
+            StringBuilder sectionText = new StringBuilder();
             boolean inSection = false;
             int c = stream.read();
             while ( c != -1 ) {
@@ -66,12 +66,12 @@ public class HexRead {
                     case '\n':
                     case '\r':
                         inSection = false;
-                        sectionText = new StringBuffer();
+                        sectionText = new StringBuilder();
                         break;
                     case ']':
                         inSection = false;
                         if ( sectionText.toString().equals( section ) ) return readData( stream, '[' );
-                        sectionText = new StringBuffer();
+                        sectionText = new StringBuilder();
                         break;
                     default:
                         if ( inSection ) sectionText.append( (char) c );

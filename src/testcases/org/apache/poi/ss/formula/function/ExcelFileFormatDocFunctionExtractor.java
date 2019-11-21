@@ -111,7 +111,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			_isVolatile = isVolatile;
 		}
 		private static String convertSpecialChars(String ss) {
-			StringBuffer sb = new StringBuffer(ss.length() + 4);
+			StringBuilder sb = new StringBuilder(ss.length() + 4);
 			for(int i=0; i<ss.length(); i++) {
 				char c = ss.charAt(i);
 				if (isSimpleAscii(c)) {
@@ -256,7 +256,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 		private boolean _isInsideTable;
 
 		private final List<String> _rowData;
-		private final StringBuffer _textNodeBuffer;
+		private final StringBuilder _textNodeBuffer;
 		private final List<Boolean> _rowNoteFlags;
 		private boolean _cellHasNote;
 
@@ -268,7 +268,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			_elemNameStack = new Stack<>();
 			_isInsideTable = false;
 			_rowData = new ArrayList<>();
-			_textNodeBuffer = new StringBuffer();
+			_textNodeBuffer = new StringBuilder();
 			_rowNoteFlags = new ArrayList<>();
 		}
 

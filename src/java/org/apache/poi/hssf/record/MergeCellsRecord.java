@@ -90,7 +90,7 @@ public final class MergeCellsRecord extends StandardRecord implements Cloneable 
 
     @Override
     public String toString() {
-        StringBuffer retval = new StringBuffer();
+        StringBuilder retval = new StringBuilder();
 
         retval.append("[MERGEDCELLS]").append("\n");
         retval.append("     .numregions =").append(getNumAreas()).append("\n");

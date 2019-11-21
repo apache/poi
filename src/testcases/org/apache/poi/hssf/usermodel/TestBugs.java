@@ -359,16 +359,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         assertEquals(a.getRichStringCellValue().getString(), b.getRichStringCellValue().getString());
     }
 
-    /*private static String unicodeString(HSSFCell cell) {
-        String ss = cell.getRichStringCellValue().getString();
-        char s[] = ss.toCharArray();
-        StringBuffer sb = new StringBuffer();
-        for (int x=0;x<s.length;x++) {
-            sb.append("\\u").append(Integer.toHexString(s[x]));
-        }
-        return sb.toString();
-    }*/
-
     /**
      * Error in opening wb
      */

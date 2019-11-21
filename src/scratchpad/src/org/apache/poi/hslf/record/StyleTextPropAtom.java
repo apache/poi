@@ -369,13 +369,11 @@ public final class StyleTextPropAtom extends RecordAtom {
 
 
     /**
-     * Dump the record content into <code>StringBuffer</code>
-     *
      * @return the string representation of the record data
      */
     @Override
     public String toString(){
-        StringBuffer out = new StringBuffer();
+        StringBuilder out = new StringBuilder();
 
         out.append("StyleTextPropAtom:\n");
         if (!initialised) {

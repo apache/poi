@@ -553,7 +553,7 @@ public final class InternalSheet {
         {
             log.log(POILogger.DEBUG, "Sheet.setDimensions");
             log.log(POILogger.DEBUG,
-                    (new StringBuffer("firstrow")).append(firstrow)
+                    (new StringBuilder("firstrow")).append(firstrow)
                         .append("firstcol").append(firstcol).append("lastrow")
                         .append(lastrow).append("lastcol").append(lastcol)
                         .toString());

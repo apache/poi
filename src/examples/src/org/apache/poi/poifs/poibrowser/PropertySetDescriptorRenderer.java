@@ -108,7 +108,7 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
      */
     protected String sectionsToString(final List<Section> sections)
     {
-        final StringBuffer b = new StringBuffer();
+        final StringBuilder b = new StringBuilder();
         int count = 1;
         for (Iterator<Section>  i = sections.iterator(); i.hasNext();)
         {
@@ -129,7 +129,7 @@ public class PropertySetDescriptorRenderer extends DocumentDescriptorRenderer
      */
     protected String toString(final Section s, final String name)
     {
-        final StringBuffer b = new StringBuffer();
+        final StringBuilder b = new StringBuilder();
         b.append("\n" + name + " Format ID: ");
         b.append(HexDump.toHex(s.getFormatID().getBytes()));
         b.append("\n" + name + " Offset: " + s.getOffset());

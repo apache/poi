@@ -52,7 +52,7 @@ public final class PageItemRecord extends StandardRecord {
 			out.writeShort(_idObj);
 		}
 
-		public void appendDebugInfo(StringBuffer sb) {
+		public void appendDebugInfo(StringBuilder sb) {
 			sb.append('(');
 			sb.append( "isxvi=").append(HexDump.shortToHex(_isxvi));
 			sb.append(" isxvd=").append(HexDump.shortToHex(_isxvd));
@@ -97,7 +97,7 @@ public final class PageItemRecord extends StandardRecord {
 
 	@Override
 	public String toString() {
-		StringBuffer sb = new StringBuffer();
+		StringBuilder sb = new StringBuilder();
 
 		sb.append("[SXPI]\n");
 		for (int i = 0; i < _fieldInfos.length; i++) {

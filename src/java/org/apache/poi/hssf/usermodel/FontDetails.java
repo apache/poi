@@ -156,7 +156,7 @@ public class FontDetails
         {
             if(max != -1 && i == listSize - 1)
             {
-                StringBuffer buf = new StringBuffer((text.length() * (listSize - i)) / listSize);
+                StringBuilder buf = new StringBuilder((text.length() * (listSize - i)) / listSize);
                 while(tok.hasMoreTokens())
                 {
                     buf.append(tok.nextToken());
