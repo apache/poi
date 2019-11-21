@@ -71,7 +71,7 @@ public final class TestNpv extends TestCase {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("IrrNpvTestCaseData.xls");
         HSSFSheet sheet = wb.getSheet("IRR-NPV");
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-        StringBuffer failures = new StringBuffer();
+        StringBuilder failures = new StringBuilder();
         int failureCount = 0;
         // TODO YK: Formulas in rows 16 and 17 operate with ArrayPtg which isn't yet supported
         // FormulaEvaluator as of r1041407 throws "Unexpected ptg class (org.apache.poi.ss.formula.ptg.ArrayPtg)"
