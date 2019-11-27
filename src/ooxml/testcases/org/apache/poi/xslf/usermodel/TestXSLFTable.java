@@ -68,6 +68,14 @@ public class TestXSLFTable {
             tab.setColumnWidth(1, 60);
             tab.setColumnWidth(2, 60);
 
+            tab.insertColumn(0);
+            assertEquals(tab.getColumnWidth(1), tab.getColumnWidth(0), 0.00001);
+            tab.addColumn();
+            assertEquals(tab.getColumnWidth(tab.getNumberOfColumns() - 2), tab.getColumnWidth(tab.getNumberOfColumns() - 1), 0.00001);
+            tab.removeColumn(0);
+            tab.removeColumn(tab.getNumberOfColumns() - 1);
+            assertEquals(data[0].length, tab.getNumberOfColumns());
+
             int startRow = rowIdx-1;
 
             XSLFTableRow row = tab.getRows().get(0);
@@ -176,7 +184,7 @@ public class TestXSLFTable {
         assertEquals("A1", cells1.get(0).getText());
         assertEquals("B1", cells1.get(1).getText());
         assertEquals("C1", cells1.get(2).getText());
-        
+
         ppt.close();
     }
 
@@ -244,7 +252,7 @@ public class TestXSLFTable {
         assertEquals(VerticalAlignment.MIDDLE, cell1.getVerticalAlignment());
         cell1.setVerticalAlignment(null);
         assertEquals(VerticalAlignment.TOP, cell1.getVerticalAlignment());
-        
+
         XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt1);
         ppt1.close();
 
@@ -254,25 +262,25 @@ public class TestXSLFTable {
         assertEquals(1, tbl.getNumberOfRows());
         assertEquals("POI", tbl.getCell(0, 0).getText());
         assertEquals("Apache", tbl.getCell(0, 1).getText());
-        
+
         ppt2.close();
     }
-    
+
     @Test
     public void removeTable() throws IOException {
         XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
         XSLFSlide sl = ss.getSlides().get(0);
         XSLFTable tab = (XSLFTable)sl.getShapes().get(4);
         sl.removeShape(tab);
-        
+
         XMLSlideShow ss2 = XSLFTestDataSamples.writeOutAndReadBack(ss);
         ss.close();
-        
+
         sl = ss2.getSlides().get(0);
         for (XSLFShape s : sl.getShapes()) {
             assertFalse(s instanceof XSLFTable);
         }
-        
+
         ss2.close();
     }
 
@@ -292,7 +300,7 @@ public class TestXSLFTable {
         // so we use something more reliable
         assertTrue(tc0.getTextHeight() > 50);
         assertEquals(0, tc0.getLineWidth(), 0);
-        
+
         ppt.close();
     }
 

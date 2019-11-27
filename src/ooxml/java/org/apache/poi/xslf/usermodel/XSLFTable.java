@@ -39,6 +39,7 @@ import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObjectData;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTable;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCol;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableRow;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrameNonVisual;
@@ -62,7 +63,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
             if (!xc.toChild(XSLFRelation.NS_DRAWINGML, "tbl")) {
                 throw new IllegalStateException("a:tbl element was not found in\n " + god);
             }
-    
+
             XmlObject xo = xc.getObject();
             // Pesky XmlBeans bug - see Bugzilla #49934
             // it never happens when using the full ooxml-schemas jar but may happen with the abridged poi-ooxml-schemas
@@ -104,7 +105,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         // cell can be potentially empty ...
         return cells.get(col);
     }
-    
+
     @Internal
     public CTTable getCTTable(){
         return _table;
@@ -135,12 +136,13 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
     public double getRowHeight(int row) {
         return Units.toPoints(_table.getTrArray(row).getH());
     }
-    
+
     @Override
     public void setRowHeight(int row, double height) {
         _table.getTrArray(row).setH(Units.toEMU(height));
     }
-    
+
+    @Override
     public Iterator<XSLFTableRow> iterator(){
         return _rows.iterator();
     }
@@ -153,7 +155,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         CTTableRow tr = _table.addNewTr();
         XSLFTableRow row = new XSLFTableRow(tr, this);
         // default height is 20 points
-        row.setHeight(20.0);    
+        row.setHeight(20.0);
         _rows.add(row);
         updateRowColIndexes();
         return row;
@@ -166,6 +168,42 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
     public void removeRow(int rowIdx) {
         _table.removeTr(rowIdx);
         _rows.remove(rowIdx);
+        updateRowColIndexes();
+    }
+
+    /**
+     * Add a new column at the end of the table.
+     * @since POI 4.1.2
+     */
+    public void addColumn() {
+        long width = _table.getTblGrid().getGridColArray(_table.getTblGrid().sizeOfGridColArray() - 1).getW();
+        CTTableCol col = _table.getTblGrid().addNewGridCol();
+        col.setW(width);
+        updateRowColIndexes();
+    }
+
+    /**
+     * Insert a new column at the given index.
+     * @param colIdx the column index.
+     * @since POI 4.1.2
+     */
+    public void insertColumn(int colIdx) {
+        if (_table.getTblGrid().sizeOfGridColArray() < colIdx) {
+            throw new IndexOutOfBoundsException("Cannot insert column at " + colIdx + "; table has only " + _table.getTblGrid().sizeOfGridColArray() + "columns.");
+        }
+        long width = _table.getTblGrid().getGridColArray(colIdx).getW();
+        CTTableCol col = _table.getTblGrid().insertNewGridCol(colIdx);
+        col.setW(width);
+        updateRowColIndexes();
+    }
+
+    /**
+     * Remove the column at the given index.
+     * @param colIdx the column index.
+     * @since POI 4.1.2
+     */
+    public void removeColumn(int colIdx) {
+        _table.getTblGrid().removeGridCol(colIdx);
         updateRowColIndexes();
     }
 
@@ -184,12 +222,12 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         XmlCursor grCur = gr.newCursor();
         grCur.toNextToken();
         grCur.beginElement(new QName(XSLFRelation.NS_DRAWINGML, "tbl"));
-        
+
         CTTable tbl = CTTable.Factory.newInstance();
         tbl.addNewTblPr();
         tbl.addNewTblGrid();
         XmlCursor tblCur = tbl.newCursor();
-        
+
         tblCur.moveXmlContents(grCur);
         tblCur.dispose();
         grCur.dispose();
@@ -248,12 +286,12 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
     		}
     	}
     }
-    
+
     /**
      * Get assigned TableStyle
      *
      * @return the assigned TableStyle
-     * 
+     *
      * @since POI 3.15-beta2
      */
     protected XSLFTableStyle getTableStyle() {
@@ -262,7 +300,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         if (!tab.isSetTblPr() || !tab.getTblPr().isSetTableStyleId()) {
             return null;
         }
-        
+
         String styleId = tab.getTblPr().getTableStyleId();
         XSLFTableStyles styles = getSheet().getSlideShow().getTableStyles();
         for (XSLFTableStyle style : styles.getStyles()) {
@@ -272,7 +310,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         }
         return null;
     }
-    
+
     /* package */ void updateRowColIndexes() {
         int rowIdx = 0;
         for (XSLFTableRow xr : this) {
@@ -304,7 +342,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
 
         Rectangle2D tblAnc = getAnchor();
         DrawFactory df = DrawFactory.getInstance(null);
-        
+
         double nextY = tblAnc.getY();
         double nextX = tblAnc.getX();
 
@@ -323,7 +361,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
             }
             rowHeights[row] = Math.max(rowHeights[row],maxHeight);
         }
-        
+
         // #2 pass - init properties
         for (int row=0; row<rows; row++) {
             nextX = tblAnc.getX();
@@ -337,7 +375,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
             }
             nextY += rowHeights[row]+DrawTableShape.borderSize;
         }
-        
+
         // #3 pass - update merge info
         for (int row=0; row<rows; row++) {
             for (int col=0; col<cols; col++) {
