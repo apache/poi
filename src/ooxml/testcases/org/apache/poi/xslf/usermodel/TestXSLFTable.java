@@ -71,6 +71,7 @@ public class TestXSLFTable {
             tab.insertColumn(0);
             assertEquals(tab.getColumnWidth(1), tab.getColumnWidth(0), 0.00001);
             tab.addColumn();
+            tab.getCell(0, data[0].length + 1);
             assertEquals(tab.getColumnWidth(tab.getNumberOfColumns() - 2), tab.getColumnWidth(tab.getNumberOfColumns() - 1), 0.00001);
             tab.removeColumn(0);
             tab.removeColumn(tab.getNumberOfColumns() - 1);
