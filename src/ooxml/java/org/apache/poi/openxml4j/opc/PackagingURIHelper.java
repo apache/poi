@@ -665,8 +665,8 @@ public final class PackagingURIHelper {
      *
      * If  part name is not a valid URI, it is resolved as follows:
      * <p>
-     * 1. Percent-encode each open bracket ([) and close bracket (]).</li>
-     * 2. Percent-encode each percent (%) character that is not followed by a hexadecimal notation of an octet value.</li>
+     * 1. Percent-encode each open bracket ([) and close bracket (]).
+     * 2. Percent-encode each percent (%) character that is not followed by a hexadecimal notation of an octet value.
      * 3. Un-percent-encode each percent-encoded unreserved character.
      * 4. Un-percent-encode each forward slash (/) and back slash (\).
      * 5. Convert all back slashes to forward slashes.
@@ -728,9 +728,10 @@ public final class PackagingURIHelper {
      * percent-encode white spaces and characters above 0x80.
      * <p>
      *   Examples:
+     *   <blockquote><pre>
      *   'Apache POI' --> 'Apache%20POI'
      *   'Apache\u0410POI' --> 'Apache%04%10POI'
-     *
+     *   </pre></blockquote>
      * @param s the string to encode
      * @return  the encoded string
      */

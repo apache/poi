@@ -75,7 +75,7 @@ public class XSSFTableColumn {
      * 
      * It is up to the caller to enforce the uniqueness of the id.
      * 
-     * @return the column id
+     * @param columnId the column id
      * @since 4.0.0
      */
     public void setId(long columnId) {
@@ -95,7 +95,7 @@ public class XSSFTableColumn {
     /**
      * Get the name of the column, which is is unique per table.
      * 
-     * @return the column name
+     * @param columnName  the column name
      * @since 4.0.0
      */
     public void setName(String columnName) {
