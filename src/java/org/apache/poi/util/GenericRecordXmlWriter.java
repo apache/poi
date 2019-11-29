@@ -462,35 +462,37 @@ public class GenericRecordXmlWriter implements Closeable {
 
     protected boolean printObject(String name, Object o) {
         openName(name+">");
-        final Matcher m = ESC_CHARS.matcher(o.toString());
-        final StringBuffer sb = new StringBuffer();
+        final String str = o.toString();
+        final Matcher m = ESC_CHARS.matcher(str);
+        int pos = 0;
         while (m.find()) {
-            String repl;
+            fw.write(str, pos, m.start());
             String match = m.group();
             switch (match) {
                 case "<":
-                    repl = "&lt;";
+                    fw.write("&lt;");
                     break;
                 case ">":
-                    repl = "&gt;";
+                    fw.write("&gt;");
                     break;
                 case "&":
-                    repl = "&amp;";
+                    fw.write("&amp;");
                     break;
                 case "\'":
-                    repl = "&apos;";
+                    fw.write("&apos;");
                     break;
                 case "\"":
-                    repl = "&quot;";
+                    fw.write("&quot;");
                     break;
                 default:
-                    repl = "&#x" + Long.toHexString(match.codePointAt(0)) + ";";
+                    fw.write("&#x");
+                    fw.write(Long.toHexString(match.codePointAt(0)));
+                    fw.write(";");
                     break;
             }
-            m.appendReplacement(sb, repl);
+            pos = m.end();
         }
-        m.appendTail(sb);
-        fw.write(sb.toString());
+        fw.append(str, pos, str.length());
         closeName(name+">");
         return true;
     }

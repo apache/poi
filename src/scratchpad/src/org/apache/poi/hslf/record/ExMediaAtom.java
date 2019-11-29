@@ -24,6 +24,7 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -169,15 +170,8 @@ public final class ExMediaAtom extends RecordAtom
         setMask(mask);
     }
 
-    public String toString(){
-        StringBuffer buf = new StringBuffer();
-        buf.append("ExMediaAtom\n");
-        buf.append("\tObjectId: " + getObjectId() + "\n");
-        buf.append("\tMask    : " + getMask() + "\n");
-        buf.append("\t  fLoop        : " + getFlag(fLoop) + "\n");
-        buf.append("\t  fRewind   : " + getFlag(fRewind) + "\n");
-        buf.append("\t  fNarration    : " + getFlag(fNarration) + "\n");
-        return buf.toString();
+    public String toString() {
+        return GenericRecordJsonWriter.marshal(this);
     }
 
     @Override

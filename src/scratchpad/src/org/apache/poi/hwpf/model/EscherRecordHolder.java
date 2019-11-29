@@ -63,7 +63,7 @@ public final class EscherRecordHolder {
 	}
 
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
+		StringBuilder buffer = new StringBuilder();
 
 		if (escherRecords.size() == 0) {
 			buffer.append("No Escher Records Decoded").append("\n");

@@ -73,7 +73,7 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
     */
    public String getText() {
       MAPIMessage msg = (MAPIMessage)document;
-      StringBuffer s = new StringBuffer();
+      StringBuilder s = new StringBuilder();
       
       // See if we can get a suitable encoding for any
       //  non unicode text in the file
@@ -158,7 +158,7 @@ public class OutlookTextExtactor extends POIOLE2TextExtractor {
     *  of emails, and does its best to return something like
     *  "Nick <nick@example.com>; Jim <jim@example.com>"
     */
-   protected void handleEmails(StringBuffer s, String type, String displayText, StringsIterator emails) {
+   protected void handleEmails(StringBuilder s, String type, String displayText, StringsIterator emails) {
       if(displayText == null || displayText.length() == 0) {
          return;
       }

@@ -404,42 +404,42 @@ public class GenericRecordJsonWriter implements Closeable {
         printName(name);
         fw.write('"');
 
-        final Matcher m = ESC_CHARS.matcher(o.toString());
-        final StringBuffer sb = new StringBuffer();
+        final String str = o.toString();
+        final Matcher m = ESC_CHARS.matcher(str);
+        int pos = 0;
         while (m.find()) {
-            String repl;
+            fw.append(str, pos, m.start());
             String match = m.group();
             switch (match) {
                 case "\n":
-                    repl = "\\\\n";
+                    fw.write("\\\\n");
                     break;
                 case "\r":
-                    repl = "\\\\r";
+                    fw.write("\\\\r");
                     break;
                 case "\t":
-                    repl = "\\\\t";
+                    fw.write("\\\\t");
                     break;
                 case "\b":
-                    repl = "\\\\b";
+                    fw.write("\\\\b");
                     break;
                 case "\f":
-                    repl = "\\\\f";
+                    fw.write("\\\\f");
                     break;
                 case "\\":
-                    repl = "\\\\\\\\";
+                    fw.write("\\\\\\\\");
                     break;
                 case "\"":
-                    repl = "\\\\\"";
+                    fw.write("\\\\\"");
                     break;
                 default:
-                    repl = "\\\\u" + trimHex(match.charAt(0), 4);
+                    fw.write("\\\\u");
+                    fw.write(trimHex(match.charAt(0), 4));
                     break;
             }
-            m.appendReplacement(sb, repl);
+            pos = m.end();
         }
-        m.appendTail(sb);
-        fw.write(sb.toString());
-
+        fw.append(str, pos, str.length());
         fw.write('"');
         return true;
     }

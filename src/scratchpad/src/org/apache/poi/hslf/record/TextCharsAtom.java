@@ -22,8 +22,8 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
@@ -110,10 +110,7 @@ public final class TextCharsAtom extends RecordAtom {
 	 */
 	@Override
     public String toString() {
-        StringBuffer out = new StringBuffer();
-        out.append( "TextCharsAtom:\n");
-		out.append( HexDump.dump(_text, 0, 0) );
-		return out.toString();
+		return GenericRecordJsonWriter.marshal(this);
 	}
 
 	@Override

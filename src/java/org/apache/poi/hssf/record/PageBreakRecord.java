@@ -119,7 +119,7 @@ public abstract class PageBreakRecord extends StandardRecord {
     }
 
     public String toString() {
-        StringBuffer retval = new StringBuffer();
+        StringBuilder retval = new StringBuilder();
 
         String label;
         String mainLabel;

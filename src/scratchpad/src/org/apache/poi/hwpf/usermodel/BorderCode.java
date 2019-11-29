@@ -210,34 +210,15 @@ public final class BorderCode implements Cloneable {
   }
 
     @Override
-    public String toString()
-    {
-        if ( isEmpty() )
-            return "[BRC] EMPTY";
-
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append( "[BRC]\n" );
-
-        buffer.append( "        .dptLineWidth         = " );
-        buffer.append( " (" ).append( getLineWidth() ).append( " )\n" );
-
-        buffer.append( "        .brcType              = " );
-        buffer.append( " (" ).append( getBorderType() ).append( " )\n" );
-
-        buffer.append( "        .ico                  = " );
-        buffer.append( " (" ).append( getColor() ).append( " )\n" );
-
-        buffer.append( "        .dptSpace             = " );
-        buffer.append( " (" ).append( getSpace() ).append( " )\n" );
-
-        buffer.append( "        .fShadow              = " );
-        buffer.append( " (" ).append( isShadow() ).append( " )\n" );
-
-        buffer.append( "        .fFrame               = " );
-        buffer.append( " (" ).append( isFrame() ).append( " )\n" );
-
-        return buffer.toString();
+    public String toString() {
+        return isEmpty() ? "[BRC] EMPTY" :
+            "[BRC]\n" +
+            "        .dptLineWidth         =  (" + getLineWidth() + " )\n" +
+            "        .brcType              =  (" + getBorderType() + " )\n" +
+            "        .ico                  =  (" + getColor() + " )\n" +
+            "        .dptSpace             =  (" + getSpace() + " )\n" +
+            "        .fShadow              =  (" + isShadow() + " )\n" +
+            "        .fFrame               =  (" + isFrame() + " )\n";
     }
 
 }

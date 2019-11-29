@@ -284,7 +284,7 @@ public class POIFSDocumentPath
 
     public String toString()
     {
-        final StringBuffer b = new StringBuffer();
+        final StringBuilder b = new StringBuilder();
         final int          l = length();
 
         b.append(File.separatorChar);

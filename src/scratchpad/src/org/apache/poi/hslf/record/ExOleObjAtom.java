@@ -25,6 +25,7 @@ import java.io.OutputStream;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
@@ -341,16 +342,8 @@ public class ExOleObjAtom extends RecordAtom {
         out.write(_data);
     }
 
-    public String toString(){
-        StringBuffer buf = new StringBuffer();
-        buf.append("ExOleObjAtom\n");
-        buf.append("  drawAspect: " + getDrawAspect() + "\n");
-        buf.append("  type: " + getType() + "\n");
-        buf.append("  objID: " + getObjID() + "\n");
-        buf.append("  subType: " + getSubType() + "\n");
-        buf.append("  objStgDataRef: " + getObjStgDataRef() + "\n");
-        buf.append("  options: " + getOptions() + "\n");
-        return buf.toString();
+    public String toString() {
+        return GenericRecordJsonWriter.marshal(this);
     }
 
     @Override

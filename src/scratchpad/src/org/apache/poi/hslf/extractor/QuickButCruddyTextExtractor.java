@@ -121,7 +121,7 @@ public final class QuickButCruddyTextExtractor {
 	 * Fetches the ALL the text of the powerpoint file, as a single string
 	 */
 	public String getTextAsString() {
-		StringBuffer ret = new StringBuffer();
+		StringBuilder ret = new StringBuilder();
 		List<String> textV = getTextAsVector();
 		for(String text : textV) {
 			ret.append(text);

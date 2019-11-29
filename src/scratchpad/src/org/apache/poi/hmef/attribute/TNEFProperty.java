@@ -201,16 +201,6 @@ public final class TNEFProperty {
    }
    
    public String toString() {
-      StringBuffer str = new StringBuffer();
-      str.append(name);
-      str.append(" [");
-      str.append(id);
-      str.append("]");
-      if(mapiProperty != null) {
-         str.append(" (");
-         str.append(mapiProperty);
-         str.append(")");
-      }
-      return str.toString();
+      return name + " [" + id + "]" + (mapiProperty == null ? "" : " (" + mapiProperty + ")");
    }
 }

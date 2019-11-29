@@ -64,34 +64,19 @@ public abstract class TLPAbstractType
         data[0x2 + offset] = field_2_tlp_flags;
     }
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append( "[TLP]\n" );
-
-        buffer.append( "    .itl                  = " );
-        buffer.append( " (" ).append( getItl() ).append( " )\n" );
-
-        buffer.append( "    .tlp_flags            = " );
-        buffer.append( " (" ).append( getTlp_flags() ).append( " )\n" );
-        buffer.append( "         .fBorders                 = " )
-                .append( isFBorders() ).append( '\n' );
-        buffer.append( "         .fShading                 = " )
-                .append( isFShading() ).append( '\n' );
-        buffer.append( "         .fFont                    = " )
-                .append( isFFont() ).append( '\n' );
-        buffer.append( "         .fColor                   = " )
-                .append( isFColor() ).append( '\n' );
-        buffer.append( "         .fBestFit                 = " )
-                .append( isFBestFit() ).append( '\n' );
-        buffer.append( "         .fHdrRows                 = " )
-                .append( isFHdrRows() ).append( '\n' );
-        buffer.append( "         .fLastRow                 = " )
-                .append( isFLastRow() ).append( '\n' );
-
-        buffer.append( "[/TLP]\n" );
-        return buffer.toString();
+    public String toString() {
+        return
+            "[TLP]\n" +
+            "    .itl                  = (" + getItl() + " )\n" +
+            "    .tlp_flags            = (" + getTlp_flags() + " )\n" +
+            "         .fBorders                 = " + isFBorders() + "\n" +
+            "         .fShading                 = " + isFShading() + "\n" +
+            "         .fFont                    = " + isFFont() + "\n" +
+            "         .fColor                   = " + isFColor() + "\n" +
+            "         .fBestFit                 = " + isFBestFit() + "\n" +
+            "         .fHdrRows                 = " + isFHdrRows() + "\n" +
+            "         .fLastRow                 = " + isFLastRow() + "\n" +
+            "[/TLP]\n";
     }
 
     /**

@@ -66,40 +66,22 @@ public abstract class FLDAbstractType
         data[0x1 + offset] = field_2_flt;
     }
 
-    public String toString()
-    {
-        StringBuffer buffer = new StringBuffer();
-
-        buffer.append( "[FLD]\n" );
-
-        buffer.append( "    .chHolder             = " );
-        buffer.append( " (" ).append( getChHolder() ).append( " )\n" );
-        buffer.append( "         .ch                       = " )
-                .append( getCh() ).append( '\n' );
-        buffer.append( "         .reserved                 = " )
-                .append( getReserved() ).append( '\n' );
-
-        buffer.append( "    .flt                  = " );
-        buffer.append( " (" ).append( getFlt() ).append( " )\n" );
-        buffer.append( "         .fDiffer                  = " )
-                .append( isFDiffer() ).append( '\n' );
-        buffer.append( "         .fZombieEmbed             = " )
-                .append( isFZombieEmbed() ).append( '\n' );
-        buffer.append( "         .fResultDirty             = " )
-                .append( isFResultDirty() ).append( '\n' );
-        buffer.append( "         .fResultEdited            = " )
-                .append( isFResultEdited() ).append( '\n' );
-        buffer.append( "         .fLocked                  = " )
-                .append( isFLocked() ).append( '\n' );
-        buffer.append( "         .fPrivateResult           = " )
-                .append( isFPrivateResult() ).append( '\n' );
-        buffer.append( "         .fNested                  = " )
-                .append( isFNested() ).append( '\n' );
-        buffer.append( "         .fHasSep                  = " )
-                .append( isFHasSep() ).append( '\n' );
-
-        buffer.append( "[/FLD]\n" );
-        return buffer.toString();
+    public String toString() {
+        return
+            "[FLD]\n" +
+            "    .chHolder             =  (" + getChHolder() + " )\n" +
+            "         .ch                       = " + getCh() + "\n" +
+            "         .reserved                 = " + getReserved() + "\n" +
+            "    .flt                  =  (" + getFlt() + " )\n" +
+            "         .fDiffer                  = " + isFDiffer() + "\n" +
+            "         .fZombieEmbed             = " + isFZombieEmbed() + "\n" +
+            "         .fResultDirty             = " + isFResultDirty() + "\n" +
+            "         .fResultEdited            = " + isFResultEdited() + "\n" +
+            "         .fLocked                  = " + isFLocked() + "\n" +
+            "         .fPrivateResult           = " + isFPrivateResult()  + "\n" +
+            "         .fNested                  = " + isFNested()  + "\n" +
+            "         .fHasSep                  = " + isFHasSep()  + "\n" +
+            "[/FLD]\n";
     }
 
     /**

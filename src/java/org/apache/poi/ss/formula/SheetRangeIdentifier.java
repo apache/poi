@@ -30,7 +30,7 @@ public class SheetRangeIdentifier extends SheetIdentifier {
     public NameIdentifier getLastSheetIdentifier() {
         return _lastSheetIdentifier;
     }
-    protected void asFormulaString(StringBuffer sb) {
+    protected void asFormulaString(StringBuilder sb) {
         super.asFormulaString(sb);
         sb.append(':');
         if (_lastSheetIdentifier.isQuoted()) {

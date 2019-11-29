@@ -212,15 +212,8 @@ public final class HSSFPalette {
         }
 
         @Override
-        public String getHexString()
-        {
-            StringBuffer sb = new StringBuffer();
-            sb.append(getGnumericPart(_red));
-            sb.append(':');
-            sb.append(getGnumericPart(_green));
-            sb.append(':');
-            sb.append(getGnumericPart(_blue));
-            return sb.toString();
+        public String getHexString() {
+            return getGnumericPart(_red) + ":" + getGnumericPart(_green) + ":" + getGnumericPart(_blue);
         }
 
         private String getGnumericPart(byte color)

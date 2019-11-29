@@ -87,25 +87,18 @@ public final class FSPATable
         return result.toArray(new FSPA[0]);
     }
 
-    public String toString()
-    {
-        StringBuffer buf = new StringBuffer();
-        buf.append( "[FPSA PLC size=" ).append( _byStart.size() )
-                .append( "]\n" );
+    public String toString() {
+        StringBuilder buf = new StringBuilder();
+        buf.append( "[FPSA PLC size=" ).append( _byStart.size() ).append( "]\n" );
 
-        for ( Map.Entry<Integer, GenericPropertyNode> entry : _byStart
-                .entrySet() )
-        {
+        for ( Map.Entry<Integer, GenericPropertyNode> entry : _byStart.entrySet() ) {
             Integer i = entry.getKey();
             buf.append( "  " ).append(i).append( " => \t" );
 
-            try
-            {
+            try {
                 FSPA fspa = getFspaFromCp( i.intValue() );
                 buf.append(fspa);
-            }
-            catch ( Exception exc )
-            {
+            } catch ( Exception exc ) {
                 buf.append( exc.getMessage() );
             }
             buf.append( "\n" );

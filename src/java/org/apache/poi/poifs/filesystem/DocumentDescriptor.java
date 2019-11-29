@@ -104,7 +104,7 @@ public class DocumentDescriptor
 
     public String toString()
     {
-        StringBuffer buffer = new StringBuffer(40 * (path.length() + 1));
+        StringBuilder buffer = new StringBuilder(40 * (path.length() + 1));
 
         for (int j = 0; j < path.length(); j++)
         {

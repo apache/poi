@@ -20,10 +20,9 @@ package org.apache.poi.hwpf.extractor;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.hwpf.converter.WordToTextConverter;
-
 import org.apache.poi.extractor.POIOLE2TextExtractor;
 import org.apache.poi.hwpf.HWPFOldDocument;
+import org.apache.poi.hwpf.converter.WordToTextConverter;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -123,7 +122,7 @@ public final class Word6Extractor extends POIOLE2TextExtractor {
         catch ( Exception exc )
         {
             // fall-back
-            StringBuffer text = new StringBuffer();
+            StringBuilder text = new StringBuilder();
 
             for ( String t : getParagraphText() )
             {

@@ -22,7 +22,6 @@ import static org.junit.Assert.assertArrayEquals;
 import java.io.ByteArrayInputStream;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
@@ -109,7 +108,7 @@ public final class TestTextObjectRecord extends TestCase {
     public void testLongRecords() {
         int[] lengths = {1024, 2048, 4096, 8192, 16384}; //test against strings of different length
         for (int length : lengths) {
-            StringBuffer buff = new StringBuffer(length);
+            StringBuilder buff = new StringBuilder(length);
             for (int j = 0; j < length; j++) {
                 buff.append("x");
             }

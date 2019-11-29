@@ -40,7 +40,11 @@ import org.apache.poi.hssf.record.OldSheetRecord;
 import org.apache.poi.hssf.record.OldStringRecord;
 import org.apache.poi.hssf.record.RKRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.poifs.filesystem.*;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.DocumentNode;
+import org.apache.poi.poifs.filesystem.FileMagic;
+import org.apache.poi.poifs.filesystem.NotOLE2FileException;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.util.IOUtils;
 
@@ -219,7 +223,7 @@ public class OldExcelExtractor implements Closeable {
      * @return the text contents of the file
      */
     public String getText() {
-        StringBuffer text = new StringBuffer();
+        StringBuilder text = new StringBuilder();
         
         // To track formats and encodings
         CodepageRecord codepage = null;
@@ -306,7 +310,7 @@ public class OldExcelExtractor implements Closeable {
         }
     }
 
-    protected void handleNumericCell(StringBuffer text, double value) {
+    protected void handleNumericCell(StringBuilder text, double value) {
         // TODO Need to fetch / use format strings
         text.append(value);
         text.append('\n');

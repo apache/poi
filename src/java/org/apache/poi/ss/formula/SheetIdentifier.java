@@ -31,7 +31,7 @@ public class SheetIdentifier {
     public NameIdentifier getSheetIdentifier() {
         return _sheetIdentifier;
     }
-    protected void asFormulaString(StringBuffer sb) {
+    protected void asFormulaString(StringBuilder sb) {
         if (_bookName != null) {
             sb.append(" [").append(_sheetIdentifier.getName()).append("]");
         }
@@ -42,16 +42,11 @@ public class SheetIdentifier {
         }
     }
     public String asFormulaString() {
-        StringBuffer sb = new StringBuffer(32);
+        StringBuilder sb = new StringBuilder(32);
         asFormulaString(sb);
         return sb.toString();
     }
     public String toString() {
-        StringBuffer sb = new StringBuffer(64);
-        sb.append(getClass().getName());
-        sb.append(" [");
-        asFormulaString(sb);
-        sb.append("]");
-        return sb.toString();
+        return getClass().getName() + " [" + asFormulaString() + "]";
     }
 }

@@ -61,7 +61,7 @@ public final class HPBFDumper {
 	 *  two chars
 	 */
 	private String dumpBytes(byte[] data, int offset, int len) {
-		StringBuffer ret = new StringBuffer();
+		StringBuilder ret = new StringBuilder();
 		for(int i=0; i<len; i++) {
 			int j = i + offset;
 			int b = data[j];

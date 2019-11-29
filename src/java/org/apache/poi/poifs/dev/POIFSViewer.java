@@ -55,7 +55,7 @@ public final class POIFSViewer {
 
     private static void viewFile(String filename, boolean printName) {
         if (printName) {
-            StringBuffer flowerbox = new StringBuffer();
+            StringBuilder flowerbox = new StringBuilder();
 
             flowerbox.append(".");
             for (int j = 0; j < filename.length(); j++) {

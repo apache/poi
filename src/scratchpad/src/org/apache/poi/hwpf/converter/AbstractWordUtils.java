@@ -20,7 +20,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFDocumentCore;
@@ -227,7 +231,7 @@ public class AbstractWordUtils
     public static String getBulletText( NumberingState numberingState,
             HWPFList list, char level )
     {
-        StringBuffer bulletBuffer = new StringBuffer();
+        StringBuilder bulletBuffer = new StringBuilder();
         char[] xst = list.getNumberText( level ).toCharArray();
         for ( char element : xst )
         {
@@ -240,17 +244,17 @@ public class AbstractWordUtils
                 if ( !list.isStartAtOverriden( element )
                         && numberingState.levels.containsKey( key ) )
                 {
-                    num = numberingState.levels.get( key ).intValue();
+                    num = numberingState.levels.get( key );
                     if ( level == element )
                     {
                         num++;
-                        numberingState.levels.put( key, Integer.valueOf( num ) );
+                        numberingState.levels.put( key, num );
                     }
                 }
                 else
                 {
                     num = list.getStartAt( element );
-                    numberingState.levels.put( key, Integer.valueOf( num ) );
+                    numberingState.levels.put( key, num );
                 }
 
                 if ( level == element )

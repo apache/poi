@@ -282,24 +282,23 @@ public final class AnimationInfoAtom extends RecordAtom {
     }
 
     public String toString(){
-        StringBuffer buf = new StringBuffer();
-        buf.append("AnimationInfoAtom\n");
-        buf.append("\tDimColor: " + getDimColor() + "\n");
         int mask = getMask();
-        buf.append("\tMask: " + mask + ", 0x"+Integer.toHexString(mask)+"\n");
-        buf.append("\t  Reverse: " + getFlag(Reverse)+"\n");
-        buf.append("\t  Automatic: " + getFlag(Automatic)+"\n");
-        buf.append("\t  Sound: " + getFlag(Sound)+"\n");
-        buf.append("\t  StopSound: " + getFlag(StopSound)+"\n");
-        buf.append("\t  Play: " + getFlag(Play)+"\n");
-        buf.append("\t  Synchronous: " + getFlag(Synchronous)+"\n");
-        buf.append("\t  Hide: " + getFlag(Hide)+"\n");
-        buf.append("\t  AnimateBg: " + getFlag(AnimateBg)+"\n");
-        buf.append("\tSoundIdRef: " + getSoundIdRef() + "\n");
-        buf.append("\tDelayTime: " + getDelayTime() + "\n");
-        buf.append("\tOrderID: " + getOrderID() + "\n");
-        buf.append("\tSlideCount: " + getSlideCount() + "\n");
-        return buf.toString();
+        return
+            "AnimationInfoAtom\n"+
+            "\tDimColor: " + getDimColor() + "\n" +
+            "\tMask: " + mask + ", 0x"+Integer.toHexString(mask)+"\n" +
+            "\t  Reverse: " + getFlag(Reverse)+"\n" +
+            "\t  Automatic: " + getFlag(Automatic)+"\n" +
+            "\t  Sound: " + getFlag(Sound)+"\n" +
+            "\t  StopSound: " + getFlag(StopSound)+"\n" +
+            "\t  Play: " + getFlag(Play)+"\n" +
+            "\t  Synchronous: " + getFlag(Synchronous)+"\n" +
+            "\t  Hide: " + getFlag(Hide)+"\n" +
+            "\t  AnimateBg: " + getFlag(AnimateBg)+"\n" +
+            "\tSoundIdRef: " + getSoundIdRef() + "\n" +
+            "\tDelayTime: " + getDelayTime() + "\n" +
+            "\tOrderID: " + getOrderID() + "\n" +
+            "\tSlideCount: " + getSlideCount() + "\n";
     }
 
     @Override

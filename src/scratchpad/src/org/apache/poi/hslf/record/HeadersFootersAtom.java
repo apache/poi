@@ -246,17 +246,16 @@ public final class HeadersFootersAtom extends RecordAtom {
     }
 
     public String toString(){
-        StringBuffer buf = new StringBuffer();
-        buf.append("HeadersFootersAtom\n");
-        buf.append("\tFormatId: " + getFormatId() + "\n");
-        buf.append("\tMask    : " + getMask() + "\n");
-        buf.append("\t  fHasDate        : " + getFlag(fHasDate) + "\n");
-        buf.append("\t  fHasTodayDate   : " + getFlag(fHasTodayDate) + "\n");
-        buf.append("\t  fHasUserDate    : " + getFlag(fHasUserDate) + "\n");
-        buf.append("\t  fHasSlideNumber : " + getFlag(fHasSlideNumber) + "\n");
-        buf.append("\t  fHasHeader      : " + getFlag(fHasHeader) + "\n");
-        buf.append("\t  fHasFooter      : " + getFlag(fHasFooter) + "\n");
-        return buf.toString();
+        return
+            "HeadersFootersAtom\n" +
+            "\tFormatId: " + getFormatId() + "\n" +
+            "\tMask    : " + getMask() + "\n" +
+            "\t  fHasDate        : " + getFlag(fHasDate) + "\n" +
+            "\t  fHasTodayDate   : " + getFlag(fHasTodayDate) + "\n" +
+            "\t  fHasUserDate    : " + getFlag(fHasUserDate) + "\n" +
+            "\t  fHasSlideNumber : " + getFlag(fHasSlideNumber) + "\n" +
+            "\t  fHasHeader      : " + getFlag(fHasHeader) + "\n" +
+            "\t  fHasFooter      : " + getFlag(fHasFooter) + "\n";
     }
 
     @Override
