@@ -131,13 +131,22 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
     }
 
     /**
+     * Return the image bounds in points
+     *
+     * @return the image bounds in points
+     */
+    public Rectangle2D getBoundsInPoints() {
+        return Units.pixelToPoints(getHeader().getBoundsRectangle());
+    }
+
+    /**
      * Return the image size in points
      *
      * @return the image size in points
      */
     public Dimension2D getSize() {
-        final Rectangle2D b = getHeader().getBoundsRectangle();
-        return Units.pixelToPoints(new Dimension2DDouble(abs(b.getWidth()), abs(b.getHeight())));
+        final Rectangle2D b = getBoundsInPoints();
+        return new Dimension2DDouble(abs(b.getWidth()), abs(b.getHeight()));
     }
 
     private static double minX(Rectangle2D bounds) {

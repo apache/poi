@@ -20,6 +20,7 @@ package org.apache.poi.hemf.record.emfplus;
 import static org.apache.poi.hemf.record.emfplus.HemfPlusDraw.readRectF;
 import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
 
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -30,6 +31,7 @@ import java.util.function.Supplier;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emf.HemfFill;
+import org.apache.poi.hwmf.record.HwmfRegionMode;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordUtil;
@@ -53,18 +55,20 @@ public class HemfPlusMisc {
     }
 
     public enum CombineMode {
-        CombineModeReplace(0x00000000),
-        CombineModeIntersect(0x00000001),
-        CombineModeUnion(0x00000002),
-        CombineModeXOR(0x00000003),
-        CombineModeExclude(0x00000004),
-        CombineModeComplement(0x00000005)
+        REPLACE(0x00000000, HwmfRegionMode.RGN_COPY),
+        INTERSECT(0x00000001, HwmfRegionMode.RGN_AND),
+        UNION(0x00000002, HwmfRegionMode.RGN_OR),
+        XOR(0x00000003, HwmfRegionMode.RGN_XOR),
+        EXCLUDE(0x00000004, HwmfRegionMode.RGN_DIFF),
+        COMPLEMENT(0x00000005, HwmfRegionMode.RGN_COMPLEMENT)
         ;
 
         public final int id;
+        public final HwmfRegionMode regionMode;
 
-        CombineMode(int id) {
+        CombineMode(int id, HwmfRegionMode regionMode) {
             this.id = id;
+            this.regionMode = regionMode;
         }
 
         public static CombineMode valueOf(int id) {
@@ -303,6 +307,14 @@ public class HemfPlusMisc {
         public CombineMode getCombineMode() {
             return CombineMode.valueOf(COMBINE_MODE.getValue(getFlags()));
         }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            HemfDrawProperties prop = ctx.getProperties();
+            ctx.applyPlusObjectTableEntry(getObjectId());
+            Shape clip = prop.getPath();
+            ctx.setClip(clip, clip == null ? HwmfRegionMode.RGN_COPY : getCombineMode().regionMode, false);
+        }
     }
 
     /** The EmfPlusSetClipRect record combines the current clipping region with a rectangle. */
@@ -390,6 +402,11 @@ public class HemfPlusMisc {
         }
 
         @Override
+        public void draw(HemfGraphics ctx) {
+            ctx.savePlusProperties(getStackIndex());
+        }
+
+        @Override
         public Map<String, Supplier<?>> getGenericProperties() {
             return GenericRecordUtil.getGenericProperties(
                 "flags", this::getFlags,
@@ -406,6 +423,11 @@ public class HemfPlusMisc {
         @Override
         public HemfPlusRecordType getEmfPlusRecordType() {
             return HemfPlusRecordType.restore;
+        }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            ctx.restorePlusProperties(getStackIndex());
         }
     }
 
@@ -432,10 +454,11 @@ public class HemfPlusMisc {
         public long init(LittleEndianInputStream leis, long dataSize, long recordId, int flags) throws IOException {
             this.flags = flags;
 
-            // A 32-bit unsigned integer that defines the horizontal coordinate value of the rendering origin.
-            double x = leis.readUInt();
-            // A 32-bit unsigned integer that defines the vertical coordinate value of the rendering origin.
-            double y = leis.readUInt();
+            // error in the MS-EMFPLUS docs - its a signed integer instead of an unsigned
+            // A 32-bit signed integer that defines the horizontal coordinate value of the rendering origin.
+            int x = leis.readInt();
+            // A 32-bit signed integer that defines the vertical coordinate value of the rendering origin.
+            int y = leis.readInt();
 
             origin.setLocation(x,y);
 

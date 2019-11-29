@@ -232,7 +232,10 @@ public class HwmfText {
 
         @Override
         public Map<String, Supplier<?>> getGenericProperties() {
-            return GenericRecordUtil.getGenericProperties("text", () -> getText(StandardCharsets.US_ASCII));
+            return GenericRecordUtil.getGenericProperties(
+                "text", () -> getText(StandardCharsets.US_ASCII),
+                "reference", () -> reference
+            );
         }
     }
 

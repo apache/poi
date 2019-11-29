@@ -22,7 +22,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.fonts.FontHeader;
+import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
+import org.apache.poi.hemf.record.emf.HemfFont;
 import org.apache.poi.hemf.record.emfplus.HemfPlusDraw.EmfPlusUnitType;
 import org.apache.poi.hemf.record.emfplus.HemfPlusHeader.EmfPlusGraphicsVersion;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectData;
@@ -106,7 +109,17 @@ public class HemfPlusFont {
 
         @Override
         public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
-
+            HemfDrawProperties prop = ctx.getProperties();
+            HemfFont font = new HemfFont();
+            font.initDefaults();
+            font.setTypeface(family);
+            // TODO: check how to calculate the font size
+            font.setHeight(emSize);
+            font.setStrikeOut(STRIKEOUT.isSet(styleFlags));
+            font.setUnderline(UNDERLINE.isSet(styleFlags));
+            font.setWeight(BOLD.isSet(styleFlags) ? 700 : FontHeader.REGULAR_WEIGHT);
+            font.setItalic(ITALIC.isSet(styleFlags));
+            prop.setFont(font);
         }
 
         @Override

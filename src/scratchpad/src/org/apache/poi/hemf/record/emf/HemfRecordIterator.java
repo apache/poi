@@ -72,10 +72,12 @@ public class HemfRecordIterator implements Iterator<HemfRecord> {
         final HemfRecord record = type.constructor.get();
 
         try {
-            long remBytes = recordSize-HEADER_SIZE;
+            long remBytes = recordSize - HEADER_SIZE;
             long readBytes = record.init(stream, remBytes, recordId);
             assert (readBytes <= remBytes);
-            stream.skipFully((int)(remBytes-readBytes));
+            stream.skipFully((int) (remBytes - readBytes));
+        } catch (RecordFormatException e) {
+            throw e;
         } catch (IOException|RuntimeException e) {
             throw new RecordFormatException(e);
         }

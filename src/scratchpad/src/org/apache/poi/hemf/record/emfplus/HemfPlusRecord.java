@@ -55,4 +55,8 @@ public interface HemfPlusRecord extends GenericRecord {
     default void draw(HemfGraphics ctx) {
     }
 
+    @Override
+    default Enum getGenericRecordType() {
+        return getEmfPlusRecordType();
+    }
 }

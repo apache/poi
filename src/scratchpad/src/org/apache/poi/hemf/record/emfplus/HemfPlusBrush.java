@@ -29,12 +29,18 @@ import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.AbstractMap;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiFunction;
 import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
@@ -47,6 +53,7 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
 import org.apache.poi.hemf.record.emfplus.HemfPlusPath.EmfPlusPath;
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfColorRef;
+import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordJsonWriter;
@@ -310,7 +317,19 @@ public class HemfPlusBrush {
 
         long init(LittleEndianInputStream leis, long dataSize) throws IOException;
 
+        /**
+         * Apply brush data to graphics properties
+         * @param ctx the graphics context
+         * @param continuedObjectData the list continued object data
+         */
         void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData);
+
+        /**
+         * Apply brush data to pen properties
+         * @param ctx the graphics context
+         * @param continuedObjectData the list continued object data
+         */
+        void applyPen(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData);
     }
 
     /** The EmfPlusBrush object specifies a graphics brush for filling regions. */
@@ -347,6 +366,13 @@ public class HemfPlusBrush {
             brushData.applyObject(ctx, continuedObjectData);
         }
 
+
+        public void applyPen(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
+            EmfPlusBrushData brushData = getBrushData(continuedObjectData);
+            brushData.applyPen(ctx, continuedObjectData);
+        }
+
+
         @Override
         public EmfPlusGraphicsVersion getGraphicsVersion() {
             return graphicsVersion;
@@ -371,7 +397,6 @@ public class HemfPlusBrush {
             }
             return brushData;
         }
-
 
         public byte[] getRawData(List<? extends EmfPlusObjectData> continuedObjectData) {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -416,9 +441,15 @@ public class HemfPlusBrush {
         @Override
         public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
             HemfDrawProperties prop = ctx.getProperties();
-            prop.setBackgroundColor(new HwmfColorRef(solidColor));
+            prop.setBrushColor(new HwmfColorRef(solidColor));
             prop.setBrushTransform(null);
             prop.setBrushStyle(HwmfBrushStyle.BS_SOLID);
+        }
+
+        @Override
+        public void applyPen(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
+            HemfDrawProperties prop = ctx.getProperties();
+            prop.setPenColor(new HwmfColorRef(solidColor));
         }
 
         @Override
@@ -458,6 +489,12 @@ public class HemfPlusBrush {
         }
 
         @Override
+        public void applyPen(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
+            HemfDrawProperties prop = ctx.getProperties();
+            prop.setPenColor(new HwmfColorRef(foreColor));
+        }
+
+        @Override
         public String toString() {
             return GenericRecordJsonWriter.marshal(this);
         }
@@ -484,12 +521,15 @@ public class HemfPlusBrush {
         private Rectangle2D rect = new Rectangle2D.Double();
         private Color startColor, endColor;
         private AffineTransform transform;
-        private double[] positions;
+        private float[] positions;
         private Color[] blendColors;
-        private double[] positionsV;
-        private double[] blendFactorsV;
-        private double[] positionsH;
-        private double[] blendFactorsH;
+        private float[] positionsV;
+        private float[] blendFactorsV;
+        private float[] positionsH;
+        private float[] blendFactorsH;
+
+        private static int[] FLAG_MASKS = { 0x02, 0x04, 0x08, 0x10, 0x80 };
+        private static String[] FLAG_NAMES = { "TRANSFORM", "PRESET_COLORS", "BLEND_FACTORS_H", "BLEND_FACTORS_V", "BRUSH_DATA_IS_GAMMA_CORRECTED" };
 
         @Override
         public long init(LittleEndianInputStream leis, long dataSize) throws IOException {
@@ -518,16 +558,13 @@ public class HemfPlusBrush {
                 size += readXForm(leis, (transform = new AffineTransform()));
             }
 
-            final boolean isPreset = PRESET_COLORS.isSet(dataFlags);
-            final boolean blendH = BLEND_FACTORS_H.isSet(dataFlags);
-            final boolean blendV = BLEND_FACTORS_V.isSet(dataFlags);
-            if (isPreset && (blendH || blendV)) {
+            if (isPreset() && (isBlendH() || isBlendV())) {
                 throw new RuntimeException("invalid combination of preset colors and blend factors v/h");
             }
 
-            size += (isPreset) ? readColors(leis, d -> positions = d, c -> blendColors = c) : 0;
-            size += (blendV) ? readFactors(leis, d -> positionsV = d, f -> blendFactorsV = f) : 0;
-            size += (blendH) ? readFactors(leis, d -> positionsH = d, f -> blendFactorsH = f) : 0;
+            size += (isPreset()) ? readColors(leis, d -> positions = d, c -> blendColors = c) : 0;
+            size += (isBlendV()) ? readFactors(leis, d -> positionsV = d, f -> blendFactorsV = f) : 0;
+            size += (isBlendH()) ? readFactors(leis, d -> positionsH = d, f -> blendFactorsH = f) : 0;
 
             return size;
         }
@@ -535,7 +572,26 @@ public class HemfPlusBrush {
         @Override
         public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
             HemfDrawProperties prop = ctx.getProperties();
-            // TODO: implement
+            prop.setBrushStyle(HwmfBrushStyle.BS_LINEAR_GRADIENT);
+            prop.setBrushRect(rect);
+            prop.setBrushTransform(transform);
+
+            // Preset colors and BlendH/V are mutual exclusive
+            if (isPreset()) {
+                setColorProps(prop::setBrushColorsH, positions, this::getBlendColorAt);
+            } else {
+                setColorProps(prop::setBrushColorsH, positionsH, this::getBlendHColorAt);
+            }
+            setColorProps(prop::setBrushColorsV, positionsV, this::getBlendVColorAt);
+
+            if (!(isPreset() || isBlendH() || isBlendV())) {
+                prop.setBrushColorsH(Arrays.asList(kv(0f,startColor), kv(1f,endColor)));
+            }
+        }
+
+        @Override
+        public void applyPen(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
+
         }
 
         @Override
@@ -551,7 +607,7 @@ public class HemfPlusBrush {
         @Override
         public Map<String, Supplier<?>> getGenericProperties() {
             final Map<String,Supplier<?>> m = new LinkedHashMap<>();
-            m.put("flags", () -> dataFlags);
+            m.put("flags", GenericRecordUtil.getBitsAsString(() -> dataFlags, FLAG_MASKS, FLAG_NAMES));
             m.put("wrapMode", () -> wrapMode);
             m.put("rect", () -> rect);
             m.put("startColor", () -> startColor);
@@ -565,6 +621,67 @@ public class HemfPlusBrush {
             m.put("blendFactorsH", () -> blendFactorsH);
             return Collections.unmodifiableMap(m);
         }
+
+        private boolean isPreset() {
+            return PRESET_COLORS.isSet(dataFlags);
+        }
+
+        private boolean isBlendH() {
+            return BLEND_FACTORS_H.isSet(dataFlags);
+        }
+
+        private boolean isBlendV() {
+            return BLEND_FACTORS_V.isSet(dataFlags);
+        }
+
+        private Map.Entry<Float,Color> getBlendColorAt(int index) {
+            return kv(positions[index], blendColors[index]);
+        }
+
+        private Map.Entry<Float,Color> getBlendHColorAt(int index) {
+            return kv(positionsH[index],interpolateColors(blendFactorsH[index]));
+        }
+
+        private Map.Entry<Float,Color> getBlendVColorAt(int index) {
+            return kv(positionsV[index],interpolateColors(blendFactorsV[index]));
+        }
+
+        private static Map.Entry<Float,Color> kv(Float position, Color color) {
+            return new AbstractMap.SimpleEntry<>(position, color);
+        }
+
+        private static void setColorProps(
+            Consumer<List<? extends Map.Entry<Float, Color>>> setter, float[] positions, Function<Integer,? extends Map.Entry<Float, Color>> sup) {
+            if (positions == null) {
+                setter.accept(null);
+            } else {
+                setter.accept(IntStream.range(0, positions.length).boxed().map(sup).collect(Collectors.toList()));
+            }
+        }
+
+        private Color interpolateColors(final double factor) {
+            // https://stackoverflow.com/questions/1416560/hsl-interpolation
+
+            final double[] hslStart = DrawPaint.RGB2HSL(startColor);
+            final double[] hslStop = DrawPaint.RGB2HSL(endColor);
+
+            BiFunction<Number,Number,Double> linearInter = (start, stop) ->
+                start.doubleValue()+(stop.doubleValue()-start.doubleValue())*factor;
+
+            double alpha = linearInter.apply(startColor.getAlpha(),endColor.getAlpha());
+            double sat = linearInter.apply(hslStart[1],hslStop[1]);
+            double lum = linearInter.apply(hslStart[2],hslStop[2]);
+
+            double hue1 = (hslStart[0]+hslStop[0])/2.;
+            double hue2 = (hslStart[0]+hslStop[0]+360.)/2.;
+
+            Function<Double,Double> hueDelta = (hue) ->
+                Math.min(Math.abs(hslStart[0]-hue), Math.abs(hslStop[0]-hue));
+
+            double hue = hueDelta.apply(hue1) < hueDelta.apply(hue2) ? hue1 : hue2;
+
+            return DrawPaint.HSL2RGB(hue, sat, lum, alpha/255.);
+        }
     }
 
     /** The EmfPlusPathGradientBrushData object specifies a path gradient for a graphics brush. */
@@ -577,9 +694,9 @@ public class HemfPlusBrush {
         private EmfPlusPath boundaryPath;
         private Point2D[] boundaryPoints;
         private AffineTransform transform;
-        private double[] positions;
+        private float[] positions;
         private Color[] blendColors;
-        private double[] blendFactorsH;
+        private float[] blendFactorsH;
         private Double focusScaleX, focusScaleY;
 
         @Override
@@ -597,8 +714,12 @@ public class HemfPlusBrush {
             // that appears at the center point of the brush. The color of the brush changes gradually from the
             // boundary color to the center color as it moves from the boundary to the center point.
             centerColor = readARGB(leis.readInt());
-
             int size = 3*LittleEndianConsts.INT_SIZE;
+
+            if (wrapMode == null) {
+                return size;
+            }
+
             size += readPointF(leis, centerPoint);
 
             // An unsigned 32-bit integer that specifies the number of colors specified in the SurroundingColor field.
@@ -608,10 +729,10 @@ public class HemfPlusBrush {
             // An array of SurroundingColorCount EmfPlusARGB objects that specify the colors for discrete points on the
             // boundary of the brush.
             surroundingColor = new Color[colorCount];
-            for (int i=0; i<colorCount; i++) {
+            for (int i = 0; i < colorCount; i++) {
                 surroundingColor[i] = readARGB(leis.readInt());
             }
-            size += (colorCount+1) * LittleEndianConsts.INT_SIZE;
+            size += (colorCount + 1) * LittleEndianConsts.INT_SIZE;
 
             // The boundary of the path gradient brush, which is specified by either a path or a closed cardinal spline.
             // If the BrushDataPath flag is set in the BrushDataFlags field, this field MUST contain an
@@ -674,6 +795,11 @@ public class HemfPlusBrush {
 
         @Override
         public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
+
+        }
+
+        @Override
+        public void applyPen(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
 
         }
 
@@ -748,6 +874,11 @@ public class HemfPlusBrush {
         }
 
         @Override
+        public void applyPen(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
+
+        }
+
+        @Override
         public String toString() {
             return GenericRecordJsonWriter.marshal(this);
         }
@@ -768,11 +899,11 @@ public class HemfPlusBrush {
         }
     }
 
-    private static int readPositions(LittleEndianInputStream leis, Consumer<double[]> pos) {
+    private static int readPositions(LittleEndianInputStream leis, Consumer<float[]> pos) {
         final int count = leis.readInt();
         int size = LittleEndianConsts.INT_SIZE;
 
-        double[] positions = new double[count];
+        float[] positions = new float[count];
         for (int i=0; i<count; i++) {
             positions[i] = leis.readFloat();
             size += LittleEndianConsts.INT_SIZE;
@@ -782,7 +913,7 @@ public class HemfPlusBrush {
         return size;
     }
 
-    private static int readColors(LittleEndianInputStream leis, Consumer<double[]> pos, Consumer<Color[]>  cols) {
+    private static int readColors(LittleEndianInputStream leis, Consumer<float[]> pos, Consumer<Color[]>  cols) {
         int[] count = { 0 };
         int size = readPositions(leis, p -> { count[0] = p.length; pos.accept(p); });
         Color[] colors = new Color[count[0]];
@@ -793,10 +924,10 @@ public class HemfPlusBrush {
         return size + colors.length * LittleEndianConsts.INT_SIZE;
     }
 
-    private static int readFactors(LittleEndianInputStream leis, Consumer<double[]> pos, Consumer<double[]> facs) {
+    private static int readFactors(LittleEndianInputStream leis, Consumer<float[]> pos, Consumer<float[]> facs) {
         int[] count = { 0 };
         int size = readPositions(leis, p -> { count[0] = p.length; pos.accept(p); });
-        double[] factors = new double[count[0]];
+        float[] factors = new float[count[0]];
         for (int i=0; i<factors.length; i++) {
             factors[i] = leis.readFloat();
         }

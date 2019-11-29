@@ -35,6 +35,7 @@ import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.record.emfplus.HemfPlusDraw.EmfPlusCompressed;
 import org.apache.poi.hemf.record.emfplus.HemfPlusDraw.EmfPlusRelativePosition;
+import org.apache.poi.hemf.record.emfplus.HemfPlusHeader.EmfPlusGraphicsVersion;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectData;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
 import org.apache.poi.util.BitField;
@@ -87,7 +88,7 @@ public class HemfPlusPath {
         private static final int[] TYPE_MASKS = { 0x10, 0x20, 0x80 };
         private static final String[] TYPE_NAMES = { "DASHED", "MARKER", "CLOSE" };
 
-        private final HemfPlusHeader.EmfPlusGraphicsVersion graphicsVersion = new HemfPlusHeader.EmfPlusGraphicsVersion();
+        private final EmfPlusGraphicsVersion graphicsVersion = new EmfPlusGraphicsVersion();
         private int pointFlags;
         private Point2D[] pathPoints;
         private byte[] pointTypes;
@@ -143,7 +144,7 @@ public class HemfPlusPath {
         }
 
         @Override
-        public HemfPlusHeader.EmfPlusGraphicsVersion getGraphicsVersion() {
+        public EmfPlusGraphicsVersion getGraphicsVersion() {
             return graphicsVersion;
         }
 
@@ -175,9 +176,15 @@ public class HemfPlusPath {
         @Override
         public void applyObject(HemfGraphics ctx, List<? extends EmfPlusObjectData> continuedObjectData) {
             HemfDrawProperties prop = ctx.getProperties();
-            Path2D path = new Path2D.Double(Path2D.WIND_NON_ZERO);
-            prop.setPath(path);
+            prop.setPath(getPath());
+        }
 
+        public Path2D getPath() {
+            return getPath(Path2D.WIND_NON_ZERO);
+        }
+
+        public Path2D getPath(int windingRule) {
+            Path2D path = new Path2D.Double(windingRule);
             for (int idx=0; idx < pathPoints.length; idx++) {
                 Point2D p1 = pathPoints[idx];
                 switch (getPointType(idx)) {
@@ -198,10 +205,11 @@ public class HemfPlusPath {
                     path.closePath();
                 }
             }
+            return path;
         }
 
         @Override
-        public EmfPlusObjectType getGenericRecordType() {
+        public Enum getGenericRecordType() {
             return EmfPlusObjectType.PATH;
         }
 

@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.util.Dimension2DDouble;
 
 /**
  * Classes can implement this interfaces to support other formats, for
@@ -106,9 +107,17 @@ public interface ImageRenderer {
     Rectangle2D getNativeBounds();
 
     /**
+     * @return the bounds of the buffered image in pixel
+     */
+    Rectangle2D getBounds();
+
+    /**
      * @return the dimension of the buffered image in pixel
      */
-    Dimension2D getDimension();
+    default Dimension2D getDimension() {
+        Rectangle2D r = getBounds();
+        return new Dimension2DDouble(Math.abs(r.getWidth()), Math.abs(r.getHeight()));
+    }
 
     /**
      * @param alpha the alpha [0..1] to be added to the image (possibly already containing an alpha channel)

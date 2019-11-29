@@ -862,7 +862,9 @@ public class HemfFill {
         // m12 (translateY) = eDy (The vertical translation component, in logical units.)
         double m12 = leis.readFloat();
 
-        xform.setTransform(m00, m10, m01, m11, m02, m12);
+        // TODO: not sure, why the shearing has to be inverted here,
+        // probably because of the different world/user space transformation
+        xform.setTransform(m00, -m10, -m01, m11, m02, m12);
 
         if (xform.isIdentity()) {
             xform.setToIdentity();

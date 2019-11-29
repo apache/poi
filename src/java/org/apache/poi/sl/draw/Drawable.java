@@ -46,6 +46,8 @@ public interface Drawable {
             case 9: return "FONT_MAP";
             case 10: return "GSAVE";
             case 11: return "GRESTORE";
+            case 12: return "CURRENT_SLIDE";
+            case 13: return "BUFFERED_IMAGE";
             default: return "UNKNOWN_ID "+intKey();
             }
         }

@@ -18,7 +18,7 @@
 package org.apache.poi.hemf.record.emfplus;
 
 
-import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+import static org.apache.poi.util.GenericRecordUtil.getEnumBitsAsString;
 
 import java.io.IOException;
 import java.util.Map;
@@ -60,8 +60,13 @@ public class HemfPlusHeader implements HemfPlusRecord {
         }
     }
 
-    private static final int[] FLAGS_MASK = { 0x0001 };
-    private static final String[] FLAGS_NAMES = { "DUAL_MODE" };
+    private static final int[] FLAGS_MASK = { 0x0000, 0x0001 };
+    private static final String[] FLAGS_NAMES = { "EMF_PLUS_MODE", "DUAL_MODE" };
+
+    private static final int[] EMFFLAGS_MASK = { 0x0000, 0x0001 };
+    private static final String[] EMFFLAGS_NAMES = { "CONTEXT_PRINTER", "CONTEXT_VIDEO" };
+
+
 
     private int flags;
     private final EmfPlusGraphicsVersion version = new EmfPlusGraphicsVersion();
@@ -125,7 +130,7 @@ public class HemfPlusHeader implements HemfPlusRecord {
     public void draw(HemfGraphics ctx) {
         // currently EMF is better supported than EMF+ ... so if there's a complete set of EMF records available,
         // disable EMF+ rendering for now
-        ctx.setRenderState(isEmfPlusDualMode() ? EmfRenderState.EMF_ONLY : EmfRenderState.EMF_DCONTEXT);
+        ctx.setRenderState(EmfRenderState.EMF_DCONTEXT);
     }
 
     @Override
@@ -136,9 +141,9 @@ public class HemfPlusHeader implements HemfPlusRecord {
     @Override
     public Map<String, Supplier<?>> getGenericProperties() {
         return GenericRecordUtil.getGenericProperties(
-            "flags", this::getFlags,
+            "flags", getEnumBitsAsString(this::getFlags, FLAGS_MASK, FLAGS_NAMES),
             "version", this::getVersion,
-            "emfPlusFlags", getBitsAsString(this::getEmfPlusFlags, FLAGS_MASK, FLAGS_NAMES),
+            "emfPlusFlags", getEnumBitsAsString(this::getEmfPlusFlags, EMFFLAGS_MASK, EMFFLAGS_NAMES),
             "logicalDpiX", this::getLogicalDpiX,
             "logicalDpiY", this::getLogicalDpiY
         );

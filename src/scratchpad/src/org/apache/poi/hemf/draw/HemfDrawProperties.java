@@ -17,10 +17,13 @@
 
 package org.apache.poi.hemf.draw;
 
+import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
+import java.awt.geom.Rectangle2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.BiConsumer;
 
 import org.apache.poi.hemf.record.emfplus.HemfPlusBrush.EmfPlusHatchStyle;
@@ -47,6 +50,10 @@ public class HemfDrawProperties extends HwmfDrawProperties {
     private final List<AffineTransform> transXForm = new ArrayList<>();
     private final List<TransOperand> transOper = new ArrayList<>();
 
+    private Rectangle2D brushRect;
+    private List<? extends Map.Entry<Float,Color>> brushColorsV;
+    private List<? extends Map.Entry<Float,Color>> brushColorsH;
+
     public HemfDrawProperties() {
     }
 
@@ -60,6 +67,15 @@ public class HemfDrawProperties extends HwmfDrawProperties {
         emfPlusImage = other.emfPlusImage;
         transXForm.addAll(other.transXForm);
         transOper.addAll(other.transOper);
+        if (other.brushRect != null) {
+            brushRect = (Rectangle2D)other.brushRect.clone();
+        }
+        if (other.brushColorsV != null) {
+            brushColorsV = new ArrayList<>(other.brushColorsV);
+        }
+        if (other.brushColorsH != null) {
+            brushColorsH = new ArrayList<>(other.brushColorsH);
+        }
     }
 
     /**
@@ -138,5 +154,29 @@ public class HemfDrawProperties extends HwmfDrawProperties {
 
     List<TransOperand> getTransOper() {
         return transOper;
+    }
+
+    public Rectangle2D getBrushRect() {
+        return brushRect;
+    }
+
+    public void setBrushRect(Rectangle2D brushRect) {
+        this.brushRect = brushRect;
+    }
+
+    public List<? extends Map.Entry<Float, Color>> getBrushColorsV() {
+        return brushColorsV;
+    }
+
+    public void setBrushColorsV(List<? extends Map.Entry<Float, Color>> brushColorsV) {
+        this.brushColorsV = brushColorsV;
+    }
+
+    public List<? extends Map.Entry<Float, Color>> getBrushColorsH() {
+        return brushColorsH;
+    }
+
+    public void setBrushColorsH(List<? extends Map.Entry<Float, Color>> brushColorsH) {
+        this.brushColorsH = brushColorsH;
     }
 }

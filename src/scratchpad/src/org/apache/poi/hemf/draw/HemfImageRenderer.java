@@ -19,11 +19,9 @@ package org.apache.poi.hemf.draw;
 
 import static org.apache.poi.hwmf.draw.HwmfImageRenderer.getOuterBounds;
 
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -33,6 +31,7 @@ import java.io.InputStream;
 
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.usermodel.HemfPicture;
+import org.apache.poi.hwmf.draw.HwmfGraphicsState;
 import org.apache.poi.hwmf.draw.HwmfImageRenderer;
 import org.apache.poi.sl.draw.BitmapImageRenderer;
 import org.apache.poi.sl.draw.EmbeddedExtractor;
@@ -64,11 +63,6 @@ public class HemfImageRenderer implements ImageRenderer, EmbeddedExtractor {
             throw new IOException("Invalid picture type");
         }
         image = new HemfPicture(new ByteArrayInputStream(data));
-    }
-
-    @Override
-    public Dimension2D getDimension() {
-        return Units.pointsToPixel(image == null ? new Dimension() : image.getSize());
     }
 
     @Override
@@ -110,20 +104,20 @@ public class HemfImageRenderer implements ImageRenderer, EmbeddedExtractor {
             return false;
         }
 
-        boolean isClipped = true;
-        if (clip == null) {
-            isClipped = false;
-            clip = new Insets(0,0,0,0);
+        HwmfGraphicsState graphicsState = new HwmfGraphicsState();
+        graphicsState.backup(graphics);
+
+        try {
+            if (clip != null) {
+                graphics.clip(anchor);
+            } else {
+                clip = new Insets(0, 0, 0, 0);
+            }
+
+            image.draw(graphics, getOuterBounds(anchor, clip));
+        } finally {
+            graphicsState.restore(graphics);
         }
-
-        Shape clipOld = graphics.getClip();
-        if (isClipped) {
-            graphics.clip(anchor);
-        }
-
-        image.draw(graphics, getOuterBounds(anchor, clip));
-
-        graphics.setClip(clipOld);
 
         return true;
     }
@@ -141,5 +135,10 @@ public class HemfImageRenderer implements ImageRenderer, EmbeddedExtractor {
     @Override
     public Rectangle2D getNativeBounds() {
         return image.getBounds();
+    }
+
+    @Override
+    public Rectangle2D getBounds() {
+        return Units.pointsToPixel(image == null ? new Rectangle2D.Double() : image.getBoundsInPoints());
     }
 }

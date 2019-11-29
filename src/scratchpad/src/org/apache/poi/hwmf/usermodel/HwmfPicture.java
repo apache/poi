@@ -36,6 +36,7 @@ import java.util.function.Supplier;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
+import org.apache.poi.hwmf.draw.HwmfGraphicsState;
 import org.apache.poi.hwmf.record.HwmfHeader;
 import org.apache.poi.hwmf.record.HwmfPlaceableHeader;
 import org.apache.poi.hwmf.record.HwmfRecord;
@@ -127,8 +128,8 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
     }
     
     public void draw(Graphics2D ctx, Rectangle2D graphicsBounds) {
-        final Shape clip = ctx.getClip();
-        final AffineTransform at = ctx.getTransform();
+        HwmfGraphicsState state = new HwmfGraphicsState();
+        state.backup(ctx);
         try {
             Rectangle2D wmfBounds = getBounds();
             Rectangle2D innerBounds = getInnnerBounds();
@@ -137,13 +138,10 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
             }
 
             // scale output bounds to image bounds
-            ctx.translate(graphicsBounds.getX(), graphicsBounds.getY());
-            ctx.scale(graphicsBounds.getWidth()/wmfBounds.getWidth(), graphicsBounds.getHeight()/wmfBounds.getHeight());
+            ctx.translate(graphicsBounds.getCenterX(), graphicsBounds.getCenterY());
+            ctx.scale(graphicsBounds.getWidth()/innerBounds.getWidth(), graphicsBounds.getHeight()/innerBounds.getHeight());
+            ctx.translate(-innerBounds.getCenterX(), -innerBounds.getCenterY());
 
-            ctx.translate(-wmfBounds.getX(), -wmfBounds.getY());
-            ctx.translate(innerBounds.getCenterX(), innerBounds.getCenterY());
-            ctx.scale(wmfBounds.getWidth()/innerBounds.getWidth(), wmfBounds.getHeight()/innerBounds.getHeight());
-            ctx.translate(-wmfBounds.getCenterX(), -wmfBounds.getCenterY());
 
             HwmfGraphics g = new HwmfGraphics(ctx, innerBounds);
             HwmfDrawProperties prop = g.getProperties();
@@ -162,8 +160,7 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
                 idx++;
             }
         } finally {
-            ctx.setTransform(at);
-            ctx.setClip(clip);
+            state.restore(ctx);
         }
     }
 
@@ -214,19 +211,30 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
     public HwmfHeader getHeader() {
         return header;
     }
-    
+
+    /**
+     * Return the image bound in points
+     *
+     * @return the image bound in points
+     */
+    public Rectangle2D getBoundsInPoints() {
+        double inch = (placeableHeader == null) ? 1440 : placeableHeader.getUnitsPerInch();
+        Rectangle2D bounds = getBounds();
+
+        //coefficient to translate from WMF dpi to 72dpi
+        double coeff = Units.POINT_DPI/inch;
+        return AffineTransform.getScaleInstance(coeff, coeff).createTransformedShape(bounds).getBounds2D();
+    }
+
+
     /**
      * Return the image size in points
      *
      * @return the image size in points
      */
     public Dimension2D getSize() {
-        double inch = (placeableHeader == null) ? 1440 : placeableHeader.getUnitsPerInch();
-        Rectangle2D bounds = getBounds();
-        
-        //coefficient to translate from WMF dpi to 72dpi
-        double coeff = Units.POINT_DPI/inch;
-        return new Dimension2DDouble(bounds.getWidth()*coeff, bounds.getHeight()*coeff);
+        Rectangle2D bounds = getBoundsInPoints();
+        return new Dimension2DDouble(bounds.getWidth(), bounds.getHeight());
     }
 
     public Iterable<HwmfEmbedded> getEmbeddings() {

@@ -29,6 +29,7 @@ import java.util.function.Supplier;
 
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfGraphics;
+import org.apache.poi.hemf.draw.HemfGraphics.EmfRenderState;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecord;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecordIterator;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
@@ -300,6 +301,9 @@ public class HemfComment {
 
         @Override
         public void draw(HemfGraphics ctx) {
+            // This state specifies that subsequent EMF records encountered in the metafile SHOULD be processed.
+            // EMF records cease being processed when the next EMF+ record is encountered.
+            ctx.setRenderState(EmfRenderState.EMFPLUS_ONLY);
             records.forEach(ctx::draw);
         }
 

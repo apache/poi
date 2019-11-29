@@ -492,6 +492,30 @@ public class HemfFont extends HwmfFont {
         );
     }
 
+    public void setHeight(double height) {
+        this.height = height;
+    }
+
+    public void setWeight(int weight) {
+        this.weight = weight;
+    }
+
+    public void setItalic(boolean italic) {
+        this.italic = italic;
+    }
+
+    public void setUnderline(boolean underline) {
+        this.underline = underline;
+    }
+
+    public void setStrikeOut(boolean strikeOut) {
+        this.strikeOut = strikeOut;
+    }
+
+    public void setTypeface(String typeface) {
+        this.facename = typeface;
+    }
+
     @Override
     protected int readString(LittleEndianInputStream leis, StringBuilder sb, int limit) throws IOException {
         sb.setLength(0);

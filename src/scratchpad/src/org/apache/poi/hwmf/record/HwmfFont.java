@@ -288,7 +288,7 @@ public class HwmfFont implements FontInfo, GenericRecord {
      * For all height comparisons, the font mapper SHOULD find the largest physical
      * font that does not exceed the requested size.
      */
-    protected int height;
+    protected double height;
 
     /**
      * A 16-bit signed integer that defines the average width, in logical units, of
@@ -433,7 +433,7 @@ public class HwmfFont implements FontInfo, GenericRecord {
         facename = "SansSerif";
     }
 
-    public int getHeight() {
+    public double getHeight() {
         return height;
     }
 

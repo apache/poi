@@ -76,7 +76,7 @@ public enum HemfPlusRecordType {
     setClipRegion(0x4033, HemfPlusMisc.EmfPlusSetClipRegion::new),
     setClipPath(0x4034, HemfPlusMisc.EmfPlusSetClipPath::new),
     offsetClip(0x4035, UnimplementedHemfPlusRecord::new),
-    drawDriverstring(0x4036, HemfPlusDraw.EmfPlusDrawDriverString::new),
+    drawDriverString(0x4036, HemfPlusDraw.EmfPlusDrawDriverString::new),
     strokeFillPath(0x4037, UnimplementedHemfPlusRecord::new),
     serializableObject(0x4038, UnimplementedHemfPlusRecord::new),
     setTSGraphics(0x4039, UnimplementedHemfPlusRecord::new),

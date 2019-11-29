@@ -22,7 +22,6 @@ import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
 import java.awt.Color;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Area;
-import java.awt.geom.Dimension2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
@@ -34,9 +33,11 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.PrimitiveIterator.OfInt;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
+import org.apache.commons.codec.Charsets;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -47,7 +48,9 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusMisc.EmfPlusObjectId;
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfColorRef;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
+import org.apache.poi.hwmf.record.HwmfPenStyle;
 import org.apache.poi.hwmf.record.HwmfTernaryRasterOp;
+import org.apache.poi.hwmf.record.HwmfText;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
@@ -165,7 +168,7 @@ public class HemfPlusDraw {
                 prop.setBrushStyle(HwmfBrushStyle.BS_SOLID);
                 prop.setBrushColor(new HwmfColorRef(getSolidColor()));
             } else {
-                ctx.applyObjectTableEntry(getBrushId());
+                ctx.applyPlusObjectTableEntry(getBrushId());
             }
         }
     }
@@ -208,8 +211,8 @@ public class HemfPlusDraw {
 
         @Override
         public void draw(HemfGraphics ctx) {
-            ctx.applyObjectTableEntry(penId);
-            ctx.applyObjectTableEntry(getObjectId());
+            ctx.applyPlusObjectTableEntry(penId);
+            ctx.applyPlusObjectTableEntry(getObjectId());
 
             HemfDrawProperties prop = ctx.getProperties();
             final Path2D path = prop.getPath();
@@ -282,11 +285,18 @@ public class HemfPlusDraw {
 
         @Override
         public void draw(HemfGraphics ctx) {
+            HemfDrawProperties prop = ctx.getProperties();
             applyColor(ctx);
 
             Area area = new Area();
             rectData.stream().map(Area::new).forEach(area::add);
-            ctx.fill(area);
+            HwmfPenStyle ps = prop.getPenStyle();
+            try {
+                prop.setPenStyle(null);
+                ctx.fill(area);
+            } finally {
+                prop.setPenStyle(ps);
+            }
         }
 
         @Override
@@ -319,6 +329,7 @@ public class HemfPlusDraw {
         }
     }
 
+    /** The EmfPlusDrawImagePoints record specifies drawing a scaled image inside a parallelogram. */
     public static class EmfPlusDrawImagePoints implements HemfPlusRecord, EmfPlusObjectId, EmfPlusCompressed, EmfPlusRelativePosition {
         /**
          * This bit indicates that the rendering of the image includes applying an effect.
@@ -426,39 +437,31 @@ public class HemfPlusDraw {
         public void draw(HemfGraphics ctx) {
             HemfDrawProperties prop = ctx.getProperties();
 
-            ctx.applyObjectTableEntry(imageAttributesID);
-            ctx.applyObjectTableEntry(getObjectId());
+            ctx.applyPlusObjectTableEntry(imageAttributesID);
+            ctx.applyPlusObjectTableEntry(getObjectId());
 
             final ImageRenderer ir = prop.getEmfPlusImage();
             if (ir == null) {
                 return;
             }
 
-
             AffineTransform txSaved = ctx.getTransform();
-            AffineTransform tx = new AffineTransform(txSaved);
+            AffineTransform tx = (AffineTransform)txSaved.clone();
+            HwmfTernaryRasterOp oldOp = prop.getRasterOp();
+            HwmfBkMode oldBk = prop.getBkMode();
             try {
                 tx.concatenate(trans);
                 ctx.setTransform(tx);
 
-                final Rectangle2D srcBounds = ir.getNativeBounds();
-                final Dimension2D dim = ir.getDimension();
-
                 prop.setRasterOp(HwmfTernaryRasterOp.SRCCOPY);
                 prop.setBkMode(HwmfBkMode.TRANSPARENT);
 
-                // the buffered image might be rescaled, so we need to calculate a new src rect to take
-                // the image data from
-                final AffineTransform srcTx = new AffineTransform();
-                srcTx.translate(-srcBounds.getX(), srcBounds.getY());
-                srcTx.scale(dim.getWidth()/srcBounds.getWidth(), dim.getHeight()/srcBounds.getHeight());
-
-                final Rectangle2D biRect = srcTx.createTransformedShape(srcRect).getBounds2D();
-
-                // TODO: handle srcUnit
-                Rectangle2D destRect = new Rectangle2D.Double(0, 0, biRect.getWidth(), biRect.getHeight());
-                ctx.drawImage(ir, srcRect, destRect);
+                // transformation from srcRect to destRect was already applied,
+                // therefore use srcRect as third parameter
+                ctx.drawImage(ir, srcRect, srcRect);
             } finally {
+                prop.setBkMode(oldBk);
+                prop.setRasterOp(oldOp);
                 ctx.setTransform(txSaved);
             }
         }
@@ -529,8 +532,8 @@ public class HemfPlusDraw {
 
         @Override
         public void draw(HemfGraphics ctx) {
-            ctx.applyObjectTableEntry(imageAttributesID);
-            ctx.applyObjectTableEntry(getObjectId());
+            ctx.applyPlusObjectTableEntry(imageAttributesID);
+            ctx.applyPlusObjectTableEntry(getObjectId());
 
             HemfDrawProperties prop = ctx.getProperties();
             prop.setRasterOp(HwmfTernaryRasterOp.SRCCOPY);
@@ -592,7 +595,7 @@ public class HemfPlusDraw {
         @Override
         public void draw(HemfGraphics ctx) {
             applyColor(ctx);
-            ctx.applyObjectTableEntry(getObjectId());
+            ctx.applyPlusObjectTableEntry(getObjectId());
             HemfDrawProperties prop = ctx.getProperties();
             ctx.fill(prop.getPath());
         }
@@ -657,12 +660,12 @@ public class HemfPlusDraw {
         private int brushId;
         private int optionsFlags;
         private String glyphs;
-        private final List<Point2D> glpyhPos = new ArrayList<>();
+        private final List<Point2D> glyphPos = new ArrayList<>();
         private final AffineTransform transformMatrix = new AffineTransform();
 
         @Override
         public HemfPlusRecordType getEmfPlusRecordType() {
-            return HemfPlusRecordType.drawDriverstring;
+            return HemfPlusRecordType.drawDriverString;
         }
 
         @Override
@@ -689,7 +692,7 @@ public class HemfPlusDraw {
 
             // A 32-bit unsigned integer that specifies whether a transform matrix is present in the
             // TransformMatrix field.
-            boolean hasMatrix = leis.readInt() == 1;
+            int matrixPresent = leis.readInt();
 
             // A 32-bit unsigned integer that specifies number of glyphs in the string.
             int glyphCount = leis.readInt();
@@ -716,15 +719,40 @@ public class HemfPlusDraw {
             for (int i=0; i<glyphCount; i++) {
                 Point2D p = new Point2D.Double();
                 size += readPointF(leis, p);
-                glpyhPos.add(p);
+                glyphPos.add(p);
             }
 
-            if (hasMatrix) {
+            if (matrixPresent != 0) {
                 size += HemfFill.readXForm(leis, transformMatrix);
             }
 
 
             return size;
+        }
+
+        @Override
+        public void draw(HemfGraphics ctx) {
+            HemfDrawProperties prop = ctx.getProperties();
+            prop.setTextAlignLatin(HwmfText.HwmfTextAlignment.LEFT);
+            prop.setTextVAlignLatin(HwmfText.HwmfTextVerticalAlignment.BASELINE);
+
+            ctx.applyPlusObjectTableEntry(getObjectId());
+            if (isSolidColor()) {
+                prop.setTextColor(new HwmfColorRef(getSolidColor()));
+            } else {
+                ctx.applyPlusObjectTableEntry(getBrushId());
+            }
+
+            if (REALIZED_ADVANCE.isSet(optionsFlags)) {
+                byte[] buf = glyphs.getBytes(Charsets.UTF_16LE);
+                ctx.drawString(buf, buf.length, glyphPos.get(0), null, null, null, null, true);
+            } else {
+                final OfInt glyphIter = glyphs.codePoints().iterator();
+                glyphPos.forEach(p -> {
+                    byte[] buf = new String(new int[]{glyphIter.next()}, 0, 1).getBytes(Charsets.UTF_16LE);
+                    ctx.drawString(buf, buf.length, p, null, null, null, null, true);
+                });
+            }
         }
 
         @Override
@@ -739,7 +767,7 @@ public class HemfPlusDraw {
                 "brushId", this::getBrushId,
                 "optionsFlags", getBitsAsString(() -> optionsFlags, OPTIONS_MASK, OPTIONS_NAMES),
                 "glyphs", () -> glyphs,
-                "glyphPos", () -> glpyhPos,
+                "glyphPos", () -> glyphPos,
                 "transform", () -> transformMatrix
             );
         }

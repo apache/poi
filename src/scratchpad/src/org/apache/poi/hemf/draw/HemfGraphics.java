@@ -20,16 +20,25 @@ package org.apache.poi.hemf.draw;
 import static org.apache.poi.hwmf.record.HwmfBrushStyle.BS_NULL;
 import static org.apache.poi.hwmf.record.HwmfBrushStyle.BS_SOLID;
 
+import java.awt.AlphaComposite;
 import java.awt.Color;
+import java.awt.Composite;
 import java.awt.Graphics2D;
+import java.awt.LinearGradientPaint;
+import java.awt.MultipleGradientPaint;
 import java.awt.Paint;
+import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.function.Consumer;
+import java.util.stream.Stream;
 
 import org.apache.poi.hemf.draw.HemfDrawProperties.TransOperand;
 import org.apache.poi.hemf.record.emf.HemfComment.EmfComment;
@@ -37,7 +46,9 @@ import org.apache.poi.hemf.record.emf.HemfRecord;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecord;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
+import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfColorRef;
+import org.apache.poi.hwmf.record.HwmfMisc;
 import org.apache.poi.hwmf.record.HwmfObjectTableEntry;
 import org.apache.poi.hwmf.record.HwmfPenStyle;
 import org.apache.poi.util.Internal;
@@ -58,11 +69,14 @@ public class HemfGraphics extends HwmfGraphics {
     private static final HwmfColorRef BLACK = new HwmfColorRef(Color.BLACK);
 
     private EmfRenderState renderState = EmfRenderState.INITIAL;
+    private final Map<Integer,HwmfObjectTableEntry> plusObjectTable = new HashMap<>();
+    private final Map<Integer,HemfDrawProperties> plusPropStack = new HashMap<>();
 
     public HemfGraphics(Graphics2D graphicsCtx, Rectangle2D bbox) {
         super(graphicsCtx,bbox);
         // add dummy entry for object ind ex 0, as emf is 1-based
         objectIndexes.set(0);
+        getProperties().setBkMode(HwmfMisc.WmfSetBkMode.HwmfBkMode.TRANSPARENT);
     }
 
     @Override
@@ -87,14 +101,8 @@ public class HemfGraphics extends HwmfGraphics {
 
     public void draw(HemfRecord r) {
         switch (getRenderState()) {
+            default:
             case EMF_DCONTEXT:
-                // This state specifies that subsequent EMF records encountered in the metafile SHOULD be processed.
-                // EMF records cease being processed when the next EMF+ record is encountered.
-                if (r instanceof EmfComment) {
-                    setRenderState(EmfRenderState.EMFPLUS_ONLY);
-                }
-                r.draw(this);
-                break;
             case INITIAL:
                 r.draw(this);
                 break;
@@ -107,8 +115,6 @@ public class HemfGraphics extends HwmfGraphics {
                 if (r instanceof EmfComment) {
                     r.draw(this);
                 }
-                break;
-            default:
                 break;
         }
     }
@@ -171,10 +177,7 @@ public class HemfGraphics extends HwmfGraphics {
 
     /**
      * Adds or sets an record of type {@link HwmfObjectTableEntry} to the object table.
-     * If the {@code index} is less than 1, the method acts the same as
-     * {@link HwmfGraphics#addObjectTableEntry(HwmfObjectTableEntry)}, otherwise the
-     * index is used to access the object table.
-     * As the table is filled successively, the index must be between 1 and size+1
+     * The index must be &gt; 0
      *
      * @param entry the record to be stored
      * @param index the index to be overwritten, regardless if its content was unset before
@@ -182,42 +185,74 @@ public class HemfGraphics extends HwmfGraphics {
      * @see HwmfGraphics#addObjectTableEntry(HwmfObjectTableEntry)
      */
     public void addObjectTableEntry(HwmfObjectTableEntry entry, int index) {
-        checkTableEntryIndex(index);
+        // in EMF the index must > 0
+        if (index < 1) {
+            throw new IndexOutOfBoundsException("Object table entry index in EMF must be > 0 - invalid index: "+index);
+        }
         objectIndexes.set(index);
         objectTable.put(index, entry);
     }
 
     /**
-     * Gets a record which was registered earliser
+     * Adds or sets an record of type {@link HwmfObjectTableEntry} to the plus object table.
+     * The index must be in the range [0..63]
+     *
+     * @param entry the record to be stored
+     * @param index the index to be overwritten, regardless if its content was unset before
+     *
+     * @see HwmfGraphics#addObjectTableEntry(HwmfObjectTableEntry)
+     */
+    public void addPlusObjectTableEntry(HwmfObjectTableEntry entry, int index) {
+        // in EMF+ the index must be between 0 and 63
+        if (index < 0 || index > 63) {
+            throw new IndexOutOfBoundsException("Object table entry index in EMF+ must be [0..63] - invalid index: "+index);
+        }
+        plusObjectTable.put(index, entry);
+    }
+
+    /**
+     * Gets a record which was registered earlier
      * @param index the record index
      * @return the record or {@code null} if it doesn't exist
      */
     public HwmfObjectTableEntry getObjectTableEntry(int index) {
-        checkTableEntryIndex(index);
+        // in EMF the index must > 0
+        if (index < 1) {
+            throw new IndexOutOfBoundsException("Object table entry index in EMF must be > 0 - invalid index: "+index);
+        }
         return objectTable.get(index);
     }
 
-    private void checkTableEntryIndex(int index) {
-        if (renderState != EmfRenderState.EMFPLUS_ONLY && renderState != EmfRenderState.EMF_DCONTEXT) {
-            // in EMF the index must > 0
-            if (index < 1) {
-                throw new IndexOutOfBoundsException("Object table entry index in EMF must be > 0 - invalid index: "+index);
-            }
-        } else {
-            // in EMF+ the index must be between 0 and 63
-            if (index < 0 || index > 63) {
-                throw new IndexOutOfBoundsException("Object table entry index in EMF+ must be [0..63] - invalid index: "+index);
-            }
+    public HwmfObjectTableEntry getPlusObjectTableEntry(int index) {
+        // in EMF+ the index must be between 0 and 63
+        if (index < 0 || index > 63) {
+            throw new IndexOutOfBoundsException("Object table entry index in EMF+ must be [0..63] - invalid index: "+index);
         }
+        return plusObjectTable.get(index);
     }
-
 
     @Override
     public void applyObjectTableEntry(int index) {
         if ((index & 0x80000000) != 0) {
             selectStockObject(index);
         } else {
-            super.applyObjectTableEntry(index);
+            HwmfObjectTableEntry ote = objectTable.get(index);
+            if (ote == null) {
+                throw new NoSuchElementException("EMF reference exception - object table entry on index "+index+" was deleted before.");
+            }
+            ote.applyObject(this);
+        }
+    }
+
+    public void applyPlusObjectTableEntry(int index) {
+        if ((index & 0x80000000) != 0) {
+            selectStockObject(index);
+        } else {
+            HwmfObjectTableEntry ote = plusObjectTable.get(index);
+            if (ote == null) {
+                throw new NoSuchElementException("EMF+ reference exception - plus object table entry on index "+index+" was deleted before.");
+            }
+            ote.applyObject(this);
         }
     }
 
@@ -351,4 +386,82 @@ public class HemfGraphics extends HwmfGraphics {
 
         graphicsCtx.setTransform(tx);
     }
+
+    @Override
+    public void fill(Shape shape) {
+        HemfDrawProperties prop = getProperties();
+
+        Composite old = graphicsCtx.getComposite();
+        graphicsCtx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+        if (prop.getBrushStyle() != HwmfBrushStyle.BS_NULL) {
+            if (prop.getBkMode() == HwmfMisc.WmfSetBkMode.HwmfBkMode.OPAQUE) {
+                graphicsCtx.setPaint(prop.getBackgroundColor().getColor());
+                graphicsCtx.fill(shape);
+            }
+
+            graphicsCtx.setPaint(getFill());
+            graphicsCtx.fill(shape);
+        }
+        graphicsCtx.setComposite(old);
+    }
+
+
+    @Override
+    protected Paint getLinearGradient() {
+        HemfDrawProperties prop = getProperties();
+        Rectangle2D rect = prop.getBrushRect();
+        List<? extends Map.Entry<Float, Color>> colorsH = prop.getBrushColorsH();
+        assert(rect != null && colorsH != null);
+
+        // TODO: handle ColorsV list with a custom GradientPaint
+        // for an idea on how to handle 2d-gradients google "bilinear color interpolation".
+        // basically use two linear interpolations for x/y or vertical/horizontal axis.
+        // the resulting two colors need to be interpolated by 50%.
+
+        return new LinearGradientPaint(
+            new Point2D.Double(rect.getMinX(),rect.getCenterY()),
+            new Point2D.Double(rect.getMaxX(),rect.getCenterY()),
+            toArray(colorsH.stream().map(Map.Entry::getKey), colorsH.size()),
+            colorsH.stream().map(Map.Entry::getValue).toArray(Color[]::new),
+            MultipleGradientPaint.CycleMethod.NO_CYCLE,
+            MultipleGradientPaint.ColorSpaceType.SRGB,
+            prop.getBrushTransform()
+        );
+    }
+
+    private static float[] toArray(Stream<? extends Number> numbers, int size) {
+        float[] arr = new float[size];
+        final int[] i = {0};
+        numbers.forEach(n -> arr[i[0]++] = n.floatValue());
+        return arr;
+    }
+
+    /**
+     * Saves the current properties to the plus stack
+     */
+    public void savePlusProperties(int index) {
+        final HemfDrawProperties p = getProperties();
+        assert(p != null);
+        p.setTransform(graphicsCtx.getTransform());
+        p.setClip(graphicsCtx.getClip());
+        plusPropStack.put(index,p);
+        prop = newProperties(p);
+    }
+
+    /**
+     * Restores the properties from the plus stack
+     *
+     * @param index the index of the previously saved properties
+     */
+    public void restorePlusProperties(int index) {
+        if (!plusPropStack.containsKey(index)) {
+            return;
+        }
+
+        prop = new HemfDrawProperties(plusPropStack.get(index));
+
+        graphicsCtx.setTransform(prop.getTransform());
+        graphicsCtx.setClip(prop.getClip());
+    }
+
 }

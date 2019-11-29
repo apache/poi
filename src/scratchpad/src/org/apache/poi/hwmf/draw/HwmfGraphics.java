@@ -93,12 +93,27 @@ public class HwmfGraphics {
         }
     }
 
-    protected final List<HwmfDrawProperties> propStack = new LinkedList<>();
+    private static final Float[] WEIGHT_MAP = {
+        900f, TextAttribute.WEIGHT_ULTRABOLD,
+        800f, TextAttribute.WEIGHT_EXTRABOLD,
+        750f, TextAttribute.WEIGHT_HEAVY,
+        700f, TextAttribute.WEIGHT_BOLD,
+        600f, TextAttribute.WEIGHT_DEMIBOLD,
+        500f, TextAttribute.WEIGHT_MEDIUM,
+        450f, TextAttribute.WEIGHT_SEMIBOLD,
+        400f, TextAttribute.WEIGHT_REGULAR,
+        300f, TextAttribute.WEIGHT_DEMILIGHT,
+        200f, TextAttribute.WEIGHT_LIGHT,
+        1f, TextAttribute.WEIGHT_EXTRA_LIGHT
+    };
+
+
+    private final List<HwmfDrawProperties> propStack = new LinkedList<>();
     protected HwmfDrawProperties prop;
     protected final Graphics2D graphicsCtx;
     protected final BitSet objectIndexes = new BitSet();
     protected final TreeMap<Integer,HwmfObjectTableEntry> objectTable = new TreeMap<>();
-    protected final AffineTransform initialAT = new AffineTransform();
+    private final AffineTransform initialAT = new AffineTransform();
 
 
     private static final Charset DEFAULT_CHARSET = LocaleUtil.CHARSET_1252;
@@ -207,7 +222,12 @@ public class HwmfGraphics {
         case BS_DIBPATTERNPT: return getPatternPaint();
         case BS_SOLID: return getSolidFill();
         case BS_HATCHED: return getHatchedFill();
+        case BS_LINEAR_GRADIENT: return getLinearGradient();
         }
+    }
+
+    protected Paint getLinearGradient() {
+        return null;
     }
 
     protected Paint getSolidFill() {
@@ -440,8 +460,13 @@ public class HwmfGraphics {
         }
 
         int trimLen;
-        for (trimLen=0; trimLen<text.length-1; trimLen+=2) {
-            if ((text[trimLen] == -1 && text[trimLen+1] == -1) ||
+        for (trimLen=0; trimLen<text.length; trimLen+=2) {
+            if (trimLen == text.length-1) {
+                if (text[trimLen] != 0) {
+                    trimLen++;
+                }
+                break;
+            } else if ((text[trimLen] == -1 && text[trimLen+1] == -1) ||
                 ((text[trimLen] & 0xE0) == 0 && text[trimLen+1] == 0)) {
                 break;
             }
@@ -519,7 +544,7 @@ public class HwmfGraphics {
                 tx.translate(-pixelBounds.getWidth() / 2., 0);
                 break;
             case RIGHT:
-                tx.translate(-pixelBounds.getWidth(), 0);
+                tx.translate(-layout.getAdvance(), 0);
                 break;
         }
 
@@ -581,7 +606,16 @@ public class HwmfGraphics {
         if (font.isItalic()) {
             as.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
         }
-        as.addAttribute(TextAttribute.WEIGHT, font.getWeight());
+        // convert font weight to awt font weight - usually a font weight of 400 is regarded as regular
+        final int fw = font.getWeight();
+        Float awtFW = TextAttribute.WEIGHT_REGULAR;
+        for (int i=0; i<WEIGHT_MAP.length; i+=2) {
+            if (fw >= WEIGHT_MAP[i]) {
+                awtFW = WEIGHT_MAP[i+1];
+                break;
+            }
+        }
+        as.addAttribute(TextAttribute.WEIGHT, awtFW);
     }
     
     private double getFontHeight(HwmfFont font) {
@@ -661,7 +695,11 @@ public class HwmfGraphics {
                 // of the referenced image and can be also negative
                 Composite old = graphicsCtx.getComposite();
                 graphicsCtx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
-                img.drawImage(graphicsCtx, normBounds, getSubImageInsets(srcBounds, img.getNativeBounds()));
+
+                boolean useDeviceBounds = (img instanceof HwmfImageRenderer);
+
+                img.drawImage(graphicsCtx, normBounds,
+                      getSubImageInsets(srcBounds, useDeviceBounds ? img.getNativeBounds() : img.getBounds()));
                 graphicsCtx.setComposite(old);
 
                 graphicsCtx.setTransform(oldTrans);
@@ -683,9 +721,9 @@ public class HwmfGraphics {
         // Todo: check if we need to normalize srcBounds x/y, in case of flipped images
         // for now we assume the width/height is positive
         int left = (int)Math.round((srcBounds.getX()-nativeBounds.getX())/nativeBounds.getWidth()*100_000.);
-        int top = (int)Math.round((srcBounds.getY()-nativeBounds.getY())/nativeBounds.getWidth()*100_000.);
+        int top = (int)Math.round((srcBounds.getY()-nativeBounds.getY())/nativeBounds.getHeight()*100_000.);
         int right = (int)Math.round((nativeBounds.getMaxX()-srcBounds.getMaxX())/nativeBounds.getWidth()*100_000.);
-        int bottom = (int)Math.round((nativeBounds.getMaxY()-srcBounds.getMaxY())/nativeBounds.getWidth()*100_000.);
+        int bottom = (int)Math.round((nativeBounds.getMaxY()-srcBounds.getMaxY())/nativeBounds.getHeight()*100_000.);
 
         return new Insets(top, left, bottom, right);
     }

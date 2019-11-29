@@ -64,7 +64,11 @@ public enum HwmfBrushStyle {
     /**
      * Not supported
      */
-    BS_MONOPATTERN(0x0009);
+    BS_MONOPATTERN(0x0009),
+    /**
+     * (POI arbitrary:) EMF/EMF+ specific value for linear gradient paint
+     */
+    BS_LINEAR_GRADIENT(0x0100);
 
     int flag;
     HwmfBrushStyle(int flag) {

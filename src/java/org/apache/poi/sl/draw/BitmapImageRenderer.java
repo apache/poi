@@ -17,7 +17,6 @@
 
 package org.apache.poi.sl.draw;
 
-import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Insets;
@@ -255,10 +254,10 @@ public class BitmapImageRenderer implements ImageRenderer {
     }
 
     @Override
-    public Dimension getDimension() {
+    public Rectangle2D getBounds() {
         return (img == null)
-            ? new Dimension(0,0)
-            : new Dimension(img.getWidth(),img.getHeight());
+            ? new Rectangle2D.Double()
+            : new Rectangle2D.Double(0, 0, img.getWidth(), img.getHeight());
     }
 
     @Override
@@ -316,7 +315,9 @@ public class BitmapImageRenderer implements ImageRenderer {
         AffineTransform at = new AffineTransform(sx, 0, 0, sy, tx, ty) ;
 
         Shape clipOld = graphics.getClip();
-        if (isClipped) graphics.clip(anchor.getBounds2D());
+        if (isClipped) {
+            graphics.clip(anchor.getBounds2D());
+        }
         graphics.drawRenderedImage(img, at);
         graphics.setClip(clipOld);
 

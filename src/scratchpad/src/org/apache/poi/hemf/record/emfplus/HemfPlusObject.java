@@ -196,7 +196,7 @@ public class HemfPlusObject {
         public void draw(HemfGraphics ctx) {
             if (objectData.isContinuedRecord()) {
                 EmfPlusObject other;
-                HwmfObjectTableEntry entry = ctx.getObjectTableEntry(getObjectId());
+                HwmfObjectTableEntry entry = ctx.getPlusObjectTableEntry(getObjectId());
                 if (entry instanceof EmfPlusObject &&
                     objectData.getClass().isInstance((other = (EmfPlusObject)entry).getObjectData())
                 ) {
@@ -205,7 +205,7 @@ public class HemfPlusObject {
                     throw new RuntimeException("can't find previous record for continued record");
                 }
             } else {
-                ctx.addObjectTableEntry(this, getObjectId());
+                ctx.addPlusObjectTableEntry(this, getObjectId());
             }
         }
 

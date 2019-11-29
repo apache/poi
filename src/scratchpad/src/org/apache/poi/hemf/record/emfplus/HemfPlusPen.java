@@ -34,6 +34,7 @@ import java.util.function.Supplier;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
+import org.apache.poi.hemf.record.emfplus.HemfPlusBrush.EmfPlusBrush;
 import org.apache.poi.hemf.record.emfplus.HemfPlusDraw.EmfPlusUnitType;
 import org.apache.poi.hemf.record.emfplus.HemfPlusHeader.EmfPlusGraphicsVersion;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectData;
@@ -330,6 +331,8 @@ public class HemfPlusPen {
         private EmfPlusCustomLineCap customStartCap;
         private EmfPlusCustomLineCap customEndCap;
 
+        private final EmfPlusBrush brush = new EmfPlusBrush();
+
         @Override
         public long init(LittleEndianInputStream leis, long dataSize, EmfPlusObjectType objectType, int flags) throws IOException {
             // An EmfPlusGraphicsVersion object that specifies the version of operating system graphics that
@@ -463,6 +466,8 @@ public class HemfPlusPen {
                 size += initCustomCap(c -> customEndCap = c, leis);
             }
 
+            size += brush.init(leis, dataSize-size, EmfPlusObjectType.BRUSH, 0);
+
             return size;
         }
 
@@ -472,8 +477,12 @@ public class HemfPlusPen {
         }
 
         private long initCustomCap(Consumer<EmfPlusCustomLineCap> setter, LittleEndianInputStream leis) throws IOException {
+            int CustomStartCapSize = leis.readInt();
+            int size = LittleEndianConsts.INT_SIZE;
+
             EmfPlusGraphicsVersion version = new EmfPlusGraphicsVersion();
-            long size = version.init(leis);
+            size += version.init(leis);
+            assert(version.getGraphicsVersion() != null);
 
             boolean adjustableArrow = (leis.readInt() != 0);
             size += LittleEndianConsts.INT_SIZE;
@@ -492,11 +501,11 @@ public class HemfPlusPen {
             // TOOD:
             // - set width according unit type
             // - provide logic for different start and end cap
-            // - provide standard caps like diamondd
+            // - provide standard caps like diamond
             // - support custom caps
 
-            // workaround for too wide pens ... just arbitrary reduce high values ...
-            prop.setPenWidth(penWidth > 20 ? 1 : penWidth);
+            brush.applyPen(ctx, continuedObjectData);
+            prop.setPenWidth(penWidth);
             prop.setPenStyle(new HwmfPenStyle(){
                 @Override
                 public HwmfLineCap getLineCap() {
@@ -573,6 +582,7 @@ public class HemfPlusPen {
             m.put("compoundLineData", () -> compoundLineData);
             m.put("customStartCap", () -> customStartCap);
             m.put("customEndCap", () -> customEndCap);
+            m.put("brush", () -> brush);
             return Collections.unmodifiableMap(m);
         }
     }
@@ -645,13 +655,17 @@ public class HemfPlusPen {
             size += readPointF(leis, lineHotSpot);
 
             if (FILL_PATH.isSet(dataFlags)) {
+                int fillSize = leis.readInt();
+                size += LittleEndianConsts.INT_SIZE;
                 fillPath = new EmfPlusPath();
-                size += fillPath.init(leis, -1, null, -1);
+                size += fillPath.init(leis, fillSize, EmfPlusObjectType.PATH, -1);
             }
 
             if (LINE_PATH.isSet(dataFlags)) {
+                int pathSize = leis.readInt();
+                size += LittleEndianConsts.INT_SIZE;
                 outlinePath = new EmfPlusPath();
-                size += outlinePath.init(leis, -1, null, -1);
+                size += outlinePath.init(leis, pathSize, EmfPlusObjectType.PATH, -1);
             }
 
             return size;

@@ -42,7 +42,6 @@ import org.apache.batik.util.XMLResourceDescriptor;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData;
-import org.apache.poi.util.Dimension2DDouble;
 import org.w3c.dom.Document;
 
 public class SVGImageRenderer implements ImageRenderer {
@@ -76,9 +75,8 @@ public class SVGImageRenderer implements ImageRenderer {
     }
 
     @Override
-    public Dimension2D getDimension() {
-        Rectangle2D r = svgRoot.getPrimitiveBounds();
-        return new Dimension2DDouble(Math.ceil(r.getWidth()), Math.ceil(r.getHeight()));
+    public Rectangle2D getBounds() {
+        return svgRoot.getPrimitiveBounds();
     }
 
     @Override

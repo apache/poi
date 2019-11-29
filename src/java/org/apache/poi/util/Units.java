@@ -17,6 +17,7 @@
 package org.apache.poi.util;
 
 import java.awt.geom.Dimension2D;
+import java.awt.geom.Rectangle2D;
 
 public class Units {
     /**
@@ -156,6 +157,22 @@ public class Units {
         double width = pointsDim.getWidth() * POINT_DPI / PIXEL_DPI;
         double height = pointsDim.getHeight() * POINT_DPI / PIXEL_DPI;
         return new Dimension2DDouble(width, height);
+    }
+
+    public static Rectangle2D pointsToPixel(Rectangle2D pointsDim) {
+        double x = pointsDim.getX() * PIXEL_DPI / POINT_DPI;
+        double y = pointsDim.getY() * PIXEL_DPI / POINT_DPI;
+        double width = pointsDim.getWidth() * PIXEL_DPI / POINT_DPI;
+        double height = pointsDim.getHeight() * PIXEL_DPI / POINT_DPI;
+        return new Rectangle2D.Double(x, y, width, height);
+    }
+
+    public static Rectangle2D pixelToPoints(Rectangle2D pointsDim) {
+        double x = pointsDim.getX() * POINT_DPI / PIXEL_DPI;
+        double y = pointsDim.getY() * POINT_DPI / PIXEL_DPI;
+        double width = pointsDim.getWidth() * POINT_DPI / PIXEL_DPI;
+        double height = pointsDim.getHeight() * POINT_DPI / PIXEL_DPI;
+        return new Rectangle2D.Double(x, y, width, height);
     }
 
     public static int charactersToEMU(double characters) {

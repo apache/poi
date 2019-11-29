@@ -21,7 +21,6 @@ import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.Insets;
 import java.awt.RenderingHints;
-import java.awt.Shape;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
@@ -114,20 +113,22 @@ public class HwmfImageRenderer implements ImageRenderer, EmbeddedExtractor {
             return false;
         }
 
+        HwmfGraphicsState graphicsState = new HwmfGraphicsState();
+        graphicsState.backup(graphics);
+
         boolean isClipped = true;
         if (clip == null) {
             isClipped = false;
             clip = new Insets(0,0,0,0);
         }
 
-        Shape clipOld = graphics.getClip();
         if (isClipped) {
             graphics.clip(anchor);
         }
 
         image.draw(graphics, getOuterBounds(anchor, clip));
 
-        graphics.setClip(clipOld);
+        graphicsState.restore(graphics);
 
         return true;
     }
@@ -178,5 +179,10 @@ public class HwmfImageRenderer implements ImageRenderer, EmbeddedExtractor {
     @Override
     public Rectangle2D getNativeBounds() {
         return image.getBounds();
+    }
+
+    @Override
+    public Rectangle2D getBounds() {
+        return Units.pointsToPixel(image == null ? new Rectangle2D.Double() : image.getBoundsInPoints());
     }
 }

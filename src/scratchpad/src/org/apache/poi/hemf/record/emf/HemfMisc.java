@@ -559,6 +559,9 @@ public class HemfMisc {
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             final int startIdx = leis.getReadIndex();
 
+            // An unsigned integer that specifies the index of the extended logical pen object in
+            // the EMF object table. This index MUST be saved so that this object can be
+            // reused or modified.
             penIndex = (int) leis.readUInt();
 
             // A 32-bit unsigned integer that specifies the offset from the start of this

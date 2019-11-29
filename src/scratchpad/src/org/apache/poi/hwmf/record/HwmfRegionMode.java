@@ -45,7 +45,11 @@ public enum HwmfRegionMode {
     /**
      * The new clipping region is the current path (or the new region).
      */
-    RGN_COPY(0x05, HwmfRegionMode::copyOp);
+    RGN_COPY(0x05, HwmfRegionMode::copyOp),
+    /**
+     * This is the opposite of {@link #RGN_DIFF}, and only made-up for compatibility with EMF+
+     */
+    RGN_COMPLEMENT(-1, HwmfRegionMode::complementOp);
 
     private final int flag;
     private final BiFunction<Shape,Shape,Shape> op;
@@ -124,5 +128,18 @@ public enum HwmfRegionMode {
 
     private static Shape copyOp(final Shape oldClip, final Shape newClip) {
         return (newClip == null || newClip.getBounds2D().isEmpty()) ? null : newClip;
+    }
+
+    private static Shape complementOp(final Shape oldClip, final Shape newClip) {
+        assert(newClip != null);
+        if (newClip.getBounds2D().isEmpty()) {
+            return oldClip;
+        } else if (oldClip == null) {
+            return newClip;
+        } else {
+            Area newArea = new Area(newClip);
+            newArea.subtract(new Area(oldClip));
+            return newArea;
+        }
     }
 }

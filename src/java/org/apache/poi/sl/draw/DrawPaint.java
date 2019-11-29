@@ -583,8 +583,7 @@ public class DrawPaint {
      *
      *  @return an array containing the 3 HSL values.
      */
-    private static double[] RGB2HSL(Color color)
-    {
+    public static double[] RGB2HSL(Color color) {
         //  Get RGB values in the range 0 - 1
 
         float[] rgb = color.getRGBColorComponents( null );
