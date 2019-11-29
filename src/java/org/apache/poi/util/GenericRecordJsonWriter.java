@@ -258,6 +258,15 @@ public class GenericRecordJsonWriter implements Closeable {
     protected boolean printNumber(String name, Object o) {
         Number n = (Number)o;
         printName(name);
+
+        if (o instanceof Float) {
+            fw.print(n.floatValue());
+            return true;
+        } else if (o instanceof Double) {
+            fw.print(n.doubleValue());
+            return true;
+        }
+
         fw.print(n.longValue());
 
         final int size;
