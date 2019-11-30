@@ -127,7 +127,7 @@ public class StandardEncryptor extends Encryptor implements Cloneable {
         protected final File fileOut;
         protected final DirectoryNode dir;
 
-        @SuppressWarnings("resource")
+        @SuppressWarnings({"resource", "squid:S2095"})
         private StandardCipherOutputStream(DirectoryNode dir, File fileOut) throws IOException {
             // although not documented, we need the same padding as with agile encryption
             // and instead of calculating the missing bytes for the block size ourselves

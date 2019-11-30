@@ -31,47 +31,44 @@ import org.apache.poi.hslf.usermodel.HSLFTextRun;
 
 /**
  * Demonstrates how to read hyperlinks from  a presentation
- *
- * @author Yegor Kozlov
  */
 public final class Hyperlinks {
 
     public static void main(String[] args) throws Exception {
         for (String arg : args) {
-            FileInputStream is = new FileInputStream(arg);
-            HSLFSlideShow ppt = new HSLFSlideShow(is);
-            is.close();
+            try (FileInputStream is = new FileInputStream(arg);
+                HSLFSlideShow ppt = new HSLFSlideShow(is)) {
 
-            for (HSLFSlide slide : ppt.getSlides()) {
-                System.out.println("\nslide " + slide.getSlideNumber());
+                for (HSLFSlide slide : ppt.getSlides()) {
+                    System.out.println("\nslide " + slide.getSlideNumber());
 
-                // read hyperlinks from the slide's text runs
-                System.out.println("- reading hyperlinks from the text runs");
-                for (List<HSLFTextParagraph> paras : slide.getTextParagraphs()) {
-                    for (HSLFTextParagraph para : paras) {
-                        for (HSLFTextRun run : para) {
-                            HSLFHyperlink link = run.getHyperlink();
+                    // read hyperlinks from the slide's text runs
+                    System.out.println("- reading hyperlinks from the text runs");
+                    for (List<HSLFTextParagraph> paras : slide.getTextParagraphs()) {
+                        for (HSLFTextParagraph para : paras) {
+                            for (HSLFTextRun run : para) {
+                                HSLFHyperlink link = run.getHyperlink();
+                                if (link != null) {
+                                    System.out.println(toStr(link, run.getRawText()));
+                                }
+                            }
+                        }
+                    }
+
+                    // in PowerPoint you can assign a hyperlink to a shape without text,
+                    // for example to a Line object. The code below demonstrates how to
+                    // read such hyperlinks
+                    System.out.println("- reading hyperlinks from the slide's shapes");
+                    for (HSLFShape sh : slide.getShapes()) {
+                        if (sh instanceof HSLFSimpleShape) {
+                            HSLFHyperlink link = ((HSLFSimpleShape) sh).getHyperlink();
                             if (link != null) {
-                                System.out.println(toStr(link, run.getRawText()));
+                                System.out.println(toStr(link, null));
                             }
                         }
                     }
                 }
-
-                // in PowerPoint you can assign a hyperlink to a shape without text,
-                // for example to a Line object. The code below demonstrates how to
-                // read such hyperlinks
-                System.out.println("- reading hyperlinks from the slide's shapes");
-                for (HSLFShape sh : slide.getShapes()) {
-                    if (sh instanceof HSLFSimpleShape) {
-                        HSLFHyperlink link = ((HSLFSimpleShape) sh).getHyperlink();
-                        if (link != null) {
-                            System.out.println(toStr(link, null));
-                        }
-                    }
-                }
             }
-            ppt.close();
         }
    }
 

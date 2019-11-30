@@ -78,10 +78,11 @@ public class VBAMacroExtractor {
         } else {
             System.err.println("STDOUT");
         }
-        
-        VBAMacroReader reader = new VBAMacroReader(input);
-        Map<String,String> macros = reader.readMacros();
-        reader.close();
+
+        final Map<String,String> macros;
+        try (VBAMacroReader reader = new VBAMacroReader(input)) {
+            macros = reader.readMacros();
+        }
         
         final String divider = "---------------------------------------";
         for (Entry<String, String> entry : macros.entrySet()) {
@@ -94,11 +95,10 @@ public class VBAMacroExtractor {
                 System.out.println(moduleCode);
             } else {
                 File out = new File(outputDir, moduleName + extension);
-                FileOutputStream fout = new FileOutputStream(out);
-                OutputStreamWriter fwriter = new OutputStreamWriter(fout, StringUtil.UTF8);
-                fwriter.write(moduleCode);
-                fwriter.close();
-                fout.close();
+                try (FileOutputStream fout = new FileOutputStream(out);
+                    OutputStreamWriter fwriter = new OutputStreamWriter(fout, StringUtil.UTF8)) {
+                    fwriter.write(moduleCode);
+                }
                 System.out.println("Extracted " + out);
             }
         }

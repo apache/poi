@@ -65,41 +65,36 @@ public class ConditionalFormats {
      * @param args pass "-xls" to generate an HSSF workbook, default is XSSF
      */
     public static void main(String[] args) throws IOException {
-        Workbook wb;
+        final boolean isHSSF = args.length > 0 && args[0].equals("-xls");
+        try (Workbook wb = isHSSF ? new HSSFWorkbook() : new XSSFWorkbook()) {
 
-        if(args.length > 0 && args[0].equals("-xls")) {
-            wb = new HSSFWorkbook();
-        } else {
-            wb = new XSSFWorkbook();
+            sameCell(wb.createSheet("Same Cell"));
+            multiCell(wb.createSheet("MultiCell"));
+            overlapping(wb.createSheet("Overlapping"));
+            errors(wb.createSheet("Errors"));
+            hideDupplicates(wb.createSheet("Hide Dups"));
+            formatDuplicates(wb.createSheet("Duplicates"));
+            inList(wb.createSheet("In List"));
+            expiry(wb.createSheet("Expiry"));
+            shadeAlt(wb.createSheet("Shade Alt"));
+            shadeBands(wb.createSheet("Shade Bands"));
+            iconSets(wb.createSheet("Icon Sets"));
+            colourScales(wb.createSheet("Colour Scales"));
+            dataBars(wb.createSheet("Data Bars"));
+
+            // print overlapping rule results
+            evaluateRules(wb, "Overlapping");
+
+            // Write the output to a file
+            String file = "cf-poi.xls";
+            if (wb instanceof XSSFWorkbook) {
+                file += "x";
+            }
+            try (FileOutputStream out = new FileOutputStream(file)) {
+                wb.write(out);
+            }
+            System.out.println("Generated: " + file);
         }
-
-        sameCell(wb.createSheet("Same Cell"));
-        multiCell(wb.createSheet("MultiCell"));
-        overlapping(wb.createSheet("Overlapping"));
-        errors(wb.createSheet("Errors"));
-        hideDupplicates(wb.createSheet("Hide Dups"));
-        formatDuplicates(wb.createSheet("Duplicates"));
-        inList(wb.createSheet("In List"));
-        expiry(wb.createSheet("Expiry"));
-        shadeAlt(wb.createSheet("Shade Alt"));
-        shadeBands(wb.createSheet("Shade Bands"));
-        iconSets(wb.createSheet("Icon Sets"));
-        colourScales(wb.createSheet("Colour Scales"));
-        dataBars(wb.createSheet("Data Bars"));
-
-        // print overlapping rule results
-        evaluateRules(wb, "Overlapping");
-
-        // Write the output to a file
-        String file = "cf-poi.xls";
-        if(wb instanceof XSSFWorkbook) {
-            file += "x";
-        }
-        FileOutputStream out = new FileOutputStream(file);
-        wb.write(out);
-        out.close();
-        System.out.println("Generated: " + file);
-        wb.close();
     }
 
     /**

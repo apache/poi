@@ -19,7 +19,6 @@ package org.apache.poi.hssf.dev;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.PrintStream;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.OldExcelFormatException;
@@ -50,15 +49,8 @@ public class TestBiffDrawingToXml extends BaseXLSIteratingTest {
 	
 	@Override
 	void runOneFile(File pFile) throws Exception {
-		PrintStream save = System.out;
-		try {
-			//System.setOut(new PrintStream(TestBiffViewer.NULL_OUTPUT_STREAM));
-			// use a NullOutputStream to not write the bytes anywhere for best runtime 
-            try (InputStream wb = new FileInputStream(pFile)) {
-                BiffDrawingToXml.writeToFile(NULL_OUTPUT_STREAM, wb, false, new String[]{});
-            }
-		} finally {
-			System.setOut(save);
-		}
+        try (InputStream wb = new FileInputStream(pFile)) {
+            BiffDrawingToXml.writeToFile(NULL_OUTPUT_STREAM, wb, false, new String[0]);
+        }
 	}
 }

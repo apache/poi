@@ -62,16 +62,15 @@ public class POIFSLister {
    }
 
    public static void viewFile(final String filename, boolean withSizes) throws IOException {
-      POIFSFileSystem fs = new POIFSFileSystem(new File(filename));
-      displayDirectory(fs.getRoot(), "", withSizes);
-      fs.close();
+      try (POIFSFileSystem fs = new POIFSFileSystem(new File(filename))) {
+         displayDirectory(fs.getRoot(), "", withSizes);
+      }
    }
 
    public static void viewFileOld(final String filename, boolean withSizes) throws IOException {
-      try (FileInputStream fis = new FileInputStream(filename)) {
-         POIFSFileSystem fs = new POIFSFileSystem(fis);
+      try (FileInputStream fis = new FileInputStream(filename);
+           POIFSFileSystem fs = new POIFSFileSystem(fis)) {
          displayDirectory(fs.getRoot(), "", withSizes);
-         fs.close();
       }
    }
 

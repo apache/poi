@@ -46,78 +46,76 @@ public final class DataExtraction {
             return;
         }
 
-        FileInputStream is = new FileInputStream(args[0]);
-        HSLFSlideShow ppt = new HSLFSlideShow(is);
-        is.close();
+        try (FileInputStream is = new FileInputStream(args[0]);
+            HSLFSlideShow ppt = new HSLFSlideShow(is)) {
 
-        //extract all sound files embedded in this presentation
-        HSLFSoundData[] sound = ppt.getSoundData();
-        for (HSLFSoundData aSound : sound) {
-            String type = aSound.getSoundType();  //*.wav
-            String name = aSound.getSoundName();  //typically file name
-            byte[] data = aSound.getData();       //raw bytes
+            //extract all sound files embedded in this presentation
+            HSLFSoundData[] sound = ppt.getSoundData();
+            for (HSLFSoundData aSound : sound) {
+                String type = aSound.getSoundType();  //*.wav
+                String name = aSound.getSoundName();  //typically file name
+                byte[] data = aSound.getData();       //raw bytes
 
-            //save the sound  on disk
-            FileOutputStream out = new FileOutputStream(name + type);
-            out.write(data);
-            out.close();
-        }
-
-        int oleIdx=-1, picIdx=-1;
-        for (HSLFSlide slide : ppt.getSlides()) {
-            //extract embedded OLE documents
-            for (HSLFShape shape : slide.getShapes()) {
-                if (shape instanceof HSLFObjectShape) {
-                    oleIdx++;
-                    HSLFObjectShape ole = (HSLFObjectShape) shape;
-                    HSLFObjectData data = ole.getObjectData();
-                    String name = ole.getInstanceName();
-                    if ("Worksheet".equals(name)) {
-
-                        //read xls
-                        @SuppressWarnings({ "unused", "resource" })
-                        HSSFWorkbook wb = new HSSFWorkbook(data.getInputStream());
-
-                    } else if ("Document".equals(name)) {
-                        HWPFDocument doc = new HWPFDocument(data.getInputStream());
-                        //read the word document
-                        Range r = doc.getRange();
-                        for(int k = 0; k < r.numParagraphs(); k++) {
-                            Paragraph p = r.getParagraph(k);
-                            System.out.println(p.text());
-                         }
-
-                        //save on disk
-                        FileOutputStream out = new FileOutputStream(name + "-("+(oleIdx)+").doc");
-                        doc.write(out);
-                        out.close();
-                        doc.close();
-                     }  else {
-                        FileOutputStream out = new FileOutputStream(ole.getProgId() + "-"+(oleIdx+1)+".dat");
-                        InputStream dis = data.getInputStream();
-                        byte[] chunk = new byte[2048];
-                        int count;
-                        while ((count = dis.read(chunk)) >= 0) {
-                          out.write(chunk,0,count);
-                        }
-                        is.close();
-                        out.close();
-                    }
+                //save the sound  on disk
+                try (FileOutputStream out = new FileOutputStream(name + type)) {
+                    out.write(data);
                 }
-                
-                //Pictures
-                else if (shape instanceof HSLFPictureShape) {
-                    picIdx++;
-                    HSLFPictureShape p = (HSLFPictureShape) shape;
-                    HSLFPictureData data = p.getPictureData();
-                    String ext = data.getType().extension;
-                    FileOutputStream out = new FileOutputStream("pict-" + picIdx + ext);
-                    out.write(data.getData());
-                    out.close();
+            }
+
+            int oleIdx = -1, picIdx = -1;
+            for (HSLFSlide slide : ppt.getSlides()) {
+                //extract embedded OLE documents
+                for (HSLFShape shape : slide.getShapes()) {
+                    if (shape instanceof HSLFObjectShape) {
+                        oleIdx++;
+                        HSLFObjectShape ole = (HSLFObjectShape) shape;
+                        HSLFObjectData data = ole.getObjectData();
+                        String name = ole.getInstanceName();
+                        if ("Worksheet".equals(name)) {
+
+                            //read xls
+                            @SuppressWarnings({"unused", "resource"})
+                            HSSFWorkbook wb = new HSSFWorkbook(data.getInputStream());
+
+                        } else if ("Document".equals(name)) {
+                            try (HWPFDocument doc = new HWPFDocument(data.getInputStream())) {
+                                //read the word document
+                                Range r = doc.getRange();
+                                for (int k = 0; k < r.numParagraphs(); k++) {
+                                    Paragraph p = r.getParagraph(k);
+                                    System.out.println(p.text());
+                                }
+
+                                //save on disk
+                                try (FileOutputStream out = new FileOutputStream(name + "-(" + (oleIdx) + ").doc")) {
+                                    doc.write(out);
+                                }
+                            }
+                        } else {
+                            try (FileOutputStream out = new FileOutputStream(ole.getProgId() + "-" + (oleIdx + 1) + ".dat");
+                                InputStream dis = data.getInputStream()) {
+                                byte[] chunk = new byte[2048];
+                                int count;
+                                while ((count = dis.read(chunk)) >= 0) {
+                                    out.write(chunk, 0, count);
+                                }
+                            }
+                        }
+                    }
+
+                    //Pictures
+                    else if (shape instanceof HSLFPictureShape) {
+                        picIdx++;
+                        HSLFPictureShape p = (HSLFPictureShape) shape;
+                        HSLFPictureData data = p.getPictureData();
+                        String ext = data.getType().extension;
+                        try (FileOutputStream out = new FileOutputStream("pict-" + picIdx + ext)) {
+                            out.write(data.getData());
+                        }
+                    }
                 }
             }
         }
-        ppt.close();
     }
 
     private static void usage(){

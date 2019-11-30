@@ -35,20 +35,20 @@ public final class ImageExtractor {
             System.err.println("\tImageExtractor <file>");
             return;
         }
-        HSLFSlideShow ppt = new HSLFSlideShow(new HSLFSlideShowImpl(args[0]));
+        try (HSLFSlideShow ppt = new HSLFSlideShow(new HSLFSlideShowImpl(args[0]))) {
 
-        //extract all pictures contained in the presentation
-        int i = 0;
-        for (HSLFPictureData pict : ppt.getPictureData()) {
-            // picture data
-            byte[] data = pict.getData();
+            //extract all pictures contained in the presentation
+            int i = 0;
+            for (HSLFPictureData pict : ppt.getPictureData()) {
+                // picture data
+                byte[] data = pict.getData();
 
-            PictureType type = pict.getType();
-            FileOutputStream out = new FileOutputStream("pict_" + i++ + type.extension);
-            out.write(data);
-            out.close();
+                PictureType type = pict.getType();
+                try (FileOutputStream out = new FileOutputStream("pict_" + i++ + type.extension)) {
+                    out.write(data);
+                }
+            }
+
         }
-        
-        ppt.close();
     }
 }

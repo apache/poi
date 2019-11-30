@@ -79,9 +79,9 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 			file = args[0];
 		}
 
-		PowerPointExtractor ppe = new PowerPointExtractor(file);
-		System.out.println(ppe.getText(true, notes, comments, master));
-		ppe.close();
+		try (PowerPointExtractor ppe = new PowerPointExtractor(file)) {
+			System.out.println(ppe.getText(true, notes, comments, master));
+		}
 	}
 
 	public PowerPointExtractor(final HSLFSlideShow slideShow) {

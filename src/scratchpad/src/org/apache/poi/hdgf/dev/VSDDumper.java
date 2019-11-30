@@ -51,16 +51,12 @@ public final class VSDDumper {
 			System.exit(1);
 		}
 
-		POIFSFileSystem poifs = new POIFSFileSystem(new File(args[0]));
-		try {
-			HDGFDiagram hdgf = new HDGFDiagram(poifs);
-
+		try (POIFSFileSystem poifs = new POIFSFileSystem(new File(args[0]));
+			 HDGFDiagram hdgf = new HDGFDiagram(poifs)) {
 			PrintStream ps = System.out;
 			ps.println("Opened " + args[0]);
 			VSDDumper vd = new VSDDumper(ps, hdgf);
 			vd.dumpFile();
-		} finally {
-			poifs.close();
 		}
 	}
 

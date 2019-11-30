@@ -337,6 +337,7 @@ public final class PPTX2PNG {
         }
     }
 
+    @SuppressWarnings({"resource", "squid:S2095"})
     private MFProxy initProxy(File file) throws IOException {
         MFProxy proxy;
         final String fileName = file.getName().toLowerCase(Locale.ROOT);

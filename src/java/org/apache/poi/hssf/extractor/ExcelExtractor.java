@@ -223,24 +223,17 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 			return;
 		}
 
-		InputStream is;
-		if(cmdArgs.getInputFile() == null) {
-			is = System.in;
-		} else {
-			is = new FileInputStream(cmdArgs.getInputFile());
+		try (InputStream is = cmdArgs.getInputFile() == null ? System.in : new FileInputStream(cmdArgs.getInputFile());
+			 HSSFWorkbook wb = new HSSFWorkbook(is);
+			 ExcelExtractor extractor = new ExcelExtractor(wb);
+		) {
+			extractor.setIncludeSheetNames(cmdArgs.shouldShowSheetNames());
+			extractor.setFormulasNotResults(!cmdArgs.shouldEvaluateFormulas());
+			extractor.setIncludeCellComments(cmdArgs.shouldShowCellComments());
+			extractor.setIncludeBlankCells(cmdArgs.shouldShowBlankCells());
+			extractor.setIncludeHeadersFooters(cmdArgs.shouldIncludeHeadersFooters());
+			System.out.println(extractor.getText());
 		}
-		HSSFWorkbook wb = new HSSFWorkbook(is);
-		is.close();
-
-		ExcelExtractor extractor = new ExcelExtractor(wb);
-		extractor.setIncludeSheetNames(cmdArgs.shouldShowSheetNames());
-		extractor.setFormulasNotResults(!cmdArgs.shouldEvaluateFormulas());
-		extractor.setIncludeCellComments(cmdArgs.shouldShowCellComments());
-		extractor.setIncludeBlankCells(cmdArgs.shouldShowBlankCells());
-		extractor.setIncludeHeadersFooters(cmdArgs.shouldIncludeHeadersFooters());
-		System.out.println(extractor.getText());
-		extractor.close();
-		wb.close();
 	}
 
 	@Override

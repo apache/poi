@@ -62,30 +62,30 @@ public class OOXMLPasswordsTry implements Closeable {
     }
     
     public String tryAll(File wordfile) throws IOException, GeneralSecurityException {
-        // Load
-        BufferedReader r = new BufferedReader(new FileReader(wordfile));
-        long start = System.currentTimeMillis();
-        int count = 0;
-        
-        // Try each password in turn, reporting progress
         String valid = null;
-        String password;
-        while ((password = r.readLine()) != null) {
-            if (isValid(password)) {
-                valid = password;
-                break;
+        // Load
+        try (BufferedReader r = new BufferedReader(new FileReader(wordfile))) {
+            long start = System.currentTimeMillis();
+            int count = 0;
+
+            // Try each password in turn, reporting progress
+            String password;
+            while ((password = r.readLine()) != null) {
+                if (isValid(password)) {
+                    valid = password;
+                    break;
+                }
+                count++;
+
+                if (count % 1000 == 0) {
+                    int secs = (int) ((System.currentTimeMillis() - start) / 1000);
+                    System.out.println("Done " + count + " passwords, " +
+                                               secs + " seconds, last password " + password);
+                }
             }
-            count++;
-            
-            if (count % 1000 == 0) {
-                int secs = (int)((System.currentTimeMillis() - start) / 1000);
-                System.out.println("Done " + count + " passwords, " +
-                                   secs + " seconds, last password " + password);
-            }
+
         }
-        
         // Tidy and return (null if no match)
-        r.close();
         return valid;
     }
     public boolean isValid(String password) throws GeneralSecurityException {
@@ -103,10 +103,11 @@ public class OOXMLPasswordsTry implements Closeable {
         
         System.out.println("Trying passwords from " + words + " against " + ooxml);
         System.out.println();
-        
-        OOXMLPasswordsTry pt = new OOXMLPasswordsTry(ooxml);
-        String password = pt.tryAll(words);
-        pt.close();
+
+        String password;
+        try (OOXMLPasswordsTry pt = new OOXMLPasswordsTry(ooxml)) {
+            password = pt.tryAll(words);
+        }
         
         System.out.println();
         if (password == null) {

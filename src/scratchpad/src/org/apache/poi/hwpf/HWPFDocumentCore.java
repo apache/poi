@@ -17,9 +17,10 @@
 
 package org.apache.poi.hwpf;
 
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.SequenceInputStream;
 import java.security.GeneralSecurityException;
 
 import org.apache.poi.EncryptedDocumentException;
@@ -48,7 +49,6 @@ import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.BoundedInputStream;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
@@ -320,40 +320,29 @@ public abstract class HWPFDocumentCore extends POIDocument {
      * @return the read bytes
      * @throws IOException if the stream can't be found
      */
-    protected byte[] getDocumentEntryBytes(String name, int encryptionOffset, int len) throws IOException {
+    protected byte[] getDocumentEntryBytes(String name, int encryptionOffset, final int len) throws IOException {
         DirectoryNode dir = getDirectory();
         DocumentEntry documentProps = (DocumentEntry)dir.getEntry(name);
-        DocumentInputStream dis = dir.createDocumentInputStream(documentProps);
-        EncryptionInfo ei = (encryptionOffset > -1) ? getEncryptionInfo() : null;
         int streamSize = documentProps.getSize();
-        ByteArrayOutputStream bos = new ByteArrayOutputStream(Math.min(streamSize,len));
+        boolean isEncrypted = (encryptionOffset > -1 && getEncryptionInfo() != null);
 
-        InputStream is = dis;
-        try {
-            if (ei != null) {
-                try {
-                    Decryptor dec = ei.getDecryptor();
-                    is = dec.getDataStream(dis, streamSize, 0);
-                    if (encryptionOffset > 0) {
-                        ChunkedCipherInputStream cis = (ChunkedCipherInputStream)is;
-                        byte[] plain = IOUtils.safelyAllocate(encryptionOffset, MAX_RECORD_LENGTH);
-                        cis.readPlain(plain, 0, encryptionOffset);
-                        bos.write(plain);
-                    }
-                } catch (GeneralSecurityException e) {
-                    throw new IOException(e.getMessage(), e);
-                }
-            }
-            // This simplifies a few combinations, so we actually always try to copy len bytes
-            // regardless if encryptionOffset is greater than 0
-            if (len < Integer.MAX_VALUE) {
-                is = new BoundedInputStream(is, len);
-            }
-            IOUtils.copy(is, bos);
-            return bos.toByteArray();
-        } finally {
-            IOUtils.closeQuietly(is);
-            IOUtils.closeQuietly(dis);
+        try (DocumentInputStream dis = dir.createDocumentInputStream(documentProps);
+             InputStream is = isEncrypted ? getDecryptedStream(dis, streamSize, encryptionOffset) : dis) {
+            return IOUtils.toByteArray(is, Math.min(streamSize, len));
+        } catch (GeneralSecurityException e) {
+            throw new IOException("Unable to decrypt data for entry: "+name, e);
         }
+    }
+
+    private InputStream getDecryptedStream(DocumentInputStream dis, int streamSize, int encryptionOffset)
+    throws IOException, GeneralSecurityException {
+        Decryptor dec = getEncryptionInfo().getDecryptor();
+        ChunkedCipherInputStream cis = (ChunkedCipherInputStream)dec.getDataStream(dis, streamSize, 0);
+        byte[] plain = {};
+        if (encryptionOffset > 0) {
+            plain = IOUtils.safelyAllocate(encryptionOffset, MAX_RECORD_LENGTH);
+            cis.readPlain(plain, 0, encryptionOffset);
+        }
+        return new SequenceInputStream(new ByteArrayInputStream(plain), cis);
     }
 }

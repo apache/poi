@@ -511,32 +511,30 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             persistIds.put(oldToNewPositions.get(entry.getValue()), entry.getKey());
         }
 
-        HSLFSlideShowEncrypted encData = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom());
+        try (HSLFSlideShowEncrypted encData = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom())) {
+            for (Record record : _records) {
+                assert (record instanceof PositionDependentRecord);
+                // We've already figured out their new location, and
+                // told them that
+                // Tell them of the positions of the other records though
+                PositionDependentRecord pdr = (PositionDependentRecord) record;
+                Integer persistId = persistIds.get(pdr.getLastOnDiskOffset());
+                if (persistId == null) {
+                    persistId = 0;
+                }
 
-        for (Record record : _records) {
-            assert (record instanceof PositionDependentRecord);
-            // We've already figured out their new location, and
-            // told them that
-            // Tell them of the positions of the other records though
-            PositionDependentRecord pdr = (PositionDependentRecord) record;
-            Integer persistId = persistIds.get(pdr.getLastOnDiskOffset());
-            if (persistId == null) {
-                persistId = 0;
-            }
+                // For now, we're only handling PositionDependentRecord's that
+                // happen at the top level.
+                // In future, we'll need the handle them everywhere, but that's
+                // a bit trickier
+                pdr.updateOtherRecordReferences(oldToNewPositions);
 
-            // For now, we're only handling PositionDependentRecord's that
-            // happen at the top level.
-            // In future, we'll need the handle them everywhere, but that's
-            // a bit trickier
-            pdr.updateOtherRecordReferences(oldToNewPositions);
-
-            // Whatever happens, write out that record tree
-            if (os != null) {
-                record.writeOut(encData.encryptRecord(os, persistId, record));
+                // Whatever happens, write out that record tree
+                if (os != null) {
+                    record.writeOut(encData.encryptRecord(os, persistId, record));
+                }
             }
         }
-
-        encData.close();
 
         // Update and write out the Current User atom
         int oldLastUserEditAtomPos = (int) currentUser.getCurrentEditOffset();
@@ -657,53 +655,52 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         }
         getDocumentSummaryInformation();
 
-        // set new encryption settings
-        HSLFSlideShowEncrypted encryptedSS = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom());
-        _records = encryptedSS.updateEncryptionRecord(_records);
-
         // The list of entries we've written out
-        List<String> writtenEntries = new ArrayList<>(1);
+        final List<String> writtenEntries = new ArrayList<>(1);
 
-        // Write out the Property Streams
-        writeProperties(outFS, writtenEntries);
+        // set new encryption settings
+        try (HSLFSlideShowEncrypted encryptedSS = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom())) {
+            _records = encryptedSS.updateEncryptionRecord(_records);
 
-        BufAccessBAOS baos = new BufAccessBAOS();
+            // Write out the Property Streams
+            writeProperties(outFS, writtenEntries);
 
-        // For position dependent records, hold where they were and now are
-        // As we go along, update, and hand over, to any Position Dependent
-        // records we happen across
-        updateAndWriteDependantRecords(baos, null);
+            BufAccessBAOS baos = new BufAccessBAOS();
 
-        // Update our cached copy of the bytes that make up the PPT stream
-        _docstream = new byte[baos.size()];
-        System.arraycopy(baos.getBuf(), 0, _docstream, 0, baos.size());
-        baos.close();
+            // For position dependent records, hold where they were and now are
+            // As we go along, update, and hand over, to any Position Dependent
+            // records we happen across
+            updateAndWriteDependantRecords(baos, null);
 
-        // Write the PPT stream into the POIFS layer
-        ByteArrayInputStream bais = new ByteArrayInputStream(_docstream);
-        outFS.createOrUpdateDocument(bais, POWERPOINT_DOCUMENT);
-        writtenEntries.add(POWERPOINT_DOCUMENT);
+            // Update our cached copy of the bytes that make up the PPT stream
+            _docstream = new byte[baos.size()];
+            System.arraycopy(baos.getBuf(), 0, _docstream, 0, baos.size());
+            baos.close();
 
-        currentUser.setEncrypted(encryptedSS.getDocumentEncryptionAtom() != null);
-        currentUser.writeToFS(outFS);
-        writtenEntries.add("Current User");
+            // Write the PPT stream into the POIFS layer
+            ByteArrayInputStream bais = new ByteArrayInputStream(_docstream);
+            outFS.createOrUpdateDocument(bais, POWERPOINT_DOCUMENT);
+            writtenEntries.add(POWERPOINT_DOCUMENT);
 
+            currentUser.setEncrypted(encryptedSS.getDocumentEncryptionAtom() != null);
+            currentUser.writeToFS(outFS);
+            writtenEntries.add("Current User");
 
-        if (_pictures.size() > 0) {
-            BufAccessBAOS pict = new BufAccessBAOS();
-            for (HSLFPictureData p : _pictures) {
-                int offset = pict.size();
-                p.write(pict);
-                encryptedSS.encryptPicture(pict.getBuf(), offset);
-            }
-            outFS.createOrUpdateDocument(
+            if (_pictures.size() > 0) {
+                BufAccessBAOS pict = new BufAccessBAOS();
+                for (HSLFPictureData p : _pictures) {
+                    int offset = pict.size();
+                    p.write(pict);
+                    encryptedSS.encryptPicture(pict.getBuf(), offset);
+                }
+                outFS.createOrUpdateDocument(
                     new ByteArrayInputStream(pict.getBuf(), 0, pict.size()), "Pictures"
-            );
-            writtenEntries.add("Pictures");
-            pict.close();
-        }
+                );
+                writtenEntries.add("Pictures");
+                pict.close();
+            }
 
-        encryptedSS.close();
+        }
         
         // If requested, copy over any other streams we spot, eg Macros
         if (copyAllOtherNodes) {

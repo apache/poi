@@ -83,9 +83,7 @@ public class ChartFromScratch {
             Double[] values1 = listCountries.toArray(new Double[0]);
             Double[] values2 = listSpeakers.toArray(new Double[0]);
 
-            try {
-
-                XMLSlideShow ppt = new XMLSlideShow();
+            try (XMLSlideShow ppt = new XMLSlideShow()) {
                 XSLFSlide slide = ppt.createSlide();
                 XSLFChart chart = ppt.createChart();
                 Rectangle2D rect2D = new java.awt.Rectangle(XDDFChart.DEFAULT_X, XDDFChart.DEFAULT_Y,
@@ -96,10 +94,6 @@ public class ChartFromScratch {
                 try (OutputStream out = new FileOutputStream("chart-from-scratch.pptx")) {
                     ppt.write(out);
                 }
-            }
-            catch(Exception e)
-            {
-                e.printStackTrace();
             }
         }
         System.out.println("Done");

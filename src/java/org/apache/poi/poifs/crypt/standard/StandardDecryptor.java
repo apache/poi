@@ -121,7 +121,7 @@ public class StandardDecryptor extends Decryptor implements Cloneable {
     }
 
     @Override
-    @SuppressWarnings("resource")
+    @SuppressWarnings({"resource", "squid:S2095"})
     public InputStream getDataStream(DirectoryNode dir) throws IOException {
         DocumentInputStream dis = dir.createDocumentInputStream(DEFAULT_POIFS_ENTRY);
 

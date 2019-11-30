@@ -17,15 +17,25 @@
 
 package org.apache.poi.ooxml.util;
 
-import org.apache.poi.openxml4j.opc.*;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.util.IOUtils;
-
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URI;
+
+import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackageProperties;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
+import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
+import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Provides handy methods to work with OOXML packages
@@ -51,27 +61,27 @@ public final class PackageHelper {
 
         String path = file.getAbsolutePath();
 
-        OPCPackage dest = OPCPackage.create(path);
-        PackageRelationshipCollection rels = pkg.getRelationships();
-        for (PackageRelationship rel : rels) {
-            PackagePart part = pkg.getPart(rel);
-            PackagePart part_tgt;
-            if (rel.getRelationshipType().equals(PackageRelationshipTypes.CORE_PROPERTIES)) {
-                copyProperties(pkg.getPackageProperties(), dest.getPackageProperties());
-                continue;
-            }
-            dest.addRelationship(part.getPartName(), rel.getTargetMode(), rel.getRelationshipType());
-            part_tgt = dest.createPart(part.getPartName(), part.getContentType());
+        try (OPCPackage dest = OPCPackage.create(path)) {
+            PackageRelationshipCollection rels = pkg.getRelationships();
+            for (PackageRelationship rel : rels) {
+                PackagePart part = pkg.getPart(rel);
+                PackagePart part_tgt;
+                if (rel.getRelationshipType().equals(PackageRelationshipTypes.CORE_PROPERTIES)) {
+                    copyProperties(pkg.getPackageProperties(), dest.getPackageProperties());
+                    continue;
+                }
+                dest.addRelationship(part.getPartName(), rel.getTargetMode(), rel.getRelationshipType());
+                part_tgt = dest.createPart(part.getPartName(), part.getContentType());
 
-            OutputStream out = part_tgt.getOutputStream();
-            IOUtils.copy(part.getInputStream(), out);
-            out.close();
+                OutputStream out = part_tgt.getOutputStream();
+                IOUtils.copy(part.getInputStream(), out);
+                out.close();
 
-            if(part.hasRelationships()) {
-                copy(pkg, part, dest, part_tgt);
+                if (part.hasRelationships()) {
+                    copy(pkg, part, dest, part_tgt);
+                }
             }
         }
-        dest.close();
 
         //the temp file will be deleted when JVM terminates
         new File(path).deleteOnExit();

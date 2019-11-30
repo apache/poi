@@ -123,42 +123,40 @@ public class BiffDrawingToXml {
             return;
         }
         String input = getInputFileName(params);
-        FileInputStream inp = new FileInputStream(input);
         String output = getOutputFileName(input);
-        FileOutputStream outputStream = new FileOutputStream(output);
-        writeToFile(outputStream, inp, isExcludeWorkbookRecords(params), params);
-        inp.close();
-        outputStream.close();
+        try (FileInputStream inp = new FileInputStream(input);
+            FileOutputStream outputStream = new FileOutputStream(output)) {
+            writeToFile(outputStream, inp, isExcludeWorkbookRecords(params), params);
+        }
     }
 
     public static void writeToFile(OutputStream fos, InputStream xlsWorkbook, boolean excludeWorkbookRecords, String[] params) throws IOException {
-        HSSFWorkbook workbook = new HSSFWorkbook(xlsWorkbook);
-        InternalWorkbook internalWorkbook = workbook.getInternalWorkbook();
-        DrawingGroupRecord r = (DrawingGroupRecord) internalWorkbook.findFirstRecordBySid(DrawingGroupRecord.sid);
+        try (HSSFWorkbook workbook = new HSSFWorkbook(xlsWorkbook)) {
+            InternalWorkbook internalWorkbook = workbook.getInternalWorkbook();
+            DrawingGroupRecord r = (DrawingGroupRecord) internalWorkbook.findFirstRecordBySid(DrawingGroupRecord.sid);
 
-        StringBuilder builder = new StringBuilder();
-        builder.append("<workbook>\n");
-        String tab = "\t";
-        if (!excludeWorkbookRecords && r != null) {
-            r.decode();
-            List<EscherRecord> escherRecords = r.getEscherRecords();
-            for (EscherRecord record : escherRecords) {
-                builder.append(record.toXml(tab));
+            StringBuilder builder = new StringBuilder();
+            builder.append("<workbook>\n");
+            String tab = "\t";
+            if (!excludeWorkbookRecords && r != null) {
+                r.decode();
+                List<EscherRecord> escherRecords = r.getEscherRecords();
+                for (EscherRecord record : escherRecords) {
+                    builder.append(record.toXml(tab));
+                }
             }
-        }
-        List<Integer> sheets = getSheetsIndexes(params, workbook);
-        for (Integer i : sheets) {
-            HSSFPatriarch p = workbook.getSheetAt(i).getDrawingPatriarch();
-            if(p != null ) {
-                builder.append(tab).append("<sheet").append(i).append(">\n");
-                builder.append(p.getBoundAggregate().toXml(tab + "\t"));
-                builder.append(tab).append("</sheet").append(i).append(">\n");
+            List<Integer> sheets = getSheetsIndexes(params, workbook);
+            for (Integer i : sheets) {
+                HSSFPatriarch p = workbook.getSheetAt(i).getDrawingPatriarch();
+                if (p != null) {
+                    builder.append(tab).append("<sheet").append(i).append(">\n");
+                    builder.append(p.getBoundAggregate().toXml(tab + "\t"));
+                    builder.append(tab).append("</sheet").append(i).append(">\n");
+                }
             }
+            builder.append("</workbook>\n");
+            fos.write(builder.toString().getBytes(StringUtil.UTF8));
         }
-        builder.append("</workbook>\n");
-        fos.write(builder.toString().getBytes(StringUtil.UTF8));
-        fos.close();
-        workbook.close();
     }
 
 }
