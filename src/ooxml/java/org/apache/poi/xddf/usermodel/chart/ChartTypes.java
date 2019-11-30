@@ -21,6 +21,7 @@ public enum ChartTypes {
     AREA3D,
     BAR,
     BAR3D,
+    DOUGHNUT,
     LINE,
     LINE3D,
     PIE,

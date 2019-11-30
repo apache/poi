@@ -97,6 +97,8 @@ public class TestNecessaryOOXMLClasses {
         Assert.assertNotNull(ctArea3DChart);
         CTSurfaceChart ctSurfaceChart = CTSurfaceChart.Factory.newInstance();
         Assert.assertNotNull(ctSurfaceChart);
+        CTDoughnutChart ctDoughnutChart = CTDoughnutChart.Factory.newInstance();
+        Assert.assertNotNull(ctDoughnutChart);
         CTBar3DChart ctBar3DChart = CTBar3DChart.Factory.newInstance();
         Assert.assertNotNull(ctBar3DChart);
         CTLine3DChart ctLine3DChart = CTLine3DChart.Factory.newInstance();

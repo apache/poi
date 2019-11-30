@@ -65,6 +65,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTDateAx;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTDoughnutChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLine3DChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPie3DChart;
@@ -426,6 +427,11 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
             series.add(new XDDFBar3DChartData(this, barChart, categories, values));
         }
 
+        for (int i = 0; i < plotArea.sizeOfDoughnutChartArray(); i++) {
+            CTDoughnutChart doughnutChart = plotArea.getDoughnutChartArray(i);
+            series.add(new XDDFDoughnutChartData(this, doughnutChart));
+        }
+
         for (int i = 0; i < plotArea.sizeOfLineChartArray(); i++) {
             CTLineChart lineChart = plotArea.getLineChartArray(i);
             series.add(new XDDFLineChartData(this, lineChart, categories, values));
@@ -465,7 +471,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
             CTSurface3DChart surfaceChart = plotArea.getSurface3DChartArray(i);
             series.add(new XDDFSurface3DChartData(this, surfaceChart, categories, values));
         }
-        // TODO repeat above code for missing charts: Bubble, Doughnut, OfPie and Stock
+        // TODO repeat above code for missing charts: Bubble, OfPie and Stock
 
         seriesCount = series.size();
         return series;
@@ -578,6 +584,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
             return new XDDFBarChartData(this, plotArea.addNewBarChart(), categories, mapValues);
         case BAR3D:
             return new XDDFBar3DChartData(this, plotArea.addNewBar3DChart(), categories, mapValues);
+        case DOUGHNUT:
+            return new XDDFDoughnutChartData(this, plotArea.addNewDoughnutChart());
         case LINE:
             return new XDDFLineChartData(this, plotArea.addNewLineChart(), categories, mapValues);
         case LINE3D:
@@ -594,7 +602,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
             return new XDDFSurfaceChartData(this, plotArea.addNewSurfaceChart(), categories, mapValues);
         case SURFACE3D:
             return new XDDFSurface3DChartData(this, plotArea.addNewSurface3DChart(), categories, mapValues);
-        // TODO repeat above code for missing charts: Bubble, Doughnut, OfPie and Stock
+        // TODO repeat above code for missing charts: Bubble, OfPie and Stock
         default:
             return null;
         }
