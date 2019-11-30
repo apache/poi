@@ -53,7 +53,6 @@ import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
@@ -84,9 +83,6 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.ChartSpaceDocument;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumns;
 
 @Beta
 public abstract class XDDFChart extends POIXMLDocumentPart implements TextContainer {
@@ -470,6 +466,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
             series.add(new XDDFSurface3DChartData(this, surfaceChart, categories, values));
         }
         // TODO repeat above code for missing charts: Bubble, Doughnut, OfPie and Stock
+
+        seriesCount = series.size();
         return series;
     }
 
@@ -501,6 +499,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
             XDDFChartAxis axis = axes.get(0);
             axis.crossAxis(valueAxis);
             valueAxis.crossAxis(axis);
+            axis.setCrosses(AxisCrosses.AUTO_ZERO);
+            valueAxis.setCrosses(AxisCrosses.AUTO_ZERO);
         }
         axes.add(valueAxis);
         return valueAxis;
@@ -518,6 +518,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
             XDDFChartAxis axis = axes.get(0);
             axis.crossAxis(seriesAxis);
             seriesAxis.crossAxis(axis);
+            axis.setCrosses(AxisCrosses.AUTO_ZERO);
+            seriesAxis.setCrosses(AxisCrosses.AUTO_ZERO);
         }
         axes.add(seriesAxis);
         return seriesAxis;
@@ -529,6 +531,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
             XDDFChartAxis axis = axes.get(0);
             axis.crossAxis(categoryAxis);
             categoryAxis.crossAxis(axis);
+            axis.setCrosses(AxisCrosses.AUTO_ZERO);
+            categoryAxis.setCrosses(AxisCrosses.AUTO_ZERO);
         }
         axes.add(categoryAxis);
         return categoryAxis;
@@ -540,6 +544,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
             XDDFChartAxis axis = axes.get(0);
             axis.crossAxis(dateAxis);
             dateAxis.crossAxis(axis);
+            axis.setCrosses(AxisCrosses.AUTO_ZERO);
+            dateAxis.setCrosses(AxisCrosses.AUTO_ZERO);
         }
         axes.add(dateAxis);
         return dateAxis;
@@ -853,48 +859,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         XSSFCell cell = this.getCell(row, column);
         cell.setCellValue(title);
 
-        CTTable ctTable = this.getSheetTable(sheet);
-
-        this.updateSheetTable(ctTable, title, column);
         return new CellReference(sheet.getSheetName(), 0, column, true, true);
-    }
-
-    /**
-     * this method will check whether sheet have table
-     * in case table size zero then create new table and add table columns element
-     * @param sheet
-     * @return table object
-     */
-    private CTTable getSheetTable(XSSFSheet sheet) {
-        if(sheet.getTables().size() == 0)
-        {
-            XSSFTable newTable = sheet.createTable(null);
-            newTable.getCTTable().addNewTableColumns();
-            sheet.getTables().add(newTable);
-        }
-        return sheet.getTables().get(0).getCTTable();
-    }
-
-    /**
-     * this method update column header of sheet into table
-     *
-     * @param ctTable
-     *            xssf table object
-     * @param title
-     *            title of column
-     * @param index
-     *            index of column
-     */
-    private void updateSheetTable(CTTable ctTable, String title, int index) {
-        CTTableColumns tableColumnList = ctTable.getTableColumns();
-        CTTableColumn column = null;
-        int columnCount  = tableColumnList.getTableColumnList().size()-1;
-        for( int i = columnCount; i < index; i++) {
-            column = tableColumnList.addNewTableColumn();
-            column.setId(i);
-        }
-        column = tableColumnList.getTableColumnArray(index);
-        column.setName(title);
     }
 
     /**

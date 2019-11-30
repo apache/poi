@@ -21,9 +21,14 @@ package org.apache.poi.xddf.usermodel.chart;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.xddf.usermodel.text.TextContainer;
+import org.apache.poi.xddf.usermodel.text.XDDFRunProperties;
 import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTTx;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 
 /**
  * @since 4.0.1
@@ -73,4 +78,41 @@ public class XDDFTitle {
         }
     }
 
+    /**
+     * @since POI 4.1.2
+     */
+    public XDDFRunProperties getOrAddTextProperties() {
+        CTTextBody text;
+        if (title.isSetTxPr()) {
+            text = title.getTxPr();
+        } else {
+            text = title.addNewTxPr();
+        }
+        return new XDDFRunProperties(getOrAddTextProperties(text));
+    }
+
+    private CTTextCharacterProperties getOrAddTextProperties(CTTextBody body) {
+        CTTextCharacterProperties properties;
+        if (body.getBodyPr() == null) {
+            body.addNewBodyPr();
+        }
+        CTTextParagraph paragraph;
+        if (body.sizeOfPArray() > 0) {
+            paragraph = body.getPArray(0);
+        } else {
+            paragraph = body.addNewP();
+        }
+        CTTextParagraphProperties paraprops;
+        if (paragraph.isSetPPr()) {
+            paraprops = paragraph.getPPr();
+        } else {
+            paraprops = paragraph.addNewPPr();
+        }
+        if (paraprops.isSetDefRPr()) {
+            properties = paraprops.getDefRPr();
+        } else {
+            properties = paraprops.addNewDefRPr();
+        }
+        return properties;
+    }
 }

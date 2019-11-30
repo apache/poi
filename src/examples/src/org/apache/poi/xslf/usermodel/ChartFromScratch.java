@@ -93,7 +93,7 @@ public class ChartFromScratch {
                 slide.addChart(chart, rect2D);
                 setBarData(chart, chartTitle, series, categories, values1, values2);
                 // save the result
-                try (OutputStream out = new FileOutputStream("bar-chart-demo-output.pptx")) {
+                try (OutputStream out = new FileOutputStream("chart-from-scratch.pptx")) {
                     ppt.write(out);
                 }
             }
@@ -114,21 +114,21 @@ public class ChartFromScratch {
         leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
 
         final int numOfPoints = categories.length;
-        final String categoryDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 0, 0));
-        final String valuesDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 1, 1));
-        final String valuesDataRange2 = chart.formatRange(new CellRangeAddress(1, numOfPoints, 2, 2));
-        final XDDFDataSource<?> categoriesData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange, 0);
-        final XDDFNumericalDataSource<? extends Number> valuesData = XDDFDataSourcesFactory.fromArray(values1, valuesDataRange, 1);
+        final String categoryDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, columnLanguages, columnLanguages));
+        final String valuesDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, columnCountries, columnCountries));
+        final String valuesDataRange2 = chart.formatRange(new CellRangeAddress(1, numOfPoints, columnSpeakers, columnSpeakers));
+        final XDDFDataSource<?> categoriesData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange, columnLanguages);
+        final XDDFNumericalDataSource<? extends Number> valuesData = XDDFDataSourcesFactory.fromArray(values1, valuesDataRange, columnCountries);
         values1[6] = 16.0; // if you ever want to change the underlying data
-        final XDDFNumericalDataSource<? extends Number> valuesData2 = XDDFDataSourcesFactory.fromArray(values2, valuesDataRange2, 2);
+        final XDDFNumericalDataSource<? extends Number> valuesData2 = XDDFDataSourcesFactory.fromArray(values2, valuesDataRange2, columnSpeakers);
 
 
         XDDFBarChartData bar = (XDDFBarChartData) chart.createData(ChartTypes.BAR, bottomAxis, leftAxis);
         XDDFBarChartData.Series series1 = (XDDFBarChartData.Series) bar.addSeries(categoriesData, valuesData);
-        series1.setTitle(series[0], chart.setSheetTitle(series[0], 1));
+        series1.setTitle(series[0], chart.setSheetTitle(series[0], columnCountries));
 
         XDDFBarChartData.Series series2 = (XDDFBarChartData.Series) bar.addSeries(categoriesData, valuesData2);
-        series2.setTitle(series[1], chart.setSheetTitle(series[1], 2));
+        series2.setTitle(series[1], chart.setSheetTitle(series[1], columnSpeakers));
 
         bar.setVaryColors(true);
         bar.setBarDirection(BarDirection.COL);
@@ -141,5 +141,9 @@ public class ChartFromScratch {
         chart.setTitleText(chartTitle);
         chart.setTitleOverlay(false);
     }
+
+    private static final int columnLanguages = 0;
+    private static final int columnCountries = 1;
+    private static final int columnSpeakers = 2;
 }
 

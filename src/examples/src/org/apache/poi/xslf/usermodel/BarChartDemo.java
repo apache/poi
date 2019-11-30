@@ -100,23 +100,27 @@ public class BarChartDemo {
         final XDDFBarChartData bar = (XDDFBarChartData) data.get(0);
 
         final int numOfPoints = categories.length;
-        final String categoryDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 0, 0));
-        final String valuesDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 1, 1));
-        final String valuesDataRange2 = chart.formatRange(new CellRangeAddress(1, numOfPoints, 2, 2));
-        final XDDFDataSource<?> categoriesData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange, 0);
-        final XDDFNumericalDataSource<? extends Number> valuesData = XDDFDataSourcesFactory.fromArray(values1, valuesDataRange, 1);
+        final String categoryDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, columnLanguages, columnLanguages));
+        final String valuesDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, columnCountries, columnCountries));
+        final String valuesDataRange2 = chart.formatRange(new CellRangeAddress(1, numOfPoints, columnSpeakers, columnSpeakers));
+        final XDDFDataSource<?> categoriesData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange, columnLanguages);
+        final XDDFNumericalDataSource<? extends Number> valuesData = XDDFDataSourcesFactory.fromArray(values1, valuesDataRange, columnCountries);
         values1[6] = 16.0; // if you ever want to change the underlying data
-        final XDDFNumericalDataSource<? extends Number> valuesData2 = XDDFDataSourcesFactory.fromArray(values2, valuesDataRange2, 2);
+        final XDDFNumericalDataSource<? extends Number> valuesData2 = XDDFDataSourcesFactory.fromArray(values2, valuesDataRange2, columnSpeakers);
 
         XDDFChartData.Series series1 = bar.getSeries(0);
         series1.replaceData(categoriesData, valuesData);
-        series1.setTitle(series[0], chart.setSheetTitle(series[0], 0));
+        series1.setTitle(series[0], chart.setSheetTitle(series[0], columnCountries));
         XDDFChartData.Series series2 = bar.addSeries(categoriesData, valuesData2);
-        series2.setTitle(series[1], chart.setSheetTitle(series[1], 1));
+        series2.setTitle(series[1], chart.setSheetTitle(series[1], columnSpeakers));
 
         chart.plot(bar);
         chart.setTitleText(chartTitle); // https://stackoverflow.com/questions/30532612
         // chart.setTitleOverlay(overlay);
+
+        // adjust font size for readability
+        bar.getCategoryAxis().getOrAddTextProperties().setFontSize(11.5);
+        chart.getTitle().getOrAddTextProperties().setFontSize(18.2);
     }
 
     private static void setColumnData(XSLFChart chart, String chartTitle) {
@@ -150,4 +154,8 @@ public class BarChartDemo {
         }
         return chart;
     }
+
+    private static final int columnLanguages = 0;
+    private static final int columnCountries = 1;
+    private static final int columnSpeakers = 2;
 }
