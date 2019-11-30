@@ -99,7 +99,7 @@ public abstract class XDDFChartData {
      */
     @Deprecated
     public List<Series> getSeries() {
-        return series;
+        return Collections.unmodifiableList(series);
     }
 
     public final int getSeriesCount() {
