@@ -346,19 +346,25 @@ public abstract class XDDFChartData {
 
         private void fillStringCache(CTStrData cache, int numOfPoints, XDDFDataSource<?> data) {
             cache.setPtArray(null); // unset old values
-            if (data.getPointAt(0) != null) { // assuming no value for first is no values at all
+            int effectiveNumOfPoints = 0;
+            for (int i = 0; i < numOfPoints; ++i) {
+                Object value = data.getPointAt(i);
+                if (value != null) {
+                    CTStrVal ctStrVal = cache.addNewPt();
+                    ctStrVal.setIdx(i);
+                    ctStrVal.setV(value.toString());
+                    effectiveNumOfPoints++;
+                }
+            }
+            if (effectiveNumOfPoints == 0) {
+                if (cache.isSetPtCount()) {
+                    cache.unsetPtCount();
+                }
+            } else {
                 if (cache.isSetPtCount()) {
                     cache.getPtCount().setVal(numOfPoints);
                 } else {
                     cache.addNewPtCount().setVal(numOfPoints);
-                }
-                for (int i = 0; i < numOfPoints; ++i) {
-                    String value = data.getPointAt(i).toString();
-                    if (value != null) {
-                        CTStrVal ctStrVal = cache.addNewPt();
-                        ctStrVal.setIdx(i);
-                        ctStrVal.setV(value);
-                    }
                 }
             }
         }
@@ -373,19 +379,23 @@ public abstract class XDDFChartData {
                 cache.setFormatCode(formatCode);
             }
             cache.setPtArray(null); // unset old values
-            if (data.getPointAt(0) != null) { // assuming no value for first is no values at all
+            int effectiveNumOfPoints = 0;
+            for (int i = 0; i < numOfPoints; ++i) {
+                Object value = data.getPointAt(i);
+                if (value != null) {
+                    CTNumVal ctNumVal = cache.addNewPt();
+                    ctNumVal.setIdx(i);
+                    ctNumVal.setV(value.toString());
+                    effectiveNumOfPoints++;
+                }
+            }
+            if (effectiveNumOfPoints == 0) {
+                cache.unsetPtCount();
+            } else {
                 if (cache.isSetPtCount()) {
                     cache.getPtCount().setVal(numOfPoints);
                 } else {
                     cache.addNewPtCount().setVal(numOfPoints);
-                }
-                for (int i = 0; i < numOfPoints; ++i) {
-                    Object value = data.getPointAt(i);
-                    if (value != null) {
-                        CTNumVal ctNumVal = cache.addNewPt();
-                        ctNumVal.setIdx(i);
-                        ctNumVal.setV(value.toString());
-                    }
                 }
             }
         }

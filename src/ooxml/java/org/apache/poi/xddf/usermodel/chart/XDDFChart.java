@@ -380,7 +380,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     }
 
     public XDDFManualLayout getOrAddManualLayout() {
-        return new XDDFManualLayout(chart.getPlotArea());
+        return new XDDFManualLayout(getCTPlotArea());
     }
 
     private long seriesCount = 0;
@@ -390,7 +390,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
 
     public void plot(XDDFChartData data) {
         XSSFSheet sheet = getSheet();
-        for (XDDFChartData.Series series : data.getSeries()) {
+        for (int idx = 0; idx < data.getSeriesCount(); idx++) {
+            XDDFChartData.Series series = data.getSeries(idx);
             series.plot();
             XDDFDataSource<?> categoryDS = series.getCategoryData();
             XDDFNumericalDataSource<? extends Number> valuesDS = series.getValuesData();
@@ -468,7 +469,6 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
             CTSurface3DChart surfaceChart = plotArea.getSurface3DChartArray(i);
             series.add(new XDDFSurface3DChartData(this, surfaceChart, categories, values));
         }
-
         // TODO repeat above code for missing charts: Bubble, Doughnut, OfPie and Stock
         return series;
     }
@@ -496,7 +496,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     }
 
     public XDDFValueAxis createValueAxis(AxisPosition pos) {
-        XDDFValueAxis valueAxis = new XDDFValueAxis(chart.getPlotArea(), pos);
+        XDDFValueAxis valueAxis = new XDDFValueAxis(getCTPlotArea(), pos);
         if (axes.size() == 1) {
             XDDFChartAxis axis = axes.get(0);
             axis.crossAxis(valueAxis);
@@ -513,7 +513,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * @return series axis with specified position
      */
     public XDDFSeriesAxis createSeriesAxis(AxisPosition pos) {
-        XDDFSeriesAxis seriesAxis = new XDDFSeriesAxis(chart.getPlotArea(), pos);
+        XDDFSeriesAxis seriesAxis = new XDDFSeriesAxis(getCTPlotArea(), pos);
         if (axes.size() == 1) {
             XDDFChartAxis axis = axes.get(0);
             axis.crossAxis(seriesAxis);
@@ -524,7 +524,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     }
 
     public XDDFCategoryAxis createCategoryAxis(AxisPosition pos) {
-        XDDFCategoryAxis categoryAxis = new XDDFCategoryAxis(chart.getPlotArea(), pos);
+        XDDFCategoryAxis categoryAxis = new XDDFCategoryAxis(getCTPlotArea(), pos);
         if (axes.size() == 1) {
             XDDFChartAxis axis = axes.get(0);
             axis.crossAxis(categoryAxis);
@@ -535,7 +535,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     }
 
     public XDDFDateAxis createDateAxis(AxisPosition pos) {
-        XDDFDateAxis dateAxis = new XDDFDateAxis(chart.getPlotArea(), pos);
+        XDDFDateAxis dateAxis = new XDDFDateAxis(getCTPlotArea(), pos);
         if (axes.size() == 1) {
             XDDFChartAxis axis = axes.get(0);
             axis.crossAxis(dateAxis);
@@ -602,23 +602,23 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     }
 
     private boolean hasAxes() {
-        CTPlotArea ctPlotArea = chart.getPlotArea();
+        CTPlotArea ctPlotArea = getCTPlotArea();
         int totalAxisCount = ctPlotArea.sizeOfValAxArray() + ctPlotArea.sizeOfCatAxArray() + ctPlotArea
             .sizeOfDateAxArray() + ctPlotArea.sizeOfSerAxArray();
         return totalAxisCount > 0;
     }
 
     private void parseAxes() {
-        for (CTCatAx catAx : chart.getPlotArea().getCatAxArray()) {
+        for (CTCatAx catAx : getCTPlotArea().getCatAxArray()) {
             axes.add(new XDDFCategoryAxis(catAx));
         }
-        for (CTDateAx dateAx : chart.getPlotArea().getDateAxArray()) {
+        for (CTDateAx dateAx : getCTPlotArea().getDateAxArray()) {
             axes.add(new XDDFDateAxis(dateAx));
         }
-        for (CTSerAx serAx : chart.getPlotArea().getSerAxArray()) {
+        for (CTSerAx serAx : getCTPlotArea().getSerAxArray()) {
             axes.add(new XDDFSeriesAxis(serAx));
         }
-        for (CTValAx valAx : chart.getPlotArea().getValAxArray()) {
+        for (CTValAx valAx : getCTPlotArea().getValAxArray()) {
             axes.add(new XDDFValueAxis(valAx));
         }
     }
@@ -775,10 +775,11 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * @since POI 4.0.0
      */
     private XSSFRow getRow(XSSFSheet sheet, int index) {
-        if (sheet.getRow(index) != null) {
-            return sheet.getRow(index);
-        } else {
+        XSSFRow row = sheet.getRow(index);
+        if (row == null) {
             return sheet.createRow(index);
+        } else {
+            return row;
         }
     }
 
@@ -794,10 +795,11 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * @since POI 4.0.0
      */
     private XSSFCell getCell(XSSFRow row, int index) {
-        if (row.getCell(index) != null) {
-            return row.getCell(index);
-        } else {
+        XSSFCell cell = row.getCell(index);
+        if (cell == null) {
             return row.createCell(index);
+        } else {
+            return cell;
         }
     }
 

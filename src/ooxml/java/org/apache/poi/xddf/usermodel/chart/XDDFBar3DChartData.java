@@ -181,7 +181,7 @@ public class XDDFBar3DChartData extends XDDFChartData {
     @Override
     public XDDFChartData.Series addSeries(XDDFDataSource<?> category,
             XDDFNumericalDataSource<? extends Number> values) {
-        final int index = this.series.size();
+        final long index = this.parent.incrementSeriesCount();
         final CTBarSer ctSer = this.chart.addNewSer();
         ctSer.addNewTx();
         ctSer.addNewCat();
