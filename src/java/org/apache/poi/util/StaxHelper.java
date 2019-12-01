@@ -17,6 +17,8 @@
 
 package org.apache.poi.util;
 
+import java.util.function.Consumer;
+
 import javax.xml.stream.XMLEventFactory;
 import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLOutputFactory;
@@ -28,17 +30,19 @@ import javax.xml.stream.XMLOutputFactory;
 public final class StaxHelper {
     private static final POILogger logger = POILogFactory.getLogger(StaxHelper.class);
 
-    private StaxHelper() {}
+    private StaxHelper() {
+    }
 
     /**
      * Creates a new StAX XMLInputFactory, with sensible defaults
      */
+    @SuppressWarnings({"squid:S2755"})
     public static XMLInputFactory newXMLInputFactory() {
         XMLInputFactory factory = XMLInputFactory.newInstance();
-        trySetProperty(factory, XMLInputFactory.IS_NAMESPACE_AWARE, true);
-        trySetProperty(factory, XMLInputFactory.IS_VALIDATING, false);
-        trySetProperty(factory, XMLInputFactory.SUPPORT_DTD, false);
-        trySetProperty(factory, XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+        trySet(XMLInputFactory.IS_NAMESPACE_AWARE, (n) -> factory.setProperty(n, true));
+        trySet(XMLInputFactory.IS_VALIDATING, (n) -> factory.setProperty(n, false));
+        trySet(XMLInputFactory.SUPPORT_DTD, (n) -> factory.setProperty(n, false));
+        trySet(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, (n) -> factory.setProperty(n, false));
         return factory;
     }
 
@@ -47,7 +51,7 @@ public final class StaxHelper {
      */
     public static XMLOutputFactory newXMLOutputFactory() {
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        trySetProperty(factory, XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
+        trySet(XMLOutputFactory.IS_REPAIRING_NAMESPACES, (n) -> factory.setProperty(n, true));
         return factory;
     }
 
@@ -58,24 +62,14 @@ public final class StaxHelper {
         // this method seems safer on Android than getFactory()
         return XMLEventFactory.newInstance();
     }
-            
-    private static void trySetProperty(XMLInputFactory factory, String feature, boolean flag) {
-        try {
-            factory.setProperty(feature, flag);
-        } catch (Exception e) {
-            logger.log(POILogger.WARN, "StAX Property unsupported", feature, e);
-        } catch (AbstractMethodError ame) {
-            logger.log(POILogger.WARN, "Cannot set StAX property because outdated StAX parser in classpath", feature, ame);
-        }
-    }
 
-    private static void trySetProperty(XMLOutputFactory factory, String feature, boolean flag) {
+    private static void trySet(String name, Consumer<String> securityFeature) {
         try {
-            factory.setProperty(feature, flag);
+            securityFeature.accept(name);
         } catch (Exception e) {
-            logger.log(POILogger.WARN, "StAX Property unsupported", feature, e);
+            logger.log(POILogger.WARN, "StAX Property unsupported", name, e);
         } catch (AbstractMethodError ame) {
-            logger.log(POILogger.WARN, "Cannot set StAX property because outdated StAX parser in classpath", feature, ame);
+            logger.log(POILogger.WARN, "Cannot set StAX property because outdated StAX parser in classpath", name, ame);
         }
     }
 }

@@ -33,6 +33,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.GenericRecordUtil;
 
 public abstract class Decryptor implements Cloneable, GenericRecord {
+    @SuppressWarnings({"squid:S2068"})
     public static final String DEFAULT_PASSWORD="VelvetSweatshop";
     public static final String DEFAULT_POIFS_ENTRY="EncryptedPackage";
     

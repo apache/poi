@@ -19,37 +19,47 @@ package org.apache.poi.util;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 
 /**
  * Helper methods for working with javax.xml classes.
  */
-public final class XMLHelper
-{
+public final class XMLHelper {
     private static POILogger logger = POILogFactory.getLogger(XMLHelper.class);
-    
+
+    @FunctionalInterface
+    private interface SecurityFeature {
+        void accept(String name) throws ParserConfigurationException;
+    }
+
     /**
      * Creates a new DocumentBuilderFactory, with sensible defaults
+     *
+     * @see <a href="https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html">OWASP XXE</a>
      */
+    @SuppressWarnings({"squid:S2755"})
     public static DocumentBuilderFactory getDocumentBuilderFactory() {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setExpandEntityReferences(false);
-        trySetSAXFeature(factory, XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        trySetSAXFeature(factory, "http://xml.org/sax/features/external-general-entities", false);
-        trySetSAXFeature(factory, "http://xml.org/sax/features/external-parameter-entities", false);
-        trySetSAXFeature(factory, "http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-        trySetSAXFeature(factory, "http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+        trySet(XMLConstants.FEATURE_SECURE_PROCESSING, (n) -> factory.setFeature(n, true));
+        trySet(XMLConstants.ACCESS_EXTERNAL_SCHEMA, (n) -> factory.setAttribute(n, ""));
+        trySet(XMLConstants.ACCESS_EXTERNAL_DTD, (n) -> factory.setAttribute(n, ""));
+        trySet("http://xml.org/sax/features/external-general-entities", (n) -> factory.setFeature(n, false));
+        trySet("http://xml.org/sax/features/external-parameter-entities", (n) -> factory.setFeature(n, false));
+        trySet("http://apache.org/xml/features/nonvalidating/load-external-dtd", (n) -> factory.setFeature(n, false));
+        trySet("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", (n) -> factory.setFeature(n, false));
+        trySet("http://apache.org/xml/features/disallow-doctype-decl", (n) -> factory.setFeature(n, true));
+        trySet("XIncludeAware", (n) -> factory.setXIncludeAware(false));
         return factory;
     }
-    
-    private static void trySetSAXFeature(DocumentBuilderFactory documentBuilderFactory, String feature, boolean enabled) {
+
+    private static void trySet(String name, SecurityFeature feature) {
         try {
-            documentBuilderFactory.setFeature(feature, enabled);
+            feature.accept(name);
         } catch (Exception e) {
-            logger.log(POILogger.WARN, "SAX Feature unsupported", feature, e);
+            logger.log(POILogger.WARN, "SAX Feature unsupported", name, e);
         } catch (AbstractMethodError ame) {
-            logger.log(POILogger.WARN, "Cannot set SAX feature because outdated XML parser in classpath", feature, ame);
+            logger.log(POILogger.WARN, "Cannot set SAX feature because outdated XML parser in classpath", name, ame);
         }
     }
-    
-
 }

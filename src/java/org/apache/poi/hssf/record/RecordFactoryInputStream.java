@@ -102,6 +102,7 @@ public final class RecordFactoryInputStream {
 			_lastRecord = rec;
 		}
 
+		@SuppressWarnings({"squid:S2068"})
 		public RecordInputStream createDecryptingStream(InputStream original) {
             String userPassword = Biff8EncryptionKey.getCurrentUserPassword();
 			if (userPassword == null) {

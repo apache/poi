@@ -39,10 +39,10 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.ooxml.util.TransformerHelper;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -81,6 +81,13 @@ import org.xml.sax.SAXException;
  */
 public class XSSFExportToXml implements Comparator<String>{
     private static final POILogger LOG = POILogFactory.getLogger(XSSFExportToXml.class);
+
+
+    @FunctionalInterface
+    private interface SecurityFeature {
+        void accept(String name) throws SAXException;
+    }
+
 
     private XSSFMap map;
     private final HashMap<String, Integer> indexMap = new HashMap<>();
@@ -240,11 +247,13 @@ public class XSSFExportToXml implements Comparator<String>{
      * @return true, if document is valid
      * @throws SAXException If validating the document fails
      */
+    @SuppressWarnings({"squid:S2755"})
     private boolean isValid(Document xml) throws SAXException{
         try {
-            String language = "http://www.w3.org/2001/XMLSchema";
-            SchemaFactory factory = SchemaFactory.newInstance(language);
-            trySetFeature(factory, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+            trySet(XMLConstants.FEATURE_SECURE_PROCESSING, (n) -> factory.setFeature(n, true));
+            trySet(XMLConstants.ACCESS_EXTERNAL_DTD, (n) -> factory.setProperty(n,""));
+            trySet(XMLConstants.ACCESS_EXTERNAL_SCHEMA, (n) -> factory.setProperty(n,""));
 
             Source source = new DOMSource(map.getSchema());
             Schema schema = factory.newSchema(source);
@@ -537,13 +546,13 @@ public class XSSFExportToXml implements Comparator<String>{
         return complexTypeNode;
     }
 
-    private static void trySetFeature(SchemaFactory sf, String feature, boolean enabled) {
+    private static void trySet(String name, SecurityFeature securityFeature) {
         try {
-            sf.setFeature(feature, enabled);
+            securityFeature.accept(name);
         } catch (Exception e) {
-            LOG.log(POILogger.WARN, "SchemaFactory Feature unsupported", feature, e);
+            LOG.log(POILogger.WARN, "SchemaFactory feature unsupported", name, e);
         } catch (AbstractMethodError ame) {
-            LOG.log(POILogger.WARN, "Cannot set SchemaFactory feature because outdated XML parser in classpath", feature, ame);
+            LOG.log(POILogger.WARN, "Cannot set SchemaFactory feature because outdated XML parser in classpath", name, ame);
         }
     }
 }

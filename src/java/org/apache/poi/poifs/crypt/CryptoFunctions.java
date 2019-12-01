@@ -101,6 +101,7 @@ public class CryptoFunctions {
      *        if false the n-1 hash value is applied first
      * @return the hashed password
      */
+    @SuppressWarnings({"squid:S2068"})
     public static byte[] hashPassword(String password, HashAlgorithm hashAlgorithm, byte[] salt, int spinCount, boolean iteratorFirst) {
         // If no password was given, use the default
         if (password == null) {
