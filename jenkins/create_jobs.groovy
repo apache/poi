@@ -128,8 +128,6 @@ def apicheckDesc = '''
 </p>
 '''
 
-def sonarOptions = '-Dsonar.projectKey=poi-parent -Dsonar.organization=apache -Dsonar.host.url=https://sonarcloud.io '
-
 def sonarDesc = '''
 <p>
 <b><a href="lastSuccessfulBuild/findbugsResult/" target="_blank">Findbugs report of latest build</a></b> -
@@ -295,7 +293,11 @@ poijobs.each { poijob ->
                 */
                 maven {
                     if (poijob.sonar) {
-                        goals('compile sonar:sonar -Dsonar.login=${POI_SONAR_TOKEN} ' + sonarOptions)
+                        goals('clean package sonar:sonar')
+                        property('sonar.host.url', 'https://sonarcloud.io')
+                        property('sonar.login', '${POI_SONAR_TOKEN}')
+                        property('sonar.projectKey', 'poi-parent')
+                        property('sonar.organization', 'apache')
                     } else {
                         goals('package')
                     }
@@ -365,7 +367,10 @@ poijobs.each { poijob ->
 
                 gradle {
                     switches('-PenableSonar')
-                    switches('-Dsonar.login=${POI_SONAR_TOKEN} ' + sonarOptions)
+                    switches('-Dsonar.host.url=https://sonarcloud.io')
+                    switches('-Dsonar.login=${POI_SONAR_TOKEN}')
+                    switches('-Dsonar.projectKey=poi-parent')
+                    switches('-Dsonar.organization=apache')
                     tasks('sonarqube')
                     useWrapper(false)
                 }
