@@ -262,12 +262,12 @@ under the License.
     <!-- coverage libs -->
     <property name="jacoco.zip" location="${main.lib}/jacoco-0.8.5.zip"/>
     <property name="jacoco.url" value="${repository.m2}/maven2/org/jacoco/jacoco/0.8.5/jacoco-0.8.5.zip"/>
-    <property name="asm.jar" location="${main.lib}/asm-7.0.jar"/>
-    <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm/7.0/asm-7.0.jar"/>
-    <property name="asmcommons.jar" location="${main.lib}/asm-commons-7.0.jar"/>
-    <property name="asmcommons.url" value="${repository.m2}/maven2/org/ow2/asm/asm-commons/7.0/asm-commons-7.0.jar"/>
-    <property name="asmtree.jar" location="${main.lib}/asm-tree-7.0.jar"/>
-    <property name="asmtree.url" value="${repository.m2}/maven2/org/ow2/asm/asm-tree/7.0/asm-tree-7.0.jar"/>
+    <property name="asm.jar" location="${main.lib}/asm-7.2.jar"/>
+    <property name="asm.url" value="${repository.m2}/maven2/org/ow2/asm/asm/7.2/asm-7.2.jar"/>
+    <property name="asmcommons.jar" location="${main.lib}/asm-commons-7.2.jar"/>
+    <property name="asmcommons.url" value="${repository.m2}/maven2/org/ow2/asm/asm-commons/7.2/asm-commons-7.2.jar"/>
+    <property name="asmtree.jar" location="${main.lib}/asm-tree-7.2.jar"/>
+    <property name="asmtree.url" value="${repository.m2}/maven2/org/ow2/asm/asm-tree/7.2/asm-tree-7.2.jar"/>
 
     <!-- license and api checks -->
     <property name="rat.jar" location="${main.lib}/apache-rat-0.12.jar"/>
@@ -645,6 +645,7 @@ under the License.
                 <include name="asm-all-5.0.3*"/>
                 <include name="asm-all-5.2*"/>
                 <include name="asm*-6.*"/>
+                <include name="asm*-7.0.*"/>
                 <include name="commons-codec-1.5*"/>
                 <include name="commons-codec-1.9*"/>
                 <include name="commons-codec-1.10*"/>
