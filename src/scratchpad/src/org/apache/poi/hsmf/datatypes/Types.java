@@ -26,8 +26,8 @@ import java.util.Map;
  * http://msdn.microsoft.com/en-us/library/microsoft.exchange.data.contenttypes.tnef.tnefpropertytype%28v=EXCHG.140%29.aspx
  */
 public final class Types {
-    private static Map<Integer, MAPIType> builtInTypes = new HashMap<>();
-    private static Map<Integer, MAPIType> customTypes = new HashMap<>();
+    private static final Map<Integer, MAPIType> builtInTypes = new HashMap<>();
+    private static final Map<Integer, MAPIType> customTypes = new HashMap<>();
 
     /** Unspecified */
     public static final MAPIType UNSPECIFIED = new MAPIType(0x0000,
@@ -119,7 +119,7 @@ public final class Types {
          * Is this type a fixed-length type, or a variable-length one?
          */
         public boolean isFixedLength() {
-            return (length != -1) && (length <= 8);
+            return ((length != -1) && (length <= 8)) || (id == Types.CLS_ID.id);
         }
 
         public int getId() {
@@ -132,8 +132,7 @@ public final class Types {
 
         @Override
         public String toString() {
-            return id + " / 0x" + asFileEnding() + " - " + name + " @ "
-                    + length;
+            return id + " / 0x" + asFileEnding() + " - " + name + " @ " + length;
         }
 
         /**

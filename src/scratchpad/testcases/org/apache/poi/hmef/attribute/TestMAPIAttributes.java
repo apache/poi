@@ -17,6 +17,9 @@
 
 package org.apache.poi.hmef.attribute;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.text.DateFormat;
@@ -28,159 +31,159 @@ import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LocaleUtil;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+public final class TestMAPIAttributes {
+    private static final POIDataSamples _samples = POIDataSamples.getHMEFInstance();
+    private HMEFMessage quick;
+    private InputStream stream;
 
-public final class TestMAPIAttributes extends TestCase {
-   private static final POIDataSamples _samples = POIDataSamples.getHMEFInstance();
-   private HMEFMessage quick;
-   private InputStream stream;
-   
-   @Override
-   protected void setUp() throws Exception {
-      super.setUp();
-      
-      stream = _samples.openResourceAsStream("quick-winmail.dat");
-      quick = new HMEFMessage(stream);
-   }
+    @Before
+    public void setUp() throws Exception {
+        stream = _samples.openResourceAsStream("quick-winmail.dat");
+        quick = new HMEFMessage(stream);
+    }
 
-
-   @Override
-protected void tearDown() throws Exception {
-       stream.close();
-
-       super.tearDown();
-   }
+    @After
+    public void tearDown() throws Exception {
+        stream.close();
+    }
 
 
-/** 
-    * Test counts
-    */
-   public void testCounts() throws Exception {
-      // Message should have 54
-      assertEquals(54, quick.getMessageMAPIAttributes().size());
-      
-      // First attachment should have 22
-      assertEquals(22, quick.getAttachments().get(0).getMAPIAttributes().size());
-   }
-	
-   /**
-    * Test various general ones
-    */
-   public void testBasics() throws Exception {
-      // Try constructing two attributes
-      byte[] data = new byte[] {
-            // Level one, id 36867, type 6
-            0x01,    0x03, (byte)0x90,   0x06, 0x00,
-            // Length 24
-            0x24, 0x00, 0x00, 0x00,
-            
-            // Three attributes
-            0x03, 0x00, 0x00, 0x00,
-            // AlternateRecipientAllowed = 01 00
-            0x0B, 0x00, 0x02, 0x00,
-            0x01, 0x00, 0x00, 0x00,
-            // Priority = 00 00 00 00
-            0x03, 0x00, 0x26, 0x00,
-            0x00, 0x00, 0x00, 0x00,
-            // ConversationTopic = Test
-            0x1E, 0x00, 0x70, 0x00,
-            0x01, 0x00, 0x00, 0x00,
-            0x04, 0x00, 0x00, 0x00,
-            (byte)'T', (byte)'e',
-            (byte)'s', (byte)'t',
-            // Checksum (may be wrong...)
-            0x01, 0x00
-      };
-      ByteArrayInputStream bais = new ByteArrayInputStream(data);
-      
-      // Create it
-      int level = bais.read();
-      assertEquals(1, level);
-      TNEFAttribute attr = TNEFAttribute.create(bais);
-      
-      // Check it
-      assertNotNull(attr);
-      assertEquals(TNEFMAPIAttribute.class, attr.getClass());
-      
-      TNEFMAPIAttribute mapi = (TNEFMAPIAttribute)attr;
-      assertEquals(3, mapi.getMAPIAttributes().size());
-      
-      assertEquals(
-            MAPIProperty.ALTERNATE_RECIPIENT_ALLOWED, 
-            mapi.getMAPIAttributes().get(0).getProperty()
-      );
-      assertEquals(1, LittleEndian.getUShort(
-               mapi.getMAPIAttributes().get(0).getData()
-      ));
-      
-      assertEquals(
-            MAPIProperty.PRIORITY, 
-            mapi.getMAPIAttributes().get(1).getProperty()
-      );
-      assertEquals(0, LittleEndian.getUShort(
-               mapi.getMAPIAttributes().get(1).getData()
-      ));
-      
-      assertEquals(
-            MAPIProperty.CONVERSATION_TOPIC, 
-            mapi.getMAPIAttributes().get(2).getProperty()
-      );
-      assertEquals(
-            "Test",
-            ((MAPIStringAttribute)mapi.getMAPIAttributes().get(2)).getDataString()
-      );
-   }
+    /**
+     * Test counts
+     */
+    @Test
+    public void testCounts() throws Exception {
+        // Message should have 54
+        assertEquals(54, quick.getMessageMAPIAttributes().size());
 
-   /**
-    * Test String, Date and RTF ones
-    */
-   public void testTyped() throws Exception {
-      MAPIAttribute attr;
-      
-      // String
-      //  ConversationTopic -> This is a test message
-      attr = quick.getMessageMAPIAttribute(MAPIProperty.CONVERSATION_TOPIC);
-      assertNotNull(attr);
-      assertEquals(MAPIStringAttribute.class, attr.getClass());
-      
-      MAPIStringAttribute str = (MAPIStringAttribute)attr;
-      assertEquals("This is a test message", str.getDataString());
-      
-      // Date
-      //  (Unknown/Custom) 32955 -> Wed Dec 15 2010 @ 14:46:31 UTC
-      attr = null;
-      for(MAPIAttribute a : quick.getMessageMAPIAttributes()) {
-         if(a.getProperty().id == 32955) {
-            attr = a;
-            break;
-         }
-      }
-      assertNotNull(attr);
-      assertEquals(MAPIDateAttribute.class, attr.getClass());
-      
-      MAPIDateAttribute date = (MAPIDateAttribute)attr;
-      DateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss", Locale.UK);
-      fmt.setTimeZone(LocaleUtil.TIMEZONE_UTC);
-      assertEquals("15-Dec-2010 14:46:31", fmt.format(date.getDate()));
-      
-      // RTF
-      //   RtfCompressed -> {\rtf1...
-      attr = quick.getMessageMAPIAttribute(MAPIProperty.RTF_COMPRESSED);
-      assertNotNull(attr);
-      assertEquals(MAPIRtfAttribute.class, attr.getClass());
-      
-      MAPIRtfAttribute rtf = (MAPIRtfAttribute)attr;
-      assertEquals("{\\rtf1", rtf.getDataString().substring(0, 6));
-   }
+        // First attachment should have 22
+        assertEquals(22, quick.getAttachments().get(0).getMAPIAttributes().size());
+    }
 
-   /**
-    * Check common ones via helper accessors
-    */
-   public void testCommon() throws Exception {
-      assertEquals("This is a test message", quick.getSubject());
-      
-      assertEquals("quick.doc", quick.getAttachments().get(0).getLongFilename());
-      assertEquals(".doc", quick.getAttachments().get(0).getExtension());
-   }
+    /**
+     * Test various general ones
+     */
+    @Test
+    public void testBasics() throws Exception {
+        // Try constructing two attributes
+        byte[] data = new byte[]{
+                // Level one, id 36867, type 6
+                0x01, 0x03, (byte) 0x90, 0x06, 0x00,
+                // Length 24
+                0x24, 0x00, 0x00, 0x00,
+
+                // Three attributes
+                0x03, 0x00, 0x00, 0x00,
+                // AlternateRecipientAllowed = 01 00
+                0x0B, 0x00, 0x02, 0x00,
+                0x01, 0x00, 0x00, 0x00,
+                // Priority = 00 00 00 00
+                0x03, 0x00, 0x26, 0x00,
+                0x00, 0x00, 0x00, 0x00,
+                // ConversationTopic = Test
+                0x1E, 0x00, 0x70, 0x00,
+                0x01, 0x00, 0x00, 0x00,
+                0x04, 0x00, 0x00, 0x00,
+                (byte) 'T', (byte) 'e',
+                (byte) 's', (byte) 't',
+                // Checksum (may be wrong...)
+                0x01, 0x00
+        };
+        ByteArrayInputStream bais = new ByteArrayInputStream(data);
+
+        // Create it
+        int level = bais.read();
+        assertEquals(1, level);
+        TNEFAttribute attr = TNEFAttribute.create(bais);
+
+        // Check it
+        assertNotNull(attr);
+        assertEquals(TNEFMAPIAttribute.class, attr.getClass());
+
+        TNEFMAPIAttribute mapi = (TNEFMAPIAttribute) attr;
+        assertEquals(3, mapi.getMAPIAttributes().size());
+
+        assertEquals(
+                MAPIProperty.ALTERNATE_RECIPIENT_ALLOWED,
+                mapi.getMAPIAttributes().get(0).getProperty()
+        );
+        assertEquals(1, LittleEndian.getUShort(
+                mapi.getMAPIAttributes().get(0).getData()
+        ));
+
+        assertEquals(
+                MAPIProperty.PRIORITY,
+                mapi.getMAPIAttributes().get(1).getProperty()
+        );
+        assertEquals(0, LittleEndian.getUShort(
+                mapi.getMAPIAttributes().get(1).getData()
+        ));
+
+        assertEquals(
+                MAPIProperty.CONVERSATION_TOPIC,
+                mapi.getMAPIAttributes().get(2).getProperty()
+        );
+        assertEquals(
+                "Test",
+                ((MAPIStringAttribute) mapi.getMAPIAttributes().get(2)).getDataString()
+        );
+    }
+
+    /**
+     * Test String, Date and RTF ones
+     */
+    @Test
+    public void testTyped() throws Exception {
+        MAPIAttribute attr;
+
+        // String
+        //  ConversationTopic -> This is a test message
+        attr = quick.getMessageMAPIAttribute(MAPIProperty.CONVERSATION_TOPIC);
+        assertNotNull(attr);
+        assertEquals(MAPIStringAttribute.class, attr.getClass());
+
+        MAPIStringAttribute str = (MAPIStringAttribute) attr;
+        assertEquals("This is a test message", str.getDataString());
+
+        // Date
+        //  (Unknown/Custom) 32955 -> Wed Dec 15 2010 @ 14:46:31 UTC
+        attr = null;
+        for (MAPIAttribute a : quick.getMessageMAPIAttributes()) {
+            if (a.getProperty().id == 32955) {
+                attr = a;
+                break;
+            }
+        }
+        assertNotNull(attr);
+        assertEquals(MAPIDateAttribute.class, attr.getClass());
+
+        MAPIDateAttribute date = (MAPIDateAttribute) attr;
+        DateFormat fmt = new SimpleDateFormat("dd-MMM-yyyy HH:mm:ss", Locale.UK);
+        fmt.setTimeZone(LocaleUtil.TIMEZONE_UTC);
+        assertEquals("15-Dec-2010 14:46:31", fmt.format(date.getDate()));
+
+        // RTF
+        //   RtfCompressed -> {\rtf1...
+        attr = quick.getMessageMAPIAttribute(MAPIProperty.RTF_COMPRESSED);
+        assertNotNull(attr);
+        assertEquals(MAPIRtfAttribute.class, attr.getClass());
+
+        MAPIRtfAttribute rtf = (MAPIRtfAttribute) attr;
+        assertEquals("{\\rtf1", rtf.getDataString().substring(0, 6));
+    }
+
+    /**
+     * Check common ones via helper accessors
+     */
+    @Test
+    public void testCommon() throws Exception {
+        assertEquals("This is a test message", quick.getSubject());
+
+        assertEquals("quick.doc", quick.getAttachments().get(0).getLongFilename());
+        assertEquals(".doc", quick.getAttachments().get(0).getExtension());
+    }
 }

@@ -20,31 +20,38 @@
 ==================================================================== */
 package org.apache.poi.hmef.dev;
 
-import org.apache.poi.POIDataSamples;
-import org.junit.Test;
-
 import java.io.File;
+import java.io.PrintStream;
+
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.util.NullOutputStream;
+import org.junit.Test;
 
 public class TestHMEFDumper {
     @Test(expected = IllegalArgumentException.class)
     public void noArguments() throws Exception {
-        HMEFDumper.main(new String[] {});
+        doMain();
     }
 
     @Test
     public void main() throws Exception {
         File file = POIDataSamples.getHMEFInstance().getFile("quick-winmail.dat");
-        HMEFDumper.main(new String[] {
-                file.getAbsolutePath()
-        });
+        doMain(file.getAbsolutePath());
     }
 
     @Test
     public void mainFull() throws Exception {
         File file = POIDataSamples.getHMEFInstance().getFile("quick-winmail.dat");
-        HMEFDumper.main(new String[] {
-                "--full",
-                file.getAbsolutePath()
-        });
+        doMain("--full", file.getAbsolutePath());
+    }
+
+    private static void doMain(String... args) throws Exception {
+        PrintStream ps = System.out;
+        try {
+            System.setOut(new PrintStream(new NullOutputStream(), true, "UTF-8"));
+            HMEFDumper.main(args);
+        } finally {
+            System.setOut(ps);
+        }
     }
 }
