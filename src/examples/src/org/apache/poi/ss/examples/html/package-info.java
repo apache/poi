@@ -1,6 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!--
-   ====================================================================
+/* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
    this work for additional information regarding copyright ownership.
@@ -15,13 +13,10 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-   ====================================================================
--->
-<html>
-<head>
-</head>
-<body>
-This package contains an example that uses POI to convert a workbook into
-an HTML representation of the data.  It can use both XSSF and HSSF workbooks.
-</body>
-</html>
+==================================================================== */
+
+/**
+ * This package contains an example that uses POI to convert a workbook into
+ * an HTML representation of the data.  It can use both XSSF and HSSF workbooks.
+ */
+package org.apache.poi.ss.examples.html;

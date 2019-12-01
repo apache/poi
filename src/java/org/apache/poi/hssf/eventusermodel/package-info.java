@@ -1,6 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!--
-   ====================================================================
+/* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
    this work for additional information regarding copyright ownership.
@@ -15,12 +13,13 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-   ====================================================================
--->
-<html>
-<head>
-</head>
-<body>
-This package contains classes that implement cell formatting
-</body>
-</html>
+==================================================================== */
+
+/**
+ * HSSF eventmodel Package provides an event-based API for reading HSSF files.
+ * <p>
+ * The event model can read XLS files with a very small memory footprint.  For
+ * writing you still have to use the usermodel.  The eventmodel is to the usermodel
+ * what SAX is to DOM.
+ */
+package org.apache.poi.hssf.eventusermodel;

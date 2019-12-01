@@ -1,6 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!--
-   ====================================================================
+/* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
    this work for additional information regarding copyright ownership.
@@ -15,21 +13,12 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-   ====================================================================
--->
-<html>
-<head>
-</head>
-<body bgcolor="white">
+==================================================================== */
 
-Horrible SpreadSheet Format API's for reading/writting Excel files using pure Java.
-
-<h2>Related Documentation</h2>
-
-For overviews, tutorials, examples, guides, and tool documentation, please see:
-<ul>
-<li><a href="http://poi.apache.org">Apache POI Project</a>
-</ul>
-
-</body>
-</html>
+/**
+ * Record package contains class representations for XLS binary strutures. Its very low level.
+ *
+ * @see org.apache.poi.hssf.eventmodel
+ * @see org.apache.poi.hssf.record.RecordFactory
+ */
+package org.apache.poi.hssf.record;

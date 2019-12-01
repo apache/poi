@@ -1,6 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!--
-   ====================================================================
+/* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
    this work for additional information regarding copyright ownership.
@@ -15,22 +13,16 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-   ====================================================================
--->
-<html>
-<head>
-</head>
-<body bgcolor="white">
+==================================================================== */
 
-util package contains tools needed for writing HSSF files that are not necesarily "real" 
-HSSF concepts.
-
-<h2>Related Documentation</h2>
-
-For overviews, tutorials, examples, guides, and tool documentation, please see:
-<ul>
-<li><a href="http://poi.apache.org">Apache POI Project</a>
-</ul>
-
-</body>
-</html>
+/**
+ * The org.apache.poi.xssf.binary package includes necessary underlying components
+ * for streaming/read-only processing of xlsb files.
+ * <p>
+ * POI does not yet support opening .xlsb files with XSSFWorkbook, but you can read files with XSSFBReader
+ * in org.apache.poi.xssf.eventusermodel.
+ * <p>
+ * This feature was added in poi-3.16-beta3 and should be considered experimental.
+ * Most classes have been marked @Internal and the API is subject to change.
+ */
+package org.apache.poi.xssf.binary;

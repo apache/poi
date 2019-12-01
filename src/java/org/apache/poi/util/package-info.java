@@ -1,6 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!--
-   ====================================================================
+/* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
    this work for additional information regarding copyright ownership.
@@ -15,24 +13,10 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-   ====================================================================
--->
-<html>
-<head>
-</head>
-<body bgcolor="white">
+==================================================================== */
 
-Provides low level API structures for reading, writing, modifying XLS files.
-
-<h2>Related Documentation</h2>
-
-For overviews, tutorials, examples, guides, and tool documentation, please see:
-<ul>
-<li><a href="http://poi.apache.org">Apache POI Project</a>
-</ul>
-
-<!-- Put @see and @since tags down here. -->
-@see org.apache.poi.hssf.usermodel
-
-</body>
-</html>
+/**
+ * Top-level util package are classes that are useful throughout the project. These classes are
+ * generally generic enough to be useful in any project and should be contributed elsewhere!
+ */
+package org.apache.poi.util;

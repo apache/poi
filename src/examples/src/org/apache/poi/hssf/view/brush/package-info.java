@@ -1,6 +1,4 @@
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 3.2 Final//EN">
-<!--
-   ====================================================================
+/* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
    this work for additional information regarding copyright ownership.
@@ -15,12 +13,9 @@
    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
    See the License for the specific language governing permissions and
    limitations under the License.
-   ====================================================================
--->
-<html>
+==================================================================== */
 
-<body>
-This package contains some brushes that are used when drawing borders for Excel
-cells.
-</body>
-</html>
+/**
+ * This package contains some brushes that are used when drawing borders for Excel cells.
+ */
+package org.apache.poi.hssf.view.brush;
