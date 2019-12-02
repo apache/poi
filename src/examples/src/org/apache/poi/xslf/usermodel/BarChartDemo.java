@@ -105,7 +105,7 @@ public class BarChartDemo {
         final String valuesDataRange2 = chart.formatRange(new CellRangeAddress(1, numOfPoints, columnSpeakers, columnSpeakers));
         final XDDFDataSource<?> categoriesData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange, columnLanguages);
         final XDDFNumericalDataSource<? extends Number> valuesData = XDDFDataSourcesFactory.fromArray(values1, valuesDataRange, columnCountries);
-        values1[6] = 16.0; // if you ever want to change the underlying data
+        values1[6] = 16.0; // if you ever want to change the underlying data, it has to be done before building the data source
         final XDDFNumericalDataSource<? extends Number> valuesData2 = XDDFDataSourcesFactory.fromArray(values2, valuesDataRange2, columnSpeakers);
 
         XDDFChartData.Series series1 = bar.getSeries(0);

@@ -47,6 +47,11 @@ public class XDDFDataSourcesFactory {
                 private CTNumData category = (CTNumData) categoryDS.getNumRef().getNumCache().copy();
 
                 @Override
+                public boolean isCellRange() {
+                    return true;
+                }
+
+                @Override
                 public boolean isNumeric() {
                     return true;
                 }
@@ -69,6 +74,11 @@ public class XDDFDataSourcesFactory {
         } else {
             return new XDDFCategoryDataSource() {
                 private CTStrData category = (CTStrData) categoryDS.getStrRef().getStrCache().copy();
+
+                @Override
+                public boolean isCellRange() {
+                    return true;
+                }
 
                 @Override
                 public String getFormula() {
@@ -106,6 +116,11 @@ public class XDDFDataSourcesFactory {
             @Override
             public void setFormatCode(String formatCode) {
                 this.formatCode = formatCode;
+            }
+
+            @Override
+            public boolean isCellRange() {
+                return true;
             }
 
             @Override
@@ -197,6 +212,11 @@ public class XDDFDataSourcesFactory {
         @Override
         public T getPointAt(int index) {
             return elements[index];
+        }
+
+        @Override
+        public boolean isCellRange() {
+            return false;
         }
 
         @Override
@@ -308,6 +328,11 @@ public class XDDFDataSourcesFactory {
         @Override
         public int getPointCount() {
             return numOfCells;
+        }
+
+        @Override
+        public boolean isCellRange() {
+            return true;
         }
 
         @Override

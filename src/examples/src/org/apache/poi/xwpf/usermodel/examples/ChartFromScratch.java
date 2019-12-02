@@ -27,9 +27,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xddf.usermodel.chart.AxisCrossBetween;
 import org.apache.poi.xddf.usermodel.chart.AxisCrosses;
 import org.apache.poi.xddf.usermodel.chart.AxisPosition;
+import org.apache.poi.xddf.usermodel.chart.AxisTickMark;
 import org.apache.poi.xddf.usermodel.chart.BarDirection;
+import org.apache.poi.xddf.usermodel.chart.BarGrouping;
 import org.apache.poi.xddf.usermodel.chart.ChartTypes;
 import org.apache.poi.xddf.usermodel.chart.LegendPosition;
 import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
@@ -48,7 +51,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
  */
 public class ChartFromScratch {
     private static void usage(){
-        System.out.println("Usage: BarChartExample <bar-chart-data.txt>");
+        System.out.println("Usage: ChartFromScratch <bar-chart-data.txt>");
         System.out.println("    bar-chart-data.txt          the model to set. First line is chart title, " +
                 "then go pairs {axis-label value}");
     }
@@ -85,10 +88,10 @@ public class ChartFromScratch {
             Double[] values2 = listSpeakers.toArray(new Double[0]);
 
             try (XWPFDocument doc = new XWPFDocument()) {
-                XWPFChart chart = doc.createChart(XDDFChart.DEFAULT_WIDTH, XDDFChart.DEFAULT_HEIGHT);
+                XWPFChart chart = doc.createChart(XDDFChart.DEFAULT_WIDTH * 10, XDDFChart.DEFAULT_HEIGHT * 15);
                 setBarData(chart, chartTitle, series, categories, values1, values2);
                 // save the result
-                try (OutputStream out = new FileOutputStream("bar-chart-demo-output.docx")) {
+                try (OutputStream out = new FileOutputStream("chart-from-scratch.docx")) {
                     doc.write(out);
                 }
             }
@@ -107,23 +110,29 @@ public class ChartFromScratch {
         XDDFValueAxis leftAxis = chart.createValueAxis(AxisPosition.LEFT);
         leftAxis.setTitle(series[0]+","+series[1]);
         leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
+        leftAxis.setMajorTickMark(AxisTickMark.OUT);
+        leftAxis.setCrossBetween(AxisCrossBetween.BETWEEN);
 
         final int numOfPoints = categories.length;
-        final String categoryDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 0, 0));
-        final String valuesDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, 1, 1));
-        final String valuesDataRange2 = chart.formatRange(new CellRangeAddress(1, numOfPoints, 2, 2));
-        final XDDFDataSource<?> categoriesData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange, 0);
-        final XDDFNumericalDataSource<? extends Number> valuesData = XDDFDataSourcesFactory.fromArray(values1, valuesDataRange, 1);
-        values1[6] = 16.0; // if you ever want to change the underlying data
-        final XDDFNumericalDataSource<? extends Number> valuesData2 = XDDFDataSourcesFactory.fromArray(values2, valuesDataRange2, 2);
+        final String categoryDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, columnLanguages, columnLanguages));
+        final String valuesDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, columnCountries, columnCountries));
+        final String valuesDataRange2 = chart.formatRange(new CellRangeAddress(1, numOfPoints, columnSpeakers, columnSpeakers));
+        final XDDFDataSource<?> categoriesData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange, columnLanguages);
+        final XDDFNumericalDataSource<? extends Number> valuesData = XDDFDataSourcesFactory.fromArray(values1, valuesDataRange, columnCountries);
+        valuesData.setFormatCode("General");
+        values1[6] = 16.0; // if you ever want to change the underlying data, it has to be done before building the data source
+        final XDDFNumericalDataSource<? extends Number> valuesData2 = XDDFDataSourcesFactory.fromArray(values2, valuesDataRange2, columnSpeakers);
+        valuesData2.setFormatCode("General");
 
 
         XDDFBarChartData bar = (XDDFBarChartData) chart.createData(ChartTypes.BAR, bottomAxis, leftAxis);
+        bar.setBarGrouping(BarGrouping.CLUSTERED);
+
         XDDFBarChartData.Series series1 = (XDDFBarChartData.Series) bar.addSeries(categoriesData, valuesData);
-        series1.setTitle(series[0], chart.setSheetTitle(series[0], 1));
+        series1.setTitle(series[0], chart.setSheetTitle(series[0], columnCountries));
 
         XDDFBarChartData.Series series2 = (XDDFBarChartData.Series) bar.addSeries(categoriesData, valuesData2);
-        series2.setTitle(series[1], chart.setSheetTitle(series[1], 2));
+        series2.setTitle(series[1], chart.setSheetTitle(series[1], columnSpeakers));
 
         bar.setVaryColors(true);
         bar.setBarDirection(BarDirection.COL);
@@ -135,6 +144,11 @@ public class ChartFromScratch {
 
         chart.setTitleText(chartTitle);
         chart.setTitleOverlay(false);
+        chart.setAutoTitleDeleted(false);
     }
+
+    private static final int columnLanguages = 0;
+    private static final int columnCountries = 1;
+    private static final int columnSpeakers = 2;
 }
 

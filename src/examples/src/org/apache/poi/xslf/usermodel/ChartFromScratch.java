@@ -28,13 +28,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.Units;
+import org.apache.poi.xddf.usermodel.chart.AxisCrossBetween;
 import org.apache.poi.xddf.usermodel.chart.AxisCrosses;
 import org.apache.poi.xddf.usermodel.chart.AxisPosition;
+import org.apache.poi.xddf.usermodel.chart.AxisTickMark;
 import org.apache.poi.xddf.usermodel.chart.BarDirection;
+import org.apache.poi.xddf.usermodel.chart.BarGrouping;
 import org.apache.poi.xddf.usermodel.chart.ChartTypes;
 import org.apache.poi.xddf.usermodel.chart.LegendPosition;
 import org.apache.poi.xddf.usermodel.chart.XDDFBarChartData;
-import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartAxis;
 import org.apache.poi.xddf.usermodel.chart.XDDFChartLegend;
 import org.apache.poi.xddf.usermodel.chart.XDDFDataSource;
@@ -47,7 +50,7 @@ import org.apache.poi.xddf.usermodel.chart.XDDFValueAxis;
  */
 public class ChartFromScratch {
     private static void usage(){
-        System.out.println("Usage: BarChartExample <bar-chart-data.txt>");
+        System.out.println("Usage: ChartFromScratch <bar-chart-data.txt>");
         System.out.println("    bar-chart-data.txt          the model to set. First line is chart title, " +
                 "then go pairs {axis-label value}");
     }
@@ -86,8 +89,7 @@ public class ChartFromScratch {
             try (XMLSlideShow ppt = new XMLSlideShow()) {
                 XSLFSlide slide = ppt.createSlide();
                 XSLFChart chart = ppt.createChart();
-                Rectangle2D rect2D = new java.awt.Rectangle(XDDFChart.DEFAULT_X, XDDFChart.DEFAULT_Y,
-                        XDDFChart.DEFAULT_WIDTH, XDDFChart.DEFAULT_HEIGHT);
+                Rectangle2D rect2D = new java.awt.Rectangle(fromCM(1.5), fromCM(4), fromCM(22), fromCM(14));
                 slide.addChart(chart, rect2D);
                 setBarData(chart, chartTitle, series, categories, values1, values2);
                 // save the result
@@ -99,6 +101,10 @@ public class ChartFromScratch {
         System.out.println("Done");
     }
 
+    private static int fromCM(double cm) {
+        return (int) (Math.rint(cm * Units.EMU_PER_CENTIMETER));
+    }
+
     private static void setBarData(XSLFChart chart, String chartTitle, String[] series, String[] categories, Double[] values1, Double[] values2) {
         // Use a category axis for the bottom axis.
         XDDFChartAxis bottomAxis = chart.createCategoryAxis(AxisPosition.BOTTOM);
@@ -106,6 +112,8 @@ public class ChartFromScratch {
         XDDFValueAxis leftAxis = chart.createValueAxis(AxisPosition.LEFT);
         leftAxis.setTitle(series[0]+","+series[1]);
         leftAxis.setCrosses(AxisCrosses.AUTO_ZERO);
+        leftAxis.setMajorTickMark(AxisTickMark.OUT);
+        leftAxis.setCrossBetween(AxisCrossBetween.BETWEEN);
 
         final int numOfPoints = categories.length;
         final String categoryDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, columnLanguages, columnLanguages));
@@ -113,11 +121,15 @@ public class ChartFromScratch {
         final String valuesDataRange2 = chart.formatRange(new CellRangeAddress(1, numOfPoints, columnSpeakers, columnSpeakers));
         final XDDFDataSource<?> categoriesData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange, columnLanguages);
         final XDDFNumericalDataSource<? extends Number> valuesData = XDDFDataSourcesFactory.fromArray(values1, valuesDataRange, columnCountries);
-        values1[6] = 16.0; // if you ever want to change the underlying data
+        valuesData.setFormatCode("General");
+        values1[6] = 16.0; // if you ever want to change the underlying data, it has to be done before building the data source
         final XDDFNumericalDataSource<? extends Number> valuesData2 = XDDFDataSourcesFactory.fromArray(values2, valuesDataRange2, columnSpeakers);
+        valuesData2.setFormatCode("General");
 
 
         XDDFBarChartData bar = (XDDFBarChartData) chart.createData(ChartTypes.BAR, bottomAxis, leftAxis);
+        bar.setBarGrouping(BarGrouping.CLUSTERED);
+
         XDDFBarChartData.Series series1 = (XDDFBarChartData.Series) bar.addSeries(categoriesData, valuesData);
         series1.setTitle(series[0], chart.setSheetTitle(series[0], columnCountries));
 
@@ -134,10 +146,10 @@ public class ChartFromScratch {
 
         chart.setTitleText(chartTitle);
         chart.setTitleOverlay(false);
+        chart.setAutoTitleDeleted(false);
     }
 
     private static final int columnLanguages = 0;
     private static final int columnCountries = 1;
     private static final int columnSpeakers = 2;
 }
-

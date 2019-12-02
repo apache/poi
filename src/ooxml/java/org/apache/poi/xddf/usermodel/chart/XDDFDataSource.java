@@ -32,6 +32,11 @@ public interface XDDFDataSource<T> {
      */
     boolean isLiteral();
 
+    /**
+     * @since POI 4.1.2
+     */
+    boolean isCellRange();
+
     boolean isReference();
 
     boolean isNumeric();

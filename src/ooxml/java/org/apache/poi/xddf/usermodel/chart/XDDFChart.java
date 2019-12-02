@@ -392,7 +392,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
             series.plot();
             XDDFDataSource<?> categoryDS = series.getCategoryData();
             XDDFNumericalDataSource<? extends Number> valuesDS = series.getValuesData();
-            if (categoryDS.isReference() || valuesDS.isReference()
+            if (categoryDS.isCellRange() || valuesDS.isCellRange()
                     || categoryDS.isLiteral() || valuesDS.isLiteral()) {
                 // let's assume the data is already in the sheet
             } else {
@@ -773,8 +773,14 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         int numOfPoints = categoryData.getPointCount();
         for (int i = 0; i < numOfPoints; i++) {
             XSSFRow row = this.getRow(sheet, i + 1); // first row is for title
-            this.getCell(row, categoryData.getColIndex()).setCellValue(categoryData.getPointAt(i).toString());
-            this.getCell(row, valuesData.getColIndex()).setCellValue(valuesData.getPointAt(i).doubleValue());
+            Object category = categoryData.getPointAt(i);
+            if (category != null) {
+                this.getCell(row, categoryData.getColIndex()).setCellValue(category.toString());
+            }
+            Number value = valuesData.getPointAt(i);
+            if (value != null) {
+                this.getCell(row, valuesData.getColIndex()).setCellValue(value.doubleValue());
+            }
         }
     }
 
