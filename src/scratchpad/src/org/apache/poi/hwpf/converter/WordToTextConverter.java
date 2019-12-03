@@ -76,7 +76,7 @@ public class WordToTextConverter extends AbstractWordConverter
             throws Exception
     {
         WordToTextConverter wordToTextConverter = new WordToTextConverter(
-                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument() );
+                XMLHelper.newDocumentBuilder().newDocument() );
         wordToTextConverter.processDocument( wordDocument );
         return wordToTextConverter.getText();
     }
@@ -105,11 +105,8 @@ public class WordToTextConverter extends AbstractWordConverter
         DOMSource domSource = new DOMSource( doc );
         StreamResult streamResult = new StreamResult( new File( args[1] ) );
 
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer serializer = tf.newTransformer();
+        Transformer serializer = XMLHelper.newTransformer();
         // TODO set encoding from a command argument
-        serializer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
-        serializer.setOutputProperty( OutputKeys.INDENT, "no" );
         serializer.setOutputProperty( OutputKeys.METHOD, "text" );
         serializer.transform( domSource, streamResult );
     }
@@ -117,7 +114,7 @@ public class WordToTextConverter extends AbstractWordConverter
     private static Document process( File docFile ) throws IOException, ParserConfigurationException {
         try (final HWPFDocumentCore wordDocument = AbstractWordUtils.loadDoc( docFile )) {
             WordToTextConverter wordToTextConverter = new WordToTextConverter(
-                    XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument());
+                    XMLHelper.newDocumentBuilder().newDocument());
             wordToTextConverter.processDocument(wordDocument);
             return wordToTextConverter.getDocument();
         }
@@ -141,8 +138,7 @@ public class WordToTextConverter extends AbstractWordConverter
     public WordToTextConverter() throws ParserConfigurationException
     {
         this.textDocumentFacade = new TextDocumentFacade(
-                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
-                        .newDocument() );
+                XMLHelper.newDocumentBuilder().newDocument() );
     }
 
     /**

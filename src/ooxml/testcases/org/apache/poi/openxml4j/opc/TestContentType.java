@@ -17,7 +17,15 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import org.apache.poi.ooxml.util.POIXMLConstants;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.InputStream;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.internal.ContentType;
@@ -25,18 +33,12 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
-import javax.xml.parsers.DocumentBuilderFactory;
-import java.io.InputStream;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 /**
  * Tests for content type (ContentType class).
  */
 public final class TestContentType {
+
+    private static final String FEATURE_DISALLOW_DOCTYPE_DECL = "http://apache.org/xml/features/disallow-doctype-decl";
 
     @Rule
     public ExpectedException exception = ExpectedException.none();
@@ -242,7 +244,7 @@ public final class TestContentType {
     public static boolean isOldXercesActive() {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         try {
-            dbf.setFeature(POIXMLConstants.FEATURE_DISALLOW_DOCTYPE_DECL, true);
+            dbf.setFeature(FEATURE_DISALLOW_DOCTYPE_DECL, true);
             return false;
         } catch (Exception|AbstractMethodError ignored) {}
         return true;

@@ -28,7 +28,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
 
-import javax.xml.XMLConstants;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
@@ -40,12 +39,12 @@ import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
 import org.apache.poi.ooxml.util.DocumentHelper;
-import org.apache.poi.ooxml.util.TransformerHelper;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -225,7 +224,7 @@ public class XSSFExportToXml implements Comparator<String>{
             //Output the XML
 
             //set up a transformer
-            Transformer trans = TransformerHelper.getFactory().newTransformer();
+            Transformer trans = XMLHelper.newTransformer();
             trans.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             trans.setOutputProperty(OutputKeys.INDENT, "yes");
             trans.setOutputProperty(OutputKeys.ENCODING, encoding);
@@ -250,10 +249,7 @@ public class XSSFExportToXml implements Comparator<String>{
     @SuppressWarnings({"squid:S2755"})
     private boolean isValid(Document xml) throws SAXException{
         try {
-            SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-            trySet(XMLConstants.FEATURE_SECURE_PROCESSING, (n) -> factory.setFeature(n, true));
-            trySet(XMLConstants.ACCESS_EXTERNAL_DTD, (n) -> factory.setProperty(n,""));
-            trySet(XMLConstants.ACCESS_EXTERNAL_SCHEMA, (n) -> factory.setProperty(n,""));
+            SchemaFactory factory = XMLHelper.getSchemaFactory();
 
             Source source = new DOMSource(map.getSchema());
             Schema schema = factory.newSchema(source);
@@ -407,7 +403,7 @@ public class XSSFExportToXml implements Comparator<String>{
         String[] rightTokens = rightXpath.split("/");
         String samePath = "";
 
-        int minLength = leftTokens.length< rightTokens.length? leftTokens.length : rightTokens.length;
+        int minLength = Math.min(leftTokens.length, rightTokens.length);
 
         Node localComplexTypeRootNode = xmlSchema;
 

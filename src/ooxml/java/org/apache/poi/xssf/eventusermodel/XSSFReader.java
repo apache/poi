@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.xssf.eventusermodel;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -30,6 +29,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -42,7 +43,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.ooxml.util.SAXHelper;
+import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.model.StylesTable;
@@ -253,7 +254,7 @@ public class XSSFReader {
             XMLSheetRefReader xmlSheetRefReader = new XMLSheetRefReader();
             XMLReader xmlReader;
             try {
-                xmlReader = SAXHelper.newXMLReader();
+                xmlReader = XMLHelper.newXMLReader();
             } catch (ParserConfigurationException | SAXException e) {
                 throw new POIXMLException(e);
             }

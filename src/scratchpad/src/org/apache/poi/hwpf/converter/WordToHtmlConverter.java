@@ -30,7 +30,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -154,18 +153,15 @@ public class WordToHtmlConverter extends AbstractWordConverter
         DOMSource domSource = new DOMSource( doc );
         StreamResult streamResult = new StreamResult( new File(args[1]) );
 
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer serializer = tf.newTransformer();
+        Transformer serializer = XMLHelper.newTransformer();
         // TODO set encoding from a command argument
-        serializer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
-        serializer.setOutputProperty( OutputKeys.INDENT, "yes" );
         serializer.setOutputProperty( OutputKeys.METHOD, "html" );
         serializer.transform( domSource, streamResult );
     }
 
     static Document process( File docFile ) throws IOException, ParserConfigurationException
     {
-        final DocumentBuilder docBuild = XMLHelper.getDocumentBuilderFactory().newDocumentBuilder();
+        final DocumentBuilder docBuild = XMLHelper.newDocumentBuilder();
         try (final HWPFDocumentCore wordDocument = AbstractWordUtils.loadDoc( docFile )) {
             WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(docBuild.newDocument());
             wordToHtmlConverter.processDocument(wordDocument);

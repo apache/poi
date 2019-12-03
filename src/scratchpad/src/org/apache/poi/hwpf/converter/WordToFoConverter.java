@@ -24,9 +24,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -86,17 +84,14 @@ public class WordToFoConverter extends AbstractWordConverter
 
         DOMSource domSource = new DOMSource( doc );
         StreamResult streamResult = new StreamResult( new File( args[1] ) );
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer serializer = tf.newTransformer();
         // TODO set encoding from a command argument
-        serializer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
-        serializer.setOutputProperty( OutputKeys.INDENT, "yes" );
+        Transformer serializer = XMLHelper.newTransformer();
         serializer.transform( domSource, streamResult );
     }
 
     static Document process( File docFile ) throws Exception
     {
-        final DocumentBuilder docBuild = XMLHelper.getDocumentBuilderFactory().newDocumentBuilder();
+        final DocumentBuilder docBuild = XMLHelper.newDocumentBuilder();
         try (final HWPFDocumentCore hwpfDocument = WordToFoUtils.loadDoc( docFile )) {
             WordToFoConverter wordToFoConverter = new WordToFoConverter(docBuild.newDocument());
             wordToFoConverter.processDocument(hwpfDocument);

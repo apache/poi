@@ -899,7 +899,7 @@ public class TestBugs{
     @Test
     public void test59322() throws Exception {
         try(HWPFDocument doc = HWPFTestDataSamples.openSampleFile("59322.doc")) {
-            Document document = XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument();
+            Document document = XMLHelper.newDocumentBuilder().newDocument();
             WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(document);
             wordToHtmlConverter.processDocument(doc);
             assertNotNull(document);

@@ -32,15 +32,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.MapInfo;
@@ -48,8 +46,6 @@ import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.xml.sax.EntityResolver;
-import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -401,7 +397,7 @@ public final class TestXSSFExportToXML {
                 String xmlData = os.toString("UTF-8");
 
                 assertNotNull(xmlData);
-                assertTrue(!xmlData.isEmpty());
+                assertFalse(xmlData.isEmpty());
 
                 String a = xmlData.split("<A>")[1].split("</A>")[0].trim();
                 String a_b = a.split("<B>")[1].split("</B>")[0].trim();
@@ -505,21 +501,9 @@ public final class TestXSSFExportToXML {
         }
     }
 
-    private void parseXML(String xmlData) throws IOException, SAXException, ParserConfigurationException {
-        DocumentBuilderFactory docBuilderFactory = XMLHelper.getDocumentBuilderFactory();
-        docBuilderFactory.setNamespaceAware(true);
-        docBuilderFactory.setValidating(false);
-        DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
-        docBuilder.setEntityResolver(new DummyEntityResolver());
-
+    private void parseXML(String xmlData) throws IOException, SAXException {
+        DocumentBuilder docBuilder = XMLHelper.newDocumentBuilder();
         docBuilder.parse(new ByteArrayInputStream(xmlData.getBytes(StandardCharsets.UTF_8)));
-    }
-
-    private static class DummyEntityResolver implements EntityResolver {
-        @Override
-        public InputSource resolveEntity(String publicId, String systemId) {
-            return null;
-        }
     }
 
     @Test

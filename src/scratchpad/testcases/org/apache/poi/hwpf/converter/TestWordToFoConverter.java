@@ -22,9 +22,7 @@ import static org.apache.poi.POITestCase.assertContains;
 
 import java.io.StringWriter;
 
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -45,14 +43,12 @@ public class TestWordToFoConverter
                 .getDocumentInstance().openResourceAsStream( sampleFileName ) );
 
         WordToFoConverter wordToFoConverter = new WordToFoConverter(
-                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument() );
+                XMLHelper.newDocumentBuilder().newDocument() );
         wordToFoConverter.processDocument( hwpfDocument );
 
         StringWriter stringWriter = new StringWriter();
 
-        Transformer transformer = TransformerFactory.newInstance()
-                .newTransformer();
-        transformer.setOutputProperty( OutputKeys.INDENT, "yes" );
+        Transformer transformer = XMLHelper.newTransformer();
         transformer.transform(
                 new DOMSource( wordToFoConverter.getDocument() ),
                 new StreamResult( stringWriter ) );

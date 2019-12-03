@@ -18,17 +18,17 @@ package org.apache.poi.hwpf.converter;
 
 import static org.junit.Assert.assertNotNull;
 
+import java.io.File;
+import java.io.StringWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.io.StringWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocumentCore;
@@ -55,15 +55,7 @@ public class TestWordToConverterSuite
         List<Object[]> files = new ArrayList<>();
         File directory = POIDataSamples.getDocumentInstance().getFile(
                 "../document" );
-        for ( final File child : directory.listFiles( new FilenameFilter()
-        {
-            @Override
-            public boolean accept( File dir, String name )
-            {
-                return name.endsWith( ".doc" ) && !failingFiles.contains( name );
-            }
-        } ) )
-        {
+        for ( final File child : directory.listFiles((dir,name) -> name.endsWith( ".doc" ) && !failingFiles.contains( name ))) {
             files.add(new Object[] { child });
         }
 
@@ -83,15 +75,12 @@ public class TestWordToConverterSuite
         }
 
         WordToFoConverter wordToFoConverter = new WordToFoConverter(
-                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument() );
+                XMLHelper.newDocumentBuilder().newDocument() );
         wordToFoConverter.processDocument( hwpfDocument );
 
         StringWriter stringWriter = new StringWriter();
 
-        Transformer transformer = TransformerFactory.newInstance()
-                .newTransformer();
-        transformer.setOutputProperty( OutputKeys.ENCODING, "utf-8" );
-        transformer.setOutputProperty( OutputKeys.INDENT, "false" );
+        Transformer transformer = XMLHelper.newTransformer();
         transformer.transform(
                 new DOMSource( wordToFoConverter.getDocument() ),
                 new StreamResult( stringWriter ) );
@@ -111,7 +100,7 @@ public class TestWordToConverterSuite
         }
 
         WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(
-                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument() );
+                XMLHelper.newDocumentBuilder().newDocument() );
         wordToHtmlConverter.processDocument( hwpfDocument );
 
         StringWriter stringWriter = new StringWriter();
@@ -140,7 +129,7 @@ public class TestWordToConverterSuite
         }
 
         WordToTextConverter wordToTextConverter = new WordToTextConverter(
-                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument() );
+                XMLHelper.newDocumentBuilder().newDocument() );
         wordToTextConverter.processDocument( wordDocument );
 
         StringWriter stringWriter = new StringWriter();

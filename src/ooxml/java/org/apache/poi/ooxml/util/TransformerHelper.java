@@ -17,33 +17,20 @@
 
 package org.apache.poi.ooxml.util;
 
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-
-import javax.xml.XMLConstants;
 import javax.xml.transform.TransformerFactory;
 
-public final class TransformerHelper {
-    private static POILogger logger = POILogFactory.getLogger(TransformerHelper.class);
+import org.apache.poi.util.Removal;
+import org.apache.poi.util.XMLHelper;
 
+/**
+ * @deprecated use {@link XMLHelper}
+ */
+@Removal(version = "5.0.0")
+@Deprecated
+public final class TransformerHelper {
     private TransformerHelper() {}
 
-    static final TransformerFactory transformerFactory = TransformerFactory.newInstance();
-    static {
-        trySetFeature(transformerFactory, XMLConstants.FEATURE_SECURE_PROCESSING, true);
-    }
-
     public static TransformerFactory getFactory() {
-        return transformerFactory;
-    }
-
-    private static void trySetFeature(TransformerFactory tf, String feature, boolean enabled) {
-        try {
-            tf.setFeature(feature, enabled);
-        } catch (Exception e) {
-            logger.log(POILogger.WARN, "TransformerFactory Feature unsupported", feature, e);
-        } catch (AbstractMethodError ame) {
-            logger.log(POILogger.WARN, "Cannot set TransformerFactory feature because outdated XML parser in classpath", feature, ame);
-        }
+        return XMLHelper.getTransformerFactory();
     }
 }

@@ -23,13 +23,13 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
-import org.apache.poi.ooxml.util.SAXHelper;
+import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.eventusermodel.XLSX2CSV;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -78,7 +78,7 @@ public class FromHowTo {
     }
 
     public XMLReader fetchSheetParser(SharedStringsTable sst) throws SAXException, ParserConfigurationException {
-        XMLReader parser = SAXHelper.newXMLReader();
+        XMLReader parser = XMLHelper.newXMLReader();
         ContentHandler handler = new SheetHandler(sst);
         parser.setContentHandler(handler);
         return parser;

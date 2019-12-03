@@ -27,7 +27,6 @@ import java.util.Map;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -85,11 +84,8 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
         DOMSource domSource = new DOMSource( doc );
         StreamResult streamResult = new StreamResult( new File(args[1]) );
 
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer serializer = tf.newTransformer();
+        Transformer serializer = XMLHelper.newTransformer();
         // TODO set encoding from a command argument
-        serializer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
-        serializer.setOutputProperty( OutputKeys.INDENT, "no" );
         serializer.setOutputProperty( OutputKeys.METHOD, "html" );
         serializer.transform( domSource, streamResult );
     }
@@ -133,8 +129,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
      */
     public static Document process( HSSFWorkbook workbook ) throws IOException, ParserConfigurationException {
         ExcelToHtmlConverter excelToHtmlConverter = new ExcelToHtmlConverter(
-                XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
-                        .newDocument() );
+                XMLHelper.newDocumentBuilder().newDocument() );
         excelToHtmlConverter.processWorkbook( workbook );
         return excelToHtmlConverter.getDocument();
     }

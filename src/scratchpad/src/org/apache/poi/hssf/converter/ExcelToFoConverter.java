@@ -20,9 +20,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -92,12 +90,8 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         DOMSource domSource = new DOMSource( doc );
         StreamResult streamResult = new StreamResult( new File(args[1]) );
 
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer serializer = tf.newTransformer();
         // TODO set encoding from a command argument
-        serializer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
-        serializer.setOutputProperty( OutputKeys.INDENT, "no" );
-        serializer.setOutputProperty( OutputKeys.METHOD, "xml" );
+        Transformer serializer = XMLHelper.newTransformer();
         serializer.transform( domSource, streamResult );
     }
 
@@ -113,8 +107,7 @@ public class ExcelToFoConverter extends AbstractExcelConverter
         final HSSFWorkbook workbook = AbstractExcelUtils.loadXls( xlsFile );
         try {
             ExcelToFoConverter excelToHtmlConverter = new ExcelToFoConverter(
-                    XMLHelper.getDocumentBuilderFactory().newDocumentBuilder()
-                            .newDocument() );
+                    XMLHelper.newDocumentBuilder().newDocument() );
             excelToHtmlConverter.processWorkbook( workbook );
             return excelToHtmlConverter.getDocument();
         } finally {

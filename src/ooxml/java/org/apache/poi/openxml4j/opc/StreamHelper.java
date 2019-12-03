@@ -30,17 +30,14 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.apache.poi.ooxml.util.TransformerHelper;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.XMLHelper;
 import org.w3c.dom.Document;
 
 public final class StreamHelper {
 
 	private StreamHelper() {
 		// Do nothing
-	}
-
-	private static synchronized Transformer getIdentityTransformer() throws TransformerException {
-		return TransformerHelper.getFactory().newTransformer();
 	}
 
 	/**
@@ -56,7 +53,7 @@ public final class StreamHelper {
 	public static boolean saveXmlInStream(Document xmlContent,
 										  OutputStream outStream) {
 		try {
-			Transformer trans = getIdentityTransformer();
+			Transformer trans = XMLHelper.newTransformer();
 			Source xmlSource = new DOMSource(xmlContent);
 			// prevent close of stream by transformer:
 			Result outputTarget = new StreamResult(new FilterOutputStream(
@@ -97,14 +94,10 @@ public final class StreamHelper {
 	 */
 	public static boolean copyStream(InputStream inStream, OutputStream outStream) {
 		try {
-			byte[] buffer = new byte[1024];
-			int bytesRead;
-			while ((bytesRead = inStream.read(buffer)) >= 0) {
-				outStream.write(buffer, 0, bytesRead);
-			}
+			IOUtils.copy(inStream, outStream);
+			return true;
 		} catch (Exception e) {
 			return false;
 		}
-		return true;
 	}
 }

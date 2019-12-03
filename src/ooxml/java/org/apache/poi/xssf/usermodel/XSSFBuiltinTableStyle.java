@@ -25,21 +25,23 @@ import java.nio.charset.StandardCharsets;
 import java.util.EnumMap;
 import java.util.Map;
 
-import org.apache.poi.ooxml.util.TransformerHelper;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.ss.usermodel.DifferentialStyleProvider;
 import org.apache.poi.ss.usermodel.TableStyle;
 import org.apache.poi.ss.usermodel.TableStyleType;
-import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.model.StylesTable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 /**
  * Table style names defined in the OOXML spec.
@@ -440,9 +442,8 @@ public enum XSSFBuiltinTableStyle {
     }
 
     private static String writeToString(Node node) throws IOException, TransformerException {
-        TransformerFactory tf = TransformerHelper.getFactory();
         try (StringWriter sw = new StringWriter()){
-            Transformer transformer = tf.newTransformer();
+            Transformer transformer = XMLHelper.newTransformer();
             transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
             transformer.transform(new DOMSource(node), new StreamResult(sw));
             return sw.toString();

@@ -16,23 +16,32 @@
 ==================================================================== */
 package org.apache.poi.ooxml.dev;
 
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.poi.ooxml.util.DocumentHelper;
-import org.apache.poi.ooxml.util.TransformerHelper;
-import org.apache.poi.openxml4j.opc.internal.ZipHelper;
-import org.apache.poi.openxml4j.util.ZipSecureFile;
-import org.apache.poi.util.IOUtils;
-import org.w3c.dom.Document;
-import org.xml.sax.InputSource;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.transform.*;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.*;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.poi.ooxml.util.DocumentHelper;
+import org.apache.poi.openxml4j.opc.internal.ZipHelper;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.XMLHelper;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
 
 /**
  * Reads a zipped OOXML file and produces a copy with the included
@@ -42,6 +51,8 @@ import java.util.zip.ZipOutputStream;
  *  use different formatting of the XML.
  */
 public class OOXMLPrettyPrint {
+    private static final String XML_INDENT_AMOUNT = "{http://xml.apache.org/xslt}indent-amount";
+
     private final DocumentBuilder documentBuilder;
 
     public OOXMLPrettyPrint() {
@@ -109,13 +120,11 @@ public class OOXMLPrettyPrint {
     }
 
     private static void pretty(Document document, OutputStream outputStream, int indent) throws TransformerException {
-        TransformerFactory transformerFactory = TransformerHelper.getFactory();
-        Transformer transformer = transformerFactory.newTransformer();
-        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        Transformer transformer = XMLHelper.newTransformer();
         if (indent > 0) {
             // set properties to indent the resulting XML nicely
             transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-            transformer.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", Integer.toString(indent));
+            transformer.setOutputProperty(XML_INDENT_AMOUNT, Integer.toString(indent));
         }
         Result result = new StreamResult(outputStream);
         Source source = new DOMSource(document);

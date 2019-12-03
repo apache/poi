@@ -16,21 +16,21 @@
 ==================================================================== */
 package org.apache.poi.hwpf.converter;
 
+import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.assertFalse;
+
+import java.io.StringWriter;
+
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
+
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.util.XMLHelper;
 import org.junit.Test;
 import org.w3c.dom.Document;
-
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-import java.io.StringWriter;
-
-import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.assertFalse;
 
 /**
  * Test cases for {@link WordToHtmlConverter}
@@ -45,7 +45,7 @@ public class TestWordToHtmlConverter {
         HWPFDocument hwpfDocument = new HWPFDocument(POIDataSamples
                 .getDocumentInstance().openResourceAsStream(sampleFileName));
 
-        Document newDocument = XMLHelper.getDocumentBuilderFactory().newDocumentBuilder().newDocument();
+        Document newDocument = XMLHelper.newDocumentBuilder().newDocument();
         WordToHtmlConverter wordToHtmlConverter = new WordToHtmlConverter(
                 newDocument);
 
@@ -58,10 +58,7 @@ public class TestWordToHtmlConverter {
 
         StringWriter stringWriter = new StringWriter();
 
-        Transformer transformer = TransformerFactory.newInstance()
-                .newTransformer();
-        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-        transformer.setOutputProperty(OutputKeys.ENCODING, "utf-8");
+        Transformer transformer = XMLHelper.newTransformer();
         transformer.setOutputProperty(OutputKeys.METHOD, "html");
         transformer.transform(
                 new DOMSource(wordToHtmlConverter.getDocument()),

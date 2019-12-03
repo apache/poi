@@ -96,7 +96,7 @@ public class TSPTimeStampService implements TimeStampService {
         }
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked","squid:S2647"})
     public byte[] timeStamp(byte[] data, RevocationData revocationData)
             throws Exception {
         // digest the message

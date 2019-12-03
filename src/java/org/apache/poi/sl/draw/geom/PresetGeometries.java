@@ -35,7 +35,7 @@ import javax.xml.transform.stream.StreamSource;
 import org.apache.poi.sl.draw.binding.CTCustomGeometry2D;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.StaxHelper;
+import org.apache.poi.util.XMLHelper;
 
 /**
  * 
@@ -50,7 +50,7 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
 
     @SuppressWarnings("unused")
     public void init(InputStream is) throws XMLStreamException, JAXBException {
-        XMLInputFactory staxFactory = StaxHelper.newXMLInputFactory();
+        XMLInputFactory staxFactory = XMLHelper.newXMLInputFactory();
         XMLStreamReader streamReader = staxFactory.createXMLStreamReader(new StreamSource(is));
         try {
             // ignore StartElement:

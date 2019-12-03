@@ -18,18 +18,19 @@ package org.apache.poi.xssf.eventusermodel;
 
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
 
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.PushbackInputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.xml.parsers.ParserConfigurationException;
+
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.ooxml.util.SAXHelper;
 import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.util.Removal;
+import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.model.SharedStrings;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
@@ -173,7 +174,7 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
             pis.unread(emptyTest);
             InputSource sheetSource = new InputSource(pis);
             try {
-                XMLReader sheetParser = SAXHelper.newXMLReader();
+                XMLReader sheetParser = XMLHelper.newXMLReader();
                 sheetParser.setContentHandler(this);
                 sheetParser.parse(sheetSource);
             } catch(ParserConfigurationException e) {
