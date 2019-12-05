@@ -216,6 +216,14 @@ public final class TestXSSFTable {
     }
 
     @Test
+    public void getEndCellReferenceFromSingleCellTable() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("SingleCellTable.xlsx")) {
+            XSSFTable table = wb.getTable("Table3");
+            assertEquals(new CellReference("A2"), table.getEndCellReference());
+        }
+    }
+
+    @Test
     public void getNumberOfMappedColumns() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx")) {
             XSSFTable table = wb.getTable("\\_Prime.1");
