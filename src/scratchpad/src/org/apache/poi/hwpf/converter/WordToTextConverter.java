@@ -27,7 +27,6 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -83,7 +82,7 @@ public class WordToTextConverter extends AbstractWordConverter
 
     /**
      * Java main() interface to interact with {@link WordToTextConverter}
-     * 
+     *
      * <p>
      * Usage: WordToTextConverter infile outfile
      * </p>
@@ -131,7 +130,7 @@ public class WordToTextConverter extends AbstractWordConverter
     /**
      * Creates new instance of {@link WordToTextConverter}. Can be used for
      * output several {@link HWPFDocument}s into single text document.
-     * 
+     *
      * @throws ParserConfigurationException
      *             if an internal {@link DocumentBuilder} cannot be created
      */
@@ -144,7 +143,7 @@ public class WordToTextConverter extends AbstractWordConverter
     /**
      * Creates new instance of {@link WordToTextConverter}. Can be used for
      * output several {@link HWPFDocument}s into single text document.
-     * 
+     *
      * @param document
      *            XML DOM Document used as storage for text pieces
      */
@@ -178,11 +177,8 @@ public class WordToTextConverter extends AbstractWordConverter
         DOMSource domSource = new DOMSource( getDocument() );
         StreamResult streamResult = new StreamResult( stringWriter );
 
-        TransformerFactory tf = TransformerFactory.newInstance();
-        Transformer serializer = tf.newTransformer();
+        Transformer serializer =  XMLHelper.newTransformer();
         // TODO set encoding from a command argument
-        serializer.setOutputProperty( OutputKeys.ENCODING, "UTF-8" );
-        serializer.setOutputProperty( OutputKeys.INDENT, "no" );
         serializer.setOutputProperty( OutputKeys.METHOD, "text" );
         serializer.transform( domSource, streamResult );
 

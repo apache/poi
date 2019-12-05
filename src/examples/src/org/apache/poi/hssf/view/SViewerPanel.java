@@ -17,13 +17,37 @@
 
 package org.apache.poi.hssf.view;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.io.*;
-import javax.swing.*;
-import javax.swing.table.*;
+import java.awt.AWTEvent;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.WindowEvent;
+import java.io.FileInputStream;
+import java.io.IOException;
 
-import org.apache.poi.hssf.usermodel.*;
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JComponent;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JPopupMenu;
+import javax.swing.JScrollPane;
+import javax.swing.JTabbedPane;
+import javax.swing.JTable;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * This class presents the sheets to the user.
@@ -144,7 +168,7 @@ public void paint(Graphics g) {
    *  The default is to popup a menu when the event occurs over a tab
    */
   private class TabListener implements MouseListener {
-    public JPopupMenu popup;
+    private final JPopupMenu popup;
     public TabListener() {
       popup = new JPopupMenu("Sheet");
       popup.add(createInsertSheetAction());

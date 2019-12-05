@@ -26,7 +26,6 @@ import java.util.List;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -106,10 +105,7 @@ public class TestExcelConverterSuite
 
         StringWriter stringWriter = new StringWriter();
 
-        Transformer transformer = TransformerFactory.newInstance()
-                .newTransformer();
-        transformer.setOutputProperty( OutputKeys.ENCODING, "utf-8" );
-        transformer.setOutputProperty( OutputKeys.INDENT, "no" );
+        Transformer transformer = XMLHelper.newTransformer();
         transformer.setOutputProperty( OutputKeys.METHOD, "html" );
         transformer.transform(
                 new DOMSource( excelToHtmlConverter.getDocument() ),

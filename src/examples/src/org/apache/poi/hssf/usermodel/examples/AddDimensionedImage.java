@@ -20,18 +20,18 @@ package org.apache.poi.hssf.usermodel.examples;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
 import org.apache.poi.hssf.usermodel.HSSFPatriarch;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
+import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.IOUtils;
 
 
 /**
@@ -126,8 +126,8 @@ import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
  * A note concerning Excels' image resizing behaviour. The HSSFClientAnchor
  * class contains a method called setAnchorType(int) which can be used to
  * determine how Excel will resize an image in reponse to the user increasing
- * or decreasing the dimensions of the cell containing the image. There are 
- * three values that can be passed to this method; 0 = To move and size the 
+ * or decreasing the dimensions of the cell containing the image. There are
+ * three values that can be passed to this method; 0 = To move and size the
  * image with the cell, 2 = To move but don't size the image with the cell,
  * 3 = To prevent the image from moving or being resized along with the cell. If
  * an image is inserted using this class and placed into a single cell then if
@@ -298,7 +298,7 @@ public class AddDimensionedImage {
         // become another parameter passed to the method.
         //anchor.setAnchorType(HSSFClientAnchor.DONT_MOVE_AND_RESIZE);
         anchor.setAnchorType(AnchorType.MOVE_AND_RESIZE);
-        
+
         // Now, add the picture to the workbook. Note that the type is assumed
         // to be a JPEG/JPG, this could easily (and should) be parameterised
         // however.
@@ -538,7 +538,7 @@ public class AddDimensionedImage {
             // total number of co-ordinate positions to the third paramater
             // of the ClientAnchorDetail constructor. For no sepcific reason,
             // the latter option is used below.
-            anchorDetail = new ClientAnchorDetail(startingColumn, 
+            anchorDetail = new ClientAnchorDetail(startingColumn,
                     toColumn, ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS);
         }
         // In this case, the image will overlap part of another column and it is
@@ -675,29 +675,9 @@ public class AddDimensionedImage {
      *                             interrupted.
      */
     private byte[] imageToBytes(String imageFilename) throws IOException {
-        File imageFile;
-        FileInputStream fis = null;
-        ByteArrayOutputStream bos;
-        int read;
-        try {
-            imageFile = new File(imageFilename);
-            fis = new FileInputStream(imageFile);
-            bos = new ByteArrayOutputStream();
-            while((read = fis.read()) != -1) {
-                bos.write(read);
-            }
-            return(bos.toByteArray());
-        }
-        finally {
-            if(fis != null) {
-                try {
-                    fis.close();
-                    fis = null;
-                }
-                catch(IOException ioEx) {
-                    // Nothing to do here
-                }
-            }
+        File imageFile = new File(imageFilename);
+        try (FileInputStream fis = new FileInputStream(imageFile)) {
+            return IOUtils.toByteArray(fis);
         }
     }
 
@@ -720,41 +700,21 @@ public class AddDimensionedImage {
      *
      * @param args the command line arguments
      */
-    public static void main(String[] args) {
-        String imageFile;
-        String outputFile;
-        FileOutputStream fos = null;
-        HSSFSheet sheet;
-        try {
-            if(args.length < 2){
-                System.err.println("Usage: AddDimensionedImage imageFile outputFile");
-                return;
-            }
-            imageFile = args[0];
-            outputFile = args[1];
-
-            try (HSSFWorkbook workbook = new HSSFWorkbook()) {
-                sheet = workbook.createSheet("Picture Test");
-                new AddDimensionedImage().addImageToSheet("A1", sheet,
-                        imageFile, 125, 125,
-                        AddDimensionedImage.EXPAND_ROW_AND_COLUMN);
-                fos = new FileOutputStream(outputFile);
-                workbook.write(fos);
-            }
-        } catch(IOException ioEx) {
-            System.out.println("Caught an: " + ioEx.getClass().getName());
-            System.out.println("Message: " + ioEx.getMessage());
-            System.out.println("Stacktrace follows...........");
-            ioEx.printStackTrace(System.out);
+    public static void main(String[] args) throws IOException {
+        if(args.length < 2){
+            System.err.println("Usage: AddDimensionedImage imageFile outputFile");
+            return;
         }
-        finally {
-            try {
-                if(fos != null) {
-                    fos.close();
-                    fos = null;
-                }
-            } catch(IOException ioEx) {
-                // I G N O R E
+        String imageFile = args[0];
+        String outputFile = args[1];
+
+        try (HSSFWorkbook workbook = new HSSFWorkbook()) {
+            HSSFSheet sheet = workbook.createSheet("Picture Test");
+            new AddDimensionedImage().addImageToSheet("A1", sheet,
+                    imageFile, 125, 125,
+                    AddDimensionedImage.EXPAND_ROW_AND_COLUMN);
+            try (FileOutputStream fos = new FileOutputStream(outputFile)) {
+                workbook.write(fos);
             }
         }
     }
@@ -775,21 +735,21 @@ public class AddDimensionedImage {
      *      * Together, parameter seven and eight determine the column and row
      *      co-ordinates of the cell whose top left hand corner will be aligned
      *      with the images bottom right hand corner.
-     * 
+     *
      * An instance of the ClientAnchorDetail class provides three of the eight
      * parameters, one of the co-ordinates for the images top left hand corner,
-     * one of the co-ordinates for the images bottom right hand corner and 
+     * one of the co-ordinates for the images bottom right hand corner and
      * either how far the image should be inset from the top or the left hand
      * edge of the cell.
-     * 
+     *
      * @author Mark Beardsley [mas at apache.org]
      * @version 1.00 5th August 2009.
      */
-    public class ClientAnchorDetail {
+    public static class ClientAnchorDetail {
 
-        public int fromIndex;
-        public int toIndex;
-        public int inset;
+        private int fromIndex;
+        private int toIndex;
+        private int inset;
 
         /**
          * Create a new instance of the ClientAnchorDetail class using the
@@ -857,17 +817,13 @@ public class AddDimensionedImage {
      *          Additional constants.
      *          widthUnits2Millimetres() and millimetres2Units() methods.
      */
-    public static class ConvertImageUnits {
+    private static final class ConvertImageUnits {
 
         // Each cell conatins a fixed number of co-ordinate points; this number
         // does not vary with row height or column width or with font. These two
         // constants are defined below.
         public static final int TOTAL_COLUMN_COORDINATE_POSITIONS = 1023; // MB
         public static final int TOTAL_ROW_COORDINATE_POSITIONS = 255;     // MB
-        // The resoultion of an image can be expressed as a specific number
-        // of pixels per inch. Displays and printers differ but 96 pixels per
-        // inch is an acceptable standard to beging with.
-        public static final int PIXELS_PER_INCH = 96;                     // MB
         // Cnstants that defines how many pixels and points there are in a
         // millimetre. These values are required for the conversion algorithm.
         public static final double PIXELS_PER_MILLIMETRES = 3.78;         // MB
@@ -880,13 +836,11 @@ public class AddDimensionedImage {
         public static final double CELL_BORDER_WIDTH_MILLIMETRES = 2.0D;  // MB
         public static final short EXCEL_COLUMN_WIDTH_FACTOR = 256;
         public static final int UNIT_OFFSET_LENGTH = 7;
-        public static final int[] UNIT_OFFSET_MAP = new int[]
+        private static final int[] UNIT_OFFSET_MAP = new int[]
             { 0, 36, 73, 109, 146, 182, 219 };
 
         /**
         * pixel units to excel width units(units of 1/256th of a character width)
-        * @param pxs
-        * @return
         */
         public static short pixel2WidthUnits(int pxs) {
             short widthUnits = (short) (EXCEL_COLUMN_WIDTH_FACTOR *
@@ -898,9 +852,6 @@ public class AddDimensionedImage {
         /**
          * excel width units(units of 1/256th of a character width) to pixel
          * units.
-         *
-         * @param widthUnits
-         * @return
          */
         public static int widthUnits2Pixel(short widthUnits) {
             int pixels = (widthUnits / EXCEL_COLUMN_WIDTH_FACTOR)

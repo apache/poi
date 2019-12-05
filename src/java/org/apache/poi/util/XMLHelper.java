@@ -17,11 +17,21 @@
 
 package org.apache.poi.util;
 
+import static javax.xml.XMLConstants.ACCESS_EXTERNAL_DTD;
+import static javax.xml.XMLConstants.ACCESS_EXTERNAL_SCHEMA;
+import static javax.xml.XMLConstants.ACCESS_EXTERNAL_STYLESHEET;
+import static javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING;
+import static javax.xml.XMLConstants.W3C_XML_SCHEMA_NS_URI;
+import static javax.xml.stream.XMLInputFactory.IS_NAMESPACE_AWARE;
+import static javax.xml.stream.XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES;
+import static javax.xml.stream.XMLInputFactory.IS_VALIDATING;
+import static javax.xml.stream.XMLInputFactory.SUPPORT_DTD;
+import static javax.xml.stream.XMLOutputFactory.IS_REPAIRING_NAMESPACES;
+
 import java.io.StringReader;
 import java.lang.reflect.Method;
 import java.util.concurrent.TimeUnit;
 
-import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
@@ -44,6 +54,8 @@ import org.xml.sax.XMLReader;
 
 /**
  * Helper methods for working with javax.xml classes.
+ *
+ * @see <a href="https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html">OWASP XXE</a>
  */
 @Internal
 public final class XMLHelper {
@@ -86,20 +98,18 @@ public final class XMLHelper {
 
     /**
      * Creates a new DocumentBuilderFactory, with sensible defaults
-     *
-     * @see <a href="https://cheatsheetseries.owasp.org/cheatsheets/XML_External_Entity_Prevention_Cheat_Sheet.html">OWASP XXE</a>
      */
     @SuppressWarnings({"squid:S2755"})
     public static DocumentBuilderFactory getDocumentBuilderFactory() {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         // this doesn't appear to work, and we still need to limit
-        // entity expansions to 1 in trySetXercesSecurityManager
+        // entity expansions to 1 in trySet(XercesSecurityManager)
         factory.setExpandEntityReferences(false);
         factory.setValidating(false);
-        trySet(factory::setFeature, XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        trySet(factory::setAttribute, XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-        trySet(factory::setAttribute, XMLConstants.ACCESS_EXTERNAL_DTD, "");
+        trySet(factory::setFeature, FEATURE_SECURE_PROCESSING, true);
+        trySet(factory::setAttribute, ACCESS_EXTERNAL_SCHEMA, "");
+        trySet(factory::setAttribute, ACCESS_EXTERNAL_DTD, "");
         trySet(factory::setFeature, FEATURE_EXTERNAL_ENTITIES, false);
         trySet(factory::setFeature, FEATURE_PARAMETER_ENTITIES, false);
         trySet(factory::setFeature, FEATURE_LOAD_EXTERNAL_DTD, false);
@@ -134,14 +144,16 @@ public final class XMLHelper {
         }
     }
 
+    @SuppressWarnings("squid:S2755")
     public static SAXParserFactory getSaxParserFactory() {
         try {
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setValidating(false);
             factory.setNamespaceAware(true);
-            trySet(factory::setFeature, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            trySet(factory::setFeature, FEATURE_SECURE_PROCESSING, true);
             trySet(factory::setFeature, FEATURE_LOAD_DTD_GRAMMAR, false);
             trySet(factory::setFeature, FEATURE_LOAD_EXTERNAL_DTD, false);
+            trySet(factory::setFeature, FEATURE_EXTERNAL_ENTITIES, false);
             return factory;
         } catch (RuntimeException | Error re) { // NOSONAR
             // this also catches NoClassDefFoundError, which may be due to a local class path issue
@@ -161,7 +173,8 @@ public final class XMLHelper {
     public static XMLReader newXMLReader() throws SAXException, ParserConfigurationException {
         XMLReader xmlReader = saxFactory.newSAXParser().getXMLReader();
         xmlReader.setEntityResolver(XMLHelper::ignoreEntity);
-        trySet(xmlReader::setFeature, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        trySet(xmlReader::setFeature, FEATURE_SECURE_PROCESSING, true);
+        trySet(xmlReader::setFeature, FEATURE_EXTERNAL_ENTITIES, false);
         Object manager = getXercesSecurityManager();
         if (manager == null || !trySet(xmlReader::setProperty, PROPERTY_SECURITY_MANAGER, manager)) {
             // separate old version of Xerces not found => use the builtin way of setting the property
@@ -176,10 +189,10 @@ public final class XMLHelper {
     @SuppressWarnings({"squid:S2755"})
     public static XMLInputFactory newXMLInputFactory() {
         XMLInputFactory factory = XMLInputFactory.newInstance();
-        trySet(factory::setProperty, XMLInputFactory.IS_NAMESPACE_AWARE, true);
-        trySet(factory::setProperty, XMLInputFactory.IS_VALIDATING, false);
-        trySet(factory::setProperty, XMLInputFactory.SUPPORT_DTD, false);
-        trySet(factory::setProperty, XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+        trySet(factory::setProperty, IS_NAMESPACE_AWARE, true);
+        trySet(factory::setProperty, IS_VALIDATING, false);
+        trySet(factory::setProperty, SUPPORT_DTD, false);
+        trySet(factory::setProperty, IS_SUPPORTING_EXTERNAL_ENTITIES, false);
         return factory;
     }
 
@@ -188,7 +201,7 @@ public final class XMLHelper {
      */
     public static XMLOutputFactory newXMLOutputFactory() {
         XMLOutputFactory factory = XMLOutputFactory.newInstance();
-        trySet(factory::setProperty, XMLOutputFactory.IS_REPAIRING_NAMESPACES, true);
+        trySet(factory::setProperty, IS_REPAIRING_NAMESPACES, true);
         return factory;
     }
 
@@ -202,7 +215,9 @@ public final class XMLHelper {
 
     public static TransformerFactory getTransformerFactory() {
         TransformerFactory factory = TransformerFactory.newInstance();
-        trySet(factory::setFeature, XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        trySet(factory::setFeature, FEATURE_SECURE_PROCESSING, true);
+        trySet(factory::setAttribute, ACCESS_EXTERNAL_DTD, "");
+        trySet(factory::setAttribute, ACCESS_EXTERNAL_STYLESHEET, "");
         return factory;
     }
 
@@ -216,10 +231,10 @@ public final class XMLHelper {
     }
 
     public static SchemaFactory getSchemaFactory() {
-        SchemaFactory factory = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
-        trySet(factory::setFeature, XMLConstants.FEATURE_SECURE_PROCESSING, true);
-        trySet(factory::setProperty, XMLConstants.ACCESS_EXTERNAL_DTD, "");
-        trySet(factory::setProperty, XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+        SchemaFactory factory = SchemaFactory.newInstance(W3C_XML_SCHEMA_NS_URI);
+        trySet(factory::setFeature, FEATURE_SECURE_PROCESSING, true);
+        trySet(factory::setProperty, ACCESS_EXTERNAL_DTD, "");
+        trySet(factory::setProperty, ACCESS_EXTERNAL_SCHEMA, "");
         return factory;
     }
 

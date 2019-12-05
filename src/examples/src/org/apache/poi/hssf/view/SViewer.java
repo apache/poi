@@ -70,6 +70,7 @@ public class SViewer extends JApplet {
      * Initialize the applet
      */
     @Override
+    @SuppressWarnings("squid:S1148")
     public void init() {
         try {
             jbInit();

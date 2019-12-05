@@ -100,7 +100,7 @@ import org.apache.poi.util.IOUtils;
  * in which those corners should be located. The setCol1() and setRow1() methods
  * together identify the cell that should contain the top left hand corner of
  * the image while setCol2() and setRow2() do the same for the images bottom
- * right hand corner. 
+ * right hand corner.
  *
  * Knowing that, it is possible to look again at the example above and to see
  * that the top left hand corner of the image will be located in cell A1 (0, 0)
@@ -108,7 +108,7 @@ import org.apache.poi.util.IOUtils;
  * the bottom right hand corner of the image will be located in cell B2 (1, 1) and
  * it will again be aligned with the top left hand corner of the cell. This has the
  * effect of making the image seem to occupy the whole of cell A1. Interestingly, it
- * also has an effect on the images resizing behaviour because testing has 
+ * also has an effect on the images resizing behaviour because testing has
  * demonstrated that if the image is wholly contained within one cell and is not
  * 'attached' for want of a better word, to a neighbouring cell, then that image
  * will not increase in size in response to the user dragging the column wider
@@ -170,8 +170,8 @@ import org.apache.poi.util.IOUtils;
  * A note concerning Excels image resizing behaviour. The ClientAnchor
  * class contains a method called setAnchorType(int) which can be used to
  * determine how Excel will resize an image in response to the user increasing
- * or decreasing the dimensions of the cell containing the image. There are 
- * three values that can be passed to this method; 0 = To move and size the 
+ * or decreasing the dimensions of the cell containing the image. There are
+ * three values that can be passed to this method; 0 = To move and size the
  * image with the cell, 2 = To move but don't size the image with the cell,
  * 3 = To prevent the image from moving or being resized along with the cell. If
  * an image is inserted using this class and placed into a single cell then if
@@ -221,12 +221,12 @@ public class AddDimensionedImage {
     public static final int EXPAND_COLUMN = 2;
     public static final int EXPAND_ROW_AND_COLUMN = 3;
     public static final int OVERLAY_ROW_AND_COLUMN = 7;
-    
+
     // Modified to support EMU - English Metric Units - used within the OOXML
     // workbooks, this multoplier is used to convert between measurements in
     // millimetres and in EMUs
     private static final int EMU_PER_MM = 36000;
-    
+
     /**
      * Add an image to a worksheet.
      *
@@ -551,7 +551,7 @@ public class AddDimensionedImage {
                (resizeBehaviour == AddDimensionedImage.EXPAND_ROW_AND_COLUMN)) {
                 row.setHeightInPoints((float)(reqImageHeightMM *
                         ConvertImageUnits.POINTS_PER_MILLIMETRE));
-                if(sheet instanceof HSSFSheet) {                    
+                if(sheet instanceof HSSFSheet) {
                     rowHeightMM = reqImageHeightMM;
                     rowCoordinatesPerMM = ConvertImageUnits.TOTAL_ROW_COORDINATE_POSITIONS /
                         rowHeightMM;
@@ -863,9 +863,9 @@ public class AddDimensionedImage {
      */
     public class ClientAnchorDetail {
 
-        public int fromIndex;
-        public int toIndex;
-        public int inset;
+        private int fromIndex;
+        private int toIndex;
+        private int inset;
 
         /**
          * Create a new instance of the ClientAnchorDetail class using the
@@ -938,26 +938,25 @@ public class AddDimensionedImage {
         // Each cell conatins a fixed number of co-ordinate points; this number
         // does not vary with row height or column width or with font. These two
         // constants are defined below.
-        public static final int TOTAL_COLUMN_COORDINATE_POSITIONS = 1023; // MB
-        public static final int TOTAL_ROW_COORDINATE_POSITIONS = 255;     // MB
+        public static final int TOTAL_COLUMN_COORDINATE_POSITIONS = 1023;
+        public static final int TOTAL_ROW_COORDINATE_POSITIONS = 255;
         // The resoultion of an image can be expressed as a specific number
         // of pixels per inch. Displays and printers differ but 96 pixels per
         // inch is an acceptable standard to beging with.
-        public static final int PIXELS_PER_INCH = 96;                     // MB
+        public static final int PIXELS_PER_INCH = 96;
         // Cnstants that defines how many pixels and points there are in a
         // millimetre. These values are required for the conversion algorithm.
-        public static final double PIXELS_PER_MILLIMETRES = 3.78;         // MB
-        public static final double POINTS_PER_MILLIMETRE = 2.83;          // MB
+        public static final double PIXELS_PER_MILLIMETRES = 3.78;
+        public static final double POINTS_PER_MILLIMETRE = 2.83;
         // The column width returned by HSSF and the width of a picture when
         // positioned to exactly cover one cell are different by almost exactly
         // 2mm - give or take rounding errors. This constant allows that
         // additional amount to be accounted for when calculating how many
         // celles the image ought to overlie.
-        public static final double CELL_BORDER_WIDTH_MILLIMETRES = 2.0D;  // MB
+        public static final double CELL_BORDER_WIDTH_MILLIMETRES = 2.0D;
         public static final short EXCEL_COLUMN_WIDTH_FACTOR = 256;
         public static final int UNIT_OFFSET_LENGTH = 7;
-        public static final int[] UNIT_OFFSET_MAP = new int[]
-            { 0, 36, 73, 109, 146, 182, 219 };
+        private static final int[] UNIT_OFFSET_MAP = { 0, 36, 73, 109, 146, 182, 219 };
 
         /**
         * pixel units to excel width units(units of 1/256th of a character width)
@@ -1006,14 +1005,6 @@ public class AddDimensionedImage {
         public static int millimetres2WidthUnits(double millimetres) {
             return(ConvertImageUnits.pixel2WidthUnits((int)(millimetres *
                     ConvertImageUnits.PIXELS_PER_MILLIMETRES)));
-        }
-        
-        public static int pointsToPixels(double points) {
-    		return (int) Math.round(points / 72D * PIXELS_PER_INCH);
-    	}
-        
-        public static double pointsToMillimeters(double points) {
-        	return points / 72D * 25.4;
         }
     }
 }
