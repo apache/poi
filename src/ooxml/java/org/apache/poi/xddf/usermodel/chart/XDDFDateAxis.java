@@ -236,6 +236,7 @@ public class XDDFDateAxis extends XDDFChartAxis {
         final long id = getNextAxId(plotArea);
         ctDateAx = plotArea.addNewDateAx();
         ctDateAx.addNewAxId().setVal(id);
+        ctDateAx.addNewAuto().setVal(false);
         ctDateAx.addNewAxPos();
         ctDateAx.addNewScaling();
         ctDateAx.addNewCrosses();
@@ -244,6 +245,8 @@ public class XDDFDateAxis extends XDDFChartAxis {
         ctDateAx.addNewDelete();
         ctDateAx.addNewMajorTickMark();
         ctDateAx.addNewMinorTickMark();
+        ctDateAx.addNewNumFmt().setSourceLinked(true);
+        ctDateAx.getNumFmt().setFormatCode("");
 
         setPosition(position);
         setOrientation(AxisOrientation.MIN_MAX);

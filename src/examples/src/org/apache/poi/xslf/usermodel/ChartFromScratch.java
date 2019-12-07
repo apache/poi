@@ -87,11 +87,9 @@ public class ChartFromScratch {
             Double[] values2 = listSpeakers.toArray(new Double[0]);
 
             try (XMLSlideShow ppt = new XMLSlideShow()) {
-                XSLFSlide slide = ppt.createSlide();
-                XSLFChart chart = ppt.createChart();
-                Rectangle2D rect2D = new java.awt.Rectangle(fromCM(1.5), fromCM(4), fromCM(22), fromCM(14));
-                slide.addChart(chart, rect2D);
-                setBarData(chart, chartTitle, series, categories, values1, values2);
+                createSlideWithChart(ppt, chartTitle, series, categories, values1, values2);
+                createSlideWithChart(ppt, chartTitle, series, categories, values1, values2);
+                createSlideWithChart(ppt, chartTitle, series, categories, values1, values2);
                 // save the result
                 try (OutputStream out = new FileOutputStream("chart-from-scratch.pptx")) {
                     ppt.write(out);
@@ -99,6 +97,15 @@ public class ChartFromScratch {
             }
         }
         System.out.println("Done");
+    }
+
+    private static void createSlideWithChart(XMLSlideShow ppt, String chartTitle, String[] series, String[] categories,
+            Double[] values1, Double[] values2) {
+        XSLFSlide slide = ppt.createSlide();
+        XSLFChart chart = ppt.createChart();
+        Rectangle2D rect2D = new java.awt.Rectangle(fromCM(1.5), fromCM(4), fromCM(22), fromCM(14));
+        slide.addChart(chart, rect2D);
+        setBarData(chart, chartTitle, series, categories, values1, values2);
     }
 
     private static int fromCM(double cm) {

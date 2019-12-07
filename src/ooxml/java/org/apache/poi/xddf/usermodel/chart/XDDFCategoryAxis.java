@@ -212,6 +212,7 @@ public class XDDFCategoryAxis extends XDDFChartAxis {
         final long id = getNextAxId(plotArea);
         ctCatAx = plotArea.addNewCatAx();
         ctCatAx.addNewAxId().setVal(id);
+        ctCatAx.addNewAuto().setVal(false);
         ctCatAx.addNewAxPos();
         ctCatAx.addNewScaling();
         ctCatAx.addNewCrosses();
@@ -220,6 +221,8 @@ public class XDDFCategoryAxis extends XDDFChartAxis {
         ctCatAx.addNewDelete();
         ctCatAx.addNewMajorTickMark();
         ctCatAx.addNewMinorTickMark();
+        ctCatAx.addNewNumFmt().setSourceLinked(true);
+        ctCatAx.getNumFmt().setFormatCode("");
 
         setPosition(position);
         setOrientation(AxisOrientation.MIN_MAX);

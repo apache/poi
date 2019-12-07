@@ -123,9 +123,9 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * Keeps track on all id-values used in this document and included parts, like headers, footers, etc.
      */
     private IdentifierManager drawingIdManager = new IdentifierManager(0L, 4294967295L);
-    
+
     private FootnoteEndnoteIdManager footnoteIdManager = new FootnoteEndnoteIdManager(this);
-    
+
     /**
      * Handles the joy of different headers/footers for different pages
      */
@@ -1356,7 +1356,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     public boolean getEvenAndOddHeadings() {
         return settings.getEvenAndOddHeadings();
     }
-    
+
     /**
      * Sets the even-and-odd-headings setting
      * @param enable Set to true to turn on separate even and odd headings.
@@ -1364,7 +1364,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     public void setEvenAndOddHeadings(boolean enable) {
         settings.setEvenAndOddHeadings(enable);
     }
-    
+
     /**
      * Returns the mirror margins setting
      *
@@ -1373,7 +1373,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     public boolean getMirrorMargins() {
         return settings.getMirrorMargins();
     }
-    
+
     /**
      * Sets the mirror margins setting
      * @param enable Set to true to turn on mirror margins.
@@ -1381,7 +1381,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     public void setMirrorMargins(boolean enable) {
         settings.setMirrorMargins(enable);
     }
-    
+
     /**
      * inserts an existing XWPFTable to the arrays bodyElements and tables
      *
@@ -1694,7 +1694,20 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * @since POI 4.0.0
      */
     public XWPFChart createChart(int width, int height) throws InvalidFormatException, IOException {
+        return createChart(createParagraph().createRun(), width, height);
+    }
 
+    /**
+     *
+     * @param run in which the chart will be attached.
+     * @param width in EMU.
+     * @param height in EMU.
+     * @return the new chart.
+     * @throws InvalidFormatException
+     * @throws IOException
+     * @since POI 4.1.2
+     */
+    public XWPFChart createChart(XWPFRun run, int width, int height) throws InvalidFormatException, IOException {
         //get chart number
         int chartNumber = getNextPartNumber(XWPFRelation.CHART, charts.size() + 1);
 
@@ -1705,7 +1718,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         // initialize xwpfchart object
         XWPFChart xwpfChart = rp.getDocumentPart();
         xwpfChart.setChartIndex(chartNumber);
-        xwpfChart.attach(rp.getRelationship().getId(), createParagraph().createRun());
+        xwpfChart.attach(rp.getRelationship().getId(), run);
         xwpfChart.setChartBoundingBox(width, height);
 
         //add chart object to chart list
@@ -1721,7 +1734,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      */
     public XWPFFootnote createFootnote() {
         XWPFFootnotes footnotes = this.createFootnotes();
-        
+
         XWPFFootnote footnote = footnotes.createFootnote();
         return footnote;
     }
@@ -1749,7 +1762,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      */
     public XWPFEndnote createEndnote() {
         XWPFEndnotes endnotes = this.createEndnotes();
-        
+
         XWPFEndnote endnote = endnotes.createEndnote();
         return endnote;
 
@@ -1769,7 +1782,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         }
 
         return endnotes;
-        
+
     }
 
     /**
