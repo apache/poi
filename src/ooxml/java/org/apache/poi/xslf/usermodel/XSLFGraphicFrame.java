@@ -47,6 +47,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 
 @Beta
 public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFShape, XSLFTextParagraph> {
+    private static final String DRAWINGML_CHART_URI = "http://schemas.openxmlformats.org/drawingml/2006/chart";
     private static final POILogger LOG = POILogFactory.getLogger(XSLFGraphicFrame.class);
 
     /*package*/ XSLFGraphicFrame(CTGraphicalObjectFrame shape, XSLFSheet sheet){
@@ -97,7 +98,7 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
             return new XSLFGraphicFrame(shape, sheet);
         }
     }
-    
+
     private static String getUri(CTGraphicalObjectFrame shape) {
         final CTGraphicalObject g = shape.getGraphic();
         if (g == null) {
@@ -160,15 +161,45 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
     	return false;
     }
 
+    public boolean hasChart() {
+        String uri = getGraphicalData().getUri();
+        return uri.equals(DRAWINGML_CHART_URI);
+    }
+
+    private CTGraphicalObjectData getGraphicalData() {
+        return ((CTGraphicalObjectFrame)getXmlObject()).getGraphic().getGraphicData();
+    }
+
+    public XSLFChart getChart() {
+        if (hasChart()) {
+            String id = null;
+            String xpath = "declare namespace c='" + DRAWINGML_CHART_URI + "' c:chart";
+            XmlObject[] obj = getGraphicalData().selectPath(xpath);
+            if (obj != null && obj.length == 1) {
+                XmlCursor c = obj[0].newCursor();
+                QName idQualifiedName = new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "id");
+                id = c.getAttributeText(idQualifiedName);
+                c.dispose();
+            }
+            if (id == null) {
+                return null;
+            } else {
+                return (XSLFChart) getSheet().getRelationById(id);
+            }
+        } else {
+            return null;
+        }
+    }
+
     @Override
     void copy(XSLFShape sh){
         super.copy(sh);
 
-        CTGraphicalObjectData data = ((CTGraphicalObjectFrame)getXmlObject()).getGraphic().getGraphicData();
+        CTGraphicalObjectData data = getGraphicalData();
         String uri = data.getUri();
         if(uri.equals("http://schemas.openxmlformats.org/drawingml/2006/diagram")){
             copyDiagram(data, (XSLFGraphicFrame)sh);
-        } if(uri.equals("http://schemas.openxmlformats.org/drawingml/2006/chart")){
+        } if(uri.equals(DRAWINGML_CHART_URI)){
         	copyChart(data, (XSLFGraphicFrame)sh);
         } else {
             // TODO  support other types of objects
@@ -179,7 +210,7 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
     private void copyChart(CTGraphicalObjectData objData, XSLFGraphicFrame srcShape) {
         XSLFSlide slide = (XSLFSlide) getSheet();
         XSLFSheet src = srcShape.getSheet();
-        String xpath = "declare namespace c='http://schemas.openxmlformats.org/drawingml/2006/chart' c:chart";
+        String xpath = "declare namespace c='" + DRAWINGML_CHART_URI + "' c:chart";
         XmlObject[] obj = objData.selectPath(xpath);
         if (obj != null && obj.length == 1) {
             XmlCursor c = obj[0].newCursor();

@@ -21,6 +21,7 @@ package org.apache.poi.xslf.usermodel;
 
 import java.awt.geom.Rectangle2D;
 import java.io.BufferedReader;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.OutputStream;
@@ -93,6 +94,20 @@ public class ChartFromScratch {
                 // save the result
                 try (OutputStream out = new FileOutputStream("chart-from-scratch.pptx")) {
                     ppt.write(out);
+                }
+            }
+            try (FileInputStream is = new FileInputStream("chart-from-scratch.pptx")) {
+                try (XMLSlideShow ppt = new XMLSlideShow(is)) {
+                    for (XSLFSlide slide : ppt.getSlides()) {
+                        for (XSLFShape shape : slide.getShapes()) {
+                            if (shape instanceof XSLFGraphicFrame) {
+                                XSLFGraphicFrame frame = (XSLFGraphicFrame) shape;
+                                if (frame.hasChart()) {
+                                    System.out.println(frame.getChart().getTitleShape().getText());
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
