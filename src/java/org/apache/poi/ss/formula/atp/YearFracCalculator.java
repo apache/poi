@@ -22,6 +22,7 @@ import java.util.Calendar;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 
 
@@ -30,6 +31,7 @@ import org.apache.poi.util.LocaleUtil;
  *
  * Algorithm inspired by www.dwheeler.com/yearfrac
  */
+@Internal
 final class YearFracCalculator {
 	private static final int MS_PER_HOUR = 60 * 60 * 1000;
 	private static final int MS_PER_DAY = 24 * MS_PER_HOUR;
@@ -86,7 +88,7 @@ final class YearFracCalculator {
 	 * @param startDateVal assumed to be less than or equal to endDateVal
 	 * @param endDateVal assumed to be greater than or equal to startDateVal
 	 */
-	public static double basis0(int startDateVal, int endDateVal) {
+	private static double basis0(int startDateVal, int endDateVal) {
 		SimpleDate startDate = createDate(startDateVal);
 		SimpleDate endDate = createDate(endDateVal);
 		int date1day = startDate.day;
@@ -116,12 +118,14 @@ final class YearFracCalculator {
 	 * @param startDateVal assumed to be less than or equal to endDateVal
 	 * @param endDateVal assumed to be greater than or equal to startDateVal
 	 */
-	public static double basis1(int startDateVal, int endDateVal) {
+	private static double basis1(int startDateVal, int endDateVal) {
+		assert(startDateVal <= endDateVal);
 		SimpleDate startDate = createDate(startDateVal);
 		SimpleDate endDate = createDate(endDateVal);
 		double yearLength;
 		if (isGreaterThanOneYear(startDate, endDate)) {
 			yearLength = averageYearLength(startDate.year, endDate.year);
+			assert(yearLength > 0);
 		} else if (shouldCountFeb29(startDate, endDate)) {
 			yearLength = DAYS_PER_LEAP_YEAR;
 		} else {
@@ -134,21 +138,21 @@ final class YearFracCalculator {
 	 * @param startDateVal assumed to be less than or equal to endDateVal
 	 * @param endDateVal assumed to be greater than or equal to startDateVal
 	 */
-	public static double basis2(int startDateVal, int endDateVal) {
+	private static double basis2(int startDateVal, int endDateVal) {
 		return (endDateVal - startDateVal) / 360.0;
 	}
 	/**
 	 * @param startDateVal assumed to be less than or equal to endDateVal
 	 * @param endDateVal assumed to be greater than or equal to startDateVal
 	 */
-	public static double basis3(double startDateVal, double endDateVal) {
+	private static double basis3(double startDateVal, double endDateVal) {
 		return (endDateVal - startDateVal) / 365.0;
 	}
 	/**
 	 * @param startDateVal assumed to be less than or equal to endDateVal
 	 * @param endDateVal assumed to be greater than or equal to startDateVal
 	 */
-	public static double basis4(int startDateVal, int endDateVal) {
+	private static double basis4(int startDateVal, int endDateVal) {
 		SimpleDate startDate = createDate(startDateVal);
 		SimpleDate endDate = createDate(endDateVal);
 		int date1day = startDate.day;
@@ -261,12 +265,10 @@ final class YearFracCalculator {
 	}
 
 	private static double averageYearLength(int startYear, int endYear) {
+		assert(startYear <= endYear);
 		int dayCount = 0;
 		for (int i=startYear; i<=endYear; i++) {
-			dayCount += DAYS_PER_NORMAL_YEAR;
-			if (isLeapYear(i)) {
-				dayCount++;
-			}
+			dayCount += isLeapYear(i) ? DAYS_PER_LEAP_YEAR : DAYS_PER_NORMAL_YEAR;
 		}
 		double numberOfYears = endYear-startYear+1;
 		return dayCount / numberOfYears;
@@ -282,13 +284,11 @@ final class YearFracCalculator {
 			return true;
 		}
 		// all other centuries are *not* leap years
-		if (i % 100 == 0) {
-			return false;
-		}
-		return true;
+		return i % 100 != 0;
 	}
 
 	private static boolean isGreaterThanOneYear(SimpleDate start, SimpleDate end) {
+		assert(start.year <= end.year);
 		if (start.year == end.year) {
 			return false;
 		}
@@ -307,7 +307,7 @@ final class YearFracCalculator {
 	}
 
 	private static SimpleDate createDate(int dayCount) {
-	    /** use UTC time-zone to avoid daylight savings issues */
+	    /* use UTC time-zone to avoid daylight savings issues */
 		Calendar cal = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
 		DateUtil.setCalendar(cal, dayCount, 0, false, false);
 		return new SimpleDate(cal);

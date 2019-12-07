@@ -19,16 +19,9 @@
 
 package org.apache.poi.sl.draw.geom;
 
-import static java.lang.Math.abs;
-import static java.lang.Math.atan2;
-import static java.lang.Math.cos;
-import static java.lang.Math.max;
-import static java.lang.Math.min;
-import static java.lang.Math.sin;
-import static java.lang.Math.sqrt;
-import static java.lang.Math.tan;
-import static java.lang.Math.toDegrees;
-import static java.lang.Math.toRadians;
+import static java.lang.Math.*;
+
+import java.util.regex.Pattern;
 
 import org.apache.poi.sl.draw.binding.CTGeomGuide;
 
@@ -40,6 +33,9 @@ public class Guide implements Formula {
         muldiv,addsub,adddiv,ifelse,val,abs,sqrt,max,min,at2,sin,cos,tan,cat2,sat2,pin,mod
     }
 
+    private static final Pattern WHITESPACE = Pattern.compile("\\s+");
+
+    @SuppressWarnings({"FieldCanBeLocal", "unused"})
     private final String name, fmla;
     private final Op op;
     private final String[] operands;
@@ -52,16 +48,18 @@ public class Guide implements Formula {
     public Guide(String nm, String fm){
         name = nm;
         fmla = fm;
-        operands = fm.split("\\s+");
-        op = Op.valueOf(operands[0].replace("*", "mul").replace("/", "div").replace("+", "add").replace("-", "sub").replace("?:", "ifelse"));
+        operands = WHITESPACE.split(fm);
+        switch (operands[0]) {
+            case "*/": op = Op.muldiv; break;
+            case "+-": op = Op.addsub; break;
+            case "+/": op = Op.adddiv; break;
+            case "?:": op = Op.ifelse; break;
+            default: op = Op.valueOf(operands[0]); break;
+        }
     }
 
     public String getName(){
         return name;
-    }
-
-    String getFormula(){
-        return fmla;
     }
 
     @Override
@@ -75,7 +73,7 @@ public class Guide implements Formula {
                 return abs(x);
             case adddiv:
                 // Add Divide Formula
-                return (x + y) / z;
+                return (z == 0) ? 0 : (x + y) / z;
             case addsub:
                 // Add Subtract Formula
                 return (x + y) - z;
@@ -87,7 +85,7 @@ public class Guide implements Formula {
                 return x * cos(toRadians(y / OOXML_DEGREE));
             case cat2:
                 // Cosine ArcTan Formula: "cat2 x y z" = (x * cos(arctan(z / y) )) = value of this guide
-                return x*cos(atan2(z, y));
+                return x * cos(atan2(z, y));
             case ifelse:
                 // If Else Formula: "?: x y z" = if (x > 0), then y = value of this guide,
                 // else z = value of this guide
@@ -106,21 +104,15 @@ public class Guide implements Formula {
                 return sqrt(x*x + y*y + z*z);
             case muldiv:
                 // Multiply Divide Formula
-                return (x * y) / z;
+                return (z == 0) ? 0 : (x * y) / z;
             case pin:
                 // Pin To Formula: "pin x y z" = if (y < x), then x = value of this guide
                 // else if (y > z), then z = value of this guide
                 // else y = value of this guide
-                if(y < x) {
-                    return x;
-                } else if (y > z) {
-                    return z;
-                } else {
-                    return y;
-                }
+                return max(x, min(y, z));
             case sat2:
                 // Sine ArcTan Formula: "sat2 x y z" = (x*sin(arctan(z / y))) = value of this guide
-                return x*sin(atan2(z, y));
+                return x * sin(atan2(z, y));
             case sin:
                 // Sine Formula: "sin x y" = (x * sin( y )) = value of this guide
                 return x * sin(toRadians(y / OOXML_DEGREE));

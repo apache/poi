@@ -213,6 +213,7 @@ public final class XMLHelper {
         return XMLEventFactory.newInstance();
     }
 
+    @SuppressWarnings("squid:S4435")
     public static TransformerFactory getTransformerFactory() {
         TransformerFactory factory = TransformerFactory.newInstance();
         trySet(factory::setFeature, FEATURE_SECURE_PROCESSING, true);

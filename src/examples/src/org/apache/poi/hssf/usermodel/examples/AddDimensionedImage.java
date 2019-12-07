@@ -559,8 +559,8 @@ public class AddDimensionedImage {
 
             // Next, from the columns width, calculate how many co-ordinate
             // positons there are per millimetre
-            coordinatePositionsPerMM = ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS /
-                    colWidthMM;
+            coordinatePositionsPerMM = colWidthMM == 0 ? 0
+                : ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS / colWidthMM;
             // From this figure, determine how many co-ordinat positions to
             // inset the left hand or bottom edge of the image.
             inset = (int)(coordinatePositionsPerMM * overlapMM);
@@ -615,8 +615,7 @@ public class AddDimensionedImage {
                 row = sheet.createRow(toRow);
             }
             // Get the row's height in millimetres and add to the running total.
-            rowHeightMM = row.getHeightInPoints() /
-                    ConvertImageUnits.POINTS_PER_MILLIMETRE;
+            rowHeightMM = row.getHeightInPoints() / ConvertImageUnits.POINTS_PER_MILLIMETRE;
             totalRowHeightMM += rowHeightMM;
             toRow++;
         }
@@ -647,11 +646,10 @@ public class AddDimensionedImage {
                 overlapMM = 0.0D;
             }
 
-            rowCoordinatesPerMM = ConvertImageUnits.TOTAL_ROW_COORDINATE_POSITIONS /
-                    rowHeightMM;
+            rowCoordinatesPerMM = rowHeightMM == 0 ? 0
+                : ConvertImageUnits.TOTAL_ROW_COORDINATE_POSITIONS / rowHeightMM;
             inset = (int)(overlapMM * rowCoordinatesPerMM);
-            clientAnchorDetail = new ClientAnchorDetail(startingRow,
-                        toRow, inset);
+            clientAnchorDetail = new ClientAnchorDetail(startingRow, toRow, inset);
         }
         return(clientAnchorDetail);
     }

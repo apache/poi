@@ -460,8 +460,8 @@ public class AddDimensionedImage {
                 // is then instantiated.
                 if(sheet instanceof HSSFSheet) {
                     colWidthMM = reqImageWidthMM;
-                    colCoordinatesPerMM = ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS /
-                        colWidthMM;
+                    colCoordinatesPerMM = colWidthMM == 0 ? 0
+                        : ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS / colWidthMM;
                     pictureWidthCoordinates = (int)(reqImageWidthMM * colCoordinatesPerMM);
 
                 }
@@ -553,8 +553,8 @@ public class AddDimensionedImage {
                         ConvertImageUnits.POINTS_PER_MILLIMETRE));
                 if(sheet instanceof HSSFSheet) {
                     rowHeightMM = reqImageHeightMM;
-                    rowCoordinatesPerMM = ConvertImageUnits.TOTAL_ROW_COORDINATE_POSITIONS /
-                        rowHeightMM;
+                    rowCoordinatesPerMM = rowHeightMM == 0 ? 0
+                        : ConvertImageUnits.TOTAL_ROW_COORDINATE_POSITIONS / rowHeightMM;
                     pictureHeightCoordinates = (int)(reqImageHeightMM *
                             rowCoordinatesPerMM);
                 }

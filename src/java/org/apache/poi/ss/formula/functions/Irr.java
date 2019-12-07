@@ -17,7 +17,10 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
  * Calculates the internal rate of return.
@@ -104,11 +107,17 @@ public final class Irr implements Function {
                 final double value = values[k];
                 fValue += value / denominator;
                 denominator *= factor;
+                if (denominator == 0) {
+                    return Double.NaN;
+                }
                 fDerivative -= k * value / denominator;
             }
 
-            // the essense of the Newton-Raphson Method
-            x1 = x0 - fValue/fDerivative;
+            // the essence of the Newton-Raphson Method
+            if (fDerivative == 0) {
+                return Double.NaN;
+            }
+            x1 =  x0 - fValue/fDerivative;
 
             if (Math.abs(x1 - x0) <= absoluteAccuracy) {
                 return x1;

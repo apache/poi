@@ -78,6 +78,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public final class BigGridDemo {
     private static final String XML_ENCODING = "UTF-8";
 
+    private static final Random rnd = new Random();
+
     private BigGridDemo() {}
 
     public static void main(String[] args) throws Exception {
@@ -153,7 +155,6 @@ public final class BigGridDemo {
 
     private static void generate(Writer out, Map<String, XSSFCellStyle> styles) throws Exception {
 
-        Random rnd = new Random();
         Calendar calendar = Calendar.getInstance();
 
         SpreadsheetWriter sw = new SpreadsheetWriter(out);
