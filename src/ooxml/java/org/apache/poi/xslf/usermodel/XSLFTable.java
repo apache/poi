@@ -179,8 +179,9 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         long width = _table.getTblGrid().getGridColArray(_table.getTblGrid().sizeOfGridColArray() - 1).getW();
         CTTableCol col = _table.getTblGrid().addNewGridCol();
         col.setW(width);
-        for(CTTableRow row : _table.getTrList()) {
-            row.addNewTc();
+        for(XSLFTableRow row : _rows) {
+            XSLFTableCell cell = row.addCell();
+            cell.getTextBody(true);
         }
         updateRowColIndexes();
     }
@@ -197,8 +198,9 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         long width = _table.getTblGrid().getGridColArray(colIdx).getW();
         CTTableCol col = _table.getTblGrid().insertNewGridCol(colIdx);
         col.setW(width);
-        for(CTTableRow row : _table.getTrList()) {
-            row.insertNewTc(colIdx);
+        for(XSLFTableRow row : _rows) {
+            XSLFTableCell cell = row.insertCell(colIdx);
+            cell.getTextBody(true);
         }
         updateRowColIndexes();
     }
@@ -210,8 +212,8 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
      */
     public void removeColumn(int colIdx) {
         _table.getTblGrid().removeGridCol(colIdx);
-        for(CTTableRow row : _table.getTrList()) {
-            row.removeTc(colIdx);
+        for(XSLFTableRow row : _rows) {
+            row.removeCell(colIdx);
         }
         updateRowColIndexes();
     }

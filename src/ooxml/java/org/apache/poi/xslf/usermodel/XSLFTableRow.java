@@ -51,6 +51,7 @@ public class XSLFTableRow implements Iterable<XSLFTableCell> {
         return _row;
     }
 
+    @Override
     public Iterator<XSLFTableCell> iterator(){
         return _cells.iterator();
     }
@@ -74,12 +75,41 @@ public class XSLFTableRow implements Iterable<XSLFTableCell> {
         _cells.add(cell);
 
         if(_table.getNumberOfColumns() < _row.sizeOfTcArray()) {
-            _table.getCTTable().getTblGrid().addNewGridCol().setW(Units.toEMU(100.0));    
+            _table.getCTTable().getTblGrid().addNewGridCol().setW(Units.toEMU(100.0));
         }
         _table.updateRowColIndexes();
         return cell;
     }
-    
+
+    /**
+     * Insert a new cell at the given index.
+     * @param colIdx the column index.
+     * @since POI 4.1.2
+     */
+    public XSLFTableCell insertCell(int colIdx){
+        CTTableCell c = _row.insertNewTc(colIdx);
+        c.set(XSLFTableCell.prototype());
+        XSLFTableCell cell = new XSLFTableCell(c, _table);
+        _cells.add(colIdx, cell);
+
+        if(_table.getNumberOfColumns() < _row.sizeOfTcArray()) {
+            _table.getCTTable().getTblGrid().insertNewGridCol(colIdx).setW(Units.toEMU(100.0));
+        }
+        _table.updateRowColIndexes();
+        return cell;
+    }
+
+    /**
+     * Remove the cell at the given index.
+     * @param colIdx the column index.
+     * @since POI 4.1.2
+     */
+    public void removeCell(int colIdx){
+        _row.removeTc(colIdx);
+        _cells.remove(colIdx);
+        _table.updateRowColIndexes();
+    }
+
     /**
      * Merge cells of a table row, inclusive.
      * Indices are 0-based.
