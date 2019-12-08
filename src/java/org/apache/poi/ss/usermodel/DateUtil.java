@@ -18,9 +18,7 @@
 
 package org.apache.poi.ss.usermodel;
 
-import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
-import org.apache.poi.util.LocaleUtil;
-
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -28,12 +26,16 @@ import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeFormatterBuilder;
 import java.time.temporal.ChronoField;
+import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalQueries;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
+
+import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * Contains methods for dealing with Excel dates.
@@ -49,8 +51,15 @@ public class DateUtil {
     public static final int HOURS_PER_DAY = 24;
     public static final int SECONDS_PER_DAY = (HOURS_PER_DAY * MINUTES_PER_HOUR * SECONDS_PER_MINUTE);
 
-    private static final int    BAD_DATE         = -1;   // used to specify that date is invalid
-    public static final long   DAY_MILLISECONDS = SECONDS_PER_DAY * 1000L;
+    // used to specify that date is invalid
+    private static final int BAD_DATE         = -1;
+    public static final long DAY_MILLISECONDS = SECONDS_PER_DAY * 1000L;
+
+
+
+    private static final BigDecimal BD_NANOSEC_DAY = BigDecimal.valueOf(SECONDS_PER_DAY * 1e9);
+    private static final BigDecimal BD_MILISEC_RND = BigDecimal.valueOf(0.5 * 1e6);
+    private static final BigDecimal BD_SECOND_RND = BigDecimal.valueOf(0.5 * 1e9);
 
     private static final Pattern TIME_SEPARATOR_PATTERN = Pattern.compile(":");
 
@@ -168,7 +177,7 @@ public class DateUtil {
     public static double getExcelDate(Date date) {
         return getExcelDate(date, false);
     }
-    
+
     /**
      * Given a Date, converts it into a double representing its internal Excel representation,
      *   which is the number of days since 1/1/1900. Fractional days represent hours, minutes, and seconds.
@@ -186,7 +195,7 @@ public class DateUtil {
         int minute = calStart.get(Calendar.MINUTE);
         int second = calStart.get(Calendar.SECOND);
         int milliSecond = calStart.get(Calendar.MILLISECOND);
-        
+
         return internalGetExcelDate(year, dayOfYear, hour, minute, second, milliSecond, use1904windowing);
     }
 
@@ -210,7 +219,7 @@ public class DateUtil {
 
         return internalGetExcelDate(year, dayOfYear, hour, minute, second, milliSecond, use1904windowing);
     }
-    
+
     private static double internalGetExcelDate(int year, int dayOfYear, int hour, int minute, int second, int milliSecond, boolean use1904windowing) {
         if ((!use1904windowing && year < 1900) ||
             (use1904windowing && year < 1904))
@@ -341,7 +350,7 @@ public class DateUtil {
     public static Date getJavaDate(double date, boolean use1904windowing) {
         return getJavaDate(date, use1904windowing, null, false);
     }
-    
+
     /**
      *  Given an Excel date with using 1900 date windowing, and
      *   converts it to a java.time.LocalDateTime.
@@ -396,13 +405,16 @@ public class DateUtil {
      *  @param roundSeconds round to closest second
      *  @return Java representation of the date, or null if date is not a valid Excel date
      */
+    @SuppressWarnings("squid:S2111")
     public static LocalDateTime getLocalDateTime(double date, boolean use1904windowing, boolean roundSeconds) {
         if (!isValidExcelDate(date)) {
             return null;
         }
-        int wholeDays = (int)Math.floor(date);
-        int millisecondsInDay = (int)((date - wholeDays) * DAY_MILLISECONDS + 0.5);
-        
+
+        BigDecimal bd = new BigDecimal(date);
+
+        int wholeDays = bd.intValue();
+
         int startYear = 1900;
         int dayAdjust = -1; // Excel thinks 2/29/1900 is a valid date, which it isn't
         if (use1904windowing) {
@@ -417,7 +429,15 @@ public class DateUtil {
 
         LocalDateTime ldt = LocalDateTime.of(startYear, 1, 1, 0, 0);
         ldt = ldt.plusDays(wholeDays+dayAdjust-1);
-        ldt = ldt.plusNanos(millisecondsInDay*1_000_000L);
+
+        long nanosTime =
+            bd.subtract(BigDecimal.valueOf(wholeDays))
+            .multiply(BD_NANOSEC_DAY)
+            .add(roundSeconds ? BD_SECOND_RND : BD_MILISEC_RND)
+            .longValue();
+
+        ldt = ldt.plusNanos(nanosTime);
+        ldt = ldt.truncatedTo(roundSeconds ? ChronoUnit.SECONDS : ChronoUnit.MILLIS);
 
         return ldt;
     }
@@ -524,25 +544,27 @@ public class DateUtil {
     // avoid re-checking DataUtil.isADateFormat(int, String) if a given format
     // string represents a date format if the same string is passed multiple times.
     // see https://issues.apache.org/bugzilla/show_bug.cgi?id=55611
-    private static ThreadLocal<Integer> lastFormatIndex = new ThreadLocal<Integer>() {
-        @Override
-        protected Integer initialValue() {
-            return -1;
-        }
-    };
+    private static ThreadLocal<Integer> lastFormatIndex = ThreadLocal.withInitial(() -> -1);
     private static ThreadLocal<String> lastFormatString = new ThreadLocal<>();
     private static ThreadLocal<Boolean> lastCachedResult = new ThreadLocal<>();
 
     private static boolean isCached(String formatString, int formatIndex) {
-        String cachedFormatString = lastFormatString.get();
-        return cachedFormatString != null && formatIndex == lastFormatIndex.get()
-                && formatString.equals(cachedFormatString);
+        return formatIndex == lastFormatIndex.get()
+                && formatString.equals(lastFormatString.get());
     }
 
     private static void cache(String formatString, int formatIndex, boolean cached) {
-        lastFormatIndex.set(formatIndex);
-        lastFormatString.set(formatString);
-        lastCachedResult.set(Boolean.valueOf(cached));
+        if (formatString == null || "".equals(formatString)) {
+            lastFormatString.remove();
+        } else {
+            lastFormatString.set(formatString);
+        }
+        if (formatIndex == -1) {
+            lastFormatIndex.remove();
+        } else {
+            lastFormatIndex.set(formatIndex);
+        }
+        lastCachedResult.set(cached);
     }
 
     /**
@@ -822,7 +844,7 @@ public class DateUtil {
     private static int absoluteDay(int year, int dayOfYear, boolean use1904windowing) {
         return dayOfYear + daysInPriorYears(year, use1904windowing);
     }
-    
+
     /**
      * Return the number of days in prior years since 1900
      *
