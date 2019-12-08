@@ -43,11 +43,12 @@ import javax.xml.namespace.QName;
 
 import org.apache.commons.collections4.ListValuedMap;
 import org.apache.commons.collections4.multimap.ArrayListValuedHashMap;
+import org.apache.poi.hpsf.ClassIDPredefined;
 import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.POIXMLProperties;
-import org.apache.poi.hpsf.ClassIDPredefined;
+import org.apache.poi.ooxml.util.PackageHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -67,8 +68,13 @@ import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.IndexedUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Date1904Support;
+import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.SheetVisibility;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.Beta;
@@ -77,7 +83,6 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.ooxml.util.PackageHelper;
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.XLSBUnsupportedException;
@@ -123,6 +128,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * @deprecated POI 3.17 beta 1
      * @see Units#DEFAULT_CHARACTER_WIDTH
      */
+    @Deprecated
     @Removal(version="4.1")
     public static final float DEFAULT_CHARACTER_WIDTH = Units.DEFAULT_CHARACTER_WIDTH;
 
@@ -668,9 +674,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
             }
             XSSFDrawing clonedDg = clonedSheet.createDrawingPatriarch();
             // copy drawing contents
-            clonedDg.getCTDrawing().set(dg.getCTDrawing());
-
-            clonedDg = clonedSheet.createDrawingPatriarch();
+            clonedDg.getCTDrawing().set(dg.getCTDrawing().copy());
 
             // Clone drawing relations
             List<RelationPart> srcRels = srcSheet.createDrawingPatriarch().getRelationParts();
