@@ -19,6 +19,11 @@
 
 package org.apache.poi.ss.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.File;
 import java.io.FileOutputStream;
 import java.text.DateFormat;
@@ -26,6 +31,11 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -34,8 +44,8 @@ import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.LocaleID;
 import org.apache.poi.util.TempFile;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public final class TestDateFormatConverter {
@@ -147,5 +157,46 @@ public final class TestDateFormatConverter {
     @Test
     public void testJDK11MyLocale() {
         DateFormat.getDateTimeInstance(DateFormat.DEFAULT, DateFormat.DEFAULT, Locale.forLanguageTag("my"));
+    }
+
+    @Test
+    public void testAllKnownLocales() {
+        Pattern p = Pattern.compile("\\[\\$-(\\p{XDigit}+)]");
+
+        Set<String> blacklist = Stream.of(
+            "sd-Deva", "tzm-Arab", "fuv", "plt", "yue", "tdd-Tale", "tdd",
+            "khb-Talu", "khb", "qps", "ja-Ploc", "dz", "tmz", "ar-Ploc"
+        ).collect(Collectors.toSet());
+
+        for (LocaleID lid : LocaleID.values()) {
+            final String langTag = lid.getLanguageTag();
+
+            if (langTag.isEmpty() || lid.getWindowsId().startsWith("invalid")) {
+                continue;
+            }
+
+            // test all from variant to parent locales
+            String cmpTag = (langTag.indexOf('_') > 0) ? langTag.replace('_','-') : langTag;
+            for (int idx = langTag.length(); idx > 0; idx = cmpTag.lastIndexOf('-', idx-1)) {
+                final String partTag = langTag.substring(0, idx);
+
+                Locale loc = Locale.forLanguageTag(partTag);
+                assertNotNull("Invalid language tag: "+partTag, loc);
+
+                if (blacklist.contains(partTag)) {
+                    continue;
+                }
+
+                String prefix = DateFormatConverter.getPrefixForLocale(loc);
+                assertNotNull("Prefix not found - language tag: "+partTag, prefix);
+                assertNotEquals("Prefix not found - language tag: "+partTag,"", prefix);
+                Matcher m = p.matcher(prefix);
+                assertTrue("Invalid prefix: "+prefix, m.matches());
+
+                LocaleID partLid = LocaleID.lookupByLanguageTag(partTag);
+                assertNotNull("LocaleID not found for part: "+partTag, partLid);
+                assertEquals(partLid.getLcid(), Integer.parseInt(m.group(1), 16));
+            }
+        }
     }
 }
