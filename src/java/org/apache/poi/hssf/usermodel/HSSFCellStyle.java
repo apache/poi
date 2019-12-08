@@ -108,7 +108,7 @@ public final class HSSFCellStyle implements CellStyle {
     }
 
     // we keep the cached data in ThreadLocal members in order to
-    // avoid multi-threading issues when different workbooks are accessed in 
+    // avoid multi-threading issues when different workbooks are accessed in
     // multiple threads at the same time
     private static final ThreadLocal<Short> lastDateFormat = new ThreadLocal<Short>() {
         @Override
@@ -264,7 +264,7 @@ public final class HSSFCellStyle implements CellStyle {
     public void setQuotePrefixed(boolean quotePrefix) {
         _format.set123Prefix(quotePrefix);
     }
-    
+
     /**
      * Is "Quote Prefix" or "123 Prefix" enabled for the cell?
      */
@@ -272,7 +272,7 @@ public final class HSSFCellStyle implements CellStyle {
     public boolean getQuotePrefixed() {
         return _format.get123Prefix();
     }
-    
+
     /**
      * set the type of horizontal alignment for the cell
      * @param align - the type of alignment
@@ -340,8 +340,8 @@ public final class HSSFCellStyle implements CellStyle {
     /**
      * set the degree of rotation for the text in the cell
      *
-     * Note: HSSF uses values from -90 to 90 degrees, whereas XSSF 
-     * uses values from 0 to 180 degrees. The implementations of this method will map between these two value-ranges 
+     * Note: HSSF uses values from -90 to 90 degrees, whereas XSSF
+     * uses values from 0 to 180 degrees. The implementations of this method will map between these two value-ranges
      * accordingly, however the corresponding getter is returning values in the range mandated by the current type
      * of Excel file-format that this CellStyle is applied to.
      *
@@ -352,7 +352,7 @@ public final class HSSFCellStyle implements CellStyle {
     {
       if (rotation == 0xff) {
           // Special cases for vertically aligned text
-      } 
+      }
       else if ((rotation < 0)&&(rotation >= -90)) {
         //Take care of the funny 4th quadrant issue
         //The 4th quadrant (-1 to -90) is stored as (91 to 180)
@@ -407,7 +407,7 @@ public final class HSSFCellStyle implements CellStyle {
     {
         return _format.getIndent();
     }
-    
+
     /**
      * set the type of border to use for the left border of the cell
      * @param border type
@@ -575,7 +575,7 @@ public final class HSSFCellStyle implements CellStyle {
     {
         return _format.getBottomBorderPaletteIdx();
     }
-    
+
     /**
      * setting to one fills the cell with the foreground color... No idea about
      * other values
@@ -674,7 +674,7 @@ public final class HSSFCellStyle implements CellStyle {
         }
         return result;
     }
-    
+
     @Override
     public HSSFColor getFillBackgroundColorColor() {
        HSSFPalette pallette = new HSSFPalette(
@@ -769,7 +769,7 @@ public final class HSSFCellStyle implements CellStyle {
     public boolean getShrinkToFit() {
         return _format.getShrinkToFit();
     }
-    
+
     /**
      * Get the reading order, for RTL/LTR ordering of
      *  the text.
@@ -792,7 +792,7 @@ public final class HSSFCellStyle implements CellStyle {
     public void setReadingOrder(short order) {
         _format.setReadingOrder(order);
     }
-    
+
     /**
      * Verifies that this style belongs to the supplied Workbook.
      * Will throw an exception if it belongs to a different one.
@@ -836,9 +836,9 @@ public final class HSSFCellStyle implements CellStyle {
         if(_workbook != source._workbook) {
 
             lastDateFormat.set(Short.MIN_VALUE);
-            lastFormats.set(null);
-            getDataFormatStringCache.set(null);
-           
+            lastFormats.remove();
+            getDataFormatStringCache.remove();
+
             // Then we need to clone the format string,
             //  and update the format record for this
             short fmt = (short)_workbook.createFormat(source.getDataFormatString() );
@@ -894,5 +894,5 @@ public final class HSSFCellStyle implements CellStyle {
         }
         return false;
     }
-    
+
 }

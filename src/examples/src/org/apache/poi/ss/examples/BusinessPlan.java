@@ -17,15 +17,26 @@
 
 package org.apache.poi.ss.examples;
 
-import org.apache.poi.xssf.usermodel.*;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
-import java.util.Map;
-import java.util.HashMap;
-import java.util.Calendar;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.PrintSetup;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * A business plan demo
@@ -35,8 +46,6 @@ import java.text.SimpleDateFormat;
  * @author Yegor Kozlov
  */
 public class BusinessPlan {
-
-    private static SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM");
 
     private static final String[] titles = {
             "ID", "Project Name", "Owner", "Days", "Start", "End"};
@@ -83,6 +92,8 @@ public class BusinessPlan {
 
         if(args.length > 0 && args[0].equals("-xls")) wb = new HSSFWorkbook();
         else wb = new XSSFWorkbook();
+
+        final SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM");
 
         Map<String, CellStyle> styles = createStyles(wb);
 
@@ -201,7 +212,7 @@ public class BusinessPlan {
         FileOutputStream out = new FileOutputStream(file);
         wb.write(out);
         out.close();
-        
+
         wb.close();
     }
 
@@ -315,7 +326,7 @@ public class BusinessPlan {
     private static CellStyle createBorderedStyle(Workbook wb){
         BorderStyle thin = BorderStyle.THIN;
         short black = IndexedColors.BLACK.getIndex();
-        
+
         CellStyle style = wb.createCellStyle();
         style.setBorderRight(thin);
         style.setRightBorderColor(black);

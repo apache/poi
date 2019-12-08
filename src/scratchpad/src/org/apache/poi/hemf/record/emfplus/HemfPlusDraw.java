@@ -820,7 +820,7 @@ public class HemfPlusDraw {
         }
     }
 
-
+    @SuppressWarnings("squid:S2111")
     static double round10(double d) {
         return new BigDecimal(d).setScale(10, RoundingMode.HALF_UP).doubleValue();
     }

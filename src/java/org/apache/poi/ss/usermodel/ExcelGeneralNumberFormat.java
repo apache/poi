@@ -16,7 +16,7 @@
 
    2012 - Alfresco Software, Ltd.
    Alfresco Software has modified source of this file
-   The details of changes as svn diff can be found in svn at location root/projects/3rd-party/src 
+   The details of changes as svn diff can be found in svn at location root/projects/3rd-party/src
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
@@ -55,6 +55,7 @@ public class ExcelGeneralNumberFormat extends Format {
         DataFormatter.setExcelStyleRoundingMode(decimalFormat);
     }
 
+    @SuppressWarnings("squid:S2111")
     public StringBuffer format(Object number, StringBuffer toAppendTo, FieldPosition pos) {
         final double value;
         if (number instanceof Number) {

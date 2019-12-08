@@ -31,6 +31,8 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  * @see <a href="http://office.microsoft.com/en-us/excel-help/irr-HP005209146.aspx">Excel IRR</a>
  */
 public final class Irr implements Function {
+    private static final int MAX_ITERATION_COUNT = 20;
+    private static final double ABSOLUTE_ACCURACY = 1E-7;
 
 
     public ValueEval evaluate(final ValueEval[] args, final int srcRowIndex, final int srcColumnIndex) {
@@ -89,27 +91,24 @@ public final class Irr implements Function {
      *     http://en.wikipedia.org/wiki/Newton%27s_method</a>
      */
     public static double irr(double[] values, double guess) {
-        final int maxIterationCount = 20;
-        final double absoluteAccuracy = 1E-7;
 
         double x0 = guess;
-        double x1;
 
-        int i = 0;
-        while (i < maxIterationCount) {
+        for (int i = 0; i < MAX_ITERATION_COUNT; i++) {
 
             // the value of the function (NPV) and its derivate can be calculated in the same loop
             final double factor = 1.0 + x0;
-            int k = 0;
-            double fValue = values[k];
+            double denominator = factor;
+            if (denominator == 0) {
+                return Double.NaN;
+            }
+
+            double fValue = values[0];
             double fDerivative = 0;
-            for (double denominator = factor; ++k < values.length; ) {
+            for (int k = 1; k < values.length; k++) {
                 final double value = values[k];
                 fValue += value / denominator;
                 denominator *= factor;
-                if (denominator == 0) {
-                    return Double.NaN;
-                }
                 fDerivative -= k * value / denominator;
             }
 
@@ -117,14 +116,13 @@ public final class Irr implements Function {
             if (fDerivative == 0) {
                 return Double.NaN;
             }
-            x1 =  x0 - fValue/fDerivative;
+            double x1 =  x0 - fValue/fDerivative;
 
-            if (Math.abs(x1 - x0) <= absoluteAccuracy) {
+            if (Math.abs(x1 - x0) <= ABSOLUTE_ACCURACY) {
                 return x1;
             }
 
             x0 = x1;
-            ++i;
         }
         // maximum number of iterations is exceeded
         return Double.NaN;

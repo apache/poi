@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Objects;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
@@ -30,7 +32,8 @@ import org.apache.poi.util.StringUtil;
  * REFERENCE:  PG 315 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class FontRecord extends StandardRecord {
-	public final static short     sid                 = 0x0031;                                                 // docs are wrong (0x231 Microsoft Support site article Q184647)
+	// docs are wrong (0x231 Microsoft Support site article Q184647)
+	public final static short     sid                 = 0x0031;
 	public final static short     SS_NONE             = 0;
 	public final static short     SS_SUPER            = 1;
 	public final static short     SS_SUB              = 2;
@@ -39,7 +42,8 @@ public final class FontRecord extends StandardRecord {
 	public final static byte      U_DOUBLE            = 2;
 	public final static byte      U_SINGLE_ACCOUNTING = 0x21;
 	public final static byte      U_DOUBLE_ACCOUNTING = 0x22;
-	private short                 field_1_font_height;        // in units of .05 of a point
+	// in units of .05 of a point
+	private short                 field_1_font_height;
 	private short                 field_2_attributes;
 
 	// 0 0x01 - Reserved bit must be 0
@@ -359,24 +363,22 @@ public final class FontRecord extends StandardRecord {
 	}
 
 	public String toString() {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("[FONT]\n");
-		sb.append("    .fontheight    = ").append(HexDump.shortToHex(getFontHeight())).append("\n");
-		sb.append("    .attributes    = ").append(HexDump.shortToHex(getAttributes())).append("\n");
-		sb.append("       .italic     = ").append(isItalic()).append("\n");
-		sb.append("       .strikout   = ").append(isStruckout()).append("\n");
-		sb.append("       .macoutlined= ").append(isMacoutlined()).append("\n");
-		sb.append("       .macshadowed= ").append(isMacshadowed()).append("\n");
-		sb.append("    .colorpalette  = ").append(HexDump.shortToHex(getColorPaletteIndex())).append("\n");
-		sb.append("    .boldweight    = ").append(HexDump.shortToHex(getBoldWeight())).append("\n");
-		sb.append("    .supersubscript= ").append(HexDump.shortToHex(getSuperSubScript())).append("\n");
-		sb.append("    .underline     = ").append(HexDump.byteToHex(getUnderline())).append("\n");
-		sb.append("    .family        = ").append(HexDump.byteToHex(getFamily())).append("\n");
-		sb.append("    .charset       = ").append(HexDump.byteToHex(getCharset())).append("\n");
-		sb.append("    .fontname      = ").append(getFontName()).append("\n");
-		sb.append("[/FONT]\n");
-		return sb.toString();
+		return
+			"[FONT]\n" +
+			"    .fontheight    = " + HexDump.shortToHex(getFontHeight()) + "\n" +
+			"    .attributes    = " + HexDump.shortToHex(getAttributes()) + "\n" +
+			"       .italic     = " + isItalic() + "\n" +
+			"       .strikout   = " + isStruckout() + "\n" +
+			"       .macoutlined= " + isMacoutlined() + "\n" +
+			"       .macshadowed= " + isMacshadowed() + "\n" +
+			"    .colorpalette  = " + HexDump.shortToHex(getColorPaletteIndex()) + "\n" +
+			"    .boldweight    = " + HexDump.shortToHex(getBoldWeight()) + "\n" +
+			"    .supersubscript= " + HexDump.shortToHex(getSuperSubScript()) + "\n" +
+			"    .underline     = " + HexDump.byteToHex(getUnderline()) + "\n" +
+			"    .family        = " + HexDump.byteToHex(getFamily()) + "\n" +
+			"    .charset       = " + HexDump.byteToHex(getCharset()) + "\n" +
+			"    .fontname      = " + getFontName() + "\n" +
+			"[/FONT]\n";
 	}
 
 	public void serialize(LittleEndianOutput out) {
@@ -421,7 +423,7 @@ public final class FontRecord extends StandardRecord {
 	 * Clones all the font style information from another
 	 *  FontRecord, onto this one. This
 	 *  will then hold all the same font style options.
-	 * 
+	 *
 	 * @param source the record to clone the properties from
 	 */
 	public void cloneStyleFrom(FontRecord source) {
@@ -464,12 +466,13 @@ public final class FontRecord extends StandardRecord {
 	 *  for exact contents, because normally the
 	 *  font record's position makes a big
 	 *  difference too.
-	 *  
+	 *
 	 *  @param other the record to compare with
-	 *  
+	 *
 	 *  @return true, if the properties match
 	 */
 	public boolean sameProperties(FontRecord other) {
+
 		return
 		field_1_font_height         == other.field_1_font_height &&
 		field_2_attributes          == other.field_2_attributes &&
@@ -480,15 +483,11 @@ public final class FontRecord extends StandardRecord {
 		field_7_family              == other.field_7_family &&
 		field_8_charset             == other.field_8_charset &&
 		field_9_zero                == other.field_9_zero &&
-        stringEquals(this.field_11_font_name, other.field_11_font_name)
+		Objects.equals(this.field_11_font_name, other.field_11_font_name)
 		;
 	}
 
     public boolean equals(Object o) {
-        return (o instanceof FontRecord) ? sameProperties((FontRecord)o) : false;
-    }
-    
-    private static boolean stringEquals(String s1, String s2) {
-        return (s1 == s2 || (s1 != null && s1.equals(s2)));
+        return (o instanceof FontRecord) && sameProperties((FontRecord) o);
     }
 }

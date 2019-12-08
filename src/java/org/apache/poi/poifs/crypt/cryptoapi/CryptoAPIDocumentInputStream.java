@@ -27,19 +27,19 @@ import org.apache.poi.util.Internal;
 
 /**
  * A seekable InputStream, which is used to decrypt/extract the document entries
- * within the encrypted stream 
+ * within the encrypted stream
  */
 @Internal
 /* package */ class CryptoAPIDocumentInputStream extends ByteArrayInputStream {
     private Cipher cipher;
     private final CryptoAPIDecryptor decryptor;
     private byte[] oneByte = {0};
-    
+
     public void seek(int newpos) {
         if (newpos > count) {
             throw new ArrayIndexOutOfBoundsException(newpos);
         }
-        
+
         this.pos = newpos;
         mark = newpos;
     }
@@ -60,7 +60,7 @@ import org.apache.poi.util.Internal;
         } catch (ShortBufferException e) {
             throw new EncryptedDocumentException(e);
         }
-        return oneByte[0];
+        return oneByte[0] & 0xFF;
     }
 
     @Override

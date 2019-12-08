@@ -685,8 +685,8 @@ public class AddDimensionedImage {
             if(sheet instanceof HSSFSheet) {
                 // Next, from the columns width, calculate how many co-ordinate
                 // positons there are per millimetre
-                coordinatePositionsPerMM = ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS /
-                    colWidthMM;
+                coordinatePositionsPerMM = (colWidthMM == 0) ? 0
+                    : ConvertImageUnits.TOTAL_COLUMN_COORDINATE_POSITIONS / colWidthMM;
                 // From this figure, determine how many co-ordinat positions to
                 // inset the left hand or bottom edge of the image.
                 inset = (int)(coordinatePositionsPerMM * overlapMM);
@@ -784,8 +784,8 @@ public class AddDimensionedImage {
             }
 
             if(sheet instanceof HSSFSheet) {
-                rowCoordinatesPerMM = ConvertImageUnits.TOTAL_ROW_COORDINATE_POSITIONS /
-                    rowHeightMM;
+                rowCoordinatesPerMM = (rowHeightMM == 0) ? 0
+                    : ConvertImageUnits.TOTAL_ROW_COORDINATE_POSITIONS / rowHeightMM;
                 inset = (int)(overlapMM * rowCoordinatesPerMM);
             }
             else {

@@ -21,10 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.ShortBufferException;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.util.IOUtils;
@@ -82,7 +79,7 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
     @Override
     public int read() throws IOException {
         byte[] b = { 0 };
-        return (read(b) == 1) ? b[0] : -1;
+        return (read(b) == 1) ? (b[0] & 0xFF) : -1;
     }
 
     // do not implement! -> recursion
@@ -222,7 +219,7 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
     /**
      * Used when BIFF header fields (sid, size) are being read. The internal
      * {@link Cipher} instance must step even when unencrypted bytes are read
-     * 
+     *
      */
     @Override
     public void readPlain(byte[] b, int off, int len) {
@@ -236,7 +233,7 @@ public abstract class ChunkedCipherInputStream extends LittleEndianInputStream {
                 readBytes = read(b, off, len, true);
                 total += Math.max(0, readBytes);
             } while (readBytes > -1 && total < len);
-    
+
             if (total < len) {
                 throw new EOFException("buffer underrun");
             }

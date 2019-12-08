@@ -68,9 +68,9 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
 
     /**
      * Create an InputStream from the specified DocumentEntry
-     * 
+     *
      * @param document the DocumentEntry to be read
-     * 
+     *
      * @exception IOException if the DocumentEntry cannot be opened (like, maybe it has
      *                been deleted?)
      */
@@ -91,7 +91,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
         DocumentNode doc = (DocumentNode)document;
         DocumentProperty property = (DocumentProperty)doc.getProperty();
         _document = new POIFSDocument(
-                property, 
+                property,
                 ((DirectoryNode)doc.getParent()).getFileSystem()
         );
         _data = _document.getBlockIterator();
@@ -99,7 +99,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
 
     /**
      * Create an InputStream from the specified Document
-     * 
+     *
      * @param document the Document to be read
      */
     public DocumentInputStream(POIFSDocument document) {
@@ -146,7 +146,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
     }
 
     @Override
-    public void mark(int ignoredReadlimit) {
+    public synchronized void mark(int ignoredReadlimit) {
         _marked_offset = _current_offset;
         _marked_offset_count = Math.max(0, _current_block_count - 1);
     }
@@ -159,13 +159,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
         }
         byte[] b = new byte[1];
         int result = read(b, 0, 1);
-        if(result >= 0) {
-            if(b[0] < 0) {
-                return b[0]+256;
-            }
-            return b[0];
-        }
-        return result;
+        return (result == EOF) ? EOF : (b[0] & 0xFF);
     }
 
     @Override
@@ -199,7 +193,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
      * method repositions the stream to its beginning.
      */
     @Override
-    public void reset() {
+    public synchronized void reset() {
         // Special case for reset to the start
         if(_marked_offset == 0 && _marked_offset_count == 0) {
             _current_block_count = _marked_offset_count;
@@ -216,15 +210,15 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
 		   _buffer = _data.next();
 		   _current_offset += _buffer.remaining();
 		}
-		
+
       _current_block_count = _marked_offset_count;
-      
+
       // Do we need to position within it?
       if(_current_offset != _marked_offset) {
    		// Grab the right block
          _buffer = _data.next();
          _current_block_count++;
-         
+
    		// Skip to the right place in it
          // (It should be positioned already at the start of the block,
          //  we need to move further inside the block)
@@ -250,9 +244,9 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
 		} else if (new_offset > _document_size) {
 			new_offset = _document_size;
 		}
-		
+
 		long rval = new_offset - _current_offset;
-		
+
 		// TODO Do this better
 		byte[] skip = IOUtils.safelyAllocate(rval, Integer.MAX_VALUE);
 		readFully(skip);
@@ -298,7 +292,7 @@ public final class DocumentInputStream extends InputStream implements LittleEndi
 		      _current_block_count++;
 		      _buffer = _data.next();
 		   }
-		   
+
 		   int limit = Math.min(len-read, _buffer.remaining());
 		   _buffer.get(buf, off+read, limit);
          _current_offset += limit;

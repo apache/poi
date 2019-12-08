@@ -60,56 +60,52 @@ public class DrawShape implements Drawable {
             return;
         }
 
-        final PlaceableShape<?,?> ps = (PlaceableShape<?,?>)shape;
-        final boolean isHSLF = isHSLF(shape);
+        final Rectangle2D anchor = getAnchor(graphics, (PlaceableShape<?,?>)shape);
+        if (anchor == null) {
+            return;
+        }
 
-        final Rectangle2D anchor = getAnchor(graphics, ps);
-
-        char[] cmds = isHSLF ? new char[]{'h', 'v', 'r'} : new char[]{'r', 'h', 'v'};
-        for (char ch : cmds) {
-            switch (ch) {
-            case 'h':
-                //flip horizontal
-                if (ps.getFlipHorizontal()) {
-                    graphics.translate(anchor.getX() + anchor.getWidth(), anchor.getY());
-                    graphics.scale(-1, 1);
-                    graphics.translate(-anchor.getX(), -anchor.getY());
-                }
-                break;
-            case 'v':
-                //flip vertical
-                if (ps.getFlipVertical()) {
-                    graphics.translate(anchor.getX(), anchor.getY() + anchor.getHeight());
-                    graphics.scale(1, -1);
-                    graphics.translate(-anchor.getX(), -anchor.getY());
-                }
-                break;
-            case 'r':
-                // rotation
-                double rotation = ps.getRotation();
-                if (rotation != 0.) {
-                    // PowerPoint rotates shapes relative to the geometric center
-                    double centerX = anchor.getCenterX();
-                    double centerY = anchor.getCenterY();
-
-
-                    // transformation is applied reversed ...
-                    graphics.translate(centerX, centerY);
-                    graphics.rotate(Math.toRadians(rotation));
-                    graphics.translate(-centerX, -centerY);
-                }
-                break;
-            default:
-                throw new RuntimeException("unexpected transform code " + ch);
-            }
+        if (isHSLF(shape)) {
+            flipHorizontal(graphics, anchor);
+            flipVertical(graphics, anchor);
+            rotate(graphics, anchor);
+        } else {
+            rotate(graphics, anchor);
+            flipHorizontal(graphics, anchor);
+            flipVertical(graphics, anchor);
         }
     }
 
-    private static double safeScale(double dim1, double dim2) {
-        if (dim1 == 0.) {
-            return 1;
+    private void flipHorizontal(Graphics2D graphics, Rectangle2D anchor) {
+        assert(shape instanceof PlaceableShape && anchor != null);
+        if (((PlaceableShape<?,?>)shape).getFlipHorizontal()) {
+            graphics.translate(anchor.getX() + anchor.getWidth(), anchor.getY());
+            graphics.scale(-1, 1);
+            graphics.translate(-anchor.getX(), -anchor.getY());
         }
-        return (dim2 == 0.) ? 1 : dim1/dim2;
+    }
+
+    private void flipVertical(Graphics2D graphics, Rectangle2D anchor) {
+        assert(shape instanceof PlaceableShape && anchor != null);
+        if (((PlaceableShape<?,?>)shape).getFlipVertical()) {
+            graphics.translate(anchor.getX(), anchor.getY() + anchor.getHeight());
+            graphics.scale(1, -1);
+            graphics.translate(-anchor.getX(), -anchor.getY());
+        }
+    }
+
+    private void rotate(Graphics2D graphics, Rectangle2D anchor) {
+        assert(shape instanceof PlaceableShape && anchor != null);
+        double rotation = ((PlaceableShape<?,?>)shape).getRotation();
+        if (rotation != 0.) {
+            // PowerPoint rotates shapes relative to the geometric center
+            graphics.rotate(Math.toRadians(rotation), anchor.getCenterX(), anchor.getCenterY());
+        }
+
+    }
+
+    private static double safeScale(double dim1, double dim2) {
+        return (dim1 == 0. || dim2 == 0.) ? 1 : dim1/dim2;
     }
 
     @Override
@@ -160,15 +156,11 @@ public class DrawShape implements Drawable {
                 // this handling is only based on try and error ... not sure why h/xslf is handled differently.
 
                 if (!isHSLF) {
-                    txs2.translate(centerX, centerY);
-                    txs2.quadrantRotate(1);
-                    txs2.translate(-centerX, -centerY);
+                    txs2.quadrantRotate(1, centerX, centerY);
                     txs2.concatenate(tx);
                 }
 
-                txs2.translate(centerX, centerY);
-                txs2.quadrantRotate(3);
-                txs2.translate(-centerX, -centerY);
+                txs2.quadrantRotate(3, centerX, centerY);
 
                 if (isHSLF) {
                     txs2.concatenate(tx);

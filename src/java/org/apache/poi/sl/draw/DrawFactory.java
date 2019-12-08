@@ -47,17 +47,21 @@ public class DrawFactory {
      * This is a fallback, for operations where usercode can't set a graphics context.
      * Preferably use the rendering hint {@link Drawable#DRAW_FACTORY} to set the factory.
      *
-     * @param factory the custom factory
+     * @param factory the custom factory or {@code null} to reset/remove the default factory
      */
     @SuppressWarnings("unused")
     public static void setDefaultFactory(DrawFactory factory) {
-        defaultFactory.set(factory);
+        if (factory == null) {
+            defaultFactory.remove();
+        } else {
+            defaultFactory.set(factory);
+        }
     }
 
     /**
      * Returns the DrawFactory, preferably via a graphics instance.
      * If graphics is null, the current thread local is checked or
-     * if it is not set, a new factory is created. 
+     * if it is not set, a new factory is created.
      *
      * @param graphics the current graphics context or null
      * @return the draw factory
@@ -112,7 +116,7 @@ public class DrawFactory {
         } else if (shape.getClass().isAnnotationPresent(DrawNotImplemented.class)) {
             return new DrawNothing(shape);
         }
-        
+
         throw new IllegalArgumentException("Unsupported shape type: "+shape.getClass());
     }
 
@@ -139,11 +143,11 @@ public class DrawFactory {
     public DrawConnectorShape getDrawable(ConnectorShape<?,?> shape) {
         return new DrawConnectorShape(shape);
     }
-    
+
     public DrawTableShape getDrawable(TableShape<?,?> shape) {
         return new DrawTableShape(shape);
     }
-    
+
     public DrawTextShape getDrawable(TextShape<?,?> shape) {
         return new DrawTextShape(shape);
     }
@@ -151,15 +155,15 @@ public class DrawFactory {
     public DrawGroupShape getDrawable(GroupShape<?,?> shape) {
         return new DrawGroupShape(shape);
     }
-    
+
     public DrawPictureShape getDrawable(PictureShape<?,?> shape) {
         return new DrawPictureShape(shape);
     }
-    
+
     public DrawGraphicalFrame getDrawable(GraphicalFrame<?,?> shape) {
         return new DrawGraphicalFrame(shape);
     }
-    
+
     public DrawTextParagraph getDrawable(TextParagraph<?,?,?> paragraph) {
         return new DrawTextParagraph(paragraph);
     }
@@ -167,12 +171,12 @@ public class DrawFactory {
     public DrawBackground getDrawable(Background<?,?> shape) {
         return new DrawBackground(shape);
     }
-    
+
     @SuppressWarnings("WeakerAccess")
     public DrawTextFragment getTextFragment(TextLayout layout, AttributedString str) {
         return new DrawTextFragment(layout, str);
     }
-    
+
     public DrawPaint getPaint(PlaceableShape<?,?> shape) {
         return new DrawPaint(shape);
     }
@@ -183,7 +187,7 @@ public class DrawFactory {
      *
      * @param graphics the graphics context to draw to
      * @param shape the shape
-     * @param bounds the bounds within the graphics context to draw to 
+     * @param bounds the bounds within the graphics context to draw to
      */
     public void drawShape(Graphics2D graphics, Shape<?,?> shape, Rectangle2D bounds) {
         Rectangle2D shapeBounds = shape.getAnchor();
@@ -202,7 +206,7 @@ public class DrawFactory {
                 tx.translate(-shapeBounds.getCenterX(), -shapeBounds.getCenterY());
             }
             graphics.setRenderingHint(Drawable.GROUP_TRANSFORM, tx);
-            
+
             Drawable d = getDrawable(shape);
             d.applyTransform(graphics);
             d.draw(graphics);
@@ -210,7 +214,7 @@ public class DrawFactory {
             graphics.setRenderingHint(Drawable.GROUP_TRANSFORM, txg);
         }
     }
-    
+
 
     /**
      * Return a FontManager, either registered beforehand or a default implementation

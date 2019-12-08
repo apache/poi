@@ -31,11 +31,11 @@ import org.apache.poi.util.POILogger;
 
 /**
  * <p>Format class that handles Excel style fractions, such as "# #/#" and "#/###"</p>
- * 
+ *
  * <p>As of this writing, this is still not 100% accurate, but it does a reasonable job
  * of trying to mimic Excel's fraction calculations.  It does not currently
  * maintain Excel's spacing.</p>
- * 
+ *
  * <p>This class relies on a method lifted nearly verbatim from org.apache.math.fraction.
  *  If further uses for Commons Math are found, we will consider adding it as a dependency.
  *  For now, we have in-lined the one method to keep things simple.</p>
@@ -43,7 +43,7 @@ import org.apache.poi.util.POILogger;
 
 @SuppressWarnings("serial")
 public class FractionFormat extends Format {
-    private static final POILogger LOGGER = POILogFactory.getLogger(FractionFormat.class); 
+    private static final POILogger LOGGER = POILogFactory.getLogger(FractionFormat.class);
     private static final Pattern DENOM_FORMAT_PATTERN = Pattern.compile("(?:(#+)|(\\d+))");
 
     //this was chosen to match the earlier limitation of max denom power
@@ -78,7 +78,7 @@ public class FractionFormat extends Format {
                 try{
                     tmpExact = Integer.parseInt(m.group(2));
                     //if the denom is 0, fall back to the default: tmpExact=100
-                    
+
                     if (tmpExact == 0){
                         tmpExact = -1;
                     }
@@ -104,10 +104,11 @@ public class FractionFormat extends Format {
         maxDenom = tmpMax;
     }
 
+    @SuppressWarnings("squid:S2111")
     public String format(Number num) {
 
         final BigDecimal doubleValue = new BigDecimal(num.doubleValue());
-        
+
         final boolean isNeg = doubleValue.compareTo(BigDecimal.ZERO) < 0;
 
         final BigDecimal absValue = doubleValue.abs();
@@ -117,7 +118,7 @@ public class FractionFormat extends Format {
         if (wholePart.add(decPart).compareTo(BigDecimal.ZERO) == 0) {
             return "0";
         }
-        
+
         // if the absolute value is smaller than 1 over the exact or maxDenom
         // you can stop here and return "0"
         // reciprocal is result of an int devision ... and so it's nearly always 0
@@ -125,10 +126,10 @@ public class FractionFormat extends Format {
         // if (absDoubleValue < reciprocal) {
         //    return "0";
         // }
-        
+
         //this is necessary to prevent overflow in the maxDenom calculation
         if (decPart.compareTo(BigDecimal.ZERO) == 0){
-            
+
             StringBuilder sb = new StringBuilder();
             if (isNeg){
                 sb.append("-");
@@ -136,7 +137,7 @@ public class FractionFormat extends Format {
             sb.append(wholePart);
             return sb.toString();
         }
-        
+
         final SimpleFraction fract;
         try {
             //this should be the case because of the constructor
@@ -151,12 +152,12 @@ public class FractionFormat extends Format {
         }
 
         StringBuilder sb = new StringBuilder();
-        
+
         //now format the results
         if (isNeg){
             sb.append("-");
         }
-        
+
         //if whole part has to go into the numerator
         if (wholePartFormatString == null || wholePartFormatString.isEmpty()){
             final int fden = fract.getDenominator();
@@ -165,8 +166,8 @@ public class FractionFormat extends Format {
             sb.append(trueNum.toBigInteger()).append("/").append(fden);
             return sb.toString();
         }
-        
-        
+
+
         //short circuit if fraction is 0 or 1
         if (fract.getNumerator() == 0){
             sb.append(wholePart);
@@ -190,5 +191,5 @@ public class FractionFormat extends Format {
     public Object parseObject(String source, ParsePosition pos) {
         throw new NotImplementedException("Reverse parsing not supported");
     }
-   
+
 }
