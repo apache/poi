@@ -269,7 +269,7 @@
                                 <configuration>
                                     <target>
                                         <copy todir="${basedir}/target/schemas">
-                                            <fileset dir="${basedir}/../../src/ooxml/resources/org/apache/poi/schemas"/>
+                                            <fileset dir="${basedir}/../../src/ooxml/resources/org/apache/poi/schemas" excludes="XAdES*.xsd"/>
                                         </copy>
                                     </target>
                                 </configuration>

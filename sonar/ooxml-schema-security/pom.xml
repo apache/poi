@@ -46,52 +46,7 @@
 						<goals><goal>wget</goal></goals>
 						<configuration>
 							<outputDirectory>target/schemas</outputDirectory>
-							<url>http://dublincore.org/schemas/xmls/qdc/2003/04/02/dc.xsd</url>
-						</configuration>
-					</execution>
-					<execution>
-						<id>install-xsds-part-3</id>
-						<phase>generate-sources</phase>
-						<goals><goal>wget</goal></goals>
-						<configuration>
-							<outputDirectory>target/schemas</outputDirectory>
-							<url>http://dublincore.org/schemas/xmls/qdc/2003/04/02/dcterms.xsd</url>
-						</configuration>
-					</execution>
-					<execution>
-						<id>install-xsds-part-4</id>
-						<phase>generate-sources</phase>
-						<goals><goal>wget</goal></goals>
-						<configuration>
-							<outputDirectory>target/schemas</outputDirectory>
-							<url>http://dublincore.org/schemas/xmls/qdc/2003/04/02/dcmitype.xsd</url>
-						</configuration>
-					</execution>
-					<execution>
-						<id>install-xsds-part-5</id>
-						<phase>generate-sources</phase>
-						<goals><goal>wget</goal></goals>
-						<configuration>
-							<outputDirectory>target/schemas</outputDirectory>
-							<url>http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd</url>
-						</configuration>
-					</execution>
-					<execution>
-						<id>install-xsds-part-6</id>
-						<phase>generate-sources</phase>
-						<goals><goal>wget</goal></goals>
-						<configuration>
-							<outputDirectory>target/schemas</outputDirectory>
-							<url>https://uri.etsi.org/01903/v1.3.2/XAdES.xsd</url>
-						</configuration>
-					</execution>
-					<execution>
-						<id>install-xsds-part-7</id>
-						<phase>generate-sources</phase>
-						<goals><goal>wget</goal></goals>
-						<configuration>
-							<outputDirectory>target/schemas</outputDirectory>
-							<url>https://uri.etsi.org/01903/v1.4.1/XAdESv141.xsd</url>
+							<url>https://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd</url>
 						</configuration>
 					</execution>
 				</executions>
@@ -112,9 +67,18 @@
 						<configuration>
 							<target>
 								<echo message="unzip schemas" />
-								<unzip src="target/OpenPackagingConventions-XMLSchema.zip" dest="target/schemas/" />
-								<copy file="../../src/ooxml/resources/org/apache/poi/poifs/crypt/signatureInfo.xsd"
-									todir="target/schemas"/>
+								<unzip src="target/OpenPackagingConventions-XMLSchema.zip" dest="target/schemas/">
+									<patternset>
+										<include name="opc-digSig.xsd"/>
+										<include name="opc-relationships.xsd"/>
+									</patternset>
+								</unzip>
+								<copy todir="target/schemas">
+									<fileset dir="../../src/ooxml/resources/org/apache/poi">
+										<include name="poifs/crypt/signatureInfo.xsd"/>
+										<include name="schemas/XAdES*.xsd"/>
+									</fileset>
+								</copy>
 							</target>
 						</configuration>
 					</execution>
@@ -129,7 +93,7 @@
 			<groupId>org.apache.xmlbeans</groupId>
 			<artifactId>xmlbeans</artifactId>
 			<version>${xmlbeans.version}</version>
-		</dependency>    	
+		</dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>poi-main</artifactId>
