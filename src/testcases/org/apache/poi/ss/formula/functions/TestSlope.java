@@ -19,17 +19,19 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
+
 /**
  * Test for Excel function SLOPE()
  *
  * @author Johan Karlsteen
  */
-public final class TestSlope extends TestCase {
+public final class TestSlope {
 	private static final Function SLOPE = new Slope();
 
 	private static ValueEval invoke(Function function, ValueEval xArray, ValueEval yArray) {
@@ -52,6 +54,7 @@ public final class TestSlope extends TestCase {
 		confirmError(SLOPE, xArray, yArray, expectedError);
 	}
 
+	@Test
 	public void testBasic() {
 		Double exp = Math.pow(10, 7.5);
 		ValueEval[] yValues = {
@@ -80,6 +83,7 @@ public final class TestSlope extends TestCase {
 	/**
 	 * number of items in array is not limited to 30
 	 */
+	@Test
 	public void testLargeArrays() {
 		ValueEval[] yValues = createMockNumberArray(100, 3); // [1,2,0,1,2,0,...,0,1]
 		yValues[0] = new NumberEval(2.0); // Changes first element to 2
@@ -102,6 +106,7 @@ public final class TestSlope extends TestCase {
 		return EvalFactory.createAreaEval(refStr, values);
 	}
 
+	@Test
 	public void testErrors() {
 		ValueEval[] xValues = {
 				ErrorEval.REF_INVALID,

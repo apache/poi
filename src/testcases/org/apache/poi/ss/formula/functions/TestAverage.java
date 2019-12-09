@@ -17,19 +17,19 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
+
 /**
  * Tests for Excel function AVERAGE()
- *
- * @author Josh Micich
  */
-public final class TestAverage extends TestCase {
+public final class TestAverage {
 
 	private static ValueEval invokeAverage(ValueEval[] args) {
 		return AggregateFunction.AVERAGE.evaluate(args, -1, (short)-1);
@@ -47,6 +47,7 @@ public final class TestAverage extends TestCase {
 		assertEquals(expectedError.getErrorCode(), ((ErrorEval)result).getErrorCode());
 	}
 
+	@Test
 	public void testBasic() {
 
 		ValueEval[] values = {
@@ -74,6 +75,7 @@ public final class TestAverage extends TestCase {
 	/**
 	 * Valid cases where values are not pure numbers
 	 */
+	@Test
 	public void testUnusualArgs() {
 		ValueEval[] values = {
 				new NumberEval(1),
@@ -86,6 +88,7 @@ public final class TestAverage extends TestCase {
 
 	}
 
+	@Test
 	public void testErrors() {
 		ValueEval[] values = {
 				new NumberEval(1),

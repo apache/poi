@@ -17,11 +17,17 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import junit.framework.AssertionFailedError;
-import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.junit.Test;
 
 /**
  * Tests for {@link Npv}
@@ -29,8 +35,9 @@ import org.apache.poi.ss.usermodel.CellValue;
  * @author Marcel May
  * @see <a href="http://office.microsoft.com/en-us/excel-help/npv-HP005209199.aspx">Excel Help</a>
  */
-public final class TestNpv extends TestCase {
+public final class TestNpv {
 
+    @Test
     public void testEvaluateInSheetExample2() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("Sheet1");
@@ -52,7 +59,7 @@ public final class TestNpv extends TestCase {
         fe.clearAllCachedResultValues();
         fe.evaluateFormulaCell(cell);
         double res = cell.getNumericCellValue();
-        assertEquals(1922.06d, Math.round(res * 100d) / 100d);
+        assertEquals(1922.06d, Math.round(res * 100d) / 100d, 0);
 
         // Range
         cell.setCellFormula("NPV(A2, A4:A8)+A3");
@@ -60,13 +67,14 @@ public final class TestNpv extends TestCase {
         fe.clearAllCachedResultValues();
         fe.evaluateFormulaCell(cell);
         res = cell.getNumericCellValue();
-        assertEquals(1922.06d, Math.round(res * 100d) / 100d);
+        assertEquals(1922.06d, Math.round(res * 100d) / 100d, 0);
     }
 
     /**
      * evaluate formulas with NPV and compare the result with
      * the cached formula result pre-calculated by Excel
      */
+    @Test
     public void testNpvFromSpreadsheet(){
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("IrrNpvTestCaseData.xls");
         HSSFSheet sheet = wb.getSheet("IRR-NPV");

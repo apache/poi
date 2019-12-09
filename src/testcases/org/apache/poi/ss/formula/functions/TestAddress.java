@@ -16,16 +16,18 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.functions;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.junit.Test;
 
-import junit.framework.TestCase;
+public final class TestAddress {
 
-public final class TestAddress extends TestCase {
-
+    @Test
     public void testAddress() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFCell cell = wb.createSheet().createRow(0).createCell(0);

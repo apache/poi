@@ -17,10 +17,12 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.EvaluationException;
@@ -29,19 +31,20 @@ import org.apache.poi.ss.formula.functions.Offset.LinearOffsetRange;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.Test;
 
 /**
  * Tests for OFFSET function implementation
  *
  * @author Josh Micich
  */
-public final class TestOffset extends TestCase {
+public final class TestOffset {
 
 	private static void confirmDoubleConvert(double doubleVal, int expected) {
 		try {
 			assertEquals(expected, Offset.evaluateIntArg(new NumberEval(doubleVal), -1, -1));
 		} catch (EvaluationException e) {
-			throw new AssertionFailedError("Unexpected error '" + e.getErrorEval() + "'.");
+			fail("Unexpected error '" + e.getErrorEval() + "'.");
 		}
 	}
 	/**
@@ -50,6 +53,7 @@ public final class TestOffset extends TestCase {
 	 * Fractional values are silently truncated.
 	 * Truncation is toward negative infinity.
 	 */
+	@Test
 	public void testDoubleConversion() {
 
 		confirmDoubleConvert(100.09, 100);
@@ -74,6 +78,7 @@ public final class TestOffset extends TestCase {
 		confirmDoubleConvert(-2.01, -3);
 	}
 
+	@Test
 	public void testLinearOffsetRange() {
 		LinearOffsetRange lor;
 
@@ -103,6 +108,7 @@ public final class TestOffset extends TestCase {
 		assertFalse(lor.isOutOfBounds(0, 65535));
 	}
 
+	@Test
 	public void testOffsetWithEmpty23Arguments() throws IOException {
 		try (Workbook workbook = new HSSFWorkbook()) {
 			Cell cell = workbook.createSheet().createRow(0).createCell(0);

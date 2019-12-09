@@ -20,27 +20,19 @@
  */
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertTrue;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  *
  */
-public abstract class AbstractNumericTestCase extends TestCase {
+public abstract class AbstractNumericTestCase {
 
     public static final double POS_ZERO = 1E-4;
     public static final double DIFF_TOLERANCE_FACTOR = 1E-8;
 
-    @Override
-    public void setUp() {
-    }
-
-    @Override
-    public void tearDown() {
-    }
-
     /**
-     * Why doesnt JUnit have a method like this for doubles? 
+     * Why doesnt JUnit have a method like this for doubles?
      * The current impl (3.8.1) of Junit has a retar*** method
      * for comparing doubles. DO NOT use that.
      * TODO: This class should really be in an abstract super class
@@ -72,4 +64,8 @@ public abstract class AbstractNumericTestCase extends TestCase {
         assertEquals(msg, baseval, checkval, POS_ZERO, DIFF_TOLERANCE_FACTOR);
     }
 
+
+    public static void assertEquals(double baseval, double checkval) {
+        assertEquals("", baseval, checkval, POS_ZERO, DIFF_TOLERANCE_FACTOR);
+    }
 }

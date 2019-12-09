@@ -17,24 +17,24 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
 
 /**
  * Tests for {@link Hex2Dec}
  *
  * @author cedric dot walter @ gmail dot com
  */
-public final class TestHex2Dec extends TestCase {
+public final class TestHex2Dec {
 
     private static ValueEval invokeValue(String number1) {
 		ValueEval[] args = new ValueEval[] { new StringEval(number1) };
@@ -53,30 +53,34 @@ public final class TestHex2Dec extends TestCase {
         assertEquals(msg, numError, result);
     }
 
+    @Test
 	public void testBasic() {
 		confirmValue("Converts hex 'A5' to decimal (165)", "A5", "165");
 		confirmValue("Converts hex FFFFFFFF5B to decimal (-165)", "FFFFFFFF5B", "-165");
 		confirmValue("Converts hex 3DA408B9 to decimal (-165)", "3DA408B9", "1034160313");
 	}
 
+    @Test
     public void testErrors() {
         confirmValueError("not a valid hex number","GGGGGGG", ErrorEval.NUM_ERROR);
         confirmValueError("not a valid hex number","3.14159", ErrorEval.NUM_ERROR);
     }
 
+    @Test
     public void testEvalOperationEvaluationContext() {
         OperationEvaluationContext ctx = createContext();
-        
+
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0) };
         ValueEval result = new Hex2Dec().evaluate(args, ctx);
 
         assertEquals(NumberEval.class, result.getClass());
         assertEquals("0", ((NumberEval) result).getStringValue());
     }
-    
+
+    @Test
     public void testEvalOperationEvaluationContextFails() {
         OperationEvaluationContext ctx = createContext();
-        
+
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 0) };
         ValueEval result = new Hex2Dec().evaluate(args, ctx);
 
@@ -88,20 +92,15 @@ public final class TestHex2Dec extends TestCase {
         HSSFWorkbook wb = new HSSFWorkbook();
         wb.createSheet();
         HSSFEvaluationWorkbook workbook = HSSFEvaluationWorkbook.create(wb);
-        WorkbookEvaluator workbookEvaluator = new WorkbookEvaluator(workbook, new IStabilityClassifier() {
-            
-            @Override
-            public boolean isCellFinal(int sheetIndex, int rowIndex, int columnIndex) {
-                return true;
-            }
-        }, null);
+        WorkbookEvaluator workbookEvaluator = new WorkbookEvaluator(workbook, (sheetIndex, rowIndex, columnIndex) -> true, null);
         return new OperationEvaluationContext(workbookEvaluator,
                 workbook, 0, 0, 0, null);
     }
 
+    @Test
     public void testRefs() {
         OperationEvaluationContext ctx = createContext();
-        
+
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0) };
         ValueEval result = new Hex2Dec().evaluate(args, -1, -1);
 

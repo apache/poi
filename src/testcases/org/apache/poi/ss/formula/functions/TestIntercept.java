@@ -19,7 +19,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -29,12 +29,14 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
+
 /**
  * Test for Excel function INTERCEPT()
  *
  * @author Johan Karlsteen
  */
-public final class TestIntercept extends TestCase {
+public final class TestIntercept {
 	private static final Function INTERCEPT = new Intercept();
 
 	private static ValueEval invoke(Function function, ValueEval xArray, ValueEval yArray) {
@@ -57,6 +59,7 @@ public final class TestIntercept extends TestCase {
 		confirmError(INTERCEPT, xArray, yArray, expectedError);
 	}
 
+	@Test
 	public void testBasic() {
 		Double exp = Math.pow(10, 7.5);
 		ValueEval[] yValues = {
@@ -85,6 +88,7 @@ public final class TestIntercept extends TestCase {
 	/**
 	 * number of items in array is not limited to 30
 	 */
+	@Test
 	public void testLargeArrays() {
 		ValueEval[] yValues = createMockNumberArray(100, 3); // [1,2,0,1,2,0,...,0,1]
 		yValues[0] = new NumberEval(2.0); // Changes first element to 2
@@ -107,6 +111,7 @@ public final class TestIntercept extends TestCase {
 		return EvalFactory.createAreaEval(refStr, values);
 	}
 
+	@Test
 	public void testErrors() {
 		ValueEval[] xValues = {
 				ErrorEval.REF_INVALID,
@@ -144,6 +149,7 @@ public final class TestIntercept extends TestCase {
      *  Example from
      *  http://office.microsoft.com/en-us/excel-help/intercept-function-HP010062512.aspx?CTT=5&origin=HA010277524
      */
+	@Test
     public void testFromFile() {
 
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("intercept.xls");

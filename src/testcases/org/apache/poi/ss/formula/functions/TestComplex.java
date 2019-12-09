@@ -16,18 +16,19 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
 
 /**
  * Tests for {@link Complex}
  *
  * @author cedric dot walter @ gmail dot com
  */
-public class TestComplex extends TestCase
-{
+public class TestComplex {
     private static ValueEval invokeValue(String real_num, String i_num, String suffix) {
         ValueEval[] args = new ValueEval[]{new StringEval(real_num), new StringEval(i_num), new StringEval(suffix)};
         return new Complex().evaluate(args, -1, -1);
@@ -45,6 +46,7 @@ public class TestComplex extends TestCase
         assertEquals(msg, numError, result);
     }
 
+    @Test
     public void testBasic() {
         confirmValue("Complex number with 3 and 4 as the real and imaginary coefficients (3 + 4i)", "3","4", "", "3+4i");
         confirmValue("Complex number with 3 and 4 as the real and imaginary coefficients, and j as the suffix (3 + 4j)", "3","4", "j", "3+4j");
@@ -58,6 +60,7 @@ public class TestComplex extends TestCase
         confirmValue("Complex number with -2 and -3 as the real and imaginary coefficients (-0.5-3.2i)", "-0.5","-3.2", "", "-0.5-3.2i");
     }
 
+    @Test
     public void testErrors() {
         confirmValueError("argument is nonnumeric", "ABCD", "","", ErrorEval.VALUE_INVALID);
         confirmValueError("argument is nonnumeric", "1", "ABCD","", ErrorEval.VALUE_INVALID);

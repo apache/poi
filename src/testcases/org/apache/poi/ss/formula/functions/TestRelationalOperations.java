@@ -16,19 +16,18 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
-import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.CacheAreaEval;
-import org.apache.poi.ss.formula.eval.*;
-import org.apache.poi.ss.usermodel.CellValue;
-
 import static org.junit.Assert.assertEquals;
 
-public class TestRelationalOperations extends TestCase {
+import org.apache.poi.ss.formula.CacheAreaEval;
+import org.apache.poi.ss.formula.eval.BoolEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.RelationalOperationEval;
+import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
+
+public class TestRelationalOperations {
 
     /**
      *  (1, 1)(1, 1) = 1
@@ -38,6 +37,7 @@ public class TestRelationalOperations extends TestCase {
      *   (TRUE, TRUE)(TRUE, TRUE)
      *
      */
+    @Test
     public void testEqMatrixByScalar_Numbers() {
         ValueEval[] values = new ValueEval[4];
         for (int i = 0; i < values.length; i++) {
@@ -61,6 +61,7 @@ public class TestRelationalOperations extends TestCase {
         }
     }
 
+    @Test
     public void testEqMatrixByScalar_String() {
         ValueEval[] values = new ValueEval[4];
         for (int i = 0; i < values.length; i++) {
@@ -83,6 +84,7 @@ public class TestRelationalOperations extends TestCase {
         }
     }
 
+    @Test
     public void testEqMatrixBy_Row() {
         ValueEval[] matrix = {
                 new NumberEval(-1), new NumberEval(1),
@@ -116,6 +118,7 @@ public class TestRelationalOperations extends TestCase {
         }
     }
 
+    @Test
     public void testEqMatrixBy_Column() {
         ValueEval[] matrix = {
                 new NumberEval(-1), new NumberEval(1),
@@ -152,6 +155,7 @@ public class TestRelationalOperations extends TestCase {
         }
     }
 
+    @Test
     public void testEqMatrixBy_Matrix() {
         // A1:B2
         ValueEval[] matrix1 = {

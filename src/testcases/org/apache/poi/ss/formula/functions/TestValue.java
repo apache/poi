@@ -17,17 +17,18 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
 
 /**
  * Tests for {@link Value}
  */
-public final class TestValue extends TestCase {
+public final class TestValue {
 
 	private static ValueEval invokeValue(String strText) {
 		ValueEval[] args = new ValueEval[] { new StringEval(strText), };
@@ -46,6 +47,7 @@ public final class TestValue extends TestCase {
 		assertEquals(ErrorEval.VALUE_INVALID, result);
 	}
 
+	@Test
 	public void testBasic() {
 
 		confirmValue("100", 100);
@@ -73,6 +75,7 @@ public final class TestValue extends TestCase {
         confirmValue("30 %", 0.3);
 	}
 
+	@Test
 	public void testErrors() {
 		confirmValueError("1+1");
 		confirmValueError("1 1");

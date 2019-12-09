@@ -19,19 +19,22 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.util.CellReference;
+import org.junit.Test;
 
 /**
  * Test cases for RANK()
  */
-public final class TestRank extends TestCase {
+public final class TestRank {
 
+    @Test
     public void testFromFile() {
 
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("rank.xls");
@@ -39,30 +42,30 @@ public final class TestRank extends TestCase {
 
         HSSFSheet example1 = wb.getSheet("Example 1");
         HSSFCell ex1cell1 = example1.getRow(7).getCell(0);
-        assertEquals(3.0, fe.evaluate(ex1cell1).getNumberValue());
+        assertEquals(3.0, fe.evaluate(ex1cell1).getNumberValue(), 0);
         HSSFCell ex1cell2 = example1.getRow(8).getCell(0);
-        assertEquals(5.0, fe.evaluate(ex1cell2).getNumberValue());
+        assertEquals(5.0, fe.evaluate(ex1cell2).getNumberValue(), 0);
 
         HSSFSheet example2 = wb.getSheet("Example 2");
         for(int rownum = 1; rownum<= 10; rownum ++){
             HSSFCell cell = example2.getRow(rownum).getCell(2);
             double cachedResult = cell.getNumericCellValue(); //cached formula result
-            assertEquals(cachedResult, fe.evaluate(cell).getNumberValue());
+            assertEquals(cachedResult, fe.evaluate(cell).getNumberValue(), 0);
         }
 
         HSSFSheet example3 = wb.getSheet("Example 3");
         for(int rownum = 1; rownum<= 10; rownum ++){
             HSSFCell cellD = example3.getRow(rownum).getCell(3);
             double cachedResultD = cellD.getNumericCellValue(); //cached formula result
-            assertEquals(new CellReference(cellD).formatAsString(), cachedResultD, fe.evaluate(cellD).getNumberValue());
+            assertEquals(new CellReference(cellD).formatAsString(), cachedResultD, fe.evaluate(cellD).getNumberValue(), 0);
 
             HSSFCell cellE = example3.getRow(rownum).getCell(4);
             double cachedResultE = cellE.getNumericCellValue(); //cached formula result
-            assertEquals(new CellReference(cellE).formatAsString(), cachedResultE, fe.evaluate(cellE).getNumberValue());
+            assertEquals(new CellReference(cellE).formatAsString(), cachedResultE, fe.evaluate(cellE).getNumberValue(), 0);
 
             HSSFCell cellF = example3.getRow(rownum).getCell(5);
             double cachedResultF = cellF.getNumericCellValue(); //cached formula result
-            assertEquals(new CellReference(cellF).formatAsString(), cachedResultF, fe.evaluate(cellF).getNumberValue());
+            assertEquals(new CellReference(cellF).formatAsString(), cachedResultF, fe.evaluate(cellF).getNumberValue(), 0);
         }
     }
 }

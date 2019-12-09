@@ -17,17 +17,19 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
+
 /**
  * Tests for Excel functions SUMX2MY2(), SUMX2PY2(), SUMXMY2()
  *
  * @author Josh Micich
  */
-public final class TestXYNumericFunction extends TestCase {
+public final class TestXYNumericFunction {
 	private static final Function SUM_SQUARES = new Sumx2py2();
 	private static final Function DIFF_SQUARES = new Sumx2my2();
 	private static final Function SUM_SQUARES_OF_DIFFS = new Sumxmy2();
@@ -54,6 +56,7 @@ public final class TestXYNumericFunction extends TestCase {
 		confirmError(SUM_SQUARES_OF_DIFFS, xArray, yArray, expectedError);
 	}
 
+	@Test
 	public void testBasic() {
 		ValueEval[] xValues = {
 			new NumberEval(1),
@@ -77,6 +80,7 @@ public final class TestXYNumericFunction extends TestCase {
 	/**
 	 * number of items in array is not limited to 30
 	 */
+	@Test
 	public void testLargeArrays() {
 		ValueEval[] xValues = createMockNumberArray(100, 3);
 		ValueEval[] yValues = createMockNumberArray(100, 2);
@@ -100,6 +104,7 @@ public final class TestXYNumericFunction extends TestCase {
 		return EvalFactory.createAreaEval(refStr, values);
 	}
 
+	@Test
 	public void testErrors() {
 		ValueEval[] xValues = {
 				ErrorEval.REF_INVALID,

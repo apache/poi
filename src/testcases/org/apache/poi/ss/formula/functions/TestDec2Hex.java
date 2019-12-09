@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -31,13 +31,14 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.junit.Test;
 
 /**
  * Tests for {@link Dec2Hex}
  *
  * @author cedric dot walter @ gmail dot com
  */
-public final class TestDec2Hex extends TestCase {
+public final class TestDec2Hex {
 
 	private static ValueEval invokeValue(String number1, String number2) {
 		ValueEval[] args = new ValueEval[] { new StringEval(number1), new StringEval(number2), };
@@ -72,6 +73,7 @@ public final class TestDec2Hex extends TestCase {
         assertEquals(msg, numError, result);
     }
 
+    @Test
 	public void testBasic() {
 		confirmValue("Converts decimal 100 to hexadecimal with 0 characters (64)", "100","0", "64");
 		confirmValue("Converts decimal 100 to hexadecimal with 4 characters (0064)", "100","4", "0064");
@@ -81,9 +83,9 @@ public final class TestDec2Hex extends TestCase {
 
 		confirmValue("Converts decimal -54 to hexadecimal, 2 is ignored","-54", "2",  "FFFFFFFFCA");
 		confirmValue("places is optionnal","-54", "FFFFFFFFCA");
-		
+
 		confirmValue("Converts normal decimal number to hexadecimal", "100", "64");
-        
+
 		String maxInt = Integer.toString(Integer.MAX_VALUE);
         assertEquals("2147483647", maxInt);
         confirmValue("Converts INT_MAX to hexadecimal", maxInt, "7FFFFFFF");
@@ -95,16 +97,17 @@ public final class TestDec2Hex extends TestCase {
         String maxIntPlusOne = Long.toString(((long)Integer.MAX_VALUE)+1);
         assertEquals("2147483648", maxIntPlusOne);
         confirmValue("Converts INT_MAX + 1 to hexadecimal", maxIntPlusOne, "80000000");
-        
+
         String maxLong = Long.toString(549755813887l);
         assertEquals("549755813887", maxLong);
         confirmValue("Converts the max supported value to hexadecimal", maxLong, "7FFFFFFFFF");
-        
+
         String minLong = Long.toString(-549755813888l);
         assertEquals("-549755813888", minLong);
         confirmValue("Converts the min supported value to hexadecimal", minLong, "FF80000000");
 	}
 
+    @Test
     public void testErrors() {
         confirmValueError("Out of range min number","-549755813889","0", ErrorEval.NUM_ERROR);
         confirmValueError("Out of range max number","549755813888","0", ErrorEval.NUM_ERROR);
@@ -113,9 +116,10 @@ public final class TestDec2Hex extends TestCase {
         confirmValueError("non number places not allowed","ABCDEF","0", ErrorEval.VALUE_INVALID);
     }
 
+    @Test
     public void testEvalOperationEvaluationContextFails() {
         OperationEvaluationContext ctx = createContext();
-        
+
         ValueEval[] args = new ValueEval[] { ErrorEval.VALUE_INVALID };
         ValueEval result = new Dec2Hex().evaluate(args, ctx);
 
@@ -136,7 +140,7 @@ public final class TestDec2Hex extends TestCase {
 
         HSSFEvaluationWorkbook workbook = HSSFEvaluationWorkbook.create(wb);
         WorkbookEvaluator workbookEvaluator = new WorkbookEvaluator(workbook, new IStabilityClassifier() {
-            
+
             @Override
             public boolean isCellFinal(int sheetIndex, int rowIndex, int columnIndex) {
                 return true;
@@ -146,9 +150,10 @@ public final class TestDec2Hex extends TestCase {
                 workbook, 0, 0, 0, null);
     }
 
+    @Test
     public void testRefs() {
         OperationEvaluationContext ctx = createContext();
-        
+
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0) };
         ValueEval result = new Dec2Hex().evaluate(args, -1, -1);
 
@@ -156,9 +161,10 @@ public final class TestDec2Hex extends TestCase {
         assertEquals("7B", ((StringEval) result).getStringValue());
     }
 
+    @Test
     public void testWithPlacesIntInt() {
         OperationEvaluationContext ctx = createContext();
-        
+
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 1) };
         ValueEval result = new Dec2Hex().evaluate(args, -1, -1);
 
@@ -166,9 +172,10 @@ public final class TestDec2Hex extends TestCase {
         assertEquals("0000007B", ((StringEval) result).getStringValue());
     }
 
+    @Test
     public void testWithPlaces() {
         OperationEvaluationContext ctx = createContext();
-        
+
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 1) };
         ValueEval result = new Dec2Hex().evaluate(args, ctx);
 
@@ -176,9 +183,10 @@ public final class TestDec2Hex extends TestCase {
         assertEquals("0000007B", ((StringEval) result).getStringValue());
     }
 
+    @Test
     public void testWithTooManyParamsIntInt() {
         OperationEvaluationContext ctx = createContext();
-        
+
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 1), ctx.getRefEval(0, 1) };
         ValueEval result = new Dec2Hex().evaluate(args, -1, -1);
 
@@ -186,9 +194,10 @@ public final class TestDec2Hex extends TestCase {
         assertEquals(ErrorEval.VALUE_INVALID, result);
     }
 
+    @Test
     public void testWithTooManyParams() {
         OperationEvaluationContext ctx = createContext();
-        
+
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 1), ctx.getRefEval(0, 1) };
         ValueEval result = new Dec2Hex().evaluate(args, ctx);
 
@@ -196,9 +205,10 @@ public final class TestDec2Hex extends TestCase {
         assertEquals(ErrorEval.VALUE_INVALID, result);
     }
 
+    @Test
     public void testWithErrorPlaces() {
         OperationEvaluationContext ctx = createContext();
-        
+
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ErrorEval.NULL_INTERSECTION };
         ValueEval result = new Dec2Hex().evaluate(args, -1, -1);
 
@@ -206,9 +216,10 @@ public final class TestDec2Hex extends TestCase {
         assertEquals(ErrorEval.NULL_INTERSECTION, result);
     }
 
+    @Test
     public void testWithNegativePlaces() {
         OperationEvaluationContext ctx = createContext();
-        
+
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 2) };
         ValueEval result = new Dec2Hex().evaluate(args, -1, -1);
 
@@ -216,9 +227,10 @@ public final class TestDec2Hex extends TestCase {
         assertEquals(ErrorEval.NUM_ERROR, result);
     }
 
+    @Test
     public void testWithEmptyPlaces() {
         OperationEvaluationContext ctx = createContext();
-        
+
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(1, 0) };
         ValueEval result = new Dec2Hex().evaluate(args, -1, -1);
 
@@ -226,6 +238,7 @@ public final class TestDec2Hex extends TestCase {
         assertEquals(ErrorEval.VALUE_INVALID, result);
     }
 
+    @Test
     public void testBackAndForth() {
         for (int i = -512; i < 512; i++) {
             ValueEval result = invokeValue(Integer.toString(i));

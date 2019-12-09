@@ -17,17 +17,19 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
 
 /**
  * Tests for ROW(), ROWS(), COLUMN(), COLUMNS()
  *
  * @author Josh Micich
  */
-public final class TestRowCol extends TestCase {
+public final class TestRowCol {
 
+	@Test
 	public void testCol() {
 		Function target = new Column();
 		{
@@ -42,6 +44,7 @@ public final class TestRowCol extends TestCase {
 		}
 	}
 
+	@Test
 	public void testRow() {
 		Function target = new RowFunc();
 		{
@@ -56,6 +59,7 @@ public final class TestRowCol extends TestCase {
 		}
 	}
 
+	@Test
 	public void testColumns() {
 
 		confirmColumnsFunc("A1:F1", 6, 1);
@@ -68,6 +72,7 @@ public final class TestRowCol extends TestCase {
 		assertEquals(1, actual, 0D);
 	}
 
+	@Test
 	public void testRows() {
 
 		confirmRowsFunc("A1:F1", 6, 1);

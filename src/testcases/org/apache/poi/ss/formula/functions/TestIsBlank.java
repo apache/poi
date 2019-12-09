@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
@@ -24,16 +26,17 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.junit.Test;
 
-import junit.framework.TestCase;
 /**
  * Tests for Excel function ISBLANK()
- * 
+ *
  * @author Josh Micich
  */
-public final class TestIsBlank extends TestCase {
+public final class TestIsBlank {
 
-	public void test3DArea() {
+    @Test
+    public void test3DArea() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet1 = wb.createSheet();
         wb.setSheetName(0, "Sheet1");
@@ -42,18 +45,18 @@ public final class TestIsBlank extends TestCase {
         HSSFRow row = sheet1.createRow(0);
         HSSFCell cell = row.createCell(0);
 
-         
+
         cell.setCellFormula("isblank(Sheet2!A1:A1)");
-        
+
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
         CellValue result = fe.evaluate(cell);
         assertEquals(CellType.BOOLEAN, result.getCellType());
         assertEquals(true, result.getBooleanValue());
-        
+
         cell.setCellFormula("isblank(D7:D7)");
-        
+
         result = fe.evaluate(cell);
         assertEquals(CellType.BOOLEAN, result.getCellType());
         assertEquals(true, result.getBooleanValue());
-   }
+    }
 }

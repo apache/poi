@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
@@ -25,12 +25,14 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
+
 /**
  * Tests for Excel function LEN()
  *
  * @author Josh Micich
  */
-public final class TestLen extends TestCase {
+public final class TestLen {
 
 	private static ValueEval invokeLen(ValueEval text) {
 		ValueEval[] args = new ValueEval[] { text, };
@@ -49,14 +51,15 @@ public final class TestLen extends TestCase {
 		assertEquals(expectedError.getErrorCode(), ((ErrorEval)result).getErrorCode());
 	}
 
+	@Test
 	public void testBasic() {
-
 		confirmLen(new StringEval("galactic"), 8);
 	}
 
 	/**
 	 * Valid cases where text arg is not exactly a string
 	 */
+	@Test
 	public void testUnusualArgs() {
 
 		// text (first) arg type is number, other args are strings with fractional digits
@@ -66,6 +69,7 @@ public final class TestLen extends TestCase {
 		confirmLen(BlankEval.instance, 0);
 	}
 
+	@Test
 	public void testErrors() {
 		confirmLen(ErrorEval.NAME_INVALID, ErrorEval.NAME_INVALID);
 	}

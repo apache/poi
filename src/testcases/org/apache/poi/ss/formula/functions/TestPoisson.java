@@ -17,18 +17,19 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
 
 /**
  * Tests for Excel function POISSON(x,mean,cumulative)
  * @author Kalpesh Parmar
  */
-public class TestPoisson extends TestCase {
+public class TestPoisson {
 
     private static final double DELTA = 1E-15;
 
@@ -43,6 +44,7 @@ public class TestPoisson extends TestCase {
         return NumericFunction.POISSON.evaluate(valueEvals,-1,-1);
 	}
 
+    @Test
     public void testCumulativeProbability()
     {
         double x = 1;
@@ -54,17 +56,19 @@ public class TestPoisson extends TestCase {
         assertEquals(myResult.getNumberValue(), result, DELTA);
     }
 
+    @Test
     public void testNonCumulativeProbability()
     {
         double x = 0;
         double mean = 0.2;
         double result = 0.8187307530779818; // known result
-        
+
         NumberEval myResult = (NumberEval)invokePoisson(x,mean,false);
 
         assertEquals(myResult.getNumberValue(), result, DELTA);
     }
 
+    @Test
     public void testNegativeMean()
     {
         double x = 0;
@@ -75,6 +79,7 @@ public class TestPoisson extends TestCase {
         assertEquals(ErrorEval.NUM_ERROR.getErrorCode(), myResult.getErrorCode());
     }
 
+    @Test
     public void testNegativeX()
     {
         double x = -1;
@@ -82,11 +87,10 @@ public class TestPoisson extends TestCase {
 
         ErrorEval myResult = (ErrorEval)invokePoisson(x,mean,false);
 
-        assertEquals(ErrorEval.NUM_ERROR.getErrorCode(), myResult.getErrorCode());    
+        assertEquals(ErrorEval.NUM_ERROR.getErrorCode(), myResult.getErrorCode());
     }
 
-
-
+    @Test
     public void testXAsDecimalNumber()
     {
         double x = 1.1;
@@ -98,6 +102,7 @@ public class TestPoisson extends TestCase {
         assertEquals(myResult.getNumberValue(), result, DELTA);
     }
 
+    @Test
     public void testXZeroMeanZero()
     {
         double x = 0;

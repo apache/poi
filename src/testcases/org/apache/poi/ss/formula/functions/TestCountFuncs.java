@@ -17,6 +17,12 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
@@ -36,17 +42,16 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.util.CellReference;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Test cases for COUNT(), COUNTA() COUNTIF(), COUNTBLANK()
  */
-public final class TestCountFuncs extends TestCase {
+public final class TestCountFuncs {
 
 	private static final String NULL = null;
 
+	@Test
 	public void testCountBlank() {
 		AreaEval range;
 		ValueEval[] values;
@@ -74,6 +79,7 @@ public final class TestCountFuncs extends TestCase {
 		confirmCountBlank(3, range);
 	}
 
+	@Test
 	public void testCountA() {
 		ValueEval[] args;
 
@@ -103,6 +109,7 @@ public final class TestCountFuncs extends TestCase {
 		confirmCountA(59, args);
 	}
 
+	@Test
 	public void testCountIf() {
 		AreaEval range;
 		ValueEval[] values;
@@ -139,6 +146,7 @@ public final class TestCountFuncs extends TestCase {
 		confirmCountIf(2, range, new StringEval(">0.5"));
 	}
 
+	@Test
 	public void testCriteriaPredicateNe_Bug46647() {
 		I_MatchPredicate mp = Countif.createCriteriaPredicate(new StringEval("<>aa"), 0, 0);
 		assertNotNull(mp);
@@ -195,6 +203,7 @@ public final class TestCountFuncs extends TestCase {
      * String criteria in COUNTIF are case insensitive;
      * for example, the string "apples" and the string "APPLES" will match the same cells.
      */
+	@Test
     public void testCaseInsensitiveStringComparison() {
         AreaEval range;
         ValueEval[] values;
@@ -215,6 +224,7 @@ public final class TestCountFuncs extends TestCase {
 	/**
 	 * special case where the criteria argument is a cell reference
 	 */
+	@Test
 	public void testCountIfWithCriteriaReference() {
 
 		ValueEval[] values = {
@@ -258,6 +268,7 @@ public final class TestCountFuncs extends TestCase {
 	/**
 	 * the criteria arg is mostly handled by {@link OperandResolver#getSingleValue(org.apache.poi.ss.formula.eval.ValueEval, int, int)}}
 	 */
+	@Test
 	public void testCountifAreaCriteria() {
 		int srcColIx = 2; // anything but column A
 
@@ -293,6 +304,7 @@ public final class TestCountFuncs extends TestCase {
 		confirmPredicate(true, mp, ErrorEval.VALUE_INVALID);
 	}
 
+	@Test
 	public void testCountifEmptyStringCriteria() {
 		I_MatchPredicate mp;
 
@@ -312,6 +324,7 @@ public final class TestCountFuncs extends TestCase {
 		confirmPredicate(true, mp, "");
 	}
 
+	@Test
 	public void testCountifComparisons() {
 		I_MatchPredicate mp;
 
@@ -353,6 +366,7 @@ public final class TestCountFuncs extends TestCase {
 	 * the criteria arg value can be an error code (the error does not
 	 * propagate to the COUNTIF result).
 	 */
+	@Test
 	public void testCountifErrorCriteria() {
 		I_MatchPredicate mp;
 
@@ -381,10 +395,11 @@ public final class TestCountFuncs extends TestCase {
     * Bug #51498 - Check that CountIf behaves correctly for GTE, LTE
     *  and NEQ cases
     */
+   @Test
 	public void testCountifBug51498() throws Exception {
 		final int REF_COL = 4;
 		final int EVAL_COL = 3;
-		
+
         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("51498.xls");
 		FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 		HSSFSheet sheet = workbook.getSheetAt(0);
@@ -425,6 +440,7 @@ public final class TestCountFuncs extends TestCase {
         }
 	}
 
+	@Test
 	public void testWildCards() {
 		I_MatchPredicate mp;
 
@@ -456,6 +472,8 @@ public final class TestCountFuncs extends TestCase {
 		confirmPredicate(true, mp, "12812");
 		confirmPredicate(false, mp, "128812");
 	}
+
+	@Test
 	public void testNotQuiteWildCards() {
 		I_MatchPredicate mp;
 
@@ -489,6 +507,7 @@ public final class TestCountFuncs extends TestCase {
 		assertEquals(expectedResult, matchPredicate.matches(value));
 	}
 
+	@Test
 	public void testCountifFromSpreadsheet() {
 		testCountFunctionFromSpreadsheet("countifExamples.xls", 1, 2, 3, "countif");
 	}
@@ -497,6 +516,7 @@ public final class TestCountFuncs extends TestCase {
      * Two COUNTIF examples taken from
      * http://office.microsoft.com/en-us/excel-help/countif-function-HP010069840.aspx?CTT=5&origin=HA010277524
      */
+	@Test
     public void testCountifExamples() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("countifExamples.xls");
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
@@ -540,6 +560,7 @@ public final class TestCountFuncs extends TestCase {
         }
     }
 
+	@Test
 	public void testCountBlankFromSpreadsheet() {
 		testCountFunctionFromSpreadsheet("countblankExamples.xls", 1, 3, 4, "countblank");
 	}

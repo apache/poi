@@ -17,16 +17,26 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
-import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.formula.eval.AreaEval;
+import org.apache.poi.ss.formula.eval.BlankEval;
+import org.apache.poi.ss.formula.eval.BoolEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
 
 /**
  * Test cases for Excel function T()
  *
  * @author Josh Micich
  */
-public final class TestTFunc extends TestCase {
+public final class TestTFunc {
 
 	/**
 	 * @return the result of calling function T() with the specified argument
@@ -54,6 +64,7 @@ public final class TestTFunc extends TestCase {
 		assertEquals(text, se.getStringValue());
 	}
 
+	@Test
 	public void testTextValues() {
 		confirmText("abc");
 		confirmText("");
@@ -65,9 +76,10 @@ public final class TestTFunc extends TestCase {
 
 	private static void confirmError(ValueEval arg) {
 		ValueEval eval = invokeT(arg);
-		assertTrue(arg == eval);
+		assertSame(arg, eval);
 	}
 
+	@Test
 	public void testErrorValues() {
 
 		confirmError(ErrorEval.VALUE_INVALID);
@@ -85,12 +97,14 @@ public final class TestTFunc extends TestCase {
 		confirmString(eval, "");
 	}
 
+	@Test
 	public void testOtherValues() {
 		confirmOther(new NumberEval(2));
 		confirmOther(BoolEval.FALSE);
 		confirmOther(BlankEval.instance);  // can this particular case be verified?
 	}
 
+	@Test
 	public void testRefValues() {
 		ValueEval eval;
 
@@ -105,9 +119,10 @@ public final class TestTFunc extends TestCase {
 		confirmString(eval, "");
 
 		eval = invokeTWithReference(ErrorEval.NAME_INVALID);
-		assertTrue(eval == ErrorEval.NAME_INVALID);
+		assertSame(eval, ErrorEval.NAME_INVALID);
 	}
 
+	@Test
 	public void testAreaArg() {
 		ValueEval[] areaValues = new ValueEval[] {
 			new StringEval("abc"), new StringEval("def"),

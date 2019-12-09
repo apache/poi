@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
@@ -27,12 +27,14 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
+
 /**
  * Tests for Excel function MID()
  *
  * @author Josh Micich
  */
-public final class TestMid extends TestCase {
+public final class TestMid {
 
 
 	private static ValueEval invokeMid(ValueEval text, ValueEval startPos, ValueEval numChars) {
@@ -52,6 +54,7 @@ public final class TestMid extends TestCase {
 		assertEquals(expectedError.getErrorCode(), ((ErrorEval)result).getErrorCode());
 	}
 
+	@Test
 	public void testBasic() {
 
 		confirmMid(new StringEval("galactic"), new NumberEval(3), new NumberEval(4), "lact");
@@ -60,6 +63,7 @@ public final class TestMid extends TestCase {
 	/**
 	 * Valid cases where args are not precisely (string, int, int) but can be resolved OK.
 	 */
+	@Test
 	public void testUnusualArgs() {
 		// startPos with fractional digits
 		confirmMid(new StringEval("galactic"), new NumberEval(3.1), new NumberEval(4), "lact");
@@ -86,6 +90,7 @@ public final class TestMid extends TestCase {
 	/**
 	 * Extreme values for startPos and numChars
 	 */
+	@Test
 	public void testExtremes() {
 		confirmMid(new StringEval("galactic"), new NumberEval(4), new NumberEval(400), "actic");
 
@@ -96,6 +101,7 @@ public final class TestMid extends TestCase {
 	/**
 	 * All sorts of ways to make MID return defined errors.
 	 */
+	@Test
 	public void testErrors() {
 		confirmMid(ErrorEval.NAME_INVALID, new NumberEval(3), new NumberEval(4), ErrorEval.NAME_INVALID);
 		confirmMid(new StringEval("galactic"), ErrorEval.NAME_INVALID, new NumberEval(4), ErrorEval.NAME_INVALID);

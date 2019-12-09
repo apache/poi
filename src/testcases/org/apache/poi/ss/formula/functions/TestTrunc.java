@@ -18,9 +18,11 @@
 package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Assert;
+import org.junit.Test;
 
 /**
  * Test case for TRUNC()
@@ -29,34 +31,40 @@ import org.apache.poi.ss.formula.eval.StringEval;
  */
 public final class TestTrunc extends AbstractNumericTestCase {
 	private static final NumericFunction F = null;
+
+	@Test
 	public void testTruncWithStringArg() {
 
 		ValueEval strArg = new StringEval("abc");
 		ValueEval[] args = { strArg, new NumberEval(2) };
 		ValueEval result = NumericFunction.TRUNC.evaluate(args, -1, (short)-1);
-		assertEquals(ErrorEval.VALUE_INVALID, result);
+		Assert.assertEquals(ErrorEval.VALUE_INVALID, result);
 	}
 
+	@Test
 	public void testTruncWithWholeNumber() {
 		ValueEval[] args = { new NumberEval(200), new NumberEval(2) };
 		@SuppressWarnings("static-access")
 		ValueEval result = F.TRUNC.evaluate(args, -1, (short)-1);
 		assertEquals("TRUNC", (new NumberEval(200d)).getNumberValue(), ((NumberEval)result).getNumberValue());
 	}
-	
+
+	@Test
 	public void testTruncWithDecimalNumber() {
 		ValueEval[] args = { new NumberEval(2.612777), new NumberEval(3) };
 		@SuppressWarnings("static-access")
 		ValueEval result = F.TRUNC.evaluate(args, -1, (short)-1);
 		assertEquals("TRUNC", (new NumberEval(2.612d)).getNumberValue(), ((NumberEval)result).getNumberValue());
 	}
-	
+
+	@Test
 	public void testTruncWithDecimalNumberOneArg() {
 		ValueEval[] args = { new NumberEval(2.612777) };
 		ValueEval result = NumericFunction.TRUNC.evaluate(args, -1, (short)-1);
 		assertEquals("TRUNC", (new NumberEval(2d)).getNumberValue(), ((NumberEval)result).getNumberValue());
 	}
 
+	@Test
     public void testNegative() {
         ValueEval[] args = { new NumberEval(-8.9), new NumberEval(0) };
         @SuppressWarnings("static-access")

@@ -17,24 +17,26 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 
 import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.WorkbookEvaluator;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.util.CellReference;
+import org.junit.Test;
 
 /**
  * Tests for the INDEX() function.</p>
@@ -46,7 +48,7 @@ import org.apache.poi.ss.util.CellReference;
  *
  * @author Josh Micich
  */
-public final class TestIndex extends TestCase {
+public final class TestIndex {
 
 	private static final Index FUNC_INST = new Index();
 	private static final double[] TEST_VALUES0 = {
@@ -61,6 +63,7 @@ public final class TestIndex extends TestCase {
 	/**
 	 * For the case when the first argument to INDEX() is an area reference
 	 */
+	@Test
 	public void testEvaluateAreaReference() {
 
 		double[] values = TEST_VALUES0;
@@ -109,6 +112,7 @@ public final class TestIndex extends TestCase {
 	 * Tests expressions like "INDEX(A1:C1,,2)".<br>
 	 * This problem was found while fixing bug 47048 and is observable up to svn r773441.
 	 */
+	@Test
 	public void testMissingArg() {
 		ValueEval[] values = {
 				new NumberEval(25.0),
@@ -138,6 +142,7 @@ public final class TestIndex extends TestCase {
 	 * A formula like "OFFSET(INDEX(A1:B2,2,1),1,1,1,1)" should return the value of cell B3.
 	 * This works because the INDEX() function returns a reference to A2 (not the value of A2)
 	 */
+	@Test
 	public void testReferenceResult() {
 		ValueEval[] values = new ValueEval[4];
 		Arrays.fill(values, NumberEval.ZERO);
@@ -162,6 +167,7 @@ public final class TestIndex extends TestCase {
 		return ae;
 	}
 
+	@Test
 	public void test61859(){
 		Workbook wb = HSSFTestDataSamples.openSampleWorkbook("maxindextest.xls");
 		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
@@ -170,41 +176,43 @@ public final class TestIndex extends TestCase {
 		Cell ex1cell1 = example1.getRow(1).getCell(6);
 		assertEquals("MAX(INDEX(($B$2:$B$11=F2)*$A$2:$A$11,0))", ex1cell1.getCellFormula());
 		fe.evaluate(ex1cell1);
-		assertEquals(4.0, ex1cell1.getNumericCellValue());
+		assertEquals(4.0, ex1cell1.getNumericCellValue(), 0);
 
 		Cell ex1cell2 = example1.getRow(2).getCell(6);
 		assertEquals("MAX(INDEX(($B$2:$B$11=F3)*$A$2:$A$11,0))", ex1cell2.getCellFormula());
 		fe.evaluate(ex1cell2);
-		assertEquals(10.0, ex1cell2.getNumericCellValue());
+		assertEquals(10.0, ex1cell2.getNumericCellValue(), 0);
 
 		Cell ex1cell3 = example1.getRow(3).getCell(6);
 		assertEquals("MAX(INDEX(($B$2:$B$11=F4)*$A$2:$A$11,0))", ex1cell3.getCellFormula());
 		fe.evaluate(ex1cell3);
-		assertEquals(20.0, ex1cell3.getNumericCellValue());
+		assertEquals(20.0, ex1cell3.getNumericCellValue(), 0);
 	}
 
+	@Test
 	public void test61116(){
 		Workbook workbook = HSSFTestDataSamples.openSampleWorkbook("61116.xls");
 		FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 		Sheet sheet = workbook.getSheet("sample2");
 
 		Row row = sheet.getRow(1);
-		assertEquals(3.0, evaluator.evaluate(row.getCell(1)).getNumberValue());
-		assertEquals(3.0, evaluator.evaluate(row.getCell(2)).getNumberValue());
+		assertEquals(3.0, evaluator.evaluate(row.getCell(1)).getNumberValue(), 0);
+		assertEquals(3.0, evaluator.evaluate(row.getCell(2)).getNumberValue(), 0);
 
 		row = sheet.getRow(2);
-		assertEquals(5.0, evaluator.evaluate(row.getCell(1)).getNumberValue());
-		assertEquals(5.0, evaluator.evaluate(row.getCell(2)).getNumberValue());
+		assertEquals(5.0, evaluator.evaluate(row.getCell(1)).getNumberValue(), 0);
+		assertEquals(5.0, evaluator.evaluate(row.getCell(2)).getNumberValue(), 0);
 	}
 
 	/**
 	 * If both the Row_num and Column_num arguments are used,
 	 * INDEX returns the value in the cell at the intersection of Row_num and Column_num
 	 */
+	@Test
 	public void testReference2DArea(){
 		Workbook wb = new HSSFWorkbook();
 		Sheet sheet = wb.createSheet();
-		/**
+		/*
 		 * 1	2	3
 		 * 4	5	6
 		 * 7	8	9
@@ -223,17 +231,18 @@ public final class TestIndex extends TestCase {
 		Cell c2 = sheet.getRow(0).createCell(6);
 		c2.setCellFormula("INDEX(A1:C3,3,2)");
 
-		assertEquals(5.0, fe.evaluate(c1).getNumberValue());
-		assertEquals(8.0, fe.evaluate(c2).getNumberValue());
+		assertEquals(5.0, fe.evaluate(c1).getNumberValue(), 0);
+		assertEquals(8.0, fe.evaluate(c2).getNumberValue(), 0);
 	}
 
 	/**
 	 * If Column_num is 0 (zero), INDEX returns the array of values for the entire row.
 	 */
+	@Test
 	public void testArrayArgument_RowLookup(){
 		Workbook wb = new HSSFWorkbook();
 		Sheet sheet = wb.createSheet();
-		/**
+		/*
 		 * 1	2	3
 		 * 4	5	6
 		 * 7	8	9
@@ -253,18 +262,19 @@ public final class TestIndex extends TestCase {
 
 		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 
-		assertEquals(6.0, fe.evaluate(c1).getNumberValue());
-		assertEquals(15.0, fe.evaluate(c2).getNumberValue());
+		assertEquals(6.0, fe.evaluate(c1).getNumberValue(), 0);
+		assertEquals(15.0, fe.evaluate(c2).getNumberValue(), 0);
 
 	}
 
 	/**
 	 * If Row_num is 0 (zero), INDEX returns the array of values for the entire column.
 	 */
+	@Test
 	public void testArrayArgument_ColumnLookup(){
 		Workbook wb = new HSSFWorkbook();
 		Sheet sheet = wb.createSheet();
-		/**
+		/*
 		 * 1	2	3
 		 * 4	5	6
 		 * 7	8	9
@@ -284,8 +294,8 @@ public final class TestIndex extends TestCase {
 
 		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 
-		assertEquals(12.0, fe.evaluate(c1).getNumberValue());
-		assertEquals(18.0, fe.evaluate(c2).getNumberValue());
+		assertEquals(12.0, fe.evaluate(c1).getNumberValue(), 0);
+		assertEquals(18.0, fe.evaluate(c2).getNumberValue(), 0);
 	}
 
 	/**
@@ -294,10 +304,11 @@ public final class TestIndex extends TestCase {
 	 * 	 The sum of the range starting at B1, and ending at the intersection of the 2nd row of the range B1:B3,
 	 * 	 which is the sum of B1:B2.
 	 */
+	@Test
 	public void testDynamicReference(){
 		Workbook wb = new HSSFWorkbook();
 		Sheet sheet = wb.createSheet();
-		/**
+		/*
 		 * 1	2	3
 		 * 4	5	6
 		 * 7	8	9
@@ -314,6 +325,6 @@ public final class TestIndex extends TestCase {
 
 		FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
 
-		assertEquals(7.0, fe.evaluate(c1).getNumberValue());
+		assertEquals(7.0, fe.evaluate(c1).getNumberValue(), 0);
 	}
 }

@@ -16,18 +16,19 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
 
 /**
  * Tests for {@link Code}
  *
  * @author cedric dot walter @ gmail dot com
  */
-public class TestCode extends TestCase
-{
+public class TestCode {
     private static ValueEval invokeValue(String number1) {
         ValueEval[] args = new ValueEval[]{new StringEval(number1),};
         return new Code().evaluate(args, -1, -1);
@@ -45,7 +46,7 @@ public class TestCode extends TestCase
         assertEquals(msg, numError, result);
     }
 
-
+    @Test
     public void testBasic() {
         confirmValue("Displays the numeric code for A (65)", "A", "65");
         confirmValue("Displays the numeric code for the first character in text ABCDEFGHI (65)", "ABCDEFGHI", "65");
@@ -53,6 +54,7 @@ public class TestCode extends TestCase
         confirmValue("Displays the numeric code for ! (33)", "!", "33");
     }
 
+    @Test
     public void testErrors() {
         confirmValueError("Empty text", "", ErrorEval.VALUE_INVALID);
     }

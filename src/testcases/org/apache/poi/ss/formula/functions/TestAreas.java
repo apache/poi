@@ -17,17 +17,18 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.junit.Test;
 
-public final class TestAreas extends TestCase {
+public final class TestAreas {
 
+    @Test
     public void testAreas() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFCell cell = wb.createSheet().createRow(0).createCell(0);
@@ -54,6 +55,6 @@ public final class TestAreas extends TestCase {
         fe.notifyUpdateCell(cell);
         CellValue result = fe.evaluate(cell);
         assertEquals(result.getCellTypeEnum(), CellType.NUMERIC);
-        assertEquals(expectedResult, result.getNumberValue());
+        assertEquals(expectedResult, result.getNumberValue(), 0);
     }
 }

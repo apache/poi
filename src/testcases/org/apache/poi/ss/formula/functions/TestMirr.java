@@ -17,6 +17,9 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.junit.Assert.assertEquals;
+
+import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
@@ -27,19 +30,18 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests for {@link org.apache.poi.ss.formula.functions.Mirr}
  *
  * @author Carlos Delgado (carlos dot del dot est at gmail dot com)
  * @author Cedric Walter (cedric dot walter at gmail dot com)
- * @see {@link org.apache.poi.ss.formula.functions.TestIrr}
+ * @see org.apache.poi.ss.formula.functions.TestIrr
  */
-public final class TestMirr extends TestCase {
+public final class TestMirr {
 
+    @Test
     public void testMirr() {
         Mirr mirr = new Mirr();
         double mirrValue;
@@ -86,6 +88,7 @@ public final class TestMirr extends TestCase {
 
     }
 
+    @Test
     public void testMirrErrors_expectDIV0() {
         Mirr mirr = new Mirr();
 
@@ -101,7 +104,7 @@ public final class TestMirr extends TestCase {
         throw new AssertionFailedError("MIRR should failed with all these positives values");
     }
 
-
+    @Test
     public void testEvaluateInSheet() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("Sheet1");
@@ -126,6 +129,7 @@ public final class TestMirr extends TestCase {
         assertEquals(0.18736225093, res, 0.00000001);
     }
 
+    @Test
     public void testMirrFromSpreadsheet() {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("mirrTest.xls");
         HSSFSheet sheet = wb.getSheet("Mirr");

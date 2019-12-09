@@ -17,7 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -25,18 +26,20 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
 
 /**
  * Test cases for SUMPRODUCT()
  *
  * @author Josh Micich
  */
-public final class TestSumproduct extends TestCase {
+public final class TestSumproduct {
 
 	private static ValueEval invokeSumproduct(ValueEval[] args) {
 		// srcCellRow and srcCellColumn are ignored by SUMPRODUCT
 		return new Sumproduct().evaluate(args, -1, (short)-1);
 	}
+
 	private static void confirmDouble(double expected, ValueEval actualEval) {
 		if(!(actualEval instanceof NumericValueEval)) {
 			fail("Expected numeric result");
@@ -45,6 +48,7 @@ public final class TestSumproduct extends TestCase {
 		assertEquals(expected, nve.getNumberValue(), 0);
 	}
 
+	@Test
 	public void testScalarSimple() {
 
 		RefEval refEval = EvalFactory.createRefEval("A1", new NumberEval(3));
@@ -56,6 +60,7 @@ public final class TestSumproduct extends TestCase {
 		confirmDouble(6D, result);
 	}
 
+	@Test
 	public void testAreaSimple() {
 		ValueEval[] aValues = {
 			new NumberEval(2),
@@ -78,6 +83,7 @@ public final class TestSumproduct extends TestCase {
 	/**
 	 * For scalar products, the terms may be 1x1 area refs
 	 */
+	@Test
 	public void testOneByOneArea() {
 
 		AreaEval ae = EvalFactory.createAreaEval("A1:A1", new ValueEval[] { new NumberEval(7), });
@@ -90,6 +96,7 @@ public final class TestSumproduct extends TestCase {
 		confirmDouble(14D, result);
 	}
 
+	@Test
 	public void testMismatchAreaDimensions() {
 
 		AreaEval aeA = EvalFactory.createAreaEval("A1:A3", new ValueEval[3]);
@@ -103,6 +110,7 @@ public final class TestSumproduct extends TestCase {
 		assertEquals(ErrorEval.VALUE_INVALID, invokeSumproduct(args));
 	}
 
+	@Test
 	public void testAreaWithErrorCell() {
 		ValueEval[] aValues = {
 			ErrorEval.REF_INVALID,

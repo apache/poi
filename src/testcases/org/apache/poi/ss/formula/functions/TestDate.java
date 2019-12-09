@@ -17,25 +17,28 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.junit.Assert.assertEquals;
+
+import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * @author Pavel Krupets (pkrupets at palmtreebusiness dot com)
  */
-public final class TestDate extends TestCase {
+public final class TestDate {
 
     private HSSFCell cell11;
     private HSSFFormulaEvaluator evaluator;
 
-    @Override
+    @Before
     public void setUp() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("new sheet");
@@ -47,11 +50,13 @@ public final class TestDate extends TestCase {
      * Test disabled pending a fix in the formula evaluator
      * TODO - create MissingArgEval and modify the formula evaluator to handle this
      */
-    public void DISABLEDtestSomeArgumentsMissing() {
+    @Ignore
+    public void testSomeArgumentsMissing() {
         confirm("DATE(, 1, 0)", 0.0);
         confirm("DATE(, 1, 1)", 1.0);
     }
 
+    @Test
     public void testValid() {
 
         confirm("DATE(1900, 1, 1)", 1);
@@ -62,6 +67,7 @@ public final class TestDate extends TestCase {
         confirm("DATE(2007, 1, 1)", 39083);
     }
 
+    @Test
     public void testBugDate() {
         confirm("DATE(1900, 2, 29)", 60);
         confirm("DATE(1900, 2, 30)", 61);
@@ -70,6 +76,7 @@ public final class TestDate extends TestCase {
         confirm("DATE(1900, 1, 22222)", 22222);
     }
 
+    @Test
     public void testPartYears() {
         confirm("DATE(4, 1, 1)", 1462.00);
         confirm("DATE(14, 1, 1)", 5115.00);

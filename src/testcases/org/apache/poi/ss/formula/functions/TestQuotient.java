@@ -16,18 +16,20 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
 
 /**
  * Tests for {@link Quotient}
  *
  * @author cedric dot walter @ gmail dot com
  */
-public class TestQuotient extends TestCase {
+public class TestQuotient {
     private static ValueEval invokeValue(String numerator, String denominator) {
         ValueEval[] args = new ValueEval[]{new StringEval(numerator), new StringEval(denominator)};
         return new Quotient().evaluate(args, -1, -1);
@@ -45,6 +47,7 @@ public class TestQuotient extends TestCase {
         assertEquals(msg, numError, result);
     }
 
+    @Test
     public void testBasic() {
         confirmValue("Integer portion of 5/2 (2)", "5", "2", "2");
         confirmValue("Integer portion of 4.5/3.1 (1)", "4.5", "3.1", "1");
@@ -55,6 +58,7 @@ public class TestQuotient extends TestCase {
         confirmValue("Integer portion of Pi/Avogadro (0)", "3.14159", "6.02214179E+23", "0");
     }
 
+    @Test
     public void testErrors() {
         confirmValueError("numerator is nonnumeric", "ABCD", "", ErrorEval.VALUE_INVALID);
         confirmValueError("denominator is nonnumeric", "", "ABCD", ErrorEval.VALUE_INVALID);

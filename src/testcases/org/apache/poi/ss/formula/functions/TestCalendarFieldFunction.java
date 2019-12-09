@@ -17,25 +17,27 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.junit.Assert.assertEquals;
+
+import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test for YEAR / MONTH / DAY / HOUR / MINUTE / SECOND
  */
-public final class TestCalendarFieldFunction extends TestCase {
+public final class TestCalendarFieldFunction {
 
     private HSSFCell cell11;
     private HSSFFormulaEvaluator evaluator;
 
-    @Override
+    @Before
     public void setUp() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("new sheet");
@@ -43,6 +45,7 @@ public final class TestCalendarFieldFunction extends TestCase {
         evaluator = new HSSFFormulaEvaluator(wb);
     }
 
+    @Test
     public void testValid() {
         confirm("YEAR(2.26)", 1900);
         confirm("MONTH(2.26)", 1);
@@ -50,7 +53,7 @@ public final class TestCalendarFieldFunction extends TestCase {
         confirm("HOUR(2.26)", 6);
         confirm("MINUTE(2.26)", 14);
         confirm("SECOND(2.26)", 24);
-        
+
         confirm("YEAR(40627.4860417)", 2011);
         confirm("MONTH(40627.4860417)", 3);
         confirm("DAY(40627.4860417)", 25);
@@ -59,6 +62,7 @@ public final class TestCalendarFieldFunction extends TestCase {
         confirm("SECOND(40627.4860417)", 54);
     }
 
+    @Test
     public void testRounding() {
 		// 41484.999994200 = 23:59:59,499
 		// 41484.9999942129 = 23:59:59,500  (but sub-milliseconds are below 0.5 (0.49999453965575), XLS-second results in 59)
@@ -71,13 +75,14 @@ public final class TestCalendarFieldFunction extends TestCase {
         confirm("HOUR(41484.9999942129)", 23);
         confirm("MINUTE(41484.9999942129)", 59);
         confirm("SECOND(41484.9999942129)", 59);
-		
+
         confirm("DAY(41484.9999942130)", 30);
         confirm("HOUR(41484.9999942130)", 0);
         confirm("MINUTE(41484.9999942130)", 0);
         confirm("SECOND(41484.9999942130)", 0);
 	}
 
+    @Test
     public void testDaylightSaving() {
         confirm("HOUR(41364.08263888890000)", 1);		// 31.03.2013 01:59:00,000
         confirm("HOUR(41364.08333333330000)", 2);		// 31.03.2013 02:00:00,000 (this time does not exist in TZ CET, but EXCEL does not care)
@@ -86,11 +91,12 @@ public final class TestCalendarFieldFunction extends TestCase {
         confirm("HOUR(41364.12500000000000)", 3);		// 31.03.2013 03:00:00,000
 	}
 
+    @Test
     public void testBugDate() {
         confirm("YEAR(0.0)", 1900);
         confirm("MONTH(0.0)", 1);
         confirm("DAY(0.0)", 0);
-        
+
         confirm("YEAR(0.26)", 1900);
         confirm("MONTH(0.26)", 1);
         confirm("DAY(0.26)", 0);

@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
@@ -25,12 +25,14 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
+
 /**
  * Tests for Excel function TRIM()
  *
  * @author Josh Micich
  */
-public final class TestTrim extends TestCase {
+public final class TestTrim {
 
 
 	private static ValueEval invokeTrim(ValueEval text) {
@@ -50,6 +52,7 @@ public final class TestTrim extends TestCase {
 		assertEquals(expectedError.getErrorCode(), ((ErrorEval)result).getErrorCode());
 	}
 
+	@Test
 	public void testBasic() {
 
 		confirmTrim(new StringEval(" hi "), "hi");
@@ -63,6 +66,7 @@ public final class TestTrim extends TestCase {
 	/**
 	 * Valid cases where text arg is not exactly a string
 	 */
+	@Test
 	public void testUnusualArgs() {
 
 		// text (first) arg type is number, other args are strings with fractional digits
@@ -72,6 +76,7 @@ public final class TestTrim extends TestCase {
 		confirmTrim(BlankEval.instance, "");
 	}
 
+	@Test
 	public void testErrors() {
 		confirmTrim(ErrorEval.NAME_INVALID, ErrorEval.NAME_INVALID);
 	}

@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -28,13 +28,14 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
 
 /**
  * Tests for {@link Bin2Dec}
  *
  * @author cedric dot walter @ gmail dot com
  */
-public final class TestBin2Dec extends TestCase {
+public final class TestBin2Dec {
 
     private static ValueEval invokeValue(String number1) {
 		ValueEval[] args = new ValueEval[] { new StringEval(number1) };
@@ -53,6 +54,7 @@ public final class TestBin2Dec extends TestCase {
         assertEquals(msg, numError, result);
     }
 
+    @Test
 	public void testBasic() {
 		confirmValue("Converts binary '00101' to decimal (5)", "00101", "5");
 		confirmValue("Converts binary '1111111111' to decimal (-1)", "1111111111", "-1");
@@ -60,25 +62,28 @@ public final class TestBin2Dec extends TestCase {
         confirmValue("Converts binary '0111111111' to decimal (511)", "0111111111", "511");
 	}
 
+    @Test
     public void testErrors() {
         confirmValueError("does not support more than 10 digits","01010101010", ErrorEval.NUM_ERROR);
         confirmValueError("not a valid binary number","GGGGGGG", ErrorEval.NUM_ERROR);
         confirmValueError("not a valid binary number","3.14159", ErrorEval.NUM_ERROR);
     }
 
+    @Test
     public void testEvalOperationEvaluationContext() {
         OperationEvaluationContext ctx = createContext();
-        
+
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0) };
         ValueEval result = new Bin2Dec().evaluate(args, ctx);
 
         assertEquals(NumberEval.class, result.getClass());
         assertEquals("0", ((NumberEval) result).getStringValue());
     }
-    
+
+    @Test
     public void testEvalOperationEvaluationContextFails() {
         OperationEvaluationContext ctx = createContext();
-        
+
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 0) };
         ValueEval result = new Bin2Dec().evaluate(args, ctx);
 
@@ -91,7 +96,7 @@ public final class TestBin2Dec extends TestCase {
         wb.createSheet();
         HSSFEvaluationWorkbook workbook = HSSFEvaluationWorkbook.create(wb);
         WorkbookEvaluator workbookEvaluator = new WorkbookEvaluator(workbook, new IStabilityClassifier() {
-            
+
             @Override
             public boolean isCellFinal(int sheetIndex, int rowIndex, int columnIndex) {
                 return true;
@@ -101,9 +106,10 @@ public final class TestBin2Dec extends TestCase {
                 workbook, 0, 0, 0, null);
     }
 
+    @Test
     public void testRefs() {
         OperationEvaluationContext ctx = createContext();
-        
+
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0) };
         ValueEval result = new Bin2Dec().evaluate(args, -1, -1);
 

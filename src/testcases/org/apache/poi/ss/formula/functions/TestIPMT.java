@@ -19,24 +19,26 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Test cases for IPMT()
  *
  */
-public final class TestIPMT extends TestCase {
+public final class TestIPMT {
 
 
     /**
      *  from http://office.microsoft.com/en-001/excel-help/ipmt-HP005209145.aspx
      */
+    @Test
     public void testFromFile() {
 
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("finance.xls");

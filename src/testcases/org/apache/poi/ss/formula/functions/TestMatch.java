@@ -17,6 +17,9 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -24,13 +27,12 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Test cases for MATCH()
  */
-public final class TestMatch extends TestCase {
+public final class TestMatch {
 	/** less than or equal to */
 	private static final NumberEval MATCH_LARGEST_LTE = new NumberEval(1);
 	private static final NumberEval MATCH_EXACT = new NumberEval(0);
@@ -57,6 +59,7 @@ public final class TestMatch extends TestCase {
 		assertEquals(expected, nve.getNumberValue(), 0);
 	}
 
+	@Test
 	public void testSimpleNumber() {
 
 		ValueEval[] values = {
@@ -78,6 +81,7 @@ public final class TestMatch extends TestCase {
 		assertEquals(ErrorEval.NA, invokeMatch(new NumberEval(20), ae, MATCH_EXACT));
 	}
 
+	@Test
 	public void testReversedNumber() {
 
 		ValueEval[] values = {
@@ -99,6 +103,7 @@ public final class TestMatch extends TestCase {
 		assertEquals(ErrorEval.NA, invokeMatch(new NumberEval(26), ae, MATCH_SMALLEST_GTE));
 	}
 
+	@Test
 	public void testSimpleString() {
         // Arrange
 		ValueEval[] values = {
@@ -120,6 +125,7 @@ public final class TestMatch extends TestCase {
 		assertEquals(ErrorEval.NA, invokeMatch(new StringEval("Hugh"), ae, MATCH_EXACT));
 	}
 
+	@Test
     public void testSimpleWildcardValuesString() {
         // Arrange
         ValueEval[] values = {
@@ -149,6 +155,7 @@ public final class TestMatch extends TestCase {
         confirmInt(5, invokeMatch(new StringEval("*Ian*"), ae, MATCH_LARGEST_LTE));
     }
 
+	@Test
     public void testTildeString() {
 
         ValueEval[] values = {
@@ -162,6 +169,7 @@ public final class TestMatch extends TestCase {
         confirmInt(2, invokeMatch(new StringEval("all~*"), ae, MATCH_EXACT));
     }
 
+	@Test
 	public void testSimpleBoolean() {
 
 		ValueEval[] values = {
@@ -180,6 +188,7 @@ public final class TestMatch extends TestCase {
 		confirmInt(3, invokeMatch(BoolEval.TRUE, ae, MATCH_EXACT));
 	}
 
+	@Test
 	public void testHeterogeneous() {
 
 		ValueEval[] values = {
@@ -232,6 +241,7 @@ public final class TestMatch extends TestCase {
 	 * Ensures that the match_type argument can be an <tt>AreaEval</tt>.<br>
 	 * Bugzilla 44421
 	 */
+	@Test
 	public void testMatchArgTypeArea() {
 
 		ValueEval[] values = {
@@ -257,7 +267,8 @@ public final class TestMatch extends TestCase {
 			throw e;
 		}
 	}
-	
+
+	@Test
 	public void testInvalidMatchType() {
 
         ValueEval[] values = {
@@ -271,8 +282,8 @@ public final class TestMatch extends TestCase {
         AreaEval ae = EvalFactory.createAreaEval("A1:A5", values);
 
         confirmInt(2, invokeMatch(new NumberEval(5), ae, MATCH_LARGEST_LTE));
-        
-        assertEquals("Should return #REF! for invalid match type", 
+
+        assertEquals("Should return #REF! for invalid match type",
                 ErrorEval.REF_INVALID, invokeMatch(new StringEval("Ben"), ae, MATCH_INVALID));
 	}
 }

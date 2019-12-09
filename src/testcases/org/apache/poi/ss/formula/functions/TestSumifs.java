@@ -19,26 +19,36 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
+import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
-import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.NumericValueEval;
+import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
 
 /**
  * Test cases for SUMIFS()
  *
  * @author Yegor Kozlov
  */
-public final class TestSumifs extends TestCase {
+public final class TestSumifs {
 
     private static final OperationEvaluationContext EC = new OperationEvaluationContext(null, null, 0, 1, 0, null);
 
 	private static ValueEval invokeSumifs(ValueEval[] args, OperationEvaluationContext ec) {
 		return new Sumifs().evaluate(args, EC);
 	}
+
 	private static void confirmDouble(double expected, ValueEval actualEval) {
 		if(!(actualEval instanceof NumericValueEval)) {
 			throw new AssertionFailedError("Expected numeric result");
@@ -55,6 +65,7 @@ public final class TestSumifs extends TestCase {
      *  Example 1 from
      *  http://office.microsoft.com/en-us/excel-help/sumifs-function-HA010047504.aspx
      */
+    @Test
 	public void testExample1() {
         // mimic test sample from http://office.microsoft.com/en-us/excel-help/sumifs-function-HA010047504.aspx
         ValueEval[] a2a9 = new ValueEval[] {
@@ -137,6 +148,7 @@ public final class TestSumifs extends TestCase {
      *  Example 2 from
      *  http://office.microsoft.com/en-us/excel-help/sumifs-function-HA010047504.aspx
      */
+    @Test
     public void testExample2() {
         ValueEval[] b2e2 = new ValueEval[] {
                 new NumberEval(100),
@@ -185,6 +197,7 @@ public final class TestSumifs extends TestCase {
      *  Example 3 from
      *  http://office.microsoft.com/en-us/excel-help/sumifs-function-HA010047504.aspx
      */
+    @Test
     public void testExample3() {
         //3.3	0.8	5.5	5.5
         ValueEval[] b2e2 = new ValueEval[] {
@@ -228,6 +241,7 @@ public final class TestSumifs extends TestCase {
      *
      *  Criteria entered as reference and by using wildcard characters
      */
+    @Test
     public void testFromFile() {
 
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("sumifs.xls");
@@ -236,18 +250,18 @@ public final class TestSumifs extends TestCase {
         HSSFSheet example1 = wb.getSheet("Example 1");
         HSSFCell ex1cell1 = example1.getRow(10).getCell(2);
         fe.evaluate(ex1cell1);
-        assertEquals(20.0, ex1cell1.getNumericCellValue());
+        assertEquals(20.0, ex1cell1.getNumericCellValue(), 0);
         HSSFCell ex1cell2 = example1.getRow(11).getCell(2);
         fe.evaluate(ex1cell2);
-        assertEquals(30.0, ex1cell2.getNumericCellValue());
+        assertEquals(30.0, ex1cell2.getNumericCellValue(), 0);
 
         HSSFSheet example2 = wb.getSheet("Example 2");
         HSSFCell ex2cell1 = example2.getRow(6).getCell(2);
         fe.evaluate(ex2cell1);
-        assertEquals(500.0, ex2cell1.getNumericCellValue());
+        assertEquals(500.0, ex2cell1.getNumericCellValue(), 0);
         HSSFCell ex2cell2 = example2.getRow(7).getCell(2);
         fe.evaluate(ex2cell2);
-        assertEquals(8711.0, ex2cell2.getNumericCellValue());
+        assertEquals(8711.0, ex2cell2.getNumericCellValue(), 0);
 
         HSSFSheet example3 = wb.getSheet("Example 3");
         HSSFCell ex3cell = example3.getRow(5).getCell(2);
@@ -257,15 +271,16 @@ public final class TestSumifs extends TestCase {
         HSSFSheet example4 = wb.getSheet("Example 4");
         HSSFCell ex4cell = example4.getRow(8).getCell(2);
         fe.evaluate(ex4cell);
-        assertEquals(3.5, ex4cell.getNumericCellValue());
+        assertEquals(3.5, ex4cell.getNumericCellValue(), 0);
 
         HSSFSheet example5 = wb.getSheet("Example 5");
         HSSFCell ex5cell = example5.getRow(8).getCell(2);
         fe.evaluate(ex5cell);
-        assertEquals(625000., ex5cell.getNumericCellValue());
+        assertEquals(625000., ex5cell.getNumericCellValue(), 0);
 
     }
-    
+
+    @Test
     public void testBug56655() {
         ValueEval[] a2a9 = new ValueEval[] {
                 new NumberEval(5),
@@ -283,7 +298,7 @@ public final class TestSumifs extends TestCase {
                 ErrorEval.VALUE_INVALID,
                 new StringEval("A*"),
         };
-        
+
         ValueEval result = invokeSumifs(args, EC);
         assertTrue("Expect to have an error when an input is an invalid value, but had: " + result.getClass(), result instanceof ErrorEval);
 
@@ -292,11 +307,12 @@ public final class TestSumifs extends TestCase {
                 EvalFactory.createAreaEval("A2:A9", a2a9),
                 ErrorEval.VALUE_INVALID,
         };
-        
+
         result = invokeSumifs(args, EC);
         assertTrue("Expect to have an error when an input is an invalid value, but had: " + result.getClass(), result instanceof ErrorEval);
     }
 
+    @Test
     public void testBug56655b() {
 /*
         setCellFormula(sheet, 0, 0, "B1*C1");
@@ -315,13 +331,13 @@ public final class TestSumifs extends TestCase {
                 EvalFactory.createAreaEval("A0:A1", a0a1),
                 ErrorEval.VALUE_INVALID
         };
-        
+
         ValueEval result = invokeSumifs(args, EC);
         assertTrue("Expect to have an error when an input is an invalid value, but had: " + result.getClass(), result instanceof ErrorEval);
         assertEquals(ErrorEval.VALUE_INVALID, result);
     }
 
-
+    @Test
     public void testBug56655c() {
 /*
         setCellFormula(sheet, 0, 0, "B1*C1");
@@ -340,7 +356,7 @@ public final class TestSumifs extends TestCase {
                 EvalFactory.createAreaEval("A0:A1", a0a1),
                 ErrorEval.NAME_INVALID
         };
-        
+
         ValueEval result = invokeSumifs(args, EC);
         assertTrue("Expect to have an error when an input is an invalid value, but had: " + result.getClass(), result instanceof ErrorEval);
         assertEquals(ErrorEval.NAME_INVALID, result);

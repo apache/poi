@@ -17,6 +17,9 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -28,26 +31,23 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
-
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * LogicalFunction unit tests.
  */
-public class TestLogicalFunction extends TestCase {
+public class TestLogicalFunction {
 
     private FormulaEvaluator evaluator;
     private Row row3;
     private Cell cell1;
     private Cell cell2;
 
-    @Override
+    @Before
     public void setUp() throws IOException {
-        Workbook wb = new HSSFWorkbook();
-        try {
+        try (Workbook wb = new HSSFWorkbook()) {
             buildWorkbook(wb);
-        } finally {
-            wb.close();
         }
     }
 
@@ -79,6 +79,7 @@ public class TestLogicalFunction extends TestCase {
         evaluator = wb.getCreationHelper().createFormulaEvaluator();
     }
 
+    @Test
     public void testIsErr() {
         cell1 = row3.createCell(0);
         cell1.setCellFormula("ISERR(B1)"); // produces #DIV/0!
@@ -88,10 +89,11 @@ public class TestLogicalFunction extends TestCase {
         CellValue cell1Value = evaluator.evaluate(cell1);
         CellValue cell2Value = evaluator.evaluate(cell2);
 
-        assertEquals(true, cell1Value.getBooleanValue());
-        assertEquals(false, cell2Value.getBooleanValue());
+        assertTrue(cell1Value.getBooleanValue());
+        assertFalse(cell2Value.getBooleanValue());
     }
 
+    @Test
     public void testIsError() {
         cell1 = row3.createCell(0);
         cell1.setCellFormula("ISERROR(B1)"); // produces #DIV/0!
@@ -101,7 +103,7 @@ public class TestLogicalFunction extends TestCase {
         CellValue cell1Value = evaluator.evaluate(cell1);
         CellValue cell2Value = evaluator.evaluate(cell2);
 
-        assertEquals(true, cell1Value.getBooleanValue());
-        assertEquals(true, cell2Value.getBooleanValue());
+        assertTrue(cell1Value.getBooleanValue());
+        assertTrue(cell2Value.getBooleanValue());
     }
 }

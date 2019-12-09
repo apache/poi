@@ -17,6 +17,9 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.junit.Assert.assertEquals;
+
+import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
@@ -25,46 +28,46 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests for {@link Irr}
  *
  * @author Marcel May
  */
-public final class TestIrr extends TestCase {
+public final class TestIrr {
 
+    @Test
     public void testIrr() {
         // http://en.wikipedia.org/wiki/Internal_rate_of_return#Example
         double[] incomes = {-4000d, 1200d, 1410d, 1875d, 1050d};
         double irr = Irr.irr(incomes);
         double irrRounded = Math.round(irr * 1000d) / 1000d;
-        assertEquals("irr", 0.143d, irrRounded);
+        assertEquals("irr", 0.143d, irrRounded, 0);
 
         // http://www.techonthenet.com/excel/formulas/irr.php
         incomes = new double[]{-7500d, 3000d, 5000d, 1200d, 4000d};
         irr = Irr.irr(incomes);
         irrRounded = Math.round(irr * 100d) / 100d;
-        assertEquals("irr", 0.28d, irrRounded);
+        assertEquals("irr", 0.28d, irrRounded, 0);
 
         incomes = new double[]{-10000d, 3400d, 6500d, 1000d};
         irr = Irr.irr(incomes);
         irrRounded = Math.round(irr * 100d) / 100d;
-        assertEquals("irr", 0.05, irrRounded);
+        assertEquals("irr", 0.05, irrRounded, 0);
 
         incomes = new double[]{100d, -10d, -110d};
         irr = Irr.irr(incomes);
         irrRounded = Math.round(irr * 100d) / 100d;
-        assertEquals("irr", 0.1, irrRounded);
+        assertEquals("irr", 0.1, irrRounded, 0);
 
         incomes = new double[]{-70000d, 12000, 15000};
         irr = Irr.irr(incomes, -0.1);
         irrRounded = Math.round(irr * 100d) / 100d;
-        assertEquals("irr", -0.44, irrRounded);
+        assertEquals("irr", -0.44, irrRounded, 0);
     }
 
+    @Test
     public void testEvaluateInSheet() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("Sheet1");
@@ -83,9 +86,10 @@ public final class TestIrr extends TestCase {
         fe.clearAllCachedResultValues();
         fe.evaluateFormulaCell(cell);
         double res = cell.getNumericCellValue();
-        assertEquals(0.143d, Math.round(res * 1000d) / 1000d);
+        assertEquals(0.143d, Math.round(res * 1000d) / 1000d, 0);
     }
 
+    @Test
     public void testIrrFromSpreadsheet(){
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("IrrNpvTestCaseData.xls");
         HSSFSheet sheet = wb.getSheet("IRR-NPV");

@@ -17,18 +17,20 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
 
 /**
  * Tests for {@link org.apache.poi.ss.formula.functions.Delta}
  *
  * @author cedric dot walter @ gmail dot com
  */
-public final class TestDelta extends TestCase {
+public final class TestDelta {
 
 	private static ValueEval invokeValue(String number1, String number2) {
 		ValueEval[] args = new ValueEval[] { new StringEval(number1), new StringEval(number2), };
@@ -47,6 +49,7 @@ public final class TestDelta extends TestCase {
         assertEquals(ErrorEval.VALUE_INVALID, result);
     }
 
+	@Test
 	public void testBasic() {
 		confirmValue("5","4", 0); // Checks whether 5 equals 4 (0)
 		confirmValue("5","5", 1); // Checks whether 5 equals 5 (1)
@@ -56,6 +59,7 @@ public final class TestDelta extends TestCase {
         confirmValue("0.5000000000","0.5", 1);
 	}
 
+	@Test
     public void testErrors() {
         confirmValueError("A1","B2");
         confirmValueError("AAAA","BBBB");

@@ -17,9 +17,9 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
+import junit.framework.AssertionFailedError;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -27,13 +27,14 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
 
 /**
  * Test cases for SUMPRODUCT()
  *
  * @author Josh Micich
  */
-public final class TestSumif extends TestCase {
+public final class TestSumif {
 	private static final NumberEval _30 = new NumberEval(30);
 	private static final NumberEval _40 = new NumberEval(40);
 	private static final NumberEval _50 = new NumberEval(50);
@@ -42,6 +43,7 @@ public final class TestSumif extends TestCase {
 	private static ValueEval invokeSumif(int rowIx, int colIx, ValueEval...args) {
 		return new Sumif().evaluate(args, rowIx, colIx);
 	}
+
 	private static void confirmDouble(double expected, ValueEval actualEval) {
 		if(!(actualEval instanceof NumericValueEval)) {
 			throw new AssertionFailedError("Expected numeric result");
@@ -50,6 +52,7 @@ public final class TestSumif extends TestCase {
 		assertEquals(expected, nve.getNumberValue(), 0);
 	}
 
+	@Test
 	public void testBasic() {
 		ValueEval[] arg0values = new ValueEval[] { _30, _30, _40, _40, _50, _50  };
 		ValueEval[] arg2values = new ValueEval[] { _30, _40, _50, _60, _60, _60 };
@@ -70,7 +73,7 @@ public final class TestSumif extends TestCase {
 		confirm(140.0, arg0, new StringEval("<=40.0"));
 		confirm(160.0, arg0, new StringEval("<>40.0"));
 		confirm(80.0, arg0, new StringEval("=40.0"));
-		
+
 
 	}
 	private static void confirm(double expectedResult, ValueEval...args) {
@@ -81,6 +84,7 @@ public final class TestSumif extends TestCase {
 	/**
 	 * test for bug observed near svn r882931
 	 */
+	@Test
 	public void testCriteriaArgRange() {
 		ValueEval[] arg0values = new ValueEval[] { _50, _60, _50, _50, _50, _30,  };
 		ValueEval[] arg1values = new ValueEval[] { _30, _40, _50, _60,  };
@@ -110,6 +114,7 @@ public final class TestSumif extends TestCase {
 		confirmDouble(60, ve);
 	}
 
+	@Test
 	public void testEvaluateException() {
 	    assertEquals(ErrorEval.VALUE_INVALID, invokeSumif(-1, -1, BlankEval.instance, new NumberEval(30.0)));
         assertEquals(ErrorEval.VALUE_INVALID, invokeSumif(-1, -1, BlankEval.instance, new NumberEval(30.0), new NumberEval(30.0)));

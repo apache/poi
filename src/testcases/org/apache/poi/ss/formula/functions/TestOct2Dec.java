@@ -17,18 +17,20 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
 
 /**
  * Tests for {@link org.apache.poi.ss.formula.functions.Oct2Dec}
  *
  * @author cedric dot walter @ gmail dot com
  */
-public final class TestOct2Dec extends TestCase {
+public final class TestOct2Dec {
 
     private static ValueEval invokeValue(String number1) {
 		ValueEval[] args = new ValueEval[] { new StringEval(number1) };
@@ -47,6 +49,7 @@ public final class TestOct2Dec extends TestCase {
         assertEquals(msg, numError, result);
     }
 
+	@Test
 	public void testBasic() {
 		confirmValue("Converts octal '' to decimal (0)", "", "0");
 		confirmValue("Converts octal 54 to decimal (44)", "54", "44");
@@ -55,6 +58,7 @@ public final class TestOct2Dec extends TestCase {
 		confirmValue("Converts octal 7776667533 to decimal (-299173)", "7776667533", "-299173");
 	}
 
+	@Test
     public void testErrors() {
         confirmValueError("not a valid octal number","ABCDEFGH", ErrorEval.NUM_ERROR);
         confirmValueError("not a valid octal number","99999999", ErrorEval.NUM_ERROR);
