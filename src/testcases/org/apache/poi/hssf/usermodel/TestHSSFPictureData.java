@@ -23,11 +23,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.junit.Assume;
 import org.junit.BeforeClass;
 
 /**
@@ -55,63 +56,70 @@ public final class TestHSSFPictureData extends TestCase{
 	public void testPictures() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithImages.xls");
 
-        @SuppressWarnings("unchecked") // TODO - add getFormat() to interface PictureData and genericise wb.getAllPictures()
+        // TODO - add getFormat() to interface PictureData and genericise wb.getAllPictures()
         List<HSSFPictureData> lst = wb.getAllPictures();
         //assertEquals(2, lst.size());
 
-        for (final HSSFPictureData pict : lst) {
-            String ext = pict.suggestFileExtension();
-            byte[] data = pict.getData();
-            if (ext.equals("jpeg")){
-                //try to read image data using javax.imageio.* (JDK 1.4+)
-                BufferedImage jpg = ImageIO.read(new ByteArrayInputStream(data));
-                assertNotNull(jpg);
-                assertEquals(192, jpg.getWidth());
-                assertEquals(176, jpg.getHeight());
-                assertEquals(HSSFWorkbook.PICTURE_TYPE_JPEG, pict.getFormat());
-                assertEquals("image/jpeg", pict.getMimeType());
-            } else if (ext.equals("png")){
-                //try to read image data using javax.imageio.* (JDK 1.4+)
-                BufferedImage png = ImageIO.read(new ByteArrayInputStream(data));
-                assertNotNull(png);
-                assertEquals(300, png.getWidth());
-                assertEquals(300, png.getHeight());
-                assertEquals(HSSFWorkbook.PICTURE_TYPE_PNG, pict.getFormat());
-                assertEquals("image/png", pict.getMimeType());
+        try {
+            for (final HSSFPictureData pict : lst) {
+                String ext = pict.suggestFileExtension();
+                byte[] data = pict.getData();
+                if (ext.equals("jpeg")) {
+                    //try to read image data using javax.imageio.* (JDK 1.4+)
+                    BufferedImage jpg = ImageIO.read(new ByteArrayInputStream(data));
+                    assertNotNull(jpg);
+                    assertEquals(192, jpg.getWidth());
+                    assertEquals(176, jpg.getHeight());
+                    assertEquals(HSSFWorkbook.PICTURE_TYPE_JPEG, pict.getFormat());
+                    assertEquals("image/jpeg", pict.getMimeType());
+                } else if (ext.equals("png")) {
+                    //try to read image data using javax.imageio.* (JDK 1.4+)
+                    BufferedImage png = ImageIO.read(new ByteArrayInputStream(data));
+                    assertNotNull(png);
+                    assertEquals(300, png.getWidth());
+                    assertEquals(300, png.getHeight());
+                    assertEquals(HSSFWorkbook.PICTURE_TYPE_PNG, pict.getFormat());
+                    assertEquals("image/png", pict.getMimeType());
             /*} else {
                 //TODO: test code for PICT, WMF and EMF*/
+                }
             }
+        } catch (IIOException e) {
+            Assume.assumeFalse(e.getMessage().contains("IIO Can't create cache file"));
+            throw e;
         }
     }
-	
+
 	public void testMacPicture() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("53446.xls");
 
-        @SuppressWarnings("unchecked")
-        List<HSSFPictureData> lst = wb.getAllPictures();
-        assertEquals(1, lst.size());
+        try{
+            List<HSSFPictureData> lst = wb.getAllPictures();
+            assertEquals(1, lst.size());
 
-        HSSFPictureData pict = lst.get(0);
-        String ext = pict.suggestFileExtension();
-        if (!ext.equals("png")) {
-            fail("Expected a PNG.");
+            HSSFPictureData pict = lst.get(0);
+            String ext = pict.suggestFileExtension();
+            assertEquals("Expected a PNG.", "png", ext);
+
+            //try to read image data using javax.imageio.* (JDK 1.4+)
+            byte[] data = pict.getData();
+            BufferedImage png = ImageIO.read(new ByteArrayInputStream(data));
+            assertNotNull(png);
+            assertEquals(78, png.getWidth());
+            assertEquals(76, png.getHeight());
+            assertEquals(HSSFWorkbook.PICTURE_TYPE_PNG, pict.getFormat());
+            assertEquals("image/png", pict.getMimeType());
+        } catch (IIOException e) {
+            Assume.assumeFalse(e.getMessage().contains("IIO Can't create cache file"));
+            throw e;
         }
-
-        //try to read image data using javax.imageio.* (JDK 1.4+)
-        byte[] data = pict.getData();
-        BufferedImage png = ImageIO.read(new ByteArrayInputStream(data));
-        assertNotNull(png);
-        assertEquals(78, png.getWidth());
-        assertEquals(76, png.getHeight());
-        assertEquals(HSSFWorkbook.PICTURE_TYPE_PNG, pict.getFormat());
-        assertEquals("image/png", pict.getMimeType());
     }
 
     public void testNotNullPictures() {
 
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SheetWithDrawing.xls");
 
-        @SuppressWarnings("unchecked") // TODO - add getFormat() to interface PictureData and genericise wb.getAllPictures()
+        // TODO - add getFormat() to interface PictureData and genericise wb.getAllPictures()
         List<HSSFPictureData> lst = wb.getAllPictures();
         for(HSSFPictureData pict : lst){
             assertNotNull(pict);
