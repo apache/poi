@@ -290,8 +290,8 @@ under the License.
     <!-- additional schemas are packed into the poi schemas jar, -->
     <!-- so we don't have to care about a seperate versioning of the original ooxml schemas -->
     <property name="ooxml.xsds.dsig.1" value="https://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd"/>
-    <property name="ooxml.xsds.dsig.2" value="https://uri.etsi.org/01903/v1.3.2/XAdES.xsd"/>
-    <property name="ooxml.xsds.dsig.3" value="https://uri.etsi.org/01903/v1.4.1/XAdESv141.xsd"/>
+    <!-- property name="ooxml.xsds.dsig.2" value="https://uri.etsi.org/01903/v1.3.2/XAdES.xsd"/ -->
+    <!-- property name="ooxml.xsds.dsig.3" value="https://uri.etsi.org/01903/v1.4.1/XAdESv141.xsd"/ -->
     <property name="ooxml.xsds.ozip.2" value="OfficeOpenXML-Part2.zip"/>
     <property name="ooxml.xsds.izip.2" value="OpenPackagingConventions-XMLSchema.zip"/>
     <property name="ooxml.xsds.url.2"
@@ -307,7 +307,7 @@ under the License.
     <property name="coverage.dir" value="build/coverage"/>
     <!-- Exclude some uninteresting classes from coverage-instrumentation as we do not want to measure coverage in those packages anyway -->
     <property name="coverage.excludes" value="org.openxmlformats.*:com.*:org.junit.*:junit.*:org.etsi.*:org.w3.*:org.slf4j.*:org.hamcrest.*:org.bouncycastle.*:org.apache.xmlbeans.*:org.apache.tools.*:org.apache.commons.*:org.apache.jcp.*:sun.*:schemaorg_apache_xmlbeans.*"/>
-    
+
     <property name="file.leak.detector" value="-Dthis.is.a.dummy=true"/>
 
     <!-- Apache RAT license check properties -->
@@ -536,7 +536,7 @@ under the License.
         <path refid="scratchpad.classpath"/>
         <path refid="ooxml.classpath"/>
         <path refid="ooxml.xmlsec.classpath"/>
-        <path refid="test.ooxml.reflections.classpath"/> 
+        <path refid="test.ooxml.reflections.classpath"/>
         <path refid="excelant.classpath"/>
         <path refid="examples.classpath"/>
         <pathelement location="${examples.output.dir}"/>
@@ -878,8 +878,8 @@ under the License.
             <url url="${ooxml.xsds.url.1}"/>
             <url url="${ooxml.xsds.url.2}"/>
             <url url="${ooxml.xsds.dsig.1}"/>
-            <url url="${ooxml.xsds.dsig.2}"/>
-            <url url="${ooxml.xsds.dsig.3}"/>
+            <!--url url="${ooxml.xsds.dsig.2}"/ -->
+            <!--url url="${ooxml.xsds.dsig.3}"/ -->
             <chainedmapper>
                 <flattenmapper/>
                 <firstmatchmapper>
@@ -1030,15 +1030,16 @@ under the License.
             <xsds>
                 <zipfileset src="${ooxml.lib}/${ooxml.xsds.izip.1}"/>
                 <fileset dir="${ooxml.visio.xsd.dir}"/>
-                <fileset dir="${ooxml.schema.xsdconfig.dir}"/>
+                <fileset dir="${ooxml.schema.xsdconfig.dir}" excludes="XAdES*.xsd"/>
             </xsds>
         </compile-ooxml-xmlbean>
         <!-- Now do the same for the security schemas -->
         <compile-ooxml-xmlbean classes-jar="${ooxml.security.jar}" sources-jar="${ooxml.security.src.jar}">
             <xsds>
                 <zipfileset src="${ooxml.lib}/${ooxml.xsds.izip.2}" includes="opc-digSig.xsd,opc-relationships.xsd"/>
-                <fileset dir="${ooxml.lib}" includes="xmldsig*.xsd,XAdES*.xsd"/>
+                <fileset dir="${ooxml.lib}" includes="xmldsig*.xsd"/>
                 <fileset dir="${ooxml.security.xsd.dir}"/>
+                <fileset dir="${ooxml.schema.xsdconfig.dir}" includes="XAdES*.xsd,*.xsdconfig"/>
             </xsds>
         </compile-ooxml-xmlbean>
     </target>
@@ -1265,7 +1266,7 @@ under the License.
         <delete dir="${ooxml.reports.test}"/>
         <delete dir="${ooxml.output.test.dir}"/>
         <mkdir dir="${ooxml.reports.test}"/>
-        <mkdir dir="${ooxml.output.test.dir}"/> 
+        <mkdir dir="${ooxml.output.test.dir}"/>
         <!-- compile the sources -->
         <javac target="${jdk.version.class}"
                source="${jdk.version.source}"
@@ -1745,7 +1746,7 @@ under the License.
     </target>
 
     <target name="docs" depends="init, -check-forrest-installed, -check-docs, javadocs, -forrest-docs"
-            unless="main.docs.notRequired" 
+            unless="main.docs.notRequired"
             description="Builds the POI website" />
 
     <target name="site" depends="-forrest-docs"/>
@@ -1786,7 +1787,7 @@ under the License.
             <packageset dir="${ooxml.src}" defaultexcludes="yes">
                 <include name="org/apache/poi/**"/>
             </packageset>
-            
+
             <arg value="--add-modules=java.xml.bind" if:true="${addOpens10}"/>
 
             <doctitle><![CDATA[<h1>POI API Documentation</h1>]]></doctitle>
@@ -2184,6 +2185,7 @@ under the License.
                 <exclude name="resources/main/org/apache/poi/sl/draw/geom/presetShapeDefinitions.xml" />
                 <exclude name="resources/ooxml/org/apache/poi/xssf/usermodel/presetTableStyles.xml" />
                 <exclude name="ooxml/resources/org/apache/poi/xdgf/visio.xsd" />
+                <exclude name="ooxml/resources/org/apache/poi/schemas/XAdES*.xsd" />
                 <exclude name="**/*.iml" />
                 <exclude name="documentation/resources/images/pb-poi.cdr"/>
                 <exclude name="scratchpad/models/poi-hdf.zargo"/>
@@ -2849,7 +2851,7 @@ under the License.
     </target>
 
     <target name="test-env" description="tests if ant is available on the jenkins slave">
-      <echo>Using Ant: ${ant.version} from ${ant.home}</echo>    
+      <echo>Using Ant: ${ant.version} from ${ant.home}</echo>
     </target>
 
 	<target name="replaceVersion" description="Apply the version from build.xml in all other places">
