@@ -85,7 +85,7 @@ public final class TestHSSFPictureData extends TestCase{
                 }
             }
         } catch (IIOException e) {
-            Assume.assumeFalse(e.getMessage().contains("IIO Can't create cache file"));
+            Assume.assumeFalse(e.getMessage().contains("Can't create cache file"));
             throw e;
         }
     }
@@ -110,7 +110,7 @@ public final class TestHSSFPictureData extends TestCase{
             assertEquals(HSSFWorkbook.PICTURE_TYPE_PNG, pict.getFormat());
             assertEquals("image/png", pict.getMimeType());
         } catch (IIOException e) {
-            Assume.assumeFalse(e.getMessage().contains("IIO Can't create cache file"));
+            Assume.assumeFalse(e.getMessage().contains("Can't create cache file"));
             throw e;
         }
     }
