@@ -92,6 +92,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             initTextBody(body);
             cell.setTxBody(body.getXmlObject());
             txBody = cell.getTxBody();
+            getTextParagraphs().add(newTextParagraph(txBody.getPArray(0)));
         }
         return txBody;
     }
