@@ -108,7 +108,7 @@ public class TestXSLFAutoShape {
         assertEquals(TextDirection.VERTICAL, shape.getTextDirection());
         shape.setTextDirection(null);
         assertEquals(TextDirection.HORIZONTAL, shape.getTextDirection());
-        
+
         ppt.close();
     }
 
@@ -211,7 +211,7 @@ public class TestXSLFAutoShape {
         p.setTextAlign(null);
         assertEquals(TextAlign.LEFT, p.getTextAlign());
         assertFalse(p.getXmlObject().getPPr().isSetAlgn());
-        
+
         ppt.close();
     }
 
@@ -231,7 +231,7 @@ public class TestXSLFAutoShape {
         assertEquals(1, p.getTextRuns().size());
         assertSame(r, p.getTextRuns().get(0));
 
-        
+
         assertEquals(18.0, r.getFontSize(), 0); // default font size for text boxes
         assertFalse(rPr.isSetSz());
         r.setFontSize(10.0);
@@ -285,7 +285,7 @@ public class TestXSLFAutoShape {
         assertEquals("POI", r.getRawText());
         r.setText(null);
         assertNull(r.getRawText());
-        
+
         ppt.close();
     }
 
@@ -301,11 +301,13 @@ public class TestXSLFAutoShape {
         assertEquals(ShapeType.TRIANGLE, shape.getShapeType());
 
         for(ShapeType tp : ShapeType.values()) {
-            if (tp.ooxmlId == -1 || tp == ShapeType.SEAL) continue;
+            if (tp.ooxmlId == -1 || tp == ShapeType.SEAL) {
+                continue;
+            }
             shape.setShapeType(tp);
             assertEquals(tp, shape.getShapeType());
         }
-        
+
         ppt.close();
     }
 }

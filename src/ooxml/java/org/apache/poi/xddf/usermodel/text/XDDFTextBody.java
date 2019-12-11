@@ -38,7 +38,6 @@ public class XDDFTextBody {
 
     public XDDFTextBody(TextContainer parent) {
         this(parent, CTTextBody.Factory.newInstance());
-        initialize();
     }
 
     @Internal
@@ -64,6 +63,7 @@ public class XDDFTextBody {
         bp.setRightToLeft(false);
         XDDFTextParagraph p = addNewParagraph();
         p.setTextAlignment(TextAlignment.LEFT);
+        p.appendRegularRun("");
         XDDFRunProperties end = p.addAfterLastRunProperties();
         end.setLanguage(Locale.US);
         end.setFontSize(11.0);

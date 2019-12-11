@@ -57,7 +57,7 @@ public class XSLFTextBox extends XSLFAutoShape implements TextBox<XSLFShape, XSL
         prst.setPrst(STShapeType.RECT);
         prst.addNewAvLst();
         XDDFTextBody body = new XDDFTextBody(null);
-        initTextBody(body);
+        body.initialize();
         ct.setTxBody(body.getXmlObject());
 
         return ct;

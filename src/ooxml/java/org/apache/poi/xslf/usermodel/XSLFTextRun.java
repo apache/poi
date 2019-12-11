@@ -28,9 +28,9 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
-import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher;
@@ -101,6 +101,7 @@ public class XSLFTextRun implements TextRun {
      *
      * @return the xmlbeans object
      */
+    @Internal
     public XmlObject getXmlObject(){
         return _r;
     }
@@ -558,7 +559,9 @@ public class XSLFTextRun implements TextRun {
 
         Double srcFontSize = r.getFontSize();
         if (srcFontSize == null) {
-            if (getFontSize() != null) setFontSize(null);
+            if (getFontSize() != null) {
+                setFontSize(null);
+            }
         } else if(!srcFontSize.equals(getFontSize())) {
             setFontSize(srcFontSize);
         }
@@ -644,7 +647,7 @@ public class XSLFTextRun implements TextRun {
                 }
                 return;
             }
-            
+
             CTTextCharacterProperties props = getRPr(false);
             if (props == null) {
                 return;
@@ -811,7 +814,7 @@ public class XSLFTextRun implements TextRun {
                     font = coll.getLatin();
                 }
                 // SYMBOL is missing
-                
+
                 if (font == null || !font.isSetTypeface() || "".equals(font.getTypeface())) {
                     font = coll.getLatin();
                 }

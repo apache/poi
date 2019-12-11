@@ -84,7 +84,6 @@ import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOuterShadowEffect;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
-
 public class TestXSLFBugs {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
@@ -294,18 +293,18 @@ public class TestXSLFBugs {
         is.close();
 
         PackagePartName ppn = PackagingURIHelper.createPartName("/ppt/media/image1.png");
-        
+
         XMLSlideShow ppt1 = new XMLSlideShow(new ByteArrayInputStream(buf));
         XSLFSlide slide1 = ppt1.getSlides().get(0);
-        
+
         Optional<XSLFShape> shapeToDelete1 =
             slide1.getShapes().stream().filter(s -> s instanceof XSLFPictureShape).findFirst();
-        
+
         assertTrue(shapeToDelete1.isPresent());
         slide1.removeShape(shapeToDelete1.get());
         assertTrue(slide1.getRelationParts().stream()
             .allMatch(rp -> "rId1,rId3".contains(rp.getRelationship().getId()) ));
-        
+
         assertNotNull(ppt1.getPackage().getPart(ppn));
         ppt1.close();
 
@@ -330,7 +329,7 @@ public class TestXSLFBugs {
         assertNull(ppt3.getPackage().getPart(ppn));
         ppt3.close();
     }
-    
+
     @Test
     public void bug51187() throws Exception {
        XMLSlideShow ss1 = XSLFTestDataSamples.openSampleDocument("51187.pptx");

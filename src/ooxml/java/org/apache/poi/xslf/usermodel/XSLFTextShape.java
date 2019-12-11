@@ -38,7 +38,6 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Units;
 import org.apache.poi.xddf.usermodel.text.TextContainer;
 import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
-import org.apache.poi.xddf.usermodel.text.XDDFTextParagraph;
 import org.apache.poi.xslf.model.PropertyFetcher;
 import org.apache.poi.xslf.model.TextBodyPropertyFetcher;
 import org.apache.xmlbeans.XmlObject;
@@ -70,11 +69,6 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
                 _paragraphs.add(newTextParagraph(p));
             }
         }
-    }
-
-    protected static void initTextBody(XDDFTextBody body) {
-        XDDFTextParagraph p = body.getParagraph(0);
-        p.appendRegularRun("");
     }
 
     @Beta
@@ -213,6 +207,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
         CTTextParagraph p;
         if (txBody == null) {
             txBody = getTextBody(true);
+            new XDDFTextBody(this, txBody).initialize();
             p = txBody.getPArray(0);
             p.removeR(0);
         } else {
@@ -669,11 +664,11 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
 
         XSLFTextShape otherTS = (XSLFTextShape) other;
         CTTextBody otherTB = otherTS.getTextBody(false);
-        CTTextBody thisTB = getTextBody(true);
         if (otherTB == null) {
             return;
         }
 
+        CTTextBody thisTB = getTextBody(true);
         thisTB.setBodyPr((CTTextBodyProperties) otherTB.getBodyPr().copy());
 
         if (thisTB.isSetLstStyle()) {

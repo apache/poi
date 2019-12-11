@@ -78,10 +78,8 @@ public class XSLFAutoShape extends XSLFTextShape implements AutoShape<XSLFShape,
         CTTextBody txBody = shape.getTxBody();
         if (txBody == null && create) {
             XDDFTextBody body = new XDDFTextBody(this);
-            initTextBody(body);
             shape.setTxBody(body.getXmlObject());
             txBody = shape.getTxBody();
-            getTextParagraphs().add(newTextParagraph(txBody.getPArray(0)));
         }
         return txBody;
     }

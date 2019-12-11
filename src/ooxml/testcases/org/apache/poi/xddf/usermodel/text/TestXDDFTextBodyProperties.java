@@ -30,7 +30,9 @@ public class TestXDDFTextBodyProperties {
 
     @Test
     public void testProperties() throws IOException {
-        XDDFBodyProperties body = new XDDFTextBody(null).getBodyProperties();
+        XDDFTextBody text = new XDDFTextBody(null);
+        text.initialize();
+        XDDFBodyProperties body = text.getBodyProperties();
         CTTextBodyProperties props = body.getXmlObject();
 
         body.setBottomInset(null);

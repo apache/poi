@@ -33,6 +33,7 @@ import org.apache.poi.sl.draw.DrawTextShape;
 import org.apache.poi.sl.usermodel.TableShape;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
+import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
@@ -181,7 +182,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         col.setW(width);
         for(XSLFTableRow row : _rows) {
             XSLFTableCell cell = row.addCell();
-            cell.getTextBody(true);
+            new XDDFTextBody(cell, cell.getTextBody(true)).initialize();
         }
         updateRowColIndexes();
     }
@@ -200,7 +201,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         col.setW(width);
         for(XSLFTableRow row : _rows) {
             XSLFTableCell cell = row.insertCell(colIdx);
-            cell.getTextBody(true);
+            new XDDFTextBody(cell, cell.getTextBody(true)).initialize();
         }
         updateRowColIndexes();
     }

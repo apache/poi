@@ -46,6 +46,7 @@ public class TestXDDFTextRun {
             sh.addNewTextParagraph();
 
             XDDFTextBody body = sh.getTextBody();
+            body.initialize();
             XDDFTextParagraph para = body.getParagraph(0);
             XDDFTextRun r = para.appendRegularRun("text");
             assertEquals(LocaleUtil.getUserLocale().toLanguageTag(), r.getLanguage().toLanguageTag());

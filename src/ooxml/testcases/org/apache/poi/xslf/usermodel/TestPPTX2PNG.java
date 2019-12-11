@@ -37,7 +37,7 @@ import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * Test class for testing PPTX2PNG utility which renderes .ppt and .pptx slideshows
+ * Test class for testing PPTX2PNG utility which renders .ppt and .pptx slideshows
  */
 @RunWith(Parameterized.class)
 public class TestPPTX2PNG {
@@ -49,8 +49,8 @@ public class TestPPTX2PNG {
         "backgrounds.pptx, layouts.pptx, sample.pptx, shapes.pptx, 54880_chinese.ppt, keyframes.pptx," +
         "customGeo.pptx, customGeo.ppt, wrench.emf, santa.wmf";
 
-        
-    
+
+
     @BeforeClass
     public static void checkHslf() {
         try {
@@ -59,11 +59,11 @@ public class TestPPTX2PNG {
             xslfOnly = true;
         }
     }
-    
+
     // use filename instead of File object to omit full pathname in test name
     @Parameter(value = 0)
     public String pptFile;
-    
+
     @SuppressWarnings("ConstantConditions")
     @Parameters(name="{0}")
     public static Collection<String> data() {

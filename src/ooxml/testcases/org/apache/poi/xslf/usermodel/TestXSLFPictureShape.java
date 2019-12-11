@@ -16,7 +16,6 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.apache.poi.POIDataSamples.TEST_PROPERTY;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -226,31 +225,31 @@ public class TestXSLFPictureShape {
         InputStream is = _slTests.openResourceAsStream("shapes.pptx");
         XMLSlideShow ppt = new XMLSlideShow(is);
         is.close();
-        
+
         XSLFSlide slide = ppt.getSlides().get(0);
         XSLFPictureShape ps = (XSLFPictureShape)slide.getShapes().get(3);
         slide.removeShape(ps);
-        
+
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ppt.write(bos);
         ppt.close();
-        
+
         XMLSlideShow ppt2 = new XMLSlideShow(new ByteArrayInputStream(bos.toByteArray()));
         assertTrue(ppt2.getPictureData().isEmpty());
         ppt2.close();
     }
-    
+
     @Test
     public void testTiffImageBug59742() throws Exception {
         XMLSlideShow slideShow = new XMLSlideShow();
         final InputStream tiffStream = _slTests.openResourceAsStream("testtiff.tif");
         final byte[] pictureData = IOUtils.toByteArray(tiffStream);
         IOUtils.closeQuietly(tiffStream);
-        
+
         XSLFPictureData pic = slideShow.addPicture(pictureData, PictureType.TIFF);
         assertEquals("image/tiff", pic.getContentType());
         assertEquals("image1.tiff", pic.getFileName());
-        
+
         slideShow.close();
     }
 

@@ -52,7 +52,7 @@ public class TestDrawPictureShape {
             xslfOnly = true;
         }
     }
-    
+
     /** a generic way to open a sample slideshow document **/
     public static SlideShow<?,?> openSampleDocument(String sampleName) throws IOException {
         InputStream is = ssSamples.openResourceAsStream(sampleName);
@@ -70,16 +70,16 @@ public class TestDrawPictureShape {
         assumeFalse(xslfOnly);
         testResize("pictures.ppt");
     }
-    
+
     @Test
     public void testResizeXSLF() throws IOException {
         testResize("shapes.pptx");
     }
-    
-        
+
+
     public void testResize(String file) throws IOException {
         SlideShow<?,?> ss = openSampleDocument(file);
-        
+
         Slide<?,?> slide = ss.getSlides().get(0);
         PictureShape<?,?> picShape = null;
         for (Shape<?,?> shape : slide.getShapes()) {
@@ -97,7 +97,7 @@ public class TestDrawPictureShape {
             (int)picShape.getAnchor().getHeight()
         );
         assertEquals(dimPd, dimShape);
-        
+
         double newWidth = (dimPd.getWidth()*(100d/dimPd.getHeight()));
         // ... -1 is a rounding error
         Rectangle2D expRect = new Rectangle2D.Double(rbf(50+300-newWidth, picShape), 50, rbf(newWidth, picShape), 100);
@@ -110,7 +110,7 @@ public class TestDrawPictureShape {
         assertEquals(expRect.getHeight(), actRect.getHeight(), .0001);
         ss.close();
     }
-    
+
     // round back and forth - points -> master -> points
     static double rbf(double val, PictureShape<?,?> picShape) {
         if (picShape.getClass().getName().contains("HSLF")) {

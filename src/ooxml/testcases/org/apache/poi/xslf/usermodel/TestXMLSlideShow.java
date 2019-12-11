@@ -40,7 +40,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListE
 
 public class TestXMLSlideShow extends BaseTestSlideShow<XSLFShape,XSLFTextParagraph> {
    private OPCPackage pack;
-   
+
    @Override
    public XMLSlideShow createSlideShow() {
        return new XMLSlideShow();
@@ -50,7 +50,7 @@ public class TestXMLSlideShow extends BaseTestSlideShow<XSLFShape,XSLFTextParagr
    public void setUp() throws Exception {
       pack = OPCPackage.open(slTests.openResourceAsStream("sample.pptx"));
    }
-   
+
    @After
    public void tearDown() {
        pack.revert();
@@ -77,7 +77,7 @@ public class TestXMLSlideShow extends BaseTestSlideShow<XSLFShape,XSLFTextParagr
       // Check it has some slides
       assertFalse(xml.getSlides().isEmpty());
       assertFalse(xml.getSlideMasters().isEmpty());
-      
+
       xml.close();
    }
 
@@ -122,10 +122,10 @@ public class TestXMLSlideShow extends BaseTestSlideShow<XSLFShape,XSLFTextParagr
       assertNotNull(notesMaster);
 
       assertNotNull(xml.getNotesMaster());
-      
+
       xml.close();
    }
-	
+
    @Test
    public void testMetadataBasics() throws IOException {
       XMLSlideShow xml = new XMLSlideShow(pack);
@@ -139,34 +139,34 @@ public class TestXMLSlideShow extends BaseTestSlideShow<XSLFShape,XSLFTextParagr
 
       assertNull(xml.getProperties().getCoreProperties().getTitle());
       assertFalse(xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().isPresent());
-      
+
       xml.close();
    }
-   
+
    @Test
    public void testComments() throws Exception {
       // Default sample file has none
       XMLSlideShow xml = new XMLSlideShow(pack);
 
       assertNull(xml.getCommentAuthors());
-      
+
       for (XSLFSlide slide : xml.getSlides()) {
          assertTrue(slide.getComments().isEmpty());
       }
-      
+
       // Try another with comments
       XMLSlideShow xmlComments = new XMLSlideShow(slTests.openResourceAsStream("45545_Comment.pptx"));
-      
+
       // Has one author
       assertNotNull(xmlComments.getCommentAuthors());
       assertEquals(1, xmlComments.getCommentAuthors().getCTCommentAuthorsList().sizeOfCmAuthorArray());
       assertEquals("XPVMWARE01", xmlComments.getCommentAuthors().getAuthorById(0).getName());
-      
+
       // First two slides have comments
       int i = -1;
       for (XSLFSlide slide : xmlComments.getSlides()) {
          i++;
-         
+
          if(i == 0) {
             assertNotNull(slide.getCommentsPart());
             assertEquals(1, slide.getCommentsPart().getNumberOfComments());
@@ -182,11 +182,11 @@ public class TestXMLSlideShow extends BaseTestSlideShow<XSLFShape,XSLFTextParagr
             assertTrue(slide.getComments().isEmpty());
          }
       }
-      
+
       xmlComments.close();
       xml.close();
    }
-   
+
    @Override
    public XMLSlideShow reopen(SlideShow<XSLFShape,XSLFTextParagraph> show) {
       try {
