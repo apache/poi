@@ -637,7 +637,7 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         if (ref != null) {
             String[] boundaries = ref.split(":", 2);
             String from = boundaries[0];
-            String to = boundaries[1];
+            String to = boundaries.length == 2 ? boundaries[1] : boundaries[0];
             startCellReference = new CellReference(from);
             endCellReference = new CellReference(to);
         }
