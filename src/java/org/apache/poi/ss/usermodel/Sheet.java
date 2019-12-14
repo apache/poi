@@ -38,25 +38,25 @@ import org.apache.poi.ss.util.PaneInformation;
 public interface Sheet extends Iterable<Row> {
 
     /* Constants for margins */
-    public static final short LeftMargin = 0;
+    short LeftMargin = 0;
 
-    public static final short RightMargin = 1;
+    short RightMargin = 1;
 
-    public static final short TopMargin = 2;
+    short TopMargin = 2;
 
-    public static final short BottomMargin = 3;
+    short BottomMargin = 3;
 
-    public static final short HeaderMargin = 4;
+    short HeaderMargin = 4;
 
-    public static final short FooterMargin = 5;
+    short FooterMargin = 5;
 
-    public static final byte PANE_LOWER_RIGHT = (byte) 0;
+    byte PANE_LOWER_RIGHT = (byte) 0;
 
-    public static final byte PANE_UPPER_RIGHT = (byte) 1;
+    byte PANE_UPPER_RIGHT = (byte) 1;
 
-    public static final byte PANE_LOWER_LEFT = (byte) 2;
+    byte PANE_LOWER_LEFT = (byte) 2;
 
-    public static final byte PANE_UPPER_LEFT = (byte) 3;
+    byte PANE_UPPER_LEFT = (byte) 3;
 
     /**
      * Create a new row within the sheet and return the high level representation
@@ -79,7 +79,7 @@ public interface Sheet extends Iterable<Row> {
      * defined you get a null.  This is to say row 4 represents the fifth row on a sheet.
      *
      * @param rownum  row to get (0-based)
-     * @return Row representing the rownumber or null if its not defined on the sheet
+     * @return Row representing the row-number or null if its not defined on the sheet
      */
     Row getRow(int rownum);
 
@@ -135,14 +135,14 @@ public interface Sheet extends Iterable<Row> {
      *
      * @param value true for right to left, false otherwise.
      */
-    public void setRightToLeft(boolean value);
+    void setRightToLeft(boolean value);
 
     /**
      * Whether the text is displayed in right-to-left mode in the window
      *
      * @return whether the text is displayed in right-to-left mode in the window
      */
-    public boolean isRightToLeft();
+    boolean isRightToLeft();
 
     /**
      * Set the width (in units of 1/256th of a character width)<p>
@@ -266,7 +266,7 @@ public interface Sheet extends Iterable<Row> {
      *  (0 based) column, or null if no style has been
      *  set for that column
      */
-    public CellStyle getColumnStyle(int column);
+    CellStyle getColumnStyle(int column);
 
     /*
      * Sets the CellStyle that applies to the given
@@ -357,14 +357,14 @@ public interface Sheet extends Iterable<Row> {
      *
      * @return the merged region at the specified index
      */
-    public CellRangeAddress getMergedRegion(int index);
+    CellRangeAddress getMergedRegion(int index);
 
     /**
      * Returns the list of merged regions.
      *
      * @return the list of merged regions
      */
-    public List<CellRangeAddress> getMergedRegions();
+    List<CellRangeAddress> getMergedRegions();
 
     /**
      *  Returns an iterator of the physical rows
@@ -616,7 +616,7 @@ public interface Sheet extends Iterable<Row> {
      * Sets the protection enabled as well as the password
      * @param password to set for protection. Pass <code>null</code> to remove protection
      */
-    public void protectSheet(String password);
+    void protectSheet(String password);
     
     /**
      * Answer whether scenario protection is enabled or disabled
@@ -642,7 +642,7 @@ public interface Sheet extends Iterable<Row> {
      * @param scale window zoom magnification
      * @throws IllegalArgumentException if scale is invalid
      */
-    public void setZoom(int scale);
+    void setZoom(int scale);
 
     /**
      * The top row in the visible view when the sheet is
@@ -664,10 +664,10 @@ public interface Sheet extends Iterable<Row> {
      * Sets desktop window pane display area, when the
      * file is first opened in a viewer.
      *
-     * @param toprow the top row to show in desktop window pane
-     * @param leftcol the left column to show in desktop window pane
+     * @param topRow the top row to show in desktop window pane
+     * @param leftCol the left column to show in desktop window pane
      */
-    void showInPane(int toprow, int leftcol);
+    void showInPane(int topRow, int leftCol);
 
     /**
      * Shifts rows between startRow and endRow n number of rows.
@@ -1024,19 +1024,19 @@ public interface Sheet extends Iterable<Row> {
      */
     CellRange<? extends Cell> removeArrayFormula(Cell cell);
     
-    public DataValidationHelper getDataValidationHelper();
+    DataValidationHelper getDataValidationHelper();
 
     /**
      * Returns the list of DataValidation in the sheet.
      * @return list of DataValidation in the sheet
      */
-    public List<? extends DataValidation> getDataValidations();
+    List<? extends DataValidation> getDataValidations();
 
     /**
      * Creates a data validation object
      * @param dataValidation The Data validation object settings
      */
-    public void addValidationData(DataValidation dataValidation);
+    void addValidationData(DataValidation dataValidation);
 
     /**
      * Enable filtering for a range of cells
@@ -1157,7 +1157,7 @@ public interface Sheet extends Iterable<Row> {
      * @param column The 0-based index of the column to look at.
      * @return hyperlink if there is a hyperlink anchored at row, column; otherwise returns null
      */
-    public Hyperlink getHyperlink(int row, int column);
+    Hyperlink getHyperlink(int row, int column);
     
     /**
      * Get a Hyperlink in this sheet located in a cell specified by {code addr}
@@ -1166,14 +1166,14 @@ public interface Sheet extends Iterable<Row> {
      * @return hyperlink if there is a hyperlink anchored at {@code addr}; otherwise returns {@code null}
      * @since POI 3.15 beta 3
      */
-    public Hyperlink getHyperlink(CellAddress addr);
+    Hyperlink getHyperlink(CellAddress addr);
     
     /**
      * Get a list of Hyperlinks in this sheet
      *
      * @return Hyperlinks for the sheet
      */
-    public List<? extends Hyperlink> getHyperlinkList();
+    List<? extends Hyperlink> getHyperlinkList();
 
     /**
      * Return location of the active cell, e.g. <code>A1</code>.
@@ -1181,7 +1181,7 @@ public interface Sheet extends Iterable<Row> {
      * @return the location of the active cell.
      * @since 3.14beta1
      */
-    public CellAddress getActiveCell();
+    CellAddress getActiveCell();
 
     /**
       * Sets location of the active cell
@@ -1189,5 +1189,5 @@ public interface Sheet extends Iterable<Row> {
       * @param address the location of the active cell, e.g. <code>A1</code>.
       * @since 3.14beta1
       */
-    public void setActiveCell(CellAddress address);
+    void setActiveCell(CellAddress address);
 }

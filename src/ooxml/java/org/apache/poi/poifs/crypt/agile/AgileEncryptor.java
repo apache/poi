@@ -35,6 +35,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
 import java.security.MessageDigest;
 import java.security.SecureRandom;
@@ -381,7 +382,7 @@ public class AgileEncryptor extends Encryptor implements Cloneable {
         xo.setSaveNoXmlDecl();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
-            bos.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n".getBytes("UTF-8"));
+            bos.write("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\r\n".getBytes(StandardCharsets.UTF_8));
             ed.save(bos, xo);
             bos.writeTo(os);
         } catch (IOException e) {

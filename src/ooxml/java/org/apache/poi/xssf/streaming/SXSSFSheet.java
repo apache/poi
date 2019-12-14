@@ -915,13 +915,13 @@ public class SXSSFSheet implements Sheet
      * Sets desktop window pane display area, when the
      * file is first opened in a viewer.
      *
-     * @param toprow the top row to show in desktop window pane
-     * @param leftcol the left column to show in desktop window pane
+     * @param topRow the top row to show in desktop window pane
+     * @param leftCol the left column to show in desktop window pane
      */
     @Override
-    public void showInPane(int toprow, int leftcol)
+    public void showInPane(int topRow, int leftCol)
     {
-        _sh.showInPane(toprow, leftcol);
+        _sh.showInPane(topRow, leftCol);
     }
 
     /**

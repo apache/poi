@@ -20,6 +20,7 @@ package org.apache.poi.hslf.record;
 
 import junit.framework.TestCase;
 import java.io.ByteArrayOutputStream;
+import java.nio.charset.StandardCharsets;
 
 /**
  * Tests that TextBytesAtom works properly
@@ -54,7 +55,7 @@ public final class TestTextBytesAtom extends TestCase {
 
 	public void testChangeText() throws Exception {
 		TextBytesAtom tba = new TextBytesAtom(data,0,data.length);
-		tba.setText(alt_text.getBytes("ISO-8859-1"));
+		tba.setText(alt_text.getBytes(StandardCharsets.ISO_8859_1));
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		tba.writeOut(baos);

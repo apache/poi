@@ -28,10 +28,10 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.util.Internal;
 
 /**
- * Manages a collection of {@link WorkbookEvaluator}s, in order to support 
+ * Manages a collection of {@link WorkbookEvaluator}s, in order to support
  * evaluation of formulas across spreadsheets.
  *
- * <p>For POI internal use only - use</p> 
+ * <p>For POI internal use only - use</p>
  */
 @Internal
 public final class CollaboratingWorkbooksEnvironment {
@@ -70,8 +70,8 @@ public final class CollaboratingWorkbooksEnvironment {
         if (evaluatorsByName.size() < 1) {
             throw new IllegalArgumentException("Must provide at least one collaborating worbook");
         }
-        WorkbookEvaluator[] evaluators = 
-                evaluatorsByName.values().toArray(new WorkbookEvaluator[0]); 
+        WorkbookEvaluator[] evaluators =
+                evaluatorsByName.values().toArray(new WorkbookEvaluator[0]);
         new CollaboratingWorkbooksEnvironment(evaluatorsByName, evaluators);
     }
     public static void setupFormulaEvaluator(Map<String,FormulaEvaluator> evaluators) {
@@ -82,7 +82,7 @@ public final class CollaboratingWorkbooksEnvironment {
             if (eval instanceof WorkbookEvaluatorProvider) {
                 evaluatorsByName.put(wbName, ((WorkbookEvaluatorProvider)eval)._getWorkbookEvaluator());
             } else {
-                throw new IllegalArgumentException("Formula Evaluator " + eval + 
+                throw new IllegalArgumentException("Formula Evaluator " + eval +
                                                    " provides no WorkbookEvaluator access");
             }
         }
@@ -127,8 +127,8 @@ public final class CollaboratingWorkbooksEnvironment {
         int nItems = evaluators.length;
         IEvaluationListener evalListener = evaluators[0].getEvaluationListener();
         // make sure that all evaluators have the same listener
-        for(int i=0; i<nItems; i++) {
-            if(evalListener != evaluators[i].getEvaluationListener()) {
+        for (WorkbookEvaluator evaluator : evaluators) {
+            if (evalListener != evaluator.getEvaluationListener()) {
                 // This would be very complex to support
                 throw new RuntimeException("Workbook evaluators must all have the same evaluation listener");
             }
@@ -145,13 +145,13 @@ public final class CollaboratingWorkbooksEnvironment {
      */
     private void unhookOldEnvironments(WorkbookEvaluator[] evaluators) {
         Set<CollaboratingWorkbooksEnvironment> oldEnvs = new HashSet<>();
-        for(int i=0; i<evaluators.length; i++) {
-            oldEnvs.add(evaluators[i].getEnvironment());
+        for (WorkbookEvaluator evaluator : evaluators) {
+            oldEnvs.add(evaluator.getEnvironment());
         }
         CollaboratingWorkbooksEnvironment[] oldCWEs = new CollaboratingWorkbooksEnvironment[oldEnvs.size()];
         oldEnvs.toArray(oldCWEs);
-        for (int i = 0; i < oldCWEs.length; i++) {
-            oldCWEs[i].unhook();
+        for (CollaboratingWorkbooksEnvironment oldCWE : oldCWEs) {
+            oldCWE.unhook();
         }
     }
 
@@ -163,8 +163,8 @@ public final class CollaboratingWorkbooksEnvironment {
             // Never dismantle the EMPTY environment
             return;
         }
-        for (int i = 0; i < _evaluators.length; i++) {
-            _evaluators[i].detachFromEnvironment();
+        for (WorkbookEvaluator evaluator : _evaluators) {
+            evaluator.detachFromEnvironment();
         }
         _unhooked = true;
     }

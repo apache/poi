@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
 import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
 import org.apache.poi.EmptyFileException;
@@ -65,14 +66,14 @@ public final class TestIOUtils {
 
     @Test
     public void testPeekFirst8Bytes() throws Exception {
-        assertArrayEquals("01234567".getBytes("UTF-8"),
-                IOUtils.peekFirst8Bytes(new ByteArrayInputStream("0123456789".getBytes("UTF-8"))));
+        assertArrayEquals("01234567".getBytes(StandardCharsets.UTF_8),
+                IOUtils.peekFirst8Bytes(new ByteArrayInputStream("0123456789".getBytes(StandardCharsets.UTF_8))));
     }
 
     @Test
     public void testPeekFirst8BytesWithPushbackInputStream() throws Exception {
-        assertArrayEquals("01234567".getBytes("UTF-8"),
-                IOUtils.peekFirst8Bytes(new PushbackInputStream(new ByteArrayInputStream("0123456789".getBytes("UTF-8")), 8)));
+        assertArrayEquals("01234567".getBytes(StandardCharsets.UTF_8),
+                IOUtils.peekFirst8Bytes(new PushbackInputStream(new ByteArrayInputStream("0123456789".getBytes(StandardCharsets.UTF_8)), 8)));
     }
 
     @Test

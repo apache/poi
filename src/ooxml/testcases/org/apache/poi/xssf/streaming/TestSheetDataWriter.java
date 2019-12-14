@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.poi.util.IOUtils;
 import org.junit.Test;
@@ -63,7 +64,7 @@ public final class TestSheetDataWriter {
             FileInputStream is = new FileInputStream(file);
             String text;
             try {
-                text = new String(IOUtils.toByteArray(is), "UTF-8");
+                text = new String(IOUtils.toByteArray(is), StandardCharsets.UTF_8);
             } finally {
                 is.close();
             }
@@ -82,7 +83,7 @@ public final class TestSheetDataWriter {
             FileInputStream is = new FileInputStream(file);
             String text;
             try {
-                text = new String(IOUtils.toByteArray(is), "UTF-8");
+                text = new String(IOUtils.toByteArray(is), StandardCharsets.UTF_8);
             } finally {
                 is.close();
             }

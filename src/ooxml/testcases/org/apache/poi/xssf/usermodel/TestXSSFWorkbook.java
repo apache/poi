@@ -33,6 +33,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -697,7 +698,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
             sheetBack.commit();
 
-            String str = new String(IOUtils.toByteArray(sheetBack.getPackagePart().getInputStream()), "UTF-8");
+            String str = new String(IOUtils.toByteArray(sheetBack.getPackagePart().getInputStream()), StandardCharsets.UTF_8);
 
             assertEquals(1, countMatches(str, "<worksheet"));
         }

@@ -27,6 +27,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hmef.attribute.MAPIAttribute;
@@ -109,7 +110,7 @@ public final class TestHMEFMessage {
         );
         assertEquals(
                 "IPM.Microsoft Mail.Note\0",
-                new String(msg.getMessageAttribute(TNEFProperty.ID_MESSAGECLASS).getData(), "ASCII")
+            new String(msg.getMessageAttribute(TNEFProperty.ID_MESSAGECLASS).getData(), StandardCharsets.US_ASCII)
         );
     }
 
@@ -141,7 +142,7 @@ public final class TestHMEFMessage {
         // Then by String
         String contents = msg.getBody();
         // It's all low bytes
-        byte[] contentsBytes = contents.getBytes("ASCII");
+      byte[] contentsBytes = contents.getBytes(StandardCharsets.US_ASCII);
         assertContents("message.rtf", contentsBytes);
 
         // try to get a message id that does not exist
@@ -163,7 +164,7 @@ public final class TestHMEFMessage {
         String contents = msg.getBody();
         //System.out.println(contents);
         // It's all low bytes
-        byte[] contentsBytes = contents.getBytes("ASCII");
+		byte[] contentsBytes = contents.getBytes(StandardCharsets.US_ASCII);
         // assertContents("message.rtf", contentsBytes);
         assertNotNull(contentsBytes);
 

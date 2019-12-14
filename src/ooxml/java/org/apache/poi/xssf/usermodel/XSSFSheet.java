@@ -267,6 +267,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         for (CTRow row : worksheetParam.getSheetData().getRowArray()) {
             XSSFRow r = new XSSFRow(row, this);
             // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+            //noinspection UnnecessaryBoxing
             final Integer rownumI = Integer.valueOf(r.getRowNum()); // NOSONAR
             _rows.put(rownumI, r);
         }
@@ -756,6 +757,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     @Override
     public XSSFRow createRow(int rownum) {
         // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+        //noinspection UnnecessaryBoxing
         final Integer rownumI = Integer.valueOf(rownum); // NOSONAR
         CTRow ctRow;
         XSSFRow prev = _rows.get(rownumI);
@@ -1073,7 +1075,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     @Override
     public boolean isDisplayZeros(){
         final CTSheetView dsv = getDefaultSheetView(false);
-        return (dsv != null) ? dsv.getShowZeros() : true;
+        return (dsv == null) || dsv.getShowZeros();
     }
 
     /**
@@ -1380,7 +1382,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         if (pane.isSetTopLeftCell()) {
             final CellReference cellRef = new CellReference(pane.getTopLeftCell());
             row = (short)cellRef.getRow();
-            col = (short)cellRef.getCol();
+            col = cellRef.getCol();
         }
 
         final short x = (short)pane.getXSplit();
@@ -1477,6 +1479,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     @Override
     public XSSFRow getRow(int rownum) {
         // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+        //noinspection UnnecessaryBoxing
         final Integer rownumI = Integer.valueOf(rownum); // NOSONAR
         return _rows.get(rownumI);
     }
@@ -1509,7 +1512,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         }
         else {
             // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+            //noinspection UnnecessaryBoxing
             final Integer startI = Integer.valueOf(startRowNum); // NOSONAR
+            //noinspection UnnecessaryBoxing
             final Integer endI = Integer.valueOf(endRowNum+1); // NOSONAR
             final Collection<XSSFRow> inclusive = _rows.subMap(startI, endI).values();
             rows.addAll(inclusive);
@@ -1774,7 +1779,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     @Override
     public boolean isDisplayFormulas() {
         final CTSheetView dsv = getDefaultSheetView(false);
-        return (dsv != null) ? dsv.getShowFormulas() : false;
+        return dsv != null && dsv.getShowFormulas();
     }
 
     /**
@@ -1787,7 +1792,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     @Override
     public boolean isDisplayGridlines() {
         final CTSheetView dsv = getDefaultSheetView(false);
-        return (dsv != null) ? dsv.getShowGridLines() : true;
+        return (dsv == null) || dsv.getShowGridLines();
     }
 
     /**
@@ -1820,7 +1825,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     @Override
     public boolean isDisplayRowColHeadings() {
         final CTSheetView dsv = getDefaultSheetView(false);
-        return (dsv != null) ? dsv.getShowRowColHeaders() : true;
+        return (dsv == null) || dsv.getShowRowColHeaders();
     }
 
     /**
@@ -2017,8 +2022,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             row.removeCell(cell);
         }
 
-        // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
         final int rowNum = row.getRowNum();
+        // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+        //noinspection UnnecessaryBoxing
         final Integer rowNumI = Integer.valueOf(rowNum); // NOSONAR
         // this is not the physical row number!
         final int idx = _rows.headMap(rowNumI).size();
@@ -2272,8 +2278,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     }
 
     private void unsetCollapsed(Boolean collapsed, CTCol ci) {
-        if (collapsed != null && collapsed.booleanValue()) {
-            ci.setCollapsed(collapsed);
+        if (collapsed != null && collapsed) {
+            ci.setCollapsed(true);
         } else {
             ci.unsetCollapsed();
         }
@@ -3067,6 +3073,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         _rows.clear();
         for(XSSFRow r : rowList) {
             // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+            //noinspection UnnecessaryBoxing
             final Integer rownumI = new Integer(r.getRowNum()); // NOSONAR
             _rows.put(rownumI, r);
         }
@@ -3082,6 +3089,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             if (shouldRemoveRow(startRow, endRow, n, rownum)) {
                 // remove row from worksheet.getSheetData row array
                 // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
+                //noinspection UnnecessaryBoxing
                 final Integer rownumI = Integer.valueOf(row.getRowNum()); // NOSONAR
                 int idx = _rows.headMap(rownumI).size();
                 worksheet.getSheetData().removeRow(idx);
@@ -3266,12 +3274,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      * Location of the top left visible cell Location of the top left visible cell in the bottom right
      * pane (when in Left-to-Right mode).
      *
-     * @param toprow the top row to show in desktop window pane
-     * @param leftcol the left column to show in desktop window pane
+     * @param topRow the top row to show in desktop window pane
+     * @param leftCol the left column to show in desktop window pane
      */
     @Override
-    public void showInPane(int toprow, int leftcol) {
-        final CellReference cellReference = new CellReference(toprow, leftcol);
+    public void showInPane(int topRow, int leftCol) {
+        final CellReference cellReference = new CellReference(topRow, leftCol);
         final String cellRef = cellReference.formatAsString();
         final CTPane pane = getPane(true);
         assert(pane != null);
@@ -3357,7 +3365,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     @Override
     public boolean isSelected() {
         final CTSheetView dsv = getDefaultSheetView(false);
-        return (dsv != null) ? dsv.getTabSelected() : false;
+        return dsv != null && dsv.getTabSelected();
     }
 
     /**
@@ -3516,8 +3524,8 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             if (n > 0 && rownum > endRow) {
                 return true;
             }
-            else if (n < 0 && rownum < startRow) {
-                return true;
+            else {
+                return n < 0 && rownum < startRow;
             }
         }
         return false;
@@ -4711,7 +4719,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                     break;
                 }
             }
-            return (coo == null) ? null : coo;
+            return coo;
         } finally {
             cur.dispose();
         }

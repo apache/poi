@@ -63,7 +63,6 @@ import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Row;
@@ -1452,15 +1451,15 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * Sets desktop window pane display area, when the
      * file is first opened in a viewer.
      *
-     * @param toprow  the top row to show in desktop window pane
-     * @param leftcol the left column to show in desktop window pane
+     * @param topRow  the top row to show in desktop window pane
+     * @param leftCol the left column to show in desktop window pane
      */
     @Override
-    public void showInPane(int toprow, int leftcol) {
+    public void showInPane(int topRow, int leftCol) {
         int maxrow = SpreadsheetVersion.EXCEL97.getLastRowIndex();
-        if (toprow > maxrow) throw new IllegalArgumentException("Maximum row number is " + maxrow);
+        if (topRow > maxrow) throw new IllegalArgumentException("Maximum row number is " + maxrow);
         
-        showInPane((short)toprow, (short)leftcol);
+        showInPane((short) topRow, (short) leftCol);
     }
     /**
      * Sets desktop window pane display area, when the
@@ -1748,11 +1747,10 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
      * For n < 0, it will shift columns left.
      * Additionally adjusts formulas.
      * Probably should also process other features (hyperlinks, comments...) in the way analog to shiftRows method 
-     * @param startRow               the row to start shifting
-     * @param endRow                 the row to end shifting
-     * @param n                      the number of rows to shift
+     * @param startColumn   the column to start shifting
+     * @param endColumn     the column to end shifting
+     * @param n             the number of columns to shift
      */
-
     @Beta
     @Override
     public void shiftColumns(int startColumn, int endColumn, int n){ 
@@ -2454,9 +2452,9 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         for (Object object : container.getChildren()) {
             HSSFShape shape = (HSSFShape) object;
             if (shape instanceof HSSFShapeGroup) {
-                HSSFShape res = lookForComment((HSSFShapeContainer) shape, row, column);
+                HSSFComment res = lookForComment((HSSFShapeContainer) shape, row, column);
                 if (null != res) {
-                    return (HSSFComment) res;
+                    return res;
                 }
                 continue;
             }

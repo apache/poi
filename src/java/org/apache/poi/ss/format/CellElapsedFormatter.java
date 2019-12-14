@@ -176,7 +176,6 @@ public class CellElapsedFormatter extends CellFormatter {
         case 'h':
             return 24;
         case 'm':
-            return 60;
         case 's':
             return 60;
         case '0':

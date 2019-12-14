@@ -29,6 +29,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
+import java.nio.charset.StandardCharsets;
 import java.util.Iterator;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -103,7 +104,7 @@ public class SheetDataWriter implements Closeable {
             throw e;
         }
         return new BufferedWriter(
-                new OutputStreamWriter(decorated, "UTF-8"));
+                new OutputStreamWriter(decorated, StandardCharsets.UTF_8));
     }
     
     /**
@@ -113,7 +114,7 @@ public class SheetDataWriter implements Closeable {
      *
      * @param fos  the stream to decorate
      * @return a decorated stream
-     * @throws IOException
+     * @throws IOException if decorating the stream fails
      * @see #decorateInputStream(FileInputStream)
      */
     protected OutputStream decorateOutputStream(FileOutputStream fos) throws IOException {
@@ -154,7 +155,7 @@ public class SheetDataWriter implements Closeable {
      *
      * @param fis  the stream to decorate
      * @return a decorated stream
-     * @throws IOException
+     * @throws IOException if decorating the stream fails
      * @see #decorateOutputStream(FileOutputStream)
      */
     protected InputStream decorateInputStream(FileInputStream fis) throws IOException {

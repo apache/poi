@@ -20,6 +20,7 @@ package org.apache.poi.xssf.model;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -252,7 +253,7 @@ public final class TestSharedStringsTable extends TestCase {
         List<String> strs = new ArrayList<>();
         POIDataSamples samples = POIDataSamples.getSpreadSheetInstance();
         BufferedReader br = new BufferedReader(
-                new InputStreamReader(samples.openResourceAsStream(filename), "UTF-8"));
+                new InputStreamReader(samples.openResourceAsStream(filename), StandardCharsets.UTF_8));
         String s;
         while ((s = br.readLine()) != null) {
             if (s.trim().length() > 0) {

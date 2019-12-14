@@ -338,17 +338,17 @@ public class ToCSV {
             for(File excelFile : filesList) {
                 // Open the workbook
                 this.openWorkbook(excelFile);
-    
+
                 // Convert it's contents into a CSV file
                 this.convertToCSV();
-    
+
                 // Build the name of the csv folder from that of the Excel workbook.
                 // Simply replace the .xls or .xlsx file extension with .csv
                 destinationFilename = excelFile.getName();
                 destinationFilename = destinationFilename.substring(
                         0, destinationFilename.lastIndexOf(".")) +
                         ToCSV.CSV_FILE_EXTENSION;
-    
+
                 // Save the CSV file away using the newly constricted file name
                 // and to the specified directory.
                 this.saveCSVFile(new File(destination, destinationFilename));
@@ -649,7 +649,7 @@ public class ToCSV {
                 // passed to the main method.
                 converter.convertExcelToCSV(args[0], args[1]);
             }
-            else if(args.length == 3){
+            else if(args.length == 3) {
                 // The Source File/Folder, Destination Folder and Separator
                 // were passed to the main method.
                 converter.convertExcelToCSV(args[0], args[1], args[2]);
@@ -699,9 +699,9 @@ public class ToCSV {
             ex.printStackTrace(System.out);
             converted = false;
         }
-        
+
         if (converted) {
-            System.out.println("Conversion took " + 
+            System.out.println("Conversion took " +
                   ((System.currentTimeMillis() - startTime)/1000) + " seconds");
         }
     }
@@ -711,7 +711,7 @@ public class ToCSV {
      * be a call to the listFiles() method when made on an instance of the
      * File class and that object refers to a folder/directory
      */
-    class ExcelFilenameFilter implements FilenameFilter {
+    static class ExcelFilenameFilter implements FilenameFilter {
 
         /**
          * Determine those files that will be returned by a call to the

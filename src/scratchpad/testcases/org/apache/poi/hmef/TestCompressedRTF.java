@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hmef.attribute.MAPIAttribute;
@@ -118,7 +119,7 @@ public final class TestCompressedRTF {
         // Decompress it
         CompressedRTF comp = new CompressedRTF();
         byte[] decomp = comp.decompress(new ByteArrayInputStream(data));
-        String decompStr = new String(decomp, "ASCII");
+       String decompStr = new String(decomp, StandardCharsets.US_ASCII);
 
         // Test
         assertEquals(block1.length(), decomp.length);
@@ -147,7 +148,7 @@ public final class TestCompressedRTF {
         // Decompress it
         CompressedRTF comp = new CompressedRTF();
         byte[] decomp = comp.decompress(new ByteArrayInputStream(data));
-        String decompStr = new String(decomp, "ASCII");
+       String decompStr = new String(decomp, StandardCharsets.US_ASCII);
 
         // Test
         assertEquals(block2.length(), decomp.length);
@@ -195,7 +196,7 @@ public final class TestCompressedRTF {
         }
 
         // By String
-        String expString = new String(expected, "ASCII");
+           String expString = new String(expected, StandardCharsets.US_ASCII);
         String decompStr = rtfAttr.getDataString();
         assertEquals(expString.length(), decompStr.length());
         assertEquals(expString, decompStr);

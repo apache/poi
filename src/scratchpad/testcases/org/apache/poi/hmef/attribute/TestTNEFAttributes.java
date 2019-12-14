@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
@@ -74,7 +75,7 @@ public final class TestTNEFAttributes {
         // Claims not to be text, but really is
         assertEquals(
                 "IPM.Microsoft Mail.Note\0",
-                new String(quick.getMessageAttribute(TNEFProperty.ID_MESSAGECLASS).getData(), "ASCII")
+            new String(quick.getMessageAttribute(TNEFProperty.ID_MESSAGECLASS).getData(), StandardCharsets.US_ASCII)
         );
 
         // Try constructing two attributes
@@ -135,7 +136,7 @@ public final class TestTNEFAttributes {
         assertEquals(TNEFStringAttribute.class, attr.getClass());
 
         // It is a null terminated string
-        assertEquals("quick.doc\u0000", new String(attr.getData(), "ASCII"));
+	   assertEquals("quick.doc\u0000", new String(attr.getData(), StandardCharsets.US_ASCII));
 
         // But when we ask for the string, that is sorted for us
         TNEFStringAttribute str = (TNEFStringAttribute) attr;

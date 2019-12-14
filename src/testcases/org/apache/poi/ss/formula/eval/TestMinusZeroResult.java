@@ -68,19 +68,19 @@ public final class TestMinusZeroResult extends TestCase {
 	}
 
 	public void testTextRendering() {
-		confirmTextRendering("-0", MINUS_ZERO);
+		confirmTextRendering(MINUS_ZERO);
 		// sub-normal negative numbers also display as '-0'
-		confirmTextRendering("-0", Double.longBitsToDouble(0x8000100020003000L));
+		confirmTextRendering(Double.longBitsToDouble(0x8000100020003000L));
 	}
 
 	/**
 	 * Uses {@link ConcatEval} to force number-to-text conversion
 	 */
-	private static void confirmTextRendering(String expRendering, double d) {
+	private static void confirmTextRendering(double d) {
 		ValueEval[] args = { StringEval.EMPTY_INSTANCE, new NumberEval(d), };
 		StringEval se = (StringEval) EvalInstances.Concat.evaluate(args, -1, (short)-1);
 		String result = se.getStringValue();
-		assertEquals(expRendering, result);
+		assertEquals("-0", result);
 	}
 
 	private static void checkEval(double expectedResult, Function instance, double... dArgs) {
@@ -104,12 +104,14 @@ public final class TestMinusZeroResult extends TestCase {
 	 * Not really a POI test - just shows similar behaviour of '-0.0' in Java.
 	 */
 	public void testJava() {
-
 		assertEquals(0x8000000000000000L, Double.doubleToLongBits(MINUS_ZERO));
 
 		// The simple operators consider all zeros to be the same
+		//noinspection SimplifiableJUnitAssertion,ConstantConditions
 		assertTrue(MINUS_ZERO == MINUS_ZERO);
+		//noinspection SimplifiableJUnitAssertion,ConstantConditions
 		assertTrue(MINUS_ZERO == +0.0);
+		//noinspection ConstantConditions
 		assertFalse(MINUS_ZERO < +0.0);
 
 		// Double.compare() considers them different
