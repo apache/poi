@@ -43,6 +43,10 @@ public class TestTempFile {
     @Before
     public void setUp() throws IOException {
         previousTempDir = System.getProperty(TempFile.JAVA_IO_TMPDIR);
+        if(previousTempDir != null) {
+            assertTrue("Failed to create directory " + previousTempDir,
+                    new File(previousTempDir).exists() || new File(previousTempDir).mkdirs());
+        }
 
         // use a separate tempdir for the tests to be able to check for leftover files
         tempDir = File.createTempFile("TestTempFile", ".tst");
@@ -53,20 +57,22 @@ public class TestTempFile {
 
     @After
     public void tearDown() throws IOException {
-        String[] files = tempDir.list();
-        assertNotNull(files);
-        // can have the "poifiles" subdir
-        if(files.length == 1) {
-            assertEquals("Had: " + Arrays.toString(files), DefaultTempFileCreationStrategy.POIFILES, files[0]);
-            files = new File(tempDir, files[0]).list();
+        if(tempDir != null) {
+            String[] files = tempDir.list();
             assertNotNull(files);
-            assertEquals("Had: " + Arrays.toString(files), 0, files.length);
-        } else {
-            assertEquals("Had: " + Arrays.toString(files), 0, files.length);
-        }
+            // can have the "poifiles" subdir
+            if (files.length == 1) {
+                assertEquals("Had: " + Arrays.toString(files), DefaultTempFileCreationStrategy.POIFILES, files[0]);
+                files = new File(tempDir, files[0]).list();
+                assertNotNull(files);
+                assertEquals("Had: " + Arrays.toString(files), 0, files.length);
+            } else {
+                assertEquals("Had: " + Arrays.toString(files), 0, files.length);
+            }
 
-        // remove the directory after the tests
-        TestPOIFSDump.deleteDirectory(tempDir);
+            // remove the directory after the tests
+            TestPOIFSDump.deleteDirectory(tempDir);
+        }
 
         if(previousTempDir == null) {
             System.clearProperty(TempFile.JAVA_IO_TMPDIR);
@@ -141,6 +147,7 @@ public class TestTempFile {
         assertTrue(file1.delete());
         
         thrown.expect(IllegalArgumentException.class);
+        //noinspection ConstantConditions
         TempFile.setTempFileCreationStrategy(null);
     }
 }
