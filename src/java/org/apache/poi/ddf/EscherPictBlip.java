@@ -58,6 +58,24 @@ public final class EscherPictBlip extends EscherBlipRecord {
 
     private byte[] raw_pictureData;
 
+    public EscherPictBlip() {}
+
+    public EscherPictBlip(EscherPictBlip other) {
+        super(other);
+        System.arraycopy(other.field_1_UID, 0, field_1_UID, 0, field_1_UID.length);
+        field_2_cb = other.field_2_cb;
+        field_3_rcBounds_x1 = other.field_3_rcBounds_x1;
+        field_3_rcBounds_y1 = other.field_3_rcBounds_y1;
+        field_3_rcBounds_x2 = other.field_3_rcBounds_x2;
+        field_3_rcBounds_y2 = other.field_3_rcBounds_y2;
+        field_4_ptSize_w = other.field_4_ptSize_w;
+        field_4_ptSize_h = other.field_4_ptSize_h;
+        field_5_cbSave = other.field_5_cbSave;
+        field_6_fCompression = other.field_6_fCompression;
+        field_7_fFilter = other.field_7_fFilter;
+        raw_pictureData = (other.raw_pictureData == null) ? null : other.raw_pictureData.clone();
+    }
+
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesAfterHeader = readHeader(data, offset);
@@ -212,7 +230,7 @@ public final class EscherPictBlip extends EscherBlipRecord {
     }
 
     /**
-     * Gets the dimensions of the metafile 
+     * Gets the dimensions of the metafile
      *
      * @return the dimensions of the metafile
      */
@@ -232,7 +250,7 @@ public final class EscherPictBlip extends EscherBlipRecord {
 
     /**
      * Gets the compressed size of the metafile (in bytes)
-     * 
+     *
      * @return the compressed size
      */
     public int getCompressedSize() {
@@ -274,7 +292,7 @@ public final class EscherPictBlip extends EscherBlipRecord {
     public byte getFilter() {
         return field_7_fFilter;
     }
-    
+
     /**
      * Sets the filter byte - this is usually 0xFE
      *
@@ -295,5 +313,10 @@ public final class EscherPictBlip extends EscherBlipRecord {
         m.put("isCompressed", this::isCompressed);
         m.put("filter", this::getFilter);
         return Collections.unmodifiableMap(m);
+    }
+
+    @Override
+    public EscherPictBlip copy() {
+        return new EscherPictBlip(this);
     }
 }

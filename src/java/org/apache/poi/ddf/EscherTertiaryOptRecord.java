@@ -20,9 +20,14 @@ package org.apache.poi.ddf;
  * "The OfficeArtTertiaryFOPT record specifies a table of OfficeArtRGFOPTE properties, as defined in section 2.3.1."
  * -- [MS-ODRAW] -- v20110608; Office Drawing Binary File Format
  */
-public class EscherTertiaryOptRecord extends AbstractEscherOptRecord
-{
+public class EscherTertiaryOptRecord extends AbstractEscherOptRecord {
     public static final short RECORD_ID = EscherRecordTypes.USER_DEFINED.typeID;
+
+    public EscherTertiaryOptRecord() {}
+
+    public EscherTertiaryOptRecord(EscherTertiaryOptRecord other) {
+        super(other);
+    }
 
     @Override
     public String getRecordName() {
@@ -32,5 +37,10 @@ public class EscherTertiaryOptRecord extends AbstractEscherOptRecord
     @Override
     public Enum getGenericRecordType() {
         return EscherRecordTypes.USER_DEFINED;
+    }
+
+    @Override
+    public EscherTertiaryOptRecord copy() {
+        return new EscherTertiaryOptRecord(this);
     }
 }

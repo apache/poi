@@ -78,6 +78,14 @@ public class EscherSpRecord extends EscherRecord {
     private int field_1_shapeId;
     private int field_2_flags;
 
+    public EscherSpRecord() {}
+
+    public EscherSpRecord(EscherSpRecord other) {
+        super(other);
+        field_1_shapeId = other.field_1_shapeId;
+        field_2_flags = other.field_2_flags;
+    }
+
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         /*int bytesRemaining =*/ readHeader( data, offset );
@@ -169,7 +177,7 @@ public class EscherSpRecord extends EscherRecord {
 
     /**
      * Sets a number that identifies this shape.
-     * 
+     *
      * @param field_1_shapeId the shape id
      */
     public void setShapeId( int field_1_shapeId )
@@ -179,7 +187,7 @@ public class EscherSpRecord extends EscherRecord {
 
     /**
      * The flags that apply to this shape.
-     * 
+     *
      * @return the flags
      *
      * @see #FLAG_GROUP
@@ -202,7 +210,7 @@ public class EscherSpRecord extends EscherRecord {
 
     /**
      * The flags that apply to this shape.
-     * 
+     *
      * @param field_2_flags the flags
      *
      * @see #FLAG_GROUP
@@ -226,7 +234,7 @@ public class EscherSpRecord extends EscherRecord {
     /**
      * Returns shape type. Must be one of MSOSPT values (see [MS-ODRAW] for
      * details).
-     * 
+     *
      * @return shape type
      */
     public short getShapeType()
@@ -237,7 +245,7 @@ public class EscherSpRecord extends EscherRecord {
     /**
      * Sets shape type. Must be one of MSOSPT values (see [MS-ODRAW] for
      * details).
-     * 
+     *
      * @param value
      *            new shape type
      */
@@ -259,5 +267,10 @@ public class EscherSpRecord extends EscherRecord {
     @Override
     public Enum getGenericRecordType() {
         return EscherRecordTypes.SP;
+    }
+
+    @Override
+    public EscherSpRecord copy() {
+        return new EscherSpRecord(this);
     }
 }

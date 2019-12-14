@@ -42,6 +42,14 @@ public class EscherPlaceholder extends EscherRecord {
 
     public EscherPlaceholder() {}
 
+    public EscherPlaceholder(EscherPlaceholder other) {
+        super(other);
+        position = other.position;
+        placementId = other.placementId;
+        size = other.size;
+        unused = other.unused;
+    }
+
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
@@ -106,5 +114,10 @@ public class EscherPlaceholder extends EscherRecord {
     @Override
     public Enum getGenericRecordType() {
         return RecordTypes.OEPlaceholderAtom;
+    }
+
+    @Override
+    public EscherPlaceholder copy() {
+        return new EscherPlaceholder(this);
     }
 }

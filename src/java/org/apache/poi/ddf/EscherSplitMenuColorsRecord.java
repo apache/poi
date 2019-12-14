@@ -36,6 +36,16 @@ public class EscherSplitMenuColorsRecord extends EscherRecord {
     private int field_3_color3;
     private int field_4_color4;
 
+    public EscherSplitMenuColorsRecord() {}
+
+    public EscherSplitMenuColorsRecord(EscherSplitMenuColorsRecord other) {
+        super(other);
+        field_1_color1 = other.field_1_color1;
+        field_2_color2 = other.field_2_color2;
+        field_3_color3 = other.field_3_color3;
+        field_4_color4 = other.field_4_color4;
+    }
+
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
@@ -87,7 +97,7 @@ public class EscherSplitMenuColorsRecord extends EscherRecord {
     }
 
     /**
-     * Gets the fill color 
+     * Gets the fill color
      *
      * @return the fill color
      */
@@ -172,5 +182,10 @@ public class EscherSplitMenuColorsRecord extends EscherRecord {
     @Override
     public Enum getGenericRecordType() {
         return EscherRecordTypes.SPLIT_MENU_COLORS;
+    }
+
+    @Override
+    public EscherSplitMenuColorsRecord copy() {
+        return new EscherSplitMenuColorsRecord(this);
     }
 }

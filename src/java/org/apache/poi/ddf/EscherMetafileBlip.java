@@ -65,6 +65,26 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
     private byte[] raw_pictureData;
     private byte[] remainingData;
 
+    public EscherMetafileBlip() {}
+
+    public EscherMetafileBlip(EscherMetafileBlip other) {
+        super(other);
+        System.arraycopy(other.field_1_UID, 0, field_1_UID, 0, field_1_UID.length);
+        System.arraycopy(other.field_2_UID, 0, field_2_UID, 0, field_2_UID.length);
+        field_2_cb = other.field_2_cb;
+        field_3_rcBounds_x1 = other.field_3_rcBounds_x1;
+        field_3_rcBounds_y1 = other.field_3_rcBounds_y1;
+        field_3_rcBounds_x2 = other.field_3_rcBounds_x2;
+        field_3_rcBounds_y2 = other.field_3_rcBounds_y2;
+        field_4_ptSize_h = other.field_4_ptSize_h;
+        field_4_ptSize_w = other.field_4_ptSize_w;
+        field_5_cbSave = other.field_5_cbSave;
+        field_6_fCompression = other.field_6_fCompression;
+        field_7_fFilter = other.field_7_fFilter;
+        raw_pictureData = (other.raw_pictureData == null) ? null : other.raw_pictureData.clone();
+        remainingData = (other.remainingData == null) ? null : other.remainingData.clone();
+    }
+
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesAfterHeader = readHeader( data, offset );
@@ -263,7 +283,7 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
     }
 
     /**
-     * Gets the dimensions of the metafile 
+     * Gets the dimensions of the metafile
      *
      * @return the dimensions of the metafile
      */
@@ -283,7 +303,7 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
 
     /**
      * Gets the compressed size of the metafile (in bytes)
-     * 
+     *
      * @return the compressed size
      */
     public int getCompressedSize() {
@@ -325,7 +345,7 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
     public byte getFilter() {
         return field_7_fFilter;
     }
-    
+
     /**
      * Sets the filter byte - this is usually 0xFE
      *
@@ -335,8 +355,8 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
         field_7_fFilter = filter;
     }
 
-    
-    
+
+
     /**
      * Returns any remaining bytes
      *
@@ -345,7 +365,7 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
     public byte[] getRemainingData() {
         return remainingData;
     }
-    
+
     /**
      * Return the blip signature
      *
@@ -381,7 +401,7 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
         } catch (IOException e) {
         	throw new RuntimeException("Can't compress metafile picture data", e);
         }
-        
+
         setCompressedSize(raw_pictureData.length);
         setCompressed(true);
     }
@@ -397,5 +417,10 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
         m.put("isCompressed", this::isCompressed);
         m.put("filter", this::getFilter);
         return Collections.unmodifiableMap(m);
+    }
+
+    @Override
+    public EscherMetafileBlip copy() {
+        return new EscherMetafileBlip(this);
     }
 }

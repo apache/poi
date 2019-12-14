@@ -33,7 +33,7 @@ import org.apache.poi.util.LittleEndian;
  * An atom record that specifies whether a shape is a placeholder shape.
  * The number, position, and type of placeholder shapes are determined by
  * the slide layout as specified in the SlideAtom record.
- * 
+ *
  * @since POI 3.14-Beta2
  */
 public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
@@ -42,19 +42,29 @@ public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
     private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     private final List<Record> _childRecords = new ArrayList<>();
-    
-    public List<? extends Record> getHSLFChildRecords() { 
+
+    public HSLFEscherClientDataRecord() {}
+
+    public HSLFEscherClientDataRecord(HSLFEscherClientDataRecord other) {
+        super(other);
+        // TODO: for now only reference others children, later copy them when Record.copy is available
+        // other._childRecords.stream().map(Record::copy).forEach(_childRecords::add);
+        other._childRecords.addAll(other._childRecords);
+    }
+
+
+    public List<? extends Record> getHSLFChildRecords() {
         return _childRecords;
     }
-    
+
     public void removeChild(Class<? extends Record> childClass) {
         _childRecords.removeIf(childClass::isInstance);
     }
-    
+
     public void addChild(Record childRecord) {
         _childRecords.add(childRecord);
     }
-    
+
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
@@ -67,12 +77,12 @@ public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
     @Override
     public int serialize(int offset, byte[] data, EscherSerializationListener listener) {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
-        
+
         LittleEndian.putShort(data, offset, getOptions());
         LittleEndian.putShort(data, offset+2, getRecordId());
 
         byte[] childBytes = getRemainingData();
-        
+
         LittleEndian.putInt(data, offset+4, childBytes.length);
         System.arraycopy(childBytes, 0, data, offset+8, childBytes.length);
         int recordSize = 8+childBytes.length;
@@ -84,7 +94,7 @@ public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
     public int getRecordSize() {
         return 8 + getRemainingData().length;
     }
-    
+
     @Override
     public byte[] getRemainingData() {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -111,10 +121,13 @@ public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
             offset += 8 + rlen;
         }
     }
-    
+
     public String getRecordName() {
         return "HSLFClientData";
     }
 
-    
+    @Override
+    public HSLFEscherClientDataRecord copy() {
+        return new HSLFEscherClientDataRecord(this);
+    }
 }

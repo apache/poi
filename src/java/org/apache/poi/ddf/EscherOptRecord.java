@@ -24,10 +24,16 @@ import org.apache.poi.util.Internal;
  * or complex. Simple types are fixed length. Complex properties are variable
  * length.
  */
-public class EscherOptRecord extends AbstractEscherOptRecord
-{
+public class EscherOptRecord extends AbstractEscherOptRecord {
     public static final short RECORD_ID = EscherRecordTypes.OPT.typeID;
     public static final String RECORD_DESCRIPTION = EscherRecordTypes.OPT.description;
+
+    public EscherOptRecord() {}
+
+    public EscherOptRecord(EscherOptRecord other) {
+        super(other);
+    }
+
 
     @Override
     public short getInstance()
@@ -75,5 +81,10 @@ public class EscherOptRecord extends AbstractEscherOptRecord
     @Override
     public Enum getGenericRecordType() {
         return EscherRecordTypes.OPT;
+    }
+
+    @Override
+    public EscherOptRecord copy() {
+        return new EscherOptRecord(this);
     }
 }

@@ -33,6 +33,14 @@ public class EscherBitmapBlip extends EscherBlipRecord {
     private final byte[] field_1_UID = new byte[16];
     private byte field_2_marker = (byte) 0xFF;
 
+    public EscherBitmapBlip() {}
+
+    public EscherBitmapBlip(EscherBitmapBlip other) {
+        super(other);
+        System.arraycopy(other.field_1_UID, 0, field_1_UID, 0, field_1_UID.length);
+        field_2_marker = other.field_2_marker;
+    }
+
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesAfterHeader = readHeader( data, offset );
@@ -121,4 +129,8 @@ public class EscherBitmapBlip extends EscherBlipRecord {
         );
     }
 
+    @Override
+    public EscherBitmapBlip copy() {
+        return new EscherBitmapBlip(this);
+    }
 }

@@ -73,6 +73,14 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
 
     private final List<EscherRecord> _childRecords = new ArrayList<>();
 
+    public EscherContainerRecord() {}
+
+    public EscherContainerRecord(EscherContainerRecord other) {
+        super(other);
+        _remainingLength = other._remainingLength;
+        other._childRecords.stream().map(EscherRecord::copy).forEach(_childRecords::add);
+    }
+
     @Override
     public int fillFields(byte[] data, int pOffset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader(data, pOffset);
@@ -283,5 +291,10 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
     @Override
     public Enum getGenericRecordType() {
         return EscherRecordTypes.forTypeID(getRecordId());
+    }
+
+    @Override
+    public EscherContainerRecord copy() {
+        return new EscherContainerRecord(this);
     }
 }

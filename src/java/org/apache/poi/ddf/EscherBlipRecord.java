@@ -39,6 +39,11 @@ public class EscherBlipRecord extends EscherRecord {
     public EscherBlipRecord() {
     }
 
+    public EscherBlipRecord(EscherBlipRecord other) {
+        super(other);
+        field_pictureData = (other.field_pictureData == null) ? null : other.field_pictureData.clone();
+    }
+
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesAfterHeader = readHeader( data, offset );
@@ -119,5 +124,11 @@ public class EscherBlipRecord extends EscherRecord {
     public Enum getGenericRecordType() {
         EscherRecordTypes t = EscherRecordTypes.forTypeID(getRecordId());
         return (t != EscherRecordTypes.UNKNOWN) ? t : EscherRecordTypes.BLIP_START;
+    }
+
+
+    @Override
+    public EscherBlipRecord copy() {
+        return new EscherBlipRecord(this);
     }
 }

@@ -51,6 +51,11 @@ public abstract class EscherRecord implements Cloneable, GenericRecord {
         // fields uninitialised
     }
 
+    protected EscherRecord(EscherRecord other) {
+        _options = other._options;
+        _recordId = other._recordId;
+    }
+
     /**
      * Delegates to fillFields(byte[], int, EscherRecordFactory)
      *
@@ -233,12 +238,11 @@ public abstract class EscherRecord implements Cloneable, GenericRecord {
      * Escher records may need to be clonable in the future.
      *
      * @return the cloned object
-     *
-     * @throws CloneNotSupportedException if the subclass hasn't implemented {@link Cloneable}
      */
     @Override
-    public EscherRecord clone() throws CloneNotSupportedException {
-        return (EscherRecord)super.clone();
+    @SuppressWarnings("squid:S2975")
+    public final EscherRecord clone() {
+        return copy();
     }
 
     /**
@@ -345,4 +349,6 @@ public abstract class EscherRecord implements Cloneable, GenericRecord {
             "recordSize", this::getRecordSize
         );
     }
+
+    public abstract EscherRecord copy();
 }

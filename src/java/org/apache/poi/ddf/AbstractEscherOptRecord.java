@@ -30,13 +30,20 @@ import org.apache.poi.util.Removal;
  * Common abstract class for {@link EscherOptRecord} and
  * {@link EscherTertiaryOptRecord}
  */
-public abstract class AbstractEscherOptRecord extends EscherRecord
-{
+public abstract class AbstractEscherOptRecord extends EscherRecord {
     private final List<EscherProperty> properties = new ArrayList<>();
+
+    protected AbstractEscherOptRecord() {}
+
+    protected AbstractEscherOptRecord(AbstractEscherOptRecord other) {
+        super(other);
+        properties.addAll(other.properties);
+    }
+
 
     /**
      * Add a property to this record.
-     * 
+     *
      * @param prop the escher property to add
      */
     public void addEscherProperty( EscherProperty prop )
@@ -60,7 +67,7 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
 
     /**
      * The list of properties stored by this record.
-     * 
+     *
      * @return the list of properties
      */
     public List<EscherProperty> getEscherProperties()
@@ -70,7 +77,7 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
 
     /**
      * The list of properties stored by this record.
-     * 
+     *
      * @param index the ordinal index of the property
      * @return the escher property
      */
@@ -79,7 +86,7 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
         return properties.get( index );
     }
 
-    
+
     private int getPropertiesSize()
     {
         int totalSize = 0;
@@ -164,4 +171,7 @@ public abstract class AbstractEscherOptRecord extends EscherRecord
             "properties", this::getEscherProperties
         );
     }
+
+    @Override
+    public abstract AbstractEscherOptRecord copy();
 }

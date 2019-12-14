@@ -43,8 +43,11 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
     /** The data for this record not including the the 8 byte header */
     private byte[] thedata = NO_BYTES;
 
-    public EscherTextboxRecord()
-    {
+    public EscherTextboxRecord() {}
+
+    public EscherTextboxRecord(EscherTextboxRecord other) {
+        super(other);
+        thedata = (other.thedata == null) ? NO_BYTES : other.thedata.clone();
     }
 
     @Override
@@ -83,7 +86,7 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
      * does not seem to put anything here, but with PowerPoint this will
      * contain the bytes that make up a TextHeaderAtom followed by a
      * TextBytesAtom/TextCharsAtom
-     * 
+     *
      * @return the extra data
      */
     public byte[] getData()
@@ -95,7 +98,7 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
      * Sets the extra data (in the parent application's format) to be
      * contained by the record. Used when the parent application changes
      * the contents.
-     * 
+     *
      * @param b the buffer which contains the data
      * @param start the start position in the buffer
      * @param length the length of the block
@@ -105,12 +108,12 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
         thedata = IOUtils.safelyAllocate(length, MAX_RECORD_LENGTH);
         System.arraycopy(b,start,thedata,0,length);
     }
-    
+
     /**
      * Sets the extra data (in the parent application's format) to be
      * contained by the record. Used when the parent application changes
      * the contents.
-     * 
+     *
      * @param b the data
      */
     public void setData(byte[] b) {
@@ -121,15 +124,6 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
     public int getRecordSize()
     {
         return 8 + thedata.length;
-    }
-
-    @Override
-    public EscherTextboxRecord clone() {
-        EscherTextboxRecord etr = new EscherTextboxRecord();
-        etr.setOptions(this.getOptions());
-        etr.setRecordId(this.getRecordId());
-        etr.thedata = this.thedata.clone();
-        return etr;
     }
 
     @Override
@@ -149,5 +143,10 @@ public final class EscherTextboxRecord extends EscherRecord implements Cloneable
             "isContainer", this::isContainerRecord,
             "extraData", this::getData
         );
+    }
+
+    @Override
+    public EscherTextboxRecord copy() {
+        return new EscherTextboxRecord(this);
     }
 }

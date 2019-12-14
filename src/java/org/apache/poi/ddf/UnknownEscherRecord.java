@@ -40,17 +40,20 @@ public final class UnknownEscherRecord extends EscherRecord implements Cloneable
 
     /** The data for this record not including the the 8 byte header */
     private byte[] thedata = NO_BYTES;
-    private List<EscherRecord> _childRecords;
+    private final List<EscherRecord> _childRecords = new ArrayList<>();
 
-    public UnknownEscherRecord() {
-        _childRecords = new ArrayList<>();
+    public UnknownEscherRecord() {}
+
+    public UnknownEscherRecord(UnknownEscherRecord other) {
+        super(other);
+        other._childRecords.stream().map(EscherRecord::copy).forEach(_childRecords::add);
     }
 
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
 		/*
-		 * Have a check between available bytes and bytesRemaining, 
+		 * Have a check between available bytes and bytesRemaining,
 		 * take the available length if the bytesRemaining out of range.
 		 */
 		int available = data.length - (offset + 8);
@@ -77,7 +80,7 @@ public final class UnknownEscherRecord extends EscherRecord implements Cloneable
         if (bytesRemaining < 0) {
             bytesRemaining = 0;
         }
-        
+
         thedata = IOUtils.safelyAllocate(bytesRemaining, MAX_RECORD_LENGTH);
         System.arraycopy( data, offset + 8, thedata, 0, bytesRemaining );
         return bytesRemaining + 8;
@@ -123,16 +126,11 @@ public final class UnknownEscherRecord extends EscherRecord implements Cloneable
 
     @Override
     public void setChildRecords(List<EscherRecord> childRecords) {
-        _childRecords = childRecords;
-    }
-
-    @Override
-    public UnknownEscherRecord clone() {
-        UnknownEscherRecord uer = new UnknownEscherRecord();
-        uer.thedata = this.thedata.clone();
-        uer.setOptions(this.getOptions());
-        uer.setRecordId(this.getRecordId());
-        return uer;
+        if (childRecords == _childRecords) {
+            return;
+        }
+        _childRecords.clear();
+        _childRecords.addAll(childRecords);
     }
 
     @Override
@@ -155,5 +153,10 @@ public final class UnknownEscherRecord extends EscherRecord implements Cloneable
     @Override
     public Enum getGenericRecordType() {
         return EscherRecordTypes.UNKNOWN;
+    }
+
+    @Override
+    public UnknownEscherRecord copy() {
+        return new UnknownEscherRecord(this);
     }
 }

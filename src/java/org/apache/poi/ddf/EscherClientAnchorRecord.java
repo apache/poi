@@ -59,6 +59,23 @@ public class EscherClientAnchorRecord extends EscherRecord {
     private byte[] remainingData = new byte[0];
     private boolean shortRecord;
 
+    public EscherClientAnchorRecord() {}
+
+    public EscherClientAnchorRecord(EscherClientAnchorRecord other) {
+        super(other);
+        field_1_flag = other.field_1_flag;
+        field_2_col1 = other.field_2_col1;
+        field_3_dx1 = other.field_3_dx1;
+        field_4_row1 = other.field_4_row1;
+        field_5_dy1 = other.field_5_dy1;
+        field_6_col2 = other.field_6_col2;
+        field_7_dx2 = other.field_7_dx2;
+        field_8_row2 = other.field_8_row2;
+        field_9_dy2 = other.field_9_dy2;
+        remainingData = (other.remainingData == null) ? null : other.remainingData.clone();
+        shortRecord = other.shortRecord;
+    }
+
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
@@ -367,5 +384,10 @@ public class EscherClientAnchorRecord extends EscherRecord {
     @Override
     public Enum getGenericRecordType() {
         return EscherRecordTypes.CLIENT_ANCHOR;
+    }
+
+    @Override
+    public EscherClientAnchorRecord copy() {
+        return new EscherClientAnchorRecord(this);
     }
 }

@@ -29,15 +29,20 @@ import org.apache.poi.util.LittleEndian;
  * The EscherClientDataRecord is used to store client specific data about the position of a
  * shape within a container.
  */
-public class EscherClientDataRecord
-    extends EscherRecord
-{
+public class EscherClientDataRecord extends EscherRecord {
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
     public static final short RECORD_ID = EscherRecordTypes.CLIENT_DATA.typeID;
 
     private byte[] remainingData;
+
+    public EscherClientDataRecord() {}
+
+    public EscherClientDataRecord(EscherClientDataRecord other) {
+        super(other);
+        remainingData = (other.remainingData == null) ? null : other.remainingData.clone();
+    }
 
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
@@ -83,7 +88,7 @@ public class EscherClientDataRecord
 
     /**
      * Any data recording this record.
-     * 
+     *
      * @return the remaining bytes
      */
     public byte[] getRemainingData()
@@ -93,7 +98,7 @@ public class EscherClientDataRecord
 
     /**
      * Any data recording this record.
-     * 
+     *
      * @param remainingData the remaining bytes
      */
     public void setRemainingData( byte[] remainingData ) {
@@ -113,5 +118,10 @@ public class EscherClientDataRecord
     @Override
     public Enum getGenericRecordType() {
         return EscherRecordTypes.CLIENT_DATA;
+    }
+
+    @Override
+    public EscherClientDataRecord copy() {
+        return new EscherClientDataRecord(this);
     }
 }

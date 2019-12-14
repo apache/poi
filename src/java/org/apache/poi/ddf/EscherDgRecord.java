@@ -34,6 +34,15 @@ public class EscherDgRecord extends EscherRecord {
     private int field_1_numShapes;
     private int field_2_lastMSOSPID;
 
+    public EscherDgRecord() {}
+
+    public EscherDgRecord(EscherDgRecord other) {
+        super(other);
+        field_1_numShapes = other.field_1_numShapes;
+        field_2_lastMSOSPID = other.field_2_lastMSOSPID;
+    }
+
+
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         /*int bytesRemaining =*/ readHeader( data, offset );
@@ -87,7 +96,7 @@ public class EscherDgRecord extends EscherRecord {
 
     /**
      * The number of shapes in this drawing group.
-     * 
+     *
      * @return the number of shapes
      */
     public int getNumShapes()
@@ -97,7 +106,7 @@ public class EscherDgRecord extends EscherRecord {
 
     /**
      * The number of shapes in this drawing group.
-     * 
+     *
      * @param field_1_numShapes the number of shapes
      */
     public void setNumShapes( int field_1_numShapes )
@@ -107,7 +116,7 @@ public class EscherDgRecord extends EscherRecord {
 
     /**
      * The last shape id used in this drawing group.
-     * 
+     *
      * @return the last shape id
      */
     public int getLastMSOSPID()
@@ -117,7 +126,7 @@ public class EscherDgRecord extends EscherRecord {
 
     /**
      * The last shape id used in this drawing group.
-     * 
+     *
      * @param field_2_lastMSOSPID the last shape id
      */
     public void setLastMSOSPID( int field_2_lastMSOSPID )
@@ -157,5 +166,10 @@ public class EscherDgRecord extends EscherRecord {
     @Override
     public Enum getGenericRecordType() {
         return EscherRecordTypes.DG;
+    }
+
+    @Override
+    public EscherDgRecord copy() {
+        return new EscherDgRecord(this);
     }
 }

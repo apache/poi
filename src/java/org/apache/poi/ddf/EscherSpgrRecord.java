@@ -36,6 +36,16 @@ public class EscherSpgrRecord extends EscherRecord {
     private int field_3_rectX2;
     private int field_4_rectY2;
 
+    public EscherSpgrRecord() {}
+
+    public EscherSpgrRecord(EscherSpgrRecord other) {
+        super(other);
+        field_1_rectX1 = other.field_1_rectX1;
+        field_2_rectY1 = other.field_2_rectY1;
+        field_3_rectX2 = other.field_3_rectX2;
+        field_4_rectY2 = other.field_4_rectY2;
+    }
+
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
@@ -90,7 +100,7 @@ public class EscherSpgrRecord extends EscherRecord {
 
     /**
      * The starting top-left coordinate of child records.
-     * 
+     *
      * @return the top-left x coordinate
      */
     public int getRectX1()
@@ -100,7 +110,7 @@ public class EscherSpgrRecord extends EscherRecord {
 
     /**
      * The top-left coordinate of child records.
-     * 
+     *
      * @param x1 the top-left x coordinate
      */
     public void setRectX1( int x1 )
@@ -110,7 +120,7 @@ public class EscherSpgrRecord extends EscherRecord {
 
     /**
      * The top-left coordinate of child records.
-     * 
+     *
      * @return the top-left y coordinate
      */
     public int getRectY1()
@@ -120,7 +130,7 @@ public class EscherSpgrRecord extends EscherRecord {
 
     /**
      * The top-left y coordinate of child records.
-     * 
+     *
      * @param y1 the top-left y coordinate
      */
     public void setRectY1( int y1 )
@@ -130,7 +140,7 @@ public class EscherSpgrRecord extends EscherRecord {
 
     /**
      * The bottom-right x coordinate of child records.
-     * 
+     *
      * @return the bottom-right x coordinate
      */
     public int getRectX2()
@@ -140,7 +150,7 @@ public class EscherSpgrRecord extends EscherRecord {
 
     /**
      * The bottom-right x coordinate of child records.
-     * 
+     *
      * @param x2 the bottom-right x coordinate
      */
     public void setRectX2( int x2 )
@@ -150,7 +160,7 @@ public class EscherSpgrRecord extends EscherRecord {
 
     /**
      * The bottom-right y coordinate of child records.
-     * 
+     *
      * @return the bottom-right y coordinate
      */
     public int getRectY2()
@@ -160,7 +170,7 @@ public class EscherSpgrRecord extends EscherRecord {
 
     /**
      * The bottom-right y coordinate of child records.
-     * 
+     *
      * @param rectY2 the bottom-right y coordinate
      */
     public void setRectY2(int rectY2) {
@@ -181,5 +191,10 @@ public class EscherSpgrRecord extends EscherRecord {
     @Override
     public Enum getGenericRecordType() {
         return EscherRecordTypes.SPGR;
+    }
+
+    @Override
+    public EscherSpgrRecord copy() {
+        return new EscherSpgrRecord(this);
     }
 }
