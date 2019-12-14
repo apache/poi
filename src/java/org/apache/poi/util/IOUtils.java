@@ -42,8 +42,13 @@ public final class IOUtils {
      * The default buffer size to use for the skip() methods.
      */
     private static final int SKIP_BUFFER_SIZE = 2048;
-    private static int BYTE_ARRAY_MAX_OVERRIDE = -1;
     private static byte[] SKIP_BYTE_BUFFER;
+
+    /**
+     * The current set global allocation limit override,
+     * -1 means limits are applied per record type.
+     */
+    private static int BYTE_ARRAY_MAX_OVERRIDE = -1;
 
     private IOUtils() {
         // no instances of this class
@@ -51,11 +56,18 @@ public final class IOUtils {
 
     /**
      * If this value is set to > 0, {@link #safelyAllocate(long, int)} will ignore the
-     * maximum record length parameter.  This is designed to allow users to bypass
-     * the hard-coded maximum record lengths if they are willing to accept the risk
-     * of an OutOfMemoryException.
+     * maximum record length parameter.
      *
-     * @param maxOverride The number of bytes that should be possible to be allocated in one step.
+     * This is designed to allow users to bypass the hard-coded maximum record lengths
+     * if they are willing to accept the risk of allocating memory up to the size specified.
+     *
+     * It also allows to impose a lower limit than used for very memory constrained systems.
+     *
+     * Note: This is an per-allocation limit and does not allow to limit overall sum of allocations!
+     *
+     * Use -1 for using the limits specified per record-type.
+     *
+     * @param maxOverride The maximum number of bytes that should be possible to be allocated in one step.
      * @since 4.0.0
      */
     @SuppressWarnings("unused")
@@ -66,12 +78,18 @@ public final class IOUtils {
     /**
      * Peeks at the first 8 bytes of the stream. Returns those bytes, but
      *  with the stream unaffected. Requires a stream that supports mark/reset,
-     *  or a PushbackInputStream. If the stream has &gt;0 but &lt;8 bytes, 
+     *  or a PushbackInputStream. If the stream has &gt;0 but &lt;8 bytes,
      *  remaining bytes will be zero.
      * @throws EmptyFileException if the stream is empty
      */
     public static byte[] peekFirst8Bytes(InputStream stream) throws IOException, EmptyFileException {
         return peekFirstNBytes(stream, 8);
+    }
+
+    private static void checkByteSizeLimit(int length) {
+        if(BYTE_ARRAY_MAX_OVERRIDE != -1 && length > BYTE_ARRAY_MAX_OVERRIDE) {
+            throwRFE(length, BYTE_ARRAY_MAX_OVERRIDE);
+        }
     }
 
     /**
@@ -82,6 +100,8 @@ public final class IOUtils {
      * @throws EmptyFileException if the stream is empty
      */
     public static byte[] peekFirstNBytes(InputStream stream, int limit) throws IOException, EmptyFileException {
+        checkByteSizeLimit(limit);
+
         stream.mark(limit);
         ByteArrayOutputStream bos = new ByteArrayOutputStream(limit);
         copy(new BoundedInputStream(stream, limit), bos);
@@ -149,7 +169,9 @@ public final class IOUtils {
         if (length > (long)Integer.MAX_VALUE) {
             throw new RecordFormatException("Can't allocate an array > "+Integer.MAX_VALUE);
         }
-        checkLength(length, maxLength);
+        if ((length != Integer.MAX_VALUE) || (maxLength != Integer.MAX_VALUE)) {
+            checkLength(length, maxLength);
+        }
 
         final int len = Math.min((int)length, maxLength);
         ByteArrayOutputStream baos = new ByteArrayOutputStream(len == Integer.MAX_VALUE ? 4096 : len);
@@ -162,6 +184,8 @@ public final class IOUtils {
             if (readBytes > 0) {
                 baos.write(buffer, 0, readBytes);
             }
+
+            checkByteSizeLimit(readBytes);
         } while (totalBytes < len && readBytes > -1);
 
         if (maxLength != Integer.MAX_VALUE && totalBytes == maxLength) {
@@ -197,6 +221,7 @@ public final class IOUtils {
             return buffer.array();
         }
 
+        checkByteSizeLimit(length);
         byte[] data = new byte[length];
         buffer.get(data);
         return data;
@@ -212,12 +237,12 @@ public final class IOUtils {
     /**
      * <p>Same as the normal {@link InputStream#read(byte[], int, int)}, but tries to ensure
      * that the entire len number of bytes is read.</p>
-     * 
+     *
      * <p>If the end of file is reached before any bytes are read, returns <tt>-1</tt>. If
      * the end of the file is reached after some bytes are read, returns the
      * number of bytes read. If the end of the file isn't reached before <tt>len</tt>
      * bytes have been read, will return <tt>len</tt> bytes.</p>
-     * 
+     *
      * @param in the stream from which the data is read.
      * @param b the buffer into which the data is read.
      * @param off the start offset in array <tt>b</tt> at which the data is written.
@@ -483,12 +508,11 @@ public final class IOUtils {
         }
         return sum.getValue();
     }
-    
-    
+
     /**
      * Quietly (no exceptions) close Closable resource. In case of error it will
      * be printed to {@link IOUtils} class logger.
-     * 
+     *
      * @param closeable
      *            resource to close
      */
@@ -570,6 +594,9 @@ public final class IOUtils {
 
     public static byte[] safelyAllocate(long length, int maxLength) {
         safelyAllocateCheck(length, maxLength);
+
+        checkByteSizeLimit((int)length);
+
         return new byte[(int)length];
     }
 

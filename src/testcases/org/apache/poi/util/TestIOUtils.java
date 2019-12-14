@@ -19,7 +19,9 @@ package org.apache.poi.util;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -200,6 +202,62 @@ public final class TestIOUtils {
     public void testWonkyInputStream() throws IOException {
         long skipped = IOUtils.skipFully(new WonkyInputStream(), 10000);
         assertEquals("length: "+LENGTH, 10000, skipped);
+    }
+
+    @Test
+    public void testSetMaxOverride() throws IOException {
+        ByteArrayInputStream stream = new ByteArrayInputStream("abc".getBytes(StandardCharsets.UTF_8));
+        byte[] bytes = IOUtils.toByteArray(stream);
+        assertNotNull(bytes);
+        assertEquals("abc", new String(bytes, StandardCharsets.UTF_8));
+    }
+
+    @Test
+    public void testSetMaxOverrideLimit() throws IOException {
+        IOUtils.setByteArrayMaxOverride(30 * 1024 * 1024);
+        try {
+            ByteArrayInputStream stream = new ByteArrayInputStream("abc".getBytes(StandardCharsets.UTF_8));
+            byte[] bytes = IOUtils.toByteArray(stream);
+            assertNotNull(bytes);
+            assertEquals("abc", new String(bytes, StandardCharsets.UTF_8));
+        } finally {
+            IOUtils.setByteArrayMaxOverride(-1);
+        }
+    }
+
+    @Test
+    public void testSetMaxOverrideOverLimit() throws IOException {
+        IOUtils.setByteArrayMaxOverride(2);
+        try {
+            ByteArrayInputStream stream = new ByteArrayInputStream("abc".getBytes(StandardCharsets.UTF_8));
+            try {
+                IOUtils.toByteArray(stream);
+                fail("Should have caught an Exception here");
+            } catch (RecordFormatException e) {
+                // expected
+            }
+        } finally {
+            IOUtils.setByteArrayMaxOverride(-1);
+        }
+    }
+
+    @Test
+    public void testSafelyAllocate() {
+        byte[] bytes = IOUtils.safelyAllocate(30, 200);
+        assertNotNull(bytes);
+        assertEquals(30, bytes.length);
+    }
+
+    @Test
+    public void testSafelyAllocateLimit() {
+        IOUtils.setByteArrayMaxOverride(40);
+        try {
+            byte[] bytes = IOUtils.safelyAllocate(30, 200);
+            assertNotNull(bytes);
+            assertEquals(30, bytes.length);
+        } finally {
+            IOUtils.setByteArrayMaxOverride(-1);
+        }
     }
 
     /**
