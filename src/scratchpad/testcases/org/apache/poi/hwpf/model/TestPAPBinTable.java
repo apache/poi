@@ -74,7 +74,7 @@ public final class TestPAPBinTable {
             PAPX oldNode = oldTextRuns.get( x );
             PAPX newNode = newTextRuns.get( x );
 
-            assertTrue( oldNode.equals( newNode ) );
+            assertEquals(oldNode, newNode);
         }
 
         _hWPFDocFixture.tearDown();

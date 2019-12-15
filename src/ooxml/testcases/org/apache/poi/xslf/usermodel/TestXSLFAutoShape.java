@@ -265,13 +265,13 @@ public class TestXSLFAutoShape {
         assertFalse(rPr.isSetB());
         r.setBold(true);
         assertTrue(r.isBold());
-        assertEquals(true, rPr.getB());
+        assertTrue(rPr.getB());
 
         assertFalse(r.isItalic());
         assertFalse(rPr.isSetI());
         r.setItalic(true);
         assertTrue(r.isItalic());
-        assertEquals(true, rPr.getI());
+        assertTrue(rPr.getI());
 
         assertFalse(r.isUnderlined());
         assertFalse(rPr.isSetU());

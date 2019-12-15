@@ -31,11 +31,11 @@ public class CombinedIteratorTest {
         Iterator<String> iter = iterable.iterator();
 
         for (String element : expected) {
-            Assert.assertEquals(true, iter.hasNext());
+            Assert.assertTrue(iter.hasNext());
             Assert.assertEquals(element, iter.next());
         }
 
-        Assert.assertEquals(false, iter.hasNext());
+        Assert.assertFalse(iter.hasNext());
     }
 
     @Test

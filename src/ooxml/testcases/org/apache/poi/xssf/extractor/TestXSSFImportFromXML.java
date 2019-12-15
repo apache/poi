@@ -75,14 +75,14 @@ public class TestXSSFImportFromXML {
             XSSFSheet sheet = wb.getSheetAt(0);
 
             XSSFRow row = sheet.getRow(0);
-            assertTrue(row.getCell(0).getStringCellValue().equals(name));
-            assertTrue(row.getCell(1).getStringCellValue().equals(teacher));
-            assertTrue(row.getCell(2).getStringCellValue().equals(tutor));
-            assertTrue(row.getCell(3).getStringCellValue().equals(cdl));
-            assertTrue(row.getCell(4).getStringCellValue().equals(duration));
-            assertTrue(row.getCell(5).getStringCellValue().equals(topic));
-            assertTrue(row.getCell(6).getStringCellValue().equals(project));
-            assertTrue(row.getCell(7).getStringCellValue().equals(credits));
+            assertEquals(row.getCell(0).getStringCellValue(), name);
+            assertEquals(row.getCell(1).getStringCellValue(), teacher);
+            assertEquals(row.getCell(2).getStringCellValue(), tutor);
+            assertEquals(row.getCell(3).getStringCellValue(), cdl);
+            assertEquals(row.getCell(4).getStringCellValue(), duration);
+            assertEquals(row.getCell(5).getStringCellValue(), topic);
+            assertEquals(row.getCell(6).getStringCellValue(), project);
+            assertEquals(row.getCell(7).getStringCellValue(), credits);
         }
     }
 

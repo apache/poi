@@ -45,8 +45,8 @@ public final class TestLineFormatRecord extends TestCase {
         assertEquals( 0, record.getLinePattern());
         assertEquals( 0, record.getWeight());
         assertEquals( 1, record.getFormat());
-        assertEquals( true, record.isAuto() );
-        assertEquals( false, record.isDrawTicks() );
+        assertTrue(record.isAuto());
+        assertFalse(record.isDrawTicks());
         assertEquals( 0x4d, record.getColourPaletteIndex());
 
         assertEquals( 16, record.getRecordSize() );

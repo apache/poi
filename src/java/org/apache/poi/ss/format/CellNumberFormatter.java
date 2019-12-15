@@ -232,7 +232,7 @@ public class CellNumberFormatter extends CellFormatter {
         integerSpecials.addAll(specials.subList(0, integerEnd()));
 
         if (exponent == null) {
-            StringBuffer fmtBuf = new StringBuffer("%");
+            StringBuilder fmtBuf = new StringBuilder("%");
 
             int integerPartWidth = calculateIntegerPartWidth();
             int totalWidth = integerPartWidth + fractionPartWidth;
@@ -789,12 +789,11 @@ public class CellNumberFormatter extends CellFormatter {
             digit++;
             --pos;
         }
-        StringBuffer extraLeadingDigits = new StringBuffer();
         if (pos >= 0) {
             // We ran out of places to put digits before we ran out of digits; put this aside so we can add it later
             // pos was decremented at the end of the loop above when the iterator was at its end
             ++pos;
-            extraLeadingDigits = new StringBuffer(result.substring(0, pos));
+            StringBuffer extraLeadingDigits = new StringBuffer(result.substring(0, pos));
             if (showGroupingSeparator) {
                 while (pos > 0) {
                     if (digit > 0 && digit % 3 == 0) {

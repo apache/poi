@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel.charts;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
@@ -139,7 +140,7 @@ public class TestXSSFChartTitle {
         XSSFRichTextString originalTitle = chart.getTitleText();
         assertNotNull(originalTitle);
         final String myTitle = "My chart title";
-        assertFalse(myTitle.equals(originalTitle.toString()));
+        assertNotEquals(myTitle, originalTitle.toString());
         chart.setTitleText(myTitle);
         XSSFRichTextString queryTitle = chart.getTitleText();
         assertNotNull(queryTitle);

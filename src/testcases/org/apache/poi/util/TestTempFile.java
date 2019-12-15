@@ -17,7 +17,7 @@
 package org.apache.poi.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -140,7 +140,7 @@ public class TestTempFile {
         // Should be able to create two tempfiles with same prefix and suffix
         File file1 = TempFile.createTempFile("TestTempFile", ".tst");
         File file2 = TempFile.createTempFile("TestTempFile", ".tst");
-        assertFalse(file1.equals(file2));
+        assertNotEquals(file1, file2);
         assertNotNull(file2);
         assertTrue(file2.delete());
         assertNotNull(file1);

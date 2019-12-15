@@ -48,8 +48,8 @@ public final class TestAreaFormatRecord extends TestCase {
         assertEquals( 0x000000, record.getBackgroundColor());
         assertEquals( 1, record.getPattern());
         assertEquals( 1, record.getFormatFlags());
-        assertEquals( true, record.isAutomatic() );
-        assertEquals( false, record.isInvert() );
+        assertTrue(record.isAutomatic());
+        assertFalse(record.isInvert());
         assertEquals( 0x4e, record.getForecolorIndex());
         assertEquals( 0x4d, record.getBackcolorIndex());
 

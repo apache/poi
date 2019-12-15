@@ -45,17 +45,17 @@ public final class TestCFHeaderRecord extends TestCase {
 		assertEquals(65535, enclosingCellRange.getLastRow());
 		assertEquals(0, enclosingCellRange.getFirstColumn());
 		assertEquals(6, enclosingCellRange.getLastColumn());
-		
-		assertEquals(false, record.getNeedRecalculation());
+
+        assertFalse(record.getNeedRecalculation());
 		assertEquals(0, record.getID());
 		
 		record.setNeedRecalculation(true);
-        assertEquals(true, record.getNeedRecalculation());
+        assertTrue(record.getNeedRecalculation());
         assertEquals(0, record.getID());
         
         record.setID(7);
 		record.setNeedRecalculation(false);
-        assertEquals(false, record.getNeedRecalculation());
+        assertFalse(record.getNeedRecalculation());
         assertEquals(7, record.getID());
 	}
 	
@@ -78,16 +78,16 @@ public final class TestCFHeaderRecord extends TestCase {
         assertEquals(0, enclosingCellRange.getFirstColumn());
         assertEquals(6, enclosingCellRange.getLastColumn());
 
-        assertEquals(false, record.getNeedRecalculation());
+        assertFalse(record.getNeedRecalculation());
         assertEquals(0, record.getID());
         
         record.setNeedRecalculation(true);
-        assertEquals(true, record.getNeedRecalculation());
+        assertTrue(record.getNeedRecalculation());
         assertEquals(0, record.getID());
         
         record.setID(7);
         record.setNeedRecalculation(false);
-        assertEquals(false, record.getNeedRecalculation());
+        assertFalse(record.getNeedRecalculation());
         assertEquals(7, record.getID());
     }
     

@@ -19,8 +19,10 @@ package org.apache.poi.hssf.usermodel;
 import static org.apache.poi.poifs.storage.RawDataUtil.decompress;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
@@ -332,7 +334,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
         assertEquals(comment.getRow(), 4);
 
         comment.setVisible(false);
-        assertEquals(comment.isVisible(), false);
+        assertFalse(comment.isVisible());
 
         HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
         sh = wbBack.getSheetAt(0);
@@ -344,7 +346,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
         assertEquals("poi", comment.getAuthor());
         assertEquals(comment.getColumn(), 3);
         assertEquals(comment.getRow(), 4);
-        assertEquals(comment.isVisible(), false);
+        assertFalse(comment.isVisible());
 
         comment.setString(new HSSFRichTextString("comment12"));
         comment.setAuthor("poi2");
@@ -361,7 +363,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
         assertEquals("poi2", comment.getAuthor());
         assertEquals(comment.getColumn(), 32);
         assertEquals(comment.getRow(), 42);
-        assertEquals(comment.isVisible(), true);
+        assertTrue(comment.isVisible());
         
         wb.close();
         wbBack.close();

@@ -18,6 +18,7 @@ package org.apache.poi.ss.formula.eval;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -66,7 +67,7 @@ public abstract class BaseTestCircularReferences {
      * Makes sure that the specified evaluated cell value represents a circular reference error.
      */
     private static void confirmCycleErrorCode(CellValue cellValue) {
-        assertTrue(cellValue.getCellType() == CellType.ERROR);
+        assertSame(cellValue.getCellType(), CellType.ERROR);
         assertEquals(ErrorEval.CIRCULAR_REF_ERROR.getErrorCode(), cellValue.getErrorValue());
     }
 
@@ -96,7 +97,7 @@ public abstract class BaseTestCircularReferences {
 
         CellValue cellValue = evaluateWithCycles(wb, testCell);
 
-        assertTrue(cellValue.getCellType() == CellType.NUMERIC);
+        assertSame(cellValue.getCellType(), CellType.NUMERIC);
         assertEquals(2, cellValue.getNumberValue(), 0);
         wb.close();
     }

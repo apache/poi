@@ -107,7 +107,7 @@ public final class TestHSSFPalette {
         assertEquals(FillPatternType.NO_FILL, cellA.getCellStyle().getFillPattern());
         assertEquals(FillPatternType.NO_FILL, cellA.getCellStyle().getFillPatternEnum());
         assertEquals("0:0:0", p.getColor((short)64).getHexString());
-        assertEquals(null, p.getColor((short)32767));
+        assertNull(p.getColor((short) 32767));
 
         // Red
         assertEquals("I'm red", cellB.getStringCellValue());

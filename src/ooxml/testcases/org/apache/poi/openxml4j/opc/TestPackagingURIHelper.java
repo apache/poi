@@ -85,9 +85,8 @@ public class TestPackagingURIHelper extends TestCase {
         // Relative part name
         PackagePartName relativeName = PackagingURIHelper.createPartName(
                 "media/image1.gif", partBase);
-        assertTrue("The part name must be equal to "
-                + partNameToValid.getName(), partNameToValid
-                .equals(relativeName));
+        assertEquals("The part name must be equal to "
+                + partNameToValid.getName(), partNameToValid, relativeName);
         pkg.revert();
     }
 
@@ -106,9 +105,8 @@ public class TestPackagingURIHelper extends TestCase {
         // Relative part name
         PackagePartName relativeName = PackagingURIHelper.createPartName(
                 new URI("media/image1.gif"), partBase);
-        assertTrue("The part name must be equal to "
-                + partNameToValid.getName(), partNameToValid
-                .equals(relativeName));
+        assertEquals("The part name must be equal to "
+                + partNameToValid.getName(), partNameToValid, relativeName);
         pkg.revert();
     }
 

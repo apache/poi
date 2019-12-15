@@ -140,7 +140,7 @@ public final class TestWorkbook {
         int countryPos = iwb.findFirstRecordLocBySid(CountryRecord.sid);
         assertTrue(countryPos != -1);
         // RecalcIdRecord is not present in new workbooks
-        assertEquals(null, iwb.findFirstRecordBySid(RecalcIdRecord.sid));
+        assertNull(iwb.findFirstRecordBySid(RecalcIdRecord.sid));
         RecalcIdRecord record = iwb.getRecalcId();
         assertNotNull(record);
         assertSame(record, iwb.getRecalcId());

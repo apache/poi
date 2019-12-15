@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.File;
@@ -265,7 +266,7 @@ public final class TestFormulaEvaluatorBugs {
         } catch (NumberFormatException e) {
             fail("Identified bug 44508");
         }
-        assertEquals(true, cell.getBooleanCellValue());
+        assertTrue(cell.getBooleanCellValue());
         
         wb.close();
     }

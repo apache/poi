@@ -38,12 +38,12 @@ public final class TestSeriesLabelsRecord extends TestCase {
     public void testLoad() {
         SeriesLabelsRecord record = new SeriesLabelsRecord(TestcaseRecordInputStream.create(0x100c, data));
         assertEquals( 3, record.getFormatFlags());
-        assertEquals( true, record.isShowActual() );
-        assertEquals( true, record.isShowPercent() );
-        assertEquals( false, record.isLabelAsPercentage() );
-        assertEquals( false, record.isSmoothedLine() );
-        assertEquals( false, record.isShowLabel() );
-        assertEquals( false, record.isShowBubbleSizes() );
+        assertTrue(record.isShowActual());
+        assertTrue(record.isShowPercent());
+        assertFalse(record.isLabelAsPercentage());
+        assertFalse(record.isSmoothedLine());
+        assertFalse(record.isShowLabel());
+        assertFalse(record.isShowBubbleSizes());
 
 
         assertEquals( 2+4, record.getRecordSize() );

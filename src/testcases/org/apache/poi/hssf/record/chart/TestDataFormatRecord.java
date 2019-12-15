@@ -45,7 +45,7 @@ public final class TestDataFormatRecord extends TestCase {
         assertEquals( 0, record.getSeriesIndex());
         assertEquals( 0, record.getSeriesNumber());
         assertEquals( 0, record.getFormatFlags());
-        assertEquals( false, record.isUseExcel4Colors() );
+        assertFalse(record.isUseExcel4Colors());
 
         assertEquals( 12, record.getRecordSize() );
     }

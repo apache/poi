@@ -140,7 +140,7 @@ public abstract class BaseTestFont {
         assertNotNull(wb3.getFontAt(font2Idx));
 
         assertEquals(15, wb3.getFontAt(font2Idx).getFontHeightInPoints());
-        assertEquals(true, wb3.getFontAt(font2Idx).getItalic());
+        assertTrue(wb3.getFontAt(font2Idx).getItalic());
         wb3.close();
     }
 
@@ -195,7 +195,7 @@ public abstract class BaseTestFont {
         assertEquals(nf, wb.getFontAt(nfIdx));
 
         assertEquals(wb.getFontAt(nfIdx), wb.getFontAt(nfIdx));
-        assertTrue(wb.getFontAt(0) != wb.getFontAt(nfIdx));
+        assertNotSame(wb.getFontAt(0), wb.getFontAt(nfIdx));
 
         // Find it now
         assertNotNull(

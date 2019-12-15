@@ -19,26 +19,29 @@ package org.apache.poi.hpsf.basic;
 
 import java.util.Locale;
 
-import junit.framework.Assert;
-import junit.framework.TestCase;
-
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.SummaryInformation;
+import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 /**
  * <p>Tests ClassID structure.</p>
  *
  * @author Michael Zalewski (zalewski@optonline.net)
  */
-public final class TestClassID extends TestCase {
+public final class TestClassID {
 
     /**
      * Various tests of overridden .equals()
      */
-    public void testEquals()
-    {
+    @Test
+    public void testEquals() {
         ClassID clsidTest1 = new ClassID(
               new byte[] {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
                           0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10}
@@ -54,17 +57,18 @@ public final class TestClassID extends TestCase {
                           0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x11 }
             , 0
         );
-        Assert.assertEquals(clsidTest1, clsidTest1);
-        Assert.assertEquals(clsidTest1, clsidTest2);
-        Assert.assertFalse(clsidTest1.equals(clsidTest3));
-        Assert.assertFalse(clsidTest1.equals(null));
+        assertEquals(clsidTest1, clsidTest1);
+        assertEquals(clsidTest1, clsidTest2);
+        assertNotEquals(clsidTest1, clsidTest3);
+        assertNotEquals(null, clsidTest1);
     }
+    
     /**
      * Try to write to a buffer that is too small. This should
      *   throw an Exception
      */
-    public void testWriteArrayStoreException()
-    {
+    @Test
+    public void testWriteArrayStoreException() {
         ClassID clsidTest = new ClassID(
               new byte[] {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
                           0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10}
@@ -79,7 +83,7 @@ public final class TestClassID extends TestCase {
         {
             bExceptionOccurred = true;
         }
-        Assert.assertTrue(bExceptionOccurred);
+        assertTrue(bExceptionOccurred);
 
         bExceptionOccurred = false;
         try
@@ -90,7 +94,7 @@ public final class TestClassID extends TestCase {
         {
             bExceptionOccurred = true;
         }
-        Assert.assertTrue(bExceptionOccurred);
+        assertTrue(bExceptionOccurred);
 
         // These should work without throwing an Exception
         bExceptionOccurred = false;
@@ -103,21 +107,22 @@ public final class TestClassID extends TestCase {
         {
             bExceptionOccurred = true;
         }
-        Assert.assertFalse(bExceptionOccurred);
+        assertFalse(bExceptionOccurred);
     }
+
     /**
      * <p>Tests the {@link PropertySet} methods. The test file has two
      * property set: the first one is a {@link SummaryInformation},
      * the second one is a {@link DocumentSummaryInformation}.</p>
      */
-    public void testClassID()
-    {
+    @Test
+    public void testClassID() {
         ClassID clsidTest = new ClassID(
               new byte[] {0x01, 0x02, 0x03, 0x04, 0x05, 0x06, 0x07, 0x08,
                           0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f, 0x10}
             , 0
         );
-        Assert.assertEquals(clsidTest.toString().toUpperCase(Locale.ROOT),
+        assertEquals(clsidTest.toString().toUpperCase(Locale.ROOT),
                             "{04030201-0605-0807-090A-0B0C0D0E0F10}"
         );
     }

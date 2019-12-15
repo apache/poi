@@ -60,8 +60,7 @@ public final class TestDocumentDescriptor extends TestCase {
                         }
                         else
                         {
-                            assertTrue("" + j + "," + k + "," + m + "," + n,
-                                       !d1.equals(d2));
+                            assertFalse(d1.equals(d2));
                         }
                     }
                 }
@@ -126,8 +125,7 @@ public final class TestDocumentDescriptor extends TestCase {
                         }
                         else
                         {
-                            assertTrue("" + j + "," + k + "," + m + "," + n,
-                                       !(d1.equals(d2)));
+                            assertFalse(d1.equals(d2));
                         }
                     }
                 }
@@ -165,8 +163,7 @@ public final class TestDocumentDescriptor extends TestCase {
                             new DocumentDescriptor(builtUpPaths[ k ],
                                                    names[ n ]);
 
-                        assertTrue("" + j + "," + k + "," + m + "," + n,
-                                   !(d1.equals(d2)));
+                        assertFalse(d1.equals(d2));
                     }
                 }
             }

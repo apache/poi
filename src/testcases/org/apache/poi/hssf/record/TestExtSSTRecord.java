@@ -826,7 +826,7 @@ public final class TestExtSSTRecord extends TestCase {
             UnicodeString us1 = expected.getString(k);
             UnicodeString us2 = actual.getString(k);
 
-            assertTrue("String at idx=" + k, us1.equals(us2));
+            assertEquals("String at idx=" + k, us1, us2);
         }
     }
 

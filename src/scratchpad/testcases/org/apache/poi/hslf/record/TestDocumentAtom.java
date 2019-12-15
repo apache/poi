@@ -60,10 +60,10 @@ public final class TestDocumentAtom extends TestCase {
 	}
 	public void testBooleans() {
 		DocumentAtom da = new DocumentAtom(data_a, 0, data_a.length);
-		assertEquals(false, da.getSaveWithFonts());
-		assertEquals(false, da.getOmitTitlePlace());
-		assertEquals(false, da.getRightToLeft());
-		assertEquals(true, da.getShowComments());
+        assertFalse(da.getSaveWithFonts());
+        assertFalse(da.getOmitTitlePlace());
+        assertFalse(da.getRightToLeft());
+        assertTrue(da.getShowComments());
 	}
 
 	public void testWrite() throws Exception {

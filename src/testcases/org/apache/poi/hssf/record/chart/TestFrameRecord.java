@@ -41,8 +41,8 @@ public final class TestFrameRecord extends TestCase {
         FrameRecord record = new FrameRecord(TestcaseRecordInputStream.create(0x1032, data));
         assertEquals( FrameRecord.BORDER_TYPE_REGULAR, record.getBorderType());
         assertEquals( 2, record.getOptions());
-        assertEquals( false, record.isAutoSize() );
-        assertEquals( true, record.isAutoPosition() );
+        assertFalse(record.isAutoSize());
+        assertTrue(record.isAutoPosition());
 
         assertEquals( 8, record.getRecordSize() );
     }

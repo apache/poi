@@ -45,9 +45,9 @@ public final class TestCategorySeriesAxisRecord extends TestCase {
         assertEquals( 1, record.getLabelFrequency());
         assertEquals( 1, record.getTickMarkFrequency());
         assertEquals( 1, record.getOptions());
-        assertEquals( true, record.isValueAxisCrossing() );
-        assertEquals( false, record.isCrossesFarRight() );
-        assertEquals( false, record.isReversed() );
+        assertTrue(record.isValueAxisCrossing());
+        assertFalse(record.isCrossesFarRight());
+        assertFalse(record.isReversed());
 
         assertEquals( 4 + 8, record.getRecordSize() );
     }

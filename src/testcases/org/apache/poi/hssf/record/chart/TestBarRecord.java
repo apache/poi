@@ -43,10 +43,10 @@ public final class TestBarRecord extends TestCase {
         assertEquals( 0, record.getBarSpace());
         assertEquals( 0x96, record.getCategorySpace());
         assertEquals( 0, record.getFormatFlags());
-        assertEquals( false, record.isHorizontal() );
-        assertEquals( false, record.isStacked() );
-        assertEquals( false, record.isDisplayAsPercentage() );
-        assertEquals( false, record.isShadow() );
+        assertFalse(record.isHorizontal());
+        assertFalse(record.isStacked());
+        assertFalse(record.isDisplayAsPercentage());
+        assertFalse(record.isShadow());
 
         assertEquals( 10, record.getRecordSize() );
     }

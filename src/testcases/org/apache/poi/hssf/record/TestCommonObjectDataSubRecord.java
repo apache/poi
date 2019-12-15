@@ -42,10 +42,10 @@ public final class TestCommonObjectDataSubRecord extends TestCase {
 		assertEquals( CommonObjectDataSubRecord.OBJECT_TYPE_LIST_BOX, record.getObjectType());
 		assertEquals((short) 1, record.getObjectId());
 		assertEquals((short) 1, record.getOption());
-		assertEquals(true, record.isLocked());
-		assertEquals(false, record.isPrintable());
-		assertEquals(false, record.isAutofill());
-		assertEquals(false, record.isAutoline());
+        assertTrue(record.isLocked());
+        assertFalse(record.isPrintable());
+        assertFalse(record.isAutofill());
+        assertFalse(record.isAutoline());
 		assertEquals(24593, record.getReserved1());
 		assertEquals(218103808, record.getReserved2());
 		assertEquals(294, record.getReserved3());

@@ -38,9 +38,9 @@ public final class TestNotesAtom extends TestCase {
 	public void testFlags() {
 		NotesAtom na = new NotesAtom(data_a, 0, data_a.length);
 		assertEquals(0x80000000, na.getSlideID());
-		assertEquals(false, na.getFollowMasterObjects());
-		assertEquals(false, na.getFollowMasterScheme());
-		assertEquals(false, na.getFollowMasterBackground());
+        assertFalse(na.getFollowMasterObjects());
+        assertFalse(na.getFollowMasterScheme());
+        assertFalse(na.getFollowMasterBackground());
 	}
 
 	public void testWrite() throws Exception {

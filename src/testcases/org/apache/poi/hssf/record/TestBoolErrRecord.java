@@ -70,7 +70,7 @@ public final class TestBoolErrRecord extends TestCase {
 		}
 		assertFalse(hasMore);
 		assertTrue(ber.isBoolean());
-		assertEquals(true, ber.getBooleanValue());
+        assertTrue(ber.getBooleanValue());
 		
 		// Check that the record re-serializes correctly
 		byte[] outData = ber.serialize();

@@ -17,7 +17,9 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -68,31 +70,31 @@ public final class TestXSSFManualLayout {
 		final LayoutTarget nonDefaultTarget = LayoutTarget.OUTER;
 
 		layout.setWidthRatio(newRatio);
-		assertTrue(layout.getWidthRatio() == newRatio);
+        assertEquals(layout.getWidthRatio(), newRatio, 0.0);
 
 		layout.setHeightRatio(newRatio);
-		assertTrue(layout.getHeightRatio() == newRatio);
+        assertEquals(layout.getHeightRatio(), newRatio, 0.0);
 
 		layout.setX(newCoordinate);
-		assertTrue(layout.getX() == newCoordinate);
+        assertEquals(layout.getX(), newCoordinate, 0.0);
 
 		layout.setY(newCoordinate);
-		assertTrue(layout.getY() == newCoordinate);
+        assertEquals(layout.getY(), newCoordinate, 0.0);
 
 		layout.setXMode(nonDefaultMode);
-		assertTrue(layout.getXMode() == nonDefaultMode);
+        assertSame(layout.getXMode(), nonDefaultMode);
 
 		layout.setYMode(nonDefaultMode);
-		assertTrue(layout.getYMode() == nonDefaultMode);
+        assertSame(layout.getYMode(), nonDefaultMode);
 
 		layout.setWidthMode(nonDefaultMode);
-		assertTrue(layout.getWidthMode() == nonDefaultMode);
+        assertSame(layout.getWidthMode(), nonDefaultMode);
 
 		layout.setHeightMode(nonDefaultMode);
-		assertTrue(layout.getHeightMode() == nonDefaultMode);
+        assertSame(layout.getHeightMode(), nonDefaultMode);
 
 		layout.setTarget(nonDefaultTarget);
-		assertTrue(layout.getTarget() == nonDefaultTarget);
+        assertSame(layout.getTarget(), nonDefaultTarget);
 
 	}
 
@@ -111,9 +113,9 @@ public final class TestXSSFManualLayout {
 		 * According to interface, 0.0 should be returned for
 		 * uninitialized double properties.
 		 */
-		assertTrue(layout.getX() == 0.0);
-		assertTrue(layout.getY() == 0.0);
-		assertTrue(layout.getWidthRatio() == 0.0);
-		assertTrue(layout.getHeightRatio() == 0.0);
+        assertEquals(0.0, layout.getX(), 0.0);
+        assertEquals(0.0, layout.getY(), 0.0);
+        assertEquals(0.0, layout.getWidthRatio(), 0.0);
+        assertEquals(0.0, layout.getHeightRatio(), 0.0);
 	}
 }

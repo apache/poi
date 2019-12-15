@@ -60,22 +60,22 @@ public final class TestBitField extends TestCase {
     }
 
     public void testIsSet() {
-        assertTrue(!bf_multi.isSet(0));
+        assertFalse(bf_multi.isSet(0));
         for (int j = 0x80; j <= 0x3F80; j += 0x80)
         {
             assertTrue(bf_multi.isSet(j));
         }
-        assertTrue(!bf_single.isSet(0));
+        assertFalse(bf_single.isSet(0));
         assertTrue(bf_single.isSet(0x4000));
     }
 
     public void testIsAllSet() {
         for (int j = 0; j < 0x3F80; j += 0x80)
         {
-            assertTrue(!bf_multi.isAllSet(j));
+            assertFalse(bf_multi.isAllSet(j));
         }
         assertTrue(bf_multi.isAllSet(0x3F80));
-        assertTrue(!bf_single.isAllSet(0));
+        assertFalse(bf_single.isAllSet(0));
         assertTrue(bf_single.isAllSet(0x4000));
     }
 
@@ -148,7 +148,7 @@ public final class TestBitField extends TestCase {
         byte clearedBit = BitFieldFactory.getInstance(0x40).setByteBoolean(( byte ) -63,
                                        false);
 
-        assertEquals(false, BitFieldFactory.getInstance(0x40).isSet(clearedBit));
+        assertFalse(BitFieldFactory.getInstance(0x40).isSet(clearedBit));
     }
 
     public void testClear() {

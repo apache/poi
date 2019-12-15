@@ -41,9 +41,9 @@ public final class TestColumnInfoRecord extends TestCase {
 		assertEquals(155, cir.getLastColumn());
 		assertEquals(6599, cir.getColumnWidth());
 		assertEquals(15, cir.getXFIndex());
-		assertEquals(true, cir.getHidden());
+        assertTrue(cir.getHidden());
 		assertEquals(3, cir.getOutlineLevel());
-		assertEquals(true, cir.getCollapsed());
+        assertTrue(cir.getCollapsed());
 		assertArrayEquals(data, cir.serialize());
 	}
 

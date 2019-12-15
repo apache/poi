@@ -21,6 +21,8 @@ package org.apache.poi.xslf.usermodel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -188,7 +190,7 @@ public class TestXSLFChart {
         XDDFChartData firstSeries = data.get(0);
 		assertNotNull(firstSeries);
 		if (firstSeries instanceof XDDFScatterChartData) {
-            assertEquals(null, firstSeries.getCategoryAxis());
+            assertNull(firstSeries.getCategoryAxis());
             assertEquals(2, firstSeries.getValueAxes().size());
             checkAxisOperations(firstSeries.getValueAxes().get(0));
             checkAxisOperations(firstSeries.getValueAxes().get(1));
@@ -219,10 +221,10 @@ public class TestXSLFChart {
 		 * According to interface, 0.0 should be returned for
 		 * uninitialized double properties.
 		 */
-		assertTrue(layout.getX() == 0.0);
-		assertTrue(layout.getY() == 0.0);
-		assertTrue(layout.getWidthRatio() == 0.0);
-		assertTrue(layout.getHeightRatio() == 0.0);
+        assertEquals(0.0, layout.getX(), 0.0);
+        assertEquals(0.0, layout.getY(), 0.0);
+        assertEquals(0.0, layout.getWidthRatio(), 0.0);
+        assertEquals(0.0, layout.getHeightRatio(), 0.0);
 
 		final double newRatio = 1.1;
 		final double newCoordinate = 0.3;
@@ -230,31 +232,31 @@ public class TestXSLFChart {
 		final LayoutTarget nonDefaultTarget = LayoutTarget.OUTER;
 
 		layout.setWidthRatio(newRatio);
-		assertTrue(layout.getWidthRatio() == newRatio);
+        assertEquals(layout.getWidthRatio(), newRatio, 0.0);
 
 		layout.setHeightRatio(newRatio);
-		assertTrue(layout.getHeightRatio() == newRatio);
+        assertEquals(layout.getHeightRatio(), newRatio, 0.0);
 
 		layout.setX(newCoordinate);
-		assertTrue(layout.getX() == newCoordinate);
+        assertEquals(layout.getX(), newCoordinate, 0.0);
 
 		layout.setY(newCoordinate);
-		assertTrue(layout.getY() == newCoordinate);
+        assertEquals(layout.getY(), newCoordinate, 0.0);
 
 		layout.setXMode(nonDefaultMode);
-		assertTrue(layout.getXMode() == nonDefaultMode);
+        assertSame(layout.getXMode(), nonDefaultMode);
 
 		layout.setYMode(nonDefaultMode);
-		assertTrue(layout.getYMode() == nonDefaultMode);
+        assertSame(layout.getYMode(), nonDefaultMode);
 
 		layout.setWidthMode(nonDefaultMode);
-		assertTrue(layout.getWidthMode() == nonDefaultMode);
+        assertSame(layout.getWidthMode(), nonDefaultMode);
 
 		layout.setHeightMode(nonDefaultMode);
-		assertTrue(layout.getHeightMode() == nonDefaultMode);
+        assertSame(layout.getHeightMode(), nonDefaultMode);
 
 		layout.setTarget(nonDefaultTarget);
-		assertTrue(layout.getTarget() == nonDefaultTarget);
+        assertSame(layout.getTarget(), nonDefaultTarget);
 	}
 
 	private void checkAxisOperations(XDDFValueAxis axis) {

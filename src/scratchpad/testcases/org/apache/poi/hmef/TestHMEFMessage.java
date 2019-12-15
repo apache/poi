@@ -236,8 +236,8 @@ public final class TestHMEFMessage {
             if (attr.getProperty().id == 0xe28) hasE28 = true;
             if (attr.getProperty().id == 0xe29) hasE29 = true;
         }
-        assertEquals(true, hasE28);
-        assertEquals(true, hasE29);
+       assertTrue(hasE28);
+       assertTrue(hasE29);
 
         // Ensure we can fetch those as custom ones
         MAPIProperty propE28 = MAPIProperty.createCustom(0xe28, Types.ASCII_STRING, "Custom E28");

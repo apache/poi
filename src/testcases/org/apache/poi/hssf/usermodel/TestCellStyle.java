@@ -152,8 +152,8 @@ public final class TestCellStyle extends TestCase {
         
         assertEquals(cs1.hashCode(), cs1.hashCode());
         assertEquals(cs2.hashCode(), cs2.hashCode());
-        assertTrue(cs1.equals(cs1));
-        assertTrue(cs2.equals(cs2));
+        assertEquals(cs1, cs1);
+        assertEquals(cs2, cs2);
         
         // Change cs1, hash will alter
         int hash1 = cs1.hashCode();
@@ -238,8 +238,8 @@ public final class TestCellStyle extends TestCase {
         assertEquals(18, orig.getDataFormat());
         
         HSSFCellStyle clone = wb.createCellStyle();
-        assertFalse(HorizontalAlignment.RIGHT == clone.getAlignment());
-        assertFalse(fnt == clone.getFont(wb));
+        assertNotSame(HorizontalAlignment.RIGHT, clone.getAlignment());
+        assertNotSame(fnt, clone.getFont(wb));
         assertFalse(18 == clone.getDataFormat());
         
         clone.cloneStyleFrom(orig);
@@ -280,9 +280,9 @@ public final class TestCellStyle extends TestCase {
         
         HSSFCellStyle clone = wbClone.createCellStyle();
         assertEquals(4, wbClone.getNumberOfFonts());
-        
-        assertFalse(HorizontalAlignment.RIGHT == clone.getAlignment());
-        assertFalse("TestingFont" == clone.getFont(wbClone).getFontName());
+
+        assertNotSame(HorizontalAlignment.RIGHT, clone.getAlignment());
+        assertNotSame("TestingFont", clone.getFont(wbClone).getFontName());
         
         clone.cloneStyleFrom(orig);
         assertEquals(HorizontalAlignment.RIGHT, clone.getAlignment());
@@ -333,9 +333,9 @@ public final class TestCellStyle extends TestCase {
         assertNotNull(wb.getWorkbook().getStyleRecord(22));
         
         // Now check the style names
-        assertEquals(null, cs1.getUserStyleName());
-        assertEquals(null, cs2.getUserStyleName());
-        assertEquals(null, cs3.getUserStyleName());
+        assertNull(cs1.getUserStyleName());
+        assertNull(cs2.getUserStyleName());
+        assertNull(cs3.getUserStyleName());
         assertEquals("style1", cs2.getParentStyle().getUserStyleName());
         assertEquals("style2", cs3.getParentStyle().getUserStyleName());
 
@@ -394,7 +394,7 @@ public final class TestCellStyle extends TestCase {
     	HSSFRow r = s.getRow(0);
     	HSSFCellStyle cs = r.getCell(0).getCellStyle();
 
-    	assertEquals(true, cs.getShrinkToFit());
+        assertTrue(cs.getShrinkToFit());
 
     	// New file
     	HSSFWorkbook wbOrig = new HSSFWorkbook();
@@ -413,8 +413,8 @@ public final class TestCellStyle extends TestCase {
     	wb = HSSFTestDataSamples.writeOutAndReadBack(wbOrig);
     	s = wb.getSheetAt(0);
     	r = s.getRow(0);
-    	assertEquals(false, r.getCell(0).getCellStyle().getShrinkToFit());
-    	assertEquals(true,  r.getCell(1).getCellStyle().getShrinkToFit());
+        assertFalse(r.getCell(0).getCellStyle().getShrinkToFit());
+        assertTrue(r.getCell(1).getCellStyle().getShrinkToFit());
     }
     
     

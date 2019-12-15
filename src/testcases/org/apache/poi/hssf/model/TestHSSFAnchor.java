@@ -18,15 +18,24 @@
 package org.apache.poi.hssf.model;
 
 import junit.framework.TestCase;
-import org.apache.poi.ddf.*;
+import org.apache.poi.ddf.EscherChildAnchorRecord;
+import org.apache.poi.ddf.EscherClientAnchorRecord;
+import org.apache.poi.ddf.EscherClientDataRecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.ddf.EscherOptRecord;
+import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.usermodel.*;
+import org.apache.poi.hssf.usermodel.HSSFAnchor;
+import org.apache.poi.hssf.usermodel.HSSFChildAnchor;
+import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
+import org.apache.poi.hssf.usermodel.HSSFPatriarch;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFSimpleShape;
+import org.apache.poi.hssf.usermodel.HSSFTestHelper;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
+import org.junit.Assert;
 
-/**
- * @author Evgeniy Berlog
- * @date 12.06.12
- */
 public class TestHSSFAnchor extends TestCase {
 
     public void testDefaultValues(){
@@ -100,6 +109,7 @@ public class TestHSSFAnchor extends TestCase {
         container.addChildRecord(escher);
 
         HSSFClientAnchor anchor = (HSSFClientAnchor) HSSFAnchor.createAnchorFromEscher(container);
+        assertNotNull(anchor);
         assertEquals(anchor.getCol1(), 11);
         assertEquals(escher.getCol1(), 11);
         assertEquals(anchor.getCol2(), 12);
@@ -128,6 +138,7 @@ public class TestHSSFAnchor extends TestCase {
         container.addChildRecord(escher);
 
         HSSFChildAnchor anchor = (HSSFChildAnchor) HSSFAnchor.createAnchorFromEscher(container);
+        assertNotNull(anchor);
         assertEquals(anchor.getDx1(), 15);
         assertEquals(escher.getDx1(), 15);
         assertEquals(anchor.getDx2(), 16);
@@ -153,7 +164,7 @@ public class TestHSSFAnchor extends TestCase {
 
         assertNotNull(HSSFTestHelper.getEscherAnchor(anchor));
         assertNotNull(HSSFTestHelper.getEscherContainer(rectangle));
-        assertTrue(HSSFTestHelper.getEscherAnchor(anchor).equals(HSSFTestHelper.getEscherContainer(rectangle).getChildById(EscherClientAnchorRecord.RECORD_ID)));
+        assertEquals(HSSFTestHelper.getEscherAnchor(anchor), HSSFTestHelper.getEscherContainer(rectangle).getChildById(EscherClientAnchorRecord.RECORD_ID));
     }
 
     public void testClientAnchorFromEscher(){
@@ -298,24 +309,24 @@ public class TestHSSFAnchor extends TestCase {
 
     public void testNullReferenceIsFalse() {
         HSSFClientAnchor clientAnchor = new HSSFClientAnchor(0, 1, 2, 3, (short)4, 5, (short)6, 7);
-        assertFalse("Passing null to equals should return false", clientAnchor.equals(null));
+        Assert.assertNotNull("Passing null to equals should return false", clientAnchor);
 
         HSSFChildAnchor childAnchor = new HSSFChildAnchor(0, 1, 2, 3);
-        assertFalse("Passing null to equals should return false", childAnchor.equals(null));
+        assertNotNull("Passing null to equals should return false", childAnchor);
     }
 
     public void testEqualsIsReflexiveIsSymmetric() {
         HSSFClientAnchor clientAnchor1 = new HSSFClientAnchor(0, 1, 2, 3, (short)4, 5, (short)6, 7);
         HSSFClientAnchor clientAnchor2 = new HSSFClientAnchor(0, 1, 2, 3, (short)4, 5, (short)6, 7);
 
-        assertTrue(clientAnchor1.equals(clientAnchor2));
-        assertTrue(clientAnchor1.equals(clientAnchor2));
+        assertEquals(clientAnchor1, clientAnchor2);
+        assertEquals(clientAnchor1, clientAnchor2);
 
         HSSFChildAnchor childAnchor1 = new HSSFChildAnchor(0, 1, 2, 3);
         HSSFChildAnchor childAnchor2 = new HSSFChildAnchor(0, 1, 2, 3);
 
-        assertTrue(childAnchor1.equals(childAnchor2));
-        assertTrue(childAnchor2.equals(childAnchor1));
+        assertEquals(childAnchor1, childAnchor2);
+        assertEquals(childAnchor2, childAnchor1);
     }
 
     public void testEqualsValues(){
@@ -394,32 +405,32 @@ public class TestHSSFAnchor extends TestCase {
 
     public void testFlipped(){
         HSSFChildAnchor child = new HSSFChildAnchor(2,2,1,1);
-        assertEquals(child.isHorizontallyFlipped(), true);
-        assertEquals(child.isVerticallyFlipped(), true);
+        assertTrue(child.isHorizontallyFlipped());
+        assertTrue(child.isVerticallyFlipped());
         assertEquals(child.getDx1(), 1);
         assertEquals(child.getDx2(), 2);
         assertEquals(child.getDy1(), 1);
         assertEquals(child.getDy2(), 2);
 
         child = new HSSFChildAnchor(3,3,4,4);
-        assertEquals(child.isHorizontallyFlipped(), false);
-        assertEquals(child.isVerticallyFlipped(), false);
+        assertFalse(child.isHorizontallyFlipped());
+        assertFalse(child.isVerticallyFlipped());
         assertEquals(child.getDx1(), 3);
         assertEquals(child.getDx2(), 4);
         assertEquals(child.getDy1(), 3);
         assertEquals(child.getDy2(), 4);
 
         HSSFClientAnchor client = new HSSFClientAnchor(1,1,1,1, (short)4,4,(short)3,3);
-        assertEquals(client.isVerticallyFlipped(), true);
-        assertEquals(client.isHorizontallyFlipped(), true);
+        assertTrue(client.isVerticallyFlipped());
+        assertTrue(client.isHorizontallyFlipped());
         assertEquals(client.getCol1(), 3);
         assertEquals(client.getCol2(), 4);
         assertEquals(client.getRow1(), 3);
         assertEquals(client.getRow2(), 4);
 
         client = new HSSFClientAnchor(1,1,1,1, (short)5,5,(short)6,6);
-        assertEquals(client.isVerticallyFlipped(), false);
-        assertEquals(client.isHorizontallyFlipped(), false);
+        assertFalse(client.isVerticallyFlipped());
+        assertFalse(client.isHorizontallyFlipped());
         assertEquals(client.getCol1(), 5);
         assertEquals(client.getCol2(), 6);
         assertEquals(client.getRow1(), 5);

@@ -83,9 +83,9 @@ public final class TestHeadersFooters
 
         //the first slide uses per-slide headers / footers
         HeadersFooters hd2 = slide.get(1).getHeadersFooters();
-        assertEquals(true, hd2.isFooterVisible());
+        assertTrue(hd2.isFooterVisible());
         assertEquals("per-slide footer", hd2.getFooterText());
-        assertEquals(true, hd2.isUserDateVisible());
+        assertTrue(hd2.isUserDateVisible());
         assertEquals("custom date format", hd2.getDateTimeText());
 
         ppt.close();

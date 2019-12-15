@@ -18,6 +18,7 @@
 package org.apache.poi.poifs.eventfilesystem;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.util.HashSet;
@@ -67,7 +68,7 @@ public final class TestPOIFSReaderRegistry {
                 Iterator<POIFSReaderListener> listeners =
                     registry.getListeners(path, name).iterator();
 
-                assertTrue(!listeners.hasNext());
+                assertFalse(listeners.hasNext());
             }
         }
     }
@@ -102,7 +103,7 @@ public final class TestPOIFSReaderRegistry {
 
                 if (k == n)
                 {
-                    assertTrue(!listeners.iterator().hasNext());
+                    assertFalse(listeners.iterator().hasNext());
                 }
                 else
                 {
@@ -118,8 +119,8 @@ public final class TestPOIFSReaderRegistry {
                     {
                         if (j == k)
                         {
-                            assertTrue(!registeredListeners
-                                .contains(this.listeners[ j ]));
+                            assertFalse(registeredListeners
+                                    .contains(this.listeners[j]));
                         }
                         else
                         {

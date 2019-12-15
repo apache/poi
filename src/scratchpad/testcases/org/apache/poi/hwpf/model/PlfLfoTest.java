@@ -40,17 +40,17 @@ public class PlfLfoTest {
         assertEquals(0, p.getLfoMac());
         assertEquals(0, p2.getLfoMac());
 
-        assertTrue(p.equals(p2));
+        assertEquals(p, p2);
         //noinspection ObjectEqualsNull
-        assertFalse(p.equals(null));
+        assertNotEquals(null, p);
 
         p.add(new LFO(new byte[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, 0), new LFOData());
         assertEquals(1, p.getLfoMac());
 
-        assertFalse(p.equals(p2));
+        assertNotEquals(p, p2);
 
         p2.add(new LFO(new byte[] {0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}, 0), new LFOData());
         assertEquals(1, p2.getLfoMac());
-        assertTrue(p.equals(p2));
+        assertEquals(p, p2);
     }
 }

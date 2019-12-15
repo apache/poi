@@ -17,6 +17,8 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -323,7 +325,7 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
             sheet.addValidationData(validation);
 
             final List<XSSFDataValidation> dataValidations = sheet.getDataValidations();
-            assertEquals(true, dataValidations.get(0).getCtDdataValidation().getAllowBlank());
+            assertTrue(dataValidations.get(0).getCtDdataValidation().getAllowBlank());
         }
     }
 
@@ -338,7 +340,7 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
             sheet.addValidationData(validation);
 
             final List<XSSFDataValidation> dataValidations = sheet.getDataValidations();
-            assertEquals(false, dataValidations.get(0).getCtDdataValidation().getAllowBlank());
+            assertFalse(dataValidations.get(0).getCtDdataValidation().getAllowBlank());
         }
     }
 
@@ -353,7 +355,7 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
             sheet.addValidationData(validation);
 
             final List<XSSFDataValidation> dataValidations = sheet.getDataValidations();
-            assertEquals(true, dataValidations.get(0).getCtDdataValidation().getAllowBlank());
+            assertTrue(dataValidations.get(0).getCtDdataValidation().getAllowBlank());
         }
     }
 

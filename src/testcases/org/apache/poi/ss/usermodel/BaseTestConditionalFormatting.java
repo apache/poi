@@ -610,7 +610,7 @@ public abstract class BaseTestConditionalFormatting {
         assertEquals(ConditionType.CELL_VALUE_IS, cr.getConditionType());
         assertEquals(ComparisonOperator.GT, cr.getComparisonOperation());
         assertEquals("0", cr.getFormula1());
-        assertEquals(null, cr.getFormula2());
+        assertNull(cr.getFormula2());
         // When it matches:
         //   Sets the font colour to dark green
         //   Sets the background colour to lighter green
@@ -791,13 +791,13 @@ public abstract class BaseTestConditionalFormatting {
     private void assertDataBar(ConditionalFormattingRule cr, String color) {
         assertEquals(ConditionType.DATA_BAR, cr.getConditionType());
         assertEquals(ComparisonOperator.NO_COMPARISON, cr.getComparisonOperation());
-        assertEquals(null, cr.getFormula1());
-        assertEquals(null, cr.getFormula2());
+        assertNull(cr.getFormula1());
+        assertNull(cr.getFormula2());
         
         DataBarFormatting databar = cr.getDataBarFormatting();
         assertNotNull(databar);
-        assertEquals(false, databar.isIconOnly());
-        assertEquals(true, databar.isLeftToRight());
+        assertFalse(databar.isIconOnly());
+        assertTrue(databar.isLeftToRight());
         assertEquals(0, databar.getWidthMin());
         assertEquals(100, databar.getWidthMax());
         
@@ -806,12 +806,12 @@ public abstract class BaseTestConditionalFormatting {
         ConditionalFormattingThreshold th;
         th = databar.getMinThreshold();
         assertEquals(RangeType.MIN, th.getRangeType());
-        assertEquals(null, th.getValue());
-        assertEquals(null, th.getFormula());
+        assertNull(th.getValue());
+        assertNull(th.getFormula());
         th = databar.getMaxThreshold();
         assertEquals(RangeType.MAX, th.getRangeType());
-        assertEquals(null, th.getValue());
-        assertEquals(null, th.getFormula());
+        assertNull(th.getValue());
+        assertNull(th.getFormula());
     }
     
     private void assertIconSetPercentages(ConditionalFormatting cf, IconSet iconset, Double...vals) {
@@ -822,14 +822,14 @@ public abstract class BaseTestConditionalFormatting {
     private void assertIconSetPercentages(ConditionalFormattingRule cr, IconSet iconset, Double...vals) {
         assertEquals(ConditionType.ICON_SET, cr.getConditionType());
         assertEquals(ComparisonOperator.NO_COMPARISON, cr.getComparisonOperation());
-        assertEquals(null, cr.getFormula1());
-        assertEquals(null, cr.getFormula2());
+        assertNull(cr.getFormula1());
+        assertNull(cr.getFormula2());
         
         IconMultiStateFormatting icon = cr.getMultiStateFormatting();
         assertNotNull(icon);
         assertEquals(iconset, icon.getIconSet());
-        assertEquals(false, icon.isIconOnly());
-        assertEquals(false, icon.isReversed());
+        assertFalse(icon.isIconOnly());
+        assertFalse(icon.isReversed());
         
         assertNotNull(icon.getThresholds());
         assertEquals(vals.length, icon.getThresholds().length);
@@ -838,7 +838,7 @@ public abstract class BaseTestConditionalFormatting {
             ConditionalFormattingThreshold th = icon.getThresholds()[i];
             assertEquals(RangeType.PERCENT, th.getRangeType());
             assertEquals(v, th.getValue());
-            assertEquals(null, th.getFormula());
+            assertNull(th.getFormula());
         }
     }
     
@@ -850,8 +850,8 @@ public abstract class BaseTestConditionalFormatting {
     private void assertColorScale(ConditionalFormattingRule cr, String... colors) {
         assertEquals(ConditionType.COLOR_SCALE, cr.getConditionType());
         assertEquals(ComparisonOperator.NO_COMPARISON, cr.getComparisonOperation());
-        assertEquals(null, cr.getFormula1());
-        assertEquals(null, cr.getFormula2());
+        assertNull(cr.getFormula1());
+        assertNull(cr.getFormula2());
         
         ColorScaleFormatting color = cr.getColorScaleFormatting();
         assertNotNull(color);
@@ -873,7 +873,7 @@ public abstract class BaseTestConditionalFormatting {
                 assertEquals(RangeType.PERCENTILE, th.getRangeType());
                 assertEquals(steps*i, th.getValue().intValue());
             }
-            assertEquals(null, th.getFormula());
+            assertNull(th.getFormula());
         }
         
         // Colors should match
@@ -1107,8 +1107,8 @@ public abstract class BaseTestConditionalFormatting {
         
         assertEquals(IconSet.GYRB_4_TRAFFIC_LIGHTS, iconFmt.getIconSet());
         assertEquals(4, iconFmt.getThresholds().length);
-        assertEquals(false, iconFmt.isIconOnly());
-        assertEquals(false, iconFmt.isReversed());
+        assertFalse(iconFmt.isIconOnly());
+        assertFalse(iconFmt.isReversed());
         
         iconFmt.setIconOnly(true);
         iconFmt.getThresholds()[0].setRangeType(RangeType.MIN);
@@ -1136,17 +1136,17 @@ public abstract class BaseTestConditionalFormatting {
         
         assertEquals(IconSet.GYRB_4_TRAFFIC_LIGHTS, iconFmt.getIconSet());
         assertEquals(4, iconFmt.getThresholds().length);
-        assertEquals(true, iconFmt.isIconOnly());
-        assertEquals(false, iconFmt.isReversed());
+        assertTrue(iconFmt.isIconOnly());
+        assertFalse(iconFmt.isReversed());
 
         assertEquals(RangeType.MIN,    iconFmt.getThresholds()[0].getRangeType());
         assertEquals(RangeType.NUMBER, iconFmt.getThresholds()[1].getRangeType());
         assertEquals(RangeType.PERCENT,iconFmt.getThresholds()[2].getRangeType());
         assertEquals(RangeType.MAX,    iconFmt.getThresholds()[3].getRangeType());
-        assertEquals(null, iconFmt.getThresholds()[0].getValue());
+        assertNull(iconFmt.getThresholds()[0].getValue());
         assertEquals(10d,  iconFmt.getThresholds()[1].getValue(), 0);
         assertEquals(75d,  iconFmt.getThresholds()[2].getValue(), 0);
-        assertEquals(null, iconFmt.getThresholds()[3].getValue());
+        assertNull(iconFmt.getThresholds()[3].getValue());
         
         wb2.close();
     }
@@ -1193,9 +1193,9 @@ public abstract class BaseTestConditionalFormatting {
         assertEquals(RangeType.MIN,    clrFmt.getThresholds()[0].getRangeType());
         assertEquals(RangeType.NUMBER, clrFmt.getThresholds()[1].getRangeType());
         assertEquals(RangeType.MAX,    clrFmt.getThresholds()[2].getRangeType());
-        assertEquals(null, clrFmt.getThresholds()[0].getValue());
+        assertNull(clrFmt.getThresholds()[0].getValue());
         assertEquals(10d,  clrFmt.getThresholds()[1].getValue(), 0);
-        assertEquals(null, clrFmt.getThresholds()[2].getValue());
+        assertNull(clrFmt.getThresholds()[2].getValue());
         
         wb2.close();
     }
@@ -1212,9 +1212,9 @@ public abstract class BaseTestConditionalFormatting {
         ConditionalFormattingRule rule1 = 
                 sheetCF.createConditionalFormattingRule(color);
         DataBarFormatting dbFmt = rule1.getDataBarFormatting();
-        
-        assertEquals(false, dbFmt.isIconOnly());
-        assertEquals(true, dbFmt.isLeftToRight());
+
+        assertFalse(dbFmt.isIconOnly());
+        assertTrue(dbFmt.isLeftToRight());
         assertEquals(0,   dbFmt.getWidthMin());
         assertEquals(100, dbFmt.getWidthMax());
         assertColour(colorHex, dbFmt.getColor());
@@ -1237,17 +1237,17 @@ public abstract class BaseTestConditionalFormatting {
         rule1 = cf.getRule(0);
         dbFmt = rule1.getDataBarFormatting();
         assertEquals(ConditionType.DATA_BAR, rule1.getConditionType());
-        
-        assertEquals(false, dbFmt.isIconOnly());
-        assertEquals(true, dbFmt.isLeftToRight());
+
+        assertFalse(dbFmt.isIconOnly());
+        assertTrue(dbFmt.isLeftToRight());
         assertEquals(0,   dbFmt.getWidthMin());
         assertEquals(100, dbFmt.getWidthMax());
         assertColour(colorHex, dbFmt.getColor());
 
         assertEquals(RangeType.MIN, dbFmt.getMinThreshold().getRangeType());
         assertEquals(RangeType.MAX, dbFmt.getMaxThreshold().getRangeType());
-        assertEquals(null, dbFmt.getMinThreshold().getValue());
-        assertEquals(null, dbFmt.getMaxThreshold().getValue());
+        assertNull(dbFmt.getMinThreshold().getValue());
+        assertNull(dbFmt.getMaxThreshold().getValue());
         
         wb2.close();
     }

@@ -49,15 +49,15 @@ public final class TestValueRangeRecord extends TestCase {
         assertEquals( 0.0, record.getMinorIncrement(), 0.001);
         assertEquals( 0.0, record.getCategoryAxisCross(), 0.001);
         assertEquals( 0x011f, record.getOptions());
-        assertEquals( true, record.isAutomaticMinimum() );
-        assertEquals( true, record.isAutomaticMaximum() );
-        assertEquals( true, record.isAutomaticMajor() );
-        assertEquals( true, record.isAutomaticMinor() );
-        assertEquals( true, record.isAutomaticCategoryCrossing() );
-        assertEquals( false, record.isLogarithmicScale() );
-        assertEquals( false, record.isValuesInReverse() );
-        assertEquals( false, record.isCrossCategoryAxisAtMaximum() );
-        assertEquals( true, record.isReserved() );
+        assertTrue(record.isAutomaticMinimum());
+        assertTrue(record.isAutomaticMaximum());
+        assertTrue(record.isAutomaticMajor());
+        assertTrue(record.isAutomaticMinor());
+        assertTrue(record.isAutomaticCategoryCrossing());
+        assertFalse(record.isLogarithmicScale());
+        assertFalse(record.isValuesInReverse());
+        assertFalse(record.isCrossCategoryAxisAtMaximum());
+        assertTrue(record.isReserved());
 
         assertEquals( 42+4, record.getRecordSize() );
     }

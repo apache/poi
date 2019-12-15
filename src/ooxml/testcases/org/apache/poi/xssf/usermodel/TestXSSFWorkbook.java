@@ -48,6 +48,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
+import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
@@ -802,7 +803,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         }
 
         try (XSSFWorkbook wb2 = (XSSFWorkbook) WorkbookFactory.create(file)) {
-            assertTrue(wb2.getPivotTables().size() == 1);
+            assertEquals(1, wb2.getPivotTables().size());
         }
 
         assertTrue(file.delete());
@@ -822,7 +823,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
         try (XSSFWorkbook wb2 = (XSSFWorkbook) WorkbookFactory.create(file)) {
             setPivotData(wb2);
-            assertTrue(wb2.getPivotTables().size() == 2);
+            assertEquals(2, wb2.getPivotTables().size());
         }
 
         assertTrue(file.delete());
@@ -890,7 +891,9 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         assertTrue(wbPart.hasRelationships());
         final PackageRelationshipCollection relationships = wbPart.getRelationships().getRelationships(XSSFRelation.VBA_MACROS.getRelation());
         assertEquals(1, relationships.size());
-        assertEquals(XSSFRelation.VBA_MACROS.getDefaultFileName(), relationships.getRelationship(0).getTargetURI().toString());
+        PackageRelationship relationship = relationships.getRelationship(0);
+        assertNotNull(relationship);
+        assertEquals(XSSFRelation.VBA_MACROS.getDefaultFileName(), relationship.getTargetURI().toString());
         PackagePart vbaPart = pkg.getPart(PackagingURIHelper.createPartName(XSSFRelation.VBA_MACROS.getDefaultFileName()));
         assertNotNull(vbaPart);
         assertFalse(vbaPart.isRelationshipPart());
@@ -984,6 +987,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         wb.close();
     }
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testBug56957CloseWorkbook() throws Exception {
         File file = TempFile.createTempFile("TestBug56957_", ".xlsx");
@@ -1027,7 +1031,7 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
     }
 
     @Test
-    public void closeDoesNotModifyWorkbook() throws IOException, InvalidFormatException {
+    public void closeDoesNotModifyWorkbook() throws IOException {
         final String filename = "SampleSS.xlsx";
         final File file = POIDataSamples.getSpreadSheetInstance().getFile(filename);
         Workbook wb;
@@ -1146,7 +1150,6 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
     /**
      * See bug #61700
-     * @throws Exception
      */
     @Test
     public void testWorkbookForceFormulaRecalculation() throws Exception {

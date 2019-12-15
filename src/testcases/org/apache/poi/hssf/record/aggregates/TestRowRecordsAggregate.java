@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record.aggregates;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -59,7 +60,7 @@ public final class TestRowRecordsAggregate {
 
 		assertNotNull(rr1);
 		assertEquals("Row number is 1", 4, rr1.getRowNumber());
-		assertTrue("Row record retrieved is identical ", rr1 == rr);
+        assertSame("Row record retrieved is identical ", rr1, rr);
 	}
 
 	/**

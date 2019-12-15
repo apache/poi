@@ -187,7 +187,7 @@ public final class TestFormulaRecord extends TestCase {
 		if (fr0.getCachedBooleanValue() && !fr1.getCachedBooleanValue()) {
 			throw new AssertionFailedError("Identified bug 46479c");
 		}
-		assertEquals(false, fr0.getCachedBooleanValue());
-		assertEquals(true, fr1.getCachedBooleanValue());
+        assertFalse(fr0.getCachedBooleanValue());
+        assertTrue(fr1.getCachedBooleanValue());
 	}
 }

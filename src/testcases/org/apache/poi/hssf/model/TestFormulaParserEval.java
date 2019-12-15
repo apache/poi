@@ -70,7 +70,7 @@ public final class TestFormulaParserEval extends TestCase {
 	 */
 	private static void confirmParseFormula(HSSFWorkbook workbook) {
 		Ptg[] ptgs = HSSFFormulaParser.parse("SUM(testName)", workbook);
-		assertTrue("two tokens expected, got "+ptgs.length,ptgs.length == 2);
+        assertEquals("two tokens expected, got " + ptgs.length, 2, ptgs.length);
 		assertEquals(NamePtg.class, ptgs[0].getClass());
 		assertEquals(AttrPtg.class, ptgs[1].getClass());
 	}

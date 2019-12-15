@@ -198,7 +198,7 @@ public final class TestFormulaParserIf extends TestCase {
 		StringPtg n = (StringPtg) ptgs[4];
 
 
-		assertEquals(true, flag.getValue());
+        assertTrue(flag.getValue());
 		assertEquals("Y", y.getValue());
 		assertEquals("N", n.getValue());
 		assertEquals("IF", funif.toFormulaString());

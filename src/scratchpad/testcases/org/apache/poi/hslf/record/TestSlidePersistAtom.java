@@ -39,7 +39,7 @@ public final class TestSlidePersistAtom extends TestCase {
 	public void testFlags() {
 		SlidePersistAtom spa = new SlidePersistAtom(data_a, 0, data_a.length);
 		assertEquals(4, spa.getRefID() );
-		assertEquals(true, spa.getHasShapesOtherThanPlaceholders() );
+        assertTrue(spa.getHasShapesOtherThanPlaceholders());
 		assertEquals(2, spa.getNumPlaceholderTexts() );
 		assertEquals(256, spa.getSlideIdentifier());
 	}

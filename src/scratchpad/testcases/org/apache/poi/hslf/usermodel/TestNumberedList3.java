@@ -22,6 +22,7 @@ package org.apache.poi.hslf.usermodel;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -68,7 +69,7 @@ public final class TestNumberedList3 {
 		final TextPFException9[] autoNumbersOfTextBox0 = numberedListInfoForTextBox.getAutoNumberTypes();
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox0[0].getfBulletHasAutoNumber());
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox0[0].getAutoNumberStartNumber());//Default value = 1 will be used 
-		assertTrue(AutoNumberingScheme.arabicPeriod == autoNumbersOfTextBox0[0].getAutoNumberScheme());
+        assertSame(AutoNumberingScheme.arabicPeriod, autoNumbersOfTextBox0[0].getAutoNumberScheme());
 		
 		final List<List<HSLFTextParagraph>> textParass = s.getTextParagraphs();
 		assertEquals(3, textParass.size());
@@ -85,7 +86,7 @@ public final class TestNumberedList3 {
 		assertEquals(1, autoNumbers.length);
 		assertEquals(Short.valueOf((short)1), autoNumbers[0].getfBulletHasAutoNumber());
 		assertEquals(Short.valueOf((short)1), autoNumbers[0].getAutoNumberStartNumber());//Default value = 1 will be used 
-		assertTrue(AutoNumberingScheme.arabicPeriod == autoNumbersOfTextBox0[0].getAutoNumberScheme());
+        assertSame(AutoNumberingScheme.arabicPeriod, autoNumbersOfTextBox0[0].getAutoNumberScheme());
 		
 		int chCovered = 0;
 		for (HSLFTextParagraph htp : textParass.get(1)) {

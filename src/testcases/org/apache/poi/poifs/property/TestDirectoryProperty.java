@@ -18,6 +18,7 @@
 package org.apache.poi.poifs.property;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -129,8 +130,7 @@ public final class TestDirectoryProperty {
 
                     if (index != -1)
                     {
-                        assertTrue("found index " + index + " twice",
-                                   !found[ index - 1 ]);
+                        assertFalse(found[index - 1]);
                         found[ index - 1 ] = true;
                         total_found++;
                     }
@@ -143,8 +143,7 @@ public final class TestDirectoryProperty {
 
                     if (index != -1)
                     {
-                        assertTrue("found index " + index + " twice",
-                                   !found[ index - 1 ]);
+                        assertFalse(found[index - 1]);
                         found[ index - 1 ] = true;
                         total_found++;
                     }
@@ -246,7 +245,7 @@ public final class TestDirectoryProperty {
             // as expected
         }
         assertTrue(_property.deleteChild(p1));
-        assertTrue(!_property.deleteChild(p1));
+        assertFalse(_property.deleteChild(p1));
         _property.addChild(new LocalProperty(1));
     }
 
@@ -259,12 +258,12 @@ public final class TestDirectoryProperty {
         _property.addChild(p1);
         assertTrue(_property.changeName(p1, "foobar"));
         assertEquals("foobar", p1.getName());
-        assertTrue(!_property.changeName(p1, "foobar"));
+        assertFalse(_property.changeName(p1, "foobar"));
         assertEquals("foobar", p1.getName());
         Property p2 = new LocalProperty(1);
 
         _property.addChild(p2);
-        assertTrue(!_property.changeName(p1, originalName));
+        assertFalse(_property.changeName(p1, originalName));
         assertTrue(_property.changeName(p2, "foo"));
         assertTrue(_property.changeName(p1, originalName));
     }
@@ -299,6 +298,6 @@ public final class TestDirectoryProperty {
         }
         assertEquals(index, property.getIndex());
         assertEquals(name, property.getName());
-        assertTrue(!property.getChildren().hasNext());
+        assertFalse(property.getChildren().hasNext());
     }
 }

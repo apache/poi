@@ -18,6 +18,8 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -249,12 +251,12 @@ public final class TestDataValidation extends BaseTestDataValidation {
             assertEquals(3, address.getFirstColumn());
             assertEquals(4, address.getLastColumn());
         }
-        assertEquals(true, dv.getEmptyCellAllowed());
-        assertEquals(false, dv.getSuppressDropDownArrow());
-        assertEquals(true, dv.getShowErrorBox());
+        assertTrue(dv.getEmptyCellAllowed());
+        assertFalse(dv.getSuppressDropDownArrow());
+        assertTrue(dv.getShowErrorBox());
         assertEquals("error-title", dv.getErrorBoxTitle());
         assertEquals("error-text", dv.getErrorBoxText());
-        assertEquals(true, dv.getShowPromptBox());
+        assertTrue(dv.getShowPromptBox());
         assertEquals("prompt-title", dv.getPromptBoxTitle());
         assertEquals("prompt-text", dv.getPromptBoxText());
 
@@ -288,8 +290,8 @@ public final class TestDataValidation extends BaseTestDataValidation {
         assertEquals(OperatorType.BETWEEN, c.getOperator());
         assertEquals("A2", c.getFormula1());
         assertEquals("A3", c.getFormula2());
-        assertEquals(null, c.getValue1());
-        assertEquals(null, c.getValue2());
+        assertNull(c.getValue1());
+        assertNull(c.getValue2());
         
         wb.close();
     }
@@ -315,8 +317,8 @@ public final class TestDataValidation extends BaseTestDataValidation {
         DVConstraint c = dv.getConstraint();
         assertEquals(ValidationType.INTEGER, c.getValidationType());
         assertEquals(OperatorType.BETWEEN, c.getOperator());
-        assertEquals(null, c.getFormula1());
-        assertEquals(null, c.getFormula2());
+        assertNull(c.getFormula1());
+        assertNull(c.getFormula2());
         assertEquals(new Double("100"), c.getValue1());
         assertEquals(new Double("200"), c.getValue2());
         
@@ -345,8 +347,8 @@ public final class TestDataValidation extends BaseTestDataValidation {
         assertEquals(ValidationType.DECIMAL, c.getValidationType());
         assertEquals(OperatorType.BETWEEN, c.getOperator());
         assertEquals("A2", c.getFormula1());
-        assertEquals(null, c.getFormula2());
-        assertEquals(null, c.getValue1());
+        assertNull(c.getFormula2());
+        assertNull(c.getValue1());
         assertEquals(new Double("200"), c.getValue2());
         
         wb.close();
@@ -373,10 +375,10 @@ public final class TestDataValidation extends BaseTestDataValidation {
         DVConstraint c = dv.getConstraint();
         assertEquals(ValidationType.DATE, c.getValidationType());
         assertEquals(OperatorType.EQUAL, c.getOperator());
-        assertEquals(null, c.getFormula1());
-        assertEquals(null, c.getFormula2());
+        assertNull(c.getFormula1());
+        assertNull(c.getFormula2());
         assertEquals(DateUtil.getExcelDate(DateUtil.parseYYYYMMDDDate("2014/10/25")), c.getValue1(), 0);
-        assertEquals(null, c.getValue2());
+        assertNull(c.getValue2());
         
         wb.close();
     }
@@ -400,14 +402,14 @@ public final class TestDataValidation extends BaseTestDataValidation {
         assertEquals(1, list.size());
 
         HSSFDataValidation dv = list.get(0);
-        assertEquals(true, dv.getSuppressDropDownArrow());
+        assertTrue(dv.getSuppressDropDownArrow());
 
         DVConstraint c = dv.getConstraint();
         assertEquals(ValidationType.LIST, c.getValidationType());
-        assertEquals(null, c.getFormula1());
-        assertEquals(null, c.getFormula2());
-        assertEquals(null, c.getValue1());
-        assertEquals(null, c.getValue2());
+        assertNull(c.getFormula1());
+        assertNull(c.getFormula2());
+        assertNull(c.getValue1());
+        assertNull(c.getValue2());
         String[] values = c.getExplicitListValues();
         assertEquals(3, values.length);
         assertEquals("aaa", values[0]);
@@ -435,14 +437,14 @@ public final class TestDataValidation extends BaseTestDataValidation {
         assertEquals(1, list.size());
 
         HSSFDataValidation dv = list.get(0);
-        assertEquals(true, dv.getSuppressDropDownArrow());
+        assertTrue(dv.getSuppressDropDownArrow());
 
         DVConstraint c = dv.getConstraint();
         assertEquals(ValidationType.LIST, c.getValidationType());
         assertEquals("A2", c.getFormula1());
-        assertEquals(null, c.getFormula2());
-        assertEquals(null, c.getValue1());
-        assertEquals(null, c.getValue2());
+        assertNull(c.getFormula2());
+        assertNull(c.getValue1());
+        assertNull(c.getValue2());
         
         wb.close();
     }
@@ -467,9 +469,9 @@ public final class TestDataValidation extends BaseTestDataValidation {
         DVConstraint c = dv.getConstraint();
         assertEquals(ValidationType.FORMULA, c.getValidationType());
         assertEquals("A2:A3", c.getFormula1());
-        assertEquals(null, c.getFormula2());
-        assertEquals(null, c.getValue1());
-        assertEquals(null, c.getValue2());
+        assertNull(c.getFormula2());
+        assertNull(c.getValue1());
+        assertNull(c.getValue2());
         wb.close();
     }
 }

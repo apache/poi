@@ -75,7 +75,7 @@ public final class TestXSSFPicture extends BaseTestPicture {
         assertEquals(AnchorType.DONT_MOVE_AND_RESIZE, anchor.getAnchorType());
 
         XSSFPicture shape = drawing.createPicture(anchor, jpegIdx);
-        assertTrue(anchor.equals(shape.getAnchor()));
+        assertEquals(anchor, shape.getAnchor());
         assertNotNull(shape.getPictureData());
         assertArrayEquals(jpegData, shape.getPictureData().getData());
 

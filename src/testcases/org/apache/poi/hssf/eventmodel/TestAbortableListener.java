@@ -55,7 +55,7 @@ public final class TestAbortableListener extends TestCase {
 		HSSFEventFactory f = new HSSFEventFactory();
 
 		assertEquals(0, l.countSeen);
-		assertEquals(null, l.lastRecordSeen);
+        assertNull(l.lastRecordSeen);
 
 		POIFSFileSystem fs = openSample();
 		short res = f.abortableProcessWorkbookEvents(req, fs);
@@ -75,7 +75,7 @@ public final class TestAbortableListener extends TestCase {
 		HSSFEventFactory f = new HSSFEventFactory();
 
 		assertEquals(0, l.countSeen);
-		assertEquals(null, l.lastRecordSeen);
+        assertNull(l.lastRecordSeen);
 
 		POIFSFileSystem fs = openSample();
 		short res = f.abortableProcessWorkbookEvents(req, fs);

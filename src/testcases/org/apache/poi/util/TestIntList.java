@@ -21,6 +21,8 @@ import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotSame;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
@@ -279,7 +281,7 @@ public final class TestIntList {
 
         assertEquals(list, list);
         //noinspection ObjectEqualsNull
-        assertFalse(list.equals(null));
+        assertNotEquals(null, list);
         IntList list2 = new IntList(200);
 
         assertEquals(list, list2);
@@ -289,15 +291,15 @@ public final class TestIntList {
         list.add(1);
         list2.add(1);
         list2.add(0);
-        assertFalse(list.equals(list2));
+        assertNotEquals(list, list2);
         list2.removeValue(1);
         list2.add(1);
         assertEquals(list, list2);
         assertEquals(list2, list);
         assertEquals(list.hashCode(), list2.hashCode());
         list2.add(2);
-        assertFalse(list.equals(list2));
-        assertFalse(list2.equals(list));
+        assertNotEquals(list, list2);
+        assertNotEquals(list2, list);
     }
 
     @Test
@@ -604,8 +606,8 @@ public final class TestIntList {
         int[] a4     = list.toArray(aShort);
         int[] a5     = list.toArray(aLong);
 
-        assertTrue(a4 != aShort);
-        assertTrue(a5 != aLong);
+        assertNotSame(a4, aShort);
+        assertNotSame(a5, aLong);
         assertEquals(a4.length, list.size());
         for (int j = 0; j < 1000; j++)
         {

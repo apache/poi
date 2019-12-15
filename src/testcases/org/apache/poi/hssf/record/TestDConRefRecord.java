@@ -25,6 +25,8 @@ import java.util.Arrays;
 import junit.framework.TestCase;
 import org.apache.poi.util.LittleEndianOutputStream;
 
+import static org.junit.Assert.assertArrayEquals;
+
 /**
  * Unit tests for DConRefRecord class.
  *
@@ -184,7 +186,6 @@ public class TestDConRefRecord extends TestCase
     /**
      * test read-constructor-then-serialize for a single-byte external reference strings of
      * various flavours. This uses the RecordInputStream constructor.
-     * @throws IOException
      */
     public void testReadWriteSBExtRef() throws IOException
     {
@@ -210,8 +211,6 @@ public class TestDConRefRecord extends TestCase
     /**
      * test read-constructor-then-serialize for a double-byte external reference 'UNC-Volume' style
      * string
-     * <p>
-     * @throws IOException
      */
     public void testReadWriteDBExtRefUncVol() throws IOException
     {
@@ -227,14 +226,11 @@ public class TestDConRefRecord extends TestCase
         d.serialize(o);
         o.flush();
 
-        assertTrue(message, Arrays.equals(data,
-                bos.toByteArray()));
+        assertArrayEquals(message, data, bos.toByteArray());
     }
 
     /**
      * test read-constructor-then-serialize for a double-byte self-reference style string
-     * <p>
-     * @throws IOException
      */
     public void testReadWriteDBSelfRef() throws IOException
     {
@@ -243,8 +239,6 @@ public class TestDConRefRecord extends TestCase
 
     /**
      * test read-constructor-then-serialize for a single-byte self-reference style string
-     * <p>
-     * @throws IOException
      */
     public void testReadWriteSBSelfRef() throws IOException
     {
@@ -289,7 +283,7 @@ public class TestDConRefRecord extends TestCase
         DConRefRecord instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data1));
         byte[] expResult = Arrays.copyOfRange(data1, 9, data1.length);
         byte[] result = instance.getPath();
-        assertTrue("get path", Arrays.equals(expResult, result));
+        assertArrayEquals("get path", expResult, result);
     }
 
     /**

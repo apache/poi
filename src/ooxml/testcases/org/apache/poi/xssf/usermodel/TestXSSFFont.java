@@ -72,12 +72,12 @@ public final class TestXSSFFont extends BaseTestFont{
 		bool.setVal(false);
 		ctFont.setBArray(0,bool);
 		XSSFFont xssfFont=new XSSFFont(ctFont);
-		assertEquals(false, xssfFont.getBold());
+        assertFalse(xssfFont.getBold());
 
 
 		xssfFont.setBold(true);
 		assertEquals(ctFont.sizeOfBArray(),1);
-		assertEquals(true, ctFont.getBArray(0).getVal());
+        assertTrue(ctFont.getBArray(0).getVal());
 	}
 
 	@SuppressWarnings("deprecation")
@@ -105,7 +105,7 @@ public final class TestXSSFFont extends BaseTestFont{
         assertEquals(FontCharset.ARABIC.getValue(), xssfFont.getCharSet());
         
         // This one isn't allowed
-        assertEquals(null, FontCharset.valueOf(9999));
+        assertNull(FontCharset.valueOf(9999));
         try {
            xssfFont.setCharSet(9999);
            fail("Shouldn't be able to set an invalid charset");
@@ -153,12 +153,12 @@ public final class TestXSSFFont extends BaseTestFont{
 		ctFont.setIArray(0,bool);
 
 		XSSFFont xssfFont=new XSSFFont(ctFont);
-		assertEquals(false, xssfFont.getItalic());
+        assertFalse(xssfFont.getItalic());
 
 		xssfFont.setItalic(true);
 		assertEquals(ctFont.sizeOfIArray(),1);
-		assertEquals(true, ctFont.getIArray(0).getVal());
-		assertEquals(true,ctFont.getIArray(0).getVal());
+        assertTrue(ctFont.getIArray(0).getVal());
+        assertTrue(ctFont.getIArray(0).getVal());
 	}
 
 	@Test
@@ -169,12 +169,12 @@ public final class TestXSSFFont extends BaseTestFont{
 		ctFont.setStrikeArray(0,bool);
 
 		XSSFFont xssfFont=new XSSFFont(ctFont);
-		assertEquals(false, xssfFont.getStrikeout());
+        assertFalse(xssfFont.getStrikeout());
 
 		xssfFont.setStrikeout(true);
 		assertEquals(ctFont.sizeOfStrikeArray(),1);
-		assertEquals(true, ctFont.getStrikeArray(0).getVal());
-		assertEquals(true,ctFont.getStrikeArray(0).getVal());
+        assertTrue(ctFont.getStrikeArray(0).getVal());
+        assertTrue(ctFont.getStrikeArray(0).getVal());
 	}
 
 	@Test
@@ -399,11 +399,7 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertEquals(2, wb.getNumberOfFonts());
 		assertEquals(nf, wb.getFontAt(1));
 
-		assertTrue(
-				wb.getFontAt(0)
-						!=
-						wb.getFontAt(1)
-		);
+        assertNotSame(wb.getFontAt(0), wb.getFontAt(1));
 
 		// Find it now
 		assertNotNull(

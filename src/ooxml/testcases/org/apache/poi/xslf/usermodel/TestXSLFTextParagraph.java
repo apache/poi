@@ -283,7 +283,7 @@ public class TestXSLFTextParagraph {
         p.setBulletFont("Calibri");
         assertEquals("Calibri", p.getBulletFont());
 
-        assertEquals(null, p.getBulletFontColor());
+        assertNull(p.getBulletFontColor());
         p.setBulletFontColor(Color.red);
         assertTrue(sameColor(Color.red, p.getBulletFontColor()));
 

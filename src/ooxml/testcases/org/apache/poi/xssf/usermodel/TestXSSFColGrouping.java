@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -129,17 +130,17 @@ public class TestXSSFColGrouping {
         assertEquals(0, cols.getColArray(0).getOutlineLevel());
         assertEquals(2, cols.getColArray(0).getMin()); // 1 based
         assertEquals(2, cols.getColArray(0).getMax()); // 1 based
-        assertEquals(true, cols.getColArray(0).getCustomWidth());
+        assertTrue(cols.getColArray(0).getCustomWidth());
 
         assertEquals(1, cols.getColArray(1).getOutlineLevel());
         assertEquals(3, cols.getColArray(1).getMin()); // 1 based
         assertEquals(4, cols.getColArray(1).getMax()); // 1 based
-        assertEquals(true, cols.getColArray(1).getCustomWidth());
+        assertTrue(cols.getColArray(1).getCustomWidth());
 
         assertEquals(0, cols.getColArray(2).getOutlineLevel());
         assertEquals(5, cols.getColArray(2).getMin()); // 1 based
         assertEquals(5, cols.getColArray(2).getMax()); // 1 based
-        assertEquals(true, cols.getColArray(2).getCustomWidth());
+        assertTrue(cols.getColArray(2).getCustomWidth());
 
         assertEquals(3, cols.sizeOfColArray());
 
@@ -177,17 +178,17 @@ public class TestXSSFColGrouping {
         assertEquals(1, cols.getColArray(0).getOutlineLevel());
         assertEquals(2, cols.getColArray(0).getMin()); // 1 based
         assertEquals(2, cols.getColArray(0).getMax()); // 1 based
-        assertEquals(false, cols.getColArray(0).getCustomWidth());
+        assertFalse(cols.getColArray(0).getCustomWidth());
 
         assertEquals(1, cols.getColArray(1).getOutlineLevel());
         assertEquals(3, cols.getColArray(1).getMin()); // 1 based
         assertEquals(5, cols.getColArray(1).getMax()); // 1 based
-        assertEquals(true, cols.getColArray(1).getCustomWidth());
+        assertTrue(cols.getColArray(1).getCustomWidth());
 
         assertEquals(1, cols.getColArray(2).getOutlineLevel());
         assertEquals(6, cols.getColArray(2).getMin()); // 1 based
         assertEquals(6, cols.getColArray(2).getMax()); // 1 based
-        assertEquals(false, cols.getColArray(2).getCustomWidth());
+        assertFalse(cols.getColArray(2).getCustomWidth());
 
         assertEquals(3, cols.sizeOfColArray());
 
@@ -225,17 +226,17 @@ public class TestXSSFColGrouping {
         assertEquals(0, cols.getColArray(0).getOutlineLevel());
         assertEquals(3, cols.getColArray(0).getMin()); // 1 based
         assertEquals(3, cols.getColArray(0).getMax()); // 1 based
-        assertEquals(true, cols.getColArray(0).getCustomWidth());
+        assertTrue(cols.getColArray(0).getCustomWidth());
 
         assertEquals(1, cols.getColArray(1).getOutlineLevel());
         assertEquals(4, cols.getColArray(1).getMin()); // 1 based
         assertEquals(5, cols.getColArray(1).getMax()); // 1 based
-        assertEquals(true, cols.getColArray(1).getCustomWidth());
+        assertTrue(cols.getColArray(1).getCustomWidth());
 
         assertEquals(1, cols.getColArray(2).getOutlineLevel());
         assertEquals(6, cols.getColArray(2).getMin()); // 1 based
         assertEquals(6, cols.getColArray(2).getMax()); // 1 based
-        assertEquals(false, cols.getColArray(2).getCustomWidth());
+        assertFalse(cols.getColArray(2).getCustomWidth());
 
         assertEquals(3, cols.sizeOfColArray());
 
@@ -274,17 +275,17 @@ public class TestXSSFColGrouping {
         assertEquals(1, cols.getColArray(0).getOutlineLevel());
         assertEquals(2, cols.getColArray(0).getMin()); // 1 based
         assertEquals(2, cols.getColArray(0).getMax()); // 1 based
-        assertEquals(false, cols.getColArray(0).getCustomWidth());
+        assertFalse(cols.getColArray(0).getCustomWidth());
 
         assertEquals(1, cols.getColArray(1).getOutlineLevel());
         assertEquals(3, cols.getColArray(1).getMin()); // 1 based
         assertEquals(4, cols.getColArray(1).getMax()); // 1 based
-        assertEquals(true, cols.getColArray(1).getCustomWidth());
+        assertTrue(cols.getColArray(1).getCustomWidth());
 
         assertEquals(0, cols.getColArray(2).getOutlineLevel());
         assertEquals(5, cols.getColArray(2).getMin()); // 1 based
         assertEquals(5, cols.getColArray(2).getMax()); // 1 based
-        assertEquals(true, cols.getColArray(2).getCustomWidth());
+        assertTrue(cols.getColArray(2).getCustomWidth());
 
         assertEquals(3, cols.sizeOfColArray());
 

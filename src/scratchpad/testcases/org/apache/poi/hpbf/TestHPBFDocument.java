@@ -17,6 +17,7 @@
 
 package org.apache.poi.hpbf;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -52,7 +53,7 @@ public final class TestHPBFDocument {
 		assertTrue(doc.getMainContents().getData().length > 0);
 		assertTrue(doc.getQuillContents().getData().length > 0);
 		assertTrue(doc.getEscherStm().getData().length > 0);
-		assertTrue(doc.getEscherDelayStm().getData().length == 0);
+        assertEquals(0, doc.getEscherDelayStm().getData().length);
 
        doc.close();
 	}

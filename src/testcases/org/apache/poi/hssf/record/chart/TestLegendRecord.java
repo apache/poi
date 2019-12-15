@@ -50,12 +50,12 @@ public final class TestLegendRecord extends TestCase {
 		assertEquals((byte) 0x1, record.getSpacing());
 
 		assertEquals((short) 0x1f, record.getOptions());
-		assertEquals(true, record.isAutoPosition());
-		assertEquals(true, record.isAutoSeries());
-		assertEquals(true, record.isAutoXPositioning());
-		assertEquals(true, record.isAutoYPositioning());
-		assertEquals(true, record.isVertical());
-		assertEquals(false, record.isDataTable());
+        assertTrue(record.isAutoPosition());
+        assertTrue(record.isAutoSeries());
+        assertTrue(record.isAutoXPositioning());
+        assertTrue(record.isAutoYPositioning());
+        assertTrue(record.isVertical());
+        assertFalse(record.isDataTable());
 
 		assertEquals(24, record.getRecordSize());
 	}

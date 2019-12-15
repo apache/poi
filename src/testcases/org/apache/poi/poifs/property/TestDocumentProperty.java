@@ -100,7 +100,7 @@ public final class TestDocumentProperty extends TestCase {
 
         if (size >= 4096)
         {
-            assertTrue(!property.shouldUseSmallBlocks());
+            assertFalse(property.shouldUseSmallBlocks());
         }
         else
         {

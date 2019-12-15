@@ -39,10 +39,10 @@ public final class TestDatRecord extends TestCase {
 
         DatRecord record = new DatRecord(TestcaseRecordInputStream.create(0x1063, data));
         assertEquals( 0xD, record.getOptions());
-        assertEquals( true, record.isHorizontalBorder() );
-        assertEquals( false, record.isVerticalBorder() );
-        assertEquals( true, record.isBorder() );
-        assertEquals( true, record.isShowSeriesKey() );
+        assertTrue(record.isHorizontalBorder());
+        assertFalse(record.isVerticalBorder());
+        assertTrue(record.isBorder());
+        assertTrue(record.isShowSeriesKey());
 
         assertEquals( 6, record.getRecordSize() );
     }

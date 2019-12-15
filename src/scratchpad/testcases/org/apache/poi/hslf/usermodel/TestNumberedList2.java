@@ -21,6 +21,7 @@ package org.apache.poi.hslf.usermodel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -69,11 +70,11 @@ public final class TestNumberedList2 {
 		final TextPFException9[] autoNumbersOfTextBox0 = numberedListInfoForTextBox0.getAutoNumberTypes();
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox0[0].getfBulletHasAutoNumber());
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox0[0].getAutoNumberStartNumber());//Default value = 1 will be used 
-		assertTrue(AutoNumberingScheme.arabicPeriod == autoNumbersOfTextBox0[0].getAutoNumberScheme());
+        assertSame(AutoNumberingScheme.arabicPeriod, autoNumbersOfTextBox0[0].getAutoNumberScheme());
 		final TextPFException9[] autoNumbersOfTextBox1 = numberedListInfoForTextBox1.getAutoNumberTypes();
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox1[0].getfBulletHasAutoNumber());
 		assertEquals(Short.valueOf((short)6), autoNumbersOfTextBox1[0].getAutoNumberStartNumber());//Default value = 1 will be used 
-		assertTrue(AutoNumberingScheme.arabicPeriod == autoNumbersOfTextBox1[0].getAutoNumberScheme());
+        assertSame(AutoNumberingScheme.arabicPeriod, autoNumbersOfTextBox1[0].getAutoNumberScheme());
 
 		
 		List<List<HSLFTextParagraph>> textParass = s.getTextParagraphs();
@@ -105,7 +106,7 @@ public final class TestNumberedList2 {
 		final TextPFException9[] autoNumbersOfTextBox = numberedListInfoForTextBox.getAutoNumberTypes();
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox[0].getfBulletHasAutoNumber());
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox[0].getAutoNumberStartNumber());//Default value = 1 will be used 
-		assertTrue(AutoNumberingScheme.arabicPeriod == autoNumbersOfTextBox[0].getAutoNumberScheme());
+        assertSame(AutoNumberingScheme.arabicPeriod, autoNumbersOfTextBox[0].getAutoNumberScheme());
 			
 		List<List<HSLFTextParagraph>> textParass = s.getTextParagraphs();
 		assertEquals(3, textParass.size());

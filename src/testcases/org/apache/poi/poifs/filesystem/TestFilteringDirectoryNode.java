@@ -59,20 +59,20 @@ public final class TestFilteringDirectoryNode {
       assertEquals(3, d.getEntryCount());
       assertEquals(dirA.getName(), d.getEntry(dirA.getName()).getName());
 
-      assertEquals(true, d.getEntry(dirA.getName()).isDirectoryEntry());
-      assertEquals(false, d.getEntry(dirA.getName()).isDocumentEntry());
+       assertTrue(d.getEntry(dirA.getName()).isDirectoryEntry());
+       assertFalse(d.getEntry(dirA.getName()).isDocumentEntry());
 
-      assertEquals(true, d.getEntry(dirB.getName()).isDirectoryEntry());
-      assertEquals(false, d.getEntry(dirB.getName()).isDocumentEntry());
+       assertTrue(d.getEntry(dirB.getName()).isDirectoryEntry());
+       assertFalse(d.getEntry(dirB.getName()).isDocumentEntry());
 
-      assertEquals(false, d.getEntry(eRoot.getName()).isDirectoryEntry());
-      assertEquals(true, d.getEntry(eRoot.getName()).isDocumentEntry());
+       assertFalse(d.getEntry(eRoot.getName()).isDirectoryEntry());
+       assertTrue(d.getEntry(eRoot.getName()).isDocumentEntry());
 
       Iterator<Entry> i = d.getEntries();
       assertEquals(dirA, i.next());
       assertEquals(dirB, i.next());
       assertEquals(eRoot, i.next());
-      assertEquals(null, i.next());
+       assertNull(i.next());
    }
 
    @Test
@@ -81,9 +81,9 @@ public final class TestFilteringDirectoryNode {
       FilteringDirectoryNode d = new FilteringDirectoryNode(fs.getRoot(), excl);
 
       assertEquals(2, d.getEntryCount());
-      assertEquals(true, d.hasEntry(dirA.getName()));
-      assertEquals(true, d.hasEntry(dirB.getName()));
-      assertEquals(false, d.hasEntry(eRoot.getName()));
+       assertTrue(d.hasEntry(dirA.getName()));
+       assertTrue(d.hasEntry(dirB.getName()));
+       assertFalse(d.hasEntry(eRoot.getName()));
 
       assertEquals(dirA, d.getEntry(dirA.getName()));
       assertEquals(dirB, d.getEntry(dirB.getName()));
@@ -96,7 +96,7 @@ public final class TestFilteringDirectoryNode {
       Iterator<Entry> i = d.getEntries();
       assertEquals(dirA, i.next());
       assertEquals(dirB, i.next());
-      assertEquals(null, i.next());
+       assertNull(i.next());
 
 
       // Filter more
@@ -104,9 +104,9 @@ public final class TestFilteringDirectoryNode {
       d = new FilteringDirectoryNode(fs.getRoot(), excl);
 
       assertEquals(1, d.getEntryCount());
-      assertEquals(false, d.hasEntry(dirA.getName()));
-      assertEquals(true, d.hasEntry(dirB.getName()));
-      assertEquals(false, d.hasEntry(eRoot.getName()));
+       assertFalse(d.hasEntry(dirA.getName()));
+       assertTrue(d.hasEntry(dirB.getName()));
+       assertFalse(d.hasEntry(eRoot.getName()));
 
       try {
          d.getEntry(dirA.getName());
@@ -122,7 +122,7 @@ public final class TestFilteringDirectoryNode {
 
       i = d.getEntries();
       assertEquals(dirB, i.next());
-      assertEquals(null, i.next());
+       assertNull(i.next());
 
 
       // Filter everything
@@ -130,9 +130,9 @@ public final class TestFilteringDirectoryNode {
       d = new FilteringDirectoryNode(fs.getRoot(), excl);
 
       assertEquals(0, d.getEntryCount());
-      assertEquals(false, d.hasEntry(dirA.getName()));
-      assertEquals(false, d.hasEntry(dirB.getName()));
-      assertEquals(false, d.hasEntry(eRoot.getName()));
+       assertFalse(d.hasEntry(dirA.getName()));
+       assertFalse(d.hasEntry(dirB.getName()));
+       assertFalse(d.hasEntry(eRoot.getName()));
 
       try {
          d.getEntry(dirA.getName());
@@ -151,7 +151,7 @@ public final class TestFilteringDirectoryNode {
       }
 
       i = d.getEntries();
-      assertEquals(null, i.next());
+       assertNull(i.next());
    }
 
    @Test
@@ -166,20 +166,20 @@ public final class TestFilteringDirectoryNode {
 
       // Check main
       assertEquals(2, d.getEntryCount());
-      assertEquals(true, d.hasEntry(dirA.getName()));
-      assertEquals(true, d.hasEntry(dirB.getName()));
-      assertEquals(false, d.hasEntry(eRoot.getName()));
+       assertTrue(d.hasEntry(dirA.getName()));
+       assertTrue(d.hasEntry(dirB.getName()));
+       assertFalse(d.hasEntry(eRoot.getName()));
 
       // Check filtering down
-      assertEquals(true, d.getEntry(dirA.getName()) instanceof FilteringDirectoryNode);
-      assertEquals(false, d.getEntry(dirB.getName()) instanceof FilteringDirectoryNode);
+       assertTrue(d.getEntry(dirA.getName()) instanceof FilteringDirectoryNode);
+       assertFalse(d.getEntry(dirB.getName()) instanceof FilteringDirectoryNode);
 
       DirectoryEntry fdA = (DirectoryEntry) d.getEntry(dirA.getName());
-      assertEquals(false, fdA.hasEntry(eA.getName()));
-      assertEquals(true, fdA.hasEntry(dirAA.getName()));
+       assertFalse(fdA.hasEntry(eA.getName()));
+       assertTrue(fdA.hasEntry(dirAA.getName()));
 
       DirectoryEntry fdAA = (DirectoryEntry) fdA.getEntry(dirAA.getName());
-      assertEquals(true, fdAA.hasEntry(eAA.getName()));
+       assertTrue(fdAA.hasEntry(eAA.getName()));
    }
 
    @Test(expected = IllegalArgumentException.class)

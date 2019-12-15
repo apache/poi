@@ -226,7 +226,7 @@ public final class TestStyleTextPropAtom {
         assertEquals(2,b_ch_1.getTextPropList().size());
         TextProp tp_1_1 = b_ch_1.getTextPropList().get(0);
         TextProp tp_1_2 = b_ch_1.getTextPropList().get(1);
-        assertEquals(true, tp_1_1 instanceof CharFlagsTextProp);
+        assertTrue(tp_1_1 instanceof CharFlagsTextProp);
         assertEquals("font.size", tp_1_2.getName());
         assertEquals(20, tp_1_2.getValue());
 
@@ -235,7 +235,7 @@ public final class TestStyleTextPropAtom {
         TextProp tp_2_1 = b_ch_2.getTextPropList().get(0);
         TextProp tp_2_2 = b_ch_2.getTextPropList().get(1);
         TextProp tp_2_3 = b_ch_2.getTextPropList().get(2);
-        assertEquals(true, tp_2_1 instanceof CharFlagsTextProp);
+        assertTrue(tp_2_1 instanceof CharFlagsTextProp);
         assertEquals("font.size", tp_2_2.getName());
         assertEquals("font.color", tp_2_3.getName());
         assertEquals(20, tp_2_2.getValue());
@@ -253,7 +253,7 @@ public final class TestStyleTextPropAtom {
         TextProp tp_4_1 = b_ch_4.getTextPropList().get(0);
         TextProp tp_4_2 = b_ch_4.getTextPropList().get(1);
         TextProp tp_4_3 = b_ch_4.getTextPropList().get(2);
-        assertEquals(true, tp_4_1 instanceof CharFlagsTextProp);
+        assertTrue(tp_4_1 instanceof CharFlagsTextProp);
         assertEquals("font.index", tp_4_2.getName());
         assertEquals("font.size", tp_4_3.getName());
         assertEquals(24, tp_4_3.getValue());
@@ -317,42 +317,42 @@ public final class TestStyleTextPropAtom {
 
         // 1st is bold
         CharFlagsTextProp cf_1_1 = (CharFlagsTextProp)b_ch_1.getTextPropList().get(0);
-        assertEquals(true,cf_1_1.getSubValue(CharFlagsTextProp.BOLD_IDX));
-        assertEquals(false,cf_1_1.getSubValue(CharFlagsTextProp.ITALIC_IDX));
-        assertEquals(false,cf_1_1.getSubValue(CharFlagsTextProp.ENABLE_NUMBERING_1_IDX));
-        assertEquals(false,cf_1_1.getSubValue(CharFlagsTextProp.ENABLE_NUMBERING_2_IDX));
-        assertEquals(false,cf_1_1.getSubValue(CharFlagsTextProp.RELIEF_IDX));
-        assertEquals(false,cf_1_1.getSubValue(CharFlagsTextProp.RESET_NUMBERING_IDX));
-        assertEquals(false,cf_1_1.getSubValue(CharFlagsTextProp.SHADOW_IDX));
-        assertEquals(false,cf_1_1.getSubValue(CharFlagsTextProp.STRIKETHROUGH_IDX));
-        assertEquals(false,cf_1_1.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
+        assertTrue(cf_1_1.getSubValue(CharFlagsTextProp.BOLD_IDX));
+        assertFalse(cf_1_1.getSubValue(CharFlagsTextProp.ITALIC_IDX));
+        assertFalse(cf_1_1.getSubValue(CharFlagsTextProp.ENABLE_NUMBERING_1_IDX));
+        assertFalse(cf_1_1.getSubValue(CharFlagsTextProp.ENABLE_NUMBERING_2_IDX));
+        assertFalse(cf_1_1.getSubValue(CharFlagsTextProp.RELIEF_IDX));
+        assertFalse(cf_1_1.getSubValue(CharFlagsTextProp.RESET_NUMBERING_IDX));
+        assertFalse(cf_1_1.getSubValue(CharFlagsTextProp.SHADOW_IDX));
+        assertFalse(cf_1_1.getSubValue(CharFlagsTextProp.STRIKETHROUGH_IDX));
+        assertFalse(cf_1_1.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
 
         // 2nd is italic
         CharFlagsTextProp cf_2_1 = (CharFlagsTextProp)b_ch_2.getTextPropList().get(0);
-        assertEquals(false,cf_2_1.getSubValue(CharFlagsTextProp.BOLD_IDX));
-        assertEquals(true,cf_2_1.getSubValue(CharFlagsTextProp.ITALIC_IDX));
-        assertEquals(false,cf_2_1.getSubValue(CharFlagsTextProp.ENABLE_NUMBERING_1_IDX));
-        assertEquals(false,cf_2_1.getSubValue(CharFlagsTextProp.ENABLE_NUMBERING_2_IDX));
-        assertEquals(false,cf_2_1.getSubValue(CharFlagsTextProp.RELIEF_IDX));
-        assertEquals(false,cf_2_1.getSubValue(CharFlagsTextProp.RESET_NUMBERING_IDX));
-        assertEquals(false,cf_2_1.getSubValue(CharFlagsTextProp.SHADOW_IDX));
-        assertEquals(false,cf_2_1.getSubValue(CharFlagsTextProp.STRIKETHROUGH_IDX));
-        assertEquals(false,cf_2_1.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
+        assertFalse(cf_2_1.getSubValue(CharFlagsTextProp.BOLD_IDX));
+        assertTrue(cf_2_1.getSubValue(CharFlagsTextProp.ITALIC_IDX));
+        assertFalse(cf_2_1.getSubValue(CharFlagsTextProp.ENABLE_NUMBERING_1_IDX));
+        assertFalse(cf_2_1.getSubValue(CharFlagsTextProp.ENABLE_NUMBERING_2_IDX));
+        assertFalse(cf_2_1.getSubValue(CharFlagsTextProp.RELIEF_IDX));
+        assertFalse(cf_2_1.getSubValue(CharFlagsTextProp.RESET_NUMBERING_IDX));
+        assertFalse(cf_2_1.getSubValue(CharFlagsTextProp.SHADOW_IDX));
+        assertFalse(cf_2_1.getSubValue(CharFlagsTextProp.STRIKETHROUGH_IDX));
+        assertFalse(cf_2_1.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
 
         // 3rd is normal, so lacks a CharFlagsTextProp
         assertFalse(b_ch_3.getTextPropList().get(0) instanceof CharFlagsTextProp);
 
         // 4th is underlined
         CharFlagsTextProp cf_4_1 = (CharFlagsTextProp)b_ch_4.getTextPropList().get(0);
-        assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.BOLD_IDX));
-        assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.ITALIC_IDX));
-        assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.ENABLE_NUMBERING_1_IDX));
-        assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.ENABLE_NUMBERING_2_IDX));
-        assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.RELIEF_IDX));
-        assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.RESET_NUMBERING_IDX));
-        assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.SHADOW_IDX));
-        assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.STRIKETHROUGH_IDX));
-        assertEquals(true,cf_4_1.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
+        assertFalse(cf_4_1.getSubValue(CharFlagsTextProp.BOLD_IDX));
+        assertFalse(cf_4_1.getSubValue(CharFlagsTextProp.ITALIC_IDX));
+        assertFalse(cf_4_1.getSubValue(CharFlagsTextProp.ENABLE_NUMBERING_1_IDX));
+        assertFalse(cf_4_1.getSubValue(CharFlagsTextProp.ENABLE_NUMBERING_2_IDX));
+        assertFalse(cf_4_1.getSubValue(CharFlagsTextProp.RELIEF_IDX));
+        assertFalse(cf_4_1.getSubValue(CharFlagsTextProp.RESET_NUMBERING_IDX));
+        assertFalse(cf_4_1.getSubValue(CharFlagsTextProp.SHADOW_IDX));
+        assertFalse(cf_4_1.getSubValue(CharFlagsTextProp.STRIKETHROUGH_IDX));
+        assertTrue(cf_4_1.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
 
         // The value for this should be 4
         assertEquals(0x0004, cf_4_1.getValue());
@@ -362,15 +362,15 @@ public final class TestStyleTextPropAtom {
         cf_4_1.setSubValue(true, CharFlagsTextProp.ITALIC_IDX);
         cf_4_1.setSubValue(false, CharFlagsTextProp.UNDERLINE_IDX);
 
-        assertEquals(true,cf_4_1.getSubValue(CharFlagsTextProp.BOLD_IDX));
-        assertEquals(true,cf_4_1.getSubValue(CharFlagsTextProp.ITALIC_IDX));
-        assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.ENABLE_NUMBERING_1_IDX));
-        assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.ENABLE_NUMBERING_2_IDX));
-        assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.RELIEF_IDX));
-        assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.RESET_NUMBERING_IDX));
-        assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.SHADOW_IDX));
-        assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.STRIKETHROUGH_IDX));
-        assertEquals(false,cf_4_1.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
+        assertTrue(cf_4_1.getSubValue(CharFlagsTextProp.BOLD_IDX));
+        assertTrue(cf_4_1.getSubValue(CharFlagsTextProp.ITALIC_IDX));
+        assertFalse(cf_4_1.getSubValue(CharFlagsTextProp.ENABLE_NUMBERING_1_IDX));
+        assertFalse(cf_4_1.getSubValue(CharFlagsTextProp.ENABLE_NUMBERING_2_IDX));
+        assertFalse(cf_4_1.getSubValue(CharFlagsTextProp.RELIEF_IDX));
+        assertFalse(cf_4_1.getSubValue(CharFlagsTextProp.RESET_NUMBERING_IDX));
+        assertFalse(cf_4_1.getSubValue(CharFlagsTextProp.SHADOW_IDX));
+        assertFalse(cf_4_1.getSubValue(CharFlagsTextProp.STRIKETHROUGH_IDX));
+        assertFalse(cf_4_1.getSubValue(CharFlagsTextProp.UNDERLINE_IDX));
 
         // The value should now be 3
         assertEquals(0x0003, cf_4_1.getValue());

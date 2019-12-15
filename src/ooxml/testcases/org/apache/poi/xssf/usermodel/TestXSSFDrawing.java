@@ -210,7 +210,7 @@ public class TestXSSFDrawing {
             XSSFShape sh1 = shapes1.get(i);
             XSSFShape sh2 = shapes2.get(i);
 
-            assertTrue(sh1.getClass() == sh2.getClass());
+            assertSame(sh1.getClass(), sh2.getClass());
             assertEquals(sh1.getShapeProperties().toString(), sh2.getShapeProperties().toString());
         }
 
@@ -246,8 +246,8 @@ public class TestXSSFDrawing {
         assertEquals(1, pr.sizeOfRArray());
 
         CTTextCharacterProperties rPr = pr.getRArray(0).getRPr();
-        assertEquals(true, rPr.getB());
-        assertEquals(true, rPr.getI());
+        assertTrue(rPr.getB());
+        assertTrue(rPr.getI());
         assertEquals(STTextUnderlineType.SNG, rPr.getU());
         assertArrayEquals(
                 new byte[]{0, (byte)128, (byte)128} ,

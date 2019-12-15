@@ -69,7 +69,7 @@ public final class TestCHPBinTable
     {
       CHPX oldNode = oldTextRuns.get(x);
       CHPX newNode = newTextRuns.get(x);
-      assertTrue(oldNode.equals(newNode));
+        assertEquals(oldNode, newNode);
     }
 
   }

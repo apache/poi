@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.text.DecimalFormat;
@@ -240,7 +241,7 @@ public final class TestHSSFDataFormatter {
 
             // should not be equal to "555.555"
             assertTrue( DateUtil.isCellDateFormatted(cell) );
-            assertTrue( ! "555.555".equals(fmtval));
+            assertFalse("555.555".equals(fmtval));
 
             String fmt = cell.getCellStyle().getDataFormatString();
 
@@ -270,7 +271,7 @@ public final class TestHSSFDataFormatter {
 
             // should not be equal to "555.47431"
             assertTrue( DateUtil.isCellDateFormatted(cell) );
-            assertTrue( ! "555.47431".equals(fmtval));
+            assertFalse("555.47431".equals(fmtval));
 
             // check we found the time properly
             assertTrue("Format came out incorrect - " + fmt + " - found " + fmtval + 

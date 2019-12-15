@@ -50,10 +50,10 @@ public final class TestTickRecord extends TestCase {
         assertEquals( (short)0, record.getZero1());
         assertEquals( (short)0, record.getZero2());
         assertEquals( (short)35, record.getOptions());
-        assertEquals( true, record.isAutoTextColor() );
-        assertEquals( true, record.isAutoTextBackground() );
+        assertTrue(record.isAutoTextColor());
+        assertTrue(record.isAutoTextBackground());
         assertEquals( (short)0x0, record.getRotation() );
-        assertEquals( true, record.isAutorotate() );
+        assertTrue(record.isAutorotate());
         assertEquals( (short)77, record.getTickColor());
         assertEquals( (short)0x0, record.getZero3());
 

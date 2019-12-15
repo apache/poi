@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.functions;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
@@ -51,12 +52,12 @@ public final class TestIsBlank {
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
         CellValue result = fe.evaluate(cell);
         assertEquals(CellType.BOOLEAN, result.getCellType());
-        assertEquals(true, result.getBooleanValue());
+        assertTrue(result.getBooleanValue());
 
         cell.setCellFormula("isblank(D7:D7)");
 
         result = fe.evaluate(cell);
         assertEquals(CellType.BOOLEAN, result.getCellType());
-        assertEquals(true, result.getBooleanValue());
+        assertTrue(result.getBooleanValue());
     }
 }

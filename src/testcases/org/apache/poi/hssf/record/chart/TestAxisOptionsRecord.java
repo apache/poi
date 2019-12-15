@@ -49,14 +49,14 @@ public final class TestAxisOptionsRecord extends TestCase {
         assertEquals( 0, record.getBaseUnit());
         assertEquals( 0, record.getCrossingPoint());
         assertEquals( 239, record.getOptions());
-        assertEquals( true, record.isDefaultMinimum() );
-        assertEquals( true, record.isDefaultMaximum() );
-        assertEquals( true, record.isDefaultMajor() );
-        assertEquals( true, record.isDefaultMinorUnit() );
-        assertEquals( false, record.isIsDate() );
-        assertEquals( true, record.isDefaultBase() );
-        assertEquals( true, record.isDefaultCross() );
-        assertEquals( true, record.isDefaultDateSettings() );
+        assertTrue(record.isDefaultMinimum());
+        assertTrue(record.isDefaultMaximum());
+        assertTrue(record.isDefaultMajor());
+        assertTrue(record.isDefaultMinorUnit());
+        assertFalse(record.isIsDate());
+        assertTrue(record.isDefaultBase());
+        assertTrue(record.isDefaultCross());
+        assertTrue(record.isDefaultDateSettings());
 
         assertEquals( 22, record.getRecordSize() );
     }

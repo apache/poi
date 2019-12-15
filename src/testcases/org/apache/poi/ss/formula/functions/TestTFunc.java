@@ -76,7 +76,7 @@ public final class TestTFunc {
 
 	private static void confirmError(ValueEval arg) {
 		ValueEval eval = invokeT(arg);
-		assertSame(arg, eval);
+        assertSame(arg, eval);
 	}
 
 	@Test
@@ -119,7 +119,7 @@ public final class TestTFunc {
 		confirmString(eval, "");
 
 		eval = invokeTWithReference(ErrorEval.NAME_INVALID);
-		assertSame(eval, ErrorEval.NAME_INVALID);
+        assertSame(eval, ErrorEval.NAME_INVALID);
 	}
 
 	@Test

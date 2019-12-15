@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
@@ -66,7 +67,7 @@ public final class TestFormulas {
         r  = s.getRow(1);
         c  = r.getCell(1);
 
-        assertTrue("Formula is as expected",("1+1".equals(c.getCellFormula())));
+        assertEquals("Formula is as expected", "1+1", c.getCellFormula());
         wb2.close();
     }
 
@@ -209,10 +210,9 @@ public final class TestFormulas {
             for (int y = 1; y < 256 && y > 0; y=(short)(y+2)) {
 
                 HSSFCell c = r.getCell(y);
-                assertTrue("got a formula",c.getCellFormula()!=null);
+                assertNotNull("got a formula", c.getCellFormula());
 
-                assertTrue("loop Formula is as expected "+x+"."+y+operator+y+"."+x+"!="+c.getCellFormula(),(
-                (""+x+"."+y+operator+y+"."+x).equals(c.getCellFormula()) ));
+                assertEquals("loop Formula is as expected " + x + "." + y + operator + y + "." + x + "!=" + c.getCellFormula(), ("" + x + "." + y + operator + y + "." + x), c.getCellFormula());
             }
         }
     }
@@ -316,9 +316,7 @@ public final class TestFormulas {
         r = s.getRow(0);
         c = r.getCell(1);
         //get our minimum values
-        assertTrue("minval Formula is as expected A2"+operator+"A3 != "+c.getCellFormula(),
-        ( ("A2"+operator+"A3").equals(c.getCellFormula())
-        ));
+        assertEquals("minval Formula is as expected A2" + operator + "A3 != " + c.getCellFormula(), ("A2" + operator + "A3"), c.getCellFormula());
 
 
         for (int x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
@@ -354,10 +352,7 @@ public final class TestFormulas {
                 String ref2=cr.formatAsString();
 
 
-                assertTrue("loop Formula is as expected "+ref+operator+ref2+"!="+c.getCellFormula(),(
-                (""+ref+operator+ref2).equals(c.getCellFormula())
-                                                         )
-                );
+                assertEquals("loop Formula is as expected " + ref + operator + ref2 + "!=" + c.getCellFormula(), ("" + ref + operator + ref2), c.getCellFormula());
             }
         }
 
@@ -391,7 +386,7 @@ public final class TestFormulas {
         //get our minimum values
         r = s.getRow(0);
         c = r.getCell(1);
-        assertTrue("minval Formula is as expected", formula.equals(c.getCellFormula()));
+        assertEquals("minval Formula is as expected", formula, c.getCellFormula());
         wb2.close();
     }
 
@@ -446,9 +441,7 @@ public final class TestFormulas {
         //get our minimum values
         r = s.getRow(0);
         c = r.getCell(1);
-        assertTrue("minval Formula is as expected 1"+operator+"1 != "+c.getCellFormula(),
-        ( ("1"+operator+"1").equals(c.getCellFormula())
-        ));
+        assertEquals("minval Formula is as expected 1" + operator + "1 != " + c.getCellFormula(), ("1" + operator + "1"), c.getCellFormula());
 
         for (int x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
             r = s.getRow(x);
@@ -457,10 +450,7 @@ public final class TestFormulas {
 
                 c = r.getCell(y);
 
-                assertTrue("loop Formula is as expected "+x+operator+y+"!="+c.getCellFormula(),(
-                (""+x+operator+y).equals(c.getCellFormula())
-                                                         )
-                );
+                assertEquals("loop Formula is as expected " + x + operator + y + "!=" + c.getCellFormula(), ("" + x + operator + y), c.getCellFormula());
             }
         }
 
@@ -468,10 +458,7 @@ public final class TestFormulas {
         r = s.getRow(0);
         c = r.getCell(0);
 
-        assertTrue("maxval Formula is as expected",(
-        (""+Short.MAX_VALUE+operator+Short.MAX_VALUE).equals(c.getCellFormula())
-                                                   )
-        );
+        assertEquals("maxval Formula is as expected", ("" + Short.MAX_VALUE + operator + Short.MAX_VALUE), c.getCellFormula());
     }
 
     /**
@@ -496,9 +483,7 @@ public final class TestFormulas {
         r = s.getRow(0);
         c = r.getCell(0);
 
-        assertTrue("function ="+function+"(A2:A3)",
-                    ( (function+"(A2:A3)").equals((function+"(A2:A3)")) )
-                  );
+        assertEquals("function =" + function + "(A2:A3)", (function + "(A2:A3)"), (function + "(A2:A3)"));
         wb2.close();
     }
 
@@ -524,9 +509,7 @@ public final class TestFormulas {
         r = s.getRow(0);
         c = r.getCell(0);
 
-        assertTrue("function ="+function+"(A2,A3)",
-                    ( (function+"(A2,A3)").equals(c.getCellFormula()) )
-                  );
+        assertEquals("function =" + function + "(A2,A3)", (function + "(A2,A3)"), c.getCellFormula());
         wb2.close();
     }
 
@@ -556,14 +539,10 @@ public final class TestFormulas {
         r = s.getRow(0);
         c = r.getCell(0);
 
-        assertTrue("function ="+function+"(A2:A4,B2:B4)",
-                    ( (function+"(A2:A4,B2:B4)").equals(c.getCellFormula()) )
-                  );
+        assertEquals("function =" + function + "(A2:A4,B2:B4)", (function + "(A2:A4,B2:B4)"), c.getCellFormula());
 
         c=r.getCell(1);
-        assertTrue("function ="+function+"($A$2:$A4,B$2:B4)",
-                    ( (function+"($A$2:$A4,B$2:B4)").equals(c.getCellFormula()) )
-                  );
+        assertEquals("function =" + function + "($A$2:$A4,B$2:B4)", (function + "($A$2:$A4,B$2:B4)"), c.getCellFormula());
         wb2.close();
     }
 
@@ -592,15 +571,15 @@ public final class TestFormulas {
         s = wb2.getSheetAt(0);
         r = s.getRow(0);
         c = r.getCell(0);
-        assertTrue("A3+A2", ("A3+A2").equals(c.getCellFormula()));
+        assertEquals("A3+A2", ("A3+A2"), c.getCellFormula());
          c = r.getCell(1);
-        assertTrue("$A3+$A2", ("$A3+$A2").equals(c.getCellFormula()));
+        assertEquals("$A3+$A2", ("$A3+$A2"), c.getCellFormula());
          c = r.getCell(2);
-        assertTrue("A$3+A$2", ("A$3+A$2").equals(c.getCellFormula()));
+        assertEquals("A$3+A$2", ("A$3+A$2"), c.getCellFormula());
          c = r.getCell(3);
-        assertTrue("$A$3+$A$2", ("$A$3+$A$2").equals(c.getCellFormula()));
+        assertEquals("$A$3+$A$2", ("$A$3+$A$2"), c.getCellFormula());
          c = r.getCell(4);
-        assertTrue("SUM($A$3,$A$2)", ("SUM($A$3,$A$2)").equals(c.getCellFormula()));
+        assertEquals("SUM($A$3,$A$2)", ("SUM($A$3,$A$2)"), c.getCellFormula());
         wb2.close();
     }
 
@@ -626,9 +605,9 @@ public final class TestFormulas {
         s = wb2.getSheet("B");
         r = s.getRow(0);
         c = r.getCell(0);
-        assertTrue("expected: AVERAGE(A!A1:B1) got: "+c.getCellFormula(), ("AVERAGE(A!A1:B1)").equals(c.getCellFormula()));
+        assertEquals("expected: AVERAGE(A!A1:B1) got: " + c.getCellFormula(), ("AVERAGE(A!A1:B1)"), c.getCellFormula());
         c = r.getCell(1);
-        assertTrue("expected: A!A1+A!B1 got: "+c.getCellFormula(), ("A!A1+A!B1").equals(c.getCellFormula()));
+        assertEquals("expected: A!A1+A!B1 got: " + c.getCellFormula(), ("A!A1+A!B1"), c.getCellFormula());
         wb2.close();
     }
 
@@ -760,14 +739,14 @@ public final class TestFormulas {
         r = s.getRow(0);
         c = r.getCell(4);
 
-        assertTrue("expected: IF(A1=D1,\"A1\",\"B1\") got "+c.getCellFormula(), ("IF(A1=D1,\"A1\",\"B1\")").equals(c.getCellFormula()));
+        assertEquals("expected: IF(A1=D1,\"A1\",\"B1\") got " + c.getCellFormula(), ("IF(A1=D1,\"A1\",\"B1\")"), c.getCellFormula());
         wb2.close();
 
         wb1 = openSample("IfFormulaTest.xls");
         s = wb1.getSheetAt(0);
         r = s.getRow(3);
         c = r.getCell(0);
-        assertTrue("expected: IF(A3=A1,\"A1\",\"A2\") got "+c.getCellFormula(), ("IF(A3=A1,\"A1\",\"A2\")").equals(c.getCellFormula()));
+        assertEquals("expected: IF(A3=A1,\"A1\",\"A2\") got " + c.getCellFormula(), ("IF(A3=A1,\"A1\",\"A2\")"), c.getCellFormula());
         //c = r.getCell((short)1);
         //assertTrue("expected: A!A1+A!B1 got: "+c.getCellFormula(), ("A!A1+A!B1").equals(c.getCellFormula()));
         wb1.close();

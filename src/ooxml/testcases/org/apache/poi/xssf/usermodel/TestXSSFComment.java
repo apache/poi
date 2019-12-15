@@ -19,9 +19,11 @@ package org.apache.poi.xssf.usermodel;
 
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.FileOutputStream;
@@ -77,11 +79,11 @@ public final class TestXSSFComment extends BaseTestCellComment  {
         CTShape vmlShape = CTShape.Factory.newInstance();
 
         XSSFComment comment = new XSSFComment(sheetComments, ctComment, vmlShape);
-        assertEquals(null, comment.getString());
+        assertNull(comment.getString());
         assertEquals(0, comment.getRow());
         assertEquals(0, comment.getColumn());
         assertEquals("", comment.getAuthor());
-        assertEquals(false, comment.isVisible());
+        assertFalse(comment.isVisible());
     }
 
     @Test
@@ -168,7 +170,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
         assertSame(comment.getString(), richText);
         //check that the rich text is set in the comment
         CTRPrElt rPr = richText.getCTRst().getRArray(0).getRPr();
-        assertEquals(true, rPr.getIArray(0).getVal());
+        assertTrue(rPr.getIArray(0).getVal());
         assertEquals(8.5, rPr.getSzArray(0).getVal(), 0);
         assertEquals(IndexedColors.BLUE_GREY.getIndex(), rPr.getColorArray(0).getIndexed());
         assertEquals("Tahoma", rPr.getRFontArray(0).getVal());

@@ -86,7 +86,7 @@ public final class TestDirectoryNode extends TestCase {
         assertEquals(property2.getName(), node.getName());
 
         // verify behavior of isDocumentEntry
-        assertTrue(!node.isDocumentEntry());
+        assertFalse(node.isDocumentEntry());
 
         // verify behavior of getParent
         assertEquals(parent, node.getParent());
@@ -117,7 +117,7 @@ public final class TestDirectoryNode extends TestCase {
         assertEquals(2, count);
 
         // verify behavior of isEmpty
-        assertTrue(!node.isEmpty());
+        assertFalse(node.isEmpty());
 
         // verify behavior of getEntryCount
         assertEquals(2, node.getEntryCount());
@@ -145,7 +145,7 @@ public final class TestDirectoryNode extends TestCase {
         assertEquals(property1.getName(), node.getName());
 
         // verify behavior of isDocumentEntry
-        assertTrue(!node.isDocumentEntry());
+        assertFalse(node.isDocumentEntry());
 
         // verify behavior of getParent
         assertNull(node.getParent());
@@ -202,14 +202,14 @@ public final class TestDirectoryNode extends TestCase {
         DirectoryEntry  root = fs.getRoot();
 
         // verify cannot rename the root directory
-        assertTrue(!root.renameTo("foo"));
+        assertFalse(root.renameTo("foo"));
         DirectoryEntry dir = fs.createDirectory("myDir");
 
         assertTrue(dir.renameTo("foo"));
         assertEquals("foo", dir.getName());
         DirectoryEntry dir2 = fs.createDirectory("myDir");
 
-        assertTrue(!dir2.renameTo("foo"));
+        assertFalse(dir2.renameTo("foo"));
         assertEquals("myDir", dir2.getName());
         assertTrue(dir.renameTo("FirstDir"));
         assertTrue(dir2.renameTo("foo"));

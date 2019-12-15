@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 /**
@@ -111,7 +112,7 @@ public final class TestFormulaBugs {
 		
 		cv = fe.evaluate(row.getCell(1));
 		assertEquals(CellType.BOOLEAN, cv.getCellType());
-		assertEquals(true, cv.getBooleanValue());
+        assertTrue(cv.getBooleanValue());
 		
 		wb.close();
 	}

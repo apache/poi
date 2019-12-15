@@ -33,14 +33,14 @@ public final class TestMAPIProperty extends TestCase {
    
    public void testGetAll() throws Exception {
       Collection<MAPIProperty> all = MAPIProperty.getAll();
-      assertEquals(true, all.contains(MAPIProperty.DISPLAY_NAME));
-      assertEquals(true, all.contains(MAPIProperty.DISPLAY_CC));
+       assertTrue(all.contains(MAPIProperty.DISPLAY_NAME));
+       assertTrue(all.contains(MAPIProperty.DISPLAY_CC));
       
       // Won't contain custom
-      assertEquals(false, all.contains(MAPIProperty.createCustom(1, Types.UNSPECIFIED, "")));
+       assertFalse(all.contains(MAPIProperty.createCustom(1, Types.UNSPECIFIED, "")));
       
       // Won't contain unknown
-      assertEquals(false, all.contains(MAPIProperty.UNKNOWN));
+       assertFalse(all.contains(MAPIProperty.UNKNOWN));
    }
    
    public void testCustom() throws Exception {
@@ -55,8 +55,8 @@ public final class TestMAPIProperty extends TestCase {
       
       // Won't be in all list
       Collection<MAPIProperty> all = MAPIProperty.getAll();
-      assertEquals(false, all.contains(c1));
-      assertEquals(false, all.contains(c2a));
-      assertEquals(false, all.contains(c2b));
+       assertFalse(all.contains(c1));
+       assertFalse(all.contains(c2a));
+       assertFalse(all.contains(c2b));
    }
 }

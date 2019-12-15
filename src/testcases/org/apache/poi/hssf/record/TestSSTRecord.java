@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -82,7 +83,7 @@ public final class TestSSTRecord {
         in.nextRecord();
         SSTRecord result = new SSTRecord(in);
         assertEquals(0, in.remaining());
-        assertTrue(!in.hasNextRecord());
+        assertFalse(in.hasNextRecord());
         return result;
     }
 
@@ -1468,7 +1469,7 @@ public final class TestSSTRecord {
             org.apache.poi.hssf.record.common.UnicodeString us1 = expected.getString(k);
             org.apache.poi.hssf.record.common.UnicodeString us2 = actual.getString(k);
 
-            assertTrue("String at idx=" + k, us1.equals(us2));
+            assertEquals("String at idx=" + k, us1, us2);
         }
     }
     

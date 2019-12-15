@@ -101,7 +101,7 @@ public abstract class BaseTestXSSFPivotTable {
         pivotTable.addColumnLabel(DataConsolidateFunction.SUM, columnIndex);
         CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
 
-        assertEquals(defintion.getColFields(), null);
+        assertNull(defintion.getColFields());
     }
 
     /**

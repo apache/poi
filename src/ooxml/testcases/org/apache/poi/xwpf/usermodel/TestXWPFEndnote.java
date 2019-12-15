@@ -94,7 +94,7 @@ public class TestXWPFEndnote {
 
         XWPFRun r2 = testP2.getRuns().get(0);
         assertNotNull("Expected a run in testP2", r2);
-        assertTrue("Found an endnote reference in testP2", r2.getCTR().getEndnoteRefList().size() == 0);
+        assertEquals("Found an endnote reference in testP2", 0, r2.getCTR().getEndnoteRefList().size());
         
     }
     

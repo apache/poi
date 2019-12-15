@@ -18,6 +18,7 @@
 package org.apache.poi.poifs.property;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
@@ -131,7 +132,7 @@ public final class TestRootProperty {
 		}
 		assertEquals(index, property.getIndex());
 		assertEquals(name, property.getName());
-		assertTrue(!property.getChildren().hasNext());
+        assertFalse(property.getChildren().hasNext());
 		assertEquals(property.getStorageClsid().toString(), sClsId);
 	}
 }

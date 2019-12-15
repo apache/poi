@@ -20,6 +20,7 @@ package org.apache.poi.sl.draw.geom;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.geom.Path2D;
@@ -52,7 +53,7 @@ public class TestPresetGeometries {
         }
         
         // we get the same instance on further calls
-        assertTrue(shapes == PresetGeometries.getInstance());
+        assertSame(shapes, PresetGeometries.getInstance());
     }
 
     // helper methods to adjust list of presets for other tests

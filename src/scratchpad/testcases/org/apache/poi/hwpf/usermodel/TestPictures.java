@@ -18,6 +18,7 @@
 package org.apache.poi.hwpf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -178,47 +179,47 @@ public final class TestPictures {
        p = r.getParagraph(0);
        assertEquals(2, p.numCharacterRuns());
        assertEquals("I have lots of embedded files in me\r", p.text());
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(0)));
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(1)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(0)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(1)));
        
        p = r.getParagraph(1);
        assertEquals(5, p.numCharacterRuns());
        assertEquals("\u0013 EMBED Excel.Sheet.8  \u0014\u0001\u0015\r", p.text());
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(0)));
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(1)));
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(2)));
-       assertEquals(true,  pictureTable.hasPicture(p.getCharacterRun(3)));
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(4)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(0)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(1)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(2)));
+        assertTrue(pictureTable.hasPicture(p.getCharacterRun(3)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(4)));
        
        p = r.getParagraph(2);
        assertEquals(6, p.numCharacterRuns());
        assertEquals("\u0013 EMBED Excel.Sheet.8  \u0014\u0001\u0015\r", p.text());
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(0)));
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(1)));
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(2)));
-       assertEquals(true,  pictureTable.hasPicture(p.getCharacterRun(3)));
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(4)));
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(5)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(0)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(1)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(2)));
+        assertTrue(pictureTable.hasPicture(p.getCharacterRun(3)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(4)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(5)));
        
        p = r.getParagraph(3);
        assertEquals(6, p.numCharacterRuns());
        assertEquals("\u0013 EMBED PowerPoint.Show.8  \u0014\u0001\u0015\r", p.text());
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(0)));
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(1)));
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(2)));
-       assertEquals(true,  pictureTable.hasPicture(p.getCharacterRun(3)));
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(4)));
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(5)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(0)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(1)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(2)));
+        assertTrue(pictureTable.hasPicture(p.getCharacterRun(3)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(4)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(5)));
        
        p = r.getParagraph(4);
        assertEquals(6, p.numCharacterRuns());
        assertEquals("\u0013 EMBED Word.Document.8 \\s \u0014\u0001\u0015\r", p.text());
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(0)));
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(1)));
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(2)));
-       assertEquals(true,  pictureTable.hasPicture(p.getCharacterRun(3)));
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(4)));
-       assertEquals(false, pictureTable.hasPicture(p.getCharacterRun(5)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(0)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(1)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(2)));
+        assertTrue(pictureTable.hasPicture(p.getCharacterRun(3)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(4)));
+        assertFalse(pictureTable.hasPicture(p.getCharacterRun(5)));
 
        // Look at the pictures table
        List<Picture> pictures = pictureTable.getAllPictures();

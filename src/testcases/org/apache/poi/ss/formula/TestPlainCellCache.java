@@ -45,7 +45,7 @@ public class TestPlainCellCache extends TestCase {
 
                         Loc sameLoc = new Loc(bookIndex, sheetIndex, rowIndex, columnIndex);
                         assertEquals(loc.hashCode(), sameLoc.hashCode());
-                        assertTrue(loc.equals(sameLoc));
+                        assertEquals(loc, sameLoc);
 
                         assertNull(cache.get(loc));
                         PlainValueCellCacheEntry entry = new PlainValueCellCacheEntry(new NumberEval(0));

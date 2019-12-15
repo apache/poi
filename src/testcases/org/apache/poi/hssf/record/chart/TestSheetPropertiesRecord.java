@@ -45,11 +45,11 @@ public final class TestSheetPropertiesRecord extends TestCase {
         }
         assertEquals(0, in.remaining());
         assertEquals( 10, record.getFlags());
-        assertEquals( false, record.isChartTypeManuallyFormatted() );
-        assertEquals( true, record.isPlotVisibleOnly() );
-        assertEquals( false, record.isDoNotSizeWithWindow() );
-        assertEquals( true, record.isDefaultPlotDimensions() );
-        assertEquals( false, record.isAutoPlotArea() );
+        assertFalse(record.isChartTypeManuallyFormatted());
+        assertTrue(record.isPlotVisibleOnly());
+        assertFalse(record.isDoNotSizeWithWindow());
+        assertTrue(record.isDefaultPlotDimensions());
+        assertFalse(record.isAutoPlotArea());
         assertEquals( 0, record.getEmpty());
 
         assertEquals( 8, record.getRecordSize() );

@@ -132,7 +132,7 @@ public final class TestFormulaParser {
         Ptg[] ptgs = parseFormula("TRUE");
         assertEquals(1, ptgs.length);
         BoolPtg flag  = (BoolPtg) ptgs[0];
-        assertEquals(true, flag.getValue());
+        assertTrue(flag.getValue());
     }
 
     @Test
@@ -300,18 +300,18 @@ public final class TestFormulaParser {
         String value = "  hi  ";
         Ptg[] ptgs = parseFormula("\"" + value + "\"");
         confirmTokenClasses(ptgs, StringPtg.class);
-        assertTrue("ptg0 contains exact value", ((StringPtg)ptgs[0]).getValue().equals(value));
+        assertEquals("ptg0 contains exact value", ((StringPtg) ptgs[0]).getValue(), value);
     }
 
     @Test
     public void testLookupAndMatchFunctionArgs() {
         Ptg[] ptgs = parseFormula("lookup(A1, A3:A52, B3:B52)");
         confirmTokenClasses(ptgs, RefPtg.class, AreaPtg.class, AreaPtg.class, FuncVarPtg.class);
-        assertTrue("ptg0 has Value class", ptgs[0].getPtgClass() == Ptg.CLASS_VALUE);
+        assertEquals("ptg0 has Value class", ptgs[0].getPtgClass(), Ptg.CLASS_VALUE);
 
         ptgs = parseFormula("match(A1, A3:A52)");
         confirmTokenClasses(ptgs, RefPtg.class, AreaPtg.class, FuncVarPtg.class);
-        assertTrue("ptg0 has Value class", ptgs[0].getPtgClass() == Ptg.CLASS_VALUE);
+        assertEquals("ptg0 has Value class", ptgs[0].getPtgClass(), Ptg.CLASS_VALUE);
     }
 
     /** bug 33160*/

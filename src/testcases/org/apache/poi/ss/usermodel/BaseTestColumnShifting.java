@@ -23,6 +23,7 @@ import org.junit.Test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.apache.poi.ss.usermodel.helpers.ColumnShifter;
 
@@ -77,7 +78,7 @@ public abstract class BaseTestColumnShifting {
     public void testShiftLeft() {
         try {
             columnShifter.shiftColumns(1, 2, -3);
-            assertTrue("Shift to negative indices should throw exception", false);
+            fail("Shift to negative indices should throw exception");
         }
         catch(IllegalStateException e){
             assertTrue(true);

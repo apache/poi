@@ -17,6 +17,7 @@
 
 package org.apache.poi.hwpf.model;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
@@ -53,7 +54,7 @@ public final class TestFontTable {
 
     FontTable newFontTable = new FontTable(newTableStream, 0, newTableStream.length);
 
-	  assertTrue(_fontTable.equals(newFontTable));
+      assertEquals(_fontTable, newFontTable);
 
   }
 

@@ -94,7 +94,7 @@ public class TestXWPFFootnote {
 
         XWPFRun r2 = testP2.getRuns().get(0);
         assertNotNull("Expected a run in testP2", r2);
-        assertTrue("Found a footnote reference in testP2", r2.getCTR().getFootnoteRefList().size() == 0);
+        assertEquals("Found a footnote reference in testP2", 0, r2.getCTR().getFootnoteRefList().size());
         
     }
     

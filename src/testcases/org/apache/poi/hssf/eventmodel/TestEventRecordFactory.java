@@ -92,8 +92,8 @@ public final class TestEventRecordFactory extends TestCase {
         byte[] bytes = bof.serialize();
             
         Record[] records = RecordFactory.createRecord(TestcaseRecordInputStream.create(bytes));
-        
-        assertTrue("record.length must be 1, was ="+records.length,records.length == 1);
+
+        assertEquals("record.length must be 1, was =" + records.length, 1, records.length);
         assertTrue("record is the same", compareRec(bof,records[0]));
         
     }

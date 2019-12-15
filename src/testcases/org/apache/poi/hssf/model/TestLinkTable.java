@@ -181,8 +181,8 @@ public final class TestLinkTable extends TestCase {
 		assertNotNull(lt);
 
 		assertEquals(2, commentRecords.size());
-    assertTrue(recs[1] == commentRecords.get("name1")); //== is intentionally not .equals()!
-    assertTrue(recs[3] == commentRecords.get("name2")); //== is intentionally not .equals()!
+        assertSame(recs[1], commentRecords.get("name1")); //== is intentionally not .equals()!
+        assertSame(recs[3], commentRecords.get("name2")); //== is intentionally not .equals()!
 
     assertEquals(2, lt.getNumNames());
 	}

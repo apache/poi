@@ -52,9 +52,9 @@ public final class TestMergeCellsRecord extends TestCase {
 		assertEquals("New Clone Row From doesnt match", mergeRegion.getFirstRow(), cloneRegion.getFirstRow());
 		assertEquals("New Clone Row To doesnt match", mergeRegion.getLastRow(), cloneRegion.getLastRow());
 		assertEquals("New Clone Col From doesnt match", mergeRegion.getFirstColumn(), cloneRegion.getFirstColumn());
-		assertEquals("New Clone Col To doesnt match", mergeRegion.getLastColumn(), cloneRegion.getLastColumn());      
-      
-		assertFalse(merge.getAreaAt(0) == clone.getAreaAt(0));
+		assertEquals("New Clone Col To doesnt match", mergeRegion.getLastColumn(), cloneRegion.getLastColumn());
+
+        assertNotSame(merge.getAreaAt(0), clone.getAreaAt(0));
 	}
    
 	private static final RecordVisitor dummyRecordVisitor = new RecordVisitor() {

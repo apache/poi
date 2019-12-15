@@ -57,9 +57,9 @@ public final class TestSlideAtom {
 		assertEquals(256, sa.getNotesID());
 
 		// Check the flags
-		assertEquals(true, sa.getFollowMasterObjects());
-		assertEquals(true, sa.getFollowMasterScheme());
-		assertEquals(true, sa.getFollowMasterBackground());
+        assertTrue(sa.getFollowMasterObjects());
+        assertTrue(sa.getFollowMasterScheme());
+        assertTrue(sa.getFollowMasterBackground());
 	}
 
     @Test

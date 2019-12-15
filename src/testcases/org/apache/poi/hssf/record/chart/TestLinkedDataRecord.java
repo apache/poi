@@ -162,7 +162,7 @@ recordid = 0x1051, size =8
         assertEquals( LinkedDataRecord.LINK_TYPE_VALUES, record.getLinkType());
         assertEquals( LinkedDataRecord.REFERENCE_TYPE_WORKSHEET, record.getReferenceType());
         assertEquals( 0, record.getOptions());
-        assertEquals( false, record.isCustomNumberFormat() );
+        assertFalse(record.isCustomNumberFormat());
         assertEquals( 0, record.getIndexNumberFmtRecord());
 
         Area3DPtg ptgExpected = new Area3DPtg(0, 7936, 0, 0,

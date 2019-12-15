@@ -20,6 +20,7 @@ import static org.apache.poi.poifs.storage.RawDataUtil.decompress;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -149,8 +150,7 @@ public class TestDrawingAggregate {
                 byte[] dgBytes2 = agg.serialize();
 
                 assertEquals("different size of raw data ande aggregate.serialize()", dgBytes1.length, dgBytes2.length);
-                assertTrue("raw drawing data ("+dgBytes1.length+" bytes) and aggregate.serialize() are different.",
-                        Arrays.equals(dgBytes1, dgBytes2));
+                assertArrayEquals("raw drawing data (" + dgBytes1.length + " bytes) and aggregate.serialize() are different.", dgBytes1, dgBytes2);
             }
         }
 
@@ -164,8 +164,7 @@ public class TestDrawingAggregate {
                     byte[] dgBytes1 = info1.getRawBytes();
                     byte[] dgBytes2 = info2.getRawBytes();
                     assertEquals("different size of drawing data before and after save", dgBytes1.length, dgBytes2.length);
-                    assertTrue("drawing data ("+dgBytes1.length+" bytes) before and after save is different.",
-                            Arrays.equals(dgBytes1, dgBytes2));
+                    assertArrayEquals("drawing data (" + dgBytes1.length + " bytes) before and after save is different.", dgBytes1, dgBytes2);
                 }
             }
             wb2.close();
@@ -295,7 +294,7 @@ public class TestDrawingAggregate {
         agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
         byte[] dgBytesAfterSave = agg.serialize();
         assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
-        assertTrue("drawing data before and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
+        assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
         wb2.close();
     }
 
@@ -314,7 +313,7 @@ public class TestDrawingAggregate {
         EscherAggregate agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
         byte[] dgBytesAfterSave = agg.serialize();
         assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
-        assertTrue("drawing data before and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
+        assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
         wb.close();
     }
 
@@ -338,7 +337,7 @@ public class TestDrawingAggregate {
                 System.out.println("pos = " + i);
             }
         }
-        assertTrue("drawing data before and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
+        assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
         wb.close();
     }
 
@@ -401,7 +400,7 @@ public class TestDrawingAggregate {
 
         byte[] dgBytesAfterSave = agg.serialize();
         assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
-        assertTrue("drawing data before and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
+        assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
         wb.close();
     }
 
@@ -469,7 +468,7 @@ public class TestDrawingAggregate {
 
         byte[] dgBytesAfterSave = agg.serialize();
         assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
-        assertTrue("drawing data before and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
+        assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
         wb.close();
     }
 
@@ -490,7 +489,7 @@ public class TestDrawingAggregate {
         for (int i = 0; i < records.size(); i++) {
             RecordBase r1 = records.get(i);
             RecordBase r2 = records2.get(i);
-            assertTrue(r1.getClass() == r2.getClass());
+            assertSame(r1.getClass(), r2.getClass());
             assertEquals(r1.getRecordSize(), r2.getRecordSize());
             if (r1 instanceof Record) {
                 assertEquals(((Record) r1).getSid(), ((Record) r2).getSid());
@@ -555,7 +554,7 @@ public class TestDrawingAggregate {
 
         byte[] dgBytesAfterSave = agg.serialize();
         assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
-        assertTrue("drawing data before and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
+        assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
         wb.close();
     }
 
@@ -615,7 +614,7 @@ public class TestDrawingAggregate {
 
         byte[] dgBytesAfterSave = agg.serialize();
         assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
-        assertTrue("drawing data before and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
+        assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
         wb.close();
     }
 
@@ -768,7 +767,7 @@ public class TestDrawingAggregate {
 
         byte[] dgBytesAfterSave = agg.serialize();
         assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
-        assertTrue("drawing data before and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
+        assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
     }
 
     @Test
@@ -941,6 +940,6 @@ public class TestDrawingAggregate {
 
         byte[] dgBytesAfterSave = agg.serialize();
         assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
-        assertTrue("drawing data brefpore and after save is different", Arrays.equals(dgBytes, dgBytesAfterSave));
+        assertArrayEquals("drawing data brefpore and after save is different", dgBytes, dgBytesAfterSave);
     }
 }

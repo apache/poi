@@ -19,6 +19,7 @@ package org.apache.poi.xslf.usermodel;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -177,8 +178,7 @@ public class TestXSLFPictureShape {
         XSLFTextBox tb1 = group.createTextBox();
         XSLFTextBox tb2 = group.createTextBox();
 
-        assertFalse("We should have different names now, but had: " + tb1.getShapeName() + " for both",
-                tb1.getShapeName().equals(tb2.getShapeName()));
+        assertNotEquals("We should have different names now, but had: " + tb1.getShapeName() + " for both", tb1.getShapeName(), tb2.getShapeName());
 
         XMLSlideShow pptCopy = new XMLSlideShow();
 
@@ -216,8 +216,7 @@ public class TestXSLFPictureShape {
     }
 
     private void differentShapeName(XSLFShape shape1, XSLFShape shape2) {
-        assertFalse("We should have different names now, but had: " + shape1.getShapeName() + " for both",
-                shape1.getShapeName().equals(shape2.getShapeName()));
+        assertNotEquals("We should have different names now, but had: " + shape1.getShapeName() + " for both", shape1.getShapeName(), shape2.getShapeName());
     }
 
     @Test

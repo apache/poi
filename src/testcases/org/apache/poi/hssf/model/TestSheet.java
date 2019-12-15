@@ -140,11 +140,11 @@ public final class TestSheet {
 		for (int n = 0; n < regionsToAdd; n++)
 		{
 			int index = sheet.addMergedRegion(0, (short) 0, 1, (short) 1);
-			assertTrue("Merged region index expected to be " + n + " got " + index, index == n);
+            assertEquals("Merged region index expected to be " + n + " got " + index, index, n);
 		}
 
 		//test all the regions were indeed added
-		assertTrue(sheet.getNumMergedRegions() == regionsToAdd);
+        assertEquals(sheet.getNumMergedRegions(), regionsToAdd);
 
 		//test that the regions were spread out over the appropriate number of records
 		MergedCellListener mcListener = new MergedCellListener();
@@ -153,8 +153,8 @@ public final class TestSheet {
 		int recordsExpected = regionsToAdd/1027;
 		if ((regionsToAdd % 1027) != 0)
 			recordsExpected++;
-		assertTrue("The " + regionsToAdd + " merged regions should have been spread out over "
-				+ recordsExpected + " records, not " + recordsAdded, recordsAdded == recordsExpected);
+        assertEquals("The " + regionsToAdd + " merged regions should have been spread out over "
+                + recordsExpected + " records, not " + recordsAdded, recordsAdded, recordsExpected);
 		// Check we can't add one with invalid date
 		try {
 			sheet.addMergedRegion(10, (short)10, 9, (short)12);
