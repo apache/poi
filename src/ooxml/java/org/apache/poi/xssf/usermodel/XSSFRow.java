@@ -254,7 +254,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
                 cell.setCellErrorValue(FormulaError._NO_ERROR);
                 break;
             default:
-                throw new AssertionError();
+                throw new AssertionError("Unknown cell-type specified: " + type);
         }
     }
 
