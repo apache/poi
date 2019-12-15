@@ -144,17 +144,13 @@ public final class ZipPackage extends OPCPackage {
             if (access == PackageAccess.WRITE) {
                 throw new InvalidOperationException("Can't open the specified file: '" + file + "'", e);
             }
-            // YK: this is incorrect and the exception below is never thrown.
-            // The could below should catch "archive is not a ZIP archive"
-            if ("java.util.zip.ZipException: archive is not a ZIP archive".equals(e.getMessage())) {
-                throw new NotOfficeXmlFileException("archive is not a ZIP archive", e);
-            }
+
             LOG.log(POILogger.ERROR, "Error in zip file "+file+" - falling back to stream processing (i.e. ignoring zip central directory)");
             ze = openZipEntrySourceStream(file);
         }
         this.zipArchive = ze;
     }
-    
+
     private static ZipEntrySource openZipEntrySourceStream(File file) throws InvalidOperationException {
         final FileInputStream fis;
         // Acquire a resource that is needed to read the next level of openZipEntrySourceStream
@@ -165,7 +161,7 @@ public final class ZipPackage extends OPCPackage {
             // If the source cannot be acquired, abort (no resources to free at this level)
             throw new InvalidOperationException("Can't open the specified file input stream from file: '" + file + "'", e);
         }
-        
+
         // If an error occurs while reading the next level of openZipEntrySourceStream, free the acquired resource
         try {
             // read from the file input stream
@@ -180,7 +176,7 @@ public final class ZipPackage extends OPCPackage {
             throw new InvalidOperationException("Failed to read the file input stream from file: '" + file + "'", e);
         }
     }
-    
+
     private static ZipEntrySource openZipEntrySourceStream(FileInputStream fis) throws InvalidOperationException {
         final ZipArchiveThresholdInputStream zis;
         // Acquire a resource that is needed to read the next level of openZipEntrySourceStream
@@ -191,7 +187,7 @@ public final class ZipPackage extends OPCPackage {
             // If the source cannot be acquired, abort (no resources to free at this level)
             throw new InvalidOperationException("Could not open the file input stream", e);
         }
-        
+
         // If an error occurs while reading the next level of openZipEntrySourceStream, free the acquired resource
         try {
             // read from the zip input stream
@@ -206,7 +202,7 @@ public final class ZipPackage extends OPCPackage {
             throw new InvalidOperationException("Failed to read the zip entry source stream", e);
         }
     }
-    
+
     private static ZipEntrySource openZipEntrySourceStream(ZipArchiveThresholdInputStream zis) throws InvalidOperationException {
         // Acquire the final level resource. If this is acquired successfully, the zip package was read successfully from the input stream
         try {
@@ -420,9 +416,9 @@ public final class ZipPackage extends OPCPackage {
             throw new InvalidOperationException(
                 "Can't close a package not previously open with the open() method !");
         }
-		    
+
 		// Case of a package previously open
-		String tempFileName = generateTempFileName(FileHelper.getDirectory(targetFile)); 
+		String tempFileName = generateTempFileName(FileHelper.getDirectory(targetFile));
 		File tempFile = TempFile.createTempFile(tempFileName, ".tmp");
 
 		// Save the final package to a temporary file
@@ -501,7 +497,7 @@ public final class ZipPackage extends OPCPackage {
 			if (this.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES).size() == 0 &&
                 this.getPartsByRelationshipType(PackageRelationshipTypes.CORE_PROPERTIES_ECMA376).size() == 0    ) {
 				LOG.log(POILogger.DEBUG,"Save core properties part");
-				
+
 				// Ensure that core properties are added if missing
 				getPackageProperties();
 				// Add core properties to part list ...
