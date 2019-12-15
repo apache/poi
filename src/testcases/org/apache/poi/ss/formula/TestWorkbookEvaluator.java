@@ -226,8 +226,7 @@ public class TestWorkbookEvaluator {
      */
     @Test
     public void testResultOutsideRange() throws IOException {
-        Workbook wb = new HSSFWorkbook();
-        try {
+        try (Workbook wb = new HSSFWorkbook()) {
             Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
             cell.setCellFormula("D2:D5"); // IF(TRUE,D2:D5,D2) or  OFFSET(D2:D5,0,0) would work too
             FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
@@ -249,8 +248,6 @@ public class TestWorkbookEvaluator {
             cv = fe.evaluate(cell);
             assertEquals(CellType.ERROR, cv.getCellType());
             assertEquals(ErrorEval.CIRCULAR_REF_ERROR.getErrorCode(), cv.getErrorValue());
-        } finally {
-            wb.close();
         }
     }
 

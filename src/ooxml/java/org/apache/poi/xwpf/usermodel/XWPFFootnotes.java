@@ -112,17 +112,11 @@ public class XWPFFootnotes extends XWPFAbstractFootnotesEndnotes {
     @Override
     protected void onDocumentRead() throws IOException {
         FootnotesDocument notesDoc;
-        InputStream is = null;
-        try {
-            is = getPackagePart().getInputStream();
+        try (InputStream is = getPackagePart().getInputStream()) {
             notesDoc = FootnotesDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
             ctFootnotes = notesDoc.getFootnotes();
         } catch (XmlException e) {
             throw new POIXMLException();
-        } finally {
-            if (is != null) {
-                is.close();
-            }
         }
     
         for (CTFtnEdn note : ctFootnotes.getFootnoteList()) {

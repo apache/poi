@@ -63,11 +63,8 @@ public class CellGeneralFormatter extends CellFormatter {
                 stripZeros = false;
             }
 
-            Formatter formatter = new Formatter(toAppendTo, locale);
-            try {
+            try (Formatter formatter = new Formatter(toAppendTo, locale)) {
                 formatter.format(locale, fmt, value);
-            } finally {
-                formatter.close();
             }
             if (stripZeros) {
                 // strip off trailing zeros

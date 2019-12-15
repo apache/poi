@@ -196,8 +196,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
 
     @Test
     public void testBug58175() throws IOException {
-        Workbook wb = new SXSSFWorkbook();
-        try {
+        try (Workbook wb = new SXSSFWorkbook()) {
             Sheet sheet = wb.createSheet();
 
             Row row = sheet.createRow(1);
@@ -241,35 +240,32 @@ public final class TestXSSFComment extends BaseTestCellComment  {
                         + ", 0";
                 vmlShape2.getClientDataArray(0).setAnchorArray(0, position);
             }
-            
+
             CellAddress ref = new CellAddress(ca.getRow1(), ca.getCol1());
             XSSFComment shape2 = new XSSFComment(comments, comments.newComment(ref), vmlShape2);
-        
+
             assertEquals(shape1.getAuthor(), shape2.getAuthor());
             assertEquals(shape1.getClientAnchor(), shape2.getClientAnchor());
             assertEquals(shape1.getColumn(), shape2.getColumn());
             assertEquals(shape1.getRow(), shape2.getRow());
             assertEquals(shape1.getCTComment().toString(), shape2.getCTComment().toString());
             assertEquals(shape1.getCTComment().getRef(), shape2.getCTComment().getRef());
-            
+
             /*CommentsTable table1 = shape1.getCommentsTable();
             CommentsTable table2 = shape2.getCommentsTable();
             assertEquals(table1.getCTComments().toString(), table2.getCTComments().toString());
             assertEquals(table1.getNumberOfComments(), table2.getNumberOfComments());
             assertEquals(table1.getRelations(), table2.getRelations());*/
-            
-            assertEquals("The vmlShapes should have equal content afterwards", 
+
+            assertEquals("The vmlShapes should have equal content afterwards",
                     vmlShape1.toString().replaceAll("_x0000_s\\d+", "_x0000_s0000"), vmlShape2.toString().replaceAll("_x0000_s\\d+", "_x0000_s0000"));
-        } finally {
-            wb.close();
         }
     }
 
     @Ignore("Used for manual testing with opening the resulting Workbook in Excel")
     @Test
     public void testBug58175a() throws IOException {
-        Workbook wb = new SXSSFWorkbook();
-        try {
+        try (Workbook wb = new SXSSFWorkbook()) {
             Sheet sheet = wb.createSheet();
 
             Row row = sheet.createRow(1);
@@ -294,7 +290,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
             comment.setString(str);
             comment.setAuthor("Apache POI");
 
-            /* fixed the problem as well 
+            /* fixed the problem as well
              * comment.setColumn(cell.getColumnIndex());
              * comment.setRow(cell.getRowIndex());
              */
@@ -302,14 +298,9 @@ public final class TestXSSFComment extends BaseTestCellComment  {
             // Assign the comment to the cell
             cell.setCellComment(comment);
 
-            OutputStream out = new FileOutputStream("C:\\temp\\58175.xlsx");
-            try {
+            try (OutputStream out = new FileOutputStream("C:\\temp\\58175.xlsx")) {
                 wb.write(out);
-            } finally {
-                out.close();
             }
-        } finally {
-            wb.close();
         }
     }
 

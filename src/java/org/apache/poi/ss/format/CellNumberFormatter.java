@@ -456,11 +456,8 @@ public class CellNumberFormatter extends CellFormatter {
             writeFraction(value, null, fractional, output, mods);
         } else {
             StringBuffer result = new StringBuffer();
-            Formatter f = new Formatter(result, locale);
-            try {
+            try (Formatter f = new Formatter(result, locale)) {
                 f.format(locale, printfFmt, value);
-            } finally {
-                f.close();
             }
 
             if (numerator == null) {
@@ -734,11 +731,8 @@ public class CellNumberFormatter extends CellFormatter {
     private void writeSingleInteger(String fmt, int num, StringBuffer output, List<Special> numSpecials, Set<CellNumberStringMod> mods) {
 
         StringBuffer sb = new StringBuffer();
-        Formatter formatter = new Formatter(sb, locale);
-        try {
+        try (Formatter formatter = new Formatter(sb, locale)) {
             formatter.format(locale, fmt, num);
-        } finally {
-            formatter.close();
         }
         writeInteger(sb, output, numSpecials, mods, false);
     }

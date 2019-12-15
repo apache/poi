@@ -63,62 +63,56 @@ public class Msg2txt {
 	public void processMessage() throws IOException {
 		String txtFileName = fileNameStem + ".txt";
 		String attDirName = fileNameStem + "-att";
-		PrintWriter txtOut = null;
-		try {
-			txtOut = new PrintWriter(txtFileName);
-			try {
-				String displayFrom = msg.getDisplayFrom();
-				txtOut.println("From: "+displayFrom);
-			} catch (ChunkNotFoundException e) {
-				// ignore
-			}
-			try {
-				String displayTo = msg.getDisplayTo();
-				txtOut.println("To: "+displayTo);
-			} catch (ChunkNotFoundException e) {
-				// ignore
-			}
-			try {
-				String displayCC = msg.getDisplayCC();
-				txtOut.println("CC: "+displayCC);
-			} catch (ChunkNotFoundException e) {
-				// ignore
-			}
-			try {
-				String displayBCC = msg.getDisplayBCC();
-				txtOut.println("BCC: "+displayBCC);
-			} catch (ChunkNotFoundException e) {
-				// ignore
-			}
-			try {
-				String subject = msg.getSubject();
-				txtOut.println("Subject: "+subject);
-			} catch (ChunkNotFoundException e) {
-				// ignore
-			}
-			try {
-				String body = msg.getTextBody();
-				txtOut.println(body);
-			} catch (ChunkNotFoundException e) {
-				System.err.println("No message body");
-			}
-			
-			AttachmentChunks[] attachments = msg.getAttachmentFiles();
-			if(attachments.length > 0) {
-				File d = new File(attDirName);
-				if(d.mkdir()) {
-					for(AttachmentChunks attachment : attachments) {
-						processAttachment(attachment, d);
-					}
-				} else {
-					System.err.println("Can't create directory "+attDirName);
-				}
-			}
-		} finally {
-			if(txtOut != null) {
-				txtOut.close();
-			}
-		}
+        try (PrintWriter txtOut = new PrintWriter(txtFileName)) {
+            try {
+                String displayFrom = msg.getDisplayFrom();
+                txtOut.println("From: " + displayFrom);
+            } catch (ChunkNotFoundException e) {
+                // ignore
+            }
+            try {
+                String displayTo = msg.getDisplayTo();
+                txtOut.println("To: " + displayTo);
+            } catch (ChunkNotFoundException e) {
+                // ignore
+            }
+            try {
+                String displayCC = msg.getDisplayCC();
+                txtOut.println("CC: " + displayCC);
+            } catch (ChunkNotFoundException e) {
+                // ignore
+            }
+            try {
+                String displayBCC = msg.getDisplayBCC();
+                txtOut.println("BCC: " + displayBCC);
+            } catch (ChunkNotFoundException e) {
+                // ignore
+            }
+            try {
+                String subject = msg.getSubject();
+                txtOut.println("Subject: " + subject);
+            } catch (ChunkNotFoundException e) {
+                // ignore
+            }
+            try {
+                String body = msg.getTextBody();
+                txtOut.println(body);
+            } catch (ChunkNotFoundException e) {
+                System.err.println("No message body");
+            }
+
+            AttachmentChunks[] attachments = msg.getAttachmentFiles();
+            if (attachments.length > 0) {
+                File d = new File(attDirName);
+                if (d.mkdir()) {
+                    for (AttachmentChunks attachment : attachments) {
+                        processAttachment(attachment, d);
+                    }
+                } else {
+                    System.err.println("Can't create directory " + attDirName);
+                }
+            }
+        }
 	}
 	
 	/**
@@ -137,15 +131,9 @@ public class Msg2txt {
 	   }
 	   
 		File f = new File(dir, fileName);
-		OutputStream fileOut = null;
-		try {
-			fileOut = new FileOutputStream(f);
-			fileOut.write(attachment.getAttachData().getValue());
-		} finally {
-			if(fileOut != null) {
-				fileOut.close();
-			}
-		}
+        try (OutputStream fileOut = new FileOutputStream(f)) {
+            fileOut.write(attachment.getAttachData().getValue());
+        }
 	}
 	
 	/**

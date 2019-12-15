@@ -52,14 +52,11 @@ public final class HMEFDumper {
             continue;
          }
 
-         InputStream stream = new FileInputStream(arg);
-         try {
-            HMEFDumper dumper = new HMEFDumper(stream);
-            dumper.setTruncatePropertyData(truncatePropData);
-            dumper.dump();
-         } finally {
-            stream.close();
-         }
+          try (InputStream stream = new FileInputStream(arg)) {
+              HMEFDumper dumper = new HMEFDumper(stream);
+              dumper.setTruncatePropertyData(truncatePropData);
+              dumper.dump();
+          }
       }
    }
 

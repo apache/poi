@@ -111,20 +111,17 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
 
     @Test
     public void overrideFlushedRows() throws IOException {
-        Workbook wb = new SXSSFWorkbook(3);
-        try {
+        try (Workbook wb = new SXSSFWorkbook(3)) {
             Sheet sheet = wb.createSheet();
-    
+
             sheet.createRow(1);
             sheet.createRow(2);
             sheet.createRow(3);
             sheet.createRow(4);
-    
+
             thrown.expect(Throwable.class);
             thrown.expectMessage("Attempting to write a row[1] in the range [0,1] that is already written to disk.");
             sheet.createRow(1);
-        } finally {
-            wb.close();
         }
     }
 

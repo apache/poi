@@ -225,16 +225,13 @@ public final class TestPOIXMLDocument {
         POIDataSamples pds = POIDataSamples.getDocumentInstance();
         @SuppressWarnings("resource")
         OPCPackage pkg = PackageHelper.open(pds.openResourceAsStream("WordWithAttachments.docx"));
-        OPCParser doc = new OPCParser(pkg);
-        try {
+        try (OPCParser doc = new OPCParser(pkg)) {
             doc.parse(new TestFactory());
-    
-            for(POIXMLDocumentPart rel : doc.getRelations()){
+
+            for (POIXMLDocumentPart rel : doc.getRelations()) {
                 //TODO finish me
                 assertNotNull(rel);
             }
-        } finally {
-        	doc.close();
         }
     }
     
@@ -243,10 +240,9 @@ public final class TestPOIXMLDocument {
         POIDataSamples pds = POIDataSamples.getDocumentInstance();
         @SuppressWarnings("resource")
         OPCPackage pkg = PackageHelper.open(pds.openResourceAsStream("WordWithAttachments.docx"));
-        OPCParser doc = new OPCParser(pkg);
-        try {
+        try (OPCParser doc = new OPCParser(pkg)) {
             doc.parse(new TestFactory());
-            
+
             // Non-indexed parts: Word is taken, Excel is not
             assertEquals(-1, doc.getNextPartNumber(XWPFRelation.DOCUMENT, 0));
             assertEquals(-1, doc.getNextPartNumber(XWPFRelation.DOCUMENT, -1));
@@ -254,20 +250,18 @@ public final class TestPOIXMLDocument {
             assertEquals(0, doc.getNextPartNumber(XSSFRelation.WORKBOOK, 0));
             assertEquals(0, doc.getNextPartNumber(XSSFRelation.WORKBOOK, -1));
             assertEquals(0, doc.getNextPartNumber(XSSFRelation.WORKBOOK, 99));
-            
+
             // Indexed parts:
             // Has 2 headers
             assertEquals(0, doc.getNextPartNumber(XWPFRelation.HEADER, 0));
             assertEquals(3, doc.getNextPartNumber(XWPFRelation.HEADER, -1));
             assertEquals(3, doc.getNextPartNumber(XWPFRelation.HEADER, 1));
             assertEquals(8, doc.getNextPartNumber(XWPFRelation.HEADER, 8));
-            
+
             // Has no Excel Sheets
             assertEquals(0, doc.getNextPartNumber(XSSFRelation.WORKSHEET, 0));
             assertEquals(1, doc.getNextPartNumber(XSSFRelation.WORKSHEET, -1));
             assertEquals(1, doc.getNextPartNumber(XSSFRelation.WORKSHEET, 1));
-        } finally {
-            doc.close();
         }
     }
 
@@ -315,12 +309,9 @@ public final class TestPOIXMLDocument {
     @Test(expected=POIXMLException.class)
     public void testInvalidCoreRel() throws IOException {
         POIDataSamples pds = POIDataSamples.getDiagramInstance();
-        OPCPackage open = PackageHelper.open(pds.openResourceAsStream("test.vsdx"));
-        
-        try {
+
+        try (OPCPackage open = PackageHelper.open(pds.openResourceAsStream("test.vsdx"))) {
             new POIXMLDocumentPart(open, "somethingillegal");
-        } finally {
-            open.close();
         }
     }
 

@@ -36,11 +36,8 @@ public class HexRead {
      */
     public static byte[] readData( String filename ) throws IOException {
         File file = new File( filename );
-        InputStream stream = new FileInputStream( file );
-        try {
-            return readData( stream, -1 );
-        } finally {
-            stream.close();
+        try (InputStream stream = new FileInputStream(file)) {
+            return readData(stream, -1);
         }
     }
 

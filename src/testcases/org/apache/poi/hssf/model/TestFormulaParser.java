@@ -157,13 +157,12 @@ public final class TestFormulaParser {
     public void testMacroFunction() throws IOException {
         // testNames.xls contains a VB function called 'myFunc'
         final String testFile = "testNames.xls";
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(testFile);
-        try {
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(testFile)) {
             HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(wb);
 
             //Expected ptg stack: [NamePtg(myFunc), StringPtg(arg), (additional operands go here...), FunctionPtg(myFunc)]
             Ptg[] ptg = FormulaParser.parse("myFunc(\"arg\")", book, FormulaType.CELL, -1);
-            assertEquals(3, ptg.length); 
+            assertEquals(3, ptg.length);
 
             // the name gets encoded as the first operand on the stack
             NamePtg tname = (NamePtg) ptg[0];
@@ -192,8 +191,7 @@ public final class TestFormulaParser {
             FormulaParser.parse("yourFunc(\"arg\")", book, FormulaType.CELL, -1);
 
             // Verify that myFunc and yourFunc were successfully added to Workbook names
-            HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb);
-            try {
+            try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb)) {
                 // HSSFWorkbook/EXCEL97-specific side-effects user-defined function names must be added to Workbook's defined names in order to be saved.
                 assertNotNull(wb2.getName("myFunc"));
                 assertEqualsIgnoreCase("myFunc", wb2.getName("myFunc").getNameName());
@@ -210,11 +208,7 @@ public final class TestFormulaParser {
                 wb2.write(fos);
                 fos.close();
                 */
-            } finally {
-                wb2.close();
             }
-        } finally {
-            wb.close();
         }
     }
     
@@ -779,21 +773,18 @@ public final class TestFormulaParser {
         }
         assertEquals("test\"ing", sp.getValue());
 
-        HSSFWorkbook wb = new HSSFWorkbook();
-        try {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
             wb.setSheetName(0, "Sheet1");
-    
+
             HSSFRow row = sheet.createRow(0);
             HSSFCell cell = row.createCell(0);
             cell.setCellFormula("right(\"test\"\"ing\", 3)");
             String actualCellFormula = cell.getCellFormula();
-            if("RIGHT(\"test\"ing\",3)".equals(actualCellFormula)) {
+            if ("RIGHT(\"test\"ing\",3)".equals(actualCellFormula)) {
                 fail("Identified bug 28754b");
             }
             assertEquals("RIGHT(\"test\"\"ing\",3)", actualCellFormula);
-        } finally {
-            wb.close();
         }
     }
 

@@ -55,13 +55,10 @@ public class TestDrawPictureShape {
 
     /** a generic way to open a sample slideshow document **/
     public static SlideShow<?,?> openSampleDocument(String sampleName) throws IOException {
-        InputStream is = ssSamples.openResourceAsStream(sampleName);
-        try {
+        try (InputStream is = ssSamples.openResourceAsStream(sampleName)) {
             return SlideShowFactory.create(is);
         } catch (Exception e) {
             throw new RuntimeException(e);
-        } finally {
-            is.close();
         }
     }
 

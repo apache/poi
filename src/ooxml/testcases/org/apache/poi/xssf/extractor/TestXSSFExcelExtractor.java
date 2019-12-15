@@ -217,29 +217,23 @@ public class TestXSSFExcelExtractor extends TestCase {
 	 * Simple test for text box text
 	 */
 	public void testTextBoxes() throws IOException {
-	    XSSFExcelExtractor extractor = getExtractor("WithTextBox.xlsx");
-	    try {
-    	    extractor.setFormulasNotResults(true);
-    	    String text = extractor.getText();
-    	    assertContains(text, "Line 1");
-    	    assertContains(text, "Line 2");
-    	    assertContains(text, "Line 3");
-	    } finally {
-	        extractor.close();
-	    }
+        try (XSSFExcelExtractor extractor = getExtractor("WithTextBox.xlsx")) {
+            extractor.setFormulasNotResults(true);
+            String text = extractor.getText();
+            assertContains(text, "Line 1");
+            assertContains(text, "Line 2");
+            assertContains(text, "Line 3");
+        }
 	}
 
 	public void testPhoneticRuns() throws Exception {
-		XSSFExcelExtractor extractor = getExtractor("51519.xlsx");
-		try {
-			String text = extractor.getText();
-			assertContains(text, "\u8C4A\u7530");
-			//this shows up only as a phonetic run and should not appear
-			//in the extracted text
-			assertNotContained(text, "\u30CB\u30DB\u30F3");
-		} finally {
-			extractor.close();
-		}
+        try (XSSFExcelExtractor extractor = getExtractor("51519.xlsx")) {
+            String text = extractor.getText();
+            assertContains(text, "\u8C4A\u7530");
+            //this shows up only as a phonetic run and should not appear
+            //in the extracted text
+            assertNotContained(text, "\u30CB\u30DB\u30F3");
+        }
 
 	}
 }

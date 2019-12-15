@@ -46,17 +46,11 @@ public class XSLFMetroShape {
     public static Shape<?,?> parseShape(byte[] metroBytes)
     throws InvalidFormatException, IOException, XmlException {
         PackagePartName shapePN = PackagingURIHelper.createPartName("/drs/shapexml.xml");
-        OPCPackage pkg = null;
-        try {
-            pkg = OPCPackage.open(new ByteArrayInputStream(metroBytes));
+        try (OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(metroBytes))) {
             PackagePart shapePart = pkg.getPart(shapePN);
             CTGroupShape gs = CTGroupShape.Factory.parse(shapePart.getInputStream(), DEFAULT_XML_OPTIONS);
             XSLFGroupShape xgs = new XSLFGroupShape(gs, null);
-            return xgs.getShapes().get(0);               
-        } finally {
-            if (pkg != null) {
-                pkg.close();
-            }
+            return xgs.getShapes().get(0);
         }
     }
 }

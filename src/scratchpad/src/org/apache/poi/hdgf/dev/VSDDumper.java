@@ -36,14 +36,14 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  */
 public final class VSDDumper {
     final static String tabs = "\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t\t";
-    
+
     private final PrintStream ps;
     private final HDGFDiagram hdgf;
     VSDDumper(PrintStream ps, HDGFDiagram hdgf) {
         this.ps = ps;
         this.hdgf = hdgf;
     }
-    
+
 	public static void main(String[] args) throws Exception {
 		if(args.length == 0) {
 			System.err.println("Use:");
@@ -53,11 +53,11 @@ public final class VSDDumper {
 
 		try (POIFSFileSystem poifs = new POIFSFileSystem(new File(args[0]));
 			 HDGFDiagram hdgf = new HDGFDiagram(poifs)) {
-			PrintStream ps = System.out;
-			ps.println("Opened " + args[0]);
-			VSDDumper vd = new VSDDumper(ps, hdgf);
-			vd.dumpFile();
-		}
+            PrintStream ps = System.out;
+            ps.println("Opened " + args[0]);
+            VSDDumper vd = new VSDDumper(ps, hdgf);
+            vd.dumpFile();
+        }
 	}
 
 	public void dumpFile() {
@@ -65,7 +65,7 @@ public final class VSDDumper {
         ps.println();
         dumpStream(hdgf.getTrailerStream(), 0);
 	}
-	
+
 	private void dumpStream(Stream stream, int indent) {
 		Pointer ptr = stream.getPointer();
 		dumpVal("Stream at", ptr.getOffset(), indent);
@@ -111,7 +111,7 @@ public final class VSDDumper {
             dumpVal(command.getDefinition().getName(), ""+command.getValue(), indent+1);
         }
 	}
-	
+
 	private void dumpVal(String label, long value, int indent) {
         ps.print(tabs.substring(0,indent));
         ps.print(label);
@@ -130,6 +130,6 @@ public final class VSDDumper {
         ps.print(tabs.substring(0,indent));
         ps.print(label);
         ps.print('\t');
-        ps.println(value);      
+        ps.println(value);
     }
 }

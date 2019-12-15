@@ -66,11 +66,8 @@ public class FontMetricsDumper {
             props.setProperty("font." + fontName + ".widths", widths.toString());
         }
 
-        OutputStream fileOut = new FileOutputStream("font_metrics.properties");
-        try {
+        try (OutputStream fileOut = new FileOutputStream("font_metrics.properties")) {
             props.store(fileOut, "Font Metrics");
-        } finally {
-            fileOut.close();
         }
     }
 }

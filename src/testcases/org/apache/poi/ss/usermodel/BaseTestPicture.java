@@ -76,30 +76,24 @@ public abstract class BaseTestPicture {
 
     @Test
     public void testResizeNoColumns() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        try {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
-    
+
             Row row = sheet.createRow(0);
-            
+
             handleResize(wb, sheet, row);
-        } finally {
-            wb.close();
         }
     }
 
     @Test
     public void testResizeWithColumns() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        try {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb.createSheet();
-    
+
             Row row = sheet.createRow(0);
             row.createCell(0);
-            
+
             handleResize(wb, sheet, row);
-        } finally {
-            wb.close();
         }
     }
 

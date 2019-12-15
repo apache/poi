@@ -112,17 +112,11 @@ public class XWPFEndnotes extends XWPFAbstractFootnotesEndnotes {
     @Override
     protected void onDocumentRead() throws IOException {
         EndnotesDocument notesDoc;
-        InputStream is = null;
-        try {
-            is = getPackagePart().getInputStream();            
+        try (InputStream is = getPackagePart().getInputStream()) {
             notesDoc = EndnotesDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
             ctEndnotes = notesDoc.getEndnotes();
         } catch (XmlException e) {
             throw new POIXMLException();
-        } finally {
-            if (is != null) {
-                is.close();
-            }
         }
     
         for (CTFtnEdn note : ctEndnotes.getEndnoteList()) {

@@ -158,21 +158,15 @@ public final class TestLbsDataSubRecord extends TestCase {
                                  "00, " +      //compression flag
                                  "00");        //padding byte
 
-        LittleEndianInputStream in = new LittleEndianInputStream(new ByteArrayInputStream(data));
-        try {
+        try (LittleEndianInputStream in = new LittleEndianInputStream(new ByteArrayInputStream(data))) {
             LbsDataSubRecord.LbsDropData lbs = new LbsDataSubRecord.LbsDropData(in);
-    
+
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-            LittleEndianOutputStream out = new LittleEndianOutputStream(baos);
-            try {
+            try (LittleEndianOutputStream out = new LittleEndianOutputStream(baos)) {
                 lbs.serialize(out);
-        
+
                 assertArrayEquals(data, baos.toByteArray());
-            } finally {
-                out.close();
             }
-        } finally {
-            in.close();
         }
     }
 }

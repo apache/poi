@@ -27,11 +27,10 @@ import org.junit.Test;
 public class TestXSSFTextRun {
     @Test
     public void testXSSFTextParagraph() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        try {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
             XSSFDrawing drawing = sheet.createDrawingPatriarch();
-    
+
             XSSFTextBox shape = drawing.createTextbox(new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 4));
 
             XSSFTextParagraph para = shape.addNewTextParagraph();
@@ -41,17 +40,17 @@ public class TestXSSFTextRun {
             assertEquals(1, runs.size());
             XSSFTextRun run = runs.get(0);
             assertEquals("Line 1", run.getText());
-            
+
             assertNotNull(run.getParentParagraph());
             assertNotNull(run.getXmlObject());
             assertNotNull(run.getRPr());
-            
-            assertEquals(new Color(0,0,0), run.getFontColor());
-            
+
+            assertEquals(new Color(0, 0, 0), run.getFontColor());
+
             Color color = new Color(0, 255, 255);
             run.setFontColor(color);
             assertEquals(color, run.getFontColor());
-            
+
             assertEquals(11.0, run.getFontSize(), 0.01);
             run.setFontSize(12.32);
             assertEquals(12.32, run.getFontSize(), 0.01);
@@ -66,7 +65,7 @@ public class TestXSSFTextRun {
                 assertTrue(e.getMessage().contains("0.9"));
             }
             assertEquals(11.0, run.getFontSize(), 0.01);
-            
+
             assertEquals(0.0, run.getCharacterSpacing(), 0.01);
             run.setCharacterSpacing(12.31);
             assertEquals(12.31, run.getCharacterSpacing(), 0.01);
@@ -74,28 +73,28 @@ public class TestXSSFTextRun {
             assertEquals(0.0, run.getCharacterSpacing(), 0.01);
             run.setCharacterSpacing(0.0);
             assertEquals(0.0, run.getCharacterSpacing(), 0.01);
-            
+
             assertEquals("Calibri", run.getFontFamily());
-            run.setFontFamily("Arial", (byte)1, (byte)1, false);
+            run.setFontFamily("Arial", (byte) 1, (byte) 1, false);
             assertEquals("Arial", run.getFontFamily());
-            run.setFontFamily("Arial", (byte)-1, (byte)1, false);
+            run.setFontFamily("Arial", (byte) -1, (byte) 1, false);
             assertEquals("Arial", run.getFontFamily());
-            run.setFontFamily("Arial", (byte)1, (byte)-1, false);
+            run.setFontFamily("Arial", (byte) 1, (byte) -1, false);
             assertEquals("Arial", run.getFontFamily());
-            run.setFontFamily("Arial", (byte)1, (byte)1, true);
+            run.setFontFamily("Arial", (byte) 1, (byte) 1, true);
             assertEquals("Arial", run.getFontFamily());
-            run.setFontFamily(null, (byte)1, (byte)1, false);
+            run.setFontFamily(null, (byte) 1, (byte) 1, false);
             assertEquals("Calibri", run.getFontFamily());
-            run.setFontFamily(null, (byte)1, (byte)1, false);
+            run.setFontFamily(null, (byte) 1, (byte) 1, false);
             assertEquals("Calibri", run.getFontFamily());
 
             run.setFont("Arial");
             assertEquals("Arial", run.getFontFamily());
-            
-            assertEquals((byte)0, run.getPitchAndFamily());
+
+            assertEquals((byte) 0, run.getPitchAndFamily());
             run.setFont(null);
-            assertEquals((byte)0, run.getPitchAndFamily());
-            
+            assertEquals((byte) 0, run.getPitchAndFamily());
+
             assertFalse(run.isStrikethrough());
             run.setStrikethrough(true);
             assertTrue(run.isStrikethrough());
@@ -113,7 +112,7 @@ public class TestXSSFTextRun {
             assertTrue(run.isSubscript());
             run.setSubscript(false);
             assertFalse(run.isSubscript());
-            
+
             assertEquals(TextCap.NONE, run.getTextCap());
 
             assertFalse(run.isBold());
@@ -133,10 +132,8 @@ public class TestXSSFTextRun {
             assertTrue(run.isUnderline());
             run.setUnderline(false);
             assertFalse(run.isUnderline());
-            
+
             assertNotNull(run.toString());
-        } finally {
-            wb.close();
         }
     }
 }

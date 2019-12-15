@@ -175,12 +175,9 @@ public class TestXSSFDrawing {
             XSSFDrawing drawing = sheet.createDrawingPatriarch();
             assertNotNull(drawing);
         }
-        OPCPackage pkg = wb.getPackage();
-        try {
+        try (OPCPackage pkg = wb.getPackage()) {
             assertEquals(3, pkg.getPartsByContentType(XSSFRelation.DRAWINGS.getContentType()).size());
             checkRewrite(wb);
-        } finally {
-            pkg.close();
         }
         wb.close();
     }

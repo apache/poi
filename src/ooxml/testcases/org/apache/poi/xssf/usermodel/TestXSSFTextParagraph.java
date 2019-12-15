@@ -27,28 +27,27 @@ import org.junit.Test;
 public class TestXSSFTextParagraph {
     @Test
     public void testXSSFTextParagraph() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        try {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
             XSSFDrawing drawing = sheet.createDrawingPatriarch();
-    
+
             XSSFTextBox shape = drawing.createTextbox(new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 4));
             XSSFRichTextString rt = new XSSFRichTextString("Test String");
-    
+
             XSSFFont font = wb.createFont();
             Color color = new Color(0, 255, 255);
             font.setColor(new XSSFColor(color, wb.getStylesSource().getIndexedColors()));
             font.setFontName("Arial");
             rt.applyFont(font);
-    
+
             shape.setText(rt);
-            
+
             List<XSSFTextParagraph> paras = shape.getTextParagraphs();
             assertEquals(1, paras.size());
-    
+
             XSSFTextParagraph text = paras.get(0);
             assertEquals("Test String", text.getText());
-            
+
             assertFalse(text.isBullet());
             assertNotNull(text.getXmlObject());
             assertEquals(shape.getCTShape(), text.getParentShape());
@@ -59,7 +58,7 @@ public class TestXSSFTextParagraph {
             assertEquals(2, text.getTextRuns().size());
             text.addNewTextRun();
             assertEquals(3, text.getTextRuns().size());
-            
+
             assertEquals(TextAlign.LEFT, text.getTextAlign());
             text.setTextAlign(null);
             assertEquals(TextAlign.LEFT, text.getTextAlign());
@@ -69,7 +68,7 @@ public class TestXSSFTextParagraph {
             assertEquals(TextAlign.RIGHT, text.getTextAlign());
             text.setTextAlign(null);
             assertEquals(TextAlign.LEFT, text.getTextAlign());
-            
+
             text.setTextFontAlign(TextFontAlign.BASELINE);
             assertEquals(TextFontAlign.BASELINE, text.getTextFontAlign());
             text.setTextFontAlign(TextFontAlign.BOTTOM);
@@ -78,19 +77,19 @@ public class TestXSSFTextParagraph {
             assertEquals(TextFontAlign.BASELINE, text.getTextFontAlign());
             text.setTextFontAlign(null);
             assertEquals(TextFontAlign.BASELINE, text.getTextFontAlign());
-            
+
             assertNull(text.getBulletFont());
             text.setBulletFont("Arial");
             assertEquals("Arial", text.getBulletFont());
-            
+
             assertNull(text.getBulletCharacter());
             text.setBulletCharacter(".");
             assertEquals(".", text.getBulletCharacter());
-            
+
             assertNull(text.getBulletFontColor());
             text.setBulletFontColor(color);
             assertEquals(color, text.getBulletFontColor());
-            
+
             assertEquals(100.0, text.getBulletFontSize(), 0.01);
             text.setBulletFontSize(1.0);
             assertEquals(1.0, text.getBulletFontSize(), 0.01);
@@ -112,7 +111,7 @@ public class TestXSSFTextParagraph {
             assertEquals(0.0, text.getIndent(), 0.01);
             text.setIndent(-1.0);
             assertEquals(0.0, text.getIndent(), 0.01);
-            
+
             assertEquals(0.0, text.getLeftMargin(), 0.01);
             text.setLeftMargin(3.0);
             assertEquals(3.0, text.getLeftMargin(), 0.01);
@@ -120,7 +119,7 @@ public class TestXSSFTextParagraph {
             assertEquals(0.0, text.getLeftMargin(), 0.01);
             text.setLeftMargin(-1.0);
             assertEquals(0.0, text.getLeftMargin(), 0.01);
-            
+
             assertEquals(0.0, text.getRightMargin(), 0.01);
             text.setRightMargin(4.5);
             assertEquals(4.5, text.getRightMargin(), 0.01);
@@ -128,13 +127,13 @@ public class TestXSSFTextParagraph {
             assertEquals(0.0, text.getRightMargin(), 0.01);
             text.setRightMargin(-1.0);
             assertEquals(0.0, text.getRightMargin(), 0.01);
-            
+
             assertEquals(0.0, text.getDefaultTabSize(), 0.01);
-            
+
             assertEquals(0.0, text.getTabStop(0), 0.01);
             text.addTabStop(3.14);
             assertEquals(3.14, text.getTabStop(0), 0.01);
-            
+
             assertEquals(100.0, text.getLineSpacing(), 0.01);
             text.setLineSpacing(3.15);
             assertEquals(3.15, text.getLineSpacing(), 0.01);
@@ -152,13 +151,13 @@ public class TestXSSFTextParagraph {
             assertEquals(6.17, text.getSpaceAfter(), 0.01);
             text.setSpaceAfter(-8.17);
             assertEquals(-8.17, text.getSpaceAfter(), 0.01);
-            
+
             assertEquals(0, text.getLevel());
             text.setLevel(1);
             assertEquals(1, text.getLevel());
             text.setLevel(4);
             assertEquals(4, text.getLevel());
-            
+
             assertTrue(text.isBullet());
             assertFalse(text.isBulletAutoNumber());
             text.setBullet(false);
@@ -170,7 +169,7 @@ public class TestXSSFTextParagraph {
             assertFalse(text.isBulletAutoNumber());
             assertEquals(0, text.getBulletAutoNumberStart());
             assertEquals(ListAutoNumber.ARABIC_PLAIN, text.getBulletAutoNumberScheme());
-            
+
             text.setBullet(false);
             assertFalse(text.isBullet());
             text.setBullet(ListAutoNumber.CIRCLE_NUM_DB_PLAIN);
@@ -187,12 +186,10 @@ public class TestXSSFTextParagraph {
             assertEquals(10, text.getBulletAutoNumberStart());
             assertEquals(ListAutoNumber.CIRCLE_NUM_WD_BLACK_PLAIN, text.getBulletAutoNumberScheme());
 
-            
+
             assertNotNull(text.toString());
-            
+
             new XSSFTextParagraph(text.getXmlObject(), shape.getCTShape());
-        } finally {
-            wb.close();
         }
     }
 }

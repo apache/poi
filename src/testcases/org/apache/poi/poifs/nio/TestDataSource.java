@@ -116,17 +116,11 @@ public class TestDataSource extends TestCase
     }
 
     private void writeDataToFile(File temp) throws IOException {
-        OutputStream str = new FileOutputStream(temp);
-           try {
-               InputStream in = data.openResourceAsStream("Notes.ole2");
-               try {
-                   IOUtils.copy(in, str);
-               } finally {
-                   in.close();
-               }
-           } finally {
-               str.close();
-           }
+        try (OutputStream str = new FileOutputStream(temp)) {
+            try (InputStream in = data.openResourceAsStream("Notes.ole2")) {
+                IOUtils.copy(in, str);
+            }
+        }
     }
     
     private void checkDataSource(FileBackedDataSource ds, boolean writeable) throws IOException {

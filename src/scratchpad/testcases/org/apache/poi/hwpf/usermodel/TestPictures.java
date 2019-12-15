@@ -366,12 +366,9 @@ public final class TestPictures {
         expectImages(docA, 1);
 
         HWPFDocument docB = HWPFTestDataSamples.writeOutAndReadBack(docA);
-        
-        OutputStream out = new FileOutputStream("/tmp/58804_1_out.doc");
-        try {
+
+        try (OutputStream out = new FileOutputStream("/tmp/58804_1_out.doc")) {
             docB.write(out);
-        } finally {
-            out.close();
         }
 
         expectImages(docB, 1);

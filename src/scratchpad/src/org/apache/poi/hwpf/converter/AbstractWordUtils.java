@@ -478,11 +478,8 @@ public class AbstractWordUtils
 
     public static HWPFDocumentCore loadDoc( File docFile ) throws IOException
     {
-        final FileInputStream istream = new FileInputStream( docFile );
-        try {
-            return loadDoc( istream );
-        } finally {
-            istream.close();
+        try (FileInputStream istream = new FileInputStream(docFile)) {
+            return loadDoc(istream);
         }
     }
 

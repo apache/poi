@@ -1459,20 +1459,10 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             xwpfPicData = (XWPFPictureData) createRelationship(relDesc, XWPFFactory.getInstance(), idx);
             /* write bytes to new part */
             PackagePart picDataPart = xwpfPicData.getPackagePart();
-            OutputStream out = null;
-            try {
-                out = picDataPart.getOutputStream();
+            try (OutputStream out = picDataPart.getOutputStream()) {
                 out.write(pictureData);
             } catch (IOException e) {
                 throw new POIXMLException(e);
-            } finally {
-                try {
-                    if (out != null) {
-                        out.close();
-                    }
-                } catch (IOException e) {
-                    // ignore
-                }
             }
 
             registerPackagePictureData(xwpfPicData);

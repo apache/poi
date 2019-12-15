@@ -90,9 +90,7 @@ public class XWPFFooter extends XWPFHeaderFooter {
     protected void onDocumentRead() throws IOException {
         super.onDocumentRead();
         FtrDocument ftrDocument = null;
-        InputStream is = null;
-        try {
-            is = getPackagePart().getInputStream();
+        try (InputStream is = getPackagePart().getInputStream()) {
             ftrDocument = FtrDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
             headerFooter = ftrDocument.getFtr();
             // parse the document with cursor and add
@@ -119,10 +117,6 @@ public class XWPFFooter extends XWPFHeaderFooter {
             cursor.dispose();
         } catch (Exception e) {
             throw new POIXMLException(e);
-        } finally {
-            if (is != null) {
-                is.close();
-            }
         }
     }
 

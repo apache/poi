@@ -112,14 +112,11 @@ public abstract class BaseTestDataFormat {
     }
 
     private void readbackFormat(String msg, String fmt) throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        try {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
             DataFormat dataFormat = wb.createDataFormat();
             short fmtIdx = dataFormat.getFormat(fmt);
             String readbackFmt = dataFormat.getFormat(fmtIdx);
             assertEquals(msg, fmt, readbackFmt);
-        } finally {
-            wb.close();
         }
     }
 

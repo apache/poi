@@ -44,13 +44,10 @@ public final class TestFixed {
 
     @Before
     public void setUp() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        try {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet("new sheet");
             cell11 = sheet.createRow(0).createCell(0);
             evaluator = new HSSFFormulaEvaluator(wb);
-        } finally {
-            wb.close();
         }
     }
 

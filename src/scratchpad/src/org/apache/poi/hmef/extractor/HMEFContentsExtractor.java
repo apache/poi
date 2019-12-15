@@ -93,19 +93,16 @@ public final class HMEFContentsExtractor {
             }
             dest = new File(name + ".txt");
         }
-        
-        OutputStream fout = new FileOutputStream(dest);
-        try {
+
+        try (OutputStream fout = new FileOutputStream(dest)) {
             if (body instanceof MAPIStringAttribute) {
                 // Save in a predictable encoding, not raw bytes
-                String text = ((MAPIStringAttribute)body).getDataString();
+                String text = ((MAPIStringAttribute) body).getDataString();
                 fout.write(text.getBytes(StringUtil.UTF8));
             } else {
                 // Save the raw bytes, should be raw RTF
                 fout.write(body.getData());
             }
-        } finally {
-            fout.close();
         }
     }
     
@@ -156,11 +153,8 @@ public final class HMEFContentsExtractor {
             
             // Save it
             File file = new File(dir, filename);
-            OutputStream fout = new FileOutputStream(file);
-            try {
-                fout.write( att.getContents() );
-            } finally {
-                fout.close();
+            try (OutputStream fout = new FileOutputStream(file)) {
+                fout.write(att.getContents());
             }
         }
     }

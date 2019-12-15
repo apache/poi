@@ -252,15 +252,12 @@ public class AgileEncryptor extends Encryptor implements Cloneable {
         byte[] buf = new byte[1024];
         LittleEndian.putLong(buf, 0, oleStreamSize);
         integrityMD.update(buf, 0, LittleEndianConsts.LONG_SIZE);
-        
-        InputStream fis = new FileInputStream(tmpFile);
-        try {
+
+        try (InputStream fis = new FileInputStream(tmpFile)) {
             int readBytes;
             while ((readBytes = fis.read(buf)) != -1) {
                 integrityMD.update(buf, 0, readBytes);
             }
-        } finally {
-        	fis.close();
         }
 
         byte[] hmacValue = integrityMD.doFinal();

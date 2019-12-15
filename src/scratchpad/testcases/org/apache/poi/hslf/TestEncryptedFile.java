@@ -45,31 +45,22 @@ public final class TestEncryptedFile {
 
     @Test(expected=EncryptedPowerPointFileException.class)
 	public void testLoadEncrypted1() throws IOException {
-        InputStream is = slTests.openResourceAsStream("Password_Protected-hello.ppt");
-		try {
+        try (InputStream is = slTests.openResourceAsStream("Password_Protected-hello.ppt")) {
             new HSLFSlideShowImpl(is).close();
-		} finally {
-		    is.close();
-		}
+        }
     }
     
     @Test(expected=EncryptedPowerPointFileException.class)
     public void testLoadEncrypted2() throws IOException {
-        InputStream is = slTests.openResourceAsStream("Password_Protected-np-hello.ppt");
-		try {
+        try (InputStream is = slTests.openResourceAsStream("Password_Protected-np-hello.ppt")) {
             new HSLFSlideShowImpl(is).close();
-		} finally {
-		    is.close();
-		}
+        }
     }
     
     @Test(expected=EncryptedPowerPointFileException.class)
     public void testLoadEncrypted3() throws IOException {
-        InputStream is = slTests.openResourceAsStream("Password_Protected-56-hello.ppt");
-		try {
+        try (InputStream is = slTests.openResourceAsStream("Password_Protected-56-hello.ppt")) {
             new HSLFSlideShowImpl(is).close();
-		} finally {
-		    is.close();
-		}
+        }
 	}
 }

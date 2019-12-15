@@ -33,23 +33,22 @@ public class TestXSSFSheetMergeRegions {
 
     @Test
     public void testMergeRegionsSpeed() throws IOException {
-        final XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57893-many-merges.xlsx");
-        try {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57893-many-merges.xlsx")) {
             long millis = Long.MAX_VALUE;
 
-            // in order to reduce the number of false positives we run it a few times before we fail, 
-            // sometimes it fails on machines that are busy at the moment.  
-            for(int i = 0;i < 5;i++) {
+            // in order to reduce the number of false positives we run it a few times before we fail,
+            // sometimes it fails on machines that are busy at the moment.
+            for (int i = 0; i < 5; i++) {
                 millis = runTest(wb);
-                if(millis < 2000) {
+                if (millis < 2000) {
                     break;
                 }
-                LOG.log(POILogger.INFO,"Retry " + i + " because run-time is too high: " + millis);
+                LOG.log(POILogger.INFO, "Retry " + i + " because run-time is too high: " + millis);
             }
 
             boolean inGump = false;
             String version = System.getProperty("version.id");
-            if(version != null && version.startsWith("gump-")) {
+            if (version != null && version.startsWith("gump-")) {
                 inGump = true;
             }
 
@@ -57,8 +56,6 @@ public class TestXSSFSheetMergeRegions {
             // when running in Gump, the VM is very slow, so we should allow much more time
             assertTrue("Should have taken <2000 ms to iterate 50k merged regions but took " + millis,
                     inGump ? millis < 8000 : millis < 2000);
-        } finally {
-            wb.close();
         }
     }
 

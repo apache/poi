@@ -112,11 +112,8 @@ public class TestXSSFVMLDrawing {
     public void testFindCommentShape() throws IOException, XmlException {
         
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
-        InputStream stream = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("vmlDrawing1.vml");
-        try {
+        try (InputStream stream = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("vmlDrawing1.vml")) {
             vml.read(stream);
-        } finally {
-            stream.close();
         }
 
         CTShape sh_a1 = vml.findCommentShape(0, 0);
@@ -150,11 +147,8 @@ public class TestXSSFVMLDrawing {
     @Test
     public void testRemoveCommentShape() throws IOException, XmlException {
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
-        InputStream stream = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("vmlDrawing1.vml");
-        try {
+        try (InputStream stream = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("vmlDrawing1.vml")) {
             vml.read(stream);
-        } finally {
-            stream.close();
         }
 
         CTShape sh_a1 = vml.findCommentShape(0, 0);
@@ -168,11 +162,8 @@ public class TestXSSFVMLDrawing {
     @Test
     public void testEvilUnclosedBRFixing() throws IOException, XmlException {
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
-        InputStream stream = POIDataSamples.getOpenXML4JInstance().openResourceAsStream("bug-60626.vml");
-        try {
+        try (InputStream stream = POIDataSamples.getOpenXML4JInstance().openResourceAsStream("bug-60626.vml")) {
             vml.read(stream);
-        } finally {
-            stream.close();
         }
         Pattern p = Pattern.compile("<br/>");
         int count = 0;

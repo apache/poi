@@ -186,11 +186,8 @@ public class StandardEncryptor extends Encryptor implements Cloneable {
                 // value, depending on the block size of the chosen encryption algorithm
                 leos.writeLong(countBytes);
 
-                FileInputStream fis = new FileInputStream(fileOut);
-                try {
+                try (FileInputStream fis = new FileInputStream(fileOut)) {
                     IOUtils.copy(fis, leos);
-                } finally {
-                    fis.close();
                 }
                 if (!fileOut.delete()) {
                     logger.log(POILogger.ERROR, "Can't delete temporary encryption file: "+fileOut);

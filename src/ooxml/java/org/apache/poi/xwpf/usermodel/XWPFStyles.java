@@ -80,15 +80,12 @@ public class XWPFStyles extends POIXMLDocumentPart {
     @Override
     protected void onDocumentRead() throws IOException {
         StylesDocument stylesDoc;
-        InputStream is = getPackagePart().getInputStream();
-        try {
+        try (InputStream is = getPackagePart().getInputStream()) {
             stylesDoc = StylesDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
             setStyles(stylesDoc.getStyles());
             latentStyles = new XWPFLatentStyles(ctStyles.getLatentStyles(), this);
         } catch (XmlException e) {
             throw new POIXMLException("Unable to read styles", e);
-        } finally {
-            is.close();
         }
     }
 

@@ -250,18 +250,10 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
             xwpfPicData = (XWPFPictureData) createRelationship(relDesc, XWPFFactory.getInstance(), idx);
             /* write bytes to new part */
             PackagePart picDataPart = xwpfPicData.getPackagePart();
-            OutputStream out = null;
-            try {
-                out = picDataPart.getOutputStream();
+            try (OutputStream out = picDataPart.getOutputStream()) {
                 out.write(pictureData);
             } catch (IOException e) {
                 throw new POIXMLException(e);
-            } finally {
-                try {
-                    if (out != null) out.close();
-                } catch (IOException e) {
-                    // ignore
-                }
             }
 
             document.registerPackagePictureData(xwpfPicData);
@@ -314,7 +306,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
 
     /**
      * Adds a new paragraph at the end of the header or footer
-     * 
+     *
      * @return new {@link XWPFParagraph} object
      */
     public XWPFParagraph createParagraph() {
@@ -323,10 +315,10 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
         bodyElements.add(paragraph);
         return paragraph;
     }
-    
+
     /**
      * Adds a new table at the end of the header or footer
-     * 
+     *
      * @param rows - number of rows in the table
      * @param cols - number of columns in the table
      * @return new {@link XWPFTable} object
@@ -337,7 +329,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
         bodyElements.add(table);
         return table;
     }
-    
+
     /**
      * Removes a specific paragraph from this header / footer
      *
@@ -353,11 +345,11 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
             bodyElements.remove(paragraph);
         }
     }
-    
+
     /**
      * Removes a specific table from this header / footer
-     * 
-     * @param table - {@link XWPFTable} object to remove 
+     *
+     * @param table - {@link XWPFTable} object to remove
      */
     public void removeTable(XWPFTable table) {
         if (tables.contains(table)) {
@@ -369,7 +361,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
             bodyElements.remove(table);
         }
     }
-    
+
     /**
      * Clears all paragraphs and tables from this header / footer
      */
@@ -381,7 +373,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
        tables.clear();
        bodyElements.clear();
     }
-    
+
     /**
      * add a new paragraph at position of the cursor
      *
@@ -590,14 +582,14 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     public POIXMLDocumentPart getPart() {
         return this;
     }
-    
+
     @Override
     protected void prepareForCommit() {
         // must contain at least an empty paragraph
         if (bodyElements.size() == 0) {
             createParagraph();
         }
-        
+
         // Cells must contain at least an empty paragraph
         for (XWPFTable tbl : tables) {
             for (XWPFTableRow row : tbl.tableRows) {
@@ -609,6 +601,6 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
             }
         }
         super.prepareForCommit();
-        
+
     }
 }

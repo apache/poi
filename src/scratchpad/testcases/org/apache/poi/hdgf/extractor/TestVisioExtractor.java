@@ -134,11 +134,8 @@ public final class TestVisioExtractor {
 	}
     
     private VisioTextExtractor openExtractor(String fileName) throws IOException {
-        InputStream is = _dgTests.openResourceAsStream(fileName);
-        try {
+        try (InputStream is = _dgTests.openResourceAsStream(fileName)) {
             return new VisioTextExtractor(is);
-        } finally {
-            is.close();
         }
     }
 }

@@ -65,30 +65,27 @@ public final class PICT extends Metafile {
         }
         byte[] chunk = new byte[4096];
         ByteArrayOutputStream out = new ByteArrayOutputStream(header.getWmfSize());
-        InflaterInputStream inflater = new InflaterInputStream( bis );
-        try {
+        try (InflaterInputStream inflater = new InflaterInputStream(bis)) {
             int count;
-            while ((count = inflater.read(chunk)) >=0 ) {
-                out.write(chunk,0,count);
+            while ((count = inflater.read(chunk)) >= 0) {
+                out.write(chunk, 0, count);
                 // PICT zip-stream can be erroneous, so we clear the array to determine
                 // the maximum of read bytes, after the inflater crashed
-                bytefill(chunk, (byte)0);
+                bytefill(chunk, (byte) 0);
             }
         } catch (Exception e) {
             int lastLen;
-            for (lastLen=chunk.length-1; lastLen>=0 && chunk[lastLen] == 0; lastLen--);
+            for (lastLen = chunk.length - 1; lastLen >= 0 && chunk[lastLen] == 0; lastLen--) ;
             if (++lastLen > 0) {
                 if (header.getWmfSize() > out.size()) {
                     // sometimes the wmfsize is smaller than the amount of already successfully read bytes
                     // in this case we take the lastLen as-is, otherwise we truncate it to the given size
                     lastLen = Math.min(lastLen, header.getWmfSize() - out.size());
                 }
-                out.write(chunk,0,lastLen);
+                out.write(chunk, 0, lastLen);
             }
             // End of picture marker for PICT is 0x00 0xFF
-            LOG.log(POILogger.ERROR, "PICT zip-stream is invalid, read as much as possible. Uncompressed length of header: "+header.getWmfSize()+" / Read bytes: "+out.size(), e);
-        } finally {
-            inflater.close();
+            LOG.log(POILogger.ERROR, "PICT zip-stream is invalid, read as much as possible. Uncompressed length of header: " + header.getWmfSize() + " / Read bytes: " + out.size(), e);
         }
         return out.toByteArray();
     }

@@ -67,16 +67,13 @@ public final class TestCurrentUserAtom {
 
 	@Test(expected = EncryptedPowerPointFileException.class)
 	public void readEnc() throws Exception {
-		POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(encFile));
 
-		try {
-    		new CurrentUserAtom(fs.getRoot());
-    		assertTrue(true); // not yet failed
-    		
-    		new HSLFSlideShowImpl(fs).close();
-		} finally {
-		    fs.close();
-		}
+        try (POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(encFile))) {
+            new CurrentUserAtom(fs.getRoot());
+            assertTrue(true); // not yet failed
+
+            new HSLFSlideShowImpl(fs).close();
+        }
 	}
 
 	@Test

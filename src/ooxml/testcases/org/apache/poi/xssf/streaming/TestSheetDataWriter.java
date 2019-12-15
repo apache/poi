@@ -61,14 +61,10 @@ public final class TestSheetDataWriter {
             writer.outputQuotedString(unicodeSurrogates);
             writer.close();
             File file = writer.getTempFile();
-            FileInputStream is = new FileInputStream(file);
-            String text;
-            try {
-                text = new String(IOUtils.toByteArray(is), StandardCharsets.UTF_8);
-            } finally {
-                is.close();
+            try (FileInputStream is = new FileInputStream(file)) {
+                String text = new String(IOUtils.toByteArray(is), StandardCharsets.UTF_8);
+                assertEquals(unicodeSurrogates, text);
             }
-            assertEquals(unicodeSurrogates, text);
         } finally {
             IOUtils.closeQuietly(writer);
         }
@@ -80,14 +76,10 @@ public final class TestSheetDataWriter {
             writer.outputQuotedString("\r\n");
             writer.close();
             File file = writer.getTempFile();
-            FileInputStream is = new FileInputStream(file);
-            String text;
-            try {
-                text = new String(IOUtils.toByteArray(is), StandardCharsets.UTF_8);
-            } finally {
-                is.close();
+            try (FileInputStream is = new FileInputStream(file)) {
+                String text = new String(IOUtils.toByteArray(is), StandardCharsets.UTF_8);
+                assertEquals("&#xd;&#xa;", text);
             }
-            assertEquals("&#xd;&#xa;", text);
         } finally {
             IOUtils.closeQuietly(writer);
         }

@@ -184,16 +184,13 @@ public class TestXSSFEventBasedExcelExtractor {
 	    */
     @Test
     public void testShapes() throws Exception{
-	    XSSFEventBasedExcelExtractor ooxmlExtractor = getExtractor("WithTextBox.xlsx");
-	       
-	    try {
-    	    String text = ooxmlExtractor.getText();
-			assertContains(text, "Line 1");
-			assertContains(text, "Line 2");
-			assertContains(text, "Line 3");
-	    } finally {
-	        ooxmlExtractor.close();
-	    }
+
+        try (XSSFEventBasedExcelExtractor ooxmlExtractor = getExtractor("WithTextBox.xlsx")) {
+            String text = ooxmlExtractor.getText();
+            assertContains(text, "Line 1");
+            assertContains(text, "Line 2");
+            assertContains(text, "Line 3");
+        }
     }
 
     /**
@@ -206,21 +203,14 @@ public class TestXSSFEventBasedExcelExtractor {
 
         String expectedOutput = "Sheet1\n99.99\n";
 
-        XSSFExcelExtractor extractor = new XSSFExcelExtractor(
-                XSSFTestDataSamples.openSampleWorkbook("56011.xlsx"));
-        try {
+        try (XSSFExcelExtractor extractor = new XSSFExcelExtractor(
+                XSSFTestDataSamples.openSampleWorkbook("56011.xlsx"))) {
             assertEquals(expectedOutput, extractor.getText().replace(",", "."));
-        } finally {
-            extractor.close();
         }
 
-        XSSFEventBasedExcelExtractor fixture =
-                new XSSFEventBasedExcelExtractor(
-                        XSSFTestDataSamples.openSamplePackage("56011.xlsx"));
-        try {
+        try (XSSFEventBasedExcelExtractor fixture = new XSSFEventBasedExcelExtractor(
+                XSSFTestDataSamples.openSamplePackage("56011.xlsx"))) {
             assertEquals(expectedOutput, fixture.getText().replace(",", "."));
-        } finally {
-            fixture.close();
         }
     }
 
@@ -242,25 +232,18 @@ public class TestXSSFEventBasedExcelExtractor {
                 "Sheet1\n" +
                 "abc\t123\n";
 
-        XSSFExcelExtractor extractor = new XSSFExcelExtractor(
-                XSSFTestDataSamples.openSampleWorkbook("headerFooterTest.xlsx"));
-        try {
+        try (XSSFExcelExtractor extractor = new XSSFExcelExtractor(
+                XSSFTestDataSamples.openSampleWorkbook("headerFooterTest.xlsx"))) {
             assertEquals(expectedOutputWithHeadersAndFooters, extractor.getText());
             extractor.setIncludeHeadersFooters(false);
             assertEquals(expectedOutputWithoutHeadersAndFooters, extractor.getText());
-        } finally {
-            extractor.close();
         }
 
-        XSSFEventBasedExcelExtractor fixture =
-                new XSSFEventBasedExcelExtractor(
-                        XSSFTestDataSamples.openSamplePackage("headerFooterTest.xlsx"));
-        try {
+        try (XSSFEventBasedExcelExtractor fixture = new XSSFEventBasedExcelExtractor(
+                XSSFTestDataSamples.openSamplePackage("headerFooterTest.xlsx"))) {
             assertEquals(expectedOutputWithHeadersAndFooters, fixture.getText());
             fixture.setIncludeHeadersFooters(false);
             assertEquals(expectedOutputWithoutHeadersAndFooters, fixture.getText());
-        } finally {
-            fixture.close();
         }
     }
 
@@ -307,48 +290,35 @@ public class TestXSSFEventBasedExcelExtractor {
                 "Comment by Shaun Kalley: Comment A7\tComment by Shaun Kalley: Comment B7\n" +
                 "Comment by Shaun Kalley: Comment A8\tComment by Shaun Kalley: Comment B8\n";
 
-        XSSFExcelExtractor extractor = new XSSFExcelExtractor(
-                XSSFTestDataSamples.openSampleWorkbook("commentTest.xlsx"));
-        try {
+        try (XSSFExcelExtractor extractor = new XSSFExcelExtractor(
+                XSSFTestDataSamples.openSampleWorkbook("commentTest.xlsx"))) {
             assertEquals(expectedOutputWithoutComments, extractor.getText());
             extractor.setIncludeCellComments(true);
             assertEquals(nonEventBasedExtractorOutputWithComments, extractor.getText());
-        } finally {
-            extractor.close();
         }
 
-        XSSFEventBasedExcelExtractor fixture =
-                new XSSFEventBasedExcelExtractor(
-                        XSSFTestDataSamples.openSamplePackage("commentTest.xlsx"));
-        try {
+        try (XSSFEventBasedExcelExtractor fixture = new XSSFEventBasedExcelExtractor(
+                XSSFTestDataSamples.openSamplePackage("commentTest.xlsx"))) {
             assertEquals(expectedOutputWithoutComments, fixture.getText());
             fixture.setIncludeCellComments(true);
             assertEquals(eventBasedExtractorOutputWithComments, fixture.getText());
-        } finally {
-            fixture.close();
         }
     }
     
     @Test
     public void testFile56278_normal() throws Exception {
         // first with normal Text Extractor
-        POIXMLTextExtractor extractor = new XSSFExcelExtractor(
-                XSSFTestDataSamples.openSampleWorkbook("56278.xlsx"));
-        try {
+        try (POIXMLTextExtractor extractor = new XSSFExcelExtractor(
+                XSSFTestDataSamples.openSampleWorkbook("56278.xlsx"))) {
             assertNotNull(extractor.getText());
-        } finally {
-            extractor.close();
         }
     }
     
     @Test
     public void testFile56278_event() throws Exception {
         // then with event based one
-        POIXMLTextExtractor extractor = getExtractor("56278.xlsx");        
-        try {
+        try (POIXMLTextExtractor extractor = getExtractor("56278.xlsx")) {
             assertNotNull(extractor.getText());
-        } finally {
-            extractor.close();
         }
     }
 

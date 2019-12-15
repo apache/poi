@@ -44,12 +44,9 @@ public class HSLFTestDataSamples {
 	}
 	
 	public static HSLFSlideShow getSlideShow(String fileName) throws IOException {
-	    InputStream is = openSampleFileStream(fileName);
-	    try {
-	        return new HSLFSlideShow(is);
-	    } finally {
-	        is.close();
-	    }
+        try (InputStream is = openSampleFileStream(fileName)) {
+            return new HSLFSlideShow(is);
+        }
 	}
 
 	/**

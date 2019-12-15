@@ -55,10 +55,8 @@ public class FormulaViewer
      * @throws IOException if the file contained errors 
      */
     public void run() throws IOException {
-        POIFSFileSystem fs  = new POIFSFileSystem(new File(file), true);
-        try {
-            InputStream is = BiffViewer.getPOIFSInputStream(fs);
-            try {
+        try (POIFSFileSystem fs = new POIFSFileSystem(new File(file), true)) {
+            try (InputStream is = BiffViewer.getPOIFSInputStream(fs)) {
                 List<Record> records = RecordFactory.createRecords(is);
 
                 for (Record record : records) {
@@ -70,11 +68,7 @@ public class FormulaViewer
                         }
                     }
                 }
-            } finally {
-                is.close();
             }
-        } finally {
-            fs.close();
         }
     }
     

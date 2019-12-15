@@ -166,9 +166,9 @@ public final class TestCompressedRTF {
             msg = new HMEFMessage(is);
         }
 
-        MAPIAttribute attr = msg.getMessageMAPIAttribute(MAPIProperty.RTF_COMPRESSED);
-        assertNotNull(attr);
-        MAPIRtfAttribute rtfAttr = (MAPIRtfAttribute) attr;
+       MAPIAttribute attr = msg.getMessageMAPIAttribute(MAPIProperty.RTF_COMPRESSED);
+       assertNotNull(attr);
+       MAPIRtfAttribute rtfAttr = (MAPIRtfAttribute)attr;
 
         final byte[] expected;
         try (InputStream stream = _samples.openResourceAsStream("quick-contents/message.rtf")) {
@@ -196,7 +196,7 @@ public final class TestCompressedRTF {
         }
 
         // By String
-           String expString = new String(expected, StandardCharsets.US_ASCII);
+        String expString = new String(expected, StandardCharsets.US_ASCII);
         String decompStr = rtfAttr.getDataString();
         assertEquals(expString.length(), decompStr.length());
         assertEquals(expString, decompStr);
