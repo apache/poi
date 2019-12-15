@@ -99,6 +99,7 @@ public interface Sheet extends Iterable<Row> {
      * than expected!
      *
      * @return the number of the first logical row on the sheet (0-based)
+     *      or -1 if no row exists
      */
     int getFirstRowNum();
 
@@ -110,7 +111,7 @@ public interface Sheet extends Iterable<Row> {
      * method will include such rows and thus the returned value might be higher
      * than expected!
      *
-     * @return last row contained on this sheet (0-based)
+     * @return last row contained on this sheet (0-based) or -1 if no row exists
      */
     int getLastRowNum();
 

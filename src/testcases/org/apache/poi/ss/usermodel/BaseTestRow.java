@@ -532,4 +532,32 @@ public abstract class BaseTestRow {
             assertNull(f1);
         }
     }
+
+    @Test
+    public void testLastRowEmptySheet() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet("sheet1");
+
+        assertEquals("Sheet without rows should return -1 as lastRowNum",
+                -1, sheet.getLastRowNum());
+        Row row = sheet.createRow(0);
+        assertNotNull(row);
+
+        assertEquals("Sheet with one row should return 0 as lastRowNum",
+                0, sheet.getLastRowNum());
+    }
+
+    @Test
+    public void testFirstRowEmptySheet() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet("sheet1");
+
+        assertEquals("Sheet without rows should return -1 as firstRowNum",
+                -1, sheet.getFirstRowNum());
+        Row row = sheet.createRow(0);
+        assertNotNull(row);
+
+        assertEquals("Sheet with one row should return 0 as firstRowNum",
+                0, sheet.getFirstRowNum());
+    }
 }

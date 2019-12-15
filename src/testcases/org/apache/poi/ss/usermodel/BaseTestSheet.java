@@ -130,8 +130,8 @@ public abstract class BaseTestSheet {
         Workbook workbook = _testDataProvider.createWorkbook();
         Sheet sheet1 = workbook.createSheet();
         assertEquals(0, sheet1.getPhysicalNumberOfRows());
-        assertEquals(0, sheet1.getFirstRowNum());
-        assertEquals(0, sheet1.getLastRowNum());
+        assertEquals(-1, sheet1.getFirstRowNum());
+        assertEquals(-1, sheet1.getLastRowNum());
 
         Row row0 = sheet1.createRow(0);
         assertEquals(1, sheet1.getPhysicalNumberOfRows());
@@ -139,8 +139,8 @@ public abstract class BaseTestSheet {
         assertEquals(0, sheet1.getLastRowNum());
         sheet1.removeRow(row0);
         assertEquals(0, sheet1.getPhysicalNumberOfRows());
-        assertEquals(0, sheet1.getFirstRowNum());
-        assertEquals(0, sheet1.getLastRowNum());
+        assertEquals(-1, sheet1.getFirstRowNum());
+        assertEquals(-1, sheet1.getLastRowNum());
 
         sheet1.createRow(1);
         Row row2 = sheet1.createRow(2);

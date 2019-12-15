@@ -114,8 +114,8 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
     protected final InternalWorkbook _book;
     protected final HSSFWorkbook _workbook;
     private HSSFPatriarch _patriarch;
-    private int _firstrow;
-    private int _lastrow;
+    private int _firstrow = -1;
+    private int _lastrow = -1;
 
     /**
      * Creates new HSSFSheet   - called by HSSFWorkbook to create a sheet from
@@ -316,6 +316,12 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
                 _firstrow = findFirstRow(_firstrow);
             }
             _sheet.removeRow(hrow.getRowRecord());
+
+            // if there are no more rows, then reset first/last
+            if(_rows.size() == 0) {
+                _firstrow = -1;
+                _lastrow = -1;
+            }
         }
     }
 

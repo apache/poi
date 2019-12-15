@@ -1098,7 +1098,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public int getFirstRowNum() {
-        return _rows.isEmpty() ? 0 : _rows.firstKey();
+        return _rows.isEmpty() ? -1 : _rows.firstKey();
     }
 
     /**
@@ -1220,7 +1220,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         // A test with 1_000_000 rows shows that querying getLastRowNum with lastKey() implementation takes ~40 ms,
         // and ~1.2 ms with cached implementation. 40 ms is negligible compared to the time of evaluation a million
         // cells, and the lastKey implementation is much more elegant and less error prone than caching.
-        return _rows.isEmpty() ? 0 : _rows.lastKey();
+        return _rows.isEmpty() ? -1 : _rows.lastKey();
     }
 
     @Override

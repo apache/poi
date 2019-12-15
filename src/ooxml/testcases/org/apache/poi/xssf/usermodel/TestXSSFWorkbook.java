@@ -113,8 +113,8 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         assertEquals(1, wb1.getSheetAt(0).getLastRowNum());
         assertEquals(0, wb1.getSheetAt(1).getFirstRowNum());
         assertEquals(0, wb1.getSheetAt(1).getLastRowNum());
-        assertEquals(0, wb1.getSheetAt(2).getFirstRowNum());
-        assertEquals(0, wb1.getSheetAt(2).getLastRowNum());
+        assertEquals(-1, wb1.getSheetAt(2).getFirstRowNum());
+        assertEquals(-1, wb1.getSheetAt(2).getLastRowNum());
 
         File file = TempFile.createTempFile("poi-", ".xlsx");
         OutputStream out = new FileOutputStream(file);
@@ -151,8 +151,8 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
         assertEquals(1, wb2.getSheetAt(0).getLastRowNum());
         assertEquals(0, wb2.getSheetAt(1).getFirstRowNum());
         assertEquals(0, wb2.getSheetAt(1).getLastRowNum());
-        assertEquals(0, wb2.getSheetAt(2).getFirstRowNum());
-        assertEquals(0, wb2.getSheetAt(2).getLastRowNum());
+        assertEquals(-1, wb2.getSheetAt(2).getFirstRowNum());
+        assertEquals(-1, wb2.getSheetAt(2).getLastRowNum());
 
         sheet1 = wb2.getSheetAt(0);
         assertEquals(1.2, sheet1.getRow(0).getCell(0).getNumericCellValue(), 0.0001);

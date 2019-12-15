@@ -206,7 +206,7 @@ public class SXSSFSheet implements Sheet
         if(_writer.getNumberOfFlushedRows() > 0) {
             return _writer.getLowestIndexOfFlushedRows();
         }
-        return _rows.size() == 0 ? 0 : _rows.firstKey();
+        return _rows.size() == 0 ? -1 : _rows.firstKey();
     }
 
     /**
@@ -217,7 +217,7 @@ public class SXSSFSheet implements Sheet
     @Override
     public int getLastRowNum()
     {
-        return _rows.size() == 0 ? 0 : _rows.lastKey();
+        return _rows.size() == 0 ? -1 : _rows.lastKey();
     }
 
     /**

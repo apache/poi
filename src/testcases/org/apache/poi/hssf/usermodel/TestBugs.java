@@ -1230,9 +1230,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet s = wb.createSheet();
 
-        // No rows, everything is 0
-        assertEquals(0, s.getFirstRowNum());
-        assertEquals(0, s.getLastRowNum());
+        // No rows, first/last return -1
+        assertEquals(-1, s.getFirstRowNum());
+        assertEquals(-1, s.getLastRowNum());
         assertEquals(0, s.getPhysicalNumberOfRows());
 
         // One row, most things are 0, physical is 1

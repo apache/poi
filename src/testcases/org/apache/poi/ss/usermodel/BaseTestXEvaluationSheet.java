@@ -36,7 +36,7 @@ public abstract class BaseTestXEvaluationSheet {
         Sheet underlyingSheet = sheetPair.getKey();
         EvaluationSheet instance = sheetPair.getValue();
 
-        assertEquals(0, instance.getLastRowNum());
+        assertEquals(-1, instance.getLastRowNum());
 
         underlyingSheet.createRow(0);
         underlyingSheet.createRow(1);
