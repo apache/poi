@@ -31,6 +31,7 @@ import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.LittleEndianOutputStream;
+import org.apache.poi.util.Removal;
 
 /**
  * Container for tabstop lists
@@ -38,20 +39,18 @@ import org.apache.poi.util.LittleEndianOutputStream;
 @Internal
 public class HSLFTabStopPropCollection extends TextProp {
     public static final String NAME = "tabStops";
-    
+
     private final List<HSLFTabStop> tabStops = new ArrayList<>();
-    
+
     public HSLFTabStopPropCollection() {
         super(0, 0x100000, NAME);
     }
-    
-    public HSLFTabStopPropCollection(final HSLFTabStopPropCollection copy) {
-        super(0, copy.getMask(), copy.getName());
-        for (HSLFTabStop ts : copy.tabStops) {
-            tabStops.add(ts.clone());
-        }
+
+    public HSLFTabStopPropCollection(final HSLFTabStopPropCollection other) {
+        super(other);
+        other.tabStops.stream().map(HSLFTabStop::copy).forEach(tabStops::add);
     }
-    
+
     /**
      * Parses the tabstops from TxMasterStyle record
      *
@@ -61,7 +60,7 @@ public class HSLFTabStopPropCollection extends TextProp {
     public void parseProperty(byte[] data, int offset) {
         tabStops.addAll(readTabStops(new LittleEndianByteArrayInputStream(data, offset)));
     }
-    
+
     public static List<HSLFTabStop> readTabStops(final LittleEndianInput lei) {
         final int count = lei.readUShort();
         final List<HSLFTabStop> tabs = new ArrayList<>(count);
@@ -72,7 +71,7 @@ public class HSLFTabStopPropCollection extends TextProp {
         }
         return tabs;
     }
-    
+
 
     public void writeProperty(OutputStream out) {
         writeTabStops(new LittleEndianOutputStream(out), tabStops);
@@ -85,18 +84,18 @@ public class HSLFTabStopPropCollection extends TextProp {
             leo.writeShort(ts.getPosition());
             leo.writeShort(ts.getType().nativeId);
         }
-        
+
     }
-    
+
     @Override
     public int getValue() { return tabStops.size(); }
 
-    
+
     @Override
     public int getSize() {
         return LittleEndianConsts.SHORT_SIZE + tabStops.size()*LittleEndianConsts.INT_SIZE;
     }
-    
+
     public List<HSLFTabStop> getTabStops() {
         return tabStops;
     }
@@ -104,13 +103,21 @@ public class HSLFTabStopPropCollection extends TextProp {
     public void clearTabs() {
         tabStops.clear();
     }
-    
+
     public void addTabStop(HSLFTabStop ts) {
         tabStops.add(ts);
     }
-    
+
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public HSLFTabStopPropCollection clone() {
+        return copy();
+    }
+
+    @Override
+    public HSLFTabStopPropCollection copy() {
         return new HSLFTabStopPropCollection(this);
     }
 
@@ -134,7 +141,7 @@ public class HSLFTabStopPropCollection extends TextProp {
 
         return tabStops.equals(other.tabStops);
     }
-    
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(super.toString());
@@ -150,7 +157,7 @@ public class HSLFTabStopPropCollection extends TextProp {
             isFirst = false;
         }
         sb.append(" ]");
-        
+
         return sb.toString();
     }
 

@@ -24,10 +24,6 @@ import org.apache.poi.util.StringUtil;
 /**
  * String Stores a String value in a formula value stored in the format
  * &lt;length 2 bytes&gt;char[]
- * 
- * @author Werner Froidevaux
- * @author Jason Height (jheight at chariot dot net dot au)
- * @author Bernard Chesnoy
  */
 public final class StringPtg extends ScalarConstantPtg {
      public final static byte sid = 0x17;
@@ -56,7 +52,7 @@ public final class StringPtg extends ScalarConstantPtg {
      * Create a StringPtg from a string representation of the number Number
      * format is not checked, it is expected to be validated in the parser that
      * calls this method.
-     * 
+     *
      * @param value :
      *            String representation of a floating point number
      */
@@ -104,5 +100,10 @@ public final class StringPtg extends ScalarConstantPtg {
 
         sb.append(FORMULA_DELIMITER);
         return sb.toString();
+    }
+
+    @Override
+    public StringPtg copy() {
+        return this;
     }
 }

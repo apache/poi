@@ -21,23 +21,24 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * links a series to its position in the series list.
  */
 public final class SeriesIndexRecord extends StandardRecord {
-    public final static short      sid                             = 0x1065;
-    private  short      field_1_index;
+    public static final short sid = 0x1065;
+    private short field_1_index;
 
+    public SeriesIndexRecord() {}
 
-    public SeriesIndexRecord()
-    {
-
+    public SeriesIndexRecord(SeriesIndexRecord other) {
+        super(other);
+        field_1_index = other.field_1_index;
     }
 
-    public SeriesIndexRecord(RecordInputStream in)
-    {
-        field_1_index                  = in.readShort();
+    public SeriesIndexRecord(RecordInputStream in) {
+        field_1_index = in.readShort();
     }
 
     public String toString()
@@ -48,7 +49,7 @@ public final class SeriesIndexRecord extends StandardRecord {
         buffer.append("    .index                = ")
             .append("0x").append(HexDump.toHex(  getIndex ()))
             .append(" (").append( getIndex() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
 
         buffer.append("[/SINDEX]\n");
         return buffer.toString();
@@ -67,15 +68,18 @@ public final class SeriesIndexRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
-        SeriesIndexRecord rec = new SeriesIndexRecord();
-    
-        rec.field_1_index = field_1_index;
-        return rec;
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public SeriesIndexRecord clone() {
+        return copy();
     }
 
-
-
+    @Override
+    public SeriesIndexRecord copy() {
+        return new SeriesIndexRecord(this);
+    }
 
     /**
      * Get the index field for the SeriesIndex record.

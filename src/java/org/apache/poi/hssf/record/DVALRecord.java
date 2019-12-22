@@ -18,14 +18,13 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        DATAVALIDATIONS Record (0x01B2)<p>
- * Description:  used in data validation ;
- *               This record is the list header of all data validation records (0x01BE) in the current sheet.
+ * This record is the list header of all data validation records (0x01BE) in the current sheet.
  */
-public final class DVALRecord extends StandardRecord implements Cloneable {
-	public final static short sid = 0x01B2;
+public final class DVALRecord extends StandardRecord {
+	public static final short sid = 0x01B2;
 
 	/** Options of the DVAL */
 	private short field_1_options;
@@ -47,12 +46,21 @@ public final class DVALRecord extends StandardRecord implements Cloneable {
         field_5_dv_no = 0x00000000;
     }
 
+	public DVALRecord(DVALRecord other) {
+		super(other);
+		field_1_options = other.field_1_options;
+		field_2_horiz_pos = other.field_2_horiz_pos;
+		field_3_vert_pos = other.field_3_vert_pos;
+		field_cbo_id = other.field_cbo_id;
+		field_5_dv_no = other.field_5_dv_no;
+	}
+
 	public DVALRecord(RecordInputStream in) {
 		field_1_options = in.readShort();
 		field_2_horiz_pos = in.readInt();
 		field_3_vert_pos = in.readInt();
-        field_cbo_id    = in.readInt(); 
-        field_5_dv_no   = in.readInt();
+        field_cbo_id = in.readInt();
+        field_5_dv_no = in.readInt();
 	}
 
     /**
@@ -142,7 +150,6 @@ public final class DVALRecord extends StandardRecord implements Cloneable {
 	}
 
     public void serialize(LittleEndianOutput out) {
- 		
 		out.writeShort(getOptions());
 		out.writeInt(getHorizontalPos());
 		out.writeInt(getVerticalPos());
@@ -158,14 +165,16 @@ public final class DVALRecord extends StandardRecord implements Cloneable {
         return sid;
     }
 
-    @Override
-    public DVALRecord clone() {
-      DVALRecord rec = new DVALRecord();
-      rec.field_1_options = field_1_options;
-      rec.field_2_horiz_pos = field_2_horiz_pos;
-      rec.field_3_vert_pos = field_3_vert_pos;
-      rec.field_cbo_id = field_cbo_id;
-      rec.field_5_dv_no = field_5_dv_no;
-      return rec;
+	@Override
+	@SuppressWarnings("squid:S2975")
+	@Deprecated
+	@Removal(version = "5.0.0")
+	public DVALRecord clone() {
+		return copy();
+	}
+
+	@Override
+    public DVALRecord copy() {
+      return new DVALRecord(this);
     }
 }

@@ -20,20 +20,21 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: Uncalced Record
- * <P>
- * If this record occurs in the Worksheet Substream, it indicates that the formulas have not 
+ * If this record occurs in the Worksheet Substream, it indicates that the formulas have not
  * been recalculated before the document was saved.
- * 
- * @author Olivier Leprince
  */
-public final class UncalcedRecord extends StandardRecord  {
-	public final static short sid = 0x005E;
+public final class UncalcedRecord extends StandardRecord {
+	public static final short sid = 0x005E;
 
     private short _reserved;
 
 	public UncalcedRecord() {
         _reserved = 0;
+	}
+
+	public UncalcedRecord(UncalcedRecord other) {
+		super(other);
+		_reserved = other._reserved;
 	}
 
 	public short getSid() {
@@ -62,5 +63,10 @@ public final class UncalcedRecord extends StandardRecord  {
 
 	public static int getStaticRecordSize() {
 		return 6;
+	}
+
+	@Override
+	public UncalcedRecord copy() {
+		return new UncalcedRecord(this);
 	}
 }

@@ -27,17 +27,24 @@ import org.apache.poi.util.LittleEndianOutput;
  */
 public final class DataLabelExtensionRecord extends StandardRecord {
 	public static final short sid = 0x086A;
-	
+
 	private int rt;
 	private int grbitFrt;
-	private byte[] unused = new byte[8];
-	
+	private final byte[] unused = new byte[8];
+
+	public DataLabelExtensionRecord(DataLabelExtensionRecord other) {
+		super(other);
+		rt = other.rt;
+		grbitFrt = other.grbitFrt;
+		System.arraycopy(other.unused, 0, unused, 0, unused.length);
+	}
+
 	public DataLabelExtensionRecord(RecordInputStream in) {
 		rt = in.readShort();
 		grbitFrt = in.readShort();
 		in.readFully(unused);
 	}
-	
+
 	@Override
 	protected int getDataSize() {
 		return 2 + 2 + 8;
@@ -66,5 +73,10 @@ public final class DataLabelExtensionRecord extends StandardRecord {
 
 		buffer.append("[/DATALABEXT]\n");
 		return buffer.toString();
+	}
+
+	@Override
+	public DataLabelExtensionRecord copy() {
+		return new DataLabelExtensionRecord(this);
 	}
 }

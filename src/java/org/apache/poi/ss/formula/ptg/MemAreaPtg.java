@@ -20,9 +20,6 @@ package org.apache.poi.ss.formula.ptg;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
-/**
- * @author Daniel Noll (daniel at nuix dot com dot au)
- */
 public final class MemAreaPtg extends OperandPtg {
 	public final static short sid = 0x26;
 	private final static int SIZE = 7;
@@ -70,5 +67,11 @@ public final class MemAreaPtg extends OperandPtg {
 		sb.append(field_2_subex_len);
 		sb.append("]");
 		return sb.toString();
+	}
+
+	@Override
+	public MemAreaPtg copy() {
+		// immutable
+		return this;
 	}
 }

@@ -23,21 +23,26 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: Double Stream Flag Record (0x0161)<p>
- * Description:  tells if this is a double stream file. (always no for HSSF generated files)<p>
- *               Double Stream files contain both BIFF8 and BIFF7 workbooks.<p>
- * REFERENCE:  PG 305 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * Tells if this is a double stream file. (never applies to HSSF generated files)<p>
+ *
+ * Double Stream files contain both BIFF8 and BIFF7 workbooks.
  */
 public final class DSFRecord extends StandardRecord {
-    public final static short sid = 0x0161;
+    public static final short sid = 0x0161;
 
     private static final BitField biff5BookStreamFlag = BitFieldFactory.getInstance(0x0001);
 
     private int _options;
 
+    private DSFRecord(DSFRecord other) {
+        super(other);
+        _options = other._options;
+    }
+
     private DSFRecord(int options) {
         _options = options;
     }
+
     public DSFRecord(boolean isBiff5BookStreamPresent) {
         this(0);
         _options = biff5BookStreamFlag.setBoolean(0, isBiff5BookStreamPresent);
@@ -70,5 +75,10 @@ public final class DSFRecord extends StandardRecord {
 
     public short getSid() {
         return sid;
+    }
+
+    @Override
+    public DSFRecord copy() {
+        return new DSFRecord(this);
     }
 }

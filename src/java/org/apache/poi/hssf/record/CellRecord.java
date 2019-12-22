@@ -29,8 +29,13 @@ public abstract class CellRecord extends StandardRecord implements CellValueReco
     private int _columnIndex;
     private int _formatIndex;
 
-    protected CellRecord() {
-        // fields uninitialised
+    protected CellRecord() {}
+
+    protected CellRecord(CellRecord other) {
+        super(other);
+        _rowIndex = other.getRow();
+        _columnIndex = other.getColumn();
+        _formatIndex = other.getXFIndex();
     }
 
     protected CellRecord(RecordInputStream in) {
@@ -100,21 +105,21 @@ public abstract class CellRecord extends StandardRecord implements CellValueReco
      * Append specific debug info (used by {@link #toString()} for the value
      * contained in this record. Trailing new-line should not be appended
      * (superclass does that).
-     * 
+     *
      * @param sb the StringBuilder to write to
      */
     protected abstract void appendValueText(StringBuilder sb);
 
     /**
      * Gets the debug info BIFF record type name (used by {@link #toString()}.
-     * 
+     *
      * @return the record type name
      */
     protected abstract String getRecordName();
 
     /**
      * writes out the value data for this cell record
-     * 
+     *
      * @param out the output
      */
     protected abstract void serializeValue(LittleEndianOutput out);
@@ -137,9 +142,6 @@ public abstract class CellRecord extends StandardRecord implements CellValueReco
         return 6 + getValueDataSize();
     }
 
-    protected final void copyBaseFields(CellRecord rec) {
-        rec._rowIndex = _rowIndex;
-        rec._columnIndex = _columnIndex;
-        rec._formatIndex = _formatIndex;
-    }
+    @Override
+    public abstract CellRecord copy();
 }

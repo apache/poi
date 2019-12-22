@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.common.usermodel.GenericRecord;
@@ -31,11 +30,19 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.GenericRecordUtil;
 
-public abstract class Encryptor implements Cloneable, GenericRecord {
+public abstract class Encryptor implements GenericRecord {
     protected static final String DEFAULT_POIFS_ENTRY = Decryptor.DEFAULT_POIFS_ENTRY;
     private EncryptionInfo encryptionInfo;
     private SecretKey secretKey;
-    
+
+    protected Encryptor() {}
+
+    protected Encryptor(Encryptor other) {
+        encryptionInfo = other.encryptionInfo;
+        // secretKey is immutable
+        secretKey = other.secretKey;
+    }
+
     /**
      * Return a output stream for encrypted data.
      *
@@ -47,9 +54,9 @@ public abstract class Encryptor implements Cloneable, GenericRecord {
 
     // for tests
     public abstract void confirmPassword(String password, byte[] keySpec, byte[] keySalt, byte[] verifier, byte[] verifierSalt, byte[] integritySalt);
-    
+
     public abstract void confirmPassword(String password);
-	
+
 	public static Encryptor getInstance(EncryptionInfo info) {
 	    return info.getEncryptor();
     }
@@ -62,7 +69,7 @@ public abstract class Encryptor implements Cloneable, GenericRecord {
     throws IOException, GeneralSecurityException {
         throw new EncryptedDocumentException("this decryptor doesn't support writing directly to a stream");
     }
-    
+
     public SecretKey getSecretKey() {
         return secretKey;
     }
@@ -89,14 +96,8 @@ public abstract class Encryptor implements Cloneable, GenericRecord {
     public void setChunkSize(int chunkSize) {
         throw new EncryptedDocumentException("this decryptor doesn't support changing the chunk size");
     }
-    
-    @Override
-    public Encryptor clone() throws CloneNotSupportedException {
-        Encryptor other = (Encryptor)super.clone();
-        other.secretKey = new SecretKeySpec(secretKey.getEncoded(), secretKey.getAlgorithm());
-        // encryptionInfo is set from outside
-        return other;
-    }
+
+    public abstract Encryptor copy();
 
     @Override
     public Map<String, Supplier<?>> getGenericProperties() {

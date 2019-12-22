@@ -20,27 +20,28 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * The AutoFilterInfo record specifies the number of columns that have AutoFilter enabled
  * and indicates the beginning of the collection of AutoFilter records.
- *
- * @author Yegor Kozlov
  */
 
-public final class AutoFilterInfoRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x9D;
+public final class AutoFilterInfoRecord extends StandardRecord {
+    public static final short sid = 0x9D;
     /**
      * Number of AutoFilter drop-down arrows on the sheet
      */
-    private short             _cEntries;   // = 0;
+    private short _cEntries;
 
-    public AutoFilterInfoRecord()
-    {
+    public AutoFilterInfoRecord() {}
+
+    public AutoFilterInfoRecord(AutoFilterInfoRecord other) {
+        super(other);
+        _cEntries = other._cEntries;
     }
 
-    public AutoFilterInfoRecord(RecordInputStream in)
-    {
+    public AutoFilterInfoRecord(RecordInputStream in) {
         _cEntries = in.readShort();
     }
 
@@ -91,9 +92,15 @@ public final class AutoFilterInfoRecord extends StandardRecord implements Clonea
     }
 
     @Override
-    public AutoFilterInfoRecord clone()
-    {
-    	return (AutoFilterInfoRecord)cloneViaReserialise();
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public AutoFilterInfoRecord clone() {
+        return copy();
     }
-    
+
+    @Override
+    public AutoFilterInfoRecord copy() {
+        return new AutoFilterInfoRecord(this);
+    }
 }

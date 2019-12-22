@@ -21,12 +21,13 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 
 /**
- * Used when checking if a key is valid for a document 
+ * Used when checking if a key is valid for a document
  */
-public abstract class EncryptionVerifier implements Cloneable, GenericRecord {
+public abstract class EncryptionVerifier implements GenericRecord, Duplicatable {
     private byte[] salt;
     private byte[] encryptedVerifier;
     private byte[] encryptedVerifierHash;
@@ -36,8 +37,19 @@ public abstract class EncryptionVerifier implements Cloneable, GenericRecord {
     private CipherAlgorithm cipherAlgorithm;
     private ChainingMode chainingMode;
     private HashAlgorithm hashAlgorithm;
-    
+
     protected EncryptionVerifier() {}
+
+    protected EncryptionVerifier(EncryptionVerifier other) {
+        salt = (other.salt == null) ? null : other.salt.clone();
+        encryptedVerifier = (other.encryptedVerifier == null) ? null : other.encryptedVerifier.clone();
+        encryptedVerifierHash = (other.encryptedVerifierHash == null) ? null : other.encryptedVerifierHash.clone();
+        encryptedKey = (other.encryptedKey == null) ? null : other.encryptedKey.clone();
+        spinCount = other.spinCount;
+        cipherAlgorithm = other.cipherAlgorithm;
+        chainingMode = other.chainingMode;
+        hashAlgorithm = other.hashAlgorithm;
+    }
 
     public byte[] getSalt() {
         return salt;
@@ -45,12 +57,12 @@ public abstract class EncryptionVerifier implements Cloneable, GenericRecord {
 
     public byte[] getEncryptedVerifier() {
         return encryptedVerifier;
-    }    
-    
+    }
+
     public byte[] getEncryptedVerifierHash() {
         return encryptedVerifierHash;
-    }    
-    
+    }
+
     public int getSpinCount() {
         return spinCount;
     }
@@ -58,15 +70,15 @@ public abstract class EncryptionVerifier implements Cloneable, GenericRecord {
     public byte[] getEncryptedKey() {
         return encryptedKey;
     }
-    
+
     public CipherAlgorithm getCipherAlgorithm() {
         return cipherAlgorithm;
     }
-    
+
     public HashAlgorithm getHashAlgorithm() {
         return hashAlgorithm;
     }
-    
+
     public ChainingMode getChainingMode() {
         return chainingMode;
     }
@@ -102,16 +114,8 @@ public abstract class EncryptionVerifier implements Cloneable, GenericRecord {
     protected void setHashAlgorithm(HashAlgorithm hashAlgorithm) {
         this.hashAlgorithm = hashAlgorithm;
     }
-    
-    @Override
-    public EncryptionVerifier clone() throws CloneNotSupportedException {
-        EncryptionVerifier other = (EncryptionVerifier)super.clone();
-        other.salt = (salt == null) ? null : salt.clone();
-        other.encryptedVerifier = (encryptedVerifier == null) ? null : encryptedVerifier.clone();
-        other.encryptedVerifierHash = (encryptedVerifierHash == null) ? null : encryptedVerifierHash.clone();
-        other.encryptedKey = (encryptedKey == null) ? null : encryptedKey.clone();
-        return other;
-    }
+
+    public abstract EncryptionVerifier copy();
 
     @Override
     public Map<String, Supplier<?>> getGenericProperties() {

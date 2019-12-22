@@ -20,8 +20,6 @@ package org.apache.poi.hssf.record.common;
 import org.apache.poi.hssf.record.FeatRecord;
 import org.apache.poi.hssf.record.PasswordRecord;
 import org.apache.poi.hssf.record.PasswordRev4Record;
-//import org.apache.poi.hssf.record.Feat11Record;
-//import org.apache.poi.hssf.record.Feat12Record;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
@@ -39,35 +37,42 @@ public final class FeatProtection implements SharedFeature {
 	public static final long HAS_SELF_RELATIVE_SECURITY_FEATURE = 1;
 
 	private int fSD;
-	
+
 	/**
 	 * 0 means no password. Otherwise indicates the
-	 *  password verifier algorithm (same kind as 
+	 *  password verifier algorithm (same kind as
 	 *   {@link PasswordRecord} and
 	 *   {@link PasswordRev4Record})
 	 */
 	private int passwordVerifier;
-	
+
 	private String title;
 	private byte[] securityDescriptor;
-	
+
 	public FeatProtection() {
 		securityDescriptor = new byte[0];
+	}
+
+	public FeatProtection(FeatProtection other) {
+		fSD = other.fSD;
+		passwordVerifier = other.passwordVerifier;
+		title = other.title;
+		securityDescriptor = (other.securityDescriptor == null) ? null : other.securityDescriptor.clone();
 	}
 
 	public FeatProtection(RecordInputStream in) {
 		fSD = in.readInt();
 		passwordVerifier = in.readInt();
-		
+
 		title = StringUtil.readUnicodeString(in);
-		
+
 		securityDescriptor = in.readRemainder();
 	}
 
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append(" [FEATURE PROTECTION]\n");
-		buffer.append("   Self Relative = " + fSD); 
+		buffer.append("   Self Relative = " + fSD);
 		buffer.append("   Password Verifier = " + passwordVerifier);
 		buffer.append("   Title = " + title);
 		buffer.append("   Security Descriptor Size = " + securityDescriptor.length);
@@ -102,5 +107,10 @@ public final class FeatProtection implements SharedFeature {
 
 	public int getFSD() {
 		return fSD;
+	}
+
+	@Override
+	public FeatProtection copy() {
+		return new FeatProtection(this);
 	}
 }

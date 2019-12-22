@@ -18,10 +18,11 @@
 package org.apache.poi.hssf.record.common;
 
 import org.apache.poi.hssf.record.FeatRecord;
-//import org.apache.poi.hssf.record.Feat11Record;
-//import org.apache.poi.hssf.record.Feat12Record;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.LittleEndianOutput;
+
+//import org.apache.poi.hssf.record.Feat11Record;
+//import org.apache.poi.hssf.record.Feat12Record;
 
 /**
  * Title: FeatSmartTag (Smart Tag Shared Feature) common record part
@@ -36,9 +37,13 @@ import org.apache.poi.util.LittleEndianOutput;
 public final class FeatSmartTag implements SharedFeature {
 	// TODO - process
 	private byte[] data;
-	
+
 	public FeatSmartTag() {
 		data = new byte[0];
+	}
+
+	public FeatSmartTag(FeatSmartTag other) {
+		data = (other.data == null) ? null : other.data.clone();
 	}
 
 	public FeatSmartTag(RecordInputStream in) {
@@ -58,5 +63,10 @@ public final class FeatSmartTag implements SharedFeature {
 
 	public void serialize(LittleEndianOutput out) {
 		out.write(data);
+	}
+
+	@Override
+	public FeatSmartTag copy() {
+		return new FeatSmartTag(this);
 	}
 }

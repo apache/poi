@@ -21,33 +21,37 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * Links text to an object on the chart or identifies it as the title.
  */
-public final class ObjectLinkRecord extends StandardRecord implements Cloneable {
-    public final static short      sid                             = 0x1027;
-    private  short      field_1_anchorId;
-    public final static short       ANCHOR_ID_CHART_TITLE          = 1;
-    public final static short       ANCHOR_ID_Y_AXIS               = 2;
-    public final static short       ANCHOR_ID_X_AXIS               = 3;
-    public final static short       ANCHOR_ID_SERIES_OR_POINT      = 4;
-    public final static short       ANCHOR_ID_Z_AXIS               = 7;
-    private  short      field_2_link1;
-    private  short      field_3_link2;
+public final class ObjectLinkRecord extends StandardRecord {
+    public static final short sid                            = 0x1027;
 
+    public static final short ANCHOR_ID_CHART_TITLE          = 1;
+    public static final short ANCHOR_ID_Y_AXIS               = 2;
+    public static final short ANCHOR_ID_X_AXIS               = 3;
+    public static final short ANCHOR_ID_SERIES_OR_POINT      = 4;
+    public static final short ANCHOR_ID_Z_AXIS               = 7;
 
-    public ObjectLinkRecord()
-    {
+    private short field_1_anchorId;
+    private short field_2_link1;
+    private short field_3_link2;
 
+    public ObjectLinkRecord() {}
+
+    public ObjectLinkRecord(ObjectLinkRecord other) {
+        super(other);
+        field_1_anchorId = other.field_1_anchorId;
+        field_2_link1 = other.field_2_link1;
+        field_3_link2 = other.field_3_link2;
     }
 
-    public ObjectLinkRecord(RecordInputStream in)
-    {
-        field_1_anchorId               = in.readShort();
-        field_2_link1                  = in.readShort();
-        field_3_link2                  = in.readShort();
-
+    public ObjectLinkRecord(RecordInputStream in) {
+        field_1_anchorId = in.readShort();
+        field_2_link1 = in.readShort();
+        field_3_link2 = in.readShort();
     }
 
     public String toString()
@@ -58,15 +62,15 @@ public final class ObjectLinkRecord extends StandardRecord implements Cloneable 
         buffer.append("    .anchorId             = ")
             .append("0x").append(HexDump.toHex(  getAnchorId ()))
             .append(" (").append( getAnchorId() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .link1                = ")
             .append("0x").append(HexDump.toHex(  getLink1 ()))
             .append(" (").append( getLink1() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .link2                = ")
             .append("0x").append(HexDump.toHex(  getLink2 ()))
             .append(" (").append( getLink2() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
 
         buffer.append("[/OBJECTLINK]\n");
         return buffer.toString();
@@ -88,22 +92,22 @@ public final class ObjectLinkRecord extends StandardRecord implements Cloneable 
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public ObjectLinkRecord clone() {
-        ObjectLinkRecord rec = new ObjectLinkRecord();
-    
-        rec.field_1_anchorId = field_1_anchorId;
-        rec.field_2_link1 = field_2_link1;
-        rec.field_3_link2 = field_3_link2;
-        return rec;
+        return copy();
     }
 
-
-
+    @Override
+    public ObjectLinkRecord copy() {
+        return new ObjectLinkRecord(this);
+    }
 
     /**
      * Get the anchor id field for the ObjectLink record.
      *
-     * @return  One of 
+     * @return  One of
      *        ANCHOR_ID_CHART_TITLE
      *        ANCHOR_ID_Y_AXIS
      *        ANCHOR_ID_X_AXIS
@@ -119,7 +123,7 @@ public final class ObjectLinkRecord extends StandardRecord implements Cloneable 
      * Set the anchor id field for the ObjectLink record.
      *
      * @param field_1_anchorId
-     *        One of 
+     *        One of
      *        ANCHOR_ID_CHART_TITLE
      *        ANCHOR_ID_Y_AXIS
      *        ANCHOR_ID_X_AXIS

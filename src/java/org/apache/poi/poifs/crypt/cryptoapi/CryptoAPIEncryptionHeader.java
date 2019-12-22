@@ -27,10 +27,14 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.standard.StandardEncryptionHeader;
 import org.apache.poi.util.LittleEndianInput;
 
-public class CryptoAPIEncryptionHeader extends StandardEncryptionHeader implements Cloneable {
+public class CryptoAPIEncryptionHeader extends StandardEncryptionHeader {
 
     public CryptoAPIEncryptionHeader(LittleEndianInput is) throws IOException {
         super(is);
+    }
+
+    protected CryptoAPIEncryptionHeader(CryptoAPIEncryptionHeader other) {
+        super(other);
     }
 
     protected CryptoAPIEncryptionHeader(CipherAlgorithm cipherAlgorithm,
@@ -62,7 +66,7 @@ public class CryptoAPIEncryptionHeader extends StandardEncryptionHeader implemen
     }
 
     @Override
-    public CryptoAPIEncryptionHeader clone() throws CloneNotSupportedException {
-        return (CryptoAPIEncryptionHeader)super.clone();
+    public CryptoAPIEncryptionHeader copy() {
+        return new CryptoAPIEncryptionHeader(this);
     }
 }

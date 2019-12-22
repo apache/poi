@@ -33,11 +33,16 @@ import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.util.LittleEndian;
 
-public class XORDecryptor extends Decryptor implements Cloneable {
+public class XORDecryptor extends Decryptor {
     private long length = -1L;
     private int chunkSize = 512;
 
-    protected XORDecryptor() {
+    protected XORDecryptor() {}
+
+    protected XORDecryptor(XORDecryptor other) {
+        super(other);
+        length = other.length;
+        chunkSize = other.chunkSize;
     }
 
     @Override
@@ -93,23 +98,23 @@ public class XORDecryptor extends Decryptor implements Cloneable {
     public void setChunkSize(int chunkSize) {
         this.chunkSize = chunkSize;
     }
-    
+
     @Override
-    public XORDecryptor clone() throws CloneNotSupportedException {
-        return (XORDecryptor)super.clone();
+    public XORDecryptor copy() {
+        return new XORDecryptor(this);
     }
 
     private class XORCipherInputStream extends ChunkedCipherInputStream {
         private final int initialOffset;
         private int recordStart;
         private int recordEnd;
-        
+
         public XORCipherInputStream(InputStream stream, int initialPos)
                 throws GeneralSecurityException {
             super(stream, Integer.MAX_VALUE, chunkSize);
             this.initialOffset = initialPos;
         }
-        
+
         @Override
         protected Cipher initCipherForBlock(Cipher existing, int block)
                 throws GeneralSecurityException {
@@ -123,19 +128,19 @@ public class XORDecryptor extends Decryptor implements Cloneable {
             final byte[] chunk = getChunk();
             final byte[] plain = getPlain();
             final int posInChunk = pos & getChunkMask();
-            
+
             /*
              * From: http://social.msdn.microsoft.com/Forums/en-US/3dadbed3-0e68-4f11-8b43-3a2328d9ebd5
-             * 
+             *
              * The initial value for XorArrayIndex is as follows:
              * XorArrayIndex = (FileOffset + Data.Length) % 16
-             * 
+             *
              * The FileOffset variable in this context is the stream offset into the Workbook stream at
              * the time we are about to write each of the bytes of the record data.
-             * This (the value) is then incremented after each byte is written. 
+             * This (the value) is then incremented after each byte is written.
              */
             final int xorArrayIndex = initialOffset+recordEnd+(pos-recordStart);
-            
+
             for (int i=0; pos+i < recordEnd && i < totalBytes; i++) {
                 // The following is taken from the Libre Office implementation
                 // It seems that the encrypt and decrypt method is mixed up
@@ -149,16 +154,16 @@ public class XORDecryptor extends Decryptor implements Cloneable {
             // the other bytes will be encoded, when setNextRecordSize is called the next time
             return totalBytes;
         }
-        
+
         private byte rotateLeft(byte bits, int shift) {
             return (byte)(((bits & 0xff) << shift) | ((bits & 0xff) >>> (8 - shift)));
         }
-        
-        
+
+
         /**
          * Decrypts a xor obfuscated byte array.
          * The data is decrypted in-place
-         * 
+         *
          * @see <a href="http://msdn.microsoft.com/en-us/library/dd908506.aspx">2.3.7.3 Binary Document XOR Data Transformation Method 1</a>
          */
         @Override

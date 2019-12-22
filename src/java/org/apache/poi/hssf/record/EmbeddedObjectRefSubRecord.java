@@ -33,6 +33,7 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -40,7 +41,7 @@ import org.apache.poi.util.StringUtil;
  * A sub-record within the OBJ record which stores a reference to an object
  * stored in a separate entry within the OLE2 compound file.
  */
-public final class EmbeddedObjectRefSubRecord extends SubRecord implements Cloneable {
+public final class EmbeddedObjectRefSubRecord extends SubRecord {
 	private static POILogger logger = POILogFactory.getLogger(EmbeddedObjectRefSubRecord.class);
 	//arbitrarily selected; may need to increase
 	private static final int MAX_RECORD_LENGTH = 100_000;
@@ -73,8 +74,16 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord implements Clone
 		field_4_ole_classname = null;
 	}
 
-	public short getSid() {
-		return sid;
+	public EmbeddedObjectRefSubRecord(EmbeddedObjectRefSubRecord other) {
+		super(other);
+		field_1_unknown_int = other.field_1_unknown_int;
+		field_2_refPtg = (other.field_2_refPtg == null) ? null : other.field_2_refPtg.copy();
+		field_2_unknownFormulaData = (other.field_2_unknownFormulaData == null) ? null : other.field_2_unknownFormulaData.clone();
+		field_3_unicode_flag = other.field_3_unicode_flag;
+		field_4_ole_classname = other.field_4_ole_classname;
+		field_4_unknownByte = other.field_4_unknownByte;
+		field_5_stream_id = other.field_5_stream_id;
+		field_6_unknown = (other.field_6_unknown == null) ? null : other.field_6_unknown.clone();
 	}
 
 	public EmbeddedObjectRefSubRecord(LittleEndianInput in, int size) {
@@ -156,6 +165,10 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord implements Clone
 			field_5_stream_id = null;
 		}
 		field_6_unknown = readRawData(in, remaining);
+	}
+
+	public short getSid() {
+		return sid;
 	}
 
 	private static Ptg readRefPtg(byte[] formulaRawBytes) {
@@ -310,8 +323,16 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord implements Clone
 	}
 
 	@Override
+	@SuppressWarnings("squid:S2975")
+	@Deprecated
+	@Removal(version = "5.0.0")
 	public EmbeddedObjectRefSubRecord clone() {
-		return this; // TODO proper clone
+		return copy();
+	}
+
+	@Override
+	public EmbeddedObjectRefSubRecord copy() {
+		return new EmbeddedObjectRefSubRecord(this);
 	}
 
 	public String toString() {
@@ -339,15 +360,15 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord implements Clone
 		sb.append("[/ftPictFmla]");
 		return sb.toString();
 	}
-	
+
 	public void setUnknownFormulaData(byte[] formularData) {
 		field_2_unknownFormulaData = formularData;
 	}
-	
+
 	public void setOleClassname(String oleClassname) {
 		field_4_ole_classname = oleClassname;
 	}
-	
+
 	public void setStorageId(int storageId) {
 		field_5_stream_id = storageId;
 	}

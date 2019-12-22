@@ -21,25 +21,25 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * The number of axes used on a chart.<p>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The number of axes used on a chart.
  */
-public final class AxisUsedRecord extends StandardRecord implements Cloneable {
-    public final static short      sid                             = 0x1046;
-    private  short      field_1_numAxis;
+public final class AxisUsedRecord extends StandardRecord {
+    public static final short sid = 0x1046;
 
+    private short field_1_numAxis;
 
-    public AxisUsedRecord()
-    {
+    public AxisUsedRecord() {}
 
+    public AxisUsedRecord(AxisUsedRecord other) {
+        super(other);
+        field_1_numAxis = other.field_1_numAxis;
     }
 
-    public AxisUsedRecord(RecordInputStream in)
-    {
-        field_1_numAxis                = in.readShort();
+    public AxisUsedRecord(RecordInputStream in) {
+        field_1_numAxis = in.readShort();
     }
 
     public String toString()
@@ -50,7 +50,7 @@ public final class AxisUsedRecord extends StandardRecord implements Cloneable {
         buffer.append("    .numAxis              = ")
             .append("0x").append(HexDump.toHex(  getNumAxis ()))
             .append(" (").append( getNumAxis() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
 
         buffer.append("[/AXISUSED]\n");
         return buffer.toString();
@@ -70,15 +70,12 @@ public final class AxisUsedRecord extends StandardRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public AxisUsedRecord clone() {
-        AxisUsedRecord rec = new AxisUsedRecord();
-    
-        rec.field_1_numAxis = field_1_numAxis;
-        return rec;
+        return copy();
     }
-
-
-
 
     /**
      * Get the num axis field for the AxisUsed record.
@@ -94,5 +91,10 @@ public final class AxisUsedRecord extends StandardRecord implements Cloneable {
     public void setNumAxis(short field_1_numAxis)
     {
         this.field_1_numAxis = field_1_numAxis;
+    }
+
+    @Override
+    public AxisUsedRecord copy() {
+        return new AxisUsedRecord(this);
     }
 }

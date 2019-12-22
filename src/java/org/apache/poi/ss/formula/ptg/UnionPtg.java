@@ -26,7 +26,7 @@ import org.apache.poi.util.LittleEndianOutput;
 public final class UnionPtg extends OperationPtg {
     public final static byte sid  = 0x10;
 
-    public static final OperationPtg instance = new UnionPtg();
+    public static final UnionPtg instance = new UnionPtg();
 
     private UnionPtg() {
     	// enforce singleton
@@ -67,4 +67,8 @@ public final class UnionPtg extends OperationPtg {
         return 2;
     }
 
+    @Override
+    public UnionPtg copy() {
+        return instance;
+    }
 }

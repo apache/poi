@@ -19,29 +19,25 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
 /**
- * XCT - CRN Count <P>
- *
- * REFERENCE:  5.114<P>
- *
- * @author Josh Micich
+ * XCT - CRN Count
  */
 public final class CRNCountRecord extends StandardRecord {
-	public final static short sid = 0x59;
+	public static final short sid = 0x59;
 
 	private static final short DATA_SIZE = 4;
 
+	private int field_1_number_crn_records;
+	private int field_2_sheet_table_index;
 
-	private int	 field_1_number_crn_records;
-	private int	 field_2_sheet_table_index;
-
-	public CRNCountRecord() {
-		throw new RuntimeException("incomplete code");
+	private CRNCountRecord() {
+		// incomplete code
 	}
 
-	public int getNumberOfCRNs() {
-		return field_1_number_crn_records;
+	public CRNCountRecord(CRNCountRecord other) {
+		super(other);
+		field_1_number_crn_records = other.field_1_number_crn_records;
+		field_2_sheet_table_index = other.field_2_sheet_table_index;
 	}
-
 
 	public CRNCountRecord(RecordInputStream in) {
 		field_1_number_crn_records = in.readShort();
@@ -53,6 +49,9 @@ public final class CRNCountRecord extends StandardRecord {
 		field_2_sheet_table_index = in.readShort();
 	 }
 
+	public int getNumberOfCRNs() {
+		return field_1_number_crn_records;
+	}
 
 	public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -76,5 +75,10 @@ public final class CRNCountRecord extends StandardRecord {
 	 */
 	public short getSid() {
 		return sid;
+	}
+
+	@Override
+	public CRNCountRecord copy() {
+		return new CRNCountRecord(this);
 	}
 }

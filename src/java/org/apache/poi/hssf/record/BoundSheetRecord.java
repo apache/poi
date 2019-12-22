@@ -18,9 +18,9 @@
 package org.apache.poi.hssf.record;
 
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.List;
 
+import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
@@ -28,20 +28,16 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
-import org.apache.poi.ss.util.WorkbookUtil;
 
 /**
- * Title:        Bound Sheet Record (aka BundleSheet) (0x0085)<P>
- * Description:  Defines a sheet within a workbook.  Basically stores the sheet name
- *               and tells where the Beginning of file record is within the HSSF
- *               file. <P>
- * REFERENCE:  PG 291 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * Defines a sheet within a workbook. Basically stores the sheet name and
+ * tells where the Beginning of file record is within the HSSF file.
  */
 public final class BoundSheetRecord extends StandardRecord {
-	public final static short sid = 0x0085;
-
+	public static final short sid = 0x0085;
 	private static final BitField hiddenFlag = BitFieldFactory.getInstance(0x01);
 	private static final BitField veryHiddenFlag = BitFieldFactory.getInstance(0x02);
+
 	private int field_1_position_of_BOF;
 	private int field_2_option_flags;
 	private int field_4_isMultibyteUnicode;
@@ -52,13 +48,21 @@ public final class BoundSheetRecord extends StandardRecord {
 		setSheetname(sheetname);
 	}
 
+	public BoundSheetRecord(BoundSheetRecord other) {
+		super(other);
+		field_1_position_of_BOF = other.field_1_position_of_BOF;
+		field_2_option_flags = other.field_2_option_flags;
+		field_4_isMultibyteUnicode = other.field_4_isMultibyteUnicode;
+		field_5_sheetname = other.field_5_sheetname;
+	}
+
 	/**
 	 * UTF8: sid + len + bof + flags + len(str) + unicode + str 2 + 2 + 4 + 2 +
 	 * 1 + 1 + len(str)
 	 *
 	 * UNICODE: sid + len + bof + flags + len(str) + unicode + str 2 + 2 + 4 + 2 +
 	 * 1 + 1 + 2 * len(str)
-	 * 
+	 *
 	 * @param in the record stream to read from
 	 */
 	public BoundSheetRecord(RecordInputStream in) {
@@ -158,7 +162,7 @@ public final class BoundSheetRecord extends StandardRecord {
 
 	/**
 	 * Is the sheet hidden? Different from very hidden
-	 * 
+	 *
 	 * @return {@code true} if hidden
 	 */
 	public boolean isHidden() {
@@ -167,7 +171,7 @@ public final class BoundSheetRecord extends StandardRecord {
 
 	/**
 	 * Is the sheet hidden? Different from very hidden
-	 * 
+	 *
 	 * @param hidden {@code true} if hidden
 	 */
 	public void setHidden(boolean hidden) {
@@ -176,7 +180,7 @@ public final class BoundSheetRecord extends StandardRecord {
 
 	/**
 	 * Is the sheet very hidden? Different from (normal) hidden
-	 * 
+	 *
 	 * @return {@code true} if very hidden
 	 */
 	public boolean isVeryHidden() {
@@ -185,7 +189,7 @@ public final class BoundSheetRecord extends StandardRecord {
 
 	/**
 	 * Is the sheet very hidden? Different from (normal) hidden
-	 * 
+	 *
 	 * @param veryHidden {@code true} if very hidden
 	 */
 	public void setVeryHidden(boolean veryHidden) {
@@ -195,22 +199,24 @@ public final class BoundSheetRecord extends StandardRecord {
 	/**
 	 * Converts a List of {@link BoundSheetRecord}s to an array and sorts by the position of their
 	 * BOFs.
-	 * 
+	 *
 	 * @param boundSheetRecords the boundSheetRecord list to arrayify
-	 * 
+	 *
 	 * @return the sorted boundSheetRecords
 	 */
 	public static BoundSheetRecord[] orderByBofPosition(List<BoundSheetRecord> boundSheetRecords) {
 		BoundSheetRecord[] bsrs = new BoundSheetRecord[boundSheetRecords.size()];
 		boundSheetRecords.toArray(bsrs);
-		Arrays.sort(bsrs, BOFComparator);
+		Arrays.sort(bsrs, BoundSheetRecord::compareRecords);
 	 	return bsrs;
 	}
-	
-	private static final Comparator<BoundSheetRecord> BOFComparator = new Comparator<BoundSheetRecord>() {
 
-		public int compare(BoundSheetRecord bsr1, BoundSheetRecord bsr2) {
-			return bsr1.getPositionOfBof() - bsr2.getPositionOfBof();
-		}
-	};
+	private static int compareRecords(BoundSheetRecord bsr1, BoundSheetRecord bsr2) {
+		return bsr1.getPositionOfBof() - bsr2.getPositionOfBof();
+	}
+
+	@Override
+	public BoundSheetRecord copy() {
+		return new BoundSheetRecord(this);
+	}
 }

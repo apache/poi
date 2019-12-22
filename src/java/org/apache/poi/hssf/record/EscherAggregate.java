@@ -85,7 +85,7 @@ import org.apache.poi.util.RecordFormatException;
 
 public final class EscherAggregate extends AbstractEscherHolderRecord {
     public static final short sid = 9876; // not a real sid - dummy value
-    private static POILogger log = POILogFactory.getLogger(EscherAggregate.class);
+    private static final POILogger log = POILogFactory.getLogger(EscherAggregate.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000_000;
 
@@ -315,6 +315,13 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
         if (createDefaultTree){
             buildBaseTree();
         }
+    }
+
+    public EscherAggregate(EscherAggregate other) {
+        super(other);
+        // shallow copy, because the aggregates doesn't own the records
+        shapeToObj.putAll(other.shapeToObj);
+        tailRec.putAll(other.tailRec);
     }
 
     /**
@@ -813,5 +820,10 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
      */
     public void removeTailRecord(NoteRecord note) {
         tailRec.remove(note.getShapeId());
+    }
+
+    @Override
+    public EscherAggregate copy() {
+        return new EscherAggregate(this);
     }
 }

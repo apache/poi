@@ -20,28 +20,27 @@ package org.apache.poi.hssf.record.chart;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * The begin record defines the start of a block of records for a (grpahing
+ * The begin record defines the start of a block of records for a (graphing
  * data object. This record is matched with a corresponding EndRecord.
  *
  * @see EndRecord
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class BeginRecord extends StandardRecord implements Cloneable {
+public final class BeginRecord extends StandardRecord {
     public static final short sid = 0x1033;
 
-    public BeginRecord()
-    {
+    public BeginRecord() {}
+
+    public BeginRecord(BeginRecord other) {
+        super(other);
     }
 
     /**
      * @param in unused (since this record has no data)
      */
-    public BeginRecord(RecordInputStream in)
-    {
-    }
+    public BeginRecord(RecordInputStream in) {}
 
     public String toString()
     {
@@ -63,10 +62,17 @@ public final class BeginRecord extends StandardRecord implements Cloneable {
     {
         return sid;
     }
-    
+
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public BeginRecord clone() {
-        // No data so nothing to copy
-       return new BeginRecord();
+        return copy();
+    }
+
+    @Override
+    public BeginRecord copy() {
+        return new BeginRecord(this);
     }
 }

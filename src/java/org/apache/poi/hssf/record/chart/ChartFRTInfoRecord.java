@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.stream.Stream;
+
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.HexDump;
@@ -40,6 +42,11 @@ public final class ChartFRTInfoRecord extends StandardRecord {
 		private int rtFirst;
 		private int rtLast;
 
+		public CFRTID(CFRTID other) {
+			rtFirst = other.rtFirst;
+			rtLast = other.rtLast;
+		}
+
 		public CFRTID(LittleEndianInput in) {
 			rtFirst = in.readShort();
 			rtLast = in.readShort();
@@ -48,6 +55,17 @@ public final class ChartFRTInfoRecord extends StandardRecord {
 		public void serialize(LittleEndianOutput out) {
 			out.writeShort(rtFirst);
 			out.writeShort(rtLast);
+		}
+	}
+
+	public ChartFRTInfoRecord(ChartFRTInfoRecord other) {
+		super(other);
+		rt = other.rt;
+		grbitFrt = other.grbitFrt;
+		verOriginator = other.verOriginator;
+		verWriter = other.verWriter;
+		if (other.rgCFRTID != null) {
+			rgCFRTID = Stream.of(other.rgCFRTID).map(CFRTID::new).toArray(CFRTID[]::new);
 		}
 	}
 
@@ -81,11 +99,10 @@ public final class ChartFRTInfoRecord extends StandardRecord {
 		out.writeShort(grbitFrt);
 		out.writeByte(verOriginator);
 		out.writeByte(verWriter);
-		int nCFRTIDs = rgCFRTID.length;
-		out.writeShort(nCFRTIDs);
+		out.writeShort(rgCFRTID.length);
 
-		for (int i = 0; i < nCFRTIDs; i++) {
-			rgCFRTID[i].serialize(out);
+		for (CFRTID cfrtid : rgCFRTID) {
+			cfrtid.serialize(out);
 		}
 	}
 
@@ -101,5 +118,10 @@ public final class ChartFRTInfoRecord extends StandardRecord {
 		buffer.append("    .nCFRTIDs     =").append(HexDump.shortToHex(rgCFRTID.length)).append('\n');
 		buffer.append("[/CHARTFRTINFO]\n");
 		return buffer.toString();
+	}
+
+	@Override
+	public ChartFRTInfoRecord copy() {
+		return new ChartFRTInfoRecord(this);
 	}
 }

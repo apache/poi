@@ -21,12 +21,8 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
-/**
- * @author Josh Micich
- */
 abstract class Ref2DPtgBase extends RefPtgBase {
 	private final static int SIZE = 5;
-
 
 	protected Ref2DPtgBase(int row, int column, boolean isRowRelative, boolean isColumnRelative) {
 		setRow(row);
@@ -34,6 +30,11 @@ abstract class Ref2DPtgBase extends RefPtgBase {
 		setRowRelative(isRowRelative);
 		setColRelative(isColumnRelative);
 	}
+
+	protected Ref2DPtgBase(Ref2DPtgBase other)  {
+		super(other);
+	}
+
 
 	protected Ref2DPtgBase(LittleEndianInput in)  {
 		readCoordinates(in);

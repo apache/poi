@@ -25,9 +25,7 @@ import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
 
 /**
- * SXVDEX - Extended PivotTable View Fields (0x0100)<br>
- * 
- * @author Patrick Cheng
+ * SXVDEX - Extended PivotTable View Fields (0x0100)
  */
 public final class ExtendedPivotTableViewFieldsRecord extends StandardRecord {
 	public static final short sid = 0x0100;
@@ -45,8 +43,19 @@ public final class ExtendedPivotTableViewFieldsRecord extends StandardRecord {
 	/** custom sub-total name */
 	private String _subtotalName;
 
-	public ExtendedPivotTableViewFieldsRecord(RecordInputStream in) {
+	public ExtendedPivotTableViewFieldsRecord(ExtendedPivotTableViewFieldsRecord other) {
+		super(other);
+		_grbit1 = other._grbit1;
+		_grbit2 = other._grbit2;
+		_citmShow = other._citmShow;
+		_isxdiSort = other._isxdiSort;
+		_isxdiShow = other._isxdiShow;
+		_reserved1 = other._reserved1;
+		_reserved2 = other._reserved2;
+		_subtotalName = other._subtotalName;
+	}
 
+	public ExtendedPivotTableViewFieldsRecord(RecordInputStream in) {
 		_grbit1 = in.readInt();
 		_grbit2 = in.readUByte();
 		_citmShow = in.readUByte();
@@ -99,7 +108,7 @@ public final class ExtendedPivotTableViewFieldsRecord extends StandardRecord {
 
 	@Override
 	protected int getDataSize() {
-		
+
 		return 4 + 1 + 1 + 2 + 2 + 2 +  4 + 4 +
 					(_subtotalName == null ? 0 : (2*_subtotalName.length())); // in unicode
 	}
@@ -123,5 +132,10 @@ public final class ExtendedPivotTableViewFieldsRecord extends StandardRecord {
 		buffer.append("    .subtotalName =").append(_subtotalName).append("\n");
 		buffer.append("[/SXVDEX]\n");
 		return buffer.toString();
+	}
+
+	@Override
+	public ExtendedPivotTableViewFieldsRecord copy() {
+		return new ExtendedPivotTableViewFieldsRecord(this);
 	}
 }

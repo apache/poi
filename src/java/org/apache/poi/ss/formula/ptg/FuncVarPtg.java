@@ -23,10 +23,7 @@ import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
-/**
- * @author Jason Height (jheight at chariot dot net dot au)
- */
-public final class FuncVarPtg extends AbstractFunctionPtg{
+public final class FuncVarPtg extends AbstractFunctionPtg {
     public final static byte sid  = 0x22;
     private final static int  SIZE = 4;
 
@@ -89,5 +86,11 @@ public final class FuncVarPtg extends AbstractFunctionPtg{
 
     public int getSize() {
         return SIZE;
+    }
+
+    @Override
+    public FuncVarPtg copy() {
+        // immutable
+        return this;
     }
 }

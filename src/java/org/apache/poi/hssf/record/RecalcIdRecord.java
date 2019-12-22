@@ -21,18 +21,16 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: Recalc Id Record (0x01C1)<p>
- * Description:  This record contains an ID that marks when a worksheet was last
- *               recalculated. It's an optimization Excel uses to determine if it
- *               needs to  recalculate the spreadsheet when it's opened. So far, only
- *               the two engine ids {@code 0x80 0x38 0x01 0x00}
- *               and {@code 0x60 0x69 0x01 0x00} have been seen.
- *               A value of {@code 0x00} will cause Excel to recalculate
- *               all formulas on the next load.<p>
- * REFERENCE:  http://chicago.sourceforge.net/devel/docs/excel/biff8.html
+ * This record contains an ID that marks when a worksheet was last recalculated.
+ * It's an optimization Excel uses to determine if it needs to  recalculate the spreadsheet
+ * when it's opened. So far, only the two engine ids {@code 0x80 0x38 0x01 0x00} and
+ * {@code 0x60 0x69 0x01 0x00} have been seen. A value of {@code 0x00} will cause Excel
+ * to recalculate all formulas on the next load.
+ *
+ * @see <a href="http://chicago.sourceforge.net/devel/docs/excel/biff8.html">Chicago biff8 docs</a>
  */
 public final class RecalcIdRecord extends StandardRecord {
-    public final static short sid = 0x01C1;
+    public static final short sid = 0x01C1;
     private final int _reserved0;
 
     /**
@@ -47,6 +45,11 @@ public final class RecalcIdRecord extends StandardRecord {
     public RecalcIdRecord() {
         _reserved0 = 0;
         _engineId = 0;
+    }
+
+    public RecalcIdRecord(RecalcIdRecord other) {
+        _reserved0 = other._reserved0;
+        _engineId = other._engineId;
     }
 
     public RecalcIdRecord(RecordInputStream in) {
@@ -89,5 +92,10 @@ public final class RecalcIdRecord extends StandardRecord {
 
     public short getSid() {
         return sid;
+    }
+
+    @Override
+    public RecalcIdRecord copy() {
+        return new RecalcIdRecord(this);
     }
 }

@@ -23,28 +23,28 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * The area record is used to define a area chart.<p>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The area record is used to define a area chart.
  */
-public final class AreaRecord extends StandardRecord implements Cloneable {
-    public final static short      sid                             = 0x101A;
-    private  short      field_1_formatFlags;
+public final class AreaRecord extends StandardRecord {
+    public static final short sid = 0x101A;
     private static final BitField stacked             = BitFieldFactory.getInstance(0x1);
     private static final BitField displayAsPercentage = BitFieldFactory.getInstance(0x2);
     private static final BitField shadow              = BitFieldFactory.getInstance(0x4);
 
+    private short field_1_formatFlags;
 
-    public AreaRecord()
-    {
 
+    public AreaRecord() {}
+
+    public AreaRecord(AreaRecord other) {
+        super(other);
+        field_1_formatFlags = other.field_1_formatFlags;
     }
 
-    public AreaRecord(RecordInputStream in)
-    {
-
+    public AreaRecord(RecordInputStream in) {
         field_1_formatFlags            = in.readShort();
     }
 
@@ -56,10 +56,10 @@ public final class AreaRecord extends StandardRecord implements Cloneable {
         buffer.append("    .formatFlags          = ")
             .append("0x").append(HexDump.toHex(  getFormatFlags ()))
             .append(" (").append( getFormatFlags() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-        buffer.append("         .stacked                  = ").append(isStacked()).append('\n'); 
-        buffer.append("         .displayAsPercentage      = ").append(isDisplayAsPercentage()).append('\n'); 
-        buffer.append("         .shadow                   = ").append(isShadow()).append('\n'); 
+        buffer.append(System.getProperty("line.separator"));
+        buffer.append("         .stacked                  = ").append(isStacked()).append('\n');
+        buffer.append("         .displayAsPercentage      = ").append(isDisplayAsPercentage()).append('\n');
+        buffer.append("         .shadow                   = ").append(isShadow()).append('\n');
 
         buffer.append("[/AREA]\n");
         return buffer.toString();
@@ -79,15 +79,12 @@ public final class AreaRecord extends StandardRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public AreaRecord clone() {
-        AreaRecord rec = new AreaRecord();
-    
-        rec.field_1_formatFlags = field_1_formatFlags;
-        return rec;
+        return copy();
     }
-
-
-
 
     /**
      * Get the format flags field for the Area record.
@@ -157,5 +154,10 @@ public final class AreaRecord extends StandardRecord implements Cloneable {
     public boolean isShadow()
     {
         return shadow.isSet(field_1_formatFlags);
+    }
+
+    @Override
+    public AreaRecord copy() {
+        return new AreaRecord(this);
     }
 }

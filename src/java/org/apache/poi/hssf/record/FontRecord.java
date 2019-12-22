@@ -25,48 +25,66 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
-/**
- * Title:        Font Record (0x0031) <p>
- * - describes a font in the workbook (index = 0-3,5-infinity - skip 4)<P>
- * Description:  An element in the Font Table<p>
- * REFERENCE:  PG 315 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
- */
+/** Describes a font in the workbook */
 public final class FontRecord extends StandardRecord {
 	// docs are wrong (0x231 Microsoft Support site article Q184647)
-	public final static short     sid                 = 0x0031;
-	public final static short     SS_NONE             = 0;
-	public final static short     SS_SUPER            = 1;
-	public final static short     SS_SUB              = 2;
-	public final static byte      U_NONE              = 0;
-	public final static byte      U_SINGLE            = 1;
-	public final static byte      U_DOUBLE            = 2;
-	public final static byte      U_SINGLE_ACCOUNTING = 0x21;
-	public final static byte      U_DOUBLE_ACCOUNTING = 0x22;
-	// in units of .05 of a point
-	private short                 field_1_font_height;
-	private short                 field_2_attributes;
+	public static final short sid                = 0x0031;
+	public static final short SS_NONE            = 0;
+	public static final short SS_SUPER           = 1;
+	public static final short SS_SUB             = 2;
+	public static final byte U_NONE              = 0;
+	public static final byte U_SINGLE            = 1;
+	public static final byte U_DOUBLE            = 2;
+	public static final byte U_SINGLE_ACCOUNTING = 0x21;
+	public static final byte U_DOUBLE_ACCOUNTING = 0x22;
 
 	// 0 0x01 - Reserved bit must be 0
-	private static final BitField italic     = BitFieldFactory.getInstance(0x02); // is this font in italics
+	// is this font in italics
+	private static final BitField italic     = BitFieldFactory.getInstance(0x02);
 
 	// 2 0x04 - reserved bit must be 0
-	private static final BitField strikeout  =BitFieldFactory.getInstance(0x08);  // is this font has a line through the center
-	private static final BitField macoutline = BitFieldFactory.getInstance(0x10); // some weird macintosh thing....but who understands those mac people anyhow
-	private static final BitField macshadow  = BitFieldFactory.getInstance(0x20); // some weird macintosh thing....but who understands those mac people anyhow
+	// is this font has a line through the center
+	private static final BitField strikeout  = BitFieldFactory.getInstance(0x08);
+	// some weird macintosh thing....but who understands those mac people anyhow
+	private static final BitField macoutline = BitFieldFactory.getInstance(0x10);
+	private static final BitField macshadow  = BitFieldFactory.getInstance(0x20);
+
+	// in units of .05 of a point
+	private short field_1_font_height;
+	private short field_2_attributes;
 
 	// 7-6 - reserved bits must be 0
 	// the rest is unused
-	private short                 field_3_color_palette_index;
-	private short                 field_4_bold_weight;
-	private short                 field_5_super_sub_script;   // 00none/01super/02sub
-	private byte                  field_6_underline;          // 00none/01single/02double/21singleaccounting/22doubleaccounting
-	private byte                  field_7_family;             // ?? defined by windows api logfont structure?
-	private byte                  field_8_charset;            // ?? defined by windows api logfont structure?
-	private byte                  field_9_zero;           // must be 0
+	private short field_3_color_palette_index;
+	private short field_4_bold_weight;
+	// 00none/01super/02sub
+	private short field_5_super_sub_script;
+	// 00none/01single/02double/21singleaccounting/22doubleaccounting
+	private byte field_6_underline;
+	// ?? defined by windows api logfont structure?
+	private byte field_7_family;
+	// ?? defined by windows api logfont structure?
+	private byte field_8_charset;
+	// must be 0
+	private byte field_9_zero;
 	/** possibly empty string never <code>null</code> */
-	private String                field_11_font_name;
+	private String field_11_font_name;
 
 	public FontRecord() {
+	}
+
+	public FontRecord(FontRecord other) {
+		super(other);
+		field_1_font_height = other.field_1_font_height;
+		field_2_attributes = other.field_2_attributes;
+		field_3_color_palette_index = other.field_3_color_palette_index;
+		field_4_bold_weight = other.field_4_bold_weight;
+		field_5_super_sub_script = other.field_5_super_sub_script;
+		field_6_underline = other.field_6_underline;
+		field_7_family = other.field_7_family;
+		field_8_charset = other.field_8_charset;
+		field_9_zero = other.field_9_zero;
+		field_11_font_name = other.field_11_font_name;
 	}
 
 	public FontRecord(RecordInputStream in) {
@@ -490,4 +508,9 @@ public final class FontRecord extends StandardRecord {
     public boolean equals(Object o) {
         return (o instanceof FontRecord) && sameProperties((FontRecord) o);
     }
+
+	@Override
+	public FontRecord copy() {
+		return new FontRecord(this);
+	}
 }

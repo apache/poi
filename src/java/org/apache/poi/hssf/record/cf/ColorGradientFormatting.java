@@ -17,6 +17,9 @@
 
 package org.apache.poi.hssf.record.cf;
 
+import java.util.stream.Stream;
+
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hssf.record.common.ExtendedColor;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
@@ -24,27 +27,39 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 
 /**
  * Color Gradient / Color Scale Conditional Formatting Rule Record.
  * (Called Color Gradient in the file format docs, but more commonly
  *  Color Scale in the UI)
  */
-public final class ColorGradientFormatting implements Cloneable {
-    private static POILogger log = POILogFactory.getLogger(ColorGradientFormatting.class);
+public final class ColorGradientFormatting implements Duplicatable {
+    private static final POILogger log = POILogFactory.getLogger(ColorGradientFormatting.class);
+
+    private static final BitField clamp = BitFieldFactory.getInstance(0x01);
+    private static final BitField background = BitFieldFactory.getInstance(0x02);
 
     private byte options;
     private ColorGradientThreshold[] thresholds;
     private ExtendedColor[] colors;
-    
-    private static BitField clamp = BitFieldFactory.getInstance(0x01);
-    private static BitField background = BitFieldFactory.getInstance(0x02);
-    
+
     public ColorGradientFormatting() {
         options = 3;
         thresholds = new ColorGradientThreshold[3];
-        colors = new ExtendedColor[3];  
+        colors = new ExtendedColor[3];
     }
+
+    public ColorGradientFormatting(ColorGradientFormatting other) {
+        options = other.options;
+        if (other.thresholds != null) {
+            thresholds = Stream.of(other.thresholds).map(ColorGradientThreshold::copy).toArray(ColorGradientThreshold[]::new);
+        }
+        if (other.colors != null) {
+            colors = Stream.of(other.colors).map(ExtendedColor::copy).toArray(ExtendedColor[]::new);
+        }
+    }
+
     public ColorGradientFormatting(LittleEndianInput in) {
         in.readShort(); // Ignored
         in.readByte();  // Reserved
@@ -54,7 +69,7 @@ public final class ColorGradientFormatting implements Cloneable {
             log.log(POILogger.WARN, "Inconsistent Color Gradient defintion, found " + numI + " vs " + numG + " entries");
         }
         options = in.readByte();
-        
+
         thresholds = new ColorGradientThreshold[numI];
         for (int i=0; i<thresholds.length; i++) {
             thresholds[i] = new ColorGradientThreshold(in);
@@ -65,7 +80,7 @@ public final class ColorGradientFormatting implements Cloneable {
             colors[i] = new ExtendedColor(in);
         }
     }
-    
+
     public int getNumControlPoints() {
         return thresholds.length;
     }
@@ -73,18 +88,18 @@ public final class ColorGradientFormatting implements Cloneable {
         if (num != thresholds.length) {
             ColorGradientThreshold[] nt = new ColorGradientThreshold[num];
             ExtendedColor[] nc = new ExtendedColor[num];
-            
+
             int copy = Math.min(thresholds.length, num);
             System.arraycopy(thresholds, 0, nt, 0, copy);
             System.arraycopy(colors, 0, nc, 0, copy);
-            
+
             this.thresholds = nt;
             this.colors = nc;
-            
+
             updateThresholdPositions();
         }
     }
-    
+
     public ColorGradientThreshold[] getThresholds() {
         return thresholds;
     }
@@ -99,7 +114,7 @@ public final class ColorGradientFormatting implements Cloneable {
     public void setColors(ExtendedColor[] colors) {
         this.colors = (colors == null) ? null : colors.clone();
     }
-    
+
     public boolean isClampToCurve() {
         return getOptionFlag(clamp);
     }
@@ -107,8 +122,7 @@ public final class ColorGradientFormatting implements Cloneable {
         return getOptionFlag(background);
     }
     private boolean getOptionFlag(BitField field) {
-        int value = field.getValue(options);
-        return value==0 ? false : true;
+        return field.isSet(options);
     }
 
     private void updateThresholdPositions() {
@@ -116,8 +130,8 @@ public final class ColorGradientFormatting implements Cloneable {
         for (int i=0; i<thresholds.length; i++) {
             thresholds[i].setPosition(step*i);
         }
-    }    
-    
+    }
+
     public String toString() {
         StringBuilder buffer = new StringBuilder();
         buffer.append("    [Color Gradient Formatting]\n");
@@ -132,17 +146,19 @@ public final class ColorGradientFormatting implements Cloneable {
         buffer.append("    [/Color Gradient Formatting]\n");
         return buffer.toString();
     }
-    
-    public Object clone()  {
-      ColorGradientFormatting rec = new ColorGradientFormatting();
-      rec.options = options;
-      rec.thresholds = new ColorGradientThreshold[thresholds.length];
-      rec.colors = new ExtendedColor[colors.length];
-      System.arraycopy(thresholds, 0, rec.thresholds, 0, thresholds.length);
-      System.arraycopy(colors, 0, rec.colors, 0, colors.length);
-      return rec;
+
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public ColorGradientFormatting clone() {
+        return copy();
     }
-    
+
+    public ColorGradientFormatting copy()  {
+        return new ColorGradientFormatting(this);
+    }
+
     public int getDataLength() {
         int len = 6;
         for (Threshold t : thresholds) {
@@ -161,15 +177,15 @@ public final class ColorGradientFormatting implements Cloneable {
         out.writeByte(thresholds.length);
         out.writeByte(thresholds.length);
         out.writeByte(options);
-        
+
         for (ColorGradientThreshold t : thresholds) {
             t.serialize(out);
         }
-        
+
         double step = 1d / (colors.length-1);
         for (int i=0; i<colors.length; i++) {
             out.writeDouble(i*step);
-            
+
             ExtendedColor c = colors[i];
             c.serialize(out);
         }

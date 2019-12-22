@@ -97,21 +97,21 @@ public class HwmfDrawProperties {
         font = new HwmfFont();
         font.initDefaults();
     }
-    
+
     public HwmfDrawProperties(HwmfDrawProperties other) {
         this.window = (other.window == null) ? null : (Rectangle2D)other.window.clone();
         this.viewport = (other.viewport == null) ? null : (Rectangle2D)other.viewport.clone();
         this.location = (Point2D)other.location.clone();
         this.mapMode = other.mapMode;
-        this.backgroundColor = (other.backgroundColor == null) ? null : other.backgroundColor.clone();
+        this.backgroundColor = (other.backgroundColor == null) ? null : other.backgroundColor.copy();
         this.brushStyle = other.brushStyle;
-        this.brushColor = other.brushColor.clone();
+        this.brushColor = other.brushColor.copy();
         this.brushHatch = other.brushHatch;
         this.brushBitmap = other.brushBitmap;
         this.brushTransform.setTransform(other.brushTransform);
         this.penWidth = other.penWidth;
-        this.penStyle = (other.penStyle == null) ? null : other.penStyle.clone();
-        this.penColor = (other.penColor == null) ? null : other.penColor.clone();
+        this.penStyle = (other.penStyle == null) ? null : other.penStyle.copy();
+        this.penColor = (other.penColor == null) ? null : other.penColor.copy();
         this.penMiterLimit = other.penMiterLimit;
         this.bkMode = other.bkMode;
         this.polyfillMode = other.polyfillMode;
@@ -123,7 +123,7 @@ public class HwmfDrawProperties {
         this.palette = other.palette;
         this.paletteOffset = other.paletteOffset;
         this.font = other.font;
-        this.textColor = (other.textColor == null) ? null : other.textColor.clone();
+        this.textColor = (other.textColor == null) ? null : other.textColor.copy();
         this.textAlignLatin = other.textAlignLatin;
         this.textVAlignLatin = other.textVAlignLatin;
         this.textAlignAsian = other.textAlignAsian;
@@ -132,7 +132,7 @@ public class HwmfDrawProperties {
         this.transform.setTransform(other.transform);
         this.clip = other.clip;
     }
-    
+
     public void setViewportExt(double width, double height) {
         if (viewport == null) {
             viewport = (Rectangle2D)window.clone();
@@ -308,7 +308,7 @@ public class HwmfDrawProperties {
     /**
      * Returns the current palette.
      * Callers may modify the palette.
-     * 
+     *
      * @return the current palette or null, if it hasn't been set
      */
     public List<PaletteEntry> getPalette() {

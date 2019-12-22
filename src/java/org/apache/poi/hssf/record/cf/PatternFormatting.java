@@ -17,80 +17,87 @@
 
 package org.apache.poi.hssf.record.cf;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * Pattern Formatting Block of the Conditional Formatting Rule Record.
  */
-public final class PatternFormatting implements Cloneable {
+public final class PatternFormatting implements Duplicatable {
     /**  No background */
-    public final static short     NO_FILL             = 0  ;
+    public static final short     NO_FILL             = 0  ;
     /**  Solidly filled */
-    public final static short     SOLID_FOREGROUND    = 1  ;
+    public static final short     SOLID_FOREGROUND    = 1  ;
     /**  Small fine dots */
-    public final static short     FINE_DOTS           = 2  ;
+    public static final short     FINE_DOTS           = 2  ;
     /**  Wide dots */
-    public final static short     ALT_BARS            = 3  ;
+    public static final short     ALT_BARS            = 3  ;
     /**  Sparse dots */
-    public final static short     SPARSE_DOTS         = 4  ;
+    public static final short     SPARSE_DOTS         = 4  ;
     /**  Thick horizontal bands */
-    public final static short     THICK_HORZ_BANDS    = 5  ;
+    public static final short     THICK_HORZ_BANDS    = 5  ;
     /**  Thick vertical bands */
-    public final static short     THICK_VERT_BANDS    = 6  ;
+    public static final short     THICK_VERT_BANDS    = 6  ;
     /**  Thick backward facing diagonals */
-    public final static short     THICK_BACKWARD_DIAG = 7  ;
+    public static final short     THICK_BACKWARD_DIAG = 7  ;
     /**  Thick forward facing diagonals */
-    public final static short     THICK_FORWARD_DIAG  = 8  ;
+    public static final short     THICK_FORWARD_DIAG  = 8  ;
     /**  Large spots */
-    public final static short     BIG_SPOTS           = 9  ;
+    public static final short     BIG_SPOTS           = 9  ;
     /**  Brick-like layout */
-    public final static short     BRICKS              = 10 ;
+    public static final short     BRICKS              = 10 ;
     /**  Thin horizontal bands */
-    public final static short     THIN_HORZ_BANDS     = 11 ;
+    public static final short     THIN_HORZ_BANDS     = 11 ;
     /**  Thin vertical bands */
-    public final static short     THIN_VERT_BANDS     = 12 ;
+    public static final short     THIN_VERT_BANDS     = 12 ;
     /**  Thin backward diagonal */
-    public final static short     THIN_BACKWARD_DIAG  = 13 ;
+    public static final short     THIN_BACKWARD_DIAG  = 13 ;
     /**  Thin forward diagonal */
-    public final static short     THIN_FORWARD_DIAG   = 14 ;
+    public static final short     THIN_FORWARD_DIAG   = 14 ;
     /**  Squares */
-    public final static short     SQUARES             = 15 ;
+    public static final short     SQUARES             = 15 ;
     /**  Diamonds */
-    public final static short     DIAMONDS            = 16 ;
+    public static final short     DIAMONDS            = 16 ;
     /**  Less Dots */
-    public final static short     LESS_DOTS           = 17 ;
+    public static final short     LESS_DOTS           = 17 ;
     /**  Least Dots */
-    public final static short     LEAST_DOTS          = 18 ;
-    
-    
+    public static final short     LEAST_DOTS          = 18 ;
+
+
     // PATTERN FORMATING BLOCK
     // For Pattern Styles see constants at HSSFCellStyle (from NO_FILL to LEAST_DOTS)
-    private int              field_15_pattern_style;
     private static final BitField  fillPatternStyle = BitFieldFactory.getInstance(0xFC00);
-    
-    private int              field_16_pattern_color_indexes;
-    private static final BitField  patternColorIndex = BitFieldFactory.getInstance(0x007F);         
-    private static final BitField  patternBackgroundColorIndex = BitFieldFactory.getInstance(0x3F80);         
 
-    
+    private static final BitField  patternColorIndex = BitFieldFactory.getInstance(0x007F);
+    private static final BitField  patternBackgroundColorIndex = BitFieldFactory.getInstance(0x3F80);
+
+    private int field_15_pattern_style;
+    private int field_16_pattern_color_indexes;
+
+
     public PatternFormatting() {
-        field_15_pattern_style    = 0;
-        field_16_pattern_color_indexes    = 0;
+        field_15_pattern_style = 0;
+        field_16_pattern_color_indexes = 0;
     }
-    
-    /** Creates new FontFormatting */
+
+    public PatternFormatting(PatternFormatting other) {
+        field_15_pattern_style = other.field_15_pattern_style;
+        field_16_pattern_color_indexes = other.field_16_pattern_color_indexes;
+    }
+
     public PatternFormatting(LittleEndianInput in) {
         field_15_pattern_style    = in.readUShort();
         field_16_pattern_color_indexes    = in.readUShort();
     }
-    
+
     public int getDataLength() {
         return 4;
     }
-    
+
     /**
      * setting fill pattern
      *
@@ -112,7 +119,7 @@ public final class PatternFormatting implements Cloneable {
      * @see #SQUARES
      * @see #DIAMONDS
      *
-     * @param fp  fill pattern 
+     * @param fp  fill pattern
      */
     public void setFillPattern(int fp) {
         field_15_pattern_style = fillPatternStyle.setValue(field_15_pattern_style, fp);
@@ -124,11 +131,11 @@ public final class PatternFormatting implements Cloneable {
     public int getFillPattern() {
         return fillPatternStyle.getValue(field_15_pattern_style);
     }
-    
+
     /**
      * set the background fill color.
      */
-    public void setFillBackgroundColor(int bg) {        
+    public void setFillBackgroundColor(int bg) {
         field_16_pattern_color_indexes = patternBackgroundColorIndex.setValue(field_16_pattern_color_indexes,bg);
     }
 
@@ -154,7 +161,7 @@ public final class PatternFormatting implements Cloneable {
     public int getFillForegroundColor() {
         return patternColorIndex.getValue(field_16_pattern_color_indexes);
     }
-    
+
     public String toString() {
         StringBuilder buffer = new StringBuilder();
         buffer.append("    [Pattern Formatting]\n");
@@ -164,12 +171,17 @@ public final class PatternFormatting implements Cloneable {
         buffer.append("    [/Pattern Formatting]\n");
         return buffer.toString();
     }
-    
-    public Object clone()  {
-      PatternFormatting rec = new PatternFormatting();
-      rec.field_15_pattern_style = field_15_pattern_style;
-      rec.field_16_pattern_color_indexes = field_16_pattern_color_indexes; 
-      return rec;
+
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public PatternFormatting clone()  {
+        return copy();
+    }
+
+    public PatternFormatting copy()  {
+        return new PatternFormatting(this);
     }
 
     public void serialize(LittleEndianOutput out) {

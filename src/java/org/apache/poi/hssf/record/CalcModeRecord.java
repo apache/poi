@@ -15,52 +15,42 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        Calc Mode Record<P>
- * Description:  Tells the gui whether to calculate formulas
- *               automatically, manually or automatically
- *               except for tables.<P>
- * REFERENCE:  PG 292 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
+ * Tells the gui whether to calculate formulas automatically, manually or automatically except for tables.
+ *
  * @version 2.0-pre
- * @see org.apache.poi.hssf.record.CalcCountRecord
+ * @see CalcCountRecord
  */
 
-public final class CalcModeRecord extends StandardRecord implements Cloneable {
-    public final static short sid                     = 0xD;
+public final class CalcModeRecord extends StandardRecord {
+    public static final short sid                     = 0xD;
 
-    /**
-     * manually calculate formulas (0)
-     */
+    /** manually calculate formulas (0) */
+    public static final short MANUAL                  = 0;
 
-    public final static short MANUAL                  = 0;
+    /** automatically calculate formulas (1) */
+    public static final short AUTOMATIC               = 1;
 
-    /**
-     * automatically calculate formulas (1)
-     */
+    /** automatically calculate formulas except for tables (-1) */
+    public static final short AUTOMATIC_EXCEPT_TABLES = -1;
 
-    public final static short AUTOMATIC               = 1;
+    private short field_1_calcmode;
 
-    /**
-     * automatically calculate formulas except for tables (-1)
-     */
+    public CalcModeRecord() {}
 
-    public final static short AUTOMATIC_EXCEPT_TABLES = -1;
-    private short             field_1_calcmode;
-
-    public CalcModeRecord()
-    {
+    public CalcModeRecord(CalcModeRecord other) {
+        super(other);
+        field_1_calcmode = other.field_1_calcmode;
     }
 
-    public CalcModeRecord(RecordInputStream in)
-    {
+    public CalcModeRecord(RecordInputStream in) {
         field_1_calcmode = in.readShort();
     }
 
@@ -119,9 +109,15 @@ public final class CalcModeRecord extends StandardRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public CalcModeRecord clone() {
-      CalcModeRecord rec = new CalcModeRecord();
-      rec.field_1_calcmode = field_1_calcmode;
-      return rec;
+        return copy();
+    }
+
+    @Override
+    public CalcModeRecord copy() {
+        return new CalcModeRecord(this);
     }
 }

@@ -49,6 +49,10 @@ public class LazilyConcatenatedByteArray {
         arrays.add(array);
     }
 
+    public void concatenate(LazilyConcatenatedByteArray other) {
+        arrays.addAll(other.arrays);
+    }
+
     /**
      * Gets the concatenated contents as a single byte array.
      *

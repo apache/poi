@@ -15,33 +15,31 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Save External Links record (BookBool)<P>
- * Description:  Contains a flag specifying whether the Gui should save externally
- *               linked values from other workbooks. <P>
- * REFERENCE:  PG 289 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ * Contains a flag specifying whether the Gui should save externally linked values from other workbooks.
+ *
  * @version 2.0-pre
  */
 
-public final class BookBoolRecord
-    extends StandardRecord
-{
-    public final static short sid = 0xDA;
-    private short             field_1_save_link_values;
+public final class BookBoolRecord extends StandardRecord {
+    public static final short sid = 0xDA;
 
-    public BookBoolRecord()
-    {
+    private short field_1_save_link_values;
+
+    public BookBoolRecord() {}
+
+    public BookBoolRecord(BookBoolRecord other) {
+        super(other);
+        field_1_save_link_values = other.field_1_save_link_values;
     }
 
-    public BookBoolRecord(RecordInputStream in)
-    {
+    public BookBoolRecord(RecordInputStream in) {
         field_1_save_link_values = in.readShort();
     }
 
@@ -89,5 +87,10 @@ public final class BookBoolRecord
     public short getSid()
     {
         return sid;
+    }
+
+    @Override
+    public BookBoolRecord copy() {
+        return new BookBoolRecord(this);
     }
 }

@@ -26,11 +26,20 @@ import org.apache.poi.util.LittleEndianInput;
 public final class AreaNPtg extends Area2DPtgBase {
 	public final static short sid = 0x2D;
 
+	public AreaNPtg(AreaNPtg other)  {
+		super(other);
+	}
+
 	public AreaNPtg(LittleEndianInput in)  {
 		super(in);
 	}
 
 	protected byte getSid() {
 		return sid;
+	}
+
+	@Override
+	public AreaNPtg copy() {
+		return new AreaNPtg(this);
 	}
 }

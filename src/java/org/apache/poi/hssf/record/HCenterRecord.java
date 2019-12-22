@@ -17,24 +17,25 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        HCenter record (0x0083)<P>
- * Description:  whether to center between horizontal margins<P>
- * REFERENCE:  PG 320 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
+ * Whether to center between horizontal margins
+ *
  * @version 2.0-pre
  */
-public final class HCenterRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x0083;
-    private short             field_1_hcenter;
+public final class HCenterRecord extends StandardRecord {
+    public static final short sid = 0x0083;
+    private short field_1_hcenter;
 
-    public HCenterRecord() {
+    public HCenterRecord() {}
+
+    public HCenterRecord(HCenterRecord other) {
+        super(other);
+        field_1_hcenter = other.field_1_hcenter;
     }
 
-    public HCenterRecord(RecordInputStream in)
-    {
+    public HCenterRecord(RecordInputStream in) {
         field_1_hcenter = in.readShort();
     }
 
@@ -43,11 +44,7 @@ public final class HCenterRecord extends StandardRecord implements Cloneable {
      * @param hc  center - t/f
      */
     public void setHCenter(boolean hc) {
-        if (hc) {
-            field_1_hcenter = 1;
-        } else {
-            field_1_hcenter = 0;
-        }
+        field_1_hcenter = (short)(hc ? 1 : 0);
     }
 
     /**
@@ -80,9 +77,15 @@ public final class HCenterRecord extends StandardRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public HCenterRecord clone() {
-      HCenterRecord rec = new HCenterRecord();
-      rec.field_1_hcenter = field_1_hcenter;
-      return rec;
+        return copy();
+    }
+
+    @Override
+    public HCenterRecord copy() {
+      return new HCenterRecord(this);
     }
 }

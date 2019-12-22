@@ -18,17 +18,15 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        Multiple Blank cell record(0x00BE)<p>
- * Description:  Represents a  set of columns in a row with no value but with styling.<p>
+ * Represents a set of columns in a row with no value but with styling.
  *
- * REFERENCE:  PG 329 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
- * 
  * @see BlankRecord
  */
 public final class MulBlankRecord extends StandardRecord {
-	public final static short sid = 0x00BE;
+	public static final short sid = 0x00BE;
 
 	private final int _row;
 	private final int _firstCol;
@@ -55,7 +53,7 @@ public final class MulBlankRecord extends StandardRecord {
 	public int getFirstColumn() {
 		return _firstCol;
 	}
-	
+
 	/**
 	 * @return ending column (last cell this holds in the row). Zero based
 	 */
@@ -122,8 +120,8 @@ public final class MulBlankRecord extends StandardRecord {
 		out.writeShort(_row);
 		out.writeShort(_firstCol);
 		int nItems = _xfs.length;
-		for (int i = 0; i < nItems; i++) {
-			out.writeShort(_xfs[i]);
+		for (short xf : _xfs) {
+			out.writeShort(xf);
 		}
 		out.writeShort(_lastCol);
 	}
@@ -134,7 +132,15 @@ public final class MulBlankRecord extends StandardRecord {
 	}
 
 	@Override
+	@SuppressWarnings("squid:S2975")
+	@Deprecated
+	@Removal(version = "5.0.0")
 	public MulBlankRecord clone() {
+		return copy();
+	}
+
+	@Override
+	public MulBlankRecord copy() {
 		// immutable - so OK to return this
 		return this;
 	}

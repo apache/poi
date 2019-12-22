@@ -15,33 +15,31 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Date Window 1904 Flag record <P>
- * Description:  Flag specifying whether 1904 date windowing is used.
- *               (tick toc tick toc...BOOM!) <P>
- * REFERENCE:  PG 280 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ * Flag specifying whether 1904 date windowing is used.
+ *
  * @version 2.0-pre
  */
 
-public final class DateWindow1904Record
-    extends StandardRecord
-{
-    public final static short sid = 0x22;
-    private short             field_1_window;
+public final class DateWindow1904Record extends StandardRecord {
+    public static final short sid = 0x22;
 
-    public DateWindow1904Record()
-    {
+    private short field_1_window;
+
+    public DateWindow1904Record() {}
+
+    public DateWindow1904Record(DateWindow1904Record other) {
+        super(other);
+        field_1_window = other.field_1_window;
     }
 
-    public DateWindow1904Record(RecordInputStream in)
-    {
+    public DateWindow1904Record(RecordInputStream in) {
         field_1_window = in.readShort();
     }
 
@@ -87,5 +85,10 @@ public final class DateWindow1904Record
     public short getSid()
     {
         return sid;
+    }
+
+    @Override
+    public DateWindow1904Record copy() {
+        return new DateWindow1904Record(this);
     }
 }

@@ -132,7 +132,7 @@ public final class InternalSheet {
         if (rs.peekNextSid() != BOFRecord.sid) {
             throw new RecordFormatException("BOF record expected");
         }
-        
+
         BOFRecord bof = (BOFRecord) rs.getNext();
         if (bof.getType() == BOFRecord.TYPE_WORKSHEET) {
             // Good, well supported
@@ -152,7 +152,7 @@ public final class InternalSheet {
             throw new UnsupportedBOFType(bof.getType());
         }
         records.add(bof);
-        
+
         while (rs.hasNext()) {
             int recSid = rs.peekNextSid();
 
@@ -339,14 +339,14 @@ public final class InternalSheet {
                 recs.add(r);
             }});
     }
-    
+
     public static class UnsupportedBOFType extends RecordFormatException {
         private final int type;
         protected UnsupportedBOFType(int type) {
             super("BOF not of a supported type, found " + type);
             this.type = type;
         }
-        
+
         public int getType() {
             return type;
         }
@@ -360,11 +360,7 @@ public final class InternalSheet {
             _destList = destList;
         }
         public void visitRecord(Record r) {
-            try {
-                _destList.add((Record)r.clone());
-            } catch (CloneNotSupportedException e) {
-                throw new RecordFormatException(e);
-            }
+            _destList.add(r.copy());
         }
     }
 
@@ -374,7 +370,7 @@ public final class InternalSheet {
      * can be added to a sheet. The <b>Record</b> object does not implement cloneable.
      * When adding a new record, implement a public clone method if and only if the record
      * belongs to a sheet.
-     * 
+     *
      * @return the cloned sheet
      */
     public InternalSheet cloneSheet() {
@@ -391,12 +387,8 @@ public final class InternalSheet {
                  */
                 rb = new DrawingRecord();
             }
-            try {
-                Record rec = (Record) ((Record) rb).clone();
-                clonedRecords.add(rec);
-            } catch (CloneNotSupportedException e) {
-                throw new RecordFormatException(e);
-            }
+            Record rec = ((Record) rb).copy();
+            clonedRecords.add(rec);
         }
         return createSheet(new RecordStream(clonedRecords, 0));
     }
@@ -478,7 +470,7 @@ public final class InternalSheet {
 
     /**
      * Updates formulas in cells and conditional formats due to moving of cells
-     * 
+     *
      * @param shifter the formular shifter
      * @param externSheetIndex the externSheet index of this sheet
      */
@@ -995,7 +987,7 @@ public final class InternalSheet {
 
     /**
      * set the default row height for the sheet (if the rows do not define their own height)
-     * 
+     *
      * @param dch the default row height
      */
     public void setDefaultRowHeight(short dch) {
@@ -1247,7 +1239,7 @@ public final class InternalSheet {
 
     /**
      * Gets the gridset record for this sheet.
-     * 
+     *
      * @return the gridset record for this sheet
      */
     public GridsetRecord getGridsetRecord()
@@ -1257,9 +1249,9 @@ public final class InternalSheet {
 
     /**
      * Returns the first occurrence of a record matching a particular sid.
-     * 
+     *
      * @param sid the sid to search for
-     * 
+     *
      * @return the matching record or {@code null} if it wasn't found
      */
     public Record findFirstRecordBySid(short sid) {
@@ -1330,7 +1322,7 @@ public final class InternalSheet {
     {
         printGridlines = newPrintGridlines;
     }
-    
+
     /**
      * Returns the PrintHeadersRecord.
      * @return PrintHeadersRecord for the sheet.
@@ -1519,7 +1511,7 @@ public final class InternalSheet {
     public boolean isDisplayRowColHeadings() {
         return windowTwo.getDisplayRowColHeadings();
     }
-    
+
     /**
      * Sets whether the RowColHeadings are shown in a viewer.
      * @param show whether to show RowColHeadings or not
@@ -1681,7 +1673,7 @@ public final class InternalSheet {
         temp.toArray(result);
         return result;
     }
-    
+
     public int getColumnOutlineLevel(int columnIndex) {
         return _columnInfos.getOutlineLevel(columnIndex);
     }

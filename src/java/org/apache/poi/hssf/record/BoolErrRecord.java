@@ -21,24 +21,27 @@ import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
+import org.apache.poi.util.Removal;
 
 /**
- * Creates new BoolErrRecord. (0x0205) <P>
- * REFERENCE:  PG ??? Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Michael P. Harhen
- * @author Jason Height (jheight at chariot dot net dot au)
+ * Creates new BoolErrRecord. (0x0205)
  */
-public final class BoolErrRecord extends CellRecord implements Cloneable {
-	public final static short sid = 0x0205;
+public final class BoolErrRecord extends CellRecord {
+	public static final short sid = 0x0205;
 	private int _value;
 	/**
-	 * If <code>true</code>, this record represents an error cell value, otherwise this record represents a boolean cell value
+	 * If <code>true</code>, this record represents an error cell value,
+	 * otherwise this record represents a boolean cell value
 	 */
 	private boolean _isError;
 
 	/** Creates new BoolErrRecord */
-	public BoolErrRecord() {
-		// fields uninitialised
+	public BoolErrRecord() {}
+
+	public BoolErrRecord(BoolErrRecord other) {
+		super(other);
+		_value = other._value;
+		_isError = other._isError;
 	}
 
 	/**
@@ -183,11 +186,15 @@ public final class BoolErrRecord extends CellRecord implements Cloneable {
 	}
 
 	@Override
+	@SuppressWarnings("squid:S2975")
+	@Deprecated
+	@Removal(version = "5.0.0")
 	public BoolErrRecord clone() {
-	  BoolErrRecord rec = new BoolErrRecord();
-	  copyBaseFields(rec);
-	  rec._value = _value;
-	  rec._isError = _isError;
-	  return rec;
+		return copy();
+	}
+
+	@Override
+	public BoolErrRecord copy() {
+		return new BoolErrRecord(this);
 	}
 }

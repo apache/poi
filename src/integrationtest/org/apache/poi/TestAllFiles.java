@@ -65,26 +65,26 @@ import org.junit.runners.Parameterized.Parameters;
 
 /**
  *  This is an integration test which performs various actions on all stored test-files and tries
- *  to reveal problems which are introduced, but not covered (yet) by unit tests. 
- * 
- *  This test looks for any file under the test-data directory and tries to do some useful 
+ *  to reveal problems which are introduced, but not covered (yet) by unit tests.
+ *
+ *  This test looks for any file under the test-data directory and tries to do some useful
  *  processing with it based on it's type.
- * 
+ *
  *  The test is implemented as a junit {@link Parameterized} test, which leads
- *  to one test-method call for each file (currently around 950 files are handled). 
- * 
- *  There is a a mapping of extension to implementations of the interface 
- *  {@link FileHandler} which defines how the file is loaded and which actions are 
- *  tried with the file. 
- *  
+ *  to one test-method call for each file (currently around 950 files are handled).
+ *
+ *  There is a a mapping of extension to implementations of the interface
+ *  {@link FileHandler} which defines how the file is loaded and which actions are
+ *  tried with the file.
+ *
  *  The test can be expanded by adding more actions to the FileHandlers, this automatically
  *  applies the action to any such file in our test-data repository.
- *  
+ *
  *  There is also a list of files that should actually fail.
- *    
- *  Note: It is also a test-failure if a file that is expected to fail now actually works, 
- *  i.e. if a bug was fixed in POI itself, the file should be removed from the expected-failures 
- *  here as well! This is to ensure that files that should not work really do not work, e.g.  
+ *
+ *  Note: It is also a test-failure if a file that is expected to fail now actually works,
+ *  i.e. if a bug was fixed in POI itself, the file should be removed from the expected-failures
+ *  here as well! This is to ensure that files that should not work really do not work, e.g.
  *  that we do not remove expected sanity checks.
  */
 @RunWith(Parameterized.class)
@@ -96,7 +96,7 @@ public class TestAllFiles {
 
     private static final Map<String,String> FILE_PASSWORD;
 
-    
+
     // map file extensions to the actual mappers
     public static final Map<String, FileHandler> HANDLERS = new HashMap<>();
 
@@ -136,7 +136,7 @@ public class TestAllFiles {
 
         // Visio - binary
         HANDLERS.put(".vsd", IGNORE_SCRATCHPAD ? new HPSFFileHandler() : new HDGFFileHandler());
-        
+
         // Visio - ooxml
         HANDLERS.put(".vsdm", new XDGFFileHandler());
         HANDLERS.put(".vsdx", new XDGFFileHandler());
@@ -238,7 +238,7 @@ public class TestAllFiles {
         passmap.put("poifs/protected_agile.docx", Decryptor.DEFAULT_PASSWORD);
         passmap.put("poifs/60320-protected.xlsx", "Test001!!");
         passmap.put("poifs/protected_sha512.xlsx", "this is a test");
-        
+
         FILE_PASSWORD = Collections.unmodifiableMap(passmap);
     }
 
@@ -326,7 +326,7 @@ public class TestAllFiles {
         "spreadsheet/testEXCEL_95.xls",
         "spreadsheet/59074.xls",
         "spreadsheet/60284.xls",
-        
+
         // OOXML Strict is not yet supported, see bug #57699
         "spreadsheet/SampleSS.strict.xlsx",
         "spreadsheet/SimpleStrict.xlsx",
@@ -342,7 +342,7 @@ public class TestAllFiles {
 
         // sheet cloning errors
         "spreadsheet/56450.xls",
-        "spreadsheet/OddStyleRecord.xls",
+        // "spreadsheet/OddStyleRecord.xls",
 
         // msg files with non-standard encodings
         "hsmf/ASCII_CP1251_LCID1049.msg",
@@ -377,7 +377,7 @@ public class TestAllFiles {
             }
             FileHandler handler = HANDLERS.get(getExtension(file));
             files.add(new Object[] { file, handler });
-            
+
             // for some file-types also run OPCFileHandler
             if(handler instanceof XSSFFileHandler ||
                 handler instanceof XWPFFileHandler ||
@@ -385,7 +385,7 @@ public class TestAllFiles {
                 handler instanceof XDGFFileHandler) {
                 files.add(new Object[] { file, new OPCFileHandler() });
             }
-            
+
             if (handler instanceof HSSFFileHandler ||
                 handler instanceof HSLFFileHandler ||
                 handler instanceof HWPFFileHandler ||
@@ -410,7 +410,7 @@ public class TestAllFiles {
         String pass = TestAllFiles.FILE_PASSWORD.get(file);
         Biff8EncryptionKey.setCurrentUserPassword(pass);
     }
-    
+
     @Test
     public void testAllFiles() throws Exception {
         if(handler == null) {
@@ -426,7 +426,7 @@ public class TestAllFiles {
                     file.endsWith(".xlsb") || file.endsWith(".pptx")) &&
                 handler instanceof OPCFileHandler;
         boolean ignoreHPSF = (handler instanceof HPSFFileHandler);
-        
+
         try {
             try (InputStream stream = new BufferedInputStream(new FileInputStream(inputFile), 64 * 1024)) {
                 handler.handleFile(stream, file);
@@ -436,7 +436,7 @@ public class TestAllFiles {
 
             handler.handleExtracting(inputFile);
 
-            assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!", 
+            assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!",
                 EXPECTED_FAILURES.contains(file) && !ignoredOPC && !ignoreHPSF);
         } catch (OldFileFormatException e) {
             // for old word files we should still support extracting text

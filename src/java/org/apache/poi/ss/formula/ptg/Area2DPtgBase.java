@@ -30,6 +30,11 @@ public abstract class Area2DPtgBase extends AreaPtgBase {
 	protected Area2DPtgBase(int firstRow, int lastRow, int firstColumn, int lastColumn, boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative) {
 		super(firstRow, lastRow, firstColumn, lastColumn, firstRowRelative, lastRowRelative, firstColRelative, lastColRelative);
 	}
+
+	protected Area2DPtgBase(Area2DPtgBase other) {
+		super(other);
+	}
+
 	protected Area2DPtgBase(AreaReference ar) {
 		super(ar);
 	}

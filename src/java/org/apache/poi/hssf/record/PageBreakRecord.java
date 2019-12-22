@@ -20,27 +20,25 @@ package org.apache.poi.hssf.record;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * <p>Record that contains the functionality page breaks (horizontal and vertical)</p>
+ * Record that contains the functionality page breaks (horizontal and vertical)<p>
  *
- * <p>The other two classes just specifically set the SIDS for record creation.</p>
+ * The other two classes just specifically set the SIDS for record creation.<p>
  *
- * <p>REFERENCE:  Microsoft Excel SDK page 322 and 420</p>
+ * REFERENCE:  Microsoft Excel SDK page 322 and 420
  *
  * @see HorizontalPageBreakRecord
  * @see VerticalPageBreakRecord
- * @author Danny Mui (dmui at apache dot org)
  */
 public abstract class PageBreakRecord extends StandardRecord {
     private static final int[] EMPTY_INT_ARRAY = { };
 
-    private List<Break> _breaks;
-    private Map<Integer, Break> _breakMap;
+    private final ArrayList<Break> _breaks = new ArrayList<>();
+    private final Map<Integer, Break> _breakMap = new HashMap<>();
 
     /**
      * Since both records store 2byte integers (short), no point in
@@ -56,8 +54,13 @@ public abstract class PageBreakRecord extends StandardRecord {
         public int subFrom;
         public int subTo;
 
-        public Break(int main, int subFrom, int subTo)
-        {
+        public Break(Break other) {
+            main = other.main;
+            subFrom = other.subFrom;
+            subTo = other.subTo;
+        }
+
+        public Break(int main, int subFrom, int subTo) {
             this.main = main;
             this.subFrom = subFrom;
             this.subTo = subTo;
@@ -76,23 +79,24 @@ public abstract class PageBreakRecord extends StandardRecord {
         }
     }
 
-    protected PageBreakRecord() {
-        _breaks = new ArrayList<>();
-        _breakMap = new HashMap<>();
+    protected PageBreakRecord() {}
+
+    protected PageBreakRecord(PageBreakRecord other) {
+        _breaks.addAll(other._breaks);
+        initMap();
     }
 
-    public PageBreakRecord(RecordInputStream in)
-    {
-        int nBreaks = in.readShort();
-        _breaks = new ArrayList<>(nBreaks + 2);
-        _breakMap = new HashMap<>();
-
+    public PageBreakRecord(RecordInputStream in) {
+        final int nBreaks = in.readShort();
+        _breaks.ensureCapacity(nBreaks + 2);
         for(int k = 0; k < nBreaks; k++) {
-            Break br = new Break(in);
-            _breaks.add(br);
-            _breakMap.put(Integer.valueOf(br.main), br);
+            _breaks.add(new Break(in));
         }
+        initMap();
+    }
 
+    private void initMap() {
+        _breaks.forEach(br -> _breakMap.put(Integer.valueOf(br.main), br));
     }
 
     public boolean isEmpty() {
@@ -105,8 +109,8 @@ public abstract class PageBreakRecord extends StandardRecord {
     public final void serialize(LittleEndianOutput out) {
         int nBreaks = _breaks.size();
         out.writeShort(nBreaks);
-        for (int i=0; i<nBreaks; i++) {
-            _breaks.get(i).serialize(out);
+        for (Break aBreak : _breaks) {
+            aBreak.serialize(out);
         }
     }
 
@@ -206,4 +210,7 @@ public abstract class PageBreakRecord extends StandardRecord {
         }
         return result;
     }
+
+    @Override
+    public abstract PageBreakRecord copy();
 }

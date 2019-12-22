@@ -23,50 +23,58 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * Describes a line format record.  The line format record controls how a line on a chart appears.
  */
-public final class LineFormatRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x1007;
+public final class LineFormatRecord extends StandardRecord {
+    public static final short sid = 0x1007;
 
     private static final BitField auto      = BitFieldFactory.getInstance(0x1);
     private static final BitField drawTicks = BitFieldFactory.getInstance(0x4);
     private static final BitField unknown   = BitFieldFactory.getInstance(0x4);
 
-    private  int        field_1_lineColor;
-    private  short      field_2_linePattern;
-    public final static short       LINE_PATTERN_SOLID             = 0;
-    public final static short       LINE_PATTERN_DASH              = 1;
-    public final static short       LINE_PATTERN_DOT               = 2;
-    public final static short       LINE_PATTERN_DASH_DOT          = 3;
-    public final static short       LINE_PATTERN_DASH_DOT_DOT      = 4;
-    public final static short       LINE_PATTERN_NONE              = 5;
-    public final static short       LINE_PATTERN_DARK_GRAY_PATTERN = 6;
-    public final static short       LINE_PATTERN_MEDIUM_GRAY_PATTERN = 7;
-    public final static short       LINE_PATTERN_LIGHT_GRAY_PATTERN = 8;
-    private  short      field_3_weight;
-    public final static short       WEIGHT_HAIRLINE                = -1;
-    public final static short       WEIGHT_NARROW                  = 0;
-    public final static short       WEIGHT_MEDIUM                  = 1;
-    public final static short       WEIGHT_WIDE                    = 2;
-    private  short      field_4_format;
-    private  short      field_5_colourPaletteIndex;
+    public static final short LINE_PATTERN_SOLID             = 0;
+    public static final short LINE_PATTERN_DASH              = 1;
+    public static final short LINE_PATTERN_DOT               = 2;
+    public static final short LINE_PATTERN_DASH_DOT          = 3;
+    public static final short LINE_PATTERN_DASH_DOT_DOT      = 4;
+    public static final short LINE_PATTERN_NONE              = 5;
+    public static final short LINE_PATTERN_DARK_GRAY_PATTERN = 6;
+    public static final short LINE_PATTERN_MEDIUM_GRAY_PATTERN = 7;
+    public static final short LINE_PATTERN_LIGHT_GRAY_PATTERN = 8;
+
+    public static final short WEIGHT_HAIRLINE                = -1;
+    public static final short WEIGHT_NARROW                  = 0;
+    public static final short WEIGHT_MEDIUM                  = 1;
+    public static final short WEIGHT_WIDE                    = 2;
 
 
-    public LineFormatRecord()
-    {
+    private int   field_1_lineColor;
+    private short field_2_linePattern;
+    private short field_3_weight;
+    private short field_4_format;
+    private short field_5_colourPaletteIndex;
 
+
+    public LineFormatRecord() {}
+
+    public LineFormatRecord(LineFormatRecord other) {
+        super(other);
+        field_1_lineColor          = other.field_1_lineColor;
+        field_2_linePattern        = other.field_2_linePattern;
+        field_3_weight             = other.field_3_weight;
+        field_4_format             = other.field_4_format;
+        field_5_colourPaletteIndex = other.field_5_colourPaletteIndex;
     }
 
-    public LineFormatRecord(RecordInputStream in)
-    {
-        field_1_lineColor              = in.readInt();
-        field_2_linePattern            = in.readShort();
-        field_3_weight                 = in.readShort();
-        field_4_format                 = in.readShort();
-        field_5_colourPaletteIndex     = in.readShort();
-
+    public LineFormatRecord(RecordInputStream in) {
+        field_1_lineColor          = in.readInt();
+        field_2_linePattern        = in.readShort();
+        field_3_weight             = in.readShort();
+        field_4_format             = in.readShort();
+        field_5_colourPaletteIndex = in.readShort();
     }
 
     public String toString()
@@ -77,26 +85,26 @@ public final class LineFormatRecord extends StandardRecord implements Cloneable 
         buffer.append("    .lineColor            = ")
             .append("0x").append(HexDump.toHex(  getLineColor ()))
             .append(" (").append( getLineColor() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .linePattern          = ")
             .append("0x").append(HexDump.toHex(  getLinePattern ()))
             .append(" (").append( getLinePattern() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .weight               = ")
             .append("0x").append(HexDump.toHex(  getWeight ()))
             .append(" (").append( getWeight() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .format               = ")
             .append("0x").append(HexDump.toHex(  getFormat ()))
             .append(" (").append( getFormat() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-        buffer.append("         .auto                     = ").append(isAuto()).append('\n'); 
-        buffer.append("         .drawTicks                = ").append(isDrawTicks()).append('\n'); 
-        buffer.append("         .unknown                  = ").append(isUnknown()).append('\n'); 
+        buffer.append(System.getProperty("line.separator"));
+        buffer.append("         .auto                     = ").append(isAuto()).append('\n');
+        buffer.append("         .drawTicks                = ").append(isDrawTicks()).append('\n');
+        buffer.append("         .unknown                  = ").append(isUnknown()).append('\n');
         buffer.append("    .colourPaletteIndex   = ")
             .append("0x").append(HexDump.toHex(  getColourPaletteIndex ()))
             .append(" (").append( getColourPaletteIndex() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
 
         buffer.append("[/LINEFORMAT]\n");
         return buffer.toString();
@@ -120,19 +128,17 @@ public final class LineFormatRecord extends StandardRecord implements Cloneable 
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public LineFormatRecord clone() {
-        LineFormatRecord rec = new LineFormatRecord();
-    
-        rec.field_1_lineColor = field_1_lineColor;
-        rec.field_2_linePattern = field_2_linePattern;
-        rec.field_3_weight = field_3_weight;
-        rec.field_4_format = field_4_format;
-        rec.field_5_colourPaletteIndex = field_5_colourPaletteIndex;
-        return rec;
+        return copy();
     }
 
-
-
+    @Override
+    public LineFormatRecord copy() {
+        return new LineFormatRecord(this);
+    }
 
     /**
      * Get the line color field for the LineFormat record.
@@ -153,7 +159,7 @@ public final class LineFormatRecord extends StandardRecord implements Cloneable 
     /**
      * Get the line pattern field for the LineFormat record.
      *
-     * @return  One of 
+     * @return  One of
      *        LINE_PATTERN_SOLID
      *        LINE_PATTERN_DASH
      *        LINE_PATTERN_DOT
@@ -173,7 +179,7 @@ public final class LineFormatRecord extends StandardRecord implements Cloneable 
      * Set the line pattern field for the LineFormat record.
      *
      * @param field_2_linePattern
-     *        One of 
+     *        One of
      *        LINE_PATTERN_SOLID
      *        LINE_PATTERN_DASH
      *        LINE_PATTERN_DOT
@@ -192,7 +198,7 @@ public final class LineFormatRecord extends StandardRecord implements Cloneable 
     /**
      * Get the weight field for the LineFormat record.
      *
-     * @return  One of 
+     * @return  One of
      *        WEIGHT_HAIRLINE
      *        WEIGHT_NARROW
      *        WEIGHT_MEDIUM
@@ -207,7 +213,7 @@ public final class LineFormatRecord extends StandardRecord implements Cloneable 
      * Set the weight field for the LineFormat record.
      *
      * @param field_3_weight
-     *        One of 
+     *        One of
      *        WEIGHT_HAIRLINE
      *        WEIGHT_NARROW
      *        WEIGHT_MEDIUM

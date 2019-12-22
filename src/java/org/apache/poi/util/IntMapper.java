@@ -19,76 +19,79 @@
 
 package org.apache.poi.util;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Map;
+
+import org.apache.poi.common.Duplicatable;
 
 /**
  * A List of objects that are indexed AND keyed by an int; also allows for getting
  * the index of a value in the list
- *
- * <p>I am happy is someone wants to re-implement this without using the
+ * <p>
+ * I am happy is someone wants to re-implement this without using the
  * internal list and hashmap. If so could you please make sure that
  * you can add elements half way into the list and have the value-key mappings
- * update</p>
- *
- *
- * @author Jason Height
+ * update
  */
 
-public class IntMapper<T>
-{
-  private List<T> elements;
-  private Map<T,Integer> valueKeyMap;
+public class IntMapper<T> implements Duplicatable {
+    private final List<T> elements;
+    private final Map<T, Integer> valueKeyMap;
 
-  private static final int _default_size = 10;
+    private static final int _default_size = 10;
 
     /**
      * create an IntMapper of default size
      */
-
-    public IntMapper()
-    {
+    public IntMapper() {
         this(_default_size);
     }
 
-    public IntMapper(final int initialCapacity)
-    {
+    public IntMapper(final int initialCapacity) {
         elements = new ArrayList<>(initialCapacity);
         valueKeyMap = new HashMap<>(initialCapacity);
+    }
+
+    public IntMapper(IntMapper<T> other) {
+        elements = new ArrayList<>(other.elements);
+        valueKeyMap = new HashMap<>(other.valueKeyMap);
     }
 
     /**
      * Appends the specified element to the end of this list
      *
      * @param value element to be appended to this list.
-     *
      * @return true (as per the general contract of the Collection.add
-     *         method).
+     * method).
      */
-    public boolean add(final T value)
-    {
-      int index = elements.size();
-      elements.add(value);
-      valueKeyMap.put(value, index);
-      return true;
+    public boolean add(final T value) {
+        int index = elements.size();
+        elements.add(value);
+        valueKeyMap.put(value, index);
+        return true;
     }
 
     public int size() {
-      return elements.size();
+        return elements.size();
     }
 
     public T get(int index) {
-      return elements.get(index);
+        return elements.get(index);
     }
 
     public int getIndex(T o) {
-      Integer i = valueKeyMap.get(o);
-      if (i == null)
-        return -1;
-      return i.intValue();
+        return valueKeyMap.getOrDefault(o, -1);
     }
 
     public Iterator<T> iterator() {
-      return elements.iterator();
+        return elements.iterator();
     }
-}   // end public class IntMapper
 
+    @Override
+    public IntMapper<T> copy() {
+        return new IntMapper<>(this);
+    }
+}

@@ -31,8 +31,6 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Encapsulates an encoded formula token array.
- *
- * @author Josh Micich
  */
 public class Formula {
 
@@ -44,6 +42,11 @@ public class Formula {
 	/** immutable */
 	private final byte[] _byteEncoding;
 	private final int _encodedTokenLen;
+
+	public Formula(Formula other) {
+		_byteEncoding = (other._byteEncoding == null) ? null : other._byteEncoding.clone();
+		_encodedTokenLen = other._encodedTokenLen;
+	}
 
 	private Formula(byte[] byteEncoding, int encodedTokenLen) {
 		_byteEncoding = byteEncoding.clone();

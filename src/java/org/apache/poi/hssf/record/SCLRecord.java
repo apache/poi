@@ -19,24 +19,27 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * Specifies the window's zoom magnification.<p>
  * If this record isn't present then the windows zoom is 100%. see p384 Excel Dev Kit
  */
 public final class SCLRecord extends StandardRecord {
-    public final static short      sid                             = 0x00A0;
-    private  short      field_1_numerator;
-    private  short      field_2_denominator;
+    public static final short sid = 0x00A0;
 
+    private short field_1_numerator;
+    private short field_2_denominator;
 
-    public SCLRecord()
-    {
+    public SCLRecord() {}
 
+    public SCLRecord(SCLRecord other) {
+        super(other);
+        field_1_numerator = other.field_1_numerator;
+        field_2_denominator = other.field_2_denominator;
     }
 
-    public SCLRecord(RecordInputStream in)
-    {
+    public SCLRecord(RecordInputStream in) {
         field_1_numerator              = in.readShort();
         field_2_denominator            = in.readShort();
     }
@@ -50,11 +53,11 @@ public final class SCLRecord extends StandardRecord {
         buffer.append("    .numerator            = ")
             .append("0x").append(HexDump.toHex(  getNumerator ()))
             .append(" (").append( getNumerator() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .denominator          = ")
             .append("0x").append(HexDump.toHex(  getDenominator ()))
             .append(" (").append( getDenominator() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
 
         buffer.append("[/SCL]\n");
         return buffer.toString();
@@ -78,17 +81,21 @@ public final class SCLRecord extends StandardRecord {
     }
 
     @Override
-    public Object clone() {
-        SCLRecord rec = new SCLRecord();
-    
-        rec.field_1_numerator = field_1_numerator;
-        rec.field_2_denominator = field_2_denominator;
-        return rec;
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public SCLRecord clone() {
+        return copy();
+    }
+
+    @Override
+    public SCLRecord copy() {
+        return new SCLRecord(this);
     }
 
     /**
      * Get the numerator field for the SCL record.
-     * 
+     *
      * @return the numerator
      */
     public short getNumerator()
@@ -98,7 +105,7 @@ public final class SCLRecord extends StandardRecord {
 
     /**
      * Set the numerator field for the SCL record.
-     * 
+     *
      * @param field_1_numerator the numerator
      */
     public void setNumerator(short field_1_numerator)
@@ -108,7 +115,7 @@ public final class SCLRecord extends StandardRecord {
 
     /**
      * Get the denominator field for the SCL record.
-     * 
+     *
      * @return the denominator
      */
     public short getDenominator()
@@ -118,7 +125,7 @@ public final class SCLRecord extends StandardRecord {
 
     /**
      * Set the denominator field for the SCL record.
-     * 
+     *
      * @param field_2_denominator the denominator
      */
     public void setDenominator(short field_2_denominator)

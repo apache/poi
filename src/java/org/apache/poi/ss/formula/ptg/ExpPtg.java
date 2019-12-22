@@ -20,15 +20,10 @@ package org.apache.poi.ss.formula.ptg;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
-/**
- *
- * @author  andy
- * @author Jason Height (jheight at chariot dot net dot au)
- * @author dmui (save existing implementation)
- */
 public final class ExpPtg extends ControlPtg {
     private final static int  SIZE = 5;
     public final static short sid  = 0x1;
+
     private final int field_1_first_row;
     private final int field_2_first_col;
 
@@ -70,5 +65,10 @@ public final class ExpPtg extends ControlPtg {
     @Override
     public String toString() {
         return "[Array Formula or Shared Formula]\n" + "row = " + getRow() + "\n" + "col = " + getColumn() + "\n";
+    }
+
+    @Override
+    public ExpPtg copy() {
+        return this;
     }
 }

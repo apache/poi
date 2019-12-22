@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
@@ -32,12 +33,13 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.GenericRecordXmlWriter;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Removal;
 
 /**
  * The base abstract record from which all escher records are defined.  Subclasses will need
  * to define methods for serialization/deserialization and for determining the record size.
  */
-public abstract class EscherRecord implements Cloneable, GenericRecord {
+public abstract class EscherRecord implements Duplicatable, GenericRecord {
     private static final BitField fInstance = BitFieldFactory.getInstance(0xfff0);
     private static final BitField fVersion = BitFieldFactory.getInstance(0x000f);
 
@@ -238,9 +240,12 @@ public abstract class EscherRecord implements Cloneable, GenericRecord {
      * Escher records may need to be clonable in the future.
      *
      * @return the cloned object
+     * @deprecated use {@link #copy()}
      */
     @Override
     @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public final EscherRecord clone() {
         return copy();
     }
@@ -350,5 +355,6 @@ public abstract class EscherRecord implements Cloneable, GenericRecord {
         );
     }
 
+    @Override
     public abstract EscherRecord copy();
 }

@@ -54,7 +54,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
     private static final POILogger LOG = POILogFactory.getLogger(TxMasterStyleAtom.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
-    
+
     /**
      * Maximum number of indentation levels allowed in PowerPoint documents
      */
@@ -166,7 +166,7 @@ public final class TxMasterStyleAtom extends RecordAtom {
 
             head = LittleEndian.getInt(_data, pos);
             pos += LittleEndian.INT_SIZE;
-            
+
             pos += prprops.buildTextPropList( head, _data, pos);
             paragraphStyles.add(prprops);
 
@@ -180,37 +180,35 @@ public final class TxMasterStyleAtom extends RecordAtom {
 
     /**
      * Updates the rawdata from the modified paragraph/character styles
-     * 
+     *
      * @since POI 3.14-beta1
      */
     public void updateStyles() {
         int type = getTextType();
-        
+
         try {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             LittleEndianOutputStream leos = new LittleEndianOutputStream(bos);
             int levels = paragraphStyles.size();
             leos.writeShort(levels);
-            
-            TextPropCollection prdummy = new TextPropCollection(0, TextPropType.paragraph);
-            TextPropCollection chdummy = new TextPropCollection(0, TextPropType.character);
-            
+
             for (int i=0; i<levels; i++) {
-                prdummy.copy(paragraphStyles.get(i));
-                chdummy.copy(charStyles.get(i));
+                TextPropCollection prdummy = paragraphStyles.get(i).copy();
+                TextPropCollection chdummy = charStyles.get(i).copy();
+
                 if (type >= TextPlaceholder.CENTER_BODY.nativeId) {
                     leos.writeShort(prdummy.getIndentLevel());
                 }
-                
+
                 // Indent level is not written for master styles
                 prdummy.setIndentLevel((short)-1);
                 prdummy.writeOut(bos, true);
                 chdummy.writeOut(bos, true);
             }
-            
+
             _data = bos.toByteArray();
             leos.close();
-            
+
             LittleEndian.putInt(_header, 4, _data.length);
         } catch (IOException e) {
             throw new HSLFException("error in updating master style properties", e);

@@ -28,14 +28,14 @@ import org.apache.poi.hssf.record.Record;
 import org.junit.Test;
 
 /**
- * Needs to be implemented in this package to have access to 
+ * Needs to be implemented in this package to have access to
  * HSSFWorkbook.getWorkbook()
  */
 public class RecordsStresser {
     public static void handleWorkbook(HSSFWorkbook wb) {
         List<Record> records = wb.getWorkbook().getRecords();
         for(Record record : records) {
-            // some Records do not implement clone ?! 
+            // some Records do not implement clone ?!
             // equals instead of instanceof is on purpose here to only skip exactly this class and not any derived ones
 //            if(record.getClass().equals(InterfaceHdrRecord.class) ||
 //                    record.getClass().equals(MMSRecord.class) ||
@@ -46,18 +46,16 @@ public class RecordsStresser {
 //                continue;
 //            }
             try {
-                Record newRecord = (Record) record.clone();
-                
-                assertEquals("Expecting the same class back from clone(), but had Record of type " + record.getClass() + " and got back a " + newRecord.getClass() + " from clone()", 
-                        record.getClass(), newRecord.getClass()); 
-                
+                Record newRecord = record.copy();
+
+                assertEquals("Expecting the same class back from clone(), but had Record of type " + record.getClass() + " and got back a " + newRecord.getClass() + " from clone()",
+                        record.getClass(), newRecord.getClass());
+
                 byte[] origBytes = record.serialize();
                 byte[] newBytes = newRecord.serialize();
-                
-                assertArrayEquals("Record of type " + record.getClass() + " should return the same byte array via the clone() method, but did return a different array", 
+
+                assertArrayEquals("Record of type " + record.getClass() + " should return the same byte array via the clone() method, but did return a different array",
                         origBytes, newBytes);
-            } catch (CloneNotSupportedException e) {
-                throw new RuntimeException(e);
             } catch (RuntimeException e) {
                 // some Records do not implement clone, ignore those for now
                 assertTrue(e.getMessage().contains("needs to define a clone method"));

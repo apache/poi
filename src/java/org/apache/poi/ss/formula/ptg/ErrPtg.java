@@ -86,4 +86,9 @@ public final class ErrPtg extends ScalarConstantPtg {
                 throw new RuntimeException("Unexpected error code (" + code + ")");
         }
     }
+
+    @Override
+    public ErrPtg copy() {
+        return this;
+    }
 }

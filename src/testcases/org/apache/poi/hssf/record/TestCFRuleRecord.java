@@ -26,6 +26,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
+import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
@@ -41,8 +42,6 @@ import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.util.LittleEndian;
 import org.junit.Test;
-
-import junit.framework.AssertionFailedError;
 
 /**
  * Tests the serialization and deserialization of the TestCFRuleRecord
@@ -141,8 +140,8 @@ public final class TestCFRuleRecord {
         record.getMultiStateFormatting().getThresholds()[1].setValue(10d);
         record.getMultiStateFormatting().getThresholds()[2].setType(RangeType.NUMBER.id);
         record.getMultiStateFormatting().getThresholds()[2].setValue(-4d);
-        
-        // Check it 
+
+        // Check it
         testCFRule12Record(record);
         assertEquals(IconSet.GREY_5_ARROWS, record.getMultiStateFormatting().getIconSet());
         assertEquals(5, record.getMultiStateFormatting().getThresholds().length);
@@ -156,7 +155,7 @@ public final class TestCFRuleRecord {
 
         // Deserialize
         record = new CFRule12Record(TestcaseRecordInputStream.create(CFRule12Record.sid, recordData));
-        
+
         // Check it has the icon, and the right number of thresholds
         assertEquals(IconSet.GREY_5_ARROWS, record.getMultiStateFormatting().getIconSet());
         assertEquals(5, record.getMultiStateFormatting().getThresholds().length);
@@ -172,10 +171,10 @@ public final class TestCFRuleRecord {
         }
         workbook.close();
     }
-    
+
     private void testCFRuleRecord(CFRuleRecord record) {
         testCFRuleBase(record);
-        
+
         assertFalse(record.isLeftBorderModified());
         record.setLeftBorderModified(true);
         assertTrue(record.isLeftBorderModified());
@@ -445,22 +444,22 @@ public final class TestCFRuleRecord {
         byte[] data = rr.serialize();
         TestcaseRecordInputStream.confirmRecordEncoding(CFRuleRecord.sid, DATA_REFN, data);
     }
-    
+
     @Test
     public void testBug53691() throws IOException {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
 
         CFRuleRecord record = CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "2", "5");
-        
-        CFRuleRecord clone = record.clone();
-        
+
+        CFRuleRecord clone = record.copy();
+
         byte [] serializedRecord = record.serialize();
         byte [] serializedClone = clone.serialize();
         assertArrayEquals(serializedRecord, serializedClone);
         workbook.close();
     }
-    
+
     @Test
     public void testBug57231_rewrite() throws IOException {
         HSSFWorkbook wb1 = HSSFITestDataProvider.instance.openSampleWorkbook("57231_MixedGasReport.xls");

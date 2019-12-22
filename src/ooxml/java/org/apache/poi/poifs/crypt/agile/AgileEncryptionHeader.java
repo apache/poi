@@ -30,14 +30,20 @@ import org.apache.poi.poifs.crypt.EncryptionHeader;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.util.GenericRecordUtil;
 
-public class AgileEncryptionHeader extends EncryptionHeader implements Cloneable {
+public class AgileEncryptionHeader extends EncryptionHeader {
     private byte[] encryptedHmacKey;
     private byte[] encryptedHmacValue;
-    
+
     public AgileEncryptionHeader(String descriptor) {
         this(AgileEncryptionInfoBuilder.parseDescriptor(descriptor));
     }
-    
+
+    public AgileEncryptionHeader(AgileEncryptionHeader other) {
+        super(other);
+        encryptedHmacKey = (other.encryptedHmacKey == null) ? null : other.encryptedHmacKey.clone();
+        encryptedHmacValue = (other.encryptedHmacValue == null) ? null : other.encryptedHmacValue.clone();
+    }
+
     protected AgileEncryptionHeader(EncryptionDocument ed) {
         CTKeyData keyData;
         try {
@@ -50,7 +56,7 @@ public class AgileEncryptionHeader extends EncryptionHeader implements Cloneable
         }
 
         int keyBits = (int)keyData.getKeyBits();
-        
+
         CipherAlgorithm ca = CipherAlgorithm.fromXmlId(keyData.getCipherAlgorithm().toString(), keyBits);
         setCipherAlgorithm(ca);
         setCipherProvider(ca.provider);
@@ -71,14 +77,14 @@ public class AgileEncryptionHeader extends EncryptionHeader implements Cloneable
         default:
             throw new EncryptedDocumentException("Unsupported chaining mode - "+ keyData.getCipherChaining());
         }
-    
+
         int hashSize = keyData.getHashSize();
-        
+
         HashAlgorithm ha = HashAlgorithm.fromEcmaId(keyData.getHashAlgorithm().toString());
         setHashAlgorithm(ha);
 
         if (getHashAlgorithm().hashSize != hashSize) {
-            throw new EncryptedDocumentException("Unsupported hash algorithm: " + 
+            throw new EncryptedDocumentException("Unsupported hash algorithm: " +
                     keyData.getHashAlgorithm() + " @ " + hashSize + " bytes");
         }
 
@@ -87,13 +93,13 @@ public class AgileEncryptionHeader extends EncryptionHeader implements Cloneable
         if (getKeySalt().length != saltLength) {
             throw new EncryptedDocumentException("Invalid salt length");
         }
-        
+
         CTDataIntegrity di = ed.getEncryption().getDataIntegrity();
         setEncryptedHmacKey(di.getEncryptedHmacKey());
         setEncryptedHmacValue(di.getEncryptedHmacValue());
     }
-    
-    
+
+
     public AgileEncryptionHeader(CipherAlgorithm algorithm, HashAlgorithm hashAlgorithm, int keyBits, int blockSize, ChainingMode chainingMode) {
         setCipherAlgorithm(algorithm);
         setHashAlgorithm(hashAlgorithm);
@@ -128,19 +134,16 @@ public class AgileEncryptionHeader extends EncryptionHeader implements Cloneable
     }
 
     @Override
-    public AgileEncryptionHeader clone() throws CloneNotSupportedException {
-        AgileEncryptionHeader other = (AgileEncryptionHeader)super.clone();
-        other.encryptedHmacKey = (encryptedHmacKey == null) ? null : encryptedHmacKey.clone();
-        other.encryptedHmacValue = (encryptedHmacValue == null) ? null : encryptedHmacValue.clone();
-        return other;
-    }
-
-    @Override
     public Map<String, Supplier<?>> getGenericProperties() {
         return GenericRecordUtil.getGenericProperties(
             "base", super::getGenericProperties,
             "encryptedHmacKey", this::getEncryptedHmacKey,
             "encryptedHmacValue", this::getEncryptedHmacValue
         );
+    }
+
+    @Override
+    public AgileEncryptionHeader copy() {
+        return new AgileEncryptionHeader(this);
     }
 }

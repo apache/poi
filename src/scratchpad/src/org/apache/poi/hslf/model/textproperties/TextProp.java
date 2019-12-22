@@ -19,29 +19,32 @@ package org.apache.poi.hslf.model.textproperties;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.GenericRecordUtil;
+import org.apache.poi.util.Removal;
 
-/** 
- * Definition of a property of some text, or its paragraph. Defines 
- * how to find out if it's present (via the mask on the paragraph or 
- * character "contains" header field), how long the value of it is, 
+/**
+ * Definition of a property of some text, or its paragraph. Defines
+ * how to find out if it's present (via the mask on the paragraph or
+ * character "contains" header field), how long the value of it is,
  * and how to get and set the value.
- * 
+ *
  * As the exact form of these (such as mask value, size of data
  *  block etc) is different for StyleTextProps and
  *  TxMasterTextProps, the definitions of the standard
- *  TextProps is stored in the different record classes 
+ *  TextProps is stored in the different record classes
  */
-public class TextProp implements Cloneable, GenericRecord {
+public class TextProp implements Duplicatable, GenericRecord {
 	private int sizeOfDataBlock; // Number of bytes the data part uses
 	private String propName;
 	private int dataValue;
 	private int maskInHeader;
 
-	/** 
+	/**
 	 * Generate the definition of a given type of text property.
 	 */
 	public TextProp(int sizeOfDataBlock, int maskInHeader, String propName) {
@@ -60,7 +63,7 @@ public class TextProp implements Cloneable, GenericRecord {
 	    this.propName = other.propName;
 	    this.dataValue = other.dataValue;
 	}
-	
+
 	/**
 	 * Name of the text property
 	 */
@@ -78,7 +81,7 @@ public class TextProp implements Cloneable, GenericRecord {
 	public int getMask() { return maskInHeader; }
 	/**
 	 * Get the mask that's used at write time. Only differs from
-	 *  the result of getMask() for the mask based properties 
+	 *  the result of getMask() for the mask based properties
 	 */
 	public int getWriteMask() { return getMask(); }
 
@@ -93,27 +96,27 @@ public class TextProp implements Cloneable, GenericRecord {
 	 */
 	public void setValue(int val) { dataValue = val; }
 
+	@Override
+	@SuppressWarnings("squid:S2975")
+	@Deprecated
+	@Removal(version = "5.0.0")
+	public TextProp clone() {
+		return copy();
+	}
+
 	/**
 	 * Clone, eg when you want to actually make use of one of these.
 	 */
 	@Override
-	public TextProp clone(){
-		try {
-			return (TextProp)super.clone();
-		} catch(CloneNotSupportedException e) {
-			throw new IllegalStateException(e);
-		}
+	public TextProp copy(){
+		// subclasses need to override copy()
+		assert(TextProp.class.equals(this.getClass()));
+		return new TextProp(this);
 	}
-	
+
 	@Override
 	public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + dataValue;
-        result = prime * result + maskInHeader;
-        result = prime * result + ((propName == null) ? 0 : propName.hashCode());
-        result = prime * result + sizeOfDataBlock;
-        return result;
+		return Objects.hash(dataValue, maskInHeader, propName, sizeOfDataBlock);
     }
 
 	@Override
@@ -146,7 +149,7 @@ public class TextProp implements Cloneable, GenericRecord {
         }
         return true;
     }
-    
+
     @Override
     public String toString() {
         int len;

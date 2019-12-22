@@ -19,7 +19,9 @@
 package org.apache.poi.hssf.usermodel;
 
 import java.util.List;
+import java.util.Objects;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.ExtendedFormatRecord;
 import org.apache.poi.hssf.record.FontRecord;
@@ -41,7 +43,7 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getCellStyleAt(int)
  * @see org.apache.poi.hssf.usermodel.HSSFCell#setCellStyle(HSSFCellStyle)
  */
-public final class HSSFCellStyle implements CellStyle {
+public final class HSSFCellStyle implements CellStyle, Duplicatable {
     private final ExtendedFormatRecord _format;
     private final short                _index;
     private final InternalWorkbook     _workbook;
@@ -58,6 +60,13 @@ public final class HSSFCellStyle implements CellStyle {
         _index = index;
         _format     = rec;
     }
+
+    protected HSSFCellStyle(HSSFCellStyle other) {
+        _workbook = other._workbook;
+        _index = other._index;
+        _format = other._format;
+    }
+
 
     /**
      * get the index within the HSSFWorkbook (sequence within the collection of ExtnededFormat objects)
@@ -863,11 +872,7 @@ public final class HSSFCellStyle implements CellStyle {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((_format == null) ? 0 : _format.hashCode());
-        result = prime * result + _index;
-        return result;
+        return Objects.hash(_format, _index);
     }
 
     @Override
@@ -895,4 +900,8 @@ public final class HSSFCellStyle implements CellStyle {
         return false;
     }
 
+    @Override
+    public HSSFCellStyle copy() {
+        return new HSSFCellStyle(this);
+    }
 }

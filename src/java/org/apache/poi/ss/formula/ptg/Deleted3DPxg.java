@@ -33,6 +33,13 @@ public final class Deleted3DPxg extends OperandPtg implements Pxg {
         this.externalWorkbookNumber = externalWorkbookNumber;
         this.sheetName = sheetName;
     }
+
+    public Deleted3DPxg(Deleted3DPxg other) {
+        super(other);
+        externalWorkbookNumber = other.externalWorkbookNumber;
+        sheetName = other.sheetName;
+    }
+
     public Deleted3DPxg(String sheetName) {
         this(-1, sheetName);
     }
@@ -59,7 +66,7 @@ public final class Deleted3DPxg extends OperandPtg implements Pxg {
     public String getSheetName() {
         return sheetName;
     }
-    
+
     public void setSheetName(String sheetName) {
         this.sheetName = sheetName;
     }
@@ -78,7 +85,7 @@ public final class Deleted3DPxg extends OperandPtg implements Pxg {
         sb.append(FormulaError.REF.getString());
         return sb.toString();
     }
-    
+
     public byte getDefaultOperandClass() {
         return Ptg.CLASS_VALUE;
     }
@@ -88,5 +95,10 @@ public final class Deleted3DPxg extends OperandPtg implements Pxg {
     }
     public void write(LittleEndianOutput out) {
         throw new IllegalStateException("XSSF-only Ptg, should not be serialised");
+    }
+
+    @Override
+    public Deleted3DPxg copy() {
+        return new Deleted3DPxg(this);
     }
 }

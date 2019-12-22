@@ -31,7 +31,7 @@ import org.apache.poi.util.LittleEndian;
  * This record is used whenever a escher record is encountered that
  * we do not explicitly support.
  */
-public final class UnknownEscherRecord extends EscherRecord implements Cloneable {
+public final class UnknownEscherRecord extends EscherRecord {
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000_000;

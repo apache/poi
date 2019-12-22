@@ -17,26 +17,29 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
-import org.apache.poi.util.LittleEndianOutput;
-
 import java.util.Arrays;
 import java.util.Locale;
 
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
+
 /**
  * The HEADERFOOTER record stores information added in Office Excel 2007 for headers/footers.
- *
- * @author Yegor Kozlov
  */
-public final class HeaderFooterRecord extends StandardRecord implements Cloneable {
-
+public final class HeaderFooterRecord extends StandardRecord {
+    public static final short sid = 0x089C;
     private static final byte[] BLANK_GUID = new byte[16];
 
-    public final static short sid = 0x089C;
 	private byte[] _rawData;
 
     public HeaderFooterRecord(byte[] data) {
         _rawData = data;
+    }
+
+    public HeaderFooterRecord(HeaderFooterRecord other) {
+        super(other);
+        _rawData = (other._rawData == null) ? null : other._rawData.clone();
     }
 
 	/**
@@ -58,7 +61,7 @@ public final class HeaderFooterRecord extends StandardRecord implements Cloneabl
 	protected int getDataSize() {
 		return _rawData.length;
 	}
-    
+
     public short getSid()
     {
         return sid;
@@ -79,7 +82,7 @@ public final class HeaderFooterRecord extends StandardRecord implements Cloneabl
     }
 
     /**
-     * @return whether this record belongs to the current sheet 
+     * @return whether this record belongs to the current sheet
      */
     public boolean isCurrentSheet(){
         return Arrays.equals(getGuid(), BLANK_GUID);
@@ -96,10 +99,17 @@ public final class HeaderFooterRecord extends StandardRecord implements Cloneabl
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public HeaderFooterRecord clone() {
-        //HACK: do a "cheat" clone, see Record.java for more information
-        return (HeaderFooterRecord)cloneViaReserialise();
+        return copy();
     }
-    
- 
+
+    @Override
+    public HeaderFooterRecord copy() {
+        return new HeaderFooterRecord(this);
+    }
+
+
 }

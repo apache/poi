@@ -38,4 +38,13 @@ public final class ParagraphFlagsTextProp extends BitMaskTextProp {
             "bullet.hardsize"
 		);
 	}
+
+	public ParagraphFlagsTextProp(ParagraphFlagsTextProp other) {
+		super(other);
+	}
+
+	@Override
+	public ParagraphFlagsTextProp copy() {
+		return new ParagraphFlagsTextProp(this);
+	}
 }

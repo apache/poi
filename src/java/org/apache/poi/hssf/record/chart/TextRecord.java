@@ -23,13 +23,14 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * The text record is used to define text stored on a chart.
  */
 public final class TextRecord extends StandardRecord {
-    public final static short      sid                             = 0x1025;
-    
+    public static final short sid = 0x1025;
+
     private static final BitField dataLabelPlacement            = BitFieldFactory.getInstance(0x000F);
     private static final BitField autoColor                     = BitFieldFactory.getInstance(0x0001);
     private static final BitField showKey                       = BitFieldFactory.getInstance(0x0002);
@@ -45,66 +46,82 @@ public final class TextRecord extends StandardRecord {
     private static final BitField showValueAsPercentage         = BitFieldFactory.getInstance(0x1000);
     private static final BitField showBubbleSizes               = BitFieldFactory.getInstance(0x2000);
     private static final BitField showLabel                     = BitFieldFactory.getInstance(0x4000);
-    
-    
-    private  byte       field_1_horizontalAlignment;
-    public final static byte        HORIZONTAL_ALIGNMENT_LEFT      = 1;
-    public final static byte        HORIZONTAL_ALIGNMENT_CENTER    = 2;
-    public final static byte        HORIZONTAL_ALIGNMENT_BOTTOM    = 3;
-    public final static byte        HORIZONTAL_ALIGNMENT_JUSTIFY   = 4;
-    private  byte       field_2_verticalAlignment;
-    public final static byte        VERTICAL_ALIGNMENT_TOP         = 1;
-    public final static byte        VERTICAL_ALIGNMENT_CENTER      = 2;
-    public final static byte        VERTICAL_ALIGNMENT_BOTTOM      = 3;
-    public final static byte        VERTICAL_ALIGNMENT_JUSTIFY     = 4;
-    private  short      field_3_displayMode;
-    public final static short       DISPLAY_MODE_TRANSPARENT       = 1;
-    public final static short       DISPLAY_MODE_OPAQUE            = 2;
-    private  int        field_4_rgbColor;
-    private  int        field_5_x;
-    private  int        field_6_y;
-    private  int        field_7_width;
-    private  int        field_8_height;
-    private  short      field_9_options1;
-    public final static short  ROTATION_NONE                  = 0;
-    public final static short  ROTATION_TOP_TO_BOTTOM         = 1;
-    public final static short  ROTATION_ROTATED_90_DEGREES    = 2;
-    public final static short  ROTATION_ROTATED_90_DEGREES_CLOCKWISE = 3;
-    private  short      field_10_indexOfColorValue;
-    private  short      field_11_options2;
-    public final static short  DATA_LABEL_PLACEMENT_CHART_DEPENDENT = 0;
-    public final static short  DATA_LABEL_PLACEMENT_OUTSIDE   = 1;
-    public final static short  DATA_LABEL_PLACEMENT_INSIDE    = 2;
-    public final static short  DATA_LABEL_PLACEMENT_CENTER    = 3;
-    public final static short  DATA_LABEL_PLACEMENT_AXIS      = 4;
-    public final static short  DATA_LABEL_PLACEMENT_ABOVE     = 5;
-    public final static short  DATA_LABEL_PLACEMENT_BELOW     = 6;
-    public final static short  DATA_LABEL_PLACEMENT_LEFT      = 7;
-    public final static short  DATA_LABEL_PLACEMENT_RIGHT     = 8;
-    public final static short  DATA_LABEL_PLACEMENT_AUTO      = 9;
-    public final static short  DATA_LABEL_PLACEMENT_USER_MOVED = 10;
-    private  short      field_12_textRotation;
 
 
-    public TextRecord()
-    {
+    public static final byte HORIZONTAL_ALIGNMENT_LEFT      = 1;
+    public static final byte HORIZONTAL_ALIGNMENT_CENTER    = 2;
+    public static final byte HORIZONTAL_ALIGNMENT_BOTTOM    = 3;
+    public static final byte HORIZONTAL_ALIGNMENT_JUSTIFY   = 4;
 
+    public static final byte VERTICAL_ALIGNMENT_TOP         = 1;
+    public static final byte VERTICAL_ALIGNMENT_CENTER      = 2;
+    public static final byte VERTICAL_ALIGNMENT_BOTTOM      = 3;
+    public static final byte VERTICAL_ALIGNMENT_JUSTIFY     = 4;
+
+    public static final short DISPLAY_MODE_TRANSPARENT       = 1;
+    public static final short DISPLAY_MODE_OPAQUE            = 2;
+
+    public static final short ROTATION_NONE                  = 0;
+    public static final short ROTATION_TOP_TO_BOTTOM         = 1;
+    public static final short ROTATION_ROTATED_90_DEGREES    = 2;
+    public static final short ROTATION_ROTATED_90_DEGREES_CLOCKWISE = 3;
+
+    public static final short DATA_LABEL_PLACEMENT_CHART_DEPENDENT = 0;
+    public static final short DATA_LABEL_PLACEMENT_OUTSIDE   = 1;
+    public static final short DATA_LABEL_PLACEMENT_INSIDE    = 2;
+    public static final short DATA_LABEL_PLACEMENT_CENTER    = 3;
+    public static final short DATA_LABEL_PLACEMENT_AXIS      = 4;
+    public static final short DATA_LABEL_PLACEMENT_ABOVE     = 5;
+    public static final short DATA_LABEL_PLACEMENT_BELOW     = 6;
+    public static final short DATA_LABEL_PLACEMENT_LEFT      = 7;
+    public static final short DATA_LABEL_PLACEMENT_RIGHT     = 8;
+    public static final short DATA_LABEL_PLACEMENT_AUTO      = 9;
+    public static final short DATA_LABEL_PLACEMENT_USER_MOVED = 10;
+
+    private byte  field_1_horizontalAlignment;
+    private byte  field_2_verticalAlignment;
+    private short field_3_displayMode;
+    private int   field_4_rgbColor;
+    private int   field_5_x;
+    private int   field_6_y;
+    private int   field_7_width;
+    private int   field_8_height;
+    private short field_9_options1;
+    private short field_10_indexOfColorValue;
+    private short field_11_options2;
+    private short field_12_textRotation;
+
+    public TextRecord() {}
+
+    public TextRecord(TextRecord other) {
+        super(other);
+        field_1_horizontalAlignment = other.field_1_horizontalAlignment;
+        field_2_verticalAlignment   = other.field_2_verticalAlignment;
+        field_3_displayMode         = other.field_3_displayMode;
+        field_4_rgbColor            = other.field_4_rgbColor;
+        field_5_x                   = other.field_5_x;
+        field_6_y                   = other.field_6_y;
+        field_7_width               = other.field_7_width;
+        field_8_height              = other.field_8_height;
+        field_9_options1            = other.field_9_options1;
+        field_10_indexOfColorValue  = other.field_10_indexOfColorValue;
+        field_11_options2           = other.field_11_options2;
+        field_12_textRotation       = other.field_12_textRotation;
     }
 
-    public TextRecord(RecordInputStream in)
-    {
-        field_1_horizontalAlignment    = in.readByte();
-        field_2_verticalAlignment      = in.readByte();
-        field_3_displayMode            = in.readShort();
-        field_4_rgbColor               = in.readInt();
-        field_5_x                      = in.readInt();
-        field_6_y                      = in.readInt();
-        field_7_width                  = in.readInt();
-        field_8_height                 = in.readInt();
-        field_9_options1               = in.readShort();
-        field_10_indexOfColorValue     = in.readShort();
-        field_11_options2              = in.readShort();
-        field_12_textRotation          = in.readShort();
+    public TextRecord(RecordInputStream in) {
+        field_1_horizontalAlignment = in.readByte();
+        field_2_verticalAlignment   = in.readByte();
+        field_3_displayMode         = in.readShort();
+        field_4_rgbColor            = in.readInt();
+        field_5_x                   = in.readInt();
+        field_6_y                   = in.readInt();
+        field_7_width               = in.readInt();
+        field_8_height              = in.readInt();
+        field_9_options1            = in.readShort();
+        field_10_indexOfColorValue  = in.readShort();
+        field_11_options2           = in.readShort();
+        field_12_textRotation       = in.readShort();
     }
 
     public String toString()
@@ -115,65 +132,65 @@ public final class TextRecord extends StandardRecord {
         buffer.append("    .horizontalAlignment  = ")
             .append("0x").append(HexDump.toHex(  getHorizontalAlignment ()))
             .append(" (").append( getHorizontalAlignment() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .verticalAlignment    = ")
             .append("0x").append(HexDump.toHex(  getVerticalAlignment ()))
             .append(" (").append( getVerticalAlignment() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .displayMode          = ")
             .append("0x").append(HexDump.toHex(  getDisplayMode ()))
             .append(" (").append( getDisplayMode() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .rgbColor             = ")
             .append("0x").append(HexDump.toHex(  getRgbColor ()))
             .append(" (").append( getRgbColor() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .x                    = ")
             .append("0x").append(HexDump.toHex(  getX ()))
             .append(" (").append( getX() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .y                    = ")
             .append("0x").append(HexDump.toHex(  getY ()))
             .append(" (").append( getY() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .width                = ")
             .append("0x").append(HexDump.toHex(  getWidth ()))
             .append(" (").append( getWidth() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .height               = ")
             .append("0x").append(HexDump.toHex(  getHeight ()))
             .append(" (").append( getHeight() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .options1             = ")
             .append("0x").append(HexDump.toHex(  getOptions1 ()))
             .append(" (").append( getOptions1() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-        buffer.append("         .autoColor                = ").append(isAutoColor()).append('\n'); 
-        buffer.append("         .showKey                  = ").append(isShowKey()).append('\n'); 
-        buffer.append("         .showValue                = ").append(isShowValue()).append('\n'); 
-        buffer.append("         .vertical                 = ").append(isVertical()).append('\n'); 
-        buffer.append("         .autoGeneratedText        = ").append(isAutoGeneratedText()).append('\n'); 
-        buffer.append("         .generated                = ").append(isGenerated()).append('\n'); 
-        buffer.append("         .autoLabelDeleted         = ").append(isAutoLabelDeleted()).append('\n'); 
-        buffer.append("         .autoBackground           = ").append(isAutoBackground()).append('\n'); 
-            buffer.append("         .rotation                 = ").append(getRotation()).append('\n'); 
-        buffer.append("         .showCategoryLabelAsPercentage     = ").append(isShowCategoryLabelAsPercentage()).append('\n'); 
-        buffer.append("         .showValueAsPercentage     = ").append(isShowValueAsPercentage()).append('\n'); 
-        buffer.append("         .showBubbleSizes          = ").append(isShowBubbleSizes()).append('\n'); 
-        buffer.append("         .showLabel                = ").append(isShowLabel()).append('\n'); 
+        buffer.append(System.getProperty("line.separator"));
+        buffer.append("         .autoColor                = ").append(isAutoColor()).append('\n');
+        buffer.append("         .showKey                  = ").append(isShowKey()).append('\n');
+        buffer.append("         .showValue                = ").append(isShowValue()).append('\n');
+        buffer.append("         .vertical                 = ").append(isVertical()).append('\n');
+        buffer.append("         .autoGeneratedText        = ").append(isAutoGeneratedText()).append('\n');
+        buffer.append("         .generated                = ").append(isGenerated()).append('\n');
+        buffer.append("         .autoLabelDeleted         = ").append(isAutoLabelDeleted()).append('\n');
+        buffer.append("         .autoBackground           = ").append(isAutoBackground()).append('\n');
+            buffer.append("         .rotation                 = ").append(getRotation()).append('\n');
+        buffer.append("         .showCategoryLabelAsPercentage     = ").append(isShowCategoryLabelAsPercentage()).append('\n');
+        buffer.append("         .showValueAsPercentage     = ").append(isShowValueAsPercentage()).append('\n');
+        buffer.append("         .showBubbleSizes          = ").append(isShowBubbleSizes()).append('\n');
+        buffer.append("         .showLabel                = ").append(isShowLabel()).append('\n');
         buffer.append("    .indexOfColorValue    = ")
             .append("0x").append(HexDump.toHex(  getIndexOfColorValue ()))
             .append(" (").append( getIndexOfColorValue() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .options2             = ")
             .append("0x").append(HexDump.toHex(  getOptions2 ()))
             .append(" (").append( getOptions2() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-            buffer.append("         .dataLabelPlacement       = ").append(getDataLabelPlacement()).append('\n'); 
+        buffer.append(System.getProperty("line.separator"));
+            buffer.append("         .dataLabelPlacement       = ").append(getDataLabelPlacement()).append('\n');
         buffer.append("    .textRotation         = ")
             .append("0x").append(HexDump.toHex(  getTextRotation ()))
             .append(" (").append( getTextRotation() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
 
         buffer.append("[/TEXT]\n");
         return buffer.toString();
@@ -203,31 +220,23 @@ public final class TextRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
-        TextRecord rec = new TextRecord();
-    
-        rec.field_1_horizontalAlignment = field_1_horizontalAlignment;
-        rec.field_2_verticalAlignment = field_2_verticalAlignment;
-        rec.field_3_displayMode = field_3_displayMode;
-        rec.field_4_rgbColor = field_4_rgbColor;
-        rec.field_5_x = field_5_x;
-        rec.field_6_y = field_6_y;
-        rec.field_7_width = field_7_width;
-        rec.field_8_height = field_8_height;
-        rec.field_9_options1 = field_9_options1;
-        rec.field_10_indexOfColorValue = field_10_indexOfColorValue;
-        rec.field_11_options2 = field_11_options2;
-        rec.field_12_textRotation = field_12_textRotation;
-        return rec;
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public TextRecord clone() {
+        return copy();
     }
 
-
-
+    @Override
+    public TextRecord copy() {
+        return new TextRecord(this);
+    }
 
     /**
      * Get the horizontal alignment field for the Text record.
      *
-     * @return  One of 
+     * @return  One of
      *        HORIZONTAL_ALIGNMENT_LEFT
      *        HORIZONTAL_ALIGNMENT_CENTER
      *        HORIZONTAL_ALIGNMENT_BOTTOM
@@ -242,7 +251,7 @@ public final class TextRecord extends StandardRecord {
      * Set the horizontal alignment field for the Text record.
      *
      * @param field_1_horizontalAlignment
-     *        One of 
+     *        One of
      *        HORIZONTAL_ALIGNMENT_LEFT
      *        HORIZONTAL_ALIGNMENT_CENTER
      *        HORIZONTAL_ALIGNMENT_BOTTOM
@@ -256,7 +265,7 @@ public final class TextRecord extends StandardRecord {
     /**
      * Get the vertical alignment field for the Text record.
      *
-     * @return  One of 
+     * @return  One of
      *        VERTICAL_ALIGNMENT_TOP
      *        VERTICAL_ALIGNMENT_CENTER
      *        VERTICAL_ALIGNMENT_BOTTOM
@@ -271,7 +280,7 @@ public final class TextRecord extends StandardRecord {
      * Set the vertical alignment field for the Text record.
      *
      * @param field_2_verticalAlignment
-     *        One of 
+     *        One of
      *        VERTICAL_ALIGNMENT_TOP
      *        VERTICAL_ALIGNMENT_CENTER
      *        VERTICAL_ALIGNMENT_BOTTOM
@@ -285,7 +294,7 @@ public final class TextRecord extends StandardRecord {
     /**
      * Get the display mode field for the Text record.
      *
-     * @return  One of 
+     * @return  One of
      *        DISPLAY_MODE_TRANSPARENT
      *        DISPLAY_MODE_OPAQUE
      */
@@ -298,7 +307,7 @@ public final class TextRecord extends StandardRecord {
      * Set the display mode field for the Text record.
      *
      * @param field_3_displayMode
-     *        One of 
+     *        One of
      *        DISPLAY_MODE_TRANSPARENT
      *        DISPLAY_MODE_OPAQUE
      */
@@ -525,7 +534,7 @@ public final class TextRecord extends StandardRecord {
 
     /**
      * Sets the auto generated text field value.
-     * 
+     *
      */
     public void setAutoGeneratedText(boolean value)
     {
@@ -533,7 +542,7 @@ public final class TextRecord extends StandardRecord {
     }
 
     /**
-     * 
+     *
      * @return  the auto generated text field value.
      */
     public boolean isAutoGeneratedText()
@@ -543,7 +552,7 @@ public final class TextRecord extends StandardRecord {
 
     /**
      * Sets the generated field value.
-     * 
+     *
      */
     public void setGenerated(boolean value)
     {
@@ -551,7 +560,7 @@ public final class TextRecord extends StandardRecord {
     }
 
     /**
-     * 
+     *
      * @return  the generated field value.
      */
     public boolean isGenerated()
@@ -561,7 +570,7 @@ public final class TextRecord extends StandardRecord {
 
     /**
      * Sets the auto label deleted field value.
-     * 
+     *
      */
     public void setAutoLabelDeleted(boolean value)
     {
@@ -569,7 +578,7 @@ public final class TextRecord extends StandardRecord {
     }
 
     /**
-     * 
+     *
      * @return  the auto label deleted field value.
      */
     public boolean isAutoLabelDeleted()
@@ -579,7 +588,7 @@ public final class TextRecord extends StandardRecord {
 
     /**
      * Sets the auto background field value.
-     * 
+     *
      */
     public void setAutoBackground(boolean value)
     {
@@ -587,7 +596,7 @@ public final class TextRecord extends StandardRecord {
     }
 
     /**
-     * 
+     *
      * @return  the auto background field value.
      */
     public boolean isAutoBackground()
@@ -597,7 +606,7 @@ public final class TextRecord extends StandardRecord {
 
     /**
      * Sets the rotation field value.
-     * 
+     *
      */
     public void setRotation(short value)
     {
@@ -605,7 +614,7 @@ public final class TextRecord extends StandardRecord {
     }
 
     /**
-     * 
+     *
      * @return  the rotation field value.
      */
     public short getRotation()
@@ -615,7 +624,7 @@ public final class TextRecord extends StandardRecord {
 
     /**
      * Sets the show category label as percentage field value.
-     * 
+     *
      */
     public void setShowCategoryLabelAsPercentage(boolean value)
     {
@@ -623,7 +632,7 @@ public final class TextRecord extends StandardRecord {
     }
 
     /**
-     * 
+     *
      * @return  the show category label as percentage field value.
      */
     public boolean isShowCategoryLabelAsPercentage()
@@ -633,7 +642,7 @@ public final class TextRecord extends StandardRecord {
 
     /**
      * Sets the show value as percentage field value.
-     * 
+     *
      */
     public void setShowValueAsPercentage(boolean value)
     {
@@ -641,7 +650,7 @@ public final class TextRecord extends StandardRecord {
     }
 
     /**
-     * 
+     *
      * @return  the show value as percentage field value.
      */
     public boolean isShowValueAsPercentage()
@@ -651,7 +660,7 @@ public final class TextRecord extends StandardRecord {
 
     /**
      * Sets the show bubble sizes field value.
-     * 
+     *
      */
     public void setShowBubbleSizes(boolean value)
     {
@@ -659,7 +668,7 @@ public final class TextRecord extends StandardRecord {
     }
 
     /**
-     * 
+     *
      * @return  the show bubble sizes field value.
      */
     public boolean isShowBubbleSizes()
@@ -669,7 +678,7 @@ public final class TextRecord extends StandardRecord {
 
     /**
      * Sets the show label field value.
-     * 
+     *
      */
     public void setShowLabel(boolean value)
     {
@@ -677,7 +686,7 @@ public final class TextRecord extends StandardRecord {
     }
 
     /**
-     * 
+     *
      * @return  the show label field value.
      */
     public boolean isShowLabel()
@@ -687,7 +696,7 @@ public final class TextRecord extends StandardRecord {
 
     /**
      * Sets the data label placement field value.
-     * 
+     *
      */
     public void setDataLabelPlacement(short value)
     {
@@ -695,7 +704,7 @@ public final class TextRecord extends StandardRecord {
     }
 
     /**
-     * 
+     *
      * @return  the data label placement field value.
      */
     public short getDataLabelPlacement()

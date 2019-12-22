@@ -35,6 +35,16 @@ public final class ChartStartObjectRecord extends StandardRecord {
 	private short iObjectInstance1;
 	private short iObjectInstance2;
 
+	public ChartStartObjectRecord(ChartStartObjectRecord other) {
+		super(other);
+		rt = other.rt;
+		grbitFrt = other.grbitFrt;
+		iObjectKind = other.iObjectKind;
+		iObjectContext = other.iObjectContext;
+		iObjectInstance1 = other.iObjectInstance1;
+		iObjectInstance2 = other.iObjectInstance2;
+	}
+
 	public ChartStartObjectRecord(RecordInputStream in) {
 		rt = in.readShort();
 		grbitFrt = in.readShort();
@@ -77,5 +87,10 @@ public final class ChartStartObjectRecord extends StandardRecord {
 		buffer.append("    .iObjectInstance2=").append(HexDump.shortToHex(iObjectInstance2)).append('\n');
 		buffer.append("[/STARTOBJECT]\n");
 		return buffer.toString();
+	}
+
+	@Override
+	public ChartStartObjectRecord copy() {
+		return new ChartStartObjectRecord(this);
 	}
 }

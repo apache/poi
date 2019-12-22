@@ -31,7 +31,7 @@ import org.apache.poi.util.RecordFormatException;
  *  Escher format. We don't attempt to understand the contents, since
  *  they will be in the parent's format, not Escher format.
  */
-public final class EscherTextboxRecord extends EscherRecord implements Cloneable {
+public final class EscherTextboxRecord extends EscherRecord {
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;

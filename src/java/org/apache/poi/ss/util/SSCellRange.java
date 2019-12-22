@@ -20,7 +20,7 @@ package org.apache.poi.ss.util;
 import java.lang.reflect.Array;
 import java.util.Iterator;
 import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.stream.Stream;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellRange;
@@ -28,8 +28,6 @@ import org.apache.poi.util.Internal;
 
 /**
  * For POI internal use only
- *
- * @author Josh Micich
  */
 @Internal
 public final class SSCellRange<K extends Cell> implements CellRange<K> {
@@ -108,30 +106,8 @@ public final class SSCellRange<K extends Cell> implements CellRange<K> {
 		}
 		return result;
 	}
+
 	public Iterator<K> iterator() {
-		return new ArrayIterator<>(_flattenedArray);
-	}
-	private static final class ArrayIterator<D> implements Iterator<D> {
-
-		private final D[] _array;
-		private int _index;
-
-		public ArrayIterator(D[] array) {
-			_array = array.clone();
-			_index = 0;
-		}
-		public boolean hasNext() {
-			return _index < _array.length;
-		}
-		public D next() {
-			if (_index >= _array.length) {
-				throw new NoSuchElementException(String.valueOf(_index));
-			}
-			return _array[_index++];
-		}
-
-		public void remove() {
-			throw new UnsupportedOperationException("Cannot remove cells from this CellRange.");
-		}
+		return Stream.of(_flattenedArray).iterator();
 	}
 }

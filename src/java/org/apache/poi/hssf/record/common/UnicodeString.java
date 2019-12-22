@@ -18,430 +18,51 @@
 package org.apache.poi.hssf.record.common;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.cont.ContinuableRecordInput;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LittleEndianInput;
-import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.StringUtil;
+import org.apache.poi.util.Removal;
 
 /**
- * Title: Unicode String<p>
- * Description:  Unicode String - just standard fields that are in several records.
- *               It is considered more desirable then repeating it in all of them.<p>
- *               This is often called a XLUnicodeRichExtendedString in MS documentation.<p>
- * REFERENCE:  PG 264 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p>
- * REFERENCE:  PG 951 Excel Binary File Format (.xls) Structure Specification v20091214 
+ * Unicode String - just standard fields that are in several records.
+ * It is considered more desirable then repeating it in all of them.<p>
+ * This is often called a XLUnicodeRichExtendedString in MS documentation.<p>
  */
-public class UnicodeString implements Comparable<UnicodeString> {
+public class UnicodeString implements Comparable<UnicodeString>, Duplicatable {
     private static final POILogger _logger = POILogFactory.getLogger(UnicodeString.class);
 
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
-
+    private static final BitField highByte  = BitFieldFactory.getInstance(0x1);
+    // 0x2 is reserved
+    private static final BitField extBit    = BitFieldFactory.getInstance(0x4);
+    private static final BitField richText  = BitFieldFactory.getInstance(0x8);
 
     private short             field_1_charCount;
     private byte              field_2_optionflags;
     private String            field_3_string;
     private List<FormatRun>   field_4_format_runs;
     private ExtRst            field_5_ext_rst;
-    private static final BitField   highByte  = BitFieldFactory.getInstance(0x1);
-    // 0x2 is reserved
-    private static final BitField   extBit    = BitFieldFactory.getInstance(0x4);
-    private static final BitField   richText  = BitFieldFactory.getInstance(0x8);
 
-    public static class FormatRun implements Comparable<FormatRun> {
-        final short _character;
-        short _fontIndex;
-
-        public FormatRun(short character, short fontIndex) {
-            this._character = character;
-            this._fontIndex = fontIndex;
-        }
-
-        public FormatRun(LittleEndianInput in) {
-            this(in.readShort(), in.readShort());
-        }
-
-        public short getCharacterPos() {
-            return _character;
-        }
-
-        public short getFontIndex() {
-            return _fontIndex;
-        }
-
-        public boolean equals(Object o) {
-            if (!(o instanceof FormatRun)) {
-                return false;
-            }
-            FormatRun other = ( FormatRun ) o;
-
-            return _character == other._character && _fontIndex == other._fontIndex;
-        }
-
-        public int compareTo(FormatRun r) {
-            if (_character == r._character && _fontIndex == r._fontIndex) {
-                return 0;
-            }
-            if (_character == r._character) {
-                return _fontIndex - r._fontIndex;
-            }
-            return _character - r._character;
-        }
-
-        @Override
-        public int hashCode() {
-            assert false : "hashCode not designed";
-            return 42; // any arbitrary constant will do
-        }
-
-        public String toString() {
-            return "character="+_character+",fontIndex="+_fontIndex;
-        }
-
-        public void serialize(LittleEndianOutput out) {
-            out.writeShort(_character);
-            out.writeShort(_fontIndex);
-        }
-    }
-    
-    // See page 681
-    public static class ExtRst implements Comparable<ExtRst> {
-       private short reserved;
-       
-       // This is a Phs (see page 881)
-       private short formattingFontIndex;
-       private short formattingOptions;
-       
-       // This is a RPHSSub (see page 894)
-       private int numberOfRuns;
-       private String phoneticText;
-       
-       // This is an array of PhRuns (see page 881)
-       private PhRun[] phRuns;
-       // Sometimes there's some cruft at the end
-       private byte[] extraData;
-
-       private void populateEmpty() {
-          reserved = 1;
-          phoneticText = "";
-          phRuns = new PhRun[0];
-          extraData = new byte[0];
-       }
-       
-       protected ExtRst() {
-          populateEmpty();
-       }
-       protected ExtRst(LittleEndianInput in, int expectedLength) {
-          reserved = in.readShort();
-          
-          // Old style detection (Reserved = 0xFF)
-          if(reserved == -1) {
-             populateEmpty();
-             return;
-          }
-          
-          // Spot corrupt records
-          if(reserved != 1) {
-             _logger.log(POILogger.WARN, "Warning - ExtRst has wrong magic marker, expecting 1 but found " + reserved + " - ignoring");
-             // Grab all the remaining data, and ignore it
-             for(int i=0; i<expectedLength-2; i++) {
-                in.readByte();
-             }
-             // And make us be empty
-             populateEmpty();
-             return;
-          }
-
-          // Carry on reading in as normal
-          short stringDataSize = in.readShort();
-          
-          formattingFontIndex = in.readShort();
-          formattingOptions   = in.readShort();
-          
-          // RPHSSub
-          numberOfRuns = in.readUShort();
-          short length1 = in.readShort();
-          // No really. Someone clearly forgot to read
-          //  the docs on their datastructure...
-          short length2 = in.readShort();
-          // And sometimes they write out garbage :(
-          if(length1 == 0 && length2 > 0) {
-             length2 = 0;
-          }
-          if(length1 != length2) {
-             throw new IllegalStateException(
-                   "The two length fields of the Phonetic Text don't agree! " +
-                   length1 + " vs " + length2
-             );
-          }
-          phoneticText = StringUtil.readUnicodeLE(in, length1);
-          
-          int runData = stringDataSize - 4 - 6 - (2*phoneticText.length());
-          int numRuns = (runData / 6);
-          phRuns = new PhRun[numRuns];
-          for(int i=0; i<phRuns.length; i++) {
-             phRuns[i] = new PhRun(in);
-          }
-
-          int extraDataLength = runData - (numRuns*6);
-          if(extraDataLength < 0) {
-        	 _logger.log( POILogger.WARN, "Warning - ExtRst overran by " + (0-extraDataLength) + " bytes");
-             extraDataLength = 0;
-          }
-          extraData = IOUtils.safelyAllocate(extraDataLength, MAX_RECORD_LENGTH);
-          for(int i=0; i<extraData.length; i++) {
-             extraData[i] = in.readByte();
-          }
-       }
-       /**
-        * Returns our size, excluding our 
-        *  4 byte header
-        */
-       protected int getDataSize() {
-          return 4 + 6 + (2*phoneticText.length()) + 
-             (6*phRuns.length) + extraData.length;
-       }
-       protected void serialize(ContinuableRecordOutput out) {
-          int dataSize = getDataSize();
-          
-          out.writeContinueIfRequired(8);
-          out.writeShort(reserved);
-          out.writeShort(dataSize);
-          out.writeShort(formattingFontIndex);
-          out.writeShort(formattingOptions);
-          
-          out.writeContinueIfRequired(6);
-          out.writeShort(numberOfRuns);
-          out.writeShort(phoneticText.length());
-          out.writeShort(phoneticText.length());
-          
-          out.writeContinueIfRequired(phoneticText.length()*2);
-          StringUtil.putUnicodeLE(phoneticText, out);
-          
-          for(int i=0; i<phRuns.length; i++) {
-             phRuns[i].serialize(out);
-          }
-          
-          out.write(extraData);
-       }
-
-       public boolean equals(Object obj) {
-          if(! (obj instanceof ExtRst)) {
-             return false;
-          }
-          ExtRst other = (ExtRst)obj;
-          return (compareTo(other) == 0);
-       }
-       public int compareTo(ExtRst o) {
-          int result;
-          
-          result = reserved - o.reserved;
-          if (result != 0) {
-              return result;
-          }
-          result = formattingFontIndex - o.formattingFontIndex;
-          if (result != 0) {
-              return result;
-          }
-          result = formattingOptions - o.formattingOptions;
-          if (result != 0) {
-              return result;
-          }
-          result = numberOfRuns - o.numberOfRuns;
-          if (result != 0) {
-              return result;
-          }
-          
-          result = phoneticText.compareTo(o.phoneticText);
-          if (result != 0) {
-              return result;
-          }
-          
-          result = phRuns.length - o.phRuns.length;
-          if (result != 0) {
-              return result;
-          }
-          for(int i=0; i<phRuns.length; i++) {
-             result = phRuns[i].phoneticTextFirstCharacterOffset - o.phRuns[i].phoneticTextFirstCharacterOffset;
-             if (result != 0) {
-                 return result;
-             }
-             result = phRuns[i].realTextFirstCharacterOffset - o.phRuns[i].realTextFirstCharacterOffset;
-             if (result != 0) {
-                 return result;
-             }
-             result = phRuns[i].realTextLength - o.phRuns[i].realTextLength;
-             if (result != 0) {
-                 return result;
-             }
-          }
-          
-          result = Arrays.hashCode(extraData)-Arrays.hashCode(o.extraData);
-          
-          return result;
-       }
-
-       @Override
-       public int hashCode() {
-           int hash = reserved;
-           hash = 31*hash+formattingFontIndex;
-           hash = 31*hash+formattingOptions;
-           hash = 31*hash+numberOfRuns;
-           hash = 31*hash+phoneticText.hashCode();
-
-           if (phRuns != null) {
-               for (PhRun ph : phRuns) {
-                   hash = 31*hash+ph.phoneticTextFirstCharacterOffset;
-                   hash = 31*hash+ph.realTextFirstCharacterOffset;
-                   hash = 31*hash+ph.realTextLength;
-               }
-           }
-           return hash;
-       }
-
-       protected ExtRst clone() {
-          ExtRst ext = new ExtRst();
-          ext.reserved = reserved;
-          ext.formattingFontIndex = formattingFontIndex;
-          ext.formattingOptions = formattingOptions;
-          ext.numberOfRuns = numberOfRuns;
-          ext.phoneticText = phoneticText;
-          ext.phRuns = new PhRun[phRuns.length];
-          for(int i=0; i<ext.phRuns.length; i++) {
-             ext.phRuns[i] = new PhRun(
-                   phRuns[i].phoneticTextFirstCharacterOffset,
-                   phRuns[i].realTextFirstCharacterOffset,
-                   phRuns[i].realTextLength
-             );
-          }
-          return ext;
-       }
-       
-       public short getFormattingFontIndex() {
-         return formattingFontIndex;
-       }
-       public short getFormattingOptions() {
-         return formattingOptions;
-       }
-       public int getNumberOfRuns() {
-         return numberOfRuns;
-       }
-       public String getPhoneticText() {
-         return phoneticText;
-       }
-       public PhRun[] getPhRuns() {
-         return phRuns;
-       }
-    }
-    public static class PhRun {
-       private int phoneticTextFirstCharacterOffset;
-       private int realTextFirstCharacterOffset;
-       private int realTextLength;
-       
-       public PhRun(int phoneticTextFirstCharacterOffset,
-            int realTextFirstCharacterOffset, int realTextLength) {
-         this.phoneticTextFirstCharacterOffset = phoneticTextFirstCharacterOffset;
-         this.realTextFirstCharacterOffset = realTextFirstCharacterOffset;
-         this.realTextLength = realTextLength;
-      }
-      private PhRun(LittleEndianInput in) {
-          phoneticTextFirstCharacterOffset = in.readUShort();
-          realTextFirstCharacterOffset = in.readUShort();
-          realTextLength = in.readUShort();
-       }
-       private void serialize(ContinuableRecordOutput out) {
-          out.writeContinueIfRequired(6);
-          out.writeShort(phoneticTextFirstCharacterOffset);
-          out.writeShort(realTextFirstCharacterOffset);
-          out.writeShort(realTextLength);
-       }
+    private UnicodeString(UnicodeString other) {
+        field_1_charCount = other.field_1_charCount;
+        field_2_optionflags = other.field_2_optionflags;
+        field_3_string = other.field_3_string;
+        field_4_format_runs =  (other.field_4_format_runs == null) ? null :
+            other.field_4_format_runs.stream().map(FormatRun::new).collect(Collectors.toList());
+        field_5_ext_rst = (other.field_5_ext_rst == null) ? null : other.field_5_ext_rst.copy();
     }
 
-    private UnicodeString() {
-     //Used for clone method.
-    }
-
-    public UnicodeString(String str)
-    {
+    public UnicodeString(String str) {
       setString(str);
-    }
-
-
-
-    public int hashCode()
-    {
-        int stringHash = 0;
-        if (field_3_string != null) {
-            stringHash = field_3_string.hashCode();
-        }
-        return field_1_charCount + stringHash;
-    }
-
-    /**
-     * Our handling of equals is inconsistent with compareTo.  The trouble is because we don't truely understand
-     * rich text fields yet it's difficult to make a sound comparison.
-     *
-     * @param o     The object to compare.
-     * @return      true if the object is actually equal.
-     */
-    public boolean equals(Object o)
-    {
-        if (!(o instanceof UnicodeString)) {
-            return false;
-        }
-        UnicodeString other = (UnicodeString) o;
-
-        //OK lets do this in stages to return a quickly, first check the actual string
-        if (field_1_charCount != other.field_1_charCount
-            || field_2_optionflags != other.field_2_optionflags
-            || !field_3_string.equals(other.field_3_string)) {
-            return false;
-        }
-
-        //OK string appears to be equal but now lets compare formatting runs
-        if (field_4_format_runs == null) {
-            // Strings are equal, and there are not formatting runs.
-            return (other.field_4_format_runs == null);
-        } else if (other.field_4_format_runs == null) {
-            // Strings are equal, but one or the other has formatting runs
-            return false;
-        }
-
-        //Strings are equal, so now compare formatting runs.
-        int size = field_4_format_runs.size();
-        if (size != other.field_4_format_runs.size()) {
-          return false;
-        }
-
-        for (int i=0;i<size;i++) {
-          FormatRun run1 = field_4_format_runs.get(i);
-          FormatRun run2 = other.field_4_format_runs.get(i);
-
-          if (!run1.equals(run2)) {
-            return false;
-          }
-        }
-
-        // Well the format runs are equal as well!, better check the ExtRst data
-        if (field_5_ext_rst == null) {
-            return (other.field_5_ext_rst == null);
-        } else if (other.field_5_ext_rst == null) {
-            return false;
-        }
-            
-       return field_5_ext_rst.equals(other.field_5_ext_rst);
     }
 
     /**
@@ -480,6 +101,70 @@ public class UnicodeString implements Comparable<UnicodeString> {
              _logger.log(POILogger.WARN, "ExtRst was supposed to be " + extensionLength + " bytes long, but seems to actually be " + (field_5_ext_rst.getDataSize() + 4));
           }
         }
+    }
+
+    public int hashCode()
+    {
+        int stringHash = 0;
+        if (field_3_string != null) {
+            stringHash = field_3_string.hashCode();
+        }
+        return field_1_charCount + stringHash;
+    }
+
+    /**
+     * Our handling of equals is inconsistent with compareTo.  The trouble is because we don't truely understand
+     * rich text fields yet it's difficult to make a sound comparison.
+     *
+     * @param o     The object to compare.
+     * @return      true if the object is actually equal.
+     */
+    public boolean equals(Object o)
+    {
+        if (!(o instanceof UnicodeString)) {
+            return false;
+        }
+        UnicodeString other = (UnicodeString) o;
+
+        //OK lets do this in stages to return a quickly, first check the actual string
+        if (field_1_charCount != other.field_1_charCount
+                || field_2_optionflags != other.field_2_optionflags
+                || !field_3_string.equals(other.field_3_string)) {
+            return false;
+        }
+
+        //OK string appears to be equal but now lets compare formatting runs
+        if (field_4_format_runs == null) {
+            // Strings are equal, and there are not formatting runs.
+            return (other.field_4_format_runs == null);
+        } else if (other.field_4_format_runs == null) {
+            // Strings are equal, but one or the other has formatting runs
+            return false;
+        }
+
+        //Strings are equal, so now compare formatting runs.
+        int size = field_4_format_runs.size();
+        if (size != other.field_4_format_runs.size()) {
+            return false;
+        }
+
+        for (int i=0;i<size;i++) {
+            FormatRun run1 = field_4_format_runs.get(i);
+            FormatRun run2 = other.field_4_format_runs.get(i);
+
+            if (!run1.equals(run2)) {
+                return false;
+            }
+        }
+
+        // Well the format runs are equal as well!, better check the ExtRst data
+        if (field_5_ext_rst == null) {
+            return (other.field_5_ext_rst == null);
+        } else if (other.field_5_ext_rst == null) {
+            return false;
+        }
+
+        return field_5_ext_rst.equals(other.field_5_ext_rst);
     }
 
 
@@ -737,7 +422,7 @@ public class UnicodeString implements Comparable<UnicodeString> {
         if (isExtendedText() && field_5_ext_rst != null) {
             extendedDataSize = 4 + field_5_ext_rst.getDataSize();
         }
-       
+
         // Serialise the bulk of the String
         // The writeString handles tricky continue stuff for us
         out.writeString(field_3_string, numberOfRichTextRuns, extendedDataSize);
@@ -812,21 +497,16 @@ public class UnicodeString implements Comparable<UnicodeString> {
         return extBit.isSet(getOptionFlags());
     }
 
-    public Object clone() {
-        UnicodeString str = new UnicodeString();
-        str.field_1_charCount = field_1_charCount;
-        str.field_2_optionflags = field_2_optionflags;
-        str.field_3_string = field_3_string;
-        if (field_4_format_runs != null) {
-          str.field_4_format_runs = new ArrayList<>();
-          for (FormatRun r : field_4_format_runs) {
-            str.field_4_format_runs.add(new FormatRun(r._character, r._fontIndex));
-          }
-        }
-        if (field_5_ext_rst != null) {
-           str.field_5_ext_rst = field_5_ext_rst.clone();
-        }
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public UnicodeString clone() {
+        return copy();
+    }
 
-        return str;
+    @Override
+    public UnicodeString copy() {
+        return new UnicodeString(this);
     }
 }

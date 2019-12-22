@@ -21,26 +21,28 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * The default data label text properties record identifies the text characteristics of the preceding text record.
  */
-public final class DefaultDataLabelTextPropertiesRecord extends StandardRecord implements Cloneable {
-    public final static short      sid                             = 0x1024;
-    private  short      field_1_categoryDataType;
-    public final static short       CATEGORY_DATA_TYPE_SHOW_LABELS_CHARACTERISTIC = 0;
-    public final static short       CATEGORY_DATA_TYPE_VALUE_AND_PERCENTAGE_CHARACTERISTIC = 1;
-    public final static short       CATEGORY_DATA_TYPE_ALL_TEXT_CHARACTERISTIC = 2;
+public final class DefaultDataLabelTextPropertiesRecord extends StandardRecord {
+    public static final short sid = 0x1024;
+    public static final short CATEGORY_DATA_TYPE_SHOW_LABELS_CHARACTERISTIC = 0;
+    public static final short CATEGORY_DATA_TYPE_VALUE_AND_PERCENTAGE_CHARACTERISTIC = 1;
+    public static final short CATEGORY_DATA_TYPE_ALL_TEXT_CHARACTERISTIC = 2;
 
+    private short field_1_categoryDataType;
 
-    public DefaultDataLabelTextPropertiesRecord()
-    {
+    public DefaultDataLabelTextPropertiesRecord() {}
 
+    public DefaultDataLabelTextPropertiesRecord(DefaultDataLabelTextPropertiesRecord other) {
+        super(other);
+        field_1_categoryDataType = other.field_1_categoryDataType;
     }
 
-    public DefaultDataLabelTextPropertiesRecord(RecordInputStream in)
-    {
-        field_1_categoryDataType       = in.readShort();
+    public DefaultDataLabelTextPropertiesRecord(RecordInputStream in) {
+        field_1_categoryDataType = in.readShort();
     }
 
     public String toString()
@@ -51,7 +53,7 @@ public final class DefaultDataLabelTextPropertiesRecord extends StandardRecord i
         buffer.append("    .categoryDataType     = ")
             .append("0x").append(HexDump.toHex(  getCategoryDataType ()))
             .append(" (").append( getCategoryDataType() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
 
         buffer.append("[/DEFAULTTEXT]\n");
         return buffer.toString();
@@ -71,20 +73,22 @@ public final class DefaultDataLabelTextPropertiesRecord extends StandardRecord i
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public DefaultDataLabelTextPropertiesRecord clone() {
-        DefaultDataLabelTextPropertiesRecord rec = new DefaultDataLabelTextPropertiesRecord();
-    
-        rec.field_1_categoryDataType = field_1_categoryDataType;
-        return rec;
+        return copy();
     }
 
-
-
+    @Override
+    public DefaultDataLabelTextPropertiesRecord copy() {
+        return new DefaultDataLabelTextPropertiesRecord(this);
+    }
 
     /**
      * Get the category data type field for the DefaultDataLabelTextProperties record.
      *
-     * @return  One of 
+     * @return  One of
      *        CATEGORY_DATA_TYPE_SHOW_LABELS_CHARACTERISTIC
      *        CATEGORY_DATA_TYPE_VALUE_AND_PERCENTAGE_CHARACTERISTIC
      *        CATEGORY_DATA_TYPE_ALL_TEXT_CHARACTERISTIC
@@ -98,7 +102,7 @@ public final class DefaultDataLabelTextPropertiesRecord extends StandardRecord i
      * Set the category data type field for the DefaultDataLabelTextProperties record.
      *
      * @param field_1_categoryDataType
-     *        One of 
+     *        One of
      *        CATEGORY_DATA_TYPE_SHOW_LABELS_CHARACTERISTIC
      *        CATEGORY_DATA_TYPE_VALUE_AND_PERCENTAGE_CHARACTERISTIC
      *        CATEGORY_DATA_TYPE_ALL_TEXT_CHARACTERISTIC

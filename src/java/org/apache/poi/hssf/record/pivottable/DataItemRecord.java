@@ -24,9 +24,7 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
 /**
- * SXDI - Data Item (0x00C5)<br>
- * 
- * @author Patrick Cheng
+ * SXDI - Data Item (0x00C5)
  */
 public final class DataItemRecord extends StandardRecord {
 	public static final short sid = 0x00C5;
@@ -38,7 +36,18 @@ public final class DataItemRecord extends StandardRecord {
 	private int isxvi;
 	private int ifmt;
 	private String name;
-	
+
+	public DataItemRecord(DataItemRecord other) {
+		super(other);
+		isxvdData = other.isxvdData;
+		iiftab = other.iiftab;
+		df = other.df;
+		isxvd = other.isxvd;
+		isxvi = other.isxvi;
+		ifmt = other.ifmt;
+		name = other.name;
+	}
+
 	public DataItemRecord(RecordInputStream in) {
 		isxvdData = in.readUShort();
 		iiftab = in.readUShort();
@@ -46,20 +55,20 @@ public final class DataItemRecord extends StandardRecord {
 		isxvd = in.readUShort();
 		isxvi = in.readUShort();
 		ifmt = in.readUShort();
-		
+
 		name = in.readString();
 	}
-	
+
 	@Override
 	protected void serialize(LittleEndianOutput out) {
-		
+
 		out.writeShort(isxvdData);
 		out.writeShort(iiftab);
 		out.writeShort(df);
 		out.writeShort(isxvd);
 		out.writeShort(isxvi);
 		out.writeShort(ifmt);
-		
+
 		StringUtil.writeUnicodeString(out, name);
 	}
 
@@ -76,7 +85,7 @@ public final class DataItemRecord extends StandardRecord {
 	@Override
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
-		
+
 		buffer.append("[SXDI]\n");
 		buffer.append("  .isxvdData = ").append(HexDump.shortToHex(isxvdData)).append("\n");
 		buffer.append("  .iiftab = ").append(HexDump.shortToHex(iiftab)).append("\n");
@@ -86,5 +95,10 @@ public final class DataItemRecord extends StandardRecord {
 		buffer.append("  .ifmt = ").append(HexDump.shortToHex(ifmt)).append("\n");
 		buffer.append("[/SXDI]\n");
 		return buffer.toString();
+	}
+
+	@Override
+	public DataItemRecord copy() {
+		return new DataItemRecord(this);
 	}
 }

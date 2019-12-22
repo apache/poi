@@ -23,29 +23,30 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * The dat record is used to store options for the chart.
  */
-public final class DatRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x1063;
+public final class DatRecord extends StandardRecord {
+    public static final short sid = 0x1063;
 
     private static final BitField horizontalBorder = BitFieldFactory.getInstance(0x1);
     private static final BitField verticalBorder   = BitFieldFactory.getInstance(0x2);
     private static final BitField border           = BitFieldFactory.getInstance(0x4);
     private static final BitField showSeriesKey    = BitFieldFactory.getInstance(0x8);
 
-    private  short      field_1_options;
+    private short field_1_options;
 
+    public DatRecord() {}
 
-    public DatRecord()
-    {
-
+    public DatRecord(DatRecord other) {
+        super(other);
+        field_1_options = other.field_1_options;
     }
 
-    public DatRecord(RecordInputStream in)
-    {
-        field_1_options                = in.readShort();
+    public DatRecord(RecordInputStream in) {
+        field_1_options = in.readShort();
     }
 
     public String toString()
@@ -56,11 +57,11 @@ public final class DatRecord extends StandardRecord implements Cloneable {
         buffer.append("    .options              = ")
             .append("0x").append(HexDump.toHex(  getOptions ()))
             .append(" (").append( getOptions() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-        buffer.append("         .horizontalBorder         = ").append(isHorizontalBorder()).append('\n'); 
-        buffer.append("         .verticalBorder           = ").append(isVerticalBorder()).append('\n'); 
-        buffer.append("         .border                   = ").append(isBorder()).append('\n'); 
-        buffer.append("         .showSeriesKey            = ").append(isShowSeriesKey()).append('\n'); 
+        buffer.append(System.getProperty("line.separator"));
+        buffer.append("         .horizontalBorder         = ").append(isHorizontalBorder()).append('\n');
+        buffer.append("         .verticalBorder           = ").append(isVerticalBorder()).append('\n');
+        buffer.append("         .border                   = ").append(isBorder()).append('\n');
+        buffer.append("         .showSeriesKey            = ").append(isShowSeriesKey()).append('\n');
 
         buffer.append("[/DAT]\n");
         return buffer.toString();
@@ -80,14 +81,17 @@ public final class DatRecord extends StandardRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public DatRecord clone() {
-        DatRecord rec = new DatRecord();
-        rec.field_1_options = field_1_options;
-        return rec;
+        return copy();
     }
 
-
-
+    @Override
+    public DatRecord copy() {
+        return new DatRecord(this);
+    }
 
     /**
      * Get the options field for the Dat record.

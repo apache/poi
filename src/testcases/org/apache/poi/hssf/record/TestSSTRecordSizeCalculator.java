@@ -18,22 +18,33 @@
 package org.apache.poi.hssf.record;
 
 import junit.framework.TestCase;
-
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.IntMapper;
+import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * Tests that records size calculates correctly.
- * 
+ *
  * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class TestSSTRecordSizeCalculator extends TestCase {
 	private static final String SMALL_STRING = "Small string";
 	private static final int COMPRESSED_PLAIN_STRING_OVERHEAD = 3;
 	private static final int OPTION_FIELD_SIZE = 1;
-	
+
 	private final IntMapper<UnicodeString> strings = new IntMapper<>();
+
+
+	/** standard record overhead: two shorts (record id plus data space size)*/
+	private static final int STD_RECORD_OVERHEAD = 2 * LittleEndianConsts.SHORT_SIZE;
+
+	/** SST overhead: the standard record overhead, plus the number of strings and the number of unique strings -- two ints */
+	private static final int SST_RECORD_OVERHEAD = STD_RECORD_OVERHEAD + 2 * LittleEndianConsts.INT_SIZE;
+
+	/** how much data can we stuff into an SST record? That would be _max minus the standard SST record overhead */
+	private static final int MAX_DATA_SPACE = RecordInputStream.MAX_RECORD_DATA_SIZE - 8;
+
 
 	private void confirmSize(int expectedSize) {
 		ContinuableRecordOutput cro = ContinuableRecordOutput.createForCountingOnly();
@@ -44,64 +55,64 @@ public final class TestSSTRecordSizeCalculator extends TestCase {
 
 	public void testBasic() {
 		strings.add(makeUnicodeString(SMALL_STRING));
-		confirmSize(SSTRecord.SST_RECORD_OVERHEAD
+		confirmSize(SST_RECORD_OVERHEAD
 				+ COMPRESSED_PLAIN_STRING_OVERHEAD
 				+ SMALL_STRING.length());
 	}
 
 	public void testBigStringAcrossUnicode() {
-		int bigString = SSTRecord.MAX_DATA_SPACE + 100;
+		int bigString = MAX_DATA_SPACE + 100;
 		strings.add(makeUnicodeString(bigString));
-		confirmSize(SSTRecord.SST_RECORD_OVERHEAD
+		confirmSize(SST_RECORD_OVERHEAD
 				+ COMPRESSED_PLAIN_STRING_OVERHEAD
-				+ SSTRecord.MAX_DATA_SPACE
-				+ SSTRecord.STD_RECORD_OVERHEAD
+				+ MAX_DATA_SPACE
+				+ STD_RECORD_OVERHEAD
 				+ OPTION_FIELD_SIZE
 				+ 100);
 	}
 
 	public void testPerfectFit() {
-		int perfectFit = SSTRecord.MAX_DATA_SPACE - COMPRESSED_PLAIN_STRING_OVERHEAD;
+		int perfectFit = MAX_DATA_SPACE - COMPRESSED_PLAIN_STRING_OVERHEAD;
 		strings.add(makeUnicodeString(perfectFit));
-		confirmSize(SSTRecord.SST_RECORD_OVERHEAD
+		confirmSize(SST_RECORD_OVERHEAD
 				+ COMPRESSED_PLAIN_STRING_OVERHEAD
 				+ perfectFit);
 	}
 
 	public void testJustOversized() {
-		int tooBig = SSTRecord.MAX_DATA_SPACE - COMPRESSED_PLAIN_STRING_OVERHEAD + 1;
+		int tooBig = MAX_DATA_SPACE - COMPRESSED_PLAIN_STRING_OVERHEAD + 1;
 		strings.add(makeUnicodeString(tooBig));
-		confirmSize(SSTRecord.SST_RECORD_OVERHEAD
+		confirmSize(SST_RECORD_OVERHEAD
 				+ COMPRESSED_PLAIN_STRING_OVERHEAD
 				+ tooBig - 1
 				// continue record
-				+ SSTRecord.STD_RECORD_OVERHEAD
+				+ STD_RECORD_OVERHEAD
 				+ OPTION_FIELD_SIZE + 1);
 
 	}
 
 	public void testSecondStringStartsOnNewContinuation() {
-		int perfectFit = SSTRecord.MAX_DATA_SPACE - COMPRESSED_PLAIN_STRING_OVERHEAD;
+		int perfectFit = MAX_DATA_SPACE - COMPRESSED_PLAIN_STRING_OVERHEAD;
 		strings.add(makeUnicodeString(perfectFit));
 		strings.add(makeUnicodeString(SMALL_STRING));
-		confirmSize(SSTRecord.SST_RECORD_OVERHEAD
-				+ SSTRecord.MAX_DATA_SPACE
+		confirmSize(SST_RECORD_OVERHEAD
+				+ MAX_DATA_SPACE
 				// second string
-				+ SSTRecord.STD_RECORD_OVERHEAD
+				+ STD_RECORD_OVERHEAD
 				+ COMPRESSED_PLAIN_STRING_OVERHEAD
 				+ SMALL_STRING.length());
 	}
 
 	public void testHeaderCrossesNormalContinuePoint() {
-		int almostPerfectFit = SSTRecord.MAX_DATA_SPACE - COMPRESSED_PLAIN_STRING_OVERHEAD - 2;
+		int almostPerfectFit = MAX_DATA_SPACE - COMPRESSED_PLAIN_STRING_OVERHEAD - 2;
 		strings.add(makeUnicodeString(almostPerfectFit));
 		String oneCharString = new String(new char[1]);
 		strings.add(makeUnicodeString(oneCharString));
-		confirmSize(SSTRecord.SST_RECORD_OVERHEAD
+		confirmSize(SST_RECORD_OVERHEAD
 				+ COMPRESSED_PLAIN_STRING_OVERHEAD
 				+ almostPerfectFit
 				// second string
-				+ SSTRecord.STD_RECORD_OVERHEAD
+				+ STD_RECORD_OVERHEAD
 				+ COMPRESSED_PLAIN_STRING_OVERHEAD
 				+ oneCharString.length());
 

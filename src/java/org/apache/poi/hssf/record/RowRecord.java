@@ -21,21 +21,33 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        Row Record (0x0208)<p>
- * Description:  stores the row information for the sheet.<p>
- * REFERENCE:  PG 379 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
- * 
+ * Stores the row information for the sheet.
+ *
  * @since 2.0-pre
  */
 public final class RowRecord extends StandardRecord {
-    public final static short sid = 0x0208;
+    public static final short sid = 0x0208;
 
     public static final int ENCODED_SIZE = 20;
-    
+
     private static final int OPTION_BITS_ALWAYS_SET = 0x0100;
     //private static final int DEFAULT_HEIGHT_BIT = 0x8000;
+
+    private static final BitField outlineLevel  = BitFieldFactory.getInstance(0x07);
+    // bit 3 reserved
+    private static final BitField colapsed      = BitFieldFactory.getInstance(0x10);
+    private static final BitField zeroHeight    = BitFieldFactory.getInstance(0x20);
+    private static final BitField badFontHeight = BitFieldFactory.getInstance(0x40);
+    private static final BitField formatted     = BitFieldFactory.getInstance(0x80);
+
+    private static final BitField xfIndex       = BitFieldFactory.getInstance(0xFFF);
+    private static final BitField topBorder     = BitFieldFactory.getInstance(0x1000);
+    private static final BitField bottomBorder  = BitFieldFactory.getInstance(0x2000);
+    private static final BitField phoeneticGuide  = BitFieldFactory.getInstance(0x4000);
+    // bit 15 is unused
 
     private int field_1_row_number;
     private int field_2_first_col;
@@ -47,20 +59,21 @@ public final class RowRecord extends StandardRecord {
     private short field_6_reserved;
     /** 16 bit options flags */
     private int field_7_option_flags;
-    private static final BitField          outlineLevel  = BitFieldFactory.getInstance(0x07);
-    // bit 3 reserved
-    private static final BitField          colapsed      = BitFieldFactory.getInstance(0x10);
-    private static final BitField          zeroHeight    = BitFieldFactory.getInstance(0x20);
-    private static final BitField          badFontHeight = BitFieldFactory.getInstance(0x40);
-    private static final BitField          formatted     = BitFieldFactory.getInstance(0x80);
-    
     /** 16 bit options flags */
     private int field_8_option_flags;   // only if isFormatted
-    private static final BitField          xfIndex       = BitFieldFactory.getInstance(0xFFF);
-    private static final BitField          topBorder     = BitFieldFactory.getInstance(0x1000);
-    private static final BitField          bottomBorder  = BitFieldFactory.getInstance(0x2000);
-    private static final BitField          phoeneticGuide  = BitFieldFactory.getInstance(0x4000);
-    // bit 15 is unused
+
+    public RowRecord(RowRecord other) {
+        super(other);
+        field_1_row_number = other.field_1_row_number;
+        field_2_first_col = other.field_2_first_col;
+        field_3_last_col = other.field_3_last_col;
+        field_4_height = other.field_4_height;
+        field_5_optimize = other.field_5_optimize;
+        field_6_reserved = other.field_6_reserved;
+        field_7_option_flags = other.field_7_option_flags;
+        field_8_option_flags = other.field_8_option_flags;
+    }
+
 
     public RowRecord(int rowNumber) {
     	if(rowNumber < 0) {
@@ -91,7 +104,7 @@ public final class RowRecord extends StandardRecord {
     }
 
     /**
-     * Updates the firstCol and lastCol fields to the reserved value (-1) 
+     * Updates the firstCol and lastCol fields to the reserved value (-1)
      * to signify that this row is empty
      */
     public void setEmpty() {
@@ -101,7 +114,7 @@ public final class RowRecord extends StandardRecord {
     public boolean isEmpty() {
         return (field_2_first_col | field_3_last_col) == 0;
     }
-    
+
     /**
      * set the logical row number for this row (0 based index)
      * @param row - the row number
@@ -202,7 +215,7 @@ public final class RowRecord extends StandardRecord {
     public void setTopBorder(boolean f) {
     	field_8_option_flags = topBorder.setBoolean(field_8_option_flags, f);
     }
-    
+
     /**
      * A bit that specifies whether any cell in the row has a medium or thick
      * bottom border, or any cell in the row directly below the current row has
@@ -212,7 +225,7 @@ public final class RowRecord extends StandardRecord {
     public void setBottomBorder(boolean f) {
     	field_8_option_flags = bottomBorder.setBoolean(field_8_option_flags, f);
     }
-    
+
     /**
      * A bit that specifies whether the phonetic guide feature is enabled for
      * any cell in this row.
@@ -221,7 +234,7 @@ public final class RowRecord extends StandardRecord {
     public void setPhoeneticGuide(boolean f) {
     	field_8_option_flags = phoeneticGuide.setBoolean(field_8_option_flags, f);
     }
-    
+
     /**
      * get the logical row number for this row (0 based index)
      * @return row - the row number
@@ -239,7 +252,7 @@ public final class RowRecord extends StandardRecord {
     }
 
     /**
-     * get the logical col number for the last cell this row (0 based index), plus one 
+     * get the logical col number for the last cell this row (0 based index), plus one
      * @return col - the last col index + 1
      */
     public int getLastCol() {
@@ -328,7 +341,7 @@ public final class RowRecord extends StandardRecord {
     public short getOptionFlags2() {
         return (short)field_8_option_flags;
     }
-    
+
     /**
      * if the row is formatted then this is the index to the extended format record
      * @see org.apache.poi.hssf.record.ExtendedFormatRecord
@@ -364,7 +377,7 @@ public final class RowRecord extends StandardRecord {
     public boolean getPhoeneticGuide() {
     	return phoeneticGuide.isSet(field_8_option_flags);
     }
-    
+
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
@@ -410,15 +423,16 @@ public final class RowRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
-      RowRecord rec = new RowRecord(field_1_row_number);
-      rec.field_2_first_col = field_2_first_col;
-      rec.field_3_last_col = field_3_last_col;
-      rec.field_4_height = field_4_height;
-      rec.field_5_optimize = field_5_optimize;
-      rec.field_6_reserved = field_6_reserved;
-      rec.field_7_option_flags = field_7_option_flags;
-      rec.field_8_option_flags = field_8_option_flags;
-      return rec;
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public RowRecord clone() {
+        return copy();
+    }
+
+    @Override
+    public RowRecord copy() {
+      return new RowRecord(this);
     }
 }

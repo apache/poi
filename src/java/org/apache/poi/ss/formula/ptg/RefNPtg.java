@@ -20,16 +20,16 @@ package org.apache.poi.ss.formula.ptg;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.LittleEndianInput;
 
-/**
- * RefNPtg
- * @author Jason Height (jheight at apache dot com)
- */
 public final class RefNPtg extends Ref2DPtgBase {
 	public final static byte sid = 0x2C;
 
 	public RefNPtg(LittleEndianInput in)  {
 		super(in);
 	}
+
+    public RefNPtg(RefNPtg other) {
+	    super(other);
+    }
 
 	protected byte getSid() {
 		return sid;
@@ -44,13 +44,18 @@ public final class RefNPtg extends Ref2DPtgBase {
         } else {
             builder.append(getRow()+1);
         }
-        
+
         if(isColRelative()) {
             builder.append(" ColOffset: ").append(getColumn());
         } else {
             builder.append(CellReference.convertNumToColString(getColumn()));
         }
-        
+
         return builder.toString();
+    }
+
+    @Override
+    public RefNPtg copy() {
+        return new RefNPtg(this);
     }
 }

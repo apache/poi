@@ -30,32 +30,31 @@ import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 
 /**
  * Conditional Formatting Rules. This can hold old-style rules
- *   
- * 
+ *
+ *
  * <p>This is for the older-style Excel conditional formattings,
  *  new-style (Excel 2007+) also make use of {@link CFRule12Record}
  *  for their rules.</p>
  */
-public abstract class CFRuleBase extends StandardRecord implements Cloneable {
+public abstract class CFRuleBase extends StandardRecord {
     // FIXME: Merge with org.apache.poi.ss.usermodel.ComparisonOperator and rewrite as an enum
-    public static final class ComparisonOperator {
-        public static final byte NO_COMPARISON = 0;
-        public static final byte BETWEEN       = 1;
-        public static final byte NOT_BETWEEN   = 2;
-        public static final byte EQUAL         = 3;
-        public static final byte NOT_EQUAL     = 4;
-        public static final byte GT            = 5;
-        public static final byte LT            = 6;
-        public static final byte GE            = 7;
-        public static final byte LE            = 8;
-        private static final byte max_operator = 8;
+    public interface ComparisonOperator {
+        byte NO_COMPARISON = 0;
+        byte BETWEEN       = 1;
+        byte NOT_BETWEEN   = 2;
+        byte EQUAL         = 3;
+        byte NOT_EQUAL     = 4;
+        byte GT            = 5;
+        byte LT            = 6;
+        byte GE            = 7;
+        byte LE            = 8;
+        byte max_operator  = 8;
     }
-    protected static final POILogger logger = POILogFactory.getLogger(CFRuleBase.class);
 
-    private byte condition_type;
     // The only kinds that CFRuleRecord handles
     public static final byte CONDITION_TYPE_CELL_VALUE_IS = 1;
     public static final byte CONDITION_TYPE_FORMULA = 2;
@@ -64,8 +63,6 @@ public abstract class CFRuleBase extends StandardRecord implements Cloneable {
     public static final byte CONDITION_TYPE_DATA_BAR = 4;
     public static final byte CONDITION_TYPE_FILTER = 5;
     public static final byte CONDITION_TYPE_ICON_SET = 6;
-
-    private byte comparison_operator;
 
     public static final int TEMPLATE_CELL_VALUE = 0x0000;
     public static final int TEMPLATE_FORMULA = 0x0001;
@@ -94,7 +91,9 @@ public abstract class CFRuleBase extends StandardRecord implements Cloneable {
     public static final int TEMPLATE_DUPLICATE_VALUES = 0x001B;
     public static final int TEMPLATE_ABOVE_OR_EQUAL_TO_AVERAGE = 0x001D;
     public static final int TEMPLATE_BELOW_OR_EQUAL_TO_AVERAGE = 0x001E;
-    
+
+    protected static final POILogger logger = POILogFactory.getLogger(CFRuleBase.class);
+
     static final BitField modificationBits = bf(0x003FFFFF); // Bits: font,align,bord,patt,prot
     static final BitField alignHor         = bf(0x00000001); // 0 = Horizontal alignment modified
     static final BitField alignVer         = bf(0x00000002); // 0 = Vertical alignment modified
@@ -129,19 +128,24 @@ public abstract class CFRuleBase extends StandardRecord implements Cloneable {
         return BitFieldFactory.getInstance(i);
     }
 
+
+    private byte condition_type;
+    private byte comparison_operator;
+
     protected int formatting_options;
-    protected short formatting_not_used; // TODO Decode this properly
+    // TODO Decode this properly
+    protected short formatting_not_used;
 
     protected FontFormatting _fontFormatting;
     protected BorderFormatting _borderFormatting;
     protected PatternFormatting _patternFormatting;
-    
+
     private Formula formula1;
     private Formula formula2;
 
     /**
      * Creates new CFRuleRecord
-     * 
+     *
      * @param conditionType the condition type
      * @param comparisonOperation the comparison operation
      */
@@ -151,19 +155,34 @@ public abstract class CFRuleBase extends StandardRecord implements Cloneable {
         formula1 = Formula.create(Ptg.EMPTY_PTG_ARRAY);
         formula2 = Formula.create(Ptg.EMPTY_PTG_ARRAY);
     }
+
     protected CFRuleBase(byte conditionType, byte comparisonOperation, Ptg[] formula1, Ptg[] formula2) {
         this(conditionType, comparisonOperation);
         this.formula1 = Formula.create(formula1);
         this.formula2 = Formula.create(formula2);
     }
+
     protected CFRuleBase() {}
-    
+
+    protected CFRuleBase(CFRuleBase other) {
+        super(other);
+        setConditionType(other.getConditionType());
+        setComparisonOperation(other.getComparisonOperation());
+        formatting_options = other.formatting_options;
+        formatting_not_used = other.formatting_not_used;
+        _fontFormatting = (!other.containsFontFormattingBlock()) ? null : other.getFontFormatting().copy();
+        _borderFormatting = (!other.containsBorderFormattingBlock()) ? null : other.getBorderFormatting().copy();
+        _patternFormatting = (!other.containsPatternFormattingBlock()) ? null : other.getPatternFormatting().copy();
+        formula1 = other.getFormula1().copy();
+        formula2 = other.getFormula2().copy();
+    }
+
     protected int readFormatOptions(RecordInputStream in) {
         formatting_options = in.readInt();
         formatting_not_used = in.readShort();
 
         int len = 6;
-        
+
         if (containsFontFormattingBlock()) {
             _fontFormatting = new FontFormatting(in);
             len += _fontFormatting.getDataLength();
@@ -178,7 +197,7 @@ public abstract class CFRuleBase extends StandardRecord implements Cloneable {
             _patternFormatting = new PatternFormatting(in);
             len += _patternFormatting.getDataLength();
         }
-        
+
         return len;
     }
 
@@ -187,10 +206,8 @@ public abstract class CFRuleBase extends StandardRecord implements Cloneable {
     }
     protected void setConditionType(byte condition_type) {
         if ((this instanceof CFRuleRecord)) {
-            if (condition_type == CONDITION_TYPE_CELL_VALUE_IS ||
-                condition_type == CONDITION_TYPE_FORMULA) {
-                // Good, valid combination
-            } else {
+            if (!(condition_type == CONDITION_TYPE_CELL_VALUE_IS ||
+                condition_type == CONDITION_TYPE_FORMULA)) {
                 throw new IllegalArgumentException("CFRuleRecord only accepts Value-Is and Formula types");
             }
         }
@@ -201,7 +218,7 @@ public abstract class CFRuleBase extends StandardRecord implements Cloneable {
         if (operation < 0 || operation > ComparisonOperator.max_operator)
             throw new IllegalArgumentException(
                     "Valid operators are only in the range 0 to " +ComparisonOperator.max_operator);
-        
+
         this.comparison_operator = operation;
     }
     public byte getComparisonOperation() {
@@ -351,7 +368,7 @@ public abstract class CFRuleBase extends StandardRecord implements Cloneable {
     private void setOptionFlag(boolean flag, BitField field) {
         formatting_options = field.setBoolean(formatting_options, flag);
     }
-    
+
     protected int getFormattingBlockSize() {
         return 6 +
           (containsFontFormattingBlock()?_fontFormatting.getRawRecord().length:0)+
@@ -375,7 +392,7 @@ public abstract class CFRuleBase extends StandardRecord implements Cloneable {
             _patternFormatting.serialize(out);
         }
     }
-    
+
     /**
      * get the stack of the 1st expression as a list
      *
@@ -440,27 +457,13 @@ public abstract class CFRuleBase extends StandardRecord implements Cloneable {
         int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
         return HSSFFormulaParser.parse(formula, sheet.getWorkbook(), FormulaType.CELL, sheetIndex);
     }
-    
-    protected void copyTo(CFRuleBase rec) {
-        rec.condition_type = condition_type;
-        rec.comparison_operator = comparison_operator;
-        
-        rec.formatting_options = formatting_options;
-        rec.formatting_not_used = formatting_not_used;
-        if (containsFontFormattingBlock()) {
-            rec._fontFormatting = _fontFormatting.clone();
-        }
-        if (containsBorderFormattingBlock()) {
-            rec._borderFormatting = _borderFormatting.clone();
-        }
-        if (containsPatternFormattingBlock()) {
-            rec._patternFormatting = (PatternFormatting) _patternFormatting.clone();
-        }
-        
-        rec.setFormula1(getFormula1().copy());
-        rec.setFormula2(getFormula2().copy());
-    }
-    
+
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public abstract CFRuleBase clone();
+
+    @Override
+    public abstract CFRuleBase copy();
 }

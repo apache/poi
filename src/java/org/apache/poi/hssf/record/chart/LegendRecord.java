@@ -23,12 +23,13 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * Defines a legend for a chart.
  */
-public final class LegendRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x1015;
+public final class LegendRecord extends StandardRecord {
+    public static final short sid = 0x1015;
 
     private static final BitField autoPosition     = BitFieldFactory.getInstance(0x01);
     private static final BitField autoSeries       = BitFieldFactory.getInstance(0x02);
@@ -37,38 +38,46 @@ public final class LegendRecord extends StandardRecord implements Cloneable {
     private static final BitField vertical         = BitFieldFactory.getInstance(0x10);
     private static final BitField dataTable        = BitFieldFactory.getInstance(0x20);
 
-    private  int        field_1_xAxisUpperLeft;
-    private  int        field_2_yAxisUpperLeft;
-    private  int        field_3_xSize;
-    private  int        field_4_ySize;
-    private  byte       field_5_type;
-    public final static byte        TYPE_BOTTOM                    = 0;
-    public final static byte        TYPE_CORNER                    = 1;
-    public final static byte        TYPE_TOP                       = 2;
-    public final static byte        TYPE_RIGHT                     = 3;
-    public final static byte        TYPE_LEFT                      = 4;
-    public final static byte        TYPE_UNDOCKED                  = 7;
-    private  byte       field_6_spacing;
-    public final static byte        SPACING_CLOSE                  = 0;
-    public final static byte        SPACING_MEDIUM                 = 1;
-    public final static byte        SPACING_OPEN                   = 2;
-    private  short      field_7_options;
+    public static final byte TYPE_BOTTOM    = 0;
+    public static final byte TYPE_CORNER    = 1;
+    public static final byte TYPE_TOP       = 2;
+    public static final byte TYPE_RIGHT     = 3;
+    public static final byte TYPE_LEFT      = 4;
+    public static final byte TYPE_UNDOCKED  = 7;
+    public static final byte SPACING_CLOSE  = 0;
+    public static final byte SPACING_MEDIUM = 1;
+    public static final byte SPACING_OPEN   = 2;
 
 
-    public LegendRecord()
-    {
+    private int   field_1_xAxisUpperLeft;
+    private int   field_2_yAxisUpperLeft;
+    private int   field_3_xSize;
+    private int   field_4_ySize;
+    private byte  field_5_type;
+    private byte  field_6_spacing;
+    private short field_7_options;
 
+    public LegendRecord() {}
+
+    public LegendRecord(LegendRecord other) {
+        super(other);
+        field_1_xAxisUpperLeft = other.field_1_xAxisUpperLeft;
+        field_2_yAxisUpperLeft = other.field_2_yAxisUpperLeft;
+        field_3_xSize          = other.field_3_xSize;
+        field_4_ySize          = other.field_4_ySize;
+        field_5_type           = other.field_5_type;
+        field_6_spacing        = other.field_6_spacing;
+        field_7_options        = other.field_7_options;
     }
 
-    public LegendRecord(RecordInputStream in)
-    {
-        field_1_xAxisUpperLeft         = in.readInt();
-        field_2_yAxisUpperLeft         = in.readInt();
-        field_3_xSize                  = in.readInt();
-        field_4_ySize                  = in.readInt();
-        field_5_type                   = in.readByte();
-        field_6_spacing                = in.readByte();
-        field_7_options                = in.readShort();
+    public LegendRecord(RecordInputStream in) {
+        field_1_xAxisUpperLeft = in.readInt();
+        field_2_yAxisUpperLeft = in.readInt();
+        field_3_xSize          = in.readInt();
+        field_4_ySize          = in.readInt();
+        field_5_type           = in.readByte();
+        field_6_spacing        = in.readByte();
+        field_7_options        = in.readShort();
     }
 
     public String toString()
@@ -79,37 +88,37 @@ public final class LegendRecord extends StandardRecord implements Cloneable {
         buffer.append("    .xAxisUpperLeft       = ")
             .append("0x").append(HexDump.toHex(  getXAxisUpperLeft ()))
             .append(" (").append( getXAxisUpperLeft() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .yAxisUpperLeft       = ")
             .append("0x").append(HexDump.toHex(  getYAxisUpperLeft ()))
             .append(" (").append( getYAxisUpperLeft() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .xSize                = ")
             .append("0x").append(HexDump.toHex(  getXSize ()))
             .append(" (").append( getXSize() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .ySize                = ")
             .append("0x").append(HexDump.toHex(  getYSize ()))
             .append(" (").append( getYSize() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .type                 = ")
             .append("0x").append(HexDump.toHex(  getType ()))
             .append(" (").append( getType() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .spacing              = ")
             .append("0x").append(HexDump.toHex(  getSpacing ()))
             .append(" (").append( getSpacing() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .options              = ")
             .append("0x").append(HexDump.toHex(  getOptions ()))
             .append(" (").append( getOptions() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-        buffer.append("         .autoPosition             = ").append(isAutoPosition()).append('\n'); 
-        buffer.append("         .autoSeries               = ").append(isAutoSeries()).append('\n'); 
-        buffer.append("         .autoXPositioning         = ").append(isAutoXPositioning()).append('\n'); 
-        buffer.append("         .autoYPositioning         = ").append(isAutoYPositioning()).append('\n'); 
-        buffer.append("         .vertical                 = ").append(isVertical()).append('\n'); 
-        buffer.append("         .dataTable                = ").append(isDataTable()).append('\n'); 
+        buffer.append(System.getProperty("line.separator"));
+        buffer.append("         .autoPosition             = ").append(isAutoPosition()).append('\n');
+        buffer.append("         .autoSeries               = ").append(isAutoSeries()).append('\n');
+        buffer.append("         .autoXPositioning         = ").append(isAutoXPositioning()).append('\n');
+        buffer.append("         .autoYPositioning         = ").append(isAutoYPositioning()).append('\n');
+        buffer.append("         .vertical                 = ").append(isVertical()).append('\n');
+        buffer.append("         .dataTable                = ").append(isDataTable()).append('\n');
 
         buffer.append("[/LEGEND]\n");
         return buffer.toString();
@@ -135,17 +144,16 @@ public final class LegendRecord extends StandardRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public LegendRecord clone() {
-        LegendRecord rec = new LegendRecord();
-    
-        rec.field_1_xAxisUpperLeft = field_1_xAxisUpperLeft;
-        rec.field_2_yAxisUpperLeft = field_2_yAxisUpperLeft;
-        rec.field_3_xSize = field_3_xSize;
-        rec.field_4_ySize = field_4_ySize;
-        rec.field_5_type = field_5_type;
-        rec.field_6_spacing = field_6_spacing;
-        rec.field_7_options = field_7_options;
-        return rec;
+        return copy();
+    }
+
+    @Override
+    public LegendRecord copy() {
+        return new LegendRecord(this);
     }
 
 
@@ -218,7 +226,7 @@ public final class LegendRecord extends StandardRecord implements Cloneable {
     /**
      * Get the type field for the Legend record.
      *
-     * @return  One of 
+     * @return  One of
      *        TYPE_BOTTOM
      *        TYPE_CORNER
      *        TYPE_TOP
@@ -235,7 +243,7 @@ public final class LegendRecord extends StandardRecord implements Cloneable {
      * Set the type field for the Legend record.
      *
      * @param field_5_type
-     *        One of 
+     *        One of
      *        TYPE_BOTTOM
      *        TYPE_CORNER
      *        TYPE_TOP
@@ -251,7 +259,7 @@ public final class LegendRecord extends StandardRecord implements Cloneable {
     /**
      * Get the spacing field for the Legend record.
      *
-     * @return  One of 
+     * @return  One of
      *        SPACING_CLOSE
      *        SPACING_MEDIUM
      *        SPACING_OPEN
@@ -265,7 +273,7 @@ public final class LegendRecord extends StandardRecord implements Cloneable {
      * Set the spacing field for the Legend record.
      *
      * @param field_6_spacing
-     *        One of 
+     *        One of
      *        SPACING_CLOSE
      *        SPACING_MEDIUM
      *        SPACING_OPEN

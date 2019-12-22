@@ -23,10 +23,28 @@ public class HemfPenStyle extends HwmfPenStyle {
 
     private float[] dashPattern;
 
+    public HemfPenStyle(int flag) {
+        super(flag);
+    }
+
+    public HemfPenStyle(HemfPenStyle other) {
+        super(other);
+        dashPattern = (other.dashPattern == null) ? null : other.dashPattern.clone();
+    }
+
+    public static HemfPenStyle valueOf(
+            HwmfLineCap cap, HwmfLineJoin join, HwmfLineDash dash, boolean isAlternateDash, boolean isGeometric) {
+        int flag = 0;
+        flag = SUBSECTION_DASH.setValue(flag, dash.wmfFlag);
+        flag = SUBSECTION_ENDCAP.setValue(flag, cap.wmfFlag);
+        flag = SUBSECTION_JOIN.setValue(flag, join.wmfFlag);
+        flag = SUBSECTION_ALTERNATE.setBoolean(flag, isAlternateDash);
+        flag = SUBSECTION_GEOMETRIC.setBoolean(flag, isGeometric);
+        return new HemfPenStyle(flag);
+    }
+
     public static HemfPenStyle valueOf(int flag) {
-        HemfPenStyle ps = new HemfPenStyle();
-        ps.flag = flag;
-        return ps;
+        return new HemfPenStyle(flag);
     }
 
     @Override
@@ -39,7 +57,7 @@ public class HemfPenStyle extends HwmfPenStyle {
     }
 
     @Override
-    public HemfPenStyle clone() {
-        return (HemfPenStyle)super.clone();
+    public HemfPenStyle copy() {
+        return new HemfPenStyle(this);
     }
 }

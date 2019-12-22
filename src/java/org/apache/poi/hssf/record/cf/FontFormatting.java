@@ -20,17 +20,17 @@ package org.apache.poi.hssf.record.cf;
 
 import java.util.Locale;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Removal;
 
 /**
  * Font Formatting Block of the Conditional Formatting Rule Record.
  */
-public final class FontFormatting implements Cloneable {
-    private final byte[] _rawData = new byte[RAW_DATA_SIZE];
-
+public final class FontFormatting implements Duplicatable {
     private static final int OFFSET_FONT_NAME = 0;
     private static final int OFFSET_FONT_HEIGHT = 64;
     private static final int OFFSET_FONT_OPTIONS = 68;
@@ -49,7 +49,7 @@ public final class FontFormatting implements Cloneable {
     private static final int RAW_DATA_SIZE = 118;
 
 
-    public final static int  FONT_CELL_HEIGHT_PRESERVED   = 0xFFFFFFFF;
+    public static final int  FONT_CELL_HEIGHT_PRESERVED   = 0xFFFFFFFF;
 
     // FONT OPTIONS MASKS
     private static final BitField posture       = BitFieldFactory.getInstance(0x00000002);
@@ -88,6 +88,8 @@ public final class FontFormatting implements Cloneable {
      */
     private static final short FONT_WEIGHT_BOLD	 = 0x2bc;
 
+    private final byte[] _rawData = new byte[RAW_DATA_SIZE];
+
     public FontFormatting() {
         setFontHeight(-1);
         setItalic(false);
@@ -114,11 +116,12 @@ public final class FontFormatting implements Cloneable {
         setShort(OFFSET_FONT_FORMATING_END, 0x0001);
     }
 
-    /** Creates new FontFormatting */
+    public FontFormatting(FontFormatting other) {
+        System.arraycopy(other._rawData, 0, _rawData, 0, _rawData.length);
+    }
+
     public FontFormatting(RecordInputStream in) {
-        for (int i = 0; i < _rawData.length; i++) {
-            _rawData[i] = in.readByte();
-        }
+        in.readFully(_rawData);
     }
 
     private short getShort(int offset) {
@@ -499,7 +502,7 @@ public final class FontFormatting implements Cloneable {
             append(getFontWeight()).
             append(
                     getFontWeight() == FONT_WEIGHT_NORMAL ? "(Normal)"
-                    : getFontWeight() == FONT_WEIGHT_BOLD ? "(Bold)" 
+                    : getFontWeight() == FONT_WEIGHT_BOLD ? "(Bold)"
                     : "0x"+Integer.toHexString(getFontWeight())).
             append("\n");
         }
@@ -533,9 +536,15 @@ public final class FontFormatting implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public FontFormatting clone() {
-        FontFormatting other = new FontFormatting();
-        System.arraycopy(_rawData, 0, other._rawData, 0, _rawData.length);
-        return other;
+        return copy();
+    }
+
+    @Override
+    public FontFormatting copy() {
+        return new FontFormatting(this);
     }
 }

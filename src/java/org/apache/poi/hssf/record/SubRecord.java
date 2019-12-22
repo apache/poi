@@ -17,27 +17,29 @@
 
 package org.apache.poi.hssf.record;
 
+import java.io.ByteArrayOutputStream;
+
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.LittleEndianOutputStream;
-
-import java.io.ByteArrayOutputStream;
+import org.apache.poi.util.Removal;
 
 /**
  * Subrecords are part of the OBJ class.
  */
-public abstract class SubRecord {
+public abstract class SubRecord implements Duplicatable {
 
 	//arbitrarily selected; may need to increase
 	private static final int MAX_RECORD_LENGTH = 1_000_000;
 
-	protected SubRecord() {
-		// no fields to initialise
-	}
+	protected SubRecord() {}
 
-    /**
+	protected SubRecord(SubRecord other) {}
+
+	/**
      * read a sub-record from the supplied stream
      *
      * @param in    the stream to read from
@@ -90,8 +92,6 @@ public abstract class SubRecord {
 
 	public abstract void serialize(LittleEndianOutput out);
 
-	@Override
-	public abstract SubRecord clone();
 
     /**
      * Whether this record terminates the sub-record stream.
@@ -126,8 +126,17 @@ public abstract class SubRecord {
 			out.writeShort(_data.length);
 			out.write(_data);
 		}
+
 		@Override
+		@SuppressWarnings("squid:S2975")
+		@Deprecated
+		@Removal(version = "5.0.0")
 		public UnknownSubRecord clone() {
+			return copy();
+		}
+
+		@Override
+		public UnknownSubRecord copy() {
 			return this;
 		}
 		@Override
@@ -141,4 +150,13 @@ public abstract class SubRecord {
 			return sb.toString();
 		}
 	}
+
+	@Override
+	@SuppressWarnings("squid:S2975")
+	@Deprecated
+	@Removal(version = "5.0.0")
+	public abstract SubRecord  clone();
+
+	@Override
+	public abstract SubRecord copy();
 }

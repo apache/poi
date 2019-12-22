@@ -24,8 +24,6 @@ import org.apache.poi.hssf.record.RecordBase;
  * <tt>RecordAggregate</tt>s are groups of of BIFF <tt>Record</tt>s that are typically stored
  * together and/or updated together.  Workbook / Sheet records are typically stored in a sequential
  * list, which does not provide much structure to coordinate updates.
- *
- * @author Josh Micich
  */
 public abstract class RecordAggregate extends RecordBase {
 

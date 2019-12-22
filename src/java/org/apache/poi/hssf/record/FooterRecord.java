@@ -17,16 +17,20 @@
 
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.util.Removal;
+
 /**
- * Title:        Footer Record (0x0015)<p>
- * Description:  Specifies the footer for a sheet<p>
- * REFERENCE:  PG 317 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * Specifies the footer for a sheet
  */
-public final class FooterRecord extends HeaderFooterBase implements Cloneable {
-	public final static short sid = 0x0015;
+public final class FooterRecord extends HeaderFooterBase {
+	public static final short sid = 0x0015;
 
 	public FooterRecord(String text) {
 		super(text);
+	}
+
+	public FooterRecord(FooterRecord other) {
+		super(other);
 	}
 
 	public FooterRecord(RecordInputStream in) {
@@ -47,7 +51,15 @@ public final class FooterRecord extends HeaderFooterBase implements Cloneable {
 	}
 
 	@Override
+	@SuppressWarnings("squid:S2975")
+	@Deprecated
+	@Removal(version = "5.0.0")
 	public FooterRecord clone() {
-		return new FooterRecord(getText());
+		return copy();
+	}
+
+	@Override
+	public FooterRecord copy() {
+		return new FooterRecord(this);
 	}
 }

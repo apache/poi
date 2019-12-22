@@ -212,13 +212,13 @@ public final class StyleTextPropAtom extends RecordAtom {
         if (initialised) {
             return;
         }
-        
+
         int pos = 0;
         int textHandled = 0;
 
         paragraphStyles.clear();
         charStyles.clear();
-        
+
         // While we have text in need of paragraph stylings, go ahead and
         // grok the contents as paragraph formatting data
         int prsize = size;
@@ -295,10 +295,10 @@ public final class StyleTextPropAtom extends RecordAtom {
 
         initialised = true;
     }
-    
+
     private int checkTextLength(int readLength, int handledSoFar, int overallSize) {
         if (readLength + handledSoFar > overallSize + 1) {
-            logger.log(POILogger.WARN, "Style length of " + readLength + " at " + handledSoFar + 
+            logger.log(POILogger.WARN, "Style length of " + readLength + " at " + handledSoFar +
                     " larger than stated size of " + overallSize + ", truncating");
             return overallSize + 1 - handledSoFar;
         }
@@ -315,20 +315,20 @@ public final class StyleTextPropAtom extends RecordAtom {
             // changed
 
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    
+
             // First up, we need to serialise the paragraph properties
             for(TextPropCollection tpc : paragraphStyles) {
                 tpc.writeOut(baos);
             }
-    
+
             // Now, we do the character ones
             for(TextPropCollection tpc : charStyles) {
                 tpc.writeOut(baos);
             }
-    
+
             rawContents = baos.toByteArray();
         }
-        
+
         // Now ensure that the header size is correct
         int newSize = rawContents.length + reserved.length;
         LittleEndian.putInt(_header,4,newSize);
@@ -343,7 +343,7 @@ public final class StyleTextPropAtom extends RecordAtom {
         reserved = new byte[0];
         initialised = true;
     }
-    
+
     /**
      * Create a new Paragraph TextPropCollection, and add it to the list
      * @param charactersCovered The number of characters this TextPropCollection will cover
@@ -354,6 +354,11 @@ public final class StyleTextPropAtom extends RecordAtom {
         paragraphStyles.add(tpc);
         return tpc;
     }
+
+    public void addParagraphTextPropCollection(TextPropCollection tpc) {
+        paragraphStyles.add(tpc);
+    }
+
     /**
      * Create a new Character TextPropCollection, and add it to the list
      * @param charactersCovered The number of characters this TextPropCollection will cover
@@ -363,6 +368,10 @@ public final class StyleTextPropAtom extends RecordAtom {
         TextPropCollection tpc = new TextPropCollection(charactersCovered, TextPropType.character);
         charStyles.add(tpc);
         return tpc;
+    }
+
+    public void addCharacterTextPropCollection(TextPropCollection tpc) {
+        charStyles.add(tpc);
     }
 
     /* ************************************************************************ */
@@ -389,7 +398,7 @@ public final class StyleTextPropAtom extends RecordAtom {
             for(TextPropCollection pr : getCharacterStyles()) {
                 out.append(pr);
             }
-            
+
             out.append("Reserved bytes\n");
             out.append( HexDump.dump(reserved, 0, 0) );
         }

@@ -17,17 +17,9 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-/**
- * Common superclass for 
- * tExp
- * tTbl
- * tParen
- * tNlr
- * tAttr
- * tSheet
- * tEndSheet
- */
 public abstract class ControlPtg extends Ptg {
+
+	protected ControlPtg() {}
 
 	public boolean isBaseToken() {
 		return true;

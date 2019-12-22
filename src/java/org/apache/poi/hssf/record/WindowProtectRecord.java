@@ -21,14 +21,13 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title: Window Protect Record (0x0019)<p>
- * Description:  flags whether workbook windows are protected<p>
- * REFERENCE:  PG 424 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * Flags whether workbook windows are protected
  */
 public final class WindowProtectRecord extends StandardRecord {
-    public final static short sid = 0x0019;
+    public static final short sid = 0x0019;
 
     private static final BitField settingsProtectedFlag = BitFieldFactory.getInstance(0x0001);
 
@@ -36,6 +35,11 @@ public final class WindowProtectRecord extends StandardRecord {
 
     public WindowProtectRecord(int options) {
         _options = options;
+    }
+
+    public WindowProtectRecord(WindowProtectRecord other) {
+        super(other);
+        _options = other._options;
     }
 
     public WindowProtectRecord(RecordInputStream in) {
@@ -85,8 +89,17 @@ public final class WindowProtectRecord extends StandardRecord {
     {
         return sid;
     }
+
     @Override
-    public Object clone() {
-        return new WindowProtectRecord(_options);
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public WindowProtectRecord clone() {
+        return copy();
+    }
+
+    @Override
+    public WindowProtectRecord copy() {
+        return new WindowProtectRecord(this);
     }
 }

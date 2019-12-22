@@ -24,7 +24,7 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.standard.EncryptionRecord;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 
-public class BinaryRC4EncryptionHeader extends EncryptionHeader implements EncryptionRecord, Cloneable {
+public class BinaryRC4EncryptionHeader extends EncryptionHeader implements EncryptionRecord {
 
     protected BinaryRC4EncryptionHeader() {
         setCipherAlgorithm(CipherAlgorithm.rc4);
@@ -38,14 +38,16 @@ public class BinaryRC4EncryptionHeader extends EncryptionHeader implements Encry
         setChainingMode(null);
     }
 
+    protected BinaryRC4EncryptionHeader(BinaryRC4EncryptionHeader other) {
+        super(other);
+    }
+
     @Override
     public void write(LittleEndianByteArrayOutputStream littleendianbytearrayoutputstream) {
     }
 
     @Override
-    public BinaryRC4EncryptionHeader clone() throws CloneNotSupportedException {
-        return (BinaryRC4EncryptionHeader)super.clone();
+    public BinaryRC4EncryptionHeader copy() {
+        return new BinaryRC4EncryptionHeader(this);
     }
-    
-    
 }

@@ -29,9 +29,12 @@ import org.apache.poi.util.LittleEndianOutput;
  */
 public abstract class ContinuableRecord extends Record {
 
-	protected ContinuableRecord() {
-		// no fields to initialise
+	protected ContinuableRecord() {}
+
+	protected ContinuableRecord(ContinuableRecord other) {
+		super(other);
 	}
+
 	/**
 	 * Serializes this record's content to the supplied data output.<p>
 	 * The standard BIFF header (ushort sid, ushort size) has been handled by the superclass, so

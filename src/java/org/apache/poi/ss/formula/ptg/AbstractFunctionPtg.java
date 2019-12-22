@@ -26,8 +26,6 @@ import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
  * This class provides the base functionality for Excel sheet functions
  * There are two kinds of function Ptgs - tFunc and tFuncVar
  * Therefore, this class will have ONLY two subclasses
- * @author  Avik Sengupta
- * @author Andrew C. Oliver (acoliver at apache dot org)
  */
 public abstract class AbstractFunctionPtg extends OperationPtg {
 

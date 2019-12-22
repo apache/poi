@@ -25,12 +25,9 @@ import org.apache.poi.hssf.record.MergeCellsRecord;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 
-/**
- * 
- * @author Josh Micich
- */
 public final class MergedCellsTable extends RecordAggregate {
-	private static int MAX_MERGED_REGIONS = 1027; // enforced by the 8224 byte limit
+	// enforced by the 8224 byte limit
+	private static final int MAX_MERGED_REGIONS = 1027;
 
 	private final List<CellRangeAddress> _mergedRegions;
 

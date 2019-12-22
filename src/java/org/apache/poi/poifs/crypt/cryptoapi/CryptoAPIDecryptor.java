@@ -49,13 +49,13 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.StringUtil;
 
-public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
+public class CryptoAPIDecryptor extends Decryptor {
 
     private long length = -1L;
     private int chunkSize = -1;
 
     static class StreamDescriptorEntry {
-        static BitField flagStream = BitFieldFactory.getInstance(1);
+        static final BitField flagStream = BitFieldFactory.getInstance(1);
 
         int streamOffset;
         int streamSize;
@@ -65,7 +65,12 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
         String streamName;
     }
 
-    protected CryptoAPIDecryptor() {
+    protected CryptoAPIDecryptor() {}
+
+    protected CryptoAPIDecryptor(CryptoAPIDecryptor other) {
+        super(other);
+        length = other.length;
+        chunkSize = other.chunkSize;
     }
 
     @Override
@@ -153,13 +158,13 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
      * Decrypt the Document-/SummaryInformation and other optionally streams.
      * Opposed to other crypto modes, cryptoapi is record based and can't be used
      * to stream-decrypt a whole file.<p>
-     * 
+     *
      * Summary entries are only encrypted within cryptoapi encrypted files.
      * Binary RC4 encrypted files use non-encrypted/default property sets
-     * 
+     *
      * @param root root directory node of the OLE file containing the encrypted properties
      * @param encryptedStream name of the encrypted stream -
-     *      "encryption" for HSSF/HWPF, "encryptedStream" (or encryptedSummary?) for HSLF 
+     *      "encryption" for HSSF/HWPF, "encryptedStream" (or encryptedSummary?) for HSLF
      *
      * @see <a href="http://msdn.microsoft.com/en-us/library/dd943321(v=office.12).aspx">2.3.5.4 RC4 CryptoAPI Encrypted Summary Stream</a>
      */
@@ -239,8 +244,8 @@ public class CryptoAPIDecryptor extends Decryptor implements Cloneable {
     }
 
     @Override
-    public CryptoAPIDecryptor clone() throws CloneNotSupportedException {
-        return (CryptoAPIDecryptor)super.clone();
+    public CryptoAPIDecryptor copy() {
+        return new CryptoAPIDecryptor(this);
     }
 
     private class CryptoAPICipherInputStream extends ChunkedCipherInputStream {

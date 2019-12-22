@@ -34,7 +34,11 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
-public class StandardEncryptionHeader extends EncryptionHeader implements EncryptionRecord, Cloneable {
+public class StandardEncryptionHeader extends EncryptionHeader implements EncryptionRecord {
+
+    protected StandardEncryptionHeader(StandardEncryptionHeader other) {
+        super(other);
+    }
 
     protected StandardEncryptionHeader(LittleEndianInput is) throws IOException {
         setFlags(is.readInt());
@@ -67,7 +71,7 @@ public class StandardEncryptionHeader extends EncryptionHeader implements Encryp
         } else {
             ((InputStream)is).reset();
         }
-        
+
         if (checkForSalt == 16) {
             setCspName("");
         } else {
@@ -81,7 +85,7 @@ public class StandardEncryptionHeader extends EncryptionHeader implements Encryp
             }
             setCspName(builder.toString());
         }
-        
+
         setChainingMode(ChainingMode.ecb);
         setKeySalt(null);
     }
@@ -97,9 +101,9 @@ public class StandardEncryptionHeader extends EncryptionHeader implements Encryp
         // see http://msdn.microsoft.com/en-us/library/windows/desktop/bb931357(v=vs.85).aspx for a full list
         // setCspName("Microsoft Enhanced RSA and AES Cryptographic Provider");
     }
-    
+
     /**
-     * serializes the header 
+     * serializes the header
      */
     @Override
     public void write(LittleEndianByteArrayOutputStream bos) {
@@ -120,11 +124,11 @@ public class StandardEncryptionHeader extends EncryptionHeader implements Encryp
         bos.write(StringUtil.getToUnicodeLE(cspName));
         bos.writeShort(0);
         int headerSize = bos.getWriteIndex()-startIdx-LittleEndianConsts.INT_SIZE;
-        sizeOutput.writeInt(headerSize);        
+        sizeOutput.writeInt(headerSize);
     }
 
     @Override
-    public StandardEncryptionHeader clone() throws CloneNotSupportedException {
-        return (StandardEncryptionHeader)super.clone();
+    public StandardEncryptionHeader copy() {
+        return new StandardEncryptionHeader(this);
     }
 }

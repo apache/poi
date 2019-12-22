@@ -21,33 +21,26 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hssf.model.RecordStream;
-import org.apache.poi.hssf.record.CFHeader12Record;
-import org.apache.poi.hssf.record.CFHeaderRecord;
+import org.apache.poi.hssf.record.CFHeaderBase;
 import org.apache.poi.ss.formula.FormulaShifter;
 
 /**
  * Holds all the conditional formatting for a workbook sheet.<p>
- * 
+ *
  * See OOO exelfileformat.pdf sec 4.12 'Conditional Formatting Table'
  */
 public final class ConditionalFormattingTable extends RecordAggregate {
-	private final List<CFRecordsAggregate> _cfHeaders;
+	private final List<CFRecordsAggregate> _cfHeaders = new ArrayList<>();
 
 	/**
 	 * Creates an empty ConditionalFormattingTable
 	 */
-	public ConditionalFormattingTable() {
-		_cfHeaders = new ArrayList<>();
-	}
+	public ConditionalFormattingTable() {}
 
 	public ConditionalFormattingTable(RecordStream rs) {
-
-		List<CFRecordsAggregate> temp = new ArrayList<>();
-		while (rs.peekNextClass() == CFHeaderRecord.class ||
-		       rs.peekNextClass() == CFHeader12Record.class) {
-			temp.add(CFRecordsAggregate.createCFAggregate(rs));
+		while (rs.peekNextRecord() instanceof CFHeaderBase) {
+			_cfHeaders.add(CFRecordsAggregate.createCFAggregate(rs));
 		}
-		_cfHeaders = temp;
 	}
 
 	public void visitContainedRecords(RecordVisitor rv) {

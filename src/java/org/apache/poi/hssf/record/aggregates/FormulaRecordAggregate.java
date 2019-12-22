@@ -35,9 +35,6 @@ import org.apache.poi.util.RecordFormatException;
 /**
  * The formula record aggregate is used to join together the formula record and it's
  * (optional) string record and (optional) Shared Formula Record (template reads, excel optimization).
- *
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Vladimirs Abramovs(Vladimirs.Abramovs at exigenservices.com) - Array Formula support
  */
 public final class FormulaRecordAggregate extends RecordAggregate implements CellValueRecordInterface {
 
@@ -79,6 +76,7 @@ public final class FormulaRecordAggregate extends RecordAggregate implements Cel
 			}
 		}
 	}
+
 	/**
 	 * Sometimes the shared formula flag "seems" to be erroneously set (because the corresponding
 	 * {@link SharedFormulaRecord} does not exist). Normally this would leave no way of determining

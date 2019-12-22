@@ -20,17 +20,15 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        Window Two Record<P>
- * Description:  sheet window settings<P>
- * REFERENCE:  PG 422 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
+ * Sheet window settings
+ *
  * @version 2.0-pre
  */
 public final class WindowTwoRecord extends StandardRecord {
-    public final static short sid = 0x023E;
+    public static final short sid = 0x023E;
 
     // bitfields
     private static final BitField displayFormulas         = BitFieldFactory.getInstance(0x01);
@@ -39,7 +37,7 @@ public final class WindowTwoRecord extends StandardRecord {
     private static final BitField freezePanes             = BitFieldFactory.getInstance(0x08);
     private static final BitField displayZeros            = BitFieldFactory.getInstance(0x10);
     /**  if false use color in field 4 if true use default foreground for headers */
-    private static final BitField defaultHeader           = BitFieldFactory.getInstance(0x20);   
+    private static final BitField defaultHeader           = BitFieldFactory.getInstance(0x20);
     private static final BitField arabic                  = BitFieldFactory.getInstance(0x040);
     private static final BitField displayGuts             = BitFieldFactory.getInstance(0x080);
     private static final BitField freezePanesNoSplit      = BitFieldFactory.getInstance(0x100);
@@ -49,20 +47,28 @@ public final class WindowTwoRecord extends StandardRecord {
     // 4-7 reserved
     // end bitfields
 
-    private short             field_1_options;
-    private short             field_2_top_row;
-    private short             field_3_left_col;
-    private int               field_4_header_color;
-    private short             field_5_page_break_zoom;
-    private short             field_6_normal_zoom;
-    private int               field_7_reserved;
+    private short field_1_options;
+    private short field_2_top_row;
+    private short field_3_left_col;
+    private int   field_4_header_color;
+    private short field_5_page_break_zoom;
+    private short field_6_normal_zoom;
+    private int   field_7_reserved;
 
-    public WindowTwoRecord()
-    {
+    public WindowTwoRecord() {}
+
+    public WindowTwoRecord(WindowTwoRecord other) {
+        super(other);
+        field_1_options = other.field_1_options;
+        field_2_top_row = other.field_2_top_row;
+        field_3_left_col = other.field_3_left_col;
+        field_4_header_color = other.field_4_header_color;
+        field_5_page_break_zoom = other.field_5_page_break_zoom;
+        field_6_normal_zoom = other.field_6_normal_zoom;
+        field_7_reserved = other.field_7_reserved;
     }
 
-    public WindowTwoRecord(RecordInputStream in)
-    {
+    public WindowTwoRecord(RecordInputStream in) {
       int size = in.remaining();
         field_1_options      = in.readShort();
         field_2_top_row      = in.readShort();
@@ -475,15 +481,16 @@ public final class WindowTwoRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
-      WindowTwoRecord rec = new WindowTwoRecord();
-      rec.field_1_options = field_1_options;
-      rec.field_2_top_row = field_2_top_row;
-      rec.field_3_left_col = field_3_left_col;
-      rec.field_4_header_color = field_4_header_color;
-      rec.field_5_page_break_zoom = field_5_page_break_zoom;
-      rec.field_6_normal_zoom = field_6_normal_zoom;
-      rec.field_7_reserved = field_7_reserved;
-      return rec;
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public WindowTwoRecord clone() {
+        return copy();
+    }
+
+    @Override
+    public WindowTwoRecord copy() {
+        return new WindowTwoRecord(this);
     }
 }

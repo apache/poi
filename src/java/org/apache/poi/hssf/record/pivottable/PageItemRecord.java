@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record.pivottable;
 
+import java.util.stream.Stream;
+
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.HexDump;
@@ -24,9 +26,7 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
 
 /**
- * SXPI - Page Item (0x00B6)<br>
- * 
- * @author Patrick Cheng
+ * SXPI - Page Item (0x00B6)
  */
 public final class PageItemRecord extends StandardRecord {
 	public static final short sid = 0x00B6;
@@ -39,6 +39,12 @@ public final class PageItemRecord extends StandardRecord {
 		private int _isxvd;
 		/** Object ID for the drop-down arrow */
 		private int _idObj;
+
+		public FieldInfo(FieldInfo other) {
+			_isxvi = other._isxvi;
+			_isxvd = other._isxvd;
+			_idObj = other._idObj;
+		}
 
 		public FieldInfo(RecordInputStream in) {
 			_isxvi = in.readShort();
@@ -63,6 +69,11 @@ public final class PageItemRecord extends StandardRecord {
 
 	private final FieldInfo[] _fieldInfos;
 
+	public PageItemRecord(PageItemRecord other) {
+		super(other);
+		_fieldInfos = Stream.of(other._fieldInfos).map(FieldInfo::new).toArray(FieldInfo[]::new);
+	}
+
 	public PageItemRecord(RecordInputStream in) {
 		int dataSize = in.remaining();
 		if (dataSize % FieldInfo.ENCODED_SIZE != 0) {
@@ -80,8 +91,8 @@ public final class PageItemRecord extends StandardRecord {
 
 	@Override
 	protected void serialize(LittleEndianOutput out) {
-		for (int i = 0; i < _fieldInfos.length; i++) {
-			_fieldInfos[i].serialize(out);
+		for (FieldInfo fieldInfo : _fieldInfos) {
+			fieldInfo.serialize(out);
 		}
 	}
 
@@ -107,5 +118,10 @@ public final class PageItemRecord extends StandardRecord {
 		}
 		sb.append("[/SXPI]\n");
 		return sb.toString();
+	}
+
+	@Override
+	public PageItemRecord copy() {
+		return new PageItemRecord(this);
 	}
 }

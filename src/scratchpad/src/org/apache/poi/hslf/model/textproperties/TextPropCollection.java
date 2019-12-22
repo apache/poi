@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.record.StyleTextPropAtom;
@@ -42,9 +43,9 @@ import org.apache.poi.util.POILogger;
  * Used to hold the number of characters affected, the list of active
  *  properties, and the indent level if required.
  */
-public class TextPropCollection implements GenericRecord {
+public class TextPropCollection implements GenericRecord, Duplicatable {
     private static final POILogger LOG = POILogFactory.getLogger(TextPropCollection.class);
-    
+
     /** All the different kinds of paragraph properties we might handle */
     private static final TextProp[] paragraphTextPropTypes = {
         // TextProp order is according to 2.9.20 TextPFException,
@@ -72,7 +73,7 @@ public class TextPropCollection implements GenericRecord {
         new TextProp(0, 0x2000000, "hasBulletScheme"), // TODO: check size
         // 0xFC000000 MUST be zero and MUST be ignored
     };
-    
+
     /** All the different kinds of character properties we might handle */
     private static final TextProp[] characterTextPropTypes = new TextProp[] {
         new TextProp(0, 0x100000, "pp10ext"),
@@ -92,16 +93,16 @@ public class TextPropCollection implements GenericRecord {
     public enum TextPropType {
         paragraph, character
     }
-    
+
     private int charactersCovered;
-	
+
     // indentLevel is only valid for paragraph collection
     // if it's set to -1, it must be omitted - see 2.9.36 TextMasterStyleLevel
     private short indentLevel;
 	private final Map<String,TextProp> textProps = new HashMap<>();
     private int maskSpecial;
     private final TextPropType textPropType;
-    
+
     /**
      * Create a new collection of text properties (be they paragraph
      *  or character) which will be groked via a subsequent call to
@@ -110,6 +111,14 @@ public class TextPropCollection implements GenericRecord {
     public TextPropCollection(int charactersCovered, TextPropType textPropType) {
         this.charactersCovered = charactersCovered;
         this.textPropType = textPropType;
+    }
+
+    public TextPropCollection(TextPropCollection other) {
+        charactersCovered = other.charactersCovered;
+        indentLevel = other.indentLevel;
+        maskSpecial = other.maskSpecial;
+        textPropType = other.textPropType;
+        other.textProps.forEach((k,v) -> textProps.put(k, v.copy()));
     }
 
     public int getSpecialMask() {
@@ -132,7 +141,7 @@ public class TextPropCollection implements GenericRecord {
         }
 	    return orderedList;
     }
-	
+
 	/** Fetch the TextProp with this name, or null if it isn't present */
 	@SuppressWarnings("unchecked")
     public final <T extends TextProp> T findByName(String textPropName) {
@@ -143,18 +152,18 @@ public class TextPropCollection implements GenericRecord {
 	public final <T extends TextProp> T removeByName(String name) {
 	    return (T)textProps.remove(name);
 	}
-	
+
 	public final TextPropType getTextPropType() {
 	    return textPropType;
 	}
-	
+
 	private TextProp[] getPotentialProperties() {
 	    return (textPropType == TextPropType.paragraph) ? paragraphTextPropTypes : characterTextPropTypes;
 	}
 
 	/**
 	 * Checks the paragraph or character properties for the given property name.
-	 * Throws a HSLFException, if the name doesn't belong into this set of properties 
+	 * Throws a HSLFException, if the name doesn't belong into this set of properties
 	 *
 	 * @param name the property name
 	 * @return if found, the property template to copy from
@@ -166,21 +175,21 @@ public class TextPropCollection implements GenericRecord {
                 return (T)tp;
             }
         }
-       String errStr = 
+       String errStr =
            "No TextProp with name " + name + " is defined to add from. " +
            "Character and paragraphs have their own properties/names.";
-       throw new HSLFException(errStr);       
+       throw new HSLFException(errStr);
 	}
-	
+
     /** Add the TextProp with this name to the list */
     @SuppressWarnings("unchecked")
     public final <T extends TextProp> T addWithName(final String name) {
         // Find the base TextProp to base on
         T existing = findByName(name);
         if (existing != null) return existing;
-        
+
         // Add a copy of this property
-        T textProp = (T)validatePropName(name).clone();
+        T textProp = (T)validatePropName(name).copy();
         textProps.put(name,textProp);
         return textProp;
     }
@@ -197,12 +206,12 @@ public class TextPropCollection implements GenericRecord {
 
 	    String propName = textProp.getName();
 	    validatePropName(propName);
-	    
+
 	    textProps.put(propName, textProp);
 	}
 
 	/**
-	 * For an existing set of text properties, build the list of 
+	 * For an existing set of text properties, build the list of
 	 *  properties coded for in a given run of properties.
 	 * @return the number of bytes that were used encoding the properties list
 	 */
@@ -224,7 +233,7 @@ public class TextPropCollection implements GenericRecord {
                 }
 
 				// Bingo, data contains this property
-				TextProp prop = tp.clone();
+				TextProp prop = tp.copy();
 				int val = 0;
 				if (prop instanceof HSLFTabStopPropCollection) {
                     ((HSLFTabStopPropCollection)prop).parseProperty(data, dataOffset+bytesPassed);
@@ -237,7 +246,7 @@ public class TextPropCollection implements GenericRecord {
                     maskSpecial |= tp.getMask();
                     continue;
                 }
-				
+
 				if (prop instanceof BitMaskTextProp) {
 				    ((BitMaskTextProp)prop).setValueWithMask(val, containsField);
 				} else if (!(prop instanceof HSLFTabStopPropCollection)) {
@@ -255,26 +264,14 @@ public class TextPropCollection implements GenericRecord {
     /**
      * Clones the given text properties
      */
-	public void copy(TextPropCollection other) {
-	    if (other == null) {
-	        throw new HSLFException("trying to copy null TextPropCollection");
-	    }
-	    if (this == other) return;
-        this.charactersCovered = other.charactersCovered;
-        this.indentLevel = other.indentLevel;
-        this.maskSpecial = other.maskSpecial;
-        this.textProps.clear();
-        for (TextProp tp : other.textProps.values()) {
-            TextProp tpCopy = (tp instanceof BitMaskTextProp)
-                ? ((BitMaskTextProp)tp).cloneAll()
-                : tp.clone();
-            addProp(tpCopy);
-        }
+    @Override
+	public TextPropCollection copy() {
+        return new TextPropCollection(this);
 	}
-	
+
 	/**
 	 * Update the size of the text that this set of properties
-	 *  applies to 
+	 *  applies to
 	 */
 	public void updateTextSize(int textSize) {
 		charactersCovered = textSize;
@@ -286,7 +283,7 @@ public class TextPropCollection implements GenericRecord {
     public void writeOut(OutputStream o) throws IOException {
         writeOut(o, false);
     }
-	
+
 	/**
 	 * Writes out to disk the header, and then all the properties
 	 */
@@ -335,7 +332,7 @@ public class TextPropCollection implements GenericRecord {
         }
         this.indentLevel = indentLevel;
     }
-    
+
     public int hashCode() {
         final int prime = 31;
         int result = 1;
@@ -352,7 +349,7 @@ public class TextPropCollection implements GenericRecord {
         if (this == other) return true;
         if (other == null) return false;
         if (getClass() != other.getClass()) return false;
-        
+
         TextPropCollection o = (TextPropCollection)other;
         if (o.maskSpecial != this.maskSpecial || o.indentLevel != this.indentLevel) {
             return false;
@@ -394,7 +391,7 @@ public class TextPropCollection implements GenericRecord {
         } catch (IOException e ) {
             LOG.log(POILogger.ERROR, "can't dump TextPropCollection", e);
         }
-        
+
         return out.toString();
     }
 

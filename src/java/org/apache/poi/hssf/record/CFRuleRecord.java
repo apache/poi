@@ -23,18 +23,22 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Conditional Formatting Rule Record (0x01B1). 
- * 
+ * Conditional Formatting Rule Record (0x01B1).
+ *
  * <p>This is for the older-style Excel conditional formattings,
  *  new-style (Excel 2007+) also make use of {@link CFRule12Record}
  *  for their rules.</p>
  */
-public final class CFRuleRecord extends CFRuleBase implements Cloneable {
+public final class CFRuleRecord extends CFRuleBase {
     public static final short sid = 0x01B1;
 
-    /** Creates new CFRuleRecord */
+    public CFRuleRecord(CFRuleRecord other) {
+        super(other);
+    }
+
     private CFRuleRecord(byte conditionType, byte comparisonOperation) {
         super(conditionType, comparisonOperation);
         setDefaults();
@@ -59,10 +63,10 @@ public final class CFRuleRecord extends CFRuleBase implements Cloneable {
 
     /**
      * Creates a new comparison operation rule
-     * 
+     *
      * @param sheet the sheet
      * @param formulaText the formula text
-     * 
+     *
      * @return a new comparison operation rule
      */
     public static CFRuleRecord create(HSSFSheet sheet, String formulaText) {
@@ -72,12 +76,12 @@ public final class CFRuleRecord extends CFRuleBase implements Cloneable {
     }
     /**
      * Creates a new comparison operation rule
-     * 
+     *
      * @param sheet the sheet
      * @param comparisonOperation the comparison operation
      * @param formulaText1 the first formula text
      * @param formulaText2 the second formula text
-     * 
+     *
      * @return a new comparison operation rule
      */
     public static CFRuleRecord create(HSSFSheet sheet, byte comparisonOperation,
@@ -120,7 +124,7 @@ public final class CFRuleRecord extends CFRuleBase implements Cloneable {
         out.writeByte(getComparisonOperation());
         out.writeShort(formula1Len);
         out.writeShort(formula2Len);
-        
+
         serializeFormattingBlock(out);
 
         getFormula1().serializeTokens(out);
@@ -156,9 +160,15 @@ public final class CFRuleRecord extends CFRuleBase implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public CFRuleRecord clone() {
-        CFRuleRecord rec = new CFRuleRecord(getConditionType(), getComparisonOperation());
-        super.copyTo(rec);
-        return rec;
+        return copy();
+    }
+
+    @Override
+    public CFRuleRecord copy() {
+        return new CFRuleRecord(this);
     }
 }

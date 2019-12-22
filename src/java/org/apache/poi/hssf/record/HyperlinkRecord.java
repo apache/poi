@@ -27,6 +27,7 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -34,13 +35,14 @@ import org.apache.poi.util.StringUtil;
  *  from the Excel-97 format.
  * Supports only external links for now (eg http://)
  */
-public final class HyperlinkRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x01B8;
+public final class HyperlinkRecord extends StandardRecord {
+    public static final short sid = 0x01B8;
     private static POILogger logger = POILogFactory.getLogger(HyperlinkRecord.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
 
+    // TODO: replace with ClassID
     static final class GUID {
         /*
          * this class is currently only used here, but could be moved to a
@@ -60,6 +62,13 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
          * 8 bytes - serialized as big endian,  stored with inverted endianness here
          */
         private final long _d4;
+
+        public GUID(GUID other) {
+            _d1 = other._d1;
+            _d2 = other._d2;
+            _d3 = other._d3;
+            _d4 = other._d4;
+        }
 
         public GUID(LittleEndianInput in) {
             this(in.readInt(), in.readUShort(), in.readUShort(), in.readLong());
@@ -199,24 +208,24 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
         }
     }
 
-    /**
+    /*
      * Link flags
      */
-     static final int  HLINK_URL    = 0x01;  // File link or URL.
-     static final int  HLINK_ABS    = 0x02;  // Absolute path.
-     static final int  HLINK_LABEL  = 0x14;  // Has label/description.
+    static final int HLINK_URL    = 0x01;  // File link or URL.
+    static final int HLINK_ABS    = 0x02;  // Absolute path.
+    static final int HLINK_LABEL  = 0x14;  // Has label/description.
     /** Place in worksheet. If set, the {@link #_textMark} field will be present */
-     static final int  HLINK_PLACE  = 0x08;
+    static final int HLINK_PLACE  = 0x08;
     private static final int  HLINK_TARGET_FRAME  = 0x80;  // has 'target frame'
     private static final int  HLINK_UNC_PATH  = 0x100;  // has UNC path
 
-     final static GUID STD_MONIKER = GUID.parse("79EAC9D0-BAF9-11CE-8C82-00AA004BA90B");
-     final static GUID URL_MONIKER = GUID.parse("79EAC9E0-BAF9-11CE-8C82-00AA004BA90B");
-     final static GUID FILE_MONIKER = GUID.parse("00000303-0000-0000-C000-000000000046");
+    static final GUID STD_MONIKER = GUID.parse("79EAC9D0-BAF9-11CE-8C82-00AA004BA90B");
+    static final GUID URL_MONIKER = GUID.parse("79EAC9E0-BAF9-11CE-8C82-00AA004BA90B");
+    static final GUID FILE_MONIKER = GUID.parse("00000303-0000-0000-C000-000000000046");
     /** expected Tail of a URL link */
-    private final static byte[] URL_TAIL  = HexRead.readFromString("79 58 81 F4  3B 1D 7F 48   AF 2C 82 5D  C4 85 27 63   00 00 00 00  A5 AB 00 00"); 
+    private static final byte[] URL_TAIL  = HexRead.readFromString("79 58 81 F4  3B 1D 7F 48   AF 2C 82 5D  C4 85 27 63   00 00 00 00  A5 AB 00 00");
     /** expected Tail of a file link */
-    private final static byte[] FILE_TAIL = HexRead.readFromString("FF FF AD DE  00 00 00 00   00 00 00 00  00 00 00 00   00 00 00 00  00 00 00 00");
+    private static final byte[] FILE_TAIL = HexRead.readFromString("FF FF AD DE  00 00 00 00   00 00 00 00  00 00 00 00   00 00 00 00  00 00 00 00");
 
     private static final int TAIL_SIZE = FILE_TAIL.length;
 
@@ -246,16 +255,30 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
      * This field is optional.  If present, the {@link #HLINK_PLACE} must be set.
      */
     private String _textMark;
-    
+
     private byte[] _uninterpretedTail;
 
     /**
      * Create a new hyperlink
      */
-    public HyperlinkRecord()
-    {
+    public HyperlinkRecord() {}
 
+
+    public HyperlinkRecord(HyperlinkRecord other) {
+        super(other);
+        _range = (other._range == null) ? null : other._range.copy();
+        _guid = (other._guid == null) ? null : new GUID(other._guid);
+        _fileOpts = other._fileOpts;
+        _linkOpts = other._linkOpts;
+        _label = other._label;
+        _targetFrame = other._targetFrame;
+        _moniker = (other._moniker == null) ? null : new GUID(other._moniker);
+        _shortFilename = other._shortFilename;
+        _address = other._address;
+        _textMark = other._textMark;
+        _uninterpretedTail = (other._uninterpretedTail == null) ? null : other._uninterpretedTail.clone();
     }
+
 
     /**
      * @return the 0-based column of the first cell that contains this hyperlink
@@ -266,7 +289,7 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
 
     /**
      * Set the first column (zero-based) of the range that contains this hyperlink
-     * 
+     *
      * @param firstCol the first column (zero-based)
      */
     public void setFirstColumn(int firstCol) {
@@ -282,7 +305,7 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
 
     /**
      * Set the last column (zero-based) of the range that contains this hyperlink
-     * 
+     *
      * @param lastCol the last column (zero-based)
      */
     public void setLastColumn(int lastCol) {
@@ -298,7 +321,7 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
 
     /**
      * Set the first row (zero-based) of the range that contains this hyperlink
-     * 
+     *
      * @param firstRow the first row (zero-based)
      */
     public void setFirstRow(int firstRow) {
@@ -314,7 +337,7 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
 
     /**
      * Set the last row (zero-based) of the range that contains this hyperlink
-     * 
+     *
      * @param lastRow the last row (zero-based)
      */
     public void setLastRow(int lastRow) {
@@ -423,7 +446,7 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
     /**
      * Link options. Must be a combination of HLINK_* constants.
      * For testing only
-     * 
+     *
      * @return Link options
      */
     int getLinkOptions(){
@@ -541,7 +564,7 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
         }
 
         if (in.remaining() > 0) {
-           logger.log(POILogger.WARN, 
+           logger.log(POILogger.WARN,
                  "Hyperlink data remains: " + in.remaining() +
                  " : " +HexDump.toHex(in.readRemainder())
            );
@@ -699,31 +722,31 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
 
     /**
      * Based on the link options, is this a url?
-     * 
+     *
      * @return true, if this is a url link
      */
     public boolean isUrlLink() {
-       return (_linkOpts & HLINK_URL) > 0 
+       return (_linkOpts & HLINK_URL) > 0
            && (_linkOpts & HLINK_ABS) > 0;
     }
     /**
      * Based on the link options, is this a file?
-     * 
+     *
      * @return true, if this is a file link
      */
     public boolean isFileLink() {
-       return (_linkOpts & HLINK_URL) > 0 
+       return (_linkOpts & HLINK_URL) > 0
            && (_linkOpts & HLINK_ABS) == 0;
     }
     /**
      * Based on the link options, is this a document?
-     * 
+     *
      * @return true, if this is a docment link
      */
     public boolean isDocumentLink() {
-       return (_linkOpts & HLINK_PLACE) > 0; 
+       return (_linkOpts & HLINK_PLACE) > 0;
     }
-    
+
     /**
      * Initialize a new url link
      */
@@ -766,19 +789,15 @@ public final class HyperlinkRecord extends StandardRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public HyperlinkRecord clone() {
-        HyperlinkRecord rec = new HyperlinkRecord();
-        rec._range = _range.copy();
-        rec._guid = _guid;
-        rec._linkOpts = _linkOpts;
-        rec._fileOpts = _fileOpts;
-        rec._label = _label;
-        rec._address = _address;
-        rec._moniker = _moniker;
-        rec._shortFilename = _shortFilename;
-        rec._targetFrame = _targetFrame;
-        rec._textMark = _textMark;
-        rec._uninterpretedTail = _uninterpretedTail;
-        return rec;
+        return copy();
+    }
+
+    @Override
+    public HyperlinkRecord copy() {
+        return new HyperlinkRecord(this);
     }
 }

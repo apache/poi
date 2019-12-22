@@ -19,39 +19,15 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        DBCell Record (0x00D7)<p>
- * Description:  Used by Excel and other MS apps to quickly find rows in the sheets.<P>
- * REFERENCE:  PG 299/440 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * Used by Excel and other MS apps to quickly find rows in the sheets.
  */
-public final class DBCellRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x00D7;
-    public final static int BLOCK_SIZE = 32;
-    
-    public static final class Builder {
-        private short[] _cellOffsets;
-        private int _nCellOffsets;
-        public Builder() {
-        	_cellOffsets = new short[4];
-		}
+public final class DBCellRecord extends StandardRecord {
+    public static final short sid = 0x00D7;
+    public static final int BLOCK_SIZE = 32;
 
-        public void addCellOffset(int cellRefOffset) {
-            if (_cellOffsets.length <= _nCellOffsets) {
-                short[] temp = new short[_nCellOffsets * 2];
-                System.arraycopy(_cellOffsets, 0, temp, 0, _nCellOffsets);
-                _cellOffsets = temp;
-            }
-            _cellOffsets[_nCellOffsets] = (short) cellRefOffset;
-            _nCellOffsets++;
-        }
-
-        public DBCellRecord build(int rowOffset) {
-            short[] cellOffsets = new short[_nCellOffsets];
-            System.arraycopy(_cellOffsets, 0, cellOffsets, 0, _nCellOffsets);
-            return new DBCellRecord(rowOffset, cellOffsets);
-        }
-    }
     /**
      * offset from the start of this DBCellRecord to the start of the first cell in
      * the next DBCell block.
@@ -59,22 +35,20 @@ public final class DBCellRecord extends StandardRecord implements Cloneable {
     private final int     field_1_row_offset;
     private final short[] field_2_cell_offsets;
 
-    DBCellRecord(int rowOffset, short[]cellOffsets) {
+    public DBCellRecord(int rowOffset, short[] cellOffsets) {
         field_1_row_offset = rowOffset;
         field_2_cell_offsets = cellOffsets;
     }
 
     public DBCellRecord(RecordInputStream in) {
         field_1_row_offset   = in.readUShort();
-        int size = in.remaining();        
+        int size = in.remaining();
         field_2_cell_offsets = new short[ size / 2 ];
 
-        for (int i=0;i<field_2_cell_offsets.length;i++)
-        {
+        for (int i=0;i<field_2_cell_offsets.length;i++) {
             field_2_cell_offsets[ i ] = in.readShort();
         }
     }
-
 
     public String toString() {
         StringBuilder buffer = new StringBuilder();
@@ -91,8 +65,8 @@ public final class DBCellRecord extends StandardRecord implements Cloneable {
 
     public void serialize(LittleEndianOutput out) {
         out.writeInt(field_1_row_offset);
-        for (int k = 0; k < field_2_cell_offsets.length; k++) {
-            out.writeShort(field_2_cell_offsets[ k ]);
+        for (short field_2_cell_offset : field_2_cell_offsets) {
+            out.writeShort(field_2_cell_offset);
         }
     }
     protected int getDataSize() {
@@ -104,7 +78,15 @@ public final class DBCellRecord extends StandardRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public DBCellRecord clone() {
+        return copy();
+    }
+
+    @Override
+    public DBCellRecord copy() {
         // safe because immutable
         return this;
     }

@@ -41,7 +41,7 @@ public class TestAbstractFunctionPtg  {
     public void testInvalidRuntimeClass() {
         new FunctionPtg(1, 300, null, 255);
     }
-    
+
     private static class FunctionPtg extends AbstractFunctionPtg {
 
         protected FunctionPtg(int functionIndex, int pReturnClass,
@@ -54,7 +54,13 @@ public class TestAbstractFunctionPtg  {
         }
 
         public void write(LittleEndianOutput out) {
-            
+
+        }
+
+        @Override
+        public FunctionPtg copy() {
+            // immutable
+            return this;
         }
     }
 }

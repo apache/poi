@@ -21,17 +21,21 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
 
 /**
- * SERIESTEXT (0x100D)<p> 
+ * SERIESTEXT (0x100D)<p>
  * Defines a series name
  */
 public final class SeriesTextRecord extends StandardRecord {
-	public final static short sid = 0x100D;
+	public static final short sid = 0x100D;
 
-	/** the actual text cannot be longer than 255 characters */
+	/**
+	 * the actual text cannot be longer than 255 characters
+	 */
 	private static final int MAX_LEN = 0xFF;
+
 	private int field_1_id;
 	private boolean is16bit;
 	private String field_4_text;
@@ -39,6 +43,13 @@ public final class SeriesTextRecord extends StandardRecord {
 	public SeriesTextRecord() {
 		field_4_text = "";
 		is16bit = false;
+	}
+
+	public SeriesTextRecord(SeriesTextRecord other) {
+		super(other);
+		field_1_id = other.field_1_id;
+		is16bit = other.is16bit;
+		field_4_text = other.field_4_text;
 	}
 
 	public SeriesTextRecord(RecordInputStream in) {
@@ -87,13 +98,17 @@ public final class SeriesTextRecord extends StandardRecord {
 		return sid;
 	}
 
-	public Object clone() {
-		SeriesTextRecord rec = new SeriesTextRecord();
+	@Override
+	@SuppressWarnings("squid:S2975")
+	@Deprecated
+	@Removal(version = "5.0.0")
+	public SeriesTextRecord clone() {
+		return copy();
+	}
 
-		rec.field_1_id = field_1_id;
-		rec.is16bit = is16bit;
-		rec.field_4_text = field_4_text;
-		return rec;
+	@Override
+	public SeriesTextRecord copy() {
+		return new SeriesTextRecord(this);
 	}
 
 	/**

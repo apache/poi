@@ -22,18 +22,19 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 
 /**
  * Reads and processes OOXML Encryption Headers
  * The constants are largely based on ZIP constants.
  */
-public abstract class EncryptionHeader implements Cloneable, GenericRecord {
+public abstract class EncryptionHeader implements GenericRecord, Duplicatable {
     public static final int ALGORITHM_RC4 = CipherAlgorithm.rc4.ecmaId;
     public static final int ALGORITHM_AES_128 = CipherAlgorithm.aes128.ecmaId;
     public static final int ALGORITHM_AES_192 = CipherAlgorithm.aes192.ecmaId;
     public static final int ALGORITHM_AES_256 = CipherAlgorithm.aes256.ecmaId;
-    
+
     public static final int HASH_NONE   = HashAlgorithm.none.ecmaId;
     public static final int HASH_SHA1   = HashAlgorithm.sha1.ecmaId;
     public static final int HASH_SHA256 = HashAlgorithm.sha256.ecmaId;
@@ -46,7 +47,7 @@ public abstract class EncryptionHeader implements Cloneable, GenericRecord {
     public static final int MODE_ECB = ChainingMode.ecb.ecmaId;
     public static final int MODE_CBC = ChainingMode.cbc.ecmaId;
     public static final int MODE_CFB = ChainingMode.cfb.ecmaId;
-    
+
     private int flags;
     private int sizeExtra;
     private CipherAlgorithm cipherAlgorithm;
@@ -57,13 +58,26 @@ public abstract class EncryptionHeader implements Cloneable, GenericRecord {
     private ChainingMode chainingMode;
     private byte[] keySalt;
     private String cspName;
-    
+
     protected EncryptionHeader() {}
+
+    protected EncryptionHeader(EncryptionHeader other) {
+        flags = other.flags;
+        sizeExtra = other.sizeExtra;
+        cipherAlgorithm = other.cipherAlgorithm;
+        hashAlgorithm = other.hashAlgorithm;
+        keyBits = other.keyBits;
+        blockSize = other.blockSize;
+        providerType = other.providerType;
+        chainingMode = other.chainingMode;
+        keySalt = (other.keySalt == null) ? null : other.keySalt.clone();
+        cspName = other.cspName;
+    }
 
     public ChainingMode getChainingMode() {
         return chainingMode;
     }
-    
+
     protected void setChainingMode(ChainingMode chainingMode) {
         this.chainingMode = chainingMode;
     }
@@ -71,7 +85,7 @@ public abstract class EncryptionHeader implements Cloneable, GenericRecord {
     public int getFlags() {
         return flags;
     }
-    
+
     protected void setFlags(int flags) {
         this.flags = flags;
     }
@@ -79,7 +93,7 @@ public abstract class EncryptionHeader implements Cloneable, GenericRecord {
     public int getSizeExtra() {
         return sizeExtra;
     }
-    
+
     protected void setSizeExtra(int sizeExtra) {
         this.sizeExtra = sizeExtra;
     }
@@ -87,7 +101,7 @@ public abstract class EncryptionHeader implements Cloneable, GenericRecord {
     public CipherAlgorithm getCipherAlgorithm() {
         return cipherAlgorithm;
     }
-    
+
     protected void setCipherAlgorithm(CipherAlgorithm cipherAlgorithm) {
         this.cipherAlgorithm = cipherAlgorithm;
         if (cipherAlgorithm.allowedKeySize.length == 1) {
@@ -106,7 +120,7 @@ public abstract class EncryptionHeader implements Cloneable, GenericRecord {
     public int getKeySize() {
         return keyBits;
     }
-    
+
     /**
      * Sets the keySize (in bits). Before calling this method, make sure
      * to set the cipherAlgorithm, as the amount of keyBits gets validated against
@@ -127,41 +141,36 @@ public abstract class EncryptionHeader implements Cloneable, GenericRecord {
     public int getBlockSize() {
     	return blockSize;
     }
-    
+
     protected void setBlockSize(int blockSize) {
         this.blockSize = blockSize;
     }
-    
+
     public byte[] getKeySalt() {
         return keySalt;
     }
-    
+
     protected void setKeySalt(byte[] salt) {
         this.keySalt = (salt == null) ? null : salt.clone();
     }
 
     public CipherProvider getCipherProvider() {
         return providerType;
-    }    
+    }
 
     protected void setCipherProvider(CipherProvider providerType) {
         this.providerType = providerType;
     }
-    
+
     public String getCspName() {
         return cspName;
     }
-    
+
     protected void setCspName(String cspName) {
         this.cspName = cspName;
     }
 
-    @Override
-    public EncryptionHeader clone() throws CloneNotSupportedException {
-        EncryptionHeader other = (EncryptionHeader)super.clone();
-        other.keySalt = (keySalt == null) ? null : keySalt.clone();
-        return other;
-    }
+    public abstract EncryptionHeader copy();
 
     @Override
     public Map<String, Supplier<?>> getGenericProperties() {

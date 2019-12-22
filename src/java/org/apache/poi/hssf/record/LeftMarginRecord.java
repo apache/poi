@@ -18,18 +18,23 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * Record for the left margin.
  */
-public final class LeftMarginRecord extends StandardRecord implements Margin, Cloneable {
-    public final static short sid = 0x0026;
+public final class LeftMarginRecord extends StandardRecord implements Margin {
+    public static final short sid = 0x0026;
     private double field_1_margin;
 
-    public LeftMarginRecord()    {    }
+    public LeftMarginRecord() {}
 
-    public LeftMarginRecord(RecordInputStream in)
-    {
+    public LeftMarginRecord(LeftMarginRecord other) {
+        super(other);
+        field_1_margin = other.field_1_margin;
+    }
+
+    public LeftMarginRecord(RecordInputStream in) {
         field_1_margin = in.readDouble();
     }
 
@@ -70,9 +75,15 @@ public final class LeftMarginRecord extends StandardRecord implements Margin, Cl
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public LeftMarginRecord clone() {
-        LeftMarginRecord rec = new LeftMarginRecord();
-        rec.field_1_margin = this.field_1_margin;
-        return rec;
+        return copy();
     }
-} 
+
+    @Override
+    public LeftMarginRecord copy() {
+        return new LeftMarginRecord(this);
+    }
+}

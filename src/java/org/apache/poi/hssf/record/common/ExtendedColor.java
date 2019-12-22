@@ -17,9 +17,11 @@
 
 package org.apache.poi.hssf.record.common;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 
 /**
@@ -27,16 +29,16 @@ import org.apache.poi.util.LittleEndianOutput;
  * <P>
  * The HSSF file format normally stores Color information in the
  *  Palette (see PaletteRecord), but for a few cases (eg Conditional
- *  Formatting, Sheet Extensions), this XSSF-style color record 
+ *  Formatting, Sheet Extensions), this XSSF-style color record
  *  can be used.
  */
-public final class ExtendedColor implements Cloneable {
+public final class ExtendedColor implements Duplicatable {
     public static final int TYPE_AUTO = 0;
     public static final int TYPE_INDEXED = 1;
     public static final int TYPE_RGB = 2;
     public static final int TYPE_THEMED = 3;
     public static final int TYPE_UNSET = 4;
-    
+
     public static final int THEME_DARK_1  = 0;
     public static final int THEME_LIGHT_1 = 1;
     public static final int THEME_DARK_2  = 2;
@@ -50,23 +52,33 @@ public final class ExtendedColor implements Cloneable {
     public static final int THEME_HYPERLINK = 10;
     // This one is SheetEx only, not allowed in CFs
     public static final int THEME_FOLLOWED_HYPERLINK = 11;
-    
+
     private int type;
-    
+
     // Type = Indexed
     private int colorIndex;
     // Type = RGB
     private byte[] rgba;
     // Type = Theme
     private int themeIndex;
-    
+
     private double tint;
-    
+
     public ExtendedColor() {
-        this.type = TYPE_INDEXED;
-        this.colorIndex = 0;
-        this.tint = 0d;
+        type = TYPE_INDEXED;
+        colorIndex = 0;
+        tint = 0d;
     }
+
+    public ExtendedColor(ExtendedColor other) {
+        type = other.type;
+        tint = other.tint;
+        colorIndex = other.colorIndex;
+        rgba = (other.rgba == null) ? null : other.rgba.clone();
+        themeIndex = other.themeIndex;
+    }
+
+
     public ExtendedColor(LittleEndianInput in) {
         type = in.readInt();
         if (type == TYPE_INDEXED) {
@@ -99,7 +111,7 @@ public final class ExtendedColor implements Cloneable {
     public void setColorIndex(int colorIndex) {
         this.colorIndex = colorIndex;
     }
-    
+
     /**
      * @return Red Green Blue Alpha, if type is {@link #TYPE_RGB}
      */
@@ -109,7 +121,7 @@ public final class ExtendedColor implements Cloneable {
     public void setRGBA(byte[] rgba) {
         this.rgba = (rgba == null) ? null : rgba.clone();
     }
-    
+
     /**
      * @return Theme color type index, eg {@link #THEME_DARK_1}, if type is {@link #TYPE_THEMED}
      */
@@ -134,7 +146,7 @@ public final class ExtendedColor implements Cloneable {
         }
         this.tint = tint;
     }
-    
+
     public String toString() {
         StringBuilder buffer = new StringBuilder();
         buffer.append("    [Extended Color]\n");
@@ -146,23 +158,20 @@ public final class ExtendedColor implements Cloneable {
         buffer.append("    [/Extended Color]\n");
         return buffer.toString();
     }
-    
+
     @Override
-    public ExtendedColor clone()  {
-        ExtendedColor exc = new ExtendedColor();
-        exc.type = type;
-        exc.tint = tint;
-        if (type == TYPE_INDEXED) {
-            exc.colorIndex = colorIndex;
-        } else if (type == TYPE_RGB) {
-            exc.rgba = new byte[4];
-            System.arraycopy(rgba, 0, exc.rgba, 0, 4);
-        } else if (type == TYPE_THEMED) {
-            exc.themeIndex = themeIndex;
-        }
-        return exc;
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public ExtendedColor clone() {
+        return copy();
     }
-    
+
+    @Override
+    public ExtendedColor copy()  {
+        return new ExtendedColor(this);
+    }
+
     public int getDataLength() {
         return 4+4+8;
     }

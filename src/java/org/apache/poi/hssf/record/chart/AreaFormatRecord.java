@@ -23,18 +23,17 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * The area format record is used to define the colours and patterns for an area.<p>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The area format record is used to define the colours and patterns for an area.
  */
-public final class AreaFormatRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x100A;
-    
+public final class AreaFormatRecord extends StandardRecord {
+    public static final short sid = 0x100A;
+
     private static final BitField automatic = BitFieldFactory.getInstance(0x1);
     private static final BitField invert    = BitFieldFactory.getInstance(0x2);
-    
+
     private  int        field_1_foregroundColor;
     private  int        field_2_backgroundColor;
     private  short      field_3_pattern;
@@ -43,20 +42,25 @@ public final class AreaFormatRecord extends StandardRecord implements Cloneable 
     private  short      field_6_backcolorIndex;
 
 
-    public AreaFormatRecord()
-    {
+    public AreaFormatRecord() {}
 
-    }
-
-    public AreaFormatRecord(RecordInputStream in)
-    {
+    public AreaFormatRecord(RecordInputStream in) {
         field_1_foregroundColor        = in.readInt();
         field_2_backgroundColor        = in.readInt();
         field_3_pattern                = in.readShort();
         field_4_formatFlags            = in.readShort();
         field_5_forecolorIndex         = in.readShort();
         field_6_backcolorIndex         = in.readShort();
+    }
 
+    public AreaFormatRecord(AreaFormatRecord other) {
+        super(other);
+        field_1_foregroundColor        = other.field_1_foregroundColor;
+        field_2_backgroundColor        = other.field_2_backgroundColor;
+        field_3_pattern                = other.field_3_pattern;
+        field_4_formatFlags            = other.field_4_formatFlags;
+        field_5_forecolorIndex         = other.field_5_forecolorIndex;
+        field_6_backcolorIndex         = other.field_6_backcolorIndex;
     }
 
     public String toString()
@@ -67,29 +71,29 @@ public final class AreaFormatRecord extends StandardRecord implements Cloneable 
         buffer.append("    .foregroundColor      = ")
             .append("0x").append(HexDump.toHex(  getForegroundColor ()))
             .append(" (").append( getForegroundColor() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .backgroundColor      = ")
             .append("0x").append(HexDump.toHex(  getBackgroundColor ()))
             .append(" (").append( getBackgroundColor() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .pattern              = ")
             .append("0x").append(HexDump.toHex(  getPattern ()))
             .append(" (").append( getPattern() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .formatFlags          = ")
             .append("0x").append(HexDump.toHex(  getFormatFlags ()))
             .append(" (").append( getFormatFlags() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-        buffer.append("         .automatic                = ").append(isAutomatic()).append('\n'); 
-        buffer.append("         .invert                   = ").append(isInvert()).append('\n'); 
+        buffer.append(System.getProperty("line.separator"));
+        buffer.append("         .automatic                = ").append(isAutomatic()).append('\n');
+        buffer.append("         .invert                   = ").append(isInvert()).append('\n');
         buffer.append("    .forecolorIndex       = ")
             .append("0x").append(HexDump.toHex(  getForecolorIndex ()))
             .append(" (").append( getForecolorIndex() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .backcolorIndex       = ")
             .append("0x").append(HexDump.toHex(  getBackcolorIndex ()))
             .append(" (").append( getBackcolorIndex() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
 
         buffer.append("[/AREAFORMAT]\n");
         return buffer.toString();
@@ -114,20 +118,12 @@ public final class AreaFormatRecord extends StandardRecord implements Cloneable 
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public AreaFormatRecord clone() {
-        AreaFormatRecord rec = new AreaFormatRecord();
-    
-        rec.field_1_foregroundColor = field_1_foregroundColor;
-        rec.field_2_backgroundColor = field_2_backgroundColor;
-        rec.field_3_pattern = field_3_pattern;
-        rec.field_4_formatFlags = field_4_formatFlags;
-        rec.field_5_forecolorIndex = field_5_forecolorIndex;
-        rec.field_6_backcolorIndex = field_6_backcolorIndex;
-        return rec;
+        return copy();
     }
-
-
-
 
     /**
      * Get the foreground color field for the AreaFormat record.
@@ -259,5 +255,10 @@ public final class AreaFormatRecord extends StandardRecord implements Cloneable 
     public boolean isInvert()
     {
         return invert.isSet(field_4_formatFlags);
+    }
+
+    @Override
+    public AreaFormatRecord copy() {
+        return new AreaFormatRecord(this);
     }
 }

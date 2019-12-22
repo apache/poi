@@ -23,36 +23,39 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * This record refers to a category or series axis and is used to specify label/tickmark frequency.<p>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * This record refers to a category or series axis and is used to specify label/tickmark frequency.
  */
-public final class CategorySeriesAxisRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x1020;
+public final class CategorySeriesAxisRecord extends StandardRecord {
+    public static final short sid = 0x1020;
 
     private static final BitField valueAxisCrossing = BitFieldFactory.getInstance(0x1);
     private static final BitField crossesFarRight   = BitFieldFactory.getInstance(0x2);
     private static final BitField reversed          = BitFieldFactory.getInstance(0x4);
-    
-    private  short      field_1_crossingPoint;
-    private  short      field_2_labelFrequency;
-    private  short      field_3_tickMarkFrequency;
-    private  short      field_4_options;
+
+    private short field_1_crossingPoint;
+    private short field_2_labelFrequency;
+    private short field_3_tickMarkFrequency;
+    private short field_4_options;
 
 
-    public CategorySeriesAxisRecord()
-    {
+    public CategorySeriesAxisRecord() {}
 
+    public CategorySeriesAxisRecord(CategorySeriesAxisRecord other) {
+        super(other);
+        field_1_crossingPoint     = other.field_1_crossingPoint;
+        field_2_labelFrequency    = other.field_2_labelFrequency;
+        field_3_tickMarkFrequency = other.field_3_tickMarkFrequency;
+        field_4_options           = other.field_4_options;
     }
 
-    public CategorySeriesAxisRecord(RecordInputStream in)
-    {
-        field_1_crossingPoint          = in.readShort();
-        field_2_labelFrequency         = in.readShort();
-        field_3_tickMarkFrequency      = in.readShort();
-        field_4_options                = in.readShort();
+    public CategorySeriesAxisRecord(RecordInputStream in) {
+        field_1_crossingPoint     = in.readShort();
+        field_2_labelFrequency    = in.readShort();
+        field_3_tickMarkFrequency = in.readShort();
+        field_4_options           = in.readShort();
     }
 
     public String toString()
@@ -63,22 +66,22 @@ public final class CategorySeriesAxisRecord extends StandardRecord implements Cl
         buffer.append("    .crossingPoint        = ")
             .append("0x").append(HexDump.toHex(  getCrossingPoint ()))
             .append(" (").append( getCrossingPoint() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .labelFrequency       = ")
             .append("0x").append(HexDump.toHex(  getLabelFrequency ()))
             .append(" (").append( getLabelFrequency() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .tickMarkFrequency    = ")
             .append("0x").append(HexDump.toHex(  getTickMarkFrequency ()))
             .append(" (").append( getTickMarkFrequency() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .options              = ")
             .append("0x").append(HexDump.toHex(  getOptions ()))
             .append(" (").append( getOptions() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-        buffer.append("         .valueAxisCrossing        = ").append(isValueAxisCrossing()).append('\n'); 
-        buffer.append("         .crossesFarRight          = ").append(isCrossesFarRight()).append('\n'); 
-        buffer.append("         .reversed                 = ").append(isReversed()).append('\n'); 
+        buffer.append(System.getProperty("line.separator"));
+        buffer.append("         .valueAxisCrossing        = ").append(isValueAxisCrossing()).append('\n');
+        buffer.append("         .crossesFarRight          = ").append(isCrossesFarRight()).append('\n');
+        buffer.append("         .reversed                 = ").append(isReversed()).append('\n');
 
         buffer.append("[/CATSERRANGE]\n");
         return buffer.toString();
@@ -101,18 +104,12 @@ public final class CategorySeriesAxisRecord extends StandardRecord implements Cl
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public CategorySeriesAxisRecord clone() {
-        CategorySeriesAxisRecord rec = new CategorySeriesAxisRecord();
-    
-        rec.field_1_crossingPoint = field_1_crossingPoint;
-        rec.field_2_labelFrequency = field_2_labelFrequency;
-        rec.field_3_tickMarkFrequency = field_3_tickMarkFrequency;
-        rec.field_4_options = field_4_options;
-        return rec;
+        return copy();
     }
-
-
-
 
     /**
      * Get the crossing point field for the CategorySeriesAxis record.
@@ -230,5 +227,10 @@ public final class CategorySeriesAxisRecord extends StandardRecord implements Cl
     public boolean isReversed()
     {
         return reversed.isSet(field_4_options);
+    }
+
+    @Override
+    public CategorySeriesAxisRecord copy() {
+        return new CategorySeriesAxisRecord(this);
     }
 }

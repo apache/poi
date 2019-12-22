@@ -34,13 +34,16 @@ import java.util.function.Supplier;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
+import org.apache.poi.hemf.record.emf.HemfPenStyle;
 import org.apache.poi.hemf.record.emfplus.HemfPlusBrush.EmfPlusBrush;
 import org.apache.poi.hemf.record.emfplus.HemfPlusDraw.EmfPlusUnitType;
 import org.apache.poi.hemf.record.emfplus.HemfPlusHeader.EmfPlusGraphicsVersion;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectData;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
 import org.apache.poi.hemf.record.emfplus.HemfPlusPath.EmfPlusPath;
-import org.apache.poi.hwmf.record.HwmfPenStyle;
+import org.apache.poi.hwmf.record.HwmfPenStyle.HwmfLineCap;
+import org.apache.poi.hwmf.record.HwmfPenStyle.HwmfLineDash;
+import org.apache.poi.hwmf.record.HwmfPenStyle.HwmfLineJoin;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.Internal;
@@ -506,55 +509,45 @@ public class HemfPlusPen {
 
             brush.applyPen(ctx, continuedObjectData);
             prop.setPenWidth(penWidth);
-            prop.setPenStyle(new HwmfPenStyle(){
-                @Override
-                public HwmfLineCap getLineCap() {
-                    // ignore endCap for now
-                    switch(startCap) {
-                        default:
-                        case FLAT:
-                            return HwmfLineCap.FLAT;
-                        case ROUND:
-                            return HwmfLineCap.ROUND;
-                        case SQUARE:
-                            return HwmfLineCap.SQUARE;
-                    }
-                }
 
-                @Override
-                public HwmfLineJoin getLineJoin() {
-                    switch (join) {
-                        default:
-                        case BEVEL:
-                            return HwmfLineJoin.BEVEL;
-                        case ROUND:
-                            return HwmfLineJoin.ROUND;
-                        case MITER_CLIPPED:
-                        case MITER:
-                            return HwmfLineJoin.MITER;
-                    }
-                }
+            HwmfLineCap cap;
+            // ignore endCap for now
+            switch(startCap) {
+                default:
+                case FLAT:
+                    cap = HwmfLineCap.FLAT;
+                    break;
+                case ROUND:
+                    cap = HwmfLineCap.ROUND;
+                    break;
+                case SQUARE:
+                    cap = HwmfLineCap.SQUARE;
+                    break;
+            }
 
-                @Override
-                public HwmfLineDash getLineDash() {
-                    return dashedLineData == null ? HwmfLineDash.SOLID : HwmfLineDash.USERSTYLE;
-                }
+            HwmfLineJoin lineJoin;
+            switch (join) {
+                default:
+                case BEVEL:
+                    lineJoin = HwmfLineJoin.BEVEL;
+                    break;
+                case ROUND:
+                    lineJoin = HwmfLineJoin.ROUND;
+                    break;
+                case MITER_CLIPPED:
+                case MITER:
+                    lineJoin = HwmfLineJoin.MITER;
+                    break;
+            }
 
-                @Override
-                public float[] getLineDashes() {
-                    return dashedLineData;
-                }
+            HwmfLineDash lineDash = (dashedLineData == null) ? HwmfLineDash.SOLID : HwmfLineDash.USERSTYLE;
 
-                @Override
-                public boolean isAlternateDash() {
-                    return (getLineDash() != HwmfLineDash.SOLID && dashOffset != null && dashOffset == 0);
-                }
+            boolean isAlternate = (lineDash != HwmfLineDash.SOLID && dashOffset != null && dashOffset == 0);
+            boolean isGeometric = (unitType == EmfPlusUnitType.World || unitType == EmfPlusUnitType.Display);
+            HemfPenStyle penStyle = HemfPenStyle.valueOf(cap, lineJoin, lineDash, isAlternate, isGeometric);
+            penStyle.setLineDashes(dashedLineData);
 
-                @Override
-                public boolean isGeometric() {
-                    return (unitType == EmfPlusUnitType.World || unitType == EmfPlusUnitType.Display);
-                }
-            });
+            prop.setPenStyle(penStyle);
         }
 
         @Override

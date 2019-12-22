@@ -25,12 +25,10 @@ import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Title:        Style Record (0x0293)<p>
- * Description:  Describes a builtin to the gui or user defined style<p>
- * REFERENCE:  PG 390 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * Describes a builtin to the gui or user defined style
  */
 public final class StyleRecord extends StandardRecord {
-	public final static short sid = 0x0293;
+	public static final short sid = 0x0293;
 
 	private static final BitField styleIndexMask = BitFieldFactory.getInstance(0x0FFF);
 	private static final BitField isBuiltinFlag  = BitFieldFactory.getInstance(0x8000);
@@ -51,6 +49,15 @@ public final class StyleRecord extends StandardRecord {
 	 */
 	public StyleRecord() {
 		field_1_xf_index = isBuiltinFlag.set(0);
+	}
+
+	public StyleRecord(StyleRecord other) {
+		super(other);
+		field_1_xf_index = other.field_1_xf_index;
+		field_2_builtin_style = other.field_2_builtin_style;
+		field_3_outline_style_level = other.field_3_outline_style_level;
+		field_3_stringHasMultibyte = other.field_3_stringHasMultibyte;
+		field_4_name = other.field_4_name;
 	}
 
 	public StyleRecord(RecordInputStream in) {
@@ -188,5 +195,10 @@ public final class StyleRecord extends StandardRecord {
 	@Override
 	public short getSid() {
 		return sid;
+	}
+
+	@Override
+	public StyleRecord copy() {
+		return new StyleRecord(this);
 	}
 }

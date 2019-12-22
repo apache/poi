@@ -17,24 +17,25 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        Print Gridlines Record<P>
- * Description:  whether to print the gridlines when you enjoy you spreadsheet on paper.<P>
- * REFERENCE:  PG 373 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
+ * Whether to print the gridlines when you enjoy the spreadsheet on paper.
+ *
  * @version 2.0-pre
  */
 public final class PrintGridlinesRecord extends StandardRecord {
-    public final static short sid = 0x2b;
-    private short             field_1_print_gridlines;
+    public static final short sid = 0x2b;
+    private short field_1_print_gridlines;
 
-    public PrintGridlinesRecord() {
+    public PrintGridlinesRecord() {}
+
+    public PrintGridlinesRecord(PrintGridlinesRecord other) {
+        super(other);
+        field_1_print_gridlines = other.field_1_print_gridlines;
     }
 
-    public PrintGridlinesRecord(RecordInputStream in)
-    {
+    public PrintGridlinesRecord(RecordInputStream in) {
         field_1_print_gridlines = in.readShort();
     }
 
@@ -44,11 +45,7 @@ public final class PrintGridlinesRecord extends StandardRecord {
      * @param pg  make spreadsheet ugly - Y/N
      */
     public void setPrintGridlines(boolean pg) {
-        if (pg) {
-            field_1_print_gridlines = 1;
-        } else {
-            field_1_print_gridlines = 0;
-        }
+        field_1_print_gridlines = (short) (pg ? 1 : 0);
     }
 
     /**
@@ -81,9 +78,15 @@ public final class PrintGridlinesRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
-      PrintGridlinesRecord rec = new PrintGridlinesRecord();
-      rec.field_1_print_gridlines = field_1_print_gridlines;
-      return rec;
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public PrintGridlinesRecord clone() {
+        return copy();
+    }
+
+    public PrintGridlinesRecord copy() {
+      return new PrintGridlinesRecord(this);
     }
 }

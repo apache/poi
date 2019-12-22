@@ -17,7 +17,6 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.record.FormulaRecord.SpecialCachedValue;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.CellType;
@@ -27,12 +26,12 @@ import org.apache.poi.ss.usermodel.CellType;
  *  encoded form, along with the value if a number
  */
 public final class OldFormulaRecord extends OldCellRecord {
-    public final static short biff2_sid = 0x0006;
-    public final static short biff3_sid = 0x0206;
-    public final static short biff4_sid = 0x0406;
-    public final static short biff5_sid = 0x0006;
+    public static final short biff2_sid = 0x0006;
+    public static final short biff3_sid = 0x0206;
+    public static final short biff4_sid = 0x0406;
+    public static final short biff5_sid = 0x0006;
 
-    private SpecialCachedValue specialCachedValue;
+    private FormulaSpecialCachedValue specialCachedValue;
     private double  field_4_value;
     private short   field_5_options;
     private Formula field_6_parsed_expr;
@@ -44,7 +43,7 @@ public final class OldFormulaRecord extends OldCellRecord {
             field_4_value = ris.readDouble();
         } else {
             long valueLongBits  = ris.readLong();
-            specialCachedValue = SpecialCachedValue.create(valueLongBits);
+            specialCachedValue = FormulaSpecialCachedValue.create(valueLongBits);
             if (specialCachedValue == null) {
                 field_4_value = Double.longBitsToDouble(valueLongBits);
             }
@@ -67,14 +66,14 @@ public final class OldFormulaRecord extends OldCellRecord {
         }
         return specialCachedValue.getValueType();
     }
-    
+
     public boolean getCachedBooleanValue() {
         return specialCachedValue.getBooleanValue();
     }
     public int getCachedErrorValue() {
         return specialCachedValue.getErrorValue();
     }
-    
+
     /**
      * get the calculated value of the formula
      *

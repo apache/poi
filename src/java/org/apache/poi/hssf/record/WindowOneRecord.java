@@ -22,55 +22,64 @@ import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Window1 Record<P>
- * Description:  Stores the attributes of the workbook window.  This is basically
- *               so the gui knows how big to make the window holding the spreadsheet
- *               document.<P>
- * REFERENCE:  PG 421 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ * Stores the attributes of the workbook window.
+ * This is basically so the gui knows how big to make the window holding the spreadsheet document.
+ *
  * @version 2.0-pre
  */
 public final class WindowOneRecord extends StandardRecord {
-    public final static short     sid = 0x3d;
+    public static final short sid = 0x3d;
 
-    // our variable names stolen from old TV sets.
-    private short                 field_1_h_hold;                  // horizontal position
-    private short                 field_2_v_hold;                  // vertical position
-    private short                 field_3_width;
-    private short                 field_4_height;
-    private short                 field_5_options;
-    static final private BitField hidden   =
-        BitFieldFactory.getInstance(0x01);                                        // is this window is hidden
-    static final private BitField iconic   =
-        BitFieldFactory.getInstance(0x02);                                        // is this window is an icon
+    // horizontal position
+    private short field_1_h_hold;
+    // vertical position
+    private short field_2_v_hold;
+    private short field_3_width;
+    private short field_4_height;
+    private short field_5_options;
+    // is this window is hidden
+    static final private BitField hidden   = BitFieldFactory.getInstance(0x01);
+    // is this window is an icon
+    static final private BitField iconic   = BitFieldFactory.getInstance(0x02);
+    // reserved
     @SuppressWarnings("unused")
-    static final private BitField reserved = BitFieldFactory.getInstance(0x04);   // reserved
-    static final private BitField hscroll  =
-        BitFieldFactory.getInstance(0x08);                                        // display horizontal scrollbar
-    static final private BitField vscroll  =
-        BitFieldFactory.getInstance(0x10);                                        // display vertical scrollbar
-    static final private BitField tabs     =
-        BitFieldFactory.getInstance(0x20);                                        // display tabs at the bottom
+    static final private BitField reserved = BitFieldFactory.getInstance(0x04);
+    // display horizontal scrollbar
+    static final private BitField hscroll  = BitFieldFactory.getInstance(0x08);
+    // display vertical scrollbar
+    static final private BitField vscroll  = BitFieldFactory.getInstance(0x10);
+    // display tabs at the bottom
+    static final private BitField tabs     = BitFieldFactory.getInstance(0x20);
 
     // all the rest are "reserved"
-    private int                   field_6_active_sheet;
-    private int                   field_7_first_visible_tab;
-    private short                 field_8_num_selected_tabs;
-    private short                 field_9_tab_width_ratio;
+    private int   field_6_active_sheet;
+    private int   field_7_first_visible_tab;
+    private short field_8_num_selected_tabs;
+    private short field_9_tab_width_ratio;
 
-    public WindowOneRecord()
-    {
+    public WindowOneRecord() {}
+
+    public WindowOneRecord(WindowOneRecord other) {
+        super(other);
+        field_1_h_hold            = other.field_1_h_hold;
+        field_2_v_hold            = other.field_2_v_hold;
+        field_3_width             = other.field_3_width;
+        field_4_height            = other.field_4_height;
+        field_5_options           = other.field_5_options;
+        field_6_active_sheet      = other.field_6_active_sheet;
+        field_7_first_visible_tab = other.field_7_first_visible_tab;
+        field_8_num_selected_tabs = other.field_8_num_selected_tabs;
+        field_9_tab_width_ratio   = other.field_9_tab_width_ratio;
     }
 
-    public WindowOneRecord(RecordInputStream in)
-    {
+    public WindowOneRecord(RecordInputStream in) {
         field_1_h_hold            = in.readShort();
         field_2_v_hold            = in.readShort();
         field_3_width             = in.readShort();
         field_4_height            = in.readShort();
         field_5_options           = in.readShort();
         field_6_active_sheet      = in.readShort();
-        field_7_first_visible_tab     = in.readShort();
+        field_7_first_visible_tab = in.readShort();
         field_8_num_selected_tabs = in.readShort();
         field_9_tab_width_ratio   = in.readShort();
     }
@@ -318,16 +327,16 @@ public final class WindowOneRecord extends StandardRecord {
 
     // end options bitfields
 
-    
+
     /**
-     * @return the index of the currently displayed sheet 
+     * @return the index of the currently displayed sheet
      */
     public int getActiveSheetIndex() {
     	return field_6_active_sheet;
     }
 
     /**
-     * @return the first visible sheet in the worksheet tab-bar. 
+     * @return the first visible sheet in the worksheet tab-bar.
      * I.E. the scroll position of the tab-bar.
      */
     public int getFirstVisibleTab() {
@@ -406,5 +415,10 @@ public final class WindowOneRecord extends StandardRecord {
     public short getSid()
     {
         return sid;
+    }
+
+    @Override
+    public WindowOneRecord copy() {
+        return new WindowOneRecord(this);
     }
 }

@@ -19,18 +19,16 @@ package org.apache.poi.ss.formula.ptg;
 
 /**
  * This PTG implements the standard binomial divide "/"
- * @author  Andrew C. Oliver acoliver at apache dot org
- * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class DividePtg extends ValueOperatorPtg {
     public final static byte sid  = 0x06;
 
-    public static final ValueOperatorPtg instance = new DividePtg();
+    public static final DividePtg instance = new DividePtg();
 
     private DividePtg() {
     	// enforce singleton
     }
-    
+
     protected byte getSid() {
     	return sid;
     }
@@ -46,5 +44,10 @@ public final class DividePtg extends ValueOperatorPtg {
         buffer.append("/");
         buffer.append(operands[ 1 ]);
         return buffer.toString();
-    }      
+    }
+
+    @Override
+    public DividePtg copy() {
+        return instance;
+    }
 }

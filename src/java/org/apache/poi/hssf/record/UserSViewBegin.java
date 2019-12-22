@@ -21,19 +21,24 @@ import java.util.Locale;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * The UserSViewBegin record specifies settings for a custom view associated with the sheet.
  * This record also marks the start of custom view records, which save custom view settings.
  * Records between {@link UserSViewBegin} and {@link UserSViewEnd} contain settings for the custom view,
  * not settings for the sheet itself.
- *
- * @author Yegor Kozlov
  */
 public final class UserSViewBegin extends StandardRecord {
 
-    public final static short sid = 0x01AA;
-	private byte[] _rawData;
+    public static final short sid = 0x01AA;
+
+    private byte[] _rawData;
+
+    public UserSViewBegin(UserSViewBegin other) {
+        super(other);
+        _rawData = (other._rawData == null) ? null : other._rawData.clone();
+    }
 
     public UserSViewBegin(byte[] data) {
         _rawData = data;
@@ -83,9 +88,17 @@ public final class UserSViewBegin extends StandardRecord {
         return sb.toString();
     }
 
-    //HACK: do a "cheat" clone, see Record.java for more information
-    public Object clone() {
-        return cloneViaReserialise();
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public UserSViewBegin clone() {
+        return copy();
     }
- 
+
+    @Override
+    public UserSViewBegin copy() {
+        return new UserSViewBegin(this);
+    }
+
 }

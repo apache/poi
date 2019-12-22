@@ -21,13 +21,14 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * ftGmo (0x0006)<p>
  * The group marker record is used as a position holder for groups.
  */
-public final class GroupMarkerSubRecord extends SubRecord implements Cloneable {
-    public final static short sid = 0x0006;
+public final class GroupMarkerSubRecord extends SubRecord {
+    public static final short sid = 0x0006;
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
@@ -39,6 +40,11 @@ public final class GroupMarkerSubRecord extends SubRecord implements Cloneable {
 
     public GroupMarkerSubRecord() {
         reserved = EMPTY_BYTE_ARRAY;
+    }
+
+    public GroupMarkerSubRecord(GroupMarkerSubRecord other) {
+        super(other);
+        reserved = other.reserved.clone();
     }
 
     public GroupMarkerSubRecord(LittleEndianInput in, int size) {
@@ -74,10 +80,15 @@ public final class GroupMarkerSubRecord extends SubRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public GroupMarkerSubRecord clone() {
-        GroupMarkerSubRecord rec = new GroupMarkerSubRecord();
-        rec.reserved = new byte[reserved.length];
-        System.arraycopy(reserved, 0, rec.reserved, 0, reserved.length);
-        return rec;
+        return copy();
+    }
+
+    @Override
+    public GroupMarkerSubRecord copy() {
+        return new GroupMarkerSubRecord(this);
     }
 }

@@ -32,7 +32,7 @@ public final class RecordStream {
 
 	/**
 	 * Creates a RecordStream bounded by startIndex and endIndex
-	 * 
+	 *
 	 * @param inputList the list to iterate over
 	 * @param startIndex the start index within the list
 	 * @param endIx the end index within the list, which is the index of the end element + 1
@@ -68,6 +68,13 @@ public final class RecordStream {
 			return null;
 		}
 		return _list.get(_nextIndex).getClass();
+	}
+
+	/**
+	 * @return the next Record. <code>null</code> if this stream is exhausted.
+	 */
+	public Record peekNextRecord() {
+		return (hasNext()) ? _list.get(_nextIndex) : null;
 	}
 
 	/**

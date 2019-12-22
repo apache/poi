@@ -23,8 +23,6 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * AreaErr - handles deleted cell area references.
- *
- * @author Daniel Noll (daniel at nuix dot com dot au)
  */
 public final class AreaErrPtg extends OperandPtg {
 	public final static byte sid = 0x2B;
@@ -59,5 +57,10 @@ public final class AreaErrPtg extends OperandPtg {
 	public int getSize() {
 		return 9;
 	}
-}
 
+	@Override
+	public AreaErrPtg copy() {
+		// immutable
+		return this;
+	}
+}

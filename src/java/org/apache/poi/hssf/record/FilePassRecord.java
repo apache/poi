@@ -33,13 +33,14 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.LittleEndianOutputStream;
+import org.apache.poi.util.Removal;
 
 /**
- * Title: File Pass Record (0x002F) <p>
+ * File Pass Record (0x002F) <p>
  *
- * Description: Indicates that the record after this record are encrypted.
+ * Indicates that the record after this record are encrypted.
  */
-public final class FilePassRecord extends StandardRecord implements Cloneable {
+public final class FilePassRecord extends StandardRecord {
 	public static final short sid = 0x002F;
     private static final int ENCRYPTION_XOR = 0;
     private static final int ENCRYPTION_OTHER = 1;
@@ -48,12 +49,9 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
     private EncryptionInfo encryptionInfo;
 
 	private FilePassRecord(FilePassRecord other) {
+        super(other);
 	    encryptionType = other.encryptionType;
-        try {
-            encryptionInfo = other.encryptionInfo.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new EncryptedDocumentException(e);
-        }
+        encryptionInfo = other.encryptionInfo.copy();
 	}
 
 	public FilePassRecord(EncryptionMode encryptionMode) {
@@ -138,8 +136,16 @@ public final class FilePassRecord extends StandardRecord implements Cloneable {
 		return sid;
 	}
 
-	@Override
-	public FilePassRecord clone() {
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public FilePassRecord clone() {
+        return copy();
+    }
+
+    @Override
+	public FilePassRecord copy() {
 		return new FilePassRecord(this);
 	}
 

@@ -17,22 +17,28 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.*;
+import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * Record for the top margin.
  */
 public final class TopMarginRecord extends StandardRecord implements Margin {
-    public final static short sid = 0x28;
+    public static final short sid = 0x28;
+
     private double field_1_margin;
 
-    public TopMarginRecord()    {    }
+    public TopMarginRecord() {}
+
+    public TopMarginRecord(TopMarginRecord other) {
+        super(other);
+        field_1_margin = other.field_1_margin;
+    }
 
     /**
      * @param in the RecordInputstream to read the record from
      */
-    public TopMarginRecord( RecordInputStream in )
-    {
+    public TopMarginRecord( RecordInputStream in ) {
         field_1_margin = in.readDouble();
     }
 
@@ -66,10 +72,16 @@ public final class TopMarginRecord extends StandardRecord implements Margin {
     public void setMargin( double field_1_margin )
     {        this.field_1_margin = field_1_margin;    }
 
-    public Object clone()
-    {
-        TopMarginRecord rec = new TopMarginRecord();
-        rec.field_1_margin = this.field_1_margin;
-        return rec;
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public TopMarginRecord clone() {
+        return copy();
     }
-}  // END OF 
+
+    @Override
+    public TopMarginRecord copy() {
+        return new TopMarginRecord(this);
+    }
+}

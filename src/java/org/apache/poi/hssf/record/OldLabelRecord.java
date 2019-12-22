@@ -24,17 +24,17 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
 
 /**
- * Biff2 - Biff 4 Label Record (0x0004 / 0x0204) - read only support for 
+ * Biff2 - Biff 4 Label Record (0x0004 / 0x0204) - read only support for
  *  strings stored directly in the cell, from the older file formats that
  *  didn't use {@link LabelSSTRecord}
  */
 public final class OldLabelRecord extends OldCellRecord {
-    private final static POILogger logger = POILogFactory.getLogger(OldLabelRecord.class);
+    private static final POILogger logger = POILogFactory.getLogger(OldLabelRecord.class);
     //arbitrarily set, may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
-    public final static short biff2_sid = 0x0004;
-    public final static short biff345_sid = 0x0204;
+    public static final short biff2_sid = 0x0004;
+    public static final short biff345_sid = 0x0204;
 
     private short          field_4_string_len;
     private final byte[]         field_5_bytes;
@@ -68,7 +68,7 @@ public final class OldLabelRecord extends OldCellRecord {
     public void setCodePage(CodepageRecord codepage) {
         this.codepage = codepage;
     }
-    
+
     /**
      * get the number of characters this string contains
      * @return number of characters
@@ -80,7 +80,7 @@ public final class OldLabelRecord extends OldCellRecord {
 
     /**
      * Get the String of the cell
-     * 
+     *
      * @return the String of the cell
      */
     public String getValue()
@@ -90,7 +90,7 @@ public final class OldLabelRecord extends OldCellRecord {
 
     /**
      * Not supported
-     * 
+     *
      * @param offset not supported
      * @param data not supported
      * @return not supported
@@ -98,7 +98,7 @@ public final class OldLabelRecord extends OldCellRecord {
     public int serialize(int offset, byte [] data) {
         throw new RecordFormatException("Old Label Records are supported READ ONLY");
     }
-    
+
     public int getRecordSize() {
         throw new RecordFormatException("Old Label Records are supported READ ONLY");
     }

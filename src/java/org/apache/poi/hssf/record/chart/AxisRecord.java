@@ -21,36 +21,40 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * The axis record defines the type of an axis.<p>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The axis record defines the type of an axis.
  */
-public final class AxisRecord extends StandardRecord implements Cloneable {
-    public final static short      sid                             = 0x101d;
-    private  short      field_1_axisType;
-    public final static short       AXIS_TYPE_CATEGORY_OR_X_AXIS   = 0;
-    public final static short       AXIS_TYPE_VALUE_AXIS           = 1;
-    public final static short       AXIS_TYPE_SERIES_AXIS          = 2;
-    private  int        field_2_reserved1;
-    private  int        field_3_reserved2;
-    private  int        field_4_reserved3;
-    private  int        field_5_reserved4;
+public final class AxisRecord extends StandardRecord {
+    public static final short sid                          = 0x101d;
+    public static final short AXIS_TYPE_CATEGORY_OR_X_AXIS = 0;
+    public static final short AXIS_TYPE_VALUE_AXIS         = 1;
+    public static final short AXIS_TYPE_SERIES_AXIS        = 2;
 
+    private short field_1_axisType;
+    private int field_2_reserved1;
+    private int field_3_reserved2;
+    private int field_4_reserved3;
+    private int field_5_reserved4;
 
-    public AxisRecord()
-    {
+    public AxisRecord() {}
 
+    public AxisRecord(AxisRecord other) {
+        super(other);
+        field_1_axisType  = other.field_1_axisType;
+        field_2_reserved1 = other.field_2_reserved1;
+        field_3_reserved2 = other.field_3_reserved2;
+        field_4_reserved3 = other.field_4_reserved3;
+        field_5_reserved4 = other.field_5_reserved4;
     }
 
-    public AxisRecord(RecordInputStream in)
-    {
-        field_1_axisType               = in.readShort();
-        field_2_reserved1              = in.readInt();
-        field_3_reserved2              = in.readInt();
-        field_4_reserved3              = in.readInt();
-        field_5_reserved4              = in.readInt();
+    public AxisRecord(RecordInputStream in) {
+        field_1_axisType  = in.readShort();
+        field_2_reserved1 = in.readInt();
+        field_3_reserved2 = in.readInt();
+        field_4_reserved3 = in.readInt();
+        field_5_reserved4 = in.readInt();
     }
 
     public String toString()
@@ -61,23 +65,23 @@ public final class AxisRecord extends StandardRecord implements Cloneable {
         buffer.append("    .axisType             = ")
             .append("0x").append(HexDump.toHex(  getAxisType ()))
             .append(" (").append( getAxisType() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .reserved1            = ")
             .append("0x").append(HexDump.toHex(  getReserved1 ()))
             .append(" (").append( getReserved1() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .reserved2            = ")
             .append("0x").append(HexDump.toHex(  getReserved2 ()))
             .append(" (").append( getReserved2() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .reserved3            = ")
             .append("0x").append(HexDump.toHex(  getReserved3 ()))
             .append(" (").append( getReserved3() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .reserved4            = ")
             .append("0x").append(HexDump.toHex(  getReserved4 ()))
             .append(" (").append( getReserved4() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
 
         buffer.append("[/AXIS]\n");
         return buffer.toString();
@@ -101,24 +105,17 @@ public final class AxisRecord extends StandardRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public AxisRecord clone() {
-        AxisRecord rec = new AxisRecord();
-    
-        rec.field_1_axisType = field_1_axisType;
-        rec.field_2_reserved1 = field_2_reserved1;
-        rec.field_3_reserved2 = field_3_reserved2;
-        rec.field_4_reserved3 = field_4_reserved3;
-        rec.field_5_reserved4 = field_5_reserved4;
-        return rec;
+        return copy();
     }
-
-
-
 
     /**
      * Get the axis type field for the Axis record.
      *
-     * @return  One of 
+     * @return  One of
      *        AXIS_TYPE_CATEGORY_OR_X_AXIS
      *        AXIS_TYPE_VALUE_AXIS
      *        AXIS_TYPE_SERIES_AXIS
@@ -132,7 +129,7 @@ public final class AxisRecord extends StandardRecord implements Cloneable {
      * Set the axis type field for the Axis record.
      *
      * @param field_1_axisType
-     *        One of 
+     *        One of
      *        AXIS_TYPE_CATEGORY_OR_X_AXIS
      *        AXIS_TYPE_VALUE_AXIS
      *        AXIS_TYPE_SERIES_AXIS
@@ -204,5 +201,10 @@ public final class AxisRecord extends StandardRecord implements Cloneable {
     public void setReserved4(int field_5_reserved4)
     {
         this.field_5_reserved4 = field_5_reserved4;
+    }
+
+    @Override
+    public AxisRecord copy() {
+        return new AxisRecord(this);
     }
 }

@@ -20,19 +20,21 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: Sheet Tab Index Array Record (0x013D)<p>
- * Description:  Contains an array of sheet id's.  Sheets always keep their ID
- *               regardless of what their name is.<p>
- * REFERENCE:  PG 412 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * Contains an array of sheet id's.  Sheets always keep their ID regardless of what their name is.
  */
 public final class TabIdRecord extends StandardRecord {
-    public final static short sid = 0x013D;
+    public static final short sid = 0x013D;
     private static final short[] EMPTY_SHORT_ARRAY = { };
 
     public short[] _tabids;
 
     public TabIdRecord() {
         _tabids = EMPTY_SHORT_ARRAY;
+    }
+
+    public TabIdRecord(TabIdRecord other) {
+        super(other);
+        _tabids = (other._tabids == null) ? null : other._tabids.clone();
     }
 
     public TabIdRecord(RecordInputStream in) {
@@ -64,10 +66,8 @@ public final class TabIdRecord extends StandardRecord {
     }
 
     public void serialize(LittleEndianOutput out) {
-        short[] tabids = _tabids;
-
-        for (int i = 0; i < tabids.length; i++) {
-            out.writeShort(tabids[i]);
+        for (short tabid : _tabids) {
+            out.writeShort(tabid);
         }
     }
 
@@ -77,5 +77,10 @@ public final class TabIdRecord extends StandardRecord {
 
     public short getSid() {
         return sid;
+    }
+
+    @Override
+    public TabIdRecord copy() {
+        return new TabIdRecord(this);
     }
 }

@@ -18,19 +18,24 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.Removal;
 
 /**
  * Conditional Formatting Header record CFHEADER (0x01B0).
  * Used to describe a {@link CFRuleRecord}.
  * @see CFHeader12Record
  */
-public final class CFHeaderRecord extends CFHeaderBase implements Cloneable {
+public final class CFHeaderRecord extends CFHeaderBase {
     public static final short sid = 0x01B0;
 
-    /** Creates new CFHeaderRecord */
     public CFHeaderRecord() {
         createEmpty();
     }
+
+    public CFHeaderRecord(CFHeaderRecord other) {
+        super(other);
+    }
+
     public CFHeaderRecord(CellRangeAddress[] regions, int nRules) {
         super(regions, nRules);
     }
@@ -48,9 +53,15 @@ public final class CFHeaderRecord extends CFHeaderBase implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public CFHeaderRecord clone() {
-        CFHeaderRecord result = new CFHeaderRecord();
-        super.copyTo(result);
-        return result;
+        return copy();
+    }
+
+    @Override
+    public CFHeaderRecord copy() {
+        return new CFHeaderRecord(this);
     }
 }

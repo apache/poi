@@ -26,20 +26,23 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.RecordFormatException;
+import org.apache.poi.util.Removal;
 
 /**
  * OBJRECORD (0x005D)<p>
  *
  * The obj record is used to hold various graphic objects and controls.
  */
-public final class ObjRecord extends Record implements Cloneable {
-    public final static short sid = 0x005D;
+public final class ObjRecord extends Record {
+    public static final short sid = 0x005D;
 
     private static final int NORMAL_PAD_ALIGNMENT = 2;
     private static int MAX_PAD_ALIGNMENT = 4;
 
-    private List<SubRecord> subrecords;
-    /** used when POI has no idea what is going on */
+    private final List<SubRecord> subrecords = new ArrayList<>();
+    /**
+     * used when POI has no idea what is going on
+     */
     private final byte[] _uninterpretedData;
     /**
      * Excel seems to tolerate padding to quad or double byte length
@@ -51,9 +54,14 @@ public final class ObjRecord extends Record implements Cloneable {
 
 
     public ObjRecord() {
-        subrecords = new ArrayList<>(2);
         // TODO - ensure 2 sub-records (ftCmo 15h, and ftEnd 00h) are always created
         _uninterpretedData = null;
+    }
+
+    public ObjRecord(ObjRecord other) {
+        other.subrecords.stream().map(SubRecord::copy).forEach(subrecords::add);
+        _uninterpretedData = (other._uninterpretedData == null) ? null : other._uninterpretedData.clone();
+        _isPaddedToQuadByteMultiple = other._isPaddedToQuadByteMultiple;
     }
 
     public ObjRecord(RecordInputStream in) {
@@ -72,7 +80,6 @@ public final class ObjRecord extends Record implements Cloneable {
             // Excel tolerates the funny ObjRecord, and replaces it with a corrected version
             // The exact logic/reasoning is not yet understood
             _uninterpretedData = subRecordData;
-            subrecords = null;
             return;
         }
 
@@ -84,7 +91,6 @@ public final class ObjRecord extends Record implements Cloneable {
         }
         */
 
-        subrecords = new ArrayList<>();
         LittleEndianByteArrayInputStream subRecStream = new LittleEndianByteArrayInputStream(subRecordData);
         CommonObjectDataSubRecord cmo = (CommonObjectDataSubRecord)SubRecord.createSubRecord(subRecStream, 0);
         subrecords.add(cmo);
@@ -138,10 +144,8 @@ public final class ObjRecord extends Record implements Cloneable {
         StringBuilder sb = new StringBuilder();
 
         sb.append("[OBJ]\n");
-        if(subrecords != null) {	// there are special cases where this can be, see comments in constructor above
-            for (final SubRecord record : subrecords) {
-                sb.append("SUBRECORD: ").append(record);
-            }
+        for (final SubRecord record : subrecords) {
+            sb.append("SUBRECORD: ").append(record);
         }
         sb.append("[/OBJ]\n");
         return sb.toString();
@@ -221,12 +225,15 @@ public final class ObjRecord extends Record implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public ObjRecord clone() {
-        ObjRecord rec = new ObjRecord();
+        return copy();
+    }
 
-        for (SubRecord record : subrecords) {
-            rec.addSubRecord(record.clone());
-        }
-        return rec;
+    @Override
+    public ObjRecord copy() {
+        return new ObjRecord(this);
     }
 }

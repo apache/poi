@@ -23,10 +23,10 @@ import org.apache.poi.util.LittleEndianOutput;
  * Common superclass of all value operators. Subclasses include all unary and
  * binary operators except for the reference operators (IntersectionPtg,
  * RangePtg, UnionPtg)
- * 
- * @author Josh Micich
  */
 public abstract class ValueOperatorPtg extends OperationPtg {
+
+	protected ValueOperatorPtg() {}
 
 	/**
 	 * All Operator <tt>Ptg</tt>s are base tokens (i.e. are not RVA classified)

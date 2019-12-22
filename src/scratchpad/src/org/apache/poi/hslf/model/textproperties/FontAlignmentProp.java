@@ -27,7 +27,7 @@ import org.apache.poi.util.GenericRecordUtil;
  * Definition for the font alignment property.
  */
 public class FontAlignmentProp extends TextProp {
-    public static final String NAME = "fontAlign";
+	public static final String NAME = "fontAlign";
 	public static final int BASELINE = 0;
 	public static final int TOP = 1;
 	public static final int CENTER = 2;
@@ -35,6 +35,10 @@ public class FontAlignmentProp extends TextProp {
 
 	public FontAlignmentProp() {
 		super(2, 0x10000, NAME);
+	}
+
+	public FontAlignmentProp(FontAlignmentProp other) {
+		super(other);
 	}
 
 	public FontAlign getFontAlign() {
@@ -58,5 +62,10 @@ public class FontAlignmentProp extends TextProp {
 			"base", super::getGenericProperties,
 			"fontAlign", this::getFontAlign
 		);
+	}
+
+	@Override
+	public FontAlignmentProp copy() {
+		return new FontAlignmentProp(this);
 	}
 }

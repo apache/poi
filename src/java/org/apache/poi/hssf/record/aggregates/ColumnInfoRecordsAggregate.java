@@ -18,50 +18,37 @@
 package org.apache.poi.hssf.record.aggregates;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.ColumnInfoRecord;
+import org.apache.poi.util.Removal;
 
-/**
- * @author Glen Stampoultzis
- */
-public final class ColumnInfoRecordsAggregate extends RecordAggregate implements Cloneable {
+public final class ColumnInfoRecordsAggregate extends RecordAggregate implements Duplicatable {
 	/**
 	 * List of {@link ColumnInfoRecord}s assumed to be in order
 	 */
-	private final List<ColumnInfoRecord> records;
-
-
-	private static final class CIRComparator implements Comparator<ColumnInfoRecord> {
-		public static final Comparator<ColumnInfoRecord> instance = new CIRComparator();
-		private CIRComparator() {
-			// enforce singleton
-		}
-		public int compare(ColumnInfoRecord a, ColumnInfoRecord b) {
-			return compareColInfos(a, b);
-		}
-		public static int compareColInfos(ColumnInfoRecord a, ColumnInfoRecord b) {
-			return a.getFirstColumn()-b.getFirstColumn();
-		}
-	}
+	private final List<ColumnInfoRecord> records = new ArrayList<>();
 
 	/**
 	 * Creates an empty aggregate
 	 */
-	public ColumnInfoRecordsAggregate() {
-		records = new ArrayList<>();
+	public ColumnInfoRecordsAggregate() {}
+
+	public ColumnInfoRecordsAggregate(ColumnInfoRecordsAggregate other) {
+		other.records.stream().map(ColumnInfoRecord::copy).forEach(records::add);
 	}
+
 	public ColumnInfoRecordsAggregate(RecordStream rs) {
 		this();
 
 		boolean isInOrder = true;
 		ColumnInfoRecord cirPrev = null;
-		while(rs.peekNextClass() == ColumnInfoRecord.class) {
+		while (rs.peekNextClass() == ColumnInfoRecord.class) {
 			ColumnInfoRecord cir = (ColumnInfoRecord) rs.getNext();
 			records.add(cir);
-			if (cirPrev != null && CIRComparator.compareColInfos(cirPrev, cir) > 0) {
+			if (cirPrev != null && compareColInfos(cirPrev, cir) > 0) {
 				isInOrder = false;
 			}
 			cirPrev = cir;
@@ -70,17 +57,21 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 			throw new RuntimeException("No column info records found");
 		}
 		if (!isInOrder) {
-			records.sort(CIRComparator.instance);
+			records.sort(ColumnInfoRecordsAggregate::compareColInfos);
 		}
 	}
 
 	@Override
+	@SuppressWarnings("squid:S2975")
+	@Deprecated
+	@Removal(version = "5.0.0")
 	public ColumnInfoRecordsAggregate clone() {
-		ColumnInfoRecordsAggregate rec = new ColumnInfoRecordsAggregate();
-		for (ColumnInfoRecord ci : records) {
-			rec.records.add(ci.clone());
-		}
-		return rec;
+		return copy();
+	}
+
+	@Override
+	public ColumnInfoRecordsAggregate copy() {
+		return new ColumnInfoRecordsAggregate(this);
 	}
 
 	/**
@@ -88,7 +79,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 	 */
 	public void insertColumn(ColumnInfoRecord col) {
 		records.add(col);
-		records.sort(CIRComparator.instance);
+		records.sort(ColumnInfoRecordsAggregate::compareColInfos);
 	}
 
 	/**
@@ -111,7 +102,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 		ColumnInfoRecord cirPrev = null;
 		for (ColumnInfoRecord cir : records) {
 			rv.visitRecord(cir);
-			if (cirPrev != null && CIRComparator.compareColInfos(cirPrev, cir) > 0) {
+			if (cirPrev != null && compareColInfos(cirPrev, cir) > 0) {
 				// Excel probably wouldn't mind, but there is much logic in this class
 				// that assumes the column info records are kept in order
 				throw new RuntimeException("Column info records are out of order");
@@ -290,7 +281,7 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 	}
 
 	private static ColumnInfoRecord copyColInfo(ColumnInfoRecord ci) {
-		return ci.clone();
+		return ci.copy();
 	}
 
 
@@ -553,5 +544,9 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 		}
 
 		return maxIndex;
+	}
+
+	private static int compareColInfos(ColumnInfoRecord a, ColumnInfoRecord b) {
+		return a.getFirstColumn()-b.getFirstColumn();
 	}
 }

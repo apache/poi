@@ -28,16 +28,22 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.poifs.crypt.*;
+import org.apache.poi.poifs.crypt.ChunkedCipherInputStream;
+import org.apache.poi.poifs.crypt.CryptoFunctions;
+import org.apache.poi.poifs.crypt.Decryptor;
+import org.apache.poi.poifs.crypt.EncryptionHeader;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
+import org.apache.poi.poifs.crypt.EncryptionVerifier;
+import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
-public class BinaryRC4Decryptor extends Decryptor implements Cloneable {
+public class BinaryRC4Decryptor extends Decryptor {
     private long length = -1L;
     private int chunkSize = 512;
-    
+
     private class BinaryRC4CipherInputStream extends ChunkedCipherInputStream {
 
         @Override
@@ -54,10 +60,16 @@ public class BinaryRC4Decryptor extends Decryptor implements Cloneable {
         public BinaryRC4CipherInputStream(InputStream stream, int size, int initialPos)
                 throws GeneralSecurityException {
             super(stream, size, chunkSize, initialPos);
-        }    
+        }
     }
 
     protected BinaryRC4Decryptor() {
+    }
+
+    protected BinaryRC4Decryptor(BinaryRC4Decryptor other) {
+        super(other);
+        length = other.length;
+        chunkSize = other.chunkSize;
     }
 
     @Override
@@ -89,8 +101,8 @@ public class BinaryRC4Decryptor extends Decryptor implements Cloneable {
     public Cipher initCipherForBlock(Cipher cipher, int block)
     throws GeneralSecurityException {
         return initCipherForBlock(cipher, block, getEncryptionInfo(), getSecretKey(), Cipher.DECRYPT_MODE);
-    }    
-    
+    }
+
     protected static Cipher initCipherForBlock(Cipher cipher, int block,
         EncryptionInfo encryptionInfo, SecretKey skey, int encryptMode)
     throws GeneralSecurityException {
@@ -136,20 +148,20 @@ public class BinaryRC4Decryptor extends Decryptor implements Cloneable {
         length = dis.readLong();
         return new BinaryRC4CipherInputStream(dis, length);
     }
-    
+
     @Override
     public InputStream getDataStream(InputStream stream, int size, int initialPos)
             throws IOException, GeneralSecurityException {
         return new BinaryRC4CipherInputStream(stream, size, initialPos);
     }
-    
+
 
     @Override
     public long getLength() {
         if (length == -1L) {
             throw new IllegalStateException("Decryptor.getDataStream() was not called");
         }
-        
+
         return length;
     }
 
@@ -157,9 +169,9 @@ public class BinaryRC4Decryptor extends Decryptor implements Cloneable {
     public void setChunkSize(int chunkSize) {
         this.chunkSize = chunkSize;
     }
-    
+
     @Override
-    public BinaryRC4Decryptor clone() throws CloneNotSupportedException {
-        return (BinaryRC4Decryptor)super.clone();
+    public BinaryRC4Decryptor copy() {
+        return new BinaryRC4Decryptor(this);
     }
 }

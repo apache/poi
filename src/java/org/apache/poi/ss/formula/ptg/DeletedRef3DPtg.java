@@ -25,8 +25,9 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Deleted Reference 3D Ptg <P>
- * Description:  Defined a cell in extern sheet. <P>
+ * Deleted Reference 3D Ptg<p>
+ * Defined a cell in extern sheet.
+ *
  * @since 1.0-pre
  */
 public final class DeletedRef3DPtg extends OperandPtg implements WorkbookDependentFormula {
@@ -61,5 +62,11 @@ public final class DeletedRef3DPtg extends OperandPtg implements WorkbookDepende
 		out.writeByte(sid + getPtgClass());
 		out.writeShort(field_1_index_extern_sheet);
 		out.writeInt(unused1);
+	}
+
+	@Override
+	public DeletedRef3DPtg copy() {
+		// immutable
+		return this;
 	}
 }

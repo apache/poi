@@ -39,7 +39,7 @@ public class HSSFHyperlink implements Hyperlink {
 
     /**
      * Construct a new hyperlink
-     * 
+     *
      * This method is internal to be used only by
      * {@link HSSFCreationHelper#createHyperlink(HyperlinkType)}.
      *
@@ -76,7 +76,7 @@ public class HSSFHyperlink implements Hyperlink {
         this.record = record;
         link_type = getType(record);
     }
-    
+
     private static HyperlinkType getType(HyperlinkRecord record) {
         HyperlinkType link_type;
         // Figure out the type
@@ -94,11 +94,11 @@ public class HSSFHyperlink implements Hyperlink {
         }
         return link_type;
     }
-    
+
     protected HSSFHyperlink(Hyperlink other) {
         if (other instanceof HSSFHyperlink) {
             HSSFHyperlink hlink = (HSSFHyperlink) other;
-            record = hlink.record.clone();
+            record = hlink.record.copy();
             link_type = getType(record);
         }
         else {
@@ -264,7 +264,7 @@ public class HSSFHyperlink implements Hyperlink {
     public HyperlinkType getType() {
         return link_type;
     }
-    
+
     /**
      * Return the type of this hyperlink
      *
@@ -277,7 +277,7 @@ public class HSSFHyperlink implements Hyperlink {
     public HyperlinkType getTypeEnum() {
         return getType();
     }
-    
+
     /**
      * @return whether the objects have the same HyperlinkRecord
      */
@@ -288,7 +288,7 @@ public class HSSFHyperlink implements Hyperlink {
         HSSFHyperlink otherLink = (HSSFHyperlink) other;
         return record == otherLink.record;
     }
-    
+
     @Override
     public int hashCode() {
         return record.hashCode();

@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record;
 
 
 import static org.junit.Assert.assertArrayEquals;
+
 import junit.framework.TestCase;
 
 /**
@@ -56,7 +57,7 @@ public final class TestFtCblsSubRecord extends TestCase {
         FtCblsSubRecord record = new FtCblsSubRecord();
         byte[] src = record.serialize();
 
-        FtCblsSubRecord cloned = record.clone();
+        FtCblsSubRecord cloned = record.copy();
         byte[] cln = cloned.serialize();
 
         assertEquals(record.getDataSize(), cloned.getDataSize());

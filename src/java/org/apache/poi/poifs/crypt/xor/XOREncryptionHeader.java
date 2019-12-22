@@ -21,9 +21,13 @@ import org.apache.poi.poifs.crypt.EncryptionHeader;
 import org.apache.poi.poifs.crypt.standard.EncryptionRecord;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 
-public class XOREncryptionHeader extends EncryptionHeader implements EncryptionRecord, Cloneable {
+public class XOREncryptionHeader extends EncryptionHeader implements EncryptionRecord {
 
     protected XOREncryptionHeader() {
+    }
+
+    protected XOREncryptionHeader(XOREncryptionHeader other) {
+        super(other);
     }
 
     @Override
@@ -31,7 +35,7 @@ public class XOREncryptionHeader extends EncryptionHeader implements EncryptionR
     }
 
     @Override
-    public XOREncryptionHeader clone() throws CloneNotSupportedException {
-        return (XOREncryptionHeader)super.clone();
+    public XOREncryptionHeader copy() {
+        return new XOREncryptionHeader(this);
     }
 }

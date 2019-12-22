@@ -23,14 +23,13 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * The series label record defines the type of label associated with the data format record.<p>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The series label record defines the type of label associated with the data format record.
  */
 public final class SeriesLabelsRecord extends StandardRecord {
-    public final static short      sid = 0x100c;
+    public static final short sid = 0x100c;
 
     private static final BitField showActual        = BitFieldFactory.getInstance(0x01);
     private static final BitField showPercent       = BitFieldFactory.getInstance(0x02);
@@ -39,16 +38,17 @@ public final class SeriesLabelsRecord extends StandardRecord {
     private static final BitField showLabel         = BitFieldFactory.getInstance(0x10);
     private static final BitField showBubbleSizes   = BitFieldFactory.getInstance(0x20);
 
-    private  short      field_1_formatFlags;
+    private short field_1_formatFlags;
 
-    public SeriesLabelsRecord()
-    {
+    public SeriesLabelsRecord() {}
 
+    public SeriesLabelsRecord(SeriesLabelsRecord other) {
+        super(other);
+        field_1_formatFlags = other.field_1_formatFlags;
     }
 
-    public SeriesLabelsRecord(RecordInputStream in)
-    {
-        field_1_formatFlags            = in.readShort();
+    public SeriesLabelsRecord(RecordInputStream in) {
+        field_1_formatFlags = in.readShort();
     }
 
     public String toString()
@@ -59,13 +59,13 @@ public final class SeriesLabelsRecord extends StandardRecord {
         buffer.append("    .formatFlags          = ")
             .append("0x").append(HexDump.toHex(  getFormatFlags ()))
             .append(" (").append( getFormatFlags() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-        buffer.append("         .showActual               = ").append(isShowActual()).append('\n'); 
-        buffer.append("         .showPercent              = ").append(isShowPercent()).append('\n'); 
-        buffer.append("         .labelAsPercentage        = ").append(isLabelAsPercentage()).append('\n'); 
-        buffer.append("         .smoothedLine             = ").append(isSmoothedLine()).append('\n'); 
-        buffer.append("         .showLabel                = ").append(isShowLabel()).append('\n'); 
-        buffer.append("         .showBubbleSizes          = ").append(isShowBubbleSizes()).append('\n'); 
+        buffer.append(System.getProperty("line.separator"));
+        buffer.append("         .showActual               = ").append(isShowActual()).append('\n');
+        buffer.append("         .showPercent              = ").append(isShowPercent()).append('\n');
+        buffer.append("         .labelAsPercentage        = ").append(isLabelAsPercentage()).append('\n');
+        buffer.append("         .smoothedLine             = ").append(isSmoothedLine()).append('\n');
+        buffer.append("         .showLabel                = ").append(isShowLabel()).append('\n');
+        buffer.append("         .showBubbleSizes          = ").append(isShowBubbleSizes()).append('\n');
 
         buffer.append("[/ATTACHEDLABEL]\n");
         return buffer.toString();
@@ -84,15 +84,18 @@ public final class SeriesLabelsRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
-        SeriesLabelsRecord rec = new SeriesLabelsRecord();
-    
-        rec.field_1_formatFlags = field_1_formatFlags;
-        return rec;
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public SeriesLabelsRecord clone() {
+        return copy();
     }
 
-
-
+    @Override
+    public SeriesLabelsRecord copy() {
+        return new SeriesLabelsRecord(this);
+    }
 
     /**
      * Get the format flags field for the SeriesLabels record.

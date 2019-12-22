@@ -56,9 +56,7 @@ public final class DataValidityTable extends RecordAggregate {
 			return;
 		}
 		rv.visitRecord(_headerRec);
-		for (int i = 0; i < _validationList.size(); i++) {
-			rv.visitRecord(_validationList.get(i));
-		}
+		_validationList.forEach(rv::visitRecord);
 	}
 
 	public void addDataValidation(DVRecord dvRecord) {

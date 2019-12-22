@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.stream.Stream;
+
 import org.apache.poi.hssf.record.common.FeatFormulaErr2;
 import org.apache.poi.hssf.record.common.FeatProtection;
 import org.apache.poi.hssf.record.common.FeatSmartTag;
@@ -26,6 +28,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 
 /**
  * Title: Feat (Feature) Record
@@ -33,19 +36,17 @@ import org.apache.poi.util.POILogger;
  * This record specifies Shared Features data. It is normally paired
  *  up with a {@link FeatHdrRecord}.
  */
-public final class FeatRecord extends StandardRecord implements Cloneable  {
-    private static POILogger logger = POILogFactory.getLogger(FeatRecord.class);
-    public final static short sid = 0x0868;
+public final class FeatRecord extends StandardRecord {
+    private static final POILogger logger = POILogFactory.getLogger(FeatRecord.class);
+    public static final short sid = 0x0868;
     // SIDs from newer versions
-    public final static short v11_sid = 0x0872;
-    public final static short v12_sid = 0x0878;
-	
-	private FtrHeader futureHeader;
-	
-	/**
-	 * See SHAREDFEATURES_* on {@link FeatHdrRecord}
-	 */
-	private int isf_sharedFeatureType; 
+    public static final short v11_sid = 0x0872;
+    public static final short v12_sid = 0x0878;
+
+	private final FtrHeader futureHeader;
+
+	/** See SHAREDFEATURES_* on {@link FeatHdrRecord} */
+	private int isf_sharedFeatureType;
 	private byte reserved1; // Should always be zero
 	private long reserved2; // Should always be zero
 	/** Only matters if type is ISFFEC2 */
@@ -55,24 +56,33 @@ public final class FeatRecord extends StandardRecord implements Cloneable  {
 
 	/**
 	 * Contents depends on isf_sharedFeatureType :
-	 *  ISFPROTECTION -> FeatProtection 
+	 *  ISFPROTECTION -> FeatProtection
 	 *  ISFFEC2       -> FeatFormulaErr2
 	 *  ISFFACTOID    -> FeatSmartTag
 	 */
-	private SharedFeature sharedFeature; 
-	
+	private SharedFeature sharedFeature;
+
 	public FeatRecord() {
 		futureHeader = new FtrHeader();
 		futureHeader.setRecordType(sid);
 	}
 
-	public short getSid() {
-		return sid;
+	public FeatRecord(FeatRecord other) {
+		super(other);
+		futureHeader = other.futureHeader.copy();
+		isf_sharedFeatureType = other.isf_sharedFeatureType;
+		reserved1 = other.reserved1;
+		reserved2 = other.reserved2;
+		cbFeatData = other.cbFeatData;
+		reserved3 = other.reserved3;
+		cellRefs = (other.cellRefs == null) ? null :
+			Stream.of(other.cellRefs).map(CellRangeAddress::copy).toArray(CellRangeAddress[]::new);
+		sharedFeature = (other.sharedFeature == null) ? null : other.sharedFeature.copy();
 	}
 
 	public FeatRecord(RecordInputStream in) {
 		futureHeader = new FtrHeader(in);
-		
+
 		isf_sharedFeatureType = in.readShort();
 		reserved1 = in.readByte();
 		reserved2 = in.readInt();
@@ -84,7 +94,7 @@ public final class FeatRecord extends StandardRecord implements Cloneable  {
 		for(int i=0; i<cellRefs.length; i++) {
 			cellRefs[i] = new CellRangeAddress(in);
 		}
-		
+
 		switch(isf_sharedFeatureType) {
 		case FeatHdrRecord.SHAREDFEATURES_ISFPROTECTION:
 			sharedFeature = new FeatProtection(in);
@@ -100,30 +110,34 @@ public final class FeatRecord extends StandardRecord implements Cloneable  {
 		}
 	}
 
+	public short getSid() {
+		return sid;
+	}
+
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("[SHARED FEATURE]\n");
-		
+
 		// TODO ...
-		
+
 		buffer.append("[/SHARED FEATURE]\n");
 		return buffer.toString();
 	}
 
 	public void serialize(LittleEndianOutput out) {
 		futureHeader.serialize(out);
-		
+
 		out.writeShort(isf_sharedFeatureType);
 		out.writeByte(reserved1);
 		out.writeInt((int)reserved2);
 		out.writeShort(cellRefs.length);
 		out.writeInt((int)cbFeatData);
 		out.writeShort(reserved3);
-		
+
 		for(int i=0; i<cellRefs.length; i++) {
 			cellRefs[i].serialize(out);
 		}
-		
+
 		sharedFeature.serialize(out);
 	}
 
@@ -156,7 +170,7 @@ public final class FeatRecord extends StandardRecord implements Cloneable  {
 	}
 	public void setSharedFeature(SharedFeature feature) {
 		this.sharedFeature = feature;
-		
+
 		if(feature instanceof FeatProtection) {
 			isf_sharedFeatureType = FeatHdrRecord.SHAREDFEATURES_ISFPROTECTION;
 		}
@@ -166,7 +180,7 @@ public final class FeatRecord extends StandardRecord implements Cloneable  {
 		if(feature instanceof FeatSmartTag) {
 			isf_sharedFeatureType = FeatHdrRecord.SHAREDFEATURES_ISFFACTOID;
 		}
-		
+
 		if(isf_sharedFeatureType == FeatHdrRecord.SHAREDFEATURES_ISFFEC2) {
 			cbFeatData = sharedFeature.getDataSize();
 		} else {
@@ -174,12 +188,16 @@ public final class FeatRecord extends StandardRecord implements Cloneable  {
 		}
 	}
 
-    
 	@Override
+	@SuppressWarnings("squid:S2975")
+	@Deprecated
+	@Removal(version = "5.0.0")
 	public FeatRecord clone() {
-        //HACK: do a "cheat" clone, see Record.java for more information
-        return (FeatRecord)cloneViaReserialise();
-    }
+		return copy();
+	}
 
-    
+	@Override
+	public FeatRecord copy() {
+        return new FeatRecord(this);
+    }
 }

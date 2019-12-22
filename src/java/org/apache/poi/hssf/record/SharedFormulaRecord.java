@@ -17,27 +17,26 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.ss.formula.ptg.*;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
-import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.SharedFormula;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        SHAREDFMLA (0x04BC) SharedFormulaRecord
- * Description:  Primarily used as an excel optimization so that multiple similar formulas
- *               are not written out too many times.  We should recognize this record and
- *               serialize as is since this is used when reading templates.
+ * Primarily used as an excel optimization so that multiple similar formulas are not
+ * written out too many times.  We should recognize this record and serialize as is
+ * since this is used when reading templates.
  * <p>
  * Note: the documentation says that the SID is BC where biffviewer reports 4BC.  The hex dump shows
  * that the two byte sid representation to be 'BC 04' that is consistent with the other high byte
  * record types.
- * @author Danny Mui at apache dot org
  */
 public final class SharedFormulaRecord extends SharedValueRecordBase {
-    public final static short   sid = 0x04BC;
+    public static final short sid = 0x04BC;
 
     private int field_5_reserved;
     private Formula field_7_parsed_expr;
@@ -46,6 +45,13 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
     public SharedFormulaRecord() {
         this(new CellRangeAddress8Bit(0,0,0,0));
     }
+
+    public SharedFormulaRecord(SharedFormulaRecord other) {
+        super(other);
+        field_5_reserved = other.field_5_reserved;
+        field_7_parsed_expr = (other.field_7_parsed_expr == null) ? null : other.field_7_parsed_expr.copy();
+    }
+
     private SharedFormulaRecord(CellRangeAddress8Bit range) {
         super(range);
         field_7_parsed_expr = Formula.create(Ptg.EMPTY_PTG_ARRAY);
@@ -117,11 +123,17 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
         return sf.convertSharedFormulas(field_7_parsed_expr.getTokens(), formulaRow, formulaColumn);
     }
 
-    public Object clone() {
-        SharedFormulaRecord result = new SharedFormulaRecord(getRange());
-        result.field_5_reserved = field_5_reserved;
-        result.field_7_parsed_expr = field_7_parsed_expr.copy();
-        return result;
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public SharedFormulaRecord clone() {
+        return copy();
+    }
+
+    @Override
+    public SharedFormulaRecord copy() {
+        return new SharedFormulaRecord(this);
     }
 	public boolean isFormulaSame(SharedFormulaRecord other) {
 		return field_7_parsed_expr.isSame(other.field_7_parsed_expr);

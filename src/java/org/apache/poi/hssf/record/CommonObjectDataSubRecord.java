@@ -23,50 +23,51 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
+import org.apache.poi.util.Removal;
 
 /**
  * The common object data record is used to store all common preferences for an excel object.
  */
-public final class CommonObjectDataSubRecord extends SubRecord implements Cloneable {
-    public final static short sid = 0x0015;
+public final class CommonObjectDataSubRecord extends SubRecord {
+    public static final short sid = 0x0015;
 
     private static final BitField locked    = BitFieldFactory.getInstance(0x0001);
     private static final BitField printable = BitFieldFactory.getInstance(0x0010);
     private static final BitField autofill  = BitFieldFactory.getInstance(0x2000);
     private static final BitField autoline  = BitFieldFactory.getInstance(0x4000);
 
-    public final static short OBJECT_TYPE_GROUP              = 0;
-    public final static short OBJECT_TYPE_LINE               = 1;
-    public final static short OBJECT_TYPE_RECTANGLE          = 2;
-    public final static short OBJECT_TYPE_OVAL               = 3;
-    public final static short OBJECT_TYPE_ARC                = 4;
-    public final static short OBJECT_TYPE_CHART              = 5;
-    public final static short OBJECT_TYPE_TEXT               = 6;
-    public final static short OBJECT_TYPE_BUTTON             = 7;
-    public final static short OBJECT_TYPE_PICTURE            = 8;
-    public final static short OBJECT_TYPE_POLYGON            = 9;
-    public final static short OBJECT_TYPE_RESERVED1          = 10;
-    public final static short OBJECT_TYPE_CHECKBOX           = 11;
-    public final static short OBJECT_TYPE_OPTION_BUTTON      = 12;
-    public final static short OBJECT_TYPE_EDIT_BOX           = 13;
-    public final static short OBJECT_TYPE_LABEL              = 14;
-    public final static short OBJECT_TYPE_DIALOG_BOX         = 15;
-    public final static short OBJECT_TYPE_SPINNER            = 16;
-    public final static short OBJECT_TYPE_SCROLL_BAR         = 17;
-    public final static short OBJECT_TYPE_LIST_BOX           = 18;
-    public final static short OBJECT_TYPE_GROUP_BOX          = 19;
-    public final static short OBJECT_TYPE_COMBO_BOX          = 20;
-    public final static short OBJECT_TYPE_RESERVED2          = 21;
-    public final static short OBJECT_TYPE_RESERVED3          = 22;
-    public final static short OBJECT_TYPE_RESERVED4          = 23;
-    public final static short OBJECT_TYPE_RESERVED5          = 24;
-    public final static short OBJECT_TYPE_COMMENT            = 25;
-    public final static short OBJECT_TYPE_RESERVED6          = 26;
-    public final static short OBJECT_TYPE_RESERVED7          = 27;
-    public final static short OBJECT_TYPE_RESERVED8          = 28;
-    public final static short OBJECT_TYPE_RESERVED9          = 29;
-    public final static short OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 30;
-    
+    public static final short OBJECT_TYPE_GROUP              = 0;
+    public static final short OBJECT_TYPE_LINE               = 1;
+    public static final short OBJECT_TYPE_RECTANGLE          = 2;
+    public static final short OBJECT_TYPE_OVAL               = 3;
+    public static final short OBJECT_TYPE_ARC                = 4;
+    public static final short OBJECT_TYPE_CHART              = 5;
+    public static final short OBJECT_TYPE_TEXT               = 6;
+    public static final short OBJECT_TYPE_BUTTON             = 7;
+    public static final short OBJECT_TYPE_PICTURE            = 8;
+    public static final short OBJECT_TYPE_POLYGON            = 9;
+    public static final short OBJECT_TYPE_RESERVED1          = 10;
+    public static final short OBJECT_TYPE_CHECKBOX           = 11;
+    public static final short OBJECT_TYPE_OPTION_BUTTON      = 12;
+    public static final short OBJECT_TYPE_EDIT_BOX           = 13;
+    public static final short OBJECT_TYPE_LABEL              = 14;
+    public static final short OBJECT_TYPE_DIALOG_BOX         = 15;
+    public static final short OBJECT_TYPE_SPINNER            = 16;
+    public static final short OBJECT_TYPE_SCROLL_BAR         = 17;
+    public static final short OBJECT_TYPE_LIST_BOX           = 18;
+    public static final short OBJECT_TYPE_GROUP_BOX          = 19;
+    public static final short OBJECT_TYPE_COMBO_BOX          = 20;
+    public static final short OBJECT_TYPE_RESERVED2          = 21;
+    public static final short OBJECT_TYPE_RESERVED3          = 22;
+    public static final short OBJECT_TYPE_RESERVED4          = 23;
+    public static final short OBJECT_TYPE_RESERVED5          = 24;
+    public static final short OBJECT_TYPE_COMMENT            = 25;
+    public static final short OBJECT_TYPE_RESERVED6          = 26;
+    public static final short OBJECT_TYPE_RESERVED7          = 27;
+    public static final short OBJECT_TYPE_RESERVED8          = 28;
+    public static final short OBJECT_TYPE_RESERVED9          = 29;
+    public static final short OBJECT_TYPE_MICROSOFT_OFFICE_DRAWING = 30;
+
     private  short      field_1_objectType;
     private  int        field_2_objectId;
     private  short      field_3_option;
@@ -75,9 +76,16 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
     private  int        field_6_reserved3;
 
 
-    public CommonObjectDataSubRecord()
-    {
+    public CommonObjectDataSubRecord() {}
 
+    public CommonObjectDataSubRecord(CommonObjectDataSubRecord other) {
+        super(other);
+        field_1_objectType = other.field_1_objectType;
+        field_2_objectId = other.field_2_objectId;
+        field_3_option = other.field_3_option;
+        field_4_reserved1 = other.field_4_reserved1;
+        field_5_reserved2 = other.field_5_reserved2;
+        field_6_reserved3 = other.field_6_reserved3;
     }
 
     public CommonObjectDataSubRecord(LittleEndianInput in, int size) {
@@ -101,31 +109,31 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
         buffer.append("    .objectType           = ")
             .append("0x").append(HexDump.toHex(  getObjectType ()))
             .append(" (").append( getObjectType() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .objectId             = ")
             .append("0x").append(HexDump.toHex(  getObjectId ()))
             .append(" (").append( getObjectId() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .option               = ")
             .append("0x").append(HexDump.toHex(  getOption ()))
             .append(" (").append( getOption() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-        buffer.append("         .locked                   = ").append(isLocked()).append('\n'); 
-        buffer.append("         .printable                = ").append(isPrintable()).append('\n'); 
-        buffer.append("         .autofill                 = ").append(isAutofill()).append('\n'); 
-        buffer.append("         .autoline                 = ").append(isAutoline()).append('\n'); 
+        buffer.append(System.getProperty("line.separator"));
+        buffer.append("         .locked                   = ").append(isLocked()).append('\n');
+        buffer.append("         .printable                = ").append(isPrintable()).append('\n');
+        buffer.append("         .autofill                 = ").append(isAutofill()).append('\n');
+        buffer.append("         .autoline                 = ").append(isAutoline()).append('\n');
         buffer.append("    .reserved1            = ")
             .append("0x").append(HexDump.toHex(  getReserved1 ()))
             .append(" (").append( getReserved1() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .reserved2            = ")
             .append("0x").append(HexDump.toHex(  getReserved2 ()))
             .append(" (").append( getReserved2() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .reserved3            = ")
             .append("0x").append(HexDump.toHex(  getReserved3 ()))
             .append(" (").append( getReserved3() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
 
         buffer.append("[/ftCmo]\n");
         return buffer.toString();
@@ -159,23 +167,23 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public CommonObjectDataSubRecord clone() {
-        CommonObjectDataSubRecord rec = new CommonObjectDataSubRecord();
-    
-        rec.field_1_objectType = field_1_objectType;
-        rec.field_2_objectId = field_2_objectId;
-        rec.field_3_option = field_3_option;
-        rec.field_4_reserved1 = field_4_reserved1;
-        rec.field_5_reserved2 = field_5_reserved2;
-        rec.field_6_reserved3 = field_6_reserved3;
-        return rec;
+        return copy();
+    }
+
+    @Override
+    public CommonObjectDataSubRecord copy() {
+        return new CommonObjectDataSubRecord(this);
     }
 
 
     /**
      * Get the object type field for the CommonObjectData record.
      *
-     * @return  One of 
+     * @return  One of
      *        OBJECT_TYPE_GROUP
      *        OBJECT_TYPE_LINE
      *        OBJECT_TYPE_RECTANGLE
@@ -217,7 +225,7 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
      * Set the object type field for the CommonObjectData record.
      *
      * @param field_1_objectType
-     *        One of 
+     *        One of
      *        OBJECT_TYPE_GROUP
      *        OBJECT_TYPE_LINE
      *        OBJECT_TYPE_RECTANGLE
@@ -257,7 +265,7 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Get the object id field for the CommonObjectData record.
-     * 
+     *
      * @return the object id field
      */
     public int getObjectId()
@@ -267,7 +275,7 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Set the object id field for the CommonObjectData record.
-     * 
+     *
      * @param field_2_objectId the object id field
      */
     public void setObjectId(int field_2_objectId)
@@ -277,7 +285,7 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Get the option field for the CommonObjectData record.
-     * 
+     *
      * @return the option field
      */
     public short getOption()
@@ -287,7 +295,7 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Set the option field for the CommonObjectData record.
-     * 
+     *
      * @param field_3_option the option field
      */
     public void setOption(short field_3_option)
@@ -297,7 +305,7 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Get the reserved1 field for the CommonObjectData record.
-     * 
+     *
      * @return the reserved1 field
      */
     public int getReserved1()
@@ -307,7 +315,7 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Set the reserved1 field for the CommonObjectData record.
-     * 
+     *
      * @param field_4_reserved1 the reserved1 field
      */
     public void setReserved1(int field_4_reserved1)
@@ -317,7 +325,7 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Get the reserved2 field for the CommonObjectData record.
-     * 
+     *
      * @return the reserved2 field
      */
     public int getReserved2()
@@ -327,7 +335,7 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Set the reserved2 field for the CommonObjectData record.
-     * 
+     *
      * @param field_5_reserved2 the reserved2 field
      */
     public void setReserved2(int field_5_reserved2)
@@ -337,7 +345,7 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Get the reserved3 field for the CommonObjectData record.
-     * 
+     *
      * @return the reserved3 field
      */
     public int getReserved3()
@@ -347,7 +355,7 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
 
     /**
      * Set the reserved3 field for the CommonObjectData record.
-     * 
+     *
      * @param field_6_reserved3 the reserved3 field
      */
     public void setReserved3(int field_6_reserved3)
@@ -358,7 +366,7 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
     /**
      * Sets the locked field value.
      * true if object is locked when sheet has been protected
-     * 
+     *
      * @param value {@code true} if object is locked when sheet has been protected
      */
     public void setLocked(boolean value)
@@ -378,7 +386,7 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
     /**
      * Sets the printable field value.
      * object appears when printed
-     * 
+     *
      * @param value {@code true} if object appears when printed
      */
     public void setPrintable(boolean value)
@@ -398,7 +406,7 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
     /**
      * Sets the autofill field value.
      * whether object uses an automatic fill style
-     * 
+     *
      * @param value {@code true} if object uses an automatic fill style
      */
     public void setAutofill(boolean value)
@@ -418,7 +426,7 @@ public final class CommonObjectDataSubRecord extends SubRecord implements Clonea
     /**
      * Sets the autoline field value.
      * whether object uses an automatic line style
-     * 
+     *
      * @param value {@code true} if object uses an automatic line style
      */
     public void setAutoline(boolean value)

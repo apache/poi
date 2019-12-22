@@ -17,22 +17,17 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.ss.formula.ptg.TblPtg;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
+import org.apache.poi.ss.formula.ptg.TblPtg;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 /**
- * DATATABLE (0x0236)<p>
- *
- * TableRecord - The record specifies a data table.
- * This record is preceded by a single Formula record that
- *  defines the first cell in the data table, which should
- *  only contain a single Ptg, {@link TblPtg}.
- *
- * See p536 of the June 08 binary docs
+ * The record specifies a data table.<p>
+ * This record is preceded by a single Formula record that defines the first cell in the data table,
+ * which should only contain a single {@link TblPtg Ptg}.
  */
 public final class TableRecord extends SharedValueRecordBase {
 	public static final short sid = 0x0236;
@@ -50,6 +45,16 @@ public final class TableRecord extends SharedValueRecordBase {
 	private int field_8_colInputRow;
 	private int field_9_rowInputCol;
 	private int field_10_colInputCol;
+
+	public TableRecord(TableRecord other) {
+		super(other);
+		field_5_flags        = other.field_5_flags;
+		field_6_res          = other.field_6_res;
+		field_7_rowInputRow  = other.field_7_rowInputRow;
+		field_8_colInputRow  = other.field_8_colInputRow;
+		field_9_rowInputCol  = other.field_9_rowInputCol;
+		field_10_colInputCol = other.field_10_colInputCol;
+	}
 
 	public TableRecord(RecordInputStream in) {
 		super(in);
@@ -142,7 +147,7 @@ public final class TableRecord extends SharedValueRecordBase {
 		return sid;
 	}
 	protected int getExtraDataSize() {
-		return 
+		return
 		2 // 2 byte fields
 		+ 8; // 4 short fields
 	}
@@ -168,6 +173,11 @@ public final class TableRecord extends SharedValueRecordBase {
 		buffer.append("    .colInput = ").append(crColInput.formatAsString()).append("\n");
 		buffer.append("[/TABLE]\n");
 		return buffer.toString();
+	}
+
+	@Override
+	public TableRecord copy() {
+		return new TableRecord(this);
 	}
 
 	private static CellReference cr(int rowIx, int colIxAndFlags) {

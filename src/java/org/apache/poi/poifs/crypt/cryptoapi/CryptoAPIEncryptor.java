@@ -46,11 +46,15 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
-public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
-    
+public class CryptoAPIEncryptor extends Encryptor {
+
     private int chunkSize = 512;
-    
-    CryptoAPIEncryptor() {
+
+    CryptoAPIEncryptor() {}
+
+    CryptoAPIEncryptor(CryptoAPIEncryptor other) {
+        super(other);
+        chunkSize = other.chunkSize;
     }
 
     @Override
@@ -98,31 +102,31 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
     public Cipher initCipherForBlock(Cipher cipher, int block)
     throws GeneralSecurityException {
         return CryptoAPIDecryptor.initCipherForBlock(cipher, block, getEncryptionInfo(), getSecretKey(), Cipher.ENCRYPT_MODE);
-    }    
+    }
 
     @Override
     public ChunkedCipherOutputStream getDataStream(DirectoryNode dir) throws IOException {
         throw new IOException("not supported");
     }
-    
+
     @Override
     public CryptoAPICipherOutputStream getDataStream(OutputStream stream, int initialOffset)
     throws IOException, GeneralSecurityException {
         return new CryptoAPICipherOutputStream(stream);
     }
-    
+
     /**
      * Encrypt the Document-/SummaryInformation and other optionally streams.
      * Opposed to other crypto modes, cryptoapi is record based and can't be used
      * to stream-encrypt a whole file
-     * 
+     *
      * @see <a href="http://msdn.microsoft.com/en-us/library/dd943321(v=office.12).aspx">2.3.5.4 RC4 CryptoAPI Encrypted Summary Stream</a>
      */
     public void setSummaryEntries(DirectoryNode dir, String encryptedStream, POIFSFileSystem entries)
     throws IOException, GeneralSecurityException {
         CryptoAPIDocumentOutputStream bos = new CryptoAPIDocumentOutputStream(this); // NOSONAR
         byte[] buf = new byte[8];
-        
+
         bos.write(buf, 0, 8); // skip header
         List<StreamDescriptorEntry> descList = new ArrayList<>();
 
@@ -137,24 +141,24 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
             descEntry.streamName = entry.getName();
             descEntry.flags = StreamDescriptorEntry.flagStream.setValue(0, 1);
             descEntry.reserved2 = 0;
-            
+
             bos.setBlock(block);
             DocumentInputStream dis = dir.createDocumentInputStream(entry);
             IOUtils.copy(dis, bos);
             dis.close();
-            
+
             descEntry.streamSize = bos.size() - descEntry.streamOffset;
             descList.add(descEntry);
-            
+
             block++;
         }
-        
+
         int streamDescriptorArrayOffset = bos.size();
-        
+
         bos.setBlock(0);
         LittleEndian.putUInt(buf, 0, descList.size());
         bos.write(buf, 0, 4);
-        
+
         for (StreamDescriptorEntry sde : descList) {
             LittleEndian.putUInt(buf, 0, sde.streamOffset);
             bos.write(buf, 0, 4);
@@ -173,7 +177,7 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
             LittleEndian.putShort(buf, 0, (short)0); // null-termination
             bos.write(buf, 0, 2);
         }
-        
+
         int savedSize = bos.size();
         int streamDescriptorArraySize = savedSize - streamDescriptorArrayOffset;
         LittleEndian.putUInt(buf, 0, streamDescriptorArrayOffset);
@@ -183,7 +187,7 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
         bos.setBlock(0);
         bos.write(buf, 0, 8);
         bos.setSize(savedSize);
-        
+
         dir.createDocument(encryptedStream, new ByteArrayInputStream(bos.getBuf(), 0, savedSize));
     }
 
@@ -195,10 +199,10 @@ public class CryptoAPIEncryptor extends Encryptor implements Cloneable {
     public void setChunkSize(int chunkSize) {
         this.chunkSize = chunkSize;
     }
-    
+
     @Override
-    public CryptoAPIEncryptor clone() throws CloneNotSupportedException {
-        return (CryptoAPIEncryptor)super.clone();
+    public CryptoAPIEncryptor copy() {
+        return new CryptoAPIEncryptor(this);
     }
 
     protected class CryptoAPICipherOutputStream extends ChunkedCipherOutputStream {

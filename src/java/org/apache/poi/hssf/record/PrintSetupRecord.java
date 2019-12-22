@@ -18,20 +18,36 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.ss.usermodel.PrintSetup;
-import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        PAGESETUP (0x00A1)<p>
- * Description:  Stores print setup options -- bogus for HSSF (and marked as such)<p>
- * REFERENCE:  PG 385 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<p>
- * REFERENCE:  PG 412 Microsoft Excel Binary File Format Structure v20091214
- * 
+ * Stores print setup options -- bogus for HSSF (and marked as such)
+ *
  * @since 2.0-pre
  */
 public final class PrintSetupRecord extends StandardRecord {
-    public final static short     sid = 0x00A1;
+    public static final short     sid = 0x00A1;
+    // print over then down
+    private static final  BitField lefttoright   = BitFieldFactory.getInstance(0x01);
+    // landscape mode
+    private static final  BitField landscape     = BitFieldFactory.getInstance(0x02);
+    // if papersize, scale, resolution, copies, landscape
+    private static final  BitField validsettings = BitFieldFactory.getInstance(0x04);
+    // print mono/b&w, colorless
+    private static final  BitField nocolor       = BitFieldFactory.getInstance(0x08);
+    // print draft quality
+    private static final  BitField draft         = BitFieldFactory.getInstance(0x10);
+    // print the notes
+    private static final  BitField notes         = BitFieldFactory.getInstance(0x20);
+    // the orientation is not set
+    private static final  BitField noOrientation = BitFieldFactory.getInstance(0x40);
+    // use a user set page no, instead of auto
+    private static final  BitField usepage       = BitFieldFactory.getInstance(0x80);
+
+
     /** Constants for this are held in {@link PrintSetup} */
     private short                 field_1_paper_size;
     private short                 field_2_scale;
@@ -39,37 +55,30 @@ public final class PrintSetupRecord extends StandardRecord {
     private short                 field_4_fit_width;
     private short                 field_5_fit_height;
     private short                 field_6_options;
-    static final private BitField lefttoright   =
-        BitFieldFactory.getInstance(0x01);   // print over then down
-    static final private BitField landscape     =
-        BitFieldFactory.getInstance(0x02);   // landscape mode
-    static final private BitField validsettings = BitFieldFactory.getInstance(
-        0x04);                // if papersize, scale, resolution, copies, landscape
-
-    // weren't obtained from the print consider them
-    // mere bunk
-    static final private BitField nocolor       =
-        BitFieldFactory.getInstance(0x08);   // print mono/b&w, colorless
-    static final private BitField draft         =
-        BitFieldFactory.getInstance(0x10);   // print draft quality
-    static final private BitField notes         =
-        BitFieldFactory.getInstance(0x20);   // print the notes
-    static final private BitField noOrientation =
-        BitFieldFactory.getInstance(0x40);   // the orientation is not set
-    static final private BitField usepage       =
-        BitFieldFactory.getInstance(0x80);   // use a user set page no, instead of auto
     private short                 field_7_hresolution;
     private short                 field_8_vresolution;
     private double                field_9_headermargin;
     private double                field_10_footermargin;
     private short                 field_11_copies;
 
-    public PrintSetupRecord()
-    {
+    public PrintSetupRecord() {}
+
+    public PrintSetupRecord(PrintSetupRecord other) {
+        super(other);
+        field_1_paper_size    = other.field_1_paper_size;
+        field_2_scale         = other.field_2_scale;
+        field_3_page_start    = other.field_3_page_start;
+        field_4_fit_width     = other.field_4_fit_width;
+        field_5_fit_height    = other.field_5_fit_height;
+        field_6_options       = other.field_6_options;
+        field_7_hresolution   = other.field_7_hresolution;
+        field_8_vresolution   = other.field_8_vresolution;
+        field_9_headermargin  = other.field_9_headermargin;
+        field_10_footermargin = other.field_10_footermargin;
+        field_11_copies       = other.field_11_copies;
     }
 
-    public PrintSetupRecord(RecordInputStream in)
-    {
+    public PrintSetupRecord(RecordInputStream in) {
         field_1_paper_size    = in.readShort();
         field_2_scale         = in.readShort();
         field_3_page_start    = in.readShort();
@@ -347,19 +356,16 @@ public final class PrintSetupRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
-      PrintSetupRecord rec = new PrintSetupRecord();
-      rec.field_1_paper_size = field_1_paper_size;
-      rec.field_2_scale = field_2_scale;
-      rec.field_3_page_start = field_3_page_start;
-      rec.field_4_fit_width = field_4_fit_width;
-      rec.field_5_fit_height = field_5_fit_height;
-      rec.field_6_options = field_6_options;
-      rec.field_7_hresolution = field_7_hresolution;
-      rec.field_8_vresolution = field_8_vresolution;
-      rec.field_9_headermargin = field_9_headermargin;
-      rec.field_10_footermargin = field_10_footermargin;
-      rec.field_11_copies = field_11_copies;
-      return rec;
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public PrintSetupRecord clone() {
+        return copy();
+    }
+
+    @Override
+    public PrintSetupRecord copy() {
+      return new PrintSetupRecord(this);
     }
 }

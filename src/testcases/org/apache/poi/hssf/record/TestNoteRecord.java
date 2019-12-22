@@ -18,9 +18,9 @@
 package org.apache.poi.hssf.record;
 
 import static org.junit.Assert.assertArrayEquals;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
-
 import org.apache.poi.util.HexRead;
 
 /**
@@ -53,7 +53,7 @@ public final class TestNoteRecord extends TestCase {
     public void testWrite() {
         NoteRecord record = new NoteRecord();
         assertEquals(NoteRecord.sid, record.getSid());
-        
+
         record.setRow((short)6);
         record.setColumn((short)1);
         record.setFlags(NoteRecord.NOTE_VISIBLE);
@@ -73,7 +73,7 @@ public final class TestNoteRecord extends TestCase {
         record.setShapeId((short)1026);
         record.setAuthor("Apache Software Foundation");
 
-        NoteRecord cloned = record.clone();
+        NoteRecord cloned = record.copy();
         assertEquals(record.getRow(), cloned.getRow());
         assertEquals(record.getColumn(), cloned.getColumn());
         assertEquals(record.getFlags(), cloned.getFlags());
@@ -85,14 +85,14 @@ public final class TestNoteRecord extends TestCase {
         byte[] cln = cloned.serialize();
         assertArrayEquals(src, cln);
     }
-    
+
     public void testUnicodeAuthor() {
-        // This sample data was created by setting the 'user name' field in the 'Personalize' 
-        // section of Excel's options to \u30A2\u30D1\u30C3\u30C1\u65CF, and then 
+        // This sample data was created by setting the 'user name' field in the 'Personalize'
+        // section of Excel's options to \u30A2\u30D1\u30C3\u30C1\u65CF, and then
         // creating a cell comment.
         byte[] data = HexRead.readFromString("01 00 01 00 00 00 03 00 " +
                 "05 00 01 " + // len=5, 16bit
-                "A2 30 D1 30 C3 30 C1 30 CF 65 " + // character data 
+                "A2 30 D1 30 C3 30 C1 30 CF 65 " + // character data
                 "00 " // padding byte
                 );
         RecordInputStream in = TestcaseRecordInputStream.create(NoteRecord.sid, data);
@@ -102,7 +102,7 @@ public final class TestNoteRecord extends TestCase {
         }
         assertEquals("\u30A2\u30D1\u30C3\u30C1\u65CF", nr.getAuthor());
         assertTrue(nr.authorIsMultibyte());
-        
+
         byte[] ser = nr.serialize();
         TestcaseRecordInputStream.confirmRecordEncoding(NoteRecord.sid, data, ser);
 
@@ -111,23 +111,23 @@ public final class TestNoteRecord extends TestCase {
         nr = new NoteRecord(in);
         assertEquals("\u30A2\u30D1\u30C3\u30C1\u65CF", nr.getAuthor());
         assertTrue(nr.authorIsMultibyte());
-        
-        
+
+
         // Change to a non unicode author, will stop being unicode
         nr.setAuthor("Simple");
         ser = nr.serialize();
         in = TestcaseRecordInputStream.create(ser);
         nr = new NoteRecord(in);
-        
+
         assertEquals("Simple", nr.getAuthor());
         assertFalse(nr.authorIsMultibyte());
-        
+
         // Now set it back again
         nr.setAuthor("Unicode\u1234");
         ser = nr.serialize();
         in = TestcaseRecordInputStream.create(ser);
         nr = new NoteRecord(in);
-        
+
         assertEquals("Unicode\u1234", nr.getAuthor());
         assertTrue(nr.authorIsMultibyte());
     }

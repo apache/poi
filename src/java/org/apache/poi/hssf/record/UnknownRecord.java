@@ -22,13 +22,12 @@ import java.util.Locale;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        Unknown Record (for debugging)<p>
- * Description:  Unknown record just tells you the sid so you can figure out
- *               what records you are missing.  Also helps us read/modify sheets we
- *               don't know all the records to.  (HSSF leaves these alone!)<p>
- * Company:      SuperLink Software, Inc.
+ * Unknown record just tells you the sid so you can figure out what records you are missing.
+ * Also helps us read/modify sheets we don't know all the records to.
+ * (HSSF leaves these alone!)
  */
 public final class UnknownRecord extends StandardRecord {
 
@@ -206,7 +205,7 @@ public final class UnknownRecord extends StandardRecord {
             case 0x08A7: return "CRTLAYOUT12A";
 
             case 0x08C8: return "PLV{Mac Excel}";
-            
+
             case 0x1001: return "UNITS";
             case 0x1006: return "CHARTDATAFORMAT";
             case 0x1007: return "CHARTLINEFORMAT";
@@ -286,7 +285,15 @@ public final class UnknownRecord extends StandardRecord {
     }
 
     @Override
-    public Object clone() {
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public UnknownRecord clone() {
+        return copy();
+    }
+
+    @Override
+    public UnknownRecord copy() {
         // immutable - OK to return this
         return this;
     }

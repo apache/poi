@@ -37,7 +37,7 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
 
 /**
- * <p>CFRecordsAggregate - aggregates Conditional Formatting records CFHeaderRecord 
+ * <p>CFRecordsAggregate - aggregates Conditional Formatting records CFHeaderRecord
  * and number of up CFRuleRecord records together to simplify access to them.</p>
  * <p>Note that Excel versions before 2007 can only cope with a maximum of 3
  *  Conditional Formatting rules per sheet. Excel 2007 or newer can cope with
@@ -52,7 +52,12 @@ public final class CFRecordsAggregate extends RecordAggregate {
     private final CFHeaderBase header;
 
     /** List of CFRuleRecord objects */
-    private final List<CFRuleBase> rules;
+    private final List<CFRuleBase> rules = new ArrayList<>();
+
+    public CFRecordsAggregate(CFRecordsAggregate other) {
+        header = other.header.copy();
+        other.rules.stream().map(t -> t.copy()).forEach(rules::add);
+    }
 
     private CFRecordsAggregate(CFHeaderBase pHeader, CFRuleBase[] pRules) {
         if(pHeader == null) {
@@ -63,7 +68,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
         }
         if(pRules.length > MAX_97_2003_CONDTIONAL_FORMAT_RULES) {
             logger.log(POILogger.WARN, "Excel versions before 2007 require that "
-                    + "No more than " + MAX_97_2003_CONDTIONAL_FORMAT_RULES 
+                    + "No more than " + MAX_97_2003_CONDTIONAL_FORMAT_RULES
                     + " rules may be specified, " + pRules.length + " were found,"
                     + " this file will cause problems with old Excel versions");
         }
@@ -71,7 +76,6 @@ public final class CFRecordsAggregate extends RecordAggregate {
             throw new RecordFormatException("Mismatch number of rules");
         }
         header = pHeader;
-        rules = new ArrayList<>(pRules.length);
         for (CFRuleBase pRule : pRules) {
             checkRuleType(pRule);
             rules.add(pRule);
@@ -105,7 +109,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
         Record rec = rs.getNext();
         if (rec.getSid() != CFHeaderRecord.sid &&
             rec.getSid() != CFHeader12Record.sid) {
-            throw new IllegalStateException("next record sid was " + rec.getSid() 
+            throw new IllegalStateException("next record sid was " + rec.getSid()
                     + " instead of " + CFHeaderRecord.sid + " or " +
                     CFHeader12Record.sid + " as expected");
         }
@@ -127,11 +131,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
      * @return A new object with the same values as this record
      */
     public CFRecordsAggregate cloneCFAggregate() {
-        CFRuleBase[] newRecs = new CFRuleBase[rules.size()];
-        for (int i = 0; i < newRecs.length; i++) {
-            newRecs[i] = getRule(i).clone();
-        }
-        return new CFRecordsAggregate(header.clone(), newRecs);
+        return new CFRecordsAggregate(this);
     }
 
     /**
@@ -143,7 +143,7 @@ public final class CFRecordsAggregate extends RecordAggregate {
 
     private void checkRuleIndex(int idx) {
         if(idx < 0 || idx >= rules.size()) {
-            throw new IllegalArgumentException("Bad rule record index (" + idx 
+            throw new IllegalArgumentException("Bad rule record index (" + idx
                     + ") nRules=" + rules.size());
         }
     }
@@ -176,8 +176,8 @@ public final class CFRecordsAggregate extends RecordAggregate {
             throw new IllegalArgumentException("r must not be null");
         }
         if(rules.size() >= MAX_97_2003_CONDTIONAL_FORMAT_RULES) {
-            logger.log(POILogger.WARN, "Excel versions before 2007 cannot cope with" 
-                    + " any more than " + MAX_97_2003_CONDTIONAL_FORMAT_RULES 
+            logger.log(POILogger.WARN, "Excel versions before 2007 cannot cope with"
+                    + " any more than " + MAX_97_2003_CONDTIONAL_FORMAT_RULES
                     + " - this file will cause problems with old Excel versions");
         }
         checkRuleType(r);

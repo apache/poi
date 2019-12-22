@@ -25,20 +25,23 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * <p>Title:        Reference 3D Ptg</p>
- * <p>Description:  Defined a cell in extern sheet.</p>
- * <p>REFERENCE: </p>
- * 
- * <p>This is HSSF only, as it matches the HSSF file format way of
- *  referring to the sheet by an extern index. The XSSF equivalent
- *  is {@link Ref3DPxg} 
+ * Reference 3D Ptg<p>
+ * Defined a cell in extern sheet.<p>
+ *
+ * This is HSSF only, as it matches the HSSF file format way of
+ * referring to the sheet by an extern index. The XSSF equivalent
+ * is {@link Ref3DPxg}
  */
 public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormula, ExternSheetReferenceToken {
     public final static byte sid  = 0x3a;
 
     private final static int  SIZE = 7; // 6 + 1 for Ptg
-    private int             field_1_index_extern_sheet;
+    private int field_1_index_extern_sheet;
 
+    public Ref3DPtg(Ref3DPtg other) {
+        super(other);
+        field_1_index_extern_sheet = other.field_1_index_extern_sheet;
+    }
 
     public Ref3DPtg(LittleEndianInput in)  {
         field_1_index_extern_sheet = in.readShort();
@@ -94,5 +97,10 @@ public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormu
     }
     public String toFormulaString() {
         throw new RuntimeException("3D references need a workbook to determine formula text");
+    }
+
+    @Override
+    public Ref3DPtg copy() {
+        return new Ref3DPtg(this);
     }
 }

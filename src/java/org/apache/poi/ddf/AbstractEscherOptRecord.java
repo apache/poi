@@ -171,7 +171,4 @@ public abstract class AbstractEscherOptRecord extends EscherRecord {
             "properties", this::getEscherProperties
         );
     }
-
-    @Override
-    public abstract AbstractEscherOptRecord copy();
 }

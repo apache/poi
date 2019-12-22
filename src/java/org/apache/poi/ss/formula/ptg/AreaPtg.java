@@ -22,7 +22,6 @@ import org.apache.poi.util.LittleEndianInput;
 
 /**
  * Specifies a rectangular area of cells A1:A4 for instance.
- * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class AreaPtg extends Area2DPtgBase {
 	public final static short sid  = 0x25;
@@ -30,17 +29,26 @@ public final class AreaPtg extends Area2DPtgBase {
 	public AreaPtg(int firstRow, int lastRow, int firstColumn, int lastColumn, boolean firstRowRelative, boolean lastRowRelative, boolean firstColRelative, boolean lastColRelative) {
 		super(firstRow, lastRow, firstColumn, lastColumn, firstRowRelative, lastRowRelative, firstColRelative, lastColRelative);
 	}
-	
+
+	public AreaPtg(AreaPtg other)  {
+		super(other);
+	}
+
 	public AreaPtg(LittleEndianInput in)  {
 		super(in);
 	}
-	
+
     public AreaPtg(AreaReference arearef) {
         super(arearef);
     }
-    
+
 	@Override
 	protected byte getSid() {
 		return sid;
+	}
+
+	@Override
+	public AreaPtg copy() {
+		return new AreaPtg(this);
 	}
 }

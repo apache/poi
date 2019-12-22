@@ -19,9 +19,7 @@ package org.apache.poi.ss.formula.ptg;
 
 
 /**
- * Common superclass of all {@link Ptg}s that represent simple constant values.
- *
- * @author Josh Micich
+ * Common superclass of all {@link Ptg Ptgs} that represent simple constant values.
  */
 public abstract class ScalarConstantPtg extends Ptg {
 	public final boolean isBaseToken() {
@@ -39,4 +37,6 @@ public abstract class ScalarConstantPtg extends Ptg {
 		sb.append("]");
 		return sb.toString();
 	}
+
+
 }

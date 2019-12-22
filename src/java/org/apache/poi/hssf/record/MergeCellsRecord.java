@@ -17,21 +17,32 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.stream.Stream;
+
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title: Merged Cells Record (0x00E5)<p>
- * 
- * Description:  Optional record defining a square area of cells to "merged" into one cell.
+ * Optional record defining a square area of cells to "merged" into one cell.
  */
-public final class MergeCellsRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x00E5;
-    /** sometimes the regions array is shared with other MergedCellsRecords */ 
+public final class MergeCellsRecord extends StandardRecord {
+    public static final short sid = 0x00E5;
+
+    /** sometimes the regions array is shared with other MergedCellsRecords */
     private final CellRangeAddress[] _regions;
     private final int _startIndex;
     private final int _numberOfRegions;
+
+    public MergeCellsRecord(MergeCellsRecord other) {
+        super(other);
+        _regions = (other._regions == null) ? null
+            : Stream.of(other._regions).map(CellRangeAddress::copy).toArray(CellRangeAddress[]::new);
+        _startIndex = other._startIndex;
+        _numberOfRegions = other._numberOfRegions;
+    }
+
 
     public MergeCellsRecord(CellRangeAddress[] regions, int startIndex, int numberOfRegions) {
 		_regions = regions;
@@ -63,7 +74,7 @@ public final class MergeCellsRecord extends StandardRecord implements Cloneable 
 
     /**
      * @param index the n-th MergedRegion
-     * 
+     *
      * @return MergedRegion at the given index representing the area that is Merged (r1,c1 - r2,c2)
      */
     public CellRangeAddress getAreaAt(int index) {
@@ -107,12 +118,15 @@ public final class MergeCellsRecord extends StandardRecord implements Cloneable 
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public MergeCellsRecord clone() {
-    	int nRegions = _numberOfRegions;
-    	CellRangeAddress[] clonedRegions = new CellRangeAddress[nRegions];
-		for (int i = 0; i < clonedRegions.length; i++) {
-			clonedRegions[i] = _regions[_startIndex + i].copy();
-		}
-        return new MergeCellsRecord(clonedRegions, 0, nRegions);
+        return copy();
+    }
+
+    @Override
+    public MergeCellsRecord copy() {
+        return new MergeCellsRecord(this);
     }
 }

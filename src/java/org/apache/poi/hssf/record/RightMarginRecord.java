@@ -18,18 +18,23 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * Record for the right margin.
  */
 public final class RightMarginRecord extends StandardRecord implements Margin {
-    public final static short sid = 0x27;
+    public static final short sid = 0x27;
     private double field_1_margin;
 
-    public RightMarginRecord()    {    }
+    public RightMarginRecord() {}
 
-    public RightMarginRecord( RecordInputStream in )
-    {
+    public RightMarginRecord(RightMarginRecord other) {
+        super(other);
+        field_1_margin = other.field_1_margin;
+    }
+
+    public RightMarginRecord( RecordInputStream in ) {
         field_1_margin = in.readDouble();
     }
 
@@ -63,10 +68,15 @@ public final class RightMarginRecord extends StandardRecord implements Margin {
     public void setMargin( double field_1_margin )
     {        this.field_1_margin = field_1_margin;    }
 
-    public Object clone()
-    {
-        RightMarginRecord rec = new RightMarginRecord();
-        rec.field_1_margin = this.field_1_margin;
-        return rec;
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public RightMarginRecord clone() {
+        return copy();
     }
-}  // END OF
+
+    public RightMarginRecord copy() {
+        return new RightMarginRecord(this);
+    }
+}

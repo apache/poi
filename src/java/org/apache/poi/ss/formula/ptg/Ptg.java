@@ -20,6 +20,7 @@ package org.apache.poi.ss.formula.ptg;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
@@ -36,8 +37,20 @@ import org.apache.poi.util.LittleEndianOutput;
  * <em>Reverse-Polish Notation</em> order. The RPN ordering also simplifies formula
  * evaluation logic, so POI mostly accesses <tt>Ptg</tt>s in the same way.
  */
-public abstract class Ptg {
+public abstract class Ptg implements Duplicatable {
 	public static final Ptg[] EMPTY_PTG_ARRAY = { };
+
+	public static final byte CLASS_REF = 0x00;
+	public static final byte CLASS_VALUE = 0x20;
+	public static final byte CLASS_ARRAY = 0x40;
+
+	private byte ptgClass = CLASS_REF; //base ptg
+
+	protected Ptg() {}
+
+	protected Ptg(Ptg other) {
+		ptgClass = other.ptgClass;
+	}
 
 	/**
 	 * Reads <tt>size</tt> bytes of the input stream, to create an array of <tt>Ptg</tt>s.
@@ -199,7 +212,7 @@ public abstract class Ptg {
 	 */
 	public static int serializePtgs(Ptg[] ptgs, byte[] array, int offset) {
 		LittleEndianByteArrayOutputStream out = new LittleEndianByteArrayOutputStream(array, offset); // NOSONAR
-		
+
 		List<Ptg> arrayPtgs = null;
 
 		for (Ptg ptg : ptgs) {
@@ -240,12 +253,6 @@ public abstract class Ptg {
 	public String toString(){
 		return this.getClass().toString();
 	}
-
-	public static final byte CLASS_REF = 0x00;
-	public static final byte CLASS_VALUE = 0x20;
-	public static final byte CLASS_ARRAY = 0x40;
-
-	private byte ptgClass = CLASS_REF; //base ptg
 
 	public final void setClass(byte thePtgClass) {
 		if (isBaseToken()) {
@@ -311,4 +318,7 @@ public abstract class Ptg {
 		}
 		return false;
 	}
+
+	@Override
+	public abstract Ptg copy();
 }

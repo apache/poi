@@ -16,11 +16,13 @@
 ==================================================================== */
 package org.apache.poi.hssf.record;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -89,6 +91,24 @@ public class LbsDataSubRecord extends SubRecord {
      */
     private boolean[] _bsels;
 
+    LbsDataSubRecord() {}
+
+    public LbsDataSubRecord(LbsDataSubRecord other) {
+        super(other);
+        _cbFContinued = other._cbFContinued;
+        _unknownPreFormulaInt = other._unknownPreFormulaInt;
+        _linkPtg = (other._linkPtg == null) ? null : other._linkPtg.copy();
+        _unknownPostFormulaByte = other._unknownPostFormulaByte;
+        _cLines = other._cLines;
+        _iSel = other._iSel;
+        _flags = other._flags;
+        _idEdit = other._idEdit;
+        _dropData = (other._dropData == null) ? null : other._dropData.copy();
+        _rgLines = (other._rgLines == null) ? null : other._rgLines.clone();
+        _bsels = (other._bsels == null) ? null : other._bsels.clone();
+    }
+
+
     /**
      * @param in the stream to read data from
      * @param cbFContinued the seconf short in the record header
@@ -151,10 +171,6 @@ public class LbsDataSubRecord extends SubRecord {
                 _bsels[i] = in.readByte() == 1;
             }
         }
-
-    }
-
-    LbsDataSubRecord(){
 
     }
 
@@ -259,9 +275,16 @@ public class LbsDataSubRecord extends SubRecord {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public LbsDataSubRecord clone() {
-        // TODO: is immutable ???
-        return this;
+        return copy();
+    }
+
+    @Override
+    public LbsDataSubRecord copy() {
+        return new LbsDataSubRecord(this);
     }
 
     @Override
@@ -303,7 +326,7 @@ public class LbsDataSubRecord extends SubRecord {
     /**
      * This structure specifies properties of the dropdown list control
      */
-    public static class LbsDropData {
+    public static class LbsDropData implements Duplicatable {
         /**
          * Combo dropdown control
          */
@@ -318,7 +341,7 @@ public class LbsDataSubRecord extends SubRecord {
         public static final int STYLE_COMBO_SIMPLE_DROPDOWN = 2;
 
         /**
-         *  An unsigned integer that specifies the style of this dropdown. 
+         *  An unsigned integer that specifies the style of this dropdown.
          */
         private int _wStyle;
 
@@ -343,12 +366,20 @@ public class LbsDataSubRecord extends SubRecord {
          */
         private Byte _unused;
 
-        public LbsDropData(){
+        public LbsDropData() {
             _str = "";
             _unused = 0;
         }
 
-        public LbsDropData(LittleEndianInput in){
+        public LbsDropData(LbsDropData other) {
+            _wStyle = other._wStyle;
+            _cLine = other._cLine;
+            _dxMin = other._dxMin;
+            _str = other._str;
+            _unused = other._unused;
+        }
+
+        public LbsDropData(LittleEndianInput in) {
             _wStyle = in.readUShort();
             _cLine = in.readUShort();
             _dxMin = in.readUShort();
@@ -367,7 +398,7 @@ public class LbsDataSubRecord extends SubRecord {
          * <li>1: Combo Edit dropdown control</li>
          * <li>2: Simple dropdown control (just the dropdown button)</li>
          * </ul>
-         * 
+         *
          * @param style the style - see possible values
          */
         public void setStyle(int style){
@@ -376,7 +407,7 @@ public class LbsDataSubRecord extends SubRecord {
 
         /**
          * Set the number of lines to be displayed in the dropdown.
-         * 
+         *
          * @param num the number of lines to be displayed in the dropdown
          */
         public void setNumLines(int num){
@@ -416,6 +447,11 @@ public class LbsDataSubRecord extends SubRecord {
             sb.append("[/LbsDropData]\n");
 
             return sb.toString();
+        }
+
+        @Override
+        public LbsDropData copy() {
+            return new LbsDropData(this);
         }
     }
 }

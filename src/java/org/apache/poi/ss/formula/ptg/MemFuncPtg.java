@@ -20,9 +20,6 @@ package org.apache.poi.ss.formula.ptg;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
-/**
- * @author Glen Stampoultzis (glens at apache.org)
- */
 public final class MemFuncPtg extends OperandPtg {
 
 	public final static byte sid = 0x29;
@@ -71,5 +68,11 @@ public final class MemFuncPtg extends OperandPtg {
 		sb.append(field_1_len_ref_subexpression);
 		sb.append("]");
 		return sb.toString();
+	}
+
+	@Override
+	public MemFuncPtg copy() {
+		// immutable
+		return this;
 	}
 }

@@ -22,8 +22,6 @@ import org.apache.poi.util.LittleEndianInput;
 
 /**
  * ReferencePtg - handles references (such as A1, A2, IA4)
- * @author  Andrew C. Oliver (acoliver@apache.org)
- * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class RefPtg extends Ref2DPtgBase {
 	public final static byte sid = 0x24;
@@ -34,6 +32,10 @@ public final class RefPtg extends Ref2DPtgBase {
 	 */
 	public RefPtg(String cellref) {
 		super(new CellReference(cellref));
+	}
+
+	public RefPtg(RefPtg other) {
+		super(other);
 	}
 
 	public RefPtg(int row, int column, boolean isRowRelative, boolean isColumnRelative) {
@@ -50,5 +52,10 @@ public final class RefPtg extends Ref2DPtgBase {
 
 	protected byte getSid() {
 		return sid;
+	}
+
+	@Override
+	public RefPtg copy() {
+		return new RefPtg(this);
 	}
 }

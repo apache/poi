@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.CellStyle;
@@ -29,6 +30,7 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.ReadingOrder;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellAlignment;
@@ -56,7 +58,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPatternType;
  * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getCellStyleAt(int)
  * @see org.apache.poi.xssf.usermodel.XSSFCell#setCellStyle(org.apache.poi.ss.usermodel.CellStyle)
  */
-public class XSSFCellStyle implements CellStyle {
+public class XSSFCellStyle implements CellStyle, Duplicatable {
 
     private int _cellXfId;
     private final StylesTable _stylesSource;
@@ -1303,6 +1305,14 @@ public class XSSFCellStyle implements CellStyle {
         return _cellXf.toString().equals(cf.getCoreXf().toString());
     }
 
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public XSSFCellStyle clone() {
+        return copy();
+    }
+
     /**
      * Make a copy of this style. The underlying CTXf bean is cloned,
      * the references to fills and borders remain.
@@ -1310,7 +1320,7 @@ public class XSSFCellStyle implements CellStyle {
      * @return a copy of this style
      */
     @Override
-    public Object clone(){
+    public XSSFCellStyle copy(){
         CTXf xf = (CTXf)_cellXf.copy();
 
         int xfSize = _stylesSource._getStyleXfsSize();

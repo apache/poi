@@ -19,6 +19,7 @@ package org.apache.poi.hssf.record;
 
 
 import static org.junit.Assert.assertArrayEquals;
+
 import junit.framework.TestCase;
 
 /**
@@ -58,7 +59,7 @@ public final class TestNoteStructureSubRecord extends TestCase {
         NoteStructureSubRecord record = new NoteStructureSubRecord();
         byte[] src = record.serialize();
 
-        NoteStructureSubRecord cloned = record.clone();
+        NoteStructureSubRecord cloned = record.copy();
         byte[] cln = cloned.serialize();
 
         assertEquals(record.getDataSize(), cloned.getDataSize());

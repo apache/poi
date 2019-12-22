@@ -21,8 +21,8 @@ import java.util.Iterator;
 
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.LabelSSTRecord;
+import org.apache.poi.hssf.record.common.FormatRun;
 import org.apache.poi.hssf.record.common.UnicodeString;
-import org.apache.poi.hssf.record.common.UnicodeString.FormatRun;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.RichTextString;
 /**
@@ -105,9 +105,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      *  be affected by changes that we make to this string.
      */
     private UnicodeString cloneStringIfRequired() {
-      if (_book == null)
-        return _string;
-        return (UnicodeString)_string.clone();
+        return (_book == null) ? _string : _string.copy();
     }
 
     private void addToSSTIfRequired() {
@@ -148,16 +146,16 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
         Iterator<FormatRun> formatting = _string.formatIterator();
         if (formatting != null) {
           while (formatting.hasNext()) {
-            UnicodeString.FormatRun r = formatting.next();
+            FormatRun r = formatting.next();
             if ((r.getCharacterPos() >= startIndex) && (r.getCharacterPos() < endIndex))
               formatting.remove();
           }
         }
 
 
-        _string.addFormatRun(new UnicodeString.FormatRun((short)startIndex, fontIndex));
+        _string.addFormatRun(new FormatRun((short)startIndex, fontIndex));
         if (endIndex != length())
-          _string.addFormatRun(new UnicodeString.FormatRun((short)endIndex, currentFont));
+          _string.addFormatRun(new FormatRun((short)endIndex, currentFont));
 
         addToSSTIfRequired();
     }
@@ -240,9 +238,9 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      */
     public short getFontAtIndex( int index ) {
       int size = _string.getFormatRunCount();
-      UnicodeString.FormatRun currentRun = null;
+      FormatRun currentRun = null;
       for (int i=0;i<size;i++) {
-        UnicodeString.FormatRun r = _string.getFormatRun(i);
+        FormatRun r = _string.getFormatRun(i);
         if (r.getCharacterPos() > index) {
             break;
         }
@@ -270,7 +268,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      * @return  the index within the string.
      */
     public int getIndexOfFormattingRun(int index) {
-        UnicodeString.FormatRun r = _string.getFormatRun(index);
+        FormatRun r = _string.getFormatRun(index);
         return r.getCharacterPos();
     }
 
@@ -281,7 +279,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      * @return  the font number used.
      */
     public short getFontOfFormattingRun(int index) {
-      UnicodeString.FormatRun r = _string.getFormatRun(index);
+      FormatRun r = _string.getFormatRun(index);
       return r.getFontIndex();
     }
 
@@ -307,7 +305,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
         return 42; // any arbitrary constant will do
     }
 
-    
+
     /**
      * @return  the plain text representation of this string.
      */

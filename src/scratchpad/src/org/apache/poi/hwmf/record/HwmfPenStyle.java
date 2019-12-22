@@ -21,6 +21,7 @@ import java.awt.BasicStroke;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
@@ -30,21 +31,21 @@ import org.apache.poi.util.GenericRecordUtil;
 /**
  * The 16-bit PenStyle Enumeration is used to specify different types of pens
  * that can be used in graphics operations.
- * 
+ *
  * Various styles can be combined by using a logical OR statement, one from
  * each subsection of Style, EndCap, Join, and Type (Cosmetic).
- * 
+ *
  * The defaults in case the other values of the subsection aren't set are
  * solid, round end caps, round joins and cosmetic type.
  */
-public class HwmfPenStyle implements Cloneable, GenericRecord {
+public class HwmfPenStyle implements Duplicatable, GenericRecord {
     public enum HwmfLineCap {
         /** Rounded ends */
         ROUND(0, BasicStroke.CAP_ROUND),
         /** Square protrudes by half line width */
         SQUARE(1, BasicStroke.CAP_SQUARE),
         /** Line ends at end point*/
-        FLAT(2, BasicStroke.CAP_BUTT);        
+        FLAT(2, BasicStroke.CAP_BUTT);
 
         public final int wmfFlag;
         public final int awtFlag;
@@ -58,9 +59,9 @@ public class HwmfPenStyle implements Cloneable, GenericRecord {
                 if (hs.wmfFlag == wmfFlag) return hs;
             }
             return null;
-        }    
+        }
     }
-    
+
     public enum HwmfLineJoin {
         /**Line joins are round. */
         ROUND(0, BasicStroke.JOIN_ROUND),
@@ -84,16 +85,16 @@ public class HwmfPenStyle implements Cloneable, GenericRecord {
                 if (hs.wmfFlag == wmfFlag) return hs;
             }
             return null;
-        }    
+        }
     }
-    
+
     public enum HwmfLineDash {
         /**
          * The pen is solid.
          */
         SOLID(0x0000, null),
         /**
-         * The pen is dashed. (-----) 
+         * The pen is dashed. (-----)
          */
         DASH(0x0001, 10, 8),
         /**
@@ -124,7 +125,7 @@ public class HwmfPenStyle implements Cloneable, GenericRecord {
          * styling is supposed to come from ...)
          */
         USERSTYLE(0x0007, null);
-        
+
 
         public final int wmfFlag;
         public final float[] dashes;
@@ -138,23 +139,29 @@ public class HwmfPenStyle implements Cloneable, GenericRecord {
                 if (hs.wmfFlag == wmfFlag) return hs;
             }
             return null;
-        }    
+        }
     }
-    
-    private static final BitField SUBSECTION_DASH      = BitFieldFactory.getInstance(0x00007);
-    private static final BitField SUBSECTION_ALTERNATE = BitFieldFactory.getInstance(0x00008);
-    private static final BitField SUBSECTION_ENDCAP    = BitFieldFactory.getInstance(0x00300);
-    private static final BitField SUBSECTION_JOIN      = BitFieldFactory.getInstance(0x03000);
-    private static final BitField SUBSECTION_GEOMETRIC = BitFieldFactory.getInstance(0x10000);
+
+    protected static final BitField SUBSECTION_DASH      = BitFieldFactory.getInstance(0x00007);
+    protected static final BitField SUBSECTION_ALTERNATE = BitFieldFactory.getInstance(0x00008);
+    protected static final BitField SUBSECTION_ENDCAP    = BitFieldFactory.getInstance(0x00300);
+    protected static final BitField SUBSECTION_JOIN      = BitFieldFactory.getInstance(0x03000);
+    protected static final BitField SUBSECTION_GEOMETRIC = BitFieldFactory.getInstance(0x10000);
 
     protected int flag;
-    
-    public static HwmfPenStyle valueOf(int flag) {
-        HwmfPenStyle ps = new HwmfPenStyle();
-        ps.flag = flag;
-        return ps;
+
+    public HwmfPenStyle(int flag) {
+        this.flag = flag;
     }
-    
+
+    public HwmfPenStyle(HwmfPenStyle other) {
+        flag = other.flag;
+    }
+
+    public static HwmfPenStyle valueOf(int flag) {
+        return new HwmfPenStyle(flag);
+    }
+
     public HwmfLineCap getLineCap() {
         return HwmfLineCap.valueOf(SUBSECTION_ENDCAP.getValue(flag));
     }
@@ -162,7 +169,7 @@ public class HwmfPenStyle implements Cloneable, GenericRecord {
     public HwmfLineJoin getLineJoin() {
         return HwmfLineJoin.valueOf(SUBSECTION_JOIN.getValue(flag));
     }
-    
+
     public HwmfLineDash getLineDash() {
         return HwmfLineDash.valueOf(SUBSECTION_DASH.getValue(flag));
     }
@@ -193,21 +200,9 @@ public class HwmfPenStyle implements Cloneable, GenericRecord {
     }
 
 
-    /**
-     * Creates a new object of the same class and with the
-     * same contents as this object.
-     * @return     a clone of this instance.
-     * @exception  OutOfMemoryError            if there is not enough memory.
-     * @see        java.lang.Cloneable
-     */
     @Override
-    public HwmfPenStyle clone() {
-        try {
-            return (HwmfPenStyle)super.clone();
-        } catch (CloneNotSupportedException e) {
-            // this shouldn't happen, since we are Cloneable
-            throw new InternalError();
-        }
+    public HwmfPenStyle copy() {
+        return new HwmfPenStyle(this);
     }
 
     @Override

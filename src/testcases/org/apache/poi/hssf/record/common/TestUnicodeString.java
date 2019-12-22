@@ -26,8 +26,6 @@ import java.io.IOException;
 import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.SSTRecord;
-import org.apache.poi.hssf.record.common.UnicodeString.ExtRst;
-import org.apache.poi.hssf.record.common.UnicodeString.FormatRun;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.hssf.usermodel.HSSFOptimiser;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -93,9 +91,9 @@ public final class TestUnicodeString {
         //Test a compressed small string that has rich text formatting
         s.setString("Test");
         s.setOptionFlags((byte)0x8);
-        UnicodeString.FormatRun r = new UnicodeString.FormatRun((short)0,(short)1);
+        FormatRun r = new FormatRun((short)0,(short)1);
         s.addFormatRun(r);
-        UnicodeString.FormatRun r2 = new UnicodeString.FormatRun((short)2,(short)2);
+        FormatRun r2 = new FormatRun((short)2,(short)2);
         s.addFormatRun(r2);
         confirmSize(17, s);
 
@@ -108,7 +106,7 @@ public final class TestUnicodeString {
         s.setString("Test");
         s.setOptionFlags((byte)0xC);
         confirmSize(17, s);
-        
+
         // Extended phonetics data
         // Minimum size is 14
         // Also adds 4 bytes to hold the length
@@ -121,7 +119,7 @@ public final class TestUnicodeString {
         s.setString(STR_16_BIT);
         s.setOptionFlags((byte)0xD);
         confirmSize(39, s);
-        
+
         s.setExtendedRst(null);
         confirmSize(21, s);
     }
@@ -144,8 +142,8 @@ public final class TestUnicodeString {
     public void perfectRichStringSize() {
       //Test a rich text string
       UnicodeString s = makeUnicodeString(MAX_DATA_SIZE-2-1-8-2);
-      s.addFormatRun(new UnicodeString.FormatRun((short)1,(short)0));
-      s.addFormatRun(new UnicodeString.FormatRun((short)2,(short)1));
+      s.addFormatRun(new FormatRun((short)1,(short)0));
+      s.addFormatRun(new FormatRun((short)2,(short)1));
       s.setOptionFlags((byte)0x8);
       confirmSize(MAX_DATA_SIZE, s);
 
@@ -153,8 +151,8 @@ public final class TestUnicodeString {
       //Note that we can only ever get to a maximum size of 8227 since an uncompressed
       //string is writing double bytes.
       s = makeUnicodeString((MAX_DATA_SIZE-2-1-8-2)/2, true);
-      s.addFormatRun(new UnicodeString.FormatRun((short)1,(short)0));
-      s.addFormatRun(new UnicodeString.FormatRun((short)2,(short)1));
+      s.addFormatRun(new FormatRun((short)1,(short)0));
+      s.addFormatRun(new FormatRun((short)2,(short)1));
       s.setOptionFlags((byte)0x9);
       confirmSize(MAX_DATA_SIZE-1, s);
     }
@@ -180,25 +178,25 @@ public final class TestUnicodeString {
       UnicodeString s = makeUnicodeString(strSize);
       confirmSize(MAX_DATA_SIZE*2, s);
     }
-    
+
     @Test
     public void formatRun() {
        FormatRun fr = new FormatRun((short)4, (short)0x15c);
        assertEquals(4, fr.getCharacterPos());
        assertEquals(0x15c, fr.getFontIndex());
-       
+
        ByteArrayOutputStream baos = new ByteArrayOutputStream();
        LittleEndianOutputStream out = new LittleEndianOutputStream(baos);
-       
+
        fr.serialize(out);
-       
+
        byte[] b = baos.toByteArray();
        assertEquals(4, b.length);
        assertEquals(4, b[0]);
        assertEquals(0, b[1]);
        assertEquals(0x5c, b[2]);
        assertEquals(0x01, b[3]);
-       
+
        LittleEndianInputStream inp = new LittleEndianInputStream(
              new ByteArrayInputStream(b)
        );
@@ -206,34 +204,34 @@ public final class TestUnicodeString {
        assertEquals(4, fr.getCharacterPos());
        assertEquals(0x15c, fr.getFontIndex());
     }
-    
+
     @Test
     public void extRstFromEmpty() {
        ExtRst ext = new ExtRst();
-       
+
        assertEquals(0, ext.getNumberOfRuns());
        assertEquals(0, ext.getFormattingFontIndex());
        assertEquals(0, ext.getFormattingOptions());
        assertEquals("", ext.getPhoneticText());
        assertEquals(0, ext.getPhRuns().length);
        assertEquals(10, ext.getDataSize()); // Excludes 4 byte header
-       
+
        ByteArrayOutputStream baos = new ByteArrayOutputStream();
        LittleEndianOutputStream out = new LittleEndianOutputStream(baos);
        ContinuableRecordOutput cout = new ContinuableRecordOutput(out, 0xffff);
-       
+
        ext.serialize(cout);
        cout.writeContinue();
-       
+
        byte[] b = baos.toByteArray();
        assertEquals(20, b.length);
-       
+
        // First 4 bytes from the outputstream
        assertEquals(-1, b[0]);
        assertEquals(-1, b[1]);
        assertEquals(14, b[2]);
        assertEquals(0, b[3]);
-       
+
        // Reserved
        assertEquals(1, b[4]);
        assertEquals(0, b[5]);
@@ -253,12 +251,12 @@ public final class TestUnicodeString {
        assertEquals(0, b[15]);
        assertEquals(0, b[16]);
        assertEquals(0, b[17]);
-       
+
        // Last 2 bytes from the outputstream
        assertEquals(ContinueRecord.sid, b[18]);
        assertEquals(0, b[19]);
-       
-       
+
+
        // Load in again and re-test
        byte[] data = new byte[14];
        System.arraycopy(b, 4, data, 0, data.length);
@@ -266,14 +264,14 @@ public final class TestUnicodeString {
              new ByteArrayInputStream(data)
        );
        ext = new ExtRst(inp, data.length);
-       
+
        assertEquals(0, ext.getNumberOfRuns());
        assertEquals(0, ext.getFormattingFontIndex());
        assertEquals(0, ext.getFormattingOptions());
        assertEquals("", ext.getPhoneticText());
        assertEquals(0, ext.getPhRuns().length);
     }
-    
+
     @Test
     public void extRstFromData() {
        byte[] data = new byte[] {
@@ -284,39 +282,39 @@ public final class TestUnicodeString {
                0, 0 // Cruft at the end, as found from real files
        };
        assertEquals(16, data.length);
-       
+
        LittleEndianInputStream inp = new LittleEndianInputStream(
              new ByteArrayInputStream(data)
        );
        ExtRst ext = new ExtRst(inp, data.length);
        assertEquals(0x0c, ext.getDataSize()); // Excludes 4 byte header
-       
+
        assertEquals(0, ext.getNumberOfRuns());
        assertEquals(0x37, ext.getFormattingOptions());
        assertEquals(0, ext.getFormattingFontIndex());
        assertEquals("", ext.getPhoneticText());
        assertEquals(0, ext.getPhRuns().length);
     }
-    
+
     @Test
     public void corruptExtRstDetection() {
        byte[] data = new byte[] {
-             0x79, 0x79, 0x11, 0x11, 
-             0x22, 0x22, 0x33, 0x33, 
+             0x79, 0x79, 0x11, 0x11,
+             0x22, 0x22, 0x33, 0x33,
        };
        assertEquals(8, data.length);
-       
+
        LittleEndianInputStream inp = new LittleEndianInputStream(
              new ByteArrayInputStream(data)
        );
        ExtRst ext = new ExtRst(inp, data.length);
-       
+
        // Will be empty
        assertEquals(ext, new ExtRst());
 
        // If written, will be the usual size
        assertEquals(10, ext.getDataSize()); // Excludes 4 byte header
-     
+
        // Is empty
        assertEquals(0, ext.getNumberOfRuns());
        assertEquals(0, ext.getFormattingOptions());
@@ -342,12 +340,12 @@ public final class TestUnicodeString {
         bos.writeShort(1);
         bos.writeShort(3);
         bos.writeShort(42);
-        
+
         LittleEndianInput in = new LittleEndianByteArrayInputStream(buf, 0, bos.getWriteIndex());
-        UnicodeString.ExtRst extRst1 = new UnicodeString.ExtRst(in, bos.getWriteIndex());
+        ExtRst extRst1 = new ExtRst(in, bos.getWriteIndex());
         in = new LittleEndianByteArrayInputStream(buf, 0, bos.getWriteIndex());
-        UnicodeString.ExtRst extRst2 = new UnicodeString.ExtRst(in, bos.getWriteIndex());
-        
+        ExtRst extRst2 = new ExtRst(in, bos.getWriteIndex());
+
         assertEquals(extRst1, extRst2);
         assertEquals(extRst1.hashCode(), extRst2.hashCode());
     }

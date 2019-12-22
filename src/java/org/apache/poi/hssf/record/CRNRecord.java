@@ -21,26 +21,29 @@ import org.apache.poi.ss.formula.constant.ConstantValueParser;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:       CRN(0x005A)<p>
- * Description: This record stores the contents of an external cell or cell range<p>
- * REFERENCE:   OOO 5.23
+ * This record stores the contents of an external cell or cell range
  */
 public final class CRNRecord extends StandardRecord {
-	public final static short sid = 0x005A;
+	public static final short sid = 0x005A;
 
-	private int	 field_1_last_column_index;
-	private int	 field_2_first_column_index;
-	private int	 field_3_row_index;
+	private int	field_1_last_column_index;
+	private int	field_2_first_column_index;
+	private int	field_3_row_index;
 	private Object[] field_4_constant_values;
 
-	public CRNRecord() {
-		throw new RuntimeException("incomplete code");
+	private CRNRecord() {
+		// incomplete code
 	}
 
-	public int getNumberOfCRNs() {
-		return field_1_last_column_index;
+	public CRNRecord(CRNRecord other) {
+		super(other);
+		field_1_last_column_index = other.field_1_last_column_index;
+		field_2_first_column_index = other.field_2_first_column_index;
+		field_3_row_index = other.field_3_row_index;
+		// field_4_constant_values are instances of Double, Boolean, String, ErrorCode,
+		// i.e. they are immutable and can their references can be simply cloned
+		field_4_constant_values = (other.field_4_constant_values == null) ? null : other.field_4_constant_values.clone();
 	}
-
 
 	public CRNRecord(RecordInputStream in) {
 		field_1_last_column_index = in.readUByte();
@@ -50,6 +53,9 @@ public final class CRNRecord extends StandardRecord {
 		field_4_constant_values = ConstantValueParser.parse(in, nValues);
 	}
 
+	public int getNumberOfCRNs() {
+		return field_1_last_column_index;
+	}
 
 	public String toString() {
 		StringBuilder sb = new StringBuilder();
@@ -76,5 +82,10 @@ public final class CRNRecord extends StandardRecord {
 	 */
 	public short getSid() {
 		return sid;
+	}
+
+	@Override
+	public CRNRecord copy() {
+		return new CRNRecord(this);
 	}
 }

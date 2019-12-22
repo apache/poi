@@ -23,35 +23,37 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * The bar record is used to define a bar chart.<p>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
+ * The bar record is used to define a bar chart.
  */
-public final class BarRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x1017;
+public final class BarRecord extends StandardRecord {
+    public static final short sid = 0x1017;
 
-    private static final BitField   horizontal          = BitFieldFactory.getInstance(0x1);
-    private static final BitField   stacked             = BitFieldFactory.getInstance(0x2);
-    private static final BitField   displayAsPercentage = BitFieldFactory.getInstance(0x4);
-    private static final BitField   shadow              = BitFieldFactory.getInstance(0x8);
+    private static final BitField horizontal          = BitFieldFactory.getInstance(0x1);
+    private static final BitField stacked             = BitFieldFactory.getInstance(0x2);
+    private static final BitField displayAsPercentage = BitFieldFactory.getInstance(0x4);
+    private static final BitField shadow              = BitFieldFactory.getInstance(0x8);
 
-    private  short      field_1_barSpace;
-    private  short      field_2_categorySpace;
-    private  short      field_3_formatFlags;
+    private short field_1_barSpace;
+    private short field_2_categorySpace;
+    private short field_3_formatFlags;
 
 
-    public BarRecord()
-    {
+    public BarRecord() {}
 
+    public BarRecord(BarRecord other) {
+        super(other);
+        field_1_barSpace      = other.field_1_barSpace;
+        field_2_categorySpace = other.field_2_categorySpace;
+        field_3_formatFlags   = other.field_3_formatFlags;
     }
 
-    public BarRecord(RecordInputStream in)
-    {
-        field_1_barSpace               = in.readShort();
-        field_2_categorySpace          = in.readShort();
-        field_3_formatFlags            = in.readShort();
+    public BarRecord(RecordInputStream in) {
+        field_1_barSpace      = in.readShort();
+        field_2_categorySpace = in.readShort();
+        field_3_formatFlags   = in.readShort();
     }
 
     public String toString()
@@ -62,19 +64,19 @@ public final class BarRecord extends StandardRecord implements Cloneable {
         buffer.append("    .barSpace             = ")
             .append("0x").append(HexDump.toHex(  getBarSpace ()))
             .append(" (").append( getBarSpace() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .categorySpace        = ")
             .append("0x").append(HexDump.toHex(  getCategorySpace ()))
             .append(" (").append( getCategorySpace() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .formatFlags          = ")
             .append("0x").append(HexDump.toHex(  getFormatFlags ()))
             .append(" (").append( getFormatFlags() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-        buffer.append("         .horizontal               = ").append(isHorizontal()).append('\n'); 
-        buffer.append("         .stacked                  = ").append(isStacked()).append('\n'); 
-        buffer.append("         .displayAsPercentage      = ").append(isDisplayAsPercentage()).append('\n'); 
-        buffer.append("         .shadow                   = ").append(isShadow()).append('\n'); 
+        buffer.append(System.getProperty("line.separator"));
+        buffer.append("         .horizontal               = ").append(isHorizontal()).append('\n');
+        buffer.append("         .stacked                  = ").append(isStacked()).append('\n');
+        buffer.append("         .displayAsPercentage      = ").append(isDisplayAsPercentage()).append('\n');
+        buffer.append("         .shadow                   = ").append(isShadow()).append('\n');
 
         buffer.append("[/BAR]\n");
         return buffer.toString();
@@ -96,17 +98,12 @@ public final class BarRecord extends StandardRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public BarRecord clone() {
-        BarRecord rec = new BarRecord();
-    
-        rec.field_1_barSpace = field_1_barSpace;
-        rec.field_2_categorySpace = field_2_categorySpace;
-        rec.field_3_formatFlags = field_3_formatFlags;
-        return rec;
+        return copy();
     }
-
-
-
 
     /**
      * Get the bar space field for the Bar record.
@@ -226,5 +223,10 @@ public final class BarRecord extends StandardRecord implements Cloneable {
     public boolean isShadow()
     {
         return shadow.isSet(field_3_formatFlags);
+    }
+
+    @Override
+    public BarRecord copy() {
+        return new BarRecord(this);
     }
 }

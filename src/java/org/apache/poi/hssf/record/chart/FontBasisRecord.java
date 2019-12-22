@@ -21,22 +21,27 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
-/**
- * The font basis record stores various font metrics.
- */
-public final class FontBasisRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x1060;
-    private  short      field_1_xBasis;
-    private  short      field_2_yBasis;
-    private  short      field_3_heightBasis;
-    private  short      field_4_scale;
-    private  short      field_5_indexToFontTable;
+/** The font basis record stores various font metrics. */
+public final class FontBasisRecord extends StandardRecord {
+    public static final short sid = 0x1060;
+    private short field_1_xBasis;
+    private short field_2_yBasis;
+    private short field_3_heightBasis;
+    private short field_4_scale;
+    private short field_5_indexToFontTable;
 
 
-    public FontBasisRecord()
-    {
+    public FontBasisRecord() {}
 
+    public FontBasisRecord(FontBasisRecord other) {
+        super(other);
+        field_1_xBasis = other.field_1_xBasis;
+        field_2_yBasis = other.field_2_yBasis;
+        field_3_heightBasis = other.field_3_heightBasis;
+        field_4_scale = other.field_4_scale;
+        field_5_indexToFontTable = other.field_5_indexToFontTable;
     }
 
     public FontBasisRecord(RecordInputStream in)
@@ -56,23 +61,23 @@ public final class FontBasisRecord extends StandardRecord implements Cloneable {
         buffer.append("    .xBasis               = ")
             .append("0x").append(HexDump.toHex(  getXBasis ()))
             .append(" (").append( getXBasis() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .yBasis               = ")
             .append("0x").append(HexDump.toHex(  getYBasis ()))
             .append(" (").append( getYBasis() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .heightBasis          = ")
             .append("0x").append(HexDump.toHex(  getHeightBasis ()))
             .append(" (").append( getHeightBasis() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .scale                = ")
             .append("0x").append(HexDump.toHex(  getScale ()))
             .append(" (").append( getScale() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .indexToFontTable     = ")
             .append("0x").append(HexDump.toHex(  getIndexToFontTable ()))
             .append(" (").append( getIndexToFontTable() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
 
         buffer.append("[/FBI]\n");
         return buffer.toString();
@@ -96,19 +101,17 @@ public final class FontBasisRecord extends StandardRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public FontBasisRecord clone() {
-        FontBasisRecord rec = new FontBasisRecord();
-    
-        rec.field_1_xBasis = field_1_xBasis;
-        rec.field_2_yBasis = field_2_yBasis;
-        rec.field_3_heightBasis = field_3_heightBasis;
-        rec.field_4_scale = field_4_scale;
-        rec.field_5_indexToFontTable = field_5_indexToFontTable;
-        return rec;
+        return copy();
     }
 
-
-
+    @Override
+    public FontBasisRecord copy() {
+        return new FontBasisRecord(this);
+    }
 
     /**
      * Get the x Basis field for the FontBasis record.

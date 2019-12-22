@@ -19,30 +19,31 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.util.RKUtil;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        RK Record (0x027E)<p>
- * Description:  An internal 32 bit number with the two most significant bits
- *               storing the type.  This is part of a bizarre scheme to save disk
- *               space and memory (gee look at all the other whole records that
- *               are in the file just "cause"..,far better to waste processor
- *               cycles on this then leave on of those "valuable" records out).<p>
+ * An internal 32 bit number with the two most significant bits storing the type.
+ * This is part of a bizarre scheme to save disk space and memory (gee look at all the other whole
+ * records that are in the file just "cause".., far better to waste processor cycles on this then
+ * leave on of those "valuable" records out).
  * We support this in READ-ONLY mode.  HSSF converts these to NUMBER records<p>
  *
- * REFERENCE:  PG 376 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
- * 
  * @see org.apache.poi.hssf.record.NumberRecord
  */
 public final class RKRecord extends CellRecord {
-    public final static short sid                      = 0x027E;
-    public final static short RK_IEEE_NUMBER           = 0;
-    public final static short RK_IEEE_NUMBER_TIMES_100 = 1;
-    public final static short RK_INTEGER               = 2;
-    public final static short RK_INTEGER_TIMES_100     = 3;
+    public static final short sid                      = 0x027E;
+    public static final short RK_IEEE_NUMBER           = 0;
+    public static final short RK_IEEE_NUMBER_TIMES_100 = 1;
+    public static final short RK_INTEGER               = 2;
+    public static final short RK_INTEGER_TIMES_100     = 3;
+
     private int field_4_rk_number;
 
-    private RKRecord() {
-    	// fields uninitialised
+    private RKRecord() {}
+
+    public RKRecord(RKRecord other) {
+        super(other);
+        field_4_rk_number = other.field_4_rk_number;
     }
 
     public RKRecord(RecordInputStream in) {
@@ -97,10 +98,15 @@ public final class RKRecord extends CellRecord {
     }
 
     @Override
-    public Object clone() {
-      RKRecord rec = new RKRecord();
-      copyBaseFields(rec);
-      rec.field_4_rk_number = field_4_rk_number;
-      return rec;
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public RKRecord clone() {
+        return copy();
+    }
+
+    @Override
+    public RKRecord copy() {
+        return new RKRecord(this);
     }
 }

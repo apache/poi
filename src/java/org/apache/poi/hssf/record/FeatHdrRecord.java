@@ -19,29 +19,30 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.record.common.FtrHeader;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * Title: FeatHdr (Feature Header) Record
  * <P>
- * This record specifies common information for Shared Features, and 
- *  specifies the beginning of a collection of records to define them. 
- * The collection of data (Globals Substream ABNF, macro sheet substream 
+ * This record specifies common information for Shared Features, and
+ *  specifies the beginning of a collection of records to define them.
+ * The collection of data (Globals Substream ABNF, macro sheet substream
  *  ABNF or worksheet substream ABNF) specifies Shared Feature data.
  */
-public final class FeatHdrRecord extends StandardRecord implements Cloneable  {
+public final class FeatHdrRecord extends StandardRecord {
 	/**
-	 * Specifies the enhanced protection type. Used to protect a 
-	 * shared workbook by restricting access to some areas of it 
+	 * Specifies the enhanced protection type. Used to protect a
+	 * shared workbook by restricting access to some areas of it
 	 */
 	public static final int SHAREDFEATURES_ISFPROTECTION = 0x02;
 	/**
-	 * Specifies that formula errors should be ignored 
+	 * Specifies that formula errors should be ignored
 	 */
 	public static final int SHAREDFEATURES_ISFFEC2       = 0x03;
 	/**
 	 * Specifies the smart tag type. Recognises certain
 	 * types of entries (proper names, dates/times etc) and
-	 * flags them for action 
+	 * flags them for action
 	 */
 	public static final int SHAREDFEATURES_ISFFACTOID    = 0x04;
 	/**
@@ -50,13 +51,13 @@ public final class FeatHdrRecord extends StandardRecord implements Cloneable  {
 	 */
 	public static final int SHAREDFEATURES_ISFLIST       = 0x05;
 
-	
-	public final static short sid = 0x0867;
 
-	private FtrHeader futureHeader;
+	public static final short sid = 0x0867;
+
+	private final FtrHeader futureHeader;
 	private int isf_sharedFeatureType; // See SHAREDFEATURES_
 	private byte reserved; // Should always be one
-	/** 
+	/**
 	 * 0x00000000 = rgbHdrData not present
 	 * 0xffffffff = rgbHdrData present
 	 */
@@ -69,13 +70,18 @@ public final class FeatHdrRecord extends StandardRecord implements Cloneable  {
 		futureHeader.setRecordType(sid);
 	}
 
-	public short getSid() {
-		return sid;
+	public FeatHdrRecord(FeatHdrRecord other) {
+		super(other);
+		futureHeader = other.futureHeader.copy();
+		isf_sharedFeatureType = other.isf_sharedFeatureType;
+		reserved = other.reserved;
+		cbHdrData = other.cbHdrData;
+		rgbHdrData = (other.rgbHdrData == null) ? null : other.rgbHdrData.clone();
 	}
 
 	public FeatHdrRecord(RecordInputStream in) {
 		futureHeader = new FtrHeader(in);
-		
+
 		isf_sharedFeatureType = in.readShort();
 		reserved = in.readByte();
 		cbHdrData = in.readInt();
@@ -83,19 +89,23 @@ public final class FeatHdrRecord extends StandardRecord implements Cloneable  {
 		rgbHdrData = in.readRemainder();
 	}
 
+	public short getSid() {
+		return sid;
+	}
+
 	public String toString() {
 		StringBuilder buffer = new StringBuilder();
 		buffer.append("[FEATURE HEADER]\n");
-		
+
 		// TODO ...
-		
+
 		buffer.append("[/FEATURE HEADER]\n");
 		return buffer.toString();
 	}
 
 	public void serialize(LittleEndianOutput out) {
 		futureHeader.serialize(out);
-		
+
 		out.writeShort(isf_sharedFeatureType);
 		out.writeByte(reserved);
 		out.writeInt((int)cbHdrData);
@@ -105,12 +115,20 @@ public final class FeatHdrRecord extends StandardRecord implements Cloneable  {
 	protected int getDataSize() {
 		return 12 + 2+1+4+rgbHdrData.length;
 	}
-    
+
 	@Override
-    public FeatHdrRecord clone() {
+	@SuppressWarnings("squid:S2975")
+	@Deprecated
+	@Removal(version = "5.0.0")
+	public FeatHdrRecord clone() {
+		return copy();
+	}
+
+	@Override
+    public FeatHdrRecord copy() {
 	    //HACK: do a "cheat" clone, see Record.java for more information
-        return (FeatHdrRecord)cloneViaReserialise();
+        return new FeatHdrRecord(this);
     }
 
-    
+
 }

@@ -21,11 +21,12 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * STARTBLOCK - Chart Future Record Type Start Block (0x0852)
  */
-public final class ChartStartBlockRecord extends StandardRecord implements Cloneable {
+public final class ChartStartBlockRecord extends StandardRecord {
 	public static final short sid = 0x0852;
 
 	private short rt;
@@ -35,9 +36,18 @@ public final class ChartStartBlockRecord extends StandardRecord implements Clone
 	private short iObjectInstance1;
 	private short iObjectInstance2;
 
-	public ChartStartBlockRecord() {
+	public ChartStartBlockRecord() {}
+
+	public ChartStartBlockRecord(ChartStartBlockRecord other) {
+		super(other);
+		rt = other.rt;
+		grbitFrt = other.grbitFrt;
+		iObjectKind = other.iObjectKind;
+		iObjectContext = other.iObjectContext;
+		iObjectInstance1 = other.iObjectInstance1;
+		iObjectInstance2 = other.iObjectInstance2;
 	}
-	
+
 	public ChartStartBlockRecord(RecordInputStream in) {
 		rt = in.readShort();
 		grbitFrt = in.readShort();
@@ -81,18 +91,17 @@ public final class ChartStartBlockRecord extends StandardRecord implements Clone
 		buffer.append("[/STARTBLOCK]\n");
 		return buffer.toString();
 	}
-	
+
 	@Override
+	@SuppressWarnings("squid:S2975")
+	@Deprecated
+	@Removal(version = "5.0.0")
 	public ChartStartBlockRecord clone() {
-		ChartStartBlockRecord record = new ChartStartBlockRecord();
-		
-		record.rt = rt;
-		record.grbitFrt = grbitFrt;
-		record.iObjectKind = iObjectKind;
-		record.iObjectContext = iObjectContext;
-		record.iObjectInstance1 = iObjectInstance1;
-		record.iObjectInstance2 = iObjectInstance2;
-		
-		return record;
+		return copy();
+	}
+
+	@Override
+	public ChartStartBlockRecord copy() {
+		return new ChartStartBlockRecord(this);
 	}
 }

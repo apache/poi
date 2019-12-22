@@ -23,7 +23,7 @@ import org.apache.poi.util.LittleEndianOutput;
 /**
  * A Name, be that a Named Range or a Function / User Defined
  *  Function, addressed in the HSSF External Sheet style.
- *  
+ *
  * <p>This is XSSF only, as it stores the sheet / book references
  *  in String form. The HSSF equivalent using indexes is {@link NameXPtg}</p>
  */
@@ -37,6 +37,14 @@ public final class NameXPxg extends OperandPtg implements Pxg {
         this.sheetName = sheetName;
         this.nameName = nameName;
     }
+
+    public NameXPxg(NameXPxg other) {
+        super(other);
+        externalWorkbookNumber = other.externalWorkbookNumber;
+        sheetName = other.sheetName;
+        nameName = other.nameName;
+    }
+
     public NameXPxg(String sheetName, String nameName) {
         this(-1, sheetName, nameName);
     }
@@ -70,7 +78,7 @@ public final class NameXPxg extends OperandPtg implements Pxg {
     public String getNameName() {
         return nameName;
     }
-    
+
     public void setSheetName(String sheetName) {
         this.sheetName = sheetName;
     }
@@ -94,7 +102,7 @@ public final class NameXPxg extends OperandPtg implements Pxg {
         sb.append(nameName);
         return sb.toString();
     }
-    
+
     public byte getDefaultOperandClass() {
         return Ptg.CLASS_VALUE;
     }
@@ -104,5 +112,10 @@ public final class NameXPxg extends OperandPtg implements Pxg {
     }
     public void write(LittleEndianOutput out) {
         throw new IllegalStateException("XSSF-only Ptg, should not be serialised");
+    }
+
+    @Override
+    public NameXPxg copy() {
+        return new NameXPxg(this);
     }
 }

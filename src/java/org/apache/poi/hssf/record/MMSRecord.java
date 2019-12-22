@@ -15,38 +15,36 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: MMS Record<P>
- * Description: defines how many add menu and del menu options are stored
- *                    in the file. Should always be set to 0 for HSSF workbooks<P>
- * REFERENCE:  PG 328 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ * defines how many add menu and del menu options are stored in the file.
+ * Should always be set to 0 for HSSF workbooks.
+ *
  * @version 2.0-pre
  */
 
-public final class MMSRecord
-    extends StandardRecord
-{
-    public final static short sid = 0xC1;
-    private byte              field_1_addMenuCount;   // = 0;
-    private byte              field_2_delMenuCount;   // = 0;
+public final class MMSRecord extends StandardRecord {
+    public static final short sid = 0xC1;
+    private byte field_1_addMenuCount;
+    private byte field_2_delMenuCount;
 
-    public MMSRecord()
-    {
+    public MMSRecord() {}
+
+    public MMSRecord(MMSRecord other) {
+        field_1_addMenuCount = other.field_1_addMenuCount;
+        field_2_delMenuCount = other.field_2_delMenuCount;
     }
 
-    public MMSRecord(RecordInputStream in)
-    {
+    public MMSRecord(RecordInputStream in) {
         if (in.remaining()==0) {
             return;
         }
-        
+
         field_1_addMenuCount = in.readByte();
         field_2_delMenuCount = in.readByte();
     }
@@ -116,5 +114,10 @@ public final class MMSRecord
     public short getSid()
     {
         return sid;
+    }
+
+    @Override
+    public MMSRecord copy() {
+        return new MMSRecord(this);
     }
 }

@@ -78,7 +78,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     private final TextHeaderAtom _headerAtom;
     private TextBytesAtom _byteAtom;
     private TextCharsAtom _charAtom;
-    private TextPropCollection _paragraphStyle = new TextPropCollection(1, TextPropType.paragraph);
+    private TextPropCollection _paragraphStyle;
 
     protected TextRulerAtom _ruler;
     protected final List<HSLFTextRun> _runs = new ArrayList<>();
@@ -141,6 +141,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         _byteAtom = tba;
         _charAtom = tca;
         this.parentList = parentList;
+        _paragraphStyle = new TextPropCollection(1, TextPropType.paragraph);
     }
 
     /* package */HSLFTextParagraph(HSLFTextParagraph other) {
@@ -151,7 +152,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         _sheet = other._sheet;
         _ruler = other._ruler;
         shapeId = other.shapeId;
-        _paragraphStyle.copy(other._paragraphStyle);
+        _paragraphStyle = other._paragraphStyle;
         parentList = other.parentList;
     }
 
@@ -169,7 +170,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     }
 
     public void setParagraphStyle(TextPropCollection paragraphStyle) {
-        _paragraphStyle.copy(paragraphStyle);
+        _paragraphStyle = paragraphStyle;
     }
 
     /**
@@ -906,8 +907,6 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     /**
      * Check and add linebreaks to text runs leading other paragraphs
-     *
-     * @param paragraphs
      */
     protected static void fixLineEndings(List<HSLFTextParagraph> paragraphs) {
         HSLFTextRun lastRun = null;
@@ -990,7 +989,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         StyleTextPropAtom styleAtom = findStyleAtomPresent(headerAtom, rawText.length());
 
         // Store in the appropriate record
-        Record oldRecord = null, newRecord = null;
+        Record oldRecord = null, newRecord;
         if (isUnicode) {
             if (byteAtom != null || charAtom == null) {
                 oldRecord = byteAtom;
@@ -1069,15 +1068,17 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             ptpc = para.getParagraphStyle();
             ptpc.updateTextSize(0);
             if (!ptpc.equals(lastPTPC)) {
-                lastPTPC = styleAtom.addParagraphTextPropCollection(0);
-                lastPTPC.copy(ptpc);
+                lastPTPC = ptpc.copy();
+                lastPTPC.updateTextSize(0);
+                styleAtom.addParagraphTextPropCollection(lastPTPC);
             }
             for (HSLFTextRun tr : para.getTextRuns()) {
                 rtpc = tr.getCharacterStyle();
                 rtpc.updateTextSize(0);
                 if (!rtpc.equals(lastRTPC)) {
-                    lastRTPC = styleAtom.addCharacterTextPropCollection(0);
-                    lastRTPC.copy(rtpc);
+                    lastRTPC = rtpc.copy();
+                    lastRTPC.updateTextSize(0);
+                    styleAtom.addCharacterTextPropCollection(lastRTPC);
                 }
                 int len = tr.getLength();
                 ptpc.updateTextSize(ptpc.getCharactersCovered() + len);
@@ -1096,10 +1097,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         lastPTPC.updateTextSize(lastPTPC.getCharactersCovered() + 1);
         lastRTPC.updateTextSize(lastRTPC.getCharactersCovered() + 1);
 
-        /**
-         * If TextSpecInfoAtom is present, we must update the text size in it,
-         * otherwise the ppt will be corrupted
-         */
+        // If TextSpecInfoAtom is present, we must update the text size in it,
+        // otherwise the ppt will be corrupted
         for (Record r : paragraphs.get(0).getRecords()) {
             if (r instanceof TextSpecInfoAtom) {
                 ((TextSpecInfoAtom) r).setParentSize(rawText.length() + 1);
@@ -1188,7 +1187,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                 TextPropCollection tpc = htp.getParagraphStyle();
                 HSLFTextParagraph prevHtp = htp;
                 htp = new HSLFTextParagraph(htp._headerAtom, htp._byteAtom, htp._charAtom, paragraphs);
-                htp.getParagraphStyle().copy(tpc);
+                htp.setParagraphStyle(tpc.copy());
                 htp.setParentShape(prevHtp.getParentShape());
                 htp.setShapeId(prevHtp.getShapeId());
                 htp.supplySheet(prevHtp.getSheet());
@@ -1199,7 +1198,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             if (!lastRunEmpty) {
                 TextPropCollection tpc = htr.getCharacterStyle();
                 htr = new HSLFTextRun(htp);
-                htr.getCharacterStyle().copy(tpc);
+                htr.setCharacterStyle(tpc.copy());
                 htp.addTextRun(htr);
             }
             htr.setText(rawText);
@@ -1581,8 +1580,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
                     return;
                 }
                 HSLFTextParagraph htp = paragraphs.get(paraIdx);
-                TextPropCollection pCopy = new TextPropCollection(0, TextPropType.paragraph);
-                pCopy.copy(p);
+                TextPropCollection pCopy = p.copy();
                 htp.setParagraphStyle(pCopy);
                 int len = 0;
                 for (HSLFTextRun trun : htp.getTextRuns()) {

@@ -22,6 +22,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
+import org.apache.poi.util.Removal;
 
 /**
  * ftNts (0x000D)<p>
@@ -29,25 +30,30 @@ import org.apache.poi.util.RecordFormatException;
  *
  * The docs say nothing about it. The length of this record is always 26 bytes.
  */
-public final class NoteStructureSubRecord extends SubRecord implements Cloneable {
-    public final static short sid = 0x0D;
+public final class NoteStructureSubRecord extends SubRecord {
+    public static final short sid = 0x0D;
     private static final int ENCODED_SIZE = 22;
 
-    private byte[] reserved;
+    private final byte[] reserved;
 
     /**
      * Construct a new <code>NoteStructureSubRecord</code> and
      * fill its data with the default values
      */
-    public NoteStructureSubRecord()
-    {
+    public NoteStructureSubRecord() {
         //all we know is that the the length of <code>NoteStructureSubRecord</code> is always 22 bytes
         reserved = new byte[ENCODED_SIZE];
     }
 
+    public NoteStructureSubRecord(NoteStructureSubRecord other) {
+        super(other);
+        reserved = other.reserved.clone();
+    }
+
+
     /**
      * Read the record data from the supplied <code>RecordInputStream</code>
-     * 
+     *
      * @param in the input to read from
      * @param size the provided size - must be 22
      */
@@ -103,12 +109,16 @@ public final class NoteStructureSubRecord extends SubRecord implements Cloneable
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public NoteStructureSubRecord clone() {
-        NoteStructureSubRecord rec = new NoteStructureSubRecord();
-        byte[] recdata = new byte[reserved.length];
-        System.arraycopy(reserved, 0, recdata, 0, recdata.length);
-        rec.reserved = recdata;
-        return rec;
+        return copy();
+    }
+
+    @Override
+    public NoteStructureSubRecord copy() {
+        return new NoteStructureSubRecord(this);
     }
 
 }

@@ -20,27 +20,29 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.IntList;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        Index Record (0x020B)<p>
- * Description:  Occurs right after BOF, tells you where the DBCELL records are for a sheet
- *               Important for locating cells<p>
- *               
- * REFERENCE:  PG 323 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * Occurs right after BOF, tells you where the DBCELL records are for a sheet Important for locating cells
  */
-public final class IndexRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x020B;
+public final class IndexRecord extends StandardRecord {
+    public static final short sid = 0x020B;
     private int                field_2_first_row;       // first row on the sheet
     private int                field_3_last_row_add1;   // last row
     private int                field_4_zero;            // supposed to be zero
     private IntList            field_5_dbcells;         // array of offsets to DBCELL records
 
-    public IndexRecord()
-    {
+    public IndexRecord() {}
+
+    public IndexRecord(IndexRecord other) {
+        super(other);
+        field_2_first_row = other.field_2_first_row;
+        field_3_last_row_add1 = other.field_3_last_row_add1;
+        field_4_zero = other.field_4_zero;
+        field_5_dbcells = (other.field_5_dbcells == null) ? null : new IntList(other.field_5_dbcells);
     }
 
-    public IndexRecord(RecordInputStream in)
-    {
+    public IndexRecord(RecordInputStream in) {
         int field_1_zero          = in.readInt();
         if (field_1_zero != 0) {
         	throw new RecordFormatException("Expected zero for field 1 but got " + field_1_zero);
@@ -48,7 +50,7 @@ public final class IndexRecord extends StandardRecord implements Cloneable {
         field_2_first_row     = in.readInt();
         field_3_last_row_add1 = in.readInt();
         field_4_zero      = in.readInt();
-        
+
         int nCells = in.remaining() / 4;
         field_5_dbcells = new IntList(nCells);
         for(int i=0; i<nCells; i++) {
@@ -139,14 +141,14 @@ public final class IndexRecord extends StandardRecord implements Cloneable {
         return 16 // 4 ints
         	+ getNumDbcells() * 4;
     }
-    
-    /** 
+
+    /**
      * @param blockCount the number of blocks to be indexed
      * @return the size of an IndexRecord when it needs to index the specified number of blocks
      */
     public static int getRecordSizeForBlockCount(int blockCount) {
         return 20 + 4 * blockCount;
-    }  
+    }
 
     @Override
     public short getSid() {
@@ -154,13 +156,15 @@ public final class IndexRecord extends StandardRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public IndexRecord clone() {
-      IndexRecord rec = new IndexRecord();
-      rec.field_2_first_row = field_2_first_row;
-      rec.field_3_last_row_add1 = field_3_last_row_add1;
-      rec.field_4_zero = field_4_zero;
-      rec.field_5_dbcells = new IntList();
-      rec.field_5_dbcells.addAll(field_5_dbcells);
-      return rec;
+        return copy();
+    }
+
+    @Override
+    public IndexRecord copy() {
+      return new IndexRecord(this);
     }
 }

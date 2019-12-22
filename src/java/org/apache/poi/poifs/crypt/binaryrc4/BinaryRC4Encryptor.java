@@ -39,11 +39,15 @@ import org.apache.poi.poifs.crypt.standard.EncryptionRecord;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 
-public class BinaryRC4Encryptor extends Encryptor implements Cloneable {
+public class BinaryRC4Encryptor extends Encryptor {
 
     private int chunkSize = 512;
-    
-    protected BinaryRC4Encryptor() {
+
+    protected BinaryRC4Encryptor() {}
+
+    protected BinaryRC4Encryptor(BinaryRC4Encryptor other) {
+        super(other);
+        chunkSize = other.chunkSize;
     }
 
     @Override
@@ -90,7 +94,7 @@ public class BinaryRC4Encryptor extends Encryptor implements Cloneable {
     throws IOException, GeneralSecurityException {
         return new BinaryRC4CipherOutputStream(stream);
     }
-    
+
     protected int getKeySizeInBytes() {
         return getEncryptionInfo().getHeader().getKeySize() / 8;
     }
@@ -116,10 +120,10 @@ public class BinaryRC4Encryptor extends Encryptor implements Cloneable {
     public void setChunkSize(int chunkSize) {
         this.chunkSize = chunkSize;
     }
-    
+
     @Override
-    public BinaryRC4Encryptor clone() throws CloneNotSupportedException {
-        return (BinaryRC4Encryptor)super.clone();
+    public BinaryRC4Encryptor copy() {
+        return new BinaryRC4Encryptor(this);
     }
 
     protected class BinaryRC4CipherOutputStream extends ChunkedCipherOutputStream {
@@ -139,7 +143,7 @@ public class BinaryRC4Encryptor extends Encryptor implements Cloneable {
         throws GeneralSecurityException {
             return BinaryRC4Decryptor.initCipherForBlock(cipher, block, getEncryptionInfo(), getSecretKey(), Cipher.ENCRYPT_MODE);
         }
-        
+
         @Override
         protected void calculateChecksum(File file, int i) {
         }

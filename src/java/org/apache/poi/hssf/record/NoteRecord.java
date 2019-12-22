@@ -18,27 +18,28 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
 
 /**
  * NOTE: Comment Associated with a Cell (0x001C)
  */
-public final class NoteRecord extends StandardRecord implements Cloneable {
-	public final static short sid = 0x001C;
+public final class NoteRecord extends StandardRecord {
+	public static final short sid = 0x001C;
 
 	public static final NoteRecord[] EMPTY_ARRAY = { };
 
 	/**
 	 * Flag indicating that the comment is hidden (default)
 	 */
-	public final static short NOTE_HIDDEN = 0x0;
+	public static final short NOTE_HIDDEN = 0x0;
 
 	/**
 	 * Flag indicating that the comment is visible
 	 */
-	public final static short NOTE_VISIBLE = 0x2;
+	public static final short NOTE_VISIBLE = 0x2;
 
-	private static final Byte DEFAULT_PADDING = Byte.valueOf((byte)0);
+	private static final Byte DEFAULT_PADDING = (byte) 0;
 
 	private int field_1_row;
 	private int field_2_col;
@@ -46,6 +47,7 @@ public final class NoteRecord extends StandardRecord implements Cloneable {
 	private int field_4_shapeid;
 	private boolean field_5_hasMultibyte;
 	private String field_6_author;
+
 	/**
 	 * Saves padding byte value to reduce delta during round-trip serialization.<br>
 	 *
@@ -64,6 +66,17 @@ public final class NoteRecord extends StandardRecord implements Cloneable {
 		field_7_padding = DEFAULT_PADDING; // seems to be always present regardless of author text
 	}
 
+	public NoteRecord(NoteRecord other) {
+		super(other);
+		field_1_row = other.field_1_row;
+		field_2_col = other.field_2_col;
+		field_3_flags = other.field_3_flags;
+		field_4_shapeid = other.field_4_shapeid;
+		field_5_hasMultibyte = other.field_5_hasMultibyte;
+		field_6_author = other.field_6_author;
+		field_7_padding = other.field_7_padding;
+	}
+
 	/**
 	 * @return id of this record.
 	 */
@@ -73,7 +86,7 @@ public final class NoteRecord extends StandardRecord implements Cloneable {
 
 	/**
 	 * Read the record data from the supplied <code>RecordInputStream</code>
-	 * 
+	 *
 	 * @param in the RecordInputStream to read from
 	 */
 	public NoteRecord(RecordInputStream in) {
@@ -194,10 +207,10 @@ public final class NoteRecord extends StandardRecord implements Cloneable {
 	public void setFlags(short flags) {
 		field_3_flags = flags;
 	}
-	
+
 	/**
 	 * For unit testing only!
-	 * 
+	 *
 	 * @return true, if author element uses multi byte
 	 */
 	protected boolean authorIsMultibyte() {
@@ -206,7 +219,7 @@ public final class NoteRecord extends StandardRecord implements Cloneable {
 
 	/**
 	 * Object id for OBJ record that contains the comment
-	 * 
+	 *
 	 * @return the Object id for OBJ record that contains the comment
 	 */
 	public int getShapeId() {
@@ -215,7 +228,7 @@ public final class NoteRecord extends StandardRecord implements Cloneable {
 
 	/**
 	 * Object id for OBJ record that contains the comment
-	 * 
+	 *
 	 * @param id the Object id for OBJ record that contains the comment
 	 */
 	public void setShapeId(int id) {
@@ -242,13 +255,15 @@ public final class NoteRecord extends StandardRecord implements Cloneable {
 	}
 
 	@Override
+	@SuppressWarnings("squid:S2975")
+	@Deprecated
+	@Removal(version = "5.0.0")
 	public NoteRecord clone() {
-		NoteRecord rec = new NoteRecord();
-		rec.field_1_row = field_1_row;
-		rec.field_2_col = field_2_col;
-		rec.field_3_flags = field_3_flags;
-		rec.field_4_shapeid = field_4_shapeid;
-		rec.field_6_author = field_6_author;
-		return rec;
+		return copy();
+	}
+
+	@Override
+	public NoteRecord copy() {
+		return new NoteRecord(this);
 	}
 }

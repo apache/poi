@@ -19,20 +19,25 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.hssf.record.cont.ContinuableRecord;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
 
 /**
  * STRING (0x0207)<p>
- * 
+ *
  * Stores the cached result of a text formula
  */
 public final class StringRecord extends ContinuableRecord {
-	public final static short sid = 0x0207;
+	public static final short sid = 0x0207;
 
 	private boolean _is16bitUnicode;
 	private String _text;
 
-    public StringRecord() {
+    public StringRecord() {}
+
+    public StringRecord(StringRecord other) {
+        _is16bitUnicode = other._is16bitUnicode;
+        _text = other._text;
     }
 
     /**
@@ -41,7 +46,7 @@ public final class StringRecord extends ContinuableRecord {
     public StringRecord( RecordInputStream in) {
         int field_1_string_length           = in.readUShort();
         _is16bitUnicode            = in.readByte() != 0x00;
-        
+
         if (_is16bitUnicode){
             _text = in.readUnicodeLEString(field_1_string_length);
         } else {
@@ -74,7 +79,7 @@ public final class StringRecord extends ContinuableRecord {
      */
     public void setString(String string) {
         _text = string;
-        _is16bitUnicode = StringUtil.hasMultibyte(string);        
+        _is16bitUnicode = StringUtil.hasMultibyte(string);
     }
 
     public String toString() {
@@ -82,11 +87,16 @@ public final class StringRecord extends ContinuableRecord {
                 "    .string            = " + _text + "\n" +
                 "[/STRING]\n";
     }
-    
-    public Object clone() {
-        StringRecord rec = new StringRecord();
-        rec._is16bitUnicode= _is16bitUnicode;
-        rec._text = _text;
-        return rec;
+
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public StringRecord clone() {
+        return copy();
+    }
+
+    public StringRecord copy() {
+        return new StringRecord(this);
     }
 }

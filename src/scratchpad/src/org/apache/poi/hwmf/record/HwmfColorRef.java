@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
@@ -35,15 +36,19 @@ import org.apache.poi.util.LittleEndianInputStream;
  * Blue (1 byte):  An 8-bit unsigned integer that defines the relative intensity of blue.
  * Reserved (1 byte):  An 8-bit unsigned integer that MUST be 0x00.
  */
-public class HwmfColorRef implements Cloneable, GenericRecord {
+public class HwmfColorRef implements Duplicatable, GenericRecord {
     private Color colorRef = Color.BLACK;
-    
+
     public HwmfColorRef() {}
-    
+
+    public HwmfColorRef(HwmfColorRef other) {
+        colorRef = other.colorRef;
+    }
+
     public HwmfColorRef(Color colorRef) {
         this.colorRef = colorRef;
     }
-    
+
     public int init(LittleEndianInputStream leis) throws IOException {
         int red = leis.readUByte();
         int green = leis.readUByte();
@@ -62,21 +67,9 @@ public class HwmfColorRef implements Cloneable, GenericRecord {
         colorRef = color;
     }
 
-    /**
-     * Creates a new object of the same class and with the
-     * same contents as this object.
-     * @return     a clone of this instance.
-     * @exception  OutOfMemoryError            if there is not enough memory.
-     * @see        java.lang.Cloneable
-     */
     @Override
-    public HwmfColorRef clone() {
-        try {
-            return (HwmfColorRef)super.clone();
-        } catch (CloneNotSupportedException e) {
-            // this shouldn't happen, since we are Cloneable
-            throw new InternalError();
-        }
+    public HwmfColorRef copy() {
+        return new HwmfColorRef(this);
     }
 
     @Override

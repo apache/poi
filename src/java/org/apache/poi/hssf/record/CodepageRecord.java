@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.hssf.record;
 
@@ -23,33 +23,33 @@ import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: Codepage Record
- * <p>Description:  the default characterset. for the workbook</p>
- * <p>REFERENCE:  PG 293 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)</p>
- * <p>Use {@link CodePageUtil} to turn these values into Java code pages
- *  to encode/decode strings.</p>
+ * The default characterset. for the workbook<p>
+ *
+ * Use {@link CodePageUtil} to turn these values into Java code pages to encode/decode strings.
+ *
  * @version 2.0-pre
  */
 
-public final class CodepageRecord
-    extends StandardRecord
-{
-    public final static short sid = 0x42;
-    private short             field_1_codepage;   // = 0;
+public final class CodepageRecord extends StandardRecord {
+    public static final short sid = 0x42;
 
     /**
      * Excel 97+ (Biff 8) should always store strings as UTF-16LE or
      *  compressed versions of that. As such, this should always be
      *  0x4b0 = UTF_16, except for files coming from older versions.
      */
-    public final static short CODEPAGE = ( short ) 0x4b0;
+    public static final short CODEPAGE = ( short ) 0x4b0;
 
-    public CodepageRecord()
-    {
+    private short field_1_codepage;
+
+    public CodepageRecord() {}
+
+    public CodepageRecord(CodepageRecord other) {
+        super(other);
+        field_1_codepage = other.field_1_codepage;
     }
 
-    public CodepageRecord(RecordInputStream in)
-    {
+    public CodepageRecord(RecordInputStream in) {
         field_1_codepage = in.readShort();
     }
 
@@ -99,5 +99,10 @@ public final class CodepageRecord
     public short getSid()
     {
         return sid;
+    }
+
+    @Override
+    public CodepageRecord copy() {
+        return new CodepageRecord(this);
     }
 }

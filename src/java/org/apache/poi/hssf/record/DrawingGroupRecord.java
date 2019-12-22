@@ -17,12 +17,12 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.NullEscherSerializationListener;
 import org.apache.poi.util.LittleEndian;
-
-import java.util.Iterator;
-import java.util.List;
 
 
 public final class DrawingGroupRecord extends AbstractEscherHolderRecord {
@@ -31,12 +31,13 @@ public final class DrawingGroupRecord extends AbstractEscherHolderRecord {
     static final int MAX_RECORD_SIZE = 8228;
     private static final int MAX_DATA_SIZE = MAX_RECORD_SIZE - 4;
 
-    public DrawingGroupRecord()
-    {
+    public DrawingGroupRecord() {}
+
+    public DrawingGroupRecord(DrawingGroupRecord other) {
+        super(other);
     }
 
-    public DrawingGroupRecord( RecordInputStream in )
-    {
+    public DrawingGroupRecord( RecordInputStream in ) {
         super( in );
     }
 
@@ -135,5 +136,10 @@ public final class DrawingGroupRecord extends AbstractEscherHolderRecord {
     {
         LittleEndian.putShort(data, 0 + offset, ContinueRecord.sid);
         LittleEndian.putShort(data, 2 + offset, (short) sizeExcludingHeader);
+    }
+
+    @Override
+    public DrawingGroupRecord copy() {
+        return new DrawingGroupRecord(this);
     }
 }

@@ -1,4 +1,4 @@
-        
+
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -23,18 +23,16 @@ package org.apache.poi.ss.formula.ptg;
 
 /**
  * Ptg class to implement less than or equal
- *
- * @author fred at stsci dot edu
  */
 public final class LessEqualPtg extends ValueOperatorPtg {
     public final static byte sid = 0x0a;
 
-    public static final ValueOperatorPtg instance = new LessEqualPtg();
+    public static final LessEqualPtg instance = new LessEqualPtg();
 
     private LessEqualPtg() {
     	// enforce singleton
     }
-    
+
     protected byte getSid() {
     	return sid;
     }
@@ -49,5 +47,10 @@ public final class LessEqualPtg extends ValueOperatorPtg {
         buffer.append("<=");
         buffer.append( operands[1] );
         return buffer.toString();
+    }
+
+    @Override
+    public LessEqualPtg copy() {
+        return instance;
     }
 }

@@ -22,11 +22,6 @@ import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
-/**
- * @author aviks
- * @author Jason Height (jheight at chariot dot net dot au)
- * @author Danny Mui (dmui at apache dot org) (Leftover handling)
- */
 public final class FuncPtg extends AbstractFunctionPtg {
 
     public final static byte sid  = 0x21;
@@ -56,5 +51,11 @@ public final class FuncPtg extends AbstractFunctionPtg {
 
     public int getSize() {
         return SIZE;
+    }
+
+    @Override
+    public FuncPtg copy() {
+        // immutable
+        return this;
     }
 }

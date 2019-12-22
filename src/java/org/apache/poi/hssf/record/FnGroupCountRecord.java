@@ -15,35 +15,32 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title: Function Group Count Record<P>
- * Description:  Number of built in function groups in the current version of the
- *               Spreadsheet (probably only used on Windoze)<P>
- * REFERENCE:  PG 315 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ * umber of built in function groups in the current version of the Spreadsheet (probably only used on Windows)
+ *
  * @version 2.0-pre
  */
-
-public final class FnGroupCountRecord
-    extends StandardRecord
-{
-    public final static short sid   = 0x9c;
+public final class FnGroupCountRecord extends StandardRecord {
+    public static final short sid   = 0x9c;
 
     /**
      * suggested default (14 dec)
      */
 
-    public final static short COUNT = 14;
+    public static final short COUNT = 14;
     private short             field_1_count;
 
-    public FnGroupCountRecord()
-    {
+    public FnGroupCountRecord() {}
+
+    public FnGroupCountRecord(FnGroupCountRecord other) {
+        super(other);
+        field_1_count = other.field_1_count;
     }
 
     public FnGroupCountRecord(RecordInputStream in)
@@ -95,5 +92,10 @@ public final class FnGroupCountRecord
     public short getSid()
     {
         return sid;
+    }
+
+    @Override
+    public FnGroupCountRecord copy() {
+        return new FnGroupCountRecord(this);
     }
 }

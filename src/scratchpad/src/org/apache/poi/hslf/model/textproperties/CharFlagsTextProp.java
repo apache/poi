@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.model.textproperties;
 
-/** 
+/**
  * Definition for the common character text property bitset, which
  *  handles bold/italic/underline etc.
  */
@@ -43,7 +43,7 @@ public class CharFlagsTextProp extends BitMaskTextProp {
 			"fehint",               // 0x0020  A bit that specifies whether characters originated from double-byte input.
 			"unused2",              // 0x0040  Undefined and MUST be ignored.
 			"kumi",                 // 0x0080  A bit that specifies whether Kumimoji are used for vertical text.
-			"strikethrough",        // 0x0100  aka "unused3" - sometimes contains the strikethrough flag 
+			"strikethrough",        // 0x0100  aka "unused3" - sometimes contains the strikethrough flag
 			"emboss",               // 0x0200  A bit that specifies whether the characters are embossed.
             "pp9rt_1",              // 0x0400  An unsigned integer that specifies the run grouping of additional text properties in StyleTextProp9Atom record.
             "pp9rt_2",              // 0x0800
@@ -52,5 +52,14 @@ public class CharFlagsTextProp extends BitMaskTextProp {
             "unused4_1",            // 0x4000  Undefined and MUST be ignored.
             "unused4_2"             // 0x8000  Undefined and MUST be ignored.
 		);
+	}
+
+	public CharFlagsTextProp(CharFlagsTextProp other) {
+		super(other);
+	}
+
+	@Override
+	public CharFlagsTextProp copy() {
+		return new CharFlagsTextProp(this);
 	}
 }

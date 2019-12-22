@@ -18,15 +18,12 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
-/**
- * Title:        Delta Record (0x0010)<p>
- * Description:  controls the accuracy of the calculations<p>
- * REFERENCE:  PG 303 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
- */
-public final class DeltaRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x0010;
-    public final static double DEFAULT_VALUE = 0.0010;   // should be .001
+/** Controls the accuracy of the calculations */
+public final class DeltaRecord extends StandardRecord {
+    public static final short sid = 0x0010;
+    public static final double DEFAULT_VALUE = 0.0010;
 
     // a double is an IEEE 8-byte float...damn IEEE and their goofy standards an
     // ambiguous numeric identifiers
@@ -34,6 +31,11 @@ public final class DeltaRecord extends StandardRecord implements Cloneable {
 
     public DeltaRecord(double maxChange) {
         field_1_max_change = maxChange;
+    }
+
+    public DeltaRecord(DeltaRecord other) {
+        super(other);
+        field_1_max_change = other.field_1_max_change;
     }
 
     public DeltaRecord(RecordInputStream in) {
@@ -70,7 +72,15 @@ public final class DeltaRecord extends StandardRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public DeltaRecord clone() {
+        return copy();
+    }
+
+    @Override
+    public DeltaRecord copy() {
         // immutable
         return this;
     }

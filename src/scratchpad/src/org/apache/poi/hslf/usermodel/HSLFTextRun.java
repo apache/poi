@@ -74,7 +74,7 @@ public final class HSLFTextRun implements TextRun {
 	}
 
 	public void setCharacterStyle(TextPropCollection characterStyle) {
-	    this.characterStyle.copy(characterStyle);
+	    this.characterStyle = characterStyle.copy();
 	    this.characterStyle.updateTextSize(_runText.length());
 	}
 
@@ -150,7 +150,7 @@ public final class HSLFTextRun implements TextRun {
             logger.log(POILogger.ERROR, "Sheet is not available");
             return null;
         }
-        
+
         final HSLFMasterSheet master = sheet.getMasterSheet();
         if (master == null) {
             logger.log(POILogger.WARN, "MasterSheet is not available");
@@ -161,8 +161,8 @@ public final class HSLFTextRun implements TextRun {
         final TextPropCollection col = master.getPropCollection(txtype, parentParagraph.getIndentLevel(), name, true);
         return (col == null) ? null : col.findByName(name);
 	}
-	
-	
+
+
 	/**
 	 * Set the value of the given flag in the CharFlagsTextProp, adding
 	 *  it if required.
@@ -315,7 +315,7 @@ public final class HSLFTextRun implements TextRun {
     @Override
 	public void setFontInfo(FontInfo fontInfo, FontGroup fontGroup) {
         FontGroup fg = safeFontGroup(fontGroup);
-        
+
         HSLFSheet sheet = parentParagraph.getSheet();
         @SuppressWarnings("resource")
         HSLFSlideShow slideShow = (sheet == null) ? null : sheet.getSlideShow();
@@ -520,7 +520,7 @@ public final class HSLFTextRun implements TextRun {
 
         return null;
     }
-    
+
     private FontGroup safeFontGroup(FontGroup fontGroup) {
         return (fontGroup != null) ? fontGroup : FontGroup.getFontGroupFirst(getRawText());
     }

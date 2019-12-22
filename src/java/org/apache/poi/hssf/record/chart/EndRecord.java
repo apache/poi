@@ -20,28 +20,24 @@ package org.apache.poi.hssf.record.chart;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * The end record defines the end of a block of records for a (Graphing)
  * data object. This record is matched with a corresponding BeginRecord.
  *
  * @see BeginRecord
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 
-public final class EndRecord extends StandardRecord implements Cloneable {
+public final class EndRecord extends StandardRecord {
     public static final short sid = 0x1034;
 
-    public EndRecord()
-    {
-    }
+    public EndRecord() {}
 
     /**
      * @param in unused (since this record has no data)
      */
-    public EndRecord(RecordInputStream in)
-    {
+    public EndRecord(RecordInputStream in) {
     }
 
     public String toString()
@@ -64,9 +60,17 @@ public final class EndRecord extends StandardRecord implements Cloneable {
     {
         return sid;
     }
-    
+
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public EndRecord clone() {
+        return copy();
+    }
+
+    @Override
+    public EndRecord copy() {
         // No data so nothing to copy
        return new EndRecord();
     }

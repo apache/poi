@@ -53,6 +53,7 @@ public final class CellRangeAddress8Bit extends CellRangeAddressBase {
 		out.writeByte(getLastColumn());
 	}
 
+	@Override
 	public CellRangeAddress8Bit copy() {
 		return new CellRangeAddress8Bit(getFirstRow(), getLastRow(), getFirstColumn(), getLastColumn());
 	}

@@ -142,13 +142,9 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
      * @return true, if any child has the given recordId
      */
     public boolean hasChildOfType(short recordId) {
-        for (EscherRecord r : this) {
-            if(r.getRecordId() == recordId) {
-                return true;
-            }
-        }
-        return false;
+        return _childRecords.stream().anyMatch(r -> r.getRecordId() == recordId);
     }
+
     @Override
     public EscherRecord getChild( int index ) {
         return _childRecords.get(index);
@@ -169,6 +165,7 @@ public final class EscherContainerRecord extends EscherRecord implements Iterabl
     public Iterator<EscherRecord> iterator() {
         return Collections.unmodifiableList(_childRecords).iterator();
     }
+
 
     /**
      * replaces the internal child list with the contents of the supplied <tt>childRecords</tt>

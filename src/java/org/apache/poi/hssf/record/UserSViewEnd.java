@@ -21,14 +21,20 @@ import java.util.Locale;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * The UserSViewEnd record marks the end of the settings for a custom view associated with the sheet
  */
 public final class UserSViewEnd extends StandardRecord {
 
-    public final static short sid = 0x01AB;
+    public static final short sid = 0x01AB;
 	private byte[] _rawData;
+
+    public UserSViewEnd(UserSViewEnd other) {
+        super(other);
+        _rawData = (other._rawData == null) ? null : other._rawData.clone();
+    }
 
     public UserSViewEnd(byte[] data) {
         _rawData = data;
@@ -69,10 +75,16 @@ public final class UserSViewEnd extends StandardRecord {
         return sb.toString();
     }
 
-    //HACK: do a "cheat" clone, see Record.java for more information
-    public Object clone() {
-        return cloneViaReserialise();
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public UserSViewEnd clone() {
+        return copy();
     }
 
-    
+    @Override
+    public UserSViewEnd copy() {
+        return new UserSViewEnd(this);
+    }
 }

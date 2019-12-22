@@ -23,55 +23,65 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * The Tick record defines how tick marks and label positioning/formatting<p>
- * 
- * @author Andrew C. Oliver(acoliver at apache.org)
  */
 public final class TickRecord extends StandardRecord {
-    public final static short sid = 0x101E;
-    
+    public static final short sid = 0x101E;
+
     private static final BitField autoTextColor      = BitFieldFactory.getInstance(0x1);
     private static final BitField autoTextBackground = BitFieldFactory.getInstance(0x2);
     private static final BitField rotation           = BitFieldFactory.getInstance(0x1c);
     private static final BitField autorotate         = BitFieldFactory.getInstance(0x20);
-    
-    private  byte       field_1_majorTickType;
-    private  byte       field_2_minorTickType;
-    private  byte       field_3_labelPosition;
-    private  byte       field_4_background;
-    private  int        field_5_labelColorRgb;
-    private  int        field_6_zero1;
-    private  int        field_7_zero2;
-    private  int        field_8_zero3;
-    private  int        field_9_zero4;
-    private  short      field_10_options;
-    private  short      field_11_tickColor;
-    private  short      field_12_zero5;
+
+    private byte  field_1_majorTickType;
+    private byte  field_2_minorTickType;
+    private byte  field_3_labelPosition;
+    private byte  field_4_background;
+    private int   field_5_labelColorRgb;
+    private int   field_6_zero1;
+    private int   field_7_zero2;
+    private int   field_8_zero3;
+    private int   field_9_zero4;
+    private short field_10_options;
+    private short field_11_tickColor;
+    private short field_12_zero5;
 
 
-    public TickRecord()
-    {
+    public TickRecord() {}
 
+    public TickRecord(TickRecord other) {
+        super(other);
+        field_1_majorTickType = other.field_1_majorTickType;
+        field_2_minorTickType = other.field_2_minorTickType;
+        field_3_labelPosition = other.field_3_labelPosition;
+        field_4_background    = other.field_4_background;
+        field_5_labelColorRgb = other.field_5_labelColorRgb;
+        field_6_zero1         = other.field_6_zero1;
+        field_7_zero2         = other.field_7_zero2;
+        field_8_zero3         = other.field_8_zero3;
+        field_9_zero4         = other.field_9_zero4;
+        field_10_options      = other.field_10_options;
+        field_11_tickColor    = other.field_11_tickColor;
+        field_12_zero5        = other.field_12_zero5;
     }
 
-    public TickRecord(RecordInputStream in)
-    {
+    public TickRecord(RecordInputStream in) {
+        field_1_majorTickType = in.readByte();
+        field_2_minorTickType = in.readByte();
+        field_3_labelPosition = in.readByte();
+        field_4_background    = in.readByte();
+        field_5_labelColorRgb = in.readInt();
+        field_6_zero1         = in.readInt();
+        field_7_zero2         = in.readInt();
+        field_8_zero3         = in.readInt();
+        field_9_zero4         = in.readInt();
 
-        field_1_majorTickType          = in.readByte();
-        field_2_minorTickType          = in.readByte();
-        field_3_labelPosition          = in.readByte();
-        field_4_background             = in.readByte();
-        field_5_labelColorRgb          = in.readInt();
-        field_6_zero1                  = in.readInt();
-        field_7_zero2                  = in.readInt();
-        field_8_zero3                  = in.readInt();
-        field_9_zero4                  = in.readInt();
-        
-        field_10_options                = in.readShort();
-        field_11_tickColor              = in.readShort();
-        field_12_zero5                 = in.readShort();
+        field_10_options      = in.readShort();
+        field_11_tickColor    = in.readShort();
+        field_12_zero5        = in.readShort();
     }
 
     public String toString()
@@ -82,47 +92,47 @@ public final class TickRecord extends StandardRecord {
         buffer.append("    .majorTickType        = ")
             .append("0x").append(HexDump.toHex(  getMajorTickType ()))
             .append(" (").append( getMajorTickType() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .minorTickType        = ")
             .append("0x").append(HexDump.toHex(  getMinorTickType ()))
             .append(" (").append( getMinorTickType() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .labelPosition        = ")
             .append("0x").append(HexDump.toHex(  getLabelPosition ()))
             .append(" (").append( getLabelPosition() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .background           = ")
             .append("0x").append(HexDump.toHex(  getBackground ()))
             .append(" (").append( getBackground() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .labelColorRgb        = ")
             .append("0x").append(HexDump.toHex(  getLabelColorRgb ()))
             .append(" (").append( getLabelColorRgb() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .zero1                = ")
             .append("0x").append(HexDump.toHex(  getZero1 ()))
             .append(" (").append( getZero1() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .zero2                = ")
             .append("0x").append(HexDump.toHex(  getZero2 ()))
             .append(" (").append( getZero2() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .options              = ")
             .append("0x").append(HexDump.toHex(  getOptions ()))
             .append(" (").append( getOptions() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-        buffer.append("         .autoTextColor            = ").append(isAutoTextColor()).append('\n'); 
-        buffer.append("         .autoTextBackground       = ").append(isAutoTextBackground()).append('\n'); 
-            buffer.append("         .rotation                 = ").append(getRotation()).append('\n'); 
-        buffer.append("         .autorotate               = ").append(isAutorotate()).append('\n'); 
+        buffer.append(System.getProperty("line.separator"));
+        buffer.append("         .autoTextColor            = ").append(isAutoTextColor()).append('\n');
+        buffer.append("         .autoTextBackground       = ").append(isAutoTextBackground()).append('\n');
+            buffer.append("         .rotation                 = ").append(getRotation()).append('\n');
+        buffer.append("         .autorotate               = ").append(isAutorotate()).append('\n');
         buffer.append("    .tickColor            = ")
             .append("0x").append(HexDump.toHex(  getTickColor ()))
             .append(" (").append( getTickColor() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .zero3                = ")
             .append("0x").append(HexDump.toHex(  getZero3 ()))
             .append(" (").append( getZero3() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
 
         buffer.append("[/TICK]\n");
         return buffer.toString();
@@ -152,26 +162,18 @@ public final class TickRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
-        TickRecord rec = new TickRecord();
-    
-        rec.field_1_majorTickType = field_1_majorTickType;
-        rec.field_2_minorTickType = field_2_minorTickType;
-        rec.field_3_labelPosition = field_3_labelPosition;
-        rec.field_4_background = field_4_background;
-        rec.field_5_labelColorRgb = field_5_labelColorRgb;
-        rec.field_6_zero1 = field_6_zero1;
-        rec.field_7_zero2 = field_7_zero2;
-        rec.field_8_zero3 = field_8_zero3;
-        rec.field_9_zero4 = field_9_zero4;
-        rec.field_10_options = field_10_options;
-        rec.field_11_tickColor = field_11_tickColor;
-        rec.field_12_zero5 = field_12_zero5;
-        return rec;
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public TickRecord clone() {
+        return copy();
     }
 
-
-
+    @Override
+    public TickRecord copy() {
+        return new TickRecord(this);
+    }
 
     /**
      * Get the major tick type field for the Tick record.

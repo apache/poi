@@ -23,12 +23,13 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * The data format record is used to index into a series.
  */
-public final class DataFormatRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x1006;
+public final class DataFormatRecord extends StandardRecord {
+    public static final short sid = 0x1006;
 
     private static final BitField useExcel4Colors = BitFieldFactory.getInstance(0x1);
 
@@ -37,18 +38,21 @@ public final class DataFormatRecord extends StandardRecord implements Cloneable 
     private short field_3_seriesNumber;
     private short field_4_formatFlags;
 
+    public DataFormatRecord() {}
 
-    public DataFormatRecord()
-    {
-
+    public DataFormatRecord(DataFormatRecord other) {
+        super(other);
+        field_1_pointNumber = other.field_1_pointNumber;
+        field_2_seriesIndex = other.field_2_seriesIndex;
+        field_3_seriesNumber = other.field_3_seriesNumber;
+        field_4_formatFlags = other.field_4_formatFlags;
     }
 
-    public DataFormatRecord(RecordInputStream in)
-    {
-        field_1_pointNumber            = in.readShort();
-        field_2_seriesIndex            = in.readShort();
-        field_3_seriesNumber           = in.readShort();
-        field_4_formatFlags            = in.readShort();
+    public DataFormatRecord(RecordInputStream in) {
+        field_1_pointNumber = in.readShort();
+        field_2_seriesIndex = in.readShort();
+        field_3_seriesNumber = in.readShort();
+        field_4_formatFlags = in.readShort();
     }
 
     public String toString()
@@ -59,20 +63,20 @@ public final class DataFormatRecord extends StandardRecord implements Cloneable 
         buffer.append("    .pointNumber          = ")
             .append("0x").append(HexDump.toHex(  getPointNumber ()))
             .append(" (").append( getPointNumber() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .seriesIndex          = ")
             .append("0x").append(HexDump.toHex(  getSeriesIndex ()))
             .append(" (").append( getSeriesIndex() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .seriesNumber         = ")
             .append("0x").append(HexDump.toHex(  getSeriesNumber ()))
             .append(" (").append( getSeriesNumber() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
         buffer.append("    .formatFlags          = ")
             .append("0x").append(HexDump.toHex(  getFormatFlags ()))
             .append(" (").append( getFormatFlags() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
-        buffer.append("         .useExcel4Colors          = ").append(isUseExcel4Colors()).append('\n'); 
+        buffer.append(System.getProperty("line.separator"));
+        buffer.append("         .useExcel4Colors          = ").append(isUseExcel4Colors()).append('\n');
 
         buffer.append("[/DATAFORMAT]\n");
         return buffer.toString();
@@ -95,18 +99,17 @@ public final class DataFormatRecord extends StandardRecord implements Cloneable 
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public DataFormatRecord clone() {
-        DataFormatRecord rec = new DataFormatRecord();
-    
-        rec.field_1_pointNumber = field_1_pointNumber;
-        rec.field_2_seriesIndex = field_2_seriesIndex;
-        rec.field_3_seriesNumber = field_3_seriesNumber;
-        rec.field_4_formatFlags = field_4_formatFlags;
-        return rec;
+        return copy();
     }
 
-
-
+    @Override
+    public DataFormatRecord copy() {
+        return new DataFormatRecord(this);
+    }
 
     /**
      * Get the point number field for the DataFormat record.

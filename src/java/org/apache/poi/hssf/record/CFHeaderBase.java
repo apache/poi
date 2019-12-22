@@ -21,20 +21,28 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellRangeUtil;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * Parent of Conditional Formatting Header records,
  *  {@link CFHeaderRecord} and {@link CFHeader12Record}.
  */
-public abstract class CFHeaderBase extends StandardRecord implements Cloneable {
+public abstract class CFHeaderBase extends StandardRecord {
     private int field_1_numcf;
     private int field_2_need_recalculation_and_id;
     private CellRangeAddress field_3_enclosing_cell_range;
     private CellRangeAddressList field_4_cell_ranges;
 
-    /** Creates new CFHeaderBase */
-    protected CFHeaderBase() {
+    protected CFHeaderBase() {}
+
+    protected CFHeaderBase(CFHeaderBase other) {
+        super(other);
+        field_1_numcf = other.field_1_numcf;
+        field_2_need_recalculation_and_id = other.field_2_need_recalculation_and_id;
+        field_3_enclosing_cell_range = other.field_3_enclosing_cell_range.copy();
+        field_4_cell_ranges = other.field_4_cell_ranges.copy();
     }
+
     protected CFHeaderBase(CellRangeAddress[] regions, int nRules) {
         CellRangeAddress[] mergeCellRanges = CellRangeUtil.mergeCellRanges(regions);
         setCellRanges(mergeCellRanges);
@@ -97,7 +105,7 @@ public abstract class CFHeaderBase extends StandardRecord implements Cloneable {
     }
 
     /**
-     * Set cell ranges list to a single cell range and 
+     * Set cell ranges list to a single cell range and
      * modify the enclosing cell range accordingly.
      * @param cellRanges - list of CellRange objects
      */
@@ -151,13 +159,12 @@ public abstract class CFHeaderBase extends StandardRecord implements Cloneable {
         field_4_cell_ranges.serialize(out);
     }
 
-    protected void copyTo(CFHeaderBase result) {
-        result.field_1_numcf = field_1_numcf;
-        result.field_2_need_recalculation_and_id = field_2_need_recalculation_and_id;
-        result.field_3_enclosing_cell_range = field_3_enclosing_cell_range.copy();
-        result.field_4_cell_ranges = field_4_cell_ranges.copy();
-    }
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public abstract CFHeaderBase clone();
 
     @Override
-    public abstract CFHeaderBase clone(); // NOSONAR
+    public abstract CFHeaderBase copy();
 }

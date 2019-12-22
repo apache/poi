@@ -19,13 +19,10 @@ package org.apache.poi.ss.formula.ptg;
 
 import org.apache.poi.util.LittleEndianOutput;
 
-/**
- * @author Daniel Noll (daniel at nuix dot com dot au)
- */
 public final class IntersectionPtg extends OperationPtg {
 	public final static byte sid = 0x0f;
 
-	public static final OperationPtg instance = new IntersectionPtg();
+	public static final IntersectionPtg instance = new IntersectionPtg();
 
 	private IntersectionPtg() {
 		// enforce singleton
@@ -58,5 +55,10 @@ public final class IntersectionPtg extends OperationPtg {
 
 	public int getNumberOfOperands() {
 		return 2;
+	}
+
+	@Override
+	public IntersectionPtg copy() {
+		return instance;
 	}
 }

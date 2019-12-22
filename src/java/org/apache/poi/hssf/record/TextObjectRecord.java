@@ -26,6 +26,7 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.RecordFormatException;
+import org.apache.poi.util.Removal;
 
 /**
  * The TXO record (0x01B6) is used to define the properties of a text box. It is
@@ -34,7 +35,7 @@ import org.apache.poi.util.RecordFormatException;
  * contains the formatting runs.
  */
 public final class TextObjectRecord extends ContinuableRecord {
-	public final static short sid = 0x01B6;
+	public static final short sid = 0x01B6;
 
 	private static final int FORMAT_RUN_ENCODED_SIZE = 8; // 2 shorts and 4 bytes reserved
 
@@ -42,19 +43,19 @@ public final class TextObjectRecord extends ContinuableRecord {
 	private static final BitField VerticalTextAlignment = BitFieldFactory.getInstance(0x0070);
 	private static final BitField textLocked = BitFieldFactory.getInstance(0x0200);
 
-	public final static short HORIZONTAL_TEXT_ALIGNMENT_LEFT_ALIGNED = 1;
-	public final static short HORIZONTAL_TEXT_ALIGNMENT_CENTERED = 2;
-	public final static short HORIZONTAL_TEXT_ALIGNMENT_RIGHT_ALIGNED = 3;
-	public final static short HORIZONTAL_TEXT_ALIGNMENT_JUSTIFIED = 4;
-	public final static short VERTICAL_TEXT_ALIGNMENT_TOP = 1;
-	public final static short VERTICAL_TEXT_ALIGNMENT_CENTER = 2;
-	public final static short VERTICAL_TEXT_ALIGNMENT_BOTTOM = 3;
-	public final static short VERTICAL_TEXT_ALIGNMENT_JUSTIFY = 4;
+	public static final short HORIZONTAL_TEXT_ALIGNMENT_LEFT_ALIGNED = 1;
+	public static final short HORIZONTAL_TEXT_ALIGNMENT_CENTERED = 2;
+	public static final short HORIZONTAL_TEXT_ALIGNMENT_RIGHT_ALIGNED = 3;
+	public static final short HORIZONTAL_TEXT_ALIGNMENT_JUSTIFIED = 4;
+	public static final short VERTICAL_TEXT_ALIGNMENT_TOP = 1;
+	public static final short VERTICAL_TEXT_ALIGNMENT_CENTER = 2;
+	public static final short VERTICAL_TEXT_ALIGNMENT_BOTTOM = 3;
+	public static final short VERTICAL_TEXT_ALIGNMENT_JUSTIFY = 4;
 
-	public final static short TEXT_ORIENTATION_NONE = 0;
-	public final static short TEXT_ORIENTATION_TOP_TO_BOTTOM = 1;
-	public final static short TEXT_ORIENTATION_ROT_RIGHT = 2;
-	public final static short TEXT_ORIENTATION_ROT_LEFT = 3;
+	public static final short TEXT_ORIENTATION_NONE = 0;
+	public static final short TEXT_ORIENTATION_TOP_TO_BOTTOM = 1;
+	public static final short TEXT_ORIENTATION_ROT_RIGHT = 2;
+	public static final short TEXT_ORIENTATION_ROT_LEFT = 3;
 
 	private int field_1_options;
 	private int field_2_textOrientation;
@@ -80,8 +81,24 @@ public final class TextObjectRecord extends ContinuableRecord {
 	 * Value is often the same as the earlier firstColumn byte. */
 	private Byte _unknownPostFormulaByte;
 
-	public TextObjectRecord() {
-		//
+	public TextObjectRecord() {}
+
+	public TextObjectRecord(TextObjectRecord other) {
+		super(other);
+		field_1_options = other.field_1_options;
+		field_2_textOrientation = other.field_2_textOrientation;
+		field_3_reserved4 = other.field_3_reserved4;
+		field_4_reserved5 = other.field_4_reserved5;
+		field_5_reserved6 = other.field_5_reserved6;
+		field_8_reserved7 = other.field_8_reserved7;
+
+		_text = other._text;
+
+		if (other._linkRefPtg != null) {
+			_unknownPreFormulaInt = other._unknownPreFormulaInt;
+			_linkRefPtg = other._linkRefPtg.copy();
+			_unknownPostFormulaByte = other._unknownPostFormulaByte;
+		}
 	}
 
 	public TextObjectRecord(RecordInputStream in) {
@@ -325,24 +342,16 @@ public final class TextObjectRecord extends ContinuableRecord {
 		return sb.toString();
 	}
 
-	public Object clone() {
+	@Override
+	@SuppressWarnings("squid:S2975")
+	@Deprecated
+	@Removal(version = "5.0.0")
+	public TextObjectRecord clone() {
+		return copy();
+	}
 
-		TextObjectRecord rec = new TextObjectRecord();
-
-		rec.field_1_options = field_1_options;
-		rec.field_2_textOrientation = field_2_textOrientation;
-		rec.field_3_reserved4 = field_3_reserved4;
-		rec.field_4_reserved5 = field_4_reserved5;
-		rec.field_5_reserved6 = field_5_reserved6;
-		rec.field_8_reserved7 = field_8_reserved7;
-
-		rec._text = _text; // clone needed?
-
-		if (_linkRefPtg != null) {
-			rec._unknownPreFormulaInt = _unknownPreFormulaInt;
-			rec._linkRefPtg = _linkRefPtg.copy();
-			rec._unknownPostFormulaByte = _unknownPostFormulaByte;
-		}
-		return rec;
+	@Override
+	public TextObjectRecord copy() {
+		return new TextObjectRecord(this);
 	}
 }

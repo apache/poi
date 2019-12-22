@@ -17,18 +17,20 @@
 
 package org.apache.poi.hssf.record.common;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * Title: FtrHeader (Future Record Header) common record part
  * <P>
  * This record part specifies a header for a Ftr (Future)
  *  style record, which includes extra attributes above and
- *  beyond those of a traditional record. 
+ *  beyond those of a traditional record.
  */
-public final class FtrHeader implements Cloneable {
+public final class FtrHeader implements Duplicatable {
     /** This MUST match the type on the containing record */
     private short recordType;
     /** This is a FrtFlags */
@@ -38,6 +40,12 @@ public final class FtrHeader implements Cloneable {
 
     public FtrHeader() {
         associatedRange = new CellRangeAddress(0, 0, 0, 0);
+    }
+
+    public FtrHeader(FtrHeader other) {
+        recordType = other.recordType;
+        grbitFrt = other.grbitFrt;
+        associatedRange = other.associatedRange.copy();
     }
 
     public FtrHeader(RecordInputStream in) {
@@ -87,11 +95,15 @@ public final class FtrHeader implements Cloneable {
         this.associatedRange = associatedRange;
     }
 
-    public Object clone() {
-        FtrHeader result = new FtrHeader();
-        result.recordType = recordType;
-        result.grbitFrt = grbitFrt;
-        result.associatedRange = associatedRange.copy();
-        return result;
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public FtrHeader clone() {
+        return copy();
+    }
+
+    public FtrHeader copy() {
+        return new FtrHeader(this);
     }
 }

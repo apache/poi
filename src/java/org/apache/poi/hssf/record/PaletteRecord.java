@@ -19,34 +19,36 @@ package org.apache.poi.hssf.record;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * PaletteRecord (0x0092) - Supports custom palettes.
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Brian Sanders (bsanders at risklabs dot com) - custom palette editing
- *
+ * Supports custom palettes.
  */
 public final class PaletteRecord extends StandardRecord {
-    public final static short sid = 0x0092;
+    public static final short sid = 0x0092;
     /** The standard size of an XLS palette */
-    public final static byte STANDARD_PALETTE_SIZE = (byte) 56;
+    public static final byte STANDARD_PALETTE_SIZE = (byte) 56;
     /** The byte index of the first color */
-    public final static short FIRST_COLOR_INDEX = (short) 0x8;
+    public static final short FIRST_COLOR_INDEX = (short) 0x8;
 
-    private final List<PColor>  _colors;
+    private final ArrayList<PColor> _colors = new ArrayList<>();
 
     public PaletteRecord() {
       PColor[] defaultPalette = createDefaultPalette();
-      _colors    = new ArrayList<>(defaultPalette.length);
+      _colors.ensureCapacity(defaultPalette.length);
       Collections.addAll(_colors, defaultPalette);
+    }
+
+    public PaletteRecord(PaletteRecord other) {
+        super(other);
+        _colors.ensureCapacity(other._colors.size());
+        other._colors.stream().map(PColor::new).forEach(_colors::add);
     }
 
     public PaletteRecord(RecordInputStream in) {
        int field_1_numcolors = in.readShort();
-       _colors    = new ArrayList<>(field_1_numcolors);
+       _colors.ensureCapacity(field_1_numcolors);
        for (int k = 0; k < field_1_numcolors; k++) {
            _colors.add(new PColor(in));
        }
@@ -71,8 +73,8 @@ public final class PaletteRecord extends StandardRecord {
     @Override
     public void serialize(LittleEndianOutput out) {
         out.writeShort(_colors.size());
-        for (int i = 0; i < _colors.size(); i++) {
-          _colors.get(i).serialize(out);
+        for (PColor color : _colors) {
+            color.serialize(out);
         }
     }
 
@@ -88,7 +90,7 @@ public final class PaletteRecord extends StandardRecord {
 
     /**
      * Returns the color value at a given index
-     * 
+     *
      * @param byteIndex palette index, must be &gt;= 0x8
      *
      * @return the RGB triplet for the color, or <code>null</code> if the specified index
@@ -127,6 +129,11 @@ public final class PaletteRecord extends StandardRecord {
         }
         PColor custColor = new PColor(red, green, blue);
         _colors.set(i, custColor);
+    }
+
+    @Override
+    public PaletteRecord copy() {
+        return new PaletteRecord(this);
     }
 
     /**
@@ -213,8 +220,10 @@ public final class PaletteRecord extends StandardRecord {
             _blue = blue;
         }
 
-        public byte[] getTriplet() {
-            return new byte[] { (byte) _red, (byte) _green, (byte) _blue };
+        public PColor(PColor other) {
+            _red = other._red;
+            _green = other._green;
+            _blue = other._blue;
         }
 
         public PColor(RecordInputStream in) {
@@ -222,6 +231,10 @@ public final class PaletteRecord extends StandardRecord {
             _green = in.readByte();
             _blue = in.readByte();
             in.readByte(); // unused
+        }
+
+        public byte[] getTriplet() {
+            return new byte[] { (byte) _red, (byte) _green, (byte) _blue };
         }
 
         public void serialize(LittleEndianOutput out) {

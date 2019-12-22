@@ -31,18 +31,16 @@ import org.apache.poi.util.LittleEndianOutput;
  * It is only after the "size" of all the Ptgs is met, that the ArrayPtg data is actually
  * held after this. So Ptg.createParsedExpression keeps track of the number of
  * ArrayPtg elements and need to parse the data upto the FORMULA record size.
- *
- * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class ArrayPtg extends Ptg {
-	public static final byte sid  = 0x20;
+	public static final byte sid = 0x20;
 
 	private static final int RESERVED_FIELD_LEN = 7;
 	/**
 	 * The size of the plain tArray token written within the standard formula tokens
 	 * (not including the data which comes after all formula tokens)
 	 */
-	public static final int PLAIN_TOKEN_SIZE = 1+RESERVED_FIELD_LEN;
+	public static final int PLAIN_TOKEN_SIZE = 1 + RESERVED_FIELD_LEN;
 
 	// 7 bytes of data (stored as an int, short and byte here)
 	private final int _reserved0Int;
@@ -50,7 +48,7 @@ public final class ArrayPtg extends Ptg {
 	private final int _reserved2Byte;
 
 	// data from these fields comes after the Ptg data of all tokens in current formula
-	private final int  _nColumns;
+	private final int _nColumns;
 	private final int _nRows;
 	private final Object[] _arrayValues;
 
@@ -62,6 +60,16 @@ public final class ArrayPtg extends Ptg {
 		_nRows = nRows;
 		_arrayValues = arrayValues.clone();
 	}
+
+	public ArrayPtg(ArrayPtg other) {
+		_reserved0Int = other._reserved0Int;
+		_reserved1Short = other._reserved1Short;
+		_reserved2Byte = other._reserved2Byte;
+		_nColumns = other._nColumns;
+		_nRows = other._nRows;
+		_arrayValues = (other._arrayValues == null) ? null : other._arrayValues.clone();
+	}
+
 	/**
 	 * @param values2d array values arranged in rows
 	 */
@@ -264,5 +272,16 @@ public final class ArrayPtg extends Ptg {
 			result.setClass(getPtgClass());
 			return result;
 		}
+
+		@Override
+		public Initial copy() {
+			// immutable
+			return this;
+		}
+	}
+
+	@Override
+	public ArrayPtg copy() {
+		return new ArrayPtg(this);
 	}
 }

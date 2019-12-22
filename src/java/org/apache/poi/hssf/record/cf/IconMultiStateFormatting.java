@@ -17,6 +17,9 @@
 
 package org.apache.poi.hssf.record.cf;
 
+import java.util.stream.Stream;
+
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
@@ -24,17 +27,18 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 
 /**
  * Icon / Multi-State Conditional Formatting Rule Record.
  */
-public final class IconMultiStateFormatting implements Cloneable {
-    private static POILogger log = POILogFactory.getLogger(IconMultiStateFormatting.class);
-            
+public final class IconMultiStateFormatting implements Duplicatable {
+    private static final POILogger log = POILogFactory.getLogger(IconMultiStateFormatting.class);
+
     private IconSet iconSet;
     private byte options;
     private Threshold[] thresholds;
-    
+
     private static BitField iconOnly = BitFieldFactory.getInstance(0x01);
     private static BitField reversed = BitFieldFactory.getInstance(0x04);
 
@@ -43,6 +47,15 @@ public final class IconMultiStateFormatting implements Cloneable {
         options = 0;
         thresholds = new Threshold[iconSet.num];
     }
+
+    public IconMultiStateFormatting(IconMultiStateFormatting other) {
+        iconSet = other.iconSet;
+        options = other.options;
+        if (other.thresholds != null) {
+            thresholds = Stream.of(other.thresholds).map(Threshold::copy).toArray(Threshold[]::new);
+        }
+    }
+
     public IconMultiStateFormatting(LittleEndianInput in) {
         in.readShort(); // Ignored
         in.readByte();  // Reserved
@@ -53,13 +66,13 @@ public final class IconMultiStateFormatting implements Cloneable {
             log.log(POILogger.WARN, "Inconsistent Icon Set defintion, found " + iconSet + " but defined as " + num + " entries");
         }
         options = in.readByte();
-        
+
         thresholds = new Threshold[iconSet.num];
         for (int i=0; i<thresholds.length; i++) {
             thresholds[i] = new IconMultiStateThreshold(in);
         }
     }
-    
+
     public IconSet getIconSet() {
         return iconSet;
     }
@@ -73,21 +86,21 @@ public final class IconMultiStateFormatting implements Cloneable {
     public void setThresholds(Threshold[] thresholds) {
         this.thresholds = (thresholds == null) ? null : thresholds.clone();
     }
-    
+
     public boolean isIconOnly() {
         return getOptionFlag(iconOnly);
     }
     public void setIconOnly(boolean only) {
         setOptionFlag(only, iconOnly);
     }
-    
+
     public boolean isReversed() {
         return getOptionFlag(reversed);
     }
     public void setReversed(boolean rev) {
         setOptionFlag(rev, reversed);
     }
-    
+
     private boolean getOptionFlag(BitField field) {
         int value = field.getValue(options);
         return value==0 ? false : true;
@@ -95,7 +108,7 @@ public final class IconMultiStateFormatting implements Cloneable {
     private void setOptionFlag(boolean option, BitField field) {
         options = field.setByteBoolean(options, option);
     }
-    
+
     public String toString() {
         StringBuilder buffer = new StringBuilder();
         buffer.append("    [Icon Formatting]\n");
@@ -108,16 +121,20 @@ public final class IconMultiStateFormatting implements Cloneable {
         buffer.append("    [/Icon Formatting]\n");
         return buffer.toString();
     }
-    
-    public Object clone()  {
-      IconMultiStateFormatting rec = new IconMultiStateFormatting();
-      rec.iconSet = iconSet;
-      rec.options = options;
-      rec.thresholds = new Threshold[thresholds.length];
-      System.arraycopy(thresholds, 0, rec.thresholds, 0, thresholds.length);
-      return rec;
+
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public IconMultiStateFormatting clone()  {
+        return copy();
     }
-    
+
+    @Override
+    public IconMultiStateFormatting copy()  {
+        return new IconMultiStateFormatting(this);
+    }
+
     public int getDataLength() {
         int len = 6;
         for (Threshold t : thresholds) {

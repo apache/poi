@@ -43,9 +43,18 @@ public final class ChartFormatRecord extends StandardRecord {
     private int field5_grbit;
     private int field6_unknown;
 
-    public ChartFormatRecord() {
-        // fields uninitialised
+    public ChartFormatRecord() {}
+
+    public ChartFormatRecord(ChartFormatRecord other) {
+        super(other);
+        field1_x_position = other.field1_x_position;
+        field2_y_position = other.field2_y_position;
+        field3_width = other.field3_width;
+        field4_height = other.field4_height;
+        field5_grbit = other.field5_grbit;
+        field6_unknown = other.field6_unknown;
     }
+
 
     public ChartFormatRecord(RecordInputStream in) {
         field1_x_position = in.readInt();
@@ -124,5 +133,10 @@ public final class ChartFormatRecord extends StandardRecord {
 
     public void setVaryDisplayPattern(boolean value) {
         field5_grbit = varyDisplayPattern.setBoolean(field5_grbit, value);
+    }
+
+    @Override
+    public ChartFormatRecord copy() {
+        return new ChartFormatRecord(this);
     }
 }

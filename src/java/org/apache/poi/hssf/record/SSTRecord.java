@@ -23,14 +23,11 @@ import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.cont.ContinuableRecord;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.IntMapper;
-import org.apache.poi.util.LittleEndianConsts;
 
 /**
- * Title:        Static String Table Record (0x00FC)<p>
+ * Static String Table Record (0x00FC)<p>
  *
- * Description:  This holds all the strings for LabelSSTRecords.<p>
- * 
- * REFERENCE:    PG 389 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * This holds all the strings for LabelSSTRecords.
  *
  * @see org.apache.poi.hssf.record.LabelSSTRecord
  * @see org.apache.poi.hssf.record.ContinueRecord
@@ -40,36 +37,43 @@ public final class SSTRecord extends ContinuableRecord {
 
     private static final UnicodeString EMPTY_STRING = new UnicodeString("");
 
-    // TODO - move these constants to test class (the only consumer)
-    /** standard record overhead: two shorts (record id plus data space size)*/
-    static final int STD_RECORD_OVERHEAD = 2 * LittleEndianConsts.SHORT_SIZE;
-
-    /** SST overhead: the standard record overhead, plus the number of strings and the number of unique strings -- two ints */
-    static final int SST_RECORD_OVERHEAD = STD_RECORD_OVERHEAD + 2 * LittleEndianConsts.INT_SIZE;
-
-    /** how much data can we stuff into an SST record? That would be _max minus the standard SST record overhead */
-    static final int MAX_DATA_SPACE = RecordInputStream.MAX_RECORD_DATA_SIZE - 8;
-
-    /** union of strings in the SST and EXTSST */
+    /**
+     * union of strings in the SST and EXTSST
+     */
     private int field_1_num_strings;
 
-    /** according to docs ONLY SST */
+    /**
+     * according to docs ONLY SST
+     */
     private int field_2_num_unique_strings;
     private IntMapper<UnicodeString> field_3_strings;
 
     private SSTDeserializer deserializer;
 
-    /** Offsets from the beginning of the SST record (even across continuations) */
-    int[] bucketAbsoluteOffsets;
-    /** Offsets relative the start of the current SST or continue record */
-    int[] bucketRelativeOffsets;
+    /**
+     * Offsets from the beginning of the SST record (even across continuations)
+     */
+    private int[] bucketAbsoluteOffsets;
+    /**
+     * Offsets relative the start of the current SST or continue record
+     */
+    private int[] bucketRelativeOffsets;
 
-    public SSTRecord()
-    {
+    public SSTRecord() {
         field_1_num_strings = 0;
         field_2_num_unique_strings = 0;
         field_3_strings = new IntMapper<>();
         deserializer = new SSTDeserializer(field_3_strings);
+    }
+
+    public SSTRecord(SSTRecord other) {
+        super(other);
+        field_1_num_strings = other.field_1_num_strings;
+        field_2_num_unique_strings = other.field_2_num_unique_strings;
+        field_3_strings = other.field_3_strings.copy();
+        deserializer = new SSTDeserializer(field_3_strings);
+        bucketAbsoluteOffsets = (other.bucketAbsoluteOffsets == null) ? null : other.bucketAbsoluteOffsets.clone();
+        bucketRelativeOffsets = (other.bucketRelativeOffsets == null) ? null : other.bucketRelativeOffsets.clone();
     }
 
     /**
@@ -242,7 +246,7 @@ public final class SSTRecord extends ContinuableRecord {
         field_1_num_strings = in.readInt();
         field_2_num_unique_strings = in.readInt();
         field_3_strings = new IntMapper<>();
-        
+
         deserializer = new SSTDeserializer(field_3_strings);
         // Bug 57456: some Excel Sheets send 0 as field=1, but have some random number in field_2,
         // we should not try to read the strings in this case.
@@ -318,5 +322,10 @@ public final class SSTRecord extends ContinuableRecord {
      */
     public int calcExtSSTRecordSize() {
       return ExtSSTRecord.getRecordSizeForStrings(field_3_strings.size());
+    }
+
+    @Override
+    public SSTRecord copy() {
+        return new SSTRecord(this);
     }
 }

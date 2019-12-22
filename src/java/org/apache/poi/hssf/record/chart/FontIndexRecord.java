@@ -21,25 +21,22 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
-/**
- * The font index record indexes into the font table for the text record.<p>
- * 
- * @author Glen Stampoultzis (glens at apache.org)
- */
-public final class FontIndexRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x1026;
-    private  short      field_1_fontIndex;
+/** The font index record indexes into the font table for the text record. */
+public final class FontIndexRecord extends StandardRecord {
+    public static final short sid = 0x1026;
+    private short field_1_fontIndex;
 
+    public FontIndexRecord() {}
 
-    public FontIndexRecord()
-    {
-
+    public FontIndexRecord(FontIndexRecord other) {
+        super(other);
+        field_1_fontIndex = other.field_1_fontIndex;
     }
 
-    public FontIndexRecord(RecordInputStream in)
-    {
-        field_1_fontIndex              = in.readShort();
+    public FontIndexRecord(RecordInputStream in) {
+        field_1_fontIndex = in.readShort();
     }
 
     public String toString()
@@ -50,7 +47,7 @@ public final class FontIndexRecord extends StandardRecord implements Cloneable {
         buffer.append("    .fontIndex            = ")
             .append("0x").append(HexDump.toHex(  getFontIndex ()))
             .append(" (").append( getFontIndex() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
 
         buffer.append("[/FONTX]\n");
         return buffer.toString();
@@ -70,11 +67,16 @@ public final class FontIndexRecord extends StandardRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public FontIndexRecord clone() {
-        FontIndexRecord rec = new FontIndexRecord();
-    
-        rec.field_1_fontIndex = field_1_fontIndex;
-        return rec;
+        return copy();
+    }
+
+    @Override
+    public FontIndexRecord copy() {
+        return new FontIndexRecord(this);
     }
 
 

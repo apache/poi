@@ -22,8 +22,6 @@ import org.apache.poi.util.StringUtil;
 
 /**
  * Common header/footer base class
- *
- * @author Josh Micich
  */
 public abstract class HeaderFooterBase extends StandardRecord {
 	private boolean field_2_hasMultibyte;
@@ -31,6 +29,12 @@ public abstract class HeaderFooterBase extends StandardRecord {
 
 	protected HeaderFooterBase(String text) {
 		setText(text);
+	}
+
+	protected HeaderFooterBase(HeaderFooterBase other) {
+		super(other);
+		field_2_hasMultibyte = other.field_2_hasMultibyte;
+		field_3_text = other.field_3_text;
 	}
 
 	protected HeaderFooterBase(RecordInputStream in) {
@@ -107,4 +111,7 @@ public abstract class HeaderFooterBase extends StandardRecord {
 		}
 		return 3 + getTextLength() * (field_2_hasMultibyte ? 2 : 1);
 	}
+
+	@Override
+	public abstract HeaderFooterBase copy();
 }

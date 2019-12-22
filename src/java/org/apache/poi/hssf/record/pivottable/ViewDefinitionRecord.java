@@ -38,26 +38,52 @@ public final class ViewDefinitionRecord extends StandardRecord {
 	private int colFirstData;
 	private int iCache;
 	private int reserved;
-	
+
 	private int sxaxis4Data;
 	private int ipos4Data;
 	private int cDim;
-	
+
 	private int cDimRw;
-	
+
 	private int cDimCol;
 	private int cDimPg;
-	
+
 	private int cDimData;
 	private int cRw;
 	private int cCol;
 	private int grbit;
 	private int itblAutoFmt;
-	
+
 	private String dataField;
 	private String name;
 
-	
+
+	public ViewDefinitionRecord(ViewDefinitionRecord other) {
+		super(other);
+		rwFirst = other.rwFirst;
+		rwLast = other.rwLast;
+		colFirst = other.colFirst;
+		colLast = other.colLast;
+		rwFirstHead = other.rwFirstHead;
+		rwFirstData = other.rwFirstData;
+		colFirstData = other.colFirstData;
+		iCache = other.iCache;
+		reserved = other.reserved;
+		sxaxis4Data = other.sxaxis4Data;
+		ipos4Data = other.ipos4Data;
+		cDim = other.cDim;
+		cDimRw = other.cDimRw;
+		cDimCol = other.cDimCol;
+		cDimPg = other.cDimPg;
+		cDimData = other.cDimData;
+		cRw = other.cRw;
+		cCol = other.cCol;
+		grbit = other.grbit;
+		itblAutoFmt = other.itblAutoFmt;
+		name = other.name;
+		dataField = other.dataField;
+	}
+
 	public ViewDefinitionRecord(RecordInputStream in) {
 		rwFirst = in.readUShort();
 		rwLast = in.readUShort();
@@ -85,7 +111,7 @@ public final class ViewDefinitionRecord extends StandardRecord {
 		name = StringUtil.readUnicodeString(in, cchName);
 		dataField = StringUtil.readUnicodeString(in, cchData);
 	}
-	
+
 	@Override
 	protected void serialize(LittleEndianOutput out) {
 		out.writeShort(rwFirst);
@@ -112,7 +138,7 @@ public final class ViewDefinitionRecord extends StandardRecord {
 		out.writeShort(dataField.length());
 
 		StringUtil.writeUnicodeStringFlagAndData(out, name);
-		StringUtil.writeUnicodeStringFlagAndData(out, dataField);		
+		StringUtil.writeUnicodeStringFlagAndData(out, dataField);
 	}
 
 	@Override
@@ -156,5 +182,10 @@ public final class ViewDefinitionRecord extends StandardRecord {
 
 		buffer.append("[/SXVIEW]\n");
 		return buffer.toString();
+	}
+
+	@Override
+	public ViewDefinitionRecord copy() {
+		return new ViewDefinitionRecord(this);
 	}
 }

@@ -41,7 +41,7 @@ public final class RecordInputStream implements LittleEndianInput {
 
 
 	/** Maximum size of a single record (minus the 4 byte header) without a continue*/
-	public final static short MAX_RECORD_DATA_SIZE = 8224;
+	public static final short MAX_RECORD_DATA_SIZE = 8224;
 	private static final int INVALID_SID_VALUE = -1;
 	//arbitrarily selected; may need to increase
 	private static final int MAX_RECORD_LENGTH = 100_000;
@@ -60,7 +60,7 @@ public final class RecordInputStream implements LittleEndianInput {
 	public static final class LeftoverDataException extends RuntimeException {
 		public LeftoverDataException(int sid, int remainingByteCount) {
 			super("Initialisation of record 0x" + Integer.toHexString(sid).toUpperCase(Locale.ROOT)
-					+ "(" + getRecordName(sid) + ") left " + remainingByteCount 
+					+ "(" + getRecordName(sid) + ") left " + remainingByteCount
 					+ " bytes remaining still to be read.");
 		}
 
@@ -177,9 +177,9 @@ public final class RecordInputStream implements LittleEndianInput {
 	/**
 	 * Note - this method is expected to be called only when completed reading the current BIFF
 	 * record.
-	 * 
+	 *
 	 * @return true, if there's another record in the stream
-	 * 
+	 *
 	 * @throws LeftoverDataException if this method is called before reaching the end of the
 	 * current record.
 	 */
@@ -268,7 +268,7 @@ public final class RecordInputStream implements LittleEndianInput {
 	}
 
 	/**
-	 * Reads a 32 bit, signed value 
+	 * Reads a 32 bit, signed value
 	 */
 	@Override
     public int readInt() {
@@ -310,11 +310,11 @@ public final class RecordInputStream implements LittleEndianInput {
         // YK: Excel doesn't write NaN but instead converts the cell type into {@link CellType#ERROR}.
 		return Double.longBitsToDouble(readLong());
 	}
-	
+
 	public void readPlain(byte[] buf, int off, int len) {
 	    readFully(buf, 0, buf.length, true);
 	}
-	
+
 	@Override
     public void readFully(byte[] buf) {
 		readFully(buf, 0, buf.length, false);
@@ -324,7 +324,7 @@ public final class RecordInputStream implements LittleEndianInput {
     public void readFully(byte[] buf, int off, int len) {
         readFully(buf, off, len, false);
     }
-	
+
     private void readFully(byte[] buf, int off, int len, boolean isPlain) {
 	    int origLen = len;
 	    if (buf == null) {
@@ -332,7 +332,7 @@ public final class RecordInputStream implements LittleEndianInput {
 	    } else if (off < 0 || len < 0 || len > buf.length - off) {
 	        throw new IndexOutOfBoundsException();
 	    }
-	    
+
 	    while (len > 0) {
 	        int nextChunk = Math.min(available(),len);
 	        if (nextChunk == 0) {
@@ -452,7 +452,7 @@ public final class RecordInputStream implements LittleEndianInput {
      * into any following continue records.
      *
      * @return all byte data for the current record
-     * 
+     *
      * @deprecated POI 2.0 Best to write a input stream that wraps this one
      *             where there is special sub record that may overlap continue
      *             records.
@@ -511,10 +511,10 @@ public final class RecordInputStream implements LittleEndianInput {
     }
 
     /**
-     * Mark the stream position - experimental function 
+     * Mark the stream position - experimental function
      *
      * @param readlimit the read ahead limit
-     * 
+     *
      * @see InputStream#mark(int)
      */
     @Internal
@@ -522,13 +522,13 @@ public final class RecordInputStream implements LittleEndianInput {
         ((InputStream)_dataInput).mark(readlimit);
         _markedDataOffset = _currentDataOffset;
     }
-    
+
     /**
      * Resets the stream position to the previously marked position.
      * Experimental function - this only works, when nextRecord() wasn't called in the meantime.
      *
      * @throws IOException if marking is not supported
-     * 
+     *
      * @see InputStream#reset()
      */
     @Internal

@@ -18,26 +18,26 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        VCenter record<P>
- * Description:  tells whether to center the sheet between vertical margins<P>
- * REFERENCE:  PG 420 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
+ * Tells whether to center the sheet between vertical margins
+ *
  * @version 2.0-pre
  */
 
 public final class VCenterRecord extends StandardRecord {
-    public final static short sid = 0x84;
+    public static final short sid = 0x84;
     private int field_1_vcenter;
 
-    public VCenterRecord()
-    {
+    public VCenterRecord() {}
+
+    public VCenterRecord(VCenterRecord other) {
+        super(other);
+        field_1_vcenter = other.field_1_vcenter;
     }
 
-    public VCenterRecord(RecordInputStream in)
-    {
+    public VCenterRecord(RecordInputStream in) {
         field_1_vcenter = in.readShort();
     }
 
@@ -85,9 +85,16 @@ public final class VCenterRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
-      VCenterRecord rec = new VCenterRecord();
-      rec.field_1_vcenter = field_1_vcenter;
-      return rec;
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public VCenterRecord clone() {
+        return copy();
+    }
+
+    @Override
+    public VCenterRecord copy() {
+      return new VCenterRecord(this);
     }
 }

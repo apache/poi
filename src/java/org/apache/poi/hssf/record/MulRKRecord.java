@@ -23,18 +23,15 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
 
 /**
- * MULRK (0x00BD)<p>
- * 
  * Used to store multiple RK numbers on a row.  1 MulRk = Multiple Cell values.
- * HSSF just converts this into multiple NUMBER records.  READ-ONLY SUPPORT!<P>
- * REFERENCE:  PG 330 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
- * 
+ * HSSF just converts this into multiple NUMBER records.  READ-ONLY SUPPORT!
+ *
  * @since 2.0-pre
  */
 public final class MulRKRecord extends StandardRecord {
-	public final static short sid = 0x00BD;
+	public static final short sid = 0x00BD;
 
-	private final int	 field_1_row;
+	private final int	  field_1_row;
 	private final short   field_2_first_col;
 	private final RkRec[] field_3_rks;
 	private final short   field_4_last_col;
@@ -69,9 +66,9 @@ public final class MulRKRecord extends StandardRecord {
 
 	/**
 	 * returns the xf index for column (coffset = column - field_2_first_col)
-	 * 
+	 *
      * @param coffset the coffset = column - field_2_first_col
-     * 
+     *
 	 * @return the XF index for the column
 	 */
 	public short getXFAt(int coffset) {
@@ -80,9 +77,9 @@ public final class MulRKRecord extends StandardRecord {
 
 	/**
 	 * returns the rk number for column (coffset = column - field_2_first_col)
-	 * 
+	 *
 	 * @param coffset the coffset = column - field_2_first_col
-	 * 
+	 *
 	 * @return the value (decoded into a double)
 	 */
 	public double getRKNumberAt(int coffset) {
@@ -150,5 +147,11 @@ public final class MulRKRecord extends StandardRecord {
 			}
 			return retval;
 		}
+	}
+
+	@Override
+	public MulRKRecord copy() {
+		// immutable - so OK to return this
+		return this;
 	}
 }

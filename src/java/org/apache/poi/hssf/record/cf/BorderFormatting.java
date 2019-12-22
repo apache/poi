@@ -17,48 +17,49 @@
 
 package org.apache.poi.hssf.record.cf;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * Border Formatting Block of the Conditional Formatting Rule Record.
  */
-public final class BorderFormatting implements Cloneable {
+public final class BorderFormatting implements Duplicatable {
     /** No border */
-    public final static short    BORDER_NONE                = 0x0;
+    public static final short    BORDER_NONE                = 0x0;
     /** Thin border */
-    public final static short    BORDER_THIN                = 0x1;
+    public static final short    BORDER_THIN                = 0x1;
     /** Medium border */
-    public final static short    BORDER_MEDIUM              = 0x2;
+    public static final short    BORDER_MEDIUM              = 0x2;
     /** dash border */
-    public final static short    BORDER_DASHED              = 0x3;
+    public static final short    BORDER_DASHED              = 0x3;
     /** dot border */
-    public final static short    BORDER_HAIR                = 0x4;
+    public static final short    BORDER_HAIR                = 0x4;
     /** Thick border */
-    public final static short    BORDER_THICK               = 0x5;
+    public static final short    BORDER_THICK               = 0x5;
     /** double-line border */
-    public final static short    BORDER_DOUBLE              = 0x6;
+    public static final short    BORDER_DOUBLE              = 0x6;
     /** hair-line border */
-    public final static short    BORDER_DOTTED              = 0x7;
+    public static final short    BORDER_DOTTED              = 0x7;
     /** Medium dashed border */
-    public final static short    BORDER_MEDIUM_DASHED       = 0x8;
+    public static final short    BORDER_MEDIUM_DASHED       = 0x8;
     /** dash-dot border */
-    public final static short    BORDER_DASH_DOT            = 0x9;
+    public static final short    BORDER_DASH_DOT            = 0x9;
     /** medium dash-dot border */
-    public final static short    BORDER_MEDIUM_DASH_DOT     = 0xA;
+    public static final short    BORDER_MEDIUM_DASH_DOT     = 0xA;
     /** dash-dot-dot border */
-    public final static short    BORDER_DASH_DOT_DOT        = 0xB;
+    public static final short    BORDER_DASH_DOT_DOT        = 0xB;
     /** medium dash-dot-dot border */
-    public final static short    BORDER_MEDIUM_DASH_DOT_DOT = 0xC;
+    public static final short    BORDER_MEDIUM_DASH_DOT_DOT = 0xC;
     /** slanted dash-dot border */
-    public final static short    BORDER_SLANTED_DASH_DOT    = 0xD;
+    public static final short    BORDER_SLANTED_DASH_DOT    = 0xD;
 
     // BORDER FORMATTING BLOCK
     // For Border Line Style codes see HSSFCellStyle.BORDER_XXXXXX
-    private int              field_13_border_styles1;
     private static final BitField  bordLeftLineStyle  = BitFieldFactory.getInstance(0x0000000F);
     private static final BitField  bordRightLineStyle = BitFieldFactory.getInstance(0x000000F0);
     private static final BitField  bordTopLineStyle   = BitFieldFactory.getInstance(0x00000F00);
@@ -68,11 +69,13 @@ public final class BorderFormatting implements Cloneable {
     private static final BitField  bordTlBrLineOnOff  = BitFieldFactory.getInstance(0x40000000);
     private static final BitField  bordBlTrtLineOnOff = BitFieldFactory.getInstance(0x80000000);
 
-    private int              field_14_border_styles2;
     private static final BitField  bordTopLineColor   = BitFieldFactory.getInstance(0x0000007F);
     private static final BitField  bordBottomLineColor= BitFieldFactory.getInstance(0x00003f80);
     private static final BitField  bordDiagLineColor  = BitFieldFactory.getInstance(0x001FC000);
     private static final BitField  bordDiagLineStyle  = BitFieldFactory.getInstance(0x01E00000);
+
+    private int field_13_border_styles1;
+    private int field_14_border_styles2;
 
 
     public BorderFormatting() {
@@ -80,7 +83,12 @@ public final class BorderFormatting implements Cloneable {
         field_14_border_styles2    = 0;
     }
 
-    /** Creates new FontFormatting */
+    public BorderFormatting(BorderFormatting other) {
+        field_13_border_styles1 = other.field_13_border_styles1;
+        field_14_border_styles2 = other.field_14_border_styles2;
+    }
+
+        /** Creates new FontFormatting */
     public BorderFormatting(LittleEndianInput in) {
         field_13_border_styles1    = in.readInt();
         field_14_border_styles2    = in.readInt();
@@ -447,11 +455,15 @@ public final class BorderFormatting implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public BorderFormatting clone() {
-      BorderFormatting rec = new BorderFormatting();
-      rec.field_13_border_styles1 = field_13_border_styles1;
-      rec.field_14_border_styles2 = field_14_border_styles2;
-      return rec;
+        return copy();
+    }
+
+    public BorderFormatting copy() {
+      return new BorderFormatting(this);
     }
 
     public int serialize(int offset, byte [] data) {

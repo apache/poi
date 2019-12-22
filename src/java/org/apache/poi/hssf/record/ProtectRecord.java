@@ -21,16 +21,15 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title: Protect Record (0x0012)<p>
- * Description:  defines whether a sheet or workbook is protected (HSSF DOES NOT SUPPORT ENCRYPTION)<p>
+ * Defines whether a sheet or workbook is protected (HSSF DOES NOT SUPPORT ENCRYPTION)<p>
  * HSSF now supports the simple "protected" sheets (where they are not encrypted and open office et al
  * ignore the password record entirely).
- * REFERENCE:  PG 373 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
  */
 public final class ProtectRecord extends StandardRecord {
-    public final static short sid = 0x0012;
+    public static final short sid = 0x0012;
 
     private static final BitField protectFlag = BitFieldFactory.getInstance(0x0001);
 
@@ -38,6 +37,11 @@ public final class ProtectRecord extends StandardRecord {
 
     private ProtectRecord(int options) {
         _options = options;
+    }
+
+    private ProtectRecord(ProtectRecord other) {
+        super(other);
+        _options = other._options;
     }
 
     public ProtectRecord(boolean isProtected) {
@@ -86,7 +90,16 @@ public final class ProtectRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
-        return new ProtectRecord(_options);
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public ProtectRecord clone() {
+        return copy();
+    }
+
+    @Override
+    public ProtectRecord copy() {
+        return new ProtectRecord(this);
     }
 }

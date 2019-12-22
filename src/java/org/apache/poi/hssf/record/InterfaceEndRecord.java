@@ -21,11 +21,7 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
 
 /**
- * Title: Interface End Record (0x00E2)<P>
- * Description: Shows where the Interface Records end (MMS)
- *  (has no fields)<P>
- * REFERENCE:  PG 324 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ * Shows where the Interface Records ends (MMS)
  */
 public final class InterfaceEndRecord extends StandardRecord {
 
@@ -60,5 +56,10 @@ public final class InterfaceEndRecord extends StandardRecord {
 
     public short getSid() {
         return sid;
+    }
+
+    @Override
+    public InterfaceEndRecord copy() {
+        return instance;
     }
 }

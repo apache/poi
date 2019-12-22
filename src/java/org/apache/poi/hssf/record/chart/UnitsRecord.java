@@ -21,24 +21,25 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * The units record describes units.
  */
 public final class UnitsRecord extends StandardRecord {
-    public final static short      sid                             = 0x1001;
-    private  short      field_1_units;
+    public static final short sid = 0x1001;
 
+    private short field_1_units;
 
-    public UnitsRecord()
-    {
+    public UnitsRecord() {}
 
+    public UnitsRecord(UnitsRecord other) {
+        super(other);
+        field_1_units = other.field_1_units;
     }
 
-    public UnitsRecord(RecordInputStream in)
-    {
-        field_1_units                  = in.readShort();
-
+    public UnitsRecord(RecordInputStream in) {
+        field_1_units = in.readShort();
     }
 
     public String toString()
@@ -49,7 +50,7 @@ public final class UnitsRecord extends StandardRecord {
         buffer.append("    .units                = ")
             .append("0x").append(HexDump.toHex(  getUnits ()))
             .append(" (").append( getUnits() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
 
         buffer.append("[/UNITS]\n");
         return buffer.toString();
@@ -68,15 +69,18 @@ public final class UnitsRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
-        UnitsRecord rec = new UnitsRecord();
-    
-        rec.field_1_units = field_1_units;
-        return rec;
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public UnitsRecord clone() {
+        return copy();
     }
 
-
-
+    @Override
+    public UnitsRecord copy() {
+        return new UnitsRecord(this);
+    }
 
     /**
      * Get the units field for the Units record.

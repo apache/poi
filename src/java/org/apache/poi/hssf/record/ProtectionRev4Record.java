@@ -23,12 +23,10 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Protection Revision 4 Record (0x01AF)<p>
- * Description:  describes whether this is a protected shared/tracked workbook<p>
- * REFERENCE:  PG 373 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * Describes whether this is a protected shared/tracked workbook<p>
  */
 public final class ProtectionRev4Record extends StandardRecord {
-    public final static short sid = 0x01AF;
+    public static final short sid = 0x01AF;
 
     private static final BitField protectedFlag = BitFieldFactory.getInstance(0x0001);
 
@@ -36,6 +34,11 @@ public final class ProtectionRev4Record extends StandardRecord {
 
     private ProtectionRev4Record(int options) {
         _options = options;
+    }
+
+    private ProtectionRev4Record(ProtectionRev4Record other) {
+        super(other);
+        _options = other._options;
     }
 
     public ProtectionRev4Record(boolean protect) {
@@ -82,5 +85,10 @@ public final class ProtectionRev4Record extends StandardRecord {
 
     public short getSid() {
         return sid;
+    }
+
+    @Override
+    public ProtectionRev4Record copy() {
+        return new ProtectionRev4Record(this);
     }
 }

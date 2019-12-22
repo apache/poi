@@ -17,28 +17,27 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.ArrayList;
+import java.util.stream.Stream;
+
 import org.apache.poi.hssf.record.cont.ContinuableRecord;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.LittleEndianOutput;
 
-import java.util.ArrayList;
-
 /**
- * Title:        Extended Static String Table (0x00FF)<p>
- * Description: This record is used for a quick lookup into the SST record. This
- *              record breaks the SST table into a set of buckets. The offsets
- *              to these buckets within the SST record are kept as well as the
- *              position relative to the start of the SST record.<p>
- * REFERENCE:  PG 313 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * Extended Static String Table (0x00FF)<p>
+ * This record is used for a quick lookup into the SST record. This record breaks the SST table
+ * into a set of buckets. The offsets to these buckets within the SST record are kept as well as
+ * the position relative to the start of the SST record.
  */
 public final class ExtSSTRecord extends ContinuableRecord {
-    public final static short sid = 0x00FF;
+    public static final short sid = 0x00FF;
     public static final int DEFAULT_BUCKET_SIZE = 8;
     //Can't seem to find this documented but from the biffviewer it is clear that
     //Excel only records the indexes for the first 128 buckets.
     public static final int MAX_BUCKETS = 128;
-    
-    
+
+
     public static final class InfoSubRecord {
     	public static final int ENCODED_SIZE = 8;
         private int field_1_stream_pos;          // stream pointer to the SST record
@@ -48,13 +47,19 @@ public final class ExtSSTRecord extends ContinuableRecord {
 
         /**
          * Creates new ExtSSTInfoSubRecord
-         * 
+         *
          * @param streamPos stream pointer to the SST record
          * @param bucketSstOffset ... don't really understand this yet
          */
         public InfoSubRecord(int streamPos, int bucketSstOffset) {
             field_1_stream_pos        = streamPos;
             field_2_bucket_sst_offset = bucketSstOffset;
+        }
+
+        public InfoSubRecord(InfoSubRecord other) {
+            field_1_stream_pos        = other.field_1_stream_pos;
+            field_2_bucket_sst_offset = other.field_2_bucket_sst_offset;
+            field_3_zero              = other.field_3_zero;
         }
 
         public InfoSubRecord(RecordInputStream in)
@@ -78,8 +83,8 @@ public final class ExtSSTRecord extends ContinuableRecord {
             out.writeShort(field_3_zero);
         }
     }
-    
-    
+
+
     private short _stringsPerBucket;
     private InfoSubRecord[] _sstInfos;
 
@@ -87,6 +92,12 @@ public final class ExtSSTRecord extends ContinuableRecord {
     public ExtSSTRecord() {
     	_stringsPerBucket = DEFAULT_BUCKET_SIZE;
         _sstInfos = new InfoSubRecord[0];
+    }
+
+    public ExtSSTRecord(ExtSSTRecord other) {
+        _stringsPerBucket = other._stringsPerBucket;
+        _sstInfos = (other._sstInfos == null) ? null
+            : Stream.of(other._sstInfos).map(InfoSubRecord::new).toArray(InfoSubRecord[]::new);
     }
 
     public ExtSSTRecord(RecordInputStream in) {
@@ -161,9 +172,9 @@ public final class ExtSSTRecord extends ContinuableRecord {
 
     /**
      * Given a number of strings (in the sst), returns the size of the extsst record
-     * 
+     *
      * @param numStrings the number of strings
-     * 
+     *
      * @return the size of the extsst record
      */
     public static int getRecordSizeForStrings(int numStrings) {
@@ -180,5 +191,10 @@ public final class ExtSSTRecord extends ContinuableRecord {
         for (int i = 0; i < bucketAbsoluteOffsets.length; i++) {
             _sstInfos[i] = new InfoSubRecord(bucketAbsoluteOffsets[i], bucketRelativeOffsets[i]);
         }
+    }
+
+    @Override
+    public ExtSSTRecord copy() {
+        return new ExtSSTRecord(this);
     }
 }

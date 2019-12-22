@@ -139,7 +139,7 @@ public final class TestTextObjectRecord extends TestCase {
         obj.setStr( str );
 
 
-        TextObjectRecord cloned = (TextObjectRecord)obj.clone();
+        TextObjectRecord cloned = obj.copy();
         assertEquals(obj.getRecordSize(), cloned.getRecordSize());
         assertEquals(obj.getHorizontalTextAlignment(), cloned.getHorizontalTextAlignment());
         assertEquals(obj.getStr().getString(), cloned.getStr().getString());

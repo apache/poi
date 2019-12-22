@@ -21,15 +21,14 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        Refresh All Record (0x01B7)<p>
- * Description:  Flag whether to refresh all external data when loading a sheet.
- *               (which hssf doesn't support anyhow so who really cares?)<p>
- * REFERENCE:  PG 376 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * Flag whether to refresh all external data when loading a sheet.
+ * (which hssf doesn't support anyhow so who really cares?)
  */
 public final class RefreshAllRecord extends StandardRecord {
-    public final static short sid = 0x01B7;
+    public static final short sid = 0x01B7;
 
     private static final BitField refreshFlag = BitFieldFactory.getInstance(0x0001);
 
@@ -37,6 +36,11 @@ public final class RefreshAllRecord extends StandardRecord {
 
     private RefreshAllRecord(int options) {
         _options = options;
+    }
+
+    private RefreshAllRecord(RefreshAllRecord other) {
+        super(other);
+        _options = other._options;
     }
 
     public RefreshAllRecord(RecordInputStream in) {
@@ -84,8 +88,17 @@ public final class RefreshAllRecord extends StandardRecord {
     public short getSid() {
         return sid;
     }
+
     @Override
-    public Object clone() {
-        return new RefreshAllRecord(_options);
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public RefreshAllRecord clone() {
+        return copy();
+    }
+
+    @Override
+    public RefreshAllRecord copy() {
+        return new RefreshAllRecord(this);
     }
 }

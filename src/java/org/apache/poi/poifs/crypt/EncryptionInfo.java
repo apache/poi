@@ -42,17 +42,7 @@ import org.apache.poi.util.LittleEndianInput;
  * some {@link EncryptionMode}s.
  * @see #getBuilder(EncryptionMode)
  */
-public class EncryptionInfo implements Cloneable, GenericRecord {
-    private final EncryptionMode encryptionMode;
-    private final int versionMajor;
-    private final int versionMinor;
-    private final int encryptionFlags;
-    
-    private EncryptionHeader header;
-    private EncryptionVerifier verifier;
-    private Decryptor decryptor;
-    private Encryptor encryptor;
-
+public class EncryptionInfo implements GenericRecord {
     /**
      * A flag that specifies whether CryptoAPI RC4 or ECMA-376 encryption
      * ECMA-376 is used. It MUST be 1 unless flagExternal is 1. If flagExternal is 1, it MUST be 0.
@@ -65,14 +55,14 @@ public class EncryptionInfo implements Cloneable, GenericRecord {
      */
     @SuppressWarnings("WeakerAccess")
     public static final BitField flagDocProps = BitFieldFactory.getInstance(0x08);
-    
+
     /**
      * A value that MUST be 1 if extensible encryption is used. If this value is 1,
      * the value of every other field in this structure MUST be 0.
      */
     @SuppressWarnings("WeakerAccess")
     public static final BitField flagExternal = BitFieldFactory.getInstance(0x10);
-    
+
     /**
      * A value that MUST be 1 if the protected content is an ECMA-376 document
      * ECMA-376. If the fAES bit is 1, the fCryptoAPI bit MUST also be 1.
@@ -87,13 +77,23 @@ public class EncryptionInfo implements Cloneable, GenericRecord {
         "CRYPTO_API", "DOC_PROPS", "EXTERNAL", "AES"
     };
 
+    private final EncryptionMode encryptionMode;
+    private final int versionMajor;
+    private final int versionMinor;
+    private final int encryptionFlags;
+
+    private EncryptionHeader header;
+    private EncryptionVerifier verifier;
+    private Decryptor decryptor;
+    private Encryptor encryptor;
+
     /**
      * Opens for decryption
      */
     public EncryptionInfo(POIFSFileSystem fs) throws IOException {
        this(fs.getRoot());
     }
-    
+
     /**
      * Opens for decryption
      */
@@ -141,7 +141,7 @@ public class EncryptionInfo implements Cloneable, GenericRecord {
                 " / fDocProps: "+flagDocProps.isSet(encryptionFlags)+
                 " / fAES: "+flagAES.isSet(encryptionFlags));
         }
-        
+
         EncryptionInfoBuilder eib;
         try {
             eib = getBuilder(encryptionMode);
@@ -151,7 +151,7 @@ public class EncryptionInfo implements Cloneable, GenericRecord {
 
         eib.initialize(this, dis);
     }
-    
+
     /**
      * Prepares for encryption, using the given Encryption Mode, and
      *  all other parameters as default.
@@ -160,7 +160,7 @@ public class EncryptionInfo implements Cloneable, GenericRecord {
     public EncryptionInfo(EncryptionMode encryptionMode) {
         this(encryptionMode, null, null, -1, -1, null);
     }
-    
+
     /**
      * Constructs an EncryptionInfo from scratch
      *
@@ -171,7 +171,7 @@ public class EncryptionInfo implements Cloneable, GenericRecord {
      * @param keyBits the bit count of the key
      * @param blockSize the size of a cipher block
      * @param chainingMode the chaining mode
-     * 
+     *
      * @throws EncryptedDocumentException if the given parameters mismatch, e.g. only certain combinations
      *   of keyBits, blockSize are allowed for a given {@link CipherAlgorithm}
      */
@@ -183,7 +183,7 @@ public class EncryptionInfo implements Cloneable, GenericRecord {
           , int blockSize
           , ChainingMode chainingMode
       ) {
-        this.encryptionMode = encryptionMode; 
+        this.encryptionMode = encryptionMode;
         versionMajor = encryptionMode.versionMajor;
         versionMinor = encryptionMode.versionMinor;
         encryptionFlags = encryptionMode.encryptionFlags;
@@ -194,8 +194,26 @@ public class EncryptionInfo implements Cloneable, GenericRecord {
         } catch (Exception e) {
             throw new EncryptedDocumentException(e);
         }
-        
+
         eib.initialize(this, cipherAlgorithm, hashAlgorithm, keyBits, blockSize, chainingMode);
+    }
+
+    public EncryptionInfo(EncryptionInfo other) {
+        encryptionMode = other.encryptionMode;
+        versionMajor = other.versionMajor;
+        versionMinor = other.versionMinor;
+        encryptionFlags = other.encryptionFlags;
+
+        header = (other.header == null) ? null : other.header.copy();
+        verifier = (other.verifier == null) ? null : other.verifier.copy();
+        if (other.decryptor != null) {
+            decryptor = other.decryptor.copy();
+            decryptor.setEncryptionInfo(this);
+        }
+        if (other.encryptor != null) {
+            encryptor = other.encryptor.copy();
+            encryptor.setEncryptionInfo(this);
+        }
     }
 
     /**
@@ -222,7 +240,7 @@ public class EncryptionInfo implements Cloneable, GenericRecord {
         eib = (EncryptionInfoBuilder)cl.loadClass(encryptionMode.builder).newInstance();
         return eib;
     }
-    
+
     public int getVersionMajor() {
         return versionMajor;
     }
@@ -242,7 +260,7 @@ public class EncryptionInfo implements Cloneable, GenericRecord {
     public EncryptionVerifier getVerifier() {
         return verifier;
     }
-    
+
     public Decryptor getDecryptor() {
         return decryptor;
     }
@@ -270,7 +288,7 @@ public class EncryptionInfo implements Cloneable, GenericRecord {
     public EncryptionMode getEncryptionMode() {
         return encryptionMode;
     }
-    
+
     /**
      * @return true, if Document Summary / Summary are encrypted and stored in the {@code EncryptedStream} stream,
      * otherwise the Summaries aren't encrypted and located in their usual streams
@@ -278,17 +296,9 @@ public class EncryptionInfo implements Cloneable, GenericRecord {
     public boolean isDocPropsEncrypted() {
         return !flagDocProps.isSet(getEncryptionFlags());
     }
-    
-    @Override
-    public EncryptionInfo clone() throws CloneNotSupportedException {
-        EncryptionInfo other = (EncryptionInfo)super.clone();
-        other.header = header.clone();
-        other.verifier = verifier.clone();
-        other.decryptor = decryptor.clone();
-        other.decryptor.setEncryptionInfo(other);
-        other.encryptor = encryptor.clone();
-        other.encryptor.setEncryptionInfo(other);
-        return other;
+
+    public EncryptionInfo copy()  {
+        return new EncryptionInfo(this);
     }
 
     @Override

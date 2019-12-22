@@ -26,8 +26,10 @@ import java.io.ByteArrayInputStream;
 public final class DrawingRecordForBiffViewer extends AbstractEscherHolderRecord {
     public static final short sid = 0xEC;
 
-    public DrawingRecordForBiffViewer()
-    {
+    public DrawingRecordForBiffViewer() {}
+
+    public DrawingRecordForBiffViewer(DrawingRecordForBiffViewer other) {
+        super(other);
     }
 
     public DrawingRecordForBiffViewer( RecordInputStream in)
@@ -58,5 +60,10 @@ public final class DrawingRecordForBiffViewer extends AbstractEscherHolderRecord
     public short getSid()
     {
         return sid;
+    }
+
+    @Override
+    public DrawingRecordForBiffViewer copy() {
+        return new DrawingRecordForBiffViewer(this);
     }
 }

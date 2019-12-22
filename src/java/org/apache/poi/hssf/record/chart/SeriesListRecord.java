@@ -22,18 +22,24 @@ import java.util.Arrays;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * SERIESLIST (0x1016)<p>
- * 
+ *
  * The series list record defines the series displayed as an overlay to the main chart record.<p>
- * 
+ *
  * (As with all chart related records, documentation is lacking.
  * See {@link ChartRecord} for more details)
  */
 public final class SeriesListRecord extends StandardRecord {
-    public final static short sid = 0x1016;
-    private  short[]    field_1_seriesNumbers;
+    public static final short sid = 0x1016;
+    private short[] field_1_seriesNumbers;
+
+    public SeriesListRecord(SeriesListRecord other) {
+        super(other);
+        field_1_seriesNumbers = (other.field_1_seriesNumbers == null) ? null : other.field_1_seriesNumbers.clone();
+    }
 
     public SeriesListRecord(short[] seriesNumbers) {
     	field_1_seriesNumbers = (seriesNumbers == null) ? null : seriesNumbers.clone();
@@ -44,17 +50,17 @@ public final class SeriesListRecord extends StandardRecord {
     	short[] ss = new short[nItems];
     	for (int i = 0; i < nItems; i++) {
 			ss[i] = in.readShort();
-			
+
 		}
         field_1_seriesNumbers = ss;
     }
 
     public String toString() {
         StringBuilder buffer = new StringBuilder();
-        
+
         buffer.append("[SERIESLIST]\n");
         buffer.append("    .seriesNumbers= ").append(" (").append( Arrays.toString(getSeriesNumbers()) ).append(" )");
-        buffer.append("\n"); 
+        buffer.append("\n");
 
         buffer.append("[/SERIESLIST]\n");
         return buffer.toString();
@@ -77,8 +83,17 @@ public final class SeriesListRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
-        return new SeriesListRecord(field_1_seriesNumbers);
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public SeriesListRecord clone() {
+        return copy();
+    }
+
+    @Override
+    public SeriesListRecord copy() {
+        return new SeriesListRecord(this);
     }
 
     /**

@@ -39,6 +39,12 @@ public abstract class Threshold {
         value = 0d;
     }
 
+    protected Threshold(Threshold other) {
+        type = other.type;
+        formula = other.formula.copy();
+        value = other.value;
+    }
+
     /** Creates new Threshold */
     protected Threshold(LittleEndianInput in) {
         type = in.readByte();
@@ -92,7 +98,7 @@ public abstract class Threshold {
     public void setValue(Double value) {
         this.value = value;
     }
-    
+
     public int getDataLength() {
         int len = 1 + formula.getEncodedSize();
         if (value != null) {
@@ -111,12 +117,6 @@ public abstract class Threshold {
         return buffer.toString();
     }
 
-    public void copyTo(Threshold rec) {
-      rec.type = type;
-      rec.formula = formula;
-      rec.value = value;
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeByte(type);
         if (formula.getTokens().length == 0) {
@@ -128,4 +128,6 @@ public abstract class Threshold {
             out.writeDouble(value);
         }
     }
+
+    public abstract Threshold copy();
 }

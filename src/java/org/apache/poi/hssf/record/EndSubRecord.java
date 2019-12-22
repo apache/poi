@@ -14,27 +14,25 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
+import org.apache.poi.util.Removal;
 
 /**
  * ftEnd (0x0000)<p>
- * 
+ *
  * The end data record is used to denote the end of the subrecords.
  */
-public final class EndSubRecord extends SubRecord implements Cloneable {
+public final class EndSubRecord extends SubRecord {
     // Note - zero sid is somewhat unusual (compared to plain Records)
-    public final static short sid = 0x0000;
+    public static final short sid = 0x0000;
     private static final int ENCODED_SIZE = 0;
 
-    public EndSubRecord()
-    {
-
-    }
+    public EndSubRecord() {}
 
     /**
      * @param in unused (since this record has no data)
@@ -76,8 +74,15 @@ public final class EndSubRecord extends SubRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public EndSubRecord clone() {
+        return copy();
+    }
 
+    @Override
+    public EndSubRecord copy() {
         return new EndSubRecord();
     }
 }

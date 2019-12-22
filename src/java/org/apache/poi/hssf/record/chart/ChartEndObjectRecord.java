@@ -33,6 +33,14 @@ public final class ChartEndObjectRecord extends StandardRecord {
 	private short iObjectKind;
 	private byte[] reserved;
 
+	public ChartEndObjectRecord(ChartEndObjectRecord other) {
+		super(other);
+		rt = other.rt;
+		grbitFrt = other.grbitFrt;
+		iObjectKind = other.iObjectKind;
+		reserved = (other.reserved == null) ? null : other.reserved.clone();
+	}
+
 	public ChartEndObjectRecord(RecordInputStream in) {
 		rt = in.readShort();
 		grbitFrt = in.readShort();
@@ -45,7 +53,7 @@ public final class ChartEndObjectRecord extends StandardRecord {
 		if(in.available() == 0) {
 		   // They've gone missing...
 		} else {
-		   // Read the reserved bytes 
+		   // Read the reserved bytes
 		   in.readFully(reserved);
 		}
 	}
@@ -80,5 +88,10 @@ public final class ChartEndObjectRecord extends StandardRecord {
 		buffer.append("    .reserved   =").append(HexDump.toHex(reserved)).append('\n');
 		buffer.append("[/ENDOBJECT]\n");
 		return buffer.toString();
+	}
+
+	@Override
+	public ChartEndObjectRecord copy() {
+		return new ChartEndObjectRecord(this);
 	}
 }

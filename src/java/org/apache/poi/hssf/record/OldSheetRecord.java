@@ -31,7 +31,7 @@ public final class OldSheetRecord {
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
-    public final static short sid = 0x0085;
+    public static final short sid = 0x0085;
 
     private int field_1_position_of_BOF;
     private int field_2_visibility;

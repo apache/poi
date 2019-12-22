@@ -19,18 +19,24 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        Password Record (0x0013)<p>
- * Description:  stores the encrypted password for a sheet or workbook (HSSF doesn't support encryption)
- * REFERENCE:  PG 371 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * Stores the encrypted password for a sheet or workbook (HSSF doesn't support encryption)
  */
 public final class PasswordRecord extends StandardRecord {
-    public final static short sid = 0x0013;
-    private int field_1_password;   // not sure why this is only 2 bytes, but it is... go figure
+    public static final short sid = 0x0013;
+
+    // not sure why this is only 2 bytes, but it is... go figure
+    private int field_1_password;
 
     public PasswordRecord(int password) {
         field_1_password = password;
+    }
+
+    public PasswordRecord(PasswordRecord other) {
+        super(other);
+        field_1_password = other.field_1_password;
     }
 
     public PasswordRecord(RecordInputStream in) {
@@ -77,10 +83,18 @@ public final class PasswordRecord extends StandardRecord {
         return sid;
     }
 
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public PasswordRecord clone() {
+        return copy();
+    }
+
     /**
      * Clone this record.
      */
-    public Object clone() {
-        return new PasswordRecord(field_1_password);
+    public PasswordRecord copy() {
+        return new PasswordRecord(this);
     }
 }

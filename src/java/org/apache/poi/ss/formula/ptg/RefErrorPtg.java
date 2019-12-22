@@ -23,7 +23,6 @@ import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * RefError - handles deleted cell reference
- * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class RefErrorPtg extends OperandPtg {
 
@@ -34,6 +33,12 @@ public final class RefErrorPtg extends OperandPtg {
     public RefErrorPtg() {
         field_1_reserved = 0;
     }
+
+    public RefErrorPtg(RefErrorPtg other) {
+        super(other);
+        field_1_reserved = other.field_1_reserved;
+    }
+
     public RefErrorPtg(LittleEndianInput in)  {
         field_1_reserved = in.readInt();
     }
@@ -55,8 +60,13 @@ public final class RefErrorPtg extends OperandPtg {
     public String toFormulaString() {
         return FormulaError.REF.getString();
     }
-    
+
     public byte getDefaultOperandClass() {
         return Ptg.CLASS_REF;
+    }
+
+    @Override
+    public RefErrorPtg copy() {
+        return new RefErrorPtg(this);
     }
 }

@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record;
 
 import static org.junit.Assert.assertArrayEquals;
+
 import junit.framework.TestCase;
 
 /**
@@ -57,7 +58,7 @@ public final class TestAutoFilterInfoRecord extends TestCase {
         record.setNumEntries((short)3);
         byte[] src = record.serialize();
 
-        AutoFilterInfoRecord cloned = record.clone();
+        AutoFilterInfoRecord cloned = record.copy();
         assertEquals(3, record.getNumEntries());
         byte[] cln = cloned.serialize();
 

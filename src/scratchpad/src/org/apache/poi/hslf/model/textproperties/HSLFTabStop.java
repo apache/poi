@@ -20,21 +20,23 @@ package org.apache.poi.hslf.model.textproperties;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.sl.usermodel.TabStop;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 
 @Internal
-public class HSLFTabStop implements TabStop, Cloneable, GenericRecord {
+public class HSLFTabStop implements TabStop, Duplicatable, GenericRecord {
     /**
      * A signed integer that specifies an offset, in master units, of the tab stop.
-     * 
+     *
      * If the TextPFException record that contains this TabStop structure also contains a
      * leftMargin, then the value of position is relative to the left margin of the paragraph;
      * otherwise, the value is relative to the left side of the paragraph.
-     * 
+     *
      * If a TextRuler record contains this TabStop structure, the value is relative to the
      * left side of the text ruler.
      */
@@ -50,14 +52,19 @@ public class HSLFTabStop implements TabStop, Cloneable, GenericRecord {
         this.type = type;
     }
 
+    public HSLFTabStop(HSLFTabStop other) {
+        position = other.position;
+        type = other.type;
+    }
+
     public int getPosition() {
         return position;
     }
-    
+
     public void setPosition(final int position) {
         this.position = position;
     }
-    
+
     @Override
     public double getPositionInPoints() {
         return Units.masterToPoints(getPosition());
@@ -79,14 +86,18 @@ public class HSLFTabStop implements TabStop, Cloneable, GenericRecord {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public HSLFTabStop clone() {
-        try {
-            return (HSLFTabStop)super.clone();
-        } catch (CloneNotSupportedException e) {
-            throw new IllegalStateException(e);
-        }
+        return copy();
     }
-    
+
+    @Override
+    public HSLFTabStop copy() {
+        return new HSLFTabStop(this);
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;

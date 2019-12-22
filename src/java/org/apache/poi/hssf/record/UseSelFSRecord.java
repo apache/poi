@@ -21,19 +21,22 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        USESELFS (0x0160) - Use Natural Language Formulas Flag <p>
- * Description:  Tells the GUI if this was written by something that can use
- *               "natural language" formulas. HSSF can't.<p>
- * REFERENCE:  PG 420 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * Tells the GUI if this was written by something that can use "natural language" formulas. HSSF can't.
  */
 public final class UseSelFSRecord extends StandardRecord {
-    public final static short sid   = 0x0160;
+    public static final short sid   = 0x0160;
 
     private static final BitField useNaturalLanguageFormulasFlag = BitFieldFactory.getInstance(0x0001);
 
     private int _options;
+
+    private UseSelFSRecord(UseSelFSRecord other) {
+        super(other);
+        _options = other._options;
+    }
 
     private UseSelFSRecord(int options) {
         _options = options;
@@ -70,7 +73,15 @@ public final class UseSelFSRecord extends StandardRecord {
     }
 
     @Override
-    public Object clone() {
-        return new UseSelFSRecord(_options);
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public UseSelFSRecord clone() {
+        return copy();
+    }
+
+    @Override
+    public UseSelFSRecord copy() {
+        return new UseSelFSRecord(this);
     }
 }

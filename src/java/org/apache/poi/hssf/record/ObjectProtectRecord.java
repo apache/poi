@@ -15,32 +15,32 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title: Object Protect Record<P>
- * Description: Protect embedded object with the lamest "security" ever invented.  
- * This record tells  "I want to protect my objects" with lame security.  It 
- * appears in conjunction with the PASSWORD and PROTECT records as well as its 
- * scenario protect cousin.<P>
- * REFERENCE:  PG 368 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ * Protect embedded object with the lamest "security" ever invented.
+ * This record tells "I want to protect my objects" with lame security.
+ * It appears in conjunction with the PASSWORD and PROTECT records as well as its scenario protect cousin.
  */
 
-public final class ObjectProtectRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x63;
-    private short             field_1_protect;
+public final class ObjectProtectRecord extends StandardRecord {
+    public static final short sid = 0x63;
 
-    public ObjectProtectRecord()
-    {
+    private short field_1_protect;
+
+    public ObjectProtectRecord() {}
+
+    public ObjectProtectRecord(ObjectProtectRecord other) {
+        super(other);
+        field_1_protect = other.field_1_protect;
     }
 
-    public ObjectProtectRecord(RecordInputStream in)
-    {
+    public ObjectProtectRecord(RecordInputStream in) {
         field_1_protect = in.readShort();
     }
 
@@ -51,14 +51,7 @@ public final class ObjectProtectRecord extends StandardRecord implements Cloneab
 
     public void setProtect(boolean protect)
     {
-        if (protect)
-        {
-            field_1_protect = 1;
-        }
-        else
-        {
-            field_1_protect = 0;
-        }
+        field_1_protect = (short) (protect ? 1 : 0);
     }
 
     /**
@@ -96,9 +89,15 @@ public final class ObjectProtectRecord extends StandardRecord implements Cloneab
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public ObjectProtectRecord clone() {
-        ObjectProtectRecord rec = new ObjectProtectRecord();
-        rec.field_1_protect = field_1_protect;
-        return rec;
+        return copy();
+    }
+
+    @Override
+    public ObjectProtectRecord copy() {
+        return new ObjectProtectRecord(this);
     }
 }

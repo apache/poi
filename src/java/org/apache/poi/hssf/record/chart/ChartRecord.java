@@ -20,34 +20,40 @@ package org.apache.poi.hssf.record.chart;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * CHART (0x1002)<p>
- * 
+ *
  * The chart record is used to define the location and size of a chart.<p>
- * 
- * Chart related records don't seem to be covered in either the 
- * <A HREF="http://sc.openoffice.org/excelfileformat.pdf">OOO</A> 
- *  or the  
- * <A HREF="http://download.microsoft.com/download/0/B/E/0BE8BDD7-E5E8-422A-ABFD-4342ED7AD886/Excel97-2007BinaryFileFormat(xls)Specification.pdf">MS</A> 
- *  documentation. 
- * 
+ *
+ * Chart related records don't seem to be covered in either the
+ * <A HREF="http://sc.openoffice.org/excelfileformat.pdf">OOO</A>
+ *  or the
+ * <A HREF="http://download.microsoft.com/download/0/B/E/0BE8BDD7-E5E8-422A-ABFD-4342ED7AD886/Excel97-2007BinaryFileFormat(xls)Specification.pdf">MS</A>
+ *  documentation.
+ *
  * The book "Microsoft Excel 97 Developer's Kit" ISBN: (1-57231-498-2) seems to have an entire
- * chapter (10) devoted to Chart records.  One  
+ * chapter (10) devoted to Chart records.  One
  * <A HREF="http://ooxmlisdefectivebydesign.blogspot.com/2008/03/bad-surprise-in-microsoft-office-binary.html">blog</A>
  *  suggests that some documentation for these records is available in "MSDN Library, Feb 1998",
  * but no later.
  */
-public final class ChartRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x1002;
+public final class ChartRecord extends StandardRecord {
+    public static final short sid = 0x1002;
     private int field_1_x;
     private int field_2_y;
     private int field_3_width;
     private int field_4_height;
 
+    public ChartRecord() {}
 
-    public ChartRecord() {
-        // fields uninitialised
+    public ChartRecord(ChartRecord other) {
+        super(other);
+        field_1_x = other.field_1_x;
+        field_2_y = other.field_2_y;
+        field_3_width = other.field_3_width;
+        field_4_height = other.field_4_height;
     }
 
     public ChartRecord(RecordInputStream in) {
@@ -86,18 +92,17 @@ public final class ChartRecord extends StandardRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public ChartRecord clone() {
-        ChartRecord rec = new ChartRecord();
-    
-        rec.field_1_x = field_1_x;
-        rec.field_2_y = field_2_y;
-        rec.field_3_width = field_3_width;
-        rec.field_4_height = field_4_height;
-        return rec;
+        return copy();
     }
 
-
-
+    @Override
+    public ChartRecord copy() {
+        return new ChartRecord(this);
+    }
 
     /**
      * Get the x field for the Chart record.

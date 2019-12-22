@@ -24,22 +24,13 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * "Special Attributes"
+ * "Special Attributes"<p>
  * This seems to be a Misc Stuff and Junk record.  One function it serves is
  * in SUM functions (i.e. SUM(A1:A3) causes an area PTG then an ATTR with the SUM option set)
- * @author  andy
- * @author Jason Height (jheight at chariot dot net dot au)
  */
 public final class AttrPtg extends ControlPtg {
     public final static byte sid  = 0x19;
     private final static int  SIZE = 4;
-    private final byte _options;
-    private final short _data;
-
-    /** only used for tAttrChoose: table of offsets to starts of args */
-    private final int[] _jumpTable;
-    /** only used for tAttrChoose: offset to the tFuncVar for CHOOSE() */
-    private final int   _chooseFuncOffset;
 
     // flags 'volatile' and 'space', can be combined.
     // OOO spec says other combinations are theoretically possible but not likely to occur.
@@ -73,6 +64,14 @@ public final class AttrPtg extends ControlPtg {
         /** 06H = Spaces following the equality sign (only in macro sheets) */
         public static final int SPACE_AFTER_EQUALITY = 0x06;
     }
+
+    private final byte _options;
+    private final short _data;
+
+    /** only used for tAttrChoose: table of offsets to starts of args */
+    private final int[] _jumpTable;
+    /** only used for tAttrChoose: offset to the tFuncVar for CHOOSE() */
+    private final int   _chooseFuncOffset;
 
     public AttrPtg(LittleEndianInput in) {
         _options = in.readByte();
@@ -259,4 +258,10 @@ public final class AttrPtg extends ControlPtg {
       }
       return "UNKNOWN ATTRIBUTE";
      }
+
+    @Override
+    public AttrPtg copy() {
+        // immutable
+        return this;
+    }
 }

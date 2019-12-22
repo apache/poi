@@ -28,7 +28,7 @@ import org.apache.poi.util.StringUtil;
  */
 public final class ExternalNameRecord extends StandardRecord {
 
-	public final static short sid = 0x0023; // as per BIFF8. (some old versions used 0x223)
+	public static final short sid = 0x0023; // as per BIFF8. (some old versions used 0x223)
 
 	private static final int OPT_BUILTIN_NAME          = 0x0001;
 	private static final int OPT_AUTOMATIC_LINK        = 0x0002; // m$ doc calls this fWantAdvise
@@ -39,11 +39,11 @@ public final class ExternalNameRecord extends StandardRecord {
 	private static final int OPT_ICONIFIED_PICTURE_LINK= 0x8000;
 
 
-	private short  field_1_option_flag;
-	private short  field_2_ixals;
-	private short  field_3_not_used;
+	private short field_1_option_flag;
+	private short field_2_ixals;
+	private short field_3_not_used;
 	private String field_4_name;
-	private Formula  field_5_name_definition;
+	private Formula field_5_name_definition;
 
 	/**
 	 * 'rgoper' / 'Last received results of the DDE link'
@@ -60,6 +60,54 @@ public final class ExternalNameRecord extends StandardRecord {
 	 */
 	private int _nRows;
 
+	public ExternalNameRecord() {
+		field_2_ixals = 0;
+	}
+
+	public ExternalNameRecord(ExternalNameRecord other) {
+		super(other);
+		field_1_option_flag = other.field_1_option_flag;
+		field_2_ixals = other.field_2_ixals;
+		field_3_not_used = other.field_3_not_used;
+		field_4_name = other.field_4_name;
+		field_5_name_definition = (other.field_5_name_definition == null) ? null : other.field_5_name_definition.copy();
+		_ddeValues = (other._ddeValues == null) ? null : other._ddeValues.clone();
+		_nColumns = other._nColumns;
+		_nRows = other._nRows;
+	}
+
+	public ExternalNameRecord(RecordInputStream in) {
+		field_1_option_flag = in.readShort();
+		field_2_ixals       = in.readShort();
+		field_3_not_used    = in.readShort();
+
+		int numChars = in.readUByte();
+		field_4_name = StringUtil.readUnicodeString(in, numChars);
+
+		// the record body can take different forms.
+		// The form is dictated by the values of 3-th and 4-th bits in field_1_option_flag
+		if(!isOLELink() && !isStdDocumentNameIdentifier()){
+			// another switch: the fWantAdvise bit specifies whether the body describes
+			// an external defined name or a DDE data item
+			if(isAutomaticLink()){
+				if(in.available() > 0) {
+					//body specifies DDE data item
+					int nColumns = in.readUByte() + 1;
+					int nRows = in.readShort() + 1;
+
+					int totalCount = nRows * nColumns;
+					_ddeValues = ConstantValueParser.parse(in, totalCount);
+					_nColumns = nColumns;
+					_nRows = nRows;
+				}
+			} else {
+				//body specifies an external defined name
+				int formulaLen = in.readUShort();
+				field_5_name_definition = Formula.read(formulaLen, in);
+			}
+		}
+	}
+
 	/**
 	 * @return {@code true} if the name is a built-in name
 	 */
@@ -68,7 +116,7 @@ public final class ExternalNameRecord extends StandardRecord {
 	}
 	/**
 	 * For OLE and DDE, links can be either 'automatic' or 'manual'
-	 * 
+	 *
 	 * @return {@code true} if this is a automatic link
 	 */
 	public boolean isAutomaticLink() {
@@ -76,7 +124,7 @@ public final class ExternalNameRecord extends StandardRecord {
 	}
 	/**
 	 * only for OLE and DDE
-	 * 
+	 *
 	 * @return {@code true} if this is a picture link
 	 */
 	public boolean isPicureLink() {
@@ -84,7 +132,7 @@ public final class ExternalNameRecord extends StandardRecord {
 	}
 	/**
 	 * DDE links only. If <code>true</code>, this denotes the 'StdDocumentName'
-	 * 
+	 *
 	 * @return {@code true} if this denotes the 'StdDocumentName'
 	 */
 	public boolean isStdDocumentNameIdentifier() {
@@ -102,7 +150,7 @@ public final class ExternalNameRecord extends StandardRecord {
 	public String getText() {
 		return field_4_name;
 	}
-	
+
     public void setText(String str) {
         field_4_name = str;
     }
@@ -112,13 +160,13 @@ public final class ExternalNameRecord extends StandardRecord {
 	 *  index of the name of the Sheet this refers to, as
 	 *  defined in the preceding {@link SupBookRecord}.
 	 * If it isn't a local name, then it must be zero.
-	 * 
+	 *
 	 * @return the index of the name of the Sheet this refers to
 	 */
 	public short getIx() {
 	   return field_2_ixals;
 	}
-	
+
     public void setIx(short ix) {
         field_2_ixals = ix;
     }
@@ -134,7 +182,7 @@ public final class ExternalNameRecord extends StandardRecord {
 	@Override
 	protected int getDataSize(){
 		int result = 2 + 4;  // short and int
-        result += StringUtil.getEncodedSize(field_4_name) - 1; //size is byte, not short 
+        result += StringUtil.getEncodedSize(field_4_name) - 1; //size is byte, not short
 
         if(!isOLELink() && !isStdDocumentNameIdentifier()){
             if(isAutomaticLink()){
@@ -171,42 +219,6 @@ public final class ExternalNameRecord extends StandardRecord {
         }
 	}
 
-    public ExternalNameRecord() {
-        field_2_ixals = 0;
-    }
-    
-    public ExternalNameRecord(RecordInputStream in) {
-		field_1_option_flag = in.readShort();
-		field_2_ixals       = in.readShort();
-      field_3_not_used    = in.readShort();
-
-        int numChars = in.readUByte();
-        field_4_name = StringUtil.readUnicodeString(in, numChars);
-
-        // the record body can take different forms.
-        // The form is dictated by the values of 3-th and 4-th bits in field_1_option_flag
-        if(!isOLELink() && !isStdDocumentNameIdentifier()){
-            // another switch: the fWantAdvise bit specifies whether the body describes
-            // an external defined name or a DDE data item
-            if(isAutomaticLink()){
-                if(in.available() > 0) {
-                   //body specifies DDE data item
-                   int nColumns = in.readUByte() + 1;
-                   int nRows = in.readShort() + 1;
-   
-                   int totalCount = nRows * nColumns;
-                   _ddeValues = ConstantValueParser.parse(in, totalCount);
-                   _nColumns = nColumns;
-                   _nRows = nRows;
-                }
-            } else {
-                //body specifies an external defined name
-                int formulaLen = in.readUShort();
-                field_5_name_definition = Formula.read(formulaLen, in);
-            }
-        }
-    }
-
 	@Override
 	public short getSid() {
 		return sid;
@@ -227,5 +239,10 @@ public final class ExternalNameRecord extends StandardRecord {
 		}
 		sb.append("[/EXTERNALNAME]\n");
 		return sb.toString();
+	}
+
+	@Override
+	public ExternalNameRecord copy() {
+		return new ExternalNameRecord(this);
 	}
 }

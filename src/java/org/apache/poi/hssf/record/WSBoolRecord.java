@@ -20,36 +20,50 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        WSBOOL (0x0081) (called SHEETPR in OOO doc)<p>
- * Description:  stores workbook settings  (aka its a big "everything we didn't
- *               put somewhere else")<p>
- * REFERENCE:  PG 425 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * Stores workbook settings (aka its a big "everything we didn't put somewhere else")
  */
 public final class WSBoolRecord extends StandardRecord {
-    public final static short     sid = 0x0081;
-    private byte                  field_1_wsbool;         // crappy names are because this is really one big short field (2byte)
-    private byte                  field_2_wsbool;         // but the docs inconsistently use it as 2 separate bytes
-
-    // I decided to be consistent in this way.
-    private static final BitField autobreaks    = BitFieldFactory.getInstance(0x01); // are automatic page breaks visible
+    public static final short     sid = 0x0081;
+    // are automatic page breaks visible
+    private static final BitField autobreaks    = BitFieldFactory.getInstance(0x01);
 
     // bits 1 to 3 unused
-    private static final BitField dialog        = BitFieldFactory.getInstance(0x10); // is sheet dialog sheet
-    private static final BitField applystyles   = BitFieldFactory.getInstance(0x20); // whether to apply automatic styles to outlines
-    private static final BitField rowsumsbelow  = BitFieldFactory.getInstance(0x40); // whether summary rows will appear below detail in outlines
-    private static final BitField rowsumsright  = BitFieldFactory.getInstance(0x80); // whether summary rows will appear right of the detail in outlines
-    private static final BitField fittopage     = BitFieldFactory.getInstance(0x01); // whether to fit stuff to the page
+    // is sheet dialog sheet
+    private static final BitField dialog        = BitFieldFactory.getInstance(0x10);
+    // whether to apply automatic styles to outlines
+    private static final BitField applystyles   = BitFieldFactory.getInstance(0x20);
+    // whether summary rows will appear below detail in outlines
+    private static final BitField rowsumsbelow  = BitFieldFactory.getInstance(0x40);
+    // whether summary rows will appear right of the detail in outlines
+    private static final BitField rowsumsright  = BitFieldFactory.getInstance(0x80);
+    // whether to fit stuff to the page
+    private static final BitField fittopage     = BitFieldFactory.getInstance(0x01);
 
     // bit 2 reserved
-    private static final BitField displayguts   = BitFieldFactory.getInstance(0x06); // whether to display outline symbols (in the gutters)
+    // whether to display outline symbols (in the gutters)
+    private static final BitField displayguts   = BitFieldFactory.getInstance(0x06);
 
     // bits 4-5 reserved
-    private static final BitField alternateexpression = BitFieldFactory.getInstance(0x40); // whether to use alternate expression eval
-    private static final BitField alternateformula    = BitFieldFactory.getInstance(0x80); // whether to use alternate formula entry
+    // whether to use alternate expression eval
+    private static final BitField alternateexpression = BitFieldFactory.getInstance(0x40);
+    // whether to use alternate formula entry
+    private static final BitField alternateformula    = BitFieldFactory.getInstance(0x80);
 
-    public WSBoolRecord() {
+    // crappy names are because this is really one big short field (2byte)
+    private byte field_1_wsbool;
+    // but the docs inconsistently use it as 2 separate bytes
+    private byte field_2_wsbool;
+
+
+    public WSBoolRecord() {}
+
+    public WSBoolRecord(WSBoolRecord other) {
+        super(other);
+        field_1_wsbool = other.field_1_wsbool;
+        field_2_wsbool = other.field_2_wsbool;
     }
 
     public WSBoolRecord(RecordInputStream in) {
@@ -292,10 +306,16 @@ public final class WSBoolRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
-      WSBoolRecord rec = new WSBoolRecord();
-      rec.field_1_wsbool = field_1_wsbool;
-      rec.field_2_wsbool = field_2_wsbool;
-      return rec;
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public WSBoolRecord clone() {
+        return copy();
+    }
+
+    @Override
+    public WSBoolRecord copy() {
+      return new WSBoolRecord(this);
     }
 }

@@ -19,20 +19,22 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * NUMBER (0x0203) Contains a numeric cell value. <P>
- * REFERENCE:  PG 334 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)<P>
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Jason Height (jheight at chariot dot net dot au)
+ * NUMBER (0x0203) Contains a numeric cell value.
  */
-public final class NumberRecord extends CellRecord implements Cloneable {
+public final class NumberRecord extends CellRecord {
     public static final short sid = 0x0203;
+
     private double field_4_value;
 
     /** Creates new NumberRecord */
-    public NumberRecord() {
-        // fields uninitialised
+    public NumberRecord() {}
+
+    public NumberRecord(NumberRecord other) {
+        super(other);
+        field_4_value = other.field_4_value;
     }
 
     /**
@@ -87,10 +89,15 @@ public final class NumberRecord extends CellRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public NumberRecord clone() {
-      NumberRecord rec = new NumberRecord();
-      copyBaseFields(rec);
-      rec.field_4_value = field_4_value;
-      return rec;
+        return copy();
+    }
+
+    @Override
+    public NumberRecord copy() {
+        return new NumberRecord(this);
     }
 }

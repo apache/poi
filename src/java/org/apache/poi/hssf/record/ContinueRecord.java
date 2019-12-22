@@ -19,21 +19,24 @@ package org.apache.poi.hssf.record;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        Continue Record(0x003C) - Helper class used primarily for SST Records <P>
- * Description:  handles overflow for prior record in the input
- *               stream; content is tailored to that prior record<P>
- * @author Marc Johnson (mjohnson at apache dot org)
- * @author Andrew C. Oliver (acoliver at apache dot org)
- * @author Csaba Nagy (ncsaba at yahoo dot com)
+ * Helper class used primarily for SST Records<p>
+ *
+ * handles overflow for prior record in the input stream; content is tailored to that prior record
  */
-public final class ContinueRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x003C;
+public final class ContinueRecord extends StandardRecord {
+    public static final short sid = 0x003C;
     private byte[] _data;
 
     public ContinueRecord(byte[] data) {
         _data = data;
+    }
+
+    public ContinueRecord(ContinueRecord other) {
+        super(other);
+        _data = (other._data == null) ? null : other._data.clone();
     }
 
     protected int getDataSize() {
@@ -70,7 +73,15 @@ public final class ContinueRecord extends StandardRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public ContinueRecord clone() {
-        return new ContinueRecord(_data);
+        return copy();
+    }
+
+    @Override
+    public ContinueRecord copy() {
+        return new ContinueRecord(this);
     }
 }

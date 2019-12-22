@@ -33,8 +33,11 @@ import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.util.LittleEndian;
 
-public class XOREncryptor extends Encryptor implements Cloneable {
-    protected XOREncryptor() {
+public class XOREncryptor extends Encryptor {
+    protected XOREncryptor() {}
+
+    protected XOREncryptor(XOREncryptor other) {
+        super(other);
     }
 
     @Override
@@ -81,8 +84,8 @@ public class XOREncryptor extends Encryptor implements Cloneable {
     }
 
     @Override
-    public XOREncryptor clone() throws CloneNotSupportedException {
-        return (XOREncryptor)super.clone();
+    public XOREncryptor copy() {
+        return new XOREncryptor(this);
     }
 
     private class XORCipherOutputStream extends ChunkedCipherOutputStream {

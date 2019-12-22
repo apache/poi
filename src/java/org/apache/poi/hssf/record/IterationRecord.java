@@ -21,28 +21,30 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Title:        Iteration Record (0x0011)<p>
- * Description:  Tells whether to iterate over formula calculations or not
- *               (if a formula is dependent upon another formula's result)
- *               (odd feature for something that can only have 32 elements in
- *                a formula!)<p>
- * REFERENCE:  PG 325 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * Tells whether to iterate over formula calculations or not.
+ * If a formula is dependent upon another formula's result.
+ * (odd feature for something that can only have 32 elements in a formula!)
  */
-public final class IterationRecord extends StandardRecord implements Cloneable {
-    public final static short sid = 0x0011;
+public final class IterationRecord extends StandardRecord {
+    public static final short sid = 0x0011;
 
     private static final BitField iterationOn = BitFieldFactory.getInstance(0x0001);
 
     private int _flags;
 
+    public IterationRecord(IterationRecord other) {
+        super(other);
+        _flags = other._flags;
+    }
+
     public IterationRecord(boolean iterateOn) {
         _flags = iterationOn.setBoolean(0, iterateOn);
     }
 
-    public IterationRecord(RecordInputStream in)
-    {
+    public IterationRecord(RecordInputStream in) {
         _flags = in.readShort();
     }
 
@@ -85,7 +87,15 @@ public final class IterationRecord extends StandardRecord implements Cloneable {
     }
 
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public IterationRecord clone() {
-        return new IterationRecord(getIteration());
+        return copy();
+    }
+
+    @Override
+    public IterationRecord copy() {
+        return new IterationRecord(this);
     }
 }

@@ -21,25 +21,26 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * Indicates the chart-group index for a series. The order probably defines the mapping.  
- * So the 0th record probably means the 0th series. The only field in this of course defines which chart 
+ * Indicates the chart-group index for a series. The order probably defines the mapping.
+ * So the 0th record probably means the 0th series. The only field in this of course defines which chart
  * group the 0th series (for instance) would map to. Confusing?  Well thats because it is.  (p 522 BCG)
  */
 public final class SeriesToChartGroupRecord extends StandardRecord {
-    public final static short      sid                             = 0x1045;
-    private  short      field_1_chartGroupIndex;
+    public static final short sid = 0x1045;
+    private short field_1_chartGroupIndex;
 
+    public SeriesToChartGroupRecord() {}
 
-    public SeriesToChartGroupRecord()
-    {
-
+    public SeriesToChartGroupRecord(SeriesToChartGroupRecord other) {
+        super(other);
+        field_1_chartGroupIndex = other.field_1_chartGroupIndex;
     }
 
-    public SeriesToChartGroupRecord(RecordInputStream in)
-    {
-        field_1_chartGroupIndex        = in.readShort();
+    public SeriesToChartGroupRecord(RecordInputStream in) {
+        field_1_chartGroupIndex = in.readShort();
     }
 
     public String toString()
@@ -50,7 +51,7 @@ public final class SeriesToChartGroupRecord extends StandardRecord {
         buffer.append("    .chartGroupIndex      = ")
             .append("0x").append(HexDump.toHex(  getChartGroupIndex ()))
             .append(" (").append( getChartGroupIndex() ).append(" )");
-        buffer.append(System.getProperty("line.separator")); 
+        buffer.append(System.getProperty("line.separator"));
 
         buffer.append("[/SeriesToChartGroup]\n");
         return buffer.toString();
@@ -69,15 +70,18 @@ public final class SeriesToChartGroupRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
-        SeriesToChartGroupRecord rec = new SeriesToChartGroupRecord();
-    
-        rec.field_1_chartGroupIndex = field_1_chartGroupIndex;
-        return rec;
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public SeriesToChartGroupRecord clone() {
+        return copy();
     }
 
-
-
+    @Override
+    public SeriesToChartGroupRecord copy() {
+        return new SeriesToChartGroupRecord(this);
+    }
 
     /**
      * Get the chart group index field for the SeriesToChartGroup record.

@@ -24,10 +24,9 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
- * Title:        Deleted Area 3D Ptg - 3D referecnce (Sheet + Area)<P>
- * Description:  Defined a area in Extern Sheet. <P>
- * REFERENCE:  <P>
- * @author Patrick Luby
+ * Deleted Area 3D Ptg - 3D referecnce (Sheet + Area)<p>
+ * Defined a area in Extern Sheet.
+ *
  * @version 1.0-pre
  */
 public final class DeletedArea3DPtg extends OperandPtg implements WorkbookDependentFormula {
@@ -41,7 +40,7 @@ public final class DeletedArea3DPtg extends OperandPtg implements WorkbookDepend
 		unused1 = 0;
 		unused2 = 0;
 	}
-	
+
 	public DeletedArea3DPtg(LittleEndianInput in)  {
 		field_1_index_extern_sheet = in.readUShort();
 		unused1 = in.readInt();
@@ -64,5 +63,11 @@ public final class DeletedArea3DPtg extends OperandPtg implements WorkbookDepend
 		out.writeShort(field_1_index_extern_sheet);
 		out.writeInt(unused1);
 		out.writeInt(unused2);
+	}
+
+	@Override
+	public DeletedArea3DPtg copy() {
+		// immutable
+		return this;
 	}
 }

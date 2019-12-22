@@ -22,30 +22,29 @@ import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
 
 /**
- * Title:        Format Record (0x041E)<p>
- * Description:  describes a number format -- those goofy strings like $(#,###)<p>
- *
- * REFERENCE:  PG 317 Microsoft Excel 97 Developer's Kit (ISBN: 1-57231-498-2)
+ * Describes a number format -- those goofy strings like $(#,###)
  */
-public final class FormatRecord extends StandardRecord implements Cloneable {
+public final class FormatRecord extends StandardRecord {
 
     private static final POILogger logger = POILogFactory.getLogger(FormatRecord.class);
 
-    public final static short sid = 0x041E;
+    public static final short sid = 0x041E;
 
     private final int field_1_index_code;
     private final boolean field_3_hasMultibyte;
     private final String field_4_formatstring;
 
     private FormatRecord(FormatRecord other) {
+        super(other);
         field_1_index_code = other.field_1_index_code;
         field_3_hasMultibyte = other.field_3_hasMultibyte;
         field_4_formatstring = other.field_4_formatstring;
     }
-    
+
     public FormatRecord(int indexCode, String fs) {
         field_1_index_code = indexCode;
         field_4_formatstring = fs;
@@ -114,9 +113,17 @@ public final class FormatRecord extends StandardRecord implements Cloneable {
     public short getSid() {
         return sid;
     }
-    
+
     @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public FormatRecord clone() {
+        return copy();
+    }
+
+    @Override
+    public FormatRecord copy() {
         return new FormatRecord(this);
     }
 

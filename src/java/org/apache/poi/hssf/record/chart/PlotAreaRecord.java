@@ -20,26 +20,20 @@ package org.apache.poi.hssf.record.chart;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * preceeds and identifies a frame as belonging to the plot area.
  */
 public final class PlotAreaRecord extends StandardRecord {
-    public final static short      sid                             = 0x1035;
+    public static final short sid = 0x1035;
 
-
-    public PlotAreaRecord()
-    {
-
-    }
+    public PlotAreaRecord() {}
 
     /**
      * @param in unused (since this record has no data)
      */
-    public PlotAreaRecord(RecordInputStream in)
-    {
-
-    }
+    public PlotAreaRecord(RecordInputStream in) {}
 
     public String toString()
     {
@@ -63,7 +57,16 @@ public final class PlotAreaRecord extends StandardRecord {
         return sid;
     }
 
-    public Object clone() {
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public PlotAreaRecord clone() {
+        return copy();
+    }
+
+    @Override
+    public PlotAreaRecord copy() {
         return new PlotAreaRecord();
     }
 }

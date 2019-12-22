@@ -34,38 +34,7 @@ import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.SCLRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.VCenterRecord;
-import org.apache.poi.hssf.record.chart.AreaFormatRecord;
-import org.apache.poi.hssf.record.chart.AxisLineFormatRecord;
-import org.apache.poi.hssf.record.chart.AxisOptionsRecord;
-import org.apache.poi.hssf.record.chart.AxisParentRecord;
-import org.apache.poi.hssf.record.chart.AxisRecord;
-import org.apache.poi.hssf.record.chart.AxisUsedRecord;
-import org.apache.poi.hssf.record.chart.BarRecord;
-import org.apache.poi.hssf.record.chart.BeginRecord;
-import org.apache.poi.hssf.record.chart.CategorySeriesAxisRecord;
-import org.apache.poi.hssf.record.chart.ChartFormatRecord;
-import org.apache.poi.hssf.record.chart.ChartRecord;
-import org.apache.poi.hssf.record.chart.ChartTitleFormatRecord;
-import org.apache.poi.hssf.record.chart.DataFormatRecord;
-import org.apache.poi.hssf.record.chart.DefaultDataLabelTextPropertiesRecord;
-import org.apache.poi.hssf.record.chart.EndRecord;
-import org.apache.poi.hssf.record.chart.FontBasisRecord;
-import org.apache.poi.hssf.record.chart.FontIndexRecord;
-import org.apache.poi.hssf.record.chart.FrameRecord;
-import org.apache.poi.hssf.record.chart.LegendRecord;
-import org.apache.poi.hssf.record.chart.LineFormatRecord;
-import org.apache.poi.hssf.record.chart.LinkedDataRecord;
-import org.apache.poi.hssf.record.chart.PlotAreaRecord;
-import org.apache.poi.hssf.record.chart.PlotGrowthRecord;
-import org.apache.poi.hssf.record.chart.SeriesIndexRecord;
-import org.apache.poi.hssf.record.chart.SeriesRecord;
-import org.apache.poi.hssf.record.chart.SeriesTextRecord;
-import org.apache.poi.hssf.record.chart.SeriesToChartGroupRecord;
-import org.apache.poi.hssf.record.chart.SheetPropertiesRecord;
-import org.apache.poi.hssf.record.chart.TextRecord;
-import org.apache.poi.hssf.record.chart.TickRecord;
-import org.apache.poi.hssf.record.chart.UnitsRecord;
-import org.apache.poi.hssf.record.chart.ValueRangeRecord;
+import org.apache.poi.hssf.record.chart.*;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.AreaPtgBase;
 import org.apache.poi.ss.formula.ptg.Ptg;
@@ -74,8 +43,6 @@ import org.apache.poi.ss.util.CellRangeAddressBase;
 
 /**
  * Has methods for construction of a chart object.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
 public final class HSSFChart {
     private HSSFSheet sheet;
@@ -235,11 +202,11 @@ public final class HSSFChart {
                     lastSeries.insertData(linkedDataRecord);
                 }
             }
-            
+
             if (lastChart == null) {
                 continue;
             }
-            
+
             if (r instanceof LegendRecord) {
                 lastChart.legendRecord = (LegendRecord)r;
             } else if(r instanceof SeriesRecord) {
@@ -1254,30 +1221,30 @@ public final class HSSFChart {
             } else if (record instanceof EndRecord) {
                 newRecord = new EndRecord();
             } else if (record instanceof SeriesRecord) {
-                SeriesRecord seriesRecord = (SeriesRecord) ((SeriesRecord)record).clone();
+                SeriesRecord seriesRecord = (SeriesRecord) ((SeriesRecord)record).copy();
                 newSeries = new HSSFSeries(seriesRecord);
                 newRecord = seriesRecord;
             } else if (record instanceof LinkedDataRecord) {
-                LinkedDataRecord linkedDataRecord = ((LinkedDataRecord)record).clone();
+                LinkedDataRecord linkedDataRecord = ((LinkedDataRecord)record).copy();
                 if (newSeries != null) {
                     newSeries.insertData(linkedDataRecord);
                 }
                 newRecord = linkedDataRecord;
             } else if (record instanceof DataFormatRecord) {
-                DataFormatRecord dataFormatRecord = ((DataFormatRecord)record).clone();
+                DataFormatRecord dataFormatRecord = ((DataFormatRecord)record).copy();
 
                 dataFormatRecord.setSeriesIndex((short)seriesIdx) ;
                 dataFormatRecord.setSeriesNumber((short)seriesIdx) ;
 
                 newRecord = dataFormatRecord;
             } else if (record instanceof SeriesTextRecord) {
-                SeriesTextRecord seriesTextRecord = (SeriesTextRecord) ((SeriesTextRecord)record).clone();
+                SeriesTextRecord seriesTextRecord = (SeriesTextRecord) ((SeriesTextRecord)record).copy();
                 if (newSeries != null) {
                     newSeries.setSeriesTitleText(seriesTextRecord);
                 }
                 newRecord = seriesTextRecord;
             } else if (record instanceof Record) {
-                newRecord = (Record) ((Record)record).clone();
+                newRecord = (Record) ((Record)record).copy();
             }
 
             if (newRecord != null)

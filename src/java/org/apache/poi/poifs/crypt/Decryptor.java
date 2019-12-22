@@ -24,7 +24,6 @@ import java.util.function.Supplier;
 
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
-import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.common.usermodel.GenericRecord;
@@ -32,18 +31,26 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.GenericRecordUtil;
 
-public abstract class Decryptor implements Cloneable, GenericRecord {
+public abstract class Decryptor implements GenericRecord {
     @SuppressWarnings({"squid:S2068"})
     public static final String DEFAULT_PASSWORD="VelvetSweatshop";
     public static final String DEFAULT_POIFS_ENTRY="EncryptedPackage";
-    
+
     protected EncryptionInfo encryptionInfo;
     private SecretKey secretKey;
     private byte[] verifier, integrityHmacKey, integrityHmacValue;
 
-    protected Decryptor() {
+    protected Decryptor() {}
+
+    protected Decryptor(Decryptor other) {
+        encryptionInfo = other.encryptionInfo;
+        // secretKey is immutable
+        secretKey = other.secretKey;
+        verifier = (other.verifier == null) ? null : other.verifier.clone();
+        integrityHmacKey = (other.integrityHmacKey == null) ? null : other.integrityHmacKey.clone();
+        integrityHmacValue = (other.integrityHmacValue == null) ? null : other.integrityHmacValue.clone();
     }
-    
+
     /**
      * Return a stream with decrypted data.
      * <p>
@@ -60,7 +67,7 @@ public abstract class Decryptor implements Cloneable, GenericRecord {
 
     /**
      * Wraps a stream for decryption<p>
-     * 
+     *
      * As we are handling streams and don't know the total length beforehand,
      * it's the callers duty to care for the length of the entries.
      *
@@ -96,7 +103,7 @@ public abstract class Decryptor implements Cloneable, GenericRecord {
     throws GeneralSecurityException {
         throw new EncryptedDocumentException("this decryptor doesn't support initCipherForBlock");
     }
-    
+
     public abstract boolean verifyPassword(String password)
         throws GeneralSecurityException;
 
@@ -137,7 +144,7 @@ public abstract class Decryptor implements Cloneable, GenericRecord {
     public SecretKey getSecretKey() {
         return secretKey;
     }
-    
+
     public byte[] getIntegrityHmacKey() {
         return integrityHmacKey;
     }
@@ -167,11 +174,11 @@ public abstract class Decryptor implements Cloneable, GenericRecord {
     protected int getBlockSizeInBytes() {
         return encryptionInfo.getHeader().getBlockSize();
     }
-    
+
     protected int getKeySizeInBytes() {
         return encryptionInfo.getHeader().getKeySize()/8;
     }
-    
+
     public EncryptionInfo getEncryptionInfo() {
         return encryptionInfo;
     }
@@ -180,16 +187,7 @@ public abstract class Decryptor implements Cloneable, GenericRecord {
         this.encryptionInfo = encryptionInfo;
     }
 
-    @Override
-    public Decryptor clone() throws CloneNotSupportedException {
-        Decryptor other = (Decryptor)super.clone();
-        other.integrityHmacKey = integrityHmacKey.clone();
-        other.integrityHmacValue = integrityHmacValue.clone();
-        other.verifier = verifier.clone();
-        other.secretKey = new SecretKeySpec(secretKey.getEncoded(), secretKey.getAlgorithm());
-        // encryptionInfo is set from outside
-        return other;
-    }
+    public abstract Decryptor copy();
 
     @Override
     public Map<String, Supplier<?>> getGenericProperties() {

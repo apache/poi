@@ -21,13 +21,12 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
- * ENDBLOCK - Chart Future Record Type End Block (0x0853)<br>
- * 
- * @author Patrick Cheng
+ * ENDBLOCK - Chart Future Record Type End Block (0x0853)
  */
-public final class ChartEndBlockRecord extends StandardRecord implements Cloneable {
+public final class ChartEndBlockRecord extends StandardRecord {
 	public static final short sid = 0x0853;
 
 	private short rt;
@@ -35,9 +34,16 @@ public final class ChartEndBlockRecord extends StandardRecord implements Cloneab
 	private short iObjectKind;
 	private byte[] unused;
 
-	public ChartEndBlockRecord() {
+	public ChartEndBlockRecord() {}
+
+	public ChartEndBlockRecord(ChartEndBlockRecord other) {
+		super(other);
+		rt = other.rt;
+		grbitFrt = other.grbitFrt;
+		iObjectKind = other.iObjectKind;
+		unused = (other.unused == null) ? null : other.unused.clone();
 	}
-	
+
 	public ChartEndBlockRecord(RecordInputStream in) {
 		rt = in.readShort();
 		grbitFrt = in.readShort();
@@ -83,16 +89,17 @@ public final class ChartEndBlockRecord extends StandardRecord implements Cloneab
 		buffer.append("[/ENDBLOCK]\n");
 		return buffer.toString();
 	}
-	
+
 	@Override
+	@SuppressWarnings("squid:S2975")
+	@Deprecated
+	@Removal(version = "5.0.0")
 	public ChartEndBlockRecord clone() {
-		ChartEndBlockRecord record = new ChartEndBlockRecord();
-		
-		record.rt = rt ;
-		record.grbitFrt = grbitFrt ;
-		record.iObjectKind = iObjectKind ;
-		record.unused = unused.clone() ;
-		
-		return record;
+		return copy();
+	}
+
+	@Override
+	public ChartEndBlockRecord copy() {
+		return new ChartEndBlockRecord(this);
 	}
 }

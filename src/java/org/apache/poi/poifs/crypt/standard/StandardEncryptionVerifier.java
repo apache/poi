@@ -25,12 +25,12 @@ import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInput;
 
 /**
- * Used when checking if a key is valid for a document 
+ * Used when checking if a key is valid for a document
  */
-public class StandardEncryptionVerifier extends EncryptionVerifier implements EncryptionRecord, Cloneable {
+public class StandardEncryptionVerifier extends EncryptionVerifier implements EncryptionRecord {
     private static final int SPIN_COUNT = 50000;
     private final int verifierHashSize;
-    
+
     protected StandardEncryptionVerifier(LittleEndianInput is, StandardEncryptionHeader header) {
         int saltSize = is.readInt();
 
@@ -56,15 +56,20 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
         setCipherAlgorithm(header.getCipherAlgorithm());
         setChainingMode(header.getChainingMode());
         setEncryptedKey(null);
-        setHashAlgorithm(header.getHashAlgorithm()); 
+        setHashAlgorithm(header.getHashAlgorithm());
     }
-    
+
     protected StandardEncryptionVerifier(CipherAlgorithm cipherAlgorithm, HashAlgorithm hashAlgorithm, int keyBits, int blockSize, ChainingMode chainingMode) {
         setCipherAlgorithm(cipherAlgorithm);
         setHashAlgorithm(hashAlgorithm);
         setChainingMode(chainingMode);
         setSpinCount(SPIN_COUNT);
         verifierHashSize = hashAlgorithm.hashSize;
+    }
+
+    protected StandardEncryptionVerifier(StandardEncryptionVerifier other) {
+        super(other);
+        verifierHashSize = other.verifierHashSize;
     }
 
     // make method visible for this package
@@ -75,7 +80,7 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
         }
         super.setSalt(salt);
     }
-    
+
     // make method visible for this package
     @Override
     protected void setEncryptedVerifier(byte[] encryptedVerifier) {
@@ -87,7 +92,7 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
     protected void setEncryptedVerifierHash(byte[] encryptedVerifierHash) {
         super.setEncryptedVerifierHash(encryptedVerifierHash);
     }
-    
+
     @Override
     public void write(LittleEndianByteArrayOutputStream bos) {
         // see [MS-OFFCRYPTO] - 2.3.4.9
@@ -95,7 +100,7 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
         assert(salt.length == 16);
         bos.writeInt(salt.length); // salt size
         bos.write(salt);
-        
+
         // The resulting Verifier value MUST be an array of 16 bytes.
         byte[] encryptedVerifier = getEncryptedVerifier();
         assert(encryptedVerifier.length == 16);
@@ -121,7 +126,7 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
     }
 
     @Override
-    public StandardEncryptionVerifier clone() throws CloneNotSupportedException {
-        return (StandardEncryptionVerifier)super.clone();
+    public StandardEncryptionVerifier copy() {
+        return new StandardEncryptionVerifier(this);
     }
 }

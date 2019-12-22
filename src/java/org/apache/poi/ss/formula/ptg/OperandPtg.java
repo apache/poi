@@ -17,10 +17,13 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-/**
- * @author Josh Micich
- */
-public abstract class OperandPtg extends Ptg implements Cloneable {
+public abstract class OperandPtg extends Ptg {
+
+	protected OperandPtg() {}
+
+	protected OperandPtg(OperandPtg other) {
+		super(other);
+	}
 
 	/**
 	 * All Operand {@link Ptg}s are classified ('relative', 'value', 'array')
@@ -28,11 +31,7 @@ public abstract class OperandPtg extends Ptg implements Cloneable {
 	public final boolean isBaseToken() {
 		return false;
 	}
-	public final OperandPtg copy() {
-		try {
-			return (OperandPtg) clone();
-		} catch (CloneNotSupportedException e) {
-			throw new RuntimeException(e);
-		}
-	}
+
+	@Override
+	public abstract OperandPtg copy();
 }

@@ -20,13 +20,14 @@ package org.apache.poi.hssf.record;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
+import org.apache.poi.util.Removal;
 
 /**
  * MsoDrawingSelection (0x00ED)<p>
  * Reference:
  * [MS-OGRAPH].pdf sec 2.4.69
  */
-public final class DrawingSelectionRecord extends StandardRecord implements Cloneable {
+public final class DrawingSelectionRecord extends StandardRecord {
 	public static final short sid = 0x00ED;
 
 	/**
@@ -44,6 +45,12 @@ public final class DrawingSelectionRecord extends StandardRecord implements Clon
 		private final int _type;
 		private final int _length;
 
+		public OfficeArtRecordHeader(OfficeArtRecordHeader other) {
+			_verAndInstance = other._verAndInstance;
+			_type = other._type;
+			_length = other._length;
+		}
+
 		public OfficeArtRecordHeader(LittleEndianInput in) {
 			_verAndInstance = in.readUShort();
 			_type = in.readUShort();
@@ -57,11 +64,10 @@ public final class DrawingSelectionRecord extends StandardRecord implements Clon
 		}
 
 		public String debugFormatAsString() {
-			StringBuilder sb = new StringBuilder(32);
-			sb.append("ver+inst=").append(HexDump.shortToHex(_verAndInstance));
-			sb.append(" type=").append(HexDump.shortToHex(_type));
-			sb.append(" len=").append(HexDump.intToHex(_length));
-			return sb.toString();
+			return
+				"ver+inst=" + HexDump.shortToHex(_verAndInstance) +
+				" type=" + HexDump.shortToHex(_type) +
+				" len=" + HexDump.intToHex(_length);
 		}
 	}
 
@@ -93,7 +99,7 @@ public final class DrawingSelectionRecord extends StandardRecord implements Clon
 	}
 
 	protected int getDataSize() {
-		return OfficeArtRecordHeader.ENCODED_SIZE 
+		return OfficeArtRecordHeader.ENCODED_SIZE
 			+ 12 // 3 int fields
 			+ _shapeIds.length * 4;
 	}
@@ -109,7 +115,15 @@ public final class DrawingSelectionRecord extends StandardRecord implements Clon
 	}
 
 	@Override
+	@SuppressWarnings("squid:S2975")
+	@Deprecated
+	@Removal(version = "5.0.0")
 	public DrawingSelectionRecord clone() {
+		return copy();
+	}
+
+	@Override
+	public DrawingSelectionRecord copy() {
 		// currently immutable
 		return this;
 	}
