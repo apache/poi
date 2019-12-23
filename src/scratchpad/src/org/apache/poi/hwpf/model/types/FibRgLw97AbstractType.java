@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model.types;
 
+import java.util.Objects;
+
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
@@ -23,17 +25,17 @@ import org.apache.poi.util.LittleEndian;
  * The FibRgLw97 structure is the third section of the FIB. This contains an array of
         4-byte values. <p>Class and fields descriptions are quoted from Microsoft Office Word
         97-2007 Binary File Format and [MS-DOC] - v20110608 Word (.doc) Binary File Format
-    
+
  * <p>
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
  *       remove the record in src/types/definitions.
  * <p>
- * This class is internal. It content or properties may change without notice 
+ * This class is internal. It content or properties may change without notice
  * due to changes in our knowledge of internal Microsoft Word binary structures.
 
  * @author Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary File Format
         Specification [*.doc] and [MS-DOC] - v20110608 Word (.doc) Binary File Format
-    
+
  */
 @Internal
 public abstract class FibRgLw97AbstractType
@@ -205,33 +207,12 @@ public abstract class FibRgLw97AbstractType
     }
 
     @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + field_1_cbMac;
-        result = prime * result + field_2_reserved1;
-        result = prime * result + field_3_reserved2;
-        result = prime * result + field_4_ccpText;
-        result = prime * result + field_5_ccpFtn;
-        result = prime * result + field_6_ccpHdd;
-        result = prime * result + field_7_reserved3;
-        result = prime * result + field_8_ccpAtn;
-        result = prime * result + field_9_ccpEdn;
-        result = prime * result + field_10_ccpTxbx;
-        result = prime * result + field_11_ccpHdrTxbx;
-        result = prime * result + field_12_reserved4;
-        result = prime * result + field_13_reserved5;
-        result = prime * result + field_14_reserved6;
-        result = prime * result + field_15_reserved7;
-        result = prime * result + field_16_reserved8;
-        result = prime * result + field_17_reserved9;
-        result = prime * result + field_18_reserved10;
-        result = prime * result + field_19_reserved11;
-        result = prime * result + field_20_reserved12;
-        result = prime * result + field_21_reserved13;
-        result = prime * result + field_22_reserved14;
-        return result;
+    public int hashCode() {
+        return Objects.hash(field_1_cbMac, field_2_reserved1, field_3_reserved2, field_4_ccpText, field_5_ccpFtn,
+            field_6_ccpHdd, field_7_reserved3, field_8_ccpAtn, field_9_ccpEdn, field_10_ccpTxbx, field_11_ccpHdrTxbx,
+            field_12_reserved4, field_13_reserved5, field_14_reserved6, field_15_reserved7, field_16_reserved8,
+            field_17_reserved9, field_18_reserved10, field_19_reserved11, field_20_reserved12, field_21_reserved13,
+            field_22_reserved14);
     }
 
     public String toString()

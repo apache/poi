@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
+import java.util.Objects;
+
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.ddf.EscherContainerRecord;
@@ -162,18 +164,18 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     public boolean isVisible() {
         return _note.getFlags() == NoteRecord.NOTE_VISIBLE;
     }
-    
+
     @Override
     public CellAddress getAddress() {
         return new CellAddress(getRow(), getColumn());
     }
-    
+
     @Override
     public void setAddress(CellAddress address) {
         setRow(address.getRow());
         setColumn(address.getColumn());
     }
-    
+
     @Override
     public void setAddress(int row, int col) {
         setRow(row);
@@ -246,7 +248,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
     protected NoteRecord getNoteRecord() {
         return _note;
     }
-    
+
     /**
      * Do we know which cell this comment belongs to?
      */
@@ -288,14 +290,14 @@ public class HSSFComment extends HSSFTextbox implements Comment {
         NoteRecord note = (NoteRecord) getNoteRecord().cloneViaReserialise();
         return new HSSFComment(spContainer, obj, txo, note);
     }
-    
+
     public void setBackgroundImage(int pictureIndex){
         setPropertyValue(new EscherSimpleProperty( EscherPropertyTypes.FILL__PATTERNTEXTURE, false, true, pictureIndex));
         setPropertyValue(new EscherSimpleProperty( EscherPropertyTypes.FILL__FILLTYPE, false, false, FILL_TYPE_PICTURE));
         EscherBSERecord bse = getPatriarch().getSheet().getWorkbook().getWorkbook().getBSERecord(pictureIndex);
         bse.setRef(bse.getRef() + 1);
     }
-    
+
     public void resetBackgroundImage(){
         EscherSimpleProperty property = getOptRecord().lookup(EscherPropertyTypes.FILL__PATTERNTEXTURE);
         if (null != property){
@@ -305,7 +307,7 @@ public class HSSFComment extends HSSFTextbox implements Comment {
         }
         setPropertyValue(new EscherSimpleProperty( EscherPropertyTypes.FILL__FILLTYPE, false, false, FILL_TYPE_SOLID));
     }
-    
+
     public int getBackgroundImageId(){
         EscherSimpleProperty property = getOptRecord().lookup(EscherPropertyTypes.FILL__PATTERNTEXTURE);
         return property == null ? 0 : property.getPropertyValue();
@@ -332,6 +334,6 @@ public class HSSFComment extends HSSFTextbox implements Comment {
 
     @Override
     public int hashCode() {
-        return ((getRow()*17) + getColumn())*31;
+        return Objects.hash(getRow(),getColumn());
     }
 }

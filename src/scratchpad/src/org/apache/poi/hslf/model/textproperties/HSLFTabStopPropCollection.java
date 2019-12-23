@@ -21,6 +21,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.apache.poi.sl.usermodel.TabStop.TabStopType;
@@ -123,7 +124,7 @@ public class HSLFTabStopPropCollection extends TextProp {
 
     @Override
     public int hashCode() {
-        return 31 * super.hashCode() + tabStops.hashCode();
+        return Objects.hash(super.hashCode(), tabStops);
     }
 
     @Override

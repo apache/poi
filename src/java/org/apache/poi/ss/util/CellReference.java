@@ -20,6 +20,7 @@ package org.apache.poi.ss.util;
 import static org.apache.poi.util.StringUtil.endsWithIgnoreCase;
 
 import java.util.Locale;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -32,11 +33,11 @@ import org.apache.poi.ss.usermodel.Cell;
  *  cell references, and POI usermodel style row=0, column=0
  *  style references. Handles sheet-based and sheet-free references
  *  as well, eg "Sheet1!A1" and "$B$72"</p>
- *  
+ *
  *  <p>Use <tt>CellReference</tt> when the concept of
  * relative/absolute does apply (such as a cell reference in a formula).
  * Use {@link CellAddress} when you want to refer to the location of a cell in a sheet
- * when the concept of relative/absolute does not apply (such as the anchor location 
+ * when the concept of relative/absolute does not apply (such as the anchor location
  * of a cell comment).
  * <tt>CellReference</tt>s have a concept of "sheet", while <tt>CellAddress</tt>es do not.</p>
  */
@@ -370,7 +371,7 @@ public class CellReference {
     private static final class CellRefParts {
         final String sheetName;
         final String rowRef;
-        final String colRef; 
+        final String colRef;
 
         private CellRefParts(String sheetName, String rowRef, String colRef) {
             this.sheetName = sheetName;
@@ -381,7 +382,7 @@ public class CellReference {
 
     /**
      * Separates the sheet name, row, and columns from a cell reference string.
-     * 
+     *
      * @param reference is a string that identifies a cell within the sheet or workbook
      * reference may not refer to a cell in an external workbook
      * reference may be absolute or relative.
@@ -584,12 +585,6 @@ public class CellReference {
 
     @Override
     public int hashCode() {
-        int result = 17;
-        result = 31 * result + _rowIndex;
-        result = 31 * result + _colIndex;
-        result = 31 * result + (_isRowAbs ? 1 : 0);
-        result = 31 * result + (_isColAbs ? 1 : 0);
-        result = 31 * result + (_sheetName == null ? 0 : _sheetName.hashCode());
-        return result;
+        return Objects.hash(_rowIndex,_colIndex,_isRowAbs,_isColAbs,_sheetName);
     }
 }

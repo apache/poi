@@ -22,6 +22,7 @@ import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.util.Removal;
@@ -348,10 +349,7 @@ public class HSSFColor implements Color {
 
     @Override
     public int hashCode() {
-        int result = color != null ? color.hashCode() : 0;
-        result = 31 * result + index;
-        result = 31 * result + index2;
-        return result;
+        return Objects.hash(color,index,index2);
     }
 
     /**

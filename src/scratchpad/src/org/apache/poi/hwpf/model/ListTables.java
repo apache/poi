@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.NoSuchElementException;
+import java.util.Objects;
 
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -162,13 +163,8 @@ public final class ListTables
   }
 
     @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + _listMap.hashCode();
-        result = prime * result + ( ( _plfLfo == null ) ? 0 : _plfLfo.hashCode() );
-        return result;
+    public int hashCode() {
+        return Objects.hash(_listMap,_plfLfo);
     }
 
     @Override

@@ -17,6 +17,8 @@
 
 package org.apache.poi.hpsf;
 
+import java.util.Objects;
+
 /**
  * This class represents custom properties in the document summary
  * information stream. The difference to normal properties is that custom
@@ -39,7 +41,7 @@ public class CustomProperty extends Property
     /**
      * Creates a {@link CustomProperty} without a name by copying the
      * underlying {@link Property}' attributes.
-     * 
+     *
      * @param property the property to copy
      */
     public CustomProperty(final Property property) {
@@ -48,7 +50,7 @@ public class CustomProperty extends Property
 
     /**
      * Creates a {@link CustomProperty} with a name.
-     * 
+     *
      * @param property This property's attributes are copied to the new custom
      *        property.
      * @param name The new custom property's name.
@@ -81,11 +83,11 @@ public class CustomProperty extends Property
      * Compares two custom properties for equality. The method returns
      * {@code true} if all attributes of the two custom properties are
      * equal.
-     * 
+     *
      * @param o The custom property to compare with.
      * @return {@code true} if both custom properties are equal, else
      *         {@code false}.
-     * 
+     *
      * @see java.util.AbstractSet#equals(java.lang.Object)
      */
     public boolean equalsContents(final Object o) {
@@ -108,11 +110,11 @@ public class CustomProperty extends Property
      */
     @Override
     public int hashCode() {
-        return (int) this.getID();
+        return Objects.hash(name, getID());
     }
 
     @Override
     public boolean equals(Object o) {
-        return (o instanceof CustomProperty) ? equalsContents(o) : false;
+        return (o instanceof CustomProperty) && equalsContents(o);
     }
 }

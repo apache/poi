@@ -18,6 +18,8 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Objects;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianOutput;
@@ -1799,18 +1801,17 @@ public final class ExtendedFormatRecord extends StandardRecord {
 
 	@Override
     public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + field_1_font_index;
-		result = prime * result + field_2_format_index;
-		result = prime * result + field_3_cell_options;
-		result = prime * result + field_4_alignment_options;
-		result = prime * result + field_5_indention_options;
-		result = prime * result + field_6_border_options;
-		result = prime * result + field_7_palette_options;
-		result = prime * result + field_8_adtl_palette_options;
-		result = prime * result + field_9_fill_palette_options;
-		return result;
+        return Objects.hash(
+            field_1_font_index
+            , field_2_format_index
+            , field_3_cell_options
+            , field_4_alignment_options
+            , field_5_indention_options
+            , field_6_border_options
+            , field_7_palette_options
+            , field_8_adtl_palette_options
+            , field_9_fill_palette_options
+        );
 	}
 
 	/**

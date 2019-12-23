@@ -18,6 +18,8 @@
 package org.apache.poi.hwpf.model.types;
 
 
+import java.util.Objects;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.Internal;
 
@@ -27,17 +29,17 @@ import org.apache.poi.util.Internal;
         an LVL or LVLF and HTML lists. The values do not define list properties. <p>Class and
         fields descriptions are quoted from [MS-DOC] -- v20110315 Word (.doc) Binary File Format
         specification
-    
+
  * <p>
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
  *       remove the record in src/types/definitions.
  * <p>
- * This class is internal. It content or properties may change without notice 
+ * This class is internal. It content or properties may change without notice
  * due to changes in our knowledge of internal Microsoft Word binary structures.
 
  * @author Sergey Vladimirov; according to [MS-DOC] -- v20110315 Word (.doc) Binary File Format
         specification
-    
+
  */
 @Internal
 public abstract class GrfhicAbstractType
@@ -98,12 +100,8 @@ public abstract class GrfhicAbstractType
     }
 
     @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + field_1_grfhic;
-        return result;
+    public int hashCode() {
+        return Objects.hash(field_1_grfhic);
     }
 
     public String toString()

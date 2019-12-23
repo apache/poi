@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.apache.poi.common.Duplicatable;
@@ -334,13 +335,7 @@ public class TextPropCollection implements GenericRecord, Duplicatable {
     }
 
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + charactersCovered;
-        result = prime * result + maskSpecial;
-        result = prime * result + indentLevel;
-        result = prime * result + textProps.hashCode();
-        return result;
+	    return Objects.hash(charactersCovered,maskSpecial,indentLevel,textProps);
     }
     /**
      * compares most properties apart of the covered characters length

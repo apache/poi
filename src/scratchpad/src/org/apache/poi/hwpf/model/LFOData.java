@@ -28,7 +28,7 @@ import org.apache.poi.util.LittleEndian;
 /**
  * The LFOData structure contains the Main Document CP of the corresponding LFO,
  * as well as an array of LVL override data.
- * 
+ *
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 @Internal
@@ -104,8 +104,6 @@ public class LFOData
 
     @Override
     public int hashCode() {
-        int result = _cp;
-        result = 31 * result + Arrays.hashCode(_rgLfoLvl);
-        return result;
+        return Arrays.deepHashCode(_rgLfoLvl);
     }
 }

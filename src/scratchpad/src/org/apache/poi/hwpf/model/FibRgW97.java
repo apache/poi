@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
+import java.util.Objects;
+
 import org.apache.poi.hwpf.model.types.FibRgW97AbstractType;
 import org.apache.poi.util.Internal;
 
@@ -24,7 +26,7 @@ import org.apache.poi.util.Internal;
  * <p>
  * Class and fields descriptions are quoted from Microsoft Office Word 97-2007
  * Binary File Format and [MS-DOC] - v20110608 Word (.doc) Binary File Format.
- * 
+ *
  * @author Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary
  *         File Format Specification [*.doc] and [MS-DOC] - v20110608 Word
  *         (.doc) Binary File Format
@@ -86,25 +88,10 @@ public class FibRgW97 extends FibRgW97AbstractType
 
     @Override
     @SuppressWarnings( "deprecation" )
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + field_10_reserved10;
-        result = prime * result + field_11_reserved11;
-        result = prime * result + field_12_reserved12;
-        result = prime * result + field_13_reserved13;
-        result = prime * result + field_14_lidFE;
-        result = prime * result + field_1_reserved1;
-        result = prime * result + field_2_reserved2;
-        result = prime * result + field_3_reserved3;
-        result = prime * result + field_4_reserved4;
-        result = prime * result + field_5_reserved5;
-        result = prime * result + field_6_reserved6;
-        result = prime * result + field_7_reserved7;
-        result = prime * result + field_8_reserved8;
-        result = prime * result + field_9_reserved9;
-        return result;
+    public int hashCode() {
+        return Objects.hash(field_1_reserved1, field_2_reserved2, field_3_reserved3, field_4_reserved4,
+            field_5_reserved5, field_6_reserved6, field_7_reserved7, field_8_reserved8, field_9_reserved9,
+            field_10_reserved10, field_11_reserved11, field_12_reserved12, field_13_reserved13, field_14_lidFE);
     }
 
 }

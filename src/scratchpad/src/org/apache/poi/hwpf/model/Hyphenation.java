@@ -17,6 +17,8 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.util.Objects;
+
 import org.apache.poi.hwpf.model.types.HRESIAbstractType;
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.util.Internal;
@@ -24,7 +26,7 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * Hyphenation. Substructure of the {@link CharacterProperties}.
- * 
+ *
  * @author Sergey Vladimirov ( vlsergey {at} gmail {dot} com )
  */
 @Internal
@@ -79,13 +81,8 @@ public final class Hyphenation extends HRESIAbstractType implements Cloneable
     }
 
     @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + field_1_hres;
-        result = prime * result + field_2_chHres;
-        return result;
+    public int hashCode() {
+        return Objects.hash(field_1_hres,field_2_chHres);
     }
 
     public boolean isEmpty()

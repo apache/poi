@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
+import java.util.Objects;
+
 import org.apache.poi.hwpf.model.types.StdfBaseAbstractType;
 import org.apache.poi.util.Internal;
 
@@ -59,16 +61,8 @@ class StdfBase extends StdfBaseAbstractType
     }
 
     @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + field_1_info1;
-        result = prime * result + field_2_info2;
-        result = prime * result + field_3_info3;
-        result = prime * result + field_4_bchUpe;
-        result = prime * result + field_5_grfstd;
-        return result;
+    public int hashCode() {
+        return Objects.hash(field_1_info1, field_2_info2, field_3_info3, field_4_bchUpe, field_5_grfstd);
     }
 
     public byte[] serialize()

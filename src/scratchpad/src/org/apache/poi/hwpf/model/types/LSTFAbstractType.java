@@ -27,17 +27,17 @@ import org.apache.poi.util.LittleEndian;
  * The LSTF structure contains formatting properties that apply to an entire list.
         <p>Class and fields descriptions are quoted from Microsoft Office Word 97-2007 Binary
         File Format and [MS-DOC] - v20110608 Word (.doc) Binary File Format
-    
+
  * <p>
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
  *       remove the record in src/types/definitions.
  * <p>
- * This class is internal. It content or properties may change without notice 
+ * This class is internal. It content or properties may change without notice
  * due to changes in our knowledge of internal Microsoft Word binary structures.
 
  * @author Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary File Format
         Specification [*.doc] and [MS-DOC] - v20110608 Word (.doc) Binary File Format
-    
+
  */
 @Internal
 public abstract class LSTFAbstractType
@@ -123,16 +123,8 @@ public abstract class LSTFAbstractType
     }
 
     @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + field_1_lsid;
-        result = prime * result + field_2_tplc;
-        result = prime * result + Arrays.hashCode( field_3_rgistdPara );
-        result = prime * result + field_4_flags;
-        result = prime * result + field_5_grfhic.hashCode();
-        return result;
+    public int hashCode() {
+        return Arrays.deepHashCode(new Object[]{field_1_lsid, field_2_tplc, field_3_rgistdPara, field_4_flags, field_5_grfhic});
     }
 
     public String toString()

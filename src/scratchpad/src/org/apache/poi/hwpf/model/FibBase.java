@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
+import java.util.Objects;
+
 import org.apache.poi.hwpf.model.types.FibBaseAbstractType;
 import org.apache.poi.util.Internal;
 
@@ -25,7 +27,7 @@ import org.apache.poi.util.Internal;
  * <p>
  * Class and fields descriptions are quoted from Microsoft Office Word 97-2007
  * Binary File Format and [MS-DOC] - v20110608 Word (.doc) Binary File Format.
- * 
+ *
  * @author Andrew C. Oliver; Sergey Vladimirov; according to Microsoft Office
  *         Word 97-2007 Binary File Format Specification [*.doc] and [MS-DOC] -
  *         v20110608 Word (.doc) Binary File Format
@@ -84,22 +86,8 @@ public class FibBase extends FibBaseAbstractType {
     @Override
     @SuppressWarnings( "deprecation" )
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + field_10_flags2;
-        result = prime * result + field_11_Chs;
-        result = prime * result + field_12_chsTables;
-        result = prime * result + field_13_fcMin;
-        result = prime * result + field_14_fcMac;
-        result = prime * result + field_1_wIdent;
-        result = prime * result + field_2_nFib;
-        result = prime * result + field_3_unused;
-        result = prime * result + field_4_lid;
-        result = prime * result + field_5_pnNext;
-        result = prime * result + field_6_flags1;
-        result = prime * result + field_7_nFibBack;
-        result = prime * result + field_8_lKey;
-        result = prime * result + field_9_envr;
-        return result;
+        return Objects.hash(field_1_wIdent, field_2_nFib, field_3_unused, field_4_lid, field_5_pnNext, field_6_flags1,
+            field_7_nFibBack, field_8_lKey, field_9_envr, field_10_flags2, field_11_Chs, field_12_chsTables,
+            field_13_fcMin, field_14_fcMac);
     }
 }

@@ -18,6 +18,8 @@
 package org.apache.poi.hwpf.model.types;
 
 
+import java.util.Objects;
+
 import org.apache.poi.hwpf.model.Colorref;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -26,16 +28,16 @@ import org.apache.poi.util.LittleEndian;
  * The Shd structure specifies the colors and pattern that are used for background shading. <p>Class
         and
         fields descriptions are quoted from Word (.doc) Binary File Format by Microsoft Corporation
-    
+
  * <p>
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
  *       remove the record in src/types/definitions.
  * <p>
- * This class is internal. It content or properties may change without notice 
+ * This class is internal. It content or properties may change without notice
  * due to changes in our knowledge of internal Microsoft Word binary structures.
 
  * @author Sergey Vladimirov; according to Word (.doc) Binary File Format by Microsoft Corporation.
-    
+
  */
 @Internal
 public abstract class SHDAbstractType
@@ -100,14 +102,8 @@ public abstract class SHDAbstractType
     }
 
     @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + field_1_cvFore.hashCode();
-        result = prime * result + field_2_cvBack.hashCode();
-        result = prime * result + field_3_ipat;
-        return result;
+    public int hashCode() {
+        return Objects.hash(field_1_cvFore,field_2_cvBack,field_3_ipat);
     }
 
     public String toString()

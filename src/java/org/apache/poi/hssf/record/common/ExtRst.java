@@ -222,20 +222,7 @@ public class ExtRst implements Comparable<ExtRst> {
 
     @Override
     public int hashCode() {
-        int hash = reserved;
-        hash = 31*hash+formattingFontIndex;
-        hash = 31*hash+formattingOptions;
-        hash = 31*hash+numberOfRuns;
-        hash = 31*hash+phoneticText.hashCode();
-
-        if (phRuns != null) {
-            for (PhRun ph : phRuns) {
-                hash = 31*hash+ph.phoneticTextFirstCharacterOffset;
-                hash = 31*hash+ph.realTextFirstCharacterOffset;
-                hash = 31*hash+ph.realTextLength;
-            }
-        }
-        return hash;
+        return Arrays.deepHashCode(new Object[]{reserved, formattingFontIndex, formattingOptions, numberOfRuns, phoneticText, phRuns});
     }
 
     public ExtRst copy() {

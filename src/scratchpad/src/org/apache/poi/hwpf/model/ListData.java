@@ -80,7 +80,7 @@ public final class ListData
 
     /**
      * Gets the level associated to a particular List at a particular index.
-     * 
+     *
      * @param index
      *            1-based index
      * @return a list level
@@ -106,13 +106,8 @@ public final class ListData
     }
 
     @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + Arrays.hashCode( _levels );
-        result = prime * result + ( ( _lstf == null ) ? 0 : _lstf.hashCode() );
-        return result;
+    public int hashCode() {
+        return Arrays.deepHashCode(new Object[]{_levels,_lstf});
     }
 
     public int numLevels()

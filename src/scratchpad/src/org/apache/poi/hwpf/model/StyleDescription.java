@@ -220,13 +220,7 @@ public final class StyleDescription {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((_name == null) ? 0 : _name.hashCode());
-        result = prime * result
-                + ((_stdfBase == null) ? 0 : _stdfBase.hashCode());
-        result = prime * result + Arrays.hashCode(_upxs);
-        return result;
+        return Arrays.deepHashCode(new Object[]{_name,_stdfBase,_upxs});
     }
 
     @Override

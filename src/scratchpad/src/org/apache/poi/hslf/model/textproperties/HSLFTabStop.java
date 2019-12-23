@@ -18,6 +18,7 @@
 package org.apache.poi.hslf.model.textproperties;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.apache.poi.common.Duplicatable;
@@ -100,11 +101,7 @@ public class HSLFTabStop implements TabStop, Duplicatable, GenericRecord {
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + position;
-        result = prime * result + ((type == null) ? 0 : type.hashCode());
-        return result;
+        return Objects.hash(position, type);
     }
 
     @Override

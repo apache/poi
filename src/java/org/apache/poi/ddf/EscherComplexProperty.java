@@ -197,7 +197,7 @@ public class EscherComplexProperty extends EscherProperty {
 
     @Override
     public int hashCode() {
-        return getId() * 11;
+        return Arrays.deepHashCode(new Object[]{complexData, getId()});
     }
 
     @Override

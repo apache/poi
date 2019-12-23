@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -219,7 +220,7 @@ public class Section {
             if (id == PropertyIDMap.PID_CODEPAGE) {
                 continue;
             }
-            
+
             int pLen = propLen(offset2Id, off, size);
             leis.setReadIndex(Math.toIntExact(this._offset + off));
 
@@ -241,7 +242,7 @@ public class Section {
                 setProperty(new Property(id, leis, pLen, codepage));
             }
         }
-        
+
         sectionBytes.write(src, Math.toIntExact(_offset), size);
         padSectionBytes();
     }
@@ -621,7 +622,7 @@ public class Section {
                 dic = PropertyIDMap.getDocumentSummaryInformationProperties();
             }
         }
-        
+
         return (dic != null && dic.containsKey(pid)) ? dic.get(pid) : PropertyIDMap.UNDEFINED;
     }
 
@@ -940,16 +941,8 @@ public class Section {
      */
     @Override
     public int hashCode() {
-        long hashCode = 0;
-        hashCode += getFormatID().hashCode();
-        final Property[] pa = getProperties();
-        for (Property aPa : pa) {
-            hashCode += aPa.hashCode();
-        }
-        return Math.toIntExact(hashCode & 0x0ffffffffL);
+        return Arrays.deepHashCode(new Object[]{getFormatID(),getProperties()});
     }
-
-
 
     /**
      * @see Object#toString()
@@ -958,7 +951,7 @@ public class Section {
     public String toString() {
         return toString(null);
     }
-    
+
     public String toString(PropertyIDMap idMap) {
         final StringBuilder b = new StringBuilder();
         final Property[] pa = getProperties();

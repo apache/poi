@@ -27,7 +27,7 @@ import org.apache.poi.util.Internal;
  * <p>
  * Class and fields descriptions are quoted from Microsoft Office Word 97-2007
  * Binary File Format and [MS-DOC] - v20110608 Word (.doc) Binary File Format
- * 
+ *
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 @Internal
@@ -111,38 +111,12 @@ public class PICF extends PICFAbstractType
     }
 
     @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + field_10_padding2;
-        result = prime * result + field_11_dxaGoal;
-        result = prime * result + field_12_dyaGoal;
-        result = prime * result + field_13_mx;
-        result = prime * result + field_14_my;
-        result = prime * result + field_15_dxaReserved1;
-        result = prime * result + field_16_dyaReserved1;
-        result = prime * result + field_17_dxaReserved2;
-        result = prime * result + field_18_dyaReserved2;
-        result = prime * result + field_19_fReserved;
-        result = prime * result + field_1_lcb;
-        result = prime * result + field_20_bpp;
-        result = prime * result + Arrays.hashCode( field_21_brcTop80 );
-        result = prime * result + Arrays.hashCode( field_22_brcLeft80 );
-        result = prime * result + Arrays.hashCode( field_23_brcBottom80 );
-        result = prime * result + Arrays.hashCode( field_24_brcRight80 );
-        result = prime * result + field_25_dxaReserved3;
-        result = prime * result + field_26_dyaReserved3;
-        result = prime * result + field_27_cProps;
-        result = prime * result + field_2_cbHeader;
-        result = prime * result + field_3_mm;
-        result = prime * result + field_4_xExt;
-        result = prime * result + field_5_yExt;
-        result = prime * result + field_6_swHMF;
-        result = prime * result + field_7_grf;
-        result = prime * result + field_8_padding;
-        result = prime * result + field_9_mmPM;
-        return result;
+    public int hashCode() {
+        return Arrays.deepHashCode(new Object[]{field_1_lcb, field_2_cbHeader, field_3_mm, field_4_xExt, field_5_yExt,
+            field_6_swHMF, field_7_grf, field_8_padding, field_9_mmPM, field_10_padding2, field_11_dxaGoal,
+            field_12_dyaGoal, field_13_mx, field_14_my, field_15_dxaReserved1, field_16_dyaReserved1, field_17_dxaReserved2,
+            field_18_dyaReserved2, field_19_fReserved, field_20_bpp, field_21_brcTop80, field_22_brcLeft80,
+            field_23_brcBottom80, field_24_brcRight80, field_25_dxaReserved3, field_26_dyaReserved3, field_27_cProps});
     }
 
 }

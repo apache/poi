@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.binary;
 
+import java.util.Objects;
+
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.Internal;
 
@@ -97,12 +99,7 @@ public class XSSFHyperlinkRecord {
 
     @Override
     public int hashCode() {
-        int result = cellRangeAddress != null ? cellRangeAddress.hashCode() : 0;
-        result = 31 * result + (relId != null ? relId.hashCode() : 0);
-        result = 31 * result + (location != null ? location.hashCode() : 0);
-        result = 31 * result + (toolTip != null ? toolTip.hashCode() : 0);
-        result = 31 * result + (display != null ? display.hashCode() : 0);
-        return result;
+        return Objects.hash(cellRangeAddress,relId,location,toolTip,display);
     }
 
     @Override

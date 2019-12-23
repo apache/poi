@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
+import java.util.Objects;
+
 import org.apache.poi.hwpf.model.types.StshifAbstractType;
 import org.apache.poi.util.Internal;
 
@@ -67,20 +69,9 @@ class Stshif extends StshifAbstractType
     }
 
     @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + field_1_cstd;
-        result = prime * result + field_2_cbSTDBaseInFile;
-        result = prime * result + field_3_info3;
-        result = prime * result + field_4_stiMaxWhenSaved;
-        result = prime * result + field_5_istdMaxFixedWhenSaved;
-        result = prime * result + field_6_nVerBuiltInNamesWhenSaved;
-        result = prime * result + field_7_ftcAsci;
-        result = prime * result + field_8_ftcFE;
-        result = prime * result + field_9_ftcOther;
-        return result;
+    public int hashCode() {
+        return Objects.hash(field_1_cstd, field_2_cbSTDBaseInFile, field_3_info3, field_4_stiMaxWhenSaved,
+            field_5_istdMaxFixedWhenSaved, field_6_nVerBuiltInNamesWhenSaved, field_7_ftcAsci, field_8_ftcFE, field_9_ftcOther);
     }
 
     public byte[] serialize()

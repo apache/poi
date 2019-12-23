@@ -18,21 +18,23 @@
 
 package org.apache.poi.hwpf.model.types;
 
+import java.util.Objects;
+
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
  * The FibRgLw95 structure is the third section of the FIB for Word95.
-    
+
  * <p>
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
  *       remove the record in src/types/definitions.
  * <p>
- * This class is internal. It content or properties may change without notice 
+ * This class is internal. It content or properties may change without notice
  * due to changes in our knowledge of internal Microsoft Word binary structures.
 
  * @author Sergey Vladimirov
-    
+
  */
 @Internal
 public abstract class FibRgLw95AbstractType
@@ -155,25 +157,10 @@ public abstract class FibRgLw95AbstractType
     }
 
     @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + field_1_cbMac;
-        result = prime * result + field_2_reserved1;
-        result = prime * result + field_3_reserved2;
-        result = prime * result + field_4_reserved3;
-        result = prime * result + field_5_reserved4;
-        result = prime * result + field_6_ccpText;
-        result = prime * result + field_7_ccpFtn;
-        result = prime * result + field_8_ccpHdd;
-        result = prime * result + field_9_ccpMcr;
-        result = prime * result + field_10_ccpAtn;
-        result = prime * result + field_11_ccpEdn;
-        result = prime * result + field_12_ccpTxbx;
-        result = prime * result + field_13_ccpHdrTxbx;
-        result = prime * result + field_14_reserved5;
-        return result;
+    public int hashCode() {
+        return Objects.hash(field_1_cbMac, field_2_reserved1, field_3_reserved2, field_4_reserved3, field_5_reserved4,
+            field_6_ccpText, field_7_ccpFtn, field_8_ccpHdd, field_9_ccpMcr, field_10_ccpAtn, field_11_ccpEdn,
+            field_12_ccpTxbx, field_13_ccpHdrTxbx, field_14_reserved5);
     }
 
     public String toString()

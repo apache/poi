@@ -19,6 +19,7 @@ package org.apache.poi.openxml4j.opc;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Objects;
 
 /**
  * A part relationship.
@@ -129,11 +130,7 @@ public final class PackageRelationship {
 
 	@Override
 	public int hashCode() {
-		return this.id.hashCode()
-                + this.relationshipType.hashCode()
-				+ (this.source == null ? 0 : this.source.hashCode())
-                + this.targetMode.hashCode()
-				+ this.targetUri.hashCode();
+		return Objects.hash(id,relationshipType,source,targetMode,targetUri);
 	}
 
 	/* Getters */

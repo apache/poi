@@ -18,6 +18,7 @@
 package org.apache.poi.ddf;
 
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
@@ -35,7 +36,7 @@ public class EscherSimpleProperty extends EscherProperty
     /**
      * The id is distinct from the actual property number.  The id includes the property number the blip id
      * flag and an indicator whether the property is complex or not.
-     * 
+     *
      * @param id the property id
      * @param propertyValue the property value
      */
@@ -57,7 +58,7 @@ public class EscherSimpleProperty extends EscherProperty
 
     /**
      * Constructs a new escher property.  The three parameters are combined to form a property id.
-     * 
+     *
      * @param propertyNumber the property number
      * @param isComplex true, if its a complex property
      * @param isBlipId true, if its a blip
@@ -142,9 +143,8 @@ public class EscherSimpleProperty extends EscherProperty
      * require the use of such things.
      */
     @Override
-    public int hashCode()
-    {
-        return propertyValue;
+    public int hashCode() {
+        return Objects.hash(propertyValue, getId());
     }
 
     @Override

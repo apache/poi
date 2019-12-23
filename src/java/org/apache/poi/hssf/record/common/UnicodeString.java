@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.apache.poi.common.Duplicatable;
@@ -103,13 +104,8 @@ public class UnicodeString implements Comparable<UnicodeString>, Duplicatable {
         }
     }
 
-    public int hashCode()
-    {
-        int stringHash = 0;
-        if (field_3_string != null) {
-            stringHash = field_3_string.hashCode();
-        }
-        return field_1_charCount + stringHash;
+    public int hashCode() {
+        return Objects.hash(field_1_charCount, field_3_string);
     }
 
     /**

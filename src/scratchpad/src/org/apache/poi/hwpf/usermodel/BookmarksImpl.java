@@ -24,6 +24,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 import org.apache.poi.hwpf.model.BookmarksTables;
 import org.apache.poi.hwpf.model.GenericPropertyNode;
@@ -31,7 +32,7 @@ import org.apache.poi.hwpf.model.PropertyNode;
 
 /**
  * Implementation of user-friendly interface for document bookmarks
- * 
+ *
  * @author Sergey Vladimirov (vlsergey {at} gmail {doc} com)
  */
 public class BookmarksImpl implements Bookmarks
@@ -100,9 +101,8 @@ public class BookmarksImpl implements Bookmarks
         }
 
         @Override
-        public int hashCode()
-        {
-            return 31 + ( first == null ? 0 : first.hashCode() );
+        public int hashCode() {
+            return Objects.hash(first);
         }
 
         public void setName( String name )

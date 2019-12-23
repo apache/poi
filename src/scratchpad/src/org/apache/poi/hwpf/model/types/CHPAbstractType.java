@@ -34,7 +34,7 @@ import org.apache.poi.util.Internal;
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
  *       remove the record in src/types/definitions.
  * <p>
- * This class is internal. It content or properties may change without notice 
+ * This class is internal. It content or properties may change without notice
  * due to changes in our knowledge of internal Microsoft Word binary structures.
 
  * @author S. Ryan Ackley
@@ -423,89 +423,20 @@ public abstract class CHPAbstractType
     }
 
     @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + field_1_grpfChp;
-        result = prime * result + field_2_hps;
-        result = prime * result + field_3_ftcAscii;
-        result = prime * result + field_4_ftcFE;
-        result = prime * result + field_5_ftcOther;
-        result = prime * result + field_6_ftcBi;
-        result = prime * result + field_7_dxaSpace;
-        result = prime * result
-                + ((field_8_cv == null) ? 0 : field_8_cv.hashCode());
-        result = prime * result + field_9_ico;
-        result = prime * result + field_10_pctCharWidth;
-        result = prime * result + field_11_lidDefault;
-        result = prime * result + field_12_lidFE;
-        result = prime * result + field_13_kcd;
-        result = prime * result + ( field_14_fUndetermine? 1231 : 1237 );
-        result = prime * result + field_15_iss;
-        result = prime * result + ( field_16_fSpecSymbol? 1231 : 1237 );
-        result = prime * result + field_17_idct;
-        result = prime * result + field_18_idctHint;
-        result = prime * result + field_19_kul;
-        result = prime * result
-                + ((field_20_hresi == null) ? 0 : field_20_hresi.hashCode());
-        result = prime * result + field_21_hpsKern;
-        result = prime * result + field_22_hpsPos;
-        result = prime * result
-                + ((field_23_shd == null) ? 0 : field_23_shd.hashCode());
-        result = prime * result
-                + ((field_24_brc == null) ? 0 : field_24_brc.hashCode());
-        result = prime * result + field_25_ibstRMark;
-        result = prime * result + field_26_sfxtText;
-        result = prime * result + ( field_27_fDblBdr? 1231 : 1237 );
-        result = prime * result + ( field_28_fBorderWS? 1231 : 1237 );
-        result = prime * result + field_29_ufel;
-        result = prime * result + field_30_copt;
-        result = prime * result + field_31_hpsAsci;
-        result = prime * result + field_32_hpsFE;
-        result = prime * result + field_33_hpsBi;
-        result = prime * result + field_34_ftcSym;
-        result = prime * result + field_35_xchSym;
-        result = prime * result + field_36_fcPic;
-        result = prime * result + field_37_fcObj;
-        result = prime * result + field_38_lTagObj;
-        result = prime * result + field_39_fcData;
-        result = prime * result
-                + ((field_40_hresiOld == null) ? 0 : field_40_hresiOld.hashCode());
-        result = prime * result + field_41_ibstRMarkDel;
-        result = prime * result
-                + ((field_42_dttmRMark == null) ? 0 : field_42_dttmRMark.hashCode());
-        result = prime * result
-                + ((field_43_dttmRMarkDel == null) ? 0 : field_43_dttmRMarkDel.hashCode());
-        result = prime * result + field_44_istd;
-        result = prime * result + field_45_idslRMReason;
-        result = prime * result + field_46_idslReasonDel;
-        result = prime * result + field_47_cpg;
-        result = prime * result + field_48_Highlight;
-        result = prime * result + field_49_CharsetFlags;
-        result = prime * result + field_50_chse;
-        result = prime * result + ( field_51_fPropRMark? 1231 : 1237 );
-        result = prime * result + field_52_ibstPropRMark;
-        result = prime * result
-                + ((field_53_dttmPropRMark == null) ? 0 : field_53_dttmPropRMark.hashCode());
-        result = prime * result + ( field_54_fConflictOrig? 1231 : 1237 );
-        result = prime * result + ( field_55_fConflictOtherDel? 1231 : 1237 );
-        result = prime * result + field_56_wConflict;
-        result = prime * result + field_57_IbstConflict;
-        result = prime * result
-                + ((field_58_dttmConflict == null) ? 0 : field_58_dttmConflict.hashCode());
-        result = prime * result + ( field_59_fDispFldRMark? 1231 : 1237 );
-        result = prime * result + field_60_ibstDispFldRMark;
-        result = prime * result
-                + ((field_61_dttmDispFldRMark == null) ? 0 : field_61_dttmDispFldRMark.hashCode());
-        result = prime * result + Arrays.hashCode( field_62_xstDispFldRMark );
-        result = prime * result + field_63_fcObjp;
-        result = prime * result + field_64_lbrCRJ;
-        result = prime * result + ( field_65_fSpecVanish? 1231 : 1237 );
-        result = prime * result + ( field_66_fHasOldProps? 1231 : 1237 );
-        result = prime * result + ( field_67_fSdtVanish? 1231 : 1237 );
-        result = prime * result + field_68_wCharScale;
-        return result;
+    public int hashCode() {
+        return Arrays.deepHashCode(new Object[]{field_1_grpfChp, field_2_hps, field_3_ftcAscii, field_4_ftcFE, field_5_ftcOther,
+           field_6_ftcBi, field_7_dxaSpace, field_8_cv, field_9_ico, field_10_pctCharWidth, field_11_lidDefault,
+           field_12_lidFE, field_13_kcd, field_14_fUndetermine, field_15_iss, field_16_fSpecSymbol, field_17_idct,
+           field_18_idctHint, field_19_kul, field_20_hresi, field_21_hpsKern, field_22_hpsPos, field_23_shd,
+           field_24_brc, field_25_ibstRMark, field_26_sfxtText, field_27_fDblBdr, field_28_fBorderWS, field_29_ufel,
+           field_30_copt, field_31_hpsAsci, field_32_hpsFE, field_33_hpsBi, field_34_ftcSym, field_35_xchSym,
+           field_36_fcPic, field_37_fcObj, field_38_lTagObj, field_39_fcData, field_40_hresiOld, field_41_ibstRMarkDel,
+           field_42_dttmRMark, field_43_dttmRMarkDel, field_44_istd, field_45_idslRMReason, field_46_idslReasonDel,
+           field_47_cpg, field_48_Highlight, field_49_CharsetFlags, field_50_chse, field_51_fPropRMark,
+           field_52_ibstPropRMark, field_53_dttmPropRMark, field_54_fConflictOrig, field_55_fConflictOtherDel,
+           field_56_wConflict, field_57_IbstConflict, field_58_dttmConflict, field_59_fDispFldRMark,
+           field_60_ibstDispFldRMark, field_61_dttmDispFldRMark, field_62_xstDispFldRMark, field_63_fcObjp,
+           field_64_lbrCRJ, field_65_fSpecVanish, field_66_fHasOldProps, field_67_fSdtVanish, field_68_wCharScale});
     }
 
     public String toString()
@@ -922,7 +853,7 @@ public abstract class CHPAbstractType
     /**
      * Emphasis mark.
      *
-     * @return One of 
+     * @return One of
      * <li>{@link #KCD_NON}
      * <li>{@link #KCD_DOT}
      * <li>{@link #KCD_COMMA}
@@ -939,7 +870,7 @@ public abstract class CHPAbstractType
      * Emphasis mark.
      *
      * @param field_13_kcd
-     *        One of 
+     *        One of
      * <li>{@link #KCD_NON}
      * <li>{@link #KCD_DOT}
      * <li>{@link #KCD_COMMA}
@@ -973,7 +904,7 @@ public abstract class CHPAbstractType
     /**
      * Superscript/subscript indices.
      *
-     * @return One of 
+     * @return One of
      * <li>{@link #ISS_NONE}
      * <li>{@link #ISS_SUPERSCRIPTED}
      * <li>{@link #ISS_SUBSCRIPTED}
@@ -988,7 +919,7 @@ public abstract class CHPAbstractType
      * Superscript/subscript indices.
      *
      * @param field_15_iss
-     *        One of 
+     *        One of
      * <li>{@link #ISS_NONE}
      * <li>{@link #ISS_SUPERSCRIPTED}
      * <li>{@link #ISS_SUBSCRIPTED}
@@ -1056,7 +987,7 @@ public abstract class CHPAbstractType
     /**
      * Underline code.
      *
-     * @return One of 
+     * @return One of
      * <li>{@link #KUL_NONE}
      * <li>{@link #KUL_SINGLE}
      * <li>{@link #KUL_BY_WORD}
@@ -1088,7 +1019,7 @@ public abstract class CHPAbstractType
      * Underline code.
      *
      * @param field_19_kul
-     *        One of 
+     *        One of
      * <li>{@link #KUL_NONE}
      * <li>{@link #KUL_SINGLE}
      * <li>{@link #KUL_BY_WORD}
@@ -1227,7 +1158,7 @@ public abstract class CHPAbstractType
     /**
      * Text animation.
      *
-     * @return One of 
+     * @return One of
      * <li>{@link #SFXTTEXT_NO}
      * <li>{@link #SFXTTEXT_LAS_VEGAS_LIGHTS}
      * <li>{@link #SFXTTEXT_BACKGROUND_BLINK}
@@ -1246,7 +1177,7 @@ public abstract class CHPAbstractType
      * Text animation.
      *
      * @param field_26_sfxtText
-     *        One of 
+     *        One of
      * <li>{@link #SFXTTEXT_NO}
      * <li>{@link #SFXTTEXT_LAS_VEGAS_LIGHTS}
      * <li>{@link #SFXTTEXT_BACKGROUND_BLINK}
@@ -1930,7 +1861,7 @@ public abstract class CHPAbstractType
     /**
      * Line BReak code for xchCRJ.
      *
-     * @return One of 
+     * @return One of
      * <li>{@link #LBRCRJ_NONE}
      * <li>{@link #LBRCRJ_LEFT}
      * <li>{@link #LBRCRJ_RIGHT}
@@ -1946,7 +1877,7 @@ public abstract class CHPAbstractType
      * Line BReak code for xchCRJ.
      *
      * @param field_64_lbrCRJ
-     *        One of 
+     *        One of
      * <li>{@link #LBRCRJ_NONE}
      * <li>{@link #LBRCRJ_LEFT}
      * <li>{@link #LBRCRJ_RIGHT}
@@ -2692,7 +2623,7 @@ public abstract class CHPAbstractType
 
     /**
      * Sets the itypFELayout field value.
-     * 
+     *
      */
     @Internal
     public void setItypFELayout( short value )
@@ -2701,7 +2632,7 @@ public abstract class CHPAbstractType
     }
 
     /**
-     * 
+     *
      * @return  the itypFELayout field value.
      */
     @Internal

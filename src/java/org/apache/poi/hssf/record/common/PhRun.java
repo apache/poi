@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record.common;
 
+import java.util.Objects;
+
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInput;
@@ -51,5 +53,10 @@ public class PhRun {
         out.writeShort(phoneticTextFirstCharacterOffset);
         out.writeShort(realTextFirstCharacterOffset);
         out.writeShort(realTextLength);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(phoneticTextFirstCharacterOffset, realTextFirstCharacterOffset, realTextLength);
     }
 }

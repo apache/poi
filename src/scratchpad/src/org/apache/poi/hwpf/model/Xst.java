@@ -28,7 +28,7 @@ import org.apache.poi.util.LittleEndian;
  * <p>
  * Documentation quoted from Page 424 of 621. [MS-DOC] -- v20110315 Word (.doc)
  * Binary File Format
- * 
+ *
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 public class Xst
@@ -118,13 +118,8 @@ public class Xst
     }
 
     @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + _cch;
-        result = prime * result + Arrays.hashCode( _rgtchar );
-        return result;
+    public int hashCode() {
+        return Arrays.deepHashCode(new Object[]{_cch,_rgtchar});
     }
 
     public void serialize( byte[] data, int startOffset )

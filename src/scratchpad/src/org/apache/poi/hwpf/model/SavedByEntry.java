@@ -17,6 +17,8 @@
 
 package org.apache.poi.hwpf.model;
 
+import java.util.Objects;
+
 import org.apache.poi.util.Internal;
 
 
@@ -67,12 +69,8 @@ public final class SavedByEntry
    *
    * @return the hash code.
    */
-  public int hashCode()
-  {
-    int hash = 29;
-    hash = hash * 13 + userName.hashCode();
-    hash = hash * 13 + saveLocation.hashCode();
-    return hash;
+  public int hashCode() {
+    return Objects.hash(userName,saveLocation);
   }
 
   /**

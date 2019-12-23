@@ -25,7 +25,7 @@ import org.apache.poi.util.LittleEndian;
  * This data structure is used by a paragraph to determine how it should drop
  * its first letter. I think its the visual effect that will show a giant first
  * letter to a paragraph. I've seen this used in the first paragraph of a book
- * 
+ *
  * @author Ryan Ackley
  */
 public final class DropCapSpecifier implements Cloneable
@@ -81,8 +81,7 @@ public final class DropCapSpecifier implements Cloneable
     }
 
     @Override
-    public int hashCode()
-    {
+    public int hashCode() {
         return _fdct;
     }
 

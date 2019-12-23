@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
+import java.util.Objects;
+
 import org.apache.poi.hwpf.model.types.FRDAbstractType;
 import org.apache.poi.util.Internal;
 
@@ -61,12 +63,8 @@ public final class FootnoteReferenceDescriptor extends FRDAbstractType
     }
 
     @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + field_1_nAuto;
-        return result;
+    public int hashCode() {
+        return Objects.hash(field_1_nAuto);
     }
 
     public boolean isEmpty()

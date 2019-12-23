@@ -316,7 +316,7 @@ public class TextPieceTable implements CharIndexTranslator {
 
     @Override
     public int hashCode() {
-        return _textPieces.size();
+        return _textPieces.hashCode();
     }
 
     public boolean isIndexInTable(int bytePos) {

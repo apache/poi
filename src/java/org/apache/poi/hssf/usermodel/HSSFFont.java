@@ -17,13 +17,15 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.util.Objects;
+
 import org.apache.poi.hssf.record.FontRecord;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Font;
 
 /**
  * Represents a Font used in a workbook.
- * 
+ *
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#createFont()
  * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(int)
  * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#setFont(HSSFFont)
@@ -207,7 +209,7 @@ public final class HSSFFont implements Font {
     {
         return font.getColorPaletteIndex();
     }
-    
+
     /**
      * get the color value for the font
      */
@@ -216,7 +218,7 @@ public final class HSSFFont implements Font {
        HSSFPalette pallette = wb.getCustomPalette();
        return pallette.getColor( getColor() );
     }
-    
+
     /**
      * sets the font to be bold or not
      */
@@ -227,7 +229,7 @@ public final class HSSFFont implements Font {
         else
             font.setBoldWeight(BOLDWEIGHT_NORMAL);
     }
-    
+
     /**
      * get if the font is bold or not
      */
@@ -344,11 +346,7 @@ public final class HSSFFont implements Font {
     }
 
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((font == null) ? 0 : font.hashCode());
-		result = prime * result + index;
-		return result;
+        return Objects.hash(font,index);
 	}
 
 	public boolean equals(Object obj) {

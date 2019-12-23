@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
+import java.util.Objects;
+
 import org.apache.poi.hwpf.model.types.StdfPost2000AbstractType;
 import org.apache.poi.util.Internal;
 
@@ -55,15 +57,8 @@ class StdfPost2000 extends StdfPost2000AbstractType
     }
 
     @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + field_1_info1;
-        result = prime * result
-                + (int) ( field_2_rsid ^ ( field_2_rsid >>> 32 ) );
-        result = prime * result + field_3_info3;
-        return result;
+    public int hashCode() {
+        return Objects.hash(field_1_info1, field_2_rsid, field_3_info3);
     }
 
     public byte[] serialize()

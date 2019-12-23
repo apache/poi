@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
+import java.util.Objects;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.Internal;
 
@@ -103,12 +105,8 @@ public final class PropertyModifier implements Cloneable
     }
 
     @Override
-    public int hashCode()
-    {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + value;
-        return result;
+    public int hashCode() {
+        return Objects.hash(value);
     }
 
     public boolean isComplex()

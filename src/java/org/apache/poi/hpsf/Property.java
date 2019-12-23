@@ -25,6 +25,7 @@ import java.nio.charset.Charset;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
@@ -67,10 +68,10 @@ public class Property {
     /**
      * Default codepage for {@link CodePageString CodePageStrings}
      */
-    public static final int DEFAULT_CODEPAGE = CodePageUtil.CP_WINDOWS_1252; 
-    
+    public static final int DEFAULT_CODEPAGE = CodePageUtil.CP_WINDOWS_1252;
+
     private static final POILogger LOG = POILogFactory.getLogger(Property.class);
-    
+
     /** The property's ID. */
     private long id;
 
@@ -369,13 +370,7 @@ public class Property {
      */
     @Override
     public int hashCode() {
-        long hashCode = 0;
-        hashCode += id;
-        hashCode += type;
-        if (value != null) {
-            hashCode += value.hashCode();
-        }
-        return (int) (hashCode & 0x0ffffffffL );
+        return Objects.hash(id,type,value);
 
     }
 
@@ -388,7 +383,7 @@ public class Property {
     public String toString() {
         return toString(Property.DEFAULT_CODEPAGE, null);
     }
-    
+
     public String toString(int codepage, PropertyIDMap idMap) {
         final StringBuilder b = new StringBuilder();
         b.append("Property[");
@@ -419,7 +414,7 @@ public class Property {
             } catch (Exception e) {
                 LOG.log(POILogger.WARN, "can't serialize string", e);
             }
-            
+
             // skip length field
             if(bos.size() > 2*LittleEndianConsts.INT_SIZE) {
                 final String hex = HexDump.dump(bos.toByteArray(), -2*LittleEndianConsts.INT_SIZE, 2*LittleEndianConsts.INT_SIZE);
@@ -448,7 +443,7 @@ public class Property {
                 final long sec = tu.toSeconds(l);
                 l -= TimeUnit.SECONDS.toNanos(sec);
                 final long ms  = tu.toMillis(l);
-                
+
                 String str = String.format(Locale.ROOT, "%02d:%02d:%02d.%03d",hr,min,sec,ms);
                 b.append(str);
             } else {
@@ -461,7 +456,7 @@ public class Property {
             b.append("null");
         } else {
             b.append(value);
-            
+
             String decoded = decodeValueFromID();
             if (decoded != null) {
                 b.append(" (");
@@ -479,7 +474,7 @@ public class Property {
         }
         return Variant.getVariantName(getType());
     }
-    
+
     private String decodeValueFromID() {
         try {
             switch((int)getID()) {
@@ -493,7 +488,7 @@ public class Property {
         }
         return null;
     }
-    
+
     /**
      * Writes the property to an output stream.
      *
