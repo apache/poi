@@ -50,65 +50,65 @@ public final class PublisherTextExtractor extends POIOLE2TextExtractor {
       this(new POIFSFileSystem(is));
    }
 
-	/**
-	 * Should a call to getText() return hyperlinks inline
-	 *  with the text?
-	 * Default is no
-	 */
-	public void setHyperlinksByDefault(boolean hyperlinksByDefault) {
-		this.hyperlinksByDefault = hyperlinksByDefault;
-	}
+    /**
+     * Should a call to getText() return hyperlinks inline
+     *  with the text?
+     * Default is no
+     */
+    public void setHyperlinksByDefault(boolean hyperlinksByDefault) {
+        this.hyperlinksByDefault = hyperlinksByDefault;
+    }
 
 
-	public String getText() {
-		StringBuilder text = new StringBuilder();
+    public String getText() {
+        StringBuilder text = new StringBuilder();
 
-		// Get the text from the Quill Contents
-		QCBit[] bits = doc.getQuillContents().getBits();
-		for (QCBit bit1 : bits) {
-			if (bit1 != null && bit1 instanceof QCTextBit) {
-				QCTextBit t = (QCTextBit) bit1;
-				text.append(t.getText().replace('\r', '\n'));
-			}
-		}
+        // Get the text from the Quill Contents
+        QCBit[] bits = doc.getQuillContents().getBits();
+        for (QCBit bit1 : bits) {
+            if (bit1 != null && bit1 instanceof QCTextBit) {
+                QCTextBit t = (QCTextBit) bit1;
+                text.append(t.getText().replace('\r', '\n'));
+            }
+        }
 
-		// If requested, add in the hyperlinks
-		// Ideally, we'd do these inline, but the hyperlink
-		//  positions are relative to the text area the
-		//  hyperlink is in, and we have yet to figure out
-		//  how to tie that together.
-		if(hyperlinksByDefault) {
-			for (QCBit bit : bits) {
-				if (bit != null && bit instanceof Type12) {
-					Type12 hyperlinks = (Type12) bit;
-					for (int j = 0; j < hyperlinks.getNumberOfHyperlinks(); j++) {
-						text.append("<");
-						text.append(hyperlinks.getHyperlink(j));
-						text.append(">\n");
-					}
-				}
-			}
-		}
+        // If requested, add in the hyperlinks
+        // Ideally, we'd do these inline, but the hyperlink
+        //  positions are relative to the text area the
+        //  hyperlink is in, and we have yet to figure out
+        //  how to tie that together.
+        if(hyperlinksByDefault) {
+            for (QCBit bit : bits) {
+                if (bit != null && bit instanceof Type12) {
+                    Type12 hyperlinks = (Type12) bit;
+                    for (int j = 0; j < hyperlinks.getNumberOfHyperlinks(); j++) {
+                        text.append("<");
+                        text.append(hyperlinks.getHyperlink(j));
+                        text.append(">\n");
+                    }
+                }
+            }
+        }
 
-		// Get more text
-		// TODO
+        // Get more text
+        // TODO
 
-		return text.toString();
-	}
+        return text.toString();
+    }
 
 
-	public static void main(String[] args) throws Exception {
-		if(args.length == 0) {
-			System.err.println("Use:");
-			System.err.println("  PublisherTextExtractor <file.pub>");
-		}
+    public static void main(String[] args) throws Exception {
+        if(args.length == 0) {
+            System.err.println("Use:");
+            System.err.println("  PublisherTextExtractor <file.pub>");
+        }
 
-		for (String arg : args) {
-			try (FileInputStream fis = new FileInputStream(arg)) {
-				PublisherTextExtractor te = new PublisherTextExtractor(fis);
-				System.out.println(te.getText());
-				te.close();
-			}
-		}
-	}
+        for (String arg : args) {
+            try (FileInputStream fis = new FileInputStream(arg)) {
+                PublisherTextExtractor te = new PublisherTextExtractor(fis);
+                System.out.println(te.getText());
+                te.close();
+            }
+        }
+    }
 }
