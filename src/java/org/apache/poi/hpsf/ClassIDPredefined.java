@@ -86,9 +86,16 @@ public enum ClassIDPredefined {
     /** Plain Text Persistent Handler **/
     TXT_ONLY             ("{5e941d80-bf96-11cd-b579-08002b30bfeb}", ".txt", "text/plain"),
     /** Microsoft Paint **/
-    PAINT                ("{0003000A-0000-0000-C000-000000000046}", null, null)
+    PAINT                ("{0003000A-0000-0000-C000-000000000046}", null, null),
+    /** Standard Hyperlink / STD Moniker **/
+    STD_MONIKER          ("{79EAC9D0-BAF9-11CE-8C82-00AA004BA90B}", null, null),
+    /** URL Moniker **/
+    URL_MONIKER          ("{79EAC9E0-BAF9-11CE-8C82-00AA004BA90B}", null, null),
+    /** File Moniker **/
+    FILE_MONIKER         ("{00000303-0000-0000-C000-000000000046}", null, null)
     ;
-    
+
+
     private static final Map<String,ClassIDPredefined> LOOKUP = new HashMap<>();
 
     static {
@@ -96,18 +103,18 @@ public enum ClassIDPredefined {
             LOOKUP.put(p.externalForm, p);
         }
     }
-    
+
     private final String externalForm;
     private ClassID classId;
     private final String fileExtension;
     private final String contentType;
-    
+
     ClassIDPredefined(final String externalForm, final String fileExtension, final String contentType) {
         this.externalForm = externalForm;
         this.fileExtension = fileExtension;
         this.contentType = contentType;
     }
-    
+
     public ClassID getClassID() {
         synchronized (this) {
             // TODO: init classId directly in the constructor when old statics have been removed from ClassID
@@ -125,12 +132,16 @@ public enum ClassIDPredefined {
     public String getContentType() {
         return contentType;
     }
-    
+
     public static ClassIDPredefined lookup(final String externalForm) {
         return LOOKUP.get(externalForm);
     }
 
     public static ClassIDPredefined lookup(final ClassID classID) {
         return (classID == null) ? null : LOOKUP.get(classID.toString());
+    }
+
+    public boolean equals(ClassID classID) {
+        return getClassID().equals(classID);
     }
 }

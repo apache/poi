@@ -19,9 +19,14 @@ package org.apache.poi.hssf.record;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertNotNull;
 
-import org.apache.poi.hssf.record.HyperlinkRecord.GUID;
+import java.io.ByteArrayInputStream;
+import java.io.DataInputStream;
+import java.io.IOException;
+
+import org.apache.poi.hpsf.ClassID;
+import org.apache.poi.hpsf.ClassIDPredefined;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
@@ -271,7 +276,7 @@ public final class TestHyperlinkRecord {
     };
 
 
-    private void confirmGUID(GUID expectedGuid, GUID actualGuid) {
+    private void confirmGUID(ClassID expectedGuid, ClassID actualGuid) {
 		assertEquals(expectedGuid, actualGuid);
 	}
 
@@ -283,8 +288,8 @@ public final class TestHyperlinkRecord {
         assertEquals(2, link.getLastRow());
         assertEquals(0, link.getFirstColumn());
         assertEquals(0, link.getLastColumn());
-        confirmGUID(HyperlinkRecord.STD_MONIKER, link.getGuid());
-        confirmGUID(HyperlinkRecord.URL_MONIKER, link.getMoniker());
+        confirmGUID(ClassIDPredefined.STD_MONIKER.getClassID(), link.getGuid());
+        confirmGUID(ClassIDPredefined.URL_MONIKER.getClassID(), link.getMoniker());
         assertEquals(2, link.getLabelOptions());
         int opts = HyperlinkRecord.HLINK_URL | HyperlinkRecord.HLINK_ABS | HyperlinkRecord.HLINK_LABEL;
         assertEquals(0x17, opts);
@@ -303,8 +308,8 @@ public final class TestHyperlinkRecord {
         assertEquals(0, link.getLastRow());
         assertEquals(0, link.getFirstColumn());
         assertEquals(0, link.getLastColumn());
-        confirmGUID(HyperlinkRecord.STD_MONIKER, link.getGuid());
-        confirmGUID(HyperlinkRecord.FILE_MONIKER, link.getMoniker());
+        confirmGUID(ClassIDPredefined.STD_MONIKER.getClassID(), link.getGuid());
+        confirmGUID(ClassIDPredefined.FILE_MONIKER.getClassID(), link.getMoniker());
         assertEquals(2, link.getLabelOptions());
         int opts = HyperlinkRecord.HLINK_URL | HyperlinkRecord.HLINK_LABEL;
         assertEquals(0x15, opts);
@@ -323,8 +328,8 @@ public final class TestHyperlinkRecord {
         assertEquals(1, link.getLastRow());
         assertEquals(0, link.getFirstColumn());
         assertEquals(0, link.getLastColumn());
-        confirmGUID(HyperlinkRecord.STD_MONIKER, link.getGuid());
-        confirmGUID(HyperlinkRecord.URL_MONIKER, link.getMoniker());
+        confirmGUID(ClassIDPredefined.STD_MONIKER.getClassID(), link.getGuid());
+        confirmGUID(ClassIDPredefined.URL_MONIKER.getClassID(), link.getMoniker());
         assertEquals(2, link.getLabelOptions());
         int opts = HyperlinkRecord.HLINK_URL | HyperlinkRecord.HLINK_ABS | HyperlinkRecord.HLINK_LABEL;
         assertEquals(0x17, opts);
@@ -342,7 +347,7 @@ public final class TestHyperlinkRecord {
         assertEquals(3, link.getLastRow());
         assertEquals(0, link.getFirstColumn());
         assertEquals(0, link.getLastColumn());
-        confirmGUID(HyperlinkRecord.STD_MONIKER, link.getGuid());
+        confirmGUID(ClassIDPredefined.STD_MONIKER.getClassID(), link.getGuid());
         assertEquals(2, link.getLabelOptions());
         int opts = HyperlinkRecord.HLINK_LABEL | HyperlinkRecord.HLINK_PLACE;
         assertEquals(0x1C, opts);
@@ -474,49 +479,47 @@ public final class TestHyperlinkRecord {
 		HyperlinkRecord hr = new HyperlinkRecord(in);
 		byte[] ser = hr.serialize();
 		TestcaseRecordInputStream.confirmRecordEncoding(HyperlinkRecord.sid, dataUNC, ser);
-		try {
-			hr.toString();
-		} catch (NullPointerException e) {
-		    fail("Identified bug with option URL and UNC set at same time");
-		}
+        assertNotNull(hr.toString());
 	}
 
     @Test
-	public void testGUID() {
-		GUID g;
-		g = GUID.parse("3F2504E0-4F89-11D3-9A0C-0305E82C3301");
+	public void testGUID() throws IOException {
+		ClassID g;
+		g = new ClassID("3F2504E0-4F89-11D3-9A0C-0305E82C3301");
 		confirmGUID(g, 0x3F2504E0, 0x4F89, 0x11D3, 0x9A0C0305E82C3301L);
-		assertEquals("3F2504E0-4F89-11D3-9A0C-0305E82C3301", g.formatAsString());
+		assertEquals("{3F2504E0-4F89-11D3-9A0C-0305E82C3301}", g.toString());
 
-		g = GUID.parse("13579BDF-0246-8ACE-0123-456789ABCDEF");
+		g = new ClassID("13579BDF-0246-8ACE-0123-456789ABCDEF");
 		confirmGUID(g, 0x13579BDF, 0x0246, 0x8ACE, 0x0123456789ABCDEFL);
-		assertEquals("13579BDF-0246-8ACE-0123-456789ABCDEF", g.formatAsString());
+		assertEquals("{13579BDF-0246-8ACE-0123-456789ABCDEF}", g.toString());
 
 		byte[] buf = new byte[16];
-		g.serialize(new LittleEndianByteArrayOutputStream(buf, 0));
+		g.write(new LittleEndianByteArrayOutputStream(buf, 0));
 		String expectedDump = "[DF, 9B, 57, 13, 46, 02, CE, 8A, 01, 23, 45, 67, 89, AB, CD, EF]";
 		assertEquals(expectedDump, HexDump.toHex(buf));
 
 		// STD Moniker
 		g = createFromStreamDump("[D0, C9, EA, 79, F9, BA, CE, 11, 8C, 82, 00, AA, 00, 4B, A9, 0B]");
-		assertEquals("79EAC9D0-BAF9-11CE-8C82-00AA004BA90B", g.formatAsString());
+		assertEquals("{79EAC9D0-BAF9-11CE-8C82-00AA004BA90B}", g.toString());
 		// URL Moniker
 		g = createFromStreamDump("[E0, C9, EA, 79, F9, BA, CE, 11, 8C, 82, 00, AA, 00, 4B, A9, 0B]");
-		assertEquals("79EAC9E0-BAF9-11CE-8C82-00AA004BA90B", g.formatAsString());
+		assertEquals("{79EAC9E0-BAF9-11CE-8C82-00AA004BA90B}", g.toString());
 		// File Moniker
 		g = createFromStreamDump("[03, 03, 00, 00, 00, 00, 00, 00, C0, 00, 00, 00, 00, 00, 00, 46]");
-		assertEquals("00000303-0000-0000-C000-000000000046", g.formatAsString());
+		assertEquals("{00000303-0000-0000-C000-000000000046}", g.toString());
 	}
 
-	private static GUID createFromStreamDump(String s) {
-		return new GUID(new LittleEndianByteArrayInputStream(HexRead.readFromString(s)));
+	private static ClassID createFromStreamDump(String s) {
+		return new ClassID(new LittleEndianByteArrayInputStream(HexRead.readFromString(s)));
 	}
 
-	private void confirmGUID(GUID g, int d1, int d2, int d3, long d4) {
-		assertEquals(HexDump.intToHex(d1), HexDump.intToHex(g.getD1()));
-		assertEquals(HexDump.shortToHex(d2), HexDump.shortToHex(g.getD2()));
-		assertEquals(HexDump.shortToHex(d3), HexDump.shortToHex(g.getD3()));
-		assertEquals(HexDump.longToHex(d4), HexDump.longToHex(g.getD4()));
+	private void confirmGUID(ClassID g, int d1, int d2, int d3, long d4) throws IOException {
+        try (DataInputStream dis = new DataInputStream(new ByteArrayInputStream(g.getBytes()))) {
+            assertEquals(d1, dis.readInt());
+            assertEquals(d2, dis.readShort() & 0xFFFF);
+            assertEquals(d3, dis.readShort() & 0xFFFF);
+            assertEquals(d4, dis.readLong());
+        }
 	}
 
 	@Test
@@ -527,8 +530,8 @@ public final class TestHyperlinkRecord {
         assertEquals(2, link.getLastRow());
         assertEquals(0, link.getFirstColumn());
         assertEquals(0, link.getLastColumn());
-        confirmGUID(HyperlinkRecord.STD_MONIKER, link.getGuid());
-        confirmGUID(HyperlinkRecord.URL_MONIKER, link.getMoniker());
+        confirmGUID(ClassIDPredefined.STD_MONIKER.getClassID(), link.getGuid());
+        confirmGUID(ClassIDPredefined.URL_MONIKER.getClassID(), link.getMoniker());
         assertEquals(2, link.getLabelOptions());
         int opts = HyperlinkRecord.HLINK_URL | HyperlinkRecord.HLINK_LABEL;
         assertEquals(opts, link.getLinkOptions());

@@ -17,11 +17,15 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.hpsf.ClassIDPredefined.FILE_MONIKER;
+import static org.apache.poi.hpsf.ClassIDPredefined.STD_MONIKER;
+import static org.apache.poi.hpsf.ClassIDPredefined.URL_MONIKER;
+
+import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
@@ -37,176 +41,10 @@ import org.apache.poi.util.StringUtil;
  */
 public final class HyperlinkRecord extends StandardRecord {
     public static final short sid = 0x01B8;
-    private static POILogger logger = POILogFactory.getLogger(HyperlinkRecord.class);
+    private static final POILogger logger = POILogFactory.getLogger(HyperlinkRecord.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
-
-    // TODO: replace with ClassID
-    static final class GUID {
-        /*
-         * this class is currently only used here, but could be moved to a
-         * common package if needed
-         */
-        private static final int TEXT_FORMAT_LENGTH = 36;
-
-        public static final int ENCODED_SIZE = 16;
-
-        /** 4 bytes - little endian */
-        private final int _d1;
-        /** 2 bytes - little endian */
-        private final int _d2;
-        /** 2 bytes - little endian */
-        private final int _d3;
-        /**
-         * 8 bytes - serialized as big endian,  stored with inverted endianness here
-         */
-        private final long _d4;
-
-        public GUID(GUID other) {
-            _d1 = other._d1;
-            _d2 = other._d2;
-            _d3 = other._d3;
-            _d4 = other._d4;
-        }
-
-        public GUID(LittleEndianInput in) {
-            this(in.readInt(), in.readUShort(), in.readUShort(), in.readLong());
-        }
-
-        public GUID(int d1, int d2, int d3, long d4) {
-            _d1 = d1;
-            _d2 = d2;
-            _d3 = d3;
-            _d4 = d4;
-        }
-
-        public void serialize(LittleEndianOutput out) {
-            out.writeInt(_d1);
-            out.writeShort(_d2);
-            out.writeShort(_d3);
-            out.writeLong(_d4);
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (!(obj instanceof GUID)) {
-                return false;
-            }
-            GUID other = (GUID) obj;
-            return _d1 == other._d1 && _d2 == other._d2
-                && _d3 == other._d3 && _d4 == other._d4;
-        }
-
-       @Override
-       public int hashCode() {
-           assert false : "hashCode not designed";
-           return 42; // any arbitrary constant will do
-       }
-
-       public int getD1() {
-            return _d1;
-        }
-
-        public int getD2() {
-            return _d2;
-        }
-
-        public int getD3() {
-            return _d3;
-        }
-
-        public long getD4() {
-            byte[] result = new byte[Long.SIZE/Byte.SIZE];
-            long l = _d4;
-            for (int i = result.length-1; i >= 0; i--) {
-                result[i] = (byte)(l & 0xFF);
-                l >>= 8;
-            }
-
-            return LittleEndian.getLong(result, 0);
-        }
-
-        public String formatAsString() {
-
-            StringBuilder sb = new StringBuilder(36);
-
-            int PREFIX_LEN = "0x".length();
-            sb.append(HexDump.intToHex(_d1).substring(PREFIX_LEN));
-            sb.append("-");
-            sb.append(HexDump.shortToHex(_d2).substring(PREFIX_LEN));
-            sb.append("-");
-            sb.append(HexDump.shortToHex(_d3).substring(PREFIX_LEN));
-            sb.append("-");
-            String d4Chars = HexDump.longToHex(getD4());
-            sb.append(d4Chars, PREFIX_LEN, PREFIX_LEN+4);
-            sb.append("-");
-            sb.append(d4Chars.substring(PREFIX_LEN+4));
-            return sb.toString();
-        }
-
-        @Override
-        public String toString() {
-            StringBuilder sb = new StringBuilder(64);
-            sb.append(getClass().getName()).append(" [");
-            sb.append(formatAsString());
-            sb.append("]");
-            return sb.toString();
-        }
-
-        /**
-         * Read a GUID in standard text form e.g.<br>
-         * 13579BDF-0246-8ACE-0123-456789ABCDEF
-         * <br> -&gt; <br>
-         *  0x13579BDF, 0x0246, 0x8ACE 0x0123456789ABCDEF
-         */
-        public static GUID parse(String rep) {
-            char[] cc = rep.toCharArray();
-            if (cc.length != TEXT_FORMAT_LENGTH) {
-                throw new RecordFormatException("supplied text is the wrong length for a GUID");
-            }
-            int d0 = (parseShort(cc, 0) << 16) + (parseShort(cc, 4) << 0);
-            int d1 = parseShort(cc, 9);
-            int d2 = parseShort(cc, 14);
-            System.arraycopy(cc, 19, cc, 20, 4);
-            long d3 = parseLELong(cc, 20);
-
-            return new GUID(d0, d1, d2, d3);
-        }
-
-        private static long parseLELong(char[] cc, int startIndex) {
-            long acc = 0;
-            for (int i = startIndex + 14; i >= startIndex; i -= 2) {
-                acc <<= 4;
-                acc += parseHexChar(cc[i + 0]);
-                acc <<= 4;
-                acc += parseHexChar(cc[i + 1]);
-            }
-            return acc;
-        }
-
-        private static int parseShort(char[] cc, int startIndex) {
-            int acc = 0;
-            for (int i = 0; i < 4; i++) {
-                acc <<= 4;
-                acc += parseHexChar(cc[startIndex + i]);
-            }
-            return acc;
-        }
-
-        private static int parseHexChar(char c) {
-            if (c >= '0' && c <= '9') {
-                return c - '0';
-            }
-            if (c >= 'A' && c <= 'F') {
-                return c - 'A' + 10;
-            }
-            if (c >= 'a' && c <= 'f') {
-                return c - 'a' + 10;
-            }
-            throw new RecordFormatException("Bad hex char '" + c + "'");
-        }
-    }
 
     /*
      * Link flags
@@ -219,9 +57,6 @@ public final class HyperlinkRecord extends StandardRecord {
     private static final int  HLINK_TARGET_FRAME  = 0x80;  // has 'target frame'
     private static final int  HLINK_UNC_PATH  = 0x100;  // has UNC path
 
-    static final GUID STD_MONIKER = GUID.parse("79EAC9D0-BAF9-11CE-8C82-00AA004BA90B");
-    static final GUID URL_MONIKER = GUID.parse("79EAC9E0-BAF9-11CE-8C82-00AA004BA90B");
-    static final GUID FILE_MONIKER = GUID.parse("00000303-0000-0000-C000-000000000046");
     /** expected Tail of a URL link */
     private static final byte[] URL_TAIL  = HexRead.readFromString("79 58 81 F4  3B 1D 7F 48   AF 2C 82 5D  C4 85 27 63   00 00 00 00  A5 AB 00 00");
     /** expected Tail of a file link */
@@ -233,7 +68,7 @@ public final class HyperlinkRecord extends StandardRecord {
     private CellRangeAddress _range;
 
     /** 16-byte GUID */
-    private GUID _guid;
+    private ClassID _guid;
     /** Some sort of options for file links. */
     private int _fileOpts;
     /** Link options. Can include any of HLINK_* flags. */
@@ -243,7 +78,7 @@ public final class HyperlinkRecord extends StandardRecord {
 
     private String _targetFrame;
     /** Moniker. Makes sense only for URL and file links */
-    private GUID _moniker;
+    private ClassID _moniker;
     /** in 8:3 DOS format No Unicode string header,
      * always 8-bit characters, zero-terminated */
     private String _shortFilename;
@@ -267,12 +102,12 @@ public final class HyperlinkRecord extends StandardRecord {
     public HyperlinkRecord(HyperlinkRecord other) {
         super(other);
         _range = (other._range == null) ? null : other._range.copy();
-        _guid = (other._guid == null) ? null : new GUID(other._guid);
+        _guid = (other._guid == null) ? null : other._guid.copy();
         _fileOpts = other._fileOpts;
         _linkOpts = other._linkOpts;
         _label = other._label;
         _targetFrame = other._targetFrame;
-        _moniker = (other._moniker == null) ? null : new GUID(other._moniker);
+        _moniker = (other._moniker == null) ? null : other._moniker.copy();
         _shortFilename = other._shortFilename;
         _address = other._address;
         _textMark = other._textMark;
@@ -345,16 +180,16 @@ public final class HyperlinkRecord extends StandardRecord {
     }
 
     /**
-     * @return 16-byte guid identifier Seems to always equal {@link #STD_MONIKER}
+     * @return 16-byte guid identifier Seems to always equal {@link org.apache.poi.hpsf.ClassIDPredefined#STD_MONIKER}
      */
-    GUID getGuid() {
+    ClassID getGuid() {
         return _guid;
     }
 
     /**
      * @return 16-byte moniker
      */
-    GUID getMoniker()
+    ClassID getMoniker()
     {
         return _moniker;
     }
@@ -471,9 +306,9 @@ public final class HyperlinkRecord extends StandardRecord {
     public HyperlinkRecord(RecordInputStream in) {
         _range = new CellRangeAddress(in);
 
-        _guid = new GUID(in);
+        _guid = new ClassID(in);
 
-        /**
+        /*
          * streamVersion (4 bytes): An unsigned integer that specifies the version number
          * of the serialization implementation used to save this structure. This value MUST equal 2.
          */
@@ -500,11 +335,11 @@ public final class HyperlinkRecord extends StandardRecord {
         }
 
         if ((_linkOpts & HLINK_URL) != 0 && (_linkOpts & HLINK_UNC_PATH) == 0) {
-            _moniker = new GUID(in);
+            _moniker = new ClassID(in);
 
             if(URL_MONIKER.equals(_moniker)){
                 int length = in.readInt();
-                /**
+                /*
                  * The value of <code>length<code> be either the byte size of the url field
                  * (including the terminating NULL character) or the byte size of the url field plus 24.
                  * If the value of this field is set to the byte size of the url field,
@@ -517,7 +352,7 @@ public final class HyperlinkRecord extends StandardRecord {
                 } else {
                     int nChars = (length - TAIL_SIZE)/2;
                     _address = in.readUnicodeLEString(nChars);
-                    /**
+                    /*
                      * TODO: make sense of the remaining bytes
                      * According to the spec they consist of:
                      * 1. 16-byte  GUID: This field MUST equal
@@ -575,7 +410,7 @@ public final class HyperlinkRecord extends StandardRecord {
     public void serialize(LittleEndianOutput out) {
         _range.serialize(out);
 
-        _guid.serialize(out);
+        _guid.write(out);
         out.writeInt(0x00000002); // TODO const
         out.writeInt(_linkOpts);
 
@@ -594,7 +429,7 @@ public final class HyperlinkRecord extends StandardRecord {
         }
 
         if ((_linkOpts & HLINK_URL) != 0 && (_linkOpts & HLINK_UNC_PATH) == 0) {
-            _moniker.serialize(out);
+            _moniker.write(out);
             if(URL_MONIKER.equals(_moniker)){
                 if (_uninterpretedTail == null) {
                     out.writeInt(_address.length()*2);
@@ -630,7 +465,7 @@ public final class HyperlinkRecord extends StandardRecord {
     protected int getDataSize() {
         int size = 0;
         size += 2 + 2 + 2 + 2;  //rwFirst, rwLast, colFirst, colLast
-        size += GUID.ENCODED_SIZE;
+        size += ClassID.LENGTH;
         size += 4;  //label_opts
         size += 4;  //link_opts
         if ((_linkOpts & HLINK_LABEL) != 0){
@@ -646,7 +481,7 @@ public final class HyperlinkRecord extends StandardRecord {
             size += _address.length()*2;
         }
         if ((_linkOpts & HLINK_URL) != 0 && (_linkOpts & HLINK_UNC_PATH) == 0) {
-            size += GUID.ENCODED_SIZE;
+            size += ClassID.LENGTH;
             if(URL_MONIKER.equals(_moniker)){
                 size += 4;  //address length
                 size += _address.length()*2;
@@ -703,14 +538,14 @@ public final class HyperlinkRecord extends StandardRecord {
 
         buffer.append("[HYPERLINK RECORD]\n");
         buffer.append("    .range   = ").append(_range.formatAsString()).append("\n");
-        buffer.append("    .guid    = ").append(_guid.formatAsString()).append("\n");
+        buffer.append("    .guid    = ").append(_guid.toString()).append("\n");
         buffer.append("    .linkOpts= ").append(HexDump.intToHex(_linkOpts)).append("\n");
         buffer.append("    .label   = ").append(getLabel()).append("\n");
         if ((_linkOpts & HLINK_TARGET_FRAME) != 0) {
             buffer.append("    .targetFrame= ").append(getTargetFrame()).append("\n");
         }
         if((_linkOpts & HLINK_URL) != 0 && _moniker != null) {
-            buffer.append("    .moniker   = ").append(_moniker.formatAsString()).append("\n");
+            buffer.append("    .moniker   = ").append(_moniker.toString()).append("\n");
         }
         if ((_linkOpts & HLINK_PLACE) != 0) {
             buffer.append("    .textMark= ").append(getTextMark()).append("\n");
@@ -725,6 +560,7 @@ public final class HyperlinkRecord extends StandardRecord {
      *
      * @return true, if this is a url link
      */
+    @SuppressWarnings("unused")
     public boolean isUrlLink() {
        return (_linkOpts & HLINK_URL) > 0
            && (_linkOpts & HLINK_ABS) > 0;
@@ -752,10 +588,10 @@ public final class HyperlinkRecord extends StandardRecord {
      */
     public void newUrlLink() {
         _range = new CellRangeAddress(0, 0, 0, 0);
-        _guid = STD_MONIKER;
+        _guid = STD_MONIKER.getClassID();
         _linkOpts = HLINK_URL | HLINK_ABS | HLINK_LABEL;
         setLabel("");
-        _moniker = URL_MONIKER;
+        _moniker = URL_MONIKER.getClassID();
         setAddress("");
         _uninterpretedTail = URL_TAIL;
     }
@@ -765,11 +601,11 @@ public final class HyperlinkRecord extends StandardRecord {
      */
     public void newFileLink() {
         _range = new CellRangeAddress(0, 0, 0, 0);
-        _guid = STD_MONIKER;
+        _guid = STD_MONIKER.getClassID();
         _linkOpts = HLINK_URL | HLINK_LABEL;
         _fileOpts = 0;
         setLabel("");
-        _moniker = FILE_MONIKER;
+        _moniker = FILE_MONIKER.getClassID();
         setAddress(null);
         setShortFilename("");
         _uninterpretedTail = FILE_TAIL;
@@ -780,16 +616,16 @@ public final class HyperlinkRecord extends StandardRecord {
      */
     public void newDocumentLink() {
         _range = new CellRangeAddress(0, 0, 0, 0);
-        _guid = STD_MONIKER;
+        _guid = STD_MONIKER.getClassID();
         _linkOpts = HLINK_LABEL | HLINK_PLACE;
         setLabel("");
-        _moniker = FILE_MONIKER;
+        _moniker = FILE_MONIKER.getClassID();
         setAddress("");
         setTextMark("");
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public HyperlinkRecord clone() {

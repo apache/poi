@@ -19,17 +19,20 @@ package org.apache.poi.hpsf;
 
 import java.util.Arrays;
 
-import org.apache.poi.util.HexDump;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.poi.common.Duplicatable;
+import org.apache.poi.util.LittleEndianInput;
+import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Represents a class ID (16 bytes). Unlike other little-endian
  * type the {@link ClassID} is not just 16 bytes stored in the wrong
  * order. Instead, it is a double word (4 bytes) followed by two
  * words (2 bytes each) followed by 8 bytes.<p>
- *  
- * The ClassID (or CLSID) is a UUID - see RFC 4122 
+ *
+ * The ClassID (or CLSID) is a UUID - see RFC 4122
  */
-public class ClassID {
+public class ClassID implements Duplicatable {
     /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
     public static final ClassID OLE10_PACKAGE  = ClassIDPredefined.OLE_V1_PACKAGE.getClassID();
     /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
@@ -84,10 +87,10 @@ public class ClassID {
     public static final ClassID POWERPOINT2007_MACRO = ClassIDPredefined.POWERPOINT_V12_MACRO.getClassID();
     /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
     public static final ClassID EQUATION30     = ClassIDPredefined.EQUATION_V3.getClassID();
-	
+
     /** The number of bytes occupied by this object in the byte stream. */
     public static final int LENGTH = 16;
-	
+
     /**
      * The bytes making out the class ID in correct order, i.e. big-endian.
      */
@@ -111,11 +114,18 @@ public class ClassID {
         Arrays.fill(bytes, (byte)0);
     }
 
+    /**
+     * Clones the given ClassID
+     */
+    public ClassID(ClassID other) {
+        System.arraycopy(other.bytes, 0, bytes, 0, bytes.length);
+    }
+
 
     /**
-     * Creates a {@link ClassID} from a human-readable representation of the Class ID in standard 
+     * Creates a {@link ClassID} from a human-readable representation of the Class ID in standard
      * format {@code "{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}"}.
-     * 
+     *
      * @param externalForm representation of the Class ID represented by this object.
      */
     public ClassID(String externalForm) {
@@ -124,7 +134,16 @@ public class ClassID {
         	bytes[i/2] = (byte)Integer.parseInt(clsStr.substring(i, i+2), 16);
         }
     }
-    
+
+    /**
+     * Reads the ClassID from the input
+     * @param lei the input (stream)
+     */
+    public ClassID(LittleEndianInput lei) {
+        byte[] buf = bytes.clone();
+        lei.readFully(buf);
+        read(buf, 0);
+    }
 
     /**
      * @return The number of bytes occupied by this object in the byte stream.
@@ -204,7 +223,7 @@ public class ClassID {
                 ("Destination byte[] must have room for at least 16 bytes, " +
                  "but has a length of only " + dst.length + ".");
         }
-        
+
         /* Write double word. */
         dst[0 + offset] = bytes[3];
         dst[1 + offset] = bytes[2];
@@ -223,7 +242,16 @@ public class ClassID {
         System.arraycopy(bytes, 8, dst, 8 + offset, 8);
     }
 
-
+    /**
+     * Write the class ID to a LittleEndianOutput (stream)
+     *
+     * @param leo the output
+     */
+    public void write(LittleEndianOutput leo) {
+        byte[] buf = bytes.clone();
+        write(buf, 0);
+        leo.write(buf);
+    }
 
     /**
      * Checks whether this {@code ClassID} is equal to another object.
@@ -275,22 +303,23 @@ public class ClassID {
     }
 
     /**
-     * Returns a human-readable representation of the Class ID in standard 
+     * Returns a human-readable representation of the Class ID in standard
      * format {@code "{xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx}"}.
-     * 
+     *
      * @return String representation of the Class ID represented by this object.
      */
     @Override
     public String toString() {
-        StringBuilder sbClassId = new StringBuilder(38);
-        sbClassId.append('{');
-        for (int i = 0; i < LENGTH; i++) {
-            sbClassId.append(HexDump.toHex(bytes[i]));
-            if (i == 3 || i == 5 || i == 7 || i == 9) {
-                sbClassId.append('-');
-            }
-        }
-        sbClassId.append('}');
-        return sbClassId.toString();
+        String hex = Hex.encodeHexString(bytes, false);
+        return  "{" + hex.substring(0,8) +
+                "-" + hex.substring(8,12) +
+                "-" + hex.substring(12,16) +
+                "-" + hex.substring(16,20) +
+                "-" + hex.substring(20) + "}";
+    }
+
+    @Override
+    public ClassID copy() {
+        return new ClassID(this);
     }
 }
