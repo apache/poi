@@ -17,79 +17,80 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.model.Colorref;
 import org.apache.poi.hwpf.model.types.CHPAbstractType;
+import org.apache.poi.util.Removal;
 
-/**
- * @author Ryan Ackley
- */
-public final class CharacterProperties
-  extends CHPAbstractType implements Cloneable
-{
-  public final static short SPRM_FRMARKDEL = (short)0x0800;
-  public final static short SPRM_FRMARK = 0x0801;
-  public final static short SPRM_FFLDVANISH = 0x0802;
-  public final static short SPRM_PICLOCATION = 0x6A03;
-  public final static short SPRM_IBSTRMARK = 0x4804;
-  public final static short SPRM_DTTMRMARK = 0x6805;
-  public final static short SPRM_FDATA = 0x0806;
-  public final static short SPRM_SYMBOL = 0x6A09;
-  public final static short SPRM_FOLE2 = 0x080A;
-  public final static short SPRM_HIGHLIGHT = 0x2A0C;
-  public final static short SPRM_OBJLOCATION = 0x680E;
-  public final static short SPRM_ISTD = 0x4A30;
-  public final static short SPRM_FBOLD = 0x0835;
-  public final static short SPRM_FITALIC = 0x0836;
-  public final static short SPRM_FSTRIKE = 0x0837;
-  public final static short SPRM_FOUTLINE = 0x0838;
-  public final static short SPRM_FSHADOW = 0x0839;
-  public final static short SPRM_FSMALLCAPS = 0x083A;
-  public final static short SPRM_FCAPS = 0x083B;
-  public final static short SPRM_FVANISH = 0x083C;
-  public final static short SPRM_KUL = 0x2A3E;
-  public final static short SPRM_DXASPACE = (short)0x8840;
-  public final static short SPRM_LID = 0x4A41;
-  public final static short SPRM_ICO = 0x2A42;
-  public final static short SPRM_HPS = 0x4A43;
-  public final static short SPRM_HPSPOS = 0x4845;
-  public final static short SPRM_ISS = 0x2A48;
-  public final static short SPRM_HPSKERN = 0x484B;
-  public final static short SPRM_YSRI = 0x484E;
-  public final static short SPRM_RGFTCASCII = 0x4A4F;
-  public final static short SPRM_RGFTCFAREAST = 0x4A50;
-  public final static short SPRM_RGFTCNOTFAREAST = 0x4A51;
-  public final static short SPRM_CHARSCALE = 0x4852;
-  public final static short SPRM_FDSTRIKE = 0x2A53;
-  public final static short SPRM_FIMPRINT = 0x0854;
-  public final static short SPRM_FSPEC = 0x0855;
-  public final static short SPRM_FOBJ = 0x0856;
-  public final static short SPRM_PROPRMARK = (short)0xCA57;
-  public final static short SPRM_FEMBOSS = 0x0858;
-  public final static short SPRM_SFXTEXT = 0x2859;
+@SuppressWarnings("unused")
+public final class CharacterProperties extends CHPAbstractType implements Duplicatable {
+  public static final short SPRM_FRMARKDEL = (short)0x0800;
+  public static final short SPRM_FRMARK = 0x0801;
+  public static final short SPRM_FFLDVANISH = 0x0802;
+  public static final short SPRM_PICLOCATION = 0x6A03;
+  public static final short SPRM_IBSTRMARK = 0x4804;
+  public static final short SPRM_DTTMRMARK = 0x6805;
+  public static final short SPRM_FDATA = 0x0806;
+  public static final short SPRM_SYMBOL = 0x6A09;
+  public static final short SPRM_FOLE2 = 0x080A;
+  public static final short SPRM_HIGHLIGHT = 0x2A0C;
+  public static final short SPRM_OBJLOCATION = 0x680E;
+  public static final short SPRM_ISTD = 0x4A30;
+  public static final short SPRM_FBOLD = 0x0835;
+  public static final short SPRM_FITALIC = 0x0836;
+  public static final short SPRM_FSTRIKE = 0x0837;
+  public static final short SPRM_FOUTLINE = 0x0838;
+  public static final short SPRM_FSHADOW = 0x0839;
+  public static final short SPRM_FSMALLCAPS = 0x083A;
+  public static final short SPRM_FCAPS = 0x083B;
+  public static final short SPRM_FVANISH = 0x083C;
+  public static final short SPRM_KUL = 0x2A3E;
+  public static final short SPRM_DXASPACE = (short)0x8840;
+  public static final short SPRM_LID = 0x4A41;
+  public static final short SPRM_ICO = 0x2A42;
+  public static final short SPRM_HPS = 0x4A43;
+  public static final short SPRM_HPSPOS = 0x4845;
+  public static final short SPRM_ISS = 0x2A48;
+  public static final short SPRM_HPSKERN = 0x484B;
+  public static final short SPRM_YSRI = 0x484E;
+  public static final short SPRM_RGFTCASCII = 0x4A4F;
+  public static final short SPRM_RGFTCFAREAST = 0x4A50;
+  public static final short SPRM_RGFTCNOTFAREAST = 0x4A51;
+  public static final short SPRM_CHARSCALE = 0x4852;
+  public static final short SPRM_FDSTRIKE = 0x2A53;
+  public static final short SPRM_FIMPRINT = 0x0854;
+  public static final short SPRM_FSPEC = 0x0855;
+  public static final short SPRM_FOBJ = 0x0856;
+  public static final short SPRM_PROPRMARK = (short)0xCA57;
+  public static final short SPRM_FEMBOSS = 0x0858;
+  public static final short SPRM_SFXTEXT = 0x2859;
     /*
      * Microsoft Office Word 97-2007 Binary File Format (.doc) Specification;
      * Page 60 of 210
      */
-  public final static short SPRM_DISPFLDRMARK = (short)0xCA62;
-  public final static short SPRM_IBSTRMARKDEL = 0x4863;
-  public final static short SPRM_DTTMRMARKDEL = 0x6864;
-  public final static short SPRM_BRC = 0x6865;
-  public final static short SPRM_SHD = 0x4866;
-  public final static short SPRM_IDSIRMARKDEL = 0x4867;
-  public final static short SPRM_CPG = 0x486B;
-  public final static short SPRM_NONFELID = 0x486D;
-  public final static short SPRM_FELID = 0x486E;
-  public final static short SPRM_IDCTHINT = 0x286F;
+  public static final short SPRM_DISPFLDRMARK = (short)0xCA62;
+  public static final short SPRM_IBSTRMARKDEL = 0x4863;
+  public static final short SPRM_DTTMRMARKDEL = 0x6864;
+  public static final short SPRM_BRC = 0x6865;
+  public static final short SPRM_SHD = 0x4866;
+  public static final short SPRM_IDSIRMARKDEL = 0x4867;
+  public static final short SPRM_CPG = 0x486B;
+  public static final short SPRM_NONFELID = 0x486D;
+  public static final short SPRM_FELID = 0x486E;
+  public static final short SPRM_IDCTHINT = 0x286F;
     /**
      * change chp.cv
      */
-    public final static short SPRM_CCV = 0x6870;
+    public static final short SPRM_CCV = 0x6870;
 
-    public CharacterProperties()
-    {
+    public CharacterProperties() {
         setFUsePgsuSettings( true );
         setXstDispFldRMark( new byte[36] );
     }
+
+  public CharacterProperties(CharacterProperties other) {
+      super(other);
+  }
 
   public boolean isMarkedDeleted()
   {
@@ -370,27 +371,16 @@ public final class CharacterProperties
         setCv( new Colorref( colour24 & 0xFFFFFF ) );
     }
 
-    public CharacterProperties clone()
-    {
-        try
-        {
-            CharacterProperties cp = (CharacterProperties) super.clone();
+    @Override
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public CharacterProperties clone() {
+        return copy();
+    }
 
-            cp.setCv( getCv().clone() );
-            cp.setDttmRMark( (DateAndTime) getDttmRMark().clone() );
-            cp.setDttmRMarkDel( (DateAndTime) getDttmRMarkDel().clone() );
-            cp.setDttmPropRMark( (DateAndTime) getDttmPropRMark().clone() );
-            cp.setDttmDispFldRMark( (DateAndTime) getDttmDispFldRMark().clone() );
-            cp.setXstDispFldRMark( getXstDispFldRMark().clone() );
-            cp.setShd( getShd().clone() );
-            cp.setBrc( (BorderCode) getBrc().clone() );
-
-            return cp;
-        }
-        catch ( CloneNotSupportedException exc )
-        {
-            throw new UnsupportedOperationException(
-                    "Impossible CloneNotSupportedException occured", exc );
-        }
+    @Override
+    public CharacterProperties copy() {
+        return new CharacterProperties(this);
     }
 }

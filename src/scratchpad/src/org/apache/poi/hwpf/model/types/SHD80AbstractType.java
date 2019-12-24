@@ -24,32 +24,24 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * The Shd80 structure specifies the colors and pattern that are used for background
-        shading. As an exception to the constraints that are specified by Ico and Ipat, a Shd80 can
-        be set to Shd80Nil and specifies that no shading is applied. <p>Class and fields
-        descriptions are quoted from Word (.doc) Binary File Format by Microsoft Corporation
-
- * <p>
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/types/definitions.
- * <p>
- * This class is internal. It content or properties may change without notice
- * due to changes in our knowledge of internal Microsoft Word binary structures.
-
- * @author Sergey Vladimirov; according to Word (.doc) Binary File Format by Microsoft Corporation.
-
+ * The Shd80 structure specifies the colors and pattern that are used for background shading.
+ * As an exception to the constraints that are specified by Ico and Ipat,
+ * a Shd80 can be set to Shd80Nil and specifies that no shading is applied.
  */
+@SuppressWarnings("unused")
 @Internal
-public abstract class SHD80AbstractType
-{
+public abstract class SHD80AbstractType {
+
+    private static final BitField icoFore = new BitField(0x001F);
+    private static final BitField icoBack = new BitField(0x03E0);
+    private static final BitField ipat = new BitField(0xFC00);
 
     protected short field_1_value;
-    /**/private static final BitField icoFore = new BitField(0x001F);
-    /**/private static final BitField icoBack = new BitField(0x03E0);
-    /**/private static final BitField ipat = new BitField(0xFC00);
 
-    protected SHD80AbstractType()
-    {
+    protected SHD80AbstractType() { }
+
+    protected SHD80AbstractType(SHD80AbstractType other) {
+        field_1_value = other.field_1_value;
     }
 
     protected void fillFields( byte[] data, int offset )
@@ -189,4 +181,4 @@ public abstract class SHD80AbstractType
         return ( byte )ipat.getValue(field_1_value);
     }
 
-}  // END OF CLASS
+}

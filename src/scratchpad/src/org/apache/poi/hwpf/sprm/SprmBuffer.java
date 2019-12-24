@@ -19,12 +19,14 @@ package org.apache.poi.hwpf.sprm;
 
 import java.util.Arrays;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Removal;
 
 @Internal
-public final class SprmBuffer implements Cloneable {
+public final class SprmBuffer implements Duplicatable {
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
@@ -34,6 +36,13 @@ public final class SprmBuffer implements Cloneable {
     int _offset;
 
     private final int _sprmsStartOffset;
+
+    public SprmBuffer(SprmBuffer other) {
+        _buf = (other._buf == null) ? null : other._buf.clone();
+        _istd = other._istd;
+        _offset = other._offset;
+        _sprmsStartOffset = other._sprmsStartOffset;
+    }
 
     public SprmBuffer(byte[] buf, boolean istd, int sprmsStartOffset) {
         _offset = buf.length;
@@ -97,15 +106,17 @@ public final class SprmBuffer implements Cloneable {
         _offset += grpprl.length - offset;
     }
 
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
     public SprmBuffer clone() {
-        try {
-            SprmBuffer retVal = (SprmBuffer) super.clone();
-            retVal._buf = new byte[_buf.length];
-            System.arraycopy(_buf, 0, retVal._buf, 0, _buf.length);
-            return retVal;
-        } catch (CloneNotSupportedException e) {
-            throw new RuntimeException(e);
-        }
+        return copy();
+    }
+
+    @Override
+    public SprmBuffer copy() {
+        return new SprmBuffer(this);
     }
 
     private void ensureCapacity(int addition) {
@@ -215,4 +226,6 @@ public final class SprmBuffer implements Cloneable {
         }
         return stringBuilder.toString();
     }
+
+
 }

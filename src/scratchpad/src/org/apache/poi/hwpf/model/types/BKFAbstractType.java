@@ -26,26 +26,23 @@ import org.apache.poi.util.LittleEndian;
  * <p>
  * Class and fields descriptions are quoted from Microsoft Office Word 97-2007
  * Binary File Format (.doc) Specification
- * 
- * NOTE: This source is automatically generated please do not modify this file.
- * Either subclass or remove the record in src/types/definitions.
- * 
- * @author Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary
- *         File Format (.doc) Specification
  */
 @Internal
-public abstract class BKFAbstractType
-{
+public abstract class BKFAbstractType {
+
+    private static final BitField itcFirst = new BitField( 0x007F );
+    private static final BitField fPub = new BitField( 0x0080 );
+    private static final BitField itcLim = new BitField( 0x7F00 );
+    private static final BitField fCol = new BitField( 0x8000 );
 
     protected short field_1_ibkl;
     protected short field_2_bkf_flags;
-    /**/private static BitField itcFirst = new BitField( 0x007F );
-    /**/private static BitField fPub = new BitField( 0x0080 );
-    /**/private static BitField itcLim = new BitField( 0x7F00 );
-    /**/private static BitField fCol = new BitField( 0x8000 );
 
-    protected BKFAbstractType()
-    {
+    protected BKFAbstractType() {}
+
+    protected BKFAbstractType(BKFAbstractType other) {
+        field_1_ibkl = other.field_1_ibkl;
+        field_2_bkf_flags = other.field_2_bkf_flags;
     }
 
     protected void fillFields( byte[] data, int offset )
@@ -189,4 +186,4 @@ public abstract class BKFAbstractType
         return fCol.isSet(field_2_bkf_flags);
     }
 
-}  // END OF CLASS
+}

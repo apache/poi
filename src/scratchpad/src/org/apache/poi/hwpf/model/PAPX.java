@@ -31,14 +31,17 @@ import org.apache.poi.util.LittleEndian;
  * Make sure you call getStart() / getEnd() when you want characters
  *    (normal use), but getStartByte() / getEndByte() when you're
  *    reading in / writing out!
- *
- * @author Ryan Ackley
  */
 @Internal
 @SuppressWarnings( "deprecation" )
 public final class PAPX extends BytePropertyNode<PAPX> {
 
     private ParagraphHeight _phe;
+
+    public PAPX(PAPX other) {
+        super(other);
+        _phe = (other._phe == null) ? null : other._phe.copy();
+    }
 
     public PAPX( int charStart, int charEnd, byte[] papx, ParagraphHeight phe,
             byte[] dataStream )
@@ -103,7 +106,7 @@ public final class PAPX extends BytePropertyNode<PAPX> {
     {
         if ( _buf == null )
             return 0;
-    
+
         byte[] buf = getGrpprl();
         if (buf.length == 0)
         {
@@ -129,7 +132,7 @@ public final class PAPX extends BytePropertyNode<PAPX> {
             // TODO Fix up for Word 6/95
             return new ParagraphProperties();
         }
-            
+
         short istd = getIstd();
         ParagraphProperties baseStyle = ss.getParagraphStyle(istd);
         return ParagraphSprmUncompressor.uncompressPAP(baseStyle, getGrpprl(), 2);
@@ -155,5 +158,10 @@ public final class PAPX extends BytePropertyNode<PAPX> {
     {
         return "PAPX from " + getStart() + " to " + getEnd() + " (in bytes "
                             + getStartBytes() + " to " + getEndBytes() + ")";
+    }
+
+    @Override
+    public PAPX copy() {
+        return new PAPX(this);
     }
 }

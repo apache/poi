@@ -20,17 +20,26 @@ package org.apache.poi.hwpf.model;
 import java.nio.charset.Charset;
 import java.util.Objects;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 
 @Internal
-public final class PieceDescriptor {
+public final class PieceDescriptor implements Duplicatable {
     private final short descriptor;
     int fc;     // used from the outside?!?
     private final PropertyModifier prm;
     private final boolean unicode;
     private final Charset charset;
+
+    public PieceDescriptor(PieceDescriptor other) {
+        descriptor = other.descriptor;
+        fc = other.fc;
+        prm = (other.prm == null) ? null : other.prm.copy();
+        unicode = other.unicode;
+        charset = other.charset;
+    }
 
     public PieceDescriptor(byte[] buf, int offset) {
         this(buf, offset, null);
@@ -154,5 +163,10 @@ public final class PieceDescriptor {
         return "PieceDescriptor (pos: " + getFilePosition() + "; "
                 + (isUnicode() ? "unicode" : "non-unicode") + "; prm: "
                 + getPrm() + ")";
+    }
+
+    @Override
+    public PieceDescriptor copy() {
+        return new PieceDescriptor(this);
     }
 }

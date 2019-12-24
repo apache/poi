@@ -17,16 +17,18 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.model.types.TCAbstractType;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Removal;
 
-public final class TableCellDescriptor extends TCAbstractType implements
-        Cloneable
-{
+public final class TableCellDescriptor extends TCAbstractType implements Duplicatable {
   public static final int SIZE = 20;
 
-  public TableCellDescriptor()
-  {
+  public TableCellDescriptor() {}
+
+  public TableCellDescriptor(TableCellDescriptor other) {
+    super(other);
   }
 
   protected void fillFields(byte[] data, int offset)
@@ -49,16 +51,17 @@ public final class TableCellDescriptor extends TCAbstractType implements
       getBrcRight().serialize(data, 0x10 + offset);
   }
 
-  public Object clone()
-    throws CloneNotSupportedException
-  {
-    TableCellDescriptor tc = (TableCellDescriptor)super.clone();
-    tc.setShd( getShd().clone() );
-    tc.setBrcTop((BorderCode)getBrcTop().clone());
-    tc.setBrcLeft((BorderCode)getBrcLeft().clone());
-    tc.setBrcBottom((BorderCode)getBrcBottom().clone());
-    tc.setBrcRight((BorderCode)getBrcRight().clone());
-    return tc;
+  @Override
+  @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
+  @Deprecated
+  @Removal(version = "5.0.0")
+  public TableCellDescriptor clone() {
+    return copy();
+  }
+
+  @Override
+  public TableCellDescriptor copy() {
+    return new TableCellDescriptor(this);
   }
 
   public static TableCellDescriptor convertBytesToTC(byte[] buf, int offset)

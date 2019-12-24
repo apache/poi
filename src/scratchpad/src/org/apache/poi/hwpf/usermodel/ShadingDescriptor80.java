@@ -17,36 +17,42 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.model.Colorref;
-
 import org.apache.poi.hwpf.model.types.SHD80AbstractType;
+import org.apache.poi.util.Removal;
 
 /**
  * The SHD80 is a substructure of the CHP and PAP, and TC for Word 97.
  */
-public final class ShadingDescriptor80 extends SHD80AbstractType implements
-        Cloneable
-{
+@SuppressWarnings("unused")
+public final class ShadingDescriptor80 extends SHD80AbstractType implements Duplicatable {
 
-    public ShadingDescriptor80()
-    {
+    public ShadingDescriptor80() {}
+
+    public ShadingDescriptor80(ShadingDescriptor80 other) {
+        super(other);
     }
 
-    public ShadingDescriptor80( byte[] buf, int offset )
-    {
-        super();
+    public ShadingDescriptor80( byte[] buf, int offset ) {
         fillFields( buf, offset );
     }
 
-    public ShadingDescriptor80( short value )
-    {
-        super();
+    public ShadingDescriptor80( short value ) {
         field_1_value = value;
     }
 
-    public ShadingDescriptor80 clone() throws CloneNotSupportedException
-    {
-        return (ShadingDescriptor80) super.clone();
+    @Override
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public ShadingDescriptor80 clone() {
+        return copy();
+    }
+
+    @Override
+    public ShadingDescriptor80 copy() {
+        return new ShadingDescriptor80(this);
     }
 
     public boolean isEmpty()

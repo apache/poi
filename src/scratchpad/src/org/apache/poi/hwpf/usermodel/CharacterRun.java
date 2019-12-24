@@ -17,6 +17,7 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.model.CHPX;
@@ -25,63 +26,62 @@ import org.apache.poi.hwpf.model.Ffn;
 import org.apache.poi.hwpf.model.NilPICFAndBinData;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
+import org.apache.poi.util.Removal;
 
 /**
  * This class represents a run of text that share common properties.
  */
-public final class CharacterRun extends Range
-  implements Cloneable, org.apache.poi.wp.usermodel.CharacterRun
-{
-  public final static short SPRM_FRMARKDEL = (short)0x0800;
-  public final static short SPRM_FRMARK = 0x0801;
-  public final static short SPRM_FFLDVANISH = 0x0802;
-  public final static short SPRM_PICLOCATION = 0x6A03;
-  public final static short SPRM_IBSTRMARK = 0x4804;
-  public final static short SPRM_DTTMRMARK = 0x6805;
-  public final static short SPRM_FDATA = 0x0806;
-  public final static short SPRM_SYMBOL = 0x6A09;
-  public final static short SPRM_FOLE2 = 0x080A;
-  public final static short SPRM_HIGHLIGHT = 0x2A0C;
-  public final static short SPRM_OBJLOCATION = 0x680E;
-  public final static short SPRM_ISTD = 0x4A30;
-  public final static short SPRM_FBOLD = 0x0835;
-  public final static short SPRM_FITALIC = 0x0836;
-  public final static short SPRM_FSTRIKE = 0x0837;
-  public final static short SPRM_FOUTLINE = 0x0838;
-  public final static short SPRM_FSHADOW = 0x0839;
-  public final static short SPRM_FSMALLCAPS = 0x083A;
-  public final static short SPRM_FCAPS = 0x083B;
-  public final static short SPRM_FVANISH = 0x083C;
-  public final static short SPRM_KUL = 0x2A3E;
-  public final static short SPRM_DXASPACE = (short)0x8840;
-  public final static short SPRM_LID = 0x4A41;
-  public final static short SPRM_ICO = 0x2A42;
-  public final static short SPRM_HPS = 0x4A43;
-  public final static short SPRM_HPSPOS = 0x4845;
-  public final static short SPRM_ISS = 0x2A48;
-  public final static short SPRM_HPSKERN = 0x484B;
-  public final static short SPRM_YSRI = 0x484E;
-  public final static short SPRM_RGFTCASCII = 0x4A4F;
-  public final static short SPRM_RGFTCFAREAST = 0x4A50;
-  public final static short SPRM_RGFTCNOTFAREAST = 0x4A51;
-  public final static short SPRM_CHARSCALE = 0x4852;
-  public final static short SPRM_FDSTRIKE = 0x2A53;
-  public final static short SPRM_FIMPRINT = 0x0854;
-  public final static short SPRM_FSPEC = 0x0855;
-  public final static short SPRM_FOBJ = 0x0856;
-  public final static short SPRM_PROPRMARK = (short)0xCA57;
-  public final static short SPRM_FEMBOSS = 0x0858;
-  public final static short SPRM_SFXTEXT = 0x2859;
-  public final static short SPRM_DISPFLDRMARK = (short)0xCA62;
-  public final static short SPRM_IBSTRMARKDEL = 0x4863;
-  public final static short SPRM_DTTMRMARKDEL = 0x6864;
-  public final static short SPRM_BRC = 0x6865;
-  public final static short SPRM_SHD = 0x4866;
-  public final static short SPRM_IDSIRMARKDEL = 0x4867;
-  public final static short SPRM_CPG = 0x486B;
-  public final static short SPRM_NONFELID = 0x486D;
-  public final static short SPRM_FELID = 0x486E;
-  public final static short SPRM_IDCTHINT = 0x286F;
+public final class CharacterRun extends Range implements Duplicatable, org.apache.poi.wp.usermodel.CharacterRun {
+  public static final short SPRM_FRMARKDEL = (short)0x0800;
+  public static final short SPRM_FRMARK = 0x0801;
+  public static final short SPRM_FFLDVANISH = 0x0802;
+  public static final short SPRM_PICLOCATION = 0x6A03;
+  public static final short SPRM_IBSTRMARK = 0x4804;
+  public static final short SPRM_DTTMRMARK = 0x6805;
+  public static final short SPRM_FDATA = 0x0806;
+  public static final short SPRM_SYMBOL = 0x6A09;
+  public static final short SPRM_FOLE2 = 0x080A;
+  public static final short SPRM_HIGHLIGHT = 0x2A0C;
+  public static final short SPRM_OBJLOCATION = 0x680E;
+  public static final short SPRM_ISTD = 0x4A30;
+  public static final short SPRM_FBOLD = 0x0835;
+  public static final short SPRM_FITALIC = 0x0836;
+  public static final short SPRM_FSTRIKE = 0x0837;
+  public static final short SPRM_FOUTLINE = 0x0838;
+  public static final short SPRM_FSHADOW = 0x0839;
+  public static final short SPRM_FSMALLCAPS = 0x083A;
+  public static final short SPRM_FCAPS = 0x083B;
+  public static final short SPRM_FVANISH = 0x083C;
+  public static final short SPRM_KUL = 0x2A3E;
+  public static final short SPRM_DXASPACE = (short)0x8840;
+  public static final short SPRM_LID = 0x4A41;
+  public static final short SPRM_ICO = 0x2A42;
+  public static final short SPRM_HPS = 0x4A43;
+  public static final short SPRM_HPSPOS = 0x4845;
+  public static final short SPRM_ISS = 0x2A48;
+  public static final short SPRM_HPSKERN = 0x484B;
+  public static final short SPRM_YSRI = 0x484E;
+  public static final short SPRM_RGFTCASCII = 0x4A4F;
+  public static final short SPRM_RGFTCFAREAST = 0x4A50;
+  public static final short SPRM_RGFTCNOTFAREAST = 0x4A51;
+  public static final short SPRM_CHARSCALE = 0x4852;
+  public static final short SPRM_FDSTRIKE = 0x2A53;
+  public static final short SPRM_FIMPRINT = 0x0854;
+  public static final short SPRM_FSPEC = 0x0855;
+  public static final short SPRM_FOBJ = 0x0856;
+  public static final short SPRM_PROPRMARK = (short)0xCA57;
+  public static final short SPRM_FEMBOSS = 0x0858;
+  public static final short SPRM_SFXTEXT = 0x2859;
+  public static final short SPRM_DISPFLDRMARK = (short)0xCA62;
+  public static final short SPRM_IBSTRMARKDEL = 0x4863;
+  public static final short SPRM_DTTMRMARKDEL = 0x6864;
+  public static final short SPRM_BRC = 0x6865;
+  public static final short SPRM_SHD = 0x4866;
+  public static final short SPRM_IDSIRMARKDEL = 0x4867;
+  public static final short SPRM_CPG = 0x486B;
+  public static final short SPRM_NONFELID = 0x486D;
+  public static final short SPRM_FELID = 0x486E;
+  public static final short SPRM_IDCTHINT = 0x286F;
 
   protected short _istd;
   protected SprmBuffer _chpx;
@@ -100,6 +100,13 @@ public final class CharacterRun extends Range
     _props = chpx.getCharacterProperties(ss, istd);
     _chpx = chpx.getSprmBuf();
     _istd = istd;
+  }
+
+  CharacterRun(CharacterRun other) {
+    super(other);
+    _istd = other._istd;
+    _chpx = (other._chpx == null) ? null : other._chpx.copy();
+    _props = (other._props == null) ? null : other._props.copy();
   }
 
   /**
@@ -551,23 +558,20 @@ public final class CharacterRun extends Range
    * Used to create a deep copy of this object.
    *
    * @return A deep copy.
-   * @throws CloneNotSupportedException never
    */
-  public Object clone()
-    throws CloneNotSupportedException
-  {
-    CharacterRun cp = (CharacterRun)super.clone();
-    cp._props.setDttmRMark((DateAndTime)_props.getDttmRMark().clone());
-    cp._props.setDttmRMarkDel((DateAndTime)_props.getDttmRMarkDel().clone());
-    cp._props.setDttmPropRMark((DateAndTime)_props.getDttmPropRMark().clone());
-    cp._props.setDttmDispFldRMark((DateAndTime)_props.getDttmDispFldRMark().
-                                  clone());
-    cp._props.setXstDispFldRMark(_props.getXstDispFldRMark().clone());
-    cp._props.setShd(_props.getShd().clone());
-
-    return cp;
+  @Override
+  @SuppressWarnings("squid:S2975")
+  @Deprecated
+  @Removal(version = "5.0.0")
+  public CharacterRun clone() {
+    return copy();
   }
-  
+
+  @Override
+  public CharacterRun copy() {
+    return new CharacterRun(this);
+  }
+
   /**
    * Returns true, if the CharacterRun is a special character run containing a symbol, otherwise false.
    *
@@ -582,7 +586,7 @@ public final class CharacterRun extends Range
 
   /**
    * Returns the symbol character, if this is a symbol character run.
-   * 
+   *
    * @see #isSymbol()
    * @throws IllegalStateException If this is not a symbol character run: call {@link #isSymbol()} first.
    */
@@ -596,7 +600,7 @@ public final class CharacterRun extends Range
 
   /**
    * Returns the symbol font, if this is a symbol character run. Might return null, if the font index is not found in the font table.
-   * 
+   *
    * @see #isSymbol()
    * @throws IllegalStateException If this is not a symbol character run: call {@link #isSymbol()} first.
    */
@@ -605,7 +609,7 @@ public final class CharacterRun extends Range
     if (isSymbol()) {
       if (_doc.getFontTable() == null)
         return null;
-      
+
       // Fetch all font names
       Ffn[] fontNames = _doc.getFontTable().getFontNames();
 
@@ -617,7 +621,7 @@ public final class CharacterRun extends Range
     } else
       throw new IllegalStateException("Not a symbol CharacterRun");
   }
-  
+
   public BorderCode getBorder() {
     return _props.getBrc();
   }
@@ -625,7 +629,7 @@ public final class CharacterRun extends Range
   public int getLanguageCode() {
       return _props.getLidDefault();
   }
-  
+
   /**
    * <p>Returns the index of the base style which applies to
    *  this Run. Details of the style can be looked up
@@ -639,10 +643,10 @@ public final class CharacterRun extends Range
   public short getStyleIndex() {
     return _istd;
   }
-  
+
   public String toString() {
      String text = text();
-     return "CharacterRun of " + text.length() + " characters - " + text; 
+     return "CharacterRun of " + text.length() + " characters - " + text;
   }
 
     public String[] getDropDownListValues()

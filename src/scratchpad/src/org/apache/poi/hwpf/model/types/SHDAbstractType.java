@@ -25,32 +25,24 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * The Shd structure specifies the colors and pattern that are used for background shading. <p>Class
-        and
-        fields descriptions are quoted from Word (.doc) Binary File Format by Microsoft Corporation
-
- * <p>
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/types/definitions.
- * <p>
- * This class is internal. It content or properties may change without notice
- * due to changes in our knowledge of internal Microsoft Word binary structures.
-
- * @author Sergey Vladimirov; according to Word (.doc) Binary File Format by Microsoft Corporation.
-
+ * The Shd structure specifies the colors and pattern that are used for background shading.
  */
 @Internal
-public abstract class SHDAbstractType
-{
+public abstract class SHDAbstractType {
 
     protected Colorref field_1_cvFore;
     protected Colorref field_2_cvBack;
     protected int field_3_ipat;
 
-    protected SHDAbstractType()
-    {
-        this.field_1_cvFore = new Colorref();
-        this.field_2_cvBack = new Colorref();
+    protected SHDAbstractType() {
+        field_1_cvFore = new Colorref();
+        field_2_cvBack = new Colorref();
+    }
+
+    protected SHDAbstractType(SHDAbstractType other) {
+        field_1_cvFore = (other.field_1_cvFore == null) ? null : other.field_1_cvFore.copy();
+        field_2_cvBack = (other.field_2_cvBack == null) ? null : other.field_2_cvBack.copy();
+        field_3_ipat = other.field_3_ipat;
     }
 
     protected void fillFields( byte[] data, int offset )
@@ -175,4 +167,4 @@ public abstract class SHDAbstractType
         this.field_3_ipat = field_3_ipat;
     }
 
-}  // END OF CLASS
+}

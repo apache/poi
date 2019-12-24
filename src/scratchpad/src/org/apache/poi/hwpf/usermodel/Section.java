@@ -17,17 +17,21 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.model.SEPX;
+import org.apache.poi.util.Removal;
 
-public final class Section extends Range
-{
-    private SectionProperties _props;
+public final class Section extends Range implements Duplicatable {
+    private final SectionProperties _props;
 
-    public Section( SEPX sepx, Range parent )
-    {
-        super( Math.max( parent._start, sepx.getStart() ), Math.min(
-                parent._end, sepx.getEnd() ), parent );
+    public Section(Section other) {
+        super(other);
+        _props  = other._props.copy();
+    }
+
+    public Section( SEPX sepx, Range parent ) {
+        super( Math.max( parent._start, sepx.getStart() ), Math.min(parent._end, sepx.getEnd() ), parent );
 
         // XXX: temporary workaround for old Word95 document
         if ( parent.getDocument() instanceof HWPFOldDocument )
@@ -36,11 +40,17 @@ public final class Section extends Range
             _props = sepx.getSectionProperties();
     }
 
-    public Object clone() throws CloneNotSupportedException
-    {
-        Section s = (Section) super.clone();
-        s._props = (SectionProperties) _props.clone();
-        return s;
+    @Override
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public Section clone() {
+        return copy();
+    }
+
+    @Override
+    public Section copy() {
+        return new Section(this);
     }
 
     /**
@@ -99,7 +109,7 @@ public final class Section extends Range
      * Set the height of the bottom margin in twips. In the AbstractWordUtils class, a constant
      * is defined that indicates how many twips there are per inch and it can be used in setting
      * the margins width a little like this;
-     * 
+     *
      * section.setMarginBottom( (int) 1.5 * AbstractWordUtils.TWIPS_PER_INCH );
      *
      * @param marginWidth A primitive int whose value will indciate how high the margin should
@@ -114,7 +124,7 @@ public final class Section extends Range
      * Set the width of the left hand margin in twips. In the AbstractWordUtils class, a constant
      * is defined that indicates how many twips there are per inch and it can be used in setting
      * the margins width a little like this;
-     * 
+     *
      * section.setMarginLeft( (int) 1.5 * AbstractWordUtils.TWIPS_PER_INCH );
      *
      * @param marginWidth A primitive int whose value will indciate how high the margin should
@@ -129,7 +139,7 @@ public final class Section extends Range
      * Set the width of the right hand margin in twips. In the AbstractWordUtils class, a constant
      * is defined that indicates how many twips there are per inch and it can be used in setting
      * the margins width a little like this;
-     * 
+     *
      * section.setMarginRight( (int) 1.5 * AbstractWordUtils.TWIPS_PER_INCH );
      *
      * @param marginWidth A primitive int whose value will indciate how high the margin should
@@ -144,7 +154,7 @@ public final class Section extends Range
      * Set the height of the top margin in twips. In the AbstractWordUtils class, a constant
      * is defined that indicates how many twips there are per inch and it can be used in setting
      * the margins width a little like this;
-     * 
+     *
      * section.setMarginTop( (int) 1.5 * AbstractWordUtils.TWIPS_PER_INCH );
      *
      * @param marginWidth A primitive int whose value will indciate how high the margin should
@@ -181,7 +191,7 @@ public final class Section extends Range
     public int getFootnoteNumberingOffset() {
         return _props.getNFtn();
     }
-    
+
     /**
      * Get the numbering format of embedded footnotes
      *
@@ -192,7 +202,7 @@ public final class Section extends Range
     public int getFootnoteNumberingFormat() {
         return _props.getNfcFtnRef();
     }
-    
+
     /**
      * Get the endnote restart qualifier
      *
@@ -203,18 +213,18 @@ public final class Section extends Range
      * </dl>
      *
      * @return an Rnc, as decribed above, specifying when and where endnote numbering restarts
-     */   
+     */
     public short getEndnoteRestartQualifier() {
         return _props.getRncEdn();
     }
-    
+
     /**
      * @return an offset to be added to endnote numbers
      */
     public int getEndnoteNumberingOffset() {
         return _props.getNEdn();
     }
-    
+
     /**
      * Get the numbering format of embedded endnotes
      *

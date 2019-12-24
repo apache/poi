@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.model.types;
 
 
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 import org.apache.poi.hwpf.model.TabDescriptor;
 import org.apache.poi.hwpf.usermodel.BorderCode;
@@ -31,18 +32,34 @@ import org.apache.poi.util.Internal;
 
 /**
  * Paragraph Properties.
- * <p>
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/types/definitions.
- * <p>
- * This class is internal. It content or properties may change without notice 
- * due to changes in our knowledge of internal Microsoft Word binary structures.
-
- * @author S. Ryan Ackley
  */
+@SuppressWarnings("unused")
 @Internal
-public abstract class PAPAbstractType
-{
+public abstract class PAPAbstractType {
+
+    protected static final byte BRCL_SINGLE = 0;
+    protected static final byte BRCL_THICK = 1;
+    protected static final byte BRCL_DOUBLE = 2;
+    protected static final byte BRCL_SHADOW = 3;
+
+    protected static final byte BRCP_NONE = 0;
+    protected static final byte BRCP_BORDER_ABOVE = 1;
+    protected static final byte BRCP_BORDER_BELOW = 2;
+    protected static final byte BRCP_BOX_AROUND = 15;
+    protected static final byte BRCP_BAR_TO_LEFT_OF_PARAGRAPH = 16;
+
+    protected static final boolean FMINHEIGHT_EXACT = false;
+    protected static final boolean FMINHEIGHT_AT_LEAST = true;
+
+    protected static final byte WALIGNFONT_HANGING = 0;
+    protected static final byte WALIGNFONT_CENTERED = 1;
+    protected static final byte WALIGNFONT_ROMAN = 2;
+    protected static final byte WALIGNFONT_VARIABLE = 3;
+    protected static final byte WALIGNFONT_AUTO = 4;
+
+    private static final BitField fVertical = new BitField(0x0001);
+    private static final BitField fBackward = new BitField(0x0002);
+    private static final BitField fRotateFont = new BitField(0x0004);
 
     protected int field_1_istd;
     protected boolean field_2_fSideBySide;
@@ -50,16 +67,7 @@ public abstract class PAPAbstractType
     protected boolean field_4_fKeepFollow;
     protected boolean field_5_fPageBreakBefore;
     protected byte field_6_brcl;
-    /**/protected final static byte BRCL_SINGLE = 0;
-    /**/protected final static byte BRCL_THICK = 1;
-    /**/protected final static byte BRCL_DOUBLE = 2;
-    /**/protected final static byte BRCL_SHADOW = 3;
     protected byte field_7_brcp;
-    /**/protected final static byte BRCP_NONE = 0;
-    /**/protected final static byte BRCP_BORDER_ABOVE = 1;
-    /**/protected final static byte BRCP_BORDER_BELOW = 2;
-    /**/protected final static byte BRCP_BOX_AROUND = 15;
-    /**/protected final static byte BRCP_BAR_TO_LEFT_OF_PARAGRAPH = 16;
     protected byte field_8_ilvl;
     protected int field_9_ilfo;
     protected boolean field_10_fNoLnn;
@@ -80,8 +88,6 @@ public abstract class PAPAbstractType
     protected boolean field_25_fNoAutoHyph;
     protected int field_26_dyaHeight;
     protected boolean field_27_fMinHeight;
-    /**/protected final static boolean FMINHEIGHT_EXACT = false;
-    /**/protected final static boolean FMINHEIGHT_AT_LEAST = true;
     protected DropCapSpecifier field_28_dcs;
     protected int field_29_dyaFromText;
     protected int field_30_dxaFromText;
@@ -94,15 +100,7 @@ public abstract class PAPAbstractType
     protected boolean field_37_fAutoSpaceDE;
     protected boolean field_38_fAutoSpaceDN;
     protected int field_39_wAlignFont;
-    /**/protected final static byte WALIGNFONT_HANGING = 0;
-    /**/protected final static byte WALIGNFONT_CENTERED = 1;
-    /**/protected final static byte WALIGNFONT_ROMAN = 2;
-    /**/protected final static byte WALIGNFONT_VARIABLE = 3;
-    /**/protected final static byte WALIGNFONT_AUTO = 4;
     protected short field_40_fontAlign;
-    /**/private static BitField fVertical = new BitField(0x0001);
-    /**/private static BitField fBackward = new BitField(0x0002);
-    /**/private static BitField fRotateFont = new BitField(0x0004);
     protected byte field_41_lvl;
     protected boolean field_42_fBiDi;
     protected boolean field_43_fNumRMIns;
@@ -143,29 +141,111 @@ public abstract class PAPAbstractType
     protected long field_78_ipgp;
     protected long field_79_rsid;
 
-    protected PAPAbstractType()
-    {
-        this.field_11_lspd = new LineSpacingDescriptor();
-        this.field_11_lspd = new LineSpacingDescriptor();
-        this.field_28_dcs = new DropCapSpecifier();
-        this.field_32_fWidowControl = true;
-        this.field_41_lvl = 9;
-        this.field_60_brcTop = new BorderCode();
-        this.field_61_brcLeft = new BorderCode();
-        this.field_62_brcBottom = new BorderCode();
-        this.field_63_brcRight = new BorderCode();
-        this.field_64_brcBetween = new BorderCode();
-        this.field_65_brcBar = new BorderCode();
-        this.field_66_shd = new ShadingDescriptor();
-        this.field_67_anld = new byte[0];
-        this.field_68_phe = new byte[0];
-        this.field_71_dttmPropRMark = new DateAndTime();
-        this.field_73_rgdxaTab = new int[0];
-        this.field_74_rgtbd = new TabDescriptor[0];
-        this.field_75_numrm = new byte[0];
-        this.field_76_ptap = new byte[0];
+    protected PAPAbstractType() {
+        field_11_lspd = new LineSpacingDescriptor();
+        field_11_lspd = new LineSpacingDescriptor();
+        field_28_dcs = new DropCapSpecifier();
+        field_32_fWidowControl = true;
+        field_41_lvl = 9;
+        field_60_brcTop = new BorderCode();
+        field_61_brcLeft = new BorderCode();
+        field_62_brcBottom = new BorderCode();
+        field_63_brcRight = new BorderCode();
+        field_64_brcBetween = new BorderCode();
+        field_65_brcBar = new BorderCode();
+        field_66_shd = new ShadingDescriptor();
+        field_67_anld = new byte[0];
+        field_68_phe = new byte[0];
+        field_71_dttmPropRMark = new DateAndTime();
+        field_73_rgdxaTab = new int[0];
+        field_74_rgtbd = new TabDescriptor[0];
+        field_75_numrm = new byte[0];
+        field_76_ptap = new byte[0];
     }
 
+    protected PAPAbstractType(PAPAbstractType other) {
+        field_1_istd = other.field_1_istd;
+        field_2_fSideBySide = other.field_2_fSideBySide;
+        field_3_fKeep = other.field_3_fKeep;
+        field_4_fKeepFollow = other.field_4_fKeepFollow;
+        field_5_fPageBreakBefore = other.field_5_fPageBreakBefore;
+        field_6_brcl = other.field_6_brcl;
+        field_7_brcp = other.field_7_brcp;
+        field_8_ilvl = other.field_8_ilvl;
+        field_9_ilfo = other.field_9_ilfo;
+        field_10_fNoLnn = other.field_10_fNoLnn;
+        field_11_lspd = (other.field_11_lspd == null) ? null : other.field_11_lspd.copy();
+        field_12_dyaBefore = other.field_12_dyaBefore;
+        field_13_dyaAfter = other.field_13_dyaAfter;
+        field_14_fInTable = other.field_14_fInTable;
+        field_15_finTableW97 = other.field_15_finTableW97;
+        field_16_fTtp = other.field_16_fTtp;
+        field_17_dxaAbs = other.field_17_dxaAbs;
+        field_18_dyaAbs = other.field_18_dyaAbs;
+        field_19_dxaWidth = other.field_19_dxaWidth;
+        field_20_fBrLnAbove = other.field_20_fBrLnAbove;
+        field_21_fBrLnBelow = other.field_21_fBrLnBelow;
+        field_22_pcVert = other.field_22_pcVert;
+        field_23_pcHorz = other.field_23_pcHorz;
+        field_24_wr = other.field_24_wr;
+        field_25_fNoAutoHyph = other.field_25_fNoAutoHyph;
+        field_26_dyaHeight = other.field_26_dyaHeight;
+        field_27_fMinHeight = other.field_27_fMinHeight;
+        field_28_dcs = (other.field_28_dcs == null) ? null : other.field_28_dcs.copy();
+        field_29_dyaFromText = other.field_29_dyaFromText;
+        field_30_dxaFromText = other.field_30_dxaFromText;
+        field_31_fLocked = other.field_31_fLocked;
+        field_32_fWidowControl = other.field_32_fWidowControl;
+        field_33_fKinsoku = other.field_33_fKinsoku;
+        field_34_fWordWrap = other.field_34_fWordWrap;
+        field_35_fOverflowPunct = other.field_35_fOverflowPunct;
+        field_36_fTopLinePunct = other.field_36_fTopLinePunct;
+        field_37_fAutoSpaceDE = other.field_37_fAutoSpaceDE;
+        field_38_fAutoSpaceDN = other.field_38_fAutoSpaceDN;
+        field_39_wAlignFont = other.field_39_wAlignFont;
+        field_40_fontAlign = other.field_40_fontAlign;
+        field_41_lvl = other.field_41_lvl;
+        field_42_fBiDi = other.field_42_fBiDi;
+        field_43_fNumRMIns = other.field_43_fNumRMIns;
+        field_44_fCrLf = other.field_44_fCrLf;
+        field_45_fUsePgsuSettings = other.field_45_fUsePgsuSettings;
+        field_46_fAdjustRight = other.field_46_fAdjustRight;
+        field_47_itap = other.field_47_itap;
+        field_48_fInnerTableCell = other.field_48_fInnerTableCell;
+        field_49_fOpenTch = other.field_49_fOpenTch;
+        field_50_fTtpEmbedded = other.field_50_fTtpEmbedded;
+        field_51_dxcRight = other.field_51_dxcRight;
+        field_52_dxcLeft = other.field_52_dxcLeft;
+        field_53_dxcLeft1 = other.field_53_dxcLeft1;
+        field_54_fDyaBeforeAuto = other.field_54_fDyaBeforeAuto;
+        field_55_fDyaAfterAuto = other.field_55_fDyaAfterAuto;
+        field_56_dxaRight = other.field_56_dxaRight;
+        field_57_dxaLeft = other.field_57_dxaLeft;
+        field_58_dxaLeft1 = other.field_58_dxaLeft1;
+        field_59_jc = other.field_59_jc;
+        field_60_brcTop = (other.field_60_brcTop == null) ? null : other.field_60_brcTop.copy();
+        field_61_brcLeft = (other.field_61_brcLeft == null) ? null : other.field_61_brcLeft.copy();
+        field_62_brcBottom = (other.field_62_brcBottom == null) ? null : other.field_62_brcBottom.copy();
+        field_63_brcRight = (other.field_63_brcRight == null) ? null : other.field_63_brcRight.copy();
+        field_64_brcBetween = (other.field_64_brcBetween == null) ? null : other.field_64_brcBetween.copy();
+        field_65_brcBar = (other.field_65_brcBar == null) ? null : other.field_65_brcBar.copy();
+        field_66_shd = (other.field_66_shd == null) ? null : other.field_66_shd.copy();
+        field_67_anld = (other.field_67_anld == null) ? null : other.field_67_anld.clone();
+        field_68_phe = (other.field_68_phe == null) ? null : other.field_68_phe.clone();
+        field_69_fPropRMark = other.field_69_fPropRMark;
+        field_70_ibstPropRMark = other.field_70_ibstPropRMark;
+        field_71_dttmPropRMark = (other.field_71_dttmPropRMark == null) ? null : other.field_71_dttmPropRMark.copy();
+        field_72_itbdMac = other.field_72_itbdMac;
+        field_73_rgdxaTab = (other.field_73_rgdxaTab == null) ? null : other.field_73_rgdxaTab.clone();
+        field_74_rgtbd = (other.field_74_rgtbd == null) ? null
+            : Stream.of(other.field_74_rgtbd).map(TabDescriptor::copy).toArray(TabDescriptor[]::new);
+        field_75_numrm = (other.field_75_numrm == null) ? null : other.field_75_numrm.clone();
+        field_76_ptap = (other.field_76_ptap == null) ? null : other.field_76_ptap.clone();
+        field_77_fNoAllowOverlap = other.field_77_fNoAllowOverlap;
+        field_78_ipgp = other.field_78_ipgp;
+        field_79_rsid = other.field_79_rsid;
+
+    }
 
     public String toString()
     {
@@ -430,7 +510,7 @@ public abstract class PAPAbstractType
     /**
      * Border line style.
      *
-     * @return One of 
+     * @return One of
      * <li>{@link #BRCL_SINGLE}
      * <li>{@link #BRCL_THICK}
      * <li>{@link #BRCL_DOUBLE}
@@ -446,7 +526,7 @@ public abstract class PAPAbstractType
      * Border line style.
      *
      * @param field_6_brcl
-     *        One of 
+     *        One of
      * <li>{@link #BRCL_SINGLE}
      * <li>{@link #BRCL_THICK}
      * <li>{@link #BRCL_DOUBLE}
@@ -461,7 +541,7 @@ public abstract class PAPAbstractType
     /**
      * Rectangle border codes.
      *
-     * @return One of 
+     * @return One of
      * <li>{@link #BRCP_NONE}
      * <li>{@link #BRCP_BORDER_ABOVE}
      * <li>{@link #BRCP_BORDER_BELOW}
@@ -478,7 +558,7 @@ public abstract class PAPAbstractType
      * Rectangle border codes.
      *
      * @param field_7_brcp
-     *        One of 
+     *        One of
      * <li>{@link #BRCP_NONE}
      * <li>{@link #BRCP_BORDER_ABOVE}
      * <li>{@link #BRCP_BORDER_BELOW}
@@ -512,23 +592,23 @@ public abstract class PAPAbstractType
     /**
      * "A 16-bit signed integer value that is used to determine which list
      * contains the paragraph. This value MUST be one of the following:
-     * 
+     *
      * 0x0000 -- This paragraph is not in a list, and any list formatting on the
      * paragraph is removed.
-     * 
+     *
      * 0x0001 - 0x07FE -- The value is a 1-based index into PlfLfo.rgLfo. The
      * LFO at this index defines the list that this paragraph is in.
-     * 
+     *
      * 0xF801 -- This paragraph is not in a list.
-     * 
+     *
      * 0xF802 - 0xFFFF -- The value is the negation of a 1-based index into
      * PlfLfo.rgLfo. The LFO at this index defines the list that this paragraph
      * is in. The logical left indentation (see sprmPDxaLeft) and the logical
      * left first line indentation (see sprmPDxaLeft1) of the paragraph MUST be
      * preserved despite any list formatting.
-     * 
+     *
      * By default, a paragraph is not in a list."
-     * 
+     *
      * Quote from [MS-DOC] -- v20110315, page 125
      */
     @Internal
@@ -540,22 +620,22 @@ public abstract class PAPAbstractType
     /**
      * "A 16-bit signed integer value that is used to determine which list
      * contains the paragraph. This value MUST be one of the following:
-     * 
+     *
      * 0x0000 -- This paragraph is not in a list, and any list formatting on the
      * paragraph is removed.
-     * 
+     *
      * 0x0001 - 0x07FE -- The value is a 1-based index into PlfLfo.rgLfo. The
      * LFO at this index defines the list that this paragraph is in.
-     * 
+     *
      * 0xF801 -- This paragraph is not in a list.
-     * 
+     *
      * 0xF802 - 0xFFFF -- The value is the negation of a 1-based index into
      * PlfLfo.rgLfo. The LFO at this index defines the list that this paragraph
      * is in. The logical left indentation (see sprmPDxaLeft) and the logical
      * left first line indentation (see sprmPDxaLeft1) of the paragraph MUST be
      * preserved despite any list formatting. By default, a paragraph is not in
      * a list."
-     * 
+     *
      * Quote from [MS-DOC] -- v20110315, page 125
      */
     @Internal
@@ -873,7 +953,7 @@ public abstract class PAPAbstractType
     /**
      * Minimum height is exact or auto.
      *
-     * @return One of 
+     * @return One of
      * <li>{@link #FMINHEIGHT_EXACT}
      * <li>{@link #FMINHEIGHT_AT_LEAST}
      */
@@ -887,7 +967,7 @@ public abstract class PAPAbstractType
      * Minimum height is exact or auto.
      *
      * @param field_27_fMinHeight
-     *        One of 
+     *        One of
      * <li>{@link #FMINHEIGHT_EXACT}
      * <li>{@link #FMINHEIGHT_AT_LEAST}
      */
@@ -1098,7 +1178,7 @@ public abstract class PAPAbstractType
     /**
      * Get the wAlignFont field for the PAP record.
      *
-     * @return One of 
+     * @return One of
      * <li>{@link #WALIGNFONT_HANGING}
      * <li>{@link #WALIGNFONT_CENTERED}
      * <li>{@link #WALIGNFONT_ROMAN}
@@ -1115,7 +1195,7 @@ public abstract class PAPAbstractType
      * Set the wAlignFont field for the PAP record.
      *
      * @param field_39_wAlignFont
-     *        One of 
+     *        One of
      * <li>{@link #WALIGNFONT_HANGING}
      * <li>{@link #WALIGNFONT_CENTERED}
      * <li>{@link #WALIGNFONT_ROMAN}
@@ -1850,7 +1930,7 @@ public abstract class PAPAbstractType
 
     /**
      * Sets the fVertical field value.
-     * 
+     *
      */
     @Internal
     public void setFVertical( boolean value )
@@ -1859,7 +1939,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * 
+     *
      * @return  the fVertical field value.
      */
     @Internal
@@ -1870,7 +1950,7 @@ public abstract class PAPAbstractType
 
     /**
      * Sets the fBackward field value.
-     * 
+     *
      */
     @Internal
     public void setFBackward( boolean value )
@@ -1879,7 +1959,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * 
+     *
      * @return  the fBackward field value.
      */
     @Internal
@@ -1890,7 +1970,7 @@ public abstract class PAPAbstractType
 
     /**
      * Sets the fRotateFont field value.
-     * 
+     *
      */
     @Internal
     public void setFRotateFont( boolean value )
@@ -1899,7 +1979,7 @@ public abstract class PAPAbstractType
     }
 
     /**
-     * 
+     *
      * @return  the fRotateFont field value.
      */
     @Internal

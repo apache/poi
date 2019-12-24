@@ -18,33 +18,34 @@ package org.apache.poi.hwpf.model;
 
 import java.util.Objects;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.model.types.BKFAbstractType;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 
 @Internal
-public final class BookmarkFirstDescriptor extends BKFAbstractType implements
-        Cloneable
-{
-    public BookmarkFirstDescriptor()
-    {
+public final class BookmarkFirstDescriptor extends BKFAbstractType implements Duplicatable {
+    public BookmarkFirstDescriptor() { }
+
+    public BookmarkFirstDescriptor(BookmarkFirstDescriptor other) {
+        super(other);
     }
 
-    public BookmarkFirstDescriptor( byte[] data, int offset )
-    {
+    public BookmarkFirstDescriptor( byte[] data, int offset ) {
         fillFields( data, offset );
     }
 
     @Override
-    protected BookmarkFirstDescriptor clone()
-    {
-        try
-        {
-            return (BookmarkFirstDescriptor) super.clone();
-        }
-        catch ( CloneNotSupportedException e )
-        {
-            throw new RuntimeException( e );
-        }
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    protected BookmarkFirstDescriptor clone() {
+        return copy();
+    }
+
+    @Override
+    public BookmarkFirstDescriptor copy() {
+        return new BookmarkFirstDescriptor(this);
     }
 
     @Override

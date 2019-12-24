@@ -17,17 +17,17 @@
 
 package org.apache.poi.hwpf.model;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
  * Section Descriptor (SED)
- * 
+ *
  * See page 186 for details.
  */
 @Internal
-public final class SectionDescriptor
-{
+public final class SectionDescriptor implements Duplicatable {
 
     /**
      * "Used internally by Word"
@@ -40,7 +40,7 @@ public final class SectionDescriptor
      * to the standard SEP (see SEP definition)."
      */
     private int fcSepx;
-    
+
     /**
      * "Used internally by Word"
      */
@@ -52,8 +52,13 @@ public final class SectionDescriptor
      */
     private int fcMpr;
 
-  public SectionDescriptor()
-  {
+  public SectionDescriptor() {}
+
+  public SectionDescriptor(SectionDescriptor other) {
+    fn = other.fn;
+    fcSepx = other.fcSepx;
+    fnMpr = other.fnMpr;
+    fcMpr = other.fcMpr;
   }
 
   public SectionDescriptor(byte[] buf, int offset)
@@ -90,7 +95,7 @@ public final class SectionDescriptor
       assert false : "hashCode not designed";
       return 42; // any arbitrary constant will do
   }
-  
+
   public byte[] toByteArray()
   {
     int offset = 0;
@@ -113,4 +118,9 @@ public final class SectionDescriptor
         return "[SED] (fn: " + fn + "; fcSepx: " + fcSepx + "; fnMpr: " + fnMpr
                 + "; fcMpr: " + fcMpr + ")";
     }
+
+  @Override
+  public SectionDescriptor copy() {
+    return new SectionDescriptor(this);
+  }
 }

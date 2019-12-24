@@ -22,11 +22,11 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * This class holds all of the section formatting 
+ * This class holds all of the section formatting
  *  properties from Old (Word 6 / Word 95) documents.
  * Unlike with Word 97+, it all gets held in the
  *  same stream.
- * In common with the rest of the old support, it 
+ * In common with the rest of the old support, it
  *  is read only
  */
 @Internal
@@ -79,6 +79,6 @@ public final class OldSectionTable extends SectionTable
 
             _sections.add( sepx );
     }
-    _sections.sort(PropertyNode.StartComparator.instance);
+    _sections.sort(PropertyNode.StartComparator);
   }
 }

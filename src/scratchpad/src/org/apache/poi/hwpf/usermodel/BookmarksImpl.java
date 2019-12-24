@@ -243,7 +243,7 @@ public class BookmarksImpl implements Bookmarks
             indices[counter++] = entry.getKey().intValue();
             List<GenericPropertyNode> updated = new ArrayList<>(
                     entry.getValue());
-            updated.sort(PropertyNode.EndComparator.instance);
+            updated.sort(PropertyNode.EndComparator);
             entry.setValue( updated );
         }
         Arrays.sort( indices );

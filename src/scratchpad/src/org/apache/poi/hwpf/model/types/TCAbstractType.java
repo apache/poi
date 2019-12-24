@@ -18,39 +18,30 @@
 package org.apache.poi.hwpf.model.types;
 
 
-import org.apache.poi.hwpf.usermodel.*;
-import org.apache.poi.util.*;
+import org.apache.poi.hwpf.usermodel.BorderCode;
+import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
+import org.apache.poi.util.BitField;
+import org.apache.poi.util.Internal;
 
 /**
  * Table Cell Descriptor.
- * <p>
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/types/definitions.
- * <p>
- * This class is internal. It content or properties may change without notice 
- * due to changes in our knowledge of internal Microsoft Word binary structures.
-
- * @author S. Ryan Ackley. Field descriptions are quoted from Microsoft Office Word 97-2007 Binary
-        File Format (.doc) Specification
-    
  */
 @Internal
-public abstract class TCAbstractType
-{
+public abstract class TCAbstractType {
+    private static final BitField fFirstMerged = new BitField(0x0001);
+    private static final BitField fMerged = new BitField(0x0002);
+    private static final BitField fVertical = new BitField(0x0004);
+    private static final BitField fBackward = new BitField(0x0008);
+    private static final BitField fRotateFont = new BitField(0x0010);
+    private static final BitField fVertMerge = new BitField(0x0020);
+    private static final BitField fVertRestart = new BitField(0x0040);
+    private static final BitField vertAlign = new BitField(0x0180);
+    private static final BitField ftsWidth = new BitField(0x0E00);
+    private static final BitField fFitText = new BitField(0x1000);
+    private static final BitField fNoWrap = new BitField(0x2000);
+    private static final BitField fUnused = new BitField(0xC000);
 
     protected short field_1_rgf;
-    /**/private static BitField fFirstMerged = new BitField(0x0001);
-    /**/private static BitField fMerged = new BitField(0x0002);
-    /**/private static BitField fVertical = new BitField(0x0004);
-    /**/private static BitField fBackward = new BitField(0x0008);
-    /**/private static BitField fRotateFont = new BitField(0x0010);
-    /**/private static BitField fVertMerge = new BitField(0x0020);
-    /**/private static BitField fVertRestart = new BitField(0x0040);
-    /**/private static BitField vertAlign = new BitField(0x0180);
-    /**/private static BitField ftsWidth = new BitField(0x0E00);
-    /**/private static BitField fFitText = new BitField(0x1000);
-    /**/private static BitField fNoWrap = new BitField(0x2000);
-    /**/private static BitField fUnused = new BitField(0xC000);
     protected short field_2_wWidth;
     protected ShadingDescriptor field_3_shd;
     protected short field_4_wCellPaddingLeft;
@@ -74,8 +65,7 @@ public abstract class TCAbstractType
     protected BorderCode field_22_brcBottom;
     protected BorderCode field_23_brcRight;
 
-    protected TCAbstractType()
-    {
+    protected TCAbstractType() {
         this.field_3_shd = new ShadingDescriptor();
         this.field_20_brcTop = new BorderCode();
         this.field_21_brcLeft = new BorderCode();
@@ -83,6 +73,31 @@ public abstract class TCAbstractType
         this.field_23_brcRight = new BorderCode();
     }
 
+    protected TCAbstractType(TCAbstractType other) {
+        field_1_rgf = other.field_1_rgf;
+        field_2_wWidth = other.field_2_wWidth;
+        field_3_shd = (other.field_3_shd == null) ? null : other.field_3_shd.copy();
+        field_4_wCellPaddingLeft = other.field_4_wCellPaddingLeft;
+        field_5_wCellPaddingTop = other.field_5_wCellPaddingTop;
+        field_6_wCellPaddingBottom = other.field_6_wCellPaddingBottom;
+        field_7_wCellPaddingRight = other.field_7_wCellPaddingRight;
+        field_8_ftsCellPaddingLeft = other.field_8_ftsCellPaddingLeft;
+        field_9_ftsCellPaddingTop = other.field_9_ftsCellPaddingTop;
+        field_10_ftsCellPaddingBottom = other.field_10_ftsCellPaddingBottom;
+        field_11_ftsCellPaddingRight = other.field_11_ftsCellPaddingRight;
+        field_12_wCellSpacingLeft = other.field_12_wCellSpacingLeft;
+        field_13_wCellSpacingTop = other.field_13_wCellSpacingTop;
+        field_14_wCellSpacingBottom = other.field_14_wCellSpacingBottom;
+        field_15_wCellSpacingRight = other.field_15_wCellSpacingRight;
+        field_16_ftsCellSpacingLeft = other.field_16_ftsCellSpacingLeft;
+        field_17_ftsCellSpacingTop = other.field_17_ftsCellSpacingTop;
+        field_18_ftsCellSpacingBottom = other.field_18_ftsCellSpacingBottom;
+        field_19_ftsCellSpacingRight = other.field_19_ftsCellSpacingRight;
+        field_20_brcTop = (other.field_20_brcTop == null) ? null : other.field_20_brcTop.copy();
+        field_21_brcLeft = (other.field_21_brcLeft == null) ? null : other.field_21_brcLeft.copy();
+        field_22_brcBottom = (other.field_22_brcBottom == null) ? null : other.field_22_brcBottom.copy();
+        field_23_brcRight = (other.field_23_brcRight == null) ? null : other.field_23_brcRight.copy();
+    }
 
     public String toString()
     {

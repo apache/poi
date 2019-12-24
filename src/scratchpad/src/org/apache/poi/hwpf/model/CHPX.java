@@ -28,12 +28,14 @@ import org.apache.poi.util.Internal;
  * Make sure you call getStart() / getEnd() when you want characters
  * (normal use), but getStartByte() / getEndByte() when you're
  * reading in / writing out!
- *
- * @author Ryan Ackley
  */
 @Internal
 @SuppressWarnings("deprecation")
 public final class CHPX extends BytePropertyNode<CHPX> {
+
+    public CHPX(CHPX other) {
+        super(other);
+    }
 
     CHPX(int charStart, int charEnd, SprmBuffer buf) {
         super(charStart, charEnd, buf);
@@ -61,5 +63,10 @@ public final class CHPX extends BytePropertyNode<CHPX> {
     public String toString() {
         return "CHPX from " + getStart() + " to " + getEnd() +
                 " (in bytes " + getStartBytes() + " to " + getEndBytes() + ")";
+    }
+
+    @Override
+    public CHPX copy() {
+        return new CHPX(this);
     }
 }

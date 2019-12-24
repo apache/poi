@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.usermodel;
 
 import java.util.NoSuchElementException;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.model.LFO;
 import org.apache.poi.hwpf.model.ListLevel;
@@ -31,67 +32,68 @@ import org.apache.poi.hwpf.sprm.TableSprmCompressor;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 
-public class Paragraph extends Range implements Cloneable {
-    private final static POILogger log = POILogFactory.getLogger( Paragraph.class );
+public class Paragraph extends Range implements Duplicatable {
+    private static final POILogger log = POILogFactory.getLogger( Paragraph.class );
 
-    public final static short SPRM_JC = 0x2403;
-    public final static short SPRM_FSIDEBYSIDE = 0x2404;
-    public final static short SPRM_FKEEP = 0x2405;
-    public final static short SPRM_FKEEPFOLLOW = 0x2406;
-    public final static short SPRM_FPAGEBREAKBEFORE = 0x2407;
-    public final static short SPRM_BRCL = 0x2408;
-    public final static short SPRM_BRCP = 0x2409;
-    public final static short SPRM_ILVL = 0x260A;
-    public final static short SPRM_ILFO = 0x460B;
-    public final static short SPRM_FNOLINENUMB = 0x240C;
-    public final static short SPRM_CHGTABSPAPX = (short)0xC60D;
-    public final static short SPRM_DXARIGHT = (short)0x840E;
-    public final static short SPRM_DXALEFT = (short)0x840F;
-    public final static short SPRM_DXALEFT1 = (short)0x8411;
-    public final static short SPRM_DYALINE = 0x6412;
-    public final static short SPRM_DYABEFORE = (short)0xA413;
-    public final static short SPRM_DYAAFTER = (short)0xA414;
-    public final static short SPRM_CHGTABS = (short)0xC615;
-    public final static short SPRM_FINTABLE = 0x2416;
-    public final static short SPRM_FTTP = 0x2417;
-    public final static short SPRM_DXAABS = (short)0x8418;
-    public final static short SPRM_DYAABS = (short)0x8419;
-    public final static short SPRM_DXAWIDTH = (short)0x841A;
-    public final static short SPRM_PC = 0x261B;
-    public final static short SPRM_WR = 0x2423;
-    public final static short SPRM_BRCTOP = 0x6424;
-    public final static short SPRM_BRCLEFT = 0x6425;
-    public final static short SPRM_BRCBOTTOM = 0x6426;
-    public final static short SPRM_BRCRIGHT = 0x6427;
-    public final static short SPRM_BRCBAR = 0x6629;
-    public final static short SPRM_FNOAUTOHYPH = 0x242A;
-    public final static short SPRM_WHEIGHTABS = 0x442B;
-    public final static short SPRM_DCS = 0x442C;
-    public final static short SPRM_SHD80 = 0x442D;
-    public final static short SPRM_SHD = (short)0xC64D;
-    public final static short SPRM_DYAFROMTEXT = (short)0x842E;
-    public final static short SPRM_DXAFROMTEXT = (short)0x842F;
-    public final static short SPRM_FLOCKED = 0x2430;
-    public final static short SPRM_FWIDOWCONTROL = 0x2431;
-    public final static short SPRM_RULER = (short)0xC632;
-    public final static short SPRM_FKINSOKU = 0x2433;
-    public final static short SPRM_FWORDWRAP = 0x2434;
-    public final static short SPRM_FOVERFLOWPUNCT = 0x2435;
-    public final static short SPRM_FTOPLINEPUNCT = 0x2436;
-    public final static short SPRM_AUTOSPACEDE = 0x2437;
-    public final static short SPRM_AUTOSPACEDN = 0x2438;
-    public final static short SPRM_WALIGNFONT = 0x4439;
-    public final static short SPRM_FRAMETEXTFLOW = 0x443A;
-    public final static short SPRM_ANLD = (short)0xC63E;
-    public final static short SPRM_PROPRMARK = (short)0xC63F;
-    public final static short SPRM_OUTLVL = 0x2640;
-    public final static short SPRM_FBIDI = 0x2441;
-    public final static short SPRM_FNUMRMLNS = 0x2443;
-    public final static short SPRM_CRLF = 0x2444;
-    public final static short SPRM_NUMRM = (short)0xC645;
-    public final static short SPRM_USEPGSUSETTINGS = 0x2447;
-    public final static short SPRM_FADJUSTRIGHT = 0x2448;
+    public static final short SPRM_JC = 0x2403;
+    public static final short SPRM_FSIDEBYSIDE = 0x2404;
+    public static final short SPRM_FKEEP = 0x2405;
+    public static final short SPRM_FKEEPFOLLOW = 0x2406;
+    public static final short SPRM_FPAGEBREAKBEFORE = 0x2407;
+    public static final short SPRM_BRCL = 0x2408;
+    public static final short SPRM_BRCP = 0x2409;
+    public static final short SPRM_ILVL = 0x260A;
+    public static final short SPRM_ILFO = 0x460B;
+    public static final short SPRM_FNOLINENUMB = 0x240C;
+    public static final short SPRM_CHGTABSPAPX = (short)0xC60D;
+    public static final short SPRM_DXARIGHT = (short)0x840E;
+    public static final short SPRM_DXALEFT = (short)0x840F;
+    public static final short SPRM_DXALEFT1 = (short)0x8411;
+    public static final short SPRM_DYALINE = 0x6412;
+    public static final short SPRM_DYABEFORE = (short)0xA413;
+    public static final short SPRM_DYAAFTER = (short)0xA414;
+    public static final short SPRM_CHGTABS = (short)0xC615;
+    public static final short SPRM_FINTABLE = 0x2416;
+    public static final short SPRM_FTTP = 0x2417;
+    public static final short SPRM_DXAABS = (short)0x8418;
+    public static final short SPRM_DYAABS = (short)0x8419;
+    public static final short SPRM_DXAWIDTH = (short)0x841A;
+    public static final short SPRM_PC = 0x261B;
+    public static final short SPRM_WR = 0x2423;
+    public static final short SPRM_BRCTOP = 0x6424;
+    public static final short SPRM_BRCLEFT = 0x6425;
+    public static final short SPRM_BRCBOTTOM = 0x6426;
+    public static final short SPRM_BRCRIGHT = 0x6427;
+    public static final short SPRM_BRCBAR = 0x6629;
+    public static final short SPRM_FNOAUTOHYPH = 0x242A;
+    public static final short SPRM_WHEIGHTABS = 0x442B;
+    public static final short SPRM_DCS = 0x442C;
+    public static final short SPRM_SHD80 = 0x442D;
+    public static final short SPRM_SHD = (short)0xC64D;
+    public static final short SPRM_DYAFROMTEXT = (short)0x842E;
+    public static final short SPRM_DXAFROMTEXT = (short)0x842F;
+    public static final short SPRM_FLOCKED = 0x2430;
+    public static final short SPRM_FWIDOWCONTROL = 0x2431;
+    public static final short SPRM_RULER = (short)0xC632;
+    public static final short SPRM_FKINSOKU = 0x2433;
+    public static final short SPRM_FWORDWRAP = 0x2434;
+    public static final short SPRM_FOVERFLOWPUNCT = 0x2435;
+    public static final short SPRM_FTOPLINEPUNCT = 0x2436;
+    public static final short SPRM_AUTOSPACEDE = 0x2437;
+    public static final short SPRM_AUTOSPACEDN = 0x2438;
+    public static final short SPRM_WALIGNFONT = 0x4439;
+    public static final short SPRM_FRAMETEXTFLOW = 0x443A;
+    public static final short SPRM_ANLD = (short)0xC63E;
+    public static final short SPRM_PROPRMARK = (short)0xC63F;
+    public static final short SPRM_OUTLVL = 0x2640;
+    public static final short SPRM_FBIDI = 0x2441;
+    public static final short SPRM_FNUMRMLNS = 0x2443;
+    public static final short SPRM_CRLF = 0x2444;
+    public static final short SPRM_NUMRM = (short)0xC645;
+    public static final short SPRM_USEPGSUSETTINGS = 0x2447;
+    public static final short SPRM_FADJUSTRIGHT = 0x2448;
 
     @Internal
     public static Paragraph newParagraph( Range parent, PAPX papx )
@@ -169,11 +171,18 @@ public class Paragraph extends Range implements Cloneable {
         _istd = papx.getIstd();
     }
 
+    Paragraph(Paragraph other) {
+        super(other);
+        _istd = other._istd;
+        _props = (other._props == null) ? null : other._props.copy();
+        _papx = (other._papx == null) ? null : other._papx.copy();
+    }
+
   /**
    * Returns the index of the style which applies to this
    *  Paragraph. Details of the style can be looked up
    *  from the {@link StyleSheet}, via
-   *  {@link StyleSheet#getStyleDescription(int)} 
+   *  {@link StyleSheet#getStyleDescription(int)}
    */
   public short getStyleIndex()
   {
@@ -540,7 +549,7 @@ public class Paragraph extends Range implements Cloneable {
     /**
      * Returns number of tabs stops defined for paragraph. Must be >= 0 and <=
      * 64.
-     * 
+     *
      * @return number of tabs stops defined for paragraph. Must be >= 0 and <=
      *         64
      */
@@ -551,7 +560,7 @@ public class Paragraph extends Range implements Cloneable {
 
     /**
      * Returns array of positions of itbdMac tab stops
-     * 
+     *
      * @return array of positions of itbdMac tab stops
      */
     public int[] getTabStopsPositions()
@@ -576,24 +585,24 @@ public class Paragraph extends Range implements Cloneable {
 
     /**
      * Clone the ParagraphProperties object associated with this
-     *  Paragraph, so that you can apply the same properties to 
+     *  Paragraph, so that you can apply the same properties to
      *  another Paragraph.
      */
     public ParagraphProperties cloneProperties() {
-        try {
-            return (ParagraphProperties)_props.clone();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return _props.copy();
     }
 
-    public Object clone() throws CloneNotSupportedException
-    {
-        Paragraph p = (Paragraph)super.clone();
-        p._props = (ParagraphProperties)_props.clone();
-        //p._baseStyle = _baseStyle;
-        p._papx = new SprmBuffer(0);
-        return p;
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public Paragraph clone() {
+        return copy();
+    }
+
+    @Override
+    public Paragraph copy() {
+        return new Paragraph(this);
     }
 
     private short getFrameTextFlow()

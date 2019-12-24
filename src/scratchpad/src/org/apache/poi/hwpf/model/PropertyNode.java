@@ -21,9 +21,11 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 
 /**
  * Represents a lightweight node in the Trees used to store content
@@ -31,35 +33,17 @@ import org.apache.poi.util.POILogger;
  * This only ever works in characters. For the few odd cases when
  * the start and end aren't in characters (eg PAPX and CHPX), use
  * {@link BytePropertyNode} between you and this.
- *
- * @author Ryan Ackley
  */
 @Internal
-public abstract class PropertyNode<T extends PropertyNode<T>> implements Comparable<T>, Cloneable {
+public abstract class PropertyNode<T extends PropertyNode<T>> implements Comparable<T>, Duplicatable {
 
-    public static final class EndComparator implements
-            Comparator<PropertyNode<?>> {
-        public static final EndComparator instance = new EndComparator();
+    public static final Comparator<PropertyNode<?>> EndComparator = Comparator.comparingInt(PropertyNode::getEnd);
 
-        public int compare(PropertyNode<?> o1, PropertyNode<?> o2) {
-            int thisVal = o1.getEnd();
-            int anotherVal = o2.getEnd();
-            return (Integer.compare(thisVal, anotherVal));
-        }
-    }
+    public static final Comparator<PropertyNode<?>> StartComparator = Comparator.comparingInt(PropertyNode::getStart);
 
-    public static final class StartComparator implements
-            Comparator<PropertyNode<?>> {
-        public static final StartComparator instance = new StartComparator();
+    private static final POILogger _logger = POILogFactory.getLogger(PropertyNode.class);
 
-        public int compare(PropertyNode<?> o1, PropertyNode<?> o2) {
-            int thisVal = o1.getStart();
-            int anotherVal = o2.getStart();
-            return (Integer.compare(thisVal, anotherVal));
-        }
-    }
 
-    private final static POILogger _logger = POILogFactory.getLogger(PropertyNode.class);
     protected Object _buf;
     /**
      * The start, in characters
@@ -69,6 +53,13 @@ public abstract class PropertyNode<T extends PropertyNode<T>> implements Compara
      * The end, in characters
      */
     private int _cpEnd;
+
+    protected PropertyNode(PropertyNode<T> other) {
+        // TODO: clone _buf?
+        _buf = other._buf;
+        _cpStart = other._cpStart;
+        _cpEnd = other._cpEnd;
+    }
 
 
     /**
@@ -118,9 +109,6 @@ public abstract class PropertyNode<T extends PropertyNode<T>> implements Compara
 
     /**
      * Adjust for a deletion that can span multiple PropertyNodes.
-     *
-     * @param start
-     * @param length
      */
     public void adjustForDelete(int start, int length) {
         int end = start + length;
@@ -164,16 +152,21 @@ public abstract class PropertyNode<T extends PropertyNode<T>> implements Compara
         return false;
     }
 
-    @SuppressWarnings("unchecked")
-    public T clone() throws CloneNotSupportedException {
-        return (T) super.clone();
+    @Override
+    @Deprecated
+    @Removal(version = "5.0.0")
+    @SuppressWarnings({"unchecked","squid:S2975"})
+    public T clone() {
+        return (T) copy();
     }
+
+    @Override
+    public abstract PropertyNode<?> copy();
 
     /**
      * Used for sorting in collections.
      */
     public int compareTo(T o) {
-        int cpEnd = o.getEnd();
-        return Integer.compare(_cpEnd, cpEnd);
+        return Integer.compare(_cpEnd, o.getEnd());
     }
 }

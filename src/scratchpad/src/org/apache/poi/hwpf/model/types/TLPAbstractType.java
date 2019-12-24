@@ -23,22 +23,10 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * Table Autoformat Look sPecifier (TLP).
- * <p>
- * Class and fields descriptions are quoted from Microsoft Office Word 97-2007
- * Binary File Format
- * 
- * NOTE: This source is automatically generated please do not modify this file.
- * Either subclass or remove the record in src/records/definitions.
- * 
- * @author Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary
- *         File Format Specification [*.doc]
  */
+@SuppressWarnings("unused")
 @Internal
-public abstract class TLPAbstractType
-{
-
-    protected short field_1_itl;
-    protected byte field_2_tlp_flags;
+public abstract class TLPAbstractType {
     private static final BitField fBorders = new BitField( 0x0001 );
     private static final BitField fShading = new BitField( 0x0002 );
     private static final BitField fFont = new BitField( 0x0004 );
@@ -47,9 +35,14 @@ public abstract class TLPAbstractType
     private static final BitField fHdrRows = new BitField( 0x0020 );
     private static final BitField fLastRow = new BitField( 0x0040 );
 
-    public TLPAbstractType()
-    {
+    protected short field_1_itl;
+    protected byte field_2_tlp_flags;
 
+    public TLPAbstractType() {}
+
+    public TLPAbstractType(TLPAbstractType other) {
+        field_1_itl = other.field_1_itl;
+        field_2_tlp_flags = other.field_2_tlp_flags;
     }
 
     protected void fillFields( byte[] data, int offset )
@@ -132,7 +125,7 @@ public abstract class TLPAbstractType
 
     /**
      * When == 1, use the border properties from the selected table look
-     * 
+     *
      * @return the fBorders field value.
      */
     public boolean isFBorders()
@@ -154,7 +147,7 @@ public abstract class TLPAbstractType
 
     /**
      * When == 1, use the shading properties from the selected table look
-     * 
+     *
      * @return the fShading field value.
      */
     public boolean isFShading()
@@ -175,7 +168,7 @@ public abstract class TLPAbstractType
 
     /**
      * When == 1, use the font from the selected table look
-     * 
+     *
      * @return the fFont field value.
      */
     public boolean isFFont()
@@ -196,7 +189,7 @@ public abstract class TLPAbstractType
 
     /**
      * When == 1, use the color from the selected table look
-     * 
+     *
      * @return the fColor field value.
      */
     public boolean isFColor()
@@ -218,7 +211,7 @@ public abstract class TLPAbstractType
 
     /**
      * When == 1, do best fit from the selected table look
-     * 
+     *
      * @return the fBestFit field value.
      */
     public boolean isFBestFit()
@@ -241,7 +234,7 @@ public abstract class TLPAbstractType
     /**
      * When == 1, apply properties from the selected table look to the header
      * rows in the table
-     * 
+     *
      * @return the fHdrRows field value.
      */
     public boolean isFHdrRows()
@@ -264,7 +257,7 @@ public abstract class TLPAbstractType
     /**
      * When == 1, apply properties from the selected table look to the last row
      * in the table
-     * 
+     *
      * @return the fLastRow field value.
      */
     public boolean isFLastRow()

@@ -16,23 +16,22 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.model.types.TBDAbstractType;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 
 /**
  * Tab descriptor. Part of {@link ParagraphProperties}.
- * 
- * @author vlsergey
  */
-public class TabDescriptor extends TBDAbstractType
-{
+public class TabDescriptor extends TBDAbstractType implements Duplicatable {
 
-    public TabDescriptor()
-    {
+    public TabDescriptor() {}
+
+    public TabDescriptor(TabDescriptor other) {
+        super(other);
     }
 
-    public TabDescriptor( byte[] bytes, int offset )
-    {
+    public TabDescriptor( byte[] bytes, int offset ) {
         fillFields( bytes, offset );
     }
 
@@ -43,4 +42,8 @@ public class TabDescriptor extends TBDAbstractType
         return buf;
     }
 
+    @Override
+    public TabDescriptor copy() {
+        return new TabDescriptor(this);
+    }
 }

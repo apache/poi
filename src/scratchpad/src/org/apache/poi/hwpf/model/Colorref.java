@@ -16,17 +16,17 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Removal;
 
 /**
  * 24-bit color structure
- * 
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 @Internal
-public class Colorref implements Cloneable
-{
+public class Colorref implements Duplicatable {
+
     public static Colorref valueOfIco( int ico )
     {
 
@@ -71,25 +71,33 @@ public class Colorref implements Cloneable
 
     private int value;
 
-    public Colorref()
-    {
+    public Colorref() {
         this.value = -1;
     }
 
-    public Colorref( byte[] data, int offset )
-    {
+    public Colorref(Colorref other) {
+        value = other.value;
+    }
+
+    public Colorref( byte[] data, int offset ) {
         this.value = LittleEndian.getInt( data, offset );
     }
 
-    public Colorref( int value )
-    {
+    public Colorref( int value ) {
         this.value = value;
     }
 
     @Override
-    public Colorref clone() throws CloneNotSupportedException
-    {
-        return (Colorref)super.clone();
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public Colorref clone() {
+        return copy();
+    }
+
+    @Override
+    public Colorref copy() {
+        return new Colorref(this);
     }
 
     @Override

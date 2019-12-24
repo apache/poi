@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.model.types;
 
 
 import java.util.Arrays;
+import java.util.stream.Stream;
 
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.ShadingDescriptor;
@@ -28,21 +29,39 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.Internal;
 
 /**
- * Table Properties. Properties descriptions quoted from official 97-2007 binary file
-        format specification.
-    
- * <p>
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/types/definitions.
- * <p>
- * This class is internal. It content or properties may change without notice 
- * due to changes in our knowledge of internal Microsoft Word binary structures.
-
- * @author S. Ryan Ackley
+ * Table Properties
  */
+@SuppressWarnings("unused")
 @Internal
-public abstract class TAPAbstractType
-{
+public abstract class TAPAbstractType {
+    private static final BitField fAutofit = new BitField(0x00000001);
+    private static final BitField fKeepFollow = new BitField(0x00000002);
+    private static final BitField ftsWidth = new BitField(0x0000001c);
+    private static final BitField ftsWidthIndent = new BitField(0x000000e0);
+    private static final BitField ftsWidthBefore = new BitField(0x00000700);
+    private static final BitField ftsWidthAfter = new BitField(0x00003800);
+    private static final BitField fNeverBeenAutofit = new BitField(0x00004000);
+    private static final BitField fInvalAutofit = new BitField(0x00008000);
+    private static final BitField widthAndFitsFlags_empty1 = new BitField(0x00070000);
+    private static final BitField fVert = new BitField(0x00080000);
+    private static final BitField pcVert = new BitField(0x00300000);
+    private static final BitField pcHorz = new BitField(0x00c00000);
+    private static final BitField widthAndFitsFlags_empty2 = new BitField(0xff000000);
+
+    private static final BitField fFirstRow = new BitField(0x0001);
+    private static final BitField fLastRow = new BitField(0x0002);
+    private static final BitField fOutline = new BitField(0x0004);
+    private static final BitField fOrigWordTableRules = new BitField(0x0008);
+    private static final BitField fCellSpacing = new BitField(0x0010);
+    private static final BitField grpfTap_unused = new BitField(0xffe0);
+
+    private static final BitField fWrapToWwd = new BitField(0x0001);
+    private static final BitField fNotPageView = new BitField(0x0002);
+    private static final BitField viewFlags_unused1 = new BitField(0x0004);
+    private static final BitField fWebView = new BitField(0x0008);
+    private static final BitField fAdjusted = new BitField(0x0010);
+    private static final BitField viewFlags_unused2 = new BitField(0xffe0);
+
 
     protected short field_1_istd;
     protected short field_2_jc;
@@ -57,19 +76,6 @@ public abstract class TAPAbstractType
     protected short field_11_wWidthBefore;
     protected short field_12_wWidthAfter;
     protected int field_13_widthAndFitsFlags;
-    /**/private static BitField fAutofit = new BitField(0x00000001);
-    /**/private static BitField fKeepFollow = new BitField(0x00000002);
-    /**/private static BitField ftsWidth = new BitField(0x0000001c);
-    /**/private static BitField ftsWidthIndent = new BitField(0x000000e0);
-    /**/private static BitField ftsWidthBefore = new BitField(0x00000700);
-    /**/private static BitField ftsWidthAfter = new BitField(0x00003800);
-    /**/private static BitField fNeverBeenAutofit = new BitField(0x00004000);
-    /**/private static BitField fInvalAutofit = new BitField(0x00008000);
-    /**/private static BitField widthAndFitsFlags_empty1 = new BitField(0x00070000);
-    /**/private static BitField fVert = new BitField(0x00080000);
-    /**/private static BitField pcVert = new BitField(0x00300000);
-    /**/private static BitField pcHorz = new BitField(0x00c00000);
-    /**/private static BitField widthAndFitsFlags_empty2 = new BitField(0xff000000);
     protected int field_14_dxaAbs;
     protected int field_15_dyaAbs;
     protected int field_16_dxaFromText;
@@ -82,12 +88,6 @@ public abstract class TAPAbstractType
     protected byte field_23_fSpare;
     protected int field_24_grpfTap;
     protected int field_25_internalFlags;
-    /**/private static BitField fFirstRow = new BitField(0x0001);
-    /**/private static BitField fLastRow = new BitField(0x0002);
-    /**/private static BitField fOutline = new BitField(0x0004);
-    /**/private static BitField fOrigWordTableRules = new BitField(0x0008);
-    /**/private static BitField fCellSpacing = new BitField(0x0010);
-    /**/private static BitField grpfTap_unused = new BitField(0xffe0);
     protected short field_26_itcMac;
     protected int field_27_dxaAdjust;
     protected int field_28_dxaWebView;
@@ -95,12 +95,6 @@ public abstract class TAPAbstractType
     protected int field_30_dxaColWidthWwd;
     protected short field_31_pctWwd;
     protected int field_32_viewFlags;
-    /**/private static BitField fWrapToWwd = new BitField(0x0001);
-    /**/private static BitField fNotPageView = new BitField(0x0002);
-    /**/private static BitField viewFlags_unused1 = new BitField(0x0004);
-    /**/private static BitField fWebView = new BitField(0x0008);
-    /**/private static BitField fAdjusted = new BitField(0x0010);
-    /**/private static BitField viewFlags_unused2 = new BitField(0xffe0);
     protected short[] field_33_rgdxaCenter;
     protected short[] field_34_rgdxaCenterPrint;
     protected ShadingDescriptor field_35_shdTable;
@@ -151,8 +145,7 @@ public abstract class TAPAbstractType
     protected BorderCode field_80_rgbrcInsideDefault_0;
     protected BorderCode field_81_rgbrcInsideDefault_1;
 
-    protected TAPAbstractType()
-    {
+    protected TAPAbstractType() {
         this.field_8_tlp = new TableAutoformatLookSpecifier();
         this.field_33_rgdxaCenter = new short[0];
         this.field_34_rgdxaCenterPrint = new short[0];
@@ -169,6 +162,91 @@ public abstract class TAPAbstractType
         this.field_81_rgbrcInsideDefault_1 = new BorderCode();
     }
 
+    protected TAPAbstractType(TAPAbstractType other) {
+        field_1_istd = other.field_1_istd;
+        field_2_jc = other.field_2_jc;
+        field_3_dxaGapHalf = other.field_3_dxaGapHalf;
+        field_4_dyaRowHeight = other.field_4_dyaRowHeight;
+        field_5_fCantSplit = other.field_5_fCantSplit;
+        field_6_fCantSplit90 = other.field_6_fCantSplit90;
+        field_7_fTableHeader = other.field_7_fTableHeader;
+        field_8_tlp = (other.field_8_tlp == null) ? null : other.field_8_tlp.copy();
+        field_9_wWidth = other.field_9_wWidth;
+        field_10_wWidthIndent = other.field_10_wWidthIndent;
+        field_11_wWidthBefore = other.field_11_wWidthBefore;
+        field_12_wWidthAfter = other.field_12_wWidthAfter;
+        field_13_widthAndFitsFlags = other.field_13_widthAndFitsFlags;
+        field_14_dxaAbs = other.field_14_dxaAbs;
+        field_15_dyaAbs = other.field_15_dyaAbs;
+        field_16_dxaFromText = other.field_16_dxaFromText;
+        field_17_dyaFromText = other.field_17_dyaFromText;
+        field_18_dxaFromTextRight = other.field_18_dxaFromTextRight;
+        field_19_dyaFromTextBottom = other.field_19_dyaFromTextBottom;
+        field_20_fBiDi = other.field_20_fBiDi;
+        field_21_fRTL = other.field_21_fRTL;
+        field_22_fNoAllowOverlap = other.field_22_fNoAllowOverlap;
+        field_23_fSpare = other.field_23_fSpare;
+        field_24_grpfTap = other.field_24_grpfTap;
+        field_25_internalFlags = other.field_25_internalFlags;
+        field_26_itcMac = other.field_26_itcMac;
+        field_27_dxaAdjust = other.field_27_dxaAdjust;
+        field_28_dxaWebView = other.field_28_dxaWebView;
+        field_29_dxaRTEWrapWidth = other.field_29_dxaRTEWrapWidth;
+        field_30_dxaColWidthWwd = other.field_30_dxaColWidthWwd;
+        field_31_pctWwd = other.field_31_pctWwd;
+        field_32_viewFlags = other.field_32_viewFlags;
+        field_33_rgdxaCenter = (other.field_33_rgdxaCenter == null) ? null : other.field_33_rgdxaCenter.clone();
+        field_34_rgdxaCenterPrint = (other.field_34_rgdxaCenterPrint == null) ? null : other.field_34_rgdxaCenterPrint.clone();
+        field_35_shdTable = (other.field_35_shdTable == null) ? null : other.field_35_shdTable.copy();
+        field_36_brcBottom = (other.field_36_brcBottom == null) ? null : other.field_36_brcBottom.copy();
+        field_37_brcTop = (other.field_37_brcTop == null) ? null : other.field_37_brcTop.copy();
+        field_38_brcLeft = (other.field_38_brcLeft == null) ? null : other.field_38_brcLeft.copy();
+        field_39_brcRight = (other.field_39_brcRight == null) ? null : other.field_39_brcRight.copy();
+        field_40_brcVertical = (other.field_40_brcVertical == null) ? null : other.field_40_brcVertical.copy();
+        field_41_brcHorizontal = (other.field_41_brcHorizontal == null) ? null : other.field_41_brcHorizontal.copy();
+        field_42_wCellPaddingDefaultTop = other.field_42_wCellPaddingDefaultTop;
+        field_43_wCellPaddingDefaultLeft = other.field_43_wCellPaddingDefaultLeft;
+        field_44_wCellPaddingDefaultBottom = other.field_44_wCellPaddingDefaultBottom;
+        field_45_wCellPaddingDefaultRight = other.field_45_wCellPaddingDefaultRight;
+        field_46_ftsCellPaddingDefaultTop = other.field_46_ftsCellPaddingDefaultTop;
+        field_47_ftsCellPaddingDefaultLeft = other.field_47_ftsCellPaddingDefaultLeft;
+        field_48_ftsCellPaddingDefaultBottom = other.field_48_ftsCellPaddingDefaultBottom;
+        field_49_ftsCellPaddingDefaultRight = other.field_49_ftsCellPaddingDefaultRight;
+        field_50_wCellSpacingDefaultTop = other.field_50_wCellSpacingDefaultTop;
+        field_51_wCellSpacingDefaultLeft = other.field_51_wCellSpacingDefaultLeft;
+        field_52_wCellSpacingDefaultBottom = other.field_52_wCellSpacingDefaultBottom;
+        field_53_wCellSpacingDefaultRight = other.field_53_wCellSpacingDefaultRight;
+        field_54_ftsCellSpacingDefaultTop = other.field_54_ftsCellSpacingDefaultTop;
+        field_55_ftsCellSpacingDefaultLeft = other.field_55_ftsCellSpacingDefaultLeft;
+        field_56_ftsCellSpacingDefaultBottom = other.field_56_ftsCellSpacingDefaultBottom;
+        field_57_ftsCellSpacingDefaultRight = other.field_57_ftsCellSpacingDefaultRight;
+        field_58_wCellPaddingOuterTop = other.field_58_wCellPaddingOuterTop;
+        field_59_wCellPaddingOuterLeft = other.field_59_wCellPaddingOuterLeft;
+        field_60_wCellPaddingOuterBottom = other.field_60_wCellPaddingOuterBottom;
+        field_61_wCellPaddingOuterRight = other.field_61_wCellPaddingOuterRight;
+        field_62_ftsCellPaddingOuterTop = other.field_62_ftsCellPaddingOuterTop;
+        field_63_ftsCellPaddingOuterLeft = other.field_63_ftsCellPaddingOuterLeft;
+        field_64_ftsCellPaddingOuterBottom = other.field_64_ftsCellPaddingOuterBottom;
+        field_65_ftsCellPaddingOuterRight = other.field_65_ftsCellPaddingOuterRight;
+        field_66_wCellSpacingOuterTop = other.field_66_wCellSpacingOuterTop;
+        field_67_wCellSpacingOuterLeft = other.field_67_wCellSpacingOuterLeft;
+        field_68_wCellSpacingOuterBottom = other.field_68_wCellSpacingOuterBottom;
+        field_69_wCellSpacingOuterRight = other.field_69_wCellSpacingOuterRight;
+        field_70_ftsCellSpacingOuterTop = other.field_70_ftsCellSpacingOuterTop;
+        field_71_ftsCellSpacingOuterLeft = other.field_71_ftsCellSpacingOuterLeft;
+        field_72_ftsCellSpacingOuterBottom = other.field_72_ftsCellSpacingOuterBottom;
+        field_73_ftsCellSpacingOuterRight = other.field_73_ftsCellSpacingOuterRight;
+        field_74_rgtc = (other.field_74_rgtc == null) ? null
+            : Stream.of(other.field_74_rgtc).map(TableCellDescriptor::copy).toArray(TableCellDescriptor[]::new);
+        field_75_rgshd = (other.field_75_rgshd == null) ? null
+                : Stream.of(other.field_75_rgshd).map(ShadingDescriptor::copy).toArray(ShadingDescriptor[]::new);
+        field_76_fPropRMark = other.field_76_fPropRMark;
+        field_77_fHasOldProps = other.field_77_fHasOldProps;
+        field_78_cHorzBands = other.field_78_cHorzBands;
+        field_79_cVertBands = other.field_79_cVertBands;
+        field_80_rgbrcInsideDefault_0 = (other.field_80_rgbrcInsideDefault_0 == null) ? null : other.field_80_rgbrcInsideDefault_0.copy();
+        field_81_rgbrcInsideDefault_1 = (other.field_81_rgbrcInsideDefault_1 == null) ? null : other.field_81_rgbrcInsideDefault_1.copy();
+    }
 
     public String toString()
     {

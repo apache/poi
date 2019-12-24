@@ -20,11 +20,13 @@ package org.apache.poi.hwpf.model;
 import org.apache.poi.util.Internal;
 
 @Internal
-public final class GenericPropertyNode
-  extends PropertyNode<GenericPropertyNode>
-{
-  public GenericPropertyNode(int start, int end, byte[] buf)
-  {
+public final class GenericPropertyNode extends PropertyNode<GenericPropertyNode> {
+
+  public GenericPropertyNode(GenericPropertyNode other) {
+    super(other);
+  }
+
+  public GenericPropertyNode(int start, int end, byte[] buf) {
     super(start, end, buf);
   }
 
@@ -44,4 +46,9 @@ public final class GenericPropertyNode
                 + ( getBytes() != null ? getBytes().length + " byte(s)"
                         : "null" );
     }
+
+  @Override
+  public GenericPropertyNode copy() {
+    return new GenericPropertyNode(this);
+  }
 }

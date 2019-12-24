@@ -18,43 +18,54 @@ package org.apache.poi.hwpf.model;
 
 import java.util.Objects;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 
 @Internal
-public final class PropertyModifier implements Cloneable
-{
+public final class PropertyModifier implements Duplicatable {
     /**
      * <li>"Set to 0 for variant 1" <li>"Set to 1 for variant 2"
      */
-    private static BitField _fComplex = new BitField( 0x0001 );
+    private static final BitField _fComplex = new BitField( 0x0001 );
 
     /**
      * "Index to a grpprl stored in CLX portion of file"
      */
-    private static BitField _figrpprl = new BitField( 0xfffe );
+    private static final BitField _figrpprl = new BitField( 0xfffe );
 
     /**
      * "Index to entry into rgsprmPrm"
      */
-    private static BitField _fisprm = new BitField( 0x00fe );
+    private static final BitField _fisprm = new BitField( 0x00fe );
 
     /**
      * "sprm's operand"
      */
-    private static BitField _fval = new BitField( 0xff00 );
+    private static final BitField _fval = new BitField( 0xff00 );
 
     private short value;
 
-    public PropertyModifier( short value )
-    {
+    public PropertyModifier( short value ) {
         this.value = value;
     }
 
+    public PropertyModifier( PropertyModifier other ) {
+        value = other.value;
+    }
+
     @Override
-    protected PropertyModifier clone() throws CloneNotSupportedException
-    {
-        return new PropertyModifier( value );
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    protected PropertyModifier clone() {
+        return copy();
+    }
+
+    @Override
+    public PropertyModifier copy() {
+        return new PropertyModifier(this);
     }
 
     @Override

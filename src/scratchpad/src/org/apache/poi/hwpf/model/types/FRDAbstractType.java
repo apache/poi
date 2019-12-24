@@ -24,21 +24,16 @@ import org.apache.poi.util.LittleEndian;
  * <p>
  * Class and fields descriptions are quoted from Microsoft Office Word 97-2007
  * Binary File Format (.doc) Specification
- * 
- * NOTE: This source is automatically generated please do not modify this file.
- * Either subclass or remove the record in src/types/definitions.
- * 
- * @author Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary
- *         File Format (.doc) Specification
  */
 @Internal
-public abstract class FRDAbstractType
-{
+public abstract class FRDAbstractType {
 
     protected short field_1_nAuto;
 
-    protected FRDAbstractType()
-    {
+    protected FRDAbstractType() {}
+
+    protected FRDAbstractType(FRDAbstractType other) {
+        field_1_nAuto = other.field_1_nAuto;
     }
 
     protected void fillFields( byte[] data, int offset )

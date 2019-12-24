@@ -18,35 +18,34 @@ package org.apache.poi.hwpf.usermodel;
 
 import java.util.Objects;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.model.types.TLPAbstractType;
+import org.apache.poi.util.Removal;
 
-public class TableAutoformatLookSpecifier extends TLPAbstractType implements
-        Cloneable
-{
+public class TableAutoformatLookSpecifier extends TLPAbstractType implements Duplicatable {
     public static final int SIZE = 4;
 
-    public TableAutoformatLookSpecifier()
-    {
-        super();
+    public TableAutoformatLookSpecifier() {}
+
+    public TableAutoformatLookSpecifier(TableAutoformatLookSpecifier other) {
+        super(other);
     }
 
-    public TableAutoformatLookSpecifier( byte[] data, int offset )
-    {
-        super();
+    public TableAutoformatLookSpecifier( byte[] data, int offset ) {
         fillFields( data, offset );
     }
 
     @Override
-    public TableAutoformatLookSpecifier clone()
-    {
-        try
-        {
-            return (TableAutoformatLookSpecifier) super.clone();
-        }
-        catch ( CloneNotSupportedException e )
-        {
-            throw new Error( e.getMessage(), e );
-        }
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public TableAutoformatLookSpecifier clone() {
+        return copy();
+    }
+
+    @Override
+    public TableAutoformatLookSpecifier copy() {
+        return new TableAutoformatLookSpecifier(this);
     }
 
     @Override

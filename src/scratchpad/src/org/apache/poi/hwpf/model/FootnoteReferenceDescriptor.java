@@ -18,33 +18,34 @@ package org.apache.poi.hwpf.model;
 
 import java.util.Objects;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.model.types.FRDAbstractType;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 
 @Internal
-public final class FootnoteReferenceDescriptor extends FRDAbstractType
-        implements Cloneable
-{
-    public FootnoteReferenceDescriptor()
-    {
+public final class FootnoteReferenceDescriptor extends FRDAbstractType implements Duplicatable {
+    public FootnoteReferenceDescriptor() { }
+
+    public FootnoteReferenceDescriptor(FootnoteReferenceDescriptor other) {
+        super(other);
     }
 
-    public FootnoteReferenceDescriptor( byte[] data, int offset )
-    {
+    public FootnoteReferenceDescriptor( byte[] data, int offset ) {
         fillFields( data, offset );
     }
 
     @Override
-    protected FootnoteReferenceDescriptor clone()
-    {
-        try
-        {
-            return (FootnoteReferenceDescriptor) super.clone();
-        }
-        catch ( CloneNotSupportedException e )
-        {
-            throw new RuntimeException( e );
-        }
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    protected FootnoteReferenceDescriptor clone() {
+        return copy();
+    }
+
+    @Override
+    public FootnoteReferenceDescriptor copy() {
+        return new FootnoteReferenceDescriptor(this);
     }
 
     @Override

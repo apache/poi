@@ -22,11 +22,11 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 /**
- * This class holds all of the character formatting 
+ * This class holds all of the character formatting
  *  properties from Old (Word 6 / Word 95) documents.
  * Unlike with Word 97+, it all gets held in the
  *  same stream.
- * In common with the rest of the old support, it 
+ * In common with the rest of the old support, it
  *  is read only
  */
 @Internal
@@ -63,6 +63,6 @@ public final class OldCHPBinTable extends CHPBinTable
                     _textRuns.add( chpx );
             }
     }
-    _textRuns.sort(PropertyNode.StartComparator.instance);
+    _textRuns.sort(PropertyNode.StartComparator);
   }
 }

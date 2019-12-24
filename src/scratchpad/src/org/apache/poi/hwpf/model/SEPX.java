@@ -24,12 +24,19 @@ import org.apache.poi.hwpf.usermodel.SectionProperties;
 import org.apache.poi.util.Internal;
 
 @Internal
-public final class SEPX extends PropertyNode<SEPX>
-{
+public final class SEPX extends PropertyNode<SEPX> {
 
     SectionProperties sectionProperties;
 
     SectionDescriptor _sed;
+
+    public SEPX( SEPX other ) {
+        super(other);
+
+        sectionProperties = (other.sectionProperties == null) ? null : other.sectionProperties.copy();
+        _sed = (other._sed == null) ? null : other._sed.copy();
+    }
+
 
     public SEPX( SectionDescriptor sed, int start, int end, byte[] grpprl )
     {
@@ -85,5 +92,10 @@ public final class SEPX extends PropertyNode<SEPX>
     public String toString()
     {
         return "SEPX from " + getStart() + " to " + getEnd();
+    }
+
+    @Override
+    public SEPX copy() {
+        return new SEPX(this);
     }
 }

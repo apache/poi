@@ -17,31 +17,36 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Removal;
 
 /**
  * Mapping class for BRC80 structure (Border Code for Word 97)
- *
- * <p>Comments are copied out from the binary format specification.
  */
-public final class BorderCode implements Cloneable {
-  
-  public static final int SIZE = 4;
-  
-  private short _info;
+public final class BorderCode implements Duplicatable {
+
+    public static final int SIZE = 4;
+
     private static final BitField _dptLineWidth = BitFieldFactory.getInstance(0x00ff);
     private static final BitField _brcType = BitFieldFactory.getInstance(0xff00);
-    
-  private short _info2;
+
     private static final BitField _ico = BitFieldFactory.getInstance(0x00ff);
     private static final BitField _dptSpace = BitFieldFactory.getInstance(0x1f00);
     private static final BitField _fShadow = BitFieldFactory.getInstance(0x2000);
     private static final BitField _fFrame = BitFieldFactory.getInstance(0x4000);
-    
-  public BorderCode()
-  {
+
+    private short _info;
+    private short _info2;
+
+
+  public BorderCode() {}
+
+  public BorderCode(BorderCode other) {
+    _info = other._info;
+    _info2 = other._info2;
   }
 
   public BorderCode(byte[] buf, int offset)
@@ -81,20 +86,27 @@ public final class BorderCode implements Cloneable {
       assert false : "hashCode not designed";
       return 42; // any arbitrary constant will do
   }
-  
-  public Object clone()
-    throws CloneNotSupportedException
-  {
-    return super.clone();
+
+  @Override
+  @SuppressWarnings("squid:S2975")
+  @Deprecated
+  @Removal(version = "5.0.0")
+  public BorderCode clone() {
+    return copy();
   }
-  
+
+  @Override
+  public BorderCode copy() {
+    return new BorderCode(this);
+  }
+
   /**
    * Width of a single line in 1/8 pt, max of 32 pt.
    */
   public int getLineWidth() {
     return _dptLineWidth.getShortValue(_info);
   }
-  
+
   /**
    * @param lineWidth the width of the line to set
    */
@@ -136,11 +148,11 @@ public final class BorderCode implements Cloneable {
   public int getBorderType() {
     return _brcType.getShortValue(_info);
   }
-  
+
   public void setBorderType(int borderType) {
       _info = _brcType.setShortValue(_info, (short)borderType);
   }
-  
+
   /**
    * Color:
    * <ul>
@@ -166,26 +178,26 @@ public final class BorderCode implements Cloneable {
   public short getColor() {
     return _ico.getShortValue(_info2);
   }
-  
+
   public void setColor(short color) {
       _info2 = _ico.setShortValue(_info2, color);
   }
-  
+
   /**
    * Width of space to maintain between border and text within border.
-   * 
+   *
    * <p>Must be 0 when BRC is a substructure of TC.
-   * 
+   *
    * <p>Stored in points.
    */
   public int getSpace() {
     return _dptSpace.getShortValue(_info2);
   }
-  
+
   public void setSpace(int space) {
       _info2 = (short)_dptSpace.setValue(_info2, space);
   }
-  
+
   /**
    * When true, border is drawn with shadow
    * Must be false when BRC is a substructure of the TC.
@@ -193,18 +205,18 @@ public final class BorderCode implements Cloneable {
   public boolean isShadow() {
     return _fShadow.getValue(_info2) != 0;
   }
-  
+
   public void setShadow(boolean shadow) {
       _info2 = (short)_fShadow.setValue(_info2, shadow ? 1 : 0);
   }
-  
+
   /**
    * Don't reverse the border.
    */
   public boolean isFrame() {
     return _fFrame.getValue(_info2) != 0;
   }
-  
+
   public void setFrame(boolean frame) {
       _info2 = (short)_fFrame.setValue(_info2, frame ? 1 : 0);
   }

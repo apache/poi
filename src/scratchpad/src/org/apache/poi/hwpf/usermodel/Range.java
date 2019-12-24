@@ -17,6 +17,8 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import static java.util.stream.Collectors.toList;
+
 import java.util.List;
 
 import org.apache.poi.hwpf.HWPFDocument;
@@ -47,49 +49,47 @@ import org.apache.poi.util.POILogger;
  * Ranges are only valid if there hasn't been an insert in a prior Range since
  * the Range's creation. Once an element (text, paragraph, etc.) has been
  * inserted into a Range, subsequent Ranges become unstable.
- *
- * @author Ryan Ackley
  */
-public class Range { // TODO -instantiable superclass
+public class Range {
 
-    private POILogger logger = POILogFactory.getLogger( Range.class );
-    
+    private static final POILogger logger = POILogFactory.getLogger( Range.class );
+
     /**
      * @deprecated POI 3.8 beta 5
      */
     @Deprecated
 	public static final int TYPE_PARAGRAPH = 0;
-    
+
     /**
      * @deprecated POI 3.8 beta 5
      */
     @Deprecated
     public static final int TYPE_CHARACTER = 1;
-    
+
     /**
      * @deprecated POI 3.8 beta 5
      */
     @Deprecated
     public static final int TYPE_SECTION = 2;
-    
+
     /**
      * @deprecated POI 3.8 beta 5
      */
     @Deprecated
     public static final int TYPE_TEXT = 3;
-    
+
     /**
      * @deprecated POI 3.8 beta 5
      */
     @Deprecated
     public static final int TYPE_LISTENTRY = 4;
-    
+
     /**
      * @deprecated POI 3.8 beta 5
      */
     @Deprecated
     public static final int TYPE_TABLE = 5;
-    
+
     /**
      * @deprecated POI 3.8 beta 5
      */
@@ -145,18 +145,15 @@ public class Range { // TODO -instantiable superclass
 	protected int _charEnd;
 
 	protected StringBuilder _text;
-	
+
 	/**
 	 * Used to construct a Range from a document. This is generally used to
 	 * create a Range that spans the whole document, or at least one whole part
 	 * of the document (eg main text, header, comment)
 	 *
-	 * @param start
-	 *            Starting character offset of the range.
-	 * @param end
-	 *            Ending character offset of the range.
-	 * @param doc
-	 *            The HWPFDocument the range is based on.
+	 * @param start Starting character offset of the range.
+	 * @param end Ending character offset of the range.
+	 * @param doc The HWPFDocument the range is based on.
 	 */
 	public Range(int start, int end, HWPFDocumentCore doc) {
 		_start = start;
@@ -174,12 +171,9 @@ public class Range { // TODO -instantiable superclass
 	/**
 	 * Used to create Ranges that are children of other Ranges.
 	 *
-	 * @param start
-	 *            Starting character offset of the range.
-	 * @param end
-	 *            Ending character offset of the range.
-	 * @param parent
-	 *            The parent this range belongs to.
+	 * @param start Starting character offset of the range.
+	 * @param end Ending character offset of the range.
+	 * @param parent The parent this range belongs to.
 	 */
 	protected Range(int start, int end, Range parent) {
 		_start = start;
@@ -193,6 +187,26 @@ public class Range { // TODO -instantiable superclass
 
 		sanityCheckStartEnd();
 		sanityCheck();
+	}
+
+	protected Range(Range other) {
+		_parent = other._parent;
+		_start = other._start;
+		_end = other._end;
+		_doc = other._doc;
+		_sectionRangeFound = other._sectionRangeFound;
+		_sections = (other._sections == null) ? null : other._sections.stream().map(SEPX::copy).collect(toList());
+		_sectionStart = other._sectionStart;
+		_sectionEnd = other._sectionEnd;
+		_parRangeFound = other._parRangeFound;
+		_paragraphs = (other._paragraphs == null) ? null : other._paragraphs.stream().map(PAPX::copy).collect(toList());
+		_parStart = other._parStart;
+		_parEnd = other._parEnd;
+		_charRangeFound = other._charRangeFound;
+		_characters = (other._characters == null) ? null : other._characters.stream().map(CHPX::copy).collect(toList());
+		_charStart = other._charStart;
+		_charEnd = other._charEnd;
+		_text = (other._text == null) ? null : new StringBuilder(other._text);
 	}
 
 
@@ -305,7 +319,7 @@ public class Range { // TODO -instantiable superclass
 
     /**
      * Inserts text into the front of this range.
-     * 
+     *
      * @param text
      *            The text to insert
      * @return The character run that text was inserted into.
@@ -335,7 +349,7 @@ public class Range { // TODO -instantiable superclass
 
     /**
      * Inserts text onto the end of this range
-     * 
+     *
      * @param text
      *            The text to insert
      * @return The character run the text was inserted into.
@@ -569,7 +583,7 @@ public class Range { // TODO -instantiable superclass
 
     /**
      * Inserts a simple table into the beginning of this range.
-     * 
+     *
      * @param columns
      *            The number of columns
      * @param rows
@@ -582,7 +596,7 @@ public class Range { // TODO -instantiable superclass
         parProps.setItap( 1 );
 
         final int oldEnd = this._end;
-        
+
         for ( int x = 0; x < rows; x++ )
         {
             Paragraph cell = this.insertBefore( parProps, StyleSheet.NIL_STYLE );
@@ -602,11 +616,11 @@ public class Range { // TODO -instantiable superclass
 
         return new Table( _start, _start + diff, this, 1 );
 	}
-	
+
     /**
      * Replace range text with new one, adding it to the range and deleting
      * original text from document
-     * 
+     *
      * @param newText
      *            The text to be replaced with
      * @param addAfter
@@ -941,7 +955,7 @@ public class Range { // TODO -instantiable superclass
 
     /**
      * Used to find the list indexes of a particular property.
-     * 
+     *
      * @param rpl
      *            A list of property nodes.
      * @param start
@@ -988,7 +1002,7 @@ public class Range { // TODO -instantiable superclass
 	 */
 	private int[] findRange(List<? extends PropertyNode<?>> rpl, int min, int start, int end) {
 		int x = min;
-		
+
         if ( rpl.size() == min )
             return new int[] { min, min };
 
@@ -1043,9 +1057,9 @@ public class Range { // TODO -instantiable superclass
     /**
      * Adjust the value of the various FIB character count fields, eg
      * <code>FIB.CCPText</code> after an insert or a delete...
-     * 
+     *
      * Works on all CCP fields from this range onwards
-     * 
+     *
      * @param adjustment
      *            The (signed) value that should be added to the FIB CCP fields
      */

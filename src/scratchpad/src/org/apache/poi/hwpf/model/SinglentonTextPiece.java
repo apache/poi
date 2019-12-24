@@ -20,11 +20,12 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.StringUtil;
 
 @Internal
-public class SinglentonTextPiece extends TextPiece
-{
+public class SinglentonTextPiece extends TextPiece {
+    public SinglentonTextPiece(SinglentonTextPiece other) {
+        super(other);
+    }
 
-    public SinglentonTextPiece( StringBuilder buffer )
-    {
+    public SinglentonTextPiece( StringBuilder buffer ) {
         super( 0, buffer.length(), StringUtil.getToUnicodeLE(buffer.toString()), new PieceDescriptor( new byte[8], 0 ) );
     }
 
@@ -61,5 +62,10 @@ public class SinglentonTextPiece extends TextPiece
     public String toString()
     {
         return "SinglentonTextPiece (" + characterLength() + " chars)";
+    }
+
+    @Override
+    public SinglentonTextPiece copy() {
+        return new SinglentonTextPiece(this);
     }
 }

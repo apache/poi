@@ -30,53 +30,111 @@ import org.apache.poi.util.Internal;
 
 /**
  * Character Properties.
- * <p>
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/types/definitions.
- * <p>
- * This class is internal. It content or properties may change without notice
- * due to changes in our knowledge of internal Microsoft Word binary structures.
-
- * @author S. Ryan Ackley
  */
+@SuppressWarnings("unused")
 @Internal
-public abstract class CHPAbstractType
-{
+public abstract class CHPAbstractType {
+
+    private static final BitField fBold = new BitField(0x00000001);
+    private static final BitField fItalic = new BitField(0x00000002);
+    private static final BitField fRMarkDel = new BitField(0x00000004);
+    private static final BitField fOutline = new BitField(0x00000008);
+    private static final BitField fFldVanish = new BitField(0x00000010);
+    private static final BitField fSmallCaps = new BitField(0x00000020);
+    private static final BitField fCaps = new BitField(0x00000040);
+    private static final BitField fVanish = new BitField(0x00000080);
+    private static final BitField fRMark = new BitField(0x00000100);
+    private static final BitField fSpec = new BitField(0x00000200);
+    private static final BitField fStrike = new BitField(0x00000400);
+    private static final BitField fObj = new BitField(0x00000800);
+    private static final BitField fShadow = new BitField(0x00001000);
+    private static final BitField fLowerCase = new BitField(0x00002000);
+    private static final BitField fData = new BitField(0x00004000);
+    private static final BitField fOle2 = new BitField(0x00008000);
+    private static final BitField fEmboss = new BitField(0x00010000);
+    private static final BitField fImprint = new BitField(0x00020000);
+    private static final BitField fDStrike = new BitField(0x00040000);
+    private static final BitField fUsePgsuSettings = new BitField(0x00080000);
+    private static final BitField fBoldBi = new BitField(0x00100000);
+    private static final BitField fComplexScripts = new BitField(0x00100000);
+    private static final BitField fItalicBi = new BitField(0x00200000);
+    private static final BitField fBiDi = new BitField(0x00400000);
+    private static final BitField fIcoBi = new BitField(0x00800000);
+    private static final BitField fNonGlyph = new BitField(0x01000000);
+    private static final BitField fBoldOther = new BitField(0x02000000);
+    private static final BitField fItalicOther = new BitField(0x04000000);
+    private static final BitField fNoProof = new BitField(0x08000000);
+    private static final BitField fWebHidden = new BitField(0x10000000);
+    private static final BitField fFitText = new BitField(0x20000000);
+    private static final BitField fCalc = new BitField(0x40000000);
+    private static final BitField fFmtLineProp = new BitField(0x80000000);
+
+    protected static final byte SFXTTEXT_NO = 0;
+    protected static final byte SFXTTEXT_LAS_VEGAS_LIGHTS = 1;
+    protected static final byte SFXTTEXT_BACKGROUND_BLINK = 2;
+    protected static final byte SFXTTEXT_SPARKLE_TEXT = 3;
+    protected static final byte SFXTTEXT_MARCHING_ANTS = 4;
+    protected static final byte SFXTTEXT_MARCHING_RED_ANTS = 5;
+    protected static final byte SFXTTEXT_SHIMMER = 6;
+
+    protected static final byte KCD_NON = 0;
+    protected static final byte KCD_DOT = 1;
+    protected static final byte KCD_COMMA = 2;
+    protected static final byte KCD_CIRCLE = 3;
+    protected static final byte KCD_UNDER_DOT = 4;
+
+    protected static final byte KUL_NONE = 0;
+    protected static final byte KUL_SINGLE = 1;
+    protected static final byte KUL_BY_WORD = 2;
+    protected static final byte KUL_DOUBLE = 3;
+    protected static final byte KUL_DOTTED = 4;
+    protected static final byte KUL_HIDDEN = 5;
+    protected static final byte KUL_THICK = 6;
+    protected static final byte KUL_DASH = 7;
+    protected static final byte KUL_DOT = 8;
+    protected static final byte KUL_DOT_DASH = 9;
+    protected static final byte KUL_DOT_DOT_DASH = 10;
+    protected static final byte KUL_WAVE = 11;
+    protected static final byte KUL_DOTTED_HEAVY = 20;
+    protected static final byte KUL_DASHED_HEAVY = 23;
+    protected static final byte KUL_DOT_DASH_HEAVY = 25;
+    protected static final byte KUL_DOT_DOT_DASH_HEAVY = 26;
+    protected static final byte KUL_WAVE_HEAVY = 27;
+    protected static final byte KUL_DASH_LONG = 39;
+    protected static final byte KUL_WAVE_DOUBLE = 43;
+    protected static final byte KUL_DASH_LONG_HEAVY = 55;
+
+    protected static final byte ISS_NONE = 0;
+    protected static final byte ISS_SUPERSCRIPTED = 1;
+    protected static final byte ISS_SUBSCRIPTED = 2;
+
+    private static final BitField itypFELayout = new BitField(0x00ff);
+    private static final BitField fTNY = new BitField(0x0100);
+    private static final BitField fWarichu = new BitField(0x0200);
+    private static final BitField fKumimoji = new BitField(0x0400);
+    private static final BitField fRuby = new BitField(0x0800);
+    private static final BitField fLSFitText = new BitField(0x1000);
+    private static final BitField spare = new BitField(0xe000);
+
+    private static final BitField iWarichuBracket = new BitField(0x07);
+    private static final BitField fWarichuNoOpenBracket = new BitField(0x08);
+    private static final BitField fTNYCompress = new BitField(0x10);
+    private static final BitField fTNYFetchTxm = new BitField(0x20);
+    private static final BitField fCellFitText = new BitField(0x40);
+    private static final BitField unused = new BitField(0x80);
+
+    private static final BitField icoHighlight = new BitField(0x001f);
+    private static final BitField fHighlight = new BitField(0x0020);
+
+    private static final BitField fChsDiff = new BitField(0x0001);
+    private static final BitField fMacChs = new BitField(0x0020);
+
+    protected static final byte LBRCRJ_NONE = 0;
+    protected static final byte LBRCRJ_LEFT = 1;
+    protected static final byte LBRCRJ_RIGHT = 2;
+    protected static final byte LBRCRJ_BOTH = 3;
 
     protected int field_1_grpfChp;
-    /**/private static final BitField fBold = new BitField(0x00000001);
-    /**/private static final BitField fItalic = new BitField(0x00000002);
-    /**/private static final BitField fRMarkDel = new BitField(0x00000004);
-    /**/private static final BitField fOutline = new BitField(0x00000008);
-    /**/private static final BitField fFldVanish = new BitField(0x00000010);
-    /**/private static final BitField fSmallCaps = new BitField(0x00000020);
-    /**/private static final BitField fCaps = new BitField(0x00000040);
-    /**/private static final BitField fVanish = new BitField(0x00000080);
-    /**/private static final BitField fRMark = new BitField(0x00000100);
-    /**/private static final BitField fSpec = new BitField(0x00000200);
-    /**/private static final BitField fStrike = new BitField(0x00000400);
-    /**/private static final BitField fObj = new BitField(0x00000800);
-    /**/private static final BitField fShadow = new BitField(0x00001000);
-    /**/private static final BitField fLowerCase = new BitField(0x00002000);
-    /**/private static final BitField fData = new BitField(0x00004000);
-    /**/private static final BitField fOle2 = new BitField(0x00008000);
-    /**/private static final BitField fEmboss = new BitField(0x00010000);
-    /**/private static final BitField fImprint = new BitField(0x00020000);
-    /**/private static final BitField fDStrike = new BitField(0x00040000);
-    /**/private static final BitField fUsePgsuSettings = new BitField(0x00080000);
-    /**/private static final BitField fBoldBi = new BitField(0x00100000);
-    /**/private static final BitField fComplexScripts = new BitField(0x00100000);
-    /**/private static final BitField fItalicBi = new BitField(0x00200000);
-    /**/private static final BitField fBiDi = new BitField(0x00400000);
-    /**/private static final BitField fIcoBi = new BitField(0x00800000);
-    /**/private static final BitField fNonGlyph = new BitField(0x01000000);
-    /**/private static final BitField fBoldOther = new BitField(0x02000000);
-    /**/private static final BitField fItalicOther = new BitField(0x04000000);
-    /**/private static final BitField fNoProof = new BitField(0x08000000);
-    /**/private static final BitField fWebHidden = new BitField(0x10000000);
-    /**/private static final BitField fFitText = new BitField(0x20000000);
-    /**/private static final BitField fCalc = new BitField(0x40000000);
-    /**/private static final BitField fFmtLineProp = new BitField(0x80000000);
     protected int field_2_hps;
     protected int field_3_ftcAscii;
     protected int field_4_ftcFE;
@@ -89,40 +147,12 @@ public abstract class CHPAbstractType
     protected int field_11_lidDefault;
     protected int field_12_lidFE;
     protected byte field_13_kcd;
-    /**/protected final static byte KCD_NON = 0;
-    /**/protected final static byte KCD_DOT = 1;
-    /**/protected final static byte KCD_COMMA = 2;
-    /**/protected final static byte KCD_CIRCLE = 3;
-    /**/protected final static byte KCD_UNDER_DOT = 4;
     protected boolean field_14_fUndetermine;
     protected byte field_15_iss;
-    /**/protected final static byte ISS_NONE = 0;
-    /**/protected final static byte ISS_SUPERSCRIPTED = 1;
-    /**/protected final static byte ISS_SUBSCRIPTED = 2;
     protected boolean field_16_fSpecSymbol;
     protected byte field_17_idct;
     protected byte field_18_idctHint;
     protected byte field_19_kul;
-    /**/protected final static byte KUL_NONE = 0;
-    /**/protected final static byte KUL_SINGLE = 1;
-    /**/protected final static byte KUL_BY_WORD = 2;
-    /**/protected final static byte KUL_DOUBLE = 3;
-    /**/protected final static byte KUL_DOTTED = 4;
-    /**/protected final static byte KUL_HIDDEN = 5;
-    /**/protected final static byte KUL_THICK = 6;
-    /**/protected final static byte KUL_DASH = 7;
-    /**/protected final static byte KUL_DOT = 8;
-    /**/protected final static byte KUL_DOT_DASH = 9;
-    /**/protected final static byte KUL_DOT_DOT_DASH = 10;
-    /**/protected final static byte KUL_WAVE = 11;
-    /**/protected final static byte KUL_DOTTED_HEAVY = 20;
-    /**/protected final static byte KUL_DASHED_HEAVY = 23;
-    /**/protected final static byte KUL_DOT_DASH_HEAVY = 25;
-    /**/protected final static byte KUL_DOT_DOT_DASH_HEAVY = 26;
-    /**/protected final static byte KUL_WAVE_HEAVY = 27;
-    /**/protected final static byte KUL_DASH_LONG = 39;
-    /**/protected final static byte KUL_WAVE_DOUBLE = 43;
-    /**/protected final static byte KUL_DASH_LONG_HEAVY = 55;
     protected Hyphenation field_20_hresi;
     protected int field_21_hpsKern;
     protected short field_22_hpsPos;
@@ -130,30 +160,10 @@ public abstract class CHPAbstractType
     protected BorderCode field_24_brc;
     protected int field_25_ibstRMark;
     protected byte field_26_sfxtText;
-    /**/protected final static byte SFXTTEXT_NO = 0;
-    /**/protected final static byte SFXTTEXT_LAS_VEGAS_LIGHTS = 1;
-    /**/protected final static byte SFXTTEXT_BACKGROUND_BLINK = 2;
-    /**/protected final static byte SFXTTEXT_SPARKLE_TEXT = 3;
-    /**/protected final static byte SFXTTEXT_MARCHING_ANTS = 4;
-    /**/protected final static byte SFXTTEXT_MARCHING_RED_ANTS = 5;
-    /**/protected final static byte SFXTTEXT_SHIMMER = 6;
     protected boolean field_27_fDblBdr;
     protected boolean field_28_fBorderWS;
     protected short field_29_ufel;
-    /**/private static final BitField itypFELayout = new BitField(0x00ff);
-    /**/private static final BitField fTNY = new BitField(0x0100);
-    /**/private static final BitField fWarichu = new BitField(0x0200);
-    /**/private static final BitField fKumimoji = new BitField(0x0400);
-    /**/private static final BitField fRuby = new BitField(0x0800);
-    /**/private static final BitField fLSFitText = new BitField(0x1000);
-    /**/private static final BitField spare = new BitField(0xe000);
     protected byte field_30_copt;
-    /**/private static final BitField iWarichuBracket = new BitField(0x07);
-    /**/private static final BitField fWarichuNoOpenBracket = new BitField(0x08);
-    /**/private static final BitField fTNYCompress = new BitField(0x10);
-    /**/private static final BitField fTNYFetchTxm = new BitField(0x20);
-    /**/private static final BitField fCellFitText = new BitField(0x40);
-    /**/private static final BitField unused = new BitField(0x80);
     protected int field_31_hpsAsci;
     protected int field_32_hpsFE;
     protected int field_33_hpsBi;
@@ -172,11 +182,7 @@ public abstract class CHPAbstractType
     protected int field_46_idslReasonDel;
     protected int field_47_cpg;
     protected short field_48_Highlight;
-    /**/private static final BitField icoHighlight = new BitField(0x001f);
-    /**/private static final BitField fHighlight = new BitField(0x0020);
     protected short field_49_CharsetFlags;
-    /**/private static final BitField fChsDiff = new BitField(0x0001);
-    /**/private static final BitField fMacChs = new BitField(0x0020);
     protected short field_50_chse;
     protected boolean field_51_fPropRMark;
     protected int field_52_ibstPropRMark;
@@ -192,36 +198,101 @@ public abstract class CHPAbstractType
     protected byte[] field_62_xstDispFldRMark;
     protected int field_63_fcObjp;
     protected byte field_64_lbrCRJ;
-    /**/protected final static byte LBRCRJ_NONE = 0;
-    /**/protected final static byte LBRCRJ_LEFT = 1;
-    /**/protected final static byte LBRCRJ_RIGHT = 2;
-    /**/protected final static byte LBRCRJ_BOTH = 3;
     protected boolean field_65_fSpecVanish;
     protected boolean field_66_fHasOldProps;
     protected boolean field_67_fSdtVanish;
     protected int field_68_wCharScale;
 
-    protected CHPAbstractType()
-    {
-        this.field_2_hps = 20;
-        this.field_8_cv = new Colorref();
-        this.field_11_lidDefault = 0x0400;
-        this.field_12_lidFE = 0x0400;
-        this.field_20_hresi = new Hyphenation();
-        this.field_23_shd = new ShadingDescriptor();
-        this.field_24_brc = new BorderCode();
-        this.field_36_fcPic = -1;
-        this.field_40_hresiOld = new Hyphenation();
-        this.field_42_dttmRMark = new DateAndTime();
-        this.field_43_dttmRMarkDel = new DateAndTime();
-        this.field_44_istd = 10;
-        this.field_53_dttmPropRMark = new DateAndTime();
-        this.field_58_dttmConflict = new DateAndTime();
-        this.field_61_dttmDispFldRMark = new DateAndTime();
-        this.field_62_xstDispFldRMark = new byte[32];
-        this.field_68_wCharScale = 100;
+    protected CHPAbstractType() {
+        field_2_hps = 20;
+        field_8_cv = new Colorref();
+        field_11_lidDefault = 0x0400;
+        field_12_lidFE = 0x0400;
+        field_20_hresi = new Hyphenation();
+        field_23_shd = new ShadingDescriptor();
+        field_24_brc = new BorderCode();
+        field_36_fcPic = -1;
+        field_40_hresiOld = new Hyphenation();
+        field_42_dttmRMark = new DateAndTime();
+        field_43_dttmRMarkDel = new DateAndTime();
+        field_44_istd = 10;
+        field_53_dttmPropRMark = new DateAndTime();
+        field_58_dttmConflict = new DateAndTime();
+        field_61_dttmDispFldRMark = new DateAndTime();
+        field_62_xstDispFldRMark = new byte[32];
+        field_68_wCharScale = 100;
     }
 
+    protected CHPAbstractType(CHPAbstractType other) {
+        field_1_grpfChp = other.field_1_grpfChp;
+        field_2_hps = other.field_2_hps;
+        field_3_ftcAscii = other.field_3_ftcAscii;
+        field_4_ftcFE = other.field_4_ftcFE;
+        field_5_ftcOther = other.field_5_ftcOther;
+        field_6_ftcBi = other.field_6_ftcBi;
+        field_7_dxaSpace = other.field_7_dxaSpace;
+        field_8_cv = (other.field_8_cv == null) ? null : other.field_8_cv.copy();
+        field_9_ico = other.field_9_ico;
+        field_10_pctCharWidth = other.field_10_pctCharWidth;
+        field_11_lidDefault = other.field_11_lidDefault;
+        field_12_lidFE = other.field_12_lidFE;
+        field_13_kcd = other.field_13_kcd;
+        field_14_fUndetermine = other.field_14_fUndetermine;
+        field_15_iss = other.field_15_iss;
+        field_16_fSpecSymbol = other.field_16_fSpecSymbol;
+        field_17_idct = other.field_17_idct;
+        field_18_idctHint = other.field_18_idctHint;
+        field_19_kul = other.field_19_kul;
+        field_20_hresi = (other.field_20_hresi == null) ? null : other.field_20_hresi.copy();
+        field_21_hpsKern = other.field_21_hpsKern;
+        field_22_hpsPos = other.field_22_hpsPos;
+        field_23_shd = (other.field_23_shd == null) ? null : other.field_23_shd.copy();
+        field_24_brc = (other.field_24_brc == null) ? null : other.field_24_brc.copy();
+        field_25_ibstRMark = other.field_25_ibstRMark;
+        field_26_sfxtText = other.field_26_sfxtText;
+        field_27_fDblBdr = other.field_27_fDblBdr;
+        field_28_fBorderWS = other.field_28_fBorderWS;
+        field_29_ufel = other.field_29_ufel;
+        field_30_copt = other.field_30_copt;
+        field_31_hpsAsci = other.field_31_hpsAsci;
+        field_32_hpsFE = other.field_32_hpsFE;
+        field_33_hpsBi = other.field_33_hpsBi;
+        field_34_ftcSym = other.field_34_ftcSym;
+        field_35_xchSym = other.field_35_xchSym;
+        field_36_fcPic = other.field_36_fcPic;
+        field_37_fcObj = other.field_37_fcObj;
+        field_38_lTagObj = other.field_38_lTagObj;
+        field_39_fcData = other.field_39_fcData;
+        field_40_hresiOld = (other.field_40_hresiOld == null) ? null : other.field_40_hresiOld.copy();
+        field_41_ibstRMarkDel = other.field_41_ibstRMarkDel;
+        field_42_dttmRMark = (other.field_42_dttmRMark == null) ? null : other.field_42_dttmRMark.copy();
+        field_43_dttmRMarkDel = (other.field_43_dttmRMarkDel == null) ? null : other.field_43_dttmRMarkDel.copy();
+        field_44_istd = other.field_44_istd;
+        field_45_idslRMReason = other.field_45_idslRMReason;
+        field_46_idslReasonDel = other.field_46_idslReasonDel;
+        field_47_cpg = other.field_47_cpg;
+        field_48_Highlight = other.field_48_Highlight;
+        field_49_CharsetFlags = other.field_49_CharsetFlags;
+        field_50_chse = other.field_50_chse;
+        field_51_fPropRMark = other.field_51_fPropRMark;
+        field_52_ibstPropRMark = other.field_52_ibstPropRMark;
+        field_53_dttmPropRMark = (other.field_53_dttmPropRMark == null) ? null : other.field_53_dttmPropRMark.copy();
+        field_54_fConflictOrig = other.field_54_fConflictOrig;
+        field_55_fConflictOtherDel = other.field_55_fConflictOtherDel;
+        field_56_wConflict = other.field_56_wConflict;
+        field_57_IbstConflict = other.field_57_IbstConflict;
+        field_58_dttmConflict = (other.field_58_dttmConflict == null) ? null : other.field_58_dttmConflict.copy();
+        field_59_fDispFldRMark = other.field_59_fDispFldRMark;
+        field_60_ibstDispFldRMark = other.field_60_ibstDispFldRMark;
+        field_61_dttmDispFldRMark = (other.field_61_dttmDispFldRMark == null) ? null : other.field_61_dttmDispFldRMark.copy();
+        field_62_xstDispFldRMark = (other.field_62_xstDispFldRMark == null) ? null : other.field_62_xstDispFldRMark.clone();
+        field_63_fcObjp = other.field_63_fcObjp;
+        field_64_lbrCRJ = other.field_64_lbrCRJ;
+        field_65_fSpecVanish = other.field_65_fSpecVanish;
+        field_66_fHasOldProps = other.field_66_fHasOldProps;
+        field_67_fSdtVanish = other.field_67_fSdtVanish;
+        field_68_wCharScale = other.field_68_wCharScale;
+    }
 
     @Override
     public boolean equals( Object obj )

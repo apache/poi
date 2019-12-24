@@ -26,39 +26,40 @@ import org.apache.poi.util.Internal;
 
 /**
  * Section Properties.
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/records/definitions.
- *
- * @author S. Ryan Ackley
  */
 @Internal
-public abstract class SEPAbstractType
-{
+public abstract class SEPAbstractType {
+
+    /** No break */
+    public static final byte BKC_NO_BREAK = 0;
+    /** New column */
+    public static final byte BKC_NEW_COLUMN = 1;
+    /** New page */
+    public static final byte BKC_NEW_PAGE = 2;
+    /** Even page */
+    public static final byte BKC_EVEN_PAGE = 3;
+    /** Odd page */
+    public static final byte BKC_ODD_PAGE = 4;
+
+    /** Arabic */
+    public static final byte NFCPGN_ARABIC = 0;
+    /** Roman (upper case) */
+    public static final byte NFCPGN_ROMAN_UPPER_CASE = 1;
+    /** Roman (lower case) */
+    public static final byte NFCPGN_ROMAN_LOWER_CASE = 2;
+    /** Letter (upper case) */
+    public static final byte NFCPGN_LETTER_UPPER_CASE = 3;
+    /** Letter (lower case) */
+    public static final byte NFCPGN_LETTER_LOWER_CASE = 4;
+
+    public static final boolean DMORIENTPAGE_LANDSCAPE = false;
+    public static final boolean DMORIENTPAGE_PORTRAIT = true;
+
 
     protected byte field_1_bkc;
-    /** No break */
-    /**/public final static byte BKC_NO_BREAK = 0;
-    /** New column */
-    /**/public final static byte BKC_NEW_COLUMN = 1;
-    /** New page */
-    /**/public final static byte BKC_NEW_PAGE = 2;
-    /** Even page */
-    /**/public final static byte BKC_EVEN_PAGE = 3;
-    /** Odd page */
-    /**/public final static byte BKC_ODD_PAGE = 4;
     protected boolean field_2_fTitlePage;
     protected boolean field_3_fAutoPgn;
     protected byte field_4_nfcPgn;
-    /** Arabic */
-    /**/public final static byte NFCPGN_ARABIC = 0;
-    /** Roman (upper case) */
-    /**/public final static byte NFCPGN_ROMAN_UPPER_CASE = 1;
-    /** Roman (lower case) */
-    /**/public final static byte NFCPGN_ROMAN_LOWER_CASE = 2;
-    /** Letter (upper case) */
-    /**/public final static byte NFCPGN_LETTER_UPPER_CASE = 3;
-    /** Letter (lower case) */
-    /**/public final static byte NFCPGN_LETTER_LOWER_CASE = 4;
     protected boolean field_5_fUnlocked;
     protected byte field_6_cnsPgn;
     protected boolean field_7_fPgnRestart;
@@ -86,8 +87,6 @@ public abstract class SEPAbstractType
     protected int field_29_clm;
     protected int field_30_unused2;
     protected boolean field_31_dmOrientPage;
-    /**/public final static boolean DMORIENTPAGE_LANDSCAPE = false;
-    /**/public final static boolean DMORIENTPAGE_PORTRAIT = true;
     protected byte field_32_iHeadingPgn;
     protected int field_33_pgnStart;
     protected int field_34_lnnMin;
@@ -117,8 +116,7 @@ public abstract class SEPAbstractType
     protected short field_58_unused6;
     protected byte[] field_59_olstAnm;
 
-    protected SEPAbstractType()
-    {
+    protected SEPAbstractType() {
         this.field_1_bkc = 2;
         this.field_8_fEndNote = true;
         this.field_13_dxaPgn = 720;
@@ -137,6 +135,68 @@ public abstract class SEPAbstractType
         this.field_49_dyaHdrBottom = 720;
         this.field_51_fEvenlySpaced = true;
         this.field_53_dxaColumns = 720;
+    }
+
+    protected SEPAbstractType(SEPAbstractType other) {
+        field_1_bkc = other.field_1_bkc;
+        field_2_fTitlePage = other.field_2_fTitlePage;
+        field_3_fAutoPgn = other.field_3_fAutoPgn;
+        field_4_nfcPgn = other.field_4_nfcPgn;
+        field_5_fUnlocked = other.field_5_fUnlocked;
+        field_6_cnsPgn = other.field_6_cnsPgn;
+        field_7_fPgnRestart = other.field_7_fPgnRestart;
+        field_8_fEndNote = other.field_8_fEndNote;
+        field_9_lnc = other.field_9_lnc;
+        field_10_grpfIhdt = other.field_10_grpfIhdt;
+        field_11_nLnnMod = other.field_11_nLnnMod;
+        field_12_dxaLnn = other.field_12_dxaLnn;
+        field_13_dxaPgn = other.field_13_dxaPgn;
+        field_14_dyaPgn = other.field_14_dyaPgn;
+        field_15_fLBetween = other.field_15_fLBetween;
+        field_16_vjc = other.field_16_vjc;
+        field_17_dmBinFirst = other.field_17_dmBinFirst;
+        field_18_dmBinOther = other.field_18_dmBinOther;
+        field_19_dmPaperReq = other.field_19_dmPaperReq;
+        field_20_brcTop = (other.field_20_brcTop == null) ? null : other.field_20_brcTop.copy();
+        field_21_brcLeft = (other.field_21_brcLeft == null) ? null : other.field_21_brcLeft.copy();
+        field_22_brcBottom = (other.field_22_brcBottom == null) ? null : other.field_22_brcBottom.copy();
+        field_23_brcRight = (other.field_23_brcRight == null) ? null : other.field_23_brcRight.copy();
+        field_24_fPropMark = other.field_24_fPropMark;
+        field_25_ibstPropRMark = other.field_25_ibstPropRMark;
+        field_26_dttmPropRMark = (other.field_26_dttmPropRMark == null) ? null : other.field_26_dttmPropRMark.copy();
+        field_27_dxtCharSpace = other.field_27_dxtCharSpace;
+        field_28_dyaLinePitch = other.field_28_dyaLinePitch;
+        field_29_clm = other.field_29_clm;
+        field_30_unused2 = other.field_30_unused2;
+        field_31_dmOrientPage = other.field_31_dmOrientPage;
+        field_32_iHeadingPgn = other.field_32_iHeadingPgn;
+        field_33_pgnStart = other.field_33_pgnStart;
+        field_34_lnnMin = other.field_34_lnnMin;
+        field_35_wTextFlow = other.field_35_wTextFlow;
+        field_36_unused3 = other.field_36_unused3;
+        field_37_pgbProp = other.field_37_pgbProp;
+        field_38_unused4 = other.field_38_unused4;
+        field_39_xaPage = other.field_39_xaPage;
+        field_40_yaPage = other.field_40_yaPage;
+        field_41_xaPageNUp = other.field_41_xaPageNUp;
+        field_42_yaPageNUp = other.field_42_yaPageNUp;
+        field_43_dxaLeft = other.field_43_dxaLeft;
+        field_44_dxaRight = other.field_44_dxaRight;
+        field_45_dyaTop = other.field_45_dyaTop;
+        field_46_dyaBottom = other.field_46_dyaBottom;
+        field_47_dzaGutter = other.field_47_dzaGutter;
+        field_48_dyaHdrTop = other.field_48_dyaHdrTop;
+        field_49_dyaHdrBottom = other.field_49_dyaHdrBottom;
+        field_50_ccolM1 = other.field_50_ccolM1;
+        field_51_fEvenlySpaced = other.field_51_fEvenlySpaced;
+        field_52_unused5 = other.field_52_unused5;
+        field_53_dxaColumns = other.field_53_dxaColumns;
+        field_54_rgdxaColumn = (other.field_54_rgdxaColumn == null) ? null : other.field_54_rgdxaColumn.clone();
+        field_55_dxaColumnWidth = other.field_55_dxaColumnWidth;
+        field_56_dmOrientFirst = other.field_56_dmOrientFirst;
+        field_57_fLayout = other.field_57_fLayout;
+        field_58_unused6 = other.field_58_unused6;
+        field_59_olstAnm = (other.field_59_olstAnm == null) ? null : other.field_59_olstAnm.clone();
     }
 
 
@@ -270,7 +330,7 @@ public abstract class SEPAbstractType
     /**
      * Break code.
      *
-     * @return One of 
+     * @return One of
      * <li>{@link #BKC_NO_BREAK}
      * <li>{@link #BKC_NEW_COLUMN}
      * <li>{@link #BKC_NEW_PAGE}
@@ -286,7 +346,7 @@ public abstract class SEPAbstractType
      * Break code.
      *
      * @param field_1_bkc
-     *        One of 
+     *        One of
      * <li>{@link #BKC_NO_BREAK}
      * <li>{@link #BKC_NEW_COLUMN}
      * <li>{@link #BKC_NEW_PAGE}
@@ -333,7 +393,7 @@ public abstract class SEPAbstractType
     /**
      * Page number format code.
      *
-     * @return One of 
+     * @return One of
      * <li>{@link #NFCPGN_ARABIC}
      * <li>{@link #NFCPGN_ROMAN_UPPER_CASE}
      * <li>{@link #NFCPGN_ROMAN_LOWER_CASE}
@@ -349,7 +409,7 @@ public abstract class SEPAbstractType
      * Page number format code.
      *
      * @param field_4_nfcPgn
-     *        One of 
+     *        One of
      * <li>{@link #NFCPGN_ARABIC}
      * <li>{@link #NFCPGN_ROMAN_UPPER_CASE}
      * <li>{@link #NFCPGN_ROMAN_LOWER_CASE}
@@ -780,7 +840,7 @@ public abstract class SEPAbstractType
     /**
      * Get the dmOrientPage field for the SEP record.
      *
-     * @return One of 
+     * @return One of
      * <li>{@link #DMORIENTPAGE_LANDSCAPE}
      * <li>{@link #DMORIENTPAGE_PORTRAIT}
      */
@@ -793,7 +853,7 @@ public abstract class SEPAbstractType
      * Set the dmOrientPage field for the SEP record.
      *
      * @param field_31_dmOrientPage
-     *        One of 
+     *        One of
      * <li>{@link #DMORIENTPAGE_LANDSCAPE}
      * <li>{@link #DMORIENTPAGE_PORTRAIT}
      */
@@ -1250,4 +1310,4 @@ public abstract class SEPAbstractType
         this.field_59_olstAnm = field_59_olstAnm;
     }
 
-}  // END OF CLASS
+}

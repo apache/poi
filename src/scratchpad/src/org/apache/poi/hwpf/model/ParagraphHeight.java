@@ -20,25 +20,35 @@ package org.apache.poi.hwpf.model;
 import java.io.IOException;
 import java.io.OutputStream;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
 @Internal
-public final class ParagraphHeight
-{
+public final class ParagraphHeight implements Duplicatable {
+  private static final BitField fSpare = BitFieldFactory.getInstance(0x0001);
+  private static final BitField fUnk = BitFieldFactory.getInstance(0x0002);
+  private static final BitField fDiffLines = BitFieldFactory.getInstance(0x0004);
+  private static final BitField clMac = BitFieldFactory.getInstance(0xff00);
+
+
   private short infoField;
-    private BitField fSpare = BitFieldFactory.getInstance(0x0001);
-    private BitField fUnk = BitFieldFactory.getInstance(0x0002);
-    private BitField fDiffLines = BitFieldFactory.getInstance(0x0004);
-    private BitField clMac = BitFieldFactory.getInstance(0xff00);
   private short reserved;
   private int dxaCol;
   private int dymLineOrHeight;
 
-  public ParagraphHeight(byte[] buf, int offset)
-  {
+  public ParagraphHeight() {}
+
+  public ParagraphHeight(ParagraphHeight other) {
+    infoField = other.infoField;
+    reserved = other.reserved;
+    dxaCol = other.dxaCol;
+    dymLineOrHeight = other.dymLineOrHeight;
+  }
+
+  public ParagraphHeight(byte[] buf, int offset) {
     infoField = LittleEndian.getShort(buf, offset);
     offset += LittleEndian.SHORT_SIZE;
     reserved = LittleEndian.getShort(buf, offset);
@@ -46,11 +56,6 @@ public final class ParagraphHeight
     dxaCol = LittleEndian.getInt(buf, offset);
     offset += LittleEndian.INT_SIZE;
     dymLineOrHeight = LittleEndian.getInt(buf, offset);
-  }
-
-  public ParagraphHeight()
-  {
-
   }
 
   public void write(OutputStream out)
@@ -89,4 +94,8 @@ public final class ParagraphHeight
       return 42; // any arbitrary constant will do
   }
 
+  @Override
+  public ParagraphHeight copy() {
+    return new ParagraphHeight(this);
+  }
 }

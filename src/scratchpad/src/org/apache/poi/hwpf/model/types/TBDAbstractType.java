@@ -22,32 +22,22 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.Internal;
 
 /**
- * The TBD is a substructure of the PAP. <p>Class and fields descriptions are quoted from
-        Microsoft Office Word 97-2007 Binary File Format
-    
- * <p>
- * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
- *       remove the record in src/types/definitions.
- * <p>
- * This class is internal. It content or properties may change without notice 
- * due to changes in our knowledge of internal Microsoft Word binary structures.
-
- * @author Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary File Format
-        Specification [*.doc]
-    
+ * The TBD is a substructure of the PAP.
  */
 @Internal
-public abstract class TBDAbstractType
-{
+public abstract class TBDAbstractType {
+    private static final BitField jc = new BitField(0x07);
+    private static final BitField tlc = new BitField(0x38);
+    private static final BitField reserved = new BitField(0xc0);
 
     protected byte field_1_value;
-    /**/private static BitField jc = new BitField(0x07);
-    /**/private static BitField tlc = new BitField(0x38);
-    /**/private static BitField reserved = new BitField(0xc0);
 
-    protected TBDAbstractType()
-    {
+    protected TBDAbstractType() { }
+
+    protected TBDAbstractType(TBDAbstractType other) {
+        field_1_value = other.field_1_value;
     }
+
 
     protected void fillFields( byte[] data, int offset )
     {
@@ -141,7 +131,7 @@ public abstract class TBDAbstractType
 
     /**
      * Sets the reserved field value.
-     * 
+     *
      */
     @Internal
     public void setReserved( byte value )
@@ -150,7 +140,7 @@ public abstract class TBDAbstractType
     }
 
     /**
-     * 
+     *
      * @return  the reserved field value.
      */
     @Internal

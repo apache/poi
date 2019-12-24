@@ -39,8 +39,6 @@ import org.apache.poi.util.POILogger;
  * This class represents the bin table of Word document but it also serves as a
  * holder for all of the paragraphs of document that have been loaded into
  * memory.
- *
- * @author Ryan Ackley
  */
 @Internal
 public class PAPBinTable
@@ -158,7 +156,7 @@ public class PAPBinTable
         }
 
         List<PAPX> oldPapxSortedByEndPos = new ArrayList<>(paragraphs);
-        oldPapxSortedByEndPos.sort(PropertyNode.EndComparator.instance);
+        oldPapxSortedByEndPos.sort(PropertyNode.EndComparator);
 
         logger.log( POILogger.DEBUG, "PAPX sorted by end position in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms" );
@@ -262,7 +260,7 @@ public class PAPBinTable
                     continue;
 
                 if ( sprmBuffer == null ) {
-                    sprmBuffer = papx.getSprmBuf().clone();
+                    sprmBuffer = papx.getSprmBuf().copy();
                 } else {
                     sprmBuffer.append( papx.getGrpprl(), 2 );
                 }
@@ -299,7 +297,7 @@ public class PAPBinTable
             PAPX currentPap = _paragraphs.get(listIndex);
             if (currentPap != null && currentPap.getStart() < cpStart)
             {
-                SprmBuffer clonedBuf = currentPap.getSprmBuf().clone();
+                SprmBuffer clonedBuf = currentPap.getSprmBuf().copy();
 
                 // Copy the properties of the one before to afterwards
                 // Will go:
@@ -389,7 +387,7 @@ public class PAPBinTable
     {
 
         PlexOfCps binTable = new PlexOfCps(4);
-    
+
         // each FKP must start on a 512 byte page.
         int docOffset = wordDocumentStream.size();
         int mod = docOffset % POIFSConstants.SMALLER_BIG_BLOCK_SIZE;
@@ -398,21 +396,21 @@ public class PAPBinTable
             byte[] padding = new byte[POIFSConstants.SMALLER_BIG_BLOCK_SIZE - mod];
             wordDocumentStream.write(padding);
         }
-    
+
         // get the page number for the first fkp
         docOffset = wordDocumentStream.size();
         int pageNum = docOffset/POIFSConstants.SMALLER_BIG_BLOCK_SIZE;
-    
+
         // get the ending fc
         // int endingFc = _paragraphs.get(_paragraphs.size() - 1).getEnd();
         // endingFc += fcMin;
         int endingFc = translator.getByteIndex( _paragraphs.get(_paragraphs.size() - 1 ).getEnd() );
-    
+
         ArrayList<PAPX> overflow = _paragraphs;
         do
         {
             PAPX startingProp = overflow.get(0);
-    
+
             // int start = startingProp.getStart() + fcMin;
             int start = translator.getByteIndex( startingProp.getStart() );
 
@@ -429,11 +427,11 @@ public class PAPBinTable
                 // end = overflow.get(0).getStart() + fcMin;
                 end = translator.getByteIndex( overflow.get( 0 ).getStart() );
             }
-    
+
             byte[] intHolder = new byte[4];
             LittleEndian.putInt(intHolder, 0, pageNum++);
             binTable.addProperty(new GenericPropertyNode(start, end, intHolder));
-    
+
         }
         while (overflow != null);
         tableStream.write(binTable.toByteArray());

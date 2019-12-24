@@ -34,6 +34,12 @@ public class OldTextPiece extends TextPiece {
 
     private final byte[] rawBytes;
 
+    public OldTextPiece(OldTextPiece other) {
+        super(other);
+        rawBytes = (other.rawBytes == null) ? null : other.rawBytes.clone();
+    }
+
+
     /**
      * @param start Beginning offset in main document stream, in characters.
      * @param end   Ending offset in main document stream, in characters.
@@ -115,4 +121,8 @@ public class OldTextPiece extends TextPiece {
                 + getPieceDescriptor() + ")";
     }
 
+    @Override
+    public OldTextPiece copy() {
+        return new OldTextPiece(this);
+    }
 }

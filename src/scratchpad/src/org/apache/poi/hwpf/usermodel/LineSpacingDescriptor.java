@@ -17,36 +17,44 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Removal;
 
 /**
  * This class is used to determine line spacing for a paragraph.
- *
- * @author Ryan Ackley
  */
-public final class LineSpacingDescriptor
-  implements Cloneable
-{
+public final class LineSpacingDescriptor implements Duplicatable {
   short _dyaLine;
   short _fMultiLinespace;
 
-  public LineSpacingDescriptor()
-  {
-      //see page 181
+  public LineSpacingDescriptor() {
       _dyaLine = 240;
       _fMultiLinespace = 1;
   }
 
-  public LineSpacingDescriptor(byte[] buf, int offset)
-  {
+  public LineSpacingDescriptor(LineSpacingDescriptor other) {
+      _dyaLine = other._dyaLine;
+      _fMultiLinespace = other._fMultiLinespace;
+  }
+
+
+  public LineSpacingDescriptor(byte[] buf, int offset) {
     _dyaLine = LittleEndian.getShort(buf, offset);
     _fMultiLinespace = LittleEndian.getShort(buf, offset + LittleEndian.SHORT_SIZE);
   }
 
-  public Object clone()
-    throws CloneNotSupportedException
-  {
-    return super.clone();
+  @Override
+  @SuppressWarnings("squid:S2975")
+  @Deprecated
+  @Removal(version = "5.0.0")
+  public LineSpacingDescriptor clone() {
+    return copy();
+  }
+
+  @Override
+  public LineSpacingDescriptor copy() {
+    return new LineSpacingDescriptor(this);
   }
 
   public void setMultiLinespace(short fMultiLinespace)
@@ -71,7 +79,7 @@ public final class LineSpacingDescriptor
   {
     _dyaLine = dyaLine;
   }
-  
+
   @Override
   public boolean equals(Object o)
   {
@@ -86,7 +94,7 @@ public final class LineSpacingDescriptor
       assert false : "hashCode not designed";
       return 42; // any arbitrary constant will do
   }
-  
+
     public boolean isEmpty()
     {
         return _dyaLine == 0 && _fMultiLinespace == 0;

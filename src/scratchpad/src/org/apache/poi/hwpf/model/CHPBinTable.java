@@ -61,7 +61,7 @@ public class CHPBinTable
 
     /**
      * Constructor used to read a binTable in from a Word document.
-     * 
+     *
      * @deprecated Use
      *             {@link #CHPBinTable(byte[], byte[], int, int, CharIndexTranslator)}
      *             instead
@@ -81,7 +81,7 @@ public class CHPBinTable
         long start = System.currentTimeMillis();
         /*
          * Page 35:
-         * 
+         *
          * "Associated with each interval is a BTE. A BTE holds a four-byte PN
          * (page number) which identifies the FKP page in the file which
          * contains the formatting information for that interval. A CHPX FKP
@@ -172,7 +172,7 @@ public class CHPBinTable
         }
 
         List<CHPX> oldChpxSortedByStartPos = new ArrayList<>(_textRuns);
-        oldChpxSortedByStartPos.sort(PropertyNode.StartComparator.instance);
+        oldChpxSortedByStartPos.sort(PropertyNode.StartComparator);
 
         logger.log( POILogger.DEBUG, "CHPX sorted by start position in ",
                 Long.valueOf( System.currentTimeMillis() - start ), " ms" );
@@ -459,7 +459,7 @@ public class CHPBinTable
 
         /*
          * Page 35:
-         * 
+         *
          * "Associated with each interval is a BTE. A BTE holds a four-byte PN
          * (page number) which identifies the FKP page in the file which
          * contains the formatting information for that interval. A CHPX FKP

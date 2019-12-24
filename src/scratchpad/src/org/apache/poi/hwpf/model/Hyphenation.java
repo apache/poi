@@ -19,41 +19,41 @@ package org.apache.poi.hwpf.model;
 
 import java.util.Objects;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.model.types.HRESIAbstractType;
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Removal;
 
 /**
  * Hyphenation. Substructure of the {@link CharacterProperties}.
- *
- * @author Sergey Vladimirov ( vlsergey {at} gmail {dot} com )
  */
 @Internal
-public final class Hyphenation extends HRESIAbstractType implements Cloneable
-{
-    public Hyphenation()
-    {
-        super();
+public final class Hyphenation extends HRESIAbstractType implements Duplicatable {
+    public Hyphenation() {}
+
+    public Hyphenation(Hyphenation other) {
+        super(other);
     }
 
-    public Hyphenation( short hres )
-    {
+    public Hyphenation( short hres ) {
         byte[] data = new byte[2];
         LittleEndian.putShort( data, 0, hres );
         fillFields( data, 0 );
     }
 
-    public Hyphenation clone()
-    {
-        try
-        {
-            return (Hyphenation) super.clone();
-        }
-        catch ( CloneNotSupportedException e )
-        {
-            throw new RuntimeException( e );
-        }
+    @Override
+    @SuppressWarnings("squid:S2975")
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public Hyphenation clone() {
+        return copy();
+    }
+
+    @Override
+    public Hyphenation copy() {
+        return new Hyphenation(this);
     }
 
     @Override

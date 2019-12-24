@@ -24,29 +24,25 @@ import org.apache.poi.util.Internal;
  * <p>
  * Class and fields descriptions are quoted from Microsoft Office Word 97-2007
  * Binary File Format (.doc) Specification
- * 
- * NOTE: This source is automatically generated please do not modify this file.
- * Either subclass or remove the record in src/types/definitions.
- * 
- * @author Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary
- *         File Format (.doc) Specification
  */
 @Internal
-public abstract class HRESIAbstractType
-{
+public abstract class HRESIAbstractType {
+    public static final byte HRES_NO = 0;
+    public static final byte HRES_NORMAL = 1;
+    public static final byte HRES_ADD_LETTER_BEFORE = 2;
+    public static final byte HRES_CHANGE_LETTER_BEFORE = 3;
+    public static final byte HRES_DELETE_LETTER_BEFORE = 4;
+    public static final byte HRES_CHANGE_LETTER_AFTER = 5;
+    public static final byte HRES_DELETE_BEFORE_CHANGE_BEFORE = 6;
 
     protected byte field_1_hres;
-    /**/public final static byte HRES_NO = 0;
-    /**/public final static byte HRES_NORMAL = 1;
-    /**/public final static byte HRES_ADD_LETTER_BEFORE = 2;
-    /**/public final static byte HRES_CHANGE_LETTER_BEFORE = 3;
-    /**/public final static byte HRES_DELETE_LETTER_BEFORE = 4;
-    /**/public final static byte HRES_CHANGE_LETTER_AFTER = 5;
-    /**/public final static byte HRES_DELETE_BEFORE_CHANGE_BEFORE = 6;
     protected byte field_2_chHres;
 
-    protected HRESIAbstractType()
-    {
+    protected HRESIAbstractType() {}
+
+    protected HRESIAbstractType(HRESIAbstractType other) {
+        field_1_hres = other.field_1_hres;
+        field_2_chHres = other.field_2_chHres;
     }
 
     protected void fillFields( byte[] data, int offset )
@@ -85,7 +81,7 @@ public abstract class HRESIAbstractType
     /**
      * Hyphenation rule.
      *
-     * @return One of 
+     * @return One of
      * <li>{@link #HRES_NO}
      * <li>{@link #HRES_NORMAL}
      * <li>{@link #HRES_ADD_LETTER_BEFORE}
@@ -103,7 +99,7 @@ public abstract class HRESIAbstractType
      * Hyphenation rule.
      *
      * @param field_1_hres
-     *        One of 
+     *        One of
      * <li>{@link #HRES_NO}
      * <li>{@link #HRES_NORMAL}
      * <li>{@link #HRES_ADD_LETTER_BEFORE}

@@ -29,14 +29,18 @@ import org.apache.poi.util.StringUtil;
  * Works in the character domain, not the byte domain, so you
  * need to have turned byte references into character
  * references before getting here.
- *
- * @author Ryan Ackley
  */
 @Internal
 public class TextPiece extends PropertyNode<TextPiece> {
     private boolean _usesUnicode;
 
     private PieceDescriptor _pd;
+
+    public TextPiece(TextPiece other) {
+        super(other);
+        _usesUnicode = other._usesUnicode;
+        _pd = (other._pd == null) ? null : other._pd.copy();
+    }
 
     /**
      * @param start Beginning offset in main document stream, in characters.
@@ -212,4 +216,8 @@ public class TextPiece extends PropertyNode<TextPiece> {
                 + getPieceDescriptor() + ")";
     }
 
+    @Override
+    public TextPiece copy() {
+        return new TextPiece(this);
+    }
 }

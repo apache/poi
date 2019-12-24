@@ -29,9 +29,6 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
-/**
- * @author Ryan Ackley
- */
 @Internal
 public class SectionTable
 {
@@ -117,7 +114,7 @@ public class SectionTable
             }
         }
 
-        _sections.sort(PropertyNode.StartComparator.instance);
+        _sections.sort(PropertyNode.StartComparator);
     }
 
     public void adjustForInsert(int listIndex, int length)

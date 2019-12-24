@@ -17,35 +17,36 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.model.types.PAPAbstractType;
+import org.apache.poi.util.Removal;
 
-public final class ParagraphProperties extends PAPAbstractType implements
-        Cloneable
-{
+@SuppressWarnings("unused")
+public final class ParagraphProperties extends PAPAbstractType implements Duplicatable {
 
     private boolean jcLogical;
 
-    public ParagraphProperties()
-    {
-        setAnld( new byte[84] );
-        setPhe( new byte[12] );
+    public ParagraphProperties() {
+        setAnld(new byte[84]);
+        setPhe(new byte[12]);
     }
 
-    public Object clone() throws CloneNotSupportedException
-    {
-        ParagraphProperties pp = (ParagraphProperties) super.clone();
-        pp.setAnld( getAnld().clone() );
-        pp.setBrcTop( (BorderCode) getBrcTop().clone() );
-        pp.setBrcLeft( (BorderCode) getBrcLeft().clone() );
-        pp.setBrcBottom( (BorderCode) getBrcBottom().clone() );
-        pp.setBrcRight( (BorderCode) getBrcRight().clone() );
-        pp.setBrcBetween( (BorderCode) getBrcBetween().clone() );
-        pp.setBrcBar( (BorderCode) getBrcBar().clone() );
-        pp.setDcs( getDcs().clone() );
-        pp.setLspd( (LineSpacingDescriptor) getLspd().clone() );
-        pp.setShd( getShd().clone() );
-        pp.setPhe( getPhe().clone() );
-        return pp;
+    public ParagraphProperties(ParagraphProperties other) {
+        super(other);
+        jcLogical = other.jcLogical;
+    }
+
+    @Override
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public ParagraphProperties clone() {
+        return copy();
+    }
+
+    @Override
+    public ParagraphProperties copy() {
+        return new ParagraphProperties(this);
     }
 
     public BorderCode getBarBorder()
@@ -92,12 +93,12 @@ public final class ParagraphProperties extends PAPAbstractType implements
 
             switch ( getJc() )
             {
-            case 0:
-                return 2;
-            case 2:
-                return 0;
-            default:
-                return getJc();
+                case 0:
+                    return 2;
+                case 2:
+                    return 0;
+                default:
+                    return getJc();
             }
         }
 
@@ -332,3 +333,4 @@ public final class ParagraphProperties extends PAPAbstractType implements
     }
 
 }
+
