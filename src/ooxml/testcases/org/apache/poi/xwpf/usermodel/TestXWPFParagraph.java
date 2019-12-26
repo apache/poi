@@ -300,6 +300,16 @@ public final class TestXWPFParagraph {
     }
 
     @Test
+    public void testGetSetILvl() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFParagraph p = doc.createParagraph();
+
+            p.setNumILvl(new BigInteger("1"));
+            assertEquals("1", p.getNumIlvl().toString());
+        }
+    }
+    
+    @Test
     public void testAddingRuns() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx")) {
 

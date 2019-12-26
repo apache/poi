@@ -265,6 +265,25 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     }
 
     /**
+     * setNumILvl of Paragraph
+     *
+     * @param iLvl
+     * @since 4.1.2
+     */
+    public void setNumILvl(BigInteger iLvl) {
+        if (paragraph.getPPr() == null) {
+            paragraph.addNewPPr();
+        }
+        if (paragraph.getPPr().getNumPr() == null) {
+            paragraph.getPPr().addNewNumPr();
+        }
+        if (paragraph.getPPr().getNumPr().getIlvl() == null) {
+            paragraph.getPPr().getNumPr().addNewIlvl();
+        }
+        paragraph.getPPr().getNumPr().getIlvl().setVal(iLvl);
+    }
+
+    /**
      * Returns Ilvl of the numeric style for this paragraph.
      * Returns null if this paragraph does not have numeric style.
      *
