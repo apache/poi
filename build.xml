@@ -552,7 +552,6 @@ under the License.
 
     <patternset id="exclude-scratchpad-test">
         <exclude name="**/TestExtractorFactory.java"/>
-        <exclude name="**/OutlookTextExtactor.java"/>
         <exclude name="**/TestEmbedOLEPackage.java"/>
         <exclude name="**/TestHxxFEncryption.java"/>
     </patternset>

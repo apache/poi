@@ -114,7 +114,7 @@ public class TestExtractorFactory {
         "Visio", vsd, "VisioTextExtractor", 50,
         "Visio - vsdx", vsdx, "XDGFVisioExtractor", 20,
         "Publisher", pub, "PublisherTextExtractor", 50,
-        "Outlook msg", msg, "OutlookTextExtactor", 50,
+        "Outlook msg", msg, "OutlookTextExtractor", 50,
 
         // TODO Support OOXML-Strict, see bug #57699
         // xlsxStrict
@@ -341,7 +341,7 @@ public class TestExtractorFactory {
                         case "WordExtractor":
                             numWord++;
                             break;
-                        case "OutlookTextExtactor":
+                        case "OutlookTextExtractor":
                             numMsg++;
                             break;
                         case "XWPFWordExtractor":
