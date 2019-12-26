@@ -31,7 +31,7 @@ import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
-import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
+import org.apache.poi.hsmf.extractor.OutlookTextExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hwpf.OldWordFileFormatException;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
@@ -103,7 +103,7 @@ public class OLE2ScratchpadExtractorFactory {
         };
         for (String entryName : outlookEntryNames) {
             if (poifsDir.hasEntry(entryName)) {
-                return new OutlookTextExtactor(poifsDir);
+                return new OutlookTextExtractor(poifsDir);
             }
         }
 
@@ -158,9 +158,9 @@ public class OLE2ScratchpadExtractorFactory {
             //} else if(ext instanceof PowerPointExtractor) {
             // Tricky, not stored directly in poifs
             // TODO
-        } else if (ext instanceof OutlookTextExtactor) {
+        } else if (ext instanceof OutlookTextExtractor) {
             // Stored in the Attachment blocks
-            MAPIMessage msg = ((OutlookTextExtactor)ext).getMAPIMessage();
+            MAPIMessage msg = ((OutlookTextExtractor)ext).getMAPIMessage();
             for (AttachmentChunks attachment : msg.getAttachmentFiles()) {
                 if (attachment.getAttachData() != null) {
                     byte[] data = attachment.getAttachData().getValue();

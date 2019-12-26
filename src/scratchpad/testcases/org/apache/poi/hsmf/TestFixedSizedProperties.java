@@ -43,6 +43,7 @@ import org.apache.poi.hsmf.datatypes.PropertyValue.LongPropertyValue;
 import org.apache.poi.hsmf.datatypes.PropertyValue.TimePropertyValue;
 import org.apache.poi.hsmf.dev.HSMFDump;
 import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
+import org.apache.poi.hsmf.extractor.OutlookTextExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.AfterClass;
@@ -141,9 +142,8 @@ public final class TestFixedSizedProperties {
     * Test to see if we can read the Date Chunk with OutlookTextExtractor.
     */
    @Test
-   // @Ignore("TODO Work out why the Fri 22nd vs Monday 25th problem is occurring and fix")
    public void testReadMessageDateSucceedsWithOutlookTextExtractor() throws Exception {
-      OutlookTextExtactor ext = new OutlookTextExtactor(mapiMessageSucceeds);
+      OutlookTextExtractor ext = new OutlookTextExtractor(mapiMessageSucceeds);
       ext.setFilesystem(null); // Don't close re-used test resources here
       
       String text = ext.getText();
@@ -151,13 +151,22 @@ public final class TestFixedSizedProperties {
       ext.close();
    }
 
-   /**
+    @Test
+    public void testReadMessageDateSucceedsWithOutlookTextExtactor() throws Exception {
+        OutlookTextExtactor ext = new OutlookTextExtactor(mapiMessageSucceeds);
+        ext.setFilesystem(null); // Don't close re-used test resources here
+
+        String text = ext.getText();
+        assertContains(text, "Date: Fri, 22 Jun 2012 18:32:54 +0000\n");
+        ext.close();
+    }
+
+    /**
     * Test to see if we can read the Date Chunk with OutlookTextExtractor.
     */
    @Test
-   // @Ignore("TODO Work out why the Thu 21st vs Monday 25th problem is occurring and fix")
    public void testReadMessageDateFailsWithOutlookTextExtractor() throws Exception {
-      OutlookTextExtactor ext = new OutlookTextExtactor(mapiMessageFails);
+      OutlookTextExtractor ext = new OutlookTextExtractor(mapiMessageFails);
       ext.setFilesystem(null); // Don't close re-used test resources here
       
       String text = ext.getText();
