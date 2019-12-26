@@ -28,7 +28,6 @@ import javax.imageio.ImageIO;
 
 import junit.framework.TestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.junit.Assume;
 import org.junit.BeforeClass;
 
 /**
@@ -85,8 +84,7 @@ public final class TestHSSFPictureData extends TestCase{
                 }
             }
         } catch (IIOException e) {
-            Assume.assumeFalse(e.getMessage().contains("Can't create cache file"));
-            throw e;
+            assertFalse(e.getMessage(), e.getMessage().contains("Can't create cache file"));
         }
     }
 
@@ -110,8 +108,7 @@ public final class TestHSSFPictureData extends TestCase{
             assertEquals(HSSFWorkbook.PICTURE_TYPE_PNG, pict.getFormat());
             assertEquals("image/png", pict.getMimeType());
         } catch (IIOException e) {
-            Assume.assumeFalse(e.getMessage().contains("Can't create cache file"));
-            throw e;
+            assertFalse(e.getMessage(), e.getMessage().contains("Can't create cache file"));
         }
     }
 

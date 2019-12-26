@@ -308,7 +308,7 @@ public final class TestXWPFParagraph {
             assertEquals("1", p.getNumIlvl().toString());
         }
     }
-    
+
     @Test
     public void testAddingRuns() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx")) {
