@@ -68,7 +68,7 @@ public final class SlideShowDumper {
   public static void main(String[] args) throws IOException
   {
 	if(args.length == 0) {
-		System.err.println("Useage: SlideShowDumper [-escher|-basicescher] <filename>");
+		System.err.println("Usage: SlideShowDumper [-escher|-basicescher] <filename>");
 		return;
 	}
 

@@ -64,7 +64,7 @@ public final class QuickButCruddyTextExtractor {
     public static void main(String[] args) throws IOException
     {
         if(args.length < 1) {
-            System.err.println("Useage:");
+            System.err.println("Usage:");
             System.err.println("\tQuickButCruddyTextExtractor <file>");
             System.exit(1);
         }

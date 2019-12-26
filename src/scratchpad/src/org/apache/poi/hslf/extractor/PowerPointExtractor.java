@@ -59,7 +59,7 @@ public final class PowerPointExtractor extends POIOLE2TextExtractor {
 	 */
 	public static void main(String[] args) throws IOException {
 		if (args.length < 1) {
-			System.err.println("Useage:");
+			System.err.println("Usage:");
 			System.err.println("\tPowerPointExtractor [-notes] <file>");
 			System.exit(1);
 		}
