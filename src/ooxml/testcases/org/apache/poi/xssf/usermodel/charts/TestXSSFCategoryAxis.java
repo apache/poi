@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.xddf.usermodel.chart.AxisCrosses;
 import org.apache.poi.xddf.usermodel.chart.AxisPosition;
 import org.apache.poi.xddf.usermodel.chart.XDDFCategoryAxis;
@@ -25,24 +27,22 @@ import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public final class TestXSSFCategoryAxis extends TestCase {
-
+public final class TestXSSFCategoryAxis {
+	@Test
 	public void testAccessMethods() throws Exception {
-		XSSFWorkbook wb = new XSSFWorkbook();
-		XSSFSheet sheet = wb.createSheet();
-		XSSFDrawing drawing = sheet.createDrawingPatriarch();
-		XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
-		XSSFChart chart = drawing.createChart(anchor);
-		XDDFCategoryAxis axis = chart.createCategoryAxis(AxisPosition.BOTTOM);
+		try (XSSFWorkbook wb = new XSSFWorkbook()) {
+			XSSFSheet sheet = wb.createSheet();
+			XSSFDrawing drawing = sheet.createDrawingPatriarch();
+			XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
+			XSSFChart chart = drawing.createChart(anchor);
+			XDDFCategoryAxis axis = chart.createCategoryAxis(AxisPosition.BOTTOM);
 
-		axis.setCrosses(AxisCrosses.AUTO_ZERO);
-		assertEquals(axis.getCrosses(), AxisCrosses.AUTO_ZERO);
+			axis.setCrosses(AxisCrosses.AUTO_ZERO);
+			assertEquals(axis.getCrosses(), AxisCrosses.AUTO_ZERO);
 
-		assertEquals(chart.getAxes().size(), 1);
-
-		wb.close();
+			assertEquals(chart.getAxes().size(), 1);
+		}
 	}
 }

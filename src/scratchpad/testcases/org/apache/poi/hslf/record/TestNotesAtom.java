@@ -18,23 +18,29 @@
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+
 import java.io.ByteArrayOutputStream;
+
+import org.junit.Test;
 
 /**
  * Tests that NotesAtom works properly
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestNotesAtom extends TestCase {
+public final class TestNotesAtom {
 	// From a real file
 	private final byte[] data_a = new byte[] { 1, 0, 0xF1-256, 3, 8, 0, 0, 0,
 		0, 0, 0, 0x80-256, 0, 0, 0x0D, 0x30 };
 
+	@Test
 	public void testRecordType() {
 		NotesAtom na = new NotesAtom(data_a, 0, data_a.length);
-		assertEquals(1009l, na.getRecordType());
+		assertEquals(1009L, na.getRecordType());
 	}
+
+	@Test
 	public void testFlags() {
 		NotesAtom na = new NotesAtom(data_a, 0, data_a.length);
 		assertEquals(0x80000000, na.getSlideID());
@@ -43,15 +49,11 @@ public final class TestNotesAtom extends TestCase {
         assertFalse(na.getFollowMasterBackground());
 	}
 
+	@Test
 	public void testWrite() throws Exception {
 		NotesAtom na = new NotesAtom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		na.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertEquals(data_a.length, b.length);
-		for(int i=0; i<data_a.length; i++) {
-			assertEquals(data_a[i],b[i]);
-		}
+		assertArrayEquals(data_a, baos.toByteArray());
 	}
 }

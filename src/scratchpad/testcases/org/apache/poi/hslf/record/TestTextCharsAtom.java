@@ -18,15 +18,17 @@
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayOutputStream;
+
+import org.junit.Test;
 
 /**
  * Tests that TextCharsAtom works properly
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestTextCharsAtom extends TestCase {
+public final class TestTextCharsAtom {
 	// From a real file
 	private final byte[] data = new byte[]  { 0, 0, 0xA0-256, 0x0f, 0x08, 0, 0, 0,
 		0x54, 0x00, 0x68, 0x00, 0x69, 0x00, 0x73, 0x00 };
@@ -35,47 +37,43 @@ public final class TestTextCharsAtom extends TestCase {
 		0x54, 0x00, 0x68, 0x00, 0x69, 0x00, 0x73, 0x00, 0xa3-256, 0x01 };
 	private final String alt_text = "This\u01A3";
 
+	@Test
     public void testRecordType() {
 		TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
-		assertEquals(4000l, tca.getRecordType());
+		assertEquals(4000L, tca.getRecordType());
 	}
 
+	@Test
 	public void testTextA() {
 		TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
 		assertEquals(data_text, tca.getText());
 	}
+
+	@Test
 	public void testTextB() {
 		TextCharsAtom tca = new TextCharsAtom(alt_data,0,alt_data.length);
 		assertEquals(alt_text, tca.getText());
 	}
 
+	@Test
 	public void testChangeText() throws Exception {
 		TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
 		tca.setText(alt_text);
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		tca.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		// Compare the header and the text
-		assertEquals(alt_data.length, b.length);
-		for(int i=0; i<alt_data.length; i++) {
-			assertEquals(alt_data[i],b[i]);
-		}
+		assertArrayEquals(alt_data, baos.toByteArray());
 	}
 
+	@Test
 	public void testWrite() throws Exception {
 		TextCharsAtom tca = new TextCharsAtom(data,0,data.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		tca.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertEquals(data.length, b.length);
-		for(int i=0; i<data.length; i++) {
-			assertEquals(data[i],b[i]);
-		}
+		assertArrayEquals(data, baos.toByteArray());
 	}
 
+	@Test
 	public void testCreateNew() throws Exception {
 		TextCharsAtom tca = new TextCharsAtom();
 		assertEquals(0, tca.getText().length());
@@ -86,12 +84,7 @@ public final class TestTextCharsAtom extends TestCase {
 		// Check it's now like data
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		tca.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertEquals(data.length, b.length);
-		for(int i=0; i<data.length; i++) {
-			assertEquals(data[i],b[i]);
-		}
+		assertArrayEquals(data, baos.toByteArray());
 	}
 
 }

@@ -16,25 +16,29 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.atp;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.Test;
 
 /**
  * Testcase for 'Analysis Toolpak' function MROUND()
- * 
- * @author Yegor Kozlov
  */
-public class TestMRound extends TestCase {
+public class TestMRound {
 
     /**
-=MROUND(10, 3) 	Rounds 10 to a nearest multiple of 3 (9)
-=MROUND(-10, -3) 	Rounds -10 to a nearest multiple of -3 (-9)
-=MROUND(1.3, 0.2) 	Rounds 1.3 to a nearest multiple of 0.2 (1.4)
-=MROUND(5, -2) 	Returns an error, because -2 and 5 have different signs (#NUM!)     *
+        =MROUND(10, 3) 	Rounds 10 to a nearest multiple of 3 (9)
+        =MROUND(-10, -3) 	Rounds -10 to a nearest multiple of -3 (-9)
+        =MROUND(1.3, 0.2) 	Rounds 1.3 to a nearest multiple of 0.2 (1.4)
+        =MROUND(5, -2) 	Returns an error, because -2 and 5 have different signs (#NUM!)     *
      */
-    public static void testEvaluate(){
+    @Test
+    public void testEvaluate(){
         Workbook wb = new HSSFWorkbook();
         Sheet sh = wb.createSheet();
         Cell cell1 = sh.createRow(0).createCell(0);
@@ -65,6 +69,6 @@ public class TestMRound extends TestCase {
                 ErrorEval.NUM_ERROR.getErrorCode(), evaluator.evaluate(cell4).getErrorValue());
 
         assertEquals("Returns 0 because the multiple is 0",
-                0.0, evaluator.evaluate(cell5).getNumberValue());
+                0.0, evaluator.evaluate(cell5).getNumberValue(), 0);
     }
 }

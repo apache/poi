@@ -17,28 +17,31 @@
 
 package org.apache.poi.hsmf;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.io.IOException;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.POIDataSamples;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests to verify if code page for general properties like subject,
  * text body and html body is evaluated correctly.
  */
-public final class Test7BitCodepage extends TestCase {
-   private final MAPIMessage ascii_cp1251_lcid1049;
-   private final MAPIMessage ascii_utf_8_cp1252_lcid1031;
-   private final MAPIMessage ascii_utf_8_cp1252_lcid1031_html;
-   private final MAPIMessage htmlbodybinary_cp1251;
-   private final MAPIMessage htmlbodybinary_utf_8;
+public final class Test7BitCodepage {
+   private MAPIMessage ascii_cp1251_lcid1049;
+   private MAPIMessage ascii_utf_8_cp1252_lcid1031;
+   private MAPIMessage ascii_utf_8_cp1252_lcid1031_html;
+   private MAPIMessage htmlbodybinary_cp1251;
+   private MAPIMessage htmlbodybinary_utf_8;
 
    /**
     * Initialize this test, load up the messages.
-    * @throws Exception
     */
-   public Test7BitCodepage() throws IOException {
+   @Before
+   public void setup() throws IOException {
        POIDataSamples samples = POIDataSamples.getHSMFInstance();
        ascii_cp1251_lcid1049 = new MAPIMessage(samples.openResourceAsStream("ASCII_CP1251_LCID1049.msg"));
        ascii_utf_8_cp1252_lcid1031  = new MAPIMessage(samples.openResourceAsStream("ASCII_UTF-8_CP1252_LCID1031.msg"));
@@ -50,6 +53,7 @@ public final class Test7BitCodepage extends TestCase {
    /**
     * Evaluate encoding and check if the subject, text body and html body is decoded correctly.
     */
+   @Test
    public void test7BitEncoding() throws Exception {
        ascii_cp1251_lcid1049.guess7BitEncoding();
        ascii_cp1251_lcid1049.setReturnNullOnMissingChunk(true);
@@ -61,23 +65,23 @@ public final class Test7BitCodepage extends TestCase {
        htmlbodybinary_cp1251.setReturnNullOnMissingChunk(true);
        htmlbodybinary_utf_8.guess7BitEncoding();
        htmlbodybinary_utf_8.setReturnNullOnMissingChunk(true);
-       
+
        assertEquals("Subject автоматически Subject", ascii_cp1251_lcid1049.getSubject());
        assertEquals("Body автоматически Body", ascii_cp1251_lcid1049.getTextBody());
        assertEquals("<!DOCTYPE html><html><meta charset=\\\"windows-1251\\\"><body>HTML автоматически</body></html>", ascii_cp1251_lcid1049.getHtmlBody());
-      
+
        assertEquals("Subject öäü Subject", ascii_utf_8_cp1252_lcid1031.getSubject());
        assertEquals("Body öäü Body", ascii_utf_8_cp1252_lcid1031.getTextBody());
        assertNull(ascii_utf_8_cp1252_lcid1031.getHtmlBody());
-       
+
        assertEquals("Subject öäü Subject", ascii_utf_8_cp1252_lcid1031_html.getSubject());
        assertEquals("Body öäü Body", ascii_utf_8_cp1252_lcid1031_html.getTextBody());
        assertEquals("<!DOCTYPE html><html><meta charset=\\\"utf-8\\\"><body>HTML öäü</body></html>", ascii_utf_8_cp1252_lcid1031_html.getHtmlBody());
-       
+
        assertEquals("Subject öäü Subject", htmlbodybinary_cp1251.getSubject());
        assertNull(htmlbodybinary_cp1251.getTextBody());
        assertEquals("<!DOCTYPE html><html><meta charset=\\\"utf-8\\\"><body>HTML автоматически</body></html>", htmlbodybinary_cp1251.getHtmlBody());
-       
+
        assertEquals("Subject öäü Subject", htmlbodybinary_utf_8.getSubject());
        assertNull(htmlbodybinary_utf_8.getTextBody());
        assertEquals("<!DOCTYPE html><html><meta charset=\\\"utf-8\\\"><body>HTML öäü</body></html>", htmlbodybinary_utf_8.getHtmlBody());

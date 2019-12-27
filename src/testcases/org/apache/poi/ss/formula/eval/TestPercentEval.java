@@ -17,25 +17,25 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-import org.apache.poi.ss.formula.functions.EvalFactory;
-import org.apache.poi.ss.formula.functions.NumericFunctionInvoker;
+import java.io.IOException;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.formula.functions.EvalFactory;
+import org.apache.poi.ss.formula.functions.NumericFunctionInvoker;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.junit.Test;
 
 /**
  * Test for percent operator evaluator.
- *
- * @author Josh Micich
  */
-public final class TestPercentEval extends TestCase {
+public final class TestPercentEval {
 
 	private static void confirm(ValueEval arg, double expectedResult) {
 		ValueEval[] args = {
@@ -47,6 +47,7 @@ public final class TestPercentEval extends TestCase {
 		assertEquals(expectedResult, result, 0);
 	}
 
+	@Test
 	public void testBasic() {
 		confirm(new NumberEval(5), 0.05);
 		confirm(new NumberEval(3000), 30.0);
@@ -55,30 +56,27 @@ public final class TestPercentEval extends TestCase {
 		confirm(BoolEval.TRUE, 0.01);
 	}
 
+	@Test
 	public void test1x1Area() {
 		AreaEval ae = EvalFactory.createAreaEval("B2:B2", new ValueEval[] { new NumberEval(50), });
 		confirm(ae, 0.5);
 	}
-	public void testInSpreadSheet() {
-		HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFSheet sheet = wb.createSheet("Sheet1");
-		HSSFRow row = sheet.createRow(0);
-		HSSFCell cell = row.createCell(0);
-		cell.setCellFormula("B1%");
-		row.createCell(1).setCellValue(50.0);
 
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-		CellValue cv;
-		try {
-			cv = fe.evaluate(cell);
-		} catch (RuntimeException e) {
-			if(e.getCause() instanceof NullPointerException) {
-				throw new AssertionFailedError("Identified bug 44608");
-			}
-			// else some other unexpected error
-			throw e;
+	@Test
+	public void testInSpreadSheet() throws IOException {
+		try (HSSFWorkbook wb = new HSSFWorkbook()) {
+			HSSFSheet sheet = wb.createSheet("Sheet1");
+			HSSFRow row = sheet.createRow(0);
+			HSSFCell cell = row.createCell(0);
+			cell.setCellFormula("B1%");
+			row.createCell(1).setCellValue(50.0);
+
+			HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+
+			// bug 44608 - NullPointerException
+			CellValue cv = fe.evaluate(cell);
+			assertEquals(CellType.NUMERIC, cv.getCellType());
+			assertEquals(0.5, cv.getNumberValue(), 0.0);
 		}
-		assertEquals(CellType.NUMERIC, cv.getCellType());
-		assertEquals(0.5, cv.getNumberValue(), 0.0);
 	}
 }

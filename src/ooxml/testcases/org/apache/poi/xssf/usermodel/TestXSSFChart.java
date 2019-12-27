@@ -17,14 +17,17 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.xssf.XSSFTestDataSamples;
-
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 
-public final class TestXSSFChart extends TestCase {
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Test;
 
+public final class TestXSSFChart {
+    @Test
     public void testGetAccessors() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithThreeCharts.xlsx")) {
             XSSFSheet s1 = wb.getSheetAt(0);
@@ -39,6 +42,7 @@ public final class TestXSSFChart extends TestCase {
         }
     }
 
+    @Test
     public void testGetCharts() throws Exception {
        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithThreeCharts.xlsx")) {
            XSSFSheet s1 = wb.getSheetAt(0);
@@ -67,6 +71,7 @@ public final class TestXSSFChart extends TestCase {
        }
     }
 
+    @Test
 	public void testAddChartsToNewWorkbook() throws Exception {
 		try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet s1 = wb.createSheet();

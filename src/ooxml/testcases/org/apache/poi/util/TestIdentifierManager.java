@@ -16,11 +16,18 @@
 ==================================================================== */
 package org.apache.poi.util;
 
-import junit.framework.TestCase;
-import org.apache.poi.ooxml.util.IdentifierManager;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-public class TestIdentifierManager extends TestCase
-{
+import org.apache.poi.ooxml.util.IdentifierManager;
+import org.junit.Test;
+
+public class TestIdentifierManager {
+    @Test
     public void testBasic()
     {
         IdentifierManager manager = new IdentifierManager(0L,100L);
@@ -31,8 +38,8 @@ public class TestIdentifierManager extends TestCase
         assertEquals(99L,manager.getRemainingIdentifiers());
     }
 
-    public void testLongLimits()
-    {
+    @Test
+    public void testLongLimits() {
         long min = IdentifierManager.MIN_ID;
         long max = IdentifierManager.MAX_ID;
         IdentifierManager manager = new IdentifierManager(min,max);
@@ -44,53 +51,44 @@ public class TestIdentifierManager extends TestCase
         manager.release(max);
         manager.release(min);
     }
-    
-    public void testReserve()
-    {
+
+    @Test
+    public void testReserve() {
         IdentifierManager manager = new IdentifierManager(10L,30L);
         assertEquals(12L,manager.reserve(12L));
         long reserve = manager.reserve(12L);
-        assertFalse("Same id must be reserved twice!",reserve == 12L);
+        assertNotEquals("Same id must be reserved twice!", 12L, reserve);
         assertTrue(manager.release(12L));
         assertTrue(manager.release(reserve));
         assertFalse(manager.release(12L));
         assertFalse(manager.release(reserve));
-        
+
         manager = new IdentifierManager(0L,2L);
         assertEquals(0L,manager.reserve(0L));
         assertEquals(1L,manager.reserve(1L));
         assertEquals(2L,manager.reserve(2L));
-        try
-        {
+        try {
             manager.reserve(0L);
             fail("Exception expected");
-        }
-        catch(IllegalStateException e)
-        {
+        } catch(IllegalStateException e) {
             // expected
         }
-        try
-        {
+        try {
             manager.reserve(1L);
             fail("Exception expected");
-        }
-        catch(IllegalStateException e)
-        {
+        } catch(IllegalStateException e) {
             // expected
         }
-        try
-        {
+        try {
             manager.reserve(2L);
             fail("Exception expected");
-        }
-        catch(IllegalStateException e)
-        {
+        } catch(IllegalStateException e) {
             // expected
         }
     }
 
-    public void testReserveNew()
-    {
+    @Test
+    public void testReserveNew() {
         IdentifierManager manager = new IdentifierManager(10L,12L);
         assertSame(10L,manager.reserveNew());
         assertSame(11L,manager.reserveNew());
@@ -98,13 +96,12 @@ public class TestIdentifierManager extends TestCase
         try {
             manager.reserveNew();
             fail("IllegalStateException expected");
-        }
-        catch (IllegalStateException e)
-        {
+        } catch (IllegalStateException e) {
             // expected
         }
     }
-    
+
+    @Test
     public void testRelease() {
         IdentifierManager manager = new IdentifierManager(10L,20L);
         assertEquals(10L,manager.reserve(10L));
@@ -112,11 +109,11 @@ public class TestIdentifierManager extends TestCase
         assertEquals(12L,manager.reserve(12L));
         assertEquals(13L,manager.reserve(13L));
         assertEquals(14L,manager.reserve(14L));
-        
+
         assertTrue(manager.release(10L));
         assertEquals(10L,manager.reserve(10L));
         assertTrue(manager.release(10L));
-        
+
         assertTrue(manager.release(11L));
         assertEquals(11L,manager.reserve(11L));
         assertTrue(manager.release(11L));

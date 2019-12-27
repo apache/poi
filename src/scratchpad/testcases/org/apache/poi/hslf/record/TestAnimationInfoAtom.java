@@ -19,17 +19,18 @@ package org.apache.poi.hslf.record;
 
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests that {@link HeadersFootersAtom} works properly
- *
- * @author Yegor Kozlov
  */
-public final class TestAnimationInfoAtom extends TestCase {
+public final class TestAnimationInfoAtom {
     // From a real file
     /*
      <AnimationInfoAtom info="1" type="4081" size="28" offset="4015" header="01 00 F1 0F 1C 00 00 00 ">
@@ -37,12 +38,13 @@ public final class TestAnimationInfoAtom extends TestCase {
        00 00 00
      </AnimationInfoAtom>
      */
-    private final byte[] data = new byte[] {
+    private final byte[] data = {
          0x01, 0x00, (byte)0xF1, 0x0F, 0x1C, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x07, 0x04, 0x05, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
             0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
 
+    @Test
     public void testRead() {
         AnimationInfoAtom record = new AnimationInfoAtom(data, 0, data.length);
         assertEquals(RecordTypes.AnimationInfoAtom.typeID, record.getRecordType());
@@ -61,6 +63,7 @@ public final class TestAnimationInfoAtom extends TestCase {
         assertEquals(0, record.getSlideCount());
     }
 
+    @Test
     public void testWrite() throws Exception {
         AnimationInfoAtom record = new AnimationInfoAtom(data, 0, data.length);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -70,6 +73,7 @@ public final class TestAnimationInfoAtom extends TestCase {
         assertArrayEquals(data, b);
     }
 
+    @Test
     public void testNewRecord() throws Exception {
         AnimationInfoAtom record = new AnimationInfoAtom();
         record.setDimColor(0x07000000);

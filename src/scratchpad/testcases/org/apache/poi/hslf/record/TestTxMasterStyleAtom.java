@@ -17,37 +17,43 @@
 
 package org.apache.poi.hslf.record;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
+import org.junit.Before;
+import org.junit.Test;
 
 
 /**
  * Test <code>TestTxMasterStyleAtom</code> record.
  * Check master style for the empty ppt which is created
  * by the default constructor of <code>SlideShow</code>
- *
- * @author Yegor Kozlov
  */
-public final class TestTxMasterStyleAtom extends TestCase {
-    protected HSLFSlideShow _ppt;
+public final class TestTxMasterStyleAtom {
+    private HSLFSlideShow _ppt;
 
-    @Override
+    @Before
     public void setUp() {
         _ppt = new HSLFSlideShow();
     }
 
+    @Test
     public void testDefaultStyles()  {
         TxMasterStyleAtom[] txmaster = getMasterStyles();
         for (final TxMasterStyleAtom atom : txmaster) {
             final int txtype = atom.getTextType();
-            switch (TextPlaceholder.fromNativeId(txtype)){
+            TextPlaceholder tp = TextPlaceholder.fromNativeId(txtype);
+            assertNotNull(tp);
+            switch (tp) {
                 case TITLE:
                     checkTitleType(atom);
                     break;
@@ -61,11 +67,8 @@ public final class TestTxMasterStyleAtom extends TestCase {
                     checkOtherType(atom);
                     break;
                 case CENTER_BODY:
-                    break;
                 case CENTER_TITLE:
-                    break;
                 case HALF_BODY:
-                    break;
                 case QUARTER_BODY:
                     break;
                 default:
@@ -200,7 +203,7 @@ public final class TestTxMasterStyleAtom extends TestCase {
      * Collect all TxMasterStyleAtom records contained in the supplied slide show.
      * There must be a TxMasterStyleAtom per each type of text defined in TextHeaderAtom
      */
-    protected TxMasterStyleAtom[] getMasterStyles(){
+    private TxMasterStyleAtom[] getMasterStyles(){
         List<TxMasterStyleAtom> lst = new ArrayList<>();
 
         Record[] coreRecs = _ppt.getMostRecentCoreRecords();
@@ -221,13 +224,12 @@ public final class TestTxMasterStyleAtom extends TestCase {
                 Record[] rec = doc.getEnvironment().getChildRecords();
                 for (final Record atom : rec) {
                     if (atom instanceof TxMasterStyleAtom) {
-                        if (txstyle != null)  fail("Document.Environment must contain 1 TxMasterStyleAtom");
+                        assertNull("Document.Environment must contain 1 TxMasterStyleAtom", txstyle);
                         txstyle = (TxMasterStyleAtom)atom;
                     }
                 }
-                if (txstyle == null) {
-                    throw new AssertionFailedError("TxMasterStyleAtom not found in Document.Environment");
-                }
+
+                assertNotNull("TxMasterStyleAtom not found in Document.Environment", txstyle);
 
                 assertEquals("Document.Environment must contain TxMasterStyleAtom  with type=TextHeaderAtom.OTHER_TYPE",
                         TextPlaceholder.OTHER.nativeId, txstyle.getTextType());

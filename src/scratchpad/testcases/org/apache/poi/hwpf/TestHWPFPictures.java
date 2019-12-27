@@ -17,6 +17,11 @@
 
 package org.apache.poi.hwpf;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -27,14 +32,13 @@ import javax.imageio.ImageIO;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.usermodel.Picture;
-
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Test picture support in HWPF
- * @author nick
  */
-public final class TestHWPFPictures extends TestCase {
+public final class TestHWPFPictures {
 	private String docAFile;
 	private String docBFile;
 	private String docCFile;
@@ -45,10 +49,8 @@ public final class TestHWPFPictures extends TestCase {
 	private String imgCFile;
 	private String imgDFile;
 
-	@Override
-    protected void setUp() throws Exception {
-		super.setUp();
-
+	@Before
+    public void setUp() {
 		docAFile = "testPictures.doc";
 		docBFile = "two_images.doc";
 		docCFile = "vector_image.doc";
@@ -68,6 +70,7 @@ public final class TestHWPFPictures extends TestCase {
 	/**
 	 * Test just opening the files
 	 */
+	@Test
 	public void testOpen() {
 		HWPFTestDataSamples.openSampleFile(docAFile);
 		HWPFTestDataSamples.openSampleFile(docBFile);
@@ -76,6 +79,7 @@ public final class TestHWPFPictures extends TestCase {
 	/**
 	 * Test that we have the right numbers of images in each file
 	 */
+	@Test
 	public void testImageCount() {
 		HWPFDocument docA = HWPFTestDataSamples.openSampleFile(docAFile);
 		HWPFDocument docB = HWPFTestDataSamples.openSampleFile(docBFile);
@@ -96,6 +100,7 @@ public final class TestHWPFPictures extends TestCase {
 	/**
 	 * Test that we have the right images in at least one file
 	 */
+	@Test
 	public void testImageData() {
 		HWPFDocument docB = HWPFTestDataSamples.openSampleFile(docBFile);
 		PicturesTable picB = docB.getPicturesTable();
@@ -113,16 +118,14 @@ public final class TestHWPFPictures extends TestCase {
 		byte[] pic1B = readFile(imgAFile);
 		byte[] pic2B = readFile(imgBFile);
 
-		assertEquals(pic1B.length, pic1.getContent().length);
-		assertEquals(pic2B.length, pic2.getContent().length);
-
-		assertBytesSame(pic1B, pic1.getContent());
-		assertBytesSame(pic2B, pic2.getContent());
+		assertArrayEquals(pic1B, pic1.getContent());
+		assertArrayEquals(pic2B, pic2.getContent());
 	}
 
 	/**
 	 * Test that compressed image data is correctly returned.
 	 */
+	@Test
 	public void testCompressedImageData() {
 		HWPFDocument docC = HWPFTestDataSamples.openSampleFile(docCFile);
 		PicturesTable picC = docC.getPicturesTable();
@@ -135,11 +138,10 @@ public final class TestHWPFPictures extends TestCase {
 
 		// Check the same
 		byte[] picBytes = readFile(imgCFile);
-
-		assertEquals(picBytes.length, pic.getContent().length);
-		assertBytesSame(picBytes, pic.getContent());
+		assertArrayEquals(picBytes, pic.getContent());
 	}
 
+	@Test
    	public void testMacImages() throws Exception {
         HWPFDocument docC = HWPFTestDataSamples.openSampleFile("53446.doc");
    		PicturesTable picturesTable = docC.getPicturesTable();
@@ -168,6 +170,7 @@ public final class TestHWPFPictures extends TestCase {
 	 * Pending the missing files being uploaded to
 	 *  bug #44937
 	 */
+	@Test
 	public void testEscherDrawing() {
 		HWPFDocument docD = HWPFTestDataSamples.openSampleFile(docDFile);
 		List<Picture> allPictures = docD.getPicturesTable().getAllPictures();
@@ -180,14 +183,7 @@ public final class TestHWPFPictures extends TestCase {
 
 		assertEquals(picD.length, pic.getContent().length);
 
-		assertBytesSame(picD, pic.getContent());
-	}
-
-	private void assertBytesSame(byte[] a, byte[] b) {
-		assertEquals(a.length, b.length);
-		for(int i=0; i<a.length; i++) {
-			assertEquals(a[i],b[i]);
-		}
+		assertArrayEquals(picD, pic.getContent());
 	}
 
 	private static byte[] readFile(String file) {

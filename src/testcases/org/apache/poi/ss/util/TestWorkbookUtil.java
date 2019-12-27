@@ -17,67 +17,70 @@
 
 package org.apache.poi.ss.util;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * Tests WorkbookUtil.
  *
  * @see org.apache.poi.ss.util.WorkbookUtil
  */
-public final class TestWorkbookUtil extends TestCase {
+public final class TestWorkbookUtil {
 	/**
-	 * borrowed test cases from 
+	 * borrowed test cases from
 	 * {@link org.apache.poi.hssf.record.TestBoundSheetRecord#testValidNames()}
 	 */
+	@Test
 	public void testCreateSafeNames() {
-		
+
 		String p = "Sheet1";
 		String actual = WorkbookUtil.createSafeSheetName(p);
 		assertEquals(p, actual);
-		
+
 		p = "O'Brien's sales";
 		actual = WorkbookUtil.createSafeSheetName(p);
 		assertEquals(p, actual);
-		
+
 		p = " data # ";
 		actual = WorkbookUtil.createSafeSheetName(p);
 		assertEquals(p, actual);
-		
+
 		p = "data $1.00";
 		actual = WorkbookUtil.createSafeSheetName(p);
 		assertEquals(p, actual);
-		
+
 		// now the replaced versions ...
 		actual = WorkbookUtil.createSafeSheetName("data?");
 		assertEquals("data ", actual);
-		
+
 		actual = WorkbookUtil.createSafeSheetName("abc/def");
 		assertEquals("abc def", actual);
-		
+
 		actual = WorkbookUtil.createSafeSheetName("data[0]");
 		assertEquals("data 0 ", actual);
-		
+
 		actual = WorkbookUtil.createSafeSheetName("data*");
 		assertEquals("data ", actual);
-		
+
 		actual = WorkbookUtil.createSafeSheetName("abc\\def");
 		assertEquals("abc def", actual);
-		
+
 		actual = WorkbookUtil.createSafeSheetName("'data");
 		assertEquals(" data", actual);
-		
+
 		actual = WorkbookUtil.createSafeSheetName("data'");
 		assertEquals("data ", actual);
-		
+
 		actual = WorkbookUtil.createSafeSheetName("d'at'a");
 		assertEquals("d'at'a", actual);
-		
+
 		actual = WorkbookUtil.createSafeSheetName(null);
 		assertEquals("null", actual);
-		
+
 		actual = WorkbookUtil.createSafeSheetName("");
 		assertEquals("empty", actual);
-		
+
 		actual = WorkbookUtil.createSafeSheetName("1234567890123456789012345678901TOOLONG");
 		assertEquals("1234567890123456789012345678901", actual);
 

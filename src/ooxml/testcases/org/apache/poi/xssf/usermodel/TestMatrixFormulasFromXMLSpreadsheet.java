@@ -26,8 +26,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 
-
-import org.apache.poi.poifs.crypt.TestSignatureInfo;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.functions.TestMathX;
 import org.apache.poi.ss.usermodel.Cell;
@@ -47,8 +45,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import junit.framework.AssertionFailedError;
-
 @RunWith(Parameterized.class)
 public final class TestMatrixFormulasFromXMLSpreadsheet {
 
@@ -58,17 +54,17 @@ public final class TestMatrixFormulasFromXMLSpreadsheet {
     private static Sheet sheet;
     private static FormulaEvaluator evaluator;
     private static Locale userLocale;
-    
+
     /*
      * Unlike TestFormulaFromSpreadsheet which this class is modified from, there is no
      * differentiation between operators and functions, if more functionality is implemented with
      * array formulas then it might be worth it to separate operators from functions
-     * 
+     *
      * Also, output matrices are statically 3x3, if larger matrices wanted to be tested
      * then adding matrix size parameter would be useful and parsing would be based off that.
      */
-    
-    private static interface Navigator {
+
+    private interface Navigator {
         /**
          * Name of the test spreadsheet (found in the standard test data folder)
          */
@@ -97,21 +93,21 @@ public final class TestMatrixFormulasFromXMLSpreadsheet {
          * Used to indicate when there are no more operations left
          */
         String END_OF_TESTS = "<END>";
-        
+
     }
-    
+
     /* Parameters for test case */
     @Parameter(0)
     public String targetFunctionName;
     @Parameter(1)
     public int formulasRowIdx;
-    
+
     @AfterClass
     public static void closeResource() throws Exception {
         LocaleUtil.setUserLocale(userLocale);
         workbook.close();
     }
-    
+
     /* generating parameter instances */
     @Parameters(name="{0}")
     public static Collection<Object[]> data() throws Exception {
@@ -120,18 +116,18 @@ public final class TestMatrixFormulasFromXMLSpreadsheet {
         // already set, when we would try to change the locale by then
         userLocale = LocaleUtil.getUserLocale();
         LocaleUtil.setUserLocale(Locale.ROOT);
-        
+
         workbook = XSSFTestDataSamples.openSampleWorkbook(Navigator.FILENAME);
         sheet = workbook.getSheetAt(0);
         evaluator = new XSSFFormulaEvaluator(workbook);
-        
+
         List<Object[]> data = new ArrayList<Object[]>();
-        
+
         processFunctionGroup(data, Navigator.START_OPERATORS_ROW_INDEX, null);
-        
+
         return data;
     }
-    
+
     /**
      * @param startRowIndex row index in the spreadsheet where the first function/operator is found
      * @param testFocusFunctionName name of a single function/operator to test alone.
@@ -153,7 +149,7 @@ public final class TestMatrixFormulasFromXMLSpreadsheet {
             }
         }
     }
-    
+
     @Test
     public void processFunctionRow() {
 
@@ -162,27 +158,27 @@ public final class TestMatrixFormulasFromXMLSpreadsheet {
        for (int rowNum = formulasRowIdx; rowNum < formulasRowIdx + Navigator.ROW_OFF_NEXT_OP - 1; rowNum++) {
            for (int colNum = Navigator.START_RESULT_COL_INDEX; colNum < endColNum; colNum++) {
                Row r = sheet.getRow(rowNum);
-               
+
                /* mainly to escape row failures on MDETERM which only returns a scalar */
                if (r == null) {
                    continue;
                }
-               
+
                Cell c = sheet.getRow(rowNum).getCell(colNum);
-               
+
                if (c == null || c.getCellType() != CellType.FORMULA) {
                    continue;
                }
-    
+
                CellValue actValue = evaluator.evaluate(c);
                Cell expValue = sheet.getRow(rowNum).getCell(colNum + Navigator.COL_OFF_EXPECTED_RESULT);
-    
+
                String msg = String.format(Locale.ROOT, "Function '%s': Formula: %s @ %d:%d"
                        , targetFunctionName, c.getCellFormula(), rowNum, colNum);
-    
+
                assertNotNull(msg + " - Bad setup data expected value is null", expValue);
                assertNotNull(msg + " - actual value was null", actValue);
-    
+
                final CellType cellType = expValue.getCellType();
                switch (cellType) {
                    case BLANK:
@@ -212,7 +208,7 @@ public final class TestMatrixFormulasFromXMLSpreadsheet {
            }
        }
    }
-    
+
     /**
      * @return <code>null</code> if cell is missing, empty or blank
      */
@@ -234,13 +230,8 @@ public final class TestMatrixFormulasFromXMLSpreadsheet {
             return cell.getRichStringCellValue().getString();
         }
 
-        throw new AssertionFailedError("Bad cell type for 'function name' column: ("
+        fail("Bad cell type for 'function name' column: ("
                 + cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
+        return null;
     }
-    
-    
-    
-    
-    
-
 }

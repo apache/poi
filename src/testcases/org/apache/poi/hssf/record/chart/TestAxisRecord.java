@@ -18,19 +18,18 @@
 package org.apache.poi.hssf.record.chart;
 
 
-import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the AxisRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
-
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestAxisRecord extends TestCase {
+public final class TestAxisRecord {
     byte[] data = new byte[] {
         (byte)0x00,(byte)0x00,                               // type
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,
@@ -39,8 +38,8 @@ public final class TestAxisRecord extends TestCase {
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00
     };
 
+    @Test
     public void testLoad() {
-
         AxisRecord record = new AxisRecord(TestcaseRecordInputStream.create(0x101d, data));
         assertEquals( AxisRecord.AXIS_TYPE_CATEGORY_OR_X_AXIS, record.getAxisType());
         assertEquals( 0, record.getReserved1());
@@ -51,8 +50,8 @@ public final class TestAxisRecord extends TestCase {
         assertEquals( 4 + 18, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
+    @Test
+    public void testStore() {
         AxisRecord record = new AxisRecord();
         record.setAxisType( AxisRecord.AXIS_TYPE_CATEGORY_OR_X_AXIS );
         record.setReserved1( 0 );
@@ -60,10 +59,7 @@ public final class TestAxisRecord extends TestCase {
         record.setReserved3( 0 );
         record.setReserved4( 0 );
 
-
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        confirmRecordEncoding(AxisRecord.sid, data, recordBytes);
     }
 }

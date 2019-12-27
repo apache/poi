@@ -19,7 +19,6 @@ package org.apache.poi.ss.formula.functions;
 
 import static org.junit.Assert.assertEquals;
 
-import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
@@ -32,8 +31,6 @@ import org.junit.Test;
 
 /**
  * Tests for {@link Irr}
- *
- * @author Marcel May
  */
 public final class TestIrr {
 
@@ -123,10 +120,7 @@ public final class TestIrr {
             }
         }
 
-        if(failures.length() > 0) {
-            throw new AssertionFailedError(failureCount + " IRR assertions failed:\n" + failures);
-        }
-
+        assertEquals("IRR assertions failed", 0, failures.length());
     }
 
     private static void assertFormulaResult(CellValue cv, HSSFCell cell){

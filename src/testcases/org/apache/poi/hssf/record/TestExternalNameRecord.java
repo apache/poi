@@ -17,17 +17,17 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
-import org.apache.poi.util.RecordFormatException;
+import org.junit.Test;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-/**
- *
- * @author Josh Micich
- */
-public final class TestExternalNameRecord extends TestCase {
+public final class TestExternalNameRecord {
 
 	private static final byte[] dataFDS = {
 		0, 0, 0, 0, 0, 0, 3, 0, 70, 68, 83, 0, 0,
@@ -36,7 +36,7 @@ public final class TestExternalNameRecord extends TestCase {
 	// data taken from bugzilla 44774 att 21790
 	private static final byte[] dataAutoDocName = {
 		-22, 127, 0, 0, 0, 0, 29, 0, 39, 49, 57, 49, 50, 49, 57, 65, 87, 52, 32, 67, 111, 114,
-			112, 44, 91, 87, 79, 82, 75, 79, 85, 84, 95, 80, 88, 93, 39,
+		112, 44, 91, 87, 79, 82, 75, 79, 85, 84, 95, 80, 88, 93, 39,
 	};
 
 	// data taken from bugzilla 44774 att 21790
@@ -49,41 +49,30 @@ public final class TestExternalNameRecord extends TestCase {
 	private static ExternalNameRecord createSimpleENR(byte[] data) {
 		return new ExternalNameRecord(TestcaseRecordInputStream.create(0x0023, data));
 	}
+
+	@Test
 	public void testBasicDeserializeReserialize() {
 
 		ExternalNameRecord enr = createSimpleENR(dataFDS);
 		assertEquals("FDS", enr.getText());
 
-		try {
-			TestcaseRecordInputStream.confirmRecordEncoding(0x0023, dataFDS, enr.serialize());
-		} catch (ArrayIndexOutOfBoundsException e) {
-			if(e.getMessage().equals("15")) {
-				throw new AssertionFailedError("Identified bug 44695");
-			}
-		}
+		// bug 44695
+		TestcaseRecordInputStream.confirmRecordEncoding(0x0023, dataFDS, enr.serialize());
 	}
 
+	@Test
 	public void testBasicSize() {
 		ExternalNameRecord enr = createSimpleENR(dataFDS);
-		if(enr.getRecordSize() == 13) {
-			throw new AssertionFailedError("Identified bug 44695");
-		}
+		assertNotEquals("Identified bug 44695",13, enr.getRecordSize());
 		assertEquals(17, enr.getRecordSize());
-		
-		assertNotNull(enr.serialize());		
+
+		assertNotNull(enr.serialize());
 	}
 
+	@Test
 	public void testAutoStdDocName() {
 
-		ExternalNameRecord enr;
-		try {
-			enr = createSimpleENR(dataAutoDocName);
-		} catch (ArrayIndexOutOfBoundsException e) {
-			if(e.getMessage() == null) {
-				throw new AssertionFailedError("Identified bug XXXX");
-			}
-			throw e;
-		}
+		ExternalNameRecord enr = createSimpleENR(dataAutoDocName);
 		assertEquals("'191219AW4 Corp,[WORKOUT_PX]'", enr.getText());
 		assertTrue(enr.isAutomaticLink());
 		assertFalse(enr.isBuiltInName());
@@ -95,6 +84,7 @@ public final class TestExternalNameRecord extends TestCase {
 		TestcaseRecordInputStream.confirmRecordEncoding(0x0023, dataAutoDocName, enr.serialize());
 	}
 
+	@Test
 	public void testPlainName() {
 
 		ExternalNameRecord enr = createSimpleENR(dataPlainName);
@@ -109,8 +99,9 @@ public final class TestExternalNameRecord extends TestCase {
 		TestcaseRecordInputStream.confirmRecordEncoding(0x0023, dataPlainName, enr.serialize());
 	}
 
+	@Test
 	public void testDDELink_bug47229() {
-		/**
+		/*
 		 * Hex dump read directly from text of bugzilla 47229
 		 */
 		final byte[] dataDDE = HexRead.readFromString(
@@ -124,22 +115,16 @@ public final class TestExternalNameRecord extends TestCase {
 				" 01 00 00 " +
 				"02 09 00 00 23 4E 2F 41 20 4E 2E 41 2E " +
 				"02 09 00 00 23 4E 2F 41 20 4E 2E 41 2E");
-		ExternalNameRecord enr;
-		try {
-			enr = createSimpleENR(dataDDE);
-		} catch (RecordFormatException e) {
-			// actual msg reported in bugzilla 47229 is different
-			// because that seems to be using a version from before svn r646666
-			if (e.getMessage().startsWith("Some unread data (is formula present?)")) {
-				throw new AssertionFailedError("Identified bug 47229 - failed to read ENR with OLE/DDE result data");
-			}
-			throw e;
-		}
+
+		// actual msg reported in bugzilla 47229 is different
+		// because that seems to be using a version from before svn r646666
+		ExternalNameRecord enr = createSimpleENR(dataDDE);
 		assertEquals("010672AT0 MUNI,[RTG_MOODY_UNDERLYING,RTG_SP_UNDERLYING]", enr.getText());
 
 		TestcaseRecordInputStream.confirmRecordEncoding(0x0023, dataDDE, enr.serialize());
 	}
 
+	@Test
 	public void testUnicodeName_bug47384() {
 		// data taken from bugzilla 47384 att 23830 at offset 0x13A0
 		byte[] dataUN = HexRead.readFromString(
@@ -150,20 +135,13 @@ public final class TestExternalNameRecord extends TestCase {
 				"00 00");
 
 		RecordInputStream in = TestcaseRecordInputStream.create(dataUN);
-		ExternalNameRecord enr;
-		try {
-			enr = new ExternalNameRecord(in);
-		} catch (RecordFormatException e) {
-			if (e.getMessage().startsWith("Expected to find a ContinueRecord in order to read remaining 242 of 268 chars")) {
-				throw new AssertionFailedError("Identified bug 47384 - failed to read ENR with unicode name");
-			}
-			throw e;
-		}
+		ExternalNameRecord enr = new ExternalNameRecord(in);
 		assertEquals("\u0159azen\u00ED_Billa", enr.getText());
         byte[] ser = enr.serialize();
         assertEquals(HexDump.toHex(dataUN), HexDump.toHex(ser));
 	}
 
+	@Test
     public void test48339() {
         // data taken from bugzilla 48339
         byte[] data = HexRead.readFromString(
@@ -175,18 +153,19 @@ public final class TestExternalNameRecord extends TestCase {
         byte[] ser = enr.serialize();
         assertEquals(HexDump.toHex(data), HexDump.toHex(ser));
     }
-    
+
+	@Test
     public void testNPEWithFileFrom49219() {
-        // the file at test-data/spreadsheet/49219.xls has ExternalNameRecords without actual data, 
+        // the file at test-data/spreadsheet/49219.xls has ExternalNameRecords without actual data,
     	// we did handle this during reading, but failed during serializing this out, ensure it works now
         byte[] data = new byte[] {
-        		2, 127, 0, 0, 0, 0, 
+        		2, 127, 0, 0, 0, 0,
         		9, 0, 82, 97, 116, 101, 95, 68, 97, 116, 101};
 
 		ExternalNameRecord enr = createSimpleENR(data);
 
         byte[] ser = enr.serialize();
-        assertEquals("[23, 00, 11, 00, 02, 7F, 00, 00, 00, 00, 09, 00, 52, 61, 74, 65, 5F, 44, 61, 74, 65]", 
+        assertEquals("[23, 00, 11, 00, 02, 7F, 00, 00, 00, 00, 09, 00, 52, 61, 74, 65, 5F, 44, 61, 74, 65]",
         		HexDump.toHex(ser));
     }
 }

@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula.atp;
 
 import static org.apache.poi.ss.formula.eval.ErrorEval.NAME_INVALID;
 import static org.apache.poi.ss.formula.eval.ErrorEval.VALUE_INVALID;
+import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +31,9 @@ import org.apache.poi.ss.formula.eval.AreaEvalBase;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public class TestNetworkdaysFunction extends TestCase {
+public class TestNetworkdaysFunction {
 
     private static final String STARTING_DATE = "2008/10/01";
     private static final String END_DATE = "2009/03/01";
@@ -43,46 +43,54 @@ public class TestNetworkdaysFunction extends TestCase {
 
     private static final OperationEvaluationContext EC = new OperationEvaluationContext(null, null, 1, 1, 1, null);
 
+    @Test
     public void testFailWhenNoArguments() {
         assertEquals(VALUE_INVALID, NetworkdaysFunction.instance.evaluate(new ValueEval[0], null));
     }
 
+    @Test
     public void testFailWhenLessThan2Arguments() {
         assertEquals(VALUE_INVALID, NetworkdaysFunction.instance.evaluate(new ValueEval[1], null));
     }
 
+    @Test
     public void testFailWhenMoreThan3Arguments() {
         assertEquals(VALUE_INVALID, NetworkdaysFunction.instance.evaluate(new ValueEval[4], null));
     }
 
+    @Test
     public void testFailWhenArgumentsAreNotDates() {
         assertEquals(VALUE_INVALID, NetworkdaysFunction.instance.evaluate(new ValueEval[]{ new StringEval("Potato"),
                 new StringEval("Cucumber") }, EC));
     }
 
+    @Test
     public void testFailWhenStartDateAfterEndDate() {
         assertEquals(NAME_INVALID, NetworkdaysFunction.instance.evaluate(new ValueEval[]{ new StringEval(END_DATE),
                 new StringEval(STARTING_DATE) }, EC));
     }
 
+    @Test
     public void testReturnNetworkdays() {
         assertEquals(108, (int) ((NumericValueEval) NetworkdaysFunction.instance.evaluate(new ValueEval[]{
                 new StringEval(STARTING_DATE), new StringEval(END_DATE) }, EC)).getNumberValue());
     }
 
+    @Test
     public void testReturnNetworkdaysWithAHoliday() {
         assertEquals(107, (int) ((NumericValueEval) NetworkdaysFunction.instance.evaluate(new ValueEval[]{
                 new StringEval(STARTING_DATE), new StringEval(END_DATE), new StringEval(FIRST_HOLIDAY) },
                 EC)).getNumberValue());
     }
 
+    @Test
     public void testReturnNetworkdaysWithManyHolidays() {
         assertEquals(105, (int) ((NumericValueEval) NetworkdaysFunction.instance.evaluate(new ValueEval[]{
                 new StringEval(STARTING_DATE), new StringEval(END_DATE),
-                new MockAreaEval(FIRST_HOLIDAY, SECOND_HOLIDAY, THIRD_HOLIDAY) }, EC)).getNumberValue());
+                new MockAreaEval(FIRST_HOLIDAY, SECOND_HOLIDAY, THIRD_HOLIDAY)}, EC)).getNumberValue());
     }
 
-    private class MockAreaEval extends AreaEvalBase {
+    private static class MockAreaEval extends AreaEvalBase {
 
         private List<ValueEval> holidays;
 

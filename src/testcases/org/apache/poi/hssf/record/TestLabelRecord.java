@@ -17,25 +17,21 @@
 
 package org.apache.poi.hssf.record;
 
+import java.io.IOException;
+
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.junit.Test;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 /**
  * Tests for <tt>LabelRecord</tt>
- * 
- * @author Josh Micich
  */
-public final class TestLabelRecord extends TestCase {
+public final class TestLabelRecord  {
 
-	public void testEmptyString() {
-		HSSFWorkbook wb;
-		try {
-			wb = HSSFTestDataSamples.openSampleWorkbook("ex42570-20305.xls");
-		} catch (NullPointerException e) {
-			throw new AssertionFailedError("Identified bug 42570");
+	@Test
+	public void testEmptyString() throws IOException {
+		try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex42570-20305.xls")) {
+			HSSFTestDataSamples.writeOutAndReadBack(wb);
 		}
-		HSSFTestDataSamples.writeOutAndReadBack(wb);
 	}
 }

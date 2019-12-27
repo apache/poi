@@ -18,32 +18,28 @@
 package org.apache.poi.ss.formula.ptg;
 
 import static org.junit.Assert.assertArrayEquals;
-import junit.framework.AssertionFailedError;
 
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndianInput;
+import org.junit.Test;
 
 /**
  * Tests for {@link AttrPtg}.
- * 
- * @author Josh Micich
  */
 public final class TestAttrPtg extends AbstractPtgTestCase {
 
 	/**
 	 * Fix for bug visible around svn r706772.
 	 */
+	@Test
 	public void testReserializeAttrChoose() {
 		byte[] data = HexRead.readFromString("19, 04, 03, 00, 08, 00, 11, 00, 1A, 00, 23, 00");
 		LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(data);
 		Ptg[] ptgs = Ptg.readTokens(data.length, in);
 		byte[] data2 = new byte[data.length];
-		try {
-			Ptg.serializePtgs(ptgs, data2, 0);
-		} catch (ArrayIndexOutOfBoundsException e) {
-			throw new AssertionFailedError("incorrect re-serialization of tAttrChoose");
-		}
+		// ArrayIndexOutOfBoundsException -> incorrect re-serialization of tAttrChoose
+		Ptg.serializePtgs(ptgs, data2, 0);
 		assertArrayEquals(data, data2);
 	}
 }

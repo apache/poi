@@ -17,19 +17,23 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.junit.Test;
 
 /**
  * API for BorderCode, see Bugzill 49919
  */
-public final class TestBorderCode extends TestCase {
+public final class TestBorderCode {
 
     private int pos;
     private Range range;
 
+    @Test
     public void test() {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug49919.doc");
         range = doc.getRange();
@@ -107,7 +111,7 @@ public final class TestBorderCode extends TestCase {
         fail("Expected paragraph not found");
 
         // should never come here
-        throw null;
+        return null;
     }
 
 }

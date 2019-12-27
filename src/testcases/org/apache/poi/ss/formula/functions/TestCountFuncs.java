@@ -22,7 +22,6 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
-import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
@@ -152,9 +151,7 @@ public final class TestCountFuncs {
 		assertNotNull(mp);
 		StringEval seA = new StringEval("aa"); // this should not match the criteria '<>aa'
 		StringEval seB = new StringEval("bb"); // this should match
-		if (mp.matches(seA) && !mp.matches(seB)) {
-			throw new AssertionFailedError("Identified bug 46647");
-		}
+		assertFalse("Identified bug 46647", mp.matches(seA) && !mp.matches(seB));
 		assertFalse(mp.matches(seA));
 		assertTrue(mp.matches(seB));
 
@@ -280,16 +277,19 @@ public final class TestCountFuncs {
 
 		I_MatchPredicate mp;
 		mp = Countif.createCriteriaPredicate(ev, 9, srcColIx);
+		assertNotNull(mp);
 		confirmPredicate(true, mp, srcColIx);
 		confirmPredicate(false, mp, "abc");
 		confirmPredicate(false, mp, ErrorEval.DIV_ZERO);
 
 		mp = Countif.createCriteriaPredicate(ev, 10, srcColIx);
+		assertNotNull(mp);
 		confirmPredicate(false, mp, srcColIx);
 		confirmPredicate(true, mp, "abc");
 		confirmPredicate(false, mp, ErrorEval.DIV_ZERO);
 
 		mp = Countif.createCriteriaPredicate(ev, 11, srcColIx);
+		assertNotNull(mp);
 		confirmPredicate(false, mp, srcColIx);
 		confirmPredicate(false, mp, "abc");
 		confirmPredicate(true, mp, ErrorEval.DIV_ZERO);
@@ -298,6 +298,7 @@ public final class TestCountFuncs {
 		// tricky: indexing outside of A10:A12
 		// even this #VALUE! error gets used by COUNTIF as valid criteria
 		mp = Countif.createCriteriaPredicate(ev, 12, srcColIx);
+		assertNotNull(mp);
 		confirmPredicate(false, mp, srcColIx);
 		confirmPredicate(false, mp, "abc");
 		confirmPredicate(false, mp, ErrorEval.DIV_ZERO);
@@ -396,7 +397,7 @@ public final class TestCountFuncs {
     *  and NEQ cases
     */
    @Test
-	public void testCountifBug51498() throws Exception {
+	public void testCountifBug51498() {
 		final int REF_COL = 4;
 		final int EVAL_COL = 3;
 
@@ -588,9 +589,6 @@ public final class TestCountFuncs {
 			}
 		}
 
-		if (failureCount > 0) {
-			throw new AssertionFailedError(failureCount + " " + functionName
-					+ " evaluations failed. See stderr for more details");
-		}
+		assertEquals(failureCount + " " + functionName + " evaluations failed.", 0, failureCount);
 	}
 }

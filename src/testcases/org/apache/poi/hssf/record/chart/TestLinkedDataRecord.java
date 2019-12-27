@@ -18,20 +18,21 @@
 package org.apache.poi.hssf.record.chart;
 
 
-import junit.framework.TestCase;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the LinkedDataRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestLinkedDataRecord extends TestCase {
+public final class TestLinkedDataRecord {
 
 /*
     The records below are records that would appear in a simple bar chart
@@ -156,8 +157,8 @@ recordid = 0x1051, size =8
         (byte)0x00,(byte)0x00,          // index to last column and relative flags
     };
 
+    @Test
     public void testLoad() {
-
         LinkedDataRecord record = new LinkedDataRecord(TestcaseRecordInputStream.create(0x1051, data));
         assertEquals( LinkedDataRecord.LINK_TYPE_VALUES, record.getLinkType());
         assertEquals( LinkedDataRecord.REFERENCE_TYPE_WORKSHEET, record.getReferenceType());
@@ -167,13 +168,14 @@ recordid = 0x1051, size =8
 
         Area3DPtg ptgExpected = new Area3DPtg(0, 7936, 0, 0,
                 false, false, false, false, 0);
-        
+
         Ptg ptgActual = record.getFormulaOfLink()[0];
         assertEquals(ptgExpected.toString(),  ptgActual.toString());
 
         assertEquals( data.length + 4, record.getRecordSize() );
     }
 
+    @Test
     public void testStore() {
         LinkedDataRecord record = new LinkedDataRecord();
         record.setLinkType( LinkedDataRecord.LINK_TYPE_VALUES );
@@ -186,8 +188,6 @@ recordid = 0x1051, size =8
         record.setFormulaOfLink(new Ptg[] { ptg, } );
 
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        confirmRecordEncoding(LinkedDataRecord.sid, data, recordBytes);
     }
 }

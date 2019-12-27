@@ -16,36 +16,42 @@
 ==================================================================== */
 package org.apache.poi.ss.examples.formula;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-public class TestExcelAntUserDefinedFunction extends TestCase {
-	
+import org.junit.Before;
+import org.junit.Test;
+
+public class TestExcelAntUserDefinedFunction {
+
 	private ExcelAntUserDefinedFunctionTestHelper fixture ;
-	
-	@Override
+
+	@Before
 	public void setUp() {
 		fixture = new ExcelAntUserDefinedFunctionTestHelper() ;
 	}
-	
+
+	@Test
 	public void testSetClassName() {
 		String className = "simple.class.name" ;
-		
+
 		fixture.setClassName( className ) ;
 		String value = fixture.getClassName() ;
-		
+
 		assertNotNull( value ) ;
 		assertEquals( className, value ) ;
 	}
-	
+
+	@Test
 	public void testSetFunction() {
 		String functionAlias = "alias" ;
-		
+
 		fixture.setFunctionAlias( functionAlias ) ;
-		
+
 		String alias = fixture.getFunctionAlias() ;
-		
+
 		assertNotNull( alias ) ;
 		assertEquals( functionAlias, alias ) ;
 	}
-	
+
 }

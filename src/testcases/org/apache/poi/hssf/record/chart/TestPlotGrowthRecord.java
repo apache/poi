@@ -18,23 +18,24 @@
 package org.apache.poi.hssf.record.chart;
 
 
-import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the PlotGrowthRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestPlotGrowthRecord extends TestCase {
+public final class TestPlotGrowthRecord {
     byte[] data = new byte[] {
         (byte)0x00,(byte)0x00,(byte)0x01,(byte)0x00,    // horizontal
         (byte)0x00,(byte)0x00,(byte)0x01,(byte)0x00     // vertical
     };
 
+    @Test
     public void testLoad() {
 
         PlotGrowthRecord record = new PlotGrowthRecord(TestcaseRecordInputStream.create(0x1064, data));
@@ -44,16 +45,14 @@ public final class TestPlotGrowthRecord extends TestCase {
         assertEquals( 12, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
+    @Test
+    public void testStore() {
         PlotGrowthRecord record = new PlotGrowthRecord();
         record.setHorizontalScale( 65536 );
         record.setVerticalScale( 65536 );
 
 
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        confirmRecordEncoding(PlotGrowthRecord.sid, data, recordBytes);
     }
 }

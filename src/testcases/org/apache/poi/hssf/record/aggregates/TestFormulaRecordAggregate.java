@@ -17,27 +17,27 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.StringRecord;
-import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.ExpPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.RecordFormatException;
+import org.junit.Test;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+public final class TestFormulaRecordAggregate {
 
-/**
- *
- * @author avik
- */
-public final class TestFormulaRecordAggregate extends TestCase {
-
+	@Test
 	public void testBasic() {
 		FormulaRecord f = new FormulaRecord();
 		f.setCachedResultTypeString();
@@ -56,29 +56,22 @@ public final class TestFormulaRecordAggregate extends TestCase {
 	 * This file seems to open in Excel (2007) with no trouble.  When it is re-saved, Excel omits
 	 * the extra record.  POI should do the same.
 	 */
+	@Test
 	public void testExtraStringRecord_bug46213() {
 		FormulaRecord fr = new FormulaRecord();
 		fr.setValue(2.0);
 		StringRecord sr = new StringRecord();
 		sr.setString("NA");
 		SharedValueManager svm = SharedValueManager.createEmpty();
-		FormulaRecordAggregate fra;
-
-		try {
-			fra = new FormulaRecordAggregate(fr, sr, svm);
-		} catch (RecordFormatException e) {
-			if ("String record was  supplied but formula record flag is not  set".equals(e.getMessage())) {
-				throw new AssertionFailedError("Identified bug 46213");
-			}
-			throw e;
-		}
-		RecordCollector rc = new RecordCollector();
-		fra.visitContainedRecords(rc);
-		Record[] vraRecs = rc.getRecords();
-		assertEquals(1, vraRecs.length);
-		assertEquals(fr, vraRecs[0]);
+		// bug 46213 -> String record was  supplied but formula record flag is not  set
+		FormulaRecordAggregate fra = new FormulaRecordAggregate(fr, sr, svm);
+		List<Record> vraRecs = new ArrayList<>();
+		fra.visitContainedRecords(vraRecs::add);
+		assertEquals(1, vraRecs.size());
+		assertEquals(fr, vraRecs.get(0));
 	}
 
+	@Test
 	public void testArrayFormulas() {
 		int rownum = 4;
 		int colnum = 4;

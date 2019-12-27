@@ -1,4 +1,4 @@
-        
+
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -18,25 +18,25 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.AreaReference;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for {@link AreaPtg}.
- *
- * @author Dmitriy Kumshayev
  */
-public final class TestAreaPtg extends TestCase {
+public final class TestAreaPtg {
 
 	AreaPtg relative;
 	AreaPtg absolute;
-	
-	@Override
-	protected void setUp() {
+
+	@Before
+	public void setUp() {
 		short firstRow=5;
 		short lastRow=13;
 		short firstCol=7;
@@ -44,8 +44,9 @@ public final class TestAreaPtg extends TestCase {
 		relative = new AreaPtg(firstRow,lastRow,firstCol,lastCol,true,true,true,true);
 		absolute = new AreaPtg(firstRow,lastRow,firstCol,lastCol,false,false,false,false);
 	}
-	
-	public static void testSortTopLeftToBottomRight() {
+
+	@Test
+	public void testSortTopLeftToBottomRight() {
 	    AreaPtg ptg = new AreaPtg(new AreaReference("A$1:$B5", SpreadsheetVersion.EXCEL2007));
 	    assertEquals("A$1:$B5", ptg.toFormulaString());
 	    ptg.setFirstColumn(3);
@@ -56,19 +57,19 @@ public final class TestAreaPtg extends TestCase {
 	            "$B$1:D5", ptg.toFormulaString());
 	}
 
-	public void testSetColumnsAbsolute()
-	{
+	@Test
+	public void testSetColumnsAbsolute() {
 		resetColumns(absolute);
 		validateReference(true, absolute);
 	}
-	public void testSetColumnsRelative()
-	{
+
+	@Test
+	public void testSetColumnsRelative() {
 		resetColumns(relative);
 		validateReference(false, relative);
 	}
 
-	private void validateReference(boolean abs, AreaPtg ref)
-	{
+	private void validateReference(boolean abs, AreaPtg ref) {
 		assertEquals("First column reference is not "+(abs?"absolute":"relative"),abs,!ref.isFirstColRelative());
 		assertEquals("Last column reference is not "+(abs?"absolute":"relative"),abs,!ref.isLastColRelative());
 		assertEquals("First row reference is not "+(abs?"absolute":"relative"),abs,!ref.isFirstRowRelative());
@@ -84,7 +85,8 @@ public final class TestAreaPtg extends TestCase {
 		assertEquals(fc , aptg.getFirstColumn() );
 		assertEquals(lc , aptg.getLastColumn() );
 	}
-	
+
+	@Test
     public void testAbsoluteRelativeRefs() {
         AreaPtg sca1 = new AreaPtg(4, 5, 6, 7, true, false, true, false);
         AreaPtg sca2 = new AreaPtg(4, 5, 6, 7, false, true, false, true);
@@ -106,27 +108,27 @@ public final class TestAreaPtg extends TestCase {
         assertEquals("first rel., last abs.", "H6:$H$6", cla3.toFormulaString());
         assertEquals("first abs., last rel.", "$H$6:H6", cla4.toFormulaString());
     }
-    private AreaPtg cloneArea(AreaPtg a)
-    {
+
+    private AreaPtg cloneArea(AreaPtg a) {
         return new AreaPtg(
                 a.getFirstRow(), a.getLastRow(), a.getFirstColumn(), a.getLastColumn(),
                 a.isFirstRowRelative(), a.isLastRowRelative(), a.isFirstColRelative(), a.isLastColRelative()
         );
     }
-	
-	public void testFormulaParser()
-	{
+
+	@Test
+	public void testFormulaParser() {
 		String formula1="SUM($E$5:$E$6)";
 		String expectedFormula1="SUM($F$5:$F$6)";
 		String newFormula1 = shiftAllColumnsBy1(formula1);
 		assertEquals("Absolute references changed", expectedFormula1, newFormula1);
-		
+
 		String formula2="SUM(E5:E6)";
 		String expectedFormula2="SUM(F5:F6)";
 		String newFormula2 = shiftAllColumnsBy1(formula2);
 		assertEquals("Relative references changed", expectedFormula2, newFormula2);
 	}
-	
+
 	private static String shiftAllColumnsBy1(String  formula) {
 		int letUsShiftColumn1By1Column=1;
 		HSSFWorkbook wb = null;

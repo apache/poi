@@ -17,17 +17,18 @@
 
 package org.apache.poi.hwpf.model;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.hwpf.HWPFDocFixture;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public final class TestCHPBinTable
-  extends TestCase
-{
+public final class TestCHPBinTable {
   private CHPBinTable _cHPBinTable;
   private HWPFDocFixture _hWPFDocFixture;
 
@@ -38,9 +39,8 @@ public final class TestCHPBinTable
       }
   };
 
-  public void testReadWrite()
-    throws Exception
-  {
+  @Test
+  public void testReadWrite() throws Exception {
     FileInformationBlock fib = _hWPFDocFixture._fib;
     byte[] mainStream = _hWPFDocFixture._mainStream;
     byte[] tableStream = _hWPFDocFixture._tableStream;
@@ -73,25 +73,19 @@ public final class TestCHPBinTable
     }
 
   }
-  @Override
-protected void setUp()
-    throws Exception
-  {
-    super.setUp();
+  @Before
+  public void setUp() throws Exception {
     _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
 
     _hWPFDocFixture.setUp();
   }
 
-  @Override
-protected void tearDown()
-    throws Exception
-  {
+  @After
+  public void tearDown() throws Exception {
     _cHPBinTable = null;
     _hWPFDocFixture.tearDown();
 
     _hWPFDocFixture = null;
-    super.tearDown();
   }
 
 }

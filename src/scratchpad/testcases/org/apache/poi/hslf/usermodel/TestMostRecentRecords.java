@@ -18,28 +18,30 @@
 package org.apache.poi.hslf.usermodel;
 
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.record.Record;
-
-import junit.framework.TestCase;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests that SlideShow finds the right records as its most recent ones
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestMostRecentRecords extends TestCase {
+public final class TestMostRecentRecords {
 	// HSLFSlideShow primed on the test data
-	private final HSLFSlideShowImpl hss;
+	private HSLFSlideShowImpl hss;
 	// SlideShow primed on the test data
-	private final HSLFSlideShow ss;
+	private HSLFSlideShow ss;
 
-	public TestMostRecentRecords() throws Exception {
-        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+	@Before
+	public void setup() throws Exception {
+		POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 		hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss = new HSLFSlideShow(hss);
 	}
 
+	@Test
 	public void testCount() {
 		// Most recent core records
 		Record[] mrcr = ss.getMostRecentCoreRecords();
@@ -48,6 +50,7 @@ public final class TestMostRecentRecords extends TestCase {
 		assertEquals(7, mrcr.length);
 	}
 
+	@Test
 	public void testRightRecordTypes() {
 		// Most recent core records
 		Record[] mrcr = ss.getMostRecentCoreRecords();
@@ -69,6 +72,7 @@ public final class TestMostRecentRecords extends TestCase {
 		assertEquals(1008, mrcr[6].getRecordType());
 	}
 
+	@Test
 	public void testCorrectRecords() {
 		// Most recent core records
 		Record[] mrcr = ss.getMostRecentCoreRecords();

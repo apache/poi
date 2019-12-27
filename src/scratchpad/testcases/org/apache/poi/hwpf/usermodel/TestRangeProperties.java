@@ -17,21 +17,25 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import java.util.List;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.PAPX;
 import org.apache.poi.hwpf.model.StyleSheet;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests to ensure that our ranges end up with
  *  the right text in them, and the right font/styling
  *  properties applied to them.
  */
-public final class TestRangeProperties extends TestCase {
+public final class TestRangeProperties {
     private static final char page_break = (char)12;
 
     private static final String u_page_1 =
@@ -64,13 +68,13 @@ public final class TestRangeProperties extends TestCase {
     private HWPFDocument u;
     private HWPFDocument a;
 
-    @Override
-    protected void setUp() {
+    @Before
+    public void setUp() {
         u = HWPFTestDataSamples.openSampleFile("HeaderFooterUnicode.doc");
         a = HWPFTestDataSamples.openSampleFile("SampleDoc.doc");
     }
 
-
+    @Test
     public void testAsciiTextParagraphs() {
         Range r = a.getRange();
         assertEquals(
@@ -126,6 +130,7 @@ public final class TestRangeProperties extends TestCase {
         assertEquals( p2_parts[2] + "\r", r.getParagraph( 7 ).text() );
     }
 
+    @Test
     public void testAsciiStyling() {
         Range r = a.getRange();
 
@@ -168,10 +173,10 @@ public final class TestRangeProperties extends TestCase {
      * Tests the raw definitions of the paragraphs of
      *  a unicode document
      */
+    @Test
     public void testUnicodeParagraphDefinitions() {
         Range r = u.getRange();
         String[] p1_parts = u_page_1.split("\r");
-        String[] p2_parts = u_page_2.split("\r");
 
         assertEquals(
                 u_page_1 + page_break + "\r" + u_page_2,
@@ -204,7 +209,7 @@ public final class TestRangeProperties extends TestCase {
         // Check that the last paragraph ends where it should do
         assertEquals(531, u.getOverallRange().text().length());
         PAPX pLast = pDefs.get(34);
-        // assertEquals(530, pLast.getEnd());
+        assertEquals(530, pLast.getEnd());
 
         // Only care about the first few really though
         PAPX p0 = pDefs.get(0);
@@ -261,6 +266,7 @@ public final class TestRangeProperties extends TestCase {
     /**
      * Tests the paragraph text of a unicode document
      */
+    @Test
     public void testUnicodeTextParagraphs() {
         Range r = u.getRange();
         assertEquals(
@@ -296,6 +302,8 @@ public final class TestRangeProperties extends TestCase {
         assertEquals( "\r", r.getParagraph( 11 ).text() );
         assertEquals( p2_parts[0] + "\r", r.getParagraph( 12 ).text() );
     }
+
+    @Test
     public void testUnicodeStyling() {
         Range r = u.getRange();
         String[] p1_parts = u_page_1.split("\r");

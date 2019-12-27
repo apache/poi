@@ -17,26 +17,26 @@
 
 package org.apache.poi.ss.formula;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.Test;
 
 /**
  * Tests {@link org.apache.poi.ss.formula.CellCacheEntry}.
- *
- * @author Josh Micich
  */
-public class TestCellCacheEntry extends TestCase {
+public class TestCellCacheEntry {
 
+	@Test
 	public void testBasic() {
 		CellCacheEntry pcce = new PlainValueCellCacheEntry(new NumberEval(42.0));
 		ValueEval ve = pcce.getValue();
 		assertEquals(42, ((NumberEval)ve).getNumberValue(), 0.0);
-		
+
 		FormulaCellCacheEntry fcce = new FormulaCellCacheEntry();
 		fcce.updateFormulaResult(new NumberEval(10.0), CellCacheEntry.EMPTY_ARRAY, null);
-		
+
 		ve = fcce.getValue();
 		assertEquals(10, ((NumberEval)ve).getNumberValue(), 0.0);
 	}

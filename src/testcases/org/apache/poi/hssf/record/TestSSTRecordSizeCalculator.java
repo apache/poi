@@ -17,18 +17,18 @@
 
 package org.apache.poi.hssf.record;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.IntMapper;
 import org.apache.poi.util.LittleEndianConsts;
+import org.junit.Test;
 
 /**
  * Tests that records size calculates correctly.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestSSTRecordSizeCalculator extends TestCase {
+public final class TestSSTRecordSizeCalculator {
 	private static final String SMALL_STRING = "Small string";
 	private static final int COMPRESSED_PLAIN_STRING_OVERHEAD = 3;
 	private static final int OPTION_FIELD_SIZE = 1;
@@ -53,6 +53,7 @@ public final class TestSSTRecordSizeCalculator extends TestCase {
 		assertEquals(expectedSize, cro.getTotalSize());
 	}
 
+	@Test
 	public void testBasic() {
 		strings.add(makeUnicodeString(SMALL_STRING));
 		confirmSize(SST_RECORD_OVERHEAD
@@ -60,6 +61,7 @@ public final class TestSSTRecordSizeCalculator extends TestCase {
 				+ SMALL_STRING.length());
 	}
 
+	@Test
 	public void testBigStringAcrossUnicode() {
 		int bigString = MAX_DATA_SPACE + 100;
 		strings.add(makeUnicodeString(bigString));
@@ -71,6 +73,7 @@ public final class TestSSTRecordSizeCalculator extends TestCase {
 				+ 100);
 	}
 
+	@Test
 	public void testPerfectFit() {
 		int perfectFit = MAX_DATA_SPACE - COMPRESSED_PLAIN_STRING_OVERHEAD;
 		strings.add(makeUnicodeString(perfectFit));
@@ -79,6 +82,7 @@ public final class TestSSTRecordSizeCalculator extends TestCase {
 				+ perfectFit);
 	}
 
+	@Test
 	public void testJustOversized() {
 		int tooBig = MAX_DATA_SPACE - COMPRESSED_PLAIN_STRING_OVERHEAD + 1;
 		strings.add(makeUnicodeString(tooBig));
@@ -91,6 +95,7 @@ public final class TestSSTRecordSizeCalculator extends TestCase {
 
 	}
 
+	@Test
 	public void testSecondStringStartsOnNewContinuation() {
 		int perfectFit = MAX_DATA_SPACE - COMPRESSED_PLAIN_STRING_OVERHEAD;
 		strings.add(makeUnicodeString(perfectFit));
@@ -103,6 +108,7 @@ public final class TestSSTRecordSizeCalculator extends TestCase {
 				+ SMALL_STRING.length());
 	}
 
+	@Test
 	public void testHeaderCrossesNormalContinuePoint() {
 		int almostPerfectFit = MAX_DATA_SPACE - COMPRESSED_PLAIN_STRING_OVERHEAD - 2;
 		strings.add(makeUnicodeString(almostPerfectFit));
@@ -117,6 +123,7 @@ public final class TestSSTRecordSizeCalculator extends TestCase {
 				+ oneCharString.length());
 
 	}
+
 	private static UnicodeString makeUnicodeString(int size) {
 		String s = new String(new char[size]);
 		return makeUnicodeString(s);

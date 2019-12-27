@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -26,18 +30,15 @@ import java.util.List;
 import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 
-import junit.framework.TestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Test <code>HSSFPictureData</code>.
  * The code to retrieve images from a workbook provided by Trejkaz (trejkaz at trypticon dot org) in Bug 41223.
- *
- * @author Yegor Kozlov (yegor at apache dot org)
- * @author Trejkaz (trejkaz at trypticon dot org)
  */
-public final class TestHSSFPictureData extends TestCase{
+public final class TestHSSFPictureData {
     @BeforeClass
     public static void setUpClass() {
         final String tmpDirProperty = System.getProperty("java.io.tmpdir");
@@ -52,6 +53,7 @@ public final class TestHSSFPictureData extends TestCase{
         ImageIO.setCacheDirectory(tmpDir);
     }
 
+    @Test
 	public void testPictures() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithImages.xls");
 
@@ -88,6 +90,7 @@ public final class TestHSSFPictureData extends TestCase{
         }
     }
 
+    @Test
 	public void testMacPicture() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("53446.xls");
 
@@ -112,6 +115,7 @@ public final class TestHSSFPictureData extends TestCase{
         }
     }
 
+    @Test
     public void testNotNullPictures() {
 
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SheetWithDrawing.xls");

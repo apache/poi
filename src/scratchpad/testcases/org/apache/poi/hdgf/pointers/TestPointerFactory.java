@@ -17,48 +17,49 @@
 
 package org.apache.poi.hdgf.pointers;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 
 /**
  * Tests for the pointer factory, and the pointers themselves
  */
-public final class TestPointerFactory extends TestCase {
+public final class TestPointerFactory {
     // Type: 14    Addr: 011eb2ac  Offset: 1dd4    Len:  14d   Format: 52  From: 24
-    private static byte[] vp5_a = new byte[] {
+    private static byte[] vp5_a = {
         0x14, 0, 0x52, 0, (byte)0xac, (byte)0xb2, 0x1e, 1, (byte)0xd4, 0x1d, 0, 0,
         0x4d, 1, 0, 0
     };
-    
+
 	// Type: 16   Addr: 0143aff4  Offset: 80   Len: 54   Format: 46   From: 8a94
-	private static byte[] vp6_a = new byte[] {
+	private static byte[] vp6_a = {
 		22, 0, 0, 0, -12, -81, 67, 1, -128, 0, 0, 0, 84, 0, 0, 0, 70, 0
 	};
 	// Type: 17   Addr: 014fd84c  Offset: d4   Len: 20   Format: 54   From: 8a94
-	private static byte[] vp6_b = new byte[] {
+	private static byte[] vp6_b = {
 		23, 0, 0, 0, 76, -40, 79, 1, -44, 0, 0, 0, 32, 0, 0, 0, 84, 0
 	};
 	// Type: 17   Addr: 014fd8bc  Offset: f8   Len: 20   Format: 54   From: 8a94
-	private static byte[] vp6_c = new byte[] {
+	private static byte[] vp6_c = {
 		23, 0, 0, 0, -68, -40, 79, 1, -8, 0, 0, 0, 32, 0, 0, 0, 84, 0
 	};
 	// Type: ff   Addr: 014fffac  Offset: 0    Len:  0   Format: 60   From: 8a94
-	private static byte[] vp6_d = new byte[] {
+	private static byte[] vp6_d = {
 		-1, 0, 0, 0, -84, -1, 79, 1, 0, 0, 0, 0, 0, 0, 0, 0, 96, 0
 	};
 
+	@Test(expected = IllegalArgumentException.class)
 	public void testCreateV4() {
 		PointerFactory pf = new PointerFactory(4);
-		try {
-			pf.createPointer(new byte[]{}, 0);
-			fail();
-		} catch(IllegalArgumentException e) {
-			// As expected
-		}
+		pf.createPointer(new byte[]{}, 0);
 	}
 
+	@Test
 	public void testCreateV5() {
 		PointerFactory pf = new PointerFactory(5);
-		
+
         Pointer a = pf.createPointer(vp5_a, 0);
         assertEquals(0x14, a.getType());
         assertEquals(0x011eb2ac, a.getAddress());
@@ -75,6 +76,7 @@ public final class TestPointerFactory extends TestCase {
         assertEquals(16, a.getSizeInBytes());
 	}
 
+	@Test
 	public void testCreateV6() {
 		PointerFactory pf = new PointerFactory(6);
 
@@ -131,6 +133,7 @@ public final class TestPointerFactory extends TestCase {
 		assertFalse(d.destinationHasPointers());
 	}
 
+	@Test
 	public void testCreateV6FromMid() {
 		PointerFactory pf = new PointerFactory(11);
 

@@ -17,15 +17,18 @@
 
 package org.apache.poi.hssf.model;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.hssf.record.ColumnInfoRecord;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
-/**
- * @author Tony Poppleton
- */
-public final class TestSheetAdditional extends TestCase {
+public final class TestSheetAdditional {
+	@Rule
+	public ExpectedException thrown= ExpectedException.none();
 
+	@Test
 	public void testGetCellWidth() {
 		InternalSheet sheet = InternalSheet.createSheet();
 		ColumnInfoRecord nci = new ColumnInfoRecord();
@@ -55,14 +58,15 @@ public final class TestSheetAdditional extends TestCase {
 		assertEquals(100,sheet.getColumnWidth(10));
 	}
 
+	@Test
 	public void testMaxColumnWidth() {
 		InternalSheet sheet = InternalSheet.createSheet();
-		sheet.setColumnWidth(0, 255*256); //the limit
-		try {
-			sheet.setColumnWidth(0, 256*256); //the limit
-			fail("expected exception");
-		} catch (IllegalArgumentException e){
-			assertEquals(e.getMessage(), "The maximum column width for an individual cell is 255 characters.");
-		}
+		// the limit
+		sheet.setColumnWidth(0, 255*256);
+
+		// over the limit
+		thrown.expect(IllegalArgumentException.class);
+		thrown.expectMessage("The maximum column width for an individual cell is 255 characters.");
+		sheet.setColumnWidth(0, 256*256);
 	}
 }

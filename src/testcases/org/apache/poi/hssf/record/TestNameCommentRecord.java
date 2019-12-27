@@ -17,16 +17,16 @@
 
 package org.apache.poi.hssf.record;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
 /**
  * Tests the NameCommentRecord serializes/deserializes correctly
- *
- * @author Andrew Shirley (aks at corefiling.co.uk)
  */
-public final class TestNameCommentRecord extends TestCase {
+public final class TestNameCommentRecord {
+	@Test
 	public void testReserialize() {
 		final byte[] data = HexRead
 				.readFromString(""

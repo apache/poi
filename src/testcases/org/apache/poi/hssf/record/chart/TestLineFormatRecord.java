@@ -18,19 +18,20 @@
 package org.apache.poi.hssf.record.chart;
 
 
-import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the LineFormatRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
-
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestLineFormatRecord extends TestCase {
+public final class TestLineFormatRecord {
     byte[] data = new byte[] {
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,    // colour
         (byte)0x00,(byte)0x00,                          // pattern
@@ -39,6 +40,7 @@ public final class TestLineFormatRecord extends TestCase {
         (byte)0x4D,(byte)0x00                           // index
     };
 
+    @Test
     public void testLoad() {
         LineFormatRecord record = new LineFormatRecord(TestcaseRecordInputStream.create(0x1007, data));
         assertEquals( 0, record.getLineColor());
@@ -52,8 +54,8 @@ public final class TestLineFormatRecord extends TestCase {
         assertEquals( 16, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
+    @Test
+    public void testStore() {
         LineFormatRecord record = new LineFormatRecord();
         record.setLineColor( 0 );
         record.setLinePattern( (short)0 );
@@ -64,8 +66,6 @@ public final class TestLineFormatRecord extends TestCase {
 
 
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        confirmRecordEncoding(LineFormatRecord.sid, data, recordBytes);
     }
 }

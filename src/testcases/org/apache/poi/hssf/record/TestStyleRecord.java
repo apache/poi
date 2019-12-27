@@ -17,30 +17,24 @@
 
 package org.apache.poi.hssf.record;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
 /**
  * Tests for {@link StyleRecord}
  */
-public final class TestStyleRecord extends TestCase {
+public final class TestStyleRecord {
+	@Test
 	public void testUnicodeReadName() {
 		byte[] data = HexRead.readFromString(
 				"11 00 09 00 01 38 5E C4 89 5F 00 53 00 68 00 65 00 65 00 74 00 31 00");
 		RecordInputStream in = TestcaseRecordInputStream.create(StyleRecord.sid, data);
 		StyleRecord sr = new StyleRecord(in);
 		assertEquals("\u5E38\u89C4_Sheet1", sr.getName()); // "<Conventional>_Sheet1"
-		byte[] ser;
-		try {
-			ser = sr.serialize();
-		} catch (IllegalStateException e) {
-			if (e.getMessage().equals("Incorrect number of bytes written - expected 27 but got 18")) {
-				throw new AssertionFailedError("Identified bug 46385");
-			}
-			throw e;
-		}
+		// bug 46385 - Incorrect number of bytes written - expected 27 but got 18
+		byte[] ser = sr.serialize();
 		TestcaseRecordInputStream.confirmRecordEncoding(StyleRecord.sid, data, ser);
 	}
 }

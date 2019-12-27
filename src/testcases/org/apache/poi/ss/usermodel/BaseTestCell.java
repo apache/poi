@@ -32,11 +32,9 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -46,13 +44,13 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.After;
 import org.junit.Test;
 
 /**
  * Common superclass for testing implementations of
  *  {@link org.apache.poi.ss.usermodel.Cell}
  */
+@SuppressWarnings("deprecation")
 public abstract class BaseTestCell {
 
     protected final ITestDataProvider _testDataProvider;
@@ -66,82 +64,81 @@ public abstract class BaseTestCell {
 
     @Test
     public void testSetValues() throws Exception {
-        Workbook book = _testDataProvider.createWorkbook();
-        Sheet sheet = book.createSheet("test");
-        Row row = sheet.createRow(0);
+        try (Workbook book = _testDataProvider.createWorkbook()) {
+            Sheet sheet = book.createSheet("test");
+            Row row = sheet.createRow(0);
 
-        CreationHelper factory = book.getCreationHelper();
-        Cell cell = row.createCell(0);
+            CreationHelper factory = book.getCreationHelper();
+            Cell cell = row.createCell(0);
 
-        cell.setCellValue(1.2);
-        assertEquals(1.2, cell.getNumericCellValue(), 0.0001);
-        assertEquals(CellType.NUMERIC, cell.getCellType());
-        assertProhibitedValueAccess(cell, CellType.BOOLEAN, CellType.STRING,
-                CellType.FORMULA, CellType.ERROR);
+            cell.setCellValue(1.2);
+            assertEquals(1.2, cell.getNumericCellValue(), 0.0001);
+            assertEquals(CellType.NUMERIC, cell.getCellType());
+            assertProhibitedValueAccess(cell, CellType.BOOLEAN, CellType.STRING,
+                                        CellType.FORMULA, CellType.ERROR);
 
-        cell.setCellValue(false);
-        assertFalse(cell.getBooleanCellValue());
-        assertEquals(CellType.BOOLEAN, cell.getCellType());
-        cell.setCellValue(true);
-        assertTrue(cell.getBooleanCellValue());
-        assertProhibitedValueAccess(cell, CellType.NUMERIC, CellType.STRING, CellType.BOOLEAN,
-                CellType.FORMULA, CellType.ERROR);
+            cell.setCellValue(false);
+            assertFalse(cell.getBooleanCellValue());
+            assertEquals(CellType.BOOLEAN, cell.getCellType());
+            cell.setCellValue(true);
+            assertTrue(cell.getBooleanCellValue());
+            assertProhibitedValueAccess(cell, CellType.NUMERIC, CellType.STRING, CellType.BOOLEAN,
+                                        CellType.FORMULA, CellType.ERROR);
 
-        cell.setCellValue(factory.createRichTextString("Foo"));
-        assertEquals("Foo", cell.getRichStringCellValue().getString());
-        assertEquals("Foo", cell.getStringCellValue());
-        assertEquals(CellType.STRING, cell.getCellType());
-        assertProhibitedValueAccess(cell, CellType.NUMERIC, CellType.BOOLEAN,
-                CellType.FORMULA, CellType.ERROR);
+            cell.setCellValue(factory.createRichTextString("Foo"));
+            assertEquals("Foo", cell.getRichStringCellValue().getString());
+            assertEquals("Foo", cell.getStringCellValue());
+            assertEquals(CellType.STRING, cell.getCellType());
+            assertProhibitedValueAccess(cell, CellType.NUMERIC, CellType.BOOLEAN,
+                                        CellType.FORMULA, CellType.ERROR);
 
-        cell.setCellValue("345");
-        assertEquals("345", cell.getRichStringCellValue().getString());
-        assertEquals("345", cell.getStringCellValue());
-        assertEquals(CellType.STRING, cell.getCellType());
-        assertProhibitedValueAccess(cell, CellType.NUMERIC, CellType.BOOLEAN,
-                CellType.FORMULA, CellType.ERROR);
+            cell.setCellValue("345");
+            assertEquals("345", cell.getRichStringCellValue().getString());
+            assertEquals("345", cell.getStringCellValue());
+            assertEquals(CellType.STRING, cell.getCellType());
+            assertProhibitedValueAccess(cell, CellType.NUMERIC, CellType.BOOLEAN,
+                                        CellType.FORMULA, CellType.ERROR);
 
-        Calendar c = LocaleUtil.getLocaleCalendar();
-        c.setTimeInMillis(123456789);
-        cell.setCellValue(c.getTime());
-        assertEquals(c.getTime().getTime(), cell.getDateCellValue().getTime());
-        assertEquals(CellType.NUMERIC, cell.getCellType());
-        assertProhibitedValueAccess(cell, CellType.BOOLEAN, CellType.STRING,
-                CellType.FORMULA, CellType.ERROR);
+            Calendar c = LocaleUtil.getLocaleCalendar();
+            c.setTimeInMillis(123456789);
+            cell.setCellValue(c.getTime());
+            assertEquals(c.getTime().getTime(), cell.getDateCellValue().getTime());
+            assertEquals(CellType.NUMERIC, cell.getCellType());
+            assertProhibitedValueAccess(cell, CellType.BOOLEAN, CellType.STRING,
+                                        CellType.FORMULA, CellType.ERROR);
 
-        cell.setCellValue(c);
-        assertEquals(c.getTime().getTime(), cell.getDateCellValue().getTime());
-        assertEquals(CellType.NUMERIC, cell.getCellType());
-        assertProhibitedValueAccess(cell, CellType.BOOLEAN, CellType.STRING,
-                CellType.FORMULA, CellType.ERROR);
+            cell.setCellValue(c);
+            assertEquals(c.getTime().getTime(), cell.getDateCellValue().getTime());
+            assertEquals(CellType.NUMERIC, cell.getCellType());
+            assertProhibitedValueAccess(cell, CellType.BOOLEAN, CellType.STRING,
+                                        CellType.FORMULA, CellType.ERROR);
 
-        cell.setCellErrorValue(FormulaError.NA.getCode());
-        assertEquals(FormulaError.NA.getCode(), cell.getErrorCellValue());
-        assertEquals(CellType.ERROR, cell.getCellType());
-        assertProhibitedValueAccess(cell, CellType.NUMERIC, CellType.BOOLEAN,
-                CellType.FORMULA, CellType.STRING);
+            cell.setCellErrorValue(FormulaError.NA.getCode());
+            assertEquals(FormulaError.NA.getCode(), cell.getErrorCellValue());
+            assertEquals(CellType.ERROR, cell.getCellType());
+            assertProhibitedValueAccess(cell, CellType.NUMERIC, CellType.BOOLEAN,
+                                        CellType.FORMULA, CellType.STRING);
 
-        LocalDateTime ldt = DateUtil.toLocalDateTime(c);
-        cell.setCellValue(ldt);
-        assertEquals(ldt, cell.getLocalDateTimeCellValue());
-        assertEquals(CellType.NUMERIC, cell.getCellType());
-        assertProhibitedValueAccess(cell, CellType.BOOLEAN, CellType.STRING,
-                CellType.FORMULA, CellType.ERROR);
+            LocalDateTime ldt = DateUtil.toLocalDateTime(c);
+            cell.setCellValue(ldt);
+            assertEquals(ldt, cell.getLocalDateTimeCellValue());
+            assertEquals(CellType.NUMERIC, cell.getCellType());
+            assertProhibitedValueAccess(cell, CellType.BOOLEAN, CellType.STRING,
+                                        CellType.FORMULA, CellType.ERROR);
 
-        LocalDate ld = ldt.toLocalDate();
-        cell.setCellValue(ld);
-        assertEquals(ld, cell.getLocalDateTimeCellValue().toLocalDate());
-        assertEquals(CellType.NUMERIC, cell.getCellType());
-        assertProhibitedValueAccess(cell, CellType.BOOLEAN, CellType.STRING,
-                CellType.FORMULA, CellType.ERROR);
+            LocalDate ld = ldt.toLocalDate();
+            cell.setCellValue(ld);
+            assertEquals(ld, cell.getLocalDateTimeCellValue().toLocalDate());
+            assertEquals(CellType.NUMERIC, cell.getCellType());
+            assertProhibitedValueAccess(cell, CellType.BOOLEAN, CellType.STRING,
+                                        CellType.FORMULA, CellType.ERROR);
 
-        cell.setCellErrorValue(FormulaError.NA.getCode());
-        assertEquals(FormulaError.NA.getCode(), cell.getErrorCellValue());
-        assertEquals(CellType.ERROR, cell.getCellType());
-        assertProhibitedValueAccess(cell, CellType.NUMERIC, CellType.BOOLEAN,
-                CellType.FORMULA, CellType.STRING);
-        
-        book.close();
+            cell.setCellErrorValue(FormulaError.NA.getCode());
+            assertEquals(FormulaError.NA.getCode(), cell.getErrorCellValue());
+            assertEquals(CellType.ERROR, cell.getCellType());
+            assertProhibitedValueAccess(cell, CellType.NUMERIC, CellType.BOOLEAN,
+                                        CellType.FORMULA, CellType.STRING);
+        }
     }
 
     private static void assertProhibitedValueAccess(Cell cell, CellType ... types) {
@@ -166,7 +163,7 @@ public abstract class BaseTestCell {
                     default:
                         fail("Should get exception when reading cell type (" + type + ").");
                 }
-                
+
             } catch (IllegalStateException e){
                 // expected during successful test
                 assertTrue(e.getMessage().startsWith("Cannot get a"));
@@ -179,49 +176,46 @@ public abstract class BaseTestCell {
      */
     @Test
     public void testBool() throws IOException {
+        try (Workbook wb1 = _testDataProvider.createWorkbook()) {
+            Sheet s = wb1.createSheet("testSheet1");
+            Row r;
+            Cell c;
+            // B1
+            r = s.createRow(0);
+            c = r.createCell(1);
+            assertEquals(0, c.getRowIndex());
+            assertEquals(1, c.getColumnIndex());
+            c.setCellValue(true);
+            assertTrue("B1 value", c.getBooleanCellValue());
 
-        Workbook wb1 = _testDataProvider.createWorkbook();
-        Sheet s = wb1.createSheet("testSheet1");
-        Row r;
-        Cell c;
-        // B1
-        r = s.createRow(0);
-        c=r.createCell(1);
-        assertEquals(0, c.getRowIndex());
-        assertEquals(1, c.getColumnIndex());
-        c.setCellValue(true);
-        assertTrue("B1 value", c.getBooleanCellValue());
+            // C1
+            c = r.createCell(2);
+            assertEquals(0, c.getRowIndex());
+            assertEquals(2, c.getColumnIndex());
+            c.setCellValue(false);
+            assertFalse("C1 value", c.getBooleanCellValue());
 
-        // C1
-        c=r.createCell(2);
-        assertEquals(0, c.getRowIndex());
-        assertEquals(2, c.getColumnIndex());
-        c.setCellValue(false);
-        assertFalse("C1 value", c.getBooleanCellValue());
+            // Make sure values are saved and re-read correctly.
+            try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1)) {
+                s = wb2.getSheet("testSheet1");
+                r = s.getRow(0);
+                assertEquals("Row 1 should have 2 cells", 2, r.getPhysicalNumberOfCells());
 
-        // Make sure values are saved and re-read correctly.
-        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
-        wb1.close();
-        
-        s = wb2.getSheet("testSheet1");
-        r = s.getRow(0);
-        assertEquals("Row 1 should have 2 cells", 2, r.getPhysicalNumberOfCells());
-        
-        c = r.getCell(1);
-        assertEquals(0, c.getRowIndex());
-        assertEquals(1, c.getColumnIndex());
-        assertEquals(CellType.BOOLEAN, c.getCellType());
-        assertTrue("B1 value", c.getBooleanCellValue());
-        
-        c = r.getCell(2);
-        assertEquals(0, c.getRowIndex());
-        assertEquals(2, c.getColumnIndex());
-        assertEquals(CellType.BOOLEAN, c.getCellType());
-        assertFalse("C1 value", c.getBooleanCellValue());
-        
-        wb2.close();
+                c = r.getCell(1);
+                assertEquals(0, c.getRowIndex());
+                assertEquals(1, c.getColumnIndex());
+                assertEquals(CellType.BOOLEAN, c.getCellType());
+                assertTrue("B1 value", c.getBooleanCellValue());
+
+                c = r.getCell(2);
+                assertEquals(0, c.getRowIndex());
+                assertEquals(2, c.getColumnIndex());
+                assertEquals(CellType.BOOLEAN, c.getCellType());
+                assertFalse("C1 value", c.getBooleanCellValue());
+            }
+        }
     }
-    
+
     /**
      * test that Error types (BoolErrRecord) are supported properly.
      * @see #testBool
@@ -229,47 +223,45 @@ public abstract class BaseTestCell {
     @Test
     public void testErr() throws IOException {
 
-        Workbook wb1 = _testDataProvider.createWorkbook();
-        Sheet s = wb1.createSheet("testSheet1");
-        Row r;
-        Cell c;
+        try (Workbook wb1 = _testDataProvider.createWorkbook()) {
+            Sheet s = wb1.createSheet("testSheet1");
+            Row r;
+            Cell c;
 
-        // B1
-        r = s.createRow(0);
-        c=r.createCell(1);
-        assertEquals(0, c.getRowIndex());
-        assertEquals(1, c.getColumnIndex());
-        c.setCellErrorValue(FormulaError.NULL.getCode());
-        assertEquals("B1 value == #NULL!", FormulaError.NULL.getCode(), c.getErrorCellValue());
+            // B1
+            r = s.createRow(0);
+            c = r.createCell(1);
+            assertEquals(0, c.getRowIndex());
+            assertEquals(1, c.getColumnIndex());
+            c.setCellErrorValue(FormulaError.NULL.getCode());
+            assertEquals("B1 value == #NULL!", FormulaError.NULL.getCode(), c.getErrorCellValue());
 
-        // C1
-        c=r.createCell(2);
-        assertEquals(0, c.getRowIndex());
-        assertEquals(2, c.getColumnIndex());
-        c.setCellErrorValue(FormulaError.DIV0.getCode());
-        assertEquals("C1 value == #DIV/0!", FormulaError.DIV0.getCode(), c.getErrorCellValue());
+            // C1
+            c = r.createCell(2);
+            assertEquals(0, c.getRowIndex());
+            assertEquals(2, c.getColumnIndex());
+            c.setCellErrorValue(FormulaError.DIV0.getCode());
+            assertEquals("C1 value == #DIV/0!", FormulaError.DIV0.getCode(), c.getErrorCellValue());
 
-        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
-        wb1.close();
+            try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1)) {
+                s = wb2.getSheet("testSheet1");
 
-        s = wb2.getSheet("testSheet1");
+                r = s.getRow(0);
+                assertEquals("Row 1 should have 2 cells", 2, r.getPhysicalNumberOfCells());
 
-        r = s.getRow(0);
-        assertEquals("Row 1 should have 2 cells", 2, r.getPhysicalNumberOfCells());
+                c = r.getCell(1);
+                assertEquals(0, c.getRowIndex());
+                assertEquals(1, c.getColumnIndex());
+                assertEquals(CellType.ERROR, c.getCellType());
+                assertEquals("B1 value == #NULL!", FormulaError.NULL.getCode(), c.getErrorCellValue());
 
-        c = r.getCell(1);
-        assertEquals(0, c.getRowIndex());
-        assertEquals(1, c.getColumnIndex());
-        assertEquals(CellType.ERROR, c.getCellType());
-        assertEquals("B1 value == #NULL!", FormulaError.NULL.getCode(), c.getErrorCellValue());
-
-        c = r.getCell(2);
-        assertEquals(0, c.getRowIndex());
-        assertEquals(2, c.getColumnIndex());
-        assertEquals(CellType.ERROR, c.getCellType());
-        assertEquals("C1 value == #DIV/0!", FormulaError.DIV0.getCode(), c.getErrorCellValue());
-
-        wb2.close();
+                c = r.getCell(2);
+                assertEquals(0, c.getRowIndex());
+                assertEquals(2, c.getColumnIndex());
+                assertEquals(CellType.ERROR, c.getCellType());
+                assertEquals("C1 value == #DIV/0!", FormulaError.DIV0.getCode(), c.getErrorCellValue());
+            }
+        }
     }
 
     /**
@@ -277,99 +269,97 @@ public abstract class BaseTestCell {
      */
     @Test
     public void testFormulaStyle() throws Exception {
+        try (Workbook wb1 = _testDataProvider.createWorkbook()) {
+            Sheet s = wb1.createSheet("testSheet1");
+            Row r;
+            Cell c;
+            CellStyle cs = wb1.createCellStyle();
+            Font f = wb1.createFont();
+            f.setFontHeightInPoints((short) 20);
+            f.setColor(IndexedColors.RED.getIndex());
+            f.setBold(true);
+            f.setFontName("Arial Unicode MS");
+            cs.setFillBackgroundColor((short) 3);
+            cs.setFont(f);
+            cs.setBorderTop(BorderStyle.THIN);
+            cs.setBorderRight(BorderStyle.THIN);
+            cs.setBorderLeft(BorderStyle.THIN);
+            cs.setBorderBottom(BorderStyle.THIN);
 
-        Workbook wb1 = _testDataProvider.createWorkbook();
-        Sheet s = wb1.createSheet("testSheet1");
-        Row r;
-        Cell c;
-        CellStyle cs = wb1.createCellStyle();
-        Font f = wb1.createFont();
-        f.setFontHeightInPoints((short) 20);
-        f.setColor(IndexedColors.RED.getIndex());
-        f.setBold(true);
-        f.setFontName("Arial Unicode MS");
-        cs.setFillBackgroundColor((short)3);
-        cs.setFont(f);
-        cs.setBorderTop(BorderStyle.THIN);
-        cs.setBorderRight(BorderStyle.THIN);
-        cs.setBorderLeft(BorderStyle.THIN);
-        cs.setBorderBottom(BorderStyle.THIN);
+            r = s.createRow(0);
+            c = r.createCell(0);
+            c.setCellStyle(cs);
+            c.setCellFormula("2*3");
 
-        r = s.createRow(0);
-        c=r.createCell(0);
-        c.setCellStyle(cs);
-        c.setCellFormula("2*3");
+            try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1)) {
+                s = wb2.getSheetAt(0);
+                r = s.getRow(0);
+                c = r.getCell(0);
 
-        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
-        wb1.close();
-        s = wb2.getSheetAt(0);
-        r = s.getRow(0);
-        c = r.getCell(0);
+                assertEquals("Formula Cell at 0,0", CellType.FORMULA, c.getCellType());
+                cs = c.getCellStyle();
 
-        assertEquals("Formula Cell at 0,0", CellType.FORMULA, c.getCellType());
-        cs = c.getCellStyle();
-
-        assertNotNull("Formula Cell Style", cs);
-        assertEquals("Font Index Matches", f.getIndexAsInt(), cs.getFontIndexAsInt());
-        assertEquals("Top Border", BorderStyle.THIN, cs.getBorderTop());
-        assertEquals("Left Border", BorderStyle.THIN, cs.getBorderLeft());
-        assertEquals("Right Border", BorderStyle.THIN, cs.getBorderRight());
-        assertEquals("Bottom Border", BorderStyle.THIN, cs.getBorderBottom());
-        wb2.close();
+                assertNotNull("Formula Cell Style", cs);
+                assertEquals("Font Index Matches", f.getIndexAsInt(), cs.getFontIndexAsInt());
+                assertEquals("Top Border", BorderStyle.THIN, cs.getBorderTop());
+                assertEquals("Left Border", BorderStyle.THIN, cs.getBorderLeft());
+                assertEquals("Right Border", BorderStyle.THIN, cs.getBorderRight());
+                assertEquals("Bottom Border", BorderStyle.THIN, cs.getBorderBottom());
+            }
+        }
     }
 
     /**tests the toString() method of HSSFCell*/
     @Test
     public void testToString() throws Exception {
-        Workbook wb1 = _testDataProvider.createWorkbook();
-        Row r = wb1.createSheet("Sheet1").createRow(0);
-        CreationHelper factory = wb1.getCreationHelper();
+        try (Workbook wb1 = _testDataProvider.createWorkbook()) {
+            Row r = wb1.createSheet("Sheet1").createRow(0);
+            CreationHelper factory = wb1.getCreationHelper();
 
-        r.createCell(0).setCellValue(false);
-        r.createCell(1).setCellValue(true);
-        r.createCell(2).setCellValue(1.5);
-        r.createCell(3).setCellValue(factory.createRichTextString("Astring"));
-        r.createCell(4).setCellErrorValue(FormulaError.DIV0.getCode());
-        r.createCell(5).setCellFormula("A1+B1");
-        r.createCell(6); // blank
+            r.createCell(0).setCellValue(false);
+            r.createCell(1).setCellValue(true);
+            r.createCell(2).setCellValue(1.5);
+            r.createCell(3).setCellValue(factory.createRichTextString("Astring"));
+            r.createCell(4).setCellErrorValue(FormulaError.DIV0.getCode());
+            r.createCell(5).setCellFormula("A1+B1");
+            r.createCell(6); // blank
 
-        // create date-formatted cell
-        Calendar c = LocaleUtil.getLocaleCalendar();
-        c.set(2010, Calendar.FEBRUARY, 2, 0, 0, 0);
-        r.createCell(7).setCellValue(c);
-        CellStyle dateStyle = wb1.createCellStyle();
-        short formatId = wb1.getCreationHelper().createDataFormat().getFormat("m/d/yy h:mm"); // any date format will do
-        dateStyle.setDataFormat(formatId);
-        r.getCell(7).setCellStyle(dateStyle);
+            // create date-formatted cell
+            Calendar c = LocaleUtil.getLocaleCalendar();
+            c.set(2010, Calendar.FEBRUARY, 2, 0, 0, 0);
+            r.createCell(7).setCellValue(c);
+            CellStyle dateStyle = wb1.createCellStyle();
+            short formatId = wb1.getCreationHelper().createDataFormat().getFormat("m/d/yy h:mm"); // any date format will do
+            dateStyle.setDataFormat(formatId);
+            r.getCell(7).setCellStyle(dateStyle);
 
-        assertEquals("Boolean", "FALSE", r.getCell(0).toString());
-        assertEquals("Boolean", "TRUE", r.getCell(1).toString());
-        assertEquals("Numeric", "1.5", r.getCell(2).toString());
-        assertEquals("String", "Astring", r.getCell(3).toString());
-        assertEquals("Error", "#DIV/0!", r.getCell(4).toString());
-        assertEquals("Formula", "A1+B1", r.getCell(5).toString());
-        assertEquals("Blank", "", r.getCell(6).toString());
-        // toString on a date-formatted cell displays dates as dd-MMM-yyyy, which has locale problems with the month
-        String dateCell1 = r.getCell(7).toString();
-        assertTrue("Date (Day)", dateCell1.startsWith("02-"));
-        assertTrue("Date (Year)", dateCell1.endsWith("-2010"));
+            assertEquals("Boolean", "FALSE", r.getCell(0).toString());
+            assertEquals("Boolean", "TRUE", r.getCell(1).toString());
+            assertEquals("Numeric", "1.5", r.getCell(2).toString());
+            assertEquals("String", "Astring", r.getCell(3).toString());
+            assertEquals("Error", "#DIV/0!", r.getCell(4).toString());
+            assertEquals("Formula", "A1+B1", r.getCell(5).toString());
+            assertEquals("Blank", "", r.getCell(6).toString());
+            // toString on a date-formatted cell displays dates as dd-MMM-yyyy, which has locale problems with the month
+            String dateCell1 = r.getCell(7).toString();
+            assertTrue("Date (Day)", dateCell1.startsWith("02-"));
+            assertTrue("Date (Year)", dateCell1.endsWith("-2010"));
 
 
-        //Write out the file, read it in, and then check cell values
-        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
-        wb1.close();
-
-        r = wb2.getSheetAt(0).getRow(0);
-        assertEquals("Boolean", "FALSE", r.getCell(0).toString());
-        assertEquals("Boolean", "TRUE", r.getCell(1).toString());
-        assertEquals("Numeric", "1.5", r.getCell(2).toString());
-        assertEquals("String", "Astring", r.getCell(3).toString());
-        assertEquals("Error", "#DIV/0!", r.getCell(4).toString());
-        assertEquals("Formula", "A1+B1", r.getCell(5).toString());
-        assertEquals("Blank", "", r.getCell(6).toString());
-        String dateCell2 = r.getCell(7).toString();
-        assertEquals("Date", dateCell1, dateCell2);
-        wb2.close();
+            //Write out the file, read it in, and then check cell values
+            try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1)) {
+                r = wb2.getSheetAt(0).getRow(0);
+                assertEquals("Boolean", "FALSE", r.getCell(0).toString());
+                assertEquals("Boolean", "TRUE", r.getCell(1).toString());
+                assertEquals("Numeric", "1.5", r.getCell(2).toString());
+                assertEquals("String", "Astring", r.getCell(3).toString());
+                assertEquals("Error", "#DIV/0!", r.getCell(4).toString());
+                assertEquals("Formula", "A1+B1", r.getCell(5).toString());
+                assertEquals("Blank", "", r.getCell(6).toString());
+                String dateCell2 = r.getCell(7).toString();
+                assertEquals("Date", dateCell1, dateCell2);
+            }
+        }
     }
 
     /**
@@ -377,67 +367,61 @@ public abstract class BaseTestCell {
      */
     @Test
     public void testSetFormulaValue() throws Exception {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet s = wb.createSheet();
-        Row r = s.createRow(0);
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet s = wb.createSheet();
+            Row r = s.createRow(0);
 
-        Cell c1 = r.createCell(0);
-        c1.setCellFormula("NA()");
-        assertEquals(0.0, c1.getNumericCellValue(), 0.0);
-        assertEquals(CellType.NUMERIC, c1.getCachedFormulaResultType());
-        c1.setCellValue(10);
-        assertEquals(10.0, c1.getNumericCellValue(), 0.0);
-        assertEquals(CellType.FORMULA, c1.getCellType());
-        assertEquals(CellType.NUMERIC, c1.getCachedFormulaResultType());
+            Cell c1 = r.createCell(0);
+            c1.setCellFormula("NA()");
+            assertEquals(0.0, c1.getNumericCellValue(), 0.0);
+            assertEquals(CellType.NUMERIC, c1.getCachedFormulaResultType());
+            c1.setCellValue(10);
+            assertEquals(10.0, c1.getNumericCellValue(), 0.0);
+            assertEquals(CellType.FORMULA, c1.getCellType());
+            assertEquals(CellType.NUMERIC, c1.getCachedFormulaResultType());
 
-        Cell c2 = r.createCell(1);
-        c2.setCellFormula("NA()");
-        assertEquals(0.0, c2.getNumericCellValue(), 0.0);
-        assertEquals(CellType.NUMERIC, c2.getCachedFormulaResultType());
-        c2.setCellValue("I changed!");
-        assertEquals("I changed!", c2.getStringCellValue());
-        assertEquals(CellType.FORMULA, c2.getCellType());
-        assertEquals(CellType.STRING, c2.getCachedFormulaResultType());
+            Cell c2 = r.createCell(1);
+            c2.setCellFormula("NA()");
+            assertEquals(0.0, c2.getNumericCellValue(), 0.0);
+            assertEquals(CellType.NUMERIC, c2.getCachedFormulaResultType());
+            c2.setCellValue("I changed!");
+            assertEquals("I changed!", c2.getStringCellValue());
+            assertEquals(CellType.FORMULA, c2.getCellType());
+            assertEquals(CellType.STRING, c2.getCachedFormulaResultType());
 
-        //calglin Cell.setCellFormula(null) for a non-formula cell
-        Cell c3 = r.createCell(2);
-        c3.setCellFormula(null);
-        assertEquals(CellType.BLANK, c3.getCellType());
-        wb.close();
+            //calglin Cell.setCellFormula(null) for a non-formula cell
+            Cell c3 = r.createCell(2);
+            c3.setCellFormula(null);
+            assertEquals(CellType.BLANK, c3.getCellType());
+        }
 
     }
 
     private Cell createACell(Workbook wb) {
         return wb.createSheet("Sheet1").createRow(0).createCell(0);
     }
-    
+
     /**
      * bug 58452: Copy cell formulas containing unregistered function names
      * Make sure that formulas with unknown/unregistered UDFs can be written to and read back from a file.
      */
     @Test
     public void testFormulaWithUnknownUDF() throws IOException {
-        final Workbook wb1 = _testDataProvider.createWorkbook();
-        final FormulaEvaluator evaluator1 = wb1.getCreationHelper().createFormulaEvaluator();
-        try {
+        try (final Workbook wb1 = _testDataProvider.createWorkbook()) {
+            final FormulaEvaluator evaluator1 = wb1.getCreationHelper().createFormulaEvaluator();
             final Cell cell1 = wb1.createSheet().createRow(0).createCell(0);
             final String formula = "myFunc(\"arg\")";
             cell1.setCellFormula(formula);
             confirmFormulaWithUnknownUDF(formula, cell1, evaluator1);
-            
-            final Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
-            final FormulaEvaluator evaluator2 = wb2.getCreationHelper().createFormulaEvaluator();
-            try {
+
+            try (final Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1)) {
+                final FormulaEvaluator evaluator2 = wb2.getCreationHelper().createFormulaEvaluator();
                 final Cell cell2 = wb2.getSheetAt(0).getRow(0).getCell(0);
                 confirmFormulaWithUnknownUDF(formula, cell2, evaluator2);
-            } finally {
-                wb2.close();
             }
-        } finally {
-            wb1.close();
         }
     }
-    
+
     private static void confirmFormulaWithUnknownUDF(String expectedFormula, Cell cell, FormulaEvaluator evaluator) {
         assertEquals(expectedFormula, cell.getCellFormula());
         try {
@@ -450,59 +434,50 @@ public abstract class BaseTestCell {
 
     @Test
     public void testChangeTypeStringToBool() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = createACell(wb);
 
-        Cell cell = createACell(wb);
+            cell.setCellValue("TRUE");
+            assertEquals(CellType.STRING, cell.getCellType());
+            // test conversion of cell from text to boolean
+            cell.setCellType(CellType.BOOLEAN);
 
-        cell.setCellValue("TRUE");
-        assertEquals(CellType.STRING, cell.getCellType());
-        // test conversion of cell from text to boolean
-        cell.setCellType(CellType.BOOLEAN);
+            assertEquals(CellType.BOOLEAN, cell.getCellType());
+            assertTrue(cell.getBooleanCellValue());
+            cell.setCellType(CellType.STRING);
+            assertEquals("TRUE", cell.getRichStringCellValue().getString());
 
-        assertEquals(CellType.BOOLEAN, cell.getCellType());
-        assertTrue(cell.getBooleanCellValue());
-        cell.setCellType(CellType.STRING);
-        assertEquals("TRUE", cell.getRichStringCellValue().getString());
-
-        // 'false' text to bool and back
-        cell.setCellValue("FALSE");
-        cell.setCellType(CellType.BOOLEAN);
-        assertEquals(CellType.BOOLEAN, cell.getCellType());
-        assertFalse(cell.getBooleanCellValue());
-        cell.setCellType(CellType.STRING);
-        assertEquals("FALSE", cell.getRichStringCellValue().getString());
-        
-        wb.close();
+            // 'false' text to bool and back
+            cell.setCellValue("FALSE");
+            cell.setCellType(CellType.BOOLEAN);
+            assertEquals(CellType.BOOLEAN, cell.getCellType());
+            assertFalse(cell.getBooleanCellValue());
+            cell.setCellType(CellType.STRING);
+            assertEquals("FALSE", cell.getRichStringCellValue().getString());
+        }
     }
 
     @Test
     public void testChangeTypeBoolToString() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = createACell(wb);
 
-        Cell cell = createACell(wb);
-
-        cell.setCellValue(true);
-        // test conversion of cell from boolean to text
-        cell.setCellType(CellType.STRING);
-        assertEquals("TRUE", cell.getRichStringCellValue().getString());
-        
-        wb.close();
+            cell.setCellValue(true);
+            // test conversion of cell from boolean to text
+            cell.setCellType(CellType.STRING);
+            assertEquals("TRUE", cell.getRichStringCellValue().getString());
+        }
     }
 
     @Test
     public void testChangeTypeErrorToNumber() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-
-        Cell cell = createACell(wb);
-        cell.setCellErrorValue(FormulaError.NAME.getCode());
-        try {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = createACell(wb);
+            cell.setCellErrorValue(FormulaError.NAME.getCode());
+            // ClassCastException -> Identified bug 46479b
             cell.setCellValue(2.5);
-        } catch (ClassCastException e) {
-            fail("Identified bug 46479b");
+            assertEquals(2.5, cell.getNumericCellValue(), 0.0);
         }
-        assertEquals(2.5, cell.getNumericCellValue(), 0.0);
-        
-        wb.close();
     }
 
     @Test
@@ -514,7 +489,7 @@ public abstract class BaseTestCell {
         cell.setCellValue(true);
         // Identify bug 46479c
         assertTrue(cell.getBooleanCellValue());
-        
+
         wb.close();
     }
 
@@ -525,69 +500,65 @@ public abstract class BaseTestCell {
      */
     @Test
     public void testConvertStringFormulaCell() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cellA1 = createACell(wb);
+            cellA1.setCellFormula("\"abc\"");
 
-        Cell cellA1 = createACell(wb);
-        cellA1.setCellFormula("\"abc\"");
+            // default cached formula result is numeric zero
+            assertEquals(0.0, cellA1.getNumericCellValue(), 0.0);
 
-        // default cached formula result is numeric zero
-        assertEquals(0.0, cellA1.getNumericCellValue(), 0.0);
+            FormulaEvaluator fe = cellA1.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
 
-        FormulaEvaluator fe = cellA1.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
+            fe.evaluateFormulaCell(cellA1);
+            assertEquals("abc", cellA1.getStringCellValue());
 
-        fe.evaluateFormulaCell(cellA1);
-        assertEquals("abc", cellA1.getStringCellValue());
-
-        fe.evaluateInCell(cellA1);
-        assertFalse("Identified bug with writing back formula result of type string", cellA1.getStringCellValue().isEmpty());
-        assertEquals("abc", cellA1.getStringCellValue());
-        
-        wb.close();
+            fe.evaluateInCell(cellA1);
+            assertFalse("Identified bug with writing back formula result of type string", cellA1.getStringCellValue().isEmpty());
+            assertEquals("abc", cellA1.getStringCellValue());
+        }
     }
-    
+
     /**
      * similar to {@link #testConvertStringFormulaCell()} but checks at a
      * lower level that {#link {@link Cell#setCellType(CellType)} works properly
      */
     @Test
     public void testSetTypeStringOnFormulaCell() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cellA1 = createACell(wb);
+            FormulaEvaluator fe = cellA1.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
 
-        Cell cellA1 = createACell(wb);
-        FormulaEvaluator fe = cellA1.getSheet().getWorkbook().getCreationHelper().createFormulaEvaluator();
+            cellA1.setCellFormula("\"DEF\"");
+            fe.clearAllCachedResultValues();
+            fe.evaluateFormulaCell(cellA1);
+            assertEquals("DEF", cellA1.getStringCellValue());
+            cellA1.setCellType(CellType.STRING);
+            assertEquals("DEF", cellA1.getStringCellValue());
 
-        cellA1.setCellFormula("\"DEF\"");
-        fe.clearAllCachedResultValues();
-        fe.evaluateFormulaCell(cellA1);
-        assertEquals("DEF", cellA1.getStringCellValue());
-        cellA1.setCellType(CellType.STRING);
-        assertEquals("DEF", cellA1.getStringCellValue());
+            cellA1.setCellFormula("25.061");
+            fe.clearAllCachedResultValues();
+            fe.evaluateFormulaCell(cellA1);
+            confirmCannotReadString(cellA1);
+            assertEquals(25.061, cellA1.getNumericCellValue(), 0.0);
+            cellA1.setCellType(CellType.STRING);
+            assertEquals("25.061", cellA1.getStringCellValue());
 
-        cellA1.setCellFormula("25.061");
-        fe.clearAllCachedResultValues();
-        fe.evaluateFormulaCell(cellA1);
-        confirmCannotReadString(cellA1);
-        assertEquals(25.061, cellA1.getNumericCellValue(), 0.0);
-        cellA1.setCellType(CellType.STRING);
-        assertEquals("25.061", cellA1.getStringCellValue());
+            cellA1.setCellFormula("TRUE");
+            fe.clearAllCachedResultValues();
+            fe.evaluateFormulaCell(cellA1);
+            confirmCannotReadString(cellA1);
+            assertTrue(cellA1.getBooleanCellValue());
+            cellA1.setCellType(CellType.STRING);
+            assertEquals("TRUE", cellA1.getStringCellValue());
 
-        cellA1.setCellFormula("TRUE");
-        fe.clearAllCachedResultValues();
-        fe.evaluateFormulaCell(cellA1);
-        confirmCannotReadString(cellA1);
-        assertTrue(cellA1.getBooleanCellValue());
-        cellA1.setCellType(CellType.STRING);
-        assertEquals("TRUE", cellA1.getStringCellValue());
-
-        cellA1.setCellFormula("#NAME?");
-        fe.clearAllCachedResultValues();
-        fe.evaluateFormulaCell(cellA1);
-        confirmCannotReadString(cellA1);
-        assertEquals(FormulaError.NAME, forInt(cellA1.getErrorCellValue()));
-        cellA1.setCellType(CellType.STRING);
-        assertEquals("#NAME?", cellA1.getStringCellValue());
-        
-        wb.close();
+            cellA1.setCellFormula("#NAME?");
+            fe.clearAllCachedResultValues();
+            fe.evaluateFormulaCell(cellA1);
+            confirmCannotReadString(cellA1);
+            assertEquals(FormulaError.NAME, forInt(cellA1.getErrorCellValue()));
+            cellA1.setCellType(CellType.STRING);
+            assertEquals("#NAME?", cellA1.getStringCellValue());
+        }
     }
 
     private static void confirmCannotReadString(Cell cell) {
@@ -599,16 +570,14 @@ public abstract class BaseTestCell {
      */
     @Test
     public void testChangeTypeFormulaToBoolean() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-
-        Cell cell = createACell(wb);
-        cell.setCellFormula("1=1");
-        cell.setCellValue(true);
-        cell.setCellType(CellType.BOOLEAN);
-        assertTrue("Identified bug 46479d", cell.getBooleanCellValue());
-        assertTrue(cell.getBooleanCellValue());
-        
-        wb.close();
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = createACell(wb);
+            cell.setCellFormula("1=1");
+            cell.setCellValue(true);
+            cell.setCellType(CellType.BOOLEAN);
+            assertTrue("Identified bug 46479d", cell.getBooleanCellValue());
+            assertTrue(cell.getBooleanCellValue());
+        }
     }
 
     /**
@@ -617,53 +586,53 @@ public abstract class BaseTestCell {
      */
     @Test
     public void test40296() throws Exception {
-        Workbook wb1 = _testDataProvider.createWorkbook();
-        Sheet workSheet = wb1.createSheet("Sheet1");
-        Cell cell;
-        Row row = workSheet.createRow(0);
+        try (Workbook wb1 = _testDataProvider.createWorkbook()) {
+            Sheet workSheet = wb1.createSheet("Sheet1");
+            Cell cell;
+            Row row = workSheet.createRow(0);
 
-        cell = row.createCell(0, CellType.NUMERIC);
-        cell.setCellValue(1.0);
-        assertEquals(CellType.NUMERIC, cell.getCellType());
-        assertEquals(1.0, cell.getNumericCellValue(), 0.0);
+            cell = row.createCell(0, CellType.NUMERIC);
+            cell.setCellValue(1.0);
+            assertEquals(CellType.NUMERIC, cell.getCellType());
+            assertEquals(1.0, cell.getNumericCellValue(), 0.0);
 
-        cell = row.createCell(1, CellType.NUMERIC);
-        cell.setCellValue(2.0);
-        assertEquals(CellType.NUMERIC, cell.getCellType());
-        assertEquals(2.0, cell.getNumericCellValue(), 0.0);
+            cell = row.createCell(1, CellType.NUMERIC);
+            cell.setCellValue(2.0);
+            assertEquals(CellType.NUMERIC, cell.getCellType());
+            assertEquals(2.0, cell.getNumericCellValue(), 0.0);
 
-        cell = row.createCell(2, CellType.FORMULA);
-        cell.setCellFormula("SUM(A1:B1)");
-        assertEquals(CellType.FORMULA, cell.getCellType());
-        assertEquals("SUM(A1:B1)", cell.getCellFormula());
+            cell = row.createCell(2, CellType.FORMULA);
+            cell.setCellFormula("SUM(A1:B1)");
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            assertEquals("SUM(A1:B1)", cell.getCellFormula());
 
-        //serialize and check again
-        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
-        wb1.close();
-        row = wb2.getSheetAt(0).getRow(0);
-        cell = row.getCell(0);
-        assertEquals(CellType.NUMERIC, cell.getCellType());
-        assertEquals(1.0, cell.getNumericCellValue(), 0.0);
+            //serialize and check again
+            try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1)) {
+                row = wb2.getSheetAt(0).getRow(0);
+                cell = row.getCell(0);
+                assertEquals(CellType.NUMERIC, cell.getCellType());
+                assertEquals(1.0, cell.getNumericCellValue(), 0.0);
 
-        cell = row.getCell(1);
-        assertEquals(CellType.NUMERIC, cell.getCellType());
-        assertEquals(2.0, cell.getNumericCellValue(), 0.0);
+                cell = row.getCell(1);
+                assertEquals(CellType.NUMERIC, cell.getCellType());
+                assertEquals(2.0, cell.getNumericCellValue(), 0.0);
 
-        cell = row.getCell(2);
-        assertEquals(CellType.FORMULA, cell.getCellType());
-        assertEquals("SUM(A1:B1)", cell.getCellFormula());
-        wb2.close();
+                cell = row.getCell(2);
+                assertEquals(CellType.FORMULA, cell.getCellType());
+                assertEquals("SUM(A1:B1)", cell.getCellFormula());
+            }
+        }
     }
 
     @Test
     public void testSetStringInFormulaCell_bug44606() throws Exception {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
-        cell.setCellFormula("B1&C1");
-        assertEquals(CellType.FORMULA, cell.getCellType());
-        cell.setCellValue(wb.getCreationHelper().createRichTextString("hello"));
-        assertEquals(CellType.FORMULA, cell.getCellType());
-        wb.close();
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
+            cell.setCellFormula("B1&C1");
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            cell.setCellValue(wb.getCreationHelper().createRichTextString("hello"));
+            assertEquals(CellType.FORMULA, cell.getCellType());
+        }
     }
 
     /**
@@ -671,15 +640,15 @@ public abstract class BaseTestCell {
      */
     @Test
     public void testSetBlank_bug47028() throws Exception {
-        Workbook wb = _testDataProvider.createWorkbook();
-        CellStyle style = wb.createCellStyle();
-        Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
-        cell.setCellStyle(style);
-        int i1 = cell.getCellStyle().getIndex();
-        cell.setBlank();
-        int i2 = cell.getCellStyle().getIndex();
-        assertEquals(i1, i2);
-        wb.close();
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            CellStyle style = wb.createCellStyle();
+            Cell cell = wb.createSheet("Sheet1").createRow(0).createCell(0);
+            cell.setCellStyle(style);
+            int i1 = cell.getCellStyle().getIndex();
+            cell.setBlank();
+            int i2 = cell.getCellStyle().getIndex();
+            assertEquals(i1, i2);
+        }
     }
 
     /**
@@ -694,7 +663,7 @@ public abstract class BaseTestCell {
      * </li>
      * <li>
      *   Not-a-Number (NaN):
-     *   NaN is used to represent invalid operations (such as infinity/infinity, 
+     *   NaN is used to represent invalid operations (such as infinity/infinity,
      *   infinity-infinity, or the square root of -1). NaNs allow a program to
      *   continue past an invalid operation. Excel instead immediately generates
      *   an error such as #NUM! or #DIV/0!.
@@ -703,143 +672,142 @@ public abstract class BaseTestCell {
      */
     @Test
     public void testNanAndInfinity() throws Exception {
-        Workbook wb1 = _testDataProvider.createWorkbook();
-        Sheet workSheet = wb1.createSheet("Sheet1");
-        Row row = workSheet.createRow(0);
+        try (Workbook wb1 = _testDataProvider.createWorkbook()) {
+            Sheet workSheet = wb1.createSheet("Sheet1");
+            Row row = workSheet.createRow(0);
 
-        Cell cell0 = row.createCell(0);
-        cell0.setCellValue(Double.NaN);
-        assertEquals("Double.NaN should change cell type to CellType#ERROR", CellType.ERROR, cell0.getCellType());
-        assertEquals("Double.NaN should change cell value to #NUM!", FormulaError.NUM, forInt(cell0.getErrorCellValue()));
+            Cell cell0 = row.createCell(0);
+            cell0.setCellValue(Double.NaN);
+            assertEquals("Double.NaN should change cell type to CellType#ERROR", CellType.ERROR, cell0.getCellType());
+            assertEquals("Double.NaN should change cell value to #NUM!", FormulaError.NUM, forInt(cell0.getErrorCellValue()));
 
-        Cell cell1 = row.createCell(1);
-        cell1.setCellValue(Double.POSITIVE_INFINITY);
-        assertEquals("Double.POSITIVE_INFINITY should change cell type to CellType#ERROR", CellType.ERROR, cell1.getCellType());
-        assertEquals("Double.POSITIVE_INFINITY should change cell value to #DIV/0!", FormulaError.DIV0, forInt(cell1.getErrorCellValue()));
+            Cell cell1 = row.createCell(1);
+            cell1.setCellValue(Double.POSITIVE_INFINITY);
+            assertEquals("Double.POSITIVE_INFINITY should change cell type to CellType#ERROR", CellType.ERROR, cell1.getCellType());
+            assertEquals("Double.POSITIVE_INFINITY should change cell value to #DIV/0!", FormulaError.DIV0, forInt(cell1.getErrorCellValue()));
 
-        Cell cell2 = row.createCell(2);
-        cell2.setCellValue(Double.NEGATIVE_INFINITY);
-        assertEquals("Double.NEGATIVE_INFINITY should change cell type to CellType#ERROR", CellType.ERROR, cell2.getCellType());
-        assertEquals("Double.NEGATIVE_INFINITY should change cell value to #DIV/0!", FormulaError.DIV0, forInt(cell2.getErrorCellValue()));
+            Cell cell2 = row.createCell(2);
+            cell2.setCellValue(Double.NEGATIVE_INFINITY);
+            assertEquals("Double.NEGATIVE_INFINITY should change cell type to CellType#ERROR", CellType.ERROR, cell2.getCellType());
+            assertEquals("Double.NEGATIVE_INFINITY should change cell value to #DIV/0!", FormulaError.DIV0, forInt(cell2.getErrorCellValue()));
 
-        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
-        wb1.close();
-        row = wb2.getSheetAt(0).getRow(0);
+            try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1)) {
+                row = wb2.getSheetAt(0).getRow(0);
 
-        cell0 = row.getCell(0);
-        assertEquals(CellType.ERROR, cell0.getCellType());
-        assertEquals(FormulaError.NUM, forInt(cell0.getErrorCellValue()));
+                cell0 = row.getCell(0);
+                assertEquals(CellType.ERROR, cell0.getCellType());
+                assertEquals(FormulaError.NUM, forInt(cell0.getErrorCellValue()));
 
-        cell1 = row.getCell(1);
-        assertEquals(CellType.ERROR, cell1.getCellType());
-        assertEquals(FormulaError.DIV0, forInt(cell1.getErrorCellValue()));
+                cell1 = row.getCell(1);
+                assertEquals(CellType.ERROR, cell1.getCellType());
+                assertEquals(FormulaError.DIV0, forInt(cell1.getErrorCellValue()));
 
-        cell2 = row.getCell(2);
-        assertEquals(CellType.ERROR, cell2.getCellType());
-        assertEquals(FormulaError.DIV0, forInt(cell2.getErrorCellValue()));
-        wb2.close();
+                cell2 = row.getCell(2);
+                assertEquals(CellType.ERROR, cell2.getCellType());
+                assertEquals(FormulaError.DIV0, forInt(cell2.getErrorCellValue()));
+            }
+        }
     }
 
     @Test
     public void testDefaultStyleProperties() throws Exception {
-        Workbook wb1 = _testDataProvider.createWorkbook();
+        try (Workbook wb1 = _testDataProvider.createWorkbook()) {
 
-        Cell cell = wb1.createSheet("Sheet1").createRow(0).createCell(0);
-        CellStyle style = cell.getCellStyle();
+            Cell cell = wb1.createSheet("Sheet1").createRow(0).createCell(0);
+            CellStyle style = cell.getCellStyle();
 
-        assertTrue(style.getLocked());
-        assertFalse(style.getHidden());
-        assertEquals(0, style.getIndention());
-        assertEquals(0, style.getFontIndexAsInt());
-        assertEquals(HorizontalAlignment.GENERAL, style.getAlignment());
-        assertEquals(0, style.getDataFormat());
-        assertFalse(style.getWrapText());
+            assertTrue(style.getLocked());
+            assertFalse(style.getHidden());
+            assertEquals(0, style.getIndention());
+            assertEquals(0, style.getFontIndexAsInt());
+            assertEquals(HorizontalAlignment.GENERAL, style.getAlignment());
+            assertEquals(0, style.getDataFormat());
+            assertFalse(style.getWrapText());
 
-        CellStyle style2 = wb1.createCellStyle();
-        assertTrue(style2.getLocked());
-        assertFalse(style2.getHidden());
-        style2.setLocked(false);
-        style2.setHidden(true);
-        assertFalse(style2.getLocked());
-        assertTrue(style2.getHidden());
+            CellStyle style2 = wb1.createCellStyle();
+            assertTrue(style2.getLocked());
+            assertFalse(style2.getHidden());
+            style2.setLocked(false);
+            style2.setHidden(true);
+            assertFalse(style2.getLocked());
+            assertTrue(style2.getHidden());
 
-        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
-        wb1.close();
-        cell = wb2.getSheetAt(0).getRow(0).getCell(0);
-        style = cell.getCellStyle();
-        assertFalse(style2.getLocked());
-        assertTrue(style2.getHidden());
-        assertTrue(style.getLocked());
-        assertFalse(style.getHidden());
+            try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1)) {
+                cell = wb2.getSheetAt(0).getRow(0).getCell(0);
+                style = cell.getCellStyle();
+                assertFalse(style2.getLocked());
+                assertTrue(style2.getHidden());
+                assertTrue(style.getLocked());
+                assertFalse(style.getHidden());
 
-        style2.setLocked(true);
-        style2.setHidden(false);
-        assertTrue(style2.getLocked());
-        assertFalse(style2.getHidden());
-        wb2.close();
+                style2.setLocked(true);
+                style2.setHidden(false);
+                assertTrue(style2.getLocked());
+                assertFalse(style2.getHidden());
+            }
+        }
     }
 
     @Test
     public void testBug55658SetNumericValue() throws Exception {
-        Workbook wb1 = _testDataProvider.createWorkbook();
-        Sheet sh = wb1.createSheet();
-        Row row = sh.createRow(0);
-        Cell cell = row.createCell(0);
-        cell.setCellValue(Integer.valueOf(23));
-        
-        cell.setCellValue("some");
+        try (Workbook wb1 = _testDataProvider.createWorkbook()) {
+            Sheet sh = wb1.createSheet();
+            Row row = sh.createRow(0);
+            Cell cell = row.createCell(0);
+            cell.setCellValue(Integer.valueOf(23));
 
-        cell = row.createCell(1);
-        cell.setCellValue(Integer.valueOf(23));
-        
-        cell.setCellValue("24");
+            cell.setCellValue("some");
 
-        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
-        wb1.close();
+            cell = row.createCell(1);
+            cell.setCellValue(Integer.valueOf(23));
 
-        assertEquals("some", wb2.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
-        assertEquals("24", wb2.getSheetAt(0).getRow(0).getCell(1).getStringCellValue());
-        wb2.close();
+            cell.setCellValue("24");
+
+            try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1)) {
+                assertEquals("some", wb2.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
+                assertEquals("24", wb2.getSheetAt(0).getRow(0).getCell(1).getStringCellValue());
+            }
+        }
     }
 
     @Test
     public void testRemoveHyperlink() throws Exception {
-        Workbook wb1 = _testDataProvider.createWorkbook();
-        Sheet sh = wb1.createSheet("test");
-        Row row = sh.createRow(0);
-        CreationHelper helper = wb1.getCreationHelper();
+        try (Workbook wb1 = _testDataProvider.createWorkbook()) {
+            Sheet sh = wb1.createSheet("test");
+            Row row = sh.createRow(0);
+            CreationHelper helper = wb1.getCreationHelper();
 
-        Cell cell1 = row.createCell(1);
-        Hyperlink link1 = helper.createHyperlink(HyperlinkType.URL);
-        cell1.setHyperlink(link1);
-        assertNotNull(cell1.getHyperlink());
-        cell1.removeHyperlink();
-        assertNull(cell1.getHyperlink());
+            Cell cell1 = row.createCell(1);
+            Hyperlink link1 = helper.createHyperlink(HyperlinkType.URL);
+            cell1.setHyperlink(link1);
+            assertNotNull(cell1.getHyperlink());
+            cell1.removeHyperlink();
+            assertNull(cell1.getHyperlink());
 
-        Cell cell2 = row.createCell(0);
-        Hyperlink link2 = helper.createHyperlink(HyperlinkType.URL);
-        cell2.setHyperlink(link2);
-        assertNotNull(cell2.getHyperlink());
-        cell2.setHyperlink(null);
-        assertNull(cell2.getHyperlink());
+            Cell cell2 = row.createCell(0);
+            Hyperlink link2 = helper.createHyperlink(HyperlinkType.URL);
+            cell2.setHyperlink(link2);
+            assertNotNull(cell2.getHyperlink());
+            cell2.setHyperlink(null);
+            assertNull(cell2.getHyperlink());
 
-        Cell cell3 = row.createCell(2);
-        Hyperlink link3 = helper.createHyperlink(HyperlinkType.URL);
-        link3.setAddress("http://poi.apache.org/");
-        cell3.setHyperlink(link3);
-        assertNotNull(cell3.getHyperlink());
+            Cell cell3 = row.createCell(2);
+            Hyperlink link3 = helper.createHyperlink(HyperlinkType.URL);
+            link3.setAddress("http://poi.apache.org/");
+            cell3.setHyperlink(link3);
+            assertNotNull(cell3.getHyperlink());
 
-        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
-        wb1.close();
-        assertNotNull(wb2);
-        
-        cell1 = wb2.getSheet("test").getRow(0).getCell(1);
-        assertNull(cell1.getHyperlink());
-        cell2 = wb2.getSheet("test").getRow(0).getCell(0);
-        assertNull(cell2.getHyperlink());
-        cell3 = wb2.getSheet("test").getRow(0).getCell(2);
-        assertNotNull(cell3.getHyperlink());
-        wb2.close();
+            try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1)) {
+                assertNotNull(wb2);
+
+                cell1 = wb2.getSheet("test").getRow(0).getCell(1);
+                assertNull(cell1.getHyperlink());
+                cell2 = wb2.getSheet("test").getRow(0).getCell(0);
+                assertNull(cell2.getHyperlink());
+                cell3 = wb2.getSheet("test").getRow(0).getCell(2);
+                assertNotNull(cell3.getHyperlink());
+            }
+        }
     }
 
     /**
@@ -857,45 +825,44 @@ public abstract class BaseTestCell {
             assertEquals(36, cell.getErrorCellValue());
         }
     }
-    
+
     @Test
     public void testSetRemoveStyle() throws Exception {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sheet = wb.createSheet();
-        Row row = sheet.createRow(0);
-        Cell cell = row.createCell(0);
-        
-        // different default style indexes for HSSF and XSSF/SXSSF
-        CellStyle defaultStyle = wb.getCellStyleAt(wb instanceof HSSFWorkbook ? (short)15 : (short)0);
-        
-        // Starts out with the default style
-        assertEquals(defaultStyle, cell.getCellStyle());
-        
-        // Create some styles, no change
-        CellStyle style1 = wb.createCellStyle();
-        CellStyle style2 = wb.createCellStyle();
-        style1.setDataFormat((short)2);
-        style2.setDataFormat((short)3);
-        
-        assertEquals(defaultStyle, cell.getCellStyle());
-        
-        // Apply one, changes
-        cell.setCellStyle(style1);
-        assertEquals(style1, cell.getCellStyle());
-        
-        // Apply the other, changes
-        cell.setCellStyle(style2);
-        assertEquals(style2, cell.getCellStyle());
-        
-        // Remove, goes back to default
-        cell.setCellStyle(null);
-        assertEquals(defaultStyle, cell.getCellStyle());
-        
-        // Add back, returns
-        cell.setCellStyle(style2);
-        assertEquals(style2, cell.getCellStyle());
-        
-        wb.close();
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
+
+            // different default style indexes for HSSF and XSSF/SXSSF
+            CellStyle defaultStyle = wb.getCellStyleAt(wb instanceof HSSFWorkbook ? (short) 15 : (short) 0);
+
+            // Starts out with the default style
+            assertEquals(defaultStyle, cell.getCellStyle());
+
+            // Create some styles, no change
+            CellStyle style1 = wb.createCellStyle();
+            CellStyle style2 = wb.createCellStyle();
+            style1.setDataFormat((short) 2);
+            style2.setDataFormat((short) 3);
+
+            assertEquals(defaultStyle, cell.getCellStyle());
+
+            // Apply one, changes
+            cell.setCellStyle(style1);
+            assertEquals(style1, cell.getCellStyle());
+
+            // Apply the other, changes
+            cell.setCellStyle(style2);
+            assertEquals(style2, cell.getCellStyle());
+
+            // Remove, goes back to default
+            cell.setCellStyle(null);
+            assertEquals(defaultStyle, cell.getCellStyle());
+
+            // Add back, returns
+            cell.setCellStyle(style2);
+            assertEquals(style2, cell.getCellStyle());
+        }
     }
 
     @Test
@@ -954,11 +921,11 @@ public abstract class BaseTestCell {
     }
 
     private void checkUnicodeValues(Workbook wb) {
-        assertEquals((wb instanceof HSSFWorkbook ? "row 0, cell 0 _x0046_ without changes" : "row 0, cell 0 F without changes"), 
+        assertEquals((wb instanceof HSSFWorkbook ? "row 0, cell 0 _x0046_ without changes" : "row 0, cell 0 F without changes"),
                 wb.getSheetAt(0).getRow(0).getCell(0).toString());
-        assertEquals((wb instanceof HSSFWorkbook ? "row 0, cell 1 _x005fx0046_ with changes" : "row 0, cell 1 _x005fx0046_ with changes"), 
+        assertEquals((wb instanceof HSSFWorkbook ? "row 0, cell 1 _x005fx0046_ with changes" : "row 0, cell 1 _x005fx0046_ with changes"),
                 wb.getSheetAt(0).getRow(0).getCell(1).toString());
-        assertEquals((wb instanceof HSSFWorkbook ? "hgh_x0041_**_x0100_*_x0101_*_x0190_*_x0200_*_x0300_*_x0427_*" : "hghA**\u0100*\u0101*\u0190*\u0200*\u0300*\u0427*"), 
+        assertEquals((wb instanceof HSSFWorkbook ? "hgh_x0041_**_x0100_*_x0101_*_x0190_*_x0200_*_x0300_*_x0427_*" : "hghA**\u0100*\u0101*\u0190*\u0200*\u0300*\u0427*"),
                 wb.getSheetAt(0).getRow(0).getCell(2).toString());
     }
 
@@ -1237,205 +1204,215 @@ public abstract class BaseTestCell {
 
     @Test(expected = IllegalArgumentException.class)
     public void setCellType_null_throwsIAE() throws IOException {
-        Cell cell = getInstance();
-        try {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = getInstance(wb);
             cell.setCellType(null);
-        } finally {
-            cell.getSheet().getWorkbook().close();
         }
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void setCellType_NONE_throwsIAE() {
-        Cell cell = getInstance();
-        cell.setCellType(CellType._NONE);
+    public void setCellType_NONE_throwsIAE() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = getInstance(wb);
+            cell.setCellType(CellType._NONE);
+        }
     }
 
 
     @Test
-    public void setBlank_removesArrayFormula_ifCellIsPartOfAnArrayFormulaGroupContainingOnlyThisCell() {
-        Cell cell = getInstance();
+    public void setBlank_removesArrayFormula_ifCellIsPartOfAnArrayFormulaGroupContainingOnlyThisCell() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = getInstance(wb);
 
-        cell.getSheet().setArrayFormula("1", CellRangeAddress.valueOf("A1"));
-        cell.setCellValue("foo");
-        assertTrue(cell.isPartOfArrayFormulaGroup());
-        assertEquals("1", cell.getCellFormula());
+            cell.getSheet().setArrayFormula("1", CellRangeAddress.valueOf("A1"));
+            cell.setCellValue("foo");
+            assertTrue(cell.isPartOfArrayFormulaGroup());
+            assertEquals("1", cell.getCellFormula());
 
-        cell.setBlank();
+            cell.setBlank();
 
-        assertEquals(CellType.BLANK, cell.getCellType());
-        assertFalse(cell.isPartOfArrayFormulaGroup());
+            assertEquals(CellType.BLANK, cell.getCellType());
+            assertFalse(cell.isPartOfArrayFormulaGroup());
+        }
     }
 
     @Test(expected = IllegalStateException.class)
-    public void setBlank_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() {
-        Cell cell = getInstance();
-        cell.getSheet().setArrayFormula("1", CellRangeAddress.valueOf("A1:B1"));
-        cell.setCellValue("foo");
-        cell.setBlank();
+    public void setBlank_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = getInstance(wb);
+            cell.getSheet().setArrayFormula("1", CellRangeAddress.valueOf("A1:B1"));
+            cell.setCellValue("foo");
+            cell.setBlank();
+        }
     }
 
     @Test(expected = IllegalStateException.class)
     public void setCellFormula_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() throws IOException {
-        Cell cell = getInstance();
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = getInstance(wb);
 
-        try {
             cell.getSheet().setArrayFormula("1", CellRangeAddress.valueOf("A1:B1"));
             assertTrue(cell.isPartOfArrayFormulaGroup());
             assertEquals(CellType.FORMULA, cell.getCellType());
 
             cell.setCellFormula("1");
-        } finally {
-            cell.getSheet().getWorkbook().close();
         }
     }
 
     @Test
-    public void removeFormula_preservesValue() {
-        Cell cell = getInstance();
+    public void removeFormula_preservesValue() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = getInstance(wb);
 
-        cell.setCellFormula("#DIV/0!");
-        cell.setCellValue(true);
-        cell.removeFormula();
-        assertEquals(CellType.BOOLEAN, cell.getCellType());
-        assertTrue(cell.getBooleanCellValue());
+            cell.setCellFormula("#DIV/0!");
+            cell.setCellValue(true);
+            cell.removeFormula();
+            assertEquals(CellType.BOOLEAN, cell.getCellType());
+            assertTrue(cell.getBooleanCellValue());
 
-        cell.setCellFormula("#DIV/0!");
-        cell.setCellValue(2);
-        cell.removeFormula();
-        assertEquals(CellType.NUMERIC, cell.getCellType());
-        assertEquals(2, cell.getNumericCellValue(), 0);
+            cell.setCellFormula("#DIV/0!");
+            cell.setCellValue(2);
+            cell.removeFormula();
+            assertEquals(CellType.NUMERIC, cell.getCellType());
+            assertEquals(2, cell.getNumericCellValue(), 0);
 
-        cell.setCellFormula("#DIV/0!");
-        cell.setCellValue("foo");
-        cell.removeFormula();
-        assertEquals(CellType.STRING, cell.getCellType());
-        assertEquals("foo", cell.getStringCellValue());
+            cell.setCellFormula("#DIV/0!");
+            cell.setCellValue("foo");
+            cell.removeFormula();
+            assertEquals(CellType.STRING, cell.getCellType());
+            assertEquals("foo", cell.getStringCellValue());
 
-        cell.setCellFormula("#DIV/0!");
-        cell.setCellErrorValue(FormulaError.NUM.getCode());
-        cell.removeFormula();
-        assertEquals(CellType.ERROR, cell.getCellType());
-        assertEquals(FormulaError.NUM.getCode(), cell.getErrorCellValue());
+            cell.setCellFormula("#DIV/0!");
+            cell.setCellErrorValue(FormulaError.NUM.getCode());
+            cell.removeFormula();
+            assertEquals(CellType.ERROR, cell.getCellType());
+            assertEquals(FormulaError.NUM.getCode(), cell.getErrorCellValue());
+        }
     }
 
     @Test
-    public void removeFormula_turnsCellToBlank_whenFormulaWasASingleCellArrayFormula() {
-        Cell cell = getInstance();
+    public void removeFormula_turnsCellToBlank_whenFormulaWasASingleCellArrayFormula() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = getInstance(wb);
 
-        cell.getSheet().setArrayFormula("#DIV/0!", CellRangeAddress.valueOf("A1"));
-        cell.setCellValue(true);
-        cell.removeFormula();
-        assertEquals(CellType.BLANK, cell.getCellType());
+            cell.getSheet().setArrayFormula("#DIV/0!", CellRangeAddress.valueOf("A1"));
+            cell.setCellValue(true);
+            cell.removeFormula();
+            assertEquals(CellType.BLANK, cell.getCellType());
 
-        cell.getSheet().setArrayFormula("#DIV/0!", CellRangeAddress.valueOf("A1"));
-        cell.setCellValue(2);
-        cell.removeFormula();
-        assertEquals(CellType.BLANK, cell.getCellType());
+            cell.getSheet().setArrayFormula("#DIV/0!", CellRangeAddress.valueOf("A1"));
+            cell.setCellValue(2);
+            cell.removeFormula();
+            assertEquals(CellType.BLANK, cell.getCellType());
 
-        cell.getSheet().setArrayFormula("#DIV/0!", CellRangeAddress.valueOf("A1"));
-        cell.setCellValue(true);
-        cell.removeFormula();
-        assertEquals(CellType.BLANK, cell.getCellType());
+            cell.getSheet().setArrayFormula("#DIV/0!", CellRangeAddress.valueOf("A1"));
+            cell.setCellValue(true);
+            cell.removeFormula();
+            assertEquals(CellType.BLANK, cell.getCellType());
 
-        cell.getSheet().setArrayFormula("#DIV/0!", CellRangeAddress.valueOf("A1"));
-        cell.setCellErrorValue(FormulaError.NUM.getCode());
-        cell.removeFormula();
-        assertEquals(CellType.BLANK, cell.getCellType());
+            cell.getSheet().setArrayFormula("#DIV/0!", CellRangeAddress.valueOf("A1"));
+            cell.setCellErrorValue(FormulaError.NUM.getCode());
+            cell.removeFormula();
+            assertEquals(CellType.BLANK, cell.getCellType());
+        }
     }
 
     @Test
     public void setCellFormula_onABlankCell_setsValueToZero() throws IOException {
-        Cell cell = getInstance();
-        cell.setCellFormula("\"foo\"");
-        assertEquals(CellType.FORMULA, cell.getCellType());
-        assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType());
-        assertEquals(0, cell.getNumericCellValue(), 0);
-        cell.getSheet().getWorkbook().close();
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = getInstance(wb);
+            cell.setCellFormula("\"foo\"");
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            assertEquals(CellType.NUMERIC, cell.getCachedFormulaResultType());
+            assertEquals(0, cell.getNumericCellValue(), 0);
+        }
     }
 
 
     @Test
     public void setCellFormula_onANonBlankCell_preservesTheValue() throws IOException {
-        Cell cell = getInstance();
-        cell.setCellValue(true);
-        cell.setCellFormula("\"foo\"");
-        assertEquals(CellType.FORMULA, cell.getCellType());
-        assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
-        assertTrue(cell.getBooleanCellValue());
-        cell.getSheet().getWorkbook().close();
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = getInstance(wb);
+            cell.setCellValue(true);
+            cell.setCellFormula("\"foo\"");
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
+            assertTrue(cell.getBooleanCellValue());
+        }
     }
 
     @Test
-    public void setCellFormula_onAFormulaCell_changeFormula_preservesTheValue() {
-        Cell cell = getInstance();
-        cell.setCellFormula("\"foo\"");
-        cell.setCellValue(true);
-        assertEquals(CellType.FORMULA, cell.getCellType());
-        assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
-        assertTrue(cell.getBooleanCellValue());
+    public void setCellFormula_onAFormulaCell_changeFormula_preservesTheValue() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = getInstance(wb);
+            cell.setCellFormula("\"foo\"");
+            cell.setCellValue(true);
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
+            assertTrue(cell.getBooleanCellValue());
 
-        cell.setCellFormula("\"bar\"");
-        assertEquals(CellType.FORMULA, cell.getCellType());
-        assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
-        assertTrue(cell.getBooleanCellValue());
+            cell.setCellFormula("\"bar\"");
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
+            assertTrue(cell.getBooleanCellValue());
+        }
     }
 
     @Test
-    public void setCellFormula_onASingleCellArrayFormulaCell_preservesTheValue() {
-        Cell cell = getInstance();
-        cell.getSheet().setArrayFormula("\"foo\"", CellRangeAddress.valueOf("A1"));
-        cell.setCellValue(true);
+    public void setCellFormula_onASingleCellArrayFormulaCell_preservesTheValue() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = getInstance(wb);
+            cell.getSheet().setArrayFormula("\"foo\"", CellRangeAddress.valueOf("A1"));
+            cell.setCellValue(true);
 
-        assertTrue(cell.isPartOfArrayFormulaGroup());
-        assertEquals(CellType.FORMULA, cell.getCellType());
-        assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
-        assertTrue(cell.getBooleanCellValue());
+            assertTrue(cell.isPartOfArrayFormulaGroup());
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
+            assertTrue(cell.getBooleanCellValue());
 
-        cell.getSheet().setArrayFormula("\"bar\"", CellRangeAddress.valueOf("A1"));
-        assertEquals(CellType.FORMULA, cell.getCellType());
-        assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
-        assertTrue(cell.getBooleanCellValue());
+            cell.getSheet().setArrayFormula("\"bar\"", CellRangeAddress.valueOf("A1"));
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
+            assertTrue(cell.getBooleanCellValue());
+        }
     }
 
     @Test(expected = IllegalArgumentException.class)
     public void setCellType_FORMULA_onANonFormulaCell_throwsIllegalArgumentException() throws IOException {
-        Cell cell = getInstance();
-        try {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = getInstance(wb);
             cell.setCellType(CellType.FORMULA);
-        } finally {
-            cell.getSheet().getWorkbook().close();
         }
     }
 
     @Test
     public void setCellType_FORMULA_onAFormulaCell_doesNothing() throws IOException {
-        Cell cell = getInstance();
-        try {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = getInstance(wb);
             cell.setCellFormula("3");
             cell.setCellValue("foo");
-    
+
             cell.setCellType(CellType.FORMULA);
-    
+
             assertEquals(CellType.FORMULA, cell.getCellType());
             assertEquals(CellType.STRING, cell.getCachedFormulaResultType());
             assertEquals("foo", cell.getStringCellValue());
-        } finally {
-            cell.getSheet().getWorkbook().close();
         }
     }
 
     @Test
-    public void setCellType_FORMULA_onAnArrayFormulaCell_doesNothing() {
-        Cell cell = getInstance();
-        cell.getSheet().setArrayFormula("3", CellRangeAddress.valueOf("A1:A2"));
-        cell.setCellValue("foo");
+    public void setCellType_FORMULA_onAnArrayFormulaCell_doesNothing() throws IOException {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Cell cell = getInstance(wb);
+            cell.getSheet().setArrayFormula("3", CellRangeAddress.valueOf("A1:A2"));
+            cell.setCellValue("foo");
 
-        cell.setCellType(CellType.FORMULA);
+            cell.setCellType(CellType.FORMULA);
 
-        assertEquals(CellType.FORMULA, cell.getCellType());
-        assertEquals(CellType.STRING, cell.getCachedFormulaResultType());
-        assertEquals("foo", cell.getStringCellValue());
+            assertEquals(CellType.FORMULA, cell.getCellType());
+            assertEquals(CellType.STRING, cell.getCachedFormulaResultType());
+            assertEquals("foo", cell.getStringCellValue());
+        }
     }
 
     @Test
@@ -1448,17 +1425,7 @@ public abstract class BaseTestCell {
         verify(cell).setBlank();
     }
 
-    private List<Workbook> workbooksToClose = new ArrayList<>();
-
-    @After
-    public void closeWorkbooks() throws IOException {
-        for (Workbook workbook : workbooksToClose) {
-            workbook.close();
-        }
-    }
-    private Cell getInstance() {
-        Workbook workbookToClose = _testDataProvider.createWorkbook();
-        workbooksToClose.add(workbookToClose);
-        return workbookToClose.createSheet().createRow(0).createCell(0);
+    private Cell getInstance(Workbook wb) {
+        return wb.createSheet().createRow(0).createCell(0);
     }
 }

@@ -17,25 +17,28 @@
 
 package org.apache.poi.hslf.record;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
-import org.apache.poi.poifs.filesystem.*;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests that Document works properly (Also tests Environment while we're at it)
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestDocument extends TestCase {
-	// HSLFSlideShow primed on the test data
-	private final HSLFSlideShowImpl ss;
-	// POIFS primed on the test data
-	private final POIFSFileSystem pfs;
+public final class TestDocument {
+	private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
-	public TestDocument() throws Exception {
-        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+	// HSLFSlideShow primed on the test data
+	private HSLFSlideShowImpl ss;
+	// POIFS primed on the test data
+	private POIFSFileSystem pfs;
+
+	@Before
+	public void setup() throws Exception {
 		pfs = new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss = new HSLFSlideShowImpl(pfs);
 	}
@@ -50,11 +53,13 @@ public final class TestDocument extends TestCase {
 		throw new IllegalStateException("No Document record found");
 	}
 
+	@Test
 	public void testRecordType() {
 		Document dr = getDocRecord();
 		assertEquals(1000, dr.getRecordType());
 	}
 
+	@Test
 	public void testChildRecords() {
 		Document dr = getDocRecord();
 		assertNotNull(dr.getDocumentAtom());
@@ -68,6 +73,7 @@ public final class TestDocument extends TestCase {
 		assertNotNull(dr.getSlideListWithTexts()[2]);
 	}
 
+	@Test
 	public void testEnvironment() {
 		Document dr = getDocRecord();
 		Environment env = dr.getEnvironment();

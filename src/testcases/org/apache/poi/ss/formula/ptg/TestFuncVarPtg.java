@@ -17,15 +17,17 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.junit.Test;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 /**
  * @author Josh Micich
  */
-public final class TestFuncVarPtg extends TestCase {
+public final class TestFuncVarPtg {
 
 	/**
 	 * The first fix for bugzilla 44675 broke the encoding of SUM formulas (and probably others).
@@ -34,20 +36,23 @@ public final class TestFuncVarPtg extends TestCase {
 	 * wrong.  In other cases Excel seems to tolerate bad operand classes.</p>
 	 * This functionality is related to the setParameterRVA() methods of <tt>FormulaParser</tt>
 	 */
+	@Test
 	public void testOperandClass() {
 		HSSFWorkbook book = new HSSFWorkbook();
 		Ptg[] ptgs = HSSFFormulaParser.parse("sum(A1:A2)", book);
 		assertEquals(2, ptgs.length);
 		assertEquals(AreaPtg.class, ptgs[0].getClass());
-		
+
 		switch(ptgs[0].getPtgClass()) {
 			case Ptg.CLASS_REF:
 				// correct behaviour
 				break;
 			case Ptg.CLASS_VALUE:
-				throw new AssertionFailedError("Identified bug 44675b");
+				fail("Identified bug 44675b");
+				break;
 			default:
-				throw new RuntimeException("Unexpected operand class");
+				fail("Unexpected operand class");
+				break;
 		}
 	}
 }

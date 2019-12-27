@@ -17,18 +17,20 @@
 
 package org.apache.poi.poifs.storage;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Class to test HeaderBlockReader functionality
- *
- * @author Marc Johnson
  */
-public final class TestHeaderBlockReading extends TestCase {
+public final class TestHeaderBlockReading {
 
+	@Test
 	public void testConstructors() throws IOException {
 		String[] hexData = {
 			"D0 CF 11 E0 A1 B1 1A E1 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 3B 00 03 00 FE FF 09 00",

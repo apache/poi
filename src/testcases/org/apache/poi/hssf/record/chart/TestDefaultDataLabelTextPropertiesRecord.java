@@ -18,23 +18,23 @@
 package org.apache.poi.hssf.record.chart;
 
 
-import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the DefaultDataLabelTextPropertiesRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
-
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestDefaultDataLabelTextPropertiesRecord extends TestCase {
+public final class TestDefaultDataLabelTextPropertiesRecord {
     byte[] data = new byte[] {
         (byte)0x02,(byte)0x00
     };
 
+    @Test
     public void testLoad() {
 
         DefaultDataLabelTextPropertiesRecord record = new DefaultDataLabelTextPropertiesRecord(TestcaseRecordInputStream.create(0x1024, data));
@@ -43,15 +43,12 @@ public final class TestDefaultDataLabelTextPropertiesRecord extends TestCase {
         assertEquals( 6, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
+    @Test
+    public void testStore() {
         DefaultDataLabelTextPropertiesRecord record = new DefaultDataLabelTextPropertiesRecord();
         record.setCategoryDataType( (short)2 );
 
-
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        confirmRecordEncoding(DefaultDataLabelTextPropertiesRecord.sid, data, recordBytes);
     }
 }

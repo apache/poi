@@ -18,19 +18,19 @@
 package org.apache.poi.hssf.record;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests the AutoFilterInfoRecord class.
- *
- * @author Yegor Kozlov
  */
-public final class TestAutoFilterInfoRecord extends TestCase {
+public final class TestAutoFilterInfoRecord {
     private final byte[] data = new byte[] {
         0x05, 0x00
     };
 
+    @Test
     public void testRead() {
 
         AutoFilterInfoRecord record = new AutoFilterInfoRecord(TestcaseRecordInputStream.create(AutoFilterInfoRecord.sid, data));
@@ -42,6 +42,7 @@ public final class TestAutoFilterInfoRecord extends TestCase {
         assertEquals(3, record.getNumEntries());
     }
 
+    @Test
     public void testWrite() {
         AutoFilterInfoRecord record = new AutoFilterInfoRecord();
         record.setNumEntries((short)3);
@@ -52,6 +53,7 @@ public final class TestAutoFilterInfoRecord extends TestCase {
         assertEquals(3, record.getNumEntries());
     }
 
+    @Test
     public void testClone()
     {
         AutoFilterInfoRecord record = new AutoFilterInfoRecord();

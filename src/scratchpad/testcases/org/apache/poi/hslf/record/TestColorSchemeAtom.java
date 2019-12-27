@@ -18,28 +18,31 @@
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayOutputStream;
+
+import org.junit.Test;
 
 /**
  * Tests that ColorSchemAtom works properly
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestColorSchemeAtom extends TestCase {
+public final class TestColorSchemeAtom {
 	// From a real file
-	private final byte[] data_a = new byte[] { 60, 0, 0xF0-256, 0x07, 0x20, 0, 0, 0,
-		0xFF-256, 0xFF-256, 0xFF-256, 00,   00, 00, 00, 00,
-		0x80-256, 0x80-256, 0x80-256, 00,   00, 00, 00, 00,
-		0xBB-256, 0xE0-256, 0xE3-256, 00,   0x33, 0x33, 0x99-256, 00,
-		00, 0x99-256, 0x99-256, 00,         0x99-256, 0xCC-256, 00, 00
+	private final byte[] data_a = { 60, 0, 0xF0-256, 0x07, 0x20, 0, 0, 0,
+		0xFF-256, 0xFF-256, 0xFF-256, 0,   0, 0, 0, 0,
+		0x80-256, 0x80-256, 0x80-256, 0,   0, 0, 0, 0,
+		0xBB-256, 0xE0-256, 0xE3-256, 0,   0x33, 0x33, 0x99-256, 0,
+		0, 0x99-256, 0x99-256, 0,         0x99-256, 0xCC-256, 0, 0
 	};
 
+	@Test
 	public void testRecordType() {
 		ColorSchemeAtom csa = new ColorSchemeAtom(data_a,0,data_a.length);
-		assertEquals(2032l, csa.getRecordType());
+		assertEquals(2032L, csa.getRecordType());
 	}
 
+	@Test
 	public void testToRGB() {
 		byte[] rgb = ColorSchemeAtom.splitRGB(3669760);
 
@@ -49,6 +52,7 @@ public final class TestColorSchemeAtom extends TestCase {
 		assertEquals(55, rgb[2]);
 	}
 
+	@Test
 	public void testFromRGB() {
 		byte[] rgb_a = new byte[] { 0, 255-256, 55 };
 		byte[] rgb_b = new byte[] { 255-256, 127, 79 };
@@ -60,6 +64,7 @@ public final class TestColorSchemeAtom extends TestCase {
 		assertEquals( 5210111, ColorSchemeAtom.joinRGB( rgb_b[0], rgb_b[1], rgb_b[2] ) );
 	}
 
+	@Test
 	public void testRGBs() {
 		ColorSchemeAtom csa = new ColorSchemeAtom(data_a,0,data_a.length);
 
@@ -73,6 +78,7 @@ public final class TestColorSchemeAtom extends TestCase {
 		assertEquals( 52377 , csa.getAccentAndFollowingHyperlinkColourRGB() );
 	}
 
+	@Test
 	public void testWrite() throws Exception {
 		ColorSchemeAtom csa = new ColorSchemeAtom(data_a,0,data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();

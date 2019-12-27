@@ -16,19 +16,24 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel.charts;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SheetBuilder;
+import org.junit.Test;
 
 /**
  * Tests for {@link org.apache.poi.ss.usermodel.charts.DataSources}.
- *
- * @author Roman Kashitsyn
  */
-public class TestDataSources extends TestCase {
+@SuppressWarnings("deprecation")
+public class TestDataSources {
 
     private static final Object[][] numericCells = {
             {0.0,      1.0,       2.0,     3.0,      4.0},
@@ -44,6 +49,7 @@ public class TestDataSources extends TestCase {
             {1.0, "2.0", 3.0, "4.0", 5.0, "6.0"}
     };
 
+    @Test
     public void testNumericArrayDataSource() {
         Double[] doubles = new Double[]{1.0, 2.0, 3.0, 4.0, 5.0};
         ChartDataSource<Double> doubleDataSource = DataSources.fromArray(doubles);
@@ -52,6 +58,7 @@ public class TestDataSources extends TestCase {
         assertDataSourceIsEqualToArray(doubleDataSource, doubles);
     }
 
+    @Test
     public void testStringArrayDataSource() {
         String[] strings = new String[]{"one", "two", "three", "four", "five"};
         ChartDataSource<String> stringDataSource = DataSources.fromArray(strings);
@@ -60,6 +67,7 @@ public class TestDataSources extends TestCase {
         assertDataSourceIsEqualToArray(stringDataSource, strings);
     }
 
+    @Test
     public void testNumericCellDataSource() {
         Workbook wb = new HSSFWorkbook();
         Sheet sheet = new SheetBuilder(wb, numericCells).build();
@@ -74,6 +82,7 @@ public class TestDataSources extends TestCase {
         }
     }
 
+    @Test
     public void testStringCellDataSource() {
         Workbook wb = new HSSFWorkbook();
         Sheet sheet = new SheetBuilder(wb, stringCells).build();
@@ -87,6 +96,7 @@ public class TestDataSources extends TestCase {
         }
     }
 
+    @Test
     public void testMixedCellDataSource() {
         Workbook wb = new HSSFWorkbook();
         Sheet sheet = new SheetBuilder(wb, mixedCells).build();
@@ -105,6 +115,7 @@ public class TestDataSources extends TestCase {
         }
     }
 
+    @Test
     public void testIOBExceptionOnInvalidIndex() {
         Workbook wb = new HSSFWorkbook();
         Sheet sheet = new SheetBuilder(wb, numericCells).build();

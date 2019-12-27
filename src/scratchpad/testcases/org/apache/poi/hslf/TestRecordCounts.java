@@ -18,27 +18,33 @@
 package org.apache.poi.hslf;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-import org.apache.poi.hslf.record.*;
-import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.record.Notes;
+import org.apache.poi.hslf.record.Record;
+import org.apache.poi.hslf.record.Slide;
+import org.apache.poi.hslf.record.SlideListWithText;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests that HSLFSlideShow returns the right numbers of key records when
  * it parses the test file
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestRecordCounts extends TestCase {
-	// HSLFSlideShow primed on the test data
-	private final HSLFSlideShowImpl ss;
+public final class TestRecordCounts {
 
-	public TestRecordCounts() throws Exception {
-        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+	private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+	// HSLFSlideShow primed on the test data
+	private HSLFSlideShowImpl ss;
+
+	@Before
+	public void setup() throws Exception {
 		ss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 	}
 
+	@Test
 	public void testSheetsCount() {
 		// Top level
 		Record[] r = ss.getRecords();
@@ -53,13 +59,14 @@ public final class TestRecordCounts extends TestCase {
 		assertEquals(3,count);
 	}
 
+	@Test
 	public void testNotesCount() {
 		// Top level
 		Record[] r = ss.getRecords();
 
 		int count = 0;
 		for (final Record rec : r) {
-			if (rec instanceof Notes && rec.getRecordType() == 1008l) {
+			if (rec instanceof Notes && rec.getRecordType() == 1008L) {
 				count++;
 			}
 		}
@@ -67,6 +74,7 @@ public final class TestRecordCounts extends TestCase {
 		assertEquals(3,count);
 	}
 
+	@Test
 	public void testSlideListWithTextCount() {
 		// Second level
 		Record[] rt = ss.getRecords();
@@ -74,7 +82,7 @@ public final class TestRecordCounts extends TestCase {
 
 		int count = 0;
 		for (final Record rec : r) {
-			if (rec instanceof SlideListWithText && rec.getRecordType() == 4080l) {
+			if (rec instanceof SlideListWithText && rec.getRecordType() == 4080L) {
 				count++;
 			}
 		}

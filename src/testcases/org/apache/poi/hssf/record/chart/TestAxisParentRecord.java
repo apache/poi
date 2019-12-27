@@ -18,18 +18,18 @@
 package org.apache.poi.hssf.record.chart;
 
 
-import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the AxisParentRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestAxisParentRecord extends TestCase {
+public final class TestAxisParentRecord {
     byte[] data = new byte[] {
         (byte)0x00,(byte)0x00,                                   // axis type
         (byte)0x1D,(byte)0x02,(byte)0x00,(byte)0x00,             // x
@@ -38,6 +38,7 @@ public final class TestAxisParentRecord extends TestCase {
         (byte)0x56,(byte)0x0B,(byte)0x00,(byte)0x00              // height
     };
 
+    @Test
     public void testLoad() {
         AxisParentRecord record = new AxisParentRecord(TestcaseRecordInputStream.create(0x1041, data));
         assertEquals( AxisParentRecord.AXIS_TYPE_MAIN, record.getAxisType());
@@ -49,8 +50,8 @@ public final class TestAxisParentRecord extends TestCase {
         assertEquals( 22, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
+    @Test
+    public void testStore() {
         AxisParentRecord record = new AxisParentRecord();
         record.setAxisType( AxisParentRecord.AXIS_TYPE_MAIN );
         record.setX( 0x021d );
@@ -60,8 +61,6 @@ public final class TestAxisParentRecord extends TestCase {
 
 
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        confirmRecordEncoding(AxisParentRecord.sid, data, recordBytes);
     }
 }

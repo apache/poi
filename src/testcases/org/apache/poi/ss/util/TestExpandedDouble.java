@@ -18,19 +18,15 @@
 package org.apache.poi.ss.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
-import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.math.RoundingMode;
 
-import org.apache.poi.util.HexDump;
 import org.junit.Test;
 
-import junit.framework.AssertionFailedError;
 /**
  * Tests for {@link ExpandedDouble}
- *
- * @author Josh Micich
  */
 public final class TestExpandedDouble {
 	private static final BigInteger BIG_POW_10 = BigInteger.valueOf(1000000000);
@@ -38,10 +34,7 @@ public final class TestExpandedDouble {
 	@Test
 	public void testNegative() {
 		ExpandedDouble hd = new ExpandedDouble(0xC010000000000000L);
-
-		if (hd.getBinaryExponent() == -2046) {
-			throw new AssertionFailedError("identified bug - sign bit not masked out of exponent");
-		}
+		assertNotEquals("identified bug - sign bit not masked out of exponent", -2046, hd.getBinaryExponent());
 		assertEquals(2, hd.getBinaryExponent());
 		BigInteger frac = hd.getSignificand();
 		assertEquals(64, frac.bitLength());
@@ -51,10 +44,7 @@ public final class TestExpandedDouble {
 	@Test
 	public void testSubnormal() {
 		ExpandedDouble hd = new ExpandedDouble(0x0000000000000001L);
-
-		if (hd.getBinaryExponent() == -1023) {
-			throw new AssertionFailedError("identified bug - subnormal numbers not decoded properly");
-		}
+		assertNotEquals("identified bug - subnormal numbers not decoded properly", -1023, hd.getBinaryExponent());
 		assertEquals(-1086, hd.getBinaryExponent());
 		BigInteger frac = hd.getSignificand();
 		assertEquals(64, frac.bitLength());
@@ -85,115 +75,36 @@ public final class TestExpandedDouble {
 				0x403CE0FFFFFFFFF0L, // has single digit round trip error
 				0x2B2BFFFF10001079L,
 		};
-		boolean success = true;
 		for (int i = 0; i < rawValues.length; i++) {
-			success &= confirmRoundTrip(i, rawValues[i]);
-		}
-		if (!success) {
-			throw new AssertionFailedError("One or more test examples failed.  See stderr.");
+			confirmRoundTrip(i, rawValues[i]);
 		}
 	}
-	
-	public static boolean confirmRoundTrip(int i, long rawBitsA) {
+
+	public static void confirmRoundTrip(int i, long rawBitsA) {
 		double a = Double.longBitsToDouble(rawBitsA);
 		if (a == 0.0) {
 			// Can't represent 0.0 or -0.0 with NormalisedDecimal
-			return true;
+			return;
 		}
-		ExpandedDouble ed1;
-		NormalisedDecimal nd2;
-		ExpandedDouble ed3;
-		try {
-			ed1 = new ExpandedDouble(rawBitsA);
-			nd2 = ed1.normaliseBaseTen();
-			checkNormaliseBaseTenResult(ed1, nd2);
+		ExpandedDouble ed1 = new ExpandedDouble(rawBitsA);
+		NormalisedDecimal nd2 = ed1.normaliseBaseTen();
+		checkNormaliseBaseTenResult(ed1, nd2);
 
-			ed3 = nd2.normaliseBaseTwo();
-		} catch (RuntimeException e) {
-			System.err.println("example[" + i + "] ("
-					+ formatDoubleAsHex(a) + ") exception:");
-			e.printStackTrace();
-			return false;
-		}
-		if (ed3.getBinaryExponent() != ed1.getBinaryExponent()) {
-			System.err.println("example[" + i + "] ("
-					+ formatDoubleAsHex(a) + ") bin exp mismatch");
-			return false;
-		}
+		ExpandedDouble ed3 = nd2.normaliseBaseTwo();
+		assertEquals("bin exp mismatch", ed3.getBinaryExponent(), ed1.getBinaryExponent());
+
 		BigInteger diff = ed3.getSignificand().subtract(ed1.getSignificand()).abs();
 		if (diff.signum() == 0) {
-			return true;
+			return;
 		}
 		// original quantity only has 53 bits of precision
 		// these quantities may have errors in the 64th bit, which hopefully don't make any difference
 
-		if (diff.bitLength() < 2) {
-			// errors in the 64th bit happen from time to time
-			// this is well below the 53 bits of precision required
-			return true;
-		}
-
-		// but bigger errors are a concern
-		System.out.println("example[" + i + "] ("
-				+ formatDoubleAsHex(a) + ") frac mismatch: " + diff);
-
-		for (int j=-2; j<3; j++) {
-			System.out.println((j<0?"":"+") + j + ": " + getNearby(ed1, j));
-		}
-		for (int j=-2; j<3; j++) {
-			System.out.println((j<0?"":"+") + j + ": " + getNearby(nd2, j));
-		}
-
-
-		return false;
+		// errors in the 64th bit happen from time to time
+		// this is well below the 53 bits of precision required
+		assertTrue(diff.bitLength() < 2);
 	}
 
-	public static String getBaseDecimal(ExpandedDouble hd) {
-		int gg = 64 - hd.getBinaryExponent() - 1;
-		BigDecimal bd = new BigDecimal(hd.getSignificand()).divide(new BigDecimal(BigInteger.ONE.shiftLeft(gg)));
-		int excessPrecision = bd.precision() - 23;
-		if (excessPrecision > 0) {
-			bd = bd.setScale(bd.scale() - excessPrecision, RoundingMode.HALF_UP);
-		}
-		return bd.unscaledValue().toString();
-	}
-	
-	public static BigInteger getNearby(NormalisedDecimal md, int offset) {
-		BigInteger frac = md.composeFrac();
-		int be = frac.bitLength() - 24 - 1;
-		int sc = frac.bitLength() - 64;
-		return getNearby(frac.shiftRight(sc), be, offset);
-	}
-
-	public static BigInteger getNearby(ExpandedDouble hd, int offset) {
-		return getNearby(hd.getSignificand(), hd.getBinaryExponent(), offset);
-	}
-
-	private static BigInteger getNearby(BigInteger significand, int binExp, int offset) {
-		int nExtraBits = 1;
-		int nDec = (int) Math.round(3.0 + (64+nExtraBits) * Math.log10(2.0));
-		BigInteger newFrac = significand.shiftLeft(nExtraBits).add(BigInteger.valueOf(offset));
-
-		int gg = 64 + nExtraBits - binExp - 1;
-
-		BigDecimal bd = new BigDecimal(newFrac);
-		if (gg > 0) {
-			bd = bd.divide(new BigDecimal(BigInteger.ONE.shiftLeft(gg)));
-		} else {
-			BigInteger frac = newFrac;
-			while (frac.bitLength() + binExp < 180) {
-				frac = frac.multiply(BigInteger.TEN);
-			}
-			int binaryExp = binExp - newFrac.bitLength() + frac.bitLength();
-
-			bd = new BigDecimal( frac.shiftRight(frac.bitLength()-binaryExp-1));
-		}
-		int excessPrecision = bd.precision() - nDec;
-		if (excessPrecision > 0) {
-			bd = bd.setScale(bd.scale() - excessPrecision, RoundingMode.HALF_UP);
-		}
-		return bd.unscaledValue();
-	}
 
 	private static void checkNormaliseBaseTenResult(ExpandedDouble orig, NormalisedDecimal result) {
 		String sigDigs = result.getSignificantDecimalDigits();
@@ -204,10 +115,7 @@ public final class TestExpandedDouble {
 		int binaryExp = orig.getBinaryExponent() - orig.getSignificand().bitLength();
 
 		String origDigs = frac.shiftLeft(binaryExp+1).toString(10);
-
-		if (!origDigs.startsWith(sigDigs)) {
-			throw new AssertionFailedError("Expected '" + origDigs + "' but got '" + sigDigs + "'.");
-		}
+		assertTrue(origDigs.startsWith(sigDigs));
 
 		double dO = Double.parseDouble("0." + origDigs.substring(sigDigs.length()));
 		double d1 = Double.parseDouble(result.getFractionalPart().toPlainString());
@@ -218,14 +126,7 @@ public final class TestExpandedDouble {
 			return;
 		}
 		BigInteger diff = subDigsB.subtract(subDigsO).abs();
-		if (diff.intValue() > 100) {
-			// 100/32768 ~= 0.003
-			throw new AssertionFailedError("minor mistake");
-		}
-	}
-
-	private static String formatDoubleAsHex(double d) {
-		long l = Double.doubleToLongBits(d);
-		return HexDump.longToHex(l)+'L';
+		// 100/32768 ~= 0.003
+		assertTrue("minor mistake", diff.intValue() <= 100);
 	}
 }

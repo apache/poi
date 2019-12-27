@@ -17,49 +17,55 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+
+import org.junit.Test;
 
 /**
  * Test <code>HSSFTextbox</code>.
- *
- * @author Yegor Kozlov (yegor at apache.org)
  */
-public final class TestHSSFTextbox extends TestCase{
+public final class TestHSSFTextbox {
 
     /**
      * Test that accessors to horizontal and vertical alignment work properly
      */
-    public void testAlignment() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sh1 = wb.createSheet();
-        HSSFPatriarch patriarch = sh1.createDrawingPatriarch();
+    @Test
+    public void testAlignment() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sh1 = wb.createSheet();
+            HSSFPatriarch patriarch = sh1.createDrawingPatriarch();
 
-        HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor(0, 0, 0, 0, (short) 1, 1, (short) 6, 4));
-        HSSFRichTextString str = new HSSFRichTextString("Hello, World");
-        textbox.setString(str);
-        textbox.setHorizontalAlignment(HSSFTextbox.HORIZONTAL_ALIGNMENT_CENTERED);
-        textbox.setVerticalAlignment(HSSFTextbox.VERTICAL_ALIGNMENT_CENTER);
+            HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor(0, 0, 0, 0, (short) 1, 1, (short) 6, 4));
+            HSSFRichTextString str = new HSSFRichTextString("Hello, World");
+            textbox.setString(str);
+            textbox.setHorizontalAlignment(HSSFTextbox.HORIZONTAL_ALIGNMENT_CENTERED);
+            textbox.setVerticalAlignment(HSSFTextbox.VERTICAL_ALIGNMENT_CENTER);
 
-        assertEquals(HSSFTextbox.HORIZONTAL_ALIGNMENT_CENTERED, textbox.getHorizontalAlignment());
-        assertEquals(HSSFTextbox.VERTICAL_ALIGNMENT_CENTER, textbox.getVerticalAlignment());
+            assertEquals(HSSFTextbox.HORIZONTAL_ALIGNMENT_CENTERED, textbox.getHorizontalAlignment());
+            assertEquals(HSSFTextbox.VERTICAL_ALIGNMENT_CENTER, textbox.getVerticalAlignment());
+        }
     }
 
     /**
      * Excel requires at least one format run in HSSFTextbox.
      * When inserting text make sure that if font is not set we must set the default one.
      */
-    public void testSetDeafultTextFormat() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
-        HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
+    @Test
+    public void testSetDeafultTextFormat() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
+            HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 
-        HSSFTextbox textbox1 = patriarch.createTextbox(new HSSFClientAnchor(0,0,0,0,(short)1,1,(short)3,3));
-        HSSFRichTextString rt1 = new HSSFRichTextString("Hello, World!");
-        assertEquals(0, rt1.numFormattingRuns());
-        textbox1.setString(rt1);
+            HSSFTextbox textbox1 = patriarch.createTextbox(new HSSFClientAnchor(0, 0, 0, 0, (short) 1, 1, (short) 3, 3));
+            HSSFRichTextString rt1 = new HSSFRichTextString("Hello, World!");
+            assertEquals(0, rt1.numFormattingRuns());
+            textbox1.setString(rt1);
 
-        HSSFRichTextString rt2 = textbox1.getString();
-        assertEquals(1, rt2.numFormattingRuns());
-        assertEquals(HSSFRichTextString.NO_FONT, rt2.getFontOfFormattingRun(0));
+            HSSFRichTextString rt2 = textbox1.getString();
+            assertEquals(1, rt2.numFormattingRuns());
+            assertEquals(HSSFRichTextString.NO_FONT, rt2.getFontOfFormattingRun(0));
+        }
     }
 }

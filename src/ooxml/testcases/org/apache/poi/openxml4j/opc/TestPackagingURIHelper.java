@@ -16,18 +16,20 @@
 ==================================================================== */
 package org.apache.poi.openxml4j.opc;
 
-import java.net.URI;
-import java.net.URISyntaxException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import junit.framework.TestCase;
+import java.net.URI;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.junit.Test;
 
-public class TestPackagingURIHelper extends TestCase {
+public class TestPackagingURIHelper {
 
     /**
      * Test relativizePartName() method.
      */
+    @Test
     public void testRelativizeURI() throws Exception {
         URI uri1 = new URI("/word/document.xml");
         URI uri2 = new URI("/word/media/image1.gif");
@@ -60,18 +62,23 @@ public class TestPackagingURIHelper extends TestCase {
 
         //URI compatible with MS Office and OpenOffice: leading slash is removed
         uriRes = PackagingURIHelper.relativizeURI(root, uri1, true);
+        assertNotNull(uriRes);
         assertEquals("word/document.xml", uriRes.toString());
 
         //preserve URI fragments
         uriRes = PackagingURIHelper.relativizeURI(uri1, uri3, true);
+        assertNotNull(uriRes);
         assertEquals("media/image1.gif#Sheet1!A1", uriRes.toString());
+        assertNotNull(uriRes);
         uriRes = PackagingURIHelper.relativizeURI(root, uri4, true);
+        assertNotNull(uriRes);
         assertEquals("#'My%20Sheet1'!A1", uriRes.toString());
     }
 
     /**
      * Test createPartName(String, y)
      */
+    @Test
     public void testCreatePartNameRelativeString()
             throws InvalidFormatException {
         PackagePartName partNameToValid = PackagingURIHelper
@@ -93,6 +100,7 @@ public class TestPackagingURIHelper extends TestCase {
     /**
      * Test createPartName(URI, y)
      */
+    @Test
     public void testCreatePartNameRelativeURI() throws Exception {
         PackagePartName partNameToValid = PackagingURIHelper
                 .createPartName("/word/media/image1.gif");
@@ -110,6 +118,7 @@ public class TestPackagingURIHelper extends TestCase {
         pkg.revert();
     }
 
+    @Test
     public void testCreateURIFromString() throws Exception {
         String[] href = {
                 "..\\\\\\cygwin\\home\\yegor\\.vim\\filetype.vim",
@@ -120,15 +129,14 @@ public class TestPackagingURIHelper extends TestCase {
                 "#'性'!B21",
                 "javascript://"
         };
+
         for(String s : href){
-            try {
-                URI uri = PackagingURIHelper.toURI(s);
-            } catch (URISyntaxException e){
-                fail("Failed to create URI from " + s);
-            }
+            URI uri = PackagingURIHelper.toURI(s);
+            assertNotNull(uri);
         }
     }
 
+    @Test
     public void test53734() throws Exception {
         URI uri = PackagingURIHelper.toURI("javascript://");
         // POI appends a trailing slash tpo avoid "Expected authority at index 13: javascript://"

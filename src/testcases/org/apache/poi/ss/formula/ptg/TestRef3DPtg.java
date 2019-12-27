@@ -17,28 +17,32 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.junit.Test;
 
 /**
  * Tests for Ref3DPtg
- * 
- * @author Josh Micich
  */
 public final class TestRef3DPtg extends AbstractPtgTestCase {
-
-	public void testToFormulaString() {
+	@Test
+	public void testToFormulaString() throws IOException {
 
 		Ref3DPtg target = new Ref3DPtg("A1", (short)0);
 
-		HSSFWorkbook wb = createWorkbookWithSheet("my sheet");
-		HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(wb);
-		assertEquals("'my sheet'!A1", target.toFormulaString(book));
+		try (HSSFWorkbook wb = createWorkbookWithSheet("my sheet")) {
+			HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(wb);
+			assertEquals("'my sheet'!A1", target.toFormulaString(book));
 
-		wb.setSheetName(0, "ProfitAndLoss");
-		assertEquals("ProfitAndLoss!A1", target.toFormulaString(book));
+			wb.setSheetName(0, "ProfitAndLoss");
+			assertEquals("ProfitAndLoss!A1", target.toFormulaString(book));
 
-		wb.setSheetName(0, "profit+loss");
-		assertEquals("'profit+loss'!A1", target.toFormulaString(book));
+			wb.setSheetName(0, "profit+loss");
+			assertEquals("'profit+loss'!A1", target.toFormulaString(book));
+		}
 	}
 }

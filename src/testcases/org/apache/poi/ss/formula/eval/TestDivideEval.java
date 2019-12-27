@@ -17,17 +17,16 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.ss.formula.functions.EvalFactory;
 import org.apache.poi.ss.formula.functions.NumericFunctionInvoker;
+import org.junit.Test;
 
 /**
  * Test for divide operator evaluator.
- *
- * @author Josh Micich
  */
-public final class TestDivideEval extends TestCase {
+public final class TestDivideEval {
 
 	private static void confirm(ValueEval arg0, ValueEval arg1, double expectedResult) {
 		ValueEval[] args = {
@@ -39,6 +38,7 @@ public final class TestDivideEval extends TestCase {
 		assertEquals(expectedResult, result, 0);
 	}
 
+	@Test
 	public void testBasic() {
 		confirm(new NumberEval(5), new NumberEval(2), 2.5);
 		confirm(new NumberEval(3), new NumberEval(16), 0.1875);
@@ -47,11 +47,14 @@ public final class TestDivideEval extends TestCase {
 		confirm(BoolEval.TRUE, new StringEval("-0.2"), -5.0);
 	}
 
+	@Test
 	public void test1x1Area() {
 		AreaEval ae0 = EvalFactory.createAreaEval("B2:B2", new ValueEval[] { new NumberEval(50), });
 		AreaEval ae1 = EvalFactory.createAreaEval("C2:C2", new ValueEval[] { new NumberEval(10), });
 		confirm(ae0, ae1, 5);
 	}
+
+	@Test
 	public void testDivZero() {
 		ValueEval[] args = {
 			new NumberEval(5), NumberEval.ZERO,

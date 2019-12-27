@@ -17,13 +17,12 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import junit.framework.Assert;
-import junit.framework.AssertionFailedError;
-
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianInput;
@@ -74,8 +73,7 @@ public final class TestcaseRecordInputStream {
 	 * @param expectedData - just raw data (without sid or size short ints)
 	 * @param actualRecordBytes this includes 4 prefix bytes (sid & size)
 	 */
-	public static void confirmRecordEncoding(int expectedSid, byte[] expectedData, byte[] actualRecordBytes)
-			throws AssertionFailedError {
+	public static void confirmRecordEncoding(int expectedSid, byte[] expectedData, byte[] actualRecordBytes) {
 		confirmRecordEncoding(null, expectedSid, expectedData, actualRecordBytes);
 	}
 	/**
@@ -84,22 +82,22 @@ public final class TestcaseRecordInputStream {
 	 * @param expectedData - just raw data (without ushort sid, ushort size)
 	 * @param actualRecordBytes this includes 4 prefix bytes (sid & size)
 	 */
-	public static void confirmRecordEncoding(String msgPrefix, int expectedSid, byte[] expectedData, byte[] actualRecordBytes)
-			throws AssertionFailedError {
+	public static void confirmRecordEncoding(String msgPrefix, int expectedSid, byte[] expectedData, byte[] actualRecordBytes) {
 		int expectedDataSize = expectedData.length;
-		Assert.assertEquals("Size of encode data mismatch", actualRecordBytes.length - 4, expectedDataSize);
-		Assert.assertEquals(expectedSid, LittleEndian.getShort(actualRecordBytes, 0));
-		Assert.assertEquals(expectedDataSize, LittleEndian.getShort(actualRecordBytes, 2));
-		for (int i = 0; i < expectedDataSize; i++)
-			if (expectedData[i] != actualRecordBytes[i+4]) {
-				StringBuilder sb = new StringBuilder(64);
-				if (msgPrefix != null) {
-					sb.append(msgPrefix).append(": ");
-				}
-				sb.append("At offset ").append(i);
-				sb.append(": expected ").append(HexDump.byteToHex(expectedData[i]));
-				sb.append(" but found ").append(HexDump.byteToHex(actualRecordBytes[i+4]));
-				throw new AssertionFailedError(sb.toString());
-			}
+		assertEquals("Size of encode data mismatch", actualRecordBytes.length - 4, expectedDataSize);
+		assertEquals(expectedSid, LittleEndian.getShort(actualRecordBytes, 0));
+		assertEquals(expectedDataSize, LittleEndian.getShort(actualRecordBytes, 2));
+		assertArrayEquals(expectedData, cut(actualRecordBytes, 4));
+	}
+
+	public static byte[] cut( byte[] data, int fromInclusive ) {
+		return cut(data, fromInclusive, data.length);
+	}
+
+	public static byte[] cut(byte[] data, int fromInclusive, int toExclusive) {
+		int length = toExclusive - fromInclusive;
+		byte[] result = new byte[length];
+		System.arraycopy( data, fromInclusive, result, 0, length);
+		return result;
 	}
 }

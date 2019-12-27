@@ -14,23 +14,22 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.record.chart;
 
 
-import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the FontBasisRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
-
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestFontBasisRecord extends TestCase {
+public final class TestFontBasisRecord {
     byte[] data = new byte[] {
         (byte)0x28,(byte)0x1A,   // x basis
         (byte)0x9C,(byte)0x0F,   // y basis
@@ -39,8 +38,8 @@ public final class TestFontBasisRecord extends TestCase {
         (byte)0x05,(byte)0x00    // index to font table
     };
 
+    @Test
     public void testLoad() {
-
         FontBasisRecord record = new FontBasisRecord(TestcaseRecordInputStream.create(0x1060, data));
         assertEquals( 0x1a28, record.getXBasis());
         assertEquals( 0x0f9c, record.getYBasis());
@@ -51,8 +50,8 @@ public final class TestFontBasisRecord extends TestCase {
         assertEquals( 14, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
+    @Test
+    public void testStore() {
         FontBasisRecord record = new FontBasisRecord();
         record.setXBasis( (short)0x1a28 );
         record.setYBasis( (short)0x0f9c );
@@ -61,8 +60,6 @@ public final class TestFontBasisRecord extends TestCase {
         record.setIndexToFontTable( (short)0x05 );
 
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        confirmRecordEncoding(FontBasisRecord.sid, data, recordBytes);
     }
 }

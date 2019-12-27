@@ -17,7 +17,10 @@
 
 package org.apache.poi.ss.formula;
 
-import java.io.PrintStream;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -25,17 +28,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.BoolEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.StringEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.hssf.usermodel.FormulaExtractor;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationTestHelper;
@@ -43,19 +36,30 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.formula.IEvaluationListener.ICacheEntry;
 import org.apache.poi.ss.formula.PlainCellCache.Loc;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.formula.eval.BlankEval;
+import org.apache.poi.ss.formula.eval.BoolEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.ss.usermodel.FormulaEvaluator;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellReference;
+import org.junit.Test;
 
 /**
  * Tests {@link org.apache.poi.ss.formula.EvaluationCache}.  Makes sure that where possible (previously calculated) cached
  * values are used.  Also checks that changing cell values causes the correct (minimal) set of
  * dependent cached values to be cleared.
- *
- * @author Josh Micich
  */
-public class TestEvaluationCache extends TestCase {
+public class TestEvaluationCache {
 
 	private static final class FormulaCellCacheEntryComparer implements Comparator<ICacheEntry> {
 
@@ -307,8 +311,8 @@ public class TestEvaluationCache extends TestCase {
 		return ms;
 	}
 
+	@Test
 	public void testMediumComplex() {
-
 		MySheet ms = createMediumComplex();
 		// completely fresh evaluation
 		confirmEvaluate(ms, "A1", 46);
@@ -385,8 +389,8 @@ public class TestEvaluationCache extends TestCase {
 		});
 	}
 
+	@Test
 	public void testMediumComplexWithDependencyChange() {
-
 		// Changing an intermediate formula
 		MySheet ms = createMediumComplex();
 		confirmEvaluate(ms, "A1", 46);
@@ -444,6 +448,7 @@ public class TestEvaluationCache extends TestCase {
 	 * verifies that when updating a plain cell, depending (formula) cell cached values are cleared
 	 * only when the plain cell's value actually changes
 	 */
+	@Test
 	public void testRedundantUpdate() {
 		MySheet ms = new MySheet();
 
@@ -487,8 +492,8 @@ public class TestEvaluationCache extends TestCase {
 	 * and VLOOKUP the effect can be subtle.  The presence of error values can also produce this
 	 * effect in almost every function and operator.
 	 */
+	@Test
 	public void testSimpleWithDependencyChange() {
-
 		MySheet ms = new MySheet();
 
 		ms.setCellFormula("A1", "INDEX(C1:E1,1,B1)");
@@ -537,9 +542,8 @@ public class TestEvaluationCache extends TestCase {
 		});
 	}
 
+	@Test
 	public void testBlankCells() {
-
-
 		MySheet ms = new MySheet();
 
 		ms.setCellFormula("A1", "sum(B1:D4,B5:E6)");
@@ -588,6 +592,7 @@ public class TestEvaluationCache extends TestCase {
 	 * Make sure that when blank cells are changed to value/formula cells, any dependent formulas
 	 * have their cached results cleared.
 	 */
+	@Test
 	public void testBlankCellChangedToValueCell_bug46053() {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet("Sheet1");
@@ -614,16 +619,16 @@ public class TestEvaluationCache extends TestCase {
 		cellB1.setCellValue(0.4);  // changing B1, so A1 cached result should be cleared
 		fe.notifyUpdateCell(cellB1);
 		cv = fe.evaluate(cellA1);
-		if (cv.getNumberValue() == 2.2) {
-			// looks like left-over cached result from before change to B1
-			throw new AssertionFailedError("Identified bug 46053");
-		}
+
+		// looks like left-over cached result from before change to B1
+		assertNotEquals("Identified bug 46053", 2.2, cv.getNumberValue());
 		assertEquals(2.6, cv.getNumberValue(), 0.0);
 	}
 
 	/**
 	 * same use-case as the test for bug 46053, but checking trace values too
 	 */
+	@Test
 	public void testBlankCellChangedToValueCell() {
 
 		MySheet ms = new MySheet();
@@ -661,87 +666,10 @@ public class TestEvaluationCache extends TestCase {
 
 	private static void confirmLog(MySheet ms, String[] expectedLog) {
 		String[] actualLog = ms.getAndClearLog();
-		int endIx = actualLog.length;
-		PrintStream ps = System.err;
-		if (endIx != expectedLog.length) {
-			ps.println("Log lengths mismatch");
-			dumpCompare(ps, expectedLog, actualLog);
-			throw new AssertionFailedError("Log lengths mismatch");
-		}
-		for (int i=0; i< endIx; i++) {
-			if (!actualLog[i].equals(expectedLog[i])) {
-				String msg = "Log entry mismatch at index " + i;
-				ps.println(msg);
-				dumpCompare(ps, expectedLog, actualLog);
-				throw new AssertionFailedError(msg);
-			}
-		}
-
+		assertArrayEquals("Log entry mismatch", expectedLog, actualLog);
 	}
 
-	private static void dumpCompare(PrintStream ps, String[] expectedLog, String[] actualLog) {
-		int max = Math.max(actualLog.length, expectedLog.length);
-		ps.println("Index\tExpected\tActual");
-		for(int i=0; i<max; i++) {
-			ps.print(i + "\t");
-			printItem(ps, expectedLog, i);
-			ps.print("\t");
-			printItem(ps, actualLog, i);
-			ps.println();
-		}
-		ps.println();
-		debugPrint(ps, actualLog);
-	}
-
-	private static void printItem(PrintStream ps, String[] ss, int index) {
-		if (index < ss.length) {
-			ps.print(ss[index]);
-		}
-	}
-
-	private static void debugPrint(PrintStream ps, String[] log) {
-		for (String element : log) {
-			ps.println('"' + element + "\",");
-		}
-	}
-
-    private static void testPlainValueCache(Workbook wb, int numberOfSheets) {
-
-        Row row;
-        Cell cell;
-
-        //create summary sheet
-        Sheet summary = wb.createSheet("summary");
-        wb.setActiveSheet(wb.getSheetIndex(summary));
-
-        //formula referring all sheets created below
-        row = summary.createRow(0);
-        Cell summaryCell = row.createCell(0);
-        summaryCell.setCellFormula("SUM(A2:A" + (numberOfSheets + 2) + ")");
-
-
-        //create sheets with cells having (different) numbers
-        // and add a row to summary
-        for (int i = 1; i < numberOfSheets; i++) {
-            Sheet sheet = wb.createSheet("new" + i);
-
-            row = sheet.createRow(0);
-            cell = row.createCell(0);
-            cell.setCellValue(i);
-
-            row = summary.createRow(i);
-            cell = row.createCell(0);
-            cell.setCellFormula("new" + i + "!A1");
-
-        }
-
-
-        //calculate
-        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
-        evaluator.evaluateFormulaCell(summaryCell);
-    }
-
-
+	@Test
     public void testPlainValueCache()  {
 
         Workbook wb = new HSSFWorkbook();
@@ -779,7 +707,7 @@ public class TestEvaluationCache extends TestCase {
         //calculate
         FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
         evaluator.evaluateFormulaCell(summaryCell);
-        assertEquals(8394753.0, summaryCell.getNumericCellValue());
+        assertEquals(8394753.0, summaryCell.getNumericCellValue(), 0);
     }
 
 }

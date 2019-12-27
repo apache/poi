@@ -19,7 +19,6 @@ package org.apache.poi.ss.formula.functions;
 
 import static org.junit.Assert.assertEquals;
 
-import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -109,9 +108,7 @@ public final class TestCalendarFieldFunction {
         cell11.setCellFormula(formulaText);
         evaluator.clearAllCachedResultValues();
         CellValue cv = evaluator.evaluate(cell11);
-        if (cv.getCellType() != CellType.NUMERIC) {
-            throw new AssertionFailedError("Wrong result type: " + cv.formatAsString());
-        }
+        assertEquals("Wrong result type", CellType.NUMERIC, cv.getCellType());
         double actualValue = cv.getNumberValue();
         assertEquals(expectedResult, actualValue, 0);
     }

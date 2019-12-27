@@ -18,19 +18,19 @@
 package org.apache.poi.hssf.record.chart;
 
 
-import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the DataFormatRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
-
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestDataFormatRecord extends TestCase {
+public final class TestDataFormatRecord {
     byte[] data = new byte[] {
         (byte)0xFF,(byte)0xFF,      // point number
         (byte)0x00,(byte)0x00,      // series index
@@ -38,8 +38,8 @@ public final class TestDataFormatRecord extends TestCase {
         (byte)0x00,(byte)0x00       // format flags
     };
 
+    @Test
     public void testLoad() {
-
         DataFormatRecord record = new DataFormatRecord(TestcaseRecordInputStream.create(0x1006, data));
         assertEquals( (short)0xFFFF, record.getPointNumber());
         assertEquals( 0, record.getSeriesIndex());
@@ -50,8 +50,8 @@ public final class TestDataFormatRecord extends TestCase {
         assertEquals( 12, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
+    @Test
+    public void testStore() {
         DataFormatRecord record = new DataFormatRecord();
         record.setPointNumber( (short)0xFFFF );
         record.setSeriesIndex( (short)0 );
@@ -61,8 +61,6 @@ public final class TestDataFormatRecord extends TestCase {
 
 
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        confirmRecordEncoding(DataFormatRecord.sid, data, recordBytes);
     }
 }

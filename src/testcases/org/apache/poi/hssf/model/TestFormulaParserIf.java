@@ -17,8 +17,8 @@
 
 package org.apache.poi.hssf.model;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.poi.ss.formula.ptg.AddPtg;
 import org.apache.poi.ss.formula.ptg.AttrPtg;
@@ -33,11 +33,12 @@ import org.apache.poi.ss.formula.ptg.NotEqualPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.formula.ptg.StringPtg;
+import org.junit.Test;
 
 /**
  * Tests <tt>FormulaParser</tt> specifically with respect to IF() functions
  */
-public final class TestFormulaParserIf extends TestCase {
+public final class TestFormulaParserIf {
 	private static Ptg[] parseFormula(String formula) {
 		return TestFormulaParser.parseFormula(formula);
 	}
@@ -48,18 +49,15 @@ public final class TestFormulaParserIf extends TestCase {
 
 	private static void confirmAttrData(Ptg[] ptgs, int i, int expectedData) {
 		Ptg ptg = ptgs[i];
-		if (!(ptg instanceof AttrPtg)) {
-			throw new AssertionFailedError("Token[" + i + "] was not AttrPtg as expected");
-		}
+		assertTrue("Token[" + i + "] was not AttrPtg as expected", ptg instanceof AttrPtg);
 		AttrPtg attrPtg = (AttrPtg) ptg;
 		assertEquals(expectedData, attrPtg.getData());
 	}
 
+	@Test
 	public void testSimpleIf() {
 
-		Class<?>[] expClss;
-
-		expClss = new Class[] {
+		Class<?>[] expClss = {
 				RefPtg.class,
 				AttrPtg.class, // tAttrIf
 				IntPtg.class,
@@ -76,11 +74,10 @@ public final class TestFormulaParserIf extends TestCase {
 		confirmAttrData(ptgs, 5, 3);
 	}
 
+	@Test
 	public void testSimpleIfNoFalseParam() {
 
-		Class<?>[] expClss;
-
-		expClss = new Class[] {
+		Class<?>[] expClss = {
 				RefPtg.class,
 				AttrPtg.class, // tAttrIf
 				RefPtg.class,
@@ -94,11 +91,10 @@ public final class TestFormulaParserIf extends TestCase {
 		confirmAttrData(ptgs, 3, 3);
 	}
 
+	@Test
 	public void testIfWithLargeParams() {
 
-		Class<?>[] expClss;
-
-		expClss = new Class[] {
+		Class<?>[] expClss = {
 				RefPtg.class,
 				AttrPtg.class, // tAttrIf
 
@@ -126,12 +122,10 @@ public final class TestFormulaParserIf extends TestCase {
 		confirmAttrData(ptgs, 13, 3);
 	}
 
+	@Test
 	public void testNestedIf() {
 
-		Class<?>[] expClss;
-
-		expClss = new Class[] {
-
+		Class<?>[] expClss = {
 				RefPtg.class,
 				AttrPtg.class,	  // A tAttrIf
 				RefPtg.class,
@@ -165,6 +159,7 @@ public final class TestFormulaParserIf extends TestCase {
 		confirmAttrData(ptgs, 17, 3);
 	}
 
+	@Test
 	public void testEmbeddedIf() {
 		Ptg[] ptgs = parseFormula("IF(3>=1,\"*\",IF(4<>1,\"first\",\"second\"))");
 		assertEquals(17, ptgs.length);
@@ -174,19 +169,22 @@ public final class TestFormulaParserIf extends TestCase {
 		assertEquals("15th Ptg is not the inner IF variable function ptg",FuncVarPtg.class,ptgs[14].getClass());
 	}
 
-
+	@Test
 	public void testSimpleLogical() {
 	 Ptg[] ptgs = parseFormula("IF(A1<A2,B1,B2)");
 	 assertEquals(9, ptgs.length);
 	 assertEquals("3rd Ptg is less than", LessThanPtg.class, ptgs[2].getClass());
 	}
 
+	@Test
 	public void testParenIf() {
 		Ptg[] ptgs = parseFormula("IF((A1+A2)<=3,\"yes\",\"no\")");
 		assertEquals(12, ptgs.length);
 		assertEquals("6th Ptg is less than equal",LessEqualPtg.class,ptgs[5].getClass());
 		assertEquals("11th Ptg is not a goto (Attr) ptg",AttrPtg.class,ptgs[10].getClass());
 	}
+
+	@Test
 	public void testYN() {
 		Ptg[] ptgs = parseFormula("IF(TRUE,\"Y\",\"N\")");
 		assertEquals(7, ptgs.length);
@@ -204,10 +202,11 @@ public final class TestFormulaParserIf extends TestCase {
 		assertEquals("IF", funif.toFormulaString());
 		assertTrue("tAttrSkip ptg exists", goto1.isSkip());
 	}
+
 	/**
 	 * Make sure the ptgs are generated properly with two functions embedded
-	 *
 	 */
+	@Test
 	public void testNestedFunctionIf() {
 		Ptg[] ptgs = parseFormula("IF(A1=B1,AVERAGE(A1:B1),AVERAGE(A2:B2))");
 		assertEquals(11, ptgs.length);
@@ -219,6 +218,7 @@ public final class TestFormulaParserIf extends TestCase {
 		assertTrue("Average Function set correctly", (ptgs[5] instanceof FuncVarPtg));
 	}
 
+	@Test
 	public void testIfSingleCondition(){
 		Ptg[] ptgs = parseFormula("IF(1=1,10)");
 		assertEquals(7, ptgs.length);

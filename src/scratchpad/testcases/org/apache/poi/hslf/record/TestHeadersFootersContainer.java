@@ -19,17 +19,18 @@ package org.apache.poi.hslf.record;
 
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.ByteArrayOutputStream;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests that {@link HeadersFootersContainer} works properly
- *
- * @author Yegor Kozlov
  */
-public final class TestHeadersFootersContainer extends TestCase {
+public final class TestHeadersFootersContainer {
 	// SlideHeadersFootersContainer
 	private final byte[] slideData = new byte[] {
             0x3F, 0x00, (byte)0xD9, 0x0F, 0x2E, 0x00, 0x00, 0x00,
@@ -52,6 +53,7 @@ public final class TestHeadersFootersContainer extends TestCase {
             0x6F, 0x00, 0x6F, 0x00, 0x74, 0x00, 0x65, 0x00, 0x72, 0x00
     };
 
+    @Test
     public void testReadSlideHeadersFootersContainer() {
 		HeadersFootersContainer record = new HeadersFootersContainer(slideData, 0, slideData.length);
 		assertEquals(RecordTypes.HeadersFooters.typeID, record.getRecordType());
@@ -71,15 +73,15 @@ public final class TestHeadersFootersContainer extends TestCase {
         assertNull(record.getHeaderAtom());
     }
 
+    @Test
 	public void testWriteSlideHeadersFootersContainer() throws Exception {
 		HeadersFootersContainer record = new HeadersFootersContainer(slideData, 0, slideData.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		record.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertArrayEquals(slideData, b);
+		assertArrayEquals(slideData, baos.toByteArray());
 	}
 
+    @Test
     public void testNewSlideHeadersFootersContainer() throws Exception {
         HeadersFootersContainer record = new HeadersFootersContainer(HeadersFootersContainer.SlideHeadersFootersContainer);
 
@@ -100,11 +102,10 @@ public final class TestHeadersFootersContainer extends TestCase {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         record.writeOut(baos);
-        byte[] b = baos.toByteArray();
-
-        assertArrayEquals(slideData, b);
+        assertArrayEquals(slideData, baos.toByteArray());
     }
 
+    @Test
     public void testReadNotesHeadersFootersContainer() {
 		HeadersFootersContainer record = new HeadersFootersContainer(notesData, 0, notesData.length);
 		assertEquals(RecordTypes.HeadersFooters.typeID, record.getRecordType());
@@ -125,15 +126,15 @@ public final class TestHeadersFootersContainer extends TestCase {
         assertEquals("Note Footer", csFooter.getText());
     }
 
+    @Test
 	public void testWriteNotesHeadersFootersContainer() throws Exception {
 		HeadersFootersContainer record = new HeadersFootersContainer(notesData, 0, notesData.length);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		record.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertArrayEquals(notesData, b);
+		assertArrayEquals(notesData, baos.toByteArray());
 	}
 
+    @Test
     public void testNewNotesHeadersFootersContainer() throws Exception {
         HeadersFootersContainer record = new HeadersFootersContainer(HeadersFootersContainer.NotesHeadersFootersContainer);
 
@@ -162,9 +163,7 @@ public final class TestHeadersFootersContainer extends TestCase {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         record.writeOut(baos);
-        byte[] b = baos.toByteArray();
-
-        assertArrayEquals(notesData, b);
+        assertArrayEquals(notesData, baos.toByteArray());
     }
 
 }

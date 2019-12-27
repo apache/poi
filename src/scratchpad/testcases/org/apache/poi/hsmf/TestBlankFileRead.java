@@ -17,104 +17,97 @@
 
 package org.apache.poi.hsmf;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 
-import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.POIDataSamples;
-
-import junit.framework.TestCase;
+import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
+import org.junit.Before;
+import org.junit.Test;
 
 
 /**
  * Tests to verify that the library can read blank msg files.
  */
-public final class TestBlankFileRead extends TestCase {
-    private final MAPIMessage mapiMessage;
+public final class TestBlankFileRead {
+    private MAPIMessage mapiMessage;
 
     /**
      * Initialize this test, load up the blank.msg mapi message.
      */
-    public TestBlankFileRead() throws IOException {
+    @Before
+    public void setup() throws IOException {
         POIDataSamples samples = POIDataSamples.getHSMFInstance();
-        this.mapiMessage = new MAPIMessage(samples.openResourceAsStream("blank.msg"));
+        mapiMessage = new MAPIMessage(samples.openResourceAsStream("blank.msg"));
     }
 
     /**
      * Check if we can read the body of the blank message, we expect "".
      */
-    public void testReadBody() {
-        try {
-            mapiMessage.getTextBody();
-        } catch(ChunkNotFoundException exp) {
-            return;
-        }
-
-        TestCase.fail("Should have thrown a ChunkNotFoundException but didn't");
+    @Test(expected = ChunkNotFoundException.class)
+    public void testReadBody() throws ChunkNotFoundException {
+        mapiMessage.getTextBody();
     }
 
 
     /**
      * Test to see if we can read the CC Chunk.
      */
+    @Test
     public void testReadDisplayCC() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayCC();
         String expected = "";
 
-        TestCase.assertEquals(expected, obtained);
+        assertEquals(expected, obtained);
     }
 
     /**
      * Test to see if we can read the CC Chunk.
      */
+    @Test
     public void testReadDisplayTo() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayTo();
         String expected = "";
 
-        TestCase.assertEquals(expected, obtained);
+        assertEquals(expected, obtained);
     }
 
     /**
      * Test to see if we can read the FROM Chunk.
      */
-    public void testReadDisplayFrom() {
-        try {
-            mapiMessage.getDisplayFrom();
-        } catch(ChunkNotFoundException exp) {
-            return;
-        }
-
-        TestCase.fail("Should have thrown a ChunkNotFoundException but didn't");
+    @Test(expected = ChunkNotFoundException.class)
+    public void testReadDisplayFrom() throws ChunkNotFoundException {
+        mapiMessage.getDisplayFrom();
     }
 
     /**
      * Test to see if we can read the CC Chunk.
      */
+    @Test
     public void testReadDisplayBCC() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayBCC();
         String expected = "";
 
-        TestCase.assertEquals(expected, obtained);
+        assertEquals(expected, obtained);
     }
 
 
     /**
      * Check if we can read the subject line of the blank message, we expect ""
      */
+    @Test
     public void testReadSubject() throws Exception {
         String obtained = mapiMessage.getSubject();
-        TestCase.assertEquals("", obtained);
+        assertEquals("", obtained);
     }
 
 
     /**
      * Check if we can read the subject line of the blank message, we expect ""
      */
-    public void testReadConversationTopic() {
-        try {
-            mapiMessage.getConversationTopic();
-        } catch(ChunkNotFoundException exp) {
-            return;
-        }
-        TestCase.fail("We shouldn't have a ConversationTopic node on the blank.msg file.");
+    @Test(expected = ChunkNotFoundException.class)
+    public void testReadConversationTopic() throws ChunkNotFoundException {
+        mapiMessage.getConversationTopic();
     }
 }

@@ -16,20 +16,19 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.usermodel.Notes;
+import org.junit.Test;
 
 /**
  * Test cases for {@link NotesTables} and default implementation of
  * {@link Notes}
- * 
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
-public class TestNotesTables extends TestCase
-{
+public class TestNotesTables {
+    @Test
     public void test()
     {
         HWPFDocument doc = HWPFTestDataSamples

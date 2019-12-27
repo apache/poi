@@ -17,7 +17,16 @@
 
 package org.apache.poi.hssf.model;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Random;
+
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherTextboxRecord;
@@ -28,19 +37,9 @@ import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFTestHelper;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.junit.Test;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.List;
-import java.util.Random;
-
-import static org.junit.Assert.assertArrayEquals;
-
-/**
- * @author Evgeniy Berlog
- * @date 18.06.12
- */
-public class TestEscherRecordFactory extends TestCase{
+public class TestEscherRecordFactory {
 
     private static byte[] toByteArray(List<RecordBase> records) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -55,6 +54,7 @@ public class TestEscherRecordFactory extends TestCase{
         return out.toByteArray();
     }
 
+    @Test
     public void testDetectContainer() {
         Random rnd = new Random();
         assertTrue(DefaultEscherRecordFactory.isContainer((short) 0x0, EscherContainerRecord.DG_CONTAINER));
@@ -79,6 +79,7 @@ public class TestEscherRecordFactory extends TestCase{
         assertFalse(DefaultEscherRecordFactory.isContainer((short) 0xCCCC, EscherTextboxRecord.RECORD_ID));
     }
 
+    @Test
     public void testDgContainerMustBeRootOfHSSFSheetEscherRecords() throws IOException {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("47251.xls");
         HSSFSheet sh = wb.getSheetAt(0);

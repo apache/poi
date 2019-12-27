@@ -16,7 +16,8 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.atp;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -26,38 +27,37 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Testcase for 'Analysis Toolpak' function RANDBETWEEN()
- * 
- * @author Brendan Nolan
  */
-public class TestRandBetween extends TestCase {
+public class TestRandBetween {
 
 	private Workbook wb;
 	private FormulaEvaluator evaluator;
 	private Cell bottomValueCell;
 	private Cell topValueCell;
 	private Cell formulaCell;
-	
-	@Override
-	protected void setUp() throws Exception {
-		super.setUp();
+
+	@Before
+	public void setUp() throws Exception {
 		wb = HSSFTestDataSamples.openSampleWorkbook("TestRandBetween.xls");
 		evaluator = wb.getCreationHelper().createFormulaEvaluator();
-		
+
 		Sheet sheet = wb.createSheet("RandBetweenSheet");
 		Row row = sheet.createRow(0);
 		bottomValueCell = row.createCell(0);
 		topValueCell = row.createCell(1);
 		formulaCell = row.createCell(2, CellType.FORMULA);
 	}
-	
+
 	/**
 	 * Check where values are the same
 	 */
+	@Test
 	public void testRandBetweenSameValues() {
-		
 		evaluator.clearAllCachedResultValues();
 		formulaCell.setCellFormula("RANDBETWEEN(1,1)");
 		evaluator.evaluateFormulaCell(formulaCell);
@@ -69,6 +69,7 @@ public class TestRandBetween extends TestCase {
 
 	}
 
+	@Test
 	public void testRandBetweenLargeLongs() {
         for (int i = 0; i < 100; i++) {
             evaluator.clearAllCachedResultValues();
@@ -79,70 +80,70 @@ public class TestRandBetween extends TestCase {
             assertTrue("rand is less than or equal to upperbound", value <= 9999999999.0);
         }
 	}
-	
+
 	/**
-	 * Check special case where rounded up bottom value is greater than 
+	 * Check special case where rounded up bottom value is greater than
 	 * top value.
 	 */
+	@Test
 	public void testRandBetweenSpecialCase() {
-		
-
-		bottomValueCell.setCellValue(0.05);		
+		bottomValueCell.setCellValue(0.05);
 		topValueCell.setCellValue(0.1);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
 		assertEquals(1, formulaCell.getNumericCellValue(), 0);
-		bottomValueCell.setCellValue(-0.1);		
+		bottomValueCell.setCellValue(-0.1);
 		topValueCell.setCellValue(-0.05);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
 		assertEquals(0, formulaCell.getNumericCellValue(), 0);
-		bottomValueCell.setCellValue(-1.1);		
+		bottomValueCell.setCellValue(-1.1);
 		topValueCell.setCellValue(-1.05);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
 		assertEquals(-1, formulaCell.getNumericCellValue(), 0);
-		bottomValueCell.setCellValue(-1.1);		
+		bottomValueCell.setCellValue(-1.1);
 		topValueCell.setCellValue(-1.1);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
 		assertEquals(-1, formulaCell.getNumericCellValue(), 0);
 	}
-	
+
 	/**
 	 * Check top value of BLANK which Excel will evaluate as 0
 	 */
+	@Test
 	public void testRandBetweenTopBlank() {
-
-		bottomValueCell.setCellValue(-1);		
+		bottomValueCell.setCellValue(-1);
 		topValueCell.setBlank();
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
 		assertTrue(formulaCell.getNumericCellValue() == 0 || formulaCell.getNumericCellValue() == -1);
-	
+
 	}
 	/**
 	 * Check where input values are of wrong type
 	 */
+	@Test
 	public void testRandBetweenWrongInputTypes() {
 		// Check case where bottom input is of the wrong type
-		bottomValueCell.setCellValue("STRING");		
+		bottomValueCell.setCellValue("STRING");
 		topValueCell.setCellValue(1);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
 		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
 		assertEquals(ErrorEval.VALUE_INVALID.getErrorCode(), formulaCell.getErrorCellValue());
-		
-		
+
+
 		// Check case where top input is of the wrong type
 		bottomValueCell.setCellValue(1);
-		topValueCell.setCellValue("STRING");		
+		topValueCell.setCellValue("STRING");
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
@@ -151,29 +152,28 @@ public class TestRandBetween extends TestCase {
 
 		// Check case where both inputs are of wrong type
 		bottomValueCell.setCellValue("STRING");
-		topValueCell.setCellValue("STRING");		
+		topValueCell.setCellValue("STRING");
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
 		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
 		assertEquals(ErrorEval.VALUE_INVALID.getErrorCode(), formulaCell.getErrorCellValue());
-	
 	}
-	
+
 	/**
 	 * Check case where bottom is greater than top
 	 */
+	@Test
 	public void testRandBetweenBottomGreaterThanTop() {
-
 		// Check case where bottom is greater than top
-		bottomValueCell.setCellValue(1);		
+		bottomValueCell.setCellValue(1);
 		topValueCell.setCellValue(0);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
 		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
-		assertEquals(ErrorEval.NUM_ERROR.getErrorCode(), formulaCell.getErrorCellValue());		
-		bottomValueCell.setCellValue(1);		
+		assertEquals(ErrorEval.NUM_ERROR.getErrorCode(), formulaCell.getErrorCellValue());
+		bottomValueCell.setCellValue(1);
 		topValueCell.setBlank();
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
@@ -181,19 +181,17 @@ public class TestRandBetween extends TestCase {
 		assertEquals(CellType.ERROR, formulaCell.getCachedFormulaResultType());
 		assertEquals(ErrorEval.NUM_ERROR.getErrorCode(), formulaCell.getErrorCellValue());
 	}
-	
+
 	/**
 	 * Boundary check of Double MIN and MAX values
 	 */
+	@Test
 	public void testRandBetweenBoundaryCheck() {
-
-		bottomValueCell.setCellValue(Double.MIN_VALUE);		
+		bottomValueCell.setCellValue(Double.MIN_VALUE);
 		topValueCell.setCellValue(Double.MAX_VALUE);
 		formulaCell.setCellFormula("RANDBETWEEN($A$1,$B$1)");
 		evaluator.clearAllCachedResultValues();
 		evaluator.evaluateFormulaCell(formulaCell);
-		assertTrue(formulaCell.getNumericCellValue() >= Double.MIN_VALUE && formulaCell.getNumericCellValue() <= Double.MAX_VALUE);		
-		
+		assertTrue(formulaCell.getNumericCellValue() >= Double.MIN_VALUE && formulaCell.getNumericCellValue() <= Double.MAX_VALUE);
 	}
-	
 }

@@ -17,27 +17,23 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
 import java.util.Collection;
 import java.util.HashMap;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
-import org.apache.poi.POITestCase;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.RecordInspector;
+import org.junit.Test;
 
 /**
  * Tests for {@link SharedValueManager}
- *
- * @author Josh Micich
  */
-public final class TestSharedValueManager extends TestCase {
+public final class TestSharedValueManager {
 
 	/**
 	 * This Excel workbook contains two sheets that each have a pair of overlapping shared formula
@@ -66,61 +62,43 @@ public final class TestSharedValueManager extends TestCase {
 	 * This bug happened when there were two or more shared formula ranges that overlapped.  POI
 	 * would sometimes associate formulas in the overlapping region with the wrong shared formula
 	 */
+	@Test
 	public void testPartiallyOverlappingRanges() {
-		Record[] records;
 
-		int attempt=1;
-		do {
+
+		for (int attempt=1; attempt < MAX_ATTEMPTS; attempt++) {
 			HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(SAMPLE_FILE_NAME);
 
 			HSSFSheet sheet = wb.getSheetAt(0);
-			RecordInspector.getRecords(sheet, 0);
 			assertEquals("1+1", sheet.getRow(2).getCell(0).getCellFormula());
-			if ("1+1".equals(sheet.getRow(3).getCell(0).getCellFormula())) {
-				throw new AssertionFailedError("Identified bug - wrong shared formula record chosen"
-						+ " (attempt " + attempt + ")");
-			}
-			assertEquals("2+2", sheet.getRow(3).getCell(0).getCellFormula());
-			records = RecordInspector.getRecords(sheet, 0);
-		} while (attempt++ < MAX_ATTEMPTS);
+			String act = sheet.getRow(3).getCell(0).getCellFormula();
+			assertNotEquals("wrong shared formula record chosen", "1+1", act);
+			act = sheet.getRow(3).getCell(0).getCellFormula();
+			assertEquals("2+2", act);
 
-		int count=0;
-		for (Record record : records) {
-			if (record instanceof SharedFormulaRecord) {
-				count++;
-			}
+			int[] count = { 0 };
+			sheet.getSheet().visitContainedRecords(r -> count[0] += r instanceof SharedFormulaRecord ? 1 : 0, 0);
+			assertEquals(2, count[0]);
 		}
-		assertEquals(2, count);
 	}
 
 	/**
 	 * This bug occurs for similar reasons to the bug in {@link #testPartiallyOverlappingRanges()}
 	 * but the symptoms are much uglier - serialization fails with {@link NullPointerException}.<br>
 	 */
+	@Test
 	public void testCompletelyOverlappedRanges() {
-		Record[] records;
-
-		int attempt=1;
-		do {
+		for (int attempt=1; attempt < MAX_ATTEMPTS; attempt++) {
 			HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook(SAMPLE_FILE_NAME);
 
 			HSSFSheet sheet = wb.getSheetAt(1);
-			try {
-				records = RecordInspector.getRecords(sheet, 0);
-			} catch (NullPointerException e) {
-				throw new AssertionFailedError("Identified bug " +
-						"- cannot reserialize completely overlapped shared formula"
-						+ " (attempt " + attempt + ")");
-			}
-		} while (attempt++ < MAX_ATTEMPTS);
 
-		int count=0;
-		for (Record record : records) {
-			if (record instanceof SharedFormulaRecord) {
-				count++;
-			}
+			int[] count = { 0 };
+
+			// NullPointerException -> cannot reserialize completely overlapped shared formula
+			sheet.getSheet().visitContainedRecords(r -> count[0] += r instanceof SharedFormulaRecord ? 1 : 0, 0);
+			assertEquals(2, count[0]);
 		}
-		assertEquals(2, count);
 	}
 
 	/**
@@ -133,6 +111,7 @@ public final class TestSharedValueManager extends TestCase {
 	 * Two existing sample files (15228.xls and ex45046-21984.xls) had similar issues.
 	 * These were not explored fully, but seem to be fixed now.
 	 */
+	@Test
 	public void testRecalculateFormulas47747() {
 
 		/*
@@ -155,30 +134,13 @@ public final class TestSharedValueManager extends TestCase {
 
 		// pick out a cell from within the second shared formula group
 		HSSFCell cell = wb.getSheetAt(0).getRow(23).getCell(0);
-		String formulaText;
-		try {
-			formulaText = cell.getCellFormula();
-			// succeeds if the formula record has been associated
-			// with the second shared formula group
-		} catch (RuntimeException e) {
-			// bug occurs if the formula record has been associated
-			// with the first shared formula group
-			if ("Shared Formula Conversion: Coding Error".equals(e.getMessage())) {
-				throw new AssertionFailedError("Identified bug 47747");
-			}
-			throw e;
-		}
+		// bug occurs if the formula record has been associated
+		// with the first (and not the second) shared formula group
+		String formulaText = cell.getCellFormula();
 		assertEquals("$AF24*A$7", formulaText);
 	}
 
-	/**
-	 * Convenience test method for digging the {@link SharedValueManager} out of a
-	 * {@link RowRecordsAggregate}.
-	 */
-	public static SharedValueManager extractFromRRA(RowRecordsAggregate rra) {
-		return POITestCase.getFieldValue(RowRecordsAggregate.class, rra, SharedValueManager.class, "_sharedValueManager");
-	}
-
+	@Test
     public void testBug52527() {
         HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("52527.xls");
         HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);

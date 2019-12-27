@@ -17,48 +17,47 @@
 
 package org.apache.poi.hssf.record.pivot;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.record.pivottable.ViewFieldsRecord;
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
 /**
  * Tests for {@link ViewFieldsRecord}
- * 
- * @author Josh Micich
  */
-public final class TestViewFieldsRecord extends TestCase {
-	
+public final class TestViewFieldsRecord {
+
+	@Test
 	public void testUnicodeFlag_bug46693() {
 		byte[] data = HexRead.readFromString("01 00 01 00 01 00 04 00 05 00 00 6D 61 72 63 6F");
 		RecordInputStream in = TestcaseRecordInputStream.create(ViewFieldsRecord.sid, data);
 		ViewFieldsRecord rec = new ViewFieldsRecord(in);
-		if (in.remaining() == 1) {
-			throw new AssertionFailedError("Identified bug 46693b");
-		}
+		assertNotEquals("Identified bug 46693b", 1, in.remaining());
 		assertEquals(0, in.remaining());
 		assertEquals(4+data.length, rec.getRecordSize());
 	}
-	
+
+	@Test
 	public void testSerialize() {
-		// This hex data was produced by changing the 'Custom Name' property, 
+		// This hex data was produced by changing the 'Custom Name' property,
 		// available under 'Field Settings' from the 'PivotTable Field List' (Excel 2007)
 		confirmSerialize("00 00 01 00 01 00 00 00 FF FF");
 		confirmSerialize("01 00 01 00 01 00 04 00 05 00 00 6D 61 72 63 6F");
 		confirmSerialize("01 00 01 00 01 00 04 00 0A 00 01 48 00 69 00 73 00 74 00 6F 00 72 00 79 00 2D 00 82 69 81 89");
 	}
 
-	private static ViewFieldsRecord confirmSerialize(String hexDump) {
+	private static void confirmSerialize(String hexDump) {
 		byte[] data = HexRead.readFromString(hexDump);
 		RecordInputStream in = TestcaseRecordInputStream.create(ViewFieldsRecord.sid, data);
 		ViewFieldsRecord rec = new ViewFieldsRecord(in);
 		assertEquals(0, in.remaining());
 		assertEquals(4+data.length, rec.getRecordSize());
 		byte[] data2 = rec.serialize();
-		TestcaseRecordInputStream.confirmRecordEncoding(ViewFieldsRecord.sid, data, data2);
-		return rec;
+		confirmRecordEncoding(ViewFieldsRecord.sid, data, data2);
 	}
 }

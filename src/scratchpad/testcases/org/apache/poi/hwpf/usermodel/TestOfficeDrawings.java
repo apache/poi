@@ -16,40 +16,34 @@
 ==================================================================== */
 package org.apache.poi.hwpf.usermodel;
 
-import junit.framework.TestCase;
+import static org.apache.poi.hwpf.HWPFTestDataSamples.openSampleFile;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.ddf.EscherComplexProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.util.StringUtil;
+import org.junit.Test;
 
 /**
  * Test cases for {@link OfficeDrawing} and {@link OfficeDrawingsImpl} classes.
- * 
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
-public class TestOfficeDrawings extends TestCase
-{
+public class TestOfficeDrawings {
     /**
      * Tests watermark text extraction
      */
-    public void testWatermark() throws Exception
-    {
-        HWPFDocument hwpfDocument = HWPFTestDataSamples
-                .openSampleFile( "watermark.doc" );
-        OfficeDrawing drawing = hwpfDocument.getOfficeDrawingsHeaders()
-                .getOfficeDrawings().iterator().next();
-        EscherContainerRecord escherContainerRecord = drawing
-                .getOfficeArtSpContainer();
+    @Test
+    public void testWatermark() throws Exception {
+        try (HWPFDocument hwpfDocument = openSampleFile("watermark.doc")) {
+            OfficeDrawing drawing = hwpfDocument.getOfficeDrawingsHeaders().getOfficeDrawings().iterator().next();
+            EscherContainerRecord escherContainerRecord = drawing.getOfficeArtSpContainer();
 
-        EscherOptRecord officeArtFOPT = escherContainerRecord
-                .getChildById( (short) 0xF00B );
-        EscherComplexProperty gtextUNICODE = officeArtFOPT
-                .lookup( 0x00c0 );
+            EscherOptRecord officeArtFOPT = escherContainerRecord.getChildById((short) 0xF00B);
+            EscherComplexProperty gtextUNICODE = officeArtFOPT.lookup(0x00c0);
 
-        String text = StringUtil.getFromUnicodeLE(gtextUNICODE.getComplexData());
-        assertEquals( "DRAFT CONTRACT\0", text );
+            String text = StringUtil.getFromUnicodeLE(gtextUNICODE.getComplexData());
+            assertEquals("DRAFT CONTRACT\0", text);
+        }
     }
 }

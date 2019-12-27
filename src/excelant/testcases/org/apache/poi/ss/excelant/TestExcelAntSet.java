@@ -16,48 +16,54 @@
 ==================================================================== */
 package org.apache.poi.ss.excelant;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.apache.poi.ss.excelant.util.ExcelAntWorkbookUtil;
 import org.apache.poi.ss.excelant.util.ExcelAntWorkbookUtilFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class TestExcelAntSet extends TestCase {
+public class TestExcelAntSet {
 
-	
-	// This is abstract in nature, so we'll use a 
+
+	// This is abstract in nature, so we'll use a
 	// concrete instance to test the set methods.
 	private ExcelAntSet fixture ;
-	
+
     private static final String mortgageCalculatorFileName =
-        BuildFileTest.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;
-    
-    @Override
+        TestBuildFile.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;
+
+    @Before
 	public void setUp() {
 		fixture = new ExcelAntSetDoubleCell() ;
 	}
-	
-    @Override
+
+    @After
 	public void tearDown() {
 		fixture = null ;
 	}
-	
+
+	@Test
 	public void testSetter() {
 		String cell = "simpleCellRef!$F$1" ;
-		
+
 		fixture.setCell( cell ) ;
-		
+
 		String cellStr = fixture.getCell() ;
-		
+
 		assertNotNull( cellStr ) ;
 		assertEquals( cell, cellStr ) ;
 	}
-	
+
+	@Test
 	public void testSetWorkbookUtil() {
 		ExcelAntWorkbookUtil util = ExcelAntWorkbookUtilFactory.getInstance(
 				                                 mortgageCalculatorFileName ) ;
-		
+
 		assertNotNull( util ) ;
-		
+
 		fixture.setWorkbookUtil( util ) ;
 	}
 }

@@ -17,17 +17,15 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.AssertionFailedError;
+import static org.junit.Assert.fail;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.eval.NotImplementedException;
 
 /**
  * Test helper class for invoking functions with numeric results.
- *
- * @author Josh Micich
  */
 public final class NumericFunctionInvoker {
 
@@ -64,8 +62,8 @@ public final class NumericFunctionInvoker {
 		try {
 			return invokeInternal(f, args, srcCellRow, srcCellCol);
 		} catch (NumericEvalEx e) {
-			throw new AssertionFailedError("Evaluation of function (" + f.getClass().getName()
-					+ ") failed: " + e.getMessage());
+			fail("Evaluation of function (" + f.getClass().getName() + ") failed: " + e.getMessage());
+			return -1;
 		}
 	}
 	/**
@@ -96,16 +94,9 @@ public final class NumericFunctionInvoker {
 		NumericValueEval result = (NumericValueEval) evalResult;
 		return result.getNumberValue();
 	}
+
 	private static String formatErrorMessage(ErrorEval ee) {
-		if(errorCodesAreEqual(ee, ErrorEval.VALUE_INVALID)) {
-			return "Error code: #VALUE! (invalid value)";
-		}
-		return "Error code=" + ee.getErrorCode();
-	}
-	private static boolean errorCodesAreEqual(ErrorEval a, ErrorEval b) {
-		if(a==b) {
-			return true;
-		}
-		return a.getErrorCode() == b.getErrorCode();
+		boolean b = (ee == ErrorEval.VALUE_INVALID || ee.getErrorCode() == ErrorEval.VALUE_INVALID.getErrorCode());
+		return b ? "Error code: #VALUE! (invalid value)" : "Error code=" + ee.getErrorCode();
 	}
 }

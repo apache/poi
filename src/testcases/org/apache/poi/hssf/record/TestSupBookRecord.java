@@ -18,17 +18,24 @@
 package org.apache.poi.hssf.record;
 
 
-import junit.framework.TestCase;
+import static org.apache.poi.hssf.record.SupBookRecord.CH_ALT_STARTUP_DIR;
+import static org.apache.poi.hssf.record.SupBookRecord.CH_DOWN_DIR;
+import static org.apache.poi.hssf.record.SupBookRecord.CH_LIB_DIR;
+import static org.apache.poi.hssf.record.SupBookRecord.CH_SAME_VOLUME;
+import static org.apache.poi.hssf.record.SupBookRecord.CH_STARTUP_DIR;
+import static org.apache.poi.hssf.record.SupBookRecord.CH_UP_DIR;
+import static org.apache.poi.hssf.record.SupBookRecord.CH_VOLUME;
+import static org.apache.poi.hssf.record.SupBookRecord.PATH_SEPERATOR;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-import static org.apache.poi.hssf.record.SupBookRecord.*;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the SupBook record
- * class works correctly.  
- *
- * @author Andrew C. Oliver (acoliver at apache dot org)
+ * class works correctly.
  */
-public final class TestSupBookRecord extends TestCase {
+public final class TestSupBookRecord {
     /**
      * This contains a fake data section of a SubBookRecord
      */
@@ -40,64 +47,66 @@ public final class TestSupBookRecord extends TestCase {
     };
     byte[] dataER = new byte[] {
         (byte)0x02,(byte)0x00,
-        (byte)0x07,(byte)0x00,   (byte)0x00,   
-                (byte)'t', (byte)'e', (byte)'s', (byte)'t', (byte)'U', (byte)'R', (byte)'L',  
-        (byte)0x06,(byte)0x00,   (byte)0x00,   
-                (byte)'S', (byte)'h', (byte)'e', (byte)'e', (byte)'t', (byte)'1', 
-        (byte)0x06,(byte)0x00,   (byte)0x00,   
-                (byte)'S', (byte)'h', (byte)'e', (byte)'e', (byte)'t', (byte)'2', 
+        (byte)0x07,(byte)0x00,   (byte)0x00,
+                (byte)'t', (byte)'e', (byte)'s', (byte)'t', (byte)'U', (byte)'R', (byte)'L',
+        (byte)0x06,(byte)0x00,   (byte)0x00,
+                (byte)'S', (byte)'h', (byte)'e', (byte)'e', (byte)'t', (byte)'1',
+        (byte)0x06,(byte)0x00,   (byte)0x00,
+                (byte)'S', (byte)'h', (byte)'e', (byte)'e', (byte)'t', (byte)'2',
    };
 
     /**
      * tests that we can load the record
      */
+    @Test
     public void testLoadIR() {
-
-        SupBookRecord record = new SupBookRecord(TestcaseRecordInputStream.create(0x01AE, dataIR));      
+        SupBookRecord record = new SupBookRecord(TestcaseRecordInputStream.create(0x01AE, dataIR));
         assertTrue( record.isInternalReferences() );             //expected flag
         assertEquals( 0x4, record.getNumberOfSheets() );    //expected # of sheets
 
         assertEquals( 8, record.getRecordSize() );  //sid+size+data
     }
+
     /**
      * tests that we can load the record
      */
+    @Test
     public void testLoadER() {
-
-        SupBookRecord record = new SupBookRecord(TestcaseRecordInputStream.create(0x01AE, dataER));      
+        SupBookRecord record = new SupBookRecord(TestcaseRecordInputStream.create(0x01AE, dataER));
         assertTrue( record.isExternalReferences() );             //expected flag
         assertEquals( 0x2, record.getNumberOfSheets() );    //expected # of sheets
 
         assertEquals( 34, record.getRecordSize() );  //sid+size+data
-        
+
         assertEquals("testURL", record.getURL());
         String[] sheetNames = record.getSheetNames();
         assertEquals(2, sheetNames.length);
         assertEquals("Sheet1", sheetNames[0]);
         assertEquals("Sheet2", sheetNames[1]);
     }
-    
+
     /**
      * tests that we can load the record
      */
+    @Test
     public void testLoadAIF() {
-
-        SupBookRecord record = new SupBookRecord(TestcaseRecordInputStream.create(0x01AE, dataAIF));      
+        SupBookRecord record = new SupBookRecord(TestcaseRecordInputStream.create(0x01AE, dataAIF));
         assertTrue( record.isAddInFunctions() );             //expected flag
         assertEquals( 0x1, record.getNumberOfSheets() );    //expected # of sheets
         assertEquals( 8, record.getRecordSize() );  //sid+size+data
     }
-   
+
     /**
      * Tests that we can store the record
-     *
      */
+    @Test
     public void testStoreIR() {
         SupBookRecord record = SupBookRecord.createInternalReferences((short)4);
 
         TestcaseRecordInputStream.confirmRecordEncoding(0x01AE, dataIR, record.serialize());
-    }   
-    
+    }
+
+    @Test
     public void testStoreER() {
         String url = "testURL";
         String[] sheetNames = { "Sheet1", "Sheet2", };
@@ -106,26 +115,28 @@ public final class TestSupBookRecord extends TestCase {
         TestcaseRecordInputStream.confirmRecordEncoding(0x01AE, dataER, record.serialize());
     }
 
+    @Test
     public void testStoreAIF() {
         SupBookRecord record = SupBookRecord.createAddInFunctions();
         assertEquals(1, record.getNumberOfSheets());
         assertTrue(record.isAddInFunctions());
         TestcaseRecordInputStream.confirmRecordEncoding(0x01AE, dataAIF, record.serialize());
     }
-    
+
+    @Test
     public void testExternalReferenceUrl() {
     	String[] sheetNames = new String[]{"SampleSheet"};
     	final char startMarker = (char)1;
-    	
+
 		SupBookRecord record;
-		
+
 		record = new SupBookRecord(startMarker + "test.xls", sheetNames);
     	assertEquals("test.xls", record.getURL());
 
     	//UNC path notation
     	record = new SupBookRecord(startMarker + "" + CH_VOLUME + "@servername" + CH_DOWN_DIR + "test.xls", sheetNames);
     	assertEquals("\\\\servername" + PATH_SEPERATOR + "test.xls", record.getURL());
-    	
+
     	//Absolute path notation - different device
     	record = new SupBookRecord(startMarker + "" + CH_VOLUME + "D" + CH_DOWN_DIR + "test.xls", sheetNames);
     	assertEquals("D:" + PATH_SEPERATOR + "test.xls", record.getURL());
@@ -133,11 +144,11 @@ public final class TestSupBookRecord extends TestCase {
     	//Absolute path notation - same device
     	record = new SupBookRecord(startMarker + "" + CH_SAME_VOLUME + "folder" + CH_DOWN_DIR + "test.xls", sheetNames);
     	assertEquals(PATH_SEPERATOR + "folder" + PATH_SEPERATOR + "test.xls", record.getURL());
-    	
+
     	//Relative path notation - down
     	record = new SupBookRecord(startMarker + "folder" + CH_DOWN_DIR + "test.xls", sheetNames);
     	assertEquals("folder" + PATH_SEPERATOR + "test.xls", record.getURL());
-    	
+
     	//Relative path notation - up
     	record = new SupBookRecord(startMarker +""+ CH_UP_DIR + "test.xls", sheetNames);
     	assertEquals(".." + PATH_SEPERATOR + "test.xls", record.getURL());

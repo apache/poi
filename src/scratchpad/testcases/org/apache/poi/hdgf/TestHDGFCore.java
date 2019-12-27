@@ -17,36 +17,41 @@
 
 package org.apache.poi.hdgf;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hdgf.streams.PointerContainingStream;
 import org.apache.poi.hdgf.streams.TrailerStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public final class TestHDGFCore extends TestCase {
+public final class TestHDGFCore {
     private static POIDataSamples _dgTests = POIDataSamples.getDiagramInstance();
 
     private POIFSFileSystem fs;
     private HDGFDiagram hdgf;
     private VisioTextExtractor textExtractor;
 
-    @Override
-    protected void setUp() throws Exception {
+    @Before
+    public void setUp() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("Test_Visio-Some_Random_Text.vsd"));
     }
-    @Override
-    protected void tearDown() throws Exception {
+    @After
+    public void tearDown() throws Exception {
         if (textExtractor != null) textExtractor.close();
         if (hdgf != null) hdgf.close();
     }
 
-
+    @Test
     public void testCreate() throws Exception {
         hdgf = new HDGFDiagram(fs);
     }
 
+    @Test
     public void testTrailer() throws Exception {
         hdgf = new HDGFDiagram(fs);
         assertNotNull(hdgf);
@@ -74,6 +79,7 @@ public final class TestHDGFCore extends TestCase {
      * Tests that we can open a problematic file, that used to
      *  break with a negative chunk length
      */
+    @Test
     public void testNegativeChunkLength() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("NegativeChunkLength.vsd"));
 
@@ -90,8 +96,8 @@ public final class TestHDGFCore extends TestCase {
      * Tests that we can open a problematic file that triggers
      *  an ArrayIndexOutOfBoundsException when processing the
      *  chunk commands.
-     * @throws Exception
      */
+    @Test
     public void DISABLEDtestAIOOB() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("44501.vsd"));
 
@@ -99,6 +105,7 @@ public final class TestHDGFCore extends TestCase {
         assertNotNull(hdgf);
     }
 
+    @Test
     public void testV5() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("v5_Connection_Types.vsd"));
 
@@ -111,6 +118,7 @@ public final class TestHDGFCore extends TestCase {
         assertEquals("Static to Static\nDynamic to Static\nDynamic to Dynamic", text);
     }
 
+    @Test
     public void testV6NonUtf16LE() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("v6-non-utf16le.vsd"));
 
@@ -123,6 +131,7 @@ public final class TestHDGFCore extends TestCase {
         assertEquals("Table\n\n\nPropertySheet\n\n\n\nPropertySheetField", text);
     }
 
+    @Test
     public void testUtf16LE() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("Test_Visio-Some_Random_Text.vsd"));
 

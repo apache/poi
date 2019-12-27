@@ -17,6 +17,11 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -29,17 +34,19 @@ import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-public final class TestXSSFChartAxis extends TestCase {
+public final class TestXSSFChartAxis {
 
 	private static final double EPSILON = 1E-7;
-	private final XDDFChartAxis axis;
+	private XSSFWorkbook wb;
+	private XDDFChartAxis axis;
 
-	public TestXSSFChartAxis() {
-		super();
-		XSSFWorkbook wb = new XSSFWorkbook();
+	@Before
+	public void setup() {
+		wb = new XSSFWorkbook();
 		XSSFSheet sheet = wb.createSheet();
 		XSSFDrawing drawing = sheet.createDrawingPatriarch();
 		XSSFClientAnchor anchor = drawing.createAnchor(0, 0, 0, 0, 1, 1, 10, 30);
@@ -47,6 +54,14 @@ public final class TestXSSFChartAxis extends TestCase {
 		axis = chart.createValueAxis(AxisPosition.BOTTOM);
 	}
 
+	@After
+	public void teardown() throws IOException {
+		wb.close();
+		wb = null;
+		axis = null;
+	}
+
+	@Test
 	public void testLogBaseIllegalArgument() {
 		IllegalArgumentException iae = null;
 		try {
@@ -65,17 +80,20 @@ public final class TestXSSFChartAxis extends TestCase {
 		assertNotNull(iae);
 	}
 
+	@Test
 	public void testLogBaseLegalArgument() {
 		axis.setLogBase(Math.E);
 		assertTrue(Math.abs(axis.getLogBase() - Math.E) < EPSILON);
 	}
 
+	@Test
 	public void testNumberFormat() {
 		final String numberFormat = "General";
 		axis.setNumberFormat(numberFormat);
 		assertEquals(numberFormat, axis.getNumberFormat());
 	}
 
+	@Test
 	public void testMaxAndMinAccessMethods() {
 		final double newValue = 10.0;
 
@@ -86,6 +104,7 @@ public final class TestXSSFChartAxis extends TestCase {
 		assertTrue(Math.abs(axis.getMaximum() - newValue) < EPSILON);
 	}
 
+	@Test
 	public void testVisibleAccessMethods() {
 		axis.setVisible(true);
 		assertTrue(axis.isVisible());
@@ -94,6 +113,7 @@ public final class TestXSSFChartAxis extends TestCase {
 		assertFalse(axis.isVisible());
 	}
 
+	@Test
 	public void testMajorTickMarkAccessMethods() {
 		axis.setMajorTickMark(AxisTickMark.NONE);
 		assertEquals(AxisTickMark.NONE, axis.getMajorTickMark());
@@ -108,6 +128,7 @@ public final class TestXSSFChartAxis extends TestCase {
 		assertEquals(AxisTickMark.CROSS, axis.getMajorTickMark());
 	}
 
+	@Test
 	public void testMinorTickMarkAccessMethods() {
 		axis.setMinorTickMark(AxisTickMark.NONE);
 		assertEquals(AxisTickMark.NONE, axis.getMinorTickMark());
@@ -122,6 +143,7 @@ public final class TestXSSFChartAxis extends TestCase {
 		assertEquals(AxisTickMark.CROSS, axis.getMinorTickMark());
 	}
 
+	@Test
 	public void testGetChartAxisBug57362() throws IOException {
 	  //Load existing excel with some chart on it having primary and secondary axis.
 	    try (final XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("57362.xlsx")) {

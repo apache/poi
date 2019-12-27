@@ -17,32 +17,36 @@
 
 package org.apache.poi.xwpf.extractor;
 
+import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.POITestCase.assertEndsWith;
+import static org.apache.poi.POITestCase.assertNotContained;
+import static org.apache.poi.POITestCase.assertStartsWith;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.util.Locale;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import static org.apache.poi.POITestCase.assertContains;
-import static org.apache.poi.POITestCase.assertEndsWith;
-import static org.apache.poi.POITestCase.assertNotContained;
-import static org.apache.poi.POITestCase.assertStartsWith;
+import org.junit.Test;
 
 /**
  * Tests for HXFWordExtractor
  */
-public class TestXWPFWordExtractor extends TestCase {
+public class TestXWPFWordExtractor {
 
     /**
      * Get text out of the simple file
      */
+    @Test
     public void testGetSimpleText() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("sample.docx");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
             String text = extractor.getText();
             assertTrue(text.length() > 0);
@@ -58,23 +62,21 @@ public class TestXWPFWordExtractor extends TestCase {
             // Check number of paragraphs by counting number of newlines
             int numberOfParagraphs = StringUtil.countMatches(text, '\n');
             assertEquals(3, numberOfParagraphs);
-
-            extractor.close();
         }
     }
 
     /**
      * Tests getting the text out of a complex file
      */
+    @Test
     public void testGetComplexText() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("IllustrativeCases.docx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("IllustrativeCases.docx");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
             String text = extractor.getText();
             assertTrue(text.length() > 0);
 
             char euro = '\u20ac';
-//		System.err.println("'"+text.substring(text.length() - 40) + "'");
 
             // Check contents
             assertStartsWith(text,
@@ -90,14 +92,13 @@ public class TestXWPFWordExtractor extends TestCase {
             // Check number of paragraphs by counting number of newlines
             int numberOfParagraphs = StringUtil.countMatches(text, '\n');
             assertEquals(134, numberOfParagraphs);
-
-            extractor.close();
         }
     }
 
+    @Test
     public void testGetWithHyperlinks() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
             // Now check contents
             extractor.setFetchHyperlinks(false);
@@ -118,126 +119,117 @@ public class TestXWPFWordExtractor extends TestCase {
                             "We have a hyperlink <http://poi.apache.org/> here, and another.\n",
                     extractor.getText()
             );
-
-            extractor.close();
         }
     }
 
+    @Test
     public void testHeadersFooters() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("ThreeColHeadFoot.docx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("ThreeColHeadFoot.docx");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
             assertEquals(
-                    "First header column!\tMid header\tRight header!\n" +
-                            "This is a sample word document. It has two pages. It has a three column heading, and a three column footer\n" +
-                            "\n" +
-                            "HEADING TEXT\n" +
-                            "\n" +
-                            "More on page one\n" +
-                            "\n\n" +
-                            "End of page 1\n\n\n" +
-                            "This is page two. It also has a three column heading, and a three column footer.\n" +
-                            "Footer Left\tFooter Middle\tFooter Right\n",
-                    extractor.getText()
+                "First header column!\tMid header\tRight header!\n" +
+                "This is a sample word document. It has two pages. It has a three column heading, and a three column footer\n" +
+                "\n" +
+                "HEADING TEXT\n" +
+                "\n" +
+                "More on page one\n" +
+                "\n\n" +
+                "End of page 1\n\n\n" +
+                "This is page two. It also has a three column heading, and a three column footer.\n" +
+                "Footer Left\tFooter Middle\tFooter Right\n",
+                extractor.getText()
             );
+        }
 
-            // Now another file, expect multiple headers
-            //  and multiple footers
-            XWPFDocument doc2 = XWPFTestDataSamples.openSampleDocument("DiffFirstPageHeadFoot.docx");
-            extractor.close();
+        // Now another file, expect multiple headers
+        //  and multiple footers
+        try (XWPFDocument doc2 = XWPFTestDataSamples.openSampleDocument("DiffFirstPageHeadFoot.docx")) {
 
-            extractor = new XWPFWordExtractor(doc2);
-            extractor.close();
+            new XWPFWordExtractor(doc2).close();
 
-            extractor =
-                    new XWPFWordExtractor(doc2);
-            extractor.getText();
+            try (XWPFWordExtractor extractor = new XWPFWordExtractor(doc2)) {
+                extractor.getText();
 
-            assertEquals(
+                assertEquals(
                     "I am the header on the first page, and I" + '\u2019' + "m nice and simple\n" +
-                            "First header column!\tMid header\tRight header!\n" +
-                            "This is a sample word document. It has two pages. It has a simple header and footer, which is different to all the other pages.\n" +
-                            "\n" +
-                            "HEADING TEXT\n" +
-                            "\n" +
-                            "More on page one\n" +
-                            "\n\n" +
-                            "End of page 1\n\n\n" +
-                            "This is page two. It also has a three column heading, and a three column footer.\n" +
-                            "The footer of the first page\n" +
-                            "Footer Left\tFooter Middle\tFooter Right\n",
+                    "First header column!\tMid header\tRight header!\n" +
+                    "This is a sample word document. It has two pages. It has a simple header and footer, which is different to all the other pages.\n" +
+                    "\n" +
+                    "HEADING TEXT\n" +
+                    "\n" +
+                    "More on page one\n" +
+                    "\n\n" +
+                    "End of page 1\n\n\n" +
+                    "This is page two. It also has a three column heading, and a three column footer.\n" +
+                    "The footer of the first page\n" +
+                    "Footer Left\tFooter Middle\tFooter Right\n",
                     extractor.getText()
-            );
+                );
 
-            extractor.close();
+            }
         }
     }
 
+    @Test
     public void testFootnotes() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("footnotes.docx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("footnotes.docx");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
             String text = extractor.getText();
             assertContains(text, "snoska");
             assertContains(text, "Eto ochen prostoy[footnoteRef:1] text so snoskoy");
-
-            extractor.close();
         }
     }
 
 
+    @Test
     public void testTableFootnotes() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("table_footnotes.docx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("table_footnotes.docx");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
             assertContains(extractor.getText(), "snoska");
-
-            extractor.close();
         }
     }
 
+    @Test
     public void testFormFootnotes() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("form_footnotes.docx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("form_footnotes.docx");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
             String text = extractor.getText();
             assertContains(text, "testdoc");
             assertContains(text, "test phrase");
-
-            extractor.close();
         }
     }
 
+    @Test
     public void testEndnotes() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("endnotes.docx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("endnotes.docx");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
             String text = extractor.getText();
             assertContains(text, "XXX");
             assertContains(text, "tilaka [endnoteRef:2]or 'tika'");
-
-            extractor.close();
         }
     }
 
+    @Test
     public void testInsertedDeletedText() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("delins.docx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("delins.docx");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
             assertContains(extractor.getText(), "pendant worn");
             assertContains(extractor.getText(), "extremely well");
-
-            extractor.close();
         }
     }
 
+    @Test
     public void testParagraphHeader() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Headers.docx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Headers.docx");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
             assertContains(extractor.getText(), "Section 1");
             assertContains(extractor.getText(), "Section 2");
             assertContains(extractor.getText(), "Section 3");
-
-            extractor.close();
         }
     }
 
@@ -245,15 +237,14 @@ public class TestXWPFWordExtractor extends TestCase {
      * Test that we can open and process .docm
      * (macro enabled) docx files (bug #45690)
      */
+    @Test
     public void testDOCMFiles() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("45690.docm")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("45690.docm");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
             assertContains(extractor.getText(), "2004");
             assertContains(extractor.getText(), "2008");
             assertContains(extractor.getText(), "(120 ");
-
-            extractor.close();
         }
     }
 
@@ -262,9 +253,10 @@ public class TestXWPFWordExtractor extends TestCase {
      * carriage returns properly in the text that
      * we're extracting (bug #49189)
      */
+    @Test
     public void testDocTabs() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("WithTabs.docx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("WithTabs.docx");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
             // Check bits
             assertContains(extractor.getText(), "a");
@@ -273,8 +265,6 @@ public class TestXWPFWordExtractor extends TestCase {
 
             // Now check the first paragraph in total
             assertContains(extractor.getText(), "a\tb\n");
-
-            extractor.close();
         }
     }
 
@@ -282,15 +272,14 @@ public class TestXWPFWordExtractor extends TestCase {
      * The output should not contain field codes, e.g. those specified in the
      * w:instrText tag (spec sec. 17.16.23)
      */
+    @Test
     public void testNoFieldCodes() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("FieldCodes.docx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("FieldCodes.docx");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
             String text = extractor.getText();
             assertTrue(text.length() > 0);
             assertFalse(text.contains("AUTHOR"));
             assertFalse(text.contains("CREATEDATE"));
-
-            extractor.close();
         }
     }
 
@@ -298,14 +287,13 @@ public class TestXWPFWordExtractor extends TestCase {
      * The output should contain the values of simple fields, those specified
      * with the fldSimple element (spec sec. 17.16.19)
      */
+    @Test
     public void testFldSimpleContent() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("FldSimple.docx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("FldSimple.docx");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
             String text = extractor.getText();
             assertTrue(text.length() > 0);
             assertContains(text, "FldSimple.docx");
-
-            extractor.close();
         }
     }
 
@@ -313,38 +301,38 @@ public class TestXWPFWordExtractor extends TestCase {
      * Test for parsing document with drawings to prevent
      * NoClassDefFoundError for CTAnchor in XWPFRun
      */
+    @Test
     public void testDrawings() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("drawing.docx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("drawing.docx");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
             String text = extractor.getText();
             assertTrue(text.length() > 0);
-
-            extractor.close();
         }
     }
 
     /**
      * Test for basic extraction of SDT content
      */
+    @Test
     public void testSimpleControlContent() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54849.docx")) {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54849.docx");
+             XWPFWordExtractor ex = new XWPFWordExtractor(doc)) {
             String[] targs = new String[]{
-                    "header_rich_text",
-                    "rich_text",
-                    "rich_text_pre_table\nrich_text_cell1\t\t\t\n\t\t\t\n\t\t\t\n\nrich_text_post_table",
-                    "plain_text_no_newlines",
-                    "plain_text_with_newlines1\nplain_text_with_newlines2\n",
-                    "watermelon\n",
-                    "dirt\n",
-                    "4/16/2013\n",
-                    "rich_text_in_cell",
-                    "abc",
-                    "rich_text_in_paragraph_in_cell",
-                    "footer_rich_text",
-                    "footnote_sdt",
-                    "endnote_sdt"
+                "header_rich_text",
+                "rich_text",
+                "rich_text_pre_table\nrich_text_cell1\t\t\t\n\t\t\t\n\t\t\t\n\nrich_text_post_table",
+                "plain_text_no_newlines",
+                "plain_text_with_newlines1\nplain_text_with_newlines2\n",
+                "watermelon\n",
+                "dirt\n",
+                "4/16/2013\n",
+                "rich_text_in_cell",
+                "abc",
+                "rich_text_in_paragraph_in_cell",
+                "footer_rich_text",
+                "footnote_sdt",
+                "endnote_sdt"
             };
-            XWPFWordExtractor ex = new XWPFWordExtractor(doc);
             String s = ex.getText().toLowerCase(Locale.ROOT);
             int hits = 0;
 
@@ -357,17 +345,17 @@ public class TestXWPFWordExtractor extends TestCase {
                 assertTrue("controlled content loading-" + targ, hit);
             }
             assertEquals("controlled content loading hit count", targs.length, hits);
-            ex.close();
+        }
 
+        try (XWPFDocument doc2 = XWPFTestDataSamples.openSampleDocument("Bug54771a.docx");
+             XWPFWordExtractor ex = new XWPFWordExtractor(doc2)) {
+            String s = ex.getText().toLowerCase(Locale.ROOT);
 
-            XWPFDocument doc2 = XWPFTestDataSamples.openSampleDocument("Bug54771a.docx");
-            targs = new String[]{
-                    "bb",
-                    "test subtitle\n",
-                    "test user\n",
+            String[] targs = {
+                "bb",
+                "test subtitle\n",
+                "test user\n",
             };
-            ex = new XWPFWordExtractor(doc2);
-            s = ex.getText().toLowerCase(Locale.ROOT);
 
             //At one point in development there were three copies of the text.
             //This ensures that there is only one copy.
@@ -387,69 +375,71 @@ public class TestXWPFWordExtractor extends TestCase {
                 hit++;
             }
             assertEquals("test<N>", 2, hit);
-            ex.close();
         }
     }
 
     /**
      * No Header or Footer in document
      */
+    @Test
     public void testBug55733() throws Exception {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("55733.docx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("55733.docx");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
             // Check it gives text without error
             extractor.getText();
-            extractor.close();
         }
     }
 
+    @Test
     public void testCheckboxes() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("checkboxes.docx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("checkboxes.docx");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
             assertEquals("This is a small test for checkboxes \nunchecked: |_| \n" +
-                    "Or checked: |X|\n\n\n\n\n" +
-                    "Test a checkbox within a textbox: |_| -> |X|\n\n\n" +
-                    "In Table:\n|_|\t|X|\n\n\n" +
-                    "In Sequence:\n|X||_||X|\n", extractor.getText());
-            extractor.close();
-        }
-    }
-    
-    public void testMultipleBodyBug() throws IOException {
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("MultipleBodyBug.docx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
-            assertEquals("START BODY 1 The quick, brown fox jumps over a lazy dog. END BODY 1.\n"
-                            + "START BODY 2 The quick, brown fox jumps over a lazy dog. END BODY 2.\n"
-                            + "START BODY 3 The quick, brown fox jumps over a lazy dog. END BODY 3.\n",
-                    extractor.getText());
-            extractor.close();
+                                 "Or checked: |X|\n\n\n\n\n" +
+                                 "Test a checkbox within a textbox: |_| -> |X|\n\n\n" +
+                                 "In Table:\n|_|\t|X|\n\n\n" +
+                                 "In Sequence:\n|X||_||X|\n", extractor.getText());
         }
     }
 
+    @Test
+    public void testMultipleBodyBug() throws IOException {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("MultipleBodyBug.docx");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
+            assertEquals("START BODY 1 The quick, brown fox jumps over a lazy dog. END BODY 1.\n"
+                                 + "START BODY 2 The quick, brown fox jumps over a lazy dog. END BODY 2.\n"
+                                 + "START BODY 3 The quick, brown fox jumps over a lazy dog. END BODY 3.\n",
+                         extractor.getText());
+        }
+    }
+
+    @Test
     public void testPhonetic() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("61470.docx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
-            //expect: baseText (phoneticText)
-            assertEquals("\u6771\u4EAC (\u3068\u3046\u304D\u3087\u3046)", extractor.getText().trim());
-            extractor.close();
-            extractor = new XWPFWordExtractor(doc);
-            extractor.setConcatenatePhoneticRuns(false);
-            assertEquals("\u6771\u4EAC", extractor.getText().trim());
+            try (XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
+                //expect: baseText (phoneticText)
+                assertEquals("\u6771\u4EAC (\u3068\u3046\u304D\u3087\u3046)", extractor.getText().trim());
+            }
+            try (XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
+                extractor.setConcatenatePhoneticRuns(false);
+                assertEquals("\u6771\u4EAC", extractor.getText().trim());
+            }
         }
     }
 
+    @Test
     public void testCTPictureBase() throws IOException {
         //This forces ctpicturebase to be included in the poi-ooxml-schemas jar
-        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("61991.docx")) {
-            XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("61991.docx");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
             String txt = extractor.getText();
             assertContains(txt, "Sequencing data");
-            extractor.close();
         }
     }
 
+    @Test
     public void testGlossary() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("60316.dotx")) {
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
@@ -461,6 +451,7 @@ public class TestXWPFWordExtractor extends TestCase {
         }
     }
 
+    @Test
     public void testPartsInTemplate() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("60316b.dotx")) {
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc);

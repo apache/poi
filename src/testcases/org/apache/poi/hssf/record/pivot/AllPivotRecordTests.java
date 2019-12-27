@@ -17,22 +17,17 @@
 
 package org.apache.poi.hssf.record.pivot;
 
-import junit.framework.Test;
-import junit.framework.TestSuite;
+import org.junit.runner.RunWith;
+import org.junit.runners.Suite;
 
 /**
  * Collects all tests for <tt>org.apache.poi.hssf.record.pivot</tt>.
- * 
- * @author Josh Micich
  */
+@RunWith(Suite.class)
+@Suite.SuiteClasses({
+	TestExtendedPivotTableViewFieldsRecord.class,
+	TestPageItemRecord.class,
+	TestViewFieldsRecord.class
+})
 public final class AllPivotRecordTests {
-	
-	public static Test suite() {
-		TestSuite result = new TestSuite(AllPivotRecordTests.class.getName());
-		
-		result.addTestSuite(TestExtendedPivotTableViewFieldsRecord.class);
-		result.addTestSuite(TestPageItemRecord.class);
-		result.addTestSuite(TestViewFieldsRecord.class);
-		return result;
-	}
 }

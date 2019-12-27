@@ -17,45 +17,47 @@
 
 package org.apache.poi.hsmf;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 
-import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.POIDataSamples;
-
-import junit.framework.TestCase;
+import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests to verify that we can still work on the newer Outlook 3.0 files.
  */
-public final class TestOutlook30FileRead extends TestCase {
-    private final MAPIMessage mapiMessage;
+public final class TestOutlook30FileRead {
+    private MAPIMessage mapiMessage;
 
     /**
      * Initialize this test, load up the blank.msg mapi message.
-     * @throws Exception
      */
-    public TestOutlook30FileRead() throws IOException {
+    @Before
+    public void setup() throws IOException {
         POIDataSamples samples = POIDataSamples.getHSMFInstance();
         this.mapiMessage = new MAPIMessage(samples.openResourceAsStream("outlook_30_msg.msg"));
     }
 
     /**
      * Test to see if we can read the CC Chunk.
-     * @throws ChunkNotFoundException
-     *
      */
+    @Test
     public void testReadDisplayCC() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayCC();
         String expected = "";
 
-        TestCase.assertEquals(obtained, expected);
+        assertEquals(obtained, expected);
     }
 
     /**
      * Test to see if we can read the CC Chunk.
-     * @throws ChunkNotFoundException
-     *
      */
+    @Test
     public void testReadDisplayTo() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayTo();
 
@@ -64,34 +66,31 @@ public final class TestOutlook30FileRead extends TestCase {
 
     /**
      * Test to see if we can read the From Chunk.
-     * @throws ChunkNotFoundException
-     *
      */
+    @Test
     public void testReadDisplayFrom() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayFrom();
         String expected = "Cramer, Nick";
 
-        TestCase.assertEquals(obtained, expected);
+        assertEquals(obtained, expected);
     }
 
     /**
      * Test to see if we can read the CC Chunk.
-     * @throws ChunkNotFoundException
-     *
      */
+    @Test
     public void testReadDisplayBCC() throws ChunkNotFoundException {
         String obtained = mapiMessage.getDisplayBCC();
         String expected = "";
 
-        TestCase.assertEquals(obtained, expected);
+        assertEquals(obtained, expected);
     }
 
 
     /**
      * Check if we can read the body of the blank message, we expect "".
-     *
-     * @throws Exception
      */
+    @Test
     public void testReadBody() throws Exception {
         String obtained = mapiMessage.getTextBody();
         assertTrue(obtained.startsWith("I am shutting down"));
@@ -99,39 +98,37 @@ public final class TestOutlook30FileRead extends TestCase {
 
     /**
      * Check if we can read the subject line of the blank message, we expect ""
-     *
-     * @throws Exception
      */
+    @Test
     public void testReadSubject() throws Exception {
         String obtained = mapiMessage.getSubject();
         String expected = "IN-SPIRE servers going down for a bit, back up around 8am";
 
-        TestCase.assertEquals(expected, obtained);
+        assertEquals(expected, obtained);
     }
 
     /**
      * Check if we can read the subject line of the blank message, we expect ""
-     *
-     * @throws Exception
      */
+    @Test
     public void testReadConversationTopic() throws Exception {
         String obtained = mapiMessage.getConversationTopic();
-        TestCase.assertEquals("IN-SPIRE servers going down for a bit, back up around 8am", obtained);
+        assertEquals("IN-SPIRE servers going down for a bit, back up around 8am", obtained);
     }
 
     /**
      * Check if we can read the subject line of the blank message, we expect ""
-     *
-     * @throws Exception
      */
+    @Test
     public void testReadMessageClass() throws Exception {
         MAPIMessage.MESSAGE_CLASS obtained = mapiMessage.getMessageClassEnum();
-        TestCase.assertEquals(MAPIMessage.MESSAGE_CLASS.NOTE, obtained);
+        assertEquals(MAPIMessage.MESSAGE_CLASS.NOTE, obtained);
     }
 
     /**
      * Ensure we can get the HTML and RTF versions
      */
+    @Test
     public void testReadBodyContents() throws Exception {
         String html = mapiMessage.getHtmlBody();
         String rtf = mapiMessage.getRtfBody();

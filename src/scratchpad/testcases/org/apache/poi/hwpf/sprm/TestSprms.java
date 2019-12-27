@@ -19,20 +19,22 @@
 
 package org.apache.poi.hwpf.sprm;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
 
-import junit.framework.TestCase;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
+import org.junit.Test;
 
-public class TestSprms extends TestCase
-{
+public class TestSprms {
     private static HWPFDocument reload( HWPFDocument hwpfDocument )
             throws IOException
     {
@@ -45,16 +47,18 @@ public class TestSprms extends TestCase
      * Test correct processing of "sprmPItap" (0x6649) and "sprmPFInTable"
      * (0x2416)
      */
-    public void testInnerTable() throws Exception
-    {
+    @Test
+    public void testInnerTable() throws Exception {
         InputStream resourceAsStream = POIDataSamples.getDocumentInstance()
                 .openResourceAsStream( "innertable.doc" );
-        HWPFDocument hwpfDocument = new HWPFDocument( resourceAsStream );
-        resourceAsStream.close();
+        try (HWPFDocument hwpfDocument = new HWPFDocument( resourceAsStream )) {
+            resourceAsStream.close();
 
-        testInnerTable( hwpfDocument );
-        hwpfDocument = reload( hwpfDocument );
-        testInnerTable( hwpfDocument );
+            testInnerTable(hwpfDocument);
+            try (HWPFDocument hwpfDocument2 = reload(hwpfDocument)) {
+                testInnerTable(hwpfDocument2);
+            }
+        }
     }
 
     private void testInnerTable( HWPFDocument hwpfDocument )
@@ -81,20 +85,22 @@ public class TestSprms extends TestCase
     /**
      * Test correct processing of "sprmPJc" by uncompressor
      */
-    public void testSprmPJc() throws IOException
-    {
-        InputStream resourceAsStream = POIDataSamples.getDocumentInstance()
+    @Test
+    public void testSprmPJc() throws IOException {
+        try (InputStream resourceAsStream = POIDataSamples.getDocumentInstance()
                 .openResourceAsStream( "Bug49820.doc" );
-        HWPFDocument hwpfDocument = new HWPFDocument( resourceAsStream );
-        resourceAsStream.close();
+        HWPFDocument hwpfDocument = new HWPFDocument( resourceAsStream )) {
+            resourceAsStream.close();
 
-        assertEquals( 1, hwpfDocument.getStyleSheet().getParagraphStyle( 8 )
-                .getJustification() );
+            assertEquals(1, hwpfDocument.getStyleSheet().getParagraphStyle(8)
+                    .getJustification());
 
-        hwpfDocument = reload( hwpfDocument );
+            try (HWPFDocument hwpfDocument2 = reload(hwpfDocument)) {
 
-        assertEquals( 1, hwpfDocument.getStyleSheet().getParagraphStyle( 8 )
-                .getJustification() );
+                assertEquals(1, hwpfDocument2.getStyleSheet().getParagraphStyle(8)
+                        .getJustification());
+            }
+        }
 
     }
 }

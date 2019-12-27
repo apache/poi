@@ -18,33 +18,32 @@
 package org.apache.poi.poifs.filesystem;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.OldExcelFormatException;
+import org.junit.Test;
 
 /**
  * Class to test that POIFS complains when given older non-OLE2
  *  formats. See also {@link TestOfficeXMLException} for OOXML
- *  checks 
+ *  checks
  */
-public class TestNotOLE2Exception extends TestCase {
+public class TestNotOLE2Exception {
 	private static InputStream openXLSSampleStream(String sampleFileName) {
 		return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
 	}
     private static InputStream openDOCSampleStream(String sampleFileName) {
         return POIDataSamples.getDocumentInstance().openResourceAsStream(sampleFileName);
     }
-    
-	public void testRawXMLException() throws IOException {
-        InputStream in = openXLSSampleStream("SampleSS.xml");
 
-        try {
+    @Test
+	public void testRawXMLException() throws IOException {
+        try (InputStream in = openXLSSampleStream("SampleSS.xml")) {
             new POIFSFileSystem(in).close();
             fail("expected exception was not thrown");
         } catch(NotOLE2FileException e) {
@@ -53,11 +52,10 @@ public class TestNotOLE2Exception extends TestCase {
             assertContains(e.getMessage(), "Formats such as Office 2003 XML");
         }
     }
-	
-    public void testMSWriteException() throws IOException {
-        InputStream in = openDOCSampleStream("MSWriteOld.wri");
 
-        try {
+    @Test
+    public void testMSWriteException() throws IOException {
+        try (InputStream in = openDOCSampleStream("MSWriteOld.wri")) {
             new POIFSFileSystem(in).close();
             fail("expected exception was not thrown");
         } catch(NotOLE2FileException e) {
@@ -66,11 +64,10 @@ public class TestNotOLE2Exception extends TestCase {
             assertContains(e.getMessage(), "doesn't currently support");
         }
     }
-    
-	public void testBiff3Exception() throws IOException {
-        InputStream in = openXLSSampleStream("testEXCEL_3.xls");
 
-        try {
+    @Test
+	public void testBiff3Exception() throws IOException {
+        try (InputStream in = openXLSSampleStream("testEXCEL_3.xls")) {
             new POIFSFileSystem(in).close();
             fail("expected exception was not thrown");
         } catch(OldExcelFormatException e) {
@@ -80,10 +77,9 @@ public class TestNotOLE2Exception extends TestCase {
         }
 	}
 
+    @Test
     public void testBiff4Exception() throws IOException {
-        InputStream in = openXLSSampleStream("testEXCEL_4.xls");
-
-        try {
+        try (InputStream in = openXLSSampleStream("testEXCEL_4.xls")) {
             new POIFSFileSystem(in).close();
             fail("expected exception was not thrown");
         } catch(OldExcelFormatException e) {

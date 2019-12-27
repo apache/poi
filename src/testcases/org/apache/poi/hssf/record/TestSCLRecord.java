@@ -18,21 +18,22 @@
 package org.apache.poi.hssf.record;
 
 
-import junit.framework.TestCase;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the SCLRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
-
- * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public final class TestSCLRecord extends TestCase {
+public final class TestSCLRecord {
     byte[] data = new byte[] {
       (byte)0x3,(byte)0x0,(byte)0x4,(byte)0x0
     };
 
+    @Test
     public void testLoad() {
         SCLRecord record = new SCLRecord(TestcaseRecordInputStream.create(0xa0, data));
         assertEquals( 3, record.getNumerator());
@@ -41,16 +42,13 @@ public final class TestSCLRecord extends TestCase {
         assertEquals( 8, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
+    @Test
+    public void testStore() {
         SCLRecord record = new SCLRecord();
         record.setNumerator( (short)3 );
         record.setDenominator( (short)4 );
 
-
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        confirmRecordEncoding(SCLRecord.sid, data, recordBytes);
     }
 }

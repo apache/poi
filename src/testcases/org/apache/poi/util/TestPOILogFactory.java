@@ -17,19 +17,15 @@
 
 package org.apache.poi.util;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-/**
- * @author Marc Johnson (mjohnson at apache dot org)
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Nicola Ken Barozzi (nicolaken at apache.org)
- */
-public final class TestPOILogFactory extends TestCase {
+public final class TestPOILogFactory {
 
 
     /**
      * test log creation
      */
+    @Test
     public void testLog() {
         //NKB Testing only that logging classes use gives no exception
         //    Since logging can be disabled, no checking of logging

@@ -19,31 +19,31 @@ package org.apache.poi.hssf.record;
 
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the NoteRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
- * @author Yegor Kozlov
  */
-public final class TestNoteStructureSubRecord extends TestCase {
+public final class TestNoteStructureSubRecord {
     private final byte[] data = new byte[] {
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)0x80, 0x00, 0x00, 0x00,
         0x00, 0x00, (byte)0xBF, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)0x81, 0x01,
         (byte)0xCC, (byte)0xEC
     };
 
+    @Test
     public void testRead() {
-
         NoteStructureSubRecord record = new NoteStructureSubRecord(TestcaseRecordInputStream.create(NoteStructureSubRecord.sid, data), data.length);
 
         assertEquals(NoteStructureSubRecord.sid, record.getSid());
         assertEquals(data.length, record.getDataSize());
     }
 
+    @Test
     public void testWrite() {
         NoteStructureSubRecord record = new NoteStructureSubRecord();
         assertEquals(NoteStructureSubRecord.sid, record.getSid());
@@ -51,11 +51,10 @@ public final class TestNoteStructureSubRecord extends TestCase {
 
         byte [] ser = record.serialize();
         assertEquals(ser.length - 4, data.length);
-
     }
 
-    public void testClone()
-    {
+    @Test
+    public void testClone() {
         NoteStructureSubRecord record = new NoteStructureSubRecord();
         byte[] src = record.serialize();
 

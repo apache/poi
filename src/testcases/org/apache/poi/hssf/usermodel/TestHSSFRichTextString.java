@@ -17,11 +17,13 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-public final class TestHSSFRichTextString extends TestCase {
+import org.junit.Test;
+
+public final class TestHSSFRichTextString {
+    @Test
     public void testApplyFont() {
-
         HSSFRichTextString r = new HSSFRichTextString("testing");
         assertEquals(0,r.numFormattingRuns());
         r.applyFont(2,4, new HSSFFont((short)1, null));
@@ -59,11 +61,10 @@ public final class TestHSSFRichTextString extends TestCase {
         assertEquals(1, r.getFontAtIndex(4));
         assertEquals(1, r.getFontAtIndex(5));
         assertEquals(1, r.getFontAtIndex(6));
-
     }
 
+    @Test
     public void testClearFormatting() {
-
       HSSFRichTextString r = new HSSFRichTextString("testing");
       assertEquals(0, r.numFormattingRuns());
       r.applyFont(2, 4, new HSSFFont( (short) 1, null));
@@ -76,8 +77,8 @@ public final class TestHSSFRichTextString extends TestCase {
     /**
      * Test case proposed in Bug 40520:  formated twice => will format whole String
      */
+    @Test
     public void test40520_1() {
-
         short font = 3;
 
         HSSFRichTextString r = new HSSFRichTextString("f0_123456789012345678901234567890123456789012345678901234567890");
@@ -93,8 +94,8 @@ public final class TestHSSFRichTextString extends TestCase {
     /**
      * Test case proposed in Bug 40520:  overlapped range => will format whole String
      */
+    @Test
     public void test40520_2() {
-
         short font = 3;
         HSSFRichTextString r = new HSSFRichTextString("f0_123456789012345678901234567890123456789012345678901234567890");
 
@@ -110,8 +111,8 @@ public final class TestHSSFRichTextString extends TestCase {
     /**
      * Test case proposed in Bug 40520:  formated twice => will format whole String
      */
+    @Test
     public void test40520_3() {
-
         short font = 3;
         HSSFRichTextString r = new HSSFRichTextString("f0_123456789012345678901234567890123456789012345678901234567890");
 

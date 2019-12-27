@@ -16,17 +16,22 @@
 ==================================================================== */
 package org.apache.poi.xddf.usermodel.chart;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SheetBuilder;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests for {@link XDDFDataSourcesFactory}.
  */
-public class TestXDDFDataSourcesFactory extends TestCase {
+public class TestXDDFDataSourcesFactory {
 
     private static final Object[][] numericCells = {
             {0.0,      1.0,       2.0,     3.0,      4.0},
@@ -42,6 +47,7 @@ public class TestXDDFDataSourcesFactory extends TestCase {
             {1.0, "2.0", 3.0, "4.0", 5.0, "6.0"}
     };
 
+    @Test
     public void testNumericArrayDataSource() {
         Double[] doubles = new Double[]{1.0, 2.0, 3.0, 4.0, 5.0};
         XDDFDataSource<Double> doubleDataSource = XDDFDataSourcesFactory.fromArray(doubles, null);
@@ -50,6 +56,7 @@ public class TestXDDFDataSourcesFactory extends TestCase {
         assertDataSourceIsEqualToArray(doubleDataSource, doubles);
     }
 
+    @Test
     public void testStringArrayDataSource() {
         String[] strings = new String[]{"one", "two", "three", "four", "five"};
         XDDFDataSource<String> stringDataSource = XDDFDataSourcesFactory.fromArray(strings, null);
@@ -58,6 +65,7 @@ public class TestXDDFDataSourcesFactory extends TestCase {
         assertDataSourceIsEqualToArray(stringDataSource, strings);
     }
 
+    @Test
     public void testNumericCellDataSource() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) new SheetBuilder(wb, numericCells).build();
@@ -72,6 +80,7 @@ public class TestXDDFDataSourcesFactory extends TestCase {
         }
     }
 
+    @Test
     public void testStringCellDataSource() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) new SheetBuilder(wb, stringCells).build();
@@ -85,6 +94,7 @@ public class TestXDDFDataSourcesFactory extends TestCase {
         }
     }
 
+    @Test
     public void testMixedCellDataSource() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) new SheetBuilder(wb, mixedCells).build();
@@ -103,6 +113,7 @@ public class TestXDDFDataSourcesFactory extends TestCase {
         }
     }
 
+    @Test
     public void testIOBExceptionOnInvalidIndex() {
         XSSFWorkbook wb = new XSSFWorkbook();
         XSSFSheet sheet = (XSSFSheet) new SheetBuilder(wb, numericCells).build();

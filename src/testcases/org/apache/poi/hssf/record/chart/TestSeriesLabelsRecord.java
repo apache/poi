@@ -18,23 +18,25 @@
 package org.apache.poi.hssf.record.chart;
 
 
-import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the SeriesLabelsRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
-
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestSeriesLabelsRecord extends TestCase {
+public final class TestSeriesLabelsRecord {
     byte[] data = new byte[] {
         (byte)0x03,(byte)0x00
     };
 
+    @Test
     public void testLoad() {
         SeriesLabelsRecord record = new SeriesLabelsRecord(TestcaseRecordInputStream.create(0x100c, data));
         assertEquals( 3, record.getFormatFlags());
@@ -45,12 +47,11 @@ public final class TestSeriesLabelsRecord extends TestCase {
         assertFalse(record.isShowLabel());
         assertFalse(record.isShowBubbleSizes());
 
-
         assertEquals( 2+4, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
+    @Test
+    public void testStore() {
         SeriesLabelsRecord record = new SeriesLabelsRecord();
         record.setShowActual( true );
         record.setShowPercent( true );
@@ -61,8 +62,6 @@ public final class TestSeriesLabelsRecord extends TestCase {
 
 
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        confirmRecordEncoding(SeriesLabelsRecord.sid, data, recordBytes);
     }
 }

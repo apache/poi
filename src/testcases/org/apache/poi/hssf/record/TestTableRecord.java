@@ -17,21 +17,23 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.hssf.util.CellRangeAddress8Bit;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.util.CellRangeAddress8Bit;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the TableRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
  */
-public final class TestTableRecord extends TestCase {
+public final class TestTableRecord {
 	byte[] header = new byte[] {
 			0x36, 02, 0x10, 00, // sid=x236, 16 bytes long
 	};
 	byte[] data = new byte[] {
-			03, 00,  // from row 3 
+			03, 00,  // from row 3
 			8, 00,   // to row 8
 			04,      // from col 4
 			06,      // to col 6
@@ -42,6 +44,7 @@ public final class TestTableRecord extends TestCase {
 			00, 00   // col inp col 0
 	};
 
+	@Test
 	public void testLoad() {
 
 		TableRecord record = new TableRecord(TestcaseRecordInputStream.create(0x236, data));
@@ -60,6 +63,7 @@ public final class TestTableRecord extends TestCase {
 		assertEquals( 16 + 4, record.getRecordSize() );
 	}
 
+	@Test
     public void testStore()
     {
 //    	Offset 0x3bd9 (15321)
@@ -87,8 +91,6 @@ public final class TestTableRecord extends TestCase {
 		record.setColInputCol(0);
 
 		byte [] recordBytes = record.serialize();
-		assertEquals(recordBytes.length - 4, data.length);
-		for (int i = 0; i < data.length; i++)
-			assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+		confirmRecordEncoding(TableRecord.sid, data, recordBytes);
 	}
 }

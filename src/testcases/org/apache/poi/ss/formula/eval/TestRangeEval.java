@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,14 +34,13 @@ import org.apache.poi.ss.formula.ptg.AreaI.OffsetArea;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
+import org.junit.Test;
 
 /**
  * Test for unary plus operator evaluator.
- *
- * @author Josh Micich
  */
-public final class TestRangeEval extends TestCase {
-
+public final class TestRangeEval {
+	@Test
 	public void testPermutations() {
 
 		confirm("B3", "D7", "B3:D7");
@@ -58,7 +57,7 @@ public final class TestRangeEval extends TestCase {
 			createRefEval(refA),
 			createRefEval(refB),
 		};
-        List<SpreadsheetVersion> versions = Arrays.asList(new SpreadsheetVersion[] {SpreadsheetVersion.EXCEL97, SpreadsheetVersion.EXCEL2007});
+        List<SpreadsheetVersion> versions = Arrays.asList(SpreadsheetVersion.EXCEL97, SpreadsheetVersion.EXCEL2007);
         for(SpreadsheetVersion version : versions) {
             AreaReference ar = new AreaReference(expectedAreaRef, version);
     		ValueEval result = EvalInstances.Range.evaluate(args, 0, (short)0);
@@ -136,6 +135,7 @@ public final class TestRangeEval extends TestCase {
 		}
 	}
 
+	@Test
 	public void testRangeUsingOffsetFunc_bug46948() {
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFRow row = wb.createSheet("Sheet1").createRow(0);
@@ -151,15 +151,8 @@ public final class TestRangeEval extends TestCase {
 		cellB1.setCellValue(1.0); // range will be C1:D1
 
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-		CellValue cv;
-		try {
-			cv = fe.evaluate(cellA1);
-		} catch (IllegalArgumentException e) {
-			if (e.getMessage().equals("Unexpected ref arg class (org.apache.poi.ss.formula.LazyAreaEval)")) {
-				throw new AssertionFailedError("Identified bug 46948");
-			}
-			throw e;
-		}
+		// bug 46948 - Unexpected ref arg class (org.apache.poi.ss.formula.LazyAreaEval)
+		CellValue cv = fe.evaluate(cellA1);
 
 		assertEquals(12.0, cv.getNumberValue(), 0.0);
 

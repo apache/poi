@@ -18,7 +18,6 @@
 package org.apache.poi.ss.util;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -27,8 +26,6 @@ import org.apache.poi.util.HexDump;
 import org.junit.Test;
 /**
  * Tests for {@link NumberComparer}
- *
- * @author Josh Micich
  */
 public final class TestNumberComparer {
 
@@ -44,27 +41,24 @@ public final class TestNumberComparer {
 			success &= confirm(i, ce.getNegA(), ce.getNegB(), -ce.getExpectedResult());
 			success &= confirm(i, ce.getNegB(), ce.getNegA(), +ce.getExpectedResult());
 		}
-		
+
 		assertTrue("One or more cases failed.  See stderr", success);
 	}
 
     @Test
 	public void testRoundTripOnComparisonExamples() {
 		ComparisonExample[] examples = NumberComparisonExamples.getComparisonExamples();
-		boolean success = true;
 		for(int i=0;i<examples.length; i++) {
 			ComparisonExample ce = examples[i];
-			success &= confirmRoundTrip(i, ce.getA());
-			success &= confirmRoundTrip(i, ce.getNegA());
-			success &= confirmRoundTrip(i, ce.getB());
-			success &= confirmRoundTrip(i, ce.getNegB());
+			confirmRoundTrip(i, ce.getA());
+			confirmRoundTrip(i, ce.getNegA());
+			confirmRoundTrip(i, ce.getB());
+			confirmRoundTrip(i, ce.getNegB());
 		}
-		
-		assertTrue("One or more cases failed.  See stderr", success);
 	}
 
-	private boolean confirmRoundTrip(int i, double a) {
-		return TestExpandedDouble.confirmRoundTrip(i, Double.doubleToLongBits(a));
+	private void confirmRoundTrip(int i, double a) {
+		TestExpandedDouble.confirmRoundTrip(i, Double.doubleToLongBits(a));
 	}
 
 	/**

@@ -21,29 +21,32 @@
 package org.apache.poi.hslf.record;
 
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayOutputStream;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests that InteractiveInfoAtom works properly.
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestInteractiveInfo extends TestCase {
+public class TestInteractiveInfo {
 	// From a real file
-	private final byte[] data_a = new byte[] {
-		0x0F, 00, 0xF2-256, 0x0F, 0x18, 00, 00, 00,
-		00, 00, 0xF3-256, 0x0F, 0x10, 00, 00, 00,
-		00, 00, 00, 00, 01, 00, 00, 00,
-		04, 00, 00, 00, 8, 00, 00, 00
+	private final byte[] data_a = {
+		0x0F, 0, 0xF2-256, 0x0F, 0x18, 0, 0, 0,
+		0, 0, 0xF3-256, 0x0F, 0x10, 0, 0, 0,
+		0, 0, 0, 0, 1, 0, 0, 0,
+		4, 0, 0, 0, 8, 0, 0, 0
 	};
 
+	@Test
 	public void testRecordType() {
 		InteractiveInfo ii = new InteractiveInfo(data_a, 0, data_a.length);
 		assertEquals(4082, ii.getRecordType());
 	}
 
+	@Test
 	public void testGetChildDetails() {
 		InteractiveInfo ii = new InteractiveInfo(data_a, 0, data_a.length);
 		InteractiveInfoAtom ia = ii.getInteractiveInfoAtom();
@@ -51,19 +54,16 @@ public class TestInteractiveInfo extends TestCase {
 		assertEquals(1, ia.getHyperlinkID());
 	}
 
+	@Test
 	public void testWrite() throws Exception {
 		InteractiveInfo ii = new InteractiveInfo(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ii.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertEquals(data_a.length, b.length);
-		for(int i=0; i<data_a.length; i++) {
-			assertEquals(data_a[i],b[i]);
-		}
+		assertArrayEquals(data_a, baos.toByteArray());
 	}
 
 	// Create A from scratch
+	@Test
 	public void testCreate() throws Exception {
 		InteractiveInfo ii = new InteractiveInfo();
 		InteractiveInfoAtom ia = ii.getInteractiveInfoAtom();
@@ -77,11 +77,6 @@ public class TestInteractiveInfo extends TestCase {
 		// Check it's now the same as a
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ii.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertEquals(data_a.length, b.length);
-		for(int i=0; i<data_a.length; i++) {
-			assertEquals(data_a[i],b[i]);
-		}
+		assertArrayEquals(data_a, baos.toByteArray());
    }
 }

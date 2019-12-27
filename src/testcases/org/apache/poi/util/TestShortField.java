@@ -17,59 +17,46 @@
 
 package org.apache.poi.util;
 
-import junit.framework.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import org.junit.Test;
 
 /**
  * Test ShortField code
- *
- * @author  Marc Johnson (mjohnson at apache dot org)
  */
-public final class TestShortField extends TestCase {
+public final class TestShortField {
 
-    private static final short[] _test_array =
-    {
-        Short.MIN_VALUE, ( short ) -1, ( short ) 0, ( short ) 1,
-        Short.MAX_VALUE
-    };
+    private static final short[] _test_array = {Short.MIN_VALUE, -1, 0, 1, Short.MAX_VALUE};
 
+    @Test
     public void testConstructors() {
-        try
-        {
+        try {
             new ShortField(-1);
             fail("Should have caught ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         ShortField field = new ShortField(2);
 
         assertEquals(0, field.get());
-        try
-        {
+        try {
             new ShortField(-1, ( short ) 1);
             fail("Should have caught ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         field = new ShortField(2, ( short ) 0x1234);
         assertEquals(0x1234, field.get());
         byte[] array = new byte[ 4 ];
 
-        try
-        {
+        try {
             new ShortField(-1, ( short ) 1, array);
             fail("Should have caught ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         field = new ShortField(2, ( short ) 0x1234, array);
@@ -77,14 +64,10 @@ public final class TestShortField extends TestCase {
         assertEquals(( byte ) 0x34, array[ 2 ]);
         assertEquals(( byte ) 0x12, array[ 3 ]);
         array = new byte[ 3 ];
-        try
-        {
+        try {
             new ShortField(2, ( short ) 5, array);
             fail("should have gotten ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         for (short element : _test_array) {
@@ -94,12 +77,12 @@ public final class TestShortField extends TestCase {
         }
     }
 
+    @Test
     public void testSet() {
         ShortField field = new ShortField(0);
         byte[]     array = new byte[ 2 ];
 
-        for (int j = 0; j < _test_array.length; j++)
-        {
+        for (int j = 0; j < _test_array.length; j++) {
             field.set(_test_array[ j ]);
             assertEquals("testing _1 " + j, _test_array[ j ], field.get());
             field = new ShortField(0);
@@ -113,18 +96,15 @@ public final class TestShortField extends TestCase {
         }
     }
 
+    @Test
     public void testReadFromBytes() {
         ShortField field = new ShortField(1);
         byte[]     array = new byte[ 2 ];
 
-        try
-        {
+        try {
             field.readFromBytes(array);
             fail("should have caught ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         field = new ShortField(0);
@@ -137,13 +117,14 @@ public final class TestShortField extends TestCase {
         }
     }
 
+    @Test
     public void testReadFromStream() throws IOException {
         ShortField field  = new ShortField(0);
         byte[]     buffer = new byte[ _test_array.length * 2 ];
 
         for (int j = 0; j < _test_array.length; j++)
         {
-            buffer[ (j * 2) + 0 ] = ( byte ) (_test_array[ j ] % 256);
+            buffer[ (j * 2)     ] = ( byte ) (_test_array[ j ]        % 256);
             buffer[ (j * 2) + 1 ] = ( byte ) ((_test_array[ j ] >> 8) % 256);
         }
         ByteArrayInputStream stream = new ByteArrayInputStream(buffer);
@@ -155,6 +136,7 @@ public final class TestShortField extends TestCase {
         }
     }
 
+    @Test
     public void testWriteToBytes() {
         ShortField field = new ShortField(0);
         byte[]     array = new byte[ 2 ];

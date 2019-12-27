@@ -17,35 +17,35 @@
 
 package org.apache.poi.xssf.model;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import org.apache.poi.POIDataSamples;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPhoneticRun;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
-import junit.framework.TestCase;
-
 /**
  * Test {@link SharedStringsTable}, the cache of strings in a workbook
- *
- * @author Yegor Kozlov
  */
-public final class TestSharedStringsTable extends TestCase {
-
+public final class TestSharedStringsTable {
     @SuppressWarnings("deprecation")
+    @Test
     public void testCreateNew() {
         SharedStringsTable sst = new SharedStringsTable();
 
@@ -117,6 +117,7 @@ public final class TestSharedStringsTable extends TestCase {
         assertEquals("Second string", new XSSFRichTextString(sst.getEntryAt(2)).toString());
     }
 
+    @Test
     public void testCreateUsingRichTextStrings() {
         SharedStringsTable sst = new SharedStringsTable();
 
@@ -183,6 +184,7 @@ public final class TestSharedStringsTable extends TestCase {
         assertEquals("Second string", sst.getItemAt(2).toString());
     }
 
+    @Test
     @SuppressWarnings("deprecation")
     public void testReadWrite() throws IOException {
         XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
@@ -222,14 +224,21 @@ public final class TestSharedStringsTable extends TestCase {
      * Test for Bugzilla 48936
      *
      * A specific sequence of strings can result in broken CDATA section in sharedStrings.xml file.
-     *
-     * @author Philippe Laflamme
      */
+    @Test
     public void testBug48936() throws IOException {
         Workbook w1 = new XSSFWorkbook();
         Sheet s = w1.createSheet();
         int i = 0;
-        List<String> lst = readStrings("48936-strings.txt");
+
+        Path path = XSSFTestDataSamples.getSampleFile("48936-strings.txt").toPath();
+
+        List<String> lst = Files
+            .lines(path, StandardCharsets.UTF_8)
+            .map(String::trim)
+            .filter(((Predicate<String>)String::isEmpty).negate())
+            .collect(Collectors.toList());
+
         for (String str : lst) {
             s.createRow(i++).createCell(0).setCellValue(str);
         }
@@ -242,26 +251,10 @@ public final class TestSharedStringsTable extends TestCase {
             String val = s.getRow(i++).getCell(0).getStringCellValue();
             assertEquals(str, val);
         }
-        
+
         Workbook w3 = XSSFTestDataSamples.writeOutAndReadBack(w2);
         w2.close();
         assertNotNull(w3);
         w3.close();
     }
-
-    private List<String> readStrings(String filename) throws IOException {
-        List<String> strs = new ArrayList<>();
-        POIDataSamples samples = POIDataSamples.getSpreadSheetInstance();
-        BufferedReader br = new BufferedReader(
-                new InputStreamReader(samples.openResourceAsStream(filename), StandardCharsets.UTF_8));
-        String s;
-        while ((s = br.readLine()) != null) {
-            if (s.trim().length() > 0) {
-                strs.add(s.trim());
-            }
-        }
-        br.close();
-        return strs;
-    }
-
 }

@@ -17,10 +17,11 @@
 
 package org.apache.poi.hssf.eventmodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.eventusermodel.AbortableHSSFListener;
@@ -30,22 +31,20 @@ import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.junit.Test;
 
 /**
  * Tests for {@link AbortableHSSFListener}
  */
-public final class TestAbortableListener extends TestCase {
+public final class TestAbortableListener {
 
-	private POIFSFileSystem openSample() {
+	private POIFSFileSystem openSample() throws IOException {
 		ByteArrayInputStream is = new ByteArrayInputStream(HSSFITestDataProvider.instance
 				.getTestDataFileContent("SimpleWithColours.xls"));
-		try {
-			return new POIFSFileSystem(is);
-		} catch (IOException e) {
-			throw new RuntimeException(e);
-		}
+		return new POIFSFileSystem(is);
 	}
 
+	@Test
 	public void testAbortingBasics() throws Exception {
 		AbortableCountingListener l = new AbortableCountingListener(1000);
 
@@ -65,7 +64,7 @@ public final class TestAbortableListener extends TestCase {
 		assertEquals(EOFRecord.sid, l.lastRecordSeen.getSid());
 	}
 
-
+	@Test
 	public void testAbortStops() throws Exception {
 		AbortableCountingListener l = new AbortableCountingListener(1);
 
@@ -100,7 +99,7 @@ public final class TestAbortableListener extends TestCase {
 			countSeen++;
 			lastRecordSeen = record;
 
-			if(countSeen == abortAfterIndex) {
+			if (countSeen == abortAfterIndex) {
 				return 1234;
 			}
 			return 0;

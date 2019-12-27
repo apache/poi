@@ -17,25 +17,22 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.util.HexRead;
-import org.apache.poi.util.RecordFormatException;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the TestEmbeddedObjectRefSubRecord
- * class works correctly.  Test data taken directly from a real
- * Excel file.
- *
- * @author Yegor Kozlov
+ * class works correctly.  Test data taken directly from a real Excel file.
  */
-public final class TestEmbeddedObjectRefSubRecord extends TestCase {
+public final class TestEmbeddedObjectRefSubRecord {
 
 	private static final short EORSR_SID = EmbeddedObjectRefSubRecord.sid;
 
+	@Test
 	public void testStore() {
 		String data1
 				= "20 00 05 00 FC 10 76 01 02 24 14 DF 00 03 10 00 "
@@ -53,29 +50,15 @@ public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 
 		RecordInputStream in2 = TestcaseRecordInputStream.create(ser);
 		EmbeddedObjectRefSubRecord record2 = new EmbeddedObjectRefSubRecord(in2, ser.length-4);
-
-		confirmData(src, ser);
+		confirmRecordEncoding(EmbeddedObjectRefSubRecord.sid, src, ser);
 		assertEquals(record1.getOLEClassName(), record2.getOLEClassName());
 
 		byte[] ser2 = record1.serialize();
 		assertArrayEquals(ser, ser2);
 	}
 
-	/**
-	 * @param expectedData does not include sid & size
-	 * @param actualFullRecordData includes sid & size
-	 */
-	private static void confirmData(byte[] expectedData, byte[] actualFullRecordData) {
-		assertEquals(expectedData.length, actualFullRecordData.length-4);
-		for (int i = 0; i < expectedData.length; i++) {
-			if(expectedData[i] != actualFullRecordData[i+4]) {
-				throw new AssertionFailedError("Difference at offset (" + i + ")");
-			}
-		}
-	}
-
+	@Test
 	public void testCreate() {
-
 		EmbeddedObjectRefSubRecord record1 = new EmbeddedObjectRefSubRecord();
 
 		byte[] ser = record1.serialize();
@@ -89,8 +72,9 @@ public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 		assertArrayEquals(ser, ser2);
 	}
 
+	@Test
 	public void testCameraTool_bug45912() {
-		/**
+		/*
 		 * taken from ftPictFmla sub-record in attachment 22645 (offset 0x40AB).
 		 */
 		byte[] data45912 = hr(
@@ -101,7 +85,7 @@ public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 
 		EmbeddedObjectRefSubRecord rec = new EmbeddedObjectRefSubRecord(in, data45912.length);
 		byte[] ser2 = rec.serialize();
-		confirmData(data45912, ser2);
+		confirmRecordEncoding(EmbeddedObjectRefSubRecord.sid, data45912, ser2);
 	}
 
 	private static byte[] hr(String string) {
@@ -111,6 +95,7 @@ public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 	/**
 	 * tests various examples of OLE controls
 	 */
+	@Test
 	public void testVarious() {
 		String[] rawData = {
 			"12 00 0B 00 70 95 0B 05 3B 01 00 36 00 40 00 18 00 19 00 18",
@@ -143,8 +128,9 @@ public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 		TestcaseRecordInputStream.confirmRecordEncoding("Test record " + i, EORSR_SID, data, ser2);
 	}
 
+	@Test
 	public void testVisioDrawing_bug46199() {
-		/**
+		/*
 		 * taken from ftPictFmla sub-record in attachment 22860 (stream offset 0x768F).<br>
 		 * Note that the since the string length is zero, there is no unicode flag byte
 		 */
@@ -157,15 +143,8 @@ public final class TestEmbeddedObjectRefSubRecord extends TestCase {
 				+ "0F CB E8 00");
 		RecordInputStream in = TestcaseRecordInputStream.create(EORSR_SID, data46199);
 
-		EmbeddedObjectRefSubRecord rec;
-		try {
-			rec = new EmbeddedObjectRefSubRecord(in, data46199.length);
-		} catch (RecordFormatException e) {
-			if (e.getMessage().equals("Not enough data (3) to read requested (4) bytes")) {
-				throw new AssertionFailedError("Identified bug 22860");
-			}
-			throw e;
-		}
+		// bug 22860 - Not enough data (3) to read requested (4) bytes
+		EmbeddedObjectRefSubRecord rec  = new EmbeddedObjectRefSubRecord(in, data46199.length);
 		byte[] ser2 = rec.serialize();
 		TestcaseRecordInputStream.confirmRecordEncoding(EORSR_SID, data46199, ser2);
 	}

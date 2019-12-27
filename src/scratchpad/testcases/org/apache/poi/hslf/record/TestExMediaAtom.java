@@ -19,22 +19,24 @@ package org.apache.poi.hslf.record;
 
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests that {@link org.apache.poi.hslf.record.HeadersFootersAtom} works properly
- *
- * @author Yegor Kozlov
  */
-public final class TestExMediaAtom extends TestCase {
+public final class TestExMediaAtom {
 	// From a real file
 	private static final byte[] data = {
-			0x00, 0x00, (byte)0x04, 0x10, 0x08, 0x00, 0x00, 00,
+			0x00, 0x00, (byte)0x04, 0x10, 0x08, 0x00, 0x00, 0,
 			0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };
 
+	@Test
 	public void testRead() {
 		ExMediaAtom record = new ExMediaAtom(data, 0, data.length);
 		assertEquals(RecordTypes.ExMediaAtom.typeID, record.getRecordType());
@@ -45,6 +47,7 @@ public final class TestExMediaAtom extends TestCase {
 		assertFalse(record.getFlag(ExMediaAtom.fRewind));
 	}
 
+	@Test
 	public void testWrite() throws Exception {
 		ExMediaAtom record = new ExMediaAtom(data, 0, data.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -54,6 +57,7 @@ public final class TestExMediaAtom extends TestCase {
 		assertArrayEquals(data, b);
 	}
 
+	@Test
 	public void testNewRecord() throws Exception {
 		ExMediaAtom ref = new ExMediaAtom(data, 0, data.length);
 		assertEquals(0, ref.getMask()); //
@@ -71,6 +75,7 @@ public final class TestExMediaAtom extends TestCase {
 		assertArrayEquals(data, b);
 	}
 
+	@Test
 	public void testFlags() {
 		ExMediaAtom record = new ExMediaAtom();
 

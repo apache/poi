@@ -17,14 +17,13 @@
 
 package org.apache.poi.ss.formula.function;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-/**
- * 
- * @author Josh Micich
- */
-public final class TestFunctionMetadataRegistry extends TestCase {
+import org.junit.Test;
 
+public final class TestFunctionMetadataRegistry {
+	@Test
 	public void testWellKnownFunctions() {
 		confirmFunction(0, "COUNT");
 		confirmFunction(1, "IF");

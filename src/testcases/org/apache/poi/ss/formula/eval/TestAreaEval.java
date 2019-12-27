@@ -17,21 +17,22 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.functions.EvalFactory;
+import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.util.AreaReference;
+import org.junit.Test;
 
 /**
  * Tests for <tt>AreaEval</tt>
- *
- * @author Josh Micich
  */
-public final class TestAreaEval extends TestCase {
+public final class TestAreaEval {
 
+	@Test
 	public void testGetValue_bug44950() {
 		// TODO - this test probably isn't testing much anymore
 		AreaPtg ptg = new AreaPtg(new AreaReference("B2:D3", SpreadsheetVersion.EXCEL97));
@@ -45,9 +46,7 @@ public final class TestAreaEval extends TestCase {
 				new NumberEval(6),
 		};
 		AreaEval ae = EvalFactory.createAreaEval(ptg, values);
-		if (one == ae.getAbsoluteValue(1, 2)) {
-			throw new AssertionFailedError("Identified bug 44950 a");
-		}
+		assertNotEquals("Identified bug 44950 a", one, ae.getAbsoluteValue(1, 2));
 		confirm(1, ae, 1, 1);
 		confirm(2, ae, 1, 2);
 		confirm(3, ae, 1, 3);

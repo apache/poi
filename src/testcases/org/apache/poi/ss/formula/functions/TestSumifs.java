@@ -22,7 +22,6 @@ package org.apache.poi.ss.formula.functions;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
-import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
@@ -38,27 +37,23 @@ import org.junit.Test;
 
 /**
  * Test cases for SUMIFS()
- *
- * @author Yegor Kozlov
  */
 public final class TestSumifs {
 
     private static final OperationEvaluationContext EC = new OperationEvaluationContext(null, null, 0, 1, 0, null);
 
-	private static ValueEval invokeSumifs(ValueEval[] args, OperationEvaluationContext ec) {
+	private static ValueEval invokeSumifs(ValueEval[] args) {
 		return new Sumifs().evaluate(args, EC);
 	}
 
 	private static void confirmDouble(double expected, ValueEval actualEval) {
-		if(!(actualEval instanceof NumericValueEval)) {
-			throw new AssertionFailedError("Expected numeric result");
-		}
+	    assertTrue("Expected numeric result", actualEval instanceof NumericValueEval);
 		NumericValueEval nve = (NumericValueEval)actualEval;
 		assertEquals(expected, nve.getNumberValue(), 0);
 	}
 
     private static void confirm(double expectedResult, ValueEval[] args) {
-        confirmDouble(expectedResult, invokeSumifs(args, EC));
+        confirmDouble(expectedResult, invokeSumifs(args));
     }
 
     /**
@@ -140,7 +135,7 @@ public final class TestSumifs {
                 EvalFactory.createAreaEval("C2:C9", c2c9),
                 new NumberEval(1),
         };
-        assertEquals(ErrorEval.VALUE_INVALID, invokeSumifs(args, EC));
+        assertEquals(ErrorEval.VALUE_INVALID, invokeSumifs(args));
 
 	}
 
@@ -189,6 +184,8 @@ public final class TestSumifs {
                 new StringEval(">0.03"), // 3% in the MSFT example
                 EvalFactory.createAreaEval("B4:E4", b4e4),
                 new StringEval(">=0.02"),   // 2% in the MSFT example
+                EvalFactory.createAreaEval("B5:E5", b5e5),
+                new StringEval(">=0.01"),   // 1% in the MSFT example
         };
         confirm(500.0, args);
     }
@@ -299,7 +296,7 @@ public final class TestSumifs {
                 new StringEval("A*"),
         };
 
-        ValueEval result = invokeSumifs(args, EC);
+        ValueEval result = invokeSumifs(args);
         assertTrue("Expect to have an error when an input is an invalid value, but had: " + result.getClass(), result instanceof ErrorEval);
 
         args = new ValueEval[]{
@@ -308,7 +305,7 @@ public final class TestSumifs {
                 ErrorEval.VALUE_INVALID,
         };
 
-        result = invokeSumifs(args, EC);
+        result = invokeSumifs(args);
         assertTrue("Expect to have an error when an input is an invalid value, but had: " + result.getClass(), result instanceof ErrorEval);
     }
 
@@ -332,7 +329,7 @@ public final class TestSumifs {
                 ErrorEval.VALUE_INVALID
         };
 
-        ValueEval result = invokeSumifs(args, EC);
+        ValueEval result = invokeSumifs(args);
         assertTrue("Expect to have an error when an input is an invalid value, but had: " + result.getClass(), result instanceof ErrorEval);
         assertEquals(ErrorEval.VALUE_INVALID, result);
     }
@@ -357,7 +354,7 @@ public final class TestSumifs {
                 ErrorEval.NAME_INVALID
         };
 
-        ValueEval result = invokeSumifs(args, EC);
+        ValueEval result = invokeSumifs(args);
         assertTrue("Expect to have an error when an input is an invalid value, but had: " + result.getClass(), result instanceof ErrorEval);
         assertEquals(ErrorEval.NAME_INVALID, result);
     }

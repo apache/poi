@@ -18,32 +18,36 @@
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayOutputStream;
+
+import org.junit.Test;
 
 /**
  * Tests that InteractiveInfoAtom works properly.
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestInteractiveInfoAtom extends TestCase {
+public class TestInteractiveInfoAtom {
 	// From a real file
 	private final byte[] data_a = new byte[] {
-		00, 00, 0xF3-256, 0x0F, 0x10, 00, 00, 00,
-		00, 00, 00, 00, 01, 00, 00, 00,
-		04, 00, 00, 00, 8, 00, 00, 00
+		0, 0, 0xF3-256, 0x0F, 0x10, 0, 0, 0,
+		0, 0, 0, 0, 1, 0, 0, 0,
+		4, 0, 0, 0, 8, 0, 0, 0
 	};
 	private final byte[] data_b = new byte[] {
-		00, 00, 0xF3-256, 0x0F, 0x10, 00, 00, 00,
-		00, 00, 00, 00, 04, 00, 00, 00,
-		04, 00, 00, 00, 8, 00, 00, 00
+		0, 0, 0xF3-256, 0x0F, 0x10, 0, 0, 0,
+		0, 0, 0, 0, 4, 0, 0, 0,
+		4, 0, 0, 0, 8, 0, 0, 0
 	};
 
+	@Test
 	public void testRecordType() {
 		InteractiveInfoAtom ia = new InteractiveInfoAtom(data_a, 0, data_a.length);
-		assertEquals(4083l, ia.getRecordType());
+		assertEquals(4083L, ia.getRecordType());
 	}
 
+	@Test
 	public void testGetNumber() {
 		InteractiveInfoAtom ia = new InteractiveInfoAtom(data_a, 0, data_a.length);
 		InteractiveInfoAtom ib = new InteractiveInfoAtom(data_b, 0, data_b.length);
@@ -52,6 +56,7 @@ public class TestInteractiveInfoAtom extends TestCase {
 		assertEquals(4, ib.getHyperlinkID());
 	}
 
+	@Test
 	public void testGetRest() {
 		InteractiveInfoAtom ia = new InteractiveInfoAtom(data_a, 0, data_a.length);
 		InteractiveInfoAtom ib = new InteractiveInfoAtom(data_b, 0, data_b.length);
@@ -66,19 +71,16 @@ public class TestInteractiveInfoAtom extends TestCase {
 		assertEquals(8, ib.getHyperlinkType());
 	}
 
+	@Test
 	public void testWrite() throws Exception {
 		InteractiveInfoAtom ia = new InteractiveInfoAtom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ia.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertEquals(data_a.length, b.length);
-		for(int i=0; i<data_a.length; i++) {
-			assertEquals(data_a[i],b[i]);
-		}
+		assertArrayEquals(data_a, baos.toByteArray());
 	}
 
 	// Create A from scratch
+	@Test
 	public void testCreate() throws Exception {
 		InteractiveInfoAtom ia = new InteractiveInfoAtom();
 
@@ -91,15 +93,11 @@ public class TestInteractiveInfoAtom extends TestCase {
 		// Check it's now the same as a
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ia.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertEquals(data_a.length, b.length);
-		for(int i=0; i<data_a.length; i++) {
-			assertEquals(data_a[i],b[i]);
-		}
+		assertArrayEquals(data_a, baos.toByteArray());
 	}
 
 	// Try to turn a into b
+	@Test
 	public void testChange() throws Exception {
 		InteractiveInfoAtom ia = new InteractiveInfoAtom(data_a, 0, data_a.length);
 
@@ -109,12 +107,6 @@ public class TestInteractiveInfoAtom extends TestCase {
 		// Check bytes are now the same
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ia.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		// Should now be the same
-		assertEquals(data_b.length, b.length);
-		for(int i=0; i<data_b.length; i++) {
-			assertEquals(data_b[i],b[i]);
-		}
+		assertArrayEquals(data_b, baos.toByteArray());
 	}
 }

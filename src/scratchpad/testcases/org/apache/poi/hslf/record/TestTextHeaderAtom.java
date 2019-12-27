@@ -18,26 +18,30 @@
 package org.apache.poi.hslf.record;
 
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayOutputStream;
 
-import junit.framework.TestCase;
 import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
+import org.junit.Test;
 
 /**
  * Tests that TextHeaderAtom works properly
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestTextHeaderAtom extends TestCase {
+public final class TestTextHeaderAtom {
 	// From a real file
-	private final byte[] notes_data = new byte[] { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 2, 0, 0, 0};
-	private final byte[] title_data = new byte[] { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 0, 0, 0, 0 };
-	private final byte[] body_data = new byte[]  { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 1, 0, 0, 0 };
+	private final byte[] notes_data = { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 2, 0, 0, 0 };
+	private final byte[] title_data = { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 0, 0, 0, 0 };
+	private final byte[] body_data = { 0, 0, 0x9f-256, 0x0f, 4, 0, 0, 0, 1, 0, 0, 0 };
 
+	@Test
 	public void testRecordType() {
 		TextHeaderAtom tha = new TextHeaderAtom(notes_data,0,12);
-		assertEquals(3999l, tha.getRecordType());
+		assertEquals(3999L, tha.getRecordType());
 	}
+
+	@Test
 	public void testTypes() {
 		TextHeaderAtom n_tha = new TextHeaderAtom(notes_data,0,12);
 		TextHeaderAtom t_tha = new TextHeaderAtom(title_data,0,12);
@@ -47,15 +51,11 @@ public final class TestTextHeaderAtom extends TestCase {
 		assertEquals(TextPlaceholder.BODY.nativeId, b_tha.getTextType());
 	}
 
+	@Test
 	public void testWrite() throws Exception {
 		TextHeaderAtom tha = new TextHeaderAtom(notes_data,0,12);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		tha.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertEquals(notes_data.length, b.length);
-		for(int i=0; i<notes_data.length; i++) {
-			assertEquals(notes_data[i],b[i]);
-		}
+		assertArrayEquals(notes_data, baos.toByteArray());
 	}
 }

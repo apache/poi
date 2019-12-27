@@ -18,27 +18,27 @@
 package org.apache.poi.hssf.record.chart;
 
 
-import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the BarRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
-
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestBarRecord extends TestCase {
+public final class TestBarRecord {
     byte[] data = new byte[] {
         (byte)0x00,(byte)0x00,   // bar space
         (byte)0x96,(byte)0x00,   // category space
         (byte)0x00,(byte)0x00    // format flags
     };
 
+    @Test
     public void testLoad() {
-
         BarRecord record = new BarRecord(TestcaseRecordInputStream.create(0x1017, data));
         assertEquals( 0, record.getBarSpace());
         assertEquals( 0x96, record.getCategorySpace());
@@ -51,8 +51,8 @@ public final class TestBarRecord extends TestCase {
         assertEquals( 10, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
+    @Test
+    public void testStore() {
         BarRecord record = new BarRecord();
         record.setBarSpace( (short)0 );
         record.setCategorySpace( (short)0x96 );
@@ -63,8 +63,6 @@ public final class TestBarRecord extends TestCase {
 
 
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        confirmRecordEncoding(BarRecord.sid, data, recordBytes);
     }
 }

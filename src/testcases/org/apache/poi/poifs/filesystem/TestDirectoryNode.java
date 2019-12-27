@@ -18,6 +18,12 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -25,76 +31,71 @@ import java.util.Iterator;
 
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.DocumentProperty;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Class to test DirectoryNode functionality
- *
- * @author Marc Johnson
  */
-public final class TestDirectoryNode extends TestCase {
+public final class TestDirectoryNode {
 
     /**
      * test trivial constructor (a DirectoryNode with no children)
      */
-    public void testEmptyConstructor() {
-        POIFSFileSystem   fs        = new POIFSFileSystem();
-        DirectoryProperty property1 = new DirectoryProperty("parent");
-        DirectoryProperty property2 = new DirectoryProperty("child");
-        DirectoryNode     parent    = new DirectoryNode(property1, fs, null);
-        DirectoryNode     node      = new DirectoryNode(property2, fs,
-                                          parent);
+    @Test
+    public void testEmptyConstructor() throws IOException {
+        try (POIFSFileSystem fs = new POIFSFileSystem()) {
+            DirectoryProperty property1 = new DirectoryProperty("parent");
+            DirectoryProperty property2 = new DirectoryProperty("child");
+            DirectoryNode parent = new DirectoryNode(property1, fs, null);
+            DirectoryNode node = new DirectoryNode(property2, fs, parent);
 
-        assertEquals(0, parent.getPath().length());
-        assertEquals(1, node.getPath().length());
-        assertEquals("child", node.getPath().getComponent(0));
+            assertEquals(0, parent.getPath().length());
+            assertEquals(1, node.getPath().length());
+            assertEquals("child", node.getPath().getComponent(0));
 
-        // verify that getEntries behaves correctly
-        int      count = 0;
-        Iterator<Entry> iter  = node.getEntries();
+            // verify that getEntries behaves correctly
+            int count = 0;
+            Iterator<Entry> iter = node.getEntries();
 
-        while (iter.hasNext())
-        {
-            count++;
-            iter.next();
+            while (iter.hasNext()) {
+                count++;
+                iter.next();
+            }
+            assertEquals(0, count);
+
+            // verify behavior of isEmpty
+            assertTrue(node.isEmpty());
+
+            // verify behavior of getEntryCount
+            assertEquals(0, node.getEntryCount());
+
+            // verify behavior of getEntry
+            try {
+                node.getEntry("foo");
+                fail("should have caught FileNotFoundException");
+            } catch (FileNotFoundException ignored) {
+
+                // as expected
+            }
+
+            // verify behavior of isDirectoryEntry
+            assertTrue(node.isDirectoryEntry());
+
+            // verify behavior of getName
+            assertEquals(property2.getName(), node.getName());
+
+            // verify behavior of isDocumentEntry
+            assertFalse(node.isDocumentEntry());
+
+            // verify behavior of getParent
+            assertEquals(parent, node.getParent());
         }
-        assertEquals(0, count);
-
-        // verify behavior of isEmpty
-        assertTrue(node.isEmpty());
-
-        // verify behavior of getEntryCount
-        assertEquals(0, node.getEntryCount());
-
-        // verify behavior of getEntry
-        try
-        {
-            node.getEntry("foo");
-            fail("should have caught FileNotFoundException");
-        }
-        catch (FileNotFoundException ignored)
-        {
-
-            // as expected
-        }
-
-        // verify behavior of isDirectoryEntry
-        assertTrue(node.isDirectoryEntry());
-
-        // verify behavior of getName
-        assertEquals(property2.getName(), node.getName());
-
-        // verify behavior of isDocumentEntry
-        assertFalse(node.isDocumentEntry());
-
-        // verify behavior of getParent
-        assertEquals(parent, node.getParent());
     }
 
     /**
      * test non-trivial constructor (a DirectoryNode with children)
      */
+    @Test
     public void testNonEmptyConstructor() throws IOException {
         DirectoryProperty property1 = new DirectoryProperty("parent");
         DirectoryProperty property2 = new DirectoryProperty("child1");
@@ -102,119 +103,118 @@ public final class TestDirectoryNode extends TestCase {
         property1.addChild(property2);
         property1.addChild(new DocumentProperty("child2", 2000));
         property2.addChild(new DocumentProperty("child3", 30000));
-        DirectoryNode node  = new DirectoryNode(property1,
-                                                new POIFSFileSystem(), null);
 
-        // verify that getEntries behaves correctly
-        int           count = 0;
-        Iterator<Entry>      iter  = node.getEntries();
+        try (POIFSFileSystem fs = new POIFSFileSystem()) {
+            DirectoryNode node = new DirectoryNode(property1, fs, null);
 
-        while (iter.hasNext())
-        {
-            count++;
-            iter.next();
+            // verify that getEntries behaves correctly
+            int count = 0;
+            Iterator<Entry> iter = node.getEntries();
+
+            while (iter.hasNext()) {
+                count++;
+                iter.next();
+            }
+            assertEquals(2, count);
+
+            // verify behavior of isEmpty
+            assertFalse(node.isEmpty());
+
+            // verify behavior of getEntryCount
+            assertEquals(2, node.getEntryCount());
+
+            // verify behavior of getEntry
+            DirectoryNode child1 = (DirectoryNode) node.getEntry("child1");
+
+            child1.getEntry("child3");
+            node.getEntry("child2");
+            try {
+                node.getEntry("child3");
+                fail("should have caught FileNotFoundException");
+            } catch (FileNotFoundException ignored) {
+
+                // as expected
+            }
+
+            // verify behavior of isDirectoryEntry
+            assertTrue(node.isDirectoryEntry());
+
+            // verify behavior of getName
+            assertEquals(property1.getName(), node.getName());
+
+            // verify behavior of isDocumentEntry
+            assertFalse(node.isDocumentEntry());
+
+            // verify behavior of getParent
+            assertNull(node.getParent());
         }
-        assertEquals(2, count);
-
-        // verify behavior of isEmpty
-        assertFalse(node.isEmpty());
-
-        // verify behavior of getEntryCount
-        assertEquals(2, node.getEntryCount());
-
-        // verify behavior of getEntry
-        DirectoryNode child1 = ( DirectoryNode ) node.getEntry("child1");
-
-        child1.getEntry("child3");
-        node.getEntry("child2");
-        try
-        {
-            node.getEntry("child3");
-            fail("should have caught FileNotFoundException");
-        }
-        catch (FileNotFoundException ignored)
-        {
-
-            // as expected
-        }
-
-        // verify behavior of isDirectoryEntry
-        assertTrue(node.isDirectoryEntry());
-
-        // verify behavior of getName
-        assertEquals(property1.getName(), node.getName());
-
-        // verify behavior of isDocumentEntry
-        assertFalse(node.isDocumentEntry());
-
-        // verify behavior of getParent
-        assertNull(node.getParent());
     }
 
     /**
      * test deletion methods
      */
+    @Test
     public void testDeletion() throws IOException {
-        POIFSFileSystem fs   = new POIFSFileSystem();
-        DirectoryEntry  root = fs.getRoot();
+        try (POIFSFileSystem fs   = new POIFSFileSystem()) {
+            DirectoryEntry root = fs.getRoot();
 
-        // verify cannot delete the root directory
-        assertFalse(root.delete());
-        assertTrue(root.isEmpty());
+            // verify cannot delete the root directory
+            assertFalse(root.delete());
+            assertTrue(root.isEmpty());
 
-        DirectoryEntry dir = fs.createDirectory("myDir");
+            DirectoryEntry dir = fs.createDirectory("myDir");
 
-        assertFalse(root.isEmpty());
-        assertTrue(dir.isEmpty());
+            assertFalse(root.isEmpty());
+            assertTrue(dir.isEmpty());
 
-        // verify can delete empty directory
-        assertFalse(root.delete());
-        assertTrue(dir.delete());
+            // verify can delete empty directory
+            assertFalse(root.delete());
+            assertTrue(dir.delete());
 
-        // Now look at a non-empty one
-        dir = fs.createDirectory("NextDir");
-        DocumentEntry doc =
-            dir.createDocument("foo",
-                               new ByteArrayInputStream(new byte[ 1 ]));
+            // Now look at a non-empty one
+            dir = fs.createDirectory("NextDir");
+            DocumentEntry doc =
+                    dir.createDocument("foo",
+                                       new ByteArrayInputStream(new byte[1]));
 
-        assertFalse(root.isEmpty());
-        assertFalse(dir.isEmpty());
+            assertFalse(root.isEmpty());
+            assertFalse(dir.isEmpty());
 
-        // verify cannot delete non-empty directory
-        assertFalse(dir.delete());
+            // verify cannot delete non-empty directory
+            assertFalse(dir.delete());
 
-        // but we can delete it if we remove the document
-        assertTrue(doc.delete());
-        assertTrue(dir.isEmpty());
-        assertTrue(dir.delete());
+            // but we can delete it if we remove the document
+            assertTrue(doc.delete());
+            assertTrue(dir.isEmpty());
+            assertTrue(dir.delete());
 
-        // It's really gone!
-        assertTrue(root.isEmpty());
+            // It's really gone!
+            assertTrue(root.isEmpty());
 
-        fs.close();
+        }
     }
 
     /**
      * test change name methods
      */
+    @Test
     public void testRename() throws IOException {
-        POIFSFileSystem fs   = new POIFSFileSystem();
-        DirectoryEntry  root = fs.getRoot();
+        try (POIFSFileSystem fs   = new POIFSFileSystem()) {
+            DirectoryEntry root = fs.getRoot();
 
-        // verify cannot rename the root directory
-        assertFalse(root.renameTo("foo"));
-        DirectoryEntry dir = fs.createDirectory("myDir");
+            // verify cannot rename the root directory
+            assertFalse(root.renameTo("foo"));
+            DirectoryEntry dir = fs.createDirectory("myDir");
 
-        assertTrue(dir.renameTo("foo"));
-        assertEquals("foo", dir.getName());
-        DirectoryEntry dir2 = fs.createDirectory("myDir");
+            assertTrue(dir.renameTo("foo"));
+            assertEquals("foo", dir.getName());
+            DirectoryEntry dir2 = fs.createDirectory("myDir");
 
-        assertFalse(dir2.renameTo("foo"));
-        assertEquals("myDir", dir2.getName());
-        assertTrue(dir.renameTo("FirstDir"));
-        assertTrue(dir2.renameTo("foo"));
-        assertEquals("foo", dir2.getName());
-
-        fs.close();
+            assertFalse(dir2.renameTo("foo"));
+            assertEquals("myDir", dir2.getName());
+            assertTrue(dir.renameTo("FirstDir"));
+            assertTrue(dir2.renameTo("foo"));
+            assertEquals("foo", dir2.getName());
+        }
     }
 }

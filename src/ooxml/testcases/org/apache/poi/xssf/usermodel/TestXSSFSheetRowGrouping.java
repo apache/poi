@@ -17,23 +17,24 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import java.io.IOException;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import junit.framework.TestCase;
+import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.junit.Test;
 
-public final class TestXSSFSheetRowGrouping extends TestCase {
+public final class TestXSSFSheetRowGrouping {
 
     private static final int ROWS_NUMBER = 200;
     private static final int GROUP_SIZE = 5;
 
-    //private int o_groupsNumber = 0;
-
+    @Test
     public void test55640() {
         //long startTime = System.currentTimeMillis();
         Workbook wb = new XSSFWorkbook();
@@ -88,6 +89,7 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
         assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(p_wb));
     }
 
+    @Test
     public void test55640reduce1() {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("sheet123");
@@ -106,7 +108,7 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
             while (start < end) {             // natural order
                 sheet.groupRow(start, end);
                 //o_groupsNumber++;
-                boolean collapsed = start % 2 == 0 ? false : true;
+                boolean collapsed = (start % 2) != 0;
                 //System.out.println("Set group " + start + "->" + end + " to " + collapsed);
                 sheet.setRowGroupCollapsed(start, collapsed);
                 start++;                      // natural order
@@ -116,29 +118,29 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
         writeToFile(wb);
     }
 
-
+    @Test
     public void test55640_VerifyCases() {
         // NOTE: This is currently based on current behavior of POI, somehow
-        // what POI returns in the calls to collapsed/hidden is not fully matching 
+        // what POI returns in the calls to collapsed/hidden is not fully matching
         // the examples in the spec or I did not fully understand how POI stores the data internally...
-        
+
         // all expanded
         verifyGroupCollapsed(
                 // level1, level2, level3
-                false, false, false, 
+                false, false, false,
                 // collapsed:
-                new Boolean[] { false, false, false, false, false}, 
+                new Boolean[] { false, false, false, false, false},
                 // hidden:
                 new boolean[] { false, false, false, false, false},
                 // outlineLevel
                 new int[] { 1, 2, 3, 3, 3 }
                 );
 
-        
-        // Level 1 collapsed, others expanded, should only have 4 rows, all hidden: 
+
+        // Level 1 collapsed, others expanded, should only have 4 rows, all hidden:
         verifyGroupCollapsed(
                 // level1, level2, level3
-                true, false, false, 
+                true, false, false,
                 // collapsed:
                 new Boolean[] { false, false, false, false, false},
                 // hidden:
@@ -147,10 +149,10 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
                 new int[] { 1, 2, 3, 3, 3 }
                 );
 
-        // Level 1 and 2 collapsed, Level 3 expanded, 
+        // Level 1 and 2 collapsed, Level 3 expanded,
         verifyGroupCollapsed(
                 // level1, level2, level3
-                true, true, false, 
+                true, true, false,
                 // collapsed:
                 new Boolean[] { false, false, false, false, true, false},
                 // hidden:
@@ -159,10 +161,10 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
                 new int[] { 1, 2, 3, 3, 3, 0 }
                 );
 
-        // Level 1 collapsed, Level 2 expanded, Level 3 collapsed 
+        // Level 1 collapsed, Level 2 expanded, Level 3 collapsed
         verifyGroupCollapsed(
                 // level1, level2, level3
-                true, false, true, 
+                true, false, true,
                 // collapsed:
                 new Boolean[] { false, false, false, false, false, true},
                 // hidden:
@@ -174,7 +176,7 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
         // Level 2 collapsed, others expanded:
         verifyGroupCollapsed(
                 // level1, level2, level3
-                false, true, false, 
+                false, true, false,
                 // collapsed:
                 new Boolean[] { false, false, false, false, false, false},
                 // hidden:
@@ -183,10 +185,10 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
                 new int[] { 1, 2, 3, 3, 3, 0 }
                 );
 
-        // Level 3 collapsed, others expanded 
+        // Level 3 collapsed, others expanded
         verifyGroupCollapsed(
                 // level1, level2, level3
-                false, false, true, 
+                false, false, true,
                 // collapsed:
                 new Boolean[] { false, false, false, false, false, true},
                 // hidden:
@@ -195,10 +197,10 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
                 new int[] { 1, 2, 3, 3, 3, 0 }
                 );
 
-        // All collapsed 
+        // All collapsed
         verifyGroupCollapsed(
                 // level1, level2, level3
-                true, true, true, 
+                true, true, true,
                 // collapsed:
                 new Boolean[] { false, false, false, false, true, true},
                 // hidden:
@@ -207,9 +209,9 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
                 new int[] { 1, 2, 3, 3, 3, 0 }
                 );
     }
-    
-   
-    private void verifyGroupCollapsed(boolean level1, boolean level2, boolean level3, 
+
+
+    private void verifyGroupCollapsed(boolean level1, boolean level2, boolean level3,
             Boolean[] collapsed, boolean[] hidden, int[] outlineLevel) {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("sheet123");
@@ -217,11 +219,11 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
         for (int i = 0; i < 4; i++) {
             sheet.createRow(i);
         }
-        
+
         sheet.groupRow(0, 4);
         sheet.groupRow(1, 4);
         sheet.groupRow(2, 4);
-        
+
         sheet.setRowGroupCollapsed(0, level1);
         sheet.setRowGroupCollapsed(1, level2);
         sheet.setRowGroupCollapsed(2, level3);
@@ -229,27 +231,28 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
         checkWorkbookGrouping(wb, collapsed, hidden, outlineLevel);
     }
 
-    public void test55640_VerifyCasesSpec() throws IOException {
+    @Test
+    public void test55640_VerifyCasesSpec() {
         // NOTE: This is currently based on current behavior of POI, somehow
-        // what POI returns in the calls to collapsed/hidden is not fully matching 
+        // what POI returns in the calls to collapsed/hidden is not fully matching
         // the examples in the spec or I did not fully understand how POI stores the data internally...
-        
+
         // all expanded
         verifyGroupCollapsedSpec(
                 // level3, level2, level1
-                false, false, false, 
+                false, false, false,
                 // collapsed:
-                new Boolean[] { false, false, false, false}, 
+                new Boolean[] { false, false, false, false},
                 // hidden:
                 new boolean[] { false, false, false, false},
                 // outlineLevel
                 new int[] { 3, 3, 2, 1 }
                 );
 
-        
+
         verifyGroupCollapsedSpec(
                 // level3, level2, level1
-                false, false, true, 
+                false, false, true,
                 // collapsed:
                 new Boolean[] { false, false, false, true},
                 // hidden:
@@ -260,7 +263,7 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
 
         verifyGroupCollapsedSpec(
                 // level3, level2, level1
-                false, true, false, 
+                false, true, false,
                 // collapsed:
                 new Boolean[] { false, false, true, false},
                 // hidden:
@@ -268,10 +271,10 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
                 // outlineLevel
                 new int[] { 3, 3, 2, 1 }
                 );
-        
+
         verifyGroupCollapsedSpec(
                 // level3, level2, level1
-                false, true, true, 
+                false, true, true,
                 // collapsed:
                 new Boolean[] { false, false, true, true},
                 // hidden:
@@ -281,34 +284,34 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
                 );
     }
 
-    private void verifyGroupCollapsedSpec(boolean level1, boolean level2, boolean level3, 
-            Boolean[] collapsed, boolean[] hidden, int[] outlineLevel) {
+    @SuppressWarnings("SameParameterValue")
+    private void verifyGroupCollapsedSpec(boolean level1, boolean level2, boolean level3,
+                                          Boolean[] collapsed, boolean[] hidden, int[] outlineLevel) {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("sheet123");
 
         for (int i = 5; i < 9; i++) {
             sheet.createRow(i);
         }
-        
+
         sheet.groupRow(5, 6);
         sheet.groupRow(5, 7);
         sheet.groupRow(5, 8);
-        
+
         sheet.setRowGroupCollapsed(6, level1);
         sheet.setRowGroupCollapsed(7, level2);
         sheet.setRowGroupCollapsed(8, level3);
-        
+
         checkWorkbookGrouping(wb, collapsed, hidden, outlineLevel);
     }
 
     private void checkWorkbookGrouping(Workbook wb, Boolean[] collapsed, boolean[] hidden, int[] outlineLevel) {
-        printWorkbook(wb);
         Sheet sheet = wb.getSheetAt(0);
-        
+
         assertEquals(collapsed.length, hidden.length);
         assertEquals(collapsed.length, outlineLevel.length);
         assertEquals("Expected " + collapsed.length + " rows with collapsed state, but had " + (sheet.getLastRowNum()-sheet.getFirstRowNum()+1) + " rows ("
-                + sheet.getFirstRowNum() + "-" + sheet.getLastRowNum() + ")",  
+                + sheet.getFirstRowNum() + "-" + sheet.getLastRowNum() + ")",
                 collapsed.length, sheet.getLastRowNum()-sheet.getFirstRowNum()+1);
         for(int i = sheet.getFirstRowNum(); i < sheet.getLastRowNum();i++) {
             if(collapsed[i-sheet.getFirstRowNum()] == null) {
@@ -317,16 +320,16 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
             XSSFRow row = (XSSFRow) sheet.getRow(i);
             assertNotNull("Could not read row " + i, row);
             assertNotNull("Could not read row " + i, row.getCTRow());
-            assertEquals("Row: " + i + ": collapsed", collapsed[i-sheet.getFirstRowNum()].booleanValue(), row.getCTRow().getCollapsed());
+            assertEquals("Row: " + i + ": collapsed", collapsed[i - sheet.getFirstRowNum()], row.getCTRow().getCollapsed());
             assertEquals("Row: " + i + ": hidden", hidden[i-sheet.getFirstRowNum()], row.getCTRow().getHidden());
-            
+
             assertEquals("Row: " + i + ": level", outlineLevel[i-sheet.getFirstRowNum()], row.getCTRow().getOutlineLevel());
         }
-        
+
         writeToFile(wb);
     }
 
- 
+    @Test
     public void test55640working() {
         Workbook wb = new XSSFWorkbook();
         Sheet sheet = wb.createSheet("sheet123");
@@ -334,7 +337,7 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
         sheet.groupRow(1, 4);
         sheet.groupRow(2, 5);
         sheet.groupRow(3, 6);
-        
+
         sheet.setRowGroupCollapsed(1, true);
         sheet.setRowGroupCollapsed(2, false);
         sheet.setRowGroupCollapsed(3, false);
@@ -342,29 +345,7 @@ public final class TestXSSFSheetRowGrouping extends TestCase {
         writeToFile(wb);
     }
 
-    // just used for printing out contents of spreadsheets
-    public void notRuntest55640printSample() {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55640.xlsx");
-        printWorkbook(wb);
-        
-        wb = XSSFTestDataSamples.openSampleWorkbook("GroupTest.xlsx");
-        printWorkbook(wb);
-    }
-
-    private void printWorkbook(Workbook wb) {
-        // disable all output for now...
-//        Sheet sheet = wb.getSheetAt(0);
-//        
-//        for(Iterator<Row> it = sheet.rowIterator();it.hasNext();) {
-//            XSSFRow row = (XSSFRow) it.next();
-//            boolean collapsed = row.getCTRow().getCollapsed();
-//            boolean hidden = row.getCTRow().getHidden();
-//            short level = row.getCTRow().getOutlineLevel();
-//            
-//            System.out.println("Row: " + row.getRowNum() + ": Level: " + level + " Collapsed: " + collapsed + " Hidden: " + hidden);
-//        }
-    }
-    
+    @Test
     public void testGroupingTest() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("GroupTest.xlsx")) {
 

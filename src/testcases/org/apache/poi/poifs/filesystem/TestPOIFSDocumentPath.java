@@ -17,19 +17,24 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
+
+import org.junit.Test;
 
 /**
  * Class to test POIFSDocumentPath functionality
- *
- * @author Marc Johnson
  */
-public final class TestPOIFSDocumentPath extends TestCase {
+public final class TestPOIFSDocumentPath {
 
 
     /**
      * Test default constructor
      */
+    @Test
     public void testDefaultConstructor() {
         POIFSDocumentPath path = new POIFSDocumentPath();
 
@@ -39,36 +44,28 @@ public final class TestPOIFSDocumentPath extends TestCase {
     /**
      * Test full path constructor
      */
+    @Test
     public void testFullPathConstructor() {
-        String[] components =
-        {
-            "foo", "bar", "foobar", "fubar"
-        };
+        String[] components = {"foo", "bar", "foobar", "fubar"};
 
-        for (int j = 0; j < components.length; j++)
-        {
+        for (int j = 0; j < components.length; j++) {
             String[] params = new String[ j ];
 
             System.arraycopy(components, 0, params, 0, j);
             POIFSDocumentPath path = new POIFSDocumentPath(params);
 
             assertEquals(j, path.length());
-            for (int k = 0; k < j; k++)
-            {
+            for (int k = 0; k < j; k++) {
                 assertEquals(components[ k ], path.getComponent(k));
             }
-            if (j == 0)
-            {
+            if (j == 0) {
                 assertNull(path.getParent());
-            }
-            else
-            {
+            } else {
                 POIFSDocumentPath parent = path.getParent();
 
                 assertNotNull(parent);
                 assertEquals(j - 1, parent.length());
-                for (int k = 0; k < j - 1; k++)
-                {
+                for (int k = 0; k < j - 1; k++) {
                     assertEquals(components[ k ], parent.getComponent(k));
                 }
             }
@@ -76,227 +73,132 @@ public final class TestPOIFSDocumentPath extends TestCase {
 
         // test weird variants
         assertEquals(0, new POIFSDocumentPath(null).length());
-        try
-        {
-            new POIFSDocumentPath(new String[]
-            {
-                "fu", ""
-            });
+        try {
+            new POIFSDocumentPath(new String[]{"fu", ""});
             fail("should have caught IllegalArgumentException");
-        }
-        catch (IllegalArgumentException ignored)
-        {
-        }
-        try
-        {
-            new POIFSDocumentPath(new String[]
-            {
-                "fu", null
-            });
+        } catch (IllegalArgumentException ignored) { }
+        try {
+            new POIFSDocumentPath(new String[]{"fu", null});
             fail("should have caught IllegalArgumentException");
-        }
-        catch (IllegalArgumentException ignored)
-        {
-        }
+        } catch (IllegalArgumentException ignored) { }
     }
 
     /**
      * Test relative path constructor
      */
+    @Test
     public void testRelativePathConstructor() {
-        String[] initialComponents =
-        {
-            "a", "b", "c"
-        };
+        String[] initialComponents = {"a", "b", "c"};
 
-        for (int n = 0; n < initialComponents.length; n++)
-        {
+        for (int n = 0; n < initialComponents.length; n++) {
             String[] initialParams = new String[ n ];
 
             System.arraycopy(initialComponents, 0, initialParams, 0, n);
-            POIFSDocumentPath base       =
-                new POIFSDocumentPath(initialParams);
-            String[]          components =
-            {
-                "foo", "bar", "foobar", "fubar"
-            };
+            POIFSDocumentPath base = new POIFSDocumentPath(initialParams);
+            String[] components = {"foo", "bar", "foobar", "fubar"};
 
-            for (int j = 0; j < components.length; j++)
-            {
+            for (int j = 0; j < components.length; j++) {
                 String[] params = new String[ j ];
 
                 System.arraycopy(components, 0, params, 0, j);
                 POIFSDocumentPath path = new POIFSDocumentPath(base, params);
 
                 assertEquals(j + n, path.length());
-                for (int k = 0; k < n; k++)
-                {
-                    assertEquals(initialComponents[ k ],
-                                 path.getComponent(k));
+                for (int k = 0; k < n; k++) {
+                    assertEquals(initialComponents[ k ], path.getComponent(k));
                 }
-                for (int k = 0; k < j; k++)
-                {
+                for (int k = 0; k < j; k++) {
                     assertEquals(components[ k ], path.getComponent(k + n));
                 }
-                if ((j + n) == 0)
-                {
+                if ((j + n) == 0) {
                     assertNull(path.getParent());
-                }
-                else
-                {
+                } else {
                     POIFSDocumentPath parent = path.getParent();
 
                     assertNotNull(parent);
                     assertEquals(j + n - 1, parent.length());
-                    for (int k = 0; k < (j + n - 1); k++)
-                    {
-                        assertEquals(path.getComponent(k),
-                                     parent.getComponent(k));
+                    for (int k = 0; k < (j + n - 1); k++) {
+                        assertEquals(path.getComponent(k), parent.getComponent(k));
                     }
                 }
             }
 
             // Test weird variants
-            
+
             // This one is allowed, even if it's really odd
             assertEquals(n, new POIFSDocumentPath(base, null).length());
-            new POIFSDocumentPath(base, new String[]
-            {
-                 "fu", ""
-            });
-            
+            new POIFSDocumentPath(base, new String[]{"fu", ""});
+
             // This one is allowed too
-            new POIFSDocumentPath(base, new String[]
-            {
-                 "", "fu"
-            });
-            
+            new POIFSDocumentPath(base, new String[]{"", "fu"});
+
             // This one shouldn't be allowed
-            try
-            {
-                new POIFSDocumentPath(base, new String[]
-                {
-                    "fu", null
-                });
+            try {
+                new POIFSDocumentPath(base, new String[]{"fu", null});
                 fail("should have caught IllegalArgumentException");
-            }
-            catch (IllegalArgumentException ignored)
-            {
-            }
-            
+            } catch (IllegalArgumentException ignored) { }
+
             // Ditto
-            try
-            {
-                new POIFSDocumentPath(base, new String[]
-                {
-                    null, "fu"
-                });
+            try {
+                new POIFSDocumentPath(base, new String[]{null, "fu"});
                 fail("should have caught IllegalArgumentException");
-            }
-            catch (IllegalArgumentException ignored)
-            {
-            }
+            } catch (IllegalArgumentException ignored) { }
         }
     }
 
     /**
      * test equality
      */
+    @Test
     public void testEquality() {
         POIFSDocumentPath   a1    = new POIFSDocumentPath();
         POIFSDocumentPath   a2    = new POIFSDocumentPath(null);
         POIFSDocumentPath   a3    = new POIFSDocumentPath(new String[ 0 ]);
         POIFSDocumentPath   a4    = new POIFSDocumentPath(a1, null);
-        POIFSDocumentPath   a5    = new POIFSDocumentPath(a1,
-                                        new String[ 0 ]);
-        POIFSDocumentPath[] paths =
-        {
-            a1, a2, a3, a4, a5
-        };
+        POIFSDocumentPath   a5    = new POIFSDocumentPath(a1, new String[ 0 ]);
 
-        for (int j = 0; j < paths.length; j++)
-        {
-            for (int k = 0; k < paths.length; k++)
-            {
-                assertEquals(j + "<>" + k,
-                             paths[ j ], paths[ k ]);
+        POIFSDocumentPath[] paths = {a1, a2, a3, a4, a5};
+
+        for (int j = 0; j < paths.length; j++) {
+            for (int k = 0; k < paths.length; k++) {
+                assertEquals(j + "<>" + k, paths[ j ], paths[ k ]);
             }
         }
-        a2 = new POIFSDocumentPath(a1, new String[]
-        {
-            "foo"
-        });
-        a3 = new POIFSDocumentPath(a2, new String[]
-        {
-            "bar"
-        });
-        a4 = new POIFSDocumentPath(a3, new String[]
-        {
-            "fubar"
-        });
-        a5 = new POIFSDocumentPath(a4, new String[]
-        {
-            "foobar"
-        });
+        a2 = new POIFSDocumentPath(a1, new String[]{"foo"});
+        a3 = new POIFSDocumentPath(a2, new String[]{"bar"});
+        a4 = new POIFSDocumentPath(a3, new String[]{"fubar"});
+        a5 = new POIFSDocumentPath(a4, new String[]{"foobar"});
         POIFSDocumentPath[] builtUpPaths =
         {
             a1, a2, a3, a4, a5
         };
-        POIFSDocumentPath[] fullPaths    =
-        {
-            new POIFSDocumentPath(), new POIFSDocumentPath(new String[]
-            {
-                "foo"
-            }), new POIFSDocumentPath(new String[]
-            {
-                "foo", "bar"
-            }), new POIFSDocumentPath(new String[]
-            {
-                "foo", "bar", "fubar"
-            }), new POIFSDocumentPath(new String[]
-            {
-                "foo", "bar", "fubar", "foobar"
-            })
+        POIFSDocumentPath[] fullPaths = {
+            new POIFSDocumentPath(), new POIFSDocumentPath(new String[]{"foo"}),
+            new POIFSDocumentPath(new String[]{"foo", "bar"}),
+            new POIFSDocumentPath(new String[]{"foo", "bar", "fubar"}),
+            new POIFSDocumentPath(new String[]{"foo", "bar", "fubar", "foobar"})
         };
 
-        for (int k = 0; k < builtUpPaths.length; k++)
-        {
-            for (int j = 0; j < fullPaths.length; j++)
-            {
-                if (k == j)
-                {
-                    assertEquals(j + "<>"
-                                 + k, fullPaths[ j ],
-                                                      builtUpPaths[ k ]);
-                }
-                else
-                {
-                    assertFalse(fullPaths[j].equals(builtUpPaths[k]));
+        for (int k = 0; k < builtUpPaths.length; k++) {
+            for (int j = 0; j < fullPaths.length; j++) {
+                if (k == j) {
+                    assertEquals(j + "<>" + k, fullPaths[ j ], builtUpPaths[ k ]);
+                } else {
+                    assertNotEquals(fullPaths[j], builtUpPaths[k]);
                 }
             }
         }
-        POIFSDocumentPath[] badPaths =
-        {
-            new POIFSDocumentPath(new String[]
-            {
-                "_foo"
-            }), new POIFSDocumentPath(new String[]
-            {
-                "foo", "_bar"
-            }), new POIFSDocumentPath(new String[]
-            {
-                "foo", "bar", "_fubar"
-            }), new POIFSDocumentPath(new String[]
-            {
-                "foo", "bar", "fubar", "_foobar"
-            })
+        POIFSDocumentPath[] badPaths = {
+            new POIFSDocumentPath(new String[]{"_foo"}),
+            new POIFSDocumentPath(new String[]{"foo", "_bar"}),
+            new POIFSDocumentPath(new String[]{"foo", "bar", "_fubar"}),
+            new POIFSDocumentPath(new String[]{"foo", "bar", "fubar", "_foobar"})
         };
 
         for (int k = 0; k < builtUpPaths.length; k++)
         {
-            for (int j = 0; j < badPaths.length; j++)
-            {
-                assertFalse(fullPaths[k].equals(badPaths[j]));
+            for (POIFSDocumentPath badPath : badPaths) {
+                assertNotEquals(fullPaths[k], badPath);
             }
         }
     }

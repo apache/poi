@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleWorkbook;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -36,7 +37,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import junit.framework.AssertionFailedError;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.hpsf.ClassID;
@@ -66,8 +66,6 @@ import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.TempFile;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -125,7 +123,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         Sheet s;
 
         // Single chart, two sheets
-        HSSFWorkbook b1 = HSSFTestDataSamples.openSampleWorkbook("44010-SingleChart.xls");
+        HSSFWorkbook b1 = openSampleWorkbook("44010-SingleChart.xls");
         assertEquals(2, b1.getNumberOfSheets());
         assertEquals("Graph2", b1.getSheetName(1));
         s = b1.getSheetAt(1);
@@ -142,7 +140,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         // We've now called getDrawingPatriarch() so
         //  everything will be all screwy
         // So, start again
-        HSSFWorkbook b2 = HSSFTestDataSamples.openSampleWorkbook("44010-SingleChart.xls");
+        HSSFWorkbook b2 = openSampleWorkbook("44010-SingleChart.xls");
 
         HSSFWorkbook b3 = HSSFTestDataSamples.writeOutAndReadBack(b2);
         b2.close();
@@ -154,7 +152,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         b3.close();
 
         // Two charts, three sheets
-        HSSFWorkbook b4 = HSSFTestDataSamples.openSampleWorkbook("44010-TwoCharts.xls");
+        HSSFWorkbook b4 = openSampleWorkbook("44010-TwoCharts.xls");
         assertEquals(3, b4.getNumberOfSheets());
 
         s = b4.getSheetAt(1);
@@ -175,7 +173,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         // We've now called getDrawingPatriarch() so
         //  everything will be all screwy
         // So, start again
-        HSSFWorkbook b5 = HSSFTestDataSamples.openSampleWorkbook("44010-TwoCharts.xls");
+        HSSFWorkbook b5 = openSampleWorkbook("44010-TwoCharts.xls");
 
         Workbook b6 = HSSFTestDataSamples.writeOutAndReadBack(b5);
         b5.close();
@@ -404,7 +402,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      */
     @Test
     public void namesToDeleteSheets() throws IOException {
-        HSSFWorkbook b = HSSFTestDataSamples.openSampleWorkbook("30978-deleted.xls");
+        HSSFWorkbook b = openSampleWorkbook("30978-deleted.xls");
         assertEquals(3, b.getNumberOfNames());
 
         // Sheet 2 is deleted
@@ -515,13 +513,10 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      * The sample file provided with bug 45582 seems to have one extra byte after the EOFRecord
      */
     @Test
-    public void extraDataAfterEOFRecord() {
-        try {
-            HSSFTestDataSamples.openSampleWorkbook("ex45582-22397.xls");
-        } catch (RecordFormatException e) {
-            if (e.getCause() instanceof LittleEndian.BufferUnderrunException) {
-                throw new AssertionFailedError("Identified bug 45582");
-            }
+    public void extraDataAfterEOFRecord() throws IOException {
+        // bug 45582 - RecordFormatException - getCause() instanceof LittleEndian.BufferUnderrunException
+        try (HSSFWorkbook wb = openSampleWorkbook("ex45582-22397.xls")) {
+            assertNotNull(wb);
         }
     }
 
@@ -533,7 +528,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     public void findBuiltInNameRecord() throws IOException {
         // testRRaC has multiple (3) built-in name records
         // The second print titles name record has getSheetNumber()==4
-        HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("testRRaC.xls");
+        HSSFWorkbook wb1 = openSampleWorkbook("testRRaC.xls");
         NameRecord nr;
         assertEquals(3, wb1.getWorkbook().getNumNames());
         nr = wb1.getWorkbook().getNameRecord(2);
@@ -793,7 +788,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
     @Test
     public void clonePictures() throws IOException {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("SimpleWithImages.xls");
+        HSSFWorkbook wb = openSampleWorkbook("SimpleWithImages.xls");
         InternalWorkbook iwb = wb.getWorkbook();
         iwb.findDrawingGroup();
 
@@ -937,7 +932,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
     @Test
 	public void bug50298() throws Exception {
-		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("50298.xls");
+		HSSFWorkbook wb = openSampleWorkbook("50298.xls");
 
 		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
 
@@ -972,7 +967,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
     @Test
 	public void bug50298a() throws Exception {
-		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("50298.xls");
+		HSSFWorkbook wb = openSampleWorkbook("50298.xls");
 
 		assertSheetOrder(wb, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
 
@@ -1017,7 +1012,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 	public void bug54500() throws Exception {
 		String nameName = "AName";
 		String sheetName = "ASheet";
-		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("54500.xls");
+		HSSFWorkbook wb = openSampleWorkbook("54500.xls");
 
 		assertSheetOrder(wb, "Sheet1", "Sheet2", "Sheet3");
 
@@ -1071,7 +1066,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 	@Test
 	public void test49423() throws Exception
     {
-		HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("49423.xls");
+		HSSFWorkbook workbook = openSampleWorkbook("49423.xls");
 
 		boolean found = false;
         int numSheets = workbook.getNumberOfSheets();

@@ -17,20 +17,25 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.junit.Test;
 
 /**
  * Tests for {@link AreaErrPtg}.
- *
- * @author Daniel Noll (daniel at nuix dot com dot au)
  */
 public final class TestAreaErrPtg extends AbstractPtgTestCase {
     /**
      * Tests reading a file containing this ptg.
      */
-    public void testReading() {
-        HSSFWorkbook workbook = loadWorkbook("AreaErrPtg.xls");
-        assertEquals("Wrong formula string for area error", "SUM(#REF!)",
-                     workbook.getSheetAt(0).getRow(0).getCell(2).getCellFormula());
+    @Test
+    public void testReading() throws IOException {
+        try (HSSFWorkbook workbook = loadWorkbook("AreaErrPtg.xls")) {
+            assertEquals("Wrong formula string for area error", "SUM(#REF!)",
+                         workbook.getSheetAt(0).getRow(0).getCell(2).getCellFormula());
+        }
     }
 }

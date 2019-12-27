@@ -17,14 +17,18 @@
 
 package org.apache.poi.hssf.model;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.BOFRecord;
@@ -40,13 +44,12 @@ import org.apache.poi.hssf.record.SupBookRecord;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.ptg.NameXPtg;
+import org.junit.Test;
 
 /**
  * Tests for {@link LinkTable}
- *
- * @author Josh Micich
  */
-public final class TestLinkTable extends TestCase {
+public final class TestLinkTable {
 
 	/**
 	 * The example file attached to bugzilla 45046 is a clear example of Name records being present
@@ -55,45 +58,30 @@ public final class TestLinkTable extends TestCase {
 	 *
 	 * It's not clear what exact steps need to be taken in Excel to create such a workbook
 	 */
+	@Test
 	public void testLinkTableWithoutExternalBookRecord_bug45046() {
-		HSSFWorkbook wb;
-
-		try {
-			wb = HSSFTestDataSamples.openSampleWorkbook("ex45046-21984.xls");
-		} catch (RuntimeException e) {
-			if ("DEFINEDNAME is part of LinkTable".equals(e.getMessage())) {
-				throw new AssertionFailedError("Identified bug 45046 b");
-			}
-			throw e;
-		}
+		// Bug 45046 b: DEFINEDNAME is part of LinkTable
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45046-21984.xls");
 		// some other sanity checks
 		assertEquals(3, wb.getNumberOfSheets());
 		String formula = wb.getSheetAt(0).getRow(4).getCell(13).getCellFormula();
 
-		if ("ipcSummenproduktIntern($P5,N$6,$A$9,N$5)".equals(formula)) {
-			// The reported symptom of this bugzilla is an earlier bug (already fixed)
-			throw new AssertionFailedError("Identified bug 41726");
-			// This is observable in version 3.0
-		}
+		// The reported symptom of this bugzilla is an earlier bug (already fixed)
+		// This is observable in version 3.0
+		assertNotEquals("ipcSummenproduktIntern($P5,N$6,$A$9,N$5)", formula);
 
 		assertEquals("ipcSummenproduktIntern($C5,N$2,$A$9,N$1)", formula);
 	}
 
+	@Test
 	public void testMultipleExternSheetRecords_bug45698() {
-		HSSFWorkbook wb;
-
-		try {
-			wb = HSSFTestDataSamples.openSampleWorkbook("ex45698-22488.xls");
-		} catch (RuntimeException e) {
-			if ("Extern sheet is part of LinkTable".equals(e.getMessage())) {
-				throw new AssertionFailedError("Identified bug 45698");
-			}
-			throw e;
-		}
+		// Bug: Extern sheet is part of LinkTable
+		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45698-22488.xls");
 		// some other sanity checks
 		assertEquals(7, wb.getNumberOfSheets());
 	}
 
+	@Test
 	public void testExtraSheetRefs_bug45978() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45978-extraLinkTableSheets.xls");
 		/*
@@ -123,15 +111,8 @@ public final class TestLinkTable extends TestCase {
 		*/
 
 		HSSFCell cell = wb.getSheetAt(0).getRow(1).getCell(1);
-		String cellFormula;
-		try {
-			cellFormula = cell.getCellFormula();
-		} catch (IndexOutOfBoundsException e) {
-			if (e.getMessage().equals("Index: 2, Size: 2")) {
-				throw new AssertionFailedError("Identified bug 45798");
-			}
-			throw e;
-		}
+		// Bug: IndexOutOfBoundsException - Index: 2, Size: 2
+		String cellFormula = cell.getCellFormula();
 		assertEquals("Data!$A2", cellFormula);
 	}
 
@@ -139,31 +120,22 @@ public final class TestLinkTable extends TestCase {
 	 * This problem was visible in POI svn r763332
 	 * when reading the workbook of attachment 23468 from bugzilla 47001
 	 */
+	@Test
 	public void testMissingExternSheetRecord_bug47001b() {
-		
+
 		Record[] recs = {
 				SupBookRecord.createAddInFunctions(),
 				new SSTRecord(),
 		};
 		List<Record> recList = Arrays.asList(recs);
 		WorkbookRecordList wrl = new WorkbookRecordList();
-		
-		LinkTable lt;
-		try {
-			lt = new LinkTable(recList, 0, wrl, Collections.emptyMap());
-		} catch (RuntimeException e) {
-			if (e.getMessage().equals("Expected an EXTERNSHEET record but got (org.apache.poi.hssf.record.SSTRecord)")) {
-				throw new AssertionFailedError("Identified bug 47001b");
-			}
-		
-			throw e;
-		}
-		assertNotNull(lt);
-	}	
 
-	/**
-	 *
-	 */
+		// Bug 47001b: Expected an EXTERNSHEET record but got (org.apache.poi.hssf.record.SSTRecord)
+		LinkTable lt = new LinkTable(recList, 0, wrl, Collections.emptyMap());
+		assertNotNull(lt);
+	}
+
+	@Test
 	public void testNameCommentRecordBetweenNameRecords() {
 
 		final Record[] recs = {
@@ -184,9 +156,10 @@ public final class TestLinkTable extends TestCase {
         assertSame(recs[1], commentRecords.get("name1")); //== is intentionally not .equals()!
         assertSame(recs[3], commentRecords.get("name2")); //== is intentionally not .equals()!
 
-    assertEquals(2, lt.getNumNames());
+    	assertEquals(2, lt.getNumNames());
 	}
 
+	@Test
     public void testAddNameX(){
         WorkbookRecordList wrl = new WorkbookRecordList();
         wrl.add(0, new BOFRecord());
@@ -217,13 +190,17 @@ public final class TestLinkTable extends TestCase {
         NameXPtg namex1 = tbl.addNameXPtg("ISODD");  // adds two new rercords
         assertEquals(0, namex1.getSheetRefIndex());
         assertEquals(0, namex1.getNameIndex());
-        assertEquals(namex1.toString(), tbl.getNameXPtg("ISODD", -1).toString());
-        
+		NameXPtg act = tbl.getNameXPtg("ISODD", -1);
+		assertNotNull(act);
+        assertEquals(namex1.toString(), act.toString());
+
         // Can only find on the right sheet ref, if restricting
-        assertEquals(namex1.toString(), tbl.getNameXPtg("ISODD", 0).toString());
+		act = tbl.getNameXPtg("ISODD", 0);
+		assertNotNull(act);
+        assertEquals(namex1.toString(), act.toString());
         assertNull(tbl.getNameXPtg("ISODD", 1));
         assertNull(tbl.getNameXPtg("ISODD", 2));
-        
+
         // assure they are in place:
         //    [BOFRecord]
         //    [CountryRecord]
@@ -251,7 +228,9 @@ public final class TestLinkTable extends TestCase {
         NameXPtg namex2 = tbl.addNameXPtg("ISEVEN");  // adds two new rercords
         assertEquals(0, namex2.getSheetRefIndex());
         assertEquals(1, namex2.getNameIndex());  // name index increased by one
-        assertEquals(namex2.toString(), tbl.getNameXPtg("ISEVEN", -1).toString());
+		act = tbl.getNameXPtg("ISEVEN", -1);
+		assertNotNull(act);
+        assertEquals(namex2.toString(), act.toString());
         assertEquals(8, wrl.getRecords().size());
         // assure they are in place:
         //    [BOFRecord]

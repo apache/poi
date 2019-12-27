@@ -19,40 +19,19 @@ package org.apache.poi.hssf.model;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.ddf.EscherDggRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.record.BOFRecord;
-import org.apache.poi.hssf.record.BlankRecord;
-import org.apache.poi.hssf.record.CellValueRecordInterface;
-import org.apache.poi.hssf.record.ColumnInfoRecord;
-import org.apache.poi.hssf.record.DimensionsRecord;
-import org.apache.poi.hssf.record.DrawingRecord;
-import org.apache.poi.hssf.record.EOFRecord;
-import org.apache.poi.hssf.record.EscherAggregate;
-import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.GutsRecord;
-import org.apache.poi.hssf.record.IndexRecord;
-import org.apache.poi.hssf.record.MergeCellsRecord;
-import org.apache.poi.hssf.record.MulBlankRecord;
-import org.apache.poi.hssf.record.NoteRecord;
-import org.apache.poi.hssf.record.NumberRecord;
-import org.apache.poi.hssf.record.ObjRecord;
-import org.apache.poi.hssf.record.Record;
-import org.apache.poi.hssf.record.RecordBase;
-import org.apache.poi.hssf.record.RowRecord;
-import org.apache.poi.hssf.record.StringRecord;
-import org.apache.poi.hssf.record.TextObjectRecord;
-import org.apache.poi.hssf.record.UncalcedRecord;
-import org.apache.poi.hssf.record.WindowTwoRecord;
+import org.apache.poi.hssf.record.*;
 import org.apache.poi.hssf.record.aggregates.ConditionalFormattingTable;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
@@ -61,14 +40,11 @@ import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.HexRead;
 import org.junit.Test;
-
-import junit.framework.AssertionFailedError;
 
 /**
  * Unit test for the {@link InternalSheet} class.
@@ -76,12 +52,6 @@ import junit.framework.AssertionFailedError;
 public final class TestSheet {
 	private static InternalSheet createSheet(List<Record> inRecs) {
 		return InternalSheet.createSheet(new RecordStream(inRecs, 0));
-	}
-
-	private static Record[] getSheetRecords(InternalSheet s, int offset) {
-		RecordCollector rc = new RecordCollector();
-		s.visitContainedRecords(rc, offset);
-		return rc.getRecords();
 	}
 
 	@Test
@@ -93,14 +63,16 @@ public final class TestSheet {
 		records.add(createWindow2Record());
 		records.add(EOFRecord.instance);
 		InternalSheet sheet = createSheet(records);
-		Record[] outRecs = getSheetRecords(sheet, 0);
 
-		int pos = 0;
-		assertTrue(outRecs[pos++] instanceof BOFRecord );
-		assertTrue(outRecs[pos++] instanceof IndexRecord);
-		assertTrue(outRecs[pos++] instanceof DimensionsRecord);
-		assertTrue(outRecs[pos++] instanceof WindowTwoRecord );
-		assertTrue(outRecs[pos++] instanceof EOFRecord);
+		List<Record> outRecs = new ArrayList<>();
+		sheet.visitContainedRecords(outRecs::add, 0);
+
+		Iterator<Record> iter = outRecs.iterator();
+		assertTrue(iter.next() instanceof BOFRecord );
+		assertTrue(iter.next() instanceof IndexRecord);
+		assertTrue(iter.next() instanceof DimensionsRecord);
+		assertTrue(iter.next() instanceof WindowTwoRecord );
+		assertTrue(iter.next() instanceof EOFRecord);
 	}
 
 	private static Record createWindow2Record() {
@@ -134,7 +106,7 @@ public final class TestSheet {
     @Test
 	public void testAddMergedRegion() {
 		InternalSheet sheet = InternalSheet.createSheet();
-		int regionsToAdd = 4096;
+		final int regionsToAdd = 4096;
 
 		//simple test that adds a load of regions
 		for (int n = 0; n < regionsToAdd; n++)
@@ -151,8 +123,10 @@ public final class TestSheet {
 		sheet.visitContainedRecords(mcListener, 0);
 		int recordsAdded	= mcListener.getCount();
 		int recordsExpected = regionsToAdd/1027;
-		if ((regionsToAdd % 1027) != 0)
+		//noinspection ConstantConditions
+		if ((regionsToAdd % 1027) != 0) {
 			recordsExpected++;
+		}
         assertEquals("The " + regionsToAdd + " merged regions should have been spread out over "
                 + recordsExpected + " records, not " + recordsAdded, recordsAdded, recordsExpected);
 		// Check we can't add one with invalid date
@@ -387,11 +361,10 @@ public final class TestSheet {
 	public void testXFIndexForColumn() {
 		final short TEST_IDX = 10;
 		final short DEFAULT_IDX = 0xF; // 15
-		short xfindex = Short.MIN_VALUE;
 		InternalSheet sheet = InternalSheet.createSheet();
 
 		// without ColumnInfoRecord
-		xfindex = sheet.getXFIndexForColAt((short) 0);
+		int xfindex = sheet.getXFIndexForColAt((short) 0);
 		assertEquals(DEFAULT_IDX, xfindex);
 		xfindex = sheet.getXFIndexForColAt((short) 1);
 		assertEquals(DEFAULT_IDX, xfindex);
@@ -450,28 +423,6 @@ public final class TestSheet {
 		assertEquals(DEFAULT_IDX, xfindex);
 	}
 
-	private static final class SizeCheckingRecordVisitor implements RecordVisitor {
-
-		private int _totalSize;
-		public SizeCheckingRecordVisitor() {
-			_totalSize = 0;
-		}
-		@Override
-        public void visitRecord(Record r) {
-
-			int estimatedSize=r.getRecordSize();
-			byte[] buf = new byte[estimatedSize];
-			int serializedSize = r.serialize(0, buf);
-			if (estimatedSize != serializedSize) {
-				throw new AssertionFailedError("serialized size mismatch for record ("
-						+ r.getClass().getName() + ")");
-			}
-			_totalSize += estimatedSize;
-		}
-		public int getTotalSize() {
-			return _totalSize;
-		}
-	}
 	/**
 	 * Prior to bug 45066, POI would get the estimated sheet size wrong
 	 * when an <tt>UncalcedRecord</tt> was present.<p>
@@ -490,9 +441,16 @@ public final class TestSheet {
 		// The original bug was due to different logic for collecting records for sizing and
 		// serialization. The code has since been refactored into a single method for visiting
 		// all contained records.  Now this test is much less interesting
-		SizeCheckingRecordVisitor scrv = new SizeCheckingRecordVisitor();
-		sheet.visitContainedRecords(scrv, 0);
-		assertEquals(90, scrv.getTotalSize());
+		int[] totalSize = { 0 };
+		byte[] buf = new byte[100];
+
+		sheet.visitContainedRecords(r -> {
+			int estimatedSize = r.getRecordSize();
+			int serializedSize = r.serialize(0, buf);
+			assertEquals("serialized size mismatch for record (" + r.getClass().getName() + ")", estimatedSize, serializedSize);
+			totalSize[0] += estimatedSize;
+		}, 0);
+		assertEquals(90, totalSize[0]);
 	}
 
 	/**
@@ -517,11 +475,9 @@ public final class TestSheet {
 
 
 		int dbCellRecordPos = getDbCellRecordPos(sheet);
-		if (dbCellRecordPos == 252) {
-			// The overt symptom of the bug
-			// DBCELL record pos is calculated wrong if VRA comes before RRA
-			throw new AssertionFailedError("Identified  bug 45145");
-		}
+		// The overt symptom of the bug
+		// DBCELL record pos is calculated wrong if VRA comes before RRA
+		assertNotEquals (252, dbCellRecordPos);
 
 //		if (false) {
 //			// make sure that RRA and VRA are in the right place
@@ -575,17 +531,10 @@ public final class TestSheet {
 		sheet.addRow(new RowRecord(0));
 		sheet.addRow(new RowRecord(1));
 		sheet.groupRowRange( 0, 1, true );
-		sheet.toString();
+		assertNotNull(sheet.toString());
 		List<RecordBase> recs = sheet.getRecords();
-		int count=0;
-		for(int i=0; i< recs.size(); i++) {
-			if (recs.get(i) instanceof GutsRecord) {
-				count++;
-			}
-		}
-		if (count == 2) {
-			throw new AssertionFailedError("Identified bug 45640");
-		}
+		long count = recs.stream().filter(r -> r instanceof GutsRecord).count();
+		assertNotEquals(2, count);
 		assertEquals(1, count);
 	}
 
@@ -600,7 +549,7 @@ public final class TestSheet {
 			fail("Identified bug 45699");
 		}
 		assertEquals("Informations", cell.getRichStringCellValue().getString());
-		
+
 		wb.close();
 	}
 	/**
@@ -645,21 +594,12 @@ public final class TestSheet {
 		inRecs.add(nr);
 		inRecs.add(createWindow2Record());
 		inRecs.add(EOFRecord.instance);
-		InternalSheet sheet;
-		try {
-			sheet = createSheet(inRecs);
-		} catch (RuntimeException e) {
-			if ("DimensionsRecord was not found".equals(e.getMessage())) {
-				throw new AssertionFailedError("Identified bug 46206");
-			}
-			throw e;
-		}
+		InternalSheet sheet = createSheet(inRecs);
 
-		RecordCollector rv = new RecordCollector();
-		sheet.visitContainedRecords(rv, rowIx);
-		Record[] outRecs = rv.getRecords();
-		assertEquals(8, outRecs.length);
-		DimensionsRecord dims = (DimensionsRecord) outRecs[5];
+		List<Record> outRecs = new ArrayList<>();
+		sheet.visitContainedRecords(outRecs::add, rowIx);
+		assertEquals(8, outRecs.size());
+		DimensionsRecord dims = (DimensionsRecord) outRecs.get(5);
 		assertEquals(rowIx, dims.getFirstRow());
 		assertEquals(rowIx, dims.getLastRow());
 		assertEquals(colIx, dims.getFirstCol());
@@ -683,9 +623,7 @@ public final class TestSheet {
 
 		FormulaShifter shifter = FormulaShifter.createForRowShift(0, "", 0, 0, 1, SpreadsheetVersion.EXCEL97);
 		sheet.updateFormulasAfterCellShift(shifter, 0);
-		if (sheetRecs.size() == 24 && sheetRecs.get(22) instanceof ConditionalFormattingTable) {
-			throw new AssertionFailedError("Identified bug 46547a");
-		}
+		assertFalse(sheetRecs.size() == 24 && sheetRecs.get(22) instanceof ConditionalFormattingTable);
 		assertEquals(23, sheetRecs.size());
 	}
 	/**
@@ -698,14 +636,8 @@ public final class TestSheet {
 		InternalSheet sheet = InternalSheet.createSheet();
 		sheet.getOrCreateDataValidityTable();
 
-		ConditionalFormattingTable cft;
 		// attempt to add conditional formatting
-		try {
-
-			cft = sheet.getConditionalFormattingTable(); // lazy getter
-		} catch (ClassCastException e) {
-			throw new AssertionFailedError("Identified bug 46547b");
-		}
+		ConditionalFormattingTable cft = sheet.getConditionalFormattingTable();
 		assertNotNull(cft);
 	}
 
@@ -723,20 +655,12 @@ public final class TestSheet {
 
 		InternalSheet sheet = createSheet(Arrays.asList(recs));
 
-		InternalSheet sheet2;
-		try {
-			sheet2 = sheet.cloneSheet();
-		} catch (RuntimeException e) {
-			if (e.getMessage().equals("The class org.apache.poi.hssf.record.MulBlankRecord needs to define a clone method")) {
-				throw new AssertionFailedError("Identified bug 46776");
-			}
-			throw e;
-		}
+		InternalSheet sheet2 = sheet.cloneSheet();
 
-		RecordCollector rc = new RecordCollector();
-		sheet2.visitContainedRecords(rc, 0);
-		Record[] clonedRecs = rc.getRecords();
-		assertEquals(recs.length+2, clonedRecs.length); // +2 for INDEX and DBCELL
+		List<Record> clonedRecs = new ArrayList<>();
+		sheet2.visitContainedRecords(clonedRecs::add, 0);
+		// +2 for INDEX and DBCELL
+		assertEquals(recs.length+2, clonedRecs.size());
 	}
 
     @Test
@@ -828,9 +752,10 @@ public final class TestSheet {
     }
 
     @Test
-    public void testSheetDimensions() throws IOException{
+    public void testSheetDimensions() {
         InternalSheet sheet = InternalSheet.createSheet();
         DimensionsRecord dimensions = (DimensionsRecord)sheet.findFirstRecordBySid(DimensionsRecord.sid);
+        assertNotNull(dimensions);
         assertEquals(0, dimensions.getFirstCol());
         assertEquals(0, dimensions.getFirstRow());
         assertEquals(1, dimensions.getLastCol());  // plus pne

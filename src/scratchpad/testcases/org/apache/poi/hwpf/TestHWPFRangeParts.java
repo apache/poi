@@ -17,15 +17,16 @@
 
 package org.apache.poi.hwpf;
 
-import org.apache.poi.hwpf.usermodel.Range;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.apache.poi.hwpf.usermodel.Range;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
- * Test that we pull out the right bits of a file into
- *  the different ranges
+ * Test that we pull out the right bits of a file into the different ranges
  */
-public final class TestHWPFRangeParts extends TestCase {
+public final class TestHWPFRangeParts {
 	private static final char page_break = (char)12;
 	private static final String headerDef =
 		"\u0003\r\r" +
@@ -93,7 +94,7 @@ public final class TestHWPFRangeParts extends TestCase {
 	 */
 	private HWPFDocument docUnicode;
 
-	@Override
+	@Before
     public void setUp() {
 		docUnicode = HWPFTestDataSamples.openSampleFile("HeaderFooterUnicode.doc");
 		docAscii = HWPFTestDataSamples.openSampleFile("ThreeColHeadFoot.doc");
@@ -104,11 +105,12 @@ public final class TestHWPFRangeParts extends TestCase {
     *  don't get broken as we write out and read back in again
     * TODO - Make this work with 3+ runs
     */
+   @Test
 	public void testContents() {
       HWPFDocument doc = docAscii;
       for(int run=0; run<3; run++) {
    		Range r;
-   
+
    		// Now check the real ranges
    		r = doc.getRange();
    		assertEquals(
@@ -117,7 +119,7 @@ public final class TestHWPFRangeParts extends TestCase {
    				a_page_2,
    				r.text()
    		);
-   
+
    		r = doc.getHeaderStoryRange();
    		assertEquals(
    				headerDef +
@@ -127,7 +129,7 @@ public final class TestHWPFRangeParts extends TestCase {
    				endHeaderFooter,
    				r.text()
    		);
-   
+
    		r = doc.getOverallRange();
    		assertEquals(
    				a_page_1 +
@@ -141,7 +143,7 @@ public final class TestHWPFRangeParts extends TestCase {
    				"\r",
    				r.text()
    		);
-         
+
          // Write out and read back in again, ready for
          //  the next run of the test
          // TODO run more than once
@@ -150,6 +152,7 @@ public final class TestHWPFRangeParts extends TestCase {
       }
 	}
 
+	@Test
 	public void testContentsUnicode() {
 		Range r;
 

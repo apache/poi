@@ -19,7 +19,6 @@ package org.apache.poi.ss.formula.functions;
 
 import static org.junit.Assert.assertEquals;
 
-import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
@@ -32,7 +31,6 @@ import org.junit.Test;
 /**
  * Tests for {@link Npv}
  *
- * @author Marcel May
  * @see <a href="http://office.microsoft.com/en-us/excel-help/npv-HP005209199.aspx">Excel Help</a>
  */
 public final class TestNpv {
@@ -79,7 +77,6 @@ public final class TestNpv {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("IrrNpvTestCaseData.xls");
         HSSFSheet sheet = wb.getSheet("IRR-NPV");
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-        StringBuilder failures = new StringBuilder();
         int failureCount = 0;
         // TODO YK: Formulas in rows 16 and 17 operate with ArrayPtg which isn't yet supported
         // FormulaEvaluator as of r1041407 throws "Unexpected ptg class (org.apache.poi.ss.formula.ptg.ArrayPtg)"
@@ -90,16 +87,11 @@ public final class TestNpv {
                 CellValue cv = fe.evaluate(cellB);
                 assertFormulaResult(cv, cellB);
             } catch (Throwable e){
-                if(failures.length() > 0) failures.append('\n');
-                failures.append("Row[" + (cellB.getRowIndex() + 1)+ "]: " + cellB.getCellFormula() + " ");
-                failures.append(e.getMessage());
                 failureCount++;
             }
         }
 
-        if(failures.length() > 0) {
-            throw new AssertionFailedError(failureCount + " IRR evaluations failed:\n" + failures);
-        }
+        assertEquals("IRR evaluations failed", 0, failureCount);
     }
 
     private static void assertFormulaResult(CellValue cv, HSSFCell cell){

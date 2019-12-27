@@ -17,17 +17,18 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+
 import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.EscherAggregate;
+import org.junit.Test;
 
-/**
- * @author Evgeniy Berlog
- * @date 01.08.12
- */
-public class TestPatriarch extends TestCase {
-
+public class TestPatriarch {
+    @Test
     public void testGetPatriarch(){
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sh = wb.createSheet();
@@ -43,15 +44,17 @@ public class TestPatriarch extends TestCase {
         EscherAggregate agg = patriarch.getBoundAggregate();
 
         EscherDgRecord dg = agg.getEscherContainer().getChildById(EscherDgRecord.RECORD_ID);
+        assertNotNull(dg);
         int lastId = dg.getLastMSOSPID();
-        
+
         assertSame(patriarch, sh.createDrawingPatriarch());
-        
+
         wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
         sh = wb.getSheetAt(0);
         patriarch = sh.createDrawingPatriarch();
         dg = patriarch.getBoundAggregate().getEscherContainer().getChildById(EscherDgRecord.RECORD_ID);
 
+        assertNotNull(dg);
         assertEquals(lastId, dg.getLastMSOSPID());
     }
 }

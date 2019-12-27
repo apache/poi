@@ -18,19 +18,20 @@
 package org.apache.poi.hssf.record.chart;
 
 
-import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the AreaFormatRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
-
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestAreaFormatRecord extends TestCase {
+public final class TestAreaFormatRecord {
     byte[] data = new byte[] {
         (byte)0xFF,(byte)0xFF,(byte)0xFF,(byte)0x00,    // forecolor
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,    // backcolor
@@ -41,8 +42,8 @@ public final class TestAreaFormatRecord extends TestCase {
 
     };
 
+    @Test
     public void testLoad() {
-
         AreaFormatRecord record = new AreaFormatRecord(TestcaseRecordInputStream.create(0x100a, data));
         assertEquals( 0xFFFFFF, record.getForegroundColor());
         assertEquals( 0x000000, record.getBackgroundColor());
@@ -57,8 +58,8 @@ public final class TestAreaFormatRecord extends TestCase {
         assertEquals( 20, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
+    @Test
+    public void testStore() {
         AreaFormatRecord record = new AreaFormatRecord();
         record.setForegroundColor( 0xFFFFFF );
         record.setBackgroundColor( 0x000000 );
@@ -70,8 +71,6 @@ public final class TestAreaFormatRecord extends TestCase {
 
 
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        confirmRecordEncoding(AreaFormatRecord.sid, data, recordBytes);
     }
 }

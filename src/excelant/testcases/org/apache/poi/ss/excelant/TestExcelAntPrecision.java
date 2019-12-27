@@ -16,32 +16,38 @@
 ==================================================================== */
 package org.apache.poi.ss.excelant;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class TestExcelAntPrecision extends TestCase {
-	
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+public class TestExcelAntPrecision {
+
 	private ExcelAntPrecision fixture ;
 
-    @Override
+    @Before
 	public void setUp() {
 		fixture = new ExcelAntPrecision() ;
 	}
-	
-    @Override
+
+    @After
 	public void tearDown() {
 		fixture = null ;
 	}
-	
+
+	@Test
 	public void testVerifyPrecision() {
-		
+
 		double value = 1.0E-1 ;
-		
+
 		fixture.setValue( value ) ;
-		
+
 		double result = fixture.getValue() ;
-		
+
 		assertTrue( result > 0 ) ;
-		
+
 		assertEquals( value, result, 0.0 ) ;
 	}
 

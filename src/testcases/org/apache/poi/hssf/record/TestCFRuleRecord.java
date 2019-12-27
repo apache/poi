@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -26,7 +27,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
-import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
@@ -50,126 +50,108 @@ import org.junit.Test;
 public final class TestCFRuleRecord {
     @Test
     public void testConstructors () throws IOException {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet();
+        try (HSSFWorkbook workbook = new HSSFWorkbook()) {
+            HSSFSheet sheet = workbook.createSheet();
 
-        CFRuleRecord rule1 = CFRuleRecord.create(sheet, "7");
-        assertEquals(CFRuleBase.CONDITION_TYPE_FORMULA, rule1.getConditionType());
-        assertEquals(ComparisonOperator.NO_COMPARISON, rule1.getComparisonOperation());
-        assertNotNull(rule1.getParsedExpression1());
-        assertSame(Ptg.EMPTY_PTG_ARRAY, rule1.getParsedExpression2());
+            CFRuleRecord rule1 = CFRuleRecord.create(sheet, "7");
+            assertEquals(CFRuleBase.CONDITION_TYPE_FORMULA, rule1.getConditionType());
+            assertEquals(ComparisonOperator.NO_COMPARISON, rule1.getComparisonOperation());
+            assertNotNull(rule1.getParsedExpression1());
+            assertSame(Ptg.EMPTY_PTG_ARRAY, rule1.getParsedExpression2());
 
-        CFRuleRecord rule2 = CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "2", "5");
-        assertEquals(CFRuleBase.CONDITION_TYPE_CELL_VALUE_IS, rule2.getConditionType());
-        assertEquals(ComparisonOperator.BETWEEN, rule2.getComparisonOperation());
-        assertNotNull(rule2.getParsedExpression1());
-        assertNotNull(rule2.getParsedExpression2());
+            CFRuleRecord rule2 = CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "2", "5");
+            assertEquals(CFRuleBase.CONDITION_TYPE_CELL_VALUE_IS, rule2.getConditionType());
+            assertEquals(ComparisonOperator.BETWEEN, rule2.getComparisonOperation());
+            assertNotNull(rule2.getParsedExpression1());
+            assertNotNull(rule2.getParsedExpression2());
 
-        CFRuleRecord rule3 = CFRuleRecord.create(sheet, ComparisonOperator.EQUAL, null, null);
-        assertEquals(CFRuleBase.CONDITION_TYPE_CELL_VALUE_IS, rule3.getConditionType());
-        assertEquals(ComparisonOperator.EQUAL, rule3.getComparisonOperation());
-        assertSame(Ptg.EMPTY_PTG_ARRAY, rule3.getParsedExpression2());
-        assertSame(Ptg.EMPTY_PTG_ARRAY, rule3.getParsedExpression2());
-        workbook.close();
+            CFRuleRecord rule3 = CFRuleRecord.create(sheet, ComparisonOperator.EQUAL, null, null);
+            assertEquals(CFRuleBase.CONDITION_TYPE_CELL_VALUE_IS, rule3.getConditionType());
+            assertEquals(ComparisonOperator.EQUAL, rule3.getComparisonOperation());
+            assertSame(Ptg.EMPTY_PTG_ARRAY, rule3.getParsedExpression2());
+            assertSame(Ptg.EMPTY_PTG_ARRAY, rule3.getParsedExpression2());
+        }
     }
 
     @Test
     public void testCreateCFRuleRecord() throws IOException {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet();
-        CFRuleRecord record = CFRuleRecord.create(sheet, "7");
-        testCFRuleRecord(record);
+        try (HSSFWorkbook workbook = new HSSFWorkbook()) {
+            HSSFSheet sheet = workbook.createSheet();
+            CFRuleRecord record = CFRuleRecord.create(sheet, "7");
+            testCFRuleRecord(record);
 
-        // Serialize
-        byte [] serializedRecord = record.serialize();
+            // Serialize
+            byte[] serializedRecord = record.serialize();
 
-        // Strip header
-        byte [] recordData = new byte[serializedRecord.length-4];
-        System.arraycopy(serializedRecord, 4, recordData, 0, recordData.length);
+            // Strip header
+            byte[] recordData = new byte[serializedRecord.length - 4];
+            System.arraycopy(serializedRecord, 4, recordData, 0, recordData.length);
 
-        // Deserialize
-        record = new CFRuleRecord(TestcaseRecordInputStream.create(CFRuleRecord.sid, recordData));
+            // Deserialize
+            record = new CFRuleRecord(TestcaseRecordInputStream.create(CFRuleRecord.sid, recordData));
 
-        // Serialize again
-        byte[] output = record.serialize();
-
-        // Compare
-        assertEquals("Output size", recordData.length+4, output.length); //includes sid+recordlength
-
-        for (int i = 0; i < recordData.length;i++) {
-            assertEquals("CFRuleRecord doesn't match", recordData[i], output[i+4]);
+            // Serialize again
+            byte[] output = record.serialize();
+            confirmRecordEncoding(CFRuleRecord.sid, recordData, output);
         }
-        workbook.close();
     }
 
     @Test
     public void testCreateCFRule12Record() throws IOException {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet();
-        CFRule12Record record = CFRule12Record.create(sheet, "7");
-        testCFRule12Record(record);
+        try (HSSFWorkbook workbook = new HSSFWorkbook()) {
+            HSSFSheet sheet = workbook.createSheet();
+            CFRule12Record record = CFRule12Record.create(sheet, "7");
+            testCFRule12Record(record);
 
-        // Serialize
-        byte [] serializedRecord = record.serialize();
+            // Serialize
+            byte[] serializedRecord = record.serialize();
 
-        // Strip header
-        byte [] recordData = new byte[serializedRecord.length-4];
-        System.arraycopy(serializedRecord, 4, recordData, 0, recordData.length);
+            // Strip header
+            byte[] recordData = new byte[serializedRecord.length - 4];
+            System.arraycopy(serializedRecord, 4, recordData, 0, recordData.length);
 
-        // Deserialize
-        record = new CFRule12Record(TestcaseRecordInputStream.create(CFRule12Record.sid, recordData));
+            // Deserialize
+            record = new CFRule12Record(TestcaseRecordInputStream.create(CFRule12Record.sid, recordData));
 
-        // Serialize again
-        byte[] output = record.serialize();
-
-        // Compare
-        assertEquals("Output size", recordData.length+4, output.length); //includes sid+recordlength
-
-        for (int i = 0; i < recordData.length;i++) {
-            assertEquals("CFRule12Record doesn't match", recordData[i], output[i+4]);
+            // Serialize again
+            byte[] output = record.serialize();
+            confirmRecordEncoding(CFRule12Record.sid, recordData, output);
         }
-        workbook.close();
     }
 
     @Test
     public void testCreateIconCFRule12Record() throws IOException {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet();
-        CFRule12Record record = CFRule12Record.create(sheet, IconSet.GREY_5_ARROWS);
-        record.getMultiStateFormatting().getThresholds()[1].setType(RangeType.PERCENT.id);
-        record.getMultiStateFormatting().getThresholds()[1].setValue(10d);
-        record.getMultiStateFormatting().getThresholds()[2].setType(RangeType.NUMBER.id);
-        record.getMultiStateFormatting().getThresholds()[2].setValue(-4d);
+        try (HSSFWorkbook workbook = new HSSFWorkbook()) {
+            HSSFSheet sheet = workbook.createSheet();
+            CFRule12Record record = CFRule12Record.create(sheet, IconSet.GREY_5_ARROWS);
+            record.getMultiStateFormatting().getThresholds()[1].setType(RangeType.PERCENT.id);
+            record.getMultiStateFormatting().getThresholds()[1].setValue(10d);
+            record.getMultiStateFormatting().getThresholds()[2].setType(RangeType.NUMBER.id);
+            record.getMultiStateFormatting().getThresholds()[2].setValue(-4d);
 
-        // Check it
-        testCFRule12Record(record);
-        assertEquals(IconSet.GREY_5_ARROWS, record.getMultiStateFormatting().getIconSet());
-        assertEquals(5, record.getMultiStateFormatting().getThresholds().length);
+            // Check it
+            testCFRule12Record(record);
+            assertEquals(IconSet.GREY_5_ARROWS, record.getMultiStateFormatting().getIconSet());
+            assertEquals(5, record.getMultiStateFormatting().getThresholds().length);
 
-        // Serialize
-        byte [] serializedRecord = record.serialize();
+            // Serialize
+            byte[] serializedRecord = record.serialize();
 
-        // Strip header
-        byte [] recordData = new byte[serializedRecord.length-4];
-        System.arraycopy(serializedRecord, 4, recordData, 0, recordData.length);
+            // Strip header
+            byte[] recordData = new byte[serializedRecord.length - 4];
+            System.arraycopy(serializedRecord, 4, recordData, 0, recordData.length);
 
-        // Deserialize
-        record = new CFRule12Record(TestcaseRecordInputStream.create(CFRule12Record.sid, recordData));
+            // Deserialize
+            record = new CFRule12Record(TestcaseRecordInputStream.create(CFRule12Record.sid, recordData));
 
-        // Check it has the icon, and the right number of thresholds
-        assertEquals(IconSet.GREY_5_ARROWS, record.getMultiStateFormatting().getIconSet());
-        assertEquals(5, record.getMultiStateFormatting().getThresholds().length);
+            // Check it has the icon, and the right number of thresholds
+            assertEquals(IconSet.GREY_5_ARROWS, record.getMultiStateFormatting().getIconSet());
+            assertEquals(5, record.getMultiStateFormatting().getThresholds().length);
 
-        // Serialize again
-        byte[] output = record.serialize();
-
-        // Compare
-        assertEquals("Output size", recordData.length+4, output.length); //includes sid+recordlength
-
-        for (int i = 0; i < recordData.length;i++) {
-            assertEquals("CFRule12Record doesn't match", recordData[i], output[i+4]);
+            // Serialize again
+            byte[] output = record.serialize();
+            confirmRecordEncoding(CFRule12Record.sid, recordData, output);
         }
-        workbook.close();
     }
 
     private void testCFRuleRecord(CFRuleRecord record) {
@@ -391,25 +373,25 @@ public final class TestCFRuleRecord {
 
     @Test
     public void testWrite() throws IOException {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet();
-        CFRuleRecord rr = CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "5", "10");
+        try (HSSFWorkbook workbook = new HSSFWorkbook()) {
+            HSSFSheet sheet = workbook.createSheet();
+            CFRuleRecord rr = CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "5", "10");
 
-        PatternFormatting patternFormatting = new PatternFormatting();
-        patternFormatting.setFillPattern(PatternFormatting.BRICKS);
-        rr.setPatternFormatting(patternFormatting);
+            PatternFormatting patternFormatting = new PatternFormatting();
+            patternFormatting.setFillPattern(PatternFormatting.BRICKS);
+            rr.setPatternFormatting(patternFormatting);
 
-        byte[] data = rr.serialize();
-        assertEquals(26, data.length);
-        assertEquals(3, LittleEndian.getShort(data, 6));
-        assertEquals(3, LittleEndian.getShort(data, 8));
+            byte[] data = rr.serialize();
+            assertEquals(26, data.length);
+            assertEquals(3, LittleEndian.getShort(data, 6));
+            assertEquals(3, LittleEndian.getShort(data, 8));
 
-        int flags = LittleEndian.getInt(data, 10);
-        assertEquals("unused flags should be 111", 0x00380000, flags & 0x00380000);
-        assertEquals("undocumented flags should be 0000", 0, flags & 0x03C00000); // Otherwise Excel gets unhappy
-        // check all remaining flag bits (some are not well understood yet)
-        assertEquals(0x203FFFFF, flags);
-        workbook.close();
+            int flags = LittleEndian.getInt(data, 10);
+            assertEquals("unused flags should be 111", 0x00380000, flags & 0x00380000);
+            assertEquals("undocumented flags should be 0000", 0, flags & 0x03C00000); // Otherwise Excel gets unhappy
+            // check all remaining flag bits (some are not well understood yet)
+            assertEquals(0x203FFFFF, flags);
+        }
     }
 
     private static final byte[] DATA_REFN = {
@@ -433,9 +415,7 @@ public final class TestCFRuleRecord {
         CFRuleRecord rr = new CFRuleRecord(is);
         Ptg[] ptgs = rr.getParsedExpression1();
         assertEquals(3, ptgs.length);
-        if (ptgs[0] instanceof RefPtg) {
-            throw new AssertionFailedError("Identified bug 45234");
-        }
+        assertFalse("Identified bug 45234", ptgs[0] instanceof RefPtg);
         assertEquals(RefNPtg.class, ptgs[0].getClass());
         RefNPtg refNPtg = (RefNPtg) ptgs[0];
         assertTrue(refNPtg.isColRelative());
@@ -447,26 +427,26 @@ public final class TestCFRuleRecord {
 
     @Test
     public void testBug53691() throws IOException {
-        HSSFWorkbook workbook = new HSSFWorkbook();
-        HSSFSheet sheet = workbook.createSheet();
+        try (HSSFWorkbook workbook = new HSSFWorkbook()) {
+            HSSFSheet sheet = workbook.createSheet();
 
-        CFRuleRecord record = CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "2", "5");
+            CFRuleRecord record = CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "2", "5");
 
-        CFRuleRecord clone = record.copy();
+            CFRuleRecord clone = record.copy();
 
-        byte [] serializedRecord = record.serialize();
-        byte [] serializedClone = clone.serialize();
-        assertArrayEquals(serializedRecord, serializedClone);
-        workbook.close();
+            byte[] serializedRecord = record.serialize();
+            byte[] serializedClone = clone.serialize();
+            assertArrayEquals(serializedRecord, serializedClone);
+        }
     }
 
     @Test
     public void testBug57231_rewrite() throws IOException {
-        HSSFWorkbook wb1 = HSSFITestDataProvider.instance.openSampleWorkbook("57231_MixedGasReport.xls");
-        assertEquals(7, wb1.getNumberOfSheets());
-        HSSFWorkbook wb2 = HSSFITestDataProvider.instance.writeOutAndReadBack(wb1);
-        assertEquals(7, wb2.getNumberOfSheets());
-        wb2.close();
-        wb1.close();
+        try (HSSFWorkbook wb1 = HSSFITestDataProvider.instance.openSampleWorkbook("57231_MixedGasReport.xls")) {
+            assertEquals(7, wb1.getNumberOfSheets());
+            try (HSSFWorkbook wb2 = HSSFITestDataProvider.instance.writeOutAndReadBack(wb1)) {
+                assertEquals(7, wb2.getNumberOfSheets());
+            }
+        }
     }
 }

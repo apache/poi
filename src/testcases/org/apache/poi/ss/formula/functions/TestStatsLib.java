@@ -20,23 +20,21 @@
  */
 package org.apache.poi.ss.formula.functions;
 
-import junit.framework.AssertionFailedError;
+import static org.junit.Assert.assertNotNull;
+
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 
-/**
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *
- */
 public class TestStatsLib extends AbstractNumericTestCase {
 
     @Test
     public void testDevsq() {
-        double[] v = null;
-        double d, x = 0;
+        double[] v;
+        double d, x;
 
         v = new double[] {1,2,3,4,5,6,7,8,9,10};
         d = StatsLib.devsq(v);
@@ -71,8 +69,8 @@ public class TestStatsLib extends AbstractNumericTestCase {
 
     @Test
     public void testKthLargest() {
-        double[] v = null;
-        double d, x = 0;
+        double[] v;
+        double d, x;
 
         v = new double[] {1,2,3,4,5,6,7,8,9,10};
         d = StatsLib.kthLargest(v, 3);
@@ -105,13 +103,15 @@ public class TestStatsLib extends AbstractNumericTestCase {
         assertEquals("kthLargest ", x, d);
     }
 
+    @Test
+    @Ignore("... implement ...")
     public void testKthSmallest() {
     }
 
     @Test
     public void testAvedev() {
-        double[] v = null;
-        double d, x = 0;
+        double[] v;
+        double d, x;
 
         v = new double[] {1,2,3,4,5,6,7,8,9,10};
         d = StatsLib.avedev(v);
@@ -146,8 +146,8 @@ public class TestStatsLib extends AbstractNumericTestCase {
 
     @Test
     public void testMedian() {
-        double[] v = null;
-        double d, x = 0;
+        double[] v;
+        double d, x;
 
         v = new double[] {1,2,3,4,5,6,7,8,9,10};
         d = StatsLib.median(v);
@@ -193,7 +193,6 @@ public class TestStatsLib extends AbstractNumericTestCase {
     @Test
     public void testMode() {
         double[] v;
-        double d, x = 0;
 
         v = new double[] {1,2,3,4,5,6,7,8,9,10};
         confirmMode(v, null);
@@ -228,9 +227,7 @@ public class TestStatsLib extends AbstractNumericTestCase {
     	double actual;
 		try {
 			actual = Mode.evaluate(v);
-			if (expectedResult == null) {
-				throw new AssertionFailedError("Expected N/A exception was not thrown");
-			}
+			assertNotNull("Expected N/A exception was not thrown", expectedResult);
 		} catch (EvaluationException e) {
 			if (expectedResult == null) {
 				Assert.assertEquals(ErrorEval.NA, e.getErrorEval());
@@ -243,8 +240,8 @@ public class TestStatsLib extends AbstractNumericTestCase {
 
     @Test
     public void testStddev() {
-        double[] v = null;
-        double d, x = 0;
+        double[] v;
+        double d, x;
 
         v = new double[] {1,2,3,4,5,6,7,8,9,10};
         d = StatsLib.stdev(v);
@@ -279,8 +276,8 @@ public class TestStatsLib extends AbstractNumericTestCase {
 
     @Test
     public void testVar() {
-        double[] v = null;
-        double d, x = 0;
+        double[] v;
+        double d, x;
 
         v = new double[] {3.50, 5.00, 7.23, 2.99};
         d = StatsLib.var(v);
@@ -305,8 +302,8 @@ public class TestStatsLib extends AbstractNumericTestCase {
 
     @Test
     public void testVarp() {
-        double[] v = null;
-        double d, x = 0;
+        double[] v;
+        double d, x;
 
         v = new double[] {3.50, 5.00, 7.23, 2.99};
         d = StatsLib.varp(v);

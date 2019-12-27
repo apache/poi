@@ -17,8 +17,10 @@
 
 package org.apache.poi.hssf.model;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -29,13 +31,13 @@ import org.apache.poi.ss.formula.functions.MatrixFunction;
 import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
 import org.apache.poi.ss.formula.ptg.FuncVarPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * Tests specific formula examples in <tt>OperandClassTransformer</tt>.
- * 
- * @author Josh Micich
  */
-public final class TestOperandClassTransformer extends TestCase {
+public final class TestOperandClassTransformer {
 
     private static Ptg[] parseFormula(String formula) {
         Ptg[] result = HSSFFormulaParser.parse(formula, null);
@@ -43,6 +45,7 @@ public final class TestOperandClassTransformer extends TestCase {
         return result;
     }
 
+    @Test
     public void testMdeterm() {
         String formula = "MDETERM(ABS(A1))";
         Ptg[] ptgs = parseFormula(formula);
@@ -52,6 +55,7 @@ public final class TestOperandClassTransformer extends TestCase {
         confirmFuncClass(ptgs, 2, "MDETERM", Ptg.CLASS_VALUE);
     }
 
+    @Test
     public void testMdetermReturnsValueInvalidOnABlankCell() {
         ValueEval matrixRef = EvalFactory.createAreaEval("A1:B2",
                 new ValueEval[]{
@@ -74,7 +78,9 @@ public final class TestOperandClassTransformer extends TestCase {
      * <p>
      * This test has been added but disabled in order to document this issue.
      */
-    public void DISABLED_testIndexPi1() {
+    @Test
+    @Ignore
+    public void testIndexPi1() {
         String formula = "INDEX(PI(),1)";
         Ptg[] ptgs = parseFormula(formula);
 
@@ -86,13 +92,11 @@ public final class TestOperandClassTransformer extends TestCase {
      * Even though count expects args of type R, because A1 is a direct operand of a
      * value operator it must get type V
      */
+    @Test
     public void testDirectOperandOfValueOperator() {
         String formula = "COUNT(A1*1)";
         Ptg[] ptgs = parseFormula(formula);
-        if (ptgs[0].getPtgClass() == Ptg.CLASS_REF) {
-            throw new AssertionFailedError("Identified bug 45348");
-        }
-
+        assertNotEquals(Ptg.CLASS_REF, ptgs[0].getPtgClass());
         confirmTokenClass(ptgs, 0, Ptg.CLASS_VALUE);
         confirmTokenClass(ptgs, 3, Ptg.CLASS_VALUE);
     }
@@ -100,6 +104,7 @@ public final class TestOperandClassTransformer extends TestCase {
     /**
      * A cell ref passed to a function expecting type V should be converted to type V
      */
+    @Test
     public void testRtoV() {
 
         String formula = "lookup(A1, A3:A52, B3:B52)";
@@ -107,6 +112,7 @@ public final class TestOperandClassTransformer extends TestCase {
         confirmTokenClass(ptgs, 0, Ptg.CLASS_VALUE);
     }
 
+    @Test
     public void testComplexIRR_bug45041() {
         String formula = "(1+IRR(SUMIF(A:A,ROW(INDIRECT(MIN(A:A)&\":\"&MAX(A:A))),B:B),0))^365-1";
         Ptg[] ptgs = parseFormula(formula);
@@ -116,9 +122,8 @@ public final class TestOperandClassTransformer extends TestCase {
         assertEquals("ROW", rowFunc.getName());
         assertEquals("SUMIF", sumifFunc.getName());
 
-        if (rowFunc.getPtgClass() == Ptg.CLASS_VALUE || sumifFunc.getPtgClass() == Ptg.CLASS_VALUE) {
-            throw new AssertionFailedError("Identified bug 45041");
-        }
+        assertNotEquals(Ptg.CLASS_VALUE, rowFunc.getPtgClass());
+        assertNotEquals(Ptg.CLASS_VALUE, sumifFunc.getPtgClass());
         confirmTokenClass(ptgs, 1, Ptg.CLASS_REF);
         confirmTokenClass(ptgs, 2, Ptg.CLASS_REF);
         confirmFuncClass(ptgs, 3, "MIN", Ptg.CLASS_VALUE);
@@ -139,25 +144,7 @@ public final class TestOperandClassTransformer extends TestCase {
 
     private void confirmTokenClass(Ptg[] ptgs, int i, byte operandClass) {
         Ptg ptg = ptgs[i];
-        if (ptg.isBaseToken()) {
-            throw new AssertionFailedError("ptg[" + i + "] is a base token");
-        }
-        if (operandClass != ptg.getPtgClass()) {
-            throw new AssertionFailedError("Wrong operand class for ptg ("
-                    + ptg + "). Expected " + getOperandClassName(operandClass)
-                    + " but got " + getOperandClassName(ptg.getPtgClass()));
-        }
-    }
-
-    private static String getOperandClassName(byte ptgClass) {
-        switch (ptgClass) {
-            case Ptg.CLASS_REF:
-                return "R";
-            case Ptg.CLASS_VALUE:
-                return "V";
-            case Ptg.CLASS_ARRAY:
-                return "A";
-        }
-        throw new RuntimeException("Unknown operand class (" + ptgClass + ")");
+        assertFalse("ptg[" + i + "] is a base token", ptg.isBaseToken());
+        assertEquals(operandClass, ptg.getPtgClass());
     }
 }

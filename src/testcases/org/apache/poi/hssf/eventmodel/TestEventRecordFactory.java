@@ -17,46 +17,59 @@
 
 package org.apache.poi.hssf.eventmodel;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.SequenceInputStream;
+import java.util.Iterator;
+import java.util.stream.Stream;
 
-import junit.framework.TestCase;
-
+import org.apache.commons.collections4.IteratorUtils;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFactory;
+import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.util.NotImplemented;
+import org.junit.Ignore;
+import org.junit.Test;
 
 /**
  * enclosing_type describe the purpose here
- * 
- * @author Andrew C. Oliver acoliver@apache.org
- * @author Csaba Nagy (ncsaba at yahoo dot com)
  */
-public final class TestEventRecordFactory extends TestCase {
+public final class TestEventRecordFactory {
+    private static final byte[][] CONTINUE_DATA = {
+        // an unknown record with 0 length
+        {0, -1, 0, 0,},
+        // a continuation record with 3 bytes of data
+        {0x3C, 0, 3, 0, 1, 2, 3,},
+        // one more continuation record with 1 byte of data
+        {0x3C, 0, 1, 0, 4}
+    };
 
     /**
-     * tests that the records can be processed and properly return 
-     * values.
+     * tests that the records can be processed and properly return values.
      */
-    public void testProcessRecords()
-    {
-        final boolean[] wascalled = { false, }; // hack to pass boolean by ref into inner class
+    @Test
+    public void testProcessRecords() {
+        final boolean[] wascalled = { false }; // hack to pass boolean by ref into inner class
 
-        ERFListener listener = new ERFListener() {
-            @Override
-            public boolean processRecord(Record rec) {
-                wascalled[0] = true;
-                assertTrue("must be BOFRecord got SID="+rec.getSid(),
-                           (rec.getSid() == BOFRecord.sid));                  
-                return true;              
-            }
+        ERFListener listener = rec -> {
+            wascalled[0] = true;
+            assertEquals("must be BOFRecord got SID=" + rec.getSid(), rec.getSid(), BOFRecord.sid);
+            return true;
         };
     	EventRecordFactory factory = new EventRecordFactory(listener, new short[] {BOFRecord.sid});
-        
+
         BOFRecord bof = new BOFRecord();
         bof.setBuild((short)0);
         bof.setBuildYear((short)1999);
@@ -64,22 +77,23 @@ public final class TestEventRecordFactory extends TestCase {
         bof.setType(BOFRecord.TYPE_WORKBOOK);
         bof.setVersion((short)0x06);
         bof.setHistoryBitMask(BOFRecord.HISTORY_MASK);
-        
+
         EOFRecord eof = EOFRecord.instance;
     	byte[] bytes = new byte[bof.getRecordSize() + eof.getRecordSize()];
         int offset = 0;
         offset = bof.serialize(offset,bytes);
-        offset = eof.serialize(offset,bytes);
-                
-        factory.processRecords(new ByteArrayInputStream(bytes));    
-        assertTrue("The record listener must be called", wascalled[0]);    
+        eof.serialize(offset,bytes);
+
+        factory.processRecords(new ByteArrayInputStream(bytes));
+        assertTrue("The record listener must be called", wascalled[0]);
     }
-    
+
 
     /**
-     * tests that the create record function returns a properly 
+     * tests that the create record function returns a properly
      * constructed record in the simple case.
      */
+    @Test
     public void testCreateRecord() {
         BOFRecord bof = new BOFRecord();
         bof.setBuild((short)0);
@@ -88,49 +102,30 @@ public final class TestEventRecordFactory extends TestCase {
         bof.setType(BOFRecord.TYPE_WORKBOOK);
         bof.setVersion((short)0x06);
         bof.setHistoryBitMask(BOFRecord.HISTORY_MASK);
-        
+
         byte[] bytes = bof.serialize();
-            
+
         Record[] records = RecordFactory.createRecord(TestcaseRecordInputStream.create(bytes));
 
         assertEquals("record.length must be 1, was =" + records.length, 1, records.length);
-        assertTrue("record is the same", compareRec(bof,records[0]));
-        
+
+        byte[] rec1 = bof.serialize();
+        byte[] rec2 = records[0].serialize();
+        assertArrayEquals(rec1, rec2);
     }
 
     /**
-     * Compare the serialized bytes of two records are equal
-     * @param first the first record to compare
-     * @param second the second record to compare
-     * @return boolean whether or not the record where equal
-     */
-    private static boolean compareRec(Record first, Record second) {
-        byte[] rec1 = first.serialize();
-        byte[] rec2 = second.serialize();
-        
-        if (rec1.length != rec2.length) {
-            return false;   
-        }
-        for (int k=0; k<rec1.length; k++) {
-            if (rec1[k] != rec2[k]) {
-                return false;
-            }   
-        }
-        return true;
-    }
-
-    
-    /**
-     * tests that the create record function returns a properly 
+     * tests that the create record function returns a properly
      * constructed record in the case of a continued record.
      * TODO - need a real world example to put in a unit test
      */
     @NotImplemented
-    public void testCreateContinuedRecord()
-    {
+    @Test
+    @Ignore
+    public void testCreateContinuedRecord() {
       //  fail("not implemented");
     }
-    
+
 
     /**
      * TEST NAME:  Test Creating ContinueRecords After Unknown Records From An InputStream <P>
@@ -140,45 +135,35 @@ public final class TestEventRecordFactory extends TestCase {
      * FAILURE:    The wrong records are created or contain the wrong values <P>
      *
      */
-     public void testContinuedUnknownRecord() {
-        final byte[] data = {
-            0, -1, 0, 0, // an unknown record with 0 length
-            0x3C , 0, 3, 0, 1, 2, 3, // a continuation record with 3 bytes of data
-            0x3C , 0, 1, 0, 4 // one more continuation record with 1 byte of data
+    @Test
+     public void testContinuedUnknownRecord() throws IOException {
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        for (byte[] b : CONTINUE_DATA) {
+            bos.write(b);
+        }
+        continueHelper(new ByteArrayInputStream(bos.toByteArray()));
+    }
+
+    @Test
+    @Ignore("same as testContinuedUnknownRecord but with SequenceInputStream which causes the available() bug 59893")
+    public void bug59893() {
+        Iterator<ByteArrayInputStream> iter = Stream.of(CONTINUE_DATA).map(ByteArrayInputStream::new).iterator();
+        SequenceInputStream sis = new SequenceInputStream(IteratorUtils.asEnumeration(iter));
+        continueHelper(sis);
+    }
+
+    private void continueHelper(InputStream data) {
+        Iterator<Class<? extends StandardRecord>> expectedType =
+                Stream.of(UnknownRecord.class, ContinueRecord.class, ContinueRecord.class).iterator();
+        Iterator<byte[]> expectedData = Stream.of(CONTINUE_DATA).iterator();
+
+        ERFListener listener = rec -> {
+            assertEquals(expectedType.next(), rec.getClass());
+            assertArrayEquals(expectedData.next(), rec.serialize());
+            return true;
         };
-
-        final int[] recCnt = { 0 };
-        final int[] offset = { 0 };
-        ERFListener listener = new ERFListener() {
-              private final String[] expectedRecordTypes = {
-                  UnknownRecord.class.getName(),
-                  ContinueRecord.class.getName(),
-                  ContinueRecord.class.getName()
-              };
-              @Override
-            public boolean processRecord(Record rec)
-              {
-                  // System.out.println(rec.toString());
-                  assertEquals(
-                    "Record type",
-                    expectedRecordTypes[recCnt[0]],
-                    rec.getClass().getName()
-                  );
-                  compareData(rec, "Record " + recCnt[0] + ": ");
-                  recCnt[0]++;
-                  return true;
-              }
-              private void compareData(Record record, String message) {
-                  byte[] recData = record.serialize();
-                  for (int i = 0; i < recData.length; i++) {
-                      assertEquals(message + " data byte " + i, data[offset[0]++], recData[i]);
-                  }
-              }
-          };
-    	EventRecordFactory factory = new EventRecordFactory(listener, new short[] {-256, 0x3C});
-
-        factory.processRecords(new ByteArrayInputStream(data));
-        assertEquals("nr. of processed records", 3, recCnt[0]);
-        assertEquals("nr. of processed bytes", data.length, offset[0]);
+        EventRecordFactory factory = new EventRecordFactory(listener, new short[] {-256, 0x3C});
+        factory.processRecords(data);
+        assertFalse("left over input data", expectedData.hasNext());
     }
 }

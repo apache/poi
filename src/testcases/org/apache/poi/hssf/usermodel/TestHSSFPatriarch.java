@@ -17,53 +17,48 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.Assert.assertNotNull;
+
+import java.io.IOException;
+
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
+import org.junit.Test;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+public final class TestHSSFPatriarch {
 
-/**
- * @author Josh Micich
- */
-public final class TestHSSFPatriarch extends TestCase {
+	@Test
+	public void testBasic() throws IOException {
+		try (HSSFWorkbook wb = new HSSFWorkbook()) {
+			HSSFSheet sheet = wb.createSheet();
 
-	public void testBasic() {
-
-		HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFSheet sheet = wb.createSheet();
-
-		HSSFPatriarch patr = sheet.createDrawingPatriarch();
-		assertNotNull(patr);
-
-		// assert something more interesting
+			HSSFPatriarch patr = sheet.createDrawingPatriarch();
+			assertNotNull(patr);
+		}
 	}
 
-	public void test44916() {
+	@Test
+	public void test44916() throws IOException {
+		try (HSSFWorkbook wb = new HSSFWorkbook()) {
+			HSSFSheet sheet = wb.createSheet();
 
-		HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFSheet sheet = wb.createSheet();
+			// 1. Create drawing patriarch
+			HSSFPatriarch patr = sheet.createDrawingPatriarch();
 
-		// 1. Create drawing patriarch
-		HSSFPatriarch patr = sheet.createDrawingPatriarch();
+			// 2. Try to re-get the patriarch
+			// bug 44916 - NullPointerException
+			HSSFPatriarch existingPatr = sheet.getDrawingPatriarch();
 
-		// 2. Try to re-get the patriarch
-		HSSFPatriarch existingPatr;
-		try {
+			// 3. Use patriarch
+			HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 600, 245, (short) 1, 1, (short) 1, 2);
+			anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
+			byte[] pictureData = HSSFTestDataSamples.getTestDataFileContent("logoKarmokar4.png");
+			int idx1 = wb.addPicture(pictureData, HSSFWorkbook.PICTURE_TYPE_PNG);
+			patr.createPicture(anchor, idx1);
+
+			// 4. Try to re-use patriarch later
 			existingPatr = sheet.getDrawingPatriarch();
-		} catch (NullPointerException e) {
-			throw new AssertionFailedError("Identified bug 44916");
+			assertNotNull(existingPatr);
 		}
-
-		// 3. Use patriarch
-		HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 600, 245, (short) 1, 1, (short) 1, 2);
-		anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
-		byte[] pictureData = HSSFTestDataSamples.getTestDataFileContent("logoKarmokar4.png");
-		int idx1 = wb.addPicture(pictureData, HSSFWorkbook.PICTURE_TYPE_PNG);
-		patr.createPicture(anchor, idx1);
-
-		// 4. Try to re-use patriarch later
-		existingPatr = sheet.getDrawingPatriarch();
-		assertNotNull(existingPatr);
 	}
 }

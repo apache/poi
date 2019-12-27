@@ -17,16 +17,20 @@
 
 package org.apache.poi.hssf.record;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the {@link CFHeaderRecord}
- *  and {@link CFHeader12Record} classes works correctly.  
+ *  and {@link CFHeader12Record} classes works correctly.
  */
-public final class TestCFHeaderRecord extends TestCase {
+public final class TestCFHeaderRecord {
+	@Test
 	public void testCreateCFHeaderRecord () {
 		CFHeaderRecord record = new CFHeaderRecord();
 		CellRangeAddress[] ranges = {
@@ -48,17 +52,18 @@ public final class TestCFHeaderRecord extends TestCase {
 
         assertFalse(record.getNeedRecalculation());
 		assertEquals(0, record.getID());
-		
+
 		record.setNeedRecalculation(true);
         assertTrue(record.getNeedRecalculation());
         assertEquals(0, record.getID());
-        
+
         record.setID(7);
 		record.setNeedRecalculation(false);
         assertFalse(record.getNeedRecalculation());
         assertEquals(7, record.getID());
 	}
-	
+
+	@Test
     public void testCreateCFHeader12Record () {
         CFHeader12Record record = new CFHeader12Record();
         CellRangeAddress[] ranges = {
@@ -80,45 +85,46 @@ public final class TestCFHeaderRecord extends TestCase {
 
         assertFalse(record.getNeedRecalculation());
         assertEquals(0, record.getID());
-        
+
         record.setNeedRecalculation(true);
         assertTrue(record.getNeedRecalculation());
         assertEquals(0, record.getID());
-        
+
         record.setID(7);
         record.setNeedRecalculation(false);
         assertFalse(record.getNeedRecalculation());
         assertEquals(7, record.getID());
     }
-    
+
+	@Test
 	public void testSerialization() {
-		byte[] recordData = 
+		byte[] recordData =
 		{
 			(byte)0x03, (byte)0x00,
 			(byte)0x01,	(byte)0x00,
-			
+
 			(byte)0x00,	(byte)0x00,
 			(byte)0x03,	(byte)0x00,
 			(byte)0x00,	(byte)0x00,
 			(byte)0x03,	(byte)0x00,
-			
+
 			(byte)0x04,	(byte)0x00, // nRegions
-			
+
 			(byte)0x00,	(byte)0x00,
 			(byte)0x01,	(byte)0x00,
 			(byte)0x00,	(byte)0x00,
 			(byte)0x01,	(byte)0x00,
-			
+
 			(byte)0x00,	(byte)0x00,
 			(byte)0x01,	(byte)0x00,
 			(byte)0x02,	(byte)0x00,
 			(byte)0x03,	(byte)0x00,
-			
+
 			(byte)0x02,	(byte)0x00,
 			(byte)0x03,	(byte)0x00,
 			(byte)0x00,	(byte)0x00,
 			(byte)0x01,	(byte)0x00,
-			
+
 			(byte)0x02,	(byte)0x00,
 			(byte)0x03,	(byte)0x00,
 			(byte)0x02,	(byte)0x00,
@@ -139,52 +145,40 @@ public final class TestCFHeaderRecord extends TestCase {
 		assertEquals(recordData.length+4, record.getRecordSize());
 
 		byte[] output = record.serialize();
-
-		assertEquals("Output size", recordData.length+4, output.length); //includes sid+recordlength
-
-		for (int i = 0; i < recordData.length; i++) 
-		{
-			assertEquals("CFHeaderRecord doesn't match", recordData[i], output[i+4]);
-		}
+		confirmRecordEncoding(CFHeaderRecord.sid, recordData, output);
 	}
-	
+
+	@Test
 	public void testExtremeRows() {
 		byte[] recordData = {
 			(byte)0x13, (byte)0x00, // nFormats
 			(byte)0x00,	(byte)0x00,
-			
+
 			(byte)0x00,	(byte)0x00,
 			(byte)0xFF,	(byte)0xFF,
 			(byte)0x00,	(byte)0x00,
 			(byte)0xFF,	(byte)0x00,
-			
+
 			(byte)0x03,	(byte)0x00, // nRegions
-			
+
 			(byte)0x40,	(byte)0x9C,
 			(byte)0x50,	(byte)0xC3,
 			(byte)0x02,	(byte)0x00,
 			(byte)0x02,	(byte)0x00,
-			
+
 			(byte)0x00,	(byte)0x00,
 			(byte)0xFF,	(byte)0xFF,
 			(byte)0x05,	(byte)0x00,
 			(byte)0x05,	(byte)0x00,
-			
+
 			(byte)0x07,	(byte)0x00,
 			(byte)0x07,	(byte)0x00,
 			(byte)0x00,	(byte)0x00,
 			(byte)0xFF,	(byte)0x00,
 		};
 
-		CFHeaderRecord record;
-		try {
-			record = new CFHeaderRecord(TestcaseRecordInputStream.create(CFHeaderRecord.sid, recordData));
-		} catch (IllegalArgumentException e) {
-			if(e.getMessage().equals("invalid cell range (-25536, 2, -15536, 2)")) {
-				throw new AssertionFailedError("Identified bug 44739b");
-			}
-			throw e;
-		}
+		// bug 44739b - invalid cell range (-25536, 2, -15536, 2)
+		CFHeaderRecord record = new CFHeaderRecord(TestcaseRecordInputStream.create(CFHeaderRecord.sid, recordData));
 
 		assertEquals("#CFRULES", 19, record.getNumberOfConditionalFormats());
 		assertFalse(record.getNeedRecalculation());
@@ -196,12 +190,7 @@ public final class TestCFHeaderRecord extends TestCase {
 		confirm(ranges[2], 7, 7, 0, 255);
 
 		byte[] output = record.serialize();
-
-		assertEquals("Output size", recordData.length+4, output.length); //includes sid+recordlength
-
-		for (int i = 0; i < recordData.length;i++) {
-			assertEquals("CFHeaderRecord doesn't match", recordData[i], output[i+4]);
-		}
+		confirmRecordEncoding(CFHeaderRecord.sid, recordData, output);
 	}
 
 	private static void confirm(CellRangeAddress cr, int expFirstRow, int expLastRow, int expFirstCol, int expLastColumn) {

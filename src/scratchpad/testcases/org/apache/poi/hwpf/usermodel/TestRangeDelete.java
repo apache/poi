@@ -17,223 +17,225 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.HWPFTestDataSamples;
-import org.apache.poi.hwpf.model.PAPX;
+import static org.apache.poi.hwpf.HWPFTestDataSamples.openSampleFile;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import java.io.IOException;
+
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.model.PAPX;
+import org.junit.Test;
 
 /**
  *	Test to see if Range.delete() works even if the Range contains a
  *	CharacterRun that uses Unicode characters.
  */
-public final class TestRangeDelete extends TestCase {
+public final class TestRangeDelete {
 
 	// u201c and u201d are "smart-quotes"
-	private final String introText =
+	private static final String introText =
 		"Introduction\r";
-	private final String fillerText =
+	private static final String fillerText =
 		"${delete} This is an MS-Word 97 formatted document created using NeoOffice v. 2.2.4 Patch 0 (OpenOffice.org v. 2.2.1).\r";
-	private final String originalText =
+	private static final String originalText =
 		"It is used to confirm that text delete works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.  Everybody should be thankful to the ${organization} ${delete} and all the POI contributors for their assistance in this matter.\r";
-	private final String lastText =
+	private static final String lastText =
 		"Thank you, ${organization} ${delete}!\r";
-	private final String searchText = "${delete}";
-	private final String expectedText1 = " This is an MS-Word 97 formatted document created using NeoOffice v. 2.2.4 Patch 0 (OpenOffice.org v. 2.2.1).\r";
-	private final String expectedText2 =
+	private static final String searchText = "${delete}";
+	private static final String expectedText1 = " This is an MS-Word 97 formatted document created using NeoOffice v. 2.2.4 Patch 0 (OpenOffice.org v. 2.2.1).\r";
+	private static final String expectedText2 =
 		"It is used to confirm that text delete works even if Unicode characters (such as \u201c\u2014\u201d (U+2014), \u201c\u2e8e\u201d (U+2E8E), or \u201c\u2714\u201d (U+2714)) are present.  Everybody should be thankful to the ${organization}  and all the POI contributors for their assistance in this matter.\r";
-	private final String expectedText3 = "Thank you, ${organization} !\r";
+	private static final String expectedText3 = "Thank you, ${organization} !\r";
 
-	private String illustrativeDocFile;
-
-	@Override
-    protected void setUp() {
-		illustrativeDocFile = "testRangeDelete.doc";
-	}
+	private static final String illustrativeDocFile = "testRangeDelete.doc";
 
 	/**
 	 * Test just opening the files
 	 */
-	public void testOpen() {
-
-		HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
+	@Test
+	public void testOpen() throws IOException {
+		openSampleFile(illustrativeDocFile).close();
 	}
 
 	/**
 	 * Test (more "confirm" than test) that we have the general structure that we expect to have.
 	 */
-	public void testDocStructure() {
+	@Test
+	public void testDocStructure() throws IOException {
 
-		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
-		Range range;
-		Section section;
-		Paragraph para;
-		PAPX paraDef;
+		try (HWPFDocument daDoc = openSampleFile(illustrativeDocFile)) {
+			Range range;
+			Section section;
+			Paragraph para;
+			PAPX paraDef;
 
-		// First, check overall
-		range = daDoc.getOverallRange();
-		assertEquals(1, range.numSections());
-		assertEquals(5, range.numParagraphs());
-
-
-		// Now, onto just the doc bit
-		range = daDoc.getRange();
-
-		assertEquals(1, range.numSections());
-		assertEquals(1, daDoc.getSectionTable().getSections().size());
-		section = range.getSection(0);
-
-		assertEquals(5, section.numParagraphs());
-
-		para = section.getParagraph(0);
-		assertEquals(1, para.numCharacterRuns());
-		assertEquals(introText, para.text());
-
-		para = section.getParagraph(1);
-		assertEquals(5, para.numCharacterRuns());
-		assertEquals(fillerText, para.text());
+			// First, check overall
+			range = daDoc.getOverallRange();
+			assertEquals(1, range.numSections());
+			assertEquals(5, range.numParagraphs());
 
 
-		paraDef = daDoc.getParagraphTable().getParagraphs().get(2);
-		assertEquals(132, paraDef.getStart());
-		assertEquals(400, paraDef.getEnd());
+			// Now, onto just the doc bit
+			range = daDoc.getRange();
 
-		para = section.getParagraph(2);
-		assertEquals(5, para.numCharacterRuns());
-		assertEquals(originalText, para.text());
+			assertEquals(1, range.numSections());
+			assertEquals(1, daDoc.getSectionTable().getSections().size());
+			section = range.getSection(0);
+
+			assertEquals(5, section.numParagraphs());
+
+			para = section.getParagraph(0);
+			assertEquals(1, para.numCharacterRuns());
+			assertEquals(introText, para.text());
+
+			para = section.getParagraph(1);
+			assertEquals(5, para.numCharacterRuns());
+			assertEquals(fillerText, para.text());
 
 
-		paraDef = daDoc.getParagraphTable().getParagraphs().get(3);
-		assertEquals(400, paraDef.getStart());
-		assertEquals(438, paraDef.getEnd());
+			paraDef = daDoc.getParagraphTable().getParagraphs().get(2);
+			assertEquals(132, paraDef.getStart());
+			assertEquals(400, paraDef.getEnd());
 
-		para = section.getParagraph(3);
-		assertEquals(1, para.numCharacterRuns());
-		assertEquals(lastText, para.text());
+			para = section.getParagraph(2);
+			assertEquals(5, para.numCharacterRuns());
+			assertEquals(originalText, para.text());
 
 
-		// Check things match on text length
-		assertEquals(439, range.text().length());
-		assertEquals(439, section.text().length());
-		assertEquals(439,
-				section.getParagraph(0).text().length() +
-				section.getParagraph(1).text().length() +
-				section.getParagraph(2).text().length() +
-				section.getParagraph(3).text().length() +
-				section.getParagraph(4).text().length()
-		);
+			paraDef = daDoc.getParagraphTable().getParagraphs().get(3);
+			assertEquals(400, paraDef.getStart());
+			assertEquals(438, paraDef.getEnd());
+
+			para = section.getParagraph(3);
+			assertEquals(1, para.numCharacterRuns());
+			assertEquals(lastText, para.text());
+
+
+			// Check things match on text length
+			assertEquals(439, range.text().length());
+			assertEquals(439, section.text().length());
+			assertEquals(439,
+						 section.getParagraph(0).text().length() +
+								 section.getParagraph(1).text().length() +
+								 section.getParagraph(2).text().length() +
+								 section.getParagraph(3).text().length() +
+								 section.getParagraph(4).text().length()
+			);
+		}
 	}
 
 	/**
 	 * Test that we can delete text (one instance) from our Range with Unicode text.
 	 */
-	public void testRangeDeleteOne() {
+	@Test
+	public void testRangeDeleteOne() throws IOException {
+		try (HWPFDocument daDoc = openSampleFile(illustrativeDocFile)) {
 
-		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
+			Range range = daDoc.getOverallRange();
+			assertEquals(1, range.numSections());
 
-		Range range = daDoc.getOverallRange();
-		assertEquals(1, range.numSections());
+			Section section = range.getSection(0);
+			assertEquals(5, section.numParagraphs());
 
-		Section section = range.getSection(0);
-		assertEquals(5, section.numParagraphs());
+			Paragraph para = section.getParagraph(2);
 
-		Paragraph para = section.getParagraph(2);
+			String text = para.text();
+			assertEquals(originalText, text);
 
-		String text = para.text();
-		assertEquals(originalText, text);
+			int offset = text.indexOf(searchText);
+			assertEquals(192, offset);
 
-		int offset = text.indexOf(searchText);
-		assertEquals(192, offset);
+			int absOffset = para.getStartOffset() + offset;
+			Range subRange = new Range(absOffset, (absOffset + searchText.length()), para.getDocument());
 
-		int absOffset = para.getStartOffset() + offset;
-		Range subRange = new Range(absOffset, (absOffset + searchText.length()), para.getDocument());
+			assertEquals(searchText, subRange.text());
 
-		assertEquals(searchText, subRange.text());
+			subRange.delete();
+			daDoc.getOverallRange().sanityCheck();
+			daDoc.getRange().sanityCheck();
 
-		subRange.delete();
-		daDoc.getOverallRange().sanityCheck();
-		daDoc.getRange().sanityCheck();
+			// we need to let the model re-calculate the Range before we evaluate it
+			range = daDoc.getRange();
 
-		// we need to let the model re-calculate the Range before we evaluate it
-		range = daDoc.getRange();
+			assertEquals(1, range.numSections());
+			section = range.getSection(0);
 
-		assertEquals(1, range.numSections());
-		section = range.getSection(0);
+			assertEquals(5, section.numParagraphs());
+			para = section.getParagraph(2);
 
-		assertEquals(5, section.numParagraphs());
-		para = section.getParagraph(2);
+			text = para.text();
+			assertEquals(expectedText2, text);
 
-		text = para.text();
-		assertEquals(expectedText2, text);
-
-		// this can lead to a StringBufferOutOfBoundsException, so we will add it
-		// even though we don't have an assertion for it
-		Range daRange = daDoc.getRange();
-		daRange.sanityCheck();
-		daRange.text();
+			// this can lead to a StringBufferOutOfBoundsException, so we will add it
+			// even though we don't have an assertion for it
+			Range daRange = daDoc.getRange();
+			daRange.sanityCheck();
+			daRange.text();
+		}
 	}
 
 	/**
 	 * Test that we can delete text (all instances of) from our Range with Unicode text.
 	 */
-	public void testRangeDeleteAll() {
+	@Test
+	public void testRangeDeleteAll() throws IOException {
+		try (HWPFDocument daDoc = openSampleFile(illustrativeDocFile)) {
 
-		HWPFDocument daDoc = HWPFTestDataSamples.openSampleFile(illustrativeDocFile);
+			Range range = daDoc.getRange();
+			assertEquals(1, range.numSections());
 
-		Range range = daDoc.getRange();
-		assertEquals(1, range.numSections());
+			Section section = range.getSection(0);
+			assertEquals(5, section.numParagraphs());
 
-		Section section = range.getSection(0);
-		assertEquals(5, section.numParagraphs());
+			Paragraph para = section.getParagraph(2);
 
-		Paragraph para = section.getParagraph(2);
+			String text = para.text();
+			assertEquals(originalText, text);
 
-		String text = para.text();
-		assertEquals(originalText, text);
+			boolean keepLooking = true;
+			while (keepLooking) {
+				// Reload the range every time
+				range = daDoc.getRange();
+				int offset = range.text().indexOf(searchText);
+				if (offset >= 0) {
 
-		boolean keepLooking = true;
-		while (keepLooking) {
-			// Reload the range every time
-			range = daDoc.getRange();
-			int offset = range.text().indexOf(searchText);
-			if (offset >= 0) {
+					int absOffset = range.getStartOffset() + offset;
 
-				int absOffset = range.getStartOffset() + offset;
+					Range subRange = new Range(
+							absOffset, (absOffset + searchText.length()), range.getDocument());
 
-				Range subRange = new Range(
-					absOffset, (absOffset + searchText.length()), range.getDocument());
+					assertEquals(searchText, subRange.text());
 
-				assertEquals(searchText, subRange.text());
+					subRange.delete();
 
-				subRange.delete();
-
-			} else {
-				keepLooking = false;
+				} else {
+					keepLooking = false;
+				}
 			}
+
+			// we need to let the model re-calculate the Range before we use it
+			range = daDoc.getRange();
+
+			assertEquals(1, range.numSections());
+			section = range.getSection(0);
+
+			assertEquals(5, section.numParagraphs());
+
+			para = section.getParagraph(0);
+			text = para.text();
+			assertEquals(introText, text);
+
+			para = section.getParagraph(1);
+			text = para.text();
+			assertEquals(expectedText1, text);
+
+			para = section.getParagraph(2);
+			text = para.text();
+			assertEquals(expectedText2, text);
+
+			para = section.getParagraph(3);
+			text = para.text();
+			assertEquals(expectedText3, text);
 		}
-
-		// we need to let the model re-calculate the Range before we use it
-		range = daDoc.getRange();
-
-		assertEquals(1, range.numSections());
-		section = range.getSection(0);
-
-		assertEquals(5, section.numParagraphs());
-
-		para = section.getParagraph(0);
-		text = para.text();
-		assertEquals(introText, text);
-
-		para = section.getParagraph(1);
-		text = para.text();
-		assertEquals(expectedText1, text);
-
-		para = section.getParagraph(2);
-		text = para.text();
-		assertEquals(expectedText2, text);
-
-		para = section.getParagraph(3);
-		text = para.text();
-		assertEquals(expectedText3, text);
 	}
 }

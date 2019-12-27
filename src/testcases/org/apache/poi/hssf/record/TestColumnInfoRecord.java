@@ -18,18 +18,18 @@
 package org.apache.poi.hssf.record;
 
 import static org.junit.Assert.assertArrayEquals;
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
 /**
  * Tests for {@link ColumnInfoRecord}
- *
- * @author Josh Micich
  */
-public final class TestColumnInfoRecord extends TestCase {
+public final class TestColumnInfoRecord {
 
+	@Test
 	public void testBasic() {
 		byte[] data = HexRead.readFromString("7D 00 0C 00 14 00 9B 00 C7 19 0F 00 01 13 00 00");
 
@@ -52,21 +52,15 @@ public final class TestColumnInfoRecord extends TestCase {
 	 * The attached file was apparently created by "SoftArtisans OfficeWriter for Excel".
 	 * Excel reads that file OK and assumes zero for the value of the reserved field.
 	 */
+	@Test
 	public void testZeroResevedBytes_bug48332() {
 		// Taken from bugzilla attachment 24661 (offset 0x1E73)
 		byte[] inpData = HexRead.readFromString("7D 00 0A 00 00 00 00 00 D5 19 0F 00 02 00");
 		byte[] outData = HexRead.readFromString("7D 00 0C 00 00 00 00 00 D5 19 0F 00 02 00 00 00");
 
 		RecordInputStream in = TestcaseRecordInputStream.create(inpData);
-		ColumnInfoRecord cir;
-		try {
-			cir = new ColumnInfoRecord(in);
-		} catch (RuntimeException e) {
-			if (e.getMessage().equals("Unusual record size remaining=(0)")) {
-				throw new AssertionFailedError("Identified bug 48332");
-			}
-			throw e;
-		}
+		// bug 48332 - Unusual record size remaining=(0)
+		ColumnInfoRecord cir = new ColumnInfoRecord(in);
 		assertEquals(0, in.remaining());
 		assertArrayEquals(outData, cir.serialize());
 	}
@@ -76,6 +70,7 @@ public final class TestColumnInfoRecord extends TestCase {
 	 * OddStyleRecord.xls, NoGutsRecords.xls, WORKBOOK_in_capitals.xls
 	 * but this seems to cause no problem to Excel
 	 */
+	@Test
 	public void testOneReservedByte() {
 		byte[] inpData = HexRead.readFromString("7D 00 0B 00 00 00 00 00 24 02 0F 00 00 00 01");
 		byte[] outData = HexRead.readFromString("7D 00 0C 00 00 00 00 00 24 02 0F 00 00 00 01 00");

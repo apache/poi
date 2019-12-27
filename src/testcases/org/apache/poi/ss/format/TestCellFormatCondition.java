@@ -16,9 +16,13 @@
 ==================================================================== */
 package org.apache.poi.ss.format;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-public class TestCellFormatCondition extends TestCase {
+import org.junit.Test;
+
+public class TestCellFormatCondition {
+    @Test
     public void testSVConditions() {
         CellFormatCondition lt = CellFormatCondition.getInstance("<", "1.5");
         assertTrue(lt.pass(1.4));

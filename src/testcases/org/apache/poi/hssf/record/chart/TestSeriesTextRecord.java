@@ -17,25 +17,23 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.util.HexRead;
-import org.apache.poi.util.RecordFormatException;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the SeriesTextRecord class
  * works correctly. Test data taken directly from a real Excel file.
- * 
- * 
- * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public final class TestSeriesTextRecord extends TestCase {
+public final class TestSeriesTextRecord {
 	private static final byte[] SIMPLE_DATA = HexRead
 			.readFromString("00 00 0C 00 56 61 6C 75 65 20 4E 75 6D 62 65 72");
 
+	@Test
 	public void testLoad() {
 		SeriesTextRecord record = new SeriesTextRecord(TestcaseRecordInputStream.create(0x100d, SIMPLE_DATA));
 
@@ -45,6 +43,7 @@ public final class TestSeriesTextRecord extends TestCase {
 		assertEquals(SIMPLE_DATA.length + 4, record.getRecordSize());
 	}
 
+	@Test
 	public void testStore() {
 		SeriesTextRecord record = new SeriesTextRecord();
 
@@ -52,10 +51,10 @@ public final class TestSeriesTextRecord extends TestCase {
 		record.setText("Value Number");
 
 		byte[] recordBytes = record.serialize();
-		TestcaseRecordInputStream.confirmRecordEncoding(SeriesTextRecord.sid, SIMPLE_DATA,
-				recordBytes);
+		TestcaseRecordInputStream.confirmRecordEncoding(SeriesTextRecord.sid, SIMPLE_DATA, recordBytes);
 	}
 
+	@Test
 	public void testReserializeLongTitle() {
 		// Hex dump from bug 45784 attachment 22560 streamOffset=0x0CD1
 		byte[] data = HexRead.readFromString(
@@ -81,28 +80,14 @@ public final class TestSeriesTextRecord extends TestCase {
 				+ "62 00 63 00");
 
 		RecordInputStream in = TestcaseRecordInputStream.create(SeriesTextRecord.sid, data);
-		SeriesTextRecord str;
-		try {
-			str = new SeriesTextRecord(in);
-		} catch (RecordFormatException e) {
-			if (e.getCause() instanceof IllegalArgumentException) {
-				// 'would be' error msg changed at svn r703620
-				// "Illegal length - asked for -126 but only 130 left!"
-				// "Bad requested string length (-126)"
-				throw new AssertionFailedError("Identified bug 45784a");
-			}
-			throw e;
-		}
+		// Identified bug 45784a
+		// 'would be' error msg changed at svn r703620
+		// "Illegal length - asked for -126 but only 130 left!"
+		// "Bad requested string length (-126)"
+		SeriesTextRecord str = new SeriesTextRecord(in);
 
-		if (str.getRecordSize() < 0) {
-			throw new AssertionFailedError("Identified bug 45784b");
-		}
-		byte[] ser;
-		try {
-			ser = str.serialize();
-		} catch (Exception e) {
-			throw new RuntimeException(e);
-		}
+		assertTrue("Identified bug 45784b", str.getRecordSize() >= 0);
+		byte[] ser = str.serialize();
 		TestcaseRecordInputStream.confirmRecordEncoding(SeriesTextRecord.sid, data, ser);
 	}
 }

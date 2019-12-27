@@ -16,25 +16,23 @@
 ==================================================================== */
 package org.apache.poi.hwpf.converter;
 
-import org.apache.poi.hwpf.usermodel.Range;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.hwpf.usermodel.Table;
+import org.junit.Test;
 
 /**
  * Test cases for {@link AbstractWordUtils}
- * 
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
-public class AbstractWordUtilsTest extends TestCase
-{
+public class AbstractWordUtilsTest {
     /**
      * Test case for {@link AbstractWordUtils#buildTableCellEdgesArray(Table)}
      */
-    public void testBuildTableCellEdgesArray()
-    {
+    @Test
+    public void testBuildTableCellEdgesArray() {
         HWPFDocument document = HWPFTestDataSamples
                 .openSampleFile( "table-merges.doc" );
         final Range range = document.getRange();

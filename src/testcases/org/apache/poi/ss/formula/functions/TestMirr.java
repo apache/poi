@@ -18,8 +18,8 @@
 package org.apache.poi.ss.formula.functions;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
@@ -42,48 +42,36 @@ import org.junit.Test;
 public final class TestMirr {
 
     @Test
-    public void testMirr() {
+    public void testMirr() throws EvaluationException {
         Mirr mirr = new Mirr();
         double mirrValue;
 
         double financeRate = 0.12;
         double reinvestRate = 0.1;
         double[] values = {-120000d, 39000d, 30000d, 21000d, 37000d, 46000d, reinvestRate, financeRate};
-        try {
-            mirrValue = mirr.evaluate(values);
-        } catch (EvaluationException e) {
-            throw new AssertionFailedError("MIRR should not failed with these parameters" + e);
-        }
+        // MIRR should not failed with these parameters
+        mirrValue = mirr.evaluate(values);
         assertEquals("mirr", 0.126094130366, mirrValue, 0.0000000001);
 
         reinvestRate = 0.05;
         financeRate = 0.08;
         values = new double[]{-7500d, 3000d, 5000d, 1200d, 4000d, reinvestRate, financeRate};
-        try {
-            mirrValue = mirr.evaluate(values);
-        } catch (EvaluationException e) {
-            throw new AssertionFailedError("MIRR should not failed with these parameters" + e);
-        }
+        // MIRR should not failed with these parameters
+        mirrValue = mirr.evaluate(values);
         assertEquals("mirr", 0.18736225093, mirrValue, 0.0000000001);
 
         reinvestRate = 0.065;
         financeRate = 0.1;
         values = new double[]{-10000, 3400d, 6500d, 1000d, reinvestRate, financeRate};
-        try {
-            mirrValue = mirr.evaluate(values);
-        } catch (EvaluationException e) {
-            throw new AssertionFailedError("MIRR should not failed with these parameters" + e);
-        }
+        // MIRR should not failed with these parameters
+        mirrValue = mirr.evaluate(values);
         assertEquals("mirr", 0.07039493966, mirrValue, 0.0000000001);
 
         reinvestRate = 0.07;
         financeRate = 0.01;
         values = new double[]{-10000d, -3400d, -6500d, -1000d, reinvestRate, financeRate};
-        try {
-            mirrValue = mirr.evaluate(values);
-        } catch (EvaluationException e) {
-            throw new AssertionFailedError("MIRR should not failed with these parameters" + e);
-        }
+        // MIRR should not failed with these parameters
+        mirrValue = mirr.evaluate(values);
         assertEquals("mirr", -1, mirrValue, 0.0);
 
     }
@@ -101,7 +89,7 @@ public final class TestMirr {
             assertEquals(ErrorEval.DIV_ZERO, e.getErrorEval());
             return;
         }
-        throw new AssertionFailedError("MIRR should failed with all these positives values");
+        fail("MIRR should failed with all these positives values");
     }
 
     @Test
@@ -134,7 +122,6 @@ public final class TestMirr {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("mirrTest.xls");
         HSSFSheet sheet = wb.getSheet("Mirr");
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-        StringBuilder failures = new StringBuilder();
         int failureCount = 0;
         int[] resultRows = {9, 19, 29, 45};
 
@@ -145,9 +132,6 @@ public final class TestMirr {
                 CellValue cv = fe.evaluate(cellA);
                 assertFormulaResult(cv, cellA);
             } catch (Throwable e) {
-                if (failures.length() > 0) failures.append('\n');
-                failures.append("Row[").append(cellA.getRowIndex() + 1).append("]: ").append(cellA.getCellFormula()).append(" ");
-                failures.append(e.getMessage());
                 failureCount++;
             }
         }
@@ -157,10 +141,7 @@ public final class TestMirr {
         CellValue cv = fe.evaluate(cellA);
         assertEquals(ErrorEval.DIV_ZERO.getErrorCode(), cv.getErrorValue());
 
-        if (failures.length() > 0) {
-            throw new AssertionFailedError(failureCount + " IRR assertions failed:\n" + failures);
-        }
-
+        assertEquals("IRR assertions failed", 0, failureCount);
     }
 
     private static void assertFormulaResult(CellValue cv, HSSFCell cell) {

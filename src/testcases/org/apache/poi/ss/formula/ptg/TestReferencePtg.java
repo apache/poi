@@ -18,22 +18,26 @@
 package org.apache.poi.ss.formula.ptg;
 
 import static org.junit.Assert.assertArrayEquals;
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
+import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.LittleEndianInput;
+import org.junit.Test;
 
 /**
  * Tests for {@link RefPtg}.
  */
-public final class TestReferencePtg extends TestCase {
+public final class TestReferencePtg {
     /**
      * Tests reading a file containing this ptg.
      */
+    @Test
     public void testReading() {
         HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("ReferencePtg.xls");
         HSSFSheet sheet = workbook.getSheetAt(0);
@@ -45,7 +49,7 @@ public final class TestReferencePtg extends TestCase {
                      sheet.getRow(0).getCell(1).getNumericCellValue(), 0.0);
         assertEquals("Wrong formula string for reference", "A1",
                      sheet.getRow(0).getCell(1).getCellFormula());
-        
+
         // Now moving over the 2**15 boundary
         // (Remember that excel row (n) is poi row (n-1)
         assertEquals("Wrong numeric value for original number", 32767.0,
@@ -54,21 +58,21 @@ public final class TestReferencePtg extends TestCase {
                 sheet.getRow(32766).getCell(1).getNumericCellValue(), 0.0);
         assertEquals("Wrong formula string for reference", "A32767",
                 sheet.getRow(32766).getCell(1).getCellFormula());
-        
+
         assertEquals("Wrong numeric value for original number", 32768.0,
                 sheet.getRow(32767).getCell(0).getNumericCellValue(), 0.0);
         assertEquals("Wrong numeric value for referemce", 32768.0,
                 sheet.getRow(32767).getCell(1).getNumericCellValue(), 0.0);
         assertEquals("Wrong formula string for reference", "A32768",
                 sheet.getRow(32767).getCell(1).getCellFormula());
-        
+
         assertEquals("Wrong numeric value for original number", 32769.0,
                 sheet.getRow(32768).getCell(0).getNumericCellValue(), 0.0);
         assertEquals("Wrong numeric value for referemce", 32769.0,
                 sheet.getRow(32768).getCell(1).getNumericCellValue(), 0.0);
         assertEquals("Wrong formula string for reference", "A32769",
                 sheet.getRow(32768).getCell(1).getCellFormula());
-        
+
         assertEquals("Wrong numeric value for original number", 32770.0,
                 sheet.getRow(32769).getCell(0).getNumericCellValue(), 0.0);
         assertEquals("Wrong numeric value for referemce", 32770.0,
@@ -76,30 +80,25 @@ public final class TestReferencePtg extends TestCase {
         assertEquals("Wrong formula string for reference", "A32770",
                 sheet.getRow(32769).getCell(1).getCellFormula());
     }
-    
-    public void testBug44921() {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex44921-21902.xls");
-        
-        try {
-            HSSFTestDataSamples.writeOutAndReadBack(wb);
-        } catch (RuntimeException e) {
-            if(e.getMessage().equals("Coding Error: This method should never be called. This ptg should be converted")) {
-                throw new AssertionFailedError("Identified bug 44921");
-            }
-            throw e;
+
+    @Test
+    public void testBug44921() throws IOException {
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex44921-21902.xls")) {
+            HSSFTestDataSamples.writeOutAndReadBack(wb).close();
         }
     }
+
     private static final byte[] tRefN_data = {
     	0x2C, 33, 44, 55, 66,
     };
+
+    @Test
     public void testReadWrite_tRefN_bug45091() {
     	LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(tRefN_data);
         Ptg[] ptgs = Ptg.readTokens(tRefN_data.length, in);
         byte[] outData = new byte[5];
         Ptg.serializePtgs(ptgs, outData, 0);
-        if (outData[0] == 0x24) {
-            throw new AssertionFailedError("Identified bug 45091");
-        }
+        assertNotEquals("Identified bug 45091", 0x24, outData[0]);
         assertArrayEquals(tRefN_data, outData);
     }
 
@@ -107,6 +106,7 @@ public final class TestReferencePtg extends TestCase {
      * test that RefPtgBase can handle references with column index greater than 255,
      * see Bugzilla 50096
      */
+    @Test
     public void testColumnGreater255() {
         RefPtgBase ptg;
         ptg = new RefPtg("IW1");

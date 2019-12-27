@@ -17,7 +17,12 @@
 
 package org.apache.poi.openxml4j.opc;
 
+import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.openSampleStream;
 import static org.apache.poi.openxml4j.opc.TestContentType.isOldXercesActive;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,14 +30,13 @@ import java.io.InputStream;
 import java.net.URI;
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.junit.Test;
 
 
-public class TestRelationships extends TestCase {
+public class TestRelationships {
 	private static final String HYPERLINK_REL_TYPE =
 		"http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink";
 	private static final String COMMENTS_REL_TYPE =
@@ -48,8 +52,9 @@ public class TestRelationships extends TestCase {
      * The code in this case assumes there are no relationships defined, but it should
      * really look also for not yet loaded parts.
      */
+    @Test
     public void testLoadRelationships() throws Exception {
-        InputStream is = OpenXML4JTestDataSamples.openSampleStream("sample.xlsx");
+        InputStream is = openSampleStream("sample.xlsx");
         try (OPCPackage pkg = OPCPackage.open(is)) {
             logger.log(POILogger.DEBUG, "1: " + pkg);
             PackageRelationshipCollection rels = pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
@@ -65,13 +70,14 @@ public class TestRelationships extends TestCase {
             }
         }
     }
-    
+
     /**
      * Checks that we can fetch a collection of relations by
      *  type, then grab from within there by id
      */
+    @Test
     public void testFetchFromCollection() throws Exception {
-        InputStream is = OpenXML4JTestDataSamples.openSampleStream("ExcelWithHyperlinks.xlsx");
+        InputStream is = openSampleStream("ExcelWithHyperlinks.xlsx");
         try (OPCPackage pkg = OPCPackage.open(is)) {
             PackagePart sheet = pkg.getPart(
                     PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));
@@ -107,13 +113,14 @@ public class TestRelationships extends TestCase {
             assertNotNull(sheet.getRelationship("rId6"));
         }
     }
-    
+
     /**
-     * Excel uses relations on sheets to store the details of 
+     * Excel uses relations on sheets to store the details of
      *  external hyperlinks. Check we can load these ok.
      */
+    @Test
     public void testLoadExcelHyperlinkRelations() throws Exception {
-        InputStream is = OpenXML4JTestDataSamples.openSampleStream("ExcelWithHyperlinks.xlsx");
+        InputStream is = openSampleStream("ExcelWithHyperlinks.xlsx");
         try (OPCPackage pkg = OPCPackage.open(is)) {
             PackagePart sheet = pkg.getPart(
                     PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));
@@ -141,21 +148,22 @@ public class TestRelationships extends TestCase {
             assertEquals("mailto:dev@poi.apache.org?subject=XSSF%20Hyperlinks", mailto.getTargetURI().toString());
         }
     }
-    
+
     /*
-     * Excel uses relations on sheets to store the details of 
-     *  external hyperlinks. Check we can create these OK, 
+     * Excel uses relations on sheets to store the details of
+     *  external hyperlinks. Check we can create these OK,
      *  then still read them later
      */
+    @Test
     public void testCreateExcelHyperlinkRelations() throws Exception {
     	String filepath = OpenXML4JTestDataSamples.getSampleFileName("ExcelWithHyperlinks.xlsx");
 	    OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ_WRITE);
 	    PackagePart sheet = pkg.getPart(
 	    		PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));
 	    assertNotNull(sheet);
-	    
+
 	    assertEquals(3, sheet.getRelationshipsByType(HYPERLINK_REL_TYPE).size());
-	    
+
 	    // Add three new ones
 	    PackageRelationship openxml4j =
 	    	sheet.addExternalRelationship("http://www.openxml4j.org/", HYPERLINK_REL_TYPE);
@@ -163,53 +171,53 @@ public class TestRelationships extends TestCase {
 	    	sheet.addExternalRelationship("http://openxml4j.sf.net/", HYPERLINK_REL_TYPE);
 	    PackageRelationship file =
 	    	sheet.addExternalRelationship("MyDocument.docx", HYPERLINK_REL_TYPE);
-	    
+
 	    // Check they were added properly
 	    assertNotNull(openxml4j);
 	    assertNotNull(sf);
 	    assertNotNull(file);
-	    
+
 	    assertEquals(6, sheet.getRelationshipsByType(HYPERLINK_REL_TYPE).size());
-	    
+
 	    assertEquals("http://www.openxml4j.org/", openxml4j.getTargetURI().toString());
 	    assertEquals("/xl/worksheets/sheet1.xml", openxml4j.getSourceURI().toString());
 	    assertEquals(HYPERLINK_REL_TYPE, openxml4j.getRelationshipType());
-	    
+
 	    assertEquals("http://openxml4j.sf.net/", sf.getTargetURI().toString());
 	    assertEquals("/xl/worksheets/sheet1.xml", sf.getSourceURI().toString());
 	    assertEquals(HYPERLINK_REL_TYPE, sf.getRelationshipType());
-	    
+
 	    assertEquals("MyDocument.docx", file.getTargetURI().toString());
 	    assertEquals("/xl/worksheets/sheet1.xml", file.getSourceURI().toString());
 	    assertEquals(HYPERLINK_REL_TYPE, file.getRelationshipType());
-	    
+
 	    // Will get ids 7, 8 and 9, as we already have 1-6
 	    assertEquals("rId7", openxml4j.getId());
 	    assertEquals("rId8", sf.getId());
 	    assertEquals("rId9", file.getId());
-	    
-	    
+
+
 	    // Write out and re-load
 	    ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	    pkg.save(baos);
-        
+
 	    // use revert to not re-write the input file
         pkg.revert();
 
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
 	    pkg = OPCPackage.open(bais);
-	    
+
 	    // Check again
 	    sheet = pkg.getPart(
 	    		PackagingURIHelper.createPartName(SHEET_WITH_COMMENTS));
-	    
+
 	    assertEquals(6, sheet.getRelationshipsByType(HYPERLINK_REL_TYPE).size());
-	    
+
 	    assertEquals("http://poi.apache.org/",
 	    		sheet.getRelationship("rId1").getTargetURI().toString());
 	    assertEquals("mailto:dev@poi.apache.org?subject=XSSF%20Hyperlinks",
 	    		sheet.getRelationship("rId3").getTargetURI().toString());
-	    
+
 	    assertEquals("http://www.openxml4j.org/",
 	    		sheet.getRelationship("rId7").getTargetURI().toString());
 	    assertEquals("http://openxml4j.sf.net/",
@@ -218,6 +226,7 @@ public class TestRelationships extends TestCase {
 	    		sheet.getRelationship("rId9").getTargetURI().toString());
     }
 
+    @Test
     public void testCreateRelationsFromScratch() throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         OPCPackage pkg = OPCPackage.create(baos);
@@ -286,6 +295,7 @@ public class TestRelationships extends TestCase {
             partB.getRelationship("rId3").getTargetURI().toString());
     }
 
+    @Test
     public void testTargetWithSpecialChars() throws Exception{
         OPCPackage pkg;
 
@@ -305,7 +315,7 @@ public class TestRelationships extends TestCase {
         assert_50154(pkg);
     }
 
-    public void assert_50154(OPCPackage pkg) throws Exception {
+    private void assert_50154(OPCPackage pkg) throws Exception {
         URI drawingURI = new URI("/xl/drawings/drawing1.xml");
         PackagePart drawingPart = pkg.getPart(PackagingURIHelper.createPartName(drawingURI));
         PackageRelationshipCollection drawingRels = drawingPart.getRelationships();
@@ -347,83 +357,89 @@ public class TestRelationships extends TestCase {
         assertEquals("'\u0410\u043F\u0430\u0447\u0435 \u041F\u041E\u0418'!A5", rel6.getFragment());
     }
 
+   @Test
    public void testSelfRelations_bug51187() throws Exception {
     	ByteArrayOutputStream baos = new ByteArrayOutputStream();
-    	OPCPackage pkg = OPCPackage.create(baos);
+        PackageRelationship rel1;
+    	try (OPCPackage pkg = OPCPackage.create(baos)) {
 
-    	PackagePart partA =
-    		pkg.createPart(PackagingURIHelper.createPartName("/partA"), "text/plain");
-    	assertNotNull(partA);
+            PackagePart partA =
+                    pkg.createPart(PackagingURIHelper.createPartName("/partA"), "text/plain");
+            assertNotNull(partA);
 
-    	// reference itself
-    	PackageRelationship rel1 = partA.addRelationship(partA.getPartName(), TargetMode.INTERNAL, "partA");
-
-    	
-    	// Save, and re-load
-    	pkg.close();
-    	ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-    	pkg = OPCPackage.open(bais);
-
-    	partA = pkg.getPart(PackagingURIHelper.createPartName("/partA"));
+            // reference itself
+            rel1 = partA.addRelationship(partA.getPartName(), TargetMode.INTERNAL, "partA");
 
 
-    	// Check the relations
-    	assertEquals(1, partA.getRelationships().size());
-
-       PackageRelationship rel2 = partA.getRelationships().getRelationship(0);
-
-       assertNotNull(rel2);
-       assertEquals(rel1.getRelationshipType(), rel2.getRelationshipType());
-       assertEquals(rel1.getId(), rel2.getId());
-       assertEquals(rel1.getSourceURI(), rel2.getSourceURI());
-       assertEquals(rel1.getTargetURI(), rel2.getTargetURI());
-       assertEquals(rel1.getTargetMode(), rel2.getTargetMode());
-    }
-
-    public void testTrailingSpacesInURI_53282() throws Exception {
-        InputStream is = OpenXML4JTestDataSamples.openSampleStream("53282.xlsx");
-        OPCPackage pkg = OPCPackage.open(is);
-        is.close();
-
-        PackageRelationshipCollection sheetRels = pkg.getPartsByName(Pattern.compile("/xl/worksheets/sheet1.xml")).get(0).getRelationships();
-        assertEquals(3, sheetRels.size());
-        PackageRelationship rId1 = sheetRels.getRelationshipByID("rId1");
-        assertEquals(TargetMode.EXTERNAL, rId1.getTargetMode());
-        URI targetUri = rId1.getTargetURI();
-        assertEquals("mailto:nobody@nowhere.uk%C2%A0", targetUri.toASCIIString());
-        assertEquals("nobody@nowhere.uk\u00A0", targetUri.getSchemeSpecificPart());
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        pkg.save(out);
-        out.close();
-
-        pkg =  OPCPackage.open(new ByteArrayInputStream(out.toByteArray()));
-        sheetRels = pkg.getPartsByName(Pattern.compile("/xl/worksheets/sheet1.xml")).get(0).getRelationships();
-        assertEquals(3, sheetRels.size());
-        rId1 = sheetRels.getRelationshipByID("rId1");
-        assertEquals(TargetMode.EXTERNAL, rId1.getTargetMode());
-        targetUri = rId1.getTargetURI();
-        assertEquals("mailto:nobody@nowhere.uk%C2%A0", targetUri.toASCIIString());
-        assertEquals("nobody@nowhere.uk\u00A0", targetUri.getSchemeSpecificPart());
-    }
-    
-    public void testEntitiesInRels_56164() throws Exception {
-        InputStream is = OpenXML4JTestDataSamples.openSampleStream("PackageRelsHasEntities.ooxml");
-        OPCPackage p = OPCPackage.open(is);
-        is.close();
-
-        // Should have 3 root relationships
-        boolean foundDocRel = false, foundCorePropRel = false, foundExtPropRel = false;
-        for (PackageRelationship pr : p.getRelationships()) {
-            if (pr.getRelationshipType().equals(PackageRelationshipTypes.CORE_DOCUMENT))
-                foundDocRel = true;
-            if (pr.getRelationshipType().equals(PackageRelationshipTypes.CORE_PROPERTIES))
-                foundCorePropRel = true;
-            if (pr.getRelationshipType().equals(PackageRelationshipTypes.EXTENDED_PROPERTIES))
-                foundExtPropRel = true;
+            // Save, and re-load
         }
-        assertEquals("Core/Doc Relationship not found in " + p.getRelationships(), isOldXercesActive(), foundDocRel);
-        assertEquals("Core Props Relationship not found in " + p.getRelationships(), isOldXercesActive(), foundCorePropRel);
-        assertEquals("Ext Props Relationship not found in " + p.getRelationships(), isOldXercesActive(), foundExtPropRel);
+
+        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
+    	try (OPCPackage pkg = OPCPackage.open(bais)) {
+            PackagePart partA = pkg.getPart(PackagingURIHelper.createPartName("/partA"));
+
+
+            // Check the relations
+            assertEquals(1, partA.getRelationships().size());
+
+            PackageRelationship rel2 = partA.getRelationships().getRelationship(0);
+
+            assertNotNull(rel2);
+            assertEquals(rel1.getRelationshipType(), rel2.getRelationshipType());
+            assertEquals(rel1.getId(), rel2.getId());
+            assertEquals(rel1.getSourceURI(), rel2.getSourceURI());
+            assertEquals(rel1.getTargetURI(), rel2.getTargetURI());
+            assertEquals(rel1.getTargetMode(), rel2.getTargetMode());
+        }
+    }
+
+    @Test
+    public void testTrailingSpacesInURI_53282() throws Exception {
+        try (InputStream is = openSampleStream("53282.xlsx");
+            OPCPackage pkg1 = OPCPackage.open(is)) {
+
+            PackageRelationshipCollection sheetRels = pkg1.getPartsByName(Pattern.compile("/xl/worksheets/sheet1.xml")).get(0).getRelationships();
+            assertEquals(3, sheetRels.size());
+            PackageRelationship rId1 = sheetRels.getRelationshipByID("rId1");
+            assertEquals(TargetMode.EXTERNAL, rId1.getTargetMode());
+            URI targetUri = rId1.getTargetURI();
+            assertEquals("mailto:nobody@nowhere.uk%C2%A0", targetUri.toASCIIString());
+            assertEquals("nobody@nowhere.uk\u00A0", targetUri.getSchemeSpecificPart());
+
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            pkg1.save(out);
+            out.close();
+
+            try (OPCPackage pkg2 = OPCPackage.open(new ByteArrayInputStream(out.toByteArray()))) {
+                sheetRels = pkg2.getPartsByName(Pattern.compile("/xl/worksheets/sheet1.xml")).get(0).getRelationships();
+                assertEquals(3, sheetRels.size());
+                rId1 = sheetRels.getRelationshipByID("rId1");
+                assertEquals(TargetMode.EXTERNAL, rId1.getTargetMode());
+                targetUri = rId1.getTargetURI();
+                assertEquals("mailto:nobody@nowhere.uk%C2%A0", targetUri.toASCIIString());
+                assertEquals("nobody@nowhere.uk\u00A0", targetUri.getSchemeSpecificPart());
+            }
+        }
+    }
+
+    @Test
+    public void testEntitiesInRels_56164() throws Exception {
+        try (InputStream is = openSampleStream("PackageRelsHasEntities.ooxml");
+            OPCPackage p = OPCPackage.open(is)) {
+
+            // Should have 3 root relationships
+            boolean foundDocRel = false, foundCorePropRel = false, foundExtPropRel = false;
+            for (PackageRelationship pr : p.getRelationships()) {
+                if (pr.getRelationshipType().equals(PackageRelationshipTypes.CORE_DOCUMENT))
+                    foundDocRel = true;
+                if (pr.getRelationshipType().equals(PackageRelationshipTypes.CORE_PROPERTIES))
+                    foundCorePropRel = true;
+                if (pr.getRelationshipType().equals(PackageRelationshipTypes.EXTENDED_PROPERTIES))
+                    foundExtPropRel = true;
+            }
+            assertEquals("Core/Doc Relationship not found in " + p.getRelationships(), isOldXercesActive(), foundDocRel);
+            assertEquals("Core Props Relationship not found in " + p.getRelationships(), isOldXercesActive(), foundCorePropRel);
+            assertEquals("Ext Props Relationship not found in " + p.getRelationships(), isOldXercesActive(), foundExtPropRel);
+        }
     }
 }

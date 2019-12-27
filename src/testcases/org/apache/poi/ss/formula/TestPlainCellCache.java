@@ -19,18 +19,17 @@
 
 package org.apache.poi.ss.formula;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+
 import org.apache.poi.ss.formula.PlainCellCache.Loc;
-import org.apache.poi.ss.formula.eval.*;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.junit.Test;
 
-/**
- * @author Yegor Kozlov
- */
-public class TestPlainCellCache extends TestCase {
+public class TestPlainCellCache {
 
-    /**
-     *
-     */
+    @Test
     public void testLoc(){
         PlainCellCache cache = new PlainCellCache();
         for (int bookIndex = 0; bookIndex < 0x1000; bookIndex += 0x100) {

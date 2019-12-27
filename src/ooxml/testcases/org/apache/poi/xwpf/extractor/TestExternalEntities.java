@@ -17,31 +17,32 @@
 
 package org.apache.poi.xwpf.extractor;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 
-import junit.framework.TestCase;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.junit.Test;
 
-public class TestExternalEntities extends TestCase {
+public class TestExternalEntities {
 
     /**
      * Get text out of the simple file
-     *
-     * @throws IOException
      */
+    @Test
     public void testFile() throws IOException {
-        XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("ExternalEntityInText.docx");
-        XWPFWordExtractor extractor = new XWPFWordExtractor(doc);
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("ExternalEntityInText.docx");
+            XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
 
-        String text = extractor.getText();
+            String text = extractor.getText();
 
-        assertTrue(text.length() > 0);
+            assertTrue(text.length() > 0);
 
-        // Check contents, they should not contain the text from POI web site after colon!
-        assertEquals("Here should not be the POI web site: \"\"", text.trim());
-
-        extractor.close();
+            // Check contents, they should not contain the text from POI web site after colon!
+            assertEquals("Here should not be the POI web site: \"\"", text.trim());
+        }
     }
 
 }

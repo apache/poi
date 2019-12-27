@@ -18,6 +18,7 @@
 package org.apache.poi.ss.formula.function;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import java.io.IOException;
 
@@ -29,7 +30,6 @@ import org.apache.poi.ss.formula.ptg.FuncVarPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.junit.Test;
 
-import junit.framework.AssertionFailedError;
 /**
  * Tests parsing of some built-in functions that were not properly
  * registered in POI as of bug #44675, #44733 (March/April 2008).
@@ -42,33 +42,30 @@ public final class TestParseMissingBuiltInFuncs {
 		book.close();
 		return ptgs;
 	}
-	
+
 	private static void confirmFunc(String formula, int expPtgArraySize, boolean isVarArgFunc, int funcIx)
 	throws IOException {
 		Ptg[] ptgs = parse(formula);
 		Ptg ptgF = ptgs[ptgs.length-1];  // func is last RPN token in all these formulas
-		
+
 		// Check critical things in the Ptg array encoding.
 		if(!(ptgF instanceof AbstractFunctionPtg)) {
 		    throw new RuntimeException("function token missing");
 		}
 		AbstractFunctionPtg func = (AbstractFunctionPtg) ptgF;
-		if(func.getFunctionIndex() == 255) {
-			throw new AssertionFailedError("Failed to recognise built-in function in formula '" 
-					+ formula + "'");
-		}
+		assertNotEquals("Failed to recognise built-in function in formula", 255, func.getFunctionIndex());
 		assertEquals(expPtgArraySize, ptgs.length);
 		assertEquals(funcIx, func.getFunctionIndex());
 		Class<? extends AbstractFunctionPtg> expCls = isVarArgFunc ? FuncVarPtg.class : FuncPtg.class;
 		assertEquals(expCls, ptgF.getClass());
-		
+
 		// check that parsed Ptg array converts back to formula text OK
 		HSSFWorkbook book = new HSSFWorkbook();
 		String reRenderedFormula = HSSFFormulaParser.toFormulaString(book, ptgs);
 		assertEquals(formula, reRenderedFormula);
 		book.close();
 	}
-	
+
 	@Test
 	public void testDatedif() throws IOException {
 		int expSize = 4;   // NB would be 5 if POI added tAttrVolatile properly
@@ -79,12 +76,12 @@ public final class TestParseMissingBuiltInFuncs {
 	public void testDdb() throws IOException {
 		confirmFunc("DDB(1,1,1,1,1)", 6, true, 144);
 	}
-	
+
 	@Test
 	public void testAtan() throws IOException {
 		confirmFunc("ATAN(1)", 2, false, 18);
 	}
-	
+
 	@Test
 	public void testUsdollar() throws IOException {
 		confirmFunc("USDOLLAR(1)", 2, true, 204);
@@ -94,12 +91,12 @@ public final class TestParseMissingBuiltInFuncs {
 	public void testDBCS() throws IOException {
 		confirmFunc("DBCS(\"abc\")", 2, false, 215);
 	}
-	
+
 	@Test
 	public void testIsnontext() throws IOException {
 		confirmFunc("ISNONTEXT(\"abc\")", 2, false, 190);
 	}
-	
+
 	@Test
 	public void testDproduct() throws IOException {
 		confirmFunc("DPRODUCT(C1:E5,\"HarvestYield\",G1:H2)", 4, false, 189);

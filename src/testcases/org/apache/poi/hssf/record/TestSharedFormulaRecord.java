@@ -17,27 +17,31 @@
 
 package org.apache.poi.hssf.record;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.ComparisonFailure;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
+import java.util.stream.Stream;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.RefPtg;
-import org.apache.poi.ss.formula.SharedFormula;
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.usermodel.CellValue;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaRenderer;
 import org.apache.poi.ss.formula.FormulaType;
-import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.SharedFormula;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.RefPtg;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.util.LittleEndianInput;
+import org.junit.Test;
 
-/**
- * @author Josh Micich
- */
-public final class TestSharedFormulaRecord extends TestCase {
+public final class TestSharedFormulaRecord {
 
     /**
      * A sample spreadsheet known to have one sheet with 4 shared formula ranges
@@ -71,6 +75,7 @@ public final class TestSharedFormulaRecord extends TestCase {
      * classes are preserved during this transformation, because Excel may not tolerate the
      * incorrect encoding.  The formula here is one such example (Excel displays #VALUE!).
      */
+    @Test
     public void testConvertSharedFormulasOperandClasses_bug45123() {
 
         LittleEndianInput in = TestcaseRecordInputStream.createLittleEndian(SHARED_FORMULA_WITH_REF_ARRAYS_DATA);
@@ -82,25 +87,17 @@ public final class TestSharedFormulaRecord extends TestCase {
 
         RefPtg refPtg = (RefPtg) convertedFormula[1];
         assertEquals("$C101", refPtg.toFormulaString());
-        if (refPtg.getPtgClass() == Ptg.CLASS_REF) {
-            throw new AssertionFailedError("Identified bug 45123");
-        }
-
+        assertNotEquals("Identified bug 45123", Ptg.CLASS_REF, refPtg.getPtgClass());
         confirmOperandClasses(sharedFormula, convertedFormula);
     }
 
     private static void confirmOperandClasses(Ptg[] originalPtgs, Ptg[] convertedPtgs) {
-        assertEquals(originalPtgs.length, convertedPtgs.length);
-        for (int i = 0; i < convertedPtgs.length; i++) {
-            Ptg originalPtg = originalPtgs[i];
-            Ptg convertedPtg = convertedPtgs[i];
-            if (originalPtg.getPtgClass() != convertedPtg.getPtgClass()) {
-                throw new ComparisonFailure("Different operand class for token[" + i + "]",
-                        String.valueOf(originalPtg.getPtgClass()), String.valueOf(convertedPtg.getPtgClass()));
-            }
-        }
+        int[] exp = Stream.of(originalPtgs).map(Ptg::getPtgClass).mapToInt(Byte::intValue).toArray();
+        int[] act = Stream.of(convertedPtgs).map(Ptg::getPtgClass).mapToInt(Byte::intValue).toArray();
+        assertArrayEquals("Different operand class", exp, act);
     }
 
+    @Test
     public void testConvertSharedFormulas() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFEvaluationWorkbook fpb = HSSFEvaluationWorkbook.create(wb);
@@ -141,6 +138,7 @@ public final class TestSharedFormulaRecord extends TestCase {
     /**
      * Make sure that POI preserves {@link SharedFormulaRecord}s
      */
+    @Test
     public void testPreserveOnReserialize() {
         HSSFWorkbook wb;
         HSSFSheet sheet;
@@ -168,10 +166,12 @@ public final class TestSharedFormulaRecord extends TestCase {
         cellB32769 = sheet.getRow(32768).getCell(1);
         cellC32769 = sheet.getRow(32768).getCell(2);
         assertEquals("B32770*2", cellB32769.getCellFormula());
+        assertEquals("C32770*2", cellC32769.getCellFormula());
         confirmCellEvaluation(wb, cellB32769, 4);
         assertEquals(4, countSharedFormulas(sheet));
     }
 
+    @Test
     public void testUnshareFormulaDueToChangeFormula() {
         HSSFWorkbook wb;
         HSSFSheet sheet;
@@ -192,6 +192,8 @@ public final class TestSharedFormulaRecord extends TestCase {
         assertEquals("C32770*2", cellC32769.getCellFormula());
         confirmCellEvaluation(wb, cellC32769, 6);
     }
+
+    @Test
     public void testUnshareFormulaDueToDelete() {
         HSSFWorkbook wb;
         HSSFSheet sheet;
@@ -236,13 +238,8 @@ public final class TestSharedFormulaRecord extends TestCase {
      * @return the number of {@link SharedFormulaRecord}s encoded for the specified sheet
      */
     private static int countSharedFormulas(HSSFSheet sheet) {
-        Record[] records = RecordInspector.getRecords(sheet, 0);
-        int count = 0;
-        for (Record rec : records) {
-            if(rec instanceof SharedFormulaRecord) {
-                count++;
-            }
-        }
-        return count;
+        int[] count = { 0 };
+        sheet.getSheet().visitContainedRecords(r -> count[0] += r instanceof SharedFormulaRecord ? 1 : 0, 0);
+        return count[0];
     }
 }

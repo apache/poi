@@ -18,30 +18,34 @@
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.apache.poi.ss.formula.functions.AbstractNumericTestCase.assertEquals;
+import static org.junit.Assert.assertArrayEquals;
+
 import java.io.ByteArrayOutputStream;
+
+import org.junit.Test;
 
 /**
  * Tests that ExObjListAtom works properly.
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestExObjListAtom extends TestCase {
+public class TestExObjListAtom {
 	// From a real file
 	private final byte[] data_a = new byte[] {
-		00, 00, 0x0A, 0x04, 04, 00, 00, 00,
-		01, 00, 00, 00
+		0, 0, 0x0A, 0x04, 4, 0, 0, 0,
+		1, 0, 0, 0
 	};
 	private final byte[] data_b = new byte[] {
-		00, 00, 0x0A, 0x04, 04, 00, 00, 00,
-		04, 00, 00, 00
+		0, 0, 0x0A, 0x04, 4, 0, 0, 0,
+		4, 0, 0, 0
 	};
 
+	@Test
 	public void testRecordType() {
 		ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
-		assertEquals(1034l, eoa.getRecordType());
+		assertEquals(1034L, eoa.getRecordType());
 	}
 
+	@Test
 	public void testGetSeed() {
 		ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
 		ExObjListAtom eob = new ExObjListAtom(data_b, 0, data_b.length);
@@ -50,19 +54,16 @@ public class TestExObjListAtom extends TestCase {
 		assertEquals(4, eob.getObjectIDSeed());
 	}
 
+	@Test
 	public void testWrite() throws Exception {
 		ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		eoa.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertEquals(data_a.length, b.length);
-		for(int i=0; i<data_a.length; i++) {
-			assertEquals(data_a[i],b[i]);
-		}
+		assertArrayEquals(data_a, baos.toByteArray());
 	}
 
 	// Create A from scratch
+	@Test
 	public void testCreate() throws Exception {
 		ExObjListAtom eoa = new ExObjListAtom();
 
@@ -72,15 +73,11 @@ public class TestExObjListAtom extends TestCase {
 		// Check it's now the same as a
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		eoa.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertEquals(data_a.length, b.length);
-		for(int i=0; i<data_a.length; i++) {
-			assertEquals(data_a[i],b[i]);
-		}
+		assertArrayEquals(data_a, baos.toByteArray());
 	}
 
 	// Try to turn a into b
+	@Test
 	public void testChange() throws Exception {
 		ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
 
@@ -90,12 +87,6 @@ public class TestExObjListAtom extends TestCase {
 		// Check bytes are now the same
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		eoa.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		// Should now be the same
-		assertEquals(data_b.length, b.length);
-		for(int i=0; i<data_b.length; i++) {
-			assertEquals(data_b[i],b[i]);
-		}
+		assertArrayEquals(data_b, baos.toByteArray());
 	}
 }

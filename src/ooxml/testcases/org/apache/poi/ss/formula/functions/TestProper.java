@@ -17,6 +17,9 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.StringEval;
@@ -29,12 +32,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-
-import junit.framework.AssertionFailedError;
 import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
 public final class TestProper {
     private Cell cell11;
@@ -70,16 +68,16 @@ public final class TestProper {
         confirm("PROPER(\"/&%\")", "/&%"); //nothing happens with ascii punctuation that is not upper or lower case
         confirm("PROPER(\"Apache POI\")", "Apache Poi"); //acronyms are not special
         confirm("PROPER(\"  hello world\")", "  Hello World"); //leading whitespace is ignored
-        
+
         final String scharfes = "\u00df"; //German lowercase eszett, scharfes s, sharp s
         confirm("PROPER(\"stra"+scharfes+"e\")", "Stra"+scharfes+"e");
         assertTrue(Character.isLetter(scharfes.charAt(0)));
-        
+
         // CURRENTLY FAILS: result: "SSUnd"+scharfes
         // LibreOffice 5.0.3.2 behavior: "Sund"+scharfes
         // Excel 2013 behavior: ???
         confirm("PROPER(\""+scharfes+"und"+scharfes+"\")", "SSund"+scharfes);
-        
+
         // also test longer string
         StringBuilder builder = new StringBuilder("A");
         StringBuilder expected = new StringBuilder("A");
@@ -94,9 +92,7 @@ public final class TestProper {
         cell11.setCellFormula(formulaText);
         evaluator.clearAllCachedResultValues();
         CellValue cv = evaluator.evaluate(cell11);
-        if (cv.getCellType() != CellType.STRING) {
-            throw new AssertionFailedError("Wrong result type: " + cv.formatAsString());
-        }
+        assertEquals("Wrong result type", CellType.STRING, cv.getCellType());
         String actualValue = cv.getStringValue();
         assertEquals(expectedResult, actualValue);
     }

@@ -17,7 +17,12 @@
 
 package org.apache.poi.hssf.model;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.poi.ddf.EscherChildAnchorRecord;
 import org.apache.poi.ddf.EscherClientAnchorRecord;
 import org.apache.poi.ddf.EscherClientDataRecord;
@@ -34,10 +39,11 @@ import org.apache.poi.hssf.usermodel.HSSFSimpleShape;
 import org.apache.poi.hssf.usermodel.HSSFTestHelper;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
-import org.junit.Assert;
+import org.junit.Test;
 
-public class TestHSSFAnchor extends TestCase {
+public class TestHSSFAnchor {
 
+    @Test
     public void testDefaultValues(){
         HSSFClientAnchor clientAnchor = new HSSFClientAnchor();
         assertEquals(clientAnchor.getAnchorType(), AnchorType.MOVE_AND_RESIZE);
@@ -74,6 +80,7 @@ public class TestHSSFAnchor extends TestCase {
         assertEquals(childAnchor.getDy2(), 0);
     }
 
+    @Test
     public void testCorrectOrderInSpContainer(){
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("drawings.xls");
         HSSFSheet sheet = wb.getSheet("pictures");
@@ -94,6 +101,7 @@ public class TestHSSFAnchor extends TestCase {
         assertEquals(HSSFTestHelper.getEscherContainer(rectangle).getChild(3).getRecordId(), EscherClientDataRecord.RECORD_ID);
     }
 
+    @Test
     public void testCreateClientAnchorFromContainer(){
         EscherContainerRecord container = new EscherContainerRecord();
         EscherClientAnchorRecord escher = new EscherClientAnchorRecord();
@@ -128,6 +136,7 @@ public class TestHSSFAnchor extends TestCase {
         assertEquals(escher.getDy2(), 18);
     }
 
+    @Test
     public void testCreateChildAnchorFromContainer(){
         EscherContainerRecord container = new EscherContainerRecord();
         EscherChildAnchorRecord escher = new EscherChildAnchorRecord();
@@ -149,6 +158,7 @@ public class TestHSSFAnchor extends TestCase {
         assertEquals(escher.getDy2(), 18);
     }
 
+    @Test
     public void testShapeEscherMustHaveAnchorRecord(){
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
@@ -167,6 +177,7 @@ public class TestHSSFAnchor extends TestCase {
         assertEquals(HSSFTestHelper.getEscherAnchor(anchor), HSSFTestHelper.getEscherContainer(rectangle).getChildById(EscherClientAnchorRecord.RECORD_ID));
     }
 
+    @Test
     public void testClientAnchorFromEscher(){
         EscherClientAnchorRecord escher = new EscherClientAnchorRecord();
         escher.setCol1((short)11);
@@ -197,6 +208,7 @@ public class TestHSSFAnchor extends TestCase {
         assertEquals(escher.getDy2(), 18);
     }
 
+    @Test
     public void testClientAnchorFromScratch(){
         HSSFClientAnchor anchor = new HSSFClientAnchor();
         EscherClientAnchorRecord escher = (EscherClientAnchorRecord) HSSFTestHelper.getEscherAnchor(anchor);
@@ -245,6 +257,7 @@ public class TestHSSFAnchor extends TestCase {
         assertEquals(escher.getDy2(), 118);
     }
 
+    @Test
     public void testChildAnchorFromEscher(){
         EscherChildAnchorRecord escher = new EscherChildAnchorRecord();
         escher.setDx1((short) 15);
@@ -263,6 +276,7 @@ public class TestHSSFAnchor extends TestCase {
         assertEquals(escher.getDy2(), 18);
     }
 
+    @Test
     public void testChildAnchorFromScratch(){
         HSSFChildAnchor anchor = new HSSFChildAnchor();
         EscherChildAnchorRecord escher = (EscherChildAnchorRecord) HSSFTestHelper.getEscherAnchor(anchor);
@@ -291,6 +305,7 @@ public class TestHSSFAnchor extends TestCase {
         assertEquals(escher.getDy2(), 118);
     }
 
+    @Test
     public void testEqualsToSelf(){
         HSSFClientAnchor clientAnchor = new HSSFClientAnchor(0, 1, 2, 3, (short)4, 5, (short)6, 7);
         assertEquals(clientAnchor, clientAnchor);
@@ -299,6 +314,7 @@ public class TestHSSFAnchor extends TestCase {
         assertEquals(childAnchor, childAnchor);
     }
 
+    @Test
     public void testPassIncompatibleTypeIsFalse(){
         HSSFClientAnchor clientAnchor = new HSSFClientAnchor(0, 1, 2, 3, (short)4, 5, (short)6, 7);
         assertNotSame(clientAnchor, "wrongType");
@@ -307,14 +323,16 @@ public class TestHSSFAnchor extends TestCase {
         assertNotSame(childAnchor, "wrongType");
     }
 
+    @Test
     public void testNullReferenceIsFalse() {
         HSSFClientAnchor clientAnchor = new HSSFClientAnchor(0, 1, 2, 3, (short)4, 5, (short)6, 7);
-        Assert.assertNotNull("Passing null to equals should return false", clientAnchor);
+        assertNotNull("Passing null to equals should return false", clientAnchor);
 
         HSSFChildAnchor childAnchor = new HSSFChildAnchor(0, 1, 2, 3);
         assertNotNull("Passing null to equals should return false", childAnchor);
     }
 
+    @Test
     public void testEqualsIsReflexiveIsSymmetric() {
         HSSFClientAnchor clientAnchor1 = new HSSFClientAnchor(0, 1, 2, 3, (short)4, 5, (short)6, 7);
         HSSFClientAnchor clientAnchor2 = new HSSFClientAnchor(0, 1, 2, 3, (short)4, 5, (short)6, 7);
@@ -329,6 +347,7 @@ public class TestHSSFAnchor extends TestCase {
         assertEquals(childAnchor2, childAnchor1);
     }
 
+    @Test
     public void testEqualsValues(){
         HSSFClientAnchor clientAnchor1 = new HSSFClientAnchor(0, 1, 2, 3, (short)4, 5, (short)6, 7);
         HSSFClientAnchor clientAnchor2 = new HSSFClientAnchor(0, 1, 2, 3, (short)4, 5, (short)6, 7);
@@ -403,6 +422,7 @@ public class TestHSSFAnchor extends TestCase {
         assertEquals(childAnchor1, childAnchor2);
     }
 
+    @Test
     public void testFlipped(){
         HSSFChildAnchor child = new HSSFChildAnchor(2,2,1,1);
         assertTrue(child.isHorizontallyFlipped());

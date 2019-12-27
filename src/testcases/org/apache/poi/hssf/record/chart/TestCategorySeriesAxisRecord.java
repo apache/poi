@@ -18,19 +18,20 @@
 package org.apache.poi.hssf.record.chart;
 
 
-import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the CategorySeriesAxisRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
-
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestCategorySeriesAxisRecord extends TestCase {
+public final class TestCategorySeriesAxisRecord {
     byte[] data = new byte[] {
         (byte)0x01,(byte)0x00,    // crossing point
         (byte)0x01,(byte)0x00,    // label frequency
@@ -38,8 +39,8 @@ public final class TestCategorySeriesAxisRecord extends TestCase {
         (byte)0x01,(byte)0x00     // options
     };
 
+    @Test
     public void testLoad() {
-
         CategorySeriesAxisRecord record = new CategorySeriesAxisRecord(TestcaseRecordInputStream.create(0x1020, data));
         assertEquals( 1, record.getCrossingPoint());
         assertEquals( 1, record.getLabelFrequency());
@@ -52,8 +53,8 @@ public final class TestCategorySeriesAxisRecord extends TestCase {
         assertEquals( 4 + 8, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
+    @Test
+    public void testStore() {
         CategorySeriesAxisRecord record = new CategorySeriesAxisRecord();
         record.setCrossingPoint( (short)1 );
         record.setLabelFrequency( (short)1 );
@@ -64,8 +65,6 @@ public final class TestCategorySeriesAxisRecord extends TestCase {
 
 
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        confirmRecordEncoding(CategorySeriesAxisRecord.sid, data, recordBytes);
     }
 }

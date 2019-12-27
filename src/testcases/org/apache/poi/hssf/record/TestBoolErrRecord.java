@@ -18,16 +18,19 @@
 package org.apache.poi.hssf.record;
 
 import static org.junit.Assert.assertArrayEquals;
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import org.apache.poi.hssf.record.RecordInputStream.LeftoverDataException;
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
+
 /**
  * Tests for {@link BoolErrRecord}
  */
-public final class TestBoolErrRecord extends TestCase {
+public final class TestBoolErrRecord {
 
+	@Test
 	public void testError() {
 		byte[] data = HexRead.readFromString(
 				"00 00 00 00 0F 00 " + // row, col, xfIndex
@@ -38,18 +41,19 @@ public final class TestBoolErrRecord extends TestCase {
 		BoolErrRecord ber = new BoolErrRecord(in);
 		assertTrue(ber.isError());
 		assertEquals(7, ber.getErrorValue());
-		
+
 		TestcaseRecordInputStream.confirmRecordEncoding(BoolErrRecord.sid, data, ber.serialize());
 	}
 
 	/**
-	 * Bugzilla 47479 was due to an apparent error in OOO which (as of version 3.0.1) 
+	 * Bugzilla 47479 was due to an apparent error in OOO which (as of version 3.0.1)
 	 * writes the <i>value</i> field of BOOLERR records as 2 bytes instead of 1.<br>
-	 * Coincidentally, the extra byte written is zero, which is exactly the value 
+	 * Coincidentally, the extra byte written is zero, which is exactly the value
 	 * required by the <i>isError</i> field.  This probably why Excel seems to have
 	 * no problem.  OOO does not have the same bug for error values (which wouldn't
-	 * work by the same coincidence). 
+	 * work by the same coincidence).
 	 */
+	@Test
 	public void testOooBadFormat_bug47479() {
 		byte[] data = HexRead.readFromString(
 				"05 02 09 00 " + // sid, size
@@ -59,19 +63,11 @@ public final class TestBoolErrRecord extends TestCase {
 
 		RecordInputStream in = TestcaseRecordInputStream.create(data);
 		BoolErrRecord ber = new BoolErrRecord(in);
-		boolean hasMore;
-		try {
-			hasMore = in.hasNextRecord();
-		} catch (LeftoverDataException e) {
-			if ("Initialisation of record 0x205 left 1 bytes remaining still to be read.".equals(e.getMessage())) {
-				throw new AssertionFailedError("Identified bug 47479");
-			}
-			throw e;
-		}
+		boolean hasMore = in.hasNextRecord();
 		assertFalse(hasMore);
 		assertTrue(ber.isBoolean());
         assertTrue(ber.getBooleanValue());
-		
+
 		// Check that the record re-serializes correctly
 		byte[] outData = ber.serialize();
 		byte[] expData = HexRead.readFromString(

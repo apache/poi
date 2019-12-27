@@ -17,17 +17,19 @@
 
 package org.apache.poi.hwpf.model;
 
-import junit.framework.*;
-import org.apache.poi.hwpf.*;
+import static org.junit.Assert.assertEquals;
 
+import org.apache.poi.hwpf.HWPFDocFixture;
 import org.apache.poi.util.LittleEndian;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public final class TestPlexOfCps
-  extends TestCase
-{
+public final class TestPlexOfCps {
   private PlexOfCps _plexOfCps;
   private HWPFDocFixture _hWPFDocFixture;
 
+  @Test
   public void testWriteRead() {
     _plexOfCps = new PlexOfCps(4);
 
@@ -56,26 +58,21 @@ public final class TestPlexOfCps
       assertEquals(node.getEnd()-node.getStart(), span);
     }
   }
-  @Override
-protected void setUp()
-    throws Exception
-  {
-    super.setUp();
+
+  @Before
+  public void setUp() throws Exception {
     /**@todo verify the constructors*/
     _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
 
     _hWPFDocFixture.setUp();
   }
 
-  @Override
-protected void tearDown()
-    throws Exception
-  {
+  @After
+  public void tearDown() throws Exception {
     _plexOfCps = null;
     _hWPFDocFixture.tearDown();
 
     _hWPFDocFixture = null;
-    super.tearDown();
   }
 
 }

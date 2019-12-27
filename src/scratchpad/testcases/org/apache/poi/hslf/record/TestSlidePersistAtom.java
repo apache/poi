@@ -18,24 +18,30 @@
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
+
+import org.junit.Test;
 
 /**
  * Tests that SlidePersistAtom works properly
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestSlidePersistAtom extends TestCase {
+public final class TestSlidePersistAtom {
 	// From a real file
 	private final byte[] data_a = new byte[] { 0, 0, 0xF3-256, 3, 0x14, 0, 0, 0,
 		4, 0, 0, 0, 4, 0, 0, 0, 2, 0, 0, 0, 0,
 		1, 0, 0, 0, 0, 0, 0 };
 
+	@Test
 	public void testRecordType() {
 		SlidePersistAtom spa = new SlidePersistAtom(data_a, 0, data_a.length);
-		assertEquals(1011l, spa.getRecordType());
+		assertEquals(1011L, spa.getRecordType());
 	}
+
+	@Test
 	public void testFlags() {
 		SlidePersistAtom spa = new SlidePersistAtom(data_a, 0, data_a.length);
 		assertEquals(4, spa.getRefID() );
@@ -44,15 +50,11 @@ public final class TestSlidePersistAtom extends TestCase {
 		assertEquals(256, spa.getSlideIdentifier());
 	}
 
+	@Test
 	public void testWrite() throws Exception {
 		SlidePersistAtom spa = new SlidePersistAtom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		spa.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertEquals(data_a.length, b.length);
-		for(int i=0; i<data_a.length; i++) {
-			assertEquals(data_a[i],b[i]);
-		}
+		assertArrayEquals(data_a, baos.toByteArray());
 	}
 }

@@ -17,13 +17,17 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.CFHeaderBase;
@@ -38,13 +42,15 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LittleEndian;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the CFRecordsAggregate
- * class works correctly.  
+ * class works correctly.
  */
 @SuppressWarnings("resource")
-public final class TestCFRecordsAggregate extends TestCase {
+public final class TestCFRecordsAggregate {
+    @Test
     public void testCFRecordsAggregate() {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
@@ -115,6 +121,7 @@ public final class TestCFRecordsAggregate extends TestCase {
     /**
      * Make sure that the CF Header record is properly updated with the number of rules
      */
+    @Test
     public void testNRules() {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
@@ -131,12 +138,11 @@ public final class TestCFRecordsAggregate extends TestCase {
         agg.serialize(0, serializedRecord);
 
         int nRules = LittleEndian.getUShort(serializedRecord, 4);
-        if (nRules == 0) {
-            throw new AssertionFailedError("Identified bug 45682 b");
-        }
+        assertNotEquals("Identified bug 45682 b", 0, nRules);
         assertEquals(rules.length, nRules);
     }
-    
+
+    @Test
     public void testCantMixTypes() {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
@@ -154,12 +160,12 @@ public final class TestCFRecordsAggregate extends TestCase {
         } catch (IllegalArgumentException e) {
             // expected here
         }
-        
-        
+
+
         rules = new CFRuleBase[] { CFRuleRecord.create(sheet, "7") };
         CFRecordsAggregate agg = new CFRecordsAggregate(cellRanges, rules);
         assertTrue(agg.getHeader().getNeedRecalculation());
-        
+
         try {
             agg.addRule(CFRule12Record.create(sheet, "7"));
             fail("Shouldn't be able to mix between types");

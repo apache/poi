@@ -19,7 +19,6 @@ package org.apache.poi.ss.formula.functions;
 
 import static org.junit.Assert.assertEquals;
 
-import junit.framework.AssertionFailedError;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -50,6 +49,7 @@ public final class TestDate {
      * Test disabled pending a fix in the formula evaluator
      * TODO - create MissingArgEval and modify the formula evaluator to handle this
      */
+    @Test
     @Ignore
     public void testSomeArgumentsMissing() {
         confirm("DATE(, 1, 0)", 0.0);
@@ -58,7 +58,6 @@ public final class TestDate {
 
     @Test
     public void testValid() {
-
         confirm("DATE(1900, 1, 1)", 1);
         confirm("DATE(1900, 1, 32)", 32);
         confirm("DATE(1900, 222, 1)", 6727);
@@ -88,9 +87,7 @@ public final class TestDate {
         cell11.setCellFormula(formulaText);
         evaluator.clearAllCachedResultValues();
         CellValue cv = evaluator.evaluate(cell11);
-        if (cv.getCellType() != CellType.NUMERIC) {
-            throw new AssertionFailedError("Wrong result type: " + cv.formatAsString());
-        }
+        assertEquals("Wrong result type", CellType.NUMERIC, cv.getCellType());
         double actualValue = cv.getNumberValue();
         assertEquals(expectedResult, actualValue, 0);
     }

@@ -19,30 +19,31 @@ package org.apache.poi.hssf.record;
 
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LittleEndianOutputStream;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the LbsDataSubRecord class works correctly.
- *
- * @author Yegor Kozlov
  */
-public final class TestLbsDataSubRecord extends TestCase {
+public final class TestLbsDataSubRecord {
 
     /**
      * test read-write round trip
      * test data was taken from 47701.xls
      */
+    @Test
     public void test_47701(){
         byte[] data = HexRead.readFromString(
                         "15, 00, 12, 00, 12, 00, 02, 00, 11, 20, " +
@@ -76,6 +77,7 @@ public final class TestLbsDataSubRecord extends TestCase {
     /**
      * test data was taken from the file attached to Bugzilla 45778
      */
+    @Test
     public void test_45778(){
         byte[] data = HexRead.readFromString(
                                 "15, 00, 12, 00, 14, 00, 01, 00, 01, 00, " +
@@ -115,6 +117,7 @@ public final class TestLbsDataSubRecord extends TestCase {
      * Test data produced by OpenOffice 3.1 by opening  and saving 47701.xls
      * There are 5 padding bytes that are removed by POI
      */
+    @Test
     public void test_remove_padding(){
         byte[] data = HexRead.readFromString(
                         "5D, 00, 4C, 00, " +
@@ -148,6 +151,7 @@ public final class TestLbsDataSubRecord extends TestCase {
         assertArrayEquals(ser, ser2);
     }
 
+    @Test
     public void test_LbsDropData() throws IOException{
         byte[] data = HexRead.readFromString(
                                  //LbsDropData

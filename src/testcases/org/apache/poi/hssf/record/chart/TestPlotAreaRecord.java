@@ -18,35 +18,33 @@
 package org.apache.poi.hssf.record.chart;
 
 
-import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the PlotAreaRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
-
- * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public final class TestPlotAreaRecord extends TestCase {
+public final class TestPlotAreaRecord {
     byte[] data = new byte[] {
-	
+
     };
 
+    @Test
     public void testLoad() {
         PlotAreaRecord record = new PlotAreaRecord(TestcaseRecordInputStream.create(0x1035, data));
 
         assertEquals( 4, record.getRecordSize() );
     }
 
+    @Test
     public void testStore() {
         PlotAreaRecord record = new PlotAreaRecord();
 
         byte [] recordBytes = record.serialize();
         assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
     }
 }

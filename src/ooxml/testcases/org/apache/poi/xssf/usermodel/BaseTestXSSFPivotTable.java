@@ -16,7 +16,9 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.io.IOException;
 
@@ -41,14 +43,13 @@ public abstract class BaseTestXSSFPivotTable {
     protected XSSFPivotTable pivotTable;
     protected XSSFPivotTable offsetPivotTable;
     protected Cell offsetOuterCell;
-    
+
     /**
      * required to set up the test pivot tables and cell reference, either by name or reference.
-     * @see junit.framework.TestCase#setUp()
      */
     @Before
     public abstract void setUp();
-    
+
     @After
     public void tearDown() throws IOException {
         if (wb != null) {
@@ -67,18 +68,18 @@ public abstract class BaseTestXSSFPivotTable {
         int columnIndex = 0;
 
         assertEquals(0, pivotTable.getRowLabelColumns().size());
-        
+
         pivotTable.addRowLabel(columnIndex);
         CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
 
         assertEquals(defintion.getRowFields().getFieldArray(0).getX(), columnIndex);
         assertEquals(defintion.getRowFields().getCount(), 1);
         assertEquals(1, pivotTable.getRowLabelColumns().size());
-        
+
         columnIndex = 1;
         pivotTable.addRowLabel(columnIndex);
         assertEquals(2, pivotTable.getRowLabelColumns().size());
-        
+
         assertEquals(0, (int)pivotTable.getRowLabelColumns().get(0));
         assertEquals(1, (int)pivotTable.getRowLabelColumns().get(1));
     }
@@ -120,8 +121,8 @@ public abstract class BaseTestXSSFPivotTable {
 
         assertEquals(defintion.getDataFields().getDataFieldList().size(), 3);
     }
-    
-    
+
+
     /**
      * Verify that it's possible to create three column labels with the same DataConsolidateFunction
      */
@@ -138,7 +139,7 @@ public abstract class BaseTestXSSFPivotTable {
 
         assertEquals(defintion.getDataFields().getDataFieldList().size(), 3);
     }
-    
+
     /**
      * Verify that when creating two column labels, a col field is being created and X is set to -2.
      */
@@ -169,7 +170,7 @@ public abstract class BaseTestXSSFPivotTable {
         assertEquals(defintion.getDataFields().getDataFieldArray(0).getSubtotal(),
                 STDataConsolidateFunction.Enum.forInt(DataConsolidateFunction.SUM.getValue()));
     }
-    
+
     /**
      * Verify that it's possible to set a custom name when creating a data column
      */
@@ -178,7 +179,7 @@ public abstract class BaseTestXSSFPivotTable {
         int columnIndex = 0;
 
         String customName = "Custom Name";
-        
+
         pivotTable.addColumnLabel(DataConsolidateFunction.SUM, columnIndex, customName);
 
         CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
@@ -186,7 +187,7 @@ public abstract class BaseTestXSSFPivotTable {
         assertEquals(defintion.getDataFields().getDataFieldArray(0).getFld(), columnIndex);
         assertEquals(defintion.getDataFields().getDataFieldArray(0).getName(), customName);
     }
-    
+
     /**
      * Verify that it's possible to set the format to the data column
      */
@@ -195,7 +196,7 @@ public abstract class BaseTestXSSFPivotTable {
         int columnIndex = 0;
 
         String format = "#,##0.0";
-        
+
         pivotTable.addColumnLabel(DataConsolidateFunction.SUM, columnIndex, null, format);
 
         CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
@@ -256,7 +257,7 @@ public abstract class BaseTestXSSFPivotTable {
     public void testAddReportFilterOutOfRangeThrowsException() {
         pivotTable.addReportFilter(5);
     }
-    
+
     /**
      * Verify that the Pivot Table operates only within the referenced area, even when the
      * first column of the referenced area is not index 0.
@@ -265,10 +266,10 @@ public abstract class BaseTestXSSFPivotTable {
     public void testAddDataColumnWithOffsetData() {
         offsetPivotTable.addColumnLabel(DataConsolidateFunction.SUM, 1);
         assertEquals(CellType.NUMERIC, offsetOuterCell.getCellType());
-        
+
         offsetPivotTable.addColumnLabel(DataConsolidateFunction.SUM, 0);
     }
-    
+
     @Test
     public void testPivotTableSheetNamesAreCaseInsensitive() {
         wb.setSheetName(0,  "original");
@@ -278,7 +279,7 @@ public abstract class BaseTestXSSFPivotTable {
         // assume sheets are accessible via case-insensitive name
         assertNotNull(original);
         assertNotNull(offset);
-        
+
         AreaReference source = wb.getCreationHelper().createAreaReference("ORIGinal!A1:C2");
         // create a pivot table on the same sheet, case insensitive
         original.createPivotTable(source, new CellReference("W1"));
@@ -296,18 +297,18 @@ public abstract class BaseTestXSSFPivotTable {
         int columnIndex = 0;
 
         assertEquals(0, pivotTable.getColLabelColumns().size());
-        
+
         pivotTable.addColLabel(columnIndex);
         CTPivotTableDefinition defintion = pivotTable.getCTPivotTableDefinition();
 
         assertEquals(defintion.getColFields().getFieldArray(0).getX(), columnIndex);
         assertEquals(defintion.getColFields().getCount(), 1);
         assertEquals(1, pivotTable.getColLabelColumns().size());
-        
+
         columnIndex = 1;
         pivotTable.addColLabel(columnIndex);
         assertEquals(2, pivotTable.getColLabelColumns().size());
-        
+
         assertEquals(0, (int)pivotTable.getColLabelColumns().get(0));
         assertEquals(1, (int)pivotTable.getColLabelColumns().get(1));
     }

@@ -20,10 +20,11 @@ package org.apache.poi.hssf.record.aggregates;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.RecordStream;
@@ -38,8 +39,6 @@ import org.apache.poi.hssf.record.SharedValueRecordBase;
 import org.apache.poi.hssf.record.TableRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.RecordInspector;
-import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.Test;
@@ -71,18 +70,19 @@ public final class TestRowRecordsAggregate {
 	 */
     @Test
 	public void testArraysAndTables() throws Exception {
-		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("testArraysAndTables.xls");
-		Record[] sheetRecs = RecordInspector.getRecords(wb.getSheetAt(0), 0);
+		try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("testArraysAndTables.xls")) {
+			final List<Record> sheetRecs = new ArrayList<>();
+			wb.getSheetAt(0).getSheet().visitContainedRecords(sheetRecs::add, 0);
 
-		int countArrayFormulas = verifySharedValues(sheetRecs, ArrayRecord.class);
-		assertEquals(5, countArrayFormulas);
-		int countTableFormulas = verifySharedValues(sheetRecs, TableRecord.class);
-		assertEquals(3, countTableFormulas);
+			int countArrayFormulas = verifySharedValues(sheetRecs, ArrayRecord.class);
+			assertEquals(5, countArrayFormulas);
+			int countTableFormulas = verifySharedValues(sheetRecs, TableRecord.class);
+			assertEquals(3, countTableFormulas);
 
-		// Note - SharedFormulaRecords are currently not re-serialized by POI (each is extracted
-		// into many non-shared formulas), but if they ever were, the same rules would apply.
-		int countSharedFormulas = verifySharedValues(sheetRecs, SharedFormulaRecord.class);
-		assertEquals(0, countSharedFormulas);
+			// Note - SharedFormulaRecords are currently not re-serialized by POI (each is extracted
+			// into many non-shared formulas), but if they ever were, the same rules would apply.
+			int countSharedFormulas = verifySharedValues(sheetRecs, SharedFormulaRecord.class);
+			assertEquals(0, countSharedFormulas);
 
 
 //		if (false) { // set true to observe re-serialized file
@@ -96,18 +96,18 @@ public final class TestRowRecordsAggregate {
 //			}
 //			System.out.println("Output file to " + f.getAbsolutePath());
 //		}
-		
-		wb.close();
+
+		}
 	}
 
-	private static int verifySharedValues(Record[] recs, Class<? extends SharedValueRecordBase> shfClass) {
+	private static int verifySharedValues(List<Record> recs, Class<? extends SharedValueRecordBase> shfClass) {
 
 		int result =0;
-		for(int i=0; i<recs.length; i++) {
-			Record rec = recs[i];
+		for(int i=0; i<recs.size(); i++) {
+			Record rec = recs.get(i);
 			if (rec.getClass() == shfClass) {
 				result++;
-				Record prevRec = recs[i-1];
+				Record prevRec = recs.get(i-1);
 				if (!(prevRec instanceof FormulaRecord)) {
 					fail("Bad record order at index "
 							+ i + ": Formula record expected but got ("
@@ -153,9 +153,9 @@ public final class TestRowRecordsAggregate {
 			}
 			throw e;
 		}
-		RecordCollector rv = new RecordCollector();
-		rra.visitContainedRecords(rv);
-		Record[] outRecs = rv.getRecords();
-		assertEquals(5, outRecs.length);
+
+		List<Record> outRecs = new ArrayList<>();
+		rra.visitContainedRecords(outRecs::add);
+		assertEquals(5, outRecs.size());
 	}
 }

@@ -17,27 +17,31 @@
 
 package org.apache.poi.xssf.usermodel.helpers;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * Test the header and footer helper.
  * As we go through XmlBeans, should always use &,
  *  and not &amp;
  */
-public class TestHeaderFooterHelper extends TestCase {
-    
+public class TestHeaderFooterHelper {
+
+    @Test
     public void testGetCenterLeftRightSection() {
         HeaderFooterHelper helper = new HeaderFooterHelper();
-        
+
         String headerFooter = "&CTest the center section";
         assertEquals("Test the center section", helper.getCenterSection(headerFooter));
-        
+
         headerFooter = "&CTest the center section&LThe left one&RAnd the right one";
         assertEquals("Test the center section", helper.getCenterSection(headerFooter));
         assertEquals("The left one", helper.getLeftSection(headerFooter));
         assertEquals("And the right one", helper.getRightSection(headerFooter));
     }
-    
+
+    @Test
     public void testSetCenterLeftRightSection() {
         HeaderFooterHelper helper = new HeaderFooterHelper();
         String headerFooter = "";
@@ -53,10 +57,10 @@ public class TestHeaderFooterHelper extends TestCase {
         headerFooter = helper.setRightSection(headerFooter, "First right&F");
         assertEquals("First right&F", helper.getRightSection(headerFooter));
         assertEquals("&CFirst added center section&LFirst left&RFirst right&F", headerFooter);
-        
+
         headerFooter = helper.setRightSection(headerFooter, "First right&");
         assertEquals("First right&", helper.getRightSection(headerFooter));
         assertEquals("&CFirst added center section&LFirst left&RFirst right&", headerFooter);
     }
-    
+
 }

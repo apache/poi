@@ -17,23 +17,23 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.functions.EvalFactory;
 import org.apache.poi.ss.formula.functions.NumericFunctionInvoker;
+import org.apache.poi.ss.formula.ptg.AreaPtg;
+import org.junit.Test;
 
 /**
  * Test for unary plus operator evaluator.
- *
- * @author Josh Micich
  */
-public final class TestUnaryPlusEval extends TestCase {
+public final class TestUnaryPlusEval {
 
 	/**
 	 * Test for bug observable at svn revision 618865 (5-Feb-2008)<br>
 	 * The code for handling column operands had been copy-pasted from the row handling code.
 	 */
+	@Test
 	public void testColumnOperand() {
 
 		short firstRow = (short)8;

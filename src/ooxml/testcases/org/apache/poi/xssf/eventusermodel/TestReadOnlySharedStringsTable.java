@@ -19,25 +19,30 @@
 
 package org.apache.poi.xssf.eventusermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.regex.Pattern;
 
-import junit.framework.TestCase;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 import org.xml.sax.SAXException;
 
 /**
  * Tests for {@link org.apache.poi.xssf.eventusermodel.XSSFReader}
  */
-public final class TestReadOnlySharedStringsTable extends TestCase {
+@SuppressWarnings("deprecation")
+public final class TestReadOnlySharedStringsTable {
     private static POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();
 
+    @Test
     public void testParse() throws Exception {
 		try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("SampleSS.xlsx"))) {
             List<PackagePart> parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.xml"));
@@ -60,6 +65,7 @@ public final class TestReadOnlySharedStringsTable extends TestCase {
 	}
 
 	//51519
+    @Test
 	public void testPhoneticRuns() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("51519.xlsx"))) {
             List < PackagePart > parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.xml"));
@@ -82,13 +88,15 @@ public final class TestReadOnlySharedStringsTable extends TestCase {
         }
     }
 
+    @Test
     public void testEmptySSTOnPackageObtainedViaWorkbook() throws Exception {
         XSSFWorkbook wb = new XSSFWorkbook(_ssTests.openResourceAsStream("noSharedStringTable.xlsx"));
         OPCPackage pkg = wb.getPackage();
         assertEmptySST(pkg);
         wb.close();
     }
-    
+
+    @Test
     public void testEmptySSTOnPackageDirect() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("noSharedStringTable.xlsx"))) {
             assertEmptySST(pkg);

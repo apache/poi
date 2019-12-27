@@ -18,19 +18,20 @@
 package org.apache.poi.hssf.record;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the NoteRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
- * @author Yegor Kozlov
  */
-public final class TestNoteRecord extends TestCase {
+public final class TestNoteRecord {
     private final byte[] testData = HexRead.readFromString(
             "06 00 01 00 02 00 02 04 " +
             "1A 00 00 " +
@@ -38,6 +39,7 @@ public final class TestNoteRecord extends TestCase {
             "00" // padding byte
             );
 
+    @Test
     public void testRead() {
 
         NoteRecord record = new NoteRecord(TestcaseRecordInputStream.create(NoteRecord.sid, testData));
@@ -50,6 +52,7 @@ public final class TestNoteRecord extends TestCase {
         assertEquals("Apache Software Foundation", record.getAuthor());
     }
 
+    @Test
     public void testWrite() {
         NoteRecord record = new NoteRecord();
         assertEquals(NoteRecord.sid, record.getSid());
@@ -64,6 +67,7 @@ public final class TestNoteRecord extends TestCase {
         TestcaseRecordInputStream.confirmRecordEncoding(NoteRecord.sid, testData, ser);
     }
 
+    @Test
     public void testClone() {
         NoteRecord record = new NoteRecord();
 
@@ -86,6 +90,7 @@ public final class TestNoteRecord extends TestCase {
         assertArrayEquals(src, cln);
     }
 
+    @Test
     public void testUnicodeAuthor() {
         // This sample data was created by setting the 'user name' field in the 'Personalize'
         // section of Excel's options to \u30A2\u30D1\u30C3\u30C1\u65CF, and then
@@ -97,9 +102,7 @@ public final class TestNoteRecord extends TestCase {
                 );
         RecordInputStream in = TestcaseRecordInputStream.create(NoteRecord.sid, data);
         NoteRecord nr = new NoteRecord(in);
-        if ("\u00A2\u0030\u00D1\u0030\u00C3".equals(nr.getAuthor())) {
-            throw new AssertionFailedError("Identified bug in reading note with unicode author");
-        }
+        assertNotEquals("Identified bug in reading note with unicode author","\u00A2\u0030\u00D1\u0030\u00C3", nr.getAuthor());
         assertEquals("\u30A2\u30D1\u30C3\u30C1\u65CF", nr.getAuthor());
         assertTrue(nr.authorIsMultibyte());
 

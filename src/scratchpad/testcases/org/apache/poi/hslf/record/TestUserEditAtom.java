@@ -18,25 +18,30 @@
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayOutputStream;
+
+import org.junit.Test;
 
 /**
  * Tests that UserEditAtom works properly
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestUserEditAtom extends TestCase {
+public final class TestUserEditAtom {
 	// From a real file
 	private final byte[] data_a = new byte[] { 0, 0, 0xF5-256, 0x0F, 0x1C, 0, 0, 0,
-		00, 01, 00, 00, 0xD9-256, 18, 00, 03,
-		00, 00, 00, 00, 00, 0x18, 00, 00, 01, 00, 00, 00,
-		05, 00, 00, 00, 01, 00, 0xF6-256, 77 };
+		0, 1, 0, 0, 0xD9-256, 18, 0, 3,
+		0, 0, 0, 0, 0, 0x18, 0, 0, 1, 0, 0, 0,
+		5, 0, 0, 0, 1, 0, 0xF6-256, 77 };
 
+	@Test
 	public void testRecordType() {
 		UserEditAtom uea = new UserEditAtom(data_a, 0, data_a.length);
-		assertEquals(4085l, uea.getRecordType());
+		assertEquals(4085L, uea.getRecordType());
 	}
+
+	@Test
 	public void testFlags() {
 		UserEditAtom uea = new UserEditAtom(data_a, 0, data_a.length);
 
@@ -49,15 +54,11 @@ public final class TestUserEditAtom extends TestCase {
 		assertEquals((short)1, uea.getLastViewType() );
 	}
 
+	@Test
 	public void testWrite() throws Exception {
 		UserEditAtom uea = new UserEditAtom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		uea.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertEquals(data_a.length, b.length);
-		for(int i=0; i<data_a.length; i++) {
-			assertEquals(data_a[i],b[i]);
-		}
+		assertArrayEquals(data_a, baos.toByteArray());
 	}
 }

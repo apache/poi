@@ -18,19 +18,18 @@
 package org.apache.poi.hssf.record.chart;
 
 
-import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the ChartRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
-
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestChartRecord extends TestCase {
+public final class TestChartRecord {
     byte[] data = new byte[] {
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,
         (byte)0x00,(byte)0x00,(byte)0x00,(byte)0x00,
@@ -38,8 +37,8 @@ public final class TestChartRecord extends TestCase {
         (byte)0xC8,(byte)0xCC,(byte)0xE5,(byte)0x00
     };
 
+    @Test
     public void testLoad() {
-
         ChartRecord record = new ChartRecord(TestcaseRecordInputStream.create(0x1002, data));
         assertEquals( 0, record.getX());
         assertEquals( 0, record.getY());
@@ -49,8 +48,8 @@ public final class TestChartRecord extends TestCase {
         assertEquals( 20, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
+    @Test
+    public void testStore() {
         ChartRecord record = new ChartRecord();
         record.setX( 0 );
         record.setY( 0 );
@@ -59,8 +58,6 @@ public final class TestChartRecord extends TestCase {
 
 
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        confirmRecordEncoding(ChartRecord.sid, data, recordBytes);
     }
 }

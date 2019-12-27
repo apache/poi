@@ -18,29 +18,54 @@
 package org.apache.poi.hssf.record.aggregates;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
+import java.util.ArrayList;
 import java.util.Arrays;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.RecordStream;
-import org.apache.poi.hssf.record.*;
+import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.BottomMarginRecord;
+import org.apache.poi.hssf.record.ContinueRecord;
+import org.apache.poi.hssf.record.DimensionsRecord;
+import org.apache.poi.hssf.record.EOFRecord;
+import org.apache.poi.hssf.record.FooterRecord;
+import org.apache.poi.hssf.record.HCenterRecord;
+import org.apache.poi.hssf.record.HeaderFooterRecord;
+import org.apache.poi.hssf.record.HeaderRecord;
+import org.apache.poi.hssf.record.IndexRecord;
+import org.apache.poi.hssf.record.NumberRecord;
+import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.SelectionRecord;
+import org.apache.poi.hssf.record.UnknownRecord;
+import org.apache.poi.hssf.record.UserSViewBegin;
+import org.apache.poi.hssf.record.UserSViewEnd;
+import org.apache.poi.hssf.record.VCenterRecord;
+import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.usermodel.HSSFPrintSetup;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hssf.usermodel.RecordInspector.RecordCollector;
 import org.apache.poi.util.HexRead;
+import org.apache.poi.util.RecordFormatException;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 /**
  * Tess for {@link PageSettingsBlock}
- *
- * @author Dmitriy Kumshayev
  */
-public final class TestPageSettingsBlock extends TestCase {
+public final class TestPageSettingsBlock {
+	@Rule
+	public ExpectedException thrown = ExpectedException.none();
 
+	@Test
 	public void testPrintSetup_bug46548() {
 
 		// PageSettingBlock in this file contains PLS (sid=x004D) record
@@ -49,18 +74,15 @@ public final class TestPageSettingsBlock extends TestCase {
 		HSSFSheet sheet = wb.getSheetAt(0);
 		HSSFPrintSetup ps = sheet.getPrintSetup();
 
-		try {
-			ps.getCopies();
-		} catch (NullPointerException e) {
-			e.printStackTrace();
-			throw new AssertionFailedError("Identified bug 46548: PageSettingBlock missing PrintSetupRecord record");
-		}
+		// bug 46548: PageSettingBlock missing PrintSetupRecord record
+		assertEquals(1, ps.getCopies());
 	}
 
 	/**
 	 * Bug 46840 occurred because POI failed to recognise HEADERFOOTER as part of the
 	 * {@link PageSettingsBlock}.
 	 */
+	@Test
 	public void testHeaderFooter_bug46840() {
 
 		int rowIx = 5;
@@ -86,25 +108,18 @@ public final class TestPageSettingsBlock extends TestCase {
 				EOFRecord.instance,
 		};
 		RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
-		InternalSheet sheet;
-		try {
-			sheet = InternalSheet.createSheet(rs);
-		} catch (RuntimeException e) {
-			if (e.getMessage().equals("two Page Settings Blocks found in the same sheet")) {
-				throw new AssertionFailedError("Identified bug 46480");
-			}
-			throw e;
-		}
+		// bug 46480- two Page Settings Blocks found in the same sheet
+		InternalSheet sheet = InternalSheet.createSheet(rs);
 
-		RecordCollector rv = new RecordCollector();
-		sheet.visitContainedRecords(rv, rowIx);
-		Record[] outRecs = rv.getRecords();
-		assertEquals(13, outRecs.length);
+		List<Record> outRecs = new ArrayList<>();
+		sheet.visitContainedRecords(outRecs::add, rowIx);
+		assertEquals(13, outRecs.size());
 	}
 
 	/**
 	 * Bug 46953 occurred because POI didn't handle late PSB records properly.
 	 */
+	@Test
 	public void testLateHeaderFooter_bug46953() {
 
 		int rowIx = 5;
@@ -126,22 +141,16 @@ public final class TestPageSettingsBlock extends TestCase {
 		RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
 		InternalSheet sheet = InternalSheet.createSheet(rs);
 
-		RecordCollector rv = new RecordCollector();
-		sheet.visitContainedRecords(rv, 0);
-		Record[] outRecs = rv.getRecords();
-		if (outRecs[4] == EOFRecord.instance) {
-			throw new AssertionFailedError("Identified bug 46953 - EOF incorrectly appended to PSB");
-		}
-		assertEquals(recs.length+1, outRecs.length); // +1 for index record
+		List<Record> outRecs = new ArrayList<>();
+		sheet.visitContainedRecords(outRecs::add, 0);
+		// Identified bug 46953 - EOF incorrectly appended to PSB
+		assertNotEquals(EOFRecord.instance, outRecs.get(4));
+		assertEquals(recs.length+1, outRecs.size()); // +1 for index record
 
-		assertEquals(BOFRecord.class, outRecs[0].getClass());
-		assertEquals(IndexRecord.class, outRecs[1].getClass());
-		assertEquals(HeaderRecord.class, outRecs[2].getClass());
-		assertEquals(FooterRecord.class, outRecs[3].getClass());
-		assertEquals(HeaderFooterRecord.class, outRecs[4].getClass());
-		assertEquals(DimensionsRecord.class, outRecs[5].getClass());
-		assertEquals(WindowTwoRecord.class, outRecs[6].getClass());
-		assertEquals(EOFRecord.instance, outRecs[7]);
+		Class<?>[] act = outRecs.stream().map(Object::getClass).toArray(Class[]::new);
+		Class<?>[] exp = { BOFRecord.class, IndexRecord.class, HeaderRecord.class, FooterRecord.class,
+				HeaderFooterRecord.class, DimensionsRecord.class, WindowTwoRecord.class, EOFRecord.class };
+		assertArrayEquals(exp, act);
 	}
 	/**
 	 * Bug 47199 was due to the margin records being located well after the initial PSB records.
@@ -155,53 +164,41 @@ public final class TestPageSettingsBlock extends TestCase {
 	 * <li>BottomMargin(0x0029)</li>
 	 * </ul>
 	 */
+	@Test
 	public void testLateMargins_bug47199() {
+
+		BottomMarginRecord bottomMargin = new BottomMarginRecord();
+		bottomMargin.setMargin(0.787F);
 
 		Record[] recs = {
 				BOFRecord.createSheetBOF(),
 				new HeaderRecord("&LSales Figures"),
 				new FooterRecord("&LJanuary"),
 				new DimensionsRecord(),
-				createBottomMargin(0.787F),
+				bottomMargin,
 				new WindowTwoRecord(),
 				EOFRecord.instance,
 		};
 		RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
 
-		InternalSheet sheet;
-		try {
-			sheet = InternalSheet.createSheet(rs);
-		} catch (RuntimeException e) {
-			if (e.getMessage().equals("two Page Settings Blocks found in the same sheet")) {
-				throw new AssertionFailedError("Identified bug 47199a - failed to process late margings records");
-			}
-			throw e;
-		}
+		// bug 47199a - failed to process late margins records
+		InternalSheet sheet = InternalSheet.createSheet(rs);
 
-		RecordCollector rv = new RecordCollector();
-		sheet.visitContainedRecords(rv, 0);
-		Record[] outRecs = rv.getRecords();
-		assertEquals(recs.length+1, outRecs.length); // +1 for index record
+		List<Record> outRecs = new ArrayList<>();
+		sheet.visitContainedRecords(outRecs::add, 0);
+		assertEquals(recs.length+1, outRecs.size()); // +1 for index record
 
-		assertEquals(BOFRecord.class, outRecs[0].getClass());
-		assertEquals(IndexRecord.class, outRecs[1].getClass());
-		assertEquals(HeaderRecord.class, outRecs[2].getClass());
-		assertEquals(FooterRecord.class, outRecs[3].getClass());
-		assertEquals(DimensionsRecord.class, outRecs[5].getClass());
-		assertEquals(WindowTwoRecord.class, outRecs[6].getClass());
-		assertEquals(EOFRecord.instance, outRecs[7]);
-	}
-
-	private Record createBottomMargin(float value) {
-		BottomMarginRecord result = new BottomMarginRecord();
-		result.setMargin(value);
-		return result;
+		Class<?>[] act = outRecs.stream().map(Object::getClass).toArray(Class[]::new);
+		Class<?>[] exp = { BOFRecord.class, IndexRecord.class, HeaderRecord.class, FooterRecord.class,
+				BottomMarginRecord.class, DimensionsRecord.class, WindowTwoRecord.class, EOFRecord.class };
+		assertArrayEquals(exp, act);
 	}
 
 	/**
 	 * The PageSettingsBlock should not allow multiple copies of the same record.  This extra assertion
 	 * was added while fixing bug 47199.  All existing POI test samples comply with this requirement.
 	 */
+	@Test
 	public void testDuplicatePSBRecord_bug47199() {
 		// Hypothetical setup of PSB records which should cause POI to crash
 		Record[] recs = {
@@ -210,18 +207,9 @@ public final class TestPageSettingsBlock extends TestCase {
 		};
 		RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
 
-		try {
-			new PageSettingsBlock(rs);
-			throw new AssertionFailedError("Identified bug 47199b - duplicate PSB records should not be allowed");
-		} catch (org.apache.poi.util.RecordFormatException e) {
-			if (!e.getMessage().equals("Duplicate PageSettingsBlock record (sid=0x14)")) {
-				throw new AssertionFailedError("Expected RecordFormatException due to duplicate PSB record");
-			}
-		}
-	}
-
-	private static UnknownRecord ur(int sid, String hexData) {
-		return new UnknownRecord(sid, HexRead.readFromString(hexData));
+		thrown.expectMessage("Duplicate PageSettingsBlock record (sid=0x14)");
+		thrown.expect(RecordFormatException.class);
+		new PageSettingsBlock(rs);
 	}
 
 	/**
@@ -229,6 +217,7 @@ public final class TestPageSettingsBlock extends TestCase {
 	 * This is not critical functionality but it has been decided to keep POI consistent with
 	 * Excel in this regard.
 	 */
+	@Test
 	public void testMissingHeaderFooter() {
 		// initialise PSB with some records, but not the header / footer
 		Record[] recs = {
@@ -239,23 +228,19 @@ public final class TestPageSettingsBlock extends TestCase {
 		PageSettingsBlock psb = new PageSettingsBlock(rs);
 
 		// serialize the PSB to see what records come out
-		RecordCollector rc = new RecordCollector();
-		psb.visitContainedRecords(rc);
-		Record[] outRecs = rc.getRecords();
+		List<Record> outRecs = new ArrayList<>();
+		psb.visitContainedRecords(outRecs::add);
 
-		if (outRecs.length == 2) {
-			throw new AssertionFailedError("PageSettingsBlock didn't add missing header/footer records");
-		}
-		assertEquals(4, outRecs.length);
-		assertEquals(HeaderRecord.class, outRecs[0].getClass());
-		assertEquals(FooterRecord.class, outRecs[1].getClass());
-		assertEquals(HCenterRecord.class, outRecs[2].getClass());
-		assertEquals(VCenterRecord.class, outRecs[3].getClass());
+		assertNotEquals("PageSettingsBlock didn't add missing header/footer records", 2, outRecs.size());
+
+		Class<?>[] act = outRecs.stream().map(Object::getClass).toArray(Class[]::new);
+		Class<?>[] exp = { HeaderRecord.class, FooterRecord.class, HCenterRecord.class, VCenterRecord.class};
+		assertArrayEquals(exp, act);
 
 		// make sure the added header / footer records are empty
-		HeaderRecord hr = (HeaderRecord) outRecs[0];
+		HeaderRecord hr = (HeaderRecord) outRecs.get(0);
 		assertEquals("", hr.getText());
-		FooterRecord fr = (FooterRecord) outRecs[1];
+		FooterRecord fr = (FooterRecord) outRecs.get(1);
 		assertEquals("", fr.getText());
 	}
 
@@ -268,9 +253,10 @@ public final class TestPageSettingsBlock extends TestCase {
 	 *
 	 * As of June 2009, PLS is still uninterpreted by POI
 	 */
+	@Test
 	public void testDuplicatePLS_bug47415() {
-		Record plsA = ur(UnknownRecord.PLS_004D, "BA AD F0 0D");
-		Record plsB = ur(UnknownRecord.PLS_004D, "DE AD BE EF");
+		Record plsA = new UnknownRecord(UnknownRecord.PLS_004D, HexRead.readFromString("BA AD F0 0D"));
+		Record plsB = new UnknownRecord(UnknownRecord.PLS_004D, HexRead.readFromString("DE AD BE EF"));
 		Record contB1 = new ContinueRecord(HexRead.readFromString("FE ED"));
 		Record contB2 = new ContinueRecord(HexRead.readFromString("FA CE"));
 		Record[] recs = {
@@ -282,25 +268,18 @@ public final class TestPageSettingsBlock extends TestCase {
 				plsB, contB1, contB2, // make sure continuing PLS is still OK
 		};
 		RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
-		PageSettingsBlock psb;
-		try {
-			psb = new PageSettingsBlock(rs);
-		} catch (org.apache.poi.util.RecordFormatException e) {
-			if ("Duplicate PageSettingsBlock record (sid=0x4d)".equals(e.getMessage())) {
-				throw new AssertionFailedError("Identified bug 47415");
-			}
-			throw e;
-		}
+		// bug 47415 - Duplicate PageSettingsBlock record (sid=0x4d)
+		PageSettingsBlock psb = new PageSettingsBlock(rs);
 
 		// serialize the PSB to see what records come out
-		RecordCollector rc = new RecordCollector();
-		psb.visitContainedRecords(rc);
-		Record[] outRecs = rc.getRecords();
+		List<Record> outRecs = new ArrayList<>();
+		psb.visitContainedRecords(outRecs::add);
 
 		// records were assembled in standard order, so this simple check is OK
-		assertArrayEquals(recs, outRecs);
+		assertArrayEquals(recs, outRecs.toArray(new Record[0]));
 	}
 
+	@Test
     public void testDuplicateHeaderFooter_bug48026() {
 
         Record[] recs = {
@@ -327,21 +306,13 @@ public final class TestPageSettingsBlock extends TestCase {
                 EOFRecord.instance,
         };
         RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
-        InternalSheet sheet;
-        try {
-            sheet = InternalSheet.createSheet(rs);
-        } catch (RuntimeException e) {
-            if (e.getMessage().equals("Duplicate PageSettingsBlock record (sid=0x89c)")) {
-                throw new AssertionFailedError("Identified bug 48026");
-            }
-            throw e;
-        }
+        // bug 48026 - Duplicate PageSettingsBlock record (sid=0x89c)
+        InternalSheet sheet = InternalSheet.createSheet(rs);
 
-        RecordCollector rv = new RecordCollector();
-        sheet.visitContainedRecords(rv, 0);
-        Record[] outRecs = rv.getRecords();
+        List<Record> outRecs = new ArrayList<>();
+        sheet.visitContainedRecords(outRecs::add, 0);
 
-        assertEquals(recs.length, outRecs.length);
+        assertEquals(recs.length, outRecs.size());
         //expected order of records:
         Record[] expectedRecs = {
                 recs[0],  //BOFRecord
@@ -362,9 +333,12 @@ public final class TestPageSettingsBlock extends TestCase {
 
                 recs[11],  //EOFRecord
         };
-        for(int i=0; i < expectedRecs.length; i++){
-            assertEquals("Record mismatch at index " + i,  expectedRecs[i].getClass(), outRecs[i].getClass());
-        }
+
+        assertArrayEquals(
+			Stream.of(expectedRecs).map(Object::getClass).toArray(Class[]::new),
+			outRecs.stream().map(Object::getClass).toArray(Class[]::new)
+		);
+
         HeaderFooterRecord hd1 = (HeaderFooterRecord)expectedRecs[4];
         //GUID is zero
         assertArrayEquals(new byte[16], hd1.getGuid());
@@ -377,6 +351,7 @@ public final class TestPageSettingsBlock extends TestCase {
         assertArrayEquals(svb.getGuid(), hd2.getGuid());
     }
 
+	@Test
     public void testDuplicateHeaderFooterInside_bug48026() {
 
         Record[] recs = {
@@ -404,21 +379,13 @@ public final class TestPageSettingsBlock extends TestCase {
                 EOFRecord.instance,
         };
         RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
-        InternalSheet sheet;
-        try {
-            sheet = InternalSheet.createSheet(rs);
-        } catch (RuntimeException e) {
-            if (e.getMessage().equals("Duplicate PageSettingsBlock record (sid=0x89c)")) {
-                throw new AssertionFailedError("Identified bug 48026");
-            }
-            throw e;
-        }
+        // Bug 48026 : Duplicate PageSettingsBlock record (sid=0x89c)
+        InternalSheet sheet = InternalSheet.createSheet(rs);
 
-        RecordCollector rv = new RecordCollector();
-        sheet.visitContainedRecords(rv, 0);
-        Record[] outRecs = rv.getRecords();
+		List<Record> outRecs = new ArrayList<>();
+        sheet.visitContainedRecords(outRecs::add, 0);
 
-        assertEquals(recs.length+1, outRecs.length);
+        assertEquals(recs.length+1, outRecs.size());
         //expected order of records:
         Record[] expectedRecs = {
                 recs[0],  //BOFRecord
@@ -441,9 +408,12 @@ public final class TestPageSettingsBlock extends TestCase {
 
                 recs[11],  //EOFRecord
         };
-        for(int i=0; i < expectedRecs.length; i++){
-            assertEquals("Record mismatch at index " + i,  expectedRecs[i].getClass(), outRecs[i].getClass());
-        }
+
+		assertArrayEquals(
+			Stream.of(expectedRecs).map(Object::getClass).toArray(Class[]::new),
+			outRecs.stream().map(Object::getClass).toArray(Class[]::new)
+		);
+
         HeaderFooterRecord hd1 = (HeaderFooterRecord)expectedRecs[10];
         //GUID is zero
         assertArrayEquals(new byte[16], hd1.getGuid());

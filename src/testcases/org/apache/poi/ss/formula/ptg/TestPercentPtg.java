@@ -17,27 +17,32 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.junit.Test;
 
 /**
  * Tests for {@link PercentPtg}.
- *
- * @author Daniel Noll (daniel at nuix dot com dot au)
  */
 public final class TestPercentPtg extends AbstractPtgTestCase {
     /**
      * Tests reading a file containing this ptg.
      */
-    public void testReading() {
-        HSSFWorkbook workbook = loadWorkbook("PercentPtg.xls");
-        HSSFSheet sheet = workbook.getSheetAt(0);
+    @Test
+    public void testReading() throws IOException {
+        try (HSSFWorkbook workbook = loadWorkbook("PercentPtg.xls")) {
+            HSSFSheet sheet = workbook.getSheetAt(0);
 
-        assertEquals("Wrong numeric value for original number", 53000.0,
-                     sheet.getRow(0).getCell(0).getNumericCellValue(), 0.0);
-        assertEquals("Wrong numeric value for percent formula result", 5300.0,
-                     sheet.getRow(1).getCell(0).getNumericCellValue(), 0.0);
-        assertEquals("Wrong formula string for percent formula", "A1*10%",
-                     sheet.getRow(1).getCell(0).getCellFormula());
+            assertEquals("Wrong numeric value for original number", 53000.0,
+                         sheet.getRow(0).getCell(0).getNumericCellValue(), 0.0);
+            assertEquals("Wrong numeric value for percent formula result", 5300.0,
+                         sheet.getRow(1).getCell(0).getNumericCellValue(), 0.0);
+            assertEquals("Wrong formula string for percent formula", "A1*10%",
+                         sheet.getRow(1).getCell(0).getCellFormula());
+        }
     }
 }

@@ -18,23 +18,23 @@
 package org.apache.poi.hssf.record.chart;
 
 
-import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the SeriesListRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
-
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestSeriesListRecord extends TestCase {
+public final class TestSeriesListRecord {
     private static final byte[] data = {
         (byte)0x02,(byte)0x00,(byte)0x01,(byte)0x20,(byte)0xff,(byte)0xf0
     };
 
+    @Test
     public void testLoad() {
 
         SeriesListRecord record = new SeriesListRecord(TestcaseRecordInputStream.create(0x1016, data));
@@ -45,12 +45,11 @@ public final class TestSeriesListRecord extends TestCase {
         assertEquals( 4 + 6, record.getRecordSize() );
     }
 
+    @Test
     public void testStore() {
         SeriesListRecord record = new SeriesListRecord(new short[] { (short)0x2001, (short)0xf0ff } );
 
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        confirmRecordEncoding(SeriesListRecord.sid, data, recordBytes);
     }
 }

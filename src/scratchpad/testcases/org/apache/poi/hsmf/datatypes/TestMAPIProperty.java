@@ -17,42 +17,50 @@
 
 package org.apache.poi.hsmf.datatypes;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Collection;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Checks various MAPIProperty related logic
  */
-public final class TestMAPIProperty extends TestCase {
-   public void testGet() throws Exception {
+public final class TestMAPIProperty {
+    @Test
+   public void testGet() {
       assertEquals(MAPIProperty.DISPLAY_NAME, MAPIProperty.get(MAPIProperty.DISPLAY_NAME.id));
       assertEquals(MAPIProperty.DISPLAY_BCC, MAPIProperty.get(MAPIProperty.DISPLAY_BCC.id));
       assertNotSame(MAPIProperty.DISPLAY_BCC, MAPIProperty.get(MAPIProperty.DISPLAY_CC.id));
    }
-   
-   public void testGetAll() throws Exception {
+
+    @Test
+   public void testGetAll() {
       Collection<MAPIProperty> all = MAPIProperty.getAll();
        assertTrue(all.contains(MAPIProperty.DISPLAY_NAME));
        assertTrue(all.contains(MAPIProperty.DISPLAY_CC));
-      
+
       // Won't contain custom
        assertFalse(all.contains(MAPIProperty.createCustom(1, Types.UNSPECIFIED, "")));
-      
+
       // Won't contain unknown
        assertFalse(all.contains(MAPIProperty.UNKNOWN));
    }
-   
-   public void testCustom() throws Exception {
+
+    @Test
+   public void testCustom() {
       MAPIProperty c1 = MAPIProperty.createCustom(1, Types.UNSPECIFIED, "");
       MAPIProperty c2a = MAPIProperty.createCustom(2, Types.UNSPECIFIED, "2");
       MAPIProperty c2b = MAPIProperty.createCustom(2, Types.UNSPECIFIED, "2");
-      
+
       // New object each time
       assertNotSame(c1, c2a);
       assertNotSame(c1, c2b);
       assertNotSame(c2a, c2b);
-      
+
       // Won't be in all list
       Collection<MAPIProperty> all = MAPIProperty.getAll();
        assertFalse(all.contains(c1));

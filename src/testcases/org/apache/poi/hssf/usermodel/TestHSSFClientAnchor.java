@@ -17,46 +17,48 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+
 import org.apache.poi.ddf.EscherClientAnchorRecord;
 import org.apache.poi.hssf.model.ConvertAnchor;
+import org.junit.Test;
 
 /**
  * Various tests for HSSFClientAnchor.
- *
- * @author Glen Stampoultzis (glens at apache.org)
- * @author Yegor Kozlov (yegor at apache.org)
  */
-public final class TestHSSFClientAnchor extends TestCase {
-    public void testGetAnchorHeightInPoints() {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet("test");
-        HSSFClientAnchor a = new HSSFClientAnchor(0,0,1023,255,(short)0,0,(short)0,0);
-        float p = a.getAnchorHeightInPoints(sheet);
-        assertEquals(12.7,p,0.001);
+public final class TestHSSFClientAnchor {
+    @Test
+    public void testGetAnchorHeightInPoints() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet("test");
+            HSSFClientAnchor a = new HSSFClientAnchor(0, 0, 1023, 255, (short) 0, 0, (short) 0, 0);
+            float p = a.getAnchorHeightInPoints(sheet);
+            assertEquals(12.7, p, 0.001);
 
-        sheet.createRow(0).setHeightInPoints(14);
-        a = new HSSFClientAnchor(0,0,1023,255,(short)0,0,(short)0,0);
-        p = a.getAnchorHeightInPoints(sheet);
-        assertEquals(13.945,p,0.001);
+            sheet.createRow(0).setHeightInPoints(14);
+            a = new HSSFClientAnchor(0, 0, 1023, 255, (short) 0, 0, (short) 0, 0);
+            p = a.getAnchorHeightInPoints(sheet);
+            assertEquals(13.945, p, 0.001);
 
-        a = new HSSFClientAnchor(0,0,1023,127,(short)0,0,(short)0,0);
-        p = a.getAnchorHeightInPoints(sheet);
-        assertEquals(6.945,p,0.001);
+            a = new HSSFClientAnchor(0, 0, 1023, 127, (short) 0, 0, (short) 0, 0);
+            p = a.getAnchorHeightInPoints(sheet);
+            assertEquals(6.945, p, 0.001);
 
-        a = new HSSFClientAnchor(0,126,1023,127,(short)0,0,(short)0,0);
-        p = a.getAnchorHeightInPoints(sheet);
-        assertEquals(0.054,p,0.001);
+            a = new HSSFClientAnchor(0, 126, 1023, 127, (short) 0, 0, (short) 0, 0);
+            p = a.getAnchorHeightInPoints(sheet);
+            assertEquals(0.054, p, 0.001);
 
-        a = new HSSFClientAnchor(0,0,1023,0,(short)0,0,(short)0,1);
-        p = a.getAnchorHeightInPoints(sheet);
-        assertEquals(14.0,p,0.001);
+            a = new HSSFClientAnchor(0, 0, 1023, 0, (short) 0, 0, (short) 0, 1);
+            p = a.getAnchorHeightInPoints(sheet);
+            assertEquals(14.0, p, 0.001);
 
-        sheet.createRow(0).setHeightInPoints(12);
-        a = new HSSFClientAnchor(0,127,1023,127,(short)0,0,(short)0,1);
-        p = a.getAnchorHeightInPoints(sheet);
-        assertEquals(12.372,p,0.001);
-
+            sheet.createRow(0).setHeightInPoints(12);
+            a = new HSSFClientAnchor(0, 127, 1023, 127, (short) 0, 0, (short) 0, 1);
+            p = a.getAnchorHeightInPoints(sheet);
+            assertEquals(12.372, p, 0.001);
+        }
     }
 
     /**
@@ -64,6 +66,7 @@ public final class TestHSSFClientAnchor extends TestCase {
      * check that dx1, dx2, dy1 and dy2 are written "as is".
      * (Bug 42999 reported that dx1 and dx2 are swapped if dx1>dx2. It doesn't make sense for client anchors.)
      */
+    @Test
     public void testConvertAnchor() {
         HSSFClientAnchor[] anchors = {
             new HSSFClientAnchor( 0 , 0 , 0 , 0 ,(short)0, 1,(short)1,3),
@@ -83,26 +86,29 @@ public final class TestHSSFClientAnchor extends TestCase {
         }
     }
 
-    public void testAnchorHeightInPoints(){
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet();
+    @Test
+    public void testAnchorHeightInPoints() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet();
 
-        HSSFClientAnchor[] anchor = {
-            new HSSFClientAnchor( 0 , 0,    0 , 0 ,(short)0, 1,(short)1, 3),
-            new HSSFClientAnchor( 0 , 254 , 0 , 126 ,(short)0, 1,(short)1, 3),
-            new HSSFClientAnchor( 0 , 128 , 0 , 128 ,(short)0, 1,(short)1, 3),
-            new HSSFClientAnchor( 0 , 0 , 0 , 128 ,(short)0, 1,(short)1, 3),
-        };
-        float[] ref = {25.5f, 19.125f, 25.5f, 31.875f};
-        for (int i = 0; i < anchor.length; i++) {
-            float height = anchor[i].getAnchorHeightInPoints(sheet);
-            assertEquals(ref[i], height, 0);
+            HSSFClientAnchor[] anchor = {
+                    new HSSFClientAnchor(0, 0, 0, 0, (short) 0, 1, (short) 1, 3),
+                    new HSSFClientAnchor(0, 254, 0, 126, (short) 0, 1, (short) 1, 3),
+                    new HSSFClientAnchor(0, 128, 0, 128, (short) 0, 1, (short) 1, 3),
+                    new HSSFClientAnchor(0, 0, 0, 128, (short) 0, 1, (short) 1, 3),
+            };
+            float[] ref = {25.5f, 19.125f, 25.5f, 31.875f};
+            for (int i = 0; i < anchor.length; i++) {
+                float height = anchor[i].getAnchorHeightInPoints(sheet);
+                assertEquals(ref[i], height, 0);
+            }
         }
     }
 
     /**
      * Check {@link HSSFClientAnchor} constructor does not treat 32768 as -32768.
      */
+    @Test
     public void testCanHaveRowGreaterThan32767() {
         // Maximum permitted row number should be 65535.
         HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 0, 0, (short) 0, 32768, (short) 0, 32768);
@@ -114,6 +120,7 @@ public final class TestHSSFClientAnchor extends TestCase {
     /**
      * Check the maximum is not set at 255*256 instead of 256*256 - 1.
      */
+    @Test
     public void testCanHaveRowUpTo65535() {
         HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 0, 0, (short) 0, 65535, (short) 0, 65535);
 
@@ -121,18 +128,15 @@ public final class TestHSSFClientAnchor extends TestCase {
         assertEquals(65535, anchor.getRow2());
     }
 
+    @Test(expected = IllegalArgumentException.class)
     public void testCannotHaveRowGreaterThan65535() {
-        try {
-            new HSSFClientAnchor(0, 0, 0, 0, (short) 0, 65536, (short) 0, 65536);
-            fail("Expected IllegalArgumentException to be thrown");
-        } catch (IllegalArgumentException ex) {
-            // pass
-        }
+        new HSSFClientAnchor(0, 0, 0, 0, (short) 0, 65536, (short) 0, 65536);
     }
 
     /**
      * Check the same maximum value enforced when using {@link HSSFClientAnchor#setRow1}.
      */
+    @Test
     public void testCanSetRowUpTo65535() {
         HSSFClientAnchor anchor = new HSSFClientAnchor();
         anchor.setRow1(65535);
@@ -142,20 +146,13 @@ public final class TestHSSFClientAnchor extends TestCase {
         assertEquals(65535, anchor.getRow2());
     }
 
+    @Test(expected = IllegalArgumentException.class)
     public void testCannotSetRow1GreaterThan65535() {
-        try {
-            new HSSFClientAnchor().setRow1(65536);
-            fail("Expected IllegalArgumentException to be thrown");
-        } catch (IllegalArgumentException ex) {
-            // pass
-        }
+        new HSSFClientAnchor().setRow1(65536);
     }
+
+    @Test(expected = IllegalArgumentException.class)
     public void testCannotSetRow2GreaterThan65535() {
-        try {
-            new HSSFClientAnchor().setRow2(65536);
-            fail("Expected IllegalArgumentException to be thrown");
-        } catch (IllegalArgumentException ex) {
-            // pass
-        }
+        new HSSFClientAnchor().setRow2(65536);
     }
 }

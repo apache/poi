@@ -20,7 +20,6 @@ package org.apache.poi.xssf.usermodel;
 import org.apache.poi.ss.formula.eval.forked.TestForkedEvaluator;
 import org.apache.poi.xssf.usermodel.extensions.TestXSSFBorder;
 import org.apache.poi.xssf.usermodel.extensions.TestXSSFCellFill;
-import org.apache.poi.xssf.usermodel.extensions.TestXSSFSheetComments;
 import org.apache.poi.xssf.usermodel.helpers.TestColumnHelper;
 import org.apache.poi.xssf.usermodel.helpers.TestHeaderFooterHelper;
 import org.junit.runner.RunWith;
@@ -56,7 +55,6 @@ import org.junit.runners.Suite;
     TestXSSFWorkbook.class,
     TestXSSFBorder.class,
     TestXSSFCellFill.class,
-    TestXSSFSheetComments.class,
     TestColumnHelper.class,
     TestHeaderFooterHelper.class,
     //TestXSSFPivotTable.class, //converted to junit4

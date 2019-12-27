@@ -17,12 +17,14 @@
 
 package org.apache.poi.xwpf;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 
-import junit.framework.TestCase;
 import org.apache.poi.ooxml.POIXMLProperties.CoreProperties;
 import org.apache.poi.openxml4j.opc.PackageProperties;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.junit.Test;
 
 /**
  * Tests if the {@link CoreProperties#getKeywords()} method. This test has been
@@ -33,10 +35,9 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
  * The author of this has added {@link CoreProperties#getKeywords()} and
  * {@link CoreProperties#setKeywords(String)} and this test is supposed to test
  * them.
- *
- * @author Antoni Mylka
  */
-public final class TestPackageCorePropertiesGetKeywords extends TestCase {
+public final class TestPackageCorePropertiesGetKeywords {
+    @Test
     public void testGetSetKeywords() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("TestPoiXMLDocumentCorePropertiesGetKeywords.docx")) {
             String keywords = doc.getProperties().getCoreProperties().getKeywords();

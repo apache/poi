@@ -43,8 +43,6 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
 import org.junit.runners.Parameterized.Parameters;
 
-import junit.framework.AssertionFailedError;
-
 /**
  * Tests formulas and operators as loaded from a test data spreadsheet.<p>
  * This class does not test implementors of <tt>Function</tt> and <tt>OperationEval</tt> in
@@ -60,11 +58,11 @@ public final class TestFormulasFromSpreadsheet {
     private static Sheet sheet;
     private static HSSFFormulaEvaluator evaluator;
     private static Locale userLocale;
-    
+
     /**
 	 * This class defines constants for navigating around the test data spreadsheet used for these tests.
 	 */
-	private static interface SS {
+	private interface SS {
 
 		/**
 		 * Name of the test spreadsheet (found in the standard test data folder)
@@ -99,6 +97,7 @@ public final class TestFormulasFromSpreadsheet {
 		int NUMBER_OF_ROWS_PER_FUNCTION = 4;
 	}
 
+    @SuppressWarnings("DefaultAnnotationParam")
     @Parameter(value = 0)
     public String targetFunctionName;
     @Parameter(value = 1)
@@ -113,7 +112,7 @@ public final class TestFormulasFromSpreadsheet {
     }
 
     @Parameters(name="{0}")
-    public static Collection<Object[]> data() throws Exception {
+    public static Collection<Object[]> data() {
         // Function "Text" uses custom-formats which are locale specific
         // can't set the locale on a per-testrun execution, as some settings have been
         // already set, when we would try to change the locale by then
@@ -123,24 +122,23 @@ public final class TestFormulasFromSpreadsheet {
         workbook = HSSFTestDataSamples.openSampleWorkbook(SS.FILENAME);
         sheet = workbook.getSheetAt( 0 );
         evaluator = new HSSFFormulaEvaluator(workbook);
-        
+
         List<Object[]> data = new ArrayList<>();
-        
-        processFunctionGroup(data, SS.START_OPERATORS_ROW_INDEX, null);
-        processFunctionGroup(data, SS.START_FUNCTIONS_ROW_INDEX, null);
+
+        processFunctionGroup(data, SS.START_OPERATORS_ROW_INDEX);
+        processFunctionGroup(data, SS.START_FUNCTIONS_ROW_INDEX);
         // example for debugging individual functions/operators:
         // processFunctionGroup(data, SS.START_OPERATORS_ROW_INDEX, "ConcatEval");
         // processFunctionGroup(data, SS.START_FUNCTIONS_ROW_INDEX, "Text");
 
         return data;
     }
-    
+
     /**
      * @param startRowIndex row index in the spreadsheet where the first function/operator is found
-     * @param testFocusFunctionName name of a single function/operator to test alone.
      * Typically pass <code>null</code> to test all functions
      */
-    private static void processFunctionGroup(List<Object[]> data, int startRowIndex, String testFocusFunctionName) {
+    private static void processFunctionGroup(List<Object[]> data, int startRowIndex) {
         for (int rowIndex = startRowIndex; true; rowIndex += SS.NUMBER_OF_ROWS_PER_FUNCTION) {
             Row r = sheet.getRow(rowIndex);
             String targetFunctionName = getTargetFunctionName(r);
@@ -151,16 +149,14 @@ public final class TestFormulasFromSpreadsheet {
                 // found end of functions list
                 break;
             }
-            if(testFocusFunctionName == null || targetFunctionName.equalsIgnoreCase(testFocusFunctionName)) {
 
-                // expected results are on the row below
-                Row expectedValuesRow = sheet.getRow(rowIndex + 1);
-                int missingRowNum = rowIndex + 2; //+1 for 1-based, +1 for next row
-                assertNotNull("Missing expected values row for function '"
-                        + targetFunctionName + " (row " + missingRowNum + ")", expectedValuesRow);
+            // expected results are on the row below
+            Row expectedValuesRow = sheet.getRow(rowIndex + 1);
+            int missingRowNum = rowIndex + 2; //+1 for 1-based, +1 for next row
+            assertNotNull("Missing expected values row for function '"
+                    + targetFunctionName + " (row " + missingRowNum + ")", expectedValuesRow);
 
-                data.add(new Object[]{targetFunctionName, rowIndex, rowIndex + 1});
-            }
+            data.add(new Object[]{targetFunctionName, rowIndex, rowIndex + 1});
         }
     }
 
@@ -235,7 +231,7 @@ public final class TestFormulasFromSpreadsheet {
 			return cell.getRichStringCellValue().getString();
 		}
 
-		throw new AssertionFailedError("Bad cell type for 'function name' column: ("
-				+ cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
+		fail("Bad cell type for 'function name' column: (" + cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
+		return null;
 	}
 }

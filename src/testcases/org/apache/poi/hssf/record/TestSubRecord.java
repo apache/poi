@@ -20,21 +20,18 @@ package org.apache.poi.hssf.record;
 
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.RecordFormatException;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests Subrecord components of an OBJ record.  Test data taken directly
  * from a real Excel file.
- *
- * @author Michael Zalewski (zalewski@optonline.net)
  */
-public final class TestSubRecord extends TestCase {
+public final class TestSubRecord {
 	/*
 	   The following is a dump of the OBJ record corresponding to an auto-filter
 	   drop-down list. The 3rd subrecord beginning at offset 0x002e (type=0x0013)
@@ -51,7 +48,7 @@ public final class TestSubRecord extends TestCase {
 	                  00 00 00 00                               l.....            Type=0x00 Len=0x0000 ftEnd
 	*/
 
-	private static final byte[] dataAutoFilter 
+	private static final byte[] dataAutoFilter
 		= HexRead.readFromString(""
 			+ "5D 00 46 00 " // ObjRecord.sid, size=70
 			// ftCmo
@@ -71,20 +68,20 @@ public final class TestSubRecord extends TestCase {
 	/**
 	 * Make sure that ftLbsData (which has abnormal size info) is parsed correctly.
 	 * If the size field is interpreted incorrectly, the resulting ObjRecord becomes way too big.
-	 * At the time of fixing (Oct-2008 svn r707447) {@link RecordInputStream} allowed  buffer 
+	 * At the time of fixing (Oct-2008 svn r707447) {@link RecordInputStream} allowed  buffer
 	 * read overruns, so the bug was mostly silent.
 	 */
+	@Test
 	public void testReadAll_bug45778() {
 		RecordInputStream in = TestcaseRecordInputStream.create(dataAutoFilter);
 		ObjRecord or = new ObjRecord(in);
 		byte[] data2 = or.serialize();
-		if (data2.length == 8228) {
-			throw new AssertionFailedError("Identified bug 45778");
-		}
+		assertNotEquals("Identified bug 45778", 8228, data2.length);
 		assertEquals(74, data2.length);
 		assertArrayEquals(dataAutoFilter, data2);
 	}
-	
+
+	@Test
 	public void testReadManualComboWithFormula() {
 		byte[] data = HexRead.readFromString(""
 			+ "5D 00 66 00 "
@@ -96,35 +93,29 @@ public final class TestSubRecord extends TestCase {
 			+ "00 02 00 02 00 02 06 00 03 00 08 00 00 00 00 00 "
 			+ "08 00 00 00 00 00 00 00 " // TODO sometimes last byte is non-zero
 		);
-		
+
 		RecordInputStream in = TestcaseRecordInputStream.create(data);
 		ObjRecord or = new ObjRecord(in);
 		byte[] data2 = or.serialize();
-		if (data2.length == 8228) {
-			throw new AssertionFailedError("Identified bug 45778");
-		}
+		assertNotEquals("Identified bug 45778", 8228, data2.length);
 		assertEquals("Encoded length", data.length, data2.length);
-		for (int i = 0; i < data.length; i++) {
-			if (data[i] != data2[i]) {
-				throw new AssertionFailedError("Encoded data differs at index " + i);
-			}
-		}
-		assertArrayEquals(data, data2);
+		assertArrayEquals("Encoded data differs", data, data2);
 	}
 
 	/**
-	 * Some versions of POI (e.g. 3.1 - prior to svn r707450 / bug 45778) interpreted the ftLbs 
-	 * subrecord second short (0x1FEE) as a length, and hence read lots of extra padding.  This 
+	 * Some versions of POI (e.g. 3.1 - prior to svn r707450 / bug 45778) interpreted the ftLbs
+	 * subrecord second short (0x1FEE) as a length, and hence read lots of extra padding.  This
 	 * buffer-overrun in {@link RecordInputStream} happened silently due to problems later fixed
-	 * in svn 707778. When the ObjRecord is written, the extra padding is written too, making the 
-	 * record 8224 bytes long instead of 70.  
+	 * in svn 707778. When the ObjRecord is written, the extra padding is written too, making the
+	 * record 8224 bytes long instead of 70.
 	 * (An aside: It seems more than a coincidence that this problem creates a record of exactly
-	 * {@link RecordInputStream#MAX_RECORD_DATA_SIZE} but not enough is understood about 
+	 * {@link RecordInputStream#MAX_RECORD_DATA_SIZE} but not enough is understood about
 	 * subrecords to explain this.)<br>
-	 * 
+	 *
 	 * Excel reads files with this excessive padding OK.  It also truncates the over-sized
 	 * ObjRecord back to the proper size.  POI should do the same.
 	 */
+	@Test
 	public void testWayTooMuchPadding_bug46545() {
 		byte[] data = HexRead.readFromString(""
 			+ "15 00 12 00 14 00 13 00 01 21 00 00 00"
@@ -143,18 +134,11 @@ public final class TestSubRecord extends TestCase {
 		int wrongTotalSize = LBS_START_POS + 4 + WRONG_LBS_SIZE;
 		byte[] wrongData = new byte[wrongTotalSize];
 		System.arraycopy(data, 0, wrongData, 0, data.length);
-		// wrongData has the ObjRecord data as would have been written by v3.1 
-		
+		// wrongData has the ObjRecord data as would have been written by v3.1
+
 		RecordInputStream in = TestcaseRecordInputStream.create(ObjRecord.sid, wrongData);
-		ObjRecord or;
-		try {
-			or = new ObjRecord(in);
-		} catch (RecordFormatException e) {
-			if (e.getMessage().startsWith("Leftover 8154 bytes in subrecord data")) {
-				throw new AssertionFailedError("Identified bug 46545");
-			}
-			throw e;
-		}
+		// bug 46545 - Leftover 8154 bytes in subrecord data
+		ObjRecord or = new ObjRecord(in);
 		// make sure POI properly truncates the ObjRecord data
 		byte[] data2 = or.serialize();
 		TestcaseRecordInputStream.confirmRecordEncoding(ObjRecord.sid, data, data2);

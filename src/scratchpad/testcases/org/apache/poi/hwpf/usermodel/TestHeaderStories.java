@@ -17,15 +17,20 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import junit.framework.TestCase;
+import static org.apache.poi.hwpf.HWPFTestDataSamples.openSampleFile;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 
 import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests for the handling of header stories into headers, footers etc
  */
-public final class TestHeaderStories extends TestCase {
+@SuppressWarnings("deprecation")
+public final class TestHeaderStories {
 	private HWPFDocument none;
 	private HWPFDocument header;
 	private HWPFDocument footer;
@@ -35,19 +40,20 @@ public final class TestHeaderStories extends TestCase {
 	private HWPFDocument unicode;
 	private HWPFDocument withFields;
 
-	@Override
-    protected void setUp() {
+	@Before
+    public void setUp() {
 
-		none = HWPFTestDataSamples.openSampleFile("NoHeadFoot.doc");
-		header = HWPFTestDataSamples.openSampleFile("ThreeColHead.doc");
-		footer = HWPFTestDataSamples.openSampleFile("ThreeColFoot.doc");
-		headerFooter = HWPFTestDataSamples.openSampleFile("SimpleHeadThreeColFoot.doc");
-		oddEven = HWPFTestDataSamples.openSampleFile("PageSpecificHeadFoot.doc");
-		diffFirst = HWPFTestDataSamples.openSampleFile("DiffFirstPageHeadFoot.doc");
-		unicode = HWPFTestDataSamples.openSampleFile("HeaderFooterUnicode.doc");
-		withFields = HWPFTestDataSamples.openSampleFile("HeaderWithMacros.doc");
+		none = openSampleFile("NoHeadFoot.doc");
+		header = openSampleFile("ThreeColHead.doc");
+		footer = openSampleFile("ThreeColFoot.doc");
+		headerFooter = openSampleFile("SimpleHeadThreeColFoot.doc");
+		oddEven = openSampleFile("PageSpecificHeadFoot.doc");
+		diffFirst = openSampleFile("DiffFirstPageHeadFoot.doc");
+		unicode = openSampleFile("HeaderFooterUnicode.doc");
+		withFields = openSampleFile("HeaderWithMacros.doc");
 	}
 
+	@Test
 	public void testNone() {
 		HeaderStories hs = new HeaderStories(none);
 
@@ -55,6 +61,7 @@ public final class TestHeaderStories extends TestCase {
 		assertEquals(0, hs.getRange().text().length());
 	}
 
+	@Test
 	public void testHeader() {
 		HeaderStories hs = new HeaderStories(header);
 
@@ -99,6 +106,7 @@ public final class TestHeaderStories extends TestCase {
 		assertEquals("", hs.getOddFooter());
 	}
 
+	@Test
 	public void testFooter() {
 		HeaderStories hs = new HeaderStories(footer);
 
@@ -111,6 +119,7 @@ public final class TestHeaderStories extends TestCase {
 		assertEquals("Footer Left\tFooter Middle Footer Right\r\r", hs.getOddFooter());
 	}
 
+	@Test
 	public void testHeaderFooter() {
 		HeaderStories hs = new HeaderStories(headerFooter);
 
@@ -123,6 +132,7 @@ public final class TestHeaderStories extends TestCase {
 		assertEquals("Footer Left\tFooter Middle Footer Right\r\r", hs.getOddFooter());
 	}
 
+	@Test
 	public void testOddEven() {
 		HeaderStories hs = new HeaderStories(oddEven);
 
@@ -145,6 +155,7 @@ public final class TestHeaderStories extends TestCase {
 		assertEquals("Footer Left\tFooter Middle Footer Right\r\r", hs.getFooter(3));
 	}
 
+	@Test
 	public void testFirst() {
 		HeaderStories hs = new HeaderStories(diffFirst);
 
@@ -162,6 +173,7 @@ public final class TestHeaderStories extends TestCase {
 		assertEquals("Footer Left\tFooter Middle Footer Right\r\r", hs.getFooter(3));
 	}
 
+	@Test
 	public void testUnicode() {
 		HeaderStories hs = new HeaderStories(unicode);
 
@@ -175,6 +187,7 @@ public final class TestHeaderStories extends TestCase {
 		assertEquals("The footer, with Moli\u00e8re, has Unicode in it.\r\r", hs.getOddFooter());
 	}
 
+	@Test
 	public void testWithFields() {
 		HeaderStories hs = new HeaderStories(withFields);
 		assertFalse(hs.areFieldsStripped());

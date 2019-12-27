@@ -17,6 +17,10 @@
 
 package org.apache.poi.poifs.property;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
@@ -24,16 +28,14 @@ import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.util.LocaleUtil;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Class to test DocumentProperty functionality
- *
- * @author Marc Johnson
  */
-public final class TestDocumentProperty extends TestCase {
+public final class TestDocumentProperty {
 
+    @Test
     public void testConstructor() throws IOException {
         // test with short name, small file
         verifyProperty("foo", 1234);
@@ -48,6 +50,7 @@ public final class TestDocumentProperty extends TestCase {
         verifyProperty("A.really.long.long.long.name123", 4096);
     }
 
+    @Test
     public void testReadingConstructor() throws IOException {
         String[] hexData = {
             "52 00 6F 00 6F 00 74 00 20 00 45 00 6E 00 74 00 72 00 79 00 00 00 00 00 00 00 00 00 00 00 00 00",

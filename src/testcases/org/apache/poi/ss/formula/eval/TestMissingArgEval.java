@@ -17,58 +17,56 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import java.util.EmptyStackException;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.junit.Test;
 
 /**
  * Tests for {@link MissingArgEval}
- *
- * @author Josh Micich
  */
-public final class TestMissingArgEval extends TestCase {
-	
-	public void testEvaluateMissingArgs() {
-		HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-		HSSFSheet sheet = wb.createSheet("Sheet1");
-		HSSFCell cell = sheet.createRow(0).createCell(0);
-		
-		cell.setCellFormula("if(true,)"); 
-		fe.clearAllCachedResultValues();
-		CellValue cv;
-		try {
-			cv = fe.evaluate(cell);
-		} catch (EmptyStackException e) {
-			throw new AssertionFailedError("Missing args evaluation not implemented (bug 43354");
-		}
-		// MissingArg -> BlankEval -> zero (as formula result)
-		assertEquals(0.0, cv.getNumberValue(), 0.0);
-		
-		// MissingArg -> BlankEval -> empty string (in concatenation)
-		cell.setCellFormula("\"abc\"&if(true,)"); 
-		fe.clearAllCachedResultValues();
-		assertEquals("abc", fe.evaluate(cell).getStringValue());
-	}
-	
-	public void testCountFuncs() {
-		HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-		HSSFSheet sheet = wb.createSheet("Sheet1");
-		HSSFCell cell = sheet.createRow(0).createCell(0);
-		
-		cell.setCellFormula("COUNT(C5,,,,)"); // 4 missing args, C5 is blank 
-		assertEquals(4.0, fe.evaluate(cell).getNumberValue(), 0.0);
+public final class TestMissingArgEval {
 
-		cell.setCellFormula("COUNTA(C5,,)"); // 2 missing args, C5 is blank 
-		fe.clearAllCachedResultValues();
-		assertEquals(2.0, fe.evaluate(cell).getNumberValue(), 0.0);
+	@Test
+	public void testEvaluateMissingArgs() throws IOException {
+		try (HSSFWorkbook wb = new HSSFWorkbook()) {
+			HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+			HSSFSheet sheet = wb.createSheet("Sheet1");
+			HSSFCell cell = sheet.createRow(0).createCell(0);
+
+			cell.setCellFormula("if(true,)");
+			fe.clearAllCachedResultValues();
+			// EmptyStackException -> Missing args evaluation not implemented (bug 43354)
+			CellValue cv = fe.evaluate(cell);
+			// MissingArg -> BlankEval -> zero (as formula result)
+			assertEquals(0.0, cv.getNumberValue(), 0.0);
+
+			// MissingArg -> BlankEval -> empty string (in concatenation)
+			cell.setCellFormula("\"abc\"&if(true,)");
+			fe.clearAllCachedResultValues();
+			assertEquals("abc", fe.evaluate(cell).getStringValue());
+		}
+	}
+
+	@Test
+	public void testCountFuncs() throws IOException {
+		try (HSSFWorkbook wb = new HSSFWorkbook()) {
+			HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+			HSSFSheet sheet = wb.createSheet("Sheet1");
+			HSSFCell cell = sheet.createRow(0).createCell(0);
+
+			cell.setCellFormula("COUNT(C5,,,,)"); // 4 missing args, C5 is blank
+			assertEquals(4.0, fe.evaluate(cell).getNumberValue(), 0.0);
+
+			cell.setCellFormula("COUNTA(C5,,)"); // 2 missing args, C5 is blank
+			fe.clearAllCachedResultValues();
+			assertEquals(2.0, fe.evaluate(cell).getNumberValue(), 0.0);
+		}
 	}
 }

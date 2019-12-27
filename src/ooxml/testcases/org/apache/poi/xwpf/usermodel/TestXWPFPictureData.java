@@ -18,21 +18,26 @@
 package org.apache.poi.xwpf.usermodel;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
+import org.junit.Assert;
+import org.junit.Test;
 
-public class TestXWPFPictureData extends TestCase {
+public class TestXWPFPictureData {
 
+    @Test
     public void testRead() throws InvalidFormatException, IOException {
         try (XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("VariousPictures.docx")) {
             List<XWPFPictureData> pictures = sampleDoc.getAllPictures();
@@ -57,6 +62,7 @@ public class TestXWPFPictureData extends TestCase {
         }
     }
 
+    @Test
     public void testPictureInHeader() throws IOException {
         try (XWPFDocument sampleDoc = XWPFTestDataSamples.openSampleDocument("headerPic.docx")) {
             verifyOneHeaderPicture(sampleDoc);
@@ -65,7 +71,8 @@ public class TestXWPFPictureData extends TestCase {
             verifyOneHeaderPicture(readBack);
         }
     }
-    
+
+    @Test
     public void testCreateHeaderPicture() throws Exception {
         try (XWPFDocument doc = new XWPFDocument()) {
 
@@ -104,6 +111,7 @@ public class TestXWPFPictureData extends TestCase {
         assertEquals(1, pictures.size());
     }
 
+    @Test
     public void testNew() throws InvalidFormatException, IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("EmptyDocumentWithHeaderFooter.docx")) {
             byte[] jpegData = XWPFTestDataSamples.getImage("nature1.jpg");
@@ -165,22 +173,19 @@ public class TestXWPFPictureData extends TestCase {
         }
     }
 
+    @Test
     public void testBug51770() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug51170.docx")) {
             XWPFHeaderFooterPolicy policy = doc.getHeaderFooterPolicy();
             XWPFHeader header = policy.getDefaultHeader();
-            for (XWPFParagraph paragraph : header.getParagraphs()) {
-                for (XWPFRun run : paragraph.getRuns()) {
-                    for (XWPFPicture picture : run.getEmbeddedPictures()) {
-                        if (paragraph.getDocument() != null) {
-                            XWPFPictureData data = picture.getPictureData();
-                            if (data != null) {
-                                fail("Should have returned null: " + data.getFileName());
-                            }
-                        }
-                    }
-                }
-            }
+
+            header.getParagraphs().stream()
+                .map(XWPFParagraph::getRuns)
+                .flatMap(List::stream)
+                .map(XWPFRun::getEmbeddedPictures)
+                .flatMap(List::stream)
+                .map(XWPFPicture::getPictureData)
+                .forEach(Assert::assertNull);
         }
     }
 }

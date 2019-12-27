@@ -17,12 +17,14 @@
 
 package org.apache.poi.hssf.eventusermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.eventusermodel.EventWorkbookBuilder.SheetRecordCollectingListener;
@@ -35,41 +37,50 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPtg;
+import org.junit.Before;
+import org.junit.Test;
+
 /**
  * Tests for {@link EventWorkbookBuilder}
  */
-public final class TestEventWorkbookBuilder extends TestCase {
-    private MockHSSFListener mockListen;
+public final class TestEventWorkbookBuilder {
+    private final List<FormulaRecord> fRecs = new ArrayList<>();
     private SheetRecordCollectingListener listener;
 
-    @Override
-    public void setUp() {
+    @Before
+    public void setUp() throws IOException {
         HSSFRequest req = new HSSFRequest();
-        mockListen = new MockHSSFListener();
-        listener = new SheetRecordCollectingListener(mockListen);
+        fRecs.clear();
+        listener = new SheetRecordCollectingListener(this::addFormulaRecord);
         req.addListenerForAllRecords(listener);
 
         HSSFEventFactory factory = new HSSFEventFactory();
-        try {
-            InputStream is = HSSFTestDataSamples.openSampleFileStream("3dFormulas.xls");
-            POIFSFileSystem fs = new POIFSFileSystem(is);
+        try (InputStream is = HSSFTestDataSamples.openSampleFileStream("3dFormulas.xls");
+            POIFSFileSystem fs = new POIFSFileSystem(is)) {
             factory.processWorkbookEvents(req, fs);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
     }
 
+    private void addFormulaRecord(Record r) {
+        if (r instanceof FormulaRecord) {
+            fRecs.add((FormulaRecord)r);
+        }
+    }
+
+    @Test
     public void testBasics() {
         assertNotNull(listener.getSSTRecord());
         assertNotNull(listener.getBoundSheetRecords());
         assertNotNull(listener.getExternSheetRecords());
     }
 
+    @Test
     public void testGetStubWorkbooks() {
         assertNotNull(listener.getStubWorkbook());
         assertNotNull(listener.getStubHSSFWorkbook());
     }
 
+    @Test
     public void testContents() {
         assertEquals(2, listener.getSSTRecord().getNumStrings());
         assertEquals(3, listener.getBoundSheetRecords().length);
@@ -83,12 +94,11 @@ public final class TestEventWorkbookBuilder extends TestCase {
         assertEquals("S2", ref.findSheetFirstNameFromExternSheet(2));
     }
 
+    @Test
     public void testFormulas() {
 
-        FormulaRecord[] fRecs = mockListen.getFormulaRecords();
-
         // Check our formula records
-        assertEquals(6, fRecs.length);
+        assertEquals(6, fRecs.size());
 
         InternalWorkbook stubWB = listener.getStubWorkbook();
         assertNotNull(stubWB);
@@ -110,7 +120,7 @@ public final class TestEventWorkbookBuilder extends TestCase {
 
         // Peer into just one formula, and check that
         //  all the ptgs give back the right things
-        Ptg[] ptgs = fRecs[0].getParsedExpression();
+        Ptg[] ptgs = fRecs.get(0).getParsedExpression();
         assertEquals(1, ptgs.length);
         assertTrue(ptgs[0] instanceof Ref3DPtg);
 
@@ -124,19 +134,19 @@ public final class TestEventWorkbookBuilder extends TestCase {
         FormulaRecord fr;
 
         // Sheet 1 A2 is on same sheet
-        fr = fRecs[0];
+        fr = fRecs.get(0);
         assertEquals(1, fr.getRow());
         assertEquals(0, fr.getColumn());
         assertEquals("Sheet1!A1", HSSFFormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
 
         // Sheet 1 A5 is to another sheet
-        fr = fRecs[3];
+        fr = fRecs.get(3);
         assertEquals(4, fr.getRow());
         assertEquals(0, fr.getColumn());
         assertEquals("'S2'!A1", HSSFFormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
 
         // Sheet 1 A7 is to another sheet, range
-        fr = fRecs[5];
+        fr = fRecs.get(5);
         assertEquals(6, fr.getRow());
         assertEquals(0, fr.getColumn());
         assertEquals("SUM(Sh3!A1:A4)", HSSFFormulaParser.toFormulaString(stubHSSF, fr.getParsedExpression()));
@@ -146,24 +156,5 @@ public final class TestEventWorkbookBuilder extends TestCase {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("3dFormulas.xls");
         assertEquals("Sheet1!A1", wb.getSheetAt(0).getRow(1).getCell(0).getCellFormula());
         assertEquals("SUM(Sh3!A1:A4)", wb.getSheetAt(0).getRow(6).getCell(0).getCellFormula());
-    }
-
-    private static final class MockHSSFListener implements HSSFListener {
-        public MockHSSFListener() {}
-        private final List<Record> _records = new ArrayList<>();
-        private final List<Record> _frecs = new ArrayList<>();
-
-        @Override
-        public void processRecord(Record record) {
-            _records.add(record);
-            if(record instanceof FormulaRecord) {
-                _frecs.add(record);
-            }
-        }
-        public FormulaRecord[] getFormulaRecords() {
-            FormulaRecord[] result = new FormulaRecord[_frecs.size()];
-            _frecs.toArray(result);
-            return result;
-        }
     }
 }

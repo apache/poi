@@ -18,46 +18,40 @@
 package org.apache.poi.hssf.record;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
 /**
  * Tests BoundSheetRecord.
- *
- * @see BoundSheetRecord
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestBoundSheetRecord extends TestCase {
+public final class TestBoundSheetRecord {
 
-
+	@Test
 	public void testRecordLength() {
 		BoundSheetRecord record = new BoundSheetRecord("Sheet1");
 		assertEquals(18, record.getRecordSize());
 	}
 
+	@Test
 	public void testWideRecordLength() {
 		BoundSheetRecord record = new BoundSheetRecord("Sheet\u20ac");
 		assertEquals(24, record.getRecordSize());
 	}
 
+	@Test(expected = IllegalArgumentException.class)
 	public void testName() {
 		BoundSheetRecord record = new BoundSheetRecord("1234567890223456789032345678904");
-
-		try {
-			record.setSheetname("s//*s");
-			fail("Should have thrown IllegalArgumentException, but didnt");
-		} catch (IllegalArgumentException e) {
-			// expected
-		}
+		record.setSheetname("s//*s");
 	}
 
+	@Test
 	public void testDeserializeUnicode() {
 
 		byte[] data = HexRead.readFromString(""
@@ -80,6 +74,7 @@ public final class TestBoundSheetRecord extends TestCase {
 		assertArrayEquals(data, data2);
 	}
 
+	@Test
 	public void testOrdering() {
 		BoundSheetRecord bs1 = new BoundSheetRecord("SheetB");
 		BoundSheetRecord bs2 = new BoundSheetRecord("SheetC");
@@ -100,32 +95,28 @@ public final class TestBoundSheetRecord extends TestCase {
 		assertEquals(bs2, r[2]);
 	}
 
+	@Test
 	public void testValidNames() {
-		confirmValid("Sheet1", true);
-		confirmValid("O'Brien's sales", true);
-		confirmValid(" data # ", true);
-		confirmValid("data $1.00", true);
+		assertTrue(isValid("Sheet1"));
+		assertTrue(isValid("O'Brien's sales"));
+		assertTrue(isValid(" data # "));
+		assertTrue(isValid("data $1.00"));
 
-		confirmValid("data?", false);
-		confirmValid("abc/def", false);
-		confirmValid("data[0]", false);
-		confirmValid("data*", false);
-		confirmValid("abc\\def", false);
-		confirmValid("'data", false);
-		confirmValid("data'", false);
+		assertFalse(isValid("data?"));
+		assertFalse(isValid("abc/def"));
+		assertFalse(isValid("data[0]"));
+		assertFalse(isValid("data*"));
+		assertFalse(isValid("abc\\def"));
+		assertFalse(isValid("'data"));
+		assertFalse(isValid("data'"));
 	}
 
-	private static void confirmValid(String sheetName, boolean expectedResult) {
-
+	private static boolean isValid(String sheetName) {
 		try {
 			new BoundSheetRecord(sheetName);
-			if (!expectedResult) {
-				throw new AssertionFailedError("Expected sheet name '" + sheetName + "' to be invalid");
-			}
+			return true;
 		} catch (IllegalArgumentException e) {
-			if (expectedResult) {
-				throw new AssertionFailedError("Expected sheet name '" + sheetName + "' to be valid");
-			}
+			return false;
 		}
 	}
 }

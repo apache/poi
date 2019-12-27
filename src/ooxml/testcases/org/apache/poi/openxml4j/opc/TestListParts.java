@@ -17,26 +17,29 @@
 
 package org.apache.poi.openxml4j.opc;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.TreeMap;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.util.POILogger;
 import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.junit.Before;
+import org.junit.Test;
 
-public final class TestListParts extends TestCase {
+public final class TestListParts {
     private static final POILogger logger = POILogFactory.getLogger(TestListParts.class);
 
 	private TreeMap<PackagePartName, String> expectedValues;
 
 	private TreeMap<PackagePartName, String> values;
 
-	@Override
-	protected void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		values = new TreeMap<>();
 
 		// Expected values
@@ -81,21 +84,21 @@ public final class TestListParts extends TestCase {
 	/**
 	 * List all parts of a package.
 	 */
+	@Test
 	public void testListParts() throws InvalidFormatException, IOException {
-		InputStream is = OpenXML4JTestDataSamples.openSampleStream("sample.docx");
+		try (InputStream is = OpenXML4JTestDataSamples.openSampleStream("sample.docx");
+			 OPCPackage p = OPCPackage.open(is)) {
 
-		OPCPackage p = OPCPackage.open(is);
-		for (PackagePart part : p.getParts()) {
-			values.put(part.getPartName(), part.getContentType());
-			logger.log(POILogger.DEBUG, part.getPartName());
+			for (PackagePart part : p.getParts()) {
+				values.put(part.getPartName(), part.getContentType());
+				logger.log(POILogger.DEBUG, part.getPartName());
+			}
+
+			// Compare expected values with values return by the package
+			for (PackagePartName partName : expectedValues.keySet()) {
+				assertNotNull(values.get(partName));
+				assertEquals(expectedValues.get(partName), values.get(partName));
+			}
 		}
-
-		// Compare expected values with values return by the package
-		for (PackagePartName partName : expectedValues.keySet()) {
-			assertNotNull(values.get(partName));
-			assertEquals(expectedValues.get(partName), values.get(partName));
-		}
-
-		p.close();
 	}
 }

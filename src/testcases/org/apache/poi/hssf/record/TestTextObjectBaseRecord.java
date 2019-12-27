@@ -18,19 +18,20 @@
 package org.apache.poi.hssf.record;
 
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.util.HexRead;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the TextObjectBaseRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestTextObjectBaseRecord extends TestCase {
+public final class TestTextObjectBaseRecord {
 	/** data for one TXO rec and two continue recs */
     private static final byte[] data = HexRead.readFromString(
         "B6 01 " + // TextObjectRecord.sid
@@ -51,6 +52,7 @@ public final class TestTextObjectBaseRecord extends TestCase {
         "02 00 00 00 00 00 00 00 "
     );
 
+    @Test
     public void testLoad() {
         RecordInputStream in = TestcaseRecordInputStream.create(data);
         TextObjectRecord record = new TextObjectRecord(in);
@@ -63,6 +65,7 @@ public final class TestTextObjectBaseRecord extends TestCase {
         assertEquals(49, record.getRecordSize() );
     }
 
+    @Test
     public void testStore() {
         TextObjectRecord record = new TextObjectRecord();
 
@@ -77,8 +80,6 @@ public final class TestTextObjectBaseRecord extends TestCase {
         record.setStr(str);
 
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i]);
+        assertArrayEquals(data, recordBytes);
     }
 }

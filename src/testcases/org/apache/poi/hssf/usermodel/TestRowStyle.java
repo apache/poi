@@ -14,22 +14,23 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.hssf.usermodel;
 
-import org.apache.poi.hssf.HSSFTestDataSamples;
+import static org.apache.poi.hssf.HSSFTestDataSamples.writeOutAndReadBack;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.IOException;
+
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
-import org.apache.poi.util.IOUtils;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Class to test row styling functionality
- *
- * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  */
-public final class TestRowStyle extends TestCase {
+public final class TestRowStyle {
 
     /**
      * TEST NAME:  Test Write Sheet Font <P>
@@ -39,62 +40,60 @@ public final class TestRowStyle extends TestCase {
      * FAILURE:    HSSF does not create a sheet or excepts.  Filesize does not match the known good.
      *             HSSFSheet last row or first row is incorrect.             <P>
      */
-    public void testWriteSheetFont() {
-        HSSFWorkbook     wb   = new HSSFWorkbook();
-        HSSFSheet        s    = wb.createSheet();
-        HSSFRow          r    = null;
-        HSSFFont         fnt  = wb.createFont();
-        HSSFCellStyle    cs   = wb.createCellStyle();
+    @Test
+    public void testWriteSheetFont() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet s = wb.createSheet();
+            HSSFFont fnt = wb.createFont();
+            HSSFCellStyle cs = wb.createCellStyle();
 
-        fnt.setColor(HSSFFont.COLOR_RED);
-        fnt.setBold(true);
-        cs.setFont(fnt);
-        for (int rownum = 0; rownum < 100; rownum++)
-        {
-            r = s.createRow(rownum);
-            r.setRowStyle(cs);
-            r.createCell(0);
+            fnt.setColor(HSSFFont.COLOR_RED);
+            fnt.setBold(true);
+            cs.setFont(fnt);
+            for (int rownum = 0; rownum < 100; rownum++) {
+                HSSFRow r = s.createRow(rownum);
+                r.setRowStyle(cs);
+                r.createCell(0);
+            }
+            try (HSSFWorkbook wb2 = writeOutAndReadBack(wb)) {
+                SanityChecker sanityChecker = new SanityChecker();
+                sanityChecker.checkHSSFWorkbook(wb2);
+                assertEquals("LAST ROW == 99", 99, s.getLastRowNum());
+                assertEquals("FIRST ROW == 0", 0, s.getFirstRowNum());
+            }
         }
-        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        IOUtils.closeQuietly(wb);
-        		
-        SanityChecker sanityChecker = new SanityChecker();
-        sanityChecker.checkHSSFWorkbook(wb2);
-        assertEquals("LAST ROW == 99", 99, s.getLastRowNum());
-        assertEquals("FIRST ROW == 0", 0, s.getFirstRowNum());
-        IOUtils.closeQuietly(wb2);
     }
 
     /**
      * Tests that is creating a file with a date or an calendar works correctly.
      */
-    public void testDataStyle() {
-        HSSFWorkbook     wb   = new HSSFWorkbook();
-        HSSFSheet        s    = wb.createSheet();
-        HSSFCellStyle    cs   = wb.createCellStyle();
-        HSSFRow row = s.createRow(0);
+    @Test
+    public void testDataStyle() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet s = wb.createSheet();
+            HSSFCellStyle cs = wb.createCellStyle();
+            HSSFRow row = s.createRow(0);
 
-        // with Date:
-        cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
-        row.setRowStyle(cs);
-        row.createCell(0);
+            // with Date:
+            cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
+            row.setRowStyle(cs);
+            row.createCell(0);
 
 
-        // with Calendar:
-        row = s.createRow(1);
-        cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
-        row.setRowStyle(cs);
-        row.createCell(0);
+            // with Calendar:
+            row = s.createRow(1);
+            cs.setDataFormat(HSSFDataFormat.getBuiltinFormat("m/d/yy"));
+            row.setRowStyle(cs);
+            row.createCell(0);
 
-        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        IOUtils.closeQuietly(wb);
-        
-        SanityChecker sanityChecker = new SanityChecker();
-        sanityChecker.checkHSSFWorkbook(wb2);
+            try (HSSFWorkbook wb2 = writeOutAndReadBack(wb)) {
+                SanityChecker sanityChecker = new SanityChecker();
+                sanityChecker.checkHSSFWorkbook(wb2);
 
-        assertEquals("LAST ROW ", 1, s.getLastRowNum());
-        assertEquals("FIRST ROW ", 0, s.getFirstRowNum());
-        IOUtils.closeQuietly(wb2);
+                assertEquals("LAST ROW ", 1, s.getLastRowNum());
+                assertEquals("FIRST ROW ", 0, s.getFirstRowNum());
+            }
+        }
     }
 
     /**
@@ -106,71 +105,71 @@ public final class TestRowStyle extends TestCase {
      * FAILURE:    HSSF does not create a sheet or excepts.  Filesize does not match the known good.
      *             HSSFSheet last row or first row is incorrect.             <P>
      */
-    public void testWriteSheetStyle() {
-        HSSFWorkbook     wb   = new HSSFWorkbook();
-        HSSFSheet        s    = wb.createSheet();
-        HSSFRow          r    = null;
-        HSSFFont         fnt  = wb.createFont();
-        HSSFCellStyle    cs   = wb.createCellStyle();
-        HSSFCellStyle    cs2  = wb.createCellStyle();
+    @Test
+    public void testWriteSheetStyle() throws IOException {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet s = wb.createSheet();
+            HSSFRow r = null;
+            HSSFFont fnt = wb.createFont();
+            HSSFCellStyle cs = wb.createCellStyle();
+            HSSFCellStyle cs2 = wb.createCellStyle();
 
-        cs.setBorderBottom(BorderStyle.THIN);
-        cs.setBorderLeft(BorderStyle.THIN);
-        cs.setBorderRight(BorderStyle.THIN);
-        cs.setBorderTop(BorderStyle.THIN);
-        cs.setFillForegroundColor(( short ) 0xA);
-        cs.setFillPattern(FillPatternType.BRICKS);
-        fnt.setColor(( short ) 0xf);
-        fnt.setItalic(true);
-        cs2.setFillForegroundColor(( short ) 0x0);
-        cs2.setFillPattern(FillPatternType.BRICKS);
-        cs2.setFont(fnt);
-        for (int rownum = 0; rownum < 100; rownum++)
-        {
-            r = s.createRow(rownum);
-            r.setRowStyle(cs);
-            r.createCell(0);
+            cs.setBorderBottom(BorderStyle.THIN);
+            cs.setBorderLeft(BorderStyle.THIN);
+            cs.setBorderRight(BorderStyle.THIN);
+            cs.setBorderTop(BorderStyle.THIN);
+            cs.setFillForegroundColor((short) 0xA);
+            cs.setFillPattern(FillPatternType.BRICKS);
+            fnt.setColor((short) 0xf);
+            fnt.setItalic(true);
+            cs2.setFillForegroundColor((short) 0x0);
+            cs2.setFillPattern(FillPatternType.BRICKS);
+            cs2.setFont(fnt);
+            for (int rownum = 0; rownum < 100; rownum++) {
+                r = s.createRow(rownum);
+                r.setRowStyle(cs);
+                r.createCell(0);
 
-            rownum++;
-            if (rownum >= 100) break; // I feel too lazy to check if this isreqd :-/ 
-            
-            r = s.createRow(rownum);
-            r.setRowStyle(cs2);
-            r.createCell(0);
+                rownum++;
+                if (rownum >= 100) break; // I feel too lazy to check if this isreqd :-/
+
+                r = s.createRow(rownum);
+                r.setRowStyle(cs2);
+                r.createCell(0);
+            }
+            try (HSSFWorkbook wb2 = writeOutAndReadBack(wb)) {
+                SanityChecker sanityChecker = new SanityChecker();
+                sanityChecker.checkHSSFWorkbook(wb2);
+                assertEquals("LAST ROW == 99", 99, s.getLastRowNum());
+                assertEquals("FIRST ROW == 0", 0, s.getFirstRowNum());
+
+                s = wb2.getSheetAt(0);
+                assertNotNull("Sheet is not null", s);
+
+                for (int rownum = 0; rownum < 100; rownum++) {
+                    r = s.getRow(rownum);
+                    assertNotNull("Row is not null", r);
+
+                    cs = r.getRowStyle();
+                    assertNotNull(cs);
+                    assertEquals("Bottom Border Style for row:", BorderStyle.THIN, cs.getBorderBottom());
+                    assertEquals("Left Border Style for row:", BorderStyle.THIN, cs.getBorderLeft());
+                    assertEquals("Right Border Style for row:", BorderStyle.THIN, cs.getBorderRight());
+                    assertEquals("Top Border Style for row:", BorderStyle.THIN, cs.getBorderTop());
+                    assertEquals("FillForegroundColor for row:", 0xA, cs.getFillForegroundColor());
+                    assertEquals("FillPattern for row:", FillPatternType.BRICKS, cs.getFillPattern());
+
+                    rownum++;
+                    if (rownum >= 100) break; // I feel too lazy to check if this isreqd :-/
+
+                    r = s.getRow(rownum);
+                    assertNotNull("Row is not null", r);
+                    cs2 = r.getRowStyle();
+                    assertNotNull(cs2);
+                    assertEquals("FillForegroundColor for row: ", cs2.getFillForegroundColor(), (short) 0x0);
+                    assertEquals("FillPattern for row: ", cs2.getFillPattern(), FillPatternType.BRICKS);
+                }
+            }
         }
-        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        IOUtils.closeQuietly(wb);
-        
-        SanityChecker sanityChecker = new SanityChecker();
-        sanityChecker.checkHSSFWorkbook(wb2);
-        assertEquals("LAST ROW == 99", 99, s.getLastRowNum());
-        assertEquals("FIRST ROW == 0", 0, s.getFirstRowNum());
-        
-        s    = wb2.getSheetAt(0);
-        assertNotNull("Sheet is not null", s);
-        
-        for (int rownum = 0; rownum < 100; rownum++)
-        {
-            r = s.getRow(rownum);
-            assertNotNull("Row is not null", r);
-            
-            cs = r.getRowStyle();
-            assertEquals("Bottom Border Style for row:", BorderStyle.THIN, cs.getBorderBottom());
-            assertEquals("Left Border Style for row:",   BorderStyle.THIN, cs.getBorderLeft());
-            assertEquals("Right Border Style for row:",  BorderStyle.THIN, cs.getBorderRight());
-            assertEquals("Top Border Style for row:",    BorderStyle.THIN, cs.getBorderTop());
-            assertEquals("FillForegroundColor for row:", 0xA, cs.getFillForegroundColor());
-            assertEquals("FillPattern for row:",         FillPatternType.BRICKS, cs.getFillPattern());
-            
-            rownum++;
-            if (rownum >= 100) break; // I feel too lazy to check if this isreqd :-/ 
-            
-            r = s.getRow(rownum);
-            assertNotNull("Row is not null", r);
-            cs2 = r.getRowStyle();
-            assertEquals("FillForegroundColor for row: ", cs2.getFillForegroundColor(), (short) 0x0);
-            assertEquals("FillPattern for row: ", cs2.getFillPattern(), FillPatternType.BRICKS);
-        }
-        IOUtils.closeQuietly(wb2);
     }
 }

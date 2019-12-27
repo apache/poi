@@ -18,18 +18,18 @@
 package org.apache.poi.hssf.record.chart;
 
 
-import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the SeriesRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestSeriesRecord extends TestCase {
+public final class TestSeriesRecord {
     byte[] data = new byte[] {
         (byte)0x01,(byte)0x00,      // category data type
         (byte)0x01,(byte)0x00,      // values data type
@@ -39,8 +39,8 @@ public final class TestSeriesRecord extends TestCase {
         (byte)0x00,(byte)0x00       // num bubble values
     };
 
+    @Test
     public void testLoad() {
-
         SeriesRecord record = new SeriesRecord(TestcaseRecordInputStream.create(0x1003, data));
         assertEquals( SeriesRecord.CATEGORY_DATA_TYPE_NUMERIC, record.getCategoryDataType());
         assertEquals( SeriesRecord.VALUES_DATA_TYPE_NUMERIC, record.getValuesDataType());
@@ -53,8 +53,8 @@ public final class TestSeriesRecord extends TestCase {
         assertEquals( 16, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
+    @Test
+    public void testStore() {
         SeriesRecord record = new SeriesRecord();
         record.setCategoryDataType( SeriesRecord.CATEGORY_DATA_TYPE_NUMERIC );
         record.setValuesDataType( SeriesRecord.VALUES_DATA_TYPE_NUMERIC );
@@ -64,8 +64,6 @@ public final class TestSeriesRecord extends TestCase {
         record.setNumBubbleValues( (short)0 );
 
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        confirmRecordEncoding(SeriesRecord.sid, data, recordBytes);
     }
 }

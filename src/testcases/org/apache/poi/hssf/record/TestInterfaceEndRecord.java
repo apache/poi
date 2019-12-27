@@ -18,21 +18,23 @@
 package org.apache.poi.hssf.record;
 
 
-import junit.framework.TestCase;
-import org.apache.poi.util.HexRead;
-import org.apache.poi.util.HexDump;
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayInputStream;
+import java.util.List;
+
+import org.apache.poi.util.HexDump;
+import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the EndSubRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
- * @author Yegor Kozlov
  */
-public final class TestInterfaceEndRecord extends TestCase {
+public final class TestInterfaceEndRecord {
 
+    @Test
     public void testCreate() {
         InterfaceEndRecord record = InterfaceEndRecord.instance;
         assertEquals(0, record.getDataSize());
@@ -43,6 +45,7 @@ public final class TestInterfaceEndRecord extends TestCase {
      * Although it violates the spec, Excel silently converts this
      * data to an {@link InterfaceHdrRecord}.
      */
+    @Test
     public void testUnexpectedBytes_bug47251(){
         String hex = "" +
                 "09 08 10 00 00 06 05 00 EC 15 CD 07 C1 C0 00 00 06 03 00 00 " +   //BOF

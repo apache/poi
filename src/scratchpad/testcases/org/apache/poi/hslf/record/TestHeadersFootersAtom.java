@@ -19,22 +19,24 @@ package org.apache.poi.hslf.record;
 
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests that {@link HeadersFootersAtom} works properly
- *
- * @author Yegor Kozlov
  */
-public final class TestHeadersFootersAtom extends TestCase {
+public final class TestHeadersFootersAtom {
 	// From a real file
 	private final byte[] data = new byte[] {
-            0x00, 0x00, (byte)0xDA, 0x0F, 0x04, 0x00, 0x00, 00,
+            0x00, 0x00, (byte)0xDA, 0x0F, 0x04, 0x00, 0x00, 0,
             0x00, 0x00, 0x23, 0x00 };
 
+    @Test
     public void testRead() {
 		HeadersFootersAtom record = new HeadersFootersAtom(data, 0, data.length);
 		assertEquals(RecordTypes.HeadersFootersAtom.typeID, record.getRecordType());
@@ -50,15 +52,15 @@ public final class TestHeadersFootersAtom extends TestCase {
         assertTrue(record.getFlag(HeadersFootersAtom.fHasFooter));
     }
 
+    @Test
 	public void testWrite() throws Exception {
 		HeadersFootersAtom record = new HeadersFootersAtom(data, 0, data.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		record.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertArrayEquals(data, b);
+		assertArrayEquals(data, baos.toByteArray());
 	}
 
+    @Test
     public void testNewRecord() throws Exception {
         HeadersFootersAtom record = new HeadersFootersAtom();
         record.setFlag(HeadersFootersAtom.fHasDate, true);
@@ -67,11 +69,10 @@ public final class TestHeadersFootersAtom extends TestCase {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         record.writeOut(baos);
-        byte[] b = baos.toByteArray();
-
-        assertArrayEquals(data, b);
+        assertArrayEquals(data, baos.toByteArray());
     }
 
+    @Test
     public void testFlags() {
         HeadersFootersAtom record = new HeadersFootersAtom();
 

@@ -17,15 +17,19 @@
 
 package org.apache.poi.hssf.record;
 
-import junit.framework.TestCase;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.cut;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.util.HexDump;
+import org.junit.Test;
 
-public final class TestDrawingGroupRecord extends TestCase {
+public final class TestDrawingGroupRecord {
     private static final int MAX_RECORD_SIZE = 8228;
     private static final int MAX_DATA_SIZE = MAX_RECORD_SIZE - 4;
 
+    @Test
     public void testGetRecordSize() {
         DrawingGroupRecord r = new DrawingGroupRecord();
         assertEquals(4, r.getRecordSize());
@@ -62,6 +66,7 @@ public final class TestDrawingGroupRecord extends TestCase {
         assertEquals( MAX_RECORD_SIZE * 2 + 5, r.getRecordSize() );
     }
 
+    @Test
     public void testSerialize() {
         // Check under max record size
         DrawingGroupRecord r = new DrawingGroupRecord();
@@ -112,21 +117,8 @@ public final class TestDrawingGroupRecord extends TestCase {
         assertEquals( 664856, r.getRecordSize() );
     }
 
-    private static byte[] cut( byte[] data, int fromInclusive, int toExclusive )
-    {
-        int length = toExclusive - fromInclusive;
-        byte[] result = new byte[length];
-        System.arraycopy( data, fromInclusive, result, 0, length);
-        return result;
-    }
-
+    @Test
     public void testGrossSizeFromDataSize() {
-        for (int i = 0; i < MAX_RECORD_SIZE * 4; i += 11)
-        {
-            //System.out.print( "data size = " + i + ", gross size = " + DrawingGroupRecord.grossSizeFromDataSize( i ) );
-            //System.out.println( "  Diff: " + (DrawingGroupRecord.grossSizeFromDataSize( i ) - i) );
-        }
-
         assertEquals( 4, DrawingGroupRecord.grossSizeFromDataSize( 0 ) );
         assertEquals( 5, DrawingGroupRecord.grossSizeFromDataSize( 1 ) );
         assertEquals( MAX_RECORD_SIZE, DrawingGroupRecord.grossSizeFromDataSize( MAX_DATA_SIZE ) );

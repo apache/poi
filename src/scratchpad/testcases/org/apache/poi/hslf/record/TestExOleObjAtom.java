@@ -18,23 +18,23 @@
 package org.apache.poi.hslf.record;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests that {@link ExOleObjAtom} works properly
- *
- * @author Yegor Kozlov
  */
-public final class TestExOleObjAtom extends TestCase {
+public final class TestExOleObjAtom {
 	// From a real file (embedded SWF control)
 	private final byte[] data = {
 			0x01, 0x00, (byte)0xC3, 0x0F, 0x18, 0x00, 0x00, 0x00,
 			0x01, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, (byte)0x96, 0x13, 0x00  };
 
+	@Test
 	public void testRead() {
 		ExOleObjAtom record = new ExOleObjAtom(data, 0, data.length);
 		assertEquals(RecordTypes.ExOleObjAtom.typeID, record.getRecordType());
@@ -47,15 +47,15 @@ public final class TestExOleObjAtom extends TestCase {
 		assertEquals(record.getOptions(), 1283584); //ther meaning is unknown
 	}
 
+	@Test
 	public void testWrite() throws Exception {
 		ExOleObjAtom record = new ExOleObjAtom(data, 0, data.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		record.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertArrayEquals(data, b);
+		assertArrayEquals(data, baos.toByteArray());
 	}
 
+	@Test
 	public void testNewRecord() throws Exception {
 		ExOleObjAtom record = new ExOleObjAtom();
 		record.setDrawAspect(ExOleObjAtom.DRAW_ASPECT_VISIBLE);
@@ -67,8 +67,6 @@ public final class TestExOleObjAtom extends TestCase {
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		record.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertArrayEquals(data, b);
+		assertArrayEquals(data, baos.toByteArray());
 	}
 }

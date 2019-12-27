@@ -18,8 +18,9 @@ package org.apache.poi.ss.formula.eval;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
@@ -32,8 +33,6 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.junit.Test;
-
-import junit.framework.AssertionFailedError;
 
 /**
  * Common superclass for testing cases of circular references
@@ -54,13 +53,13 @@ public abstract class BaseTestCircularReferences {
     /**
      * Translates StackOverflowError into AssertionFailedError
      */
-    private CellValue evaluateWithCycles(Workbook wb, Cell testCell)
-            throws AssertionFailedError {
+    private CellValue evaluateWithCycles(Workbook wb, Cell testCell) {
         FormulaEvaluator evaluator = _testDataProvider.createFormulaEvaluator(wb);
         try {
             return evaluator.evaluate(testCell);
         } catch (StackOverflowError e) {
-            throw new AssertionFailedError( "circular reference caused stack overflow error");
+            fail( "circular reference caused stack overflow error");
+            return null;
         }
     }
     /**
@@ -78,28 +77,28 @@ public abstract class BaseTestCircularReferences {
      */
     @Test
     public void testIndexFormula() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sheet = wb.createSheet("Sheet1");
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet("Sheet1");
 
-        int colB = 1;
-        sheet.createRow(0).createCell(colB).setCellValue(1);
-        sheet.createRow(1).createCell(colB).setCellValue(2);
-        sheet.createRow(2).createCell(colB).setCellValue(3);
-        Row row4 = sheet.createRow(3);
-        Cell testCell = row4.createCell(0);
-        // This formula should evaluate to the contents of B2,
-        testCell.setCellFormula("INDEX(A1:B4,2,2)");
-        // However the range A1:B4 also includes the current cell A4.  If the other parameters
-        // were 4 and 1, this would represent a circular reference.  Prior to v3.2 POI would
-        // 'fully' evaluate ref arguments before invoking operators, which raised the possibility of
-        // cycles / StackOverflowErrors.
+            int colB = 1;
+            sheet.createRow(0).createCell(colB).setCellValue(1);
+            sheet.createRow(1).createCell(colB).setCellValue(2);
+            sheet.createRow(2).createCell(colB).setCellValue(3);
+            Row row4 = sheet.createRow(3);
+            Cell testCell = row4.createCell(0);
+            // This formula should evaluate to the contents of B2,
+            testCell.setCellFormula("INDEX(A1:B4,2,2)");
+            // However the range A1:B4 also includes the current cell A4.  If the other parameters
+            // were 4 and 1, this would represent a circular reference.  Prior to v3.2 POI would
+            // 'fully' evaluate ref arguments before invoking operators, which raised the possibility of
+            // cycles / StackOverflowErrors.
 
 
-        CellValue cellValue = evaluateWithCycles(wb, testCell);
-
-        assertSame(cellValue.getCellType(), CellType.NUMERIC);
-        assertEquals(2, cellValue.getNumberValue(), 0);
-        wb.close();
+            CellValue cellValue = evaluateWithCycles(wb, testCell);
+            assertNotNull(cellValue);
+            assertSame(cellValue.getCellType(), CellType.NUMERIC);
+            assertEquals(2, cellValue.getNumberValue(), 0);
+        }
     }
 
     /**
@@ -107,18 +106,18 @@ public abstract class BaseTestCircularReferences {
      */
     @Test
     public void testSimpleCircularReference() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sheet = wb.createSheet("Sheet1");
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet("Sheet1");
 
-        Row row = sheet.createRow(0);
-        Cell testCell = row.createCell(0);
-        testCell.setCellFormula("A1");
+            Row row = sheet.createRow(0);
+            Cell testCell = row.createCell(0);
+            testCell.setCellFormula("A1");
 
-        CellValue cellValue = evaluateWithCycles(wb, testCell);
+            CellValue cellValue = evaluateWithCycles(wb, testCell);
+            assertNotNull(cellValue);
+            confirmCycleErrorCode(cellValue);
 
-        confirmCycleErrorCode(cellValue);
-        
-        wb.close();
+        }
     }
 
     /**
@@ -126,67 +125,66 @@ public abstract class BaseTestCircularReferences {
      */
     @Test
     public void testMultiLevelCircularReference() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sheet = wb.createSheet("Sheet1");
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet("Sheet1");
 
-        Row row = sheet.createRow(0);
-        row.createCell(0).setCellFormula("B1");
-        row.createCell(1).setCellFormula("C1");
-        row.createCell(2).setCellFormula("D1");
-        Cell testCell = row.createCell(3);
-        testCell.setCellFormula("A1");
+            Row row = sheet.createRow(0);
+            row.createCell(0).setCellFormula("B1");
+            row.createCell(1).setCellFormula("C1");
+            row.createCell(2).setCellFormula("D1");
+            Cell testCell = row.createCell(3);
+            testCell.setCellFormula("A1");
 
-        CellValue cellValue = evaluateWithCycles(wb, testCell);
-
-        confirmCycleErrorCode(cellValue);
-        
-        wb.close();
+            CellValue cellValue = evaluateWithCycles(wb, testCell);
+            assertNotNull(cellValue);
+            confirmCycleErrorCode(cellValue);
+        }
     }
 
     @Test
     public void testIntermediateCircularReferenceResults_bug46898() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sheet = wb.createSheet("Sheet1");
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb.createSheet("Sheet1");
 
-        Row row = sheet.createRow(0);
+            Row row = sheet.createRow(0);
 
-        Cell cellA1 = row.createCell(0);
-        Cell cellB1 = row.createCell(1);
-        Cell cellC1 = row.createCell(2);
-        Cell cellD1 = row.createCell(3);
-        Cell cellE1 = row.createCell(4);
+            Cell cellA1 = row.createCell(0);
+            Cell cellB1 = row.createCell(1);
+            Cell cellC1 = row.createCell(2);
+            Cell cellD1 = row.createCell(3);
+            Cell cellE1 = row.createCell(4);
 
-        cellA1.setCellFormula("IF(FALSE, 1+B1, 42)");
-        cellB1.setCellFormula("1+C1");
-        cellC1.setCellFormula("1+D1");
-        cellD1.setCellFormula("1+E1");
-        cellE1.setCellFormula("1+A1");
+            cellA1.setCellFormula("IF(FALSE, 1+B1, 42)");
+            cellB1.setCellFormula("1+C1");
+            cellC1.setCellFormula("1+D1");
+            cellD1.setCellFormula("1+E1");
+            cellE1.setCellFormula("1+A1");
 
-        FormulaEvaluator fe = _testDataProvider.createFormulaEvaluator(wb);
-        CellValue cv;
+            FormulaEvaluator fe = _testDataProvider.createFormulaEvaluator(wb);
+            CellValue cv;
 
-        // Happy day flow - evaluate A1 first
-        cv = fe.evaluate(cellA1);
-        assertEquals(CellType.NUMERIC, cv.getCellType());
-        assertEquals(42.0, cv.getNumberValue(), 0.0);
-        cv = fe.evaluate(cellB1); // no circ-ref-error because A1 result is cached
-        assertEquals(CellType.NUMERIC, cv.getCellType());
-        assertEquals(46.0, cv.getNumberValue(), 0.0);
+            // Happy day flow - evaluate A1 first
+            cv = fe.evaluate(cellA1);
+            assertEquals(CellType.NUMERIC, cv.getCellType());
+            assertEquals(42.0, cv.getNumberValue(), 0.0);
+            cv = fe.evaluate(cellB1); // no circ-ref-error because A1 result is cached
+            assertEquals(CellType.NUMERIC, cv.getCellType());
+            assertEquals(46.0, cv.getNumberValue(), 0.0);
 
-        // Show the bug - evaluate another cell from the loop first
-        fe.clearAllCachedResultValues();
-        cv = fe.evaluate(cellB1);
-        // Identified bug 46898
-        assertNotEquals(cv.getCellType(), ErrorEval.CIRCULAR_REF_ERROR.getErrorCode());
-        assertEquals(CellType.NUMERIC, cv.getCellType());
-        assertEquals(46.0, cv.getNumberValue(), 0.0);
+            // Show the bug - evaluate another cell from the loop first
+            fe.clearAllCachedResultValues();
+            cv = fe.evaluate(cellB1);
+            // Identified bug 46898
+            assertNotEquals(cv.getCellType(), ErrorEval.CIRCULAR_REF_ERROR.getErrorCode());
+            assertEquals(CellType.NUMERIC, cv.getCellType());
+            assertEquals(46.0, cv.getNumberValue(), 0.0);
 
-        // start evaluation on another cell
-        fe.clearAllCachedResultValues();
-        cv = fe.evaluate(cellE1);
-        assertEquals(CellType.NUMERIC, cv.getCellType());
-        assertEquals(43.0, cv.getNumberValue(), 0.0);
-        
-        wb.close();
+            // start evaluation on another cell
+            fe.clearAllCachedResultValues();
+            cv = fe.evaluate(cellE1);
+            assertEquals(CellType.NUMERIC, cv.getCellType());
+            assertEquals(43.0, cv.getNumberValue(), 0.0);
+
+        }
     }
 }

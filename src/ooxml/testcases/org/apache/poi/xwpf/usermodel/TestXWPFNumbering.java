@@ -17,16 +17,21 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 import java.math.BigInteger;
 
-import junit.framework.TestCase;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
+import org.junit.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNum;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumLvl;
 
-public class TestXWPFNumbering extends TestCase {
+public class TestXWPFNumbering {
 
+    @Test
     public void testCompareAbstractNum() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx")) {
             XWPFNumbering numbering = doc.getNumbering();
@@ -40,6 +45,7 @@ public class TestXWPFNumbering extends TestCase {
         }
     }
 
+    @Test
     public void testAddNumberingToDoc() throws IOException {
         BigInteger abstractNumId = BigInteger.valueOf(1);
         BigInteger numId = BigInteger.valueOf(1);
@@ -58,6 +64,7 @@ public class TestXWPFNumbering extends TestCase {
         assertEquals(abstractNumId, compareAbstractNum);
     }
 
+    @Test
     public void testGetNumIlvl() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx")) {
             BigInteger numIlvl = BigInteger.valueOf(0);
@@ -67,6 +74,7 @@ public class TestXWPFNumbering extends TestCase {
         }
     }
 
+    @Test
     public void testGetNumFmt() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx")) {
             assertEquals("bullet", doc.getParagraphs().get(0).getNumFmt());
@@ -79,6 +87,7 @@ public class TestXWPFNumbering extends TestCase {
         }
     }
 
+    @Test
     public void testLvlText() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Numbering.docx")) {
 
@@ -93,6 +102,7 @@ public class TestXWPFNumbering extends TestCase {
         }
     }
 
+    @Test
     public void testOverrideList() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("NumberingWOverrides.docx")) {
             XWPFParagraph p = doc.getParagraphs().get(4);

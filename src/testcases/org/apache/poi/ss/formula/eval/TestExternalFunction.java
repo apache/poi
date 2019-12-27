@@ -17,81 +17,67 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.ss.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.udf.DefaultUDFFinder;
-import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
-import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
+import org.apache.poi.ss.formula.functions.FreeRefFunction;
+import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
+import org.apache.poi.ss.formula.udf.DefaultUDFFinder;
+import org.apache.poi.ss.formula.udf.UDFFinder;
+import org.junit.Test;
 
-/**
- * @author Josh Micich
- * @author Petr Udalau - registering UDFs in workbook and using ToolPacks.
- */
-public final class TestExternalFunction extends TestCase {
+public final class TestExternalFunction {
 
-	private static class MyFunc implements FreeRefFunction {
-		public MyFunc() {
-			//
+	private static ValueEval myFunc1(ValueEval[] args, OperationEvaluationContext ec) {
+		if (args.length != 1 || !(args[0] instanceof StringEval)) {
+			return ErrorEval.VALUE_INVALID;
 		}
-
-		@Override
-        public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
-			if (args.length != 1 || !(args[0] instanceof StringEval)) {
-				return ErrorEval.VALUE_INVALID;
-			}
-			StringEval input = (StringEval) args[0];
-			return new StringEval(input.getStringValue() + "abc");
-		}
+		StringEval input = (StringEval) args[0];
+		return new StringEval(input.getStringValue() + "abc");
 	}
 
-	private static class MyFunc2 implements FreeRefFunction {
-		public MyFunc2() {
-			//
+	private static ValueEval myFunc2(ValueEval[] args, OperationEvaluationContext ec) {
+		if (args.length != 1 || !(args[0] instanceof StringEval)) {
+			return ErrorEval.VALUE_INVALID;
 		}
-
-		@Override
-        public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
-			if (args.length != 1 || !(args[0] instanceof StringEval)) {
-				return ErrorEval.VALUE_INVALID;
-			}
-			StringEval input = (StringEval) args[0];
-			return new StringEval(input.getStringValue() + "abc2");
-		}
+		StringEval input = (StringEval) args[0];
+		return new StringEval(input.getStringValue() + "abc2");
 	}
 
 	/**
-	 * Checks that an external function can get invoked from the formula
-	 * evaluator.
+	 * Checks that an external function can get invoked from the formula evaluator.
 	 */
-	public void testInvoke() {
-		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("testNames.xls");
-		HSSFSheet sheet = wb.getSheetAt(0);
+	@Test
+	public void testInvoke() throws IOException {
+		try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("testNames.xls")) {
+			HSSFSheet sheet = wb.getSheetAt(0);
 
-		/**
-		 * register the two test UDFs in a UDF finder, to be passed to the evaluator
-		 */
-		UDFFinder udff1 = new DefaultUDFFinder(new String[] { "myFunc", },
-				new FreeRefFunction[] { new MyFunc(), });
-		UDFFinder udff2 = new DefaultUDFFinder(new String[] { "myFunc2", },
-				new FreeRefFunction[] { new MyFunc2(), });
-		UDFFinder udff = new AggregatingUDFFinder(udff1, udff2);
+			/*
+			 * register the two test UDFs in a UDF finder, to be passed to the evaluator
+			 */
+			UDFFinder udff1 = new DefaultUDFFinder(new String[]{"myFunc",},
+												   new FreeRefFunction[]{TestExternalFunction::myFunc1});
+			UDFFinder udff2 = new DefaultUDFFinder(new String[]{"myFunc2",},
+												   new FreeRefFunction[]{TestExternalFunction::myFunc2,});
+			UDFFinder udff = new AggregatingUDFFinder(udff1, udff2);
 
 
-		HSSFRow row = sheet.getRow(0);
-		HSSFCell myFuncCell = row.getCell(1); // =myFunc("_")
+			HSSFRow row = sheet.getRow(0);
+			HSSFCell myFuncCell = row.getCell(1); // =myFunc("_")
 
-		HSSFCell myFunc2Cell = row.getCell(2); // =myFunc2("_")
+			HSSFCell myFunc2Cell = row.getCell(2); // =myFunc2("_")
 
-		HSSFFormulaEvaluator fe = HSSFFormulaEvaluator.create(wb, null, udff);
-		assertEquals("_abc", fe.evaluate(myFuncCell).getStringValue());
-		assertEquals("_abc2", fe.evaluate(myFunc2Cell).getStringValue());
+			HSSFFormulaEvaluator fe = HSSFFormulaEvaluator.create(wb, null, udff);
+			assertEquals("_abc", fe.evaluate(myFuncCell).getStringValue());
+			assertEquals("_abc2", fe.evaluate(myFunc2Cell).getStringValue());
+		}
 	}
 }

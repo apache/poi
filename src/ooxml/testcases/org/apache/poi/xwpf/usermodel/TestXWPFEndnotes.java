@@ -17,45 +17,46 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertSame;
+
 import java.io.IOException;
 import java.math.BigInteger;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
+import org.junit.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STFtnEdn;
 
-import junit.framework.TestCase;
+public class TestXWPFEndnotes {
 
-public class TestXWPFEndnotes extends TestCase {
-    
+    @Test
     public void testCreateEndnotes() throws IOException{
-        XWPFDocument docOut = new XWPFDocument();
+        try (XWPFDocument docOut = new XWPFDocument()) {
+            XWPFEndnotes footnotes = docOut.createEndnotes();
+            assertNotNull(footnotes);
 
-        XWPFEndnotes footnotes = docOut.createEndnotes();
-        
-        assertNotNull(footnotes);
-        
-        XWPFEndnotes secondFootnotes = docOut.createEndnotes();
-        
-        assertSame(footnotes, secondFootnotes);
-        
-        docOut.close();
+            XWPFEndnotes secondFootnotes = docOut.createEndnotes();
+            assertSame(footnotes, secondFootnotes);
+        }
     }
 
+    @Test
     public void testAddEndnotesToDocument() throws IOException {
-        XWPFDocument docOut = new XWPFDocument();
+        try (XWPFDocument docOut = new XWPFDocument()) {
+            // NOTE: XWPFDocument.createEndnote() delegates directly
+            //       to XWPFFootnotes.createEndnote() so this tests
+            //       both creation of new XWPFFootnotes in document
+            //       and XWPFFootnotes.createEndnote();
+            XWPFEndnote endnote = docOut.createEndnote();
+            BigInteger noteId = endnote.getId();
 
-        // NOTE: XWPFDocument.createEndnote() delegates directly
-        //       to XWPFFootnotes.createEndnote() so this tests
-        //       both creation of new XWPFFootnotes in document
-        //       and XWPFFootnotes.createEndnote();
-        XWPFEndnote endnote = docOut.createEndnote();
-        BigInteger noteId = endnote.getId();
+            XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
 
-        XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
-
-        XWPFEndnote note = docIn.getEndnoteByID(noteId.intValue());
-        assertNotNull(note);
-        assertEquals(STFtnEdn.NORMAL, note.getCTFtnEdn().getType());
+            XWPFEndnote note = docIn.getEndnoteByID(noteId.intValue());
+            assertNotNull(note);
+            assertEquals(STFtnEdn.NORMAL, note.getCTFtnEdn().getType());
+        }
     }
 
 }

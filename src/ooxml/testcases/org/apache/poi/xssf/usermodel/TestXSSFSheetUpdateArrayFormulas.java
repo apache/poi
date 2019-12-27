@@ -19,6 +19,7 @@ package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 
@@ -33,12 +34,8 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 
-import junit.framework.AssertionFailedError;
 /**
  * Test array formulas in XSSF
- *
- * @author Yegor Kozlov
- * @author Josh Micich
  */
 public final class TestXSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateArrayFormulas {
 
@@ -67,7 +64,7 @@ public final class TestXSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateA
         //retrieve the range and check it is the same
         assertEquals(range.formatAsString(), firstCell.getArrayFormulaRange().formatAsString());
         confirmArrayFormulaCell(firstCell, "C3", formula1, "C3");
-        
+
         workbook.close();
     }
 
@@ -103,9 +100,7 @@ public final class TestXSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateA
         confirmArrayFormulaCell(c, cellRef, null, null);
     }
     private static void confirmArrayFormulaCell(XSSFCell c, String cellRef, String formulaText, String arrayRangeRef) {
-        if (c == null) {
-            throw new AssertionFailedError("Cell should not be null.");
-        }
+        assertNotNull("Cell should not be null.", c);
         CTCell ctCell = c.getCTCell();
         assertEquals(cellRef, ctCell.getR());
         if (formulaText == null) {

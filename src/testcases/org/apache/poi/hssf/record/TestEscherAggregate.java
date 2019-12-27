@@ -17,25 +17,26 @@
 
 package org.apache.poi.hssf.record;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
-
-import java.util.ArrayList;
-import java.util.List;
+import org.junit.Test;
 
 /**
  * Tests the EscherAggregate class.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestEscherAggregate extends TestCase {
+public final class TestEscherAggregate {
     /**
      * Tests that the create aggregate method correctly rejoins escher records together.
      */
+    @Test
     public void testCreateAggregate() {
         String msoDrawingRecord1 =
                 "0F 00 02 F0 20 01 00 00 10 00 08 F0 08 00 00 00 \n" +
@@ -81,10 +82,9 @@ public final class TestEscherAggregate extends TestCase {
         assertEquals( 1, aggregate.getEscherRecords().size() );
         assertEquals( (short) 0xF002, aggregate.getEscherRecord( 0 ).getRecordId() );
         assertEquals( 2, aggregate.getEscherRecord( 0 ).getChildRecords().size() );
-
-//        System.out.println( "aggregate = " + aggregate );
     }
 
+    @Test
     public void testSerialize() {
 
         EscherContainerRecord container1 = new EscherContainerRecord();

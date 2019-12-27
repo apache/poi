@@ -16,11 +16,16 @@
 ==================================================================== */
 
 package org.apache.poi.hssf.eventusermodel;
+
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
-
-import junit.framework.TestCase;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -36,66 +41,61 @@ import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.After;
+import org.junit.Test;
 
 /**
  * Testing for {@link HSSFEventFactory}
  */
-public final class TestHSSFEventFactory extends TestCase {
-    private static InputStream openSample(String sampleFileName) {
-        return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
+public final class TestHSSFEventFactory {
+    private final List<Record> records = new ArrayList<>();
+
+    private void openSample(String sampleFileName) throws IOException {
+        records.clear();
+        HSSFRequest req = new HSSFRequest();
+        req.addListenerForAllRecords(records::add);
+        try (InputStream is = HSSFTestDataSamples.openSampleFileStream(sampleFileName);
+             POIFSFileSystem fs = new POIFSFileSystem(is)) {
+            HSSFEventFactory factory = new HSSFEventFactory();
+            factory.processWorkbookEvents(req, fs);
+        }
     }
 
+    @Test
     public void testWithMissingRecords() throws Exception {
 
-        HSSFRequest req = new HSSFRequest();
-        MockHSSFListener mockListen = new MockHSSFListener();
-        req.addListenerForAllRecords(mockListen);
+        openSample("SimpleWithSkip.xls");
 
-        POIFSFileSystem fs = new POIFSFileSystem(openSample("SimpleWithSkip.xls"));
-        HSSFEventFactory factory = new HSSFEventFactory();
-        factory.processWorkbookEvents(req, fs);
+        int numRec = records.size();
 
-        Record[] recs = mockListen.getRecords();
         // Check we got the records
-        assertTrue( recs.length > 100 );
+        assertTrue( numRec > 100 );
 
         // Check that the last few records are as we expect
         // (Makes sure we don't accidently skip the end ones)
-        int numRec = recs.length;
-        assertEquals(WindowTwoRecord.class, recs[numRec-3].getClass());
-        assertEquals(SelectionRecord.class, recs[numRec-2].getClass());
-        assertEquals(EOFRecord.class,	   recs[numRec-1].getClass());
+        Class<?>[] exp = { WindowTwoRecord.class, SelectionRecord.class, EOFRecord.class };
+        Class<?>[] act = records.subList(numRec - 3, numRec).stream().map(Object::getClass).toArray(Class[]::new);
+        assertArrayEquals(exp, act);
     }
 
+    @Test
     public void testWithCrazyContinueRecords() throws Exception {
         // Some files have crazy ordering of their continue records
         // Check that we don't break on them (bug #42844)
 
-        HSSFRequest req = new HSSFRequest();
-        MockHSSFListener mockListen = new MockHSSFListener();
-        req.addListenerForAllRecords(mockListen);
+        openSample("ContinueRecordProblem.xls");
 
-        POIFSFileSystem fs = new POIFSFileSystem(openSample("ContinueRecordProblem.xls"));
-        HSSFEventFactory factory = new HSSFEventFactory();
-        factory.processWorkbookEvents(req, fs);
-
-        Record[] recs = mockListen.getRecords();
+        int numRec = records.size();
         // Check we got the records
-        assertTrue( recs.length > 100 );
+        assertTrue( numRec > 100 );
 
         // And none of them are continue ones
-        for (Record rec : recs) {
-            assertFalse( rec instanceof ContinueRecord );
-        }
+        assertFalse(records.stream().anyMatch(r -> r instanceof ContinueRecord));
 
         // Check that the last few records are as we expect
-        // (Makes sure we don't accidently skip the end ones)
-        int numRec = recs.length;
-        assertEquals(DVALRecord.class,    recs[numRec-4].getClass());
-        assertEquals(DVRecord.class,      recs[numRec-3].getClass());
-        assertEquals(FeatHdrRecord.class, recs[numRec-2].getClass());
-        assertEquals(EOFRecord.class,     recs[numRec-1].getClass());
+        // (Makes sure we don't accidentally skip the end ones)
+        Class<?>[] exp = { DVALRecord.class, DVRecord.class, FeatHdrRecord.class, EOFRecord.class };
+        Class<?>[] act = records.subList(numRec-4, numRec).stream().map(Object::getClass).toArray(Class[]::new);
+        assertArrayEquals(exp, act);
     }
 
     /**
@@ -103,77 +103,36 @@ public final class TestHSSFEventFactory extends TestCase {
      * Check that HSSFEventFactory doesn't break on them.
      * (the test file was provided in a reopen of bug #42844)
      */
+    @Test
     public void testUnknownContinueRecords() throws Exception {
-
-        HSSFRequest req = new HSSFRequest();
-        MockHSSFListener mockListen = new MockHSSFListener();
-        req.addListenerForAllRecords(mockListen);
-
-        POIFSFileSystem fs = new POIFSFileSystem(openSample("42844.xls"));
-        HSSFEventFactory factory = new HSSFEventFactory();
-        factory.processWorkbookEvents(req, fs);
+        openSample("42844.xls");
     }
 
-    private static class MockHSSFListener implements HSSFListener {
-        private final List<Record> records = new ArrayList<>();
-
-        public MockHSSFListener() {}
-        public Record[] getRecords() {
-            Record[] result = new Record[records.size()];
-            records.toArray(result);
-            return result;
-        }
-
-        @Override
-        public void processRecord(Record record) {
-            records.add(record);
-        }
-    }
-
+    @Test
     public void testWithDifferentWorkbookName() throws Exception {
-        HSSFRequest req = new HSSFRequest();
-        MockHSSFListener mockListen = new MockHSSFListener();
-        req.addListenerForAllRecords(mockListen);
-
-        POIFSFileSystem fs = new POIFSFileSystem(openSample("BOOK_in_capitals.xls"));
-        HSSFEventFactory factory = new HSSFEventFactory();
-        factory.processWorkbookEvents(req, fs);
-
-        fs = new POIFSFileSystem(openSample("WORKBOOK_in_capitals.xls"));
-        factory = new HSSFEventFactory();
-        factory.processWorkbookEvents(req, fs);
+        openSample("BOOK_in_capitals.xls");
+        openSample("WORKBOOK_in_capitals.xls");
     }
 
-    public void testWithPasswordProtectedWorkbooks() throws Exception {
-        HSSFRequest req = new HSSFRequest();
-        MockHSSFListener mockListen = new MockHSSFListener();
-        req.addListenerForAllRecords(mockListen);
-
+    @Test(expected = EncryptedDocumentException.class)
+    public void testWithPasswordProtectedWorkbooksNoPass() throws Exception {
         // Without a password, can't be read
-        POIFSFileSystem fs = new POIFSFileSystem(openSample("xor-encryption-abc.xls"));
+        openSample("xor-encryption-abc.xls");
+    }
 
-        HSSFEventFactory factory = new HSSFEventFactory();
-        try {
-            factory.processWorkbookEvents(req, fs);
-            fail("Shouldn't be able to process protected workbook without the password");
-        } catch (EncryptedDocumentException e) {}
-
-
+    @Test
+    public void testWithPasswordProtectedWorkbooks() throws Exception {
         // With the password, is properly processed
         Biff8EncryptionKey.setCurrentUserPassword("abc");
         try {
-            req = new HSSFRequest();
-            mockListen = new MockHSSFListener();
-            req.addListenerForAllRecords(mockListen);
-            factory.processWorkbookEvents(req, fs);
+            openSample("xor-encryption-abc.xls");
 
             // Check we got the sheet and the contents
-            Record[] recs = mockListen.getRecords();
-            assertTrue(recs.length > 50);
+            assertTrue(records.size() > 50);
 
             // Has one sheet, with values 1,2,3 in column A rows 1-3
             boolean hasSheet = false, hasA1 = false, hasA2 = false, hasA3 = false;
-            for (Record r : recs) {
+            for (Record r : records) {
                 if (r instanceof BoundSheetRecord) {
                     BoundSheetRecord bsr = (BoundSheetRecord) r;
                     assertEquals("Sheet1", bsr.getSheetname());
@@ -204,4 +163,4 @@ public final class TestHSSFEventFactory extends TestCase {
             Biff8EncryptionKey.setCurrentUserPassword(null);
         }
     }
-}	
+}

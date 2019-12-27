@@ -17,36 +17,44 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
-import org.apache.poi.hssf.HSSFTestDataSamples;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-public final class TestUnicodeWorkbook extends TestCase {
+import java.io.IOException;
+
+import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.junit.Test;
+
+public final class TestUnicodeWorkbook {
 
     /**
      *  Tests Bug38230
      *  That a Umlat is written  and then read back.
      *  It should have been written as a compressed unicode.
      */
-    public void testUmlatReadWrite() {
-        HSSFWorkbook wb = new HSSFWorkbook();
+    @Test
+    public void testUmlatReadWrite() throws IOException {
+        try (HSSFWorkbook wb1 = new HSSFWorkbook()) {
 
-        //Create a unicode sheet name (euro symbol)
-        HSSFSheet s = wb.createSheet("test");
+            //Create a unicode sheet name (euro symbol)
+            HSSFSheet s = wb1.createSheet("test");
 
-        HSSFRow r = s.createRow(0);
-        HSSFCell c = r.createCell(1);
-        c.setCellValue(new HSSFRichTextString("\u00e4"));
+            HSSFRow r = s.createRow(0);
+            HSSFCell c = r.createCell(1);
+            c.setCellValue(new HSSFRichTextString("\u00e4"));
 
-        //Confirm that the sring will be compressed
-        assertEquals(c.getRichStringCellValue().getUnicodeString().getOptionFlags(), 0);
+            //Confirm that the sring will be compressed
+            assertEquals(c.getRichStringCellValue().getUnicodeString().getOptionFlags(), 0);
 
-        wb = HSSFTestDataSamples.writeOutAndReadBack(wb);
+            try (HSSFWorkbook wb = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
 
-        //Test the sheetname
-        s = wb.getSheet("test");
-        assertNotNull(s);
+                //Test the sheetname
+                s = wb.getSheet("test");
+                assertNotNull(s);
 
-        c = r.getCell(1);
-        assertEquals(c.getRichStringCellValue().getString(), "\u00e4");
+                c = r.getCell(1);
+                assertEquals(c.getRichStringCellValue().getString(), "\u00e4");
+            }
+        }
     }
 }

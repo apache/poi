@@ -17,19 +17,19 @@
 
 package org.apache.poi.hsmf.datatypes;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * Verifies that the Chunks class is actually setup properly and hasn't been changed in ways
  * that will break the library.
- *
- * @author Travis Ferguson
- *
  */
-public final class TestChunkData extends TestCase {
+public final class TestChunkData {
+	@Test
 	public void testChunkCreate() {
 	   Chunk chunk;
-	   
+
 		chunk = new StringChunk(0x0200, Types.createCustom(0x001E));
 		assertEquals("__substg1.0_0200001E", chunk.getEntryName());
 		assertEquals(0x0200, chunk.getChunkId());
@@ -39,12 +39,12 @@ public final class TestChunkData extends TestCase {
       assertEquals("__substg1.0_0200001E", chunk.getEntryName());
       assertEquals(0x0200, chunk.getChunkId());
       assertEquals(0x001E, chunk.getType().getId());
-      
+
       chunk = new StringChunk("__substg1.0_", 0x0200, Types.getById(0x001E));
       assertEquals("__substg1.0_0200001E", chunk.getEntryName());
       assertEquals(0x0200, chunk.getChunkId());
       assertEquals(0x001E, chunk.getType().getId());
-      
+
 		/* test the lower and upper limits of the chunk ids */
 		chunk = new StringChunk(0x0000, Types.createCustom(0x001E));
 		assertEquals("__substg1.0_0000001E", chunk.getEntryName());
@@ -56,27 +56,32 @@ public final class TestChunkData extends TestCase {
 		assertEquals("__substg1.0_FFFF001F", chunk.getEntryName());
 	}
 
+	@Test
 	public void testTextBodyChunk() {
 		StringChunk chunk = new StringChunk(0x1000, Types.UNICODE_STRING);
 		assertEquals(chunk.getChunkId(), MAPIProperty.BODY.id);
 	}
 
+	@Test
 	public void testDisplayToChunk() {
 		StringChunk chunk = new StringChunk(0x0E04, Types.UNICODE_STRING);
       assertEquals(chunk.getChunkId(), MAPIProperty.DISPLAY_TO.id);
 	}
 
 
+	@Test
 	public void testDisplayCCChunk() {
 		StringChunk chunk = new StringChunk(0x0E03, Types.UNICODE_STRING);
       assertEquals(chunk.getChunkId(), MAPIProperty.DISPLAY_CC.id);
 	}
 
+	@Test
 	public void testDisplayBCCChunk() {
 		StringChunk chunk = new StringChunk(0x0E02, Types.UNICODE_STRING);
       assertEquals(chunk.getChunkId(), MAPIProperty.DISPLAY_BCC.id);
 	}
 
+	@Test
 	public void testSubjectChunk() {
 		Chunk chunk = new StringChunk(0x0037, Types.UNICODE_STRING);
       assertEquals(chunk.getChunkId(), MAPIProperty.SUBJECT.id);

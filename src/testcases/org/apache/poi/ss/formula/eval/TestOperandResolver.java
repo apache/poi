@@ -17,67 +17,62 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.junit.Test;
+
 /**
  * Tests for <tt>OperandResolver</tt>
- *
- * @author Brendan Nolan
  */
-public final class TestOperandResolver extends TestCase {
-
+public final class TestOperandResolver {
+	@Test
 	public void testParseDouble_bug48472() {
-		final Double resolvedValue;
-		
-		try {
-			resolvedValue = OperandResolver.parseDouble("-");
-		} catch (StringIndexOutOfBoundsException e) { 
-			throw new AssertionFailedError("Identified bug 48472");
-		}
-
+		// bug 48472 - StringIndexOutOfBoundsException
+		Double resolvedValue = OperandResolver.parseDouble("-");
 		assertNull(resolvedValue);
 	}
-	
+
+	@Test
 	public void testParseDouble_bug49723() {
 		String value = ".1";
-		
 		Double resolvedValue = OperandResolver.parseDouble(value);
-		
+
 		assertNotNull("Identified bug 49723", resolvedValue);
 	}
-	
+
 	/**
-	 * 
 	 * Tests that a list of valid strings all return a non null value from {@link OperandResolver#parseDouble(String)}
-	 * 
 	 */
+	@Test
 	public void testParseDoubleValidStrings() {
 		String[] values = new String[]{".19", "0.19", "1.9", "1E4", "-.19", "-0.19",
 				"8.5","-1E4", ".5E6","+1.5","+1E5", "  +1E5  ", " 123 ", "1E4", "-123" };
 
 		for (String value : values) {
-			assertNotNull(OperandResolver.parseDouble(value));
-			assertEquals(OperandResolver.parseDouble(value), Double.parseDouble(value));
+			Double act = OperandResolver.parseDouble(value);
+			assertNotNull(act);
+			assertEquals(act, Double.parseDouble(value), 0);
 		}
 	}
-	
+
 	/**
-	 * 
 	 * Tests that a list of invalid strings all return null from {@link OperandResolver#parseDouble(String)}
-	 * 
 	 */
+	@Test
 	public void testParseDoubleInvalidStrings() {
 		String[] values = new String[]{"-", "ABC", "-X", "1E5a", "Infinity", "NaN", ".5F", "1,000"};
-		
+
 		for (String value : values) {
 			assertNull(OperandResolver.parseDouble(value));
 		}
 	}
 
+	@Test
 	public void testCoerceDateStringToNumber() throws EvaluationException {
 		Map<String, Double> values = new LinkedHashMap<>();
 		values.put("2019/1/18", 43483.);
@@ -90,6 +85,7 @@ public final class TestOperandResolver extends TestCase {
 		}
 	}
 
+	@Test
 	public void testCoerceTimeStringToNumber() throws EvaluationException {
 		Map<String, Double> values = new LinkedHashMap<>();
 		values.put("00:00", 0.0);

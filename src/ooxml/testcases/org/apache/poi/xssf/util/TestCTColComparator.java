@@ -17,15 +17,17 @@
 
 package org.apache.poi.xssf.util;
 
+import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
 
-import junit.framework.TestCase;
-
+import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 
 
-public final class TestCTColComparator extends TestCase {
+public final class TestCTColComparator {
 
+    @Test
     public void testCompare() {
         CTCol o1 = CTCol.Factory.newInstance();
         o1.setMin(1);
@@ -43,6 +45,7 @@ public final class TestCTColComparator extends TestCase {
         assertEquals(-1, CTColComparator.BY_MIN_MAX.compare(o3, o4));
     }
 
+    @Test
     public void testArraysSort() {
         CTCol o1 = CTCol.Factory.newInstance();
         o1.setMin(1);

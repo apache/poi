@@ -17,59 +17,50 @@
 
 package org.apache.poi.util;
 
-import junit.framework.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+
+import org.junit.Test;
 
 /**
  * Test LongField code
- *
- * @author  Marc Johnson (mjohnson at apache dot org)
  */
-public final class TestLongField extends TestCase {
+public final class TestLongField {
 
     static private final long[] _test_array =
     {
         Long.MIN_VALUE, -1L, 0L, 1L, Long.MAX_VALUE
     };
 
-    public void testConstructors()
-    {
-        try
-        {
+    @Test
+    public void testConstructors() {
+        try {
             new LongField(-1);
             fail("Should have caught ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         LongField field = new LongField(2);
 
         assertEquals(0L, field.get());
-        try
-        {
+        try {
             new LongField(-1, 1L);
             fail("Should have caught ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         field = new LongField(2, 0x123456789ABCDEF0L);
         assertEquals(0x123456789ABCDEF0L, field.get());
         byte[] array = new byte[ 10 ];
 
-        try
-        {
+        try {
             new LongField(-1, 1L, array);
             fail("Should have caught ArrayIndexOutOfBoundsException");
         }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         field = new LongField(2, 0x123456789ABCDEF0L, array);
@@ -83,14 +74,10 @@ public final class TestLongField extends TestCase {
         assertEquals(( byte ) 0x34, array[ 8 ]);
         assertEquals(( byte ) 0x12, array[ 9 ]);
         array = new byte[ 9 ];
-        try
-        {
+        try {
             new LongField(2, 5L, array);
             fail("should have gotten ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         for (long element : _test_array) {
@@ -100,13 +87,12 @@ public final class TestLongField extends TestCase {
         }
     }
 
-    public void testSet()
-    {
+    @Test
+    public void testSet() {
         LongField field = new LongField(0);
         byte[]    array = new byte[ 8 ];
 
-        for (int j = 0; j < _test_array.length; j++)
-        {
+        for (int j = 0; j < _test_array.length; j++) {
             field.set(_test_array[ j ]);
             assertEquals("testing _1 " + j, _test_array[ j ], field.get());
             field = new LongField(0);
@@ -138,24 +124,19 @@ public final class TestLongField extends TestCase {
         }
     }
 
-    public void testReadFromBytes()
-    {
+    @Test
+    public void testReadFromBytes() {
         LongField field = new LongField(1);
         byte[]    array = new byte[ 8 ];
 
-        try
-        {
+        try {
             field.readFromBytes(array);
             fail("should have caught ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         field = new LongField(0);
-        for (int j = 0; j < _test_array.length; j++)
-        {
+        for (int j = 0; j < _test_array.length; j++) {
             array[ 0 ] = ( byte ) (_test_array[ j ] % 256);
             array[ 1 ] = ( byte ) ((_test_array[ j ] >> 8) % 256);
             array[ 2 ] = ( byte ) ((_test_array[ j ] >> 16) % 256);
@@ -169,15 +150,13 @@ public final class TestLongField extends TestCase {
         }
     }
 
-    public void testReadFromStream()
-        throws IOException
-    {
+    @Test
+    public void testReadFromStream() throws IOException {
         LongField field  = new LongField(0);
         byte[]    buffer = new byte[ _test_array.length * 8 ];
 
-        for (int j = 0; j < _test_array.length; j++)
-        {
-            buffer[ (j * 8) + 0 ] = ( byte ) ((_test_array[ j ] >>  0) % 256);
+        for (int j = 0; j < _test_array.length; j++) {
+            buffer[ (j * 8)     ] = ( byte ) ((_test_array[ j ]      ) % 256);
             buffer[ (j * 8) + 1 ] = ( byte ) ((_test_array[ j ] >>  8) % 256);
             buffer[ (j * 8) + 2 ] = ( byte ) ((_test_array[ j ] >> 16) % 256);
             buffer[ (j * 8) + 3 ] = ( byte ) ((_test_array[ j ] >> 24) % 256);
@@ -188,15 +167,14 @@ public final class TestLongField extends TestCase {
         }
         ByteArrayInputStream stream = new ByteArrayInputStream(buffer);
 
-        for (int j = 0; j < buffer.length / 8; j++)
-        {
+        for (int j = 0; j < buffer.length / 8; j++) {
             field.readFromStream(stream);
             assertEquals("Testing " + j, _test_array[ j ], field.get());
         }
     }
 
-    public void testWriteToBytes()
-    {
+    @Test
+    public void testWriteToBytes() {
         LongField field = new LongField(0);
         byte[]    array = new byte[ 8 ];
 

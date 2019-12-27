@@ -37,7 +37,6 @@ import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
 
-import junit.framework.TestCase;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.PropertySet;
@@ -79,7 +78,7 @@ public final class TestPOIFSStream {
       assertFalse(i.hasNext());
       assertFalse(i.hasNext());
       assertFalse(i.hasNext());
-      
+
       // Check the contents
       assertEquals((byte)0x81, b.get());
       assertEquals((byte)0x00, b.get());
@@ -89,17 +88,17 @@ public final class TestPOIFSStream {
       assertEquals((byte)0x00, b.get());
       assertEquals((byte)0x00, b.get());
       assertEquals((byte)0x00, b.get());
-      
+
       fs.close();
    }
 
    /**
-    * Read a stream with only two blocks in it 
+    * Read a stream with only two blocks in it
     */
    @Test
    public void testReadShortStream() throws Exception {
       POIFSFileSystem fs = new POIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
-      
+
       // 97 -> 98 -> end
       POIFSStream stream = new POIFSStream(fs, 97);
       Iterator<ByteBuffer> i = stream.getBlockIterator();
@@ -113,7 +112,7 @@ public final class TestPOIFSStream {
       assertFalse(i.hasNext());
       assertFalse(i.hasNext());
       assertFalse(i.hasNext());
-      
+
       // Check the contents of the 1st block
       assertEquals((byte)0x01, b97.get());
       assertEquals((byte)0x00, b97.get());
@@ -123,7 +122,7 @@ public final class TestPOIFSStream {
       assertEquals((byte)0x00, b97.get());
       assertEquals((byte)0x00, b97.get());
       assertEquals((byte)0x00, b97.get());
-      
+
       // Check the contents of the 2nd block
       assertEquals((byte)0x81, b98.get());
       assertEquals((byte)0x00, b98.get());
@@ -133,21 +132,21 @@ public final class TestPOIFSStream {
       assertEquals((byte)0x00, b98.get());
       assertEquals((byte)0x00, b98.get());
       assertEquals((byte)0x00, b98.get());
-      
+
       fs.close();
    }
-   
+
    /**
-    * Read a stream with many blocks 
+    * Read a stream with many blocks
     */
    @Test
    public void testReadLongerStream() throws Exception {
       POIFSFileSystem fs = new POIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
-      
+
       ByteBuffer b0 = null;
       ByteBuffer b1 = null;
       ByteBuffer b22 = null;
-      
+
       // The stream at 0 has 23 blocks in it
       POIFSStream stream = new POIFSStream(fs, 0);
       Iterator<ByteBuffer> i = stream.getBlockIterator();
@@ -163,24 +162,24 @@ public final class TestPOIFSStream {
          if(count == 22) {
             b22 = b;
          }
-         
+
          count++;
       }
       assertEquals(23, count);
-      
+
       // Check the contents
       //  1st block is at 0
       assertEquals((byte)0x9e, b0.get());
       assertEquals((byte)0x75, b0.get());
       assertEquals((byte)0x97, b0.get());
       assertEquals((byte)0xf6, b0.get());
-            
+
       //  2nd block is at 1
       assertEquals((byte)0x86, b1.get());
       assertEquals((byte)0x09, b1.get());
       assertEquals((byte)0x22, b1.get());
       assertEquals((byte)0xfb, b1.get());
-      
+
       //  last block is at 89
       assertEquals((byte)0xfe, b22.get());
       assertEquals((byte)0xff, b22.get());
@@ -190,17 +189,17 @@ public final class TestPOIFSStream {
       assertEquals((byte)0x01, b22.get());
       assertEquals((byte)0x02, b22.get());
       assertEquals((byte)0x00, b22.get());
-      
+
       fs.close();
    }
 
    /**
-    * Read a stream with several blocks in a 4096 byte block file 
+    * Read a stream with several blocks in a 4096 byte block file
     */
    @Test
    public void testReadStream4096() throws Exception {
       POIFSFileSystem fs = new POIFSFileSystem(_inst.getFile("BlockSize4096.zvi"));
-      
+
       // 0 -> 1 -> 2 -> end
       POIFSStream stream = new POIFSStream(fs, 0);
       Iterator<ByteBuffer> i = stream.getBlockIterator();
@@ -217,7 +216,7 @@ public final class TestPOIFSStream {
       assertFalse(i.hasNext());
       assertFalse(i.hasNext());
       assertFalse(i.hasNext());
-      
+
       // Check the contents of the 1st block
       assertEquals((byte)0x9E, b0.get());
       assertEquals((byte)0x75, b0.get());
@@ -227,7 +226,7 @@ public final class TestPOIFSStream {
       assertEquals((byte)0x21, b0.get());
       assertEquals((byte)0xD2, b0.get());
       assertEquals((byte)0x11, b0.get());
-      
+
       // Check the contents of the 2nd block
       assertEquals((byte)0x00, b1.get());
       assertEquals((byte)0x00, b1.get());
@@ -237,7 +236,7 @@ public final class TestPOIFSStream {
       assertEquals((byte)0x00, b1.get());
       assertEquals((byte)0x00, b1.get());
       assertEquals((byte)0x00, b1.get());
-      
+
       // Check the contents of the 3rd block
       assertEquals((byte)0x6D, b2.get());
       assertEquals((byte)0x00, b2.get());
@@ -247,39 +246,39 @@ public final class TestPOIFSStream {
       assertEquals((byte)0x00, b2.get());
       assertEquals((byte)0x46, b2.get());
       assertEquals((byte)0x00, b2.get());
-      
+
       fs.close();
    }
-   
+
    /**
     * Craft a nasty file with a loop, and ensure we don't get stuck
     */
    @Test
    public void testReadFailsOnLoop() throws Exception {
       POIFSFileSystem fs = new POIFSFileSystem(_inst.getFile("BlockSize512.zvi"));
-      
+
       // Hack the FAT so that it goes 0->1->2->0
       fs.setNextBlock(0, 1);
       fs.setNextBlock(1, 2);
       fs.setNextBlock(2, 0);
-      
+
       // Now try to read
       POIFSStream stream = new POIFSStream(fs, 0);
       Iterator<ByteBuffer> i = stream.getBlockIterator();
       assertTrue(i.hasNext());
-      
+
       // 1st read works
       i.next();
       assertTrue(i.hasNext());
-      
+
       // 2nd read works
       i.next();
       assertTrue(i.hasNext());
-      
+
       // 3rd read works
       i.next();
       assertTrue(i.hasNext());
-      
+
       // 4th read blows up as it loops back to 0
       try {
          i.next();
@@ -288,7 +287,7 @@ public final class TestPOIFSStream {
          // Good, it was detected
       }
       assertTrue(i.hasNext());
-      
+
       fs.close();
    }
 
@@ -300,7 +299,7 @@ public final class TestPOIFSStream {
    public void testReadMiniStreams() throws Exception {
       POIFSFileSystem fs = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
       POIFSMiniStore ministore = fs.getMiniStore();
-      
+
       // 178 -> 179 -> 180 -> end
       POIFSStream stream = new POIFSStream(ministore, 178);
       Iterator<ByteBuffer> i = stream.getBlockIterator();
@@ -316,7 +315,7 @@ public final class TestPOIFSStream {
       assertFalse(i.hasNext());
       assertFalse(i.hasNext());
       assertFalse(i.hasNext());
-      
+
       // Check the contents of the 1st block
       assertEquals((byte)0xfe, b178.get());
       assertEquals((byte)0xff, b178.get());
@@ -326,7 +325,7 @@ public final class TestPOIFSStream {
       assertEquals((byte)0x01, b178.get());
       assertEquals((byte)0x02, b178.get());
       assertEquals((byte)0x00, b178.get());
-      
+
       // And the 2nd
       assertEquals((byte)0x6c, b179.get());
       assertEquals((byte)0x00, b179.get());
@@ -336,7 +335,7 @@ public final class TestPOIFSStream {
       assertEquals((byte)0x00, b179.get());
       assertEquals((byte)0x00, b179.get());
       assertEquals((byte)0x00, b179.get());
-      
+
       // And the 3rd
       assertEquals((byte)0x30, b180.get());
       assertEquals((byte)0x00, b180.get());
@@ -346,7 +345,7 @@ public final class TestPOIFSStream {
       assertEquals((byte)0x00, b180.get());
       assertEquals((byte)0x00, b180.get());
       assertEquals((byte)0x80, b180.get());
-      
+
       fs.close();
    }
 
@@ -356,22 +355,22 @@ public final class TestPOIFSStream {
    @Test
    public void testReplaceStream() throws Exception {
       POIFSFileSystem fs = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
-      
+
       byte[] data = new byte[512];
       for(int i=0; i<data.length; i++) {
          data[i] = (byte)(i%256);
       }
-      
+
       // 98 is actually the last block in a two block stream...
       POIFSStream stream = new POIFSStream(fs, 98);
       stream.updateContents(data);
-      
+
       // Check the reading of blocks
       Iterator<ByteBuffer> it = stream.getBlockIterator();
       assertTrue(it.hasNext());
       ByteBuffer b = it.next();
       assertFalse(it.hasNext());
-      
+
       // Now check the contents
       data = new byte[512];
       b.get(data);
@@ -379,10 +378,10 @@ public final class TestPOIFSStream {
          byte exp = (byte)(i%256);
          assertEquals(exp, data[i]);
       }
-      
+
       fs.close();
    }
-   
+
    /**
     * Writes less data than before, some blocks will need
     *  to be freed
@@ -424,7 +423,7 @@ public final class TestPOIFSStream {
           }
       }
    }
-   
+
    /**
     * Writes more data than before, new blocks will be needed
     */
@@ -471,14 +470,14 @@ public final class TestPOIFSStream {
           assertEquals(3, count);
       }
    }
-   
+
    /**
     * Writes to a new stream in the file
     */
    @Test
    public void testWriteNewStream() throws Exception {
       POIFSFileSystem fs = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
-      
+
       // 100 is our first free one
       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(99));
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(100));
@@ -486,17 +485,17 @@ public final class TestPOIFSStream {
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(102));
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(103));
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(104));
-      
-      
+
+
       // Add a single block one
       byte[] data = new byte[512];
       for(int i=0; i<data.length; i++) {
          data[i] = (byte)(i%256);
       }
-      
+
       POIFSStream stream = new POIFSStream(fs);
       stream.updateContents(data);
-      
+
       // Check it was allocated properly
       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(99));
       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(100));
@@ -504,7 +503,7 @@ public final class TestPOIFSStream {
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(102));
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(103));
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(104));
-      
+
       // And check the contents
       Iterator<ByteBuffer> it = stream.getBlockIterator();
       int count = 0;
@@ -519,17 +518,17 @@ public final class TestPOIFSStream {
          count++;
       }
       assertEquals(1, count);
-      
-      
+
+
       // And a multi block one
       data = new byte[512*3];
       for(int i=0; i<data.length; i++) {
          data[i] = (byte)(i%256);
       }
-      
+
       stream = new POIFSStream(fs);
       stream.updateContents(data);
-      
+
       // Check it was allocated properly
       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(99));
       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(100));
@@ -537,7 +536,7 @@ public final class TestPOIFSStream {
       assertEquals(103,                         fs.getNextBlock(102));
       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(103));
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(104));
-      
+
       // And check the contents
       it = stream.getBlockIterator();
       count = 0;
@@ -552,7 +551,7 @@ public final class TestPOIFSStream {
          count++;
       }
       assertEquals(3, count);
-      
+
       // Free it
       stream.free();
       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(99));
@@ -561,10 +560,10 @@ public final class TestPOIFSStream {
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(102));
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(103));
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(104));
-      
+
       fs.close();
    }
-   
+
    /**
     * Writes to a new stream in the file, where we've not enough
     *  free blocks so new FAT segments will need to be allocated
@@ -573,7 +572,7 @@ public final class TestPOIFSStream {
    @Test
    public void testWriteNewStreamExtraFATs() throws Exception {
       POIFSFileSystem fs = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize512.zvi"));
-      
+
       // Allocate almost all the blocks
       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(99));
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(100));
@@ -584,7 +583,7 @@ public final class TestPOIFSStream {
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(127));
       assertTrue(fs.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
 
-      
+
       // Write a 3 block stream
       byte[] data = new byte[512*3];
       for(int i=0; i<data.length; i++) {
@@ -592,11 +591,11 @@ public final class TestPOIFSStream {
       }
       POIFSStream stream = new POIFSStream(fs);
       stream.updateContents(data);
-      
+
       // Check we got another BAT
       assertFalse(fs.getBATBlockAndIndex(0).getBlock().hasFreeSectors());
       assertTrue(fs.getBATBlockAndIndex(128).getBlock().hasFreeSectors());
-      
+
       // the BAT will be in the first spot of the new block
       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(126));
       assertEquals(129,                         fs.getNextBlock(127));
@@ -604,10 +603,10 @@ public final class TestPOIFSStream {
       assertEquals(130,                         fs.getNextBlock(129));
       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(130));
       assertEquals(POIFSConstants.UNUSED_BLOCK, fs.getNextBlock(131));
-      
+
       fs.close();
    }
-   
+
    /**
     * Replaces data in an existing stream, with a bit
     *  more data than before, in a 4096 byte block file
@@ -615,27 +614,27 @@ public final class TestPOIFSStream {
    @Test
    public void testWriteStream4096() throws Exception {
       POIFSFileSystem fs = new POIFSFileSystem(_inst.openResourceAsStream("BlockSize4096.zvi"));
-      
+
       // 0 -> 1 -> 2 -> end
       assertEquals(1, fs.getNextBlock(0));
       assertEquals(2, fs.getNextBlock(1));
       assertEquals(POIFSConstants.END_OF_CHAIN, fs.getNextBlock(2));
       assertEquals(4, fs.getNextBlock(3));
-      
+
       // First free one is at 15
       assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, fs.getNextBlock(14));
       assertEquals(POIFSConstants.UNUSED_BLOCK,     fs.getNextBlock(15));
-      
-      
-      // Write a 5 block file 
+
+
+      // Write a 5 block file
       byte[] data = new byte[4096*5];
       for(int i=0; i<data.length; i++) {
          data[i] = (byte)(i%256);
       }
       POIFSStream stream = new POIFSStream(fs, 0);
       stream.updateContents(data);
-      
-      
+
+
       // Check it
       assertEquals(1, fs.getNextBlock(0));
       assertEquals(2, fs.getNextBlock(1));
@@ -660,10 +659,10 @@ public final class TestPOIFSStream {
          count++;
       }
       assertEquals(5, count);
-      
+
       fs.close();
    }
-   
+
    /**
     * Tests that we can write into the mini stream
     */
@@ -895,7 +894,7 @@ public final class TestPOIFSStream {
           }
       }
    }
-   
+
    /**
     * Tests adding a new stream, writing and reading it.
     */
@@ -964,7 +963,7 @@ public final class TestPOIFSStream {
           assertFalse(it.hasNext());
       }
    }
-   
+
    /**
     * Writes a stream, then replaces it
     */
@@ -1002,16 +1001,16 @@ public final class TestPOIFSStream {
        assertEquals(4106, normal.getSize());
        assertEquals(4106, ((DocumentNode)normal).getProperty().getSize());
 
-       
+
        // Replace with one still big enough for a main stream, but one block smaller
        byte[] main4096 = new byte[4096];
        main4096[0] = -10;
        main4096[4095] = -11;
-       
+
        DocumentOutputStream nout = new DocumentOutputStream(normal);
        nout.write(main4096);
        nout.close();
-       
+
        // Will have dropped to 8
        assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(0));
        assertEquals(POIFSConstants.FAT_SECTOR_BLOCK,bat.getValueAt(1));
@@ -1029,12 +1028,12 @@ public final class TestPOIFSStream {
        normal = (DocumentEntry)fs.getRoot().getEntry("Normal");
        assertEquals(4096, normal.getSize());
        assertEquals(4096, ((DocumentNode)normal).getProperty().getSize());
-       
-       
+
+
        // Write and check
        fs = writeOutAndReadBack(fs);
        bat = fs.getBATBlockAndIndex(0).getBlock();
-       
+
        // No change after write
        assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(0)); // Properties
        assertEquals(POIFSConstants.FAT_SECTOR_BLOCK,bat.getValueAt(1));
@@ -1048,12 +1047,12 @@ public final class TestPOIFSStream {
        assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(9)); // End of Normal
        assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(10));
        assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(11));
-       
+
        normal = (DocumentEntry)fs.getRoot().getEntry("Normal");
        assertEquals(4096, normal.getSize());
        assertEquals(4096, ((DocumentNode)normal).getProperty().getSize());
-       
-       
+
+
        // Make longer, take 1 block at the end
        normal = (DocumentEntry)fs.getRoot().getEntry("Normal");
        nout = new DocumentOutputStream(normal);
@@ -1073,19 +1072,19 @@ public final class TestPOIFSStream {
        assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(10)); // Normal
        assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(11));
        assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(12));
-       
+
        normal = (DocumentEntry)fs.getRoot().getEntry("Normal");
        assertEquals(4106, normal.getSize());
        assertEquals(4106, ((DocumentNode)normal).getProperty().getSize());
 
-       
+
        // Make it small, will trigger the SBAT stream and free lots up
        byte[] mini = new byte[] { 42, 0, 1, 2, 3, 4, 42 };
        normal = (DocumentEntry)fs.getRoot().getEntry("Normal");
        nout = new DocumentOutputStream(normal);
        nout.write(mini);
        nout.close();
-       
+
        assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(0));
        assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, bat.getValueAt(1));
        assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(2)); // SBAT
@@ -1099,17 +1098,17 @@ public final class TestPOIFSStream {
        assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(10));
        assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(11));
        assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(12));
-       
+
        normal = (DocumentEntry)fs.getRoot().getEntry("Normal");
        assertEquals(7, normal.getSize());
        assertEquals(7, ((DocumentNode)normal).getProperty().getSize());
 
-       
+
        // Finally back to big again
        nout = new DocumentOutputStream(normal);
        nout.write(main4096);
        nout.close();
-       
+
        // Will keep the mini stream, now empty
        assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(0));
        assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, bat.getValueAt(1));
@@ -1125,16 +1124,16 @@ public final class TestPOIFSStream {
        assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(11));
        assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(12));
        assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(13));
-       
+
        normal = (DocumentEntry)fs.getRoot().getEntry("Normal");
        assertEquals(4096, normal.getSize());
        assertEquals(4096, ((DocumentNode)normal).getProperty().getSize());
-       
-       
+
+
        // Save, re-load, re-check
        fs = writeOutAndReadBack(fs);
        bat = fs.getBATBlockAndIndex(0).getBlock();
-       
+
        assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(0));
        assertEquals(POIFSConstants.FAT_SECTOR_BLOCK, bat.getValueAt(1));
        assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(2)); // SBAT
@@ -1149,11 +1148,11 @@ public final class TestPOIFSStream {
        assertEquals(POIFSConstants.END_OF_CHAIN, bat.getValueAt(11));
        assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(12));
        assertEquals(POIFSConstants.UNUSED_BLOCK, bat.getValueAt(13));
-       
+
        normal = (DocumentEntry)fs.getRoot().getEntry("Normal");
        assertEquals(4096, normal.getSize());
        assertEquals(4096, ((DocumentNode)normal).getProperty().getSize());
-       
+
        fs.close();
    }
 

@@ -27,21 +27,18 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
-import junit.framework.TestCase;
-
 /**
  * Mixed utilities for testing memory usage in XSSF
- *
- * @author Yegor Kozlov
  */
 @SuppressWarnings("InfiniteLoopStatement")
-public class MemoryUsage extends TestCase {
+public class MemoryUsage {
     private static final int NUM_COLUMNS = 255;
 
     private static void printMemoryUsage(String msg) {
@@ -159,6 +156,7 @@ public class MemoryUsage extends TestCase {
      *
      * @see #testXmlAttached()
      */
+    @Test
     public void testXmlDetached() {
         System.out.println();
         System.out.println("Testing detached");
@@ -187,6 +185,7 @@ public class MemoryUsage extends TestCase {
      *
      * @see #testXmlAttached()
      */
+    @Test
     public void testXmlAttached() {
         System.out.println();
         System.out.println("Testing attached");
@@ -212,18 +211,22 @@ public class MemoryUsage extends TestCase {
         printMemoryUsage("after");
     }
 
+    @Test
     public void testMixedHSSF() {
         mixedSpreadsheet(new HSSFWorkbook(), NUM_COLUMNS);
     }
 
+    @Test
     public void testMixedXSSF() {
         mixedSpreadsheet(new XSSFWorkbook(), NUM_COLUMNS);
     }
 
+    @Test
     public void testNumberHSSF() {
         numberSpreadsheet(new HSSFWorkbook(), NUM_COLUMNS);
     }
 
+    @Test
     public void testNumberXSSF() {
         numberSpreadsheet(new XSSFWorkbook(), NUM_COLUMNS);
     }

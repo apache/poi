@@ -17,19 +17,17 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
 import java.io.ByteArrayInputStream;
 
 import org.apache.poi.util.LittleEndian;
+import org.junit.Test;
 
-import junit.framework.TestCase;
-
-/**
- * 
- * @author Josh Micich
- */
-public final class TestDVALRecord extends TestCase {
+public final class TestDVALRecord {
+    @Test
     public void testRead() {
-        
         byte[] data = new byte[22];
         LittleEndian.putShort(data, 0, DVALRecord.sid);
         LittleEndian.putShort(data, 2, (short)18);
@@ -38,18 +36,16 @@ public final class TestDVALRecord extends TestCase {
         LittleEndian.putInt(data, 10, 57);
         LittleEndian.putInt(data, 14, 58);
         LittleEndian.putInt(data, 18, 59);
-       
+
         RecordInputStream in = new RecordInputStream(new ByteArrayInputStream(data));
         in.nextRecord();
         DVALRecord dv = new DVALRecord(in);
-        
+
         assertEquals(55, dv.getOptions());
         assertEquals(56, dv.getHorizontalPos());
         assertEquals(57, dv.getVerticalPos());
         assertEquals(58, dv.getObjectID());
-        if(dv.getDVRecNo() == 0) {
-            fail("Identified bug 44510");
-        }
+        assertNotEquals("Identified bug 44510",0, dv.getDVRecNo());
         assertEquals(59, dv.getDVRecNo());
     }
 }

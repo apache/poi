@@ -17,19 +17,19 @@
 
 package org.apache.poi.hssf.util;
 
-import java.io.InputStream;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
-import junit.framework.TestCase;
+import java.io.InputStream;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.formula.ptg.Area3DPtg;
-import org.apache.poi.ss.formula.ptg.MemFuncPtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFName;
@@ -37,11 +37,18 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.TestHSSFWorkbook;
+import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.ptg.Area3DPtg;
+import org.apache.poi.ss.formula.ptg.MemFuncPtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
+import org.junit.Test;
 
-public final class TestAreaReference extends TestCase {
+public final class TestAreaReference {
 
+    @Test
     public void testAreaRef1() {
         AreaReference ar = new AreaReference("$A$1:$B$2", SpreadsheetVersion.EXCEL97);
         assertFalse("Two cells expected", ar.isSingleCell());
@@ -83,6 +90,7 @@ public final class TestAreaReference extends TestCase {
      * References failed when sheet names were being used
      * Reported by Arne.Clauss@gedas.de
      */
+    @Test
     public void testReferenceWithSheet() {
         AreaReference ar;
 
@@ -107,6 +115,7 @@ public final class TestAreaReference extends TestCase {
         TestCellReference.confirmCell(allCells[2], "Tabelle1", 6, 1, true, true, "Tabelle1!$B$7");
     }
 
+    @Test
     public void testContiguousReferences() {
         String refSimple = "$C$10:$C$10";
         String ref2D = "$C$10:$D$11";
@@ -186,69 +195,72 @@ public final class TestAreaReference extends TestCase {
         assertEquals("Tabelle1", refs[1].getLastCell().getSheetName());
     }
 
+    @Test
     public void testDiscontinousReference() throws Exception {
-        InputStream is = HSSFTestDataSamples.openSampleFileStream("44167.xls");
-        HSSFWorkbook wb = new HSSFWorkbook(is);
-        InternalWorkbook workbook = TestHSSFWorkbook.getInternalWorkbook(wb);
-        HSSFEvaluationWorkbook eb = HSSFEvaluationWorkbook.create(wb);
+        try (InputStream is = HSSFTestDataSamples.openSampleFileStream("44167.xls");
+            HSSFWorkbook wb = new HSSFWorkbook(is)) {
+            InternalWorkbook workbook = TestHSSFWorkbook.getInternalWorkbook(wb);
+            HSSFEvaluationWorkbook eb = HSSFEvaluationWorkbook.create(wb);
 
-        assertEquals(1, wb.getNumberOfNames());
-        String sheetName = "Tabelle1";
-        String rawRefA = "$C$10:$C$14";
-        String rawRefB = "$C$16:$C$18";
-        String refA = sheetName + "!" + rawRefA;
-        String refB = sheetName + "!" + rawRefB;
-        String ref = refA + "," + refB;
+            assertEquals(1, wb.getNumberOfNames());
+            String sheetName = "Tabelle1";
+            String rawRefA = "$C$10:$C$14";
+            String rawRefB = "$C$16:$C$18";
+            String refA = sheetName + "!" + rawRefA;
+            String refB = sheetName + "!" + rawRefB;
+            String ref = refA + "," + refB;
 
-        // Check the low level record
-        NameRecord nr = workbook.getNameRecord(0);
-        assertNotNull(nr);
-        assertEquals("test", nr.getNameText());
+            // Check the low level record
+            NameRecord nr = workbook.getNameRecord(0);
+            assertNotNull(nr);
+            assertEquals("test", nr.getNameText());
 
-        Ptg[] def =nr.getNameDefinition();
-        assertEquals(4, def.length);
+            Ptg[] def = nr.getNameDefinition();
+            assertEquals(4, def.length);
 
-        MemFuncPtg ptgA = (MemFuncPtg)def[0];
-        Area3DPtg ptgB = (Area3DPtg)def[1];
-        Area3DPtg ptgC = (Area3DPtg)def[2];
-        UnionPtg ptgD = (UnionPtg)def[3];
-        assertEquals("", ptgA.toFormulaString());
-        assertEquals(refA, ptgB.toFormulaString(eb));
-        assertEquals(refB, ptgC.toFormulaString(eb));
-        assertEquals(",", ptgD.toFormulaString());
+            MemFuncPtg ptgA = (MemFuncPtg) def[0];
+            Area3DPtg ptgB = (Area3DPtg) def[1];
+            Area3DPtg ptgC = (Area3DPtg) def[2];
+            UnionPtg ptgD = (UnionPtg) def[3];
+            assertEquals("", ptgA.toFormulaString());
+            assertEquals(refA, ptgB.toFormulaString(eb));
+            assertEquals(refB, ptgC.toFormulaString(eb));
+            assertEquals(",", ptgD.toFormulaString());
 
-        assertEquals(ref, HSSFFormulaParser.toFormulaString(wb, nr.getNameDefinition()));
+            assertEquals(ref, HSSFFormulaParser.toFormulaString(wb, nr.getNameDefinition()));
 
-        // Check the high level definition
-        int idx = wb.getNameIndex("test");
-        assertEquals(0, idx);
-        HSSFName aNamedCell = wb.getNameAt(idx);
+            // Check the high level definition
+            int idx = wb.getNameIndex("test");
+            assertEquals(0, idx);
+            HSSFName aNamedCell = wb.getNameAt(idx);
 
-        // Should have 2 references
-        String formulaRefs = aNamedCell.getRefersToFormula();
-        assertNotNull(formulaRefs);
-        assertEquals(ref, formulaRefs);
+            // Should have 2 references
+            String formulaRefs = aNamedCell.getRefersToFormula();
+            assertNotNull(formulaRefs);
+            assertEquals(ref, formulaRefs);
 
-        // Check the parsing of the reference into cells
-        assertFalse(AreaReference.isContiguous(formulaRefs));
-        AreaReference[] arefs = AreaReference.generateContiguous(SpreadsheetVersion.EXCEL97, formulaRefs);
-        assertEquals(2, arefs.length);
-        assertEquals(refA, arefs[0].formatAsString());
-        assertEquals(refB, arefs[1].formatAsString());
+            // Check the parsing of the reference into cells
+            assertFalse(AreaReference.isContiguous(formulaRefs));
+            AreaReference[] arefs = AreaReference.generateContiguous(SpreadsheetVersion.EXCEL97, formulaRefs);
+            assertEquals(2, arefs.length);
+            assertEquals(refA, arefs[0].formatAsString());
+            assertEquals(refB, arefs[1].formatAsString());
 
-        for (AreaReference ar : arefs) {
-            confirmResolveCellRef(wb, ar.getFirstCell());
-            confirmResolveCellRef(wb, ar.getLastCell());
+            for (AreaReference ar : arefs) {
+                confirmResolveCellRef(wb, ar.getFirstCell());
+                confirmResolveCellRef(wb, ar.getLastCell());
+            }
         }
     }
 
     private static void confirmResolveCellRef(HSSFWorkbook wb, CellReference cref) {
         HSSFSheet s = wb.getSheet(cref.getSheetName());
         HSSFRow r = s.getRow(cref.getRow());
-        HSSFCell c = r.getCell((int)cref.getCol());
+        HSSFCell c = r.getCell(cref.getCol());
         assertNotNull(c);
     }
 
+    @Test
     public void testSpecialSheetNames() {
         AreaReference ar;
         ar = new AreaReference("'Sheet A'!A1:A1", SpreadsheetVersion.EXCEL97);
@@ -270,20 +282,20 @@ public final class TestAreaReference extends TestCase {
         assertEquals(expectedFullText, ar.formatAsString());
     }
 
+    @Test
     public void testWholeColumnRefs() {
         confirmWholeColumnRef("A:A", 0, 0, false, false);
         confirmWholeColumnRef("$C:D", 2, 3, true, false);
         confirmWholeColumnRef("AD:$AE", 29, 30, false, true);
     }
-    
+
     private static void confirmWholeColumnRef(String ref, int firstCol, int lastCol, boolean firstIsAbs, boolean lastIsAbs) {
         AreaReference ar = new AreaReference(ref, SpreadsheetVersion.EXCEL97);
         confirmCell(ar.getFirstCell(), 0, firstCol, true, firstIsAbs);
         confirmCell(ar.getLastCell(), 0xFFFF, lastCol, true, lastIsAbs);
     }
 
-    private static void confirmCell(CellReference cell, int row, int col, boolean isRowAbs,
-            boolean isColAbs) {
+    private static void confirmCell(CellReference cell, int row, int col, boolean isRowAbs, boolean isColAbs) {
         assertEquals(row, cell.getRow());
         assertEquals(col, cell.getCol());
         assertEquals(isRowAbs, cell.isRowAbsolute());

@@ -18,20 +18,21 @@
 package org.apache.poi.hslf.record;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests TextSpecInfoAtom
  *
  * @author Yegor Kozlov
  */
-public final class TestTextSpecInfoAtom extends TestCase {
+public final class TestTextSpecInfoAtom  {
 
     //from a real file
-    private final byte[] data_1 = new byte[] {
+    private final byte[] data_1 = {
         0x00, 0x00, (byte)0xAA, 0x0F, 0x2C, 0x00, 0x00, 0x00,
         0x0A, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x01,
         0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x46, 0x00,
@@ -39,7 +40,7 @@ public final class TestTextSpecInfoAtom extends TestCase {
         0x00, 0x00, 0x00, 0x03, 0x00, 0x20, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
     };
 
-
+    @Test
     public void testRead() {
         TextSpecInfoAtom spec = new TextSpecInfoAtom(data_1, 0, data_1.length);
         TextSpecInfoRun[] run = spec.getTextSpecInfoRuns();
@@ -50,18 +51,17 @@ public final class TestTextSpecInfoAtom extends TestCase {
         assertEquals(70, run[2].getLength());
         assertEquals(9, run[3].getLength());
         assertEquals(32, run[4].getLength());
-
     }
 
+    @Test
     public void testWrite() throws Exception {
         TextSpecInfoAtom spec = new TextSpecInfoAtom(data_1, 0, data_1.length);
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         spec.writeOut(out);
-
-        byte[] result = out.toByteArray();
-        assertArrayEquals(result, data_1);
+        assertArrayEquals(data_1, out.toByteArray());
 	}
 
+    @Test
     public void testReset() throws Exception {
         TextSpecInfoAtom spec = new TextSpecInfoAtom(data_1, 0, data_1.length);
         spec.reset(32);  //length of the parent text

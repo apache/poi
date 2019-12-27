@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.atp;
 
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
@@ -24,24 +26,12 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.AggregateFunction;
 import org.apache.poi.ss.formula.functions.EvalFactory;
-
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Testcase for Excel function PERCENTILE()
- *
- * @author T. Gordon
  */
-public class TestPercentile extends TestCase {
-
-    public void testPercentile() {
-        testBasic();
-        testUnusualArgs();
-        testUnusualArgs2();
-        testUnusualArgs3();
-        testErrors();
-        testErrors2();
-    }
+public class TestPercentile {
 
     private static ValueEval invokePercentile(ValueEval[] args, ValueEval percentile) {
         AreaEval aeA = EvalFactory.createAreaEval("A1:A" + args.length, args);
@@ -62,6 +52,7 @@ public class TestPercentile extends TestCase {
         assertEquals(expectedError.getErrorCode(), ((ErrorEval) result).getErrorCode());
     }
 
+    @Test
     public void testBasic() {
         ValueEval[] values = { new NumberEval(210.128), new NumberEval(65.2182), new NumberEval(32.231),
                 new NumberEval(12.123), new NumberEval(45.32) };
@@ -69,6 +60,7 @@ public class TestPercentile extends TestCase {
         confirmPercentile(percentile, values, 181.14604);
     }
 
+    @Test
     public void testBlanks() {
         ValueEval[] values = { new NumberEval(210.128), new NumberEval(65.2182), new NumberEval(32.231),
                 BlankEval.instance, new NumberEval(45.32) };
@@ -76,6 +68,7 @@ public class TestPercentile extends TestCase {
         confirmPercentile(percentile, values, 188.39153);
     }
 
+    @Test
     public void testUnusualArgs() {
         ValueEval[] values = { new NumberEval(1), new NumberEval(2), BoolEval.TRUE, BoolEval.FALSE };
         ValueEval percentile = new NumberEval(0.95);
@@ -83,6 +76,7 @@ public class TestPercentile extends TestCase {
     }
 
     //percentile has to be between 0 and 1 - here we test less than zero
+    @Test
     public void testUnusualArgs2() {
         ValueEval[] values = { new NumberEval(1), new NumberEval(2), };
         ValueEval percentile = new NumberEval(-0.1);
@@ -90,6 +84,7 @@ public class TestPercentile extends TestCase {
     }
 
     //percentile has to be between 0 and 1 - here we test more than 1
+    @Test
     public void testUnusualArgs3() {
         ValueEval[] values = { new NumberEval(1), new NumberEval(2) };
         ValueEval percentile = new NumberEval(1.1);
@@ -97,6 +92,7 @@ public class TestPercentile extends TestCase {
     }
 
     //here we test where there are errors as part of inputs
+    @Test
     public void testErrors() {
         ValueEval[] values = { new NumberEval(1), ErrorEval.NAME_INVALID, new NumberEval(3), ErrorEval.DIV_ZERO, };
         ValueEval percentile = new NumberEval(0.95);
@@ -104,6 +100,7 @@ public class TestPercentile extends TestCase {
     }
 
     //here we test where there are errors as part of inputs
+    @Test
     public void testErrors2() {
         ValueEval[] values = { new NumberEval(1), new NumberEval(2), new NumberEval(3), ErrorEval.DIV_ZERO, };
         ValueEval percentile = new NumberEval(0.95);

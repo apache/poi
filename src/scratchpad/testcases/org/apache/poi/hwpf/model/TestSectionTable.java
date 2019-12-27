@@ -17,22 +17,22 @@
 
 package org.apache.poi.hwpf.model;
 
-import junit.framework.*;
+import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
-import org.apache.poi.hwpf.*;
-import org.apache.poi.hwpf.model.io.*;
+import org.apache.poi.hwpf.HWPFDocFixture;
+import org.apache.poi.hwpf.model.io.HWPFFileSystem;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public final class TestSectionTable
-  extends TestCase
-{
+public final class TestSectionTable {
   private HWPFDocFixture _hWPFDocFixture;
 
-  public void testReadWrite()
-    throws Exception
-  {
+  @Test
+  public void testReadWrite() throws Exception {
     FileInformationBlock fib = _hWPFDocFixture._fib;
     byte[] mainStream = _hWPFDocFixture._mainStream;
     byte[] tableStream = _hWPFDocFixture._tableStream;
@@ -85,25 +85,19 @@ public final class TestSectionTable
     }
   }
 
-  @Override
-protected void setUp()
-    throws Exception
-  {
-    super.setUp();
-    /**@todo verify the constructors*/
+  @Before
+  public void setUp() throws Exception {
+    /*@todo verify the constructors*/
     _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
 
     _hWPFDocFixture.setUp();
   }
 
-  @Override
-protected void tearDown()
-    throws Exception
-  {
+  @After
+  public void tearDown()  {
     _hWPFDocFixture.tearDown();
 
     _hWPFDocFixture = null;
-    super.tearDown();
   }
 
 }

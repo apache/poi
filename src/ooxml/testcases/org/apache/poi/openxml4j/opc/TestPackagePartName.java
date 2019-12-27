@@ -17,13 +17,16 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-public final class TestPackagePartName extends TestCase {
+import org.junit.Test;
+
+public final class TestPackagePartName {
 
 	/**
 	 * Test method getExtension().
 	 */
+	@Test
 	public void testGetExtension() throws Exception{
 		PackagePartName name1 = PackagingURIHelper.createPartName("/doc/props/document.xml");
 		PackagePartName name2 = PackagingURIHelper.createPartName("/root/document");

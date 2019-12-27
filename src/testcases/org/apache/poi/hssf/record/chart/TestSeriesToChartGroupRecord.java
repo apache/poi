@@ -18,23 +18,23 @@
 package org.apache.poi.hssf.record.chart;
 
 
-import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the SeriesToChartGroupRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
-
- * @author Andrew C. Oliver (acoliver at apache.org)
  */
-public final class TestSeriesToChartGroupRecord extends TestCase {
+public final class TestSeriesToChartGroupRecord {
     byte[] data = new byte[] {
 	(byte)0x0, (byte)0x0
     };
 
+    @Test
     public void testLoad() {
         SeriesToChartGroupRecord record = new SeriesToChartGroupRecord(TestcaseRecordInputStream.create(0x1045, data));
         assertEquals( 0x0, record.getChartGroupIndex());
@@ -42,15 +42,12 @@ public final class TestSeriesToChartGroupRecord extends TestCase {
         assertEquals( 0x6, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
+    @Test
+    public void testStore() {
         SeriesToChartGroupRecord record = new SeriesToChartGroupRecord();
         record.setChartGroupIndex( (short)0x0 );
 
-
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        confirmRecordEncoding(SeriesToChartGroupRecord.sid, data, recordBytes);
     }
 }

@@ -18,17 +18,12 @@
 package org.apache.poi.hssf.record;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.util.HexRead;
-import org.apache.poi.util.RecordFormatException;
+import org.junit.Test;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
-/**
- *
- * @author Josh Micich
- */
-public final class TestRecalcIdRecord extends TestCase {
+public final class TestRecalcIdRecord {
 
 	private static RecalcIdRecord create(byte[] data) {
 		RecordInputStream in = TestcaseRecordInputStream.create(RecalcIdRecord.sid, data);
@@ -36,8 +31,10 @@ public final class TestRecalcIdRecord extends TestCase {
 		assertEquals(0, in.remaining());
 		return result;
 	}
+
+	@Test
 	public void testBasicDeserializeReserialize() {
-		
+
 		byte[] data = HexRead.readFromString(
 				"C1 01" +  // rt
 				"00 00" +  // reserved
@@ -47,8 +44,9 @@ public final class TestRecalcIdRecord extends TestCase {
 		TestcaseRecordInputStream.confirmRecordEncoding(RecalcIdRecord.sid, data, r.serialize());
 	}
 
+	@Test
 	public void testBadFirstField_bug48096() {
-		/**
+		/*
 		 * Data taken from the sample file referenced in Bugzilla 48096, file offset 0x0D45.
 		 * The apparent problem is that the first data short field has been written with the
 		 * wrong <i>endianness</n>.  Excel seems to ignore whatever value is present in this
@@ -58,15 +56,10 @@ public final class TestRecalcIdRecord extends TestCase {
 		byte[] goodData = HexRead.readFromString("C1 01 08 00 C1 01 00 00 00 01 69 61");
 
 		RecordInputStream in = TestcaseRecordInputStream.create(badData);
-		RecalcIdRecord r;
-		try {
-			r = new RecalcIdRecord(in);
-		} catch (RecordFormatException e) {
-			if (e.getMessage().equals("expected 449 but got 49409")) {
-				throw new AssertionFailedError("Identified bug 48096");
-			}
-			throw e;
-		}
+
+		// bug 48096 - expected 449 but got 49409
+		RecalcIdRecord r = new RecalcIdRecord(in);
+
 		assertEquals(0, in.remaining());
 		assertArrayEquals(r.serialize(), goodData);
 	}

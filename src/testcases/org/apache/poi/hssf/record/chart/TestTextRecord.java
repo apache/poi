@@ -18,18 +18,20 @@
 package org.apache.poi.hssf.record.chart;
 
 
-import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
-import junit.framework.TestCase;
+import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the TextRecord
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestTextRecord extends TestCase {
+public final class TestTextRecord {
     byte[] data = new byte[] {
         (byte)0x02,                                          // horiz align
         (byte)0x02,                                          // vert align
@@ -45,8 +47,8 @@ public final class TestTextRecord extends TestCase {
         (byte)0x00,(byte)0x00                                // text rotation
     };
 
+    @Test
     public void testLoad() {
-
         TextRecord record = new TextRecord(TestcaseRecordInputStream.create(0x1025, data));
         assertEquals( TextRecord.HORIZONTAL_ALIGNMENT_CENTER, record.getHorizontalAlignment());
         assertEquals( TextRecord.VERTICAL_ALIGNMENT_CENTER, record.getVerticalAlignment());
@@ -79,8 +81,8 @@ public final class TestTextRecord extends TestCase {
         assertEquals( 36, record.getRecordSize() );
     }
 
-    public void testStore()
-    {
+    @Test
+    public void testStore() {
         TextRecord record = new TextRecord();
         record.setHorizontalAlignment( TextRecord.HORIZONTAL_ALIGNMENT_CENTER );
         record.setVerticalAlignment( TextRecord.VERTICAL_ALIGNMENT_CENTER );
@@ -110,8 +112,6 @@ public final class TestTextRecord extends TestCase {
 
 
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        confirmRecordEncoding(TextRecord.sid, data, recordBytes);
     }
 }

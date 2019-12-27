@@ -17,18 +17,20 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+
+import org.junit.Test;
 
 /**
  * Class to test DocumentDescriptor functionality
- *
- * @author Marc Johnson
  */
-public final class TestDocumentDescriptor extends TestCase {
+public final class TestDocumentDescriptor {
 
     /**
      * test equality
      */
+    @Test
     public void testEquality() {
         String[] names = { "c1", "c2", "c3", "c4", "c5" };
         POIFSDocumentPath   a1    = new POIFSDocumentPath();
@@ -39,131 +41,67 @@ public final class TestDocumentDescriptor extends TestCase {
                                         new String[ 0 ]);
         POIFSDocumentPath[] paths = { a1, a2, a3, a4, a5 };
 
-        for (int j = 0; j < paths.length; j++)
-        {
-            for (int k = 0; k < paths.length; k++)
-            {
-                for (int m = 0; m < names.length; m++)
-                {
-                    DocumentDescriptor d1 = new DocumentDescriptor(paths[ j ],
-                                                names[ m ]);
+        for (int j = 0; j < paths.length; j++) {
+            for (int k = 0; k < paths.length; k++) {
+                for (int m = 0; m < names.length; m++) {
+                    DocumentDescriptor d1 = new DocumentDescriptor(paths[ j ], names[ m ]);
 
-                    for (int n = 0; n < names.length; n++)
-                    {
-                        DocumentDescriptor d2 =
-                            new DocumentDescriptor(paths[ k ], names[ n ]);
+                    for (int n = 0; n < names.length; n++) {
+                        DocumentDescriptor d2 = new DocumentDescriptor(paths[ k ], names[ n ]);
 
-                        if (m == n)
-                        {
-                            assertEquals("" + j + "," + k + "," + m + ","
-                                         + n, d1, d2);
-                        }
-                        else
-                        {
-                            assertFalse(d1.equals(d2));
+                        if (m == n) {
+                            assertEquals("" + j + "," + k + "," + m + "," + n, d1, d2);
+                        } else {
+                            assertNotEquals(d1, d2);
                         }
                     }
                 }
             }
         }
-        a2 = new POIFSDocumentPath(a1, new String[]
-        {
-            "foo"
-        });
-        a3 = new POIFSDocumentPath(a2, new String[]
-        {
-            "bar"
-        });
-        a4 = new POIFSDocumentPath(a3, new String[]
-        {
-            "fubar"
-        });
-        a5 = new POIFSDocumentPath(a4, new String[]
-        {
-            "foobar"
-        });
-        POIFSDocumentPath[] builtUpPaths =
-        {
-            a1, a2, a3, a4, a5
-        };
-        POIFSDocumentPath[] fullPaths    =
-        {
-            new POIFSDocumentPath(), new POIFSDocumentPath(new String[]
-            {
-                "foo"
-            }), new POIFSDocumentPath(new String[]
-            {
-                "foo", "bar"
-            }), new POIFSDocumentPath(new String[]
-            {
-                "foo", "bar", "fubar"
-            }), new POIFSDocumentPath(new String[]
-            {
-                "foo", "bar", "fubar", "foobar"
-            })
+        a2 = new POIFSDocumentPath(a1, new String[]{"foo"});
+        a3 = new POIFSDocumentPath(a2, new String[]{"bar"});
+        a4 = new POIFSDocumentPath(a3, new String[]{"fubar"});
+        a5 = new POIFSDocumentPath(a4, new String[]{"foobar"});
+        POIFSDocumentPath[] builtUpPaths = {a1, a2, a3, a4, a5};
+        POIFSDocumentPath[] fullPaths    = {
+            new POIFSDocumentPath(),
+            new POIFSDocumentPath(new String[]{"foo"}),
+            new POIFSDocumentPath(new String[]{"foo", "bar"}),
+            new POIFSDocumentPath(new String[]{"foo", "bar", "fubar"}),
+            new POIFSDocumentPath(new String[]{"foo", "bar", "fubar", "foobar"})
         };
 
-        for (int k = 0; k < builtUpPaths.length; k++)
-        {
-            for (int j = 0; j < fullPaths.length; j++)
-            {
-                for (int m = 0; m < names.length; m++)
-                {
-                    DocumentDescriptor d1 =
-                        new DocumentDescriptor(fullPaths[ j ], names[ m ]);
+        for (int k = 0; k < builtUpPaths.length; k++) {
+            for (int j = 0; j < fullPaths.length; j++) {
+                for (int m = 0; m < names.length; m++) {
+                    DocumentDescriptor d1 = new DocumentDescriptor(fullPaths[ j ], names[ m ]);
 
-                    for (int n = 0; n < names.length; n++)
-                    {
-                        DocumentDescriptor d2 =
-                            new DocumentDescriptor(builtUpPaths[ k ],
-                                                   names[ n ]);
+                    for (int n = 0; n < names.length; n++) {
+                        DocumentDescriptor d2 = new DocumentDescriptor(builtUpPaths[ k ], names[ n ]);
 
-                        if ((k == j) && (m == n))
-                        {
-                            assertEquals("" + j + "," + k + "," + m + ","
-                                         + n, d1, d2);
-                        }
-                        else
-                        {
-                            assertFalse(d1.equals(d2));
+                        if ((k == j) && (m == n)) {
+                            assertEquals("" + j + "," + k + "," + m + "," + n, d1, d2);
+                        } else {
+                            assertNotEquals(d1, d2);
                         }
                     }
                 }
             }
         }
-        POIFSDocumentPath[] badPaths =
-        {
-            new POIFSDocumentPath(new String[]
-            {
-                "_foo"
-            }), new POIFSDocumentPath(new String[]
-            {
-                "foo", "_bar"
-            }), new POIFSDocumentPath(new String[]
-            {
-                "foo", "bar", "_fubar"
-            }), new POIFSDocumentPath(new String[]
-            {
-                "foo", "bar", "fubar", "_foobar"
-            })
+        POIFSDocumentPath[] badPaths = {
+            new POIFSDocumentPath(new String[]{"_foo"}),
+            new POIFSDocumentPath(new String[]{"foo", "_bar"}),
+            new POIFSDocumentPath(new String[]{"foo", "bar", "_fubar"}),
+            new POIFSDocumentPath(new String[]{"foo", "bar", "fubar", "_foobar"})
         };
 
-        for (int k = 0; k < builtUpPaths.length; k++)
-        {
-            for (int j = 0; j < badPaths.length; j++)
-            {
-                for (int m = 0; m < names.length; m++)
-                {
-                    DocumentDescriptor d1 =
-                        new DocumentDescriptor(badPaths[ j ], names[ m ]);
-
-                    for (int n = 0; n < names.length; n++)
-                    {
-                        DocumentDescriptor d2 =
-                            new DocumentDescriptor(builtUpPaths[ k ],
-                                                   names[ n ]);
-
-                        assertFalse(d1.equals(d2));
+        for (POIFSDocumentPath builtUpPath : builtUpPaths) {
+            for (POIFSDocumentPath badPath : badPaths) {
+                for (String s : names) {
+                    DocumentDescriptor d1 = new DocumentDescriptor(badPath, s);
+                    for (String name : names) {
+                        DocumentDescriptor d2 = new DocumentDescriptor(builtUpPath, name);
+                        assertNotEquals(d1, d2);
                     }
                 }
             }

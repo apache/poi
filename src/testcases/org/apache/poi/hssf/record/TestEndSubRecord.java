@@ -18,30 +18,27 @@
 package org.apache.poi.hssf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the EndSubRecord
- * class works correctly.  Test data taken directly from a real
- * Excel file.
- *
- * @author Glen Stampoultzis (glens at apache.org)
+ * class works correctly.  Test data taken directly from a real Excel file.
  */
-public final class TestEndSubRecord extends TestCase {
+public final class TestEndSubRecord {
     private static final byte[] data =  { };
 
+    @Test
     public void testLoad() {
         EndSubRecord record = new EndSubRecord(TestcaseRecordInputStream.create(0x00, data), 0);
         assertEquals(0, record.getDataSize());
     }
 
-    public void testStore()
-    {
+    @Test
+    public void testStore() {
         EndSubRecord record = new EndSubRecord();
-
         byte [] recordBytes = record.serialize();
-        assertEquals(recordBytes.length - 4, data.length);
-        for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+        assertEquals(0, recordBytes.length - 4);
     }
 }

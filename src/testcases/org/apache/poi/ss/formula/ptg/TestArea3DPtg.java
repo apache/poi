@@ -17,32 +17,37 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.junit.Test;
 
 /**
  * Tests for Area3DPtg
- * 
- * @author Josh Micich
  */
 public final class TestArea3DPtg extends AbstractPtgTestCase {
 
 	/**
 	 * confirms that sheet names get properly escaped
 	 */
-	public void testToFormulaString() {
+	@Test
+	public void testToFormulaString() throws IOException {
 
 		Area3DPtg target = new Area3DPtg("A1:B1", (short)0);
 
 		String sheetName = "my sheet";
-		HSSFWorkbook wb = createWorkbookWithSheet(sheetName);
-		HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(wb);
-		assertEquals("'my sheet'!A1:B1", target.toFormulaString(book));
+		try (HSSFWorkbook wb = createWorkbookWithSheet(sheetName)) {
+			HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(wb);
+			assertEquals("'my sheet'!A1:B1", target.toFormulaString(book));
 
-		wb.setSheetName(0, "Sheet1");
-		assertEquals("Sheet1!A1:B1", target.toFormulaString(book));
+			wb.setSheetName(0, "Sheet1");
+			assertEquals("Sheet1!A1:B1", target.toFormulaString(book));
 
-		wb.setSheetName(0, "C64");
-		assertEquals("'C64'!A1:B1", target.toFormulaString(book));
+			wb.setSheetName(0, "C64");
+			assertEquals("'C64'!A1:B1", target.toFormulaString(book));
+		}
 	}
 }

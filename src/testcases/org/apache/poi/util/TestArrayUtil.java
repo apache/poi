@@ -18,17 +18,21 @@
 
 package org.apache.poi.util;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.fail;
+
+import java.util.Arrays;
+
+import org.junit.Test;
 
 /**
  * Unit test for ArrayUtil
- *
- * @author Nick Burch
  */
-public class TestArrayUtil extends TestCase {
+public class TestArrayUtil {
 	/**
 	 * Test to ensure that our own arraycopy behaves as it should do
 	 */
+	@Test
 	public void testarraycopy() {
 		byte[] bytes = new byte[] { 0x01, 0x02, 0x03, 0x04 };
 
@@ -36,11 +40,7 @@ public class TestArrayUtil extends TestCase {
 		byte[] dest = new byte[4];
 		ArrayUtil.arraycopy(bytes, 0, dest, 0, 4);
 
-		assertEquals(dest.length, bytes.length);
-		for(int i=0; i<dest.length; i++) {
-			assertEquals(bytes[i], dest[i]);
-		}
-
+		assertArrayEquals(dest, bytes);
 		// ToDo - test exceptions are as expected
 	}
 
@@ -49,234 +49,58 @@ public class TestArrayUtil extends TestCase {
 	 * Helper for testArrayMoveWithin
 	 */
 	private Integer[] getIntsList() {
-		return new Integer[] {
-				Integer.valueOf(0),
-				Integer.valueOf(1),
-				Integer.valueOf(2),
-				Integer.valueOf(3),
-				Integer.valueOf(4),
-				Integer.valueOf(5),
-				Integer.valueOf(6),
-				Integer.valueOf(7),
-				Integer.valueOf(8),
-				Integer.valueOf(9)
-		};
+		return new Integer[] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9};
 	}
 
-	private static void assertEquals(int exp, Integer act) {
-		assertEquals(exp, act.intValue());
-	}
-	
 	/**
 	 * Test to ensure that arrayMoveWithin works as expected
 	 */
+	@Test
 	public void testArrayMoveWithin() {
-		Integer[] ints = getIntsList();
+		// moveFrom, moveTo, numToMove, values...
+		Integer[][] data = {
+			// Moving to a later point in the array
+			// Shift 1 back
+			{ 4, 8, 1,      0, 1, 2, 3, 5, 6, 7, 8, 4, 9 },
+			// Shift front 1 back
+			{ 0, 7, 1,      1, 2, 3, 4, 5, 6, 7, 0, 8, 9 },
+			// Shift 1 to end
+			{ 4, 9, 1,      0, 1, 2, 3, 5, 6, 7, 8, 9, 4 },
 
-		assertEquals(0, ints[0]);
-		assertEquals(1, ints[1]);
-		assertEquals(2, ints[2]);
-		assertEquals(3, ints[3]);
-		assertEquals(4, ints[4]);
-		assertEquals(5, ints[5]);
-		assertEquals(6, ints[6]);
-		assertEquals(7, ints[7]);
-		assertEquals(8, ints[8]);
-		assertEquals(9, ints[9]);
+			// Moving to an earlier point in the array
+			// Shift 1 forward
+			{ 8, 3, 1,      0, 1, 2, 8, 3, 4, 5, 6, 7, 9 },
+			// Shift end 1 forward
+			{ 9, 2, 1,      0, 1, 9, 2, 3, 4, 5, 6, 7, 8 },
+			// Shift 1 to front
+			{ 5, 0, 1,      5, 0, 1, 2, 3, 4, 6, 7, 8, 9 },
 
+			// Moving many to a later point in the array
+			// Shift 3 back
+			{ 2, 6, 3,      0, 1, 5, 6, 7, 8, 2, 3, 4, 9 },
+			// Shift 3 to back
+			{ 2, 7, 3,      0, 1, 5, 6, 7, 8, 9, 2, 3, 4 },
+			// Shift from 3 front
+			{ 0, 5, 3,      3, 4, 5, 6, 7, 0, 1, 2, 8, 9 },
 
-		//
-		// Moving to a later point in the array
-		//
+			// Moving many to an earlier point in the array
+			// Shift 3 forward
+			{ 6, 2, 3,      0, 1, 6, 7, 8, 2, 3, 4, 5, 9 },
+			// Shift 3 to front
+			{ 6, 0, 3,      6, 7, 8, 0, 1, 2, 3, 4, 5, 9 },
+			// Shift from 3 back
+			{ 7, 3, 3,      0, 1, 2, 7, 8, 9, 3, 4, 5, 6 }
+		};
 
-		// Shift 1 back
-		ints = getIntsList();
-		ArrayUtil.arrayMoveWithin(ints, 4, 8, 1);
-		assertEquals(0, ints[0]);
-		assertEquals(1, ints[1]);
-		assertEquals(2, ints[2]);
-		assertEquals(3, ints[3]);
-		assertEquals(5, ints[4]);
-		assertEquals(6, ints[5]);
-		assertEquals(7, ints[6]);
-		assertEquals(8, ints[7]);
-		assertEquals(4, ints[8]);
-		assertEquals(9, ints[9]);
-
-		// Shift front 1 back
-		ints = getIntsList();
-		ArrayUtil.arrayMoveWithin(ints, 0, 7, 1);
-		assertEquals(1, ints[0]);
-		assertEquals(2, ints[1]);
-		assertEquals(3, ints[2]);
-		assertEquals(4, ints[3]);
-		assertEquals(5, ints[4]);
-		assertEquals(6, ints[5]);
-		assertEquals(7, ints[6]);
-		assertEquals(0, ints[7]);
-		assertEquals(8, ints[8]);
-		assertEquals(9, ints[9]);
-
-		// Shift 1 to end
-		ints = getIntsList();
-		ArrayUtil.arrayMoveWithin(ints, 4, 9, 1);
-		assertEquals(0, ints[0]);
-		assertEquals(1, ints[1]);
-		assertEquals(2, ints[2]);
-		assertEquals(3, ints[3]);
-		assertEquals(5, ints[4]);
-		assertEquals(6, ints[5]);
-		assertEquals(7, ints[6]);
-		assertEquals(8, ints[7]);
-		assertEquals(9, ints[8]);
-		assertEquals(4, ints[9]);
-
-
-		//
-		// Moving to an earlier point in the array
-		//
-
-		// Shift 1 forward
-		ints = getIntsList();
-		ArrayUtil.arrayMoveWithin(ints, 8, 3, 1);
-		assertEquals(0, ints[0]);
-		assertEquals(1, ints[1]);
-		assertEquals(2, ints[2]);
-		assertEquals(8, ints[3]);
-		assertEquals(3, ints[4]);
-		assertEquals(4, ints[5]);
-		assertEquals(5, ints[6]);
-		assertEquals(6, ints[7]);
-		assertEquals(7, ints[8]);
-		assertEquals(9, ints[9]);
-
-		// Shift end 1 forward
-		ints = getIntsList();
-		ArrayUtil.arrayMoveWithin(ints, 9, 2, 1);
-		assertEquals(0, ints[0]);
-		assertEquals(1, ints[1]);
-		assertEquals(9, ints[2]);
-		assertEquals(2, ints[3]);
-		assertEquals(3, ints[4]);
-		assertEquals(4, ints[5]);
-		assertEquals(5, ints[6]);
-		assertEquals(6, ints[7]);
-		assertEquals(7, ints[8]);
-		assertEquals(8, ints[9]);
-
-		// Shift 1 to front
-		ints = getIntsList();
-		ArrayUtil.arrayMoveWithin(ints, 5, 0, 1);
-		assertEquals(5, ints[0]);
-		assertEquals(0, ints[1]);
-		assertEquals(1, ints[2]);
-		assertEquals(2, ints[3]);
-		assertEquals(3, ints[4]);
-		assertEquals(4, ints[5]);
-		assertEquals(6, ints[6]);
-		assertEquals(7, ints[7]);
-		assertEquals(8, ints[8]);
-		assertEquals(9, ints[9]);
-
-
-		//
-		// Moving many to a later point in the array
-		//
-
-		// Shift 3 back
-		ints = getIntsList();
-		ArrayUtil.arrayMoveWithin(ints, 2, 6, 3);
-		assertEquals(0, ints[0]);
-		assertEquals(1, ints[1]);
-		assertEquals(5, ints[2]);
-		assertEquals(6, ints[3]);
-		assertEquals(7, ints[4]);
-		assertEquals(8, ints[5]);
-		assertEquals(2, ints[6]);
-		assertEquals(3, ints[7]);
-		assertEquals(4, ints[8]);
-		assertEquals(9, ints[9]);
-
-		// Shift 3 to back
-		ints = getIntsList();
-		ArrayUtil.arrayMoveWithin(ints, 2, 7, 3);
-		assertEquals(0, ints[0]);
-		assertEquals(1, ints[1]);
-		assertEquals(5, ints[2]);
-		assertEquals(6, ints[3]);
-		assertEquals(7, ints[4]);
-		assertEquals(8, ints[5]);
-		assertEquals(9, ints[6]);
-		assertEquals(2, ints[7]);
-		assertEquals(3, ints[8]);
-		assertEquals(4, ints[9]);
-
-		// Shift from 3 front
-		ints = getIntsList();
-		ArrayUtil.arrayMoveWithin(ints, 0, 5, 3);
-		assertEquals(3, ints[0]);
-		assertEquals(4, ints[1]);
-		assertEquals(5, ints[2]);
-		assertEquals(6, ints[3]);
-		assertEquals(7, ints[4]);
-		assertEquals(0, ints[5]);
-		assertEquals(1, ints[6]);
-		assertEquals(2, ints[7]);
-		assertEquals(8, ints[8]);
-		assertEquals(9, ints[9]);
-
-
-		//
-		// Moving many to an earlier point in the array
-		//
-
-		// Shift 3 forward
-		ints = getIntsList();
-		ArrayUtil.arrayMoveWithin(ints, 6, 2, 3);
-		assertEquals(0, ints[0]);
-		assertEquals(1, ints[1]);
-		assertEquals(6, ints[2]);
-		assertEquals(7, ints[3]);
-		assertEquals(8, ints[4]);
-		assertEquals(2, ints[5]);
-		assertEquals(3, ints[6]);
-		assertEquals(4, ints[7]);
-		assertEquals(5, ints[8]);
-		assertEquals(9, ints[9]);
-
-		// Shift 3 to front
-		ints = getIntsList();
-		ArrayUtil.arrayMoveWithin(ints, 6, 0, 3);
-		assertEquals(6, ints[0]);
-		assertEquals(7, ints[1]);
-		assertEquals(8, ints[2]);
-		assertEquals(0, ints[3]);
-		assertEquals(1, ints[4]);
-		assertEquals(2, ints[5]);
-		assertEquals(3, ints[6]);
-		assertEquals(4, ints[7]);
-		assertEquals(5, ints[8]);
-		assertEquals(9, ints[9]);
-
-		// Shift from 3 back
-		ints = getIntsList();
-		ArrayUtil.arrayMoveWithin(ints, 7, 3, 3);
-		assertEquals(0, ints[0]);
-		assertEquals(1, ints[1]);
-		assertEquals(2, ints[2]);
-		assertEquals(7, ints[3]);
-		assertEquals(8, ints[4]);
-		assertEquals(9, ints[5]);
-		assertEquals(3, ints[6]);
-		assertEquals(4, ints[7]);
-		assertEquals(5, ints[8]);
-		assertEquals(6, ints[9]);
-
+		for (Integer[] entry : data) {
+			Integer[] ints = getIntsList();
+			ArrayUtil.arrayMoveWithin(ints, entry[0], entry[1], entry[2]);
+			assertArrayEquals(ints, Arrays.copyOfRange(entry, 3, 13));
+		}
 
 		// Check can't shift more than we have
 		try {
-			ints = getIntsList();
-			ArrayUtil.arrayMoveWithin(ints, 7, 3, 5);
+			ArrayUtil.arrayMoveWithin(getIntsList(), 7, 3, 5);
 			fail();
 		} catch(IllegalArgumentException e) {
 			// Good, we don't have 5 from 7 onwards
@@ -284,8 +108,7 @@ public class TestArrayUtil extends TestCase {
 
 		// Check can't shift where would overshoot
 		try {
-			ints = getIntsList();
-			ArrayUtil.arrayMoveWithin(ints, 2, 7, 5);
+			ArrayUtil.arrayMoveWithin(getIntsList(), 2, 7, 5);
 			fail();
 		} catch(IllegalArgumentException e) {
 			// Good, we can't fit 5 in starting at 7

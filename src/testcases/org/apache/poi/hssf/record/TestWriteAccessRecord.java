@@ -17,18 +17,15 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexRead;
-import org.apache.poi.util.RecordFormatException;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
 /**
  * Tests for {@link WriteAccessRecord}
- *
- * @author Josh Micich
  */
-public final class TestWriteAccessRecord extends TestCase {
+public final class TestWriteAccessRecord {
 
 	private static final String HEX_SIXTYFOUR_SPACES = ""
 		+ "20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 "
@@ -36,7 +33,7 @@ public final class TestWriteAccessRecord extends TestCase {
 		+ "20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 "
 		+ "20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20";
 
-
+	@Test
 	public void testMissingStringHeader_bug47001a() {
 		/*
 		 * Data taken from offset 0x0224 in
@@ -52,15 +49,8 @@ public final class TestWriteAccessRecord extends TestCase {
 
 		RecordInputStream in = TestcaseRecordInputStream.create(data);
 
-		WriteAccessRecord rec;
-		try {
-			rec = new WriteAccessRecord(in);
-		} catch (RecordFormatException e) {
-			if (e.getMessage().equals("Not enough data (0) to read requested (1) bytes")) {
-				throw new AssertionFailedError("Identified bug 47001a");
-			}
-			throw e;
-		}
+		// bug 47001a - Not enough data (0) to read requested (1) bytes
+		WriteAccessRecord rec = new WriteAccessRecord(in);
 		assertEquals("Java Excel API v2.6.4", rec.getUsername());
 
 
@@ -74,6 +64,7 @@ public final class TestWriteAccessRecord extends TestCase {
 		TestcaseRecordInputStream.confirmRecordEncoding(WriteAccessRecord.sid, expectedEncoding, rec.serialize());
 	}
 
+	@Test
 	public void testShortRecordWrittenByMSAccess() {
 		/*
 		 * Data taken from two example files

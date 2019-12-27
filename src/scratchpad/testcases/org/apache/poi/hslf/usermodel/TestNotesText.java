@@ -18,41 +18,41 @@
 package org.apache.poi.hslf.usermodel;
 
 
-import org.apache.poi.POIDataSamples;
+import static org.junit.Assert.assertArrayEquals;
 
-import junit.framework.TestCase;
+import org.apache.poi.POIDataSamples;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests that SlideShow returns MetaSheets which have the right text in them
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestNotesText extends TestCase {
+public final class TestNotesText {
 	// SlideShow primed on the test data
-	private final HSLFSlideShow ss;
+	private HSLFSlideShow ss;
 
-	public TestNotesText() throws Exception {
-        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+	@Before
+	public void setup() throws Exception {
+		POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss = new HSLFSlideShow(hss);
 	}
 
+	@Test
 	public void testNotesOne() {
 		HSLFNotes notes = ss.getNotes().get(0);
-
-		String[] expectText = new String[] {"These are the notes for page 1"};
-		assertEquals(expectText.length, notes.getTextParagraphs().size());
-		for(int i=0; i<expectText.length; i++) {
-			assertEquals(expectText[i], HSLFTextParagraph.getRawText(notes.getTextParagraphs().get(i)));
-		}
+		String[] expectText = {"These are the notes for page 1"};
+		assertArrayEquals(expectText, toStrings(notes));
 	}
 
+	@Test
 	public void testNotesTwo() {
 		HSLFNotes notes = ss.getNotes().get(1);
-		String[] expectText = new String[] {"These are the notes on page two, again lacking formatting"};
-		assertEquals(expectText.length, notes.getTextParagraphs().size());
-		for(int i=0; i<expectText.length; i++) {
-			assertEquals(expectText[i], HSLFTextParagraph.getRawText(notes.getTextParagraphs().get(i)));
-		}
+		String[] expectText = {"These are the notes on page two, again lacking formatting"};
+		assertArrayEquals(expectText, toStrings(notes));
+	}
+
+	private static String[] toStrings(HSLFNotes notes) {
+		return notes.getTextParagraphs().stream().map(HSLFTextParagraph::getRawText).toArray(String[]::new);
 	}
 }

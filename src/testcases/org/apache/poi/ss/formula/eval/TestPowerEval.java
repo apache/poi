@@ -17,29 +17,29 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.junit.Test;
 
 /**
  * Tests for power operator evaluator.
- *
- * @author Bob van den Berge
  */
-public final class TestPowerEval extends TestCase {
-
+public final class TestPowerEval {
+    @Test
     public void testPositiveValues() {
         confirm(0, 0, 1);
         confirm(1, 1, 0);
         confirm(9, 3, 2);
     }
 
+    @Test
     public void testNegativeValues() {
         confirm(-1, -1, 1);
         confirm(1, 1, -1);
@@ -47,18 +47,22 @@ public final class TestPowerEval extends TestCase {
         confirm((1.0/3), 3, -1);
     }
 
+    @Test
     public void testPositiveDecimalValues() {
         confirm(3, 27, (1/3.0));
     }
 
+    @Test
     public void testNegativeDecimalValues() {
         confirm(-3, -27, (1/3.0));
     }
 
+    @Test
     public void testErrorValues() {
         confirmError(-1.00001, 1.1);
     }
 
+    @Test
     public void testInSpreadSheet() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("Sheet1");
@@ -72,27 +76,27 @@ public final class TestPowerEval extends TestCase {
         CellValue cv = fe.evaluate(cell);
 
         assertEquals(CellType.NUMERIC, cv.getCellType());
-        assertEquals(-3.0, cv.getNumberValue());
+        assertEquals(-3.0, cv.getNumberValue(), 0);
     }
 
     private void confirm(double expected, double a, double b) {
-        NumberEval result = (NumberEval) evaluate(EvalInstances.Power, a, b);
+        NumberEval result = (NumberEval) evaluate(a, b);
 
-        assertEquals(expected, result.getNumberValue());
+        assertEquals(expected, result.getNumberValue(), 0);
     }
 
     private void confirmError(double a, double b) {
-        ErrorEval result = (ErrorEval) evaluate(EvalInstances.Power, a, b);
+        ErrorEval result = (ErrorEval) evaluate(a, b);
 
         assertEquals("#NUM!", result.getErrorString());
     }
 
-    private static ValueEval evaluate(Function instance, double... dArgs) {
+    private static ValueEval evaluate(double... dArgs) {
         ValueEval[] evalArgs;
         evalArgs = new ValueEval[dArgs.length];
         for (int i = 0; i < evalArgs.length; i++) {
             evalArgs[i] = new NumberEval(dArgs[i]);
         }
-        return instance.evaluate(evalArgs, -1, (short) -1);
+        return EvalInstances.Power.evaluate(evalArgs, -1, (short) -1);
     }
 }

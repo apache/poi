@@ -17,19 +17,21 @@
 
 package org.apache.poi.xssf.model;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcCell;
 
-import junit.framework.TestCase;
+public final class TestCalculationChain {
 
-import java.io.IOException;
-
-public final class TestCalculationChain extends TestCase {
-
+    @Test
     public void test46535() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("46535.xlsx")) {
 

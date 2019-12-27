@@ -17,7 +17,8 @@
 
 package org.apache.poi.hssf.record;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -30,9 +31,11 @@ import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
-public final class TestArrayRecord extends TestCase {
+public final class TestArrayRecord {
 
+    @Test
     public void testRead() {
         String hex =
                 "21 02 25 00 01 00 01 00 01 01 00 00 00 00 00 00 " +
@@ -58,6 +61,7 @@ public final class TestArrayRecord extends TestCase {
         assertEquals(HexDump.toHex(data), HexDump.toHex(ser));
     }
 
+    @Test
     public void testBug57231() {
         HSSFWorkbook wb = HSSFTestDataSamples
                 .openSampleWorkbook("57231_MixedGasReport.xls");

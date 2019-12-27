@@ -17,32 +17,28 @@
 
 package org.apache.poi.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Test IntegerField code
- *
- * @author  Marc Johnson (mjohnson at apache dot org)
  */
-public final class TestIntegerField extends TestCase {
+public final class TestIntegerField {
 
-    private static final int[] _test_array =
-    {
-        Integer.MIN_VALUE, -1, 0, 1, Integer.MAX_VALUE
-    };
+    private static final int[] _test_array = {Integer.MIN_VALUE, -1, 0, 1, Integer.MAX_VALUE};
 
+    @Test
     public void testConstructors() {
         try
         {
             new IntegerField(-1);
             fail("Should have caught ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         IntegerField field = new IntegerField(2);
@@ -52,10 +48,7 @@ public final class TestIntegerField extends TestCase {
         {
             new IntegerField(-1, 1);
             fail("Should have caught ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         field = new IntegerField(2, 0x12345678);
@@ -66,10 +59,7 @@ public final class TestIntegerField extends TestCase {
         {
             new IntegerField(-1, 1, array);
             fail("Should have caught ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         field = new IntegerField(2, 0x12345678, array);
@@ -83,10 +73,7 @@ public final class TestIntegerField extends TestCase {
         {
             new IntegerField(2, 5, array);
             fail("should have gotten ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         for (int element : _test_array) {
@@ -96,12 +83,12 @@ public final class TestIntegerField extends TestCase {
         }
     }
 
+    @Test
     public void testSet() {
         IntegerField field = new IntegerField(0);
         byte[]       array = new byte[ 4 ];
 
-        for (int j = 0; j < _test_array.length; j++)
-        {
+        for (int j = 0; j < _test_array.length; j++) {
             field.set(_test_array[ j ]);
             assertEquals("testing _1 " + j, _test_array[ j ], field.get());
             field = new IntegerField(0);
@@ -121,23 +108,19 @@ public final class TestIntegerField extends TestCase {
         }
     }
 
+    @Test
     public void testReadFromBytes() {
         IntegerField field = new IntegerField(1);
         byte[]       array = new byte[ 4 ];
 
-        try
-        {
+        try {
             field.readFromBytes(array);
             fail("should have caught ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         field = new IntegerField(0);
-        for (int j = 0; j < _test_array.length; j++)
-        {
+        for (int j = 0; j < _test_array.length; j++) {
             array[ 0 ] = ( byte ) (_test_array[ j ] % 256);
             array[ 1 ] = ( byte ) ((_test_array[ j ] >> 8) % 256);
             array[ 2 ] = ( byte ) ((_test_array[ j ] >> 16) % 256);
@@ -147,12 +130,12 @@ public final class TestIntegerField extends TestCase {
         }
     }
 
+    @Test
     public void testReadFromStream() throws IOException {
         IntegerField field  = new IntegerField(0);
         byte[]       buffer = new byte[ _test_array.length * 4 ];
 
-        for (int j = 0; j < _test_array.length; j++)
-        {
+        for (int j = 0; j < _test_array.length; j++) {
             buffer[ (j * 4) + 0 ] = ( byte ) (_test_array[ j ] % 256);
             buffer[ (j * 4) + 1 ] = ( byte ) ((_test_array[ j ] >> 8) % 256);
             buffer[ (j * 4) + 2 ] = ( byte ) ((_test_array[ j ] >> 16) % 256);
@@ -160,13 +143,13 @@ public final class TestIntegerField extends TestCase {
         }
         ByteArrayInputStream stream = new ByteArrayInputStream(buffer);
 
-        for (int j = 0; j < buffer.length / 4; j++)
-        {
+        for (int j = 0; j < buffer.length / 4; j++) {
             field.readFromStream(stream);
             assertEquals("Testing " + j, _test_array[ j ], field.get());
         }
     }
 
+    @Test
     public void testWriteToBytes() {
         IntegerField field = new IntegerField(0);
         byte[]       array = new byte[ 4 ];

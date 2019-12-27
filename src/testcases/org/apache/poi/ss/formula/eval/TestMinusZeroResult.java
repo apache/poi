@@ -17,11 +17,12 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import junit.framework.ComparisonFailure;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.poi.ss.formula.functions.Function;
-import org.apache.poi.util.HexDump;
+import org.junit.Test;
 
 /**
  * IEEE 754 defines a quantity '-0.0' which is distinct from '0.0'.
@@ -35,11 +36,11 @@ import org.apache.poi.util.HexDump;
  * <li>For most operation results '-0.0' is converted to '0.0'.</li>
  * <li>Comparison operators have slightly different rules regarding '-0.0'.</li>
  * </ol>
- * @author Josh Micich
  */
-public final class TestMinusZeroResult extends TestCase {
+public final class TestMinusZeroResult {
 	private static final double MINUS_ZERO = -0.0;
 
+	@Test
 	public void testSimpleOperators() {
 
 		// unary plus is a no-op
@@ -61,12 +62,14 @@ public final class TestMinusZeroResult extends TestCase {
 	 * These results are hard to see in Excel (since -0.0 is usually converted to +0.0 before it
 	 * gets to the comparison operator)
 	 */
+	@Test
 	public void testComparisonOperators() {
 		checkEval(false, EvalInstances.Equal, 0.0, MINUS_ZERO);
 		checkEval(true, EvalInstances.GreaterThan, 0.0, MINUS_ZERO);
 		checkEval(true, EvalInstances.LessThan, MINUS_ZERO, 0.0);
 	}
 
+	@Test
 	public void testTextRendering() {
 		confirmTextRendering(MINUS_ZERO);
 		// sub-normal negative numbers also display as '-0'
@@ -103,6 +106,7 @@ public final class TestMinusZeroResult extends TestCase {
 	/**
 	 * Not really a POI test - just shows similar behaviour of '-0.0' in Java.
 	 */
+	@Test
 	public void testJava() {
 		assertEquals(0x8000000000000000L, Double.doubleToLongBits(MINUS_ZERO));
 
@@ -141,9 +145,6 @@ public final class TestMinusZeroResult extends TestCase {
 	private static void assertDouble(double a, double b) {
 		long bitsA = Double.doubleToLongBits(a);
 		long bitsB = Double.doubleToLongBits(b);
-		if (bitsA != bitsB) {
-			throw new ComparisonFailure("value different to expected",
-					HexDump.longToHex(bitsA), HexDump.longToHex(bitsB));
-		}
+		assertEquals(bitsA, bitsB);
 	}
 }

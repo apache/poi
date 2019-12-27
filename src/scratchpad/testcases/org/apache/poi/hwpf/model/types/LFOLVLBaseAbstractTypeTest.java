@@ -16,18 +16,16 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model.types;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * Test cases for {@link LFOLVLBaseAbstractType}
- * 
- * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
-public class LFOLVLBaseAbstractTypeTest extends TestCase
-{
-
-    public void testGetSize()
-    {
+public class LFOLVLBaseAbstractTypeTest {
+    @Test
+    public void testGetSize() {
         assertEquals( 8, LFOLVLBaseAbstractType.getSize() );
     }
 

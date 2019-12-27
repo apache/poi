@@ -18,16 +18,19 @@
 package org.apache.poi.hssf.record;
 
 
-import junit.framework.TestCase;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the {@link CommonObjectDataSubRecord}
  * class works correctly.  Test data taken directly from a real
  * Excel file.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestCommonObjectDataSubRecord extends TestCase {
+public final class TestCommonObjectDataSubRecord {
 	byte[] data = new byte[] {
 		(byte)0x12,(byte)0x00,(byte)0x01,(byte)0x00,
 		(byte)0x01,(byte)0x00,(byte)0x11,(byte)0x60,
@@ -36,6 +39,7 @@ public final class TestCommonObjectDataSubRecord extends TestCase {
 		(byte)0x00,(byte)0x00,
 	};
 
+	@Test
 	public void testLoad() {
 		CommonObjectDataSubRecord record = new CommonObjectDataSubRecord(TestcaseRecordInputStream.createLittleEndian(data), data.length);
 
@@ -52,6 +56,7 @@ public final class TestCommonObjectDataSubRecord extends TestCase {
 		assertEquals(18, record.getDataSize());
 	}
 
+	@Test
 	public void testStore() {
 		CommonObjectDataSubRecord record = new CommonObjectDataSubRecord();
 
@@ -66,9 +71,7 @@ public final class TestCommonObjectDataSubRecord extends TestCase {
 		record.setReserved2(218103808);
 		record.setReserved3(294);
 
-		byte [] recordBytes = record.serialize();
-		assertEquals(recordBytes.length - 4, data.length);
-		for (int i = 0; i < data.length; i++)
-			assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+		byte[] recordBytes = record.serialize();
+		confirmRecordEncoding(CommonObjectDataSubRecord.sid, data, recordBytes);
 	}
 }

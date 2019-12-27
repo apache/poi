@@ -17,25 +17,23 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.poi.ss.formula.functions.EvalFactory;
 import org.apache.poi.ss.formula.functions.Function;
+import org.junit.Test;
 
 /**
- * Test for {@link EqualEval}
- *
- * @author Josh Micich
+ * Test for EqualEval
  */
-public final class TestEqualEval extends TestCase {
-	// convenient access to namepace
-	private static final EvalInstances EI = null;
-
+public final class TestEqualEval {
 	/**
 	 * Test for bug observable at svn revision 692218 (Sep 2008)<br>
 	 * The value from a 1x1 area should be taken immediately, regardless of srcRow and srcCol
 	 */
+	@Test
 	public void test1x1AreaOperand() {
 
 		ValueEval[] values = { BoolEval.FALSE, };
@@ -44,17 +42,15 @@ public final class TestEqualEval extends TestCase {
 			BoolEval.FALSE,
 		};
 		ValueEval result = evaluate(EvalInstances.Equal, args, 10, 10);
-		if (result instanceof ErrorEval) {
-			if (result == ErrorEval.VALUE_INVALID) {
-				throw new AssertionFailedError("Identified bug in evaluation of 1x1 area");
-			}
-		}
-		assertEquals(BoolEval.class, result.getClass());
+		assertNotEquals("Identified bug in evaluation of 1x1 area", ErrorEval.VALUE_INVALID, result);
+		assertTrue(result instanceof BoolEval);
 		assertTrue(((BoolEval)result).getBooleanValue());
 	}
+
 	/**
 	 * Empty string is equal to blank
 	 */
+	@Test
 	public void testBlankEqualToEmptyString() {
 
 		ValueEval[] args = {
@@ -64,19 +60,14 @@ public final class TestEqualEval extends TestCase {
 		ValueEval result = evaluate(EvalInstances.Equal, args, 10, 10);
 		assertEquals(BoolEval.class, result.getClass());
 		BoolEval be = (BoolEval) result;
-		if (!be.getBooleanValue()) {
-			throw new AssertionFailedError("Identified bug blank/empty string equality");
-		}
-		assertTrue(be.getBooleanValue());
+		assertTrue("Identified bug blank/empty string equality", be.getBooleanValue());
 	}
 
 	/**
 	 * Test for bug 46613 (observable at svn r737248)
 	 */
+	@Test
 	public void testStringInsensitive_bug46613() {
-		if (!evalStringCmp("abc", "aBc", EvalInstances.Equal)) {
-			throw new AssertionFailedError("Identified bug 46613");
-		}
 		assertTrue(evalStringCmp("abc", "aBc", EvalInstances.Equal));
 		assertTrue(evalStringCmp("ABC", "azz", EvalInstances.LessThan));
 		assertTrue(evalStringCmp("abc", "AZZ", EvalInstances.LessThan));
@@ -95,6 +86,7 @@ public final class TestEqualEval extends TestCase {
 		return be.getBooleanValue();
 	}
 
+	@Test
 	public void testBooleanCompares() {
 		confirmCompares(BoolEval.TRUE, new StringEval("TRUE"), +1);
 		confirmCompares(BoolEval.TRUE, new NumberEval(1.0), +1);
@@ -106,6 +98,7 @@ public final class TestEqualEval extends TestCase {
 		confirmCompares(BoolEval.FALSE, new NumberEval(0.0), +1);
 		confirmCompares(BoolEval.FALSE, BoolEval.FALSE, 0);
 	}
+
 	private static void confirmCompares(ValueEval a, ValueEval b, int expRes) {
 		confirm(a, b, expRes>0,  EvalInstances.GreaterThan);
 		confirm(a, b, expRes>=0, EvalInstances.GreaterEqual);
@@ -119,6 +112,7 @@ public final class TestEqualEval extends TestCase {
 		confirm(b, a, expRes>=0, EvalInstances.LessEqual);
 		confirm(b, a, expRes>0,  EvalInstances.LessThan);
 	}
+
 	private static void confirm(ValueEval a, ValueEval b, boolean expectedResult, Function cmpOp) {
 		ValueEval[] args = { a, b, };
 		ValueEval result = evaluate(cmpOp, args, 10, 20);
@@ -135,22 +129,21 @@ public final class TestEqualEval extends TestCase {
 	 * "Excel considers -0.0 to be equal to 0.0" which is NQR
 	 * See {@link TestMinusZeroResult} for more specific tests regarding -0.0.
 	 */
+	@Test
 	public void testZeroEquality_bug47198() {
 		NumberEval zero = new NumberEval(0.0);
 		NumberEval mZero = (NumberEval) evaluate(UnaryMinusEval.instance, new ValueEval[] { zero, }, 0, 0);
-		if (Double.doubleToLongBits(mZero.getNumberValue()) == 0x8000000000000000L) {
-			throw new AssertionFailedError("Identified bug 47198: unary minus should convert -0.0 to 0.0");
-		}
+		assertNotEquals("Identified bug 47198: unary minus should convert -0.0 to 0.0",
+						0x8000000000000000L, Double.doubleToLongBits(mZero.getNumberValue()));
 		ValueEval[] args = { zero, mZero, };
 		BoolEval result = (BoolEval) evaluate(EvalInstances.Equal, args, 0, 0);
-		if (!result.getBooleanValue()) {
-			throw new AssertionFailedError("Identified bug 47198: -0.0 != 0.0");
-		}
+		assertTrue("Identified bug 47198: -0.0 != 0.0", result.getBooleanValue());
 	}
 
+	@Test
 	public void testRounding_bug47598() {
 		double x = 1+1.0028-0.9973; // should be 1.0055, but has IEEE rounding
-		assertFalse(x == 1.0055);
+		assertNotEquals(1.0055, x, 0.0);
 
 		NumberEval a = new NumberEval(x);
 		NumberEval b = new NumberEval(1.0055);
@@ -158,9 +151,7 @@ public final class TestEqualEval extends TestCase {
 
 		ValueEval[] args = { a, b, };
 		BoolEval result = (BoolEval) evaluate(EvalInstances.Equal, args, 0, 0);
-		if (!result.getBooleanValue()) {
-			throw new AssertionFailedError("Identified bug 47598: 1+1.0028-0.9973 != 1.0055");
-		}
+		assertTrue("Identified bug 47598: 1+1.0028-0.9973 != 1.0055", result.getBooleanValue());
 	}
 
 	private static ValueEval evaluate(Function oper, ValueEval[] args, int srcRowIx, int srcColIx) {

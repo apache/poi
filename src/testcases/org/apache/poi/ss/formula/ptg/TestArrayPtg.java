@@ -18,20 +18,20 @@
 package org.apache.poi.ss.formula.ptg;
 
 import static org.junit.Assert.assertArrayEquals;
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInput;
+import org.junit.Test;
+
 /**
  * Tests for <tt>ArrayPtg</tt>
- *
- * @author Josh Micich
  */
-public final class TestArrayPtg extends TestCase {
+public final class TestArrayPtg {
 
 	private static final byte[] ENCODED_PTG_DATA = {
 		0x40,
@@ -56,6 +56,7 @@ public final class TestArrayPtg extends TestCase {
 	/**
 	 * Lots of problems with ArrayPtg's decoding and encoding of the element value data
 	 */
+	@Test
 	public void testReadWriteTokenValueBytes() {
 		ArrayPtg ptg = create(ENCODED_PTG_DATA, ENCODED_CONSTANT_DATA);
 		assertEquals(3, ptg.getColumnCount());
@@ -73,9 +74,7 @@ public final class TestArrayPtg extends TestCase {
 		byte[] outBuf = new byte[ENCODED_CONSTANT_DATA.length];
 		ptg.writeTokenValueBytes(new LittleEndianByteArrayOutputStream(outBuf, 0));
 
-		if(outBuf[0] == 4) {
-			throw new AssertionFailedError("Identified bug 42564b");
-		}
+		assertNotEquals("Identified bug 42564b", 4, outBuf[0]);
 		assertArrayEquals(ENCODED_CONSTANT_DATA, outBuf);
 	}
 
@@ -83,6 +82,7 @@ public final class TestArrayPtg extends TestCase {
 	/**
 	 * Excel stores array elements column by column.  This test makes sure POI does the same.
 	 */
+	@Test
 	public void testElementOrdering() {
 		ArrayPtg ptg = create(ENCODED_PTG_DATA, ENCODED_CONSTANT_DATA);
 		assertEquals(3, ptg.getColumnCount());
@@ -100,35 +100,29 @@ public final class TestArrayPtg extends TestCase {
 	 * Test for a bug which was temporarily introduced by the fix for bug 42564.
 	 * A spreadsheet was added to make the ordering clearer.
 	 */
+	@Test
 	public void testElementOrderingInSpreadsheet() {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex42564-elementOrder.xls");
 
 		// The formula has an array with 3 rows and 5 columns
 		String formula = wb.getSheetAt(0).getRow(0).getCell(0).getCellFormula();
 
-		if (formula.equals("SUM({1,6,11;2,7,12;3,8,13;4,9,14;5,10,15})")) {
-			throw new AssertionFailedError("Identified bug 42564 b");
-		}
+		assertNotEquals("Identified bug 42564 b", "SUM({1,6,11;2,7,12;3,8,13;4,9,14;5,10,15})", formula);
 		assertEquals("SUM({1,2,3,4,5;6,7,8,9,10;11,12,13,14,15})", formula);
 	}
 
+	@Test
 	public void testToFormulaString() {
 		ArrayPtg ptg = create(ENCODED_PTG_DATA, ENCODED_CONSTANT_DATA);
-		String actualFormula;
-		try {
-			actualFormula = ptg.toFormulaString();
-		} catch (IllegalArgumentException e) {
-			if (e.getMessage().equals("Unexpected constant class (java.lang.Boolean)")) {
-				throw new AssertionFailedError("Identified bug 45380");
-			}
-			throw e;
-		}
+		// bug 45380 - Unexpected constant class (java.lang.Boolean)
+		String actualFormula = ptg.toFormulaString();
 		assertEquals("{TRUE,\"ABCD\",\"E\";0,FALSE,\"FG\"}", actualFormula);
 	}
 
 	/**
 	 * worth checking since AttrPtg.sid=0x20 and Ptg.CLASS_* = (0x00, 0x20, and 0x40)
 	 */
+	@Test
 	public void testOperandClassDecoding() {
 		confirmOperandClassDecoding(Ptg.CLASS_REF);
 		confirmOperandClassDecoding(Ptg.CLASS_VALUE);

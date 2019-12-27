@@ -16,19 +16,18 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import static org.apache.poi.POITestCase.assertContains;
+
 import java.io.IOException;
 
-import junit.framework.TestCase;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
-import static org.apache.poi.POITestCase.assertContains;
+import org.junit.Test;
 
 /**
  * Tests for reading SmartTags from Word docx.
- *
- * @author Fabian Lange
  */
-public final class TestXWPFSmartTag extends TestCase {
-
+public final class TestXWPFSmartTag {
+    @Test
     public void testSmartTags() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("smarttag-snippet.docx")) {
             XWPFParagraph p = doc.getParagraphArray(0);

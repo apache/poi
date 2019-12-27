@@ -21,6 +21,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -42,8 +43,6 @@ import org.xmlunit.diff.DefaultNodeMatcher;
 import org.xmlunit.diff.Diff;
 import org.xmlunit.diff.DifferenceEvaluator;
 import org.xmlunit.diff.ElementSelectors;
-
-import junit.framework.AssertionFailedError;
 
 /**
  * Compare the contents of 2 zip files.
@@ -140,7 +139,7 @@ public final class ZipFileAssert {
             TreeMap<String, ByteArrayOutputStream> file2 = decompress(actual);
             equals(file1, file2);
         } catch (IOException e) {
-            throw new AssertionFailedError(e.toString());
+            fail(e.toString());
         }
     }
 

@@ -17,22 +17,25 @@
 
 package org.apache.poi.xssf.io;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.util.List;
 
-import junit.framework.TestCase;
-
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFPictureData;
-import org.apache.poi.POIDataSamples;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Test;
 
 
-public class TestLoadSaveXSSF extends TestCase {
+public class TestLoadSaveXSSF {
     private static final POIDataSamples _ssSamples = POIDataSamples.getSpreadSheetInstance();
 
+    @Test
     public void testLoadSample() throws Exception {
         try (XSSFWorkbook workbook = new XSSFWorkbook(_ssSamples.openResourceAsStream("sample.xlsx"))) {
             assertEquals(3, workbook.getNumberOfSheets());
@@ -47,6 +50,7 @@ public class TestLoadSaveXSSF extends TestCase {
         }
     }
 
+    @Test
     public void testLoadStyles() throws Exception {
         try (XSSFWorkbook workbook = new XSSFWorkbook(_ssSamples.openResourceAsStream("styles.xlsx"))) {
             Sheet sheet = workbook.getSheetAt(0);
@@ -57,6 +61,7 @@ public class TestLoadSaveXSSF extends TestCase {
         }
     }
 
+    @Test
     public void testLoadPictures() throws Exception {
         try (XSSFWorkbook workbook = new XSSFWorkbook(_ssSamples.openResourceAsStream("picture.xlsx"))) {
             List<XSSFPictureData> pictures = workbook.getAllPictures();

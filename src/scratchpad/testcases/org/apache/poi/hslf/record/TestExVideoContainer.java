@@ -19,17 +19,20 @@ package org.apache.poi.hslf.record;
 
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayOutputStream;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests that {@link HeadersFootersAtom} works properly
  *
  * @author Yegor Kozlov
  */
-public final class TestExVideoContainer extends TestCase {
+public final class TestExVideoContainer {
 
     // From a real file
     private final byte[] data = new byte[]{
@@ -47,9 +50,7 @@ public final class TestExVideoContainer extends TestCase {
             0x73, 0x00, 0x5C, 0x00, 0x63, 0x00, 0x61, 0x00, 0x72, 0x00, 0x64, 0x00, 0x73, 0x00, 0x2E, 0x00,
             0x6D, 0x00, 0x70, 0x00, 0x67, 0x00};
 
-
-
-
+    @Test
     public void testRead() {
         ExVideoContainer record = new ExVideoContainer(data, 0, data.length);
         assertEquals(RecordTypes.ExVideoContainer.typeID, record.getRecordType());
@@ -66,15 +67,15 @@ public final class TestExVideoContainer extends TestCase {
         assertEquals("D:\\projects\\SchulerAG\\mcom_v_1_0_4\\view\\data\\tests\\images\\cards.mpg", path.getText());
     }
 
+    @Test
     public void testWrite() throws Exception {
         ExVideoContainer record = new ExVideoContainer(data, 0, data.length);
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         record.writeOut(baos);
-        byte[] b = baos.toByteArray();
-
-        assertArrayEquals(data, b);
+        assertArrayEquals(data, baos.toByteArray());
     }
 
+    @Test
     public void testNewRecord() throws Exception {
         ExVideoContainer record = new ExVideoContainer();
         record.getExMediaAtom().setObjectId(1);
@@ -82,8 +83,6 @@ public final class TestExVideoContainer extends TestCase {
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         record.writeOut(baos);
-        byte[] b = baos.toByteArray();
-
-        assertArrayEquals(data, b);
+        assertArrayEquals(data, baos.toByteArray());
     }
 }

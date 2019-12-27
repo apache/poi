@@ -18,21 +18,24 @@
 package org.apache.poi.hslf.extractor;
 
 
-import java.util.List;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.StringUtil;
+import org.junit.Before;
+import org.junit.Test;
 
 /**
  * Tests that the QuickButCruddyTextExtractor works correctly
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestCruddyExtractor extends TestCase {
+public final class TestCruddyExtractor {
+	private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+
 	// Extractor primed on the test data
-	private final QuickButCruddyTextExtractor te;
+	private QuickButCruddyTextExtractor te;
+
 	// All the text to be found in the file
 	String[] allTheText = new String[] {
 		"This is a test title",
@@ -59,11 +62,12 @@ public final class TestCruddyExtractor extends TestCase {
 		"This is page two\nIt has several blocks of text\nNone of them have formatting",
 	};
 
-    public TestCruddyExtractor() throws Exception {
-        POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+	@Before
+    public void setup() throws Exception {
 		te = new QuickButCruddyTextExtractor(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
     }
 
+	@Test
     public void testReadAsVector() {
 		// Extract the text from the file as a vector
 		List<String> foundTextV = te.getTextAsVector();
@@ -76,6 +80,7 @@ public final class TestCruddyExtractor extends TestCase {
 		}
 	}
 
+	@Test
 	public void testReadAsString() {
 		// Extract the text as a String
 		String foundText = te.getTextAsString();

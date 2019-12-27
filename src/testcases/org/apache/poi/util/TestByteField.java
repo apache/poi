@@ -18,73 +18,58 @@
 
 package org.apache.poi.util;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
- * Title:        Unit test for ByteField class
- * Description:  Unit test for ByteField class
- * @author       Marc Johnson (mjohnson at apache dot org)
+ * Unit test for ByteField class
  */
-public final class TestByteField extends TestCase {
+public final class TestByteField {
 
-    private static final byte[] _test_array =
-    {
+    private static final byte[] _test_array = {
         Byte.MIN_VALUE, ( byte ) -1, ( byte ) 0, ( byte ) 1, Byte.MAX_VALUE
     };
 
+    @Test
     public void testConstructors() {
-        try
-        {
+        try {
             new ByteField(-1);
             fail("Should have caught ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         ByteField field = new ByteField(2);
 
         assertEquals(( byte ) 0, field.get());
-        try
-        {
+        try {
             new ByteField(-1, ( byte ) 1);
             fail("Should have caught ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         field = new ByteField(2, ( byte ) 3);
         assertEquals(( byte ) 3, field.get());
         byte[] array = new byte[ 3 ];
 
-        try
-        {
+        try {
             new ByteField(-1, ( byte ) 1, array);
             fail("Should have caught ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         field = new ByteField(2, ( byte ) 4, array);
         assertEquals(( byte ) 4, field.get());
         assertEquals(( byte ) 4, array[ 2 ]);
         array = new byte[ 2 ];
-        try
-        {
+        try {
             new ByteField(2, ( byte ) 5, array);
             fail("should have gotten ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         for (byte b : _test_array) {
@@ -94,12 +79,12 @@ public final class TestByteField extends TestCase {
         }
     }
 
+    @Test
     public void testSet() {
         ByteField field = new ByteField(0);
         byte[]    array = new byte[ 1 ];
 
-        for (int j = 0; j < _test_array.length; j++)
-        {
+        for (int j = 0; j < _test_array.length; j++) {
             field.set(_test_array[ j ]);
             assertEquals("testing _1 " + j, _test_array[ j ], field.get());
             field = new ByteField(0);
@@ -109,29 +94,26 @@ public final class TestByteField extends TestCase {
         }
     }
 
+    @Test
     public void testReadFromBytes() {
         ByteField field = new ByteField(1);
         byte[]    array = new byte[ 1 ];
 
-        try
-        {
+        try {
             field.readFromBytes(array);
             fail("should have caught ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e)
-        {
-
+        } catch (ArrayIndexOutOfBoundsException ignored_e) {
             // as expected
         }
         field = new ByteField(0);
-        for (int j = 0; j < _test_array.length; j++)
-        {
+        for (int j = 0; j < _test_array.length; j++) {
             array[ 0 ] = _test_array[ j ];
             field.readFromBytes(array);
             assertEquals("testing " + j, _test_array[ j ], field.get());
         }
     }
 
+    @Test
     public void testReadFromStream() throws IOException {
         ByteField field  = new ByteField(0);
         byte[]    buffer = new byte[ _test_array.length ];
@@ -139,13 +121,13 @@ public final class TestByteField extends TestCase {
         System.arraycopy(_test_array, 0, buffer, 0, buffer.length);
         ByteArrayInputStream stream = new ByteArrayInputStream(buffer);
 
-        for (int j = 0; j < buffer.length; j++)
-        {
+        for (int j = 0; j < buffer.length; j++) {
             field.readFromStream(stream);
             assertEquals("Testing " + j, _test_array[ j ], field.get());
         }
     }
 
+    @Test
     public void testWriteToBytes() {
         ByteField field = new ByteField(0);
         byte[]    array = new byte[ 1 ];

@@ -18,31 +18,32 @@
 package org.apache.poi.hssf.record.chart;
 
 
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests for {@link SheetPropertiesRecord}
  * Test data taken directly from a real Excel file.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestSheetPropertiesRecord extends TestCase {
+public final class TestSheetPropertiesRecord {
     private static final byte[] data = {
         (byte)0x0A,(byte)0x00,
         (byte)0x00,
         (byte)0x00,      // not sure where that last byte comes from
     };
 
+    @Test
     public void testLoad() {
         RecordInputStream in = TestcaseRecordInputStream.create(0x1044, data);
         SheetPropertiesRecord record = new SheetPropertiesRecord(in);
-        if (in.remaining() == 1) {
-            throw new AssertionFailedError("Identified bug 44693c");
-        }
+        assertNotEquals("Identified bug 44693c", 1, in.remaining());
         assertEquals(0, in.remaining());
         assertEquals( 10, record.getFlags());
         assertFalse(record.isChartTypeManuallyFormatted());
@@ -55,6 +56,7 @@ public final class TestSheetPropertiesRecord extends TestCase {
         assertEquals( 8, record.getRecordSize() );
     }
 
+    @Test
     public void testStore() {
         SheetPropertiesRecord record = new SheetPropertiesRecord();
         record.setChartTypeManuallyFormatted( false );
@@ -66,6 +68,6 @@ public final class TestSheetPropertiesRecord extends TestCase {
 
 
         byte [] recordBytes = record.serialize();
-        TestcaseRecordInputStream.confirmRecordEncoding(SheetPropertiesRecord.sid, data, recordBytes);
+        confirmRecordEncoding(SheetPropertiesRecord.sid, data, recordBytes);
     }
 }

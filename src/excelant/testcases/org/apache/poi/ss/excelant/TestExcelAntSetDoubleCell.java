@@ -16,51 +16,55 @@
 ==================================================================== */
 package org.apache.poi.ss.excelant;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.poi.ss.excelant.util.ExcelAntWorkbookUtil;
 import org.apache.poi.ss.excelant.util.ExcelAntWorkbookUtilFactory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
 
-public class TestExcelAntSetDoubleCell extends TestCase {
-	
+public class TestExcelAntSetDoubleCell {
+
 	private ExcelAntSetDoubleCell fixture ;
-	
+
 	private ExcelAntWorkbookUtil util ;
 
     private static final String mortgageCalculatorFileName =
-        BuildFileTest.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;
+        TestBuildFile.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;
 
-    @Override
+    @Before
 	public void setUp() {
 		fixture = new ExcelAntSetDoubleCell() ;
-		util = ExcelAntWorkbookUtilFactory.getInstance(
-				                                  mortgageCalculatorFileName ) ;
+		util = ExcelAntWorkbookUtilFactory.getInstance(mortgageCalculatorFileName ) ;
 		fixture.setWorkbookUtil( util ) ;
 	}
-	
-    @Override
+
+    @After
 	public void tearDown() {
 		fixture = null ;
 	}
-	
+
+	@Test
 	public void testSetDouble() {
 		String cellId = "'Sheet3'!$A$1" ;
 		double testValue = 1.1 ;
-		
+
 		fixture.setCell( cellId ) ;
 		fixture.setValue( testValue ) ;
-		
+
 		double value = fixture.getCellValue() ;
-		
+
 		assertTrue( value > 0 ) ;
 		assertEquals( testValue, value, 0.0 ) ;
-		
+
 		fixture.execute() ;
-		
+
 		double setValue = util.getCellAsDouble( cellId ) ;
-		
+
 		assertEquals( setValue, testValue, 0.0 ) ;
 	}
-	
+
 
 }

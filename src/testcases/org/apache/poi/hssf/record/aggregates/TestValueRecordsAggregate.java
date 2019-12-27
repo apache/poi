@@ -17,7 +17,11 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -42,15 +46,13 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.HexRead;
 import org.junit.Test;
 
-import junit.framework.AssertionFailedError;
-
 /**
  * Tests for {@link ValueRecordsAggregate}
  */
 public final class TestValueRecordsAggregate {
 	private static final String ABNORMAL_SHARED_FORMULA_FLAG_TEST_FILE = "AbnormalSharedFormulaFlag.xls";
 	private final ValueRecordsAggregate valueRecord = new ValueRecordsAggregate();
-	
+
 	private List<CellValueRecordInterface> getValueRecords() {
 	    List<CellValueRecordInterface> list = new ArrayList<>();
 	    for ( CellValueRecordInterface rec : valueRecord ) {
@@ -263,7 +265,7 @@ public final class TestValueRecordsAggregate {
 		assertNotEquals("found bug 44449 (Wrong SharedFormulaRecord was used).", "\"second formula\"", cellFormula);
 
 		assertEquals("Something else wrong with this test case", "\"first formula\"", cellFormula);
-		
+
 		wb.close();
 	}
 	private static String getFormulaFromFirstCell(HSSFSheet s, int rowIx) {
@@ -310,21 +312,15 @@ public final class TestValueRecordsAggregate {
 
 		return crc.getValue();
 	}
-	
+
     @Test
 	public void testRemoveNewRow_bug46312() {
 		// To make bug occur, rowIndex needs to be >= ValueRecordsAggregate.records.length
 		int rowIndex = 30;
 
 		ValueRecordsAggregate vra = new ValueRecordsAggregate();
-		try {
-			vra.removeAllCellsValuesForRow(rowIndex);
-		} catch (IllegalArgumentException e) {
-			if (e.getMessage().equals("Specified rowIndex 30 is outside the allowable range (0..30)")) {
-				throw new AssertionFailedError("Identified bug 46312");
-			}
-			throw e;
-		}
+		// bug 46312 - Specified rowIndex 30 is outside the allowable range (0..30)
+		vra.removeAllCellsValuesForRow(rowIndex);
 
 //		if (false) { // same bug as demonstrated through usermodel API
 //
@@ -395,18 +391,14 @@ public final class TestValueRecordsAggregate {
 		}
 
 		final BlankStats bs = new BlankStats();
-		RecordVisitor rv = new RecordVisitor() {
-
-			@Override
-            public void visitRecord(Record r) {
-				if (r instanceof MulBlankRecord) {
-					MulBlankRecord mbr = (MulBlankRecord) r;
-					bs.countMulBlankRecords++;
-					bs.countBlankCells += mbr.getNumColumns();
-				} else if (r instanceof BlankRecord) {
-					bs.countSingleBlankRecords++;
-					bs.countBlankCells++;
-				}
+		RecordVisitor rv = r -> {
+			if (r instanceof MulBlankRecord) {
+				MulBlankRecord mbr = (MulBlankRecord) r;
+				bs.countMulBlankRecords++;
+				bs.countBlankCells += mbr.getNumColumns();
+			} else if (r instanceof BlankRecord) {
+				bs.countSingleBlankRecords++;
+				bs.countBlankCells++;
 			}
 		};
 

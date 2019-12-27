@@ -17,17 +17,15 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexRead;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
 /**
  * Tests for {@link RecordInputStream}
- *
- * @author Josh Micich
  */
-public final class TestRecordInputStream extends TestCase {
+public final class TestRecordInputStream {
 
 	/**
 	 * Data inspired by attachment 22626 of bug 45866<br>
@@ -51,6 +49,9 @@ public final class TestRecordInputStream extends TestCase {
 			+ "01"	// this bit uncompressed
 			+ "1A 59 00 8A 9E 8A " // 3 uncompressed unicode chars
 	;
+
+
+	@Test
 	public void testChangeOfCompressionFlag_bug25866() {
 		byte[] changingFlagSimpleData = HexRead.readFromString(""
 				+ "AA AA "  // fake SID
@@ -58,19 +59,13 @@ public final class TestRecordInputStream extends TestCase {
 				+ HED_DUMP1
 				);
 		RecordInputStream in = TestcaseRecordInputStream.create(changingFlagSimpleData);
-		String actual;
-		try {
-			actual = in.readUnicodeLEString(18);
-		} catch (IllegalArgumentException e) {
-			if ("compressByte in continue records must be 1 while reading unicode LE string".equals(e.getMessage())) {
-				throw new AssertionFailedError("Identified bug 45866");
-			}
-				
-			throw e;
-		}
+
+		// bug 45866 - compressByte in continue records must be 1 while reading unicode LE string
+		String actual  = in.readUnicodeLEString(18);
 		assertEquals("\u591A\u8A00\u8A9E - Multilingual", actual);
 	}
 
+	@Test
 	public void testChangeFromUnCompressedToCompressed() {
 		byte[] changingFlagSimpleData = HexRead.readFromString(""
 				+ "AA AA "  // fake SID
@@ -81,7 +76,8 @@ public final class TestRecordInputStream extends TestCase {
 		String actual = in.readCompressedUnicode(18);
 		assertEquals("Multilingual - \u591A\u8A00\u8A9E", actual);
 	}
-	
+
+	@Test
 	public void testReadString() {
 		byte[] changingFlagFullData = HexRead.readFromString(""
 				+ "AA AA "  // fake SID
@@ -95,6 +91,8 @@ public final class TestRecordInputStream extends TestCase {
 		assertEquals("Multilingual - \u591A\u8A00\u8A9E", actual);
 	}
 
+	@SuppressWarnings("ThrowableNotThrown")
+	@Test
 	public void testLeftoverDataException() {
 	    // just ensure that the exception is created correctly, even with unknown sids
 	    new RecordInputStream.LeftoverDataException(1, 200);

@@ -17,29 +17,29 @@
 
 package org.apache.poi.hssf.model;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-import org.apache.poi.ss.formula.ptg.AttrPtg;
-import org.apache.poi.ss.formula.ptg.NamePtg;
-import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFName;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.FormulaParseException;
+import org.apache.poi.ss.formula.ptg.AttrPtg;
+import org.apache.poi.ss.formula.ptg.NamePtg;
+import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.junit.Test;
 
 /**
  * Test the low level formula parser functionality,
  *  but using parts which need to use
  *  HSSFFormulaEvaluator.
  */
-public final class TestFormulaParserEval extends TestCase {
+public final class TestFormulaParserEval {
 
+	@Test
 	public void testWithNamedRange() {
 		HSSFWorkbook workbook = new HSSFWorkbook();
 
@@ -75,6 +75,7 @@ public final class TestFormulaParserEval extends TestCase {
 		assertEquals(AttrPtg.class, ptgs[1].getClass());
 	}
 
+	@Test
 	public void testEvaluateFormulaWithRowBeyond32768_Bug44539() {
 
 		HSSFWorkbook wb = new HSSFWorkbook();
@@ -90,15 +91,8 @@ public final class TestFormulaParserEval extends TestCase {
 		sheet.createRow(32769).createCell(0).setCellValue(11);
 
 		HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-		CellValue result;
-		try {
-			result = fe.evaluate(cell);
-		} catch (FormulaParseException e) {
-			if (!e.getMessage().equals("Found reference to named range \"A\", but that named range wasn't defined!")) {
-				throw new AssertionFailedError("Identifed bug 44539");
-			}
-			throw e;
-		}
+		// Check for: Found reference to named range "A", but that named range wasn't defined!
+		CellValue result= fe.evaluate(cell);
 		assertEquals(CellType.NUMERIC, result.getCellType());
 		assertEquals(42.0, result.getNumberValue(), 0.0);
 	}

@@ -17,18 +17,14 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import junit.framework.TestCase;
-
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 /**
  * Convenient abstract class to reduce the amount of boilerplate code needed
  * in ptg-related unit tests.
- *
- * @author Daniel Noll (daniel at nuix dot com dot au)
  */
-public abstract class AbstractPtgTestCase extends TestCase {
+public abstract class AbstractPtgTestCase {
 
     /**
      * Loads a workbook from the given filename in the test data dir.

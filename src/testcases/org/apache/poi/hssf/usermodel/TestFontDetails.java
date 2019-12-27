@@ -17,38 +17,41 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
 import java.util.Properties;
 
+import org.junit.Before;
+import org.junit.Test;
+
 /**
  * Tests the implementation of the FontDetails class.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public final class TestFontDetails extends TestCase {
-    private Properties properties;
+public final class TestFontDetails {
     private FontDetails fontDetails;
 
-    @Override
-    protected void setUp() {
-        properties = new Properties();
+    @Before
+    public void setUp() {
+        Properties properties = new Properties();
         properties.setProperty("font.Arial.height", "13");
         properties.setProperty("font.Arial.characters", "a, b, c, d, e, f, g, h, i, j, k, l, m, n, o, p, q, r, s, t, u, v, w, x, y, z, A, B, C, D, E, F, G, H, I, J, K, L, M, N, O, P, Q, R, S, T, U, V, W, X, Y, Z, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, ");
-        properties.setProperty("font.Arial.widths",     "6, 6, 6, 6, 6, 3, 6, 6, 3, 4, 6, 3, 9, 6, 6, 6, 6, 4, 6, 3, 6, 7, 9, 6, 5, 5, 7, 7, 7, 7, 7, 6, 8, 7, 3, 6, 7, 6, 9, 7, 8, 7, 8, 7, 7, 5, 7, 7, 9, 7, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, ");
+        properties.setProperty("font.Arial.widths", "6, 6, 6, 6, 6, 3, 6, 6, 3, 4, 6, 3, 9, 6, 6, 6, 6, 4, 6, 3, 6, 7, 9, 6, 5, 5, 7, 7, 7, 7, 7, 6, 8, 7, 3, 6, 7, 6, 9, 7, 8, 7, 8, 7, 7, 5, 7, 7, 9, 7, 7, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, ");
         fontDetails = FontDetails.create("Arial", properties);
     }
 
+    @Test
     public void testCreate() {
         assertEquals(13, fontDetails.getHeight());
         assertEquals(6, fontDetails.getCharWidth('a'));
         assertEquals(3, fontDetails.getCharWidth('f'));
     }
 
+    @Test
     public void testGetStringWidth() {
         assertEquals(9, fontDetails.getStringWidth("af"));
     }
 
+    @Test
     public void testGetCharWidth() {
         assertEquals(6, fontDetails.getCharWidth('a'));
         assertEquals(9, fontDetails.getCharWidth('='));

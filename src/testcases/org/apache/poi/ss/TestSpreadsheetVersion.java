@@ -17,15 +17,16 @@
 
 package org.apache.poi.ss;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 /**
  * Check that all enum values are properly set
- *
- * @author Yegor Kozlov
  */
-public final class TestSpreadsheetVersion extends TestCase {
+public final class TestSpreadsheetVersion {
 
+    @Test
     public void testExcel97(){
         SpreadsheetVersion v = SpreadsheetVersion.EXCEL97;
         assertEquals(1 << 8, v.getMaxColumns());
@@ -37,6 +38,7 @@ public final class TestSpreadsheetVersion extends TestCase {
         assertEquals("IV", v.getLastColumnName());
     }
 
+    @Test
     public void testExcel2007(){
         SpreadsheetVersion v = SpreadsheetVersion.EXCEL2007;
         assertEquals(1 << 14, v.getMaxColumns());

@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import org.apache.poi.ss.formula.ptg.AttrPtg;
 import org.apache.poi.ss.formula.ptg.FuncVarPtg;
 import org.apache.poi.ss.formula.ptg.IntPtg;
@@ -24,17 +28,14 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaError;
-
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests for {@link FormulaRecord}
- *
- * @author Andrew C. Oliver
  */
-public final class TestFormulaRecord extends TestCase {
+public final class TestFormulaRecord {
 
+	@Test
 	public void testCreateFormulaRecord () {
 		FormulaRecord record = new FormulaRecord();
 		record.setColumn((short)0);
@@ -50,6 +51,7 @@ public final class TestFormulaRecord extends TestCase {
 	 * Make sure a NAN value is preserved
 	 * This formula record is a representation of =1/0 at row 0, column 0
 	 */
+	@Test
 	public void testCheckNanPreserve() {
 		byte[] formulaByte = {
 			0, 0, 0, 0,
@@ -95,8 +97,8 @@ public final class TestFormulaRecord extends TestCase {
 
 	/**
 	 * Tests to see if the shared formula cells properly reserialize the expPtg
-	 *
 	 */
+	@Test
 	public void testExpFormula() {
 		byte[] formulaByte = new byte[27];
 
@@ -114,6 +116,7 @@ public final class TestFormulaRecord extends TestCase {
 		assertEquals("Offset 22", 1, output[26]);
 	}
 
+	@Test
 	public void testWithConcat() {
 		// =CHOOSE(2,A2,A3,A4)
 		byte[] data = {
@@ -150,7 +153,8 @@ public final class TestFormulaRecord extends TestCase {
 		FuncVarPtg choose = (FuncVarPtg)ptgs[8];
 		assertEquals("CHOOSE", choose.getName());
 	}
-	
+
+	@Test
 	public void testReserialize() {
 		FormulaRecord formulaRecord = new FormulaRecord();
 		formulaRecord.setRow(1);
@@ -168,15 +172,16 @@ public final class TestFormulaRecord extends TestCase {
 		RefPtg rp = (RefPtg) ptgs[0];
 		assertEquals("B$5", rp.toFormulaString());
 	}
-	
+
 	/**
 	 * Bug noticed while fixing 46479.  Operands of conditional operator ( ? : ) were swapped
 	 * inside {@link FormulaRecord}
 	 */
+	@Test
 	public void testCachedValue_bug46479() {
 		FormulaRecord fr0 = new FormulaRecord();
 		FormulaRecord fr1 = new FormulaRecord();
-		// test some other cached value types 
+		// test some other cached value types
 		fr0.setValue(3.5);
 		assertEquals(3.5, fr0.getValue(), 0.0);
 		fr0.setCachedResultErrorCode(FormulaError.REF.getCode());
@@ -184,9 +189,7 @@ public final class TestFormulaRecord extends TestCase {
 
 		fr0.setCachedResultBoolean(false);
 		fr1.setCachedResultBoolean(true);
-		if (fr0.getCachedBooleanValue() && !fr1.getCachedBooleanValue()) {
-			throw new AssertionFailedError("Identified bug 46479c");
-		}
+		assertFalse("Identified bug 46479c", fr0.getCachedBooleanValue() && !fr1.getCachedBooleanValue());
         assertFalse(fr0.getCachedBooleanValue());
         assertTrue(fr1.getCachedBooleanValue());
 	}

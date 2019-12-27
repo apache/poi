@@ -17,16 +17,17 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
+import org.junit.Test;
 
 /**
  * Make sure the FuncPtg performs as expected
- *
- * @author Danny Mui (dmui at apache dot org)
  */
-public final class TestFuncPtg extends TestCase {
+public final class TestFuncPtg {
 
+    @Test
     public void testRead() {
     	// This function index represents the LEN() function
         byte[] fakeData = { 0x20, 0x00,};
@@ -38,6 +39,7 @@ public final class TestFuncPtg extends TestCase {
         assertEquals( "Ptg Size", 3, ptg.getSize() );
     }
 
+    @Test
     public void testNumberOfOperands() {
         FuncPtg funcPtg = FuncPtg.create(27); // ROUND() - takes 2 args
         assertEquals(2, funcPtg.getNumberOfOperands());

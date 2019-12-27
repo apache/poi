@@ -18,46 +18,59 @@
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
+
+import org.junit.Test;
 
 /**
  * Tests that DocumentAtom works properly
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestDocumentAtom extends TestCase {
+public final class TestDocumentAtom {
 	// From a real file
-	private final byte[] data_a = new byte[] { 1, 0, 0xE9-256, 3, 0x28, 0, 0, 0,
+	private final byte[] data_a = { 1, 0, 0xE9-256, 3, 0x28, 0, 0, 0,
 		0x80-256, 0x16, 0, 0, 0xE0-256, 0x10, 0, 0,
 		0xE0-256, 0x10, 0, 0, 0x80-256, 0x16, 0, 0,
 		0x05, 0, 0, 0, 0x0A, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
 		1, 0, 0, 0, 0, 0, 0, 1 };
 
+	@Test
     public void testRecordType() {
 		DocumentAtom da = new DocumentAtom(data_a, 0, data_a.length);
 		assertEquals(1001l, da.getRecordType());
 	}
+
+	@Test
 	public void testSizeAndZoom() {
 		DocumentAtom da = new DocumentAtom(data_a, 0, data_a.length);
-		assertEquals(5760l, da.getSlideSizeX());
-		assertEquals(4320l, da.getSlideSizeY());
-		assertEquals(4320l, da.getNotesSizeX());
-		assertEquals(5760l, da.getNotesSizeY());
+		assertEquals(5760L, da.getSlideSizeX());
+		assertEquals(4320L, da.getSlideSizeY());
+		assertEquals(4320L, da.getNotesSizeX());
+		assertEquals(5760L, da.getNotesSizeY());
 
-		assertEquals(5l, da.getServerZoomFrom());
-		assertEquals(10l, da.getServerZoomTo());
+		assertEquals(5L, da.getServerZoomFrom());
+		assertEquals(10L, da.getServerZoomTo());
 	}
+
+	@Test
 	public void testMasterPersist() {
 		DocumentAtom da = new DocumentAtom(data_a, 0, data_a.length);
-		assertEquals(2l, da.getNotesMasterPersist());
-		assertEquals(0l, da.getHandoutMasterPersist());
+		assertEquals(2L, da.getNotesMasterPersist());
+		assertEquals(0L, da.getHandoutMasterPersist());
 	}
+
+	@Test
 	public void testSlideDetails() {
 		DocumentAtom da = new DocumentAtom(data_a, 0, data_a.length);
 		assertEquals(1, da.getFirstSlideNum());
 		assertEquals(0, da.getSlideSizeType());
 	}
+
+	@Test
 	public void testBooleans() {
 		DocumentAtom da = new DocumentAtom(data_a, 0, data_a.length);
         assertFalse(da.getSaveWithFonts());
@@ -66,15 +79,11 @@ public final class TestDocumentAtom extends TestCase {
         assertTrue(da.getShowComments());
 	}
 
+	@Test
 	public void testWrite() throws Exception {
 		DocumentAtom da = new DocumentAtom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		da.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertEquals(data_a.length, b.length);
-		for(int i=0; i<data_a.length; i++) {
-			assertEquals(data_a[i],b[i]);
-		}
+		assertArrayEquals(data_a, baos.toByteArray());
 	}
 }

@@ -17,22 +17,27 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.junit.Test;
 
 /**
  * Tests for {@link ErrPtg}.
- *
- * @author Daniel Noll (daniel at nuix dot com dot au)
  */
 public final class TestErrPtg extends AbstractPtgTestCase {
     /**
      * Tests reading a file containing this ptg.
      */
-    public void testReading() {
-        HSSFWorkbook workbook = loadWorkbook("ErrPtg.xls");
-        HSSFCell cell = workbook.getSheetAt(0).getRow(3).getCell(0);
-        assertEquals("Wrong cell value", 4.0, cell.getNumericCellValue(), 0.0);
-        assertEquals("Wrong cell formula", "ERROR.TYPE(#REF!)", cell.getCellFormula());
+    @Test
+    public void testReading() throws IOException {
+        try (HSSFWorkbook workbook = loadWorkbook("ErrPtg.xls")) {
+            HSSFCell cell = workbook.getSheetAt(0).getRow(3).getCell(0);
+            assertEquals("Wrong cell value", 4.0, cell.getNumericCellValue(), 0.0);
+            assertEquals("Wrong cell formula", "ERROR.TYPE(#REF!)", cell.getCellFormula());
+        }
     }
 }

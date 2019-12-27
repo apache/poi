@@ -18,19 +18,23 @@
 package org.apache.poi.hssf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-/**
- * 
- */
-public final class TestUnicodeNameRecord extends TestCase {
+import org.junit.Test;
 
-	public void testReadBook() {
+public final class TestUnicodeNameRecord {
 
+	@Test
+	public void testReadBook() throws IOException {
 		// This bit used to crash
-		HSSFWorkbook book = HSSFTestDataSamples.openSampleWorkbook("unicodeNameRecord.xls");
-		book.getSheetAt(0);
+		try (HSSFWorkbook book = HSSFTestDataSamples.openSampleWorkbook("unicodeNameRecord.xls")) {
+			HSSFSheet sheet = book.getSheetAt(0);
+			assertNotNull(sheet);
+		}
 	}
 }

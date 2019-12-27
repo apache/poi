@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record.aggregates;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,10 +26,7 @@ import java.util.List;
 import org.apache.poi.hssf.record.ColumnInfoRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
-import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.junit.Test;
-
-import junit.framework.AssertionFailedError;
 
 public final class TestColumnInfoRecordsAggregate {
 
@@ -62,34 +60,19 @@ public final class TestColumnInfoRecordsAggregate {
 		return columnInfoRecord;
 	}
 
-	private static final class CIRCollector implements RecordVisitor {
-
-		private final List<Record> _list = new ArrayList<>();
-
-		@Override
-        public void visitRecord(Record r) {
-			_list.add(r);
-		}
-
-		public static ColumnInfoRecord[] getRecords(ColumnInfoRecordsAggregate agg) {
-			CIRCollector circ = new CIRCollector();
-			agg.visitContainedRecords(circ);
-            return circ._list.toArray(new ColumnInfoRecord[0]);
-		}
-	}
-
 	@Test
 	public void testGroupColumns_bug45639() {
 		ColumnInfoRecordsAggregate agg = new ColumnInfoRecordsAggregate();
 		agg.groupColumnRange( 7, 9, true);
 		agg.groupColumnRange( 4, 12, true);
-		try {
-			agg.groupColumnRange( 1, 15, true);
-		} catch (ArrayIndexOutOfBoundsException e) {
-			throw new AssertionFailedError("Identified bug 45639");
-		}
-		ColumnInfoRecord[] cirs = CIRCollector.getRecords(agg);
-		assertEquals(5, cirs.length);
+
+		// bug 45639 - ArrayIndexOutOfBoundsException
+		agg.groupColumnRange( 1, 15, true);
+
+		List<Record> cirs = new ArrayList<>();
+		agg.visitContainedRecords(cirs::add);
+
+		assertEquals(5, cirs.size());
 		confirmCIR(cirs, 0,  1,  3, 1, false, false);
 		confirmCIR(cirs, 1,  4,  6, 2, false, false);
 		confirmCIR(cirs, 2,  7,  9, 3, false, false);
@@ -106,14 +89,14 @@ public final class TestColumnInfoRecordsAggregate {
 		agg.groupColumnRange(1, 15, true);
 		agg.groupColumnRange(4, 12, true);
 
-		ColumnInfoRecord[] cirs;
+		List<Record> cirs = new ArrayList<>();
 
 		// collapse both inner and outer groups
 		agg.collapseColumn(6);
 		agg.collapseColumn(3);
 
-		cirs = CIRCollector.getRecords(agg);
-		assertEquals(5, cirs.length);
+		agg.visitContainedRecords(cirs::add);
+		assertEquals(5, cirs.size());
 		confirmCIR(cirs, 0,  1,  3, 1, true, false);
 		confirmCIR(cirs, 1,  4, 12, 2, true, false);
 		confirmCIR(cirs, 2, 13, 13, 1, true, true);
@@ -123,19 +106,19 @@ public final class TestColumnInfoRecordsAggregate {
 		// just expand the inner group
 		agg.expandColumn(6);
 
-		cirs = CIRCollector.getRecords(agg);
-		assertEquals(4, cirs.length);
-		if (!cirs[1].getHidden()) {
-			throw new AssertionFailedError("Inner group should still be hidden");
-		}
+		cirs.clear();
+		agg.visitContainedRecords(cirs::add);
+		assertEquals(4, cirs.size());
+		assertTrue("Inner group should still be hidden", ((ColumnInfoRecord)cirs.get(1)).getHidden());
 		confirmCIR(cirs, 0,  1,  3, 1, true, false);
 		confirmCIR(cirs, 1,  4, 12, 2, true, false);
 		confirmCIR(cirs, 2, 13, 15, 1, true, false);
 		confirmCIR(cirs, 3, 16, 16, 0, false, true);
 	}
-	
-	private static void confirmCIR(ColumnInfoRecord[] cirs, int ix, int startColIx, int endColIx, int level, boolean isHidden, boolean isCollapsed) {
-		ColumnInfoRecord cir = cirs[ix];
+
+	private static void confirmCIR(List<Record> cirs, int ix, int startColIx, int endColIx, int level, boolean isHidden, boolean isCollapsed) {
+		assertTrue(cirs.get(ix) instanceof ColumnInfoRecord);
+		ColumnInfoRecord cir = (ColumnInfoRecord)cirs.get(ix);
 		assertEquals("startColIx", startColIx, cir.getFirstColumn());
 		assertEquals("endColIx", endColIx, cir.getLastColumn());
 		assertEquals("level", level, cir.getOutlineLevel());

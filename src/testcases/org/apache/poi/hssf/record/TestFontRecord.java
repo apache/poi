@@ -18,31 +18,35 @@
 package org.apache.poi.hssf.record;
 
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the {@link FontRecord}
  * class works correctly.  Test data taken directly from a real Excel file.
  */
-public final class TestFontRecord extends TestCase {
+public final class TestFontRecord {
 
     private static final int SID = 0x31;
     private static final byte[] data = {
-            0xC8-256, 00,       // font height = xc8
-            00, 00,             // attrs = 0
+            0xC8-256, 0,       // font height = xc8
+            0, 0,             // attrs = 0
             0xFF-256, 0x7F,     // colour palette = x7fff
             0x90-256, 0x01,     // bold weight = x190
-            00, 00,  // supersubscript
-            00, 00,  // underline, family
-            00, 00,  // charset, padding
-            05, 00,  // name length, unicode flag
+            0, 0,  // supersubscript
+            0, 0,  // underline, family
+            0, 0,  // charset, padding
+            5, 0,  // name length, unicode flag
             0x41, 0x72, 0x69, 0x61, 0x6C, // Arial, as unicode
 
     };
 
+    @Test
     public void testLoad() {
 
         FontRecord record = new FontRecord(TestcaseRecordInputStream.create(0x31, data));
@@ -63,6 +67,7 @@ public final class TestFontRecord extends TestCase {
         assertEquals(21 + 4, record.getRecordSize());
     }
 
+    @Test
     public void testStore() {
 //      .fontheight      = c8
 //      .attributes      = 0
@@ -94,6 +99,7 @@ public final class TestFontRecord extends TestCase {
         TestcaseRecordInputStream.confirmRecordEncoding(0x31, data, recordBytes);
     }
 
+    @Test
     public void testCloneOnto() {
         FontRecord base = new FontRecord(TestcaseRecordInputStream.create(0x31, data));
 
@@ -106,6 +112,7 @@ public final class TestFontRecord extends TestCase {
             assertEquals("At offset " + i, data[i], recordBytes[i+4]);
     }
 
+    @Test
     public void testSameProperties() {
         FontRecord f1 = new FontRecord(TestcaseRecordInputStream.create(0x31, data));
         FontRecord f2 = new FontRecord(TestcaseRecordInputStream.create(0x31, data));
@@ -128,6 +135,7 @@ public final class TestFontRecord extends TestCase {
      * length is zero.  The OOO documentation seems to agree with this and POI had no test data
      * samples to say otherwise.
      */
+    @Test
     public void testEmptyName_bug47250() {
         byte[] emptyNameData = HexRead.readFromString(
                 "C8 00 00 00 FF 7F 90 01 00 00 00 00 00 00 "
@@ -137,9 +145,7 @@ public final class TestFontRecord extends TestCase {
 
         RecordInputStream in = TestcaseRecordInputStream.create(SID, emptyNameData);
         FontRecord fr = new FontRecord(in);
-        if (in.available() == 1) {
-            throw new AssertionFailedError("Identified bug 47250");
-        }
+        assertNotEquals(1, in.available());
         assertEquals(0, in.available());
 
         assertEquals(0, fr.getFontName().length());

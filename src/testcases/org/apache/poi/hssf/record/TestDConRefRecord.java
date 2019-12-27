@@ -19,27 +19,27 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
-import junit.framework.TestCase;
-import org.apache.poi.util.LittleEndianOutputStream;
 
-import static org.junit.Assert.assertArrayEquals;
+import org.apache.poi.util.LittleEndianOutputStream;
+import org.junit.Test;
 
 /**
  * Unit tests for DConRefRecord class.
- *
- * @author Niklas Rehfeld
  */
-public class TestDConRefRecord extends TestCase
-{
+public class TestDConRefRecord {
     /**
      * record of a proper single-byte external 'volume'-style path with multiple parts and a sheet
      * name.
      */
-    final byte[] volumeString = new byte[]
-    {
+    final byte[] volumeString = {
         0, 0, 0, 0, 0, 0, //ref (6 bytes) not used...
         17, 0,//cchFile (2 bytes)
         0, //char type
@@ -51,8 +51,7 @@ public class TestDConRefRecord extends TestCase
      * record of a proper single-byte external 'unc-volume'-style path with multiple parts and a
      * sheet name.
      */
-    final byte[] uncVolumeString = new byte[]
-    {
+    final byte[] uncVolumeString = {
         0, 0, 0, 0, 0, 0, //ref (6 bytes) not used...
         34, 0,//cchFile (2 bytes)
         0, //char type
@@ -65,8 +64,7 @@ public class TestDConRefRecord extends TestCase
     /**
      * record of a proper single-byte external 'simple-file-path-dcon' style path with a sheet name.
      */
-    final byte[] simpleFilePathDconString = new byte[]
-    {
+    final byte[] simpleFilePathDconString = {
         0, 0, 0, 0, 0, 0, //ref (6 bytes) not used...
         16, 0,//cchFile (2 bytes)
         0, //char type
@@ -77,8 +75,7 @@ public class TestDConRefRecord extends TestCase
      * record of a proper 'transfer-protocol'-style path. This one has a sheet name at the end, and
      * another one inside the file path. The spec doesn't seem to care about what they are.
      */
-    final byte[] transferProtocolString = new byte[]
-    {
+    final byte[] transferProtocolString = {
         0, 0, 0, 0, 0, 0, //ref (6 bytes) not used...
         33, 0,//cchFile (2 bytes)
         0, //char type
@@ -91,8 +88,7 @@ public class TestDConRefRecord extends TestCase
     /**
      * startup-type path.
      */
-    final byte[] relVolumeString = new byte[]
-    {
+    final byte[] relVolumeString = {
         0, 0, 0, 0, 0, 0, //ref (6 bytes) not used...
         16, 0,//cchFile (2 bytes)
         0, //char type
@@ -102,8 +98,7 @@ public class TestDConRefRecord extends TestCase
     /**
      * startup-type path.
      */
-    final byte[] startupString = new byte[]
-    {
+    final byte[] startupString = {
         0, 0, 0, 0, 0, 0, //ref (6 bytes) not used...
         16, 0,//cchFile (2 bytes)
         0, //char type
@@ -113,8 +108,7 @@ public class TestDConRefRecord extends TestCase
     /**
      * alt-startup-type path.
      */
-    final byte[] altStartupString = new byte[]
-    {
+    final byte[] altStartupString = {
         0, 0, 0, 0, 0, 0, //ref (6 bytes) not used...
         16, 0,//cchFile (2 bytes)
         0, //char type
@@ -124,8 +118,7 @@ public class TestDConRefRecord extends TestCase
     /**
      * library-style path.
      */
-    final byte[] libraryString = new byte[]
-    {
+    final byte[] libraryString = {
         0, 0, 0, 0, 0, 0, //ref (6 bytes) not used...
         16, 0,//cchFile (2 bytes)
         0, //char type
@@ -135,8 +128,7 @@ public class TestDConRefRecord extends TestCase
     /**
      * record of single-byte string, external, volume path.
      */
-    final byte[] data1 = new byte[]
-    {
+    final byte[] data1 = {
         0, 0, 0, 0, 0, 0, //ref (6 bytes) not used...
         10, 0,//cchFile (2 bytes)
         0, //char type
@@ -147,8 +139,7 @@ public class TestDConRefRecord extends TestCase
     /**
      * record of double-byte string, self-reference.
      */
-    final byte[] data2 = new byte[]
-    {
+    final byte[] data2 = {
         0, 0, 0, 0, 0, 0, //ref (6 bytes) not used...
         9, 0,//cchFile (2 bytes)
         1, //char type = unicode
@@ -159,8 +150,7 @@ public class TestDConRefRecord extends TestCase
     /**
      * record of single-byte string, self-reference.
      */
-    final byte[] data3 = new byte[]
-    {
+    final byte[] data3 = {
         0, 0, 0, 0, 0, 0, //ref (6 bytes) not used...
         9, 0,//cchFile (2 bytes)
         0, //char type = ansi
@@ -171,8 +161,7 @@ public class TestDConRefRecord extends TestCase
     /**
      * double-byte string, external reference, unc-volume.
      */
-    final byte[] data4 = new byte[]
-    {
+    final byte[] data4 = {
         0, 0, 0, 0, 0, 0, //ref (6 bytes) not used...
         16, 0,//cchFile (2 bytes)
         //stFile starts here:
@@ -187,8 +176,8 @@ public class TestDConRefRecord extends TestCase
      * test read-constructor-then-serialize for a single-byte external reference strings of
      * various flavours. This uses the RecordInputStream constructor.
      */
-    public void testReadWriteSBExtRef() throws IOException
-    {
+    @Test
+    public void testReadWriteSBExtRef() throws IOException {
         testReadWrite(data1, "read-write single-byte external reference, volume type path");
         testReadWrite(volumeString,
                 "read-write properly formed single-byte external reference, volume type path");
@@ -212,13 +201,12 @@ public class TestDConRefRecord extends TestCase
      * test read-constructor-then-serialize for a double-byte external reference 'UNC-Volume' style
      * string
      */
-    public void testReadWriteDBExtRefUncVol() throws IOException
-    {
+    @Test
+    public void testReadWriteDBExtRefUncVol() throws IOException {
         testReadWrite(data4, "read-write double-byte external reference, UNC volume type path");
     }
 
-    private void testReadWrite(byte[] data, String message) throws IOException
-    {
+    private void testReadWrite(byte[] data, String message) throws IOException {
         RecordInputStream is = TestcaseRecordInputStream.create(81, data);
         DConRefRecord d = new DConRefRecord(is);
         ByteArrayOutputStream bos = new ByteArrayOutputStream(data.length);
@@ -232,24 +220,24 @@ public class TestDConRefRecord extends TestCase
     /**
      * test read-constructor-then-serialize for a double-byte self-reference style string
      */
-    public void testReadWriteDBSelfRef() throws IOException
-    {
+    @Test
+    public void testReadWriteDBSelfRef() throws IOException {
         testReadWrite(data2, "read-write double-byte self reference");
     }
 
     /**
      * test read-constructor-then-serialize for a single-byte self-reference style string
      */
-    public void testReadWriteSBSelfRef() throws IOException
-    {
+    @Test
+    public void testReadWriteSBSelfRef() throws IOException {
         testReadWrite(data3, "read-write single byte self reference");
     }
 
     /**
      * Test of getDataSize method, of class DConRefRecord.
      */
-    public void testGetDataSize()
-    {
+    @Test
+    public void testGetDataSize() {
         DConRefRecord instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data1));
         int expResult = data1.length;
         int result = instance.getDataSize();
@@ -266,8 +254,8 @@ public class TestDConRefRecord extends TestCase
     /**
      * Test of getSid method, of class DConRefRecord.
      */
-    public void testGetSid()
-    {
+    @Test
+    public void testGetSid() {
         DConRefRecord instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data1));
         short expResult = 81;
         short result = instance.getSid();
@@ -276,10 +264,10 @@ public class TestDConRefRecord extends TestCase
 
     /**
      * Test of getPath method, of class DConRefRecord.
-     * @todo different types of paths.
      */
-    public void testGetPath()
-    {
+    @Test
+    public void testGetPath() {
+        // TODO: different types of paths.
         DConRefRecord instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data1));
         byte[] expResult = Arrays.copyOfRange(data1, 9, data1.length);
         byte[] result = instance.getPath();
@@ -289,8 +277,8 @@ public class TestDConRefRecord extends TestCase
     /**
      * Test of isExternalRef method, of class DConRefRecord.
      */
-    public void testIsExternalRef()
-    {
+    @Test
+    public void testIsExternalRef() {
         DConRefRecord instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data1));
         assertTrue("external reference", instance.isExternalRef());
         instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data2));

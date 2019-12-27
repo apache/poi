@@ -17,47 +17,45 @@
 
 package org.apache.poi.hssf.record.pivot;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.record.pivottable.PageItemRecord;
 import org.apache.poi.util.HexRead;
+import org.junit.Test;
 
 /**
  * Tests for {@link PageItemRecord}
- * 
- * @author Josh Micich
  */
-public final class TestPageItemRecord extends TestCase {
-	
+public final class TestPageItemRecord {
+	@Test
 	public void testMoreThanOneInfoItem_bug46917() {
 		byte[] data = HexRead.readFromString("01 02 03 04 05 06 07 08 09 0A 0B 0C");
 		RecordInputStream in = TestcaseRecordInputStream.create(PageItemRecord.sid, data);
 		PageItemRecord rec = new PageItemRecord(in);
-		if (in.remaining() == 6) {
-			throw new AssertionFailedError("Identified bug 46917");
-		}
+		assertNotEquals("Identified bug 46917", 6, in.remaining());
 		assertEquals(0, in.remaining());
-		
+
 		assertEquals(4+data.length, rec.getRecordSize());
 	}
-	
+
+	@Test
 	public void testSerialize() {
 		confirmSerialize("01 02 03 04 05 06");
 		confirmSerialize("01 02 03 04 05 06 07 08 09 0A 0B 0C");
 		confirmSerialize("01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F 10 11 12");
 	}
 
-	private static PageItemRecord confirmSerialize(String hexDump) {
+	private static void confirmSerialize(String hexDump) {
 		byte[] data = HexRead.readFromString(hexDump);
 		RecordInputStream in = TestcaseRecordInputStream.create(PageItemRecord.sid, data);
 		PageItemRecord rec = new PageItemRecord(in);
 		assertEquals(0, in.remaining());
 		assertEquals(4+data.length, rec.getRecordSize());
 		byte[] data2 = rec.serialize();
-		TestcaseRecordInputStream.confirmRecordEncoding(PageItemRecord.sid, data, data2);
-		return rec;
+		confirmRecordEncoding(PageItemRecord.sid, data, data2);
 	}
 }

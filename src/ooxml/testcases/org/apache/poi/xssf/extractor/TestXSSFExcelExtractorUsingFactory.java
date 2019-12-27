@@ -17,8 +17,9 @@
 
 package org.apache.poi.xssf.extractor;
 
-import org.apache.poi.ooxml.extractor.ExtractorFactory;
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.ooxml.extractor.ExtractorFactory;
+import org.junit.After;
 
 /**
  * Tests for {@link XSSFExcelExtractor}
@@ -34,8 +35,8 @@ public final class TestXSSFExcelExtractorUsingFactory extends TestXSSFExcelExtra
 			throw new RuntimeException(e);
 		}
 	}
-    
-    @Override
+
+    @After
     public void tearDown() {
         // reset setting to not affect other tests
         ExtractorFactory.setAllThreadsPreferEventExtractors(null);

@@ -17,41 +17,45 @@
 
 package org.apache.poi.hsmf;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import java.io.IOException;
-
-import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
-import org.apache.poi.POIDataSamples;
-
 import java.util.Calendar;
 
-import junit.framework.TestCase;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
+import org.junit.Before;
+import org.junit.Test;
 
-public final class TestMessageSubmissionChunk extends TestCase {
-    
-    private final MAPIMessage mapiMessageExtraHyphenSubmissionChunk;
-    private final MAPIMessage mapiMessageNormalSubmissionChunk;
+public final class TestMessageSubmissionChunk {
+
+    private MAPIMessage mapiMessageExtraHyphenSubmissionChunk;
+    private MAPIMessage mapiMessageNormalSubmissionChunk;
 
     /**
      * Initialise this test, load up the test messages.
-     * @throws Exception
      */
-    public TestMessageSubmissionChunk() throws IOException {
+    @Before
+    public void setup() throws IOException {
         POIDataSamples samples = POIDataSamples.getHSMFInstance();
         this.mapiMessageExtraHyphenSubmissionChunk = new MAPIMessage(samples.openResourceAsStream("message_extra_hyphen_submission_chunk.msg"));
         this.mapiMessageNormalSubmissionChunk = new MAPIMessage(samples.openResourceAsStream("message_normal_submission_chunk.msg"));
     }
 
+    @Test
     public void testReadMessageDateExtraHyphenSubmissionChunk() throws ChunkNotFoundException {
         final Calendar date = mapiMessageExtraHyphenSubmissionChunk.getMessageDate();
-        TestCase.assertNotNull(date);
+        assertNotNull(date);
         final int year = date.get(Calendar.YEAR);
-        TestCase.assertEquals(2007, year);
+        assertEquals(2007, year);
     }
 
+    @Test
     public void testReadMessageDateNormalSubmissionChunk() throws ChunkNotFoundException {
         final Calendar date = mapiMessageNormalSubmissionChunk.getMessageDate();
-        TestCase.assertNotNull(date);
+        assertNotNull(date);
         final int year = date.get(Calendar.YEAR);
-        TestCase.assertEquals(2007, year);
+        assertEquals(2007, year);
     }
 }

@@ -19,17 +19,17 @@ package org.apache.poi.hslf.record;
 
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayOutputStream;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests that {@link org.apache.poi.hslf.record.ExControl} works properly
- *
- * @author Yegor Kozlov
  */
-public final class TestExControl extends TestCase {
+public final class TestExControl {
 
 	// From a real file (embedded SWF control)
     /*
@@ -55,7 +55,7 @@ public final class TestExControl extends TestCase {
        </CString>
      </ExControl>
      */
-    private final byte[] data = new byte[] {
+    private final byte[] data = {
             0x0F, 0x00, (byte)0xEE, 0x0F, (byte)0xDA, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)0xFB, 0x0F, 0x04, 0x00, 0x00, 0x00,
             0x00, 0x01, 0x00, 0x00, 0x01, 0x00, (byte)0xC3, 0x0F, 0x18, 0x00, 0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x02, 0x00,
             0x00, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, (byte)0x96, 0x13, 0x00,
@@ -71,6 +71,7 @@ public final class TestExControl extends TestCase {
             0x65, 0x00, 0x63, 0x00, 0x74, 0x00
     };
 
+	@Test
 	public void testRead() {
 		ExControl record = new ExControl(data, 0, data.length);
 		assertEquals(RecordTypes.ExControl.typeID, record.getRecordType());
@@ -89,15 +90,15 @@ public final class TestExControl extends TestCase {
 		assertEquals("Shockwave Flash Object", record.getClipboardName());
 	}
 
+	@Test
 	public void testWrite() throws Exception {
 		ExControl record = new ExControl(data, 0, data.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		record.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertArrayEquals(data, b);
+		assertArrayEquals(data, baos.toByteArray());
 	}
 
+	@Test
 	public void testNewRecord() throws Exception {
 		ExControl record = new ExControl();
 		ExControlAtom ctrl = record.getExControlAtom();
@@ -117,9 +118,6 @@ public final class TestExControl extends TestCase {
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		record.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertEquals(data.length, b.length);
-		assertArrayEquals(data, b);
+		assertArrayEquals(data, baos.toByteArray());
 	}
 }

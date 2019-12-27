@@ -18,15 +18,17 @@
 package org.apache.poi.hssf.record;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 
-import junit.framework.TestCase;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndian;
+import org.junit.Test;
 
 /**
  * Tests that serialization and deserialization of the TextObjectRecord .
@@ -34,7 +36,7 @@ import org.apache.poi.util.LittleEndian;
  *
  * @author Yegor Kozlov
  */
-public final class TestTextObjectRecord extends TestCase {
+public final class TestTextObjectRecord {
 
     private static final byte[] simpleData = HexRead.readFromString(
         "B6 01 12 00 " +
@@ -47,7 +49,7 @@ public final class TestTextObjectRecord extends TestCase {
         "00 0D 00 00 00 00 00 00 00"
     );
 
-
+    @Test
     public void testRead() {
 
         RecordInputStream is =TestcaseRecordInputStream.create(simpleData);
@@ -60,6 +62,7 @@ public final class TestTextObjectRecord extends TestCase {
         assertEquals("Hello, World!", record.getStr().getString());
     }
 
+    @Test
     public void testWrite() {
         HSSFRichTextString str = new HSSFRichTextString("Hello, World!");
 
@@ -78,11 +81,13 @@ public final class TestTextObjectRecord extends TestCase {
         //read again
         RecordInputStream is = TestcaseRecordInputStream.create(simpleData);
         record = new TextObjectRecord(is);
+        assertNotNull(record);
     }
 
     /**
      * Zero {@link ContinueRecord}s follow a {@link TextObjectRecord} if the text is empty
      */
+    @Test
     public void testWriteEmpty() {
         HSSFRichTextString str = new HSSFRichTextString("");
 
@@ -105,6 +110,7 @@ public final class TestTextObjectRecord extends TestCase {
     /**
      * Test that TextObjectRecord serializes logs records properly.
      */
+    @Test
     public void testLongRecords() {
         int[] lengths = {1024, 2048, 4096, 8192, 16384}; //test against strings of different length
         for (int length : lengths) {
@@ -131,6 +137,7 @@ public final class TestTextObjectRecord extends TestCase {
     /**
      * Test cloning
      */
+    @Test
     public void testClone() {
         String text = "Hello, World";
         HSSFRichTextString str = new HSSFRichTextString(text);
@@ -175,7 +182,7 @@ public final class TestTextObjectRecord extends TestCase {
             "02 00 00 00 00 00 00 00 "
         );
 
-
+    @Test
     public void testLinkFormula() {
         RecordInputStream is = new RecordInputStream(new ByteArrayInputStream(linkData));
         is.nextRecord();

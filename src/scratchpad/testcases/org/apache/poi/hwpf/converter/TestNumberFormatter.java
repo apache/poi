@@ -16,13 +16,14 @@
 ==================================================================== */
 package org.apache.poi.hwpf.converter;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
 
-public class TestNumberFormatter extends TestCase
-{
+import org.junit.Test;
 
-    public void testRoman()
-    {
+public class TestNumberFormatter {
+
+    @Test
+    public void testRoman() {
         assertEquals( "i", NumberFormatter.getNumber( 1, 2 ) );
         assertEquals( "ii", NumberFormatter.getNumber( 2, 2 ) );
         assertEquals( "iii", NumberFormatter.getNumber( 3, 2 ) );
@@ -39,44 +40,42 @@ public class TestNumberFormatter extends TestCase
         assertEquals( "mcmliv", NumberFormatter.getNumber( 1954, 2 ) );
     }
 
-    public void testEnglish()
-    {
+    @Test
+    public void testEnglish() {
         assertEquals( "a", NumberFormatter.getNumber( 1, 4 ) );
         assertEquals( "z", NumberFormatter.getNumber( 26, 4 ) );
 
-        assertEquals( "aa", NumberFormatter.getNumber( 1 * 26 + 1, 4 ) );
-        assertEquals( "az", NumberFormatter.getNumber( 1 * 26 + 26, 4 ) );
+        assertEquals( "aa", NumberFormatter.getNumber(  26 + 1, 4 ) );
+        assertEquals( "az", NumberFormatter.getNumber(  26 + 26, 4 ) );
 
         assertEquals( "za", NumberFormatter.getNumber( 26 * 26 + 1, 4 ) );
         assertEquals( "zz", NumberFormatter.getNumber( 26 * 26 + 26, 4 ) );
 
         assertEquals( "aaa",
-                NumberFormatter.getNumber( 26 * 26 + 1 * 26 + 1, 4 ) );
+                NumberFormatter.getNumber( 26 * 26 + 26 + 1, 4 ) );
         assertEquals( "aaz",
-                NumberFormatter.getNumber( 26 * 26 + 1 * 26 + 26, 4 ) );
+                NumberFormatter.getNumber( 26 * 26 + 26 + 26, 4 ) );
 
         assertEquals( "aba",
-                NumberFormatter.getNumber( 1 * 26 * 26 + 2 * 26 + 1, 4 ) );
+                NumberFormatter.getNumber( 26 * 26 + 2 * 26 + 1, 4 ) );
         assertEquals( "aza",
-                NumberFormatter.getNumber( 1 * 26 * 26 + 26 * 26 + 1, 4 ) );
+                NumberFormatter.getNumber( 26 * 26 + 26 * 26 + 1, 4 ) );
 
         assertEquals( "azz",
                 NumberFormatter.getNumber( 26 * 26 + 26 * 26 + 26, 4 ) );
         assertEquals( "baa",
-                NumberFormatter.getNumber( 2 * 26 * 26 + 1 * 26 + 1, 4 ) );
+                NumberFormatter.getNumber( 2 * 26 * 26 + 26 + 1, 4 ) );
         assertEquals( "zaa",
-                NumberFormatter.getNumber( 26 * 26 * 26 + 1 * 26 + 1, 4 ) );
+                NumberFormatter.getNumber( 26 * 26 * 26 + 26 + 1, 4 ) );
         assertEquals( "zzz",
                 NumberFormatter.getNumber( 26 * 26 * 26 + 26 * 26 + 26, 4 ) );
 
         assertEquals(
                 "aaaa",
-                NumberFormatter.getNumber( 1 * 26 * 26 * 26 + 1 * 26 * 26 + 1
-                        * 26 + 1, 4 ) );
+                NumberFormatter.getNumber( 26 * 26 * 26 + 26 * 26 + 26 + 1, 4 ) );
         assertEquals(
                 "azzz",
-                NumberFormatter.getNumber( 1 * 26 * 26 * 26 + 26 * 26 * 26 + 26
-                        * 26 + 26, 4 ) );
+                NumberFormatter.getNumber( 26 * 26 * 26 + 26 * 26 * 26 + 26 * 26 + 26, 4 ) );
         assertEquals(
                 "zzzz",
                 NumberFormatter.getNumber( 26 * 26 * 26 * 26 + 26 * 26 * 26

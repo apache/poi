@@ -17,27 +17,27 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotSame;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import junit.framework.AssertionFailedError;
-import junit.framework.TestCase;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.aggregates.MergedCellsTable;
-import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.junit.Test;
 
 
 /**
  * Make sure the merge cells record behaves
- * @author Danny Mui (dmui at apache dot org)
- *
  */
-public final class TestMergeCellsRecord extends TestCase {
+public final class TestMergeCellsRecord {
 
 	/**
 	 * Make sure when a clone is called, we actually clone it.
 	 */
+	@Test
 	public void testCloneReferences() {
 		CellRangeAddress[] cras = { new CellRangeAddress(0, 1, 0, 2), };
 		MergeCellsRecord merge = new MergeCellsRecord(cras, 0, cras.length);
@@ -56,12 +56,7 @@ public final class TestMergeCellsRecord extends TestCase {
         assertNotSame(merge.getAreaAt(0), clone.getAreaAt(0));
 	}
 
-	private static final RecordVisitor dummyRecordVisitor = new RecordVisitor() {
-		@Override
-        public void visitRecord(Record r) {
-			// do nothing
-		}
-	};
+	@Test
 	public void testMCTable_bug46009() {
 		MergedCellsTable mct = new MergedCellsTable();
 		List<Record> recList = new ArrayList<>();
@@ -71,10 +66,6 @@ public final class TestMergeCellsRecord extends TestCase {
 		recList.add(new MergeCellsRecord(cras, 0, 1));
 		RecordStream rs = new RecordStream(recList, 0);
 		mct.read(rs);
-		try {
-			mct.visitContainedRecords(dummyRecordVisitor);
-		} catch (ArrayStoreException e) {
-			throw new AssertionFailedError("Identified bug 46009");
-		}
+		mct.visitContainedRecords(r -> {});
 	}
 }

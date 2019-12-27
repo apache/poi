@@ -17,42 +17,46 @@
 
 package org.apache.poi.hwpf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
-import junit.framework.TestCase;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.StyleSheet;
+import org.junit.Test;
 
-public final class TestBug49820 extends TestCase {
+public final class TestBug49820 {
 
+  @Test
   public void test() throws IOException {
-    HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug49820.doc");
-    
-    Range documentRange = doc.getRange();
-    StyleSheet styleSheet = doc.getStyleSheet();
-    
-    // JUnit asserts
-    assertLevels(documentRange, styleSheet, 0, 0, 0);
-    assertLevels(documentRange, styleSheet, 1, 1, 1);
-    assertLevels(documentRange, styleSheet, 2, 2, 2);
-    assertLevels(documentRange, styleSheet, 3, 3, 3);
-    assertLevels(documentRange, styleSheet, 4, 4, 4);
-    assertLevels(documentRange, styleSheet, 5, 5, 5);
-    assertLevels(documentRange, styleSheet, 6, 6, 6);
-    assertLevels(documentRange, styleSheet, 7, 7, 7);
-    assertLevels(documentRange, styleSheet, 8, 8, 8);
-    assertLevels(documentRange, styleSheet, 9, 9, 9);
-    assertLevels(documentRange, styleSheet, 10, 9, 0);
-    assertLevels(documentRange, styleSheet, 11, 9, 4);
-    
-    // output to console
+    try (HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug49820.doc")) {
+
+      Range documentRange = doc.getRange();
+      StyleSheet styleSheet = doc.getStyleSheet();
+
+      // JUnit asserts
+      assertLevels(documentRange, styleSheet, 0, 0, 0);
+      assertLevels(documentRange, styleSheet, 1, 1, 1);
+      assertLevels(documentRange, styleSheet, 2, 2, 2);
+      assertLevels(documentRange, styleSheet, 3, 3, 3);
+      assertLevels(documentRange, styleSheet, 4, 4, 4);
+      assertLevels(documentRange, styleSheet, 5, 5, 5);
+      assertLevels(documentRange, styleSheet, 6, 6, 6);
+      assertLevels(documentRange, styleSheet, 7, 7, 7);
+      assertLevels(documentRange, styleSheet, 8, 8, 8);
+      assertLevels(documentRange, styleSheet, 9, 9, 9);
+      assertLevels(documentRange, styleSheet, 10, 9, 0);
+      assertLevels(documentRange, styleSheet, 11, 9, 4);
+
+      // output to console
     /*for (int i=0; i<documentRange.numParagraphs(); i++) {
       Paragraph par = documentRange.getParagraph(i);
       int styleLvl = styleSheet.getParagraphStyle(par.getStyleIndex()).getLvl();
       int parLvl = par.getLvl();
       System.out.println("Style level: " + styleLvl + ", paragraph level: " + parLvl + ", text: " + par.text());
     }*/
+    }
   }
 
   private void assertLevels(Range documentRange, StyleSheet styleSheet, int parIndex, int expectedStyleLvl, int expectedParLvl) {

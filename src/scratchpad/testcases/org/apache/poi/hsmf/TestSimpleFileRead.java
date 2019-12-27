@@ -17,14 +17,14 @@
 
 package org.apache.poi.hsmf;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.IOException;
 
-import junit.framework.TestCase;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.junit.Test;
-
-import static org.junit.Assert.assertTrue;
 
 /**
  * Tests to verify that we can read a simple msg file, that is in plain/text
@@ -50,7 +50,7 @@ public final class TestSimpleFileRead {
         String obtained = mapiMessage.getDisplayCC();
         String expected = "";
 
-        TestCase.assertEquals(obtained, expected);
+        assertEquals(obtained, expected);
     }
 
     /**
@@ -61,7 +61,7 @@ public final class TestSimpleFileRead {
         String obtained = mapiMessage.getDisplayTo();
         String expected = "travis@overwrittenstack.com";
 
-        TestCase.assertEquals(obtained, expected);
+        assertEquals(obtained, expected);
     }
 
     /**
@@ -72,7 +72,7 @@ public final class TestSimpleFileRead {
         String obtained = mapiMessage.getDisplayFrom();
         String expected = "Travis Ferguson";
 
-        TestCase.assertEquals(obtained, expected);
+        assertEquals(obtained, expected);
     }
 
     /**
@@ -83,7 +83,7 @@ public final class TestSimpleFileRead {
         String obtained = mapiMessage.getDisplayBCC();
         String expected = "";
 
-        TestCase.assertEquals(obtained, expected);
+        assertEquals(obtained, expected);
     }
 
 
@@ -95,7 +95,7 @@ public final class TestSimpleFileRead {
         String obtained = mapiMessage.getTextBody();
         String expected = "This is a test message.";
 
-        TestCase.assertEquals(obtained, expected);
+        assertEquals(obtained, expected);
     }
 
     /**
@@ -106,7 +106,7 @@ public final class TestSimpleFileRead {
         String obtained = mapiMessage.getSubject();
         String expected = "test message";
 
-        TestCase.assertEquals(expected, obtained);
+        assertEquals(expected, obtained);
     }
 
     /**
@@ -115,7 +115,7 @@ public final class TestSimpleFileRead {
     @Test
     public void testReadConversationTopic() throws Exception {
         String obtained = mapiMessage.getConversationTopic();
-        TestCase.assertEquals("test message", obtained);
+        assertEquals("test message", obtained);
     }
 
 
@@ -125,7 +125,7 @@ public final class TestSimpleFileRead {
     @Test
     public void testReadMessageClass() throws Exception {
         MAPIMessage.MESSAGE_CLASS obtained = mapiMessage.getMessageClassEnum();
-        TestCase.assertEquals(MAPIMessage.MESSAGE_CLASS.NOTE, obtained);
+        assertEquals(MAPIMessage.MESSAGE_CLASS.NOTE, obtained);
     }
 
     /**
@@ -133,7 +133,7 @@ public final class TestSimpleFileRead {
      */
     @Test
     public void testReadMessageClass2() throws Exception {
-        TestCase.assertEquals(
+        assertEquals(
                 MAPIMessage.MESSAGE_CLASS.NOTE, mapiMessage.getMessageClassEnum());
 
         for (String messageClass : new String[]{

@@ -17,11 +17,14 @@
 
 package org.apache.poi.xssf.util;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+
+import org.junit.Test;
 
 
-public class TestNumericRanges extends TestCase {
-    
+public class TestNumericRanges {
+
+    @Test
     public void testGetOverlappingType() {
         long[] r1 = {3, 8};
         long[] r2 = {6, 11};
@@ -35,7 +38,8 @@ public class TestNumericRanges extends TestCase {
         assertEquals(NumericRanges.OVERLAPS_1_WRAPS, NumericRanges.getOverlappingType(r1, r5));
         assertEquals(NumericRanges.NO_OVERLAPS, NumericRanges.getOverlappingType(r1, r6));
     }
-    
+
+    @Test
     public void testGetOverlappingRange() {
         long[] r1 = {3, 8};
         long[] r2 = {6, 11};
@@ -54,5 +58,5 @@ public class TestNumericRanges extends TestCase {
         assertEquals(-1, NumericRanges.getOverlappingRange(r1, r6)[0]);
         assertEquals(-1, NumericRanges.getOverlappingRange(r1, r6)[1]);
     }
-    
+
 }

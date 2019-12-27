@@ -17,50 +17,54 @@
 
 package org.apache.poi.hsmf;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
-
-import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
-import org.apache.poi.POIDataSamples;
-
 import java.util.Calendar;
 
-import junit.framework.TestCase;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
+import org.junit.Before;
+import org.junit.Test;
 
-public final class TestMessageSubmissionChunkY2KRead extends TestCase {
-    
-    private final MAPIMessage mapiMessage1979;
-    private final MAPIMessage mapiMessage1980;
-    private final MAPIMessage mapiMessage1981;
+public final class TestMessageSubmissionChunkY2KRead {
+
+    private MAPIMessage mapiMessage1979;
+    private MAPIMessage mapiMessage1980;
+    private MAPIMessage mapiMessage1981;
 
     /**
      * Initialise this test, load up the three test messages.
-     * @throws Exception
      */
-    public TestMessageSubmissionChunkY2KRead() throws IOException {
+    @Before
+    public void setup() throws IOException {
         POIDataSamples samples = POIDataSamples.getHSMFInstance();
-        this.mapiMessage1979 = new MAPIMessage(samples.openResourceAsStream("message_1979.msg"));
-        this.mapiMessage1980 = new MAPIMessage(samples.openResourceAsStream("message_1980.msg"));
-        this.mapiMessage1981 = new MAPIMessage(samples.openResourceAsStream("message_1981.msg"));
+        mapiMessage1979 = new MAPIMessage(samples.openResourceAsStream("message_1979.msg"));
+        mapiMessage1980 = new MAPIMessage(samples.openResourceAsStream("message_1980.msg"));
+        mapiMessage1981 = new MAPIMessage(samples.openResourceAsStream("message_1981.msg"));
     }
 
     // 1979 is one year before our pivot year (so this is an expected "failure")
+    @Test
     public void testReadMessageDate1979() throws ChunkNotFoundException {
         final Calendar date = mapiMessage1979.getMessageDate();
         final int year = date.get(Calendar.YEAR);
-        TestCase.assertEquals(2079, year);
+        assertEquals(2079, year);
     }
 
     // 1980 is our pivot year (so this is an expected "failure")
+    @Test
     public void testReadMessageDate1980() throws ChunkNotFoundException {
         final Calendar date = mapiMessage1980.getMessageDate();
         final int year = date.get(Calendar.YEAR);
-        TestCase.assertEquals(2080, year);
+        assertEquals(2080, year);
     }
 
     // 1981 is one year after our pivot year (so this starts working)
+    @Test
     public void testReadMessageDate1981() throws ChunkNotFoundException {
         final Calendar date = mapiMessage1981.getMessageDate();
         final int year = date.get(Calendar.YEAR);
-        TestCase.assertEquals(1981, year);
+        assertEquals(1981, year);
     }
 }

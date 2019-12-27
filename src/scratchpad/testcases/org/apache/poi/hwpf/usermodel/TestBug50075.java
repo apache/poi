@@ -16,26 +16,31 @@
 ==================================================================== */
 package org.apache.poi.hwpf.usermodel;
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
+import java.io.IOException;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.LFO;
 import org.apache.poi.hwpf.model.ListLevel;
+import org.junit.Test;
 
-public class TestBug50075 extends TestCase
-{
+public class TestBug50075 {
 
-  public void test() {
-    HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug50075.doc");
-    Range range = doc.getRange();
-    assertEquals(1, range.numParagraphs());
-    ListEntry entry = (ListEntry) range.getParagraph(0);
-    LFO override = doc.getListTables().getLfo( entry.getIlfo());
-    ListLevel level = doc.getListTables().getLevel(override.getLsid(), entry.getIlvl());
-    
-    // the bug reproduces, if this call fails with NullPointerException
-    level.getNumberText();
+  @Test
+  public void test() throws IOException {
+    try (HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug50075.doc")) {
+      Range range = doc.getRange();
+      assertEquals(1, range.numParagraphs());
+      ListEntry entry = (ListEntry) range.getParagraph(0);
+      LFO override = doc.getListTables().getLfo(entry.getIlfo());
+      ListLevel level = doc.getListTables().getLevel(override.getLsid(), entry.getIlvl());
+      assertNotNull(level);
+      // the bug reproduces, if this call fails with NullPointerException
+      assertNotNull(level.getNumberText());
+    }
   }
-  
+
 }

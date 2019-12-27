@@ -19,120 +19,142 @@
 
 package org.apache.poi.ss.formula;
 
-import junit.framework.TestCase;
-import org.apache.poi.hssf.usermodel.*;
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.atp.AnalysisToolPak;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.FunctionEval;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.functions.FreeRefFunction;
-import org.apache.poi.ss.formula.functions.Function;
 import org.apache.poi.ss.usermodel.CellValue;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.FixMethodOrder;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runners.MethodSorters;
 
-/**
- *
- * @author Yegor Kozlov
- */
-public class TestFunctionRegistry extends TestCase {
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+public class TestFunctionRegistry {
 
-	public void testRegisterInRuntime() {
-		HSSFWorkbook wb = new HSSFWorkbook();
-		HSSFSheet sheet = wb.createSheet("Sheet1");
-		HSSFRow row = sheet.createRow(0);
-        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+    HSSFWorkbook wb;
+    HSSFSheet sheet;
+    HSSFRow row;
+    HSSFFormulaEvaluator fe;
 
-		HSSFCell cellA = row.createCell(0);
-		cellA.setCellFormula("FISHER(A5)");
-		CellValue cv;
-		try {
-			cv = fe.evaluate(cellA);
-            fail("expectecd exception");
-		} catch (NotImplementedException e) {
-        }
+    @Before
+    public void setup() {
+        wb = new HSSFWorkbook();
+        sheet = wb.createSheet("Sheet1");
+        row = sheet.createRow(0);
+        fe = new HSSFFormulaEvaluator(wb);
+    }
 
-        FunctionEval.registerFunction("FISHER", new Function() {
-            @Override
-            public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
-                return ErrorEval.NA;
-            }
-        });
+    @After
+    public void teardown() throws IOException {
+        wb.close();
+        wb = null;
+        sheet = null;
+        row = null;
+        fe = null;
+    }
 
-        cv = fe.evaluate(cellA);
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
+    @Test
+	public void testRegisterInRuntimeA() {
+        HSSFCell cellA = row.createCell(0);
+        cellA.setCellFormula("FISHER(A5)");
+        thrown.expect(NotImplementedException.class);
+        fe.evaluate(cellA);
+    }
+
+    @Test
+    public void testRegisterInRuntimeB() {
+        HSSFCell cellA = row.createCell(0);
+        cellA.setCellFormula("FISHER(A5)");
+        FunctionEval.registerFunction("FISHER", (args, srcRowIndex, srcColumnIndex) -> ErrorEval.NA);
+        CellValue cv = fe.evaluate(cellA);
         assertEquals(ErrorEval.NA.getErrorCode(), cv.getErrorValue());
+    }
 
+    @Test
+    public void testRegisterInRuntimeC() {
         HSSFCell cellB = row.createCell(1);
         cellB.setCellFormula("CUBEMEMBERPROPERTY(A5)");
-        try {
-            cv = fe.evaluate(cellB);
-            fail("expectecd exception");
-        } catch (NotImplementedException e) {
-        }
+        thrown.expect(NotImplementedException.class);
+        fe.evaluate(cellB);
+    }
 
-        AnalysisToolPak.registerFunction("CUBEMEMBERPROPERTY", new FreeRefFunction() {
-            @Override
-            public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
-                return ErrorEval.NUM_ERROR;
-            }
-        });
+    @Test
+    public void testRegisterInRuntimeD() {
+        HSSFCell cellB = row.createCell(1);
+        cellB.setCellFormula("CUBEMEMBERPROPERTY(A5)");
 
-        cv = fe.evaluate(cellB);
+        AnalysisToolPak.registerFunction("CUBEMEMBERPROPERTY", (args, ec) -> ErrorEval.NUM_ERROR);
+
+        CellValue cv = fe.evaluate(cellB);
         assertEquals(ErrorEval.NUM_ERROR.getErrorCode(), cv.getErrorValue());
 	}
 
-    public void testExceptions() {
-        Function func = new Function() {
-            @Override
-            public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
-                return ErrorEval.NA;
-            }
-        };
-        try {
-            FunctionEval.registerFunction("SUM", func);
-            fail("expectecd exception");
-        } catch (IllegalArgumentException e){
-            assertEquals("POI already implememts SUM" +
-                    ". You cannot override POI's implementations of Excel functions", e.getMessage());
-        }
-        try {
-            FunctionEval.registerFunction("SUMXXX", func);
-            fail("expectecd exception");
-        } catch (IllegalArgumentException e){
-            assertEquals("Unknown function: SUMXXX", e.getMessage());
-        }
-        try {
-            FunctionEval.registerFunction("ISODD", func);
-            fail("expectecd exception");
-        } catch (IllegalArgumentException e){
-            assertEquals("ISODD is a function from the Excel Analysis Toolpack. " +
-                    "Use AnalysisToolpack.registerFunction(String name, FreeRefFunction func) instead.", e.getMessage());
-        }
+	private static ValueEval na(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+        return ErrorEval.NA;
+    }
 
-        FreeRefFunction atpFunc = new FreeRefFunction() {
-            @Override
-            public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
-                return ErrorEval.NUM_ERROR;
-            }
-        };
-        try {
-            AnalysisToolPak.registerFunction("ISODD", atpFunc);
-            fail("expectecd exception");
-        } catch (IllegalArgumentException e){
-            assertEquals("POI already implememts ISODD" +
-                    ". You cannot override POI's implementations of Excel functions", e.getMessage());
-        }
-        try {
-            AnalysisToolPak.registerFunction("ISODDXXX", atpFunc);
-            fail("expectecd exception");
-        } catch (IllegalArgumentException e){
-            assertEquals("ISODDXXX is not a function from the Excel Analysis Toolpack.", e.getMessage());
-        }
-        try {
-            AnalysisToolPak.registerFunction("SUM", atpFunc);
-            fail("expectecd exception");
-        } catch (IllegalArgumentException e){
-            assertEquals("SUM is a built-in Excel function. " +
-                    "Use FunctoinEval.registerFunction(String name, Function func) instead.", e.getMessage());
-        }
+    @Test
+    public void testExceptionsA() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("POI already implememts SUM. You cannot override POI's implementations of Excel functions");
+        FunctionEval.registerFunction("SUM", TestFunctionRegistry::na);
+    }
+
+    @Test
+    public void testExceptionsB() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("Unknown function: SUMXXX");
+        FunctionEval.registerFunction("SUMXXX", TestFunctionRegistry::na);
+    }
+
+    @Test
+    public void testExceptionsC() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("ISODD is a function from the Excel Analysis Toolpack. " +
+            "Use AnalysisToolpack.registerFunction(String name, FreeRefFunction func) instead.");
+        FunctionEval.registerFunction("ISODD", TestFunctionRegistry::na);
+    }
+
+    private static ValueEval atpFunc(ValueEval[] args, OperationEvaluationContext ec) {
+        return ErrorEval.NUM_ERROR;
+    }
+
+    @Test
+    public void testExceptionsD() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("POI already implememts ISODD. You cannot override POI's implementations of Excel functions");
+        AnalysisToolPak.registerFunction("ISODD", TestFunctionRegistry::atpFunc);
+    }
+
+    @Test
+    public void testExceptionsE() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("ISODDXXX is not a function from the Excel Analysis Toolpack.");
+        AnalysisToolPak.registerFunction("ISODDXXX", TestFunctionRegistry::atpFunc);
+    }
+
+    @Test
+    public void testExceptionsF() {
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("SUM is a built-in Excel function. " +
+             "Use FunctoinEval.registerFunction(String name, Function func) instead.");
+        AnalysisToolPak.registerFunction("SUM", TestFunctionRegistry::atpFunc);
     }
 }

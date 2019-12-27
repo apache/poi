@@ -17,20 +17,23 @@
 package org.apache.poi;
 
 import static org.apache.poi.POITestCase.assertContains;
-
-import junit.framework.TestCase;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.apache.poi.ooxml.extractor.POIXMLPropertiesTextExtractor;
-import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ooxml.util.PackageHelper;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.Test;
 
-public final class TestXMLPropertiesTextExtractor extends TestCase {
+public final class TestXMLPropertiesTextExtractor {
     private static final POIDataSamples _ssSamples = POIDataSamples.getSpreadSheetInstance();
     private static final POIDataSamples _slSamples = POIDataSamples.getSlideShowInstance();
 
+	@Test
 	public void testGetFromMainExtractor() throws Exception {
 		OPCPackage pkg = PackageHelper.open(_ssSamples.openResourceAsStream("ExcelWithAttachments.xlsm"));
 
@@ -49,11 +52,12 @@ public final class TestXMLPropertiesTextExtractor extends TestCase {
 
 		assertContains(text, "LastModifiedBy = Yury Batrakov");
 		assertContains(cText, "LastModifiedBy = Yury Batrakov");
-		
+
 		textExt.close();
 		ext.close();
 	}
 
+	@Test
 	public void testCore() throws Exception {
 		OPCPackage pkg = PackageHelper.open(
                 _ssSamples.openResourceAsStream("ExcelWithAttachments.xlsm")
@@ -69,10 +73,11 @@ public final class TestXMLPropertiesTextExtractor extends TestCase {
 
 		assertContains(text, "LastModifiedBy = Yury Batrakov");
 		assertContains(cText, "LastModifiedBy = Yury Batrakov");
-		
+
 		ext.close();
 	}
 
+	@Test
 	public void testExtended() throws Exception {
 		OPCPackage pkg = OPCPackage.open(
                 _ssSamples.openResourceAsStream("ExcelWithAttachments.xlsm")
@@ -94,6 +99,7 @@ public final class TestXMLPropertiesTextExtractor extends TestCase {
 		ext.close();
 	}
 
+	@Test
 	public void testCustom() throws Exception {
       OPCPackage pkg = OPCPackage.open(
                 _ssSamples.openResourceAsStream("ExcelWithAttachments.xlsm")
@@ -106,31 +112,32 @@ public final class TestXMLPropertiesTextExtractor extends TestCase {
       // Now check
       String text = ext.getText();
       String cText = ext.getCustomPropertiesText();
-      
+
       assertContains(text, "description = another value");
       assertContains(cText, "description = another value");
 
       ext.close();
 	}
-	
+
 	/**
 	 * Bug #49386 - some properties, especially
 	 *  dates can be null
 	 */
+	@Test
 	public void testWithSomeNulls() throws Exception {
       OPCPackage pkg = OPCPackage.open(
             _slSamples.openResourceAsStream("49386-null_dates.pptx")
       );
       XSLFSlideShow sl = new XSLFSlideShow(pkg);
-   
+
       POIXMLPropertiesTextExtractor ext = new POIXMLPropertiesTextExtractor(sl);
       ext.getText();
-      
+
       String text = ext.getText();
       assertFalse(text.contains("Created =")); // With date is null
       assertContains(text, "CreatedString = "); // Via string is blank
       assertContains(text, "LastModifiedBy = IT Client Services");
-		
+
       ext.close();
 	}
 }

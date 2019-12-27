@@ -19,29 +19,29 @@ package org.apache.poi.hssf.record;
 
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
 /**
  * Tests the serialization and deserialization of the FtCblsSubRecord
  * class works correctly.
- *
- * @author Yegor Kozlov
  */
-public final class TestFtCblsSubRecord extends TestCase {
+public final class TestFtCblsSubRecord {
     private final byte[] data = new byte[] {
         0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x64, 0x00,
         0x01, 0x00, 0x0A, 0x00, 0x00, 0x00, 0x10, 0x00, 0x01, 0x00
     };
 
+    @Test
     public void testRead() {
-
         FtCblsSubRecord record = new FtCblsSubRecord(TestcaseRecordInputStream.create(FtCblsSubRecord.sid, data), data.length);
 
         assertEquals(FtCblsSubRecord.sid, record.getSid());
         assertEquals(data.length, record.getDataSize());
     }
 
+    @Test
     public void testWrite() {
         FtCblsSubRecord record = new FtCblsSubRecord();
         assertEquals(FtCblsSubRecord.sid, record.getSid());
@@ -49,11 +49,10 @@ public final class TestFtCblsSubRecord extends TestCase {
 
         byte [] ser = record.serialize();
         assertEquals(ser.length - 4, data.length);
-
     }
 
-    public void testClone()
-    {
+    @Test
+    public void testClone() {
         FtCblsSubRecord record = new FtCblsSubRecord();
         byte[] src = record.serialize();
 

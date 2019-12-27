@@ -18,6 +18,8 @@
 package org.apache.poi.hssf.record;
 
 import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,14 +27,15 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import junit.framework.TestCase;
+import org.junit.Test;
 
-public final class TestDrawingRecord extends TestCase {
+public final class TestDrawingRecord {
 
     /**
      * Check that RecordFactoryInputStream properly handles continued DrawingRecords
      * See Bugzilla #47548
      */
+    @Test
     public void testReadContinued() throws IOException {
 
         //simulate a continues drawing record

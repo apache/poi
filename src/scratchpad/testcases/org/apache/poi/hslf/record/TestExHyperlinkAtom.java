@@ -18,30 +18,34 @@
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+
 import java.io.ByteArrayOutputStream;
+
+import org.junit.Test;
 
 /**
  * Tests that ExHyperlinkAtom works properly.
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public class TestExHyperlinkAtom extends TestCase {
+public class TestExHyperlinkAtom {
 	// From a real file
 	private final byte[] data_a = new byte[] {
-		00, 00, 0xD3-256, 0x0F, 04, 00, 00, 00,
-		01, 00, 00, 00
+		0, 0, 0xD3-256, 0x0F, 4, 0, 0, 0,
+		1, 0, 0, 0
 	};
 	private final byte[] data_b = new byte[] {
-		00, 00, 0xD3-256, 0x0F, 04, 00, 00, 00,
-		04, 00, 00, 00
+		0, 0, 0xD3-256, 0x0F, 4, 0, 0, 0,
+		4, 0, 0, 0
 	};
 
+	@Test
     public void testRecordType() {
     	ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
-		assertEquals(4051l, eha.getRecordType());
+		assertEquals(4051L, eha.getRecordType());
 	}
 
+	@Test
     public void testGetNumber() {
     	ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
     	ExHyperlinkAtom ehb = new ExHyperlinkAtom(data_b, 0, data_b.length);
@@ -50,19 +54,16 @@ public class TestExHyperlinkAtom extends TestCase {
 		assertEquals(4, ehb.getNumber());
     }
 
+	@Test
 	public void testWrite() throws Exception {
     	ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		eha.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertEquals(data_a.length, b.length);
-		for(int i=0; i<data_a.length; i++) {
-			assertEquals(data_a[i],b[i]);
-		}
+		assertArrayEquals(data_a, baos.toByteArray());
 	}
 
 	// Create A from scratch
+	@Test
 	public void testCreate() throws Exception {
 		ExHyperlinkAtom eha = new ExHyperlinkAtom();
 
@@ -72,15 +73,11 @@ public class TestExHyperlinkAtom extends TestCase {
 		// Check it's now the same as a
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		eha.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		assertEquals(data_a.length, b.length);
-		for(int i=0; i<data_a.length; i++) {
-			assertEquals(data_a[i],b[i]);
-		}
+		assertArrayEquals(data_a, baos.toByteArray());
 	}
 
 	// Try to turn a into b
+	@Test
 	public void testChange() throws Exception {
 		ExHyperlinkAtom eha = new ExHyperlinkAtom(data_a, 0, data_a.length);
 
@@ -90,12 +87,6 @@ public class TestExHyperlinkAtom extends TestCase {
 		// Check bytes are now the same
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		eha.writeOut(baos);
-		byte[] b = baos.toByteArray();
-
-		// Should now be the same
-		assertEquals(data_b.length, b.length);
-		for(int i=0; i<data_b.length; i++) {
-			assertEquals(data_b[i],b[i]);
-		}
+		assertArrayEquals(data_b, baos.toByteArray());
 	}
 }

@@ -17,20 +17,22 @@
 
 package org.apache.poi.hssf.record;
 
-import junit.framework.TestCase;
-/**
- */
-public final class TestExtendedFormatRecord extends TestCase {
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
+import static org.junit.Assert.assertEquals;
 
-	private static final byte[] data = new byte[] {
-			00, 00, // Font 0
-			00, 00, // Format 0
+import org.junit.Test;
+
+public final class TestExtendedFormatRecord {
+
+	private static final byte[] data = {
+			0, 0, // Font 0
+			0, 0, // Format 0
 			0xF5 - 256, 0xFF - 256, // Cell opts ...
-			0x20, 00, // Alignment 20
-			00, 00, // Ident 0
-			00, 00, // Border 0
-			00, 00, // Palette 0
-			00, 00, 00, 00, // ADTL Palette 0
+			0x20, 0, // Alignment 20
+			0, 0, // Ident 0
+			0, 0, // Border 0
+			0, 0, // Palette 0
+			0, 0, 0, 0, // ADTL Palette 0
 			0xC0 - 256, 0x20 // Fill Palette 20c0
 	};
 
@@ -38,6 +40,7 @@ public final class TestExtendedFormatRecord extends TestCase {
 		return new ExtendedFormatRecord(TestcaseRecordInputStream.create(0x00E0, data));
 	}
 
+	@Test
 	public void testLoad() {
 		ExtendedFormatRecord record = createEFR();
 		assertEquals(0, record.getFontIndex());
@@ -54,6 +57,7 @@ public final class TestExtendedFormatRecord extends TestCase {
 	}
 
 
+	@Test
 	public void testStore() {
 //    .fontindex       = 0
 //    .formatindex     = 0
@@ -113,11 +117,12 @@ public final class TestExtendedFormatRecord extends TestCase {
 		record.setFillBackground((short) 0x41);
 
 		byte[] recordBytes = record.serialize();
-		assertEquals(recordBytes.length - 4, data.length);
-		for (int i = 0; i < data.length; i++)
-			assertEquals("At offset " + i, data[i], recordBytes[i + 4]);
+		confirmRecordEncoding(ExtendedFormatRecord.sid, data, recordBytes);
 	}
 
+
+
+	@Test
 	public void testCloneOnto() {
 		ExtendedFormatRecord base = createEFR();
 
@@ -125,11 +130,10 @@ public final class TestExtendedFormatRecord extends TestCase {
 		other.cloneStyleFrom(base);
 
 		byte[] recordBytes = other.serialize();
-		assertEquals(recordBytes.length - 4, data.length);
-		for (int i = 0; i < data.length; i++)
-			assertEquals("At offset " + i, data[i], recordBytes[i + 4]);
+		confirmRecordEncoding(ExtendedFormatRecord.sid, data, recordBytes);
 	}
-	
+
+	@Test
 	public void testRotation() {
         ExtendedFormatRecord record = createEFR();
         assertEquals(0, record.getRotation());

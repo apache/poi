@@ -18,29 +18,34 @@
 package org.apache.poi.hslf.record;
 
 
-import junit.framework.TestCase;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayOutputStream;
+
+import org.junit.Test;
 
 /**
  * Tests that CString works properly
- *
- * @author Nick Burch (nick at torchbox dot com)
  */
-public final class TestCString extends TestCase {
+public final class TestCString {
 	// From a real file
-	private final byte[] data_a = new byte[] { 0, 0, 0xBA-256, 0x0f, 0x10, 0, 0, 0,
-		0x48, 00, 0x6F, 00, 0x67, 00, 0x77, 00,
-		0x61, 00, 0x72, 00, 0x74, 00, 0x73, 00  };
+	private final byte[] data_a = { 0, 0, 0xBA-256, 0x0f, 0x10, 0, 0, 0,
+		0x48, 0, 0x6F, 0, 0x67, 0, 0x77, 0,
+		0x61, 0, 0x72, 0, 0x74, 0, 0x73, 0  };
 	private final byte[] data_b = new byte[] { 0x10, 0, 0xBA-256, 0x0f, 0x10, 0, 0, 0,
-		0x43, 00, 0x6F, 00, 0x6D, 00, 0x6D, 00,
-		0x65, 00, 0x6E, 00, 0x74, 00, 0x73, 00 };
+		0x43, 0, 0x6F, 0, 0x6D, 0, 0x6D, 0,
+		0x65, 0, 0x6E, 0, 0x74, 0, 0x73, 0 };
 
+	@Test
     public void testRecordType() {
 		CString ca = new CString(data_a, 0, data_a.length);
-		assertEquals(4026l, ca.getRecordType());
+		assertEquals(4026L, ca.getRecordType());
 		CString cb = new CString(data_b, 0, data_a.length);
-		assertEquals(4026l, cb.getRecordType());
+		assertEquals(4026L, cb.getRecordType());
 	}
+
+	@Test
 	public void testCount() {
 		CString ca = new CString(data_a, 0, data_a.length);
 		assertEquals(0, ca.getOptions());
@@ -51,6 +56,7 @@ public final class TestCString extends TestCase {
 		assertEquals(28, ca.getOptions());
 	}
 
+	@Test
 	public void testText() {
 		CString ca = new CString(data_a, 0, data_a.length);
 		assertEquals("Hogwarts", ca.getText());
@@ -61,6 +67,7 @@ public final class TestCString extends TestCase {
 		assertEquals("FooBar", ca.getText());
 	}
 
+	@Test
 	public void testWrite() throws Exception {
 		CString ca = new CString(data_a, 0, data_a.length);
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -84,6 +91,7 @@ public final class TestCString extends TestCase {
 	}
 
 	// Turn data_a into data_b
+	@Test
 	public void testChange() throws Exception {
 		CString ca = new CString(data_a, 0, data_a.length);
 		ca.setText("Comments");
