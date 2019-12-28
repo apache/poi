@@ -31,6 +31,11 @@ import org.apache.poi.util.Internal;
 @Internal
 public class XSLFSlideShowFactory extends SlideShowFactory {
 
+    static {
+        SlideShowFactory.createXslfByFile = XSLFSlideShowFactory::createSlideShow;
+        SlideShowFactory.createXslfByStream = XSLFSlideShowFactory::createSlideShow;
+    }
+
     /**
      * Creates a XMLSlideShow from the given OOXML Package.
      * This is a convenience method to go along the create-methods of the super class.
@@ -43,7 +48,6 @@ public class XSLFSlideShowFactory extends SlideShowFactory {
      *  @return The created SlideShow
      *
      *  @throws IOException if an error occurs while reading the data
-     * @throws InvalidFormatException
      */
     public static XMLSlideShow create(OPCPackage pkg) throws IOException {
         try {
@@ -69,7 +73,6 @@ public class XSLFSlideShowFactory extends SlideShowFactory {
      *  @return The created SlideShow
      *
      *  @throws IOException if an error occurs while reading the data
-     * @throws InvalidFormatException 
      */
     public static XMLSlideShow createSlideShow(OPCPackage pkg) throws IOException {
         try {
@@ -83,7 +86,7 @@ public class XSLFSlideShowFactory extends SlideShowFactory {
             throw ioe;
         }
     }
-    
+
     /**
      * Creates the XMLSlideShow from the given File, which must exist and be readable.
      * <p>Note that in order to properly release resources theSlideShow should be closed after use.
@@ -99,9 +102,13 @@ public class XSLFSlideShowFactory extends SlideShowFactory {
      */
     @SuppressWarnings("resource")
     public static XMLSlideShow createSlideShow(File file, boolean readOnly)
-    throws IOException, InvalidFormatException {
-        OPCPackage pkg = OPCPackage.open(file, readOnly ? PackageAccess.READ : PackageAccess.READ_WRITE);
-        return createSlideShow(pkg);
+    throws IOException {
+        try {
+            OPCPackage pkg = OPCPackage.open(file, readOnly ? PackageAccess.READ : PackageAccess.READ_WRITE);
+            return createSlideShow(pkg);
+        } catch (InvalidFormatException e) {
+            throw new IOException(e);
+        }
     }
 
     /**
@@ -115,12 +122,15 @@ public class XSLFSlideShowFactory extends SlideShowFactory {
      * @return The created SlideShow
      *
      * @throws IOException if an error occurs while reading the data
-     * @throws InvalidFormatException 
      */
     @SuppressWarnings("resource")
-    public static XMLSlideShow createSlideShow(InputStream stream) throws IOException, InvalidFormatException {
-        OPCPackage pkg = OPCPackage.open(stream);
-        return createSlideShow(pkg);
+    public static XMLSlideShow createSlideShow(InputStream stream) throws IOException {
+        try {
+            OPCPackage pkg = OPCPackage.open(stream);
+            return createSlideShow(pkg);
+        } catch (InvalidFormatException e) {
+            throw new IOException(e);
+        }
     }
 
 }

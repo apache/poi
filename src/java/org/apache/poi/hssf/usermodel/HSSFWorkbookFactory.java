@@ -31,6 +31,12 @@ import org.apache.poi.util.Internal;
 @SuppressWarnings("unused")
 @Internal
 public class HSSFWorkbookFactory extends WorkbookFactory {
+
+    static {
+        WorkbookFactory.createHssfFromScratch = HSSFWorkbookFactory::createWorkbook;
+        WorkbookFactory.createHssfByNode = HSSFWorkbookFactory::createWorkbook;
+    }
+
     /**
      * Create a new empty Workbook
      *

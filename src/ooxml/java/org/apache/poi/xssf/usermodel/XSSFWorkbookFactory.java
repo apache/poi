@@ -29,6 +29,15 @@ import org.apache.poi.openxml4j.opc.ZipPackage;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 
 public class XSSFWorkbookFactory extends WorkbookFactory {
+
+    static {
+        WorkbookFactory.createXssfFromScratch = XSSFWorkbookFactory::createWorkbook;
+        WorkbookFactory.createXssfByStream = XSSFWorkbookFactory::createWorkbook;
+        WorkbookFactory.createXssfByPackage = o -> XSSFWorkbookFactory.createWorkbook((OPCPackage)o);
+        WorkbookFactory.createXssfByFile = XSSFWorkbookFactory::createWorkbook;
+    }
+
+
     /**
      * Create a new empty Workbook
      *
@@ -110,10 +119,13 @@ public class XSSFWorkbookFactory extends WorkbookFactory {
      *  @throws EncryptedDocumentException If the wrong password is given for a protected file
      */
     @SuppressWarnings("resource")
-    public static XSSFWorkbook createWorkbook(File file, boolean readOnly)
-            throws IOException, InvalidFormatException {
-        OPCPackage pkg = OPCPackage.open(file, readOnly ? PackageAccess.READ : PackageAccess.READ_WRITE);
-        return createWorkbook(pkg);
+    public static XSSFWorkbook createWorkbook(File file, boolean readOnly) throws IOException {
+        try {
+            OPCPackage pkg = OPCPackage.open(file, readOnly ? PackageAccess.READ : PackageAccess.READ_WRITE);
+            return createWorkbook(pkg);
+        } catch (InvalidFormatException e) {
+            throw new IOException(e);
+        }
     }
 
     /**
@@ -127,11 +139,14 @@ public class XSSFWorkbookFactory extends WorkbookFactory {
      * @return The created Workbook
      *
      * @throws IOException if an error occurs while reading the data
-     * @throws InvalidFormatException if the package is not valid.
      */
     @SuppressWarnings("resource")
-    public static XSSFWorkbook createWorkbook(InputStream stream) throws IOException, InvalidFormatException {
-        OPCPackage pkg = OPCPackage.open(stream);
-        return createWorkbook(pkg);
+    public static XSSFWorkbook createWorkbook(InputStream stream) throws IOException {
+        try {
+            OPCPackage pkg = OPCPackage.open(stream);
+            return createWorkbook(pkg);
+        } catch (InvalidFormatException e) {
+            throw new IOException(e);
+        }
     }
 }

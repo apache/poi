@@ -52,9 +52,9 @@ public final class TestWorkbookFactory {
     private static final String[] xls_protected = new String[] {"password.xls", "password"};
     private static final String[] xlsx_protected = new String[]{"protected_passtika.xlsx", "tika"};
     private static final String txt = "SampleSS.txt";
-    
+
     private static final POILogger LOGGER = POILogFactory.getLogger(TestWorkbookFactory.class);
-    
+
     /**
      * Closes the sample workbook read in from filename.
      * Throws an exception if closing the workbook results in the file on disk getting modified.
@@ -70,7 +70,7 @@ public final class TestWorkbookFactory {
         assertArrayEquals(filename + " sample file was modified as a result of closing the workbook",
                 before, after);
     }
-    
+
     /**
      * bug 58779: Closing an XSSFWorkbook that was created with WorkbookFactory modifies the file
      * FIXME: replace this method with wb.close() when bug 58779 is resolved.
@@ -353,56 +353,45 @@ public final class TestWorkbookFactory {
             // expected here
         }
     }
-    
+
     /**
      * Check that a helpful exception is given on an empty input stream
      */
-    @Test
+    @Test(expected = EmptyFileException.class)
     public void testEmptyInputStream() throws Exception {
         InputStream emptyStream = new ByteArrayInputStream(new byte[0]);
-        try {
-            WorkbookFactory.create(emptyStream);
-            fail("Shouldn't be able to create for an empty stream");
-        } catch (final EmptyFileException expected) {}
+        WorkbookFactory.create(emptyStream);
     }
-    
+
     /**
      * Check that a helpful exception is given on an empty file
      */
-    @Test
+    @Test(expected = EmptyFileException.class)
     public void testEmptyFile() throws Exception {
         File emptyFile = TempFile.createTempFile("empty", ".poi");
         try {
             WorkbookFactory.create(emptyFile);
             fail("Shouldn't be able to create for an empty file");
-        } catch (final EmptyFileException expected) {
-            // expected here
+        } finally {
+            assertTrue(emptyFile.delete());
         }
-
-        assertTrue(emptyFile.delete());
     }
 
     /**
       * Check that a helpful exception is raised on a non-existing file
       */
-    @Test
+    @Test(expected = FileNotFoundException.class)
     public void testNonExistingFile() throws Exception {
         File nonExistingFile = new File("notExistingFile");
         assertFalse(nonExistingFile.exists());
-
-        try {
-            WorkbookFactory.create(nonExistingFile, "password", true);
-            fail("Should not be able to create for a non-existing file");
-        } catch (final FileNotFoundException e) {
-            // expected
-        }
+        WorkbookFactory.create(nonExistingFile, "password", true);
     }
 
     /**
      * See Bugzilla bug #62831 - #WorkbookFactory.create(File) needs
      *  to work for sub-classes of File too, eg JFileChooser
      */
-    @Test
+    @Test(expected = ClassCastException.class)
     public void testFileSubclass() throws Exception {
         File normalXLS = HSSFTestDataSamples.getSampleFile(xls);
         File normalXLSX = HSSFTestDataSamples.getSampleFile(xlsx);
@@ -423,15 +412,11 @@ public final class TestWorkbookFactory {
 
         // check what happens if the file is passed as "Object"
 
-        try {
-            //noinspection deprecation
-            WorkbookFactory.create((Object)altXLSX);
-            fail("Will throw an exception");
-        } catch(IOException e) {
-            // expected here because create() in this case expects an object of type "OPCPackage"
-        }
+        //noinspection deprecation
+        WorkbookFactory.create((Object)altXLSX);
+        // expected a ClassCastException here because create() in this case expects an object of type "OPCPackage"
     }
-    
+
     private static class TestFile extends File {
         public TestFile(String file) {
             super(file);
@@ -452,15 +437,10 @@ public final class TestWorkbookFactory {
         closeOrRevert(wb);
     }
 
-    @Test
-    public void testInvalidFormatException() {
+    @Test(expected = IOException.class)
+    public void testInvalidFormatException() throws IOException {
         String filename = "OPCCompliance_DerivedPartNameFAIL.docx";
-        try {
-            WorkbookFactory.create(POIDataSamples.getOpenXML4JInstance().openResourceAsStream(filename));
-            fail("Expecting an Exception for this document");
-        } catch (IOException e) {
-            // expected here
-        }
+        WorkbookFactory.create(POIDataSamples.getOpenXML4JInstance().openResourceAsStream(filename));
     }
 
 }

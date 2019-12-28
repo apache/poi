@@ -31,6 +31,12 @@ import org.apache.poi.util.Internal;
 @SuppressWarnings("unused")
 @Internal
 public class HSLFSlideShowFactory extends SlideShowFactory {
+
+    static {
+        SlideShowFactory.createHslfByNode = HSLFSlideShowFactory::createSlideShow;
+        SlideShowFactory.createHslfByPoifs = HSLFSlideShowFactory::createSlideShow;
+    }
+
     /**
      * Creates a HSLFSlideShow from the given {@link POIFSFileSystem}<p>
      * Note that in order to properly release resources the

@@ -20,21 +20,40 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.OldFileFormatException;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
 import org.apache.poi.poifs.filesystem.FileMagic;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 
-public class SlideShowFactory {
+@SuppressWarnings("unchecked")
+public abstract class SlideShowFactory {
+
+    protected interface CreateSlideShow1<T> {
+        SlideShow<?, ?> apply(T t) throws IOException;
+    }
+
+    protected interface CreateSlideShow2<T, U> {
+        SlideShow<?, ?> apply(T t, U u) throws IOException;
+    }
+
+    // XMLSlideShow createSlideShow(InputStream stream)
+    protected static CreateSlideShow1<InputStream> createXslfByStream;
+
+    // XMLSlideShow createSlideShow(File file, boolean readOnly)
+    protected static CreateSlideShow2<File, Boolean> createXslfByFile;
+
+    // HSLFSlideShow createSlideShow(final POIFSFileSystem fs)
+    protected static CreateSlideShow1<POIFSFileSystem> createHslfByPoifs;
+
+    // HSLFSlideShow createSlideShow(final DirectoryNode root)
+    protected static CreateSlideShow1<DirectoryNode> createHslfByNode;
+
     /**
      * Creates a SlideShow from the given POIFSFileSystem.
      *
@@ -106,8 +125,8 @@ public class SlideShowFactory {
             InputStream stream = null;
             try {
                 stream = DocumentFactoryHelper.getDecryptedStream(root, password);
-
-                return createXSLFSlideShow(stream);
+                initXslf();
+                return (SlideShow<S, P>) createXslfByStream.apply(stream);
             } finally {
                 IOUtils.closeQuietly(stream);
 
@@ -125,7 +144,8 @@ public class SlideShowFactory {
             passwordSet = true;
         }
         try {
-            return createHSLFSlideShow(root);
+            initHslf();
+            return (SlideShow<S, P>) createHslfByNode.apply(root);
         } finally {
             if (passwordSet) {
                 Biff8EncryptionKey.setCurrentUserPassword(null);
@@ -162,7 +182,7 @@ public class SlideShowFactory {
     /**
      * Creates the appropriate HSLFSlideShow / XMLSlideShow from
      *  the given InputStream, which may be password protected.
-     *  
+     *
      * <p>Note that using an {@link InputStream} has a higher memory footprint
      *  than using a {@link File}.</p>
      *
@@ -185,13 +205,14 @@ public class SlideShowFactory {
     > SlideShow<S,P> create(InputStream inp, String password) throws IOException, EncryptedDocumentException {
         InputStream is = FileMagic.prepareToCheckMagic(inp);
         FileMagic fm = FileMagic.valueOf(is);
-        
+
         switch (fm) {
         case OLE2:
             POIFSFileSystem fs = new POIFSFileSystem(is);
             return create(fs, password);
         case OOXML:
-            return createXSLFSlideShow(is);
+            initXslf();
+            return (SlideShow<S, P>) createXslfByStream.apply(is);
         default:
             throw new IOException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
         }
@@ -270,66 +291,31 @@ public class SlideShowFactory {
             return create(fs, password);
         } catch(OfficeXmlFileException e) {
             IOUtils.closeQuietly(fs);
-            return createXSLFSlideShow(file, readOnly);
+            initXslf();
+            return (SlideShow<S, P>) createXslfByFile.apply(file, readOnly);
         } catch(RuntimeException e) {
             IOUtils.closeQuietly(fs);
             throw e;
         }
     }
-    
-    private static <
-        S extends Shape<S,P>,
-        P extends TextParagraph<S,P,? extends TextRun>
-    > SlideShow<S,P> createHSLFSlideShow(Object... args) throws IOException, EncryptedDocumentException {
-        return createSlideShow("org.apache.poi.hslf.usermodel.HSLFSlideShowFactory", args);
-    }
-    
-    private static <
-        S extends Shape<S,P>,
-        P extends TextParagraph<S,P,? extends TextRun>
-    > SlideShow<S,P> createXSLFSlideShow(Object... args) throws IOException, EncryptedDocumentException {
-        return createSlideShow("org.apache.poi.xslf.usermodel.XSLFSlideShowFactory", args);
+
+    private static void initXslf() throws IOException {
+        if (createXslfByFile == null) {
+            initFactory("org.apache.poi.xslf.usermodel.XSLFSlideShowFactory", "poi-ooxml-*.jar");
+        }
     }
 
-    private static <
-        S extends Shape<S,P>,
-        P extends TextParagraph<S,P,? extends TextRun>
-    > SlideShow<S,P> createSlideShow(String factoryClass, Object[] args) throws IOException, EncryptedDocumentException {
-        final Class<?> clazz;
-        try {
-            clazz = SlideShowFactory.class.getClassLoader().loadClass(factoryClass);
-        } catch (ClassNotFoundException e) {
-            throw new IOException(factoryClass+" not found - check if poi-scratchpad.jar is on the classpath.");
+    private static void initHslf() throws IOException {
+        if (createHslfByPoifs == null) {
+            initFactory("org.apache.poi.hslf.usermodel.HSLFSlideShowFactory", "poi-scratchpad-*.jar");
         }
+    }
+
+    private static void initFactory(String factoryClass, String jar) throws IOException {
         try {
-            Class<?>[] argsClz = new Class<?>[args.length];
-            int i=0;
-            for (Object o : args) {
-                Class<?> c = o.getClass();
-                if (Boolean.class.isAssignableFrom(c)) {
-                    c = boolean.class;
-                } else if (InputStream.class.isAssignableFrom(c)) {
-                    c = InputStream.class;
-                }
-                argsClz[i++] = c;
-            }
-            Method m = clazz.getMethod("createSlideShow", argsClz);
-            return (SlideShow<S,P>)m.invoke(null, args);
-        } catch (InvocationTargetException e) {
-            Throwable t = e.getCause();
-            if (t instanceof IOException) {
-                throw (IOException)t;
-            } else if (t instanceof EncryptedDocumentException) {
-                throw (EncryptedDocumentException)t;
-            } else if (t instanceof OldFileFormatException) {
-                throw (OldFileFormatException)t;
-            } else if (t instanceof RuntimeException) {
-                throw (RuntimeException)t;
-            } else {
-                throw new IOException(t);
-            }
-        } catch (Exception e) {
-            throw new IOException(e);
+            Class.forName(factoryClass, true, SlideShowFactory.class.getClassLoader());
+        } catch (ClassNotFoundException e) {
+            throw new IOException(factoryClass+" not found - check if " + jar + " is on the classpath.");
         }
     }
 }

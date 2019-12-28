@@ -21,20 +21,16 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Arrays;
 
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.OldFileFormatException;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
 import org.apache.poi.poifs.filesystem.FileMagic;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Removal;
 
@@ -43,7 +39,28 @@ import org.apache.poi.util.Removal;
  *  (be it {@link HSSFWorkbook} or XSSFWorkbook),
  *  by auto-detecting from the supplied input.
  */
-public class WorkbookFactory {
+public abstract class WorkbookFactory {
+
+    protected interface CreateWorkbook0 {
+        Workbook apply() throws IOException;
+    }
+
+    protected interface CreateWorkbook1<T> {
+        Workbook apply(T t) throws IOException;
+    }
+
+    protected interface CreateWorkbook2<T, U> {
+        Workbook apply(T t, U u) throws IOException;
+    }
+
+    protected static CreateWorkbook0 createHssfFromScratch;
+    protected static CreateWorkbook1<DirectoryNode> createHssfByNode;
+
+    protected static CreateWorkbook0 createXssfFromScratch;
+    protected static CreateWorkbook1<InputStream> createXssfByStream;
+    protected static CreateWorkbook1<Object> createXssfByPackage;
+    protected static CreateWorkbook2<File,Boolean> createXssfByFile;
+
     /**
      * Create a new empty Workbook, either XSSF or HSSF depending
      * on the parameter
@@ -56,9 +73,11 @@ public class WorkbookFactory {
      */
     public static Workbook create(boolean xssf) throws IOException {
         if(xssf) {
-            return createXSSFWorkbook();
+            initXssf();
+            return createXssfFromScratch.apply();
         } else {
-            return createHSSFWorkbook();
+            initHssf();
+            return createHssfFromScratch.apply();
         }
     }
 
@@ -125,8 +144,8 @@ public class WorkbookFactory {
             InputStream stream = null;
             try {
                 stream = DocumentFactoryHelper.getDecryptedStream(root, password);
-
-                return createXSSFWorkbook(stream);
+                initXssf();
+                return createXssfByStream.apply(stream);
             } finally {
                 IOUtils.closeQuietly(stream);
 
@@ -144,7 +163,8 @@ public class WorkbookFactory {
             passwordSet = true;
         }
         try {
-            return createHSSFWorkbook(root);
+            initHssf();
+            return createHssfByNode.apply(root);
         } finally {
             if (passwordSet) {
                 Biff8EncryptionKey.setCurrentUserPassword(null);
@@ -172,7 +192,8 @@ public class WorkbookFactory {
     @Deprecated
     @Removal(version = "4.2.0")
     public static Workbook create(Object pkg) throws IOException {
-        return createXSSFWorkbook(pkg);
+        initXssf();
+        return createXssfByPackage.apply(pkg);
     }
 
     /**
@@ -231,7 +252,8 @@ public class WorkbookFactory {
                 POIFSFileSystem fs = new POIFSFileSystem(is);
                 return create(fs, password);
             case OOXML:
-                return createXSSFWorkbook(is);
+                initXssf();
+                return createXssfByStream.apply(is);
             default:
                 throw new IOException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
         }
@@ -301,60 +323,32 @@ public class WorkbookFactory {
             return create(fs, password);
         } catch(OfficeXmlFileException e) {
             IOUtils.closeQuietly(fs);
-            return createXSSFWorkbook(file, readOnly);
+            initXssf();
+            return createXssfByFile.apply(file, readOnly);
         } catch(RuntimeException e) {
             IOUtils.closeQuietly(fs);
             throw e;
         }
     }
 
-    private static Workbook createHSSFWorkbook(Object... args) throws IOException, EncryptedDocumentException {
-        return createWorkbook("org.apache.poi.hssf.usermodel.HSSFWorkbookFactory", args);
+    private static void initXssf() throws IOException {
+        if (createXssfFromScratch == null) {
+            initFactory("org.apache.poi.xssf.usermodel.XSSFWorkbookFactory", "poi-ooxml-*.jar");
+        }
     }
 
-    private static Workbook createXSSFWorkbook(Object... args) throws IOException, EncryptedDocumentException {
-        return createWorkbook("org.apache.poi.xssf.usermodel.XSSFWorkbookFactory", args);
+    private static void initHssf() throws IOException {
+        if (createHssfFromScratch == null) {
+            // HSSF is part of the main jar, so this shouldn't fail ...
+            initFactory("org.apache.poi.hssf.usermodel.HSSFWorkbookFactory", "poi-*.jar");
+        }
     }
 
-    /**
-     * Does the actual call to HSSF or XSSF to do the creation.
-     * Uses reflection, so that this class can be in the Core non-OOXML
-     *  POI jar without errors / broken references to the OOXML / XSSF code.
-     */
-    private static Workbook createWorkbook(String factoryClass, Object[] args) throws IOException, EncryptedDocumentException {
+    private static void initFactory(String factoryClass, String jar) throws IOException {
         try {
-            Class<?> clazz = WorkbookFactory.class.getClassLoader().loadClass(factoryClass);
-            Class<?>[] argsClz = new Class<?>[args.length];
-            int i=0;
-            for (Object o : args) {
-                Class<?> c = o.getClass();
-                if (Boolean.class.isAssignableFrom(c)) {
-                    c = boolean.class;
-                } else if (InputStream.class.isAssignableFrom(c)) {
-                    c = InputStream.class;
-                } else if (File.class.isAssignableFrom(c)) {
-                    c = File.class;
-                }
-                argsClz[i++] = c;
-            }
-            Method m = clazz.getMethod("createWorkbook", argsClz);
-            return (Workbook)m.invoke(null, args);
-        } catch (InvocationTargetException e) {
-            Throwable t = e.getCause();
-            if (t instanceof IOException) {
-                throw (IOException)t;
-            } else if (t instanceof EncryptedDocumentException) {
-                throw (EncryptedDocumentException)t;
-            } else if (t instanceof OldFileFormatException) {
-                throw (OldFileFormatException)t;
-            } else if (t instanceof RuntimeException) {
-                throw (RuntimeException)t;
-            } else {
-                throw new IOException(t.getMessage(), t);
-            }
-        } catch (Exception e) {
-            throw new IOException("While trying to invoke 'createWorkbook' on factory " + factoryClass +
-                    " and arguments " + Arrays.toString(args), e);
+            Class.forName(factoryClass, true, WorkbookFactory.class.getClassLoader());
+        } catch (ClassNotFoundException e) {
+            throw new IOException(factoryClass+" not found - check if " + jar + " is on the classpath.");
         }
     }
 }
