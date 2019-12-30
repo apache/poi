@@ -17,6 +17,7 @@
 
 package org.apache.poi.ddf;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotSame;
@@ -186,12 +187,16 @@ public final class TestEscherContainerRecord {
 	 *  but hopefully we now read the correct size.
 	 */
     @Test
-	public void testBug44857() throws Exception {
+	public void testBug44857() {
 		byte[] data = _samples.readFile("Container.dat");
 
 		// This used to fail with an OutOfMemory
 		EscherContainerRecord record = new EscherContainerRecord();
 		record.fillFields(data, 0, new DefaultEscherRecordFactory());
+
+		Class<?>[] exp = { EscherDggRecord.class, EscherContainerRecord.class, EscherOptRecord.class, EscherSplitMenuColorsRecord.class };
+		Class<?>[] act = record.getChildRecords().stream().map(Object::getClass).toArray(Class[]::new);
+		assertArrayEquals(exp, act);
 	}
 
 	/**

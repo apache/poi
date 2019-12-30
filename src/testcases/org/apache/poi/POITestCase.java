@@ -17,37 +17,32 @@
 
 package org.apache.poi;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.CoreMatchers.containsString;
+import static org.hamcrest.CoreMatchers.endsWith;
+import static org.hamcrest.CoreMatchers.hasItem;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.startsWith;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 import static org.junit.Assume.assumeTrue;
 
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.startsWith;
-import static org.hamcrest.CoreMatchers.endsWith;
-import static org.hamcrest.CoreMatchers.not;
-import static org.hamcrest.CoreMatchers.hasItem;
-
-import java.lang.reflect.AccessibleObject;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.poi.util.SuppressForbidden;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.SuppressForbidden;
+import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 
 /**
- * Util class for POI JUnit TestCases, which provide additional features 
+ * Util class for POI JUnit TestCases, which provide additional features
  */
 @Internal
 public final class POITestCase {
@@ -69,7 +64,7 @@ public final class POITestCase {
         assertNotNull(suffix);
         assertThat(string, endsWith(suffix));
     }
-    
+
     public static void assertContains(String haystack, String needle) {
         assertNotNull(haystack);
         assertNotNull(needle);
@@ -94,13 +89,13 @@ public final class POITestCase {
     public static void assertContainsIgnoreCase(String haystack, String needle) {
         assertContainsIgnoreCase(haystack, needle, Locale.ROOT);
     }
-    
+
     public static void assertNotContained(String haystack, String needle) {
         assertNotNull(haystack);
         assertNotNull(needle);
         assertThat(haystack, not(containsString(needle)));
     }
-    
+
     /**
      * @param map haystack
      * @param key needle
@@ -118,7 +113,7 @@ public final class POITestCase {
             fail("Set should not contain " + element);
         }*/
     }
-     
+
     /**
      * Utility method to get the value of a private/protected field.
      * Only use this method in test cases!!!
@@ -140,7 +135,7 @@ public final class POITestCase {
             throw new RuntimeException("Cannot access field '" + fieldName + "' of class " + clazz, pae.getException());
         }
     }
-     
+
     /**
      * Utility method to call a private/protected method.
      * Only use this method in test cases!!!
@@ -169,60 +164,24 @@ public final class POITestCase {
      * Only use this method in test cases!!!
      */
     public static void assertReflectEquals(final Object expected, Object actual) throws Exception {
-        final List<Field> fields;
-        try {
-            fields = AccessController.doPrivileged(new PrivilegedExceptionAction<List<Field>>() {
-                @Override
-                @SuppressForbidden("Test only")
-                public List<Field> run() throws Exception {
-                    List<Field> flds = new ArrayList<>();
-                    for (Class<?> c = expected.getClass(); c != null; c = c.getSuperclass()) {
-                        Field[] fs = c.getDeclaredFields();
-                        AccessibleObject.setAccessible(fs, true);                        
-                        for (Field f : fs) {
-                            // JaCoCo Code Coverage adds it's own field, don't look at this one here
-                            if(f.getName().equals("$jacocoData")) {
-                                continue;
-                            }
-                            
-                            flds.add(f);
-                        }
-                    }
-                    return flds;
-                }
-            });
-        } catch (PrivilegedActionException pae) {
-            throw pae.getException();
-        }
-        
-        for (Field f : fields) {
-            Class<?> t = f.getType();
-            if (t.isArray()) {
-                if (Object[].class.isAssignableFrom(t)) {
-                    assertArrayEquals((Object[])f.get(expected), (Object[])f.get(actual));
-                } else if (byte[].class.isAssignableFrom(t)) {
-                    assertArrayEquals((byte[])f.get(expected), (byte[])f.get(actual));
-                } else {
-                    fail("Array type is not yet implemented ... add it!");
-                }
-            } else {
-                assertEquals(f.get(expected), f.get(actual));
-            }
-        }
+        // as long as ReflectionEquals is provided by Mockito, use it ... otherwise use commons.lang for the tests
+
+        // JaCoCo Code Coverage adds its own field, don't look at this one here
+        assertTrue(new ReflectionEquals(expected, "$jacocoData").matches(actual));
     }
-    
+
     /**
      * Rather than adding {@literal @}Ignore to known-failing tests,
      * write the test so that it notifies us if it starts passing.
      * This is useful for closing related or forgotten bugs.
-     * 
+     *
      * An Example:
      * <code><pre>
      * public static int add(int a, int b) {
      *     // a known bug in behavior that has not been fixed yet
      *     raise UnsupportedOperationException("add");
      * }
-     * 
+     *
      * {@literal @}Test
      * public void knownFailingUnitTest() {
      *     try {
@@ -234,18 +193,18 @@ public final class POITestCase {
      *         skipTest(e);
      *     }
      * }
-     * 
+     *
      * Once passing, this unit test can be rewritten as:
      * {@literal @}Test
      * public void knownPassingUnitTest() {
      *     assertEquals(2, add(1,1));
      * }
-     * 
+     *
      * If you have a better idea how to simplify test code while still notifying
      * us when a previous known-failing test now passes, please improve these.
      * As a bonus, a known-failing test that fails should not be counted as a
      * passing test.
-     * 
+     *
      * One possible alternative is to expect the known exception, but without
      * a clear message that it is a good thing to no longer get the expected
      * exception once the test passes.
@@ -255,7 +214,7 @@ public final class POITestCase {
      * }
      *
      * @param e  the exception that was caught that will no longer
-     * be raised when the bug is fixed 
+     * be raised when the bug is fixed
      */
     public static void skipTest(Throwable e) {
         assumeTrue("This test currently fails with " + e, false);
@@ -268,18 +227,11 @@ public final class POITestCase {
     public static void testPassesNow(int bug) {
         fail("This test passes now. Please update the unit test and bug " + bug + ".");
     }
-    
+
     public static void assertBetween(String message, int value, int min, int max) {
         assertTrue(message + ": " + value + " is less than the minimum value of " + min,
                 min <= value);
         assertTrue(message + ": " + value + " is greater than the maximum value of " + max,
                 value <= max);
     }
-    public static void assertStrictlyBetween(String message, int value, int min, int max) {
-        assertTrue(message + ": " + value + " is less than or equal to the minimum value of " + min,
-                min < value);
-        assertTrue(message + ": " + value + " is greater than or equal to the maximum value of " + max,
-                value < max);
-    }
-
 }

@@ -35,6 +35,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -43,6 +44,7 @@ import java.util.Map;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.ClassID;
+import org.apache.poi.hpsf.ClassIDPredefined;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFException;
 import org.apache.poi.hpsf.NoFormatIDException;
@@ -58,7 +60,6 @@ import org.apache.poi.hpsf.VariantSupport;
 import org.apache.poi.hpsf.WritingNotSupportedException;
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
 import org.apache.poi.poifs.eventfilesystem.POIFSReader;
-import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
@@ -67,13 +68,10 @@ import org.apache.poi.poifs.filesystem.DocumentOutputStream;
 import org.apache.poi.poifs.filesystem.POIFSDocument;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.CodePageUtil;
-import org.apache.poi.util.CommonsLogger;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.TempFile;
-import org.junit.AfterClass;
 import org.junit.Assume;
-import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
@@ -93,6 +91,7 @@ public class TestWrite {
         "LANG environment variable to a proper value, e.g. " +
         "\"de_DE\".";
 
+    /*
     private static String loggerBefore;
 
     @BeforeClass
@@ -114,10 +113,10 @@ public class TestWrite {
             System.setProperty("org.apache.poi.util.POILogger", loggerBefore);
         }
     }
-    
+     */
+
     /**
-     * <p>Writes an empty property set to a POIFS and reads it back
-     * in.</p>
+     * Writes an empty property set to a POIFS and reads it back in.
      *
      * @exception IOException if an I/O exception occurs
      */
@@ -133,20 +132,16 @@ public class TestWrite {
 
         /* Write it to a POIFS and the latter to disk: */
         try (OutputStream out = new FileOutputStream(filename);
-             POIFSFileSystem poiFs = new POIFSFileSystem()) {
-            final ByteArrayOutputStream psStream = new ByteArrayOutputStream();
+             POIFSFileSystem poiFs = new POIFSFileSystem();
+             ByteArrayOutputStream psStream = new ByteArrayOutputStream()) {
             ps.write(psStream);
-            psStream.close();
-            final byte[] streamData = psStream.toByteArray();
-            poiFs.createDocument(new ByteArrayInputStream(streamData),
-                    SummaryInformation.DEFAULT_STREAM_NAME);
+            poiFs.createDocument(new ByteArrayInputStream(psStream.toByteArray()), SummaryInformation.DEFAULT_STREAM_NAME);
             poiFs.writeFilesystem(out);
         }
     }
 
     /**
-     * <p>Writes an empty property set to a POIFS and reads it back
-     * in.</p>
+     * Writes an empty property set to a POIFS and reads it back in.
      *
      * @exception IOException if an I/O exception occurs
      * @exception UnsupportedVariantTypeException if HPSF does not yet support
@@ -160,27 +155,24 @@ public class TestWrite {
         filename.deleteOnExit();
 
         /* Create a mutable property set and write it to a POIFS: */
-        final OutputStream out = new FileOutputStream(filename);
-        final POIFSFileSystem poiFs = new POIFSFileSystem();
-        final PropertySet ps = new PropertySet();
-        final Section s = ps.getSections().get(0);
-        s.setFormatID(SummaryInformation.FORMAT_ID);
-
-        final ByteArrayOutputStream psStream = new ByteArrayOutputStream();
-        ps.write(psStream);
-        psStream.close();
-        final byte[] streamData = psStream.toByteArray();
-        poiFs.createDocument(new ByteArrayInputStream(streamData),
-                             SummaryInformation.DEFAULT_STREAM_NAME);
-        poiFs.writeFilesystem(out);
-        poiFs.close();
-        out.close();
+        try (OutputStream out = new FileOutputStream(filename);
+            POIFSFileSystem poiFs = new POIFSFileSystem();
+             ByteArrayOutputStream psStream = new ByteArrayOutputStream()) {
+            final PropertySet ps = new PropertySet();
+            final Section s = ps.getSections().get(0);
+            s.setFormatID(SummaryInformation.FORMAT_ID);
+            ps.write(psStream);
+            poiFs.createDocument(new ByteArrayInputStream(psStream.toByteArray()), SummaryInformation.DEFAULT_STREAM_NAME);
+            poiFs.writeFilesystem(out);
+        }
 
         /* Read the POIFS: */
         final POIFSReader r = new POIFSReader();
-        r.registerListener(new MyPOIFSReaderListener(),
-                           SummaryInformation.DEFAULT_STREAM_NAME);
+        final List<PropertySet> psa = new ArrayList<>();
+
+        r.registerListener(getListener(psa), SummaryInformation.DEFAULT_STREAM_NAME);
         r.read(filename);
+        assertEquals(1, psa.size());
     }
 
     /**
@@ -199,45 +191,35 @@ public class TestWrite {
         final File dataDir = _samples.getFile("");
         final File filename = new File(dataDir, POI_FS);
         filename.deleteOnExit();
-        final OutputStream out = new FileOutputStream(filename);
-        final POIFSFileSystem poiFs = new POIFSFileSystem();
+        try (OutputStream out = new FileOutputStream(filename);
+            POIFSFileSystem poiFs = new POIFSFileSystem()) {
 
-        final PropertySet ps = new PropertySet();
-        final Section si = new Section();
-        si.setFormatID(SummaryInformation.FORMAT_ID);
-        ps.clearSections();
-        ps.addSection(si);
+            final PropertySet ps = new PropertySet();
+            final Section si = new Section();
+            si.setFormatID(SummaryInformation.FORMAT_ID);
+            ps.clearSections();
+            ps.addSection(si);
 
-        final Property p = new Property();
-        p.setID(PropertyIDMap.PID_AUTHOR);
-        p.setType(Variant.VT_LPWSTR);
-        p.setValue(AUTHOR);
-        si.setProperty(p);
-        si.setProperty(PropertyIDMap.PID_TITLE, Variant.VT_LPSTR, TITLE);
+            final Property p = new Property();
+            p.setID(PropertyIDMap.PID_AUTHOR);
+            p.setType(Variant.VT_LPWSTR);
+            p.setValue(AUTHOR);
+            si.setProperty(p);
+            si.setProperty(PropertyIDMap.PID_TITLE, Variant.VT_LPSTR, TITLE);
 
-        poiFs.createDocument(ps.toInputStream(),
-                             SummaryInformation.DEFAULT_STREAM_NAME);
-        poiFs.writeFilesystem(out);
-        poiFs.close();
-        out.close();
+            poiFs.createDocument(ps.toInputStream(), SummaryInformation.DEFAULT_STREAM_NAME);
+            poiFs.writeFilesystem(out);
+        }
 
         /* Read the POIFS: */
-        final PropertySet[] psa = new PropertySet[1];
+        final List<PropertySet> psa = new ArrayList<>();
         final POIFSReader r = new POIFSReader();
-        final POIFSReaderListener listener = event -> {
-            try {
-                psa[0] = PropertySetFactory.create(event.getStream());
-            } catch (Exception ex) {
-                fail(ex.getMessage());
-            }
-        };
-        r.registerListener(listener, SummaryInformation.DEFAULT_STREAM_NAME);
-
+        r.registerListener(getListener(psa), SummaryInformation.DEFAULT_STREAM_NAME);
         r.read(filename);
-        assertNotNull(psa[0]);
-        assertTrue(psa[0].isSummaryInformation());
+        assertEquals(1, psa.size());
+        assertTrue(psa.get(0).isSummaryInformation());
 
-        final Section s = (psa[0].getSections().get(0));
+        final Section s = psa.get(0).getSections().get(0);
         Object p1 = s.getProperty(PropertyIDMap.PID_AUTHOR);
         Object p2 = s.getProperty(PropertyIDMap.PID_TITLE);
         assertEquals(AUTHOR, p1);
@@ -247,8 +229,8 @@ public class TestWrite {
 
 
     /**
-     * <p>Writes a simple property set with two sections to a POIFS and reads it
-     * back in.</p>
+     * Writes a simple property set with two sections to a POIFS and reads it
+     * back in.
      *
      * @exception IOException if an I/O exception occurs
      * @exception WritingNotSupportedException if HPSF does not yet support
@@ -259,33 +241,30 @@ public class TestWrite {
         final String STREAM_NAME = "PropertySetStream";
         final String SECTION1 = "Section 1";
         final String SECTION2 = "Section 2";
+        final ClassID FORMATID = ClassIDPredefined.EXCEL_V12.getClassID();
 
         final File dataDir = _samples.getFile("");
         final File filename = new File(dataDir, POI_FS);
         filename.deleteOnExit();
-        final OutputStream out = new FileOutputStream(filename);
 
-        final POIFSFileSystem poiFs = new POIFSFileSystem();
-        final PropertySet ps = new PropertySet();
-        ps.clearSections();
+        try (OutputStream out = new FileOutputStream(filename);
+            POIFSFileSystem poiFs = new POIFSFileSystem()) {
+            final PropertySet ps = new PropertySet();
+            ps.clearSections();
 
-        final ClassID formatID = new ClassID();
-        formatID.setBytes(new byte[]{0, 1,  2,  3,  4,  5,  6,  7,
-                                     8, 9, 10, 11, 12, 13, 14, 15});
-        final Section s1 = new Section();
-        s1.setFormatID(formatID);
-        s1.setProperty(2, SECTION1);
-        ps.addSection(s1);
+            final Section s1 = new Section();
+            s1.setFormatID(FORMATID);
+            s1.setProperty(2, SECTION1);
+            ps.addSection(s1);
 
-        final Section s2 = new Section();
-        s2.setFormatID(formatID);
-        s2.setProperty(2, SECTION2);
-        ps.addSection(s2);
+            final Section s2 = new Section();
+            s2.setFormatID(FORMATID);
+            s2.setProperty(2, SECTION2);
+            ps.addSection(s2);
 
-        poiFs.createDocument(ps.toInputStream(), STREAM_NAME);
-        poiFs.writeFilesystem(out);
-        poiFs.close();
-        out.close();
+            poiFs.createDocument(ps.toInputStream(), STREAM_NAME);
+            poiFs.writeFilesystem(out);
+        }
 
         /* Read the POIFS: */
         final PropertySet[] psa = new PropertySet[1];
@@ -303,7 +282,7 @@ public class TestWrite {
 
         assertNotNull(psa[0]);
         Section s = (psa[0].getSections().get(0));
-        assertEquals(s.getFormatID(), formatID);
+        assertEquals(s.getFormatID(), FORMATID);
         Object p = s.getProperty(2);
         assertEquals(SECTION1, p);
         s = (psa[0].getSections().get(1));
@@ -311,16 +290,14 @@ public class TestWrite {
         assertEquals(SECTION2, p);
     }
 
-
-    static class MyPOIFSReaderListener implements POIFSReaderListener {
-        @Override
-        public void processPOIFSReaderEvent(final POIFSReaderEvent event) {
+    private static POIFSReaderListener getListener(List<PropertySet> psa) {
+        return event -> {
             try {
-                PropertySetFactory.create(event.getStream());
+                psa.add(PropertySetFactory.create(event.getStream()));
             } catch (Exception ex) {
                 fail(ex.getMessage());
             }
-        }
+        };
     }
 
     /**
@@ -419,7 +396,7 @@ public class TestWrite {
         String title = (String) sr.getProperty(PropertyIDMap.PID_TITLE);
         assertEquals(TITLE, title);
     }
-    
+
     private void checkString(final long variantType, final String value, final int codepage)
     throws UnsupportedVariantTypeException, IOException {
         for (int i=0; i<value.length(); i++) {
@@ -503,7 +480,7 @@ public class TestWrite {
         // We need to work on a File for in-place changes, so create a temp one
         final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
         copy.deleteOnExit();
-        
+
         // Copy a test file over to our temp location
         try (FileOutputStream out = new FileOutputStream(copy);
              InputStream inp = _samples.openResourceAsStream("TestShiftJIS.doc")) {
@@ -710,7 +687,7 @@ public class TestWrite {
     public void dictionaryWithInvalidCodepage() throws IOException, HPSFException {
         final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
         copy.deleteOnExit();
-        
+
         /* Write: */
 
         final PropertySet ps1 = new PropertySet();

@@ -345,6 +345,8 @@ public class TestBuildFile {
     @Test
     public void testPassOnError() {
         executeTarget("test-passonerror");
+        assertLogContaining("Using input file: " + TestBuildFile.getDataDir() + "/spreadsheet/excelant.xls");
+        assertLogContaining("Test named failonerror failed because 1 of 0 evaluations failed to evaluate correctly.");
     }
 
     @Test

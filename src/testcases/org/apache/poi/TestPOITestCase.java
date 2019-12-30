@@ -17,10 +17,20 @@
 
 package org.apache.poi;
 
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.EntryNode;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.property.PropertyTable;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -41,7 +51,7 @@ public final class TestPOITestCase {
         POITestCase.assertEndsWith("Apache POI", "POI");
         POITestCase.assertEndsWith("Apache POI", "Apache POI");
     }
-    
+
     @Test
     public void assertContains() {
         POITestCase.assertContains("There is a needle in this haystack", "needle");
@@ -78,45 +88,32 @@ public final class TestPOITestCase {
         // FIXME: test failing case
     }
 
-     
+
     /**
      * Utility method to get the value of a private/protected field.
      * Only use this method in test cases!!!
      */
-    @Ignore
     @Test
-    public void getFieldValue() {
-        /*
-        final Class<? super T> clazz;
-        final T instance;
-        final Class<R> fieldType;
-        final String fieldName;
-
-        final R expected;
-        final R actual = POITestCase.getFieldValue(clazz, instance, fieldType, fieldName);
-        assertEquals(expected, actual);
-        */
+    public void getFieldValue() throws IOException {
+        try (POIFSFileSystem fs = new POIFSFileSystem()) {
+            PropertyTable actual = POITestCase.getFieldValue(POIFSFileSystem.class, fs, PropertyTable.class, "_property_table");
+            assertNotNull(actual);
+        }
     }
-     
+
     /**
      * Utility method to call a private/protected method.
      * Only use this method in test cases!!!
      */
     @Ignore
     @Test
-    public void callMethod() {
-        /*
-        final Class<? super T> clazz;
-        final T instance;
-        final Class<R> returnType;
-        final String methodName;
-        final Class<?>[] parameterTypes;
-        final Object[] parameters;
-
-        final R expected;
-        final R actual = POITestCase.callMethod(clazz, instance, returnType, methodName, parameterTypes, parameters);
-        assertEquals(expected, actual);
-        */
+    public void callMethod() throws IOException {
+        try (POIFSFileSystem fs = new POIFSFileSystem()) {
+            DirectoryNode root = fs.getRoot();
+            DocumentEntry doc = fs.createDocument(new ByteArrayInputStream(new byte[]{1, 2, 3}), "foobaa");
+            boolean actual = POITestCase.callMethod(DirectoryNode.class, root, boolean.class, "deleteEntry", new Class[]{EntryNode.class}, new Object[]{doc});
+            assertTrue(actual);
+        }
     }
 
     /**

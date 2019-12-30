@@ -18,26 +18,25 @@
 package org.apache.poi.ddf;
 
 import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
+import java.nio.charset.StandardCharsets;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.NullOutputStream;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.Test;
 
 public class TestEscherDump {
-    private static NullPrinterStream nullPS;
-
     private static final String recordData =
         "H4sIAAAAAAAAAL2UaVCSWxjHX0SBChABLRXM1FxSEzXTzHK7dpVIcMmwxXCP9KaGTaWlGYLrtGmGmYEmYmqF2qIt4ppmjNG+" +
         "2dWulUtOUdq1NHjva8v90HT7eM+Z5znP/M9/zpk5v3mONgAoc5AANBDKeVDW0gQAjZkVCti3mKnpAExpB/m8AKTyEiTCNd2J" +
@@ -64,45 +63,52 @@ public class TestEscherDump {
         "cT19LR+PfTgjN4CKCS5Es4LS+7nLt9hQ7ejwGQnEyxebOgJzlHjotWUACpoZsFkAgGqBeUDZAzB6h4N2MFCNhmIuFJMAgPsH" +
         "eJr+iZEHAAA=";
 
+    private EscherDump dumper = new EscherDump();
+    private ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    private PrintStream stream;
 
-    @BeforeClass
-    public static void init() throws UnsupportedEncodingException {
-        nullPS = new NullPrinterStream();
+    @Before
+    public void setup() throws UnsupportedEncodingException {
+        stream = new PrintStream(baos, true, StandardCharsets.UTF_8.name());
     }
 
     // simple test to at least cover some parts of the class
     @Test
     public void testSimple() throws Exception {
-        // Create a new instance of the escher dumper
-        EscherDump dumper = new EscherDump();
-
         // Decode the stream to bytes
         byte[] bytes = RawDataUtil.decompress(recordData);
-        // Dump the contents of scher to screen.
-        dumper.dump(bytes, 0, bytes.length, nullPS);
+        // Dump the contents of escher to stream.
+        dumper.dump(bytes, 0, bytes.length, stream);
+        assertEquals(216, countProperties());
 
-        dumper.dump(0, new byte[] {}, nullPS);
-        dumper.dump(new byte[] {}, 0, 0, nullPS);
+        baos.reset();
+        dumper.dump(0, new byte[0], stream);
+        assertEquals(0, countProperties());
+
+        baos.reset();
+        dumper.dump(new byte[0], 0, 0, stream);
+        assertEquals(0, countProperties());
     }
 
     @Test
     public void testWithData() {
-        new EscherDump().dump(8, new byte[] {0, 0, 0, 0, 0, 0, 0, 0}, nullPS);
+        dumper.dump(8, new byte[] {0, 0, 0, 0, 0, 0, 0, 0}, stream);
+        assertEquals(6, countProperties());
     }
 
     @Test
     public void testWithSamplefile() throws Exception {
         //InputStream stream = HSSFTestDataSamples.openSampleFileStream(")
         byte[] data = POIDataSamples.getDDFInstance().readFile("Container.dat");
-        new EscherDump().dump(data.length, data, nullPS);
-        //new EscherDump().dumpOld(data.length, new ByteArrayInputStream(data), System.out);
+        dumper.dump(data.length, data, stream);
+        assertEquals(127, countProperties());
 
         data = new byte[2586114];
-        try (InputStream stream = HSSFTestDataSamples.openSampleFileStream("44593.xls")) {
-            int bytes = IOUtils.readFully(stream, data);
-            assertTrue(bytes != -1);
-            //new EscherDump().dump(bytes, data, System.out);
-            //new EscherDump().dumpOld(bytes, new ByteArrayInputStream(data), System.out);
+        try (InputStream is = HSSFTestDataSamples.openSampleFileStream("44593.xls")) {
+            int bytes = IOUtils.readFully(is, data);
+            assertNotEquals(-1, bytes);
+            dumper.dump(data, 0, bytes, stream);
+            assertEquals(163, countProperties());
         }
     }
 
@@ -110,7 +116,6 @@ public class TestEscherDump {
     public void testCopy() throws Exception {
         byte[] data1 = RawDataUtil.decompress(recordData);
 
-        List<EscherRecord> records = new ArrayList<>();
         EscherRecordFactory recordFactory = new DefaultEscherRecordFactory();
         EscherRecord r = recordFactory.createRecord(data1, 0);
         r.fillFields(data1, recordFactory);
@@ -120,14 +125,13 @@ public class TestEscherDump {
         assertArrayEquals(data1, data2);
     }
 
-    /**
-     * Implementation of an OutputStream which does nothing, used
-     * to redirect stdout to avoid spamming the console with output
-     */
-    private static class NullPrinterStream extends PrintStream {
-        @SuppressWarnings("resource")
-        private NullPrinterStream() throws UnsupportedEncodingException {
-            super(new NullOutputStream(),true,LocaleUtil.CHARSET_1252.name());
+    private int countProperties() {
+        String data = new String(baos.toByteArray(), StandardCharsets.UTF_8);
+        Matcher matcher = Pattern.compile(",? \"[^\"]+\": ").matcher(data);
+        int count = 0;
+        while (matcher.find()) {
+            count++;
         }
+        return count;
     }
 }

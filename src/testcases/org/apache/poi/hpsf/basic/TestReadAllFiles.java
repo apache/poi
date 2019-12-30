@@ -56,7 +56,7 @@ import org.junit.runners.Parameterized.Parameters;
 @RunWith(Parameterized.class)
 public class TestReadAllFiles {
     private static final POIDataSamples _samples = POIDataSamples.getHPSFInstance();
-    
+
     @Parameters(name="{index}: {0} using {1}")
     public static Iterable<Object[]> files() {
         File hpsfTestDir = _samples.getFile("");
@@ -82,12 +82,13 @@ public class TestReadAllFiles {
         /* Read the POI filesystem's property set streams: */
         for (POIFile pf : Util.readPropertySets(file)) {
             try (InputStream in = new ByteArrayInputStream(pf.getBytes())) {
-                PropertySetFactory.create(in);
+                PropertySet ps = PropertySetFactory.create(in);
+                assertNotNull(ps);
             }
         }
     }
-    
-    
+
+
     /**
      * This test method does a write and read back test with all POI
      * filesystems in the "data" directory by performing the following
@@ -105,7 +106,7 @@ public class TestReadAllFiles {
     public void recreate() throws IOException, HPSFException {
         /* Read the POI filesystem's property set streams: */
         Map<String,PropertySet> psMap = new HashMap<>();
-        
+
         /* Create a new POI filesystem containing the origin file's
          * property set streams: */
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
@@ -125,20 +126,20 @@ public class TestReadAllFiles {
             final PropertySet ps1 = me.getValue();
             final PropertySet ps2 = PropertySetFactory.create(poiFs.getRoot(), me.getKey());
             assertNotNull(ps2);
-            
+
             /* Compare the property set stream with the corresponding one
              * from the origin file and check whether they are equal. */
-            
+
             // Because of missing 0-paddings in the original input files, the bytes might differ.
             // This fixes the comparison
             String ps1str = ps1.toString().replace(" 00", "   ").replace(".", " ").replaceAll("(?m)( +$|(size|offset): [0-9]+)","");
             String ps2str = ps2.toString().replace(" 00", "   ").replace(".", " ").replaceAll("(?m)( +$|(size|offset): [0-9]+)","");
-            
+
             assertEquals("Equality for file " + file.getName(), ps1str, ps2str);
         }
         poiFs.close();
     }
-    
+
     /**
      * This test method checks whether DocumentSummary information streams
      * can be read. This is done by opening all "Test*" files in the 'poifs' directrory
@@ -181,7 +182,7 @@ public class TestReadAllFiles {
             }
         }
     }
-    
+
     /**
      * Tests the simplified custom properties by reading them from the
      * available test files.
