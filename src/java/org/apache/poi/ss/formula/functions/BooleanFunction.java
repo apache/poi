@@ -55,7 +55,7 @@ public abstract class BooleanFunction implements Function,ArrayFunction {
 	private boolean calculate(ValueEval[] args) throws EvaluationException {
 
 		boolean result = getInitialResultValue();
-		boolean atleastOneNonBlank = false;
+		boolean atLeastOneNonBlank = false;
 
 		/*
 		 * Note: no short-circuit boolean loop exit because any ErrorEvals will override the result
@@ -71,8 +71,8 @@ public abstract class BooleanFunction implements Function,ArrayFunction {
 						ValueEval ve = ae.getValue(rrIx, rcIx);
 						tempVe = OperandResolver.coerceValueToBoolean(ve, true);
 						if (tempVe != null) {
-							result = partialEvaluate(result, tempVe.booleanValue());
-							atleastOneNonBlank = true;
+							result = partialEvaluate(result, tempVe);
+							atLeastOneNonBlank = true;
 						}
 					}
 				}
@@ -86,26 +86,26 @@ public abstract class BooleanFunction implements Function,ArrayFunction {
                     ValueEval ve = re.getInnerValueEval(sIx);
                     tempVe = OperandResolver.coerceValueToBoolean(ve, true);
                     if (tempVe != null) {
-                        result = partialEvaluate(result, tempVe.booleanValue());
-                        atleastOneNonBlank = true;
+                        result = partialEvaluate(result, tempVe);
+                        atLeastOneNonBlank = true;
                     }
                 }
                 continue;
             }
-			
+
 			if (arg == MissingArgEval.instance) {
-				tempVe = null;		// you can leave out parameters, they are simply ignored
+				tempVe = false;		// missing parameters are treated as FALSE
 			} else {
 				tempVe = OperandResolver.coerceValueToBoolean(arg, false);
 			}
 
 			if (tempVe != null) {
-				result = partialEvaluate(result, tempVe.booleanValue());
-				atleastOneNonBlank = true;
+				result = partialEvaluate(result, tempVe);
+				atLeastOneNonBlank = true;
 			}
 		}
 
-		if (!atleastOneNonBlank) {
+		if (!atLeastOneNonBlank) {
 			throw new EvaluationException(ErrorEval.VALUE_INVALID);
 		}
 		return result;
@@ -161,7 +161,7 @@ public abstract class BooleanFunction implements Function,ArrayFunction {
 			try {
 				ValueEval ve = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
 				Boolean b = OperandResolver.coerceValueToBoolean(ve, false);
-				boolArgVal = b == null ? false : b.booleanValue();
+				boolArgVal = b == null ? false : b;
 			} catch (EvaluationException e) {
 				return e.getErrorEval();
 			}
