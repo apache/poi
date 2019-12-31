@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -43,6 +44,7 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
 public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
     public TestSXSSFBugs() {
@@ -67,7 +69,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
         CellRangeAddress cra = CellRangeAddress.valueOf("C2:D3");
 
         // No print settings before repeating
-        Sheet s1 = wb1.createSheet(); 
+        Sheet s1 = wb1.createSheet();
         s1.setRepeatingColumns(cra);
         s1.setRepeatingRows(cra);
 
@@ -93,7 +95,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
         wb1.close();
         wb2.close();
     }
-    
+
     // bug 60197: setSheetOrder should update sheet-scoped named ranges to maintain references to the sheets before the re-order
     @Test
     @Override
@@ -207,6 +209,33 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
             workbook.dispose();
             workbook.close();
             out.flush();
+        }
+    }
+
+    @Test
+    public void test63960() throws Exception {
+        try (Workbook workbook = new SXSSFWorkbook(100)) {
+            Sheet sheet = workbook.createSheet("RawData");
+
+            Row row = sheet.createRow(0);
+            Cell cell;
+
+            cell = row.createCell(0);
+            cell.setCellValue(123);
+            cell = row.createCell(1);
+            cell.setCellValue("");
+            cell.setCellFormula("=TEXT(A1,\"#\")");
+
+            /*try (FileOutputStream out = new FileOutputStream(File.createTempFile("test63960", ".xlsx"))) {
+                workbook.write(out);
+            }*/
+
+            try (Workbook wbBack = SXSSFITestDataProvider.instance.writeOutAndReadBack(workbook)) {
+                assertNotNull(wbBack);
+                Cell rawData = wbBack.getSheet("RawData").getRow(0).getCell(1);
+
+                assertEquals(STCellType.STR, ((XSSFCell) rawData).getCTCell().getT());
+            }
         }
     }
 }

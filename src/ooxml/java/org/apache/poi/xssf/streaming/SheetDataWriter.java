@@ -53,7 +53,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
  */
 public class SheetDataWriter implements Closeable {
     private static final POILogger logger = POILogFactory.getLogger(SheetDataWriter.class);
-    
+
     private final File _fd;
     private final Writer _out;
     private int _rownum;
@@ -78,11 +78,11 @@ public class SheetDataWriter implements Closeable {
         this._sharedStringSource = sharedStringsTable;
     }
     /**
-     * Create a temp file to write sheet data. 
+     * Create a temp file to write sheet data.
      * By default, temp files are created in the default temporary-file directory
-     * with a prefix "poi-sxssf-sheet" and suffix ".xml".  Subclasses can override 
+     * with a prefix "poi-sxssf-sheet" and suffix ".xml".  Subclasses can override
      * it and specify a different temp directory or filename or suffix, e.g. <code>.gz</code>
-     * 
+     *
      * @return temp file to write sheet data
      */
     public File createTempFile() throws IOException {
@@ -91,7 +91,7 @@ public class SheetDataWriter implements Closeable {
 
     /**
      * Create a writer for the sheet data.
-     * 
+     *
      * @param  fd the file to write to
      */
     public Writer createWriter(File fd) throws IOException {
@@ -106,7 +106,7 @@ public class SheetDataWriter implements Closeable {
         return new BufferedWriter(
                 new OutputStreamWriter(decorated, StandardCharsets.UTF_8));
     }
-    
+
     /**
      * Override this to translate (such as encrypt or compress) the file output stream
      * as it is being written to disk.
@@ -122,7 +122,7 @@ public class SheetDataWriter implements Closeable {
     }
 
     /**
-     * flush and close the temp data writer. 
+     * flush and close the temp data writer.
      * This method <em>must</em> be invoked before calling {@link #getWorksheetXMLInputStream()}
      */
     public void close() throws IOException {
@@ -133,7 +133,7 @@ public class SheetDataWriter implements Closeable {
     protected File getTempFile() {
         return _fd;
     }
-    
+
     /**
      * @return a stream to read temp file with the sheet data
      */
@@ -147,7 +147,7 @@ public class SheetDataWriter implements Closeable {
             throw e;
         }
     }
-    
+
     /**
      * Override this to translate (such as decrypt or expand) the file input stream
      * as it is being read from disk.
@@ -233,7 +233,7 @@ public class SheetDataWriter implements Closeable {
         if(row.getCollapsed() != null) {
             writeAttribute("collapsed", row.getCollapsed() ? "1" : "0");
         }
-        
+
         _out.write(">\n");
         this._rownum = rownum;
     }
@@ -252,7 +252,7 @@ public class SheetDataWriter implements Closeable {
         CellStyle cellStyle = cell.getCellStyle();
         if (cellStyle.getIndex() != 0) {
             // need to convert the short to unsigned short as the indexes can be up to 64k
-            // ideally we would use int for this index, but that would need changes to some more 
+            // ideally we would use int for this index, but that would need changes to some more
             // APIs
             writeAttribute("s", Integer.toString(cellStyle.getIndex() & 0xffff));
         }
@@ -268,7 +268,7 @@ public class SheetDataWriter implements Closeable {
                         writeAttribute("t", "n");
                         break;
                     case STRING:
-                        writeAttribute("t", STCellType.S.toString());
+                        writeAttribute("t", STCellType.STR.toString());
                         break;
                     case BOOLEAN:
                         writeAttribute("t", "b");
@@ -438,7 +438,7 @@ public class SheetDataWriter implements Closeable {
     static boolean replaceWithQuestionMark(char c) {
         return c < ' ' || ('\uFFFE' <= c && c <= '\uFFFF');
     }
-     
+
     /**
      * Deletes the temporary file that backed this sheet on disk.
      * @return true if the file was deleted, false if it wasn't.

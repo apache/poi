@@ -132,12 +132,9 @@ public interface Cell {
     /**
      * Only valid for formula cells
      *
-     * Will return {@link CellType} in a future version of POI.
-     * For forwards compatibility, do not hard-code cell type literals in your code.
-     *
      * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
      *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
-     * on the cached value of the formula
+     *      on the cached value of the formula
      */
     CellType getCachedFormulaResultType();
 
