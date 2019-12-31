@@ -54,13 +54,13 @@ public final class DStarRunner implements Function3Arg {
         /** @see DSum */
         DSUM(DSum::new),
         ;
-        
+
         private final Supplier<IDStarAlgorithm> implSupplier;
 
-        private DStarAlgorithmEnum(Supplier<IDStarAlgorithm> implSupplier) {
+        DStarAlgorithmEnum(Supplier<IDStarAlgorithm> implSupplier) {
             this.implSupplier = implSupplier;
         }
-        
+
         /**
          * @return a new function implementation instance
          */
@@ -94,7 +94,7 @@ public final class DStarRunner implements Function3Arg {
         }
         AreaEval db = (AreaEval)database;
         AreaEval cdb = (AreaEval)conditionDatabase;
-        
+
         try {
             filterColumn = OperandResolver.getSingleValue(filterColumn, srcRowIndex, srcColumnIndex);
         } catch (EvaluationException e) {
@@ -149,7 +149,7 @@ public final class DStarRunner implements Function3Arg {
     }
 
     /**
-     * 
+     *
      *
      * @param nameValueEval Must not be a RefEval or AreaEval. Thus make sure resolveReference() is called on the value first!
      * @param db Database
@@ -158,8 +158,17 @@ public final class DStarRunner implements Function3Arg {
      */
     private static int getColumnForName(ValueEval nameValueEval, AreaEval db)
             throws EvaluationException {
-        String name = OperandResolver.coerceValueToString(nameValueEval);
-        return getColumnForString(db, name);
+        if (nameValueEval instanceof NumericValueEval) {
+            int columnNo =  OperandResolver.coerceValueToInt(nameValueEval) - 1;
+            if (columnNo < 0 || columnNo >= db.getWidth()) {
+                return -1;
+            }
+            return columnNo;
+        }
+        else {
+            String name = OperandResolver.coerceValueToString(nameValueEval);
+            return getColumnForString(db, name);
+        }
     }
 
     /**
@@ -169,10 +178,8 @@ public final class DStarRunner implements Function3Arg {
      * @param db Database.
      * @param name Column heading.
      * @return Corresponding column number.
-     * @throws EvaluationException If it's not possible to turn all headings into strings.
      */
-    private static int getColumnForString(AreaEval db,String name)
-            throws EvaluationException {
+    private static int getColumnForString(AreaEval db,String name) {
         int resultColumn = -1;
         final int width = db.getWidth();
         for(int column = 0; column < width; ++column) {
@@ -216,10 +223,10 @@ public final class DStarRunner implements Function3Arg {
                 // special column that accepts formulas.
                 boolean columnCondition = true;
                 ValueEval condition;
-                
+
                 // The condition to apply.
                 condition = resolveReference(cdb, conditionRow, column);
-                
+
                 // If the condition is empty it matches.
                 if(condition instanceof BlankEval)
                     continue;
@@ -229,7 +236,7 @@ public final class DStarRunner implements Function3Arg {
                 if(!(targetHeader instanceof StringValueEval)) {
                     throw new EvaluationException(ErrorEval.VALUE_INVALID);
                 }
-                
+
                 if (getColumnForName(targetHeader, db) == -1)
                     // No column found, it's again a special column that accepts formulas.
                     columnCondition = false;
@@ -269,7 +276,7 @@ public final class DStarRunner implements Function3Arg {
             throws EvaluationException {
         if(condition instanceof StringEval) {
             String conditionString = ((StringEval)condition).getStringValue();
-        
+
             if(conditionString.startsWith("<")) { // It's a </<= condition.
                 String number = conditionString.substring(1);
                 if(number.startsWith("=")) {
@@ -378,7 +385,7 @@ public final class DStarRunner implements Function3Arg {
         }
         return false; // Can not be reached.
     }
-    
+
     private static Double getNumberFromValueEval(ValueEval value) {
         if(value instanceof NumericValueEval) {
             return ((NumericValueEval)value).getNumberValue();
@@ -395,11 +402,11 @@ public final class DStarRunner implements Function3Arg {
             return null;
         }
     }
-    
+
     /**
      * Resolve a ValueEval that's in an AreaEval.
      *
-     * @param db AreaEval from which the cell to resolve is retrieved. 
+     * @param db AreaEval from which the cell to resolve is retrieved.
      * @param dbRow Relative row in the AreaEval.
      * @param dbCol Relative column in the AreaEval.
      * @return A ValueEval that is a NumberEval, StringEval, BoolEval, BlankEval or ErrorEval.
