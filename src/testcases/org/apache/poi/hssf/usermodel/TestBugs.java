@@ -2879,7 +2879,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
 
         eval.evaluateAll();
-        
+
         /*OutputStream out = new FileOutputStream("C:\\temp\\48043.xls");
         try {
           wb.write(out);
@@ -3119,20 +3119,25 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void test60460() throws IOException {
-        final Workbook wb = HSSFTestDataSamples.openSampleWorkbook("60460.xls");
+        try (final Workbook wb = HSSFTestDataSamples.openSampleWorkbook("60460.xls")) {
+            assertEquals(2, wb.getAllNames().size());
 
-        assertEquals(2, wb.getAllNames().size());
+            Name rangedName = wb.getAllNames().get(0);
+            assertFalse(rangedName.isFunctionName());
+            assertEquals("'[\\\\HEPPC3\\gt$\\Teaching\\Syn\\physyn.xls]#REF'!$AK$70:$AL$70",
+                    // replace '/' to make test work equally on Windows and Linux
+                    rangedName.getRefersToFormula().replace("/", "\\"));
 
-        Name rangedName = wb.getAllNames().get(0);
-        assertFalse(rangedName.isFunctionName());
-        assertEquals("'[\\\\HEPPC3\\gt$\\Teaching\\Syn\\physyn.xls]#REF'!$AK$70:$AL$70",
-                // replace '/' to make test work equally on Windows and Linux
-                rangedName.getRefersToFormula().replace("/", "\\"));
+            rangedName = wb.getAllNames().get(1);
+            assertFalse(rangedName.isFunctionName());
+            assertEquals("Questionnaire!$A$1:$L$65", rangedName.getRefersToFormula());
+        }
+    }
 
-        rangedName = wb.getAllNames().get(1);
-        assertFalse(rangedName.isFunctionName());
-        assertEquals("Questionnaire!$A$1:$L$65", rangedName.getRefersToFormula());
-
-        wb.close();
+    @Test
+    public void test63940() throws IOException {
+        try (final Workbook wb = HSSFTestDataSamples.openSampleWorkbook("SUBSTITUTE.xls")) {
+            wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+        }
     }
 }

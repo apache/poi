@@ -64,11 +64,15 @@ public final class Substitute extends Var3or4ArgFunction {
 	}
 
 	private static String replaceAllOccurrences(String oldStr, String searchStr, String newStr) {
+		// avoid endless loop when searching for nothing
+		if (searchStr.length() < 1) {
+			return oldStr;
+		}
+
 		StringBuilder sb = new StringBuilder();
 		int startIndex = 0;
-		int nextMatch;
 		while (true) {
-			nextMatch = oldStr.indexOf(searchStr, startIndex);
+			int nextMatch = oldStr.indexOf(searchStr, startIndex);
 			if (nextMatch < 0) {
 				// store everything from end of last match to end of string
 				sb.append(oldStr.substring(startIndex));
@@ -82,25 +86,23 @@ public final class Substitute extends Var3or4ArgFunction {
 	}
 
 	private static String replaceOneOccurrence(String oldStr, String searchStr, String newStr, int instanceNumber) {
+		// avoid endless loop when searching for nothing
 		if (searchStr.length() < 1) {
 			return oldStr;
 		}
 		int startIndex = 0;
-		int nextMatch = -1;
 		int count=0;
 		while (true) {
-			nextMatch = oldStr.indexOf(searchStr, startIndex);
+			int nextMatch = oldStr.indexOf(searchStr, startIndex);
 			if (nextMatch < 0) {
 				// not enough occurrences found - leave unchanged
 				return oldStr;
 			}
 			count++;
 			if (count == instanceNumber) {
-				StringBuilder sb = new StringBuilder(oldStr.length() + newStr.length());
-				sb.append(oldStr, 0, nextMatch);
-				sb.append(newStr);
-				sb.append(oldStr.substring(nextMatch + searchStr.length()));
-				return sb.toString();
+				return oldStr.substring(0, nextMatch) +
+						newStr +
+						oldStr.substring(nextMatch + searchStr.length());
 			}
 			startIndex = nextMatch + searchStr.length();
 		}
