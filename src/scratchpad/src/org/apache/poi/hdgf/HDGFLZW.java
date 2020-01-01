@@ -70,7 +70,7 @@ public class HDGFLZW extends LZWDecompresser {
       }
       return pntr;
    }
-   
+
    /**
     * We want an empty dictionary, so do nothing
     */
@@ -89,7 +89,7 @@ public class HDGFLZW extends LZWDecompresser {
     *    or the OutputStream can't be written to
     */
    public void compress(InputStream src, OutputStream res) throws IOException {
-      HDGFLZWCompressor c = new HDGFLZWCompressor();
-      c.compress(src, res);
+      HDGFLZWCompressor c = new HDGFLZWCompressor(res);
+      c.compress(src);
    }
 }
