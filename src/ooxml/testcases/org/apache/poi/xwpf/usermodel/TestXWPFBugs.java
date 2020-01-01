@@ -17,16 +17,21 @@
 package org.apache.poi.xwpf.usermodel;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.math.BigInteger;
 
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFRun.FontCharRange;
 import org.junit.Test;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
 
 public class TestXWPFBugs {
     @Test
@@ -111,7 +116,7 @@ public class TestXWPFBugs {
             assertEquals(p, same);
         }
     }
-    
+
     @Test
     public void bug57495_convertPixelsToEMUs() {
         int pixels = 100;
@@ -142,7 +147,7 @@ public class TestXWPFBugs {
             }
         }
     }
-    
+
   /**
    * Removing a run needs to take into account position of run if paragraph contains hyperlink runs
    */
@@ -173,5 +178,54 @@ public class TestXWPFBugs {
             XWPFDocument docBack = XWPFTestDataSamples.writeOutAndReadBack(doc);
             docBack.close();
         }
+    }
+
+    @Test
+    public void test63788() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+
+            XWPFNumbering numbering = doc.createNumbering();
+
+            for (int i = 10; i >= 0; i--) {
+                addNumberingWithAbstractId(numbering, i);        //add numbers in reverse order
+            }
+
+            for (int i = 0; i <= 10; i++) {
+                assertEquals(i, numbering.getAbstractNum(BigInteger.valueOf(i)).getAbstractNum().getAbstractNumId().longValue());
+            }
+
+            //attempt to remove item with numId 2
+            assertTrue(numbering.removeAbstractNum(BigInteger.valueOf(2)));
+
+            for (int i = 0; i <= 10; i++) {
+                XWPFAbstractNum abstractNum = numbering.getAbstractNum(BigInteger.valueOf(i));
+
+                // we removed id "2", so this one should be empty, all others not
+                if (i == 2) {
+                    assertNull("Failed for " + i, abstractNum);
+                } else {
+                    assertNotNull("Failed for " + i, abstractNum);
+                    assertEquals(i, abstractNum.getAbstractNum().getAbstractNumId().longValue());
+                }
+            }
+
+            // removing the same again fails
+            assertFalse(numbering.removeAbstractNum(BigInteger.valueOf(2)));
+
+            // removing another one works
+            assertTrue(numbering.removeAbstractNum(BigInteger.valueOf(4)));
+        }
+    }
+
+    private static void addNumberingWithAbstractId(XWPFNumbering documentNumbering, int id){
+        // create a numbering scheme
+        CTAbstractNum cTAbstractNum = CTAbstractNum.Factory.newInstance();
+        // give the scheme an ID
+        cTAbstractNum.setAbstractNumId(BigInteger.valueOf(id));
+
+        XWPFAbstractNum abstractNum = new XWPFAbstractNum(cTAbstractNum);
+        BigInteger abstractNumID = documentNumbering.addAbstractNum(abstractNum);
+
+        documentNumbering.addNum(abstractNumID);
     }
 }

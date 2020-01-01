@@ -49,14 +49,14 @@ public class XWPFNumbering extends POIXMLDocumentPart {
 
     /**
      * create a new styles object with an existing document
-     * 
+     *
      * @since POI 3.14-Beta1
      */
     public XWPFNumbering(PackagePart part) throws IOException, OpenXML4JException {
         super(part);
         isNew = true;
     }
-    
+
     /**
      * create a new XWPFNumbering object for use in a new document
      */
@@ -254,11 +254,15 @@ public class XWPFNumbering extends POIXMLDocumentPart {
      * false if abstractNum with abstractNumID not exists
      */
     public boolean removeAbstractNum(BigInteger abstractNumID) {
-        if (abstractNumID.byteValue() < abstractNums.size()) {
-            ctNumbering.removeAbstractNum(abstractNumID.byteValue());
-            abstractNums.remove(abstractNumID.byteValue());
-            return true;
+        for (XWPFAbstractNum abstractNum : abstractNums) {
+            BigInteger foundNumId = abstractNum.getAbstractNum().getAbstractNumId();
+            if(abstractNumID.equals(foundNumId)) {
+                ctNumbering.removeAbstractNum(foundNumId.byteValue());
+                abstractNums.remove(abstractNum);
+                return true;
+            }
         }
+
         return false;
     }
 
