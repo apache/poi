@@ -922,7 +922,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     private void setWorksheetPartCommitted() throws InvalidFormatException {
         for (RelationPart part : getRelationParts()) {
             if (POIXMLDocument.PACK_OBJECT_REL_TYPE.equals(part.getRelationship().getRelationshipType())) {
-                part.getDocumentPart().setCommited(true);
+                part.getDocumentPart().setCommitted(true);
                 break;
             }
         }

@@ -36,9 +36,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
-import org.apache.poi.util.Internal;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
+import org.apache.poi.util.*;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -57,24 +55,49 @@ public class POIXMLDocumentPart {
     private PackagePart packagePart;
     private POIXMLDocumentPart parent;
     private Map<String, RelationPart> relations = new LinkedHashMap<>();
-    private boolean isCommited = false;
+    private boolean isCommitted = false;
 
     /**
      * to check whether embedded part is already committed
      *
      * @return return true if embedded part is committed
+     * @deprecated use @link{#isCommitted()}
      */
+    @Removal(version = "5.0.0")
+    @Deprecated
     public boolean isCommited() {
-        return isCommited;
+        return isCommitted();
+    }
+
+    /**
+     * to check whether embedded part is already committed
+     *
+     * @return return true if embedded part is committed
+     * @since 4.1.2
+     */
+    public boolean isCommitted() {
+        return isCommitted;
     }
 
     /**
      * setter method to set embedded part is committed
      *
-     * @param isCommited boolean value
+     * @param isCommitted boolean value
+     * @deprecated use @link{#setCommitted(isCommitted)}
      */
-    public void setCommited(boolean isCommited) {
-        this.isCommited = isCommited;
+    @Removal(version = "5.0.0")
+    @Deprecated
+    public void setCommited(boolean isCommitted) {
+        this.isCommitted = isCommitted;
+    }
+
+    /**
+     * setter method to set embedded part is committed
+     *
+     * @param isCommitted boolean value
+     */
+    public void setCommitted(boolean isCommitted) {
+        this.isCommitted = isCommitted;
     }
 
     /**
@@ -453,7 +476,7 @@ public class POIXMLDocumentPart {
      */
     protected final void onSave(Set<PackagePart> alreadySaved) throws IOException {
         //if part is already committed then return
-        if (this.isCommited) {
+        if (this.isCommitted) {
             return;
         }
 
@@ -740,6 +763,7 @@ public class POIXMLDocumentPart {
         if (coreRel != null) {
             PackagePart pp = pkg.getPart(coreRel);
             if (pp == null) {
+                closeQuietly(pp);
                 throw new POIXMLException("OOXML file structure broken/invalid - core document '" + coreRel.getTargetURI() + "' not found.");
             }
             return pp;
@@ -747,9 +771,25 @@ public class POIXMLDocumentPart {
 
         coreRel = pkg.getRelationshipsByType(PackageRelationshipTypes.STRICT_CORE_DOCUMENT).getRelationship(0);
         if (coreRel != null) {
+            IOUtils.closeQuietly(pkg);
             throw new POIXMLException("Strict OOXML isn't currently supported, please see bug #57699");
         }
 
         throw new POIXMLException("OOXML file structure broken/invalid - no core document found!");
     }
+
+    private static void closeQuietly(final PackagePart closeable) {
+        // no need to log a NullPointerException here
+        if(closeable == null) {
+            return;
+        }
+
+        try {
+            closeable.close();
+        } catch ( Exception exc ) {
+            logger.log( POILogger.ERROR, "Unable to close resource: " + exc,
+                    exc );
+        }
+    }
+
 }
