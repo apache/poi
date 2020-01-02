@@ -210,7 +210,7 @@ public interface Cell {
      *        will change the cell to a numerics cell and set its value.
      */
     default void setCellValue(LocalDate value) {
-        setCellValue(value.atStartOfDay());
+        setCellValue(value == null ? null : value.atStartOfDay());
     }
 
     /**

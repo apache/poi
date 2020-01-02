@@ -133,6 +133,21 @@ public abstract class BaseTestCell {
             assertProhibitedValueAccess(cell, CellType.BOOLEAN, CellType.STRING,
                                         CellType.FORMULA, CellType.ERROR);
 
+            String strNull = null;
+            cell.setCellValue(strNull);
+            assertNull(cell.getRichStringCellValue());
+            assertEquals(CellType.BLANK, cell.getCellType());
+
+            LocalDate ldNull = null;
+            cell.setCellValue(ldNull);
+            assertNull(cell.getLocalDateTimeCellValue());
+            assertEquals(CellType.BLANK, cell.getCellType());
+
+            LocalDateTime ldtNull = null;
+            cell.setCellValue(ldtNull);
+            assertNull(cell.getLocalDateTimeCellValue());
+            assertEquals(CellType.BLANK, cell.getCellType());
+
             cell.setCellErrorValue(FormulaError.NA.getCode());
             assertEquals(FormulaError.NA.getCode(), cell.getErrorCellValue());
             assertEquals(CellType.ERROR, cell.getCellType());
