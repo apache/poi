@@ -135,7 +135,7 @@ public abstract class BaseTestCell {
 
             String strNull = null;
             cell.setCellValue(strNull);
-            assertNull(cell.getRichStringCellValue());
+            assertEquals("", cell.getStringCellValue());
             assertEquals(CellType.BLANK, cell.getCellType());
 
             LocalDate ldNull = null;
