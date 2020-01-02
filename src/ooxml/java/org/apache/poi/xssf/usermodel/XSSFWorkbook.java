@@ -493,8 +493,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * Create a new SpreadsheetML package and setup the default minimal content
      */
     protected static OPCPackage newPackage(XSSFWorkbookType workbookType) {
+        OPCPackage pkg = null;
         try {
-            OPCPackage pkg = OPCPackage.create(new ByteArrayOutputStream());    // NOSONAR - we do not want to close this here
+            pkg = OPCPackage.create(new ByteArrayOutputStream());    // NOSONAR - we do not want to close this here
             // Main part
             PackagePartName corePartName = PackagingURIHelper.createPartName(XSSFRelation.WORKBOOK.getDefaultFileName());
             // Create main part relationship
@@ -503,11 +504,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
             pkg.createPart(corePartName, workbookType.getContentType());
 
             pkg.getPackageProperties().setCreatorProperty(DOCUMENT_CREATOR);
-
-            return pkg;
-        } catch (Exception e){
+        } catch (Exception e) {
+            IOUtils.closeQuietly(pkg);
             throw new POIXMLException(e);
         }
+        return pkg;
     }
 
     /**
@@ -541,7 +542,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         XSSFPictureData img = createRelationship(XSSFPictureData.RELATIONS[format], this.xssfFactory, imageNumber, true).getDocumentPart();
         try (OutputStream out = img.getPackagePart().getOutputStream()) {
             out.write(pictureData);
-        } catch (IOException e){
+        } catch (IOException e) {
             throw new POIXMLException(e);
         }
         pictures.add(img);
@@ -589,8 +590,11 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
 
     @Override
     public void close() throws IOException {
-        super.close();
-        sharedStringSource.close();
+        try {
+            super.close();
+        } finally {
+            IOUtils.closeQuietly(sharedStringSource);
+        }
     }
 
     /**
