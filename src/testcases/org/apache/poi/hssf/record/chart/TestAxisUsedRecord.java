@@ -42,6 +42,7 @@ public final class TestAxisUsedRecord {
         assertEquals( 6, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         AxisUsedRecord record = new AxisUsedRecord();

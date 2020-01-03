@@ -45,6 +45,7 @@ public final class TestSeriesListRecord {
         assertEquals( 4 + 6, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         SeriesListRecord record = new SeriesListRecord(new short[] { (short)0x2001, (short)0xf0ff } );

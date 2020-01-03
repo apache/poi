@@ -42,6 +42,7 @@ public final class TestSeriesToChartGroupRecord {
         assertEquals( 0x6, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         SeriesToChartGroupRecord record = new SeriesToChartGroupRecord();

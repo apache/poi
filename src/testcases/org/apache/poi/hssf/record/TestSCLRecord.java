@@ -42,6 +42,7 @@ public final class TestSCLRecord {
         assertEquals( 8, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         SCLRecord record = new SCLRecord();

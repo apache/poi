@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -68,7 +69,7 @@ public final class TestNameRecord {
 		NameRecord nr = new NameRecord(in);
 		assertEquals(0x0020, nr.getOptionFlag());
 		byte[] data2 = nr.serialize();
-		TestcaseRecordInputStream.confirmRecordEncoding(NameRecord.sid, data, data2);
+		confirmRecordEncoding(NameRecord.sid, data, data2);
 	}
 
 	@Test

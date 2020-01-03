@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record;
 
 
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -67,6 +68,7 @@ public final class TestFontRecord {
         assertEquals(21 + 4, record.getRecordSize());
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
 //      .fontheight      = c8
@@ -96,7 +98,7 @@ public final class TestFontRecord {
         record.setFontName("Arial");
 
         byte [] recordBytes = record.serialize();
-        TestcaseRecordInputStream.confirmRecordEncoding(0x31, data, recordBytes);
+        confirmRecordEncoding(0x31, data, recordBytes);
     }
 
     @Test
@@ -150,6 +152,6 @@ public final class TestFontRecord {
 
         assertEquals(0, fr.getFontName().length());
         byte[] recordBytes = fr.serialize();
-        TestcaseRecordInputStream.confirmRecordEncoding(SID, emptyNameData, recordBytes);
+        confirmRecordEncoding(SID, emptyNameData, recordBytes);
     }
 }

@@ -45,12 +45,12 @@ public final class TestPlotGrowthRecord {
         assertEquals( 12, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         PlotGrowthRecord record = new PlotGrowthRecord();
         record.setHorizontalScale( 65536 );
         record.setVerticalScale( 65536 );
-
 
         byte [] recordBytes = record.serialize();
         confirmRecordEncoding(PlotGrowthRecord.sid, data, recordBytes);

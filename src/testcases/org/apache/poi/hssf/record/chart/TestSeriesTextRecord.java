@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -43,6 +44,7 @@ public final class TestSeriesTextRecord {
 		assertEquals(SIMPLE_DATA.length + 4, record.getRecordSize());
 	}
 
+	@SuppressWarnings("squid:S2699")
 	@Test
 	public void testStore() {
 		SeriesTextRecord record = new SeriesTextRecord();
@@ -51,7 +53,7 @@ public final class TestSeriesTextRecord {
 		record.setText("Value Number");
 
 		byte[] recordBytes = record.serialize();
-		TestcaseRecordInputStream.confirmRecordEncoding(SeriesTextRecord.sid, SIMPLE_DATA, recordBytes);
+		confirmRecordEncoding(SeriesTextRecord.sid, SIMPLE_DATA, recordBytes);
 	}
 
 	@Test
@@ -88,6 +90,6 @@ public final class TestSeriesTextRecord {
 
 		assertTrue("Identified bug 45784b", str.getRecordSize() >= 0);
 		byte[] ser = str.serialize();
-		TestcaseRecordInputStream.confirmRecordEncoding(SeriesTextRecord.sid, data, ser);
+		confirmRecordEncoding(SeriesTextRecord.sid, data, ser);
 	}
 }

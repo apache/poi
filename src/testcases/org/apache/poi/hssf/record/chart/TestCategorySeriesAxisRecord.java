@@ -53,6 +53,7 @@ public final class TestCategorySeriesAxisRecord {
         assertEquals( 4 + 8, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         CategorySeriesAxisRecord record = new CategorySeriesAxisRecord();

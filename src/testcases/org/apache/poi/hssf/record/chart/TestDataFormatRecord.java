@@ -50,6 +50,7 @@ public final class TestDataFormatRecord {
         assertEquals( 12, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         DataFormatRecord record = new DataFormatRecord();

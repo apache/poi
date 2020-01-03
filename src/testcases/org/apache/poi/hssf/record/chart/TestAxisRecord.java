@@ -50,6 +50,7 @@ public final class TestAxisRecord {
         assertEquals( 4 + 18, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         AxisRecord record = new AxisRecord();

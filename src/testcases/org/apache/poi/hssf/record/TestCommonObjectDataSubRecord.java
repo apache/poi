@@ -56,6 +56,7 @@ public final class TestCommonObjectDataSubRecord {
 		assertEquals(18, record.getDataSize());
 	}
 
+	@SuppressWarnings("squid:S2699")
 	@Test
 	public void testStore() {
 		CommonObjectDataSubRecord record = new CommonObjectDataSubRecord();

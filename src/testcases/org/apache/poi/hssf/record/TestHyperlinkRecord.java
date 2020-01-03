@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -453,12 +454,13 @@ public final class TestHyperlinkRecord {
 
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testReserializeTargetFrame() {
 		RecordInputStream in = TestcaseRecordInputStream.create(HyperlinkRecord.sid, dataTargetFrame);
 		HyperlinkRecord hr = new HyperlinkRecord(in);
 		byte[] ser = hr.serialize();
-		TestcaseRecordInputStream.confirmRecordEncoding(HyperlinkRecord.sid, dataTargetFrame, ser);
+		confirmRecordEncoding(HyperlinkRecord.sid, dataTargetFrame, ser);
 	}
 
     @Test
@@ -467,7 +469,7 @@ public final class TestHyperlinkRecord {
 		RecordInputStream in = TestcaseRecordInputStream.create(HyperlinkRecord.sid, dataLinkToWorkbook);
 		HyperlinkRecord hr = new HyperlinkRecord(in);
 		byte[] ser = hr.serialize();
-		TestcaseRecordInputStream.confirmRecordEncoding(HyperlinkRecord.sid, dataLinkToWorkbook, ser);
+		confirmRecordEncoding(HyperlinkRecord.sid, dataLinkToWorkbook, ser);
 		assertNotEquals("Identified bug in reading workbook link", "YEARFR~1.XLS", hr.getAddress());
 		assertEquals("yearfracExamples.xls", hr.getAddress());
 	}
@@ -478,7 +480,7 @@ public final class TestHyperlinkRecord {
 		RecordInputStream in = TestcaseRecordInputStream.create(HyperlinkRecord.sid, dataUNC);
 		HyperlinkRecord hr = new HyperlinkRecord(in);
 		byte[] ser = hr.serialize();
-		TestcaseRecordInputStream.confirmRecordEncoding(HyperlinkRecord.sid, dataUNC, ser);
+		confirmRecordEncoding(HyperlinkRecord.sid, dataUNC, ser);
         assertNotNull(hr.toString());
 	}
 
@@ -541,6 +543,6 @@ public final class TestHyperlinkRecord {
         assertEquals("testfolder/test.PDF", link.getAddress());
 
         byte[] ser = link.serialize();
-        TestcaseRecordInputStream.confirmRecordEncoding(HyperlinkRecord.sid, data_47498, ser);
+        confirmRecordEncoding(HyperlinkRecord.sid, data_47498, ser);
     }
 }

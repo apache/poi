@@ -73,6 +73,7 @@ public final class TestCFRuleRecord {
         }
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testCreateCFRuleRecord() throws IOException {
         try (HSSFWorkbook workbook = new HSSFWorkbook()) {
@@ -96,6 +97,7 @@ public final class TestCFRuleRecord {
         }
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testCreateCFRule12Record() throws IOException {
         try (HSSFWorkbook workbook = new HSSFWorkbook()) {
@@ -422,7 +424,7 @@ public final class TestCFRuleRecord {
         assertTrue(refNPtg.isRowRelative());
 
         byte[] data = rr.serialize();
-        TestcaseRecordInputStream.confirmRecordEncoding(CFRuleRecord.sid, DATA_REFN, data);
+        confirmRecordEncoding(CFRuleRecord.sid, DATA_REFN, data);
     }
 
     @Test

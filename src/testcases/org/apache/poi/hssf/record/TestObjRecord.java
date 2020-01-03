@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -107,11 +108,11 @@ public final class TestObjRecord {
         assertTrue( subrecords.get(0) instanceof CommonObjectDataSubRecord);
         assertTrue( subrecords.get(1) instanceof EndSubRecord );
     }
-    
+
     @Test
     public void testReadWriteWithPadding_bug45133() {
         ObjRecord record = new ObjRecord(TestcaseRecordInputStream.create(recdataNeedingPadding));
-        
+
         if (record.getRecordSize() == 34) {
             fail("Identified bug 45133");
         }
@@ -124,11 +125,12 @@ public final class TestObjRecord {
         assertEquals(GroupMarkerSubRecord.class, subrecords.get(1).getClass());
         assertEquals(EndSubRecord.class, subrecords.get(2).getClass());
     }
-    
+
     /**
      * Check that ObjRecord tolerates and preserves padding to a 4-byte boundary
      * (normally padding is to a 2-byte boundary).
      */
+    @SuppressWarnings("squid:S2699")
     @Test
     public void test4BytePadding() {
         // actual data from file saved by Excel 2007
@@ -142,6 +144,6 @@ public final class TestObjRecord {
         ObjRecord record = new ObjRecord(in);
         // check that it re-serializes to the same data
         byte[] ser = record.serialize();
-        TestcaseRecordInputStream.confirmRecordEncoding(ObjRecord.sid, data, ser);
+        confirmRecordEncoding(ObjRecord.sid, data, ser);
     }
 }

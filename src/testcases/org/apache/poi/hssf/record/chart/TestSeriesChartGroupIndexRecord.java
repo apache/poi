@@ -42,11 +42,11 @@ public final class TestSeriesChartGroupIndexRecord {
         assertEquals( 6, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         SeriesChartGroupIndexRecord record = new SeriesChartGroupIndexRecord();
         record.setChartGroupIndex( (short)0 );
-
 
         byte [] recordBytes = record.serialize();
         confirmRecordEncoding(SeriesChartGroupIndexRecord.sid, data, recordBytes);

@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
@@ -32,6 +33,7 @@ public final class TestRecalcIdRecord {
 		return result;
 	}
 
+	@SuppressWarnings("squid:S2699")
 	@Test
 	public void testBasicDeserializeReserialize() {
 
@@ -41,7 +43,7 @@ public final class TestRecalcIdRecord {
 				"1D EB 01 00"); // engine id
 
 		RecalcIdRecord r = create(data);
-		TestcaseRecordInputStream.confirmRecordEncoding(RecalcIdRecord.sid, data, r.serialize());
+		confirmRecordEncoding(RecalcIdRecord.sid, data, r.serialize());
 	}
 
 	@Test

@@ -44,6 +44,7 @@ public final class TestExtendedPivotTableViewFieldsRecord {
 		assertEquals(data.length, rec.getRecordSize());
 	}
 
+	@SuppressWarnings("squid:S2699")
 	@Test
 	public void testOlderFormat_bug46918() {
 		// There are 10 SXVDEX records in the file (not uploaded) that originated bugzilla 46918

@@ -48,6 +48,7 @@ public final class TestDatRecord {
         assertEquals( 6, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         DatRecord record = new DatRecord();
@@ -55,7 +56,6 @@ public final class TestDatRecord {
         record.setVerticalBorder( false );
         record.setBorder( true );
         record.setShowSeriesKey( true );
-
 
         byte [] recordBytes = record.serialize();
         confirmRecordEncoding(DatRecord.sid, data, recordBytes);

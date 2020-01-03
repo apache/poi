@@ -56,6 +56,7 @@ public final class TestSheetPropertiesRecord {
         assertEquals( 8, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         SheetPropertiesRecord record = new SheetPropertiesRecord();

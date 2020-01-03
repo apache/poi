@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.util.HexRead;
@@ -35,6 +36,6 @@ public final class TestStyleRecord {
 		assertEquals("\u5E38\u89C4_Sheet1", sr.getName()); // "<Conventional>_Sheet1"
 		// bug 46385 - Incorrect number of bytes written - expected 27 but got 18
 		byte[] ser = sr.serialize();
-		TestcaseRecordInputStream.confirmRecordEncoding(StyleRecord.sid, data, ser);
+		confirmRecordEncoding(StyleRecord.sid, data, ser);
 	}
 }

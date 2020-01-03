@@ -43,6 +43,7 @@ public final class TestDefaultDataLabelTextPropertiesRecord {
         assertEquals( 6, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         DefaultDataLabelTextPropertiesRecord record = new DefaultDataLabelTextPropertiesRecord();

@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -64,7 +65,7 @@ public final class TestNoteRecord {
         record.setAuthor("Apache Software Foundation");
 
         byte[] ser = record.serialize();
-        TestcaseRecordInputStream.confirmRecordEncoding(NoteRecord.sid, testData, ser);
+        confirmRecordEncoding(NoteRecord.sid, testData, ser);
     }
 
     @Test
@@ -107,7 +108,7 @@ public final class TestNoteRecord {
         assertTrue(nr.authorIsMultibyte());
 
         byte[] ser = nr.serialize();
-        TestcaseRecordInputStream.confirmRecordEncoding(NoteRecord.sid, data, ser);
+        confirmRecordEncoding(NoteRecord.sid, data, ser);
 
         // Re-check
         in = TestcaseRecordInputStream.create(ser);

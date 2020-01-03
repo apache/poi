@@ -42,6 +42,7 @@ public final class TestAxisLineFormatRecord {
         assertEquals( 6, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         AxisLineFormatRecord record = new AxisLineFormatRecord();

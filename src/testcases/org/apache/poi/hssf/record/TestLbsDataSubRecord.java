@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record;
 
 
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
@@ -71,7 +72,7 @@ public final class TestLbsDataSubRecord {
 
         // check that it re-serializes to the same data
         byte[] ser = record.serialize();
-        TestcaseRecordInputStream.confirmRecordEncoding(ObjRecord.sid, data, ser);
+        confirmRecordEncoding(ObjRecord.sid, data, ser);
     }
 
     /**
@@ -109,7 +110,7 @@ public final class TestLbsDataSubRecord {
 
         // check that it re-serializes to the same data
         byte[] ser = record.serialize();
-        TestcaseRecordInputStream.confirmRecordEncoding(ObjRecord.sid, data, ser);
+        confirmRecordEncoding(ObjRecord.sid, data, ser);
 
     }
 

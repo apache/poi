@@ -42,11 +42,11 @@ public final class TestSeriesIndexRecord {
         assertEquals( 6, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         SeriesIndexRecord record = new SeriesIndexRecord();
         record.setIndex( (short)3 );
-
 
         byte [] recordBytes = record.serialize();
         confirmRecordEncoding(SeriesIndexRecord.sid, data, recordBytes);

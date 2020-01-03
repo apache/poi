@@ -50,6 +50,7 @@ public final class TestFontBasisRecord {
         assertEquals( 14, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         FontBasisRecord record = new FontBasisRecord();

@@ -27,10 +27,8 @@ import static org.junit.Assert.fail;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
-import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -178,15 +176,10 @@ public class TestDrawingAggregate {
     @Test
     public void testAllTestSamples() throws IOException {
         File[] xls = new File(System.getProperty("POI.testdata.path"), "spreadsheet").listFiles(
-                new FilenameFilter() {
-                    @Override
-                    public boolean accept(File dir, String name) {
-                        return name.endsWith(".xls");
-                    }
-                }
+            (dir, name) -> name.endsWith(".xls")
         );
         assertNotNull(
-                "Need to find files in test-data path, had path: " + new File(System.getProperty("POI.testdata.path"), "spreadsheet"), 
+                "Need to find files in test-data path, had path: " + new File(System.getProperty("POI.testdata.path"), "spreadsheet"),
                 xls);
         for(File file : xls) {
             HSSFWorkbook wb;
@@ -203,7 +196,7 @@ public class TestDrawingAggregate {
                 String filename = file.getName();
                 System.out.println("Drawing Aggregate re-write test failed for " + filename);
                 e.printStackTrace(System.out);
-                
+
                 fail("Error when writing and re-reading workbook " + filename + "\n" + e);
             }
             wb.close();
@@ -246,12 +239,17 @@ public class TestDrawingAggregate {
      */
     @Test
     public void testFailing() throws IOException {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("15573.xls");
-        HSSFSheet sh = wb.getSheetAt(0);
-        sh.getDrawingPatriarch();
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("15573.xls")) {
+            HSSFSheet sh = wb.getSheetAt(0);
+            HSSFPatriarch dp = sh.getDrawingPatriarch();
+            assertNotNull(dp);
 
-        HSSFTestDataSamples.writeOutAndReadBack(wb).close();
-        wb.close();
+            try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                HSSFSheet sh2 = wb2.getSheetAt(0);
+                HSSFPatriarch dp2 = sh2.getDrawingPatriarch();
+                assertNotNull(dp2);
+            }
+        }
     }
 
     private static byte[] toByteArray(List<RecordBase> records) {
@@ -269,76 +267,81 @@ public class TestDrawingAggregate {
 
     @Test
     public void testSolverContainerMustBeSavedDuringSerialization() throws IOException{
-        HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("SolverContainerAfterSPGR.xls");
-        HSSFSheet sh = wb1.getSheetAt(0);
-        InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);
-        List<RecordBase> records = ish.getRecords();
-        // records to be aggregated
-        List<RecordBase> dgRecords = records.subList(19, 22);
-        byte[] dgBytes = toByteArray(dgRecords);
-        sh.getDrawingPatriarch();
-        EscherAggregate agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
-        assertEquals(agg.getEscherRecords().get(0).getChildRecords().size(), 3);
-        assertEquals(agg.getEscherRecords().get(0).getChild(2).getRecordId(), EscherContainerRecord.SOLVER_CONTAINER);
-        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
-        wb1.close();
-        sh = wb2.getSheetAt(0);
-        sh.getDrawingPatriarch();
-        ish = HSSFTestHelper.getSheetForTest(sh);
-        agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
-        assertEquals(agg.getEscherRecords().get(0).getChildRecords().size(), 3);
-        assertEquals(agg.getEscherRecords().get(0).getChild(2).getRecordId(), EscherContainerRecord.SOLVER_CONTAINER);
+        try (HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("SolverContainerAfterSPGR.xls")) {
+            HSSFSheet sh = wb1.getSheetAt(0);
+            InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);
+            List<RecordBase> records = ish.getRecords();
+            // records to be aggregated
+            List<RecordBase> dgRecords = records.subList(19, 22);
+            byte[] dgBytes = toByteArray(dgRecords);
+            sh.getDrawingPatriarch();
+            EscherAggregate agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
+            assertNotNull(agg);
+            assertEquals(agg.getEscherRecords().get(0).getChildRecords().size(), 3);
+            assertEquals(agg.getEscherRecords().get(0).getChild(2).getRecordId(), EscherContainerRecord.SOLVER_CONTAINER);
+            try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                sh = wb2.getSheetAt(0);
+                sh.getDrawingPatriarch();
+                ish = HSSFTestHelper.getSheetForTest(sh);
+                agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
+                assertNotNull(agg);
+                assertEquals(agg.getEscherRecords().get(0).getChildRecords().size(), 3);
+                assertEquals(agg.getEscherRecords().get(0).getChild(2).getRecordId(), EscherContainerRecord.SOLVER_CONTAINER);
 
 
-        // collect drawing records into a byte buffer.
-        agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
-        byte[] dgBytesAfterSave = agg.serialize();
-        assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
-        assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
-        wb2.close();
+                // collect drawing records into a byte buffer.
+                agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
+                assertNotNull(agg);
+                byte[] dgBytesAfterSave = agg.serialize();
+                assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
+                assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
+            }
+        }
     }
 
     @Test
     public void testFileWithTextbox() throws IOException{
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("text.xls");
-        HSSFSheet sh = wb.getSheetAt(0);
-        InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);
-        List<RecordBase> records = ish.getRecords();
-        // records to be aggregated
-        List<RecordBase> dgRecords = records.subList(19, 23);
-        byte[] dgBytes = toByteArray(dgRecords);
-        sh.getDrawingPatriarch();
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("text.xls")) {
+            HSSFSheet sh = wb.getSheetAt(0);
+            InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);
+            List<RecordBase> records = ish.getRecords();
+            // records to be aggregated
+            List<RecordBase> dgRecords = records.subList(19, 23);
+            byte[] dgBytes = toByteArray(dgRecords);
+            sh.getDrawingPatriarch();
 
-        // collect drawing records into a byte buffer.
-        EscherAggregate agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
-        byte[] dgBytesAfterSave = agg.serialize();
-        assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
-        assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
-        wb.close();
+            // collect drawing records into a byte buffer.
+            EscherAggregate agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
+            assertNotNull(agg);
+            byte[] dgBytesAfterSave = agg.serialize();
+            assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
+            assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
+        }
     }
 
     @Test
     public void testFileWithCharts() throws IOException {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49581.xls");
-        HSSFSheet sh = wb.getSheetAt(0);
-        InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);
-        List<RecordBase> records = ish.getRecords();
-        // records to be aggregated
-        List<RecordBase> dgRecords = records.subList(19, 21);
-        byte[] dgBytes = toByteArray(dgRecords);
-        sh.getDrawingPatriarch();
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49581.xls")) {
+            HSSFSheet sh = wb.getSheetAt(0);
+            InternalSheet ish = HSSFTestHelper.getSheetForTest(sh);
+            List<RecordBase> records = ish.getRecords();
+            // records to be aggregated
+            List<RecordBase> dgRecords = records.subList(19, 21);
+            byte[] dgBytes = toByteArray(dgRecords);
+            sh.getDrawingPatriarch();
 
-        // collect drawing records into a byte buffer.
-        EscherAggregate agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
-        byte[] dgBytesAfterSave = agg.serialize();
-        assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
-        for (int i=0; i< dgBytes.length; i++){
-            if (dgBytes[i] != dgBytesAfterSave[i]){
-                System.out.println("pos = " + i);
+            // collect drawing records into a byte buffer.
+            EscherAggregate agg = (EscherAggregate) ish.findFirstRecordBySid(EscherAggregate.sid);
+            assertNotNull(agg);
+            byte[] dgBytesAfterSave = agg.serialize();
+            assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
+            for (int i = 0; i < dgBytes.length; i++) {
+                if (dgBytes[i] != dgBytesAfterSave[i]) {
+                    System.out.println("pos = " + i);
+                }
             }
+            assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
         }
-        assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
-        wb.close();
     }
 
     /**
@@ -346,62 +349,62 @@ public class TestDrawingAggregate {
      */
     @Test
     public void test45129() throws IOException {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("45129.xls");
-        HSSFSheet sh = wb.getSheetAt(0);
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("45129.xls")) {
+            HSSFSheet sh = wb.getSheetAt(0);
 
-        InternalWorkbook iworkbook = HSSFTestHelper.getWorkbookForTest(wb);
-        InternalSheet isheet = HSSFTestHelper.getSheetForTest(sh);
+            InternalWorkbook iworkbook = HSSFTestHelper.getWorkbookForTest(wb);
+            InternalSheet isheet = HSSFTestHelper.getSheetForTest(sh);
 
-        List<RecordBase> records = isheet.getRecords();
+            List<RecordBase> records = isheet.getRecords();
 
-        // the sheet's drawing is not aggregated
-        assertEquals("wrong size of sheet records stream", 394, records.size());
-        // the last record before the drawing block
-        assertTrue(
-                "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName(),
-                records.get(18) instanceof RowRecordsAggregate);
-
-        // records to be aggregated
-        List<RecordBase> dgRecords = records.subList(19, 389);
-        // collect drawing records into a byte buffer.
-        byte[] dgBytes = toByteArray(dgRecords);
-
-        for (RecordBase rb : dgRecords) {
-            Record r = (Record) rb;
-            short sid = r.getSid();
-            // we expect that drawing block consists of either
-            // DrawingRecord or ContinueRecord or ObjRecord or TextObjectRecord
+            // the sheet's drawing is not aggregated
+            assertEquals("wrong size of sheet records stream", 394, records.size());
+            // the last record before the drawing block
             assertTrue(
-                    sid == DrawingRecord.sid ||
-                            sid == ContinueRecord.sid ||
-                            sid == ObjRecord.sid ||
-                            sid == TextObjectRecord.sid);
+                    "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName(),
+                    records.get(18) instanceof RowRecordsAggregate);
+
+            // records to be aggregated
+            List<RecordBase> dgRecords = records.subList(19, 389);
+            // collect drawing records into a byte buffer.
+            byte[] dgBytes = toByteArray(dgRecords);
+
+            for (RecordBase rb : dgRecords) {
+                Record r = (Record) rb;
+                short sid = r.getSid();
+                // we expect that drawing block consists of either
+                // DrawingRecord or ContinueRecord or ObjRecord or TextObjectRecord
+                assertTrue(
+                        sid == DrawingRecord.sid ||
+                                sid == ContinueRecord.sid ||
+                                sid == ObjRecord.sid ||
+                                sid == TextObjectRecord.sid);
+            }
+
+            // the first record after the drawing block
+            assertTrue(
+                    "records.get(389) is expected to be Window2",
+                    records.get(389) instanceof WindowTwoRecord);
+
+            // aggregate drawing records.
+            // The subrange [19, 388] is expected to be replaced with a EscherAggregate object
+            DrawingManager2 drawingManager = iworkbook.findDrawingGroup();
+            int loc = isheet.aggregateDrawingRecords(drawingManager, false);
+            EscherAggregate agg = (EscherAggregate) records.get(loc);
+
+            assertEquals("wrong size of the aggregated sheet records stream", 25, records.size());
+            assertTrue(
+                    "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName(),
+                    records.get(18) instanceof RowRecordsAggregate);
+            assertTrue("records.get(19) is expected to be EscherAggregate but was " + records.get(19).getClass().getSimpleName(),
+                       records.get(19) instanceof EscherAggregate);
+            assertTrue("records.get(20) is expected to be Window2 but was " + records.get(20).getClass().getSimpleName(),
+                       records.get(20) instanceof WindowTwoRecord);
+
+            byte[] dgBytesAfterSave = agg.serialize();
+            assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
+            assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
         }
-
-        // the first record after the drawing block
-        assertTrue(
-                "records.get(389) is expected to be Window2",
-                records.get(389) instanceof WindowTwoRecord);
-
-        // aggregate drawing records.
-        // The subrange [19, 388] is expected to be replaced with a EscherAggregate object
-        DrawingManager2 drawingManager = iworkbook.findDrawingGroup();
-        int loc = isheet.aggregateDrawingRecords(drawingManager, false);
-        EscherAggregate agg = (EscherAggregate) records.get(loc);
-
-        assertEquals("wrong size of the aggregated sheet records stream", 25, records.size());
-        assertTrue(
-                "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName(),
-                records.get(18) instanceof RowRecordsAggregate);
-        assertTrue("records.get(19) is expected to be EscherAggregate but was " + records.get(19).getClass().getSimpleName(),
-                records.get(19) instanceof EscherAggregate);
-        assertTrue("records.get(20) is expected to be Window2 but was " + records.get(20).getClass().getSimpleName(),
-                records.get(20) instanceof WindowTwoRecord);
-
-        byte[] dgBytesAfterSave = agg.serialize();
-        assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
-        assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
-        wb.close();
     }
 
     /**
@@ -414,208 +417,207 @@ public class TestDrawingAggregate {
      */
     @Test
     public void testSerializeDrawingBigger8k() throws IOException {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("DrawingContinue.xls");
-        InternalWorkbook iworkbook = HSSFTestHelper.getWorkbookForTest(wb);
-        HSSFSheet sh = wb.getSheetAt(0);
-        InternalSheet isheet = HSSFTestHelper.getSheetForTest(sh);
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("DrawingContinue.xls")) {
+            InternalWorkbook iworkbook = HSSFTestHelper.getWorkbookForTest(wb);
+            HSSFSheet sh = wb.getSheetAt(0);
+            InternalSheet isheet = HSSFTestHelper.getSheetForTest(sh);
 
 
-        List<RecordBase> records = isheet.getRecords();
+            List<RecordBase> records = isheet.getRecords();
 
-        // the sheet's drawing is not aggregated
-        assertEquals("wrong size of sheet records stream", 32, records.size());
-        // the last record before the drawing block
-        assertTrue(
-                "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName(),
-                records.get(18) instanceof RowRecordsAggregate);
-
-        // records to be aggregated
-        List<RecordBase> dgRecords = records.subList(19, 26);
-        for (RecordBase rb : dgRecords) {
-            Record r = (Record) rb;
-            short sid = r.getSid();
-            // we expect that drawing block consists of either
-            // DrawingRecord or ContinueRecord or ObjRecord or TextObjectRecord
+            // the sheet's drawing is not aggregated
+            assertEquals("wrong size of sheet records stream", 32, records.size());
+            // the last record before the drawing block
             assertTrue(
-                    sid == DrawingRecord.sid ||
-                            sid == ContinueRecord.sid ||
-                            sid == ObjRecord.sid ||
-                            sid == NoteRecord.sid ||
-                            sid == TextObjectRecord.sid);
+                    "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName(),
+                    records.get(18) instanceof RowRecordsAggregate);
+
+            // records to be aggregated
+            List<RecordBase> dgRecords = records.subList(19, 26);
+            for (RecordBase rb : dgRecords) {
+                Record r = (Record) rb;
+                short sid = r.getSid();
+                // we expect that drawing block consists of either
+                // DrawingRecord or ContinueRecord or ObjRecord or TextObjectRecord
+                assertTrue(
+                        sid == DrawingRecord.sid ||
+                                sid == ContinueRecord.sid ||
+                                sid == ObjRecord.sid ||
+                                sid == NoteRecord.sid ||
+                                sid == TextObjectRecord.sid);
+            }
+            // collect drawing records into a byte buffer.
+            byte[] dgBytes = toByteArray(dgRecords);
+
+            // the first record after the drawing block
+            assertTrue(
+                    "records.get(26) is expected to be Window2",
+                    records.get(26) instanceof WindowTwoRecord);
+
+            // aggregate drawing records.
+            // The subrange [19, 38] is expected to be replaced with a EscherAggregate object
+            DrawingManager2 drawingManager = iworkbook.findDrawingGroup();
+            int loc = isheet.aggregateDrawingRecords(drawingManager, false);
+            EscherAggregate agg = (EscherAggregate) records.get(loc);
+
+            assertEquals("wrong size of the aggregated sheet records stream", 26, records.size());
+            assertTrue(
+                    "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName(),
+                    records.get(18) instanceof RowRecordsAggregate);
+            assertTrue("records.get(19) is expected to be EscherAggregate but was " + records.get(19).getClass().getSimpleName(),
+                       records.get(19) instanceof EscherAggregate);
+            assertTrue("records.get(20) is expected to be Window2 but was " + records.get(20).getClass().getSimpleName(),
+                       records.get(20) instanceof WindowTwoRecord);
+
+            byte[] dgBytesAfterSave = agg.serialize();
+            assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
+            assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
         }
-        // collect drawing records into a byte buffer.
-        byte[] dgBytes = toByteArray(dgRecords);
-
-        // the first record after the drawing block
-        assertTrue(
-                "records.get(26) is expected to be Window2",
-                records.get(26) instanceof WindowTwoRecord);
-
-        // aggregate drawing records.
-        // The subrange [19, 38] is expected to be replaced with a EscherAggregate object
-        DrawingManager2 drawingManager = iworkbook.findDrawingGroup();
-        int loc = isheet.aggregateDrawingRecords(drawingManager, false);
-        EscherAggregate agg = (EscherAggregate) records.get(loc);
-
-        assertEquals("wrong size of the aggregated sheet records stream", 26, records.size());
-        assertTrue(
-                "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName(),
-                records.get(18) instanceof RowRecordsAggregate);
-        assertTrue("records.get(19) is expected to be EscherAggregate but was " + records.get(19).getClass().getSimpleName(),
-                records.get(19) instanceof EscherAggregate);
-        assertTrue("records.get(20) is expected to be Window2 but was " + records.get(20).getClass().getSimpleName(),
-                records.get(20) instanceof WindowTwoRecord);
-
-        byte[] dgBytesAfterSave = agg.serialize();
-        assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
-        assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
-        wb.close();
     }
 
 
     @Test
     public void testSerializeDrawingBigger8k_noAggregation() throws IOException {
-        HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("DrawingContinue.xls");
+        try (HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("DrawingContinue.xls")) {
+            InternalSheet isheet = HSSFTestHelper.getSheetForTest(wb1.getSheetAt(0));
+            List<RecordBase> records = isheet.getRecords();
 
-        InternalSheet isheet = HSSFTestHelper.getSheetForTest(wb1.getSheetAt(0));
-        List<RecordBase> records = isheet.getRecords();
+            try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                InternalSheet isheet2 = HSSFTestHelper.getSheetForTest(wb2.getSheetAt(0));
+                List<RecordBase> records2 = isheet2.getRecords();
 
-        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
-        wb1.close();
-        InternalSheet isheet2 = HSSFTestHelper.getSheetForTest(wb2.getSheetAt(0));
-        List<RecordBase> records2 = isheet2.getRecords();
-
-        assertEquals(records.size(), records2.size());
-        for (int i = 0; i < records.size(); i++) {
-            RecordBase r1 = records.get(i);
-            RecordBase r2 = records2.get(i);
-            assertSame(r1.getClass(), r2.getClass());
-            assertEquals(r1.getRecordSize(), r2.getRecordSize());
-            if (r1 instanceof Record) {
-                assertEquals(((Record) r1).getSid(), ((Record) r2).getSid());
-                assertArrayEquals(((Record) r1).serialize(), ((Record) r2).serialize());
+                assertEquals(records.size(), records2.size());
+                for (int i = 0; i < records.size(); i++) {
+                    RecordBase r1 = records.get(i);
+                    RecordBase r2 = records2.get(i);
+                    assertSame(r1.getClass(), r2.getClass());
+                    assertEquals(r1.getRecordSize(), r2.getRecordSize());
+                    if (r1 instanceof Record) {
+                        assertEquals(((Record) r1).getSid(), ((Record) r2).getSid());
+                        assertArrayEquals(((Record) r1).serialize(), ((Record) r2).serialize());
+                    }
+                }
             }
         }
-        wb2.close();
     }
 
     @Test
     public void testSerializeDrawingWithComments() throws IOException {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("DrawingAndComments.xls");
-        HSSFSheet sh = wb.getSheetAt(0);
-        InternalWorkbook iworkbook = HSSFTestHelper.getWorkbookForTest(wb);
-        InternalSheet isheet = HSSFTestHelper.getSheetForTest(sh);
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("DrawingAndComments.xls")) {
+            HSSFSheet sh = wb.getSheetAt(0);
+            InternalWorkbook iworkbook = HSSFTestHelper.getWorkbookForTest(wb);
+            InternalSheet isheet = HSSFTestHelper.getSheetForTest(sh);
 
-        List<RecordBase> records = isheet.getRecords();
+            List<RecordBase> records = isheet.getRecords();
 
-        // the sheet's drawing is not aggregated
-        assertEquals("wrong size of sheet records stream", 46, records.size());
-        // the last record before the drawing block
-        assertTrue(
-                "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName(),
-                records.get(18) instanceof RowRecordsAggregate);
-
-        // records to be aggregated
-        List<RecordBase> dgRecords = records.subList(19, 39);
-        for (RecordBase rb : dgRecords) {
-            Record r = (Record) rb;
-            short sid = r.getSid();
-            // we expect that drawing block consists of either
-            // DrawingRecord or ContinueRecord or ObjRecord or TextObjectRecord
+            // the sheet's drawing is not aggregated
+            assertEquals("wrong size of sheet records stream", 46, records.size());
+            // the last record before the drawing block
             assertTrue(
-                    sid == DrawingRecord.sid ||
-                            sid == ContinueRecord.sid ||
-                            sid == ObjRecord.sid ||
-                            sid == NoteRecord.sid ||
-                            sid == TextObjectRecord.sid);
+                    "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName(),
+                    records.get(18) instanceof RowRecordsAggregate);
+
+            // records to be aggregated
+            List<RecordBase> dgRecords = records.subList(19, 39);
+            for (RecordBase rb : dgRecords) {
+                Record r = (Record) rb;
+                short sid = r.getSid();
+                // we expect that drawing block consists of either
+                // DrawingRecord or ContinueRecord or ObjRecord or TextObjectRecord
+                assertTrue(
+                        sid == DrawingRecord.sid ||
+                                sid == ContinueRecord.sid ||
+                                sid == ObjRecord.sid ||
+                                sid == NoteRecord.sid ||
+                                sid == TextObjectRecord.sid);
+            }
+            // collect drawing records into a byte buffer.
+            byte[] dgBytes = toByteArray(dgRecords);
+
+            // the first record after the drawing block
+            assertTrue(
+                    "records.get(39) is expected to be Window2",
+                    records.get(39) instanceof WindowTwoRecord);
+
+            // aggregate drawing records.
+            // The subrange [19, 38] is expected to be replaced with a EscherAggregate object
+            DrawingManager2 drawingManager = iworkbook.findDrawingGroup();
+            int loc = isheet.aggregateDrawingRecords(drawingManager, false);
+            EscherAggregate agg = (EscherAggregate) records.get(loc);
+
+            assertEquals("wrong size of the aggregated sheet records stream", 27, records.size());
+            assertTrue(
+                    "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName(),
+                    records.get(18) instanceof RowRecordsAggregate);
+            assertTrue("records.get(19) is expected to be EscherAggregate but was " + records.get(19).getClass().getSimpleName(),
+                       records.get(19) instanceof EscherAggregate);
+            assertTrue("records.get(20) is expected to be Window2 but was " + records.get(20).getClass().getSimpleName(),
+                       records.get(20) instanceof WindowTwoRecord);
+
+            byte[] dgBytesAfterSave = agg.serialize();
+            assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
+            assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
         }
-        // collect drawing records into a byte buffer.
-        byte[] dgBytes = toByteArray(dgRecords);
-
-        // the first record after the drawing block
-        assertTrue(
-                "records.get(39) is expected to be Window2",
-                records.get(39) instanceof WindowTwoRecord);
-
-        // aggregate drawing records.
-        // The subrange [19, 38] is expected to be replaced with a EscherAggregate object
-        DrawingManager2 drawingManager = iworkbook.findDrawingGroup();
-        int loc = isheet.aggregateDrawingRecords(drawingManager, false);
-        EscherAggregate agg = (EscherAggregate) records.get(loc);
-
-        assertEquals("wrong size of the aggregated sheet records stream", 27, records.size());
-        assertTrue(
-                "records.get(18) is expected to be RowRecordsAggregate but was " + records.get(18).getClass().getSimpleName(),
-                records.get(18) instanceof RowRecordsAggregate);
-        assertTrue("records.get(19) is expected to be EscherAggregate but was " + records.get(19).getClass().getSimpleName(),
-                records.get(19) instanceof EscherAggregate);
-        assertTrue("records.get(20) is expected to be Window2 but was " + records.get(20).getClass().getSimpleName(),
-                records.get(20) instanceof WindowTwoRecord);
-
-        byte[] dgBytesAfterSave = agg.serialize();
-        assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
-        assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
-        wb.close();
     }
 
 
     @Test
     public void testFileWithPictures() throws IOException {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ContinueRecordProblem.xls");
-        HSSFSheet sh = wb.getSheetAt(0);
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ContinueRecordProblem.xls")) {
+            HSSFSheet sh = wb.getSheetAt(0);
 
-        InternalWorkbook iworkbook = HSSFTestHelper.getWorkbookForTest(wb);
-        InternalSheet isheet = HSSFTestHelper.getSheetForTest(sh);
+            InternalWorkbook iworkbook = HSSFTestHelper.getWorkbookForTest(wb);
+            InternalSheet isheet = HSSFTestHelper.getSheetForTest(sh);
 
-        List<RecordBase> records = isheet.getRecords();
+            List<RecordBase> records = isheet.getRecords();
 
-        // the sheet's drawing is not aggregated
-        assertEquals("wrong size of sheet records stream", 315, records.size());
-        // the last record before the drawing block
-        assertTrue(
-                "records.get(21) is expected to be RowRecordsAggregate but was " + records.get(21).getClass().getSimpleName(),
-                records.get(21) instanceof RowRecordsAggregate);
-
-        // records to be aggregated
-        List<RecordBase> dgRecords = records.subList(22, 300);
-        for (RecordBase rb : dgRecords) {
-            Record r = (Record) rb;
-            short sid = r.getSid();
-            // we expect that drawing block consists of either
-            // DrawingRecord or ContinueRecord or ObjRecord or TextObjectRecord
+            // the sheet's drawing is not aggregated
+            assertEquals("wrong size of sheet records stream", 315, records.size());
+            // the last record before the drawing block
             assertTrue(
-                    sid == DrawingRecord.sid ||
-                            sid == ContinueRecord.sid ||
-                            sid == ObjRecord.sid ||
-                            sid == TextObjectRecord.sid);
+                    "records.get(21) is expected to be RowRecordsAggregate but was " + records.get(21).getClass().getSimpleName(),
+                    records.get(21) instanceof RowRecordsAggregate);
+
+            // records to be aggregated
+            List<RecordBase> dgRecords = records.subList(22, 300);
+            for (RecordBase rb : dgRecords) {
+                Record r = (Record) rb;
+                short sid = r.getSid();
+                // we expect that drawing block consists of either
+                // DrawingRecord or ContinueRecord or ObjRecord or TextObjectRecord
+                assertTrue(
+                        sid == DrawingRecord.sid ||
+                                sid == ContinueRecord.sid ||
+                                sid == ObjRecord.sid ||
+                                sid == TextObjectRecord.sid);
+            }
+            // collect drawing records into a byte buffer.
+            byte[] dgBytes = toByteArray(dgRecords);
+
+            // the first record after the drawing block
+            assertTrue(
+                    "records.get(300) is expected to be Window2",
+                    records.get(300) instanceof WindowTwoRecord);
+
+            // aggregate drawing records.
+            // The subrange [19, 299] is expected to be replaced with a EscherAggregate object
+            DrawingManager2 drawingManager = iworkbook.findDrawingGroup();
+            int loc = isheet.aggregateDrawingRecords(drawingManager, false);
+            EscherAggregate agg = (EscherAggregate) records.get(loc);
+
+            assertEquals("wrong size of the aggregated sheet records stream", 38, records.size());
+            assertTrue(
+                    "records.get(21) is expected to be RowRecordsAggregate but was " + records.get(21).getClass().getSimpleName(),
+                    records.get(21) instanceof RowRecordsAggregate);
+            assertTrue("records.get(22) is expected to be EscherAggregate but was " + records.get(22).getClass().getSimpleName(),
+                       records.get(22) instanceof EscherAggregate);
+            assertTrue("records.get(23) is expected to be Window2 but was " + records.get(23).getClass().getSimpleName(),
+                       records.get(23) instanceof WindowTwoRecord);
+
+            byte[] dgBytesAfterSave = agg.serialize();
+            assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
+            assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
         }
-        // collect drawing records into a byte buffer.
-        byte[] dgBytes = toByteArray(dgRecords);
-
-        // the first record after the drawing block
-        assertTrue(
-                "records.get(300) is expected to be Window2",
-                records.get(300) instanceof WindowTwoRecord);
-
-        // aggregate drawing records.
-        // The subrange [19, 299] is expected to be replaced with a EscherAggregate object
-        DrawingManager2 drawingManager = iworkbook.findDrawingGroup();
-        int loc = isheet.aggregateDrawingRecords(drawingManager, false);
-        EscherAggregate agg = (EscherAggregate) records.get(loc);
-
-        assertEquals("wrong size of the aggregated sheet records stream", 38, records.size());
-        assertTrue(
-                "records.get(21) is expected to be RowRecordsAggregate but was " + records.get(21).getClass().getSimpleName(),
-                records.get(21) instanceof RowRecordsAggregate);
-        assertTrue("records.get(22) is expected to be EscherAggregate but was " + records.get(22).getClass().getSimpleName(),
-                records.get(22) instanceof EscherAggregate);
-        assertTrue("records.get(23) is expected to be Window2 but was " + records.get(23).getClass().getSimpleName(),
-                records.get(23) instanceof WindowTwoRecord);
-
-        byte[] dgBytesAfterSave = agg.serialize();
-        assertEquals("different size of drawing data before and after save", dgBytes.length, dgBytesAfterSave.length);
-        assertArrayEquals("drawing data before and after save is different", dgBytes, dgBytesAfterSave);
-        wb.close();
     }
 
     @Test

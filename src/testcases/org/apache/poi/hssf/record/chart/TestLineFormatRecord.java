@@ -54,6 +54,7 @@ public final class TestLineFormatRecord {
         assertEquals( 16, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         LineFormatRecord record = new LineFormatRecord();
@@ -63,7 +64,6 @@ public final class TestLineFormatRecord {
         record.setAuto( true );
         record.setDrawTicks( false );
         record.setColourPaletteIndex( (short)0x4d );
-
 
         byte [] recordBytes = record.serialize();
         confirmRecordEncoding(LineFormatRecord.sid, data, recordBytes);

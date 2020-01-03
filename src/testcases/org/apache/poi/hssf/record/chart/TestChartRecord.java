@@ -48,6 +48,7 @@ public final class TestChartRecord {
         assertEquals( 20, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         ChartRecord record = new ChartRecord();
@@ -55,7 +56,6 @@ public final class TestChartRecord {
         record.setY( 0 );
         record.setWidth( 30474216 );
         record.setHeight( 15060168 );
-
 
         byte [] recordBytes = record.serialize();
         confirmRecordEncoding(ChartRecord.sid, data, recordBytes);

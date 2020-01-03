@@ -81,6 +81,7 @@ public final class TestTextRecord {
         assertEquals( 36, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         TextRecord record = new TextRecord();

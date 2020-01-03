@@ -17,17 +17,25 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Sheet;
 import org.junit.Test;
-/**
- * 
- */
+
 public final class TestBOFRecord {
     @Test
     public void testBOFRecord() throws IOException {
         // This used to throw an error before - #42794
-        HSSFTestDataSamples.openSampleWorkbook("bug_42794.xls").close();
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("bug_42794.xls")) {
+            Sheet sh = wb.getSheetAt(0);
+            for (int i=1; i<=10; i++) {
+                double act = sh.getRow(i).getCell(0).getNumericCellValue();
+                assertEquals(i, act, 0);
+            }
+        }
     }
 }

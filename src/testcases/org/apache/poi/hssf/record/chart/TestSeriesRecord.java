@@ -53,6 +53,7 @@ public final class TestSeriesRecord {
         assertEquals( 16, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         SeriesRecord record = new SeriesRecord();

@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.util.HexRead;
@@ -61,7 +62,7 @@ public final class TestWriteAccessRecord {
 				+ "20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 20 "
 				+ HEX_SIXTYFOUR_SPACES);
 
-		TestcaseRecordInputStream.confirmRecordEncoding(WriteAccessRecord.sid, expectedEncoding, rec.serialize());
+		confirmRecordEncoding(WriteAccessRecord.sid, expectedEncoding, rec.serialize());
 	}
 
 	@Test
@@ -90,6 +91,6 @@ public final class TestWriteAccessRecord {
 				+                "20 20 20 20 20 20 20 20 20 20 20 "
 				+ HEX_SIXTYFOUR_SPACES);
 
-		TestcaseRecordInputStream.confirmRecordEncoding(WriteAccessRecord.sid, expectedEncoding, rec.serialize());
+		confirmRecordEncoding(WriteAccessRecord.sid, expectedEncoding, rec.serialize());
 	}
 }

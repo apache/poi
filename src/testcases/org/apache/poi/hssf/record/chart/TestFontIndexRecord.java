@@ -43,6 +43,7 @@ public final class TestFontIndexRecord {
         assertEquals( 6, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         FontIndexRecord record = new FontIndexRecord();

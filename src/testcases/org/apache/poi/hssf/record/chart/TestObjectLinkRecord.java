@@ -45,6 +45,7 @@ public final class TestObjectLinkRecord {
         assertEquals( 10, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         ObjectLinkRecord record = new ObjectLinkRecord();
@@ -52,7 +53,6 @@ public final class TestObjectLinkRecord {
         record.setAnchorId( (short)3 );
         record.setLink1( (short)0x00 );
         record.setLink2( (short)0x00 );
-
 
         byte [] recordBytes = record.serialize();
         confirmRecordEncoding(ObjectLinkRecord.sid, data, recordBytes);

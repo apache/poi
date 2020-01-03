@@ -63,6 +63,7 @@ public final class TestTickRecord {
         assertEquals( 34, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         TickRecord record = new TickRecord();

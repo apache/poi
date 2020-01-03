@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.Assert.assertEquals;
 
 import org.apache.poi.util.HexRead;
@@ -37,6 +38,6 @@ public final class TestNameCommentRecord {
 		assertEquals("name", ncr.getNameText());
 		assertEquals("comment", ncr.getCommentText());
 		final byte[] data2 = ncr.serialize();
-		TestcaseRecordInputStream.confirmRecordEncoding(NameCommentRecord.sid, data, data2);
+		confirmRecordEncoding(NameCommentRecord.sid, data, data2);
 	}
 }

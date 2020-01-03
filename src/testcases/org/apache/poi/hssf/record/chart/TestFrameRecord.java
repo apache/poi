@@ -48,6 +48,7 @@ public final class TestFrameRecord {
         assertEquals( 8, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         FrameRecord record = new FrameRecord();
@@ -55,7 +56,6 @@ public final class TestFrameRecord {
         record.setOptions( (short)2 );
         record.setAutoSize( false );
         record.setAutoPosition( true );
-
 
         byte [] recordBytes = record.serialize();
         confirmRecordEncoding(FrameRecord.sid, data, recordBytes);

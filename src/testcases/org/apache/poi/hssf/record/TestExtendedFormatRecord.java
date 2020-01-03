@@ -57,6 +57,7 @@ public final class TestExtendedFormatRecord {
 	}
 
 
+	@SuppressWarnings("squid:S2699")
 	@Test
 	public void testStore() {
 //    .fontindex       = 0
@@ -122,6 +123,7 @@ public final class TestExtendedFormatRecord {
 
 
 
+	@SuppressWarnings("squid:S2699")
 	@Test
 	public void testCloneOnto() {
 		ExtendedFormatRecord base = createEFR();

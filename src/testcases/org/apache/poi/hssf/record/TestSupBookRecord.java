@@ -26,6 +26,7 @@ import static org.apache.poi.hssf.record.SupBookRecord.CH_STARTUP_DIR;
 import static org.apache.poi.hssf.record.SupBookRecord.CH_UP_DIR;
 import static org.apache.poi.hssf.record.SupBookRecord.CH_VOLUME;
 import static org.apache.poi.hssf.record.SupBookRecord.PATH_SEPERATOR;
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
@@ -99,20 +100,22 @@ public final class TestSupBookRecord {
     /**
      * Tests that we can store the record
      */
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStoreIR() {
         SupBookRecord record = SupBookRecord.createInternalReferences((short)4);
 
-        TestcaseRecordInputStream.confirmRecordEncoding(0x01AE, dataIR, record.serialize());
+        confirmRecordEncoding(0x01AE, dataIR, record.serialize());
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStoreER() {
         String url = "testURL";
         String[] sheetNames = { "Sheet1", "Sheet2", };
         SupBookRecord record = SupBookRecord.createExternalReferences(url, sheetNames);
 
-        TestcaseRecordInputStream.confirmRecordEncoding(0x01AE, dataER, record.serialize());
+        confirmRecordEncoding(0x01AE, dataER, record.serialize());
     }
 
     @Test
@@ -120,7 +123,7 @@ public final class TestSupBookRecord {
         SupBookRecord record = SupBookRecord.createAddInFunctions();
         assertEquals(1, record.getNumberOfSheets());
         assertTrue(record.isAddInFunctions());
-        TestcaseRecordInputStream.confirmRecordEncoding(0x01AE, dataAIF, record.serialize());
+        confirmRecordEncoding(0x01AE, dataAIF, record.serialize());
     }
 
     @Test

@@ -48,6 +48,7 @@ public final class TestAreaRecord {
         assertEquals( 6, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         AreaRecord record = new AreaRecord();

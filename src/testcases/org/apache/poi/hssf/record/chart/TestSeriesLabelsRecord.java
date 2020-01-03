@@ -50,6 +50,7 @@ public final class TestSeriesLabelsRecord {
         assertEquals( 2+4, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         SeriesLabelsRecord record = new SeriesLabelsRecord();
@@ -59,7 +60,6 @@ public final class TestSeriesLabelsRecord {
         record.setSmoothedLine( false );
         record.setShowLabel( false );
         record.setShowBubbleSizes( false );
-
 
         byte [] recordBytes = record.serialize();
         confirmRecordEncoding(SeriesLabelsRecord.sid, data, recordBytes);

@@ -19,6 +19,7 @@
 package org.apache.poi.hssf.record;
 
 
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -141,6 +142,6 @@ public final class TestSubRecord {
 		ObjRecord or = new ObjRecord(in);
 		// make sure POI properly truncates the ObjRecord data
 		byte[] data2 = or.serialize();
-		TestcaseRecordInputStream.confirmRecordEncoding(ObjRecord.sid, data, data2);
+		confirmRecordEncoding(ObjRecord.sid, data, data2);
 	}
 }

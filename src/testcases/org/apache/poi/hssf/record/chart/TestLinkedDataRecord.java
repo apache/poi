@@ -175,6 +175,7 @@ recordid = 0x1051, size =8
         assertEquals( data.length + 4, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         LinkedDataRecord record = new LinkedDataRecord();

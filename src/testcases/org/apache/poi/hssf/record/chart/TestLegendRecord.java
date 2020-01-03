@@ -62,22 +62,17 @@ public final class TestLegendRecord {
 		assertEquals(24, record.getRecordSize());
 	}
 
+	@SuppressWarnings("squid:S2699")
 	@Test
 	public void testStore() {
 		LegendRecord record = new LegendRecord();
 
 		record.setXAxisUpperLeft(0xe76);
-
 		record.setYAxisUpperLeft(0x786);
-
 		record.setXSize(0x119);
-
 		record.setYSize(0x8b);
-
 		record.setType((byte) 0x3);
-
 		record.setSpacing((byte) 0x1);
-
 		record.setOptions((short) 0x1f);
 		record.setAutoPosition(true);
 		record.setAutoSeries(true);

@@ -72,6 +72,7 @@ public final class TestEmbeddedObjectRefSubRecord {
 		assertArrayEquals(ser, ser2);
 	}
 
+	@SuppressWarnings("squid:S2699")
 	@Test
 	public void testCameraTool_bug45912() {
 		/*
@@ -95,6 +96,7 @@ public final class TestEmbeddedObjectRefSubRecord {
 	/**
 	 * tests various examples of OLE controls
 	 */
+	@SuppressWarnings("squid:S2699")
 	@Test
 	public void testVarious() {
 		String[] rawData = {
@@ -125,9 +127,10 @@ public final class TestEmbeddedObjectRefSubRecord {
 
 		EmbeddedObjectRefSubRecord rec = new EmbeddedObjectRefSubRecord(in, data.length);
 		byte[] ser2 = rec.serialize();
-		TestcaseRecordInputStream.confirmRecordEncoding("Test record " + i, EORSR_SID, data, ser2);
+		confirmRecordEncoding("Test record " + i, EORSR_SID, data, ser2);
 	}
 
+	@SuppressWarnings("squid:S2699")
 	@Test
 	public void testVisioDrawing_bug46199() {
 		/*
@@ -146,6 +149,6 @@ public final class TestEmbeddedObjectRefSubRecord {
 		// bug 22860 - Not enough data (3) to read requested (4) bytes
 		EmbeddedObjectRefSubRecord rec  = new EmbeddedObjectRefSubRecord(in, data46199.length);
 		byte[] ser2 = rec.serialize();
-		TestcaseRecordInputStream.confirmRecordEncoding(EORSR_SID, data46199, ser2);
+		confirmRecordEncoding(EORSR_SID, data46199, ser2);
 	}
 }

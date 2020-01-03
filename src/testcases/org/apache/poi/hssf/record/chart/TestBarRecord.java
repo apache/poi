@@ -51,6 +51,7 @@ public final class TestBarRecord {
         assertEquals( 10, record.getRecordSize() );
     }
 
+    @SuppressWarnings("squid:S2699")
     @Test
     public void testStore() {
         BarRecord record = new BarRecord();

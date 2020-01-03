@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -57,7 +58,7 @@ public final class TestExternalNameRecord {
 		assertEquals("FDS", enr.getText());
 
 		// bug 44695
-		TestcaseRecordInputStream.confirmRecordEncoding(0x0023, dataFDS, enr.serialize());
+		confirmRecordEncoding(0x0023, dataFDS, enr.serialize());
 	}
 
 	@Test
@@ -81,7 +82,7 @@ public final class TestExternalNameRecord {
 		assertFalse(enr.isPicureLink());
 		assertTrue(enr.isStdDocumentNameIdentifier());
 
-		TestcaseRecordInputStream.confirmRecordEncoding(0x0023, dataAutoDocName, enr.serialize());
+		confirmRecordEncoding(0x0023, dataAutoDocName, enr.serialize());
 	}
 
 	@Test
@@ -96,7 +97,7 @@ public final class TestExternalNameRecord {
 		assertFalse(enr.isPicureLink());
 		assertFalse(enr.isStdDocumentNameIdentifier());
 
-		TestcaseRecordInputStream.confirmRecordEncoding(0x0023, dataPlainName, enr.serialize());
+		confirmRecordEncoding(0x0023, dataPlainName, enr.serialize());
 	}
 
 	@Test
@@ -121,7 +122,7 @@ public final class TestExternalNameRecord {
 		ExternalNameRecord enr = createSimpleENR(dataDDE);
 		assertEquals("010672AT0 MUNI,[RTG_MOODY_UNDERLYING,RTG_SP_UNDERLYING]", enr.getText());
 
-		TestcaseRecordInputStream.confirmRecordEncoding(0x0023, dataDDE, enr.serialize());
+		confirmRecordEncoding(0x0023, dataDDE, enr.serialize());
 	}
 
 	@Test

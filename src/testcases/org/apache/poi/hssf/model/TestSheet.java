@@ -202,15 +202,15 @@ public final class TestSheet {
 		assertEquals("Should be no more merged regions", 0, sheet.getNumMergedRegions());
 	}
 
-    @Test
-	public void testGetMergedRegionAt() {
-		//TODO
-	}
+    // @Test
+	// public void testGetMergedRegionAt() {
+	// TODO
+	// }
 
-    @Test
-	public void testGetNumMergedRegions() {
-		//TODO
-	}
+	// @Test
+	// public void testGetNumMergedRegions() {
+	// TODO
+	// }
 
 	/**
 	 * Makes sure all rows registered for this sheet are aggregated, they were being skipped
