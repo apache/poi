@@ -767,7 +767,6 @@ public class POIXMLDocumentPart {
         if (coreRel != null) {
             PackagePart pp = pkg.getPart(coreRel);
             if (pp == null) {
-                closeQuietly(pp);
                 throw new POIXMLException("OOXML file structure broken/invalid - core document '" + coreRel.getTargetURI() + "' not found.");
             }
             return pp;
@@ -781,19 +780,4 @@ public class POIXMLDocumentPart {
 
         throw new POIXMLException("OOXML file structure broken/invalid - no core document found!");
     }
-
-    private static void closeQuietly(final PackagePart closeable) {
-        // no need to log a NullPointerException here
-        if(closeable == null) {
-            return;
-        }
-
-        try {
-            closeable.close();
-        } catch ( Exception exc ) {
-            logger.log( POILogger.ERROR, "Unable to close resource: " + exc,
-                    exc );
-        }
-    }
-
 }
