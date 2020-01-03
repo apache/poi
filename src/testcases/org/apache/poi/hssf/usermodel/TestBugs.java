@@ -2914,43 +2914,40 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void test46515() throws IOException {
-        Workbook wb = HSSFTestDataSamples.openSampleWorkbook("46515.xls");
+        try (Workbook wb = HSSFTestDataSamples.openSampleWorkbook("46515.xls")) {
 
-        // Get structure from webservice
-        String urlString = "http://poi.apache.org/components/spreadsheet/images/calendar.jpg";
-        URL structURL = new URL(urlString);
-        BufferedImage bimage;
-        try {
-            bimage = ImageIO.read(structURL);
-        } catch (IOException e) {
-            Assume.assumeNoException("Downloading a jpg from poi.apache.org should work", e);
-            return;
-        } finally {
-            wb.close();
-        }
+            // Get structure from webservice
+            String urlString = "http://poi.apache.org/components/spreadsheet/images/calendar.jpg";
+            URL structURL = new URL(urlString);
+            BufferedImage bimage;
+            try {
+                bimage = ImageIO.read(structURL);
+            } catch (IOException e) {
+                Assume.assumeNoException("Downloading a jpg from poi.apache.org should work", e);
+                return;
+            }
 
-        // Convert BufferedImage to byte[]
-        ByteArrayOutputStream imageBAOS = new ByteArrayOutputStream();
-        ImageIO.write(bimage, "jpeg", imageBAOS);
-        imageBAOS.flush();
-        byte[] imageBytes = imageBAOS.toByteArray();
-        imageBAOS.close();
+            // Convert BufferedImage to byte[]
+            ByteArrayOutputStream imageBAOS = new ByteArrayOutputStream();
+            ImageIO.write(bimage, "jpeg", imageBAOS);
+            imageBAOS.flush();
+            byte[] imageBytes = imageBAOS.toByteArray();
+            imageBAOS.close();
 
-        // Pop structure into Structure HSSFSheet
-        int pict = wb.addPicture(imageBytes, HSSFWorkbook.PICTURE_TYPE_JPEG);
-        Sheet sheet = wb.getSheet("Structure");
-        assertNotNull("Did not find sheet", sheet);
-        HSSFPatriarch patriarch = (HSSFPatriarch) sheet.createDrawingPatriarch();
-        HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 0, 0, (short) 1, 1, (short) 10, 22);
-        anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
-        patriarch.createPicture(anchor, pict);
+            // Pop structure into Structure HSSFSheet
+            int pict = wb.addPicture(imageBytes, HSSFWorkbook.PICTURE_TYPE_JPEG);
+            Sheet sheet = wb.getSheet("Structure");
+            assertNotNull("Did not find sheet", sheet);
+            HSSFPatriarch patriarch = (HSSFPatriarch) sheet.createDrawingPatriarch();
+            HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 0, 0, (short) 1, 1, (short) 10, 22);
+            anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);
+            patriarch.createPicture(anchor, pict);
 
-        // Write out destination file
+            // Write out destination file
 //        FileOutputStream fileOut = new FileOutputStream("/tmp/46515.xls");
 //        wb.write(fileOut);
 //        fileOut.close();
-
-        wb.close();
+        }
     }
 
     @Test

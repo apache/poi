@@ -27,6 +27,7 @@ import java.nio.file.Path;
 import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
@@ -233,11 +234,12 @@ public final class TestSharedStringsTable {
 
         Path path = XSSFTestDataSamples.getSampleFile("48936-strings.txt").toPath();
 
-        List<String> lst = Files
-            .lines(path, StandardCharsets.UTF_8)
+        Stream<String> lines = Files.lines(path, StandardCharsets.UTF_8);
+        List<String> lst = lines
             .map(String::trim)
             .filter(((Predicate<String>)String::isEmpty).negate())
             .collect(Collectors.toList());
+        lines.close();
 
         for (String str : lst) {
             s.createRow(i++).createCell(0).setCellValue(str);

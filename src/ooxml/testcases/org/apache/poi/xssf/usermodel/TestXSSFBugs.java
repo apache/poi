@@ -3455,4 +3455,12 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             }*/
         }
     }
+
+    @Test(expected = POIXMLException.class)
+    public void test64045() throws IOException, InvalidFormatException {
+        File file = XSSFTestDataSamples.getSampleFile("xlsx-corrupted.xlsx");
+        try (XSSFWorkbook ignored = new XSSFWorkbook(file)) {
+            fail("Should catch exception as the file is corrupted");
+        }
+    }
 }

@@ -317,6 +317,7 @@ public class TestAllFiles {
         "spreadsheet/poc-shared-strings.xlsx",  // contains shared-string-entity-expansion
         "document/61612a.docx",
         "document/word2.doc",
+        "spreadsheet/xlsx-corrupted.xlsx",
 
         // old Excel files, which we only support simple text extraction of
         "spreadsheet/testEXCEL_2.xls",

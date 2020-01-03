@@ -113,17 +113,17 @@ public class TestXSSFBEventBasedExcelExtractor {
             extractor.setIncludeCellComments(true);
             String[] rows = extractor.getText().split("[\r\n]+");
             assertEquals(283, rows.length);
-            BufferedReader reader = Files.newBufferedReader(XSSFTestDataSamples.getSampleFile("62815.xlsb.txt").toPath(),
-                    StandardCharsets.UTF_8);
-            String line = reader.readLine();
-            for (String row : rows) {
-                assertEquals(line, row);
-                line = reader.readLine();
-                while (line != null && line.startsWith("#")) {
+            try (BufferedReader reader = Files.newBufferedReader(XSSFTestDataSamples.getSampleFile("62815.xlsb.txt").toPath(),
+                    StandardCharsets.UTF_8)) {
+                String line = reader.readLine();
+                for (String row : rows) {
+                    assertEquals(line, row);
                     line = reader.readLine();
+                    while (line != null && line.startsWith("#")) {
+                        line = reader.readLine();
+                    }
                 }
             }
         }
     }
-
 }

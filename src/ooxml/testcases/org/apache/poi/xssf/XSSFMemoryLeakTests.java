@@ -17,6 +17,9 @@
 
 package org.apache.poi.xssf;
 
+import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.util.MemoryLeakVerifier;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -27,12 +30,14 @@ import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.fail;
 
 /**
  * A test which uses {@link MemoryLeakVerifier} to ensure that certain
@@ -140,5 +145,25 @@ public class XSSFMemoryLeakTests {
         sheetToCheck.removeRow(row);
 
         wb1.close();
+    }
+
+    @Test(expected = POIXMLException.class)
+    public void testFileLeak() throws IOException, InvalidFormatException {
+        File file = XSSFTestDataSamples.getSampleFile("xlsx-corrupted.xlsx");
+        verifier.addObject(file);
+        try (XSSFWorkbook ignored = new XSSFWorkbook(file)) {
+            fail("Should catch exception as the file is corrupted");
+        }
+    }
+
+    @Test(expected = POIXMLException.class)
+    public void testFileLeak2() throws IOException, InvalidFormatException {
+        File file = XSSFTestDataSamples.getSampleFile("xlsx-corrupted.xlsx");
+        verifier.addObject(file);
+        try (OPCPackage pkg = OPCPackage.open(file)) {
+            try (XSSFWorkbook ignored = new XSSFWorkbook(pkg)) {
+                fail("Should catch exception as the file is corrupted");
+            }
+        }
     }
 }

@@ -43,8 +43,9 @@ class EMFHandler extends MFProxy {
 
     @Override
     public void parse(File file) throws IOException {
-        // stream needs to be kept open
-        parse(file.toURI().toURL().openStream());
+        // stream needs to be kept open until the instance is closed
+        is = file.toURI().toURL().openStream();
+        parse(is);
     }
 
     @Override
@@ -66,7 +67,6 @@ class EMFHandler extends MFProxy {
 //                }
             }
         }
-
     }
 
     protected String getContentType() {
