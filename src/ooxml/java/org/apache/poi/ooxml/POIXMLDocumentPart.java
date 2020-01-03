@@ -759,7 +759,7 @@ public class POIXMLDocumentPart {
     /**
      * Retrieves the core document part
      *
-     * @since POI 3.14-Beta1
+     * Since POI 4.1.2 - pkg is closed if this method throws an exception
      */
     private static PackagePart getPartFromOPCPackage(OPCPackage pkg, String coreDocumentRel) {
         PackageRelationship coreRel = pkg.getRelationshipsByType(coreDocumentRel).getRelationship(0);
@@ -767,6 +767,7 @@ public class POIXMLDocumentPart {
         if (coreRel != null) {
             PackagePart pp = pkg.getPart(coreRel);
             if (pp == null) {
+                IOUtils.closeQuietly(pkg);
                 throw new POIXMLException("OOXML file structure broken/invalid - core document '" + coreRel.getTargetURI() + "' not found.");
             }
             return pp;
@@ -778,6 +779,7 @@ public class POIXMLDocumentPart {
             throw new POIXMLException("Strict OOXML isn't currently supported, please see bug #57699");
         }
 
+        IOUtils.closeQuietly(pkg);
         throw new POIXMLException("OOXML file structure broken/invalid - no core document found!");
     }
 }
