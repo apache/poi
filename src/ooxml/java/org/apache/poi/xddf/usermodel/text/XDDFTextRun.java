@@ -376,8 +376,8 @@ public class XDDFTextRun {
      *            <dt>Minimum inclusive =</dt>
      *            <dd>1</dd>
      *            <dt>Maximum inclusive =</dt>
-     *            <dd>400</dd></dt>
-     *
+     *            <dd>400</dd>
+     *            </dl>
      */
     public void setFontSize(Double size) {
         getOrCreateProperties().setFontSize(size);
@@ -402,7 +402,8 @@ public class XDDFTextRun {
      *            <dt>Minimum inclusive =</dt>
      *            <dd>0</dd>
      *            <dt>Maximum inclusive =</dt>
-     *            <dd>4000</dd></dt>
+     *            <dd>4000</dd>
+     *            </dl>
      */
     public void setCharacterKerning(Double kerning) {
         getOrCreateProperties().setCharacterKerning(kerning);
@@ -435,7 +436,8 @@ public class XDDFTextRun {
      *            <dt>Minimum inclusive =</dt>
      *            <dd>-4000</dd>
      *            <dt>Maximum inclusive =</dt>
-     *            <dd>4000</dd></dt>
+     *            <dd>4000</dd>
+     *            </dl>
      */
     public void setCharacterSpacing(Double spacing) {
         getOrCreateProperties().setCharacterSpacing(spacing);

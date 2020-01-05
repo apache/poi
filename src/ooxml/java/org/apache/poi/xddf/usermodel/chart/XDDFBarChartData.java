@@ -143,10 +143,13 @@ public class XDDFBarChartData extends XDDFChartData {
     }
 
     /**
-     * Minimum inclusive: -100
-     * <br/>
-     * Maximum inclusive: 100
      * @param overlap
+     *            <dl>
+     *            <dt>Minimum inclusive =</dt>
+     *            <dd>-100</dd>
+     *            <dt>Maximum inclusive =</dt>
+     *            <dd>100</dd>
+     *            </dl>
      */
     public void setOverlap(Byte overlap) {
         if (overlap == null) {
