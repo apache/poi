@@ -72,7 +72,9 @@ public class TestXSLFTable {
             assertEquals(tab.getColumnWidth(1), tab.getColumnWidth(0), 0.00001);
             assertNotNull(tab.getCell(0, 0).getTextBody());
             tab.addColumn();
-            tab.getCell(0, data[0].length + 1);
+            XSLFTableCell cell = tab.getCell(0, data[0].length + 1);
+            assertEquals(1, cell.getTextBody().getParagraphs().size());
+            assertEquals("", cell.getTextBody().getParagraph(0).getText());
             assertEquals(tab.getColumnWidth(tab.getNumberOfColumns() - 2), tab.getColumnWidth(tab.getNumberOfColumns() - 1), 0.00001);
             assertNotNull(tab.getCell(0, tab.getNumberOfColumns() - 1).getTextBody());
             tab.removeColumn(0);
