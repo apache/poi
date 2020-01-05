@@ -189,6 +189,21 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     }
 
     /**
+     * Clear all properties, as if a new instance had just been created.
+     * @since POI 4.1.2
+     */
+    public void clear() {
+        axes.clear();
+        seriesCount = 0;
+        if (workbook != null) {
+            workbook.removeSheetAt(0);
+            workbook.createSheet();
+        }
+        chart.set(CTChart.Factory.newInstance());
+        chart.addNewPlotArea();
+    }
+
+    /**
      * @return true if only visible cells will be present on the chart, false
      *         otherwise
      */
@@ -475,6 +490,78 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
 
         seriesCount = series.size();
         return series;
+    }
+
+    /**
+     * Clear all chart series, as if a new instance had just been created.
+     * @since POI 4.1.2
+     */
+    public void clearChartSeries() {
+        CTPlotArea plotArea = getCTPlotArea();
+
+        for (int i = plotArea.sizeOfAreaChartArray(); i > 0; i--) {
+            plotArea.removeAreaChart(i - 1);
+        }
+
+        for (int i = plotArea.sizeOfArea3DChartArray(); i > 0; i--) {
+            plotArea.removeArea3DChart(i - 1);
+        }
+
+        for (int i = plotArea.sizeOfBarChartArray(); i > 0; i--) {
+            plotArea.removeBarChart(i - 1);
+        }
+
+        for (int i = plotArea.sizeOfBar3DChartArray(); i > 0; i--) {
+            plotArea.removeBar3DChart(i - 1);
+        }
+
+        for (int i = plotArea.sizeOfBubbleChartArray(); i > 0; i--) {
+            plotArea.removeBubbleChart(i - 1);
+        }
+
+        for (int i = plotArea.sizeOfDoughnutChartArray(); i > 0; i--) {
+            plotArea.removeDoughnutChart(i - 1);
+        }
+
+        for (int i = plotArea.sizeOfLineChartArray(); i > 0; i--) {
+            plotArea.removeLineChart(i - 1);
+        }
+
+        for (int i = plotArea.sizeOfLine3DChartArray(); i > 0; i--) {
+            plotArea.removeLine3DChart(i - 1);
+        }
+
+        for (int i = plotArea.sizeOfOfPieChartArray(); i > 0; i--) {
+            plotArea.removeOfPieChart(i - 1);
+        }
+
+        for (int i = plotArea.sizeOfPieChartArray(); i > 0; i--) {
+            plotArea.removePieChart(i - 1);
+        }
+
+        for (int i = plotArea.sizeOfPie3DChartArray(); i > 0; i--) {
+            plotArea.removePie3DChart(i - 1);
+        }
+
+        for (int i = plotArea.sizeOfRadarChartArray(); i > 0; i--) {
+            plotArea.removeRadarChart(i - 1);
+        }
+
+        for (int i = plotArea.sizeOfScatterChartArray(); i > 0; i--) {
+            plotArea.removeScatterChart(i - 1);
+        }
+
+        for (int i = plotArea.sizeOfStockChartArray(); i > 0; i--) {
+            plotArea.removeStockChart(i - 1);
+        }
+
+        for (int i = plotArea.sizeOfSurfaceChartArray(); i > 0; i--) {
+            plotArea.removeSurfaceChart(i - 1);
+        }
+
+        for (int i = plotArea.sizeOfSurface3DChartArray(); i > 0; i--) {
+            plotArea.removeSurface3DChart(i - 1);
+        }
     }
 
     private Map<Long, XDDFChartAxis> getCategoryAxes() {
