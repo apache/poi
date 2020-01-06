@@ -158,6 +158,15 @@ public class TestNecessaryOOXMLClasses {
         Assert.assertNotNull(ctOverlap);
         CTFirstSliceAng ctFirstSliceAng = CTFirstSliceAng.Factory.newInstance();
         Assert.assertNotNull(ctFirstSliceAng);
+
+        STErrBarType.Enum e9 = STErrBarType.Enum.forString("both");
+        Assert.assertNotNull(e9);
+        STErrValType.Enum e10 = STErrValType.Enum.forString("percentage");
+        Assert.assertNotNull(e10);
+        STErrDir.Enum e11 = STErrDir.Enum.forString("x");
+        Assert.assertNotNull(e11);
+        CTErrBars bars = CTErrBars.Factory.newInstance();
+        Assert.assertNotNull(bars);
     }
 
 }
