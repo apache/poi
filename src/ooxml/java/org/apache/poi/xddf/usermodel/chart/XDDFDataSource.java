@@ -20,6 +20,9 @@
 package org.apache.poi.xddf.usermodel.chart;
 
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.Internal;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrData;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrVal;
 
 @Beta
 public interface XDDFDataSource<T> {
@@ -46,4 +49,34 @@ public interface XDDFDataSource<T> {
     String getDataRangeReference();
 
     String getFormula();
+
+    /**
+     * @since POI 4.1.2
+     */
+    @Internal
+    default void fillStringCache(CTStrData cache) {
+        cache.setPtArray(null); // unset old values
+        final int numOfPoints = getPointCount();
+        int effectiveNumOfPoints = 0;
+        for (int i = 0; i < numOfPoints; ++i) {
+            Object value = getPointAt(i);
+            if (value != null) {
+                CTStrVal ctStrVal = cache.addNewPt();
+                ctStrVal.setIdx(i);
+                ctStrVal.setV(value.toString());
+                effectiveNumOfPoints++;
+            }
+        }
+        if (effectiveNumOfPoints == 0) {
+            if (cache.isSetPtCount()) {
+                cache.unsetPtCount();
+            }
+        } else {
+            if (cache.isSetPtCount()) {
+                cache.getPtCount().setVal(numOfPoints);
+            } else {
+                cache.addNewPtCount().setVal(numOfPoints);
+            }
+        }
+    }
 }

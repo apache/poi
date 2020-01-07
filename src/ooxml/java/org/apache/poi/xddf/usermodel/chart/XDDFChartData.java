@@ -33,11 +33,9 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTAxDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumRef;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumVal;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTSerTx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrData;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrRef;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrVal;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTUnsignedInt;
 
 /**
@@ -211,16 +209,15 @@ public abstract class XDDFChartData {
         }
 
         public void plot() {
-            int numOfPoints = categoryData.getPointCount();
             if (categoryData.isNumeric()) {
                 CTNumData cache = retrieveNumCache(getAxDS(), categoryData);
-                fillNumCache(cache, numOfPoints, (XDDFNumericalDataSource<?>) categoryData);
+                ((XDDFNumericalDataSource<?>) categoryData).fillNumericalCache(cache);
             } else {
                 CTStrData cache = retrieveStrCache(getAxDS(), categoryData);
-                fillStringCache(cache, numOfPoints, categoryData);
+                categoryData.fillStringCache(cache);
             }
             CTNumData cache = retrieveNumCache(getNumDS(), valuesData);
-            fillNumCache(cache, numOfPoints, valuesData);
+            valuesData.fillNumericalCache(cache);
         }
 
         /**
@@ -342,62 +339,6 @@ public abstract class XDDFChartData {
                 }
             }
             return numCache;
-        }
-
-        private void fillStringCache(CTStrData cache, int numOfPoints, XDDFDataSource<?> data) {
-            cache.setPtArray(null); // unset old values
-            int effectiveNumOfPoints = 0;
-            for (int i = 0; i < numOfPoints; ++i) {
-                Object value = data.getPointAt(i);
-                if (value != null) {
-                    CTStrVal ctStrVal = cache.addNewPt();
-                    ctStrVal.setIdx(i);
-                    ctStrVal.setV(value.toString());
-                    effectiveNumOfPoints++;
-                }
-            }
-            if (effectiveNumOfPoints == 0) {
-                if (cache.isSetPtCount()) {
-                    cache.unsetPtCount();
-                }
-            } else {
-                if (cache.isSetPtCount()) {
-                    cache.getPtCount().setVal(numOfPoints);
-                } else {
-                    cache.addNewPtCount().setVal(numOfPoints);
-                }
-            }
-        }
-
-        private void fillNumCache(CTNumData cache, int numOfPoints, XDDFNumericalDataSource<?> data) {
-            String formatCode = data.getFormatCode();
-            if (formatCode == null) {
-                if (cache.isSetFormatCode()) {
-                    cache.unsetFormatCode();
-                }
-            } else {
-                cache.setFormatCode(formatCode);
-            }
-            cache.setPtArray(null); // unset old values
-            int effectiveNumOfPoints = 0;
-            for (int i = 0; i < numOfPoints; ++i) {
-                Object value = data.getPointAt(i);
-                if (value != null) {
-                    CTNumVal ctNumVal = cache.addNewPt();
-                    ctNumVal.setIdx(i);
-                    ctNumVal.setV(value.toString());
-                    effectiveNumOfPoints++;
-                }
-            }
-            if (effectiveNumOfPoints == 0) {
-                cache.unsetPtCount();
-            } else {
-                if (cache.isSetPtCount()) {
-                    cache.getPtCount().setVal(numOfPoints);
-                } else {
-                    cache.addNewPtCount().setVal(numOfPoints);
-                }
-            }
         }
     }
 }

@@ -22,6 +22,9 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTErrBars;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumData;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumDataSource;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumRef;
 
 /**
  * @since POI 4.1.2
@@ -166,5 +169,61 @@ public class XDDFErrorBars {
         }
     }
 
-    // TODO handle minus and plus as numerical data sources
+    public XDDFNumericalDataSource<Double> getMinus() {
+        if (bars.isSetMinus()) {
+            return XDDFDataSourcesFactory.fromDataSource(bars.getMinus());
+        } else {
+            return null;
+        }
+    }
+
+    public void setMinus(XDDFNumericalDataSource<Double> ds) {
+        if (ds == null) {
+            if (bars.isSetMinus()) {
+                bars.unsetMinus();
+            }
+        } else {
+            if (bars.isSetMinus()) {
+                ds.fillNumericalCache(retrieveCache(bars.getMinus(), ds.getDataRangeReference()));
+            } else {
+                CTNumDataSource ctDS = bars.addNewMinus();
+                ctDS.addNewNumLit();
+                ds.fillNumericalCache(retrieveCache(ctDS, ds.getDataRangeReference()));
+            }
+        }
+    }
+
+    public XDDFNumericalDataSource<Double> getPlus() {
+        if (bars.isSetPlus()) {
+            return XDDFDataSourcesFactory.fromDataSource(bars.getPlus());
+        } else {
+            return null;
+        }
+    }
+
+    public void setPlus(XDDFNumericalDataSource<Double> ds) {
+        if (ds == null) {
+            if (bars.isSetPlus()) {
+                bars.unsetPlus();
+            }
+        } else {
+            if (bars.isSetPlus()) {
+                ds.fillNumericalCache(retrieveCache(bars.getPlus(), ds.getDataRangeReference()));
+            } else {
+                CTNumDataSource ctDS = bars.addNewPlus();
+                ctDS.addNewNumLit();
+                ds.fillNumericalCache(retrieveCache(ctDS, ds.getDataRangeReference()));
+            }
+        }
+    }
+
+    private CTNumData retrieveCache(CTNumDataSource ds, String dataRangeReference) {
+        if (ds.isSetNumRef()) {
+            CTNumRef numRef = ds.getNumRef();
+            numRef.setF(dataRangeReference);
+            return numRef.getNumCache();
+        } else {
+            return ds.getNumLit();
+        }
+    }
 }
