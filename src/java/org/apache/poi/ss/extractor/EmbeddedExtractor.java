@@ -104,7 +104,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
         extractAll(patriarch, embeddings);
         return embeddings;
     }
-    
+
     protected void extractAll(ShapeContainer<?> parent, List<EmbeddedData> embeddings) throws IOException {
         for (Shape shape : parent) {
             EmbeddedData data = null;
@@ -124,7 +124,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
             } else if (shape instanceof ShapeContainer) {
                 extractAll((ShapeContainer<?>)shape, embeddings);
             }
-            
+
             if (data == null) {
                 continue;
             }
@@ -132,7 +132,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
             data.setShape(shape);
             String filename = data.getFilename();
             String extension = (filename == null || filename.lastIndexOf('.') == -1) ? ".bin" : filename.substring(filename.lastIndexOf('.'));
-            
+
             // try to find an alternative name
             if (filename == null || filename.isEmpty() || filename.startsWith("MBD") || filename.startsWith("Root Entry")) {
                 filename = shape.getShapeName();
@@ -146,11 +146,11 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
             }
             filename = filename.trim();
             data.setFilename(filename);
-            
+
             embeddings.add(data);
         }
     }
-    
+
 
     public boolean canExtract(DirectoryNode source) {
         return false;
@@ -175,7 +175,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
     protected EmbeddedData extract(Picture source) throws IOException {
         return null;
     }
-    
+
     public static class Ole10Extractor extends EmbeddedExtractor {
         @Override
         public boolean canExtract(DirectoryNode dn) {
@@ -196,11 +196,10 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
     }
 
     static class PdfExtractor extends EmbeddedExtractor {
-        static ClassID PdfClassID = new ClassID("{B801CA65-A1FC-11D0-85AD-444553540000}");
         @Override
         public boolean canExtract(DirectoryNode dn) {
             ClassID clsId = dn.getStorageClsid();
-            return (PdfClassID.equals(clsId) || dn.hasEntry("CONTENTS"));
+            return (ClassIDPredefined.PDF.equals(clsId) || dn.hasEntry("CONTENTS"));
         }
 
         @Override
@@ -211,7 +210,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
                 return new EmbeddedData(dn.getName() + ".pdf", bos.toByteArray(), CONTENT_TYPE_PDF);
             }
         }
-        
+
         @Override
         public boolean canExtract(Picture source) {
             PictureData pd = source.getPictureData();
@@ -239,12 +238,12 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
             if (idxStart == -1) {
                 return null;
             }
-            
+
             int idxEnd = indexOf(pictureBytes, idxStart, "%%EOF".getBytes(LocaleUtil.CHARSET_1252));
             if (idxEnd == -1) {
                 return null;
             }
-            
+
             int pictureBytesLen = idxEnd-idxStart+6;
             byte[] pdfBytes = IOUtils.safelyAllocate(pictureBytesLen, MAX_RECORD_LENGTH);
             System.arraycopy(pictureBytes, idxStart, pdfBytes, 0, pictureBytesLen);
@@ -254,7 +253,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
             }
             return new EmbeddedData(filename, pdfBytes, CONTENT_TYPE_PDF);
         }
-        
+
 
     }
 
@@ -271,12 +270,12 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
 
             String contentType = null;
             String ext = null;
-            
+
             if (clsId != null) {
                 contentType = clsId.getContentType();
                 ext = clsId.getFileExtension();
             }
-            
+
             if (contentType == null || ext == null) {
                 contentType = "application/zip";
                 ext = ".zip";
@@ -285,7 +284,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
             DocumentInputStream dis = dn.createDocumentInputStream("package");
             byte[] data = IOUtils.toByteArray(dis);
             dis.close();
-            
+
             return new EmbeddedData(dn.getName()+ext, data, contentType);
         }
     }
@@ -295,7 +294,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
         public boolean canExtract(DirectoryNode dn) {
             return canExtractExcel(dn) || canExtractWord(dn);
         }
-        
+
         protected boolean canExtractExcel(DirectoryNode dn) {
             ClassIDPredefined clsId = ClassIDPredefined.lookup(dn.getStorageClsid());
             return (ClassIDPredefined.EXCEL_V7 == clsId
@@ -309,7 +308,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
                 || ClassIDPredefined.WORD_V8 == clsId
                 || dn.hasEntry("WordDocument"));
         }
-        
+
         @Override
         public EmbeddedData extract(DirectoryNode dn) throws IOException {
             EmbeddedData ed = super.extract(dn);
@@ -320,7 +319,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
                 ed.setFilename(dn.getName() + ".doc");
                 ed.setContentType(CONTENT_TYPE_DOC);
             }
-            
+
             return ed;
         }
     }
@@ -338,7 +337,7 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
             return ed;
         }
     }
-    
+
     protected static void copyNodes(DirectoryNode src, DirectoryNode dest) throws IOException {
         for (Entry e : src) {
             if (e instanceof DirectoryNode) {
@@ -353,8 +352,8 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
             }
         }
     }
-    
-    
+
+
 
     /**
      * Knuth-Morris-Pratt Algorithm for Pattern Matching
@@ -401,5 +400,5 @@ public class EmbeddedExtractor implements Iterable<EmbeddedExtractor> {
         return failure;
     }
 
-    
+
 }

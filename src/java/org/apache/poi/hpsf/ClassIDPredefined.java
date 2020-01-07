@@ -92,7 +92,13 @@ public enum ClassIDPredefined {
     /** URL Moniker **/
     URL_MONIKER          ("{79EAC9E0-BAF9-11CE-8C82-00AA004BA90B}", null, null),
     /** File Moniker **/
-    FILE_MONIKER         ("{00000303-0000-0000-C000-000000000046}", null, null)
+    FILE_MONIKER         ("{00000303-0000-0000-C000-000000000046}", null, null),
+    /** Document summary information first property section **/
+    DOC_SUMMARY          ("{D5CDD502-2E9C-101B-9397-08002B2CF9AE}", null, null),
+    /** Document summary information user defined properties section **/
+    USER_PROPERTIES      ("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}", null, null),
+    /** Summary information property section **/
+    SUMMARY_PROPERTIES   ("{F29F85E0-4FF9-1068-AB91-08002B27B3D9}", null, null);
     ;
 
 

@@ -17,9 +17,11 @@
 
 package org.apache.poi.hpsf;
 
+import static org.apache.poi.hpsf.ClassIDPredefined.DOC_SUMMARY;
+import static org.apache.poi.hpsf.ClassIDPredefined.USER_PROPERTIES;
+
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +34,7 @@ import org.apache.poi.hpsf.wellknown.PropertyIDMap;
  *
  * @see SummaryInformation
  */
+@SuppressWarnings("unused")
 public class DocumentSummaryInformation extends PropertySet {
 
     /**
@@ -44,15 +47,10 @@ public class DocumentSummaryInformation extends PropertySet {
     /**
      * The DocumentSummaryInformation's first and second sections' format ID.
      */
-    private static final ClassID DOC_SUMMARY_INFORMATION =
-        new ClassID("{D5CDD502-2E9C-101B-9397-08002B2CF9AE}");    
-    private static final ClassID USER_DEFINED_PROPERTIES =
-        new ClassID("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}");
-    
     public static final ClassID[] FORMAT_ID = {
-        DOC_SUMMARY_INFORMATION, USER_DEFINED_PROPERTIES
+        DOC_SUMMARY.getClassID(), USER_PROPERTIES.getClassID()
     };
-    
+
     @Override
     public PropertyIDMap getPropertySetIDMap() {
     	return PropertyIDMap.getDocumentSummaryInformationProperties();
@@ -63,10 +61,10 @@ public class DocumentSummaryInformation extends PropertySet {
      * Creates an empty {@link DocumentSummaryInformation}.
      */
     public DocumentSummaryInformation() {
-        getFirstSection().setFormatID(DOC_SUMMARY_INFORMATION);
+        getFirstSection().setFormatID(DOC_SUMMARY.getClassID());
     }
 
-    
+
     /**
      * Creates a {@link DocumentSummaryInformation} from a given
      * {@link PropertySet}.
@@ -97,20 +95,16 @@ public class DocumentSummaryInformation extends PropertySet {
      *
      * @param stream Holds the data making out the property set
      * stream.
-     * @throws MarkUnsupportedException
-     *    if the stream does not support the {@link InputStream#markSupported} method.
      * @throws IOException
      *    if the {@link InputStream} cannot be accessed as needed.
      * @exception NoPropertySetStreamException
      *    if the input stream does not contain a property set.
-     * @exception UnsupportedEncodingException
-     *    if a character encoding is not supported.
      */
     public DocumentSummaryInformation(final InputStream stream)
-    throws NoPropertySetStreamException, MarkUnsupportedException, IOException, UnsupportedEncodingException {
+    throws NoPropertySetStreamException, IOException {
         super(stream);
     }
-    
+
     /**
      * Returns the category (or {@code null}).
      *
@@ -531,10 +525,10 @@ public class DocumentSummaryInformation extends PropertySet {
     public void removeLinksDirty() {
         remove1stProperty(PropertyIDMap.PID_LINKSDIRTY);
     }
-    
-    
+
+
     /**
-     * Returns the character count including whitespace, or 0 if the 
+     * Returns the character count including whitespace, or 0 if the
      *  {@link DocumentSummaryInformation} does not contain this char count.
      * <p>This is the whitespace-including version of {@link SummaryInformation#getCharCount()}
      *
@@ -546,42 +540,42 @@ public class DocumentSummaryInformation extends PropertySet {
 
     /**
      * Sets the character count including whitespace
-     * 
+     *
      * @param count The character count to set.
      */
     public void setCharCountWithSpaces(int count) {
         set1stProperty(PropertyIDMap.PID_CCHWITHSPACES, count);
     }
-    
+
     /**
      * Removes the character count
      */
     public void removeCharCountWithSpaces() {
         remove1stProperty(PropertyIDMap.PID_CCHWITHSPACES);
     }
-    
-    
+
+
     /**
-     * Get if the User Defined Property Set has been updated outside of the 
+     * Get if the User Defined Property Set has been updated outside of the
      * Application.<p>
      * If it has (true), the hyperlinks should be updated on document load.
-     * 
+     *
      * @return true, if the hyperlinks should be updated on document load
      */
     public boolean getHyperlinksChanged() {
         return getPropertyBooleanValue(PropertyIDMap.PID_HYPERLINKSCHANGED);
     }
-    
+
     /**
-     * Set the flag for if the User Defined Property Set has been updated outside 
+     * Set the flag for if the User Defined Property Set has been updated outside
      *  of the Application.
-     *  
+     *
      * @param changed true, if the User Defined Property Set has been updated
      */
     public void setHyperlinksChanged(boolean changed) {
         set1stProperty(PropertyIDMap.PID_HYPERLINKSCHANGED, changed);
     }
-    
+
     /**
      * Removes the flag for if the User Defined Property Set has been updated
      *  outside of the Application.
@@ -590,30 +584,30 @@ public class DocumentSummaryInformation extends PropertySet {
         remove1stProperty(PropertyIDMap.PID_HYPERLINKSCHANGED);
     }
 
-    
+
     /**
      * Gets the version of the Application which wrote the
      *  Property set, stored with the two high order bytes having the major
      *  version number, and the two low order bytes the minor version number.<p>
      * This will be 0 if no version is set.
-     * 
+     *
      * @return the Application version
      */
     public int getApplicationVersion() {
         return getPropertyIntValue(PropertyIDMap.PID_VERSION);
     }
-    
+
     /**
      * Sets the Application version, which must be a 4 byte int with
-     *  the  two high order bytes having the major version number, and the 
+     *  the  two high order bytes having the major version number, and the
      *  two low order bytes the minor version number.
-     *  
+     *
      * @param version the Application version
      */
     public void setApplicationVersion(int version) {
         set1stProperty(PropertyIDMap.PID_VERSION, version);
     }
-    
+
     /**
      * Removes the Application Version
      */
@@ -621,31 +615,28 @@ public class DocumentSummaryInformation extends PropertySet {
         remove1stProperty(PropertyIDMap.PID_VERSION);
     }
 
-    
+
     /**
-     * Returns the VBA digital signature for the VBA project 
+     * Returns the VBA digital signature for the VBA project
      * embedded in the document (or {@code null}).
-     * 
+     *
      * @return the VBA digital signature
      */
     public byte[] getVBADigitalSignature() {
         Object value = getProperty(PropertyIDMap.PID_DIGSIG);
-        if (value != null && value instanceof byte[]) {
-            return (byte[])value;
-        }
-        return null;
+        return (value instanceof byte[]) ? (byte[])value : null;
     }
-    
+
     /**
-     * Sets the VBA digital signature for the VBA project 
+     * Sets the VBA digital signature for the VBA project
      *  embedded in the document.
-     *  
+     *
      * @param signature VBA Digital Signature for the project
      */
     public void setVBADigitalSignature(byte[] signature) {
         set1stProperty(PropertyIDMap.PID_DIGSIG, signature);
     }
-    
+
     /**
      * Removes the VBA Digital Signature
      */
@@ -653,25 +644,25 @@ public class DocumentSummaryInformation extends PropertySet {
         remove1stProperty(PropertyIDMap.PID_DIGSIG);
     }
 
-    
+
     /**
      * Gets the content type of the file (or {@code null}).
-     * 
+     *
      * @return the content type of the file
      */
     public String getContentType() {
         return getPropertyStringValue(PropertyIDMap.PID_CONTENTTYPE);
     }
-    
+
     /**
      * Sets the content type of the file
-     * 
+     *
      * @param type the content type of the file
      */
     public void setContentType(String type) {
         set1stProperty(PropertyIDMap.PID_CONTENTTYPE, type);
     }
-    
+
     /**
      * Removes the content type of the file
      */
@@ -679,25 +670,25 @@ public class DocumentSummaryInformation extends PropertySet {
         remove1stProperty(PropertyIDMap.PID_CONTENTTYPE);
     }
 
-    
+
     /**
      * Gets the content status of the file (or {@code null}).
-     * 
+     *
      * @return the content status of the file
      */
     public String getContentStatus() {
         return getPropertyStringValue(PropertyIDMap.PID_CONTENTSTATUS);
     }
-    
+
     /**
      * Sets the content status of the file
-     * 
+     *
      * @param status the content status of the file
      */
     public void setContentStatus(String status) {
         set1stProperty(PropertyIDMap.PID_CONTENTSTATUS, status);
     }
-    
+
     /**
      * Removes the content status of the file
      */
@@ -705,25 +696,25 @@ public class DocumentSummaryInformation extends PropertySet {
         remove1stProperty(PropertyIDMap.PID_CONTENTSTATUS);
     }
 
-    
+
     /**
      * Gets the document language, which is normally unset and empty (or {@code null}).
-     * 
+     *
      * @return the document language
      */
     public String getLanguage() {
         return getPropertyStringValue(PropertyIDMap.PID_LANGUAGE);
     }
-    
+
     /**
      * Set the document language
-     * 
+     *
      * @param language the document language
      */
     public void setLanguage(String language) {
         set1stProperty(PropertyIDMap.PID_LANGUAGE, language);
     }
-    
+
     /**
      * Removes the document language
      */
@@ -731,26 +722,26 @@ public class DocumentSummaryInformation extends PropertySet {
         remove1stProperty(PropertyIDMap.PID_LANGUAGE);
     }
 
-    
+
     /**
      * Gets the document version as a string, which is normally unset and empty
      *  (or {@code null}).
-     *  
+     *
      *  @return the document verion
      */
     public String getDocumentVersion() {
         return getPropertyStringValue(PropertyIDMap.PID_DOCVERSION);
     }
-    
+
     /**
      * Sets the document version string
-     * 
+     *
      * @param version the document version string
      */
     public void setDocumentVersion(String version) {
         set1stProperty(PropertyIDMap.PID_DOCVERSION, version);
     }
-    
+
     /**
      * Removes the document version string
      */
@@ -758,7 +749,7 @@ public class DocumentSummaryInformation extends PropertySet {
         remove1stProperty(PropertyIDMap.PID_DOCVERSION);
     }
 
-    
+
     /**
      * Gets the custom properties.
      *
@@ -824,7 +815,7 @@ public class DocumentSummaryInformation extends PropertySet {
     private void ensureSection2() {
         if (getSectionCount() < 2) {
             Section s2 = new Section();
-            s2.setFormatID(USER_DEFINED_PROPERTIES);
+            s2.setFormatID(USER_PROPERTIES.getClassID());
             addSection(s2);
         }
     }
@@ -846,7 +837,7 @@ public class DocumentSummaryInformation extends PropertySet {
             }
         }
     }
-    
+
     /**
      * Throws an {@link UnsupportedOperationException} with a message text
      * telling which functionality is not yet implemented.

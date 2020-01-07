@@ -262,8 +262,11 @@ public class HwmfWindowing {
         public void draw(HwmfGraphics ctx) {
             final HwmfDrawProperties prop = ctx.getProperties();
             Rectangle2D old = prop.getWindow();
-            double oldW = (old == null ? 0 : old.getWidth());
-            double oldH = (old == null ? 0 : old.getHeight());
+            double oldW = 0, oldH = 0;
+            if (old != null) {
+                oldW = old.getWidth();
+                oldH = old.getHeight();
+            }
             if (oldW != size.getWidth() || oldH != size.getHeight()) {
                 prop.setWindowExt(size.getWidth(), size.getHeight());
                 ctx.updateWindowMapMode();
@@ -521,7 +524,7 @@ public class HwmfWindowing {
         public void draw(HwmfGraphics ctx) {
             ctx.setClip(normalizeBounds(bounds), HwmfRegionMode.RGN_DIFF, false);
         }
-        
+
         @Override
         public String toString() {
             return GenericRecordJsonWriter.marshal(this);
@@ -561,7 +564,7 @@ public class HwmfWindowing {
         public void draw(HwmfGraphics ctx) {
             ctx.setClip(bounds, HwmfRegionMode.RGN_AND, false);
         }
-        
+
         @Override
         public String toString() {
             return GenericRecordJsonWriter.marshal(this);
@@ -736,7 +739,7 @@ public class HwmfWindowing {
             // lower-right corner of the rectangle.
             double bottom = leis.readShort();
             bounds.setRect(left, top, right-left, bottom-top);
-            
+
             int size = 9*LittleEndianConsts.SHORT_SIZE+LittleEndianConsts.INT_SIZE;
 
             scanObjects = new WmfScanObject[scanCount];
@@ -751,7 +754,7 @@ public class HwmfWindowing {
         public void draw(HwmfGraphics ctx) {
             ctx.addObjectTableEntry(this);
         }
-        
+
         @Override
         public void applyObject(HwmfGraphics ctx) {
             Rectangle2D lastRect = null;
@@ -768,7 +771,7 @@ public class HwmfWindowing {
                     count++;
                 }
             }
-            
+
             Shape region = null;
             if (count > 0) {
                 region = (count == 1) ? lastRect : scanLines;

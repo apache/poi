@@ -17,6 +17,8 @@
 
 package org.apache.poi.hpsf;
 
+import static org.apache.poi.hpsf.ClassIDPredefined.SUMMARY_PROPERTIES;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -40,8 +42,7 @@ public final class SummaryInformation extends PropertySet {
     /**
      * The SummaryInformation's section's format ID.
      */
-    public static final ClassID FORMAT_ID =
-        new ClassID("{F29F85E0-4FF9-1068-AB91-08002B27B3D9}");
+    public static final ClassID FORMAT_ID = SUMMARY_PROPERTIES.getClassID();
 
     @Override
     public PropertyIDMap getPropertySetIDMap() {
@@ -54,7 +55,7 @@ public final class SummaryInformation extends PropertySet {
     public SummaryInformation() {
         getFirstSection().setFormatID(FORMAT_ID);
     }
-        
+
     /**
      * Creates a {@link SummaryInformation} from a given {@link
      * PropertySet}.
@@ -98,7 +99,7 @@ public final class SummaryInformation extends PropertySet {
         super(stream);
     }
 
-    
+
     /**
      * @return The title or {@code null}
      */
@@ -315,7 +316,7 @@ public final class SummaryInformation extends PropertySet {
 
 
     /**
-     * Returns the revision number (or {@code null}). 
+     * Returns the revision number (or {@code null}).
      *
      * @return The revision number or {@code null}
      */
@@ -582,7 +583,7 @@ public final class SummaryInformation extends PropertySet {
      * change!</strong><p>
      *
      * To process this data, you may wish to make use of the
-     *  {@link Thumbnail} class. The raw data is generally 
+     *  {@link Thumbnail} class. The raw data is generally
      *  an image in WMF or Clipboard (BMP?) format
      *
      * @return The thumbnail or {@code null}

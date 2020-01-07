@@ -62,7 +62,7 @@ import org.apache.poi.util.Removal;
  * #getSections} to retrieve the {@link Section}s, then call {@link
  * Section#getProperties} for each {@link Section} to get hold of the
  * {@link Property} arrays.<p>
- * 
+ *
  * Since the vast majority of {@link PropertySet}s contains only a single
  * {@link Section}, the convenience method {@link #getProperties} returns
  * the properties of a {@link PropertySet}'s {@link Section} (throwing a
@@ -108,7 +108,7 @@ public class PropertySet {
         ClassID.LENGTH +                /* Class ID      */
         LittleEndianConsts.INT_SIZE;    /* Section count */
 
-    
+
     /**
      * Specifies this {@link PropertySet}'s byte order. See the
      * HPFS documentation for details!
@@ -120,7 +120,7 @@ public class PropertySet {
      * documentation for details!
      */
     private int format;
-    
+
     /**
      * Specifies the version of the operating system that created this
      * {@link PropertySet}. See the HPFS documentation for details!
@@ -138,7 +138,7 @@ public class PropertySet {
      */
     private final List<Section> sections = new ArrayList<>();
 
-    
+
     /**
      * Constructs a {@code PropertySet} instance. Its
      * primary task is to initialize the field with their proper values.
@@ -190,7 +190,7 @@ public class PropertySet {
         if (!isPropertySetStream(stream)) {
             throw new NoPropertySetStreamException();
         }
-        
+
         final byte[] buffer = IOUtils.toByteArray(stream);
         init(buffer, 0, buffer.length);
     }
@@ -208,7 +208,7 @@ public class PropertySet {
      * @param length The length of the stream data.
      * @throws NoPropertySetStreamException if the byte array is not a
      * property set stream.
-     * 
+     *
      * @exception UnsupportedEncodingException if the codepage is not supported.
      */
     public PropertySet(final byte[] stream, final int offset, final int length)
@@ -227,14 +227,14 @@ public class PropertySet {
      * complete byte array contents is the stream data.
      * @throws NoPropertySetStreamException if the byte array is not a
      * property set stream.
-     * 
+     *
      * @exception UnsupportedEncodingException if the codepage is not supported.
      */
     public PropertySet(final byte[] stream)
     throws NoPropertySetStreamException, UnsupportedEncodingException {
         this(stream, 0, stream.length);
     }
-    
+
     /**
      * Constructs a {@code PropertySet} by doing a deep copy of
      * an existing {@code PropertySet}. All nested elements, i.e.
@@ -253,7 +253,7 @@ public class PropertySet {
         }
     }
 
-    
+
     /**
      * @return The property set stream's low-level "byte order" field. It is always {@code 0xFFFE}.
      */
@@ -321,7 +321,7 @@ public class PropertySet {
     public void setClassID(ClassID classID) {
         this.classID = classID;
     }
-    
+
     /**
      * @return The number of {@link Section}s in the property set.
      */
@@ -348,24 +348,24 @@ public class PropertySet {
     public void addSection(final Section section) {
         sections.add(section);
     }
-    
+
     /**
      * Removes all sections from this property set.
      */
     public void clearSections() {
         sections.clear();
     }
-    
+
     /**
      * The id to name mapping of the properties in this set.
-     * 
+     *
      * @return the id to name mapping of the properties in this set or {@code null} if not applicable
      */
     public PropertyIDMap getPropertySetIDMap() {
         return null;
     }
 
-    
+
     /**
      * Checks whether an {@link InputStream} is in the Horrible
      * Property Set Format.
@@ -427,11 +427,9 @@ public class PropertySet {
                 return false;
             }
             final long osVersion = leis.readUInt();
-            byte[] clsBuf = new byte[ClassID.LENGTH];
-            leis.readFully(clsBuf);
-
-            final ClassID classID = new ClassID(clsBuf, 0);
-
+            if (leis.skip(ClassID.LENGTH) != ClassID.LENGTH) {
+                return false;
+            }
             final long sectionCount = leis.readUInt();
             return (sectionCount >= 0);
         } catch (RuntimeException e) {
@@ -482,7 +480,7 @@ public class PropertySet {
          * consists of a format ID telling what the section contains
          * and an offset telling how many bytes from the start of the
          * stream the section begins.
-         * 
+         *
          * Most property sets have only one section. The Document
          * Summary Information stream has 2. Everything else is a rare
          * exception and is no longer fostered by Microsoft.
@@ -608,9 +606,9 @@ public class PropertySet {
     /**
      * Fetches the property with the given ID, then does its
      *  best to return it as a String
-     * 
+     *
      * @param propertyId the property id
-     *  
+     *
      * @return The property as a String, or null if unavailable
      */
     String getPropertyStringValue(final int propertyId) {
@@ -620,9 +618,9 @@ public class PropertySet {
 
     /**
      * Return the string representation of a property value
-     * 
+     *
      * @param propertyValue the property value
-     *  
+     *
      * @return The property value as a String, or null if unavailable
      */
     public static String getPropertyStringValue(final Object propertyValue) {
@@ -633,7 +631,7 @@ public class PropertySet {
         if (propertyValue instanceof String) {
             return (String)propertyValue;
         }
-        
+
         // Do our best with some edge cases
         if (propertyValue instanceof byte[]) {
             byte[] b = (byte[])propertyValue;
@@ -666,7 +664,7 @@ public class PropertySet {
      * represents a Summary Information, else {@code false}.
      */
     public boolean isSummaryInformation() {
-        return !sections.isEmpty() && matchesSummary(getFirstSection().getFormatID(), SummaryInformation.FORMAT_ID); 
+        return !sections.isEmpty() && matchesSummary(getFirstSection().getFormatID(), SummaryInformation.FORMAT_ID);
     }
 
     /**
@@ -676,9 +674,9 @@ public class PropertySet {
      * represents a Document Summary Information, else {@code false}.
      */
     public boolean isDocumentSummaryInformation() {
-        return !sections.isEmpty() && matchesSummary(getFirstSection().getFormatID(), DocumentSummaryInformation.FORMAT_ID); 
+        return !sections.isEmpty() && matchesSummary(getFirstSection().getFormatID(), DocumentSummaryInformation.FORMAT_ID);
     }
-    
+
     /* package */ static boolean matchesSummary(ClassID actual, ClassID... expected) {
         for (ClassID sum : expected) {
             if (sum.equals(actual) || sum.equalsInverted(actual)) {
@@ -816,7 +814,7 @@ public class PropertySet {
      * to the specified parameter, else {@code false}.
      *
      * @param o the object to compare this {@code PropertySet} with
-     * 
+     *
      * @return {@code true} if the objects are equal, {@code false}
      * if not
      */
@@ -888,7 +886,7 @@ public class PropertySet {
         b.append(']');
         return b.toString();
     }
-    
+
 
     void remove1stProperty(long id) {
         getFirstSection().removeProperty(id);
@@ -897,20 +895,20 @@ public class PropertySet {
     void set1stProperty(long id, String value) {
         getFirstSection().setProperty((int)id, value);
     }
-    
+
     void set1stProperty(long id, int value) {
         getFirstSection().setProperty((int)id, value);
     }
-    
+
     void set1stProperty(long id, boolean value) {
         getFirstSection().setProperty((int)id, value);
     }
-    
+
     @SuppressWarnings("SameParameterValue")
     void set1stProperty(long id, byte[] value) {
         getFirstSection().setProperty((int)id, value);
     }
-    
+
     private static void putClassId(final ByteArrayOutputStream out, final ClassID n) {
         byte[] b = new byte[16];
         n.write(b, 0);
