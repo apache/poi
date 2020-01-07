@@ -3,7 +3,7 @@
 //
 // See https://github.com/jenkinsci/job-dsl-plugin/wiki for information about the DSL, you can
 // use http://job-dsl.herokuapp.com/ to validate the code before checkin
-// 
+//
 
 def triggerSundays = '''
 # only run this once per week on Sundays
@@ -294,10 +294,7 @@ poijobs.each { poijob ->
                 maven {
                     if (poijob.sonar) {
                         goals('clean package sonar:sonar')
-                        property('sonar.host.url', 'https://sonarcloud.io')
                         property('sonar.login', '${POI_SONAR_TOKEN}')
-                        property('sonar.projectKey', 'poi-parent')
-                        property('sonar.organization', 'apache')
                     } else {
                         goals('package')
                     }
@@ -367,10 +364,7 @@ poijobs.each { poijob ->
 
                 gradle {
                     switches('-PenableSonar')
-                    switches('-Dsonar.host.url=https://sonarcloud.io')
                     switches('-Dsonar.login=${POI_SONAR_TOKEN}')
-                    switches('-Dsonar.projectKey=poi-parent')
-                    switches('-Dsonar.organization=apache')
                     tasks('sonarqube')
                     useWrapper(false)
                 }
