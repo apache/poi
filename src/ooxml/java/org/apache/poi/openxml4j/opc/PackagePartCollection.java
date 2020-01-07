@@ -123,7 +123,7 @@ public final class PackagePartCollection implements Serializable {
      *      e.g. "/ppt/slides/slide#.xml"
      * @return the next available part name index
      * @throws InvalidFormatException if the nameTemplate is null or doesn't contain
-     *      the index char (#) or results in an invalid part name 
+     *      the index char (#) or results in an invalid part name
      */
     public int getUnusedPartIndex(final String nameTemplate) throws InvalidFormatException {
         if (nameTemplate == null || !nameTemplate.contains("#")) {
@@ -131,21 +131,14 @@ public final class PackagePartCollection implements Serializable {
         }
 
         final Pattern pattern = Pattern.compile(nameTemplate.replace("#", "([0-9]+)"));
-        
+
         final ToIntFunction<String> indexFromName = name -> {
             Matcher m = pattern.matcher(name);
             return m.matches() ? Integer.parseInt(m.group(1)) : 0;
         };
-        
+
         return packagePartLookup.keySet().stream()
             .mapToInt(indexFromName)
-            .collect(MySparseBitSet::new, MySparseBitSet::set, MySparseBitSet::myOr).nextClearBit(1);
+            .collect(SparseBitSet::new, SparseBitSet::set, (s1,s2) -> s1.or(s2)).nextClearBit(1);
     }
-    
-    private class MySparseBitSet extends SparseBitSet {
-
-		public void myOr(MySparseBitSet other) {
-    		this.or(other);
-		}
-	}
 }
