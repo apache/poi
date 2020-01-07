@@ -154,8 +154,9 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
      * Create a new WordProcessingML package and setup the default minimal content
      */
     protected static OPCPackage newPackage() {
+        OPCPackage pkg = null;
         try {
-            OPCPackage pkg = OPCPackage.create(new ByteArrayOutputStream());    // NOSONAR - we do not want to close this here
+            pkg = OPCPackage.create(new ByteArrayOutputStream());    // NOSONAR - we do not want to close this here
             // Main part
             PackagePartName corePartName = PackagingURIHelper.createPartName(XWPFRelation.DOCUMENT.getDefaultFileName());
             // Create main part relationship
@@ -167,6 +168,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
 
             return pkg;
         } catch (Exception e) {
+            IOUtils.closeQuietly(pkg);
             throw new POIXMLException(e);
         }
     }

@@ -301,7 +301,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      *       OPCPackage pkg = OPCPackage.open(path);
      *       XSSFWorkbook wb = new XSSFWorkbook(pkg);
      *       // work with the wb object
-     *       ......
+     *       ......XWPFDocument
      *       pkg.close(); // gracefully closes the underlying zip file
      *   </code></pre>
      */
