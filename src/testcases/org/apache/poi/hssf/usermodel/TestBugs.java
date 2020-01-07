@@ -134,7 +134,11 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         for (int i=0; i<refs.length; i+=2) {
             HSSFWorkbook wb = new HSSFWorkbook();
             wb.createSheet(refs[i]);
-            SIMPLE_REFS.put(refs[i+1].replace("/", File.separator), wb.getCreationHelper().createFormulaEvaluator());
+            String fileName = refs[i+1];
+            if (!fileName.contains("://")) {
+                fileName = fileName.replace("/", File.separator);
+            }
+            SIMPLE_REFS.put(fileName, wb.getCreationHelper().createFormulaEvaluator());
         }
     }
 
