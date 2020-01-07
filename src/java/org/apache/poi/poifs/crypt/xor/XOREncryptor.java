@@ -21,11 +21,11 @@ import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
-import java.util.BitSet;
 
 import javax.crypto.Cipher;
 import javax.crypto.spec.SecretKeySpec;
 
+import com.zaxxer.sparsebits.SparseBitSet;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.ChunkedCipherOutputStream;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
@@ -139,7 +139,7 @@ public class XOREncryptor extends Encryptor {
 
             final int start = Math.max(posInChunk-(recordEnd-recordStart), 0);
 
-            final BitSet plainBytes = getPlainByteFlags();
+            final SparseBitSet plainBytes = getPlainByteFlags();
             final byte[] xorArray = getEncryptionInfo().getEncryptor().getSecretKey().getEncoded();
             final byte[] chunk = getChunk();
             final byte[] plain = (plainBytes.isEmpty()) ? null : chunk.clone();

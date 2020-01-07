@@ -25,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -34,6 +33,7 @@ import java.util.Optional;
 
 import javax.xml.namespace.QName;
 
+import com.zaxxer.sparsebits.SparseBitSet;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -82,7 +82,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     private Map<Integer, XSLFSimpleShape> _placeholderByIdMap;
     private Map<Integer, XSLFSimpleShape> _placeholderByTypeMap;
 
-    private final BitSet shapeIds = new BitSet();
+    private final SparseBitSet shapeIds = new SparseBitSet();
 
     protected XSLFSheet() {
         super();

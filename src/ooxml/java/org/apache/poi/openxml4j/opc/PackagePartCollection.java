@@ -18,7 +18,6 @@
 package org.apache.poi.openxml4j.opc;
 
 import java.io.Serializable;
-import java.util.BitSet;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -28,6 +27,7 @@ import java.util.function.ToIntFunction;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.zaxxer.sparsebits.SparseBitSet;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 
@@ -139,6 +139,13 @@ public final class PackagePartCollection implements Serializable {
         
         return packagePartLookup.keySet().stream()
             .mapToInt(indexFromName)
-            .collect(BitSet::new, BitSet::set, BitSet::or).nextClearBit(1);
+            .collect(MySparseBitSet::new, MySparseBitSet::set, MySparseBitSet::myOr).nextClearBit(1);
     }
+    
+    private class MySparseBitSet extends SparseBitSet {
+
+		public void myOr(MySparseBitSet other) {
+    		this.or(other);
+		}
+	}
 }

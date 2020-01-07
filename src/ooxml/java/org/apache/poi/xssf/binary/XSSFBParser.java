@@ -19,8 +19,8 @@ package org.apache.poi.xssf.binary;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.BitSet;
 
+import com.zaxxer.sparsebits.SparseBitSet;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -39,7 +39,7 @@ public abstract class XSSFBParser {
     private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     private final LittleEndianInputStream is;
-    private final BitSet records;
+    private final SparseBitSet records;
 
     public XSSFBParser(InputStream is) {
         this.is = new LittleEndianInputStream(is);
@@ -51,7 +51,7 @@ public abstract class XSSFBParser {
      * @param is inputStream
      * @param bitSet call {@link #handleRecord(int, byte[])} only on those records in this bitSet
      */
-    protected XSSFBParser(InputStream is, BitSet bitSet) {
+    protected XSSFBParser(InputStream is, SparseBitSet bitSet) {
         this.is = new LittleEndianInputStream(is);
         records = bitSet;
     }

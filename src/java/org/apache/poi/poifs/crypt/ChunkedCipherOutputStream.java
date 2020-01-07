@@ -25,13 +25,13 @@ import java.io.FilterOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
-import java.util.BitSet;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.ShortBufferException;
 
+import com.zaxxer.sparsebits.SparseBitSet;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSWriterEvent;
@@ -56,7 +56,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
     private final int chunkBits;
 
     private final byte[] chunk;
-    private final BitSet plainByteFlags;
+    private final SparseBitSet plainByteFlags;
     private final File fileOut;
     private final DirectoryNode dir;
 
@@ -74,7 +74,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         this.chunkSize = chunkSize;
         int cs = chunkSize == STREAMING ? 4096 : chunkSize;
         this.chunk = IOUtils.safelyAllocate(cs, MAX_RECORD_LENGTH);
-        this.plainByteFlags = new BitSet(cs);
+        this.plainByteFlags = new SparseBitSet(cs);
         this.chunkBits = Integer.bitCount(cs-1);
         this.fileOut = TempFile.createTempFile("encrypted_package", "crypt");
         this.fileOut.deleteOnExit();
@@ -88,7 +88,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         this.chunkSize = chunkSize;
         int cs = chunkSize == STREAMING ? 4096 : chunkSize;
         this.chunk = IOUtils.safelyAllocate(cs, MAX_RECORD_LENGTH);
-        this.plainByteFlags = new BitSet(cs);
+        this.plainByteFlags = new SparseBitSet(cs);
         this.chunkBits = Integer.bitCount(cs-1);
         this.fileOut = null;
         this.dir = null;
@@ -283,7 +283,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
         return chunk;
     }
 
-    protected BitSet getPlainByteFlags() {
+    protected SparseBitSet getPlainByteFlags() {
         return plainByteFlags;
     }
 

@@ -20,7 +20,6 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.FieldPosition;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.Collections;
 import java.util.Formatter;
 import java.util.Iterator;
@@ -30,6 +29,7 @@ import java.util.Locale;
 import java.util.Set;
 import java.util.TreeSet;
 
+import com.zaxxer.sparsebits.SparseBitSet;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -475,7 +475,7 @@ public class CellNumberFormatter extends CellFormatter {
         Iterator<CellNumberStringMod> changes = mods.iterator();
         CellNumberStringMod nextChange = (changes.hasNext() ? changes.next() : null);
         // records chars already deleted
-        BitSet deletedChars = new BitSet();
+        SparseBitSet deletedChars = new SparseBitSet();
         int adjust = 0;
         for (Special s : specials) {
             int adjustedPos = s.pos + adjust;

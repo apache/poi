@@ -21,13 +21,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.BitSet;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
+import com.zaxxer.sparsebits.SparseBitSet;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -43,7 +43,7 @@ import org.apache.poi.xssf.usermodel.XSSFRelation;
 @Internal
 public class XSSFBHyperlinksTable {
 
-    private static final BitSet RECORDS = new BitSet();
+    private static final SparseBitSet RECORDS = new SparseBitSet();
 
 
     static {

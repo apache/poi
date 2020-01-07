@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,6 +27,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import com.zaxxer.sparsebits.SparseBitSet;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -173,7 +173,7 @@ public class XSSFBReader extends XSSFReader {
 
 
     private static class PathExtractor extends XSSFBParser {
-        private static BitSet RECORDS = new BitSet();
+        private static SparseBitSet RECORDS = new SparseBitSet();
         static {
             RECORDS.set(XSSFBRecordType.BrtAbsPath15.getId());
         }

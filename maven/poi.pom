@@ -88,6 +88,11 @@
       <artifactId>commons-math3</artifactId>
       <version>3.6.1</version>
     </dependency>
+    <dependency>
+      <groupId>com.zaxxer</groupId>
+      <artifactId>SparseBitSet</artifactId>
+      <version>1.2</version>
+    </dependency>
 
     <dependency>
       <groupId>org.hamcrest</groupId>

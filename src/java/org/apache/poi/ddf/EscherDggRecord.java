@@ -19,11 +19,11 @@ package org.apache.poi.ddf;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.BitSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import com.zaxxer.sparsebits.SparseBitSet;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
@@ -301,7 +301,7 @@ public final class EscherDggRecord extends EscherRecord {
      * @return the next available drawing group id
      */
     public short findNewDrawingGroupId() {
-        BitSet bs = new BitSet();
+        SparseBitSet bs = new SparseBitSet();
         bs.set(0);
         for (FileIdCluster fic : field_5_fileIdClusters) {
             bs.set(fic.getDrawingGroupId());

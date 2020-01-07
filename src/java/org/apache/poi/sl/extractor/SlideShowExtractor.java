@@ -25,6 +25,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
 
+import com.zaxxer.sparsebits.SparseBitSet;
 import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.Notes;
@@ -382,7 +383,9 @@ public class SlideShowExtractor<
      * @param bold use {@code true} for bold TextRuns, {@code false} for non-bold ones and
      *      {@code null} if it doesn't matter
      * @return a bitset with the marked/used codepoints
+     * @deprecated use {@link #getCodepointsInSparseBitSet(String, Boolean, Boolean)}
      */
+    @Deprecated
     public BitSet getCodepoints(String typeface, Boolean italic, Boolean bold) {
         final BitSet glyphs = new BitSet();
 
@@ -399,6 +402,30 @@ public class SlideShowExtractor<
         return glyphs;
     }
 
+    /**
+     * Extract the used codepoints for font embedding / subsetting
+     * @param typeface the typeface/font family of the textruns to examine
+     * @param italic use {@code true} for italic TextRuns, {@code false} for non-italic ones and
+     *      {@code null} if it doesn't matter
+     * @param bold use {@code true} for bold TextRuns, {@code false} for non-bold ones and
+     *      {@code null} if it doesn't matter
+     * @return a bitset with the marked/used codepoints
+     */
+    public SparseBitSet getCodepointsInSparseBitSet(String typeface, Boolean italic, Boolean bold) {
+        final SparseBitSet glyphs = new SparseBitSet();
+
+        Predicate<Object> filterOld = filter;
+        try {
+            filter = o -> filterFonts(o, typeface, italic, bold);
+            slideshow.getSlides().forEach(slide ->
+                    getText(slide, s -> s.codePoints().forEach(glyphs::set))
+            );
+        } finally {
+            filter = filterOld;
+        }
+
+        return glyphs;
+    }
     private static boolean filterFonts(Object o, String typeface, Boolean italic, Boolean bold) {
         if (!(o instanceof TextRun)) {
             return false;

@@ -185,6 +185,7 @@ project('main') {
         compile 'com.sun.xml.bind:jaxb-impl:2.3.2'
         compile 'com.sun.xml.bind:jaxb-core:2.3.0.1'
         compile 'javax.activation:activation:1.1.1'
+        compile 'com.zaxxer:SparseBitSet:1.2'
 
         testCompile 'junit:junit:4.12'
         testCompile 'org.mockito:mockito-core:3.0.0'
@@ -236,6 +237,7 @@ project('ooxml') {
         compile 'org.apache.santuario:xmlsec:2.1.2'
         compile 'org.bouncycastle:bcpkix-jdk15on:1.62'
         compile 'com.github.virtuald:curvesapi:1.06'
+        compile 'com.zaxxer:SparseBitSet:1.2'
 
         // compile only, don't add it to our dist as it blows up the size
         compile 'org.apache.xmlgraphics:batik-all:1.11'
