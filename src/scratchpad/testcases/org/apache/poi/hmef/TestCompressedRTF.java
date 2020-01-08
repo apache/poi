@@ -17,6 +17,7 @@
 
 package org.apache.poi.hmef;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -24,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hmef.attribute.MAPIAttribute;
@@ -69,32 +71,36 @@ public final class TestCompressedRTF {
 
 
         // Now Look at the code
-        assertEquals((byte) 0x07, data[16 + 0]);  // Flag: cccUUUUU
-        assertEquals((byte) 0x00, data[16 + 1]);  //  c1a: offset 0 / 0x000
-        assertEquals((byte) 0x06, data[16 + 2]);  //  c1b: length 6+2  -> {\rtf1\a
-        assertEquals((byte) 0x01, data[16 + 3]);  //  c2a: offset 16 / 0x010
-        assertEquals((byte) 0x01, data[16 + 4]);  //  c2b: length 1+2  ->  def
-        assertEquals((byte) 0x0b, data[16 + 5]);  //  c3a: offset 182 / 0xb6
-        assertEquals((byte) 0x60, data[16 + 6]);  //  c3b: length 0+2  -> la
-        assertEquals((byte) 0x6e, data[16 + 7]);  // n
-        assertEquals((byte) 0x67, data[16 + 8]);  // g
-        assertEquals((byte) 0x31, data[16 + 9]);  // 1
-        assertEquals((byte) 0x30, data[16 + 10]); // 0
-        assertEquals((byte) 0x32, data[16 + 11]); // 2
+        byte[] exp = {
+            (byte) 0x07, // Flag: cccUUUUU
+            (byte) 0x00, //  c1a: offset 0 / 0x000
+            (byte) 0x06, //  c1b: length 6+2  -> {\rtf1\a
+            (byte) 0x01, //  c2a: offset 16 / 0x010
+            (byte) 0x01, //  c2b: length 1+2  ->  def
+            (byte) 0x0b, //  c3a: offset 182 / 0xb6
+            (byte) 0x60, //  c3b: length 0+2  -> la
+            (byte) 0x6e, // n
+            (byte) 0x67, // g
+            (byte) 0x31, // 1
+            (byte) 0x30, // 0
+            (byte) 0x32, // 2
 
-        assertEquals((byte) 0x66, data[16 + 12]); // Flag:  UccUUccU
-        assertEquals((byte) 0x35, data[16 + 13]); // 5
-        assertEquals((byte) 0x00, data[16 + 14]); //  c2a: offset 6 / 0x006
-        assertEquals((byte) 0x64, data[16 + 15]); //  c2b: length 4+2  -> \ansi\a
-        assertEquals((byte) 0x00, data[16 + 16]); //  c3a: offset 7 / 0x007
-        assertEquals((byte) 0x72, data[16 + 17]); //  c3b: length 2+2  -> nsi
-        assertEquals((byte) 0x63, data[16 + 18]); // c
-        assertEquals((byte) 0x70, data[16 + 19]); // p
-        assertEquals((byte) 0x0d, data[16 + 20]); //  c6a: offset 221 / 0x0dd
-        assertEquals((byte) 0xd0, data[16 + 21]); //  c6b: length 0+2  -> g1
-        assertEquals((byte) 0x0e, data[16 + 22]); //  c7a: offset 224 / 0x0e0
-        assertEquals((byte) 0x00, data[16 + 23]); //  c7b: length 0+2  -> 25
-        assertEquals((byte) 0x32, data[16 + 24]); // 2
+            (byte) 0x66, // Flag:  UccUUccU
+            (byte) 0x35, // 5
+            (byte) 0x00, //  c2a: offset 6 / 0x006
+            (byte) 0x64, //  c2b: length 4+2  -> \ansi\a
+            (byte) 0x00, //  c3a: offset 7 / 0x007
+            (byte) 0x72, //  c3b: length 2+2  -> nsi
+            (byte) 0x63, // c
+            (byte) 0x70, // p
+            (byte) 0x0d, //  c6a: offset 221 / 0x0dd
+            (byte) 0xd0, //  c6b: length 0+2  -> g1
+            (byte) 0x0e, //  c7a: offset 224 / 0x0e0
+            (byte) 0x00, //  c7b: length 0+2  -> 25
+            (byte) 0x32, // 2
+        };
+
+        assertArrayEquals(exp, Arrays.copyOfRange(data, 16, 16+25));
     }
 
     /**
@@ -119,7 +125,7 @@ public final class TestCompressedRTF {
         // Decompress it
         CompressedRTF comp = new CompressedRTF();
         byte[] decomp = comp.decompress(new ByteArrayInputStream(data));
-       String decompStr = new String(decomp, StandardCharsets.US_ASCII);
+        String decompStr = new String(decomp, StandardCharsets.US_ASCII);
 
         // Test
         assertEquals(block1.length(), decomp.length);
@@ -142,16 +148,14 @@ public final class TestCompressedRTF {
         MAPIRtfAttribute rtfAttr = (MAPIRtfAttribute) attr;
 
         // Truncate to header + flag + data for flag + flag + data
-        byte[] data = new byte[16 + 12 + 13];
-        System.arraycopy(rtfAttr.getRawData(), 0, data, 0, data.length);
+        byte[] data = Arrays.copyOf(rtfAttr.getRawData(), 16 + 12 + 13);
 
         // Decompress it
         CompressedRTF comp = new CompressedRTF();
         byte[] decomp = comp.decompress(new ByteArrayInputStream(data));
-       String decompStr = new String(decomp, StandardCharsets.US_ASCII);
+        String decompStr = new String(decomp, StandardCharsets.US_ASCII);
 
         // Test
-        assertEquals(block2.length(), decomp.length);
         assertEquals(block2, decompStr);
     }
 
@@ -185,20 +189,13 @@ public final class TestCompressedRTF {
 
         // Will have been padded though
         assertEquals(expected.length + 2, decomp.length);
-        byte[] tmp = new byte[expected.length];
-        System.arraycopy(decomp, 0, tmp, 0, tmp.length);
-        decomp = tmp;
 
         // By byte
-        assertEquals(expected.length, decomp.length);
-        for (int i = 0; i < expected.length; i++) {
-            assertEquals(expected[i], decomp[i]);
-        }
+        assertArrayEquals(expected, Arrays.copyOf(decomp, expected.length));
 
         // By String
         String expString = new String(expected, StandardCharsets.US_ASCII);
         String decompStr = rtfAttr.getDataString();
-        assertEquals(expString.length(), decompStr.length());
         assertEquals(expString, decompStr);
     }
 }

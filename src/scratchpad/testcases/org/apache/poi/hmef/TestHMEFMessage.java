@@ -17,11 +17,11 @@
 
 package org.apache.poi.hmef;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,30 +33,25 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.hmef.attribute.MAPIAttribute;
 import org.apache.poi.hmef.attribute.MAPIRtfAttribute;
 import org.apache.poi.hmef.attribute.MAPIStringAttribute;
+import org.apache.poi.hmef.attribute.TNEFAttribute;
 import org.apache.poi.hmef.attribute.TNEFProperty;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.Types;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public final class TestHMEFMessage {
-    protected static final POIDataSamples _samples = POIDataSamples.getHMEFInstance();
+    private static final POIDataSamples _samples = POIDataSamples.getHMEFInstance();
 
-    @Test
-    public void testOpen() throws Exception {
-        HMEFMessage msg = new HMEFMessage(
-                _samples.openResourceAsStream("quick-winmail.dat")
-        );
-
-        assertNotNull(msg);
-    }
+    @Rule
+    public ExpectedException thrown =  ExpectedException.none();
 
     @Test
     public void testCounts() throws Exception {
-        HMEFMessage msg = new HMEFMessage(
-                _samples.openResourceAsStream("quick-winmail.dat")
-        );
+        HMEFMessage msg = openSample("quick-winmail.dat");
 
         // Should have 4 attributes on the message
         assertEquals(4, msg.getMessageAttributes().size());
@@ -82,9 +77,7 @@ public final class TestHMEFMessage {
 
     @Test
     public void testBasicMessageAttributes() throws Exception {
-        HMEFMessage msg = new HMEFMessage(
-                _samples.openResourceAsStream("quick-winmail.dat")
-        );
+        HMEFMessage msg = openSample("quick-winmail.dat");
 
         // Should have version, codepage, class and MAPI
         assertEquals(4, msg.getMessageAttributes().size());
@@ -104,21 +97,18 @@ public final class TestHMEFMessage {
         assertNull(msg.getMessageAttribute(TNEFProperty.ID_ATTACHDATA));
 
         // Now check the details of one or two
-        assertEquals(
-                0x010000,
-                LittleEndian.getInt(msg.getMessageAttribute(TNEFProperty.ID_TNEFVERSION).getData())
-        );
-        assertEquals(
-                "IPM.Microsoft Mail.Note\0",
-            new String(msg.getMessageAttribute(TNEFProperty.ID_MESSAGECLASS).getData(), StandardCharsets.US_ASCII)
-        );
+        TNEFAttribute version = msg.getMessageAttribute(TNEFProperty.ID_TNEFVERSION);
+        assertNotNull(version);
+        assertEquals(0x010000, LittleEndian.getInt(version.getData()));
+
+        TNEFAttribute msgCls = msg.getMessageAttribute(TNEFProperty.ID_MESSAGECLASS);
+        assertNotNull(msgCls);
+        assertEquals("IPM.Microsoft Mail.Note\0", new String(msgCls.getData(), StandardCharsets.US_ASCII));
     }
 
     @Test
     public void testBasicMessageMAPIAttributes() throws Exception {
-        HMEFMessage msg = new HMEFMessage(
-                _samples.openResourceAsStream("quick-winmail.dat")
-        );
+        HMEFMessage msg = openSample("quick-winmail.dat");
 
         assertEquals("This is a test message", msg.getSubject());
         assertEquals("{\\rtf1", msg.getBody().substring(0, 6));
@@ -130,19 +120,18 @@ public final class TestHMEFMessage {
      */
     @Test
     public void testMessageContents() throws Exception {
-        HMEFMessage msg = new HMEFMessage(
-                _samples.openResourceAsStream("quick-winmail.dat")
-        );
+        HMEFMessage msg = openSample("quick-winmail.dat");
 
         // Firstly by byte
         MAPIRtfAttribute rtf = (MAPIRtfAttribute)
                 msg.getMessageMAPIAttribute(MAPIProperty.RTF_COMPRESSED);
+        assertNotNull(rtf);
         assertContents("message.rtf", rtf.getData());
 
         // Then by String
         String contents = msg.getBody();
         // It's all low bytes
-      byte[] contentsBytes = contents.getBytes(StandardCharsets.US_ASCII);
+        byte[] contentsBytes = contents.getBytes(StandardCharsets.US_ASCII);
         assertContents("message.rtf", contentsBytes);
 
         // try to get a message id that does not exist
@@ -151,8 +140,7 @@ public final class TestHMEFMessage {
 
     @Test
     public void testMessageSample1() throws Exception {
-        HMEFMessage msg = new HMEFMessage(
-                _samples.openResourceAsStream("winmail-sample1.dat"));
+        HMEFMessage msg = openSample("winmail-sample1.dat");
 
         // Firstly by byte
         MAPIRtfAttribute rtf = (MAPIRtfAttribute) msg
@@ -164,7 +152,7 @@ public final class TestHMEFMessage {
         String contents = msg.getBody();
         //System.out.println(contents);
         // It's all low bytes
-		byte[] contentsBytes = contents.getBytes(StandardCharsets.US_ASCII);
+        byte[] contentsBytes = contents.getBytes(StandardCharsets.US_ASCII);
         // assertContents("message.rtf", contentsBytes);
         assertNotNull(contentsBytes);
 
@@ -174,13 +162,11 @@ public final class TestHMEFMessage {
 
     @Test
     public void testInvalidMessage() throws Exception {
-        InputStream str = new ByteArrayInputStream(new byte[]{0, 0, 0, 0});
-        try {
-            assertNotNull(new HMEFMessage(str));
-            fail("Should catch an exception here");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().contains("TNEF signature not detected in file, expected 574529400 but got 0"));
-        }
+        InputStream str = new ByteArrayInputStream(new byte[4]);
+
+        thrown.expect(IllegalArgumentException.class);
+        thrown.expectMessage("TNEF signature not detected in file, expected 574529400 but got 0");
+        new HMEFMessage(str);
     }
 
     @Test
@@ -213,21 +199,16 @@ public final class TestHMEFMessage {
         // invalid level
         LittleEndian.putUShort(90, out);
 
-        byte[] bytes = out.toByteArray();
-        InputStream str = new ByteArrayInputStream(bytes);
-        try {
-            assertNotNull(new HMEFMessage(str));
-            fail("Should catch an exception here");
-        } catch (IllegalStateException e) {
-            assertTrue(e.getMessage().contains("Unhandled level 90"));
-        }
+        InputStream str = new ByteArrayInputStream(out.toByteArray());
+
+        thrown.expect(IllegalStateException.class);
+        thrown.expectMessage("Unhandled level 90");
+        new HMEFMessage(str);
     }
 
     @Test
-    public void testCustomProperty() throws Exception {
-        HMEFMessage msg = new HMEFMessage(
-                _samples.openResourceAsStream("quick-winmail.dat")
-        );
+    public void testCustomProperty() throws IOException {
+        HMEFMessage msg = openSample("quick-winmail.dat");
 
         // Should have non-standard properties with IDs 0xE28 and 0xE29
         boolean hasE28 = false;
@@ -236,8 +217,8 @@ public final class TestHMEFMessage {
             if (attr.getProperty().id == 0xe28) hasE28 = true;
             if (attr.getProperty().id == 0xe29) hasE29 = true;
         }
-       assertTrue(hasE28);
-       assertTrue(hasE29);
+        assertTrue(hasE28);
+        assertTrue(hasE29);
 
         // Ensure we can fetch those as custom ones
         MAPIProperty propE28 = MAPIProperty.createCustom(0xe28, Types.ASCII_STRING, "Custom E28");
@@ -245,22 +226,22 @@ public final class TestHMEFMessage {
         assertNotNull(msg.getMessageMAPIAttribute(propE28));
         assertNotNull(msg.getMessageMAPIAttribute(propE29));
 
-        assertEquals(MAPIStringAttribute.class, msg.getMessageMAPIAttribute(propE28).getClass());
-        assertEquals(
-                "Zimbra - Mark Rogers",
-                ((MAPIStringAttribute) msg.getMessageMAPIAttribute(propE28)).getDataString().substring(10)
-        );
+        MAPIStringAttribute propE28b = (MAPIStringAttribute)msg.getMessageMAPIAttribute(propE28);
+        assertNotNull(propE28b);
+        assertEquals(MAPIStringAttribute.class, propE28b.getClass());
+        assertEquals("Zimbra - Mark Rogers", propE28b.getDataString().substring(10));
     }
 
-    static void assertContents(String filename, byte[] actual)
-            throws IOException {
+    static HMEFMessage openSample(String filename) throws IOException {
+        try (InputStream is = _samples.openResourceAsStream(filename)) {
+            return new HMEFMessage(is);
+        }
+    }
+
+    static void assertContents(String filename, byte[] actual) throws IOException {
         try (InputStream stream = _samples.openResourceAsStream("quick-contents/" + filename)) {
             byte[] expected = IOUtils.toByteArray(stream);
-
-            assertEquals(expected.length, actual.length);
-            for (int i = 0; i < expected.length; i++) {
-                assertEquals("Byte " + i + " wrong", expected[i], actual[i]);
-            }
+            assertArrayEquals(expected, actual);
         }
     }
 

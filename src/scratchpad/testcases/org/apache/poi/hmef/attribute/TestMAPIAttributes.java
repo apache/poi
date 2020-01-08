@@ -31,26 +31,19 @@ import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 public final class TestMAPIAttributes {
     private static final POIDataSamples _samples = POIDataSamples.getHMEFInstance();
     private HMEFMessage quick;
-    private InputStream stream;
 
     @Before
     public void setUp() throws Exception {
-        stream = _samples.openResourceAsStream("quick-winmail.dat");
-        quick = new HMEFMessage(stream);
+        try (InputStream stream = _samples.openResourceAsStream("quick-winmail.dat")) {
+            quick = new HMEFMessage(stream);
+        }
     }
-
-    @After
-    public void tearDown() throws Exception {
-        stream.close();
-    }
-
 
     /**
      * Test counts
