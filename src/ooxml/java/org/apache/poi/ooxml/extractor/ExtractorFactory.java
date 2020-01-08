@@ -66,7 +66,7 @@ import org.apache.xmlbeans.XmlException;
 /**
  * Figures out the correct POITextExtractor for your supplied
  *  document, and returns it.
- *  
+ *
  * <p>Note 1 - will fail for many file formats if the POI Scratchpad jar is
  *  not present on the runtime classpath</p>
  * <p>Note 2 - rather than using this, for most cases you would be better
@@ -75,7 +75,7 @@ import org.apache.xmlbeans.XmlException;
 @SuppressWarnings("WeakerAccess")
 public final class ExtractorFactory {
     private static final POILogger logger = POILogFactory.getLogger(ExtractorFactory.class);
-    
+
     public static final String CORE_DOCUMENT_REL = PackageRelationshipTypes.CORE_DOCUMENT;
     private static final String VISIO_DOCUMENT_REL = PackageRelationshipTypes.VISIO_CORE_DOCUMENT;
     private static final String STRICT_DOCUMENT_REL = PackageRelationshipTypes.STRICT_CORE_DOCUMENT;
@@ -146,7 +146,7 @@ public final class ExtractorFactory {
         } catch (NotOLE2FileException ne) {
             // ensure file-handle release
             IOUtils.closeQuietly(fs);
-            throw new IllegalArgumentException("Your File was neither an OLE2 file, nor an OOXML file");
+            throw new IllegalArgumentException("Your File was neither an OLE2 file, nor an OOXML file", ne);
         } catch (OpenXML4JException | Error | RuntimeException | IOException | XmlException e) { // NOSONAR
             // ensure file-handle release
             IOUtils.closeQuietly(fs);
@@ -158,11 +158,11 @@ public final class ExtractorFactory {
         InputStream is = FileMagic.prepareToCheckMagic(inp);
 
         FileMagic fm = FileMagic.valueOf(is);
-        
+
         switch (fm) {
         case OLE2:
             POIFSFileSystem fs = new POIFSFileSystem(is);
-            boolean isEncrypted = fs.getRoot().hasEntry(Decryptor.DEFAULT_POIFS_ENTRY); 
+            boolean isEncrypted = fs.getRoot().hasEntry(Decryptor.DEFAULT_POIFS_ENTRY);
             return isEncrypted ? createEncryptedOOXMLExtractor(fs) : createExtractor(fs);
         case OOXML:
             return createExtractor(OPCPackage.open(is));
@@ -176,8 +176,8 @@ public final class ExtractorFactory {
      *
      * @param pkg An {@link OPCPackage}.
      * @return A {@link POIXMLTextExtractor} for the given file.
-     * @throws IOException If an error occurs while reading the file 
-     * @throws OpenXML4JException If an error parsing the OpenXML file format is found. 
+     * @throws IOException If an error occurs while reading the file
+     * @throws OpenXML4JException If an error parsing the OpenXML file format is found.
      * @throws XmlException If an XML parsing error occurs.
      * @throws IllegalArgumentException If no matching file type could be found.
      */
@@ -186,7 +186,7 @@ public final class ExtractorFactory {
             // Check for the normal Office core document
             PackageRelationshipCollection core;
             core = pkg.getRelationshipsByType(CORE_DOCUMENT_REL);
-              
+
             // If nothing was found, try some of the other OOXML-based core types
             if (core.size() == 0) {
                 // Could it be an OOXML-Strict one?
@@ -198,16 +198,16 @@ public final class ExtractorFactory {
                 if (core.size() == 1)
                     return new XDGFVisioExtractor(pkg);
             }
-              
+
             // Should just be a single core document, complain if not
             if (core.size() != 1) {
                 throw new IllegalArgumentException("Invalid OOXML Package received - expected 1 core document, found " + core.size());
             }
-     
+
             // Grab the core document part, and try to identify from that
             final PackagePart corePart = pkg.getPart(core.getRelationship(0));
             final String contentType = corePart.getContentType();
-     
+
             // Is it XSSF?
             for (XSSFRelation rel : XSSFExcelExtractor.SUPPORTED_TYPES) {
                 if ( rel.getContentType().equals( contentType ) ) {
@@ -217,22 +217,22 @@ public final class ExtractorFactory {
                     return new XSSFExcelExtractor(pkg);
                 }
             }
-     
+
             // Is it XWPF?
             for (XWPFRelation rel : XWPFWordExtractor.SUPPORTED_TYPES) {
                 if ( rel.getContentType().equals( contentType ) ) {
                     return new XWPFWordExtractor(pkg);
                 }
             }
-     
+
             // Is it XSLF?
             for (XSLFRelation rel : XSLFPowerPointExtractor.SUPPORTED_TYPES) {
                 if ( rel.getContentType().equals( contentType ) ) {
                     return new SlideShowExtractor<>(new XMLSlideShow(pkg));
                 }
             }
-     
-            // special handling for SlideShow-Theme-files, 
+
+            // special handling for SlideShow-Theme-files,
             if (XSLFRelation.THEME_MANAGER.getContentType().equals(contentType)) {
                 return new SlideShowExtractor<>(new XMLSlideShow(pkg));
             }
@@ -380,14 +380,14 @@ public final class ExtractorFactory {
     public static POITextExtractor[] getEmbeddedDocsTextExtractors(POIXMLTextExtractor ext) {
         throw new IllegalStateException("Not yet supported");
     }
-    
+
     private static POITextExtractor createEncryptedOOXMLExtractor(POIFSFileSystem fs)
     throws IOException {
         String pass = Biff8EncryptionKey.getCurrentUserPassword();
         if (pass == null) {
             pass = Decryptor.DEFAULT_PASSWORD;
         }
-        
+
         EncryptionInfo ei = new EncryptionInfo(fs);
         Decryptor dec = ei.getDecryptor();
         InputStream is = null;
