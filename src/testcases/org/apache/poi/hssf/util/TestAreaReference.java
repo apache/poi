@@ -55,15 +55,15 @@ public final class TestAreaReference {
         CellReference cf = ar.getFirstCell();
         assertEquals("row is 4", 0, cf.getRow());
         assertEquals("col is 1", 0, cf.getCol());
-        assertTrue("row is abs",cf.isRowAbsolute());
-        assertTrue("col is abs",cf.isColAbsolute());
+        assertTrue("row is abs", cf.isRowAbsolute());
+        assertTrue("col is abs", cf.isColAbsolute());
         assertEquals("string is $A$1", "$A$1", cf.formatAsString());
 
         cf = ar.getLastCell();
         assertEquals("row is 4", 1, cf.getRow());
         assertEquals("col is 1", 1, cf.getCol());
-        assertTrue("row is abs",cf.isRowAbsolute());
-        assertTrue("col is abs",cf.isColAbsolute());
+        assertTrue("row is abs", cf.isRowAbsolute());
+        assertTrue("col is abs", cf.isColAbsolute());
         assertEquals("string is $B$2", "$B$2", cf.formatAsString());
 
         CellReference[] refs = ar.getAllReferencedCells();
@@ -87,8 +87,8 @@ public final class TestAreaReference {
     }
 
     /**
-     * References failed when sheet names were being used
-     * Reported by Arne.Clauss@gedas.de
+     * References failed when sheet names were being used Reported by
+     * Arne.Clauss@gedas.de
      */
     @Test
     public void testReferenceWithSheet() {
@@ -99,7 +99,6 @@ public final class TestAreaReference {
         TestCellReference.confirmCell(ar.getFirstCell(), "Tabelle1", 4, 1, false, false, "Tabelle1!B5");
 
         assertEquals(1, ar.getAllReferencedCells().length);
-
 
         ar = new AreaReference("Tabelle1!$B$5:$B$7", SpreadsheetVersion.EXCEL97);
         assertFalse(ar.isSingleCell());
@@ -122,6 +121,8 @@ public final class TestAreaReference {
         String refDCSimple = "$C$10:$C$10,$D$12:$D$12,$E$14:$E$14";
         String refDC2D = "$C$10:$C$11,$D$12:$D$12,$E$14:$E$20";
         String refDC3D = "Tabelle1!$C$10:$C$14,Tabelle1!$D$10:$D$12";
+        String refComma = "'A,Sheet'!$A$1:$A$1,'A,Sheet'!$A$4:$A$5";
+        String refCommaExp = "'!Sheet,Comma!'!$A$1:$B$1";
 
         // Check that we detect as contiguous properly
         assertTrue(AreaReference.isContiguous(refSimple));
@@ -129,6 +130,8 @@ public final class TestAreaReference {
         assertFalse(AreaReference.isContiguous(refDCSimple));
         assertFalse(AreaReference.isContiguous(refDC2D));
         assertFalse(AreaReference.isContiguous(refDC3D));
+        assertFalse(AreaReference.isContiguous(refComma));
+        assertTrue(AreaReference.isContiguous(refCommaExp));
 
         // Check we can only create contiguous entries
         new AreaReference(refSimple, SpreadsheetVersion.EXCEL97);
@@ -136,20 +139,20 @@ public final class TestAreaReference {
         try {
             new AreaReference(refDCSimple, SpreadsheetVersion.EXCEL97);
             fail("expected IllegalArgumentException");
-        } catch(IllegalArgumentException e) {
-        	// expected during successful test
+        } catch (IllegalArgumentException e) {
+            // expected during successful test
         }
         try {
             new AreaReference(refDC2D, SpreadsheetVersion.EXCEL97);
             fail("expected IllegalArgumentException");
-        } catch(IllegalArgumentException e) {
-        	// expected during successful test
+        } catch (IllegalArgumentException e) {
+            // expected during successful test
         }
         try {
             new AreaReference(refDC3D, SpreadsheetVersion.EXCEL97);
             fail("expected IllegalArgumentException");
-        } catch(IllegalArgumentException e) {
-        	// expected during successful test
+        } catch (IllegalArgumentException e) {
+            // expected during successful test
         }
 
         // Test that we split as expected
@@ -193,6 +196,21 @@ public final class TestAreaReference {
         assertEquals("Tabelle1", refs[0].getLastCell().getSheetName());
         assertEquals("Tabelle1", refs[1].getFirstCell().getSheetName());
         assertEquals("Tabelle1", refs[1].getLastCell().getSheetName());
+
+        refs = AreaReference.generateContiguous(SpreadsheetVersion.EXCEL97, refComma);
+        assertEquals(2, refs.length);
+        System.out.println(refs[0].formatAsString());
+        assertTrue(refs[0].isSingleCell());
+        assertEquals("'A,Sheet'!$A$1", refs[0].formatAsString());
+        assertEquals("A,Sheet", refs[0].getLastCell().getSheetName());
+        assertEquals("'A,Sheet'!$A$4:$A$5", refs[1].formatAsString());
+        assertEquals("A,Sheet", refs[1].getLastCell().getSheetName());
+
+        refs = AreaReference.generateContiguous(SpreadsheetVersion.EXCEL97, refCommaExp);
+        assertEquals(1, refs.length);
+        assertFalse(refs[0].isSingleCell());
+        assertEquals("'!Sheet,Comma!'!$A$1:$B$1", refs[0].formatAsString());
+        assertEquals("!Sheet,Comma!", refs[0].getLastCell().getSheetName());
     }
 
     @Test
@@ -274,6 +292,9 @@ public final class TestAreaReference {
 
         ar = new AreaReference("'one:many'!A1:B2", SpreadsheetVersion.EXCEL97);
         confirmAreaSheetName(ar, "one:many", "'one:many'!A1:B2");
+
+        ar = new AreaReference("'O,Comma'!A1:B1", SpreadsheetVersion.EXCEL97);
+        confirmAreaSheetName(ar, "O,Comma", "'O,Comma'!A1:B1");
     }
 
     private static void confirmAreaSheetName(AreaReference ar, String sheetName, String expectedFullText) {
