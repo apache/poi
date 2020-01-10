@@ -52,7 +52,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
     private int _lastrow  = -1;
     private final Map<Integer, RowRecord> _rowRecords;
     private final ValueRecordsAggregate _valuesAgg;
-    private final List<Record> _unknownRecords;
+    private final List<org.apache.poi.hssf.record.Record> _unknownRecords;
     private final SharedValueManager _sharedValueManager;
 
     // Cache values to speed up performance of
@@ -116,7 +116,7 @@ public final class RowRecordsAggregate extends RecordAggregate {
     /**
      * Handles UnknownRecords which appear within the row/cell records
      */
-    private void addUnknownRecord(Record rec) {
+    private void addUnknownRecord(org.apache.poi.hssf.record.Record rec) {
         // ony a few distinct record IDs are encountered by the existing POI test cases:
         // 0x1065 // many
         // 0x01C2 // several

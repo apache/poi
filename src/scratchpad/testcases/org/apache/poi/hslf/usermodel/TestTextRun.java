@@ -129,7 +129,7 @@ public final class TestTextRun {
         TextHeaderAtom tha = null;
         TextBytesAtom tba = null;
         TextCharsAtom tca = null;
-		for (Record r : para.getRecords()) {
+		for ( org.apache.poi.hslf.record.Record r : para.getRecords()) {
 		    if (r instanceof TextHeaderAtom) tha = (TextHeaderAtom)r;
 		    else if (r instanceof TextBytesAtom) tba = (TextBytesAtom)r;
 		    else if (r instanceof TextCharsAtom) tca = (TextCharsAtom)r;
@@ -145,7 +145,7 @@ public final class TestTextRun {
 		HSLFTextParagraph.setText(paras, changeBytesOnly);
 		para = paras.get(0);
 		tha = null; tba = null; tca = null;
-        for (Record r : para.getRecords()) {
+        for ( org.apache.poi.hslf.record.Record r : para.getRecords()) {
             if (r instanceof TextHeaderAtom) tha = (TextHeaderAtom)r;
             else if (r instanceof TextBytesAtom) tba = (TextBytesAtom)r;
             else if (r instanceof TextCharsAtom) tca = (TextCharsAtom)r;
@@ -164,7 +164,7 @@ public final class TestTextRun {
 		HSLFTextParagraph.setText(paras, changeByteChar);
 		para = paras.get(0);
         tha = null; tba = null; tca = null;
-        for (Record r : para.getRecords()) {
+        for ( org.apache.poi.hslf.record.Record r : para.getRecords()) {
             if (r instanceof TextHeaderAtom) tha = (TextHeaderAtom)r;
             else if (r instanceof TextBytesAtom) tba = (TextBytesAtom)r;
             else if (r instanceof TextCharsAtom) tca = (TextCharsAtom)r;
@@ -183,7 +183,7 @@ public final class TestTextRun {
 		HSLFTextParagraph.setText(paras, changeCharChar);
         para = paras.get(0);
         tha = null; tba = null; tca = null;
-        for (Record r : para.getRecords()) {
+        for ( org.apache.poi.hslf.record.Record r : para.getRecords()) {
             if (r instanceof TextHeaderAtom) tha = (TextHeaderAtom)r;
             else if (r instanceof TextBytesAtom) tba = (TextBytesAtom)r;
             else if (r instanceof TextCharsAtom) tca = (TextCharsAtom)r;
@@ -525,8 +525,8 @@ public final class TestTextRun {
                 HSLFTextShape tx = (HSLFTextShape)sh;
                 List<HSLFTextParagraph> paras = tx.getTextParagraphs();
                 //verify that records cached in  TextRun and EscherTextboxWrapper are the same
-                Record[] runChildren = paras.get(0).getRecords();
-                Record[] txboxChildren = tx.getEscherTextboxWrapper().getChildRecords();
+                 org.apache.poi.hslf.record.Record[] runChildren = paras.get(0).getRecords();
+                 org.apache.poi.hslf.record.Record[] txboxChildren = tx.getEscherTextboxWrapper().getChildRecords();
                 assertEquals(runChildren.length, txboxChildren.length);
                 for(int i=0; i < txboxChildren.length; i++){
                     assertSame(txboxChildren[i], runChildren[i]);

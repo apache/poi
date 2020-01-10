@@ -25,7 +25,7 @@ import org.apache.poi.hssf.record.Record;
  */
 public final class RecordStream {
 
-	private final List<Record> _list;
+	private final List<org.apache.poi.hssf.record.Record> _list;
 	private int _nextIndex;
 	private int _countRead;
 	private final int _endIx;
@@ -37,14 +37,14 @@ public final class RecordStream {
 	 * @param startIndex the start index within the list
 	 * @param endIx the end index within the list, which is the index of the end element + 1
 	 */
-	public RecordStream(List<Record> inputList, int startIndex, int endIx) {
+	public RecordStream(List<org.apache.poi.hssf.record.Record> inputList, int startIndex, int endIx) {
 		_list = inputList;
 		_nextIndex = startIndex;
 		_endIx = endIx;
 		_countRead = 0;
 	}
 
-	public RecordStream(List<Record> records, int startIx) {
+	public RecordStream(List<org.apache.poi.hssf.record.Record> records, int startIx) {
 		this(records, startIx, records.size());
 	}
 

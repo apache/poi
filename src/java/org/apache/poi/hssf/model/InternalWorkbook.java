@@ -179,15 +179,15 @@ public final class InternalWorkbook {
      * @param recs an array of Record objects
      * @return Workbook object
      */
-    public static InternalWorkbook createWorkbook(List<Record> recs) {
+    public static InternalWorkbook createWorkbook(List<org.apache.poi.hssf.record.Record> recs) {
         LOG.log(DEBUG, "Workbook (readfile) created with reclen=", recs.size());
         InternalWorkbook retval = new InternalWorkbook();
-        List<Record> records = new ArrayList<>(recs.size() / 3);
+        List<org.apache.poi.hssf.record.Record> records = new ArrayList<>(recs.size() / 3);
         retval.records.setRecords(records);
 
         boolean eofPassed = false;
         for (int k = 0; k < recs.size(); k++) {
-            Record rec = recs.get(k);
+            org.apache.poi.hssf.record.Record rec = recs.get(k);
             String logObj;
             switch (rec.getSid()) {
 
@@ -328,7 +328,7 @@ public final class InternalWorkbook {
         LOG.log( DEBUG, "creating new workbook from scratch" );
 
         InternalWorkbook retval = new InternalWorkbook();
-        List<Record> records = new ArrayList<>(30);
+        List<org.apache.poi.hssf.record.Record> records = new ArrayList<>(30);
         retval.records.setRecords(records);
         List<FormatRecord> formats = retval.formats;
 
@@ -604,7 +604,7 @@ public final class InternalWorkbook {
         // also adjust order of Records, calculate the position of the Boundsheets via getBspos()...
         int initialBspos = records.getBspos();
         int pos0 = initialBspos - (boundsheets.size() - 1);
-        Record removed = records.get(pos0 + sheetNumber);
+        org.apache.poi.hssf.record.Record removed = records.get(pos0 + sheetNumber);
         records.remove(pos0 + sheetNumber);
 		records.add(pos0 + pos, removed);
         records.setBspos(initialBspos);
@@ -774,7 +774,7 @@ public final class InternalWorkbook {
      * make the tabid record look like the current situation.
      */
     private void fixTabIdRecord() {
-        Record rec = records.get(records.getTabpos());
+        org.apache.poi.hssf.record.Record rec = records.get(records.getTabpos());
 
         // see bug 55982, quite a number of documents do not have a TabIdRecord and
         // thus there is no way to do the fixup here,
@@ -885,7 +885,7 @@ public final class InternalWorkbook {
         // Style records always follow after
         //  the ExtendedFormat records
         for(int i=records.getXfpos(); i<records.size(); i++) {
-            Record r = records.get(i);
+            org.apache.poi.hssf.record.Record r = records.get(i);
             if (r instanceof StyleRecord) {
                 StyleRecord sr = (StyleRecord)r;
                 if (sr.getXFIndex() == xfIndex) {
@@ -907,7 +907,7 @@ public final class InternalWorkbook {
         // Style records always follow after
         //  the ExtendedFormat records
         for(int i=records.getXfpos(); i<records.size(); i++) {
-            Record r = records.get(i);
+            org.apache.poi.hssf.record.Record r = records.get(i);
             if (r instanceof StyleRecord) {
                 StyleRecord sr = (StyleRecord)r;
                 if (sr.getXFIndex() == oldXf) {
@@ -936,7 +936,7 @@ public final class InternalWorkbook {
         int addAt = -1;
         for(int i=records.getXfpos(); i<records.size() &&
                 addAt == -1; i++) {
-            Record r = records.get(i);
+            org.apache.poi.hssf.record.Record r = records.get(i);
             if(r instanceof ExtendedFormatRecord ||
                     r instanceof StyleRecord) {
                 // Keep going
@@ -1015,7 +1015,7 @@ public final class InternalWorkbook {
         SSTRecord lSST = null;
         int sstPos = 0;
         boolean wroteBoundSheets = false;
-        for ( Record record : records.getRecords() ) {
+        for ( org.apache.poi.hssf.record.Record record : records.getRecords() ) {
             int len = 0;
             if (record instanceof SSTRecord) {
                 lSST = (SSTRecord)record;
@@ -1061,7 +1061,7 @@ public final class InternalWorkbook {
         int retval = 0;
 
         SSTRecord lSST = null;
-        for ( Record record : records.getRecords() ) {
+        for ( org.apache.poi.hssf.record.Record record : records.getRecords() ) {
             if (record instanceof SSTRecord) {
                 lSST = (SSTRecord)record;
             }
@@ -1733,8 +1733,8 @@ public final class InternalWorkbook {
      *
      * @return the matching record or {@code null} if it wasn't found
      */
-    public Record findFirstRecordBySid(short sid) {
-        for (Record record : records.getRecords() ) {
+    public org.apache.poi.hssf.record.Record findFirstRecordBySid(short sid) {
+        for (org.apache.poi.hssf.record.Record record : records.getRecords() ) {
             if (record.getSid() == sid) {
                 return record;
             }
@@ -1749,7 +1749,7 @@ public final class InternalWorkbook {
      */
     public int findFirstRecordLocBySid(short sid) {
         int index = 0;
-        for (Record record : records.getRecords() ) {
+        for (org.apache.poi.hssf.record.Record record : records.getRecords() ) {
             if (record.getSid() == sid) {
                 return index;
             }
@@ -1766,9 +1766,9 @@ public final class InternalWorkbook {
      *
      * @return the matching record or {@code null} if it wasn't found
      */
-    public Record findNextRecordBySid(short sid, int pos) {
+    public org.apache.poi.hssf.record.Record findNextRecordBySid(short sid, int pos) {
         int matches = 0;
-        for (Record record : records.getRecords() ) {
+        for (org.apache.poi.hssf.record.Record record : records.getRecords() ) {
             if (record.getSid() == sid && matches++ == pos) {
                 return record;
             }
@@ -1781,7 +1781,7 @@ public final class InternalWorkbook {
         return hyperlinks;
     }
 
-    public List<Record> getRecords() {
+    public List<org.apache.poi.hssf.record.Record> getRecords() {
         return records.getRecords();
     }
 
@@ -1805,7 +1805,7 @@ public final class InternalWorkbook {
         PaletteRecord palette;
         int palettePos = records.getPalettepos();
         if (palettePos != -1) {
-            Record rec = records.get(palettePos);
+            org.apache.poi.hssf.record.Record rec = records.get(palettePos);
             if (rec instanceof PaletteRecord) {
                 palette = (PaletteRecord) rec;
             } else {
@@ -1832,7 +1832,7 @@ public final class InternalWorkbook {
         }
 
         // Need to find a DrawingGroupRecord that contains a EscherDggRecord
-        for(Record r : records.getRecords() ) {
+        for(org.apache.poi.hssf.record.Record r : records.getRecords() ) {
             if (!(r instanceof DrawingGroupRecord)) {
                 continue;
             }

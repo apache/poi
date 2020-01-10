@@ -67,7 +67,7 @@ public final class TestValueRecordsAggregate {
 	 */
     @Test
 	public void testSharedFormula() {
-		List<Record> records = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
 		records.add(new FormulaRecord());
 		records.add(new SharedFormulaRecord());
 		records.add(new WindowTwoRecord());
@@ -82,7 +82,7 @@ public final class TestValueRecordsAggregate {
 		assertTrue( "First record is a FormulaRecordsAggregate", ( record instanceof FormulaRecordAggregate ) );
 	}
 
-	private void constructValueRecord(List<Record> records) {
+	private void constructValueRecord(List<org.apache.poi.hssf.record.Record> records) {
 		RowBlocksReader rbr = new RowBlocksReader(new RecordStream(records, 0));
 		SharedValueManager sfrh = rbr.getSharedFormulaManager();
 		RecordStream rs = rbr.getPlainRecordStream();
@@ -92,8 +92,8 @@ public final class TestValueRecordsAggregate {
 		}
 	}
 
-	private static List<Record> testData() {
-		List<Record> records = new ArrayList<>();
+	private static List<org.apache.poi.hssf.record.Record> testData() {
+		List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
 		FormulaRecord formulaRecord = new FormulaRecord();
 		BlankRecord blankRecord = new BlankRecord();
 		formulaRecord.setRow(1);
@@ -174,7 +174,7 @@ public final class TestValueRecordsAggregate {
 
 		}
 		@Override
-        public void visitRecord(Record r) {
+        public void visitRecord(org.apache.poi.hssf.record.Record r) {
 			r.serialize(_writeIndex, _buf);
 			_writeIndex += r.getRecordSize();
 		}
@@ -191,7 +191,7 @@ public final class TestValueRecordsAggregate {
 				+ "01 02 06 00 " // Blank
 				+ "02 00 02 00 00 00");
 		byte[] actualArray = new byte[expectedArray.length];
-		List<Record> records = testData();
+		List<org.apache.poi.hssf.record.Record> records = testData();
 		constructValueRecord(records);
 
 		SerializerVisitor sv = new SerializerVisitor(actualArray);

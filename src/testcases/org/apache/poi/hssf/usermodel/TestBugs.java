@@ -1641,7 +1641,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
                 // Ensure the tab index
                 TabIdRecord tr = null;
-                for (Record r : wb2.getWorkbook().getRecords()) {
+                for (org.apache.poi.hssf.record.Record r : wb2.getWorkbook().getRecords()) {
                     if (r instanceof TabIdRecord) {
                         tr = (TabIdRecord) r;
                     }

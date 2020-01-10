@@ -162,7 +162,7 @@ public final class HSLFShapeFactory {
     @SuppressWarnings("unchecked")
     protected static <T extends Record> T getClientDataRecord(EscherContainerRecord spContainer, int recordType) {
         HSLFEscherClientDataRecord cldata = spContainer.getChildById(EscherClientDataRecord.RECORD_ID);
-        if (cldata != null) for (Record r : cldata.getHSLFChildRecords()) {
+        if (cldata != null) for (org.apache.poi.hslf.record.Record r : cldata.getHSLFChildRecords()) {
             if (r.getRecordType() == recordType) {
                 return (T)r;
             }

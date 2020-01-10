@@ -439,7 +439,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
                 loc++;
                 continue;
             }
-            Record objRecord = (Record) records.get(loc);
+            Record objRecord = (org.apache.poi.hssf.record.Record) records.get(loc);
             agg.shapeToObj.put(shapeRecords.get(shapeIndex++), objRecord);
             loc++;
         }
@@ -635,7 +635,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
             continueRecordsHeadersSize += 4;
         }
         int objRecordSize = 0;
-        for (Record r : shapeToObj.values()) {
+        for (org.apache.poi.hssf.record.Record r : shapeToObj.values()) {
             objRecordSize += r.getRecordSize();
         }
         int tailRecordSize = 0;
@@ -771,7 +771,7 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     private static short sid(List<RecordBase> records, int loc) {
         RecordBase record = records.get(loc);
         if (record instanceof Record) {
-            return ((Record)record).getSid();
+            return ((org.apache.poi.hssf.record.Record)record).getSid();
         } else {
             // Aggregates don't have a sid
             // We could step into them, but for these needs we don't care

@@ -517,7 +517,7 @@ public final class TestBugs {
         SlideAtomsSet s1 = slidesSLWT.getSlideAtomsSets()[0];
 
         int tha = 0;
-        for (Record r : s1.getSlideRecords()) {
+        for ( org.apache.poi.hslf.record.Record r : s1.getSlideRecords()) {
             if (r instanceof TextHeaderAtom) {
                 tha++;
             }

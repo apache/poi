@@ -86,11 +86,11 @@ public final class TestHSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateA
             HSSFSheet s = wb.createSheet("Sheet1");
 
             CellRange<HSSFCell> cr = s.setArrayFormula("123", CellRangeAddress.valueOf("B5:C6"));
-            List<Record> recs = new ArrayList<>();
+            List<org.apache.poi.hssf.record.Record> recs = new ArrayList<>();
             s.getSheet().visitContainedRecords(recs::add, 0);
 
             int ix = 0;
-            for (Record r : recs) {
+            for (org.apache.poi.hssf.record.Record r : recs) {
                 if (r instanceof ArrayRecord) break;
                 ix++;
             }

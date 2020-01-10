@@ -57,7 +57,7 @@ public final class EscherTextboxWrapper extends RecordContainer {
 		// Find the child records in the escher data
 		byte[] data = _escherRecord.getData();
 		_children = Record.findChildRecords(data,0,data.length);
-		for (Record r : this._children) {
+		for (org.apache.poi.hslf.record.Record r : this._children) {
 			if (r instanceof StyleTextPropAtom) { this.styleTextPropAtom = (StyleTextPropAtom) r; }
 		}
 	}
@@ -70,7 +70,7 @@ public final class EscherTextboxWrapper extends RecordContainer {
 		_escherRecord.setRecordId(EscherTextboxRecord.RECORD_ID);
 		_escherRecord.setOptions((short)15);
 
-		_children = new Record[0];
+		_children = new org.apache.poi.hslf.record.Record[0];
 	}
 
 
@@ -90,7 +90,7 @@ public final class EscherTextboxWrapper extends RecordContainer {
 
 		// Grab the children's data
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		for (Record r : _children) r.writeOut(baos);
+		for (org.apache.poi.hslf.record.Record r : _children) r.writeOut(baos);
 		byte[] data = baos.toByteArray();
 
 		// Save in the escher layer

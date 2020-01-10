@@ -71,7 +71,7 @@ public final class TestChartTitleFormatRecord {
 		}
 
 		@Override
-        public void processRecord(Record record) {
+        public void processRecord(org.apache.poi.hssf.record.Record record) {
 			if(record instanceof ChartTitleFormatRecord) {
 				chartTitleFormatRecords.add((ChartTitleFormatRecord)record);
 			}

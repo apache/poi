@@ -50,24 +50,24 @@ import org.junit.Test;
  * Unit test for the {@link InternalSheet} class.
  */
 public final class TestSheet {
-	private static InternalSheet createSheet(List<Record> inRecs) {
+	private static InternalSheet createSheet(List<org.apache.poi.hssf.record.Record> inRecs) {
 		return InternalSheet.createSheet(new RecordStream(inRecs, 0));
 	}
 
 	@Test
 	public void testCreateSheet() {
 		// Check we're adding row and cell aggregates
-		List<Record> records = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
 		records.add(BOFRecord.createSheetBOF());
 		records.add( new DimensionsRecord() );
 		records.add(createWindow2Record());
 		records.add(EOFRecord.instance);
 		InternalSheet sheet = createSheet(records);
 
-		List<Record> outRecs = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> outRecs = new ArrayList<>();
 		sheet.visitContainedRecords(outRecs::add, 0);
 
-		Iterator<Record> iter = outRecs.iterator();
+		Iterator<org.apache.poi.hssf.record.Record> iter = outRecs.iterator();
 		assertTrue(iter.next() instanceof BOFRecord );
 		assertTrue(iter.next() instanceof IndexRecord);
 		assertTrue(iter.next() instanceof DimensionsRecord);
@@ -75,7 +75,7 @@ public final class TestSheet {
 		assertTrue(iter.next() instanceof EOFRecord);
 	}
 
-	private static Record createWindow2Record() {
+	private static org.apache.poi.hssf.record.Record createWindow2Record() {
 		WindowTwoRecord result = new WindowTwoRecord();
 		result.setOptions(( short ) 0x6b6);
 		result.setTopRow(( short ) 0);
@@ -93,7 +93,7 @@ public final class TestSheet {
 			_count = 0;
 		}
 		@Override
-        public void visitRecord(Record r) {
+        public void visitRecord(org.apache.poi.hssf.record.Record r) {
 			if (r instanceof MergeCellsRecord) {
 				_count++;
 			}
@@ -179,7 +179,7 @@ public final class TestSheet {
 	 */
     @Test
 	public void testMovingMergedRegion() {
-		List<Record> records = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
 
 		CellRangeAddress[] cras = {
 			new CellRangeAddress(0, 1, 0, 2),
@@ -218,7 +218,7 @@ public final class TestSheet {
 	 */
     @Test
 	public void testRowAggregation() {
-		List<Record> records = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
 
 		records.add(InternalSheet.createBOF());
 		records.add(new DimensionsRecord());
@@ -430,7 +430,7 @@ public final class TestSheet {
     @Test
 	public void testUncalcSize_bug45066() {
 
-		List<Record> records = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
 		records.add(BOFRecord.createSheetBOF());
 		records.add(new UncalcedRecord());
 		records.add(new DimensionsRecord());
@@ -510,7 +510,7 @@ public final class TestSheet {
 			return _indexRecord;
 		}
 		@Override
-        public void visitRecord(Record r) {
+        public void visitRecord(org.apache.poi.hssf.record.Record r) {
 			if (r instanceof IndexRecord) {
 				if (_indexRecord != null) {
 					throw new RuntimeException("too many index records");
@@ -588,7 +588,7 @@ public final class TestSheet {
 		nr.setColumn((short) colIx);
 		nr.setValue(3.0);
 
-		List<Record> inRecs = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> inRecs = new ArrayList<>();
 		inRecs.add(BOFRecord.createSheetBOF());
 		inRecs.add(new RowRecord(rowIx));
 		inRecs.add(nr);
@@ -596,7 +596,7 @@ public final class TestSheet {
 		inRecs.add(EOFRecord.instance);
 		InternalSheet sheet = createSheet(inRecs);
 
-		List<Record> outRecs = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> outRecs = new ArrayList<>();
 		sheet.visitContainedRecords(outRecs::add, rowIx);
 		assertEquals(8, outRecs.size());
 		DimensionsRecord dims = (DimensionsRecord) outRecs.get(5);
@@ -643,7 +643,7 @@ public final class TestSheet {
 
     @Test
 	public void testCloneMulBlank_bug46776() {
-		Record[]  recs = {
+		org.apache.poi.hssf.record.Record[] recs = {
 				InternalSheet.createBOF(),
 				new DimensionsRecord(),
 				new RowRecord(1),
@@ -657,7 +657,7 @@ public final class TestSheet {
 
 		InternalSheet sheet2 = sheet.cloneSheet();
 
-		List<Record> clonedRecs = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> clonedRecs = new ArrayList<>();
 		sheet2.visitContainedRecords(clonedRecs::add, 0);
 		// +2 for INDEX and DBCELL
 		assertEquals(recs.length+2, clonedRecs.size());
@@ -700,7 +700,7 @@ public final class TestSheet {
         r2.setStr(new HSSFRichTextString("Aggregated"));
         NoteRecord n2 = new NoteRecord();
 
-        List<Record> recordStream = new ArrayList<>();
+        List<org.apache.poi.hssf.record.Record> recordStream = new ArrayList<>();
         recordStream.add(InternalSheet.createBOF());
         recordStream.add( d1 );
         recordStream.add( r1 );
@@ -734,7 +734,7 @@ public final class TestSheet {
         confirmAggregatedRecords(recordStream);
      }
 
-    private void confirmAggregatedRecords(List<Record> recordStream){
+    private void confirmAggregatedRecords(List<org.apache.poi.hssf.record.Record> recordStream){
         InternalSheet sheet = InternalSheet.createSheet();
         sheet.getRecords().clear();
         sheet.getRecords().addAll(recordStream);
@@ -745,10 +745,10 @@ public final class TestSheet {
         sheet.aggregateDrawingRecords(drawingManager, false);
 
         assertEquals(4, sheetRecords.size());
-        assertEquals(BOFRecord.sid, ((Record)sheetRecords.get(0)).getSid());
-        assertEquals(EscherAggregate.sid, ((Record)sheetRecords.get(1)).getSid());
-        assertEquals(WindowTwoRecord.sid, ((Record)sheetRecords.get(2)).getSid());
-        assertEquals(EOFRecord.sid, ((Record)sheetRecords.get(3)).getSid());
+        assertEquals(BOFRecord.sid, ((org.apache.poi.hssf.record.Record)sheetRecords.get(0)).getSid());
+        assertEquals(EscherAggregate.sid, ((org.apache.poi.hssf.record.Record)sheetRecords.get(1)).getSid());
+        assertEquals(WindowTwoRecord.sid, ((org.apache.poi.hssf.record.Record)sheetRecords.get(2)).getSid());
+        assertEquals(EOFRecord.sid, ((org.apache.poi.hssf.record.Record)sheetRecords.get(3)).getSid());
     }
 
     @Test

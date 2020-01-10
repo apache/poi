@@ -414,7 +414,7 @@ public final class TestHSSFSheet extends BaseTestSheet {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet();
             s.protectSheet("secret");
-            List<Record> recs = new ArrayList<>();
+            List<org.apache.poi.hssf.record.Record> recs = new ArrayList<>();
             s.getSheet().visitContainedRecords(recs::add, 0);
             int nRecs = recs.size();
 

@@ -39,7 +39,7 @@ public class EventExample implements HSSFListener {
      * @param record    The record that was found while reading.
      */
     @Override
-    public void processRecord(Record record)
+    public void processRecord(org.apache.poi.hssf.record.Record record)
     {
         switch (record.getSid())
         {

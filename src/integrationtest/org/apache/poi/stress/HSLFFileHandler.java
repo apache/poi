@@ -36,9 +36,9 @@ public class HSLFFileHandler extends SlideShowHandler {
         assertNotNull(slide.getEmbeddedObjects());
         assertNotNull(slide.getUnderlyingBytes());
         assertNotNull(slide.getPictureData());
-        Record[] records = slide.getRecords();
+        org.apache.poi.hssf.record.Record[] records = slide.getRecords();
         assertNotNull(records);
-        for(Record record : records) {
+        for(org.apache.poi.hssf.record.Record record : records) {
             assertNotNull("Found a record which was null", record);
             assertTrue(record.getRecordType() >= 0);
         }

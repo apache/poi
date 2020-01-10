@@ -132,7 +132,7 @@ public class XLS2CSVmra implements HSSFListener {
 	 *  CSV as the file is processed.
 	 */
 	@Override
-    public void processRecord(Record record) {
+    public void processRecord(org.apache.poi.hssf.record.Record record) {
 		int thisRow = -1;
 		int thisColumn = -1;
 		String thisStr = null;

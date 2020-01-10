@@ -258,7 +258,7 @@ public class SanityChecker {
 
     private void checkWorkbookRecords(InternalWorkbook workbook)
     {
-        List<Record> records = workbook.getRecords();
+        List<org.apache.poi.hssf.record.Record> records = workbook.getRecords();
         assertTrue(records.get(0) instanceof BOFRecord);
         assertTrue(records.get(records.size() - 1) instanceof EOFRecord);
 
@@ -338,7 +338,7 @@ public class SanityChecker {
         int checkIndex = 0;
         for (int recordIndex = 0; recordIndex < records.size(); recordIndex++)
         {
-            Record record = (Record) records.get(recordIndex);
+            Record record = (org.apache.poi.hssf.record.Record) records.get(recordIndex);
             if (check[checkIndex].getRecord().isInstance(record))
             {
                 if (check[checkIndex].getOccurance() == 'M')

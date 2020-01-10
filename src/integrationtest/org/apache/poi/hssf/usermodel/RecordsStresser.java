@@ -33,8 +33,8 @@ import org.junit.Test;
  */
 public class RecordsStresser {
     public static void handleWorkbook(HSSFWorkbook wb) {
-        List<Record> records = wb.getWorkbook().getRecords();
-        for(Record record : records) {
+        List<org.apache.poi.hssf.record.Record> records = wb.getWorkbook().getRecords();
+        for(org.apache.poi.hssf.record.Record record : records) {
             // some Records do not implement clone ?!
             // equals instead of instanceof is on purpose here to only skip exactly this class and not any derived ones
 //            if(record.getClass().equals(InterfaceHdrRecord.class) ||

@@ -44,7 +44,7 @@ public final class TestMostRecentRecords {
 	@Test
 	public void testCount() {
 		// Most recent core records
-		Record[] mrcr = ss.getMostRecentCoreRecords();
+		 org.apache.poi.hslf.record.Record[] mrcr = ss.getMostRecentCoreRecords();
 
 		// Master sheet + master notes + 2 slides + 2 notes + document
 		assertEquals(7, mrcr.length);
@@ -53,7 +53,7 @@ public final class TestMostRecentRecords {
 	@Test
 	public void testRightRecordTypes() {
 		// Most recent core records
-		Record[] mrcr = ss.getMostRecentCoreRecords();
+		 org.apache.poi.hslf.record.Record[] mrcr = ss.getMostRecentCoreRecords();
 
 		// Document
 		assertEquals(1000, mrcr[0].getRecordType());
@@ -75,10 +75,10 @@ public final class TestMostRecentRecords {
 	@Test
 	public void testCorrectRecords() {
 		// Most recent core records
-		Record[] mrcr = ss.getMostRecentCoreRecords();
+		 org.apache.poi.hslf.record.Record[] mrcr = ss.getMostRecentCoreRecords();
 
 		// All records
-		Record[] allr = hss.getRecords();
+		 org.apache.poi.hslf.record.Record[] allr = hss.getRecords();
 
 		// Ensure they are the right (latest) version of each
 

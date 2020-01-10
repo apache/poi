@@ -71,7 +71,7 @@ public final class TestRowRecordsAggregate {
     @Test
 	public void testArraysAndTables() throws Exception {
 		try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("testArraysAndTables.xls")) {
-			final List<Record> sheetRecs = new ArrayList<>();
+			final List<org.apache.poi.hssf.record.Record> sheetRecs = new ArrayList<>();
 			wb.getSheetAt(0).getSheet().visitContainedRecords(sheetRecs::add, 0);
 
 			int countArrayFormulas = verifySharedValues(sheetRecs, ArrayRecord.class);
@@ -100,7 +100,7 @@ public final class TestRowRecordsAggregate {
 		}
 	}
 
-	private static int verifySharedValues(List<Record> recs, Class<? extends SharedValueRecordBase> shfClass) {
+	private static int verifySharedValues(List<org.apache.poi.hssf.record.Record> recs, Class<? extends SharedValueRecordBase> shfClass) {
 
 		int result =0;
 		for(int i=0; i<recs.size(); i++) {
@@ -137,7 +137,7 @@ public final class TestRowRecordsAggregate {
 	 */
 	@Test
 	public void testUnknownContinue_bug46280() {
-		Record[] inRecs = {
+		org.apache.poi.hssf.record.Record[] inRecs = {
 			new RowRecord(0),
 			new NumberRecord(),
 			new UnknownRecord(0x5555, "dummydata".getBytes(LocaleUtil.CHARSET_1252)),
@@ -154,7 +154,7 @@ public final class TestRowRecordsAggregate {
 			throw e;
 		}
 
-		List<Record> outRecs = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> outRecs = new ArrayList<>();
 		rra.visitContainedRecords(outRecs::add);
 		assertEquals(5, outRecs.size());
 	}

@@ -53,7 +53,7 @@ public abstract class RecordAggregate extends RecordBase {
 		 * Implementors may call non-mutating methods on Record r.
 		 * @param r must not be <code>null</code>
 		 */
-		void visitRecord(Record r);
+		void visitRecord(org.apache.poi.hssf.record.Record r);
 	}
 
 	private static final class SerializingRecordVisitor implements RecordVisitor {
@@ -70,7 +70,7 @@ public abstract class RecordAggregate extends RecordBase {
 		public int countBytesWritten() {
 			return _countBytesWritten;
 		}
-		public void visitRecord(Record r) {
+		public void visitRecord(org.apache.poi.hssf.record.Record r) {
 			int currentOffset = _startOffset + _countBytesWritten;
 			_countBytesWritten += r.serialize(currentOffset, _data);
 		}
@@ -85,7 +85,7 @@ public abstract class RecordAggregate extends RecordBase {
 		public int getTotalSize() {
 			return _totalSize;
 		}
-		public void visitRecord(Record r) {
+		public void visitRecord(org.apache.poi.hssf.record.Record r) {
 			_totalSize += r.getRecordSize();
 		}
 	}
@@ -101,7 +101,7 @@ public abstract class RecordAggregate extends RecordBase {
 			_rv = rv;
 			_position = initialPosition;
 		}
-		public void visitRecord(Record r) {
+		public void visitRecord(org.apache.poi.hssf.record.Record r) {
 			_position += r.getRecordSize();
 			_rv.visitRecord(r);
 		}

@@ -188,7 +188,7 @@ final class LinkTable {
     private final int _recordCount;
     private final WorkbookRecordList _workbookRecordList; // TODO - would be nice to remove this
 
-    public LinkTable(List<Record> inputList, int startIndex, WorkbookRecordList workbookRecordList, Map<String, NameCommentRecord> commentRecords) {
+    public LinkTable(List<org.apache.poi.hssf.record.Record> inputList, int startIndex, WorkbookRecordList workbookRecordList, Map<String, NameCommentRecord> commentRecords) {
 
         _workbookRecordList = workbookRecordList;
         RecordStream rs = new RecordStream(inputList, startIndex);
@@ -524,7 +524,7 @@ final class LinkTable {
      */
     private int findFirstRecordLocBySid(short sid) {
         int index = 0;
-        for (Record record : _workbookRecordList.getRecords()) {
+        for (org.apache.poi.hssf.record.Record record : _workbookRecordList.getRecords()) {
             if (record.getSid() == sid) {
                 return index;
             }
@@ -641,7 +641,7 @@ final class LinkTable {
         int supLinkIndex = 0;
         // find the posistion of the Add-In SupBookRecord in the workbook stream,
         // the created ExternalNameRecord will be appended to it
-        for (Record record : _workbookRecordList.getRecords()) {
+        for (org.apache.poi.hssf.record.Record record : _workbookRecordList.getRecords()) {
             if (record instanceof SupBookRecord && ((SupBookRecord) record).isAddInFunctions()) {
                 break;
             }

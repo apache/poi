@@ -172,7 +172,7 @@ public class EventBasedExcelExtractor extends POIOLE2TextExtractor implements or
        public TextListener() {
            sheetNames = new ArrayList<>();
        }
-       public void processRecord(Record record) {
+       public void processRecord(org.apache.poi.hssf.record.Record record) {
            String thisText = null;
            int thisRow = -1;
 

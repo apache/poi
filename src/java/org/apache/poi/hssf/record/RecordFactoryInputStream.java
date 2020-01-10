@@ -52,7 +52,7 @@ public final class RecordFactoryInputStream {
 		private final Record _lastRecord;
 		private final boolean _hasBOFRecord;
 
-		public StreamEncryptionInfo(RecordInputStream rs, List<Record> outputRecs) {
+		public StreamEncryptionInfo(RecordInputStream rs, List<org.apache.poi.hssf.record.Record> outputRecs) {
 			Record rec;
 			rs.nextRecord();
 			int recSize = 4 + rs.remaining();
@@ -183,7 +183,7 @@ public final class RecordFactoryInputStream {
 	 */
 	public RecordFactoryInputStream(InputStream in, boolean shouldIncludeContinueRecords) {
 		RecordInputStream rs = new RecordInputStream(in);
-		List<Record> records = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
 		StreamEncryptionInfo sei = new StreamEncryptionInfo(rs, records);
 		if (sei.hasEncryption()) {
 			rs = sei.createDecryptingStream(in);

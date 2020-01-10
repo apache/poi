@@ -104,7 +104,7 @@ public final class HeadersFootersContainer extends RecordContainer {
         LittleEndian.putShort(_header, 2, (short)getRecordType());
 
         hdAtom = new HeadersFootersAtom();
-        _children = new Record[]{
+        _children = new org.apache.poi.hslf.record.Record[]{
             hdAtom
         };
         csDate = csHeader = csFooter = null;
@@ -198,7 +198,7 @@ public final class HeadersFootersContainer extends RecordContainer {
         csHeader = new CString();
         csHeader.setOptions(HEADERATOM << 4);
 
-        Record r = hdAtom;
+        org.apache.poi.hslf.record.Record r = hdAtom;
         if(csDate != null) r = hdAtom;
         addChildAfter(csHeader, r);
 
@@ -216,7 +216,7 @@ public final class HeadersFootersContainer extends RecordContainer {
         csFooter = new CString();
         csFooter.setOptions(FOOTERATOM << 4);
 
-        Record r = hdAtom;
+        org.apache.poi.hslf.record.Record r = hdAtom;
         if(csHeader != null) r = csHeader;
         else if(csDate != null) r = csDate;
         addChildAfter(csFooter, r);

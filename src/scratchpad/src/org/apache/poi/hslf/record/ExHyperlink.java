@@ -137,7 +137,7 @@ public class ExHyperlink extends RecordContainer {
 	 */
 	public ExHyperlink() {
 		_header = new byte[8];
-		_children = new Record[3];
+		_children = new org.apache.poi.hslf.record.Record[3];
 		
 		// Setup our header block
 		_header[0] = 0x0f; // We are a container record

@@ -37,5 +37,5 @@ public interface HSSFListener
      * 
      * @param record the record to be processed
      */
-    public void processRecord(Record record);
+    public void processRecord(org.apache.poi.hssf.record.Record record);
 }

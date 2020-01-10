@@ -84,7 +84,7 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 	 * Process this record ourselves, and then pass it on to our child listener
 	 */
 	@Override
-    public void processRecord(Record record) {
+    public void processRecord(org.apache.poi.hssf.record.Record record) {
 		// Handle it ourselves
 		processRecordInternally(record);
 
@@ -98,7 +98,7 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 	 *
 	 * @param record the record to be processed
 	 */
-	public void processRecordInternally(Record record) {
+	public void processRecordInternally(org.apache.poi.hssf.record.Record record) {
 		if (record instanceof FormatRecord) {
 			FormatRecord fr = (FormatRecord) record;
 			_customFormatRecords.put(Integer.valueOf(fr.getIndexCode()), fr);

@@ -340,7 +340,7 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
         //document-level container which stores info about all links in a presentation
         ExObjList exobj = ppt.getDocumentRecord().getExObjList(false);
         if (exobj != null) {
-            Record[] records = firstPara.getRecords();
+            org.apache.poi.hslf.record.Record[] records = firstPara.getRecords();
             find(Arrays.asList(records), exobj, lst);
         }
 
@@ -372,7 +372,7 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
     private static void find(List<? extends Record> records, ExObjList exobj, List<HSLFHyperlink> out){
         ListIterator<? extends Record> iter = records.listIterator();
         while (iter.hasNext()) {
-            Record r = iter.next();
+            org.apache.poi.hslf.record.Record r = iter.next();
             // see if we have InteractiveInfo in the textrun's records
             if (!(r instanceof InteractiveInfo)) {
                 continue;

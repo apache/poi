@@ -52,7 +52,7 @@ public final class FontCollection extends RecordContainer {
 
 		_children = Record.findChildRecords(source,start+8,len-8);
 
-		for (Record r : _children){
+		for (org.apache.poi.hslf.record.Record r : _children){
 			if(r instanceof FontEntityAtom) {
                 HSLFFontInfo fi = new HSLFFontInfo((FontEntityAtom) r);
                 fonts.put(fi.getIndex(), fi);

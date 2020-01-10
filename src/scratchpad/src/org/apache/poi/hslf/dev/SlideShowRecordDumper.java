@@ -146,7 +146,7 @@ public final class SlideShowRecordDumper {
         return ret.toString();
     }
 
-    public int getDiskLen(Record r) throws IOException {
+    public int getDiskLen(org.apache.poi.hslf.record.Record r) throws IOException {
         int diskLen = 0;
         if (r != null) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -156,7 +156,7 @@ public final class SlideShowRecordDumper {
         return diskLen;
     }
 
-    public String getPrintableRecordContents(Record r) throws IOException {
+    public String getPrintableRecordContents(org.apache.poi.hslf.record.Record r) throws IOException {
         if (r == null) {
             return "<<null>>";
         }
@@ -228,7 +228,7 @@ public final class SlideShowRecordDumper {
     public void walkTree(int depth, int pos, Record[] records, int indent) throws IOException {
         String ind = tabs.substring(0, indent);
 
-        for (Record r : records) {
+        for (org.apache.poi.hslf.record.Record r : records) {
             if (r == null) {
                 ps.println(ind + "At position " + pos + " (" + makeHex(pos, 6) + "):");
                 ps.println(ind + "Warning! Null record found.");

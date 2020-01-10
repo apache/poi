@@ -48,7 +48,7 @@ import org.junit.Test;
  */
 public final class TestMissingRecordAwareHSSFListener {
 
-	private final List<Record> _records = new ArrayList<>();
+	private final List<org.apache.poi.hssf.record.Record> _records = new ArrayList<>();
 
 	private void readRecords(String sampleFileName) throws IOException {
 		_records.clear();
@@ -103,7 +103,7 @@ public final class TestMissingRecordAwareHSSFListener {
 		readRecords("MRExtraLines.xls");
 
 		int rowCount=0;
-		for (Record rec : _records) {
+		for (org.apache.poi.hssf.record.Record rec : _records) {
 			if (rec instanceof LastCellOfRowDummyRecord) {
 				LastCellOfRowDummyRecord eor = (LastCellOfRowDummyRecord) rec;
 				assertEquals(rowCount, eor.getRow());
@@ -158,10 +158,10 @@ public final class TestMissingRecordAwareHSSFListener {
 		assertEquals(exp, act);
 	}
 
-	private int lastIndexOf(Predicate<Record> pre) {
+	private int lastIndexOf(Predicate<org.apache.poi.hssf.record.Record> pre) {
 		int found = -1;
 		int i = 0;
-		for (Record r : _records) {
+		for (org.apache.poi.hssf.record.Record r : _records) {
 			if (pre.test(r)) {
 				found = i;
 			}
@@ -173,7 +173,7 @@ public final class TestMissingRecordAwareHSSFListener {
 	private String digest(int start, int len) {
 		StringBuilder sb = new StringBuilder(len*10);
 		int lastRow = -1;
-		for (Record r : _records.subList(start, start+len+1)) {
+		for (org.apache.poi.hssf.record.Record r : _records.subList(start, start+len+1)) {
 			String dig = null;
 			int row = -1;
 			if (r instanceof RowRecord) {
@@ -221,7 +221,7 @@ public final class TestMissingRecordAwareHSSFListener {
 		return sb.toString();
 	}
 
-	private long matches(Predicate<Record> r) {
+	private long matches(Predicate<org.apache.poi.hssf.record.Record> r) {
 		return _records.stream().filter(r).count();
 	}
 }

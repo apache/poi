@@ -65,7 +65,7 @@ public final class TestFormulaRecordAggregate {
 		SharedValueManager svm = SharedValueManager.createEmpty();
 		// bug 46213 -> String record was  supplied but formula record flag is not  set
 		FormulaRecordAggregate fra = new FormulaRecordAggregate(fr, sr, svm);
-		List<Record> vraRecs = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> vraRecs = new ArrayList<>();
 		fra.visitContainedRecords(vraRecs::add);
 		assertEquals(1, vraRecs.size());
 		assertEquals(fr, vraRecs.get(0));

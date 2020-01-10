@@ -113,7 +113,7 @@ public final class RecordFactory {
         public Record create(RecordInputStream in) {
             Object[] args = { in, };
             try {
-                return (Record) _m.invoke(null, args);
+                return (org.apache.poi.hssf.record.Record) _m.invoke(null, args);
             } catch (IllegalArgumentException | IllegalAccessException e) {
                 throw new RuntimeException(e);
             } catch (InvocationTargetException e) {
@@ -314,7 +314,7 @@ public final class RecordFactory {
      * @param in the RecordInputStream to read from
      * @return the extracted records
      */
-    public static Record [] createRecord(RecordInputStream in) {
+    public static org.apache.poi.hssf.record.Record [] createRecord(RecordInputStream in) {
         Record record = createSingleRecord(in);
         if (record instanceof DBCellRecord) {
             // Not needed by POI.  Regenerated from scratch by POI when spreadsheet is written
@@ -329,7 +329,7 @@ public final class RecordFactory {
         return new Record[] { record, };
     }
 
-    public static Record createSingleRecord(RecordInputStream in) {
+    public static org.apache.poi.hssf.record.Record createSingleRecord(RecordInputStream in) {
         I_RecordCreator constructor = _recordCreatorsById.get(Integer.valueOf(in.getSid()));
 
         if (constructor == null) {
@@ -478,9 +478,9 @@ public final class RecordFactory {
      *
      * @exception org.apache.poi.util.RecordFormatException on error processing the InputStream
      */
-    public static List<Record> createRecords(InputStream in) throws org.apache.poi.util.RecordFormatException {
+    public static List<org.apache.poi.hssf.record.Record> createRecords(InputStream in) throws org.apache.poi.util.RecordFormatException {
 
-        List<Record> records = new ArrayList<>(NUM_RECORDS);
+        List<org.apache.poi.hssf.record.Record> records = new ArrayList<>(NUM_RECORDS);
 
         RecordFactoryInputStream recStream = new RecordFactoryInputStream(in, true);
 

@@ -90,7 +90,7 @@ public final class WorksheetProtectionBlock extends RecordAggregate {
 		return true;
 	}
 
-	private void checkNotPresent(Record rec) {
+	private void checkNotPresent(org.apache.poi.hssf.record.Record rec) {
 		if (rec != null) {
 			throw new RecordFormatException("Duplicate PageSettingsBlock record (sid=0x"
 					+ Integer.toHexString(rec.getSid()) + ")");
@@ -106,7 +106,7 @@ public final class WorksheetProtectionBlock extends RecordAggregate {
 		visitIfPresent(_passwordRecord, rv);
 	}
 
-	private static void visitIfPresent(Record r, RecordVisitor rv) {
+	private static void visitIfPresent(org.apache.poi.hssf.record.Record r, RecordVisitor rv) {
 		if (r != null) {
 			rv.visitRecord(r);
 		}

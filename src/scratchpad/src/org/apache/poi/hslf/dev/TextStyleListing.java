@@ -44,7 +44,7 @@ public final class TextStyleListing {
 		try (HSLFSlideShowImpl ss = new HSLFSlideShowImpl(args[0])) {
 			// Find the documents, and then their SLWT
 			Record[] records = ss.getRecords();
-			for (Record record : records) {
+			for (org.apache.poi.hslf.record.Record record : records) {
 				if (record.getRecordType() == 1000L) {
 					Record[] docChildren = record.getChildRecords();
 					for (Record docChild : docChildren) {

@@ -75,7 +75,7 @@ public final class SlideIdListing {
             SlideListWithText[] slwts = document.getSlideListWithTexts();
             for (SlideListWithText slwt : slwts) {
                 Record[] cr = slwt.getChildRecords();
-                for (Record record : cr) {
+                for (org.apache.poi.hslf.record.Record record : cr) {
                     if (record instanceof SlidePersistAtom) {
                         SlidePersistAtom spa = (SlidePersistAtom) record;
                         System.out.println("SlidePersistAtom knows about slide:");
@@ -117,7 +117,7 @@ public final class SlideIdListing {
 
             // Find any persist ones first
             int pos = 0;
-            for (Record r : records) {
+            for (org.apache.poi.hslf.record.Record r : records) {
                 if (r.getRecordType() == 6001L) {
                     // PersistPtrFullBlock
                     System.out.println("Found PersistPtrFullBlock at " + pos + " (" + Integer.toHexString(pos) + ")");
@@ -159,7 +159,7 @@ public final class SlideIdListing {
 
 
     // Finds the record at a given position
-    public static Record findRecordAtPos(int pos) {
+    public static org.apache.poi.hslf.record.Record findRecordAtPos(int pos) {
         long type = LittleEndian.getUShort(fileContents, pos+2);
         long rlen = LittleEndian.getUInt(fileContents, pos+4);
 

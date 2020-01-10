@@ -182,7 +182,7 @@ public final class TestRecordFactory {
 				"00 00 00 00 00 00 00";
 		byte[] data = HexRead.readFromString(dump);
 
-		List<Record> records = RecordFactory.createRecords(new ByteArrayInputStream(data));
+		List<org.apache.poi.hssf.record.Record> records = RecordFactory.createRecords(new ByteArrayInputStream(data));
 		assertEquals(5, records.size());
 		assertTrue(records.get(0) instanceof ObjRecord);
 		assertTrue(records.get(1) instanceof DrawingRecord);
@@ -192,7 +192,7 @@ public final class TestRecordFactory {
 
 		//serialize and verify that the serialized data is the same as the original
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		for(Record rec : records){
+		for(org.apache.poi.hssf.record.Record rec : records){
 			out.write(rec.serialize());
 		}
 
@@ -211,7 +211,7 @@ public final class TestRecordFactory {
 			EOFRecord.instance,
 		};
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		for (Record rec : recs) {
+		for (org.apache.poi.hssf.record.Record rec : recs) {
 			try {
 				baos.write(rec.serialize());
 			} catch (IOException e) {
@@ -232,7 +232,7 @@ public final class TestRecordFactory {
         fs.createDocument(new ByteArrayInputStream(baos.toByteArray()), "dummy");
 		InputStream is = fs.getRoot().createDocumentInputStream("dummy");
 
-		List<Record> outRecs = RecordFactory.createRecords(is);
+		List<org.apache.poi.hssf.record.Record> outRecs = RecordFactory.createRecords(is);
 		// Buffer underrun - requested 512 bytes but 192 was available
 		assertEquals(5, outRecs.size());
 		fs.close();

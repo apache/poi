@@ -327,7 +327,7 @@ public final class TestHSSFCell extends BaseTestCell {
 			confirmStringRecord(sheet, true);
 			cell.setCellValue(123);
 
-			final List<Record> recs = new ArrayList<>();
+			final List<org.apache.poi.hssf.record.Record> recs = new ArrayList<>();
 			sheet.getSheet().visitContainedRecords(recs::add, 0);
 			assertFalse("Identified bug - leftover StringRecord", recs.size() == 28 && recs.get(23) instanceof StringRecord);
 			confirmStringRecord(sheet, false);
@@ -347,11 +347,11 @@ public final class TestHSSFCell extends BaseTestCell {
 	}
 
 	private static void confirmStringRecord(HSSFSheet sheet, boolean isPresent) {
-		List<Record> recs = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> recs = new ArrayList<>();
 		sheet.getSheet().visitContainedRecords(recs::add, 0);
 		assertEquals(isPresent ? 28 : 27, recs.size());
 
-		ListIterator<Record> iter = recs.listIterator(22);
+		ListIterator<org.apache.poi.hssf.record.Record> iter = recs.listIterator(22);
 		assertEquals(FormulaRecord.class, iter.next().getClass());
 		if (isPresent) {
 			assertEquals(StringRecord.class, iter.next().getClass());

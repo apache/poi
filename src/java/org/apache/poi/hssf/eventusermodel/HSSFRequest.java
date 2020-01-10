@@ -88,7 +88,7 @@ public class HSSFRequest {
 	 * @return numeric user-specified result code. If zero continue processing.
 	 * @throws HSSFUserException User exception condition
 	 */
-	protected short processRecord(Record rec) throws HSSFUserException {
+	protected short processRecord(org.apache.poi.hssf.record.Record rec) throws HSSFUserException {
 		List<HSSFListener> listeners = _records.get(Short.valueOf(rec.getSid()));
 		short userCode = 0;
 

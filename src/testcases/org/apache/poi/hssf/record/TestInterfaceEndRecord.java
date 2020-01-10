@@ -52,7 +52,7 @@ public final class TestInterfaceEndRecord {
                 "E2 00 02 00 B0 04 " + //INTERFACEEND with extra two bytes
                 "0A 00 00 00";    // EOF
         byte[] data = HexRead.readFromString(hex);
-        List<Record> records = RecordFactory.createRecords(new ByteArrayInputStream(data));
+        List<org.apache.poi.hssf.record.Record> records = RecordFactory.createRecords(new ByteArrayInputStream(data));
         assertEquals(3, records.size());
         Record rec1 = records.get(1);
         assertEquals(InterfaceHdrRecord.class, rec1.getClass());

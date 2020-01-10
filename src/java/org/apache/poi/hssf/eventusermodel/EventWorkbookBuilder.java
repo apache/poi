@@ -66,7 +66,7 @@ public class EventWorkbookBuilder {
 	 */
 	public static InternalWorkbook createStubWorkbook(ExternSheetRecord[] externs,
 			BoundSheetRecord[] bounds, SSTRecord sst) {
-		List<Record> wbRecords = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> wbRecords = new ArrayList<>();
 
 		// Core Workbook records go first
 		if(bounds != null) {
@@ -157,7 +157,7 @@ public class EventWorkbookBuilder {
 		 *  pass it on to our child listener
 		 */
 		@Override
-        public void processRecord(Record record) {
+        public void processRecord(org.apache.poi.hssf.record.Record record) {
 			// Handle it ourselves
 			processRecordInternally(record);
 
@@ -171,7 +171,7 @@ public class EventWorkbookBuilder {
 		 *  
 		 * @param record the record to be processed
 		 */
-		public void processRecordInternally(Record record) {
+		public void processRecordInternally(org.apache.poi.hssf.record.Record record) {
 			if(record instanceof BoundSheetRecord) {
 				boundSheetRecords.add((BoundSheetRecord)record);
 			}

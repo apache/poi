@@ -251,7 +251,7 @@ public final class ValueRecordsAggregate implements Iterable<CellValueRecordInte
 				RecordAggregate agg = (RecordAggregate) cvr;
 				agg.visitContainedRecords(rv);
 			} else {
-				rv.visitRecord((Record) cvr);
+				rv.visitRecord((org.apache.poi.hssf.record.Record) cvr);
 			}
 		}
 	}

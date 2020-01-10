@@ -168,7 +168,7 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 			findFirst();
 	}
 
-	private static Stream<StyleTextProp9Atom> findInProgBinaryTag(Record r) {
+	private static Stream<StyleTextProp9Atom> findInProgBinaryTag(org.apache.poi.hslf.record.Record r) {
 		Record[] ch = r.getChildRecords();
 		if (ch != null &&
 			ch.length == 2 &&
@@ -253,7 +253,7 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 	/**
 	 * We're pretending to be an atom, so return null
 	 */
-	public Record[] getChildRecords() { return null; }
+	public org.apache.poi.hslf.record.Record[] getChildRecords() { return null; }
 
 	/**
 	 * Write the contents of the record back, so it can be written
@@ -396,7 +396,7 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 		return GenericRecordUtil.getGenericProperties("escherRecords", this::getEscherRecords);
 	}
 
-	private static Predicate<Record> sameHSLF(RecordTypes type) {
+	private static Predicate<org.apache.poi.hslf.record.Record> sameHSLF(RecordTypes type) {
 		return (p) -> p.getRecordType() == type.typeID;
 	}
 

@@ -47,7 +47,7 @@ public final class TestRecordContainer {
         is.close();
 
         Record[] r = hss.getRecords();
-        for (Record rec : r) {
+        for ( org.apache.poi.hslf.record.Record rec : r) {
             if(rec instanceof RecordContainer) {
                 recordContainer = (RecordContainer)rec;
                 return;

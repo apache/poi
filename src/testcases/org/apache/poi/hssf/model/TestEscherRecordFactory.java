@@ -44,7 +44,7 @@ public class TestEscherRecordFactory {
     private static byte[] toByteArray(List<RecordBase> records) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         for (RecordBase rb : records) {
-            Record r = (Record) rb;
+            Record r = (org.apache.poi.hssf.record.Record) rb;
             try {
                 out.write(r.serialize());
             } catch (IOException e) {

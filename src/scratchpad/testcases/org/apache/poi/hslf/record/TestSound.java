@@ -42,7 +42,7 @@ public final class TestSound {
 		Document doc = ppt.getDocumentRecord();
 		SoundCollection soundCollection = null;
 		Record[] doc_ch = doc.getChildRecords();
-		for (Record rec : doc_ch) {
+		for ( org.apache.poi.hslf.record.Record rec : doc_ch) {
 			if (rec instanceof SoundCollection) {
 				soundCollection = (SoundCollection) rec;
 				break;
@@ -53,7 +53,7 @@ public final class TestSound {
 		Sound sound = null;
 		Record[] sound_ch = soundCollection.getChildRecords();
 		int k = 0;
-		for (Record rec : sound_ch) {
+		for ( org.apache.poi.hslf.record.Record rec : sound_ch) {
 			if (rec instanceof Sound) {
 				sound = (Sound) rec;
 				k++;

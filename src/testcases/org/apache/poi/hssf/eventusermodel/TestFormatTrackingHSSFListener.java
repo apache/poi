@@ -82,7 +82,7 @@ public final class TestFormatTrackingHSSFListener {
 			
 			// Now check we can turn all the numeric
 			//  cells into strings without error
-			for(Record r : mockListen._records) {
+			for(org.apache.poi.hssf.record.Record r : mockListen._records) {
 				CellValueRecordInterface cvr = null;
 				
 				if(r instanceof NumberRecord) {
@@ -106,10 +106,10 @@ public final class TestFormatTrackingHSSFListener {
 	
 	private static final class MockHSSFListener implements HSSFListener {
 		public MockHSSFListener() {}
-		private final List<Record> _records = new ArrayList<>();
+		private final List<org.apache.poi.hssf.record.Record> _records = new ArrayList<>();
 
 		@Override
-        public void processRecord(Record record) {
+        public void processRecord(org.apache.poi.hssf.record.Record record) {
 			_records.add(record);
 		}
 	}

@@ -113,7 +113,7 @@ public class TestDrawingAggregate {
         byte[] getRawBytes(){
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             for (RecordBase rb : aggRecords) {
-                Record r = (Record) rb;
+                Record r = (org.apache.poi.hssf.record.Record) rb;
                 try {
                     out.write(r.serialize());
                 } catch (IOException e) {
@@ -255,7 +255,7 @@ public class TestDrawingAggregate {
     private static byte[] toByteArray(List<RecordBase> records) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         for (RecordBase rb : records) {
-            Record r = (Record) rb;
+            Record r = (org.apache.poi.hssf.record.Record) rb;
             try {
                 out.write(r.serialize());
             } catch (IOException e) {
@@ -370,7 +370,7 @@ public class TestDrawingAggregate {
             byte[] dgBytes = toByteArray(dgRecords);
 
             for (RecordBase rb : dgRecords) {
-                Record r = (Record) rb;
+                Record r = (org.apache.poi.hssf.record.Record) rb;
                 short sid = r.getSid();
                 // we expect that drawing block consists of either
                 // DrawingRecord or ContinueRecord or ObjRecord or TextObjectRecord
@@ -435,7 +435,7 @@ public class TestDrawingAggregate {
             // records to be aggregated
             List<RecordBase> dgRecords = records.subList(19, 26);
             for (RecordBase rb : dgRecords) {
-                Record r = (Record) rb;
+                Record r = (org.apache.poi.hssf.record.Record) rb;
                 short sid = r.getSid();
                 // we expect that drawing block consists of either
                 // DrawingRecord or ContinueRecord or ObjRecord or TextObjectRecord
@@ -493,8 +493,8 @@ public class TestDrawingAggregate {
                     assertSame(r1.getClass(), r2.getClass());
                     assertEquals(r1.getRecordSize(), r2.getRecordSize());
                     if (r1 instanceof Record) {
-                        assertEquals(((Record) r1).getSid(), ((Record) r2).getSid());
-                        assertArrayEquals(((Record) r1).serialize(), ((Record) r2).serialize());
+                        assertEquals(((org.apache.poi.hssf.record.Record) r1).getSid(), ((org.apache.poi.hssf.record.Record) r2).getSid());
+                        assertArrayEquals(((org.apache.poi.hssf.record.Record) r1).serialize(), ((org.apache.poi.hssf.record.Record) r2).serialize());
                     }
                 }
             }
@@ -520,7 +520,7 @@ public class TestDrawingAggregate {
             // records to be aggregated
             List<RecordBase> dgRecords = records.subList(19, 39);
             for (RecordBase rb : dgRecords) {
-                Record r = (Record) rb;
+                Record r = (org.apache.poi.hssf.record.Record) rb;
                 short sid = r.getSid();
                 // we expect that drawing block consists of either
                 // DrawingRecord or ContinueRecord or ObjRecord or TextObjectRecord
@@ -581,7 +581,7 @@ public class TestDrawingAggregate {
             // records to be aggregated
             List<RecordBase> dgRecords = records.subList(22, 300);
             for (RecordBase rb : dgRecords) {
-                Record r = (Record) rb;
+                Record r = (org.apache.poi.hssf.record.Record) rb;
                 short sid = r.getSid();
                 // we expect that drawing block consists of either
                 // DrawingRecord or ContinueRecord or ObjRecord or TextObjectRecord
@@ -723,7 +723,7 @@ public class TestDrawingAggregate {
             "fvcr1v8aFU6POn+OCqfj4ffS/e+pcOEMKhABrCdUAAPhwB+pQHYGFcT/BBUEz6LC/wGpc+eRNSkAAA==";
 
         byte[] dgBytes = decompress(data);
-        List<Record> dgRecords = RecordFactory.createRecords(new ByteArrayInputStream(dgBytes));
+        List<org.apache.poi.hssf.record.Record> dgRecords = RecordFactory.createRecords(new ByteArrayInputStream(dgBytes));
         assertEquals(20, dgRecords.size());
 
         short[] expectedSids = {
@@ -901,7 +901,7 @@ public class TestDrawingAggregate {
             "BPza/oPKABD5z4SARKQEELP1WQsFMc+QwP8ATkmhK404AAA=";
 
         byte[] dgBytes = decompress(data);
-        List<Record> dgRecords = RecordFactory.createRecords(new ByteArrayInputStream(dgBytes));
+        List<org.apache.poi.hssf.record.Record> dgRecords = RecordFactory.createRecords(new ByteArrayInputStream(dgBytes));
         assertEquals(14, dgRecords.size());
 
         short[] expectedSids = {

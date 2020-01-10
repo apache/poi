@@ -82,7 +82,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     private byte[] _docstream;
 
     // Low level contents
-    private Record[] _records;
+    private org.apache.poi.hslf.record.Record[] _records;
 
     // Raw Pictures contained in the pictures stream
     private List<HSLFPictureData> _pictures;
@@ -251,7 +251,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         _records = read(_docstream, (int) currentUser.getCurrentEditOffset());
     }
 
-    private Record[] read(byte[] docstream, int usrOffset) throws IOException {
+    private org.apache.poi.hslf.record.Record[] read(byte[] docstream, int usrOffset) throws IOException {
         //sort found records by offset.
         //(it is not necessary but SlideShow.findMostRecentCoreRecords() expects them sorted)
         NavigableMap<Integer, Record> records = new TreeMap<>(); // offset -> record
@@ -261,7 +261,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
         for (Map.Entry<Integer, Record> entry : records.entrySet()) {
             Integer offset = entry.getKey();
-            Record record = entry.getValue();
+            org.apache.poi.hslf.record.Record record = entry.getValue();
             Integer persistId = persistIds.get(offset);
             if (record == null) {
                 // all plain records have been already added,
@@ -277,7 +277,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         }
 
         decryptData.close();
-        return records.values().toArray(new Record[0]);
+        return records.values().toArray(new org.apache.poi.hslf.record.Record[0]);
     }
 
     private void initRecordOffsets(byte[] docstream, int usrOffset, NavigableMap<Integer, Record> recordMap, Map<Integer, Integer> offset2id) {
@@ -318,7 +318,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     }
 
     public DocumentEncryptionAtom getDocumentEncryptionAtom() {
-        for (Record r : _records) {
+        for (org.apache.poi.hslf.record.Record r : _records) {
             if (r instanceof DocumentEncryptionAtom) {
                 return (DocumentEncryptionAtom) r;
             }
@@ -470,7 +470,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         UserEditAtom usr = null;
         PersistPtrHolder ptr = null;
         CountingOS cos = new CountingOS();
-        for (Record record : _records) {
+        for (org.apache.poi.hslf.record.Record record : _records) {
             // all top level records are position dependent
             assert (record instanceof PositionDependentRecord);
             PositionDependentRecord pdr = (PositionDependentRecord) record;
@@ -512,7 +512,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         }
 
         try (HSLFSlideShowEncrypted encData = new HSLFSlideShowEncrypted(getDocumentEncryptionAtom())) {
-            for (Record record : _records) {
+            for (org.apache.poi.hslf.record.Record record : _records) {
                 assert (record instanceof PositionDependentRecord);
                 // We've already figured out their new location, and
                 // told them that
@@ -727,7 +727,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     @SuppressWarnings({"UnusedReturnValue", "WeakerAccess"})
     public synchronized int appendRootLevelRecord(Record newRecord) {
         int addedAt = -1;
-        Record[] r = new Record[_records.length + 1];
+        org.apache.poi.hslf.record.Record[] r = new org.apache.poi.hslf.record.Record[_records.length + 1];
         boolean added = false;
         for (int i = (_records.length - 1); i >= 0; i--) {
             if (added) {
@@ -779,7 +779,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     /**
      * Returns an array of all the records found in the slideshow
      */
-    public Record[] getRecords() {
+    public org.apache.poi.hslf.record.Record[] getRecords() {
         return _records;
     }
 
@@ -824,7 +824,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     public HSLFObjectData[] getEmbeddedObjects() {
         if (_objects == null) {
             List<HSLFObjectData> objects = new ArrayList<>();
-            for (Record r : _records) {
+            for (org.apache.poi.hslf.record.Record r : _records) {
                 if (r instanceof ExOleObjStg) {
                     objects.add(new HSLFObjectData((ExOleObjStg) r));
                 }

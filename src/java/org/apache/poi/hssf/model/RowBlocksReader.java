@@ -36,7 +36,7 @@ import org.apache.poi.ss.util.CellReference;
  */
 public final class RowBlocksReader {
 
-	private final List<Record> _plainRecords;
+	private final List<org.apache.poi.hssf.record.Record> _plainRecords;
 	private final SharedValueManager _sfm;
 	private final MergeCellsRecord[] _mergedCellsRecords;
 
@@ -47,12 +47,12 @@ public final class RowBlocksReader {
 	 * @param  rs the record stream
 	 */
 	public RowBlocksReader(RecordStream rs) {
-		List<Record> plainRecords = new ArrayList<>();
-		List<Record> shFrmRecords = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> plainRecords = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> shFrmRecords = new ArrayList<>();
 		List<CellReference> firstCellRefs = new ArrayList<>();
-		List<Record> arrayRecords = new ArrayList<>();
-		List<Record> tableRecords = new ArrayList<>();
-		List<Record> mergeCellRecords = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> arrayRecords = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> tableRecords = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> mergeCellRecords = new ArrayList<>();
 
 		Record prevRec = null;
 		while(!RecordOrderer.isEndOfRowBlock(rs.peekNextSid())) {
@@ -65,7 +65,7 @@ public final class RowBlocksReader {
 
 			}
 			Record rec = rs.getNext();
-			List<Record> dest;
+			List<org.apache.poi.hssf.record.Record> dest;
 			switch (rec.getSid()) {
 				case MergeCellsRecord.sid:    dest = mergeCellRecords; break;
 				case SharedFormulaRecord.sid: dest = shFrmRecords;

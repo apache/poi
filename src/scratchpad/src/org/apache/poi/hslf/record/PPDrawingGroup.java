@@ -73,7 +73,7 @@ public final class PPDrawingGroup extends RecordAtom {
     /**
      * We're pretending to be an atom, so return null
      */
-    public Record[] getChildRecords() {
+    public org.apache.poi.hslf.record.Record[] getChildRecords() {
         return null;
     }
 

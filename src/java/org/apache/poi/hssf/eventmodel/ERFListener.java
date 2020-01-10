@@ -36,5 +36,5 @@ public interface ERFListener
      * 
      * @return boolean specifying whether the effort was a success.
      */
-    public boolean processRecord(Record rec);
+    public boolean processRecord(org.apache.poi.hssf.record.Record rec);
 }

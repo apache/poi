@@ -69,7 +69,7 @@ public final class TestColumnInfoRecordsAggregate {
 		// bug 45639 - ArrayIndexOutOfBoundsException
 		agg.groupColumnRange( 1, 15, true);
 
-		List<Record> cirs = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> cirs = new ArrayList<>();
 		agg.visitContainedRecords(cirs::add);
 
 		assertEquals(5, cirs.size());
@@ -89,7 +89,7 @@ public final class TestColumnInfoRecordsAggregate {
 		agg.groupColumnRange(1, 15, true);
 		agg.groupColumnRange(4, 12, true);
 
-		List<Record> cirs = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> cirs = new ArrayList<>();
 
 		// collapse both inner and outer groups
 		agg.collapseColumn(6);
@@ -116,7 +116,7 @@ public final class TestColumnInfoRecordsAggregate {
 		confirmCIR(cirs, 3, 16, 16, 0, false, true);
 	}
 
-	private static void confirmCIR(List<Record> cirs, int ix, int startColIx, int endColIx, int level, boolean isHidden, boolean isCollapsed) {
+	private static void confirmCIR(List<org.apache.poi.hssf.record.Record> cirs, int ix, int startColIx, int endColIx, int level, boolean isHidden, boolean isCollapsed) {
 		assertTrue(cirs.get(ix) instanceof ColumnInfoRecord);
 		ColumnInfoRecord cir = (ColumnInfoRecord)cirs.get(ix);
 		assertEquals("startColIx", startColIx, cir.getFirstColumn());

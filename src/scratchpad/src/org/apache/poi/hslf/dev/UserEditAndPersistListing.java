@@ -50,7 +50,7 @@ public final class UserEditAndPersistListing {
 
 			// Find any persist ones first
 			int pos = 0;
-			for (Record r : ss.getRecords()) {
+			for (org.apache.poi.hslf.record.Record r : ss.getRecords()) {
 				if (r.getRecordType() == 6001L) {
 					// PersistPtrFullBlock
 					System.out.println("Found PersistPtrFullBlock at " + pos + " (" + Integer.toHexString(pos) + ")");
@@ -88,7 +88,7 @@ public final class UserEditAndPersistListing {
 
 			pos = 0;
 			// Now look for UserEditAtoms
-			for (Record r : ss.getRecords()) {
+			for (org.apache.poi.hslf.record.Record r : ss.getRecords()) {
 				if (r instanceof UserEditAtom) {
 					UserEditAtom uea = (UserEditAtom) r;
 					System.out.println("Found UserEditAtom at " + pos + " (" + Integer.toHexString(pos) + ")");
@@ -118,7 +118,7 @@ public final class UserEditAndPersistListing {
 
 
 	// Finds the record at a given position
-	public static Record findRecordAtPos(int pos) {
+	public static org.apache.poi.hslf.record.Record findRecordAtPos(int pos) {
 		long type = LittleEndian.getUShort(fileContents, pos+2);
 		long rlen = LittleEndian.getUInt(fileContents, pos+4);
 

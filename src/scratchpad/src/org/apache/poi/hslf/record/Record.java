@@ -79,7 +79,7 @@ public abstract class Record implements GenericRecord
 	}
 
 	@Override
-	public List<Record> getGenericChildren() {
+	public List<org.apache.poi.hslf.record.Record> getGenericChildren() {
 		Record[] recs = getChildRecords();
 		return (recs == null) ? null : Arrays.asList(recs);
 	}
@@ -107,7 +107,7 @@ public abstract class Record implements GenericRecord
 	 * @param b The byte array to build from
 	 * @param offset The offset to build at
 	 */
-	public static Record buildRecordAtOffset(byte[] b, int offset) {
+	public static org.apache.poi.hslf.record.Record buildRecordAtOffset(byte[] b, int offset) {
 		long type = LittleEndian.getUShort(b,offset+2);
 		long rlen = LittleEndian.getUInt(b,offset+4);
 
@@ -122,7 +122,7 @@ public abstract class Record implements GenericRecord
 	 * Default method for finding child records of a container record
 	 */
 	public static Record[] findChildRecords(byte[] b, int start, int len) {
-		List<Record> children = new ArrayList<>(5);
+		List<org.apache.poi.hslf.record.Record> children = new ArrayList<>(5);
 
 		// Jump our little way along, creating records as we go
 		int pos = start;
@@ -149,7 +149,7 @@ public abstract class Record implements GenericRecord
 		}
 
 		// Turn the vector into an array, and return
-        return children.toArray(new Record[0]);
+        return children.toArray(new org.apache.poi.hslf.record.Record[0]);
 	}
 
 	/**
@@ -161,7 +161,7 @@ public abstract class Record implements GenericRecord
 	 *  (not including the size of the header), this code assumes you're
 	 *  passing in corrected lengths
 	 */
-	public static Record createRecordForType(long type, byte[] b, int start, int len) {
+	public static org.apache.poi.hslf.record.Record createRecordForType(long type, byte[] b, int start, int len) {
 		// We use the RecordTypes class to provide us with the right
 		//  class to use for a given type
 		// A spot of reflection gets us the (byte[],int,int) constructor

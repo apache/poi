@@ -105,7 +105,7 @@ public final class Comment2000 extends RecordContainer {
 		System.arraycopy(source,start,_header,0,8);
 
 		// Find our children
-		_children = Record.findChildRecords(source,start+8,len-8);
+		_children = org.apache.poi.hslf.record.Record.findChildRecords(source,start+8,len-8);
 		findInterestingChildren();
 	}
 
@@ -116,7 +116,7 @@ public final class Comment2000 extends RecordContainer {
 	 */
 	private void findInterestingChildren() {
 
-        for(Record r : _children){
+        for(org.apache.poi.hslf.record.Record r : _children){
             if (r instanceof CString){
                 CString cs = (CString)r;
                 int recInstance = cs.getOptions() >> 4;
@@ -140,7 +140,7 @@ public final class Comment2000 extends RecordContainer {
 	 */
 	public Comment2000() {
 		_header = new byte[8];
-		_children = new Record[4];
+		_children = new org.apache.poi.hslf.record.Record[4];
 
 		// Setup our header block
 		_header[0] = 0x0f; // We are a container record

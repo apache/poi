@@ -73,7 +73,7 @@ public class InteractiveInfo extends RecordContainer {
 	 */
 	public InteractiveInfo() {
 		_header = new byte[8];
-		_children = new Record[1];
+		_children = new org.apache.poi.hslf.record.Record[1];
 		
 		// Setup our header block
 		_header[0] = 0x0f; // We are a container record

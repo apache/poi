@@ -57,7 +57,7 @@ public class ExMCIMovie extends RecordContainer { // TODO - instantiable supercl
         LittleEndian.putShort(_header, 2, (short) getRecordType());
 
         exVideo = new ExVideoContainer();
-        _children = new Record[]{exVideo};
+        _children = new org.apache.poi.hslf.record.Record[]{exVideo};
 
     }
 

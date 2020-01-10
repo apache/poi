@@ -104,7 +104,7 @@ public final class HSLFObjectShape extends HSLFPictureShape implements ObjectSha
 
         HSLFEscherClientDataRecord cldata = getClientData(true);
         ExObjRefAtom uer = null;
-        for (Record r : cldata.getHSLFChildRecords()) {
+        for (org.apache.poi.hslf.record.Record r : cldata.getHSLFChildRecords()) {
             if (r.getRecordType() == RecordTypes.ExObjRefAtom.typeID) {
                 uer = (ExObjRefAtom)r;
                 break;

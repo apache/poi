@@ -46,20 +46,20 @@ public final class TestRecordSetup {
 
 	@Test
 	public void testHandleParentAwareRecords() {
-		Record[] records = hss.getRecords();
-		for (Record record : records) {
+		 org.apache.poi.hslf.record.Record[] records = hss.getRecords();
+		for ( org.apache.poi.hslf.record.Record record : records) {
 			ensureParentAware(record,null);
 		}
 	}
-	private void ensureParentAware(Record r,RecordContainer parent) {
+	private void ensureParentAware( org.apache.poi.hslf.record.Record r,RecordContainer parent) {
 		if(r instanceof ParentAwareRecord) {
 			ParentAwareRecord pr = (ParentAwareRecord)r;
 			assertEquals(parent, pr.getParentRecord());
 		}
 		if(r instanceof RecordContainer) {
 			RecordContainer rc = (RecordContainer)r;
-			Record[] children = rc.getChildRecords();
-			for (Record rec : children) {
+			 org.apache.poi.hslf.record.Record[] children = rc.getChildRecords();
+			for ( org.apache.poi.hslf.record.Record rec : children) {
 				ensureParentAware(rec, rc);
 			}
 		}

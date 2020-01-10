@@ -92,7 +92,7 @@ public final class TestPageSettingsBlock {
 		nr.setColumn((short) colIx);
 		nr.setValue(3.0);
 
-		Record[] recs = {
+		org.apache.poi.hssf.record.Record[] recs = {
 				BOFRecord.createSheetBOF(),
 				new HeaderRecord("&LSales Figures"),
 				new FooterRecord("&LJanuary"),
@@ -111,7 +111,7 @@ public final class TestPageSettingsBlock {
 		// bug 46480- two Page Settings Blocks found in the same sheet
 		InternalSheet sheet = InternalSheet.createSheet(rs);
 
-		List<Record> outRecs = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> outRecs = new ArrayList<>();
 		sheet.visitContainedRecords(outRecs::add, rowIx);
 		assertEquals(13, outRecs.size());
 	}
@@ -129,7 +129,7 @@ public final class TestPageSettingsBlock {
 		nr.setColumn((short) colIx);
 		nr.setValue(3.0);
 
-		Record[] recs = {
+		org.apache.poi.hssf.record.Record[] recs = {
 				BOFRecord.createSheetBOF(),
 				new HeaderRecord("&LSales Figures"),
 				new FooterRecord("&LJanuary"),
@@ -141,7 +141,7 @@ public final class TestPageSettingsBlock {
 		RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
 		InternalSheet sheet = InternalSheet.createSheet(rs);
 
-		List<Record> outRecs = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> outRecs = new ArrayList<>();
 		sheet.visitContainedRecords(outRecs::add, 0);
 		// Identified bug 46953 - EOF incorrectly appended to PSB
 		assertNotEquals(EOFRecord.instance, outRecs.get(4));
@@ -170,7 +170,7 @@ public final class TestPageSettingsBlock {
 		BottomMarginRecord bottomMargin = new BottomMarginRecord();
 		bottomMargin.setMargin(0.787F);
 
-		Record[] recs = {
+		org.apache.poi.hssf.record.Record[] recs = {
 				BOFRecord.createSheetBOF(),
 				new HeaderRecord("&LSales Figures"),
 				new FooterRecord("&LJanuary"),
@@ -184,7 +184,7 @@ public final class TestPageSettingsBlock {
 		// bug 47199a - failed to process late margins records
 		InternalSheet sheet = InternalSheet.createSheet(rs);
 
-		List<Record> outRecs = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> outRecs = new ArrayList<>();
 		sheet.visitContainedRecords(outRecs::add, 0);
 		assertEquals(recs.length+1, outRecs.size()); // +1 for index record
 
@@ -201,7 +201,7 @@ public final class TestPageSettingsBlock {
 	@Test
 	public void testDuplicatePSBRecord_bug47199() {
 		// Hypothetical setup of PSB records which should cause POI to crash
-		Record[] recs = {
+		org.apache.poi.hssf.record.Record[] recs = {
 				new HeaderRecord("&LSales Figures"),
 				new HeaderRecord("&LInventory"),
 		};
@@ -220,7 +220,7 @@ public final class TestPageSettingsBlock {
 	@Test
 	public void testMissingHeaderFooter() {
 		// initialise PSB with some records, but not the header / footer
-		Record[] recs = {
+		org.apache.poi.hssf.record.Record[] recs = {
 				new HCenterRecord(),
 				new VCenterRecord(),
 		};
@@ -228,7 +228,7 @@ public final class TestPageSettingsBlock {
 		PageSettingsBlock psb = new PageSettingsBlock(rs);
 
 		// serialize the PSB to see what records come out
-		List<Record> outRecs = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> outRecs = new ArrayList<>();
 		psb.visitContainedRecords(outRecs::add);
 
 		assertNotEquals("PageSettingsBlock didn't add missing header/footer records", 2, outRecs.size());
@@ -259,7 +259,7 @@ public final class TestPageSettingsBlock {
 		Record plsB = new UnknownRecord(UnknownRecord.PLS_004D, HexRead.readFromString("DE AD BE EF"));
 		Record contB1 = new ContinueRecord(HexRead.readFromString("FE ED"));
 		Record contB2 = new ContinueRecord(HexRead.readFromString("FA CE"));
-		Record[] recs = {
+		org.apache.poi.hssf.record.Record[] recs = {
 				new HeaderRecord("&LSales Figures"),
 				new FooterRecord("&LInventory"),
 				new HCenterRecord(),
@@ -272,7 +272,7 @@ public final class TestPageSettingsBlock {
 		PageSettingsBlock psb = new PageSettingsBlock(rs);
 
 		// serialize the PSB to see what records come out
-		List<Record> outRecs = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> outRecs = new ArrayList<>();
 		psb.visitContainedRecords(outRecs::add);
 
 		// records were assembled in standard order, so this simple check is OK
@@ -282,7 +282,7 @@ public final class TestPageSettingsBlock {
 	@Test
     public void testDuplicateHeaderFooter_bug48026() {
 
-        Record[] recs = {
+        org.apache.poi.hssf.record.Record[] recs = {
                 BOFRecord.createSheetBOF(),
                 new IndexRecord(),
 
@@ -309,7 +309,7 @@ public final class TestPageSettingsBlock {
         // bug 48026 - Duplicate PageSettingsBlock record (sid=0x89c)
         InternalSheet sheet = InternalSheet.createSheet(rs);
 
-        List<Record> outRecs = new ArrayList<>();
+        List<org.apache.poi.hssf.record.Record> outRecs = new ArrayList<>();
         sheet.visitContainedRecords(outRecs::add, 0);
 
         assertEquals(recs.length, outRecs.size());
@@ -382,7 +382,7 @@ public final class TestPageSettingsBlock {
         // Bug 48026 : Duplicate PageSettingsBlock record (sid=0x89c)
         InternalSheet sheet = InternalSheet.createSheet(rs);
 
-		List<Record> outRecs = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> outRecs = new ArrayList<>();
         sheet.visitContainedRecords(outRecs::add, 0);
 
         assertEquals(recs.length+1, outRecs.size());

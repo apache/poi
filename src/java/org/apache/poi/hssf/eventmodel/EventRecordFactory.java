@@ -28,7 +28,7 @@ import org.apache.poi.util.RecordFormatException;
 
 /**
  * Event-based record factory.  As opposed to RecordFactory
- * this version sends {@link ERFListener#processRecord(Record) } messages to
+ * this version sends {@link ERFListener#processRecord(org.apache.poi.hssf.record.Record) } messages to
  * the supplied listener.  Record notifications are sent one record behind
  * to ensure that {@link ContinueRecord}s are processed first.
  */
@@ -68,7 +68,7 @@ public final class EventRecordFactory {
 	 * @return <code>false</code> to abort.  This aborts
 	 * out of the event loop should the listener return false
 	 */
-	private boolean processRecord(Record record) {
+	private boolean processRecord(org.apache.poi.hssf.record.Record record) {
 		if (!isSidIncluded(record.getSid())) {
 			return true;
 		}
@@ -93,7 +93,7 @@ public final class EventRecordFactory {
 			recStream.nextRecord();
 			Record[] recs = RecordFactory.createRecord(recStream);   // handle MulRK records
 			if (recs.length > 1) {
-				for (Record rec : recs) {
+				for (org.apache.poi.hssf.record.Record rec : recs) {
 					if ( last_record != null ) {
 						if (!processRecord(last_record)) {
 							return;

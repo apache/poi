@@ -144,7 +144,7 @@ public final class InternalSheet {
             // Not a supported type
             // Skip onto the EOF, then complain
             while (rs.hasNext()) {
-                Record rec = rs.getNext();
+                org.apache.poi.hssf.record.Record rec = rs.getNext();
                 if (rec instanceof EOFRecord) {
                     break;
                 }
@@ -229,7 +229,7 @@ public final class InternalSheet {
                 continue;
             }
 
-            Record rec = rs.getNext();
+            org.apache.poi.hssf.record.Record rec = rs.getNext();
             if ( recSid == IndexRecord.sid ) {
                 // ignore INDEX record because it is only needed by Excel,
                 // and POI always re-calculates its contents
@@ -334,10 +334,7 @@ public final class InternalSheet {
             log.log(POILogger.DEBUG, "sheet createSheet (existing file) exited");
     }
     private static void spillAggregate(RecordAggregate ra, final List<RecordBase> recs) {
-        ra.visitContainedRecords(new RecordVisitor() {
-            public void visitRecord(Record r) {
-                recs.add(r);
-            }});
+        ra.visitContainedRecords(r -> recs.add(r));
     }
 
     public static class UnsupportedBOFType extends RecordFormatException {
@@ -354,12 +351,12 @@ public final class InternalSheet {
 
     private static final class RecordCloner implements RecordVisitor {
 
-        private final List<Record> _destList;
+        private final List<org.apache.poi.hssf.record.Record> _destList;
 
-        public RecordCloner(List<Record> destList) {
+        public RecordCloner(List<org.apache.poi.hssf.record.Record> destList) {
             _destList = destList;
         }
-        public void visitRecord(Record r) {
+        public void visitRecord(org.apache.poi.hssf.record.Record r) {
             _destList.add(r.copy());
         }
     }
@@ -374,7 +371,7 @@ public final class InternalSheet {
      * @return the cloned sheet
      */
     public InternalSheet cloneSheet() {
-        List<Record> clonedRecords = new ArrayList<>(_records.size());
+        List<org.apache.poi.hssf.record.Record> clonedRecords = new ArrayList<>(_records.size());
         for (int i = 0; i < _records.size(); i++) {
             RecordBase rb = _records.get(i);
             if (rb instanceof RecordAggregate) {
@@ -387,7 +384,7 @@ public final class InternalSheet {
                  */
                 rb = new DrawingRecord();
             }
-            Record rec = ((Record) rb).copy();
+            org.apache.poi.hssf.record.Record rec = ((org.apache.poi.hssf.record.Record) rb).copy();
             clonedRecords.add(rec);
         }
         return createSheet(new RecordStream(clonedRecords, 0));
@@ -571,7 +568,7 @@ public final class InternalSheet {
                 RecordAggregate agg = (RecordAggregate) record;
                 agg.visitContainedRecords(ptv);
             } else {
-                ptv.visitRecord((Record) record);
+                ptv.visitRecord((org.apache.poi.hssf.record.Record) record);
             }
 
             // If the BOF record was just serialized then add the IndexRecord
@@ -1254,12 +1251,12 @@ public final class InternalSheet {
      *
      * @return the matching record or {@code null} if it wasn't found
      */
-    public Record findFirstRecordBySid(short sid) {
+    public org.apache.poi.hssf.record.Record findFirstRecordBySid(short sid) {
         int ix = findFirstRecordLocBySid(sid);
         if (ix < 0) {
             return null;
         }
-        return (Record) _records.get(ix);
+        return (org.apache.poi.hssf.record.Record) _records.get(ix);
     }
 
     /**
@@ -1290,10 +1287,10 @@ public final class InternalSheet {
         int max = _records.size();
         for (int i=0; i< max; i++) {
             Object rb = _records.get(i);
-            if (!(rb instanceof Record)) {
+            if (!(rb instanceof org.apache.poi.hssf.record.Record)) {
                 continue;
             }
-            Record record = (Record) rb;
+            org.apache.poi.hssf.record.Record record = (org.apache.poi.hssf.record.Record) rb;
             if (record.getSid() == sid) {
                 return i;
             }

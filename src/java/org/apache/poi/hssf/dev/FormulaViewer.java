@@ -57,9 +57,9 @@ public class FormulaViewer
     public void run() throws IOException {
         try (POIFSFileSystem fs = new POIFSFileSystem(new File(file), true)) {
             try (InputStream is = BiffViewer.getPOIFSInputStream(fs)) {
-                List<Record> records = RecordFactory.createRecords(is);
+                List<org.apache.poi.hssf.record.Record> records = RecordFactory.createRecords(is);
 
-                for (Record record : records) {
+                for (org.apache.poi.hssf.record.Record record : records) {
                     if (record.getSid() == FormulaRecord.sid) {
                         if (list) {
                             listFormula((FormulaRecord) record);

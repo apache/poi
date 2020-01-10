@@ -61,7 +61,7 @@ public final class TestEventWorkbookBuilder {
         }
     }
 
-    private void addFormulaRecord(Record r) {
+    private void addFormulaRecord(org.apache.poi.hssf.record.Record r) {
         if (r instanceof FormulaRecord) {
             fRecs.add((FormulaRecord)r);
         }

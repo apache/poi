@@ -715,7 +715,7 @@ public abstract class HSLFShape implements Shape<HSLFShape,HSLFTextParagraph> {
     public <T extends Record> T getClientDataRecord(int recordType) {
 
         List<? extends Record> records = getClientRecords();
-        if (records != null) for (Record r : records) {
+        if (records != null) for (org.apache.poi.hslf.record.Record r : records) {
             if (r.getRecordType() == recordType){
                 return (T)r;
             }

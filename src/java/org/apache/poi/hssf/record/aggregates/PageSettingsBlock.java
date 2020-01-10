@@ -40,7 +40,7 @@ public final class PageSettingsBlock extends RecordAggregate {
      */
     private static final class PLSAggregate extends RecordAggregate {
         private static final ContinueRecord[] EMPTY_CONTINUE_RECORD_ARRAY = { };
-        private final Record _pls;
+        private final org.apache.poi.hssf.record.Record _pls;
         /**
          * holds any continue records found after the PLS record.<br>
          * This would not be required if PLS was properly interpreted.
@@ -86,7 +86,7 @@ public final class PageSettingsBlock extends RecordAggregate {
     private BottomMarginRecord _bottomMargin;
     private final List<PLSAggregate> _plsRecords;
     private PrintSetupRecord _printSetup;
-    private Record _bitmap;
+    private org.apache.poi.hssf.record.Record _bitmap;
     private HeaderFooterRecord _headerFooter;
     /**
      * HeaderFooterRecord records belonging to preceding CustomViewSettingsRecordAggregates.
@@ -94,7 +94,7 @@ public final class PageSettingsBlock extends RecordAggregate {
      *  see {@link  org.apache.poi.hssf.record.HeaderFooterRecord#getGuid()}
      */
     private final List<HeaderFooterRecord> _sviewHeaderFooters = new ArrayList<>();
-    private Record _printSize;
+    private org.apache.poi.hssf.record.Record _printSize;
 
     public PageSettingsBlock(RecordStream rs) {
         _plsRecords = new ArrayList<>();
@@ -220,7 +220,7 @@ public final class PageSettingsBlock extends RecordAggregate {
         return true;
     }
 
-    private void checkNotPresent(Record rec) {
+    private void checkNotPresent(org.apache.poi.hssf.record.Record rec) {
         if (rec != null) {
             throw new org.apache.poi.util.RecordFormatException("Duplicate PageSettingsBlock record (sid=0x"
                     + Integer.toHexString(rec.getSid()) + ")");
@@ -296,7 +296,7 @@ public final class PageSettingsBlock extends RecordAggregate {
         visitIfPresent(_headerFooter, rv);
         visitIfPresent(_bitmap, rv);
     }
-    private static void visitIfPresent(Record r, RecordVisitor rv) {
+    private static void visitIfPresent(org.apache.poi.hssf.record.Record r, RecordVisitor rv) {
         if (r != null) {
             rv.visitRecord(r);
         }
@@ -687,7 +687,7 @@ public final class PageSettingsBlock extends RecordAggregate {
                 final CustomViewSettingsRecordAggregate cv = (CustomViewSettingsRecordAggregate) rb;
                 cv.visitContainedRecords(new RecordVisitor() {
                     @Override
-                    public void visitRecord(Record r) {
+                    public void visitRecord(org.apache.poi.hssf.record.Record r) {
                         if (r.getSid() == UserSViewBegin.sid) {
                             String guid = HexDump.toHex(((UserSViewBegin) r).getGuid());
                             HeaderFooterRecord hf = hfGuidMap.get(guid);

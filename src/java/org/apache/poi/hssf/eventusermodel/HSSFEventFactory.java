@@ -165,7 +165,7 @@ public class HSSFEventFactory {
 
 		// Process each record as they come in
 		while(true) {
-			Record r = recordStream.nextRecord();
+			org.apache.poi.hssf.record.Record r = recordStream.nextRecord();
 			if(r == null) {
 				break;
 			}

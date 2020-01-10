@@ -113,7 +113,7 @@ public final class HSSFChart {
     public void createBarChart( HSSFWorkbook workbook, HSSFSheet parentSheet )
     {
 
-        List<Record> records = new ArrayList<>();
+        List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
         records.add( createMSDrawingObjectRecord() );
         records.add( createOBJRecord() );
         records.add( createBOFRecord() );
@@ -227,7 +227,7 @@ public final class HSSFChart {
             } else if(r instanceof ValueRangeRecord){
                 lastChart.valueRanges.add((ValueRangeRecord)r);
             } else if (r instanceof Record) {
-                Record record = (Record) r;
+                Record record = (org.apache.poi.hssf.record.Record) r;
                 for (HSSFChartType type : HSSFChartType.values()) {
                     if (type == HSSFChartType.Unknown) {
                         continue;
@@ -440,7 +440,7 @@ public final class HSSFChart {
         return new UnknownRecord((short)0x00EC, data);
     }
 
-    private void createAxisRecords( List<Record> records )
+    private void createAxisRecords( List<org.apache.poi.hssf.record.Record> records )
     {
         records.add( createAxisParentRecord() );
         records.add( createBeginRecord() );
@@ -1244,7 +1244,7 @@ public final class HSSFChart {
                 }
                 newRecord = seriesTextRecord;
             } else if (record instanceof Record) {
-                newRecord = (Record) ((Record)record).copy();
+                newRecord = (org.apache.poi.hssf.record.Record) ((org.apache.poi.hssf.record.Record)record).copy();
             }
 
             if (newRecord != null)

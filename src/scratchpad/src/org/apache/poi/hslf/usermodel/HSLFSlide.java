@@ -412,7 +412,7 @@ public final class HSLFSlide extends HSLFSheet implements Slide<HSLFShape,HSLFTe
                         RecordTypes.ProgTags, RecordTypes.ProgBinaryTag, RecordTypes.BinaryTagData);
 
         if (binaryTags != null) {
-            for (final Record record : binaryTags.getChildRecords()) {
+            for (final org.apache.poi.hslf.record.Record record : binaryTags.getChildRecords()) {
                 if (record instanceof Comment2000) {
                     comments.add(new HSLFComment((Comment2000)record));
                 }

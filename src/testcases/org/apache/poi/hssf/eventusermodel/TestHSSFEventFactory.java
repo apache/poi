@@ -47,7 +47,7 @@ import org.junit.Test;
  * Testing for {@link HSSFEventFactory}
  */
 public final class TestHSSFEventFactory {
-    private final List<Record> records = new ArrayList<>();
+    private final List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
 
     private void openSample(String sampleFileName) throws IOException {
         records.clear();
@@ -132,7 +132,7 @@ public final class TestHSSFEventFactory {
 
             // Has one sheet, with values 1,2,3 in column A rows 1-3
             boolean hasSheet = false, hasA1 = false, hasA2 = false, hasA3 = false;
-            for (Record r : records) {
+            for (org.apache.poi.hssf.record.Record r : records) {
                 if (r instanceof BoundSheetRecord) {
                     BoundSheetRecord bsr = (BoundSheetRecord) r;
                     assertEquals("Sheet1", bsr.getSheetname());

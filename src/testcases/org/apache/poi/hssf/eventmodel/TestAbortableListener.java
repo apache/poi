@@ -95,7 +95,7 @@ public final class TestAbortableListener {
 			lastRecordSeen = null;
 		}
 		@Override
-		public short abortableProcessRecord(Record record) {
+		public short abortableProcessRecord(org.apache.poi.hssf.record.Record record) {
 			countSeen++;
 			lastRecordSeen = record;
 

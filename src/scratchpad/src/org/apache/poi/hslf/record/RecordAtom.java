@@ -33,5 +33,5 @@ public abstract class RecordAtom extends Record
 	/**
 	 * We're an atom, returns null
 	 */
-	public Record[] getChildRecords() { return null; }
+	public org.apache.poi.hslf.record.Record[] getChildRecords() { return null; }
 }

@@ -162,7 +162,7 @@ final class RecordOrderer {
 			return true; // oo COLINFO
 		}
 		if (rb instanceof Record) {
-			Record record = (Record) rb;
+			Record record = (org.apache.poi.hssf.record.Record) rb;
 			switch (record.getSid()) {
 				case DefaultColWidthRecord.sid:
 				case UnknownRecord.SORT_0090:
@@ -186,7 +186,7 @@ final class RecordOrderer {
 	}
 	private static boolean isPageBreakPriorRecord(Object rb) {
 		if (rb instanceof Record) {
-			Record record = (Record) rb;
+			Record record = (org.apache.poi.hssf.record.Record) rb;
 			switch (record.getSid()) {
 				case BOFRecord.sid:
 				case IndexRecord.sid:
@@ -226,7 +226,7 @@ final class RecordOrderer {
 				continue;
 			}
 
-			Record rec = (Record) rb;
+			Record rec = (org.apache.poi.hssf.record.Record) rb;
 			switch (rec.getSid()) {
 				case WindowTwoRecord.sid:
 				case SCLRecord.sid:
@@ -253,7 +253,7 @@ final class RecordOrderer {
 				// even PageSettingsBlock (which doesn't normally appear after 'View Settings')
 				continue;
 			}
-			Record rec = (Record) rb;
+			Record rec = (org.apache.poi.hssf.record.Record) rb;
 			switch (rec.getSid()) {
 				// 'View Settings' (4 records)
 				case WindowTwoRecord.sid:
@@ -298,14 +298,14 @@ final class RecordOrderer {
 			i--;
 			RecordBase rb = records.get(i);
 			if (isDVTPriorRecord(rb)) {
-				Record nextRec = (Record) records.get(i + 1);
+				Record nextRec = (org.apache.poi.hssf.record.Record) records.get(i + 1);
 				if (!isDVTSubsequentRecord(nextRec.getSid())) {
 					throw new IllegalStateException("Unexpected (" + nextRec.getClass().getName()
 							+ ") found after (" + rb.getClass().getName() + ")");
 				}
 				return i+1;
 			}
-			Record rec = (Record) rb;
+			Record rec = (org.apache.poi.hssf.record.Record) rb;
 			if (!isDVTSubsequentRecord(rec.getSid())) {
 				throw new IllegalStateException("Unexpected (" + rec.getClass().getName()
 						+ ") while looking for DV Table insert pos");
@@ -319,7 +319,7 @@ final class RecordOrderer {
 		if (rb instanceof MergedCellsTable || rb instanceof ConditionalFormattingTable) {
 			return true;
 		}
-		short sid = ((Record)rb).getSid();
+		short sid = ((org.apache.poi.hssf.record.Record)rb).getSid();
 		switch(sid) {
 			case WindowTwoRecord.sid:
 			case UnknownRecord.SCL_00A0:
@@ -379,7 +379,7 @@ final class RecordOrderer {
 
 	private static boolean isGutsPriorRecord(RecordBase rb) {
 		if (rb instanceof Record) {
-			Record record = (Record) rb;
+			Record record = (org.apache.poi.hssf.record.Record) rb;
 			switch (record.getSid()) {
 				case BOFRecord.sid:
 				case IndexRecord.sid:

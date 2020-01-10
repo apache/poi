@@ -42,7 +42,7 @@ public abstract class RecordContainer extends Record
 	 * Return any children
 	 */
 	@Override
-    public Record[] getChildRecords() { return _children; }
+    public org.apache.poi.hslf.record.Record[] getChildRecords() { return _children; }
 
 	/**
 	 * We're not an atom
@@ -61,7 +61,7 @@ public abstract class RecordContainer extends Record
 	 */
 	private int findChildLocation(Record child) {
 	    int i=0;
-		for(Record r : _children) {
+		for(org.apache.poi.hslf.record.Record r : _children) {
 			if (r.equals(child)) {
 				return i;
 			}
@@ -77,7 +77,7 @@ public abstract class RecordContainer extends Record
 	 */
 	private int appendChild(Record newChild) {
 		// Copy over, and pop the child in at the end
-		Record[] nc = new Record[(_children.length + 1)];
+		Record[] nc = new org.apache.poi.hslf.record.Record[(_children.length + 1)];
 		System.arraycopy(_children, 0, nc, 0, _children.length);
 		// Switch the arrays
 		nc[_children.length] = newChild;
@@ -125,8 +125,8 @@ public abstract class RecordContainer extends Record
 	 *  or null if none of the child records are of the
 	 *  given type. Does not descend.
 	 */
-	public Record findFirstOfType(long type) {
-		for (Record r : _children) {
+	public org.apache.poi.hslf.record.Record findFirstOfType(long type) {
+		for (org.apache.poi.hslf.record.Record r : _children) {
 			if (r.getRecordType() == type) {
 				return r;
 			}
@@ -140,17 +140,17 @@ public abstract class RecordContainer extends Record
      * @param ch the child to remove
      * @return the removed record
      */
-    public Record removeChild(Record ch) {
-        Record rm = null;
-        ArrayList<Record> lst = new ArrayList<>();
-        for(Record r : _children) {
+    public org.apache.poi.hslf.record.Record removeChild(Record ch) {
+        org.apache.poi.hslf.record.Record rm = null;
+        ArrayList<org.apache.poi.hslf.record.Record> lst = new ArrayList<>();
+        for(org.apache.poi.hslf.record.Record r : _children) {
             if(r != ch) {
                 lst.add(r);
             } else {
                 rm = r;
             }
         }
-        _children = lst.toArray(new Record[0]);
+        _children = lst.toArray(new org.apache.poi.hslf.record.Record[0]);
         return rm;
     }
 
@@ -278,7 +278,7 @@ public abstract class RecordContainer extends Record
      *
      * @param records   the new child records
      */
-    public void setChildRecord(Record[] records) {
+    public void setChildRecord(org.apache.poi.hslf.record.Record[] records) {
         this._children = records.clone();
     }
 
@@ -360,7 +360,7 @@ public abstract class RecordContainer extends Record
      */
     public static void handleParentAwareRecords(RecordContainer br) {
         // Loop over child records, looking for interesting ones
-        for (Record record : br.getChildRecords()) {
+        for (org.apache.poi.hslf.record.Record record : br.getChildRecords()) {
             // Tell parent aware records of their parent
             if (record instanceof ParentAwareRecord) {
                 ((ParentAwareRecord) record).setParentRecord(br);

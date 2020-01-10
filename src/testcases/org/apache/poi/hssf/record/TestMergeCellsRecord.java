@@ -59,7 +59,7 @@ public final class TestMergeCellsRecord {
 	@Test
 	public void testMCTable_bug46009() {
 		MergedCellsTable mct = new MergedCellsTable();
-		List<Record> recList = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> recList = new ArrayList<>();
 		CellRangeAddress[] cras = new CellRangeAddress[] {
 				new CellRangeAddress(0, 0, 0, 3),
 		};

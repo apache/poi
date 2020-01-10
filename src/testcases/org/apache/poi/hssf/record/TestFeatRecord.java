@@ -48,7 +48,7 @@ public final class TestFeatRecord {
 		int countFRH = 0;
 
 		// Check on the workbook, but shouldn't be there!
-		for(Record r : wb.getRecords()) {
+		for(org.apache.poi.hssf.record.Record r : wb.getRecords()) {
 			if(r instanceof FeatRecord) {
 				countFR++;
 			} else if (r.getSid() == FeatRecord.sid) {
@@ -70,7 +70,7 @@ public final class TestFeatRecord {
 
 		for(RecordBase rb : sheet.getRecords()) {
 			if(rb instanceof Record) {
-				Record r = (Record)rb;
+				Record r = (org.apache.poi.hssf.record.Record)rb;
 				if(r instanceof FeatRecord) {
 					countFR++;
 				} else if (r.getSid() == FeatRecord.sid) {
@@ -102,7 +102,7 @@ public final class TestFeatRecord {
 		// First check it isn't on the Workbook
 		int countFR = 0;
 		int countFRH = 0;
-		for(Record r : wb.getRecords()) {
+		for(org.apache.poi.hssf.record.Record r : wb.getRecords()) {
 			if(r instanceof FeatRecord) {
 				fr = (FeatRecord)r;
 				countFR++;
@@ -125,7 +125,7 @@ public final class TestFeatRecord {
 
 		for(RecordBase rb : sheet.getRecords()) {
 			if(rb instanceof Record) {
-				Record r = (Record)rb;
+				Record r = (org.apache.poi.hssf.record.Record)rb;
 				if(r instanceof FeatRecord) {
 					fr = (FeatRecord)r;
 					countFR++;

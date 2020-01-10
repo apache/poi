@@ -212,7 +212,7 @@ public class HSLFShapePlaceholderDetails extends HSLFPlaceholderDetails {
             throw new HSLFException("Placeholder aren't allowed for shape type: " + shape.getClass().getSimpleName());
         }
 
-        for (Record r : clientData.getHSLFChildRecords()) {
+        for (org.apache.poi.hslf.record.Record r : clientData.getHSLFChildRecords()) {
             if (r instanceof OEPlaceholderAtom) {
                 oePlaceholderAtom = (OEPlaceholderAtom)r;
             } else if (r instanceof RoundTripHFPlaceholder12) {

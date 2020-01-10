@@ -96,7 +96,7 @@ public final class SlideListWithText extends RecordContainer {
 
 				// Create a SlideAtomsSets, not caring if they're empty
 				//if(emptySet) { continue; }
-				Record[] spaChildren = new Record[clen];
+				org.apache.poi.hslf.record.Record[] spaChildren = new org.apache.poi.hslf.record.Record[clen];
 				System.arraycopy(_children,i+1,spaChildren,0,clen);
 				SlideAtomsSet set = new SlideAtomsSet((SlidePersistAtom)_children[i],spaChildren);
 				sets.add(set);
@@ -120,7 +120,7 @@ public final class SlideListWithText extends RecordContainer {
 		LittleEndian.putInt(_header, 4, 0);
 
 		// We have no children to start with
-		_children = new Record[0];
+		_children = new org.apache.poi.hslf.record.Record[0];
 		slideAtomsSets = new SlideAtomsSet[0];
 	}
 
@@ -133,7 +133,7 @@ public final class SlideListWithText extends RecordContainer {
 		// Add the new SlidePersistAtom at the end
 		appendChildRecord(spa);
 
-		SlideAtomsSet newSAS = new SlideAtomsSet(spa, new Record[0]);
+		SlideAtomsSet newSAS = new SlideAtomsSet(spa, new org.apache.poi.hslf.record.Record[0]);
 
 		// Update our SlideAtomsSets with this
 		SlideAtomsSet[] sas = new SlideAtomsSet[slideAtomsSets.length+1];
@@ -186,15 +186,15 @@ public final class SlideListWithText extends RecordContainer {
 	 */
 	public static class SlideAtomsSet {
 		private SlidePersistAtom slidePersistAtom;
-		private Record[] slideRecords;
+		private org.apache.poi.hslf.record.Record[] slideRecords;
 
 		/** Get the SlidePersistAtom, which gives details on the Slide this text is associated with */
 		public SlidePersistAtom getSlidePersistAtom() { return slidePersistAtom; }
 		/** Get the Text related records for this slide */
-		public Record[] getSlideRecords() { return slideRecords; }
+		public org.apache.poi.hslf.record.Record[] getSlideRecords() { return slideRecords; }
 
 		/** Create one to hold the Records for one Slide's text */
-		public SlideAtomsSet(SlidePersistAtom s, Record[] r) {
+		public SlideAtomsSet(SlidePersistAtom s, org.apache.poi.hslf.record.Record[] r) {
 			slidePersistAtom = s;
 			slideRecords = r.clone();
 		}

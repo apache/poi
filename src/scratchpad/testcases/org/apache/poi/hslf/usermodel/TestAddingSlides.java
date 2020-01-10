@@ -81,7 +81,7 @@ public final class TestAddingSlides {
         // grab UserEditAtom
         UserEditAtom usredit = null;
         Record[] _records = ss_empty.getSlideShowImpl().getRecords();
-        for (Record record : _records) {
+        for ( org.apache.poi.hslf.record.Record record : _records) {
             if (record.getRecordType() == RecordTypes.UserEditAtom.typeID) {
                 usredit = (UserEditAtom) record;
             }
@@ -169,7 +169,7 @@ public final class TestAddingSlides {
         // grab UserEditAtom
         UserEditAtom usredit = null;
         Record[] _records = ss_two.getSlideShowImpl().getRecords();
-        for (Record record : _records) {
+        for ( org.apache.poi.hslf.record.Record record : _records) {
             if (record.getRecordType() == RecordTypes.UserEditAtom.typeID) {
                 usredit = (UserEditAtom) record;
             }

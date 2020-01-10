@@ -24,6 +24,6 @@ package org.apache.poi.hslf.record;
  * @author Nick Burch (nick at torchbox dot com)
  */
 public interface ParentAwareRecord {
-	public RecordContainer getParentRecord();
+	public org.apache.poi.hslf.record.RecordContainer getParentRecord();
 	public void setParentRecord(RecordContainer parentRecord);
 }

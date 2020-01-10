@@ -34,7 +34,7 @@ public class ExEmbed extends RecordContainer {
     private final byte[] _header;
 
     // Links to our more interesting children
-    private RecordAtom embedAtom;
+    public org.apache.poi.hslf.record.RecordAtom embedAtom;
     private ExOleObjAtom oleObjAtom;
     private CString menuName;
     private CString progId;
@@ -74,7 +74,7 @@ public class ExEmbed extends RecordContainer {
      */
     public ExEmbed() {
         _header = new byte[8];
-        _children = new Record[5];
+        _children = new org.apache.poi.hslf.record.Record[5];
 
         // Setup our header block
         _header[0] = 0x0f; // We are a container record
@@ -222,7 +222,7 @@ public class ExEmbed extends RecordContainer {
         }
 
         boolean found = false;
-        for (final Record r : _children) {
+        for (final org.apache.poi.hslf.record.Record r : _children) {
             // for simplicity just check for object identity
             if (r == newStr) {
                 found = true;

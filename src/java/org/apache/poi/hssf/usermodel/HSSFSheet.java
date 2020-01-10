@@ -231,7 +231,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             }
             if (log.check( POILogger.DEBUG )) {
                 if (cval instanceof Record) {
-                log.log( DEBUG, "record id = " + Integer.toHexString( ( (Record) cval ).getSid() ) );
+                log.log( DEBUG, "record id = " + Integer.toHexString( ( (org.apache.poi.hssf.record.Record) cval ).getSid() ) );
                 } else {
                     log.log( DEBUG, "record = " + cval );
                 }
@@ -438,7 +438,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             private HSSFEvaluationWorkbook book = HSSFEvaluationWorkbook.create(getWorkbook());
 
             @Override
-            public void visitRecord(Record r) {
+            public void visitRecord(org.apache.poi.hssf.record.Record r) {
                 if (!(r instanceof DVRecord)) {
                     return;
                 }
@@ -1773,7 +1773,7 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
         // add logic for hyperlinks etc, like in shiftRows()
     }
 
-    protected void insertChartRecords(List<Record> records) {
+    protected void insertChartRecords(List<org.apache.poi.hssf.record.Record> records) {
         int window2Loc = _sheet.findFirstRecordLocBySid(WindowTwoRecord.sid);
         _sheet.getRecords().addAll(window2Loc, records);
     }

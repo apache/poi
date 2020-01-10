@@ -63,7 +63,7 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
 		childListener = listener;
 	}
 
-	public void processRecord(Record record) {
+	public void processRecord(org.apache.poi.hssf.record.Record record) {
 		int thisRow;
 		int thisColumn;
 		CellValueRecordInterface[] expandedRecords = null;
@@ -195,7 +195,7 @@ public final class MissingRecordAwareHSSFListener implements HSSFListener {
 		// Pass along the record(s)
 		if(expandedRecords != null && expandedRecords.length > 0) {
 			for(CellValueRecordInterface r : expandedRecords) {
-				childListener.processRecord((Record)r);
+				childListener.processRecord((org.apache.poi.hssf.record.Record)r);
 			}
 		} else {
 			childListener.processRecord(record);

@@ -91,7 +91,7 @@ public final class BiffViewer {
             if (recStream.getSid() == 0) {
                 continue;
             }
-            Record record;
+            org.apache.poi.hssf.record.Record record;
             if (dumpInterpretedRecords) {
                 record = createRecord (recStream);
                 if (record.getSid() == ContinueRecord.sid) {
@@ -115,7 +115,7 @@ public final class BiffViewer {
      *  up non-debug operations.
      *
      */
-    private static Record createRecord(RecordInputStream in) {
+    private static org.apache.poi.hssf.record.Record createRecord(RecordInputStream in) {
         switch (in.getSid()) {
             case AreaFormatRecord.sid:        return new AreaFormatRecord(in);
             case AreaRecord.sid:              return new AreaRecord(in);

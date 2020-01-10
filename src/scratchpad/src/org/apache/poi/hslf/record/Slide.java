@@ -92,7 +92,7 @@ public final class Slide extends SheetContainer
 
 		ColorSchemeAtom colorAtom = new ColorSchemeAtom();
 
-		_children = new Record[] {
+		_children = new org.apache.poi.hslf.record.Record[] {
 			slideAtom,
 			ppDrawing,
 			colorAtom

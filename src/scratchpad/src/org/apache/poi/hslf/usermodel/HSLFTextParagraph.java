@@ -267,7 +267,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         _ruler = getTextRuler();
         if (_ruler == null) {
             _ruler = TextRulerAtom.getParagraphInstance();
-            Record childAfter = _byteAtom;
+            org.apache.poi.hslf.record.Record childAfter = _byteAtom;
             if (childAfter == null) {
                 childAfter = _charAtom;
             }
@@ -285,18 +285,18 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      *
      * @return text run records
      */
-    public Record[] getRecords() {
-        Record[] r = _headerAtom.getParentRecord().getChildRecords();
+    public org.apache.poi.hslf.record.Record[] getRecords() {
+        org.apache.poi.hslf.record.Record[] r = _headerAtom.getParentRecord().getChildRecords();
         return getRecords(r, new int[] { 0 }, _headerAtom);
     }
 
-    private static Record[] getRecords(Record[] records, int[] startIdx, TextHeaderAtom headerAtom) {
+    private static org.apache.poi.hslf.record.Record[] getRecords(org.apache.poi.hslf.record.Record[] records, int[] startIdx, TextHeaderAtom headerAtom) {
         if (records == null) {
             throw new NullPointerException("records need to be set.");
         }
 
         for (; startIdx[0] < records.length; startIdx[0]++) {
-            Record r = records[startIdx[0]];
+            org.apache.poi.hslf.record.Record r = records[startIdx[0]];
             if (r instanceof TextHeaderAtom && (headerAtom == null || r == headerAtom)) {
                 break;
             }
@@ -304,18 +304,18 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
         if (startIdx[0] >= records.length) {
             logger.log(POILogger.INFO, "header atom wasn't found - container might contain only an OutlineTextRefAtom");
-            return new Record[0];
+            return new org.apache.poi.hslf.record.Record[0];
         }
 
         int length;
         for (length = 1; startIdx[0] + length < records.length; length++) {
-            Record r = records[startIdx[0]+length];
+            org.apache.poi.hslf.record.Record r = records[startIdx[0]+length];
             if (r instanceof TextHeaderAtom || r instanceof SlidePersistAtom) {
                 break;
             }
         }
 
-        Record[] result = new Record[length];
+        org.apache.poi.hslf.record.Record[] result = new org.apache.poi.hslf.record.Record[length];
         System.arraycopy(records, startIdx[0], result, 0, length);
         startIdx[0] += length;
 
@@ -932,7 +932,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     private static StyleTextPropAtom findStyleAtomPresent(TextHeaderAtom header, int textLen) {
         boolean afterHeader = false;
         StyleTextPropAtom style = null;
-        for (Record record : header.getParentRecord().getChildRecords()) {
+        for (org.apache.poi.hslf.record.Record record : header.getParentRecord().getChildRecords()) {
             long rt = record.getRecordType();
             if (afterHeader && rt == RecordTypes.TextHeaderAtom.typeID) {
                 // already on the next header, quit searching
@@ -989,7 +989,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         StyleTextPropAtom styleAtom = findStyleAtomPresent(headerAtom, rawText.length());
 
         // Store in the appropriate record
-        Record oldRecord = null, newRecord;
+        org.apache.poi.hslf.record.Record oldRecord = null, newRecord;
         if (isUnicode) {
             if (byteAtom != null || charAtom == null) {
                 oldRecord = byteAtom;
@@ -1010,10 +1010,10 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         assert (newRecord != null);
 
         RecordContainer _txtbox = headerAtom.getParentRecord();
-        Record[] cr = _txtbox.getChildRecords();
+        org.apache.poi.hslf.record.Record[] cr = _txtbox.getChildRecords();
         int /* headerIdx = -1, */ textIdx = -1, styleIdx = -1;
         for (int i = 0; i < cr.length; i++) {
-            Record r = cr[i];
+            org.apache.poi.hslf.record.Record r = cr[i];
             if (r == headerAtom) {
                 // headerIdx = i;
             } else if (r == oldRecord || r == newRecord) {
@@ -1099,7 +1099,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
         // If TextSpecInfoAtom is present, we must update the text size in it,
         // otherwise the ppt will be corrupted
-        for (Record r : paragraphs.get(0).getRecords()) {
+        for (org.apache.poi.hslf.record.Record r : paragraphs.get(0).getRecords()) {
             if (r instanceof TextSpecInfoAtom) {
                 ((TextSpecInfoAtom) r).setParentSize(rawText.length() + 1);
                 break;
@@ -1111,7 +1111,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         TextHeaderAtom headerAtom = paragraphs.get(0)._headerAtom;
         RecordContainer _txtbox = headerAtom.getParentRecord();
         // remove existing hyperlink records
-        for (Record r : _txtbox.getChildRecords()) {
+        for (org.apache.poi.hslf.record.Record r : _txtbox.getChildRecords()) {
             if (r instanceof InteractiveInfo || r instanceof TxInteractiveInfoAtom) {
                 _txtbox.removeChild(r);
             }
@@ -1403,7 +1403,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
      *
      * @param records the records to build from
      */
-    protected static List<List<HSLFTextParagraph>> findTextParagraphs(Record[] records) {
+    protected static List<List<HSLFTextParagraph>> findTextParagraphs(org.apache.poi.hslf.record.Record[] records) {
         List<List<HSLFTextParagraph>> paragraphCollection = new ArrayList<>();
 
         int[] recordIdx = { 0 };
@@ -1415,7 +1415,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             TextRulerAtom ruler = null;
             MasterTextPropAtom indents = null;
 
-            for (Record r : getRecords(records, recordIdx, null)) {
+            for (org.apache.poi.hslf.record.Record r : getRecords(records, recordIdx, null)) {
                 long rt = r.getRecordType();
                 if (RecordTypes.TextHeaderAtom.typeID == rt) {
                     header = (TextHeaderAtom) r;

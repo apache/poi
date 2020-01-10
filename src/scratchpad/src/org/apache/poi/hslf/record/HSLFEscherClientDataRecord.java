@@ -41,7 +41,7 @@ public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 1_000_000;
 
-    private final List<Record> _childRecords = new ArrayList<>();
+    private final List<org.apache.poi.hslf.record.Record> _childRecords = new ArrayList<>();
 
     public HSLFEscherClientDataRecord() {}
 
@@ -99,7 +99,7 @@ public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
     public byte[] getRemainingData() {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {
-            for (Record r : _childRecords) {
+            for (org.apache.poi.hslf.record.Record r : _childRecords) {
                 r.writeOut(bos);
             }
         } catch (IOException e) {
@@ -113,7 +113,7 @@ public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
         _childRecords.clear();
         int offset = 0;
         while (offset < remainingData.length) {
-            final Record r = Record.buildRecordAtOffset(remainingData, offset);
+            final org.apache.poi.hslf.record.Record r = Record.buildRecordAtOffset(remainingData, offset);
             if (r != null) {
                 _childRecords.add(r);
             }

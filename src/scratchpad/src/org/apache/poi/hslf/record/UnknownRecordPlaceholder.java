@@ -68,7 +68,7 @@ public final class UnknownRecordPlaceholder extends RecordAtom
 	/**
 	 * Return the value as enum we were given at creation
 	 */
-	public RecordTypes getRecordTypeEnum() {
+	public org.apache.poi.hslf.record.RecordTypes getRecordTypeEnum() {
 		return RecordTypes.forTypeID((int)_type);
 	}
 

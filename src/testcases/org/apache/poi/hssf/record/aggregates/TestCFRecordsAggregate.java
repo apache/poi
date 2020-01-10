@@ -55,7 +55,7 @@ public final class TestCFRecordsAggregate {
         HSSFWorkbook workbook = new HSSFWorkbook();
         HSSFSheet sheet = workbook.createSheet();
 
-        List<Record> recs = new ArrayList<>();
+        List<org.apache.poi.hssf.record.Record> recs = new ArrayList<>();
         CFHeaderBase header = new CFHeaderRecord();
         CFRuleBase rule1 = CFRuleRecord.create(sheet, "7");
         CFRuleBase rule2 = CFRuleRecord.create(sheet, ComparisonOperator.BETWEEN, "2", "5");

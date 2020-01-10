@@ -36,7 +36,7 @@ import org.apache.poi.util.LittleEndian;
 public final class TextHeaderAtom extends RecordAtom implements ParentAwareRecord {
     public static final long _type = RecordTypes.TextHeaderAtom.typeID;
 	private byte[] _header;
-	private RecordContainer parentRecord;
+	public org.apache.poi.hslf.record.RecordContainer parentRecord;
 
 	/** The kind of text it is */
 	private int textType;
@@ -65,7 +65,7 @@ public final class TextHeaderAtom extends RecordAtom implements ParentAwareRecor
 	public void setIndex(int index) { this.index = index; }
 
 	@Override
-    public RecordContainer getParentRecord() { return parentRecord; }
+    public org.apache.poi.hslf.record.RecordContainer getParentRecord() { return parentRecord; }
 	@Override
     public void setParentRecord(RecordContainer record) { this.parentRecord = record; }
 

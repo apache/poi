@@ -456,7 +456,7 @@ public final class TestWorkbook {
             return _count;
         }
         @Override
-        public void visitRecord(Record r) {
+        public void visitRecord(org.apache.poi.hssf.record.Record r) {
             if (r instanceof LabelSSTRecord) {
                 _count++;
             }

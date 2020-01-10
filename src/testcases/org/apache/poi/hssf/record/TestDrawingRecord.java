@@ -53,7 +53,7 @@ public final class TestDrawingRecord {
         ContinueRecord cn = new ContinueRecord(data2);
         out.write(cn.serialize());
 
-        List<Record> rec = RecordFactory.createRecords(new ByteArrayInputStream(out.toByteArray()));
+        List<org.apache.poi.hssf.record.Record> rec = RecordFactory.createRecords(new ByteArrayInputStream(out.toByteArray()));
         assertEquals(2, rec.size());
         assertTrue(rec.get(0) instanceof DrawingRecord);
         assertTrue(rec.get(1) instanceof ContinueRecord);

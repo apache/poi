@@ -127,7 +127,7 @@ public final class TestLinkTable {
 				SupBookRecord.createAddInFunctions(),
 				new SSTRecord(),
 		};
-		List<Record> recList = Arrays.asList(recs);
+		List<org.apache.poi.hssf.record.Record> recList = Arrays.asList(recs);
 		WorkbookRecordList wrl = new WorkbookRecordList();
 
 		// Bug 47001b: Expected an EXTERNSHEET record but got (org.apache.poi.hssf.record.SSTRecord)
@@ -145,7 +145,7 @@ public final class TestLinkTable {
         new NameCommentRecord("name2", "comment2"),
 
 		};
-		final List<Record> recList = Arrays.asList(recs);
+		final List<org.apache.poi.hssf.record.Record> recList = Arrays.asList(recs);
 		final WorkbookRecordList wrl = new WorkbookRecordList();
 		final Map<String, NameCommentRecord> commentRecords = new LinkedHashMap<>();
 

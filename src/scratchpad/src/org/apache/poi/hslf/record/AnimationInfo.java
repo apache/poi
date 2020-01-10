@@ -71,7 +71,7 @@ public final class AnimationInfo extends RecordContainer {
 		_header[0] = 0x0f; // We are a container record
 		LittleEndian.putShort(_header, 2, (short)getRecordType());
 
-        _children = new Record[1];
+        _children = new org.apache.poi.hslf.record.Record[1];
 		_children[0] = animationAtom = new AnimationInfoAtom();
 	}
 

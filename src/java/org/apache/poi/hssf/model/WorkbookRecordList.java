@@ -23,7 +23,7 @@ import java.util.List;
 import org.apache.poi.hssf.record.Record;
 
 public final class WorkbookRecordList {
-    private List<Record> records = new ArrayList<>();
+    private List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
 
     /** holds the position of the protect record */
 	private int protpos;
@@ -47,7 +47,7 @@ public final class WorkbookRecordList {
 	private int palettepos     = -1;
 
 
-	public void setRecords(List<Record> records) {
+	public void setRecords(List<org.apache.poi.hssf.record.Record> records) {
 	    this.records = records;
 	}
 
@@ -64,7 +64,7 @@ public final class WorkbookRecordList {
 		updateRecordPos(pos, true);
 	}
 
-	public List<Record> getRecords() {
+	public List<org.apache.poi.hssf.record.Record> getRecords() {
 		return records;
 	}
 
@@ -76,7 +76,7 @@ public final class WorkbookRecordList {
 	public void remove( Object record ) {
 	   // can't use List.indexOf here because it checks the records for equality and not identity
 	   int i = 0;
-	   for (Record r : records) {
+	   for (org.apache.poi.hssf.record.Record r : records) {
 	       if (r == record) {
 	           remove(i);
 	           break;

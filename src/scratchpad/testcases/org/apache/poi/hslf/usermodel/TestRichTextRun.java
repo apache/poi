@@ -418,7 +418,7 @@ public final class TestRichTextRun {
 		assertArrayEquals(raw_file, raw_ss);
 	}
 
-	private byte[] writeRecord(Record r) throws IOException {
+	private byte[] writeRecord( org.apache.poi.hslf.record.Record r) throws IOException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		r.writeOut(baos);
 		return baos.toByteArray();

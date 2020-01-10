@@ -59,7 +59,7 @@ public final class VBAInfoContainer extends RecordContainer {
      */
     private VBAInfoContainer() {
         _header = new byte[8];
-        _children = new Record[0];
+        _children = new org.apache.poi.hslf.record.Record[0];
 
         // Setup our header block
         _header[0] = 0x0f; // We are a container record

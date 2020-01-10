@@ -47,7 +47,7 @@ public final class TestSanityChecker {
 	@Test
 	public void testCheckRecordOrder() {
 		final SanityChecker c = new SanityChecker();
-		List<Record> records = new ArrayList<>();
+		List<org.apache.poi.hssf.record.Record> records = new ArrayList<>();
 		records.add(new BOFRecord());
 		records.add(INTERFACEHDR);
 		records.add(createBoundSheetRec());
@@ -121,7 +121,7 @@ public final class TestSanityChecker {
 	}
 	private static void confirmBadRecordOrder(final SanityChecker.CheckRecord[] check, Record[] recs) {
 		final SanityChecker c = new SanityChecker();
-		final List<Record> records = Arrays.asList(recs);
+		final List<org.apache.poi.hssf.record.Record> records = Arrays.asList(recs);
 		try {
 			new Runnable() {
 				@Override

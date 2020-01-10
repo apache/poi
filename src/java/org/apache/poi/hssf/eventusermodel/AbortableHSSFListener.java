@@ -24,7 +24,7 @@ import org.apache.poi.hssf.record.Record;
  * Abstract class for use with the HSSFRequest and HSSFEventFactory, which
  *  allows for the halting of processing. 
  * Users should create subclass of this (which implements the usual
- *  HSSFListener), and then override the #abortableProcessRecord(Record)
+ *  HSSFListener), and then override the #abortableProcessRecord(org.apache.poi.hssf.record.Record)
  *  method to do their processing.
  * This should then be registered with the HSSFRequest (associating
  * it with Record SID's) as usual.
@@ -42,7 +42,7 @@ public abstract class AbortableHSSFListener implements HSSFListener
      * You should implement #abortableProcessRecord instead
      */
 	@Override
-    public void processRecord(Record record)
+    public void processRecord(org.apache.poi.hssf.record.Record record)
 	{
 	}
 
@@ -67,5 +67,5 @@ public abstract class AbortableHSSFListener implements HSSFListener
 	 * @throws HSSFUserException User code can throw this to abort 
 	 * file processing by HSSFEventFactory and return diagnostic information.
      */
-    public abstract short abortableProcessRecord(Record record) throws HSSFUserException;
+    public abstract short abortableProcessRecord(org.apache.poi.hssf.record.Record record) throws HSSFUserException;
 }
