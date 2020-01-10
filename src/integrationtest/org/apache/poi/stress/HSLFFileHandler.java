@@ -21,7 +21,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.*;
 
-import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.util.POILogger;
@@ -36,9 +35,9 @@ public class HSLFFileHandler extends SlideShowHandler {
         assertNotNull(slide.getEmbeddedObjects());
         assertNotNull(slide.getUnderlyingBytes());
         assertNotNull(slide.getPictureData());
-        org.apache.poi.hssf.record.Record[] records = slide.getRecords();
+        org.apache.poi.hslf.record.Record[] records = slide.getRecords();
         assertNotNull(records);
-        for(org.apache.poi.hssf.record.Record record : records) {
+        for(org.apache.poi.hslf.record.Record record : records) {
             assertNotNull("Found a record which was null", record);
             assertTrue(record.getRecordType() >= 0);
         }
