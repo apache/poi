@@ -22,9 +22,13 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
           // H43 has outdated JDK12 installed
-          slaveAdd: '&&!H43'
+          slaveAdd: '&&!H43',
+          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA now
+          disabled: true
         ],
         [ name: 'POI-DSL-1.13', jdk: '1.13', trigger: triggerSundays, skipcigame: true
+        ],
+        [ name: 'POI-DSL-1.14', jdk: '1.14', trigger: triggerSundays, skipcigame: true
         ],
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true
         ],
@@ -52,7 +56,11 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
         ],
-        [ name: 'POI-DSL-Windows-1.12', jdk: '1.12', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
+        [ name: 'POI-DSL-Windows-1.12', jdk: '1.12', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true,
+          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA now
+          disabled: true
+        ],
+        [ name: 'POI-DSL-Windows-1.14', jdk: '1.14', trigger: triggerSundays, windows: true, slaves: 'Windows', skipcigame: true
         ],
         [ name: 'POI-DSL-Github-PullRequests', trigger: '', githubpr: true, skipcigame: true,
           // ensure the file which is needed from the separate documentation module does exist
@@ -70,6 +78,10 @@ def xmlbeansjobs = [
         [ name: 'POI-XMLBeans-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
         ],
         [ name: 'POI-XMLBeans-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
+          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA now
+          disabled: true
+        ],
+        [ name: 'POI-XMLBeans-DSL-1.14', jdk: '1.14', trigger: triggerSundays, skipcigame: true,
         ]
 ]
 
@@ -93,6 +105,7 @@ def jdkMapping = [
         '1.11': 'JDK 11 (latest)',
         '1.12': 'JDK 12 (latest)',
         '1.13': 'JDK 13 (latest)',
+        '1.14': 'JDK 14 (latest)',
         'IBMJDK': 'IBM 1.8 64-bit (on Ubuntu only)',
 ]
 
@@ -475,7 +488,7 @@ xmlbeansjobs.each { xjob ->
                 // when using JDK 9/10 for running Ant, we need to provide more modules for the forbidden-api-checks task
                 // on JDK 11 and newer there is no such module any more, so do not add it here
                 env('ANT_OPTS', '--add-modules=java.xml.bind --add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
-            } else if (jdkKey == '1.11' || jdkKey == '1.12' || jdkKey == '1.13') {
+            } else if (jdkKey == '1.11' || jdkKey == '1.12' || jdkKey == '1.13' || jdkKey == '1.14') {
                 env('ANT_OPTS', '--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
             }
             // will be needed for forbidden-apis-check: env('ANT_HOME', xjob.windows ? 'f:\\jenkins\\tools\\ant\\latest' : '/usr/share/ant')
