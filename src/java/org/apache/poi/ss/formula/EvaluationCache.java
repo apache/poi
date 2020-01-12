@@ -118,12 +118,7 @@ final class EvaluationCache {
 	private void updateAnyBlankReferencingFormulas(int bookIndex, int sheetIndex,
 			final int rowIndex, final int columnIndex) {
 		final BookSheetKey bsk = new BookSheetKey(bookIndex, sheetIndex);
-		_formulaCellCache.applyOperation(new IEntryOperation() {
-
-			public void processEntry(FormulaCellCacheEntry entry) {
-				entry.notifyUpdatedBlankCell(bsk, rowIndex, columnIndex, _evaluationListener);
-			}
-		});
+		_formulaCellCache.applyOperation(entry -> entry.notifyUpdatedBlankCell(bsk, rowIndex, columnIndex, _evaluationListener));
 	}
 
 	public PlainValueCellCacheEntry getPlainValueEntry(int bookIndex, int sheetIndex,

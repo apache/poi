@@ -685,17 +685,14 @@ public final class PageSettingsBlock extends RecordAggregate {
         for (RecordBase rb : sheetRecords) {
             if (rb instanceof CustomViewSettingsRecordAggregate) {
                 final CustomViewSettingsRecordAggregate cv = (CustomViewSettingsRecordAggregate) rb;
-                cv.visitContainedRecords(new RecordVisitor() {
-                    @Override
-                    public void visitRecord(org.apache.poi.hssf.record.Record r) {
-                        if (r.getSid() == UserSViewBegin.sid) {
-                            String guid = HexDump.toHex(((UserSViewBegin) r).getGuid());
-                            HeaderFooterRecord hf = hfGuidMap.get(guid);
+                cv.visitContainedRecords(r -> {
+                    if (r.getSid() == UserSViewBegin.sid) {
+                        String guid = HexDump.toHex(((UserSViewBegin) r).getGuid());
+                        HeaderFooterRecord hf = hfGuidMap.get(guid);
 
-                            if (hf != null) {
-                                cv.append(hf);
-                                _sviewHeaderFooters.remove(hf);
-                            }
+                        if (hf != null) {
+                            cv.append(hf);
+                            _sviewHeaderFooters.remove(hf);
                         }
                     }
                 });

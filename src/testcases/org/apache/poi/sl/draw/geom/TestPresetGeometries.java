@@ -40,12 +40,7 @@ public class TestPresetGeometries {
 
         for(String name : shapes.keySet()) {
             CustomGeometry geom = shapes.get(name);
-            Context ctx = new Context(geom, new Rectangle2D.Double(0, 0, 100, 100), new IAdjustableShape() {
-                @Override
-                public Guide getAdjustValue(String presetName) {
-                    return null;
-                }
-            });
+            Context ctx = new Context(geom, new Rectangle2D.Double(0, 0, 100, 100), presetName -> null);
             for(Path p : geom){
                 Path2D path = p.getPath(ctx);
                 assertNotNull(path);
