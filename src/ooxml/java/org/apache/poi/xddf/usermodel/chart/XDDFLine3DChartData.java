@@ -248,6 +248,41 @@ public class XDDFLine3DChartData extends XDDFChartData {
             }
         }
 
+        /**
+         * @since 4.1.2
+         */
+        public boolean hasErrorBars() {
+            return series.isSetErrBars();
+        }
+
+        /**
+         * @since 4.1.2
+         */
+        public XDDFErrorBars getErrorBars() {
+                if (series.isSetErrBars()) {
+                    return new XDDFErrorBars(series.getErrBars());
+                } else {
+                    return null;
+                }
+        }
+
+        /**
+         * @since 4.1.2
+         */
+        public void setErrorBars(XDDFErrorBars bars) {
+            if (bars == null) {
+                if (series.isSetErrBars()) {
+                    series.unsetErrBars();
+                }
+            } else {
+                if (series.isSetErrBars()) {
+                    series.getErrBars().set(bars.getXmlObject());
+                } else {
+                    series.addNewErrBars().set(bars.getXmlObject());
+                }
+            }
+        }
+
         @Override
         protected CTAxDataSource getAxDS() {
             return series.getCat();
