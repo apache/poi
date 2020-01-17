@@ -37,9 +37,15 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 /**
- * This class handles the processing of a sheet#.xml 
+ * This class handles the streaming processing of a sheet#.xml
  *  sheet part of a XSSF .xlsx file, and generates
  *  row and cell events for it.
+ *
+ * This allows to build functionality which reads huge files
+ * without needing large amounts of main memory.
+ *
+ * See {@link SheetContentsHandler} for the interface that
+ * you need to implement for reading information from a file.
  */
 public class XSSFSheetXMLHandler extends DefaultHandler {
     private static final POILogger logger = POILogFactory.getLogger(XSSFSheetXMLHandler.class);
@@ -498,8 +504,13 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
    }
 
    /**
-    * You need to implement this to handle the results
-    *  of the sheet parsing.
+    * This interface allows to provide callbacks when reading
+    * a sheet in streaming mode.
+    *
+    * The XSLX file is usually read via {@link XSSFReader}.
+    *
+    * By implementing the methods, you can process arbitrarily
+    * large files without exhausting main memory.
     */
    public interface SheetContentsHandler {
       /** A row with the (zero based) row number has started */
