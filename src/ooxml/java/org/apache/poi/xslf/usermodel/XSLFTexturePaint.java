@@ -21,11 +21,14 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Supplier;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
+import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.util.Dimension2DDouble;
@@ -33,7 +36,9 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTDuotoneEffect;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRelativeRect;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTileInfoProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTileFlipMode;
 
@@ -42,11 +47,17 @@ public class XSLFTexturePaint implements PaintStyle.TexturePaint {
     private final CTBlipFillProperties blipFill;
     private final PackagePart parentPart;
     private final CTBlip blip;
+    private final CTSchemeColor phClr;
+    private final XSLFTheme theme;
+    private final XSLFSheet sheet;
 
-    public XSLFTexturePaint(final CTBlipFillProperties blipFill, final PackagePart parentPart) {
+    public XSLFTexturePaint(final CTBlipFillProperties blipFill, final PackagePart parentPart, CTSchemeColor phClr, final XSLFTheme theme, final XSLFSheet sheet) {
         this.blipFill = blipFill;
         this.parentPart = parentPart;
         blip = blipFill.getBlip();
+        this.phClr = phClr;
+        this.theme = theme;
+        this.sheet = sheet;
     }
 
 
@@ -138,6 +149,20 @@ public class XSLFTexturePaint implements PaintStyle.TexturePaint {
     public Insets2D getStretch() {
         return getRectVal(blipFill.isSetStretch() ? blipFill.getStretch().getFillRect() : null);
     }
+
+    @Override
+    public List<ColorStyle> getDuoTone() {
+        if (blip.sizeOfDuotoneArray() == 0) {
+            return null;
+        }
+        List<ColorStyle> colors = new ArrayList<>();
+        CTDuotoneEffect duoEff = blip.getDuotoneArray(0);
+        for (CTSchemeColor phClrDuo : duoEff.getSchemeClrArray()) {
+            colors.add(new XSLFColor(phClrDuo, theme, phClr, sheet).getColorStyle());
+        }
+        return colors;
+    }
+
 
     private static Insets2D getRectVal(CTRelativeRect rect) {
         return rect == null ? null : new Insets2D(

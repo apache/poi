@@ -61,11 +61,11 @@ public class XSLFShadow extends XSLFShape implements Shadow<XSLFShape,XSLFTextPa
      */
     public double getDistance(){
         CTOuterShadowEffect ct = (CTOuterShadowEffect)getXmlObject();
-        return ct.isSetDist() ? Units.toPoints(ct.getDist()) : 0;        
+        return ct.isSetDist() ? Units.toPoints(ct.getDist()) : 0;
     }
 
     /**
-     * 
+     *
      * @return the direction to offset the shadow in angles
      */
     public double getAngle(){
@@ -74,9 +74,9 @@ public class XSLFShadow extends XSLFShape implements Shadow<XSLFShape,XSLFTextPa
     }
 
     /**
-     * 
+     *
      * @return the blur radius of the shadow
-     * TODO: figure out how to make sense of this property when rendering shadows 
+     * TODO: figure out how to make sense of this property when rendering shadows
      */
     public double getBlur(){
         CTOuterShadowEffect ct = (CTOuterShadowEffect)getXmlObject();
@@ -84,7 +84,7 @@ public class XSLFShadow extends XSLFShape implements Shadow<XSLFShape,XSLFTextPa
     }
 
     /**
-     * @return the color of this shadow. 
+     * @return the color of this shadow.
      * Depending whether the parent shape is filled or stroked, this color is used to fill or stroke this shadow
      */
     public Color getFillColor() {
@@ -98,9 +98,9 @@ public class XSLFShadow extends XSLFShape implements Shadow<XSLFShape,XSLFTextPa
         XSLFTheme theme = getSheet().getTheme();
         CTOuterShadowEffect ct = (CTOuterShadowEffect)getXmlObject();
         if(ct == null) return null;
-            
+
         CTSchemeColor phClr = ct.getSchemeClr();
-        final XSLFColor xc = new XSLFColor(ct, theme, phClr);
+        final XSLFColor xc = new XSLFColor(ct, theme, phClr, getSheet());
         return DrawPaint.createSolidPaint(xc.getColorStyle());
     }
 }

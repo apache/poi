@@ -20,7 +20,7 @@ package org.apache.poi.sl.usermodel;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.io.InputStream;
-
+import java.util.List;
 
 
 public interface PaintStyle {
@@ -87,8 +87,8 @@ public interface PaintStyle {
     }
 
     interface GradientPaint extends PaintStyle {
-        enum GradientType { linear, circular, shape }
-        
+        enum GradientType { linear, circular, rectangular, shape }
+
         /**
          * @return the angle of the gradient
          */
@@ -97,8 +97,12 @@ public interface PaintStyle {
         float[] getGradientFractions();
         boolean isRotatedWithShape();
         GradientType getGradientType();
-    }    
-    
+
+        default Insets2D getFillToInsets() {
+            return null;
+        }
+    }
+
     interface TexturePaint extends PaintStyle {
         /**
          * @return the raw image stream
@@ -109,7 +113,7 @@ public interface PaintStyle {
          * @return the content type of the image data
          */
         String getContentType();
-        
+
         /**
          * @return the alpha mask in percents [0..100000]
          */
@@ -170,5 +174,14 @@ public interface PaintStyle {
         default Insets2D getStretch() {
             return null;
         }
+
+
+        /**
+         * For pattern images, the duo tone defines the black/white pixel color replacement
+         */
+        default List<ColorStyle> getDuoTone() {
+            return null;
+        }
+
     }
 }

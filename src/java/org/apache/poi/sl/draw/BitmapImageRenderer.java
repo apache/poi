@@ -75,7 +75,7 @@ public class BitmapImageRenderer implements ImageRenderer {
     public void loadImage(byte[] data, String contentType) throws IOException {
         img = readImage(new ByteArrayInputStream(data), contentType);
     }
-    
+
     /**
      * Read the image data via ImageIO and optionally try to workaround metadata errors.
      * The resulting image is of image type {@link BufferedImage#TYPE_INT_ARGB}
@@ -117,7 +117,7 @@ public class BitmapImageRenderer implements ImageRenderer {
                     }
 
                     try {
-                    
+
                         switch (mode) {
                             case 0:
                                 reader.setInput(iis, false, true);
@@ -146,7 +146,7 @@ public class BitmapImageRenderer implements ImageRenderer {
                                 reader.setInput(iis, false, true);
                                 int height = reader.getHeight(0);
                                 int width = reader.getWidth(0);
-                                
+
                                 Iterator<ImageTypeSpecifier> imageTypes = reader.getImageTypes(0);
                                 if (imageTypes.hasNext()) {
                                     ImageTypeSpecifier imageTypeSpecifier = imageTypes.next();
@@ -172,11 +172,11 @@ public class BitmapImageRenderer implements ImageRenderer {
                                             img = argbImg;
                                         }
                                     }
-                                }                                
+                                }
                                 break;
                             }
                         }
-                    
+
                     } catch (IOException e) {
                         if (mode < 2) {
                             lastException = e;
@@ -192,7 +192,7 @@ public class BitmapImageRenderer implements ImageRenderer {
         } finally {
             iis.close();
         }
-        
+
         // If you don't have an image at the end of all readers
         if (img == null) {
             if (lastException != null) {
@@ -212,7 +212,7 @@ public class BitmapImageRenderer implements ImageRenderer {
             g.dispose();
             return argbImg;
         }
-        
+
         return img;
     }
 
@@ -229,8 +229,8 @@ public class BitmapImageRenderer implements ImageRenderer {
         }
         return 0;
     }
-    
-    
+
+
     @Override
     public BufferedImage getImage() {
         return img;
@@ -245,6 +245,9 @@ public class BitmapImageRenderer implements ImageRenderer {
         double h_old = img.getHeight();
         double w_new = dim.getWidth();
         double h_new = dim.getHeight();
+        if (w_old == w_new && h_old == h_new) {
+            return img;
+        }
         BufferedImage scaled = new BufferedImage((int)w_new, (int)h_new, BufferedImage.TYPE_INT_ARGB);
         AffineTransform at = new AffineTransform();
         at.scale(w_new/w_old, h_new/h_old);

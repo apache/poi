@@ -144,7 +144,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
                 if (shape instanceof XSLFPictureShape) {
                     CTPicture pic = (CTPicture)shape.getXmlObject();
                     if (pic.getBlipFill() != null) {
-                        setValue(selectPaint(pic.getBlipFill(), pp));
+                        setValue(selectPaint(pic.getBlipFill(), pp, null, theme));
                         return true;
                     }
                 }
@@ -360,13 +360,13 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
      * @return  the applied Paint or null if none was applied
      */
     @SuppressWarnings("WeakerAccess")
-    protected static PaintStyle selectPaint(XSLFFillProperties fp, final CTSchemeColor phClr, final PackagePart parentPart, final XSLFTheme theme, boolean hasPlaceholder) {
+    protected PaintStyle selectPaint(XSLFFillProperties fp, final CTSchemeColor phClr, final PackagePart parentPart, final XSLFTheme theme, boolean hasPlaceholder) {
         if (fp == null || fp.isSetNoFill()) {
             return null;
         } else if (fp.isSetSolidFill()) {
             return selectPaint(fp.getSolidFill(), phClr, theme);
         } else if (fp.isSetBlipFill()) {
-            return selectPaint(fp.getBlipFill(), parentPart);
+            return selectPaint(fp.getBlipFill(), parentPart, phClr, theme);
         } else if (fp.isSetGradFill()) {
             return selectPaint(fp.getGradFill(), phClr, theme);
         } else if (fp.isSetMatrixStyle()) {
@@ -377,7 +377,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
     }
 
     @SuppressWarnings("WeakerAccess")
-    protected static PaintStyle selectPaint(CTSolidColorFillProperties solidFill, CTSchemeColor phClr, final XSLFTheme theme) {
+    protected PaintStyle selectPaint(CTSolidColorFillProperties solidFill, CTSchemeColor phClr, final XSLFTheme theme) {
         if (solidFill.isSetSchemeClr()) {
         	// if there's a reference to the placeholder color,
         	// stop evaluating further and let the caller select
@@ -389,22 +389,22 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
                 phClr = solidFill.getSchemeClr();
             }
         }
-        final XSLFColor c = new XSLFColor(solidFill, theme, phClr);
+        final XSLFColor c = new XSLFColor(solidFill, theme, phClr, _sheet);
         return DrawPaint.createSolidPaint(c.getColorStyle());
     }
 
     @SuppressWarnings("WeakerAccess")
-    protected static PaintStyle selectPaint(final CTBlipFillProperties blipFill, final PackagePart parentPart) {
-        return new XSLFTexturePaint(blipFill, parentPart);
+    protected PaintStyle selectPaint(final CTBlipFillProperties blipFill, final PackagePart parentPart, CTSchemeColor phClr, final XSLFTheme theme) {
+        return new XSLFTexturePaint(blipFill, parentPart, phClr, theme, _sheet);
     }
 
     @SuppressWarnings("WeakerAccess")
-    protected static PaintStyle selectPaint(final CTGradientFillProperties gradFill, CTSchemeColor phClr, final XSLFTheme theme) {
-        return new XSLFGradientPaint(gradFill, phClr, theme);
+    protected PaintStyle selectPaint(final CTGradientFillProperties gradFill, CTSchemeColor phClr, final XSLFTheme theme) {
+        return new XSLFGradientPaint(gradFill, phClr, theme, _sheet);
     }
 
     @SuppressWarnings("WeakerAccess")
-    protected static PaintStyle selectPaint(CTStyleMatrixReference fillRef, final XSLFTheme theme, boolean isLineStyle, boolean hasPlaceholder) {
+    protected PaintStyle selectPaint(CTStyleMatrixReference fillRef, final XSLFTheme theme, boolean isLineStyle, boolean hasPlaceholder) {
         if (fillRef == null) {
             return null;
         }
@@ -441,7 +441,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         if (res != null || hasPlaceholder) {
             return res;
         }
-        XSLFColor col = new XSLFColor(fillRef, theme, phClr);
+        XSLFColor col = new XSLFColor(fillRef, theme, phClr, _sheet);
         return DrawPaint.createSolidPaint(col.getColorStyle());
     }
 

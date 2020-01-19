@@ -19,6 +19,9 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.AbstractColorStyle;
@@ -52,11 +55,13 @@ public class XSLFColor {
     private XmlObject _xmlObject;
     private Color _color;
     private CTSchemeColor _phClr;
+    private XSLFSheet _sheet;
 
     @SuppressWarnings("WeakerAccess")
-    public XSLFColor(XmlObject obj, XSLFTheme theme, CTSchemeColor phClr) {
+    public XSLFColor(XmlObject obj, XSLFTheme theme, CTSchemeColor phClr, XSLFSheet sheet) {
         _xmlObject = obj;
         _phClr = phClr;
+        _sheet = sheet;
         _color = toColor(obj, theme);
     }
 
@@ -74,116 +79,87 @@ public class XSLFColor {
         return DrawPaint.applyColorTransform(getColorStyle());
     }
 
+
     @SuppressWarnings("WeakerAccess")
     public ColorStyle getColorStyle() {
-        return new AbstractColorStyle() {
-            @Override
-            public Color getColor() {
-                return _color;
-            }
+        return new XSLFColorStyle(_xmlObject, _color, _phClr);
+    }
 
-            @Override
-            public int getAlpha() {
-                return getRawValue("alpha");
-            }
+    private Color toColor(CTHslColor hsl) {
+        return DrawPaint.HSL2RGB(
+            hsl.getHue2() / 60000d,
+            hsl.getSat2() / 1000d,
+            hsl.getLum2() / 1000d,
+            1d);
+    }
 
-            @Override
-            public int getHueOff() {
-                return getRawValue("hueOff");
-            }
+    private Color toColor(CTPresetColor prst) {
+        String colorName = prst.getVal().toString();
+        PresetColor pc = PresetColor.valueOfOoxmlId(colorName);
+        return (pc != null) ? pc.color : null;
+    }
 
-            @Override
-            public int getHueMod() {
-                return getRawValue("hueMod");
-            }
+    private Color toColor(CTSchemeColor schemeColor, XSLFTheme theme) {
+        String colorRef = schemeColor.getVal().toString();
+        if(_phClr != null) {
+            // context color overrides the theme
+            colorRef = _phClr.getVal().toString();
+        }
+        // find referenced CTColor in the theme and convert it to java.awt.Color via a recursive call
+        CTColor ctColor = theme == null ? null : theme.getCTColor(_sheet.mapSchemeColor(colorRef));
+        return (ctColor != null) ? toColor(ctColor, null) : null;
+    }
 
-            @Override
-            public int getSatOff() {
-                return getRawValue("satOff");
-            }
+    private Color toColor(CTScRgbColor scrgb) {
+        // color in percentage is in linear RGB color space, i.e. needs to be gamma corrected for AWT color
+        return new Color(DrawPaint.lin2srgb(scrgb.getR()), DrawPaint.lin2srgb(scrgb.getG()), DrawPaint.lin2srgb(scrgb.getB()));
+    }
 
-            @Override
-            public int getSatMod() {
-                return getRawValue("satMod");
-            }
+    private Color toColor(CTSRgbColor srgb) {
+        // color in sRGB color space, i.e. same as AWT Color
+        byte[] val = srgb.getVal();
+        return new Color(0xFF & val[0], 0xFF & val[1], 0xFF & val[2]);
+    }
 
-            @Override
-            public int getLumOff() {
-                return getRawValue("lumOff");
-            }
-
-            @Override
-            public int getLumMod() {
-                return getRawValue("lumMod");
-            }
-
-            @Override
-            public int getShade() {
-                return getRawValue("shade");
-            }
-
-            @Override
-            public int getTint() {
-                return getRawValue("tint");
-            }
-        };
+    private Color toColor(CTSystemColor sys) {
+        if (sys.isSetLastClr()) {
+            byte[] val = sys.getLastClr();
+            return new Color(0xFF & val[0], 0xFF & val[1], 0xFF & val[2]);
+        } else {
+            String colorName = sys.getVal().toString();
+            PresetColor pc = PresetColor.valueOfOoxmlId(colorName);
+            return (pc != null && pc.color != null) ? pc.color : Color.black;
+        }
     }
 
     private Color toColor(XmlObject obj, XSLFTheme theme) {
         Color color = null;
-        for (XmlObject ch : obj.selectPath("*")) {
+        List<XmlObject> xo = new ArrayList<>();
+        xo.add(obj);
+        xo.addAll(Arrays.asList(obj.selectPath("*")));
+        boolean isFirst = true;
+        for (XmlObject ch : xo) {
             if (ch instanceof CTHslColor) {
-                CTHslColor hsl = (CTHslColor)ch;
-                int h = hsl.getHue2();
-                int s = hsl.getSat2();
-                int l = hsl.getLum2();
-                color = DrawPaint.HSL2RGB(h / 60000d, s / 1000d, l / 1000d, 1d);
+                color = toColor((CTHslColor)ch);
             } else if (ch instanceof CTPresetColor) {
-                CTPresetColor prst = (CTPresetColor)ch;
-                String colorName = prst.getVal().toString();
-                PresetColor pc = PresetColor.valueOfOoxmlId(colorName);
-                if (pc != null) {
-                    color = pc.color;
-                }
+                color = toColor((CTPresetColor)ch);
             } else if (ch instanceof CTSchemeColor) {
-                CTSchemeColor schemeColor = (CTSchemeColor)ch;
-                String colorRef = schemeColor.getVal().toString();
-                if(_phClr != null) {
-                    // context color overrides the theme
-                    colorRef = _phClr.getVal().toString();
-                }
-                // find referenced CTColor in the theme and convert it to java.awt.Color via a recursive call
-                CTColor ctColor = theme == null ? null : theme.getCTColor(colorRef);
-                if(ctColor != null) {
-                    color = toColor(ctColor, null);
-                }
+                color = toColor((CTSchemeColor)ch, theme);
             } else if (ch instanceof CTScRgbColor) {
-                // color in percentage is in linear RGB color space, i.e. needs to be gamma corrected for AWT color
-                CTScRgbColor scrgb = (CTScRgbColor)ch;
-                color = new Color(DrawPaint.lin2srgb(scrgb.getR()), DrawPaint.lin2srgb(scrgb.getG()), DrawPaint.lin2srgb(scrgb.getB()));
+                color = toColor((CTScRgbColor)ch);
             } else if (ch instanceof CTSRgbColor) {
-                // color in sRGB color space, i.e. same as AWT Color
-                CTSRgbColor srgb = (CTSRgbColor)ch;
-                byte[] val = srgb.getVal();
-                color = new Color(0xFF & val[0], 0xFF & val[1], 0xFF & val[2]);
+                color = toColor((CTSRgbColor)ch);
             } else if (ch instanceof CTSystemColor) {
-                CTSystemColor sys = (CTSystemColor)ch;
-                if(sys.isSetLastClr()) {
-                    byte[] val = sys.getLastClr();
-                    color = new Color(0xFF & val[0], 0xFF & val[1], 0xFF & val[2]);
-                } else {
-                    String colorName = sys.getVal().toString();
-                    PresetColor pc = PresetColor.valueOfOoxmlId(colorName);
-                    if (pc != null) {
-                        color = pc.color;
-                    }
-                    if (color == null) {
-                        color = Color.black;
-                    }
-                }
+                color = toColor((CTSystemColor)ch);
             } else if (!(ch instanceof CTFontReference)) {
-                throw new IllegalArgumentException("Unexpected color choice: " + ch.getClass());
+                if (!isFirst) {
+                    throw new IllegalArgumentException("Unexpected color choice: " + ch.getClass());
+                }
             }
+            if (color != null) {
+                break;
+            }
+            isFirst = false;
         }
         return color;
     }
@@ -257,14 +233,14 @@ public class XSLFColor {
         return Math.abs((f*255d) - Math.rint(f*255d)) < 0.00001;
     }
 
-    private int getRawValue(String elem) {
+    private static int getRawValue(CTSchemeColor phClr, XmlObject xmlObject, String elem) {
         String query = "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' $this//a:" + elem;
 
         XmlObject[] obj;
 
         // first ask the context color and if not found, ask the actual color bean
-        if (_phClr != null){
-            obj = _phClr.selectPath(query);
+        if (phClr != null){
+            obj = phClr.selectPath(query);
             if (obj.length == 1){
                 Node attr = obj[0].getDomNode().getAttributes().getNamedItem("val");
                 if(attr != null) {
@@ -273,7 +249,7 @@ public class XSLFColor {
             }
         }
 
-        obj = _xmlObject.selectPath(query);
+        obj = xmlObject.selectPath(query);
         if (obj.length == 1){
             Node attr = obj[0].getDomNode().getAttributes().getNamedItem("val");
             if(attr != null) {
@@ -294,7 +270,7 @@ public class XSLFColor {
      * @return  the percentage value in the range [0 .. 100]
      */
     private int getPercentageValue(String elem){
-        int val = getRawValue(elem);
+        int val = getRawValue(_phClr, _xmlObject, elem);
         return (val == -1) ? val : (val / 1000);
     }
 
@@ -333,7 +309,7 @@ public class XSLFColor {
 
     @SuppressWarnings("unused")
     int getHue(){
-        int val = getRawValue("hue");
+        int val = getRawValue(_phClr, _xmlObject, "hue");
         return (val == -1) ? val : (val / 60000);
     }
 
@@ -499,5 +475,67 @@ public class XSLFColor {
      */
     public int getTint(){
         return getPercentageValue("tint");
+    }
+
+    private static class XSLFColorStyle extends AbstractColorStyle {
+        private XmlObject xmlObject;
+        private Color color;
+        private CTSchemeColor phClr;
+
+        XSLFColorStyle(XmlObject xmlObject, Color color, CTSchemeColor phClr) {
+            this.xmlObject = xmlObject;
+            this.color = color;
+            this.phClr = phClr;
+        }
+
+        @Override
+        public Color getColor() {
+            return color;
+        }
+
+        @Override
+        public int getAlpha() {
+            return getRawValue(phClr, xmlObject, "alpha");
+        }
+
+        @Override
+        public int getHueOff() {
+            return getRawValue(phClr, xmlObject, "hueOff");
+        }
+
+        @Override
+        public int getHueMod() {
+            return getRawValue(phClr, xmlObject, "hueMod");
+        }
+
+        @Override
+        public int getSatOff() {
+            return getRawValue(phClr, xmlObject, "satOff");
+        }
+
+        @Override
+        public int getSatMod() {
+            return getRawValue(phClr, xmlObject, "satMod");
+        }
+
+        @Override
+        public int getLumOff() {
+            return getRawValue(phClr, xmlObject, "lumOff");
+        }
+
+        @Override
+        public int getLumMod() {
+            return getRawValue(phClr, xmlObject, "lumMod");
+        }
+
+        @Override
+        public int getShade() {
+            return getRawValue(phClr, xmlObject, "shade");
+        }
+
+        @Override
+        public int getTint() {
+            return getRawValue(phClr, xmlObject, "tint");
+        }
     }
 }

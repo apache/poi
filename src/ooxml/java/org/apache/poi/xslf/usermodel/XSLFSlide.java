@@ -24,6 +24,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.Drawable;
@@ -31,7 +32,6 @@ import org.apache.poi.sl.usermodel.Notes;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.util.Beta;
-import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.NotImplemented;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
@@ -283,7 +283,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     public boolean getFollowMasterObjects() {
         return getFollowMasterGraphics();
     }
-    
+
     @Override
     public void setFollowMasterObjects(boolean follow) {
         setFollowMasterGraphics(follow);
@@ -328,7 +328,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     public boolean getFollowMasterBackground() {
         return false;
     }
-    
+
     @Override
     @NotImplemented
     public void setFollowMasterBackground(boolean follow) {
@@ -340,7 +340,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     public boolean getFollowMasterColourScheme() {
         return false;
     }
-    
+
     @Override
     @NotImplemented
     public void setFollowMasterColourScheme(boolean follow) {
@@ -378,7 +378,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         return false;
     }
 
-    
+
     @Override
     public void setHidden(boolean hidden) {
         CTSlide sld = getXmlObject();
@@ -391,7 +391,7 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
             }
         }
     }
-    
+
     @Override
     public boolean isHidden() {
         CTSlide sld = getXmlObject();
@@ -402,5 +402,10 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
     public String getSlideName() {
         final CTCommonSlideData cSld = getXmlObject().getCSld();
         return cSld.isSetName() ? cSld.getName() : "Slide"+getSlideNumber();
+    }
+
+    @Override
+    String mapSchemeColor(String schemeColor) {
+        return mapSchemeColor(_slide.getClrMapOvr(), schemeColor);
     }
 }

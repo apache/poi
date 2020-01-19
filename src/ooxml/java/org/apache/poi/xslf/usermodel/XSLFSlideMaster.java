@@ -29,7 +29,6 @@ import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTColorMapping;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextListStyle;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTBackground;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMaster;
@@ -66,7 +65,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
             SldMasterDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _slide = doc.getSldMaster();
     }
-    
+
     @Override
 	public CTSlideMaster getXmlObject() {
 		return _slide;
@@ -169,7 +168,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
     }
 
     @Override
-    CTColorMapping getColorMapping() {
-        return _slide.getClrMap();
+    String mapSchemeColor(String schemeColor) {
+        String masterColor = mapSchemeColor(_slide.getClrMap(), schemeColor);
+        return masterColor == null ? schemeColor : masterColor;
     }
 }

@@ -51,33 +51,7 @@ import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFEffectProperties
 import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFFillProperties;
 import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFGeometryProperties;
 import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTBaseStyles;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTEffectStyleItem;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTGeomGuide;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTLineEndProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTLineStyleList;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualDrawingProps;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTOuterShadowEffect;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetGeometry2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPresetLineDashProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrix;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.STCompoundLine;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineCap;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndLength;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndWidth;
-import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
-import org.openxmlformats.schemas.drawingml.x2006.main.STShapeType;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
 
 /**
  * Represents a single (non-group) shape in a .pptx slide show
@@ -130,7 +104,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
             }
         };
         fetchShapeProperty(fetcher);
-        
+
         CTTransform2D xfrm = fetcher.getValue();
         if (!create || xfrm != null) {
             return xfrm;
@@ -286,12 +260,12 @@ public abstract class XSLFSimpleShape extends XSLFShape
             ln.unsetNoFill();
         }
 
-        
+
         if (color == null) {
             ln.addNewNoFill();
         } else {
             CTSolidColorFillProperties fill = ln.addNewSolidFill();
-            XSLFColor col = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr());
+            XSLFColor col = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr(), getSheet());
             col.setColor(color);
         }
     }
@@ -325,7 +299,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
                     setValue(null);
                     return true;
                 }
-                
+
                 PackagePart pp = shape.getSheet().getPackagePart();
                 PaintStyle paint = selectPaint(fp, null, pp, theme, hasPlaceholder);
                 if (paint != null) {
@@ -343,12 +317,12 @@ public abstract class XSLFSimpleShape extends XSLFShape
                         paint = getThemePaint(style, pp);
                     }
                 }
-                
+
                 if (paint != null) {
                     setValue(paint);
                     return true;
                 }
-                
+
                 return false;
             }
 
@@ -384,7 +358,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
         if (lnPr == null) {
             return;
         }
-        
+
         if (width == 0.) {
             if (lnPr.isSetW()) {
                 lnPr.unsetW();
@@ -592,7 +566,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
         if (ln == null) {
             return;
         }
-        
+
         if (cap == null) {
             if (ln.isSetCap()) {
                 ln.unsetCap();
@@ -641,7 +615,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
             if (fp.isSetSolidFill()) {
                 fp.unsetSolidFill();
             }
-            
+
             if (fp.isSetGradFill()) {
                 fp.unsetGradFill();
             }
@@ -649,11 +623,11 @@ public abstract class XSLFSimpleShape extends XSLFShape
             if (fp.isSetPattFill()) {
                 fp.unsetGradFill();
             }
-            
+
             if (fp.isSetBlipFill()) {
                 fp.unsetBlipFill();
             }
-            
+
             if (!fp.isSetNoFill()) {
                 fp.addNewNoFill();
             }
@@ -663,8 +637,8 @@ public abstract class XSLFSimpleShape extends XSLFShape
             }
 
             CTSolidColorFillProperties fill = fp.isSetSolidFill() ? fp.getSolidFill() : fp.addNewSolidFill();
-                    
-            XSLFColor col = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr());
+
+            XSLFColor col = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr(), getSheet());
             col.setColor(color);
         }
     }
@@ -720,11 +694,11 @@ public abstract class XSLFSimpleShape extends XSLFShape
     @Override
     public CustomGeometry getGeometry() {
         XSLFGeometryProperties gp = XSLFPropertiesDelegate.getGeometryDelegate(getShapeProperties());
-        
+
         if (gp == null) {
             return null;
         }
-        
+
         CustomGeometry geom;
         PresetGeometries dict = PresetGeometries.getInstance();
         if(gp.isSetPrstGeom()){
@@ -798,7 +772,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
 
     /**
      * Specifies the line end decoration, such as a triangle or arrowhead.
-     * 
+     *
      * @param style the line end docoration style
      */
     @SuppressWarnings("WeakerAccess")
@@ -832,8 +806,8 @@ public abstract class XSLFSimpleShape extends XSLFShape
 
     /**
      * specifies decoration width of the head of a line.
-     * 
-     * @param style the decoration width 
+     *
+     * @param style the decoration width
      */
     @SuppressWarnings("WeakerAccess")
     public void setLineHeadWidth(DecorationSize style) {
@@ -873,7 +847,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
         if (ln == null) {
             return;
         }
-        
+
         CTLineEndProperties lnEnd = ln.isSetHeadEnd() ? ln.getHeadEnd() : ln.addNewHeadEnd();
         if (style == null) {
             if (lnEnd.isSetLen()) {
@@ -890,12 +864,12 @@ public abstract class XSLFSimpleShape extends XSLFShape
     @SuppressWarnings("WeakerAccess")
     public DecorationSize getLineHeadLength() {
         CTLineProperties ln = getLn(this, false);
-        
+
         DecorationSize ds = DecorationSize.MEDIUM;
         if (ln != null && ln.isSetHeadEnd() && ln.getHeadEnd().isSetLen()) {
             ds = DecorationSize.fromOoxmlId(ln.getHeadEnd().getLen().intValue());
         }
-        return ds; 
+        return ds;
     }
 
     /**
@@ -924,7 +898,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
     @SuppressWarnings("WeakerAccess")
     public DecorationShape getLineTailDecoration() {
         CTLineProperties ln = getLn(this, false);
-        
+
         DecorationShape ds = DecorationShape.NONE;
         if (ln != null && ln.isSetTailEnd() && ln.getTailEnd().isSetType()) {
             ds = DecorationShape.fromOoxmlId(ln.getTailEnd().getType().intValue());
@@ -941,7 +915,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
         if (ln == null) {
             return;
         }
-        
+
         CTLineEndProperties lnEnd = ln.isSetTailEnd() ? ln.getTailEnd() : ln.addNewTailEnd();
         if (style == null) {
             if (lnEnd.isSetW()) {
@@ -974,7 +948,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
         if (ln == null) {
             return;
         }
-        
+
         CTLineEndProperties lnEnd = ln.isSetTailEnd() ? ln.getTailEnd() : ln.addNewTailEnd();
         if (style == null) {
             if (lnEnd.isSetLen()) {
@@ -991,18 +965,18 @@ public abstract class XSLFSimpleShape extends XSLFShape
     @SuppressWarnings("WeakerAccess")
     public DecorationSize getLineTailLength() {
         CTLineProperties ln = getLn(this, false);
-        
+
         DecorationSize ds = DecorationSize.MEDIUM;
         if (ln != null && ln.isSetTailEnd() && ln.getTailEnd().isSetLen()) {
             ds = DecorationSize.fromOoxmlId(ln.getTailEnd().getLen().intValue());
         }
-        return ds; 
+        return ds;
     }
 
     @Override
     public Guide getAdjustValue(String name) {
         XSLFGeometryProperties gp = XSLFPropertiesDelegate.getGeometryDelegate(getShapeProperties());
-        
+
         if (gp != null && gp.isSetPrstGeom() && gp.getPrstGeom().isSetAvLst()) {
             //noinspection deprecation
             for (CTGeomGuide g : gp.getPrstGeom().getAvLst().getGdArray()) {
@@ -1098,7 +1072,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
             setLineColor(null);
             return;
         }
-        
+
         // TODO: handle PaintStyle
         for (Object st : styles) {
             if (st instanceof Number) {
@@ -1114,7 +1088,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
             }
         }
     }
-    
+
     @Override
     public XSLFHyperlink getHyperlink() {
         CTNonVisualDrawingProps cNvPr = getCNvPr();
@@ -1123,7 +1097,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
         }
         return new XSLFHyperlink(cNvPr.getHlinkClick(), getSheet());
     }
-    
+
     @Override
     public XSLFHyperlink createHyperlink() {
         XSLFHyperlink hl = getHyperlink();
@@ -1140,7 +1114,7 @@ public abstract class XSLFSimpleShape extends XSLFShape
             LOG.log(POILogger.WARN, shape.getClass() +" doesn't have line properties");
             return null;
         }
-        
+
         CTShapeProperties spr = (CTShapeProperties)pr;
         return (spr.isSetLn() || !create) ? spr.getLn() : spr.addNewLn();
     }

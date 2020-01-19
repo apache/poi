@@ -22,7 +22,10 @@ import static org.apache.poi.sl.draw.geom.ArcToCommand.convertOoxml2AwtAngle;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.LinearGradientPaint;
+import java.awt.MultipleGradientPaint.ColorSpaceType;
+import java.awt.MultipleGradientPaint.CycleMethod;
 import java.awt.Paint;
+import java.awt.Point;
 import java.awt.RadialGradientPaint;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -30,15 +33,24 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+import java.awt.image.DirectColorModel;
+import java.awt.image.Raster;
+import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
 import org.apache.poi.sl.usermodel.AbstractColorStyle;
 import org.apache.poi.sl.usermodel.ColorStyle;
+import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.FlipMode;
 import org.apache.poi.sl.usermodel.PaintStyle.GradientPaint;
@@ -214,6 +226,9 @@ public class DrawPaint {
             }
 
             private int scale(int value, PaintModifier lessModifier, PaintModifier moreModifier) {
+                if (value == -1) {
+                    return -1;
+                }
                 int delta = (modifier == lessModifier ? 20000 : (modifier == moreModifier ? 40000 : 0));
                 return Math.min(100000, Math.max(0,value)+delta);
             }
@@ -227,6 +242,8 @@ public class DrawPaint {
         switch (fill.getGradientType()) {
         case linear:
             return createLinearGradientPaint(fill, graphics);
+        case rectangular:
+            // TODO: implement rectangular gradient fill
         case circular:
             return createRadialGradientPaint(fill, graphics);
         case shape:
@@ -314,6 +331,8 @@ public class DrawPaint {
                 image = img;
             }
 
+            image = colorizePattern(fill, image);
+
             Shape s = (Shape)graphics.getRenderingHint(Drawable.GRADIENT_SHAPE);
 
             // TODO: check why original bitmaps scale/behave differently to vector based images
@@ -323,6 +342,49 @@ public class DrawPaint {
             return TRANSPARENT;
         }
     }
+
+    /**
+     * In case a duotone element is specified, handle image as pattern and replace its color values
+     * with the corresponding percentile / linear value between fore- and background color
+     *
+     * @return the original image if no duotone was found, otherwise the colorized pattern
+     */
+    private static BufferedImage colorizePattern(TexturePaint fill, BufferedImage pattern) {
+        List<ColorStyle> duoTone = fill.getDuoTone();
+        if (duoTone == null || duoTone.size() != 2) {
+            return pattern;
+        }
+
+        // the pattern image is actually a gray scale image, so we simply take the first color component
+        // as an index into our gradient samples
+        int blendShades = 1 << pattern.getSampleModel().getSampleSize(0);
+        int[] gradSample = linearBlendedColors(duoTone, blendShades);
+        int[] redSample = pattern.getRaster().getSamples(0, 0, pattern.getWidth(), pattern.getHeight(), 0, (int[])null);
+
+        for (int i=0; i<redSample.length; i++) {
+            redSample[i] = gradSample[redSample[i] & 0xFF];
+        }
+
+        DirectColorModel dcm = new DirectColorModel(32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
+        DataBufferInt dbi = new DataBufferInt(redSample, redSample.length);
+        WritableRaster raster = Raster.createPackedRaster(dbi, pattern.getWidth(), pattern.getHeight(), pattern.getWidth(), new int[]{0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000}, new Point());
+        return new BufferedImage(dcm, raster, true, null);
+    }
+
+    private static int[] linearBlendedColors(List<ColorStyle> duoTone, final int blendShades) {
+        Color[] colors = duoTone.stream().map(DrawPaint::applyColorTransform).toArray(Color[]::new);
+        float[] fractions = { 0, 1 };
+
+        // create lookup list of blended colors of back- and foreground
+        BufferedImage gradBI = new BufferedImage(blendShades, 1, BufferedImage.TYPE_INT_ARGB);
+        Graphics2D gradG = gradBI.createGraphics();
+        gradG.setPaint(new LinearGradientPaint(0,0, blendShades,0, fractions, colors));
+        gradG.fillRect(0,0, blendShades,1);
+        gradG.dispose();
+
+        return gradBI.getRGB(0, 0, blendShades, 1, null, 0, blendShades);
+    }
+
 
     /**
      * Convert color transformations in {@link ColorStyle} to a {@link Color} instance
@@ -341,7 +403,8 @@ public class DrawPaint {
         Color result = color.getColor();
 
         double alpha = getAlpha(result, color);
-        double[] hsl = RGB2HSL(result); // values are in the range [0..100] (usually ...)
+        // values are in the range [0..100] (usually ...)
+        double[] hsl = RGB2HSL(result);
         applyHslModOff(hsl, 0, color.getHueMod(), color.getHueOff());
         applyHslModOff(hsl, 1, color.getSatMod(), color.getSatOff());
         applyHslModOff(hsl, 2, color.getLumMod(), color.getLumOff());
@@ -386,16 +449,11 @@ public class DrawPaint {
      * @param off the offset adjustment
      */
     private static void applyHslModOff(double[] hsl, int hslPart, int mod, int off) {
-        if (mod == -1) {
-            mod = 100000;
+        if (mod != -1) {
+            hsl[hslPart] *= mod / 100_000d;
         }
-        if (off == -1) {
-            off = 0;
-        }
-        if (!(mod == 100000 && off == 0)) {
-            double fOff = off / 1000d;
-            double fMod = mod / 100000d;
-            hsl[hslPart] = hsl[hslPart]*fMod+fOff;
+        if (off != -1) {
+            hsl[hslPart] += off / 1000d;
         }
     }
 
@@ -410,9 +468,8 @@ public class DrawPaint {
             return;
         }
 
-        double shadePct = shade / 100000.;
-
-        hsl[2] *= 1. - shadePct;
+        double shadePct = shade / 100_000.;
+        hsl[2] *= shadePct;
     }
 
     /**
@@ -423,13 +480,23 @@ public class DrawPaint {
      */
     private static void applyTint(double[] hsl, ColorStyle fc) {
         int tint = fc.getTint();
-        if (tint == -1) {
+        if (tint == -1 || tint == 0) {
             return;
         }
 
         // see 18.8.19 fgColor (Foreground Color)
-        double tintPct = tint / 100000.;
-        hsl[2] = hsl[2]*(1.-tintPct) + (100.-100.*(1.-tintPct));
+        double tintPct = tint / 100_000.;
+
+
+        // The tint value is stored as a double from -1.0 .. 1.0, where -1.0 means 100% darken
+        // and 1.0 means 100% lighten. Also, 0.0 means no change.
+        if (tintPct < 0) {
+            // Lum’ = Lum * (1.0 + tint)
+            hsl[2] *= (1 + tintPct);
+        } else {
+            // Lum‘ = Lum * (1.0-tint) + (HLSMAX – HLSMAX * (1.0-tint))
+            hsl[2] = hsl[2]*(1-tintPct) + (100-100*(1-tintPct));
+        }
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -444,6 +511,9 @@ public class DrawPaint {
         }
 
         Rectangle2D anchor = DrawShape.getAnchor(graphics, shape);
+        if (anchor == null) {
+            return TRANSPARENT;
+        }
 
         angle = convertOoxml2AwtAngle(-angle, anchor.getWidth(), anchor.getHeight());
 
@@ -467,12 +537,50 @@ public class DrawPaint {
     @SuppressWarnings("WeakerAccess")
     protected Paint createRadialGradientPaint(GradientPaint fill, Graphics2D graphics) {
         Rectangle2D anchor = DrawShape.getAnchor(graphics, shape);
+        if (anchor == null) {
+            return TRANSPARENT;
+        }
 
-        final Point2D pCenter = new Point2D.Double(anchor.getCenterX(), anchor.getCenterY());
+        Insets2D insets = fill.getFillToInsets();
+        if (insets == null) {
+            insets = new Insets2D(0,0,0,0);
+        }
+
+        // TODO: handle negative width/height
+        final Point2D pCenter = new Point2D.Double(
+            anchor.getCenterX(), anchor.getCenterY()
+        );
+
+        final Point2D pFocus = new Point2D.Double(
+            getCenterVal(anchor.getMinX(), anchor.getMaxX(), insets.left, insets.right),
+            getCenterVal(anchor.getMinY(), anchor.getMaxY(), insets.top, insets.bottom)
+        );
 
         final float radius = (float)Math.max(anchor.getWidth(), anchor.getHeight());
 
-        return safeFractions((f,c)->new RadialGradientPaint(pCenter,radius,f,c), fill);
+        final AffineTransform at = new AffineTransform();
+        at.translate(pFocus.getX(), pFocus.getY());
+        at.scale(
+            getScale(anchor.getMinX(), anchor.getMaxX(), insets.left, insets.right),
+            getScale(anchor.getMinY(), anchor.getMaxY(), insets.top, insets.bottom)
+        );
+        at.translate(-pFocus.getX(), -pFocus.getY());
+
+        return safeFractions((f,c)->new RadialGradientPaint(pCenter, radius, pFocus, f, c, CycleMethod.NO_CYCLE, ColorSpaceType.SRGB, at), fill);
+    }
+
+    private static double getScale(double absMin, double absMax, double relMin, double relMax) {
+        double absDelta = absMax-absMin;
+        double absStart = absMin+absDelta*relMin;
+        double absStop = (relMin+relMax <= 1) ? absMax-absDelta*relMax : absMax+absDelta*relMax;
+        return (absDelta == 0) ? 1 : (absStop-absStart)/absDelta;
+    }
+
+    private static double getCenterVal(double absMin, double absMax, double relMin, double relMax) {
+        double absDelta = absMax-absMin;
+        double absStart = absMin+absDelta*relMin;
+        double absStop = (relMin+relMax <= 1) ? absMax-absDelta*relMax : absMax+absDelta*relMax;
+        return absStart+(absStop-absStart)/2.;
     }
 
     @SuppressWarnings({"WeakerAccess", "unused"})
@@ -483,29 +591,25 @@ public class DrawPaint {
     }
 
     private Paint safeFractions(BiFunction<float[],Color[],Paint> init, GradientPaint fill) {
-        float[] fractions = fill.getGradientFractions();
-        final ColorStyle[] styles = fill.getGradientColors();
+        // if style is null, use transparent color to get color of background
+        final Iterator<Color> styles = Stream.of(fill.getGradientColors())
+            .map(s -> s == null ? TRANSPARENT : applyColorTransform(s))
+            .iterator();
 
         // need to remap the fractions, because Java doesn't like repeating fraction values
         Map<Float,Color> m = new TreeMap<>();
-        for (int i = 0; i<fractions.length; i++) {
-            // if fc is null, use transparent color to get color of background
-            m.put(fractions[i], (styles[i] == null ? TRANSPARENT : applyColorTransform(styles[i])));
+        for (float fraction : fill.getGradientFractions()) {
+            m.put(fraction, styles.next());
         }
 
-        final Color[] colors = new Color[m.size()];
-        if (fractions.length != m.size()) {
-            fractions = new float[m.size()];
-        }
+        return init.apply(toArray(m.keySet()), m.values().toArray(new Color[0]));
+    }
 
-        int i=0;
-        for (Map.Entry<Float,Color> me : m.entrySet()) {
-            fractions[i] = me.getKey();
-            colors[i] = me.getValue();
-            i++;
-        }
-
-        return init.apply(fractions, colors);
+    private static float[] toArray(Collection<Float> floatList) {
+        int[] idx = { 0 };
+        float[] ret = new float[floatList.size()];
+        floatList.forEach(f -> ret[idx[0]++] = f);
+        return ret;
     }
 
     /**

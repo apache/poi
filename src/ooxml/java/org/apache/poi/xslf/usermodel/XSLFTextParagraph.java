@@ -279,7 +279,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
             @Override
             public boolean fetch(CTTextParagraphProperties props){
                 if(props.isSetBuClr()){
-                    XSLFColor c = new XSLFColor(props.getBuClr(), theme, null);
+                    XSLFColor c = new XSLFColor(props.getBuClr(), theme, null, _shape.getSheet());
                     setValue(c.getColor());
                     return true;
                 }

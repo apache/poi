@@ -20,10 +20,12 @@ package org.apache.poi.xslf.usermodel;
 import java.util.Arrays;
 
 import org.apache.poi.sl.usermodel.ColorStyle;
+import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientStop;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTRelativeRect;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.STPathShadeType;
 
@@ -34,7 +36,7 @@ public class XSLFGradientPaint implements PaintStyle.GradientPaint {
     final ColorStyle[] cs;
     final float[] fractions;
 
-    public XSLFGradientPaint(final CTGradientFillProperties gradFill, CTSchemeColor phClr, final XSLFTheme theme) {
+    public XSLFGradientPaint(final CTGradientFillProperties gradFill, CTSchemeColor phClr, final XSLFTheme theme, final XSLFSheet sheet) {
         this.gradFill = gradFill;
 
         final CTGradientStop[] gs = gradFill.getGsLst() == null ?
@@ -55,7 +57,7 @@ public class XSLFGradientPaint implements PaintStyle.GradientPaint {
             if (phClrCgs == null && cgs.isSetSchemeClr()) {
                 phClrCgs = cgs.getSchemeClr();
             }
-            cs[i] = new XSLFColor(cgs, theme, phClrCgs).getColorStyle();
+            cs[i] = new XSLFColor(cgs, theme, phClrCgs, sheet).getColorStyle();
             fractions[i] = cgs.getPos() / 100000.f;
             i++;
         }
@@ -98,10 +100,21 @@ public class XSLFGradientPaint implements PaintStyle.GradientPaint {
                 return PaintStyle.GradientPaint.GradientType.circular;
             } else if (ps == STPathShadeType.SHAPE) {
                 return PaintStyle.GradientPaint.GradientType.shape;
+            } else if (ps == STPathShadeType.RECT) {
+                return PaintStyle.GradientPaint.GradientType.rectangular;
             }
         }
 
         return PaintStyle.GradientPaint.GradientType.linear;
     }
 
+    @Override
+    public Insets2D getFillToInsets() {
+        if (gradFill.isSetPath() && gradFill.getPath().isSetFillToRect()) {
+            final double base = 100_000;
+            CTRelativeRect rect = gradFill.getPath().getFillToRect();
+            return new Insets2D(rect.getT()/base, rect.getL()/base, rect.getB()/base, rect.getR()/base);
+        }
+        return null;
+    }
 }

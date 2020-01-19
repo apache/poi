@@ -48,7 +48,7 @@ public class XSLFBackground extends XSLFSimpleShape
 
     /**
      * background does not have a associated transform, therefore we return null
-     * 
+     *
      * @param create ignored
      *
      * @return null
@@ -57,7 +57,7 @@ public class XSLFBackground extends XSLFSimpleShape
     protected CTTransform2D getXfrm(boolean create) {
         return null;
     }
-    
+
     @Override
     public void setPlaceholder(Placeholder placeholder) {
         // extending XSLFSimpleShape is a bit unlucky ...
@@ -74,7 +74,7 @@ public class XSLFBackground extends XSLFSimpleShape
         }
         return bg.getBgPr();
     }
-    
+
     public void setFillColor(Color color) {
         CTBackgroundProperties bgPr = getBgPr(true);
 
@@ -105,8 +105,8 @@ public class XSLFBackground extends XSLFSimpleShape
             }
 
             CTSolidColorFillProperties fill = bgPr.isSetSolidFill() ? bgPr.getSolidFill() : bgPr.addNewSolidFill();
-                    
-            XSLFColor col = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr());
+
+            XSLFColor col = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr(), getSheet());
             col.setColor(color);
         }
     }

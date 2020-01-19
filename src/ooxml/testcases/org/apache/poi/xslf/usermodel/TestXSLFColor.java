@@ -40,7 +40,7 @@ public class TestXSLFColor {
         CTSRgbColor c = xml.addNewSrgbClr();
         c.setVal(new byte[]{(byte)0xFF, 0, 0});
 
-        XSLFColor color = new XSLFColor(xml, null, null);
+        XSLFColor color = new XSLFColor(xml, null, null, null);
 
         assertEquals(-1, color.getAlpha());
         c.addNewAlpha().setVal(50000);
@@ -103,7 +103,7 @@ public class TestXSLFColor {
         c.setSat2(100000);
         c.setLum2(50000);
 
-        XSLFColor color = new XSLFColor(xml, null, null);
+        XSLFColor color = new XSLFColor(xml, null, null, null);
         assertEquals(Color.BLUE, color.getColor());
     }
 
@@ -112,31 +112,32 @@ public class TestXSLFColor {
         CTColor xml = CTColor.Factory.newInstance();
         xml.addNewSrgbClr().setVal(new byte[]{ (byte)0xFF, (byte)0xFF, 0});
 
-        XSLFColor color = new XSLFColor(xml, null, null);
+        XSLFColor color = new XSLFColor(xml, null, null, null);
         assertEquals(new Color(0xFF, 0xFF, 0), color.getColor());
     }
 
     @Test
     public void testSchemeColor() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
-        XSLFTheme theme = ppt.createSlide().getTheme();
+        XSLFSheet slide = ppt.createSlide();
+        XSLFTheme theme = slide.getTheme();
 
         CTColor xml = CTColor.Factory.newInstance();
         xml.addNewSchemeClr().setVal(STSchemeColorVal.ACCENT_2);
 
-        XSLFColor color = new XSLFColor(xml, theme, null);
+        XSLFColor color = new XSLFColor(xml, theme, null, slide);
         // accent2 is theme1.xml is <a:srgbClr val="C0504D"/>
         assertEquals(Color.decode("0xC0504D"), color.getColor());
 
         xml = CTColor.Factory.newInstance();
         xml.addNewSchemeClr().setVal(STSchemeColorVal.LT_1);
-        color = new XSLFColor(xml, theme, null);
+        color = new XSLFColor(xml, theme, null, slide);
         // <a:sysClr val="window" lastClr="FFFFFF"/>
         assertEquals(Color.decode("0xFFFFFF"), color.getColor());
 
         xml = CTColor.Factory.newInstance();
         xml.addNewSchemeClr().setVal(STSchemeColorVal.DK_1);
-        color = new XSLFColor(xml, theme, null);
+        color = new XSLFColor(xml, theme, null, slide);
         // <a:sysClr val="windowText" lastClr="000000"/>
         assertEquals(Color.decode("0x000000"), color.getColor());
 
@@ -147,7 +148,7 @@ public class TestXSLFColor {
     public void testPresetColor() {
         CTColor xml = CTColor.Factory.newInstance();
         xml.addNewPrstClr().setVal(STPresetColorVal.AQUAMARINE);
-        XSLFColor color = new XSLFColor(xml, null, null);
+        XSLFColor color = new XSLFColor(xml, null, null, null);
         assertEquals(new Color(127, 255, 212), color.getColor());
 
 
@@ -162,7 +163,7 @@ public class TestXSLFColor {
             } else {
                 xml.addNewSysClr().setVal(sysVal);
             }
-            color = new XSLFColor(xml, null, null);
+            color = new XSLFColor(xml, null, null, null);
             assertEquals(pc.color, color.getColor());
         }
     }
@@ -172,13 +173,13 @@ public class TestXSLFColor {
         CTColor xml = CTColor.Factory.newInstance();
         CTSystemColor sys = xml.addNewSysClr();
         sys.setVal(STSystemColorVal.CAPTION_TEXT);
-        XSLFColor color = new XSLFColor(xml, null, null);
+        XSLFColor color = new XSLFColor(xml, null, null, null);
         assertEquals(Color.black, color.getColor());
 
         xml = CTColor.Factory.newInstance();
         sys = xml.addNewSysClr();
         sys.setLastClr(new byte[]{(byte)0xFF, 0, 0});
-        color = new XSLFColor(xml, null, null);
+        color = new XSLFColor(xml, null, null, null);
         assertEquals(Color.red, color.getColor());
     }
 }

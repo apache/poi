@@ -41,7 +41,25 @@ import org.apache.poi.hslf.model.textproperties.TextPFException9;
 import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection.TextPropType;
-import org.apache.poi.hslf.record.*;
+import org.apache.poi.hslf.record.ColorSchemeAtom;
+import org.apache.poi.hslf.record.EscherTextboxWrapper;
+import org.apache.poi.hslf.record.InteractiveInfo;
+import org.apache.poi.hslf.record.MasterTextPropAtom;
+import org.apache.poi.hslf.record.OutlineTextRefAtom;
+import org.apache.poi.hslf.record.PPDrawing;
+import org.apache.poi.hslf.record.RecordContainer;
+import org.apache.poi.hslf.record.RecordTypes;
+import org.apache.poi.hslf.record.RoundTripHFPlaceholder12;
+import org.apache.poi.hslf.record.SlideListWithText;
+import org.apache.poi.hslf.record.SlidePersistAtom;
+import org.apache.poi.hslf.record.StyleTextProp9Atom;
+import org.apache.poi.hslf.record.StyleTextPropAtom;
+import org.apache.poi.hslf.record.TextBytesAtom;
+import org.apache.poi.hslf.record.TextCharsAtom;
+import org.apache.poi.hslf.record.TextHeaderAtom;
+import org.apache.poi.hslf.record.TextRulerAtom;
+import org.apache.poi.hslf.record.TextSpecInfoAtom;
+import org.apache.poi.hslf.record.TxInteractiveInfoAtom;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.apache.poi.sl.usermodel.PaintStyle;
@@ -141,7 +159,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         _byteAtom = tba;
         _charAtom = tca;
         this.parentList = parentList;
-        _paragraphStyle = new TextPropCollection(1, TextPropType.paragraph);
+        setParagraphStyle(new TextPropCollection(1, TextPropType.paragraph));
     }
 
     /* package */HSLFTextParagraph(HSLFTextParagraph other) {
@@ -152,8 +170,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
         _sheet = other._sheet;
         _ruler = other._ruler;
         shapeId = other.shapeId;
-        _paragraphStyle = other._paragraphStyle;
         parentList = other.parentList;
+        setParagraphStyle(other._paragraphStyle);
     }
 
     public void addTextRun(HSLFTextRun run) {

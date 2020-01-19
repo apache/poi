@@ -40,7 +40,6 @@ implements Notes<XSLFShape,XSLFTextParagraph> {
      * Create a new notes
      */
     XSLFNotes() {
-        super();
         _notes = prototype();
     }
 
@@ -104,5 +103,10 @@ implements Notes<XSLFShape,XSLFTextParagraph> {
             }
         }
         return tp;
+    }
+
+    @Override
+    String mapSchemeColor(String schemeColor) {
+        return mapSchemeColor(_notes.getClrMapOvr(), schemeColor);
     }
 }

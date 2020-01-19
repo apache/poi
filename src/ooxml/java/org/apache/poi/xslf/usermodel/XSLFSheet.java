@@ -29,7 +29,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.xml.namespace.QName;
 
@@ -60,6 +59,8 @@ import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColorMapping;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTColorMappingOverride;
+import org.openxmlformats.schemas.drawingml.x2006.main.STColorSchemeIndex;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTConnector;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGraphicalObjectFrame;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
@@ -497,15 +498,11 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
             return _theme;
         }
 
-        final Optional<XSLFTheme> t =
-                getRelations().stream().filter((p) -> p instanceof XSLFTheme).map((p) -> (XSLFTheme) p).findAny();
-        if (t.isPresent()) {
-            _theme = t.get();
-            final CTColorMapping cmap = getColorMapping();
-            if (cmap != null) {
-                _theme.initColorMap(cmap);
-            }
-        }
+        getRelations().stream()
+            .filter(p -> p instanceof XSLFTheme)
+            .findAny()
+            .ifPresent(p -> _theme = (XSLFTheme)p);
+
         return _theme;
     }
 
@@ -521,7 +518,7 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
     /**
      * @return the color mapping for this slide type
      */
-    CTColorMapping getColorMapping() {
+    String mapSchemeColor(String schemeColor) {
         return null;
     }
 
@@ -744,4 +741,60 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         getDrawing().addChart(rp.getRelationship().getId(), rect2D);
     }
 
+    protected String mapSchemeColor(CTColorMappingOverride cmapOver, String schemeColor) {
+            String slideColor = mapSchemeColor((cmapOver == null) ? null : cmapOver.getOverrideClrMapping(), schemeColor);
+            if (slideColor != null) {
+                return slideColor;
+            }
+            XSLFSheet master = (XSLFSheet)getMasterSheet();
+            String masterColor = (master == null) ? null : master.mapSchemeColor(schemeColor);
+            return (masterColor == null) ? schemeColor : masterColor;
+    }
+
+    protected String mapSchemeColor(CTColorMapping cmap, String schemeColor) {
+        STColorSchemeIndex.Enum schemeMap = null;
+        if (cmap != null && schemeColor != null) {
+            switch (schemeColor) {
+                case "accent1":
+                    schemeMap = cmap.getAccent1();
+                    break;
+                case "accent2":
+                    schemeMap = cmap.getAccent2();
+                    break;
+                case "accent3":
+                    schemeMap = cmap.getAccent3();
+                    break;
+                case "accent4":
+                    schemeMap = cmap.getAccent4();
+                    break;
+                case "accent5":
+                    schemeMap = cmap.getAccent5();
+                    break;
+                case "accent6":
+                    schemeMap = cmap.getAccent6();
+                    break;
+                case "bg1":
+                    schemeMap = cmap.getBg1();
+                    break;
+                case "bg2":
+                    schemeMap = cmap.getBg2();
+                    break;
+                case "folHlink":
+                    schemeMap = cmap.getFolHlink();
+                    break;
+                case "hlink":
+                    schemeMap = cmap.getHlink();
+                    break;
+                case "tx1":
+                    schemeMap = cmap.getTx1();
+                    break;
+                case "tx2":
+                    schemeMap = cmap.getTx2();
+                    break;
+                default:
+                    break;
+            }
+        }
+        return (schemeMap == null) ? null : schemeMap.toString();
+    }
 }

@@ -37,33 +37,7 @@ import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
 import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFFillProperties;
 import org.apache.poi.xslf.usermodel.XSLFTableStyle.TablePartStyle;
 import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTFontReference;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTLineEndProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTLineProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTable;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCellProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTablePartStyle;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTableProperties;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTableStyleCellStyle;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTableStyleTextStyle;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
-import org.openxmlformats.schemas.drawingml.x2006.main.STCompoundLine;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineCap;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndLength;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndWidth;
-import org.openxmlformats.schemas.drawingml.x2006.main.STOnOffStyleType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STPenAlignment;
-import org.openxmlformats.schemas.drawingml.x2006.main.STPresetLineDashVal;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextAnchoringType;
-import org.openxmlformats.schemas.drawingml.x2006.main.STTextVerticalType;
+import org.openxmlformats.schemas.drawingml.x2006.main.*;
 
 /**
  * Represents a cell of a table in a .pptx presentation
@@ -319,7 +293,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
 
         CTLineProperties ln = setBorderDefaults(edge);
         CTSolidColorFillProperties fill = ln.addNewSolidFill();
-        XSLFColor c = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr());
+        XSLFColor c = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr(), getSheet());
         c.setColor(color);
     }
 
@@ -331,7 +305,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
         }
 
         CTSolidColorFillProperties fill = ln.getSolidFill();
-        XSLFColor c = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr());
+        XSLFColor c = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr(), getSheet());
         return c.getColor();
     }
 
@@ -415,7 +389,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             }
         } else {
             CTSolidColorFillProperties fill = spPr.isSetSolidFill() ? spPr.getSolidFill() : spPr.addNewSolidFill();
-            XSLFColor c = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr());
+            XSLFColor c = new XSLFColor(fill, getSheet().getTheme(), fill.getSchemeClr(), getSheet());
             c.setColor(color);
         }
     }
@@ -470,7 +444,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
 
         fp = XSLFPropertiesDelegate.getFillDelegate(props);
         if (fp != null) {
-            PaintStyle paint = XSLFShape.selectPaint(fp, null, slideShow.getPackagePart(), theme, hasPlaceholder);
+            PaintStyle paint = selectPaint(fp, null, slideShow.getPackagePart(), theme, hasPlaceholder);
             if (paint != null) {
                 return paint;
             }
@@ -758,7 +732,7 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             }
 
             XSLFTheme theme = getSheet().getTheme();
-            final XSLFColor c = new XSLFColor(txStyle, theme, phClr);
+            final XSLFColor c = new XSLFColor(txStyle, theme, phClr, getSheet());
             return DrawPaint.createSolidPaint(c.getColorStyle());
         }
 

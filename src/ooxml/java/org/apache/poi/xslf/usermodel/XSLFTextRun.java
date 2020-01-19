@@ -123,7 +123,8 @@ public class XSLFTextRun implements TextRun {
         CTTextCharacterProperties rPr = getRPr(true);
         CTSolidColorFillProperties fill = rPr.isSetSolidFill() ? rPr.getSolidFill() : rPr.addNewSolidFill();
 
-        XSLFColor col = new XSLFColor(fill, getParentParagraph().getParentShape().getSheet().getTheme(), fill.getSchemeClr());
+        XSLFSheet sheet = getParentParagraph().getParentShape().getSheet();
+        XSLFColor col = new XSLFColor(fill, sheet.getTheme(), fill.getSchemeClr(), sheet);
         col.setColor(c);
     }
 
@@ -148,7 +149,7 @@ public class XSLFTextRun implements TextRun {
                 XSLFSheet sheet = shape.getSheet();
                 PackagePart pp = sheet.getPackagePart();
                 XSLFTheme theme = sheet.getTheme();
-                PaintStyle ps = XSLFShape.selectPaint(fp, phClr, pp, theme, hasPlaceholder);
+                PaintStyle ps = shape.selectPaint(fp, phClr, pp, theme, hasPlaceholder);
 
                 if (ps != null)  {
                     setValue(ps);

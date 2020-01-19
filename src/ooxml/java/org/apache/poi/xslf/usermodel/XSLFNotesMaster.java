@@ -26,7 +26,6 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.util.Beta;
 import org.apache.xmlbeans.XmlException;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTColorMapping;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMaster;
 import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
 
@@ -65,12 +64,12 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
             NotesMasterDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _slide = doc.getNotesMaster();
     }
-    
+
     private static CTNotesMaster prototype() {
         InputStream is = XSLFNotesMaster.class.getResourceAsStream("notesMaster.xml");
         if (is == null) {
             throw new POIXMLException("Missing resource 'notesMaster.xml'");
-        }        
+        }
 
         try {
             try {
@@ -78,12 +77,12 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
                 return doc.getNotesMaster();
             } finally {
                 is.close();
-            }            
+            }
         } catch (Exception e) {
             throw new POIXMLException("Can't initialize NotesMaster", e);
         }
     }
-    
+
     @Override
     public CTNotesMaster getXmlObject() {
        return _slide;
@@ -106,7 +105,8 @@ import org.openxmlformats.schemas.presentationml.x2006.main.NotesMasterDocument;
     }
 
     @Override
-    CTColorMapping getColorMapping() {
-        return _slide.getClrMap();
+    String mapSchemeColor(String schemeColor) {
+        String notesMasterColor = mapSchemeColor(_slide.getClrMap(), schemeColor);
+        return notesMasterColor == null ? schemeColor : notesMasterColor;
     }
 }

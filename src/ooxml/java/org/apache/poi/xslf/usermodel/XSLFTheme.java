@@ -20,8 +20,6 @@ import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.xml.namespace.QName;
 
@@ -30,27 +28,21 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBaseStyles;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTColorMapping;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColorScheme;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOfficeStyleSheet;
 import org.openxmlformats.schemas.drawingml.x2006.main.ThemeDocument;
 
 /**
  * A shared style sheet in a .pptx slide show
- *
- * @author Yegor Kozlov
  */
 @Beta
 public class XSLFTheme extends POIXMLDocumentPart {
     private CTOfficeStyleSheet _theme;
-    private Map<String, CTColor> _schemeColors;
 
     XSLFTheme() {
-        super();
         _theme = CTOfficeStyleSheet.Factory.newInstance();
     }
 
@@ -62,37 +54,11 @@ public class XSLFTheme extends POIXMLDocumentPart {
         ThemeDocument doc =
             ThemeDocument.Factory.parse(getPackagePart().getInputStream(), DEFAULT_XML_OPTIONS);
         _theme = doc.getTheme();
-        initialize();
     }
 
     @SuppressWarnings("WeakerAccess")
     public void importTheme(XSLFTheme theme) {
         _theme = theme.getXmlObject();
-        _schemeColors = theme._schemeColors;
-    }
-
-    private void initialize(){
-    	CTBaseStyles elems = _theme.getThemeElements();
-    	CTColorScheme scheme = elems.getClrScheme();
-    	// The color scheme is responsible for defining a list of twelve colors.
-    	_schemeColors = new HashMap<>(12);
-    	for(XmlObject o : scheme.selectPath("*")){
-    		CTColor c = (CTColor)o;
-    		String name = c.getDomNode().getLocalName();
-    		_schemeColors.put(name, c);
-    	}
-     }
-
-    /**
-     * re-map colors
-     *
-     * @param cmap color map defined in the master slide referencing this theme
-     */
-    void initColorMap(CTColorMapping cmap) {
-        _schemeColors.put("bg1", _schemeColors.get(cmap.getBg1().toString()));
-        _schemeColors.put("bg2", _schemeColors.get(cmap.getBg2().toString()));
-        _schemeColors.put("tx1", _schemeColors.get(cmap.getTx1().toString()));
-        _schemeColors.put("tx2", _schemeColors.get(cmap.getTx2().toString()));
     }
 
     /**
@@ -118,8 +84,45 @@ public class XSLFTheme extends POIXMLDocumentPart {
      * @return a theme color or <code>null</code> if not found
      */
     @Internal
-    public CTColor getCTColor(String name){
-    	return _schemeColors.get(name);
+    public CTColor getCTColor(String name) {
+        CTBaseStyles elems = _theme.getThemeElements();
+        CTColorScheme scheme = (elems == null) ? null : elems.getClrScheme();
+    	return getMapColor(name, scheme);
+    }
+
+
+    private static CTColor getMapColor(String mapName, CTColorScheme scheme) {
+        if (mapName == null || scheme == null) {
+            return null;
+        }
+        switch (mapName) {
+            case "accent1":
+                return scheme.getAccent1();
+            case "accent2":
+                return scheme.getAccent2();
+            case "accent3":
+                return scheme.getAccent3();
+            case "accent4":
+                return scheme.getAccent4();
+            case "accent5":
+                return scheme.getAccent5();
+            case "accent6":
+                return scheme.getAccent6();
+            case "dk1":
+                return scheme.getDk1();
+            case "dk2":
+                return scheme.getDk2();
+            case "folHlink":
+                return scheme.getFolHlink();
+            case "hlink":
+                return scheme.getHlink();
+            case "lt1":
+                return scheme.getLt1();
+            case "lt2":
+                return scheme.getLt2();
+            default:
+                return null;
+        }
     }
 
     /**

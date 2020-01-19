@@ -145,4 +145,10 @@ implements MasterSheet<XSLFShape,XSLFTextParagraph> {
         int ordinal = _layout.getType().intValue() - 1;
         return SlideLayout.values()[ordinal];
     }
+
+
+    @Override
+    String mapSchemeColor(String schemeColor) {
+        return mapSchemeColor(_layout.getClrMapOvr(), schemeColor);
+    }
 }
