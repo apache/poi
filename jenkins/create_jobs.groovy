@@ -231,6 +231,7 @@ poijobs.each { poijob ->
             }
             preBuildCleanup {
                 includePattern('**/ooxml-lib/ooxml*.jar')
+                includePattern('sonar/*/target/**')
             }
             if(poijob.sonar) {
                 credentialsBinding {

@@ -25,7 +25,6 @@ import java.util.Arrays;
 
 import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hmef.attribute.MAPIAttribute;
-import org.apache.poi.hmef.attribute.MAPIStringAttribute;
 import org.apache.poi.hmef.attribute.TNEFAttribute;
 import org.apache.poi.hmef.attribute.TNEFProperty;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
@@ -47,13 +46,7 @@ public class HMEFFileHandler extends AbstractFileHandler {
     public void handleFile(InputStream stream, String path) throws Exception {
 		HMEFMessage msg = new HMEFMessage(stream);
 
-		// list all properties
-		StringBuilder props = new StringBuilder();
-		for(MAPIAttribute att : msg.getMessageMAPIAttributes()) {
-			props.append(att.getType()).append(": ").append(MAPIStringAttribute.getAsString( att)).append("\n");
-		}
-
-		// there are two test-files that have no body...
+		// there are test-files that have no body...
 		String[] HTML_BODY = {
 			"Testing TNEF Message", "TNEF test message with attachments", "Test"
 		};
