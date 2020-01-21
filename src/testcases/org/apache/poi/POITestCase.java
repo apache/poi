@@ -26,10 +26,9 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.Assume.assumeNoException;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.security.AccessController;
 import java.security.PrivilegedActionException;
 import java.security.PrivilegedExceptionAction;
@@ -38,7 +37,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.SuppressForbidden;
 import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 
 /**
@@ -46,6 +44,9 @@ import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
  */
 @Internal
 public final class POITestCase {
+
+    private POITestCase() {
+    }
 
     public static void assertStartsWith(String string, String prefix) {
         assertNotNull(string);
@@ -118,18 +119,14 @@ public final class POITestCase {
      * Utility method to get the value of a private/protected field.
      * Only use this method in test cases!!!
      */
+    @SuppressWarnings({"unused", "unchecked"})
     public static <R,T> R getFieldValue(final Class<? super T> clazz, final T instance, final Class<R> fieldType, final String fieldName) {
         assertTrue("Reflection of private fields is only allowed for POI classes.", clazz.getName().startsWith("org.apache.poi."));
         try {
-            return AccessController.doPrivileged(new PrivilegedExceptionAction<R>() {
-                @Override
-                @SuppressWarnings("unchecked")
-                @SuppressForbidden("For test usage only")
-                public R run() throws Exception {
-                    Field f = clazz.getDeclaredField(fieldName);
-                    f.setAccessible(true);
-                    return (R) f.get(instance);
-                }
+            return AccessController.doPrivileged((PrivilegedExceptionAction<R>) () -> {
+                Field f = clazz.getDeclaredField(fieldName);
+                f.setAccessible(true);
+                return (R) f.get(instance);
             });
         } catch (PrivilegedActionException pae) {
             throw new RuntimeException("Cannot access field '" + fieldName + "' of class " + clazz, pae.getException());
@@ -137,33 +134,10 @@ public final class POITestCase {
     }
 
     /**
-     * Utility method to call a private/protected method.
-     * Only use this method in test cases!!!
-     */
-    public static <R,T> R callMethod(final Class<? super T> clazz, final T instance, final Class<R> returnType, final String methodName,
-        final Class<?>[] parameterTypes, final Object[] parameters) {
-        assertTrue("Reflection of private methods is only allowed for POI classes.", clazz.getName().startsWith("org.apache.poi."));
-        try {
-            return AccessController.doPrivileged(new PrivilegedExceptionAction<R>() {
-                @Override
-                @SuppressWarnings("unchecked")
-                @SuppressForbidden("For test usage only")
-                public R run() throws Exception {
-                    Method m = clazz.getDeclaredMethod(methodName, parameterTypes);
-                    m.setAccessible(true);
-                    return (R) m.invoke(instance, parameters);
-                }
-            });
-        } catch (PrivilegedActionException pae) {
-            throw new RuntimeException("Cannot access method '" + methodName + "' of class " + clazz, pae.getException());
-        }
-    }
-
-    /**
      * Utility method to shallow compare all fields of the objects
      * Only use this method in test cases!!!
      */
-    public static void assertReflectEquals(final Object expected, Object actual) throws Exception {
+    public static void assertReflectEquals(final Object expected, Object actual) {
         // as long as ReflectionEquals is provided by Mockito, use it ... otherwise use commons.lang for the tests
 
         // JaCoCo Code Coverage adds its own field, don't look at this one here
@@ -217,7 +191,7 @@ public final class POITestCase {
      * be raised when the bug is fixed
      */
     public static void skipTest(Throwable e) {
-        assumeTrue("This test currently fails with " + e, false);
+        assumeNoException("This test currently fails with", e);
     }
     /**
      * @see #skipTest(Throwable)

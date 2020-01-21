@@ -18,9 +18,9 @@
 /* ====================================================================
    This product contains an ASLv2 licensed version of the OOXML signer
    package from the eID Applet project
-   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt  
+   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt
    Copyright (C) 2008-2014 FedICT.
-   ================================================================= */ 
+   ================================================================= */
 package org.apache.poi.poifs.crypt;
 
 import static org.junit.Assert.assertEquals;
@@ -76,9 +76,9 @@ import javax.xml.crypto.dsig.dom.DOMSignContext;
 import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.POITestCase;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
@@ -157,7 +157,9 @@ import org.junit.AfterClass;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.w3.x2000.x09.xmldsig.ReferenceType;
 import org.w3.x2000.x09.xmldsig.SignatureDocument;
 import org.w3c.dom.Document;
@@ -170,11 +172,14 @@ public class TestSignatureInfo {
     private KeyPair keyPair;
     private X509Certificate x509;
 
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
+
     @AfterClass
     public static void removeUserLocale() {
         LocaleUtil.resetUserLocale();
     }
-    
+
     @BeforeClass
     public static void initBouncy() {
         CryptoFunctions.registerBouncyCastle();
@@ -182,19 +187,19 @@ public class TestSignatureInfo {
         // Set cal to now ... only set to fixed date for debugging ...
         LocaleUtil.resetUserLocale();
         LocaleUtil.resetUserTimeZone();
-        
+
         cal = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
         assertNotNull(cal);
 
-        // don't run this test when we are using older Xerces as it triggers an XML Parser backwards compatibility issue 
+        // don't run this test when we are using older Xerces as it triggers an XML Parser backwards compatibility issue
         // in the xmlsec jar file
         String additionalJar = System.getProperty("additionaljar");
         //System.out.println("Having: " + additionalJar);
-        Assume.assumeTrue("Not running TestSignatureInfo because we are testing with additionaljar set to " + additionalJar, 
+        Assume.assumeTrue("Not running TestSignatureInfo because we are testing with additionaljar set to " + additionalJar,
                 additionalJar == null || additionalJar.trim().length() == 0);
-        
+
         System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
-        
+
         // Set line.separator for bug61182
         // System.setProperty("line.separator", "\n");
     }
@@ -223,12 +228,12 @@ public class TestSignatureInfo {
             "7R4TQX/9/H6RiN34c9KldmPZZGANXzzTajZS9mR2OSvlJ+F4AgSko4htrMAKFTBu51/5SWNsO1vlRaaG48ZRJ+8PzuHQMdvS36gNpRPi7jhF1S"+
             "H3B2ycI4y0VURv6SrqJNUY/X645ZFJQ+eBO+ptG7o8axf1dcqh2beiQk+GRTeZ37LVeUlaeo9vl1/+8tyBfyT2v5lFC5E19WdKIyCuZe7r99Px"+
             "D/Od4Qj0TA92+DQnbCQTCMy/wwse9O4gsEebkkpPIP5GBV3Q0YBsj75XE0uSFQ1tCZSW8bNa9MUJZ/nPBfExohHlgGAAA=";
-        
+
         Calendar cal = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
         cal.clear();
         cal.setTimeZone(LocaleUtil.TIMEZONE_UTC);
         cal.set(2017, Calendar.JULY, 1);
-        
+
         SignatureConfig signatureConfig = prepareConfig("test", "CN=Test", pfxInput);
         signatureConfig.setExecutionTime(cal.getTime());
 
@@ -240,9 +245,9 @@ public class TestSignatureInfo {
         ByteArrayOutputStream bos = new ByteArrayOutputStream(100000);
         wb1.write(bos);
         wb1.close();
-        
+
         OPCPackage pkg1 = OPCPackage.open(new ByteArrayInputStream(bos.toByteArray()));
-        
+
         signatureConfig.setOpcPackage(pkg1);
         si.confirmSignature();
         assertTrue(si.verifySignature());
@@ -255,7 +260,7 @@ public class TestSignatureInfo {
         OPCPackage pkg2 = wb2.getPackage();
         signatureConfig.setOpcPackage(pkg2);
         assertTrue(si.verifySignature());
-        
+
         // xmlbeans adds line-breaks depending on the system setting, so we get different
         // test results on Unix/Mac/Windows
         // if the xml documents eventually change, this test needs to be run with the
@@ -279,15 +284,15 @@ public class TestSignatureInfo {
                 "NZedY/LNTYU4nAUEUhIOg5+fKdgVtzRXKmdD3v+47E7Mb84oeiUGv9cCEE91DU3StF/JFIhjOJqavOzKnCsNcz"+
                 "NJ4j/inggUl1OJUsicqIGQnA7E8vzWnN1kf5lINgJLv+0PyrrX9sQZbItzxUpgqyOFYcD0trid+31nRt4wtaA=";
         }
-        
+
         String signAct = si.getSignatureParts().iterator().next().
             getSignatureDocument().getSignature().getSignatureValue().getStringValue();
         assertEquals(signExp, signAct);
-        
+
         pkg2.close();
         wb2.close();
     }
-    
+
     @Test
     public void office2007prettyPrintedRels() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(testdata.getFile("office2007prettyPrintedRels.docx"), PackageAccess.READ)) {
@@ -299,7 +304,7 @@ public class TestSignatureInfo {
             assertTrue(isValid);
         }
     }
-    
+
     @Test
     public void getSignerUnsigned() throws Exception {
         String[] testFiles = {
@@ -308,7 +313,7 @@ public class TestSignatureInfo {
                 "hello-world-unsigned.xlsx",
                 "hello-world-office-2010-technical-preview-unsigned.docx"
         };
-        
+
         for (String testFile : testFiles) {
             OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ);
             SignatureConfig sic = new SignatureConfig();
@@ -327,7 +332,7 @@ public class TestSignatureInfo {
             assertTrue(result.isEmpty());
         }
     }
-    
+
     @Test
     public void getSigner() throws Exception {
         String[] testFiles = {
@@ -342,7 +347,7 @@ public class TestSignatureInfo {
                 "Office2010-SP1-XAdES-X-L.docx",
                 "signed.docx",
         };
-        
+
         for (String testFile : testFiles) {
             try (OPCPackage pkg = OPCPackage.open(testdata.getFile(testFile), PackageAccess.READ)) {
                 SignatureConfig sic = new SignatureConfig();
@@ -395,7 +400,7 @@ public class TestSignatureInfo {
             pkg.revert();
         }
     }
-    
+
     @Test
     public void testSignSpreadsheet() throws Exception {
         String testFile = "hello-world-unsigned.xlsx";
@@ -404,55 +409,65 @@ public class TestSignatureInfo {
         pkg.close();
     }
 
+    private static class CommitableWorkbook extends XSSFWorkbook {
+        CommitableWorkbook(OPCPackage pkg) throws IOException {
+            super(pkg);
+        }
+        public void commit() throws IOException {
+            super.commit();
+        }
+    }
+
     @Test
     public void testManipulation() throws Exception {
         // sign & validate
         String testFile = "hello-world-unsigned.xlsx";
-        @SuppressWarnings("resource")
-        OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE);
-        sign(pkg, "Test", "CN=Test", 1);
-        
-        // manipulate
-        XSSFWorkbook wb = new XSSFWorkbook(pkg);
-        wb.setSheetName(0, "manipulated");
-        // ... I don't know, why commit is protected ...
-        POITestCase.callMethod(XSSFWorkbook.class, wb, Void.class, "commit", new Class[0], new Object[0]);
+        try (OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE)) {
+            sign(pkg, "Test", "CN=Test", 1);
 
-        // todo: test a manipulation on a package part, which is not signed
-        // ... maybe in combination with #56164 
-        
-        // validate
-        SignatureConfig sic = new SignatureConfig();
-        sic.setOpcPackage(pkg);
-        SignatureInfo si = new SignatureInfo();
-        si.setSignatureConfig(sic);
-        boolean b = si.verifySignature();
-        assertFalse("signature should be broken", b);
-        
-        wb.close();
+            // manipulate
+            try (CommitableWorkbook wb = new CommitableWorkbook(pkg)) {
+                wb.setSheetName(0, "manipulated");
+                // ... I don't know, why commit is protected ...
+                wb.commit();
+
+                // todo: test a manipulation on a package part, which is not signed
+                // ... maybe in combination with #56164
+
+                // validate
+                SignatureConfig sic = new SignatureConfig();
+                sic.setOpcPackage(pkg);
+                SignatureInfo si = new SignatureInfo();
+                si.setSignatureConfig(sic);
+                boolean b = si.verifySignature();
+                assertFalse("signature should be broken", b);
+            }
+            thrown.expectMessage("Fail to save: an error occurs while saving the package : Zip File is close");
+            thrown.expect(OpenXML4JRuntimeException.class);
+        }
     }
-    
+
     @Test
     public void testSignSpreadsheetWithSignatureInfo() throws Exception {
         initKeyPair("Test", "CN=Test");
         String testFile = "hello-world-unsigned.xlsx";
-        OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE);
-        SignatureConfig sic = new SignatureConfig();
-        sic.setOpcPackage(pkg);
-        sic.setKey(keyPair.getPrivate());
-        sic.setSigningCertificateChain(Collections.singletonList(x509));
-        SignatureInfo si = new SignatureInfo();
-        si.setSignatureConfig(sic);
-        // hash > sha1 doesn't work in excel viewer ...
-        si.confirmSignature();
-        List<X509Certificate> result = new ArrayList<>();
-        for (SignaturePart sp : si.getSignatureParts()) {
-            if (sp.validate()) {
-                result.add(sp.getSigner());
+        try (OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE)) {
+            SignatureConfig sic = new SignatureConfig();
+            sic.setOpcPackage(pkg);
+            sic.setKey(keyPair.getPrivate());
+            sic.setSigningCertificateChain(Collections.singletonList(x509));
+            SignatureInfo si = new SignatureInfo();
+            si.setSignatureConfig(sic);
+            // hash > sha1 doesn't work in excel viewer ...
+            si.confirmSignature();
+            List<X509Certificate> result = new ArrayList<>();
+            for (SignaturePart sp : si.getSignatureParts()) {
+                if (sp.validate()) {
+                    result.add(sp.getSigner());
+                }
             }
+            assertEquals(1, result.size());
         }
-        assertEquals(1, result.size());
-        pkg.close();
     }
 
     @Test
@@ -672,7 +687,7 @@ public class TestSignatureInfo {
             }
         }
     }
-    
+
     @Test
     public void testCertChain() throws Exception {
         KeyStore keystore = KeyStore.getInstance("PKCS12");
@@ -689,32 +704,32 @@ public class TestSignatureInfo {
         }
         x509 = certChain.get(0);
         keyPair = new KeyPair(x509.getPublicKey(), (PrivateKey)key);
-        
+
         String testFile = "hello-world-unsigned.xlsx";
-        OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE);
+        try (OPCPackage pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE)) {
 
-        SignatureConfig signatureConfig = new SignatureConfig();
-        signatureConfig.setKey(keyPair.getPrivate());
-        signatureConfig.setSigningCertificateChain(certChain);
-        Calendar oldCal = LocaleUtil.getLocaleCalendar(2007, 7, 1);
-        signatureConfig.setExecutionTime(oldCal.getTime());
-        signatureConfig.setDigestAlgo(HashAlgorithm.sha1);
-        signatureConfig.setOpcPackage(pkg);
-        
-        SignatureInfo si = new SignatureInfo();
-        si.setSignatureConfig(signatureConfig);
+            SignatureConfig signatureConfig = new SignatureConfig();
+            signatureConfig.setKey(keyPair.getPrivate());
+            signatureConfig.setSigningCertificateChain(certChain);
+            Calendar oldCal = LocaleUtil.getLocaleCalendar(2007, 7, 1);
+            signatureConfig.setExecutionTime(oldCal.getTime());
+            signatureConfig.setDigestAlgo(HashAlgorithm.sha1);
+            signatureConfig.setOpcPackage(pkg);
 
-        si.confirmSignature();
-        
-        for (SignaturePart sp : si.getSignatureParts()){
-            assertTrue("Could not validate", sp.validate());
-            X509Certificate signer = sp.getSigner();
-            assertNotNull("signer undefined?!", signer);
-            List<X509Certificate> certChainRes = sp.getCertChain();
-            assertEquals(3, certChainRes.size());
+            SignatureInfo si = new SignatureInfo();
+            si.setSignatureConfig(signatureConfig);
+
+            si.confirmSignature();
+
+            for (SignaturePart sp : si.getSignatureParts()) {
+                assertTrue("Could not validate", sp.validate());
+                X509Certificate signer = sp.getSigner();
+                assertNotNull("signer undefined?!", signer);
+                List<X509Certificate> certChainRes = sp.getCertChain();
+                assertEquals(3, certChainRes.size());
+            }
+
         }
-        
-        pkg.close();
     }
 
     @Test
@@ -728,17 +743,17 @@ public class TestSignatureInfo {
 
         HashAlgorithm[] testAlgo = {HashAlgorithm.sha224, HashAlgorithm.sha256
                 , HashAlgorithm.sha384, HashAlgorithm.sha512, HashAlgorithm.ripemd160};
-        
+
         for (HashAlgorithm ha : testAlgo) {
             OPCPackage pkg = null;
             try {
                 signatureConfig.setDigestAlgo(ha);
                 pkg = OPCPackage.open(copy(testdata.getFile(testFile)), PackageAccess.READ_WRITE);
                 signatureConfig.setOpcPackage(pkg);
-                
+
                 SignatureInfo si = new SignatureInfo();
                 si.setSignatureConfig(signatureConfig);
-        
+
                 si.confirmSignature();
                 boolean b = si.verifySignature();
                 assertTrue("Signature not correctly calculated for " + ha, b);
@@ -756,28 +771,29 @@ public class TestSignatureInfo {
     public void bug58630() throws Exception {
         // test deletion of sheet 0 and signing
         File tpl = copy(testdata.getFile("bug58630.xlsx"));
-        SXSSFWorkbook wb1 = new SXSSFWorkbook((XSSFWorkbook)WorkbookFactory.create(tpl), 10);
-        wb1.setCompressTempFiles(true);
-        wb1.removeSheetAt(0);
-        ByteArrayOutputStream os = new ByteArrayOutputStream();
-        wb1.write(os);
-        wb1.close();
-        OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(os.toByteArray()));
-        
-        initKeyPair("Test", "CN=Test");
-        SignatureConfig signatureConfig = new SignatureConfig();
-        signatureConfig.setKey(keyPair.getPrivate());
-        signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
-        signatureConfig.setOpcPackage(pkg);
-        
-        SignatureInfo si = new SignatureInfo();
-        si.setSignatureConfig(signatureConfig);
-        si.confirmSignature();
-        assertTrue("invalid signature", si.verifySignature());
-        
-        pkg.close();
+        try (SXSSFWorkbook wb1 = new SXSSFWorkbook((XSSFWorkbook)WorkbookFactory.create(tpl), 10)) {
+            wb1.setCompressTempFiles(true);
+            wb1.removeSheetAt(0);
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            wb1.write(os);
+            wb1.close();
+            try (OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(os.toByteArray()))) {
+
+                initKeyPair("Test", "CN=Test");
+                SignatureConfig signatureConfig = new SignatureConfig();
+                signatureConfig.setKey(keyPair.getPrivate());
+                signatureConfig.setSigningCertificateChain(Collections.singletonList(x509));
+                signatureConfig.setOpcPackage(pkg);
+
+                SignatureInfo si = new SignatureInfo();
+                si.setSignatureConfig(signatureConfig);
+                si.confirmSignature();
+                assertTrue("invalid signature", si.verifySignature());
+
+            }
+        }
     }
-    
+
     @Test
     public void testMultiSign() throws Exception {
         cal = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
@@ -892,11 +908,11 @@ public class TestSignatureInfo {
 
         return signatureConfig;
     }
-    
+
     private void sign(OPCPackage pkgCopy, String alias, String signerDn, int signerCount) throws Exception {
         SignatureConfig signatureConfig = prepareConfig(alias, signerDn, null);
         signatureConfig.setOpcPackage(pkgCopy);
-        
+
         SignatureInfo si = new SignatureInfo();
         si.setSignatureConfig(signatureConfig);
 
@@ -912,7 +928,7 @@ public class TestSignatureInfo {
 
         // setup: key material, signature value
         final String signatureValue = si.signDigest(xmlSignContext, signedInfo);
-        
+
         // operate: postSign
         si.postSign(xmlSignContext, signatureValue);
 
@@ -930,7 +946,7 @@ public class TestSignatureInfo {
     private void initKeyPair(String alias, String subjectDN) throws Exception {
         initKeyPair(alias, subjectDN, null);
     }
-    
+
     private void initKeyPair(String alias, String subjectDN, String pfxInput) throws Exception {
         final char[] password = "test".toCharArray();
         File file = new File("build/test.pfx");
@@ -941,7 +957,7 @@ public class TestSignatureInfo {
             InputStream fis = new ByteArrayInputStream(RawDataUtil.decompress(pfxInput));
             keystore.load(fis, password);
             fis.close();
-        } else if (file.exists()) { 
+        } else if (file.exists()) {
             InputStream fis = new FileInputStream(file);
             keystore.load(fis, password);
             fis.close();
@@ -960,12 +976,12 @@ public class TestSignatureInfo {
             cal2.add(Calendar.YEAR, 1);
             Date notAfter = cal2.getTime();
             KeyUsage keyUsage = new KeyUsage(KeyUsage.digitalSignature);
-            
+
             x509 = generateCertificate(keyPair.getPublic(), subjectDN
                 , notBefore, notAfter, null, keyPair.getPrivate(), true, 0, null, null, keyUsage);
 
             keystore.setKeyEntry(alias, keyPair.getPrivate(), password, new Certificate[]{x509});
-            
+
             if (pfxInput == null) {
                 FileOutputStream fos = new FileOutputStream(file);
                 keystore.store(fos, password);
@@ -997,7 +1013,7 @@ public class TestSignatureInfo {
 
     private static File copy(File input) throws IOException {
         String extension = input.getName().replaceAll(".*?(\\.[^.]+)?$", "$1");
-        if (extension == null || extension.isEmpty()) {
+        if (extension.isEmpty()) {
             extension = ".zip";
         }
 

@@ -17,9 +17,12 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.junit.Test;
 
@@ -30,8 +33,15 @@ public final class TestLabelRecord  {
 
 	@Test
 	public void testEmptyString() throws IOException {
-		try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex42570-20305.xls")) {
-			HSSFTestDataSamples.writeOutAndReadBack(wb);
+		try (HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("ex42570-20305.xls");
+			 HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+			HSSFSheet s1 = wb1.getSheetAt(0);
+			HSSFSheet s2 = wb2.getSheetAt(0);
+			for (int c=0; c<2; c++) {
+				for (int r=0; r<146; r++) {
+					assertEquals(s1.getRow(r).getCell(c).getNumericCellValue(), s2.getRow(r).getCell(c).getNumericCellValue(), 0);
+				}
+			}
 		}
 	}
 }

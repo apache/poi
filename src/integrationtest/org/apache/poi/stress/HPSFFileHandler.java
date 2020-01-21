@@ -45,9 +45,9 @@ import org.junit.Test;
 
 public class HPSFFileHandler extends POIFSFileHandler {
     private static final String NL = System.getProperty("line.separator");
-    
+
     private static File copyOutput;
-    
+
     static final Set<String> EXCLUDES_HANDLE_ADD = unmodifiableHashSet(
         "spreadsheet/45290.xls",
         "spreadsheet/46904.xls",
@@ -57,17 +57,17 @@ public class HPSFFileHandler extends POIFSFileHandler {
         "hpsf/Test_Humor-Generation.ppt",
         "document/word2.doc"
     );
-    
+
     static final Set<String> EXCLUDES_HANDLE_FILE = unmodifiableHashSet(
         "hpsf/Test_Humor-Generation.ppt"
     );
-        
-    
+
+
     private static Set<String> unmodifiableHashSet(String... a) {
         return Collections.unmodifiableSet(new HashSet<>(Arrays.asList(a)));
     }
 
-    
+
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
         Assume.assumeFalse(EXCLUDES_HANDLE_FILE.contains(path));
@@ -77,10 +77,10 @@ public class HPSFFileHandler extends POIFSFileHandler {
 		SummaryInformation si = hpsf.getSummaryInformation();
 		boolean hasDSI = hasPropertyStream(poifs, DocumentSummaryInformation.DEFAULT_STREAM_NAME);
 		boolean hasSI = hasPropertyStream(poifs, SummaryInformation.DEFAULT_STREAM_NAME);
-		
+
 		assertEquals(hasDSI, dsi != null);
         assertEquals(hasSI, si != null);
-		
+
 		handlePOIDocument(hpsf);
 	}
 
@@ -93,7 +93,7 @@ public class HPSFFileHandler extends POIFSFileHandler {
             return PropertySet.isPropertySetStream(dis);
         }
 	}
-	
+
     @Override
     public void handleAdditional(File file) throws Exception {
         Assume.assumeFalse(EXCLUDES_HANDLE_ADD.contains(file.getParentFile().getName()+"/"+file.getName()));
@@ -114,10 +114,11 @@ public class HPSFFileHandler extends POIFSFileHandler {
         }
     }
 
-	
+
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Override
     @Test
+    @SuppressWarnings("java:S2699")
 	public void test() throws Exception {
 	    String path = "test-data/hpsf/Test0313rur.adm";
         try (InputStream stream = new FileInputStream(path)) {

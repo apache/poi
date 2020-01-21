@@ -37,10 +37,10 @@ public class TestBiffViewer extends BaseXLSIteratingTest {
     @BeforeClass
     public static void setup() {
         EXCLUDED.clear();
-        EXCLUDED.put("35897-type4.xls", EncryptedDocumentException.class); // unsupported crypto api header 
+        EXCLUDED.put("35897-type4.xls", EncryptedDocumentException.class); // unsupported crypto api header
         EXCLUDED.put("51832.xls", EncryptedDocumentException.class);
-        EXCLUDED.put("xor-encryption-abc.xls", EncryptedDocumentException.class); 
-        EXCLUDED.put("password.xls", EncryptedDocumentException.class); 
+        EXCLUDED.put("xor-encryption-abc.xls", EncryptedDocumentException.class);
+        EXCLUDED.put("password.xls", EncryptedDocumentException.class);
         EXCLUDED.put("46904.xls", OldExcelFormatException.class);
         EXCLUDED.put("59074.xls", OldExcelFormatException.class);
         EXCLUDED.put("testEXCEL_2.xls", OldExcelFormatException.class);  // Biff 2 / Excel 2, pre-OLE2
@@ -68,6 +68,7 @@ public class TestBiffViewer extends BaseXLSIteratingTest {
 
     @Test
     @Ignore("only used for manual tests")
+    @SuppressWarnings("java:S2699")
     public void testOneFile() throws Exception {
         POIDataSamples samples = POIDataSamples.getSpreadSheetInstance();
         runOneFile(samples.getFile("43493.xls"));

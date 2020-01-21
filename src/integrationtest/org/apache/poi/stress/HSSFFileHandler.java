@@ -21,7 +21,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintStream;
@@ -50,7 +49,7 @@ public class HSSFFileHandler extends SpreadsheetHandler {
         // So FormulaEvalTestData.xls now contains a few formulas that produce errors here.
         //HSSFFormulaEvaluator evaluator = new HSSFFormulaEvaluator(wb);
         //evaluator.evaluateAll();
-        
+
 		delegate.handlePOIDocument(wb);
 
 		// also try to see if some of the Records behave incorrectly
@@ -122,6 +121,7 @@ public class HSSFFileHandler extends SpreadsheetHandler {
 
 	// a test-case to test this locally without executing the full TestAllFiles
     @Test
+	@SuppressWarnings("java:S2699")
     public void testExtractor() throws Exception {
         handleExtracting(new File("test-data/spreadsheet/BOOK_in_capitals.xls"));
     }

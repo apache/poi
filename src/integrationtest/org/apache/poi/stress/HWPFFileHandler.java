@@ -47,25 +47,19 @@ public class HWPFFileHandler extends POIFSFileHandler {
     // a test-case to test this locally without executing the full TestAllFiles
     @Override
     @Test
+    @SuppressWarnings("java:S2699")
     public void test() throws Exception {
         File file = new File("test-data/document/52117.doc");
 
-        InputStream stream = new FileInputStream(file);
-        try {
+        try (InputStream stream = new FileInputStream(file)) {
             handleFile(stream, file.getPath());
-        } finally {
-            stream.close();
         }
-        
+
         handleExtracting(file);
-        
-        stream = new FileInputStream(file);
-        try {
-            try (WordExtractor extractor = new WordExtractor(stream)) {
-                assertNotNull(extractor.getText());
-            }
-        } finally {
-            stream.close();
+
+        try (FileInputStream stream = new FileInputStream(file);
+             WordExtractor extractor = new WordExtractor(stream)) {
+            assertNotNull(extractor.getText());
         }
     }
 

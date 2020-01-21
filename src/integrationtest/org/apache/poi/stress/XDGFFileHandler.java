@@ -32,9 +32,10 @@ public class XDGFFileHandler extends AbstractFileHandler {
         XmlVisioDocument doc = new XmlVisioDocument(stream);
         new POIXMLDocumentHandler().handlePOIXMLDocument(doc);
     }
-    
+
     // a test-case to test this locally without executing the full TestAllFiles
     @Test
+    @SuppressWarnings("java:S2699")
     public void test() throws Exception {
         try (OPCPackage pkg = OPCPackage.open("test-data/diagram/test.vsdx", PackageAccess.READ)) {
             XmlVisioDocument doc = new XmlVisioDocument(pkg);

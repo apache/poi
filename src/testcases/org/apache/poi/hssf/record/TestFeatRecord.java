@@ -23,6 +23,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.io.IOException;
+
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
@@ -181,9 +183,16 @@ public final class TestFeatRecord {
      *  cloning sheets with feat records
      */
 	@Test
-    public void testCloneSheetWithFeatRecord() {
-        HSSFWorkbook wb =
-            HSSFTestDataSamples.openSampleWorkbook("46136-WithWarnings.xls");
-        wb.cloneSheet(0);
+    public void testCloneSheetWithFeatRecord() throws IOException {
+        try (HSSFWorkbook wb =
+            HSSFTestDataSamples.openSampleWorkbook("46136-WithWarnings.xls")) {
+			HSSFSheet src = wb.getSheetAt(0);
+			HSSFSheet dst = wb.cloneSheet(0);
+
+			InternalSheet isrc = HSSFTestHelper.getSheetForTest(src);
+			InternalSheet idst = HSSFTestHelper.getSheetForTest(dst);
+
+			assertEquals(isrc.getRecords().size(), idst.getRecords().size());
+		}
     }
 }

@@ -36,7 +36,6 @@ import org.apache.poi.hssf.record.DVRecord;
 import org.apache.poi.hssf.record.EOFRecord;
 import org.apache.poi.hssf.record.FeatHdrRecord;
 import org.apache.poi.hssf.record.NumberRecord;
-import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
@@ -104,17 +103,20 @@ public final class TestHSSFEventFactory {
      * (the test file was provided in a reopen of bug #42844)
      */
     @Test
+    @SuppressWarnings("java:S2699")
     public void testUnknownContinueRecords() throws Exception {
         openSample("42844.xls");
     }
 
     @Test
+    @SuppressWarnings("java:S2699")
     public void testWithDifferentWorkbookName() throws Exception {
         openSample("BOOK_in_capitals.xls");
         openSample("WORKBOOK_in_capitals.xls");
     }
 
     @Test(expected = EncryptedDocumentException.class)
+    @SuppressWarnings("java:S2699")
     public void testWithPasswordProtectedWorkbooksNoPass() throws Exception {
         // Without a password, can't be read
         openSample("xor-encryption-abc.xls");

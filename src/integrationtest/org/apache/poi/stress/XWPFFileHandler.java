@@ -31,12 +31,13 @@ public class XWPFFileHandler extends AbstractFileHandler {
         if (POIXMLDocumentHandler.isEncrypted(stream)) return;
 
         XWPFDocument doc = new XWPFDocument(stream);
-        
+
         new POIXMLDocumentHandler().handlePOIXMLDocument(doc);
     }
 
     // a test-case to test this locally without executing the full TestAllFiles
     @Test
+    @SuppressWarnings("java:S2699")
     public void test() throws Exception {
         File file = new File("test-data/document/51921-Word-Crash067.docx");
 
