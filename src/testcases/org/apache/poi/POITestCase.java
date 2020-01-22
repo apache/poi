@@ -37,6 +37,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.SuppressForbidden;
 import org.mockito.internal.matchers.apachecommons.ReflectionEquals;
 
 /**
@@ -120,6 +121,7 @@ public final class POITestCase {
      * Only use this method in test cases!!!
      */
     @SuppressWarnings({"unused", "unchecked"})
+    @SuppressForbidden("For test usage only")
     public static <R,T> R getFieldValue(final Class<? super T> clazz, final T instance, final Class<R> fieldType, final String fieldName) {
         assertTrue("Reflection of private fields is only allowed for POI classes.", clazz.getName().startsWith("org.apache.poi."));
         try {
