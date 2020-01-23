@@ -323,7 +323,7 @@ public class HemfPlusPen {
         private final AffineTransform trans = new AffineTransform();
         private EmfPlusLineCapType startCap = EmfPlusLineCapType.FLAT;
         private EmfPlusLineCapType endCap = startCap;
-        private EmfPlusLineJoin join = EmfPlusLineJoin.ROUND;
+        private EmfPlusLineJoin lineJoin = EmfPlusLineJoin.ROUND;
         private Double miterLimit = 1.;
         private EmfPlusLineStyle style = EmfPlusLineStyle.SOLID;
         private EmfPlusDashedLineCapType dashedLineCapType;
@@ -381,7 +381,7 @@ public class HemfPlusPen {
                 // An optional 32-bit signed integer that specifies how to join two lines that are drawn by the same pen
                 // and whose ends meet. This field MUST be present if the PenDataJoin flag is set in the PenDataFlags
                 // field of the EmfPlusPenData object, and the value MUST be defined in the LineJoinType enumeration
-                join = EmfPlusLineJoin.valueOf(leis.readInt());
+                lineJoin = EmfPlusLineJoin.valueOf(leis.readInt());
                 size += LittleEndianConsts.INT_SIZE;
             }
 
@@ -479,6 +479,7 @@ public class HemfPlusPen {
             return graphicsVersion;
         }
 
+        @SuppressWarnings("unused")
         private long initCustomCap(Consumer<EmfPlusCustomLineCap> setter, LittleEndianInputStream leis) throws IOException {
             int CustomStartCapSize = leis.readInt();
             int size = LittleEndianConsts.INT_SIZE;
@@ -526,7 +527,7 @@ public class HemfPlusPen {
             }
 
             HwmfLineJoin lineJoin;
-            switch (join) {
+            switch (this.lineJoin) {
                 default:
                 case BEVEL:
                     lineJoin = HwmfLineJoin.BEVEL;
@@ -565,7 +566,7 @@ public class HemfPlusPen {
             m.put("trans", () -> trans);
             m.put("startCap", () -> startCap);
             m.put("endCap", () -> endCap);
-            m.put("join", () -> join);
+            m.put("join", () -> lineJoin);
             m.put("miterLimit", () -> miterLimit);
             m.put("style", () -> style);
             m.put("dashedLineCapType", () -> dashedLineCapType);
