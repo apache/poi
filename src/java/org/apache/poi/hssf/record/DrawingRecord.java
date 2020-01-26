@@ -43,6 +43,10 @@ public final class DrawingRecord extends StandardRecord {
         recordData = in.readRemainder();
     }
 
+    public DrawingRecord(byte[] data) {
+        recordData = data.clone();
+    }
+
     /**
      * @deprecated POI 3.9
      */

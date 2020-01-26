@@ -31,7 +31,7 @@ public final class ContinueRecord extends StandardRecord {
     private byte[] _data;
 
     public ContinueRecord(byte[] data) {
-        _data = data;
+        _data = data.clone();
     }
 
     public ContinueRecord(ContinueRecord other) {

@@ -19,62 +19,65 @@ package org.apache.poi.ddf;
 
 import java.util.Map;
 import java.util.function.Function;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public enum EscherRecordTypes {
-    // records greater then 0xF000 belong to with Microsoft Office Drawing format also known as Escher
-    DGG_CONTAINER(0xF000, "DggContainer", null),
-    BSTORE_CONTAINER(0xf001, "BStoreContainer", null),
-    DG_CONTAINER(0xf002, "DgContainer", null),
-    SPGR_CONTAINER(0xf003, "SpgrContainer", null),
-    SP_CONTAINER(0xf004, "SpContainer", null),
-    SOLVER_CONTAINER(0xf005, "SolverContainer", null),
-    DGG(0xf006, "Dgg", "MsofbtDgg"),
-    BSE(0xf007, "BSE", "MsofbtBSE"),
-    DG(0xf008, "Dg", "MsofbtDg"),
-    SPGR(0xf009, "Spgr", "MsofbtSpgr"),
-    SP(0xf00a, "Sp", "MsofbtSp"),
-    OPT(0xf00b, "Opt", "msofbtOPT"),
-    TEXTBOX(0xf00c, null, null),
-    CLIENT_TEXTBOX(0xf00d, "ClientTextbox", "msofbtClientTextbox"),
-    ANCHOR(0xf00e, null, null),
-    CHILD_ANCHOR(0xf00f, "ChildAnchor", "MsofbtChildAnchor"),
-    CLIENT_ANCHOR(0xf010, "ClientAnchor", "MsofbtClientAnchor"),
-    CLIENT_DATA(0xf011, "ClientData", "MsofbtClientData"),
-    CONNECTOR_RULE(0xf012, null, null),
-    ALIGN_RULE(0xf013, null, null),
-    ARC_RULE(0xf014, null, null),
-    CLIENT_RULE(0xf015, null, null),
-    CLSID(0xf016, null, null),
-    CALLOUT_RULE(0xf017, null, null),
-    BLIP_START(0xf018, "Blip", "msofbtBlip"),
-    BLIP_EMF(0xf018 + 2, "BlipEmf", null),
-    BLIP_WMF(0xf018 + 3, "BlipWmf", null),
-    BLIP_PICT(0xf018 + 4, "BlipPict", null),
-    BLIP_JPEG(0xf018 + 5, "BlipJpeg", null),
-    BLIP_PNG(0xf018 + 6, "BlipPng", null),
-    BLIP_DIB(0xf018 + 7, "BlipDib", null),
-    BLIP_END(0xf117, "Blip", "msofbtBlip"),
-    REGROUP_ITEMS(0xf118, null, null),
-    SELECTION(0xf119, null, null),
-    COLOR_MRU(0xf11a, null, null),
-    DELETED_PSPL(0xf11d, null, null),
-    SPLIT_MENU_COLORS(0xf11e, "SplitMenuColors", "MsofbtSplitMenuColors"),
-    OLE_OBJECT(0xf11f, null, null),
-    COLOR_SCHEME(0xf120, null, null),
+    // records greater then 0xF000 belong to Microsoft Office Drawing format also known as Escher
+    DGG_CONTAINER(0xF000, "DggContainer", null, EscherContainerRecord::new),
+    BSTORE_CONTAINER(0xf001, "BStoreContainer", null, EscherContainerRecord::new),
+    DG_CONTAINER(0xf002, "DgContainer", null, EscherContainerRecord::new),
+    SPGR_CONTAINER(0xf003, "SpgrContainer", null, EscherContainerRecord::new),
+    SP_CONTAINER(0xf004, "SpContainer", null, EscherContainerRecord::new),
+    SOLVER_CONTAINER(0xf005, "SolverContainer", null, EscherContainerRecord::new),
+    DGG(0xf006, "Dgg", "MsofbtDgg", EscherDggRecord::new),
+    BSE(0xf007, "BSE", "MsofbtBSE", EscherBSERecord::new),
+    DG(0xf008, "Dg", "MsofbtDg", EscherDgRecord::new),
+    SPGR(0xf009, "Spgr", "MsofbtSpgr", EscherSpgrRecord::new),
+    SP(0xf00a, "Sp", "MsofbtSp", EscherSpRecord::new),
+    OPT(0xf00b, "Opt", "msofbtOPT", EscherOptRecord::new),
+    TEXTBOX(0xf00c, null, null, EscherTextboxRecord::new),
+    CLIENT_TEXTBOX(0xf00d, "ClientTextbox", "msofbtClientTextbox", EscherTextboxRecord::new),
+    ANCHOR(0xf00e, null, null, null),
+    CHILD_ANCHOR(0xf00f, "ChildAnchor", "MsofbtChildAnchor", EscherChildAnchorRecord::new),
+    CLIENT_ANCHOR(0xf010, "ClientAnchor", "MsofbtClientAnchor", EscherClientAnchorRecord::new),
+    CLIENT_DATA(0xf011, "ClientData", "MsofbtClientData", EscherClientDataRecord::new),
+    CONNECTOR_RULE(0xf012, null, null, null),
+    ALIGN_RULE(0xf013, null, null, null),
+    ARC_RULE(0xf014, null, null, null),
+    CLIENT_RULE(0xf015, null, null, null),
+    CLSID(0xf016, null, null, null),
+    CALLOUT_RULE(0xf017, null, null, null),
+    BLIP_START(0xf018, "Blip", "msofbtBlip", null),
+    BLIP_EMF(0xf018 + 2, "BlipEmf", null, EscherMetafileBlip::new),
+    BLIP_WMF(0xf018 + 3, "BlipWmf", null, EscherMetafileBlip::new),
+    BLIP_PICT(0xf018 + 4, "BlipPict", null, EscherMetafileBlip::new),
+    BLIP_JPEG(0xf018 + 5, "BlipJpeg", null, EscherBitmapBlip::new),
+    BLIP_PNG(0xf018 + 6, "BlipPng", null, EscherBitmapBlip::new),
+    BLIP_DIB(0xf018 + 7, "BlipDib", null, EscherBitmapBlip::new),
+    BLIP_END(0xf117, "Blip", "msofbtBlip", null),
+    REGROUP_ITEMS(0xf118, null, null, null),
+    SELECTION(0xf119, null, null, null),
+    COLOR_MRU(0xf11a, null, null, null),
+    DELETED_PSPL(0xf11d, null, null, null),
+    SPLIT_MENU_COLORS(0xf11e, "SplitMenuColors", "MsofbtSplitMenuColors", EscherSplitMenuColorsRecord::new),
+    OLE_OBJECT(0xf11f, null, null, null),
+    COLOR_SCHEME(0xf120, null, null, null),
     // same as EscherTertiaryOptRecord.RECORD_ID
-    USER_DEFINED(0xf122, "TertiaryOpt", null),
-    UNKNOWN(0xffff, "unknown", "unknown");
+    USER_DEFINED(0xf122, "TertiaryOpt", null, EscherTertiaryOptRecord::new),
+    UNKNOWN(0xffff, "unknown", "unknown", UnknownEscherRecord::new);
 
     public final short typeID;
     public final String recordName;
     public final String description;
+    public final Supplier<? extends EscherRecord> constructor;
 
-    EscherRecordTypes(int typeID, String recordName, String description) {
+    EscherRecordTypes(int typeID, String recordName, String description, Supplier<? extends EscherRecord> constructor) {
         this.typeID = (short) typeID;
         this.recordName = recordName;
         this.description = description;
+        this.constructor = constructor;
     }
 
     private Short getTypeId() {

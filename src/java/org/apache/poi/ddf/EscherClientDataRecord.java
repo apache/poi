@@ -30,10 +30,12 @@ import org.apache.poi.util.LittleEndian;
  * shape within a container.
  */
 public class EscherClientDataRecord extends EscherRecord {
-    //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 100_000;
 
     public static final short RECORD_ID = EscherRecordTypes.CLIENT_DATA.typeID;
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 100_000;
+    private static final byte[] EMPTY = {};
 
     private byte[] remainingData;
 
@@ -48,7 +50,7 @@ public class EscherClientDataRecord extends EscherRecord {
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
         int pos            = offset + 8;
-        remainingData = IOUtils.safelyAllocate(bytesRemaining, MAX_RECORD_LENGTH);
+        remainingData = (bytesRemaining == 0) ? EMPTY : IOUtils.safelyAllocate(bytesRemaining, MAX_RECORD_LENGTH);
         System.arraycopy( data, pos, remainingData, 0, bytesRemaining );
         return 8 + bytesRemaining;
     }
@@ -58,7 +60,7 @@ public class EscherClientDataRecord extends EscherRecord {
         listener.beforeRecordSerialize( offset, getRecordId(), this );
 
         if (remainingData == null) {
-            remainingData = new byte[0];
+            remainingData = EMPTY;
         }
         LittleEndian.putShort( data, offset, getOptions() );
         LittleEndian.putShort( data, offset + 2, getRecordId() );

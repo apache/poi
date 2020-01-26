@@ -58,11 +58,8 @@ public class HSSFShapeFactory {
             HSSFShapeGroup group = new HSSFShapeGroup(container, obj);
             List<EscherContainerRecord> children = container.getChildContainers();
             // skip the first child record, it is group descriptor
-            for (int i = 0; i < children.size(); i++) {
-                EscherContainerRecord spContainer = children.get(i);
-                if (i != 0) {
-                    createShapeTree(spContainer, agg, group, root);
-                }
+            if (children.size() > 1) {
+                children.subList(1, children.size()).forEach(c -> createShapeTree(c, agg, group, root));
             }
             out.addShape(group);
         } else if (container.getRecordId() == EscherContainerRecord.SP_CONTAINER) {

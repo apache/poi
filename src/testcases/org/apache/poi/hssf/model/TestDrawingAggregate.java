@@ -726,31 +726,22 @@ public class TestDrawingAggregate {
         List<org.apache.poi.hssf.record.Record> dgRecords = RecordFactory.createRecords(new ByteArrayInputStream(dgBytes));
         assertEquals(20, dgRecords.size());
 
-        short[] expectedSids = {
-                DrawingRecord.sid,
-                ObjRecord.sid,
-                DrawingRecord.sid,
-                TextObjectRecord.sid,
-                DrawingRecord.sid,
-                ObjRecord.sid,
-                DrawingRecord.sid,
-                TextObjectRecord.sid,
-                DrawingRecord.sid,
-                ObjRecord.sid,
-                DrawingRecord.sid,
-                TextObjectRecord.sid,
-                DrawingRecord.sid,
-                ObjRecord.sid,
-                DrawingRecord.sid,
-                TextObjectRecord.sid,
-                ContinueRecord.sid,
-                ObjRecord.sid,
-                ContinueRecord.sid,
-                TextObjectRecord.sid
+        int[] expectedSids = {
+            DrawingRecord.sid, ObjRecord.sid,
+            DrawingRecord.sid, TextObjectRecord.sid,
+            DrawingRecord.sid, ObjRecord.sid,
+            DrawingRecord.sid, TextObjectRecord.sid,
+            DrawingRecord.sid, ObjRecord.sid,
+            DrawingRecord.sid, TextObjectRecord.sid,
+            DrawingRecord.sid, ObjRecord.sid,
+            DrawingRecord.sid, TextObjectRecord.sid,
+            ContinueRecord.sid, ObjRecord.sid,
+            ContinueRecord.sid, TextObjectRecord.sid
         };
-        for (int i = 0; i < expectedSids.length; i++) {
-            assertEquals("unexpected record.sid and index[" + i + "]", expectedSids[i], dgRecords.get(i).getSid());
-        }
+
+        int[] actualSids = dgRecords.stream().mapToInt(Record::getSid).toArray();
+        assertArrayEquals("unexpected record.sid", expectedSids, actualSids);
+
         DrawingManager2 drawingManager = new DrawingManager2(new EscherDggRecord());
 
         // create a dummy sheet consisting of our test data
@@ -904,26 +895,19 @@ public class TestDrawingAggregate {
         List<org.apache.poi.hssf.record.Record> dgRecords = RecordFactory.createRecords(new ByteArrayInputStream(dgBytes));
         assertEquals(14, dgRecords.size());
 
-        short[] expectedSids = {
-                DrawingRecord.sid,
-                ObjRecord.sid,
-                DrawingRecord.sid,
-                ObjRecord.sid,
-                DrawingRecord.sid,
-                ObjRecord.sid,
-                DrawingRecord.sid,
-                ObjRecord.sid,
-                ContinueRecord.sid,
-                ObjRecord.sid,
-                ContinueRecord.sid,
-                ObjRecord.sid,
-                ContinueRecord.sid,
-                ObjRecord.sid
+        int[] expectedSids = {
+            DrawingRecord.sid, ObjRecord.sid,
+            DrawingRecord.sid, ObjRecord.sid,
+            DrawingRecord.sid, ObjRecord.sid,
+            DrawingRecord.sid, ObjRecord.sid,
+            ContinueRecord.sid, ObjRecord.sid,
+            ContinueRecord.sid, ObjRecord.sid,
+            ContinueRecord.sid, ObjRecord.sid
         };
 
-        for (int i = 0; i < expectedSids.length; i++) {
-            assertEquals("unexpected record.sid and index[" + i + "]", expectedSids[i], dgRecords.get(i).getSid());
-        }
+        int[] actualSids = dgRecords.stream().mapToInt(Record::getSid).toArray();
+        assertArrayEquals("unexpected record.sid", expectedSids, actualSids);
+
         DrawingManager2 drawingManager = new DrawingManager2(new EscherDggRecord());
 
         // create a dummy sheet consisting of our test data
