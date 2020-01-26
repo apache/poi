@@ -16,18 +16,6 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.Iterator;
-import java.util.List;
-
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.Units;
@@ -40,17 +28,16 @@ import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrClear;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STEm;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHighlightColor;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STThemeColor;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalAlignRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.Iterator;
+import java.util.List;
+
+import static org.junit.Assert.*;
 
 /**
  * Tests for XWPF Run
@@ -807,6 +794,45 @@ public class TestXWPFRun {
 
             assertEquals(pic.getWidth(), Units.toPoints(21), 0.0);
             assertEquals(pic.getDepth(), Units.toPoints(32), 0.0);
+        }
+    }
+
+    @Test
+    public void testWhitespace() throws IOException {
+        String[] text = new String[] {
+                "  The quick brown fox",
+                "\t\tjumped over the lazy dog"
+        };
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        try (XWPFDocument doc = new XWPFDocument();) {
+            for(String s : text) {
+                XWPFParagraph p1 = doc.createParagraph();
+                XWPFRun r1 = p1.createRun();
+                r1.setText(s);
+            }
+
+            doc.write(bos);
+            bos.flush();
+        }
+
+        try (
+                ByteArrayInputStream bis = new ByteArrayInputStream(bos.toByteArray());
+                XWPFDocument doc = new XWPFDocument(bis)
+        ) {
+            List<XWPFParagraph> paragraphs = doc.getParagraphs();
+            assertEquals(2, paragraphs.size());
+            for (int i = 0; i < text.length; i++) {
+                XWPFParagraph p1 = paragraphs.get(i);
+                String expected = text[i];
+                assertEquals(expected, p1.getText());
+                CTP ctp = p1.getCTP();
+                CTR ctr = ctp.getRArray(0);
+                CTText ctText = ctr.getTArray(0);
+                // if text has leading whitespace then expect xml-fragment to have xml:space="preserve" set
+                // <xml-fragment xml:space="preserve" xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
+                boolean isWhitespace = Character.isWhitespace(expected.charAt(0));
+                assertEquals(isWhitespace, ctText.isSetSpace());
+            }
         }
     }
 }

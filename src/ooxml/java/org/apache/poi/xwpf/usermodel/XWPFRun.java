@@ -146,7 +146,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     static void preserveSpaces(XmlString xs) {
         String text = xs.getStringValue();
-        if (text != null && (text.startsWith(" ") || text.endsWith(" "))) {
+        if (text != null && text.length() >= 1
+                && (Character.isWhitespace(text.charAt(0)) || Character.isWhitespace(text.charAt(text.length()-1)))) {
             XmlCursor c = xs.newCursor();
             c.toNextToken();
             c.insertAttributeWithValue(new QName("http://www.w3.org/XML/1998/namespace", "space"), "preserve");
