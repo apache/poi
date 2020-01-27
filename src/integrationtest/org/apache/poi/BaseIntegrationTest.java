@@ -75,12 +75,13 @@ public class BaseIntegrationTest {
 			throw e;
 		} catch (IOException e) {
 			// ignore some other ways of corrupted files
-			if(e.getMessage().contains("Truncated ZIP file")) {
+			String message = e.getMessage();
+			if(message != null && message.contains("Truncated ZIP file")) {
 				Assume.assumeFalse("File " + file + " excluded because the Zip file is incomplete", true);
 			}
 
 			// sometimes binary format has XML-format-extension...
-			if(e.getMessage().contains("rong file format or file extension for OO XML file")) {
+			if(message != null && message.contains("rong file format or file extension for OO XML file")) {
 				handleWrongOLE2XMLExtension(inputFile, e);
 				return;
 			}
