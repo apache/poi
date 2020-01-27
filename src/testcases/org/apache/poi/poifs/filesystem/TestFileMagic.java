@@ -107,8 +107,15 @@ public class TestFileMagic {
     @Test
     public void testShortFile() throws IOException {
         // having a file shorter than 8 bytes previously caused an exception
-        byte[] data = new byte[] { -1, -40, -1, -32, 0 };
+        fetchMagicFromData(new byte[] { -1, -40, -1, -32, 0 });
+        fetchMagicFromData(new byte[] { -1, -40, -1, -32 });
+        fetchMagicFromData(new byte[] { -1, -40, -1 });
+        fetchMagicFromData(new byte[] { -1, -40 });
+        fetchMagicFromData(new byte[] { -1 });
+        fetchMagicFromData(new byte[0]);
+    }
 
+    private void fetchMagicFromData(byte[] data) throws IOException {
         File file = TempFile.createTempFile("TestFileMagic", ".bin");
         try {
             try (FileOutputStream fos = new FileOutputStream(file)) {

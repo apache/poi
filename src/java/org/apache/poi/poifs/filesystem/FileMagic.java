@@ -113,7 +113,7 @@ public enum FileMagic {
     final static int MAX_PATTERN_LENGTH = 44;
 
     final byte[][] magic;
-    
+
     FileMagic(long magic) {
         this.magic = new byte[1][8];
         LittleEndian.putLong(this.magic[0], 0, magic);
@@ -122,7 +122,7 @@ public enum FileMagic {
     FileMagic(byte[]... magic) {
         this.magic = magic;
     }
-    
+
     FileMagic(String... magic) {
         this.magic = new byte[magic.length][];
         int i=0;
@@ -172,6 +172,9 @@ public enum FileMagic {
             // read as many bytes as possible, up to the required number of bytes
             byte[] data = new byte[MAX_PATTERN_LENGTH];
             int read = IOUtils.readFully(fis, data, 0, MAX_PATTERN_LENGTH);
+            if(read == -1) {
+                return FileMagic.UNKNOWN;
+            }
 
             // only use the bytes that could be read
             data = Arrays.copyOf(data, read);
