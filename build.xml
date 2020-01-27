@@ -605,6 +605,7 @@ under the License.
 
         <echo message="Using Ant: ${ant.version} from ${ant.home}, Ant detected Java ${ant.java.version} (may be different than actual Java sometimes...)" />
         <echo message="Using Java: ${java.version}/${java.runtime.version}/${java.vm.version}/${java.vm.name} from ${java.vm.vendor} on ${os.name}: ${os.version}" />
+        <echo message="Building Apache POI version ${version.id} and RC: ${release.rc}" />
 
         <scriptdef name="release_tag" language="javascript">
             var rel = ("REL_"+project.getProperty("version.id")).toUpperCase().replace(/\W/g,"_");
