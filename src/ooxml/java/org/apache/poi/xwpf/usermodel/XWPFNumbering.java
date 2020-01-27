@@ -29,7 +29,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
@@ -52,7 +51,7 @@ public class XWPFNumbering extends POIXMLDocumentPart {
      *
      * @since POI 3.14-Beta1
      */
-    public XWPFNumbering(PackagePart part) throws IOException, OpenXML4JException {
+    public XWPFNumbering(PackagePart part) {
         super(part);
         isNew = true;
     }

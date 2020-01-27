@@ -19,12 +19,11 @@ package org.apache.poi.xdgf.usermodel;
 
 import java.io.IOException;
 
+import com.microsoft.schemas.office.visio.x2012.main.MasterContentsDocument;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xdgf.exceptions.XDGFException;
 import org.apache.xmlbeans.XmlException;
-
-import com.microsoft.schemas.office.visio.x2012.main.MasterContentsDocument;
 
 /**
  * Contains the actual contents of the master/stencil
@@ -36,10 +35,10 @@ public class XDGFMasterContents extends XDGFBaseContents {
     /**
      * @since POI 3.14-Beta1
      */
-    public XDGFMasterContents(PackagePart part, XDGFDocument document) {
-        super(part, document);
+    public XDGFMasterContents(PackagePart part) {
+        super(part);
     }
-    
+
     @Override
     protected void onDocumentRead() {
 

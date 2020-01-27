@@ -26,13 +26,30 @@ import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.xmlbeans.XmlException;
 
 /**
  * Represents a descriptor of a OOXML relation.
  */
 public abstract class POIXMLRelation {
+
+    @Internal
+    public interface NoArgConstructor {
+        POIXMLDocumentPart init();
+    }
+
+    @Internal
+    public interface PackagePartConstructor {
+        POIXMLDocumentPart init(PackagePart part) throws IOException, XmlException;
+    }
+
+    @Internal
+    public interface ParentPartConstructor {
+        POIXMLDocumentPart init(POIXMLDocumentPart parent, PackagePart part) throws IOException, XmlException;
+    }
 
     private static final POILogger log = POILogFactory.getLogger(POIXMLRelation.class);
 
@@ -52,9 +69,11 @@ public abstract class POIXMLRelation {
     private String _defaultName;
 
     /**
-     * Defines what object is used to construct instances of this relationship
+     * Constructors or factory method to construct instances of this relationship
      */
-    private Class<? extends POIXMLDocumentPart> _cls;
+    private final NoArgConstructor noArgConstructor;
+    private final PackagePartConstructor packagePartConstructor;
+    private final ParentPartConstructor parentPartConstructor;
 
     /**
      * Instantiates a POIXMLRelation.
@@ -62,13 +81,19 @@ public abstract class POIXMLRelation {
      * @param type content type
      * @param rel  relationship
      * @param defaultName default item name
-     * @param cls defines what object is used to construct instances of this relationship
+     * @param noArgConstructor method used to construct instances of this relationship from scratch
+     * @param packagePartConstructor method used to construct instances of this relationship with a package part
      */
-    public POIXMLRelation(String type, String rel, String defaultName, Class<? extends POIXMLDocumentPart> cls) {
+    protected POIXMLRelation(String type, String rel, String defaultName,
+                             NoArgConstructor noArgConstructor,
+                             PackagePartConstructor packagePartConstructor,
+                             ParentPartConstructor parentPartConstructor) {
         _type = type;
         _relation = rel;
         _defaultName = defaultName;
-        _cls = cls;
+        this.noArgConstructor = noArgConstructor;
+        this.packagePartConstructor = packagePartConstructor;
+        this.parentPartConstructor = parentPartConstructor;
     }
 
     /**
@@ -78,8 +103,8 @@ public abstract class POIXMLRelation {
      * @param rel  relationship
      * @param defaultName default item name
      */
-    public POIXMLRelation(String type, String rel, String defaultName) {
-        this(type, rel, defaultName, null);
+    protected POIXMLRelation(String type, String rel, String defaultName) {
+        this(type, rel, defaultName, null, null, null);
     }
     /**
      * Return the content type. Content types define a media type, a subtype, and an
@@ -114,7 +139,7 @@ public abstract class POIXMLRelation {
 
     /**
      * Returns the filename for the nth one of these, e.g. /xl/comments4.xml
-     * 
+     *
      * @param index the suffix for the document type
      * @return the filename including the suffix
      */
@@ -125,11 +150,11 @@ public abstract class POIXMLRelation {
         }
         return _defaultName.replace("#", Integer.toString(index));
     }
-    
+
     /**
      * Returns the index of the filename within the package for the given part.
      *  e.g. 4 for /xl/comments4.xml
-     *  
+     *
      * @param part the part to read the suffix from
      * @return the suffix
      */
@@ -137,14 +162,32 @@ public abstract class POIXMLRelation {
         String regex = _defaultName.replace("#", "(\\d+)");
         return Integer.valueOf(part.getPackagePart().getPartName().getName().replaceAll(regex, "$1"));
     }
-    
+
     /**
-     * Return type of the object used to construct instances of this relationship
+     * @return the constructor method used to construct instances of this relationship from scratch
      *
-     * @return the class of the object used to construct instances of this relation
+     *  @since 4.1.2
      */
-    public Class<? extends POIXMLDocumentPart> getRelationClass(){
-        return _cls;
+    public NoArgConstructor getNoArgConstructor() {
+        return noArgConstructor;
+    }
+
+    /**
+     * @return the constructor method used to construct instances of this relationship with a package part
+     *
+     *  @since 4.1.2
+     */
+    public PackagePartConstructor getPackagePartConstructor() {
+        return packagePartConstructor;
+    }
+
+    /**
+     * @return the constructor method used to construct instances of this relationship with a package part
+     *
+     *  @since 4.1.2
+     */
+    public ParentPartConstructor getParentPartConstructor() {
+        return parentPartConstructor;
     }
 
     /**

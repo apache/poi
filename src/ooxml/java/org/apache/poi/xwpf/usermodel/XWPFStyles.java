@@ -29,7 +29,6 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlOptions;
@@ -61,13 +60,13 @@ public class XWPFStyles extends POIXMLDocumentPart {
      * Construct XWPFStyles from a package part
      *
      * @param part the package part holding the data of the styles,
-     * 
+     *
      * @since POI 3.14-Beta1
      */
-    public XWPFStyles(PackagePart part) throws IOException, OpenXML4JException {
+    public XWPFStyles(PackagePart part) {
         super(part);
     }
-    
+
     /**
      * Construct XWPFStyles from scratch for a new document.
      */

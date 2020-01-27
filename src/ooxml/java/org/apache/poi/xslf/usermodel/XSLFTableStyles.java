@@ -46,9 +46,10 @@ public class XSLFTableStyles extends POIXMLDocumentPart implements Iterable<XSLF
     public XSLFTableStyles(PackagePart part) throws IOException, XmlException {
         super(part);
 
-        InputStream is = getPackagePart().getInputStream();
-        TblStyleLstDocument styleDoc = TblStyleLstDocument.Factory.parse(is);
-        is.close();
+        TblStyleLstDocument styleDoc;
+        try (InputStream is = getPackagePart().getInputStream()) {
+            styleDoc = TblStyleLstDocument.Factory.parse(is);
+        }
         _tblStyleLst = styleDoc.getTblStyleLst();
         List<CTTableStyle> tblStyles = _tblStyleLst.getTblStyleList();
         _styles = new ArrayList<>(tblStyles.size());
@@ -56,7 +57,7 @@ public class XSLFTableStyles extends POIXMLDocumentPart implements Iterable<XSLF
             _styles.add(new XSLFTableStyle(c));
         }
     }
-    
+
     public CTTableStyleList getXmlObject(){
         return _tblStyleLst;
     }

@@ -68,7 +68,7 @@ public abstract class XWPFHeaderFooter extends POIXMLDocumentPart implements IBo
     /**
      * @since by POI 3.14-Beta1
      */
-    public XWPFHeaderFooter(POIXMLDocumentPart parent, PackagePart part) throws IOException {
+    public XWPFHeaderFooter(POIXMLDocumentPart parent, PackagePart part) {
         super(parent, part);
         this.document = (XWPFDocument) getParent();
 

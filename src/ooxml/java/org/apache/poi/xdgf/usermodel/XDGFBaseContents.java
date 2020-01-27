@@ -25,6 +25,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.microsoft.schemas.office.visio.x2012.main.ConnectType;
+import com.microsoft.schemas.office.visio.x2012.main.PageContentsType;
+import com.microsoft.schemas.office.visio.x2012.main.ShapeSheetType;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Internal;
@@ -33,10 +36,6 @@ import org.apache.poi.xdgf.usermodel.shape.ShapeRenderer;
 import org.apache.poi.xdgf.usermodel.shape.ShapeVisitor;
 import org.apache.poi.xdgf.usermodel.shape.exceptions.StopVisiting;
 import org.apache.poi.xdgf.xml.XDGFXMLDocumentPart;
-
-import com.microsoft.schemas.office.visio.x2012.main.ConnectType;
-import com.microsoft.schemas.office.visio.x2012.main.PageContentsType;
-import com.microsoft.schemas.office.visio.x2012.main.ShapeSheetType;
 
 /**
  * Container of shapes for a page in a Visio diagram. Shapes are not
@@ -55,10 +54,10 @@ public class XDGFBaseContents extends XDGFXMLDocumentPart {
     /**
      * @since POI 3.14-Beta1
      */
-    public XDGFBaseContents(PackagePart part, XDGFDocument document) {
-        super(part, document);
+    public XDGFBaseContents(PackagePart part) {
+        super(part);
     }
-    
+
     @Internal
     public PageContentsType getXmlObject() {
         return _pageContents;
@@ -133,7 +132,7 @@ public class XDGFBaseContents extends XDGFXMLDocumentPart {
     public List<XDGFShape> getTopLevelShapes() {
         return Collections.unmodifiableList(_toplevelShapes);
     }
-    
+
     public List<XDGFConnection> getConnections() {
         return Collections.unmodifiableList(_connections);
     }

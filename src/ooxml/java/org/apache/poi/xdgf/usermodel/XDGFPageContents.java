@@ -21,13 +21,12 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.microsoft.schemas.office.visio.x2012.main.PageContentsDocument;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xdgf.exceptions.XDGFException;
 import org.apache.xmlbeans.XmlException;
-
-import com.microsoft.schemas.office.visio.x2012.main.PageContentsDocument;
 
 public class XDGFPageContents extends XDGFBaseContents {
 
@@ -37,10 +36,10 @@ public class XDGFPageContents extends XDGFBaseContents {
     /**
      * @since POI 3.14-Beta1
      */
-    public XDGFPageContents(PackagePart part, XDGFDocument document) {
-        super(part, document);
+    public XDGFPageContents(PackagePart part) {
+        super(part);
     }
-    
+
     @Override
     protected void onDocumentRead() {
         try {

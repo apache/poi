@@ -21,14 +21,12 @@ import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.namespace.QName;
 
 import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
@@ -56,13 +54,13 @@ public class XWPFEndnotes extends XWPFAbstractFootnotesEndnotes {
      * Construct XWPFEndnotes from a package part
      *
      * @param part the package part holding the data of the footnotes,
-     * 
+     *
      * @since POI 3.14-Beta1
      */
-    public XWPFEndnotes(PackagePart part) throws IOException, OpenXML4JException {
+    public XWPFEndnotes(PackagePart part) {
         super(part);
     }
-    
+
     /**
      * Set the end notes for this part.
      *
@@ -74,25 +72,25 @@ public class XWPFEndnotes extends XWPFAbstractFootnotesEndnotes {
     }
 
     /**
-     * Create a new end note and add it to the document. 
+     * Create a new end note and add it to the document.
      *
      * @return New XWPFEndnote
      * @since 4.0.0
      */
     public XWPFEndnote createEndnote() {
-        CTFtnEdn newNote = CTFtnEdn.Factory.newInstance(); 
+        CTFtnEdn newNote = CTFtnEdn.Factory.newInstance();
         newNote.setType(STFtnEdn.NORMAL);
 
         XWPFEndnote footnote = addEndnote(newNote);
         footnote.getCTFtnEdn().setId(getIdManager().nextId());
         return footnote;
-        
+
     }
 
     /**
      * Remove the specified footnote if present.
      *
-     * @param pos 
+     * @param pos
      * @return True if the footnote was removed.
      * @since 4.0.0
      */
@@ -118,7 +116,7 @@ public class XWPFEndnotes extends XWPFAbstractFootnotesEndnotes {
         } catch (XmlException e) {
             throw new POIXMLException();
         }
-    
+
         for (CTFtnEdn note : ctEndnotes.getEndnoteList()) {
             listFootnote.add(new XWPFEndnote(note, this));
         }
@@ -200,6 +198,6 @@ public class XWPFEndnotes extends XWPFAbstractFootnotesEndnotes {
         }
     }
 
-    
+
 
 }

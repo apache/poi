@@ -22,14 +22,12 @@ import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.namespace.QName;
 
 import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlException;
@@ -50,13 +48,13 @@ public class XWPFFootnotes extends XWPFAbstractFootnotesEndnotes {
      * Construct XWPFFootnotes from a package part
      *
      * @param part the package part holding the data of the footnotes,
-     * 
+     *
      * @since POI 3.14-Beta1
      */
-    public XWPFFootnotes(PackagePart part) throws IOException, OpenXML4JException {
+    public XWPFFootnotes(PackagePart part) {
         super(part);
     }
-    
+
     /**
      * Construct XWPFFootnotes from scratch for a new document.
      */
@@ -74,19 +72,19 @@ public class XWPFFootnotes extends XWPFAbstractFootnotesEndnotes {
     }
 
     /**
-     * Create a new footnote and add it to the document. 
+     * Create a new footnote and add it to the document.
      *
      * @return New {@link XWPFFootnote}
      * @since 4.0.0
      */
     public XWPFFootnote createFootnote() {
-        CTFtnEdn newNote = CTFtnEdn.Factory.newInstance(); 
+        CTFtnEdn newNote = CTFtnEdn.Factory.newInstance();
         newNote.setType(STFtnEdn.NORMAL);
 
         XWPFFootnote footnote = addFootnote(newNote);
         footnote.getCTFtnEdn().setId(getIdManager().nextId());
         return footnote;
-        
+
     }
 
     /**
@@ -118,7 +116,7 @@ public class XWPFFootnotes extends XWPFAbstractFootnotesEndnotes {
         } catch (XmlException e) {
             throw new POIXMLException();
         }
-    
+
         for (CTFtnEdn note : ctFootnotes.getFootnoteList()) {
             listFootnote.add(new XWPFFootnote(note, this));
         }
@@ -172,7 +170,7 @@ public class XWPFFootnotes extends XWPFAbstractFootnotesEndnotes {
         }
         return resultList;
     }
-    
-    
+
+
 
 }

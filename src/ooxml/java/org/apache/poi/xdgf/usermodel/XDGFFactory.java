@@ -17,12 +17,11 @@
 
 package org.apache.poi.xdgf.usermodel;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
-
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLFactory;
 import org.apache.poi.ooxml.POIXMLRelation;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.xdgf.xml.XDGFXMLDocumentPart;
 
 /**
  * Instantiates sub-classes of POIXMLDocumentPart depending on their relationship type
@@ -42,28 +41,21 @@ public class XDGFFactory extends POIXMLFactory {
         return XDGFRelation.getInstance(relationshipType);
     }
 
-    /**
-     * @since POI 3.14-Beta1
-     */
     @Override
-    protected POIXMLDocumentPart createDocumentPart
-        (Class<? extends POIXMLDocumentPart> cls, Class<?>[] classes, Object[] values)
-    throws SecurityException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
-        Class<?>[] cl;
-        Object[] vals;
-        if (classes == null) {
-            cl = new Class<?>[]{XDGFDocument.class};
-            vals = new Object[]{document};
-        } else {
-            cl = new Class<?>[classes.length+1];
-            System.arraycopy(classes, 0, cl, 0, classes.length);
-            cl[classes.length] = XDGFDocument.class;
-            vals = new Object[values.length+1];
-            System.arraycopy(values, 0, vals, 0, values.length);
-            vals[values.length] = document;
+    public POIXMLDocumentPart createDocumentPart(POIXMLDocumentPart parent, PackagePart part) {
+        POIXMLDocumentPart newPart = super.createDocumentPart(parent, part);
+        if (newPart instanceof XDGFXMLDocumentPart) {
+            ((XDGFXMLDocumentPart)newPart).setDocument(document);
         }
-        
-        Constructor<? extends POIXMLDocumentPart> constructor = cls.getDeclaredConstructor(cl);
-        return constructor.newInstance(vals);
+        return newPart;
+    }
+
+    @Override
+    public POIXMLDocumentPart newDocumentPart(POIXMLRelation descriptor) {
+        POIXMLDocumentPart newPart = super.newDocumentPart(descriptor);
+        if (newPart instanceof XDGFXMLDocumentPart) {
+            ((XDGFXMLDocumentPart)newPart).setDocument(document);
+        }
+        return newPart;
     }
 }

@@ -23,6 +23,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.microsoft.schemas.office.visio.x2012.main.MasterType;
+import com.microsoft.schemas.office.visio.x2012.main.MastersDocument;
+import com.microsoft.schemas.office.visio.x2012.main.MastersType;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -30,10 +33,6 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.xdgf.exceptions.XDGFException;
 import org.apache.poi.xdgf.xml.XDGFXMLDocumentPart;
 import org.apache.xmlbeans.XmlException;
-
-import com.microsoft.schemas.office.visio.x2012.main.MasterType;
-import com.microsoft.schemas.office.visio.x2012.main.MastersDocument;
-import com.microsoft.schemas.office.visio.x2012.main.MastersType;
 
 /**
  * A collection of masters (typically stencils) in a Visio document
@@ -48,10 +47,10 @@ public class XDGFMasters extends XDGFXMLDocumentPart {
     /**
      * @since POI 3.14-Beta1
      */
-    public XDGFMasters(PackagePart part, XDGFDocument document) {
-        super(part, document);
+    public XDGFMasters(PackagePart part) {
+        super(part);
     }
-    
+
     @Internal
     protected MastersType getXmlObject() {
         return _mastersObject;

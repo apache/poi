@@ -29,7 +29,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.Thread.UncaughtExceptionHandler;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -37,6 +36,7 @@ import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
+import org.apache.poi.ooxml.util.PackageHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -44,7 +44,6 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.NullOutputStream;
-import org.apache.poi.ooxml.util.PackageHelper;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
@@ -61,7 +60,7 @@ public final class TestPOIXMLDocument {
         public OPCParser(OPCPackage pkg) {
             super(pkg);
         }
-        
+
         public OPCParser(OPCPackage pkg, String coreDocumentRel) {
             super(pkg, coreDocumentRel);
         }
@@ -86,16 +85,6 @@ public final class TestPOIXMLDocument {
         protected POIXMLRelation getDescriptor(String relationshipType) {
             return null;
         }
-
-        /**
-         * @since POI 3.14-Beta1
-         */
-        @Override
-        protected POIXMLDocumentPart createDocumentPart
-            (Class<? extends POIXMLDocumentPart> cls, Class<?>[] classes, Object[] values)
-        throws SecurityException, NoSuchMethodException, InstantiationException, IllegalAccessException, InvocationTargetException {
-            return null;
-        }
     }
 
     private static void traverse(POIXMLDocument doc) throws IOException{
@@ -104,18 +93,18 @@ public final class TestPOIXMLDocument {
             traverse(p, context);
         }
     }
-    
+
     /**
      * Recursively traverse a OOXML document and assert that same logical parts have the same physical instances
      */
     private static void traverse(RelationPart rp, HashMap<String,POIXMLDocumentPart> context) throws IOException{
         POIXMLDocumentPart dp = rp.getDocumentPart();
         assertEquals(rp.getRelationship().getTargetURI().toString(), dp.getPackagePart().getPartName().getName());
-        
+
         context.put(dp.getPackagePart().getPartName().getName(), dp);
         for(RelationPart p : dp.getRelationParts()){
             assertNotNull(p.getRelationship().toString());
-            
+
             String uri = p.getDocumentPart().getPackagePart().getPartName().getURI().toString();
             assertEquals(uri, p.getRelationship().getTargetURI().toString());
             if (!context.containsKey(uri)) {
@@ -138,7 +127,7 @@ public final class TestPOIXMLDocument {
         FileOutputStream out = new FileOutputStream(tmp);
         doc.write(out);
         out.close();
-        
+
         // Should not be able to write to an output stream that has been closed
         try {
             doc.write(out);
@@ -166,7 +155,7 @@ public final class TestPOIXMLDocument {
                 throw e;
             }
         }
-        
+
         // Should be able to close a document multiple times, though subsequent closes will have no effect.
         doc.close();
 
@@ -177,17 +166,17 @@ public final class TestPOIXMLDocument {
         try {
             doc.parse(new TestFactory());
             traverse(doc);
-    
+
             assertEquals(pkg1.getRelationships().size(), pkg2.getRelationships().size());
-    
+
             ArrayList<PackagePart> l1 = pkg1.getParts();
             ArrayList<PackagePart> l2 = pkg2.getParts();
-    
+
             assertEquals(l1.size(), l2.size());
             for (int i=0; i < l1.size(); i++){
                 PackagePart p1 = l1.get(i);
                 PackagePart p2 = l2.get(i);
-    
+
                 assertEquals(p1.getContentType(), p2.getContentType());
                 assertEquals(p1.hasRelationships(), p2.hasRelationships());
                 if(p1.hasRelationships()){
@@ -234,7 +223,7 @@ public final class TestPOIXMLDocument {
             }
         }
     }
-    
+
     @Test
     public void testGetNextPartNumber() throws Exception {
         POIDataSamples pds = POIDataSamples.getDocumentInstance();
@@ -280,32 +269,32 @@ public final class TestPOIXMLDocument {
         part.onDocumentCreate();
         //part.getTargetPart(null);
     }
-    
+
     @Test
     public void testVSDX() throws Exception {
         POIDataSamples pds = POIDataSamples.getDiagramInstance();
         @SuppressWarnings("resource")
         OPCPackage open = PackageHelper.open(pds.openResourceAsStream("test.vsdx"));
         POIXMLDocument part = new OPCParser(open, PackageRelationshipTypes.VISIO_CORE_DOCUMENT);
-        
+
         assertNotNull(part);
         assertEquals(0, part.getRelationCounter());
         part.close();
     }
-    
+
     @Test
     public void testVSDXPart() throws IOException {
         POIDataSamples pds = POIDataSamples.getDiagramInstance();
         OPCPackage open = PackageHelper.open(pds.openResourceAsStream("test.vsdx"));
-        
+
         POIXMLDocumentPart part = new POIXMLDocumentPart(open, PackageRelationshipTypes.VISIO_CORE_DOCUMENT);
-        
+
         assertNotNull(part);
         assertEquals(0, part.getRelationCounter());
-        
+
         open.close();
     }
-    
+
     @Test(expected=POIXMLException.class)
     public void testInvalidCoreRel() throws IOException {
         POIDataSamples pds = POIDataSamples.getDiagramInstance();
@@ -349,7 +338,7 @@ public final class TestPOIXMLDocument {
 
         ClassLoader cl = getClass().getClassLoader();
         UncaughtHandler uh = new UncaughtHandler();
-        
+
         // check schema type loading and check if we could run in an OOM
         Thread[] ta = new Thread[30];
         for (int j=0; j<10; j++) {
@@ -372,12 +361,12 @@ public final class TestPOIXMLDocument {
 
     private static class UncaughtHandler implements UncaughtExceptionHandler {
         Throwable e;
-        
+
         public synchronized void uncaughtException(Thread t, Throwable e) {
             this.e = e;
-            
+
         }
-        
+
         public synchronized boolean hasException() {
             return e != null;
         }
