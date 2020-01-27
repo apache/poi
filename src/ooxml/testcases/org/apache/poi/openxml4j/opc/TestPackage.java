@@ -79,6 +79,7 @@ import java.io.OutputStream;
 import java.io.PushbackInputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -86,7 +87,6 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
-import java.util.zip.ZipException;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -113,7 +113,7 @@ public final class TestPackage {
         OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE);
 		try {
     		p.save(targetFile.getAbsoluteFile());
-    
+
     		// Compare the original and newly saved document
     		assertTrue(targetFile.exists());
     		ZipFileAssert.assertEquals(new File(originalFile), targetFile);
@@ -160,7 +160,7 @@ public final class TestPackage {
 						PackagingURIHelper.createPartName("/foo.txt")
 				)
 		);
-		
+
 		pkg.revert();
 	}
 
@@ -229,7 +229,7 @@ public final class TestPackage {
         PackagePart corePart = pkg.createPart(corePartName, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml");
         // Put in some dummy content
         OutputStream coreOut = corePart.getOutputStream();
-        coreOut.write("<dummy-xml />".getBytes("UTF-8"));
+        coreOut.write("<dummy-xml />".getBytes(StandardCharsets.UTF_8));
         coreOut.close();
 
 		// And another bit
@@ -243,7 +243,7 @@ public final class TestPackage {
 
         // Dummy content again
         coreOut = corePart.getOutputStream();
-        coreOut.write("<dummy-xml2 />".getBytes("UTF-8"));
+        coreOut.write("<dummy-xml2 />".getBytes(StandardCharsets.UTF_8));
         coreOut.close();
 
         //add a relationship with internal target: "#Sheet1!A1"
@@ -280,13 +280,13 @@ public final class TestPackage {
             assertEquals("/xl/workbook.xml", coreRel.getTargetURI().toString());
             corePart = pkg.getPart(coreRel);
             assertNotNull(corePart);
-    
+
             PackageRelationshipCollection rels = corePart.getRelationshipsByType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink");
             assertEquals(1, rels.size());
             rel = rels.getRelationship(0);
 			assertNotNull(rel);
             assertEquals("Sheet1!A1", rel.getTargetURI().getRawFragment());
-    
+
             assertMSCompatibility(pkg);
         } finally {
             pkg.close();
@@ -384,7 +384,7 @@ public final class TestPackage {
 			try (FileOutputStream fout = new FileOutputStream(targetFile)) {
 				p.save(fout);
 			}
-    
+
     		// Compare the original and newly saved document
     		assertTrue(targetFile.exists());
     		ZipFileAssert.assertEquals(new File(originalFile), targetFile);
@@ -404,28 +404,29 @@ public final class TestPackage {
 	public void openFromInputStream() throws IOException, InvalidFormatException {
 		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
 
-		FileInputStream finp = new FileInputStream(originalFile);
+		try (FileInputStream finp = new FileInputStream(originalFile)) {
+			@SuppressWarnings("resource")
+			OPCPackage p = OPCPackage.open(finp);
 
-		@SuppressWarnings("resource")
-        OPCPackage p = OPCPackage.open(finp);
+			try {
+				assertNotNull(p);
+				assertNotNull(p.getRelationships());
+				assertEquals(12, p.getParts().size());
 
-		assertNotNull(p);
-		assertNotNull(p.getRelationships());
-		assertEquals(12, p.getParts().size());
-
-		// Check it has the usual bits
-		assertTrue(p.hasRelationships());
-		assertTrue(p.containPart(PackagingURIHelper.createPartName("/_rels/.rels")));
-		
-		p.revert();
-		finp.close();
+				// Check it has the usual bits
+				assertTrue(p.hasRelationships());
+				assertTrue(p.containPart(PackagingURIHelper.createPartName("/_rels/.rels")));
+			} finally {
+				p.revert();
+			}
+		}
 	}
 
     /**
      * TODO: fix and enable
      */
     @Test
-    @Ignore
+	@Ignore
     public void removePartRecursive() throws IOException, InvalidFormatException, URISyntaxException {
 		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
 		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageRemovePartRecursiveOUTPUT.docx");
@@ -433,16 +434,18 @@ public final class TestPackage {
 
 		@SuppressWarnings("resource")
         OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE);
-		p.removePartRecursive(PackagingURIHelper.createPartName(new URI(
-				"/word/document.xml")));
-		p.save(tempFile.getAbsoluteFile());
+		try {
+			p.removePartRecursive(PackagingURIHelper.createPartName(new URI(
+					"/word/document.xml")));
+			p.save(tempFile.getAbsoluteFile());
 
-		// Compare the original and newly saved document
-		assertTrue(targetFile.exists());
-		ZipFileAssert.assertEquals(targetFile, tempFile);
-		assertTrue(targetFile.delete());
-		
-		p.revert();
+			// Compare the original and newly saved document
+			assertTrue(targetFile.exists());
+			ZipFileAssert.assertEquals(targetFile, tempFile);
+			assertTrue(targetFile.delete());
+		} finally {
+			p.revert();
+		}
 	}
 
     @Test
@@ -543,7 +546,7 @@ public final class TestPackage {
 		// Don't save modifications
 		p.revert();
 	}
-	
+
 	/**
 	 * Test that we can open a file by path, and then
 	 *  write changes to it.
@@ -553,18 +556,18 @@ public final class TestPackage {
         File tempFile = TempFile.createTempFile("poiTesting","tmp");
         File origFile = OpenXML4JTestDataSamples.getSampleFile("TestPackageCommon.docx");
         FileHelper.copyFile(origFile, tempFile);
-        
+
         // Open the temp file
         OPCPackage p = OPCPackage.open(tempFile.toString(), PackageAccess.READ_WRITE);
         // Close it
         p.close();
         // Delete it
         assertTrue(tempFile.delete());
-        
+
         // Reset
         FileHelper.copyFile(origFile, tempFile);
         p = OPCPackage.open(tempFile.toString(), PackageAccess.READ_WRITE);
-        
+
         // Save it to the same file - not allowed
         try {
             p.save(tempFile);
@@ -576,14 +579,15 @@ public final class TestPackage {
         p.close();
         // Delete it
         assertTrue(tempFile.delete());
-        
-        
+
+
         // Open it read only, then close and delete - allowed
         FileHelper.copyFile(origFile, tempFile);
         p = OPCPackage.open(tempFile.toString(), PackageAccess.READ);
         p.close();
         assertTrue(tempFile.delete());
 	}
+
     /**
      * Test that we can open a file by path, save it
      *  to another file, then delete both
@@ -594,14 +598,13 @@ public final class TestPackage {
         File tempFile2 = TempFile.createTempFile("poiTesting","tmp");
         File origFile = OpenXML4JTestDataSamples.getSampleFile("TestPackageCommon.docx");
         FileHelper.copyFile(origFile, tempFile);
-        
-        // Open the temp file
-        OPCPackage p = OPCPackage.open(tempFile.toString(), PackageAccess.READ_WRITE);
 
-        // Save it to a different file
-        p.save(tempFile2);
-        p.close();
-        
+        // Open the temp file
+		try (OPCPackage p = OPCPackage.open(tempFile.toString(), PackageAccess.READ_WRITE)) {
+			// Save it to a different file
+			p.save(tempFile2);
+		}
+
         // Delete both the files
         assertTrue(tempFile.delete());
         assertTrue(tempFile2.delete());
@@ -620,10 +623,10 @@ public final class TestPackage {
         try {
             List<PackagePart> rs =  pkg.getPartsByName(Pattern.compile("/word/.*?\\.xml"));
             HashMap<String, PackagePart>  selected = new HashMap<>();
-    
+
             for(PackagePart p : rs)
                 selected.put(p.getPartName().getName(), p);
-    
+
             assertEquals(6, selected.size());
             assertTrue(selected.containsKey("/word/document.xml"));
             assertTrue(selected.containsKey("/word/fontTable.xml"));
@@ -636,7 +639,7 @@ public final class TestPackage {
             pkg.revert();
         }
     }
-    
+
     @Test
     public void getPartSize() throws IOException, InvalidFormatException {
        String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
@@ -690,7 +693,7 @@ public final class TestPackage {
         p.revert();
         is.close();
     }
-    
+
     /**
      * Verify we give helpful exceptions (or as best we can) when
      *  supplied with non-OOXML file types (eg OLE2, ODF)
@@ -699,7 +702,7 @@ public final class TestPackage {
     public void NonOOXMLFileTypes() throws Exception {
         // Spreadsheet has a good mix of alternate file types
         POIDataSamples files = POIDataSamples.getSpreadSheetInstance();
-        
+
         // OLE2 - Stream
         try {
 			try (InputStream stream = files.openResourceAsStream("SampleSS.xls")) {
@@ -718,7 +721,7 @@ public final class TestPackage {
             assertTrue(e.getMessage().contains("The supplied data appears to be in the OLE2 Format"));
             assertTrue(e.getMessage().contains("You are calling the part of POI that deals with OOXML"));
         }
-        
+
         // Raw XML - Stream
         try {
 			try (InputStream stream = files.openResourceAsStream("SampleSS.xml")) {
@@ -737,7 +740,7 @@ public final class TestPackage {
             assertTrue(e.getMessage().contains("The supplied data appears to be a raw XML file"));
             assertTrue(e.getMessage().contains("Formats such as Office 2003 XML"));
         }
-        
+
         // ODF / ODS - Stream
         try {
 			try (InputStream stream = files.openResourceAsStream("SampleSS.ods")) {
@@ -756,7 +759,7 @@ public final class TestPackage {
             assertTrue(e.toString().contains("The supplied data appears to be in ODF"));
             assertTrue(e.toString().contains("Formats like these (eg ODS"));
         }
-        
+
         // Plain Text - Stream
         try {
 			try (InputStream stream = files.openResourceAsStream("SampleSS.txt")) {
@@ -814,7 +817,7 @@ public final class TestPackage {
 								append.write(spam);
 								size += spam.length;
 							}
-							append.write("</Types>".getBytes("UTF-8"));
+							append.write("</Types>".getBytes(StandardCharsets.UTF_8));
 							size += 8;
 							eOut.setSize(size);
 						} else {
@@ -969,7 +972,7 @@ public final class TestPackage {
             ZipSecureFile.setMaxTextSize(before);
         }
     }
-    
+
     // bug 60128
     @Test(expected=NotOfficeXmlFileException.class)
     public void testCorruptFile() throws InvalidFormatException {
@@ -989,7 +992,7 @@ public final class TestPackage {
                 new PushbackInputStream(new FileInputStream(hssf), 2),
                 new BufferedInputStream(new FileInputStream(hssf), 2),
         };
-        
+
         try {
             for (InputStream is : isList) {
                 WorkbookFactory.create(is).close();
@@ -1099,9 +1102,10 @@ public final class TestPackage {
 	public void testBug62592SequentialCallsToGetParts() throws Exception {
 		//make absolutely certain that sequential calls don't throw InvalidFormatExceptions
 		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
-		OPCPackage p2 = OPCPackage.open(originalFile, PackageAccess.READ);
-		p2.getParts();
-		p2.getParts();
+		try (OPCPackage p2 = OPCPackage.open(originalFile, PackageAccess.READ)) {
+			p2.getParts();
+			p2.getParts();
+		}
 	}
 
 	@Test
@@ -1189,6 +1193,7 @@ public final class TestPackage {
 		}
 	}
 
+	@SuppressWarnings("UnstableApiUsage")
 	@Test
 	public void testBug63029() throws Exception {
 		File testFile = OpenXML4JTestDataSamples.getSampleFile("sample.docx");
@@ -1212,6 +1217,7 @@ public final class TestPackage {
 			ex = e;
 		}
 		// verify there was an exception while closing the file
+		assertNotNull("Fail to save: an error occurs while saving the package : Bugzilla 63029", ex);
 		assertEquals("Fail to save: an error occurs while saving the package : Bugzilla 63029", ex.getMessage());
 
 		// assert that md5 after closing is the same, i.e. the source is left intact

@@ -99,7 +99,7 @@ public class XSSFFont implements Font {
         setFontName(DEFAULT_FONT_NAME);
         setFontHeight((double)DEFAULT_FONT_SIZE);
     }
-    
+
     /**
      * get the underlying CTFont font
      */
@@ -209,7 +209,7 @@ public class XSSFFont implements Font {
     public short getFontHeightInPoints() {
         return (short)getFontHeightRaw();
     }
-    
+
     /**
      * Return the raw font height, in points, but also
      *  including fractions.
@@ -540,7 +540,7 @@ public class XSSFFont implements Font {
 
 
     /**
-     * Perform a registration of ourselves 
+     * Perform a registration of ourselves
      *  to the style table
      */
     public long registerTo(StylesTable styles) {
@@ -649,7 +649,7 @@ public class XSSFFont implements Font {
                         && Objects.equals(this.getBold(), cf.getBold())
                         && Objects.equals(this.getStrikeout(), cf.getStrikeout())
                         && Objects.equals(this.getCharSet(), cf.getCharSet())
-                        && Objects.equals(this.getBold(), cf.getBold())
+                        && Objects.equals(this.getItalic(), cf.getItalic())
                         && Objects.equals(this.getColor(), cf.getColor())
                         && Objects.equals(this.getFamily(), cf.getFamily())
                         && Objects.equals(this.getFontHeight(), cf.getFontHeight())

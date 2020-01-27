@@ -588,14 +588,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
 
     public XDDFValueAxis createValueAxis(AxisPosition pos) {
         XDDFValueAxis valueAxis = new XDDFValueAxis(getCTPlotArea(), pos);
-        if (axes.size() == 1) {
-            XDDFChartAxis axis = axes.get(0);
-            axis.crossAxis(valueAxis);
-            valueAxis.crossAxis(axis);
-            axis.setCrosses(AxisCrosses.AUTO_ZERO);
-            valueAxis.setCrosses(AxisCrosses.AUTO_ZERO);
-        }
-        axes.add(valueAxis);
+        addAxis(valueAxis);
         return valueAxis;
     }
 
@@ -607,41 +600,31 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      */
     public XDDFSeriesAxis createSeriesAxis(AxisPosition pos) {
         XDDFSeriesAxis seriesAxis = new XDDFSeriesAxis(getCTPlotArea(), pos);
-        if (axes.size() == 1) {
-            XDDFChartAxis axis = axes.get(0);
-            axis.crossAxis(seriesAxis);
-            seriesAxis.crossAxis(axis);
-            axis.setCrosses(AxisCrosses.AUTO_ZERO);
-            seriesAxis.setCrosses(AxisCrosses.AUTO_ZERO);
-        }
-        axes.add(seriesAxis);
+        addAxis(seriesAxis);
         return seriesAxis;
     }
 
     public XDDFCategoryAxis createCategoryAxis(AxisPosition pos) {
         XDDFCategoryAxis categoryAxis = new XDDFCategoryAxis(getCTPlotArea(), pos);
-        if (axes.size() == 1) {
-            XDDFChartAxis axis = axes.get(0);
-            axis.crossAxis(categoryAxis);
-            categoryAxis.crossAxis(axis);
-            axis.setCrosses(AxisCrosses.AUTO_ZERO);
-            categoryAxis.setCrosses(AxisCrosses.AUTO_ZERO);
-        }
-        axes.add(categoryAxis);
+        addAxis(categoryAxis);
         return categoryAxis;
     }
 
     public XDDFDateAxis createDateAxis(AxisPosition pos) {
         XDDFDateAxis dateAxis = new XDDFDateAxis(getCTPlotArea(), pos);
+        addAxis(dateAxis);
+        return dateAxis;
+    }
+
+    private void addAxis(XDDFChartAxis newAxis) {
         if (axes.size() == 1) {
             XDDFChartAxis axis = axes.get(0);
-            axis.crossAxis(dateAxis);
-            dateAxis.crossAxis(axis);
+            axis.crossAxis(newAxis);
+            newAxis.crossAxis(axis);
             axis.setCrosses(AxisCrosses.AUTO_ZERO);
-            dateAxis.setCrosses(AxisCrosses.AUTO_ZERO);
+            newAxis.setCrosses(AxisCrosses.AUTO_ZERO);
         }
-        axes.add(dateAxis);
-        return dateAxis;
+        axes.add(newAxis);
     }
 
     /**
@@ -774,7 +757,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     public PackageRelationship createRelationshipInChart(POIXMLRelation chartRelation, POIXMLFactory chartFactory,
         int chartIndex) {
         documentPart = createRelationship(chartRelation, chartFactory, chartIndex, true).getDocumentPart();
-        return this.addRelation(null, chartRelation, documentPart).getRelationship();
+        return addRelation(null, chartRelation, documentPart).getRelationship();
     }
 
     /**
@@ -793,7 +776,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     private PackagePart createWorksheetPart(POIXMLRelation chartRelation, POIXMLRelation chartWorkbookRelation,
         POIXMLFactory chartFactory) throws InvalidFormatException {
         PackageRelationship xlsx = createRelationshipInChart(chartWorkbookRelation, chartFactory, chartIndex);
-        this.setExternalId(xlsx.getId());
+        setExternalId(xlsx.getId());
         return getTargetPart(xlsx);
     }
 
@@ -859,14 +842,14 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     protected void fillSheet(XSSFSheet sheet, XDDFDataSource<?> categoryData, XDDFNumericalDataSource<?> valuesData) {
         int numOfPoints = categoryData.getPointCount();
         for (int i = 0; i < numOfPoints; i++) {
-            XSSFRow row = this.getRow(sheet, i + 1); // first row is for title
+            XSSFRow row = getRow(sheet, i + 1); // first row is for title
             Object category = categoryData.getPointAt(i);
             if (category != null) {
-                this.getCell(row, categoryData.getColIndex()).setCellValue(category.toString());
+                getCell(row, categoryData.getColIndex()).setCellValue(category.toString());
             }
             Number value = valuesData.getPointAt(i);
             if (value != null) {
-                this.getCell(row, valuesData.getColIndex()).setCellValue(value.doubleValue());
+                getCell(row, valuesData.getColIndex()).setCellValue(value.doubleValue());
             }
         }
     }
@@ -956,8 +939,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      */
     public CellReference setSheetTitle(String title, int column) {
         XSSFSheet sheet = getSheet();
-        XSSFRow row = this.getRow(sheet, 0);
-        XSSFCell cell = this.getCell(row, column);
+        XSSFRow row = getRow(sheet, 0);
+        XSSFCell cell = getCell(row, column);
         cell.setCellValue(title);
 
         return new CellReference(sheet.getSheetName(), 0, column, true, true);

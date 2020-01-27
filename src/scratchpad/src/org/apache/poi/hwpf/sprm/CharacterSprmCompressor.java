@@ -94,7 +94,7 @@ public final class CharacterSprmCompressor
 
        size += SprmUtils.addSprm((short)0x6a09, 0, varParam, sprmList);
     }
-    if (newCHP.isFOle2() != newCHP.isFOle2())
+    if (newCHP.isFOle2() != oldCHP.isFOle2())
     {
       int value = 0;
       if (newCHP.isFOle2())

@@ -59,6 +59,10 @@ public class OutlookTextExtractor extends POIOLE2TextExtractor {
     }
 
     public static void main(String[] args) throws Exception {
+        if(args.length == 0) {
+            System.err.println("Usage: OutlookTextExtractor <file> [<file> ...]");
+            System.exit(1);
+        }
         for (String filename : args) {
             try (POIFSFileSystem poifs = new POIFSFileSystem(new File(filename));
                  OutlookTextExtractor extractor = new OutlookTextExtractor(poifs)) {

@@ -103,7 +103,7 @@ public final class TestXSSFFont extends BaseTestFont{
         assertEquals(FontCharset.ARABIC.getValue(), xssfFont.getCharSet());
         xssfFont.setCharSet((byte)(FontCharset.ARABIC.getValue()));
         assertEquals(FontCharset.ARABIC.getValue(), xssfFont.getCharSet());
-        
+
         // This one isn't allowed
         assertNull(FontCharset.valueOf(9999));
         try {
@@ -112,20 +112,20 @@ public final class TestXSSFFont extends BaseTestFont{
         } catch(POIXMLException e) {
         	// expected here
 		}
-      
-		
+
+
 		// Now try with a few sample files
-		
+
 		// Normal charset
         XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("Formatting.xlsx");
-        assertEquals(0, 
+        assertEquals(0,
               wb1.getSheetAt(0).getRow(0).getCell(0).getCellStyle().getFont().getCharSet()
         );
         wb1.close();
-		
+
 		// GB2312 charset
         XSSFWorkbook wb2 = XSSFTestDataSamples.openSampleWorkbook("49273.xlsx");
-        assertEquals(134, 
+        assertEquals(134,
               wb2.getSheetAt(0).getRow(0).getCell(0).getCellStyle().getFont().getCharSet()
         );
         wb2.close();
@@ -253,13 +253,13 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertEquals(ctFont.getColorArray(0).getRgb()[3],xssfFont.getXSSFColor().getRGB()[3]);
 
 		xssfFont.setColor((short)23);
-		
+
 		byte[] bytes = Integer.toHexString(0xF1F1F1).getBytes(LocaleUtil.CHARSET_1252);
         color.setRgb(bytes);
 		XSSFColor newColor=XSSFColor.from(color, null);
 		xssfFont.setColor(newColor);
 		assertEquals(ctFont.getColorArray(0).getRgb()[2],newColor.getRGB()[2]);
-		
+
 		assertArrayEquals(bytes, xssfFont.getXSSFColor().getRGB());
 		assertEquals(0, xssfFont.getColor());
 	}
@@ -325,16 +325,16 @@ public final class TestXSSFFont extends BaseTestFont{
         // cannot check on result because on some machines we get back false here!
         SheetUtil.canComputeColumnWidth(wb.getFontAt(0));
 
-        wb.close();        
+        wb.close();
     }
 
     // store test from TestSheetUtil here as it uses XSSF
 	@Test
-	public void testCanComputeWidthInvalidFont() throws IOException {
+	public void testCanComputeWidthInvalidFont() {
         Font font = new XSSFFont(CTFont.Factory.newInstance());
         font.setFontName("some non existing font name");
-        
-        // Even with invalid fonts we still get back useful data most of the time... 
+
+        // Even with invalid fonts we still get back useful data most of the time...
         SheetUtil.canComputeColumnWidth(font);
     }
 
@@ -438,5 +438,20 @@ public final class TestXSSFFont extends BaseTestFont{
 		);
 
 		wb.close();
+	}
+
+	@Test
+	public void testEquals() {
+		XSSFFont font = new XSSFFont();
+		XSSFFont equ = new XSSFFont();
+		XSSFFont notequ = new XSSFFont();
+		notequ.setItalic(true);
+
+		assertEquals(equ, font);
+		assertNotEquals(font, notequ);
+
+		notequ.setItalic(false);
+		notequ.setThemeColor((short)123);
+		assertNotEquals(font, notequ);
 	}
 }

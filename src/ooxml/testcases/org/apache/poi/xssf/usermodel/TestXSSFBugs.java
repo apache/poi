@@ -1919,29 +1919,31 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     @Test
     public void test54764WithSAXHelper() throws Exception {
         File testFile = XSSFTestDataSamples.getSampleFile("54764.xlsx");
-        ZipFile zip = new ZipFile(testFile);
-        ZipArchiveEntry ze = zip.getEntry("xl/sharedStrings.xml");
-        XMLReader reader = XMLHelper.newXMLReader();
-        try {
-            reader.parse(new InputSource(zip.getInputStream(ze)));
-            fail("should have thrown SAXParseException");
-        } catch (SAXParseException e) {
-            assertNotNull(e.getMessage());
-            assertTrue(e.getMessage().contains("more than \"1\" entity"));
+        try (ZipFile zip = new ZipFile(testFile)) {
+            ZipArchiveEntry ze = zip.getEntry("xl/sharedStrings.xml");
+            XMLReader reader = XMLHelper.newXMLReader();
+            try {
+                reader.parse(new InputSource(zip.getInputStream(ze)));
+                fail("should have thrown SAXParseException");
+            } catch (SAXParseException e) {
+                assertNotNull(e.getMessage());
+                assertTrue(e.getMessage().contains("more than \"1\" entity"));
+            }
         }
     }
 
     @Test
     public void test54764WithDocumentHelper() throws Exception {
         File testFile = XSSFTestDataSamples.getSampleFile("54764.xlsx");
-        ZipFile zip = new ZipFile(testFile);
-        ZipArchiveEntry ze = zip.getEntry("xl/sharedStrings.xml");
-        try {
-            DocumentHelper.readDocument(zip.getInputStream(ze));
-            fail("should have thrown SAXParseException");
-        } catch (SAXParseException e) {
-            assertNotNull(e.getMessage());
-            assertNotEquals(isOldXercesActive(), e.getMessage().contains("DOCTYPE is disallowed when the feature"));
+        try (ZipFile zip = new ZipFile(testFile)) {
+            ZipArchiveEntry ze = zip.getEntry("xl/sharedStrings.xml");
+            try {
+                DocumentHelper.readDocument(zip.getInputStream(ze));
+                fail("should have thrown SAXParseException");
+            } catch (SAXParseException e) {
+                assertNotNull(e.getMessage());
+                assertNotEquals(isOldXercesActive(), e.getMessage().contains("DOCTYPE is disallowed when the feature"));
+            }
         }
     }
 

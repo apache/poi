@@ -49,8 +49,6 @@ public class TestPPTX2PNG {
         "backgrounds.pptx, layouts.pptx, sample.pptx, shapes.pptx, 54880_chinese.ppt, keyframes.pptx," +
         "customGeo.pptx, customGeo.ppt, wrench.emf, santa.wmf";
 
-
-
     @BeforeClass
     public static void checkHslf() {
         try {
@@ -61,7 +59,7 @@ public class TestPPTX2PNG {
     }
 
     // use filename instead of File object to omit full pathname in test name
-    @Parameter(value = 0)
+    @Parameter
     public String pptFile;
 
     @SuppressWarnings("ConstantConditions")

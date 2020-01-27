@@ -25,7 +25,6 @@ import java.awt.Shape;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -57,11 +56,11 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
     private final List<HemfRecord> records = new ArrayList<>();
     private boolean isParsed = false;
 
-    public HemfPicture(InputStream is) throws IOException {
+    public HemfPicture(InputStream is) {
         this(new LittleEndianInputStream(is));
     }
 
-    public HemfPicture(LittleEndianInputStream is) throws IOException {
+    public HemfPicture(LittleEndianInputStream is) {
         stream = is;
     }
 
@@ -175,13 +174,11 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
             prop.setViewportOrg(emfBounds.getX(), emfBounds.getY());
             prop.setViewportExt(emfBounds.getWidth(), emfBounds.getHeight());
 
-            int idx = 0;
             for (HemfRecord r : getRecords()) {
                 try {
                     g.draw(r);
                 } catch (RuntimeException ignored) {
                 }
-                idx++;
             }
         } finally {
             ctx.setTransform(at);

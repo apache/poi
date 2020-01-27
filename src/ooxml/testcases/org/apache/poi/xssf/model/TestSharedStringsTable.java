@@ -234,12 +234,13 @@ public final class TestSharedStringsTable {
 
         Path path = XSSFTestDataSamples.getSampleFile("48936-strings.txt").toPath();
 
-        Stream<String> lines = Files.lines(path, StandardCharsets.UTF_8);
-        List<String> lst = lines
-            .map(String::trim)
-            .filter(((Predicate<String>)String::isEmpty).negate())
-            .collect(Collectors.toList());
-        lines.close();
+        final List<String> lst;
+        try (Stream<String> lines = Files.lines(path, StandardCharsets.UTF_8)) {
+            lst = lines
+                    .map(String::trim)
+                    .filter(((Predicate<String>) String::isEmpty).negate())
+                    .collect(Collectors.toList());
+        }
 
         for (String str : lst) {
             s.createRow(i++).createCell(0).setCellValue(str);
