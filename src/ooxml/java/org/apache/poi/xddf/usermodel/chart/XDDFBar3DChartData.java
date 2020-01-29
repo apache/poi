@@ -251,6 +251,27 @@ public class XDDFBar3DChartData extends XDDFChartData {
             }
         }
 
+        /**
+         * @since 4.1.2
+         */
+        public boolean getInvertIfNegative() {
+            if (series.isSetInvertIfNegative()) {
+                return series.getInvertIfNegative().getVal();
+            }
+            return false;
+        }
+
+        /**
+         * @since 4.1.2
+         */
+        public void setInvertIfNegative(boolean invertIfNegative) {
+            if (series.isSetInvertIfNegative()) {
+                series.getInvertIfNegative().setVal(invertIfNegative);
+            } else {
+                series.addNewInvertIfNegative().setVal(invertIfNegative);
+            }
+        }
+
         @Override
         public void setShowLeaderLines(boolean showLeaderLines) {
             if (!series.isSetDLbls()) {
