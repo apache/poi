@@ -127,7 +127,8 @@ public class TestPackagingURIHelper {
                 "..\\cygwin\\home\\yegor\\dinom\\%5baccess%5d.2010-10-26.log",
                 "#'Instructions (Text)'!B21",
                 "#'性'!B21",
-                "javascript://"
+                "javascript://",
+                "#ctl||rId16||cmdAddAction||_x0000_i1029"
         };
 
         for(String s : href){
