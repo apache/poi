@@ -37,6 +37,7 @@ javax.crypto.Cipher.getMaxAllowedKeyLength
 
 # IntelliJ
 com.intellij.junit4.JUnit4TestRunnerUtil.<clinit>
+com.intellij.rt.coverage.instrumentation.AbstractIntellijClassfileTransformer.getOrLoadClassReader
 
 # OpenJPA/Derby (regression testing)
 org.apache.derby.impl.services.stream.SingleStream.PBmakeFileHPW
@@ -66,3 +67,5 @@ java.text.BreakIterator.getBundle
 sun.java2d.SunGraphicsEnvironment.<init>
 org.kohsuke.file_leak_detector.AgentMain.runHttpServer
 org.apache.log4j.FileAppender.setFile
+sun.launcher.LauncherHelper.validateMainClass
+sun.util.locale.provider.RuleBasedBreakIterator$1.run2
