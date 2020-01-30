@@ -64,7 +64,8 @@ public class ComplexFileTable {
         this._grpprls = sprmBuffers.toArray(new SprmBuffer[0]);
 
         if (tableStream[offset] != TEXT_PIECE_TABLE_TYPE) {
-            throw new IOException("The text piece table is corrupted");
+            throw new IOException("The text piece table is corrupted, expected byte value " + TEXT_PIECE_TABLE_TYPE +
+                    " but had " + tableStream[offset]);
         }
         int pieceTableSize = LittleEndian.getInt(tableStream, ++offset);
         offset += LittleEndian.INT_SIZE;

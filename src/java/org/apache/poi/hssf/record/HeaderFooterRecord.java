@@ -89,13 +89,10 @@ public final class HeaderFooterRecord extends StandardRecord {
     }
 
     public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append('[').append("HEADERFOOTER").append("] (0x");
-        sb.append(Integer.toHexString(sid).toUpperCase(Locale.ROOT)).append(")\n");
-        sb.append("  rawData=").append(HexDump.toHex(_rawData)).append("\n");
-        sb.append("[/").append("HEADERFOOTER").append("]\n");
-        return sb.toString();
+        return '[' + "HEADERFOOTER" + "] (0x" +
+                Integer.toHexString(sid).toUpperCase(Locale.ROOT) + ")\n" +
+                "  rawData=" + HexDump.toHex(_rawData) + "\n" +
+                "[/" + "HEADERFOOTER" + "]\n";
     }
 
     @Override

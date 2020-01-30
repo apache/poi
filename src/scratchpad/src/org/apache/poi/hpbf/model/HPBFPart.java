@@ -60,7 +60,7 @@ public abstract class HPBFPart {
 				dir = (DirectoryNode)dir.getEntry(path[i]);
 			} catch (FileNotFoundException e) {
 				throw new IllegalArgumentException("File invalid - failed to find directory entry '"
-						+ path[i] + "'");
+						+ path[i] + "': " + e);
 			}
 		}
 		return dir;
@@ -101,7 +101,7 @@ public abstract class HPBFPart {
 	public final byte[] getData() {
 		return data;
 	}
-	
+
 	protected final void setData(byte[] data) {
 	    this.data = data.clone();
 	}

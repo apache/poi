@@ -50,7 +50,7 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
 
         // write out the file
         ByteArrayOutputStream out = writeToArray(ss);
-        
+
         readContent(ss);
 
         // read in the written file
@@ -67,11 +67,11 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
         } finally {
             stream.close();
         }
-        
+
         return stream;
     }
 
-    
+
     private void readContent(SlideShow<?,?> ss) {
         for (Slide<?,?> s : ss.getSlides()) {
             s.getTitle();
@@ -96,8 +96,8 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
     private void readShapes(Shape<?,?> s) {
         // recursively walk group-shapes
         if(s instanceof GroupShape) {
-            GroupShape<? extends Shape, ?> shapes = (GroupShape<? extends Shape, ?>) s;
-            for (Shape<? extends Shape, ?> shape : shapes) {
+            GroupShape<? extends Shape<?,?>, ?> shapes = (GroupShape<? extends Shape<?,?>, ?>) s;
+            for (Shape<? extends Shape<?,?>, ?> shape : shapes) {
                 readShapes(shape);
             }
         }
@@ -123,20 +123,22 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
             }
         }
     }
-    
+
     private void readPictures(SlideShow<?,?> ss) {
         for (PictureData pd : ss.getPictureData()) {
             Dimension dim = pd.getImageDimension();
-            assertTrue(dim.getHeight() >= 0);
-            assertTrue(dim.getWidth() >= 0);
+            assertTrue("Expecting a valid height, but had an image with height: " + dim.getHeight(),
+                    dim.getHeight() >= 0);
+            assertTrue("Expecting a valid width, but had an image with width: " + dim.getWidth(),
+                    dim.getWidth() >= 0);
         }
     }
-    
+
     private void renderSlides(SlideShow<?,?> ss) {
-        Dimension pgsize = ss.getPageSize();
+        Dimension pgSize = ss.getPageSize();
 
         for (Slide<?,?> s : ss.getSlides()) {
-            BufferedImage img = new BufferedImage(pgsize.width, pgsize.height, BufferedImage.TYPE_INT_ARGB);
+            BufferedImage img = new BufferedImage(pgSize.width, pgSize.height, BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = img.createGraphics();
 
             // default rendering options
@@ -145,10 +147,10 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
             graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
             graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
             graphics.setRenderingHint(Drawable.BUFFERED_IMAGE, new WeakReference<>(img));
-    
+
             // draw stuff
             s.draw(graphics);
-            
+
             graphics.dispose();
             img.flush();
         }
