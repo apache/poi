@@ -56,46 +56,42 @@ public class TestHemfPicture {
     private static final POIDataSamples ss_samples = POIDataSamples.getSpreadSheetInstance();
     private static final POIDataSamples sl_samples = POIDataSamples.getSlideShowInstance();
 
-    /*
+/*
+    @Test
+    @Ignore("Only for manual tests")
+    public void paintSingle() throws Exception {
+        File fileIn = new File("tmp/emfs/govdocs1/844/844795.ppt_2.emf");
+
+        String[] args = {
+                "-format", "png", // png,gif,jpg or null for test
+                "-outdir", new File("build/tmp/").getCanonicalPath(),
+                "-outfile", fileIn.getName().replaceAll("\\.[^.]+?$", ".png"),
+                "-fixside", "long",
+                "-scale", "800",
+                "-ignoreParse",
+                // "-dump", new File("build/tmp/", fileIn.getName().replaceAll("\\.[^.]+?$",".json")).getCanonicalPath(),
+                // "-quiet",
+                // "-extractEmbedded",
+                fileIn.getPath()
+        };
+        PPTX2PNG.main(args);
+    }
+*/
+/*
     @Test
     @Ignore("Only for manual tests - need to add org.tukaani:xz:1.8 for this to work")
-    public void paint() throws Exception {
+    public void paintMultiple() throws Exception {
         final byte buf[] = new byte[50_000_000];
-
-        // good test samples to validate rendering:
-        // emfs/commoncrawl2/NB/NBWN2YH5VFCLZRFDQU7PB7IDD4UKY7DN_2.emf
-        // emfs/govdocs1/777/777525.ppt_0.emf
-        // emfs/govdocs1/844/844795.ppt_2.emf
-        // emfs/commoncrawl2/TO/TOYZSTNUSW5OFCFUQ6T5FBLIDLCRF3NH_0.emf
-
-        // ISS3ANIX2PL4PXR7SZSJSPBZI7YQQE3U_6 - map of italy - stroke problem
-        // 3QKAPISTXYHSFCTV6QTKTYLK6JTWJHQU_2 - text misplaced
-        // KEEDHN6XES4EKK52E3AJHKCARNTQF7PO_0 - dito
-        // KWG4VAU5GM3POSA4BPG6RSVQVS44SXOL_1.emf - processing freezes
-
-        // F7GK5XOLERFURVTQALOCX3GJ6FH45LNQ strange colors
-        // ISS3ANIX2PL4PXR7SZSJSPBZI7YQQE3U stroke wrong
-        // KWG4VAU5GM3POSA4BPG6RSVQVS44SXOL_1
-
         try (SevenZFile sevenZFile = new SevenZFile(new File("tmp/plus_emf.7z"))
             ) {
-            for (int idx=0;;idx++) {
-                SevenZArchiveEntry entry = sevenZFile.getNextEntry();
-                if (entry == null) break;
+            SevenZArchiveEntry entry;
+            while ((entry = sevenZFile.getNextEntry()) != null) {
                 final String etName = entry.getName();
 
                 if (entry.isDirectory() || !etName.endsWith(".emf")) continue;
 
-                if (!(etName.contains("3QKAPISTXYHSFCTV6QTKTYLK6JTWJHQU_2")
-                )) continue;
-
-//                || etName.contains("ISS3ANIX2PL4PXR7SZSJSPBZI7YQQE3U_6")
-//                        || etName.contains("KWG4VAU5GM3POSA4BPG6RSVQVS44SXOL_1")
-
-
-                System.out.println(etName);
-
                 int size = sevenZFile.read(buf);
+
                 ByteArrayInputStream bis = new ByteArrayInputStream(buf, 0, size);
                 System.setIn(bis);
 
@@ -108,7 +104,7 @@ public class TestHemfPicture {
                     "-fixside", "long",
                     "-scale", "800",
                     "-ignoreParse",
-                     "-dump", new File("build/tmp/", lastName.replace(".emf",".json")).getCanonicalPath(),
+                    // "-dump", new File("build/tmp/", lastName.replace(".emf",".json")).getCanonicalPath(),
                     // "-quiet",
                     // "-extractEmbedded",
                     "stdin"
@@ -117,7 +113,8 @@ public class TestHemfPicture {
             }
         }
     }
-*/
+ */
+
     @Test
     public void testBasicWindows() throws Exception {
         try (InputStream is = ss_samples.openResourceAsStream("SimpleEMF_windows.emf")) {
