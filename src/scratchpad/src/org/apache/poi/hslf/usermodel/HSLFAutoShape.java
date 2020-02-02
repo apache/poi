@@ -17,6 +17,9 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import static org.apache.poi.hslf.usermodel.HSLFFreeformShape.ShapePath.CURVES_CLOSED;
+import static org.apache.poi.hslf.usermodel.HSLFFreeformShape.ShapePath.LINES_CLOSED;
+
 import java.awt.geom.Arc2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
@@ -69,21 +72,9 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
     static final byte[] SEGMENTINFO_CLOSE    = new byte[]{0x01, (byte)0x60};
     static final byte[] SEGMENTINFO_END      = new byte[]{0x00, (byte)0x80};
 
+    private static final ObjectFactory OF = new ObjectFactory();
     private static final BitField PATH_INFO = BitFieldFactory.getInstance(0xE000);
     private static final BitField ESCAPE_INFO = BitFieldFactory.getInstance(0x1F00);
-
-    private static final EscherPropertyTypes[] ADJUST_VALUES = {
-        EscherPropertyTypes.GEOMETRY__ADJUSTVALUE,
-        EscherPropertyTypes.GEOMETRY__ADJUST2VALUE,
-        EscherPropertyTypes.GEOMETRY__ADJUST3VALUE,
-        EscherPropertyTypes.GEOMETRY__ADJUST4VALUE,
-        EscherPropertyTypes.GEOMETRY__ADJUST5VALUE,
-        EscherPropertyTypes.GEOMETRY__ADJUST6VALUE,
-        EscherPropertyTypes.GEOMETRY__ADJUST7VALUE,
-        EscherPropertyTypes.GEOMETRY__ADJUST8VALUE,
-        EscherPropertyTypes.GEOMETRY__ADJUST9VALUE,
-        EscherPropertyTypes.GEOMETRY__ADJUST10VALUE
-    };
 
     enum PathInfo {
         lineTo(0),curveTo(1),moveTo(2),close(3),end(4),escape(5),clientEscape(6);
@@ -220,12 +211,11 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
     }
 
     CustomGeometry getGeometry(Path2D path2D) {
-        final ObjectFactory of = new ObjectFactory();
-        final CTCustomGeometry2D cusGeo = of.createCTCustomGeometry2D();
-        cusGeo.setAvLst(of.createCTGeomGuideList());
-        cusGeo.setGdLst(of.createCTGeomGuideList());
-        cusGeo.setAhLst(of.createCTAdjustHandleList());
-        cusGeo.setCxnLst(of.createCTConnectionSiteList());
+        final CTCustomGeometry2D cusGeo = OF.createCTCustomGeometry2D();
+        cusGeo.setAvLst(OF.createCTGeomGuideList());
+        cusGeo.setGdLst(OF.createCTGeomGuideList());
+        cusGeo.setAhLst(OF.createCTAdjustHandleList());
+        cusGeo.setCxnLst(OF.createCTConnectionSiteList());
 
         final AbstractEscherOptRecord opt = getEscherOptRecord();
 
@@ -249,8 +239,8 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
         final int[] xyPoints = new int[2];
         boolean isClosed = false;
 
-        final CTPath2DList pathLst = of.createCTPath2DList();
-        final CTPath2D pathCT = of.createCTPath2D();
+        final CTPath2DList pathLst = OF.createCTPath2DList();
+        final CTPath2D pathCT = OF.createCTPath2D();
         final List<Object> moveLst = pathCT.getCloseOrMoveToOrLnTo();
         pathLst.getPath().add(pathCT);
         cusGeo.setPathLst(pathLst);
@@ -262,46 +252,23 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
                 continue;
             }
             switch (pi) {
-                case escape: {
+                case escape:
                     handleEscapeInfo(pathCT, path2D, segElem, vertIter);
                     break;
-                }
                 case moveTo:
-                    if (vertIter.hasNext()) {
-                        final CTPath2DMoveTo m = of.createCTPath2DMoveTo();
-                        m.setPt(fillPoint(vertIter.next(), xyPoints));
-                        moveLst.add(m);
-                        path2D.moveTo(xyPoints[0], xyPoints[1]);
-                    }
+                    handleMoveTo(vertIter, xyPoints, moveLst, path2D);
                     break;
                 case lineTo:
-                    if (vertIter.hasNext()) {
-                        final CTPath2DLineTo m = of.createCTPath2DLineTo();
-                        m.setPt(fillPoint(vertIter.next(), xyPoints));
-                        moveLst.add(m);
-                        path2D.lineTo(xyPoints[0], xyPoints[1]);
-                    }
+                    handleLineTo(vertIter, xyPoints, moveLst, path2D);
                     break;
-                case curveTo: {
-                    final CTPath2DCubicBezierTo m = of.createCTPath2DCubicBezierTo();
-                    List<CTAdjPoint2D> mLst = m.getPt();
-
-                    int[] pts = new int[6];
-
-                    for (int i=0; vertIter.hasNext() && i<3; i++) {
-                        mLst.add(fillPoint(vertIter.next(), xyPoints));
-                        pts[i*2] = xyPoints[0];
-                        pts[i*2+1] = xyPoints[1];
-                        if (i == 2) {
-                            moveLst.add(m);
-                            path2D.curveTo(pts[0], pts[1], pts[2], pts[3], pts[4], pts[5]);
-                        }
-                    }
+                case curveTo:
+                    handleCurveTo(vertIter, xyPoints, moveLst, path2D);
                     break;
-                }
                 case close:
-                    moveLst.add(of.createCTPath2DClose());
-                    path2D.closePath();
+                    if (path2D.getCurrentPoint() != null) {
+                        moveLst.add(OF.createCTPath2DClose());
+                        path2D.closePath();
+                    }
                     isClosed = true;
                     break;
                 default:
@@ -309,28 +276,11 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
             }
         }
 
-        EscherSimpleProperty shapePath = getEscherProperty(opt, EscherPropertyTypes.GEOMETRY__SHAPEPATH);
-        HSLFFreeformShape.ShapePath sp = HSLFFreeformShape.ShapePath.valueOf(shapePath == null ? 1 : shapePath.getPropertyValue());
-        if ((sp == HSLFFreeformShape.ShapePath.LINES_CLOSED || sp == HSLFFreeformShape.ShapePath.CURVES_CLOSED) && !isClosed) {
-            moveLst.add(of.createCTPath2DClose());
-            path2D.closePath();
+        if (!isClosed) {
+            handleClosedShape(opt, moveLst, path2D);
         }
 
-        EscherSimpleProperty geoLeft = getEscherProperty(opt, EscherPropertyTypes.GEOMETRY__LEFT);
-        EscherSimpleProperty geoRight = getEscherProperty(opt, EscherPropertyTypes.GEOMETRY__RIGHT);
-        EscherSimpleProperty geoTop = getEscherProperty(opt, EscherPropertyTypes.GEOMETRY__TOP);
-        EscherSimpleProperty geoBottom = getEscherProperty(opt, EscherPropertyTypes.GEOMETRY__BOTTOM);
-
-        final Rectangle2D bounds;
-        if (geoLeft != null && geoRight != null && geoTop != null && geoBottom != null) {
-            bounds = new Rectangle2D.Double();
-            bounds.setFrameFromDiagonal(
-                new Point2D.Double(geoLeft.getPropertyValue(), geoTop.getPropertyValue()),
-                new Point2D.Double(geoRight.getPropertyValue(), geoBottom.getPropertyValue())
-            );
-        } else {
-            bounds = path2D.getBounds2D();
-        }
+        final Rectangle2D bounds = getBounds(opt, path2D);
 
         pathCT.setW((int)Math.rint(bounds.getWidth()));
         pathCT.setH((int)Math.rint(bounds.getHeight()));
@@ -338,8 +288,94 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
         return new CustomGeometry(cusGeo);
     }
 
-    private void handleEscapeInfo(CTPath2D pathCT, Path2D path2D, byte[] segElem, Iterator<byte[]> vertIter) {
-        final ObjectFactory of = new ObjectFactory();
+    private static Rectangle2D getBounds(AbstractEscherOptRecord opt, Path2D path2D) {
+        EscherSimpleProperty geoLeft = getEscherProperty(opt, EscherPropertyTypes.GEOMETRY__LEFT);
+        EscherSimpleProperty geoRight = getEscherProperty(opt, EscherPropertyTypes.GEOMETRY__RIGHT);
+        EscherSimpleProperty geoTop = getEscherProperty(opt, EscherPropertyTypes.GEOMETRY__TOP);
+        EscherSimpleProperty geoBottom = getEscherProperty(opt, EscherPropertyTypes.GEOMETRY__BOTTOM);
+
+        if (geoLeft != null && geoRight != null && geoTop != null && geoBottom != null) {
+            final Rectangle2D bounds = new Rectangle2D.Double();
+            bounds.setFrameFromDiagonal(
+                    new Point2D.Double(geoLeft.getPropertyValue(), geoTop.getPropertyValue()),
+                    new Point2D.Double(geoRight.getPropertyValue(), geoBottom.getPropertyValue())
+            );
+            return bounds;
+        } else {
+            return path2D.getBounds2D();
+        }
+    }
+
+    private static void handleClosedShape(AbstractEscherOptRecord opt, List<Object> moveLst, Path2D path2D) {
+        EscherSimpleProperty shapePath = getEscherProperty(opt, EscherPropertyTypes.GEOMETRY__SHAPEPATH);
+        HSLFFreeformShape.ShapePath sp = HSLFFreeformShape.ShapePath.valueOf(shapePath == null ? 1 : shapePath.getPropertyValue());
+        if (sp == LINES_CLOSED || sp == CURVES_CLOSED) {
+            moveLst.add(OF.createCTPath2DClose());
+            path2D.closePath();
+        }
+    }
+
+    private static void handleMoveTo(Iterator<byte[]> vertIter, int[] xyPoints, List<Object> moveLst, Path2D path2D) {
+        if (!vertIter.hasNext()) {
+            return;
+        }
+        final CTPath2DMoveTo m = OF.createCTPath2DMoveTo();
+        m.setPt(fillPoint(vertIter.next(), xyPoints));
+        moveLst.add(m);
+        path2D.moveTo(xyPoints[0], xyPoints[1]);
+    }
+
+    private static void handleLineTo(Iterator<byte[]> vertIter, int[] xyPoints, List<Object> moveLst, Path2D path2D) {
+        if (!vertIter.hasNext()) {
+            return;
+        }
+        handleMoveTo0(moveLst, path2D);
+
+        final CTPath2DLineTo m = OF.createCTPath2DLineTo();
+        m.setPt(fillPoint(vertIter.next(), xyPoints));
+        moveLst.add(m);
+        path2D.lineTo(xyPoints[0], xyPoints[1]);
+    }
+
+    private static void handleCurveTo(Iterator<byte[]> vertIter, int[] xyPoints, List<Object> moveLst, Path2D path2D) {
+        if (!vertIter.hasNext()) {
+            return;
+        }
+        handleMoveTo0(moveLst, path2D);
+
+        final CTPath2DCubicBezierTo m = OF.createCTPath2DCubicBezierTo();
+        List<CTAdjPoint2D> mLst = m.getPt();
+
+        int[] pts = new int[6];
+
+        for (int i=0; vertIter.hasNext() && i<3; i++) {
+            mLst.add(fillPoint(vertIter.next(), xyPoints));
+            pts[i*2] = xyPoints[0];
+            pts[i*2+1] = xyPoints[1];
+            if (i == 2) {
+                moveLst.add(m);
+                path2D.curveTo(pts[0], pts[1], pts[2], pts[3], pts[4], pts[5]);
+            }
+        }
+    }
+
+    /**
+     * Sometimes the path2D is not initialized - this initializes it with the 0,0 position
+     */
+    private static void handleMoveTo0(List<Object> moveLst, Path2D path2D) {
+        if (path2D.getCurrentPoint() == null) {
+            final CTPath2DMoveTo m = OF.createCTPath2DMoveTo();
+
+            CTAdjPoint2D pt = OF.createCTAdjPoint2D();
+            pt.setX("0");
+            pt.setY("0");
+            m.setPt(pt);
+            moveLst.add(m);
+            path2D.moveTo(0, 0);
+        }
+    }
+
+    private static void handleEscapeInfo(CTPath2D pathCT, Path2D path2D, byte[] segElem, Iterator<byte[]> vertIter) {
         HSLFFreeformShape.EscapeInfo ei = getEscapeInfo(segElem);
         if (ei == null) {
             return;
@@ -376,7 +412,7 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
                 path2D.append(arc2D, true);
 
 
-                CTPath2DArcTo arcTo = of.createCTPath2DArcTo();
+                CTPath2DArcTo arcTo = OF.createCTPath2DArcTo();
                 arcTo.setHR(d2s(bounds.getHeight()/2.0));
                 arcTo.setWR(d2s(bounds.getWidth()/2.0));
 
@@ -451,7 +487,7 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
     }
 
 
-    private CTAdjPoint2D fillPoint(byte[] xyMaster, int[] xyPoints) {
+    private static CTAdjPoint2D fillPoint(byte[] xyMaster, int[] xyPoints) {
         if (xyMaster == null || xyPoints == null) {
             LOG.log(POILogger.WARN, "Master bytes or points not set - ignore point");
             return null;
@@ -477,7 +513,7 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
     }
 
     private static CTAdjPoint2D toPoint(int[] xyPoints) {
-        CTAdjPoint2D pt = new CTAdjPoint2D();
+        CTAdjPoint2D pt = OF.createCTAdjPoint2D();
         pt.setX(Integer.toString(xyPoints[0]));
         pt.setY(Integer.toString(xyPoints[1]));
         return pt;
