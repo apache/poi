@@ -31,9 +31,9 @@ import java.util.Set;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.extractor.POIOLE2TextExtractor;
 import org.apache.poi.extractor.POITextExtractor;
+import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.ooxml.extractor.ExtractorFactory;
-import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.ss.extractor.ExcelExtractor;
 import org.apache.poi.util.IOUtils;
@@ -48,12 +48,13 @@ public abstract class AbstractFileHandler implements FileHandler {
     static {
         // password protected files without password
     	// ... currently none ...
-        
+
         // unsupported file-types, no supported OLE2 parts
         EXPECTED_EXTRACTOR_FAILURES.add("hmef/quick-winmail.dat");
         EXPECTED_EXTRACTOR_FAILURES.add("hmef/winmail-sample1.dat");
         EXPECTED_EXTRACTOR_FAILURES.add("hmef/bug52400-winmail-simple.dat");
         EXPECTED_EXTRACTOR_FAILURES.add("hmef/bug52400-winmail-with-attachments.dat");
+        EXPECTED_EXTRACTOR_FAILURES.add("hmef/bug63955-winmail.dat");
         EXPECTED_EXTRACTOR_FAILURES.add("hpsf/Test0313rur.adm");
         EXPECTED_EXTRACTOR_FAILURES.add("poifs/Notes.ole2");
     }
@@ -70,10 +71,10 @@ public abstract class AbstractFileHandler implements FileHandler {
         } finally {
             ExtractorFactory.setThreadPrefersEventExtractors(before);
         }
-        
+
         /* Did fail for some documents with special XML contents...
         try {
-            OOXMLPrettyPrint.main(new String[] { file.getAbsolutePath(), 
+            OOXMLPrettyPrint.main(new String[] { file.getAbsolutePath(),
             		"/tmp/pretty-" + file.getName() });
         } catch (ZipException e) {
         	// ignore, not a Zip/OOXML file
@@ -83,7 +84,7 @@ public abstract class AbstractFileHandler implements FileHandler {
     private void handleExtractingInternal(File file) throws Exception {
         long length = file.length();
         long modified = file.lastModified();
-        
+
         POITextExtractor extractor = null;
         String fileAndParentName = file.getParentFile().getName() + "/" + file.getName();
         try {
