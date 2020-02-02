@@ -17,7 +17,14 @@
 package org.apache.poi.xslf;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.*;
+import static org.apache.poi.xslf.XSLFTestDataSamples.openSampleDocument;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -66,6 +73,7 @@ import org.apache.poi.xslf.usermodel.XSLFAutoShape;
 import org.apache.poi.xslf.usermodel.XSLFGroupShape;
 import org.apache.poi.xslf.usermodel.XSLFHyperlink;
 import org.apache.poi.xslf.usermodel.XSLFNotes;
+import org.apache.poi.xslf.usermodel.XSLFObjectShape;
 import org.apache.poi.xslf.usermodel.XSLFPictureData;
 import org.apache.poi.xslf.usermodel.XSLFPictureShape;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
@@ -89,7 +97,7 @@ public class TestXSLFBugs {
 
     @Test
     public void bug62929() throws Exception {
-        try(XMLSlideShow ss1 = XSLFTestDataSamples.openSampleDocument("missing-blip-fill.pptx")) {
+        try(XMLSlideShow ss1 = openSampleDocument("missing-blip-fill.pptx")) {
             assertEquals(1, ss1.getSlides().size());
 
             XSLFSlide slide = ss1.getSlides().get(0);
@@ -108,7 +116,7 @@ public class TestXSLFBugs {
 
     @Test
     public void bug62736() throws Exception {
-        XMLSlideShow ss1 = XSLFTestDataSamples.openSampleDocument("bug62736.pptx");
+        XMLSlideShow ss1 = openSampleDocument("bug62736.pptx");
 
         assertEquals(1, ss1.getSlides().size());
 
@@ -332,7 +340,7 @@ public class TestXSLFBugs {
 
     @Test
     public void bug51187() throws Exception {
-       XMLSlideShow ss1 = XSLFTestDataSamples.openSampleDocument("51187.pptx");
+       XMLSlideShow ss1 = openSampleDocument("51187.pptx");
 
        assertEquals(1, ss1.getSlides().size());
 
@@ -373,7 +381,7 @@ public class TestXSLFBugs {
      */
     @Test
     public void tika705() throws Exception {
-       XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("with_japanese.pptx");
+       XMLSlideShow ss = openSampleDocument("with_japanese.pptx");
 
        // Should have one slide
        assertEquals(1, ss.getSlides().size());
@@ -423,7 +431,7 @@ public class TestXSLFBugs {
      */
     @Test
     public void bug54916() throws IOException {
-        try (XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("OverlappingRelations.pptx")) {
+        try (XMLSlideShow ss = openSampleDocument("OverlappingRelations.pptx")) {
             XSLFSlide slide;
 
             // Should find 4 slides
@@ -452,7 +460,7 @@ public class TestXSLFBugs {
      */
     @Test
     public void bug56812() throws Exception {
-        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("56812.pptx");
+        XMLSlideShow ppt = openSampleDocument("56812.pptx");
 
         int internalPictures = 0;
         int externalPictures = 0;
@@ -485,7 +493,7 @@ public class TestXSLFBugs {
     @Test
     @Ignore("Similar to TestFontRendering it doesn't make sense to compare images because of tiny rendering differences in windows/unix")
     public void bug54542() throws Exception {
-        XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("54542_cropped_bitmap.pptx");
+        XMLSlideShow ss = openSampleDocument("54542_cropped_bitmap.pptx");
 
         Dimension pgsize = ss.getPageSize();
 
@@ -676,7 +684,7 @@ public class TestXSLFBugs {
 
     @Test
     public void bug58205() throws IOException {
-        XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("themes.pptx");
+        XMLSlideShow ss = openSampleDocument("themes.pptx");
 
         int i = 1;
         for (XSLFSlideMaster sm : ss.getSlideMasters()) {
@@ -688,14 +696,14 @@ public class TestXSLFBugs {
 
     @Test
     public void bug55791a() throws IOException {
-        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("45541_Footer.pptx");
+        XMLSlideShow ppt = openSampleDocument("45541_Footer.pptx");
         removeAndCreateSlide(ppt);
         ppt.close();
     }
 
     @Test
     public void bug55791b() throws IOException {
-        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("SampleShow.pptx");
+        XMLSlideShow ppt = openSampleDocument("SampleShow.pptx");
         removeAndCreateSlide(ppt);
         ppt.close();
     }
@@ -708,7 +716,7 @@ public class TestXSLFBugs {
 
     @Test
     public void blibFillAlternateContent() throws IOException {
-        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("2411-Performance_Up.pptx");
+        XMLSlideShow ppt = openSampleDocument("2411-Performance_Up.pptx");
         XSLFPictureShape ps = (XSLFPictureShape)ppt.getSlides().get(4).getShapes().get(0);
         assertNotNull(ps.getPictureData());
         ppt.close();
@@ -781,7 +789,7 @@ public class TestXSLFBugs {
 
     @Test
     public void bug55714() throws IOException {
-        XMLSlideShow srcPptx = XSLFTestDataSamples.openSampleDocument("pptx2svg.pptx");
+        XMLSlideShow srcPptx = openSampleDocument("pptx2svg.pptx");
         XMLSlideShow newPptx = new XMLSlideShow();
         XSLFSlide srcSlide = srcPptx.getSlides().get(0);
         XSLFSlide newSlide = newPptx.createSlide();
@@ -807,7 +815,7 @@ public class TestXSLFBugs {
 
     @Test
     public void bug59273() throws IOException {
-        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("bug59273.potx");
+        XMLSlideShow ppt = openSampleDocument("bug59273.potx");
         ppt.getPackage().replaceContentType(
             XSLFRelation.PRESENTATIONML_TEMPLATE.getContentType(),
             XSLFRelation.MAIN.getContentType()
@@ -851,7 +859,7 @@ public class TestXSLFBugs {
 
     @Test
     public void bug60715() throws IOException {
-        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("bug60715.pptx");
+        XMLSlideShow ppt = openSampleDocument("bug60715.pptx");
         ppt.createSlide();
         ppt.close();
     }
@@ -887,7 +895,7 @@ public class TestXSLFBugs {
 
     @Test
     public void test60810() throws IOException {
-        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("60810.pptx");
+        XMLSlideShow ppt = openSampleDocument("60810.pptx");
         for(XSLFSlide slide : ppt.getSlides()) {
             XSLFNotes notesSlide = ppt.getNotesSlide(slide);
             assertNotNull(notesSlide);
@@ -898,7 +906,7 @@ public class TestXSLFBugs {
 
     @Test
     public void test60042() throws IOException {
-        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("60042.pptx");
+        XMLSlideShow ppt = openSampleDocument("60042.pptx");
         ppt.removeSlide(0);
         ppt.createSlide();
         ppt.close();
@@ -906,7 +914,7 @@ public class TestXSLFBugs {
 
     @Test
     public void test61515() throws IOException {
-        XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("61515.pptx");
+        XMLSlideShow ppt = openSampleDocument("61515.pptx");
         ppt.removeSlide(0);
         assertEquals(1, ppt.createSlide().getRelations().size());
         try {
@@ -923,7 +931,7 @@ public class TestXSLFBugs {
 
     @Test
     public void testAptia() throws IOException {
-        try (XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("aptia.pptx");
+        try (XMLSlideShow ppt = openSampleDocument("aptia.pptx");
              XMLSlideShow saved = XSLFTestDataSamples.writeOutAndReadBack(ppt)) {
             assertEquals(ppt.getSlides().size(), saved.getSlides().size());
         }
@@ -932,7 +940,7 @@ public class TestXSLFBugs {
     @Ignore
     @Test
     public void testDivinoRevelado() throws IOException {
-        try (XMLSlideShow ppt = XSLFTestDataSamples.openSampleDocument("Divino_Revelado.pptx");
+        try (XMLSlideShow ppt = openSampleDocument("Divino_Revelado.pptx");
              XMLSlideShow saved = XSLFTestDataSamples.writeOutAndReadBack(ppt)){
             assertEquals(ppt.getSlides().size(), saved.getSlides().size());
         }
@@ -968,7 +976,7 @@ public class TestXSLFBugs {
 
     @Test
     public void bug63200() throws Exception {
-        try (XMLSlideShow ss1 = XSLFTestDataSamples.openSampleDocument("63200.pptx")) {
+        try (XMLSlideShow ss1 = openSampleDocument("63200.pptx")) {
             assertEquals(1, ss1.getSlides().size());
 
             XSLFSlide slide = ss1.getSlides().get(0);
@@ -980,6 +988,27 @@ public class TestXSLFBugs {
             XSLFAutoShape arrow = (XSLFAutoShape) group.getShapes().get(1);
             assertNull(oval.getFillColor());
             assertNull(arrow.getFillColor());
+        }
+    }
+
+    @Test
+    public void alternateContent() throws Exception {
+        try (XMLSlideShow ppt = openSampleDocument("alterman_security.pptx")) {
+            XSLFSlideMaster slide = ppt.getSlideMasters().get(0);
+            XSLFObjectShape os = (XSLFObjectShape)slide.getShapes().get(0);
+            // ctOleObject is nested in AlternateContent in this file
+            // if there are casting errors, we would fail early and wouldn't reach this point anyway
+            assertNotNull(os.getCTOleObject());
+            // accessing the picture data of the AlternateContent fallback part
+            XSLFPictureData picData = os.getPictureData();
+            assertNotNull(picData);
+        }
+
+        try (XMLSlideShow ppt = openSampleDocument("2411-Performance_Up.pptx")) {
+            XSLFSlide slide = ppt.getSlides().get(4);
+            XSLFPictureShape ps = (XSLFPictureShape)slide.getShapes().get(0);
+            assertEquals("image4.png", ps.getPictureData().getFileName());
+            assertEquals("Picture 5", ps.getShapeName());
         }
     }
 }

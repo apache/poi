@@ -19,32 +19,35 @@
 
 package org.apache.poi.xslf.model;
 
+import static org.apache.poi.xslf.model.ParagraphPropertyFetcher.DML_NS;
+import static org.apache.poi.xslf.model.ParagraphPropertyFetcher.PML_NS;
+
+import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
+
 import org.apache.poi.xslf.usermodel.XSLFShape;
-import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlException;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBody;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextBodyProperties;
 
-/**
- * Created by IntelliJ IDEA.
- * User: yegor
- * Date: Oct 21, 2011
- * Time: 1:18:52 PM
- * To change this template use File | Settings | File Templates.
- */
 public abstract class TextBodyPropertyFetcher<T> extends PropertyFetcher<T> {
+    private static final QName[] TX_BODY = { new QName(PML_NS, "txBody") };
+    private static final QName[] BODY_PR = { new QName(DML_NS, "bodyPr") };
 
     public boolean fetch(XSLFShape shape) {
-
-        XmlObject[] o = shape.getXmlObject().selectPath(
-                "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' " +
-                "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' " +
-                ".//p:txBody/a:bodyPr"
-        );
-        if (o.length == 1) {
-            CTTextBodyProperties props = (CTTextBodyProperties) o[0];
-            return fetch(props);
+        CTTextBodyProperties props = null;
+        try {
+            props = shape.selectProperty(
+                    CTTextBodyProperties.class, TextBodyPropertyFetcher::parse, TX_BODY, BODY_PR);
+            return (props != null) && fetch(props);
+        } catch (XmlException e) {
+            return false;
         }
+    }
 
-        return false;
+    private static CTTextBodyProperties parse(XMLStreamReader reader) throws XmlException {
+        CTTextBody body = CTTextBody.Factory.parse(reader);
+        return (body != null) ? body.getBodyPr() : null;
     }
 
     public abstract boolean fetch(CTTextBodyProperties props);
