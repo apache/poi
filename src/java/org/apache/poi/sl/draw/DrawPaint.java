@@ -25,7 +25,6 @@ import java.awt.LinearGradientPaint;
 import java.awt.MultipleGradientPaint.ColorSpaceType;
 import java.awt.MultipleGradientPaint.CycleMethod;
 import java.awt.Paint;
-import java.awt.Point;
 import java.awt.RadialGradientPaint;
 import java.awt.Shape;
 import java.awt.geom.AffineTransform;
@@ -33,9 +32,8 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
-import java.awt.image.DirectColorModel;
-import java.awt.image.Raster;
+import java.awt.image.DataBuffer;
+import java.awt.image.IndexColorModel;
 import java.awt.image.WritableRaster;
 import java.io.IOException;
 import java.io.InputStream;
@@ -350,25 +348,42 @@ public class DrawPaint {
      * @return the original image if no duotone was found, otherwise the colorized pattern
      */
     private static BufferedImage colorizePattern(TexturePaint fill, BufferedImage pattern) {
-        List<ColorStyle> duoTone = fill.getDuoTone();
+        final List<ColorStyle> duoTone = fill.getDuoTone();
         if (duoTone == null || duoTone.size() != 2) {
             return pattern;
         }
 
         // the pattern image is actually a gray scale image, so we simply take the first color component
         // as an index into our gradient samples
-        int blendShades = 1 << pattern.getSampleModel().getSampleSize(0);
-        int[] gradSample = linearBlendedColors(duoTone, blendShades);
-        int[] redSample = pattern.getRaster().getSamples(0, 0, pattern.getWidth(), pattern.getHeight(), 0, (int[])null);
+        final int redBits = pattern.getSampleModel().getSampleSize(0);
+        final int blendBits = Math.max(Math.min(redBits, 8), 1);
+        final int blendShades = 1 << blendBits;
+        // Currently ImageIO converts 16-bit images to 8-bit internally, so it's unlikely to get a blendRatio != 1
+        final double blendRatio = blendShades / (double)(1 << Math.max(redBits,1));
+        final int[] gradSample = linearBlendedColors(duoTone, blendShades);
 
-        for (int i=0; i<redSample.length; i++) {
-            redSample[i] = gradSample[redSample[i] & 0xFF];
+        final IndexColorModel icm = new IndexColorModel(blendBits, blendShades, gradSample, 0, true, -1, DataBuffer.TYPE_BYTE);
+        final BufferedImage patIdx = new BufferedImage(pattern.getWidth(), pattern.getHeight(), BufferedImage.TYPE_BYTE_INDEXED, icm);
+
+        final WritableRaster rasterRGBA = pattern.getRaster();
+        final WritableRaster rasterIdx = patIdx.getRaster();
+
+        final int[] redSample = new int[pattern.getWidth()];
+        for (int y=0; y<pattern.getHeight(); y++) {
+            rasterRGBA.getSamples(0, y, redSample.length, 1, 0, redSample);
+            scaleShades(redSample, blendRatio);
+            rasterIdx.setSamples(0, y, redSample.length, 1, 0, redSample);
         }
 
-        DirectColorModel dcm = new DirectColorModel(32, 0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000);
-        DataBufferInt dbi = new DataBufferInt(redSample, redSample.length);
-        WritableRaster raster = Raster.createPackedRaster(dbi, pattern.getWidth(), pattern.getHeight(), pattern.getWidth(), new int[]{0x00FF0000, 0x0000FF00, 0x000000FF, 0xFF000000}, new Point());
-        return new BufferedImage(dcm, raster, true, null);
+        return patIdx;
+    }
+
+    private static void scaleShades(int[] samples, double ratio) {
+        if (ratio != 1) {
+            for (int x=0; x<samples.length; x++) {
+                samples[x] = (int)Math.rint(samples[x] * ratio);
+            }
+        }
     }
 
     private static int[] linearBlendedColors(List<ColorStyle> duoTone, final int blendShades) {

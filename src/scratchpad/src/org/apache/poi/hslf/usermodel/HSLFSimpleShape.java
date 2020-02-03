@@ -62,7 +62,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
 
     public final static double DEFAULT_LINE_WIDTH = 0.75;
 
-    private static final EscherPropertyTypes[] ADJUST_VALUES = {
+    protected static final EscherPropertyTypes[] ADJUST_VALUES = {
             EscherPropertyTypes.GEOMETRY__ADJUSTVALUE,
             EscherPropertyTypes.GEOMETRY__ADJUST2VALUE,
             EscherPropertyTypes.GEOMETRY__ADJUST3VALUE,
@@ -79,7 +79,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
      * Hyperlink
      */
     protected HSLFHyperlink _hyperlink;
-    
+
     /**
      * Create a SimpleShape object and initialize it from the supplied Record container.
      *
@@ -563,8 +563,8 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
     public HSLFShapePlaceholderDetails getPlaceholderDetails() {
         return new HSLFShapePlaceholderDetails(this);
     }
-    
-    
+
+
     @Override
     public Placeholder getPlaceholder() {
         return getPlaceholderDetails().getPlaceholder();
@@ -604,7 +604,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
     public HSLFHyperlink getHyperlink(){
         return _hyperlink;
     }
-    
+
     @Override
     public HSLFHyperlink createHyperlink() {
         if (_hyperlink == null) {
@@ -612,7 +612,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
         }
         return _hyperlink;
     }
-    
+
     /**
      * Sets the hyperlink - used when the document is parsed
      *
@@ -621,7 +621,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
     protected void setHyperlink(HSLFHyperlink link) {
         _hyperlink = link;
     }
-    
+
     @Override
     public boolean isPlaceholder() {
         // currently we only identify TextShapes as placeholders

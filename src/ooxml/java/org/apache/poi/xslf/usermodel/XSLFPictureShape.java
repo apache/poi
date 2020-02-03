@@ -33,6 +33,7 @@ import java.net.URI;
 
 import javax.imageio.ImageIO;
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
 
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -69,10 +70,14 @@ public class XSLFPictureShape extends XSLFSimpleShape
     implements PictureShape<XSLFShape,XSLFTextParagraph> {
     private static final POILogger LOG = POILogFactory.getLogger(XSLFPictureShape.class);
 
-    private static final String DML_NS = "http://schemas.microsoft.com/office/drawing/2010/main";
-    private static final String SVG_NS = "http://schemas.microsoft.com/office/drawing/2016/SVG/main";
+    private static final String MS_DML_NS = "http://schemas.microsoft.com/office/drawing/2010/main";
+    private static final String MS_SVG_NS = "http://schemas.microsoft.com/office/drawing/2016/SVG/main";
     private static final String BITMAP_URI = "{28A0092B-C50C-407E-A947-70E740481C1C}";
     private static final String SVG_URI = "{96DAC541-7B7A-43D3-8B79-37D633B846F1}";
+
+    private static final QName EMBED_TAG = new QName(CORE_PROPERTIES_ECMA376_NS, "embed", "rel");
+    private static final QName[] BLIP_FILL = { new QName(PML_NS, "blipFill") };
+
 
     private XSLFPictureData _data;
 
@@ -135,8 +140,8 @@ public class XSLFPictureShape extends XSLFSimpleShape
     public void setPlaceholder(Placeholder placeholder) {
         super.setPlaceholder(placeholder);
     }
-    
-    
+
+
     /**
      * For an external linked picture, return the last-seen
      *  path to the picture.
@@ -147,13 +152,13 @@ public class XSLFPictureShape extends XSLFSimpleShape
             // Internal picture, nothing to return
             return null;
         }
-        
+
         String rId = getBlipLink();
         if (rId == null) {
             // No link recorded, nothing we can do
             return null;
         }
-        
+
         PackagePart p = getSheet().getPackagePart();
         PackageRelationship rel = p.getRelationship(rId);
         if (rel != null) {
@@ -168,25 +173,23 @@ public class XSLFPictureShape extends XSLFSimpleShape
         if (bfp != null) {
             return bfp;
         }
-                    
-        String xquery =
-                "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main'; "
-              + "declare namespace mc='http://schemas.openxmlformats.org/markup-compatibility/2006' "
-              + ".//mc:Fallback/p:blipFill"
-              ;
-        XmlObject xo = selectProperty(XmlObject.class, xquery);
+
         try {
-            xo = CTPicture.Factory.parse(xo.getDomNode());
+            return selectProperty(CTBlipFillProperties.class, XSLFPictureShape::parse, BLIP_FILL);
         } catch (XmlException xe) {
             return null;
         }
-        return ((CTPicture)xo).getBlipFill();
     }
-    
+
+    private static CTBlipFillProperties parse(XMLStreamReader reader) throws XmlException {
+        CTPicture pic = CTPicture.Factory.parse(reader);
+        return (pic != null) ? pic.getBlipFill() : null;
+    }
+
     protected CTBlip getBlip(){
         return getBlipFill().getBlip();
     }
-    
+
     @SuppressWarnings("WeakerAccess")
     protected String getBlipLink(){
         CTBlip blip = getBlip();
@@ -232,8 +235,8 @@ public class XSLFPictureShape extends XSLFSimpleShape
             extBitmap.setUri(BITMAP_URI);
             XmlCursor cur = extBitmap.newCursor();
             cur.toEndToken();
-            cur.beginElement(new QName(DML_NS, "useLocalDpi", "a14"));
-            cur.insertNamespace("a14", DML_NS);
+            cur.beginElement(new QName(MS_DML_NS, "useLocalDpi", "a14"));
+            cur.insertNamespace("a14", MS_DML_NS);
             cur.insertAttributeWithValue("val", "0");
             cur.dispose();
         }
@@ -252,9 +255,9 @@ public class XSLFPictureShape extends XSLFSimpleShape
         svgBitmap.setUri(SVG_URI);
         XmlCursor cur = svgBitmap.newCursor();
         cur.toEndToken();
-        cur.beginElement(new QName(SVG_NS, "svgBlip", "asvg"));
-        cur.insertNamespace("asvg", SVG_NS);
-        cur.insertAttributeWithValue(new QName(CORE_PROPERTIES_ECMA376_NS, "embed", "rel"), svgRelId);
+        cur.beginElement(new QName(MS_SVG_NS, "svgBlip", "asvg"));
+        cur.insertNamespace("asvg", MS_SVG_NS);
+        cur.insertAttributeWithValue(EMBED_TAG, svgRelId);
         cur.dispose();
     }
 
@@ -277,8 +280,8 @@ public class XSLFPictureShape extends XSLFSimpleShape
         for (int i = 0; i < size; i++) {
             XmlCursor cur = extLst.getExtArray(i).newCursor();
             try {
-                if (cur.toChild(SVG_NS, "svgBlip")) {
-                    String svgRelId = cur.getAttributeText(new QName(CORE_PROPERTIES_ECMA376_NS, "embed"));
+                if (cur.toChild(MS_SVG_NS, "svgBlip")) {
+                    String svgRelId = cur.getAttributeText(EMBED_TAG);
                     return (svgRelId != null) ? (XSLFPictureData) getSheet().getRelationById(svgRelId) : null;
                 }
             } finally {
@@ -367,13 +370,13 @@ public class XSLFPictureShape extends XSLFSimpleShape
             CTOfficeArtExtensionList extLst = blip.getExtLst();
             //noinspection deprecation
             for(CTOfficeArtExtension ext : extLst.getExtArray()){
-                String xpath = "declare namespace a14='"+ DML_NS +"' $this//a14:imgProps/a14:imgLayer";
+                String xpath = "declare namespace a14='"+ MS_DML_NS +"' $this//a14:imgProps/a14:imgLayer";
                 XmlObject[] obj = ext.selectPath(xpath);
                 if(obj != null && obj.length == 1){
                     XmlCursor c = obj[0].newCursor();
-                    String id = c.getAttributeText(new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "embed"));//selectPath("declare namespace r='http://schemas.openxmlformats.org/officeDocument/2006/relationships' $this//[@embed]");
+                    String id = c.getAttributeText(EMBED_TAG);
                     String newId = getSheet().importBlip(id, p.getSheet());
-                    c.setAttributeText(new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "embed"), newId);
+                    c.setAttributeText(EMBED_TAG, newId);
                     c.dispose();
                 }
             }

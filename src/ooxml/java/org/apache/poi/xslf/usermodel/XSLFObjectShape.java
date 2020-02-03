@@ -25,10 +25,11 @@ import java.io.IOException;
 import java.io.OutputStream;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamReader;
 
+import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -42,8 +43,6 @@ import org.apache.poi.sl.usermodel.ObjectShape;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGraphicalObjectData;
@@ -63,6 +62,10 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTPictureNonVisual;
 public class XSLFObjectShape extends XSLFGraphicFrame implements ObjectShape<XSLFShape,XSLFTextParagraph> {
 
     /* package */ static final String OLE_URI = "http://schemas.openxmlformats.org/presentationml/2006/ole";
+    private static final QName[] GRAPHIC = { new QName(DML_NS, "graphic") };
+    private static final QName[] GRAPHIC_DATA = { new QName(DML_NS, "graphicData") };
+    private static final QName[] OLE_OBJ = { new QName(PML_NS, "oleObj") };
+    private static final QName[] CT_PICTURE = { new QName(PML_NS, "pic") };
 
     private CTOleObject _oleObject;
     private XSLFPictureData _data;
@@ -70,31 +73,13 @@ public class XSLFObjectShape extends XSLFGraphicFrame implements ObjectShape<XSL
     /*package*/ XSLFObjectShape(CTGraphicalObjectFrame shape, XSLFSheet sheet){
         super(shape, sheet);
 
-        CTGraphicalObjectData god = shape.getGraphic().getGraphicData();
-        XmlCursor xc = god.newCursor();
         // select oleObj potentially under AlternateContent
         // usually the mc:Choice element will be selected first
-        xc.selectPath("declare namespace p='"+PML_NS+"' .//p:oleObj");
         try {
-            if (!xc.toNextSelection()) {
-                throw new IllegalStateException("p:oleObj element was not found in\n " + god);
-            }
-
-            XmlObject xo = xc.getObject();
-            // Pesky XmlBeans bug - see Bugzilla #49934
-            // it never happens when using the full ooxml-schemas jar but may happen with the abridged poi-ooxml-schemas
-            if (xo instanceof XmlAnyTypeImpl){
-                String errStr =
-                    "Schemas (*.xsb) for CTOleObject can't be loaded - usually this happens when OSGI " +
-                    "loading is used and the thread context classloader has no reference to " +
-                    "the xmlbeans classes - use POIXMLTypeLoader.setClassLoader() to set the loader, " +
-                    "e.g. with CTOleObject.class.getClassLoader()"
-                ;
-                throw new IllegalStateException(errStr);
-            }
-            _oleObject = (CTOleObject)xo;
-        } finally {
-            xc.dispose();
+            _oleObject = selectProperty(CTOleObject.class, null, GRAPHIC, GRAPHIC_DATA, OLE_OBJ);
+        } catch (XmlException e) {
+            // ole objects should be also inside AlternateContent tags, even with ECMA 376 edition 1
+            throw new IllegalStateException(e);
         }
     }
 
@@ -113,13 +98,13 @@ public class XSLFObjectShape extends XSLFGraphicFrame implements ObjectShape<XSL
     public String getProgId() {
         return (_oleObject == null) ? null : _oleObject.getProgId();
     }
-    
+
     @Override
     public String getFullName() {
         return (_oleObject == null) ? null : _oleObject.getName();
     }
-    
-    
+
+
     /**
      * Return the data on the (internal) picture.
      * For an external linked picture, will return null
@@ -160,19 +145,19 @@ public class XSLFObjectShape extends XSLFGraphicFrame implements ObjectShape<XSL
     }
 
     protected CTBlipFillProperties getBlipFill() {
-        String xquery =
-                "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' "
-              + ".//p:blipFill"
-              ;
-        XmlObject xo = selectProperty(XmlObject.class, xquery);
         try {
-            xo = CTPicture.Factory.parse(xo.getDomNode());
-        } catch (XmlException xe) {
+            CTPicture pic = selectProperty
+                (CTPicture.class, XSLFObjectShape::parse, GRAPHIC, GRAPHIC_DATA, OLE_OBJ, CT_PICTURE);
+            return (pic != null) ? pic.getBlipFill() : null;
+        } catch (XmlException e) {
             return null;
         }
-        return ((CTPicture)xo).getBlipFill();
     }
 
+    private static CTPicture parse(XMLStreamReader reader) throws XmlException {
+        CTGroupShape gs = CTGroupShape.Factory.parse(reader);
+        return (gs.sizeOfPicArray() > 0) ? gs.getPicArray(0) : null;
+    }
 
     @Override
     public OutputStream updateObjectData(final Application application, final ObjectMetaData metaData) throws IOException {

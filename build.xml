@@ -1648,7 +1648,7 @@ under the License.
             unless="integration.test.notRequired">
         <propertyreset name="org.apache.poi.util.POILogger" value="org.apache.poi.util.CommonsLogger"/>
         <delete dir="build" includes="test-integration.log*"/>
-        <poiunit failureproperty="integration.test.failed" heap="2048" showoutput="true" jacocodest="build/jacoco-integration.exec">
+        <poiunit failureproperty="integration.test.failed" heap="1512" showoutput="true" jacocodest="build/jacoco-integration.exec">
             <classpath refid="test.integration.classpath"/>
             <batchtest todir="${integration.reports.test}">
                 <fileset dir="${integration.src.test}">

@@ -22,9 +22,12 @@ import static org.apache.poi.xslf.usermodel.XSLFShape.PML_NS;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
+import javax.xml.namespace.QName;
+
 import org.apache.poi.sl.usermodel.MasterSheet;
 import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.PlaceholderDetails;
+import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTApplicationNonVisualDrawingProps;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTHeaderFooter;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMaster;
@@ -190,9 +193,24 @@ public class XSLFPlaceholderDetails implements PlaceholderDetails {
         return _ph;
     }
 
+    private static final QName[] NV_CONTAINER = {
+        new QName(PML_NS, "nvSpPr"),
+        new QName(PML_NS, "nvCxnSpPr"),
+        new QName(PML_NS, "nvGrpSpPr"),
+        new QName(PML_NS, "nvPicPr"),
+        new QName(PML_NS, "nvGraphicFramePr")
+    };
+
+    private static final QName[] NV_PROPS = {
+        new QName(PML_NS, "nvPr")
+    };
+
     private CTApplicationNonVisualDrawingProps getNvProps() {
-        final String xquery = "declare namespace p='" + PML_NS + "' .//*/p:nvPr";
-        return shape.selectProperty(CTApplicationNonVisualDrawingProps.class, xquery);
+        try {
+            return shape.selectProperty(CTApplicationNonVisualDrawingProps.class, null, NV_CONTAINER, NV_PROPS);
+        } catch (XmlException e) {
+            return null;
+        }
     }
 
     private CTHeaderFooter getHeaderFooter(final boolean create) {

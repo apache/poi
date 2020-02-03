@@ -59,7 +59,8 @@ public class HPSFFileHandler extends POIFSFileHandler {
     );
 
     static final Set<String> EXCLUDES_HANDLE_FILE = unmodifiableHashSet(
-        "hpsf/Test_Humor-Generation.ppt"
+        "hpsf/Test_Humor-Generation.ppt",
+        "slideshow/missing-moveto.ppt" // POIFS properties corrupted
     );
 
 

@@ -38,12 +38,24 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.XMLHelper;
 
 /**
- * 
+ *
  */
 public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
     private final static POILogger LOG = POILogFactory.getLogger(PresetGeometries.class);
-    protected final static String BINDING_PACKAGE = "org.apache.poi.sl.draw.binding";
-    
+    private final static String BINDING_PACKAGE = "org.apache.poi.sl.draw.binding";
+
+    private static class SingletonHelper {
+        private static JAXBContext JAXB_CONTEXT;
+        static {
+            try {
+                JAXB_CONTEXT = JAXBContext.newInstance(BINDING_PACKAGE);
+            } catch (JAXBException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
+
+
     protected static PresetGeometries _inst;
 
     protected PresetGeometries(){}
@@ -57,7 +69,7 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
             streamReader.nextTag();
 
             // JAXB:
-            JAXBContext jaxbContext = JAXBContext.newInstance(BINDING_PACKAGE);
+            JAXBContext jaxbContext = SingletonHelper.JAXB_CONTEXT;
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
             long cntElem = 0;
@@ -76,13 +88,13 @@ public class PresetGeometries extends LinkedHashMap<String, CustomGeometry> {
             streamReader.close();
         }
     }
-    
+
     /**
      * Convert a single CustomGeometry object, i.e. from xmlbeans
      */
     public static CustomGeometry convertCustomGeometry(XMLStreamReader staxReader) {
         try {
-            JAXBContext jaxbContext = JAXBContext.newInstance(BINDING_PACKAGE);
+            JAXBContext jaxbContext = SingletonHelper.JAXB_CONTEXT;
             Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
             JAXBElement<CTCustomGeometry2D> el = unmarshaller.unmarshal(staxReader, CTCustomGeometry2D.class);
             return new CustomGeometry(el.getValue());

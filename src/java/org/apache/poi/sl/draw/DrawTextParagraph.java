@@ -31,6 +31,7 @@ import java.text.AttributedCharacterIterator;
 import java.text.AttributedCharacterIterator.Attribute;
 import java.text.AttributedString;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 
@@ -60,7 +61,7 @@ import org.apache.poi.util.Units;
 
 public class DrawTextParagraph implements Drawable {
     private static final POILogger LOG = POILogFactory.getLogger(DrawTextParagraph.class);
-    
+
     /** Keys for passing hyperlinks to the graphics context */
     public static final XlinkAttribute HYPERLINK_HREF = new XlinkAttribute("href");
     public static final XlinkAttribute HYPERLINK_LABEL = new XlinkAttribute("label");
@@ -206,7 +207,7 @@ public class DrawTextParagraph implements Drawable {
 
             line.setPosition(penX, penY);
             line.draw(graphics);
-            
+
             if(spacing > 0) {
                 // If linespacing >= 0, then linespacing is a percentage of normal line height.
                 penY += spacing*0.01* line.getHeight();
@@ -383,7 +384,14 @@ public class DrawTextParagraph implements Drawable {
 
     @Internal
     public String getRenderableText(final TextRun tr) {
-        final String txtSpace = tr.getRawText().replace("\t", tab2space(tr)).replace('\u000b', '\n');
+        String txtSpace = tr.getRawText();
+        if (txtSpace == null) {
+            return null;
+        }
+        if (txtSpace.contains("\t")) {
+            txtSpace = txtSpace.replace("\t", tab2space(tr));
+        }
+        txtSpace = txtSpace.replace('\u000b', '\n');
         final Locale loc = LocaleUtil.getUserLocale();
 
         switch (tr.getTextCap()) {
@@ -414,19 +422,23 @@ public class DrawTextParagraph implements Drawable {
         string.addAttribute(TextAttribute.SIZE, fs.floatValue());
 
         TextLayout l = new TextLayout(string.getIterator(), new FontRenderContext(null, true, true));
+        // some JDK versions return 0 here
         double wspace = l.getAdvance();
 
+        final int numSpaces;
         Double tabSz = paragraph.getDefaultTabSize();
-        if (tabSz == null) {
-            tabSz = wspace*4;
+        if (wspace <= 0) {
+            numSpaces = 4;
+        } else {
+            if (tabSz == null) {
+                tabSz = wspace*4;
+            }
+            numSpaces = (int)Math.min(Math.ceil(tabSz / wspace), 20);
         }
 
-        int numSpaces = (int)Math.ceil(tabSz / wspace);
-        StringBuilder buf = new StringBuilder();
-        for(int i = 0; i < numSpaces; i++) {
-            buf.append(' ');
-        }
-        return buf.toString();
+        char[] buf = new char[numSpaces];
+        Arrays.fill(buf, ' ');
+        return new String(buf);
     }
 
 
@@ -683,7 +695,7 @@ public class DrawTextParagraph implements Drawable {
                 // fallback for unsupported glyphs
                 partBegin = partEnd;
                 partEnd = nextPart(fontMapped, runText, partBegin, rangeBegin+rangeLen, false);
-                
+
                 if (partBegin < partEnd) {
                     // handle (a) and (b)
                     attList.add(new AttributedStringData(TextAttribute.FAMILY, fontFallback.getFontName(Locale.ROOT), beginIndex+partBegin, beginIndex+partEnd));
@@ -692,11 +704,11 @@ public class DrawTextParagraph implements Drawable {
                     }
                 }
             }
-            
+
             rangeBegin += rangeLen;
         }
     }
-    
+
     private static int nextPart(Font fontMapped, String runText, int beginPart, int endPart, boolean isDisplayed) {
         int rIdx = beginPart;
         while (rIdx < endPart) {
