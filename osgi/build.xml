@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- 
+<!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
 distributed with this work for additional information
@@ -25,7 +25,7 @@ under the License.
     <property name="bundle.lib" location="osgi/lib"/>
 
     <!-- TODO Import these from the parent build file -->
-    <property name="repository.m2" value="http://repo1.maven.org"/>
+    <property name="repository.m2" value="https://repo1.maven.org"/>
     <property name="version.id" value="4.1.2-SNAPSHOT"/>
     <property name="dist.dir" value="build/dist"/>
 
@@ -54,13 +54,13 @@ under the License.
     <target name="bundle" depends="init, check-bundle-jars, fetch-bundle-jars">
         <taskdef resource="aQute/bnd/ant/taskdef.properties" classpath="${bundle.bnd.jar}"/>
         <mkdir dir="build/osgi"/>
-        <bnd 
+        <bnd
            classpath="${dist.dir}/poi-${version.id}-${DSTAMP}.jar,${dist.dir}/poi-scratchpad-${version.id}-${DSTAMP}.jar,${dist.dir}/poi-ooxml-${version.id}-${DSTAMP}.jar"
-           eclipse="false" 
-           failok="false" 
-           exceptions="true" 
+           eclipse="false"
+           failok="false"
+           exceptions="true"
            output="build/osgi"
-           files="test.bnd"/> 
+           files="test.bnd"/>
         <!-- TODO Include the settings from http://svn.apache.org/repos/asf/servicemix/smx4/bundles/trunk/poi-3.9/pom.xml -->
         <!-- TODO Make this actually spit out an OSGi Jar -->
     </target>
