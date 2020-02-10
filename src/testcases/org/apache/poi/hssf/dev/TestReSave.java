@@ -51,6 +51,7 @@ public class TestReSave extends BaseXLSIteratingTest {
         EXCLUDED.put("44958_1.xls", RecordInputStream.LeftoverDataException.class);
         EXCLUDED.put("XRefCalc.xls", RuntimeException.class);            // "Buffer overrun"
         EXCLUDED.put("61300.xls", RecordFormatException.class);
+        EXCLUDED.put("64130.xls", OldExcelFormatException.class); //Biff 5
     }
 
 	@Override

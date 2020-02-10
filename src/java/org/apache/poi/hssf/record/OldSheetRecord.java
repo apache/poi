@@ -47,15 +47,17 @@ public final class OldSheetRecord {
         field_2_visibility = in.readUByte();
         field_3_type = in.readUByte();
         int field_4_sheetname_length = in.readUByte();
-        in.mark(1);
-        byte b = in.readByte();
-        // if the sheet name starts with a 0, we need to skip one byte, otherwise the following records will
-        // fail with a LeftOverDataException
-        if (b != 0) {
-            try {
-                in.reset();
-            } catch (IOException e) {
-                throw new RecordFormatException(e);
+        if (field_4_sheetname_length > 0) {
+            in.mark(1);
+            byte b = in.readByte();
+            // if the sheet name starts with a 0, we need to skip one byte, otherwise the following records will
+            // fail with a LeftOverDataException
+            if (b != 0) {
+                try {
+                    in.reset();
+                } catch (IOException e) {
+                    throw new RecordFormatException(e);
+                }
             }
         }
         field_5_sheetname = IOUtils.safelyAllocate(field_4_sheetname_length, MAX_RECORD_LENGTH);

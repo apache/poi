@@ -327,6 +327,7 @@ public class TestAllFiles {
         "spreadsheet/testEXCEL_95.xls",
         "spreadsheet/59074.xls",
         "spreadsheet/60284.xls",
+        "spreadsheet/64130.xls",
 
         // OOXML Strict is not yet supported, see bug #57699
         "spreadsheet/SampleSS.strict.xlsx",

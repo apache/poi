@@ -54,6 +54,7 @@ public class TestBiffViewer extends BaseXLSIteratingTest {
         EXCLUDED.put("50833.xls", IllegalArgumentException.class);       // "Name is too long" when setting username
         EXCLUDED.put("XRefCalc.xls", RuntimeException.class);            // "Buffer overrun"
         EXCLUDED.put("61300.xls", RecordFormatException.class);
+        EXCLUDED.put("64130.xls", OldExcelFormatException.class); //Biff 5
     }
 
     @Override

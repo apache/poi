@@ -47,6 +47,7 @@ public class TestFormulaViewer extends BaseXLSIteratingTest {
         EXCLUDED.put("43493.xls", RecordInputStream.LeftoverDataException.class);  // HSSFWorkbook cannot open it as well
         EXCLUDED.put("44958_1.xls", RecordInputStream.LeftoverDataException.class);
         EXCLUDED.put("61300.xls", RecordFormatException.class);
+        EXCLUDED.put("64130.xls", OldExcelFormatException.class); //Biff 5
     }
 	
     @Override

@@ -267,6 +267,10 @@ public final class TestOldExcelExtractor {
 
     @Test
     public void testInputStreamNPOIHeader() throws IOException {
+        //TODO: the worksheet names are currently mangled.  They're treated
+        //as if UTF-16, but they're just ascii.  Need to fix this.
+        //Is it possible that the leading 0 byte in the worksheet name is a signal
+        //that these worksheet names should be interpreted as ascii/1252?
         File file = HSSFTestDataSamples.getSampleFile("FormulaRefs.xls");
         try (InputStream stream = new FileInputStream(file);
              OldExcelExtractor extractor = new OldExcelExtractor(stream)) {
@@ -347,6 +351,17 @@ public final class TestOldExcelExtractor {
             assertEquals(5, ex.getBiffVersion());
             assertEquals(5, ex.getFileType());
             ex.getText();
+        }
+    }
+
+    @Test
+    public void testSheetWithNoName() throws IOException {
+        File file = HSSFTestDataSamples.getSampleFile("64130.xls");
+
+        try (OldExcelExtractor ex = new OldExcelExtractor(file)) {
+            assertEquals(5, ex.getBiffVersion());
+            assertEquals(5, ex.getFileType());
+            assertContains(ex.getText(), "Dawn");
         }
     }
 
