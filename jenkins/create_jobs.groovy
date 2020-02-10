@@ -10,7 +10,7 @@ def triggerSundays = '''
 H H * * 0
 '''
 
-def xercesUrl = 'http://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesImpl-2.6.1.jar'
+def xercesUrl = 'https://repo1.maven.org/maven2/xerces/xercesImpl/2.6.1/xercesImpl-2.6.1.jar'
 def xercesLib = './xercesImpl-2.6.1.jar'
 
 def poijobs = [
