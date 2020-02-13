@@ -17,7 +17,7 @@
       
 // Add the POI core and OOXML support dependencies into your build.sbt
 libraryDependencies ++= Seq(
-   "org.apache.poi" % "poi" % "4.1.0",
-   "org.apache.poi" % "poi-ooxml" % "4.1.0",
-   "org.apache.poi" % "poi-ooxml-schemas" "4.1.0",
+   "org.apache.poi" % "poi" % "4.1.2",
+   "org.apache.poi" % "poi-ooxml" % "4.1.2",
+   "org.apache.poi" % "poi-ooxml-schemas" "4.1.2",
 )

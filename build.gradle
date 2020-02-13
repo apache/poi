@@ -70,7 +70,7 @@ wrapper.finalizedBy adjustWrapperPropertiesFile
 
 /**
 
-Define properties for all projects, including this one 
+Define properties for all projects, including this one
 
 */
 allprojects {
@@ -87,12 +87,12 @@ subprojects {
     apply plugin: 'java'
     apply plugin: 'jacoco'
 
-    // See https://github.com/melix/japicmp-gradle-plugin 
+    // See https://github.com/melix/japicmp-gradle-plugin
     apply plugin: 'me.champeau.gradle.japicmp'
-        
-    version = '4.1.2-SNAPSHOT'
+
+    version = '4.1.3-SNAPSHOT'
     ext {
-        japicmpversion = '4.1.0'
+        japicmpversion = '4.1.2'
     }
 
     tasks.withType(JavaCompile) {
@@ -131,15 +131,15 @@ subprojects {
 
         // Specifying the local via system properties did not work, so we set them this way
         jvmArgs '-Duser.language=en -Duser.country=US'
-  
+
         // show standard out and standard error of the test JVM(s) on the console
         //testLogging.showStandardStreams = true
 
         // http://forums.gradle.org/gradle/topics/jacoco_related_failure_in_multiproject_build
         systemProperties['user.dir'] = workingDir
-        
+
         systemProperties['POI.testdata.path'] = '../../test-data'
-        
+
         // this is necessary for JDK 9+ to keep formatting dates the same way as in previous JDK-versions
         systemProperties['java.locale.providers'] = 'JRE,CLDR'
     }
@@ -147,7 +147,7 @@ subprojects {
     jacoco {
         toolVersion = '0.8.5'
     }
-    
+
     // ensure the build-dir exists
     projectDir.mkdirs()
 
@@ -217,7 +217,7 @@ project('main') {
 }
 
 project('ooxml') {
-    
+
     sourceSets.main.java.srcDirs = ['../../src/ooxml/java']
     sourceSets.main.resources.srcDirs = ['../../src/ooxml/resources', '../../src/resources/ooxml']
     sourceSets.test.java.srcDirs = ['../../src/ooxml/testcases']

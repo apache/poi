@@ -19,14 +19,14 @@ under the License.
 -->
 
 <!-- POI OSGi Bundle System -->
-<project name="POI OSGi Bundle" default="bundle" basedir=".." xmlns:mvn="antlib:org.apache.maven.artifact.ant">
+<project name="POI OSGi Bundle" default="bundle" basedir="..">
     <description>The Apache POI OSGi Bundle System.</description>
 
     <property name="bundle.lib" location="osgi/lib"/>
 
     <!-- TODO Import these from the parent build file -->
     <property name="repository.m2" value="https://repo1.maven.org"/>
-    <property name="version.id" value="4.1.2-SNAPSHOT"/>
+    <property name="version.id" value="4.1.3-SNAPSHOT"/>
     <property name="dist.dir" value="build/dist"/>
 
     <!-- jars in the /lib directory, see the fetch-bundle-jars target-->
