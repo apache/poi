@@ -44,7 +44,7 @@ configurations {
 }
 
 dependencies {
-    antLibs("junit:junit:4.12")
+    antLibs("junit:junit:4.13")
     antLibs("org.apache.ant:ant-junit:1.10.4")
     antLibs("org.apache.ant:ant-junit4:1.10.4")
 }
@@ -187,8 +187,8 @@ project('main') {
         implementation 'javax.activation:activation:1.1.1'
         implementation 'com.zaxxer:SparseBitSet:1.2'
 
-        testImplementation 'junit:junit:4.12'
-        testImplementation 'org.mockito:mockito-core:3.0.0'
+        testImplementation 'junit:junit:4.13'
+        testImplementation 'org.mockito:mockito-core:3.2.4'
         testImplementation 'org.reflections:reflections:0.9.11'
     }
 
@@ -245,15 +245,15 @@ project('ooxml') {
         implementation 'org.apache.xmlgraphics:xmlgraphics-commons:2.3'
 
         // for ooxml-lite, should we move this somewhere else?
-        implementation 'junit:junit:4.12'
+        implementation 'junit:junit:4.13'
 
         implementation project(':main')
         implementation project(':scratchpad')		// TODO: get rid of this dependency!
         implementation files('../../ooxml-lib/ooxml-schemas-1.4.jar')
         implementation files('../../ooxml-lib/ooxml-security-1.1.jar')
 
-        testImplementation 'junit:junit:4.12'
-        testImplementation 'org.mockito:mockito-core:3.0.0'
+        testImplementation 'junit:junit:4.13'
+        testImplementation 'org.mockito:mockito-core:3.2.4'
         testImplementation 'org.xmlunit:xmlunit-core:2.5.1'
         testImplementation 'org.reflections:reflections:0.9.11'
         testImplementation project(path: ':main', configuration: 'tests')
@@ -316,7 +316,7 @@ project('integrationtest') {
         implementation project(':scratchpad')
         implementation project(':examples')
 
-        testImplementation 'junit:junit:4.12'
+        testImplementation 'junit:junit:4.13'
     }
 
 	jar {
@@ -353,7 +353,7 @@ project('scratchpad') {
 
         // cyclic-dependency here: implementation project(':ooxml')
 
-        testImplementation 'junit:junit:4.12'
+        testImplementation 'junit:junit:4.13'
         testImplementation project(path: ':main', configuration: 'tests')
     }
 

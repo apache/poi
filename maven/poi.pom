@@ -104,7 +104,7 @@
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>
-      <version>4.12</version>
+      <version>4.13</version>
     </dependency>
   </dependencies>
 

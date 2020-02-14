@@ -20,7 +20,7 @@
 	<classpathentry kind="lib" path="lib/log4j-1.2.17.jar"/>
 	<classpathentry exported="true" kind="lib" path="ooxml-lib/xmlbeans-3.1.0.jar" sourcepath="ooxml-lib/xmlbeans-3.1.0.jar"/>
 	<classpathentry kind="lib" path="lib/hamcrest-core-1.3.jar"/>
-	<classpathentry kind="lib" path="lib/junit-4.12.jar"/>
+	<classpathentry kind="lib" path="lib/junit-4.13.jar"/>
 	<classpathentry kind="lib" path="ooxml-lib/curvesapi-1.06.jar"/>
 	<classpathentry exported="true" kind="lib" path="ooxml-lib/ooxml-schemas-1.4.jar" sourcepath="ooxml-lib/ooxml-schemas-1.4-sources.jar"/>
 	<classpathentry exported="true" kind="lib" path="ooxml-lib/ooxml-security-1.1.jar" sourcepath="ooxml-lib/ooxml-security-1.1-sources.jar"/>
@@ -41,7 +41,7 @@
 	<classpathentry kind="lib" path="lib/xmlunit-core-2.5.1.jar"/>
 	<classpathentry kind="lib" path="lib/objenesis-2.6.jar"/>
 	<classpathentry kind="lib" path="lib/commons-compress-1.19.jar"/>
-	<classpathentry kind="lib" path="lib/mockito-core-3.0.0.jar"/>
+	<classpathentry kind="lib" path="lib/mockito-core-3.2.4.jar"/>
 	<classpathentry kind="lib" path="lib/byte-buddy-1.10.1.jar"/>
 	<classpathentry kind="lib" path="lib/byte-buddy-agent-1.10.1.jar"/>
 	<classpathentry kind="lib" path="compile-lib/batik-all-1.11.jar"/>
