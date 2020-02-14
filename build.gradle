@@ -354,6 +354,7 @@ project('scratchpad') {
         // cyclic-dependency here: implementation project(':ooxml')
 
         testImplementation 'junit:junit:4.13'
+        testImplementation 'org.mockito:mockito-core:3.2.4'
         testImplementation project(path: ':main', configuration: 'tests')
     }
 
