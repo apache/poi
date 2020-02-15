@@ -184,19 +184,19 @@ project('main') {
     sourceSets.test.java.srcDirs = ['../../src/testcases']
 
     dependencies {
-        implementation "commons-codec:commons-codec:${commonsCodecVersion}"
-        implementation 'commons-logging:commons-logging:1.2'
-        implementation 'org.apache.commons:commons-collections4:4.4'
-        implementation "org.apache.commons:commons-math3:${commonsMathVersion}"
-        implementation 'javax.xml.bind:jaxb-api:2.3.1'
-        implementation 'com.sun.xml.bind:jaxb-impl:2.3.2'
-        implementation 'com.sun.xml.bind:jaxb-core:2.3.0.1'
-        implementation 'javax.activation:activation:1.1.1'
-        implementation 'com.zaxxer:SparseBitSet:1.2'
+        compile "commons-codec:commons-codec:${commonsCodecVersion}"
+        compile 'commons-logging:commons-logging:1.2'
+        compile 'org.apache.commons:commons-collections4:4.4'
+        compile "org.apache.commons:commons-math3:${commonsMathVersion}"
+        compile 'javax.xml.bind:jaxb-api:2.3.1'
+        compile 'com.sun.xml.bind:jaxb-impl:2.3.2'
+        compile 'com.sun.xml.bind:jaxb-core:2.3.0.1'
+        compile 'javax.activation:activation:1.1.1'
+        compile 'com.zaxxer:SparseBitSet:1.2'
 
-        testImplementation "junit:junit:${junitVersion}"
-        testImplementation "org.mockito:mockito-core:${mockitoVersion}"
-        testImplementation 'org.reflections:reflections:0.9.11'
+        testCompile "junit:junit:${junitVersion}"
+        testCompile "org.mockito:mockito-core:${mockitoVersion}"
+        testCompile 'org.reflections:reflections:0.9.11'
     }
 
     jar {
@@ -237,35 +237,35 @@ project('ooxml') {
     compileJava.dependsOn 'ant-compile-ooxml-xsds'
 
     dependencies {
-        implementation "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
-        implementation 'org.apache.commons:commons-collections4:4.4'
-        implementation "org.apache.commons:commons-math3:${commonsMathVersion}"
-        implementation "org.apache.commons:commons-compress:${commonsCompressVersion}"
-        implementation 'org.apache.santuario:xmlsec:2.1.2'
-        implementation "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVersion}"
-        implementation 'com.github.virtuald:curvesapi:1.06'
-        implementation 'com.zaxxer:SparseBitSet:1.2'
+        compile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
+        compile 'org.apache.commons:commons-collections4:4.4'
+        compile "org.apache.commons:commons-math3:${commonsMathVersion}"
+        compile "org.apache.commons:commons-compress:${commonsCompressVersion}"
+        compile 'org.apache.santuario:xmlsec:2.1.2'
+        compile "org.bouncycastle:bcpkix-jdk15on:${bouncyCastleVersion}"
+        compile 'com.github.virtuald:curvesapi:1.06'
+        compile 'com.zaxxer:SparseBitSet:1.2'
 
         // compile only, don't add it to our dist as it blows up the size
-        implementation 'org.apache.xmlgraphics:batik-all:1.11'
-        implementation 'xml-apis:xml-apis-ext:1.3.04'
-        implementation 'org.apache.xmlgraphics:xmlgraphics-commons:2.3'
+        compile 'org.apache.xmlgraphics:batik-all:1.11'
+        compile 'xml-apis:xml-apis-ext:1.3.04'
+        compile 'org.apache.xmlgraphics:xmlgraphics-commons:2.3'
 
         // for ooxml-lite, should we move this somewhere else?
-        implementation "junit:junit:${junitVersion}"
+        compile "junit:junit:${junitVersion}"
 
-        implementation project(':main')
-        implementation project(':scratchpad')		// TODO: get rid of this dependency!
-        implementation files('../../ooxml-lib/ooxml-schemas-1.4.jar')
-        implementation files('../../ooxml-lib/ooxml-security-1.1.jar')
+        compile project(':main')
+        compile project(':scratchpad')		// TODO: get rid of this dependency!
+        compile files('../../ooxml-lib/ooxml-schemas-1.4.jar')
+        compile files('../../ooxml-lib/ooxml-security-1.1.jar')
 
-        testImplementation "junit:junit:${junitVersion}"
-        testImplementation "org.mockito:mockito-core:${mockitoVersion}"
-        testImplementation 'org.xmlunit:xmlunit-core:2.5.1'
-        testImplementation 'org.reflections:reflections:0.9.11'
-        testImplementation project(path: ':main', configuration: 'tests')
-        testImplementation 'org.openjdk.jmh:jmh-core:1.19'
-        testImplementation 'org.openjdk.jmh:jmh-generator-annprocess:1.19'
+        testCompile "junit:junit:${junitVersion}"
+        testCompile "org.mockito:mockito-core:${mockitoVersion}"
+        testCompile 'org.xmlunit:xmlunit-core:2.5.1'
+        testCompile 'org.reflections:reflections:0.9.11'
+        testCompile project(path: ':main', configuration: 'tests')
+        testCompile 'org.openjdk.jmh:jmh-core:1.19'
+        testCompile 'org.openjdk.jmh:jmh-generator-annprocess:1.19'
     }
 
     jar {
@@ -281,12 +281,12 @@ project('examples') {
     sourceSets.main.java.srcDirs = ['../../src/examples/src']
 
     dependencies {
-        implementation project(':main')
-        implementation project(':ooxml')
-        implementation project(':scratchpad')
-        implementation "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
-        implementation files('../../ooxml-lib/ooxml-schemas-1.4.jar')
-        implementation "org.apache.commons:commons-compress:${commonsCompressVersion}"
+        compile project(':main')
+        compile project(':ooxml')
+        compile project(':scratchpad')
+        compile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
+        compile files('../../ooxml-lib/ooxml-schemas-1.4.jar')
+        compile "org.apache.commons:commons-compress:${commonsCompressVersion}"
     }
 
     japicmp.enabled = false
@@ -299,13 +299,13 @@ project('excelant') {
     sourceSets.test.java.srcDirs = ['../../src/excelant/testcases']
 
     dependencies {
-        implementation 'org.apache.ant:ant:1.10.4'
+        compile 'org.apache.ant:ant:1.10.4'
 
-        implementation project(':main')
-        implementation project(':ooxml')
+        compile project(':main')
+        compile project(':ooxml')
 
-        testImplementation project(path: ':main', configuration: 'tests')
-        testImplementation "junit:junit:${junitVersion}"
+        testCompile project(path: ':main', configuration: 'tests')
+        testCompile "junit:junit:${junitVersion}"
     }
 
 	jar {
@@ -321,16 +321,16 @@ project('integrationtest') {
     sourceSets.test.java.srcDirs = ['../../src/integrationtest']
 
     dependencies {
-        implementation 'org.apache.ant:ant:1.10.4'
+        compile 'org.apache.ant:ant:1.10.4'
 
-        implementation project(':main')
-        implementation project(':ooxml')
-        implementation project(':scratchpad')
-        implementation project(':examples')
+        compile project(':main')
+        compile project(':ooxml')
+        compile project(':scratchpad')
+        compile project(':examples')
 
-        testImplementation "junit:junit:${junitVersion}"
-        testImplementation  "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
-        testImplementation files('../../ooxml-lib/ooxml-schemas-1.4.jar')
+        testCompile "junit:junit:${junitVersion}"
+        testCompile  "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
+        testCompile files('../../ooxml-lib/ooxml-schemas-1.4.jar')
     }
 
 	jar {
@@ -361,15 +361,15 @@ project('scratchpad') {
     sourceSets.test.java.srcDirs = ['../../src/scratchpad/testcases']
 
     dependencies {
-        implementation project(':main')
-        implementation "commons-codec:commons-codec:${commonsCodecVersion}"
-        implementation "org.apache.commons:commons-math3:${commonsMathVersion}"
+        compile project(':main')
+        compile "commons-codec:commons-codec:${commonsCodecVersion}"
+        compile "org.apache.commons:commons-math3:${commonsMathVersion}"
 
-        // cyclic-dependency here: implementation project(':ooxml')
+        // cyclic-dependency here: compile project(':ooxml')
 
-        testImplementation "junit:junit:${junitVersion}"
-        testImplementation "org.mockito:mockito-core:${mockitoVersion}"
-        testImplementation project(path: ':main', configuration: 'tests')
+        testCompile "junit:junit:${junitVersion}"
+        testCompile "org.mockito:mockito-core:${mockitoVersion}"
+        testCompile project(path: ':main', configuration: 'tests')
     }
 
 	jar {
