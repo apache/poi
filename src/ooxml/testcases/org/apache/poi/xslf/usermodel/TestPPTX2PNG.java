@@ -76,7 +76,7 @@ public class TestPPTX2PNG {
         assumeFalse("ignore HSLF (.ppt) / HEMF (.emf) / HWMF (.wmf) files in no-scratchpad run", xslfOnly && pptFile.matches(".*\\.(ppt|emf|wmf)$"));
 
         String[] args = {
-            "-format", "null", // png,gif,jpg or null for test
+            "-format", "null", // png,gif,jpg,svg or null for test
             "-slide", "-1", // -1 for all
             "-outdir", new File("build/tmp/").getCanonicalPath(),
             "-outpat", "${basename}-${slideno}-${ext}.${format}",

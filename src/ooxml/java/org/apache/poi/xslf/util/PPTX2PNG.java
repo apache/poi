@@ -20,10 +20,12 @@
 package org.apache.poi.xslf.util;
 
 import java.awt.AlphaComposite;
+import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.Dimension2D;
 import java.awt.image.BufferedImage;
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -35,12 +37,16 @@ import java.util.regex.Pattern;
 
 import javax.imageio.ImageIO;
 
+import org.apache.batik.dom.GenericDOMImplementation;
+import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.draw.EmbeddedExtractor.EmbeddedPart;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.GenericRecordJsonWriter;
+import org.w3c.dom.DOMImplementation;
+import org.w3c.dom.Document;
 
 /**
  * An utility to convert slides of a .pptx slide show to a PNG image
@@ -62,7 +68,7 @@ public final class PPTX2PNG {
             "    -scale <float>    scale factor\n" +
             "    -fixSide <side>   specify side (long,short,width,height) to fix - use <scale> as amount of pixels\n" +
             "    -slide <integer>  1-based index of a slide to render\n" +
-            "    -format <type>    png,gif,jpg (,null for testing)\n" +
+            "    -format <type>    png,gif,jpg,svg (,null for testing)\n" +
             "    -outdir <dir>     output directory, defaults to origin of the ppt/pptx file\n" +
             "    -outfile <file>   output filename, defaults to '"+OUTPUT_PAT_REGEX+"'\n" +
             "    -outpat <pattern> output filename pattern, defaults to '"+OUTPUT_PAT_REGEX+"'\n" +
@@ -175,7 +181,7 @@ public final class PPTX2PNG {
             return false;
         }
 
-        if (format == null || !format.matches("^(png|gif|jpg|null)$")) {
+        if (format == null || !format.matches("^(png|gif|jpg|null|svg)$")) {
             usage("Invalid format given");
             return false;
         }
@@ -216,6 +222,8 @@ public final class PPTX2PNG {
             System.out.println("Processing " + file);
         }
 
+
+
         try (MFProxy proxy = initProxy(file)) {
             final Set<Integer> slidenum = proxy.slideIndexes(slidenumStr);
             if (slidenum.isEmpty()) {
@@ -239,33 +247,27 @@ public final class PPTX2PNG {
 
                 extractEmbedded(proxy, slideNo);
 
-                BufferedImage img = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-                Graphics2D graphics = img.createGraphics();
+                try (OutputFormat outputFormat = ("svg".equals(format)) ? new SVGFormat() : new BitmapFormat(format)) {
+                    Graphics2D graphics = outputFormat.getGraphics2D(width, height);
 
-                // default rendering options
-                graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-                graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-                graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
-                graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-                graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-                graphics.setRenderingHint(Drawable.BUFFERED_IMAGE, new WeakReference<>(img));
+                    // default rendering options
+                    graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+                    graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
+                    graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
+                    graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+                    graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
 
-                graphics.scale(scale / lenSide, scale / lenSide);
+                    graphics.scale(scale / lenSide, scale / lenSide);
 
-                graphics.setComposite(AlphaComposite.Clear);
-                graphics.fillRect(0, 0, width, height);
-                graphics.setComposite(AlphaComposite.SrcOver);
+                    graphics.setComposite(AlphaComposite.Clear);
+                    graphics.fillRect(0, 0, width, height);
+                    graphics.setComposite(AlphaComposite.SrcOver);
 
-                // draw stuff
-                proxy.draw(graphics);
+                    // draw stuff
+                    proxy.draw(graphics);
 
-                // save the result
-                if (!"null".equals(format)) {
-                    ImageIO.write(img, format, new File(outdir, calcOutFile(proxy, slideNo)));
+                    outputFormat.writeOut(proxy, slideNo);
                 }
-
-                graphics.dispose();
-                img.flush();
             }
         } catch (NoScratchpadException e) {
             usage("'"+file.getName()+"': Format not supported - try to include poi-scratchpad.jar into the CLASSPATH.");
@@ -391,6 +393,72 @@ public final class PPTX2PNG {
 
         NoScratchpadException(Throwable cause) {
             super(cause);
+        }
+    }
+
+    private interface OutputFormat extends Closeable {
+        Graphics2D getGraphics2D(double width, double height);
+        void writeOut(MFProxy proxy, int slideNo) throws IOException;
+    }
+
+    private class SVGFormat implements OutputFormat {
+        static final String svgNS = "http://www.w3.org/2000/svg";
+        private SVGGraphics2D svgGenerator;
+
+        @Override
+        public Graphics2D getGraphics2D(double width, double height) {
+            // Get a DOMImplementation.
+            DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
+
+            // Create an instance of org.w3c.dom.Document.
+            Document document = domImpl.createDocument(svgNS, "svg", null);
+            svgGenerator = new SVGGraphics2D(document);
+            svgGenerator.setSVGCanvasSize(new Dimension((int)width, (int)height));
+            return svgGenerator;
+        }
+
+        @Override
+        public void writeOut(MFProxy proxy, int slideNo) throws IOException {
+            File outfile = new File(outdir, calcOutFile(proxy, slideNo));
+            svgGenerator.stream(outfile.getCanonicalPath(), true);
+        }
+
+        @Override
+        public void close() throws IOException {
+            svgGenerator.dispose();
+        }
+    }
+
+    private class BitmapFormat implements OutputFormat {
+        private final String format;
+        private BufferedImage img;
+        private Graphics2D graphics;
+
+        BitmapFormat(String format) {
+            this.format = format;
+        }
+
+        @Override
+        public Graphics2D getGraphics2D(double width, double height) {
+            img = new BufferedImage((int)width, (int)height, BufferedImage.TYPE_INT_ARGB);
+            graphics = img.createGraphics();
+            graphics.setRenderingHint(Drawable.BUFFERED_IMAGE, new WeakReference<>(img));
+            return graphics;
+        }
+
+        @Override
+        public void writeOut(MFProxy proxy, int slideNo) throws IOException {
+            if (!"null".equals(format)) {
+                ImageIO.write(img, format, new File(outdir, calcOutFile(proxy, slideNo)));
+            }
+        }
+
+        @Override
+        public void close() throws IOException {
+            if (graphics != null) {
+                graphics.dispose();
+                img.flush();
+            }
         }
     }
 }
