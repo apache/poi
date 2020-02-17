@@ -233,8 +233,8 @@ under the License.
     <property name="dsig.sl4j-api.url" value="${repository.m2}/maven2/org/slf4j/slf4j-api/1.7.30/slf4j-api-1.7.30.jar"/>
 
     <!-- svg/batik libs - not part of the distribution -->
-    <property name="svg.batik-all.url" value="${repository.m2}/maven2/org/apache/xmlgraphics/batik-all/1.11/batik-all-1.11.jar"/>
-    <property name="svg.batik-all.jar" value="${compile.lib}/batik-all-1.11.jar"/>
+    <property name="svg.batik-all.url" value="${repository.m2}/maven2/org/apache/xmlgraphics/batik-all/1.12/batik-all-1.12.jar"/>
+    <property name="svg.batik-all.jar" value="${compile.lib}/batik-all-1.12.jar"/>
     <property name="svg.xml-apis-ext.url" value="${repository.m2}/maven2/xml-apis/xml-apis-ext/1.3.04/xml-apis-ext-1.3.04.jar"/>
     <property name="svg.xml-apis-ext.jar" value="${compile.lib}/xml-apis-ext-1.3.04.jar"/>
     <property name="svg.xmlgraphics-commons.url" value="${repository.m2}/maven2/org/apache/xmlgraphics/xmlgraphics-commons/2.3/xmlgraphics-commons-2.3.jar"/>
@@ -720,6 +720,7 @@ under the License.
                 <include name="bc*jdk15on-1.61*.jar"/>
                 <include name="bc*jdk15on-1.62*.jar"/>
                 <include name="batik-all-1.10.jar"/>
+                <include name="batik-all-1.11.jar"/>
                 <include name="slf4j-api-1.7.7.jar"/>
                 <include name="slf4j-api-1.7.1*.jar"/>
                 <include name="slf4j-api-1.7.2*.jar"/>

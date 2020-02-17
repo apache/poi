@@ -247,7 +247,7 @@ project('ooxml') {
         compile 'com.zaxxer:SparseBitSet:1.2'
 
         // compile only, don't add it to our dist as it blows up the size
-        compile 'org.apache.xmlgraphics:batik-all:1.11'
+        compile 'org.apache.xmlgraphics:batik-all:1.12'
         compile 'xml-apis:xml-apis-ext:1.3.04'
         compile 'org.apache.xmlgraphics:xmlgraphics-commons:2.3'
 
