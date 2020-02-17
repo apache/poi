@@ -20,33 +20,24 @@
 package org.apache.poi.xslf.util;
 
 import java.awt.AlphaComposite;
-import java.awt.Dimension;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.geom.Dimension2D;
-import java.awt.image.BufferedImage;
-import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.ref.WeakReference;
 import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import javax.imageio.ImageIO;
-
-import org.apache.batik.dom.GenericDOMImplementation;
-import org.apache.batik.svggen.SVGGraphics2D;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.poifs.filesystem.FileMagic;
-import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.draw.EmbeddedExtractor.EmbeddedPart;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.GenericRecordJsonWriter;
-import org.w3c.dom.DOMImplementation;
-import org.w3c.dom.Document;
+import org.apache.poi.xslf.util.OutputFormat.BitmapFormat;
+import org.apache.poi.xslf.util.OutputFormat.SVGFormat;
 
 /**
  * An utility to convert slides of a .pptx slide show to a PNG image
@@ -266,7 +257,7 @@ public final class PPTX2PNG {
                     // draw stuff
                     proxy.draw(graphics);
 
-                    outputFormat.writeOut(proxy, slideNo);
+                    outputFormat.writeOut(proxy, new File(outdir, calcOutFile(proxy, slideNo)));
                 }
             }
         } catch (NoScratchpadException e) {
@@ -393,72 +384,6 @@ public final class PPTX2PNG {
 
         NoScratchpadException(Throwable cause) {
             super(cause);
-        }
-    }
-
-    private interface OutputFormat extends Closeable {
-        Graphics2D getGraphics2D(double width, double height);
-        void writeOut(MFProxy proxy, int slideNo) throws IOException;
-    }
-
-    private class SVGFormat implements OutputFormat {
-        static final String svgNS = "http://www.w3.org/2000/svg";
-        private SVGGraphics2D svgGenerator;
-
-        @Override
-        public Graphics2D getGraphics2D(double width, double height) {
-            // Get a DOMImplementation.
-            DOMImplementation domImpl = GenericDOMImplementation.getDOMImplementation();
-
-            // Create an instance of org.w3c.dom.Document.
-            Document document = domImpl.createDocument(svgNS, "svg", null);
-            svgGenerator = new SVGGraphics2D(document);
-            svgGenerator.setSVGCanvasSize(new Dimension((int)width, (int)height));
-            return svgGenerator;
-        }
-
-        @Override
-        public void writeOut(MFProxy proxy, int slideNo) throws IOException {
-            File outfile = new File(outdir, calcOutFile(proxy, slideNo));
-            svgGenerator.stream(outfile.getCanonicalPath(), true);
-        }
-
-        @Override
-        public void close() throws IOException {
-            svgGenerator.dispose();
-        }
-    }
-
-    private class BitmapFormat implements OutputFormat {
-        private final String format;
-        private BufferedImage img;
-        private Graphics2D graphics;
-
-        BitmapFormat(String format) {
-            this.format = format;
-        }
-
-        @Override
-        public Graphics2D getGraphics2D(double width, double height) {
-            img = new BufferedImage((int)width, (int)height, BufferedImage.TYPE_INT_ARGB);
-            graphics = img.createGraphics();
-            graphics.setRenderingHint(Drawable.BUFFERED_IMAGE, new WeakReference<>(img));
-            return graphics;
-        }
-
-        @Override
-        public void writeOut(MFProxy proxy, int slideNo) throws IOException {
-            if (!"null".equals(format)) {
-                ImageIO.write(img, format, new File(outdir, calcOutFile(proxy, slideNo)));
-            }
-        }
-
-        @Override
-        public void close() throws IOException {
-            if (graphics != null) {
-                graphics.dispose();
-                img.flush();
-            }
         }
     }
 }
