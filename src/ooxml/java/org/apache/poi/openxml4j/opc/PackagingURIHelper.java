@@ -193,7 +193,7 @@ public final class PackagingURIHelper {
      */
     public static String getFilenameWithoutExtension(URI uri) {
         String filename = getFilename(uri);
-        int dotIndex = filename.lastIndexOf(".");
+        int dotIndex = filename.lastIndexOf('.');
         if (dotIndex == -1)
             return filename;
         return filename.substring(0, dotIndex);

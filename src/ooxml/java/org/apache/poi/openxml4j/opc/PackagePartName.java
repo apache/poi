@@ -422,7 +422,7 @@ public final class PackagePartName implements Comparable<PackagePartName> {
 	public String getExtension() {
 		String fragment = this.partNameURI.getPath();
 		if (fragment.length() > 0) {
-			int i = fragment.lastIndexOf(".");
+			int i = fragment.lastIndexOf('.');
 			if (i > -1) {
                 return fragment.substring(i + 1);
             }

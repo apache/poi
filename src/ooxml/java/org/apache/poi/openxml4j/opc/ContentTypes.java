@@ -111,7 +111,7 @@ public final class ContentTypes {
 	public static final String EXTENSION_XML = "xml";
 
 	public static String getContentTypeFromFileExtension(String filename) {
-		String extension = filename.substring(filename.lastIndexOf(".") + 1)
+		String extension = filename.substring(filename.lastIndexOf('.') + 1)
 				.toLowerCase(Locale.ROOT);
 		if (extension.equals(EXTENSION_JPG_1)
 				|| extension.equals(EXTENSION_JPG_2))

@@ -47,7 +47,7 @@ public class CellTextFormatter extends CellFormatter {
         textPos = new int[numPlaces[0]];
         int pos = desc.length() - 1;
         for (int i = 0; i < textPos.length; i++) {
-            textPos[i] = desc.lastIndexOf("\u0000", pos);
+            textPos[i] = desc.lastIndexOf('\u0000', pos);
             pos = textPos[i] - 1;
         }
     }

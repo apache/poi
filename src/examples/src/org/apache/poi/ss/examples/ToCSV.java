@@ -346,7 +346,7 @@ public class ToCSV {
                 // Simply replace the .xls or .xlsx file extension with .csv
                 destinationFilename = excelFile.getName();
                 destinationFilename = destinationFilename.substring(
-                        0, destinationFilename.lastIndexOf(".")) +
+                        0, destinationFilename.lastIndexOf('.')) +
                         ToCSV.CSV_FILE_EXTENSION;
 
                 // Save the CSV file away using the newly constricted file name

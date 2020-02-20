@@ -122,7 +122,7 @@ public class CellRangeAddress extends CellRangeAddressBase {
      *            column range (e.g. "C:F")
      */
     public static CellRangeAddress valueOf(String ref) {
-        int sep = ref.indexOf(":");
+        int sep = ref.indexOf(':');
         CellReference a;
         CellReference b;
         if (sep == -1) {

@@ -517,7 +517,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
                     + filename);
         } catch (InvalidFormatException e) {
             String partName = "/docProps/thumbnail" +
-                    filename.substring(filename.lastIndexOf(".") + 1);
+                    filename.substring(filename.lastIndexOf('.') + 1);
             try {
                 thumbnailPartName = PackagingURIHelper.createPartName(partName);
             } catch (InvalidFormatException e2) {

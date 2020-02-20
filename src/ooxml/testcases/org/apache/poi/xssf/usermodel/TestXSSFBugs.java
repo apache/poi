@@ -916,7 +916,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals(text, cell.getStringCellValue());
 
         // Now add a 2nd, and check again
-        int fontAt = text.indexOf("\n", 6);
+        int fontAt = text.indexOf('\n', 6);
         cell.getRichStringCellValue().applyFont(10, fontAt + 1, font2);
         assertEquals(text, cell.getStringCellValue());
 
