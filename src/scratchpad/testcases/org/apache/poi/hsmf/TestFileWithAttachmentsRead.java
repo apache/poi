@@ -22,6 +22,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.junit.AfterClass;
@@ -134,6 +135,9 @@ public class TestFileWithAttachmentsRead {
         assertEquals("test-unicode.doc", attachment.getAttachLongFileName().getValue());
         assertEquals(".doc", attachment.getAttachExtension().getValue());
         assertNull(attachment.getAttachMimeTag());
+        ByteArrayOutputStream attachmentstream = new ByteArrayOutputStream();
+        attachment.getAttachData().writeValue(attachmentstream);
+        assertEquals(24064, attachmentstream.size());
         assertEquals(24064, attachment.getAttachData().getValue().length); // or compare the hashes of the attachment data
 
         attachment = twoSimpleAttachments.getAttachmentFiles()[1];
@@ -142,6 +146,9 @@ public class TestFileWithAttachmentsRead {
         assertEquals(".txt", attachment.getAttachExtension().getValue());
         assertNull(attachment.getAttachMimeTag());
         assertEquals(89, attachment.getAttachData().getValue().length); // or compare the hashes of the attachment data
+        attachmentstream = new ByteArrayOutputStream();
+        attachment.getAttachData().writeValue(attachmentstream);
+        assertEquals(89, attachmentstream.size());
     }
     
     /**

@@ -790,6 +790,8 @@ public class MAPIProperty {
         new MAPIProperty(0x3f, BINARY, "ReceivedByEntryId", "PR_RECEIVED_BY_ENTRYID");
     public static final MAPIProperty RECEIVED_BY_NAME =
         new MAPIProperty(0x40, ASCII_STRING, "ReceivedByName", "PR_RECEIVED_BY_NAME");
+    public static final MAPIProperty RECEIVED_BY_SMTP_ADDRESS =
+        new MAPIProperty(0x5D07, ASCII_STRING, "ReceivedBySmtpAddress", "PR_RECEIVED_BY_SMTP_ADDRESS");
     public static final MAPIProperty RECIPIENT_DISPLAY_NAME =
         new MAPIProperty(0x5ff6, Types.UNICODE_STRING, "RecipientDisplayName", null);
     public static final MAPIProperty RECIPIENT_ENTRY_ID =

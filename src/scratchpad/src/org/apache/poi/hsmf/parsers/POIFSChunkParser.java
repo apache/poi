@@ -19,9 +19,12 @@ package org.apache.poi.hsmf.parsers;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.datatypes.ByteChunk;
+import org.apache.poi.hsmf.datatypes.ByteStreamChunk;
 import org.apache.poi.hsmf.datatypes.Chunk;
 import org.apache.poi.hsmf.datatypes.ChunkGroup;
 import org.apache.poi.hsmf.datatypes.Chunks;
@@ -107,21 +110,38 @@ public final class POIFSChunkParser {
     *  doesn't recurse or descend 
     */
    protected static void processChunks(DirectoryNode node, ChunkGroup grouping) {
+     TreeMap<Integer, TreeMap<Integer, Chunk>> multivaluedchunks = new TreeMap<>();
+     TreeMap<Integer, Integer> multivaluedchunkslengths = new TreeMap<>();
+     
       for(Entry entry : node) {
          if(entry instanceof DocumentNode) {
-            process(entry, grouping);
+            process(entry, grouping, multivaluedchunks, multivaluedchunkslengths);
          } else if(entry instanceof DirectoryNode) {
              if(entry.getName().endsWith(Types.DIRECTORY.asFileEnding())) {
-                 process(entry, grouping);
+                 process(entry, grouping, multivaluedchunks, multivaluedchunkslengths);
              }
          }
+      }
+      //
+      // Finish up variable length multivalued properties
+      //
+      for (Map.Entry<Integer, Integer> multivaluedprop : multivaluedchunkslengths.entrySet()) {
+        TreeMap<Integer, Chunk> propvals = multivaluedchunks.get(multivaluedprop.getKey());
+        for (int i = 0;i < multivaluedprop.getValue(); i++) {
+          Chunk propval = propvals != null ? propvals.get(i) : null;
+          if (propval != null) {
+            grouping.record(propval);
+          }
+        }
       }
    }
    
    /**
     * Creates a chunk, and gives it to its parent group 
     */
-   protected static void process(Entry entry, ChunkGroup grouping) {
+   protected static void process(Entry entry, ChunkGroup grouping,
+      TreeMap<Integer/*chunk id*/, TreeMap<Integer/*multivalue index*/, Chunk>> multivaluedchunks,
+      TreeMap<Integer/*chunk id*/, Integer/*multivalue length*/> multivaluedchunkslengths) {
       String entryName = entry.getName();
       Chunk chunk = null;
       
@@ -150,6 +170,20 @@ public final class POIFSChunkParser {
          int splitAt = entryName.lastIndexOf('_');
          String namePrefix = entryName.substring(0, splitAt+1);
          String ids = entryName.substring(splitAt+1);
+         long multivalueidx = -1;
+         boolean ismvvaluestream = false;
+         splitAt = ids.lastIndexOf('-');
+         if (splitAt >= 0) {
+            ismvvaluestream = true;
+            String mvidxstr = ids.substring(splitAt + 1);
+            try {
+               multivalueidx = Long.parseLong(mvidxstr);
+               multivalueidx = multivalueidx & 0xFFFFFFFF;
+            } catch (NumberFormatException e) {
+               // Name in the wrong format
+               return;
+            }
+         }
          
          // Make sure we got what we expected, should be of 
          //  the form __<name>_<id><type>
@@ -170,47 +204,103 @@ public final class POIFSChunkParser {
             int chunkId = Integer.parseInt(ids.substring(0, 4), 16);
             int typeId  = Integer.parseInt(ids.substring(4, 8), 16);
             
+            boolean multivalued = false;
+            if ((typeId & Types.MULTIVALUED_FLAG) != 0) {
+               typeId -= Types.MULTIVALUED_FLAG;
+               multivalued = true;
+            }
             MAPIType type = Types.getById(typeId);
             if (type == null) {
                type = Types.createCustom(typeId);
             }
             
             // Special cases based on the ID
-            if(chunkId == MAPIProperty.MESSAGE_SUBMISSION_ID.id) {
+            if (chunkId == MAPIProperty.MESSAGE_SUBMISSION_ID.id) {
                chunk = new MessageSubmissionChunk(namePrefix, chunkId, type);
-            } 
+            }
+            else if (type == Types.BINARY && chunkId == MAPIProperty.ATTACH_DATA.id) {
+               chunk = new ByteStreamChunk(namePrefix, chunkId, type);
+            }
             else {
                // Nothing special about this ID
                // So, do the usual thing which is by type
-               if (type == Types.BINARY) {
-                  chunk = new ByteChunk(namePrefix, chunkId, type);
-               }
-               else if (type == Types.DIRECTORY) {
-                  if(entry instanceof DirectoryNode) {
-                      chunk = new DirectoryChunk((DirectoryNode)entry, namePrefix, chunkId, type);
+               if (multivalued) {
+                  if (!ismvvaluestream) {
+                     ByteChunk mvlengthchunk = new ByteChunk(chunkId, Types.BINARY);
+                     if(entry instanceof DocumentNode) {
+                        DocumentInputStream inp = null;
+                        try {
+                           inp = new DocumentInputStream((DocumentNode) entry);
+                           mvlengthchunk.readValue(inp);
+                           byte[] mvlength = mvlengthchunk.getValue();
+                           int len = mvlength.length / 4;
+                           multivaluedchunkslengths.put(chunkId, len);
+                        } catch(IOException e) {
+                           logger.log(POILogger.ERROR, "Error reading from part " + entry.getName() + " - " + e);
+                        }
+                     }
+                  }
+                  else if (multivalueidx >= 0) {
+                     TreeMap<Integer, Chunk> chunklist = multivaluedchunks.get(chunkId);
+                     if (chunklist == null) {
+                        chunklist = new TreeMap<>();
+                        multivaluedchunks.put(chunkId, chunklist);
+                     }
+                     Chunk valchunk = null;
+                     if (type == Types.BINARY) {
+                        valchunk = new ByteChunk(namePrefix, chunkId, type);
+                     } else if (type == Types.ASCII_STRING ||
+                                type == Types.UNICODE_STRING) {
+                        valchunk = new StringChunk(namePrefix, chunkId, type);
+                     } else {
+                        System.out.println("UNSUPPORTED MULTIVALUED PROP TYPE " + entryName);
+                        // Type of an unsupported multivalued type! Skipping...
+                     }
+                     if (valchunk != null) {
+                        DocumentInputStream inp = null;
+                        try {
+                           inp = new DocumentInputStream((DocumentNode) entry);
+                           valchunk.readValue(inp);
+                        } catch (IOException e) {
+                           logger.log(POILogger.ERROR, "Error reading from part " + entry.getName() + " - " + e);
+                        }
+                        chunklist.put((int) multivalueidx, valchunk);
+                     }
+                  }
+               } else {
+                  if (type == Types.DIRECTORY) {
+                     if (entry instanceof DirectoryNode) {
+                        chunk = new DirectoryChunk((DirectoryNode) entry, namePrefix, chunkId, type);
+                     }
+                  } else if (type == Types.BINARY) {
+                     chunk = new ByteChunk(namePrefix, chunkId, type);
+                  } else if (type == Types.ASCII_STRING ||
+                             type == Types.UNICODE_STRING) {
+                     chunk = new StringChunk(namePrefix, chunkId, type);
+                  } else {
+                     System.out.println("UNSUPPORTED PROP TYPE " + entryName);
+                     // Type of an unsupported type! Skipping...
                   }
                }
-               else if (type == Types.ASCII_STRING ||
-                        type == Types.UNICODE_STRING) {
-                  chunk = new StringChunk(namePrefix, chunkId, type);
-               } 
-               else {
-                  // Type of an unsupported type! Skipping... 
-               }
             }
-         } catch(NumberFormatException e) {
-            // Name in the wrong format
-            return;
+         } catch (NumberFormatException e) {
+           // Name in the wrong format
+           return;
          }
       }
-         
+      
       if(chunk != null) {
           if(entry instanceof DocumentNode) {
-             try (DocumentInputStream inp = new DocumentInputStream((DocumentNode) entry)) {
+             DocumentInputStream inp = null;
+             try {
+                inp = new DocumentInputStream((DocumentNode)entry);
                 chunk.readValue(inp);
                 grouping.record(chunk);
-             } catch (IOException e) {
+             } catch(IOException e) {
                 logger.log(POILogger.ERROR, "Error reading from part " + entry.getName() + " - " + e);
+             } finally {
+                // Do not close stream referenced by ByteStreamChunk
+                if (inp != null && !(chunk instanceof ByteStreamChunk)) inp.close();
              }
           } else {
              grouping.record(chunk);

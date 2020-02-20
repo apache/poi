@@ -42,7 +42,7 @@ public class AttachmentChunks implements ChunkGroup {
     private static final POILogger LOG = POILogFactory.getLogger(AttachmentChunks.class);
     public static final String PREFIX = "__attach_version1.0_#";
 
-    private ByteChunk attachData;
+    private ByteStreamChunk attachData;
     private StringChunk attachExtension;
     private StringChunk attachFileName;
     private StringChunk attachLongFileName;
@@ -90,7 +90,7 @@ public class AttachmentChunks implements ChunkGroup {
      * Returns the embedded object, if the attachment is an object based
      * embedding (image, document etc), or null if it's an embedded message
      */
-    public byte[] getEmbeddedAttachmentObject() {
+    public byte[] getEmbeddedAttachmentObject() throws IOException {
         if (attachData != null) {
             return attachData.getValue();
         }
@@ -113,7 +113,7 @@ public class AttachmentChunks implements ChunkGroup {
     /**
      * @return the ATTACH_DATA chunk
      */
-    public ByteChunk getAttachData() {
+    public ByteStreamChunk getAttachData() {
         return attachData;
     }
 
@@ -182,8 +182,8 @@ public class AttachmentChunks implements ChunkGroup {
         // - ATTACH_SIZE
         final int chunkId = chunk.getChunkId();
         if (chunkId == ATTACH_DATA.id) {
-            if (chunk instanceof ByteChunk) {
-                attachData = (ByteChunk) chunk;
+            if (chunk instanceof ByteStreamChunk) {
+                attachData = (ByteStreamChunk) chunk;
             } else if (chunk instanceof DirectoryChunk) {
                 attachmentDirectory = (DirectoryChunk) chunk;
             } else {
