@@ -500,7 +500,7 @@ public abstract class Property implements Child, POIFSViewable {
      */
     public Iterator<Object> getViewableIterator()
     {
-        return Collections.emptyList().iterator();
+        return Collections.emptyIterator();
     }
 
     /**

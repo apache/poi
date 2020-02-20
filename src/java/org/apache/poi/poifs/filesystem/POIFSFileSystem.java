@@ -858,7 +858,7 @@ public class POIFSFileSystem extends BlockStore
             return getRoot().getViewableIterator();
         }
 
-        return Collections.emptyList().iterator();
+        return Collections.emptyIterator();
     }
 
     /**

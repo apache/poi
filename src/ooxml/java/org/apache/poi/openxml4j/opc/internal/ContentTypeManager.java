@@ -286,8 +286,8 @@ public abstract class ContentTypeManager {
             throw new IllegalArgumentException("contentType");
         }
 
-        return (this.defaultContentType.values().contains(contentType) || (this.overrideContentType != null && this.overrideContentType
-                .values().contains(contentType)));
+        return (this.defaultContentType.containsValue(contentType) || 
+                (this.overrideContentType != null && this.overrideContentType.containsValue(contentType)));
     }
 
     /**

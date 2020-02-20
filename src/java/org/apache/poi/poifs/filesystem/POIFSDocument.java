@@ -17,7 +17,7 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import static java.util.Collections.emptyList;
+import static java.util.Collections.emptyIterator;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -235,7 +235,7 @@ public final class POIFSDocument implements POIFSViewable, Iterable<ByteBuffer> 
     *		 store
     */
    public Iterator<Object> getViewableIterator() {
-      return emptyList().iterator();
+      return emptyIterator();
    }
 
    /**
