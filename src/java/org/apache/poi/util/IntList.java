@@ -100,7 +100,6 @@ public class IntList
         }
         else
         {
-
             // index < limit -- insert into the middle
             if (_limit == _array.length)
             {
@@ -229,16 +228,14 @@ public class IntList
 
     public boolean contains(final int o)
     {
-        boolean rval = false;
-
-        for (int j = 0; !rval && (j < _limit); j++)
+        for (int j = 0; j < _limit; j++)
         {
             if (_array[ j ] == o)
             {
-                rval = true;
+                return true;
             }
         }
-        return rval;
+        return false;
     }
 
     /**
@@ -253,19 +250,17 @@ public class IntList
 
     public boolean containsAll(final IntList c)
     {
-        boolean rval = true;
-
         if (this != c)
         {
-            for (int j = 0; rval && (j < c._limit); j++)
+            for (int j = 0; j < c._limit; j++)
             {
                 if (!contains(c._array[ j ]))
                 {
-                    rval = false;
+                    return false;
                 }
             }
         }
-        return rval;
+        return true;
     }
 
     /**
@@ -286,24 +281,27 @@ public class IntList
 
     public boolean equals(final Object o)
     {
-        boolean rval = this == o;
+        if (o == this) {
+            return true;
+        }
+        
+        if (o.getClass()!=this.getClass()) {
+            return false;
+        }
 
-        if (!rval && (o != null) && (o.getClass() == this.getClass()))
-        {
-            IntList other = ( IntList ) o;
+        IntList other = ( IntList ) o;
 
-            if (other._limit == _limit)
-            {
-
-                // assume match
-                rval = true;
-                for (int j = 0; rval && (j < _limit); j++)
-                {
-                    rval = _array[ j ] == other._array[ j ];
-                }
+        if (other._limit != _limit) {
+            return false;
+        }
+        
+        for (int i=0; i< _limit; i++) {
+            if (other._array[i] != _array[i]) {
+                return false;
             }
         }
-        return rval;
+        
+        return true;
     }
 
     /**
@@ -374,20 +372,12 @@ public class IntList
 
     public int indexOf(final int o)
     {
-        int rval = 0;
-
-        for (; rval < _limit; rval++)
-        {
-            if (o == _array[ rval ])
-            {
-                break;
+        for (int i=0; i<_limit; i++) {
+            if (_array[i] == o) {
+                return i;
             }
         }
-        if (rval == _limit)
-        {
-            rval = -1;   // didn't find it
-        }
-        return rval;
+        return -1;
     }
 
     /**
@@ -416,16 +406,12 @@ public class IntList
 
     public int lastIndexOf(final int o)
     {
-        int rval = _limit - 1;
-
-        for (; rval >= 0; rval--)
-        {
-            if (o == _array[ rval ])
-            {
-                break;
+        for (int i=_limit-1; i>=0; i--) {
+            if (_array[i] == o) {
+                return i;
             }
         }
-        return rval;
+        return -1;
     }
 
     /**
@@ -469,9 +455,7 @@ public class IntList
 
     public boolean removeValue(final int o)
     {
-        boolean rval = false;
-
-        for (int j = 0; !rval && (j < _limit); j++)
+        for (int j = 0; j < _limit; j++)
         {
             if (o == _array[ j ])
             {
@@ -479,10 +463,10 @@ public class IntList
                     System.arraycopy(_array, j + 1, _array, j, _limit - j);
                 }
                 _limit--;
-                rval = true;
+                return true;
             }
         }
-        return rval;
+        return false;
     }
 
     /**
