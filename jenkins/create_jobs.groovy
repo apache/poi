@@ -33,7 +33,7 @@ def poijobs = [
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true
         ],
         [ name: 'POI-DSL-old-Xerces', trigger: triggerSundays,
-          shell: "test -f ${xercesLib} || wget -O ${xercesLib} ${xercesUrl}\n",
+          shell: "test -s ${xercesLib} || wget -O ${xercesLib} ${xercesUrl}\n",
           // the property triggers using Xerces as XML Parser and previously showed some exception that can occur
           properties: ["-Dadditionaljar=${xercesLib}"]
         ],
