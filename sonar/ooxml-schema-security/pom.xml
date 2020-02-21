@@ -27,7 +27,7 @@
 			<!-- use maven plugin instead of ant tasks get because of caching feature ... -->
 			<plugin>
 				<groupId>com.googlecode.maven-download-plugin</groupId>
-				<artifactId>maven-download-plugin</artifactId>
+				<artifactId>download-maven-plugin</artifactId>
 				<version>${maven.plugin.download.version}</version>
 				<executions>
 					<execution>
