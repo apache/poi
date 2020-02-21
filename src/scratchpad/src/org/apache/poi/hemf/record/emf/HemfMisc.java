@@ -100,6 +100,7 @@ public class HemfMisc {
             return HemfRecordType.eof;
         }
 
+        @SuppressWarnings("unused")
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             final int startIdx = leis.getReadIndex();
@@ -112,7 +113,7 @@ public class HemfMisc {
             int size = 2 * LittleEndianConsts.INT_SIZE;
 
             if (nPalEntries > 0 && offPalEntries > 0) {
-                int undefinedSpace1 = (int) (offPalEntries - (size + HEADER_SIZE));
+                int undefinedSpace1 = offPalEntries - (size + HEADER_SIZE);
                 assert (undefinedSpace1 >= 0);
                 leis.skipFully(undefinedSpace1);
                 size += undefinedSpace1;
@@ -165,7 +166,7 @@ public class HemfMisc {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -191,7 +192,7 @@ public class HemfMisc {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -213,7 +214,7 @@ public class HemfMisc {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -240,7 +241,7 @@ public class HemfMisc {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -260,7 +261,7 @@ public class HemfMisc {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -283,7 +284,7 @@ public class HemfMisc {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -306,7 +307,7 @@ public class HemfMisc {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -331,7 +332,7 @@ public class HemfMisc {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -385,7 +386,7 @@ public class HemfMisc {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -454,7 +455,7 @@ public class HemfMisc {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -477,7 +478,7 @@ public class HemfMisc {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -538,7 +539,7 @@ public class HemfMisc {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -668,7 +669,7 @@ public class HemfMisc {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }

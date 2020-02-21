@@ -46,6 +46,7 @@ import org.apache.poi.hwmf.record.HwmfPenStyle.HwmfLineDash;
 import org.apache.poi.hwmf.record.HwmfPenStyle.HwmfLineJoin;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -233,14 +234,64 @@ public class HemfPlusPen {
 
 
     @Internal
-    public interface EmfPlusCustomLineCap extends GenericRecord {
-        long init(LittleEndianInputStream leis) throws IOException;
+    public static abstract class EmfPlusCustomLineCap implements GenericRecord {
+        private EmfPlusLineCapType startCap;
+        private EmfPlusLineCapType endCap;
+        private EmfPlusLineJoin join;
+        private double miterLimit;
+        private double widthScale;
+        private final Point2D fillHotSpot = new Point2D.Double();
+        private final Point2D lineHotSpot = new Point2D.Double();
+
+        protected long init(LittleEndianInputStream leis) throws IOException {
+            // A 32-bit unsigned integer that specifies the value in the LineCap enumeration that indicates the line
+            // cap used at the start/end of the line to be drawn.
+            startCap = EmfPlusLineCapType.valueOf(leis.readInt());
+            endCap = EmfPlusLineCapType.valueOf(leis.readInt());
+
+            // A 32-bit unsigned integer that specifies the value in the LineJoin enumeration, which specifies how
+            // to join two lines that are drawn by the same pen and whose ends meet. At the intersection of the two
+            // line ends, a line join makes the connection look more continuous.
+            join = EmfPlusLineJoin.valueOf(leis.readInt());
+
+            // A 32-bit floating-point value that contains the limit of the thickness of the join on a mitered corner
+            // by setting the maximum allowed ratio of miter length to line width.
+            miterLimit = leis.readFloat();
+
+            // A 32-bit floating-point value that specifies the amount by which to scale the custom line cap with
+            // respect to the width of the EmfPlusPen object that is used to draw the lines.
+            widthScale = leis.readFloat();
+
+            long size = 5*LittleEndianConsts.INT_SIZE;
+
+            // An EmfPlusPointF object that is not currently used. It MUST be set to {0.0, 0.0}.
+            size += readPointF(leis, fillHotSpot);
+            size += readPointF(leis, lineHotSpot);
+
+            return size;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+            m.put("startCap", () -> startCap);
+            m.put("endCap", () -> endCap);
+            m.put("join", () -> join);
+            m.put("miterLimit", () -> miterLimit);
+            m.put("widthScale", () -> widthScale);
+            m.put("fillHotSpot", () -> fillHotSpot);
+            m.put("lineHotSpot", () -> lineHotSpot);
+            return m;
+        }
+
+        @Override
+        public final EmfPlusObjectType getGenericRecordType() {
+            return EmfPlusObjectType.CUSTOM_LINE_CAP;
+        }
     }
 
 
     public static class EmfPlusPen implements EmfPlusObjectData {
-
-
         /**
          * If set, a 2x3 transform matrix MUST be specified in the OptionalData field of an EmfPlusPenData object.
          */
@@ -581,7 +632,7 @@ public class HemfPlusPen {
         }
     }
 
-    public static class EmfPlusPathArrowCap implements EmfPlusCustomLineCap {
+    public static class EmfPlusPathArrowCap extends EmfPlusCustomLineCap {
         /**
          * If set, an EmfPlusFillPath object MUST be specified in the OptionalData field of the
          * EmfPlusCustomLineCapData object for filling the custom line cap.
@@ -600,13 +651,6 @@ public class HemfPlusPen {
         private int dataFlags;
         private EmfPlusLineCapType baseCap;
         private double baseInset;
-        private EmfPlusLineCapType startCap;
-        private EmfPlusLineCapType endCap;
-        private EmfPlusLineJoin join;
-        private double miterLimit;
-        private double widthScale;
-        private final Point2D fillHotSpot = new Point2D.Double();
-        private final Point2D lineHotSpot = new Point2D.Double();
         private EmfPlusPath fillPath;
         private EmfPlusPath outlinePath;
 
@@ -624,78 +668,44 @@ public class HemfPlusPen {
             // beginning of the line cap and the end of the line.
             baseInset = leis.readFloat();
 
-            // A 32-bit unsigned integer that specifies the value in the LineCap enumeration that indicates the line
-            // cap used at the start/end of the line to be drawn.
-            startCap = EmfPlusLineCapType.valueOf(leis.readInt());
-            endCap = EmfPlusLineCapType.valueOf(leis.readInt());
+            long size = 3*LittleEndianConsts.INT_SIZE;
 
-            // A 32-bit unsigned integer that specifies the value in the LineJoin enumeration, which specifies how
-            // to join two lines that are drawn by the same pen and whose ends meet. At the intersection of the two
-            // line ends, a line join makes the connection look more continuous.
-            join = EmfPlusLineJoin.valueOf(leis.readInt());
+            size += super.init(leis);
 
-            // A 32-bit floating-point value that contains the limit of the thickness of the join on a mitered corner
-            // by setting the maximum allowed ratio of miter length to line width.
-            miterLimit = leis.readFloat();
-
-            // A 32-bit floating-point value that specifies the amount by which to scale the custom line cap with
-            // respect to the width of the EmfPlusPen object that is used to draw the lines.
-            widthScale = leis.readFloat();
-
-            int size = 8* LittleEndianConsts.INT_SIZE;
-
-            // An EmfPlusPointF object that is not currently used. It MUST be set to {0.0, 0.0}.
-            size += readPointF(leis, fillHotSpot);
-            size += readPointF(leis, lineHotSpot);
-
-            if (FILL_PATH.isSet(dataFlags)) {
-                int fillSize = leis.readInt();
-                size += LittleEndianConsts.INT_SIZE;
-                fillPath = new EmfPlusPath();
-                size += fillPath.init(leis, fillSize, EmfPlusObjectType.PATH, -1);
-            }
-
-            if (LINE_PATH.isSet(dataFlags)) {
-                int pathSize = leis.readInt();
-                size += LittleEndianConsts.INT_SIZE;
-                outlinePath = new EmfPlusPath();
-                size += outlinePath.init(leis, pathSize, EmfPlusObjectType.PATH, -1);
-            }
+            size += initPath(leis, FILL_PATH, p -> fillPath = p);
+            size += initPath(leis, LINE_PATH, p -> outlinePath = p);
 
             return size;
         }
 
+        private long initPath(LittleEndianInputStream leis, BitField bitField, Consumer<EmfPlusPath> setter) throws IOException {
+            if (!bitField.isSet(dataFlags)) {
+                return 0;
+            }
+            int pathSize = leis.readInt();
+            EmfPlusPath path = new EmfPlusPath();
+            setter.accept(path);
+            return LittleEndianConsts.INT_SIZE + path.init(leis, pathSize, EmfPlusObjectType.PATH, -1);
+        }
+
         @Override
         public Map<String, Supplier<?>> getGenericProperties() {
-            final Map<String,Supplier<?>> m = new LinkedHashMap<>();
-            m.put("flags", getBitsAsString(() -> dataFlags, FLAGS_MASKS, FLAGS_NAMES));
-            m.put("baseCap", () -> baseCap);
-            m.put("baseInset", () -> baseInset);
-            m.put("startCap", () -> startCap);
-            m.put("endCap", () -> endCap);
-            m.put("join", () -> join);
-            m.put("miterLimit", () -> miterLimit);
-            m.put("widthScale", () -> widthScale);
-            m.put("fillHotSpot", () -> fillHotSpot);
-            m.put("lineHotSpot", () -> lineHotSpot);
-            m.put("fillPath", () -> fillPath);
-            m.put("outlinePath", () -> outlinePath);
-            return Collections.unmodifiableMap(m);
+            return GenericRecordUtil.getGenericProperties(
+                "flags", getBitsAsString(() -> dataFlags, FLAGS_MASKS, FLAGS_NAMES),
+                "baseCap", () -> baseCap,
+                "baseInset", () -> baseInset,
+                "base", super::getGenericProperties,
+                "fillPath", () -> fillPath,
+                "outlinePath", () -> outlinePath
+            );
         }
     }
 
-    public static class EmfPlusAdjustableArrowCap implements EmfPlusCustomLineCap {
+    public static class EmfPlusAdjustableArrowCap extends EmfPlusCustomLineCap {
         private double width;
         private double height;
         private double middleInset;
         private boolean isFilled;
-        private EmfPlusLineCapType startCap;
-        private EmfPlusLineCapType endCap;
-        private EmfPlusLineJoin join;
-        private double miterLimit;
-        private double widthScale;
-        private final Point2D fillHotSpot = new Point2D.Double();
-        private final Point2D lineHotSpot = new Point2D.Double();
 
         @Override
         public long init(LittleEndianInputStream leis) throws IOException {
@@ -719,51 +729,19 @@ public class HemfPlusPen {
             // If the arrow cap is not filled, only the outline is drawn.
             isFilled = (leis.readInt() != 0);
 
-            // A 32-bit unsigned integer that specifies the value in the LineCap enumeration that indicates
-            // the line cap to be used at the start/end of the line to be drawn.
-            startCap = EmfPlusLineCapType.valueOf(leis.readInt());
-            endCap = EmfPlusLineCapType.valueOf(leis.readInt());
-
-            // 32-bit unsigned integer that specifies the value in the LineJoin enumeration that specifies how to
-            // join two lines that are drawn by the same pen and whose ends meet. At the intersection of the two
-            // line ends, a line join makes the connection look more continuous.
-            join = EmfPlusLineJoin.valueOf(leis.readInt());
-
-            // A 32-bit floating-point value that specifies the limit of the thickness of the join on a mitered
-            // corner by setting the maximum allowed ratio of miter length to line width.
-            miterLimit = leis.readFloat();
-
-            // A 32-bit floating-point value that specifies the amount by which to scale an EmfPlusCustomLineCap
-            // object with respect to the width of the graphics pen that is used to draw the lines.
-            widthScale = leis.readFloat();
-
-            int size = 9 * LittleEndianConsts.INT_SIZE;
-
-            // An EmfPlusPointF object that is not currently used. It MUST be set to {0.0, 0.0}.
-            size += readPointF(leis, fillHotSpot);
-
-            // An EmfPlusPointF object that is not currently used. It MUST be set to {0.0, 0.0}.
-            size += readPointF(leis, lineHotSpot);
-
-            return size;
+            return 4*LittleEndianConsts.INT_SIZE + super.init(leis);
         }
 
 
         @Override
         public Map<String, Supplier<?>> getGenericProperties() {
-            final Map<String,Supplier<?>> m = new LinkedHashMap<>();
-            m.put("width", () -> width);
-            m.put("height", () -> height);
-            m.put("middleInset", () -> middleInset);
-            m.put("isFilled", () -> isFilled);
-            m.put("startCap", () -> startCap);
-            m.put("endCap", () -> endCap);
-            m.put("join", () -> join);
-            m.put("miterLimit", () -> miterLimit);
-            m.put("widthScale", () -> widthScale);
-            m.put("fillHotSpot", () -> fillHotSpot);
-            m.put("lineHotSpot", () -> lineHotSpot);
-            return Collections.unmodifiableMap(m);
+            return GenericRecordUtil.getGenericProperties(
+                "width", () -> width,
+                "height", () -> height,
+                "middleInset", () -> middleInset,
+                "isFilled", () -> isFilled,
+                "base", super::getGenericProperties
+            );
         }
     }
 }

@@ -48,7 +48,7 @@ public class HemfPalette {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -96,7 +96,7 @@ public class HemfPalette {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -144,7 +144,7 @@ public class HemfPalette {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -191,7 +191,7 @@ public class HemfPalette {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -212,7 +212,7 @@ public class HemfPalette {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }

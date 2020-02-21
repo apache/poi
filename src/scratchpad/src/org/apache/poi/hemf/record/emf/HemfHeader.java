@@ -43,9 +43,6 @@ import org.apache.poi.util.LittleEndianInputStream;
 @Internal
 public class HemfHeader implements HemfRecord {
 
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
-
-
     private final Rectangle2D boundsRectangle = new Rectangle2D.Double();
     private final Rectangle2D frameRectangle = new Rectangle2D.Double();
     private long bytes;
@@ -131,6 +128,7 @@ public class HemfHeader implements HemfRecord {
         return HemfRecordType.header;
     }
 
+    @SuppressWarnings("unused")
     @Override
     public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
         if (recordId != HemfRecordType.header.id) {

@@ -52,9 +52,6 @@ import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
 public class HemfPlusImage {
-    /** Maximum image dimension for converting embedded metafiles */
-    private static final int MAX_IMAGE_SIZE = 1500;
-
     /** The ImageDataType enumeration defines types of image data formats. */
     public enum EmfPlusImageDataType {
         /** The type of image is not known. */
@@ -80,6 +77,7 @@ public class HemfPlusImage {
         }
     }
 
+    @SuppressWarnings("unused")
     public enum EmfPlusPixelFormat {
         UNDEFINED(0X00000000),
         INDEXED_1BPP(0X00030101),

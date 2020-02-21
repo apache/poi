@@ -225,7 +225,7 @@ public class HemfText {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -266,7 +266,7 @@ public class HemfText {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -286,7 +286,7 @@ public class HemfText {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -338,7 +338,7 @@ public class HemfText {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }

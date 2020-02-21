@@ -53,8 +53,8 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
-public class HemfFill {
-    private static final int MAX_RECORD_LENGTH = 10_000_000;
+public final class HemfFill {
+    private HemfFill() {}
 
     /**
      * The EMR_SETPOLYFILLMODE record defines polygon fill mode.
@@ -75,7 +75,7 @@ public class HemfFill {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -98,7 +98,7 @@ public class HemfFill {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -224,7 +224,7 @@ public class HemfFill {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -309,7 +309,7 @@ public class HemfFill {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -341,6 +341,7 @@ public class HemfFill {
             return HemfRecordType.frameRgn;
         }
 
+        @SuppressWarnings("unused")
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             long size = readRectL(leis, bounds);
@@ -386,7 +387,7 @@ public class HemfFill {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -401,6 +402,7 @@ public class HemfFill {
             return HemfRecordType.invertRgn;
         }
 
+        @SuppressWarnings("unused")
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             long size = readRectL(leis, bounds);
@@ -453,6 +455,7 @@ public class HemfFill {
             return HemfRecordType.fillRgn;
         }
 
+        @SuppressWarnings("unused")
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             long size = readRectL(leis, bounds);
@@ -486,7 +489,7 @@ public class HemfFill {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -500,6 +503,7 @@ public class HemfFill {
             return HemfRecordType.extSelectClipRgn;
         }
 
+        @SuppressWarnings("unused")
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             // A 32-bit unsigned integer that specifies the size of region data in bytes
@@ -522,7 +526,6 @@ public class HemfFill {
 
         @Override
         public void draw(HemfGraphics ctx) {
-            HemfDrawProperties prop = ctx.getProperties();
             ctx.setClip(getShape(), regionMode, true);
         }
 
@@ -692,6 +695,7 @@ public class HemfFill {
             return HemfRecordType.setDiBitsToDevice;
         }
 
+        @SuppressWarnings("unused")
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             int startIdx = leis.getReadIndex();
@@ -804,6 +808,7 @@ public class HemfFill {
     }
 
 
+    @SuppressWarnings("unused")
     static long readRgnData(final LittleEndianInputStream leis, final List<Rectangle2D> rgnRects) {
         // *** RegionDataHeader ***
         // A 32-bit unsigned integer that specifies the size of this object in bytes. This MUST be 0x00000020.
@@ -873,7 +878,7 @@ public class HemfFill {
         return 6 * LittleEndian.INT_SIZE;
     }
 
-    protected static Shape getRgnShape(List<Rectangle2D> rgnRects) {
+    static Shape getRgnShape(List<Rectangle2D> rgnRects) {
         if (rgnRects.size() == 1) {
             return rgnRects.get(0);
         }

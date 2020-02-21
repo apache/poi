@@ -110,6 +110,7 @@ public class HemfPlusHeader implements HemfPlusRecord {
      *
      * @return {@code true} if dual-mode is enabled
      */
+    @SuppressWarnings("unused")
     public boolean isEmfPlusDualMode() {
         return (flags & 1) == 1;
     }

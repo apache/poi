@@ -32,6 +32,7 @@ import java.io.InputStream;
 import org.apache.poi.sl.draw.BitmapImageRenderer;
 import org.apache.poi.util.IOUtils;
 
+@SuppressWarnings("unused")
 public class HemfPlusGDIImageRenderer extends BitmapImageRenderer {
     private int width;
     private int height;
@@ -81,7 +82,7 @@ public class HemfPlusGDIImageRenderer extends BitmapImageRenderer {
     }
 
     @Override
-    public void loadImage(byte[] data, String contentType) throws IOException {
+    public void loadImage(byte[] data, String contentType) {
         img = readGDIImage(data);
     }
 

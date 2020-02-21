@@ -63,7 +63,7 @@ public interface HemfRecord extends GenericRecord {
     default void setHeader(HemfHeader header) {}
 
     @Override
-    default Enum getGenericRecordType() {
+    default HemfRecordType getGenericRecordType() {
         return getEmfRecordType();
     }
 }

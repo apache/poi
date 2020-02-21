@@ -108,6 +108,7 @@ public class HemfPlusRegion {
         private final EmfPlusGraphicsVersion graphicsVersion = new EmfPlusGraphicsVersion();
         private EmfPlusRegionNodeData regionNode;
 
+        @SuppressWarnings("unused")
         @Override
         public long init(LittleEndianInputStream leis, long dataSize, EmfPlusObjectType objectType, int flags) throws IOException {
             long size = graphicsVersion.init(leis);

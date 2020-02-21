@@ -30,11 +30,8 @@ import org.apache.poi.util.LittleEndianInputStream;
 @Internal
 public class UnimplementedHemfPlusRecord implements HemfPlusRecord {
 
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
-
     private HemfPlusRecordType recordType;
     private int flags;
-    private byte[] recordBytes;
 
     @Override
     public HemfPlusRecordType getEmfPlusRecordType() {
@@ -50,21 +47,17 @@ public class UnimplementedHemfPlusRecord implements HemfPlusRecord {
     public long init(LittleEndianInputStream leis, long dataSize, long recordId, int flags) throws IOException {
         recordType = HemfPlusRecordType.getById(recordId);
         this.flags = flags;
-        recordBytes = IOUtils.safelyAllocate(dataSize, MAX_RECORD_LENGTH);
-        leis.readFully(recordBytes);
-        return recordBytes.length;
-    }
-
-    public byte[] getRecordBytes() {
-        //should probably defensively return a copy.
-        return recordBytes;
+        long skipped = IOUtils.skipFully(leis, dataSize);
+        if (skipped < dataSize) {
+            throw new IOException("End of stream reached before record read");
+        }
+        return skipped;
     }
 
     @Override
     public Map<String, Supplier<?>> getGenericProperties() {
         return GenericRecordUtil.getGenericProperties(
-            "flags", this::getFlags,
-            "recordBytes", () -> recordBytes
+            "flags", this::getFlags
         );
     }
 }

@@ -53,7 +53,7 @@ public class HemfWindowing {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -73,7 +73,7 @@ public class HemfWindowing {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -93,7 +93,7 @@ public class HemfWindowing {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -113,7 +113,7 @@ public class HemfWindowing {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -134,7 +134,7 @@ public class HemfWindowing {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -155,7 +155,7 @@ public class HemfWindowing {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -176,7 +176,7 @@ public class HemfWindowing {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -197,7 +197,7 @@ public class HemfWindowing {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -218,7 +218,7 @@ public class HemfWindowing {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }

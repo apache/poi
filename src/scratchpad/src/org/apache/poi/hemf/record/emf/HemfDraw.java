@@ -42,7 +42,9 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
-public class HemfDraw {
+public final class HemfDraw {
+    private HemfDraw() {}
+
     /**
      * The EMR_SELECTOBJECT record adds a graphics object to the current metafile playback device
      * context. The object is specified either by its index in the EMF Object Table or by its
@@ -102,7 +104,7 @@ public class HemfDraw {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -212,7 +214,7 @@ public class HemfDraw {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -313,7 +315,7 @@ public class HemfDraw {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -456,6 +458,7 @@ public class HemfDraw {
             return readPointL(leis, point);
         }
 
+        @SuppressWarnings("unused")
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
             long size = readRectL(leis, bounds);
@@ -521,7 +524,7 @@ public class HemfDraw {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -593,7 +596,7 @@ public class HemfDraw {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -618,7 +621,7 @@ public class HemfDraw {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -647,7 +650,7 @@ public class HemfDraw {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -677,7 +680,7 @@ public class HemfDraw {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -706,7 +709,7 @@ public class HemfDraw {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -733,7 +736,7 @@ public class HemfDraw {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -759,7 +762,7 @@ public class HemfDraw {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -792,7 +795,7 @@ public class HemfDraw {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -818,7 +821,7 @@ public class HemfDraw {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -848,7 +851,7 @@ public class HemfDraw {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -958,7 +961,7 @@ public class HemfDraw {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
     }
@@ -1215,8 +1218,6 @@ public class HemfDraw {
      * path by using the current pen, and fills its interior by using the current brush.
      */
     public static class EmfStrokeAndFillPath extends EmfStrokePath {
-        protected final Rectangle2D bounds = new Rectangle2D.Double();
-
         @Override
         public HemfRecordType getEmfRecordType() {
             return HemfRecordType.strokeAndFillPath;

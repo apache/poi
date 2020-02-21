@@ -237,6 +237,7 @@ public class HemfFont extends HwmfFont {
 
     protected LogFontDetails details;
 
+    @SuppressWarnings("unused")
     @Override
     public int init(LittleEndianInputStream leis, long recordSize) throws IOException {
         // A 32-bit signed integer that specifies the height, in logical units, of the font's
@@ -517,7 +518,7 @@ public class HemfFont extends HwmfFont {
     }
 
     @Override
-    protected int readString(LittleEndianInputStream leis, StringBuilder sb, int limit) throws IOException {
+    protected int readString(LittleEndianInputStream leis, StringBuilder sb, int limit) {
         sb.setLength(0);
         byte[] buf = new byte[limit * 2];
         leis.readFully(buf);

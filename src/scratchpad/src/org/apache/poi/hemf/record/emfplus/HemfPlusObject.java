@@ -117,6 +117,7 @@ public class HemfPlusObject {
      * The EmfPlusObject record specifies an object for use in graphics operations. The object definition
      * can span multiple records), which is indicated by the value of the Flags field.
      */
+    @SuppressWarnings("unused")
     public static class EmfPlusObject implements HemfPlusRecord, EmfPlusObjectId, HwmfObjectTableEntry {
         /**
          * Indicates that the object definition continues on in the next EmfPlusObject
@@ -136,6 +137,7 @@ public class HemfPlusObject {
 
         private int flags;
         // for debugging
+        @SuppressWarnings("FieldCanBeLocal")
         private int objectId;
         private EmfPlusObjectData objectData;
         private List<EmfPlusObjectData> continuedObjectData;
@@ -155,6 +157,7 @@ public class HemfPlusObject {
             return EmfPlusObjectType.valueOf(OBJECT_TYPE.getValue(flags));
         }
 
+        @SuppressWarnings("unchecked")
         public <T extends EmfPlusObjectData> T getObjectData() {
             return (T)objectData;
         }

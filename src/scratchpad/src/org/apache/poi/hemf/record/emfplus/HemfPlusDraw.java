@@ -62,8 +62,10 @@ import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.StringUtil;
 
 @SuppressWarnings("WeakerAccess")
-public class HemfPlusDraw {
+public final class HemfPlusDraw {
     private static final int MAX_OBJECT_SIZE = 1_000_000;
+
+    private HemfPlusDraw() {}
 
     public enum EmfPlusUnitType {
         /** Specifies a unit of logical distance within the world space. */
@@ -126,9 +128,9 @@ public class HemfPlusDraw {
          * If set, each element in PointData specifies a location in the coordinate space that is relative to the
          * location specified by the previous element in the array. In the case of the first element in PointData,
          * a previous location at coordinates (0,0) is assumed.
-         * If clear, PointData specifies absolute locations according to the {@link #isCompressed()} flag.
+         * If clear, PointData specifies absolute locations according to the {@link EmfPlusCompressed#isCompressed()} flag.
          *
-         * Note If this flag is set, the {@link #isCompressed()} flag (above) is undefined and MUST be ignored.
+         * Note If this flag is set, the {@link EmfPlusCompressed#isCompressed()} flag (above) is undefined and MUST be ignored.
          */
         BitField POSITION = BitFieldFactory.getInstance(0x0800);
 
@@ -330,6 +332,7 @@ public class HemfPlusDraw {
     }
 
     /** The EmfPlusDrawImagePoints record specifies drawing a scaled image inside a parallelogram. */
+    @SuppressWarnings("unused")
     public static class EmfPlusDrawImagePoints implements HemfPlusRecord, EmfPlusObjectId, EmfPlusCompressed, EmfPlusRelativePosition {
         /**
          * This bit indicates that the rendering of the image includes applying an effect.
@@ -625,6 +628,7 @@ public class HemfPlusDraw {
     }
 
     /** The EmfPlusDrawDriverString record specifies text output with character positions. */
+    @SuppressWarnings("unused")
     public static class EmfPlusDrawDriverString implements HemfPlusRecord, EmfPlusObjectId, EmfPlusSolidColor {
         /**
          * If set, the positions of character glyphs SHOULD be specified in a character map lookup table.

@@ -251,6 +251,7 @@ public class HemfPlusBrush {
 
     }
 
+    @SuppressWarnings("unused")
     public interface EmfPlusBrushData extends GenericRecord {
         /**
          * This flag is meaningful in EmfPlusPathGradientBrushData objects.
@@ -458,7 +459,7 @@ public class HemfPlusBrush {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public EmfPlusBrushType getGenericRecordType() {
             return EmfPlusBrushType.SOLID_COLOR;
         }
 
@@ -500,7 +501,7 @@ public class HemfPlusBrush {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public EmfPlusBrushType getGenericRecordType() {
             return EmfPlusBrushType.HATCH_FILL;
         }
 
@@ -600,7 +601,7 @@ public class HemfPlusBrush {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public EmfPlusBrushType getGenericRecordType() {
             return EmfPlusBrushType.LINEAR_GRADIENT;
         }
 
@@ -810,7 +811,7 @@ public class HemfPlusBrush {
 
 
         @Override
-        public Enum getGenericRecordType() {
+        public EmfPlusBrushType getGenericRecordType() {
             return EmfPlusBrushType.PATH_GRADIENT;
         }
 
@@ -884,7 +885,7 @@ public class HemfPlusBrush {
         }
 
         @Override
-        public Enum getGenericRecordType() {
+        public EmfPlusBrushType getGenericRecordType() {
             return EmfPlusBrushType.TEXTURE_FILL;
         }
 

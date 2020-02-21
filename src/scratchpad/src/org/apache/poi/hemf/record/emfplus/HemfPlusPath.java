@@ -55,9 +55,10 @@ public class HemfPlusPath {
         // not defined
         UNUSED,
         /** Specifies that the point is an endpoint or control point of a cubic Bezier curve */
-        BEZIER;
+        BEZIER
     }
 
+    @SuppressWarnings("unused")
     public static class EmfPlusPath implements EmfPlusObjectData, EmfPlusCompressed, EmfPlusRelativePosition {
         /**
          * If set, the point types in the PathPointTypes array are specified by EmfPlusPathPointTypeRLE objects,

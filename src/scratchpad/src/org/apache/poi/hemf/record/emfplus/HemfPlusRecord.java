@@ -56,7 +56,7 @@ public interface HemfPlusRecord extends GenericRecord {
     }
 
     @Override
-    default Enum getGenericRecordType() {
+    default HemfPlusRecordType getGenericRecordType() {
         return getEmfPlusRecordType();
     }
 }
