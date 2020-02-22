@@ -30,7 +30,6 @@ import org.junit.runners.Suite;
     , TestDecryptor.class
     , TestEncryptor.class
     , TestAgileEncryptionParameters.class
-    , TestCertificateEncryption.class
 })
 public final class AllPOIFSCryptoTests {
 }
