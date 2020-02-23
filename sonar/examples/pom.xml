@@ -12,7 +12,12 @@
     <packaging>jar</packaging>
 
     <name>Apache POI Examples package</name>
-    
+
+	<properties>
+		<!-- There are no junit tests in the examples module -->
+		<maven.test.skip>true</maven.test.skip>
+	</properties>
+
     <build>
 		<plugins>
 			<!-- copy sources, resources and tests in place as otherwise Sonar does not pick them up correctly! -->
@@ -29,12 +34,12 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/src/main/java</outputDirectory>
-							<resources>          
+							<resources>
 								<resource>
 									<directory>../../src/examples/src</directory>
 								</resource>
-							</resources>              
-						</configuration>            
+							</resources>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -50,7 +55,7 @@
                         </fileset>
                     </filesets>
                 </configuration>
-            </plugin>			
+            </plugin>
 		</plugins>
     </build>
 
@@ -65,12 +70,5 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-
-		<!-- non-test dependency for UpdateEmbeddedDoc -->
-        <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
-        </dependency>
     </dependencies>
 </project>

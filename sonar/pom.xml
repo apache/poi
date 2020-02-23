@@ -74,10 +74,10 @@
 
         <sonar.organization>apache</sonar.organization>
         <sonar.projectKey>poi-parent</sonar.projectKey>
-        <sonar.moduleKey>${artifactId}</sonar.moduleKey>
+        <sonar.moduleKey>${project.artifactId}</sonar.moduleKey>
 
         <sonar.host.url>https://sonarcloud.io</sonar.host.url>
-        <sonar.jacoco.reportPaths>target/jacoco.exec</sonar.jacoco.reportPaths>
+        <!-- sonar.jacoco.reportPaths>target/jacoco.exec</sonar.jacoco.reportPaths -->
         <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 
         <!-- define some of the third-party or plugin-versions globally to use the same in all modules -->
