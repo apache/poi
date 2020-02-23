@@ -34,6 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.imageio.IIOException;
+
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.IOUtils;
@@ -258,28 +260,32 @@ public class TestXSLFPictureShape {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
 
-        XSLFPictureData svgPic = ppt.addPicture(POIDataSamples.getDocumentInstance().getFile("../project-header.svg"), PictureType.SVG);
-        XSLFPictureShape shape = XSLFPictureShape.addSvgImage(slide, svgPic, PictureType.JPEG, null);
+        try {
+            XSLFPictureData svgPic = ppt.addPicture(POIDataSamples.getDocumentInstance().getFile("../project-header.svg"), PictureType.SVG);
+            XSLFPictureShape shape = XSLFPictureShape.addSvgImage(slide, svgPic, PictureType.JPEG, null);
 
-        Rectangle2D anchor = shape.getAnchor();
-        anchor.setRect(100, 100, anchor.getWidth(), anchor.getHeight());
-        shape.setAnchor(anchor);
+            Rectangle2D anchor = shape.getAnchor();
+            anchor.setRect(100, 100, anchor.getWidth(), anchor.getHeight());
+            shape.setAnchor(anchor);
 
-        assertNotNull(shape.getSvgImage());
+            assertNotNull(shape.getSvgImage());
 
-        final File tmpFile = TempFile.createTempFile("svgtest", ".pptx");
-        System.out.println(tmpFile);
-        try (FileOutputStream fos = new FileOutputStream(tmpFile)) {
-            ppt.write(fos);
+            final File tmpFile = TempFile.createTempFile("svgtest", ".pptx");
+            System.out.println(tmpFile);
+            try (FileOutputStream fos = new FileOutputStream(tmpFile)) {
+                ppt.write(fos);
+            }
+
+            String[] args = {
+                    "-format", "png", // png,gif,jpg or null for test
+                    "-slide", "-1", // -1 for all
+                    "-outdir", tmpFile.getParentFile().getCanonicalPath(),
+                    "-quiet",
+                    tmpFile.getAbsolutePath()
+            };
+            PPTX2PNG.main(args);
+        } catch (IIOException e) {
+            assertFalse(e.getMessage(), e.getMessage().contains("Can't create"));
         }
-
-        String[] args = {
-                "-format", "png", // png,gif,jpg or null for test
-                "-slide", "-1", // -1 for all
-                "-outdir", tmpFile.getParentFile().getCanonicalPath(),
-                "-quiet",
-                tmpFile.getAbsolutePath()
-        };
-        PPTX2PNG.main(args);
     }
 }
