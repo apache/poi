@@ -284,8 +284,8 @@ public class IntList
         if (o == this) {
             return true;
         }
-        
-        if (o.getClass()!=this.getClass()) {
+
+        if (!(o instanceof IntList)) {
             return false;
         }
 
@@ -294,13 +294,13 @@ public class IntList
         if (other._limit != _limit) {
             return false;
         }
-        
+
         for (int i=0; i< _limit; i++) {
             if (other._array[i] != _array[i]) {
                 return false;
             }
         }
-        
+
         return true;
     }
 

@@ -119,12 +119,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     // we keep the cached data in ThreadLocal members in order to
     // avoid multi-threading issues when different workbooks are accessed in
     // multiple threads at the same time
-    private static final ThreadLocal<Short> lastDateFormat = new ThreadLocal<Short>() {
-        @Override
-        protected Short initialValue() {
-            return Short.MIN_VALUE;
-        }
-    };
+    private static final ThreadLocal<Short> lastDateFormat = ThreadLocal.withInitial(() -> Short.MIN_VALUE);
     private static final ThreadLocal<List<FormatRecord>> lastFormats = new ThreadLocal<>();
     private static final ThreadLocal<String> getDataFormatStringCache = new ThreadLocal<>();
 

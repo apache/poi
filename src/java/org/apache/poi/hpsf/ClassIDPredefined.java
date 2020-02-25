@@ -147,6 +147,7 @@ public enum ClassIDPredefined {
         return (classID == null) ? null : LOOKUP.get(classID.toString());
     }
 
+    @SuppressWarnings("java:S1201")
     public boolean equals(ClassID classID) {
         return getClassID().equals(classID);
     }

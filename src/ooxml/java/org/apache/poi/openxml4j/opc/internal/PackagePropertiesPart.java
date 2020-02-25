@@ -26,6 +26,8 @@ import java.util.Locale;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -675,41 +677,35 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
         }
 
         Matcher m = TIME_ZONE_PAT.matcher(dateStr);
+        Date d = null;
         if (m.find()) {
-            String dateTzStr = dateStr.substring(0, m.start())+
-                    m.group(1)+m.group(2);
-            for (String fStr : TZ_DATE_FORMATS) {
-                SimpleDateFormat df = new SimpleDateFormat(fStr, Locale.ROOT);
-                df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
-                Date d = df.parse(dateTzStr, new ParsePosition(0));
-                if (d != null) {
-                    return Optional.of(d);
-                }
-            }
+            String dateTzStr = dateStr.substring(0, m.start())+m.group(1)+m.group(2);
+            d = parseDateFormat(TZ_DATE_FORMATS, dateTzStr);
         }
-        String dateTzStr = dateStr.endsWith("Z") ? dateStr : (dateStr + "Z");
-        for (String fStr : DATE_FORMATS) {
+        if (d == null) {
+            String dateTzStr = dateStr.endsWith("Z") ? dateStr : (dateStr + "Z");
+            d = parseDateFormat(DATE_FORMATS, dateTzStr);
+        }
+        if (d != null) {
+            return Optional.of(d);
+        }
+
+        //if you're here, no pattern matched, throw exception
+        String allFormats = Stream.of(TZ_DATE_FORMATS, DATE_FORMATS)
+            .flatMap(Stream::of).collect(Collectors.joining(", "));
+        throw new InvalidFormatException("Date " + dateStr + " not well formatted, expected format in: "+ allFormats);
+    }
+
+    private static Date parseDateFormat(String[] formats, String dateTzStr) {
+        for (String fStr : formats) {
             SimpleDateFormat df = new SimpleDateFormat(fStr, Locale.ROOT);
             df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
             Date d = df.parse(dateTzStr, new ParsePosition(0));
             if (d != null) {
-                return Optional.of(d);
+                return d;
             }
         }
-        //if you're here, no pattern matched, throw exception
-        StringBuilder sb = new StringBuilder();
-        int i = 0;
-        for (String fStr : TZ_DATE_FORMATS) {
-            if (i++ > 0) {
-                sb.append(", ");
-            }
-            sb.append(fStr);
-        }
-        for (String fStr : DATE_FORMATS) {
-            sb.append(", ").append(fStr);
-        }
-        throw new InvalidFormatException("Date " + dateStr + " not well formatted, "
-                + "expected format in: "+ sb);
+        return null;
     }
 
     /**
@@ -720,13 +716,14 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
      * @return The formated date or null.
      * @see java.text.SimpleDateFormat
      */
-    private String getDateValue(Optional<Date> d) {
-        if (d == null || !d.isPresent()) {
-            return "";
-        }
+    private static String getDateValue(Optional<Date> d) {
+        return d.map(PackagePropertiesPart::getDateValue).orElse("");
+    }
+
+    private static String getDateValue(Date d) {
         SimpleDateFormat df = new SimpleDateFormat(DEFAULT_DATEFORMAT, Locale.ROOT);
         df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
-        return df.format(d.get());
+        return df.format(d);
     }
 
     @Override
