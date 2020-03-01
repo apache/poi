@@ -18,9 +18,9 @@
 /* ====================================================================
    This product contains an ASLv2 licensed version of the OOXML signer
    package from the eID Applet project
-   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt  
+   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt
    Copyright (C) 2008-2014 FedICT.
-   ================================================================= */ 
+   ================================================================= */
 
 package org.apache.poi.poifs.crypt.dsig;
 
@@ -42,33 +42,29 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.poifs.crypt.dsig.SignatureConfig.SignatureConfigurable;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 /**
  * JSR105 URI dereferencer for Office Open XML documents.
  */
-public class OOXMLURIDereferencer implements URIDereferencer, SignatureConfigurable {
+public class OOXMLURIDereferencer implements URIDereferencer {
 
     private static final POILogger LOG = POILogFactory.getLogger(OOXMLURIDereferencer.class);
 
-    private SignatureConfig signatureConfig;
+    private SignatureInfo signatureInfo;
     private URIDereferencer baseUriDereferencer;
 
-    public void setSignatureConfig(SignatureConfig signatureConfig) {
-        this.signatureConfig = signatureConfig;
+    public void setSignatureInfo(SignatureInfo signatureInfo) {
+        this.signatureInfo = signatureInfo;
+        baseUriDereferencer = signatureInfo.getSignatureFactory().getURIDereferencer();
     }
 
     public Data dereference(URIReference uriReference, XMLCryptoContext context) throws URIReferenceException {
-        if (baseUriDereferencer == null) {
-            baseUriDereferencer = signatureConfig.getSignatureFactory().getURIDereferencer();
+        if (uriReference == null) {
+            throw new NullPointerException("URIReference cannot be null - call setSignatureInfo(...) before");
         }
-        
-        if (null == uriReference) {
-            throw new NullPointerException("URIReference cannot be null");
-        }
-        if (null == context) {
+        if (context == null) {
             throw new NullPointerException("XMLCryptoContext cannot be null");
         }
 
@@ -82,7 +78,7 @@ public class OOXMLURIDereferencer implements URIDereferencer, SignatureConfigura
         PackagePart part = findPart(uri);
         if (part == null) {
             LOG.log(POILogger.DEBUG, "cannot resolve, delegating to base DOM URI dereferencer", uri);
-            return this.baseUriDereferencer.dereference(uriReference, context);
+            return baseUriDereferencer.dereference(uriReference, context);
         }
 
         InputStream dataStream;
@@ -116,15 +112,14 @@ public class OOXMLURIDereferencer implements URIDereferencer, SignatureConfigura
             LOG.log(POILogger.DEBUG, "illegal part name (expected)", uri);
             return null;
         }
-        
+
         PackagePartName ppn;
         try {
             ppn = PackagingURIHelper.createPartName(path);
+            return signatureInfo.getOpcPackage().getPart(ppn);
         } catch (InvalidFormatException e) {
             LOG.log(POILogger.WARN, "illegal part name (not expected)", uri);
             return null;
         }
-        
-        return signatureConfig.getOpcPackage().getPart(ppn);
     }
 }

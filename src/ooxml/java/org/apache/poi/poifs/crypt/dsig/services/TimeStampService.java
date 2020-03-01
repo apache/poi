@@ -18,28 +18,26 @@
 /* ====================================================================
    This product contains an ASLv2 licensed version of the OOXML signer
    package from the eID Applet project
-   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt  
+   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt
    Copyright (C) 2008-2014 FedICT.
-   ================================================================= */ 
+   ================================================================= */
 
 package org.apache.poi.poifs.crypt.dsig.services;
 
-import org.apache.poi.poifs.crypt.dsig.SignatureConfig.SignatureConfigurable;
-
+import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 
 /**
  * Interface for a time-stamp service.
- * 
+ *
  * @author Frank Cornelis
- * 
  */
-public interface TimeStampService extends SignatureConfigurable {
+public interface TimeStampService {
 
     /**
      * Gives back the encoded time-stamp token for the given array of data
      * bytes. We assume that the time-stamp token itself contains its full
      * certificate chain required for proper validation.
-     * 
+     *
      * @param data
      *            the data to be time-stamped.
      * @param revocationData
@@ -49,6 +47,5 @@ public interface TimeStampService extends SignatureConfigurable {
      * @throws Exception
      *             in case something went wrong.
      */
-    byte[] timeStamp(byte[] data, RevocationData revocationData)
-            throws Exception;
+    byte[] timeStamp(SignatureInfo signatureInfo, byte[] data, RevocationData revocationData) throws Exception;
 }

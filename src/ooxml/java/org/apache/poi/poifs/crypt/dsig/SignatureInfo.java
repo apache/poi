@@ -31,6 +31,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
 import java.security.PrivateKey;
+import java.security.Provider;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
@@ -38,6 +39,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.URIDereferencer;
@@ -52,6 +55,7 @@ import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMSignContext;
+import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 
 import org.apache.jcp.xml.dsig.internal.dom.DOMReference;
@@ -70,7 +74,6 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
-import org.apache.poi.poifs.crypt.dsig.SignatureConfig.SignatureConfigurable;
 import org.apache.poi.poifs.crypt.dsig.facets.SignatureFacet;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
 import org.apache.poi.util.POILogFactory;
@@ -84,6 +87,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
+import org.w3c.dom.events.MutationEvent;
 
 
 /**
@@ -153,20 +157,16 @@ import org.w3c.dom.events.EventTarget;
  * <li>and slf4j-api (tested against 1.7.30)</li>
  * </ul>
  */
-public class SignatureInfo implements SignatureConfigurable {
+public class SignatureInfo {
 
     private static final POILogger LOG = POILogFactory.getLogger(SignatureInfo.class);
-    private static boolean isInitialized;
 
     private SignatureConfig signatureConfig;
-
-
-    /**
-     * Constructor initializes xml signature environment, if it hasn't been initialized before
-     */
-    public SignatureInfo() {
-        initXmlProvider();
-    }
+    private OPCPackage opcPackage;
+    private Provider provider;
+    private XMLSignatureFactory signatureFactory;
+    private KeyInfoFactory keyInfoFactory;
+    private URIDereferencer uriDereferencer;
 
     /**
      * @return the signature config
@@ -178,30 +178,45 @@ public class SignatureInfo implements SignatureConfigurable {
     /**
      * @param signatureConfig the signature config, needs to be set before a SignatureInfo object is used
      */
-    @Override
     public void setSignatureConfig(SignatureConfig signatureConfig) {
         this.signatureConfig = signatureConfig;
+    }
+
+    public void setOpcPackage(OPCPackage opcPackage) {
+        this.opcPackage = opcPackage;
+    }
+
+    public OPCPackage getOpcPackage() {
+        return opcPackage;
+    }
+
+    public URIDereferencer getUriDereferencer() {
+        return uriDereferencer;
+    }
+
+    public void setUriDereferencer(URIDereferencer uriDereferencer) {
+        this.uriDereferencer = uriDereferencer;
     }
 
     /**
      * @return true, if first signature part is valid
      */
     public boolean verifySignature() {
+        initXmlProvider();
         // http://www.oracle.com/technetwork/articles/javase/dig-signature-api-140772.html
-        for (SignaturePart sp : getSignatureParts()){
-            // only validate first part
-            return sp.validate();
-        }
-        return false;
+        // only validate first part
+        Iterator<SignaturePart> iter = getSignatureParts().iterator();
+        return iter.hasNext() && iter.next().validate();
     }
 
     /**
      * add the xml signature to the document
      *
-     * @throws XMLSignatureException
-     * @throws MarshalException
+     * @throws XMLSignatureException if the signature can't be calculated
+     * @throws MarshalException if the document can't be serialized
      */
     public void confirmSignature() throws XMLSignatureException, MarshalException {
+        initXmlProvider();
         final Document document = DocumentHelper.createDocument();
         final DOMSignContext xmlSignContext = createXMLSignContext(document);
 
@@ -223,6 +238,7 @@ public class SignatureInfo implements SignatureConfigurable {
      * @return the initialized signature context
      */
     public DOMSignContext createXMLSignContext(final Document document) {
+        initXmlProvider();
         return new DOMSignContext(signatureConfig.getKey(), document);
     }
 
@@ -231,10 +247,10 @@ public class SignatureInfo implements SignatureConfigurable {
      * Sign (encrypt) the digest with the private key.
      * Currently only rsa is supported.
      *
-     * @param digest the hashed input
      * @return the encrypted hash
      */
     public String signDigest(final DOMSignContext xmlSignContext, final DOMSignedInfo signedInfo) {
+        initXmlProvider();
         final PrivateKey key = signatureConfig.getKey();
         final HashAlgorithm algo = signatureConfig.getDigestAlgo();
 
@@ -243,12 +259,12 @@ public class SignatureInfo implements SignatureConfigurable {
 
 
         if (algo.hashSize*4/3 > BASE64DEFAULTLENGTH && !XMLUtils.ignoreLineBreaks()) {
-            throw new EncryptedDocumentException("The hash size of the choosen hash algorithm ("+algo+" = "+algo.hashSize+" bytes), "+
+            throw new EncryptedDocumentException("The hash size of the chosen hash algorithm ("+algo+" = "+algo.hashSize+" bytes), "+
                 "will motivate XmlSec to add linebreaks to the generated digest, which results in an invalid signature (... at least "+
                 "for Office) - please persuade it otherwise by adding '-Dorg.apache.xml.security.ignoreLineBreaks=true' to the JVM "+
                 "system properties.");
         }
-        
+
         try (final DigestOutputStream dos = getDigestStream(algo, key)) {
             dos.init();
 
@@ -277,77 +293,60 @@ public class SignatureInfo implements SignatureConfigurable {
      * the parts can be validated independently.
      */
     public Iterable<SignaturePart> getSignatureParts() {
-        signatureConfig.init(true);
-        return new Iterable<SignaturePart>() {
-            @Override
-            public Iterator<SignaturePart> iterator() {
-                return new Iterator<SignaturePart>() {
-                    OPCPackage pkg = signatureConfig.getOpcPackage();
-                    Iterator<PackageRelationship> sigOrigRels =
-                        pkg.getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE_ORIGIN).iterator();
-                    Iterator<PackageRelationship> sigRels;
-                    PackagePart sigPart;
+        initXmlProvider();
+        return SignaturePartIterator::new;
+    }
 
-                    @Override
-                    public boolean hasNext() {
-                        while (sigRels == null || !sigRels.hasNext()) {
-                            if (!sigOrigRels.hasNext()) {
-                                return false;
-                            }
-                            sigPart = pkg.getPart(sigOrigRels.next());
-                            LOG.log(POILogger.DEBUG, "Digital Signature Origin part", sigPart);
-                            try {
-                                sigRels = sigPart.getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE).iterator();
-                            } catch (InvalidFormatException e) {
-                                LOG.log(POILogger.WARN, "Reference to signature is invalid.", e);
-                            }
-                        }
-                        return true;
-                    }
+    private final class SignaturePartIterator implements Iterator<SignaturePart> {
+        Iterator<PackageRelationship> sigOrigRels;
+        private Iterator<PackageRelationship> sigRels;
+        private PackagePart sigPart;
 
-                    @Override
-                    public SignaturePart next() {
-                        PackagePart sigRelPart = null;
-                        do {
-                            try {
-                                if (!hasNext()) {
-                                    throw new NoSuchElementException();
-                                }
-                                sigRelPart = sigPart.getRelatedPart(sigRels.next());
-                                LOG.log(POILogger.DEBUG, "XML Signature part", sigRelPart);
-                            } catch (InvalidFormatException e) {
-                                LOG.log(POILogger.WARN, "Reference to signature is invalid.", e);
-                            }
-                        } while (sigRelPart == null);
-                        return new SignaturePart(sigRelPart, signatureConfig);
-                    }
+        private SignaturePartIterator() {
+            sigOrigRels = opcPackage.getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE_ORIGIN).iterator();
+        }
 
-                    @Override
-                    public void remove() {
-                        throw new UnsupportedOperationException();
-                    }
-                };
+        @Override
+        public boolean hasNext() {
+            while (sigRels == null || !sigRels.hasNext()) {
+                if (!sigOrigRels.hasNext()) {
+                    return false;
+                }
+                sigPart = opcPackage.getPart(sigOrigRels.next());
+                LOG.log(POILogger.DEBUG, "Digital Signature Origin part", sigPart);
+                try {
+                    sigRels = sigPart.getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE).iterator();
+                } catch (InvalidFormatException e) {
+                    LOG.log(POILogger.WARN, "Reference to signature is invalid.", e);
+                }
             }
-        };
+            return true;
+        }
+
+        @Override
+        public SignaturePart next() {
+            PackagePart sigRelPart = null;
+            do {
+                try {
+                    if (!hasNext()) {
+                        throw new NoSuchElementException();
+                    }
+                    sigRelPart = sigPart.getRelatedPart(sigRels.next());
+                    LOG.log(POILogger.DEBUG, "XML Signature part", sigRelPart);
+                } catch (InvalidFormatException e) {
+                    LOG.log(POILogger.WARN, "Reference to signature is invalid.", e);
+                }
+            } while (sigRelPart == null);
+            return new SignaturePart(sigRelPart, SignatureInfo.this);
+        }
+
+        @Override
+        public void remove() {
+            throw new UnsupportedOperationException();
+        }
     }
 
-    /**
-     * Initialize the xml signing environment and the bouncycastle provider
-     */
-    protected static synchronized void initXmlProvider() {
-        if (isInitialized) {
-            return;
-        }
-        isInitialized = true;
 
-        try {
-            Init.init();
-            RelationshipTransformService.registerDsigProvider();
-            CryptoFunctions.registerBouncyCastle();
-        } catch (Exception e) {
-            throw new RuntimeException("Xml & BouncyCastle-Provider initialization failed", e);
-        }
-    }
 
     /**
      * Helper method for adding informations before the signing.
@@ -356,35 +355,18 @@ public class SignatureInfo implements SignatureConfigurable {
     @SuppressWarnings("unchecked")
     public DOMSignedInfo preSign(final DOMSignContext xmlSignContext)
     throws XMLSignatureException, MarshalException {
-        signatureConfig.init(false);
-
         final Document document = (Document)xmlSignContext.getParent();
 
-        // it's necessary to explicitly set the mdssi namespace, but the sign() method has no
-        // normal way to interfere with, so we need to add the namespace under the hand ...
-        EventTarget target = (EventTarget)document;
-        EventListener creationListener = signatureConfig.getSignatureMarshalListener();
-        if (creationListener != null) {
-            if (creationListener instanceof SignatureMarshalListener) {
-                ((SignatureMarshalListener)creationListener).setEventTarget(target);
-            }
-            SignatureMarshalListener.setListener(target, creationListener, true);
-        }
+        registerEventListener(document);
 
-        /*
-         * Signature context construction.
-         */
-        URIDereferencer uriDereferencer = signatureConfig.getUriDereferencer();
-        if (null != uriDereferencer) {
+        // Signature context construction.
+        if (uriDereferencer != null) {
             xmlSignContext.setURIDereferencer(uriDereferencer);
         }
 
         signatureConfig.getNamespacePrefixes().forEach(xmlSignContext::putNamespacePrefix);
 
         xmlSignContext.setDefaultNamespacePrefix("");
-        // signatureConfig.getNamespacePrefixes().get(XML_DIGSIG_NS));
-
-        XMLSignatureFactory signatureFactory = signatureConfig.getSignatureFactory();
 
         /*
          * Add ds:References that come from signing client local files.
@@ -397,7 +379,7 @@ public class SignatureInfo implements SignatureConfigurable {
         List<XMLObject> objects = new ArrayList<>();
         for (SignatureFacet signatureFacet : signatureConfig.getSignatureFacets()) {
             LOG.log(POILogger.DEBUG, "invoking signature facet: " + signatureFacet.getClass().getSimpleName());
-            signatureFacet.preSign(document, references, objects);
+            signatureFacet.preSign(this, document, references, objects);
         }
 
         /*
@@ -471,6 +453,35 @@ public class SignatureInfo implements SignatureConfigurable {
         return (DOMSignedInfo)signedInfo;
     }
 
+    // it's necessary to explicitly set the mdssi namespace, but the sign() method has no
+    // normal way to interfere with, so we need to add the namespace under the hand ...
+    protected void registerEventListener(Document document) {
+        final SignatureMarshalListener sml = signatureConfig.getSignatureMarshalListener();
+        if (sml == null) {
+            return;
+        }
+
+        EventTarget target = (EventTarget)document;
+
+        final EventListener[] el = { null };
+        el[0] = (e) -> {
+            if (!(e instanceof MutationEvent)) {
+                return;
+            }
+
+            MutationEvent mutEvt = (MutationEvent) e;
+            EventTarget et = mutEvt.getTarget();
+            if (!(et instanceof Element)) {
+                return;
+            }
+
+            sml.handleElement(this, (Element) et, target, el[0]);
+        };
+
+        SignatureMarshalListener.setListener(target, el[0], true);
+    }
+
+
     /**
      * Helper method for adding informations after the signing.
      * Normally {@link #confirmSignature()} is sufficient to be used.
@@ -492,7 +503,7 @@ public class SignatureInfo implements SignatureConfigurable {
         /*
          * Insert signature value into the ds:SignatureValue element
          */
-        final Element signatureNode = getDsigElement(document, "SignatureValue"); 
+        final Element signatureNode = getDsigElement(document, "SignatureValue");
         if (signatureNode == null) {
             throw new RuntimeException("preSign has to be called before postSign");
         }
@@ -502,7 +513,7 @@ public class SignatureInfo implements SignatureConfigurable {
          * Allow signature facets to inject their own stuff.
          */
         for (SignatureFacet signatureFacet : signatureConfig.getSignatureFacets()) {
-            signatureFacet.postSign(document);
+            signatureFacet.postSign(this, document);
         }
 
         writeDocument(document);
@@ -512,7 +523,7 @@ public class SignatureInfo implements SignatureConfigurable {
      * Write XML signature into the OPC package
      *
      * @param document the xml signature document
-     * @throws MarshalException
+     * @throws MarshalException if the document can't be serialized
      */
     protected void writeDocument(Document document) throws MarshalException {
         XmlOptions xo = new XmlOptions();
@@ -527,23 +538,21 @@ public class SignatureInfo implements SignatureConfigurable {
          * Copy the original OOXML content to the signed OOXML package. During
          * copying some files need to changed.
          */
-        OPCPackage pkg = signatureConfig.getOpcPackage();
-
         try {
             // <Default Extension="sigs" ContentType="application/vnd.openxmlformats-package.digital-signature-origin"/>
             final DSigRelation originDesc = DSigRelation.ORIGIN_SIGS;
             PackagePartName originPartName = PackagingURIHelper.createPartName(originDesc.getFileName(0));
 
-            PackagePart originPart = pkg.getPart(originPartName);
+            PackagePart originPart = opcPackage.getPart(originPartName);
             if (originPart == null) {
                 // touch empty marker file
-                originPart = pkg.createPart(originPartName, originDesc.getContentType());
-                pkg.addRelationship(originPartName, TargetMode.INTERNAL, originDesc.getRelation());
+                originPart = opcPackage.createPart(originPartName, originDesc.getContentType());
+                opcPackage.addRelationship(originPartName, TargetMode.INTERNAL, originDesc.getRelation());
             }
 
             // <Override PartName="/_xmlsignatures/sig1.xml" ContentType="application/vnd.openxmlformats-package.digital-signature-xmlsignature+xml"/>
             final DSigRelation sigDesc = DSigRelation.SIG;
-            int nextSigIdx = pkg.getUnusedPartIndex(sigDesc.getDefaultFileName());
+            int nextSigIdx = opcPackage.getUnusedPartIndex(sigDesc.getDefaultFileName());
 
             if (!signatureConfig.isAllowMultipleSignatures()) {
                 PackageRelationshipCollection prc = originPart.getRelationshipsByType(sigDesc.getRelation());
@@ -558,16 +567,16 @@ public class SignatureInfo implements SignatureConfigurable {
                         }
                     }
 
-                    pkg.removePart(pkg.getPart(pn));
+                    opcPackage.removePart(opcPackage.getPart(pn));
                 }
                 nextSigIdx = 1;
             }
 
 
             PackagePartName sigPartName = PackagingURIHelper.createPartName(sigDesc.getFileName(nextSigIdx));
-            PackagePart sigPart = pkg.getPart(sigPartName);
+            PackagePart sigPart = opcPackage.getPart(sigPartName);
             if (sigPart == null) {
-                sigPart = pkg.createPart(sigPartName, sigDesc.getContentType());
+                sigPart = opcPackage.createPart(sigPartName, sigDesc.getContentType());
                 originPart.addRelationship(sigPartName, TargetMode.INTERNAL, sigDesc.getRelation());
             } else {
                 sigPart.clear();
@@ -590,7 +599,123 @@ public class SignatureInfo implements SignatureConfigurable {
         }
 
         LOG.log(POILogger.WARN, "Signature element '"+localName+"' was "+(sigValNl.getLength() == 0 ? "not found" : "multiple times"));
-        
+
         return null;
     }
+
+    public void setProvider(Provider provider) {
+        this.provider = provider;
+    }
+
+    public void setSignatureFactory(XMLSignatureFactory signatureFactory) {
+        this.signatureFactory = signatureFactory;
+    }
+
+    public XMLSignatureFactory getSignatureFactory() {
+        return signatureFactory;
+    }
+
+    public void setKeyInfoFactory(KeyInfoFactory keyInfoFactory) {
+        this.keyInfoFactory = keyInfoFactory;
+    }
+
+    public KeyInfoFactory getKeyInfoFactory() {
+        return keyInfoFactory;
+    }
+
+
+
+    /**
+     * Initialize the xml signing environment and the bouncycastle provider
+     */
+    @SuppressWarnings("deprecation")
+    protected void initXmlProvider() {
+        if (opcPackage == null) {
+            opcPackage = signatureConfig.getOpcPackage();
+        }
+        if (provider == null) {
+            provider = signatureConfig.getProvider();
+            if (provider == null) {
+                provider = XmlProviderInitSingleton.getInstance().findProvider();
+            }
+        }
+        if (signatureFactory == null) {
+            signatureFactory = signatureConfig.getSignatureFactory();
+            if (signatureFactory == null) {
+                signatureFactory = XMLSignatureFactory.getInstance("DOM", provider);
+            }
+        }
+        if (keyInfoFactory == null) {
+            keyInfoFactory = signatureConfig.getKeyInfoFactory();
+            if (keyInfoFactory == null) {
+                keyInfoFactory = KeyInfoFactory.getInstance("DOM", provider);
+            }
+        }
+        if (uriDereferencer == null) {
+            uriDereferencer = signatureConfig.getUriDereferencer();
+            if (uriDereferencer == null) {
+                uriDereferencer = new OOXMLURIDereferencer();
+            }
+        }
+        if (uriDereferencer instanceof OOXMLURIDereferencer) {
+            ((OOXMLURIDereferencer)uriDereferencer).setSignatureInfo(this);
+        }
+    }
+
+    private static final class XmlProviderInitSingleton {
+
+        // Bill Pugh Singleton
+        private static class SingletonHelper {
+            private static final XmlProviderInitSingleton INSTANCE = new XmlProviderInitSingleton();
+        }
+
+        public static XmlProviderInitSingleton getInstance(){
+            return SingletonHelper.INSTANCE;
+        }
+
+        private XmlProviderInitSingleton() {
+            try {
+                Init.init();
+                RelationshipTransformService.registerDsigProvider();
+                CryptoFunctions.registerBouncyCastle();
+            } catch (Exception e) {
+                throw new RuntimeException("Xml & BouncyCastle-Provider initialization failed", e);
+            }
+        }
+
+        /**
+         * This method tests the existence of xml signature provider in the following order:
+         * <ul>
+         * <li>the class pointed to by the system property "jsr105Provider"</li>
+         * <li>the Santuario xmlsec provider</li>
+         * <li>the JDK xmlsec provider</li>
+         * </ul>
+         *
+         * For signing the classes are linked against the Santuario xmlsec, so this might
+         * only work for validation (not tested).
+         *
+         * @return the xml dsig provider
+         */
+        public Provider findProvider() {
+            return
+                Stream.of(SignatureConfig.getProviderNames())
+                .map(this::getProvider)
+                .filter(Objects::nonNull).findFirst()
+                .orElseThrow(this::providerNotFound);
+        }
+
+        private Provider getProvider(String className) {
+            try {
+                return (Provider)Class.forName(className).newInstance();
+            } catch (Exception e) {
+                LOG.log(POILogger.DEBUG, "XMLDsig-Provider '"+className+"' can't be found - trying next.");
+                return null;
+            }
+        }
+
+        private RuntimeException providerNotFound() {
+            return new RuntimeException("JRE doesn't support default xml signature provider - set jsr105Provider system property!");
+        }
+    }
+
 }

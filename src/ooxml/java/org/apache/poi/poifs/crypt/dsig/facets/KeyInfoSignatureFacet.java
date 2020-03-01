@@ -18,9 +18,9 @@
 /* ====================================================================
    This product contains an ASLv2 licensed version of the OOXML signer
    package from the eID Applet project
-   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt  
+   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt
    Copyright (C) 2008-2014 FedICT.
-   ================================================================= */ 
+   ================================================================= */
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
@@ -29,7 +29,6 @@ import java.security.KeyException;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.XMLStructure;
@@ -41,6 +40,8 @@ import javax.xml.crypto.dsig.keyinfo.KeyValue;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
 
 import org.apache.jcp.xml.dsig.internal.dom.DOMKeyInfo;
+import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
+import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.w3c.dom.Document;
@@ -50,21 +51,20 @@ import org.w3c.dom.NodeList;
 
 /**
  * Signature Facet implementation that adds ds:KeyInfo to the XML signature.
- * 
+ *
  * @author Frank Cornelis
- * 
  */
-public class KeyInfoSignatureFacet extends SignatureFacet {
+public class KeyInfoSignatureFacet implements SignatureFacet {
 
     private static final POILogger LOG = POILogFactory.getLogger(KeyInfoSignatureFacet.class);
-    
+
     @Override
-    public void postSign(Document document) 
+    public void postSign(SignatureInfo signatureInfo, Document document)
     throws MarshalException {
         LOG.log(POILogger.DEBUG, "postSign");
 
         NodeList nl = document.getElementsByTagNameNS(XML_DIGSIG_NS, "Object");
-        
+
         /*
          * Make sure we insert right after the ds:SignatureValue element, just
          * before the first ds:Object element.
@@ -74,8 +74,9 @@ public class KeyInfoSignatureFacet extends SignatureFacet {
         /*
          * Construct the ds:KeyInfo element using JSR 105.
          */
-        KeyInfoFactory keyInfoFactory = signatureConfig.getKeyInfoFactory();
+        KeyInfoFactory keyInfoFactory = signatureInfo.getKeyInfoFactory();
         List<Object> x509DataObjects = new ArrayList<>();
+        SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
         X509Certificate signingCertificate = signatureConfig.getSigningCertificateChain().get(0);
 
         List<XMLStructure> keyInfoContent = new ArrayList<>();
@@ -107,7 +108,7 @@ public class KeyInfoSignatureFacet extends SignatureFacet {
             keyInfoContent.add(x509Data);
         }
         KeyInfo keyInfo = keyInfoFactory.newKeyInfo(keyInfoContent);
-        DOMKeyInfo domKeyInfo = (DOMKeyInfo)keyInfo; 
+        DOMKeyInfo domKeyInfo = (DOMKeyInfo)keyInfo;
 
         Key key = new Key() {
             private static final long serialVersionUID = 1L;
@@ -133,7 +134,7 @@ public class KeyInfoSignatureFacet extends SignatureFacet {
 
         DOMStructure domStructure = new DOMStructure(n);
         domKeyInfo.marshal(domStructure, domSignContext);
-        
+
         // move keyinfo into the right place
         if (nextSibling != null) {
             NodeList kiNl = document.getElementsByTagNameNS(XML_DIGSIG_NS, "KeyInfo");

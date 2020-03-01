@@ -18,9 +18,9 @@
 /* ====================================================================
    This product contains an ASLv2 licensed version of the OOXML signer
    package from the eID Applet project
-   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt  
+   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt
    Copyright (C) 2008-2014 FedICT.
-   ================================================================= */ 
+   ================================================================= */
 
 package org.apache.poi.poifs.crypt.dsig.services;
 
@@ -47,6 +47,7 @@ import java.util.Map;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
+import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
@@ -72,15 +73,13 @@ import org.bouncycastle.tsp.TimeStampToken;
 
 /**
  * A TSP time-stamp service implementation.
- * 
+ *
  * @author Frank Cornelis
- * 
+ *
  */
 public class TSPTimeStampService implements TimeStampService {
 
     private static final POILogger LOG = POILogFactory.getLogger(TSPTimeStampService.class);
-
-    private SignatureConfig signatureConfig;
 
     /**
      * Maps the digest algorithm to corresponding OID value.
@@ -97,8 +96,9 @@ public class TSPTimeStampService implements TimeStampService {
     }
 
     @SuppressWarnings({"unchecked","squid:S2647"})
-    public byte[] timeStamp(byte[] data, RevocationData revocationData)
-            throws Exception {
+    public byte[] timeStamp(SignatureInfo signatureInfo, byte[] data, RevocationData revocationData) throws Exception {
+        SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
+
         // digest the message
         MessageDigest messageDigest = CryptoFunctions.getMessageDigest(signatureConfig.getTspDigestAlgo());
         byte[] digest = messageDigest.digest(data);
@@ -170,7 +170,7 @@ public class TSPTimeStampService implements TimeStampService {
             huc.disconnect();
         }
 
-        if (!contentType.startsWith(signatureConfig.isTspOldProtocol() 
+        if (!contentType.startsWith(signatureConfig.isTspOldProtocol()
             ? "application/timestamp-response"
             : "application/timestamp-reply"
         )) {
@@ -178,7 +178,7 @@ public class TSPTimeStampService implements TimeStampService {
                     // dump the first few bytes
                     ": " + HexDump.dump(bos.toByteArray(), 0, 0, 200));
         }
-        
+
         if (bos.size() == 0) {
             throw new RuntimeException("Content-Length is zero");
         }
@@ -209,7 +209,7 @@ public class TSPTimeStampService implements TimeStampService {
 
         // TSP signer certificates retrieval
         Collection<X509CertificateHolder> certificates = timeStampToken.getCertificates().getMatches(null);
-        
+
         X509CertificateHolder signerCert = null;
         Map<X500Name, X509CertificateHolder> certificateMap = new HashMap<>();
         for (X509CertificateHolder certificate : certificates) {
@@ -245,7 +245,7 @@ public class TSPTimeStampService implements TimeStampService {
         BcDigestCalculatorProvider calculator = new BcDigestCalculatorProvider();
         BcRSASignerInfoVerifierBuilder verifierBuilder = new BcRSASignerInfoVerifierBuilder(nameGen, sigAlgoFinder, hashAlgoFinder, calculator);
         SignerInformationVerifier verifier = verifierBuilder.build(holder);
-        
+
         timeStampToken.validate(verifier);
 
         // verify TSP signer certificate
@@ -257,9 +257,5 @@ public class TSPTimeStampService implements TimeStampService {
                 + timeStampToken.getTimeStampInfo().getGenTime());
 
         return timeStampToken.getEncoded();
-    }
-
-    public void setSignatureConfig(SignatureConfig signatureConfig) {
-        this.signatureConfig = signatureConfig;
     }
 }

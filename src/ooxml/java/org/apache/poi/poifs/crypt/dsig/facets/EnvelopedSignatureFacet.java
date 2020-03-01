@@ -18,11 +18,14 @@
 /* ====================================================================
    This product contains an ASLv2 licensed version of the OOXML signer
    package from the eID Applet project
-   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt  
+   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt
    Copyright (C) 2008-2014 FedICT.
-   ================================================================= */ 
+   ================================================================= */
 
 package org.apache.poi.poifs.crypt.dsig.facets;
+
+import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacetHelper.newReference;
+import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacetHelper.newTransform;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,28 +36,29 @@ import javax.xml.crypto.dsig.Transform;
 import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignatureException;
 
+import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.w3c.dom.Document;
 
 /**
  * Signature Facet implementation to create enveloped signatures.
- * 
+ *
  * @author Frank Cornelis
- * 
  */
-public class EnvelopedSignatureFacet extends SignatureFacet {
+public class EnvelopedSignatureFacet implements SignatureFacet {
 
     @Override
-    public void preSign(Document document
+    public void preSign(SignatureInfo signatureInfo
+        , Document document
         , List<Reference> references
         , List<XMLObject> objects)
     throws XMLSignatureException {
         List<Transform> transforms = new ArrayList<>();
-        Transform envelopedTransform = newTransform(CanonicalizationMethod.ENVELOPED);
+        Transform envelopedTransform = newTransform(signatureInfo, CanonicalizationMethod.ENVELOPED);
         transforms.add(envelopedTransform);
-        Transform exclusiveTransform = newTransform(CanonicalizationMethod.EXCLUSIVE);
+        Transform exclusiveTransform = newTransform(signatureInfo, CanonicalizationMethod.EXCLUSIVE);
         transforms.add(exclusiveTransform);
 
-        Reference reference = newReference("", transforms, null, null, null);
+        Reference reference = newReference(signatureInfo, "", transforms, null, null, null);
         references.add(reference);
     }
 }

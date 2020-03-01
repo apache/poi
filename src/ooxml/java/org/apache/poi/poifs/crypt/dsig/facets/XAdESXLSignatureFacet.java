@@ -18,9 +18,9 @@
 /* ====================================================================
    This product contains an ASLv2 licensed version of the OOXML signer
    package from the eID Applet project
-   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt  
+   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt
    Copyright (C) 2008-2014 FedICT.
-   ================================================================= */ 
+   ================================================================= */
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
@@ -47,6 +47,8 @@ import java.util.UUID;
 
 import javax.xml.crypto.MarshalException;
 
+import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
+import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
@@ -73,18 +75,18 @@ import org.w3c.dom.NodeList;
 /**
  * XAdES-X-L v1.4.1 signature facet. This signature facet implementation will
  * upgrade a given XAdES-BES/EPES signature to XAdES-X-L.
- * 
+ *
  * We don't inherit from XAdESSignatureFacet as we also want to be able to use
  * this facet out of the context of a signature creation. This signature facet
  * assumes that the signature is already XAdES-BES/EPES compliant.
- * 
+ *
  * This implementation has been tested against an implementation that
  * participated multiple ETSI XAdES plugtests.
- * 
+ *
  * @author Frank Cornelis
  * @see XAdESSignatureFacet
  */
-public class XAdESXLSignatureFacet extends SignatureFacet {
+public class XAdESXLSignatureFacet implements SignatureFacet {
 
     private static final POILogger LOG = POILogFactory.getLogger(XAdESXLSignatureFacet.class);
 
@@ -99,8 +101,10 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
     }
 
     @Override
-    public void postSign(Document document) throws MarshalException {
+    public void postSign(SignatureInfo signatureInfo, Document document) throws MarshalException {
         LOG.log(POILogger.DEBUG, "XAdES-X-L post sign phase");
+
+        SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
 
         QualifyingPropertiesDocument qualDoc = null;
         QualifyingPropertiesType qualProps = null;
@@ -127,18 +131,18 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
         if (unsignedSigProps == null) {
             unsignedSigProps = unsignedProps.addNewUnsignedSignatureProperties();
         }
-        
+
 
         // create the XAdES-T time-stamp
         NodeList nlSigVal = document.getElementsByTagNameNS(XML_DIGSIG_NS, "SignatureValue");
         if (nlSigVal.getLength() != 1) {
             throw new IllegalArgumentException("SignatureValue is not set.");
         }
-        
+
         RevocationData tsaRevocationDataXadesT = new RevocationData();
         LOG.log(POILogger.DEBUG, "creating XAdES-T time-stamp");
         XAdESTimeStampType signatureTimeStamp = createXAdESTimeStamp
-            (Collections.singletonList(nlSigVal.item(0)), tsaRevocationDataXadesT);
+            (signatureInfo, Collections.singletonList(nlSigVal.item(0)), tsaRevocationDataXadesT);
 
         // marshal the XAdES-T extension
         unsignedSigProps.addNewSignatureTimeStamp().set(signatureTimeStamp);
@@ -158,7 +162,7 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
         }
 
         // XAdES-C: complete certificate refs
-        CompleteCertificateRefsType completeCertificateRefs = 
+        CompleteCertificateRefsType completeCertificateRefs =
             unsignedSigProps.addNewCompleteCertificateRefs();
 
         CertIDListType certIdList = completeCertificateRefs.addNewCertRefs();
@@ -176,7 +180,7 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
         }
 
         // XAdES-C: complete revocation refs
-        CompleteRevocationRefsType completeRevocationRefs = 
+        CompleteRevocationRefsType completeRevocationRefs =
             unsignedSigProps.addNewCompleteRevocationRefs();
         RevocationData revocationData = signatureConfig.getRevocationDataService()
             .getRevocationData(certChain);
@@ -212,22 +216,22 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
             for (byte[] ocsp : revocationData.getOCSPs()) {
                 try {
                     OCSPRefType ocspRef = ocspRefs.addNewOCSPRef();
-    
+
                     DigestAlgAndValueType digestAlgAndValue = ocspRef.addNewDigestAlgAndValue();
                     XAdESSignatureFacet.setDigestAlgAndValue(digestAlgAndValue, ocsp, signatureConfig.getDigestAlgo());
-    
+
                     OCSPIdentifierType ocspIdentifier = ocspRef.addNewOCSPIdentifier();
-                    
+
                     OCSPResp ocspResp = new OCSPResp(ocsp);
-                    
+
                     BasicOCSPResp basicOcspResp = (BasicOCSPResp)ocspResp.getResponseObject();
-                    
+
                     Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("Z"), Locale.ROOT);
                     cal.setTime(basicOcspResp.getProducedAt());
                     ocspIdentifier.setProducedAt(cal);
-    
+
                     ResponderIDType responderId = ocspIdentifier.addNewResponderID();
-    
+
                     RespID respId = basicOcspResp.getResponderId();
                     ResponderID ocspResponderId = respId.toASN1Primitive();
                     DERTaggedObject derTaggedObject = (DERTaggedObject)ocspResponderId.toASN1Primitive();
@@ -247,7 +251,7 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
         }
 
         // marshal XAdES-C
-        
+
         // XAdES-X Type 1 timestamp
         List<Node> timeStampNodesXadesX1 = new ArrayList<>();
         timeStampNodesXadesX1.add(nlSigVal.item(0));
@@ -258,7 +262,7 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
         RevocationData tsaRevocationDataXadesX1 = new RevocationData();
         LOG.log(POILogger.DEBUG, "creating XAdES-X time-stamp");
         XAdESTimeStampType timeStampXadesX1 = createXAdESTimeStamp
-            (timeStampNodesXadesX1, tsaRevocationDataXadesX1);
+            (signatureInfo, timeStampNodesXadesX1, tsaRevocationDataXadesX1);
         if (tsaRevocationDataXadesX1.hasRevocationDataEntries()) {
             ValidationDataType timeStampXadesX1ValidationData = createValidationData(tsaRevocationDataXadesX1);
             insertXChild(unsignedSigProps, timeStampXadesX1ValidationData);
@@ -277,7 +281,7 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
                 throw new RuntimeException("certificate encoding error: " + e.getMessage(), e);
             }
         }
-        
+
         RevocationValuesType revocationValues = unsignedSigProps.addNewRevocationValues();
         createRevocationValues(revocationValues, revocationData);
 
@@ -330,18 +334,21 @@ public class XAdESXLSignatureFacet extends SignatureFacet {
     }
 
     private XAdESTimeStampType createXAdESTimeStamp(
+            SignatureInfo signatureInfo,
             List<Node> nodeList,
             RevocationData revocationData) {
+        SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
         byte[] c14nSignatureValueElement = getC14nValue(nodeList, signatureConfig.getXadesCanonicalizationMethod());
 
-        return createXAdESTimeStamp(c14nSignatureValueElement, revocationData);
+        return createXAdESTimeStamp(signatureInfo, c14nSignatureValueElement, revocationData);
     }
 
-    private XAdESTimeStampType createXAdESTimeStamp(byte[] data, RevocationData revocationData) {
+    private XAdESTimeStampType createXAdESTimeStamp(SignatureInfo signatureInfo, byte[] data, RevocationData revocationData) {
+        SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
         // create the time-stamp
         byte[] timeStampToken;
         try {
-            timeStampToken = signatureConfig.getTspService().timeStamp(data, revocationData);
+            timeStampToken = signatureConfig.getTspService().timeStamp(signatureInfo, data, revocationData);
         } catch (Exception e) {
             throw new RuntimeException("error while creating a time-stamp: "
                     + e.getMessage(), e);

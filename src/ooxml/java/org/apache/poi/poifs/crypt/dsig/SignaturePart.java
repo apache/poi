@@ -30,6 +30,7 @@ import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.xml.crypto.MarshalException;
+import javax.xml.crypto.URIDereferencer;
 import javax.xml.crypto.dsig.XMLSignature;
 import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
@@ -54,40 +55,40 @@ import org.xml.sax.SAXException;
 
 public class SignaturePart {
     private static final POILogger LOG = POILogFactory.getLogger(SignaturePart.class);
-    private static final String XMLSEC_VALIDATE_MANIFEST = "org.jcp.xml.dsig.validateManifests"; 
+    private static final String XMLSEC_VALIDATE_MANIFEST = "org.jcp.xml.dsig.validateManifests";
 
-    
+
     private final PackagePart signaturePart;
-    private final SignatureConfig signatureConfig;
+    private final SignatureInfo signatureInfo;
     private X509Certificate signer;
     private List<X509Certificate> certChain;
-    
-    /* package */ SignaturePart(final PackagePart signaturePart, final SignatureConfig signatureConfig) {
+
+    /* package */ SignaturePart(final PackagePart signaturePart, final SignatureInfo signatureInfo) {
         this.signaturePart = signaturePart;
-        this.signatureConfig = signatureConfig;
+        this.signatureInfo = signatureInfo;
     }
-    
+
     /**
      * @return the package part containing the signature
      */
     public PackagePart getPackagePart() {
         return signaturePart;
     }
-    
+
     /**
      * @return the signer certificate
      */
     public X509Certificate getSigner() {
         return signer;
     }
-    
+
     /**
      * @return the certificate chain of the signer
      */
     public List<X509Certificate> getCertChain() {
         return certChain;
     }
-    
+
     /**
      * Helper method for examining the xml signature
      *
@@ -102,7 +103,7 @@ public class SignaturePart {
 
     /**
      * @return true, when the xml signature is valid, false otherwise
-     * 
+     *
      * @throws EncryptedDocumentException if the signature can't be extracted or if its malformed
      */
     public boolean validate() {
@@ -117,14 +118,16 @@ public class SignaturePart {
             for (int i=0; i<length; i++) {
                 ((Element)nl.item(i)).setIdAttribute("Id", true);
             }
-            
+
             DOMValidateContext domValidateContext = new DOMValidateContext(keySelector, doc);
             domValidateContext.setProperty(XMLSEC_VALIDATE_MANIFEST, Boolean.TRUE);
-            domValidateContext.setURIDereferencer(signatureConfig.getUriDereferencer());
 
-            XMLSignatureFactory xmlSignatureFactory = signatureConfig.getSignatureFactory();
+            URIDereferencer uriDereferencer = signatureInfo.getUriDereferencer();
+            domValidateContext.setURIDereferencer(uriDereferencer);
+
+            XMLSignatureFactory xmlSignatureFactory = signatureInfo.getSignatureFactory();
             XMLSignature xmlSignature = xmlSignatureFactory.unmarshalXMLSignature(domValidateContext);
-            
+
             boolean valid = xmlSignature.validate(domValidateContext);
 
             if (valid) {
@@ -132,7 +135,7 @@ public class SignaturePart {
                 certChain = keySelector.getCertChain();
                 extractConfig(doc, xmlSignature);
             }
-            
+
             return valid;
         } catch (IOException e) {
             String s = "error in reading document";
@@ -158,6 +161,7 @@ public class SignaturePart {
     }
 
     private void extractConfig(final Document doc, final XMLSignature xmlSignature) throws XPathExpressionException {
+        SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
         if (!signatureConfig.isUpdateConfigOnValidate()) {
             return;
         }
@@ -168,7 +172,7 @@ public class SignaturePart {
         final XPath xpath = XPathHelper.getFactory().newXPath();
         xpath.setNamespaceContext(new XPathNSContext());
 
-        final Map<String,Consumer<String>> m = new HashMap();
+        final Map<String,Consumer<String>> m = new HashMap<>();
         m.put("//mdssi:SignatureTime/mdssi:Value", signatureConfig::setExecutionTime);
         m.put("//xd:ClaimedRole", signatureConfig::setXadesRole);
         m.put("//dsss:SignatureComments", signatureConfig::setSignatureDescription);
@@ -185,7 +189,7 @@ public class SignaturePart {
         final Map<String,String> nsMap = new HashMap<>();
 
         {
-            signatureConfig.getNamespacePrefixes().forEach((k,v) -> nsMap.put(v,k));
+            signatureInfo.getSignatureConfig().getNamespacePrefixes().forEach((k,v) -> nsMap.put(v,k));
             nsMap.put("dsss", MS_DIGSIG_NS);
             nsMap.put("ds", XML_DIGSIG_NS);
         }
@@ -193,6 +197,8 @@ public class SignaturePart {
         public String getNamespaceURI(String prefix) {
             return nsMap.get(prefix);
         }
+        @SuppressWarnings("rawtypes")
+        @Override
         public Iterator getPrefixes(String val) {
             return null;
         }

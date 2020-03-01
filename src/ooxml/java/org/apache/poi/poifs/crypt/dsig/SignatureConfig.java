@@ -27,12 +27,15 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import javax.xml.crypto.URIDereferencer;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
@@ -53,11 +56,12 @@ import org.apache.poi.poifs.crypt.dsig.services.SignaturePolicyService;
 import org.apache.poi.poifs.crypt.dsig.services.TSPTimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampService;
 import org.apache.poi.poifs.crypt.dsig.services.TimeStampServiceValidator;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 import org.apache.xml.security.signature.XMLSignature;
-import org.w3c.dom.events.EventListener;
 
 /**
  * This class bundles the configuration options used for the existing
@@ -73,11 +77,16 @@ public class SignatureConfig {
     private static final POILogger LOG = POILogFactory.getLogger(SignatureConfig.class);
     private static final String DigestMethod_SHA224 = "http://www.w3.org/2001/04/xmldsig-more#sha224";
     private static final String DigestMethod_SHA384 = "http://www.w3.org/2001/04/xmldsig-more#sha384";
+    private static final String XMLSEC_SANTUARIO = "org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI";
+    private static final String XMLSEC_JDK = "org.jcp.xml.dsig.internal.dom.XMLDSigRI";
 
+    private static final List<Supplier<SignatureFacet>> DEFAULT_FACETS = Arrays.asList(
+        OOXMLSignatureFacet::new,
+        KeyInfoSignatureFacet::new,
+        XAdESSignatureFacet::new,
+        Office2010SignatureFacet::new
+    );
 
-    public interface SignatureConfigurable {
-        void setSignatureConfig(SignatureConfig signatureConfig);
-    }
 
     private ThreadLocal<OPCPackage> opcPackage = new ThreadLocal<>();
     private ThreadLocal<XMLSignatureFactory> signatureFactory = new ThreadLocal<>();
@@ -94,7 +103,7 @@ public class SignatureConfig {
      * the optional signature policy service used for XAdES-EPES.
      */
     private SignaturePolicyService signaturePolicyService;
-    private URIDereferencer uriDereferencer;
+    private URIDereferencer uriDereferencer = new OOXMLURIDereferencer();
     private String canonicalizationMethod = CanonicalizationMethod.INCLUSIVE;
 
     private boolean includeEntireCertificateChain = true;
@@ -161,7 +170,7 @@ public class SignatureConfig {
      * with certain namespaces, so this EventListener is used to interfere
      * with the marshalling process.
      */
-    private EventListener signatureMarshalListener;
+    private SignatureMarshalListener signatureMarshalListener = new SignatureMarshalDefaultListener();
 
     /**
      * Map of namespace uris to prefix
@@ -181,61 +190,11 @@ public class SignatureConfig {
      */
     private boolean allowMultipleSignatures = false;
 
-
-    /**
-     * Inits and checks the config object.
-     * If not set previously, complex configuration properties also get
-     * created/initialized via this initialization call.
-     *
-     * @param onlyValidation if true, only a subset of the properties
-     * is initialized, which are necessary for validation. If false,
-     * also the other properties needed for signing are been taken care of
-     */
-    protected void init(boolean onlyValidation) {
-        if (opcPackage == null) {
-            throw new EncryptedDocumentException("opcPackage is null");
-        }
-        if (uriDereferencer == null) {
-            uriDereferencer = new OOXMLURIDereferencer();
-        }
-        if (uriDereferencer instanceof SignatureConfigurable) {
-            ((SignatureConfigurable)uriDereferencer).setSignatureConfig(this);
-        }
-        if (namespacePrefixes.isEmpty()) {
-            /*
-             * OOo doesn't like ds namespaces so per default prefixing is off.
-             */
-            // namespacePrefixes.put(XML_DIGSIG_NS, "");
-            namespacePrefixes.put(OO_DIGSIG_NS, "mdssi");
-            namespacePrefixes.put(XADES_132_NS, "xd");
-        }
-
-        if (onlyValidation) {
-            return;
-        }
-
-        if (signatureMarshalListener == null) {
-            signatureMarshalListener = new SignatureMarshalListener();
-        }
-
-        if (signatureMarshalListener instanceof SignatureConfigurable) {
-            ((SignatureConfigurable)signatureMarshalListener).setSignatureConfig(this);
-        }
-
-        if (tspService != null) {
-            tspService.setSignatureConfig(this);
-        }
-
-        if (signatureFacets.isEmpty()) {
-            addSignatureFacet(new OOXMLSignatureFacet());
-            addSignatureFacet(new KeyInfoSignatureFacet());
-            addSignatureFacet(new XAdESSignatureFacet());
-            addSignatureFacet(new Office2010SignatureFacet());
-        }
-
-        for (SignatureFacet sf : signatureFacets) {
-            sf.setSignatureConfig(this);
-        }
+    public SignatureConfig() {
+        // OOo doesn't like ds namespaces so per default prefixing is off.
+        // namespacePrefixes.put(XML_DIGSIG_NS, "");
+        namespacePrefixes.put(OO_DIGSIG_NS, "mdssi");
+        namespacePrefixes.put(XADES_132_NS, "xd");
     }
 
     /**
@@ -249,7 +208,11 @@ public class SignatureConfig {
      * @return the list of facets, may be empty when the config object is not initialized
      */
     public List<SignatureFacet> getSignatureFacets() {
-        return signatureFacets;
+        if (signatureFacets.isEmpty()) {
+            return DEFAULT_FACETS.stream().map(Supplier::get).collect(Collectors.toList());
+        } else {
+            return signatureFacets;
+        }
     }
 
     /**
@@ -275,14 +238,22 @@ public class SignatureConfig {
 
     /**
      * @return the opc package to be used by this thread, stored as thread-local
+     *
+     * @deprecated in POI 4.1.3 - use {@link SignatureInfo#setOpcPackage(OPCPackage)} instead
      */
+    @Deprecated
+    @Removal(version = "5.0.0")
     public OPCPackage getOpcPackage() {
         return opcPackage.get();
     }
 
     /**
      * @param opcPackage the opc package to be handled by this thread, stored as thread-local
+     *
+     * @deprecated in POI 4.1.3 - use {@link SignatureInfo#setOpcPackage(OPCPackage)} instead
      */
+    @Deprecated
+    @Removal(version = "5.0.0")
     public void setOpcPackage(OPCPackage opcPackage) {
         this.opcPackage.set(opcPackage);
     }
@@ -378,14 +349,22 @@ public class SignatureConfig {
 
     /**
      * @return the dereferencer used for Reference/@URI attributes, defaults to {@link OOXMLURIDereferencer}
+     *
+     * @deprecated in POI 4.1.3 - use {@link SignatureInfo#getUriDereferencer()} instead
      */
+    @Deprecated
+    @Removal(version = "5.0.0")
     public URIDereferencer getUriDereferencer() {
         return uriDereferencer;
     }
 
     /**
      * @param uriDereferencer the dereferencer used for Reference/@URI attributes
+     *
+     * @deprecated in POI 4.1.3 - use {@link SignatureInfo#setUriDereferencer(URIDereferencer)} instead
      */
+    @Deprecated
+    @Removal(version = "5.0.0")
     public void setUriDereferencer(URIDereferencer uriDereferencer) {
         this.uriDereferencer = uriDereferencer;
     }
@@ -753,11 +732,10 @@ public class SignatureConfig {
 
 
     /**
-     * @return the event listener which is active while xml structure for
-     * the signature is created.
+     * @return the event listener which is active while xml structure for the signature is created.
      * Defaults to {@link SignatureMarshalListener}
      */
-    public EventListener getSignatureMarshalListener() {
+    public SignatureMarshalListener getSignatureMarshalListener() {
         return signatureMarshalListener;
     }
 
@@ -765,7 +743,7 @@ public class SignatureConfig {
      * @param signatureMarshalListener the event listener watching the xml structure
      * generation for the signature
      */
-    public void setSignatureMarshalListener(EventListener signatureMarshalListener) {
+    public void setSignatureMarshalListener(SignatureMarshalListener signatureMarshalListener) {
         this.signatureMarshalListener = signatureMarshalListener;
     }
 
@@ -898,84 +876,90 @@ public class SignatureConfig {
 
     /**
      * @param signatureFactory the xml signature factory, saved as thread-local
+     *
+     * @deprecated in POI 4.1.3 - use {@link SignatureInfo#setSignatureFactory(XMLSignatureFactory)}
      */
+    @Deprecated
+    @Removal(version = "5.0.0")
     public void setSignatureFactory(XMLSignatureFactory signatureFactory) {
         this.signatureFactory.set(signatureFactory);
     }
 
     /**
      * @return the xml signature factory (thread-local)
+     *
+     * @deprecated in POI 4.1.3 - will be handled by SignatureInfo internally
      */
+    @Deprecated
+    @Removal(version = "5.0.0")
     public XMLSignatureFactory getSignatureFactory() {
-        XMLSignatureFactory sigFac = signatureFactory.get();
-        if (sigFac == null) {
-            sigFac = XMLSignatureFactory.getInstance("DOM", getProvider());
-            setSignatureFactory(sigFac);
-        }
-        return sigFac;
+        return signatureFactory.get();
     }
 
     /**
      * @param keyInfoFactory the key factory, saved as thread-local
+     *
+     * @deprecated in POI 4.1.3 - use {@link SignatureInfo#setKeyInfoFactory(KeyInfoFactory)}
      */
+    @Deprecated
+    @Removal(version = "5.0.0")
     public void setKeyInfoFactory(KeyInfoFactory keyInfoFactory) {
         this.keyInfoFactory.set(keyInfoFactory);
     }
 
     /**
      * @return the key factory (thread-local)
+     *
+     * @deprecated in POI 4.1.3 - will be handled by SignatureInfo internally
      */
+    @Deprecated
+    @Removal(version = "5.0.0")
     public KeyInfoFactory getKeyInfoFactory() {
-        KeyInfoFactory keyFac = keyInfoFactory.get();
-        if (keyFac == null) {
-            keyFac = KeyInfoFactory.getInstance("DOM", getProvider());
-            setKeyInfoFactory(keyFac);
-        }
-        return keyFac;
+        return keyInfoFactory.get();
     }
 
     /**
-     * This method tests the existence of xml signature provider in the following order:
-     * <ul>
+     * Helper method to set provider
+     * @param provider the provider
+     * @deprecated in POI 4.1.3 - use {@link SignatureInfo#setProvider(Provider)}
+     */
+    @Internal
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public void setProvider(Provider provider) {
+        this.provider.set(provider);
+    }
+
+    /**
+     * @return the cached provider or null if not set before
+     *
+     * @deprecated in POI 4.1.3 - will be handled by SignatureInfo internally
+     */
+    @Deprecated
+    @Removal(version = "5.0.0")
+    public Provider getProvider() {
+        return provider.get();
+    }
+
+    /**
+     * Determine the possible classes for XMLSEC.
+     * The order is
+     * <ol>
      * <li>the class pointed to by the system property "jsr105Provider"</li>
      * <li>the Santuario xmlsec provider</li>
      * <li>the JDK xmlsec provider</li>
-     * </ul>
+     * </ol>
      *
-     * For signing the classes are linked against the Santuario xmlsec, so this might
-     * only work for validation (not tested).
-     *
-     * @return the xml dsig provider
+     * @return a list of possible XMLSEC provider class names
      */
-    public Provider getProvider() {
-        Provider prov = provider.get();
-        if (prov == null) {
-            String[] dsigProviderNames = {
-                    System.getProperty("jsr105Provider"),
-                    // Santuario xmlsec
-                    "org.apache.jcp.xml.dsig.internal.dom.XMLDSigRI",
-                    // JDK xmlsec
-                    "org.jcp.xml.dsig.internal.dom.XMLDSigRI"
-            };
-            for (String pn : dsigProviderNames) {
-                if (pn == null) {
-                    continue;
-                }
-                try {
-                    prov = (Provider)Class.forName(pn).newInstance();
-                    break;
-                } catch (Exception e) {
-                    LOG.log(POILogger.DEBUG, "XMLDsig-Provider '"+pn+"' can't be found - trying next.");
-                }
-            }
-        }
-
-        if (prov == null) {
-            throw new RuntimeException("JRE doesn't support default xml signature provider - set jsr105Provider system property!");
-        }
-
-        return prov;
+    public static String[] getProviderNames() {
+        // need to check every time, as the system property might have been changed in the meantime
+        String sysProp = System.getProperty("jsr105Provider");
+        return (sysProp == null || "".equals(sysProp))
+            ? new String[]{XMLSEC_SANTUARIO, XMLSEC_JDK}
+            : new String[]{sysProp, XMLSEC_SANTUARIO, XMLSEC_JDK};
     }
+
 
     /**
      * @return the cannonicalization method for XAdES-XL signing.

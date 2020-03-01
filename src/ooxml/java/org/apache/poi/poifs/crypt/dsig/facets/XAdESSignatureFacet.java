@@ -18,13 +18,15 @@
 /* ====================================================================
    This product contains an ASLv2 licensed version of the OOXML signer
    package from the eID Applet project
-   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt  
+   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt
    Copyright (C) 2008-2014 FedICT.
-   ================================================================= */ 
+   ================================================================= */
 
 package org.apache.poi.poifs.crypt.dsig.facets;
 
 import static java.util.Collections.singletonList;
+import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacetHelper.newReference;
+import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacetHelper.newTransform;
 
 import java.security.MessageDigest;
 import java.security.cert.CertificateEncodingException;
@@ -48,6 +50,7 @@ import javax.xml.crypto.dsig.XMLSignatureException;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
+import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.poifs.crypt.dsig.services.SignaturePolicyService;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -77,36 +80,39 @@ import org.w3c.dom.Node;
  * XAdES Signature Facet. Implements XAdES v1.4.1 which is compatible with XAdES
  * v1.3.2. The implemented XAdES format is XAdES-BES/EPES. It's up to another
  * part of the signature service to upgrade the XAdES-BES to a XAdES-X-L.
- * 
+ *
  * This implementation has been tested against an implementation that
  * participated multiple ETSI XAdES plugtests.
- * 
+ *
  * @author Frank Cornelis
  * @see <a href="http://en.wikipedia.org/wiki/XAdES">XAdES</a>
- * 
+ *
  */
-public class XAdESSignatureFacet extends SignatureFacet {
+public class XAdESSignatureFacet implements SignatureFacet {
 
     private static final POILogger LOG = POILogFactory.getLogger(XAdESSignatureFacet.class);
 
     private static final String XADES_TYPE = "http://uri.etsi.org/01903#SignedProperties";
-    
+
     private final Map<String, String> dataObjectFormatMimeTypes = new HashMap<>();
 
 
     @Override
     public void preSign(
-          Document document
+          SignatureInfo signatureInfo
+        , Document document
         , List<Reference> references
         , List<XMLObject> objects)
     throws XMLSignatureException {
         LOG.log(POILogger.DEBUG, "preSign");
 
+        SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
+
         // QualifyingProperties
         QualifyingPropertiesDocument qualDoc = QualifyingPropertiesDocument.Factory.newInstance();
         QualifyingPropertiesType qualifyingProperties = qualDoc.addNewQualifyingProperties();
         qualifyingProperties.setTarget("#" + signatureConfig.getPackageSignatureId());
-        
+
         // SignedProperties
         SignedPropertiesType signedProperties = qualifyingProperties.addNewSignedProperties();
         signedProperties.setId(signatureConfig.getXadesSignatureId());
@@ -115,35 +121,37 @@ public class XAdESSignatureFacet extends SignatureFacet {
         SignedSignaturePropertiesType signedSignatureProperties = signedProperties.addNewSignedSignatureProperties();
 
         // SigningTime
-        addSigningTime(signedSignatureProperties);
+        addSigningTime(signatureInfo, signedSignatureProperties);
 
         // SigningCertificate
-        addCertificate(signedSignatureProperties);
+        addCertificate(signatureInfo, signedSignatureProperties);
 
         // ClaimedRole
-        addXadesRole(signedSignatureProperties);
+        addXadesRole(signatureInfo, signedSignatureProperties);
 
         // XAdES-EPES
-        addPolicy(signedSignatureProperties);
+        addPolicy(signatureInfo, signedSignatureProperties);
 
         // DataObjectFormat
         addMimeTypes(signedProperties);
 
         // add XAdES ds:Object
-        objects.add(addXadesObject(document, qualifyingProperties));
+        objects.add(addXadesObject(signatureInfo, document, qualifyingProperties));
 
         // add XAdES ds:Reference
-        references.add(addXadesReference());
+        references.add(addXadesReference(signatureInfo));
     }
 
-    private void addSigningTime(SignedSignaturePropertiesType signedSignatureProperties) {
+    private void addSigningTime(SignatureInfo signatureInfo, SignedSignaturePropertiesType signedSignatureProperties) {
+        SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
         Calendar xmlGregorianCalendar = Calendar.getInstance(TimeZone.getTimeZone("Z"), Locale.ROOT);
         xmlGregorianCalendar.setTime(signatureConfig.getExecutionTime());
         xmlGregorianCalendar.clear(Calendar.MILLISECOND);
         signedSignatureProperties.setSigningTime(xmlGregorianCalendar);
     }
 
-    private void addCertificate(SignedSignaturePropertiesType signedSignatureProperties) {
+    private void addCertificate(SignatureInfo signatureInfo, SignedSignaturePropertiesType signedSignatureProperties) {
+        SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
         List<X509Certificate> chain = signatureConfig.getSigningCertificateChain();
         if (chain == null || chain.isEmpty()) {
             throw new RuntimeException("no signing certificate chain available");
@@ -153,7 +161,8 @@ public class XAdESSignatureFacet extends SignatureFacet {
         setCertID(certId, signatureConfig, signatureConfig.isXadesIssuerNameNoReverseOrder(), chain.get(0));
     }
 
-    private void addXadesRole(SignedSignaturePropertiesType signedSignatureProperties) {
+    private void addXadesRole(SignatureInfo signatureInfo, SignedSignaturePropertiesType signedSignatureProperties) {
+        SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
         String role = signatureConfig.getXadesRole();
         if (role == null || role.isEmpty()) {
             return;
@@ -168,7 +177,8 @@ public class XAdESSignatureFacet extends SignatureFacet {
         insertXChild(claimedRole, roleString);
     }
 
-    private void addPolicy(SignedSignaturePropertiesType signedSignatureProperties) {
+    private void addPolicy(SignatureInfo signatureInfo, SignedSignaturePropertiesType signedSignatureProperties) {
+        SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
         SignaturePolicyService policyService = signatureConfig.getSignaturePolicyService();
         if (policyService == null) {
             if (signatureConfig.isXadesSignaturePolicyImplied()) {
@@ -221,22 +231,23 @@ public class XAdESSignatureFacet extends SignatureFacet {
         });
     }
 
-    private XMLObject addXadesObject(Document document, QualifyingPropertiesType qualifyingProperties) {
+    private XMLObject addXadesObject(SignatureInfo signatureInfo, Document document, QualifyingPropertiesType qualifyingProperties) {
         Node qualDocElSrc = qualifyingProperties.getDomNode();
         Node qualDocEl = document.importNode(qualDocElSrc, true);
         List<XMLStructure> xadesObjectContent = Arrays.asList(new DOMStructure(qualDocEl));
-        return getSignatureFactory().newXMLObject(xadesObjectContent, null, null, null);
+        return signatureInfo.getSignatureFactory().newXMLObject(xadesObjectContent, null, null, null);
     }
 
-    private Reference addXadesReference() throws XMLSignatureException {
-        List<Transform> transforms = singletonList(newTransform(CanonicalizationMethod.INCLUSIVE));
-        return newReference("#"+signatureConfig.getXadesSignatureId(), transforms, XADES_TYPE, null, null);
+    private Reference addXadesReference(SignatureInfo signatureInfo) throws XMLSignatureException {
+        SignatureConfig signatureConfig = signatureInfo.getSignatureConfig();
+        List<Transform> transforms = singletonList(newTransform(signatureInfo, CanonicalizationMethod.INCLUSIVE));
+        return newReference(signatureInfo, "#"+signatureConfig.getXadesSignatureId(), transforms, XADES_TYPE, null, null);
     }
 
     /**
      * Gives back the JAXB DigestAlgAndValue data structure.
      *
-     * @param digestAlgAndValue the parent for the new digest element 
+     * @param digestAlgAndValue the parent for the new digest element
      * @param data the data to be digested
      * @param digestAlgo the digest algorithm
      */
@@ -246,7 +257,7 @@ public class XAdESSignatureFacet extends SignatureFacet {
             HashAlgorithm digestAlgo) {
         DigestMethodType digestMethod = digestAlgAndValue.addNewDigestMethod();
         digestMethod.setAlgorithm(SignatureConfig.getDigestMethodUri(digestAlgo));
-        
+
         MessageDigest messageDigest = CryptoFunctions.getMessageDigest(digestAlgo);
         byte[] digestValue = messageDigest.digest(data);
         digestAlgAndValue.setDigestValue(digestValue);
@@ -264,7 +275,7 @@ public class XAdESSignatureFacet extends SignatureFacet {
              * Make sure the DN is encoded using the same order as present
              * within the certificate. This is an Office2010 work-around.
              * Should be reverted back.
-             * 
+             *
              * XXX: not correct according to RFC 4514.
              */
             // TODO: check if issuerName is different on getTBSCertificate
@@ -283,14 +294,14 @@ public class XAdESSignatureFacet extends SignatureFacet {
             throw new RuntimeException("certificate encoding error: "
                     + e.getMessage(), e);
         }
-        DigestAlgAndValueType certDigest = certId.addNewCertDigest(); 
+        DigestAlgAndValueType certDigest = certId.addNewCertDigest();
         setDigestAlgAndValue(certDigest, encodedCertificate, signatureConfig.getXadesDigestAlgo());
     }
 
     /**
      * Adds a mime-type for the given ds:Reference (referred via its @URI). This
      * information is added via the xades:DataObjectFormat element.
-     * 
+     *
      * @param dsReferenceUri
      * @param mimetype
      */
