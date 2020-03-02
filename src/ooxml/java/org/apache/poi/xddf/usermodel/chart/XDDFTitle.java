@@ -58,10 +58,16 @@ public class XDDFTitle {
     }
 
     public void setText(String text) {
-        if (!title.isSetLayout()) {
-            title.addNewLayout();
+        if (text == null) {
+            if (title.isSetTx()) {
+                title.unsetTx();
+            }
+        } else{
+            if (!title.isSetLayout()) {
+                title.addNewLayout();
+            }
+            getBody().setText(text);
         }
-        getBody().setText(text);
     }
 
     public void setOverlay(Boolean overlay) {
