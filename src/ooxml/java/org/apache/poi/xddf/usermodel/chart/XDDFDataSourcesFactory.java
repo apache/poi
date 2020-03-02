@@ -45,6 +45,7 @@ public class XDDFDataSourcesFactory {
         if (categoryDS.getStrRef() == null) {
             return new XDDFCategoryDataSource() {
                 private CTNumData category = (CTNumData) categoryDS.getNumRef().getNumCache().copy();
+                private String formatCode = category.isSetFormatCode() ? category.getFormatCode() : null;
 
                 @Override
                 public boolean isCellRange() {
@@ -70,6 +71,9 @@ public class XDDFDataSourcesFactory {
                 public String getPointAt(int index) {
                     return category.getPtArray(index).getV();
                 }
+
+                @Override
+                public String getFormatCode() { return formatCode; }
             };
         } else {
             return new XDDFCategoryDataSource() {
@@ -94,6 +98,9 @@ public class XDDFDataSourcesFactory {
                 public String getPointAt(int index) {
                     return category.getPtArray(index).getV();
                 }
+
+                @Override
+                public String getFormatCode() { return null; }
             };
         }
     }
@@ -287,6 +294,9 @@ public class XDDFDataSourcesFactory {
         public String getFormula() {
             return getDataRangeReference();
         }
+
+        @Override
+        public String getFormatCode() { return null; }
     }
 
     private static class LiteralNumericalArrayDataSource<T extends Number> extends NumericalArrayDataSource<T> {
@@ -430,5 +440,8 @@ public class XDDFDataSourcesFactory {
         public boolean isNumeric() {
             return false;
         }
+
+        @Override
+        public String getFormatCode() { return null; }
     }
 }

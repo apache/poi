@@ -211,7 +211,7 @@ public abstract class XDDFChartData {
         public void plot() {
             if (categoryData.isNumeric()) {
                 CTNumData cache = retrieveNumCache(getAxDS(), categoryData);
-                ((XDDFNumericalDataSource<?>) categoryData).fillNumericalCache(cache);
+                categoryData.fillNumericalCache(cache);
             } else {
                 CTStrData cache = retrieveStrCache(getAxDS(), categoryData);
                 categoryData.fillStringCache(cache);

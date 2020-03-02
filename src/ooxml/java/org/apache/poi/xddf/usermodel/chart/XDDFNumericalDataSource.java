@@ -26,48 +26,10 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTNumVal;
 
 @Beta
 public interface XDDFNumericalDataSource<T extends Number> extends XDDFDataSource<T> {
-    String getFormatCode();
-
     void setFormatCode(String formatCode);
 
     @Override
     default boolean isLiteral() {
         return false;
-    }
-
-    /**
-     * @since POI 4.1.2
-     */
-    @Internal
-    default void fillNumericalCache(CTNumData cache) {
-        String formatCode = getFormatCode();
-        if (formatCode == null) {
-            if (cache.isSetFormatCode()) {
-                cache.unsetFormatCode();
-            }
-        } else {
-            cache.setFormatCode(formatCode);
-        }
-        cache.setPtArray(null); // unset old values
-        final int numOfPoints = getPointCount();
-        int effectiveNumOfPoints = 0;
-        for (int i = 0; i < numOfPoints; ++i) {
-            Object value = getPointAt(i);
-            if (value != null) {
-                CTNumVal ctNumVal = cache.addNewPt();
-                ctNumVal.setIdx(i);
-                ctNumVal.setV(value.toString());
-                effectiveNumOfPoints++;
-            }
-        }
-        if (effectiveNumOfPoints == 0) {
-            cache.unsetPtCount();
-        } else {
-            if (cache.isSetPtCount()) {
-                cache.getPtCount().setVal(numOfPoints);
-            } else {
-                cache.addNewPtCount().setVal(numOfPoints);
-            }
-        }
     }
 }
