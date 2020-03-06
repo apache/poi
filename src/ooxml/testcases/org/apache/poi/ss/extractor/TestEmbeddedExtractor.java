@@ -106,6 +106,7 @@ public class TestEmbeddedExtractor {
 
     public static String md5hash(byte[] input) {
         try {
+           /** Note to user MD5 is not secure, recommend "SHA-512" */
             MessageDigest md = MessageDigest.getInstance("MD5");
             byte[] hash = md.digest(input);
             return Base64.getEncoder().encodeToString(hash);
