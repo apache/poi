@@ -1388,7 +1388,17 @@ under the License.
         </copy-->
     </target>
 
-    <target name="compile-version" depends="init"
+    <target name="-version-java-check">
+		<!-- recompile Version.java from the template whenever source or the version in build.xml changes -->
+        <uptodate property="version.java.notRequired" targetfile="${main.output.dir}/org/apache/poi/Version.class">
+            <srcfiles file="src/resources/version/Version.java.template"/>
+            <srcfiles file="build.xml"/>
+        </uptodate>
+    </target>
+
+    <target name="compile-version" 
+			unless="version.java.notRequired"
+			depends="init, -version-java-check"
             description="Compiles the version class">
         <!-- Generate the .java file -->
         <property name="version.java" value="${main.output.dir}/org/apache/poi/Version.java"/>
@@ -1408,6 +1418,7 @@ under the License.
                srcdir="${main.output.dir}"
                encoding="${java.source.encoding}" includeantruntime="false">
         </javac>
+
         <!-- Tidy up -->
         <delete file="${version.java}"/>
     </target>
