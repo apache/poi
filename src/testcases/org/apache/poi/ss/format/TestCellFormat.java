@@ -943,34 +943,33 @@ public class TestCellFormat {
 
         // For +ve numbers, should be Space + currency symbol + spaces + whole number with commas + space
         // (Except French, which is mostly reversed...)
-        assertEquals(" $   12 ", cfDft.apply(Double.valueOf(12.33)).text);
-        assertEquals(" $   12 ",  cfUS.apply(Double.valueOf(12.33)).text);
-        assertEquals(" "+pound+"   12 ", cfUK.apply(Double.valueOf(12.33)).text);
-        assertEquals(" 12   "+euro+" ", cfFR.apply(Double.valueOf(12.33)).text);
+        assertEquals(" $   12 ", cfDft.apply(12.33).text);
+        assertEquals(" $   12 ",  cfUS.apply(12.33).text);
+        assertEquals(" "+pound+"   12 ", cfUK.apply(12.33).text);
+        assertEquals(" 12   "+euro+" ", cfFR.apply(12.33).text);
 
-        assertEquals(" $   16,789 ", cfDft.apply(Double.valueOf(16789.2)).text);
-        assertEquals(" $   16,789 ",  cfUS.apply(Double.valueOf(16789.2)).text);
-        assertEquals(" "+pound+"   16,789 ", cfUK.apply(Double.valueOf(16789.2)).text);
-        assertEquals(" 16,789   "+euro+" ", cfFR.apply(Double.valueOf(16789.2)).text);
+        assertEquals(" $   16,789 ", cfDft.apply(16789.2).text);
+        assertEquals(" $   16,789 ",  cfUS.apply(16789.2).text);
+        assertEquals(" "+pound+"   16,789 ", cfUK.apply(16789.2).text);
+        assertEquals(" 16,789   "+euro+" ", cfFR.apply(16789.2).text);
 
         // For -ve numbers, gets a bit more complicated...
-        assertEquals("-$   12 ", cfDft.apply(Double.valueOf(-12.33)).text);
-        assertEquals(" $   -12 ",  cfUS.apply(Double.valueOf(-12.33)).text);
-        assertEquals("-"+pound+"   12 ", cfUK.apply(Double.valueOf(-12.33)).text);
-        assertEquals("-12   "+euro+" ", cfFR.apply(Double.valueOf(-12.33)).text);
+        assertEquals("-$   12 ", cfDft.apply(-12.33).text);
+        assertEquals(" $   -12 ",  cfUS.apply(-12.33).text);
+        assertEquals("-"+pound+"   12 ", cfUK.apply(-12.33).text);
+        assertEquals("-12   "+euro+" ", cfFR.apply(-12.33).text);
 
-        assertEquals("-$   16,789 ", cfDft.apply(Double.valueOf(-16789.2)).text);
-        assertEquals(" $   -16,789 ",  cfUS.apply(Double.valueOf(-16789.2)).text);
-        assertEquals("-"+pound+"   16,789 ", cfUK.apply(Double.valueOf(-16789.2)).text);
-        assertEquals("-16,789   "+euro+" ", cfFR.apply(Double.valueOf(-16789.2)).text);
+        assertEquals("-$   16,789 ", cfDft.apply(-16789.2).text);
+        assertEquals(" $   -16,789 ",  cfUS.apply(-16789.2).text);
+        assertEquals("-"+pound+"   16,789 ", cfUK.apply(-16789.2).text);
+        assertEquals("-16,789   "+euro+" ", cfFR.apply(-16789.2).text);
 
         // For zero, should be Space + currency symbol + spaces + Minus + spaces
-        assertEquals(" $   - ", cfDft.apply(Double.valueOf(0)).text);
-        // TODO Fix the exception this incorrectly triggers
-        //assertEquals(" $   - ",  cfUS.apply(Double.valueOf(0)).text);
+        assertEquals(" $   - ", cfDft.apply((double) 0).text);
+        assertEquals(" $   - ", cfUS.apply((double) 0).text);
         // TODO Fix these to not have an incorrect bonus 0 on the end
-        //assertEquals(" "+pound+"   -  ", cfUK.apply(Double.valueOf(0)).text);
-        //assertEquals(" -    "+euro+"  ", cfFR.apply(Double.valueOf(0)).text);
+        //assertEquals(" "+pound+"   -  ", cfUK.apply((double) 0).text);
+        //assertEquals(" -    "+euro+"  ", cfFR.apply((double) 0).text);
     }
 
     @Test

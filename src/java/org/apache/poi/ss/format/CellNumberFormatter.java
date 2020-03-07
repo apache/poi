@@ -22,6 +22,7 @@ import java.text.FieldPosition;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Formatter;
+import java.util.IllegalFormatException;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
@@ -232,15 +233,15 @@ public class CellNumberFormatter extends CellFormatter {
         integerSpecials.addAll(specials.subList(0, integerEnd()));
 
         if (exponent == null) {
-            StringBuilder fmtBuf = new StringBuilder("%");
-
             int integerPartWidth = calculateIntegerPartWidth();
             int totalWidth = integerPartWidth + fractionPartWidth;
 
-            fmtBuf.append('0').append(totalWidth).append('.').append(precision);
-
-            fmtBuf.append("f");
-            printfFmt = fmtBuf.toString();
+            // need to handle empty width specially as %00.0f fails during formatting
+            if(totalWidth == 0) {
+                printfFmt = "";
+            } else {
+                printfFmt = "%0" + totalWidth + '.' + precision + "f";
+            }
             decimalFmt = null;
         } else {
             StringBuffer fmtBuf = new StringBuffer();
@@ -278,7 +279,7 @@ public class CellNumberFormatter extends CellFormatter {
     private DecimalFormatSymbols getDecimalFormatSymbols() {
         return DecimalFormatSymbols.getInstance(locale);
     }
-    
+
     private static void placeZeros(StringBuffer sb, List<Special> specials) {
         for (Special s : specials) {
             if (isDigitFmt(s)) {
@@ -458,6 +459,8 @@ public class CellNumberFormatter extends CellFormatter {
             StringBuffer result = new StringBuffer();
             try (Formatter f = new Formatter(result, locale)) {
                 f.format(locale, printfFmt, value);
+            } catch (IllegalFormatException e) {
+                throw new IllegalArgumentException("Format: " + printfFmt, e);
             }
 
             if (numerator == null) {
@@ -695,7 +698,7 @@ public class CellNumberFormatter extends CellFormatter {
             LOG.log(POILogger.ERROR, "error while fraction evaluation", ignored);
         }
     }
-    
+
     private String localiseFormat(String format) {
         DecimalFormatSymbols dfs = getDecimalFormatSymbols();
         if(format.contains(",") && dfs.getGroupingSeparator() != ',') {
@@ -711,8 +714,8 @@ public class CellNumberFormatter extends CellFormatter {
         }
         return format;
     }
-    
-    
+
+
     private static String replaceLast(String text, String regex, String replacement) {
         return text.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
     }
