@@ -18,19 +18,18 @@
 package org.apache.poi.hsmf;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
-import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 /**
  * Tests to verify that we can read attachments from msg file
@@ -42,8 +41,6 @@ public class TestFileWithAttachmentsRead {
 
     /**
      * Initialize this test, load up the attachment_test_msg.msg mapi message.
-     * 
-     * @throws Exception
      */
     @BeforeClass
     public static void setUp() throws IOException {
@@ -62,16 +59,13 @@ public class TestFileWithAttachmentsRead {
 
     /**
      * Test to see if we can retrieve attachments.
-     * 
-     * @throws ChunkNotFoundException
-     * 
      */
     @Test
     public void testRetrieveAttachments() {
         // Simple file
         AttachmentChunks[] attachments = twoSimpleAttachments.getAttachmentFiles();
         assertEquals(2, attachments.length);
-        
+
         // Other file
         attachments = pdfMsgAttachments.getAttachmentFiles();
         assertEquals(2, attachments.length);
@@ -134,16 +128,24 @@ public class TestFileWithAttachmentsRead {
         assertEquals("test-unicode.doc", attachment.getAttachLongFileName().getValue());
         assertEquals(".doc", attachment.getAttachExtension().getValue());
         assertNull(attachment.getAttachMimeTag());
-        assertEquals(24064, attachment.getAttachData().getValue().length); // or compare the hashes of the attachment data
+        ByteArrayOutputStream attachmentstream = new ByteArrayOutputStream();
+        attachment.getAttachData().writeValue(attachmentstream);
+        assertEquals(24064, attachmentstream.size());
+        // or compare the hashes of the attachment data
+        assertEquals(24064, attachment.getAttachData().getValue().length);
 
         attachment = twoSimpleAttachments.getAttachmentFiles()[1];
         assertEquals("pj1.txt", attachment.getAttachFileName().getValue());
         assertEquals("pj1.txt", attachment.getAttachLongFileName().getValue());
         assertEquals(".txt", attachment.getAttachExtension().getValue());
         assertNull(attachment.getAttachMimeTag());
-        assertEquals(89, attachment.getAttachData().getValue().length); // or compare the hashes of the attachment data
+        // or compare the hashes of the attachment data
+        assertEquals(89, attachment.getAttachData().getValue().length);
+        attachmentstream = new ByteArrayOutputStream();
+        attachment.getAttachData().writeValue(attachmentstream);
+        assertEquals(89, attachmentstream.size());
     }
-    
+
     /**
      * Test that we can handle both PDF and MSG attachments
      */
@@ -151,7 +153,7 @@ public class TestFileWithAttachmentsRead {
     public void testReadMsgAttachments() throws Exception {
         AttachmentChunks[] attachments = pdfMsgAttachments.getAttachmentFiles();
         assertEquals(2, attachments.length);
-         
+
         AttachmentChunks attachment;
 
         // Second is a PDF
@@ -161,8 +163,9 @@ public class TestFileWithAttachmentsRead {
         assertEquals(".pdf", attachment.getAttachExtension().getValue());
         assertNull(attachment.getAttachMimeTag());
         assertNull(attachment.getAttachmentDirectory());
-        assertEquals(13539, attachment.getAttachData().getValue().length); //or compare the hashes of the attachment data
-        
+        //or compare the hashes of the attachment data
+        assertEquals(13539, attachment.getAttachData().getValue().length);
+
         // First in a nested message
         attachment = pdfMsgAttachments.getAttachmentFiles()[0];
         assertEquals("Test Attachment", attachment.getAttachFileName().getValue());
@@ -171,7 +174,7 @@ public class TestFileWithAttachmentsRead {
         assertNull(attachment.getAttachMimeTag());
         assertNull(attachment.getAttachData());
         assertNotNull(attachment.getAttachmentDirectory());
-        
+
         // Check we can see some bits of it
         MAPIMessage nested = attachment.getAttachmentDirectory().getAsEmbeddedMessage();
         assertEquals(1, nested.getRecipientNamesList().length);

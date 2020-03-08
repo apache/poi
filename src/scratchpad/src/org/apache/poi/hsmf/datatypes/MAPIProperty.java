@@ -43,6 +43,7 @@ import org.apache.poi.hsmf.datatypes.Types.MAPIType;
  * https://msdn.microsoft.com/en-us/library/microsoft.exchange.data.contenttypes.tnef.tnefpropertyid(v=exchg.150).aspx
  * http://msdn.microsoft.com/en-us/library/ms526356%28v=exchg.10%29.aspx
  */
+@SuppressWarnings("unused")
 public class MAPIProperty {
     private static Map<Integer, MAPIProperty> attributes = new HashMap<>();
 
@@ -790,6 +791,8 @@ public class MAPIProperty {
         new MAPIProperty(0x3f, BINARY, "ReceivedByEntryId", "PR_RECEIVED_BY_ENTRYID");
     public static final MAPIProperty RECEIVED_BY_NAME =
         new MAPIProperty(0x40, ASCII_STRING, "ReceivedByName", "PR_RECEIVED_BY_NAME");
+    public static final MAPIProperty RECEIVED_BY_SMTP_ADDRESS =
+        new MAPIProperty(0x5D07, ASCII_STRING, "ReceivedBySmtpAddress", "PR_RECEIVED_BY_SMTP_ADDRESS");
     public static final MAPIProperty RECIPIENT_DISPLAY_NAME =
         new MAPIProperty(0x5ff6, Types.UNICODE_STRING, "RecipientDisplayName", null);
     public static final MAPIProperty RECIPIENT_ENTRY_ID =
@@ -1050,7 +1053,7 @@ public class MAPIProperty {
         this.mapiProperty = mapiProperty;
 
         // If it isn't unknown or custom, store it for lookup
-        if (id == -1 
+        if (id == -1
             || (id >= ID_FIRST_CUSTOM && id <= ID_LAST_CUSTOM)
             || (this instanceof CustomMAPIProperty)) {
             // Custom/Unknown, skip
@@ -1095,7 +1098,7 @@ public class MAPIProperty {
         return new CustomMAPIProperty(id, type, name, null);
     }
 
-    private static class CustomMAPIProperty extends MAPIProperty {
+    private static final class CustomMAPIProperty extends MAPIProperty {
         private CustomMAPIProperty(int id, MAPIType usualType, String name, String mapiProperty) {
             super(id, usualType, name, mapiProperty);
         }

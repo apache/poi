@@ -28,12 +28,12 @@ import org.apache.poi.util.POILogger;
 
 /**
  * Collection of convenience chunks for standard parts of the MSG file.
- * 
+ *
  * Not all of these will be present in any given file.
- * 
+ *
  * A partial list is available at:
  * http://msdn.microsoft.com/en-us/library/ms526356%28v=exchg.10%29.aspx
- * 
+ *
  * TODO Deprecate the public Chunks in favour of Property Lookups
  */
 public final class Chunks implements ChunkGroupWithProperties {
@@ -44,7 +44,13 @@ public final class Chunks implements ChunkGroupWithProperties {
      * Normally a property will have zero chunks (fixed sized) or one chunk
      * (variable size), but in some cases (eg Unknown) you may get more.
      */
-    private Map<MAPIProperty, List<Chunk>> allChunks = new HashMap<>();
+    private final Map<MAPIProperty, List<Chunk>> allChunks = new HashMap<>();
+
+    /**
+     * Holds all the unknown properties that were found, indexed by their property id and property type.
+     * All unknown properties have a custom properties instance.
+     */
+    private final Map<Long, MAPIProperty> unknownProperties = new HashMap<>();
 
     /** Type of message that the MSG represents (ie. IPM.Note) */
     private StringChunk messageClass;
@@ -188,6 +194,14 @@ public final class Chunks implements ChunkGroupWithProperties {
     public void record(Chunk chunk) {
         // Work out what MAPIProperty this corresponds to
         MAPIProperty prop = MAPIProperty.get(chunk.getChunkId());
+        if (prop == MAPIProperty.UNKNOWN) {
+            long id = (chunk.getChunkId() << 16) + chunk.getType().getId();
+            prop = unknownProperties.get(id);
+            if (prop == null) {
+                prop = MAPIProperty.createCustom(chunk.getChunkId(), chunk.getType(), chunk.getEntryName());
+                unknownProperties.put(id, prop);
+            }
+        }
 
         // Assign it for easy lookup, as best we can
         if (prop == MAPIProperty.MESSAGE_CLASS) {
