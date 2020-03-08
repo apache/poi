@@ -20,6 +20,8 @@ package org.apache.poi.hpsf.basic;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
+import java.util.Locale;
+
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hpsf.ClassIDPredefined;
 import org.junit.Test;
@@ -78,6 +80,6 @@ public final class TestClassID {
         String exp = "EABCECDB-CC1C-4A6F-B4E3-7F888A5ADFC8";
         ClassID clsId = ClassIDPredefined.EXCEL_V14_ODS.getClassID();
         assertEquals(exp, clsId.toUUIDString());
-        assertEquals(exp, clsId.toUUID().toString().toUpperCase());
+        assertEquals(exp, clsId.toUUID().toString().toUpperCase(Locale.ROOT));
     }
 }
