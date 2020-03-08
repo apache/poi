@@ -539,8 +539,9 @@ public final class ZipPackage extends OPCPackage {
 
 				final PartMarshaller pm = (marshaller != null) ? marshaller : defaultPartMarshaller;
                 if (!pm.marshall(part, zos)) {
-                    String errMsg = "The part " + ppn.getURI() + " failed to be saved in the stream with marshaller ";
-                    throw new OpenXML4JException(errMsg + pm);
+                    String errMsg = "The part " + ppn.getURI() + " failed to be saved in the stream with marshaller " + pm +
+                            ". Enable logging via POILogger for more details.";
+                    throw new OpenXML4JException(errMsg);
                 }
 			}
 

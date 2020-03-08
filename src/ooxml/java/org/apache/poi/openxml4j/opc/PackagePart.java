@@ -466,7 +466,7 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
    /**
     * Get the PackagePart that is the target of a relationship.
     *
-    * @param rel A relationship from this part to another one 
+    * @param rel A relationship from this part to another one
     * @return The target part of the relationship
     * @throws InvalidFormatException
     *             If the specified URI is not valid.
@@ -698,7 +698,8 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      *
      * @param zos
      *            Output stream to save this part.
-     * @return boolean flag that shows if the save succeeded
+     * @return true if the content has been successfully stored, false otherwise.
+     *         More information about errors may be logged via {@link org.apache.poi.util.POILogger}
      * @throws OpenXML4JException
      *             If any exception occur.
      */
@@ -709,8 +710,8 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
      *
      * @param ios
      *            The input stream of the content to load.
-     * @return <b>true</b> if the content has been successfully loaded, else
-     *         <b>false</b>.
+     * @return true if the content has been successfully loaded, false otherwise.
+     *         More information about errors may be logged via {@link org.apache.poi.util.POILogger}
      * @throws InvalidFormatException
      *             Throws if the content format is invalid.
      */

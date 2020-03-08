@@ -22,6 +22,19 @@ package org.apache.poi.util;
  * developers to write log calls, while simultaneously making those
  * calls as cheap as possible by performing lazy evaluation of the log
  * message.
+ *
+ * A logger can be selected via system properties, e.g.
+ * <code>
+ *     -Dorg.apache.poi.util.POILogger=org.apache.poi.util.SystemOutLogger
+ * </code>
+ *
+ * The following Logger-implementations are provided:
+ *
+ * <ul>
+ *     <li>NullLogger</li>
+ *     <li>CommonsLogger</li>
+ *     <li>SystemOutLogger</li>
+ * </ul>
  */
 @Internal
 public interface POILogger {
@@ -62,7 +75,7 @@ public interface POILogger {
      * Check if a logger is enabled to log at the specified level
      * This allows code to avoid building strings or evaluating functions in
      * the arguments to log.
-     * 
+     *
      * An example:
      * <code><pre>
      * if (logger.check(POILogger.INFO)) {
@@ -92,11 +105,11 @@ public interface POILogger {
                 sb.append(objs[i]);
             }
         }
-        
+
         String msg = sb.toString();
         // log forging escape
         msg = msg.replaceAll("[\r\n]+", " ");
-        
+
         if (lastEx == null) {
             _log(level, msg);
         } else {

@@ -33,8 +33,12 @@ import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
 public final class DefaultMarshaller implements PartMarshaller {
 
 	/**
-	 * Save part in the output stream by using the save() method of the part.
+	 * Save the given part in the output stream by using the save() method of the part.
 	 *
+	 * @param part The {@link PackagePart} to store.
+	 * @param out Output stream to save this part.
+	 * @return true if the content has been successfully stored, false otherwise.
+	 *         More information about errors may be logged via {@link org.apache.poi.util.POILogger}
 	 * @throws OpenXML4JException
 	 *             If any error occur.
 	 */

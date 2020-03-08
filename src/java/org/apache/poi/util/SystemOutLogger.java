@@ -14,16 +14,14 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-
 package org.apache.poi.util;
 
-
-
 /**
- * A logger class that strives to make it as easy as possible for
- * developers to write log calls, while simultaneously making those
- * calls as cheap as possible by performing lazy evaluation of the log
- * message.
+ * An implementation of the {@link POILogger} which uses System.out.println.
+ *
+ * This can be used to provide simply output from applications, however the
+ * suggested approach in production systems is to use the {@link CommonsLogger}
+ * and configure proper log-handling via Apache Commons Logging.
  */
 public class SystemOutLogger implements POILogger {
     /**

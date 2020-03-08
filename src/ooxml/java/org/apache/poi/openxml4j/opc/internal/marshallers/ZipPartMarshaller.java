@@ -50,10 +50,15 @@ public final class ZipPartMarshaller implements PartMarshaller {
 	private final static POILogger logger = POILogFactory.getLogger(ZipPartMarshaller.class);
 
 	/**
-	 * Save the specified part.
+	 * Save the specified part to the given stream.
 	 *
+	 * @param part The {@link PackagePart} to save
+	 * @param os The stream to write the data to
+	 * @return true if saving was successful or there was nothing to save,
+	 * 		false if an error occurred.
+	 * 		In case of errors, logging via the {@link POILogger} is used to provide more information.
 	 * @throws OpenXML4JException
-	 *             Throws if an internal exception is thrown.
+	 *      Throws if the stream cannot be written to or an internal exception is thrown.
 	 */
 	@Override
 	public boolean marshall(PackagePart part, OutputStream os)
@@ -61,10 +66,10 @@ public final class ZipPartMarshaller implements PartMarshaller {
 		if (!(os instanceof ZipArchiveOutputStream)) {
 			logger.log(POILogger.ERROR,"Unexpected class " + os.getClass().getName());
 			throw new OpenXML4JException("ZipOutputStream expected !");
-			// Normally should happen only in developement phase, so just throw
+			// Normally should happen only in development phase, so just throw
 			// exception
 		}
-		
+
 		// check if there is anything to save for some parts. We don't do this for all parts as some code
 		// might depend on empty parts being saved, e.g. some unit tests verify this currently.
 		if(part.getSize() == 0 && part.getPartName().getName().equals(XSSFRelation.SHARED_STRINGS.getDefaultFileName())) {
@@ -98,8 +103,8 @@ public final class ZipPartMarshaller implements PartMarshaller {
 
 			marshallRelationshipPart(part.getRelationships(),
 					relationshipPartName, zos);
-
 		}
+
 		return true;
 	}
 
@@ -113,6 +118,9 @@ public final class ZipPartMarshaller implements PartMarshaller {
 	 * @param zos
 	 *            Zip output stream in which to save the XML content of the
 	 *            relationships serialization.
+	 * @return true if saving was successful,
+	 * 		false if an error occurred.
+	 * 		In case of errors, logging via the {@link POILogger} is used to provide more information.
 	 */
 	public static boolean marshallRelationshipPart(
 			PackageRelationshipCollection rels, PackagePartName relPartName,

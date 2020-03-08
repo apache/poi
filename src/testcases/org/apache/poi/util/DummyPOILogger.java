@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * POILogger which logs into an ArrayList, so that 
+ * {@link POILogger} which logs into an ArrayList so that
  *  tests can see what got logged
  */
 @Internal
@@ -30,7 +30,7 @@ public class DummyPOILogger implements POILogger {
 	public void reset() {
 		logged = new ArrayList<>();
 	}
-	
+
     @Override
 	public boolean check(int level) {
 		return true;

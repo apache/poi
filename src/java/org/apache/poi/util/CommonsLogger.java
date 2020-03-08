@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,18 +14,16 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-
 package org.apache.poi.util;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
 /**
- * A logger class that strives to make it as easy as possible for
- * developers to write log calls, while simultaneously making those
- * calls as cheap as possible by performing lazy evaluation of the log
- * message.<p>
+ * An implementation of the {@link POILogger} using the
+ * Apache Commons Logging framework. Which itself can be configured to
+ * send log to various different log frameworks and even allows to create
+ * a small wrapper for custom log frameworks.
  */
 public class CommonsLogger implements POILogger
 {
@@ -36,8 +33,8 @@ public class CommonsLogger implements POILogger
     @Override
     public void initialize(final String cat) {
         this.log = _creator.getInstance(cat);
-    }   
-     
+    }
+
     /**
      * Log a message
      *
@@ -81,7 +78,7 @@ public class CommonsLogger implements POILogger
                 break;
         }
     }
-    
+
     /**
      * Log a message
      *
