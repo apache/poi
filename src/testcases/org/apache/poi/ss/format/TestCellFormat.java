@@ -1007,4 +1007,10 @@ public class TestCellFormat {
         assertNotNull(instance);
         assertEquals("01/01/1970", instance.apply(new Date(12345)).text);
     }
+
+    @Test
+    public void testBug62865() {
+        CellFormat cf = CellFormat.getInstance("\"ca. \"0");
+        assertEquals("ca. 5", cf.apply((double) 5).text);
+    }
 }

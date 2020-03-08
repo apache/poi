@@ -109,7 +109,13 @@ public final class TestUnfixedBugs {
     }
 
     @Test
-    public void testDataFormattingWithQuestionMark() {
+    public void testBug62242() {
+        CellFormat cfUK  = CellFormat.getInstance("_ * #,##0.00_ ;_ * \\-#,##0.00_ ;_ * \"-\"??_ ;_ @_");
+        assertEquals("    -   ", cfUK.apply((double) 0).text);
+    }
+
+    @Test
+    public void testDataFormattingWithQuestionMarkBug62242() {
         // The question mark in the format should be replaced by blanks, but
         // this is currently not handled when producing the Java formatting and
         // so we end up with a trailing zero here
@@ -118,13 +124,16 @@ public final class TestUnfixedBugs {
     }
 
     @Test
-    public void testDataFormattingWithQuestionMarkAndPound() {
+    public void testDataFormattingWithQuestionMarkAndPoundBug62242() {
         char pound = '\u00A3';
 
         // The question mark in the format should be replaced by blanks, but
         // this is currently not handled when producing the Java formatting and
         // so we end up with a trailing zero here
         CellFormat cfUK  = CellFormat.getInstance("_-[$£-809]* \"-\"??_-");
-        assertEquals(" "+pound+"   -  ", cfUK.apply((double) 0).text);
+        assertEquals(" "+pound+"   -   ", cfUK.apply((double) 0).text);
+
+        cfUK  = CellFormat.getInstance("_-[$£-809]* \"-\"??_-a");
+        assertEquals(" "+pound+"   -   a", cfUK.apply((double) 0).text);
     }
 }

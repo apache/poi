@@ -420,7 +420,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         }
         return null;
     }
-    
+
     /**
      * Indicates whether this paragraph should be kept on the same page as the next one.
      *
@@ -432,9 +432,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         }
         return false;
     }
-    
+
     /**
-     * Sets this paragraph to be kept on the same page as the next one or not. 
+     * Sets this paragraph to be kept on the same page as the next one or not.
      *
      * @since POI 4.1.1
      */
@@ -1092,7 +1092,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
             return val[0].doubleValue() + (val[1].doubleValue() / 240L);
         }
         BigInteger[] val = spacing.getLine().divideAndRemainder(BigInteger.valueOf(20L));
-        return val[0].doubleValue() + (val[1].doubleValue() / 20L);        
+        return val[0].doubleValue() + (val[1].doubleValue() / 20L);
     }
 
     /**
@@ -1105,8 +1105,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      *               font size. If AT_LEAST, then spacing value is in inches, and is the
      *               minimum size of the line. If the line height is taller, then the
      *               line expands to match. If EXACT, then spacing is the exact line
-     *               height. If the text is taller than the line height, then it is 
-     *               clipped at the top. 
+     *               height. If the text is taller than the line height, then it is
+     *               clipped at the top.
      */
     public void setSpacingBetween(double spacing, LineSpacingRule rule) {
         CTSpacing ctSp = getCTSpacing(true);
@@ -1117,7 +1117,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         }
         ctSp.setLineRule(STLineSpacingRule.Enum.forInt(rule.getValue()));
     }
-    
+
     /**
      * Sets the spacing between lines in a paragraph
      *
@@ -1126,7 +1126,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     public void setSpacingBetween(double spacing) {
         setSpacingBetween(spacing, LineSpacingRule.AUTO);
     }
-    
+
     /**
      * Specifies the indentation which shall be placed between the left text
      * margin for this paragraph and the left edge of that paragraph's content
@@ -1460,17 +1460,17 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * @since POI 4.1.1
      */
     public XWPFHyperlinkRun createHyperlinkRun(String uri) {
-        // Create a relationship ID for this link. 
+        // Create a relationship ID for this link.
         String rId = getPart().getPackagePart().addExternalRelationship(
                 uri, XWPFRelation.HYPERLINK.getRelation()
         ).getId();
-        
-        // Create the run. 
+
+        // Create the run.
         CTHyperlink ctHyperLink = getCTP().addNewHyperlink();
         ctHyperLink.setId(rId);
         ctHyperLink.addNewR();
-        
-        // Append this run to the paragraph. 
+
+        // Append this run to the paragraph.
         XWPFHyperlinkRun link = new XWPFHyperlinkRun(ctHyperLink, ctHyperLink.getRArray(0), this);
         runs.add(link);
         iruns.add(link);
@@ -1481,7 +1481,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      * insert a new Run in RunArray
      *
      * @param pos The position at which the new run should be added.
-     * 
+     *
      * @return the inserted run or null if the given pos is out of bounds.
      */
     public XWPFRun insertNewRun(int pos) {
@@ -1537,7 +1537,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
             startChar = startPos.getChar();
         int beginRunPos = 0, candCharPos = 0;
         boolean newList = false;
-        
+
         CTR[] rArray = paragraph.getRArray();
         for (int runPos = startRun; runPos < rArray.length; runPos++) {
             int beginTextPos = 0, beginCharPos = 0, textPos = 0, charPos;
@@ -1555,7 +1555,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
                             } else {
                                 charPos = 0;
                             }
-    
+
                             for (; charPos < candidate.length(); charPos++) {
                                 if ((candidate.charAt(charPos) == searched.charAt(0)) && (candCharPos == 0)) {
                                     beginTextPos = textPos;

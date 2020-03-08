@@ -198,6 +198,8 @@ public final class TestXWPFDocument {
             XWPFHyperlinkRun h = p.createHyperlinkRun("https://poi.apache.org/");
             h.setText("Apache POI");
 
+            assertEquals("rId7", h.getHyperlinkId());
+
             assertEquals("https://poi.apache.org/", h.getHyperlink(doc).getURL());
             assertEquals(p.getRuns().size(), 1);
             assertEquals(p.getRuns().get(0), h);

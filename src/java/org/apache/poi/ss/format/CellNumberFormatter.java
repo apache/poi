@@ -766,7 +766,6 @@ public class CellNumberFormatter extends CellFormatter {
         }
 
         ListIterator<Special> it = numSpecials.listIterator(numSpecials.size());
-        boolean followWithGroupingSeparator = false;
         Special lastOutputIntegerDigit = null;
         int digit = 0;
         while (it.hasPrevious()) {
@@ -778,7 +777,7 @@ public class CellNumberFormatter extends CellFormatter {
                 resultCh = '0';
             }
             Special s = it.previous();
-            followWithGroupingSeparator = showGroupingSeparator && digit > 0 && digit % 3 == 0;
+            boolean followWithGroupingSeparator = showGroupingSeparator && digit > 0 && digit % 3 == 0;
             boolean zeroStrip = false;
             if (resultCh != '0' || s.ch == '0' || s.ch == '?' || pos >= strip) {
                 zeroStrip = s.ch == '?' && pos < strip;
@@ -787,7 +786,6 @@ public class CellNumberFormatter extends CellFormatter {
             }
             if (followWithGroupingSeparator) {
                 mods.add(insertMod(s, zeroStrip ? " " : groupingSeparator, CellNumberStringMod.AFTER));
-                followWithGroupingSeparator = false;
             }
             digit++;
             --pos;
