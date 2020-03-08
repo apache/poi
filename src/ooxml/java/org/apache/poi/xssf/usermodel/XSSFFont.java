@@ -195,7 +195,7 @@ public class XSSFFont implements Font {
      * @see #getFontHeightInPoints()
      */
     public short getFontHeight() {
-        return (short)(getFontHeightRaw()*20);
+        return (short)(getFontHeightRaw()*Font.TWIPS_PER_POINT);
     }
 
     /**
@@ -394,7 +394,7 @@ public class XSSFFont implements Font {
      * @param height - height in points
      */
     public void setFontHeight(short height) {
-        setFontHeight((double) height/20);
+        setFontHeight((double) height/Font.TWIPS_PER_POINT);
     }
 
     /**

@@ -26,76 +26,82 @@ public interface Font {
      * normal type of black color.
      */
 
-    public final static short COLOR_NORMAL = 0x7fff;
+    short COLOR_NORMAL = 0x7fff;
 
     /**
      * Dark Red color
      */
 
-    public final static short COLOR_RED = 0xa;
+    short COLOR_RED = 0xa;
 
     /**
      * no type offsetting (not super or subscript)
      */
 
-    public final static short SS_NONE = 0;
+    short SS_NONE = 0;
 
     /**
      * superscript
      */
 
-    public final static short SS_SUPER = 1;
+    short SS_SUPER = 1;
 
     /**
      * subscript
      */
 
-    public final static short SS_SUB = 2;
+    short SS_SUB = 2;
 
     /**
      * not underlined
      */
 
-    public final static byte U_NONE = 0;
+    byte U_NONE = 0;
 
     /**
      * single (normal) underline
      */
 
-    public final static byte U_SINGLE = 1;
+    byte U_SINGLE = 1;
 
     /**
      * double underlined
      */
 
-    public final static byte U_DOUBLE = 2;
+    byte U_DOUBLE = 2;
 
     /**
      * accounting style single underline
      */
 
-    public final static byte U_SINGLE_ACCOUNTING = 0x21;
+    byte U_SINGLE_ACCOUNTING = 0x21;
 
     /**
      * accounting style double underline
      */
 
-    public final static byte U_DOUBLE_ACCOUNTING = 0x22;
+    byte U_DOUBLE_ACCOUNTING = 0x22;
 
     /**
      * ANSI character set
      */
-    public final static byte ANSI_CHARSET = 0;
+    byte ANSI_CHARSET = 0;
 
     /**
      * Default character set.
      */
-    public final static byte DEFAULT_CHARSET = 1;
+    byte DEFAULT_CHARSET = 1;
 
     /**
      * Symbol character set
      */
-    public final static byte SYMBOL_CHARSET = 2;
+    byte SYMBOL_CHARSET = 2;
+
+    /**
+     * Font height is handled in points and 1/20th of points so
+     * this is the constant used to convert between those two units.
+     */
+    int TWIPS_PER_POINT = 20;
 
     /**
      * set the name for the font (i.e. Arial)
@@ -266,13 +272,13 @@ public interface Font {
 
     /**
      * Get the index within the XSSFWorkbook (sequence within the collection of Font objects)
-     * 
+     *
      * @return unique index number of the underlying record this Font represents (probably you don't care
      *  unless you're comparing which one is which)
      * @deprecated use <code>getIndexAsInt()</code> instead
      */
     @Removal(version = "4.2")
-    public short getIndex();
+    short getIndex();
 
     /**
      * get the index within the XSSFWorkbook (sequence within the collection of Font objects)
@@ -281,9 +287,9 @@ public interface Font {
      *  unless you're comparing which one is which)
      * @since 4.0.0
      */
-    public int getIndexAsInt();
+    int getIndexAsInt();
 
-    public void setBold(boolean bold);
+    void setBold(boolean bold);
 
-    public boolean getBold();
+    boolean getBold();
 }

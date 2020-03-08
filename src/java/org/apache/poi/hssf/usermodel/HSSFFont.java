@@ -120,7 +120,7 @@ public final class HSSFFont implements Font {
 
     public void setFontHeightInPoints(short height)
     {
-        font.setFontHeight(( short ) (height * 20));
+        font.setFontHeight(( short ) (height * Font.TWIPS_PER_POINT));
     }
 
     /**
@@ -143,7 +143,7 @@ public final class HSSFFont implements Font {
 
     public short getFontHeightInPoints()
     {
-        return ( short ) (font.getFontHeight() / 20);
+        return ( short ) (font.getFontHeight() / Font.TWIPS_PER_POINT);
     }
 
     /**

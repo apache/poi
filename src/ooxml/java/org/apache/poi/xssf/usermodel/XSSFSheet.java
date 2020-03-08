@@ -60,6 +60,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DataValidation;
 import org.apache.poi.ss.usermodel.DataValidationHelper;
+import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Footer;
 import org.apache.poi.ss.usermodel.Header;
 import org.apache.poi.ss.usermodel.IgnoredErrorType;
@@ -156,7 +157,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     private static final double DEFAULT_MARGIN_BOTTOM = 0.75;
     private static final double DEFAULT_MARGIN_LEFT = 0.7;
     private static final double DEFAULT_MARGIN_RIGHT = 0.7;
-    public static final int TWIPS_PER_POINT = 20;
+
+    /**
+     * Kept for backwards-compatibility, use {@link Font#TWIPS_PER_POINT} instead.
+     * @deprecated POI 4.1.3
+     */
+    public static final int TWIPS_PER_POINT = Font.TWIPS_PER_POINT;
 
     //TODO make the two variable below private!
     protected CTSheet sheet;
@@ -763,9 +769,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         XSSFRow prev = _rows.get(rownumI);
         if(prev != null){
             // the Cells in an existing row are invalidated on-purpose, in order to clean up correctly, we
-            // need to call the remove, so things like ArrayFormulas and CalculationChain updates are done 
-            // correctly. 
-            // We remove the cell this way as the internal cell-list is changed by the remove call and 
+            // need to call the remove, so things like ArrayFormulas and CalculationChain updates are done
+            // correctly.
+            // We remove the cell this way as the internal cell-list is changed by the remove call and
             // thus would cause ConcurrentModificationException otherwise
             while(prev.getFirstCellNum() != -1) {
                 prev.removeCell(prev.getCell(prev.getFirstCellNum()));
@@ -986,7 +992,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public short getDefaultRowHeight() {
-        return (short)(getDefaultRowHeightInPoints() * TWIPS_PER_POINT);
+        return (short)(getDefaultRowHeightInPoints() * Font.TWIPS_PER_POINT);
     }
 
 
@@ -1444,7 +1450,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     }
 
     /**
-     * Sets the sheet password. 
+     * Sets the sheet password.
      *
      * @param password if null, the password will be removed
      * @param hashAlgo if null, the password will be set as XOR password (Excel 2010 and earlier)
@@ -2598,7 +2604,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
      */
     @Override
     public void setDefaultRowHeight(short height) {
-        setDefaultRowHeightInPoints((float)height / TWIPS_PER_POINT);
+        setDefaultRowHeightInPoints((float)height / Font.TWIPS_PER_POINT);
     }
 
     /**
@@ -3223,7 +3229,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
     private void shiftCommentsForColumns(XSSFVMLDrawing vml, int startColumnIndex, int endColumnIndex, final int n){
         // then do the actual moving and also adjust comments/rowHeight
-        // we need to sort it in a way so the shifting does not mess up the structures, 
+        // we need to sort it in a way so the shifting does not mess up the structures,
         // i.e. when shifting down, start from down and go up, when shifting up, vice-versa
         SortedMap<XSSFComment, Integer> commentsToShift = new TreeMap<>((o1, o2) -> {
             int column1 = o1.getColumn();
@@ -3261,7 +3267,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             }
         }
         // adjust all the affected comment-structures now
-        // the Map is sorted and thus provides them in the order that we need here, 
+        // the Map is sorted and thus provides them in the order that we need here,
         // i.e. from down to up if shifting down, vice-versa otherwise
         for(Map.Entry<XSSFComment, Integer> entry : commentsToShift.entrySet()) {
             entry.getKey().setColumn(entry.getValue());
