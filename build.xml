@@ -1782,6 +1782,26 @@ under the License.
         <echo>Broken links:</echo>
         <echo file="${build.site}/../tmp/brokenlinks.xml"/>
 
+        <!-- Apache Forrest is dead, so we cannot expect fixes there
+            however it does not handle "https" in "credits" currently
+            if the *.xml file is in a sub-directory, see Apache Forrest
+            code at main/webapp/skins/pelt/xslt/html/site-to-xhtml.xsl:350
+
+            So we need to replace the links afterwards to have a fully "https"
+            website and avoid browser warning about a "mixed content"
+            website -->
+        <echo>Fix https in ${build.site}</echo>
+        <replace dir="${build.site}"
+            token="http://www.apache.org/events/current-event-125x125.png"
+            value="https://www.apache.org/events/current-event-125x125.png"
+            summary="true"
+            includes="**/*.html"/>
+        <replace dir="${build.site}"
+            token="http://www.google.com/search"
+            value="https://www.google.com/search"
+            summary="true"
+            includes="**/*.html"/>
+
         <fixcrlf srcdir="${build.site}" includes="**/*.html,**/*.css" eol="unix" eof="remove" />
 
         <touch>

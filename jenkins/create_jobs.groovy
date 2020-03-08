@@ -2,7 +2,7 @@
 // Apache POI uses on the public Jenkins instance at https://builds.apache.org/view/P/view/POI/
 //
 // See https://github.com/jenkinsci/job-dsl-plugin/wiki for information about the DSL, you can
-// use http://job-dsl.herokuapp.com/ to validate the code before checkin
+// use https://job-dsl.herokuapp.com/ to validate the code before checkin
 //
 
 def triggerSundays = '''
@@ -255,7 +255,7 @@ poijobs.each { poijob ->
             } else {
                 svn(svnBase) { svnNode ->
                     svnNode / browser(class: 'hudson.scm.browsers.ViewSVN') /
-                            url << 'http://svn.apache.org/viewcvs.cgi/?root=Apache-SVN'
+                            url << 'https://svn.apache.org/viewcvs.cgi/?root=Apache-SVN'
                 }
             }
         }
@@ -506,7 +506,7 @@ xmlbeansjobs.each { xjob ->
         scm {
             svn(xmlbeansSvnBase) { svnNode ->
                 svnNode / browser(class: 'hudson.scm.browsers.ViewSVN') /
-                        url << 'http://svn.apache.org/viewcvs.cgi/?root=Apache-SVN'
+                        url << 'https://svn.apache.org/viewcvs.cgi/?root=Apache-SVN'
             }
         }
         checkoutRetryCount(3)
