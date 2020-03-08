@@ -36,6 +36,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -91,6 +93,8 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.NullOutputStream;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
@@ -116,6 +120,8 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 public final class TestXSSFBugs extends BaseTestBugzillaIssues {
+    private static POILogger LOG = POILogFactory.getLogger(TestXSSFBugs.class);
+
     public TestXSSFBugs() {
         super(XSSFITestDataProvider.instance);
     }
@@ -3463,6 +3469,29 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         File file = XSSFTestDataSamples.getSampleFile("xlsx-corrupted.xlsx");
         try (XSSFWorkbook ignored = new XSSFWorkbook(file)) {
             fail("Should catch exception as the file is corrupted");
+        }
+    }
+
+    @Test
+    public void test58896WithFile() throws IOException {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("58896.xlsx")) {
+            Sheet sheet = wb.getSheetAt(0);
+            Instant start = Instant.now();
+
+            LOG.log(POILogger.INFO, "Autosizing columns...");
+
+            for (int i = 0; i < 3; ++i) {
+                LOG.log(POILogger.INFO, "Autosize " + i + " - " + Duration.between(start, Instant.now()));
+                sheet.autoSizeColumn(i);
+            }
+
+            for (int i = 0; i < 69 - 35 + 1; ++i)
+                for (int j = 0; j < 8; ++j) {
+                    int col = 3 + 2 + i * (8 + 2) + j;
+                    LOG.log(POILogger.INFO, "Autosize " + col + " - " + Duration.between(start, Instant.now()));
+                    sheet.autoSizeColumn(col);
+                }
+            LOG.log(POILogger.INFO, Duration.between(start, Instant.now()));
         }
     }
 }

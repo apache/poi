@@ -23,6 +23,7 @@ import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Rectangle2D;
 import java.text.AttributedString;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -118,6 +119,26 @@ public class SheetUtil {
      * @return  the width in pixels or -1 if cell is empty
      */
     public static double getCellWidth(Cell cell, int defaultCharWidth, DataFormatter formatter, boolean useMergedCells) {
+        List<CellRangeAddress> mergedRegions = cell.getSheet().getMergedRegions();
+        return getCellWidth(cell, defaultCharWidth, formatter, useMergedCells, mergedRegions);
+    }
+
+    /**
+     * Compute width of a single cell
+     *
+     * This method receives the list of merged regions as querying it from the cell/sheet
+     * is time-consuming and thus caching the list across cells speeds up certain operations
+     * considerably.
+     *
+     * @param cell the cell whose width is to be calculated
+     * @param defaultCharWidth the width of a single character
+     * @param formatter formatter used to prepare the text to be measured
+     * @param useMergedCells    whether to use merged cells
+     * @param mergedRegions The list of merged regions as received via cell.getSheet().getMergedRegions()
+     * @return  the width in pixels or -1 if cell is empty
+     */
+    public static double getCellWidth(Cell cell, int defaultCharWidth, DataFormatter formatter, boolean useMergedCells,
+                                      List<CellRangeAddress> mergedRegions) {
         Sheet sheet = cell.getSheet();
         Workbook wb = sheet.getWorkbook();
         Row row = cell.getRow();
@@ -126,7 +147,7 @@ public class SheetUtil {
         // FIXME: this looks very similar to getCellWithMerges below. Consider consolidating.
         // We should only be checking merged regions if useMergedCells is true. Why are we doing this for-loop?
         int colspan = 1;
-        for (CellRangeAddress region : sheet.getMergedRegions()) {
+        for (CellRangeAddress region : mergedRegions) {
             if (region.isInRange(row.getRowNum(), column)) {
                 if (!useMergedCells) {
                     // If we're not using merged cells, skip this one and move on to the next.
@@ -232,7 +253,7 @@ public class SheetUtil {
     public static double getColumnWidth(Sheet sheet, int column, boolean useMergedCells) {
         return getColumnWidth(sheet, column, useMergedCells, sheet.getFirstRowNum(), sheet.getLastRowNum());
     }
-    
+
     /**
      * Compute width of a column based on a subset of the rows and return the result
      *
@@ -247,11 +268,12 @@ public class SheetUtil {
         DataFormatter formatter = new DataFormatter();
         int defaultCharWidth = getDefaultCharWidth(sheet.getWorkbook());
 
+        List<CellRangeAddress> mergedRegions = sheet.getMergedRegions();
         double width = -1;
         for (int rowIdx = firstRow; rowIdx <= lastRow; ++rowIdx) {
             Row row = sheet.getRow(rowIdx);
             if( row != null ) {
-                double cellWidth = getColumnWidthForRow(row, column, defaultCharWidth, formatter, useMergedCells);
+                double cellWidth = getColumnWidthForRow(row, column, defaultCharWidth, formatter, useMergedCells, mergedRegions);
                 width = Math.max(width, cellWidth);
             }
         }
@@ -286,7 +308,8 @@ public class SheetUtil {
      * @return  the width in pixels or -1 if cell is empty
      */
     private static double getColumnWidthForRow(
-            Row row, int column, int defaultCharWidth, DataFormatter formatter, boolean useMergedCells) {
+            Row row, int column, int defaultCharWidth, DataFormatter formatter, boolean useMergedCells,
+            List<CellRangeAddress> mergedRegions) {
         if( row == null ) {
             return -1;
         }
@@ -297,16 +320,16 @@ public class SheetUtil {
             return -1;
         }
 
-        return getCellWidth(cell, defaultCharWidth, formatter, useMergedCells);
+        return getCellWidth(cell, defaultCharWidth, formatter, useMergedCells, mergedRegions);
     }
 
     /**
      * Check if the Fonts are installed correctly so that Java can compute the size of
-     * columns. 
-     * 
-     * If a Cell uses a Font which is not available on the operating system then Java may 
+     * columns.
+     *
+     * If a Cell uses a Font which is not available on the operating system then Java may
      * fail to return useful Font metrics and thus lead to an auto-computed size of 0.
-     * 
+     *
      *  This method allows to check if computing the sizes for a given Font will succeed or not.
      *
      * @param font The Font that is used in the Cell
@@ -358,7 +381,7 @@ public class SheetUtil {
     /**
      * Return the cell, taking account of merged regions. Allows you to find the
      *  cell who's contents are shown in a given position in the sheet.
-     * 
+     *
      * <p>If the cell at the given co-ordinates is a merged cell, this will
      *  return the primary (top-left) most cell of the merged region.
      * <p>If the cell at the given co-ordinates is not in a merged region,
@@ -375,7 +398,7 @@ public class SheetUtil {
     public static Cell getCellWithMerges(Sheet sheet, int rowIx, int colIx) {
         final Cell c = getCell(sheet, rowIx, colIx);
         if (c != null) return c;
-        
+
         for (CellRangeAddress mergedRegion : sheet.getMergedRegions()) {
             if (mergedRegion.isInRange(rowIx, colIx)) {
                 // The cell wanted is in this merged range
@@ -386,7 +409,7 @@ public class SheetUtil {
                 }
             }
         }
-        
+
         // If we get here, then the cell isn't defined, and doesn't
         //  live within any merged regions
         return null;
