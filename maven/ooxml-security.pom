@@ -31,7 +31,7 @@
   <description>
     XmlBeans generated from various supplied xsds for encryption and signing:
     http://msdn.microsoft.com/en-us/library/dd925810(v=office.12).aspx
-    http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%202%20(PDF).zip 
+    http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%202%20(PDF).zip
     http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd
     http://uri.etsi.org/01903/v1.3.2/XAdES.xsd
     http://uri.etsi.org/01903/v1.4.1/XAdESv141.xsd
@@ -39,7 +39,7 @@
     http://dublincore.org/schemas/xmls/qdc/2003/04/02/dcterms.xsd
     http://dublincore.org/schemas/xmls/qdc/2003/04/02/dcmitype.xsd
   </description>
-  <url>http://poi.apache.org/</url>
+  <url>https://poi.apache.org/</url>
 
   <mailingLists>
     <mailingList>

@@ -97,7 +97,7 @@ public abstract class BaseTestSheetShiftRows {
         assertEquals(s.getRow(5).getPhysicalNumberOfCells(), 2);
 
         wb3.close();
-        
+
         // Read the first file again
         Workbook wb4 = _testDataProvider.openSampleWorkbook(sampleName);
         s = wb4.getSheetAt( 0 );
@@ -192,7 +192,7 @@ public abstract class BaseTestSheetShiftRows {
         // Ensure that the changes were persisted
         Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
         wb1.close();
-        
+
         sheet = wb2.getSheet("Sheet1");
         assertEquals(4, sheet.getLastRowNum());
 
@@ -217,7 +217,7 @@ public abstract class BaseTestSheetShiftRows {
         // by shifting rows...
         if(!(wb2 instanceof HSSFWorkbook)) {
             assertEquals(2, sheet.getLastRowNum());
-            
+
             // Verify comments are in the position expected
             assertNull("Had: " + (sheet.getCellComment(new CellAddress(0,0)) == null ? "null" : sheet.getCellComment(new CellAddress(0,0)).getString()),
                     sheet.getCellComment(new CellAddress(0,0)));
@@ -229,7 +229,7 @@ public abstract class BaseTestSheetShiftRows {
         assertEquals(comment1,"comment top row3 (index2)\n");
         String comment2 = sheet.getCellComment(new CellAddress(2,0)).getString().getString();
         assertEquals(comment2,"comment top row4 (index3)\n");
-        
+
         wb2.close();
     }
 
@@ -274,7 +274,7 @@ public abstract class BaseTestSheetShiftRows {
 
         name4 = wb.getName("name4");
         assertEquals("A1", name4.getRefersToFormula());
-        
+
         wb.close();
     }
 
@@ -304,31 +304,31 @@ public abstract class BaseTestSheetShiftRows {
         // populate sheet cells
         for (int i = 0; i < 10; i++) {
             Row row = sheet.createRow(i);
-            
+
             for (int j = 0; j < 10; j++) {
                 Cell cell = row.createCell(j, CellType.STRING);
                 cell.setCellValue(i + "x" + j);
             }
         }
-        
+
         CellRangeAddress A4_B7 = CellRangeAddress.valueOf("A4:B7");
         CellRangeAddress C4_D7 = CellRangeAddress.valueOf("C4:D7");
 
         assertEquals(0, sheet.addMergedRegion(A4_B7));
         assertEquals(1, sheet.addMergedRegion(C4_D7));
-        
+
         assumeTrue(sheet.getLastRowNum() > 8);
-        
+
         // Insert a row in the middle of both merged regions.
         sheet.shiftRows(4, sheet.getLastRowNum(), 1);
-        
+
         // all regions should still start at row 3, and elongate by 1 row
         List<CellRangeAddress> expectedMergedRegions = new ArrayList<>();
         CellRangeAddress A4_B8 = CellRangeAddress.valueOf("A4:B8"); //A4:B7 should be elongated by 1 row
         CellRangeAddress C4_D8 = CellRangeAddress.valueOf("C4:D8"); //C4:B7 should be elongated by 1 row
         expectedMergedRegions.add(A4_B8);
         expectedMergedRegions.add(C4_D8);
-        
+
         // This test is written as expected-to-fail and should be rewritten
         // as expected-to-pass when the bug is fixed.
         // FIXME: remove try, catch, and testPassesNow, skipTest when test passes
@@ -340,8 +340,8 @@ public abstract class BaseTestSheetShiftRows {
         }
         wb.close();
     }
-    
-    
+
+
 
     /**
      * See bug #34023
@@ -498,7 +498,7 @@ public abstract class BaseTestSheetShiftRows {
 
         wb.close();
     }
-    
+
     /**
      * Unified test for:
      * bug 46742: XSSFSheet.shiftRows should shift hyperlinks
@@ -509,7 +509,7 @@ public abstract class BaseTestSheetShiftRows {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("test");
         Row row = sheet.createRow(0);
-        
+
         // How to create hyperlinks
         // https://poi.apache.org/spreadsheet/quick-guide.html#Hyperlinks
         CreationHelper helper = wb.getCreationHelper();
@@ -524,55 +524,55 @@ public abstract class BaseTestSheetShiftRows {
         Cell cell = row.createCell(0);
         cell.setCellStyle(hlinkStyle);
         createHyperlink(helper, cell, HyperlinkType.DOCUMENT, "test!E1");
-        
+
         // URL
         cell = row.createCell(1);
         // CellAddress=B1, shifted to B4
         cell.setCellStyle(hlinkStyle);
-        createHyperlink(helper, cell, HyperlinkType.URL, "http://poi.apache.org/");
-        
+        createHyperlink(helper, cell, HyperlinkType.URL, "https://poi.apache.org/");
+
         // row0 will be shifted on top of row1, so this URL should be removed from the workbook
         Row overwrittenRow = sheet.createRow(3);
         cell = overwrittenRow.createCell(2);
         // CellAddress=C4, will be overwritten (deleted)
         cell.setCellStyle(hlinkStyle);
         createHyperlink(helper, cell, HyperlinkType.EMAIL, "mailto:poi@apache.org");
-        
+
         // hyperlinks on this row are unaffected by the row shifting, so the hyperlinks should not move
         Row unaffectedRow = sheet.createRow(20);
         cell = unaffectedRow.createCell(3);
         // CellAddress=D21, will be unaffected
         cell.setCellStyle(hlinkStyle);
         createHyperlink(helper, cell, HyperlinkType.FILE, "54524.xlsx");
-        
+
         cell = wb.createSheet("other").createRow(0).createCell(0);
         // CellAddress=Other!A1, will be unaffected
         cell.setCellStyle(hlinkStyle);
         createHyperlink(helper, cell, HyperlinkType.URL, "http://apache.org/");
-        
+
         int startRow = 0;
         int endRow = 0;
         int n = 3;
         sheet.shiftRows(startRow, endRow, n);
-        
+
         Workbook read = _testDataProvider.writeOutAndReadBack(wb);
         wb.close();
-        
+
         Sheet sh = read.getSheet("test");
-        
+
         Row shiftedRow = sh.getRow(3);
-        
+
         // document link anchored on a shifted cell should be moved
         // Note that hyperlinks do not track what they point to, so this hyperlink should still refer to test!E1
         verifyHyperlink(shiftedRow.getCell(0), HyperlinkType.DOCUMENT, "test!E1");
-        
+
         // URL, EMAIL, and FILE links anchored on a shifted cell should be moved
-        verifyHyperlink(shiftedRow.getCell(1), HyperlinkType.URL, "http://poi.apache.org/");
-        
+        verifyHyperlink(shiftedRow.getCell(1), HyperlinkType.URL, "https://poi.apache.org/");
+
         // Make sure hyperlinks were moved and not copied
         assertNull("Document hyperlink should be moved, not copied", sh.getHyperlink(0, 0));
         assertNull("URL hyperlink should be moved, not copied", sh.getHyperlink(0, 1));
-        
+
         // Make sure hyperlink in overwritten row is deleted
         assertEquals(3, sh.getHyperlinkList().size());
         CellAddress unexpectedLinkAddress = new CellAddress("C4");
@@ -583,26 +583,26 @@ public abstract class BaseTestSheetShiftRows {
                      "been deleted when Row 1 was shifted on top of it.");
             }
         }
-        
+
         // Make sure unaffected rows are not shifted
         Cell unaffectedCell = sh.getRow(20).getCell(3);
         assertTrue(cellHasHyperlink(unaffectedCell));
         verifyHyperlink(unaffectedCell, HyperlinkType.FILE, "54524.xlsx");
-        
+
         // Make sure cells on other sheets are not affected
         unaffectedCell = read.getSheet("other").getRow(0).getCell(0);
         assertTrue(cellHasHyperlink(unaffectedCell));
         verifyHyperlink(unaffectedCell, HyperlinkType.URL, "http://apache.org/");
-        
+
         read.close();
     }
-    
+
     //@Ignore("bug 56454: Incorrectly handles merged regions that do not contain column 0")
     @Test
     public void shiftRowsWithMergedRegionsThatDoNotContainColumnZero() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("test");
-        
+
         // populate sheet cells
         for (int i = 0; i < 10; i++) {
             Row row = sheet.createRow(i);
@@ -633,7 +633,7 @@ public abstract class BaseTestSheetShiftRows {
         } catch (AssertionError e) {
             skipTest(e);
         }
-        
+
         wb.close();
     }
 
@@ -740,32 +740,32 @@ public abstract class BaseTestSheetShiftRows {
 
         wb.close();
     }
-    
+
     @Test
     public void test61840_shifting_rows_up_does_not_produce_REF_errors() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
         Cell cell = sheet.createRow(4).createCell(0);
-        
+
         cell.setCellFormula("(B5-C5)/B5");
         sheet.shiftRows(4, 4, -1);
-        
+
         // Cell objects created before a row shift are still valid.
         // The row number of those cell references will be shifted if
         // the cell is within the shift range.
         assertEquals("(B4-C4)/B4", cell.getCellFormula());
-        
+
         // New cell references are also valid.
         Cell shiftedCell = sheet.getRow(3).getCell(0);
         assertNotNull(shiftedCell);
         assertEquals("(B4-C4)/B4", shiftedCell.getCellFormula());
-        
+
         wb.close();
     }
-    
-    
-    
-    
+
+
+
+
 
     private void createHyperlink(CreationHelper helper, Cell cell, HyperlinkType linkType, String ref) {
         cell.setCellValue(ref);
@@ -773,14 +773,14 @@ public abstract class BaseTestSheetShiftRows {
         link.setAddress(ref);
         cell.setHyperlink(link);
     }
-    
+
     private void verifyHyperlink(Cell cell, HyperlinkType linkType, String ref) {
         assertTrue(cellHasHyperlink(cell));
         Hyperlink link = cell.getHyperlink();
         assertEquals(linkType, link.getType());
         assertEquals(ref, link.getAddress());
     }
-    
+
     private boolean cellHasHyperlink(Cell cell) {
         return (cell != null) && (cell.getHyperlink() != null);
     }

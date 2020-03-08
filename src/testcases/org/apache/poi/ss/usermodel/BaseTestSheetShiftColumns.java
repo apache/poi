@@ -74,18 +74,18 @@ public abstract class BaseTestSheetShiftColumns {
         textCell.setCellValue("TEXT");
         textCell.setCellStyle(newCenterBottomStyle());
 
-        sheet2 = workbook.createSheet("sheet2"); 
-        row = sheet2.createRow(0); row.createCell(0, CellType.NUMERIC).setCellValue(10); 
-        row.createCell(1, CellType.NUMERIC).setCellValue(11); 
-        row.createCell(2, CellType.FORMULA).setCellFormula("SUM(sheet1!B3:C3)"); 
-        row = sheet2.createRow(1); 
-        row.createCell(0, CellType.NUMERIC).setCellValue(21); 
-        row.createCell(1, CellType.NUMERIC).setCellValue(22); 
-        row.createCell(2, CellType.NUMERIC).setCellValue(23); 
+        sheet2 = workbook.createSheet("sheet2");
+        row = sheet2.createRow(0); row.createCell(0, CellType.NUMERIC).setCellValue(10);
+        row.createCell(1, CellType.NUMERIC).setCellValue(11);
+        row.createCell(2, CellType.FORMULA).setCellFormula("SUM(sheet1!B3:C3)");
+        row = sheet2.createRow(1);
+        row.createCell(0, CellType.NUMERIC).setCellValue(21);
+        row.createCell(1, CellType.NUMERIC).setCellValue(22);
+        row.createCell(2, CellType.NUMERIC).setCellValue(23);
         row = sheet2.createRow(2);
         row.createCell(0, CellType.FORMULA).setCellFormula("sheet1!A4+sheet1!C2+A2");
-        row.createCell(1, CellType.FORMULA).setCellFormula("SUM(sheet1!A3:$C3)"); 
-        row = sheet2.createRow(3); 
+        row.createCell(1, CellType.FORMULA).setCellFormula("SUM(sheet1!A3:$C3)");
+        row = sheet2.createRow(3);
         row.createCell(0, CellType.STRING).setCellValue("dummy");
     }
 
@@ -116,7 +116,7 @@ public abstract class BaseTestSheetShiftColumns {
         Cell textCell = sheet1.getRow(6).getCell(3);
         assertEquals(textCell.getStringCellValue(), "TEXT");
         assertEquals(textCell.getCellStyle().getAlignment(), HorizontalAlignment.CENTER);
-        
+
         // other sheet
         String formulaC1 = sheet2.getRow(0).getCell(2).getCellFormula(); // SUM(sheet1!B3:C3)
         assertEquals("SUM(sheet1!C3:D3)", formulaC1);
@@ -155,7 +155,7 @@ public abstract class BaseTestSheetShiftColumns {
         Cell newb6Null = sheet1.getRow(5).getCell(1);
         assertNull(newb6Null);
     }
-    
+
     @Test(expected = IllegalStateException.class)
     public void testShiftTwoColumnsLeft() {
         sheet1.shiftColumns(1, 2, -2);
@@ -186,7 +186,7 @@ public abstract class BaseTestSheetShiftColumns {
         cell = row.createCell(1);
         // CellAddress=B1, shifted to B4
         cell.setCellStyle(hlinkStyle);
-        createHyperlink(helper, cell, HyperlinkType.URL, "http://poi.apache.org/");
+        createHyperlink(helper, cell, HyperlinkType.URL, "https://poi.apache.org/");
 
         // row0 will be shifted on top of row1, so this URL should be removed
         // from the workbook
@@ -225,7 +225,7 @@ public abstract class BaseTestSheetShiftColumns {
         verifyHyperlink(shiftedRow.getCell(3), HyperlinkType.DOCUMENT, "test!E1");
 
         // URL, EMAIL, and FILE links anchored on a shifted cell should be moved
-        verifyHyperlink(shiftedRow.getCell(4), HyperlinkType.URL, "http://poi.apache.org/");
+        verifyHyperlink(shiftedRow.getCell(4), HyperlinkType.URL, "https://poi.apache.org/");
 
         // Make sure hyperlinks were moved and not copied
         assertNull("Document hyperlink should be moved, not copied", sh.getHyperlink(0, 0));
@@ -331,7 +331,7 @@ public abstract class BaseTestSheetShiftColumns {
 
     protected abstract Workbook openWorkbook(String spreadsheetFileName) throws IOException;
     protected abstract Workbook getReadBackWorkbook(Workbook wb) throws IOException;
-    
+
     protected static final String AMDOCS = "Amdocs";
     protected static final String AMDOCS_TEST = "Amdocs:\ntest\n";
 
@@ -344,7 +344,7 @@ public abstract class BaseTestSheetShiftColumns {
         assertNotNull(comment);
         assertEquals(AMDOCS, comment.getAuthor());
         assertEquals(AMDOCS_TEST, comment.getString().getString());
-        
+
         sheet.shiftColumns(0, 1, 1);
 
         // comment in column 0 is gone
@@ -374,19 +374,19 @@ public abstract class BaseTestSheetShiftColumns {
         assertEquals(AMDOCS_TEST, comment.getString().getString());
         wbBack.close();
     }
-    
+
     // transposed version of TestXSSFSheetShiftRows.testBug54524()
     @Test
     public void testBug54524() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet();
-        Row firstRow = sheet.createRow(0); 
+        Row firstRow = sheet.createRow(0);
         firstRow.createCell(0).setCellValue("");
         firstRow.createCell(1).setCellValue(1);
         firstRow.createCell(2).setCellValue(2);
         firstRow.createCell(3).setCellFormula("SUM(B1:C1)");
         firstRow.createCell(4).setCellValue("X");
-        
+
         sheet.shiftColumns(3, 5, -1);
 
         Cell cell = CellUtil.getCell(sheet.getRow(0), 1);

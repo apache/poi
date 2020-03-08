@@ -265,7 +265,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         XSSFWorkbook wb2 = (XSSFWorkbook)_testDataProvider.writeOutAndReadBack(wb1);
         row = wb2.getSheetAt(0).getRow(0);
         assertCellsWithMissingR(row);
-        
+
         wb2.close();
         wb1.close();
     }
@@ -338,7 +338,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         wbRef.close();
         wb.close();
     }
-    
+
     @Test
     public void test56170() throws IOException {
         final Workbook wb1 = XSSFTestDataSamples.openSampleWorkbook("56170.xlsx");
@@ -346,7 +346,7 @@ public final class TestXSSFCell extends BaseTestXCell {
 
         Workbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
         Cell cell;
-        
+
         // add some contents to table so that the table will need expansion
         Row row = sheet.getRow(0);
         Workbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb2);
@@ -363,7 +363,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         cell.setCellValue("demo3");
 
         Workbook wb9 = XSSFTestDataSamples.writeOutAndReadBack(wb8);
-        
+
         row = sheet.getRow(1);
         cell = row.createCell(0);
         cell.setCellValue("demo1");
@@ -373,7 +373,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         cell.setCellValue("demo3");
 
         Workbook wb10 = XSSFTestDataSamples.writeOutAndReadBack(wb9);
-        
+
         // expand table
         XSSFTable table = sheet.getTables().get(0);
         final CellReference startRef = table.getStartCellReference();
@@ -395,7 +395,7 @@ public final class TestXSSFCell extends BaseTestXCell {
         wb2.close();
         wb1.close();
     }
-    
+
     @Test
     public void test56170Reproduce() throws IOException {
         try (Workbook wb = new XSSFWorkbook()) {
@@ -437,11 +437,11 @@ public final class TestXSSFCell extends BaseTestXCell {
     private void validateRow(Row row) {
         // trigger bug with CArray handling
         ((XSSFRow)row).onDocumentWrite();
-        
+
         for(Cell cell : row) {
             assertNotNull(cell.toString());
         }
-    }    
+    }
 
     @Test
     public void testBug56644ReturnNull() throws IOException {
@@ -526,59 +526,59 @@ public final class TestXSSFCell extends BaseTestXCell {
     }
 
     private XSSFCell srcCell, destCell; //used for testCopyCellFrom_CellCopyPolicy
-    
+
     @Test
     public final void testCopyCellFrom_CellCopyPolicy_default() {
         setUp_testCopyCellFrom_CellCopyPolicy();
-        
+
         // default copy policy
         final CellCopyPolicy policy = new CellCopyPolicy();
         destCell.copyCellFrom(srcCell, policy);
-        
+
         assertEquals(CellType.FORMULA, destCell.getCellType());
         assertEquals("2+3", destCell.getCellFormula());
         assertEquals(srcCell.getCellStyle(), destCell.getCellStyle());
     }
-    
+
     @Test
     public final void testCopyCellFrom_CellCopyPolicy_value() {
         setUp_testCopyCellFrom_CellCopyPolicy();
-        
+
         // Paste values only
         final CellCopyPolicy policy = new CellCopyPolicy.Builder().cellFormula(false).build();
         destCell.copyCellFrom(srcCell, policy);
         assertEquals(CellType.NUMERIC, destCell.getCellType());
     }
-    
+
     @Test
     public final void testCopyCellFrom_CellCopyPolicy_formulaWithUnregisteredUDF() {
         setUp_testCopyCellFrom_CellCopyPolicy();
-        
+
         srcCell.setCellFormula("MYFUNC2(123, $A5, Sheet1!$B7)");
-        
+
         // Copy formula verbatim (no shifting). This is okay because copyCellFrom is Internal.
         // Users should use higher-level copying functions to row- or column-shift formulas.
         final CellCopyPolicy policy = new CellCopyPolicy.Builder().cellFormula(true).build();
         destCell.copyCellFrom(srcCell, policy);
         assertEquals("MYFUNC2(123, $A5, Sheet1!$B7)", destCell.getCellFormula());
     }
-    
+
     @Test
     public final void testCopyCellFrom_CellCopyPolicy_style() {
         setUp_testCopyCellFrom_CellCopyPolicy();
         srcCell.setCellValue((String) null);
-        
+
         // Paste styles only
         final CellCopyPolicy policy = new CellCopyPolicy.Builder().cellValue(false).build();
         destCell.copyCellFrom(srcCell, policy);
         assertEquals(srcCell.getCellStyle(), destCell.getCellStyle());
-        
+
         // Old cell value should not have been overwritten
         assertNotEquals(CellType.BLANK, destCell.getCellType());
         assertEquals(CellType.BOOLEAN, destCell.getCellType());
         assertTrue(destCell.getBooleanCellValue());
     }
-    
+
     @Test
     public final void testCopyCellFrom_CellCopyPolicy_copyHyperlink() throws IOException {
         setUp_testCopyCellFrom_CellCopyPolicy();
@@ -587,7 +587,7 @@ public final class TestXSSFCell extends BaseTestXCell {
 
         srcCell.setCellValue("URL LINK");
         Hyperlink link = createHelper.createHyperlink(HyperlinkType.URL);
-        link.setAddress("http://poi.apache.org/");
+        link.setAddress("https://poi.apache.org/");
         srcCell.setHyperlink(link);
 
         // Set link cell style (optional)
@@ -607,7 +607,7 @@ public final class TestXSSFCell extends BaseTestXCell {
                 new CellAddress(srcCell).formatAsString(), links.get(0).getCellRef());
         assertEquals("destination hyperlink",
                 new CellAddress(destCell).formatAsString(), links.get(1).getCellRef());
-        
+
         wb.close();
     }
 
@@ -628,7 +628,7 @@ public final class TestXSSFCell extends BaseTestXCell {
 
         srcCell.setCellValue("URL LINK");
         Hyperlink link = createHelper.createHyperlink(HyperlinkType.URL);
-        link.setAddress("http://poi.apache.org/");
+        link.setAddress("https://poi.apache.org/");
         destCell.setHyperlink(link);
 
         // Set link cell style (optional)
@@ -651,36 +651,36 @@ public final class TestXSSFCell extends BaseTestXCell {
         assertEquals("number of hyperlinks on sheet", 1, links.size());
         assertEquals("source hyperlink",
                 new CellAddress(destCell).formatAsString(), links.get(0).getCellRef());
-        
+
         // Merge destCell's hyperlink to srcCell. Since destCell does have a hyperlink, this should copy destCell's hyperlink to srcCell.
         srcCell.copyCellFrom(destCell, policy);
         assertNotNull(srcCell.getHyperlink());
         assertNotNull(destCell.getHyperlink());
-        
+
         links = srcCell.getSheet().getHyperlinkList();
         assertEquals("number of hyperlinks on sheet", 2, links.size());
         assertEquals("dest hyperlink",
                 new CellAddress(destCell).formatAsString(), links.get(0).getCellRef());
         assertEquals("source hyperlink",
                 new CellAddress(srcCell).formatAsString(), links.get(1).getCellRef());
-        
+
         wb.close();
     }
-    
+
     private void setUp_testCopyCellFrom_CellCopyPolicy() {
         @SuppressWarnings("resource")
         final XSSFWorkbook wb = new XSSFWorkbook();
         final XSSFRow row = wb.createSheet("Sheet1").createRow(0);
         srcCell = row.createCell(0);
         destCell = row.createCell(1);
-        
+
         srcCell.setCellFormula("2+3");
-        
+
         final CellStyle style = wb.createCellStyle();
         style.setBorderTop(BorderStyle.THICK);
         style.setFillBackgroundColor((short) 5);
         srcCell.setCellStyle(style);
-        
+
         destCell.setCellValue(true);
     }
 

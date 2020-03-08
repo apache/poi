@@ -2693,7 +2693,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         try (Workbook wb = openSampleWorkbook("46515.xls")) {
 
             // Get structure from webservice
-            String urlString = "http://poi.apache.org/components/spreadsheet/images/calendar.jpg";
+            String urlString = "https://poi.apache.org/components/spreadsheet/images/calendar.jpg";
             URL structURL = new URL(urlString);
             BufferedImage bimage;
             try {

@@ -124,7 +124,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
      *  link.setTextMark("'Target Sheet-1'!A1"); //HSSF-specific
      *  or
      *  link.setAddress("'Target Sheet-1'!A1"); //common between XSSF and HSSF
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void testCreateDocumentLink() throws IOException {
@@ -155,7 +155,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
 
         HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
         wb.close();
-        
+
         sheet = wbBack.getSheet("Hyperlinks");
 
         cell = sheet.getRow(0).getCell(0);
@@ -169,7 +169,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertNotNull(link);
         assertEquals("'Hyperlinks'!A1", link.getTextMark());
         assertEquals("'Hyperlinks'!A1", link.getAddress());
-        
+
         wbBack.close();
     }
 
@@ -208,7 +208,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         cell.setHyperlink(link);
 
         HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
-        
+
         wb.close();
 
         sheet = wbBack.getSheet("Hyperlinks");
@@ -217,7 +217,7 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         link = cell.getHyperlink();
         assertNotNull(link);
         assertEquals("testfolder\\test.PDF", link.getAddress());
-        
+
         wbBack.close();
     }
 
@@ -266,12 +266,12 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         assertEquals(5, link2_shifted.getFirstRow());
         assertEquals(5, link2_shifted.getLastRow());
     }
-    
+
     @Override
     public HSSFHyperlink copyHyperlink(Hyperlink link) {
         return new HSSFHyperlink(link);
     }
-    
+
     /*
     @Test
     public void testCopyXSSFHyperlink() throws IOException {
@@ -282,12 +282,12 @@ public final class TestHSSFHyperlink extends BaseTestHyperlink {
         xlink.setCellReference("D3");
         xlink.setTooltip("tooltip");
         HSSFHyperlink hlink = new HSSFHyperlink(xlink);
-        
+
         assertEquals("http://poi.apache.org/", hlink.getAddress());
         assertEquals("D3", new CellReference(hlink.getFirstRow(), hlink.getFirstColumn()).formatAsString());
         // Are HSSFHyperlink.label and XSSFHyperlink.tooltip the same? If so, perhaps one of these needs renamed for a consistent Hyperlink interface
         // assertEquals("tooltip", hlink.getLabel());
-        
+
         wb.close();
     }*/
 }

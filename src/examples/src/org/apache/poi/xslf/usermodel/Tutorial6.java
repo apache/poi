@@ -14,7 +14,7 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
- * ==================================================================== 
+ * ====================================================================
  */
 
 package org.apache.poi.xslf.usermodel;
@@ -37,8 +37,8 @@ public class Tutorial6 {
             shape1.setAnchor(new Rectangle(50, 50, 200, 50));
             XSLFTextRun r1 = shape1.addNewTextParagraph().addNewTextRun();
             XSLFHyperlink link1 = r1.createHyperlink();
-            r1.setText("http://poi.apache.org"); // visible text
-            link1.setAddress("http://poi.apache.org");  // link address
+            r1.setText("https://poi.apache.org"); // visible text
+            link1.setAddress("https://poi.apache.org");  // link address
 
             XSLFTextBox shape2 = slide1.createTextBox();
             shape2.setAnchor(new Rectangle(300, 50, 200, 50));

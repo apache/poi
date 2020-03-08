@@ -434,7 +434,7 @@ public final class ApacheconEU08 {
             tp.get(i).getTextRuns().get(0).setFontSize(24d);
             tp.get(i).setIndentLevel(1);
         }
-        
+
         box2.setAnchor(new Rectangle(36, 126, 648, 400));
     }
 
@@ -449,7 +449,7 @@ public final class ApacheconEU08 {
         TextBox<?,?> box2 = slide.createTextBox();
         box2.setTextPlaceholder(TextPlaceholder.CENTER_BODY);
         box2.setText(
-                "http://poi.apache.org/hslf/\r" +
+                "https://poi.apache.org/hslf/\r" +
                 "http://people.apache.org/~yegor");
         box2.setAnchor(new Rectangle(108, 306, 504, 138));
     }

@@ -55,7 +55,7 @@ public class Hyperlinks {
             cell = sheet.createRow(0).createCell(0);
             cell.setCellValue("URL Link");
             HSSFHyperlink link = helper.createHyperlink(HyperlinkType.URL);
-            link.setAddress("http://poi.apache.org/");
+            link.setAddress("https://poi.apache.org/");
             cell.setHyperlink(link);
             cell.setCellStyle(hlink_style);
 

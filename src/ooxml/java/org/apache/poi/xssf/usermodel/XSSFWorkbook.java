@@ -267,7 +267,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
 
     /**
      * Constructs a XSSFWorkbook object given a OpenXML4J <code>Package</code> object,
-     *  see <a href="http://poi.apache.org/oxml4j/">http://poi.apache.org/oxml4j/</a>.
+     *  see <a href="https://poi.apache.org/oxml4j/">https://poi.apache.org/oxml4j/</a>.
      *
      * <p>Once you have finished working with the Workbook, you should close the package
      * by calling either {@link #close()} or {@link OPCPackage#close()}, to avoid

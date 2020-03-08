@@ -53,8 +53,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *  now includes the SXSSF which handles all of this for you, you should
  *  be using that instead! This code remains mostly for historical interest.
  * <p>
- * See <a "http://poi.apache.org/spreadsheet/how-to.html#sxssf">
- *     http://poi.apache.org/spreadsheet/how-to.html#sxssf</a>.
+ * See <a "https://poi.apache.org/spreadsheet/how-to.html#sxssf">
+ *     https://poi.apache.org/spreadsheet/how-to.html#sxssf</a>.
  * <p>
  * If you really want to use this approach, which is also the one that SXSSF
  * does for you, it works as follows:
@@ -72,8 +72,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *  to all rows in the document. Older rows that are no longer in the window
  *  become inaccessible, as they are written to the disk.
  * </p>
- * See <a "http://poi.apache.org/spreadsheet/how-to.html#sxssf">
- *     http://poi.apache.org/spreadsheet/how-to.html#sxssf</a>.
+ * See <a "https://poi.apache.org/spreadsheet/how-to.html#sxssf">
+ *     https://poi.apache.org/spreadsheet/how-to.html#sxssf</a>.
  */
 public final class BigGridDemo {
     private static final String XML_ENCODING = "UTF-8";

@@ -808,7 +808,7 @@ public abstract class BaseTestCell {
 
             Cell cell3 = row.createCell(2);
             Hyperlink link3 = helper.createHyperlink(HyperlinkType.URL);
-            link3.setAddress("http://poi.apache.org/");
+            link3.setAddress("https://poi.apache.org/");
             cell3.setHyperlink(link3);
             assertNotNull(cell3.getHyperlink());
 

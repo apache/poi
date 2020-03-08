@@ -29,7 +29,7 @@
  * <li>the {@link org.apache.poi.poifs.crypt.xor xor} package contains classes for the xor obfuscation of biff/H**F formats</li>
  * </ul>
  *
- * @see <a href="http://poi.apache.org/encryption.html">Apache POI - Encryption support</a>
+ * @see <a href="https://poi.apache.org/encryption.html">Apache POI - Encryption support</a>
  * @see <a href="http://msdn.microsoft.com/en-us/library/dd952186(v=office.12).aspx">ECMA-376 Document Encryption</a>
  */
 package org.apache.poi.poifs.crypt;

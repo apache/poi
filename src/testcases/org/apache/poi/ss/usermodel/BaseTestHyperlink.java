@@ -54,7 +54,7 @@ public abstract class BaseTestHyperlink {
         cell = sheet.createRow(0).createCell((short) 0);
         cell.setCellValue("URL Link");
         link = createHelper.createHyperlink(HyperlinkType.URL);
-        link.setAddress("http://poi.apache.org/");
+        link.setAddress("https://poi.apache.org/");
         cell.setHyperlink(link);
 
         //link to a file in the current directory
@@ -90,17 +90,17 @@ public abstract class BaseTestHyperlink {
         sheet = wb2.getSheetAt(0);
         link = sheet.getRow(0).getCell(0).getHyperlink();
 
-        assertEquals("http://poi.apache.org/", link.getAddress());
+        assertEquals("https://poi.apache.org/", link.getAddress());
         link = sheet.getRow(1).getCell(0).getHyperlink();
         assertEquals("hyperinks-beta4-dump.txt", link.getAddress());
         link = sheet.getRow(2).getCell(0).getHyperlink();
         assertEquals("mailto:poi@apache.org?subject=Hyperlinks", link.getAddress());
         link = sheet.getRow(3).getCell(0).getHyperlink();
         assertEquals("'Target Sheet'!A1", link.getAddress());
-        
+
         wb2.close();
     }
-    
+
     // copy a hyperlink via the copy constructor
     @Test
     public void testCopyHyperlink() throws IOException {
@@ -117,32 +117,32 @@ public abstract class BaseTestHyperlink {
         cell2 = row.createCell(1);
         cell1.setCellValue("URL Link");
         link1 = createHelper.createHyperlink(HyperlinkType.URL);
-        link1.setAddress("http://poi.apache.org/");
+        link1.setAddress("https://poi.apache.org/");
         cell1.setHyperlink(link1);
-        
+
         link2 = copyHyperlink(link1);
-        
+
         // Change address (type is not changeable)
         link2.setAddress("http://apache.org/");
         cell2.setHyperlink(link2);
-        
-        // Make sure hyperlinks were deep-copied, and modifying one does not modify the other. 
+
+        // Make sure hyperlinks were deep-copied, and modifying one does not modify the other.
         assertNotSame(link1, link2);
         assertNotEquals(link1, link2);
-        assertEquals("http://poi.apache.org/", link1.getAddress());
+        assertEquals("https://poi.apache.org/", link1.getAddress());
         assertEquals("http://apache.org/", link2.getAddress());
         assertEquals(link1, cell1.getHyperlink());
         assertEquals(link2, cell2.getHyperlink());
-        
+
         // Make sure both hyperlinks were added to the sheet
         @SuppressWarnings("unchecked")
         final List<Hyperlink> actualHyperlinks = (List<Hyperlink>) sheet.getHyperlinkList();
         assertEquals(2, actualHyperlinks.size());
         assertEquals(link1, actualHyperlinks.get(0));
         assertEquals(link2, actualHyperlinks.get(1));
-        
+
         wb.close();
     }
-    
+
     public abstract Hyperlink copyHyperlink(Hyperlink link);
 }

@@ -54,7 +54,7 @@ public class HyperlinkExample {
             cell.setCellValue("URL Link");
 
             Hyperlink link = createHelper.createHyperlink(HyperlinkType.URL);
-            link.setAddress("http://poi.apache.org/");
+            link.setAddress("https://poi.apache.org/");
             cell.setHyperlink(link);
             cell.setCellStyle(hlink_style);
 

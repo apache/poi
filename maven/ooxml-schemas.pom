@@ -28,9 +28,9 @@
   <version>@VERSION@</version>
   <packaging>jar</packaging>
   <name>OOXML schemas</name>
-  <description>XmlBeans generated from the Ecma supplied xsds: 
+  <description>XmlBeans generated from the Ecma supplied xsds:
     http://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%20Part%204%20(DOCX).zip</description>
-  <url>http://poi.apache.org/</url>
+  <url>https://poi.apache.org/</url>
 
   <mailingLists>
     <mailingList>

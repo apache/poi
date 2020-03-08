@@ -32,7 +32,7 @@ import org.junit.Test;
 public final class TestPublisherTextExtractor {
     private static final POIDataSamples _samples = POIDataSamples.getPublisherInstance();
 
-    private static final String SAMPLE_TEXT = 
+    private static final String SAMPLE_TEXT =
         "This is some text on the first page\n" +
         "It\u2019s in times new roman, font size 10, all normal\n" +
         "" +
@@ -154,7 +154,7 @@ public final class TestPublisherTextExtractor {
      */
     @Test
     public void testWithHyperlinks() throws Exception {
-        InputStream linkAt = _samples.openResourceAsStream("LinkAt10.pub"); 
+        InputStream linkAt = _samples.openResourceAsStream("LinkAt10.pub");
         HPBFDocument doc = new HPBFDocument(linkAt);
 
         PublisherTextExtractor ext = new PublisherTextExtractor(doc);

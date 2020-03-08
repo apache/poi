@@ -68,7 +68,7 @@ public final class TestQuillContents {
 		assertEquals("STSH", qc.getBits()[3].getThingType());
 		assertEquals("STSH", qc.getBits()[3].getBitType());
 		assertEquals(2, qc.getBits()[3].getOptA());
-		
+
 		doc.close();
 	}
 
@@ -85,7 +85,7 @@ public final class TestQuillContents {
 		String t = text.getText();
 		assertStartsWith(t, "This is some text on the first page");
 		assertEndsWith(t, "Within doc to page 1\r");
-		
+
       doc.close();
 	}
 
@@ -148,7 +148,7 @@ public final class TestQuillContents {
 		assertEquals(0x22000000, plc12.getPlcValB()[0]);
 		assertEquals(0x05, plc12.getPlcValA()[1]);
 		assertEquals(0x04, plc12.getPlcValB()[1]);
-		
+
 		doc.close();
 	}
 
@@ -253,7 +253,7 @@ public final class TestQuillContents {
 		assertEquals(0x000004, plc16.getPlcValB()[4]);
 		assertEquals(0x000004, plc16.getPlcValA()[5]);
 		assertEquals(0x000004, plc16.getPlcValB()[5]);
-		
+
       doc.close();
 	}
 
@@ -272,7 +272,7 @@ public final class TestQuillContents {
 		assertEquals(0, plc18.getNumberOfHyperlinks());
 		assertEquals(0, plc18.getTextStartAt(0));
 		assertEquals(601, plc18.getAllTextEndAt());
-		
+
       doc.close();
 	}
 
@@ -347,7 +347,7 @@ public final class TestQuillContents {
 		assertEquals(10, hlBit.getTextStartAt(0));
 		assertEquals(15, hlBit.getAllTextEndAt());
 		assertEquals("http://poi.apache.org/", hlBit.getHyperlink(0));
-		
+
       doc.close();
 	}
 

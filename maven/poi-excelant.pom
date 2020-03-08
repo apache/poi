@@ -28,7 +28,7 @@
 	<version>@VERSION@</version>
 	<packaging>jar</packaging>
 	<name>Apache POI</name>
-	<url>http://poi.apache.org/</url>
+	<url>https://poi.apache.org/</url>
 	<description>Apache POI Excel Ant Tasks</description>
 
   <mailingLists>
@@ -73,6 +73,6 @@
      	<groupId>org.apache.ant</groupId>
      	<artifactId>ant</artifactId>
      	<version>1.8.2</version>
-   	</dependency> 
+   	</dependency>
   </dependencies>
 </project>

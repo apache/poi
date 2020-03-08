@@ -28,7 +28,7 @@
 	<version>@VERSION@</version>
 	<packaging>jar</packaging>
 	<name>Apache POI</name>
-	<url>http://poi.apache.org/</url>
+	<url>https://poi.apache.org/</url>
 	<description>Apache POI Examples</description>
 
   <mailingLists>

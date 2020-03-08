@@ -18,6 +18,6 @@
 /**
  * Horrible SpreadSheet Format API's for reading/writting Excel files using pure Java.
  *
- * @see <a href="http://poi.apache.org/components/spreadsheet/index.html">Overview, tutorials, examples, guides, and tool documentation</a>
+ * @see <a href="https://poi.apache.org/components/spreadsheet/index.html">Overview, tutorials, examples, guides, and tool documentation</a>
  */
 package org.apache.poi.hssf;

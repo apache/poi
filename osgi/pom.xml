@@ -35,7 +35,7 @@
   <description>
     OSGi bundle that contains Apache POI, and the dependencies.
   </description>
-  <url>http://poi.apache.org/</url>
+  <url>https://poi.apache.org/</url>
   <version>${poi.version}</version>
 
   <properties>

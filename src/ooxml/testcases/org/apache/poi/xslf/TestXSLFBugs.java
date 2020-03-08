@@ -211,7 +211,7 @@ public class TestXSLFBugs {
             XSLFTextRun r = p.addNewTextRun();
             p.addLineBreak();
             r.setText("Apache POI");
-            r.createHyperlink().setAddress("http://poi.apache.org");
+            r.createHyperlink().setAddress("https://poi.apache.org");
             // create hyperlink pointing to a page, which isn't available at the time of importing the content
             r = p.addNewTextRun();
             r.setText("Slide 2");
@@ -233,7 +233,7 @@ public class TestXSLFBugs {
             XSLFTextParagraph p = shape.getTextParagraphs().get(1);
             XSLFHyperlink h1 = p.getTextRuns().get(0).getHyperlink();
             assertNotNull(h1);
-            assertEquals("http://poi.apache.org", h1.getAddress());
+            assertEquals("https://poi.apache.org", h1.getAddress());
             XSLFHyperlink h2 = p.getTextRuns().get(2).getHyperlink();
             assertNotNull(h2);
             // relative url will be resolved to an absolute url, therefore this doesn't equals to "slide2.xml"
@@ -724,8 +724,8 @@ public class TestXSLFBugs {
 
     @Test
     public void bug59434() throws IOException {
-        String url1 = "http://poi.apache.org/changes.html";
-        String url2 = "http://poi.apache.org/faq.html";
+        String url1 = "https://poi.apache.org/changes.html";
+        String url2 = "https://poi.apache.org/faq.html";
         XMLSlideShow ppt1 = new XMLSlideShow();
         PictureData pd1 = ppt1.addPicture(slTests.readFile("tomcat.png"), PictureType.PNG);
         PictureData pd2 = ppt1.addPicture(slTests.readFile("santa.wmf"), PictureType.WMF);

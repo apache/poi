@@ -91,7 +91,7 @@ public final class TestHyperlink {
         assertEquals("Open Jakarta POI HSSF module test  ", links.get(0).getLabel());
         assertEquals("http://jakarta.apache.org/poi/hssf/", links.get(0).getAddress());
         assertEquals("Jakarta HSSF", rawText.substring(links.get(0).getStartIndex(), links.get(0).getEndIndex()-1));
-        
+
         ppt.close();
     }
 
@@ -115,7 +115,7 @@ public final class TestHyperlink {
         hl3.linkToSlide(slide1);
         HSLFTextRun r4 = ppt1.createSlide().createTextBox().setText("page4");
         HSLFHyperlink hl4 = r4.createHyperlink();
-        hl4.linkToUrl("http://poi.apache.org");
+        hl4.linkToUrl("https://poi.apache.org");
         HSLFTextBox tb5 = ppt1.createSlide().createTextBox();
         tb5.setText("page5");
         HSLFHyperlink hl5 = tb5.createHyperlink();
@@ -146,7 +146,7 @@ public final class TestHyperlink {
         HSLFTextBox tb4 = (HSLFTextBox)slides.get(3).getShapes().get(0);
         hl4 = tb4.getTextParagraphs().get(0).getTextRuns().get(0).getHyperlink();
         assertNotNull(hl4);
-        assertEquals("http://poi.apache.org", hl4.getLabel());
+        assertEquals("https://poi.apache.org", hl4.getLabel());
         assertEquals(HyperlinkType.URL, hl4.getType());
 
         tb5 = (HSLFTextBox)slides.get(4).getShapes().get(0);
@@ -154,10 +154,10 @@ public final class TestHyperlink {
         assertNotNull(hl5);
         assertEquals(InteractiveInfoAtom.LINK_FirstSlide, hl5.getInfo().getInteractiveInfoAtom().getHyperlinkType());
         assertEquals(HyperlinkType.DOCUMENT, hl5.getType());
-        
+
         ppt2.close();
     }
-    
+
     private static List<HSLFHyperlink> findHyperlinks(List<HSLFTextParagraph> paras) {
         List<HSLFHyperlink> links = new ArrayList<>();
         for (HSLFTextParagraph p : paras) {

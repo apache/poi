@@ -56,7 +56,7 @@ public class TestXSLFHyperlink {
         XSLFHyperlink link3 = cell3.getTextParagraphs().get(0).getTextRuns().get(0).getHyperlink();
         assertNotNull(link3);
         assertEquals("mailto:dev@poi.apache.org?subject=Hi%20There", link3.getAddress());
-        
+
         ppt.close();
     }
 
@@ -99,7 +99,7 @@ public class TestXSLFHyperlink {
         assertEquals(id2, rel2.getId());
         assertEquals(TargetMode.INTERNAL, rel2.getTargetMode());
         assertEquals(XSLFRelation.SLIDE.getRelation(), rel2.getRelationshipType());
-        
+
         ppt.close();
     }
 
@@ -174,7 +174,7 @@ public class TestXSLFHyperlink {
         assertNotNull(hl5);
         assertEquals("firstslide", hl5.getXmlObject().getAction().split("=")[1]);
         assertEquals(HyperlinkType.DOCUMENT, hl5.getType());
-        
+
         ppt2.close();
     }
 }

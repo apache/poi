@@ -29,13 +29,13 @@ import org.junit.Test;
 
 /**
  * Tests to show that our documentation at
- *  http://poi.apache.org/hssf/eval.html
+ *  https://poi.apache.org/hssf/eval.html
  * all actually works as we'd expect them to
  */
 public final class TestFormulaEvaluatorDocs {
 
 	/**
-	 * http://poi.apache.org/hssf/eval.html#EvaluateAll
+	 * https://poi.apache.org/hssf/eval.html#EvaluateAll
 	 */
 	@Test
 	public void testEvaluateAll() throws IOException {

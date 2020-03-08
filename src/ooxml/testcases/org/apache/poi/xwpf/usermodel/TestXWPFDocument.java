@@ -65,7 +65,7 @@ public final class TestXWPFDocument {
 //            }
         }
         assertTrue(found);
-        
+
         pack.close();
         doc.close();
     }
@@ -195,12 +195,17 @@ public final class TestXWPFDocument {
     public void testAddHyperlink() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx")) {
             XWPFParagraph p = doc.createParagraph();
-            XWPFHyperlinkRun h = p.createHyperlinkRun("http://poi.apache.org/");
+            XWPFHyperlinkRun h = p.createHyperlinkRun("https://poi.apache.org/");
             h.setText("Apache POI");
 
-            assertEquals("http://poi.apache.org/", h.getHyperlink(doc).getURL());
+            assertEquals("https://poi.apache.org/", h.getHyperlink(doc).getURL());
             assertEquals(p.getRuns().size(), 1);
             assertEquals(p.getRuns().get(0), h);
+
+            h = p.createHyperlinkRun("https://poi.apache.org/");
+            h.setText("Apache POI");
+
+            assertEquals("rId8", h.getHyperlinkId());
         }
     }
 
@@ -456,14 +461,14 @@ public final class TestXWPFDocument {
 
         doc.close();
     }
-	
+
 	@Test
 	public void testEnforcedWith() throws IOException {
         try (XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("EnforcedWith.docx")) {
             assertTrue(docx.isEnforcedProtection());
         }
     }
-	
+
 	@Test
 	@Ignore("XWPF should be able to write to a new Stream when opened Read-Only")
 	public void testWriteFromReadOnlyOPC() throws Exception {
