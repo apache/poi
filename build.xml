@@ -1396,7 +1396,7 @@ under the License.
         </uptodate>
     </target>
 
-    <target name="compile-version" 
+    <target name="compile-version"
 			unless="version.java.notRequired"
 			depends="init, -version-java-check"
             description="Compiles the version class">
@@ -2779,7 +2779,7 @@ under the License.
         <attribute name="pack"/>
         <sequential>
             <local name="baseurl"/>
-            <property name="baseurl" value="https://www.apache.org/dist/poi/release"/>
+            <property name="baseurl" value="https://downloads.apache.org/poi/release"/>
 
             <local name="basedyn"/>
             <property name="basedyn" value="https://www.apache.org/dyn/closer.lua/poi/release"/>
