@@ -146,8 +146,8 @@ public class TestAllFiles {
         HANDLERS.put(".vstx", new XDGFFileHandler());
 
         // Visio - not handled yet
-        HANDLERS.put(".vst", new NullFileHandler());
-        HANDLERS.put(".vss", new NullFileHandler());
+        HANDLERS.put(".vst", NullFileHandler.instance);
+        HANDLERS.put(".vss", NullFileHandler.instance);
 
         // POIFS
         HANDLERS.put(".ole2", new POIFSFileHandler());
@@ -159,65 +159,65 @@ public class TestAllFiles {
         HANDLERS.put(".dat", IGNORE_SCRATCHPAD ? new HPSFFileHandler() : new HMEFFileHandler());
 
         // TODO: are these readable by some of the formats?
-        HANDLERS.put(".wri", new NullFileHandler());
-        HANDLERS.put(".shw", new NullFileHandler());
-        HANDLERS.put(".zvi", new NullFileHandler());
-        HANDLERS.put(".mpp", new NullFileHandler());
-        HANDLERS.put(".qwp", new NullFileHandler());
-        HANDLERS.put(".wps", new NullFileHandler());
-        HANDLERS.put(".bin", new NullFileHandler());
-        HANDLERS.put(".xps", new NullFileHandler());
-        HANDLERS.put(".sldprt", new NullFileHandler());
-        HANDLERS.put(".mdb", new NullFileHandler());
-        HANDLERS.put(".vml", new NullFileHandler());
+        HANDLERS.put(".wri", NullFileHandler.instance);
+        HANDLERS.put(".shw", NullFileHandler.instance);
+        HANDLERS.put(".zvi", NullFileHandler.instance);
+        HANDLERS.put(".mpp", NullFileHandler.instance);
+        HANDLERS.put(".qwp", NullFileHandler.instance);
+        HANDLERS.put(".wps", NullFileHandler.instance);
+        HANDLERS.put(".bin", NullFileHandler.instance);
+        HANDLERS.put(".xps", NullFileHandler.instance);
+        HANDLERS.put(".sldprt", NullFileHandler.instance);
+        HANDLERS.put(".mdb", NullFileHandler.instance);
+        HANDLERS.put(".vml", NullFileHandler.instance);
 
         // ignore some file types, images, other formats, ...
-        HANDLERS.put(".txt", new NullFileHandler());
-        HANDLERS.put(".pdf", new NullFileHandler());
-        HANDLERS.put(".rtf", new NullFileHandler());
-        HANDLERS.put(".gif", new NullFileHandler());
-        HANDLERS.put(".html", new NullFileHandler());
-        HANDLERS.put(".png", new NullFileHandler());
-        HANDLERS.put(".wmf", new NullFileHandler());
-        HANDLERS.put(".emf", new NullFileHandler());
-        HANDLERS.put(".dib", new NullFileHandler());
-        HANDLERS.put(".svg", new NullFileHandler());
-        HANDLERS.put(".pict", new NullFileHandler());
-        HANDLERS.put(".jpg", new NullFileHandler());
-        HANDLERS.put(".jpeg", new NullFileHandler());
-        HANDLERS.put(".tif", new NullFileHandler());
-        HANDLERS.put(".tiff", new NullFileHandler());
-        HANDLERS.put(".wav", new NullFileHandler());
-        HANDLERS.put(".xml", new NullFileHandler());
-        HANDLERS.put(".csv", new NullFileHandler());
-        HANDLERS.put(".ods", new NullFileHandler());
-        HANDLERS.put(".ttf", new NullFileHandler());
-        HANDLERS.put(".fntdata", new NullFileHandler());
+        HANDLERS.put(".txt", NullFileHandler.instance);
+        HANDLERS.put(".pdf", NullFileHandler.instance);
+        HANDLERS.put(".rtf", NullFileHandler.instance);
+        HANDLERS.put(".gif", NullFileHandler.instance);
+        HANDLERS.put(".html", NullFileHandler.instance);
+        HANDLERS.put(".png", NullFileHandler.instance);
+        HANDLERS.put(".wmf", NullFileHandler.instance);
+        HANDLERS.put(".emf", NullFileHandler.instance);
+        HANDLERS.put(".dib", NullFileHandler.instance);
+        HANDLERS.put(".svg", NullFileHandler.instance);
+        HANDLERS.put(".pict", NullFileHandler.instance);
+        HANDLERS.put(".jpg", NullFileHandler.instance);
+        HANDLERS.put(".jpeg", NullFileHandler.instance);
+        HANDLERS.put(".tif", NullFileHandler.instance);
+        HANDLERS.put(".tiff", NullFileHandler.instance);
+        HANDLERS.put(".wav", NullFileHandler.instance);
+        HANDLERS.put(".xml", NullFileHandler.instance);
+        HANDLERS.put(".csv", NullFileHandler.instance);
+        HANDLERS.put(".ods", NullFileHandler.instance);
+        HANDLERS.put(".ttf", NullFileHandler.instance);
+        HANDLERS.put(".fntdata", NullFileHandler.instance);
         // VBA source files
-        HANDLERS.put(".vba", new NullFileHandler());
-        HANDLERS.put(".bas", new NullFileHandler());
-        HANDLERS.put(".frm", new NullFileHandler());
-        HANDLERS.put(".frx", new NullFileHandler()); //binary
-        HANDLERS.put(".cls", new NullFileHandler());
+        HANDLERS.put(".vba", NullFileHandler.instance);
+        HANDLERS.put(".bas", NullFileHandler.instance);
+        HANDLERS.put(".frm", NullFileHandler.instance);
+        HANDLERS.put(".frx", NullFileHandler.instance); //binary
+        HANDLERS.put(".cls", NullFileHandler.instance);
 
         // map some files without extension
-        HANDLERS.put("spreadsheet/BigSSTRecord", new NullFileHandler());
-        HANDLERS.put("spreadsheet/BigSSTRecord2", new NullFileHandler());
-        HANDLERS.put("spreadsheet/BigSSTRecord2CR1", new NullFileHandler());
-        HANDLERS.put("spreadsheet/BigSSTRecord2CR2", new NullFileHandler());
-        HANDLERS.put("spreadsheet/BigSSTRecord2CR3", new NullFileHandler());
-        HANDLERS.put("spreadsheet/BigSSTRecord2CR4", new NullFileHandler());
-        HANDLERS.put("spreadsheet/BigSSTRecord2CR5", new NullFileHandler());
-        HANDLERS.put("spreadsheet/BigSSTRecord2CR6", new NullFileHandler());
-        HANDLERS.put("spreadsheet/BigSSTRecord2CR7", new NullFileHandler());
-        HANDLERS.put("spreadsheet/BigSSTRecordCR", new NullFileHandler());
-        HANDLERS.put("spreadsheet/test_properties1", new NullFileHandler());
+        HANDLERS.put("spreadsheet/BigSSTRecord", NullFileHandler.instance);
+        HANDLERS.put("spreadsheet/BigSSTRecord2", NullFileHandler.instance);
+        HANDLERS.put("spreadsheet/BigSSTRecord2CR1", NullFileHandler.instance);
+        HANDLERS.put("spreadsheet/BigSSTRecord2CR2", NullFileHandler.instance);
+        HANDLERS.put("spreadsheet/BigSSTRecord2CR3", NullFileHandler.instance);
+        HANDLERS.put("spreadsheet/BigSSTRecord2CR4", NullFileHandler.instance);
+        HANDLERS.put("spreadsheet/BigSSTRecord2CR5", NullFileHandler.instance);
+        HANDLERS.put("spreadsheet/BigSSTRecord2CR6", NullFileHandler.instance);
+        HANDLERS.put("spreadsheet/BigSSTRecord2CR7", NullFileHandler.instance);
+        HANDLERS.put("spreadsheet/BigSSTRecordCR", NullFileHandler.instance);
+        HANDLERS.put("spreadsheet/test_properties1", NullFileHandler.instance);
 
         // keystore files
-        HANDLERS.put(".pfx", new NullFileHandler());
-        HANDLERS.put(".pem", new NullFileHandler());
-        HANDLERS.put(".jks", new NullFileHandler());
-        HANDLERS.put(".pkcs12", new NullFileHandler());
+        HANDLERS.put(".pfx", NullFileHandler.instance);
+        HANDLERS.put(".pem", NullFileHandler.instance);
+        HANDLERS.put(".jks", NullFileHandler.instance);
+        HANDLERS.put(".pkcs12", NullFileHandler.instance);
 
         Map<String,String> passmap = new HashMap<>();
         passmap.put("slideshow/Password_Protected-hello.ppt", "hello");
@@ -484,6 +484,8 @@ public class TestAllFiles {
     }
 
     public static class NullFileHandler implements FileHandler {
+        public static final FileHandler instance = new NullFileHandler();
+
         @Override
         public void handleFile(InputStream stream, String path) {
         }

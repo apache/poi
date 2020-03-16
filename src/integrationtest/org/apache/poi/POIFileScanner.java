@@ -139,7 +139,7 @@ public class POIFileScanner {
                         }
                     } catch (IOException | RuntimeException e2) {
                         System.out.println("Could not open POIFSFileSystem for OLE2 file " + testFile + ": " + e + " and " + e2);
-                        return new TestAllFiles.NullFileHandler();
+                        return TestAllFiles.NullFileHandler.instance;
                     }
                 }
             }
@@ -159,7 +159,7 @@ public class POIFileScanner {
                         }
                     } catch (IOException | RuntimeException e2) {
                         System.out.println("Could not open POIFSFileSystem for OOXML file " + testFile + ": " + e + " and " + e2);
-                        return new TestAllFiles.NullFileHandler();
+                        return TestAllFiles.NullFileHandler.instance;
                     }
                 }
             }
@@ -168,12 +168,12 @@ public class POIFileScanner {
             case RTF:
             case PDF:
             case HTML:
-                return new TestAllFiles.NullFileHandler();
+                return TestAllFiles.NullFileHandler.instance;
         }
 
         System.out.println("Did not get a handler for extension " + TestAllFiles.getExtension(file) +
                 " of file " + file + ": " + magic);
-        return new TestAllFiles.NullFileHandler();
+        return TestAllFiles.NullFileHandler.instance;
     }
 
     @Ignore
