@@ -17,7 +17,9 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,59 +33,56 @@ import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.STEditAs;
 
-/**
- * @author Yegor Kozlov
- */
 public final class TestXSSFPicture extends BaseTestPicture {
 
     public TestXSSFPicture() {
         super(XSSFITestDataProvider.instance);
     }
 
+
     @Test
     public void resize() throws Exception {
-        XSSFWorkbook wb = XSSFITestDataProvider.instance.openSampleWorkbook("resize_compare.xlsx");
-        XSSFDrawing dp = wb.getSheetAt(0).createDrawingPatriarch();
-        List<XSSFShape> pics = dp.getShapes();
-        XSSFPicture inpPic = (XSSFPicture)pics.get(0);
-        XSSFPicture cmpPic = (XSSFPicture)pics.get(0);
-        
-        baseTestResize(inpPic, cmpPic, 2.0, 2.0);
-        wb.close();
+        try (XSSFWorkbook wb = XSSFITestDataProvider.instance.openSampleWorkbook("resize_compare.xlsx")) {
+            XSSFDrawing dp = wb.getSheetAt(0).createDrawingPatriarch();
+            List<XSSFShape> pics = dp.getShapes();
+            XSSFPicture inpPic = (XSSFPicture) pics.get(0);
+            XSSFPicture cmpPic = (XSSFPicture) pics.get(0);
+
+            baseTestResize(inpPic, cmpPic, 2.0, 2.0);
+        }
     }
 
 
     @Test
     public void create() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
-        XSSFDrawing drawing = sheet.createDrawingPatriarch();
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
-        byte[] jpegData = "test jpeg data".getBytes(LocaleUtil.CHARSET_1252);
+            byte[] jpegData = "test jpeg data".getBytes(LocaleUtil.CHARSET_1252);
 
-        List<XSSFPictureData> pictures = wb.getAllPictures();
-        assertEquals(0, pictures.size());
+            List<XSSFPictureData> pictures = wb.getAllPictures();
+            assertEquals(0, pictures.size());
 
-        int jpegIdx = wb.addPicture(jpegData, XSSFWorkbook.PICTURE_TYPE_JPEG);
-        assertEquals(1, pictures.size());
-        assertEquals("jpeg", pictures.get(jpegIdx).suggestFileExtension());
-        assertArrayEquals(jpegData, pictures.get(jpegIdx).getData());
+            int jpegIdx = wb.addPicture(jpegData, XSSFWorkbook.PICTURE_TYPE_JPEG);
+            assertEquals(1, pictures.size());
+            assertEquals("jpeg", pictures.get(jpegIdx).suggestFileExtension());
+            assertArrayEquals(jpegData, pictures.get(jpegIdx).getData());
 
-        XSSFClientAnchor anchor = new XSSFClientAnchor(0, 0, 0, 0, 1, 1, 10, 30);
-        assertEquals(AnchorType.MOVE_AND_RESIZE, anchor.getAnchorType());
-        anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
-        assertEquals(AnchorType.DONT_MOVE_AND_RESIZE, anchor.getAnchorType());
+            XSSFClientAnchor anchor = new XSSFClientAnchor(0, 0, 0, 0, 1, 1, 10, 30);
+            assertEquals(AnchorType.MOVE_AND_RESIZE, anchor.getAnchorType());
+            anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
+            assertEquals(AnchorType.DONT_MOVE_AND_RESIZE, anchor.getAnchorType());
 
-        XSSFPicture shape = drawing.createPicture(anchor, jpegIdx);
-        assertEquals(anchor, shape.getAnchor());
-        assertNotNull(shape.getPictureData());
-        assertArrayEquals(jpegData, shape.getPictureData().getData());
+            XSSFPicture shape = drawing.createPicture(anchor, jpegIdx);
+            assertEquals(anchor, shape.getAnchor());
+            assertNotNull(shape.getPictureData());
+            assertArrayEquals(jpegData, shape.getPictureData().getData());
 
-        CTTwoCellAnchor ctShapeHolder = drawing.getCTDrawing().getTwoCellAnchorArray(0);
-        // STEditAs.ABSOLUTE corresponds to ClientAnchor.DONT_MOVE_AND_RESIZE
-        assertEquals(STEditAs.ABSOLUTE, ctShapeHolder.getEditAs());
-        
-        wb.close();
+            CTTwoCellAnchor ctShapeHolder = drawing.getCTDrawing().getTwoCellAnchorArray(0);
+            // STEditAs.ABSOLUTE corresponds to ClientAnchor.DONT_MOVE_AND_RESIZE
+            assertEquals(STEditAs.ABSOLUTE, ctShapeHolder.getEditAs());
+        }
     }
 
     /**
@@ -93,71 +92,69 @@ public final class TestXSSFPicture extends BaseTestPicture {
      */
     @Test
     public void incrementShapeId() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
-        XSSFDrawing drawing = sheet.createDrawingPatriarch();
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
-        XSSFClientAnchor anchor = new XSSFClientAnchor(0, 0, 0, 0, 1, 1, 10, 30);
-        byte[] jpegData = "picture1".getBytes(LocaleUtil.CHARSET_1252);
-        int jpegIdx = wb.addPicture(jpegData, XSSFWorkbook.PICTURE_TYPE_JPEG);
+            XSSFClientAnchor anchor = new XSSFClientAnchor(0, 0, 0, 0, 1, 1, 10, 30);
+            byte[] jpegData = "picture1".getBytes(LocaleUtil.CHARSET_1252);
+            int jpegIdx = wb.addPicture(jpegData, XSSFWorkbook.PICTURE_TYPE_JPEG);
 
-        XSSFPicture shape1 = drawing.createPicture(anchor, jpegIdx);
-        assertEquals(1, shape1.getCTPicture().getNvPicPr().getCNvPr().getId());
+            XSSFPicture shape1 = drawing.createPicture(anchor, jpegIdx);
+            assertEquals(1, shape1.getCTPicture().getNvPicPr().getCNvPr().getId());
 
-        jpegData = "picture2".getBytes(LocaleUtil.CHARSET_1252);
-        jpegIdx = wb.addPicture(jpegData, XSSFWorkbook.PICTURE_TYPE_JPEG);
-        XSSFPicture shape2 = drawing.createPicture(anchor, jpegIdx);
-        assertEquals(2, shape2.getCTPicture().getNvPicPr().getCNvPr().getId());
-        wb.close();
+            jpegData = "picture2".getBytes(LocaleUtil.CHARSET_1252);
+            jpegIdx = wb.addPicture(jpegData, XSSFWorkbook.PICTURE_TYPE_JPEG);
+            XSSFPicture shape2 = drawing.createPicture(anchor, jpegIdx);
+            assertEquals(2, shape2.getCTPicture().getNvPicPr().getCNvPr().getId());
+        }
     }
 
     /**
      * same image refrerred by mulitple sheets
      */
-    @SuppressWarnings("resource")
     @Test
     public void multiRelationShips() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
+        try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
+            byte[] pic1Data = "test jpeg data".getBytes(LocaleUtil.CHARSET_1252);
+            byte[] pic2Data = "test png data".getBytes(LocaleUtil.CHARSET_1252);
 
-        byte[] pic1Data = "test jpeg data".getBytes(LocaleUtil.CHARSET_1252);
-        byte[] pic2Data = "test png data".getBytes(LocaleUtil.CHARSET_1252);
+            List<XSSFPictureData> pictures = wb1.getAllPictures();
+            assertEquals(0, pictures.size());
 
-        List<XSSFPictureData> pictures = wb.getAllPictures();
-        assertEquals(0, pictures.size());
+            int pic1 = wb1.addPicture(pic1Data, XSSFWorkbook.PICTURE_TYPE_JPEG);
+            int pic2 = wb1.addPicture(pic2Data, XSSFWorkbook.PICTURE_TYPE_PNG);
 
-        int pic1 = wb.addPicture(pic1Data, XSSFWorkbook.PICTURE_TYPE_JPEG);
-        int pic2 = wb.addPicture(pic2Data, XSSFWorkbook.PICTURE_TYPE_PNG);
+            XSSFSheet sheet1 = wb1.createSheet();
+            XSSFDrawing drawing1 = sheet1.createDrawingPatriarch();
+            XSSFPicture shape1 = drawing1.createPicture(new XSSFClientAnchor(), pic1);
+            XSSFPicture shape2 = drawing1.createPicture(new XSSFClientAnchor(), pic2);
 
-        XSSFSheet sheet1 = wb.createSheet();
-        XSSFDrawing drawing1 = sheet1.createDrawingPatriarch();
-        XSSFPicture shape1 = drawing1.createPicture(new XSSFClientAnchor(), pic1);
-        XSSFPicture shape2 = drawing1.createPicture(new XSSFClientAnchor(), pic2);
+            XSSFSheet sheet2 = wb1.createSheet();
+            XSSFDrawing drawing2 = sheet2.createDrawingPatriarch();
+            XSSFPicture shape3 = drawing2.createPicture(new XSSFClientAnchor(), pic2);
+            XSSFPicture shape4 = drawing2.createPicture(new XSSFClientAnchor(), pic1);
 
-        XSSFSheet sheet2 = wb.createSheet();
-        XSSFDrawing drawing2 = sheet2.createDrawingPatriarch();
-        XSSFPicture shape3 = drawing2.createPicture(new XSSFClientAnchor(), pic2);
-        XSSFPicture shape4 = drawing2.createPicture(new XSSFClientAnchor(), pic1);
+            assertEquals(2, pictures.size());
 
-        assertEquals(2, pictures.size());
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                pictures = wb2.getAllPictures();
+                assertEquals(2, pictures.size());
 
-        wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        pictures = wb.getAllPictures();
-        assertEquals(2, pictures.size());
+                sheet1 = wb2.getSheetAt(0);
+                drawing1 = sheet1.createDrawingPatriarch();
+                XSSFPicture shape11 = (XSSFPicture) drawing1.getShapes().get(0);
+                assertArrayEquals(shape1.getPictureData().getData(), shape11.getPictureData().getData());
+                XSSFPicture shape22 = (XSSFPicture) drawing1.getShapes().get(1);
+                assertArrayEquals(shape2.getPictureData().getData(), shape22.getPictureData().getData());
 
-        sheet1 = wb.getSheetAt(0);
-        drawing1 = sheet1.createDrawingPatriarch();
-        XSSFPicture shape11 = (XSSFPicture)drawing1.getShapes().get(0);
-        assertArrayEquals(shape1.getPictureData().getData(), shape11.getPictureData().getData());
-        XSSFPicture shape22 = (XSSFPicture)drawing1.getShapes().get(1);
-        assertArrayEquals(shape2.getPictureData().getData(), shape22.getPictureData().getData());
-
-        sheet2 = wb.getSheetAt(1);
-        drawing2 = sheet2.createDrawingPatriarch();
-        XSSFPicture shape33 = (XSSFPicture)drawing2.getShapes().get(0);
-        assertArrayEquals(shape3.getPictureData().getData(), shape33.getPictureData().getData());
-        XSSFPicture shape44 = (XSSFPicture)drawing2.getShapes().get(1);
-        assertArrayEquals(shape4.getPictureData().getData(), shape44.getPictureData().getData());
-
-        wb.close();
+                sheet2 = wb2.getSheetAt(1);
+                drawing2 = sheet2.createDrawingPatriarch();
+                XSSFPicture shape33 = (XSSFPicture) drawing2.getShapes().get(0);
+                assertArrayEquals(shape3.getPictureData().getData(), shape33.getPictureData().getData());
+                XSSFPicture shape44 = (XSSFPicture) drawing2.getShapes().get(1);
+                assertArrayEquals(shape4.getPictureData().getData(), shape44.getPictureData().getData());
+            }
+        }
     }
 }
