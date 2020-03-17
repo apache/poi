@@ -49,6 +49,7 @@ import org.apache.poi.sl.usermodel.Placeholder;
 import org.apache.poi.sl.usermodel.Sheet;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
@@ -540,7 +541,8 @@ implements XSLFShapeContainer, Sheet<XSLFShape,XSLFTextParagraph> {
         return getPlaceholderByType(ph.ooxmlId);
     }
 
-    XSLFSimpleShape getPlaceholder(CTPlaceholder ph) {
+    @Internal
+    public XSLFSimpleShape getPlaceholder(CTPlaceholder ph) {
         XSLFSimpleShape shape = null;
         if(ph.isSetIdx()) {
             shape = getPlaceholderById((int)ph.getIdx());

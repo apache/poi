@@ -59,6 +59,16 @@ public class XSLFPlaceholderDetails implements PlaceholderDetails {
         return Placeholder.lookupOoxml(ph.getType().intValue());
     }
 
+    public XSLFSimpleShape getPlaceholderShape() {
+        CTPlaceholder ph = getCTPlaceholder(false);
+        if (ph == null) {
+            return null;
+        }
+        XSLFSheet sheet = (XSLFSheet)shape.getSheet().getMasterSheet();
+        return sheet.getPlaceholder(ph);
+    }
+
+
     @Override
     public void setPlaceholder(final Placeholder placeholder) {
         CTPlaceholder ph = getCTPlaceholder(placeholder != null);
@@ -66,7 +76,10 @@ public class XSLFPlaceholderDetails implements PlaceholderDetails {
             if (placeholder != null) {
                 ph.setType(STPlaceholderType.Enum.forInt(placeholder.ooxmlId));
             } else {
-                getNvProps().unsetPh();
+                CTApplicationNonVisualDrawingProps nvProps = getNvProps();
+                if (nvProps != null) {
+                    nvProps.unsetPh();
+                }
             }
         }
     }

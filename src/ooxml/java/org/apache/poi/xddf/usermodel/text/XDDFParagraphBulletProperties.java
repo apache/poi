@@ -204,4 +204,8 @@ public class XDDFParagraphBulletProperties {
             props.unsetBuSzTx();
         }
     }
+
+    public CTTextParagraphProperties getXmlObject() {
+        return props;
+    }
 }
