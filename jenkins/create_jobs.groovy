@@ -18,7 +18,7 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-OpenJDK', jdk: 'OpenJDK 1.8', trigger: 'H */12 * * *',
           // only a limited set of nodes still have OpenJDK 8 (on Ubuntu) installed
-          slaves: 'H5||H6||H44||H48||H49||H50',
+          slaves: 'H0||H2||H6||H9||H10||H12||H14||H22||H23||H25||H27||H34||H36||H37||H39||H40||H42||H44||H48||H50',
           skipcigame: true
         ],
         [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays, skipcigame: true
