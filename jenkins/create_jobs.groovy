@@ -16,6 +16,11 @@ def xercesLib = './xercesImpl-2.6.1.jar'
 def poijobs = [
         [ name: 'POI-DSL-1.8', trigger: 'H */12 * * *'
         ],
+        [ name: 'POI-DSL-OpenJDK', jdk: 'OpenJDK 1.8', trigger: 'H */12 * * *',
+          // only a limited set of nodes still have OpenJDK 8 (on Ubuntu) installed
+          slaves: 'H5||H6||H44||H48||H49||H50',
+          skipcigame: true
+        ],
         [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays, skipcigame: true
         ],
         [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true
@@ -49,7 +54,7 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
         ],
-        [ name: 'POI-DSL-SonarQube', trigger: 'H 9 * * *', maven: true, sonar: true, skipcigame: true
+        [ name: 'POI-DSL-SonarQube', trigger: 'H 7 * * *', maven: true, sonar: true, skipcigame: true, email: 'kiwiwings@apache.org'
         ],
         [ name: 'POI-DSL-SonarQube-Gradle', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true,
                 disabled: true // this one does run, but does not actually send data to Sonarqube for some reason, we need to investigate some more
@@ -106,6 +111,7 @@ def jdkMapping = [
         '1.12': 'JDK 12 (latest)',
         '1.13': 'JDK 13 (latest)',
         '1.14': 'JDK 14 (latest)',
+        'OpenJDK 1.8': 'OpenJDK 1.8.0_242',
         'IBMJDK': 'IBM 1.8 64-bit (on Ubuntu only)',
 ]
 
@@ -578,6 +584,7 @@ Unfortunately we often see builds break because of changes/new machines...''')
     axes {
         jdk(
                 'JDK 1.8 (latest)',
+                'OpenJDK 1.8.0_242',
                 'IBM 1.8 64-bit (on Ubuntu only)',
                 'JDK 11 (latest)',
                 'JDK 12 (latest)',
