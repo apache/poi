@@ -31,8 +31,8 @@ import static org.apache.poi.poifs.crypt.dsig.facets.SignatureFacetHelper.newTra
 import java.security.MessageDigest;
 import java.security.cert.CertificateEncodingException;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -74,7 +74,9 @@ import org.etsi.uri.x01903.v13.SignerRoleType;
 import org.w3.x2000.x09.xmldsig.DigestMethodType;
 import org.w3.x2000.x09.xmldsig.X509IssuerSerialType;
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 /**
  * XAdES Signature Facet. Implements XAdES v1.4.1 which is compatible with XAdES
@@ -233,9 +235,15 @@ public class XAdESSignatureFacet implements SignatureFacet {
 
     private XMLObject addXadesObject(SignatureInfo signatureInfo, Document document, QualifyingPropertiesType qualifyingProperties) {
         Node qualDocElSrc = qualifyingProperties.getDomNode();
-        Node qualDocEl = document.importNode(qualDocElSrc, true);
-        List<XMLStructure> xadesObjectContent = Arrays.asList(new DOMStructure(qualDocEl));
-        return signatureInfo.getSignatureFactory().newXMLObject(xadesObjectContent, null, null, null);
+        Element qualDocEl = (Element)document.importNode(qualDocElSrc, true);
+
+        NodeList nl = qualDocEl.getElementsByTagNameNS(SignatureFacet.XADES_132_NS, "SignedProperties");
+        assert(nl.getLength() == 1);
+        ((Element)nl.item(0)).setIdAttribute("Id", true);
+
+        List<XMLStructure> xadesObjectContent = Collections.singletonList(new DOMStructure(qualDocEl));
+        XMLObject xo = signatureInfo.getSignatureFactory().newXMLObject(xadesObjectContent, null, null, null);
+        return xo;
     }
 
     private Reference addXadesReference(SignatureInfo signatureInfo) throws XMLSignatureException {

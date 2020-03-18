@@ -153,7 +153,7 @@ import org.w3c.dom.events.MutationEvent;
  * in the classpath:</p>
  * <ul>
  * <li>BouncyCastle bcpkix and bcprov (tested against 1.64)</li>
- * <li>Apache Santuario "xmlsec" (tested against 2.1.2)</li>
+ * <li>Apache Santuario "xmlsec" (tested against 2.1.5)</li>
  * <li>and slf4j-api (tested against 1.7.30)</li>
  * </ul>
  */
@@ -461,26 +461,21 @@ public class SignatureInfo {
             return;
         }
 
-        EventTarget target = (EventTarget)document;
-
         final EventListener[] el = { null };
+        final EventTarget eventTarget = (EventTarget)document;
+        final String eventType = "DOMSubtreeModified";
+        final boolean DONT_USE_CAPTURE = false;
+
         el[0] = (e) -> {
-            if (!(e instanceof MutationEvent)) {
-                return;
+            if (e instanceof MutationEvent && e.getTarget() instanceof Document) {
+                eventTarget.removeEventListener(eventType, el[0], DONT_USE_CAPTURE);
+                sml.handleElement(this, document, eventTarget, el[0]);
+                eventTarget.addEventListener(eventType, el[0], DONT_USE_CAPTURE);
             }
-
-            MutationEvent mutEvt = (MutationEvent) e;
-            EventTarget et = mutEvt.getTarget();
-            if (!(et instanceof Element)) {
-                return;
-            }
-
-            sml.handleElement(this, (Element) et, target, el[0]);
         };
 
-        SignatureMarshalListener.setListener(target, el[0], true);
+        eventTarget.addEventListener(eventType, el[0], DONT_USE_CAPTURE);
     }
-
 
     /**
      * Helper method for adding informations after the signing.

@@ -17,7 +17,7 @@
 
 package org.apache.poi.poifs.crypt.dsig;
 
-import org.w3c.dom.Element;
+import org.w3c.dom.Document;
 import org.w3c.dom.events.EventListener;
 import org.w3c.dom.events.EventTarget;
 
@@ -26,16 +26,5 @@ import org.w3c.dom.events.EventTarget;
  * e.g. to register id attributes or set prefixes for registered namespaces
  */
 public interface SignatureMarshalListener {
-    void handleElement(SignatureInfo signatureInfo, Element el, EventTarget target, EventListener parentListener);
-
-    // helper method to keep it in one place
-    static void setListener(EventTarget target, EventListener listener, boolean enabled) {
-        final String type = "DOMSubtreeModified";
-        final boolean DONT_USE_CAPTURE = false;
-        if (enabled) {
-            target.addEventListener(type, listener, DONT_USE_CAPTURE);
-        } else {
-            target.removeEventListener(type, listener, DONT_USE_CAPTURE);
-        }
-    }
+    void handleElement(SignatureInfo signatureInfo, Document doc, EventTarget target, EventListener parentListener);
 }

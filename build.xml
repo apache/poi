@@ -223,8 +223,8 @@ under the License.
               value="${repository.m2}/maven2/com/zaxxer/SparseBitSet/1.2/SparseBitSet-1.2.jar"/>
 
     <!-- xml signature libs -->
-    <property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.1.2.jar"/>
-    <property name="dsig.xmlsec.url" value="${repository.m2}/maven2/org/apache/santuario/xmlsec/2.1.2/xmlsec-2.1.2.jar"/>
+    <property name="dsig.xmlsec.jar" location="${compile.lib}/xmlsec-2.1.5.jar"/>
+    <property name="dsig.xmlsec.url" value="${repository.m2}/maven2/org/apache/santuario/xmlsec/2.1.5/xmlsec-2.1.5.jar"/>
     <property name="dsig.bouncycastle-prov.jar" location="${compile.lib}/bcprov-ext-jdk15on-1.64.jar"/>
     <property name="dsig.bouncycastle-prov.url" value="${repository.m2}/maven2/org/bouncycastle/bcprov-ext-jdk15on/1.64/bcprov-ext-jdk15on-1.64.jar"/>
     <property name="dsig.bouncycastle-pkix.jar" location="${compile.lib}/bcpkix-jdk15on-1.64.jar"/>
@@ -715,6 +715,10 @@ under the License.
                 <include name="xercesImpl-*.jar"/>
                 <include name="xmlsec-2.0*.jar"/>
                 <include name="xmlsec-2.1.0.jar"/>
+                <include name="xmlsec-2.1.1.jar"/>
+                <include name="xmlsec-2.1.2.jar"/>
+                <include name="xmlsec-2.1.3.jar"/>
+                <include name="xmlsec-2.1.4.jar"/>
                 <include name="bc*jdk15on-1.5*.jar"/>
                 <include name="bc*jdk15on-1.60*.jar"/>
                 <include name="bc*jdk15on-1.61*.jar"/>
