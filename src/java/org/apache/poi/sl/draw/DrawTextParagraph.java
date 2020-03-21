@@ -568,7 +568,7 @@ public class DrawTextParagraph implements Drawable {
             text = new StringBuilder();
         }
 
-        PlaceableShape<?,?> ps = getParagraphShape();
+        final DrawPaint dp = new DrawPaint(getParagraphShape());
         DrawFontManager dfm = DrawFactory.getInstance(graphics).getFontManager(graphics);
         assert(dfm != null);
 
@@ -587,7 +587,7 @@ public class DrawTextParagraph implements Drawable {
             int endIndex = text.length();
 
             PaintStyle fgPaintStyle = run.getFontColor();
-            Paint fgPaint = new DrawPaint(ps).getPaint(graphics, fgPaintStyle);
+            Paint fgPaint = dp.getPaint(graphics, fgPaintStyle);
             attList.add(new AttributedStringData(TextAttribute.FOREGROUND, fgPaint, beginIndex, endIndex));
 
             Double fontSz = run.getFontSize();

@@ -139,13 +139,11 @@ public class DrawSimpleShape extends DrawShape {
     }
 
     protected Paint getFillPaint(Graphics2D graphics) {
-        final PaintStyle ps = getShape().getFillStyle().getPaint();
         DrawPaint drawPaint = DrawFactory.getInstance(graphics).getPaint(getShape());
-        return drawPaint.getPaint(graphics, ps);
+        return drawPaint.getPaint(graphics, getShape().getFillStyle().getPaint());
     }
 
     protected Paint getLinePaint(Graphics2D graphics) {
-        final PaintStyle ps = getShape().getFillStyle().getPaint();
         DrawPaint drawPaint = DrawFactory.getInstance(graphics).getPaint(getShape());
         return drawPaint.getPaint(graphics, getShape().getStrokeStyle().getPaint());
     }

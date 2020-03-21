@@ -56,6 +56,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTShapeStyle;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrix;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTStyleMatrixReference;
+import org.openxmlformats.schemas.drawingml.x2006.main.STSchemeColorVal;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperties;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPicture;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPlaceholder;
@@ -565,25 +566,23 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
             return selectPaint(fp.getGradFill(), phClr, theme);
         } else if (fp.isSetMatrixStyle()) {
             return selectPaint(fp.getMatrixStyle(), theme, fp.isLineStyle(), hasPlaceholder);
+        } else if (phClr != null) {
+            return selectPaint(phClr, theme);
         } else {
             return null;
         }
     }
 
+    protected PaintStyle selectPaint(CTSchemeColor phClr, final XSLFTheme theme) {
+        final XSLFColor c = new XSLFColor(null, theme, phClr, _sheet);
+        return DrawPaint.createSolidPaint(c.getColorStyle());
+    }
+
     @SuppressWarnings("WeakerAccess")
     protected PaintStyle selectPaint(CTSolidColorFillProperties solidFill, CTSchemeColor phClr, final XSLFTheme theme) {
-        if (solidFill.isSetSchemeClr()) {
-        	// if there's a reference to the placeholder color,
-        	// stop evaluating further and let the caller select
-        	// the next style inheritance level
-//            if (STSchemeColorVal.PH_CLR.equals(solidFill.getSchemeClr().getVal())) {
-//                return null;
-//            }
-            if (phClr == null) {
-                phClr = solidFill.getSchemeClr();
-            }
-        }
-        final XSLFColor c = new XSLFColor(solidFill, theme, phClr, _sheet);
+        CTSchemeColor nestedPhClr = solidFill.getSchemeClr();
+        boolean useNested = nestedPhClr != null && nestedPhClr.getVal() != null && !STSchemeColorVal.PH_CLR.equals(nestedPhClr.getVal());
+        final XSLFColor c = new XSLFColor(solidFill, theme, useNested ? nestedPhClr : phClr, _sheet);
         return DrawPaint.createSolidPaint(c.getColorStyle());
     }
 
