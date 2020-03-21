@@ -54,7 +54,10 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
         ],
-        [ name: 'POI-DSL-SonarQube', trigger: 'H 7 * * *', maven: true, sonar: true, skipcigame: true, email: 'kiwiwings@apache.org'
+        [ name: 'POI-DSL-SonarQube', trigger: 'H 7 * * *', maven: true, sonar: true, skipcigame: true,
+          email: 'kiwiwings@apache.org',
+          // H40 can't access sonar instance
+          slaveAdd: '&&!H40'
         ],
         [ name: 'POI-DSL-SonarQube-Gradle', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true,
                 disabled: true // this one does run, but does not actually send data to Sonarqube for some reason, we need to investigate some more
