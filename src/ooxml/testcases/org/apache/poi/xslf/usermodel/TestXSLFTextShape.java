@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.apache.poi.sl.TestCommonSL.sameColor;
+import static org.apache.poi.sl.TestCommonSL.getColor;
 import static org.apache.poi.xslf.usermodel.TestXSLFSimpleShape.getSpPr;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -41,6 +41,7 @@ import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.xddf.usermodel.text.XDDFBodyProperties;
 import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
+import org.apache.poi.xddf.usermodel.text.XDDFTextParagraph;
 import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -76,7 +77,7 @@ public class TestXSLFTextShape {
         verifySlide7(slide.get(6));
         verifySlide8(slide.get(7));
         verifySlide10(slide.get(9));
-        
+
         ppt.close();
     }
 
@@ -118,11 +119,11 @@ public class TestXSLFTextShape {
         // now check text properties
         assertEquals("Centered Title", shape1.getText());
         assertEquals("Centered Title",
-            tb1.getParagraphs().stream().map(p -> p.getText()).collect(Collectors.joining("\n")));
+            tb1.getParagraphs().stream().map(XDDFTextParagraph::getText).collect(Collectors.joining("\n")));
         XSLFTextRun r1 = shape1.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals("Calibri", r1.getFontFamily());
         assertEquals(44.0, r1.getFontSize(), 0);
-        assertTrue(sameColor(Color.black, r1.getFontColor()));
+        assertEquals(Color.black, getColor(r1.getFontColor()));
 
         XSLFTextShape shape2 = (XSLFTextShape)shapes.get(1);
         XDDFTextBody tb2 = shape2.getTextBody();
@@ -155,7 +156,7 @@ public class TestXSLFTextShape {
         assertNull(tbp2.getAnchoring());
 
         assertEquals("subtitle", shape2.getText());
-        assertEquals("subtitle", tb2.getParagraphs().stream().map(p -> p.getText()).collect(Collectors.joining("\n")));
+        assertEquals("subtitle", tb2.getParagraphs().stream().map(XDDFTextParagraph::getText).collect(Collectors.joining("\n")));
         XSLFTextRun r2 = shape2.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals("Calibri", r2.getFontFamily());
         assertEquals(32.0, r2.getFontSize(), 0);
@@ -199,7 +200,7 @@ public class TestXSLFTextShape {
         XSLFTextRun r1 = shape1.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals("Calibri", r1.getFontFamily());
         assertEquals(44.0, r1.getFontSize(), 0);
-        assertTrue(sameColor(Color.black, r1.getFontColor()));
+        assertEquals(Color.black, getColor(r1.getFontColor()));
 
         XSLFTextShape shape2 = (XSLFTextShape)shapes.get(1);
         CTPlaceholder ph2 = shape2.getPlaceholderDetails().getCTPlaceholder(false);
@@ -234,8 +235,8 @@ public class TestXSLFTextShape {
         assertEquals("Content", pr1.getRawText());
         assertEquals("Calibri", pr1.getFontFamily());
         assertEquals(32.0, pr1.getFontSize(), 0);
-        assertEquals(27.0, pr1.getParentParagraph().getLeftMargin(), 0); 
-        assertEquals("\u2022", pr1.getParentParagraph().getBulletCharacter()); 
+        assertEquals(27.0, pr1.getParentParagraph().getLeftMargin(), 0);
+        assertEquals("\u2022", pr1.getParentParagraph().getBulletCharacter());
         assertEquals("Arial", pr1.getParentParagraph().getBulletFont());
 
         XSLFTextRun pr2 = shape2.getTextParagraphs().get(1).getTextRuns().get(0);
@@ -310,7 +311,7 @@ public class TestXSLFTextShape {
         assertEquals(TextAlign.LEFT, r1.getParentParagraph().getTextAlign());
         assertEquals("Calibri", r1.getFontFamily());
         assertEquals(40.0, r1.getFontSize(), 0);
-        assertTrue(sameColor(Color.black, r1.getFontColor()));
+        assertEquals(Color.black, getColor(r1.getFontColor()));
         assertTrue(r1.isBold());
         assertFalse(r1.isItalic());
         assertFalse(r1.isUnderlined());
@@ -384,7 +385,7 @@ public class TestXSLFTextShape {
         assertEquals(TextAlign.CENTER, r1.getParentParagraph().getTextAlign());
         assertEquals("Calibri", r1.getFontFamily());
         assertEquals(44.0, r1.getFontSize(), 0);
-        assertTrue(sameColor(Color.black, r1.getFontColor()));
+        assertEquals(Color.black, getColor(r1.getFontColor()));
 
         XSLFTextShape shape2 = (XSLFTextShape)shapes.get(1);
         CTPlaceholder ph2 = shape2.getPlaceholderDetails().getCTPlaceholder(false);
@@ -452,7 +453,7 @@ public class TestXSLFTextShape {
         assertEquals(0, pr5.getParentParagraph().getIndentLevel());
         assertEquals("Right", pr5.getRawText());
         assertEquals("Calibri", pr5.getFontFamily());
-        assertTrue(sameColor(Color.black, pr5.getFontColor()));
+        assertEquals(Color.black, getColor(pr5.getFontColor()));
     }
 
     @SuppressWarnings("unused")
@@ -460,7 +461,7 @@ public class TestXSLFTextShape {
         XSLFSlideLayout layout = slide.getSlideLayout();
         List<XSLFShape> shapes = slide.getShapes();
         // TODO
-    }    
+    }
 
     void verifySlide7(XSLFSlide slide){
         XSLFSlideLayout layout = slide.getSlideLayout();
@@ -492,7 +493,7 @@ public class TestXSLFTextShape {
         assertEquals(TextAlign.CENTER, r1.getParentParagraph().getTextAlign());
         assertEquals("Calibri", r1.getFontFamily());
         assertEquals(44.0, r1.getFontSize(), 0);
-        assertTrue(sameColor(Color.black, r1.getFontColor()));
+        assertEquals(Color.black, getColor(r1.getFontColor()));
         assertFalse(r1.isBold());
 
         XSLFTextShape shape2 = (XSLFTextShape)shapes.get(1);
@@ -565,7 +566,7 @@ public class TestXSLFTextShape {
         assertEquals(TextAlign.LEFT, r1.getParentParagraph().getTextAlign());
         assertEquals("Calibri", r1.getFontFamily());
         assertEquals(20.0, r1.getFontSize(), 0);
-        assertTrue(sameColor(Color.black, r1.getFontColor()));
+        assertEquals(Color.black, getColor(r1.getFontColor()));
         assertTrue(r1.isBold());
 
         XSLFTextShape shape2 = (XSLFTextShape)shapes.get(1);
@@ -652,8 +653,7 @@ public class TestXSLFTextShape {
         assertEquals(TextAlign.CENTER, r1.getParentParagraph().getTextAlign());
         assertEquals("Calibri", r1.getFontFamily());
         assertEquals(12.0, r1.getFontSize(), 0);
-        // TODO calculation of tint might be incorrect
-        assertTrue(sameColor(new Color(191,191,191), r1.getFontColor()));
+        assertEquals(new Color(0x898989), getColor(r1.getFontColor()));
 
         XSLFTextShape dt = (XSLFTextShape)slide.getPlaceholderByType(STPlaceholderType.INT_DT);
         assertEquals("Friday, October 21, 2011", dt.getText());
@@ -741,7 +741,7 @@ public class TestXSLFTextShape {
         assertEquals("Calibri", textRun.getFontFamily());
         lv5PPr.setAlgn(STTextAlignType.CTR);
         assertEquals(TextAlign.CENTER, paragraph.getTextAlign());
-        
+
         ppt.close();
     }
 
@@ -945,10 +945,10 @@ public class TestXSLFTextShape {
         assertEquals("Calibri", r3.getFontFamily());
         lv3PPr.setAlgn(STTextAlignType.CTR);
         assertEquals(TextAlign.CENTER, p3.getTextAlign());
-        
+
         ppt.close();
     }
-    
+
     @Test
     public void metroBlob() throws IOException, ReflectiveOperationException {
         assumeFalse(xslfOnly);

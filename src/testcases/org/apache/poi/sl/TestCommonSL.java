@@ -29,10 +29,10 @@ import org.junit.Ignore;
 @Ignore
 public class TestCommonSL {
 
-    public static boolean sameColor(Color colorExpected, PaintStyle paintActual) {
-        if (!(paintActual instanceof SolidPaint)) return false;
-        Color thisC = DrawPaint.applyColorTransform(((SolidPaint)paintActual).getSolidColor());
-        return thisC.equals(colorExpected);
+    public static Color getColor(PaintStyle paintActual) {
+        return (paintActual instanceof SolidPaint)
+            ? DrawPaint.applyColorTransform(((SolidPaint)paintActual).getSolidColor())
+            : null;
     }
 
 }

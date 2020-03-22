@@ -111,8 +111,8 @@ public class XSLFColor {
     }
 
     private Color toColor(CTScRgbColor scrgb) {
-        // color in percentage is in linear RGB color space, i.e. needs to be gamma corrected for AWT color
-        return new Color(DrawPaint.lin2srgb(scrgb.getR()), DrawPaint.lin2srgb(scrgb.getG()), DrawPaint.lin2srgb(scrgb.getB()));
+        // percental [0..100000] scRGB color space  needs to be gamma corrected for AWT/sRGB colorspace
+        return DrawPaint.SCRGB2RGB(scrgb.getR()/100_000d,scrgb.getG()/100_000d,scrgb.getB()/100_000d);
     }
 
     private Color toColor(CTSRgbColor srgb) {
@@ -225,15 +225,16 @@ public class XSLFColor {
             alphaPct = (addAlpha) ? rgb.addNewAlpha() : null;
         } else {
             CTScRgbColor rgb = fill.addNewScrgbClr();
-            rgb.setR(DrawPaint.srgb2lin(rgbaf[0]));
-            rgb.setG(DrawPaint.srgb2lin(rgbaf[1]));
-            rgb.setB(DrawPaint.srgb2lin(rgbaf[2]));
+            double[] scRGB = DrawPaint.RGB2SCRGB(color);
+            rgb.setR((int)Math.rint(scRGB[0]*100_000d));
+            rgb.setG((int)Math.rint(scRGB[1]*100_000d));
+            rgb.setB((int)Math.rint(scRGB[2]*100_000d));
             alphaPct = (addAlpha) ? rgb.addNewAlpha() : null;
         }
 
         // alpha (%)
         if (alphaPct != null) {
-            alphaPct.setVal((int)(100000 * rgbaf[3]));
+            alphaPct.setVal((int)Math.rint(rgbaf[3]*100_000));
         }
     }
 

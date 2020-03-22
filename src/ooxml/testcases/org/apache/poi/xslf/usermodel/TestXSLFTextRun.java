@@ -18,7 +18,7 @@
  */
 package org.apache.poi.xslf.usermodel;
 
-import static org.apache.poi.sl.TestCommonSL.sameColor;
+import static org.apache.poi.sl.TestCommonSL.getColor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
@@ -55,9 +55,9 @@ public class TestXSLFTextRun {
         assertEquals(0., r.getCharacterSpacing(), 0);
         assertFalse(r.getRPr(true).isSetSpc());
 
-        assertTrue(sameColor(Color.black, r.getFontColor()));
+        assertEquals(Color.black, getColor(r.getFontColor()));
         r.setFontColor(Color.red);
-        assertTrue(sameColor(Color.red, r.getFontColor()));
+        assertEquals(Color.red, getColor(r.getFontColor()));
 
         assertEquals("Calibri", r.getFontFamily());
         r.setFontFamily("Arial");
@@ -78,7 +78,7 @@ public class TestXSLFTextRun {
         assertTrue(r.isSubscript());
         r.setSubscript(false);
         assertFalse(r.isSubscript());
-        
+
         ppt.close();
     }
 

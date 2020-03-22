@@ -417,14 +417,18 @@ public class DrawPaint {
 
         Color result = color.getColor();
 
-        double alpha = getAlpha(result, color);
+        final double alpha = getAlpha(result, color);
+
+        final double[] scRGB = RGB2SCRGB(result);
+        applyShade(scRGB, color);
+        applyTint(scRGB, color);
+        result = SCRGB2RGB(scRGB);
+
         // values are in the range [0..100] (usually ...)
         double[] hsl = RGB2HSL(result);
         applyHslModOff(hsl, 0, color.getHueMod(), color.getHueOff());
         applyHslModOff(hsl, 1, color.getSatMod(), color.getSatOff());
         applyHslModOff(hsl, 2, color.getLumMod(), color.getLumOff());
-        applyShade(hsl, color);
-        applyTint(hsl, color);
 
         result = HSL2RGB(hsl[0], hsl[1], hsl[2], alpha);
 
@@ -477,23 +481,22 @@ public class DrawPaint {
      *
      * For a shade, the equation is luminance * %tint.
      */
-    private static void applyShade(double[] hsl, ColorStyle fc) {
+    private static void applyShade(double[] scRGB, ColorStyle fc) {
         int shade = fc.getShade();
         if (shade == -1) {
             return;
         }
 
-        double shadePct = shade / 100_000.;
-        hsl[2] *= shadePct;
+        final double shadePct = shade / 100_000.;
+        for (int i=0; i<3; i++) {
+            scRGB[i] = Math.max(0, Math.min(1, scRGB[i]*shadePct));
+        }
     }
 
     /**
      * Apply the tint
-     *
-     * For a tint, the equation is luminance * %tint + (1-%tint).
-     * (Note that 1-%tint is equal to the lumOff value in DrawingML.)
      */
-    private static void applyTint(double[] hsl, ColorStyle fc) {
+    private static void applyTint(double[] scRGB, ColorStyle fc) {
         int tint = fc.getTint();
         if (tint == -1 || tint == 0) {
             return;
@@ -502,15 +505,8 @@ public class DrawPaint {
         // see 18.8.19 fgColor (Foreground Color)
         double tintPct = tint / 100_000.;
 
-
-        // The tint value is stored as a double from -1.0 .. 1.0, where -1.0 means 100% darken
-        // and 1.0 means 100% lighten. Also, 0.0 means no change.
-        if (tintPct < 0) {
-            // Lum’ = Lum * (1.0 + tint)
-            hsl[2] *= (1 + tintPct);
-        } else {
-            // Lum‘ = Lum * (1.0-tint) + (HLSMAX – HLSMAX * (1.0-tint))
-            hsl[2] = hsl[2]*(1-tintPct) + (100-100*(1-tintPct));
+        for (int i=0; i<3; i++) {
+            scRGB[i] =  1 - (1 - scRGB[i]) * tintPct;
         }
     }
 
@@ -749,35 +745,49 @@ public class DrawPaint {
     }
 
     /**
-     * Convert sRGB float component [0..1] from sRGB to linear RGB [0..100000]
+     * Convert sRGB Color to scRGB [0..1] (0:red,1:green,2:blue).
+     * Alpha needs to be handled separately.
      *
-     * @see Color#getRGBColorComponents(float[])
+     * @see <a href="https://referencesource.microsoft.com/#PresentationCore/Core/CSharp/System/Windows/Media/Color.cs,1048">.Net implementation sRgbToScRgb</a>
      */
-    public static int srgb2lin(float sRGB) {
-        // scRGB has a linear gamma of 1.0, scale the AWT-Color which is in sRGB to linear RGB
-        // see https://en.wikipedia.org/wiki/SRGB (the reverse transformation)
-        if (sRGB <= 0.04045d) {
-            return (int)Math.rint(100000d * sRGB / 12.92d);
-        } else {
-            return (int)Math.rint(100000d * Math.pow((sRGB + 0.055d) / 1.055d, 2.4d));
+    public static double[] RGB2SCRGB(Color color) {
+        float[] rgb = color.getColorComponents(null);
+        double[] scRGB = new double[3];
+        for (int i=0; i<3; i++) {
+            if (rgb[i] < 0) {
+                scRGB[i] = 0;
+            } else if (rgb[i] <= 0.04045) {
+                scRGB[i] = rgb[i] / 12.92;
+            } else if (rgb[i] <= 1) {
+                scRGB[i] = Math.pow((rgb[i] + 0.055) / 1.055, 2.4);
+            } else {
+                scRGB[i] = 1;
+            }
         }
+        return scRGB;
     }
 
     /**
-     * Convert linear RGB [0..100000] to sRGB float component [0..1]
+     * Convert scRGB [0..1] components (0:red,1:green,2:blue) to sRGB Color.
+     * Alpha needs to be handled separately.
      *
-     * @see Color#getRGBColorComponents(float[])
+     * @see <a href="https://referencesource.microsoft.com/#PresentationCore/Core/CSharp/System/Windows/Media/Color.cs,1075">.Net implementation ScRgbTosRgb</a>
      */
-    public static float lin2srgb(int linRGB) {
-        // color in percentage is in linear RGB color space, i.e. needs to be gamma corrected for AWT color
-        // see https://en.wikipedia.org/wiki/SRGB (The forward transformation)
-        if (linRGB <= 0.0031308d) {
-            return (float)(linRGB / 100000d * 12.92d);
-        } else {
-            return (float)(1.055d * Math.pow(linRGB / 100000d, 1.0d/2.4d) - 0.055d);
+    public static Color SCRGB2RGB(double... scRGB) {
+        final double[] rgb = new double[3];
+        for (int i=0; i<3; i++) {
+            if (scRGB[i] < 0) {
+                rgb[i] = 0;
+            } else if (scRGB[i] <= 0.0031308) {
+                rgb[i] = scRGB[i] * 12.92;
+            } else if (scRGB[i] < 1) {
+                rgb[i] = 1.055 * Math.pow(scRGB[i], 1.0 / 2.4) - 0.055;
+            } else {
+                rgb[i] = 1;
+            }
         }
+        return new Color((float)rgb[0],(float)rgb[1],(float)rgb[2]);
     }
-
 
     static void fillPaintWorkaround(Graphics2D graphics, Shape shape) {
         // the ibm jdk has a rendering/JIT bug, which throws an AIOOBE in

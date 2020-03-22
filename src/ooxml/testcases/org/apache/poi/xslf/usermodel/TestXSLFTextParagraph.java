@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.apache.poi.sl.TestCommonSL.sameColor;
+import static org.apache.poi.sl.TestCommonSL.getColor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
@@ -285,7 +285,7 @@ public class TestXSLFTextParagraph {
 
         assertNull(p.getBulletFontColor());
         p.setBulletFontColor(Color.red);
-        assertTrue(sameColor(Color.red, p.getBulletFontColor()));
+        assertEquals(Color.red, getColor(p.getBulletFontColor()));
 
         assertNull(p.getBulletFontSize());
         p.setBulletFontSize(200.);

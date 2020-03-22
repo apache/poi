@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.model;
 
-import static org.apache.poi.sl.TestCommonSL.sameColor;
+import static org.apache.poi.sl.TestCommonSL.getColor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -70,15 +70,10 @@ public final class TestShapes {
 
     @Before
     public void setUp() throws Exception {
-        InputStream is1 = null, is2 = null;
-        try {
-            is1 = _slTests.openResourceAsStream("empty.ppt");
+        try (InputStream is1 = _slTests.openResourceAsStream("empty.ppt");
+             InputStream is2 = _slTests.openResourceAsStream("empty_textbox.ppt")) {
             ppt = new HSLFSlideShow(is1);
-            is2 = _slTests.openResourceAsStream("empty_textbox.ppt");
             pptB = new HSLFSlideShow(is2);
-        } finally {
-            is1.close();
-            is2.close();
         }
     }
 
@@ -121,13 +116,12 @@ public final class TestShapes {
 
         assertTrue(shape.get(1) instanceof HSLFAutoShape); //group shape
         assertEquals(ellipseAnchor, shape.get(1).getAnchor()); //group shape
-        
+
         ppt2.close();
     }
 
     /**
      * Verify that we can read TextBox shapes
-     * @throws Exception
      */
     @Test
     public void textBoxRead() throws IOException {
@@ -142,20 +136,29 @@ public final class TestShapes {
             assertEquals(txtbox.getTextParagraphs().get(0).getTextRuns().size(), 1);
             HSLFTextRun rt = txtbox.getTextParagraphs().get(0).getTextRuns().get(0);
 
-            if (text.equals("Hello, World!!!")){
-                assertEquals(32, rt.getFontSize(), 0);
-                assertTrue(rt.isBold());
-                assertTrue(rt.isItalic());
-            } else if (text.equals("I am just a poor boy")){
-                assertEquals(44, rt.getFontSize(), 0);
-                assertTrue(rt.isBold());
-            } else if (text.equals("This is Times New Roman")){
-                assertEquals(16, rt.getFontSize(), 0);
-                assertTrue(rt.isBold());
-                assertTrue(rt.isItalic());
-                assertTrue(rt.isUnderlined());
-            } else if (text.equals("Plain Text")){
-                assertEquals(18, rt.getFontSize(), 0);
+            switch (text) {
+                case "Hello, World!!!":
+                    assertNotNull(rt.getFontSize());
+                    assertEquals(32, rt.getFontSize(), 0);
+                    assertTrue(rt.isBold());
+                    assertTrue(rt.isItalic());
+                    break;
+                case "I am just a poor boy":
+                    assertNotNull(rt.getFontSize());
+                    assertEquals(44, rt.getFontSize(), 0);
+                    assertTrue(rt.isBold());
+                    break;
+                case "This is Times New Roman":
+                    assertNotNull(rt.getFontSize());
+                    assertEquals(16, rt.getFontSize(), 0);
+                    assertTrue(rt.isBold());
+                    assertTrue(rt.isItalic());
+                    assertTrue(rt.isUnderlined());
+                    break;
+                case "Plain Text":
+                    assertNotNull(rt.getFontSize());
+                    assertEquals(18, rt.getFontSize(), 0);
+                    break;
             }
         }
     }
@@ -179,30 +182,30 @@ public final class TestShapes {
         shape.setAnchor(new Rectangle2D.Double(100,100,100,10));
         slide.addShape(shape);
         shape.resizeToFitText();
-        
+
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         ss.write(bos);
-        
+
         ss = new HSLFSlideShow(new ByteArrayInputStream(bos.toByteArray()));
         slide = ss.getSlides().get(0);
         HSLFTextBox tb = (HSLFTextBox)slide.getShapes().get(0);
         List<HSLFTextParagraph> para = tb.getTextParagraphs();
         HSLFTextRun tr = para.get(0).getTextRuns().get(0);
         assertEquals("para 1 run 1. ", tr.getRawText());
-        assertTrue(sameColor(Color.black, tr.getFontColor()));
+        assertEquals(Color.black, getColor(tr.getFontColor()));
         tr = para.get(0).getTextRuns().get(1);
         assertEquals("para 1 run 2.\r",  tr.getRawText());
-        assertTrue(sameColor(Color.red, tr.getFontColor()));
+        assertEquals(Color.red, getColor(tr.getFontColor()));
         tr = para.get(1).getTextRuns().get(0);
         assertEquals("para 2 run 1. ", tr.getRawText());
-        assertTrue(sameColor(Color.yellow, tr.getFontColor()));
+        assertEquals(Color.yellow, getColor(tr.getFontColor()));
         tr = para.get(1).getTextRuns().get(1);
         assertEquals("para 2 run 2. para 2 run 3.", tr.getRawText());
-        assertTrue(sameColor(Color.black, tr.getFontColor()));
+        assertEquals(Color.black, getColor(tr.getFontColor()));
         assertTrue(tr.isStrikethrough());
     }
-        
-    
+
+
     /**
      * Verify that we can add TextBox shapes to a slide
      * and set some of the style attributes
@@ -230,12 +233,13 @@ public final class TestShapes {
         // Check it before save
         rt = txtbox.getTextParagraphs().get(0).getTextRuns().get(0);
         assertEquals(val, rt.getRawText());
+        assertNotNull(rt.getFontSize());
         assertEquals(42, rt.getFontSize(), 0);
         assertTrue(rt.isBold());
         assertTrue(rt.isItalic());
         assertFalse(rt.isUnderlined());
         assertEquals("Arial", rt.getFontFamily());
-        assertTrue(sameColor(Color.red, rt.getFontColor()));
+        assertEquals(Color.red, getColor(rt.getFontColor()));
 
         // Serialize and read again
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -250,13 +254,14 @@ public final class TestShapes {
 
         // Check after save
         assertEquals(val, rt.getRawText());
+        assertNotNull(rt.getFontSize());
         assertEquals(42, rt.getFontSize(), 0);
         assertTrue(rt.isBold());
         assertTrue(rt.isItalic());
         assertFalse(rt.isUnderlined());
         assertEquals("Arial", rt.getFontFamily());
-        assertTrue(sameColor(Color.red, rt.getFontColor()));
-        
+        assertEquals(Color.red, getColor(rt.getFontColor()));
+
         ppt2.close();
     }
 
@@ -368,7 +373,7 @@ public final class TestShapes {
 
         line = (HSLFLine)grshape.get(1);
         assertEquals(new Rectangle2D.Double(300, 300, 500, 0), line.getAnchor());
-        
+
         ss.close();
     }
 
@@ -421,7 +426,6 @@ public final class TestShapes {
     public void shapeId() throws IOException {
         HSLFSlideShow ss = new HSLFSlideShow();
         HSLFSlide slide = ss.createSlide();
-        HSLFShape shape = null;
 
         //EscherDgg is a document-level record which keeps track of the drawing groups
         EscherDggRecord dgg = ss.getDocumentRecord().getPPDrawingGroup().getEscherDggRecord();
@@ -434,7 +438,7 @@ public final class TestShapes {
         int dgShapesUsed = dg.getNumShapes();          // number of shapes in the slide
         //insert 3 shapes and make sure the Ids are properly incremented
         for (int i = 0; i < 3; i++) {
-            shape = new HSLFLine();
+            HSLFShape shape = new HSLFLine();
             assertEquals(0, shape.getShapeId());
             slide.addShape(shape);
             assertTrue(shape.getShapeId() > 0);
@@ -461,7 +465,7 @@ public final class TestShapes {
         //make sure it is so
         int numClusters = dgg.getNumIdClusters();
         for (int i = 0; i < 1025; i++) {
-            shape = new HSLFLine();
+            HSLFShape shape = new HSLFLine();
             slide.addShape(shape);
         }
         assertEquals(numClusters + 1, dgg.getNumIdClusters());
@@ -492,7 +496,7 @@ public final class TestShapes {
         assertEquals("Border width is 5 pt", sh4.getText());
         assertEquals(Color.black, sh4.getLineColor());
         assertEquals(5.0, sh4.getLineWidth(), 0);
-        
+
         ss.close();
     }
 }

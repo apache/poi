@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.apache.poi.sl.TestCommonSL.sameColor;
+import static org.apache.poi.sl.TestCommonSL.getColor;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -139,7 +139,7 @@ public class TestXSLFSlide {
         assertEquals(40.0, r1.getFontSize(), 0);
         assertTrue(r1.isBold());
         assertTrue(r1.isItalic());
-        assertTrue(sameColor(new Color(148, 198, 0), r1.getFontColor()));
+        assertEquals(new Color(148, 198, 0), getColor(r1.getFontColor()));
         assertNull(sh1.getFillColor());
         assertNull(sh1.getLineColor());
 
@@ -152,7 +152,7 @@ public class TestXSLFSlide {
         assertEquals(18.0, r2.getFontSize(), 0);
         assertFalse(r2.isBold());
         assertFalse(r2.isItalic());
-        assertTrue(sameColor(Color.white, r2.getFontColor()));
+        assertEquals(Color.white, getColor(r2.getFontColor()));
         assertEquals(new Color(148, 198, 0), sh2.getFillColor());
         assertEquals(new Color(148, 198, 0), sh2.getLineColor()); // slightly different from PowerPoint!
 
@@ -168,7 +168,7 @@ public class TestXSLFSlide {
         //assertEquals(32.4.0, r3.getFontSize());
         assertTrue(r3.isBold());
         assertTrue(r3.isItalic());
-        assertTrue(sameColor(new Color(148, 198, 0), r3.getFontColor()));
+        assertEquals(new Color(148, 198, 0), getColor(r3.getFontColor()));
         assertNull(sh3.getFillColor());
         assertNull(sh3.getLineColor());
 
