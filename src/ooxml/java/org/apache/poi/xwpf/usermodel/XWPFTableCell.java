@@ -139,7 +139,7 @@ public class XWPFTableCell implements IBody, ICell {
      * returns a list of paragraphs
      */
     public List<XWPFParagraph> getParagraphs() {
-        return paragraphs;
+        return Collections.unmodifiableList(paragraphs);
     }
 
     /**
