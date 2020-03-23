@@ -57,4 +57,8 @@ public class XWPFAbstractNum {
         return ctAbstractNum;
     }
 
+    public void setCtAbstractNum(CTAbstractNum ctAbstractNum) {
+        this.ctAbstractNum = ctAbstractNum;
+    }
+
 }
