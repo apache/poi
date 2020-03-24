@@ -563,4 +563,29 @@ public final class TestXSSFRichTextString {
         assertEquals("Rich Text\r\nTest", wb.getSheetAt(0).getRow(1).getCell(1).getRichStringCellValue().getString());
         wb.close();
     }
+
+    @Test
+    public void testUtfDecode_withApplyFont() {
+        XSSFFont font = new XSSFFont();
+        font.setBold(true);
+        font.setFontHeightInPoints((short) 14);
+
+        CTRst st = CTRst.Factory.newInstance();
+        st.setT("abc_x000D_2ef_x000D_");
+        XSSFRichTextString rt = new XSSFRichTextString(st);
+        rt.applyFont(font);
+        assertEquals("abc\r2ef\r", rt.getString());
+    }
+
+    @Test
+    public void testUtfLength() {
+        assertEquals(0, XSSFRichTextString.utfLength(null));
+        assertEquals(0, XSSFRichTextString.utfLength(""));
+
+        assertEquals(3, XSSFRichTextString.utfLength("abc"));
+        assertEquals(3, XSSFRichTextString.utfLength("ab_x0032_"));
+        assertEquals(3, XSSFRichTextString.utfLength("a_x0032__x0032_"));
+        assertEquals(3, XSSFRichTextString.utfLength("_x0032_a_x0032_"));
+        assertEquals(3, XSSFRichTextString.utfLength("_x0032__x0032_a"));
+    }
 }

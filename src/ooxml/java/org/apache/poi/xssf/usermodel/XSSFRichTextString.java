@@ -201,7 +201,7 @@ public class XSSFRichTextString implements RichTextString {
         CTRElt lt = st.addNewR();
         lt.setT(text);
         preserveSpaces(lt.xgetT());
-        
+
         if (font != null) {
             CTRPrElt pr = lt.addNewRPr();
             setRunAttributes(font.getCTFont(), pr);
@@ -247,7 +247,7 @@ public class XSSFRichTextString implements RichTextString {
     }
 
     /**
-     * Does this string have any explicit formatting applied, or is 
+     * Does this string have any explicit formatting applied, or is
      *  it just text in the default style?
      */
     public boolean hasFormatting() {
@@ -496,6 +496,32 @@ public class XSSFRichTextString implements RichTextString {
     }
 
     /**
+     * Optimized counting of actual length of a string
+     * considering the replacement of _xHHHH_ that needs
+     * to be applied to rich-text strings.
+     *
+     * @param value The string
+     * @return The length of the string, 0 if the string is null.
+     */
+    static int utfLength(String value) {
+        if(value == null) {
+            return 0;
+        }
+        if (!value.contains("_x")) {
+            return value.length();
+        }
+
+        Matcher matcher = utfPtrn.matcher(value);
+        int count = 0;
+        while (matcher.find()) {
+            count++;
+        }
+
+        // Length of pattern is 7 (_xHHHH_), and we replace it with one character
+        return value.length() - (count * 6);
+    }
+
+    /**
      * For all characters which cannot be represented in XML as defined by the XML 1.0 specification,
      * the characters are escaped using the Unicode numerical character representation escape character
      * format _xHHHH_, where H represents a hexadecimal character in the character's value.
@@ -512,7 +538,7 @@ public class XSSFRichTextString implements RichTextString {
         if(value == null || !value.contains("_x")) {
             return value;
         }
-        
+
         StringBuilder buf = new StringBuilder();
         Matcher m = utfPtrn.matcher(value);
         int idx = 0;
@@ -528,13 +554,13 @@ public class XSSFRichTextString implements RichTextString {
 
             idx = m.end();
         }
-        
-        // small optimization: don't go via StringBuilder if not necessary, 
-        // the encodings are very rare, so we should almost always go via this shortcut. 
+
+        // small optimization: don't go via StringBuilder if not necessary,
+        // the encodings are very rare, so we should almost always go via this shortcut.
         if(idx == 0) {
             return value;
         }
-        
+
         buf.append(value.substring(idx));
         return buf.toString();
     }
@@ -577,7 +603,7 @@ public class XSSFRichTextString implements RichTextString {
             String txt = r.getT();
             CTRPrElt fmt = r.getRPr();
 
-            length += txt.length();
+            length += utfLength(txt);
             formats.put(length, fmt);
         }
         return formats;
@@ -605,7 +631,7 @@ public class XSSFRichTextString implements RichTextString {
         }
         return stf;
     }
-    
+
     private ThemesTable getThemesTable() {
        if(styles == null) return null;
        return styles.getTheme();
