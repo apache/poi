@@ -27,6 +27,7 @@ import org.apache.poi.xwpf.usermodel.TextAlignment;
 import org.apache.poi.xwpf.usermodel.UnderlinePatterns;
 import org.apache.poi.xwpf.usermodel.VerticalAlign;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRun;
 
@@ -78,6 +79,11 @@ public class SimpleDocument {
             r3.setFontSize(20);
             r3.setSubscript(VerticalAlign.SUPERSCRIPT);
 
+            // hyperlink
+            XWPFHyperlinkRun hyperlink = p2.insertNewHyperlinkRun(0, "http://poi.apache.org/");
+            hyperlink.setUnderline(UnderlinePatterns.SINGLE);
+            hyperlink.setColor("0000ff");
+            hyperlink.setText("Apache POI");
 
             XWPFParagraph p3 = doc.createParagraph();
             p3.setWordWrapped(true);
