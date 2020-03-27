@@ -90,11 +90,10 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
 
     @Override
     public XSLFTableCell getCell(int row, int col) {
-        List<XSLFTableRow> rows = getRows();
-        if (row < 0 || rows.size() <= row) {
+        if (row < 0 || _rows.size() <= row) {
             return null;
         }
-        XSLFTableRow r = rows.get(row);
+        XSLFTableRow r = _rows.get(row);
         if (r == null) {
             // empty row
             return null;

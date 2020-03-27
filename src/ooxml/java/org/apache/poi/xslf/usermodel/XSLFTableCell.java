@@ -33,6 +33,7 @@ import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.sl.usermodel.TableCell;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.Units;
+import org.apache.poi.xddf.usermodel.XDDFLineProperties;
 import org.apache.poi.xddf.usermodel.text.XDDFTextBody;
 import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFFillProperties;
 import org.apache.poi.xslf.usermodel.XSLFTableStyle.TablePartStyle;
@@ -136,6 +137,18 @@ public class XSLFTableCell extends XSLFTextShape implements TableCell<XSLFShape,
             return (pr.isSetLnR()) ? pr.getLnR() : (create ? pr.addNewLnR() : null);
         default:
             return null;
+        }
+    }
+
+    public XDDFLineProperties getBorderProperties(BorderEdge edge) {
+        CTLineProperties props = getCTLine(edge, false);
+        return (props == null) ? null : new XDDFLineProperties(props);
+    }
+
+    public void setBorderProperties(BorderEdge edge, XDDFLineProperties properties) {
+        CTLineProperties props = getCTLine(edge, true);
+        if (props != null) {
+            props.set(properties.getXmlObject().copy());
         }
     }
 
