@@ -151,6 +151,58 @@ public class TestXWPFTableCell {
     }
 
     @Test
+    public void testAddParagraph() throws Exception {
+        XWPFDocument doc = new XWPFDocument();
+        XWPFTable table = doc.createTable();
+        XWPFTableRow tr = table.createRow();
+        XWPFTableCell cell = tr.addNewTableCell();
+
+        // cell have at least one paragraph by default
+        assertEquals(1, cell.getParagraphs().size());
+        assertEquals(1, cell.getBodyElements().size());
+        assertEquals(cell.getParagraphArray(0), cell.getBodyElements().get(0));
+
+        XWPFParagraph p = cell.addParagraph();
+        assertEquals(2, cell.getParagraphs().size());
+        assertEquals(2, cell.getBodyElements().size());
+        assertEquals(p, cell.getParagraphArray(1));
+        assertEquals(cell.getParagraphArray(1), cell.getBodyElements().get(1));
+
+        doc.close();
+    }
+
+    @Test
+    public void testRemoveParagraph() throws Exception {
+        XWPFDocument doc = new XWPFDocument();
+        XWPFTable table = doc.createTable();
+        XWPFTableRow tr = table.createRow();
+        XWPFTableCell cell = tr.addNewTableCell();
+
+        // cell have at least one paragraph by default
+        XWPFParagraph p0 = cell.getParagraphArray(0);
+        XWPFParagraph p1 = cell.addParagraph();
+        cell.addParagraph();
+
+        // remove 3rd
+        cell.removeParagraph(2);
+        assertEquals(2, cell.getParagraphs().size());
+        assertEquals(2, cell.getBodyElements().size());
+        assertEquals(p0, cell.getParagraphArray(0));
+        assertEquals(p1, cell.getParagraphArray(1));
+        assertEquals(p0, cell.getBodyElements().get(0));
+        assertEquals(p1, cell.getBodyElements().get(1));
+
+        // remove 2nd
+        cell.removeParagraph(1);
+        assertEquals(1, cell.getParagraphs().size());
+        assertEquals(1, cell.getBodyElements().size());
+        assertEquals(p0, cell.getParagraphArray(0));
+        assertEquals(p0, cell.getBodyElements().get(0));
+
+        doc.close();
+    }
+
+    @Test
     public void testBug63624() throws Exception {
         XWPFDocument doc = new XWPFDocument();
         XWPFTable table = doc.createTable(1, 1);
