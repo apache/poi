@@ -149,4 +149,18 @@ public class TestXWPFTableCell {
         assertEquals(2500, cell.getWidth());
         doc.close();
     }
+
+    @Test
+    public void testBug63624() throws Exception {
+        XWPFDocument doc = new XWPFDocument();
+        XWPFTable table = doc.createTable(1, 1);
+        XWPFTableRow row = table.getRow(0);
+        XWPFTableCell cell = row.getCell(0);
+
+        String expected = "this must not be empty";
+        cell.setText(expected);
+        String actual = cell.getText();
+        assertEquals(expected, actual);
+        doc.close();
+    }
 }

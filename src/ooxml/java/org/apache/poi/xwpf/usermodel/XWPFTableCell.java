@@ -427,8 +427,7 @@ public class XWPFTableCell implements IBody, ICell {
     }
 
     public void setText(String text) {
-        CTP ctP = (ctTc.sizeOfPArray() == 0) ? ctTc.addNewP() : ctTc.getPArray(0);
-        XWPFParagraph par = new XWPFParagraph(ctP, this);
+        XWPFParagraph par = (paragraphs.size() == 0) ? addParagraph() : paragraphs.get(0);
         par.createRun().setText(text);
     }
 
