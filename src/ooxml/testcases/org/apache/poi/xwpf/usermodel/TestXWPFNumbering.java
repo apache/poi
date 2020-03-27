@@ -26,6 +26,7 @@ import java.math.BigInteger;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.junit.Test;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNum;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTNumLvl;
 
@@ -58,6 +59,45 @@ public class TestXWPFNumbering {
 
         numbering = docIn.getNumbering();
         assertTrue(numbering.numExist(numId));
+        XWPFNum num = numbering.getNum(numId);
+
+        BigInteger compareAbstractNum = num.getCTNum().getAbstractNumId().getVal();
+        assertEquals(abstractNumId, compareAbstractNum);
+    }
+
+    @Test
+    public void testAddAbstractNumIfAbstractNumNotEqualNull() throws IOException {
+        BigInteger abstractNumId = BigInteger.valueOf(1);
+        XWPFDocument docOut = new XWPFDocument();
+        XWPFNumbering numbering = docOut.createNumbering();
+
+        CTAbstractNum cTAbstractNum = CTAbstractNum.Factory.newInstance();
+        // must set the AbstractNumId, Otherwise fail
+        cTAbstractNum.setAbstractNumId(abstractNumId);
+        XWPFAbstractNum abstractNum = new XWPFAbstractNum(cTAbstractNum);
+        abstractNumId = numbering.addAbstractNum(abstractNum);
+        BigInteger numId = numbering.addNum(abstractNumId);
+
+        XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
+
+        numbering = docIn.getNumbering();
+        XWPFNum num = numbering.getNum(numId);
+        BigInteger compareAbstractNum = num.getCTNum().getAbstractNumId().getVal();
+        assertEquals(abstractNumId, compareAbstractNum);
+    }
+
+    @Test
+    public void testAddAbstractNumIfAbstractNumEqualNull() throws IOException {
+        XWPFDocument docOut = new XWPFDocument();
+        XWPFNumbering numbering = docOut.createNumbering();
+
+        XWPFAbstractNum abstractNum = new XWPFAbstractNum();
+        BigInteger abstractNumId = numbering.addAbstractNum(abstractNum);
+        BigInteger numId = numbering.addNum(abstractNumId);
+
+        XWPFDocument docIn = XWPFTestDataSamples.writeOutAndReadBack(docOut);
+
+        numbering = docIn.getNumbering();
         XWPFNum num = numbering.getNum(numId);
 
         BigInteger compareAbstractNum = num.getCTNum().getAbstractNumId().getVal();
