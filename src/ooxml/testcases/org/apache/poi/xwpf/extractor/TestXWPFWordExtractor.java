@@ -17,6 +17,16 @@
 
 package org.apache.poi.xwpf.extractor;
 
+import org.apache.poi.util.StringUtil;
+import org.apache.poi.xwpf.XWPFTestDataSamples;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.junit.Test;
+
+import java.io.IOException;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertEndsWith;
 import static org.apache.poi.POITestCase.assertNotContained;
@@ -24,16 +34,6 @@ import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
-
-import java.io.IOException;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.xwpf.XWPFTestDataSamples;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.junit.Test;
 
 /**
  * Tests for HXFWordExtractor
@@ -458,6 +458,23 @@ public class TestXWPFWordExtractor {
             String txt = extractor.getText();
             assertContains(txt, "header 2");
             assertContains(txt, "footer 1");
+        }
+    }
+
+    @Test
+    public void bug55966() throws IOException  {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("55966.docx")) {
+            String expected = "Content control within a paragraph is here text content from within a paragraph second control with a new\n" +
+                    "line\n" +
+                    "\n" +
+                    "Content control that is the entire paragraph\n";
+
+            XWPFWordExtractor extractedDoc = new XWPFWordExtractor(doc);
+
+            String actual = extractedDoc.getText();
+
+            extractedDoc.close();
+            assertEquals(expected, actual);
         }
     }
 }

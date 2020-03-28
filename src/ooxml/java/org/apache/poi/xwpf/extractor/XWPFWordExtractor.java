@@ -90,7 +90,7 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
 
     /**
      * Should we concatenate phonetic runs in extraction.  Default is <code>true</code>
-     * @param concatenatePhoneticRuns
+     * @param concatenatePhoneticRuns If phonetic runs should be concatenated
      */
     public void setConcatenatePhoneticRuns(boolean concatenatePhoneticRuns) {
         this.concatenatePhoneticRuns = concatenatePhoneticRuns;
@@ -138,9 +138,10 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
             extractHeaders(text, headerFooterPolicy);
         }
 
-
-        for (IRunElement run : paragraph.getRuns()) {
-            if (! concatenatePhoneticRuns && run instanceof XWPFRun) {
+        for (IRunElement run : paragraph.getIRuns()) {
+            if (run instanceof XWPFSDT) {
+                text.append(((XWPFSDT) run).getContent().getText());
+            } else if (! concatenatePhoneticRuns && run instanceof XWPFRun) {
                 text.append(((XWPFRun)run).text());
             } else {
                 text.append(run);
