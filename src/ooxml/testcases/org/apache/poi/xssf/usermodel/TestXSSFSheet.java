@@ -27,6 +27,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Calendar;
@@ -36,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
@@ -55,6 +57,7 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.*;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
@@ -2000,6 +2003,42 @@ public final class TestXSSFSheet extends BaseTestXSheet {
 
             XSSFHeaderFooterProperties hfProp = sh.getHeaderFooterProperties();
             assertNotNull(hfProp);
+        }
+    }
+
+    @Test
+    public void testSheetForceFormulaRecalculationDefaultValues() throws IOException {
+        try (Workbook wb = _testDataProvider.openSampleWorkbook("sample.xlsx")){
+            for (Sheet s : wb) {
+                assertEquals(wb.getForceFormulaRecalculation(),s.getForceFormulaRecalculation());
+            }
+        }
+    }
+
+    @Test
+    public void testWorkbookSetForceFormulaRecalculation() throws IOException {
+        try (Workbook wb = _testDataProvider.openSampleWorkbook("sample.xlsx")){
+            wb.setForceFormulaRecalculation(true);
+            assertTrue(wb.getForceFormulaRecalculation());
+        }
+    }
+
+    @Test
+    public void testNotCascadeWorkbookSetForceFormulaRecalculation() throws IOException {
+        try (Workbook wb = _testDataProvider.openSampleWorkbook("sample.xlsx")) {
+            // set all sheets to force recalculation
+            for (Sheet s : wb) {
+                s.setForceFormulaRecalculation(true);
+                assertTrue(s.getForceFormulaRecalculation());
+            }
+
+            // disable on workbook-level
+            wb.setForceFormulaRecalculation(false);
+
+            // on sheet-level, the flag is still set
+            for (Sheet s : wb) {
+                assertTrue("Sheet-level flag is still set to true", s.getForceFormulaRecalculation());
+            }
         }
     }
 }

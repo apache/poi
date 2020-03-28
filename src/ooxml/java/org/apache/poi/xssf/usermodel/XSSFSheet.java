@@ -2098,8 +2098,13 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     }
 
     /**
-     * Whether Excel will be asked to recalculate all formulas when the
-     *  workbook is opened.
+     * Whether Excel will be asked to recalculate all formulas of this sheet
+     * when the workbook is opened.
+     *
+     * Note: This just returns if the sheet has the recalculate flag set and
+     * will still return false even if recalculation is enabled on workbook-level.
+     *
+     * @return true if the Sheet has the recalculate-flag set.
      */
     @Override
     public boolean getForceFormulaRecalculation() {
