@@ -30,6 +30,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.IOUtils;
 
@@ -304,7 +305,7 @@ public class AddDimensionedImage {
         // however.
         //int index = sheet.getWorkbook().addPicture(this.imageToBytes(imageFile),
         //            HSSFWorkbook.PICTURE_TYPE_JPEG);
-        int index = sheet.getWorkbook().addPicture(this.imageToBytes(imageFile), HSSFWorkbook.PICTURE_TYPE_PNG);
+        int index = sheet.getWorkbook().addPicture(this.imageToBytes(imageFile), Workbook.PICTURE_TYPE_PNG);
 
         // Get the drawing patriarch and create the picture.
         patriarch = sheet.createDrawingPatriarch();

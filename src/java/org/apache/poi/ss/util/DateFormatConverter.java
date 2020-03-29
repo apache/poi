@@ -173,7 +173,7 @@ public final class DateFormatConverter  {
 		String token;
 		while( ( token = tokenizer.getNextToken() ) != null ) {
 			if( token.startsWith("'") ) {
-				result.append( token.replaceAll("'", "\"") );
+				result.append( token.replace('\'', '"') );
 			} else if( ! Character.isLetter( token.charAt( 0 ) ) ) {
 				result.append( token );
 			} else {

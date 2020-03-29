@@ -269,7 +269,7 @@ public class WordToTextConverter extends AbstractWordConverter
 
         currentBlock.appendChild( textDocumentFacade.createText( " ("
                 + UNICODECHAR_ZERO_WIDTH_SPACE
-                + hyperlink.replaceAll( "/", UNICODECHAR_ZERO_WIDTH_SPACE
+                + hyperlink.replace( "/", UNICODECHAR_ZERO_WIDTH_SPACE
                         + "\\/" + UNICODECHAR_ZERO_WIDTH_SPACE )
                 + UNICODECHAR_ZERO_WIDTH_SPACE + ")" ) );
     }

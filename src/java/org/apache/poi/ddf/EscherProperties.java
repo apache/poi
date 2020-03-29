@@ -24,7 +24,7 @@ import org.apache.poi.util.Removal;
  *
  * @deprecated use {@link EscherPropertyTypes} enum instead
  */
-@SuppressWarnings({"unused"})
+@SuppressWarnings({"unused","java:S115"})
 @Deprecated
 @Removal(version = "5.0.0")
 public interface EscherProperties {

@@ -17,15 +17,24 @@
 
 package org.apache.poi.xssf.usermodel.examples;
 
-import org.apache.poi.xssf.usermodel.*;
-
 import java.io.FileOutputStream;
 import java.io.OutputStream;
+
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFColor;
+import org.apache.poi.xssf.usermodel.XSSFFont;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Demonstrates how to work with rich text
  */
-public class WorkingWithRichText {
+public final class WorkingWithRichText {
+
+    private WorkingWithRichText() {}
 
     public static void main(String[] args) throws Exception {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
@@ -42,7 +51,7 @@ public class WorkingWithRichText {
 
             XSSFFont font2 = wb.createFont();
             font2.setItalic(true);
-            font2.setUnderline(XSSFFont.U_DOUBLE);
+            font2.setUnderline(Font.U_DOUBLE);
             font2.setColor(new XSSFColor(new java.awt.Color(0, 255, 0), wb.getStylesSource().getIndexedColors()));
             rt.applyFont(10, 19, font2);
 

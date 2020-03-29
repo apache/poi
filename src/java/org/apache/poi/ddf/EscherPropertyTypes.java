@@ -25,6 +25,7 @@ import java.util.stream.Stream;
 /**
  * Provides a list of all known escher properties including the description and type.
  */
+@SuppressWarnings({"java:S115"})
 public enum EscherPropertyTypes {
     TRANSFORM__ROTATION(0x0004, "transform.rotation"),
     PROTECTION__LOCKROTATION(0x0077, "protection.lockrotation"),

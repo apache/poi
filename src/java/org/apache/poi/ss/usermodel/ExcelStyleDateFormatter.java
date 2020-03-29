@@ -91,13 +91,13 @@ public class ExcelStyleDateFormatter extends SimpleDateFormat {
      * with our detection sequences
      */
     private static String processFormatPattern(String f) {
-        String t = f.replaceAll("MMMMM", MMMMM_START_SYMBOL + "MMM" + MMMMM_TRUNCATE_SYMBOL);
-        t = t.replaceAll("\\[H]", String.valueOf(H_BRACKET_SYMBOL));
-        t = t.replaceAll("\\[HH]", String.valueOf(HH_BRACKET_SYMBOL));
-        t = t.replaceAll("\\[m]", String.valueOf(M_BRACKET_SYMBOL));
-        t = t.replaceAll("\\[mm]", String.valueOf(MM_BRACKET_SYMBOL));
-        t = t.replaceAll("\\[s]", String.valueOf(S_BRACKET_SYMBOL));
-        t = t.replaceAll("\\[ss]", String.valueOf(SS_BRACKET_SYMBOL));
+        String t = f.replace("MMMMM", MMMMM_START_SYMBOL + "MMM" + MMMMM_TRUNCATE_SYMBOL);
+        t = t.replace("[H]", String.valueOf(H_BRACKET_SYMBOL));
+        t = t.replace("[HH]", String.valueOf(HH_BRACKET_SYMBOL));
+        t = t.replace("[m]", String.valueOf(M_BRACKET_SYMBOL));
+        t = t.replace("[mm]", String.valueOf(MM_BRACKET_SYMBOL));
+        t = t.replace("[s]", String.valueOf(S_BRACKET_SYMBOL));
+        t = t.replace("[ss]", String.valueOf(SS_BRACKET_SYMBOL));
         t = t.replaceAll("s.000", "s.SSS");
         t = t.replaceAll("s.00", "s." + LL_BRACKET_SYMBOL);
         t = t.replaceAll("s.0", "s." + L_BRACKET_SYMBOL);

@@ -18,14 +18,17 @@
  */
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.*;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTUnderlineProperty;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
+import org.apache.poi.ss.usermodel.Color;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.FontFormatting;
+import org.apache.poi.ss.usermodel.FontUnderline;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontSize;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTUnderlineProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTVerticalAlignFontProperty;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignRun;
 
 
@@ -45,13 +48,13 @@ public class XSSFFontFormatting implements FontFormatting {
      * get the type of super or subscript for the font
      *
      * @return super or subscript option
-     * @see #SS_NONE
-     * @see #SS_SUPER
-     * @see #SS_SUB
+     * @see org.apache.poi.ss.usermodel.Font#SS_NONE
+     * @see org.apache.poi.ss.usermodel.Font#SS_SUPER
+     * @see org.apache.poi.ss.usermodel.Font#SS_SUB
      */
     @Override
     public short getEscapementType(){
-        if(_font.sizeOfVertAlignArray() == 0) return SS_NONE;
+        if(_font.sizeOfVertAlignArray() == 0) return org.apache.poi.ss.usermodel.Font.SS_NONE;
 
         CTVerticalAlignFontProperty prop = _font.getVertAlignArray(0);
         return (short)(prop.getVal().intValue() - 1);
@@ -61,14 +64,14 @@ public class XSSFFontFormatting implements FontFormatting {
      * set the escapement type for the font
      *
      * @param escapementType  super or subscript option
-     * @see #SS_NONE
-     * @see #SS_SUPER
-     * @see #SS_SUB
+     * @see org.apache.poi.ss.usermodel.Font#SS_NONE
+     * @see org.apache.poi.ss.usermodel.Font#SS_SUPER
+     * @see org.apache.poi.ss.usermodel.Font#SS_SUB
      */
     @Override
     public void setEscapementType(short escapementType){
         _font.setVertAlignArray(null);
-        if(escapementType != SS_NONE){
+        if(escapementType != org.apache.poi.ss.usermodel.Font.SS_NONE){
             _font.addNewVertAlign().setVal(STVerticalAlignRun.Enum.forInt(escapementType + 1));
         }
     }
@@ -76,13 +79,13 @@ public class XSSFFontFormatting implements FontFormatting {
     /**
      * XMLBeans and the XSD make this look like it can have multiple values, but it is maxOccurrs=1.
      * Use get*Array(), it is much faster than get*List().
-     * 
+     *
      * @see org.apache.poi.ss.usermodel.FontFormatting#isStruckout()
      */
     @Override
     public boolean isStruckout() {
         for (CTBooleanProperty bProp : _font.getStrikeArray()) return bProp.getVal();
-        return false; 
+        return false;
     }
 
     /**
@@ -159,22 +162,22 @@ public class XSSFFontFormatting implements FontFormatting {
      *
      * @return font underlining type
      *
-     * @see #U_NONE
-     * @see #U_SINGLE
-     * @see #U_DOUBLE
-     * @see #U_SINGLE_ACCOUNTING
-     * @see #U_DOUBLE_ACCOUNTING
+     * @see Font#U_NONE
+     * @see Font#U_SINGLE
+     * @see Font#U_DOUBLE
+     * @see Font#U_SINGLE_ACCOUNTING
+     * @see Font#U_DOUBLE_ACCOUNTING
      */
     @Override
     public short getUnderlineType(){
-        if(_font.sizeOfUArray() == 0) return U_NONE;
+        if(_font.sizeOfUArray() == 0) return Font.U_NONE;
         CTUnderlineProperty u = _font.getUArray(0);
         switch(u.getVal().intValue()){
-            case STUnderlineValues.INT_SINGLE: return U_SINGLE;
-            case STUnderlineValues.INT_DOUBLE: return U_DOUBLE;
-            case STUnderlineValues.INT_SINGLE_ACCOUNTING: return U_SINGLE_ACCOUNTING;
-            case STUnderlineValues.INT_DOUBLE_ACCOUNTING: return U_DOUBLE_ACCOUNTING;
-            default: return U_NONE;
+            case STUnderlineValues.INT_SINGLE: return Font.U_SINGLE;
+            case STUnderlineValues.INT_DOUBLE: return Font.U_DOUBLE;
+            case STUnderlineValues.INT_SINGLE_ACCOUNTING: return Font.U_SINGLE_ACCOUNTING;
+            case STUnderlineValues.INT_DOUBLE_ACCOUNTING: return Font.U_DOUBLE_ACCOUNTING;
+            default: return Font.U_NONE;
         }
     }
 
@@ -183,16 +186,16 @@ public class XSSFFontFormatting implements FontFormatting {
      *
      * @param underlineType  super or subscript option
      *
-     * @see #U_NONE
-     * @see #U_SINGLE
-     * @see #U_DOUBLE
-     * @see #U_SINGLE_ACCOUNTING
-     * @see #U_DOUBLE_ACCOUNTING
+     * @see Font#U_NONE
+     * @see Font#U_SINGLE
+     * @see Font#U_DOUBLE
+     * @see Font#U_SINGLE_ACCOUNTING
+     * @see Font#U_DOUBLE_ACCOUNTING
      */
     @Override
     public void setUnderlineType(short underlineType){
         _font.setUArray(null);
-        if(underlineType != U_NONE){
+        if(underlineType != Font.U_NONE){
             FontUnderline fenum = FontUnderline.valueOf(underlineType);
             STUnderlineValues.Enum val = STUnderlineValues.Enum.forInt(fenum.getValue());
             _font.addNewU().setVal(val);

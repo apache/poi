@@ -49,7 +49,9 @@ import org.apache.poi.xddf.usermodel.chart.XDDFValueAxis;
 /**
  * Build a chart without reading template file
  */
-public class ChartFromScratch {
+public final class ChartFromScratch {
+    private ChartFromScratch() {}
+
     private static void usage(){
         System.out.println("Usage: ChartFromScratch <bar-chart-data.txt>");
         System.out.println("    bar-chart-data.txt          the model to set. First line is chart title, " +
@@ -138,14 +140,14 @@ public class ChartFromScratch {
         leftAxis.setCrossBetween(AxisCrossBetween.BETWEEN);
 
         final int numOfPoints = categories.length;
-        final String categoryDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, columnLanguages, columnLanguages));
-        final String valuesDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, columnCountries, columnCountries));
-        final String valuesDataRange2 = chart.formatRange(new CellRangeAddress(1, numOfPoints, columnSpeakers, columnSpeakers));
-        final XDDFDataSource<?> categoriesData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange, columnLanguages);
-        final XDDFNumericalDataSource<? extends Number> valuesData = XDDFDataSourcesFactory.fromArray(values1, valuesDataRange, columnCountries);
+        final String categoryDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, COLUMN_LANGUAGES, COLUMN_LANGUAGES));
+        final String valuesDataRange = chart.formatRange(new CellRangeAddress(1, numOfPoints, COLUMN_COUNTRIES, COLUMN_COUNTRIES));
+        final String valuesDataRange2 = chart.formatRange(new CellRangeAddress(1, numOfPoints, COLUMN_SPEAKERS, COLUMN_SPEAKERS));
+        final XDDFDataSource<?> categoriesData = XDDFDataSourcesFactory.fromArray(categories, categoryDataRange, COLUMN_LANGUAGES);
+        final XDDFNumericalDataSource<? extends Number> valuesData = XDDFDataSourcesFactory.fromArray(values1, valuesDataRange, COLUMN_COUNTRIES);
         valuesData.setFormatCode("General");
         values1[6] = 16.0; // if you ever want to change the underlying data, it has to be done before building the data source
-        final XDDFNumericalDataSource<? extends Number> valuesData2 = XDDFDataSourcesFactory.fromArray(values2, valuesDataRange2, columnSpeakers);
+        final XDDFNumericalDataSource<? extends Number> valuesData2 = XDDFDataSourcesFactory.fromArray(values2, valuesDataRange2, COLUMN_SPEAKERS);
         valuesData2.setFormatCode("General");
 
 
@@ -153,10 +155,10 @@ public class ChartFromScratch {
         bar.setBarGrouping(BarGrouping.CLUSTERED);
 
         XDDFBarChartData.Series series1 = (XDDFBarChartData.Series) bar.addSeries(categoriesData, valuesData);
-        series1.setTitle(series[0], chart.setSheetTitle(series[0], columnCountries));
+        series1.setTitle(series[0], chart.setSheetTitle(series[0], COLUMN_COUNTRIES));
 
         XDDFBarChartData.Series series2 = (XDDFBarChartData.Series) bar.addSeries(categoriesData, valuesData2);
-        series2.setTitle(series[1], chart.setSheetTitle(series[1], columnSpeakers));
+        series2.setTitle(series[1], chart.setSheetTitle(series[1], COLUMN_SPEAKERS));
 
         bar.setVaryColors(true);
         bar.setBarDirection(BarDirection.COL);
@@ -171,7 +173,7 @@ public class ChartFromScratch {
         chart.setAutoTitleDeleted(false);
     }
 
-    private static final int columnLanguages = 0;
-    private static final int columnCountries = 1;
-    private static final int columnSpeakers = 2;
+    private static final int COLUMN_LANGUAGES = 0;
+    private static final int COLUMN_COUNTRIES = 1;
+    private static final int COLUMN_SPEAKERS = 2;
 }

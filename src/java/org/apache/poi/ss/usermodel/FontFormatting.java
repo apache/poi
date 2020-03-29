@@ -19,36 +19,88 @@
 
 package org.apache.poi.ss.usermodel;
 
+import org.apache.poi.util.Removal;
+
 /**
  * High level representation for Font Formatting component
  * of Conditional Formatting settings
  */
 public interface FontFormatting {
-    /** Escapement type - None */
-    public final static short SS_NONE  = 0;
-    /** Escapement type - Superscript */
-    public final static short SS_SUPER = 1;
-    /** Escapement type - Subscript */
-    public final static short SS_SUB   = 2;
+    // TODO: refactor and unify Font & FontFormatting in POI 5.0.0
 
-    /** Underline type - None */
-    public final static byte U_NONE              = 0;
-    /** Underline type - Single */
-    public final static byte U_SINGLE            = 1;
-    /** Underline type - Double */
-    public final static byte U_DOUBLE            = 2;
-    /**  Underline type - Single Accounting */
-    public final static byte U_SINGLE_ACCOUNTING = 0x21;
-    /** Underline type - Double Accounting */
-    public final static byte U_DOUBLE_ACCOUNTING = 0x22;
+    /**
+     * Escapement type - None
+     *
+     * @deprecated use {@link Font#SS_NONE} instead
+     */
+    @Deprecated
+    @Removal(version = "5.0.0")
+    short SS_NONE  = 0;
+    /**
+     * Escapement type - Superscript
+     *
+     * @deprecated use {@link Font#SS_SUPER} instead
+     */
+    @Deprecated
+    @Removal(version = "5.0.0")
+    short SS_SUPER = 1;
+    /**
+     * Escapement type - Subscript
+     *
+     * @deprecated use {@link Font#SS_SUB} instead
+     */
+    @Deprecated
+    @Removal(version = "5.0.0")
+    short SS_SUB   = 2;
+
+    /**
+     * Underline type - None
+     *
+     * @deprecated use {@link Font#U_NONE} instead
+     */
+    @Deprecated
+    @Removal(version = "5.0.0")
+    byte U_NONE              = 0;
+    /**
+     * Underline type - Single
+     *
+     * @deprecated use {@link Font#U_SINGLE} instead
+     */
+    @Deprecated
+    @Removal(version = "5.0.0")
+    byte U_SINGLE            = 1;
+    /**
+     * Underline type - Double
+     *
+     * @deprecated use {@link Font#U_DOUBLE} instead
+     */
+    @Deprecated
+    @Removal(version = "5.0.0")
+    byte U_DOUBLE            = 2;
+    /**
+     * Underline type - Single Accounting
+     *
+     * @deprecated use {@link Font#U_SINGLE_ACCOUNTING} instead
+     */
+    @Deprecated
+    @Removal(version = "5.0.0")
+    byte U_SINGLE_ACCOUNTING = 0x21;
+    /**
+     * Underline type - Double Accounting
+     *
+     * @deprecated use {@link Font#U_DOUBLE_ACCOUNTING} instead
+     */
+    @Deprecated
+    @Removal(version = "5.0.0")
+    byte U_DOUBLE_ACCOUNTING = 0x22;
 
     /**
      * get the type of super or subscript for the font
      *
      * @return super or subscript option
-     * @see #SS_NONE
-     * @see #SS_SUPER
-     * @see #SS_SUB
+     * @see Font#SS_NONE
+     * @see Font#SS_SUPER
+     * @see Font#SS_SUB
      */
     short getEscapementType();
 
@@ -56,9 +108,9 @@ public interface FontFormatting {
      * set the escapement type for the font
      *
      * @param escapementType  super or subscript option
-     * @see #SS_NONE
-     * @see #SS_SUPER
-     * @see #SS_SUB
+     * @see Font#SS_NONE
+     * @see Font#SS_SUPER
+     * @see Font#SS_SUB
      */
     void setEscapementType(short escapementType);
 
@@ -72,12 +124,12 @@ public interface FontFormatting {
      * @param color font colour index
      */
     void setFontColorIndex(short color);
-    
+
     /**
      * @return The colour of the font, or null if no colour applied
      */
     Color getFontColor();
-    
+
     /**
      * Sets the colour to use
      * @param color font colour to use
@@ -103,11 +155,11 @@ public interface FontFormatting {
      *
      * @return font underlining type
      *
-     * @see #U_NONE
-     * @see #U_SINGLE
-     * @see #U_DOUBLE
-     * @see #U_SINGLE_ACCOUNTING
-     * @see #U_DOUBLE_ACCOUNTING
+     * @see Font#U_NONE
+     * @see Font#U_SINGLE
+     * @see Font#U_DOUBLE
+     * @see Font#U_SINGLE_ACCOUNTING
+     * @see Font#U_DOUBLE_ACCOUNTING
      */
     short getUnderlineType();
 
@@ -116,11 +168,11 @@ public interface FontFormatting {
      *
      * @param underlineType  super or subscript option
      *
-     * @see #U_NONE
-     * @see #U_SINGLE
-     * @see #U_DOUBLE
-     * @see #U_SINGLE_ACCOUNTING
-     * @see #U_DOUBLE_ACCOUNTING
+     * @see Font#U_NONE
+     * @see Font#U_SINGLE
+     * @see Font#U_DOUBLE
+     * @see Font#U_SINGLE_ACCOUNTING
+     * @see Font#U_DOUBLE_ACCOUNTING
      */
     void setUnderlineType(short underlineType);
 

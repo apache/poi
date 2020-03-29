@@ -26,7 +26,7 @@ import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LittleEndianOutput;
@@ -94,13 +94,13 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		// 1223 void XclImpOleObj::ReadPictFmla( XclImpStream& rStrm, sal_uInt16 nRecSize )
 
 		int streamIdOffset = in.readShort(); // OOO calls this 'nFmlaLen'
-		int remaining = size - LittleEndian.SHORT_SIZE;
+		int remaining = size - LittleEndianConsts.SHORT_SIZE;
 
 		int dataLenAfterFormula = remaining - streamIdOffset;
 		int formulaSize = in.readUShort();
-		remaining -= LittleEndian.SHORT_SIZE;
+		remaining -= LittleEndianConsts.SHORT_SIZE;
 		field_1_unknown_int = in.readInt();
-		remaining -= LittleEndian.INT_SIZE;
+		remaining -= LittleEndianConsts.INT_SIZE;
 		byte[] formulaRawBytes = readRawData(in, formulaSize);
 		remaining -= formulaSize;
 		field_2_refPtg = readRefPtg(formulaRawBytes);
@@ -116,16 +116,16 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		int stringByteCount;
 		if (remaining >= dataLenAfterFormula + 3) {
 			int tag = in.readByte();
-			stringByteCount = LittleEndian.BYTE_SIZE;
+			stringByteCount = LittleEndianConsts.BYTE_SIZE;
 			if (tag != 0x03) {
 				throw new RecordFormatException("Expected byte 0x03 here");
 			}
 			int nChars = in.readUShort();
-			stringByteCount += LittleEndian.SHORT_SIZE;
+			stringByteCount += LittleEndianConsts.SHORT_SIZE;
 			if (nChars > 0) {
 				 // OOO: the 4th way Xcl stores a unicode string: not even a Grbit byte present if length 0
 				field_3_unicode_flag = ( in.readByte() & 0x01 ) != 0;
-				stringByteCount += LittleEndian.BYTE_SIZE;
+				stringByteCount += LittleEndianConsts.BYTE_SIZE;
 				if (field_3_unicode_flag) {
 					field_4_ole_classname = StringUtil.readUnicodeLE(in, nChars);
 					stringByteCount += nChars * 2;
@@ -144,9 +144,9 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		// Pad to next 2-byte boundary
 		if (((stringByteCount + formulaSize) % 2) != 0) {
 			int b = in.readByte();
-			remaining -= LittleEndian.BYTE_SIZE;
+			remaining -= LittleEndianConsts.BYTE_SIZE;
 			if (field_2_refPtg != null && field_4_ole_classname == null) {
-				field_4_unknownByte = Byte.valueOf((byte)b);
+				field_4_unknownByte = (byte)b;
 			}
 		}
 		int nUnexpectedPadding = remaining - dataLenAfterFormula;
@@ -159,8 +159,8 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 
 		// Fetch the stream ID
 		if (dataLenAfterFormula >= 4) {
-			field_5_stream_id = Integer.valueOf(in.readInt());
-			remaining -= LittleEndian.INT_SIZE;
+			field_5_stream_id = in.readInt();
+			remaining -= LittleEndianConsts.INT_SIZE;
 		} else {
 			field_5_stream_id = null;
 		}
@@ -199,13 +199,10 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		int result = 2 + 4; // formulaSize + f2unknown_int
 		result += formulaSize;
 
-		int stringLen;
-		if (field_4_ole_classname == null) {
-			// don't write 0x03, stringLen, flag, text
-			stringLen = 0;
-		} else {
+		// don't write 0x03, stringLen, flag, text
+		if (field_4_ole_classname != null) {
 			result += 1 + 2;  // 0x03, stringLen
-			stringLen = field_4_ole_classname.length();
+			int stringLen = field_4_ole_classname.length();
 			if (stringLen > 0) {
 				result += 1; // flag
 				if (field_3_unicode_flag) {
@@ -259,14 +256,11 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		}
 		pos += formulaSize;
 
-		int stringLen;
-		if (field_4_ole_classname == null) {
-			// don't write 0x03, stringLen, flag, text
-			stringLen = 0;
-		} else {
+		// don't write 0x03, stringLen, flag, text
+		if (field_4_ole_classname != null) {
 			out.writeByte(0x03);
 			pos+=1;
-			stringLen = field_4_ole_classname.length();
+			int stringLen = field_4_ole_classname.length();
 			out.writeShort(stringLen);
 			pos+=2;
 			if (stringLen > 0) {
@@ -287,7 +281,6 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		switch(idOffset - (pos - 6)) { // 6 for 3 shorts: sid, dataSize, idOffset
 			case 1:
 				out.writeByte(field_4_unknownByte == null ? 0x00 : field_4_unknownByte.intValue());
-				pos++;
 				break;
 			case 0:
 				break;
@@ -296,8 +289,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		}
 
 		if (field_5_stream_id != null) {
-			out.writeInt(field_5_stream_id.intValue());
-			pos += 4;
+			out.writeInt(field_5_stream_id);
 		}
 		out.write(field_6_unknown);
 	}
@@ -349,10 +341,10 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 			sb.append("    .oleClassname  = ").append(field_4_ole_classname).append("\n");
 		}
 		if (field_4_unknownByte != null) {
-			sb.append("    .f4unknown   = ").append(HexDump.byteToHex(field_4_unknownByte.intValue())).append("\n");
+			sb.append("    .f4unknown   = ").append(HexDump.byteToHex(field_4_unknownByte)).append("\n");
 		}
 		if (field_5_stream_id != null) {
-			sb.append("    .streamId      = ").append(HexDump.intToHex(field_5_stream_id.intValue())).append("\n");
+			sb.append("    .streamId      = ").append(HexDump.intToHex(field_5_stream_id)).append("\n");
 		}
 		if (field_6_unknown.length > 0) {
 			sb.append("    .f7unknown     = ").append(HexDump.toHex(field_6_unknown)).append("\n");

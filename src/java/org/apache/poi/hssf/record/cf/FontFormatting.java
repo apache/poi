@@ -64,22 +64,71 @@ public final class FontFormatting implements Duplicatable {
     private static final BitField shadowModified       = BitFieldFactory.getInstance(0x00000010);
     private static final BitField cancellationModified = BitFieldFactory.getInstance(0x00000080);
 
-    /** Escapement type - None */
+    /**
+     * Escapement type - None
+     *
+     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#SS_NONE}
+     */
+    @Deprecated
+    @Removal(version = "5.0.0")
     public static final short SS_NONE  = 0;
-    /** Escapement type - Superscript */
+    /**
+     * Escapement type - Superscript
+     *
+     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#SS_SUPER}
+     */
+    @Deprecated
+    @Removal(version = "5.0.0")
     public static final short SS_SUPER = 1;
-    /** Escapement type - Subscript */
+    /**
+     * Escapement type - Subscript
+     *
+     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#SS_SUB}
+     */
+    @Deprecated
+    @Removal(version = "5.0.0")
     public static final short SS_SUB   = 2;
-    /** Underline type - None */
+    /**
+     * Underline type - None
+     *
+     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#U_NONE}
+     */
+    @Deprecated
+    @Removal(version = "5.0.0")
     public static final byte U_NONE               = 0;
-    /** Underline type - Single */
+    /**
+     * Underline type - Single
+     *
+     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#U_SINGLE}
+     */
+    @Deprecated
+    @Removal(version = "5.0.0")
     public static final byte U_SINGLE             = 1;
-    /** Underline type - Double */
+    /**
+     * Underline type - Double
+     *
+     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#U_DOUBLE}
+     */
+    @Deprecated
+    @Removal(version = "5.0.0")
     public static final byte U_DOUBLE             = 2;
-    /** Underline type - Single Accounting */
+    /**
+     * Underline type - Single Accounting
+     *
+     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#U_SINGLE_ACCOUNTING}
+     */
+    @Deprecated
+    @Removal(version = "5.0.0")
     public static final byte U_SINGLE_ACCOUNTING  = 0x21;
-    /** Underline type - Double Accounting */
+    /**
+     * Underline type - Double Accounting
+     *
+     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#U_DOUBLE_ACCOUNTING}
+     */
+    @Deprecated
+    @Removal(version = "5.0.0")
     public static final byte U_DOUBLE_ACCOUNTING  = 0x22;
+
     /** Normal boldness (not bold) */
     private static final short FONT_WEIGHT_NORMAL = 0x190;
 
@@ -253,12 +302,8 @@ public final class FontFormatting implements Duplicatable {
      * @param bw - a number between 100-1000 for the fonts "boldness"
      */
 
-    private void setFontWeight(short pbw)
-    {
-        short bw = pbw;
-        if( bw<100) { bw=100; }
-        if( bw>1000){ bw=1000; }
-        setShort(OFFSET_FONT_WEIGHT, bw);
+    private void setFontWeight(short bw) {
+        setShort(OFFSET_FONT_WEIGHT, Math.max(100, Math.min(1000, bw)));
     }
 
     /**
@@ -298,9 +343,9 @@ public final class FontFormatting implements Duplicatable {
      * get the type of super or subscript for the font
      *
      * @return super or subscript option
-     * @see org.apache.poi.hssf.usermodel.HSSFFontFormatting#SS_NONE
-     * @see org.apache.poi.hssf.usermodel.HSSFFontFormatting#SS_SUPER
-     * @see org.apache.poi.hssf.usermodel.HSSFFontFormatting#SS_SUB
+     * @see org.apache.poi.ss.usermodel.Font#SS_NONE
+     * @see org.apache.poi.ss.usermodel.Font#SS_SUPER
+     * @see org.apache.poi.ss.usermodel.Font#SS_SUB
      */
     public short getEscapementType()
     {
@@ -311,9 +356,9 @@ public final class FontFormatting implements Duplicatable {
      * set the escapement type for the font
      *
      * @param escapementType  super or subscript option
-     * @see org.apache.poi.hssf.usermodel.HSSFFontFormatting#SS_NONE
-     * @see org.apache.poi.hssf.usermodel.HSSFFontFormatting#SS_SUPER
-     * @see org.apache.poi.hssf.usermodel.HSSFFontFormatting#SS_SUB
+     * @see org.apache.poi.ss.usermodel.Font#SS_NONE
+     * @see org.apache.poi.ss.usermodel.Font#SS_SUPER
+     * @see org.apache.poi.ss.usermodel.Font#SS_SUB
      */
     public void setEscapementType( short escapementType)
     {
@@ -325,11 +370,11 @@ public final class FontFormatting implements Duplicatable {
      *
      * @return font underlining type
      *
-     * @see org.apache.poi.hssf.usermodel.HSSFFontFormatting#U_NONE
-     * @see org.apache.poi.hssf.usermodel.HSSFFontFormatting#U_SINGLE
-     * @see org.apache.poi.hssf.usermodel.HSSFFontFormatting#U_DOUBLE
-     * @see org.apache.poi.hssf.usermodel.HSSFFontFormatting#U_SINGLE_ACCOUNTING
-     * @see org.apache.poi.hssf.usermodel.HSSFFontFormatting#U_DOUBLE_ACCOUNTING
+     * @see org.apache.poi.ss.usermodel.Font#U_NONE
+     * @see org.apache.poi.ss.usermodel.Font#U_SINGLE
+     * @see org.apache.poi.ss.usermodel.Font#U_DOUBLE
+     * @see org.apache.poi.ss.usermodel.Font#U_SINGLE_ACCOUNTING
+     * @see org.apache.poi.ss.usermodel.Font#U_DOUBLE_ACCOUNTING
      */
     public short getUnderlineType()
     {
@@ -341,11 +386,11 @@ public final class FontFormatting implements Duplicatable {
      *
      * @param underlineType underline option
      *
-     * @see org.apache.poi.hssf.usermodel.HSSFFontFormatting#U_NONE
-     * @see org.apache.poi.hssf.usermodel.HSSFFontFormatting#U_SINGLE
-     * @see org.apache.poi.hssf.usermodel.HSSFFontFormatting#U_DOUBLE
-     * @see org.apache.poi.hssf.usermodel.HSSFFontFormatting#U_SINGLE_ACCOUNTING
-     * @see org.apache.poi.hssf.usermodel.HSSFFontFormatting#U_DOUBLE_ACCOUNTING
+     * @see org.apache.poi.ss.usermodel.Font#U_NONE
+     * @see org.apache.poi.ss.usermodel.Font#U_SINGLE
+     * @see org.apache.poi.ss.usermodel.Font#U_DOUBLE
+     * @see org.apache.poi.ss.usermodel.Font#U_SINGLE_ACCOUNTING
+     * @see org.apache.poi.ss.usermodel.Font#U_DOUBLE_ACCOUNTING
      */
     public void setUnderlineType( short underlineType)
     {
@@ -366,7 +411,7 @@ public final class FontFormatting implements Duplicatable {
     private boolean getOptionFlag(BitField field) {
         int optionFlags = getInt(OFFSET_OPTION_FLAGS);
         int value = field.getValue(optionFlags);
-        return value==0? true : false ;
+        return value == 0;
     }
 
     private void setOptionFlag(boolean modified, BitField field)
@@ -536,7 +581,7 @@ public final class FontFormatting implements Duplicatable {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public FontFormatting clone() {

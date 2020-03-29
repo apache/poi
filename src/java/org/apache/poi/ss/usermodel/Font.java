@@ -21,65 +21,57 @@ package org.apache.poi.ss.usermodel;
 import org.apache.poi.util.Removal;
 
 public interface Font {
+    // TODO: refactor and unify Font & FontFormatting in POI 5.0.0
+    // TODO: refactor the constants to enums in POI 5.0.0
 
     /**
      * normal type of black color.
      */
-
     short COLOR_NORMAL = 0x7fff;
 
     /**
      * Dark Red color
      */
-
     short COLOR_RED = 0xa;
 
     /**
      * no type offsetting (not super or subscript)
      */
-
     short SS_NONE = 0;
 
     /**
      * superscript
      */
-
     short SS_SUPER = 1;
 
     /**
      * subscript
      */
-
     short SS_SUB = 2;
 
     /**
      * not underlined
      */
-
     byte U_NONE = 0;
 
     /**
      * single (normal) underline
      */
-
     byte U_SINGLE = 1;
 
     /**
      * double underlined
      */
-
     byte U_DOUBLE = 2;
 
     /**
      * accounting style single underline
      */
-
     byte U_SINGLE_ACCOUNTING = 0x21;
 
     /**
      * accounting style double underline
      */
-
     byte U_DOUBLE_ACCOUNTING = 0x22;
 
     /**

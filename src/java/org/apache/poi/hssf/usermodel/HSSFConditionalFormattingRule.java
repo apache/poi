@@ -21,7 +21,6 @@ import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.record.CFRule12Record;
 import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator;
-import org.apache.poi.hssf.record.CFRuleRecord;
 import org.apache.poi.hssf.record.cf.BorderFormatting;
 import org.apache.poi.hssf.record.cf.ColorGradientFormatting;
 import org.apache.poi.hssf.record.cf.DataBarFormatting;
@@ -41,8 +40,9 @@ import org.apache.poi.ss.usermodel.ExcelNumberFormat;
  * It allows to specify formula based conditions for the Conditional Formatting
  * and the formatting settings such as font, border and pattern.
  */
+@SuppressWarnings("unused")
 public final class HSSFConditionalFormattingRule implements ConditionalFormattingRule {
-    private static final byte CELL_COMPARISON = CFRuleRecord.CONDITION_TYPE_CELL_VALUE_IS;
+    private static final byte CELL_COMPARISON = CFRuleBase.CONDITION_TYPE_CELL_VALUE_IS;
 
     private final CFRuleBase cfRuleRecord;
     private final HSSFWorkbook workbook;
@@ -62,7 +62,7 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
 
     /**
      * Only newer style formatting rules have priorities. For older ones,
-     *  we don't know priority for these, other than definition/model order, 
+     *  we don't know priority for these, other than definition/model order,
      *  which appears to be what Excel uses.
      * @see org.apache.poi.ss.usermodel.ConditionalFormattingRule#getPriority()
      */
@@ -71,7 +71,7 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
         if (rule12 == null) return 0;
         return rule12.getPriority();
     }
-    
+
     /**
      * Always true for HSSF files, per Microsoft Excel documentation
      * @see org.apache.poi.ss.usermodel.ConditionalFormattingRule#getStopIfTrue()
@@ -79,20 +79,20 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     public boolean getStopIfTrue() {
         return true;
     }
-    
+
     CFRuleBase getCfRuleRecord() {
         return cfRuleRecord;
     }
     private CFRule12Record getCFRule12Record(boolean create) {
         if (cfRuleRecord instanceof CFRule12Record) {
-            // Good
-        } else {
-            if (create) throw new IllegalArgumentException("Can't convert a CF into a CF12 record");
-            return null;
+            return (CFRule12Record) cfRuleRecord;
         }
-        return (CFRule12Record)cfRuleRecord;
+        if (create) {
+            throw new IllegalArgumentException("Can't convert a CF into a CF12 record");
+        }
+        return null;
     }
-    
+
     /**
      * Always null for HSSF records, until someone figures out where to find it
      * @see org.apache.poi.ss.usermodel.ConditionalFormattingRule#getNumberFormat()
@@ -177,20 +177,20 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     {
         return getPatternFormatting(true);
     }
-    
+
     private HSSFDataBarFormatting getDataBarFormatting(boolean create) {
         CFRule12Record cfRule12Record = getCFRule12Record(create);
         if (cfRule12Record == null) return null;
-        
+
         DataBarFormatting databarFormatting = cfRule12Record.getDataBarFormatting();
         if (databarFormatting == null) {
             if (!create) return null;
             cfRule12Record.createDataBarFormatting();
         }
-        
+
         return new HSSFDataBarFormatting(cfRule12Record, sheet);
     }
-    
+
     /**
      * @return databar / data-bar formatting object if defined, <code>null</code> otherwise
      */
@@ -204,11 +204,11 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     public HSSFDataBarFormatting createDataBarFormatting() {
         return getDataBarFormatting(true);
     }
-    
+
     private HSSFIconMultiStateFormatting getMultiStateFormatting(boolean create) {
         CFRule12Record cfRule12Record = getCFRule12Record(create);
         if (cfRule12Record == null) return null;
-        
+
         IconMultiStateFormatting iconFormatting = cfRule12Record.getMultiStateFormatting();
         if (iconFormatting == null) {
             if (!create) return null;
@@ -216,7 +216,7 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
         }
         return new HSSFIconMultiStateFormatting(cfRule12Record, sheet);
     }
-    
+
     /**
      * @return icon / multi-state formatting object if defined, <code>null</code> otherwise
      */
@@ -230,11 +230,11 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     public HSSFIconMultiStateFormatting createMultiStateFormatting() {
         return getMultiStateFormatting(true);
     }
-    
+
     private HSSFColorScaleFormatting getColorScaleFormatting(boolean create) {
         CFRule12Record cfRule12Record = getCFRule12Record(create);
         if (cfRule12Record == null) return null;
-        
+
         ColorGradientFormatting colorFormatting = cfRule12Record.getColorGradientFormatting();
         if (colorFormatting == null) {
             if (!create) return null;
@@ -243,13 +243,14 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
 
         return new HSSFColorScaleFormatting(cfRule12Record, sheet);
     }
-    
+
     /**
      * @return color scale / gradient formatting object if defined, <code>null</code> otherwise
      */
     public HSSFColorScaleFormatting getColorScaleFormatting() {
         return getColorScaleFormatting(false);
     }
+
     /**
      * create a new color scale / gradient formatting object if it does not exist,
      * otherwise just return the existing object.
@@ -257,7 +258,7 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     public HSSFColorScaleFormatting createColorScaleFormatting() {
         return getColorScaleFormatting(true);
     }
-    
+
     /**
      * @return -  the conditiontype for the cfrule
      */
@@ -274,11 +275,11 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     public ConditionFilterType getConditionFilterType() {
         return getConditionType() == ConditionType.FILTER ? ConditionFilterType.FILTER : null;
     }
-    
+
     public ConditionFilterData getFilterConfiguration() {
         return null;
     }
-    
+
     /**
      * @return - the comparisionoperatation for the cfrule
      */
@@ -308,17 +309,18 @@ public final class HSSFConditionalFormattingRule implements ConditionalFormattin
     public String getText() {
         return null; // not available here, unless it exists and is unimplemented in cfRuleRecord
     }
-    
-    protected String toFormulaString(Ptg[] parsedExpression) {
+
+    String toFormulaString(Ptg[] parsedExpression) {
         return toFormulaString(parsedExpression, workbook);
     }
-    protected static String toFormulaString(Ptg[] parsedExpression, HSSFWorkbook workbook) {
+
+    static String toFormulaString(Ptg[] parsedExpression, HSSFWorkbook workbook) {
         if(parsedExpression == null || parsedExpression.length == 0) {
             return null;
         }
         return HSSFFormulaParser.toFormulaString(workbook, parsedExpression);
     }
-    
+
     /**
      * Conditional format rules don't define stripes, so always 0
      * @see org.apache.poi.ss.usermodel.DifferentialStyleProvider#getStripeSize()

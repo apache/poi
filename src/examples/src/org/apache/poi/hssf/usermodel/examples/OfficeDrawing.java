@@ -17,17 +17,35 @@
 
 package org.apache.poi.hssf.usermodel.examples;
 
-import org.apache.poi.hssf.usermodel.*;
-import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
+import java.io.ByteArrayOutputStream;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
 
-import java.io.*;
+import org.apache.poi.hssf.usermodel.HSSFChildAnchor;
+import org.apache.poi.hssf.usermodel.HSSFClientAnchor;
+import org.apache.poi.hssf.usermodel.HSSFFont;
+import org.apache.poi.hssf.usermodel.HSSFPatriarch;
+import org.apache.poi.hssf.usermodel.HSSFPicture;
+import org.apache.poi.hssf.usermodel.HSSFPolygon;
+import org.apache.poi.hssf.usermodel.HSSFRichTextString;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFShape;
+import org.apache.poi.hssf.usermodel.HSSFShapeGroup;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFSimpleShape;
+import org.apache.poi.hssf.usermodel.HSSFTextbox;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.Workbook;
 
 /**
  * Demonstrates how to use the office drawing capabilities of POI.
- *
- * @author Glen Stampoultzis (glens at apache.org)
  */
-public class OfficeDrawing {
+public final class OfficeDrawing {
+    private OfficeDrawing() {}
+
     public static void main(String[] args) throws IOException {
         // Create the workbook and sheets.
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
@@ -129,19 +147,19 @@ public class OfficeDrawing {
                 new HSSFClientAnchor(0,0,900,100,(short)3,3,(short)3,4));
         textbox2.setString(new HSSFRichTextString("Woo") );
         textbox2.setFillColor(200,0,0);
-        textbox2.setLineStyle(HSSFSimpleShape.LINESTYLE_DOTGEL);
+        textbox2.setLineStyle(HSSFShape.LINESTYLE_DOTGEL);
 
         // Create third one with some fancy font styling.
         HSSFTextbox textbox3 = patriarch.createTextbox(
                 new HSSFClientAnchor(0,0,900,100,(short)4,4,(short)5,4+1));
         HSSFFont font = wb.createFont();
         font.setItalic(true);
-        font.setUnderline(HSSFFont.U_DOUBLE);
+        font.setUnderline(Font.U_DOUBLE);
         HSSFRichTextString string = new HSSFRichTextString("Woo!!!");
         string.applyFont(2,5,font);
         textbox3.setString(string );
         textbox3.setFillColor(0x08000030);
-        textbox3.setLineStyle(HSSFSimpleShape.LINESTYLE_NONE);  // no line around the textbox.
+        textbox3.setLineStyle(HSSFShape.LINESTYLE_NONE);  // no line around the textbox.
         textbox3.setNoFill(true);    // make it transparent
     }
 
@@ -178,7 +196,7 @@ public class OfficeDrawing {
             int c;
             while ((c = fis.read()) != -1)
                 bos.write(c);
-            pictureIndex = wb.addPicture(bos.toByteArray(), HSSFWorkbook.PICTURE_TYPE_PNG);
+            pictureIndex = wb.addPicture(bos.toByteArray(), Workbook.PICTURE_TYPE_PNG);
         }
         return pictureIndex;
     }
@@ -247,9 +265,9 @@ public class OfficeDrawing {
         double xRatio = 3.22;
         double yRatio = 0.6711;
 
-        int x1 = 000;
-        int y1 = 000;
-        int x2 = 000;
+        int x1 = 0;
+        int y1 = 0;
+        int x2 = 0;
         int y2 = 200;
         for (int i = 0; i < 20; i++)
         {
@@ -263,10 +281,10 @@ public class OfficeDrawing {
             x2 += 10;
         }
 
-        x1 = 000;
-        y1 = 000;
+        x1 = 0;
+        y1 = 0;
         x2 = 200;
-        y2 = 000;
+        y2 = 0;
         for (int i = 0; i < 20; i++)
         {
             HSSFClientAnchor a2 = new HSSFClientAnchor();

@@ -24,32 +24,63 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 
 /**
- * Implementation for Excel WeekNum() function.<p>
+ * Implementation for Excel Roman() function.<p>
  * <p>
- * <b>Syntax</b>:<br> <b>WeekNum  </b>(<b>Serial_num</b>,<b>Return_type</b>)<br>
+ * <b>Syntax</b>:<br> <b>Roman  </b>(<b>number</b>,<b>form</b>)<br>
  * <p>
- * Returns a number that indicates where the week falls numerically within a year.
+ * Converts an arabic numeral to roman, as text.
  * <p>
  * <p>
- * Serial_num     is a date within the week. Dates should be entered by using the DATE function,
- * or as results of other formulas or functions. For example, use DATE(2008,5,23)
- * for the 23rd day of May, 2008. Problems can occur if dates are entered as text.
- * Return_type     is a number that determines on which day the week begins. The default is 1.
- * 1	Week begins on Sunday. Weekdays are numbered 1 through 7.
- * 2	Week begins on Monday. Weekdays are numbered 1 through 7.
- *
- * @author cedric dot walter @ gmail dot com
+ * Number  Required. The Arabic numeral you want converted.<p>
+ * Form    Optional. A number specifying the type of roman numeral you want.
+ *         The roman numeral style ranges from Classic to Simplified, becoming more concise as the value of form increases.
+ * <p>
+ * Return_type     a roman numeral, as text
  */
 public class Roman extends Fixed2ArgFunction {
 
     //M (1000), CM (900), D (500), CD (400), C (100), XC (90), L (50), XL (40), X (10), IX (9), V (5), IV (4) and I (1).
-    public static final int[] VALUES = new int[]{1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
-    public static final String[] ROMAN = new String[]
-            {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+    private static final int[] VALUES = {1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1};
+
+    private static final String[] ROMAN = {"M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"};
+
+    private static final String[][] REPLACEMENTS = {
+        { // form > 0
+            "XLV",  "VL",   //  45
+            "XCV",  "VC",   //  95
+            "CDL",  "LD",   // 450
+            "CML",  "LM",   // 950
+            "CMVC", "LMVL"  // 995
+        },{ // Form == 1 only
+            "CDXC", "LDXL", // 490
+            "CDVC", "LDVL", // 495
+            "CMXC", "LMXL", // 990
+            "XCIX", "VCIV", //  99
+            "XLIX", "VLIV"  //  49
+        },{ // form > 1
+            "XLIX", "IL",   //  49
+            "XCIX", "IC",   //  99
+            "CDXC", "XD",   // 490
+            "CDVC", "XDV",  // 495
+            "CDIC", "XDIX", // 499
+            "LMVL", "XMV",  // 995
+            "CMIC", "XMIX", // 999
+            "CMXC", "XM"    // 990
+        },{ // form > 2
+            "XDV",  "VD",   // 495
+            "XDIX", "VDIV", // 499
+            "XMV",  "VM",   // 995
+            "XMIX", "VMIV"  // 999
+        },{ // form == 4
+            "VDIV", "ID",   // 499
+            "VMIV", "IM"    // 999
+        }
+    };
+
 
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval numberVE, ValueEval formVE) {
-        int number = 0;
+        final int number;
         try {
             ValueEval ve = OperandResolver.getSingleValue(numberVE, srcRowIndex, srcColumnIndex);
             number = OperandResolver.coerceValueToInt(ve);
@@ -66,7 +97,7 @@ public class Roman extends Fixed2ArgFunction {
             return new StringEval("");
         }
 
-        int form = 0;
+        final int form;
         try {
             ValueEval ve = OperandResolver.getSingleValue(formVE, srcRowIndex, srcColumnIndex);
             form = OperandResolver.coerceValueToInt(ve);
@@ -90,7 +121,7 @@ public class Roman extends Fixed2ArgFunction {
     /**
      * Classic conversion.
      *
-     * @param number
+     * @param number the number
      */
     private String integerToRoman(int number) {
         StringBuilder result = new StringBuilder();
@@ -106,45 +137,21 @@ public class Roman extends Fixed2ArgFunction {
     /**
      * Use conversion rule to factor some parts and make them more concise
      *
-     * @param result
-     * @param form
+     * @param input the input string
+     * @param form the level of conciseness [0..4] with 4 being most concise and simplified
      */
-    public String makeConcise(String result, int form) {
-        if (form > 0) {
-            result = result.replaceAll("XLV", "VL"); //45
-            result = result.replaceAll("XCV", "VC"); //95
-            result = result.replaceAll("CDL", "LD"); //450
-            result = result.replaceAll("CML", "LM"); //950
-            result = result.replaceAll("CMVC", "LMVL"); //995
+    public String makeConcise(final String input, final int form) {
+        String result = input;
+        for (int i=0; i<=form && i<=4 && form > 0; i++) {
+            if (i==1 && form>1) {
+                // Replacement[1] is only meant for form == 1
+                continue;
+            }
+            String[] repl = REPLACEMENTS[i];
+            for (int j=0; j<repl.length; j+=2) {
+                result = result.replace(repl[j],repl[j+1]);
+            }
         }
-        if (form == 1) {
-            result = result.replaceAll("CDXC", "LDXL"); //490
-            result = result.replaceAll("CDVC", "LDVL"); //495
-            result = result.replaceAll("CMXC", "LMXL"); //990
-            result = result.replaceAll("XCIX", "VCIV"); //99
-            result = result.replaceAll("XLIX", "VLIV"); //49
-        }
-        if (form > 1) {
-            result = result.replaceAll("XLIX", "IL"); //49
-            result = result.replaceAll("XCIX", "IC"); //99
-            result = result.replaceAll("CDXC", "XD"); //490
-            result = result.replaceAll("CDVC", "XDV"); //495
-            result = result.replaceAll("CDIC", "XDIX"); //499
-            result = result.replaceAll("LMVL", "XMV"); //995
-            result = result.replaceAll("CMIC", "XMIX"); //999
-            result = result.replaceAll("CMXC", "XM"); // 990
-        }
-        if (form > 2) {
-            result = result.replaceAll("XDV", "VD");  //495
-            result = result.replaceAll("XDIX", "VDIV"); //499
-            result = result.replaceAll("XMV", "VM"); // 995
-            result = result.replaceAll("XMIX", "VMIV"); //999
-        }
-        if (form == 4) {
-            result = result.replaceAll("VDIV", "ID"); //499
-            result = result.replaceAll("VMIV", "IM"); //999
-        }
-
         return result;
     }
 }

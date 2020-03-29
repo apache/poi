@@ -118,6 +118,7 @@ import org.apache.poi.util.POILogger;
  *  You can use {@link DateFormatConverter} to do some of this localisation if
  *   you need it.
  */
+@SuppressWarnings("unused")
 public class DataFormatter implements Observer {
     private static final String defaultFractionWholePartFormat = "#";
     private static final String defaultFractionFractionPartFormat = "#/##";
@@ -342,13 +343,11 @@ public class DataFormatter implements Observer {
                 // Ask CellFormat to get a formatter for it
                 CellFormat cfmt = CellFormat.getInstance(locale, formatStr);
                 // CellFormat requires callers to identify date vs not, so do so
-                Object cellValueO = Double.valueOf(cellValue);
-                if (DateUtil.isADateFormat(formatIndex, formatStr) &&
-                        // don't try to handle Date value 0, let a 3 or 4-part format take care of it
-                        ((Double)cellValueO).doubleValue() != 0.0) {
-                    cellValueO = DateUtil.getJavaDate(cellValue, use1904Windowing);
-                }
-                // Wrap and return (non-cachable - CellFormat does that)
+                // don't try to handle Date value 0, let a 3 or 4-part format take care of it
+                Object cellValueO = (cellValue != 0.0 && DateUtil.isADateFormat(formatIndex, formatStr))
+                    ? DateUtil.getJavaDate(cellValue, use1904Windowing)
+                    : cellValue;
+                // Wrap and return (non-cacheable - CellFormat does that)
                 return new CellFormatResultWrapper( cfmt.apply(cellValueO) );
             } catch (Exception e) {
                 logger.log(POILogger.WARN, "Formatting failed for format " + formatStr + ", falling back", e);
@@ -357,7 +356,7 @@ public class DataFormatter implements Observer {
 
        // Excel's # with value 0 will output empty where Java will output 0. This hack removes the # from the format.
        if (emulateCSV && cellValue == 0.0 && formatStr.contains("#") && !formatStr.contains("0")) {
-           formatStr = formatStr.replaceAll("#", "");
+           formatStr = formatStr.replace("#", "");
        }
 
         // See if we already have it cached
@@ -397,38 +396,42 @@ public class DataFormatter implements Observer {
         String formatStr = sFormat;
 
         // Remove colour formatting if present
-        Matcher colourM = colorPattern.matcher(formatStr);
-        while(colourM.find()) {
-           String colour = colourM.group();
+        if (formatStr != null) {
+            Matcher colourM = colorPattern.matcher(formatStr);
+            while (colourM.find()) {
+                String colour = colourM.group();
 
-           // Paranoid replacement...
-           int at = formatStr.indexOf(colour);
-           if(at == -1) break;
-           String nFormatStr = formatStr.substring(0,at) +
-              formatStr.substring(at+colour.length());
-           if(nFormatStr.equals(formatStr)) break;
+                // Paranoid replacement...
+                int at = formatStr.indexOf(colour);
+                if (at == -1) break;
+                String nFormatStr = formatStr.substring(0, at) +
+                        formatStr.substring(at + colour.length());
+                if (nFormatStr.equals(formatStr)) break;
 
-           // Try again in case there's multiple
-           formatStr = nFormatStr;
-           colourM = colorPattern.matcher(formatStr);
+                // Try again in case there's multiple
+                formatStr = nFormatStr;
+                colourM = colorPattern.matcher(formatStr);
+            }
         }
 
         // Strip off the locale information, we use an instance-wide locale for everything
-        Matcher m = localePatternGroup.matcher(formatStr);
-        while(m.find()) {
-            String match = m.group();
-            String symbol = match.substring(match.indexOf('$') + 1, match.indexOf('-'));
-            if (symbol.indexOf('$') > -1) {
-                symbol = symbol.substring(0, symbol.indexOf('$')) +
-                        '\\' +
-                        symbol.substring(symbol.indexOf('$'));
+        if (formatStr != null) {
+            Matcher m = localePatternGroup.matcher(formatStr);
+            while (m.find()) {
+                String match = m.group();
+                String symbol = match.substring(match.indexOf('$') + 1, match.indexOf('-'));
+                if (symbol.indexOf('$') > -1) {
+                    symbol = symbol.substring(0, symbol.indexOf('$')) +
+                            '\\' +
+                            symbol.substring(symbol.indexOf('$'));
+                }
+                formatStr = m.replaceAll(symbol);
+                m = localePatternGroup.matcher(formatStr);
             }
-            formatStr = m.replaceAll(symbol);
-            m = localePatternGroup.matcher(formatStr);
         }
 
         // Check for special cases
-        if(formatStr == null || formatStr.trim().length() == 0) {
+        if(formatStr == null || formatStr.trim().isEmpty()) {
             return getDefaultFormat(cellValue);
         }
 
@@ -476,15 +479,15 @@ public class DataFormatter implements Observer {
 
     private Format createDateFormat(String pFormatStr, double cellValue) {
         String formatStr = pFormatStr;
-        formatStr = formatStr.replaceAll("\\\\-","-");
-        formatStr = formatStr.replaceAll("\\\\,",",");
-        formatStr = formatStr.replaceAll("\\\\\\.","."); // . is a special regexp char
-        formatStr = formatStr.replaceAll("\\\\ "," ");
-        formatStr = formatStr.replaceAll("\\\\/","/"); // weird: m\\/d\\/yyyy
-        formatStr = formatStr.replaceAll(";@", "");
-        formatStr = formatStr.replaceAll("\"/\"", "/"); // "/" is escaped for no reason in: mm"/"dd"/"yyyy
+        formatStr = formatStr.replace("\\-","-");
+        formatStr = formatStr.replace("\\,",",");
+        formatStr = formatStr.replace("\\.","."); // . is a special regexp char
+        formatStr = formatStr.replace("\\ "," ");
+        formatStr = formatStr.replace("\\/","/"); // weird: m\\/d\\/yyyy
+        formatStr = formatStr.replace(";@", "");
+        formatStr = formatStr.replace("\"/\"", "/"); // "/" is escaped for no reason in: mm"/"dd"/"yyyy
         formatStr = formatStr.replace("\"\"", "'");	// replace Excel quoting with Java style quoting
-        formatStr = formatStr.replaceAll("\\\\T","'T'"); // Quote the T is iso8601 style dates
+        formatStr = formatStr.replace("\\T","'T'"); // Quote the T is iso8601 style dates
 
 
         boolean hasAmPm = false;
@@ -494,12 +497,12 @@ public class DataFormatter implements Observer {
             hasAmPm = true;
             amPmMatcher = amPmPattern.matcher(formatStr);
         }
-        formatStr = formatStr.replaceAll("@", "a");
+        formatStr = formatStr.replace('@', 'a');
 
 
         Matcher dateMatcher = daysAsText.matcher(formatStr);
         if (dateMatcher.find()) {
-            String match = dateMatcher.group(0).toUpperCase(Locale.ROOT).replaceAll("D", "E");
+            String match = dateMatcher.group(0).toUpperCase(Locale.ROOT).replace('D', 'E');
             formatStr = dateMatcher.replaceAll(match);
         }
 
@@ -567,9 +570,7 @@ public class DataFormatter implements Observer {
             else if (c == 'm' || c == 'M') {
                 if(mIsMonth) {
                     sb.append('M');
-                    ms.add(
-                            Integer.valueOf(sb.length() -1)
-                    );
+                    ms.add(sb.length() - 1);
                 } else {
                     sb.append('m');
                 }
@@ -801,6 +802,7 @@ public class DataFormatter implements Observer {
      * Performs Excel-style date formatting, using the
      *  supplied Date and format
      */
+    @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
     private String performDateFormatting(Date d, Format dateFormat) {
         Format df = dateFormat != null ? dateFormat : defaultDateformat;
         synchronized (df) {
@@ -821,6 +823,7 @@ public class DataFormatter implements Observer {
      * @param cfEvaluator ConditionalFormattingEvaluator (if available)
      * @return Formatted value
      */
+    @SuppressWarnings("SynchronizationOnLocalVariableOrMethodParameter")
     private String getFormattedDateString(Cell cell, ConditionalFormattingEvaluator cfEvaluator) {
         if (cell == null) {
             return null;
@@ -870,7 +873,7 @@ public class DataFormatter implements Observer {
         if (numberFormat == null) {
             return String.valueOf(d);
         }
-        String formatted = numberFormat.format(Double.valueOf(d));
+        String formatted = numberFormat.format(d);
         return formatted.replaceFirst("E(\\d)", "E+$1"); // to match Excel's E-notation
     }
 
@@ -921,7 +924,7 @@ public class DataFormatter implements Observer {
         String result;
         final String textValue = NumberToTextConverter.toText(value);
         if (textValue.indexOf('E') > -1) {
-            result = numberFormat.format(Double.valueOf(value));
+            result = numberFormat.format(value);
         }
         else {
             result = numberFormat.format(new BigDecimal(textValue));
