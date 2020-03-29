@@ -18,6 +18,8 @@
 package org.apache.poi.xddf.usermodel.text;
 
 import java.util.Locale;
+import java.util.function.Consumer;
+import java.util.function.Supplier;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
@@ -36,6 +38,7 @@ import org.apache.poi.xddf.usermodel.XDDFSolidFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
 
+@SuppressWarnings("unused")
 @Beta
 public class XDDFRunProperties {
     private CTTextCharacterProperties props;
@@ -55,95 +58,43 @@ public class XDDFRunProperties {
     }
 
     public void setBaseline(Integer value) {
-        if (value == null) {
-            if (props.isSetBaseline()) {
-                props.unsetBaseline();
-            }
-        } else {
-            props.setBaseline(value);
-        }
+        update(props::isSetBaseline, props::unsetBaseline, props::setBaseline, value);
     }
 
     public void setDirty(Boolean dirty) {
-        if (dirty == null) {
-            if (props.isSetDirty()) {
-                props.unsetDirty();
-            }
-        } else {
-            props.setDirty(dirty);
-        }
+        update(props::isSetDirty, props::unsetDirty, props::setDirty, dirty);
     }
 
     public void setSpellError(Boolean error) {
-        if (error == null) {
-            if (props.isSetErr()) {
-                props.unsetErr();
-            }
-        } else {
-            props.setErr(error);
-        }
+        update(props::isSetErr, props::unsetErr, props::setErr, error);
     }
 
     public void setNoProof(Boolean noproof) {
-        if (noproof == null) {
-            if (props.isSetNoProof()) {
-                props.unsetNoProof();
-            }
-        } else {
-            props.setNoProof(noproof);
-        }
+        update(props::isSetNoProof, props::unsetNoProof, props::setNoProof, noproof);
     }
 
     public void setNormalizeHeights(Boolean normalize) {
-        if (normalize == null) {
-            if (props.isSetNormalizeH()) {
-                props.unsetNormalizeH();
-            }
-        } else {
-            props.setNormalizeH(normalize);
-        }
+        update(props::isSetNormalizeH, props::unsetNormalizeH, props::setNormalizeH, normalize);
     }
 
     public void setKumimoji(Boolean kumimoji) {
-        if (kumimoji == null) {
-            if (props.isSetKumimoji()) {
-                props.unsetKumimoji();
-            }
-        } else {
-            props.setKumimoji(kumimoji);
-        }
+        update(props::isSetKumimoji, props::unsetKumimoji, props::setKumimoji, kumimoji);
     }
 
     public void setBold(Boolean bold) {
-        if (bold == null) {
-            if (props.isSetB()) {
-                props.unsetB();
-            }
-        } else {
-            props.setB(bold);
-        }
+        update(props::isSetB, props::unsetB, props::setB, bold);
     }
 
     public void setItalic(Boolean italic) {
-        if (italic == null) {
-            if (props.isSetI()) {
-                props.unsetI();
-            }
-        } else {
-            props.setI(italic);
-        }
+        update(props::isSetI, props::unsetI, props::setI, italic);
     }
 
     public void setFontSize(Double size) {
-        if (size == null) {
-            if (props.isSetSz()) {
-                props.unsetSz();
-            }
-        } else if (size < 1 || 400 < size) {
+        if (size != null && (size < 1 || 400 < size)) {
             throw new IllegalArgumentException("Minimum inclusive = 1. Maximum inclusive = 400.");
-        } else {
-            props.setSz((int)(100 * size));
         }
+
+        update(props::isSetSz, props::unsetSz, props::setSz, size == null ? null : (int)(100 * size));
     }
 
     public void setFillProperties(XDDFFillProperties properties) {
@@ -184,27 +135,19 @@ public class XDDFRunProperties {
     }
 
     public void setCharacterKerning(Double kerning) {
-        if (kerning == null) {
-            if (props.isSetKern()) {
-                props.unsetKern();
-            }
-        } else if (kerning < 0 || 4000 < kerning) {
+        if (kerning != null && (kerning < 0 || 4000 < kerning)) {
             throw new IllegalArgumentException("Minimum inclusive = 0. Maximum inclusive = 4000.");
-        } else {
-            props.setKern((int) (100 * kerning));
         }
+
+        update(props::isSetKern, props::unsetKern, props::setKern, kerning == null ? null : (int)(100 * kerning));
     }
 
     public void setCharacterSpacing(Double spacing) {
-        if (spacing == null) {
-            if (props.isSetSpc()) {
-                props.unsetSpc();
-            }
-        } else if (spacing < -4000 || 4000 < spacing) {
+        if (spacing != null && (spacing < -4000 || 4000 < spacing)) {
             throw new IllegalArgumentException("Minimum inclusive = -4000. Maximum inclusive = 4000.");
-        } else {
-            props.setSpc((int) (100 * spacing));
         }
+
+        update(props::isSetSpc, props::unsetSpc, props::setSpc, spacing == null ? null : (int)(100 * spacing));
     }
 
     public void setFonts(XDDFFont[] fonts) {
@@ -212,139 +155,59 @@ public class XDDFRunProperties {
             CTTextFont xml = font.getXmlObject();
             switch (font.getGroup()) {
             case COMPLEX_SCRIPT:
-                if (xml == null) {
-                    if (props.isSetCs()) {
-                        props.unsetCs();
-                    }
-                } else {
-                    props.setCs(xml);
-                }
+                update(props::isSetCs, props::unsetCs, props::setCs, xml);
+                break;
             case EAST_ASIAN:
-                if (xml == null) {
-                    if (props.isSetEa()) {
-                        props.unsetEa();
-                    }
-                } else {
-                    props.setEa(xml);
-                }
+                update(props::isSetEa, props::unsetEa, props::setEa, xml);
+                break;
             case LATIN:
-                if (xml == null) {
-                    if (props.isSetLatin()) {
-                        props.unsetLatin();
-                    }
-                } else {
-                    props.setLatin(xml);
-                }
+                update(props::isSetLatin, props::unsetLatin, props::setLatin, xml);
+                break;
             case SYMBOL:
-                if (xml == null) {
-                    if (props.isSetSym()) {
-                        props.unsetSym();
-                    }
-                } else {
-                    props.setSym(xml);
-                }
+                update(props::isSetSym, props::unsetSym, props::setSym, xml);
+                break;
             }
         }
     }
 
     public void setUnderline(UnderlineType underline) {
-        if (underline == null) {
-            if (props.isSetU()) {
-                props.unsetU();
-            }
-        } else {
-            props.setU(underline.underlying);
-        }
+        update(props::isSetU, props::unsetU, props::setU, underline == null ? null : underline.underlying);
     }
 
     public void setStrikeThrough(StrikeType strike) {
-        if (strike == null) {
-            if (props.isSetStrike()) {
-                props.unsetStrike();
-            }
-        } else {
-            props.setStrike(strike.underlying);
-        }
+        update(props::isSetStrike, props::unsetStrike, props::setStrike, strike == null ? null : strike.underlying);
     }
 
     public void setCapitals(CapsType caps) {
-        if (caps == null) {
-            if (props.isSetCap()) {
-                props.unsetCap();
-            }
-        } else {
-            props.setCap(caps.underlying);
-        }
+        update(props::isSetCap, props::unsetCap, props::setCap, caps == null ? null : caps.underlying);
     }
 
     public void setHyperlink(XDDFHyperlink link) {
-        if (link == null) {
-            if (props.isSetHlinkClick()) {
-                props.unsetHlinkClick();
-            }
-        } else {
-            props.setHlinkClick(link.getXmlObject());
-        }
+        update(props::isSetHlinkClick, props::unsetHlinkClick, props::setHlinkClick, link == null ? null : link.getXmlObject());
     }
 
     public void setMouseOver(XDDFHyperlink link) {
-        if (link == null) {
-            if (props.isSetHlinkMouseOver()) {
-                props.unsetHlinkMouseOver();
-            }
-        } else {
-            props.setHlinkMouseOver(link.getXmlObject());
-        }
+        update(props::isSetHlinkMouseOver, props::unsetHlinkMouseOver, props::setHlinkMouseOver, link == null ? null : link.getXmlObject());
     }
 
     public void setLanguage(Locale lang) {
-        if (lang == null) {
-            if (props.isSetLang()) {
-                props.unsetLang();
-            }
-        } else {
-            props.setLang(lang.toLanguageTag());
-        }
+        update(props::isSetLang, props::unsetLang, props::setLang, lang == null ? null : lang.toLanguageTag());
     }
 
     public void setAlternativeLanguage(Locale lang) {
-        if (lang == null) {
-            if (props.isSetAltLang()) {
-                props.unsetAltLang();
-            }
-        } else {
-            props.setAltLang(lang.toLanguageTag());
-        }
+        update(props::isSetAltLang, props::unsetAltLang, props::setAltLang, lang == null ? null : lang.toLanguageTag());
     }
 
     public void setHighlight(XDDFColor color) {
-        if (color == null) {
-            if (props.isSetHighlight()) {
-                props.unsetHighlight();
-            }
-        } else {
-            props.setHighlight(color.getColorContainer());
-        }
+        update(props::isSetHighlight, props::unsetHighlight, props::setHighlight, color == null ? null : color.getColorContainer());
     }
 
     public void setLineProperties(XDDFLineProperties properties) {
-        if (properties == null) {
-            if (props.isSetLn()) {
-                props.unsetLn();
-            }
-        } else {
-            props.setLn(properties.getXmlObject());
-        }
+        update(props::isSetLn, props::unsetLn, props::setLn, properties == null ? null : properties.getXmlObject());
     }
 
     public void setBookmark(String bookmark) {
-        if (bookmark == null) {
-            if (props.isSetBmk()) {
-                props.unsetBmk();
-            }
-        } else {
-            props.setBmk(bookmark);
-        }
+        update(props::isSetBmk, props::unsetBmk, props::setBmk, bookmark);
     }
 
     public XDDFExtensionList getExtensionList() {
@@ -356,13 +219,7 @@ public class XDDFRunProperties {
     }
 
     public void setExtensionList(XDDFExtensionList list) {
-        if (list == null) {
-            if (props.isSetExtLst()) {
-                props.unsetExtLst();
-            }
-        } else {
-            props.setExtLst(list.getXmlObject());
-        }
+        update(props::isSetExtLst, props::unsetExtLst, props::setExtLst, list == null ? null : list.getXmlObject());
     }
 
     public XDDFEffectContainer getEffectContainer() {
@@ -374,13 +231,7 @@ public class XDDFRunProperties {
     }
 
     public void setEffectContainer(XDDFEffectContainer container) {
-        if (container == null) {
-            if (props.isSetEffectDag()) {
-                props.unsetEffectDag();
-            }
-        } else {
-            props.setEffectDag(container.getXmlObject());
-        }
+        update(props::isSetEffectDag, props::unsetEffectDag, props::setEffectDag, container == null ? null : container.getXmlObject());
     }
 
     public XDDFEffectList getEffectList() {
@@ -392,12 +243,14 @@ public class XDDFRunProperties {
     }
 
     public void setEffectList(XDDFEffectList list) {
-        if (list == null) {
-            if (props.isSetEffectLst()) {
-                props.unsetEffectLst();
-            }
-        } else {
-            props.setEffectLst(list.getXmlObject());
+        update(props::isSetEffectLst, props::unsetEffectLst, props::setEffectLst, list == null ? null : list.getXmlObject());
+    }
+
+    private static <T> void update(Supplier<Boolean> isSet, Runnable unset, Consumer<T> setter, T val) {
+        if (val != null) {
+            setter.accept(val);
+        } else if (isSet.get()) {
+            unset.run();
         }
     }
 }

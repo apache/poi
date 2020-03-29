@@ -313,14 +313,14 @@ public class SlideShowExtractor<
 
     public List<? extends ObjectShape<S,P>> getOLEShapes() {
         final List<ObjectShape<S,P>> oleShapes = new ArrayList<>();
-        
+
         for (final Slide<S,P> slide : slideshow.getSlides()) {
             addOLEShapes(oleShapes, slide);
         }
-        
+
         return oleShapes;
     }
-    
+
     @SuppressWarnings("unchecked")
     private void addOLEShapes(final List<ObjectShape<S,P>> oleShapes, ShapeContainer<S,P> container) {
         for (Shape<S,P> shape : container) {
@@ -368,8 +368,10 @@ public class SlideShowExtractor<
         switch (tr.getTextCap()) {
             case ALL:
                 txt = txt.toUpperCase(LocaleUtil.getUserLocale());
+                break;
             case SMALL:
                 txt = txt.toLowerCase(LocaleUtil.getUserLocale());
+                break;
         }
 
         return txt;

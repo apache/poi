@@ -72,7 +72,7 @@ final class NormalisedDecimal {
 	private static final long MAX_REP_WHOLE_PART = 0x38D7EA4C68000L;
 
 
-
+	@SuppressWarnings("java:S128")
 	public static NormalisedDecimal create(BigInteger frac, int binaryExponent) {
 		// estimate pow2&pow10 first, perform optional mulShift, then normalize
 		int pow10;
@@ -167,7 +167,7 @@ final class NormalisedDecimal {
 	 * Convert to an equivalent {@link ExpandedDouble} representation (binary frac and exponent).
 	 * The resulting transformed object is easily converted to a 64 bit IEEE double:
 	 * <ul>
-	 * <li>bits 2-53 of the {@link #getSignificand()} become the 52 bit 'fraction'.</li>
+	 * <li>bits 2-53 of the {@link #composeFrac()} become the 52 bit 'fraction'.</li>
 	 * <li>{@link #getBinaryExponent()} is biased by 1023 to give the 'exponent'.</li>
 	 * </ul>
 	 * The sign bit must be obtained from somewhere else.
@@ -184,21 +184,7 @@ final class NormalisedDecimal {
 	 * @return the significand as a fixed point number (with 24 fraction bits and 47-50 whole bits)
 	 */
 	BigInteger composeFrac() {
-		long wp = _wholePart;
-		int fp = _fractionalPart;
-		return new BigInteger(new byte[] {
-				(byte) (wp >> 56), // N.B. assuming sign bit is zero
-				(byte) (wp >> 48),
-				(byte) (wp >> 40),
-				(byte) (wp >> 32),
-				(byte) (wp >> 24),
-				(byte) (wp >> 16),
-				(byte) (wp >>  8),
-				(byte) (wp >>  0),
-				(byte) (fp >> 16),
-				(byte) (fp >> 8),
-				(byte) (fp >> 0),
-		});
+		return BigInteger.valueOf(_wholePart).shiftLeft(24).or(BigInteger.valueOf(_fractionalPart & 0x00FFFFFF));
 	}
 
 	public String getSignificantDecimalDigits() {

@@ -22,42 +22,42 @@ import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.formula.FormulaParser;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.xssf.usermodel.BaseXSSFEvaluationWorkbook;
 import org.apache.poi.util.Internal;
+import org.apache.poi.xssf.usermodel.BaseXSSFEvaluationWorkbook;
 
 /**
  * SXSSF wrapper around the SXSSF and XSSF workbooks
  */
 @Internal
 public final class SXSSFEvaluationWorkbook extends BaseXSSFEvaluationWorkbook {
-    private final SXSSFWorkbook _uBook;
-    
+    private final SXSSFWorkbook _sxssfBook;
+
     public static SXSSFEvaluationWorkbook create(SXSSFWorkbook book) {
         if (book == null) {
             return null;
         }
         return new SXSSFEvaluationWorkbook(book);
     }
-    
+
     private SXSSFEvaluationWorkbook(SXSSFWorkbook book) {
         super(book.getXSSFWorkbook());
-        _uBook = book;
+        _sxssfBook = book;
     }
 
     @Override
     public int getSheetIndex(EvaluationSheet evalSheet) {
         SXSSFSheet sheet = ((SXSSFEvaluationSheet)evalSheet).getSXSSFSheet();
-        return _uBook.getSheetIndex(sheet);
+        return _sxssfBook.getSheetIndex(sheet);
     }
 
     @Override
     public EvaluationSheet getSheet(int sheetIndex) {
-        return new SXSSFEvaluationSheet(_uBook.getSheetAt(sheetIndex));
+        return new SXSSFEvaluationSheet(_sxssfBook.getSheetAt(sheetIndex));
     }
 
     @Override
     public Ptg[] getFormulaTokens(EvaluationCell evalCell) {
         SXSSFCell cell = ((SXSSFEvaluationCell)evalCell).getSXSSFCell();
-        return FormulaParser.parse(cell.getCellFormula(), this, FormulaType.CELL, _uBook.getSheetIndex(cell.getSheet()));
+        return FormulaParser.parse(cell.getCellFormula(), this, FormulaType.CELL, _sxssfBook.getSheetIndex(cell.getSheet()));
     }
 }

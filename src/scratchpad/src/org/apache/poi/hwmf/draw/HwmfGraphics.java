@@ -297,7 +297,7 @@ public class HwmfGraphics {
      * Applies the object table entry
      *
      * @param index the index of the object table entry (0-based)
-     * 
+     *
      * @throws IndexOutOfBoundsException if the index is out of range
      * @throws NoSuchElementException if the entry was deleted before
      */
@@ -308,10 +308,10 @@ public class HwmfGraphics {
         }
         ote.applyObject(this);
     }
-    
+
     /**
      * Unsets (deletes) the object table entry for further usage
-     * 
+     *
      * When a META_DELETEOBJECT record (section 2.3.4.7) is received that specifies this
      * object's particular index, the object's resources are released, the binding to its
      * WMF Object Table index is ended, and the index value is returned to the pool of
@@ -319,7 +319,7 @@ public class HwmfGraphics {
      * created by another Object Record Type record.
      *
      * @param index the index (0-based)
-     * 
+     *
      * @throws IndexOutOfBoundsException if the index is out of range
      */
     public void unsetObjectTableEntry(int index) {
@@ -331,7 +331,7 @@ public class HwmfGraphics {
         objectTable.remove(index);
         objectIndexes.clear(index);
     }
-    
+
     /**
      * Saves the current properties to the stack
      */
@@ -343,7 +343,7 @@ public class HwmfGraphics {
         propStack.add(p);
         prop = newProperties(p);
     }
-    
+
     /**
      * Restores the properties from the stack
      *
@@ -444,11 +444,11 @@ public class HwmfGraphics {
         if (font == null || text == null || text.length == 0) {
             return;
         }
-        
+
         double fontH = getFontHeight(font);
         // TODO: another approx. ...
         double fontW = fontH/1.8;
-        
+
         Charset charset;
         if (isUnicode) {
             charset = Charsets.UTF_16LE;
@@ -552,6 +552,7 @@ public class HwmfGraphics {
         switch (valign) {
             case TOP:
                 tx.translate(0, layout.getAscent());
+                break;
             default:
             case BASELINE:
                 break;
@@ -617,7 +618,7 @@ public class HwmfGraphics {
         }
         as.addAttribute(TextAttribute.WEIGHT, awtFW);
     }
-    
+
     private double getFontHeight(HwmfFont font) {
         // see HwmfFont#height for details
         double fontHeight = font.getHeight();
@@ -626,9 +627,9 @@ public class HwmfGraphics {
         } else if (fontHeight < 0) {
             return -fontHeight;
         } else {
-            // TODO: fix font height calculation 
+            // TODO: fix font height calculation
             // the height is given as font size + ascent + descent
-            // as an approximation we reduce the height by a static factor 
+            // as an approximation we reduce the height by a static factor
             return fontHeight*3/4;
         }
     }

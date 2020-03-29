@@ -45,15 +45,15 @@ public final class TextRulerAtom extends RecordAtom {
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
-    
+
     private static final BitField DEFAULT_TAB_SIZE = getInstance(0x0001);
     private static final BitField C_LEVELS = getInstance(0x0002);
     private static final BitField TAB_STOPS = getInstance(0x0004);
-    private static final BitField[] LEFT_MARGIN = {
+    private static final BitField[] LEFT_MARGIN_LVL_MASK = {
         getInstance(0x0008), getInstance(0x0010), getInstance(0x0020),
         getInstance(0x0040), getInstance(0x0080),
     };
-    private static final BitField[] INDENT = {
+    private static final BitField[] INDENT_LVL_MASK = {
         getInstance(0x0100), getInstance(0x0200), getInstance(0x0400),
         getInstance(0x0800), getInstance(0x1000),
     };
@@ -87,9 +87,9 @@ public final class TextRulerAtom extends RecordAtom {
      * @param start the start offset into the byte array.
      * @param len the length of the slice in the byte array.
      */
-    protected TextRulerAtom(final byte[] source, final int start, final int len) {
+    TextRulerAtom(final byte[] source, final int start, final int len) {
         final LittleEndianByteArrayInputStream leis = new LittleEndianByteArrayInputStream(source, start, Math.min(len, MAX_RECORD_LENGTH));
-        
+
 
         try {
             // Get the header.
@@ -128,8 +128,8 @@ public final class TextRulerAtom extends RecordAtom {
         mask |= writeIf(lbos, defaultTabSize, DEFAULT_TAB_SIZE);
         mask |= writeIf(lbos, tabStops, TAB_STOPS);
         for (int i=0; i<5; i++) {
-            mask |= writeIf(lbos, leftMargin[i], LEFT_MARGIN[i]);
-            mask |= writeIf(lbos, indent[i], INDENT[i]);
+            mask |= writeIf(lbos, leftMargin[i], LEFT_MARGIN_LVL_MASK[i]);
+            mask |= writeIf(lbos, indent[i], INDENT_LVL_MASK[i]);
         }
         LittleEndian.putInt(_header, 4, bos.size()+4);
         out.write(_header);
@@ -146,7 +146,8 @@ public final class TextRulerAtom extends RecordAtom {
         }
         return bit.setBoolean(0, isSet);
     }
-    
+
+    @SuppressWarnings("SameParameterValue")
     private static int writeIf(final LittleEndianOutputStream lbos, List<HSLFTabStop> value, BitField bit) {
         boolean isSet = false;
         if (value != null && !value.isEmpty()) {
@@ -155,7 +156,7 @@ public final class TextRulerAtom extends RecordAtom {
         }
         return bit.setBoolean(0, isSet);
     }
-    
+
     /**
      * Read the record bytes and initialize the internal variables
      */
@@ -167,15 +168,15 @@ public final class TextRulerAtom extends RecordAtom {
             tabStops.addAll(HSLFTabStopPropCollection.readTabStops(leis));
         }
         for (int i=0; i<5; i++) {
-            leftMargin[i] = readIf(leis, mask, LEFT_MARGIN[i]);
-            indent[i] = readIf(leis, mask, INDENT[i]);
+            leftMargin[i] = readIf(leis, mask, LEFT_MARGIN_LVL_MASK[i]);
+            indent[i] = readIf(leis, mask, INDENT_LVL_MASK[i]);
         }
     }
 
     private static Integer readIf(final LittleEndianByteArrayInputStream leis, final int mask, final BitField bit) {
         return (bit.isSet(mask)) ? (int)leis.readShort() : null;
-    }    
-    
+    }
+
     /**
      * Default distance between tab stops, in master coordinates (576 dpi).
      */

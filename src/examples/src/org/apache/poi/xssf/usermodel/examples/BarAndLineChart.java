@@ -62,9 +62,12 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 // additional title formatting from https://stackoverflow.com/questions/50418856
 // and legend positioning from https://stackoverflow.com/questions/49615379
 // this would probably be an answer for https://stackoverflow.com/questions/36447925 too
-public class BarAndLineChart {
+public final class BarAndLineChart {
+
     private static final int NUM_OF_ROWS = 7;
     private static final Random RNG = new Random();
+
+    private BarAndLineChart() {}
 
     public static void main(String[] args) throws Exception {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {

@@ -521,7 +521,7 @@ public class HemfPlusBrush {
         private EmfPlusWrapMode wrapMode;
         private Rectangle2D rect = new Rectangle2D.Double();
         private Color startColor, endColor;
-        private AffineTransform transform;
+        private AffineTransform blendTransform;
         private float[] positions;
         private Color[] blendColors;
         private float[] positionsV;
@@ -556,7 +556,7 @@ public class HemfPlusBrush {
             size += 4*LittleEndianConsts.INT_SIZE;
 
             if (TRANSFORM.isSet(dataFlags)) {
-                size += readXForm(leis, (transform = new AffineTransform()));
+                size += readXForm(leis, (blendTransform = new AffineTransform()));
             }
 
             if (isPreset() && (isBlendH() || isBlendV())) {
@@ -575,7 +575,7 @@ public class HemfPlusBrush {
             HemfDrawProperties prop = ctx.getProperties();
             prop.setBrushStyle(HwmfBrushStyle.BS_LINEAR_GRADIENT);
             prop.setBrushRect(rect);
-            prop.setBrushTransform(transform);
+            prop.setBrushTransform(blendTransform);
 
             // Preset colors and BlendH/V are mutual exclusive
             if (isPreset()) {
@@ -613,7 +613,7 @@ public class HemfPlusBrush {
             m.put("rect", () -> rect);
             m.put("startColor", () -> startColor);
             m.put("endColor", () -> endColor);
-            m.put("transform", () -> transform);
+            m.put("blendTransform", () -> blendTransform);
             m.put("positions", () -> positions);
             m.put("blendColors", () -> blendColors);
             m.put("positionsV", () -> positionsV);
@@ -694,7 +694,7 @@ public class HemfPlusBrush {
         private Color[] surroundingColor;
         private EmfPlusPath boundaryPath;
         private Point2D[] boundaryPoints;
-        private AffineTransform transform;
+        private AffineTransform blendTransform;
         private float[] positions;
         private Color[] blendColors;
         private float[] blendFactorsH;
@@ -761,7 +761,7 @@ public class HemfPlusBrush {
             // the path gradient brush. This field MUST be present if the BrushDataTransform flag is set in the
             // BrushDataFlags field of the EmfPlusPathGradientBrushData object.
             if (TRANSFORM.isSet(dataFlags)) {
-                size += readXForm(leis, (transform = new AffineTransform()));
+                size += readXForm(leis, (blendTransform = new AffineTransform()));
             }
 
             // An optional blend pattern for the path gradient brush. If this field is present, it MUST contain either
@@ -825,7 +825,7 @@ public class HemfPlusBrush {
             m.put("surroundingColor", () -> surroundingColor);
             m.put("boundaryPath", () -> boundaryPath);
             m.put("boundaryPoints", () -> boundaryPoints);
-            m.put("transform", () -> transform);
+            m.put("blendTransform", () -> blendTransform);
             m.put("positions", () -> positions);
             m.put("blendColors", () -> blendColors);
             m.put("blendFactorsH", () -> blendFactorsH);
@@ -839,7 +839,7 @@ public class HemfPlusBrush {
     public static class EmfPlusTextureBrushData implements EmfPlusBrushData {
         private int dataFlags;
         private EmfPlusWrapMode wrapMode;
-        private AffineTransform transform;
+        private AffineTransform brushTransform;
         private EmfPlusImage image;
 
         @Override
@@ -855,7 +855,7 @@ public class HemfPlusBrush {
             int size = 2*LittleEndianConsts.INT_SIZE;
 
             if (TRANSFORM.isSet(dataFlags)) {
-                size += readXForm(leis, (transform = new AffineTransform()));
+                size += readXForm(leis, (brushTransform = new AffineTransform()));
             }
 
             if (dataSize > size) {
@@ -871,7 +871,7 @@ public class HemfPlusBrush {
             image.applyObject(ctx, null);
             prop.setBrushBitmap(prop.getEmfPlusImage());
             prop.setBrushStyle(HwmfBrushStyle.BS_PATTERN);
-            prop.setBrushTransform(transform);
+            prop.setBrushTransform(brushTransform);
         }
 
         @Override
@@ -894,7 +894,7 @@ public class HemfPlusBrush {
             return GenericRecordUtil.getGenericProperties(
                 "dataFlags", () -> dataFlags,
                 "wrapMode", () -> wrapMode,
-                "transform", () -> transform,
+                "brushTransform", () -> brushTransform,
                 "image", () -> image
             );
         }

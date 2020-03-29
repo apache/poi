@@ -1294,7 +1294,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     protected static void setWidthType(TableWidthType widthType, CTTblWidth ctWidth) {
         TableWidthType currentType = getWidthType(ctWidth);
         if (!currentType.equals(widthType)) {
-            STTblWidth.Enum stWidthType = widthType.getSTWidthType();
+            STTblWidth.Enum stWidthType = widthType.getStWidthType();
             ctWidth.setType(stWidthType);
             switch (stWidthType.intValue()) {
             case STTblWidth.INT_PCT:

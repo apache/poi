@@ -42,8 +42,8 @@ import org.w3c.dom.traversal.NodeIterator;
  * e.g. to register id attributes or set prefixes for registered namespaces
  */
 public class SignatureMarshalDefaultListener implements SignatureMarshalListener {
+    private static final String OBJECT_TAG = "Object";
     private final Set<String> IGNORE_NS = new HashSet<>(Arrays.asList(null, XML_NS, XML_DIGSIG_NS));
-    private final String OBJECT_TAG = "Object";
 
     @Override
     public void handleElement(SignatureInfo signatureInfo, Document doc, EventTarget target, EventListener parentListener) {

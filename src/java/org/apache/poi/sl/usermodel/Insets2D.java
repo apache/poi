@@ -17,11 +17,13 @@
 
 package org.apache.poi.sl.usermodel;
 
+import org.apache.poi.common.Duplicatable;
+
 /**
  * This is a replacement for {@link java.awt.Insets} which works on doubles
  * instead of ints
  */
-public final class Insets2D implements Cloneable {
+public final class Insets2D implements Duplicatable {
 
     /**
      * The inset from the top.
@@ -50,10 +52,10 @@ public final class Insets2D implements Cloneable {
      * to yield a new location for the Right edge.
      */
     public double right;
-    
+
     /**
-     * Creates and initializes a new <code>Insets</code> object with the 
-     * specified top, left, bottom, and right insets. 
+     * Creates and initializes a new <code>Insets</code> object with the
+     * specified top, left, bottom, and right insets.
      * @param       top   the inset from the top.
      * @param       left   the inset from the left.
      * @param       bottom   the inset from the bottom.
@@ -83,9 +85,9 @@ public final class Insets2D implements Cloneable {
     }
 
     /**
-     * Checks whether two insets objects are equal. Two instances 
+     * Checks whether two insets objects are equal. Two instances
      * of <code>Insets</code> are equal if the four integer values
-     * of the fields <code>top</code>, <code>left</code>, 
+     * of the fields <code>top</code>, <code>left</code>,
      * <code>bottom</code>, and <code>right</code> are all equal.
      * @return      <code>true</code> if the two insets are equal;
      *                          otherwise <code>false</code>.
@@ -115,12 +117,12 @@ public final class Insets2D implements Cloneable {
     }
 
     /**
-     * Returns a string representation of this <code>Insets</code> object. 
-     * This method is intended to be used only for debugging purposes, and 
-     * the content and format of the returned string may vary between 
-     * implementations. The returned string may be empty but may not be 
+     * Returns a string representation of this <code>Insets</code> object.
+     * This method is intended to be used only for debugging purposes, and
+     * the content and format of the returned string may vary between
+     * implementations. The returned string may be empty but may not be
      * <code>null</code>.
-     * 
+     *
      * @return  a string representation of this <code>Insets</code> object.
      */
     public String toString() {
@@ -132,9 +134,9 @@ public final class Insets2D implements Cloneable {
      * @return     a copy of this <code>Insets2D</code> object.
      */
     @Override
-    public Insets2D clone() {
+    public Insets2D copy() {
         return new Insets2D(top, left, bottom, right);
     }
-    
+
 
 }
