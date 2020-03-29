@@ -328,6 +328,138 @@ public final class TestXWPFParagraph {
     }
 
     @Test
+    public void testCreateNewRuns() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+
+            XWPFParagraph p = doc.createParagraph();
+            XWPFHyperlinkRun h = p.createHyperlinkRun("http://poi.apache.org");
+            XWPFFieldRun fieldRun = p.createFieldRun();
+            XWPFRun r = p.createRun();
+
+            assertEquals(3, p.getRuns().size());
+            assertEquals(0, p.getRuns().indexOf(h));
+            assertEquals(1, p.getRuns().indexOf(fieldRun));
+            assertEquals(2, p.getRuns().indexOf(r));
+
+            assertEquals(3, p.getIRuns().size());
+            assertEquals(0, p.getIRuns().indexOf(h));
+            assertEquals(1, p.getIRuns().indexOf(fieldRun));
+            assertEquals(2, p.getIRuns().indexOf(r));
+        }
+    }
+
+    @Test
+    public void testInsertNewRuns() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+
+            XWPFParagraph p = doc.createParagraph();
+            XWPFRun r = p.createRun();
+            assertEquals(1, p.getRuns().size());
+            assertEquals(0, p.getRuns().indexOf(r));
+
+            XWPFHyperlinkRun h = p.insertNewHyperlinkRun(0, "http://poi.apache.org");
+            assertEquals(2, p.getRuns().size());
+            assertEquals(0, p.getRuns().indexOf(h));
+            assertEquals(1, p.getRuns().indexOf(r));
+
+            XWPFFieldRun fieldRun2 = p.insertNewFieldRun(2);
+            assertEquals(3, p.getRuns().size());
+            assertEquals(2, p.getRuns().indexOf(fieldRun2));
+        }
+    }
+
+    @Test
+    public void testRemoveRuns() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+
+            XWPFParagraph p = doc.createParagraph();
+            XWPFRun r = p.createRun();
+            p.createRun();
+            XWPFHyperlinkRun hyperlinkRun = p
+                    .createHyperlinkRun("http://poi.apache.org");
+            XWPFFieldRun fieldRun = p.createFieldRun();
+
+            assertEquals(4, p.getRuns().size());
+            assertEquals(2, p.getRuns().indexOf(hyperlinkRun));
+            assertEquals(3, p.getRuns().indexOf(fieldRun));
+
+            p.removeRun(2);
+            assertEquals(3, p.getRuns().size());
+            assertEquals(-1, p.getRuns().indexOf(hyperlinkRun));
+            assertEquals(2, p.getRuns().indexOf(fieldRun));
+
+            p.removeRun(0);
+            assertEquals(2, p.getRuns().size());
+            assertEquals(-1, p.getRuns().indexOf(r));
+            assertEquals(1, p.getRuns().indexOf(fieldRun));
+
+            p.removeRun(1);
+            assertEquals(1, p.getRuns().size());
+            assertEquals(-1, p.getRuns().indexOf(fieldRun));
+        }
+    }
+
+    @Test
+    public void testRemoveAndInsertRunsWithOtherIRunElement()
+            throws IOException {
+        XWPFDocument doc = new XWPFDocument();
+
+        XWPFParagraph p = doc.createParagraph();
+        p.createRun();
+        // add other run element
+        p.getCTP().addNewSdt();
+        // add two CTR in hyperlink
+        XWPFHyperlinkRun hyperlinkRun = p
+                .createHyperlinkRun("http://poi.apache.org");
+        hyperlinkRun.getCTHyperlink().addNewR();
+        p.createFieldRun();
+
+        XWPFDocument doc2 = XWPFTestDataSamples.writeOutAndReadBack(doc);
+        XWPFParagraph paragraph = doc2.getParagraphArray(0);
+
+        assertEquals(4, paragraph.getRuns().size());
+        assertEquals(5, paragraph.getIRuns().size());
+
+        assertTrue(paragraph.getRuns().get(1) instanceof XWPFHyperlinkRun);
+        assertTrue(paragraph.getRuns().get(2) instanceof XWPFHyperlinkRun);
+        assertTrue(paragraph.getRuns().get(3) instanceof XWPFFieldRun);
+
+        assertTrue(paragraph.getIRuns().get(1) instanceof XWPFSDT);
+        assertTrue(paragraph.getIRuns().get(2) instanceof XWPFHyperlinkRun);
+
+        paragraph.removeRun(1);
+        assertEquals(3, paragraph.getRuns().size());
+        assertTrue(paragraph.getRuns().get(1) instanceof XWPFHyperlinkRun);
+        assertTrue(paragraph.getRuns().get(2) instanceof XWPFFieldRun);
+
+        assertTrue(paragraph.getIRuns().get(1) instanceof XWPFSDT);
+        assertTrue(paragraph.getIRuns().get(2) instanceof XWPFHyperlinkRun);
+
+        paragraph.removeRun(1);
+        assertEquals(2, paragraph.getRuns().size());
+        assertTrue(paragraph.getRuns().get(1) instanceof XWPFFieldRun);
+
+        assertTrue(paragraph.getIRuns().get(1) instanceof XWPFSDT);
+        assertTrue(paragraph.getIRuns().get(2) instanceof XWPFFieldRun);
+
+        paragraph.removeRun(0);
+        assertEquals(1, paragraph.getRuns().size());
+        assertTrue(paragraph.getRuns().get(0) instanceof XWPFFieldRun);
+
+        assertTrue(paragraph.getIRuns().get(0) instanceof XWPFSDT);
+        assertTrue(paragraph.getIRuns().get(1) instanceof XWPFFieldRun);
+
+        XWPFRun newRun = paragraph.insertNewRun(0);
+        assertEquals(2, paragraph.getRuns().size());
+
+        assertEquals(3, paragraph.getIRuns().size());
+        assertEquals(0, paragraph.getRuns().indexOf(newRun));
+
+        doc.close();
+        doc2.close();
+    }
+
+    @Test
     public void testPictures() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("VariousPictures.docx")) {
             assertEquals(7, doc.getParagraphs().size());

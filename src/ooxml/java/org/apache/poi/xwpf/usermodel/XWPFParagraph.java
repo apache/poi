@@ -20,6 +20,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Function;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.util.Internal;
@@ -1478,50 +1479,144 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     }
 
     /**
-     * insert a new Run in RunArray
+     * Appends a new field run to this paragraph
+     * 
+     * @return a new field run
+     */
+    public XWPFFieldRun createFieldRun() {
+        CTSimpleField ctSimpleField = paragraph.addNewFldSimple();
+        XWPFFieldRun newRun = new XWPFFieldRun(ctSimpleField, ctSimpleField.addNewR(), this);
+        runs.add(newRun);
+        iruns.add(newRun);
+        return newRun;
+    }
+
+    /**
+     * insert a new Run in all runs
      *
      * @param pos The position at which the new run should be added.
      *
      * @return the inserted run or null if the given pos is out of bounds.
      */
     public XWPFRun insertNewRun(int pos) {
-        if (pos >= 0 && pos <= runs.size()) {
-            // calculate the correct pos as our run/irun list contains
-            // hyperlinks
-            // and fields so it is different to the paragraph R array.
-            int rPos = 0;
-            for (int i = 0; i < pos; i++) {
-                XWPFRun currRun = runs.get(i);
-                if (!(currRun instanceof XWPFHyperlinkRun
-                        || currRun instanceof XWPFFieldRun)) {
-                    rPos++;
-                }
+        if (pos == runs.size()) {
+            return createRun();
+        }
+        return insertNewProvidedRun(pos, newCursor -> {
+            String uri = CTR.type.getName().getNamespaceURI();
+            String localPart = "r";
+            // creates a new run, cursor is positioned inside the new
+            // element
+            newCursor.beginElement(localPart, uri);
+            // move the cursor to the START token to the run just created
+            newCursor.toParent();
+            CTR r = (CTR) newCursor.getObject();
+            return new XWPFRun(r, (IRunBody)this);
+        });
+    }
+
+    /**
+     * insert a new hyperlink Run in all runs
+     *
+     * @param pos The position at which the new run should be added.
+     * @param uri hyperlink uri
+     *
+     * @return the inserted run or null if the given pos is out of bounds.
+     */
+    public XWPFHyperlinkRun insertNewHyperlinkRun(int pos, String uri) {
+        if (pos == runs.size()) {
+            return createHyperlinkRun(uri);
+        }
+        XWPFHyperlinkRun newRun = insertNewProvidedRun(pos, newCursor -> {
+            String namespaceURI = CTHyperlink.type.getName().getNamespaceURI();
+            String localPart = "hyperlink";
+            newCursor.beginElement(localPart, namespaceURI);
+            // move the cursor to the START token to the hyperlink just created
+            newCursor.toParent();
+            CTHyperlink ctHyperLink = (CTHyperlink) newCursor.getObject();
+            return new XWPFHyperlinkRun(ctHyperLink, ctHyperLink.addNewR(), this);
+        });
+
+        String rId = getPart().getPackagePart().addExternalRelationship(
+                uri, XWPFRelation.HYPERLINK.getRelation()
+        ).getId();
+        newRun.getCTHyperlink().setId(rId);
+        return newRun;
+    }
+
+    /**
+     * insert a new field Run in all runs
+     *
+     * @param pos The position at which the new run should be added.
+     *
+     * @return the inserted run or null if the given pos is out of bounds.
+     */
+    public XWPFFieldRun insertNewFieldRun(int pos) {
+        if (pos == runs.size()) {
+            return createFieldRun();
+        }
+        return insertNewProvidedRun(pos, newCursor -> {
+            String uri = CTSimpleField.type.getName().getNamespaceURI();
+            String localPart = "fldSimple";
+            newCursor.beginElement(localPart, uri);
+            // move the cursor to the START token to the field just created
+            newCursor.toParent();
+            CTSimpleField ctSimpleField = (CTSimpleField) newCursor.getObject();
+            return new XWPFFieldRun(ctSimpleField, ctSimpleField.addNewR(), this);
+        });
+    }
+
+    /**
+     * insert a new run provided by  in all runs
+     *
+     * @param <T> XWPFRun or XWPFHyperlinkRun or XWPFFieldRun
+     * @param pos The position at which the new run should be added.
+     * @param provider provide a new run at position of the given cursor.
+     * @return the inserted run or null if the given pos is out of bounds.
+     */
+    private <T extends XWPFRun> T insertNewProvidedRun(int pos, Function<XmlCursor, T> provider) {
+        if (pos >= 0 && pos < runs.size()) {
+            XWPFRun run = runs.get(pos);
+            CTR ctr = run.getCTR();
+            XmlCursor newCursor = ctr.newCursor();
+            if (!isCursorInParagraph(newCursor)) {
+                // look up correct position for CTP -> XXX -> R array
+                newCursor.toParent();
             }
+            if (isCursorInParagraph(newCursor)) {
+                // provide a new run
+                T newRun = provider.apply(newCursor);
 
-            CTR ctRun = paragraph.insertNewR(rPos);
-            XWPFRun newRun = new XWPFRun(ctRun, (IRunBody) this);
-
-            // To update the iruns, find where we're going
-            // in the normal runs, and go in there
-            int iPos = iruns.size();
-            if (pos < runs.size()) {
-                XWPFRun oldAtPos = runs.get(pos);
-                int oldAt = iruns.indexOf(oldAtPos);
+                // To update the iruns, find where we're going
+                // in the normal runs, and go in there
+                int iPos = iruns.size();
+                int oldAt = iruns.indexOf(run);
                 if (oldAt != -1) {
                     iPos = oldAt;
                 }
+                iruns.add(iPos, newRun);
+                // Runs itself is easy to update
+                runs.add(pos, newRun);
+                return newRun;
             }
-            iruns.add(iPos, newRun);
-
-            // Runs itself is easy to update
-            runs.add(pos, newRun);
-
-            return newRun;
+            newCursor.dispose();
         }
-
         return null;
     }
-    // TODO Add methods to allow adding a HyperlinkRun or a FieldRun
+
+    /**
+     * verifies that cursor is on the right position
+     *
+     * @param cursor
+     * @return
+     */
+    private boolean isCursorInParagraph(XmlCursor cursor) {
+        XmlCursor verify = cursor.newCursor();
+        verify.toParent();
+        boolean result = (verify.getObject() == this.paragraph);
+        verify.dispose();
+        return result;
+    }
 
     /**
      * this methods parse the paragraph and search for the string searched.
@@ -1643,29 +1738,65 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public boolean removeRun(int pos) {
         if (pos >= 0 && pos < runs.size()) {
-            // Remove the run from our high level lists
             XWPFRun run = runs.get(pos);
-            if (run instanceof XWPFHyperlinkRun ||
-                run instanceof XWPFFieldRun) {
-                // TODO Add support for removing these kinds of nested runs,
-                //  which aren't on the CTP -> R array, but CTP -> XXX -> R array
-                throw new IllegalArgumentException("Removing Field or Hyperlink runs not yet supported");
+            // CTP -> CTHyperlink -> R array
+            if (run instanceof XWPFHyperlinkRun
+                    && isTheOnlyCTHyperlinkInRuns((XWPFHyperlinkRun) run)) {
+                XmlCursor c = ((XWPFHyperlinkRun) run).getCTHyperlink()
+                        .newCursor();
+                c.removeXml();
+                c.dispose();
+                runs.remove(pos);
+                iruns.remove(run);
+                return true;
             }
+            // CTP -> CTField -> R array
+            if (run instanceof XWPFFieldRun
+                    && isTheOnlyCTFieldInRuns((XWPFFieldRun) run)) {
+                XmlCursor c = ((XWPFFieldRun) run).getCTField().newCursor();
+                c.removeXml();
+                c.dispose();
+                runs.remove(pos);
+                iruns.remove(run);
+                return true;
+            }
+            XmlCursor c = run.getCTR().newCursor();
+            c.removeXml();
+            c.dispose();
             runs.remove(pos);
             iruns.remove(run);
-            // Remove the run from the low-level XML
-            //calculate the correct pos as our run/irun list contains hyperlinks and fields so is different to the paragraph R array.
-            int rPos = 0;
-            for(int i=0;i<pos;i++) {
-              XWPFRun currRun = runs.get(i);
-              if(!(currRun instanceof XWPFHyperlinkRun || currRun instanceof XWPFFieldRun)) {
-                rPos++;
-              }
-            }
-            getCTP().removeR(rPos);
             return true;
         }
         return false;
+    }
+
+    /**
+     * Is there only one ctHyperlink in all runs
+     *
+     * @param run
+     *            hyperlink run
+     * @return
+     */
+    private boolean isTheOnlyCTHyperlinkInRuns(XWPFHyperlinkRun run) {
+        CTHyperlink ctHyperlink = run.getCTHyperlink();
+        long count = runs.stream().filter(r -> (r instanceof XWPFHyperlinkRun
+                && ctHyperlink == ((XWPFHyperlinkRun) r).getCTHyperlink()))
+                .count();
+        return count <= 1;
+    }
+
+    /**
+     * Is there only one ctField in all runs
+     *
+     * @param run
+     *            field run
+     * @return
+     */
+    private boolean isTheOnlyCTFieldInRuns(XWPFFieldRun run) {
+        CTSimpleField ctField = run.getCTField();
+        long count = runs.stream().filter(r -> (r instanceof XWPFFieldRun
+                && ctField == ((XWPFFieldRun) r).getCTField())).count();
+        return count <= 1;
     }
 
     /**
