@@ -51,6 +51,16 @@ import static org.junit.Assert.assertEquals;
  * Can also be used to get the appropriate FileHandler for a single file.
  */
 public class POIFileScanner {
+    private final static File ROOT_DIR;
+    static {
+        // when running in Gradle, current directory might be "build/integrationtest"
+        if(new File("../../test-data").exists()) {
+            ROOT_DIR = new File("../../test-data");
+        } else {
+            ROOT_DIR = new File("test-data");
+        }
+    }
+
     /**
      * Scan a folder for files and return a collection of
      * found files together with the matching {@link FileHandler}.
@@ -195,11 +205,11 @@ public class POIFileScanner {
 
     @Test
     public void testDetectUnnamedFile() throws IOException {
-        POIFileScanner.detectUnnamedFile(new File("test-data/spreadsheet"), "49156.xlsx");
+        POIFileScanner.detectUnnamedFile(new File(ROOT_DIR, "spreadsheet"), "49156.xlsx");
     }
 
     @Test
     public void test() throws IOException {
-        POIFileScanner.scan(new File("test-data"));
+        POIFileScanner.scan(ROOT_DIR);
     }
 }
