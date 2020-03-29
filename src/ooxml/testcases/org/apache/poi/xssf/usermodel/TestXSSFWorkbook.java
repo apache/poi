@@ -507,6 +507,13 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             calcPr.setCalcMode(STCalcMode.MANUAL);
             wb.setForceFormulaRecalculation(true);
             assertEquals(STCalcMode.AUTO, calcPr.getCalcMode());
+            assertTrue(wb.getForceFormulaRecalculation());
+
+            wb.setForceFormulaRecalculation(false);
+            assertFalse(wb.getForceFormulaRecalculation());
+
+            wb.setForceFormulaRecalculation(true);
+            assertTrue(wb.getForceFormulaRecalculation());
         }
     }
 
@@ -1163,8 +1170,14 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
 
         Workbook wbBack = _testDataProvider.writeOutAndReadBack(workbook);
         assertTrue(wbBack.getForceFormulaRecalculation());
+        wbBack.setForceFormulaRecalculation(false);
+        assertFalse(wbBack.getForceFormulaRecalculation());
+
+        Workbook wbBack2 = _testDataProvider.writeOutAndReadBack(wbBack);
+        assertFalse(wbBack2.getForceFormulaRecalculation());
 
         workbook.close();
         wbBack.close();
+        wbBack2.close();
     }
 }
