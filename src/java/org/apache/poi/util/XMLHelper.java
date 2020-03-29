@@ -219,6 +219,7 @@ public final class XMLHelper {
         trySet(factory::setFeature, FEATURE_SECURE_PROCESSING, true);
         trySet(factory::setAttribute, ACCESS_EXTERNAL_DTD, "");
         trySet(factory::setAttribute, ACCESS_EXTERNAL_STYLESHEET, "");
+        trySet(factory::setAttribute, ACCESS_EXTERNAL_SCHEMA, "");
         return factory;
     }
 
@@ -235,6 +236,7 @@ public final class XMLHelper {
         SchemaFactory factory = SchemaFactory.newInstance(W3C_XML_SCHEMA_NS_URI);
         trySet(factory::setFeature, FEATURE_SECURE_PROCESSING, true);
         trySet(factory::setProperty, ACCESS_EXTERNAL_DTD, "");
+        trySet(factory::setProperty, ACCESS_EXTERNAL_STYLESHEET, "");
         trySet(factory::setProperty, ACCESS_EXTERNAL_SCHEMA, "");
         return factory;
     }
