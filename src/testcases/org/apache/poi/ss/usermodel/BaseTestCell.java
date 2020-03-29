@@ -1352,7 +1352,8 @@ public abstract class BaseTestCell {
             cell.setCellFormula("\"foo\"");
             assertEquals(CellType.FORMULA, cell.getCellType());
             assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
-            assertTrue(cell.getBooleanCellValue());
+            assertTrue("Expected a boolean cell-value, but had 'false'",
+                    cell.getBooleanCellValue());
         }
     }
 
@@ -1369,7 +1370,8 @@ public abstract class BaseTestCell {
             cell.setCellFormula("\"bar\"");
             assertEquals(CellType.FORMULA, cell.getCellType());
             assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
-            assertTrue(cell.getBooleanCellValue());
+            assertTrue("Expected a boolean cell-value, but had 'false'",
+                    cell.getBooleanCellValue());
         }
     }
 
@@ -1387,8 +1389,10 @@ public abstract class BaseTestCell {
 
             cell.getSheet().setArrayFormula("\"bar\"", CellRangeAddress.valueOf("A1"));
             assertEquals(CellType.FORMULA, cell.getCellType());
-            assertEquals(CellType.BOOLEAN, cell.getCachedFormulaResultType());
-            assertTrue(cell.getBooleanCellValue());
+            assertEquals("Expected a boolean cell-value, but had " + cell.getCachedFormulaResultType(),
+                    CellType.BOOLEAN, cell.getCachedFormulaResultType());
+            assertTrue("Expected a boolean cell-value, but had 'false'",
+                    cell.getBooleanCellValue());
         }
     }
 

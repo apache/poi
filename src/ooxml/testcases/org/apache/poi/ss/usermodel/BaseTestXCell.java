@@ -20,8 +20,6 @@ package org.apache.poi.ss.usermodel;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.ss.ITestDataProvider;
@@ -30,9 +28,9 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.junit.Test;
 
 /**
- * Class for combined testing of XML-specific functionality of 
+ * Class for combined testing of XML-specific functionality of
  * {@link XSSFCell} and {@link SXSSFCell}.
- * 
+ *
  *  Any test that is applicable for {@link HSSFCell} as well should go into
  *  the common base class {@link BaseTestCell}.
  */
@@ -47,14 +45,14 @@ public abstract class BaseTestXCell extends BaseTestCell {
         Sheet sh = wb1.createSheet();
         Row row = sh.createRow(0);
         Cell cell = row.createCell(0);
-        String sval = "\u0000\u0002\u0012<>\t\n\u00a0 &\"POI\'\u2122";
+        String sval = "\u0000\u0002\u0012<>\t\n\u00a0 &\"POI'\u2122";
         cell.setCellValue(sval);
 
         Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
         wb1.close();
 
         // invalid characters are replaced with question marks
-        assertEquals("???<>\t\n\u00a0 &\"POI\'\u2122", wb2.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
+        assertEquals("???<>\t\n\u00a0 &\"POI'\u2122", wb2.getSheetAt(0).getRow(0).getCell(0).getStringCellValue());
         wb2.close();
     }
 }

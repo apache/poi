@@ -531,6 +531,12 @@ public class HSSFCell extends CellBase {
      */
     @Override
     protected void setCellFormulaImpl(String formula) {
+        // formula cells always have a value. If the cell is blank (either initially or after removing an
+        // array formula), set value to 0
+        if (getValueType() == CellType.BLANK) {
+            setCellValue(0);
+        }
+
         assert formula != null;
 
         int row=_record.getRow();
@@ -566,7 +572,7 @@ public class HSSFCell extends CellBase {
             case ERROR:
                 return CellValue.getError(getErrorCellValue());
             default:
-                throw new IllegalStateException();
+                throw new IllegalStateException("Unexpected cell-type " + valueType);
         }
     }
 
@@ -585,7 +591,7 @@ public class HSSFCell extends CellBase {
                 setCellErrorValue(FormulaError.forInt(value.getErrorValue()));
                 break;
             default:
-                throw new IllegalStateException();
+                throw new IllegalStateException("Unexpected cell-type " + value.getCellType() + " for cell-value: " + value);
         }
     }
 

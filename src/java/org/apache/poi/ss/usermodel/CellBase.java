@@ -123,12 +123,6 @@ public abstract class CellBase implements Cell {
             return;
         }
 
-        // formula cells always have a value. If the cell is blank (either initially or after removing an
-        // array formula), set value to 0
-        if (getValueType() == CellType.BLANK) {
-            setCellValue(0);
-        }
-
         setCellFormulaImpl(formula);
     }
 
@@ -255,7 +249,7 @@ public abstract class CellBase implements Cell {
      * @param value the new date to set
      */
     protected abstract void setCellValueImpl(LocalDateTime value);
-    
+
     /**
      * {@inheritDoc}
      */

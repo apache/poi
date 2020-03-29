@@ -51,7 +51,7 @@ public class SXSSFCell extends CellBase {
     private Value _value;
     private CellStyle _style;
     private Property _firstProperty;
-    
+
     public SXSSFCell(SXSSFRow row, CellType cellType)
     {
         _row=row;
@@ -133,7 +133,7 @@ public class SXSSFCell extends CellBase {
 
         return _value.getType();
     }
-    
+
     /**
      * Only valid for formula cells
      * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
@@ -194,7 +194,7 @@ public class SXSSFCell extends CellBase {
         boolean date1904 = getSheet().getWorkbook().isDate1904();
         setCellValue(DateUtil.getExcelDate(value, date1904));
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -249,6 +249,7 @@ public class SXSSFCell extends CellBase {
             ((FormulaValue)_value).setValue(formula);
         } else {
             switch (getCellType()) {
+                case BLANK:
                 case NUMERIC:
                     _value = new NumericFormulaValue(formula, getNumericCellValue());
                     break;
@@ -266,12 +267,8 @@ public class SXSSFCell extends CellBase {
                 case ERROR:
                     _value = new ErrorFormulaValue(formula, getErrorCellValue());
                     break;
-                case _NONE:
-                    // fall-through
-                case FORMULA:
-                    // fall-through
-                case BLANK:
-                    throw new AssertionError();
+                default:
+                    throw new IllegalStateException("Cannot set a formula for a cell of type " + getCellType());
             }
         }
     }
@@ -334,7 +331,7 @@ public class SXSSFCell extends CellBase {
     public double getNumericCellValue()
     {
         CellType cellType = getCellType();
-        switch(cellType) 
+        switch(cellType)
         {
             case BLANK:
                 return 0.0;
@@ -366,7 +363,7 @@ public class SXSSFCell extends CellBase {
     public Date getDateCellValue()
     {
         CellType cellType = getCellType();
-        if (cellType == CellType.BLANK) 
+        if (cellType == CellType.BLANK)
         {
             return null;
         }
@@ -434,7 +431,7 @@ public class SXSSFCell extends CellBase {
     public String getStringCellValue()
     {
         CellType cellType = getCellType();
-        switch(cellType) 
+        switch(cellType)
         {
             case BLANK:
                 return "";
@@ -510,7 +507,7 @@ public class SXSSFCell extends CellBase {
     public boolean getBooleanCellValue()
     {
         CellType cellType = getCellType();
-        switch(cellType) 
+        switch(cellType)
         {
             case BLANK:
                 return false;
@@ -545,7 +542,7 @@ public class SXSSFCell extends CellBase {
     public byte getErrorCellValue()
     {
         CellType cellType = getCellType();
-        switch(cellType) 
+        switch(cellType)
         {
             case BLANK:
                 return 0;
@@ -568,10 +565,10 @@ public class SXSSFCell extends CellBase {
     /**
      * <p>Set the style for the cell.  The style should be an CellStyle created/retreived from
      * the Workbook.</p>
-     * 
+     *
      * <p>To change the style of a cell without affecting other cells that use the same style,
      * use {@link org.apache.poi.ss.util.CellUtil#setCellStyleProperties(Cell, Map)}</p>
-     * 
+     *
      * @param style  reference contained in the workbook.
      * If the value is null then the style information is removed causing the cell to used the default workbook style.
      * @see org.apache.poi.ss.usermodel.Workbook#createCellStyle
@@ -964,7 +961,7 @@ public class SXSSFCell extends CellBase {
                 return false;
             default: throw new RuntimeException("Unexpected cell type (" + cellType + ")");
         }
-        
+
     }
     private String convertCellValueToString() {
         CellType cellType = getCellType();

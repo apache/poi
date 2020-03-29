@@ -3494,4 +3494,52 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             LOG.log(POILogger.INFO, Duration.between(start, Instant.now()));
         }
     }
+
+    @Test
+    public void testBug63845() throws IOException {
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet();
+            Row row = sheet.createRow(0);
+
+            Cell cell = row.createCell(0, CellType.FORMULA);
+            cell.setCellFormula("SUM(B1:E1)");
+
+            assertNull("Element 'v' should not be set for formulas unless the value was calculated",
+                    ((XSSFCell) cell).getCTCell().getV());
+
+            try (Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                Cell cellBack = wbBack.getSheetAt(0).getRow(0).getCell(0);
+                assertNull("Element 'v' should not be set for formulas unless the value was calculated",
+                        ((XSSFCell) cellBack).getCTCell().getV());
+
+                wbBack.getCreationHelper().createFormulaEvaluator().evaluateInCell(cellBack);
+
+                assertEquals("Element 'v' should be set now as the formula was calculated manually",
+                        "0.0", ((XSSFCell) cellBack).getCTCell().getV());
+            }
+        }
+    }
+
+    @Test
+    public void testBug63845_2() throws IOException {
+        try (Workbook wb = new XSSFWorkbook()) {
+            Sheet sheet = wb.createSheet("test");
+            Row row = sheet.createRow(0);
+            row.createCell(0).setCellValue(2);
+            row.createCell(1).setCellValue(5);
+            row.createCell(2).setCellFormula("A1+B1");
+
+            try (Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb)) {
+                Cell cellBack = wbBack.getSheetAt(0).getRow(0).getCell(2);
+
+                assertNull("Element 'v' should not be set for formulas unless the value was calculated",
+                        ((XSSFCell) cellBack).getCTCell().getV());
+
+                wbBack.getCreationHelper().createFormulaEvaluator().evaluateInCell(cellBack);
+
+                assertEquals("Element 'v' should be set now as the formula was calculated manually",
+                        "7.0", ((XSSFCell) cellBack).getCTCell().getV());
+            }
+        }
+    }
 }
