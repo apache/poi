@@ -165,7 +165,7 @@ public class LbsDataSubRecord extends SubRecord {
 
         // From [MS-XLS].pdf 2.5.147 FtLbsData:
         // This array MUST exist if and only if the wListType field is not equal to 0.
-        if(((_flags >> 4) & 0x2) != 0) {
+        if(((_flags >> 4) & 0x1) + (_flags >> 5 & 0x1) != 0) {
             _bsels = new boolean[_cLines];
             for(int i=0; i < _cLines; i++) {
                 _bsels[i] = in.readByte() == 1;

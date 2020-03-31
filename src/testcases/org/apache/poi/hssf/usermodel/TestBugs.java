@@ -2891,7 +2891,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     public void test63940() throws IOException {
         simpleTest("SUBSTITUTE.xls");
     }
-
+    @Test
+    public void test64261() throws IOException {
+        simpleTest("64261.xls");
+    }
     // a simple test which rewrites the file once and evaluates its formulas
     private void simpleTest(String fileName) throws IOException {
         simpleTest(fileName, null);
@@ -2932,4 +2935,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         HSSFFormulaEvaluator.setupEnvironment( files.toArray(new String[0]), evals.toArray(new HSSFFormulaEvaluator[0]) );
         evals.get(0).evaluateAll();
     }
+
+
 }
