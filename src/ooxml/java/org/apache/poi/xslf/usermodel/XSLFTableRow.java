@@ -105,6 +105,9 @@ public class XSLFTableRow implements Iterable<XSLFTableCell> {
      * @since POI 4.1.2
      */
     public void removeCell(int colIdx){
+        if (_row.sizeOfTcArray() < colIdx) {
+            throw new IndexOutOfBoundsException("Cannot remove cell at " + colIdx + "; row has only " + _row.sizeOfTcArray() + "columns.");
+        }
         _row.removeTc(colIdx);
         _cells.remove(colIdx);
         _table.updateRowColIndexes();

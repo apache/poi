@@ -55,60 +55,66 @@ public class TestXSLFTable {
 
         XMLSlideShow ppt = new XMLSlideShow();
         int rowIdx=1;
+
+        XSLFSlide slide = ppt.createSlide();
+        // a red bordered box in the background, to show/verify the table dimensions
+        XSLFAutoShape as = slide.createAutoShape();
+        as.setShapeType(ShapeType.RECT);
+        as.setStrokeStyle(Color.RED, 2., StrokeStyle.LineDash.LG_DASH);
+
+        XSLFTable tab = slide.createTable(1, data[0].length);
+        tab.setAnchor(new Rectangle2D.Double(50,50,0,0));
+        tab.setColumnWidth(0, 60);
+        tab.setColumnWidth(1, 60);
+        tab.setColumnWidth(2, 60);
+
+        tab.insertColumn(0);
+        assertEquals(tab.getColumnWidth(1), tab.getColumnWidth(0), 0.00001);
+        assertNotNull(tab.getCell(0, 0).getTextBody());
+        tab.addColumn();
+        XSLFTableCell cell = tab.getCell(0, data[0].length + 1);
+        assertEquals(1, cell.getTextBody().getParagraphs().size());
+        assertEquals("", cell.getTextBody().getParagraph(0).getText());
+        assertEquals(tab.getColumnWidth(tab.getNumberOfColumns() - 2), tab.getColumnWidth(tab.getNumberOfColumns() - 1), 0.00001);
+        assertNotNull(tab.getCell(0, tab.getNumberOfColumns() - 1).getTextBody());
+        tab.removeColumn(0);
+        tab.removeColumn(tab.getNumberOfColumns() - 1);
+        assertEquals(data[0].length, tab.getNumberOfColumns());
+
+        int startRow = rowIdx-1;
+
+        XSLFTableRow row = tab.getRows().get(0);
+        for (int colIdx=0; colIdx<data[0].length; colIdx++) {
+            XSLFTextRun tr = row.getCells().get(colIdx).setText(data[0][colIdx]);
+            tr.setFontSize(20.);
+            tr.setFontFamily("Arial");
+        }
+
         while (rowIdx<data.length) {
-            XSLFSlide slide = ppt.createSlide();
-            // a red bordered box in the background, to show/verify the table dimensions
-            XSLFAutoShape as = slide.createAutoShape();
-            as.setShapeType(ShapeType.RECT);
-            as.setStrokeStyle(Color.RED, 2., StrokeStyle.LineDash.LG_DASH);
-
-            XSLFTable tab = slide.createTable(1, data[0].length);
-            tab.setAnchor(new Rectangle2D.Double(50,50,0,0));
-            tab.setColumnWidth(0, 60);
-            tab.setColumnWidth(1, 60);
-            tab.setColumnWidth(2, 60);
-
-            tab.insertColumn(0);
-            assertEquals(tab.getColumnWidth(1), tab.getColumnWidth(0), 0.00001);
-            assertNotNull(tab.getCell(0, 0).getTextBody());
-            tab.addColumn();
-            XSLFTableCell cell = tab.getCell(0, data[0].length + 1);
-            assertEquals(1, cell.getTextBody().getParagraphs().size());
-            assertEquals("", cell.getTextBody().getParagraph(0).getText());
-            assertEquals(tab.getColumnWidth(tab.getNumberOfColumns() - 2), tab.getColumnWidth(tab.getNumberOfColumns() - 1), 0.00001);
-            assertNotNull(tab.getCell(0, tab.getNumberOfColumns() - 1).getTextBody());
-            tab.removeColumn(0);
-            tab.removeColumn(tab.getNumberOfColumns() - 1);
-            assertEquals(data[0].length, tab.getNumberOfColumns());
-
-            int startRow = rowIdx-1;
-
-            XSLFTableRow row = tab.getRows().get(0);
-            for (int colIdx=0; colIdx<data[0].length; colIdx++) {
-                XSLFTextRun tr = row.getCells().get(colIdx).setText(data[0][colIdx]);
-                tr.setFontSize(20.);
+            row = tab.addRow();
+            for (int col=0; col<data[rowIdx].length; col++) {
+                XSLFTextRun tr = tab.getCell(rowIdx, col).setText(data[rowIdx][col]);
+                tr.setFontSize(15.);
                 tr.setFontFamily("Arial");
             }
-
-
-            while (rowIdx<data.length) {
-                row = tab.addRow();
-                for (int col=0; col<data[rowIdx].length; col++) {
-                    XSLFTextRun tr = row.addCell().setText(data[rowIdx][col]);
-                    tr.setFontSize(15.);
-                    tr.setFontFamily("Arial");
-                }
-                tab.updateCellAnchor();
-                if (tab.getAnchor().getHeight() > maxHeight) {
-                    tab.removeRow(rowIdx-startRow);
-                    break;
-                }
-                rowIdx++;
+            row = tab.insertRow(rowIdx);
+            for (int col=0; col<data[rowIdx].length; col++) {
+                XSLFTextRun tr = tab
+                        .getCell(rowIdx, col)
+                        .setText(
+                                data[rowIdx][col]);
+                tr.setFontSize(12.);
+                tr.setFontFamily("Arial");
             }
-
             tab.updateCellAnchor();
-            as.setAnchor(tab.getAnchor());
+            if (tab.getAnchor().getHeight() > maxHeight) {
+                tab.removeRow(rowIdx-startRow);
+                break;
+            }
+            rowIdx += 2;
         }
+
+        as.setAnchor(tab.getAnchor());
 
         File fileOut = TempFile.createTempFile("tabtest", ".pptx");
         try (FileOutputStream fos = new FileOutputStream(fileOut)) {
