@@ -27,7 +27,8 @@ import java.io.IOException;
 /**
  * Basic paragraph and text formatting
  */
-public class Tutorial2 {
+public final class Tutorial2 {
+    private Tutorial2() {}
 
     public static void main(String[] args) throws IOException{
         try (XMLSlideShow ppt = new XMLSlideShow()) {

@@ -28,7 +28,8 @@ import org.apache.poi.sl.usermodel.PictureData.PictureType;
 /**
  * Images
  */
-public class Tutorial5 {
+public final class Tutorial5 {
+    private Tutorial5() {}
 
     public static void main(String[] args) throws IOException{
         try (XMLSlideShow ppt = new XMLSlideShow()) {

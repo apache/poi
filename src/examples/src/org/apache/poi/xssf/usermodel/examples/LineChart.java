@@ -49,7 +49,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 /**
  * Line chart example.
  */
-public class LineChart {
+public final class LineChart {
+    private LineChart() {}
 
     public static void main(String[] args) throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {

@@ -31,7 +31,9 @@ import java.io.FileOutputStream;
 /**
  * Create slides from pre-defined slide layouts
  */
-public class Step2 {
+public final class Step2 {
+    private Step2() {}
+
     public static void main(String[] args) throws Exception{
         try (XMLSlideShow ppt = new XMLSlideShow()) {
 

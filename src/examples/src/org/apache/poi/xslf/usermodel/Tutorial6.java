@@ -26,7 +26,8 @@ import java.io.IOException;
 /**
  * Hyperlinks
  */
-public class Tutorial6 {
+public final class Tutorial6 {
+    private Tutorial6() {}
 
     public static void main(String[] args) throws IOException{
         try (XMLSlideShow ppt = new XMLSlideShow()) {

@@ -26,7 +26,8 @@ import java.io.IOException;
  * Demonstrates how to create slides with predefined layout
  * and fill the placeholder shapes
  */
-public class Tutorial1 {
+public final class Tutorial1 {
+    private Tutorial1() {}
 
     public static void main(String[] args) throws IOException{
         try (XMLSlideShow ppt = new XMLSlideShow()) {

@@ -32,6 +32,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
  * Demonstrates how you can extract data from a .pptx file
  */
 public final class DataExtraction {
+    private DataExtraction() {}
 
     public static void main(String[] args) throws IOException, OpenXML4JException {
 

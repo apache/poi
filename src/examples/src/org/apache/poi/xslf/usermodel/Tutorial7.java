@@ -29,7 +29,8 @@ import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 /**
  * Bullets and numbering
  */
-public class Tutorial7 {
+public final class Tutorial7 {
+    private Tutorial7() {}
 
     public static void main(String[] args) throws IOException {
         try (XMLSlideShow ppt = new XMLSlideShow()) {

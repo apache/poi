@@ -26,6 +26,7 @@ import java.io.FileOutputStream;
  * Merge multiple pptx presentations together
  */
 public final class MergePresentations {
+    private MergePresentations() {}
 
     public static void main(String[] args) throws Exception {
         try (XMLSlideShow ppt = new XMLSlideShow()) {

@@ -30,7 +30,8 @@ import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 /**
  * PPTX Tables
  */
-public class Tutorial4 {
+public final class Tutorial4 {
+    private Tutorial4() {}
 
     public static void main(String[] args) throws IOException{
         try (XMLSlideShow ppt = new XMLSlideShow()) {

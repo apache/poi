@@ -62,7 +62,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * @see <a href="https://stackoverflow.com/questions/50873700/">Change axis color and font of the chart in openxmlformats</a>
  * @see <a href="https://stackoverflow.com/questions/51530552/">Change colors of line chart Apache POI</a>
  */
-class ExcelChartWithTargetLine {
+public final class ExcelChartWithTargetLine {
+    private ExcelChartWithTargetLine() {}
 
     private static final int NUM_OF_ROWS = 6;
 

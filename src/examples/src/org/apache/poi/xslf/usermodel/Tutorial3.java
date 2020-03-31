@@ -28,7 +28,8 @@ import org.apache.poi.sl.usermodel.Placeholder;
 /**
  * How to set slide title
  */
-public class Tutorial3 {
+public final class Tutorial3 {
+    private Tutorial3() {}
 
     public static void main(String[] args) throws IOException{
         try (XMLSlideShow ppt = new XMLSlideShow()) {

@@ -50,7 +50,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 /**
  * Illustrates how to create a simple scatter chart.
  */
-public class ScatterChart {
+public final class ScatterChart {
+    private ScatterChart() {}
 
     public static void main(String[] args) throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {

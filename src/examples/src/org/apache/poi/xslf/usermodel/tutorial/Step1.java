@@ -31,7 +31,8 @@ import org.apache.poi.xslf.usermodel.XSLFTextShape;
 /**
  * Reading a .pptx presentation and printing basic shape properties
  */
-public class Step1 {
+public final class Step1 {
+    private Step1() {}
 
     public static void main(String[] args) throws Exception {
         if(args.length == 0)  {
