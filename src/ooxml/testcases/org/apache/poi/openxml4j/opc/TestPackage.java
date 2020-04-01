@@ -17,55 +17,18 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import com.google.common.hash.Hashing;
-import com.google.common.io.Files;
-import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
-import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
-import org.apache.commons.compress.archivers.zip.ZipFile;
-import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.POIDataSamples;
-import org.apache.poi.POITestCase;
-import org.apache.poi.UnsupportedFileFormatException;
-import org.apache.poi.extractor.POITextExtractor;
-import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.ooxml.extractor.ExtractorFactory;
-import org.apache.poi.ooxml.util.DocumentHelper;
-import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
-import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
-import org.apache.poi.openxml4j.exceptions.ODFNotOfficeXmlFileException;
-import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
-import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
-import org.apache.poi.openxml4j.opc.internal.FileHelper;
-import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
-import org.apache.poi.openxml4j.opc.internal.ZipHelper;
-import org.apache.poi.openxml4j.util.ZipSecureFile;
-import org.apache.poi.sl.usermodel.SlideShow;
-import org.apache.poi.sl.usermodel.SlideShowFactory;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.POILogFactory;
-import org.apache.poi.util.POILogger;
-import org.apache.poi.util.TempFile;
-import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.apache.poi.xwpf.usermodel.XWPFRelation;
-import org.apache.xmlbeans.XmlException;
-import org.hamcrest.Description;
-import org.hamcrest.TypeSafeMatcher;
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
+import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getOutputFile;
+import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getSampleFile;
+import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getSampleFileName;
+import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.openSampleStream;
+import static org.apache.poi.openxml4j.opc.PackagingURIHelper.createPartName;
+import static org.hamcrest.core.StringContains.containsString;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -88,15 +51,61 @@ import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import com.google.common.hash.Hashing;
+import com.google.common.io.Files;
+import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
+import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
+import org.apache.commons.compress.archivers.zip.ZipFile;
+import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.POITestCase;
+import org.apache.poi.UnsupportedFileFormatException;
+import org.apache.poi.extractor.POITextExtractor;
+import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.ooxml.extractor.ExtractorFactory;
+import org.apache.poi.ooxml.util.DocumentHelper;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
+import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
+import org.apache.poi.openxml4j.exceptions.ODFNotOfficeXmlFileException;
+import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
+import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
+import org.apache.poi.openxml4j.opc.internal.FileHelper;
+import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
+import org.apache.poi.openxml4j.opc.internal.ZipHelper;
+import org.apache.poi.openxml4j.util.ZipSecureFile;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.TempFile;
+import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFRelation;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xwpf.usermodel.XWPFRelation;
+import org.apache.xmlbeans.XmlException;
+import org.hamcrest.Description;
+import org.hamcrest.TypeSafeMatcher;
+import org.hamcrest.core.AllOf;
+import org.junit.Ignore;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
 
 public final class TestPackage {
     private static final POILogger logger = POILogFactory.getLogger(TestPackage.class);
+	private static final String NS_OOXML_WP_MAIN = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
+	private static final String CONTENT_EXT_PROPS = "application/vnd.openxmlformats-officedocument.extended-properties+xml";
+	private static final POIDataSamples xlsSamples = POIDataSamples.getSpreadSheetInstance();
 
 	@Rule
 	public ExpectedException expectedEx = ExpectedException.none();
@@ -106,21 +115,21 @@ public final class TestPackage {
 	 */
     @Test
 	public void openSave() throws IOException, InvalidFormatException {
-		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
-		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageOpenSaveTMP.docx");
+		String originalFile = getSampleFileName("TestPackageCommon.docx");
+		File targetFile = getOutputFile("TestPackageOpenSaveTMP.docx");
 
-		@SuppressWarnings("resource")
-        OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE);
-		try {
-    		p.save(targetFile.getAbsoluteFile());
+        try (OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE)) {
+			try {
+				p.save(targetFile.getAbsoluteFile());
 
-    		// Compare the original and newly saved document
-    		assertTrue(targetFile.exists());
-    		ZipFileAssert.assertEquals(new File(originalFile), targetFile);
-    		assertTrue(targetFile.delete());
-		} finally {
-            // use revert to not re-write the input file
-            p.revert();
+				// Compare the original and newly saved document
+				assertTrue(targetFile.exists());
+				ZipFileAssert.assertEquals(new File(originalFile), targetFile);
+				assertTrue(targetFile.delete());
+			} finally {
+				// use revert to not re-write the input file
+				p.revert();
+			}
 		}
 	}
 
@@ -131,37 +140,24 @@ public final class TestPackage {
     @Test
 	public void createGetsContentTypes()
     throws IOException, InvalidFormatException, SecurityException, IllegalArgumentException {
-		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestCreatePackageTMP.docx");
+		File targetFile = getOutputFile("TestCreatePackageTMP.docx");
 
 		// Zap the target file, in case of an earlier run
 		if(targetFile.exists()) {
 			assertTrue(targetFile.delete());
 		}
 
-		@SuppressWarnings("resource")
-        OPCPackage pkg = OPCPackage.create(targetFile);
-
-		// Check it has content types for rels and xml
-		ContentTypeManager ctm = getContentTypeManager(pkg);
-		assertEquals(
-				"application/xml",
-				ctm.getContentType(
-						PackagingURIHelper.createPartName("/foo.xml")
-				)
-		);
-		assertEquals(
-				ContentTypes.RELATIONSHIPS_PART,
-				ctm.getContentType(
-						PackagingURIHelper.createPartName("/foo.rels")
-				)
-		);
-		assertNull(
-				ctm.getContentType(
-						PackagingURIHelper.createPartName("/foo.txt")
-				)
-		);
-
-		pkg.revert();
+        try (OPCPackage pkg = OPCPackage.create(targetFile)) {
+			try {
+				// Check it has content types for rels and xml
+				ContentTypeManager ctm = getContentTypeManager(pkg);
+				assertEquals("application/xml", ctm.getContentType(createPartName("/foo.xml")));
+				assertEquals(ContentTypes.RELATIONSHIPS_PART, ctm.getContentType(createPartName("/foo.rels")));
+				assertNull(ctm.getContentType(createPartName("/foo.txt")));
+			} finally {
+				pkg.revert();
+			}
+		}
 	}
 
 	/**
@@ -169,9 +165,9 @@ public final class TestPackage {
 	 */
     @Test
 	public void createPackageAddPart() throws IOException, InvalidFormatException {
-		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestCreatePackageTMP.docx");
+		File targetFile = getOutputFile("TestCreatePackageTMP.docx");
 
-		File expectedFile = OpenXML4JTestDataSamples.getSampleFile("TestCreatePackageOUTPUT.docx");
+		File expectedFile = getSampleFile("TestCreatePackageOUTPUT.docx");
 
         // Zap the target file, in case of an earlier run
         if(targetFile.exists()) {
@@ -180,27 +176,23 @@ public final class TestPackage {
 
         // Create a package
         OPCPackage pkg = OPCPackage.create(targetFile);
-        PackagePartName corePartName = PackagingURIHelper
-                .createPartName("/word/document.xml");
+        PackagePartName corePartName = createPartName("/word/document.xml");
 
         pkg.addRelationship(corePartName, TargetMode.INTERNAL,
                 PackageRelationshipTypes.CORE_DOCUMENT, "rId1");
 
-        PackagePart corePart = pkg
-                .createPart(
-                        corePartName,
-                        "application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml");
+        PackagePart corePart = pkg.createPart(corePartName, XWPFRelation.DOCUMENT.getContentType());
 
         Document doc = DocumentHelper.createDocument();
-        Element elDocument = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:document");
+        Element elDocument = doc.createElementNS(NS_OOXML_WP_MAIN, "w:document");
         doc.appendChild(elDocument);
-        Element elBody = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:body");
+        Element elBody = doc.createElementNS(NS_OOXML_WP_MAIN, "w:body");
         elDocument.appendChild(elBody);
-        Element elParagraph = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:p");
+        Element elParagraph = doc.createElementNS(NS_OOXML_WP_MAIN, "w:p");
         elBody.appendChild(elParagraph);
-        Element elRun = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:r");
+        Element elRun = doc.createElementNS(NS_OOXML_WP_MAIN, "w:r");
         elParagraph.appendChild(elRun);
-        Element elText = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:t");
+        Element elText = doc.createElementNS(NS_OOXML_WP_MAIN, "w:t");
         elRun.appendChild(elText);
         elText.setTextContent("Hello Open XML !");
 
@@ -219,82 +211,79 @@ public final class TestPackage {
     @Test
 	public void createPackageWithCoreDocument() throws IOException, InvalidFormatException, URISyntaxException, SAXException {
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		OPCPackage pkg = OPCPackage.create(baos);
+		try (OPCPackage pkg = OPCPackage.create(baos)) {
 
-		// Add a core document
-        PackagePartName corePartName = PackagingURIHelper.createPartName("/xl/workbook.xml");
-        // Create main part relationship
-        pkg.addRelationship(corePartName, TargetMode.INTERNAL, PackageRelationshipTypes.CORE_DOCUMENT, "rId1");
-        // Create main document part
-        PackagePart corePart = pkg.createPart(corePartName, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml");
-        // Put in some dummy content
-        OutputStream coreOut = corePart.getOutputStream();
-        coreOut.write("<dummy-xml />".getBytes(StandardCharsets.UTF_8));
-        coreOut.close();
+			// Add a core document
+			PackagePartName corePartName = createPartName("/xl/workbook.xml");
+			// Create main part relationship
+			pkg.addRelationship(corePartName, TargetMode.INTERNAL, PackageRelationshipTypes.CORE_DOCUMENT, "rId1");
+			// Create main document part
+			PackagePart corePart = pkg.createPart(corePartName, XSSFRelation.WORKBOOK.getContentType());
+			// Put in some dummy content
+			try (OutputStream coreOut = corePart.getOutputStream()) {
+				coreOut.write("<dummy-xml />".getBytes(StandardCharsets.UTF_8));
+			}
 
-		// And another bit
-        PackagePartName sheetPartName = PackagingURIHelper.createPartName("/xl/worksheets/sheet1.xml");
-        PackageRelationship rel =
-        	 corePart.addRelationship(sheetPartName, TargetMode.INTERNAL, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet", "rSheet1");
-		assertNotNull(rel);
+			// And another bit
+			PackagePartName sheetPartName = createPartName("/xl/worksheets/sheet1.xml");
+			PackageRelationship rel = corePart.addRelationship(
+					sheetPartName, TargetMode.INTERNAL, XSSFRelation.WORKSHEET.getRelation(), "rSheet1");
+			assertNotNull(rel);
 
-        PackagePart part = pkg.createPart(sheetPartName, "application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml");
-        assertNotNull(part);
+			PackagePart part = pkg.createPart(sheetPartName, XSSFRelation.WORKSHEET.getContentType());
+			assertNotNull(part);
 
-        // Dummy content again
-        coreOut = corePart.getOutputStream();
-        coreOut.write("<dummy-xml2 />".getBytes(StandardCharsets.UTF_8));
-        coreOut.close();
+			// Dummy content again
+			try (OutputStream coreOut = corePart.getOutputStream()) {
+				coreOut.write("<dummy-xml2 />".getBytes(StandardCharsets.UTF_8));
+			}
 
-        //add a relationship with internal target: "#Sheet1!A1"
-        corePart.addRelationship(new URI("#Sheet1!A1"), TargetMode.INTERNAL, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink", "rId2");
+			//add a relationship with internal target: "#Sheet1!A1"
+			corePart.addRelationship(new URI("#Sheet1!A1"), TargetMode.INTERNAL, PackageRelationshipTypes.HYPERLINK_PART, "rId2");
 
-        // Check things are as expected
-        PackageRelationshipCollection coreRels =
-        	pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
-        assertEquals(1, coreRels.size());
-        PackageRelationship coreRel = coreRels.getRelationship(0);
-		assertNotNull(coreRel);
-        assertEquals("/", coreRel.getSourceURI().toString());
-        assertEquals("/xl/workbook.xml", coreRel.getTargetURI().toString());
-        assertNotNull(pkg.getPart(coreRel));
+			// Check things are as expected
+			PackageRelationshipCollection coreRels =
+					pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
+			assertEquals(1, coreRels.size());
+			PackageRelationship coreRel = coreRels.getRelationship(0);
+			assertNotNull(coreRel);
+			assertEquals("/", coreRel.getSourceURI().toString());
+			assertEquals("/xl/workbook.xml", coreRel.getTargetURI().toString());
+			assertNotNull(pkg.getPart(coreRel));
+		}
 
 
-        // Save and re-load
-        pkg.close();
+		// Save and re-load
         File tmp = TempFile.createTempFile("testCreatePackageWithCoreDocument", ".zip");
 		try (OutputStream fout = new FileOutputStream(tmp)) {
-			fout.write(baos.toByteArray());
+			baos.writeTo(fout);
+			fout.flush();
 		}
-        pkg = OPCPackage.open(tmp.getPath());
-        //tmp.delete();
 
-        try {
+        try (OPCPackage pkg = OPCPackage.open(tmp.getPath())) {
             // Check still right
-            coreRels = pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
+			PackageRelationshipCollection coreRels = pkg.getRelationshipsByType(PackageRelationshipTypes.CORE_DOCUMENT);
             assertEquals(1, coreRels.size());
-            coreRel = coreRels.getRelationship(0);
+			PackageRelationship coreRel = coreRels.getRelationship(0);
 
 			assertNotNull(coreRel);
             assertEquals("/", coreRel.getSourceURI().toString());
             assertEquals("/xl/workbook.xml", coreRel.getTargetURI().toString());
-            corePart = pkg.getPart(coreRel);
+			PackagePart corePart = pkg.getPart(coreRel);
             assertNotNull(corePart);
 
-            PackageRelationshipCollection rels = corePart.getRelationshipsByType("http://schemas.openxmlformats.org/officeDocument/2006/relationships/hyperlink");
+            PackageRelationshipCollection rels = corePart.getRelationshipsByType(PackageRelationshipTypes.HYPERLINK_PART);
             assertEquals(1, rels.size());
-            rel = rels.getRelationship(0);
+			PackageRelationship rel = rels.getRelationship(0);
 			assertNotNull(rel);
             assertEquals("Sheet1!A1", rel.getTargetURI().getRawFragment());
 
             assertMSCompatibility(pkg);
-        } finally {
-            pkg.close();
         }
     }
 
     private void assertMSCompatibility(OPCPackage pkg) throws IOException, InvalidFormatException, SAXException {
-        PackagePartName relName = PackagingURIHelper.createPartName(PackageRelationship.getContainerPartRelationship());
+        PackagePartName relName = createPartName(PackageRelationship.getContainerPartRelationship());
         PackagePart relPart = pkg.getPart(relName);
 
         Document xmlRelationshipsDoc = DocumentHelper.readDocument(relPart.getInputStream());
@@ -315,11 +304,11 @@ public final class TestPackage {
 	 */
     @Test
 	public void openPackage() throws IOException, InvalidFormatException {
-		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestOpenPackageTMP.docx");
+		File targetFile = getOutputFile("TestOpenPackageTMP.docx");
 
-		File inputFile = OpenXML4JTestDataSamples.getSampleFile("TestOpenPackageINPUT.docx");
+		File inputFile = getSampleFile("TestOpenPackageINPUT.docx");
 
-		File expectedFile = OpenXML4JTestDataSamples.getSampleFile("TestOpenPackageOUTPUT.docx");
+		File expectedFile = getSampleFile("TestOpenPackageOUTPUT.docx");
 
 		// Copy the input file in the output directory
 		FileHelper.copyFile(inputFile, targetFile);
@@ -328,30 +317,29 @@ public final class TestPackage {
 		OPCPackage pkg = OPCPackage.open(targetFile.getAbsolutePath());
 
 		// Modify core part
-		PackagePartName corePartName = PackagingURIHelper
-				.createPartName("/word/document.xml");
+		PackagePartName corePartName = createPartName("/word/document.xml");
 
 		PackagePart corePart = pkg.getPart(corePartName);
 
 		// Delete some part to have a valid document
 		for (PackageRelationship rel : corePart.getRelationships()) {
 			corePart.removeRelationship(rel.getId());
-			pkg.removePart(PackagingURIHelper.createPartName(PackagingURIHelper
+			pkg.removePart(createPartName(PackagingURIHelper
 					.resolvePartUri(corePart.getPartName().getURI(), rel
 							.getTargetURI())));
 		}
 
 		// Create a content
 		Document doc = DocumentHelper.createDocument();
-        Element elDocument = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:document");
+        Element elDocument = doc.createElementNS(NS_OOXML_WP_MAIN, "w:document");
         doc.appendChild(elDocument);
-        Element elBody = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:body");
+        Element elBody = doc.createElementNS(NS_OOXML_WP_MAIN, "w:body");
         elDocument.appendChild(elBody);
-        Element elParagraph = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:p");
+        Element elParagraph = doc.createElementNS(NS_OOXML_WP_MAIN, "w:p");
         elBody.appendChild(elParagraph);
-        Element elRun = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:r");
+        Element elRun = doc.createElementNS(NS_OOXML_WP_MAIN, "w:r");
         elParagraph.appendChild(elRun);
-        Element elText = doc.createElementNS("http://schemas.openxmlformats.org/wordprocessingml/2006/main", "w:t");
+        Element elText = doc.createElementNS(NS_OOXML_WP_MAIN, "w:t");
         elRun.appendChild(elText);
         elText.setTextContent("Hello Open XML !");
 
@@ -375,23 +363,23 @@ public final class TestPackage {
 	 */
     @Test
 	public void saveToOutputStream() throws IOException, InvalidFormatException {
-		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
-		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageOpenSaveTMP.docx");
+		String originalFile = getSampleFileName("TestPackageCommon.docx");
+		File targetFile = getOutputFile("TestPackageOpenSaveTMP.docx");
 
-		@SuppressWarnings("resource")
-        OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE);
-		try {
-			try (FileOutputStream fout = new FileOutputStream(targetFile)) {
-				p.save(fout);
+		try (OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE)) {
+			try {
+				try (FileOutputStream fout = new FileOutputStream(targetFile)) {
+					p.save(fout);
+				}
+
+				// Compare the original and newly saved document
+				assertTrue(targetFile.exists());
+				ZipFileAssert.assertEquals(new File(originalFile), targetFile);
+				assertTrue(targetFile.delete());
+			} finally {
+				// use revert to not re-write the input file
+				p.revert();
 			}
-
-    		// Compare the original and newly saved document
-    		assertTrue(targetFile.exists());
-    		ZipFileAssert.assertEquals(new File(originalFile), targetFile);
-    		assertTrue(targetFile.delete());
-		} finally {
-		    // use revert to not re-write the input file
-		    p.revert();
 		}
 	}
 
@@ -402,12 +390,10 @@ public final class TestPackage {
 	 */
     @Test
 	public void openFromInputStream() throws IOException, InvalidFormatException {
-		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
+		String originalFile = getSampleFileName("TestPackageCommon.docx");
 
-		try (FileInputStream finp = new FileInputStream(originalFile)) {
-			@SuppressWarnings("resource")
-			OPCPackage p = OPCPackage.open(finp);
-
+		try (FileInputStream finp = new FileInputStream(originalFile);
+			 OPCPackage p = OPCPackage.open(finp)) {
 			try {
 				assertNotNull(p);
 				assertNotNull(p.getRelationships());
@@ -415,7 +401,7 @@ public final class TestPackage {
 
 				// Check it has the usual bits
 				assertTrue(p.hasRelationships());
-				assertTrue(p.containPart(PackagingURIHelper.createPartName("/_rels/.rels")));
+				assertTrue(p.containPart(createPartName("/_rels/.rels")));
 			} finally {
 				p.revert();
 			}
@@ -428,123 +414,94 @@ public final class TestPackage {
     @Test
 	@Ignore
     public void removePartRecursive() throws IOException, InvalidFormatException, URISyntaxException {
-		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
-		File targetFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageRemovePartRecursiveOUTPUT.docx");
-		File tempFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageRemovePartRecursiveTMP.docx");
+		String originalFile = getSampleFileName("TestPackageCommon.docx");
+		File targetFile = getOutputFile("TestPackageRemovePartRecursiveOUTPUT.docx");
+		File tempFile = getOutputFile("TestPackageRemovePartRecursiveTMP.docx");
 
-		@SuppressWarnings("resource")
-        OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE);
-		try {
-			p.removePartRecursive(PackagingURIHelper.createPartName(new URI(
-					"/word/document.xml")));
+		try (OPCPackage p = OPCPackage.open(originalFile, PackageAccess.READ_WRITE))  {
+			p.removePartRecursive(createPartName(new URI("/word/document.xml")));
 			p.save(tempFile.getAbsoluteFile());
 
 			// Compare the original and newly saved document
 			assertTrue(targetFile.exists());
 			ZipFileAssert.assertEquals(targetFile, tempFile);
 			assertTrue(targetFile.delete());
-		} finally {
 			p.revert();
 		}
 	}
 
     @Test
-	public void deletePart() throws InvalidFormatException {
-		TreeMap<PackagePartName, String> expectedValues;
-		TreeMap<PackagePartName, String> values;
-
-		values = new TreeMap<>();
+	public void deletePart() throws InvalidFormatException, IOException {
+		final TreeMap<PackagePartName, String> expectedValues = new TreeMap<>();
+		final TreeMap<PackagePartName, String> values = new TreeMap<>();
 
 		// Expected values
-		expectedValues = new TreeMap<>();
-		expectedValues.put(PackagingURIHelper.createPartName("/_rels/.rels"),
-				"application/vnd.openxmlformats-package.relationships+xml");
+		expectedValues.put(createPartName("/_rels/.rels"), ContentTypes.RELATIONSHIPS_PART);
+		expectedValues.put(createPartName("/docProps/app.xml"), CONTENT_EXT_PROPS);
+		expectedValues.put(createPartName("/docProps/core.xml"), ContentTypes.CORE_PROPERTIES_PART);
+		expectedValues.put(createPartName("/word/fontTable.xml"), XWPFRelation.FONT_TABLE.getContentType());
+		expectedValues.put(createPartName("/word/media/image1.gif"), XWPFRelation.IMAGE_GIF.getContentType());
+		expectedValues.put(createPartName("/word/settings.xml"), XWPFRelation.SETTINGS.getContentType());
+		expectedValues.put(createPartName("/word/styles.xml"), XWPFRelation.STYLES.getContentType());
+		expectedValues.put(createPartName("/word/theme/theme1.xml"), XWPFRelation.THEME.getContentType());
+		expectedValues.put(createPartName("/word/webSettings.xml"), XWPFRelation.WEB_SETTINGS.getContentType());
 
-		expectedValues
-				.put(PackagingURIHelper.createPartName("/docProps/app.xml"),
-						"application/vnd.openxmlformats-officedocument.extended-properties+xml");
-		expectedValues.put(PackagingURIHelper
-				.createPartName("/docProps/core.xml"),
-				"application/vnd.openxmlformats-package.core-properties+xml");
-		expectedValues
-				.put(PackagingURIHelper.createPartName("/word/fontTable.xml"),
-						"application/vnd.openxmlformats-officedocument.wordprocessingml.fontTable+xml");
-		expectedValues.put(PackagingURIHelper
-				.createPartName("/word/media/image1.gif"), "image/gif");
-		expectedValues
-				.put(PackagingURIHelper.createPartName("/word/settings.xml"),
-						"application/vnd.openxmlformats-officedocument.wordprocessingml.settings+xml");
-		expectedValues
-				.put(PackagingURIHelper.createPartName("/word/styles.xml"),
-						"application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml");
-		expectedValues.put(PackagingURIHelper
-				.createPartName("/word/theme/theme1.xml"),
-				"application/vnd.openxmlformats-officedocument.theme+xml");
-		expectedValues
-				.put(
-						PackagingURIHelper
-								.createPartName("/word/webSettings.xml"),
-						"application/vnd.openxmlformats-officedocument.wordprocessingml.webSettings+xml");
+		String filepath = getSampleFileName("sample.docx");
 
-		String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
+        try (OPCPackage p = OPCPackage.open(filepath, PackageAccess.READ_WRITE)) {
+        	try {
+				// Remove the core part
+				p.deletePart(createPartName("/word/document.xml"));
 
-		@SuppressWarnings("resource")
-        OPCPackage p = OPCPackage.open(filepath, PackageAccess.READ_WRITE);
-		// Remove the core part
-		p.deletePart(PackagingURIHelper.createPartName("/word/document.xml"));
+				for (PackagePart part : p.getParts()) {
+					values.put(part.getPartName(), part.getContentType());
+					logger.log(POILogger.DEBUG, part.getPartName());
+				}
 
-		for (PackagePart part : p.getParts()) {
-			values.put(part.getPartName(), part.getContentType());
-			logger.log(POILogger.DEBUG, part.getPartName());
+				// Compare expected values with values return by the package
+				for (PackagePartName partName : expectedValues.keySet()) {
+					assertNotNull(values.get(partName));
+					assertEquals(expectedValues.get(partName), values.get(partName));
+				}
+			} finally {
+				// Don't save modifications
+				p.revert();
+			}
 		}
-
-		// Compare expected values with values return by the package
-		for (PackagePartName partName : expectedValues.keySet()) {
-			assertNotNull(values.get(partName));
-			assertEquals(expectedValues.get(partName), values.get(partName));
-		}
-		// Don't save modifications
-		p.revert();
 	}
 
     @Test
-	public void deletePartRecursive() throws InvalidFormatException {
-		TreeMap<PackagePartName, String> expectedValues;
-		TreeMap<PackagePartName, String> values;
-
-		values = new TreeMap<>();
+	public void deletePartRecursive() throws InvalidFormatException, IOException {
+		final TreeMap<PackagePartName, String> expectedValues = new TreeMap<>();
+		final TreeMap<PackagePartName, String> values = new TreeMap<>();
 
 		// Expected values
-		expectedValues = new TreeMap<>();
-		expectedValues.put(PackagingURIHelper.createPartName("/_rels/.rels"),
-				"application/vnd.openxmlformats-package.relationships+xml");
+		expectedValues.put(createPartName("/_rels/.rels"), ContentTypes.RELATIONSHIPS_PART);
+		expectedValues.put(createPartName("/docProps/app.xml"), CONTENT_EXT_PROPS);
+		expectedValues.put(createPartName("/docProps/core.xml"), ContentTypes.CORE_PROPERTIES_PART);
 
-		expectedValues
-				.put(PackagingURIHelper.createPartName("/docProps/app.xml"),
-						"application/vnd.openxmlformats-officedocument.extended-properties+xml");
-		expectedValues.put(PackagingURIHelper
-				.createPartName("/docProps/core.xml"),
-				"application/vnd.openxmlformats-package.core-properties+xml");
+		String filepath = getSampleFileName("sample.docx");
 
-		String filepath = OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
+        try (OPCPackage p = OPCPackage.open(filepath, PackageAccess.READ_WRITE)) {
+        	try {
+				// Remove the core part
+				p.deletePartRecursive(createPartName("/word/document.xml"));
 
-		@SuppressWarnings("resource")
-        OPCPackage p = OPCPackage.open(filepath, PackageAccess.READ_WRITE);
-		// Remove the core part
-		p.deletePartRecursive(PackagingURIHelper.createPartName("/word/document.xml"));
+				for (PackagePart part : p.getParts()) {
+					values.put(part.getPartName(), part.getContentType());
+					logger.log(POILogger.DEBUG, part.getPartName());
+				}
 
-		for (PackagePart part : p.getParts()) {
-			values.put(part.getPartName(), part.getContentType());
-			logger.log(POILogger.DEBUG, part.getPartName());
+				// Compare expected values with values return by the package
+				for (PackagePartName partName : expectedValues.keySet()) {
+					assertNotNull(values.get(partName));
+					assertEquals(expectedValues.get(partName), values.get(partName));
+				}
+			} finally {
+				// Don't save modifications
+				p.revert();
+			}
 		}
-
-		// Compare expected values with values return by the package
-		for (PackagePartName partName : expectedValues.keySet()) {
-			assertNotNull(values.get(partName));
-			assertEquals(expectedValues.get(partName), values.get(partName));
-		}
-		// Don't save modifications
-		p.revert();
 	}
 
 	/**
@@ -554,37 +511,36 @@ public final class TestPackage {
     @Test
 	public void openFileThenOverwrite() throws IOException, InvalidFormatException {
         File tempFile = TempFile.createTempFile("poiTesting","tmp");
-        File origFile = OpenXML4JTestDataSamples.getSampleFile("TestPackageCommon.docx");
+        File origFile = getSampleFile("TestPackageCommon.docx");
         FileHelper.copyFile(origFile, tempFile);
 
-        // Open the temp file
-        OPCPackage p = OPCPackage.open(tempFile.toString(), PackageAccess.READ_WRITE);
-        // Close it
-        p.close();
+        // Open and close the temp file
+        try (OPCPackage p = OPCPackage.open(tempFile.toString(), PackageAccess.READ_WRITE)) {
+        	assertNotNull(p);
+		}
         // Delete it
         assertTrue(tempFile.delete());
 
         // Reset
         FileHelper.copyFile(origFile, tempFile);
-        p = OPCPackage.open(tempFile.toString(), PackageAccess.READ_WRITE);
-
-        // Save it to the same file - not allowed
-        try {
-            p.save(tempFile);
-            fail("You shouldn't be able to call save(File) to overwrite the current file");
-        } catch(InvalidOperationException e) {
-			// expected here
+		try (OPCPackage p = OPCPackage.open(tempFile.toString(), PackageAccess.READ_WRITE)) {
+			// Save it to the same file - not allowed
+			try {
+				p.save(tempFile);
+				fail("You shouldn't be able to call save(File) to overwrite the current file");
+			} catch(InvalidOperationException e) {
+				// expected here
+			}
 		}
-
-        p.close();
         // Delete it
         assertTrue(tempFile.delete());
 
 
         // Open it read only, then close and delete - allowed
         FileHelper.copyFile(origFile, tempFile);
-        p = OPCPackage.open(tempFile.toString(), PackageAccess.READ);
-        p.close();
+		try (OPCPackage p = OPCPackage.open(tempFile.toString(), PackageAccess.READ)) {
+			assertNotNull(p);
+		}
         assertTrue(tempFile.delete());
 	}
 
@@ -596,7 +552,7 @@ public final class TestPackage {
     public void openFileThenSaveDelete() throws IOException, InvalidFormatException {
         File tempFile = TempFile.createTempFile("poiTesting","tmp");
         File tempFile2 = TempFile.createTempFile("poiTesting","tmp");
-        File origFile = OpenXML4JTestDataSamples.getSampleFile("TestPackageCommon.docx");
+        File origFile = getSampleFile("TestPackageCommon.docx");
         FileHelper.copyFile(origFile, tempFile);
 
         // Open the temp file
@@ -615,34 +571,34 @@ public final class TestPackage {
 	}
 
     @Test
-    public void getPartsByName() throws InvalidFormatException {
-        String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
+    public void getPartsByName() throws InvalidFormatException, IOException {
+        String filepath =  getSampleFileName("sample.docx");
 
-        @SuppressWarnings("resource")
-        OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ_WRITE);
-        try {
-            List<PackagePart> rs =  pkg.getPartsByName(Pattern.compile("/word/.*?\\.xml"));
-            HashMap<String, PackagePart>  selected = new HashMap<>();
+        try (OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ_WRITE)) {
+			try {
+				List<PackagePart> rs = pkg.getPartsByName(Pattern.compile("/word/.*?\\.xml"));
+				HashMap<String, PackagePart> selected = new HashMap<>();
 
-            for(PackagePart p : rs)
-                selected.put(p.getPartName().getName(), p);
+				for (PackagePart p : rs)
+					selected.put(p.getPartName().getName(), p);
 
-            assertEquals(6, selected.size());
-            assertTrue(selected.containsKey("/word/document.xml"));
-            assertTrue(selected.containsKey("/word/fontTable.xml"));
-            assertTrue(selected.containsKey("/word/settings.xml"));
-            assertTrue(selected.containsKey("/word/styles.xml"));
-            assertTrue(selected.containsKey("/word/theme/theme1.xml"));
-            assertTrue(selected.containsKey("/word/webSettings.xml"));
-        } finally {
-            // use revert to not re-write the input file
-            pkg.revert();
-        }
+				assertEquals(6, selected.size());
+				assertTrue(selected.containsKey("/word/document.xml"));
+				assertTrue(selected.containsKey("/word/fontTable.xml"));
+				assertTrue(selected.containsKey("/word/settings.xml"));
+				assertTrue(selected.containsKey("/word/styles.xml"));
+				assertTrue(selected.containsKey("/word/theme/theme1.xml"));
+				assertTrue(selected.containsKey("/word/webSettings.xml"));
+			} finally {
+				// use revert to not re-write the input file
+				pkg.revert();
+			}
+		}
     }
 
     @Test
     public void getPartSize() throws IOException, InvalidFormatException {
-       String filepath =  OpenXML4JTestDataSamples.getSampleFileName("sample.docx");
+       String filepath =  getSampleFileName("sample.docx");
 		try (OPCPackage pkg = OPCPackage.open(filepath, PackageAccess.READ)) {
 			int checked = 0;
 			for (PackagePart part : pkg.getParts()) {
@@ -671,113 +627,133 @@ public final class TestPackage {
     }
 
     @Test
-    public void replaceContentType()
-    throws IOException, InvalidFormatException, SecurityException, IllegalArgumentException {
-        InputStream is = OpenXML4JTestDataSamples.openSampleStream("sample.xlsx");
-        @SuppressWarnings("resource")
-        OPCPackage p = OPCPackage.open(is);
+    public void replaceContentType() throws IOException, InvalidFormatException {
+        try (InputStream is = openSampleStream("sample.xlsx");
+        	OPCPackage p = OPCPackage.open(is)) {
+			try {
+				ContentTypeManager mgr = getContentTypeManager(p);
 
-        ContentTypeManager mgr = getContentTypeManager(p);
+				assertTrue(mgr.isContentTypeRegister(XSSFRelation.WORKBOOK.getContentType()));
+				assertFalse(mgr.isContentTypeRegister(XSSFRelation.MACROS_WORKBOOK.getContentType()));
+				assertTrue(p.replaceContentType(XSSFRelation.WORKBOOK.getContentType(), XSSFRelation.MACROS_WORKBOOK.getContentType()));
 
-        assertTrue(mgr.isContentTypeRegister("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"));
-        assertFalse(mgr.isContentTypeRegister("application/vnd.ms-excel.sheet.macroEnabled.main+xml"));
-
-        assertTrue(
-                p.replaceContentType(
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml",
-                "application/vnd.ms-excel.sheet.macroEnabled.main+xml")
-        );
-
-        assertFalse(mgr.isContentTypeRegister("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"));
-        assertTrue(mgr.isContentTypeRegister("application/vnd.ms-excel.sheet.macroEnabled.main+xml"));
-        p.revert();
-        is.close();
+				assertFalse(mgr.isContentTypeRegister(XSSFRelation.WORKBOOK.getContentType()));
+				assertTrue(mgr.isContentTypeRegister(XSSFRelation.MACROS_WORKBOOK.getContentType()));
+			} finally {
+				p.revert();
+			}
+		}
     }
 
-    /**
-     * Verify we give helpful exceptions (or as best we can) when
-     *  supplied with non-OOXML file types (eg OLE2, ODF)
-     */
-    @Test
-    public void NonOOXMLFileTypes() throws Exception {
-        // Spreadsheet has a good mix of alternate file types
-        POIDataSamples files = POIDataSamples.getSpreadSheetInstance();
 
-        // OLE2 - Stream
-        try {
-			try (InputStream stream = files.openResourceAsStream("SampleSS.xls")) {
-				OPCPackage.open(stream);
-			}
-            fail("Shouldn't be able to open OLE2");
-        } catch (OLE2NotOfficeXmlFileException e) {
-            assertTrue(e.getMessage().contains("The supplied data appears to be in the OLE2 Format"));
-            assertTrue(e.getMessage().contains("You are calling the part of POI that deals with OOXML"));
-        }
-        // OLE2 - File
-        try {
-            OPCPackage.open(files.getFile("SampleSS.xls"));
-            fail("Shouldn't be able to open OLE2");
-        } catch (OLE2NotOfficeXmlFileException e) {
-            assertTrue(e.getMessage().contains("The supplied data appears to be in the OLE2 Format"));
-            assertTrue(e.getMessage().contains("You are calling the part of POI that deals with OOXML"));
-        }
+	@Test
+	public void NonOOXML_OLE2Stream() throws Exception {
+    	expectedEx.expect(OLE2NotOfficeXmlFileException.class);
+    	expectedEx.expectMessage(AllOf.allOf(
+			containsString("The supplied data appears to be in the OLE2 Format"),
+			containsString("You are calling the part of POI that deals with OOXML")
+		));
+		try (InputStream stream = xlsSamples.openResourceAsStream("SampleSS.xls");
+			 OPCPackage p = OPCPackage.open(stream)) {
+			assertNotNull(p);
+			fail("Shouldn't be able to open OLE2");
+		}
+	}
 
-        // Raw XML - Stream
-        try {
-			try (InputStream stream = files.openResourceAsStream("SampleSS.xml")) {
-				OPCPackage.open(stream);
-			}
-            fail("Shouldn't be able to open XML");
-        } catch (NotOfficeXmlFileException e) {
-            assertTrue(e.getMessage().contains("The supplied data appears to be a raw XML file"));
-            assertTrue(e.getMessage().contains("Formats such as Office 2003 XML"));
-        }
-        // Raw XML - File
-        try {
-            OPCPackage.open(files.getFile("SampleSS.xml"));
-            fail("Shouldn't be able to open XML");
-        } catch (NotOfficeXmlFileException e) {
-            assertTrue(e.getMessage().contains("The supplied data appears to be a raw XML file"));
-            assertTrue(e.getMessage().contains("Formats such as Office 2003 XML"));
-        }
+	@Test
+	public void NonOOXML_OLE2File() throws Exception {
+		expectedEx.expect(OLE2NotOfficeXmlFileException.class);
+		expectedEx.expectMessage(AllOf.allOf(
+			containsString("The supplied data appears to be in the OLE2 Format"),
+			containsString("You are calling the part of POI that deals with OOXML")
+		));
+		try (OPCPackage p = OPCPackage.open(xlsSamples.getFile("SampleSS.xls"))) {
+			assertNotNull(p);
+			fail("Shouldn't be able to open OLE2");
+		}
+	}
 
-        // ODF / ODS - Stream
-        try {
-			try (InputStream stream = files.openResourceAsStream("SampleSS.ods")) {
-				OPCPackage.open(stream);
-			}
-            fail("Shouldn't be able to open ODS");
-        } catch (ODFNotOfficeXmlFileException e) {
-            assertTrue(e.toString().contains("The supplied data appears to be in ODF"));
-            assertTrue(e.toString().contains("Formats like these (eg ODS"));
-        }
-        // ODF / ODS - File
-        try {
-            OPCPackage.open(files.getFile("SampleSS.ods"));
-            fail("Shouldn't be able to open ODS");
-        } catch (ODFNotOfficeXmlFileException e) {
-            assertTrue(e.toString().contains("The supplied data appears to be in ODF"));
-            assertTrue(e.toString().contains("Formats like these (eg ODS"));
-        }
+	@Test
+	public void NonOOXML_RawXmlStream() throws Exception {
+		expectedEx.expect(NotOfficeXmlFileException.class);
+		expectedEx.expectMessage(AllOf.allOf(
+			containsString("The supplied data appears to be a raw XML file"),
+			containsString("Formats such as Office 2003 XML")
+		));
+		try (InputStream stream = xlsSamples.openResourceAsStream("SampleSS.xml");
+			 OPCPackage p = OPCPackage.open(stream)) {
+			assertNotNull(p);
+			fail("Shouldn't be able to open XML");
+		}
+	}
 
-        // Plain Text - Stream
-        try {
-			try (InputStream stream = files.openResourceAsStream("SampleSS.txt")) {
-				OPCPackage.open(stream);
-			}
-            fail("Shouldn't be able to open Plain Text");
-        } catch (NotOfficeXmlFileException e) {
-            assertTrue(e.getMessage().contains("No valid entries or contents found"));
-            assertTrue(e.getMessage().contains("not a valid OOXML"));
-        }
-        // Plain Text - File
-        try {
-            OPCPackage.open(files.getFile("SampleSS.txt"));
-            fail("Shouldn't be able to open Plain Text");
-        } catch (UnsupportedFileFormatException e) {
-            // Unhelpful low-level error, sorry
-        }
-    }
+	@Test
+	public void NonOOXML_RawXmlFile() throws Exception {
+		expectedEx.expect(NotOfficeXmlFileException.class);
+		expectedEx.expectMessage(AllOf.allOf(
+			containsString("The supplied data appears to be a raw XML file"),
+			containsString("Formats such as Office 2003 XML")
+		));
+		try (OPCPackage p = OPCPackage.open(xlsSamples.getFile("SampleSS.xml"))) {
+			assertNotNull(p);
+			fail("Shouldn't be able to open XML");
+		}
+	}
+
+	@Test
+	public void NonOOXML_ODFStream() throws Exception {
+		expectedEx.expect(ODFNotOfficeXmlFileException.class);
+		expectedEx.expectMessage(AllOf.allOf(
+			containsString("The supplied data appears to be in ODF"),
+			containsString("Formats like these (eg ODS")
+		));
+		try (InputStream stream = xlsSamples.openResourceAsStream("SampleSS.ods");
+			 OPCPackage p = OPCPackage.open(stream)) {
+			assertNotNull(p);
+			fail("Shouldn't be able to open ODS");
+		}
+	}
+
+	@Test
+	public void NonOOXML_ODFFile() throws Exception {
+		expectedEx.expect(ODFNotOfficeXmlFileException.class);
+		expectedEx.expectMessage(AllOf.allOf(
+			containsString("The supplied data appears to be in ODF"),
+			containsString("Formats like these (eg ODS")
+		));
+		try (OPCPackage p = OPCPackage.open(xlsSamples.getFile("SampleSS.ods"))) {
+			assertNotNull(p);
+			fail("Shouldn't be able to open ODS");
+		}
+	}
+
+	@Test
+	public void NonOOXML_TextStream() throws Exception {
+		expectedEx.expect(NotOfficeXmlFileException.class);
+		expectedEx.expectMessage(AllOf.allOf(
+				containsString("No valid entries or contents found"),
+				containsString("not a valid OOXML")
+		));
+		try (InputStream stream = xlsSamples.openResourceAsStream("SampleSS.txt");
+			 OPCPackage p = OPCPackage.open(stream)) {
+			assertNotNull(p);
+			fail("Shouldn't be able to open Plain Text");
+		}
+	}
+
+	@Test
+	public void NonOOXML_TextFile() throws Exception {
+		// Unhelpful low-level error, sorry
+		expectedEx.expect(UnsupportedFileFormatException.class);
+		expectedEx.expectMessage(AllOf.allOf(
+				containsString("No valid entries or contents found"),
+				containsString("not a valid OOXML")
+		));
+		try (OPCPackage p = OPCPackage.open(xlsSamples.getFile("SampleSS.txt"))) {
+			assertNotNull(p);
+			fail("Shouldn't be able to open Plain Text");
+		}
+	}
 
 	/**
 	 * Zip bomb handling test
@@ -789,7 +765,7 @@ public final class TestPackage {
     throws IOException, EncryptedDocumentException {
 		ByteArrayOutputStream bos = new ByteArrayOutputStream(2500000);
 
-        try (ZipFile zipFile = ZipHelper.openZipFile(OpenXML4JTestDataSamples.getSampleFile("sample.xlsx"));
+        try (ZipFile zipFile = ZipHelper.openZipFile(getSampleFile("sample.xlsx"));
 			 ZipArchiveOutputStream append = new ZipArchiveOutputStream(bos)) {
 			assertNotNull(zipFile);
 
@@ -952,14 +928,14 @@ public final class TestPackage {
     @Test
     public void testConstructors() throws IOException {
         // verify the various ways to construct a ZipSecureFile
-        File file = OpenXML4JTestDataSamples.getSampleFile("sample.xlsx");
-        ZipSecureFile zipFile = new ZipSecureFile(file);
-        assertNotNull(zipFile.getName());
-        zipFile.close();
+        File file = getSampleFile("sample.xlsx");
+        try (ZipSecureFile zipFile = new ZipSecureFile(file)) {
+			assertNotNull(zipFile.getName());
+		}
 
-        zipFile = new ZipSecureFile(file.getAbsolutePath());
-        assertNotNull(zipFile.getName());
-        zipFile.close();
+        try (ZipSecureFile zipFile = new ZipSecureFile(file.getAbsolutePath())) {
+			assertNotNull(zipFile.getName());
+		}
     }
 
     @Test
@@ -976,83 +952,73 @@ public final class TestPackage {
     // bug 60128
     @Test(expected=NotOfficeXmlFileException.class)
     public void testCorruptFile() throws InvalidFormatException {
-        File file = OpenXML4JTestDataSamples.getSampleFile("invalid.xlsx");
+        File file = getSampleFile("invalid.xlsx");
         OPCPackage.open(file, PackageAccess.READ);
     }
 
-    // bug 61381
+	private interface CountingStream {
+    	InputStream create(InputStream is, int length);
+	}
+
+	// bug 61381
     @Test
     public void testTooShortFilterStreams() throws IOException {
-        File xssf = OpenXML4JTestDataSamples.getSampleFile("sample.xlsx");
-        File hssf = POIDataSamples.getSpreadSheetInstance().getFile("SampleSS.xls");
-
-        InputStream[] isList = {
-                new PushbackInputStream(new FileInputStream(xssf), 2),
-                new BufferedInputStream(new FileInputStream(xssf), 2),
-                new PushbackInputStream(new FileInputStream(hssf), 2),
-                new BufferedInputStream(new FileInputStream(hssf), 2),
-        };
-
-        try {
-            for (InputStream is : isList) {
-                WorkbookFactory.create(is).close();
-            }
-        } finally {
-            for (InputStream is : isList) {
-                IOUtils.closeQuietly(is);
-            }
-        }
+		for (String file : new String[]{"sample.xlsx","SampleSS.xls"}) {
+			for (CountingStream cs : new CountingStream[]{PushbackInputStream::new, BufferedInputStream::new}) {
+				try (InputStream is = cs.create(xlsSamples.openResourceAsStream(file), 2);
+					 Workbook wb = WorkbookFactory.create(is)) {
+					assertEquals(3, wb.getNumberOfSheets());
+				}
+			}
+		}
     }
 
 	@Test
 	public void testBug56479() throws Exception {
-		InputStream is = OpenXML4JTestDataSamples.openSampleStream("dcterms_bug_56479.zip");
-		OPCPackage p = OPCPackage.open(is);
+		try (InputStream is = openSampleStream("dcterms_bug_56479.zip");
+			OPCPackage p = OPCPackage.open(is)) {
 
-		// Check we found the contents of it
-		boolean foundCoreProps = false, foundDocument = false, foundTheme1 = false;
-		for (final PackagePart part : p.getParts()) {
-			final String partName = part.getPartName().toString();
-			final String contentType = part.getContentType();
-			if ("/docProps/core.xml".equals(partName)) {
-				assertEquals(ContentTypes.CORE_PROPERTIES_PART, contentType);
-				foundCoreProps = true;
+			// Check we found the contents of it
+			boolean foundCoreProps = false, foundDocument = false, foundTheme1 = false;
+			for (final PackagePart part : p.getParts()) {
+				final String partName = part.getPartName().toString();
+				final String contentType = part.getContentType();
+				switch (partName) {
+					case "/docProps/core.xml":
+						assertEquals(ContentTypes.CORE_PROPERTIES_PART, contentType);
+						foundCoreProps = true;
+						break;
+					case "/word/document.xml":
+						assertEquals(XWPFRelation.DOCUMENT.getContentType(), contentType);
+						foundDocument = true;
+						break;
+					case "/word/theme/theme1.xml":
+						assertEquals(XWPFRelation.THEME.getContentType(), contentType);
+						foundTheme1 = true;
+						break;
+				}
 			}
-			if ("/word/document.xml".equals(partName)) {
-				assertEquals(XWPFRelation.DOCUMENT.getContentType(), contentType);
-				foundDocument = true;
-			}
-			if ("/word/theme/theme1.xml".equals(partName)) {
-				assertEquals(XWPFRelation.THEME.getContentType(), contentType);
-				foundTheme1 = true;
-			}
+			assertTrue("Core not found in " + p.getParts(), foundCoreProps);
+			assertFalse("Document should not be found in " + p.getParts(), foundDocument);
+			assertFalse("Theme1 should not found in " + p.getParts(), foundTheme1);
 		}
-		assertTrue("Core not found in " + p.getParts(), foundCoreProps);
-		assertFalse("Document should not be found in " + p.getParts(), foundDocument);
-		assertFalse("Theme1 should not found in " + p.getParts(), foundTheme1);
-		p.close();
-		is.close();
 	}
 
 	@Test
 	public void unparseableCentralDirectory() throws IOException {
-		File f = OpenXML4JTestDataSamples.getSampleFile("at.pzp.www_uploads_media_PP_Scheinecker-jdk6error.pptx");
-		SlideShow<?,?> ppt = SlideShowFactory.create(f, null, true);
-		ppt.close();
+		File f = getSampleFile("at.pzp.www_uploads_media_PP_Scheinecker-jdk6error.pptx");
+		SlideShowFactory.create(f, null, true).close();
 	}
 
 	@Test
 	public void testClosingStreamOnException() throws IOException {
-		InputStream is = OpenXML4JTestDataSamples.openSampleStream("dcterms_bug_56479.zip");
 		File tmp = File.createTempFile("poi-test-truncated-zip", "");
+
 		// create a corrupted zip file by truncating a valid zip file to the first 100 bytes
-		OutputStream os = new FileOutputStream(tmp);
-		for (int i = 0; i < 100; i++) {
-			os.write(is.read());
+		try (InputStream is = openSampleStream("dcterms_bug_56479.zip");
+			OutputStream os = new FileOutputStream(tmp)) {
+			IOUtils.copy(is, os, 100);
 		}
-		os.flush();
-		os.close();
-		is.close();
 
 		// feed the corrupted zip file to OPCPackage
 		try {
@@ -1094,14 +1060,14 @@ public final class TestPackage {
 
 	@Test(expected = InvalidFormatException.class)
 	public void testBug62592() throws Exception {
-		InputStream is = OpenXML4JTestDataSamples.openSampleStream("62592.thmx");
+		InputStream is = openSampleStream("62592.thmx");
 		/*OPCPackage p =*/ OPCPackage.open(is);
 	}
 
 	@Test
 	public void testBug62592SequentialCallsToGetParts() throws Exception {
 		//make absolutely certain that sequential calls don't throw InvalidFormatExceptions
-		String originalFile = OpenXML4JTestDataSamples.getSampleFileName("TestPackageCommon.docx");
+		String originalFile = getSampleFileName("TestPackageCommon.docx");
 		try (OPCPackage p2 = OPCPackage.open(originalFile, PackageAccess.READ)) {
 			p2.getParts();
 			p2.getParts();
@@ -1138,11 +1104,9 @@ public final class TestPackage {
 
 
 	private static void openInvalidFile(final String name, final boolean useStream) throws IOException, InvalidFormatException {
-		// Spreadsheet has a good mix of alternate file types
-		final POIDataSamples files = POIDataSamples.getSpreadSheetInstance();
 		ZipPackage pkgTest = null;
-		try (final InputStream is = (useStream) ? files.openResourceAsStream(name) : null) {
-			try (final ZipPackage pkg = (useStream) ? new ZipPackage(is, PackageAccess.READ) : new ZipPackage(files.getFile(name), PackageAccess.READ)) {
+		try (final InputStream is = (useStream) ? xlsSamples.openResourceAsStream(name) : null) {
+			try (final ZipPackage pkg = (useStream) ? new ZipPackage(is, PackageAccess.READ) : new ZipPackage(xlsSamples.getFile(name), PackageAccess.READ)) {
 				pkgTest = pkg;
 				assertNotNull(pkg.getZipArchive());
 				assertFalse(pkg.getZipArchive().isClosed());
@@ -1196,8 +1160,8 @@ public final class TestPackage {
 	@SuppressWarnings("UnstableApiUsage")
 	@Test
 	public void testBug63029() throws Exception {
-		File testFile = OpenXML4JTestDataSamples.getSampleFile("sample.docx");
-		File tmpFile = OpenXML4JTestDataSamples.getOutputFile("Bug63029.docx");
+		File testFile = getSampleFile("sample.docx");
+		File tmpFile = getOutputFile("Bug63029.docx");
 		Files.copy(testFile, tmpFile);
 
 		int numPartsBefore = 0;
@@ -1212,7 +1176,7 @@ public final class TestPackage {
 			pkg.addMarshaller("poi/junit", (part, out) -> {
 				throw new RuntimeException("Bugzilla 63029");
 			});
-			pkg.createPart(PackagingURIHelper.createPartName("/poi/test.xml"), "poi/junit");
+			pkg.createPart(createPartName("/poi/test.xml"), "poi/junit");
 		} catch (RuntimeException e){
 			ex = e;
 		}

@@ -213,7 +213,7 @@ public final class XMLHelper {
         return XMLEventFactory.newInstance();
     }
 
-    @SuppressWarnings("squid:S4435")
+    @SuppressWarnings({"squid:S4435","java:S2755"})
     public static TransformerFactory getTransformerFactory() {
         TransformerFactory factory = TransformerFactory.newInstance();
         trySet(factory::setFeature, FEATURE_SECURE_PROCESSING, true);
@@ -232,6 +232,7 @@ public final class XMLHelper {
         return serializer;
     }
 
+    @SuppressWarnings("java:S2755")
     public static SchemaFactory getSchemaFactory() {
         SchemaFactory factory = SchemaFactory.newInstance(W3C_XML_SCHEMA_NS_URI);
         trySet(factory::setFeature, FEATURE_SECURE_PROCESSING, true);

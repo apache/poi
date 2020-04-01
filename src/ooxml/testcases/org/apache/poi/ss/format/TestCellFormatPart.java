@@ -16,74 +16,95 @@
 ==================================================================== */
 package org.apache.poi.ss.format;
 
+import static java.awt.Color.ORANGE;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import java.awt.Color;
 import java.io.IOException;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
+
+import javax.swing.JLabel;
 
 import org.apache.poi.hssf.util.HSSFColor;
+import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-/** Test the individual CellFormatPart types. */
-public class TestCellFormatPart extends CellFormatTestBase {
-    
+/**
+ * Class for spreadsheet-based tests, such as are used for cell formatting.
+ * This reads tests from the spreadsheet, as well as reading
+ * flags that can be used to paramterize these tests.
+ * <p>
+ * Each test has four parts: The expected result (column A), the format string
+ * (column B), the value to format (column C), and a comma-separated list of
+ * categores that this test falls in. Normally all tests are run, but if the
+ * flag "Categories" is not empty, only tests that have at least one category
+ * listed in "Categories" are run.
+ */
+public class TestCellFormatPart {
+    private static final Pattern NUMBER_EXTRACT_FMT = Pattern.compile(
+            "([-+]?[0-9]+)(\\.[0-9]+)?.*(?:(e).*?([+-]?[0-9]+))",
+            Pattern.CASE_INSENSITIVE);
+    private static final Color TEST_COLOR = ORANGE.darker();
     private static Locale userLocale;
-    
+
+
+
     @BeforeClass
     public static void setLocale() {
         userLocale = LocaleUtil.getUserLocale();
         LocaleUtil.setUserLocale(Locale.UK);
     }
-    
+
     @AfterClass
     public static void unsetLocale() {
         LocaleUtil.setUserLocale(userLocale);
     }
-    
-    private static final Pattern NUMBER_EXTRACT_FMT = Pattern.compile(
-            "([-+]?[0-9]+)(\\.[0-9]+)?.*(?:(e).*?([+-]?[0-9]+))",
-            Pattern.CASE_INSENSITIVE);
 
-    public TestCellFormatPart() {
-        super(XSSFITestDataProvider.instance);
+    private final ITestDataProvider _testDataProvider = XSSFITestDataProvider.instance;
+
+    private interface CellValue {
+        Object getValue(Cell cell);
+
+        default void equivalent(String expected, String actual, CellFormatPart format) {
+            assertEquals("format \"" + format + "\"", '"' + expected + '"',
+                         '"' + actual + '"');
+        }
     }
 
     @Test
     public void testGeneralFormat() throws IOException {
-        runFormatTests("GeneralFormatTests.xlsx", new CellValue() {
-            @Override
-            public Object getValue(Cell cell) {
-                switch (CellFormat.ultimateType(cell)) {
-                    case BOOLEAN:
-                        return cell.getBooleanCellValue();
-                    case NUMERIC:
-                        return cell.getNumericCellValue();
-                    default:
-                        return cell.getStringCellValue();
-                }
+        runFormatTests("GeneralFormatTests.xlsx", cell -> {
+            assertNotNull(cell);
+            switch (CellFormat.ultimateType(cell)) {
+                case BOOLEAN:
+                    return cell.getBooleanCellValue();
+                case NUMERIC:
+                    return cell.getNumericCellValue();
+                default:
+                    return cell.getStringCellValue();
             }
         });
     }
 
     @Test
     public void testNumberFormat() throws IOException {
-        runFormatTests("NumberFormatTests.xlsx", new CellValue() {
-            @Override
-            public Object getValue(Cell cell) {
-                return cell.getNumericCellValue();
-            }
-        });
+        runFormatTests("NumberFormatTests.xlsx", Cell::getNumericCellValue);
     }
 
     @Test
@@ -95,7 +116,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
             }
 
             @Override
-            void equivalent(String expected, String actual,
+            public void equivalent(String expected, String actual,
                     CellFormatPart format) {
                 double expectedVal = extractNumber(expected);
                 double actualVal = extractNumber(actual);
@@ -112,12 +133,7 @@ public class TestCellFormatPart extends CellFormatTestBase {
         TimeZone tz = LocaleUtil.getUserTimeZone();
         LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
         try {
-            runFormatTests("DateFormatTests.xlsx", new CellValue() {
-                @Override
-                public Object getValue(Cell cell) {
-                    return cell.getDateCellValue();
-                }
-            });
+            runFormatTests("DateFormatTests.xlsx", Cell::getDateCellValue);
         } finally {
             LocaleUtil.setUserTimeZone(tz);
         }
@@ -125,55 +141,34 @@ public class TestCellFormatPart extends CellFormatTestBase {
 
     @Test
     public void testElapsedFormat() throws IOException {
-        runFormatTests("ElapsedFormatTests.xlsx", new CellValue() {
-            @Override
-            public Object getValue(Cell cell) {
-                return cell.getNumericCellValue();
-            }
-        });
+        runFormatTests("ElapsedFormatTests.xlsx", Cell::getNumericCellValue);
     }
 
     @Test
     public void testTextFormat() throws IOException {
-        runFormatTests("TextFormatTests.xlsx", new CellValue() {
-            @Override
-            public Object getValue(Cell cell) {
-                if (CellFormat.ultimateType(cell) == CellType.BOOLEAN) {
-                    return cell.getBooleanCellValue();
-                }
-                return cell.getStringCellValue();
-            }
-        });
+        runFormatTests("TextFormatTests.xlsx", cell ->
+            (CellFormat.ultimateType(cell) == CellType.BOOLEAN) ? cell.getBooleanCellValue() : cell.getStringCellValue()
+        );
     }
 
     @Test
     public void testConditions() throws IOException {
-        runFormatTests("FormatConditionTests.xlsx", new CellValue() {
-            @Override
-            Object getValue(Cell cell) {
-                return cell.getNumericCellValue();
-            }
-        });
+        runFormatTests("FormatConditionTests.xlsx", Cell::getNumericCellValue);
     }
 
     @Test
     public void testNamedColors() {
         assertTrue(CellFormatPart.NAMED_COLORS.size() >= HSSFColor.HSSFColorPredefined.values().length);
-        assertNotNull(CellFormatPart.NAMED_COLORS.get("GREEN"));
-        assertNotNull(CellFormatPart.NAMED_COLORS.get("Green"));
-        assertNotNull(CellFormatPart.NAMED_COLORS.get("RED"));
-        assertNotNull(CellFormatPart.NAMED_COLORS.get("Red"));
-        assertNotNull(CellFormatPart.NAMED_COLORS.get("BLUE"));
-        assertNotNull(CellFormatPart.NAMED_COLORS.get("Blue"));
-        assertNotNull(CellFormatPart.NAMED_COLORS.get("YELLOW"));
-        assertNotNull(CellFormatPart.NAMED_COLORS.get("Yellow"));
+        Stream.of("GREEN","Green","RED","Red","BLUE","Blue","YELLOW","Yellow")
+            .map(CellFormatPart.NAMED_COLORS::get)
+            .forEach(Assert::assertNotNull);
     }
 
     private double extractNumber(String str) {
         Matcher m = NUMBER_EXTRACT_FMT.matcher(str);
-        if (!m.find())
-            throw new IllegalArgumentException(
-                    "Cannot find number in \"" + str + "\"");
+        if (!m.find()) {
+            throw new IllegalArgumentException("Cannot find number in \"" + str + "\"");
+        }
 
         StringBuilder sb = new StringBuilder();
         // The groups in the pattern are the parts of the number
@@ -182,6 +177,45 @@ public class TestCellFormatPart extends CellFormatTestBase {
             if (part != null)
                 sb.append(part);
         }
-        return Double.valueOf(sb.toString());
+        return Double.parseDouble(sb.toString());
+    }
+
+
+    protected void runFormatTests(String workbookName, CellValue valueGetter) throws IOException {
+        try (Workbook workbook = _testDataProvider.openSampleWorkbook(workbookName)) {
+            workbook.setMissingCellPolicy(Row.MissingCellPolicy.CREATE_NULL_AS_BLANK);
+
+            Sheet sheet = workbook.getSheet("Tests");
+            boolean isHeader = true;
+            for (Row row : sheet) {
+                // Skip the header row
+                if (isHeader || row == null) {
+                    isHeader = false;
+                    continue;
+                }
+                String expectedText = row.getCell(0).getStringCellValue();
+                String format = row.getCell(1).getStringCellValue();
+                Cell value = row.getCell(2);
+
+                if (expectedText.isEmpty() && format.isEmpty()) {
+                    continue;
+                }
+
+                Object objVal = valueGetter.getValue(value);
+                JLabel label = new JLabel();
+                label.setForeground(TEST_COLOR);
+                label.setText("xyzzy");
+
+                Color origColor = label.getForeground();
+                CellFormatPart cellFormatPart = new CellFormatPart(format);
+                // If this doesn't apply, no color change is expected
+                Color expectedColor = cellFormatPart.apply(label, objVal).applies ? TEST_COLOR : origColor;
+
+                String actualText = label.getText();
+                Color actualColor = label.getForeground();
+                valueGetter.equivalent(expectedText, actualText, cellFormatPart);
+                assertEquals("no color", expectedColor, actualColor);
+            }
+        }
     }
 }
