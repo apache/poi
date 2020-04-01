@@ -31,6 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import javax.xml.namespace.QName;
 
@@ -114,8 +115,6 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     private XSSFWorkbook workbook;
 
     private int chartIndex = 0;
-
-    private POIXMLDocumentPart documentPart = null;
 
     protected List<XDDFChartAxis> axes = new ArrayList<>();
 
@@ -362,14 +361,14 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     }
 
     @Override
-    public <R> Optional<R> findDefinedParagraphProperty(Function<CTTextParagraphProperties, Boolean> isSet,
+    public <R> Optional<R> findDefinedParagraphProperty(Predicate<CTTextParagraphProperties> isSet,
         Function<CTTextParagraphProperties, R> getter) {
         // TODO Auto-generated method stub
         return Optional.empty();
     }
 
     @Override
-    public <R> Optional<R> findDefinedRunProperty(Function<CTTextCharacterProperties, Boolean> isSet,
+    public <R> Optional<R> findDefinedRunProperty(Predicate<CTTextCharacterProperties> isSet,
         Function<CTTextCharacterProperties, R> getter) {
         // TODO Auto-generated method stub
         return Optional.empty();
@@ -578,23 +577,23 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     private Map<Long, XDDFChartAxis> getCategoryAxes() {
         CTPlotArea plotArea = getCTPlotArea();
         int sizeOfArray = plotArea.sizeOfCatAxArray();
-        Map<Long, XDDFChartAxis> axes = new HashMap<>(sizeOfArray);
+        Map<Long, XDDFChartAxis> axesMap = new HashMap<>(sizeOfArray);
         for (int i = 0; i < sizeOfArray; i++) {
             CTCatAx category = plotArea.getCatAxArray(i);
-            axes.put(category.getAxId().getVal(), new XDDFCategoryAxis(category));
+            axesMap.put(category.getAxId().getVal(), new XDDFCategoryAxis(category));
         }
-        return axes;
+        return axesMap;
     }
 
     private Map<Long, XDDFValueAxis> getValueAxes() {
         CTPlotArea plotArea = getCTPlotArea();
         int sizeOfArray = plotArea.sizeOfValAxArray();
-        Map<Long, XDDFValueAxis> axes = new HashMap<>(sizeOfArray);
+        Map<Long, XDDFValueAxis> axesMap = new HashMap<>(sizeOfArray);
         for (int i = 0; i < sizeOfArray; i++) {
             CTValAx values = plotArea.getValAxArray(i);
-            axes.put(values.getAxId().getVal(), new XDDFValueAxis(values));
+            axesMap.put(values.getAxId().getVal(), new XDDFValueAxis(values));
         }
-        return axes;
+        return axesMap;
     }
 
     public XDDFValueAxis createValueAxis(AxisPosition pos) {
@@ -767,15 +766,14 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      */
     public PackageRelationship createRelationshipInChart(POIXMLRelation chartRelation, POIXMLFactory chartFactory,
         int chartIndex) {
-        documentPart = createRelationship(chartRelation, chartFactory, chartIndex, true).getDocumentPart();
+        POIXMLDocumentPart documentPart =
+                createRelationship(chartRelation, chartFactory, chartIndex, true).getDocumentPart();
         return addRelation(null, chartRelation, documentPart).getRelationship();
     }
 
     /**
      * if embedded part was null then create new part
      *
-     * @param chartRelation
-     *            chart relation object
      * @param chartWorkbookRelation
      *            chart workbook relation object
      * @param chartFactory
@@ -784,8 +782,8 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      * @throws InvalidFormatException
      * @since POI 4.0.0
      */
-    private PackagePart createWorksheetPart(POIXMLRelation chartRelation, POIXMLRelation chartWorkbookRelation,
-        POIXMLFactory chartFactory) throws InvalidFormatException {
+    private PackagePart createWorksheetPart(POIXMLRelation chartWorkbookRelation, POIXMLFactory chartFactory)
+            throws InvalidFormatException {
         PackageRelationship xlsx = createRelationshipInChart(chartWorkbookRelation, chartFactory, chartIndex);
         setExternalId(xlsx.getId());
         return getTargetPart(xlsx);
@@ -803,11 +801,10 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
     public void saveWorkbook(XSSFWorkbook workbook) throws IOException, InvalidFormatException {
         PackagePart worksheetPart = getWorksheetPart();
         if (worksheetPart == null) {
-            POIXMLRelation chartRelation = getChartRelation();
             POIXMLRelation chartWorkbookRelation = getChartWorkbookRelation();
             POIXMLFactory chartFactory = getChartFactory();
-            if (chartRelation != null && chartWorkbookRelation != null && chartFactory != null) {
-                worksheetPart = createWorksheetPart(chartRelation, chartWorkbookRelation, chartFactory);
+            if (chartWorkbookRelation != null && chartFactory != null) {
+                worksheetPart = createWorksheetPart(chartWorkbookRelation, chartFactory);
             } else {
                 throw new InvalidFormatException("unable to determine chart relations");
             }
@@ -950,6 +947,9 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      */
     public CellReference setSheetTitle(String title, int column) {
         XSSFSheet sheet = getSheet();
+        if (sheet == null) {
+            return null;
+        }
         XSSFRow row = getRow(sheet, 0);
         XSSFCell cell = getCell(row, column);
         cell.setCellValue(title);
@@ -1000,7 +1000,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         return null;
     }
 
-    private void setWorksheetPartCommitted() throws InvalidFormatException {
+    private void setWorksheetPartCommitted() {
         for (RelationPart part : getRelationParts()) {
             if (POIXMLDocument.PACK_OBJECT_REL_TYPE.equals(part.getRelationship().getRelationshipType())) {
                 part.getDocumentPart().setCommitted(true);

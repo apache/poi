@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.SimpleShape;
@@ -1005,14 +1006,14 @@ public class XSSFSimpleShape extends XSSFShape implements Iterable<XSSFTextParag
     }
 
     @Override
-    public <R> Optional<R> findDefinedParagraphProperty(Function<CTTextParagraphProperties, Boolean> isSet,
+    public <R> Optional<R> findDefinedParagraphProperty(Predicate<CTTextParagraphProperties> isSet,
         Function<CTTextParagraphProperties, R> getter) {
         // TODO Auto-generated method stub
         return Optional.empty();
     }
 
     @Override
-    public <R> Optional<R> findDefinedRunProperty(Function<CTTextCharacterProperties, Boolean> isSet,
+    public <R> Optional<R> findDefinedRunProperty(Predicate<CTTextCharacterProperties> isSet,
         Function<CTTextCharacterProperties, R> getter) {
         // TODO Auto-generated method stub
         return Optional.empty();

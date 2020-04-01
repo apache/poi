@@ -20,6 +20,7 @@ package org.apache.poi.xddf.usermodel.chart;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.apache.poi.util.Beta;
@@ -195,14 +196,16 @@ public final class XDDFChartLegend implements TextContainer {
         legend.getOverlay().setVal(value);
     }
 
+    @Override
     public <R> Optional<R> findDefinedParagraphProperty(
-            Function<CTTextParagraphProperties, Boolean> isSet,
+            Predicate<CTTextParagraphProperties> isSet,
             Function<CTTextParagraphProperties, R> getter) {
         return Optional.empty(); // chart legend has no (indirect) paragraph properties
     }
 
+    @Override
     public <R> Optional<R> findDefinedRunProperty(
-            Function<CTTextCharacterProperties, Boolean> isSet,
+            Predicate<CTTextCharacterProperties> isSet,
             Function<CTTextCharacterProperties, R> getter) {
         return Optional.empty(); // chart legend has no (indirect) paragraph properties
     }

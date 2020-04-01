@@ -19,6 +19,7 @@ package org.apache.poi.xddf.usermodel.chart;
 
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
@@ -113,14 +114,14 @@ public class XDDFLegendEntry implements TextContainer {
 
     @Override
     public <R> Optional<R> findDefinedParagraphProperty(
-            Function<CTTextParagraphProperties, Boolean> isSet,
+            Predicate<CTTextParagraphProperties> isSet,
             Function<CTTextParagraphProperties, R> getter) {
         return Optional.empty(); // legend entry has no (indirect) paragraph properties
     }
 
     @Override
     public <R> Optional<R> findDefinedRunProperty(
-            Function<CTTextCharacterProperties, Boolean> isSet,
+            Predicate<CTTextCharacterProperties> isSet,
             Function<CTTextCharacterProperties, R> getter) {
         return Optional.empty(); // legend entry has no (indirect) paragraph properties
     }

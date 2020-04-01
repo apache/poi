@@ -21,6 +21,7 @@ import java.util.LinkedList;
 import java.util.Locale;
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.apache.poi.common.usermodel.fonts.FontGroup;
 import org.apache.poi.ooxml.POIXMLRelation;
@@ -108,7 +109,9 @@ public class XDDFTextRun {
     }
 
     public Boolean getDirty() {
-        return findDefinedProperty(props -> props.isSetDirty(), props -> props.getDirty())
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetDirty,
+                CTTextCharacterProperties::getDirty)
             .orElse(null);
     }
 
@@ -117,7 +120,9 @@ public class XDDFTextRun {
     }
 
     public Boolean getSpellError() {
-        return findDefinedProperty(props -> props.isSetErr(), props -> props.getErr())
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetErr,
+                CTTextCharacterProperties::getErr)
             .orElse(null);
     }
 
@@ -126,7 +131,9 @@ public class XDDFTextRun {
     }
 
     public Boolean getNoProof() {
-        return findDefinedProperty(props -> props.isSetNoProof(), props -> props.getNoProof())
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetNoProof,
+                CTTextCharacterProperties::getNoProof)
             .orElse(null);
     }
 
@@ -135,7 +142,9 @@ public class XDDFTextRun {
     }
 
     public Boolean getNormalizeHeights() {
-        return findDefinedProperty(props -> props.isSetNormalizeH(), props -> props.getNormalizeH())
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetNormalizeH,
+                CTTextCharacterProperties::getNormalizeH)
             .orElse(null);
     }
 
@@ -144,7 +153,9 @@ public class XDDFTextRun {
     }
 
     public boolean isKumimoji() {
-        return findDefinedProperty(props -> props.isSetKumimoji(), props -> props.getKumimoji())
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetKumimoji,
+                CTTextCharacterProperties::getKumimoji)
             .orElse(false);
     }
 
@@ -162,7 +173,9 @@ public class XDDFTextRun {
      * @return whether this run of text is formatted as bold text.
      */
     public boolean isBold() {
-        return findDefinedProperty(props -> props.isSetB(), props -> props.getB())
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetB,
+                CTTextCharacterProperties::getB)
             .orElse(false);
     }
 
@@ -178,7 +191,9 @@ public class XDDFTextRun {
      * @return whether this run of text is formatted as italic text.
      */
     public boolean isItalic() {
-        return findDefinedProperty(props -> props.isSetI(), props -> props.getI())
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetI,
+                CTTextCharacterProperties::getI)
             .orElse(false);
     }
 
@@ -194,7 +209,9 @@ public class XDDFTextRun {
      * @return whether this run of text is formatted as striked text.
      */
     public boolean isStrikeThrough() {
-        return findDefinedProperty(props -> props.isSetStrike(), props -> props.getStrike())
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetStrike,
+                CTTextCharacterProperties::getStrike)
             .map(strike -> strike != STTextStrikeType.NO_STRIKE)
             .orElse(false);
     }
@@ -203,8 +220,10 @@ public class XDDFTextRun {
      * @return which strike style this run of text is formatted with.
      */
     public StrikeType getStrikeThrough() {
-        return findDefinedProperty(props -> props.isSetStrike(), props -> props.getStrike())
-            .map(strike -> StrikeType.valueOf(strike))
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetStrike,
+                CTTextCharacterProperties::getStrike)
+            .map(StrikeType::valueOf)
             .orElse(null);
     }
 
@@ -220,7 +239,9 @@ public class XDDFTextRun {
      * @return whether this run of text is formatted as underlined text.
      */
     public boolean isUnderline() {
-        return findDefinedProperty(props -> props.isSetU(), props -> props.getU())
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetU,
+                CTTextCharacterProperties::getU)
             .map(underline -> underline != STTextUnderlineType.NONE)
             .orElse(false);
     }
@@ -229,8 +250,10 @@ public class XDDFTextRun {
      * @return which underline style this run of text is formatted with.
      */
     public UnderlineType getUnderline() {
-        return findDefinedProperty(props -> props.isSetU(), props -> props.getU())
-            .map(underline -> UnderlineType.valueOf(underline))
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetU,
+                CTTextCharacterProperties::getU)
+            .map(UnderlineType::valueOf)
             .orElse(null);
     }
 
@@ -246,7 +269,9 @@ public class XDDFTextRun {
      * @return whether this run of text is formatted as capitalized text.
      */
     public boolean isCapitals() {
-        return findDefinedProperty(props -> props.isSetCap(), props -> props.getCap())
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetCap,
+                CTTextCharacterProperties::getCap)
             .map(caps -> caps != STTextCapsType.NONE)
             .orElse(false);
     }
@@ -255,8 +280,10 @@ public class XDDFTextRun {
      * @return which caps style this run of text is formatted with.
      */
     public CapsType getCapitals() {
-        return findDefinedProperty(props -> props.isSetCap(), props -> props.getCap())
-            .map(caps -> CapsType.valueOf(caps))
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetCap,
+                CTTextCharacterProperties::getCap)
+            .map(CapsType::valueOf)
             .orElse(null);
     }
 
@@ -265,7 +292,9 @@ public class XDDFTextRun {
      *         Default is false.
      */
     public boolean isSubscript() {
-        return findDefinedProperty(props -> props.isSetBaseline(), props -> props.getBaseline())
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetBaseline,
+                CTTextCharacterProperties::getBaseline)
             .map(baseline -> baseline < 0)
             .orElse(false);
     }
@@ -275,7 +304,9 @@ public class XDDFTextRun {
      *         Default is false.
      */
     public boolean isSuperscript() {
-        return findDefinedProperty(props -> props.isSetBaseline(), props -> props.getBaseline())
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetBaseline,
+                CTTextCharacterProperties::getBaseline)
             .map(baseline -> baseline > 0)
             .orElse(false);
     }
@@ -332,8 +363,10 @@ public class XDDFTextRun {
     }
 
     public XDDFColor getFontColor() {
-        XDDFSolidFillProperties solid = findDefinedProperty(props -> props.isSetSolidFill(), props -> props.getSolidFill())
-            .map(props -> new XDDFSolidFillProperties(props))
+        XDDFSolidFillProperties solid = findDefinedProperty(
+                CTTextCharacterProperties::isSetSolidFill,
+                CTTextCharacterProperties::getSolidFill)
+            .map(XDDFSolidFillProperties::new)
             .orElse(new XDDFSolidFillProperties());
         return solid.getColor();
     }
@@ -352,18 +385,18 @@ public class XDDFTextRun {
     public XDDFFont[] getFonts() {
         LinkedList<XDDFFont> list = new LinkedList<>();
 
-        findDefinedProperty(props -> props.isSetCs(), props -> props.getCs())
+        findDefinedProperty(CTTextCharacterProperties::isSetCs, CTTextCharacterProperties::getCs)
             .map(font -> new XDDFFont(FontGroup.COMPLEX_SCRIPT, font))
-            .ifPresent(font -> list.add(font));
-        findDefinedProperty(props -> props.isSetEa(), props -> props.getEa())
+            .ifPresent(list::add);
+        findDefinedProperty(CTTextCharacterProperties::isSetEa, CTTextCharacterProperties::getEa)
             .map(font -> new XDDFFont(FontGroup.EAST_ASIAN, font))
-            .ifPresent(font -> list.add(font));
-        findDefinedProperty(props -> props.isSetLatin(), props -> props.getLatin())
+            .ifPresent(list::add);
+        findDefinedProperty(CTTextCharacterProperties::isSetLatin, CTTextCharacterProperties::getLatin)
             .map(font -> new XDDFFont(FontGroup.LATIN, font))
-            .ifPresent(font -> list.add(font));
-        findDefinedProperty(props -> props.isSetSym(), props -> props.getSym())
+            .ifPresent(list::add);
+        findDefinedProperty(CTTextCharacterProperties::isSetSym, CTTextCharacterProperties::getSym)
             .map(font -> new XDDFFont(FontGroup.SYMBOL, font))
-            .ifPresent(font -> list.add(font));
+            .ifPresent(list::add);
 
         return list.toArray(new XDDFFont[0]);
     }
@@ -384,7 +417,9 @@ public class XDDFTextRun {
     }
 
     public Double getFontSize() {
-        Integer size = findDefinedProperty(props -> props.isSetSz(), props -> props.getSz())
+        Integer size = findDefinedProperty(
+                CTTextCharacterProperties::isSetSz,
+                CTTextCharacterProperties::getSz)
             .orElse(100 * XSSFFont.DEFAULT_FONT_SIZE); // default font size
         double scale = _parent.getParentBody().getBodyProperties().getAutoFit().getFontScale() / 10_000_000.0;
         return size * scale;
@@ -415,7 +450,9 @@ public class XDDFTextRun {
      * If this attribute is omitted then returns <code>null</code>.
      */
     public Double getCharacterKerning() {
-        return findDefinedProperty(props -> props.isSetKern(), props -> props.getKern())
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetKern,
+                CTTextCharacterProperties::getKern)
             .map(kerning -> 0.01 * kerning)
             .orElse(null);
     }
@@ -449,7 +486,9 @@ public class XDDFTextRun {
      * If this attribute is omitted then returns <code>null</code>.
      */
     public Double getCharacterSpacing() {
-        return findDefinedProperty(props -> props.isSetSpc(), props -> props.getSpc())
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetSpc,
+                CTTextCharacterProperties::getSpc)
             .map(spacing -> 0.01 * spacing)
             .orElse(null);
     }
@@ -459,7 +498,9 @@ public class XDDFTextRun {
     }
 
     public String getBookmark() {
-        return findDefinedProperty(props -> props.isSetBmk(), props -> props.getBmk())
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetBmk,
+                CTTextCharacterProperties::getBmk)
             .orElse(null);
     }
 
@@ -484,8 +525,10 @@ public class XDDFTextRun {
     }
 
     public XDDFHyperlink getHyperlink() {
-        return findDefinedProperty(props -> props.isSetHlinkClick(), props -> props.getHlinkClick())
-            .map(link -> new XDDFHyperlink(link))
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetHlinkClick,
+                CTTextCharacterProperties::getHlinkClick)
+            .map(XDDFHyperlink::new)
             .orElse(null);
     }
 
@@ -496,8 +539,10 @@ public class XDDFTextRun {
     }
 
     public XDDFHyperlink getMouseOver() {
-        return findDefinedProperty(props -> props.isSetHlinkMouseOver(), props -> props.getHlinkMouseOver())
-            .map(link -> new XDDFHyperlink(link))
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetHlinkMouseOver,
+                CTTextCharacterProperties::getHlinkMouseOver)
+            .map(XDDFHyperlink::new)
             .orElse(null);
     }
 
@@ -506,8 +551,10 @@ public class XDDFTextRun {
     }
 
     public Locale getLanguage() {
-        return findDefinedProperty(props -> props.isSetLang(), props -> props.getLang())
-            .map(lang -> Locale.forLanguageTag(lang))
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetLang,
+                CTTextCharacterProperties::getLang)
+            .map(Locale::forLanguageTag)
             .orElse(null);
     }
 
@@ -516,8 +563,10 @@ public class XDDFTextRun {
     }
 
     public Locale getAlternativeLanguage() {
-        return findDefinedProperty(props -> props.isSetAltLang(), props -> props.getAltLang())
-            .map(lang -> Locale.forLanguageTag(lang))
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetAltLang,
+                CTTextCharacterProperties::getAltLang)
+            .map(Locale::forLanguageTag)
             .orElse(null);
     }
 
@@ -526,8 +575,10 @@ public class XDDFTextRun {
     }
 
     public XDDFColor getHighlight() {
-        return findDefinedProperty(props -> props.isSetHighlight(), props -> props.getHighlight())
-            .map(color -> XDDFColor.forColorContainer(color))
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetHighlight,
+                CTTextCharacterProperties::getHighlight)
+            .map(XDDFColor::forColorContainer)
             .orElse(null);
     }
 
@@ -536,14 +587,16 @@ public class XDDFTextRun {
     }
 
     public XDDFLineProperties getLineProperties() {
-        return findDefinedProperty(props -> props.isSetLn(), props -> props.getLn())
-            .map(props -> new XDDFLineProperties(props))
+        return findDefinedProperty(
+                CTTextCharacterProperties::isSetLn,
+                CTTextCharacterProperties::getLn)
+            .map(XDDFLineProperties::new)
             .orElse(null);
     }
 
-    private <R> Optional<R> findDefinedProperty(Function<CTTextCharacterProperties, Boolean> isSet, Function<CTTextCharacterProperties, R> getter) {
+    private <R> Optional<R> findDefinedProperty(Predicate<CTTextCharacterProperties> isSet, Function<CTTextCharacterProperties, R> getter) {
         CTTextCharacterProperties props = getProperties();
-        if (props != null && isSet.apply(props)) {
+        if (props != null && isSet.test(props)) {
             return Optional.ofNullable(getter.apply(props));
         } else {
             return _parent.findDefinedRunProperty(isSet, getter);

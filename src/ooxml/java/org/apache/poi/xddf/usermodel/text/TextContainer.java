@@ -19,6 +19,7 @@ package org.apache.poi.xddf.usermodel.text;
 
 import java.util.Optional;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.apache.poi.util.Beta;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
@@ -27,10 +28,10 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties
 @Beta
 public interface TextContainer {
 
-    <R> Optional<R> findDefinedParagraphProperty(Function<CTTextParagraphProperties, Boolean> isSet,
+    <R> Optional<R> findDefinedParagraphProperty(Predicate<CTTextParagraphProperties> isSet,
         Function<CTTextParagraphProperties, R> getter);
 
-    <R> Optional<R> findDefinedRunProperty(Function<CTTextCharacterProperties, Boolean> isSet,
+    <R> Optional<R> findDefinedRunProperty(Predicate<CTTextCharacterProperties> isSet,
         Function<CTTextCharacterProperties, R> getter);
 
 }

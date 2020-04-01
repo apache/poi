@@ -408,7 +408,10 @@ public abstract class XDDFChartAxis implements HasShapeProperties {
     }
 
     protected long getNextAxId(CTPlotArea plotArea) {
-        long totalAxisCount = plotArea.sizeOfValAxArray() + plotArea.sizeOfCatAxArray() + plotArea.sizeOfDateAxArray()
+        long totalAxisCount = 0L
+                + plotArea.sizeOfValAxArray()
+                + plotArea.sizeOfCatAxArray()
+                + plotArea.sizeOfDateAxArray()
                 + plotArea.sizeOfSerAxArray();
         return totalAxisCount;
     }
