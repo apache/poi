@@ -137,6 +137,7 @@ public class TestXSSFChartTitle {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chartTitle_withTitle.xlsx");
         XSSFChart chart = getChartFromWorkbook(wb, "Sheet1");
         assertNotNull(chart);
+        assertNotNull(chart.getTitle());
         XSSFRichTextString originalTitle = chart.getTitleText();
         assertNotNull(originalTitle);
         final String myTitle = "My chart title";
@@ -154,6 +155,7 @@ public class TestXSSFChartTitle {
         XSSFChart chart = getChartFromWorkbook(wb, "Sheet1");
         assertNotNull(chart);
         assertNull(chart.getTitleText());
+        assertNull(chart.getTitle());
         final String myTitle = "My chart title";
         chart.setTitleText(myTitle);
         XSSFRichTextString queryTitle = chart.getTitleText();
@@ -173,6 +175,32 @@ public class TestXSSFChartTitle {
         String formula = chart.getTitleFormula();
         assertNotNull(formula);
         assertEquals("Sheet1!$E$1", formula);
+        wb.close();
+    }
+
+    @Test
+    public void testRemovingFromExistingChartNoTitle() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chartTitle_noTitle.xlsx");
+        XSSFChart chart = getChartFromWorkbook(wb, "Sheet1");
+        assertNotNull(chart);
+        assertNull(chart.getTitleText());
+        assertNull(chart.getTitle());
+        chart.removeTitle();
+        assertNull(chart.getTitleText());
+        assertNull(chart.getTitle());
+        wb.close();
+    }
+
+    @Test
+    public void testRemovingFromExistingChartWithTitle() throws IOException {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chartTitle_withTitle.xlsx");
+        XSSFChart chart = getChartFromWorkbook(wb, "Sheet1");
+        assertNotNull(chart);
+        assertNotNull(chart.getTitleText());
+        assertNotNull(chart.getTitle());
+        chart.removeTitle();
+        assertNull(chart.getTitleText());
+        assertNull(chart.getTitle());
         wb.close();
     }
 

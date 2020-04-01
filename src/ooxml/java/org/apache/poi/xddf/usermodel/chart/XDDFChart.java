@@ -253,6 +253,9 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
             chart.setAutoTitleDeleted(CTBoolean.Factory.newInstance());
         }
         chart.getAutoTitleDeleted().setVal(deleted);
+        if (deleted && chart.isSetTitle()) {
+            chart.unsetTitle();
+        }
     }
 
     /**
@@ -321,7 +324,15 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         }
     }
 
-   /**
+    /**
+     * Remove the chart title.
+     * @since POI 4.1.3
+     */
+    public void removeTitle() {
+        setAutoTitleDeleted(true);
+    }
+
+    /**
     * Get or Add chart 3D view into chart
     *
     * @return this method will add 3D view
