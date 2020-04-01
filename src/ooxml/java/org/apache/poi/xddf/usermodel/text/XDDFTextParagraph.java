@@ -60,7 +60,7 @@ public class XDDFTextParagraph {
         final int count = paragraph.sizeOfBrArray() + paragraph.sizeOfFldArray() + paragraph.sizeOfRArray();
         this._runs = new ArrayList<>(count);
 
-        for (XmlObject xo : _p.selectChildren(QNameSet.ALL)) {
+        for (XmlObject xo : paragraph.selectChildren(QNameSet.ALL)) {
             if (xo instanceof CTTextLineBreak) {
                 _runs.add(new XDDFTextRun((CTTextLineBreak) xo, this));
             } else if (xo instanceof CTTextField) {
@@ -75,6 +75,11 @@ public class XDDFTextParagraph {
     }
 
     public void setText(String text) {
+        // keep the properties of current last run
+        XmlObject existing = null;
+        if (_runs.size() > 0) {
+            existing = _runs.get(_runs.size() - 1).getProperties().copy();
+        }
         // remove all runs
         for (int i = _p.sizeOfBrArray() - 1; i >= 0; i--) {
             _p.removeBr(i);
@@ -86,7 +91,10 @@ public class XDDFTextParagraph {
             _p.removeR(i);
         }
         _runs.clear();
-        appendRegularRun(text);
+        XDDFTextRun run = appendRegularRun(text);
+        if (existing != null) {
+            run.getProperties().set(existing);
+        }
     }
 
     public String getText() {
@@ -119,7 +127,7 @@ public class XDDFTextParagraph {
         // by default, line break has the font properties of the last text run
         for (XDDFTextRun tr : new IteratorIterable<>(new ReverseListIterator<>(_runs))) {
             CTTextCharacterProperties prevProps = tr.getProperties();
-            // let's find one that is not undefined
+            // let's find one which is not undefined
             if (prevProps != null) {
                 br.setRPr((CTTextCharacterProperties) prevProps.copy());
                 break;
