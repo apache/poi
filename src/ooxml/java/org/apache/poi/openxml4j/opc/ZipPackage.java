@@ -564,4 +564,11 @@ public final class ZipPackage extends OPCPackage {
     public ZipEntrySource getZipArchive() {
         return zipArchive;
     }
+
+    @Override
+    public boolean isClosed() {
+        // if zipArchive == null, it might be created on the fly
+        // so only return true, if a zip archive was initialized before
+        return zipArchive != null && zipArchive.isClosed();
+    }
 }

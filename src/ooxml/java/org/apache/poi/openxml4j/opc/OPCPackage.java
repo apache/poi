@@ -32,11 +32,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.apache.poi.ooxml.util.PackageHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
@@ -210,7 +215,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
            throw e;
        }
    }
-   
+
 	/**
 	 * Open a package.
 	 *
@@ -230,7 +235,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		if (path == null || path.trim().isEmpty()) {
 			throw new IllegalArgumentException("'path' must be given");
 		}
-		
+
 		File file = new File(path);
 		if (file.exists() && file.isDirectory()) {
 			throw new IllegalArgumentException("path must not be a directory");
@@ -383,7 +388,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		try {
 			// Content type manager
 			pkg.contentTypeManager = new ZipContentTypeManager(null, pkg);
-			
+
 			// Add default content types for .xml and .rels
 			pkg.contentTypeManager.addContentType(
 					PackagingURIHelper.createPartName(
@@ -421,7 +426,7 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 
 	/**
 	 * Close the open, writable package and save its content.
-	 * 
+	 *
 	 * If your package is open read only, then you should call {@link #revert()}
 	 *  when finished with the package.
 	 *
@@ -432,8 +437,12 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 */
 	@Override
     public void close() throws IOException {
+		if (isClosed()) {
+			return;
+		}
+
 		if (this.packageAccess == PackageAccess.READ) {
-			logger.log(POILogger.WARN, 
+			logger.log(POILogger.WARN,
 			        "The close() method is intended to SAVE a package. This package is open in READ ONLY mode, use the revert() method instead !");
 			revert();
 			return;
@@ -707,11 +716,11 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	/**
 	 * Load the parts of the archive if it has not been done yet. The
 	 * relationships of each part are not loaded.
-	 * 
+	 *
 	 * Note - Rule M4.1 states that there may only ever be one Core
 	 *  Properties Part, but Office produced files will sometimes
 	 *  have multiple! As Office ignores all but the first, we relax
-	 *  Compliance with Rule M4.1, and ignore all others silently too. 
+	 *  Compliance with Rule M4.1, and ignore all others silently too.
 	 *
 	 * @return All this package's parts.
 	 * @throws InvalidFormatException if the package is not valid.
@@ -1477,16 +1486,16 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		}
 
 		this.throwExceptionIfReadOnly();
-		
+
 		// You shouldn't save the the same file, do a close instead
-		if(targetFile.exists() && 
+		if(targetFile.exists() &&
 		        targetFile.getAbsolutePath().equals(this.originalPackagePath)) {
 		    throw new InvalidOperationException(
 		            "You can't call save(File) to save to the currently open " +
 		            "file. To save to the current file, please just call close()"
 		    );
 		}
-		
+
 		// Do the save
 		try (FileOutputStream fos = new FileOutputStream(targetFile)) {
 			this.save(fos);
@@ -1649,9 +1658,14 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
      *      e.g. "/ppt/slides/slide#.xml"
      * @return the next available part name index
      * @throws InvalidFormatException if the nameTemplate is null or doesn't contain
-     *      the index char (#) or results in an invalid part name 
+     *      the index char (#) or results in an invalid part name
      */
     public int getUnusedPartIndex(final String nameTemplate) throws InvalidFormatException {
         return partList.getUnusedPartIndex(nameTemplate);
     }
+
+	/**
+	 * Has close been called already?
+	 */
+	public abstract boolean isClosed();
 }

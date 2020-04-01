@@ -78,7 +78,6 @@ import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
@@ -431,8 +430,6 @@ public class TestSignatureInfo {
                 boolean b = si.verifySignature();
                 assertFalse("signature should be broken", b);
             }
-            thrown.expectMessage("Fail to save: an error occurs while saving the package : Zip File is close");
-            thrown.expect(OpenXML4JRuntimeException.class);
         }
     }
 
