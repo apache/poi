@@ -23,6 +23,7 @@ import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.Removal;
 
 @Internal
@@ -62,38 +63,38 @@ public final class SprmBuffer implements Duplicatable {
     }
 
     public void addSprm(short opcode, byte operand) {
-        int addition = LittleEndian.SHORT_SIZE + LittleEndian.BYTE_SIZE;
+        int addition = LittleEndianConsts.SHORT_SIZE + LittleEndianConsts.BYTE_SIZE;
         ensureCapacity(addition);
         LittleEndian.putShort(_buf, _offset, opcode);
-        _offset += LittleEndian.SHORT_SIZE;
+        _offset += LittleEndianConsts.SHORT_SIZE;
         _buf[_offset++] = operand;
     }
 
     public void addSprm(short opcode, byte[] operand) {
-        int addition = LittleEndian.SHORT_SIZE + LittleEndian.BYTE_SIZE + operand.length;
+        int addition = LittleEndianConsts.SHORT_SIZE + LittleEndianConsts.BYTE_SIZE + operand.length;
         ensureCapacity(addition);
         LittleEndian.putShort(_buf, _offset, opcode);
-        _offset += LittleEndian.SHORT_SIZE;
+        _offset += LittleEndianConsts.SHORT_SIZE;
         _buf[_offset++] = (byte) operand.length;
         System.arraycopy(operand, 0, _buf, _offset, operand.length);
     }
 
     public void addSprm(short opcode, int operand) {
-        int addition = LittleEndian.SHORT_SIZE + LittleEndian.INT_SIZE;
+        int addition = LittleEndianConsts.SHORT_SIZE + LittleEndianConsts.INT_SIZE;
         ensureCapacity(addition);
         LittleEndian.putShort(_buf, _offset, opcode);
-        _offset += LittleEndian.SHORT_SIZE;
+        _offset += LittleEndianConsts.SHORT_SIZE;
         LittleEndian.putInt(_buf, _offset, operand);
-        _offset += LittleEndian.INT_SIZE;
+        _offset += LittleEndianConsts.INT_SIZE;
     }
 
     public void addSprm(short opcode, short operand) {
-        int addition = LittleEndian.SHORT_SIZE + LittleEndian.SHORT_SIZE;
+        int addition = LittleEndianConsts.SHORT_SIZE + LittleEndianConsts.SHORT_SIZE;
         ensureCapacity(addition);
         LittleEndian.putShort(_buf, _offset, opcode);
-        _offset += LittleEndian.SHORT_SIZE;
+        _offset += LittleEndianConsts.SHORT_SIZE;
         LittleEndian.putShort(_buf, _offset, operand);
-        _offset += LittleEndian.SHORT_SIZE;
+        _offset += LittleEndianConsts.SHORT_SIZE;
     }
 
     public void append(byte[] grpprl) {

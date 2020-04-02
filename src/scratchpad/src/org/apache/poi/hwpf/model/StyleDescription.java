@@ -24,6 +24,7 @@ import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
@@ -91,7 +92,7 @@ public final class StyleDescription {
         if (word9) {
             nameLength = LittleEndian.getShort(std, nameStart);
             multiplier = 2;
-            nameStart += LittleEndian.SHORT_SIZE;
+            nameStart += LittleEndianConsts.SHORT_SIZE;
         } else {
             nameLength = std[nameStart];
         }
@@ -107,7 +108,7 @@ public final class StyleDescription {
         _upxs = new UPX[countOfUPX];
         for (int x = 0; x < countOfUPX; x++) {
             int upxSize = LittleEndian.getShort(std, varOffset);
-            varOffset += LittleEndian.SHORT_SIZE;
+            varOffset += LittleEndianConsts.SHORT_SIZE;
 
             byte[] upx = IOUtils.safelyAllocate(upxSize, Short.MAX_VALUE);
             System.arraycopy(std, varOffset, upx, 0, upxSize);
@@ -199,18 +200,18 @@ public final class StyleDescription {
 
         char[] letters = _name.toCharArray();
         LittleEndian.putShort(buf, _baseLength, (short) letters.length);
-        offset += LittleEndian.SHORT_SIZE;
+        offset += LittleEndianConsts.SHORT_SIZE;
         for (int x = 0; x < letters.length; x++) {
             LittleEndian.putShort(buf, offset, (short) letters[x]);
-            offset += LittleEndian.SHORT_SIZE;
+            offset += LittleEndianConsts.SHORT_SIZE;
         }
         // get past the null delimiter for the name.
-        offset += LittleEndian.SHORT_SIZE;
+        offset += LittleEndianConsts.SHORT_SIZE;
 
         for (int x = 0; x < _upxs.length; x++) {
             short upxSize = (short) _upxs[x].size();
             LittleEndian.putShort(buf, offset, upxSize);
-            offset += LittleEndian.SHORT_SIZE;
+            offset += LittleEndianConsts.SHORT_SIZE;
             System.arraycopy(_upxs[x].getUPX(), 0, buf, offset, upxSize);
             offset += upxSize + (upxSize % 2);
         }

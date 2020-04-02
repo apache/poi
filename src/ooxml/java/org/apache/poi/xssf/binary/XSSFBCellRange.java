@@ -20,6 +20,7 @@ package org.apache.poi.xssf.binary;
 
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * @since 3.16-beta3
@@ -28,7 +29,7 @@ import org.apache.poi.util.LittleEndian;
 class XSSFBCellRange {
     //TODO: Convert this to generate an AreaReference
 
-    public static final int length = 4* LittleEndian.INT_SIZE;
+    public static final int length = 4* LittleEndianConsts.INT_SIZE;
     /**
      * Parses an RfX cell range from the data starting at the offset.
      * This performs no range checking.
@@ -41,9 +42,9 @@ class XSSFBCellRange {
         if (cellRange == null) {
             cellRange = new XSSFBCellRange();
         }
-        cellRange.firstRow = XSSFBUtils.castToInt(LittleEndian.getUInt(data, offset)); offset += LittleEndian.INT_SIZE;
-        cellRange.lastRow = XSSFBUtils.castToInt(LittleEndian.getUInt(data, offset)); offset += LittleEndian.INT_SIZE;
-        cellRange.firstCol = XSSFBUtils.castToInt(LittleEndian.getUInt(data, offset)); offset += LittleEndian.INT_SIZE;
+        cellRange.firstRow = XSSFBUtils.castToInt(LittleEndian.getUInt(data, offset)); offset += LittleEndianConsts.INT_SIZE;
+        cellRange.lastRow = XSSFBUtils.castToInt(LittleEndian.getUInt(data, offset)); offset += LittleEndianConsts.INT_SIZE;
+        cellRange.firstCol = XSSFBUtils.castToInt(LittleEndian.getUInt(data, offset)); offset += LittleEndianConsts.INT_SIZE;
         cellRange.lastCol = XSSFBUtils.castToInt(LittleEndian.getUInt(data, offset));
 
         return cellRange;

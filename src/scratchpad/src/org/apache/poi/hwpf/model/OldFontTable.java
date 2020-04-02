@@ -23,6 +23,7 @@ import java.util.List;
 
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -46,7 +47,7 @@ public final class OldFontTable {
         int fontTableLength = LittleEndian.getShort(buf, offset);
 
         int endOfTableOffset = offset + length;
-        int startOffset = offset + LittleEndian.SHORT_SIZE;//first short should == length!
+        int startOffset = offset + LittleEndianConsts.SHORT_SIZE;//first short should == length!
 
         while (true) {
             OldFfn oldFfn = OldFfn.build(buf, startOffset, endOfTableOffset);

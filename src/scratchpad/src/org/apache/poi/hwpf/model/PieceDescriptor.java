@@ -23,6 +23,7 @@ import java.util.Objects;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.StringUtil;
 
 @Internal
@@ -54,9 +55,9 @@ public final class PieceDescriptor implements Duplicatable {
      */
     public PieceDescriptor(byte[] buf, int offset, Charset charset) {
         descriptor = LittleEndian.getShort(buf, offset);
-        offset += LittleEndian.SHORT_SIZE;
+        offset += LittleEndianConsts.SHORT_SIZE;
         fc = LittleEndian.getInt(buf, offset);
-        offset += LittleEndian.INT_SIZE;
+        offset += LittleEndianConsts.INT_SIZE;
         prm = new PropertyModifier(LittleEndian.getShort(buf, offset));
         if (charset == null) {
             // see if this piece uses unicode.
@@ -125,9 +126,9 @@ public final class PieceDescriptor implements Duplicatable {
         int offset = 0;
         byte[] buf = new byte[8];
         LittleEndian.putShort(buf, offset, descriptor);
-        offset += LittleEndian.SHORT_SIZE;
+        offset += LittleEndianConsts.SHORT_SIZE;
         LittleEndian.putInt(buf, offset, tempFc);
-        offset += LittleEndian.INT_SIZE;
+        offset += LittleEndianConsts.INT_SIZE;
         LittleEndian.putShort(buf, offset, prm.getValue());
 
         return buf;

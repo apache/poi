@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.util.NoSuchElementException;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -65,7 +66,7 @@ public class PlfLfo
          * [MS-DOC] -- v20110315 Word (.doc) Binary File Format
          */
         long lfoMacLong = LittleEndian.getUInt( tableStream, offset );
-        offset += LittleEndian.INT_SIZE;
+        offset += LittleEndianConsts.INT_SIZE;
 
         if ( lfoMacLong > Integer.MAX_VALUE )
         {

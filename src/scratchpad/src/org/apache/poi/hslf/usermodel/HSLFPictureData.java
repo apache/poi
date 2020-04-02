@@ -37,6 +37,7 @@ import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.Units;
 
 /**
@@ -64,10 +65,10 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
     private int uidInstanceCount = 1;
 
     /**
-     * The 1-based index within the pictures stream 
+     * The 1-based index within the pictures stream
      */
     private int index = -1;
-    
+
     /**
      * Blip signature.
      */
@@ -84,13 +85,13 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
 
     /**
      * The instance type/signatures defines if one or two UID instances will be included
-     * 
+     *
      * @param uidInstanceCount the number of uid sequences
      */
     protected void setUIDInstanceCount(int uidInstanceCount) {
         this.uidInstanceCount = uidInstanceCount;
     }
-    
+
     /**
      * Returns the raw binary data of this Picture excluding the first 8 bytes
      * which hold image signature and size of the image data.
@@ -137,7 +138,7 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
     public byte[] getChecksum() {
         return getChecksum(getData());
     }
-        
+
     /**
      * Compute 16-byte checksum of this picture using MD5 algorithm.
      */
@@ -153,18 +154,18 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
     public void write(OutputStream out) throws IOException {
         byte[] data;
 
-        data = new byte[LittleEndian.SHORT_SIZE];
+        data = new byte[LittleEndianConsts.SHORT_SIZE];
         LittleEndian.putUShort(data, 0, getSignature());
         out.write(data);
 
-        data = new byte[LittleEndian.SHORT_SIZE];
+        data = new byte[LittleEndianConsts.SHORT_SIZE];
         PictureType pt = getType();
         LittleEndian.putUShort(data, 0, pt.nativeId + 0xF018);
         out.write(data);
 
         byte[] rd = getRawData();
 
-        data = new byte[LittleEndian.INT_SIZE];
+        data = new byte[LittleEndianConsts.INT_SIZE];
         LittleEndian.putInt(data, 0, rd.length);
         out.write(data);
 
@@ -223,7 +224,7 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
     public void setIndex(int index) {
         this.index = index;
     }
-    
+
     @Override
     public final String getContentType() {
         return getType().contentType;

@@ -26,6 +26,7 @@ import java.util.List;
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * A block of block allocation table entries. BATBlocks are created
@@ -39,30 +40,30 @@ public final class BATBlock implements BlockWritable {
     private POIFSBigBlockSize bigBlockSize;
 
     /**
-     * For a regular fat block, these are 128 / 1024 
+     * For a regular fat block, these are 128 / 1024
      *  next sector values.
      * For a XFat (DIFat) block, these are 127 / 1023
      *  next sector values, then a chaining value.
      */
     private int[] _values;
-    
+
     /**
      * Does this BATBlock have any free sectors in it?
      */
     private boolean _has_free_sectors;
-    
+
     /**
      * Where in the file are we?
      */
     private int ourBlockIndex;
-    
+
     /**
      * Create a single instance initialized with default values
      */
     private BATBlock(POIFSBigBlockSize bigBlockSize)
     {
         this.bigBlockSize = bigBlockSize;
-        
+
         int _entries_per_block = bigBlockSize.getBATEntriesPerBlock();
         _values = new int[_entries_per_block];
         _has_free_sectors = true;
@@ -89,19 +90,19 @@ public final class BATBlock implements BlockWritable {
     {
        // Create an empty block
        BATBlock block = new BATBlock(bigBlockSize);
-       
+
        // Fill it
-       byte[] buffer = new byte[LittleEndian.INT_SIZE];
+       byte[] buffer = new byte[LittleEndianConsts.INT_SIZE];
        for(int i=0; i<block._values.length; i++) {
           data.get(buffer);
           block._values[i] = LittleEndian.getInt(buffer);
        }
        block.recomputeFree();
-       
+
        // All done
        return block;
     }
-    
+
     /**
      * Creates a single BATBlock, with all the values set to empty.
      */
@@ -119,7 +120,7 @@ public final class BATBlock implements BlockWritable {
      *  number of FAT (BAT) sectors specified. (We don't care if those BAT
      *  blocks come from the 109 in the header, or from header + XBATS, it
      *  won't affect the calculation)
-     *  
+     *
      * The actual file size will be between [size of fatCount-1 blocks] and
      *   [size of fatCount blocks].
      *  For 512 byte block sizes, this means we may over-estimate by up to 65kb.
@@ -129,12 +130,12 @@ public final class BATBlock implements BlockWritable {
           final int numBATs) {
        // Header isn't FAT addressed
        long size = 1;
-       
+
        // The header has up to 109 BATs, and extra ones are referenced
        //  from XBATs
        // However, all BATs can contain 128/1024 blocks
        size += (((long)numBATs) * bigBlockSize.getBATEntriesPerBlock());
-       
+
        // So far we've been in sector counts, turn into bytes
        return size * bigBlockSize.getBigBlockSize();
     }
@@ -148,26 +149,26 @@ public final class BATBlock implements BlockWritable {
      *  and the relative index within it.
      * The List of BATBlocks must be in sequential order
      */
-    public static BATBlockAndIndex getBATBlockAndIndex(final int offset, 
+    public static BATBlockAndIndex getBATBlockAndIndex(final int offset,
                 final HeaderBlock header, final List<BATBlock> bats) {
        POIFSBigBlockSize bigBlockSize = header.getBigBlockSize();
        int entriesPerBlock = bigBlockSize.getBATEntriesPerBlock();
-       
+
        int whichBAT = offset / entriesPerBlock;
        int index = offset % entriesPerBlock;
        return new BATBlockAndIndex( index, bats.get(whichBAT) );
     }
-    
+
     /**
      * Returns the BATBlock that handles the specified offset,
      *  and the relative index within it, for the mini stream.
      * The List of BATBlocks must be in sequential order
      */
-    public static BATBlockAndIndex getSBATBlockAndIndex(final int offset, 
+    public static BATBlockAndIndex getSBATBlockAndIndex(final int offset,
           final HeaderBlock header, final List<BATBlock> sbats) {
         return getBATBlockAndIndex(offset, header, sbats);
     }
-    
+
     /**
      * Does this BATBlock have any free sectors in it, or
      *  is it full?
@@ -190,20 +191,20 @@ public final class BATBlock implements BlockWritable {
         }
         return usedSectors;
     }
-    
+
     public int getValueAt(int relativeOffset) {
        if(relativeOffset >= _values.length) {
           throw new ArrayIndexOutOfBoundsException(
-                "Unable to fetch offset " + relativeOffset + " as the " + 
+                "Unable to fetch offset " + relativeOffset + " as the " +
                 "BAT only contains " + _values.length + " entries"
-          ); 
+          );
        }
        return _values[relativeOffset];
     }
     public void setValueAt(int relativeOffset, int value) {
        int oldValue = _values[relativeOffset];
        _values[relativeOffset] = value;
-       
+
        // Do we need to re-compute the free?
        if(value == POIFSConstants.UNUSED_BLOCK) {
           _has_free_sectors = true;
@@ -213,7 +214,7 @@ public final class BATBlock implements BlockWritable {
           recomputeFree();
        }
     }
-    
+
     /**
      * Record where in the file we live
      */
@@ -221,7 +222,7 @@ public final class BATBlock implements BlockWritable {
        this.ourBlockIndex = index;
     }
     /**
-     * Retrieve where in the file we live 
+     * Retrieve where in the file we live
      */
     public int getOurBlockIndex() {
        return ourBlockIndex;
@@ -246,18 +247,18 @@ public final class BATBlock implements BlockWritable {
        // Save it out
        block.put( serialize() );
     }
-    
+
     private byte[] serialize() {
        // Create the empty array
        byte[] data = new byte[ bigBlockSize.getBigBlockSize() ];
-       
+
         // Fill in the values
         int offset = 0;
         for (int _value : _values) {
             LittleEndian.putInt(data, offset, _value);
-            offset += LittleEndian.INT_SIZE;
+            offset += LittleEndianConsts.INT_SIZE;
         }
-       
+
        // Done
        return data;
     }

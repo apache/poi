@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -146,7 +147,7 @@ public final class FIBFieldHandler
 
   private final static POILogger log = POILogFactory.getLogger(FIBFieldHandler.class);
 
-  private static final int FIELD_SIZE = LittleEndian.INT_SIZE * 2;
+  private static final int FIELD_SIZE = LittleEndianConsts.INT_SIZE * 2;
 
   private Map<Integer, UnhandledDataStructure> _unknownMap = new HashMap<>();
   private int[] _fields;
@@ -161,7 +162,7 @@ public final class FIBFieldHandler
     {
       int fieldOffset = (x * FIELD_SIZE) + offset;
       int dsOffset = LittleEndian.getInt(mainStream, fieldOffset);
-      fieldOffset += LittleEndian.INT_SIZE;
+      fieldOffset += LittleEndianConsts.INT_SIZE;
       int dsSize = LittleEndian.getInt(mainStream, fieldOffset);
 
       if (offsetList.contains(Integer.valueOf(x)) ^ areKnown)
@@ -216,13 +217,13 @@ public final class FIBFieldHandler
 
   public int sizeInBytes()
   {
-    return (_fields.length * LittleEndian.INT_SIZE);
+    return (_fields.length * LittleEndianConsts.INT_SIZE);
   }
 
   public int getFieldsCount() {
       return _fields.length / 2;
   }
-  
+
   void writeTo(byte[] mainStream, int offset, ByteArrayOutputStream tableStream)
     throws IOException
   {
@@ -233,21 +234,21 @@ public final class FIBFieldHandler
       {
         _fields[x * 2] = tableStream.size();
         LittleEndian.putInt(mainStream, offset, tableStream.size());
-        offset += LittleEndian.INT_SIZE;
+        offset += LittleEndianConsts.INT_SIZE;
 
         byte[] buf = ds.getBuf();
         tableStream.write(buf);
 
         _fields[(x * 2) + 1] = buf.length;
         LittleEndian.putInt(mainStream, offset, buf.length);
-        offset += LittleEndian.INT_SIZE;
+        offset += LittleEndianConsts.INT_SIZE;
       }
       else
       {
         LittleEndian.putInt(mainStream, offset, _fields[x * 2]);
-        offset += LittleEndian.INT_SIZE;
+        offset += LittleEndianConsts.INT_SIZE;
         LittleEndian.putInt(mainStream, offset, _fields[(x * 2) + 1]);
-        offset += LittleEndian.INT_SIZE;
+        offset += LittleEndianConsts.INT_SIZE;
       }
     }
   }
@@ -283,9 +284,9 @@ public final class FIBFieldHandler
         {
             result.append( '\t' );
             result.append( leftPad( Integer.toString( x ), 8, ' ' ) );
-            result.append( leftPad( Integer.toString( 154 + x * LittleEndian.INT_SIZE * 2 ), 6, ' ' ) );
+            result.append( leftPad( Integer.toString( 154 + x * LittleEndianConsts.INT_SIZE * 2 ), 6, ' ' ) );
             result.append( "   0x" );
-            result.append( leftPad( Integer.toHexString( 154 + x * LittleEndian.INT_SIZE * 2 ), 4, '0' ) );
+            result.append( leftPad( Integer.toHexString( 154 + x * LittleEndianConsts.INT_SIZE * 2 ), 4, '0' ) );
             result.append( leftPad( Integer.toString( getFieldOffset( x ) ), 8, ' ' ) );
             result.append( leftPad( Integer.toString( getFieldSize( x ) ), 8, ' ' ) );
 

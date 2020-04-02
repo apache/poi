@@ -17,9 +17,9 @@
 
 package org.apache.poi.hdgf.chunks;
 
-import org.apache.poi.util.LittleEndian;
-
 import java.nio.charset.Charset;
+
+import org.apache.poi.util.LittleEndian;
 
 /**
  * A chunk header
@@ -79,13 +79,7 @@ public abstract class ChunkHeader {
 	 * @return the header size
 	 */
 	public static int getHeaderSize(int documentVersion) {
-		if(documentVersion > 6) {
-			return ChunkHeaderV11.getHeaderSize();
-		} else if(documentVersion == 6) {
-			return ChunkHeaderV6.getHeaderSize();
-		} else {
-			return ChunkHeaderV4V5.getHeaderSize();
-		}
+		return documentVersion >= 6 ? ChunkHeaderV6.getHeaderSize() : ChunkHeaderV4V5.getHeaderSize();
 	}
 
 	public abstract int getSizeInBytes();

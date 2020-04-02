@@ -27,6 +27,7 @@ import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.StringUtil;
 
 @Internal
@@ -54,7 +55,7 @@ public class ComplexFileTable {
         while (tableStream[offset] == GRPPRL_TYPE) {
             offset++;
             int size = LittleEndian.getShort(tableStream, offset);
-            offset += LittleEndian.SHORT_SIZE;
+            offset += LittleEndianConsts.SHORT_SIZE;
             byte[] bs = LittleEndian.getByteArray(tableStream, offset, size, MAX_RECORD_LENGTH);
             offset += size;
 
@@ -68,7 +69,7 @@ public class ComplexFileTable {
                     " but had " + tableStream[offset]);
         }
         int pieceTableSize = LittleEndian.getInt(tableStream, ++offset);
-        offset += LittleEndian.INT_SIZE;
+        offset += LittleEndianConsts.INT_SIZE;
         _tpt = newTextPieceTable(documentStream, tableStream, offset, pieceTableSize, fcMin, charset);
 
     }
@@ -99,7 +100,7 @@ public class ComplexFileTable {
 
         byte[] table = _tpt.writeTo(wordDocumentStream);
 
-        byte[] numHolder = new byte[LittleEndian.INT_SIZE];
+        byte[] numHolder = new byte[LittleEndianConsts.INT_SIZE];
         LittleEndian.putInt(numHolder, 0, table.length);
         tableStream.write(numHolder);
         tableStream.write(table);

@@ -25,6 +25,7 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 @Internal
 public final class ParagraphHeight implements Duplicatable {
@@ -50,11 +51,11 @@ public final class ParagraphHeight implements Duplicatable {
 
   public ParagraphHeight(byte[] buf, int offset) {
     infoField = LittleEndian.getShort(buf, offset);
-    offset += LittleEndian.SHORT_SIZE;
+    offset += LittleEndianConsts.SHORT_SIZE;
     reserved = LittleEndian.getShort(buf, offset);
-    offset += LittleEndian.SHORT_SIZE;
+    offset += LittleEndianConsts.SHORT_SIZE;
     dxaCol = LittleEndian.getInt(buf, offset);
-    offset += LittleEndian.INT_SIZE;
+    offset += LittleEndianConsts.INT_SIZE;
     dymLineOrHeight = LittleEndian.getInt(buf, offset);
   }
 
@@ -69,11 +70,11 @@ public final class ParagraphHeight implements Duplicatable {
     byte[] buf = new byte[12];
     int offset = 0;
     LittleEndian.putShort(buf, offset, infoField);
-    offset += LittleEndian.SHORT_SIZE;
+    offset += LittleEndianConsts.SHORT_SIZE;
     LittleEndian.putShort(buf, offset, reserved);
-    offset += LittleEndian.SHORT_SIZE;
+    offset += LittleEndianConsts.SHORT_SIZE;
     LittleEndian.putInt(buf, offset, dxaCol);
-    offset += LittleEndian.INT_SIZE;
+    offset += LittleEndianConsts.INT_SIZE;
     LittleEndian.putInt(buf, offset, dymLineOrHeight);
 
     return buf;

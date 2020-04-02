@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 import javax.xml.crypto.URIDereferencer;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
 import javax.xml.crypto.dsig.DigestMethod;
+import javax.xml.crypto.dsig.Transform;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 
@@ -405,9 +406,9 @@ public class SignatureConfig {
         }
 
         switch (canonicalizationMethod) {
+            case Transform.ENVELOPED:
             case CanonicalizationMethod.INCLUSIVE:
             case CanonicalizationMethod.INCLUSIVE_WITH_COMMENTS:
-            case CanonicalizationMethod.ENVELOPED:
             case CanonicalizationMethod.EXCLUSIVE:
             case CanonicalizationMethod.EXCLUSIVE_WITH_COMMENTS:
                 return canonicalizationMethod;

@@ -49,7 +49,6 @@ import org.apache.poi.hwmf.record.HwmfTernaryRasterOp;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -875,7 +874,7 @@ public final class HemfFill {
             xform.setToIdentity();
         }
 
-        return 6 * LittleEndian.INT_SIZE;
+        return 6 * LittleEndianConsts.INT_SIZE;
     }
 
     static Shape getRgnShape(List<Rectangle2D> rgnRects) {

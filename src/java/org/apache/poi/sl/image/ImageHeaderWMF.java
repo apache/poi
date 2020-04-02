@@ -24,6 +24,7 @@ import java.io.OutputStream;
 
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
@@ -77,7 +78,7 @@ public class ImageHeaderWMF {
 
     public ImageHeaderWMF(byte[] data, final int off) {
         int offset = off;
-        int key = LittleEndian.getInt(data, offset); offset += LittleEndian.INT_SIZE; //header key
+        int key = LittleEndian.getInt(data, offset); offset += LittleEndianConsts.INT_SIZE; //header key
         if (key != APMHEADER_KEY) {
             LOG.log(POILogger.WARN, "WMF file doesn't contain a placeable header - ignore parsing");
             handle = 0;
@@ -90,16 +91,16 @@ public class ImageHeaderWMF {
             return;
         }
 
-        handle = LittleEndian.getUShort(data, offset); offset += LittleEndian.SHORT_SIZE;
-        left = LittleEndian.getShort(data, offset); offset += LittleEndian.SHORT_SIZE;
-        top = LittleEndian.getShort(data, offset); offset += LittleEndian.SHORT_SIZE;
-        right = LittleEndian.getShort(data, offset); offset += LittleEndian.SHORT_SIZE;
-        bottom = LittleEndian.getShort(data, offset); offset += LittleEndian.SHORT_SIZE;
+        handle = LittleEndian.getUShort(data, offset); offset += LittleEndianConsts.SHORT_SIZE;
+        left = LittleEndian.getShort(data, offset); offset += LittleEndianConsts.SHORT_SIZE;
+        top = LittleEndian.getShort(data, offset); offset += LittleEndianConsts.SHORT_SIZE;
+        right = LittleEndian.getShort(data, offset); offset += LittleEndianConsts.SHORT_SIZE;
+        bottom = LittleEndian.getShort(data, offset); offset += LittleEndianConsts.SHORT_SIZE;
 
-        inch = LittleEndian.getUShort(data, offset); offset += LittleEndian.SHORT_SIZE;
-        reserved = LittleEndian.getInt(data, offset); offset += LittleEndian.INT_SIZE;
+        inch = LittleEndian.getUShort(data, offset); offset += LittleEndianConsts.SHORT_SIZE;
+        reserved = LittleEndian.getInt(data, offset); offset += LittleEndianConsts.INT_SIZE;
 
-        checksum = LittleEndian.getShort(data, offset); offset += LittleEndian.SHORT_SIZE;
+        checksum = LittleEndian.getShort(data, offset); offset += LittleEndianConsts.SHORT_SIZE;
         if (checksum != getChecksum()){
             LOG.log(POILogger.WARN, "WMF checksum does not match the header data");
         }
@@ -124,14 +125,14 @@ public class ImageHeaderWMF {
     public void write(OutputStream out) throws IOException {
         byte[] header = new byte[22];
         int pos = 0;
-        LittleEndian.putInt(header, pos, APMHEADER_KEY); pos += LittleEndian.INT_SIZE; //header key
-        LittleEndian.putUShort(header, pos, 0); pos += LittleEndian.SHORT_SIZE; //hmf
-        LittleEndian.putUShort(header, pos, left); pos += LittleEndian.SHORT_SIZE; //left
-        LittleEndian.putUShort(header, pos, top); pos += LittleEndian.SHORT_SIZE; //top
-        LittleEndian.putUShort(header, pos, right); pos += LittleEndian.SHORT_SIZE; //right
-        LittleEndian.putUShort(header, pos, bottom); pos += LittleEndian.SHORT_SIZE; //bottom
-        LittleEndian.putUShort(header, pos, inch); pos += LittleEndian.SHORT_SIZE; //inch
-        LittleEndian.putInt(header, pos, 0); pos += LittleEndian.INT_SIZE;  //reserved
+        LittleEndian.putInt(header, pos, APMHEADER_KEY); pos += LittleEndianConsts.INT_SIZE; //header key
+        LittleEndian.putUShort(header, pos, 0); pos += LittleEndianConsts.SHORT_SIZE; //hmf
+        LittleEndian.putUShort(header, pos, left); pos += LittleEndianConsts.SHORT_SIZE; //left
+        LittleEndian.putUShort(header, pos, top); pos += LittleEndianConsts.SHORT_SIZE; //top
+        LittleEndian.putUShort(header, pos, right); pos += LittleEndianConsts.SHORT_SIZE; //right
+        LittleEndian.putUShort(header, pos, bottom); pos += LittleEndianConsts.SHORT_SIZE; //bottom
+        LittleEndian.putUShort(header, pos, inch); pos += LittleEndianConsts.SHORT_SIZE; //inch
+        LittleEndian.putInt(header, pos, 0); pos += LittleEndianConsts.INT_SIZE;  //reserved
 
         checksum = getChecksum();
         LittleEndian.putUShort(header, pos, checksum);

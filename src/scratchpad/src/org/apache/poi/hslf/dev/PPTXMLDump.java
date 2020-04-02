@@ -33,6 +33,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * Utility class which dumps raw contents of a ppt file into XML format
@@ -72,7 +73,7 @@ public final class PPTXMLDump {
             return bos.toByteArray();
         }
     }
-    
+
     /**
      * Dump the structure of the supplied PPT file into XML
      * @param outWriter <code>Writer</code> to write out
@@ -118,11 +119,11 @@ public final class PPTXMLDump {
 
             //read record header
             int info = LittleEndian.getUShort(data, pos);
-            pos += LittleEndian.SHORT_SIZE;
+            pos += LittleEndianConsts.SHORT_SIZE;
             int type = LittleEndian.getUShort(data, pos);
-            pos += LittleEndian.SHORT_SIZE;
+            pos += LittleEndianConsts.SHORT_SIZE;
             int size = (int)LittleEndian.getUInt(data, pos);
-            pos += LittleEndian.INT_SIZE;
+            pos += LittleEndianConsts.INT_SIZE;
 
             //get name of the record by type
             String recname = RecordTypes.forTypeID(type).name();

@@ -21,6 +21,7 @@ package org.apache.poi.hwpf.model;
 import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * The Xst structure is a string. The string is prepended by its length and is
@@ -56,13 +57,13 @@ public class Xst
         int offset = startOffset;
 
         _cch = LittleEndian.getUShort( data, offset );
-        offset += LittleEndian.SHORT_SIZE;
+        offset += LittleEndianConsts.SHORT_SIZE;
 
         _rgtchar = new char[_cch];
         for ( int x = 0; x < _cch; x++ )
         {
             _rgtchar[x] = (char) LittleEndian.getShort( data, offset );
-            offset += LittleEndian.SHORT_SIZE;
+            offset += LittleEndianConsts.SHORT_SIZE;
         }
 
     }
@@ -114,7 +115,7 @@ public class Xst
 
     public int getSize()
     {
-        return LittleEndian.SHORT_SIZE + _rgtchar.length * 2;
+        return LittleEndianConsts.SHORT_SIZE + _rgtchar.length * 2;
     }
 
     @Override
@@ -127,12 +128,12 @@ public class Xst
         int offset = startOffset;
 
         LittleEndian.putUShort( data, offset, _cch );
-        offset += LittleEndian.SHORT_SIZE;
+        offset += LittleEndianConsts.SHORT_SIZE;
 
         for ( char c : _rgtchar )
         {
             LittleEndian.putShort( data, offset, (short) c );
-            offset += LittleEndian.SHORT_SIZE;
+            offset += LittleEndianConsts.SHORT_SIZE;
         }
     }
 

@@ -53,7 +53,7 @@ import org.w3c.dom.Text;
 
 /**
  * Converts xls files (97-2007) to HTML file.
- * 
+ *
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 @Beta
@@ -63,7 +63,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
 
     /**
      * Java main() interface to interact with {@link ExcelToHtmlConverter}
-     * 
+     *
      * <p>
      * Usage: ExcelToHtmlConverter infile outfile
      * </p>
@@ -92,7 +92,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
 
     /**
      * Converts Excel file (97-2007) into HTML file.
-     * 
+     *
      * @param xlsFile
      *            workbook file to process
      * @return DOM representation of result HTML
@@ -100,14 +100,14 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
      * @throws ParserConfigurationException If configuration is incorrect
      */
     public static Document process( File xlsFile ) throws IOException, ParserConfigurationException {
-        try (HSSFWorkbook workbook = ExcelToHtmlUtils.loadXls(xlsFile)) {
+        try (HSSFWorkbook workbook = AbstractExcelUtils.loadXls(xlsFile)) {
             return ExcelToHtmlConverter.process(workbook);
         }
     }
 
     /**
      * Converts Excel file (97-2007) into HTML file.
-     * 
+     *
      * @param xlsStream workbook stream to process
      * @return DOM representation of result HTML
      * @throws IOException If an error occurs reading or writing files
@@ -121,7 +121,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
 
     /**
      * Converts Excel file (97-2007) into HTML file.
-     * 
+     *
      * @param workbook workbook instance to process
      * @return DOM representation of result HTML
      * @throws IOException If an error occurs reading or writing files
@@ -173,13 +173,13 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
             case SOLID_FOREGROUND:
                 final HSSFColor foregroundColor = cellStyle.getFillForegroundColorColor();
                 if ( foregroundColor == null ) break;
-                String fgCol = ExcelToHtmlUtils.getColor( foregroundColor );
+                String fgCol = AbstractExcelUtils.getColor( foregroundColor );
                 style.append("background-color:").append(fgCol).append(";");
                 break;
             default:
                 final HSSFColor backgroundColor = cellStyle.getFillBackgroundColorColor();
                 if ( backgroundColor == null ) break;
-                String bgCol = ExcelToHtmlUtils.getColor( backgroundColor );
+                String bgCol = AbstractExcelUtils.getColor( backgroundColor );
                 style.append("background-color:").append(bgCol).append(";");
                 break;
         }
@@ -206,16 +206,16 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
         }
 
         StringBuilder borderStyle = new StringBuilder();
-        borderStyle.append( ExcelToHtmlUtils.getBorderWidth( xlsBorder ) );
+        borderStyle.append( AbstractExcelUtils.getBorderWidth( xlsBorder ) );
         borderStyle.append( ' ' );
-        borderStyle.append( ExcelToHtmlUtils.getBorderStyle( xlsBorder ) );
+        borderStyle.append( AbstractExcelUtils.getBorderStyle( xlsBorder ) );
 
         final HSSFColor color = workbook.getCustomPalette().getColor(
                 borderColor );
         if ( color != null )
         {
             borderStyle.append( ' ' );
-            borderStyle.append( ExcelToHtmlUtils.getColor( color ) );
+            borderStyle.append( AbstractExcelUtils.getColor( color ) );
         }
 
         style.append("border-").append(type).append(":").append(borderStyle).append(";");
@@ -231,7 +231,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
         final HSSFColor fontColor = workbook.getCustomPalette().getColor(
                 font.getColor() );
         if ( fontColor != null )
-            style.append("color: ").append(ExcelToHtmlUtils.getColor(fontColor)).append("; ");
+            style.append("color: ").append(AbstractExcelUtils.getColor(fontColor)).append("; ");
 
         if ( font.getFontHeightInPoints() != 0 )
             style.append("font-size:").append(font.getFontHeightInPoints()).append("pt;");
@@ -307,7 +307,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
                 }
                 else
                 {
-                    value = ExcelToHtmlUtils.EMPTY;
+                    value = AbstractExcelUtils.EMPTY;
                 }
                 break;
             case NUMERIC:
@@ -327,12 +327,12 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
                         POILogger.WARN,
                         "Unexpected cell cachedFormulaResultType ("
                                 + cell.getCachedFormulaResultType() + ")" );
-                value = ExcelToHtmlUtils.EMPTY;
+                value = AbstractExcelUtils.EMPTY;
                 break;
             }
             break;
         case BLANK:
-            value = ExcelToHtmlUtils.EMPTY;
+            value = AbstractExcelUtils.EMPTY;
             break;
         case NUMERIC:
             value = _formatter.formatCellValue( cell );
@@ -349,14 +349,14 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
             return true;
         }
 
-        final boolean noText = ExcelToHtmlUtils.isEmpty( value );
+        final boolean noText = AbstractExcelUtils.isEmpty( value );
         final boolean wrapInDivs = !noText && isUseDivsToSpan() && !cellStyle.getWrapText();
 
         if ( cellStyle.getIndex() != 0 ) {
             @SuppressWarnings("resource")
             HSSFWorkbook workbook = cell.getRow().getSheet().getWorkbook();
             String mainCssClass = getStyleClassName( workbook, cellStyle );
-            
+
             if ( wrapInDivs ) {
                 tableCellElement.setAttribute( "class", mainCssClass + " "
                         + cssClassContainerCell );
@@ -419,7 +419,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
             tableCellElement.appendChild( text );
         }
 
-        return ExcelToHtmlUtils.isEmpty( value ) && (cellStyle.getIndex() == 0);
+        return AbstractExcelUtils.isEmpty( value ) && (cellStyle.getIndex() == 0);
     }
 
     protected void processColumnHeaders( HSSFSheet sheet, int maxSheetColumns,
@@ -472,16 +472,16 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
     }
 
     protected void processDocumentInformation(SummaryInformation summaryInformation ) {
-        if ( ExcelToHtmlUtils.isNotEmpty( summaryInformation.getTitle() ) )
+        if ( AbstractExcelUtils.isNotEmpty( summaryInformation.getTitle() ) )
             htmlDocumentFacade.setTitle( summaryInformation.getTitle() );
 
-        if ( ExcelToHtmlUtils.isNotEmpty( summaryInformation.getAuthor() ) )
+        if ( AbstractExcelUtils.isNotEmpty( summaryInformation.getAuthor() ) )
             htmlDocumentFacade.addAuthor( summaryInformation.getAuthor() );
 
-        if ( ExcelToHtmlUtils.isNotEmpty( summaryInformation.getKeywords() ) )
+        if ( AbstractExcelUtils.isNotEmpty( summaryInformation.getKeywords() ) )
             htmlDocumentFacade.addKeywords( summaryInformation.getKeywords() );
 
-        if ( ExcelToHtmlUtils.isNotEmpty( summaryInformation.getComments() ) )
+        if ( AbstractExcelUtils.isNotEmpty( summaryInformation.getComments() ) )
             htmlDocumentFacade
                     .addDescription( summaryInformation.getComments() );
     }
@@ -512,7 +512,7 @@ public class ExcelToHtmlConverter extends AbstractExcelConverter {
             if ( !isOutputHiddenColumns() && sheet.isColumnHidden( colIx ) )
                 continue;
 
-            CellRangeAddress range = ExcelToHtmlUtils.getMergedRange(
+            CellRangeAddress range = AbstractExcelUtils.getMergedRange(
                     mergedRanges, row.getRowNum(), colIx );
 
             if ( range != null

@@ -20,6 +20,7 @@ package org.apache.poi.hslf.record;
 import java.util.function.Supplier;
 
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
+import org.apache.poi.ddf.EscherClientDataRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.ddf.EscherRecordFactory;
 
@@ -40,7 +41,7 @@ public class HSLFEscherRecordFactory extends DefaultEscherRecordFactory {
     protected Supplier<? extends EscherRecord> getConstructor(short options, short recordId) {
         if (recordId == EscherPlaceholder.RECORD_ID) {
             return EscherPlaceholder::new;
-        } else if (recordId == HSLFEscherClientDataRecord.RECORD_ID) {
+        } else if (recordId == EscherClientDataRecord.RECORD_ID) {
             return HSLFEscherClientDataRecord::new;
         }
         return super.getConstructor(options, recordId);

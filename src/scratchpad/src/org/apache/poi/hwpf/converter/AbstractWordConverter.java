@@ -923,7 +923,7 @@ public abstract class AbstractWordConverter
                 imageWidth *= aspectRatioX / 1000f;
             }
             imageWidth /= AbstractWordUtils.TWIPS_PER_INCH;
-            
+
             float imageHeight = picture.getDyaGoal();
             if (aspectRatioY > 0) {
                 imageHeight *= aspectRatioY / 1000f;
@@ -934,7 +934,7 @@ public abstract class AbstractWordConverter
                     picture.suggestPictureType(),
                     picture.suggestFullFileName(), imageWidth, imageHeight );
 
-            if ( WordToFoUtils.isNotEmpty( url ) )
+            if ( AbstractWordUtils.isNotEmpty( url ) )
             {
                 processImage( currentBlock, inlined, picture, url );
                 return;

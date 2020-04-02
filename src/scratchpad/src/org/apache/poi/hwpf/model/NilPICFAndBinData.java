@@ -16,11 +16,12 @@
 ==================================================================== */
 package org.apache.poi.hwpf.model;
 
+import java.util.Arrays;
+
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-
-import java.util.Arrays;
 
 public class NilPICFAndBinData
 {
@@ -39,7 +40,7 @@ public class NilPICFAndBinData
     {
         int lcb = LittleEndian.getInt( data, offset );
         int cbHeader = LittleEndian.getUShort( data, offset
-                + LittleEndian.INT_SIZE );
+                + LittleEndianConsts.INT_SIZE );
 
         if ( cbHeader != 0x44 )
         {

@@ -36,8 +36,8 @@ import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.binary.XSSFBCommentsTable;
@@ -236,9 +236,9 @@ public class XSSFBReader extends XSSFReader {
             int offset = 0;
             //this is the sheet state #2.5.142
             /*long hsShtat =*/ //noinspection ResultOfMethodCallIgnored
-            LittleEndian.getUInt(data, offset); offset += LittleEndian.INT_SIZE;
+            LittleEndian.getUInt(data, offset); offset += LittleEndianConsts.INT_SIZE;
 
-            long iTabID = LittleEndian.getUInt(data, offset); offset += LittleEndian.INT_SIZE;
+            long iTabID = LittleEndian.getUInt(data, offset); offset += LittleEndianConsts.INT_SIZE;
             //according to #2.4.304
             if (iTabID < 1 || iTabID > 0x0000FFFFL) {
                 throw new XSSFBParseException("table id out of range: "+iTabID);
@@ -257,7 +257,7 @@ public class XSSFBReader extends XSSFReader {
             //undocumented what is contained in these 8 bytes.
             //for the non-beta xlsb files, this would be 4, not 8.
             int offset = 8;
-            long iTabID = LittleEndian.getUInt(data, offset); offset += LittleEndian.INT_SIZE;
+            long iTabID = LittleEndian.getUInt(data, offset); offset += LittleEndianConsts.INT_SIZE;
             if (iTabID < 1 || iTabID > 0x0000FFFFL) {
                 throw new XSSFBParseException("table id out of range: "+iTabID);
             }

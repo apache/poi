@@ -24,6 +24,7 @@ import java.util.Arrays;
 
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * The LFOData structure contains the Main Document CP of the corresponding LFO,
@@ -49,7 +50,7 @@ public class LFOData
         int offset = startOffset;
 
         _cp = LittleEndian.getInt( buf, offset );
-        offset += LittleEndian.INT_SIZE;
+        offset += LittleEndianConsts.INT_SIZE;
 
         _rgLfoLvl = new ListFormatOverrideLevel[cLfolvl];
         for ( int x = 0; x < cLfolvl; x++ )
@@ -72,7 +73,7 @@ public class LFOData
     public int getSizeInBytes()
     {
         int result = 0;
-        result += LittleEndian.INT_SIZE;
+        result += LittleEndianConsts.INT_SIZE;
 
         for ( ListFormatOverrideLevel lfolvl : _rgLfoLvl )
             result += lfolvl.getSizeInBytes();

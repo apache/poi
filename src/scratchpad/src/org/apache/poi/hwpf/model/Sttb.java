@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.model;
 import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
@@ -34,7 +35,7 @@ import org.apache.poi.util.StringUtil;
  * <p>
  * This class is internal. It content or properties may change without notice
  * due to changes in our knowledge of internal Microsoft Word binary structures.
- * 
+ *
  * @author Sergey Vladimirov; according to [MS-DOC] -- v20121003 Word (.doc)
  *         Binary File Format; Copyright (c) 2012 Microsoft Corporation;
  *         Release: October 8, 2012
@@ -76,7 +77,7 @@ public class Sttb
     public void fillFields( byte[] buffer, int startOffset )
     {
         short ffff = LittleEndian.getShort( buffer, startOffset );
-        int offset = startOffset + LittleEndian.SHORT_SIZE;
+        int offset = startOffset + LittleEndianConsts.SHORT_SIZE;
 
         if ( ffff != (short) 0xffff )
         {
@@ -137,20 +138,20 @@ public class Sttb
     public int getSize()
     {
         // ffff
-        int size = LittleEndian.SHORT_SIZE;
+        int size = LittleEndianConsts.SHORT_SIZE;
 
         // cData
         size += _cDataLength;
 
         // cbExtra
-        size += LittleEndian.SHORT_SIZE;
+        size += LittleEndianConsts.SHORT_SIZE;
 
         if ( this._fExtend )
         {
             for ( String data : _data )
             {
                 // cchData
-                size += LittleEndian.SHORT_SIZE;
+                size += LittleEndianConsts.SHORT_SIZE;
                 // data
                 size += 2 * data.length();
             }
@@ -160,9 +161,9 @@ public class Sttb
             for ( String data : _data )
             {
                 // cchData
-                size += LittleEndian.BYTE_SIZE;
+                size += LittleEndianConsts.BYTE_SIZE;
                 // data
-                size += 1 * data.length();
+                size += data.length();
             }
         }
 
@@ -200,13 +201,13 @@ public class Sttb
         {
             LittleEndian.putInt( buffer, 2, _data.length );
             LittleEndian.putUShort( buffer, 6, _cbExtra );
-            offset = 2 + LittleEndian.INT_SIZE + LittleEndian.SHORT_SIZE;
+            offset = 2 + LittleEndianConsts.INT_SIZE + LittleEndianConsts.SHORT_SIZE;
         }
         else
         {
             LittleEndian.putUShort( buffer, 2, _data.length );
             LittleEndian.putUShort( buffer, 4, _cbExtra );
-            offset = 2 + LittleEndian.SHORT_SIZE + LittleEndian.SHORT_SIZE;
+            offset = 2 + LittleEndianConsts.SHORT_SIZE + LittleEndianConsts.SHORT_SIZE;
         }
 
         for ( int i = 0; i < _data.length; i++ )
@@ -224,7 +225,7 @@ public class Sttb
             if ( _fExtend )
             {
                 LittleEndian.putUShort( buffer, offset, entry.length() );
-                offset += LittleEndian.SHORT_SIZE;
+                offset += LittleEndianConsts.SHORT_SIZE;
 
                 StringUtil.putUnicodeLE( entry, buffer, offset );
                 offset += 2 * entry.length();

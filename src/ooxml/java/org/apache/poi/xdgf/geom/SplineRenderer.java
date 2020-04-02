@@ -17,6 +17,7 @@
 
 package org.apache.poi.xdgf.geom;
 
+import com.graphbuilder.curve.BSpline;
 import com.graphbuilder.curve.ControlPath;
 import com.graphbuilder.curve.GroupIterator;
 import com.graphbuilder.curve.NURBSpline;
@@ -49,7 +50,7 @@ public class SplineRenderer {
         NURBSpline spline = new NURBSpline(controlPoints, gi);
 
         spline.setDegree(degree);
-        spline.setKnotVectorType(NURBSpline.NON_UNIFORM);
+        spline.setKnotVectorType(BSpline.NON_UNIFORM);
         spline.setKnotVector(knots);
 
         if (weights == null) {

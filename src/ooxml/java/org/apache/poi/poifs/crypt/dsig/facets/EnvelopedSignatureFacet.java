@@ -53,7 +53,7 @@ public class EnvelopedSignatureFacet implements SignatureFacet {
         , List<XMLObject> objects)
     throws XMLSignatureException {
         List<Transform> transforms = new ArrayList<>();
-        Transform envelopedTransform = newTransform(signatureInfo, CanonicalizationMethod.ENVELOPED);
+        Transform envelopedTransform = newTransform(signatureInfo, Transform.ENVELOPED);
         transforms.add(envelopedTransform);
         Transform exclusiveTransform = newTransform(signatureInfo, CanonicalizationMethod.EXCLUSIVE);
         transforms.add(exclusiveTransform);

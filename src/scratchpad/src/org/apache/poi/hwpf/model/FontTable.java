@@ -23,6 +23,7 @@ import java.io.IOException;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -55,9 +56,9 @@ public final class FontTable
         this.fcSttbfffn = offset;
 
         _stringCount = LittleEndian.getShort(buf, offset);
-        offset += LittleEndian.SHORT_SIZE;
+        offset += LittleEndianConsts.SHORT_SIZE;
         _extraDataSz = LittleEndian.getShort(buf, offset);
-        offset += LittleEndian.SHORT_SIZE;
+        offset += LittleEndianConsts.SHORT_SIZE;
 
         _fontNames = new Ffn[_stringCount]; //Ffn corresponds to a Pascal style String in STTBF.
 
@@ -124,7 +125,7 @@ public final class FontTable
 
     public void writeTo( ByteArrayOutputStream tableStream ) throws IOException
     {
-        byte[] buf = new byte[LittleEndian.SHORT_SIZE];
+        byte[] buf = new byte[LittleEndianConsts.SHORT_SIZE];
         LittleEndian.putShort(buf, 0, _stringCount);
         tableStream.write(buf);
         LittleEndian.putShort(buf, 0, _extraDataSz);
@@ -146,11 +147,11 @@ public final class FontTable
                 || o._extraDataSz != this._extraDataSz
                 || o._fontNames.length != this._fontNames.length
         ) return false;
-        
+
         for (int i=0; i<o._fontNames.length; i++) {
             if (!o._fontNames[i].equals(this._fontNames[i])) return false;
         }
-        
+
         return true;
     }
 

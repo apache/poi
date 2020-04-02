@@ -309,9 +309,8 @@ public class FoDocumentFacade
             if ( child.getNodeType() == Node.ELEMENT_NODE )
             {
                 Element childElement = (Element) child;
-                if ( WordToFoUtils.isNotEmpty( childElement.getNamespaceURI() )
-                        && WordToFoUtils.isNotEmpty( childElement
-                                .getLocalName() )
+                if ( AbstractWordUtils.isNotEmpty( childElement.getNamespaceURI() )
+                        && AbstractWordUtils.isNotEmpty( childElement.getLocalName() )
                         && namespace.equals( childElement.getNamespaceURI() )
                         && name.equals( childElement.getLocalName() ) )
                 {
@@ -321,7 +320,7 @@ public class FoDocumentFacade
             }
         }
 
-        if ( WordToFoUtils.isNotEmpty( value ) )
+        if ( AbstractWordUtils.isNotEmpty( value ) )
         {
             Element property = document.createElementNS( namespace, prefix
                     + ":" + name );

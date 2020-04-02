@@ -23,6 +23,7 @@ import java.util.List;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * Plex of CPs stored in File (PLCF)
@@ -100,7 +101,7 @@ public final class PlexOfCps {
 
     public byte[] toByteArray() {
         int size = _props.size();
-        int cpBufSize = ((size + 1) * LittleEndian.INT_SIZE);
+        int cpBufSize = ((size + 1) * LittleEndianConsts.INT_SIZE);
         int structBufSize = +(_cbStruct * size);
         int bufSize = cpBufSize + structBufSize;
 
@@ -110,15 +111,15 @@ public final class PlexOfCps {
         for (int x = 0; x < size; x++) {
             GenericPropertyNode node = _props.get(x);
             nodeEnd = node.getEnd();
-            
+
             // put the starting offset of the property into the plcf.
-            LittleEndian.putInt(buf, (LittleEndian.INT_SIZE * x), node.getStart());
+            LittleEndian.putInt(buf, (LittleEndianConsts.INT_SIZE * x), node.getStart());
 
             // put the struct into the plcf
             System.arraycopy(node.getBytes(), 0, buf, cpBufSize + (x * _cbStruct), _cbStruct);
         }
         // put the ending offset of the last property into the plcf.
-        LittleEndian.putInt(buf, LittleEndian.INT_SIZE * size, nodeEnd);
+        LittleEndian.putInt(buf, LittleEndianConsts.INT_SIZE * size, nodeEnd);
 
         return buf;
     }

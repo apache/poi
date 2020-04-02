@@ -28,6 +28,7 @@ import org.apache.poi.hwpf.usermodel.TableProperties;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 @Internal
 public final class TableSprmCompressor
@@ -82,7 +83,7 @@ public final class TableSprmCompressor
       int itcMac = newTAP.getItcMac();
       byte[] buf = IOUtils.safelyAllocate(
               1
-                + (LittleEndian.SHORT_SIZE*((long)itcMac + 1))
+                + (LittleEndianConsts.SHORT_SIZE*((long)itcMac + 1))
                 + (TableCellDescriptor.SIZE*(long)itcMac),
               MAX_RECORD_LENGTH);
       buf[0] = (byte)itcMac;
@@ -90,7 +91,7 @@ public final class TableSprmCompressor
       short[] dxaCenters = newTAP.getRgdxaCenter();
       for (int x = 0; x < dxaCenters.length; x++)
       {
-        LittleEndian.putShort(buf, 1 + (x * LittleEndian.SHORT_SIZE),
+        LittleEndian.putShort(buf, 1 + (x * LittleEndianConsts.SHORT_SIZE),
                               dxaCenters[x]);
       }
 
@@ -98,7 +99,7 @@ public final class TableSprmCompressor
       for (int x = 0; x < cellDescriptors.length; x++)
       {
         cellDescriptors[x].serialize(buf,
-          1+((itcMac+1)*LittleEndian.SHORT_SIZE)+(x*TableCellDescriptor.SIZE));
+          1+((itcMac+1)* LittleEndianConsts.SHORT_SIZE)+(x*TableCellDescriptor.SIZE));
       }
       size += SprmUtils.addSpecialSprm((short)0xD608, buf, sprmList);
 

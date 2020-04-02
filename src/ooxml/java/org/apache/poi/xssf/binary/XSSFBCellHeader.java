@@ -19,6 +19,7 @@ package org.apache.poi.xssf.binary;
 
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * This class encapsulates what the spec calls a "Cell" object.
@@ -39,7 +40,7 @@ class XSSFBCellHeader {
      * @param cell cell buffer to update
      */
     public static void parse(byte[] data, int offset,  int currentRow, XSSFBCellHeader cell) {
-        int colNum = XSSFBUtils.castToInt(LittleEndian.getUInt(data, offset)); offset += LittleEndian.INT_SIZE;
+        int colNum = XSSFBUtils.castToInt(LittleEndian.getUInt(data, offset)); offset += LittleEndianConsts.INT_SIZE;
         int styleIdx = XSSFBUtils.get24BitInt(data, offset); offset += 3;
         //TODO: range checking
         boolean showPhonetic = false;//TODO: fill this out

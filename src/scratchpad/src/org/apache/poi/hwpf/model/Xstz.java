@@ -18,6 +18,7 @@ package org.apache.poi.hwpf.model;
 
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -63,7 +64,7 @@ public class Xstz
 
     public int getSize()
     {
-        return _xst.getSize() + LittleEndian.SHORT_SIZE;
+        return _xst.getSize() + LittleEndianConsts.SHORT_SIZE;
     }
 
     public int serialize( byte[] data, int startOffset )
@@ -74,7 +75,7 @@ public class Xstz
         offset += _xst.getSize();
 
         LittleEndian.putUShort( data, offset, _chTerm );
-        offset += LittleEndian.SHORT_SIZE;
+        offset += LittleEndianConsts.SHORT_SIZE;
 
         return offset - startOffset;
     }

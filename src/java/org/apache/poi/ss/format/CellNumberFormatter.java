@@ -19,6 +19,7 @@ package org.apache.poi.ss.format;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.FieldPosition;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Formatter;
@@ -558,7 +559,7 @@ public class CellNumberFormatter extends CellFormatter {
     private void writeScientific(double value, StringBuffer output, Set<CellNumberStringMod> mods) {
 
         StringBuffer result = new StringBuffer();
-        FieldPosition fractionPos = new FieldPosition(DecimalFormat.FRACTION_FIELD);
+        FieldPosition fractionPos = new FieldPosition(NumberFormat.FRACTION_FIELD);
         decimalFmt.format(value, result, fractionPos);
         writeInteger(result, output, integerSpecials, mods, showGroupingSeparator);
         writeFractional(result, output);

@@ -26,6 +26,7 @@ import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * Represents a document's stylesheet. A word documents formatting is stored as
@@ -77,11 +78,11 @@ public final class StyleSheet {
     public StyleSheet(byte[] tableStream, int offset) {
         int startOffset = offset;
         _cbStshi = LittleEndian.getShort(tableStream, offset);
-        offset += LittleEndian.SHORT_SIZE;
+        offset += LittleEndianConsts.SHORT_SIZE;
 
         /*
          * Count of styles in stylesheet
-         * 
+         *
          * The number of styles in this style sheet. There will be stshi.cstd
          * (cbSTD, STD) pairs in the file following the STSHI. Note: styles can
          * be empty, i.e. cbSTD==0.
@@ -92,7 +93,7 @@ public final class StyleSheet {
 
         // shall we discard cbLSD and mpstilsd?
 
-        offset = startOffset + LittleEndian.SHORT_SIZE + _cbStshi;
+        offset = startOffset + LittleEndianConsts.SHORT_SIZE + _cbStshi;
         _styleDescriptions = new StyleDescription[_stshif.getCstd()];
         for (int x = 0; x < _stshif.getCstd(); x++) {
             int stdSize = LittleEndian.getShort(tableStream, offset);
@@ -134,7 +135,7 @@ public final class StyleSheet {
         byte[] buf = new byte[_cbStshi + 2];
 
         LittleEndian.putUShort(buf, offset, (short) _cbStshi);
-        offset += LittleEndian.SHORT_SIZE;
+        offset += LittleEndianConsts.SHORT_SIZE;
 
         _stshif.setCstd(_styleDescriptions.length);
         _stshif.serialize(buf, offset);

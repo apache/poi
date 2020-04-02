@@ -21,6 +21,7 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * This class is used to represent a sprm operation from a Word 97/2000/XP
@@ -88,7 +89,7 @@ public final class SprmOperation
     {
         return _gOffset;
     }
-    
+
     public int getOperand()
     {
         switch ( getSizeCode() )
@@ -107,7 +108,7 @@ public final class SprmOperation
             byte operandLength = _grpprl[_gOffset + 1];
 
             // initialized to zeros by JVM
-            byte[] codeBytes = new byte[LittleEndian.INT_SIZE];
+            byte[] codeBytes = new byte[LittleEndianConsts.INT_SIZE];
             for ( int i = 0; i < operandLength; i++ )
                 if ( _gOffset + i < _grpprl.length )
                     codeBytes[i] = _grpprl[_gOffset + 1 + i];

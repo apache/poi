@@ -24,6 +24,7 @@ import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * FFN - Font Family Name. FFN is a data structure that stores the names of the Main
@@ -63,15 +64,15 @@ public final class Ffn
     int offsetTmp = offset;
 
     _cbFfnM1 = LittleEndian.getUByte(buf,offset);
-    offset += LittleEndian.BYTE_SIZE;
+    offset += LittleEndianConsts.BYTE_SIZE;
     _info = buf[offset];
-    offset += LittleEndian.BYTE_SIZE;
+    offset += LittleEndianConsts.BYTE_SIZE;
     _wWeight = LittleEndian.getShort(buf, offset);
-    offset += LittleEndian.SHORT_SIZE;
+    offset += LittleEndianConsts.SHORT_SIZE;
     _chs = buf[offset];
-    offset += LittleEndian.BYTE_SIZE;
+    offset += LittleEndianConsts.BYTE_SIZE;
     _ixchSzAlt = buf[offset];
-    offset += LittleEndian.BYTE_SIZE;
+    offset += LittleEndianConsts.BYTE_SIZE;
 
     // read panose and fs so we can write them back out.
     System.arraycopy(buf, offset, _panose, 0, _panose.length);
@@ -86,7 +87,7 @@ public final class Ffn
     for(int i = 0; i < _xszFfnLength; i++)
     {
       _xszFfn[i] = (char)LittleEndian.getShort(buf, offset);
-      offset += LittleEndian.SHORT_SIZE;
+      offset += LittleEndianConsts.SHORT_SIZE;
     }
 
 
@@ -161,15 +162,15 @@ public final class Ffn
     byte[] buf = IOUtils.safelyAllocate(this.getSize(), MAX_RECORD_LENGTH);
 
     buf[offset] = (byte)_cbFfnM1;
-    offset += LittleEndian.BYTE_SIZE;
+    offset += LittleEndianConsts.BYTE_SIZE;
     buf[offset] = _info;
-    offset += LittleEndian.BYTE_SIZE;
+    offset += LittleEndianConsts.BYTE_SIZE;
     LittleEndian.putShort(buf, offset, _wWeight);
-    offset += LittleEndian.SHORT_SIZE;
+    offset += LittleEndianConsts.SHORT_SIZE;
     buf[offset] = _chs;
-    offset += LittleEndian.BYTE_SIZE;
+    offset += LittleEndianConsts.BYTE_SIZE;
     buf[offset] = _ixchSzAlt;
-    offset += LittleEndian.BYTE_SIZE;
+    offset += LittleEndianConsts.BYTE_SIZE;
 
     System.arraycopy(_panose,0,buf, offset,_panose.length);
     offset += _panose.length;
@@ -179,7 +180,7 @@ public final class Ffn
     for(int i = 0; i < _xszFfn.length; i++)
     {
       LittleEndian.putShort(buf, offset, (short)_xszFfn[i]);
-      offset += LittleEndian.SHORT_SIZE;
+      offset += LittleEndianConsts.SHORT_SIZE;
     }
 
     return buf;
@@ -190,7 +191,7 @@ public final class Ffn
   public boolean equals(Object other) {
       if (!(other instanceof Ffn)) return false;
       Ffn o = (Ffn)other;
-      
+
       return (
              o._cbFfnM1 == this._cbFfnM1
           && o._info == this._info

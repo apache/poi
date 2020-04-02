@@ -247,7 +247,7 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
 
         while (segIter.hasNext()) {
             byte[] segElem = segIter.next();
-            HSLFFreeformShape.PathInfo pi = getPathInfo(segElem);
+            HSLFAutoShape.PathInfo pi = getPathInfo(segElem);
             if (pi == null) {
                 continue;
             }
@@ -376,7 +376,7 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
     }
 
     private static void handleEscapeInfo(CTPath2D pathCT, Path2D path2D, byte[] segElem, Iterator<byte[]> vertIter) {
-        HSLFFreeformShape.EscapeInfo ei = getEscapeInfo(segElem);
+        HSLFAutoShape.EscapeInfo ei = getEscapeInfo(segElem);
         if (ei == null) {
             return;
         }
@@ -474,16 +474,16 @@ public class HSLFAutoShape extends HSLFTextShape implements AutoShape<HSLFShape,
         return new Point2D.Double(xyPoints[0],xyPoints[1]);
     }
 
-    private static HSLFFreeformShape.PathInfo getPathInfo(byte[] elem) {
+    private static HSLFAutoShape.PathInfo getPathInfo(byte[] elem) {
         int elemUS = LittleEndian.getUShort(elem, 0);
         int pathInfo = PATH_INFO.getValue(elemUS);
-        return HSLFFreeformShape.PathInfo.valueOf(pathInfo);
+        return HSLFAutoShape.PathInfo.valueOf(pathInfo);
     }
 
-    private static HSLFFreeformShape.EscapeInfo getEscapeInfo(byte[] elem) {
+    private static HSLFAutoShape.EscapeInfo getEscapeInfo(byte[] elem) {
         int elemUS = LittleEndian.getUShort(elem, 0);
         int escInfo = ESCAPE_INFO.getValue(elemUS);
-        return HSLFFreeformShape.EscapeInfo.valueOf(escInfo);
+        return HSLFAutoShape.EscapeInfo.valueOf(escInfo);
     }
 
 

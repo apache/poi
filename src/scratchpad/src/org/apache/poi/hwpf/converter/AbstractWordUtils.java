@@ -61,7 +61,7 @@ public class AbstractWordUtils
      * Creates array of all possible cell edges. In HTML (and FO) cells from
      * different rows and same column should have same width, otherwise spanning
      * shall be used.
-     * 
+     *
      * @param table
      *            table to build cell edges array from
      * @return array of cell edges (including leftest one) in twips
@@ -137,7 +137,7 @@ public class AbstractWordUtils
         {
             Node child1 = childNodes.item( i );
             Node child2 = childNodes.item( i + 1 );
-            if ( !WordToFoUtils.canBeMerged( child1, child2, childTagName ) )
+            if ( !AbstractWordUtils.canBeMerged( child1, child2, childTagName ) )
                 continue;
 
             // merge
@@ -266,7 +266,7 @@ public class AbstractWordUtils
                         numberingState.levels.remove( childKey );
                     }
                 }
-                
+
                 bulletBuffer.append( NumberFormatter.getNumber( num,
                         list.getNumberFormat( level ) ) );
             }

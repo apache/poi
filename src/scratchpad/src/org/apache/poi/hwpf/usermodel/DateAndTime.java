@@ -23,6 +23,7 @@ import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.Removal;
 
@@ -50,7 +51,7 @@ public final class DateAndTime implements Duplicatable {
 
     public DateAndTime(byte[] buf, int offset) {
         _info = LittleEndian.getShort(buf, offset);
-        _info2 = LittleEndian.getShort(buf, offset + LittleEndian.SHORT_SIZE);
+        _info2 = LittleEndian.getShort(buf, offset + LittleEndianConsts.SHORT_SIZE);
     }
 
   public Calendar getDate() {
@@ -68,7 +69,7 @@ public final class DateAndTime implements Duplicatable {
   public void serialize(byte[] buf, int offset)
   {
     LittleEndian.putShort(buf, offset, _info);
-    LittleEndian.putShort(buf, offset + LittleEndian.SHORT_SIZE, _info2);
+    LittleEndian.putShort(buf, offset + LittleEndianConsts.SHORT_SIZE, _info2);
   }
 
   @Override

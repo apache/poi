@@ -57,7 +57,7 @@ public class VariantSupport extends Variant {
             Variant.VT_FILETIME, Variant.VT_LPSTR, Variant.VT_LPWSTR,
             Variant.VT_CF, Variant.VT_BOOL };
 
-    
+
     private static final POILogger logger = POILogFactory.getLogger(VariantSupport.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
@@ -69,10 +69,10 @@ public class VariantSupport extends Variant {
      * been issued for.
      */
     private static List<Long> unsupportedMessage;
-    
+
     private static final byte[] paddingBytes = new byte[3];
 
-    
+
     /**
      * Specifies whether warnings about unsupported variant types are to be
      * written to {@code System.err} or not.
@@ -166,7 +166,7 @@ public class VariantSupport extends Variant {
         LittleEndianByteArrayInputStream lei = new LittleEndianByteArrayInputStream(src, offset);
         return read( lei, length, type, codepage );
     }
-        
+
     public static Object read( LittleEndianByteArrayInputStream lei,
             final int length, final long type, final int codepage )
     throws ReadingNotSupportedException, UnsupportedEncodingException {
@@ -233,7 +233,7 @@ public class VariantSupport extends Variant {
              *
              * August 20, 2009
              */
-            // l1 = LittleEndian.getInt(src, o1); o1 += LittleEndian.INT_SIZE;
+            // l1 = LittleEndian.getInt(src, o1); o1 += LittleEndianConts.INT_SIZE;
             // }
             // final byte[] v = new byte[l1];
             // System.arraycopy(src, o1, v, 0, v.length);
@@ -246,7 +246,7 @@ public class VariantSupport extends Variant {
             case Variant.VT_BOOL:
                 VariantBool bool = (VariantBool) typedPropertyValue.getValue();
                 return bool.getValue();
-                
+
             /*
              * it is not very good, but what can do without breaking current
              * API? --sergey
@@ -359,7 +359,7 @@ public class VariantSupport extends Variant {
                     if (bi.bitLength() > 64) {
                         throw new WritingNotSupportedException(type, value);
                     }
-                    
+
                     byte[] biBytesBE = bi.toByteArray(), biBytesLE = new byte[LittleEndianConsts.LONG_SIZE];
                     int i=biBytesBE.length;
                     for (byte b : biBytesBE) {
@@ -368,7 +368,7 @@ public class VariantSupport extends Variant {
                         }
                         i--;
                     }
-    
+
                     out.write(biBytesLE);
                     length = LittleEndianConsts.LONG_SIZE;
                 }
@@ -383,7 +383,7 @@ public class VariantSupport extends Variant {
                 }
                 break;
             }
-            
+
             case Variant.VT_R8:
                 if (value instanceof Number) {
                     LittleEndian.putDouble( ((Number)value).doubleValue(), out);
@@ -412,7 +412,7 @@ public class VariantSupport extends Variant {
                 throw new WritingNotSupportedException(type, value);
             }
         }
-        
+
         /* pad values to 4-bytes */
         int padding = (4-(length & 0x3)) & 0x3;
         out.write(paddingBytes, 0, padding);

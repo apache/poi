@@ -29,6 +29,7 @@ import java.util.TreeMap;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * @since 3.16-beta3
@@ -60,7 +61,7 @@ public class XSSFBCommentsTable extends XSSFBParser {
         switch (recordType) {
             case BrtBeginComment:
                 int offset = 0;
-                authorId = XSSFBUtils.castToInt(LittleEndian.getUInt(data)); offset += LittleEndian.INT_SIZE;
+                authorId = XSSFBUtils.castToInt(LittleEndian.getUInt(data)); offset += LittleEndianConsts.INT_SIZE;
                 cellRange = XSSFBCellRange.parse(data, offset, cellRange);
                 offset+= XSSFBCellRange.length;
                 //for strict parsing; confirm that firstRow==lastRow and firstCol==colLats (2.4.28)

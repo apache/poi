@@ -21,7 +21,7 @@ import java.nio.charset.Charset;
 
 import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
@@ -74,12 +74,12 @@ public final class OldFfn {
             charset = wmfCharset.getCharset();
         }
         charset = charset == null ? StringUtil.WIN_1252 : charset;
-        offset += LittleEndian.BYTE_SIZE;
+        offset += LittleEndianConsts.BYTE_SIZE;
         //if this byte here == 7, it _may_ signify existence of
         //an altername font name
 
         //not sure what the byte after the _chs does
-        offset += LittleEndian.BYTE_SIZE;
+        offset += LittleEndianConsts.BYTE_SIZE;
         int fontNameLength = -1;
         for (int i = offset; i < fontTableEnd; i++) {
             if (buf[i] == 0) {
@@ -109,7 +109,7 @@ public final class OldFfn {
         //reset to 0 for length calculation
         altFontNameLength = (altFontNameLength < 0) ? 0 : altFontNameLength + 1;//add one for zero byte
 
-        int len = LittleEndian.INT_SIZE + LittleEndian.BYTE_SIZE + LittleEndian.BYTE_SIZE +//6 starting bytes
+        int len = LittleEndianConsts.INT_SIZE + LittleEndianConsts.BYTE_SIZE + LittleEndianConsts.BYTE_SIZE +//6 starting bytes
                 fontNameLength + altFontNameLength + 1;//+1 is for the zero byte
         //this len should == fontDescriptionLength
 

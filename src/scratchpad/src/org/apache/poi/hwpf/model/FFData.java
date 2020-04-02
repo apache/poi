@@ -18,6 +18,7 @@ package org.apache.poi.hwpf.model;
 
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 /**
  * The FFData structure specifies form field data for a text box, check box, or
@@ -29,7 +30,7 @@ import org.apache.poi.util.LittleEndian;
  * <p>
  * This class is internal. It content or properties may change without notice
  * due to changes in our knowledge of internal Microsoft Word binary structures.
- * 
+ *
  * @author Sergey Vladimirov; according to [MS-DOC] -- v20121003 Word (.doc)
  *         Binary File Format; Copyright (c) 2012 Microsoft Corporation;
  *         Release: October 8, 2012
@@ -114,7 +115,7 @@ public class FFData
         {
             this._wDef = Integer
                     .valueOf( LittleEndian.getUShort( std, offset ) );
-            offset += LittleEndian.SHORT_SIZE;
+            offset += LittleEndianConsts.SHORT_SIZE;
         }
         else
         {
@@ -170,7 +171,7 @@ public class FFData
         if ( _base.getIType() == FFDataBase.ITYPE_CHCK
                 || _base.getIType() == FFDataBase.ITYPE_DROP )
         {
-            size += LittleEndian.SHORT_SIZE;
+            size += LittleEndianConsts.SHORT_SIZE;
         }
 
         size += _xstzTextFormat.getSize();
@@ -211,7 +212,7 @@ public class FFData
                 || _base.getIType() == FFDataBase.ITYPE_DROP )
         {
             LittleEndian.putUShort( buffer, offset, _wDef );
-            offset += LittleEndian.SHORT_SIZE;
+            offset += LittleEndianConsts.SHORT_SIZE;
         }
 
         offset += _xstzTextFormat.serialize( buffer, offset );

@@ -19,7 +19,7 @@ package org.apache.poi.ss.formula.ptg;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -208,7 +208,7 @@ public final class AttrPtg extends ControlPtg {
 
     public int getSize() {
         if (_jumpTable != null) {
-            return SIZE + (_jumpTable.length + 1) * LittleEndian.SHORT_SIZE;
+            return SIZE + (_jumpTable.length + 1) * LittleEndianConsts.SHORT_SIZE;
         }
         return SIZE;
     }

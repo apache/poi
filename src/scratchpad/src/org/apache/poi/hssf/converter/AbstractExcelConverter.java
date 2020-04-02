@@ -32,7 +32,7 @@ import org.w3c.dom.Document;
 
 /**
  * Common class for {@link ExcelToFoConverter} and {@link ExcelToHtmlConverter}
- * 
+ *
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  * @see AbstractWordConverter
  */
@@ -41,13 +41,13 @@ public abstract class AbstractExcelConverter
 {
     protected static int getColumnWidth( HSSFSheet sheet, int columnIndex )
     {
-        return ExcelToHtmlUtils.getColumnWidthInPx( sheet
+        return AbstractExcelUtils.getColumnWidthInPx( sheet
                 .getColumnWidth( columnIndex ) );
     }
 
     protected static int getDefaultColumnWidth( HSSFSheet sheet )
     {
-        return ExcelToHtmlUtils.getColumnWidthInPx( sheet
+        return AbstractExcelUtils.getColumnWidthInPx( sheet
                 .getDefaultColumnWidth() );
     }
 
@@ -68,7 +68,7 @@ public abstract class AbstractExcelConverter
     /**
      * Generates name for output as column header in case
      * <tt>{@link #isOutputColumnHeaders()} == true</tt>
-     * 
+     *
      * @param columnIndex
      *            0-based column index
      */
@@ -151,12 +151,12 @@ public abstract class AbstractExcelConverter
                 value = ErrorEval.getText( cell.getErrorCellValue() );
                 break;
             default:
-                value = ExcelToHtmlUtils.EMPTY;
+                value = AbstractExcelUtils.EMPTY;
                 break;
             }
             break;
         case BLANK:
-            value = ExcelToHtmlUtils.EMPTY;
+            value = AbstractExcelUtils.EMPTY;
             break;
         case NUMERIC:
             value = _formatter.formatCellValue( cell );
@@ -171,7 +171,7 @@ public abstract class AbstractExcelConverter
             return true;
         }
 
-        return ExcelToHtmlUtils.isEmpty( value );
+        return AbstractExcelUtils.isEmpty( value );
     }
 
     public void setFontReplacer( FontReplacer fontReplacer )

@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 
 @Internal
@@ -37,11 +38,11 @@ public final class SprmUtils
 
     public static byte[] shortArrayToByteArray(short[] convert)
     {
-        byte[] buf = IOUtils.safelyAllocate(convert.length * (long)LittleEndian.SHORT_SIZE, MAX_RECORD_LENGTH);
+        byte[] buf = IOUtils.safelyAllocate(convert.length * (long)LittleEndianConsts.SHORT_SIZE, MAX_RECORD_LENGTH);
 
         for (int x = 0; x < convert.length; x++)
         {
-            LittleEndian.putShort(buf, x * LittleEndian.SHORT_SIZE, convert[x]);
+            LittleEndian.putShort(buf, x * LittleEndianConsts.SHORT_SIZE, convert[x]);
         }
 
         return buf;
@@ -130,7 +131,7 @@ public final class SprmUtils
     {
         byte[] buf = new byte[4];
         LittleEndian.putShort(buf, 0, brc[0]);
-        LittleEndian.putShort(buf, LittleEndian.SHORT_SIZE, brc[1]);
+        LittleEndian.putShort(buf, LittleEndianConsts.SHORT_SIZE, brc[1]);
         return LittleEndian.getInt(buf);
     }
 }

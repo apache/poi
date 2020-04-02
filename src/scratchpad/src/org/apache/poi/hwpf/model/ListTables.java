@@ -25,6 +25,7 @@ import java.util.Objects;
 
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -56,7 +57,7 @@ public final class ListTables
         int offset = lstOffset;
 
         int cLst = LittleEndian.getShort( tableStream, offset );
-        offset += LittleEndian.SHORT_SIZE;
+        offset += LittleEndianConsts.SHORT_SIZE;
         int levelOffset = offset + ( cLst * LSTF.getSize() );
 
         for ( int x = 0; x < cLst; x++ )

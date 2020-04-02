@@ -24,6 +24,7 @@ import java.util.List;
 import org.apache.poi.hwpf.usermodel.SectionProperties;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 
 @Internal
 public final class SectionSprmCompressor
@@ -187,9 +188,9 @@ public final class SectionSprmCompressor
         {
             byte[] buf = new byte[7];
             buf[0] = (byte)(newSEP.getFPropMark() ? 1 : 0);
-            int offset = LittleEndian.BYTE_SIZE;
+            int offset = LittleEndianConsts.BYTE_SIZE;
             LittleEndian.putShort(buf, 0, (short)newSEP.getIbstPropRMark());
-            offset += LittleEndian.SHORT_SIZE;
+            offset += LittleEndianConsts.SHORT_SIZE;
             newSEP.getDttmPropRMark().serialize(buf, offset);
             size += SprmUtils.addSprm((short)0xD227, -1, buf, sprmList);
         }

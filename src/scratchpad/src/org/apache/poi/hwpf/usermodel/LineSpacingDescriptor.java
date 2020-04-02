@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.Removal;
 
 /**
@@ -41,7 +42,7 @@ public final class LineSpacingDescriptor implements Duplicatable {
 
   public LineSpacingDescriptor(byte[] buf, int offset) {
     _dyaLine = LittleEndian.getShort(buf, offset);
-    _fMultiLinespace = LittleEndian.getShort(buf, offset + LittleEndian.SHORT_SIZE);
+    _fMultiLinespace = LittleEndian.getShort(buf, offset + LittleEndianConsts.SHORT_SIZE);
   }
 
   @Override
@@ -72,7 +73,7 @@ public final class LineSpacingDescriptor implements Duplicatable {
   public void serialize(byte[] buf, int offset)
   {
     LittleEndian.putShort(buf, offset, _dyaLine);
-    LittleEndian.putShort(buf, offset + LittleEndian.SHORT_SIZE, _fMultiLinespace);
+    LittleEndian.putShort(buf, offset + LittleEndianConsts.SHORT_SIZE, _fMultiLinespace);
   }
 
   public void setDyaLine(short dyaLine)

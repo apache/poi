@@ -36,6 +36,7 @@ import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.util.DocumentFormatException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -471,9 +472,9 @@ public class Range {
 		CharacterProperties baseChp = ss.getCharacterStyle(styleIndex);
 
 		byte[] grpprl = ParagraphSprmCompressor.compressParagraphProperty(props, baseStyle);
-		byte[] withIndex = new byte[grpprl.length + LittleEndian.SHORT_SIZE];
+		byte[] withIndex = new byte[grpprl.length + LittleEndianConsts.SHORT_SIZE];
 		LittleEndian.putShort(withIndex, 0, (short) styleIndex);
-		System.arraycopy(grpprl, 0, withIndex, LittleEndian.SHORT_SIZE, grpprl.length);
+		System.arraycopy(grpprl, 0, withIndex, LittleEndianConsts.SHORT_SIZE, grpprl.length);
 		SprmBuffer buf = new SprmBuffer(withIndex, 2);
 
 		_doc.getParagraphTable().insert(_parStart, _start, buf);
@@ -522,9 +523,9 @@ public class Range {
 		CharacterProperties baseChp = ss.getCharacterStyle(styleIndex);
 
 		byte[] grpprl = ParagraphSprmCompressor.compressParagraphProperty(props, baseStyle);
-		byte[] withIndex = new byte[grpprl.length + LittleEndian.SHORT_SIZE];
+		byte[] withIndex = new byte[grpprl.length + LittleEndianConsts.SHORT_SIZE];
 		LittleEndian.putShort(withIndex, 0, (short) styleIndex);
-		System.arraycopy(grpprl, 0, withIndex, LittleEndian.SHORT_SIZE, grpprl.length);
+		System.arraycopy(grpprl, 0, withIndex, LittleEndianConsts.SHORT_SIZE, grpprl.length);
 		SprmBuffer buf = new SprmBuffer(withIndex, 2);
 
 		_doc.getParagraphTable().insert(_parEnd, _end, buf);
