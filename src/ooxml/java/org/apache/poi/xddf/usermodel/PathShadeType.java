@@ -32,7 +32,7 @@ public enum PathShadeType {
         this.underlying = pathShadeType;
     }
 
-    private final static HashMap<STPathShadeType.Enum, PathShadeType> reverse = new HashMap<STPathShadeType.Enum, PathShadeType>();
+    private final static HashMap<STPathShadeType.Enum, PathShadeType> reverse = new HashMap<>();
     static {
         for (PathShadeType value : values()) {
             reverse.put(value.underlying, value);

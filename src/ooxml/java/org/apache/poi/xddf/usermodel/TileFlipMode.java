@@ -33,7 +33,7 @@ public enum TileFlipMode {
         this.underlying = mode;
     }
 
-    private final static HashMap<STTileFlipMode.Enum, TileFlipMode> reverse = new HashMap<STTileFlipMode.Enum, TileFlipMode>();
+    private final static HashMap<STTileFlipMode.Enum, TileFlipMode> reverse = new HashMap<>();
     static {
         for (TileFlipMode value : values()) {
             reverse.put(value.underlying, value);

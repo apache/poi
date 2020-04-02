@@ -31,7 +31,7 @@ public enum BarDirection {
         this.underlying = direction;
     }
 
-    private final static HashMap<STBarDir.Enum, BarDirection> reverse = new HashMap<STBarDir.Enum, BarDirection>();
+    private final static HashMap<STBarDir.Enum, BarDirection> reverse = new HashMap<>();
     static {
         for (BarDirection value : values()) {
             reverse.put(value.underlying, value);

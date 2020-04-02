@@ -70,7 +70,7 @@ public enum AutonumberScheme {
         this.underlying = scheme;
     }
 
-    private final static HashMap<STTextAutonumberScheme.Enum, AutonumberScheme> reverse = new HashMap<STTextAutonumberScheme.Enum, AutonumberScheme>();
+    private final static HashMap<STTextAutonumberScheme.Enum, AutonumberScheme> reverse = new HashMap<>();
     static {
         for (AutonumberScheme value : values()) {
             reverse.put(value.underlying, value);

@@ -40,7 +40,7 @@ public enum MarkerStyle {
         this.underlying = style;
     }
 
-    private final static HashMap<STMarkerStyle.Enum, MarkerStyle> reverse = new HashMap<STMarkerStyle.Enum, MarkerStyle>();
+    private final static HashMap<STMarkerStyle.Enum, MarkerStyle> reverse = new HashMap<>();
     static {
         for (MarkerStyle value : values()) {
             reverse.put(value.underlying, value);

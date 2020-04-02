@@ -34,7 +34,7 @@ public enum FontAlignment {
         this.underlying = align;
     }
 
-    private final static HashMap<STTextFontAlignType.Enum, FontAlignment> reverse = new HashMap<STTextFontAlignType.Enum, FontAlignment>();
+    private final static HashMap<STTextFontAlignType.Enum, FontAlignment> reverse = new HashMap<>();
     static {
         for (FontAlignment value : values()) {
             reverse.put(value.underlying, value);

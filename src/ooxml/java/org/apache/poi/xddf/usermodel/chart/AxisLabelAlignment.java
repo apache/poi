@@ -32,7 +32,7 @@ public enum AxisLabelAlignment {
         this.underlying = alignment;
     }
 
-    private final static HashMap<STLblAlgn.Enum, AxisLabelAlignment> reverse = new HashMap<STLblAlgn.Enum, AxisLabelAlignment>();
+    private final static HashMap<STLblAlgn.Enum, AxisLabelAlignment> reverse = new HashMap<>();
     static {
         for (AxisLabelAlignment value : values()) {
             reverse.put(value.underlying, value);

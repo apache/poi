@@ -33,7 +33,7 @@ public enum TabAlignment {
         this.underlying = align;
     }
 
-    private final static HashMap<STTextTabAlignType.Enum, TabAlignment> reverse = new HashMap<STTextTabAlignType.Enum, TabAlignment>();
+    private final static HashMap<STTextTabAlignType.Enum, TabAlignment> reverse = new HashMap<>();
     static {
         for (TabAlignment value : values()) {
             reverse.put(value.underlying, value);

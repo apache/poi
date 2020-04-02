@@ -174,7 +174,7 @@ public class XWPFEndnotes extends XWPFAbstractFootnotesEndnotes {
      * @return List, possibly empty, of end notes.
      */
     public List<XWPFEndnote> getEndnotesList() {
-        List<XWPFEndnote> resultList = new ArrayList<XWPFEndnote>();
+        List<XWPFEndnote> resultList = new ArrayList<>();
         for (XWPFAbstractFootnoteEndnote note : listFootnote) {
             resultList.add((XWPFEndnote)note);
         }

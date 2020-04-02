@@ -31,7 +31,7 @@ public enum PenAlignment {
         this.underlying = alignment;
     }
 
-    private final static HashMap<STPenAlignment.Enum, PenAlignment> reverse = new HashMap<STPenAlignment.Enum, PenAlignment>();
+    private final static HashMap<STPenAlignment.Enum, PenAlignment> reverse = new HashMap<>();
     static {
         for (PenAlignment value : values()) {
             reverse.put(value.underlying, value);

@@ -34,7 +34,7 @@ public enum AnchorType {
         this.underlying = caps;
     }
 
-    private final static HashMap<STTextAnchoringType.Enum, AnchorType> reverse = new HashMap<STTextAnchoringType.Enum, AnchorType>();
+    private final static HashMap<STTextAnchoringType.Enum, AnchorType> reverse = new HashMap<>();
     static {
         for (AnchorType value : values()) {
             reverse.put(value.underlying, value);

@@ -32,7 +32,7 @@ public enum StrikeType {
         this.underlying = strike;
     }
 
-    private final static HashMap<STTextStrikeType.Enum, StrikeType> reverse = new HashMap<STTextStrikeType.Enum, StrikeType>();
+    private final static HashMap<STTextStrikeType.Enum, StrikeType> reverse = new HashMap<>();
     static {
         for (StrikeType value : values()) {
             reverse.put(value.underlying, value);

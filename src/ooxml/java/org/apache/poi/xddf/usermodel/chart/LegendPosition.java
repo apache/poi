@@ -34,7 +34,7 @@ public enum LegendPosition {
         this.underlying = position;
     }
 
-    private final static HashMap<STLegendPos.Enum, LegendPosition> reverse = new HashMap<STLegendPos.Enum, LegendPosition>();
+    private final static HashMap<STLegendPos.Enum, LegendPosition> reverse = new HashMap<>();
     static {
         for (LegendPosition value : values()) {
             reverse.put(value.underlying, value);

@@ -33,7 +33,7 @@ public enum BlackWhiteMode {
         this.underlying = mode;
     }
 
-    private final static HashMap<STBlackWhiteMode.Enum, BlackWhiteMode> reverse = new HashMap<STBlackWhiteMode.Enum, BlackWhiteMode>();
+    private final static HashMap<STBlackWhiteMode.Enum, BlackWhiteMode> reverse = new HashMap<>();
     static {
         for (BlackWhiteMode value : values()) {
             reverse.put(value.underlying, value);

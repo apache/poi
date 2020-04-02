@@ -164,7 +164,7 @@ public class XWPFFootnotes extends XWPFAbstractFootnotesEndnotes {
      * @return List, possibly empty, of footnotes.
      */
     public List<XWPFFootnote> getFootnotesList() {
-        List<XWPFFootnote> resultList = new ArrayList<XWPFFootnote>();
+        List<XWPFFootnote> resultList = new ArrayList<>();
         for (XWPFAbstractFootnoteEndnote note : listFootnote) {
             resultList.add((XWPFFootnote)note);
         }

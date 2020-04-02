@@ -35,7 +35,7 @@ public enum ScatterStyle {
         this.underlying = style;
     }
 
-    private final static HashMap<STScatterStyle.Enum, ScatterStyle> reverse = new HashMap<STScatterStyle.Enum, ScatterStyle>();
+    private final static HashMap<STScatterStyle.Enum, ScatterStyle> reverse = new HashMap<>();
     static {
         for (ScatterStyle value : values()) {
             reverse.put(value.underlying, value);

@@ -33,7 +33,7 @@ public enum BarGrouping {
         this.underlying = grouping;
     }
 
-    private final static HashMap<STBarGrouping.Enum, BarGrouping> reverse = new HashMap<STBarGrouping.Enum, BarGrouping>();
+    private final static HashMap<STBarGrouping.Enum, BarGrouping> reverse = new HashMap<>();
     static {
         for (BarGrouping value : values()) {
             reverse.put(value.underlying, value);

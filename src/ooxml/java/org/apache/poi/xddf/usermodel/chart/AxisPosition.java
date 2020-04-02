@@ -33,7 +33,7 @@ public enum AxisPosition {
         this.underlying = position;
     }
 
-    private final static HashMap<STAxPos.Enum, AxisPosition> reverse = new HashMap<STAxPos.Enum, AxisPosition>();
+    private final static HashMap<STAxPos.Enum, AxisPosition> reverse = new HashMap<>();
     static {
         for (AxisPosition value : values()) {
             reverse.put(value.underlying, value);

@@ -40,7 +40,7 @@ public enum PresetLineDash {
         this.underlying = dash;
     }
 
-    private final static HashMap<STPresetLineDashVal.Enum, PresetLineDash> reverse = new HashMap<STPresetLineDashVal.Enum, PresetLineDash>();
+    private final static HashMap<STPresetLineDashVal.Enum, PresetLineDash> reverse = new HashMap<>();
     static {
         for (PresetLineDash value : values()) {
             reverse.put(value.underlying, value);

@@ -38,7 +38,7 @@ public enum RectangleAlignment {
         this.underlying = alignment;
     }
 
-    private final static HashMap<STRectAlignment.Enum, RectangleAlignment> reverse = new HashMap<STRectAlignment.Enum, RectangleAlignment>();
+    private final static HashMap<STRectAlignment.Enum, RectangleAlignment> reverse = new HashMap<>();
     static {
         for (RectangleAlignment value : values()) {
             reverse.put(value.underlying, value);

@@ -47,7 +47,7 @@ public enum UnderlineType {
         this.underlying = underline;
     }
 
-    private final static HashMap<STTextUnderlineType.Enum, UnderlineType> reverse = new HashMap<STTextUnderlineType.Enum, UnderlineType>();
+    private final static HashMap<STTextUnderlineType.Enum, UnderlineType> reverse = new HashMap<>();
     static {
         for (UnderlineType value : values()) {
             reverse.put(value.underlying, value);

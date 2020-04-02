@@ -32,7 +32,7 @@ public enum LineCap {
         this.underlying = line;
     }
 
-    private final static HashMap<STLineCap.Enum, LineCap> reverse = new HashMap<STLineCap.Enum, LineCap>();
+    private final static HashMap<STLineCap.Enum, LineCap> reverse = new HashMap<>();
     static {
         for (LineCap value : values()) {
             reverse.put(value.underlying, value);

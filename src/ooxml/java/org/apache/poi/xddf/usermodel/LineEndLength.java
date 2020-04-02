@@ -32,7 +32,7 @@ public enum LineEndLength {
         this.underlying = lineEnd;
     }
 
-    private final static HashMap<STLineEndLength.Enum, LineEndLength> reverse = new HashMap<STLineEndLength.Enum, LineEndLength>();
+    private final static HashMap<STLineEndLength.Enum, LineEndLength> reverse = new HashMap<>();
     static {
         for (LineEndLength value : values()) {
             reverse.put(value.underlying, value);

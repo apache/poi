@@ -83,7 +83,7 @@ public enum PresetPattern {
         this.underlying = pattern;
     }
 
-    private final static HashMap<STPresetPatternVal.Enum, PresetPattern> reverse = new HashMap<STPresetPatternVal.Enum, PresetPattern>();
+    private final static HashMap<STPresetPatternVal.Enum, PresetPattern> reverse = new HashMap<>();
     static {
         for (PresetPattern value : values()) {
             reverse.put(value.underlying, value);

@@ -35,7 +35,7 @@ public enum LineEndType {
         this.underlying = lineEnd;
     }
 
-    private final static HashMap<STLineEndType.Enum, LineEndType> reverse = new HashMap<STLineEndType.Enum, LineEndType>();
+    private final static HashMap<STLineEndType.Enum, LineEndType> reverse = new HashMap<>();
     static {
         for (LineEndType value : values()) {
             reverse.put(value.underlying, value);

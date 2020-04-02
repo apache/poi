@@ -19,6 +19,7 @@ package org.apache.poi.sl.draw.binding;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,9 +30,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for CT_Path2D complex type.
- * 
+ *
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ *
  * <pre>
  * &lt;complexType name="CT_Path2D"&gt;
  *   &lt;complexContent&gt;
@@ -53,8 +54,8 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/complexContent&gt;
  * &lt;/complexType&gt;
  * </pre>
- * 
- * 
+ *
+ *
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "CT_Path2D", propOrder = {
@@ -84,20 +85,20 @@ public class CTPath2D {
 
     /**
      * Gets the value of the closeOrMoveToOrLnTo property.
-     * 
+     *
      * <p>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the closeOrMoveToOrLnTo property.
-     * 
+     *
      * <p>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getCloseOrMoveToOrLnTo().add(newItem);
      * </pre>
-     * 
-     * 
+     *
+     *
      * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link CTPath2DClose }
@@ -106,12 +107,12 @@ public class CTPath2D {
      * {@link CTPath2DArcTo }
      * {@link CTPath2DQuadBezierTo }
      * {@link CTPath2DCubicBezierTo }
-     * 
-     * 
+     *
+     *
      */
     public List<Object> getCloseOrMoveToOrLnTo() {
         if (closeOrMoveToOrLnTo == null) {
-            closeOrMoveToOrLnTo = new ArrayList<Object>();
+            closeOrMoveToOrLnTo = new ArrayList<>();
         }
         return this.closeOrMoveToOrLnTo;
     }
@@ -126,11 +127,11 @@ public class CTPath2D {
 
     /**
      * Gets the value of the w property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Long }
-     *     
+     *
      */
     public long getW() {
         if (w == null) {
@@ -142,11 +143,11 @@ public class CTPath2D {
 
     /**
      * Sets the value of the w property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Long }
-     *     
+     *
      */
     public void setW(long value) {
         this.w = value;
@@ -162,11 +163,11 @@ public class CTPath2D {
 
     /**
      * Gets the value of the h property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Long }
-     *     
+     *
      */
     public long getH() {
         if (h == null) {
@@ -178,11 +179,11 @@ public class CTPath2D {
 
     /**
      * Sets the value of the h property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Long }
-     *     
+     *
      */
     public void setH(long value) {
         this.h = value;
@@ -198,11 +199,11 @@ public class CTPath2D {
 
     /**
      * Gets the value of the fill property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link STPathFillMode }
-     *     
+     *
      */
     public STPathFillMode getFill() {
         if (fill == null) {
@@ -214,11 +215,11 @@ public class CTPath2D {
 
     /**
      * Sets the value of the fill property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link STPathFillMode }
-     *     
+     *
      */
     public void setFill(STPathFillMode value) {
         this.fill = value;
@@ -230,11 +231,11 @@ public class CTPath2D {
 
     /**
      * Gets the value of the stroke property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isStroke() {
         if (stroke == null) {
@@ -246,11 +247,11 @@ public class CTPath2D {
 
     /**
      * Sets the value of the stroke property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setStroke(boolean value) {
         this.stroke = value;
@@ -266,11 +267,11 @@ public class CTPath2D {
 
     /**
      * Gets the value of the extrusionOk property.
-     * 
+     *
      * @return
      *     possible object is
      *     {@link Boolean }
-     *     
+     *
      */
     public boolean isExtrusionOk() {
         if (extrusionOk == null) {
@@ -282,11 +283,11 @@ public class CTPath2D {
 
     /**
      * Sets the value of the extrusionOk property.
-     * 
+     *
      * @param value
      *     allowed object is
      *     {@link Boolean }
-     *     
+     *
      */
     public void setExtrusionOk(boolean value) {
         this.extrusionOk = value;

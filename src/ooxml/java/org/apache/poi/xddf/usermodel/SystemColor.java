@@ -59,7 +59,7 @@ public enum SystemColor {
         this.underlying = color;
     }
 
-    private final static HashMap<STSystemColorVal.Enum, SystemColor> reverse = new HashMap<STSystemColorVal.Enum, SystemColor>();
+    private final static HashMap<STSystemColorVal.Enum, SystemColor> reverse = new HashMap<>();
     static {
         for (SystemColor value : values()) {
             reverse.put(value.underlying, value);

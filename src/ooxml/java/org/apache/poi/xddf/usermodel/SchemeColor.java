@@ -46,7 +46,7 @@ public enum SchemeColor {
         this.underlying = color;
     }
 
-    private final static HashMap<STSchemeColorVal.Enum, SchemeColor> reverse = new HashMap<STSchemeColorVal.Enum, SchemeColor>();
+    private final static HashMap<STSchemeColorVal.Enum, SchemeColor> reverse = new HashMap<>();
     static {
         for (SchemeColor value : values()) {
             reverse.put(value.underlying, value);

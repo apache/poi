@@ -47,11 +47,7 @@ public class XSSFLineChartData implements LineChartData {
     /**
      * List of all data series.
      */
-    private List<Series> series;
-
-    public XSSFLineChartData() {
-        series = new ArrayList<Series>();
-    }
+    private final List<Series> series = new ArrayList<>();
 
     static class Series extends AbstractXSSFChartSeries implements LineChartSeries {
         private int id;

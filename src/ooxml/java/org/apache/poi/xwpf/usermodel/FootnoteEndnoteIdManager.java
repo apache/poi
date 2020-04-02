@@ -27,7 +27,7 @@ import java.util.List;
  */
 public class FootnoteEndnoteIdManager {
 
-    private XWPFDocument document;    
+    private XWPFDocument document;
 
     public FootnoteEndnoteIdManager(XWPFDocument document) {
         this.document = document;
@@ -39,8 +39,8 @@ public class FootnoteEndnoteIdManager {
      * @return ID number to use.
      */
     public BigInteger nextId() {
-        
-        List<BigInteger> ids = new ArrayList<BigInteger>();
+
+        List<BigInteger> ids = new ArrayList<>();
         for (XWPFAbstractFootnoteEndnote note : document.getFootnotes()) {
             ids.add(note.getId());
         }
@@ -52,8 +52,8 @@ public class FootnoteEndnoteIdManager {
         while (ids.contains(newId)) {
             cand++;
             newId = BigInteger.valueOf(cand);
-        } 
-        
+        }
+
         return newId;
     }
 

@@ -31,7 +31,7 @@ public enum AxisOrientation {
         this.underlying = orientation;
     }
 
-    private final static HashMap<STOrientation.Enum, AxisOrientation> reverse = new HashMap<STOrientation.Enum, AxisOrientation>();
+    private final static HashMap<STOrientation.Enum, AxisOrientation> reverse = new HashMap<>();
     static {
         for (AxisOrientation value : values()) {
             reverse.put(value.underlying, value);

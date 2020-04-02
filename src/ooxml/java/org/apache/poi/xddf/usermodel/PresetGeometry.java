@@ -217,7 +217,7 @@ public enum PresetGeometry {
         this.underlying = shape;
     }
 
-    private final static HashMap<STShapeType.Enum, PresetGeometry> reverse = new HashMap<STShapeType.Enum, PresetGeometry>();
+    private final static HashMap<STShapeType.Enum, PresetGeometry> reverse = new HashMap<>();
     static {
         for (PresetGeometry value : values()) {
             reverse.put(value.underlying, value);

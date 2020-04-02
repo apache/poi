@@ -34,7 +34,7 @@ public enum CompoundLine {
         this.underlying = line;
     }
 
-    private final static HashMap<STCompoundLine.Enum, CompoundLine> reverse = new HashMap<STCompoundLine.Enum, CompoundLine>();
+    private final static HashMap<STCompoundLine.Enum, CompoundLine> reverse = new HashMap<>();
     static {
         for (CompoundLine value : values()) {
             reverse.put(value.underlying, value);

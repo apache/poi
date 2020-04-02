@@ -33,7 +33,7 @@ public enum AxisTickLabelPosition {
         this.underlying = position;
     }
 
-    private final static HashMap<STTickLblPos.Enum, AxisTickLabelPosition> reverse = new HashMap<STTickLblPos.Enum, AxisTickLabelPosition>();
+    private final static HashMap<STTickLblPos.Enum, AxisTickLabelPosition> reverse = new HashMap<>();
     static {
         for (AxisTickLabelPosition value : values()) {
             reverse.put(value.underlying, value);
