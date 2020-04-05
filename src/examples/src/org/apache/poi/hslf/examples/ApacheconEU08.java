@@ -48,6 +48,7 @@ import org.apache.poi.sl.usermodel.VerticalAlignment;
  *
  * @author Yegor Kozlov
  */
+@SuppressWarnings("java:S1192")
 public final class ApacheconEU08 {
 
     public static void main(String[] args) throws IOException {

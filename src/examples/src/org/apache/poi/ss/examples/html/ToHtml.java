@@ -53,6 +53,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * This example shows how to display a spreadsheet in HTML using the classes for
  * spreadsheet display.
  */
+@SuppressWarnings("java:S1192")
 public class ToHtml {
     private final Workbook wb;
     private final Appendable output;

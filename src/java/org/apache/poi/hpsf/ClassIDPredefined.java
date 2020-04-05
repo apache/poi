@@ -20,6 +20,7 @@ package org.apache.poi.hpsf;
 import java.util.HashMap;
 import java.util.Map;
 
+@SuppressWarnings("java:S1192")
 public enum ClassIDPredefined {
     /** OLE 1.0 package manager */
     OLE_V1_PACKAGE       ("{0003000C-0000-0000-C000-000000000046}", ".bin", null),

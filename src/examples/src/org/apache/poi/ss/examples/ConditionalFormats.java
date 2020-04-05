@@ -57,6 +57,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *   http://www.contextures.com/xlcondformat03.html
  * </p>
  */
+@SuppressWarnings("java:S1192")
 public class ConditionalFormats {
 
     /**

@@ -80,8 +80,9 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *  }
  * </pre>
  */
+@SuppressWarnings("java:S1192")
 public class ExcelComparator {
-    
+
     private static final String CELL_DATA_DOES_NOT_MATCH = "Cell Data does not Match ::";
     private static final String CELL_FONT_ATTRIBUTES_DOES_NOT_MATCH = "Cell Font Attributes does not Match ::";
 
@@ -91,7 +92,7 @@ public class ExcelComparator {
         Row row;
         Cell cell;
     }
-    
+
     List<String> listOfDifferences = new ArrayList<>();
 
     public static void main(String[] args) throws Exception {
@@ -108,7 +109,7 @@ public class ExcelComparator {
             }
         }
     }
-    
+
     /**
      * Utility to compare Excel File Contents cell by cell for all sheets.
      *
@@ -231,16 +232,16 @@ public class ExcelComparator {
             if (loc2.workbook.getNumberOfSheets() <= i) {
                 return;
             }
-            
+
             loc1.sheet = loc1.workbook.getSheetAt(i);
             loc2.sheet = loc2.workbook.getSheetAt(i);
 
             Iterator<Row> ri1 = loc1.sheet.rowIterator();
             Iterator<Row> ri2 = loc2.sheet.rowIterator();
-            
+
             int num1 = (ri1.hasNext()) ? ri1.next().getPhysicalNumberOfCells() : 0;
             int num2 = (ri2.hasNext()) ? ri2.next().getPhysicalNumberOfCells() : 0;
-            
+
             if (num1 != num2) {
                 String str = String.format(Locale.ROOT, "%s\nworkbook1 -> %s [%d] != workbook2 -> %s [%d]",
                     "Number Of Columns does not Match ::",
@@ -263,7 +264,7 @@ public class ExcelComparator {
 
             loc1.sheet = loc1.workbook.getSheetAt(i);
             loc2.sheet = loc2.workbook.getSheetAt(i);
-            
+
             int num1 = loc1.sheet.getPhysicalNumberOfRows();
             int num2 = loc2.sheet.getPhysicalNumberOfRows();
 
@@ -292,7 +293,7 @@ public class ExcelComparator {
             );
 
             listOfDifferences.add(str);
-            
+
         }
     }
 
@@ -313,7 +314,7 @@ public class ExcelComparator {
         for (int i = 0; i < loc1.workbook.getNumberOfSheets(); i++) {
             String name1 = loc1.workbook.getSheetName(i);
             String name2 = (loc2.workbook.getNumberOfSheets() > i) ? loc2.workbook.getSheetName(i) : "";
-            
+
             if (!name1.equals(name2)) {
                 String str = String.format(Locale.ROOT, "%s\nworkbook1 -> %s [%d] != workbook2 -> %s [%d]",
                     "Name of the sheets do not match ::", name1, i+1, name2, i+1
@@ -461,7 +462,7 @@ public class ExcelComparator {
         Color col = loc.cell.getCellStyle().getFillForegroundColorColor();
         return (col instanceof XSSFColor) ? ((XSSFColor)col).getARGBHex() : "NO COLOR";
     }
-    
+
     /**
      * Checks if cell file back ground matches.
      */

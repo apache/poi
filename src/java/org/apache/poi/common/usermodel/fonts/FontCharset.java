@@ -24,11 +24,12 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
 /**
- * Charset represents the basic set of characters associated with a font (that it can display), and 
+ * Charset represents the basic set of characters associated with a font (that it can display), and
  * corresponds to the ANSI codepage (8-bit or DBCS) of that character set used by a given language.
- * 
+ *
  * @since POI 3.17-beta2
  */
+@SuppressWarnings("java:S1192")
 public enum FontCharset {
     /** Specifies the English character set. */
     ANSI(0x00000000, "Cp1252"),
@@ -80,17 +81,17 @@ public enum FontCharset {
     OEM(0x000000FF, "Cp1252");
 
     private static FontCharset[] _table = new FontCharset[256];
-    
+
     private int nativeId;
     private Charset charset;
 
-    
+
     static {
         for (FontCharset c : values()) {
             _table[c.getNativeId()] = c;
         }
     }
-    
+
     FontCharset(int flag, String javaCharsetName) {
         this.nativeId = flag;
         if (javaCharsetName.length() > 0) {
@@ -113,12 +114,12 @@ public enum FontCharset {
     public Charset getCharset() {
         return charset;
     }
-    
+
     public int getNativeId() {
         return nativeId;
     }
 
     public static FontCharset valueOf(int value){
-        return (value < 0 || value >= _table.length) ? null :_table[value];
+        return (value < 0 || value >= _table.length) ? null : _table[value];
     }
 }

@@ -45,6 +45,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *
  * @author Yegor Kozlov
  */
+@SuppressWarnings("java:S1192")
 public class BusinessPlan {
 
     private static final String[] titles = {

@@ -26,7 +26,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 /**
  * This holds the common functionality for all read-only
  *  POI Document classes, i.e. ones which don't support writing.
- *  
+ *
  *  @since POI 3.15 beta 3
  */
 public abstract class POIReadOnlyDocument extends POIDocument {
@@ -39,29 +39,33 @@ public abstract class POIReadOnlyDocument extends POIDocument {
 
     /**
      * Note - writing is not yet supported for this file format, sorry.
-     * 
+     *
      * @throws IllegalStateException If you call the method, as writing is not supported
      */
     @Override
     public void write() {
-        throw new IllegalStateException("Writing is not yet implemented for this Document Format");
+        notImplemented();
     }
     /**
      * Note - writing is not yet supported for this file format, sorry.
-     * 
+     *
      * @throws IllegalStateException If you call the method, as writing is not supported
      */
     @Override
     public void write(File file) {
-        throw new IllegalStateException("Writing is not yet implemented for this Document Format");
+        notImplemented();
     }
     /**
      * Note - writing is not yet supported for this file format, sorry.
-     * 
+     *
      * @throws IllegalStateException If you call the method, as writing is not supported
      */
     @Override
     public void write(OutputStream out) {
+        notImplemented();
+    }
+
+    private static void notImplemented() {
         throw new IllegalStateException("Writing is not yet implemented for this Document Format");
     }
 }
