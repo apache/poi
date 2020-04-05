@@ -33,7 +33,7 @@ import org.apache.poi.util.Internal;
 
 /**
  * Default implementation of {@link Field}
- * 
+ *
  * @author Sergey Vladimirov (vlsergey {at} gmail {dot} com)
  */
 @Internal
@@ -48,7 +48,7 @@ public class FieldsImpl implements Fields
     {
         checkIndexForBinarySearch( list.size(), startIndex, endIndex );
 
-        int low = startIndex, mid = -1, high = endIndex - 1, result = 0;
+        int low = startIndex, mid = -1, high = endIndex - 1;
         while ( low <= high )
         {
             mid = ( low + high ) >>> 1;
@@ -79,7 +79,7 @@ public class FieldsImpl implements Fields
             }
             return -insertPoint - 1;
         }
-        return -mid - ( result >= 0 ? 1 : 2 );
+        return -mid - 1;
     }
 
     private static void checkIndexForBinarySearch( int length, int start,
@@ -127,7 +127,7 @@ public class FieldsImpl implements Fields
         if ( map == null || map.isEmpty() )
             return null;
 
-        return map.get( Integer.valueOf( offset ) );
+        return map.get(offset);
     }
 
     private Map<Integer, FieldImpl> parseFieldStructure(
@@ -145,14 +145,15 @@ public class FieldsImpl implements Fields
                 fields.size());
         for ( FieldImpl field : fields )
         {
-            result.put( Integer.valueOf( field.getFieldStartOffset() ), field );
+            result.put(field.getFieldStartOffset(), field );
         }
         return result;
     }
 
-    private void parseFieldStructureImpl( List<PlexOfField> plexOfFields,
-            int startOffsetInclusive, int endOffsetExclusive,
-            List<FieldImpl> result )
+    @SuppressWarnings("UnnecessaryContinue")
+    private void parseFieldStructureImpl(List<PlexOfField> plexOfFields,
+                                         int startOffsetInclusive, int endOffsetExclusive,
+                                         List<FieldImpl> result )
     {
         int next = startOffsetInclusive;
         while ( next < endOffsetExclusive )

@@ -22,7 +22,6 @@ import org.apache.poi.ss.usermodel.Color;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FontFormatting;
 import org.apache.poi.ss.usermodel.FontUnderline;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontSize;
@@ -84,8 +83,7 @@ public class XSSFFontFormatting implements FontFormatting {
      */
     @Override
     public boolean isStruckout() {
-        for (CTBooleanProperty bProp : _font.getStrikeArray()) return bProp.getVal();
-        return false;
+        return _font.sizeOfStrikeArray() > 0 && _font.getStrikeArray(0).getVal();
     }
 
     /**

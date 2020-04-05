@@ -154,9 +154,9 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
     /**
      * Creates a byte array representation of this data structure. Suitable for
      * writing to a Word document.
-     * 
+     *
      * @param dataStream required if PAPX is too big to fit in FKP
-     * 
+     *
      * @return A byte array representing this data structure.
      * @throws IOException
      *             if an I/O error occurs.
@@ -325,9 +325,10 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
 
         }
 
-        // LittleEndian.putInt(buf, fcOffset, papx.getEndBytes() + fcMin);
-        LittleEndian.putInt( buf, fcOffset,
-                translator.getByteIndex( papx.getEnd() ) );
+        if (papx != null) {
+            // LittleEndian.putInt(buf, fcOffset, papx.getEndBytes() + fcMin);
+            LittleEndian.putInt(buf, fcOffset, translator.getByteIndex(papx.getEnd()));
+        }
         return buf;
     }
 

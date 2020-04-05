@@ -894,7 +894,7 @@ public final class HemfPlusDraw {
             return LittleEndianConsts.BYTE_SIZE;
         }
         // ok we've read a EmfPlusInteger15
-        value[0] = ((value[0] << 8) | leis.readByte()) & 0x7FFF;
+        value[0] = ((value[0] << 8) | (leis.readByte() & 0xFF)) & 0x7FFF;
         return LittleEndianConsts.SHORT_SIZE;
     }
 

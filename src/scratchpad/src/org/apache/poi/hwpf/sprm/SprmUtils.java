@@ -90,6 +90,7 @@ public final class SprmUtils
                 LittleEndian.putShort(sprm, 2, (short)param);
                 break;
             case 6:
+                assert(varParam != null);
                 sprm = new byte[3 + varParam.length];
                 sprm[2] = (byte)varParam.length;
                 System.arraycopy(varParam, 0, sprm, 3, varParam.length);

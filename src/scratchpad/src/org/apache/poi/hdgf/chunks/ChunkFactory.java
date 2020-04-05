@@ -82,19 +82,19 @@ public final class ChunkFactory {
 	        }
 
 	        inp = new BufferedReader(new InputStreamReader(cpd, LocaleUtil.CHARSET_1252));
-		    
+
 		    while( (line = inp.readLine()) != null ) {
     			if (line.isEmpty() || "# \t".contains(line.substring(0,1))) {
     			    continue;
     			}
-    
+
     			// Start xxx
     			if(!line.matches("^start [0-9]+$")) {
     				throw new IllegalStateException("Expecting start xxx, found " + line);
     			}
     			int chunkType = Integer.parseInt(line.substring(6));
     			ArrayList<CommandDefinition> defsL = new ArrayList<>();
-    
+
     			// Data entries
     			while( (line = inp.readLine()) != null ) {
     			    if (line.startsWith("end")) {
@@ -104,15 +104,15 @@ public final class ChunkFactory {
     				int defType = Integer.parseInt(st.nextToken());
     				int offset = Integer.parseInt(st.nextToken());
     				String name = st.nextToken("\uffff").substring(1);
-    
+
     				CommandDefinition def = new CommandDefinition(defType,offset,name);
     				defsL.add(def);
     			}
-    
+
     			CommandDefinition[] defs = defsL.toArray(new CommandDefinition[0]);
-    
+
     			// Add to the map
-    			chunkCommandDefinitions.put(Integer.valueOf(chunkType), defs);
+    			chunkCommandDefinitions.put(chunkType, defs);
     		}
 		} finally {
     		if (inp != null) {
@@ -193,11 +193,11 @@ public final class ChunkFactory {
 		Chunk chunk = new Chunk(header, trailer, separator, contents);
 
 		// Feed in the stuff from  chunks_parse_cmds.tbl
-		CommandDefinition[] defs = chunkCommandDefinitions.get(Integer.valueOf(header.getType()));
+		CommandDefinition[] defs = chunkCommandDefinitions.get(header.getType());
 		if (defs == null) {
 		    defs = new CommandDefinition[0];
 		}
-		chunk.commandDefinitions = defs;
+		chunk.setCommandDefinitions(defs);
 
 		// Now get the chunk to process its commands
 		chunk.processCommands();

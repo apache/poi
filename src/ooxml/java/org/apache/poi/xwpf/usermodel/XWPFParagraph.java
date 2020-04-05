@@ -1480,7 +1480,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
 
     /**
      * Appends a new field run to this paragraph
-     * 
+     *
      * @return a new field run
      */
     public XWPFFieldRun createFieldRun() {
@@ -1537,10 +1537,13 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
             return new XWPFHyperlinkRun(ctHyperLink, ctHyperLink.addNewR(), this);
         });
 
-        String rId = getPart().getPackagePart().addExternalRelationship(
-                uri, XWPFRelation.HYPERLINK.getRelation()
-        ).getId();
-        newRun.getCTHyperlink().setId(rId);
+        if (newRun != null) {
+            String rId = getPart().getPackagePart().addExternalRelationship(
+                    uri, XWPFRelation.HYPERLINK.getRelation()
+            ).getId();
+            newRun.getCTHyperlink().setId(rId);
+        }
+
         return newRun;
     }
 

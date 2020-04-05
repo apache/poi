@@ -24,7 +24,6 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.function.Supplier;
 
-import org.apache.poi.hslf.util.MutableByteArrayOutputStream;
 import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.Removal;
@@ -101,7 +100,7 @@ public abstract class RecordContainer extends Record
 	}
 
 	/**
-	 * Moves {@code number} child records from {@code oldLoc} to {@code newLoc}. 
+	 * Moves {@code number} child records from {@code oldLoc} to {@code newLoc}.
 	 * @param oldLoc the current location of the records to move
 	 * @param newLoc the new location for the records
 	 * @param number the number of records to move
@@ -161,9 +160,9 @@ public abstract class RecordContainer extends Record
 
 	/**
 	 * Add a new child record onto a record's list of children.
-	 * 
+	 *
 	 * @param newChild the child record to be added
-	 * @return the position of the added child within the list, i.e. the last index 
+	 * @return the position of the added child within the list, i.e. the last index
 	 */
 	public int appendChildRecord(Record newChild) {
 		return appendChild(newChild);
@@ -207,7 +206,7 @@ public abstract class RecordContainer extends Record
 
 	/**
 	 * Moves the given Child Record to before the supplied record
-     * 
+     *
      * @deprecated method is not used within POI and will be removed
      */
     @Removal(version="3.19")
@@ -218,7 +217,7 @@ public abstract class RecordContainer extends Record
 
 	/**
 	 * Moves the given Child Records to before the supplied record
-     * 
+     *
      * @deprecated method is not used within POI and will be removed
      */
     @Removal(version="3.19")
@@ -244,11 +243,11 @@ public abstract class RecordContainer extends Record
 
 	/**
 	 * Moves the given Child Records to after the supplied record
-	 * 
+	 *
      * @param firstChild the first child to be moved
      * @param number the number of records to move
      * @param after the record after that the children are moved
-	 * 
+	 *
 	 * @deprecated method is not used within POI and will be removed
 	 */
 	@Removal(version="3.19")
@@ -296,63 +295,31 @@ public abstract class RecordContainer extends Record
 	 * @param out the stream to write to
 	 */
 	public void writeOut(byte headerA, byte headerB, long type, Record[] children, OutputStream out) throws IOException {
-		// If we have a mutable output stream, take advantage of that
-		if(out instanceof MutableByteArrayOutputStream) {
-			MutableByteArrayOutputStream mout =
-				(MutableByteArrayOutputStream)out;
+		// Create a ByteArrayOutputStream to hold everything in
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 
-			// Grab current size
-			int oldSize = mout.getBytesWritten();
+		// Write out our header, less the size
+		baos.write(new byte[] {headerA,headerB});
+		byte[] typeB = new byte[2];
+		LittleEndian.putShort(typeB,0,(short)type);
+		baos.write(typeB);
+		baos.write(new byte[] {0,0,0,0});
 
-			// Write out our header, less the size
-			mout.write(new byte[] {headerA,headerB});
-			byte[] typeB = new byte[2];
-			LittleEndian.putShort(typeB, 0, (short)type);
-			mout.write(typeB);
-			mout.write(new byte[4]);
-
-			// Write out the children
-			for (Record aChildren : children) {
-				aChildren.writeOut(mout);
-			}
-
-			// Update our header with the size
-			// Don't forget to knock 8 more off, since we don't include the
-			//  header in the size
-			int length = mout.getBytesWritten() - oldSize - 8;
-			byte[] size = new byte[4];
-			LittleEndian.putInt(size,0,length);
-			mout.overwrite(size, oldSize+4);
-		} else {
-			// Going to have to do it a slower way, because we have
-			// to update the length come the end
-
-			// Create a ByteArrayOutputStream to hold everything in
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-			// Write out our header, less the size
-			baos.write(new byte[] {headerA,headerB});
-			byte[] typeB = new byte[2];
-			LittleEndian.putShort(typeB,0,(short)type);
-			baos.write(typeB);
-			baos.write(new byte[] {0,0,0,0});
-
-			// Write out our children
-			for (Record aChildren : children) {
-				aChildren.writeOut(baos);
-			}
-
-			// Grab the bytes back
-			byte[] toWrite = baos.toByteArray();
-
-			// Update our header with the size
-			// Don't forget to knock 8 more off, since we don't include the
-			//  header in the size
-			LittleEndian.putInt(toWrite,4,(toWrite.length-8));
-
-			// Write out the bytes
-			out.write(toWrite);
+		// Write out our children
+		for (Record aChildren : children) {
+			aChildren.writeOut(baos);
 		}
+
+		// Grab the bytes back
+		byte[] toWrite = baos.toByteArray();
+
+		// Update our header with the size
+		// Don't forget to knock 8 more off, since we don't include the
+		//  header in the size
+		LittleEndian.putInt(toWrite,4,(toWrite.length-8));
+
+		// Write out the bytes
+		out.write(toWrite);
 	}
 
     /**

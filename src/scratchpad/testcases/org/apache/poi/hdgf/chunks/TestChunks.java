@@ -22,76 +22,31 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+
+import org.apache.poi.hdgf.chunks.ChunkFactory.CommandDefinition;
+import org.apache.poi.poifs.storage.RawDataUtil;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 public final class TestChunks {
-public static final byte[] data_a = new byte[] { 70, 0, 0, 0,
-	-1, -1, -1, -1, 2, 0, 0, 0, 68, 0, 0, 0, 0, 0, 0, 68, 0, 0, 0, 0, 0,
-	0, 0, 2, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-	-1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 0, 0, 0, -1, -1, -1, -1, 0, 0, 0,
-	0, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 104, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0,
-	0, 36, 0, 0, 0, 1, 0, 84, 24, 0, 0, 0, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0,
-	0, 0, 2, 0, 0, 0, 0, 0, 0, 0, -110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	-124, 0, 0, 0, 2, 0, 85, 73, 0, 0, 0, 0, 0, 0, -56, 63, 73, 0, 0, 0,
-	0, 0, 0, -64, 63, 63, 0, 0, 0, 0, 0, 0, -64, 63, 63, 0, 0, 0, 0, 0, 0,
-	-64, -65, 73, 0, 0, 0, 0, 0, 0, -16, 63, 73, 0, 0, 0, 0, 0, 0, -16, 63,
-	4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 80,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -16, 63, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	1, -1, 3, 0, 0, 32, 0, 0, 0, 0, 0, -73, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0,
-	79, 0, 0, 0, 2, 0, 85, 32, 32, 64, 0, 0, 0, 0, 0, 0, 0, 0, 64, 0, 0, 0,
-	0, 0, 0, 0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 0,
-	8, 8, 65, 0, 0, 0, 0, 0, 0, 0, 0, 65, 0, 0, 0, 0, 0, 0, 0, 0, 64, 0, 0,
-	0, 0, 0, 0, 0, 0, 64, 0, 0, 0, 0, 0, 0, 0, 0, 1, -13, 15, 0, 0, 0, 0,
-	-56, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 72, 0, 0, 0, 2, 0, 85, 63, 0, 0,
-	0, 0, 0, 0, -48, 63, 63, 0, 0, 0, 0, 0, 0, -48, 63, 63, 0, 0, 0, 0, 0,
-	0, -48, 63, 63, 0, 0, 0, 0, 0, 0, -48, 63, 0, 0, 0, 0, 0, 0, -16, 63,
-	0, 0, 0, 0, 0, 0, -16, 63, 1, 0, 1, 0, 0, 0, 0, 0, 7, 0, 0, 0, 0, 0, 0,
-	0, 1, -1, 15, 7, 0, 0, 0, 0, 101, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 28,
-	0, 0, 0, 1, 0, 84, 24, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	-125, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 2, 0, 85, 5, 0, 0,
-	0, 72, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-};
-public static final byte[] data_b = new byte[] { 70, 0, 0, 0,
-	-1, -1, -1, -1, 3, 0, 0, 0, 68, 0, 0, 0, 0, 0, 0, 68, 0, 0, 0, 0, 0,
-	0, 0, 2, 0, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
-	-1, -1, -1, -1, -1, -1, -1, -1, -1, -1, 0, 	0, 0, 0, -1, -1, -1, -1,
-	0, 0, 0, 0, -1, -1, -1, -1, 0, 0, 0, 0, 0, 0, 	0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 104, 0, 0, 0, 0, 0, 0,
-	0, 2, 0, 0, 0, 32, 0, 0, 0, 1, 0, 84, 24, 0, 0, 0, 8, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 1, 0, 0, 0, 0, 0, 0, 0, -110, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -124,
-	0, 0, 0, 2, 0, 85, 63, 0, 0, 0, 0, 0, 0, 33, 64, 63, 0, 0, 0, 0, 0, 0,
-	38, 64, 63, 0, 0, 0, 0, 0, 0, -64, 63, 63, 0, 0, 0, 0, 0, 0, -64, -65,
-	73, 0, 0, 0, 0, 0, 0, -16, 63, 73, 0, 0, 0, 0, 0, 0, -16, 63, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 80, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, -16, 63, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, -1, 3,
-	0, 4, 32, 0, 0, 0, 0, 0, -56, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 72, 0, 0,
-	0, 2, 0, 85, 63, 0, 0, 0, 0, 0, 0, -48, 63, 63, 0, 0, 0, 0, 0, 0, -48,
-	63, 63, 0, 0, 0, 0, 0, 0, -48, 63, 63, 0, 0, 0, 0, 0, 0, -48, 63, 0, 0,
-	0, 0, 0, 0, -16, 63, 0, 0, 0, 0, 0, 0, -16, 63, 1, 0, 1, 0, 0, 1, 1, 0,
-	7, 0, 0, 0, 0, 0, 0, 0, 1, -1, 15, 7, 0, 0, 0, 0, 101, 0, 0, 0, 1, 0, 0,
-	0, 1, 0, 0, 0, 28, 0, 0, 0, 1, 0, 84, 24, 0, 0, 0, 4, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, -125, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 10, 0, 0, 0, 2, 0,
-	85, 5, 0, 0, 0, 78, 0, 0, 0, 0, 0, 0, 0, 0, 0, -55, 0, 0, 0, 2, 0, 0, 0,
-	0, 0, 0, 0, -122, 0, 0, 0, 1, 0, 80, 1, 0, 0, 0, 60, 0, 0, 0, 60, 0, 0,
-	0, 5, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-	0, 0, 0
-};
-    
+	private static byte[] data_a, data_b;
+
+	@BeforeClass
+	public static void setup() throws IOException {
+		data_a = RawDataUtil.decompress(
+			"H4sIAAAAAAAAAHNjYGD4DwRMQNqFAQygFAMTWAIbYIBqQqZRARMSOwNKMwOxChAzMoRIACkeNC3MUAwDjEjGTEISb" +
+			"wGLh3pCeCfsoYwD9vbojP1QqQ/2cAYLplNBIACV+8EeuzKE2/4DXaoAZm6HOhUE/CFOU1BwgCnEw+DgcIQxHXGrYv" +
+			"zMD6JOMCACwwNiC9SNF+zxMFC988GeEepUdrg/+MHMVKgnQFiGAR5F6KEFU4IMmpHYXBCXsUIdCQUApUvwomMCAAA=");
+		data_b = RawDataUtil.decompress(
+			"H4sIAAAAAAAAAHNjYGD4DwTMQNqFAQygFAMTWAIbYIBqQqZRATMSOwNuHgODAhAzMoRIACkONC1MUAwDjFB6EpJYC" +
+			"1hNqD2Ep+gAZajBGAfsYYz9nhDGB3s4A9OVYBCAysWpDu4uYFixKICZJ5Cc6YHitAv2eBioFn2wZwQZwsjIwA63gR" +
+			"/MTIUaD8IyDPCAY0F3EJIrYKAZic0FcRkrkPKDC55kQIR2G9iAAJAZNlDMii8EaAoA66WHVpECAAA=");
+	}
+
     @Test
-	public void testChunkHeaderA() throws Exception {
-		ChunkHeader h =
-			ChunkHeader.createChunkHeader(11, data_a, 0);
+	public void testChunkHeaderA() {
+		ChunkHeader h = ChunkHeader.createChunkHeader(11, data_a, 0);
 
 		assertTrue(h instanceof ChunkHeaderV11);
 		ChunkHeaderV11 header = (ChunkHeaderV11)h;
@@ -106,11 +61,10 @@ public static final byte[] data_b = new byte[] { 70, 0, 0, 0,
 		assertTrue(header.hasTrailer());
 		assertTrue(header.hasSeparator());
 	}
-	
+
     @Test
-    public void testChunkHeaderB() throws Exception {
-		ChunkHeader h =
-			ChunkHeader.createChunkHeader(11, data_b, 0);
+    public void testChunkHeaderB() {
+		ChunkHeader h = ChunkHeader.createChunkHeader(11, data_b, 0);
 
 		assertTrue(h instanceof ChunkHeaderV11);
 		ChunkHeaderV11 header = (ChunkHeaderV11)h;
@@ -147,16 +101,16 @@ public static final byte[] data_b = new byte[] { 70, 0, 0, 0,
 
 		// Should have two virtual chunk commands, a
 		//  10 (page sheet) and an 18
-		assertEquals(2, chunk.commandDefinitions.length);
+		assertEquals(2, chunk.getCommandDefinitions().length);
 		assertEquals(0, chunk.getCommands().length);
 
-		assertEquals(10, chunk.commandDefinitions[0].getType());
-		assertEquals(0, chunk.commandDefinitions[0].getOffset());
-		assertEquals("PageSheet", chunk.commandDefinitions[0].getName());
+		assertEquals(10, chunk.getCommandDefinitions()[0].getType());
+		assertEquals(0, chunk.getCommandDefinitions()[0].getOffset());
+		assertEquals("PageSheet", chunk.getCommandDefinitions()[0].getName());
 
-		assertEquals(18, chunk.commandDefinitions[1].getType());
-		assertEquals(0, chunk.commandDefinitions[1].getOffset());
-		assertEquals("0", chunk.commandDefinitions[1].getName());
+		assertEquals(18, chunk.getCommandDefinitions()[1].getType());
+		assertEquals(0, chunk.getCommandDefinitions()[1].getOffset());
+		assertEquals("0", chunk.getCommandDefinitions()[1].getName());
 	}
 
     @Test
@@ -183,16 +137,17 @@ public static final byte[] data_b = new byte[] { 70, 0, 0, 0,
 
 		// Should have two virtual chunk commands, a
 		//  10 (Unknown) and an 18
-		assertEquals(2, chunk.commandDefinitions.length);
+		final CommandDefinition[] cdef = chunk.getCommandDefinitions();
+		assertEquals(2, cdef.length);
 		assertEquals(0, chunk.getCommands().length);
 
-		assertEquals(10, chunk.commandDefinitions[0].getType());
-		assertEquals(0, chunk.commandDefinitions[0].getOffset());
-		assertEquals("PropList", chunk.commandDefinitions[0].getName());
+		assertEquals(10, cdef[0].getType());
+		assertEquals(0, cdef[0].getOffset());
+		assertEquals("PropList", cdef[0].getName());
 
-		assertEquals(18, chunk.commandDefinitions[1].getType());
-		assertEquals(0, chunk.commandDefinitions[1].getOffset());
-		assertEquals("0", chunk.commandDefinitions[1].getName());
+		assertEquals(18, cdef[1].getType());
+		assertEquals(0, cdef[1].getOffset());
+		assertEquals("0", cdef[1].getName());
 	}
 
     @Test
@@ -230,6 +185,5 @@ public static final byte[] data_b = new byte[] { 70, 0, 0, 0,
 		assertNotNull(chunk.getHeader());
 		assertNull(chunk.getTrailer());
 		assertNotNull(chunk.getSeparator());
-		offset += chunk.getOnDiskSize();
 	}
 }

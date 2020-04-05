@@ -39,7 +39,7 @@ public final class Chunk {
     /** May be null */
     private ChunkSeparator separator;
     /** The possible different commands we can hold */
-    protected CommandDefinition[] commandDefinitions;
+    private CommandDefinition[] commandDefinitions;
     /** The command+value pairs we hold */
     private Command[] commands;
     /* The blocks (if any) we hold */
@@ -89,8 +89,13 @@ public final class Chunk {
      *
      * @return the command definitions
      */
+    @SuppressWarnings("unused")
     public CommandDefinition[] getCommandDefinitions() {
         return commandDefinitions;
+    }
+
+    void setCommandDefinitions(CommandDefinition[] commandDefinitions) {
+        this.commandDefinitions = commandDefinitions;
     }
 
     public Command[] getCommands() {
@@ -128,7 +133,7 @@ public final class Chunk {
      *  our chunk type has, and figure out the
      *  values for them.
      */
-    protected void processCommands() {
+    void processCommands() {
         if(commandDefinitions == null) {
             throw new IllegalStateException("You must supply the command definitions before calling processCommands!");
         }
@@ -162,8 +167,8 @@ public final class Chunk {
             switch(type) {
             case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
             case 11: case 21:
-            case 12: case 16: case 17: case 18: case 28: case 29:
-                // Offset is from start of chunk
+            case 12: case 16: case 17: case 28: case 29:
+                // Offset is from start of chunk (case 18 has been taken care of above)
                 break;
             default:
                 // Offset is from start of header!
@@ -183,16 +188,15 @@ public final class Chunk {
             try {
                 // Process
                 switch(type) {
-                // Types 0->7 = a flat at bit 0->7
+                // Types 0->7 = a flag at bit 0->7
                 case 0: case 1: case 2: case 3: case 4: case 5: case 6: case 7:
-                    int val = contents[offset] & (1<<type);
-                    command.value = Boolean.valueOf(val > 0);
+                    command.value = ((contents[offset] >>> type) & 1) == 1;
                     break;
                 case 8:
-                    command.value = Byte.valueOf(contents[offset]);
+                    command.value = contents[offset];
                     break;
                 case 9:
-                    command.value = Double.valueOf(LittleEndian.getDouble(contents, offset));
+                    command.value = LittleEndian.getDouble(contents, offset);
                     break;
                 case 12:
                     // A Little Endian String
@@ -221,14 +225,10 @@ public final class Chunk {
                     command.value = new String(contents, startsAt, strLen, header.getChunkCharset().name());
                     break;
                 case 25:
-                    command.value = Short.valueOf(
-                        LittleEndian.getShort(contents, offset)
-                    );
+                    command.value = LittleEndian.getShort(contents, offset);
                     break;
                 case 26:
-                    command.value = Integer.valueOf(
-                            LittleEndian.getInt(contents, offset)
-                    );
+                    command.value = LittleEndian.getInt(contents, offset);
                     break;
 
                 // Types 11 and 21 hold the offset to the blocks
@@ -297,12 +297,12 @@ public final class Chunk {
      * A special kind of command that holds the offset to
      *  a block
      */
-    private static class BlockOffsetCommand extends Command {
+    private static final class BlockOffsetCommand extends Command {
         private BlockOffsetCommand(CommandDefinition definition) {
             super(definition, null);
         }
         private void setOffset(int offset) {
-            value = Integer.valueOf(offset);
+            value = offset;
         }
     }
 }

@@ -16,14 +16,16 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import java.util.Objects;
+
 import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.util.Internal;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.FontCharset;
 import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.FontScheme;
 import org.apache.poi.ss.usermodel.FontUnderline;
 import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
@@ -38,8 +40,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTVerticalAlignFontPr
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STFontScheme;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignRun;
-
-import java.util.Objects;
 
 /**
  * Represents a font used in a workbook.
@@ -649,7 +649,6 @@ public class XSSFFont implements Font {
                         && Objects.equals(this.getBold(), cf.getBold())
                         && Objects.equals(this.getStrikeout(), cf.getStrikeout())
                         && Objects.equals(this.getCharSet(), cf.getCharSet())
-                        && Objects.equals(this.getItalic(), cf.getItalic())
                         && Objects.equals(this.getColor(), cf.getColor())
                         && Objects.equals(this.getFamily(), cf.getFamily())
                         && Objects.equals(this.getFontHeight(), cf.getFontHeight())
