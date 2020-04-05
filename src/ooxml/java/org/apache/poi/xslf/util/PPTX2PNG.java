@@ -53,7 +53,7 @@ public final class PPTX2PNG {
 
     private static void usage(String error){
         String msg =
-            "Usage: PPTX2PNG [options] <ppt or pptx file or 'stdin'>\n" +
+            "Usage: PPTX2PNG [options] <.ppt/.pptx/.emf/.wmf file or 'stdin'>\n" +
             (error == null ? "" : ("Error: "+error+"\n")) +
             "Options:\n" +
             "    -scale <float>    scale factor\n" +
