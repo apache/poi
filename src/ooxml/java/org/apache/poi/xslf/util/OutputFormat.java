@@ -50,6 +50,11 @@ interface OutputFormat extends Closeable {
     class SVGFormat implements OutputFormat {
         static final String svgNS = "http://www.w3.org/2000/svg";
         private SVGGraphics2D svgGenerator;
+        private final boolean textAsShapes;
+
+        SVGFormat(boolean textAsShapes) {
+            this.textAsShapes = textAsShapes;
+        }
 
         @Override
         public Graphics2D getGraphics2D(double width, double height) {
@@ -58,7 +63,7 @@ interface OutputFormat extends Closeable {
 
             // Create an instance of org.w3c.dom.Document.
             Document document = domImpl.createDocument(svgNS, "svg", null);
-            svgGenerator = new SVGPOIGraphics2D(document);
+            svgGenerator = new SVGPOIGraphics2D(document, textAsShapes);
             svgGenerator.setSVGCanvasSize(new Dimension((int)width, (int)height));
             return svgGenerator;
         }

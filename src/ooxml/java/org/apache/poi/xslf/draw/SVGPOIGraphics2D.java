@@ -37,8 +37,8 @@ public class SVGPOIGraphics2D extends SVGGraphics2D {
 
     private final RenderingHints hints;
 
-    public SVGPOIGraphics2D(Document document) {
-        super(getCtx(document), false);
+    public SVGPOIGraphics2D(Document document, boolean textAsShapes) {
+        super(getCtx(document), textAsShapes);
         hints = getGeneratorContext().getGraphicContextDefaults().getRenderingHints();
     }
 

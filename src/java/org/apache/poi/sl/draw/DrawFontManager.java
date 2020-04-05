@@ -48,20 +48,25 @@ public interface DrawFontManager {
      *
      * @param graphics the graphics context to request additional rendering hints
      * @param fontInfo the font info object corresponding to the text run font
-     * 
+     *
      * @return the font to be used as a fallback for the original typeface
      */
     FontInfo getFallbackFont(Graphics2D graphics, FontInfo fontInfo);
 
     /**
-     * Map text charset depending on font family.<p>
-     * 
-     * Currently this only maps for wingdings font (into unicode private use area)
+     * Map text charset depending on font family.
+     * <p>
+     * Currently this only maps for wingdings and symbol font (into unicode private use area)
+     * <p>
+     * Depending if the requested font is installed in the system, tbe mapped string varies:<br>
+     * If the font is registered into the graphics environment the characters are mapped to the
+     * private use area. If the font is missing (and hence a AWT logical font is used), the
+     * characters are mapped to the corresponding unicode characters
      *
      * @param graphics the graphics context to request additional rendering hints
      * @param fontInfo the font info object corresponding to the text run font
      * @param text the raw text
-     * 
+     *
      * @return String with mapped codepoints
      *
      * @see <a href="http://stackoverflow.com/questions/8692095">Drawing exotic fonts in a java applet</a>
@@ -77,7 +82,7 @@ public interface DrawFontManager {
      * @param size the font size in points
      * @param bold {@code true} if the font is bold
      * @param italic {@code true} if the font is italic
-     * 
+     *
      * @return the AWT font object
      */
     Font createAWTFont(Graphics2D graphics, FontInfo fontInfo, double size, boolean bold, boolean italic);

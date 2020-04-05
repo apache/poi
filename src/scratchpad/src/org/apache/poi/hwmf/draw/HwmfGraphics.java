@@ -21,6 +21,7 @@ import java.awt.AlphaComposite;
 import java.awt.BasicStroke;
 import java.awt.Color;
 import java.awt.Composite;
+import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.GraphicsConfiguration;
 import java.awt.Insets;
@@ -29,6 +30,7 @@ import java.awt.Rectangle;
 import java.awt.Shape;
 import java.awt.TexturePaint;
 import java.awt.font.FontRenderContext;
+import java.awt.font.GlyphVector;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
@@ -39,16 +41,18 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.nio.charset.Charset;
 import java.text.AttributedString;
+import java.util.ArrayList;
 import java.util.BitSet;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.codec.Charsets;
-import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfFont;
@@ -59,12 +63,10 @@ import org.apache.poi.hwmf.record.HwmfObjectTableEntry;
 import org.apache.poi.hwmf.record.HwmfPenStyle;
 import org.apache.poi.hwmf.record.HwmfPenStyle.HwmfLineDash;
 import org.apache.poi.hwmf.record.HwmfRegionMode;
-import org.apache.poi.hwmf.record.HwmfText;
 import org.apache.poi.hwmf.record.HwmfText.WmfExtTextOutOptions;
 import org.apache.poi.sl.draw.BitmapImageRenderer;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawFontManager;
-import org.apache.poi.sl.draw.DrawFontManagerDefault;
 import org.apache.poi.sl.draw.DrawPictureShape;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.util.Internal;
@@ -106,6 +108,16 @@ public class HwmfGraphics {
         200f, TextAttribute.WEIGHT_LIGHT,
         1f, TextAttribute.WEIGHT_EXTRA_LIGHT
     };
+
+    private static class DxLayout {
+        double dx;
+        // Spacing at default tracking value of 0
+        double pos0;
+        // Spacing at second tracking value
+        double pos1;
+        int beginIndex;
+        int endIndex;
+    }
 
 
     private final List<HwmfDrawProperties> propStack = new LinkedList<>();
@@ -189,6 +201,7 @@ public class HwmfGraphics {
         draw(shape);
     }
 
+    @SuppressWarnings("MagicConstant")
     protected BasicStroke getStroke() {
         HwmfDrawProperties prop = getProperties();
         HwmfPenStyle ps = prop.getPenStyle();
@@ -285,7 +298,7 @@ public class HwmfGraphics {
      * Moreover, each object table index uniquely refers to an object.
      * Indexes in the WMF Object Table always start at 0.
      *
-     * @param entry
+     * @param entry the object table entry
      */
     public void addObjectTableEntry(HwmfObjectTableEntry entry) {
         int objIdx = objectIndexes.nextClearBit(0);
@@ -433,155 +446,44 @@ public class HwmfGraphics {
         final HwmfDrawProperties prop = getProperties();
 
         final AffineTransform at = graphicsCtx.getTransform();
-
         try {
             at.createInverse();
         } catch (NoninvertibleTransformException e) {
             return;
         }
 
-        HwmfFont font = prop.getFont();
+        final HwmfFont font = prop.getFont();
         if (font == null || text == null || text.length == 0) {
             return;
         }
 
-        double fontH = getFontHeight(font);
-        // TODO: another approx. ...
-        double fontW = fontH/1.8;
-
-        Charset charset;
-        if (isUnicode) {
-            charset = Charsets.UTF_16LE;
-        } else {
-            charset = font.getCharset().getCharset();
-            if (charset == null) {
-                charset = DEFAULT_CHARSET;
-            }
-        }
-
-        int trimLen;
-        for (trimLen=0; trimLen<text.length; trimLen+=2) {
-            if (trimLen == text.length-1) {
-                if (text[trimLen] != 0) {
-                    trimLen++;
-                }
-                break;
-            } else if ((text[trimLen] == -1 && text[trimLen+1] == -1) ||
-                ((text[trimLen] & 0xE0) == 0 && text[trimLen+1] == 0)) {
-                break;
-            }
-        }
-
-        String textString = new String(text, 0, trimLen, charset);
-        textString = textString.substring(0, Math.min(textString.length(), length));
-
+        String textString = trimText(font, isUnicode, text, length);
         if (textString.isEmpty()) {
             return;
         }
 
-        DrawFontManager fontHandler = DrawFactory.getInstance(graphicsCtx).getFontManager(graphicsCtx);
-        FontInfo fontInfo = fontHandler.getMappedFont(graphicsCtx, font);
-        if (fontInfo.getCharset() == FontCharset.SYMBOL) {
-            textString = DrawFontManagerDefault.mapSymbolChars(textString);
-        }
+        final DrawFontManager fontHandler = DrawFactory.getInstance(graphicsCtx).getFontManager(graphicsCtx);
+        final FontInfo fontInfo = fontHandler.getMappedFont(graphicsCtx, font);
+        textString = fontHandler.mapFontCharset(graphicsCtx, fontInfo, textString);
 
-        AttributedString as = new AttributedString(textString);
-        addAttributes(as, font, fontInfo.getTypeface());
-
-        // disabled for the time being, as the results aren't promising
-        /*
-        if (dx != null && !dx.isEmpty()) {
-            //for multi-byte encodings (e.g. Shift_JIS), the byte length
-            //might not equal the string length().
-            //The x information is stored in dx[], an array parallel to the
-            //byte array text[].  dx[] stores the x info in the
-            //first byte of a multibyte character, but dx[] stores 0
-            //for the other bytes in that character.
-            //We need to map this information to the String offsets
-            //dx[0] = 13 text[0] = -125
-            //dx[1] = 0  text[1] = 118
-            //dx[2] = 14 text[2] = -125
-            //dx[3] = 0  text[3] = -115
-            // needs to be remapped as:
-            //dxNormed[0] = 13 textString.get(0) = U+30D7
-            //dxNormed[1] = 14 textString.get(1) = U+30ED
-
-            final int cps = textString.codePointCount(0, textString.length());
-            final int unicodeSteps = Math.max(dx.size()/cps, 1);
-            int dxPosition = 0, lastDxPosition = 0;
-            int beginIndex = 0;
-            while (beginIndex < textString.length() && dxPosition < dx.size()) {
-                int endIndex = textString.offsetByCodePoints(beginIndex, 1);
-                if (beginIndex > 0) {
-                    // Tracking works as a prefix/advance space on characters whereas
-                    // dx[...] is the complete width of the current char
-                    // therefore we need to add the additional/suffix width to the next char
-
-                    as.addAttribute(TextAttribute.TRACKING, (float)((dx.get(lastDxPosition) - fontW) / fontH), beginIndex, endIndex);
-                }
-                lastDxPosition = dxPosition;
-                dxPosition += (isUnicode) ? unicodeSteps : (endIndex-beginIndex);
-                beginIndex = endIndex;
-            }
-        }
-        */
-
-        double angle = Math.toRadians(-font.getEscapement()/10.);
-
-        final HwmfText.HwmfTextAlignment align = prop.getTextAlignLatin();
-        final HwmfText.HwmfTextVerticalAlignment valign = prop.getTextVAlignLatin();
+        final AttributedString as = new AttributedString(textString);
+        addAttributes(as::addAttribute, font, fontInfo.getTypeface());
         final FontRenderContext frc = graphicsCtx.getFontRenderContext();
-        final TextLayout layout = new TextLayout(as.getIterator(), frc);
 
-        final Rectangle2D pixelBounds = layout.getBounds();
+        calculateDx(textString, dx, font, fontInfo, frc, as);
 
-        AffineTransform tx = new AffineTransform();
-        switch (align) {
-            default:
-            case LEFT:
-                break;
-            case CENTER:
-                tx.translate(-pixelBounds.getWidth() / 2., 0);
-                break;
-            case RIGHT:
-                tx.translate(-layout.getAdvance(), 0);
-                break;
-        }
+        final double angle = Math.toRadians(-font.getEscapement()/10.);
 
-        // TODO: check min/max orientation
-        switch (valign) {
-            case TOP:
-                tx.translate(0, layout.getAscent());
-                break;
-            default:
-            case BASELINE:
-                break;
-            case BOTTOM:
-                tx.translate(0, -(pixelBounds.getHeight()-layout.getDescent()));
-                break;
-        }
-        tx.rotate(angle);
-        Point2D src = new Point2D.Double();
-        Point2D dst = new Point2D.Double();
-        tx.transform(src, dst);
-
+        final Point2D dst = getRotatedOffset(angle, frc, as);
         final Shape clipShape = graphicsCtx.getClip();
-        try {
-            if (clip != null && !clip.getBounds2D().isEmpty()) {
-                graphicsCtx.translate(-clip.getCenterX(), -clip.getCenterY());
-                graphicsCtx.rotate(angle);
-                graphicsCtx.translate(clip.getCenterX(), clip.getCenterY());
-                if (prop.getBkMode() == HwmfBkMode.OPAQUE && opts.isOpaque()) {
-                    graphicsCtx.setPaint(prop.getBackgroundColor().getColor());
-                    graphicsCtx.fill(clip);
-                }
-                if (opts.isClipped()) {
-                    graphicsCtx.setClip(clip);
-                }
-                graphicsCtx.setTransform(at);
-            }
 
-            graphicsCtx.translate(reference.getX(), reference.getY());
+        try {
+            updateClipping(graphicsCtx, clip, angle, opts);
+
+            // TODO: Check: certain images don't use the reference of the extTextOut, but rely on a moveto issued beforehand
+            Point2D moveTo = (reference.distance(0,0) == 0) ? prop.getLocation() : reference;
+            graphicsCtx.translate(moveTo.getX(), moveTo.getY());
+
             graphicsCtx.rotate(angle);
             if (scale != null) {
                 graphicsCtx.scale(scale.getWidth() < 0 ? -1 : 1, scale.getHeight() < 0 ? -1 : 1);
@@ -595,17 +497,74 @@ public class HwmfGraphics {
         }
     }
 
-    private void addAttributes(AttributedString as, HwmfFont font, String typeface) {
-        as.addAttribute(TextAttribute.FAMILY, typeface);
-        as.addAttribute(TextAttribute.SIZE, getFontHeight(font));
+    /**
+     * The dx array indicate the distance between origins of adjacent character cells.
+     * For example, dx[i] logical units separate the origins of character cell i and character cell i + 1.
+     * So dx{i] is the complete width of the current char + space to the next character
+     *
+     * In AWT we have the {@link TextAttribute#TRACKING} attribute, which works very similar.
+     * As we don't know (yet) the calculation based on the font size/height, we interpolate
+     * between the default tracking and a tracking value of 1
+     */
+    private void calculateDx(String textString, List<Integer> dx, HwmfFont font, FontInfo fontInfo, FontRenderContext frc, AttributedString as) {
+        if (dx == null || dx.isEmpty()) {
+            return;
+        }
+        final List<DxLayout> dxList = new ArrayList<>();
+
+        Map<TextAttribute,Object> fontAtt = new HashMap<>();
+        // Font tracking default (= 0)
+        addAttributes(fontAtt::put, font, fontInfo.getTypeface());
+        final GlyphVector gv0 = new Font(fontAtt).createGlyphVector(frc, textString);
+        // Font tracking = 1
+        fontAtt.put(TextAttribute.TRACKING, 1);
+        final GlyphVector gv1 = new Font(fontAtt).createGlyphVector(frc, textString);
+
+        int beginIndex = 0;
+        for (int offset = 0; offset < dx.size(); offset++) {
+            if (beginIndex >= textString.length()) {
+                break;
+            }
+            DxLayout dxLayout = new DxLayout();
+            dxLayout.dx = dx.get(offset);
+            dxLayout.pos0 = gv0.getGlyphPosition(offset).getX();
+            dxLayout.pos1 = gv1.getGlyphPosition(offset).getX();
+            dxLayout.beginIndex = beginIndex;
+            dxLayout.endIndex = textString.offsetByCodePoints(beginIndex, 1);
+            dxList.add(dxLayout);
+
+            beginIndex = dxLayout.endIndex;
+        }
+
+        // Calculate the linear (y ~= Tracking setting / x ~= character spacing / target value)
+        // y = m * x + n
+        // y = ((y2-y1)/(x2-x1))x + ((y1x2-y2x1)/(x2-x1))
+
+        DxLayout dx0 = null;
+        for (DxLayout dx1 : dxList) {
+            if (dx0 != null) {
+                // Default Tracking = 0 (y1)
+                double y1 = 0, x1 = dx1.pos0-dx0.pos0;
+                // Second Tracking = 1 (y2)
+                double y2 = 1, x2 = dx1.pos1-dx0.pos1;
+                double track = ((y2-y1)/(x2-x1))*dx0.dx + ((y1*x2-y2*x1)/(x2-x1));
+                as.addAttribute(TextAttribute.TRACKING, (float)track, dx0.beginIndex, dx0.endIndex);
+            }
+            dx0 = dx1;
+        }
+    }
+
+    private void addAttributes(BiConsumer<TextAttribute,Object> attributes, HwmfFont font, String typeface) {
+        attributes.accept(TextAttribute.FAMILY, typeface);
+        attributes.accept(TextAttribute.SIZE, getFontHeight(font));
         if (font.isStrikeOut()) {
-            as.addAttribute(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
+            attributes.accept(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
         }
         if (font.isUnderline()) {
-            as.addAttribute(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+            attributes.accept(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
         }
         if (font.isItalic()) {
-            as.addAttribute(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
+            attributes.accept(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
         }
         // convert font weight to awt font weight - usually a font weight of 400 is regarded as regular
         final int fw = font.getWeight();
@@ -616,7 +575,7 @@ public class HwmfGraphics {
                 break;
             }
         }
-        as.addAttribute(TextAttribute.WEIGHT, awtFW);
+        attributes.accept(TextAttribute.WEIGHT, awtFW);
     }
 
     private double getFontHeight(HwmfFont font) {
@@ -630,8 +589,100 @@ public class HwmfGraphics {
             // TODO: fix font height calculation
             // the height is given as font size + ascent + descent
             // as an approximation we reduce the height by a static factor
+            //
+            // see https://stackoverflow.com/a/26564924/2066598 on to get the font size from the cell height
             return fontHeight*3/4;
         }
+    }
+
+    private static Charset getCharset(HwmfFont font, boolean isUnicode) {
+        if (isUnicode) {
+            return Charsets.UTF_16LE;
+        }
+
+        Charset charset = font.getCharset().getCharset();
+        return (charset == null) ? DEFAULT_CHARSET : charset;
+    }
+
+    private static String trimText(HwmfFont font, boolean isUnicode, byte[] text, int length) {
+        final Charset charset = getCharset(font, isUnicode);
+
+        int trimLen;
+        for (trimLen=0; trimLen<text.length; trimLen+=2) {
+            if (trimLen == text.length-1) {
+                if (text[trimLen] != 0) {
+                    trimLen++;
+                }
+                break;
+            } else if ((text[trimLen] == -1 && text[trimLen+1] == -1) ||
+                    ((text[trimLen] & 0xE0) == 0 && text[trimLen+1] == 0)) {
+                break;
+            }
+        }
+
+        String textString = new String(text, 0, trimLen, charset);
+        return textString.substring(0, Math.min(textString.length(), length));
+    }
+
+    private void updateHorizontalAlign(AffineTransform tx, TextLayout layout) {
+        switch (prop.getTextAlignLatin()) {
+            default:
+            case LEFT:
+                break;
+            case CENTER:
+                tx.translate(-layout.getBounds().getWidth() / 2., 0);
+                break;
+            case RIGHT:
+                tx.translate(-layout.getAdvance(), 0);
+                break;
+        }
+    }
+
+    private void updateVerticalAlign(AffineTransform tx, TextLayout layout) {
+        // TODO: check min/max orientation
+        switch (prop.getTextVAlignLatin()) {
+            case TOP:
+                tx.translate(0, layout.getAscent());
+                break;
+            default:
+            case BASELINE:
+                break;
+            case BOTTOM:
+                tx.translate(0, -(layout.getBounds().getHeight()-layout.getDescent()));
+                break;
+        }
+    }
+
+    private void updateClipping(Graphics2D graphicsCtx, Rectangle2D clip, double angle, WmfExtTextOutOptions opts) {
+        if (clip == null || clip.getBounds2D().isEmpty()) {
+            return;
+        }
+
+        final AffineTransform at = graphicsCtx.getTransform();
+
+        graphicsCtx.translate(-clip.getCenterX(), -clip.getCenterY());
+        graphicsCtx.rotate(angle);
+        graphicsCtx.translate(clip.getCenterX(), clip.getCenterY());
+        if (prop.getBkMode() == HwmfBkMode.OPAQUE && opts.isOpaque()) {
+            graphicsCtx.setPaint(prop.getBackgroundColor().getColor());
+            graphicsCtx.fill(clip);
+        }
+        if (opts.isClipped()) {
+            graphicsCtx.setClip(clip);
+        }
+
+        graphicsCtx.setTransform(at);
+    }
+
+    private Point2D getRotatedOffset(double angle, FontRenderContext frc, AttributedString as) {
+        final TextLayout layout = new TextLayout(as.getIterator(), frc);
+        final AffineTransform tx = new AffineTransform();
+        updateHorizontalAlign(tx, layout);
+        updateVerticalAlign(tx, layout);
+
+        tx.rotate(angle);
+        Point2D src = new Point2D.Double();
+        return tx.transform(src, null);
     }
 
     public void drawImage(BufferedImage img, Rectangle2D srcBounds, Rectangle2D dstBounds) {

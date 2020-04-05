@@ -67,7 +67,11 @@ public final class PPTX2PNG {
             "    -dump <file>      dump the annotated records to a file\n" +
             "    -quiet            do not write to console (for normal processing)\n" +
             "    -ignoreParse      ignore parsing error and continue with the records read until the error\n" +
-            "    -extractEmbedded  extract embedded parts";
+            "    -extractEmbedded  extract embedded parts\n" +
+            "    -inputType <type> default input file type (OLE2,WMF,EMF), default is OLE2 = Powerpoint\n" +
+            "                      some files (usually wmf) don't have a header, i.e. an identifiable file magic\n" +
+            "    -textAsShapes     text elements are saved as shapes in SVG, necessary for variable spacing\n" +
+            "                      often found in math formulas";
 
         System.out.println(msg);
         // no System.exit here, as we also run in junit tests!
@@ -93,6 +97,8 @@ public final class PPTX2PNG {
     private String fixSide = "scale";
     private boolean ignoreParse = false;
     private boolean extractEmbedded = false;
+    private FileMagic defaultFileType = FileMagic.OLE2;
+    private boolean textAsShapes = false;
 
     private PPTX2PNG() {
     }
@@ -152,6 +158,17 @@ public final class PPTX2PNG {
                     } else {
                         fixSide = "long";
                     }
+                    break;
+                case "-inputType":
+                    if (opt != null) {
+                        defaultFileType = FileMagic.valueOf(opt);
+                        i++;
+                    } else {
+                        defaultFileType = FileMagic.OLE2;
+                    }
+                    break;
+                case "-textAsShapes":
+                    textAsShapes = true;
                     break;
                 case "-ignoreParse":
                     ignoreParse = true;
@@ -238,7 +255,7 @@ public final class PPTX2PNG {
 
                 extractEmbedded(proxy, slideNo);
 
-                try (OutputFormat outputFormat = ("svg".equals(format)) ? new SVGFormat() : new BitmapFormat(format)) {
+                try (OutputFormat outputFormat = ("svg".equals(format)) ? new SVGFormat(textAsShapes) : new BitmapFormat(format)) {
                     Graphics2D graphics = outputFormat.getGraphics2D(width, height);
 
                     // default rendering options
@@ -337,6 +354,9 @@ public final class PPTX2PNG {
         if ("stdin".equals(fileName)) {
             InputStream bis = FileMagic.prepareToCheckMagic(System.in);
             FileMagic fm = FileMagic.valueOf(bis);
+            if (fm == FileMagic.UNKNOWN) {
+                fm = defaultFileType;
+            }
             switch (fm) {
                 case EMF:
                     proxy = new EMFHandler();

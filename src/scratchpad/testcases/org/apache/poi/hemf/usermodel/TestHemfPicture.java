@@ -51,6 +51,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.Test;
 
+@SuppressWarnings("StatementWithEmptyBody")
 public class TestHemfPicture {
 
     private static final POIDataSamples ss_samples = POIDataSamples.getSpreadSheetInstance();
@@ -77,44 +78,49 @@ public class TestHemfPicture {
         PPTX2PNG.main(args);
     }
 */
+
 /*
     @Test
     @Ignore("Only for manual tests - need to add org.tukaani:xz:1.8 for this to work")
     public void paintMultiple() throws Exception {
-        final byte buf[] = new byte[50_000_000];
+        Pattern fileExt = Pattern.compile("(?i)^(.+/)*(.+)\\.(emf|wmf)$");
+        final byte[] buf = new byte[50_000_000];
         try (SevenZFile sevenZFile = new SevenZFile(new File("tmp/plus_emf.7z"))
             ) {
             SevenZArchiveEntry entry;
             while ((entry = sevenZFile.getNextEntry()) != null) {
-                final String etName = entry.getName();
-
-                if (entry.isDirectory() || !etName.endsWith(".emf")) continue;
+                if (entry.isDirectory() || entry.getSize() == 0) continue;
+                Matcher m = fileExt.matcher(entry.getName());
+                if (!m.matches()) continue;
 
                 int size = sevenZFile.read(buf);
 
                 ByteArrayInputStream bis = new ByteArrayInputStream(buf, 0, size);
                 System.setIn(bis);
 
-                String lastName = etName.replaceFirst(".+/", "");
-
                 String[] args = {
                     "-format", "png", // png,gif,jpg or null for test
                     "-outdir", new File("build/tmp/").getCanonicalPath(),
-                    "-outfile", lastName.replace(".emf", ".png"),
+                    "-outfile", m.replaceAll("$2.png"),
                     "-fixside", "long",
                     "-scale", "800",
                     "-ignoreParse",
+                    "-inputtype", m.replaceAll("$3").toUpperCase(),
                     // "-dump", new File("build/tmp/", lastName.replace(".emf",".json")).getCanonicalPath(),
-                    // "-quiet",
+                    "-quiet",
                     // "-extractEmbedded",
                     "stdin"
                 };
-                PPTX2PNG.main(args);
+                try {
+                    PPTX2PNG.main(args);
+                    System.out.println("Processing "+entry.getName()+" ok");
+                } catch (Exception e) {
+                    System.out.println("Processing "+entry.getName()+" failed");
+                }
             }
         }
     }
- */
-
+*/
     @Test
     public void testBasicWindows() throws Exception {
         try (InputStream is = ss_samples.openResourceAsStream("SimpleEMF_windows.emf")) {
@@ -272,7 +278,7 @@ public class TestHemfPicture {
     public void testInfiniteLoopOnFile() throws Exception {
         try (InputStream is = ss_samples.openResourceAsStream("61294.emf")) {
             HemfPicture pic = new HemfPicture(is);
-            for (HemfRecord record : pic) {
+            for (HemfRecord ignored : pic) {
 
             }
         }
@@ -286,7 +292,7 @@ public class TestHemfPicture {
             is.close();
 
             HemfPicture pic = new HemfPicture(new ByteArrayInputStream(bos.toByteArray()));
-            for (HemfRecord record : pic) {
+            for (HemfRecord ignored : pic) {
 
             }
         }

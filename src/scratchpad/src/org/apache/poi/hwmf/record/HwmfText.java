@@ -50,12 +50,12 @@ public class HwmfText {
     private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     /**
-     * The META_SETTEXTCHAREXTRA record defines inter-character spacing for text justification in the 
+     * The META_SETTEXTCHAREXTRA record defines inter-character spacing for text justification in the
      * playback device context. Spacing is added to the white space between each character, including
      * break characters, when a line of justified text is output.
      */
     public static class WmfSetTextCharExtra implements HwmfRecord {
-        
+
         /**
          * A 16-bit unsigned integer that defines the amount of extra space, in
          * logical units, to be added to each character. If the current mapping mode is not MM_TEXT,
@@ -63,12 +63,12 @@ public class HwmfText {
          * mapping mode, see META_SETMAPMODE
          */
         private int charExtra;
-        
+
         @Override
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setTextCharExtra;
         }
-        
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             charExtra = leis.readUShort();
@@ -85,19 +85,19 @@ public class HwmfText {
             return GenericRecordUtil.getGenericProperties("charExtra", () -> charExtra);
         }
     }
-    
+
     /**
      * The META_SETTEXTCOLOR record defines the text foreground color in the playback device context.
      */
     public static class WmfSetTextColor implements HwmfRecord {
-        
+
         protected final HwmfColorRef colorRef = new HwmfColorRef();
-        
+
         @Override
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setTextColor;
         }
-        
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             return colorRef.init(leis);
@@ -122,18 +122,18 @@ public class HwmfText {
             return GenericRecordUtil.getGenericProperties("colorRef", this::getColorRef);
         }
     }
-    
+
     /**
      * The META_SETTEXTJUSTIFICATION record defines the amount of space to add to break characters
      * in a string of justified text.
      */
     public static class WmfSetTextJustification implements HwmfRecord {
-        
+
         /**
          * A 16-bit unsigned integer that specifies the number of space characters in the line.
          */
         private int breakCount;
-        
+
         /**
          * A 16-bit unsigned integer that specifies the total extra space, in logical
          * units, to be added to the line of text. If the current mapping mode is not MM_TEXT, the value
@@ -141,12 +141,12 @@ public class HwmfText {
          * details about setting the mapping mode, see {@link WmfSetMapMode}.
          */
         private int breakExtra;
-        
+
         @Override
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setBkColor;
         }
-        
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             breakCount = leis.readUShort();
@@ -167,7 +167,7 @@ public class HwmfText {
             );
         }
     }
-    
+
     /**
      * The META_TEXTOUT record outputs a character string at the specified location by using the font,
      * background color, and text color that are defined in the playback device context.
@@ -193,7 +193,7 @@ public class HwmfText {
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.textOut;
         }
-        
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             stringLength = leis.readShort();
@@ -239,6 +239,7 @@ public class HwmfText {
         }
     }
 
+    @SuppressWarnings("unused")
     public static class WmfExtTextOutOptions implements GenericRecord {
         /**
          * Indicates that the background color that is defined in the playback device context
@@ -361,18 +362,18 @@ public class HwmfText {
          */
         protected final WmfExtTextOutOptions options;
         /**
-         * An optional 8-byte Rect Object (section 2.2.2.18) that defines the 
+         * An optional 8-byte Rect Object (section 2.2.2.18) that defines the
          * dimensions, in logical coordinates, of a rectangle that is used for clipping, opaquing, or both.
-         * 
+         *
          * The corners are given in the order left, top, right, bottom.
-         * Each value is a 16-bit signed integer that defines the coordinate, in logical coordinates, of 
+         * Each value is a 16-bit signed integer that defines the coordinate, in logical coordinates, of
          * the upper-left corner of the rectangle
          */
         protected final Rectangle2D bounds = new Rectangle2D.Double();
         /**
-         * A variable-length string that specifies the text to be drawn. The string does 
-         * not need to be null-terminated, because StringLength specifies the length of the string. If 
-         * the length is odd, an extra byte is placed after it so that the following member (optional Dx) is 
+         * A variable-length string that specifies the text to be drawn. The string does
+         * not need to be null-terminated, because StringLength specifies the length of the string. If
+         * the length is odd, an extra byte is placed after it so that the following member (optional Dx) is
          * aligned on a 16-bit boundary.
          */
         protected byte[] rawTextBytes;
@@ -396,7 +397,7 @@ public class HwmfText {
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.extTextOut;
         }
-        
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             // -6 bytes of record function and length header
@@ -413,16 +414,16 @@ public class HwmfText {
                 // the bounding rectangle is optional and only read when options are given
                 size += readRectS(leis, bounds);
             }
-            
+
             rawTextBytes = IOUtils.safelyAllocate(stringLength+(stringLength&1), MAX_RECORD_LENGTH);
             leis.readFully(rawTextBytes);
             size += rawTextBytes.length;
-            
+
             if (size >= remainingRecordSize) {
                 logger.log(POILogger.INFO, "META_EXTTEXTOUT doesn't contain character tracking info");
                 return size;
             }
-            
+
             int dxLen = Math.min(stringLength, (remainingRecordSize-size)/LittleEndianConsts.SHORT_SIZE);
             if (dxLen < stringLength) {
                 logger.log(POILogger.WARN, "META_EXTTEXTOUT tracking info doesn't cover all characters");
@@ -432,7 +433,7 @@ public class HwmfText {
                 dx.add((int)leis.readShort());
                 size += LittleEndianConsts.SHORT_SIZE;
             }
-            
+
             return size;
         }
 
@@ -480,23 +481,24 @@ public class HwmfText {
             return GenericRecordUtil.getGenericProperties(
                 "reference", this::getReference,
                 "bounds", this::getBounds,
-                "text", this::getGenericText
+                "text", this::getGenericText,
+                "dx", () -> dx
             );
         }
     }
-    
+
     public enum HwmfTextAlignment {
         LEFT,
         RIGHT,
         CENTER
     }
-    
+
     public enum HwmfTextVerticalAlignment {
         TOP,
         BOTTOM,
         BASELINE
     }
-    
+
     /**
      * The META_SETTEXTALIGN record defines text-alignment values in the playback device context.
      */
@@ -572,13 +574,13 @@ public class HwmfText {
          * The reference point MUST be on the left edge of the bounding rectangle.
          */
         private static final int VALIGN_BOTTOM = 1;
-        
+
         /**
          * Flag TA_BASELINE (0x0018) / VTA_BASELINE (0x0018):
          * The reference point MUST be on the baseline of the text.
          */
         private static final int VALIGN_BASELINE = 3;
-        
+
         /**
          * A 16-bit unsigned integer that defines text alignment.
          * This value MUST be a combination of one or more TextAlignmentMode Flags
@@ -586,12 +588,12 @@ public class HwmfText {
          * for text with a vertical baseline.
          */
         protected int textAlignmentMode;
-        
+
         @Override
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setTextAlign;
         }
-        
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             textAlignmentMode = leis.readUShort();
@@ -670,7 +672,7 @@ public class HwmfText {
             }
         }
     }
-    
+
     public static class WmfCreateFontIndirect implements HwmfRecord, HwmfObjectTableEntry {
         protected final HwmfFont font;
 
@@ -686,7 +688,7 @@ public class HwmfText {
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.createFontIndirect;
         }
-        
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             return font.init(leis, recordSize);
@@ -696,7 +698,7 @@ public class HwmfText {
         public void draw(HwmfGraphics ctx) {
             ctx.addObjectTableEntry(this);
         }
-        
+
         @Override
         public void applyObject(HwmfGraphics ctx) {
             ctx.getProperties().setFont(font);
