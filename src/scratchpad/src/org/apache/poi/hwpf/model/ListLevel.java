@@ -19,6 +19,7 @@ package org.apache.poi.hwpf.model;
 
 import java.util.Arrays;
 
+import org.apache.poi.hwpf.model.types.LVLFAbstractType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
@@ -54,7 +55,7 @@ public final class ListLevel
      * from the other paragraphs in the list. Any element in the rgtchar field
      * of this Xst can be a placeholder. Each placeholder is an unsigned 2-byte
      * integer that specifies the zero-based level that the placeholder is for.
-     * 
+     *
      * Each placeholder MUST have a value that is less than or equal to the
      * zero-based level of the list that this LVL represents. The indexes of the
      * placeholders are specified by lvlf.rgbxchNums. Placeholders that
@@ -162,7 +163,7 @@ public final class ListLevel
 
     public int getSizeInBytes()
     {
-        return LVLF.getSize() + _lvlf.getCbGrpprlChpx()
+        return LVLFAbstractType.getSize() + _lvlf.getCbGrpprlChpx()
                 + _lvlf.getCbGrpprlPapx() + _xst.getSize();
     }
 
@@ -182,35 +183,35 @@ public final class ListLevel
     /**
      * An unsigned integer that specifies the first (most-significant) zero-based level after which the number sequence of this level does not restart. The number sequence of this level does restart after any level that is more significant than the specified level. This MUST be less than or equal to the zero-based level of the list to which this LVLF corresponds.
      * <p>see [MS-DOC], v20140721, 2.9.150</p>
-     * 
+     *
      * @return the first ({@code 0} is the most significant) level after which
      * the numbering does not restart or {@code -1} if no restart is applicable
      */
-    public short getRestart() {    	
+    public short getRestart() {
     	return _lvlf.isFNoRestart() ? _lvlf.getIlvlRestartLim() : -1;
     }
-    
+
     /**
      * Determines if the number formatting shall be overridden by
      * {@code msonfcArabic}; unless it originally was {@code msonfcArabicLZ}
      * in which case it is preserved.
      * <p>see [MS-DOC], v20140721, 2.9.150 and [MS-OSHARED], v20140721, 2.2.1.3</p>
-     * 
+     *
      * @return {@code true} if the level numbering of this and all more
      * significant levels must be overridden; {@code false} otherwise
      */
     public boolean isLegalNumbering() {
     	return _lvlf.isFLegal();
     }
-    
+
     /**
      * Array which specifies the character offsets of the level numbers in a
      * level numbering string.
      * <p>see [MS-DOC], v20140721, 2.9.150</p>
-     * 
-     * @return {@code 0}-terminated array, unless it is full 
+     *
+     * @return {@code 0}-terminated array, unless it is full
      */
-    public byte[] getLevelNumberingPlaceholderOffsets() {    	
+    public byte[] getLevelNumberingPlaceholderOffsets() {
     	return _lvlf.getRgbxchNums();
     }
 
@@ -219,7 +220,7 @@ public final class ListLevel
         int offset = startOffset;
 
         _lvlf = new LVLF( data, offset );
-        offset += LVLF.getSize();
+        offset += LVLFAbstractType.getSize();
 
         //short -- no need to safely allocate
         _grpprlPapx = new byte[_lvlf.getCbGrpprlPapx()];
@@ -292,7 +293,7 @@ public final class ListLevel
         _lvlf.setCbGrpprlChpx( (short) _grpprlChpx.length );
         _lvlf.setCbGrpprlPapx( (short) _grpprlPapx.length );
         _lvlf.serialize( buf, offset );
-        offset += LVLF.getSize();
+        offset += LVLFAbstractType.getSize();
 
         System.arraycopy( _grpprlPapx, 0, buf, offset, _grpprlPapx.length );
         offset += _grpprlPapx.length;

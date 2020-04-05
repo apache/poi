@@ -44,7 +44,7 @@ public class TextDocumentFacade
 
         root.appendChild( head );
         root.appendChild( body );
-        
+
         title = document.createElement( "title" );
         titleText = document.createTextNode( "" );
         head.appendChild( title );
@@ -159,7 +159,7 @@ public class TextDocumentFacade
 
     public void setTitle( String titleText )
     {
-        if ( WordToHtmlUtils.isEmpty( titleText ) && this.title != null )
+        if ( AbstractWordUtils.isEmpty( titleText ) && this.title != null )
         {
             this.head.removeChild( this.title );
             this.title = null;

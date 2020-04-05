@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.hwpf.model.TabDescriptor;
+import org.apache.poi.hwpf.model.types.TBDAbstractType;
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.DateAndTime;
 import org.apache.poi.hwpf.usermodel.DropCapSpecifier;
@@ -155,7 +156,7 @@ public final class ParagraphSprmUncompressor
         newPAP.setFNoLnn (sprm.getOperand() != 0);
         break;
       case 0xd:
-        /**handle tabs . variable parameter. seperate processing needed*/
+        // handle tabs . variable parameter. seperate processing needed
         handleTabs(newPAP, sprm);
         break;
       case 0xe:
@@ -204,7 +205,7 @@ public final class ParagraphSprmUncompressor
         break;
       case 0x1b:
         byte param = (byte)sprm.getOperand();
-        /** @todo handle paragraph postioning*/
+        // TODO: handle paragraph postioning
         byte pcVert = (byte) ((param & 0x0c) >> 2);
         byte pcHorz = (byte) (param & 0x03);
         if (pcVert != 3)
@@ -430,12 +431,12 @@ public final class ParagraphSprmUncompressor
     Map<Integer, TabDescriptor> tabMap = new HashMap<>();
     for (int x = 0; x < tabPositions.length; x++)
     {
-      tabMap.put(Integer.valueOf(tabPositions[x]), tabDescriptors[x]);
+      tabMap.put(tabPositions[x], tabDescriptors[x]);
     }
 
     for (int x = 0; x < delSize; x++)
     {
-      tabMap.remove(Integer.valueOf(LittleEndian.getShort(grpprl, offset)));
+      tabMap.remove((int) LittleEndian.getShort(grpprl, offset));
       offset += LittleEndianConsts.SHORT_SIZE;
     }
 
@@ -443,8 +444,8 @@ public final class ParagraphSprmUncompressor
     int start = offset;
     for (int x = 0; x < addSize; x++)
     {
-      Integer key = Integer.valueOf(LittleEndian.getShort(grpprl, offset));
-      TabDescriptor val = new TabDescriptor( grpprl, start + ((TabDescriptor.getSize() * addSize) + x) );
+      Integer key = (int) LittleEndian.getShort(grpprl, offset);
+      TabDescriptor val = new TabDescriptor( grpprl, start + ((TBDAbstractType.getSize() * addSize) + x) );
       tabMap.put(key, val);
       offset += LittleEndianConsts.SHORT_SIZE;
     }
@@ -458,7 +459,7 @@ public final class ParagraphSprmUncompressor
     for (int x = 0; x < tabPositions.length; x++)
     {
       Integer key = list.get(x);
-      tabPositions[x] = key.intValue();
+      tabPositions[x] = key;
       if (tabMap.containsKey( key ))
           tabDescriptors[x] = tabMap.get(key);
       else

@@ -18,7 +18,9 @@
 package org.apache.poi.hwpf.model;
 
 import java.util.Arrays;
+import java.util.Objects;
 
+import org.apache.poi.hwpf.model.types.StdfBaseAbstractType;
 import org.apache.poi.hwpf.usermodel.CharacterProperties;
 import org.apache.poi.hwpf.usermodel.ParagraphProperties;
 import org.apache.poi.util.IOUtils;
@@ -72,13 +74,11 @@ public final class StyleDescription {
         } else if (baseLength == 0x000A) {
             readStdfPost2000 = false;
         } else {
-            logger.log(POILogger.WARN,
-                    "Style definition has non-standard size of ",
-                    Integer.valueOf(baseLength));
+            logger.log(POILogger.WARN, "Style definition has non-standard size of ", baseLength);
         }
 
         _stdfBase = new StdfBase(std, offset);
-        offset += StdfBase.getSize();
+        offset += StdfBaseAbstractType.getSize();
 
         if (readStdfPost2000) {
             _stdfPost2000 = new StdfPost2000(std, offset);
@@ -146,12 +146,7 @@ public final class StyleDescription {
     }
 
     public byte[] getPAPX() {
-        switch (_stdfBase.getStk()) {
-            case PARAGRAPH_STYLE:
-                return _upxs[0].getUPX();
-            default:
-                return null;
-        }
+        return _stdfBase.getStk() == PARAGRAPH_STYLE ? _upxs[0].getUPX() : null;
     }
 
     @Deprecated
@@ -201,18 +196,18 @@ public final class StyleDescription {
         char[] letters = _name.toCharArray();
         LittleEndian.putShort(buf, _baseLength, (short) letters.length);
         offset += LittleEndianConsts.SHORT_SIZE;
-        for (int x = 0; x < letters.length; x++) {
-            LittleEndian.putShort(buf, offset, (short) letters[x]);
+        for (char letter : letters) {
+            LittleEndian.putShort(buf, offset, (short) letter);
             offset += LittleEndianConsts.SHORT_SIZE;
         }
         // get past the null delimiter for the name.
         offset += LittleEndianConsts.SHORT_SIZE;
 
-        for (int x = 0; x < _upxs.length; x++) {
-            short upxSize = (short) _upxs[x].size();
+        for (UPX upx : _upxs) {
+            short upxSize = (short) upx.size();
             LittleEndian.putShort(buf, offset, upxSize);
             offset += LittleEndianConsts.SHORT_SIZE;
-            System.arraycopy(_upxs[x].getUPX(), 0, buf, offset, upxSize);
+            System.arraycopy(upx.getUPX(), 0, buf, offset, upxSize);
             offset += upxSize + (upxSize % 2);
         }
 
@@ -228,24 +223,16 @@ public final class StyleDescription {
     public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
+        if (!(obj instanceof StyleDescription))
             return false;
         StyleDescription other = (StyleDescription) obj;
-        if (_name == null) {
-            if (other._name != null)
-                return false;
-        } else if (!_name.equals(other._name))
+        if (!Objects.equals(_name, other._name)) {
             return false;
-        if (_stdfBase == null) {
-            if (other._stdfBase != null)
-                return false;
-        } else if (!_stdfBase.equals(other._stdfBase))
+        }
+        if (!Objects.equals(_stdfBase, other._stdfBase)) {
             return false;
-        if (!Arrays.equals(_upxs, other._upxs))
-            return false;
-        return true;
+        }
+        return Arrays.equals(_upxs, other._upxs);
     }
 
     @Override

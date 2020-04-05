@@ -23,6 +23,7 @@ import java.io.InputStream;
 
 import org.apache.poi.extractor.POIOLE2TextExtractor;
 import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFDocumentCore;
 import org.apache.poi.hwpf.converter.WordToTextConverter;
 import org.apache.poi.hwpf.usermodel.HeaderStories;
 import org.apache.poi.hwpf.usermodel.Paragraph;
@@ -32,10 +33,10 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Class to extract the text from a Word Document.
- * 
+ *
  * You should use either getParagraphText() or getText() unless you have a
  * strong reason otherwise.
- * 
+ *
  * @author Nick Burch
  */
 public final class WordExtractor extends POIOLE2TextExtractor {
@@ -43,17 +44,17 @@ public final class WordExtractor extends POIOLE2TextExtractor {
 
     /**
      * Create a new Word Extractor
-     * 
+     *
      * @param is
      *            InputStream containing the word file
      */
     public WordExtractor( InputStream is ) throws IOException {
-        this( HWPFDocument.verifyAndBuildPOIFS( is ) );
+        this(HWPFDocumentCore.verifyAndBuildPOIFS(is ) );
     }
 
     /**
      * Create a new Word Extractor
-     * 
+     *
      * @param fs
      *            POIFSFileSystem containing the word file
      */
@@ -67,7 +68,7 @@ public final class WordExtractor extends POIOLE2TextExtractor {
 
     /**
      * Create a new Word Extractor
-     * 
+     *
      * @param doc
      *            The HWPFDocument to extract from
      */

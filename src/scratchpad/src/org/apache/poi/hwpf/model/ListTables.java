@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 
+import org.apache.poi.hwpf.model.types.LSTFAbstractType;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -58,13 +59,13 @@ public final class ListTables
 
         int cLst = LittleEndian.getShort( tableStream, offset );
         offset += LittleEndianConsts.SHORT_SIZE;
-        int levelOffset = offset + ( cLst * LSTF.getSize() );
+        int levelOffset = offset + ( cLst * LSTFAbstractType.getSize() );
 
         for ( int x = 0; x < cLst; x++ )
         {
             ListData lst = new ListData( tableStream, offset );
-            _listMap.put( Integer.valueOf( lst.getLsid() ), lst );
-            offset += LSTF.getSize();
+            _listMap.put(lst.getLsid(), lst );
+            offset += LSTFAbstractType.getSize();
 
             int num = lst.numLevels();
             for ( int y = 0; y < num; y++ )
@@ -96,10 +97,9 @@ public final class ListTables
     for(ListData lst : _listMap.values()) {
       tableStream.write(lst.toByteArray());
       ListLevel[] lvls = lst.getLevels();
-      for (int y = 0; y < lvls.length; y++)
-      {
-        levelBuf.write(lvls[y].toByteArray());
-      }
+        for (ListLevel lvl : lvls) {
+            levelBuf.write(lvl.toByteArray());
+        }
     }
 
         /*
@@ -135,13 +135,11 @@ public final class ListTables
 
     /**
      * Get the ListLevel for a given lsid and level
-     * @param lsid
-     * @param level
      * @return ListLevel if found, or <code>null</code> if ListData can't be found or if level is > that available
      */
   public ListLevel getLevel(int lsid, int level)
   {
-    ListData lst = _listMap.get(Integer.valueOf(lsid));
+    ListData lst = _listMap.get(lsid);
     if (lst == null) {
         if (log.check(POILogger.WARN)) {
             log.log(POILogger.WARN, "ListData for " +
@@ -160,7 +158,7 @@ public final class ListTables
 
   public ListData getListData(int lsid)
   {
-    return _listMap.get(Integer.valueOf(lsid));
+    return _listMap.get(lsid);
   }
 
     @Override
@@ -180,25 +178,18 @@ public final class ListTables
         ListTables other = (ListTables) obj;
         if ( !_listMap.equals( other._listMap ) )
             return false;
-        if ( _plfLfo == null )
-        {
-            if ( other._plfLfo != null )
-                return false;
-        }
-        else if ( !_plfLfo.equals( other._plfLfo ) )
-            return false;
-        return true;
+        return Objects.equals(_plfLfo, other._plfLfo);
     }
 
     public int addList( ListData lst, LFO lfo, LFOData lfoData )
     {
         int lsid = lst.getLsid();
-        while ( _listMap.get( Integer.valueOf( lsid ) ) != null )
+        while (_listMap.containsKey(lsid))
         {
             lsid = lst.resetListID();
             lfo.setLsid( lsid );
         }
-        _listMap.put( Integer.valueOf( lsid ), lst );
+        _listMap.put(lsid, lst );
 
         if ( lfo == null && lfoData != null )
         {

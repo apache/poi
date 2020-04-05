@@ -89,7 +89,6 @@ public final class StyleSheet {
          */
 
         _stshif = new Stshif(tableStream, offset);
-        offset += Stshif.getSize();
 
         // shall we discard cbLSD and mpstilsd?
 
@@ -144,9 +143,9 @@ public final class StyleSheet {
         out.write(buf);
 
         byte[] sizeHolder = new byte[2];
-        for (int x = 0; x < _styleDescriptions.length; x++) {
-            if (_styleDescriptions[x] != null) {
-                byte[] std = _styleDescriptions[x].toByteArray();
+        for (StyleDescription styleDescription : _styleDescriptions) {
+            if (styleDescription != null) {
+                byte[] std = styleDescription.toByteArray();
 
                 // adjust the size so it is always on a word boundary
                 LittleEndian.putShort(sizeHolder, 0, (short) ((std.length) + (std.length % 2)));
@@ -179,7 +178,7 @@ public final class StyleSheet {
             StyleDescription tsd = this._styleDescriptions[i];
             StyleDescription osd = ss._styleDescriptions[i];
             if (tsd == null && osd == null) continue;
-            if (tsd == null || osd == null || !osd.equals(tsd)) return false;
+            if (osd == null || !osd.equals(tsd)) return false;
         }
 
         return true;

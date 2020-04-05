@@ -22,6 +22,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.poi.hwpf.model.types.BKFAbstractType;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -124,9 +125,9 @@ public class BookmarksTables
         int firstDescriptorsStart = fib.getFcPlcfbkf();
         int firstDescriptorsLength = fib.getLcbPlcfbkf();
         if ( firstDescriptorsStart != 0 && firstDescriptorsLength != 0 )
-            descriptorsFirst = new PlexOfCps( tableStream,
-                    firstDescriptorsStart, firstDescriptorsLength,
-                    BookmarkFirstDescriptor.getSize() );
+            descriptorsFirst = new PlexOfCps(tableStream,
+                 firstDescriptorsStart, firstDescriptorsLength,
+                 BKFAbstractType.getSize() );
 
         int limDescriptorsStart = fib.getFcPlcfbkl();
         int limDescriptorsLength = fib.getLcbPlcfbkl();

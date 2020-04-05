@@ -77,9 +77,8 @@ public class AbstractWordUtils
             {
                 TableCell tableCell = tableRow.getCell( c );
 
-                edges.add( Integer.valueOf( tableCell.getLeftEdge() ) );
-                edges.add( Integer.valueOf( tableCell.getLeftEdge()
-                        + tableCell.getWidth() ) );
+                edges.add(tableCell.getLeftEdge());
+                edges.add(tableCell.getLeftEdge() + tableCell.getWidth());
             }
         }
 
@@ -87,7 +86,7 @@ public class AbstractWordUtils
         int[] result = new int[sorted.length];
         for ( int i = 0; i < sorted.length; i++ )
         {
-            result[i] = sorted[i].intValue();
+            result[i] = sorted[i];
         }
 
         return result;
@@ -165,45 +164,37 @@ public class AbstractWordUtils
 
         switch ( borderCode.getBorderType() )
         {
-        case 1:
-        case 2:
-            return "solid";
-        case 3:
-            return "double";
-        case 5:
-            return "solid";
-        case 6:
-            return "dotted";
-        case 7:
-        case 8:
-            return "dashed";
-        case 9:
-            return "dotted";
-        case 10:
-        case 11:
-        case 12:
-        case 13:
-        case 14:
-        case 15:
-        case 16:
-        case 17:
-        case 18:
-        case 19:
-            return "double";
-        case 20:
-            return "solid";
-        case 21:
-            return "double";
-        case 22:
-            return "dashed";
-        case 23:
-            return "dashed";
-        case 24:
-            return "ridge";
-        case 25:
-            return "grooved";
-        default:
-            return "solid";
+            case 3:
+            case 10:
+            case 11:
+            case 12:
+            case 13:
+            case 14:
+            case 15:
+            case 16:
+            case 17:
+            case 18:
+            case 19:
+            case 21:
+                return "double";
+            case 6:
+            case 9:
+                return "dotted";
+            case 7:
+            case 8:
+            case 22:
+            case 23:
+                return "dashed";
+            case 24:
+                return "ridge";
+            case 25:
+                return "grooved";
+                case 5:
+            case 1:
+            case 2:
+            case 20:
+            default:
+                return "solid";
         }
     }
 
@@ -213,12 +204,7 @@ public class AbstractWordUtils
         int pt = lineWidth / 8;
         int pte = lineWidth - pt * 8;
 
-        StringBuilder stringBuilder = new StringBuilder();
-        stringBuilder.append( pt );
-        stringBuilder.append( "." );
-        stringBuilder.append( 1000 / 8 * pte );
-        stringBuilder.append( "pt" );
-        return stringBuilder.toString();
+        return pt + "." + 1000 / 8 * pte + "pt";
     }
 
     public static class NumberingState
@@ -294,48 +280,46 @@ public class AbstractWordUtils
 
     public static String getColor( int ico )
     {
-        switch ( ico )
-        {
-        case 1:
-            return "black";
-        case 2:
-            return "blue";
-        case 3:
-            return "cyan";
-        case 4:
-            return "green";
-        case 5:
-            return "magenta";
-        case 6:
-            return "red";
-        case 7:
-            return "yellow";
-        case 8:
-            return "white";
-        case 9:
-            return "darkblue";
-        case 10:
-            return "darkcyan";
-        case 11:
-            return "darkgreen";
-        case 12:
-            return "darkmagenta";
-        case 13:
-            return "darkred";
-        case 14:
-            return "darkyellow";
-        case 15:
-            return "darkgray";
-        case 16:
-            return "lightgray";
-        default:
-            return "black";
+        switch ( ico ) {
+            case 2:
+                return "blue";
+            case 3:
+                return "cyan";
+            case 4:
+                return "green";
+            case 5:
+                return "magenta";
+            case 6:
+                return "red";
+            case 7:
+                return "yellow";
+            case 8:
+                return "white";
+            case 9:
+                return "darkblue";
+            case 10:
+                return "darkcyan";
+            case 11:
+                return "darkgreen";
+            case 12:
+                return "darkmagenta";
+            case 13:
+                return "darkred";
+            case 14:
+                return "darkyellow";
+            case 15:
+                return "darkgray";
+            case 16:
+                return "lightgray";
+            case 1:
+            default:
+                return "black";
         }
     }
 
     public static String getOpacity( int argbValue )
     {
-        int opacity = (int) ( ( argbValue & 0xFF000000l ) >>> 24 );
+        int opacity = (int) ( ( argbValue & 0xFF000000L) >>> 24 );
         if ( opacity == 0 || opacity == 0xFF )
             return ".0";
 
@@ -403,24 +387,20 @@ public class AbstractWordUtils
         switch ( js )
         {
         case 0:
+        case 7:
             return "start";
         case 1:
+        case 5:
             return "center";
         case 2:
+        case 8:
             return "end";
         case 3:
         case 4:
-            return "justify";
-        case 5:
-            return "center";
-        case 6:
-            return "left";
-        case 7:
-            return "start";
-        case 8:
-            return "end";
         case 9:
             return "justify";
+        case 6:
+            return "left";
         }
         return "";
     }
@@ -438,8 +418,7 @@ public class AbstractWordUtils
         case 2057:
             return "en-uk";
         default:
-            logger.log( POILogger.WARN, "Uknown or unmapped language code: ",
-                    Integer.valueOf( languageCode ) );
+            logger.log( POILogger.WARN, "Uknown or unmapped language code: ", languageCode);
             return EMPTY;
         }
     }

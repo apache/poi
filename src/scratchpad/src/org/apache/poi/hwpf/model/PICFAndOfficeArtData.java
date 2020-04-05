@@ -22,6 +22,7 @@ import java.util.List;
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherRecord;
+import org.apache.poi.hwpf.model.types.PICFAbstractType;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
@@ -47,7 +48,7 @@ public class PICFAndOfficeArtData
         int offset = startOffset;
 
         _picf = new PICF( dataStream, offset );
-        offset += PICF.getSize();
+        offset += PICFAbstractType.getSize();
 
         if ( _picf.getMm() == 0x0066 )
         {

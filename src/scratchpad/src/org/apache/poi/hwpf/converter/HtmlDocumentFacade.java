@@ -88,8 +88,7 @@ public class HtmlDocumentFacade
     {
         String exising = element.getAttribute( "class" );
         String addition = getOrCreateCssClass( classNamePrefix, style );
-        String newClassValue = WordToHtmlUtils.isEmpty( exising ) ? addition
-                : ( exising + " " + addition );
+        String newClassValue = AbstractWordUtils.isEmpty( exising ) ? addition : ( exising + " " + addition );
         element.setAttribute( "class", newClassValue );
     }
 
@@ -272,7 +271,7 @@ public class HtmlDocumentFacade
 
     public void setTitle( String titleText )
     {
-        if ( WordToHtmlUtils.isEmpty( titleText ) && this.title != null )
+        if ( AbstractWordUtils.isEmpty( titleText ) && this.title != null )
         {
             this.head.removeChild( this.title );
             this.title = null;

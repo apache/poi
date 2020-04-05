@@ -18,6 +18,7 @@ package org.apache.poi.hwpf.model;
 
 import java.util.Objects;
 
+import org.apache.poi.hwpf.model.types.LFOLVLBaseAbstractType;
 import org.apache.poi.util.Internal;
 
 /**
@@ -36,7 +37,7 @@ public final class ListFormatOverrideLevel
     public ListFormatOverrideLevel( byte[] buf, int offset )
     {
         _base = new LFOLVLBase( buf, offset );
-        offset += LFOLVLBase.getSize();
+        offset += LFOLVLBaseAbstractType.getSize();
 
         if ( _base.isFFormatting() )
         {
@@ -78,7 +79,7 @@ public final class ListFormatOverrideLevel
 
     public int getSizeInBytes()
     {
-        return _lvl == null ? LFOLVLBase.getSize() : LFOLVLBase.getSize()
+        return _lvl == null ? LFOLVLBaseAbstractType.getSize() : LFOLVLBaseAbstractType.getSize()
                 + _lvl.getSizeInBytes();
     }
 
@@ -103,7 +104,7 @@ public final class ListFormatOverrideLevel
 
         byte[] buf = new byte[getSizeInBytes()];
         _base.serialize( buf, offset );
-        offset += LFOLVLBase.getSize();
+        offset += LFOLVLBaseAbstractType.getSize();
 
         if ( _lvl != null )
         {

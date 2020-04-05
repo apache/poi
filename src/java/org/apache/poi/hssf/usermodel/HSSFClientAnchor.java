@@ -46,10 +46,10 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
     /**
      * Creates a new client anchor and sets the top-left and bottom-right
      * coordinates of the anchor.
-     * 
-     * Note: Microsoft Excel seems to sometimes disallow 
-     * higher y1 than y2 or higher x1 than x2, you might need to 
-     * reverse them and draw shapes vertically or horizontally flipped! 
+     *
+     * Note: Microsoft Excel seems to sometimes disallow
+     * higher y1 than y2 or higher x1 than x2, you might need to
+     * reverse them and draw shapes vertically or horizontally flipped!
      *
      * @param dx1  the x coordinate within the first cell.
      * @param dy1  the y coordinate within the first cell.
@@ -175,7 +175,7 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
      */
     public void setRow1(int row1) {
         checkRange(row1, 0, MAX_ROW, "row1");
-        _escherClientAnchor.setRow1(Integer.valueOf(row1).shortValue());
+        _escherClientAnchor.setRow1((short)row1);
     }
 
     /**
@@ -190,16 +190,16 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
      */
     public void setRow2(int row2) {
         checkRange(row2, 0, MAX_ROW, "row2");
-        _escherClientAnchor.setRow2(Integer.valueOf(row2).shortValue());
+        _escherClientAnchor.setRow2((short)row2);
     }
 
     /**
-     * Sets the top-left and bottom-right coordinates of 
+     * Sets the top-left and bottom-right coordinates of
      * the anchor.
-     * 
-     * Note: Microsoft Excel seems to sometimes disallow 
-     * higher y1 than y2 or higher x1 than x2, you might need to 
-     * reverse them and draw shapes vertically or horizontally flipped! 
+     *
+     * Note: Microsoft Excel seems to sometimes disallow
+     * higher y1 than y2 or higher x1 than x2, you might need to
+     * reverse them and draw shapes vertically or horizontally flipped!
      *
      * @param x1   the x coordinate within the first cell.
      * @param y1   the y coordinate within the first cell.
@@ -311,7 +311,7 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
 
     @Override
     public void setDx1(int dx1) {
-        _escherClientAnchor.setDx1(Integer.valueOf(dx1).shortValue());
+        _escherClientAnchor.setDx1((short)dx1);
     }
 
     @Override
@@ -321,7 +321,7 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
 
     @Override
     public void setDy1(int dy1) {
-        _escherClientAnchor.setDy1(Integer.valueOf(dy1).shortValue());
+        _escherClientAnchor.setDy1((short)dy1);
     }
 
     @Override
@@ -331,7 +331,7 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
 
     @Override
     public void setDy2(int dy2) {
-        _escherClientAnchor.setDy2(Integer.valueOf(dy2).shortValue());
+        _escherClientAnchor.setDy2((short)dy2);
     }
 
     @Override
@@ -341,6 +341,6 @@ public final class HSSFClientAnchor extends HSSFAnchor implements ClientAnchor {
 
     @Override
     public void setDx2(int dx2) {
-        _escherClientAnchor.setDx2(Integer.valueOf(dx2).shortValue());
+        _escherClientAnchor.setDx2((short)dx2);
     }
 }

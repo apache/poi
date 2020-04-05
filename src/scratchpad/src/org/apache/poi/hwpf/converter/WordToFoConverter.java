@@ -16,6 +16,11 @@
 ==================================================================== */
 package org.apache.poi.hwpf.converter;
 
+import static org.apache.poi.hwpf.converter.AbstractWordUtils.TWIPS_PER_INCH;
+import static org.apache.poi.hwpf.converter.AbstractWordUtils.isNotEmpty;
+import static org.apache.poi.hwpf.converter.AbstractWordUtils.loadDoc;
+import static org.apache.poi.hwpf.converter.WordToFoUtils.*;
+
 import java.io.File;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -64,7 +69,7 @@ public class WordToFoConverter extends AbstractWordConverter
 
     /**
      * Java main() interface to interact with {@link WordToFoConverter}
-     * 
+     *
      * <p>
      * Usage: WordToFoConverter infile outfile
      * </p>
@@ -92,7 +97,7 @@ public class WordToFoConverter extends AbstractWordConverter
     static Document process( File docFile ) throws Exception
     {
         final DocumentBuilder docBuild = XMLHelper.newDocumentBuilder();
-        try (final HWPFDocumentCore hwpfDocument = WordToFoUtils.loadDoc( docFile )) {
+        try (final HWPFDocumentCore hwpfDocument = loadDoc( docFile )) {
             WordToFoConverter wordToFoConverter = new WordToFoConverter(docBuild.newDocument());
             wordToFoConverter.processDocument(hwpfDocument);
             return wordToFoConverter.getDocument();
@@ -112,7 +117,7 @@ public class WordToFoConverter extends AbstractWordConverter
     /**
      * Creates new instance of {@link WordToFoConverter}. Can be used for output
      * several {@link HWPFDocument}s into single FO document.
-     * 
+     *
      * @param document
      *            XML DOM Document used as XSL FO document. Shall support
      *            namespaces
@@ -136,18 +141,13 @@ public class WordToFoConverter extends AbstractWordConverter
         return inline;
     }
 
-    protected String createPageMaster( Section section, String type,
-            int sectionIndex )
-    {
-        float height = section.getPageHeight() / WordToFoUtils.TWIPS_PER_INCH;
-        float width = section.getPageWidth() / WordToFoUtils.TWIPS_PER_INCH;
-        float leftMargin = section.getMarginLeft()
-                / WordToFoUtils.TWIPS_PER_INCH;
-        float rightMargin = section.getMarginRight()
-                / WordToFoUtils.TWIPS_PER_INCH;
-        float topMargin = section.getMarginTop() / WordToFoUtils.TWIPS_PER_INCH;
-        float bottomMargin = section.getMarginBottom()
-                / WordToFoUtils.TWIPS_PER_INCH;
+    protected String createPageMaster( Section section, String type, int sectionIndex ) {
+        float height = section.getPageHeight() / TWIPS_PER_INCH;
+        float width = section.getPageWidth() / TWIPS_PER_INCH;
+        float leftMargin = section.getMarginLeft() / TWIPS_PER_INCH;
+        float rightMargin = section.getMarginRight() / TWIPS_PER_INCH;
+        float topMargin = section.getMarginTop() / TWIPS_PER_INCH;
+        float bottomMargin = section.getMarginBottom() / TWIPS_PER_INCH;
 
         // add these to the header
         String pageMasterName = type + "-page" + sectionIndex;
@@ -163,7 +163,7 @@ public class WordToFoConverter extends AbstractWordConverter
 
         /*
          * 6.4.14 fo:region-body
-         * 
+         *
          * The values of the padding and border-width traits must be "0".
          */
         // WordToFoUtils.setBorder(regionBody, sep.getBrcTop(), "top");
@@ -177,8 +177,7 @@ public class WordToFoConverter extends AbstractWordConverter
                     "" + ( section.getNumColumns() ) );
             if ( section.isColumnsEvenlySpaced() )
             {
-                float distance = section.getDistanceBetweenColumns()
-                        / WordToFoUtils.TWIPS_PER_INCH;
+                float distance = section.getDistanceBetweenColumns() / TWIPS_PER_INCH;
                 regionBody.setAttribute( "column-gap", distance + "in" );
             }
             else
@@ -208,15 +207,15 @@ public class WordToFoConverter extends AbstractWordConverter
 
         Triplet triplet = getCharacterRunTriplet( characterRun );
 
-        if ( WordToFoUtils.isNotEmpty( triplet.fontName ) )
-            WordToFoUtils.setFontFamily( inline, triplet.fontName );
-        WordToFoUtils.setBold( inline, triplet.bold );
-        WordToFoUtils.setItalic( inline, triplet.italic );
-        WordToFoUtils.setFontSize( inline, characterRun.getFontSize() / 2 );
-        WordToFoUtils.setCharactersProperties( characterRun, inline );
+        if ( isNotEmpty( triplet.fontName ) )
+            setFontFamily( inline, triplet.fontName );
+        setBold( inline, triplet.bold );
+        setItalic( inline, triplet.italic );
+        setFontSize( inline, characterRun.getFontSize() / 2 );
+        setCharactersProperties( characterRun, inline );
 
         if ( isOutputCharactersLanguage() )
-            WordToFoUtils.setLanguage( characterRun, inline );
+            setLanguage( characterRun, inline );
 
         block.appendChild( inline );
 
@@ -254,16 +253,16 @@ public class WordToFoConverter extends AbstractWordConverter
     protected void processDocumentInformation(
             SummaryInformation summaryInformation )
     {
-        if ( WordToHtmlUtils.isNotEmpty( summaryInformation.getTitle() ) )
+        if ( isNotEmpty( summaryInformation.getTitle() ) )
             foDocumentFacade.setTitle( summaryInformation.getTitle() );
 
-        if ( WordToHtmlUtils.isNotEmpty( summaryInformation.getAuthor() ) )
+        if ( isNotEmpty( summaryInformation.getAuthor() ) )
             foDocumentFacade.setCreator( summaryInformation.getAuthor() );
 
-        if ( WordToHtmlUtils.isNotEmpty( summaryInformation.getKeywords() ) )
+        if ( isNotEmpty( summaryInformation.getKeywords() ) )
             foDocumentFacade.setKeywords( summaryInformation.getKeywords() );
 
-        if ( WordToHtmlUtils.isNotEmpty( summaryInformation.getComments() ) )
+        if ( isNotEmpty( summaryInformation.getComments() ) )
             foDocumentFacade.setDescription( summaryInformation.getComments() );
     }
 
@@ -302,7 +301,7 @@ public class WordToFoConverter extends AbstractWordConverter
         processCharacters( wordDocument, Integer.MIN_VALUE, endnoteTextRange,
                 endnote );
 
-        WordToFoUtils.compactInlines( endnote );
+        compactInlines( endnote );
         this.endnotes.add( endnote );
     }
 
@@ -339,7 +338,7 @@ public class WordToFoConverter extends AbstractWordConverter
         processCharacters( wordDocument, Integer.MIN_VALUE, footnoteTextRange,
                 footnoteBlock );
 
-        WordToFoUtils.compactInlines( footnoteBlock );
+        compactInlines( footnoteBlock );
     }
 
     protected void processHyperlink( HWPFDocumentCore wordDocument,
@@ -360,7 +359,7 @@ public class WordToFoConverter extends AbstractWordConverter
     {
         final Element externalGraphic = foDocumentFacade
                 .createExternalGraphic( url );
-        WordToFoUtils.setPictureProperties( picture, externalGraphic );
+        setPictureProperties( picture, externalGraphic );
         currentBlock.appendChild( externalGraphic );
     }
 
@@ -426,7 +425,7 @@ public class WordToFoConverter extends AbstractWordConverter
         final Element block = foDocumentFacade.createBlock();
         parentFopElement.appendChild( block );
 
-        WordToFoUtils.setParagraphProperties( paragraph, block );
+        setParagraphProperties( paragraph, block );
 
         final int charRuns = paragraph.numCharacterRuns();
 
@@ -437,7 +436,7 @@ public class WordToFoConverter extends AbstractWordConverter
 
         boolean haveAnyText = false;
 
-        if ( WordToFoUtils.isNotEmpty( bulletText ) )
+        if ( isNotEmpty( bulletText ) )
         {
             Element inline = foDocumentFacade.createInline();
             block.appendChild( inline );
@@ -457,7 +456,7 @@ public class WordToFoConverter extends AbstractWordConverter
             block.appendChild( leader );
         }
 
-        WordToFoUtils.compactInlines( block );
+        compactInlines( block );
     }
 
     protected void processSection( HWPFDocumentCore wordDocument,
@@ -485,8 +484,7 @@ public class WordToFoConverter extends AbstractWordConverter
         Element tableHeader = foDocumentFacade.createTableHeader();
         Element tableBody = foDocumentFacade.createTableBody();
 
-        final int[] tableCellEdges = WordToHtmlUtils
-                .buildTableCellEdgesArray( table );
+        final int[] tableCellEdges = buildTableCellEdgesArray( table );
         final int tableRows = table.numRows();
 
         int maxColumns = Integer.MIN_VALUE;
@@ -500,7 +498,7 @@ public class WordToFoConverter extends AbstractWordConverter
             TableRow tableRow = table.getRow( r );
 
             Element tableRowElement = foDocumentFacade.createTableRow();
-            WordToFoUtils.setTableRowProperties( tableRow, tableRowElement );
+            setTableRowProperties( tableRow, tableRowElement );
 
             // index of current element in tableCellEdges[]
             int currentEdgeIndex = 0;
@@ -518,7 +516,7 @@ public class WordToFoConverter extends AbstractWordConverter
                 }
 
                 Element tableCellElement = foDocumentFacade.createTableCell();
-                WordToFoUtils.setTableCellProperties( tableRow, tableCell,
+                setTableCellProperties( tableRow, tableCell,
                         tableCellElement, r == 0, r == tableRows - 1, c == 0,
                         c == rowCells - 1 );
 

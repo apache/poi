@@ -24,6 +24,8 @@ import java.lang.reflect.Modifier;
 import java.util.HashSet;
 import java.util.Locale;
 
+import org.apache.poi.hwpf.model.types.FibBaseAbstractType;
+import org.apache.poi.hwpf.model.types.FibRgW97AbstractType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
@@ -69,20 +71,18 @@ public final class FileInformationBlock
         int offset = 0;
 
         _fibBase = new FibBase( mainDocument, offset );
-        offset = FibBase.getSize();
+        offset = FibBaseAbstractType.getSize();
         assert offset == 32;
 
         _csw = LittleEndian.getUShort( mainDocument, offset );
         offset += LittleEndianConsts.SHORT_SIZE;
-        assert offset == 34;
 
         _fibRgW = new FibRgW97( mainDocument, offset );
-        offset += FibRgW97.getSize();
+        offset += FibRgW97AbstractType.getSize();
         assert offset == 62;
 
         _cslw = LittleEndian.getUShort( mainDocument, offset );
         offset += LittleEndianConsts.SHORT_SIZE;
-        assert offset == 64;
 
         if ( _fibBase.getNFib() < 105 )
         {
@@ -1079,13 +1079,13 @@ public final class FileInformationBlock
         _cbRgFcLcb = _fieldHandler.getFieldsCount();
 
         _fibBase.serialize( mainStream, 0 );
-        int offset = FibBase.getSize();
+        int offset = FibBaseAbstractType.getSize();
 
         LittleEndian.putUShort( mainStream, offset, _csw );
         offset += LittleEndianConsts.SHORT_SIZE;
 
         _fibRgW.serialize( mainStream, offset );
-        offset += FibRgW97.getSize();
+        offset += FibRgW97AbstractType.getSize();
 
         LittleEndian.putUShort( mainStream, offset, _cslw );
         offset += LittleEndianConsts.SHORT_SIZE;
@@ -1114,7 +1114,7 @@ public final class FileInformationBlock
 
     public int getSize()
     {
-        return FibBase.getSize() + LittleEndianConsts.SHORT_SIZE + FibRgW97.getSize()
+        return FibBaseAbstractType.getSize() + LittleEndianConsts.SHORT_SIZE + FibRgW97AbstractType.getSize()
                 + LittleEndianConsts.SHORT_SIZE + FibRgLw97.getSize()
                 + LittleEndianConsts.SHORT_SIZE + _fieldHandler.sizeInBytes();
     }

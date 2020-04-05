@@ -22,12 +22,11 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hwpf.model.types.FSPAAbstractType;
 import org.apache.poi.util.Internal;
 
 /**
  * This class holds all the FSPA (File Shape Address) structures.
- * 
- * @author Squeeself
  */
 @Internal
 public final class FSPATable
@@ -41,12 +40,11 @@ public final class FSPATable
         int offset = fib.getFSPAPlcfOffset( part );
         int length = fib.getFSPAPlcfLength( part );
 
-        PlexOfCps plex = new PlexOfCps( tableStream, offset, length,
-                FSPA.getSize() );
+        PlexOfCps plex = new PlexOfCps(tableStream, offset, length, FSPAAbstractType.getSize() );
         for ( int i = 0; i < plex.length(); i++ )
         {
             GenericPropertyNode property = plex.getProperty( i );
-            _byStart.put( Integer.valueOf( property.getStart() ), property );
+            _byStart.put(property.getStart(), property );
         }
     }
 
@@ -63,13 +61,13 @@ public final class FSPATable
         for ( int i = 0; i < plex.length(); i++ )
         {
             GenericPropertyNode property = plex.getProperty( i );
-            _byStart.put( Integer.valueOf( property.getStart() ), property );
+            _byStart.put(property.getStart(), property );
         }
     }
 
     public FSPA getFspaFromCp( int cp )
     {
-        GenericPropertyNode propertyNode = _byStart.get( Integer.valueOf( cp ) );
+        GenericPropertyNode propertyNode = _byStart.get(cp);
         if ( propertyNode == null )
         {
             return null;
@@ -96,7 +94,7 @@ public final class FSPATable
             buf.append( "  " ).append(i).append( " => \t" );
 
             try {
-                FSPA fspa = getFspaFromCp( i.intValue() );
+                FSPA fspa = getFspaFromCp(i);
                 buf.append(fspa);
             } catch ( Exception exc ) {
                 buf.append( exc.getMessage() );

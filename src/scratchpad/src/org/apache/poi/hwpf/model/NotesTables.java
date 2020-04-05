@@ -19,18 +19,18 @@ package org.apache.poi.hwpf.model;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.apache.poi.hwpf.model.types.FRDAbstractType;
 import org.apache.poi.util.Internal;
 
 /**
  * Holds information about document notes (footnotes or ending notes)
- * 
+ *
  * @author Sergey Vladimirov (vlsergey {at} gmail {doc} com)
  */
 @Internal
 public class NotesTables
 {
-    private PlexOfCps descriptors = new PlexOfCps(
-            FootnoteReferenceDescriptor.getSize() );
+    private PlexOfCps descriptors = new PlexOfCps(FRDAbstractType.getSize() );
 
     private final NoteType noteType;
 
@@ -72,7 +72,7 @@ public class NotesTables
 
         if ( referencesStart != 0 && referencesLength != 0 )
             this.descriptors = new PlexOfCps( tableStream, referencesStart,
-                    referencesLength, FootnoteReferenceDescriptor.getSize() );
+                    referencesLength, FRDAbstractType.getSize() );
 
         int textPositionsStart = fib.getNotesTextPositionsOffset( noteType );
         int textPositionsLength = fib.getNotesTextPositionsSize( noteType );
