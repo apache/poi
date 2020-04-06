@@ -30,22 +30,6 @@ import org.junit.Test;
  */
 public class TestArrayUtil {
 	/**
-	 * Test to ensure that our own arraycopy behaves as it should do
-	 */
-	@Test
-	public void testarraycopy() {
-		byte[] bytes = new byte[] { 0x01, 0x02, 0x03, 0x04 };
-
-		// Test copy whole thing
-		byte[] dest = new byte[4];
-		ArrayUtil.arraycopy(bytes, 0, dest, 0, 4);
-
-		assertArrayEquals(dest, bytes);
-		// ToDo - test exceptions are as expected
-	}
-
-
-	/**
 	 * Helper for testArrayMoveWithin
 	 */
 	private Integer[] getIntsList() {
