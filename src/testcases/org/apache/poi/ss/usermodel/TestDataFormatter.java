@@ -965,6 +965,33 @@ public class TestDataFormatter {
         doFormatTestSequential(formatter1);
         doFormatTestConcurrent(formatter1, formatter2);
     }
+    
+    /**
+     * Bug #64319
+     *
+     * A custom format string like TRUE shouldn't be E+
+     * A numeric format string like 0E0 shouldn't be E+
+     * A numeric format string like 0E+0 should be E+
+     */
+    @Test
+    @Ignore("Bug #64319 is currently failing")
+    public void testWithEinFormat() throws Exception {
+        DataFormatter formatter = new DataFormatter();
+        assertEquals("TRUE", formatter.formatRawCellContents(1.0, 170, 
+                       "\"TRUE\";\"TRUE\";\"FALSE\""));
+        assertEquals("TRUE", formatter.formatRawCellContents(0.0, 170, 
+                       "\"TRUE\";\"TRUE\";\"FALSE\""));
+        assertEquals("FALSE", formatter.formatRawCellContents(-1.0, 170, 
+                       "\"TRUE\";\"TRUE\";\"FALSE\""));
+        assertEquals("1E+05", formatter.formatRawCellContents(1e05, 170, 
+                       "0E+00"));
+        assertEquals("1E+10", formatter.formatRawCellContents(1e10, 170, 
+                       "0E+00"));
+        assertEquals("1E5", formatter.formatRawCellContents(1e05, 170, 
+                       "0E0"));
+        assertEquals("1E10", formatter.formatRawCellContents(1e10, 170, 
+                       "0E0"));
+    }
 
     private void doFormatTestSequential(DataFormatter formatter) {
         for (int i = 0; i < 1_000; i++) {
