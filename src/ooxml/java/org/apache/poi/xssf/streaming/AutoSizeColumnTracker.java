@@ -138,7 +138,8 @@ import org.apache.poi.util.Internal;
      * @since 3.14beta1
      */
     public boolean isColumnTracked(int column) {
-        return trackAllColumns || maxColumnWidths.containsKey(column);
+        return (trackAllColumns && !untrackedColumns.contains(column))
+                || maxColumnWidths.containsKey(column);
     }
     
     /**
