@@ -337,8 +337,9 @@ public class TestSXSSFSheetAutoSizeColumn {
         
         sheet.trackColumnsForAutoSizing(columns);
         sheet.trackAllColumnsForAutoSizing();
-        
-        sheet.untrackColumnForAutoSizing(0);
+
+        boolean untracked = sheet.untrackColumnForAutoSizing(0);
+        assertTrue(untracked);
         try {
             sheet.autoSizeColumn(0, useMergedCells);
             fail("Should not be able to auto-size an explicitly untracked column");

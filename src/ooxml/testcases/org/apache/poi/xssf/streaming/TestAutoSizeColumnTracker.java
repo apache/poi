@@ -111,18 +111,7 @@ public class TestAutoSizeColumnTracker {
     
     @Test
     public void trackAndUntrackAllColumns() {
-        assumeTrue(tracker.getTrackedColumns().isEmpty());
-        tracker.trackAllColumns();
-        assertTrue(tracker.getTrackedColumns().isEmpty());
-        
-        Row row = sheet.createRow(0);
-        for (int column : columns) {
-            row.createCell(column);
-        }
-        // implicitly track the columns
-        tracker.updateColumnWidths(row);
-        assertEquals(columns, tracker.getTrackedColumns());
-        
+        createColumnsAndTrackThemAll();
         tracker.untrackAllColumns();
         assertTrue(tracker.getTrackedColumns().isEmpty());
     }
@@ -135,7 +124,19 @@ public class TestAutoSizeColumnTracker {
         tracker.untrackColumn(0);
         assertFalse(tracker.isColumnTracked(0));
     }
-    
+
+    @Test
+    public void isColumnTrackedAndTrackAllColumns() {
+        createColumnsAndTrackThemAll();
+        tracker.untrackColumn(0);
+        SortedSet<Integer> _newColumns = new TreeSet<>();
+        _newColumns.add(1);
+        _newColumns.add(3);
+        SortedSet<Integer> newColumns = Collections.unmodifiableSortedSet(_newColumns);
+        assertEquals(newColumns, tracker.getTrackedColumns());
+        assertFalse(tracker.isColumnTracked(0));
+    }
+
     @Test
     public void getTrackedColumns() {
         assumeTrue(tracker.getTrackedColumns().isEmpty());
@@ -213,5 +214,19 @@ public class TestAutoSizeColumnTracker {
         Font font = workbook.getFontAt(cell.getCellStyle().getFontIndexAsInt());
         Assume.assumeTrue("Cannot verify autoSizeColumn() because the necessary Fonts are not installed on this machine: " + font,
                           SheetUtil.canComputeColumnWidth(font));
+    }
+
+    private void createColumnsAndTrackThemAll() {
+        assumeTrue(tracker.getTrackedColumns().isEmpty());
+        tracker.trackAllColumns();
+        assertTrue(tracker.getTrackedColumns().isEmpty());
+
+        Row row = sheet.createRow(0);
+        for (int column : columns) {
+            row.createCell(column);
+        }
+        // implicitly track the columns
+        tracker.updateColumnWidths(row);
+        assertEquals(columns, tracker.getTrackedColumns());
     }
 }
