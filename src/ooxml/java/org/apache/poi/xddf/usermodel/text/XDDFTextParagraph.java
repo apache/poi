@@ -172,6 +172,32 @@ public class XDDFTextParagraph {
     }
 
     /**
+     * Returns the paragraph indentation level.
+     *
+     * @return indentation level of the paragraph.
+     */
+    public int getIndentationLevel() {
+        if (_p.isSetPPr()) {
+            return getProperties().getLevel();
+        } else {
+            return 0;
+        }
+    }
+
+    /**
+     * Specifies the paragraph indentation level, between 1 and 9.
+     *
+     * @param level
+     *            new indentation level for the paragraph.
+     *            Use <code>null</code> to unset the indentation level.
+     */
+    public void setIndentationLevel(Integer level) {
+        if (_p.isSetPPr()) {
+            getProperties().setLevel(level);
+        }
+    }
+
+    /**
      * Returns the alignment that is applied to the paragraph.
      *
      * If this attribute is omitted, then a value of left is implied.
