@@ -974,23 +974,47 @@ public class TestDataFormatter {
      * A numeric format string like 0E+0 should be E+
      */
     @Test
-    @Ignore("Bug #64319 is currently failing")
     public void testWithEinFormat() throws Exception {
         DataFormatter formatter = new DataFormatter();
+        
+        // Format string literals with an E in them shouldn't be
+        //  treated as a Scientific format, so shouldn't become E+
         assertEquals("TRUE", formatter.formatRawCellContents(1.0, 170, 
-                       "\"TRUE\";\"TRUE\";\"FALSE\""));
-        assertEquals("TRUE", formatter.formatRawCellContents(0.0, 170, 
-                       "\"TRUE\";\"TRUE\";\"FALSE\""));
+                       "\"TRUE\";\"FALSE\";\"ZERO\""));
+        assertEquals("ZERO", formatter.formatRawCellContents(0.0, 170, 
+                       "\"TRUE\";\"FALSE\";\"ZERO\""));
         assertEquals("FALSE", formatter.formatRawCellContents(-1.0, 170, 
-                       "\"TRUE\";\"TRUE\";\"FALSE\""));
+                       "\"TRUE\";\"FALSE\";\"ZERO\""));
+
+        // Explicit Scientific format does need E+
         assertEquals("1E+05", formatter.formatRawCellContents(1e05, 170, 
                        "0E+00"));
         assertEquals("1E+10", formatter.formatRawCellContents(1e10, 170, 
                        "0E+00"));
+        assertEquals("1E-10", formatter.formatRawCellContents(1e-10, 170, 
+                      "0E+00"));
+        
+        // Large numbers with "General" need E+
+        assertEquals("100000", formatter.formatRawCellContents(1e05, -1, "General"));
+        assertEquals("1E+12", formatter.formatRawCellContents(1e12, -1, "General"));
+
+        // Less common Scientific-like formats which don't ask for
+        //  the + on >1 exponentials don't need it adding
+        // (Java will put the -ve ones in for E-## automatically)
         assertEquals("1E5", formatter.formatRawCellContents(1e05, 170, 
                        "0E0"));
         assertEquals("1E10", formatter.formatRawCellContents(1e10, 170, 
                        "0E0"));
+        assertEquals("1E-10", formatter.formatRawCellContents(1e-10, 170, 
+                       "0E0"));
+
+        assertEquals("1E5", formatter.formatRawCellContents(1e05, 170, 
+                       "0E-0"));
+        assertEquals("1E10", formatter.formatRawCellContents(1e10, 170, 
+                       "0E-0"));
+        assertEquals("1E-10", formatter.formatRawCellContents(1e-10, 170, 
+                       "0E-0"));
+        
     }
 
     private void doFormatTestSequential(DataFormatter formatter) {

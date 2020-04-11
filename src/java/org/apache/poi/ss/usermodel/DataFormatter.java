@@ -686,7 +686,7 @@ public class DataFormatter implements Observer {
                 i--;
 
             // for scientific/engineering notation
-            } else if (c == '+' && i > 0 && sb.charAt(i - 1) == 'E') {
+            } else if ((c == '+' || c == '-') && i > 0 && sb.charAt(i - 1) == 'E') {
                 sb.deleteCharAt(i);
                 i--;
             }
@@ -929,8 +929,12 @@ public class DataFormatter implements Observer {
         else {
             result = numberFormat.format(new BigDecimal(textValue));
         }
-        // Complete scientific notation by adding the missing +.
-        if (result.indexOf('E') > -1 && !result.contains("E-")) {
+        
+        // If they requested a non-abbreviated Scientific format,
+        //  and there's an E## (but not E-##), add the missing '+' for E+##
+        String fslc = formatString.toLowerCase(Locale.ROOT);
+        if ((fslc.contains("general") || fslc.contains("e+0"))
+                && result.contains("E") && !result.contains("E-")) {
             result = result.replaceFirst("E", "E+");
         }
         return result;
