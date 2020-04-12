@@ -153,14 +153,15 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
 
     public XSLFTableRow addRow(){
         CTTableRow tr = _table.addNewTr();
-        return initializeRow(tr);
+        XSLFTableRow row = initializeRow(tr);
+        _rows.add(row);
+        return row;
     }
 
     private XSLFTableRow initializeRow(CTTableRow tr) {
         XSLFTableRow row = new XSLFTableRow(tr, this);
         // default height is 20 points
         row.setHeight(20.0);
-        _rows.add(row);
         for (int i = 0;  i < getNumberOfColumns(); i++) {
             row.addCell();
         }
@@ -177,7 +178,9 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
             throw new IndexOutOfBoundsException("Cannot insert row at " + rowIdx + "; table has only " + getNumberOfRows() + "rows.");
         }
         CTTableRow tr = _table.insertNewTr(rowIdx);
-        return initializeRow(tr);
+        XSLFTableRow row = initializeRow(tr);
+        _rows.add(rowIdx, row);
+        return row;
     }
 
     /**
