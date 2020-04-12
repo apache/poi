@@ -17,11 +17,15 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -63,19 +67,6 @@ public final class ChartFormatRecord extends StandardRecord {
         field4_height = in.readInt();
         field5_grbit = in.readUShort();
         field6_unknown = in.readUShort();
-    }
-
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[CHARTFORMAT]\n");
-        buffer.append("    .xPosition       = ").append(getXPosition()).append("\n");
-        buffer.append("    .yPosition       = ").append(getYPosition()).append("\n");
-        buffer.append("    .width           = ").append(getWidth()).append("\n");
-        buffer.append("    .height          = ").append(getHeight()).append("\n");
-        buffer.append("    .grBit           = ").append(HexDump.intToHex(field5_grbit)).append("\n");
-        buffer.append("[/CHARTFORMAT]\n");
-        return buffer.toString();
     }
 
     public void serialize(LittleEndianOutput out) {
@@ -138,5 +129,23 @@ public final class ChartFormatRecord extends StandardRecord {
     @Override
     public ChartFormatRecord copy() {
         return new ChartFormatRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.CHART_FORMAT;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "x", this::getXPosition,
+            "y", this::getYPosition,
+            "width", this::getWidth,
+            "height", this::getHeight,
+            "grbit", () -> field5_grbit,
+            "varyDisplayPattern", this::getVaryDisplayPattern,
+            "unknown", () -> field6_unknown
+        );
     }
 }

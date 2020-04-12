@@ -17,11 +17,15 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -295,5 +299,20 @@ public abstract class AreaPtgBase extends OperandPtg implements AreaI {
 
     public byte getDefaultOperandClass() {
         return Ptg.CLASS_REF;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "firstRow", this::getFirstRow,
+            "firstRowRelative", this::isFirstRowRelative,
+            "firstColumn", this::getFirstColumn,
+            "firstColRelative", this::isFirstColRelative,
+            "lastRow", this::getLastRow,
+            "lastRowRelative", this::isLastRowRelative,
+            "lastColumn", this::getLastColumn,
+            "lastColRelative", this::isLastColRelative,
+            "formatReference", this::formatReferenceAsString
+        );
     }
 }

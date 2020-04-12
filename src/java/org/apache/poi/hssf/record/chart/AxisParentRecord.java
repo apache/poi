@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -58,36 +62,6 @@ public final class AxisParentRecord extends StandardRecord {
         field_5_height   = in.readInt();
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[AXISPARENT]\n");
-        buffer.append("    .axisType             = ")
-            .append("0x").append(HexDump.toHex(  getAxisType ()))
-            .append(" (").append( getAxisType() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .x                    = ")
-            .append("0x").append(HexDump.toHex(  getX ()))
-            .append(" (").append( getX() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .y                    = ")
-            .append("0x").append(HexDump.toHex(  getY ()))
-            .append(" (").append( getY() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .width                = ")
-            .append("0x").append(HexDump.toHex(  getWidth ()))
-            .append(" (").append( getWidth() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .height               = ")
-            .append("0x").append(HexDump.toHex(  getHeight ()))
-            .append(" (").append( getHeight() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-
-        buffer.append("[/AXISPARENT]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_axisType);
         out.writeInt(field_2_x);
@@ -106,7 +80,7 @@ public final class AxisParentRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public AxisParentRecord clone() {
@@ -205,5 +179,21 @@ public final class AxisParentRecord extends StandardRecord {
     @Override
     public AxisParentRecord copy() {
         return new AxisParentRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.AXIS_PARENT;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "axisType", this::getAxisType,
+            "x", this::getX,
+            "y", this::getY,
+            "width", this::getWidth,
+            "height", this::getHeight
+        );
     }
 }

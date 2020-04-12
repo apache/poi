@@ -192,7 +192,7 @@ public abstract class Decryptor implements GenericRecord {
     @Override
     public Map<String, Supplier<?>> getGenericProperties() {
         return GenericRecordUtil.getGenericProperties(
-            "secretKey", secretKey::getEncoded,
+            "secretKey", secretKey == null ? () -> null : secretKey::getEncoded,
             "verifier", this::getVerifier,
             "integrityHmacKey", this::getIntegrityHmacKey,
             "integrityHmacValue", this::getIntegrityHmacValue

@@ -17,6 +17,10 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -72,16 +76,17 @@ public final class TblPtg extends ControlPtg {
         throw new RuntimeException("Table and Arrays are not yet supported");
     }
 
-    public String toString() {
-        StringBuilder buffer = new StringBuilder("[Data Table - Parent cell is an interior cell in a data table]\n");
-        buffer.append("top left row = ").append(getRow()).append("\n");
-        buffer.append("top left col = ").append(getColumn()).append("\n");
-        return buffer.toString();
-    }
-
     @Override
     public TblPtg copy() {
         // immutable
         return this;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "row", this::getRow,
+            "column", this::getColumn
+        );
     }
 }

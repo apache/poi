@@ -18,10 +18,14 @@
 package org.apache.poi.hssf.record;
 
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hssf.record.cont.ContinuableRecord;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -38,7 +42,7 @@ public final class ExtSSTRecord extends ContinuableRecord {
     public static final int MAX_BUCKETS = 128;
 
 
-    public static final class InfoSubRecord {
+    public static final class InfoSubRecord implements GenericRecord {
     	public static final int ENCODED_SIZE = 8;
         private int field_1_stream_pos;          // stream pointer to the SST record
         private int field_2_bucket_sst_offset;   // don't really understand this yet.
@@ -62,8 +66,7 @@ public final class ExtSSTRecord extends ContinuableRecord {
             field_3_zero              = other.field_3_zero;
         }
 
-        public InfoSubRecord(RecordInputStream in)
-        {
+        public InfoSubRecord(RecordInputStream in) {
             field_1_stream_pos        = in.readInt();
             field_2_bucket_sst_offset = in.readShort();
             field_3_zero              = in.readShort();
@@ -81,6 +84,14 @@ public final class ExtSSTRecord extends ContinuableRecord {
             out.writeInt(field_1_stream_pos);
             out.writeShort(field_2_bucket_sst_offset);
             out.writeShort(field_3_zero);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "streamPos", this::getStreamPos,
+                "bucketSSTOffset", this::getBucketSSTOffset
+            );
         }
     }
 
@@ -121,41 +132,18 @@ public final class ExtSSTRecord extends ContinuableRecord {
         _stringsPerBucket = numStrings;
     }
 
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[EXTSST]\n");
-        buffer.append("    .dsst           = ")
-            .append(Integer.toHexString(_stringsPerBucket))
-            .append("\n");
-        buffer.append("    .numInfoRecords = ").append(_sstInfos.length)
-            .append("\n");
-        for (int k = 0; k < _sstInfos.length; k++)
-        {
-            buffer.append("    .inforecord     = ").append(k).append("\n");
-            buffer.append("    .streampos      = ")
-                .append(Integer
-                .toHexString(_sstInfos[k].getStreamPos())).append("\n");
-            buffer.append("    .sstoffset      = ")
-                .append(Integer
-                .toHexString(_sstInfos[k].getBucketSSTOffset()))
-                    .append("\n");
-        }
-        buffer.append("[/EXTSST]\n");
-        return buffer.toString();
-    }
-
     public void serialize(ContinuableRecordOutput out) {
         out.writeShort(_stringsPerBucket);
-        for (int k = 0; k < _sstInfos.length; k++) {
-            _sstInfos[k].serialize(out);
+        for (InfoSubRecord sstInfo : _sstInfos) {
+            sstInfo.serialize(out);
         }
     }
-    protected int getDataSize() {
+
+    int getDataSize() {
     	return 2 + InfoSubRecord.ENCODED_SIZE*_sstInfos.length;
     }
 
-    protected InfoSubRecord[] getInfoSubRecords() {
+    InfoSubRecord[] getInfoSubRecords() {
         return _sstInfos;
     }
 
@@ -196,5 +184,18 @@ public final class ExtSSTRecord extends ContinuableRecord {
     @Override
     public ExtSSTRecord copy() {
         return new ExtSSTRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.EXT_SST;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "dataSize", this::getDataSize,
+            "infoSubRecords", this::getInfoSubRecords
+        );
     }
 }

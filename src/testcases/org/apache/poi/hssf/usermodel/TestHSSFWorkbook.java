@@ -36,6 +36,8 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.EscherBSERecord;
@@ -47,6 +49,7 @@ import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.CFRuleRecord;
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
@@ -505,6 +508,16 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         }
         @Override
         public BadlyBehavedRecord copy() {
+            return null;
+        }
+
+        @Override
+        public HSSFRecordTypes getGenericRecordType() {
+            return null;
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
             return null;
         }
     }

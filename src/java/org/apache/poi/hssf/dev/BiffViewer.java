@@ -139,7 +139,7 @@ public final class BiffViewer {
             case CFHeader12Record.sid:        return new CFHeader12Record(in);
             case CFRuleRecord.sid:            return new CFRuleRecord(in);
             case CFRule12Record.sid:          return new CFRule12Record(in);
-            // TODO Add CF Ex, and remove from UnknownRecord 
+            // TODO Add CF Ex, and remove from UnknownRecord
             case CalcCountRecord.sid:         return new CalcCountRecord(in);
             case CalcModeRecord.sid:          return new CalcModeRecord(in);
             case CategorySeriesAxisRecord.sid:return new CategorySeriesAxisRecord(in);
@@ -236,7 +236,7 @@ public final class BiffViewer {
             case SeriesListRecord.sid:        return new SeriesListRecord(in);
             case SeriesRecord.sid:            return new SeriesRecord(in);
             case SeriesTextRecord.sid:        return new SeriesTextRecord(in);
-            case SeriesToChartGroupRecord.sid:return new SeriesToChartGroupRecord(in);
+            case SeriesChartGroupIndexRecord.sid:return new SeriesChartGroupIndexRecord(in);
             case SharedFormulaRecord.sid:     return new SharedFormulaRecord(in);
             case SheetPropertiesRecord.sid:   return new SheetPropertiesRecord(in);
             case StringRecord.sid:            return new StringRecord(in);
@@ -383,8 +383,8 @@ public final class BiffViewer {
 	 * <tr><td>--escher</td><td>turn on deserialization of escher records (default is off)</td></tr>
 	 * <tr><td>--noheader</td><td>do not print record header (default is on)</td></tr>
 	 * </table>
-	 * 
-	 * @param args the command line arguments 
+	 *
+	 * @param args the command line arguments
 	 *
 	 * @throws IOException if the file doesn't exist or contained errors
 	 * @throws CommandParseException if the command line contained errors
@@ -676,7 +676,7 @@ public final class BiffViewer {
 			}
 
 			idx = arraycopy(NEW_LINE_CHARS, buf, idx);
-			
+
 			w.write(buf, 0, idx);
 		} catch (IOException e) {
 			throw new RuntimeException(e);
@@ -690,7 +690,7 @@ public final class BiffViewer {
 	    }
 	    return idx;
 	}
-	
+
 	private static char getPrintableChar(byte b) {
 		char ib = (char) (b & 0x00FF);
 		if (ib < 32 || ib > 126) {

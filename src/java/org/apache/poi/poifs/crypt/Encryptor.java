@@ -102,7 +102,7 @@ public abstract class Encryptor implements GenericRecord {
     @Override
     public Map<String, Supplier<?>> getGenericProperties() {
         return GenericRecordUtil.getGenericProperties(
-            "secretKey", secretKey::getEncoded
+            "secretKey", secretKey == null ? () -> null : secretKey::getEncoded
         );
     }
 }

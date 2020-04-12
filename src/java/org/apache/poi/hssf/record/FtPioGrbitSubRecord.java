@@ -17,7 +17,12 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
@@ -98,6 +103,10 @@ public final class FtPioGrbitSubRecord extends SubRecord {
     }
 
     public FtPioGrbitSubRecord(LittleEndianInput in, int size) {
+        this(in,size,-1);
+    }
+
+    FtPioGrbitSubRecord(LittleEndianInput in, int size, int cmoOt) {
         if (size != length) {
             throw new RecordFormatException("Unexpected size (" + size + ")");
         }
@@ -119,19 +128,6 @@ public final class FtPioGrbitSubRecord extends SubRecord {
 
     public boolean getFlagByBit(int bitmask) {
         return ((flags & bitmask) != 0);
-    }
-
-    /**
-     * Convert this record to string.
-     * Used by BiffViewer and other utilities.
-     */
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("[FtPioGrbit ]\n");
-        buffer.append("  size     = ").append(length).append("\n");
-        buffer.append("  flags    = ").append(HexDump.toHex(flags)).append("\n");
-        buffer.append("[/FtPioGrbit ]\n");
-        return buffer.toString();
     }
 
     /**
@@ -170,11 +166,25 @@ public final class FtPioGrbitSubRecord extends SubRecord {
         return new FtPioGrbitSubRecord(this);
     }
 
- public short getFlags() {
-   return flags;
- }
+    public short getFlags() {
+        return flags;
+    }
 
- public void setFlags(short flags) {
-   this.flags = flags;
- }
+    public void setFlags(short flags) {
+        this.flags = flags;
+    }
+
+    @Override
+    public SubRecordTypes getGenericRecordType() {
+        return SubRecordTypes.FT_PIO_GRBIT;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "flags", getBitsAsString(this::getFlags,
+            new int[]{AUTO_PICT_BIT, DDE_BIT, PRINT_CALC_BIT, ICON_BIT, CTL_BIT, PRSTM_BIT, CAMERA_BIT, DEFAULT_SIZE_BIT, AUTO_LOAD_BIT},
+            new String[]{"AUTO_PICT", "DDE", "PRINT_CALC", "ICON", "CTL", "PRSTM", "CAMERA", "DEFAULT_SIZE", "AUTO_LOAD"})
+        );
+    }
 }

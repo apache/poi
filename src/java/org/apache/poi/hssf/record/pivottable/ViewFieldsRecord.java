@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record.pivottable;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
@@ -113,21 +117,23 @@ public final class ViewFieldsRecord extends StandardRecord {
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append("[SXVD]\n");
-		buffer.append("    .sxaxis    = ").append(HexDump.shortToHex(_sxaxis)).append('\n');
-		buffer.append("    .cSub      = ").append(HexDump.shortToHex(_cSub)).append('\n');
-		buffer.append("    .grbitSub  = ").append(HexDump.shortToHex(_grbitSub)).append('\n');
-		buffer.append("    .cItm      = ").append(HexDump.shortToHex(_cItm)).append('\n');
-		buffer.append("    .name      = ").append(_name).append('\n');
-
-		buffer.append("[/SXVD]\n");
-		return buffer.toString();
+	public ViewFieldsRecord copy() {
+		return new ViewFieldsRecord(this);
 	}
 
 	@Override
-	public ViewFieldsRecord copy() {
-		return new ViewFieldsRecord(this);
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.VIEW_FIELDS;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"sxaxis", () -> _sxaxis,
+			"cSub", () -> _cSub,
+			"grbitSub", () -> _grbitSub,
+			"cItm", () -> _cItm,
+			"name", () -> _name
+		);
 	}
 }

@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -61,17 +65,6 @@ public final class VCenterRecord extends StandardRecord {
         return (field_1_vcenter == 1);
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[VCENTER]\n");
-        buffer.append("    .vcenter        = ").append(getVCenter())
-            .append("\n");
-        buffer.append("[/VCENTER]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_vcenter);
     }
@@ -86,7 +79,7 @@ public final class VCenterRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public VCenterRecord clone() {
@@ -96,5 +89,16 @@ public final class VCenterRecord extends StandardRecord {
     @Override
     public VCenterRecord copy() {
       return new VCenterRecord(this);
+    }
+
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.V_CENTER;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("vcenter", this::getVCenter);
     }
 }

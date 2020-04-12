@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
@@ -102,10 +106,10 @@ public final class NoteRecord extends StandardRecord {
 			field_6_author = StringUtil.readCompressedUnicode(in, length);
 		}
  		if (in.available() == 1) {
-			field_7_padding = Byte.valueOf(in.readByte());
+			field_7_padding = in.readByte();
 		} else if (in.available() == 2 && length == 0) {
 		    // If there's no author, may be double padded
-            field_7_padding = Byte.valueOf(in.readByte());
+            field_7_padding = in.readByte();
             in.readByte();
  		}
 	}
@@ -131,23 +135,6 @@ public final class NoteRecord extends StandardRecord {
 		return 11 // 5 shorts + 1 byte
 			+ field_6_author.length() * (field_5_hasMultibyte ? 2 : 1)
 			+ (field_7_padding == null ? 0 : 1);
-	}
-
-	/**
-	 * Convert this record to string.
-	 * Used by BiffViewer and other utilities.
-	 */
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-
-		buffer.append("[NOTE]\n");
-		buffer.append("    .row    = ").append(field_1_row).append("\n");
-		buffer.append("    .col    = ").append(field_2_col).append("\n");
-		buffer.append("    .flags  = ").append(field_3_flags).append("\n");
-		buffer.append("    .shapeid= ").append(field_4_shapeid).append("\n");
-		buffer.append("    .author = ").append(field_6_author).append("\n");
-		buffer.append("[/NOTE]\n");
-		return buffer.toString();
 	}
 
 	/**
@@ -213,7 +200,7 @@ public final class NoteRecord extends StandardRecord {
 	 *
 	 * @return true, if author element uses multi byte
 	 */
-	protected boolean authorIsMultibyte() {
+	boolean authorIsMultibyte() {
 	   return field_5_hasMultibyte;
 	}
 
@@ -255,7 +242,7 @@ public final class NoteRecord extends StandardRecord {
 	}
 
 	@Override
-	@SuppressWarnings("squid:S2975")
+	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
 	@Deprecated
 	@Removal(version = "5.0.0")
 	public NoteRecord clone() {
@@ -265,5 +252,21 @@ public final class NoteRecord extends StandardRecord {
 	@Override
 	public NoteRecord copy() {
 		return new NoteRecord(this);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.NOTE;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"row", this::getRow,
+			"column", this::getColumn,
+			"flags", this::getFlags,
+			"shapeId", this::getShapeId,
+			"author", this::getAuthor
+		);
 	}
 }

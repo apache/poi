@@ -19,6 +19,8 @@ package org.apache.poi.hssf.record;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
@@ -29,7 +31,7 @@ import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionHeader;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionVerifier;
 import org.apache.poi.poifs.crypt.xor.XOREncryptionHeader;
 import org.apache.poi.poifs.crypt.xor.XOREncryptionVerifier;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.LittleEndianOutputStream;
@@ -86,7 +88,7 @@ public final class FilePassRecord extends StandardRecord {
     public void serialize(LittleEndianOutput out) {
         out.writeShort(encryptionType);
 
-        byte data[] = new byte[1024];
+        byte[] data = new byte[1024];
         try (LittleEndianByteArrayOutputStream bos =
                 new LittleEndianByteArrayOutputStream(data, 0)) { // NOSONAR
 
@@ -137,7 +139,7 @@ public final class FilePassRecord extends StandardRecord {
 	}
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public FilePassRecord clone() {
@@ -149,19 +151,16 @@ public final class FilePassRecord extends StandardRecord {
 		return new FilePassRecord(this);
 	}
 
-	@Override
-    public String toString() {
-	    StringBuilder buffer = new StringBuilder();
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.FILE_PASS;
+    }
 
-		buffer.append("[FILEPASS]\n");
-		buffer.append("    .type = ").append(HexDump.shortToHex(encryptionType)).append('\n');
-        String prefix = "     ."+encryptionInfo.getEncryptionMode();
-        buffer.append(prefix+".info = ").append(HexDump.shortToHex(encryptionInfo.getVersionMajor())).append('\n');
-        buffer.append(prefix+".ver  = ").append(HexDump.shortToHex(encryptionInfo.getVersionMinor())).append('\n');
-        buffer.append(prefix+".salt = ").append(HexDump.toHex(encryptionInfo.getVerifier().getSalt())).append('\n');
-        buffer.append(prefix+".verifier = ").append(HexDump.toHex(encryptionInfo.getVerifier().getEncryptedVerifier())).append('\n');
-        buffer.append(prefix+".verifierHash = ").append(HexDump.toHex(encryptionInfo.getVerifier().getEncryptedVerifierHash())).append('\n');
-		buffer.append("[/FILEPASS]\n");
-		return buffer.toString();
-	}
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "type", () -> encryptionType,
+            "encryptionInfo", this::getEncryptionInfo
+        );
+    }
 }

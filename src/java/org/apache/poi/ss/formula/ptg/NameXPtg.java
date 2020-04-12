@@ -17,8 +17,12 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -78,11 +82,6 @@ public final class NameXPtg extends OperandPtg implements WorkbookDependentFormu
 		throw new RuntimeException("3D references need a workbook to determine formula text");
 	}
 
-	public String toString(){
-        return "NameXPtg:[sheetRefIndex:" + _sheetRefIndex +
-           " , nameNumber:" + _nameNumber + "]";
-	}
-
 	public byte getDefaultOperandClass() {
 		return Ptg.CLASS_VALUE;
 	}
@@ -98,5 +97,13 @@ public final class NameXPtg extends OperandPtg implements WorkbookDependentFormu
 	public NameXPtg copy() {
 		// immutable
 		return this;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"sheetRefIndex", this::getSheetRefIndex,
+			"nameIndex", this::getNameIndex
+		);
 	}
 }

@@ -17,8 +17,6 @@
 
 package org.apache.poi.hssf.record;
 
-import java.util.Arrays;
-
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.ptg.Ptg;
@@ -39,15 +37,11 @@ public final class CFRuleRecord extends CFRuleBase {
         super(other);
     }
 
-    private CFRuleRecord(byte conditionType, byte comparisonOperation) {
-        super(conditionType, comparisonOperation);
-        setDefaults();
-    }
-
     private CFRuleRecord(byte conditionType, byte comparisonOperation, Ptg[] formula1, Ptg[] formula2) {
         super(conditionType, comparisonOperation, formula1, formula2);
         setDefaults();
     }
+
     private void setDefaults() {
         // Set modification flags to 1: by default options are not modified
         formatting_options = modificationBits.setValue(formatting_options, -1);
@@ -139,27 +133,6 @@ public final class CFRuleRecord extends CFRuleBase {
     }
 
     @Override
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("[CFRULE]\n");
-        buffer.append("    .condition_type   =").append(getConditionType()).append("\n");
-        buffer.append("    OPTION FLAGS=0x").append(Integer.toHexString(getOptions())).append("\n");
-        if (containsFontFormattingBlock()) {
-            buffer.append(_fontFormatting).append("\n");
-        }
-        if (containsBorderFormattingBlock()) {
-            buffer.append(_borderFormatting).append("\n");
-        }
-        if (containsPatternFormattingBlock()) {
-            buffer.append(_patternFormatting).append("\n");
-        }
-        buffer.append("    Formula 1 =").append(Arrays.toString(getFormula1().getTokens())).append("\n");
-        buffer.append("    Formula 2 =").append(Arrays.toString(getFormula2().getTokens())).append("\n");
-        buffer.append("[/CFRULE]\n");
-        return buffer.toString();
-    }
-
-    @Override
     @SuppressWarnings("squid:S2975")
     @Deprecated
     @Removal(version = "5.0.0")
@@ -170,5 +143,10 @@ public final class CFRuleRecord extends CFRuleBase {
     @Override
     public CFRuleRecord copy() {
         return new CFRuleRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.CF_RULE;
     }
 }

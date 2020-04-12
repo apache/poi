@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IntList;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
@@ -107,24 +111,6 @@ public final class IndexRecord extends StandardRecord {
     }
 
     @Override
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[INDEX]\n");
-        buffer.append("    .firstrow       = ")
-            .append(Integer.toHexString(getFirstRow())).append("\n");
-        buffer.append("    .lastrowadd1    = ")
-            .append(Integer.toHexString(getLastRowAdd1())).append("\n");
-        for (int k = 0; k < getNumDbcells(); k++) {
-            buffer.append("    .dbcell_").append(k).append(" = ")
-                .append(Integer.toHexString(getDbcellAt(k))).append("\n");
-        }
-        buffer.append("[/INDEX]\n");
-        return buffer.toString();
-    }
-
-    @Override
     public void serialize(LittleEndianOutput out) {
 
         out.writeInt(0);
@@ -156,7 +142,7 @@ public final class IndexRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public IndexRecord clone() {
@@ -165,6 +151,20 @@ public final class IndexRecord extends StandardRecord {
 
     @Override
     public IndexRecord copy() {
-      return new IndexRecord(this);
+        return new IndexRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.INDEX;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "firstRow", this::getFirstRow,
+            "lastRowAdd1", this::getLastRowAdd1,
+            "dbcell_", (field_5_dbcells == null) ? () -> null : field_5_dbcells::toArray
+        );
     }
 }

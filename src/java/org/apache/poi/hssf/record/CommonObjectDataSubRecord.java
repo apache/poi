@@ -17,9 +17,14 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
@@ -89,6 +94,10 @@ public final class CommonObjectDataSubRecord extends SubRecord {
     }
 
     public CommonObjectDataSubRecord(LittleEndianInput in, int size) {
+        this(in, size, -1);
+    }
+
+    CommonObjectDataSubRecord(LittleEndianInput in, int size, int cmoOt) {
         if (size != 18) {
             throw new RecordFormatException("Expected size 18 but got (" + size + ")");
         }
@@ -98,45 +107,6 @@ public final class CommonObjectDataSubRecord extends SubRecord {
         field_4_reserved1              = in.readInt();
         field_5_reserved2              = in.readInt();
         field_6_reserved3              = in.readInt();
-    }
-
-    @Override
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[ftCmo]\n");
-        buffer.append("    .objectType           = ")
-            .append("0x").append(HexDump.toHex(  getObjectType ()))
-            .append(" (").append( getObjectType() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .objectId             = ")
-            .append("0x").append(HexDump.toHex(  getObjectId ()))
-            .append(" (").append( getObjectId() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .option               = ")
-            .append("0x").append(HexDump.toHex(  getOption ()))
-            .append(" (").append( getOption() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("         .locked                   = ").append(isLocked()).append('\n');
-        buffer.append("         .printable                = ").append(isPrintable()).append('\n');
-        buffer.append("         .autofill                 = ").append(isAutofill()).append('\n');
-        buffer.append("         .autoline                 = ").append(isAutoline()).append('\n');
-        buffer.append("    .reserved1            = ")
-            .append("0x").append(HexDump.toHex(  getReserved1 ()))
-            .append(" (").append( getReserved1() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .reserved2            = ")
-            .append("0x").append(HexDump.toHex(  getReserved2 ()))
-            .append(" (").append( getReserved2() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .reserved3            = ")
-            .append("0x").append(HexDump.toHex(  getReserved3 ()))
-            .append(" (").append( getReserved3() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-
-        buffer.append("[/ftCmo]\n");
-        return buffer.toString();
     }
 
     @Override
@@ -441,5 +411,24 @@ public final class CommonObjectDataSubRecord extends SubRecord {
     public boolean isAutoline()
     {
         return autoline.isSet(field_3_option);
+    }
+
+    @Override
+    public SubRecordTypes getGenericRecordType() {
+        return SubRecordTypes.COMMON_OBJECT_DATA;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "objectType", this::getObjectType,
+            "objectId", this::getObjectId,
+            "option", getBitsAsString(this::getOption,
+                new BitField[]{locked,printable,autofill,autoline},
+                new String[]{"LOCKED","PRINTABLE","AUTOFILL","AUTOLINE"}),
+            "reserved1", this::getReserved1,
+            "reserved2", this::getReserved2,
+            "reserved3", this::getReserved3
+        );
     }
 }

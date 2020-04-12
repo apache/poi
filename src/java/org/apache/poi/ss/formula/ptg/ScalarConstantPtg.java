@@ -29,14 +29,4 @@ public abstract class ScalarConstantPtg extends Ptg {
 	public final byte getDefaultOperandClass() {
 		return Ptg.CLASS_VALUE;
 	}
-
-	public final String toString() {
-		StringBuilder sb = new StringBuilder(64);
-		sb.append(getClass().getName()).append(" [");
-		sb.append(toFormulaString());
-		sb.append("]");
-		return sb.toString();
-	}
-
-
 }

@@ -20,9 +20,13 @@ package org.apache.poi.hpsf;
 import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Supplier;
 
 import org.apache.poi.common.Duplicatable;
+import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -34,7 +38,7 @@ import org.apache.poi.util.LittleEndianOutput;
  *
  * The ClassID (or CLSID) is a UUID - see RFC 4122
  */
-public class ClassID implements Duplicatable {
+public class ClassID implements Duplicatable, GenericRecord {
     /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
     public static final ClassID OLE10_PACKAGE  = ClassIDPredefined.OLE_V1_PACKAGE.getClassID();
     /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
@@ -343,5 +347,10 @@ public class ClassID implements Duplicatable {
     @Override
     public ClassID copy() {
         return new ClassID(this);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("uuid", this::toString);
     }
 }

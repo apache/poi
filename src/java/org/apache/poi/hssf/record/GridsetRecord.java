@@ -17,6 +17,10 @@
 ==================================================================== */
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -63,13 +67,6 @@ public final class GridsetRecord extends StandardRecord {
         return (field_1_gridset_flag == 1);
     }
 
-    public String toString() {
-        return "[GRIDSET]\n" +
-                "    .gridset        = " + getGridset() +
-                "\n" +
-                "[/GRIDSET]\n";
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_gridset_flag);
     }
@@ -84,7 +81,7 @@ public final class GridsetRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public GridsetRecord clone() {
@@ -94,5 +91,15 @@ public final class GridsetRecord extends StandardRecord {
     @Override
     public GridsetRecord copy() {
         return new GridsetRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.GRIDSET;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("gridset", this::getGridset);
     }
 }

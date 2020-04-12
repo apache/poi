@@ -37,21 +37,12 @@ public final class HeaderRecord extends HeaderFooterBase {
 		super(in);
 	}
 
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-
-		buffer.append("[HEADER]\n");
-		buffer.append("    .header = ").append(getText()).append("\n");
-		buffer.append("[/HEADER]\n");
-		return buffer.toString();
-	}
-
 	public short getSid() {
 		return sid;
 	}
 
 	@Override
-	@SuppressWarnings("squid:S2975")
+	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
 	@Deprecated
 	@Removal(version = "5.0.0")
 	public HeaderRecord clone() {
@@ -61,5 +52,10 @@ public final class HeaderRecord extends HeaderFooterBase {
 	@Override
 	public HeaderRecord copy() {
 		return new HeaderRecord(this);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.HEADER;
 	}
 }

@@ -17,13 +17,17 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.hssf.record.cont.ContinuableRecord;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPtg;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.StringUtil;
@@ -31,6 +35,7 @@ import org.apache.poi.util.StringUtil;
 /**
  * Defines a named range within a workbook.
  */
+@SuppressWarnings("unused")
 public final class NameRecord extends ContinuableRecord {
     public static final short sid = 0x0018;
 	/**Included for completeness sake, not implemented */
@@ -238,6 +243,7 @@ public final class NameRecord extends ContinuableRecord {
 	public boolean isHiddenName() {
 		return (field_1_option_flag & Option.OPT_HIDDEN_NAME) != 0;
 	}
+
 	public void setHidden(boolean b) {
 		if (b) {
 			field_1_option_flag |= Option.OPT_HIDDEN_NAME;
@@ -416,7 +422,7 @@ public final class NameRecord extends ContinuableRecord {
 		return nChars;
 	}
 
-	protected int getDataSize() {
+	int getDataSize() {
 		return 13 // 3 shorts + 7 bytes
 			+ getNameRawSize()
 			+ field_14_custom_menu_text.length()
@@ -552,37 +558,6 @@ public final class NameRecord extends ContinuableRecord {
 	  3B 00 00 07 00 07 00 00 00 FF 00 ]
 	 */
 
-	@Override
-    public String toString() {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("[NAME]\n");
-		sb.append("    .option flags           = ").append(HexDump.shortToHex(field_1_option_flag)).append("\n");
-		sb.append("    .keyboard shortcut      = ").append(HexDump.byteToHex(field_2_keyboard_shortcut)).append("\n");
-		sb.append("    .length of the name     = ").append(getNameTextLength()).append("\n");
-		sb.append("    .extSheetIx(1-based, 0=Global)= ").append( field_5_externSheetIndex_plus1 ).append("\n");
-		sb.append("    .sheetTabIx             = ").append(field_6_sheetNumber ).append("\n");
-		sb.append("    .Menu text length       = ").append(field_14_custom_menu_text.length()).append("\n");
-		sb.append("    .Description text length= ").append(field_15_description_text.length()).append("\n");
-		sb.append("    .Help topic text length = ").append(field_16_help_topic_text.length()).append("\n");
-		sb.append("    .Status bar text length = ").append(field_17_status_bar_text.length()).append("\n");
-		sb.append("    .NameIsMultibyte        = ").append(field_11_nameIsMultibyte).append("\n");
-		sb.append("    .Name (Unicode text)    = ").append( getNameText() ).append("\n");
-		Ptg[] ptgs = field_13_name_definition.getTokens();
-		sb.append("    .Formula (nTokens=").append(ptgs.length).append("):") .append("\n");
-		for (Ptg ptg : ptgs) {
-			sb.append("       ").append(ptg).append(ptg.getRVAType()).append("\n");
-		}
-
-		sb.append("    .Menu text       = ").append(field_14_custom_menu_text).append("\n");
-		sb.append("    .Description text= ").append(field_15_description_text).append("\n");
-		sb.append("    .Help topic text = ").append(field_16_help_topic_text).append("\n");
-		sb.append("    .Status bar text = ").append(field_17_status_bar_text).append("\n");
-		sb.append("[/NAME]\n");
-
-		return sb.toString();
-	}
-
 	/**Creates a human readable name for built in types
 	 * @return Unknown if the built-in name cannot be translated
 	 */
@@ -612,5 +587,30 @@ public final class NameRecord extends ContinuableRecord {
 	@Override
 	public NameRecord copy() {
 		return new NameRecord(this);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.NAME;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+		m.put("dataSize", this::getDataSize);
+		m.put("optionFlag", this::getOptionFlag);
+		m.put("keyboardShortcut", this::getKeyboardShortcut);
+		m.put("externSheetIndex", () -> field_5_externSheetIndex_plus1);
+		m.put("sheetNumber", this::getSheetNumber);
+		m.put("nameIsMultibyte", () -> field_11_nameIsMultibyte);
+		m.put("builtInName", this::getBuiltInName);
+		m.put("nameLength", this::getNameTextLength);
+		m.put("nameText", this::getNameText);
+		m.put("formula", this::getNameDefinition);
+		m.put("customMenuText", this::getCustomMenuText);
+		m.put("descriptionText", this::getDescriptionText);
+		m.put("helpTopicText", this::getHelpTopicText);
+		m.put("statusBarText", this::getStatusBarText);
+		return Collections.unmodifiableMap(m);
 	}
 }

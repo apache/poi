@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record.pivottable;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -55,18 +59,17 @@ public final class ViewSourceRecord extends StandardRecord {
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-
-		buffer.append("[SXVS]\n");
-		buffer.append("    .vs      =").append(HexDump.shortToHex(vs)).append('\n');
-
-		buffer.append("[/SXVS]\n");
-		return buffer.toString();
+	public ViewSourceRecord copy() {
+		return new ViewSourceRecord(this);
 	}
 
 	@Override
-	public ViewSourceRecord copy() {
-		return new ViewSourceRecord(this);
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.VIEW_SOURCE;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties("vs", () -> vs);
 	}
 }

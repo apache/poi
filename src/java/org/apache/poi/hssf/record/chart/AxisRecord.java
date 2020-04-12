@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -57,36 +61,6 @@ public final class AxisRecord extends StandardRecord {
         field_5_reserved4 = in.readInt();
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[AXIS]\n");
-        buffer.append("    .axisType             = ")
-            .append("0x").append(HexDump.toHex(  getAxisType ()))
-            .append(" (").append( getAxisType() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .reserved1            = ")
-            .append("0x").append(HexDump.toHex(  getReserved1 ()))
-            .append(" (").append( getReserved1() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .reserved2            = ")
-            .append("0x").append(HexDump.toHex(  getReserved2 ()))
-            .append(" (").append( getReserved2() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .reserved3            = ")
-            .append("0x").append(HexDump.toHex(  getReserved3 ()))
-            .append(" (").append( getReserved3() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .reserved4            = ")
-            .append("0x").append(HexDump.toHex(  getReserved4 ()))
-            .append(" (").append( getReserved4() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-
-        buffer.append("[/AXIS]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_axisType);
         out.writeInt(field_2_reserved1);
@@ -105,7 +79,7 @@ public final class AxisRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public AxisRecord clone() {
@@ -206,5 +180,21 @@ public final class AxisRecord extends StandardRecord {
     @Override
     public AxisRecord copy() {
         return new AxisRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.AXIS;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "axisType", this::getAxisType,
+            "reserved1", this::getReserved1,
+            "reserved2", this::getReserved2,
+            "reserved3", this::getReserved3,
+            "reserved4", this::getReserved4
+        );
     }
 }

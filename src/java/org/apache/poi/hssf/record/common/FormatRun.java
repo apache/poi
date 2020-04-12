@@ -17,12 +17,17 @@
 
 package org.apache.poi.hssf.record.common;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 @Internal
-public class FormatRun implements Comparable<FormatRun> {
+public class FormatRun implements Comparable<FormatRun>, GenericRecord {
     final short _character;
     short _fontIndex;
 
@@ -80,5 +85,13 @@ public class FormatRun implements Comparable<FormatRun> {
     public void serialize(LittleEndianOutput out) {
         out.writeShort(_character);
         out.writeShort(_fontIndex);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "characterPos", this::getCharacterPos,
+            "fontIndex", this::getFontIndex
+        );
     }
 }

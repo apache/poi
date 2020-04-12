@@ -17,10 +17,17 @@
 
 package org.apache.poi.hssf.record.common;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.hssf.record.FeatRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -59,19 +66,17 @@ public final class FeatFormulaErr2 implements SharedFeature {
 		errorCheck = in.readInt();
 	}
 
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"errorCheck", getBitsAsString(this::_getRawErrorCheckValue,
+			new BitField[]{CHECK_CALCULATION_ERRORS, CHECK_EMPTY_CELL_REF, CHECK_NUMBERS_AS_TEXT, CHECK_INCONSISTENT_RANGES, CHECK_INCONSISTENT_FORMULAS, CHECK_DATETIME_FORMATS, CHECK_UNPROTECTED_FORMULAS, PERFORM_DATA_VALIDATION},
+			new String[]{"CHECK_CALCULATION_ERRORS", "CHECK_EMPTY_CELL_REF", "CHECK_NUMBERS_AS_TEXT", "CHECK_INCONSISTENT_RANGES", "CHECK_INCONSISTENT_FORMULAS", "CHECK_DATETIME_FORMATS", "CHECK_UNPROTECTED_FORMULAS", "PERFORM_DATA_VALIDATION"})
+		);
+	}
+
 	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append(" [FEATURE FORMULA ERRORS]\n");
-		buffer.append("  checkCalculationErrors    = ");
-		buffer.append("  checkEmptyCellRef         = ");
-		buffer.append("  checkNumbersAsText        = ");
-		buffer.append("  checkInconsistentRanges   = ");
-		buffer.append("  checkInconsistentFormulas = ");
-		buffer.append("  checkDateTimeFormats      = ");
-		buffer.append("  checkUnprotectedFormulas  = ");
-		buffer.append("  performDataValidation     = ");
-		buffer.append(" [/FEATURE FORMULA ERRORS]\n");
-		return buffer.toString();
+		return GenericRecordJsonWriter.marshal(this);
 	}
 
 	public void serialize(LittleEndianOutput out) {

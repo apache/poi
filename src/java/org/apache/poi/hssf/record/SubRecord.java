@@ -18,9 +18,14 @@
 package org.apache.poi.hssf.record;
 
 import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.common.Duplicatable;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
@@ -30,7 +35,59 @@ import org.apache.poi.util.Removal;
 /**
  * Subrecords are part of the OBJ class.
  */
-public abstract class SubRecord implements Duplicatable {
+public abstract class SubRecord implements Duplicatable, GenericRecord {
+
+	public enum SubRecordTypes {
+		UNKNOWN(-1, UnknownSubRecord::new),
+		END(0x0000, EndSubRecord::new),
+		GROUP_MARKER(0x0006, GroupMarkerSubRecord::new),
+		FT_CF(0x0007, FtCfSubRecord::new),
+		FT_PIO_GRBIT(0x0008, FtPioGrbitSubRecord::new),
+		EMBEDDED_OBJECT_REF(0x0009, EmbeddedObjectRefSubRecord::new),
+		FT_CBLS(0x000C, FtCblsSubRecord::new),
+		NOTE_STRUCTURE(0x000D, NoteStructureSubRecord::new),
+		LBS_DATA(0x0013, LbsDataSubRecord::new),
+		COMMON_OBJECT_DATA(0x0015, CommonObjectDataSubRecord::new),
+		;
+
+
+
+		@FunctionalInterface
+		public interface RecordConstructor<T extends SubRecord> {
+			/**
+			 * read a sub-record from the supplied stream
+			 *
+			 * @param in    the stream to read from
+			 * @param cmoOt the objectType field of the containing CommonObjectDataSubRecord,
+			 *   we need it to propagate to next sub-records as it defines what data follows
+			 * @return the created sub-record
+			 */
+			T apply(LittleEndianInput in, int size, int cmoOt);
+		}
+
+		private static final Map<Short,SubRecordTypes> LOOKUP;
+
+		static {
+			LOOKUP = new HashMap<>();
+			for(SubRecordTypes s : values()) {
+				LOOKUP.put(s.sid, s);
+			}
+		}
+
+		public final short sid;
+		public final RecordConstructor<?> recordConstructor;
+
+		SubRecordTypes(int sid, RecordConstructor<?> recordConstructor) {
+			this.sid = (short)sid;
+			this.recordConstructor = recordConstructor;
+		}
+
+		public static SubRecordTypes forTypeID(int typeID) {
+			return LOOKUP.getOrDefault((short)typeID, UNKNOWN);
+		}
+
+	}
+
 
 	//arbitrarily selected; may need to increase
 	private static final int MAX_RECORD_LENGTH = 1_000_000;
@@ -72,6 +129,11 @@ public abstract class SubRecord implements Duplicatable {
             	return new FtCfSubRecord(in, secondUShort);
 		}
 		return new UnknownSubRecord(in, sid, secondUShort);
+	}
+
+	@Override
+	public final String toString() {
+		return GenericRecordJsonWriter.marshal(this);
 	}
 
 	/**
@@ -139,15 +201,18 @@ public abstract class SubRecord implements Duplicatable {
 		public UnknownSubRecord copy() {
 			return this;
 		}
+
 		@Override
-		public String toString() {
-			StringBuilder sb = new StringBuilder(64);
-			sb.append(getClass().getName()).append(" [");
-			sb.append("sid=").append(HexDump.shortToHex(_sid));
-			sb.append(" size=").append(_data.length);
-			sb.append(" : ").append(HexDump.toHex(_data));
-			sb.append("]\n");
-			return sb.toString();
+		public SubRecordTypes getGenericRecordType() {
+			return SubRecordTypes.UNKNOWN;
+		}
+
+		@Override
+		public Map<String, Supplier<?>> getGenericProperties() {
+			return GenericRecordUtil.getGenericProperties(
+				"sid", () -> _sid,
+				"data", () -> _data
+			);
 		}
 	}
 
@@ -159,4 +224,7 @@ public abstract class SubRecord implements Duplicatable {
 
 	@Override
 	public abstract SubRecord copy();
+
+	@Override
+	public abstract SubRecordTypes getGenericRecordType();
 }

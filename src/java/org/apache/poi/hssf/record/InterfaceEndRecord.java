@@ -17,6 +17,9 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
 
@@ -42,10 +45,6 @@ public final class InterfaceEndRecord extends StandardRecord {
         throw new RecordFormatException("Invalid record data size: " + in.remaining());
     }
 
-    public String toString() {
-        return "[INTERFACEEND/]\n";
-    }
-
     public void serialize(LittleEndianOutput out) {
         // no instance data
     }
@@ -61,5 +60,15 @@ public final class InterfaceEndRecord extends StandardRecord {
     @Override
     public InterfaceEndRecord copy() {
         return instance;
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.INTERFACE_END;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return null;
     }
 }

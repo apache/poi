@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -36,15 +40,6 @@ public final class LeftMarginRecord extends StandardRecord implements Margin {
 
     public LeftMarginRecord(RecordInputStream in) {
         field_1_margin = in.readDouble();
-    }
-
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append( "[LeftMargin]\n" );
-        buffer.append( "    .margin               = " ).append( " (" ).append( getMargin() ).append( " )\n" );
-        buffer.append( "[/LeftMargin]\n" );
-        return buffer.toString();
     }
 
     public void serialize(LittleEndianOutput out) {
@@ -75,7 +70,7 @@ public final class LeftMarginRecord extends StandardRecord implements Margin {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public LeftMarginRecord clone() {
@@ -85,5 +80,15 @@ public final class LeftMarginRecord extends StandardRecord implements Margin {
     @Override
     public LeftMarginRecord copy() {
         return new LeftMarginRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.LEFT_MARGIN;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("margin", this::getMargin);
     }
 }

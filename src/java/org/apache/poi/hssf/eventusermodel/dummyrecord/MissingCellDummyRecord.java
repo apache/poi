@@ -18,6 +18,12 @@
 package org.apache.poi.hssf.eventusermodel.dummyrecord;
 
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
+import org.apache.poi.util.GenericRecordUtil;
+
 /**
  * A dummy record for when we're missing a cell in a row,
  *  but still want to trigger something
@@ -36,5 +42,18 @@ public final class MissingCellDummyRecord extends DummyRecordBase {
 	@Override
 	public MissingCellDummyRecord copy() {
 		return this;
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return null;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"row", this::getRow,
+			"column", this::getColumn
+		);
 	}
 }

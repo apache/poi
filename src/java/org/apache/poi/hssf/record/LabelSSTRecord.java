@@ -17,7 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -67,11 +70,6 @@ public final class LabelSSTRecord extends CellRecord {
     }
 
     @Override
-    protected void appendValueText(StringBuilder sb) {
-		sb.append("  .sstIndex = ");
-    	sb.append(HexDump.shortToHex(getSSTIndex()));
-    }
-    @Override
     protected void serializeValue(LittleEndianOutput out) {
         out.writeInt(getSSTIndex());
     }
@@ -87,7 +85,7 @@ public final class LabelSSTRecord extends CellRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public LabelSSTRecord clone() {
@@ -97,5 +95,18 @@ public final class LabelSSTRecord extends CellRecord {
     @Override
     public LabelSSTRecord copy() {
         return new LabelSSTRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.LABEL_SST;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "sstIndex", this::getSSTIndex
+        );
     }
 }

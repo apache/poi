@@ -17,11 +17,15 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ExternSheetReferenceToken;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
 import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -67,18 +71,6 @@ public final class Area3DPtg extends AreaPtgBase implements WorkbookDependentFor
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getClass().getName());
-		sb.append(" [");
-		sb.append("sheetIx=").append(getExternSheetIndex());
-		sb.append(" ! ");
-		sb.append(formatReferenceAsString());
-		sb.append("]");
-		return sb.toString();
-	}
-
-	@Override
 	public void write(LittleEndianOutput out) {
 		out.writeByte(sid + getPtgClass());
 		out.writeShort(field_1_index_extern_sheet);
@@ -116,5 +108,13 @@ public final class Area3DPtg extends AreaPtgBase implements WorkbookDependentFor
 	@Override
 	public Area3DPtg copy() {
 		return new Area3DPtg(this);
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"base", super::getGenericProperties,
+			"externSheetIndex", this::getExternSheetIndex
+		);
 	}
 }

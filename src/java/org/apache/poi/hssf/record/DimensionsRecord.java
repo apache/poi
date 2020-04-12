@@ -19,6 +19,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -145,25 +149,6 @@ public final class DimensionsRecord extends StandardRecord {
         return field_4_last_col;
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[DIMENSIONS]\n");
-        buffer.append("    .firstrow       = ")
-            .append(Integer.toHexString(getFirstRow())).append("\n");
-        buffer.append("    .lastrow        = ")
-            .append(Integer.toHexString(getLastRow())).append("\n");
-        buffer.append("    .firstcol       = ")
-            .append(Integer.toHexString(getFirstCol())).append("\n");
-        buffer.append("    .lastcol        = ")
-            .append(Integer.toHexString(getLastCol())).append("\n");
-        buffer.append("    .zero           = ")
-            .append(Integer.toHexString(field_5_zero)).append("\n");
-        buffer.append("[/DIMENSIONS]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeInt(getFirstRow());
         out.writeInt(getLastRow());
@@ -182,7 +167,7 @@ public final class DimensionsRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public DimensionsRecord clone() {
@@ -192,5 +177,21 @@ public final class DimensionsRecord extends StandardRecord {
     @Override
     public DimensionsRecord copy() {
       return new DimensionsRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.DIMENSIONS;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "firstRow", this::getFirstRow,
+            "lastRow", this::getLastRow,
+            "firstColumn", this::getFirstCol,
+            "lastColumn", this::getLastCol,
+            "zero", () -> field_5_zero
+        );
     }
 }

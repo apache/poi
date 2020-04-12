@@ -18,7 +18,12 @@
 package org.apache.poi.hssf.record;
 
 
-import org.apache.poi.util.HexDump;
+import static org.apache.poi.util.GenericRecordUtil.getEnumBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -58,37 +63,6 @@ public final class PaneRecord extends StandardRecord {
     }
 
     @Override
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[PANE]\n");
-        buffer.append("    .x                    = ")
-            .append("0x").append(HexDump.toHex(  getX ()))
-            .append(" (").append( getX() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .y                    = ")
-            .append("0x").append(HexDump.toHex(  getY ()))
-            .append(" (").append( getY() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .topRow               = ")
-            .append("0x").append(HexDump.toHex(  getTopRow ()))
-            .append(" (").append( getTopRow() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .leftColumn           = ")
-            .append("0x").append(HexDump.toHex(  getLeftColumn ()))
-            .append(" (").append( getLeftColumn() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .activePane           = ")
-            .append("0x").append(HexDump.toHex(  getActivePane ()))
-            .append(" (").append( getActivePane() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-
-        buffer.append("[/PANE]\n");
-        return buffer.toString();
-    }
-
-    @Override
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_x);
         out.writeShort(field_2_y);
@@ -109,7 +83,7 @@ public final class PaneRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public PaneRecord clone() {
@@ -228,5 +202,23 @@ public final class PaneRecord extends StandardRecord {
     public void setActivePane(short field_5_activePane)
     {
         this.field_5_activePane = field_5_activePane;
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.PANE;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "x", this::getX,
+            "y", this::getY,
+            "topRow", this::getTopRow,
+            "leftColumn", this::getLeftColumn,
+            "activePane", getEnumBitsAsString(this::getActivePane,
+                new int[]{ACTIVE_PANE_LOWER_RIGHT, ACTIVE_PANE_UPPER_RIGHT, ACTIVE_PANE_LOWER_LEFT, ACTIVE_PANE_UPPER_LEFT},
+                new String[]{"LOWER_RIGHT","UPPER_RIGHT","LOWER_LEFT","UPPER_LEFT"})
+        );
     }
 }

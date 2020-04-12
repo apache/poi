@@ -45,9 +45,9 @@ import org.apache.poi.hssf.record.chart.DataFormatRecord;
 import org.apache.poi.hssf.record.chart.EndRecord;
 import org.apache.poi.hssf.record.chart.LegendRecord;
 import org.apache.poi.hssf.record.chart.LinkedDataRecord;
+import org.apache.poi.hssf.record.chart.SeriesChartGroupIndexRecord;
 import org.apache.poi.hssf.record.chart.SeriesRecord;
 import org.apache.poi.hssf.record.chart.SeriesTextRecord;
-import org.apache.poi.hssf.record.chart.SeriesToChartGroupRecord;
 import org.apache.poi.hssf.record.chart.ValueRangeRecord;
 import org.apache.poi.hssf.record.pivottable.DataItemRecord;
 import org.apache.poi.hssf.record.pivottable.ExtendedPivotTableViewFieldsRecord;
@@ -268,7 +268,7 @@ public final class RecordFactory {
         DataFormatRecord.class,
         EndRecord.class,
         LinkedDataRecord.class,
-        SeriesToChartGroupRecord.class,
+        SeriesChartGroupIndexRecord.class,
 
         // pivot table records
         DataItemRecord.class,

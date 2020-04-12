@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record.pivottable;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
@@ -119,23 +123,24 @@ public final class ExtendedPivotTableViewFieldsRecord extends StandardRecord {
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-
-		buffer.append("[SXVDEX]\n");
-
-		buffer.append("    .grbit1 =").append(HexDump.intToHex(_grbit1)).append("\n");
-		buffer.append("    .grbit2 =").append(HexDump.byteToHex(_grbit2)).append("\n");
-		buffer.append("    .citmShow =").append(HexDump.byteToHex(_citmShow)).append("\n");
-		buffer.append("    .isxdiSort =").append(HexDump.shortToHex(_isxdiSort)).append("\n");
-		buffer.append("    .isxdiShow =").append(HexDump.shortToHex(_isxdiShow)).append("\n");
-		buffer.append("    .subtotalName =").append(_subtotalName).append("\n");
-		buffer.append("[/SXVDEX]\n");
-		return buffer.toString();
+	public ExtendedPivotTableViewFieldsRecord copy() {
+		return new ExtendedPivotTableViewFieldsRecord(this);
 	}
 
 	@Override
-	public ExtendedPivotTableViewFieldsRecord copy() {
-		return new ExtendedPivotTableViewFieldsRecord(this);
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.EXTENDED_PIVOT_TABLE_VIEW_FIELDS;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"grbit1", () -> _grbit1,
+			"grbit2", () -> _grbit2,
+			"citmShow", () -> _citmShow,
+			"isxdiSort", () -> _isxdiSort,
+			"isxdiShow", () -> _isxdiShow,
+			"subtotalName", () -> _subtotalName
+		);
 	}
 }

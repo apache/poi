@@ -17,7 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -46,15 +49,6 @@ public final class InterfaceHdrRecord extends StandardRecord {
         _codepage = in.readShort();
     }
 
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[INTERFACEHDR]\n");
-        buffer.append("    .codepage = ").append(HexDump.shortToHex(_codepage)).append("\n");
-        buffer.append("[/INTERFACEHDR]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(_codepage);
     }
@@ -70,5 +64,15 @@ public final class InterfaceHdrRecord extends StandardRecord {
     @Override
     public InterfaceHdrRecord copy() {
         return new InterfaceHdrRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.INTERFACE_HDR;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("codePage", () -> _codepage);
     }
 }

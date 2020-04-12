@@ -19,6 +19,7 @@
 
 package org.apache.poi.util;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -38,7 +39,7 @@ public final class GenericRecordUtil {
         String val1, Supplier<?> sup1,
         String val2, Supplier<?> sup2
     ) {
-        return getGenericProperties(val1, sup1, val2, sup2, null, null, null, null, null, null, null, null);
+        return getGenericProperties(val1, sup1, val2, sup2, null, null, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     public static Map<String, Supplier<?>> getGenericProperties(
@@ -46,7 +47,7 @@ public final class GenericRecordUtil {
             String val2, Supplier<?> sup2,
             String val3, Supplier<?> sup3
     ) {
-        return getGenericProperties(val1, sup1, val2, sup2, val3, sup3, null, null, null, null, null, null);
+        return getGenericProperties(val1, sup1, val2, sup2, val3, sup3, null, null, null, null, null, null, null, null, null, null, null, null);
     }
 
     public static Map<String, Supplier<?>> getGenericProperties(
@@ -55,7 +56,7 @@ public final class GenericRecordUtil {
             String val3, Supplier<?> sup3,
             String val4, Supplier<?> sup4
     ) {
-        return getGenericProperties(val1, sup1, val2, sup2, val3, sup3, val4, sup4, null, null, null, null);
+        return getGenericProperties(val1, sup1, val2, sup2, val3, sup3, val4, sup4, null, null, null, null, null, null, null, null, null, null);
 
     }
 
@@ -66,7 +67,7 @@ public final class GenericRecordUtil {
             String val4, Supplier<?> sup4,
             String val5, Supplier<?> sup5
     ) {
-        return getGenericProperties(val1, sup1, val2, sup2, val3, sup3, val4, sup4, val5, sup5, null, null);
+        return getGenericProperties(val1, sup1, val2, sup2, val3, sup3, val4, sup4, val5, sup5, null, null, null, null, null, null, null, null);
     }
 
     public static Map<String, Supplier<?>> getGenericProperties(
@@ -77,10 +78,49 @@ public final class GenericRecordUtil {
             String val5, Supplier<?> sup5,
             String val6, Supplier<?> sup6
     ) {
+        return getGenericProperties(val1, sup1, val2, sup2, val3, sup3, val4, sup4, val5, sup5, val6, sup6, null, null, null, null, null, null);
+    }
+
+    public static Map<String, Supplier<?>> getGenericProperties(
+        String val1, Supplier<?> sup1,
+        String val2, Supplier<?> sup2,
+        String val3, Supplier<?> sup3,
+        String val4, Supplier<?> sup4,
+        String val5, Supplier<?> sup5,
+        String val6, Supplier<?> sup6,
+        String val7, Supplier<?> sup7
+    ) {
+        return getGenericProperties(val1, sup1, val2, sup2, val3, sup3, val4, sup4, val5, sup5, val6, sup6, val7, sup7, null, null, null, null);
+    }
+
+    public static Map<String, Supplier<?>> getGenericProperties(
+        String val1, Supplier<?> sup1,
+        String val2, Supplier<?> sup2,
+        String val3, Supplier<?> sup3,
+        String val4, Supplier<?> sup4,
+        String val5, Supplier<?> sup5,
+        String val6, Supplier<?> sup6,
+        String val7, Supplier<?> sup7,
+        String val8, Supplier<?> sup8
+    ) {
+        return getGenericProperties(val1, sup1, val2, sup2, val3, sup3, val4, sup4, val5, sup5, val6, sup6, val7, sup7, val8, sup8, null, null);
+    }
+
+    public static Map<String, Supplier<?>> getGenericProperties(
+        String val1, Supplier<?> sup1,
+        String val2, Supplier<?> sup2,
+        String val3, Supplier<?> sup3,
+        String val4, Supplier<?> sup4,
+        String val5, Supplier<?> sup5,
+        String val6, Supplier<?> sup6,
+        String val7, Supplier<?> sup7,
+        String val8, Supplier<?> sup8,
+        String val9, Supplier<?> sup9
+    ) {
         final Map<String,Supplier<?>> m = new LinkedHashMap<>();
 
-        final String[] vals = { val1, val2, val3, val4, val5, val6 };
-        final Supplier<?>[] sups = { sup1, sup2, sup3, sup4, sup5, sup6 };
+        final String[] vals = { val1, val2, val3, val4, val5, val6, val7, val8, val9 };
+        final Supplier<?>[] sups = { sup1, sup2, sup3, sup4, sup5, sup6, sup7, sup8, sup9 };
 
         for (int i=0; i<vals.length && vals[i] != null; i++) {
             assert(sups[i] != null);
@@ -97,13 +137,18 @@ public final class GenericRecordUtil {
         return Collections.unmodifiableMap(m);
     }
 
-    public static <T extends Enum> Supplier<T> safeEnum(T[] values, Supplier<Number> ordinal) {
+    public static <T extends Enum<?>> Supplier<T> safeEnum(T[] values, Supplier<Number> ordinal) {
         return safeEnum(values, ordinal, null);
     }
 
-    public static <T extends Enum> Supplier<T> safeEnum(T[] values, Supplier<Number> ordinal, T defaultVal) {
+    public static <T extends Enum<?>> Supplier<T> safeEnum(T[] values, Supplier<Number> ordinal, T defaultVal) {
         int ord = ordinal.get().intValue();
         return () -> (0 <= ord && ord < values.length) ? values[ord] : defaultVal;
+    }
+
+    public static Supplier<AnnotatedFlag> getBitsAsString(Supplier<Number> flags, final BitField[] masks, final String[] names) {
+        int[] iMasks = Arrays.stream(masks).mapToInt(BitField::getMask).toArray();
+        return () -> new AnnotatedFlag(flags, iMasks, names, false);
     }
 
     public static Supplier<AnnotatedFlag> getBitsAsString(Supplier<Number> flags, final int[] masks, final String[] names) {

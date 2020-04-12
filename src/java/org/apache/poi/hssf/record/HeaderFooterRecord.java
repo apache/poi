@@ -18,9 +18,10 @@
 package org.apache.poi.hssf.record;
 
 import java.util.Arrays;
-import java.util.Locale;
+import java.util.Map;
+import java.util.function.Supplier;
 
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -29,6 +30,7 @@ import org.apache.poi.util.Removal;
  */
 public final class HeaderFooterRecord extends StandardRecord {
     public static final short sid = 0x089C;
+    @SuppressWarnings("MismatchedReadAndWriteOfArray")
     private static final byte[] BLANK_GUID = new byte[16];
 
 	private byte[] _rawData;
@@ -88,15 +90,8 @@ public final class HeaderFooterRecord extends StandardRecord {
         return Arrays.equals(getGuid(), BLANK_GUID);
     }
 
-    public String toString() {
-        return '[' + "HEADERFOOTER" + "] (0x" +
-                Integer.toHexString(sid).toUpperCase(Locale.ROOT) + ")\n" +
-                "  rawData=" + HexDump.toHex(_rawData) + "\n" +
-                "[/" + "HEADERFOOTER" + "]\n";
-    }
-
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public HeaderFooterRecord clone() {
@@ -108,5 +103,13 @@ public final class HeaderFooterRecord extends StandardRecord {
         return new HeaderFooterRecord(this);
     }
 
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.HEADER_FOOTER;
+    }
 
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("rawData", () -> _rawData);
+    }
 }

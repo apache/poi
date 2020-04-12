@@ -17,11 +17,15 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -69,44 +73,6 @@ public final class ValueRangeRecord extends StandardRecord {
         field_6_options           = in.readShort();
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[VALUERANGE]\n");
-        buffer.append("    .minimumAxisValue     = ")
-            .append(" (").append( getMinimumAxisValue() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .maximumAxisValue     = ")
-            .append(" (").append( getMaximumAxisValue() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .majorIncrement       = ")
-            .append(" (").append( getMajorIncrement() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .minorIncrement       = ")
-            .append(" (").append( getMinorIncrement() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .categoryAxisCross    = ")
-            .append(" (").append( getCategoryAxisCross() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .options              = ")
-            .append("0x").append(HexDump.toHex(  getOptions ()))
-            .append(" (").append( getOptions() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("         .automaticMinimum         = ").append(isAutomaticMinimum()).append('\n');
-        buffer.append("         .automaticMaximum         = ").append(isAutomaticMaximum()).append('\n');
-        buffer.append("         .automaticMajor           = ").append(isAutomaticMajor()).append('\n');
-        buffer.append("         .automaticMinor           = ").append(isAutomaticMinor()).append('\n');
-        buffer.append("         .automaticCategoryCrossing     = ").append(isAutomaticCategoryCrossing()).append('\n');
-        buffer.append("         .logarithmicScale         = ").append(isLogarithmicScale()).append('\n');
-        buffer.append("         .valuesInReverse          = ").append(isValuesInReverse()).append('\n');
-        buffer.append("         .crossCategoryAxisAtMaximum     = ").append(isCrossCategoryAxisAtMaximum()).append('\n');
-        buffer.append("         .reserved                 = ").append(isReserved()).append('\n');
-
-        buffer.append("[/VALUERANGE]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeDouble(field_1_minimumAxisValue);
         out.writeDouble(field_2_maximumAxisValue);
@@ -126,7 +92,7 @@ public final class ValueRangeRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public ValueRangeRecord clone() {
@@ -394,5 +360,24 @@ public final class ValueRangeRecord extends StandardRecord {
     public boolean isReserved()
     {
         return reserved.isSet(field_6_options);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.VALUE_RANGE;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "minimumAxisValue", this::getMinimumAxisValue,
+            "maximumAxisValue", this::getMaximumAxisValue,
+            "majorIncrement", this::getMajorIncrement,
+            "minorIncrement", this::getMinorIncrement,
+            "categoryAxisCross", this::getCategoryAxisCross,
+            "options", GenericRecordUtil.getBitsAsString(this::getOptions,
+                new BitField[]{automaticMinimum, automaticMaximum, automaticMajor, automaticMinor, automaticCategoryCrossing, logarithmicScale, valuesInReverse, crossCategoryAxisAtMaximum, reserved},
+                new String[]{"AUTOMATIC_MINIMUM", "AUTOMATIC_MAXIMUM", "AUTOMATIC_MAJOR", "AUTOMATIC_MINOR", "AUTOMATIC_CATEGORY_CROSSING", "LOGARITHMIC_SCALE", "VALUES_IN_REVERSE", "CROSS_CATEGORY_AXIS_AT_MAXIMUM", "RESERVED"})
+        );
     }
 }

@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -69,17 +73,6 @@ public final class DefaultColWidthRecord extends StandardRecord {
         return field_1_col_width;
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[DEFAULTCOLWIDTH]\n");
-        buffer.append("    .colwidth      = ")
-            .append(Integer.toHexString(getColWidth())).append("\n");
-        buffer.append("[/DEFAULTCOLWIDTH]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(getColWidth());
     }
@@ -94,7 +87,7 @@ public final class DefaultColWidthRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public DefaultColWidthRecord clone() {
@@ -104,5 +97,17 @@ public final class DefaultColWidthRecord extends StandardRecord {
     @Override
     public DefaultColWidthRecord copy() {
       return new DefaultColWidthRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.DEFAULT_COL_WIDTH;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "colWidth", this::getColWidth
+        );
     }
 }

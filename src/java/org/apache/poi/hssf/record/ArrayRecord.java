@@ -17,10 +17,13 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -86,24 +89,8 @@ public final class ArrayRecord extends SharedValueRecordBase {
 		return sid;
 	}
 
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getClass().getName()).append(" [ARRAY]\n");
-		sb.append(" range=").append(getRange()).append("\n");
-		sb.append(" options=").append(HexDump.shortToHex(_options)).append("\n");
-		sb.append(" notUsed=").append(HexDump.intToHex(_field3notUsed)).append("\n");
-		sb.append(" formula:").append("\n");
-		Ptg[] ptgs = _formula.getTokens();
-		for (int i = 0; i < ptgs.length; i++) {
-			Ptg ptg = ptgs[i];
-			sb.append(ptg).append(ptg.getRVAType()).append("\n");
-		}
-		sb.append("]");
-		return sb.toString();
-	}
-
 	@Override
-	@SuppressWarnings("squid:S2975")
+	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
 	@Deprecated
 	@Removal(version = "5.0.0")
 	public ArrayRecord clone() {
@@ -114,4 +101,19 @@ public final class ArrayRecord extends SharedValueRecordBase {
     public ArrayRecord copy() {
         return new ArrayRecord(this);
     }
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.ARRAY;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"range", this::getRange,
+			"options", () -> _options,
+			"notUsed", () -> _field3notUsed,
+			"formula", () -> _formula
+		);
+	}
 }

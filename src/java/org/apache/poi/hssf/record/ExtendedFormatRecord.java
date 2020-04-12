@@ -18,7 +18,15 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+import static org.apache.poi.util.GenericRecordUtil.getEnumBitsAsString;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
@@ -1645,114 +1653,6 @@ public final class ExtendedFormatRecord extends StandardRecord {
     }
 
     @Override
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[EXTENDEDFORMAT]\n");
-        if (getXFType() == XF_STYLE)
-        {
-            buffer.append(" STYLE_RECORD_TYPE\n");
-        }
-        else if (getXFType() == XF_CELL)
-        {
-            buffer.append(" CELL_RECORD_TYPE\n");
-        }
-        buffer.append("    .fontindex       = ")
-            .append(Integer.toHexString(getFontIndex())).append("\n");
-        buffer.append("    .formatindex     = ")
-            .append(Integer.toHexString(getFormatIndex())).append("\n");
-        buffer.append("    .celloptions     = ")
-            .append(Integer.toHexString(getCellOptions())).append("\n");
-        buffer.append("          .islocked  = ").append(isLocked())
-            .append("\n");
-        buffer.append("          .ishidden  = ").append(isHidden())
-            .append("\n");
-        buffer.append("          .recordtype= ")
-            .append(Integer.toHexString(getXFType())).append("\n");
-        buffer.append("          .parentidx = ")
-            .append(Integer.toHexString(getParentIndex())).append("\n");
-        buffer.append("    .alignmentoptions= ")
-            .append(Integer.toHexString(getAlignmentOptions())).append("\n");
-        buffer.append("          .alignment = ").append(getAlignment())
-            .append("\n");
-        buffer.append("          .wraptext  = ").append(getWrapText())
-            .append("\n");
-        buffer.append("          .valignment= ")
-            .append(Integer.toHexString(getVerticalAlignment())).append("\n");
-        buffer.append("          .justlast  = ")
-            .append(Integer.toHexString(getJustifyLast())).append("\n");
-        buffer.append("          .rotation  = ")
-            .append(Integer.toHexString(getRotation())).append("\n");
-        buffer.append("    .indentionoptions= ")
-            .append(Integer.toHexString(getIndentionOptions())).append("\n");
-        buffer.append("          .indent    = ")
-            .append(Integer.toHexString(getIndent())).append("\n");
-        buffer.append("          .shrinktoft= ").append(getShrinkToFit())
-            .append("\n");
-        buffer.append("          .mergecells= ").append(getMergeCells())
-            .append("\n");
-        buffer.append("          .readngordr= ")
-            .append(Integer.toHexString(getReadingOrder())).append("\n");
-        buffer.append("          .formatflag= ")
-            .append(isIndentNotParentFormat()).append("\n");
-        buffer.append("          .fontflag  = ")
-            .append(isIndentNotParentFont()).append("\n");
-        buffer.append("          .prntalgnmt= ")
-            .append(isIndentNotParentAlignment()).append("\n");
-        buffer.append("          .borderflag= ")
-            .append(isIndentNotParentBorder()).append("\n");
-        buffer.append("          .paternflag= ")
-            .append(isIndentNotParentPattern()).append("\n");
-        buffer.append("          .celloption= ")
-            .append(isIndentNotParentCellOptions()).append("\n");
-        buffer.append("    .borderoptns     = ")
-            .append(Integer.toHexString(getBorderOptions())).append("\n");
-        buffer.append("          .lftln     = ")
-            .append(Integer.toHexString(getBorderLeft())).append("\n");
-        buffer.append("          .rgtln     = ")
-            .append(Integer.toHexString(getBorderRight())).append("\n");
-        buffer.append("          .topln     = ")
-            .append(Integer.toHexString(getBorderTop())).append("\n");
-        buffer.append("          .btmln     = ")
-            .append(Integer.toHexString(getBorderBottom())).append("\n");
-        buffer.append("    .paleteoptns     = ")
-            .append(Integer.toHexString(getPaletteOptions())).append("\n");
-        buffer.append("          .leftborder= ")
-            .append(Integer.toHexString(getLeftBorderPaletteIdx()))
-            .append("\n");
-        buffer.append("          .rghtborder= ")
-            .append(Integer.toHexString(getRightBorderPaletteIdx()))
-            .append("\n");
-        buffer.append("          .diag      = ")
-            .append(Integer.toHexString(getDiag())).append("\n");
-        buffer.append("    .paleteoptn2     = ")
-            .append(Integer.toHexString(getAdtlPaletteOptions()))
-            .append("\n");
-        buffer.append("          .topborder = ")
-            .append(Integer.toHexString(getTopBorderPaletteIdx()))
-            .append("\n");
-        buffer.append("          .botmborder= ")
-            .append(Integer.toHexString(getBottomBorderPaletteIdx()))
-            .append("\n");
-        buffer.append("          .adtldiag  = ")
-            .append(Integer.toHexString(getAdtlDiag())).append("\n");
-        buffer.append("          .diaglnstyl= ")
-            .append(Integer.toHexString(getAdtlDiagLineStyle())).append("\n");
-        buffer.append("          .fillpattrn= ")
-            .append(Integer.toHexString(getAdtlFillPattern())).append("\n");
-        buffer.append("    .fillpaloptn     = ")
-            .append(Integer.toHexString(getFillPaletteOptions()))
-            .append("\n");
-        buffer.append("          .foreground= ")
-            .append(Integer.toHexString(getFillForeground())).append("\n");
-        buffer.append("          .background= ")
-            .append(Integer.toHexString(getFillBackground())).append("\n");
-        buffer.append("[/EXTENDEDFORMAT]\n");
-        return buffer.toString();
-    }
-
-    @Override
     public void serialize(LittleEndianOutput out) {
         out.writeShort(getFontIndex());
         out.writeShort(getFormatIndex());
@@ -1827,25 +1727,7 @@ public final class ExtendedFormatRecord extends StandardRecord {
 			return false;
 		if (obj instanceof ExtendedFormatRecord) {
 			final ExtendedFormatRecord other = (ExtendedFormatRecord) obj;
-			if (field_1_font_index != other.field_1_font_index)
-				return false;
-			if (field_2_format_index != other.field_2_format_index)
-				return false;
-			if (field_3_cell_options != other.field_3_cell_options)
-				return false;
-			if (field_4_alignment_options != other.field_4_alignment_options)
-				return false;
-			if (field_5_indention_options != other.field_5_indention_options)
-				return false;
-			if (field_6_border_options != other.field_6_border_options)
-				return false;
-			if (field_7_palette_options != other.field_7_palette_options)
-				return false;
-			if (field_8_adtl_palette_options != other.field_8_adtl_palette_options)
-				return false;
-			if (field_9_fill_palette_options != other.field_9_fill_palette_options)
-				return false;
-			return true;
+			return Arrays.equals(stateSummary(), other.stateSummary());
 		}
 		return false;
 	}
@@ -1859,5 +1741,55 @@ public final class ExtendedFormatRecord extends StandardRecord {
     @Override
     public ExtendedFormatRecord copy() {
         return new ExtendedFormatRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.EXTENDED_FORMAT;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("xfType", getEnumBitsAsString(this::getXFType, new int[]{0,1}, new String[]{"CELL", "STYLE"}));
+        m.put("fontIndex", this::getFontIndex);
+        m.put("formatIndex", this::getFormatIndex);
+        m.put("cellOptions", getBitsAsString(this::getCellOptions,
+            new BitField[]{_locked,_hidden,_123_prefix},
+            new String[]{"LOCKED","HIDDEN","LOTUS_123_PREFIX"}));
+        m.put("parentIndex", this::getParentIndex);
+        m.put("alignmentOptions", getBitsAsString(this::getAlignmentOptions,
+            new BitField[]{_wrap_text, _justify_last},
+            new String[]{"WRAP_TEXT", "JUSTIFY_LAST"}));
+        m.put("alignment", this::getAlignment);
+        m.put("verticalAlignment", this::getVerticalAlignment);
+        m.put("rotation", this::getRotation);
+        m.put("indentionOptions", getBitsAsString(this::getIndentionOptions,
+            new BitField[]{_shrink_to_fit,_merge_cells,_indent_not_parent_format,_indent_not_parent_font,
+                    _indent_not_parent_alignment,_indent_not_parent_border,_indent_not_parent_pattern,_indent_not_parent_cell_options},
+            new String[]{"SHRINK_TO_FIT","MERGE_CELLS","NOT_PARENT_FORMAT","NOT_PARENT_FONT",
+                    "NOT_PARENT_ALIGNMENT","NOT_PARENT_BORDER","NOT_PARENT_PATTERN","NOT_PARENT_CELL_OPTIONS"}));
+        m.put("indent", this::getIndent);
+        m.put("readingOrder", this::getReadingOrder);
+        m.put("borderOptions", this::getBorderOptions);
+        m.put("borderLeft", this::getBorderLeft);
+        m.put("borderRight", this::getBorderRight);
+        m.put("borderTop", this::getBorderTop);
+        m.put("borderBottom", this::getBorderBottom);
+        m.put("paletteOptions", this::getPaletteOptions);
+        m.put("leftBorderPaletteIdx", this::getLeftBorderPaletteIdx);
+        m.put("rightBorderPaletteIdx", this::getRightBorderPaletteIdx);
+        m.put("diag", this::getDiag);
+        m.put("adtlPaletteOptions", this::getAdtlPaletteOptions);
+        m.put("topBorderPaletteIdx", this::getTopBorderPaletteIdx);
+        m.put("bottomBorderPaletteIdx", this::getBottomBorderPaletteIdx);
+        m.put("adtlDiag", this::getAdtlDiag);
+        m.put("adtlDiagLineStyle", this::getAdtlDiagLineStyle);
+        m.put("adtlFillPattern", this::getAdtlFillPattern);
+        m.put("fillPaletteOptions", this::getFillPaletteOptions);
+        m.put("fillForeground", this::getFillForeground);
+        m.put("fillBackground", this::getFillBackground);
+
+        return Collections.unmodifiableMap(m);
     }
 }

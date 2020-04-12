@@ -17,6 +17,9 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -54,5 +57,10 @@ public final class ParenthesisPtg extends ControlPtg {
 	@Override
 	public ParenthesisPtg copy() {
 		return instance;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return null;
 	}
 }

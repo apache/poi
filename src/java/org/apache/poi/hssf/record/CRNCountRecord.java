@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 /**
  * XCT - CRN Count
@@ -28,10 +32,6 @@ public final class CRNCountRecord extends StandardRecord {
 
 	private int field_1_number_crn_records;
 	private int field_2_sheet_table_index;
-
-	private CRNCountRecord() {
-		// incomplete code
-	}
 
 	public CRNCountRecord(CRNCountRecord other) {
 		super(other);
@@ -53,15 +53,6 @@ public final class CRNCountRecord extends StandardRecord {
 		return field_1_number_crn_records;
 	}
 
-	public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getName()).append(" [XCT");
-        sb.append(" nCRNs=").append(field_1_number_crn_records);
-        sb.append(" sheetIx=").append(field_2_sheet_table_index);
-        sb.append("]");
-        return sb.toString();
-	}
-
 	public void serialize(LittleEndianOutput out) {
 		out.writeShort((short)field_1_number_crn_records);
 		out.writeShort((short)field_2_sheet_table_index);
@@ -80,5 +71,18 @@ public final class CRNCountRecord extends StandardRecord {
 	@Override
 	public CRNCountRecord copy() {
 		return new CRNCountRecord(this);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.CRN_COUNT;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"numberOfCRNs", this::getNumberOfCRNs,
+			"sheetTableIndex", () -> field_2_sheet_table_index
+		);
 	}
 }

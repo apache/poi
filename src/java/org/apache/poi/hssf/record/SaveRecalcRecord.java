@@ -17,6 +17,10 @@
 ==================================================================== */
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -59,13 +63,6 @@ public final class SaveRecalcRecord extends StandardRecord {
         return (field_1_recalc == 1);
     }
 
-    public String toString() {
-        return "[SAVERECALC]\n" +
-                "    .recalc         = " + getRecalc() +
-                "\n" +
-                "[/SAVERECALC]\n";
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_recalc);
     }
@@ -79,7 +76,7 @@ public final class SaveRecalcRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public SaveRecalcRecord clone() {
@@ -89,5 +86,15 @@ public final class SaveRecalcRecord extends StandardRecord {
     @Override
     public SaveRecalcRecord copy() {
         return new SaveRecalcRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.SAVE_RECALC;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("recalc", this::getRecalc);
     }
 }

@@ -29,6 +29,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherClientDataRecord;
@@ -39,6 +40,7 @@ import org.apache.poi.ddf.EscherSerializationListener;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.ddf.EscherSpgrRecord;
 import org.apache.poi.ddf.EscherTextboxRecord;
+import org.apache.poi.util.GenericRecordXmlWriter;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RecordFormatException;
 
@@ -333,36 +335,13 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     }
 
     /**
-     * Calculates the string representation of this record.  This is
-     * simply a dump of all the records.
-     */
-    public String toString() {
-        String nl = System.getProperty("line.separtor");
-
-        StringBuilder result = new StringBuilder();
-        result.append('[').append(getRecordName()).append(']').append(nl);
-        for (EscherRecord escherRecord : getEscherRecords()) {
-            result.append(escherRecord);
-        }
-        result.append("[/").append(getRecordName()).append(']').append(nl);
-
-        return result.toString();
-    }
-
-    /**
      * Calculates the xml representation of this record.  This is
      * simply a dump of all the records.
      * @param tab - string which must be added before each line (used by default '\t')
      * @return xml representation of the all aggregated records
      */
     public String toXml(String tab) {
-        StringBuilder builder = new StringBuilder();
-        builder.append(tab).append("<").append(getRecordName()).append(">\n");
-        for (EscherRecord escherRecord : getEscherRecords()) {
-            builder.append(escherRecord.toXml(tab + "\t"));
-        }
-        builder.append(tab).append("</").append(getRecordName()).append(">\n");
-        return builder.toString();
+        return GenericRecordXmlWriter.marshal(this);
     }
 
     /**
@@ -788,5 +767,15 @@ public final class EscherAggregate extends AbstractEscherHolderRecord {
     @Override
     public EscherAggregate copy() {
         return new EscherAggregate(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.ESCHER_AGGREGATE;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return null;
     }
 }

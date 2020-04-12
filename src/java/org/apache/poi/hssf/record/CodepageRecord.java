@@ -19,7 +19,11 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.util.CodePageUtil;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -77,17 +81,6 @@ public final class CodepageRecord extends StandardRecord {
         return field_1_codepage;
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[CODEPAGE]\n");
-        buffer.append("    .codepage        = ")
-            .append(Integer.toHexString(getCodepage())).append("\n");
-        buffer.append("[/CODEPAGE]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(getCodepage());
     }
@@ -104,5 +97,17 @@ public final class CodepageRecord extends StandardRecord {
     @Override
     public CodepageRecord copy() {
         return new CodepageRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.CODEPAGE;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "codepage", this::getCodepage
+        );
     }
 }

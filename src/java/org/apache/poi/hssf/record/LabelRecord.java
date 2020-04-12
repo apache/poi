@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -149,21 +153,6 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
         return sid;
     }
 
-    @Override
-    public String toString()
-    {
-        StringBuilder sb = new StringBuilder();
-		sb.append("[LABEL]\n");
-		sb.append("    .row       = ").append(HexDump.shortToHex(getRow())).append("\n");
-		sb.append("    .column    = ").append(HexDump.shortToHex(getColumn())).append("\n");
-		sb.append("    .xfindex   = ").append(HexDump.shortToHex(getXFIndex())).append("\n");
-		sb.append("    .string_len= ").append(HexDump.shortToHex(field_4_string_len)).append("\n");
-		sb.append("    .unicode_flag= ").append(HexDump.byteToHex(field_5_unicode_flag)).append("\n");
-		sb.append("    .value       = ").append(getValue()).append("\n");
-		sb.append("[/LABEL]\n");
-        return sb.toString();
-    }
-
     /**
 	 * NO-OP!
 	 */
@@ -189,7 +178,7 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public LabelRecord clone() {
@@ -199,5 +188,22 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
     @Override
     public LabelRecord copy() {
         return new LabelRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.LABEL;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "row", this::getRow,
+            "column", this::getColumn,
+            "xfIndex", this::getXFIndex,
+            "stringLen", this::getStringLength,
+            "unCompressedUnicode", this::isUnCompressedUnicode,
+            "value", this::getValue
+        );
     }
 }

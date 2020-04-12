@@ -17,11 +17,17 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -39,6 +45,12 @@ public final class AxisOptionsRecord extends StandardRecord {
     private static final BitField defaultBase         = BitFieldFactory.getInstance(0x20);
     private static final BitField defaultCross        = BitFieldFactory.getInstance(0x40);
     private static final BitField defaultDateSettings = BitFieldFactory.getInstance(0x80);
+
+    private static final int[] FLAG_MASKS = { 0x01,0x02,0x04,0x08,0x10,0x20,0x40,0x80 };
+
+    private static final String[] FLAG_NAMES = { "DEFAULT_MINIMUM", "DEFAULT_MAXIMUM", "DEFAULT_MAJOR",
+        "DEFAULT_MINOR_UNIT", "IS_DATE", "DEFAULT_BASE", "DEFAULT_CROSS", "DEFAULT_DATE_SETTINGS" };
+
 
     private short field_1_minimumCategory;
     private short field_2_maximumCategory;
@@ -79,60 +91,6 @@ public final class AxisOptionsRecord extends StandardRecord {
         field_9_options         = in.readShort();
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[AXCEXT]\n");
-        buffer.append("    .minimumCategory      = ")
-            .append("0x").append(HexDump.toHex(  getMinimumCategory ()))
-            .append(" (").append( getMinimumCategory() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .maximumCategory      = ")
-            .append("0x").append(HexDump.toHex(  getMaximumCategory ()))
-            .append(" (").append( getMaximumCategory() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .majorUnitValue       = ")
-            .append("0x").append(HexDump.toHex(  getMajorUnitValue ()))
-            .append(" (").append( getMajorUnitValue() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .majorUnit            = ")
-            .append("0x").append(HexDump.toHex(  getMajorUnit ()))
-            .append(" (").append( getMajorUnit() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .minorUnitValue       = ")
-            .append("0x").append(HexDump.toHex(  getMinorUnitValue ()))
-            .append(" (").append( getMinorUnitValue() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .minorUnit            = ")
-            .append("0x").append(HexDump.toHex(  getMinorUnit ()))
-            .append(" (").append( getMinorUnit() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .baseUnit             = ")
-            .append("0x").append(HexDump.toHex(  getBaseUnit ()))
-            .append(" (").append( getBaseUnit() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .crossingPoint        = ")
-            .append("0x").append(HexDump.toHex(  getCrossingPoint ()))
-            .append(" (").append( getCrossingPoint() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .options              = ")
-            .append("0x").append(HexDump.toHex(  getOptions ()))
-            .append(" (").append( getOptions() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("         .defaultMinimum           = ").append(isDefaultMinimum()).append('\n');
-        buffer.append("         .defaultMaximum           = ").append(isDefaultMaximum()).append('\n');
-        buffer.append("         .defaultMajor             = ").append(isDefaultMajor()).append('\n');
-        buffer.append("         .defaultMinorUnit         = ").append(isDefaultMinorUnit()).append('\n');
-        buffer.append("         .isDate                   = ").append(isIsDate()).append('\n');
-        buffer.append("         .defaultBase              = ").append(isDefaultBase()).append('\n');
-        buffer.append("         .defaultCross             = ").append(isDefaultCross()).append('\n');
-        buffer.append("         .defaultDateSettings      = ").append(isDefaultDateSettings()).append('\n');
-
-        buffer.append("[/AXCEXT]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_minimumCategory);
         out.writeShort(field_2_maximumCategory);
@@ -155,7 +113,7 @@ public final class AxisOptionsRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public AxisOptionsRecord clone() {
@@ -453,5 +411,25 @@ public final class AxisOptionsRecord extends StandardRecord {
     @Override
     public AxisOptionsRecord copy() {
         return new AxisOptionsRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.AXIS_OPTIONS;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "minimumCategory", this::getMinimumCategory,
+            "maximumCategory", this::getMaximumCategory,
+            "majorUnitValue", this::getMajorUnitValue,
+            "majorUnit", this::getMajorUnit,
+            "minorUnitValue", this::getMinorUnitValue,
+            "minorUnit", this::getMinorUnit,
+            "baseUnit", this::getBaseUnit,
+            "crossingPoint", this::getCrossingPoint,
+            "options", getBitsAsString(this::getOptions, FLAG_MASKS, FLAG_NAMES)
+        );
     }
 }

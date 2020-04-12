@@ -17,6 +17,10 @@
 ==================================================================== */
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -60,13 +64,6 @@ public final class PrecisionRecord extends StandardRecord {
         return (field_1_precision == 1);
     }
 
-    public String toString() {
-        return "[PRECISION]\n" +
-                "    .precision       = " + getFullPrecision() +
-                "\n" +
-                "[/PRECISION]\n";
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_precision);
     }
@@ -83,5 +80,15 @@ public final class PrecisionRecord extends StandardRecord {
     @Override
     public PrecisionRecord copy() {
         return new PrecisionRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.PRECISION;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("precision", this::getFullPrecision);
     }
 }

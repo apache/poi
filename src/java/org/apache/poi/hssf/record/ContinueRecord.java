@@ -17,7 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -55,15 +58,6 @@ public final class ContinueRecord extends StandardRecord {
         return _data;
     }
 
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[CONTINUE RECORD]\n");
-        buffer.append("    .data = ").append(HexDump.toHex(_data)).append("\n");
-        buffer.append("[/CONTINUE RECORD]\n");
-        return buffer.toString();
-    }
-
     public short getSid() {
         return sid;
     }
@@ -73,7 +67,7 @@ public final class ContinueRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public ContinueRecord clone() {
@@ -83,5 +77,15 @@ public final class ContinueRecord extends StandardRecord {
     @Override
     public ContinueRecord copy() {
         return new ContinueRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.CONTINUE;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("data", this::getData);
     }
 }

@@ -17,9 +17,12 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.StringUtil;
@@ -147,25 +150,6 @@ public final class StyleRecord extends StandardRecord {
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("[STYLE]\n");
-		sb.append("    .xf_index_raw =").append(HexDump.shortToHex(field_1_xf_index)).append("\n");
-		sb.append("        .type     =").append(isBuiltin() ? "built-in" : "user-defined").append("\n");
-		sb.append("        .xf_index =").append(HexDump.shortToHex(getXFIndex())).append("\n");
-		if (isBuiltin()){
-			sb.append("    .builtin_style=").append(HexDump.byteToHex(field_2_builtin_style)).append("\n");
-			sb.append("    .outline_level=").append(HexDump.byteToHex(field_3_outline_style_level)).append("\n");
-		} else {
-			 sb.append("    .name        =").append(getName()).append("\n");
-		}
-		sb.append("[/STYLE]\n");
-		return sb.toString();
-	}
-
-
-	@Override
 	protected int getDataSize() {
 		if (isBuiltin()) {
 			return 4; // short, byte, byte
@@ -200,5 +184,21 @@ public final class StyleRecord extends StandardRecord {
 	@Override
 	public StyleRecord copy() {
 		return new StyleRecord(this);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.STYLE;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"xfIndex", this::getXFIndex,
+			"type", () -> isBuiltin() ? "built-in" : "user-defined",
+			"builtin_style", () -> field_2_builtin_style,
+			"outline_level", () -> field_3_outline_style_level,
+			"name", this::getName
+		);
 	}
 }

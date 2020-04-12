@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -74,23 +78,25 @@ public final class ChartStartObjectRecord extends StandardRecord {
 		out.writeShort(iObjectInstance2);
 	}
 
-	public String toString() {
-
-		StringBuilder buffer = new StringBuilder();
-
-		buffer.append("[STARTOBJECT]\n");
-		buffer.append("    .rt              =").append(HexDump.shortToHex(rt)).append('\n');
-		buffer.append("    .grbitFrt        =").append(HexDump.shortToHex(grbitFrt)).append('\n');
-		buffer.append("    .iObjectKind     =").append(HexDump.shortToHex(iObjectKind)).append('\n');
-		buffer.append("    .iObjectContext  =").append(HexDump.shortToHex(iObjectContext)).append('\n');
-		buffer.append("    .iObjectInstance1=").append(HexDump.shortToHex(iObjectInstance1)).append('\n');
-		buffer.append("    .iObjectInstance2=").append(HexDump.shortToHex(iObjectInstance2)).append('\n');
-		buffer.append("[/STARTOBJECT]\n");
-		return buffer.toString();
-	}
-
 	@Override
 	public ChartStartObjectRecord copy() {
 		return new ChartStartObjectRecord(this);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.CHART_START_OBJECT;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"rt", () -> rt,
+			"grbitFrt", () -> grbitFrt,
+			"iObjectKind", () -> iObjectKind,
+			"iObjectContext", () -> iObjectContext,
+			"iObjectInstance1", () -> iObjectInstance1,
+			"iObjectInstance2", () -> iObjectInstance2
+		);
 	}
 }

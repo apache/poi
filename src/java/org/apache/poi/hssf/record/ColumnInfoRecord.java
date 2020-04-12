@@ -17,9 +17,12 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -216,10 +219,7 @@ public final class ColumnInfoRecord extends StandardRecord {
         if (_options != other._options) {
             return false;
         }
-        if (_colWidth != other._colWidth) {
-            return false;
-        }
-        return true;
+        return _colWidth == other._colWidth;
     }
 
     public short getSid() {
@@ -239,24 +239,8 @@ public final class ColumnInfoRecord extends StandardRecord {
         return 12;
     }
 
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("[COLINFO]\n");
-        sb.append("  colfirst = ").append(getFirstColumn()).append("\n");
-        sb.append("  collast  = ").append(getLastColumn()).append("\n");
-        sb.append("  colwidth = ").append(getColumnWidth()).append("\n");
-        sb.append("  xfindex  = ").append(getXFIndex()).append("\n");
-        sb.append("  options  = ").append(HexDump.shortToHex(_options)).append("\n");
-        sb.append("    hidden   = ").append(getHidden()).append("\n");
-        sb.append("    olevel   = ").append(getOutlineLevel()).append("\n");
-        sb.append("    collapsed= ").append(getCollapsed()).append("\n");
-        sb.append("[/COLINFO]\n");
-        return sb.toString();
-    }
-
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public ColumnInfoRecord clone() {
@@ -266,5 +250,24 @@ public final class ColumnInfoRecord extends StandardRecord {
     @Override
     public ColumnInfoRecord copy() {
         return new ColumnInfoRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.COLUMN_INFO;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "firstColumn", this::getFirstColumn,
+            "lastColumn", this::getLastColumn,
+            "columnWidth", this::getColumnWidth,
+            "xfIndex", this::getXFIndex,
+            "options", () -> _options,
+            "hidden", this::getHidden,
+            "outlineLevel", this::getOutlineLevel,
+            "collapsed", this::getCollapsed
+        );
     }
 }

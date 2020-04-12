@@ -17,7 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hssf.record.cf.ColorGradientFormatting;
 import org.apache.poi.hssf.record.cf.ColorGradientThreshold;
@@ -35,7 +38,6 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogger;
@@ -447,43 +449,6 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         return len;
     }
 
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("[CFRULE12]\n");
-        buffer.append("    .condition_type=").append(getConditionType()).append("\n");
-        buffer.append("    .dxfn12_length =0x").append(Integer.toHexString(ext_formatting_length)).append("\n");
-        buffer.append("    .option_flags  =0x").append(Integer.toHexString(getOptions())).append("\n");
-        if (containsFontFormattingBlock()) {
-            buffer.append(_fontFormatting).append("\n");
-        }
-        if (containsBorderFormattingBlock()) {
-            buffer.append(_borderFormatting).append("\n");
-        }
-        if (containsPatternFormattingBlock()) {
-            buffer.append(_patternFormatting).append("\n");
-        }
-        buffer.append("    .dxfn12_ext=").append(HexDump.toHex(ext_formatting_data)).append("\n");
-        buffer.append("    .formula_1 =").append(Arrays.toString(getFormula1().getTokens())).append("\n");
-        buffer.append("    .formula_2 =").append(Arrays.toString(getFormula2().getTokens())).append("\n");
-        buffer.append("    .formula_S =").append(Arrays.toString(formula_scale.getTokens())).append("\n");
-        buffer.append("    .ext_opts  =").append(ext_opts).append("\n");
-        buffer.append("    .priority  =").append(priority).append("\n");
-        buffer.append("    .template_type  =").append(template_type).append("\n");
-        buffer.append("    .template_params=").append(HexDump.toHex(template_params)).append("\n");
-        buffer.append("    .filter_data    =").append(HexDump.toHex(filter_data)).append("\n");
-        if (color_gradient != null) {
-            buffer.append(color_gradient);
-        }
-        if (multistate != null) {
-            buffer.append(multistate);
-        }
-        if (data_bar != null) {
-            buffer.append(data_bar);
-        }
-        buffer.append("[/CFRULE12]\n");
-        return buffer.toString();
-    }
-
     @Override
     @SuppressWarnings("squid:S2975")
     @Deprecated
@@ -505,5 +470,28 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
     }
     public CellRangeAddress getAssociatedRange() {
         return futureHeader.getAssociatedRange();
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.CF_RULE_12;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String, Supplier<?>> m = new LinkedHashMap<>(super.getGenericProperties());
+        m.put("dxFn12Length", () -> ext_formatting_length);
+        m.put("futureHeader", this::getFutureHeader);
+        m.put("dxFn12Ext", () -> ext_formatting_data);
+        m.put("formulaScale", this::getParsedExpressionScale);
+        m.put("extOptions", () -> ext_opts);
+        m.put("priority", this::getPriority);
+        m.put("templateType", () -> template_type);
+        m.put("templateParams", () -> template_params);
+        m.put("filterData",  () -> filter_data);
+        m.put("dataBar", this::getDataBarFormatting);
+        m.put("multiState", this::getMultiStateFormatting);
+        m.put("colorGradient", this::getColorGradientFormatting);
+        return Collections.unmodifiableMap(m);
     }
 }

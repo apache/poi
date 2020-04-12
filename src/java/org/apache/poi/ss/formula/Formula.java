@@ -18,11 +18,15 @@
 package org.apache.poi.ss.formula;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.ss.formula.ptg.ExpPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.TblPtg;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
@@ -32,7 +36,7 @@ import org.apache.poi.util.LittleEndianOutput;
 /**
  * Encapsulates an encoded formula token array.
  */
-public class Formula {
+public class Formula implements GenericRecord {
 
 	//Arbitrarily set.  May need to increase.
 	private static final int MAX_ENCODED_LEN = 100000;
@@ -194,5 +198,13 @@ public class Formula {
 	}
 	public boolean isSame(Formula other) {
 		return Arrays.equals(_byteEncoding, other._byteEncoding);
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"tokens", this::getTokens,
+			"expReference", this::getExpReference
+		);
 	}
 }

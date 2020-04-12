@@ -19,6 +19,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -65,17 +69,6 @@ public final class BookBoolRecord extends StandardRecord {
         return field_1_save_link_values;
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[BOOKBOOL]\n");
-        buffer.append("    .savelinkvalues  = ")
-            .append(Integer.toHexString(getSaveLinkValues())).append("\n");
-        buffer.append("[/BOOKBOOL]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_save_link_values);
     }
@@ -92,5 +85,17 @@ public final class BookBoolRecord extends StandardRecord {
     @Override
     public BookBoolRecord copy() {
         return new BookBoolRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.BOOK_BOOL;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "saveLinkValues", this::getSaveLinkValues
+        );
     }
 }

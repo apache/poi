@@ -17,6 +17,11 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.hssf.record.cont.ContinuableRecord;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.hssf.usermodel.HSSFRichTextString;
@@ -24,7 +29,6 @@ import org.apache.poi.ss.formula.ptg.OperandPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.Removal;
 
@@ -125,11 +129,7 @@ public final class TextObjectRecord extends ContinuableRecord {
 						+ " tokens but expected exactly 1");
 			}
 			_linkRefPtg = (OperandPtg) ptgs[0];
-			if (in.remaining() > 0) {
-				_unknownPostFormulaByte = Byte.valueOf(in.readByte());
-			} else {
-				_unknownPostFormulaByte = null;
-			}
+			_unknownPostFormulaByte = in.remaining() > 0 ? in.readByte() : null;
 		} else {
 			_linkRefPtg = null;
 		}
@@ -195,7 +195,7 @@ public final class TextObjectRecord extends ContinuableRecord {
 			out.writeInt(_unknownPreFormulaInt);
 			_linkRefPtg.write(out);
 			if (_unknownPostFormulaByte != null) {
-				out.writeByte(_unknownPostFormulaByte.byteValue());
+				out.writeByte(_unknownPostFormulaByte);
 			}
 		}
 	}
@@ -317,33 +317,8 @@ public final class TextObjectRecord extends ContinuableRecord {
 		return _linkRefPtg;
 	}
 
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("[TXO]\n");
-		sb.append("    .options        = ").append(HexDump.shortToHex(field_1_options)).append("\n");
-		sb.append("         .isHorizontal = ").append(getHorizontalTextAlignment()).append('\n');
-		sb.append("         .isVertical   = ").append(getVerticalTextAlignment()).append('\n');
-		sb.append("         .textLocked   = ").append(isTextLocked()).append('\n');
-		sb.append("    .textOrientation= ").append(HexDump.shortToHex(getTextOrientation())).append("\n");
-		sb.append("    .reserved4      = ").append(HexDump.shortToHex(field_3_reserved4)).append("\n");
-		sb.append("    .reserved5      = ").append(HexDump.shortToHex(field_4_reserved5)).append("\n");
-		sb.append("    .reserved6      = ").append(HexDump.shortToHex(field_5_reserved6)).append("\n");
-		sb.append("    .textLength     = ").append(HexDump.shortToHex(_text.length())).append("\n");
-		sb.append("    .reserved7      = ").append(HexDump.intToHex(field_8_reserved7)).append("\n");
-
-		sb.append("    .string = ").append(_text).append('\n');
-
-		for (int i = 0; i < _text.numFormattingRuns(); i++) {
-			sb.append("    .textrun = ").append(_text.getFontOfFormattingRun(i)).append('\n');
-
-		}
-		sb.append("[/TXO]\n");
-		return sb.toString();
-	}
-
 	@Override
-	@SuppressWarnings("squid:S2975")
+	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
 	@Deprecated
 	@Removal(version = "5.0.0")
 	public TextObjectRecord clone() {
@@ -353,5 +328,25 @@ public final class TextObjectRecord extends ContinuableRecord {
 	@Override
 	public TextObjectRecord copy() {
 		return new TextObjectRecord(this);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.TEXT_OBJECT;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+		m.put("isHorizontal", this::getHorizontalTextAlignment);
+		m.put("isVertical", this::getVerticalTextAlignment);
+		m.put("textLocked", this::isTextLocked);
+		m.put("textOrientation", this::getTextOrientation);
+		m.put("string", this::getStr);
+		m.put("reserved4", () -> field_3_reserved4);
+		m.put("reserved5", () -> field_4_reserved5);
+		m.put("reserved6", () -> field_5_reserved6);
+		m.put("reserved7", () -> field_8_reserved7);
+		return Collections.unmodifiableMap(m);
 	}
 }

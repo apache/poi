@@ -19,6 +19,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -144,23 +148,6 @@ public final class GutsRecord extends StandardRecord {
         return field_4_col_level_max;
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[GUTS]\n");
-        buffer.append("    .leftgutter     = ")
-            .append(Integer.toHexString(getLeftRowGutter())).append("\n");
-        buffer.append("    .topgutter      = ")
-            .append(Integer.toHexString(getTopColGutter())).append("\n");
-        buffer.append("    .rowlevelmax    = ")
-            .append(Integer.toHexString(getRowLevelMax())).append("\n");
-        buffer.append("    .collevelmax    = ")
-            .append(Integer.toHexString(getColLevelMax())).append("\n");
-        buffer.append("[/GUTS]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(getLeftRowGutter());
         out.writeShort(getTopColGutter());
@@ -178,7 +165,7 @@ public final class GutsRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public GutsRecord clone() {
@@ -188,5 +175,20 @@ public final class GutsRecord extends StandardRecord {
     @Override
     public GutsRecord copy() {
       return new GutsRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.GUTS;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "leftGutter", this::getLeftRowGutter,
+            "topGutter", this::getTopColGutter,
+            "rowLevelMax", this::getRowLevelMax,
+            "colLevelMax", this::getColLevelMax
+        );
     }
 }

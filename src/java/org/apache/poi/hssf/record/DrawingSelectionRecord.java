@@ -17,7 +17,11 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
@@ -34,7 +38,7 @@ public final class DrawingSelectionRecord extends StandardRecord {
 	 * From [MS-ODRAW].pdf sec 2.2.1<p>
 	 * TODO - make EscherRecordHeader {@link LittleEndianInput} aware and refactor with this
 	 */
-	private static final class OfficeArtRecordHeader {
+	private static final class OfficeArtRecordHeader implements GenericRecord {
 		public static final int ENCODED_SIZE = 8;
 		/**
 		 * lower 4 bits is 'version' usually 0x01 or 0x0F (for containers)
@@ -44,12 +48,6 @@ public final class DrawingSelectionRecord extends StandardRecord {
 		/** value should be between 0xF000 and 0xFFFF */
 		private final int _type;
 		private final int _length;
-
-		public OfficeArtRecordHeader(OfficeArtRecordHeader other) {
-			_verAndInstance = other._verAndInstance;
-			_type = other._type;
-			_length = other._length;
-		}
 
 		public OfficeArtRecordHeader(LittleEndianInput in) {
 			_verAndInstance = in.readUShort();
@@ -63,11 +61,13 @@ public final class DrawingSelectionRecord extends StandardRecord {
 			out.writeInt(_length);
 		}
 
-		public String debugFormatAsString() {
-			return
-				"ver+inst=" + HexDump.shortToHex(_verAndInstance) +
-				" type=" + HexDump.shortToHex(_type) +
-				" len=" + HexDump.intToHex(_length);
+		@Override
+		public Map<String, Supplier<?>> getGenericProperties() {
+			return GenericRecordUtil.getGenericProperties(
+				"verAndInstance", () -> _verAndInstance,
+				"type", () -> _type,
+				"length", () -> _length
+			);
 		}
 	}
 
@@ -109,13 +109,13 @@ public final class DrawingSelectionRecord extends StandardRecord {
 		out.writeInt(_cpsp);
 		out.writeInt(_dgslk);
 		out.writeInt(_spidFocus);
-		for (int i = 0; i < _shapeIds.length; i++) {
-			out.writeInt(_shapeIds[i]);
+		for (int shapeId : _shapeIds) {
+			out.writeInt(shapeId);
 		}
 	}
 
 	@Override
-	@SuppressWarnings("squid:S2975")
+	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
 	@Deprecated
 	@Removal(version = "5.0.0")
 	public DrawingSelectionRecord clone() {
@@ -128,24 +128,19 @@ public final class DrawingSelectionRecord extends StandardRecord {
 		return this;
 	}
 
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.DRAWING_SELECTION;
+	}
 
-		sb.append("[MSODRAWINGSELECTION]\n");
-		sb.append("    .rh       =(").append(_header.debugFormatAsString()).append(")\n");
-		sb.append("    .cpsp     =").append(HexDump.intToHex(_cpsp)).append('\n');
-		sb.append("    .dgslk    =").append(HexDump.intToHex(_dgslk)).append('\n');
-		sb.append("    .spidFocus=").append(HexDump.intToHex(_spidFocus)).append('\n');
-		sb.append("    .shapeIds =(");
-		for (int i = 0; i < _shapeIds.length; i++) {
-			if (i > 0) {
-				sb.append(", ");
-			}
-			sb.append(HexDump.intToHex(_shapeIds[i]));
-		}
-		sb.append(")\n");
-
-		sb.append("[/MSODRAWINGSELECTION]\n");
-		return sb.toString();
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"rh", () -> _header,
+			"cpsp", () -> _cpsp,
+			"dgslk", () -> _dgslk,
+			"spidFocus", () -> _spidFocus,
+			"shapeIds", () -> _shapeIds
+		);
 	}
 }

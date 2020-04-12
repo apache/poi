@@ -64,4 +64,9 @@ public final class CFHeaderRecord extends CFHeaderBase {
     public CFHeaderRecord copy() {
         return new CFHeaderRecord(this);
     }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.CF_HEADER;
+    }
 }

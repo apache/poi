@@ -73,7 +73,7 @@ public class GenericRecordJsonWriter implements Closeable {
         boolean print(GenericRecordJsonWriter record, String name, Object object);
     }
 
-    private static final List<Map.Entry<Class,GenericRecordHandler>> handler = new ArrayList<>();
+    private static final List<Map.Entry<Class<?>,GenericRecordHandler>> handler = new ArrayList<>();
 
     static {
         char[] t = new char[255];
@@ -96,7 +96,7 @@ public class GenericRecordJsonWriter implements Closeable {
         handler(Object.class, GenericRecordJsonWriter::printObject);
     }
 
-    private static void handler(Class c, GenericRecordHandler printer) {
+    private static void handler(Class<?> c, GenericRecordHandler printer) {
         handler.add(new AbstractMap.SimpleEntry<>(c,printer));
     }
 
@@ -147,7 +147,7 @@ public class GenericRecordJsonWriter implements Closeable {
 
     public void write(GenericRecord record) {
         final String tabs = tabs();
-        Enum type = record.getGenericRecordType();
+        Enum<?> type = record.getGenericRecordType();
         String recordName = (type != null) ? type.name() : record.getClass().getSimpleName();
         fw.append(tabs);
         fw.append("{");
@@ -241,7 +241,7 @@ public class GenericRecordJsonWriter implements Closeable {
         return result;
     }
 
-    protected static boolean matchInstanceOrArray(Class key, Object instance) {
+    protected static boolean matchInstanceOrArray(Class<?> key, Object instance) {
         return key.isInstance(instance) || (Array.class.equals(key) && instance.getClass().isArray());
     }
 
@@ -302,8 +302,7 @@ public class GenericRecordJsonWriter implements Closeable {
         fw.println("[");
         int oldChildIndex = childIndex;
         childIndex = 0;
-        //noinspection unchecked
-        ((List)o).forEach(e -> { writeValue(null, e); childIndex++; });
+        ((List<?>)o).forEach(e -> { writeValue(null, e); childIndex++; });
         childIndex = oldChildIndex;
         fw.write(tabs() + "\t]");
         return true;
@@ -533,7 +532,7 @@ public class GenericRecordJsonWriter implements Closeable {
             if (holdBack != null) {
                 if (appender != null) {
                     appender.append(holdBack);
-                } else {
+                } else if (writer != null) {
                     writer.write(holdBack);
                 }
                 holdBack = null;
@@ -541,7 +540,7 @@ public class GenericRecordJsonWriter implements Closeable {
 
             if (appender != null) {
                 appender.append(String.valueOf(cbuf), off, len);
-            } else {
+            } else if (writer != null) {
                 writer.write(cbuf, off, len);
             }
         }

@@ -17,6 +17,8 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.apache.poi.hssf.record.common.FeatFormulaErr2;
@@ -25,6 +27,7 @@ import org.apache.poi.hssf.record.common.FeatSmartTag;
 import org.apache.poi.hssf.record.common.FtrHeader;
 import org.apache.poi.hssf.record.common.SharedFeature;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -114,16 +117,6 @@ public final class FeatRecord extends StandardRecord {
 		return sid;
 	}
 
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append("[SHARED FEATURE]\n");
-
-		// TODO ...
-
-		buffer.append("[/SHARED FEATURE]\n");
-		return buffer.toString();
-	}
-
 	public void serialize(LittleEndianOutput out) {
 		futureHeader.serialize(out);
 
@@ -134,8 +127,8 @@ public final class FeatRecord extends StandardRecord {
 		out.writeInt((int)cbFeatData);
 		out.writeShort(reserved3);
 
-		for(int i=0; i<cellRefs.length; i++) {
-			cellRefs[i].serialize(out);
+		for (CellRangeAddress cellRef : cellRefs) {
+			cellRef.serialize(out);
 		}
 
 		sharedFeature.serialize(out);
@@ -189,7 +182,7 @@ public final class FeatRecord extends StandardRecord {
 	}
 
 	@Override
-	@SuppressWarnings("squid:S2975")
+	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
 	@Deprecated
 	@Removal(version = "5.0.0")
 	public FeatRecord clone() {
@@ -200,4 +193,23 @@ public final class FeatRecord extends StandardRecord {
 	public FeatRecord copy() {
         return new FeatRecord(this);
     }
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.FEAT;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"futureHeader", () -> futureHeader,
+			"isf_sharedFeatureType", this::getIsf_sharedFeatureType,
+			"reserved1", () -> reserved1,
+			"reserved2", () -> reserved2,
+			"cbFeatData", this::getCbFeatData,
+			"reserved3", () -> reserved3,
+			"cellRefs", this::getCellRefs,
+			"sharedFeature", this::getSharedFeature
+		);
+	}
 }

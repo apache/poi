@@ -17,11 +17,18 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+import static org.apache.poi.util.GenericRecordUtil.getEnumBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -58,22 +65,6 @@ public final class SheetPropertiesRecord extends StandardRecord {
     public SheetPropertiesRecord(RecordInputStream in) {
         field_1_flags = in.readUShort();
         field_2_empty = in.readUShort();
-    }
-
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[SHTPROPS]\n");
-        buffer.append("    .flags                = ").append(HexDump.shortToHex(field_1_flags)).append('\n');
-        buffer.append("         .chartTypeManuallyFormatted= ").append(isChartTypeManuallyFormatted()).append('\n');
-        buffer.append("         .plotVisibleOnly           = ").append(isPlotVisibleOnly()).append('\n');
-        buffer.append("         .doNotSizeWithWindow       = ").append(isDoNotSizeWithWindow()).append('\n');
-        buffer.append("         .defaultPlotDimensions     = ").append(isDefaultPlotDimensions()).append('\n');
-        buffer.append("         .autoPlotArea              = ").append(isAutoPlotArea()).append('\n');
-        buffer.append("    .empty                = ").append(HexDump.shortToHex(field_2_empty)).append('\n');
-
-        buffer.append("[/SHTPROPS]\n");
-        return buffer.toString();
     }
 
     public void serialize(LittleEndianOutput out) {
@@ -212,5 +203,22 @@ public final class SheetPropertiesRecord extends StandardRecord {
      */
     public boolean isAutoPlotArea() {
         return autoPlotArea.isSet(field_1_flags);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.SHEET_PROPERTIES;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "flags", getBitsAsString(this::getFlags,
+                 new BitField[]{chartTypeManuallyFormatted, plotVisibleOnly, doNotSizeWithWindow, defaultPlotDimensions, autoPlotArea},
+                 new String[]{"CHART_TYPE_MANUALLY_FORMATTED","PLOT_VISIBLE_ONLY","DO_NOT_SIZE_WITH_WINDOW","DEFAULT_PLOT_DIMENSIONS","AUTO_PLOT_AREA"}),
+            "empty", getEnumBitsAsString(this::getEmpty,
+                 new int[]{EMPTY_NOT_PLOTTED, EMPTY_ZERO, EMPTY_INTERPOLATED},
+                 new String[]{"EMPTY_NOT_PLOTTED","EMPTY_ZERO","EMPTY_INTERPOLATED"})
+        );
     }
 }

@@ -17,12 +17,17 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.ss.formula.ptg.TblPtg;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 /**
  * The record specifies a data table.<p>
@@ -160,21 +165,6 @@ public final class TableRecord extends SharedValueRecordBase {
 		out.writeShort(field_10_colInputCol);
 	}
 
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append("[TABLE]\n");
-		buffer.append("    .range    = ").append(getRange()).append("\n");
-		buffer.append("    .flags    = ") .append(HexDump.byteToHex(field_5_flags)).append("\n");
-		buffer.append("    .alwaysClc= ").append(isAlwaysCalc()).append("\n");
-		buffer.append("    .reserved = ").append(HexDump.intToHex(field_6_res)).append("\n");
-		CellReference crRowInput = cr(field_7_rowInputRow, field_8_colInputRow);
-		CellReference crColInput = cr(field_9_rowInputCol, field_10_colInputCol);
-		buffer.append("    .rowInput = ").append(crRowInput.formatAsString()).append("\n");
-		buffer.append("    .colInput = ").append(crColInput.formatAsString()).append("\n");
-		buffer.append("[/TABLE]\n");
-		return buffer.toString();
-	}
-
 	@Override
 	public TableRecord copy() {
 		return new TableRecord(this);
@@ -185,5 +175,23 @@ public final class TableRecord extends SharedValueRecordBase {
 		boolean isRowAbs = (colIxAndFlags & 0x8000) == 0;
 		boolean isColAbs = (colIxAndFlags & 0x4000) == 0;
 		return new CellReference(rowIx, colIx, isRowAbs, isColAbs);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.TABLE;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"range", this::getRange,
+			"flags", getBitsAsString(this::getFlags,
+				new BitField[]{alwaysCalc, calcOnOpen, rowOrColInpCell, oneOrTwoVar, rowDeleted, colDeleted},
+				new String[]{"ALWAYS_CALC","CALC_ON_OPEN","ROW_OR_COL_INP_CELL","ONE_OR_TWO_VAR","ROW_DELETED","COL_DELETED"}),
+			"reserved", () -> field_6_res,
+			"rowInput", () -> cr(field_7_rowInputRow, field_8_colInputRow),
+			"colInput", () -> cr(field_9_rowInputCol, field_10_colInputCol)
+		);
 	}
 }

@@ -49,7 +49,7 @@ public final class TestArrayPtg {
 	};
 
 	private static ArrayPtg create(byte[] initialData, byte[] constantData) {
-		ArrayPtg.Initial ptgInit = new ArrayPtg.Initial(TestcaseRecordInputStream.createLittleEndian(initialData));
+		ArrayInitialPtg ptgInit = new ArrayInitialPtg(TestcaseRecordInputStream.createLittleEndian(initialData));
 		return ptgInit.finishReading(TestcaseRecordInputStream.createLittleEndian(constantData));
 	}
 

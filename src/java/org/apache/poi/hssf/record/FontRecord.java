@@ -17,11 +17,13 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
@@ -380,25 +382,6 @@ public final class FontRecord extends StandardRecord {
 		return field_11_font_name;
 	}
 
-	public String toString() {
-		return
-			"[FONT]\n" +
-			"    .fontheight    = " + HexDump.shortToHex(getFontHeight()) + "\n" +
-			"    .attributes    = " + HexDump.shortToHex(getAttributes()) + "\n" +
-			"       .italic     = " + isItalic() + "\n" +
-			"       .strikout   = " + isStruckout() + "\n" +
-			"       .macoutlined= " + isMacoutlined() + "\n" +
-			"       .macshadowed= " + isMacshadowed() + "\n" +
-			"    .colorpalette  = " + HexDump.shortToHex(getColorPaletteIndex()) + "\n" +
-			"    .boldweight    = " + HexDump.shortToHex(getBoldWeight()) + "\n" +
-			"    .supersubscript= " + HexDump.shortToHex(getSuperSubScript()) + "\n" +
-			"    .underline     = " + HexDump.byteToHex(getUnderline()) + "\n" +
-			"    .family        = " + HexDump.byteToHex(getFamily()) + "\n" +
-			"    .charset       = " + HexDump.byteToHex(getCharset()) + "\n" +
-			"    .fontname      = " + getFontName() + "\n" +
-			"[/FONT]\n";
-	}
-
 	public void serialize(LittleEndianOutput out) {
 
 		out.writeShort(getFontHeight());
@@ -508,5 +491,27 @@ public final class FontRecord extends StandardRecord {
 	@Override
 	public FontRecord copy() {
 		return new FontRecord(this);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.FONT;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"fontHeight", this::getFontHeight,
+			"attributes", GenericRecordUtil.getBitsAsString(this::getAttributes,
+					new BitField[]{italic,strikeout,macoutline,macshadow},
+					new String[]{"ITALIC","STRIKEOUT","MACOUTLINE","MACSHADOW"}),
+			"colorPalette", this::getColorPaletteIndex,
+			"boldWeight", this::getBoldWeight,
+			"superSubScript", this::getSuperSubScript,
+			"underline", this::getUnderline,
+			"family", this::getFamily,
+			"charset", this::getCharset,
+			"fontName", this::getFontName
+		);
 	}
 }

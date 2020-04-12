@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellRangeUtil;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -129,23 +133,6 @@ public abstract class CFHeaderBase extends StandardRecord {
 
     protected abstract String getRecordName();
 
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[").append(getRecordName()).append("]\n");
-        buffer.append("\t.numCF             = ").append(getNumberOfConditionalFormats()).append("\n");
-        buffer.append("\t.needRecalc        = ").append(getNeedRecalculation()).append("\n");
-        buffer.append("\t.id                = ").append(getID()).append("\n");
-        buffer.append("\t.enclosingCellRange= ").append(getEnclosingCellRange()).append("\n");
-        buffer.append("\t.cfranges=[");
-        for( int i=0; i<field_4_cell_ranges.countRanges(); i++) {
-            buffer.append(i==0?"":",").append(field_4_cell_ranges.getCellRangeAddress(i));
-        }
-        buffer.append("]\n");
-        buffer.append("[/").append(getRecordName()).append("]\n");
-        return buffer.toString();
-    }
-
     protected int getDataSize() {
         return 4 // 2 short fields
              + CellRangeAddress.ENCODED_SIZE
@@ -167,4 +154,15 @@ public abstract class CFHeaderBase extends StandardRecord {
 
     @Override
     public abstract CFHeaderBase copy();
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "id", this::getID,
+            "numCF", this::getNumberOfConditionalFormats,
+            "needRecalculationAndId", this::getNeedRecalculation,
+            "enclosingCellRange", this::getEnclosingCellRange,
+            "cfRanges", this::getCellRanges
+        );
+    }
 }

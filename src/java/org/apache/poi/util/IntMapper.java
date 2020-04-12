@@ -94,4 +94,8 @@ public class IntMapper<T> implements Duplicatable {
     public IntMapper<T> copy() {
         return new IntMapper<>(this);
     }
+
+    public List<T> getElements() {
+        return elements;
+    }
 }

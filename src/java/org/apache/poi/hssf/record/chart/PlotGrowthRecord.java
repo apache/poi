@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -44,24 +48,6 @@ public final class PlotGrowthRecord extends StandardRecord {
         field_2_verticalScale = in.readInt();
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[PLOTGROWTH]\n");
-        buffer.append("    .horizontalScale      = ")
-            .append("0x").append(HexDump.toHex(  getHorizontalScale ()))
-            .append(" (").append( getHorizontalScale() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .verticalScale        = ")
-            .append("0x").append(HexDump.toHex(  getVerticalScale ()))
-            .append(" (").append( getVerticalScale() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-
-        buffer.append("[/PLOTGROWTH]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeInt(field_1_horizontalScale);
         out.writeInt(field_2_verticalScale);
@@ -77,7 +63,7 @@ public final class PlotGrowthRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public PlotGrowthRecord clone() {
@@ -118,5 +104,19 @@ public final class PlotGrowthRecord extends StandardRecord {
     public void setVerticalScale(int field_2_verticalScale)
     {
         this.field_2_verticalScale = field_2_verticalScale;
+    }
+
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.PLOT_GROWTH;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "horizontalScale", this::getHorizontalScale,
+            "verticalScale", this::getVerticalScale
+        );
     }
 }

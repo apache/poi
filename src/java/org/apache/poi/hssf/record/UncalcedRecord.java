@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -45,14 +49,6 @@ public final class UncalcedRecord extends StandardRecord {
 		_reserved = in.readShort(); // unused
 	}
 
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append("[UNCALCED]\n");
-        buffer.append("    _reserved: ").append(_reserved).append('\n');
-		buffer.append("[/UNCALCED]\n");
-		return buffer.toString();
-	}
-
 	public void serialize(LittleEndianOutput out) {
 		out.writeShort(_reserved);
 	}
@@ -68,5 +64,15 @@ public final class UncalcedRecord extends StandardRecord {
 	@Override
 	public UncalcedRecord copy() {
 		return new UncalcedRecord(this);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.UNCALCED;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties("reserved", () -> _reserved);
 	}
 }

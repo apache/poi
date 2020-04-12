@@ -17,9 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import java.util.Locale;
+import java.util.Map;
+import java.util.function.Supplier;
 
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -65,18 +66,8 @@ public final class UserSViewEnd extends StandardRecord {
         return sid;
     }
 
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append('[').append("USERSVIEWEND").append("] (0x");
-        sb.append(Integer.toHexString(sid).toUpperCase(Locale.ROOT)).append(")\n");
-        sb.append("  rawData=").append(HexDump.toHex(_rawData)).append("\n");
-        sb.append("[/").append("USERSVIEWEND").append("]\n");
-        return sb.toString();
-    }
-
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public UserSViewEnd clone() {
@@ -86,5 +77,15 @@ public final class UserSViewEnd extends StandardRecord {
     @Override
     public UserSViewEnd copy() {
         return new UserSViewEnd(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.USER_SVIEW_END;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("rawData", () -> _rawData);
     }
 }

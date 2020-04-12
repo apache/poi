@@ -56,7 +56,6 @@ import org.junit.runners.Suite;
     TestSeriesListRecord.class,
     TestSeriesRecord.class,
     TestSeriesTextRecord.class,
-    TestSeriesToChartGroupRecord.class,
     TestSheetPropertiesRecord.class,
     TestTextRecord.class,
     TestTickRecord.class,

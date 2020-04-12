@@ -18,6 +18,12 @@
 package org.apache.poi.hssf.eventusermodel.dummyrecord;
 
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
+import org.apache.poi.util.GenericRecordUtil;
+
 /**
  * A dummy record to indicate that we've now had the last
  *  cell record for this row.
@@ -55,12 +61,20 @@ public final class LastCellOfRowDummyRecord extends DummyRecordBase {
     }
 
 	@Override
-	public String toString() {
-	    return "End-of-Row for Row=" + row + " at Column=" + lastColumnNumber;
+	public LastCellOfRowDummyRecord copy() {
+		return this;
 	}
 
 	@Override
-	public LastCellOfRowDummyRecord copy() {
-		return this;
+	public HSSFRecordTypes getGenericRecordType() {
+		return null;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"row", this::getRow,
+			"lastColumnNumber", this::getLastColumnNumber
+		);
 	}
 }

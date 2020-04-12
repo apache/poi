@@ -20,11 +20,13 @@ package org.apache.poi.hssf.record;
 import java.io.ByteArrayInputStream;
 
 import org.apache.poi.common.Duplicatable;
+import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.util.GenericRecordJsonWriter;
 
 /**
  * All HSSF Records inherit from this class.
  */
-public abstract class Record extends RecordBase implements Duplicatable {
+public abstract class Record extends RecordBase implements Duplicatable, GenericRecord {
 
     protected Record() {}
 
@@ -48,8 +50,8 @@ public abstract class Record extends RecordBase implements Duplicatable {
      * get a string representation of the record (for biffview/debugging)
      */
     @Override
-    public String toString() {
-        return super.toString();
+    public final String toString() {
+        return GenericRecordJsonWriter.marshal(this);
     }
 
     /**
@@ -85,4 +87,7 @@ public abstract class Record extends RecordBase implements Duplicatable {
     }
 
     public abstract Record copy();
+
+    @Override
+    public abstract HSSFRecordTypes getGenericRecordType();
 }

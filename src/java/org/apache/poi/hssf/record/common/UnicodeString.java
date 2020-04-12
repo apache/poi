@@ -21,15 +21,19 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 import org.apache.poi.common.Duplicatable;
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.cont.ContinuableRecordInput;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Removal;
@@ -39,7 +43,7 @@ import org.apache.poi.util.Removal;
  * It is considered more desirable then repeating it in all of them.<p>
  * This is often called a XLUnicodeRichExtendedString in MS documentation.<p>
  */
-public class UnicodeString implements Comparable<UnicodeString>, Duplicatable {
+public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, GenericRecord {
     private static final POILogger _logger = POILogFactory.getLogger(UnicodeString.class);
 
     private static final BitField highByte  = BitFieldFactory.getInstance(0x1);
@@ -504,5 +508,16 @@ public class UnicodeString implements Comparable<UnicodeString>, Duplicatable {
     @Override
     public UnicodeString copy() {
         return new UnicodeString(this);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "charCount", this::getCharCount,
+            "optionFlags", this::getOptionFlags,
+            "string", this::getString,
+            "formatRuns", () -> field_4_format_runs,
+            "extendedRst", this::getExtendedRst
+        );
     }
 }

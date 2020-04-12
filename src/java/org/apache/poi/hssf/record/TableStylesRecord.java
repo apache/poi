@@ -17,7 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
@@ -83,25 +86,25 @@ public final class TableStylesRecord extends StandardRecord {
 		return sid;
 	}
 
-
-	@Override
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-
-		buffer.append("[TABLESTYLES]\n");
-		buffer.append("    .rt      =").append(HexDump.shortToHex(rt)).append('\n');
-		buffer.append("    .grbitFrt=").append(HexDump.shortToHex(grbitFrt)).append('\n');
-		buffer.append("    .unused  =").append(HexDump.toHex(unused)).append('\n');
-		buffer.append("    .cts=").append(HexDump.intToHex(cts)).append('\n');
-		buffer.append("    .rgchDefListStyle=").append(rgchDefListStyle).append('\n');
-		buffer.append("    .rgchDefPivotStyle=").append(rgchDefPivotStyle).append('\n');
-
-		buffer.append("[/TABLESTYLES]\n");
-		return buffer.toString();
-	}
-
 	@Override
 	public TableStylesRecord copy() {
 		return new TableStylesRecord(this);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.TABLE_STYLES;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"rt", () -> rt,
+			"grbitFrt", () -> grbitFrt,
+			"unused", () -> unused,
+			"cts", () -> cts,
+			"rgchDefListStyle", () -> rgchDefListStyle,
+			"rgchDefPivotStyle", () -> rgchDefPivotStyle
+		);
 	}
 }

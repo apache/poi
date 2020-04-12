@@ -775,9 +775,9 @@ public final class HSSFChart {
         return r;
     }
 
-    private SeriesToChartGroupRecord createSeriesToChartGroupRecord()
+    private SeriesChartGroupIndexRecord createSeriesToChartGroupRecord()
     {
-        return new SeriesToChartGroupRecord();
+        return new SeriesChartGroupIndexRecord();
     }
 
     private DataFormatRecord createDataFormatRecord()

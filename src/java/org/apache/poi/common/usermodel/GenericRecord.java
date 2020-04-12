@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 public interface GenericRecord {
-    default Enum getGenericRecordType() { return null; }
+    default Enum<?> getGenericRecordType() { return null; }
 
     Map<String, Supplier<?>> getGenericProperties();
 

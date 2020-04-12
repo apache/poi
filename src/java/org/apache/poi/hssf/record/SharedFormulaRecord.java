@@ -17,12 +17,15 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.SharedFormula;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -77,29 +80,6 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
         return 2 + field_7_parsed_expr.getEncodedSize();
     }
 
-    /**
-     * print a sort of string representation ([SHARED FORMULA RECORD] id = x [/SHARED FORMULA RECORD])
-     */
-
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[SHARED FORMULA (").append(HexDump.intToHex(sid)).append("]\n");
-        buffer.append("    .range      = ").append(getRange()).append("\n");
-        buffer.append("    .reserved    = ").append(HexDump.shortToHex(field_5_reserved)).append("\n");
-
-        Ptg[] ptgs = field_7_parsed_expr.getTokens();
-        for (int k = 0; k < ptgs.length; k++ ) {
-           buffer.append("Formula[").append(k).append("]");
-           Ptg ptg = ptgs[k];
-           buffer.append(ptg).append(ptg.getRVAType()).append("\n");
-        }
-
-        buffer.append("[/SHARED FORMULA]\n");
-        return buffer.toString();
-    }
-
     public short getSid() {
         return sid;
     }
@@ -124,7 +104,7 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public SharedFormulaRecord clone() {
@@ -138,4 +118,18 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
 	public boolean isFormulaSame(SharedFormulaRecord other) {
 		return field_7_parsed_expr.isSame(other.field_7_parsed_expr);
 	}
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.SHARED_FORMULA;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "range", this::getRange,
+            "reserved", () -> field_5_reserved,
+            "formula", () -> field_7_parsed_expr
+        );
+    }
 }

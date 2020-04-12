@@ -17,12 +17,13 @@
 
 package org.apache.poi.hssf.record.common;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Common Interface for all Shared Features
  */
-public interface SharedFeature {
+public interface SharedFeature extends GenericRecord {
 	String toString();
 	void serialize(LittleEndianOutput out);
 	int getDataSize();

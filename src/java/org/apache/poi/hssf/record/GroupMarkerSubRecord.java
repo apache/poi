@@ -17,7 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
@@ -48,20 +51,13 @@ public final class GroupMarkerSubRecord extends SubRecord {
     }
 
     public GroupMarkerSubRecord(LittleEndianInput in, int size) {
+        this(in,size,-1);
+    }
+
+    GroupMarkerSubRecord(LittleEndianInput in, int size, int cmoOt) {
         byte[] buf = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
         in.readFully(buf);
         reserved = buf;
-    }
-
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        String nl = System.getProperty("line.separator");
-        buffer.append("[ftGmo]" + nl);
-        buffer.append("  reserved = ").append(HexDump.toHex(reserved)).append(nl);
-        buffer.append("[/ftGmo]" + nl);
-        return buffer.toString();
     }
 
     public void serialize(LittleEndianOutput out) {
@@ -90,5 +86,16 @@ public final class GroupMarkerSubRecord extends SubRecord {
     @Override
     public GroupMarkerSubRecord copy() {
         return new GroupMarkerSubRecord(this);
+    }
+
+
+    @Override
+    public SubRecordTypes getGenericRecordType() {
+        return SubRecordTypes.GROUP_MARKER;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("reserved", () -> reserved);
     }
 }

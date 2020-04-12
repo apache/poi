@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -63,20 +67,21 @@ public final class DataLabelExtensionRecord extends StandardRecord {
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-
-		buffer.append("[DATALABEXT]\n");
-		buffer.append("    .rt      =").append(HexDump.shortToHex(rt)).append('\n');
-		buffer.append("    .grbitFrt=").append(HexDump.shortToHex(grbitFrt)).append('\n');
-		buffer.append("    .unused  =").append(HexDump.toHex(unused)).append('\n');
-
-		buffer.append("[/DATALABEXT]\n");
-		return buffer.toString();
+	public DataLabelExtensionRecord copy() {
+		return new DataLabelExtensionRecord(this);
 	}
 
 	@Override
-	public DataLabelExtensionRecord copy() {
-		return new DataLabelExtensionRecord(this);
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.DATA_LABEL_EXTENSION;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"rt", () -> rt,
+			"grbitFrt", () -> grbitFrt,
+			"unused", () -> unused
+		);
 	}
 }

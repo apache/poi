@@ -18,13 +18,15 @@
 package org.apache.poi.hssf.record;
 
 import java.io.ByteArrayInputStream;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPtg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
@@ -87,6 +89,10 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 	}
 
 	public EmbeddedObjectRefSubRecord(LittleEndianInput in, int size) {
+		this(in,size,-1);
+	}
+
+	EmbeddedObjectRefSubRecord(LittleEndianInput in, int size, int cmoOt) {
 
 		// Much guess-work going on here due to lack of any documentation.
 		// See similar source code in OOO:
@@ -327,32 +333,6 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		return new EmbeddedObjectRefSubRecord(this);
 	}
 
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("[ftPictFmla]\n");
-		sb.append("    .f2unknown     = ").append(HexDump.intToHex(field_1_unknown_int)).append("\n");
-		if (field_2_refPtg == null) {
-			sb.append("    .f3unknown     = ").append(HexDump.toHex(field_2_unknownFormulaData)).append("\n");
-		} else {
-			sb.append("    .formula       = ").append(field_2_refPtg).append("\n");
-		}
-		if (field_4_ole_classname != null) {
-			sb.append("    .unicodeFlag   = ").append(field_3_unicode_flag).append("\n");
-			sb.append("    .oleClassname  = ").append(field_4_ole_classname).append("\n");
-		}
-		if (field_4_unknownByte != null) {
-			sb.append("    .f4unknown   = ").append(HexDump.byteToHex(field_4_unknownByte)).append("\n");
-		}
-		if (field_5_stream_id != null) {
-			sb.append("    .streamId      = ").append(HexDump.intToHex(field_5_stream_id)).append("\n");
-		}
-		if (field_6_unknown.length > 0) {
-			sb.append("    .f7unknown     = ").append(HexDump.toHex(field_6_unknown)).append("\n");
-		}
-		sb.append("[/ftPictFmla]");
-		return sb.toString();
-	}
-
 	public void setUnknownFormulaData(byte[] formularData) {
 		field_2_unknownFormulaData = formularData;
 	}
@@ -363,5 +343,24 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 
 	public void setStorageId(int storageId) {
 		field_5_stream_id = storageId;
+	}
+
+	@Override
+	public SubRecordTypes getGenericRecordType() {
+		return SubRecordTypes.EMBEDDED_OBJECT_REF;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"f2unknown", () -> field_1_unknown_int,
+			"f3unknown", () -> field_2_unknownFormulaData,
+			"formula", () -> field_2_refPtg,
+			"unicodeFlag", () -> field_3_unicode_flag,
+			"oleClassname", () -> field_4_ole_classname,
+			"f4unknown", () -> field_4_unknownByte,
+			"streamId", () -> field_5_stream_id,
+			"f7unknown", () -> field_6_unknown
+		);
 	}
 }

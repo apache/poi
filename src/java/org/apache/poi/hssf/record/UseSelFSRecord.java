@@ -17,9 +17,14 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -51,15 +56,6 @@ public final class UseSelFSRecord extends StandardRecord {
         _options = useNaturalLanguageFormulasFlag.setBoolean(_options, b);
     }
 
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[USESELFS]\n");
-        buffer.append("    .options = ").append(HexDump.shortToHex(_options)).append("\n");
-        buffer.append("[/USESELFS]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(_options);
     }
@@ -73,7 +69,7 @@ public final class UseSelFSRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public UseSelFSRecord clone() {
@@ -83,5 +79,16 @@ public final class UseSelFSRecord extends StandardRecord {
     @Override
     public UseSelFSRecord copy() {
         return new UseSelFSRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.USE_SEL_FS;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("options", getBitsAsString(() -> _options,
+             new BitField[]{useNaturalLanguageFormulasFlag}, new String[]{"USE_NATURAL_LANGUAGE_FORMULAS_FLAG"}));
     }
 }

@@ -20,7 +20,10 @@ package org.apache.poi.hssf.record;
 
 import java.io.ByteArrayInputStream;
 import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
@@ -228,25 +231,6 @@ public class DConRefRecord extends StandardRecord {
         return lastRow;
     }
 
-    @Override
-    public String toString()
-    {
-        StringBuilder b = new StringBuilder();
-	b.append("[DCONREF]\n");
-        b.append("    .ref\n");
-        b.append("        .firstrow   = ").append(firstRow).append("\n");
-        b.append("        .lastrow    = ").append(lastRow).append("\n");
-        b.append("        .firstcol   = ").append(firstCol).append("\n");
-        b.append("        .lastcol    = ").append(lastCol).append("\n");
-        b.append("    .cch            = ").append(charCount).append("\n");
-	b.append("    .stFile\n");
-	b.append("        .h          = ").append(charType).append("\n");
-	b.append("        .rgb        = ").append(getReadablePath()).append("\n");
-	b.append("[/DCONREF]\n");
-
-        return b.toString();
-    }
-
     /**
      *
      * @return raw path byte array.
@@ -297,5 +281,23 @@ public class DConRefRecord extends StandardRecord {
         RecordInputStream ric = new RecordInputStream(new ByteArrayInputStream(data));
         ric.nextRecord();
         return ric;
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.DCON_REF;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "firstRow", this::getFirstRow,
+            "lastRow", this::getLastRow,
+            "firstColumn", this::getFirstColumn,
+            "lastColumn", this::getLastColumn,
+            "charCount", () -> charCount,
+            "charType", () -> charType,
+            "path", this::getReadablePath
+        );
     }
 }

@@ -17,6 +17,10 @@
 ==================================================================== */
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -62,13 +66,6 @@ public final class PrintHeadersRecord extends StandardRecord {
         return (field_1_print_headers == 1);
     }
 
-    public String toString() {
-        return "[PRINTHEADERS]\n" +
-                "    .printheaders   = " + getPrintHeaders() +
-                "\n" +
-                "[/PRINTHEADERS]\n";
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_print_headers);
     }
@@ -83,7 +80,7 @@ public final class PrintHeadersRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public PrintHeadersRecord clone() {
@@ -92,5 +89,15 @@ public final class PrintHeadersRecord extends StandardRecord {
 
     public PrintHeadersRecord copy() {
       return new PrintHeadersRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.PRINT_HEADERS;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("printHeaders", this::getPrintHeaders);
     }
 }

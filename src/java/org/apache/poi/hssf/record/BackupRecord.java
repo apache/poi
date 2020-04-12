@@ -19,6 +19,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -65,17 +69,6 @@ public final class BackupRecord extends StandardRecord {
         return field_1_backup;
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[BACKUP]\n");
-        buffer.append("    .backup          = ")
-            .append(Integer.toHexString(getBackup())).append("\n");
-        buffer.append("[/BACKUP]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(getBackup());
     }
@@ -92,5 +85,17 @@ public final class BackupRecord extends StandardRecord {
     @Override
     public BackupRecord copy() {
         return new BackupRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.BACKUP;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "backup", this::getBackup
+        );
     }
 }

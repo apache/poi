@@ -17,11 +17,17 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -51,26 +57,6 @@ public final class SeriesLabelsRecord extends StandardRecord {
         field_1_formatFlags = in.readShort();
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[ATTACHEDLABEL]\n");
-        buffer.append("    .formatFlags          = ")
-            .append("0x").append(HexDump.toHex(  getFormatFlags ()))
-            .append(" (").append( getFormatFlags() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("         .showActual               = ").append(isShowActual()).append('\n');
-        buffer.append("         .showPercent              = ").append(isShowPercent()).append('\n');
-        buffer.append("         .labelAsPercentage        = ").append(isLabelAsPercentage()).append('\n');
-        buffer.append("         .smoothedLine             = ").append(isSmoothedLine()).append('\n');
-        buffer.append("         .showLabel                = ").append(isShowLabel()).append('\n');
-        buffer.append("         .showBubbleSizes          = ").append(isShowBubbleSizes()).append('\n');
-
-        buffer.append("[/ATTACHEDLABEL]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_formatFlags);
     }
@@ -85,7 +71,7 @@ public final class SeriesLabelsRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public SeriesLabelsRecord clone() {
@@ -219,5 +205,18 @@ public final class SeriesLabelsRecord extends StandardRecord {
     public boolean isShowBubbleSizes()
     {
         return showBubbleSizes.isSet(field_1_formatFlags);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.SERIES_LABELS;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "formatFlags", getBitsAsString(this::getFormatFlags,
+                new BitField[]{showActual,showPercent,labelAsPercentage,smoothedLine,showLabel,showBubbleSizes},
+                new String[]{"SHOW_ACTUAL","SHOW_PERCENT","LABEL_AS_PERCENTAGE","SMOOTHED_LINE","SHOW_LABEL","SHOW_BUBBLE_SIZES"}));
     }
 }

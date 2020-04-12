@@ -19,6 +19,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -64,17 +68,6 @@ public final class ObjectProtectRecord extends StandardRecord {
         return (field_1_protect == 1);
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[SCENARIOPROTECT]\n");
-        buffer.append("    .protect         = ").append(getProtect())
-            .append("\n");
-        buffer.append("[/SCENARIOPROTECT]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_protect);
     }
@@ -89,7 +82,7 @@ public final class ObjectProtectRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public ObjectProtectRecord clone() {
@@ -99,5 +92,15 @@ public final class ObjectProtectRecord extends StandardRecord {
     @Override
     public ObjectProtectRecord copy() {
         return new ObjectProtectRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.OBJECT_PROTECT;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("protect", this::getProtect);
     }
 }

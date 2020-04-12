@@ -19,6 +19,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -73,17 +77,6 @@ public final class HideObjRecord extends StandardRecord {
         return field_1_hide_obj;
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[HIDEOBJ]\n");
-        buffer.append("    .hideobj         = ")
-            .append(Integer.toHexString(getHideObj())).append("\n");
-        buffer.append("[/HIDEOBJ]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(getHideObj());
     }
@@ -100,5 +93,15 @@ public final class HideObjRecord extends StandardRecord {
     @Override
     public HideObjRecord copy() {
         return new HideObjRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.HIDE_OBJ;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("hideObj", this::getHideObj);
     }
 }

@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -97,21 +101,6 @@ public final class MulBlankRecord extends StandardRecord {
 		return retval;
 	}
 
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-
-		buffer.append("[MULBLANK]\n");
-		buffer.append("row  = ").append(Integer.toHexString(getRow())).append("\n");
-		buffer.append("firstcol  = ").append(Integer.toHexString(getFirstColumn())).append("\n");
-		buffer.append(" lastcol  = ").append(Integer.toHexString(_lastCol)).append("\n");
-		for (int k = 0; k < getNumColumns(); k++) {
-			buffer.append("xf").append(k).append("		= ").append(
-					Integer.toHexString(getXFAt(k))).append("\n");
-		}
-		buffer.append("[/MULBLANK]\n");
-		return buffer.toString();
-	}
-
 	public short getSid() {
 		return sid;
 	}
@@ -119,7 +108,6 @@ public final class MulBlankRecord extends StandardRecord {
 	public void serialize(LittleEndianOutput out) {
 		out.writeShort(_row);
 		out.writeShort(_firstCol);
-		int nItems = _xfs.length;
 		for (short xf : _xfs) {
 			out.writeShort(xf);
 		}
@@ -132,7 +120,7 @@ public final class MulBlankRecord extends StandardRecord {
 	}
 
 	@Override
-	@SuppressWarnings("squid:S2975")
+	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
 	@Deprecated
 	@Removal(version = "5.0.0")
 	public MulBlankRecord clone() {
@@ -143,5 +131,20 @@ public final class MulBlankRecord extends StandardRecord {
 	public MulBlankRecord copy() {
 		// immutable - so OK to return this
 		return this;
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.MUL_BLANK;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"row", this::getRow,
+			"firstColumn", this::getFirstColumn,
+			"lastColumn", this::getLastColumn,
+			"xf", () -> _xfs
+		);
 	}
 }

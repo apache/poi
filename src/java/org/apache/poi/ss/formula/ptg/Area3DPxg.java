@@ -17,11 +17,15 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.SheetIdentifier;
 import org.apache.poi.ss.formula.SheetRangeAndWorkbookIndexFormatter;
 import org.apache.poi.ss.formula.SheetRangeIdentifier;
 import org.apache.poi.ss.util.AreaReference;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -65,27 +69,6 @@ public final class Area3DPxg extends AreaPtgBase implements Pxg3D {
         this(-1, sheetName, arearef);
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getName());
-        sb.append(" [");
-        if (externalWorkbookNumber >= 0) {
-            sb.append(" [");
-            sb.append("workbook=").append(getExternalWorkbookNumber());
-            sb.append("] ");
-        }
-        sb.append("sheet=").append(getSheetName());
-        if (lastSheetName != null) {
-            sb.append(" : ");
-            sb.append("sheet=").append(lastSheetName);
-        }
-        sb.append(" ! ");
-        sb.append(formatReferenceAsString());
-        sb.append("]");
-        return sb.toString();
-    }
-
     public int getExternalWorkbookNumber() {
         return externalWorkbookNumber;
     }
@@ -126,5 +109,15 @@ public final class Area3DPxg extends AreaPtgBase implements Pxg3D {
     @Override
     public Area3DPxg copy() {
         return new Area3DPxg(this);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "externalWorkbookNumber", this::getExternalWorkbookNumber,
+            "sheetName", this::getSheetName,
+            "lastSheetName", this::getLastSheetName
+        );
     }
 }

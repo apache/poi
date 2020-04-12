@@ -19,6 +19,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -69,17 +73,6 @@ public final class CalcCountRecord extends StandardRecord {
         return field_1_iterations;
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[CALCCOUNT]\n");
-        buffer.append("    .iterations     = ")
-            .append(Integer.toHexString(getIterations())).append("\n");
-        buffer.append("[/CALCCOUNT]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(getIterations());
     }
@@ -94,7 +87,7 @@ public final class CalcCountRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public CalcCountRecord clone() {
@@ -104,5 +97,17 @@ public final class CalcCountRecord extends StandardRecord {
     @Override
     public CalcCountRecord copy() {
         return new CalcCountRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.CALC_COUNT;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "iterations", this::getIterations
+        );
     }
 }

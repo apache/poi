@@ -17,11 +17,15 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -58,35 +62,6 @@ public final class CategorySeriesAxisRecord extends StandardRecord {
         field_4_options           = in.readShort();
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[CATSERRANGE]\n");
-        buffer.append("    .crossingPoint        = ")
-            .append("0x").append(HexDump.toHex(  getCrossingPoint ()))
-            .append(" (").append( getCrossingPoint() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .labelFrequency       = ")
-            .append("0x").append(HexDump.toHex(  getLabelFrequency ()))
-            .append(" (").append( getLabelFrequency() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .tickMarkFrequency    = ")
-            .append("0x").append(HexDump.toHex(  getTickMarkFrequency ()))
-            .append(" (").append( getTickMarkFrequency() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .options              = ")
-            .append("0x").append(HexDump.toHex(  getOptions ()))
-            .append(" (").append( getOptions() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("         .valueAxisCrossing        = ").append(isValueAxisCrossing()).append('\n');
-        buffer.append("         .crossesFarRight          = ").append(isCrossesFarRight()).append('\n');
-        buffer.append("         .reversed                 = ").append(isReversed()).append('\n');
-
-        buffer.append("[/CATSERRANGE]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_crossingPoint);
         out.writeShort(field_2_labelFrequency);
@@ -104,7 +79,7 @@ public final class CategorySeriesAxisRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public CategorySeriesAxisRecord clone() {
@@ -232,5 +207,23 @@ public final class CategorySeriesAxisRecord extends StandardRecord {
     @Override
     public CategorySeriesAxisRecord copy() {
         return new CategorySeriesAxisRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.CATEGORY_SERIES_AXIS;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "crossingPoint", this::getCrossingPoint,
+            "labelFrequency", this::getLabelFrequency,
+            "tickMarkFrequency", this::getTickMarkFrequency,
+            "options", this::getOptions,
+            "valueAxisCrossing", this::isValueAxisCrossing,
+            "crossesFarRight", this::isCrossesFarRight,
+            "reversed", this::isReversed
+        );
     }
 }

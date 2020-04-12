@@ -20,13 +20,17 @@ package org.apache.poi.ss.util;
 import static org.apache.poi.util.StringUtil.endsWithIgnoreCase;
 
 import java.util.Locale;
+import java.util.Map;
 import java.util.Objects;
+import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.util.GenericRecordUtil;
 
 /**
  * <p>Common conversion functions between Excel style A1, C27 style
@@ -41,7 +45,7 @@ import org.apache.poi.ss.usermodel.Cell;
  * of a cell comment).
  * <tt>CellReference</tt>s have a concept of "sheet", while <tt>CellAddress</tt>es do not.</p>
  */
-public class CellReference {
+public class CellReference implements GenericRecord {
     /**
      * Used to classify identifiers found in formulas as cell references or not.
      */
@@ -586,5 +590,17 @@ public class CellReference {
     @Override
     public int hashCode() {
         return Objects.hash(_rowIndex,_colIndex,_isRowAbs,_isColAbs,_sheetName);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "sheetName", this::getSheetName,
+            "rowIndex", this::getRow,
+            "colIndex", this::getCol,
+            "rowAbs", this::isRowAbsolute,
+            "colAbs", this::isColAbsolute,
+            "formatAsString", this::formatAsString
+        );
     }
 }

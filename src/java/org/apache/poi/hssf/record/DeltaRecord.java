@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -50,15 +54,6 @@ public final class DeltaRecord extends StandardRecord {
         return field_1_max_change;
     }
 
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[DELTA]\n");
-        buffer.append("    .maxchange = ").append(getMaxChange()).append("\n");
-        buffer.append("[/DELTA]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeDouble(getMaxChange());
     }
@@ -72,7 +67,7 @@ public final class DeltaRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public DeltaRecord clone() {
@@ -83,5 +78,15 @@ public final class DeltaRecord extends StandardRecord {
     public DeltaRecord copy() {
         // immutable
         return this;
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.DELTA;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("maxChange", this::getMaxChange);
     }
 }

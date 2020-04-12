@@ -17,8 +17,13 @@
 
 package org.apache.poi.hssf.record.common;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.hssf.record.FeatRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 //import org.apache.poi.hssf.record.Feat11Record;
@@ -51,10 +56,7 @@ public final class FeatSmartTag implements SharedFeature {
 	}
 
 	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append(" [FEATURE SMART TAGS]\n");
-		buffer.append(" [/FEATURE SMART TAGS]\n");
-		return buffer.toString();
+		return GenericRecordJsonWriter.marshal(this);
 	}
 
 	public int getDataSize() {
@@ -68,5 +70,10 @@ public final class FeatSmartTag implements SharedFeature {
 	@Override
 	public FeatSmartTag copy() {
 		return new FeatSmartTag(this);
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties("data", () -> data);
 	}
 }

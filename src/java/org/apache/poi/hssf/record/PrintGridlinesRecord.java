@@ -16,6 +16,10 @@
 ==================================================================== */
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -58,13 +62,6 @@ public final class PrintGridlinesRecord extends StandardRecord {
         return (field_1_print_gridlines == 1);
     }
 
-    public String toString() {
-        return "[PRINTGRIDLINES]\n" +
-                "    .printgridlines = " + getPrintGridlines() +
-                "\n" +
-                "[/PRINTGRIDLINES]\n";
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_print_gridlines);
     }
@@ -79,7 +76,7 @@ public final class PrintGridlinesRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public PrintGridlinesRecord clone() {
@@ -87,6 +84,16 @@ public final class PrintGridlinesRecord extends StandardRecord {
     }
 
     public PrintGridlinesRecord copy() {
-      return new PrintGridlinesRecord(this);
+        return new PrintGridlinesRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.PRINT_GRIDLINES;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("printGridlines", this::getPrintGridlines);
     }
 }

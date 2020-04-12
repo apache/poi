@@ -17,7 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -62,15 +65,6 @@ public final class PasswordRecord extends StandardRecord {
         return field_1_password;
     }
 
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[PASSWORD]\n");
-        buffer.append("    .password = ").append(HexDump.shortToHex(field_1_password)).append("\n");
-        buffer.append("[/PASSWORD]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_password);
     }
@@ -84,7 +78,7 @@ public final class PasswordRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public PasswordRecord clone() {
@@ -96,5 +90,15 @@ public final class PasswordRecord extends StandardRecord {
      */
     public PasswordRecord copy() {
         return new PasswordRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.PASSWORD;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("password", this::getPassword);
     }
 }

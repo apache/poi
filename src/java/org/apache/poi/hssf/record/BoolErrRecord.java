@@ -17,8 +17,11 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.usermodel.FormulaError;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
 import org.apache.poi.util.Removal;
@@ -159,17 +162,7 @@ public final class BoolErrRecord extends CellRecord {
 	protected String getRecordName() {
 		return "BOOLERR";
 	}
-	@Override
-	protected void appendValueText(StringBuilder sb) {
-		if (isBoolean()) {
-			sb.append("  .boolVal = ");
-			sb.append(getBooleanValue());
-		} else {
-			sb.append("  .errCode = ");
-			sb.append(FormulaError.forInt(getErrorValue()).getString());
-			sb.append(" (").append(HexDump.byteToHex(getErrorValue())).append(")");
-		}
-	}
+
 	@Override
 	protected void serializeValue(LittleEndianOutput out) {
 		out.writeByte(_value);
@@ -186,7 +179,7 @@ public final class BoolErrRecord extends CellRecord {
 	}
 
 	@Override
-	@SuppressWarnings("squid:S2975")
+	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
 	@Deprecated
 	@Removal(version = "5.0.0")
 	public BoolErrRecord clone() {
@@ -196,5 +189,22 @@ public final class BoolErrRecord extends CellRecord {
 	@Override
 	public BoolErrRecord copy() {
 		return new BoolErrRecord(this);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.BOOL_ERR;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"base", super::getGenericProperties,
+			"isBoolean", this::isBoolean,
+			"booleanVal", this::getBooleanValue,
+			"isError", this::isError,
+			"errorVal", this::getErrorValue,
+			"errorTxt", () -> isError() ? FormulaError.forInt(getErrorValue()).getString() : null
+		);
 	}
 }

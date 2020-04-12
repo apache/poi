@@ -17,8 +17,14 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -276,22 +282,6 @@ public final class WSBoolRecord extends StandardRecord {
         return alternateformula.isSet(field_2_wsbool);
     }
 
-    // end bitfields
-    public String toString() {
-        return "[WSBOOL]\n" +
-                "    .wsbool1        = " + Integer.toHexString(getWSBool1()) + "\n" +
-                "        .autobreaks = " + getAutobreaks() + "\n" +
-                "        .dialog     = " + getDialog() + "\n" +
-                "        .rowsumsbelw= " + getRowSumsBelow() + "\n" +
-                "        .rowsumsrigt= " + getRowSumsRight() + "\n" +
-                "    .wsbool2        = " + Integer.toHexString(getWSBool2()) + "\n" +
-                "        .fittopage  = " + getFitToPage() + "\n" +
-                "        .displayguts= " + getDisplayGuts() + "\n" +
-                "        .alternateex= " + getAlternateExpression() + "\n" +
-                "        .alternatefo= " + getAlternateFormula() + "\n" +
-                "[/WSBOOL]\n";
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeByte(getWSBool2());
         out.writeByte(getWSBool1());
@@ -307,7 +297,7 @@ public final class WSBoolRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public WSBoolRecord clone() {
@@ -317,5 +307,22 @@ public final class WSBoolRecord extends StandardRecord {
     @Override
     public WSBoolRecord copy() {
       return new WSBoolRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.WS_BOOL;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "wsbool1", getBitsAsString(this::getWSBool1,
+                new BitField[]{autobreaks, dialog, applystyles, rowsumsbelow, rowsumsright},
+                new String[]{"AUTO_BREAKS", "DIALOG", "APPLY_STYLES", "ROW_SUMS_BELOW", "ROW_SUMS_RIGHT"}),
+            "wsbool2", getBitsAsString(this::getWSBool2,
+                new BitField[]{fittopage, displayguts, alternateexpression, alternateformula},
+                new String[]{"FIT_TO_PAGE", "DISPLAY_GUTS", "ALTERNATE_EXPRESSION", "ALTERNATE_FORMULA"})
+        );
     }
 }

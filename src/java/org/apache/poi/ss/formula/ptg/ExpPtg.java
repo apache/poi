@@ -17,6 +17,10 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -63,12 +67,15 @@ public final class ExpPtg extends ControlPtg {
     }
 
     @Override
-    public String toString() {
-        return "[Array Formula or Shared Formula]\n" + "row = " + getRow() + "\n" + "col = " + getColumn() + "\n";
+    public ExpPtg copy() {
+        return this;
     }
 
     @Override
-    public ExpPtg copy() {
-        return this;
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "row", this::getRow,
+            "column", this::getColumn
+        );
     }
 }

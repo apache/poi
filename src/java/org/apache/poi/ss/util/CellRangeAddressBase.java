@@ -19,12 +19,16 @@ package org.apache.poi.ss.util;
 
 import java.util.EnumSet;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import org.apache.poi.common.Duplicatable;
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.util.GenericRecordUtil;
 
 
 /**
@@ -32,7 +36,7 @@ import org.apache.poi.ss.usermodel.Cell;
  *
  * Common superclass of 8-bit and 16-bit versions
  */
-public abstract class CellRangeAddressBase implements Iterable<CellAddress>, Duplicatable {
+public abstract class CellRangeAddressBase implements Iterable<CellAddress>, Duplicatable, GenericRecord {
 
     /**
      * Indicates a cell or range is in the given relative position in a range.
@@ -377,5 +381,15 @@ public abstract class CellRangeAddressBase implements Iterable<CellAddress>, Dup
         (getMaxColumn() << 8) +
         (getMinRow() << 16) +
         (getMaxRow() << 24));
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"firstRow", this::getFirstRow,
+			"firstCol", this::getFirstColumn,
+			"lastRow", this::getLastRow,
+			"lastCol", this::getLastColumn
+		);
 	}
 }

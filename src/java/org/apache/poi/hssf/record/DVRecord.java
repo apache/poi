@@ -17,13 +17,18 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.usermodel.HSSFDataValidation;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.util.BitField;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
@@ -52,6 +57,15 @@ public final class DVRecord extends StandardRecord {
 	private static final BitField opt_show_prompt_on_cell_selected = new BitField(0x00040000);
 	private static final BitField opt_show_error_on_invalid_value  = new BitField(0x00080000);
 	private static final BitField opt_condition_operator           = new BitField(0x00700000);
+
+	private static final int[] FLAG_MASKS = { 0x0000000F,0x00000070,0x00000080,0x00000100,
+			0x00000200,0x00040000,0x00080000,0x00700000 };
+
+	private static final String[] FLAG_NAMES = { "DATA_TYPE", "ERROR_STYLE", "STRING_LIST_FORMULA",
+		"EMPTY_CELL_ALLOWED", "SUPPRESS_DROPDOWN_ARROW", "SHOW_PROMPT_ON_CELL_SELECTED",
+		"SHOW_ERROR_ON_INVALID_VALUE", "CONDITION_OPERATOR" };
+
+
 
 	/** Option flags */
 	private int _option_flags;
@@ -250,55 +264,6 @@ public final class DVRecord extends StandardRecord {
 	}
 
 
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("[DV]\n");
-		sb.append(" options=").append(Integer.toHexString(_option_flags));
-		sb.append(" title-prompt=").append(formatTextTitle(_promptTitle));
-		sb.append(" title-error=").append(formatTextTitle(_errorTitle));
-		sb.append(" text-prompt=").append(formatTextTitle(_promptText));
-		sb.append(" text-error=").append(formatTextTitle(_errorText));
-		sb.append("\n");
-		appendFormula(sb, "Formula 1:",  _formula1);
-		appendFormula(sb, "Formula 2:",  _formula2);
-		sb.append("Regions: ");
-		int nRegions = _regions.countRanges();
-		for(int i=0; i<nRegions; i++) {
-			if (i>0) {
-				sb.append(", ");
-			}
-			CellRangeAddress addr = _regions.getCellRangeAddress(i);
-			sb.append('(').append(addr.getFirstRow()).append(',').append(addr.getLastRow());
-			sb.append(',').append(addr.getFirstColumn()).append(',').append(addr.getLastColumn()).append(')');
-		}
-		sb.append("\n");
-		sb.append("[/DV]");
-
-		return sb.toString();
-	}
-
-	private static String formatTextTitle(UnicodeString us) {
-		String str = us.getString();
-		if (str.length() == 1 && str.charAt(0) == '\0') {
-			return "'\\0'";
-		}
-		return str;
-	}
-
-	private static void appendFormula(StringBuilder sb, String label, Formula f) {
-		sb.append(label);
-
-		if (f == null) {
-			sb.append("<empty>\n");
-			return;
-		}
-		Ptg[] ptgs = f.getTokens();
-		sb.append('\n');
-		for (Ptg ptg : ptgs) {
-			sb.append('\t').append(ptg).append('\n');
-		}
-	}
-
 	public void serialize(LittleEndianOutput out) {
 
 		out.writeInt(_option_flags);
@@ -367,7 +332,7 @@ public final class DVRecord extends StandardRecord {
 	}
 
 	@Override
-	@SuppressWarnings("squid:S2975")
+	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
 	@Deprecated
 	@Removal(version = "5.0.0")
 	public DVRecord clone() {
@@ -378,5 +343,24 @@ public final class DVRecord extends StandardRecord {
 	@Override
 	public DVRecord copy() {
 		return new DVRecord(this);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.DV;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"optionFlags", getBitsAsString(() -> _option_flags, FLAG_MASKS, FLAG_NAMES),
+			"promptTitle", this::getPromptTitle,
+			"errorTitle", this::getErrorTitle,
+			"promptText", this::getPromptText,
+			"errorText", this::getErrorText,
+			"formula1", this::getFormula1,
+			"formula2", this::getFormula2,
+			"regions", () -> _regions
+		);
 	}
 }

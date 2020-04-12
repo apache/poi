@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
@@ -106,20 +110,6 @@ public final class FileSharingRecord extends StandardRecord {
     }
 
 
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[FILESHARING]\n");
-        buffer.append("    .readonly       = ")
-            .append(getReadOnly() == 1 ? "true" : "false").append("\n");
-        buffer.append("    .password       = ")
-            .append(Integer.toHexString(getPassword())).append("\n");
-        buffer.append("    .username       = ")
-            .append(getUsername()).append("\n");
-        buffer.append("[/FILESHARING]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         // TODO - junit
         out.writeShort(getReadOnly());
@@ -144,7 +134,7 @@ public final class FileSharingRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public FileSharingRecord clone() {
@@ -153,6 +143,20 @@ public final class FileSharingRecord extends StandardRecord {
 
     @Override
     public FileSharingRecord copy() {
-      return new FileSharingRecord(this);
+        return new FileSharingRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.FILE_SHARING;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "readOnly", this::getReadOnly,
+            "password", this::getPassword,
+            "username", this::getUsername
+        );
     }
 }

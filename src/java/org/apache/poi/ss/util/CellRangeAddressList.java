@@ -20,7 +20,10 @@ package org.apache.poi.ss.util;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianOutput;
@@ -35,32 +38,27 @@ import org.apache.poi.util.LittleEndianOutput;
  * with the number of ranges and the list of the range addresses. Each cell
  * range address (called an ADDR structure) contains 4 16-bit-values.
  * </p>
- *
- * @author Dragos Buleandra (dragos.buleandra@trade2b.ro)
  */
-public class CellRangeAddressList {
+public class CellRangeAddressList implements GenericRecord {
 
 	/**
 	 * List of <tt>CellRangeAddress</tt>es. Each structure represents a cell range
 	 */
-	protected final List<CellRangeAddress> _list;
+	protected final List<CellRangeAddress> _list = new ArrayList<>();
 
 	public CellRangeAddressList() {
-		_list = new ArrayList<>();
 	}
 	/**
 	 * Convenience constructor for creating a <tt>CellRangeAddressList</tt> with a single
 	 * <tt>CellRangeAddress</tt>.  Other <tt>CellRangeAddress</tt>es may be added later.
 	 */
 	public CellRangeAddressList(int firstRow, int lastRow, int firstCol, int lastCol) {
-		this();
 		addCellRangeAddress(firstRow, firstCol, lastRow, lastCol);
 	}
 	/**
 	 * @param in the RecordInputstream to read the record from
 	 */
 	public CellRangeAddressList(RecordInputStream in) {
-		this();
 		int nItems = in.readUShort();
 
 		for (int k = 0; k < nItems; k++) {
@@ -139,18 +137,14 @@ public class CellRangeAddressList {
 	public void serialize(LittleEndianOutput out) {
 		int nItems = _list.size();
 		out.writeShort(nItems);
-		for (int k = 0; k < nItems; k++) {
-			CellRangeAddress region = _list.get(k);
+		for (CellRangeAddress region : _list) {
 			region.serialize(out);
 		}
 	}
 
 	public CellRangeAddressList copy() {
 		CellRangeAddressList result = new CellRangeAddressList();
-
-		int nItems = _list.size();
-		for (int k = 0; k < nItems; k++) {
-			CellRangeAddress region = _list.get(k);
+		for (CellRangeAddress region : _list) {
 			result.addCellRangeAddress(region.copy());
 		}
 		return result;
@@ -159,5 +153,15 @@ public class CellRangeAddressList {
 		CellRangeAddress[] result = new CellRangeAddress[_list.size()];
 		_list.toArray(result);
 		return result;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return null;
+	}
+
+	@Override
+	public List<CellRangeAddress> getGenericChildren() {
+		return _list;
 	}
 }

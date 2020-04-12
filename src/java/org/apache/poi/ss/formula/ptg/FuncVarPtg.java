@@ -16,10 +16,14 @@
 ==================================================================== */
 
 package org.apache.poi.ss.formula.ptg;
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.formula.function.FunctionMetadata;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -92,5 +96,13 @@ public final class FuncVarPtg extends AbstractFunctionPtg {
     public FuncVarPtg copy() {
         // immutable
         return this;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "cetab", () -> _isCetab
+        );
     }
 }

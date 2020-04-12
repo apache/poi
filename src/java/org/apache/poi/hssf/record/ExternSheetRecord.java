@@ -19,7 +19,12 @@ package org.apache.poi.hssf.record;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -31,7 +36,7 @@ public class ExternSheetRecord extends StandardRecord {
     public static final short sid = 0x0017;
 	private final List<RefSubRecord> _list = new ArrayList<>();
 
-	private static final class RefSubRecord {
+	private static final class RefSubRecord implements GenericRecord {
 		public static final int ENCODED_SIZE = 6;
 
 		/** index to External Book Block (which starts with a EXTERNALBOOK record) */
@@ -58,11 +63,6 @@ public class ExternSheetRecord extends StandardRecord {
 			this(in.readShort(), in.readShort(), in.readShort());
 		}
 
-		public void adjustIndex(int offset) {
-			_firstSheetIndex += offset;
-			_lastSheetIndex += offset;
-		}
-
 		public int getExtBookIndex(){
 			return _extBookIndex;
 		}
@@ -75,17 +75,22 @@ public class ExternSheetRecord extends StandardRecord {
 
 		@Override
 		public String toString() {
-			StringBuilder buffer = new StringBuilder();
-			buffer.append("extBook=").append(_extBookIndex);
-			buffer.append(" firstSheet=").append(_firstSheetIndex);
-			buffer.append(" lastSheet=").append(_lastSheetIndex);
-			return buffer.toString();
+			return GenericRecordJsonWriter.marshal(this);
 		}
 
 		public void serialize(LittleEndianOutput out) {
 			out.writeShort(_extBookIndex);
 			out.writeShort(_firstSheetIndex);
 			out.writeShort(_lastSheetIndex);
+		}
+
+		@Override
+		public Map<String, Supplier<?>> getGenericProperties() {
+			return GenericRecordUtil.getGenericProperties(
+				"extBookIndex", this::getExtBookIndex,
+				"firstSheetIndex", this::getFirstSheetIndex,
+				"lastSheetIndex", this::getLastSheetIndex
+			);
 		}
 	}
 
@@ -125,24 +130,6 @@ public class ExternSheetRecord extends StandardRecord {
 	 */
 	public int getNumOfREFRecords() {
 		return _list.size();
-	}
-
-
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		int nItems = _list.size();
-		sb.append("[EXTERNSHEET]\n");
-		sb.append("   numOfRefs     = ").append(nItems).append("\n");
-		for (int i=0; i < nItems; i++) {
-			sb.append("refrec         #").append(i).append(": ");
-			sb.append(getRef(i));
-			sb.append('\n');
-		}
-		sb.append("[/EXTERNSHEET]\n");
-
-
-		return sb.toString();
 	}
 
 	@Override
@@ -308,5 +295,15 @@ public class ExternSheetRecord extends StandardRecord {
 	@Override
 	public ExternSheetRecord copy() {
 		return new ExternSheetRecord(this);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.EXTERN_SHEET;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties("refrec", () -> _list);
 	}
 }

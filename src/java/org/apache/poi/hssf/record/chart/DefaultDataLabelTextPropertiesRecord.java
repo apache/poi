@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -45,20 +49,6 @@ public final class DefaultDataLabelTextPropertiesRecord extends StandardRecord {
         field_1_categoryDataType = in.readShort();
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[DEFAULTTEXT]\n");
-        buffer.append("    .categoryDataType     = ")
-            .append("0x").append(HexDump.toHex(  getCategoryDataType ()))
-            .append(" (").append( getCategoryDataType() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-
-        buffer.append("[/DEFAULTTEXT]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_categoryDataType);
     }
@@ -73,7 +63,7 @@ public final class DefaultDataLabelTextPropertiesRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public DefaultDataLabelTextPropertiesRecord clone() {
@@ -110,5 +100,17 @@ public final class DefaultDataLabelTextPropertiesRecord extends StandardRecord {
     public void setCategoryDataType(short field_1_categoryDataType)
     {
         this.field_1_categoryDataType = field_1_categoryDataType;
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.DEFAULT_DATA_LABEL_TEXT_PROPERTIES;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "categoryDataType", this::getCategoryDataType
+        );
     }
 }

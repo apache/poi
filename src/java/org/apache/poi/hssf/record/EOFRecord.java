@@ -17,6 +17,9 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -38,15 +41,6 @@ public final class EOFRecord extends StandardRecord {
      */
     public EOFRecord(RecordInputStream in) {}
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[EOF]\n");
-        buffer.append("[/EOF]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
     }
 
@@ -60,7 +54,7 @@ public final class EOFRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public EOFRecord clone() {
@@ -70,5 +64,15 @@ public final class EOFRecord extends StandardRecord {
     @Override
     public EOFRecord copy() {
       return instance;
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.EOF;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return null;
     }
 }

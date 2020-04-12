@@ -17,7 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -50,19 +53,6 @@ public final class DBCellRecord extends StandardRecord {
         }
     }
 
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[DBCELL]\n");
-        buffer.append("    .rowoffset = ").append(HexDump.intToHex(field_1_row_offset)).append("\n");
-        for (int k = 0; k < field_2_cell_offsets.length; k++) {
-            buffer.append("    .cell_").append(k).append(" = ")
-                .append(HexDump.shortToHex(field_2_cell_offsets[ k ])).append("\n");
-        }
-        buffer.append("[/DBCELL]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeInt(field_1_row_offset);
         for (short field_2_cell_offset : field_2_cell_offsets) {
@@ -78,7 +68,7 @@ public final class DBCellRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public DBCellRecord clone() {
@@ -89,5 +79,18 @@ public final class DBCellRecord extends StandardRecord {
     public DBCellRecord copy() {
         // safe because immutable
         return this;
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.DB_CELL;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "rowOffset", () -> field_1_row_offset,
+            "cellOffsets", () -> field_2_cell_offsets
+        );
     }
 }

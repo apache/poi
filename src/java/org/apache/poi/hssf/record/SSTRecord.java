@@ -18,10 +18,13 @@
 package org.apache.poi.hssf.record;
 
 import java.util.Iterator;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.cont.ContinuableRecord;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IntMapper;
 
 /**
@@ -127,33 +130,8 @@ public final class SSTRecord extends ContinuableRecord {
      *
      * @return the desired string
      */
-    public UnicodeString getString(int id )
-    {
+    public UnicodeString getString(int id ) {
         return field_3_strings.get( id );
-    }
-
-
-    /**
-     * Return a debugging string representation
-     *
-     * @return string representation
-     */
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append( "[SST]\n" );
-        buffer.append( "    .numstrings     = " )
-                .append( Integer.toHexString( getNumStrings() ) ).append( "\n" );
-        buffer.append( "    .uniquestrings  = " )
-                .append( Integer.toHexString( getNumUniqueStrings() ) ).append( "\n" );
-        for ( int k = 0; k < field_3_strings.size(); k++ )
-        {
-          UnicodeString s = field_3_strings.get( k );
-            buffer.append("    .string_").append(k).append("      = ")
-                    .append( s.getDebugInfo() ).append( "\n" );
-        }
-        buffer.append( "[/SST]\n" );
-        return buffer.toString();
     }
 
     public short getSid() {
@@ -281,10 +259,6 @@ public final class SSTRecord extends ContinuableRecord {
         bucketRelativeOffsets = serializer.getBucketRelativeOffsets();
     }
 
-    SSTDeserializer getDeserializer() {
-        return deserializer;
-    }
-
     /**
      * Creates an extended string record based on the current contents of
      * the current SST record.  The offset within the stream to the SST record
@@ -327,5 +301,21 @@ public final class SSTRecord extends ContinuableRecord {
     @Override
     public SSTRecord copy() {
         return new SSTRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.SST;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "numStrings", this::getNumStrings,
+            "numUniqueStrings", this::getNumUniqueStrings,
+            "strings", () -> field_3_strings.getElements(),
+            "bucketAbsoluteOffsets", () -> bucketAbsoluteOffsets,
+            "bucketRelativeOffsets", () -> bucketRelativeOffsets
+        );
     }
 }

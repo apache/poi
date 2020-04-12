@@ -17,7 +17,11 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -229,21 +233,6 @@ public final class BOFRecord extends StandardRecord {
         return field_6_rversion;
     }
 
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[BOF RECORD]\n");
-        buffer.append("    .version  = ").append(HexDump.shortToHex(getVersion())).append("\n");
-        buffer.append("    .type     = ").append(HexDump.shortToHex(getType()));
-        buffer.append(" (").append(getTypeName()).append(")").append("\n");
-        buffer.append("    .build    = ").append(HexDump.shortToHex(getBuild())).append("\n");
-        buffer.append("    .buildyear= ").append(getBuildYear()).append("\n");
-        buffer.append("    .history  = ").append(HexDump.intToHex(getHistoryBitMask())).append("\n");
-        buffer.append("    .reqver   = ").append(HexDump.intToHex(getRequiredVersion())).append("\n");
-        buffer.append("[/BOF RECORD]\n");
-        return buffer.toString();
-    }
-
     private String getTypeName() {
         switch(field_2_type) {
             case TYPE_CHART: return "chart";
@@ -274,7 +263,7 @@ public final class BOFRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public BOFRecord clone() {
@@ -284,5 +273,23 @@ public final class BOFRecord extends StandardRecord {
     @Override
     public BOFRecord copy() {
         return new BOFRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.BOF;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("version", this::getVersion);
+        m.put("type", this::getType);
+        m.put("typeName", this::getTypeName);
+        m.put("build", this::getBuild);
+        m.put("buildYear", this::getBuildYear);
+        m.put("history", this::getHistoryBitMask);
+        m.put("requiredVersion", this::getRequiredVersion);
+        return Collections.unmodifiableMap(m);
     }
 }

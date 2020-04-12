@@ -17,11 +17,18 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+import static org.apache.poi.util.GenericRecordUtil.getEnumBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -80,50 +87,6 @@ public final class LegendRecord extends StandardRecord {
         field_7_options        = in.readShort();
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[LEGEND]\n");
-        buffer.append("    .xAxisUpperLeft       = ")
-            .append("0x").append(HexDump.toHex(  getXAxisUpperLeft ()))
-            .append(" (").append( getXAxisUpperLeft() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .yAxisUpperLeft       = ")
-            .append("0x").append(HexDump.toHex(  getYAxisUpperLeft ()))
-            .append(" (").append( getYAxisUpperLeft() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .xSize                = ")
-            .append("0x").append(HexDump.toHex(  getXSize ()))
-            .append(" (").append( getXSize() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .ySize                = ")
-            .append("0x").append(HexDump.toHex(  getYSize ()))
-            .append(" (").append( getYSize() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .type                 = ")
-            .append("0x").append(HexDump.toHex(  getType ()))
-            .append(" (").append( getType() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .spacing              = ")
-            .append("0x").append(HexDump.toHex(  getSpacing ()))
-            .append(" (").append( getSpacing() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .options              = ")
-            .append("0x").append(HexDump.toHex(  getOptions ()))
-            .append(" (").append( getOptions() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("         .autoPosition             = ").append(isAutoPosition()).append('\n');
-        buffer.append("         .autoSeries               = ").append(isAutoSeries()).append('\n');
-        buffer.append("         .autoXPositioning         = ").append(isAutoXPositioning()).append('\n');
-        buffer.append("         .autoYPositioning         = ").append(isAutoYPositioning()).append('\n');
-        buffer.append("         .vertical                 = ").append(isVertical()).append('\n');
-        buffer.append("         .dataTable                = ").append(isDataTable()).append('\n');
-
-        buffer.append("[/LEGEND]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeInt(field_1_xAxisUpperLeft);
         out.writeInt(field_2_yAxisUpperLeft);
@@ -144,7 +107,7 @@ public final class LegendRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public LegendRecord clone() {
@@ -406,4 +369,29 @@ public final class LegendRecord extends StandardRecord {
     {
         return dataTable.isSet(field_7_options);
     }
+
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.LEGEND;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "xAxisUpperLeft", this::getXAxisUpperLeft,
+            "yAxisUpperLeft", this::getYAxisUpperLeft,
+            "xSize", this::getXSize,
+            "ySize", this::getYSize,
+            "type", getEnumBitsAsString(this::getType,
+                new int[]{TYPE_BOTTOM, TYPE_CORNER, TYPE_TOP, TYPE_RIGHT, TYPE_LEFT, TYPE_UNDOCKED},
+                new String[]{"BOTTOM","CORNER","TOP","RIGHT","LEFT","UNDOCKED"}),
+            "spacing", getEnumBitsAsString(this::getSpacing,
+                new int[]{SPACING_CLOSE, SPACING_MEDIUM, SPACING_OPEN},
+                new String[]{"CLOSE","MEDIUM","OPEN"}),
+            "options", getBitsAsString(this::getOptions,
+                new BitField[]{autoPosition, autoSeries, autoXPositioning, autoYPositioning, vertical, dataTable},
+                new String[]{"AUTO_POSITION","AUTO_SERIES","AUTO_X_POSITIONING","AUTO_Y_POSITIONING","VERTICAL","DATA_TABLE"})
+        );
+     }
 }

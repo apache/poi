@@ -19,6 +19,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -69,17 +73,6 @@ public final class RefModeRecord extends StandardRecord {
         return field_1_mode;
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[REFMODE]\n");
-        buffer.append("    .mode           = ")
-            .append(Integer.toHexString(getMode())).append("\n");
-        buffer.append("[/REFMODE]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(getMode());
     }
@@ -94,7 +87,7 @@ public final class RefModeRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public RefModeRecord clone() {
@@ -103,6 +96,16 @@ public final class RefModeRecord extends StandardRecord {
 
     @Override
     public RefModeRecord copy() {
-      return new RefModeRecord();
+        return new RefModeRecord();
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.REF_MODE;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("mode", this::getMode);
     }
 }

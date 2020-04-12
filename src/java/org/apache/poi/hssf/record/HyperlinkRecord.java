@@ -20,9 +20,14 @@ package org.apache.poi.hssf.record;
 import static org.apache.poi.hpsf.ClassIDPredefined.FILE_MONIKER;
 import static org.apache.poi.hpsf.ClassIDPredefined.STD_MONIKER;
 import static org.apache.poi.hpsf.ClassIDPredefined.URL_MONIKER;
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.IOUtils;
@@ -512,16 +517,9 @@ public final class HyperlinkRecord extends StandardRecord {
     private static byte[] readTail(byte[] expectedTail, LittleEndianInput in) {
         byte[] result = new byte[TAIL_SIZE];
         in.readFully(result);
-//    	if (false) { // Quite a few examples in the unit tests which don't have the exact expected tail
-//            for (int i = 0; i < expectedTail.length; i++) {
-//                if (expectedTail[i] != result[i]) {
-//                	logger.log( POILogger.ERROR, "Mismatch in tail byte [" + i + "]"
-//                    		+ "expected " + (expectedTail[i] & 0xFF) + " but got " + (result[i] & 0xFF));
-//                }
-//            }
-//    	}
         return result;
     }
+
     private static void writeTail(byte[] tail, LittleEndianOutput out) {
         out.write(tail);
     }
@@ -531,29 +529,6 @@ public final class HyperlinkRecord extends StandardRecord {
         return HyperlinkRecord.sid;
     }
 
-
-    @Override
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[HYPERLINK RECORD]\n");
-        buffer.append("    .range   = ").append(_range.formatAsString()).append("\n");
-        buffer.append("    .guid    = ").append(_guid.toString()).append("\n");
-        buffer.append("    .linkOpts= ").append(HexDump.intToHex(_linkOpts)).append("\n");
-        buffer.append("    .label   = ").append(getLabel()).append("\n");
-        if ((_linkOpts & HLINK_TARGET_FRAME) != 0) {
-            buffer.append("    .targetFrame= ").append(getTargetFrame()).append("\n");
-        }
-        if((_linkOpts & HLINK_URL) != 0 && _moniker != null) {
-            buffer.append("    .moniker   = ").append(_moniker.toString()).append("\n");
-        }
-        if ((_linkOpts & HLINK_PLACE) != 0) {
-            buffer.append("    .textMark= ").append(getTextMark()).append("\n");
-        }
-        buffer.append("    .address   = ").append(getAddress()).append("\n");
-        buffer.append("[/HYPERLINK RECORD]\n");
-        return buffer.toString();
-    }
 
     /**
      * Based on the link options, is this a url?
@@ -635,5 +610,26 @@ public final class HyperlinkRecord extends StandardRecord {
     @Override
     public HyperlinkRecord copy() {
         return new HyperlinkRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.HYPERLINK;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "range", () -> _range,
+            "guid", this::getGuid,
+            "linkOpts", () -> getBitsAsString(this::getLinkOptions,
+                  new int[]{HLINK_URL,HLINK_ABS,HLINK_PLACE,HLINK_LABEL,HLINK_TARGET_FRAME,HLINK_UNC_PATH},
+                  new String[]{"URL","ABS","PLACE","LABEL","TARGET_FRAME","UNC_PATH"}),
+            "label", this::getLabel,
+            "targetFrame", this::getTargetFrame,
+            "moniker", this::getMoniker,
+            "textMark", this::getTextMark,
+            "address", this::getAddress
+        );
     }
 }

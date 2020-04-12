@@ -17,9 +17,13 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
 import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -58,6 +62,11 @@ public final class DeletedArea3DPtg extends OperandPtg implements WorkbookDepend
 	public int getSize() {
 		return 11;
 	}
+
+	public int getExternSheetIndex() {
+		return field_1_index_extern_sheet;
+	}
+
 	public void write(LittleEndianOutput out) {
 		out.writeByte(sid + getPtgClass());
 		out.writeShort(field_1_index_extern_sheet);
@@ -69,5 +78,14 @@ public final class DeletedArea3DPtg extends OperandPtg implements WorkbookDepend
 	public DeletedArea3DPtg copy() {
 		// immutable
 		return this;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"externSheetIndex", this::getExternSheetIndex,
+			"unused1", () -> unused1,
+			"unused2", () -> unused2
+		);
 	}
 }

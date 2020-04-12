@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -137,27 +141,6 @@ public final class SupBookRecord extends StandardRecord {
         }
      }
 
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("[SUPBOOK ");
-
-        if(isExternalReferences()) {
-            sb.append("External References]\n");
-            sb.append(" .url     = ").append(getURL()).append("\n");
-            sb.append(" .nSheets = ").append(field_1_number_of_sheets).append("\n");
-            for (String sheetname : field_3_sheet_names) {
-                sb.append("    .name = ").append(sheetname).append("\n");
-            }
-            sb.append("[/SUPBOOK");
-        } else if(_isAddInFunctions) {
-            sb.append("Add-In Functions");
-        } else {
-            sb.append("Internal References");
-            sb.append(" nSheets=").append(field_1_number_of_sheets);
-        }
-        sb.append("]");
-        return sb.toString();
-    }
     protected int getDataSize() {
         if(!isExternalReferences()) {
             return SMALL_RECORD_SIZE;
@@ -202,7 +185,7 @@ public final class SupBookRecord extends StandardRecord {
     }
     public String getURL() {
         String encodedUrl = field_2_encoded_url;
-        switch(encodedUrl.charAt(0)) {
+        switch(encodedUrl == null ? -1 : encodedUrl.charAt(0)) {
             case 0: // Reference to an empty workbook name
                 return encodedUrl.substring(1); // will this just be empty string?
             case 1: // encoded file name
@@ -254,7 +237,7 @@ public final class SupBookRecord extends StandardRecord {
         return sb.toString();
     }
     public String[] getSheetNames() {
-        return field_3_sheet_names.clone();
+        return field_3_sheet_names == null ? null : field_3_sheet_names.clone();
     }
 
     public void setURL(String pUrl) {
@@ -265,5 +248,22 @@ public final class SupBookRecord extends StandardRecord {
     @Override
     public SupBookRecord copy() {
         return new SupBookRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.SUP_BOOK;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "externalReferences", this::isExternalReferences,
+            "internalReferences", this::isInternalReferences,
+            "url", this::getURL,
+            "numberOfSheets", this::getNumberOfSheets,
+            "sheetNames", this::getSheetNames,
+            "addInFunctions", this::isAddInFunctions
+        );
     }
 }

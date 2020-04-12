@@ -17,9 +17,12 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -65,15 +68,6 @@ public final class IterationRecord extends StandardRecord {
         return iterationOn.isSet(_flags);
     }
 
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[ITERATION]\n");
-        buffer.append("    .flags      = ").append(HexDump.shortToHex(_flags)).append("\n");
-        buffer.append("[/ITERATION]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(_flags);
     }
@@ -87,7 +81,7 @@ public final class IterationRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public IterationRecord clone() {
@@ -97,5 +91,18 @@ public final class IterationRecord extends StandardRecord {
     @Override
     public IterationRecord copy() {
         return new IterationRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.ITERATION;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "flags", () -> _flags,
+            "iteration", this::getIteration
+        );
     }
 }

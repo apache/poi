@@ -19,6 +19,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -93,19 +97,6 @@ public final class CountryRecord extends StandardRecord {
         return field_2_current_country;
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[COUNTRY]\n");
-        buffer.append("    .defaultcountry  = ")
-            .append(Integer.toHexString(getDefaultCountry())).append("\n");
-        buffer.append("    .currentcountry  = ")
-            .append(Integer.toHexString(getCurrentCountry())).append("\n");
-        buffer.append("[/COUNTRY]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(getDefaultCountry());
         out.writeShort(getCurrentCountry());
@@ -123,5 +114,18 @@ public final class CountryRecord extends StandardRecord {
     @Override
     public CountryRecord copy() {
         return new CountryRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.COUNTRY;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "defaultCountry", this::getDefaultCountry,
+            "currentCountry", this::getCurrentCountry
+        );
     }
 }

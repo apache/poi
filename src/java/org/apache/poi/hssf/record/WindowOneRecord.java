@@ -17,8 +17,14 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -363,39 +369,6 @@ public final class WindowOneRecord extends StandardRecord {
         return field_9_tab_width_ratio;
     }
 
-    public String toString() {
-        return "[WINDOW1]\n" +
-                "    .h_hold          = " +
-                Integer.toHexString(getHorizontalHold()) + "\n" +
-                "    .v_hold          = " +
-                Integer.toHexString(getVerticalHold()) + "\n" +
-                "    .width           = " +
-                Integer.toHexString(getWidth()) + "\n" +
-                "    .height          = " +
-                Integer.toHexString(getHeight()) + "\n" +
-                "    .options         = " +
-                Integer.toHexString(getOptions()) + "\n" +
-                "        .hidden      = " + getHidden() +
-                "\n" +
-                "        .iconic      = " + getIconic() +
-                "\n" +
-                "        .hscroll     = " +
-                getDisplayHorizontalScrollbar() + "\n" +
-                "        .vscroll     = " +
-                getDisplayVerticalScrollbar() + "\n" +
-                "        .tabs        = " + getDisplayTabs() +
-                "\n" +
-                "    .activeSheet     = " +
-                Integer.toHexString(getActiveSheetIndex()) + "\n" +
-                "    .firstVisibleTab    = " +
-                Integer.toHexString(getFirstVisibleTab()) + "\n" +
-                "    .numselectedtabs = " +
-                Integer.toHexString(getNumSelectedTabs()) + "\n" +
-                "    .tabwidthratio   = " +
-                Integer.toHexString(getTabWidthRatio()) + "\n" +
-                "[/WINDOW1]\n";
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(getHorizontalHold());
         out.writeShort(getVerticalHold());
@@ -420,5 +393,26 @@ public final class WindowOneRecord extends StandardRecord {
     @Override
     public WindowOneRecord copy() {
         return new WindowOneRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.WINDOW_ONE;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "horizontalHold", this::getHorizontalHold,
+            "verticalHold", this::getVerticalHold,
+            "width", this::getWidth,
+            "options", getBitsAsString(this::getOptions,
+                new BitField[]{hidden, iconic, reserved, hscroll, vscroll, tabs},
+                new String[]{"HIDDEN", "ICONIC", "RESERVED", "HSCROLL", "VSCROLL", "TABS"}),
+            "activeSheetIndex", this::getActiveSheetIndex,
+            "firstVisibleTab", this::getFirstVisibleTab,
+            "numSelectedTabs", this::getNumSelectedTabs,
+            "tabWidthRatio", this::getTabWidthRatio
+        );
     }
 }

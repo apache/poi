@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -80,7 +84,7 @@ public final class DrawingRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public DrawingRecord clone() {
@@ -97,7 +101,15 @@ public final class DrawingRecord extends StandardRecord {
     }
 
     @Override
-    public String toString() {
-        return "DrawingRecord["+recordData.length+"]";
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.DRAWING;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "recordData", this::getRecordData,
+            "contd", () -> contd
+        );
     }
 }

@@ -17,7 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -119,18 +122,6 @@ public final class BlankRecord extends StandardRecord implements CellValueRecord
         return sid;
     }
 
-    public String toString()
-    {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("[BLANK]\n");
-        sb.append("    row= ").append(HexDump.shortToHex(getRow())).append("\n");
-        sb.append("    col= ").append(HexDump.shortToHex(getColumn())).append("\n");
-        sb.append("    xf = ").append(HexDump.shortToHex(getXFIndex())).append("\n");
-        sb.append("[/BLANK]\n");
-        return sb.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(getRow());
         out.writeShort(getColumn());
@@ -142,7 +133,7 @@ public final class BlankRecord extends StandardRecord implements CellValueRecord
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public BlankRecord clone() {
@@ -152,5 +143,19 @@ public final class BlankRecord extends StandardRecord implements CellValueRecord
     @Override
     public BlankRecord copy() {
         return new BlankRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.BLANK;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "row", this::getRow,
+            "col", this::getColumn,
+            "xfIndex", this::getXFIndex
+        );
     }
 }

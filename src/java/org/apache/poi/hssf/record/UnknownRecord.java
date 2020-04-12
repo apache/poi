@@ -18,9 +18,11 @@
 package org.apache.poi.hssf.record;
 
 import java.util.Locale;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -97,27 +99,6 @@ public final class UnknownRecord extends StandardRecord {
     protected int getDataSize() {
         return _rawData.length;
     }
-
-    /**
-     * print a sort of string representation ([UNKNOWN RECORD] id = x [/UNKNOWN RECORD])
-     */
-    @Override
-    public String toString() {
-        String biffName = getBiffName(_sid);
-        if (biffName == null) {
-            biffName = "UNKNOWNRECORD";
-        }
-        StringBuilder sb = new StringBuilder();
-
-        sb.append('[').append(biffName).append("] (0x");
-        sb.append(Integer.toHexString(_sid).toUpperCase(Locale.ROOT)).append(")\n");
-        if (_rawData.length > 0) {
-            sb.append("  rawData=").append(HexDump.toHex(_rawData)).append("\n");
-        }
-        sb.append("[/").append(biffName).append("]\n");
-        return sb.toString();
-    }
-
     @Override
     public short getSid() {
         return (short) _sid;
@@ -285,7 +266,7 @@ public final class UnknownRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public UnknownRecord clone() {
@@ -296,5 +277,24 @@ public final class UnknownRecord extends StandardRecord {
     public UnknownRecord copy() {
         // immutable - OK to return this
         return this;
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.UNKNOWN;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        Supplier<String> biffName = () -> {
+            String bn = getBiffName(_sid);
+            return bn == null ? "UNKNOWNRECORD" : bn;
+        };
+
+        return GenericRecordUtil.getGenericProperties(
+            "sid", this::getSid,
+            "biffName", biffName,
+            "rawData", () -> _rawData
+        );
     }
 }

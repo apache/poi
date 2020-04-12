@@ -57,13 +57,4 @@ public abstract class Area2DPtgBase extends AreaPtgBase {
 	public final String toFormulaString() {
 		return formatReferenceAsString();
 	}
-
-	public final String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getClass().getName());
-		sb.append(" [");
-		sb.append(formatReferenceAsString());
-		sb.append("]");
-		return sb.toString();
-	}
 }

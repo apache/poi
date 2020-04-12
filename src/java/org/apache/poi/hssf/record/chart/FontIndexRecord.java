@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -39,20 +43,6 @@ public final class FontIndexRecord extends StandardRecord {
         field_1_fontIndex = in.readShort();
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[FONTX]\n");
-        buffer.append("    .fontIndex            = ")
-            .append("0x").append(HexDump.toHex(  getFontIndex ()))
-            .append(" (").append( getFontIndex() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-
-        buffer.append("[/FONTX]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_fontIndex);
     }
@@ -67,7 +57,7 @@ public final class FontIndexRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public FontIndexRecord clone() {
@@ -96,5 +86,15 @@ public final class FontIndexRecord extends StandardRecord {
     public void setFontIndex(short field_1_fontIndex)
     {
         this.field_1_fontIndex = field_1_fontIndex;
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.FONT_INDEX;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("fontIdex", this::getFontIndex);
     }
 }

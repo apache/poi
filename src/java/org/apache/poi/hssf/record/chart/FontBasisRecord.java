@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -53,36 +57,6 @@ public final class FontBasisRecord extends StandardRecord {
         field_5_indexToFontTable       = in.readShort();
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[FBI]\n");
-        buffer.append("    .xBasis               = ")
-            .append("0x").append(HexDump.toHex(  getXBasis ()))
-            .append(" (").append( getXBasis() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .yBasis               = ")
-            .append("0x").append(HexDump.toHex(  getYBasis ()))
-            .append(" (").append( getYBasis() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .heightBasis          = ")
-            .append("0x").append(HexDump.toHex(  getHeightBasis ()))
-            .append(" (").append( getHeightBasis() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .scale                = ")
-            .append("0x").append(HexDump.toHex(  getScale ()))
-            .append(" (").append( getScale() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .indexToFontTable     = ")
-            .append("0x").append(HexDump.toHex(  getIndexToFontTable ()))
-            .append(" (").append( getIndexToFontTable() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-
-        buffer.append("[/FBI]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_xBasis);
         out.writeShort(field_2_yBasis);
@@ -101,7 +75,7 @@ public final class FontBasisRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public FontBasisRecord clone() {
@@ -191,5 +165,21 @@ public final class FontBasisRecord extends StandardRecord {
     public void setIndexToFontTable(short field_5_indexToFontTable)
     {
         this.field_5_indexToFontTable = field_5_indexToFontTable;
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.FONT_BASIS;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "xBasis", this::getXBasis,
+            "yBasis", this::getYBasis,
+            "heightBasis", this::getHeightBasis,
+            "scale", this::getScale,
+            "indexToFontTable", this::getIndexToFontTable
+        );
     }
 }

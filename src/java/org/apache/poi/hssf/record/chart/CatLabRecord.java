@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -82,24 +86,24 @@ public final class CatLabRecord extends StandardRecord {
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-
-		buffer.append("[CATLAB]\n");
-		buffer.append("    .rt      =").append(HexDump.shortToHex(rt)).append('\n');
-		buffer.append("    .grbitFrt=").append(HexDump.shortToHex(grbitFrt)).append('\n');
-		buffer.append("    .wOffset =").append(HexDump.shortToHex(wOffset)).append('\n');
-		buffer.append("    .at      =").append(HexDump.shortToHex(at)).append('\n');
-		buffer.append("    .grbit   =").append(HexDump.shortToHex(grbit)).append('\n');
-		if(unused != null)
-			buffer.append("    .unused  =").append(HexDump.shortToHex(unused)).append('\n');
-
-		buffer.append("[/CATLAB]\n");
-		return buffer.toString();
+	public CatLabRecord copy() {
+		return new CatLabRecord(this);
 	}
 
 	@Override
-	public CatLabRecord copy() {
-		return new CatLabRecord(this);
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.CAT_LAB;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"rt", () -> rt,
+			"grbitFrt", () -> grbitFrt,
+			"wOffset", () -> wOffset,
+			"at", () -> at,
+			"grbit", () -> grbit,
+			"unused", () -> unused
+		);
 	}
 }

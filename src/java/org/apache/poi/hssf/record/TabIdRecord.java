@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -53,18 +57,6 @@ public final class TabIdRecord extends StandardRecord {
         _tabids = array.clone();
     }
 
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[TABID]\n");
-        buffer.append("    .elements        = ").append(_tabids.length).append("\n");
-        for (int i = 0; i < _tabids.length; i++) {
-            buffer.append("    .element_").append(i).append(" = ").append(_tabids[i]).append("\n");
-        }
-        buffer.append("[/TABID]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         for (short tabid : _tabids) {
             out.writeShort(tabid);
@@ -82,5 +74,15 @@ public final class TabIdRecord extends StandardRecord {
     @Override
     public TabIdRecord copy() {
         return new TabIdRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.TAB_ID;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("elements", () -> _tabids);
     }
 }

@@ -20,10 +20,15 @@
  */
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -35,7 +40,7 @@ public class ChartTitleFormatRecord extends StandardRecord {
 
 	private final CTFormat[] _formats;
 
-	private static final class CTFormat {
+	private static final class CTFormat implements GenericRecord {
 		public static final int ENCODED_SIZE=4;
 		private int _offset;
 		private int _fontIndex;
@@ -64,6 +69,14 @@ public class ChartTitleFormatRecord extends StandardRecord {
 			out.writeShort(_offset);
 			out.writeShort(_fontIndex);
 		}
+
+		@Override
+		public Map<String, Supplier<?>> getGenericProperties() {
+			return GenericRecordUtil.getGenericProperties(
+				"offset", this::getOffset,
+				"fontIndex", this::getFontIndex
+			);
+		}
 	}
 
 	public ChartTitleFormatRecord(ChartTitleFormatRecord other) {
@@ -82,9 +95,9 @@ public class ChartTitleFormatRecord extends StandardRecord {
 
 	public void serialize(LittleEndianOutput out) {
         out.writeShort(_formats.length);
-        for(int i=0; i<_formats.length; i++){
-            _formats[i].serialize(out);
-        }
+		for (CTFormat format : _formats) {
+			format.serialize(out);
+		}
     }
 
     protected int getDataSize() {
@@ -112,23 +125,18 @@ public class ChartTitleFormatRecord extends StandardRecord {
 		}
 	}
 
-	public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[CHARTTITLEFORMAT]\n");
-        buffer.append("    .format_runs       = ").append(_formats.length).append("\n");
-        for(int i=0; i<_formats.length; i++) {
-            CTFormat ctf = _formats[i];
-        	buffer.append("       .char_offset= ").append(ctf.getOffset());
-        	buffer.append(",.fontidx= ").append(ctf.getFontIndex());
-            buffer.append("\n");
-        }
-        buffer.append("[/CHARTTITLEFORMAT]\n");
-        return buffer.toString();
-    }
-
 	@Override
 	public ChartTitleFormatRecord copy() {
 		return new ChartTitleFormatRecord(this);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.CHART_TITLE_FORMAT;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties("formats", () -> _formats);
 	}
 }

@@ -18,7 +18,10 @@
 package org.apache.poi.hssf.record;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
@@ -121,15 +124,6 @@ public final class WriteAccessRecord extends StandardRecord {
 		return field_1_username;
 	}
 
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-
-		buffer.append("[WRITEACCESS]\n");
-		buffer.append("    .name = ").append(field_1_username).append("\n");
-		buffer.append("[/WRITEACCESS]\n");
-		return buffer.toString();
-	}
-
 	public void serialize(LittleEndianOutput out) {
 		String username = getUsername();
 		boolean is16bit = StringUtil.hasMultibyte(username);
@@ -157,5 +151,15 @@ public final class WriteAccessRecord extends StandardRecord {
 	@Override
 	public WriteAccessRecord copy() {
 		return new WriteAccessRecord(this);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.WRITE_ACCESS;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties("username", this::getUsername);
 	}
 }

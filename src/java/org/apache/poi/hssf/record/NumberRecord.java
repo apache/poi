@@ -17,7 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.ss.util.NumberToTextConverter;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -69,11 +72,6 @@ public final class NumberRecord extends CellRecord {
     }
 
     @Override
-    protected void appendValueText(StringBuilder sb) {
-        sb.append("  .value= ").append(NumberToTextConverter.toText(field_4_value));
-    }
-
-    @Override
     protected void serializeValue(LittleEndianOutput out) {
         out.writeDouble(getValue());
     }
@@ -89,7 +87,7 @@ public final class NumberRecord extends CellRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public NumberRecord clone() {
@@ -99,5 +97,18 @@ public final class NumberRecord extends CellRecord {
     @Override
     public NumberRecord copy() {
         return new NumberRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.NUMBER;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+           "base", super::getGenericProperties,
+           "value", this::getValue
+        );
     }
 }

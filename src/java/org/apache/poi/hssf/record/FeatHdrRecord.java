@@ -17,7 +17,11 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.hssf.record.common.FtrHeader;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -55,8 +59,10 @@ public final class FeatHdrRecord extends StandardRecord {
 	public static final short sid = 0x0867;
 
 	private final FtrHeader futureHeader;
-	private int isf_sharedFeatureType; // See SHAREDFEATURES_
-	private byte reserved; // Should always be one
+	// See SHAREDFEATURES
+	private int isf_sharedFeatureType;
+	// Should always be one
+	private byte reserved;
 	/**
 	 * 0x00000000 = rgbHdrData not present
 	 * 0xffffffff = rgbHdrData present
@@ -93,16 +99,6 @@ public final class FeatHdrRecord extends StandardRecord {
 		return sid;
 	}
 
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-		buffer.append("[FEATURE HEADER]\n");
-
-		// TODO ...
-
-		buffer.append("[/FEATURE HEADER]\n");
-		return buffer.toString();
-	}
-
 	public void serialize(LittleEndianOutput out) {
 		futureHeader.serialize(out);
 
@@ -117,7 +113,7 @@ public final class FeatHdrRecord extends StandardRecord {
 	}
 
 	@Override
-	@SuppressWarnings("squid:S2975")
+	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
 	@Deprecated
 	@Removal(version = "5.0.0")
 	public FeatHdrRecord clone() {
@@ -130,5 +126,19 @@ public final class FeatHdrRecord extends StandardRecord {
         return new FeatHdrRecord(this);
     }
 
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.FEAT_HDR;
+	}
 
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"futureHeader", () -> futureHeader,
+			"isf_sharedFeatureType", () -> isf_sharedFeatureType,
+			"reserved", () -> reserved,
+			"cbHdrData", () -> cbHdrData,
+			"rgbHdrData", () -> rgbHdrData
+		);
+	}
 }

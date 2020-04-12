@@ -17,6 +17,10 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -55,8 +59,17 @@ public final class MemErrPtg extends OperandPtg {
 		return Ptg.CLASS_VALUE;
 	}
 
+	public int getLenRefSubexpression() {
+		return field_2_subex_len;
+	}
+
 	@Override
 	public MemErrPtg copy() {
 		return new MemErrPtg(this);
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties("lenRefSubexpression", this::getLenRefSubexpression);
 	}
 }

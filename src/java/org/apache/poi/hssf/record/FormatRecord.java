@@ -17,7 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
@@ -82,17 +85,6 @@ public final class FormatRecord extends StandardRecord {
         return field_4_formatstring;
     }
 
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[FORMAT]\n");
-        buffer.append("    .indexcode       = ").append(HexDump.shortToHex(getIndexCode())).append("\n");
-        buffer.append("    .isUnicode       = ").append(field_3_hasMultibyte ).append("\n");
-        buffer.append("    .formatstring    = ").append(getFormatString()).append("\n");
-        buffer.append("[/FORMAT]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         String formatString = getFormatString();
         out.writeShort(getIndexCode());
@@ -115,7 +107,7 @@ public final class FormatRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public FormatRecord clone() {
@@ -134,10 +126,9 @@ public final class FormatRecord extends StandardRecord {
         if (requestedLength < 0 || requestedLength > 0x100000) { // 16 million chars?
             throw new IllegalArgumentException("Bad requested string length (" + requestedLength + ")");
         }
-        char[] buf = null;
+        char[] buf;
         int availableChars = pIsCompressedEncoding ? ris.remaining() : ris.remaining() / LittleEndianConsts.SHORT_SIZE;
         //everything worked out.  Great!
-        int remaining = ris.remaining();
         if (requestedLength == availableChars) {
             buf = new char[requestedLength];
         } else {
@@ -176,4 +167,17 @@ public final class FormatRecord extends StandardRecord {
         return new String(buf);
     }
 
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.FORMAT;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "indexCode", this::getIndexCode,
+            "unicode", () -> field_3_hasMultibyte,
+            "formatString", this::getFormatString
+        );
+    }
 }

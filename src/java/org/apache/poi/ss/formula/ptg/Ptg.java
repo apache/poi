@@ -21,6 +21,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.common.Duplicatable;
+import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
@@ -37,7 +39,7 @@ import org.apache.poi.util.LittleEndianOutput;
  * <em>Reverse-Polish Notation</em> order. The RPN ordering also simplifies formula
  * evaluation logic, so POI mostly accesses <tt>Ptg</tt>s in the same way.
  */
-public abstract class Ptg implements Duplicatable {
+public abstract class Ptg implements Duplicatable, GenericRecord {
 	public static final Ptg[] EMPTY_PTG_ARRAY = { };
 
 	public static final byte CLASS_REF = 0x00;
@@ -62,7 +64,7 @@ public abstract class Ptg implements Duplicatable {
 		boolean hasArrayPtgs = false;
 		while (pos < size) {
 			Ptg ptg = Ptg.createPtg(in);
-			if (ptg instanceof ArrayPtg.Initial) {
+			if (ptg instanceof ArrayInitialPtg) {
 				hasArrayPtgs = true;
 			}
 			pos += ptg.getSize();
@@ -74,8 +76,8 @@ public abstract class Ptg implements Duplicatable {
 		if (hasArrayPtgs) {
 			Ptg[] result = toPtgArray(temp);
 			for (int i=0;i<result.length;i++) {
-				if (result[i] instanceof ArrayPtg.Initial) {
-					result[i] = ((ArrayPtg.Initial) result[i]).finishReading(in);
+				if (result[i] instanceof ArrayInitialPtg) {
+					result[i] = ((ArrayInitialPtg) result[i]).finishReading(in);
 				}
 			}
 			return result;
@@ -107,7 +109,7 @@ public abstract class Ptg implements Duplicatable {
 		int baseId = id & 0x1F | 0x20;
 
 		switch (baseId) {
-			case ArrayPtg.sid:    return new ArrayPtg.Initial(in);//0x20, 0x40, 0x60
+			case ArrayPtg.sid:    return new ArrayInitialPtg(in);//0x20, 0x40, 0x60
 			case FuncPtg.sid:     return FuncPtg.create(in);  // 0x21, 0x41, 0x61
 			case FuncVarPtg.sid:  return FuncVarPtg.create(in);//0x22, 0x42, 0x62
 			case NamePtg.sid:     return new NamePtg(in);     // 0x23, 0x43, 0x63
@@ -245,13 +247,9 @@ public abstract class Ptg implements Duplicatable {
 	 */
 	public abstract String toFormulaString();
 
-	/** Overridden toString method to ensure object hash is not printed.
-	 * This helps get rid of gratuitous diffs when comparing two dumps
-	 * Subclasses may output more relevant information by overriding this method
-	 **/
 	@Override
-	public String toString(){
-		return this.getClass().toString();
+	public final String toString() {
+		return GenericRecordJsonWriter.marshal(this);
 	}
 
 	public final void setClass(byte thePtgClass) {

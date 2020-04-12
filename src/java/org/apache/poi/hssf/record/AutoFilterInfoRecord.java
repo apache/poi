@@ -19,6 +19,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -67,17 +71,6 @@ public final class AutoFilterInfoRecord extends StandardRecord {
         return _cEntries;
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[AUTOFILTERINFO]\n");
-        buffer.append("    .numEntries          = ")
-            .append(_cEntries).append("\n");
-        buffer.append("[/AUTOFILTERINFO]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(_cEntries);
     }
@@ -92,7 +85,7 @@ public final class AutoFilterInfoRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public AutoFilterInfoRecord clone() {
@@ -102,5 +95,17 @@ public final class AutoFilterInfoRecord extends StandardRecord {
     @Override
     public AutoFilterInfoRecord copy() {
         return new AutoFilterInfoRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.AUTO_FILTER_INFO;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "numEntries", this::getNumEntries
+        );
     }
 }

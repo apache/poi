@@ -17,11 +17,18 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -84,60 +91,6 @@ public final class TickRecord extends StandardRecord {
         field_12_zero5        = in.readShort();
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[TICK]\n");
-        buffer.append("    .majorTickType        = ")
-            .append("0x").append(HexDump.toHex(  getMajorTickType ()))
-            .append(" (").append( getMajorTickType() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .minorTickType        = ")
-            .append("0x").append(HexDump.toHex(  getMinorTickType ()))
-            .append(" (").append( getMinorTickType() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .labelPosition        = ")
-            .append("0x").append(HexDump.toHex(  getLabelPosition ()))
-            .append(" (").append( getLabelPosition() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .background           = ")
-            .append("0x").append(HexDump.toHex(  getBackground ()))
-            .append(" (").append( getBackground() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .labelColorRgb        = ")
-            .append("0x").append(HexDump.toHex(  getLabelColorRgb ()))
-            .append(" (").append( getLabelColorRgb() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .zero1                = ")
-            .append("0x").append(HexDump.toHex(  getZero1 ()))
-            .append(" (").append( getZero1() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .zero2                = ")
-            .append("0x").append(HexDump.toHex(  getZero2 ()))
-            .append(" (").append( getZero2() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .options              = ")
-            .append("0x").append(HexDump.toHex(  getOptions ()))
-            .append(" (").append( getOptions() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("         .autoTextColor            = ").append(isAutoTextColor()).append('\n');
-        buffer.append("         .autoTextBackground       = ").append(isAutoTextBackground()).append('\n');
-            buffer.append("         .rotation                 = ").append(getRotation()).append('\n');
-        buffer.append("         .autorotate               = ").append(isAutorotate()).append('\n');
-        buffer.append("    .tickColor            = ")
-            .append("0x").append(HexDump.toHex(  getTickColor ()))
-            .append(" (").append( getTickColor() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .zero3                = ")
-            .append("0x").append(HexDump.toHex(  getZero3 ()))
-            .append(" (").append( getZero3() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-
-        buffer.append("[/TICK]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeByte(field_1_majorTickType);
         out.writeByte(field_2_minorTickType);
@@ -163,7 +116,7 @@ public final class TickRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public TickRecord clone() {
@@ -405,5 +358,29 @@ public final class TickRecord extends StandardRecord {
     public boolean isAutorotate()
     {
         return autorotate.isSet(field_10_options);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.TICK;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("majorTickType", this::getMajorTickType);
+        m.put("minorTickType", this::getMinorTickType);
+        m.put("labelPosition", this::getLabelPosition);
+        m.put("background", this::getBackground);
+        m.put("labelColorRgb", this::getLabelColorRgb);
+        m.put("zero1", this::getZero1);
+        m.put("zero2", this::getZero2);
+        m.put("options", getBitsAsString(this::getOptions,
+            new BitField[]{autoTextColor,autoTextBackground,autorotate},
+            new String[]{"AUTO_TEXT_COLOR","AUTO_TEXT_BACKGROUND","AUTO_ROTATE"}) );
+        m.put("rotation", this::getRotation);
+        m.put("tickColor", this::getTickColor);
+        m.put("zero3", this::getZero3);
+        return Collections.unmodifiableMap(m);
     }
 }

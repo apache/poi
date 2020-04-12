@@ -17,7 +17,11 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -43,10 +47,6 @@ public final class RefErrorPtg extends OperandPtg {
         field_1_reserved = in.readInt();
     }
 
-    public String toString() {
-        return getClass().getName();
-    }
-
     public void write(LittleEndianOutput out) {
         out.writeByte(sid + getPtgClass());
         out.writeInt(field_1_reserved);
@@ -68,5 +68,10 @@ public final class RefErrorPtg extends OperandPtg {
     @Override
     public RefErrorPtg copy() {
         return new RefErrorPtg(this);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("reserved", () -> field_1_reserved);
     }
 }

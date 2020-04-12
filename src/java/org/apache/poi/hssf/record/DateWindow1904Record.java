@@ -19,6 +19,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -63,17 +67,6 @@ public final class DateWindow1904Record extends StandardRecord {
         return field_1_window;
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[1904]\n");
-        buffer.append("    .is1904          = ")
-            .append(Integer.toHexString(getWindowing())).append("\n");
-        buffer.append("[/1904]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(getWindowing());
     }
@@ -90,5 +83,15 @@ public final class DateWindow1904Record extends StandardRecord {
     @Override
     public DateWindow1904Record copy() {
         return new DateWindow1904Record(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.DATE_WINDOW_1904;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("is1904", this::getWindowing);
     }
 }

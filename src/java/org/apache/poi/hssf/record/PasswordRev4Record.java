@@ -17,7 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -50,15 +53,6 @@ public final class PasswordRev4Record extends StandardRecord {
         field_1_password = pw;
     }
 
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[PROT4REVPASSWORD]\n");
-        buffer.append("    .password = ").append(HexDump.shortToHex(field_1_password)).append("\n");
-        buffer.append("[/PROT4REVPASSWORD]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_password);
     }
@@ -74,5 +68,15 @@ public final class PasswordRev4Record extends StandardRecord {
     @Override
     public PasswordRev4Record copy() {
         return new PasswordRev4Record(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.PASSWORD_REV_4;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("password", () -> field_1_password);
     }
 }

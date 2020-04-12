@@ -17,11 +17,15 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -53,26 +57,6 @@ public final class FrameRecord extends StandardRecord {
         field_2_options = in.readShort();
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[FRAME]\n");
-        buffer.append("    .borderType           = ")
-            .append("0x").append(HexDump.toHex(  getBorderType ()))
-            .append(" (").append( getBorderType() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .options              = ")
-            .append("0x").append(HexDump.toHex(  getOptions ()))
-            .append(" (").append( getOptions() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("         .autoSize                 = ").append(isAutoSize()).append('\n');
-        buffer.append("         .autoPosition             = ").append(isAutoPosition()).append('\n');
-
-        buffer.append("[/FRAME]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_borderType);
         out.writeShort(field_2_options);
@@ -88,7 +72,7 @@ public final class FrameRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public FrameRecord clone() {
@@ -175,5 +159,20 @@ public final class FrameRecord extends StandardRecord {
     public boolean isAutoPosition()
     {
         return autoPosition.isSet(field_2_options);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.FRAME;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "borderType", this::getBorderType,
+            "options", this::getOptions,
+            "autoSize", this::isAutoSize,
+            "autoPosition", this::isAutoPosition
+        );
     }
 }

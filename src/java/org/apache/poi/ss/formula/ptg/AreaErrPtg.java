@@ -17,7 +17,11 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -62,5 +66,13 @@ public final class AreaErrPtg extends OperandPtg {
 	public AreaErrPtg copy() {
 		// immutable
 		return this;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"unused1", () -> unused1,
+			"unused2", () -> unused2
+		);
 	}
 }

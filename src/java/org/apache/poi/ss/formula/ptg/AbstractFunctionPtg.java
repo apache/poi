@@ -18,9 +18,12 @@
 package org.apache.poi.ss.formula.ptg;
 
 import java.util.Locale;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.ss.formula.function.FunctionMetadata;
 import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
+import org.apache.poi.util.GenericRecordUtil;
 
 /**
  * This class provides the base functionality for Excel sheet functions
@@ -54,10 +57,6 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
     }
     public final boolean isBaseToken() {
         return false;
-    }
-
-    public final String toString() {
-        return getClass().getName() + " [" + lookupName(_functionIndex) + " nArgs=" + _numberOfArgs + "]";
     }
 
     public final short getFunctionIndex() {
@@ -167,5 +166,16 @@ public abstract class AbstractFunctionPtg extends OperationPtg {
             return paramClass[paramClass.length - 1];
         }
         return paramClass[index];
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "functionIndex", this::getFunctionIndex,
+            "functionName", this::getName,
+            "numberOfOperands", this::getNumberOfOperands,
+            "externalFunction", this::isExternalFunction,
+            "defaultOperandClass", this::getDefaultOperandClass
+        );
     }
 }

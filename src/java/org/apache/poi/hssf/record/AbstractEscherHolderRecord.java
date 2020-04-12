@@ -82,23 +82,6 @@ public abstract class AbstractEscherHolderRecord extends Record {
         }
     }
 
-    @Override
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        final String nl = System.getProperty("line.separator");
-        buffer.append('[' + getRecordName() + ']' + nl);
-        if (escherRecords.size() == 0)
-            buffer.append("No Escher Records Decoded" + nl);
-        for (EscherRecord r : escherRecords) {
-            buffer.append(r);
-        }
-        buffer.append("[/" + getRecordName() + ']' + nl);
-
-        return buffer.toString();
-    }
-
     protected abstract String getRecordName();
 
     @Override
@@ -267,5 +250,10 @@ public abstract class AbstractEscherHolderRecord extends Record {
             byte[] rawData = getRawData();
             convertToEscherRecords(0, rawData.length, rawData );
         }
+    }
+
+    @Override
+    public List<EscherRecord> getGenericChildren() {
+        return escherRecords;
     }
 }

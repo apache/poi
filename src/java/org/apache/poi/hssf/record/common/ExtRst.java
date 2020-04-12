@@ -18,9 +18,13 @@
 package org.apache.poi.hssf.record.common;
 
 import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInput;
@@ -29,7 +33,7 @@ import org.apache.poi.util.POILogger;
 import org.apache.poi.util.StringUtil;
 
 @Internal
-public class ExtRst implements Comparable<ExtRst> {
+public class ExtRst implements Comparable<ExtRst>, GenericRecord {
     private static final POILogger _logger = POILogFactory.getLogger(ExtRst.class);
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
@@ -157,8 +161,8 @@ public class ExtRst implements Comparable<ExtRst> {
         out.writeContinueIfRequired(phoneticText.length()*2);
         StringUtil.putUnicodeLE(phoneticText, out);
 
-        for(int i=0; i<phRuns.length; i++) {
-            phRuns[i].serialize(out);
+        for (PhRun phRun : phRuns) {
+            phRun.serialize(out);
         }
 
         out.write(extraData);
@@ -245,4 +249,16 @@ public class ExtRst implements Comparable<ExtRst> {
         return phRuns;
     }
 
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "reserved", () -> reserved,
+            "formattingFontIndex", this::getFormattingFontIndex,
+            "formattingOptions", this::getFormattingOptions,
+            "numberOfRuns", this::getNumberOfRuns,
+            "phoneticText", this::getPhoneticText,
+            "phRuns", this::getPhRuns,
+            "extraData", () -> extraData
+        );
+    }
 }

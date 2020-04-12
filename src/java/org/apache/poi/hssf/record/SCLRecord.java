@@ -17,7 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -45,25 +48,6 @@ public final class SCLRecord extends StandardRecord {
     }
 
     @Override
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[SCL]\n");
-        buffer.append("    .numerator            = ")
-            .append("0x").append(HexDump.toHex(  getNumerator ()))
-            .append(" (").append( getNumerator() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .denominator          = ")
-            .append("0x").append(HexDump.toHex(  getDenominator ()))
-            .append(" (").append( getDenominator() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-
-        buffer.append("[/SCL]\n");
-        return buffer.toString();
-    }
-
-    @Override
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_numerator);
         out.writeShort(field_2_denominator);
@@ -81,7 +65,7 @@ public final class SCLRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public SCLRecord clone() {
@@ -131,5 +115,18 @@ public final class SCLRecord extends StandardRecord {
     public void setDenominator(short field_2_denominator)
     {
         this.field_2_denominator = field_2_denominator;
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.SCL;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "numerator", this::getNumerator,
+            "denominator", this::getDenominator
+        );
     }
 }

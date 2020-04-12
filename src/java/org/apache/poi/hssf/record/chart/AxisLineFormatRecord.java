@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -46,20 +50,6 @@ public final class AxisLineFormatRecord extends StandardRecord {
         field_1_axisType = in.readShort();
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[AXISLINEFORMAT]\n");
-        buffer.append("    .axisType             = ")
-            .append("0x").append(HexDump.toHex(  getAxisType ()))
-            .append(" (").append( getAxisType() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-
-        buffer.append("[/AXISLINEFORMAT]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_axisType);
     }
@@ -74,7 +64,7 @@ public final class AxisLineFormatRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public AxisLineFormatRecord clone() {
@@ -113,5 +103,17 @@ public final class AxisLineFormatRecord extends StandardRecord {
     @Override
     public AxisLineFormatRecord copy() {
         return new AxisLineFormatRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.AXIS_LINE_FORMAT;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "axisType", this::getAxisType
+        );
     }
 }

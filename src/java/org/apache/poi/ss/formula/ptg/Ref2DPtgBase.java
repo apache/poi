@@ -61,14 +61,4 @@ abstract class Ref2DPtgBase extends RefPtgBase {
     public final int getSize() {
 		return SIZE;
 	}
-
-    @Override
-    public final String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getName());
-        sb.append(" [");
-        sb.append(formatReferenceAsString());
-        sb.append("]");
-        return sb.toString();
-    }
 }

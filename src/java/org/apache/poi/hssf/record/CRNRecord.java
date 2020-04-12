@@ -17,7 +17,11 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.formula.constant.ConstantValueParser;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -30,10 +34,6 @@ public final class CRNRecord extends StandardRecord {
 	private int	field_2_first_column_index;
 	private int	field_3_row_index;
 	private Object[] field_4_constant_values;
-
-	private CRNRecord() {
-		// incomplete code
-	}
 
 	public CRNRecord(CRNRecord other) {
 		super(other);
@@ -57,15 +57,6 @@ public final class CRNRecord extends StandardRecord {
 		return field_1_last_column_index;
 	}
 
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append(getClass().getName()).append(" [CRN");
-		sb.append(" rowIx=").append(field_3_row_index);
-		sb.append(" firstColIx=").append(field_2_first_column_index);
-		sb.append(" lastColIx=").append(field_1_last_column_index);
-		sb.append("]");
-		return sb.toString();
-	}
 	protected int getDataSize() {
 		return 4 + ConstantValueParser.getEncodedSize(field_4_constant_values);
 	}
@@ -87,5 +78,20 @@ public final class CRNRecord extends StandardRecord {
 	@Override
 	public CRNRecord copy() {
 		return new CRNRecord(this);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.CRN;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"row", () -> field_3_row_index,
+			"firstColumn", () -> field_2_first_column_index,
+			"lastColumn", () -> field_1_last_column_index,
+			"constantValues", () -> field_4_constant_values
+		);
 	}
 }

@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -135,20 +139,6 @@ public final class DVALRecord extends StandardRecord {
         return field_5_dv_no;
     }
 
-
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-
-		buffer.append("[DVAL]\n");
-		buffer.append("    .options      = ").append(getOptions()).append('\n');
-		buffer.append("    .horizPos     = ").append(getHorizontalPos()).append('\n');
-		buffer.append("    .vertPos      = ").append(getVerticalPos()).append('\n');
-		buffer.append("    .comboObjectID   = ").append(Integer.toHexString(getObjectID())).append("\n");
-		buffer.append("    .DVRecordsNumber = ").append(Integer.toHexString(getDVRecNo())).append("\n");
-		buffer.append("[/DVAL]\n");
-		return buffer.toString();
-	}
-
     public void serialize(LittleEndianOutput out) {
 		out.writeShort(getOptions());
 		out.writeInt(getHorizontalPos());
@@ -166,7 +156,7 @@ public final class DVALRecord extends StandardRecord {
     }
 
 	@Override
-	@SuppressWarnings("squid:S2975")
+	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
 	@Deprecated
 	@Removal(version = "5.0.0")
 	public DVALRecord clone() {
@@ -177,4 +167,20 @@ public final class DVALRecord extends StandardRecord {
     public DVALRecord copy() {
       return new DVALRecord(this);
     }
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.DVAL;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"options", this::getOptions,
+			"horizPos", this::getHorizontalPos,
+			"vertPos", this::getVerticalPos,
+			"comboObjectID", this::getObjectID,
+			"dvRecordsNumber", this::getDVRecNo
+		);
+	}
 }

@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -78,20 +82,22 @@ public final class ChartEndObjectRecord extends StandardRecord {
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-
-		buffer.append("[ENDOBJECT]\n");
-		buffer.append("    .rt         =").append(HexDump.shortToHex(rt)).append('\n');
-		buffer.append("    .grbitFrt   =").append(HexDump.shortToHex(grbitFrt)).append('\n');
-		buffer.append("    .iObjectKind=").append(HexDump.shortToHex(iObjectKind)).append('\n');
-		buffer.append("    .reserved   =").append(HexDump.toHex(reserved)).append('\n');
-		buffer.append("[/ENDOBJECT]\n");
-		return buffer.toString();
+	public ChartEndObjectRecord copy() {
+		return new ChartEndObjectRecord(this);
 	}
 
 	@Override
-	public ChartEndObjectRecord copy() {
-		return new ChartEndObjectRecord(this);
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.CHART_END_OBJECT;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"rt", () -> rt,
+			"grbitFrt", () -> grbitFrt,
+			"iObjectKind", () -> iObjectKind,
+			"reserved", () -> reserved
+		);
 	}
 }

@@ -17,13 +17,19 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import static org.apache.poi.util.GenericRecordUtil.getEnumBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -73,26 +79,6 @@ public final class LinkedDataRecord extends StandardRecord {
         field_5_formulaOfLink = Formula.read(encodedTokenLen, in);
     }
 
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[AI]\n");
-        buffer.append("    .linkType             = ").append(HexDump.byteToHex(getLinkType())).append('\n');
-        buffer.append("    .referenceType        = ").append(HexDump.byteToHex(getReferenceType())).append('\n');
-        buffer.append("    .options              = ").append(HexDump.shortToHex(getOptions())).append('\n');
-        buffer.append("    .customNumberFormat   = ").append(isCustomNumberFormat()).append('\n');
-        buffer.append("    .indexNumberFmtRecord = ").append(HexDump.shortToHex(getIndexNumberFmtRecord())).append('\n');
-        buffer.append("    .formulaOfLink        = ").append('\n');
-        Ptg[] ptgs = field_5_formulaOfLink.getTokens();
-        for (int i = 0; i < ptgs.length; i++) {
-            Ptg ptg = ptgs[i];
-            buffer.append(ptg).append(ptg.getRVAType()).append('\n');
-        }
-
-        buffer.append("[/AI]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeByte(field_1_linkType);
         out.writeByte(field_2_referenceType);
@@ -110,7 +96,7 @@ public final class LinkedDataRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public LinkedDataRecord clone() {
@@ -245,5 +231,26 @@ public final class LinkedDataRecord extends StandardRecord {
     public boolean isCustomNumberFormat()
     {
         return customNumberFormat.isSet(field_3_options);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.LINKED_DATA;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "linkType", getEnumBitsAsString(this::getLinkType,
+                new int[]{LINK_TYPE_TITLE_OR_TEXT,LINK_TYPE_VALUES,LINK_TYPE_CATEGORIES,LINK_TYPE_SECONDARY_CATEGORIES},
+                new String[]{"TITLE_OR_TEXT","VALUES","CATEGORIES","SECONDARY_CATEGORIES"}),
+            "referenceType", getEnumBitsAsString(this::getReferenceType,
+                new int[]{REFERENCE_TYPE_DEFAULT_CATEGORIES, REFERENCE_TYPE_DIRECT, REFERENCE_TYPE_WORKSHEET, REFERENCE_TYPE_NOT_USED, REFERENCE_TYPE_ERROR_REPORTED},
+                new String[]{"DEFAULT_CATEGORIES","DIRECT","WORKSHEET","NOT_USED","ERROR_REPORTED"}),
+            "options", this::getOptions,
+            "customNumberFormat", this::isCustomNumberFormat,
+            "indexNumberFmtRecord", this::getIndexNumberFmtRecord,
+            "formulaOfLink", () -> field_5_formulaOfLink
+        );
     }
 }

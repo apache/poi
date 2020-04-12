@@ -17,8 +17,12 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.usermodel.FormulaError;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 
@@ -42,22 +46,6 @@ public final class Deleted3DPxg extends OperandPtg implements Pxg {
 
     public Deleted3DPxg(String sheetName) {
         this(-1, sheetName);
-    }
-
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getName());
-        sb.append(" [");
-        if (externalWorkbookNumber >= 0) {
-            sb.append(" [");
-            sb.append("workbook=").append(getExternalWorkbookNumber());
-            sb.append("] ");
-        }
-        sb.append("sheet=").append(getSheetName());
-        sb.append(" ! ");
-        sb.append(FormulaError.REF.getString());
-        sb.append("]");
-        return sb.toString();
     }
 
     public int getExternalWorkbookNumber() {
@@ -100,5 +88,15 @@ public final class Deleted3DPxg extends OperandPtg implements Pxg {
     @Override
     public Deleted3DPxg copy() {
         return new Deleted3DPxg(this);
+    }
+
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "externalWorkbookNumber", this::getExternalWorkbookNumber,
+            "sheetName", this::getSheetName,
+            "formulaError", () -> FormulaError.REF
+        );
     }
 }

@@ -17,11 +17,18 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+import static org.apache.poi.util.GenericRecordUtil.getEnumBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -77,39 +84,6 @@ public final class LineFormatRecord extends StandardRecord {
         field_5_colourPaletteIndex = in.readShort();
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[LINEFORMAT]\n");
-        buffer.append("    .lineColor            = ")
-            .append("0x").append(HexDump.toHex(  getLineColor ()))
-            .append(" (").append( getLineColor() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .linePattern          = ")
-            .append("0x").append(HexDump.toHex(  getLinePattern ()))
-            .append(" (").append( getLinePattern() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .weight               = ")
-            .append("0x").append(HexDump.toHex(  getWeight ()))
-            .append(" (").append( getWeight() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .format               = ")
-            .append("0x").append(HexDump.toHex(  getFormat ()))
-            .append(" (").append( getFormat() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("         .auto                     = ").append(isAuto()).append('\n');
-        buffer.append("         .drawTicks                = ").append(isDrawTicks()).append('\n');
-        buffer.append("         .unknown                  = ").append(isUnknown()).append('\n');
-        buffer.append("    .colourPaletteIndex   = ")
-            .append("0x").append(HexDump.toHex(  getColourPaletteIndex ()))
-            .append(" (").append( getColourPaletteIndex() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-
-        buffer.append("[/LINEFORMAT]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeInt(field_1_lineColor);
         out.writeShort(field_2_linePattern);
@@ -128,7 +102,7 @@ public final class LineFormatRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public LineFormatRecord clone() {
@@ -308,5 +282,28 @@ public final class LineFormatRecord extends StandardRecord {
     public boolean isUnknown()
     {
         return unknown.isSet(field_4_format);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.LINE_FORMAT;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "lineColor", this::getLineColor,
+            "linePattern", getEnumBitsAsString(this::getLinePattern,
+                new int[]{LINE_PATTERN_SOLID, LINE_PATTERN_DASH, LINE_PATTERN_DOT, LINE_PATTERN_DASH_DOT,
+                        LINE_PATTERN_DASH_DOT_DOT, LINE_PATTERN_NONE, LINE_PATTERN_DARK_GRAY_PATTERN,
+                        LINE_PATTERN_MEDIUM_GRAY_PATTERN, LINE_PATTERN_LIGHT_GRAY_PATTERN},
+                new String[]{"SOLID","DASH","DOT","DASH_DOT","DASH_DOT_DOT","NONE","DARK_GRAY_PATTERN","MEDIUM_GRAY_PATTERN","LIGHT_GRAY_PATTERN"}),
+            "weight", getEnumBitsAsString(this::getWeight,
+                new int[]{WEIGHT_HAIRLINE, WEIGHT_NARROW, WEIGHT_MEDIUM, WEIGHT_WIDE},
+                new String[]{"HAIRLINE","NARROW","MEDIUM","WIDE"}),
+            "format", getBitsAsString(this::getFormat,
+                new BitField[]{auto,drawTicks,unknown},new String[]{"AUTO","DRAWTICKS","UNKNOWN"}),
+            "colourPaletteIndex", this::getColourPaletteIndex
+        );
     }
 }

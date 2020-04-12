@@ -18,6 +18,8 @@
 package org.apache.poi.hssf.record;
 
 import java.io.ByteArrayInputStream;
+import java.util.Map;
+import java.util.function.Supplier;
 
 /**
  * This is purely for the biff viewer.  During normal operations we don't want
@@ -65,5 +67,15 @@ public final class DrawingRecordForBiffViewer extends AbstractEscherHolderRecord
     @Override
     public DrawingRecordForBiffViewer copy() {
         return new DrawingRecordForBiffViewer(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.DRAWING;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return null;
     }
 }

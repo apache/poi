@@ -17,7 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
@@ -58,6 +61,10 @@ public final class NoteStructureSubRecord extends SubRecord {
      * @param size the provided size - must be 22
      */
     public NoteStructureSubRecord(LittleEndianInput in, int size) {
+        this(in,size,-1);
+    }
+
+    public NoteStructureSubRecord(LittleEndianInput in, int size, int cmoOt) {
         if (size != ENCODED_SIZE) {
             throw new RecordFormatException("Unexpected size (" + size + ")");
         }
@@ -65,22 +72,6 @@ public final class NoteStructureSubRecord extends SubRecord {
         byte[] buf = IOUtils.safelyAllocate(size, ENCODED_SIZE);
         in.readFully(buf);
         reserved = buf;
-    }
-
-    /**
-     * Convert this record to string.
-     * Used by BiffViewer and other utilities.
-     */
-    @Override
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[ftNts ]").append("\n");
-        buffer.append("  size     = ").append(getDataSize()).append("\n");
-        buffer.append("  reserved = ").append(HexDump.toHex(reserved)).append("\n");
-        buffer.append("[/ftNts ]").append("\n");
-        return buffer.toString();
     }
 
     /**
@@ -121,6 +112,17 @@ public final class NoteStructureSubRecord extends SubRecord {
         return new NoteStructureSubRecord(this);
     }
 
+    @Override
+    public SubRecordTypes getGenericRecordType() {
+        return SubRecordTypes.NOTE_STRUCTURE;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "reserved", () -> reserved
+        );
+    }
 }
 
 

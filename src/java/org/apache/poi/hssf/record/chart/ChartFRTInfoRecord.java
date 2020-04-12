@@ -17,11 +17,14 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -107,21 +110,23 @@ public final class ChartFRTInfoRecord extends StandardRecord {
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-
-		buffer.append("[CHARTFRTINFO]\n");
-		buffer.append("    .rt           =").append(HexDump.shortToHex(rt)).append('\n');
-		buffer.append("    .grbitFrt     =").append(HexDump.shortToHex(grbitFrt)).append('\n');
-		buffer.append("    .verOriginator=").append(HexDump.byteToHex(verOriginator)).append('\n');
-		buffer.append("    .verWriter    =").append(HexDump.byteToHex(verOriginator)).append('\n');
-		buffer.append("    .nCFRTIDs     =").append(HexDump.shortToHex(rgCFRTID.length)).append('\n');
-		buffer.append("[/CHARTFRTINFO]\n");
-		return buffer.toString();
+	public ChartFRTInfoRecord copy() {
+		return new ChartFRTInfoRecord(this);
 	}
 
 	@Override
-	public ChartFRTInfoRecord copy() {
-		return new ChartFRTInfoRecord(this);
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.CHART_FRT_INFO;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"rt", () -> rt,
+			"grbitFrt", () -> grbitFrt,
+			"verOriginator", () -> verOriginator,
+			"verWriter", () -> verWriter,
+			"rgCFRTIDs", () -> rgCFRTID
+		);
 	}
 }

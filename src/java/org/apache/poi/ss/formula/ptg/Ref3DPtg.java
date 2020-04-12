@@ -17,10 +17,14 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.formula.ExternSheetReferenceToken;
 import org.apache.poi.ss.formula.FormulaRenderingWorkbook;
 import org.apache.poi.ss.formula.WorkbookDependentFormula;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -57,17 +61,6 @@ public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormu
         setExternSheetIndex(externIdx);
     }
 
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getName());
-        sb.append(" [");
-        sb.append("sheetIx=").append(getExternSheetIndex());
-        sb.append(" ! ");
-        sb.append(formatReferenceAsString());
-        sb.append("]");
-        return sb.toString();
-    }
-
     public void write(LittleEndianOutput out) {
         out.writeByte(sid + getPtgClass());
         out.writeShort(getExternSheetIndex());
@@ -102,5 +95,13 @@ public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormu
     @Override
     public Ref3DPtg copy() {
         return new Ref3DPtg(this);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "externSheetIndex", this::getExternSheetIndex
+        );
     }
 }

@@ -17,8 +17,15 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+import static org.apache.poi.util.GenericRecordUtil.getEnumBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
@@ -166,41 +173,14 @@ public final class AttrPtg extends ControlPtg {
         return _chooseFuncOffset;
     }
 
-    public String toString() {
-        StringBuilder sb = new StringBuilder(64);
-        sb.append(getClass().getName()).append(" [");
-
-        if(isSemiVolatile()) {
-            sb.append("volatile ");
-        }
-        if(isSpace()) {
-            sb.append("space count=").append((_data >> 8) & 0x00FF);
-            sb.append(" type=").append(_data & 0x00FF).append(" ");
-        }
-        // the rest seem to be mutually exclusive
-        if(isOptimizedIf()) {
-            sb.append("if dist=").append(_data);
-        } else if(isOptimizedChoose()) {
-            sb.append("choose nCases=").append(_data);
-        } else if(isSkip()) {
-            sb.append("skip dist=").append(_data);
-        } else if(isSum()) {
-            sb.append("sum ");
-        } else if(isBaxcel()) {
-            sb.append("assign ");
-        }
-        sb.append("]");
-        return sb.toString();
-    }
-
     public void write(LittleEndianOutput out) {
         out.writeByte(sid + getPtgClass());
         out.writeByte(_options);
         out.writeShort(_data);
         int[] jt = _jumpTable;
         if (jt != null) {
-            for (int i = 0; i < jt.length; i++) {
-                out.writeShort(jt[i]);
+            for (int value : jt) {
+                out.writeShort(value);
             }
             out.writeShort(_chooseFuncOffset);
         }
@@ -234,34 +214,48 @@ public final class AttrPtg extends ControlPtg {
         return -1;
     }
 
-   public String toFormulaString() {
-      if(semiVolatile.isSet(_options)) {
-        return "ATTR(semiVolatile)";
-      }
-      if(optiIf.isSet(_options)) {
-        return "IF";
-      }
-      if( optiChoose.isSet(_options)) {
-        return "CHOOSE";
-      }
-      if(optiSkip.isSet(_options)) {
-        return "";
-      }
-      if(optiSum.isSet(_options)) {
-        return "SUM";
-      }
-      if(baxcel.isSet(_options)) {
-        return "ATTR(baxcel)";
-      }
-      if(space.isSet(_options)) {
-        return "";
-      }
-      return "UNKNOWN ATTRIBUTE";
-     }
+    public String toFormulaString() {
+        if (semiVolatile.isSet(_options)) {
+            return "ATTR(semiVolatile)";
+        }
+        if (optiIf.isSet(_options)) {
+            return "IF";
+        }
+        if (optiChoose.isSet(_options)) {
+            return "CHOOSE";
+        }
+        if (optiSkip.isSet(_options)) {
+            return "";
+        }
+        if (optiSum.isSet(_options)) {
+            return "SUM";
+        }
+        if (baxcel.isSet(_options)) {
+            return "ATTR(baxcel)";
+        }
+        if (space.isSet(_options)) {
+            return "";
+        }
+        return "UNKNOWN ATTRIBUTE";
+    }
 
     @Override
     public AttrPtg copy() {
         // immutable
         return this;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "volatile", this::isSemiVolatile,
+            "options", getBitsAsString(() -> _options,
+                new BitField[]{semiVolatile, optiIf, optiChoose, optiSkip, optiSum, baxcel, space},
+                new String[]{"SEMI_VOLATILE", "OPTI_IF", "OPTI_CHOOSE", "OPTI_SKIP", "OPTI_SUM", "BAXCEL", "SPACE"}),
+            "space_count", () -> (_data >> 8) & 0xFF,
+            "space_type",  getEnumBitsAsString(() -> _data & 0xFF,
+                new int[]{SpaceType.SPACE_BEFORE,SpaceType.CR_BEFORE,SpaceType.SPACE_BEFORE_OPEN_PAREN,SpaceType.CR_BEFORE_OPEN_PAREN,SpaceType.SPACE_BEFORE_CLOSE_PAREN,SpaceType.CR_BEFORE_CLOSE_PAREN,SpaceType.SPACE_AFTER_EQUALITY},
+                new String[]{"SPACE_BEFORE","CR_BEFORE","SPACE_BEFORE_OPEN_PAREN","CR_BEFORE_OPEN_PAREN","SPACE_BEFORE_CLOSE_PAREN","CR_BEFORE_CLOSE_PAREN","SPACE_AFTER_EQUALITY"})
+        );
     }
 }

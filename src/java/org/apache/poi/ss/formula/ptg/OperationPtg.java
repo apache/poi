@@ -17,6 +17,9 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 /**
  * defines a Ptg that is an operation instead of an operand
  * @author  andy
@@ -43,5 +46,10 @@ public abstract class OperationPtg extends Ptg {
 
     public byte getDefaultOperandClass() {
         return Ptg.CLASS_VALUE;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return null;
     }
 }

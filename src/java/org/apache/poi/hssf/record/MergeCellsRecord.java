@@ -17,10 +17,14 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -100,25 +104,7 @@ public final class MergeCellsRecord extends StandardRecord {
     }
 
     @Override
-    public String toString() {
-        StringBuilder retval = new StringBuilder();
-
-        retval.append("[MERGEDCELLS]").append("\n");
-        retval.append("     .numregions =").append(getNumAreas()).append("\n");
-        for (int k = 0; k < _numberOfRegions; k++) {
-            CellRangeAddress r = _regions[_startIndex + k];
-
-            retval.append("     .rowfrom =").append(r.getFirstRow()).append("\n");
-            retval.append("     .rowto   =").append(r.getLastRow()).append("\n");
-            retval.append("     .colfrom =").append(r.getFirstColumn()).append("\n");
-            retval.append("     .colto   =").append(r.getLastColumn()).append("\n");
-        }
-        retval.append("[MERGEDCELLS]").append("\n");
-        return retval.toString();
-    }
-
-    @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public MergeCellsRecord clone() {
@@ -128,5 +114,18 @@ public final class MergeCellsRecord extends StandardRecord {
     @Override
     public MergeCellsRecord copy() {
         return new MergeCellsRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.MERGE_CELLS;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "numRegions", this::getNumAreas,
+            "regions", () -> Arrays.copyOfRange(_regions, _startIndex, _startIndex+_numberOfRegions)
+        );
     }
 }

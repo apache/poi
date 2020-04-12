@@ -17,7 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -70,16 +73,6 @@ public final class RecalcIdRecord extends StandardRecord {
         return _engineId;
     }
 
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[RECALCID]\n");
-        buffer.append("    .reserved = ").append(HexDump.shortToHex(_reserved0)).append("\n");
-        buffer.append("    .engineId = ").append(HexDump.intToHex(_engineId)).append("\n");
-        buffer.append("[/RECALCID]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(sid); // always write 'rt' field as 0x01C1
         out.writeShort(_reserved0);
@@ -97,5 +90,18 @@ public final class RecalcIdRecord extends StandardRecord {
     @Override
     public RecalcIdRecord copy() {
         return new RecalcIdRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.RECALC_ID;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "reserved0", () -> _reserved0,
+            "engineId", this::getEngineId
+        );
     }
 }

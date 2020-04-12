@@ -18,6 +18,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -92,19 +96,6 @@ public final class DefaultRowHeightRecord extends StandardRecord {
         return field_2_row_height;
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[DEFAULTROWHEIGHT]\n");
-        buffer.append("    .optionflags    = ")
-            .append(Integer.toHexString(getOptionFlags())).append("\n");
-        buffer.append("    .rowheight      = ")
-            .append(Integer.toHexString(getRowHeight())).append("\n");
-        buffer.append("[/DEFAULTROWHEIGHT]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(getOptionFlags());
         out.writeShort(getRowHeight());
@@ -120,7 +111,7 @@ public final class DefaultRowHeightRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public DefaultRowHeightRecord clone() {
@@ -129,6 +120,19 @@ public final class DefaultRowHeightRecord extends StandardRecord {
 
     @Override
     public DefaultRowHeightRecord copy() {
-      return new DefaultRowHeightRecord(this);
+        return new DefaultRowHeightRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.DEFAULT_ROW_HEIGHT;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "optionFlags", this::getOptionFlags,
+            "rowHeight", this::getRowHeight
+        );
     }
 }

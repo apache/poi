@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.constant.ConstantValueParser;
 import org.apache.poi.ss.formula.ptg.Ptg;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
@@ -37,6 +41,12 @@ public final class ExternalNameRecord extends StandardRecord {
 	private static final int OPT_OLE_LINK              = 0x0010; //fOleLink
 //	private static final int OPT_CLIP_FORMAT_MASK      = 0x7FE0;
 	private static final int OPT_ICONIFIED_PICTURE_LINK= 0x8000;
+
+	private static final int[] OPTION_FLAGS = {
+		OPT_BUILTIN_NAME,OPT_AUTOMATIC_LINK,OPT_PICTURE_LINK,OPT_STD_DOCUMENT_NAME,OPT_OLE_LINK,OPT_ICONIFIED_PICTURE_LINK};
+	private static final String[] OPTION_NAMES = {
+		"BUILTIN_NAME","AUTOMATIC_LINK","PICTURE_LINK","STD_DOCUMENT_NAME","OLE_LINK","ICONIFIED_PICTURE_LINK"};
+
 
 
 	private short field_1_option_flag;
@@ -225,24 +235,23 @@ public final class ExternalNameRecord extends StandardRecord {
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-		sb.append("[EXTERNALNAME]\n");
-        sb.append("    .options = ").append(field_1_option_flag).append("\n");
-		sb.append("    .ix      = ").append(field_2_ixals).append("\n");
-		sb.append("    .name    = ").append(field_4_name).append("\n");
-		if(field_5_name_definition != null) {
-            Ptg[] ptgs = field_5_name_definition.getTokens();
-            for (Ptg ptg : ptgs) {
-                sb.append("    .namedef = ").append(ptg).append(ptg.getRVAType()).append("\n");
-            }
-		}
-		sb.append("[/EXTERNALNAME]\n");
-		return sb.toString();
+	public ExternalNameRecord copy() {
+		return new ExternalNameRecord(this);
 	}
 
 	@Override
-	public ExternalNameRecord copy() {
-		return new ExternalNameRecord(this);
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.EXTERNAL_NAME;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"options", GenericRecordUtil.getBitsAsString(() -> field_1_option_flag, OPTION_FLAGS, OPTION_NAMES),
+			"ix", this::getIx,
+			"name", this::getText,
+			"nameDefinition", (field_5_name_definition == null ? () -> null : field_5_name_definition::getTokens)
+		);
+
 	}
 }

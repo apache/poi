@@ -17,11 +17,15 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -49,24 +53,6 @@ public final class DatRecord extends StandardRecord {
         field_1_options = in.readShort();
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[DAT]\n");
-        buffer.append("    .options              = ")
-            .append("0x").append(HexDump.toHex(  getOptions ()))
-            .append(" (").append( getOptions() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("         .horizontalBorder         = ").append(isHorizontalBorder()).append('\n');
-        buffer.append("         .verticalBorder           = ").append(isVerticalBorder()).append('\n');
-        buffer.append("         .border                   = ").append(isBorder()).append('\n');
-        buffer.append("         .showSeriesKey            = ").append(isShowSeriesKey()).append('\n');
-
-        buffer.append("[/DAT]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_options);
     }
@@ -81,7 +67,7 @@ public final class DatRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public DatRecord clone() {
@@ -179,5 +165,21 @@ public final class DatRecord extends StandardRecord {
     public boolean isShowSeriesKey()
     {
         return showSeriesKey.isSet(field_1_options);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.DAT;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "options", this::getOptions,
+            "horizontalBorder", this::isHorizontalBorder,
+            "verticalBorder", this::isVerticalBorder,
+            "border", this::isBorder,
+            "showSeriesKey", this::isShowSeriesKey
+        );
     }
 }

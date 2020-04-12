@@ -19,11 +19,13 @@ package org.apache.poi.hssf.record;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
 import org.apache.poi.ss.util.WorkbookUtil;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianOutput;
@@ -125,18 +127,6 @@ public final class BoundSheetRecord extends StandardRecord {
 		return field_5_sheetname;
 	}
 
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-
-		buffer.append("[BOUNDSHEET]\n");
-		buffer.append("    .bof        = ").append(HexDump.intToHex(getPositionOfBof())).append("\n");
-		buffer.append("    .options    = ").append(HexDump.shortToHex(field_2_option_flags)).append("\n");
-		buffer.append("    .unicodeflag= ").append(HexDump.byteToHex(field_4_isMultibyteUnicode)).append("\n");
-		buffer.append("    .sheetname  = ").append(field_5_sheetname).append("\n");
-		buffer.append("[/BOUNDSHEET]\n");
-		return buffer.toString();
-	}
-
 	protected int getDataSize() {
 		return 8 + field_5_sheetname.length() * (isMultibyte() ? 2 : 1);
 	}
@@ -218,5 +208,22 @@ public final class BoundSheetRecord extends StandardRecord {
 	@Override
 	public BoundSheetRecord copy() {
 		return new BoundSheetRecord(this);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.BOUND_SHEET;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"bof", this::getPositionOfBof,
+			"optionFlags", () -> field_2_option_flags,
+			"multiByte", this::isMultibyte,
+			"sheetName", this::getSheetname,
+			"hidden", this::isHidden,
+			"veryHidden", this::isVeryHidden
+		);
 	}
 }

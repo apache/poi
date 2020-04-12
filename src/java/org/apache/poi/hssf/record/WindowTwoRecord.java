@@ -17,8 +17,12 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -438,30 +442,6 @@ public final class WindowTwoRecord extends StandardRecord {
         return field_7_reserved;
     }
 
-    public String toString() {
-        return "[WINDOW2]\n" +
-                "    .options        = " + Integer.toHexString(getOptions()) + "\n" +
-                "       .dispformulas= " + getDisplayFormulas() + "\n" +
-                "       .dispgridlins= " + getDisplayGridlines() + "\n" +
-                "       .disprcheadin= " + getDisplayRowColHeadings() + "\n" +
-                "       .freezepanes = " + getFreezePanes() + "\n" +
-                "       .displayzeros= " + getDisplayZeros() + "\n" +
-                "       .defaultheadr= " + getDefaultHeader() + "\n" +
-                "       .arabic      = " + getArabic() + "\n" +
-                "       .displayguts = " + getDisplayGuts() + "\n" +
-                "       .frzpnsnosplt= " + getFreezePanesNoSplit() + "\n" +
-                "       .selected    = " + getSelected() + "\n" +
-                "       .active       = " + isActive() + "\n" +
-                "       .svdinpgbrkpv= " + getSavedInPageBreakPreview() + "\n" +
-                "    .toprow         = " + Integer.toHexString(getTopRow()) + "\n" +
-                "    .leftcol        = " + Integer.toHexString(getLeftCol()) + "\n" +
-                "    .headercolor    = " + Integer.toHexString(getHeaderColor()) + "\n" +
-                "    .pagebreakzoom  = " + Integer.toHexString(getPageBreakZoom()) + "\n" +
-                "    .normalzoom     = " + Integer.toHexString(getNormalZoom()) + "\n" +
-                "    .reserved       = " + Integer.toHexString(getReserved()) + "\n" +
-                "[/WINDOW2]\n";
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(getOptions());
         out.writeShort(getTopRow());
@@ -482,7 +462,7 @@ public final class WindowTwoRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public WindowTwoRecord clone() {
@@ -492,5 +472,25 @@ public final class WindowTwoRecord extends StandardRecord {
     @Override
     public WindowTwoRecord copy() {
         return new WindowTwoRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.WINDOW_TWO;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "options", GenericRecordUtil.getBitsAsString(this::getOptions,
+                new BitField[]{displayFormulas, displayGridlines, displayRowColHeadings, freezePanes, displayZeros, defaultHeader, arabic, displayGuts, freezePanesNoSplit, selected, active, savedInPageBreakPreview},
+                new String[]{"DISPLAY_FORMULAS", "DISPLAY_GRIDLINES", "DISPLAY_ROW_COL_HEADINGS", "FREEZE_PANES", "DISPLAY_ZEROS", "DEFAULT_HEADER", "ARABIC", "DISPLAY_GUTS", "FREEZE_PANES_NO_SPLIT", "SELECTED", "ACTIVE", "SAVED_IN_PAGE_BREAK_PREVIEW"}),
+            "topRow", this::getTopRow,
+            "leftCol", this::getLeftCol,
+            "headerColor", this::getHeaderColor,
+            "pageBreakZoom", this::getPageBreakZoom,
+            "normalZoom", this::getNormalZoom,
+            "reserved", this::getReserved
+        );
     }
 }

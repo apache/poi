@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -73,40 +77,6 @@ public final class SeriesRecord extends StandardRecord {
         field_6_numBubbleValues  = in.readShort();
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[SERIES]\n");
-        buffer.append("    .categoryDataType     = ")
-            .append("0x").append(HexDump.toHex(  getCategoryDataType ()))
-            .append(" (").append( getCategoryDataType() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .valuesDataType       = ")
-            .append("0x").append(HexDump.toHex(  getValuesDataType ()))
-            .append(" (").append( getValuesDataType() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .numCategories        = ")
-            .append("0x").append(HexDump.toHex(  getNumCategories ()))
-            .append(" (").append( getNumCategories() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .numValues            = ")
-            .append("0x").append(HexDump.toHex(  getNumValues ()))
-            .append(" (").append( getNumValues() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .bubbleSeriesType     = ")
-            .append("0x").append(HexDump.toHex(  getBubbleSeriesType ()))
-            .append(" (").append( getBubbleSeriesType() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .numBubbleValues      = ")
-            .append("0x").append(HexDump.toHex(  getNumBubbleValues ()))
-            .append(" (").append( getNumBubbleValues() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-
-        buffer.append("[/SERIES]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_categoryDataType);
         out.writeShort(field_2_valuesDataType);
@@ -126,7 +96,7 @@ public final class SeriesRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public SeriesRecord clone() {
@@ -271,5 +241,22 @@ public final class SeriesRecord extends StandardRecord {
     public void setNumBubbleValues(short field_6_numBubbleValues)
     {
         this.field_6_numBubbleValues = field_6_numBubbleValues;
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.SERIES;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "categoryDataType", this::getCategoryDataType,
+            "valuesDataType", this::getValuesDataType,
+            "numCategories", this::getNumCategories,
+            "numValues", this::getNumValues,
+            "bubbleSeriesType", this::getBubbleSeriesType,
+            "numBubbleValues", this::getNumBubbleValues
+        );
     }
 }

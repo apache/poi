@@ -17,7 +17,11 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.hssf.util.RKUtil;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -38,8 +42,6 @@ public final class RKRecord extends CellRecord {
     public static final short RK_INTEGER_TIMES_100     = 3;
 
     private int field_4_rk_number;
-
-    private RKRecord() {}
 
     public RKRecord(RKRecord other) {
         super(other);
@@ -78,11 +80,6 @@ public final class RKRecord extends CellRecord {
     }
 
     @Override
-    protected void appendValueText(StringBuilder sb) {
-    	sb.append("  .value= ").append(getRKNumber());
-    }
-
-    @Override
     protected void serializeValue(LittleEndianOutput out) {
     	out.writeInt(field_4_rk_number);
     }
@@ -98,7 +95,7 @@ public final class RKRecord extends CellRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public RKRecord clone() {
@@ -108,5 +105,18 @@ public final class RKRecord extends CellRecord {
     @Override
     public RKRecord copy() {
         return new RKRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.RK;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "rkNumber", this::getRKNumber
+        );
     }
 }

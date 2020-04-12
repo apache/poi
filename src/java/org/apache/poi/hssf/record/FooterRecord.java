@@ -37,21 +37,12 @@ public final class FooterRecord extends HeaderFooterBase {
 		super(in);
 	}
 
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-
-		buffer.append("[FOOTER]\n");
-		buffer.append("    .footer = ").append(getText()).append("\n");
-		buffer.append("[/FOOTER]\n");
-		return buffer.toString();
-	}
-
 	public short getSid() {
 		return sid;
 	}
 
 	@Override
-	@SuppressWarnings("squid:S2975")
+	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
 	@Deprecated
 	@Removal(version = "5.0.0")
 	public FooterRecord clone() {
@@ -61,5 +52,10 @@ public final class FooterRecord extends HeaderFooterBase {
 	@Override
 	public FooterRecord copy() {
 		return new FooterRecord(this);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.FOOTER;
 	}
 }

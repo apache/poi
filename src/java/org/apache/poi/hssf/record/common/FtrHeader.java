@@ -17,9 +17,15 @@
 
 package org.apache.poi.hssf.record.common;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.common.Duplicatable;
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -30,7 +36,7 @@ import org.apache.poi.util.Removal;
  *  style record, which includes extra attributes above and
  *  beyond those of a traditional record.
  */
-public final class FtrHeader implements Duplicatable {
+public final class FtrHeader implements Duplicatable, GenericRecord {
     /** This MUST match the type on the containing record */
     private short recordType;
     /** This is a FrtFlags */
@@ -56,12 +62,7 @@ public final class FtrHeader implements Duplicatable {
     }
 
     public String toString() {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(" [FUTURE HEADER]\n");
-        buffer.append("   Type " + recordType);
-        buffer.append("   Flags " + grbitFrt);
-        buffer.append(" [/FUTURE HEADER]\n");
-        return buffer.toString();
+        return GenericRecordJsonWriter.marshal(this);
     }
 
     public void serialize(LittleEndianOutput out) {
@@ -96,7 +97,7 @@ public final class FtrHeader implements Duplicatable {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public FtrHeader clone() {
@@ -105,5 +106,14 @@ public final class FtrHeader implements Duplicatable {
 
     public FtrHeader copy() {
         return new FtrHeader(this);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "recordType", this::getRecordType,
+            "grbitFrt", this::getGrbitFrt,
+            "associatedRange", this::getAssociatedRange
+        );
     }
 }

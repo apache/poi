@@ -17,11 +17,15 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -55,33 +59,6 @@ public final class DataFormatRecord extends StandardRecord {
         field_4_formatFlags = in.readShort();
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[DATAFORMAT]\n");
-        buffer.append("    .pointNumber          = ")
-            .append("0x").append(HexDump.toHex(  getPointNumber ()))
-            .append(" (").append( getPointNumber() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .seriesIndex          = ")
-            .append("0x").append(HexDump.toHex(  getSeriesIndex ()))
-            .append(" (").append( getSeriesIndex() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .seriesNumber         = ")
-            .append("0x").append(HexDump.toHex(  getSeriesNumber ()))
-            .append(" (").append( getSeriesNumber() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .formatFlags          = ")
-            .append("0x").append(HexDump.toHex(  getFormatFlags ()))
-            .append(" (").append( getFormatFlags() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("         .useExcel4Colors          = ").append(isUseExcel4Colors()).append('\n');
-
-        buffer.append("[/DATAFORMAT]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_pointNumber);
         out.writeShort(field_2_seriesIndex);
@@ -99,7 +76,7 @@ public final class DataFormatRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public DataFormatRecord clone() {
@@ -191,5 +168,22 @@ public final class DataFormatRecord extends StandardRecord {
     public boolean isUseExcel4Colors()
     {
         return useExcel4Colors.isSet(field_4_formatFlags);
+    }
+
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.DATA_FORMAT;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "pointNumber", this::getPointNumber,
+            "seriesIndex", this::getSeriesIndex,
+            "seriesNumber", this::getSeriesNumber,
+            "formatFlags", this::getFormatFlags,
+            "useExcel4Colors", this::isUseExcel4Colors
+        );
     }
 }

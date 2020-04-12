@@ -16,6 +16,10 @@
 ==================================================================== */
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -56,13 +60,6 @@ public final class HCenterRecord extends StandardRecord {
         return (field_1_hcenter == 1);
     }
 
-    public String toString() {
-        return "[HCENTER]\n" +
-                "    .hcenter        = " + getHCenter() +
-                "\n" +
-                "[/HCENTER]\n";
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_hcenter);
     }
@@ -77,7 +74,7 @@ public final class HCenterRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public HCenterRecord clone() {
@@ -86,6 +83,16 @@ public final class HCenterRecord extends StandardRecord {
 
     @Override
     public HCenterRecord copy() {
-      return new HCenterRecord(this);
+        return new HCenterRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.H_CENTER;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("hcenter", this::getHCenter);
     }
 }

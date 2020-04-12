@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record.pivottable;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
@@ -83,22 +87,24 @@ public final class DataItemRecord extends StandardRecord {
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-
-		buffer.append("[SXDI]\n");
-		buffer.append("  .isxvdData = ").append(HexDump.shortToHex(isxvdData)).append("\n");
-		buffer.append("  .iiftab = ").append(HexDump.shortToHex(iiftab)).append("\n");
-		buffer.append("  .df = ").append(HexDump.shortToHex(df)).append("\n");
-		buffer.append("  .isxvd = ").append(HexDump.shortToHex(isxvd)).append("\n");
-		buffer.append("  .isxvi = ").append(HexDump.shortToHex(isxvi)).append("\n");
-		buffer.append("  .ifmt = ").append(HexDump.shortToHex(ifmt)).append("\n");
-		buffer.append("[/SXDI]\n");
-		return buffer.toString();
+	public DataItemRecord copy() {
+		return new DataItemRecord(this);
 	}
 
 	@Override
-	public DataItemRecord copy() {
-		return new DataItemRecord(this);
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.DATA_ITEM;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"isxvdData", () -> isxvdData,
+			"iiftab", () -> iiftab,
+			"df", () -> df,
+			"isxvd", () -> isxvd,
+			"isxvi", () -> isxvi,
+			"ifmt", () -> ifmt
+		);
 	}
 }

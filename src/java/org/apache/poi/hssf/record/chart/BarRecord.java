@@ -17,11 +17,16 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -56,32 +61,6 @@ public final class BarRecord extends StandardRecord {
         field_3_formatFlags   = in.readShort();
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[BAR]\n");
-        buffer.append("    .barSpace             = ")
-            .append("0x").append(HexDump.toHex(  getBarSpace ()))
-            .append(" (").append( getBarSpace() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .categorySpace        = ")
-            .append("0x").append(HexDump.toHex(  getCategorySpace ()))
-            .append(" (").append( getCategorySpace() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .formatFlags          = ")
-            .append("0x").append(HexDump.toHex(  getFormatFlags ()))
-            .append(" (").append( getFormatFlags() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("         .horizontal               = ").append(isHorizontal()).append('\n');
-        buffer.append("         .stacked                  = ").append(isStacked()).append('\n');
-        buffer.append("         .displayAsPercentage      = ").append(isDisplayAsPercentage()).append('\n');
-        buffer.append("         .shadow                   = ").append(isShadow()).append('\n');
-
-        buffer.append("[/BAR]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(field_1_barSpace);
         out.writeShort(field_2_categorySpace);
@@ -98,7 +77,7 @@ public final class BarRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public BarRecord clone() {
@@ -228,5 +207,24 @@ public final class BarRecord extends StandardRecord {
     @Override
     public BarRecord copy() {
         return new BarRecord(this);
+    }
+
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.BAR;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("barSpace", this::getBarSpace);
+        m.put("categorySpace", this::getCategorySpace);
+        m.put("formatFlags", this::getFormatFlags);
+        m.put("horizontal", this::isHorizontal);
+        m.put("stacked", this::isStacked);
+        m.put("displayAsPercentage", this::isDisplayAsPercentage);
+        m.put("shadow", this::isShadow);
+        return Collections.unmodifiableMap(m);
     }
 }

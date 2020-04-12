@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
@@ -63,18 +67,6 @@ public final class SeriesTextRecord extends StandardRecord {
 		}
 	}
 
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
-
-		sb.append("[SERIESTEXT]\n");
-		sb.append("  .id     =").append(HexDump.shortToHex(getId())).append('\n');
-		sb.append("  .textLen=").append(field_4_text.length()).append('\n');
-		sb.append("  .is16bit=").append(is16bit).append('\n');
-		sb.append("  .text   =").append(" (").append(getText()).append(" )").append('\n');
-		sb.append("[/SERIESTEXT]\n");
-		return sb.toString();
-	}
-
 	public void serialize(LittleEndianOutput out) {
 
 		out.writeShort(field_1_id);
@@ -99,7 +91,7 @@ public final class SeriesTextRecord extends StandardRecord {
 	}
 
 	@Override
-	@SuppressWarnings("squid:S2975")
+	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
 	@Deprecated
 	@Removal(version = "5.0.0")
 	public SeriesTextRecord clone() {
@@ -142,5 +134,19 @@ public final class SeriesTextRecord extends StandardRecord {
 		}
 		field_4_text = text;
 		is16bit = StringUtil.hasMultibyte(text);
+	}
+
+	@Override
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.SERIES_TEXT;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"id", this::getId,
+			"bit16", () -> is16bit,
+			"text", this::getText
+		);
 	}
 }

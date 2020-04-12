@@ -17,8 +17,13 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -63,18 +68,6 @@ public final class ChartRecord extends StandardRecord {
         field_4_height = in.readInt();
     }
 
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append("[CHART]\n");
-        sb.append("    .x     = ").append(getX()).append('\n');
-        sb.append("    .y     = ").append(getY()).append('\n');
-        sb.append("    .width = ").append(getWidth()).append('\n');
-        sb.append("    .height= ").append(getHeight()).append('\n');
-        sb.append("[/CHART]\n");
-        return sb.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeInt(field_1_x);
         out.writeInt(field_2_y);
@@ -92,7 +85,7 @@ public final class ChartRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public ChartRecord clone() {
@@ -158,5 +151,20 @@ public final class ChartRecord extends StandardRecord {
      */
     public void setHeight(int height) {
         field_4_height = height;
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.CHART;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "x", this::getX,
+            "y", this::getY,
+            "width", this::getWidth,
+            "height", this::getHeight
+        );
     }
 }

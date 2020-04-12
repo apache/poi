@@ -17,7 +17,11 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.formula.SheetNameFormatter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -50,23 +54,6 @@ public final class NameXPxg extends OperandPtg implements Pxg {
     }
     public NameXPxg(String nameName) {
         this(-1, null, nameName);
-    }
-
-    public String toString(){
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getName());
-        sb.append(" [");
-        if (externalWorkbookNumber >= 0) {
-            sb.append(" [");
-            sb.append("workbook=").append(getExternalWorkbookNumber());
-            sb.append("] ");
-        }
-        sb.append("sheet=").append(getSheetName());
-        sb.append(" ! ");
-        sb.append("name=");
-        sb.append(nameName);
-        sb.append("]");
-        return sb.toString();
     }
 
     public int getExternalWorkbookNumber() {
@@ -117,5 +104,14 @@ public final class NameXPxg extends OperandPtg implements Pxg {
     @Override
     public NameXPxg copy() {
         return new NameXPxg(this);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "externalWorkbookNumber", this::getExternalWorkbookNumber,
+            "sheetName", this::getSheetName,
+            "nameName", this::getNameName
+        );
     }
 }

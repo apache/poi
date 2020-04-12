@@ -17,10 +17,14 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.formula.SheetIdentifier;
 import org.apache.poi.ss.formula.SheetRangeAndWorkbookIndexFormatter;
 import org.apache.poi.ss.formula.SheetRangeIdentifier;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -64,26 +68,6 @@ public final class Ref3DPxg extends RefPtgBase implements Pxg3D {
         this(-1, sheetName, c);
     }
 
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append(getClass().getName());
-        sb.append(" [");
-        if (externalWorkbookNumber >= 0) {
-            sb.append(" [");
-            sb.append("workbook=").append(getExternalWorkbookNumber());
-            sb.append("] ");
-        }
-        sb.append("sheet=").append(firstSheetName);
-        if (lastSheetName != null) {
-            sb.append(" : ");
-            sb.append("sheet=").append(lastSheetName);
-        }
-        sb.append(" ! ");
-        sb.append(formatReferenceAsString());
-        sb.append("]");
-        return sb.toString();
-    }
-
     public int getExternalWorkbookNumber() {
         return externalWorkbookNumber;
     }
@@ -124,5 +108,15 @@ public final class Ref3DPxg extends RefPtgBase implements Pxg3D {
     @Override
     public Ref3DPxg copy() {
         return new Ref3DPxg(this);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "externalWorkbookNumber", this::getExternalWorkbookNumber,
+            "firstSheetName", this::getSheetName,
+            "lastSheetName", this::getLastSheetName
+        );
     }
 }

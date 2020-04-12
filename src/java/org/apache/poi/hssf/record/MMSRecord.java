@@ -19,6 +19,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -89,19 +93,6 @@ public final class MMSRecord extends StandardRecord {
         return field_2_delMenuCount;
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[MMS]\n");
-        buffer.append("    .addMenu        = ")
-            .append(Integer.toHexString(getAddMenuCount())).append("\n");
-        buffer.append("    .delMenu        = ")
-            .append(Integer.toHexString(getDelMenuCount())).append("\n");
-        buffer.append("[/MMS]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeByte(getAddMenuCount());
         out.writeByte(getDelMenuCount());
@@ -119,5 +110,18 @@ public final class MMSRecord extends StandardRecord {
     @Override
     public MMSRecord copy() {
         return new MMSRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.MMS;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "addMenuCount", this::getAddMenuCount,
+            "delMenuCount", this::getDelMenuCount
+        );
     }
 }

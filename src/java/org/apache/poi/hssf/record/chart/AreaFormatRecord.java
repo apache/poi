@@ -17,11 +17,16 @@
 
 package org.apache.poi.hssf.record.chart;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
 
@@ -63,42 +68,6 @@ public final class AreaFormatRecord extends StandardRecord {
         field_6_backcolorIndex         = other.field_6_backcolorIndex;
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[AREAFORMAT]\n");
-        buffer.append("    .foregroundColor      = ")
-            .append("0x").append(HexDump.toHex(  getForegroundColor ()))
-            .append(" (").append( getForegroundColor() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .backgroundColor      = ")
-            .append("0x").append(HexDump.toHex(  getBackgroundColor ()))
-            .append(" (").append( getBackgroundColor() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .pattern              = ")
-            .append("0x").append(HexDump.toHex(  getPattern ()))
-            .append(" (").append( getPattern() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .formatFlags          = ")
-            .append("0x").append(HexDump.toHex(  getFormatFlags ()))
-            .append(" (").append( getFormatFlags() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("         .automatic                = ").append(isAutomatic()).append('\n');
-        buffer.append("         .invert                   = ").append(isInvert()).append('\n');
-        buffer.append("    .forecolorIndex       = ")
-            .append("0x").append(HexDump.toHex(  getForecolorIndex ()))
-            .append(" (").append( getForecolorIndex() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-        buffer.append("    .backcolorIndex       = ")
-            .append("0x").append(HexDump.toHex(  getBackcolorIndex ()))
-            .append(" (").append( getBackcolorIndex() ).append(" )");
-        buffer.append(System.getProperty("line.separator"));
-
-        buffer.append("[/AREAFORMAT]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeInt(field_1_foregroundColor);
         out.writeInt(field_2_backgroundColor);
@@ -118,7 +87,7 @@ public final class AreaFormatRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public AreaFormatRecord clone() {
@@ -260,5 +229,24 @@ public final class AreaFormatRecord extends StandardRecord {
     @Override
     public AreaFormatRecord copy() {
         return new AreaFormatRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.AREA_FORMAT;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("foregroundColor", this::getForegroundColor);
+        m.put("backgroundColor", this::getBackgroundColor);
+        m.put("pattern", this::getPattern);
+        m.put("inverted", this::isInvert);
+        m.put("automatic", this::isAutomatic);
+        m.put("formatFlags", this::getFormatFlags);
+        m.put("forecolorIndex", this::getForecolorIndex);
+        m.put("backcolorIndex", this::getBackcolorIndex);
+        return Collections.unmodifiableMap(m);
     }
 }

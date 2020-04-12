@@ -17,7 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.StringUtil;
 
@@ -115,23 +118,6 @@ public final class NameCommentRecord extends StandardRecord {
         return sid;
     }
 
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder();
-
-        sb.append("[NAMECMT]\n");
-        sb.append("    .record type            = ").append(HexDump.shortToHex(field_1_record_type)).append("\n");
-        sb.append("    .frt cell ref flag      = ").append(HexDump.byteToHex(field_2_frt_cell_ref_flag)).append("\n");
-        sb.append("    .reserved               = ").append(field_3_reserved).append("\n");
-        sb.append("    .name length            = ").append(field_6_name_text.length()).append("\n");
-        sb.append("    .comment length         = ").append(field_7_comment_text.length()).append("\n");
-        sb.append("    .name                   = ").append(field_6_name_text).append("\n");
-        sb.append("    .comment                = ").append(field_7_comment_text).append("\n");
-        sb.append("[/NAMECMT]\n");
-
-        return sb.toString();
-    }
-
     /**
      * @return the name of the NameRecord to which this comment applies.
      */
@@ -167,5 +153,21 @@ public final class NameCommentRecord extends StandardRecord {
     @Override
     public NameCommentRecord copy() {
         return new NameCommentRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.NAME_COMMENT;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "recordType", this::getRecordType,
+            "frtCellRefFlag", () -> field_2_frt_cell_ref_flag,
+            "reserved", () -> field_3_reserved,
+            "name", this::getNameText,
+            "comment", this::getCommentText
+        );
     }
 }

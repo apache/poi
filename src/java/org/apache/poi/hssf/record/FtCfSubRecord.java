@@ -17,7 +17,12 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
+import static org.apache.poi.util.GenericRecordUtil.getEnumBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
@@ -61,23 +66,14 @@ public final class FtCfSubRecord extends SubRecord {
     }
 
     public FtCfSubRecord(LittleEndianInput in, int size) {
+        this(in,size,-1);
+    }
+
+    FtCfSubRecord(LittleEndianInput in, int size, int cmoOt) {
         if (size != length) {
             throw new RecordFormatException("Unexpected size (" + size + ")");
         }
         flags = in.readShort();
-    }
-
-    /**
-     * Convert this record to string.
-     * Used by BiffViewer and other utilities.
-     */
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("[FtCf ]\n");
-        buffer.append("  size     = ").append(length).append("\n");
-        buffer.append("  flags    = ").append(HexDump.toHex(flags)).append("\n");
-        buffer.append("[/FtCf ]\n");
-        return buffer.toString();
     }
 
     /**
@@ -116,11 +112,23 @@ public final class FtCfSubRecord extends SubRecord {
         return new FtCfSubRecord(this);
     }
 
- public short getFlags() {
-   return flags;
- }
+    public short getFlags() {
+        return flags;
+    }
 
- public void setFlags(short flags) {
-   this.flags = flags;
- }
+    public void setFlags(short flags) {
+        this.flags = flags;
+    }
+
+    @Override
+    public SubRecordTypes getGenericRecordType() {
+        return SubRecordTypes.FT_CF;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("flags", getEnumBitsAsString(this::getFlags,
+            new int[]{METAFILE_BIT,BITMAP_BIT,UNSPECIFIED_BIT},
+            new String[]{"METAFILE","BITMAP","UNSPECIFIED"}));
+    }
 }

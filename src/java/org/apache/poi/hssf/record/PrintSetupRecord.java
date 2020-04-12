@@ -17,6 +17,13 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
@@ -286,53 +293,6 @@ public final class PrintSetupRecord extends StandardRecord {
         return field_11_copies;
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append("[PRINTSETUP]\n");
-        buffer.append("    .papersize      = ").append(getPaperSize())
-            .append("\n");
-        buffer.append("    .scale          = ").append(getScale())
-            .append("\n");
-        buffer.append("    .pagestart      = ").append(getPageStart())
-            .append("\n");
-        buffer.append("    .fitwidth       = ").append(getFitWidth())
-            .append("\n");
-        buffer.append("    .fitheight      = ").append(getFitHeight())
-            .append("\n");
-        buffer.append("    .options        = ").append(getOptions())
-            .append("\n");
-        buffer.append("        .ltor       = ").append(getLeftToRight())
-            .append("\n");
-        buffer.append("        .landscape  = ").append(getLandscape())
-            .append("\n");
-        buffer.append("        .valid      = ").append(getValidSettings())
-            .append("\n");
-        buffer.append("        .mono       = ").append(getNoColor())
-            .append("\n");
-        buffer.append("        .draft      = ").append(getDraft())
-            .append("\n");
-        buffer.append("        .notes      = ").append(getNotes())
-            .append("\n");
-        buffer.append("        .noOrientat = ").append(getNoOrientation())
-            .append("\n");
-        buffer.append("        .usepage    = ").append(getUsePage())
-            .append("\n");
-        buffer.append("    .hresolution    = ").append(getHResolution())
-            .append("\n");
-        buffer.append("    .vresolution    = ").append(getVResolution())
-            .append("\n");
-        buffer.append("    .headermargin   = ").append(getHeaderMargin())
-            .append("\n");
-        buffer.append("    .footermargin   = ").append(getFooterMargin())
-            .append("\n");
-        buffer.append("    .copies         = ").append(getCopies())
-            .append("\n");
-        buffer.append("[/PRINTSETUP]\n");
-        return buffer.toString();
-    }
-
     public void serialize(LittleEndianOutput out) {
         out.writeShort(getPaperSize());
         out.writeShort(getScale());
@@ -357,7 +317,7 @@ public final class PrintSetupRecord extends StandardRecord {
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public PrintSetupRecord clone() {
@@ -367,5 +327,29 @@ public final class PrintSetupRecord extends StandardRecord {
     @Override
     public PrintSetupRecord copy() {
       return new PrintSetupRecord(this);
+    }
+
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.PRINT_SETUP;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("paperSize", this::getPaperSize);
+        m.put("scale", this::getScale);
+        m.put("pageStart",this::getPageStart);
+        m.put("fitWidth", this::getFitWidth);
+        m.put("fitHeight", this::getFitHeight);
+        m.put("options", getBitsAsString(this::getOptions,
+             new BitField[]{lefttoright, landscape, validsettings, nocolor, draft, notes, noOrientation, usepage},
+             new String[]{"lefttoright","landscape","validsettings","nocolor","draft","notes","noOrientation","usepage"}));
+        m.put("hResolution", this::getHResolution);
+        m.put("vResolution", this::getVResolution);
+        m.put("headerMargin", this::getHeaderMargin);
+        m.put("footerMargin", this::getFooterMargin);
+        m.put("copies", this::getCopies);
+        return Collections.unmodifiableMap(m);
     }
 }

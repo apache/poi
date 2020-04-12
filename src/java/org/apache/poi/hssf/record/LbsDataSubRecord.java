@@ -16,9 +16,16 @@
 ==================================================================== */
 package org.apache.poi.hssf.record;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.common.Duplicatable;
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
@@ -287,27 +294,6 @@ public class LbsDataSubRecord extends SubRecord {
         return new LbsDataSubRecord(this);
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder(256);
-
-        sb.append("[ftLbsData]\n");
-        sb.append("    .unknownShort1 =").append(HexDump.shortToHex(_cbFContinued)).append("\n");
-        sb.append("    .formula        = ").append('\n');
-        if(_linkPtg != null) {
-            sb.append(_linkPtg).append(_linkPtg.getRVAType()).append('\n');
-        }
-        sb.append("    .nEntryCount   =").append(HexDump.shortToHex(_cLines)).append("\n");
-        sb.append("    .selEntryIx    =").append(HexDump.shortToHex(_iSel)).append("\n");
-        sb.append("    .style         =").append(HexDump.shortToHex(_flags)).append("\n");
-        sb.append("    .unknownShort10=").append(HexDump.shortToHex(_idEdit)).append("\n");
-        if(_dropData != null) {
-            sb.append('\n').append(_dropData);
-        }
-        sb.append("[/ftLbsData]\n");
-        return sb.toString();
-    }
-
     /**
      *
      * @return the formula that specifies the range of cell values that are the items in this list.
@@ -323,10 +309,32 @@ public class LbsDataSubRecord extends SubRecord {
         return _cLines;
     }
 
+    @Override
+    public SubRecordTypes getGenericRecordType() {
+        return SubRecordTypes.LBS_DATA;
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("unknownShort1", () -> _cbFContinued);
+        m.put("unknownPreFormulaInt", () -> _unknownPreFormulaInt);
+        m.put("formula", this::getFormula);
+        m.put("unknownPostFormulaByte", () -> _unknownPostFormulaByte);
+        m.put("numberOfItems", this::getNumberOfItems);
+        m.put("selEntryIx", () -> _iSel);
+        m.put("style", () -> _flags);
+        m.put("unknownShort10", () -> _idEdit);
+        m.put("dropData", () -> _dropData);
+        m.put("rgLines", () -> _rgLines);
+        m.put("bsels", () -> _bsels);
+        return Collections.unmodifiableMap(m);
+    }
+
     /**
      * This structure specifies properties of the dropdown list control
      */
-    public static class LbsDropData implements Duplicatable {
+    public static class LbsDropData implements Duplicatable, GenericRecord {
         /**
          * Combo dropdown control
          */
@@ -435,23 +443,23 @@ public class LbsDataSubRecord extends SubRecord {
 
         @Override
         public String toString(){
-            StringBuilder sb = new StringBuilder();
-            sb.append("[LbsDropData]\n");
-            sb.append("  ._wStyle:  ").append(_wStyle).append('\n');
-            sb.append("  ._cLine:  ").append(_cLine).append('\n');
-            sb.append("  ._dxMin:  ").append(_dxMin).append('\n');
-            sb.append("  ._str:  ").append(_str).append('\n');
-            if(_unused != null) {
-                sb.append("  ._unused:  ").append(_unused).append('\n');
-            }
-            sb.append("[/LbsDropData]\n");
-
-            return sb.toString();
+            return GenericRecordJsonWriter.marshal(this);
         }
 
         @Override
         public LbsDropData copy() {
             return new LbsDropData(this);
+        }
+
+        @Override
+        public Map<String, Supplier<?>> getGenericProperties() {
+            return GenericRecordUtil.getGenericProperties(
+                "wStyle", () -> _wStyle,
+                "cLine", () -> _cLine,
+                "dxMin", () -> _dxMin,
+                "str", () -> _str,
+                "unused", () -> _unused
+            );
         }
     }
 }

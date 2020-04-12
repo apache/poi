@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record.pivottable;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.hssf.record.HSSFRecordTypes;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
@@ -55,18 +59,17 @@ public final class StreamIDRecord extends StandardRecord {
 	}
 
 	@Override
-	public String toString() {
-		StringBuilder buffer = new StringBuilder();
-
-		buffer.append("[SXIDSTM]\n");
-		buffer.append("    .idstm      =").append(HexDump.shortToHex(idstm)).append('\n');
-
-		buffer.append("[/SXIDSTM]\n");
-		return buffer.toString();
+	public StreamIDRecord copy() {
+		return new StreamIDRecord(this);
 	}
 
 	@Override
-	public StreamIDRecord copy() {
-		return new StreamIDRecord(this);
+	public HSSFRecordTypes getGenericRecordType() {
+		return HSSFRecordTypes.STREAM_ID;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties("idstm", () -> idstm);
 	}
 }

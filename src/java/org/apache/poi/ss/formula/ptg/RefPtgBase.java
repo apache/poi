@@ -17,9 +17,13 @@
 
 package org.apache.poi.ss.formula.ptg;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
@@ -117,5 +121,16 @@ public abstract class RefPtgBase extends OperandPtg {
 	@Override
     public final byte getDefaultOperandClass() {
 		return Ptg.CLASS_REF;
+	}
+
+	@Override
+	public Map<String, Supplier<?>> getGenericProperties() {
+		return GenericRecordUtil.getGenericProperties(
+			"row", this::getRow,
+			"rowRelative", this::isRowRelative,
+			"column", this::getColumn,
+			"colRelative", this::isColRelative,
+			"formatReference", this::formatReferenceAsString
+		);
 	}
 }
