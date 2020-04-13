@@ -18,9 +18,11 @@
 package org.apache.poi.hssf.record;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
+import java.util.Arrays;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
@@ -50,8 +52,6 @@ public abstract class SubRecord implements Duplicatable, GenericRecord {
 		COMMON_OBJECT_DATA(0x0015, CommonObjectDataSubRecord::new),
 		;
 
-
-
 		@FunctionalInterface
 		public interface RecordConstructor<T extends SubRecord> {
 			/**
@@ -65,14 +65,8 @@ public abstract class SubRecord implements Duplicatable, GenericRecord {
 			T apply(LittleEndianInput in, int size, int cmoOt);
 		}
 
-		private static final Map<Short,SubRecordTypes> LOOKUP;
-
-		static {
-			LOOKUP = new HashMap<>();
-			for(SubRecordTypes s : values()) {
-				LOOKUP.put(s.sid, s);
-			}
-		}
+		private static final Map<Short,SubRecordTypes> LOOKUP =
+			Arrays.stream(values()).collect(Collectors.toMap(SubRecordTypes::getSid, Function.identity()));
 
 		public final short sid;
 		public final RecordConstructor<?> recordConstructor;
@@ -82,10 +76,13 @@ public abstract class SubRecord implements Duplicatable, GenericRecord {
 			this.recordConstructor = recordConstructor;
 		}
 
-		public static SubRecordTypes forTypeID(int typeID) {
-			return LOOKUP.getOrDefault((short)typeID, UNKNOWN);
+		public static SubRecordTypes forSID(int sid) {
+			return LOOKUP.getOrDefault((short)sid, UNKNOWN);
 		}
 
+		public short getSid() {
+			return sid;
+		}
 	}
 
 
@@ -106,29 +103,10 @@ public abstract class SubRecord implements Duplicatable, GenericRecord {
      */
     public static SubRecord createSubRecord(LittleEndianInput in, int cmoOt) {
 		int sid = in.readUShort();
-		int secondUShort = in.readUShort(); // Often (but not always) the datasize for the sub-record
-
-		switch (sid) {
-			case CommonObjectDataSubRecord.sid:
-				return new CommonObjectDataSubRecord(in, secondUShort);
-			case EmbeddedObjectRefSubRecord.sid:
-				return new EmbeddedObjectRefSubRecord(in, secondUShort);
-			case GroupMarkerSubRecord.sid:
-				return new GroupMarkerSubRecord(in, secondUShort);
-			case EndSubRecord.sid:
-				return new EndSubRecord(in, secondUShort);
-			case NoteStructureSubRecord.sid:
-				return new NoteStructureSubRecord(in, secondUShort);
-			case LbsDataSubRecord.sid:
-				return new LbsDataSubRecord(in, secondUShort, cmoOt);
-            case FtCblsSubRecord.sid:
-                return new FtCblsSubRecord(in, secondUShort);
-            case FtPioGrbitSubRecord.sid:
-            	return new FtPioGrbitSubRecord(in, secondUShort);
-            case FtCfSubRecord.sid:
-            	return new FtCfSubRecord(in, secondUShort);
-		}
-		return new UnknownSubRecord(in, sid, secondUShort);
+		// Often (but not always) the datasize for the sub-record
+		int size = in.readUShort();
+		SubRecordTypes srt = SubRecordTypes.forSID(sid);
+		return srt.recordConstructor.apply(in, size, srt == SubRecordTypes.UNKNOWN ? sid : cmoOt);
 	}
 
 	@Override
@@ -172,7 +150,7 @@ public abstract class SubRecord implements Duplicatable, GenericRecord {
 		private final int _sid;
 		private final byte[] _data;
 
-		public UnknownSubRecord(LittleEndianInput in, int sid, int size) {
+		public UnknownSubRecord(LittleEndianInput in, int size, int sid) {
 			_sid = sid;
 	    	byte[] buf = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
 	    	in.readFully(buf);

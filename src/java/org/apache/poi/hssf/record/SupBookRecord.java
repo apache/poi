@@ -52,8 +52,8 @@ public final class SupBookRecord extends StandardRecord {
 
     private short field_1_number_of_sheets;
     private String field_2_encoded_url;
-    private String[] field_3_sheet_names;
-    private boolean _isAddInFunctions;
+    private final String[] field_3_sheet_names;
+    private final boolean _isAddInFunctions;
 
     public SupBookRecord(SupBookRecord other) {
         super(other);
@@ -185,14 +185,16 @@ public final class SupBookRecord extends StandardRecord {
     }
     public String getURL() {
         String encodedUrl = field_2_encoded_url;
-        switch(encodedUrl == null ? -1 : encodedUrl.charAt(0)) {
-            case 0: // Reference to an empty workbook name
-                return encodedUrl.substring(1); // will this just be empty string?
-            case 1: // encoded file name
-                return decodeFileName(encodedUrl);
-            case 2: // Self-referential external reference
-                return encodedUrl.substring(1);
+        if (encodedUrl != null && encodedUrl.length() >= 2) {
+            switch(encodedUrl.charAt(0)) {
+                case 0: // Reference to an empty workbook name
+                case 2: // Self-referential external reference
+                    // will this just be empty string?
+                    return encodedUrl.substring(1);
+                case 1: // encoded file name
+                    return decodeFileName(encodedUrl);
 
+            }
         }
         return encodedUrl;
     }
@@ -212,9 +214,7 @@ public final class SupBookRecord extends StandardRecord {
         		}
         		break;
         	case CH_SAME_VOLUME:
-        		sb.append(PATH_SEPERATOR);
-        		break;
-        	case CH_DOWN_DIR:
+            case CH_DOWN_DIR:
         		sb.append(PATH_SEPERATOR);
         		break;
         	case CH_UP_DIR:
