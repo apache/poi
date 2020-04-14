@@ -25,6 +25,7 @@ import java.io.IOException;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
@@ -205,21 +206,50 @@ public final class TestXWPFHeader {
         }
     }
 
+    public void testSetWatermarkOnEmptyDoc() throws IOException {
+        try (XWPFDocument sampleDoc = new XWPFDocument()) {
+
+            // No header is set (yet)
+            XWPFHeaderFooterPolicy policy = sampleDoc.getHeaderFooterPolicy();
+            assertNull(policy.getDefaultHeader());
+            assertNull(policy.getFirstPageHeader());
+            assertNull(policy.getDefaultFooter());
+
+            policy.createWatermark("DRAFT");
+
+            assertNotNull(policy.getDefaultHeader());
+            assertNotNull(policy.getFirstPageHeader());
+            assertNotNull(policy.getEvenPageHeader());
+
+            // Re-open, and check
+            XWPFDocument reopened = XWPFTestDataSamples.writeOutAndReadBack(sampleDoc);
+            policy = reopened.getHeaderFooterPolicy();
+
+            assertNotNull(policy.getDefaultHeader());
+            assertNotNull(policy.getFirstPageHeader());
+            assertNotNull(policy.getEvenPageHeader());
+        }
+    }
+
+    @Ignore
     @Test
     public void testAddPictureData() {
         // TODO
     }
 
+    @Ignore
     @Test
     public void testGetAllPictures() {
         // TODO
     }
 
+    @Ignore
     @Test
     public void testGetAllPackagePictures() {
         // TODO
     }
 
+    @Ignore
     @Test
     public void testGetPictureDataById() {
         // TODO
