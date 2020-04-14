@@ -18,6 +18,7 @@
 package org.apache.poi.util;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 // based on https://gist.github.com/EmmanuelOga/48df70b27ead4d80234b
 @Internal
@@ -37,6 +38,9 @@ public class StringCodepointsIterable implements Iterable<String> {
 
         @Override
         public String next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
             int codePoint = StringCodepointsIterable.this.string.codePointAt(index);
             index += Character.charCount(codePoint);
             return new String(Character.toChars(codePoint));

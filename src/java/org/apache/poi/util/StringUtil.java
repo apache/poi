@@ -17,9 +17,10 @@
 
 package org.apache.poi.util;
 
+import static java.nio.charset.StandardCharsets.ISO_8859_1;
+
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
-import java.util.Iterator;
 import java.util.Locale;
 
 /**
@@ -27,7 +28,6 @@ import java.util.Locale;
  */
 @Internal
 public final class StringUtil {
-    private static final Charset ISO_8859_1 = StandardCharsets.ISO_8859_1;
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 10000000;
 
@@ -303,38 +303,6 @@ public final class StringUtil {
         int length = suffix.length();
         int start = haystack.length() - length;
         return haystack.regionMatches(true, start, suffix, 0, length);
-    }
-
-    /**
-     * An Iterator over an array of Strings.
-     */
-    public static class StringsIterator implements Iterator<String> {
-        private String[] strings = {};
-        private int position;
-
-        public StringsIterator(String[] strings) {
-            if (strings != null) {
-                this.strings = strings.clone();
-            }
-        }
-
-        @Override
-        public boolean hasNext() {
-            return position < strings.length;
-        }
-
-        @Override
-        public String next() {
-            int ourPos = position++;
-            if (ourPos >= strings.length) {
-                throw new ArrayIndexOutOfBoundsException(ourPos);
-            }
-            return strings[ourPos];
-        }
-
-        @Override
-        public void remove() {
-        }
     }
 
     @Internal

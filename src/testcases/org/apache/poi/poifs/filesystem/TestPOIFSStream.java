@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
@@ -72,11 +73,7 @@ public final class TestPOIFSStream {
       POIFSStream stream = new POIFSStream(fs, 98);
       Iterator<ByteBuffer> i = stream.getBlockIterator();
       assertTrue(i.hasNext());
-      assertTrue(i.hasNext());
-      assertTrue(i.hasNext());
       ByteBuffer b = i.next();
-      assertFalse(i.hasNext());
-      assertFalse(i.hasNext());
       assertFalse(i.hasNext());
 
       // Check the contents
@@ -103,14 +100,9 @@ public final class TestPOIFSStream {
       POIFSStream stream = new POIFSStream(fs, 97);
       Iterator<ByteBuffer> i = stream.getBlockIterator();
       assertTrue(i.hasNext());
-      assertTrue(i.hasNext());
-      assertTrue(i.hasNext());
       ByteBuffer b97 = i.next();
       assertTrue(i.hasNext());
-      assertTrue(i.hasNext());
       ByteBuffer b98 = i.next();
-      assertFalse(i.hasNext());
-      assertFalse(i.hasNext());
       assertFalse(i.hasNext());
 
       // Check the contents of the 1st block
@@ -169,18 +161,21 @@ public final class TestPOIFSStream {
 
       // Check the contents
       //  1st block is at 0
+      assertNotNull(b0);
       assertEquals((byte)0x9e, b0.get());
       assertEquals((byte)0x75, b0.get());
       assertEquals((byte)0x97, b0.get());
       assertEquals((byte)0xf6, b0.get());
 
       //  2nd block is at 1
+      assertNotNull(b1);
       assertEquals((byte)0x86, b1.get());
       assertEquals((byte)0x09, b1.get());
       assertEquals((byte)0x22, b1.get());
       assertEquals((byte)0xfb, b1.get());
 
       //  last block is at 89
+      assertNotNull(b22);
       assertEquals((byte)0xfe, b22.get());
       assertEquals((byte)0xff, b22.get());
       assertEquals((byte)0x00, b22.get());
@@ -204,17 +199,11 @@ public final class TestPOIFSStream {
       POIFSStream stream = new POIFSStream(fs, 0);
       Iterator<ByteBuffer> i = stream.getBlockIterator();
       assertTrue(i.hasNext());
-      assertTrue(i.hasNext());
-      assertTrue(i.hasNext());
       ByteBuffer b0 = i.next();
-      assertTrue(i.hasNext());
       assertTrue(i.hasNext());
       ByteBuffer b1 = i.next();
       assertTrue(i.hasNext());
-      assertTrue(i.hasNext());
       ByteBuffer b2 = i.next();
-      assertFalse(i.hasNext());
-      assertFalse(i.hasNext());
       assertFalse(i.hasNext());
 
       // Check the contents of the 1st block
@@ -304,16 +293,11 @@ public final class TestPOIFSStream {
       POIFSStream stream = new POIFSStream(ministore, 178);
       Iterator<ByteBuffer> i = stream.getBlockIterator();
       assertTrue(i.hasNext());
-      assertTrue(i.hasNext());
-      assertTrue(i.hasNext());
       ByteBuffer b178 = i.next();
-      assertTrue(i.hasNext());
       assertTrue(i.hasNext());
       ByteBuffer b179 = i.next();
       assertTrue(i.hasNext());
       ByteBuffer b180 = i.next();
-      assertFalse(i.hasNext());
-      assertFalse(i.hasNext());
       assertFalse(i.hasNext());
 
       // Check the contents of the 1st block
@@ -803,7 +787,7 @@ public final class TestPOIFSStream {
           try {
               ministore.getBlockAt(184);
               fail("Block 184 should be off the end of the list");
-          } catch (IndexOutOfBoundsException e) {
+          } catch (NoSuchElementException e) {
           }
 
           data = new byte[64 * 6 + 12];

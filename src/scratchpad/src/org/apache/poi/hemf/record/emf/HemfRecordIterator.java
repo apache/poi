@@ -19,6 +19,7 @@ package org.apache.poi.hemf.record.emf;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -44,6 +45,9 @@ public class HemfRecordIterator implements Iterator<HemfRecord> {
 
     @Override
     public HemfRecord next() {
+        if (!hasNext()) {
+            throw new NoSuchElementException();
+        }
         HemfRecord toReturn = currentRecord;
         currentRecord = (currentRecord instanceof HemfMisc.EmfEof) ? null : _next();
         return toReturn;

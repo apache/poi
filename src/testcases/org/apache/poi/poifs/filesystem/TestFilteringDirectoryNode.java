@@ -18,17 +18,22 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.junit.Before;
 import org.junit.Test;
-
-import static org.junit.Assert.*;
 
 /**
  * Class to test FilteringDirectoryNode functionality
@@ -68,16 +73,20 @@ public final class TestFilteringDirectoryNode {
        assertFalse(d.getEntry(eRoot.getName()).isDirectoryEntry());
        assertTrue(d.getEntry(eRoot.getName()).isDocumentEntry());
 
-      Iterator<Entry> i = d.getEntries();
-      assertEquals(dirA, i.next());
-      assertEquals(dirB, i.next());
-      assertEquals(eRoot, i.next());
-       assertNull(i.next());
+       Iterator<Entry> i = d.getEntries();
+       assertEquals(dirA, i.next());
+       assertEquals(dirB, i.next());
+       assertEquals(eRoot, i.next());
+       try {
+           assertNull(i.next());
+           fail("Should throw NoSuchElementException when depleted");
+       } catch (NoSuchElementException ignored) {
+       }
    }
 
    @Test
    public void testChildFiltering() throws Exception {
-      List<String> excl = Arrays.asList(new String[]{"NotThere", "AlsoNotThere", eRoot.getName()});
+      List<String> excl = Arrays.asList("NotThere", "AlsoNotThere", eRoot.getName());
       FilteringDirectoryNode d = new FilteringDirectoryNode(fs.getRoot(), excl);
 
       assertEquals(2, d.getEntryCount());
@@ -96,11 +105,15 @@ public final class TestFilteringDirectoryNode {
       Iterator<Entry> i = d.getEntries();
       assertEquals(dirA, i.next());
       assertEquals(dirB, i.next());
-       assertNull(i.next());
+      try {
+          assertNull(i.next());
+          fail("Should throw NoSuchElementException when depleted");
+      } catch (NoSuchElementException ignored) {
+      }
 
 
       // Filter more
-      excl = Arrays.asList(new String[]{"NotThere", "AlsoNotThere", eRoot.getName(), dirA.getName()});
+      excl = Arrays.asList("NotThere", "AlsoNotThere", eRoot.getName(), dirA.getName());
       d = new FilteringDirectoryNode(fs.getRoot(), excl);
 
       assertEquals(1, d.getEntryCount());
@@ -122,11 +135,15 @@ public final class TestFilteringDirectoryNode {
 
       i = d.getEntries();
       assertEquals(dirB, i.next());
-       assertNull(i.next());
+       try {
+           assertNull(i.next());
+           fail("Should throw NoSuchElementException when depleted");
+       } catch (NoSuchElementException ignored) {
+       }
 
 
       // Filter everything
-      excl = Arrays.asList(new String[]{"NotThere", eRoot.getName(), dirA.getName(), dirB.getName()});
+      excl = Arrays.asList("NotThere", eRoot.getName(), dirA.getName(), dirB.getName());
       d = new FilteringDirectoryNode(fs.getRoot(), excl);
 
       assertEquals(0, d.getEntryCount());
@@ -151,17 +168,19 @@ public final class TestFilteringDirectoryNode {
       }
 
       i = d.getEntries();
-       assertNull(i.next());
+       try {
+           assertNull(i.next());
+           fail("Should throw NoSuchElementException when depleted");
+       } catch (NoSuchElementException ignored) {
+       }
    }
 
    @Test
    public void testNestedFiltering() throws Exception {
-      List<String> excl = Arrays.asList(new String[]{
-              dirA.getName() + "/" + "MadeUp",
-              dirA.getName() + "/" + eA.getName(),
-              dirA.getName() + "/" + dirAA.getName() + "/Test",
-              eRoot.getName()
-      });
+      List<String> excl = Arrays.asList(dirA.getName() + "/" + "MadeUp",
+                                        dirA.getName() + "/" + eA.getName(),
+                                        dirA.getName() + "/" + dirAA.getName() + "/Test",
+                                        eRoot.getName());
       FilteringDirectoryNode d = new FilteringDirectoryNode(fs.getRoot(), excl);
 
       // Check main

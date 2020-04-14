@@ -18,6 +18,7 @@
 package org.apache.poi.hssf.record.aggregates;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.BlankRecord;
@@ -338,8 +339,9 @@ public final class ValueRecordsAggregate implements Iterable<CellValueRecordInte
 		}
 
 		public CellValueRecordInterface next() {
-			if (!hasNext())
-				throw new IndexOutOfBoundsException("iterator has no next");
+			if (!hasNext()) {
+				throw new NoSuchElementException();
+			}
 
 			curRowIndex = nextRowIndex;
 			curColIndex = nextColIndex;

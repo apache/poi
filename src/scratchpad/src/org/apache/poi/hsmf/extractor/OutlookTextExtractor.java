@@ -16,6 +16,17 @@
 ==================================================================== */
 package org.apache.poi.hsmf.extractor;
 
+import static org.apache.poi.util.StringUtil.startsWithIgnoreCase;
+
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
+import java.util.Locale;
+
 import org.apache.poi.extractor.POIOLE2TextExtractor;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
@@ -24,16 +35,6 @@ import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.Removal;
-import org.apache.poi.util.StringUtil.StringsIterator;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-
-import static org.apache.poi.util.StringUtil.startsWithIgnoreCase;
 
 /**
  * A text extractor for HSMF (Outlook) .msg files.
@@ -90,13 +91,11 @@ public class OutlookTextExtractor extends POIOLE2TextExtractor {
         msg.guess7BitEncoding();
 
         // Off we go
-        StringsIterator emails;
+        Iterator<String> emails;
         try {
-            emails = new StringsIterator(
-                    msg.getRecipientEmailAddressList()
-            );
+            emails = Arrays.asList(msg.getRecipientEmailAddressList()).iterator();
         } catch (ChunkNotFoundException e) {
-            emails = new StringsIterator(new String[0]);
+            emails = Collections.emptyIterator();
         }
 
         try {
@@ -174,7 +173,7 @@ public class OutlookTextExtractor extends POIOLE2TextExtractor {
      * of emails, and does its best to return something like
      * "Nick <nick@example.com>; Jim <jim@example.com>"
      */
-    protected void handleEmails(StringBuilder s, String type, String displayText, StringsIterator emails) {
+    protected void handleEmails(StringBuilder s, String type, String displayText, Iterator<String> emails) {
         if (displayText == null || displayText.length() == 0) {
             return;
         }

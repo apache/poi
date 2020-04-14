@@ -25,6 +25,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.function.Supplier;
 
 import org.apache.poi.common.usermodel.GenericRecord;
@@ -172,6 +173,9 @@ public class HemfComment {
 
         @Override
         public EmfCommentData next() {
+            if (!hasNext()) {
+                throw new NoSuchElementException();
+            }
             EmfCommentData toReturn = currentRecord;
             final boolean isEOF = (limit == -1 || leis.getReadIndex() >= startIdx+limit);
             // (currentRecord instanceof HemfPlusMisc.EmfEof)
