@@ -425,8 +425,16 @@ public class XWPFHeaderFooterPolicy {
      */
     private XWPFParagraph getWatermarkParagraph(String text, int idx) {
         CTP p = CTP.Factory.newInstance();
-        byte[] rsidr = doc.getDocument().getBody().getPArray(0).getRsidR();
-        byte[] rsidrdefault = doc.getDocument().getBody().getPArray(0).getRsidRDefault();
+        CTBody ctBody = doc.getDocument().getBody();
+        byte[] rsidr = null;
+        byte[] rsidrdefault = null;
+        if (ctBody.sizeOfPArray() == 0) {
+            // TODO generate rsidr and rsidrdefault
+        } else {
+            CTP ctp = ctBody.getPArray(0);
+            rsidr = ctp.getRsidR();
+            rsidrdefault = ctp.getRsidRDefault();
+        }
         p.setRsidP(rsidr);
         p.setRsidRDefault(rsidrdefault);
         CTPPr pPr = p.addNewPPr();
