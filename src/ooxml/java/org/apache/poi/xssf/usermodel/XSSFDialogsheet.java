@@ -30,6 +30,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 //YK: TODO: this is only a prototype
+@SuppressWarnings("unused")
 public class XSSFDialogsheet extends XSSFSheet implements Sheet{
     protected CTDialogsheet dialogsheet;
 
@@ -43,43 +44,43 @@ public class XSSFDialogsheet extends XSSFSheet implements Sheet{
         return null;
     }
 
-    protected CTHeaderFooter getSheetTypeHeaderFooter() {
+    protected CTHeaderFooter getDialogHeaderFooter() {
         if (dialogsheet.getHeaderFooter() == null) {
             dialogsheet.setHeaderFooter(CTHeaderFooter.Factory.newInstance());
         }
         return dialogsheet.getHeaderFooter();
     }
 
-    protected CTSheetPr getSheetTypeSheetPr() {
+    protected CTSheetPr getDialogSheetPr() {
         if (dialogsheet.getSheetPr() == null) {
             dialogsheet.setSheetPr(CTSheetPr.Factory.newInstance());
         }
         return dialogsheet.getSheetPr();
     }
 
-    protected CTPageBreak getSheetTypeColumnBreaks() {
+    protected CTPageBreak getDialogColumnBreaks() {
         return null;
     }
 
-    protected CTSheetFormatPr getSheetTypeSheetFormatPr() {
+    protected CTSheetFormatPr getDialogSheetFormatPr() {
         if (dialogsheet.getSheetFormatPr() == null) {
             dialogsheet.setSheetFormatPr(CTSheetFormatPr.Factory.newInstance());
         }
         return dialogsheet.getSheetFormatPr();
     }
 
-    protected CTPageMargins getSheetTypePageMargins() {
+    protected CTPageMargins getDialogPageMargins() {
         if (dialogsheet.getPageMargins() == null) {
             dialogsheet.setPageMargins(CTPageMargins.Factory.newInstance());
         }
         return dialogsheet.getPageMargins();
     }
 
-    protected CTPageBreak getSheetTypeRowBreaks() {
+    protected CTPageBreak getDialogRowBreaks() {
         return null;
     }
 
-    protected CTSheetViews getSheetTypeSheetViews() {
+    protected CTSheetViews getDialogSheetViews() {
         if (dialogsheet.getSheetViews() == null) {
             dialogsheet.setSheetViews(CTSheetViews.Factory.newInstance());
             dialogsheet.getSheetViews().addNewSheetView();
@@ -87,14 +88,14 @@ public class XSSFDialogsheet extends XSSFSheet implements Sheet{
         return dialogsheet.getSheetViews();
     }
 
-    protected CTPrintOptions getSheetTypePrintOptions() {
+    protected CTPrintOptions getDialogPrintOptions() {
         if (dialogsheet.getPrintOptions() == null) {
             dialogsheet.setPrintOptions(CTPrintOptions.Factory.newInstance());
         }
         return dialogsheet.getPrintOptions();
     }
 
-    protected CTSheetProtection getSheetTypeProtection() {
+    protected CTSheetProtection getDialogProtection() {
         if (dialogsheet.getSheetProtection() == null) {
             dialogsheet.setSheetProtection(CTSheetProtection.Factory.newInstance());
         }
