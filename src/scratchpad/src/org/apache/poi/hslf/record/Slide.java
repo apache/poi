@@ -19,6 +19,7 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
 
@@ -56,24 +57,22 @@ public final class Slide extends SheetContainer
 	 */
 	protected Slide(byte[] source, int start, int len) {
 		// Grab the header
-		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+		_header = Arrays.copyOfRange(source, start, start+8);
 
 		// Find our children
 		_children = Record.findChildRecords(source,start+8,len-8);
 
 		// Find the interesting ones in there
-		for(int i=0; i<_children.length; i++) {
-			if(_children[i] instanceof SlideAtom) {
-				slideAtom = (SlideAtom)_children[i];
-			}
-			else if(_children[i] instanceof PPDrawing) {
-				ppDrawing = (PPDrawing)_children[i];
+		for (Record child : _children) {
+			if (child instanceof SlideAtom) {
+				slideAtom = (SlideAtom) child;
+			} else if (child instanceof PPDrawing) {
+				ppDrawing = (PPDrawing) child;
 			}
 
-            if(ppDrawing != null && _children[i] instanceof ColorSchemeAtom) {
-                _colorScheme = (ColorSchemeAtom)_children[i];
-            }
+			if (ppDrawing != null && child instanceof ColorSchemeAtom) {
+				_colorScheme = (ColorSchemeAtom) child;
+			}
 		}
 	}
 

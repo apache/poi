@@ -17,6 +17,8 @@
 
 package org.apache.poi.hwpf.sprm;
 
+import java.util.Arrays;
+
 import org.apache.poi.hwpf.usermodel.BorderCode;
 import org.apache.poi.hwpf.usermodel.SectionProperties;
 import org.apache.poi.util.HexDump;
@@ -69,8 +71,7 @@ public final class SectionSprmUncompressor extends SprmUncompressor
         newSEP.setIHeadingPgn ((byte) sprm.getOperand());
         break;
       case 0x2:
-        byte[] buf = new byte[sprm.size() - 3];
-        System.arraycopy(sprm.getGrpprl(), sprm.getGrpprlOffset(), buf, 0, buf.length);
+        byte[] buf = Arrays.copyOfRange(sprm.getGrpprl(), sprm.getGrpprlOffset(), sprm.getGrpprlOffset() + (sprm.size() - 3));
         newSEP.setOlstAnm (buf);
         break;
       case 0x3:
@@ -216,11 +217,11 @@ public final class SectionSprmUncompressor extends SprmUncompressor
         newSEP.setWTextFlow ((short) sprm.getOperand());
         break;
       case 0x3C:
-        // [MS-DOC], v20140721, 2.6.4, sprmSRncFtn        
+        // [MS-DOC], v20140721, 2.6.4, sprmSRncFtn
         newSEP.setRncFtn((short) sprm.getOperand());
         break;
       case 0x3E:
-        // [MS-DOC], v20140721, 2.6.4, sprmSRncEdn        
+        // [MS-DOC], v20140721, 2.6.4, sprmSRncEdn
         newSEP.setRncEdn((short) sprm.getOperand());
         break;
       case 0x3F:

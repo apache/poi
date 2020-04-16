@@ -62,7 +62,7 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
     /**
      * This constructs a CHPFormattedDiskPage from a raw fkp (512 byte array
      * read from a Word file).
-     * 
+     *
      * @deprecated Use
      *             {@link #CHPFormattedDiskPage(byte[], int, CharIndexTranslator)}
      *             instead
@@ -134,17 +134,13 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
         int chpxOffset = 2 * LittleEndian.getUByte(_fkp, _offset + (((_crun + 1) * 4) + index));
 
         //optimization if offset == 0 use "Normal" style
-        if(chpxOffset == 0)
-        {
+        if(chpxOffset == 0) {
             return new byte[0];
         }
 
         int size = LittleEndian.getUByte(_fkp, _offset + chpxOffset);
 
-        byte[] chpx = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
-
-        System.arraycopy(_fkp, _offset + ++chpxOffset, chpx, 0, size);
-        return chpx;
+        return IOUtils.safelyClone(_fkp, _offset + chpxOffset + 1, size, MAX_RECORD_LENGTH);
     }
 
     protected byte[] toByteArray( CharIndexTranslator translator )
@@ -184,7 +180,7 @@ public final class CHPFormattedDiskPage extends FormattedDiskPage
         if (index == 0) {
             throw new RecordFormatException("empty grpprl entry.");
         }
-        
+
         // see if we couldn't fit some
         if ( index != size )
         {

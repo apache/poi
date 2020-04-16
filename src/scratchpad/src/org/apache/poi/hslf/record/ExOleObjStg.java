@@ -22,6 +22,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 import java.util.zip.DeflaterOutputStream;
@@ -51,7 +52,7 @@ public class ExOleObjStg extends PositionDependentRecordAtom implements PersistR
      * Record data.
      */
     private byte[] _data;
-    
+
     /**
      * Constructs a new empty storage container.
      */
@@ -74,12 +75,10 @@ public class ExOleObjStg extends PositionDependentRecordAtom implements PersistR
      */
     protected ExOleObjStg(byte[] source, int start, int len) {
         // Get the header.
-        _header = new byte[8];
-        System.arraycopy(source,start,_header,0,8);
+        _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the record data.
-        _data = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
-        System.arraycopy(source,start+8,_data,0,len-8);
+        _data = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
     }
 
     public boolean isCompressed() {
@@ -155,7 +154,7 @@ public class ExOleObjStg extends PositionDependentRecordAtom implements PersistR
     public int getRecordInstance() {
         return (LittleEndian.getUShort(_header, 0) >>> 4);
     }
-    
+
     /**
      * Write the contents of the record back, so it can be written
      * to disk.

@@ -19,6 +19,7 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -84,8 +85,7 @@ public final class TextHeaderAtom extends RecordAtom implements ParentAwareRecor
 		}
 
 		// Get the header
-		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+		_header = Arrays.copyOfRange(source, start, start+8);
 
 		// Grab the type
 		textType = LittleEndian.getInt(source,start+8);

@@ -19,8 +19,8 @@
 
 package org.apache.poi.hssf.record.cont;
 
-import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.ContinueRecord;
+import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.LittleEndianInput;
 
 /**
@@ -44,7 +44,7 @@ import org.apache.poi.util.LittleEndianInput;
  *
  * <p>
  * YK: For now (March 2011) this class is only used to read
- *   @see org.apache.poi.hssf.record.common.UnicodeString.ExtRst blocks of a UnicodeString.
+ *   @see org.apache.poi.hssf.record.common.ExtRst blocks of a UnicodeString.
  *
  * </p>
  */
@@ -78,7 +78,7 @@ public class ContinuableRecordInput implements LittleEndianInput {
     public int readUShort(){
         int ch1 = readUByte();
         int ch2 = readUByte();
-        return (ch2 << 8) + (ch1 << 0);
+        return (ch2 << 8) + (ch1);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class ContinuableRecordInput implements LittleEndianInput {
         int ch2 = _in.readUByte();
         int ch3 = _in.readUByte();
         int ch4 = _in.readUByte();
-        return (ch4 << 24) + (ch3 << 16) + (ch2 << 8) + (ch1 << 0);
+        return (ch4 << 24) + (ch3 << 16) + (ch2 << 8) + (ch1);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class ContinuableRecordInput implements LittleEndianInput {
                 ((long)b3 << 24) +
                 (b2 << 16) +
                 (b1 <<  8) +
-                (b0 <<  0));
+                (b0));
     }
 
     @Override
@@ -124,7 +124,7 @@ public class ContinuableRecordInput implements LittleEndianInput {
     public void readFully(byte[] buf, int off, int len){
         _in.readFully(buf, off, len);
     }
-    
+
     @Override
     public void readPlain(byte[] buf, int off, int len) {
         readFully(buf, off, len);

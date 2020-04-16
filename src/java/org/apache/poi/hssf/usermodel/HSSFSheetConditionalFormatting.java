@@ -96,7 +96,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
      * A factory method allowing the creation of conditional formatting
      *  rules using an Icon Set / Multi-State formatting.
      * The thresholds for it will be created, but will be empty
-     *  and require configuring with 
+     *  and require configuring with
      *  {@link HSSFConditionalFormattingRule#getMultiStateFormatting()}
      *  then
      *  {@link HSSFIconMultiStateFormatting#getThresholds()}
@@ -109,12 +109,12 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
 
     /**
      * Create a Databar conditional formatting rule.
-     * <p>The thresholds and colour for it will be created, but will be 
-     *  empty and require configuring with 
+     * <p>The thresholds and colour for it will be created, but will be
+     *  empty and require configuring with
      *  {@link HSSFConditionalFormattingRule#getDataBarFormatting()}
      *  then
      *  {@link HSSFDataBarFormatting#getMinThreshold()}
-     *  and 
+     *  and
      *  {@link HSSFDataBarFormatting#getMaxThreshold()}
      */
     public HSSFConditionalFormattingRule createConditionalFormattingRule(HSSFExtendedColor color) {
@@ -127,8 +127,8 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
 
     /**
      * Create a Color Scale / Color Gradient conditional formatting rule.
-     * <p>The thresholds and colours for it will be created, but will be 
-     *  empty and require configuring with 
+     * <p>The thresholds and colours for it will be created, but will be
+     *  empty and require configuring with
      *  {@link HSSFConditionalFormattingRule#getColorScaleFormatting()}
      *  then
      *  {@link HSSFColorScaleFormatting#getThresholds()}
@@ -139,7 +139,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
         CFRule12Record rr = CFRule12Record.createColorScale(_sheet);
         return new HSSFConditionalFormattingRule(_sheet, rr);
     }
-    
+
     /**
      * Adds a copy of HSSFConditionalFormatting object to the sheet
      * <p>This method could be used to copy HSSFConditionalFormatting object
@@ -196,8 +196,9 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
 
     public int addConditionalFormatting(CellRangeAddress[] regions, ConditionalFormattingRule[] cfRules) {
         HSSFConditionalFormattingRule[] hfRules;
-        if(cfRules instanceof HSSFConditionalFormattingRule[]) hfRules = (HSSFConditionalFormattingRule[])cfRules;
-        else {
+        if(cfRules instanceof HSSFConditionalFormattingRule[]) {
+            hfRules = (HSSFConditionalFormattingRule[])cfRules;
+        } else {
             hfRules = new HSSFConditionalFormattingRule[cfRules.length];
             System.arraycopy(cfRules, 0, hfRules, 0, hfRules.length);
         }
@@ -206,7 +207,7 @@ public final class HSSFSheetConditionalFormatting implements SheetConditionalFor
 
     public int addConditionalFormatting(CellRangeAddress[] regions,
             HSSFConditionalFormattingRule rule1) {
-        return addConditionalFormatting(regions, rule1 == null ? 
+        return addConditionalFormatting(regions, rule1 == null ?
                     null : new HSSFConditionalFormattingRule[] { rule1 }
         );
     }

@@ -24,6 +24,8 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
+import java.util.Arrays;
+
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndian;
 import org.junit.Test;
@@ -130,11 +132,10 @@ public final class TestSubRecord {
 		);
 		final int LBS_START_POS = 0x002E;
 		final int WRONG_LBS_SIZE = 0x1FEE;
-		assertEquals(0x0013, LittleEndian.getShort(data, LBS_START_POS+0));
+		assertEquals(0x0013, LittleEndian.getShort(data, LBS_START_POS));
 		assertEquals(WRONG_LBS_SIZE, LittleEndian.getShort(data, LBS_START_POS+2));
 		int wrongTotalSize = LBS_START_POS + 4 + WRONG_LBS_SIZE;
-		byte[] wrongData = new byte[wrongTotalSize];
-		System.arraycopy(data, 0, wrongData, 0, data.length);
+		byte[] wrongData = Arrays.copyOf(data, wrongTotalSize);
 		// wrongData has the ObjRecord data as would have been written by v3.1
 
 		RecordInputStream in = TestcaseRecordInputStream.create(ObjRecord.sid, wrongData);

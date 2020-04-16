@@ -282,9 +282,7 @@ public final class TestDirectoryProperty {
     private static void verifyReadingProperty(int index, byte[] input, int offset, String name) {
         DirectoryProperty property = new DirectoryProperty(index, input, offset);
         ByteArrayOutputStream stream = new ByteArrayOutputStream(128);
-        byte[] expected = new byte[128];
-
-        System.arraycopy(input, offset, expected, 0, 128);
+        byte[] expected = Arrays.copyOfRange(input, offset, offset+128);
         try {
             property.writeData(stream);
         } catch (IOException e) {

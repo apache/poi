@@ -17,11 +17,12 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.POILogger;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
+
+import org.apache.poi.util.POILogger;
 
 /**
  * Master container for Document. There is one of these for every
@@ -46,24 +47,24 @@ public final class Document extends PositionDependentRecordContainer
 	 * Returns the DocumentAtom of this Document
 	 */
 	public DocumentAtom getDocumentAtom() { return documentAtom; }
-	
+
 	/**
 	 * Returns the Environment of this Notes, which lots of
 	 * settings for the document in it
 	 */
 	public Environment getEnvironment() { return environment; }
-	
+
 	/**
 	 * Returns the PPDrawingGroup, which holds an Escher Structure
 	 * that contains information on pictures in the slides.
 	 */
 	public PPDrawingGroup getPPDrawingGroup() { return ppDrawing; }
-	
+
 	/**
 	 * Returns the ExObjList, which holds the references to
 	 * external objects used in the slides. This may be null, if
 	 * there are no external references.
-	 *  
+	 *
 	 * @param create if true, create an ExObjList if it doesn't exist
 	 */
 	public ExObjList getExObjList(boolean create) {
@@ -126,8 +127,7 @@ public final class Document extends PositionDependentRecordContainer
 	 */
 	/* package */ Document(byte[] source, int start, int len) {
 		// Grab the header
-		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+		_header = Arrays.copyOfRange(source, start, start+8);
 
 		// Find our children
 		_children = Record.findChildRecords(source,start+8,len-8);

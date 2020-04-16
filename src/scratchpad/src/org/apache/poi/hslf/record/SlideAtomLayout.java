@@ -19,6 +19,7 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -32,7 +33,7 @@ import org.apache.poi.util.LittleEndian;
  * Holds the geometry of the Slide, and the ID of the placeholders on the slide.
  * Embedded inside a SlideAtom is a SlideAtomLayout, without the usual record header.
  * Since it's a fixed size and tied to the SlideAtom, we'll hold it here.<p>
- * 
+ *
  * This might eventually merged with the XSLF counterpart
  */
 @Internal
@@ -82,7 +83,7 @@ public class SlideAtomLayout implements GenericRecord {
         SlideLayoutType(int nativeId) {
             this.nativeId = nativeId;
         }
-        
+
         public int getNativeId() {
             return nativeId;
         }
@@ -117,8 +118,7 @@ public class SlideAtomLayout implements GenericRecord {
 
         // Grab out our data
         geometry = SlideLayoutType.forNativeID(LittleEndian.getInt(data,0));
-        placeholderIDs = new byte[8];
-        System.arraycopy(data,4,placeholderIDs,0,8);
+        placeholderIDs = Arrays.copyOfRange(data,4, 4+8);
     }
 
     /**

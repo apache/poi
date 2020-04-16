@@ -22,6 +22,7 @@ import static org.apache.poi.util.GenericRecordUtil.safeEnum;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -142,12 +143,10 @@ public final class HeadersFootersAtom extends RecordAtom {
      */
 	protected HeadersFootersAtom(byte[] source, int start, int len) {
 		// Get the header
-		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+        _header = Arrays.copyOfRange(source, start, start+8);
 
 		// Grab the record data
-		_recdata = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
-		System.arraycopy(source,start+8,_recdata,0,len-8);
+		_recdata = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
 	}
 
     /**

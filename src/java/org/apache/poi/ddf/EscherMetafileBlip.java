@@ -106,8 +106,7 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
         field_6_fCompression = data[pos]; pos++;
         field_7_fFilter = data[pos]; pos++;
 
-        raw_pictureData = IOUtils.safelyAllocate(field_5_cbSave, MAX_RECORD_LENGTH);
-        System.arraycopy( data, pos, raw_pictureData, 0, field_5_cbSave );
+        raw_pictureData = IOUtils.safelyClone(data, pos, field_5_cbSave, MAX_RECORD_LENGTH);
         pos += field_5_cbSave;
 
         // 0 means DEFLATE compression
@@ -120,8 +119,7 @@ public final class EscherMetafileBlip extends EscherBlipRecord {
 
         int remaining = bytesAfterHeader - pos + offset + HEADER_SIZE;
         if(remaining > 0) {
-            remainingData = IOUtils.safelyAllocate(remaining, MAX_RECORD_LENGTH);
-            System.arraycopy( data, pos, remainingData, 0, remaining );
+            remainingData = IOUtils.safelyClone(data, pos, remaining, MAX_RECORD_LENGTH);
         }
         return bytesAfterHeader + HEADER_SIZE;
     }

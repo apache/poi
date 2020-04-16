@@ -19,6 +19,7 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -83,12 +84,10 @@ public final class SlideAtom extends RecordAtom {
 		if(len < 30) { len = 30; }
 
 		// Get the header
-		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+		_header = Arrays.copyOfRange(source, start, start+8);
 
 		// Grab the 12 bytes that is "SSlideLayoutAtom"
-		byte[] SSlideLayoutAtomData = new byte[12];
-		System.arraycopy(source,start+8,SSlideLayoutAtomData,0,12);
+		byte[] SSlideLayoutAtomData = Arrays.copyOfRange(source,start+8, start+12+8);
 		// Use them to build up the SSlideLayoutAtom
 		layoutAtom = new SlideAtomLayout(SSlideLayoutAtomData);
 
@@ -98,26 +97,13 @@ public final class SlideAtom extends RecordAtom {
 
 		// Grok the flags, stored as bits
 		int flags = LittleEndian.getUShort(source,start+20+8);
-		if((flags&4) == 4) {
-			followMasterBackground = true;
-		} else {
-			followMasterBackground = false;
-		}
-		if((flags&2) == 2) {
-			followMasterScheme = true;
-		} else {
-			followMasterScheme = false;
-		}
-		if((flags&1) == 1) {
-			followMasterObjects = true;
-		} else {
-			followMasterObjects = false;
-		}
+		followMasterBackground = (flags & 4) == 4;
+		followMasterScheme = (flags & 2) == 2;
+		followMasterObjects = (flags & 1) == 1;
 
 		// If there's any other bits of data, keep them about
 		// 8 bytes header + 20 bytes to flags + 2 bytes flags = 30 bytes
-		reserved = IOUtils.safelyAllocate(len-30, MAX_RECORD_LENGTH);
-		System.arraycopy(source,start+30,reserved,0,reserved.length);
+		reserved = IOUtils.safelyClone(source,start+30, len-30, MAX_RECORD_LENGTH);
 	}
 
 	/**

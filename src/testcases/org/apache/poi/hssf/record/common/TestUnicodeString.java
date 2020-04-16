@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.poi.hssf.record.ContinueRecord;
 import org.apache.poi.hssf.record.RecordInputStream;
@@ -258,11 +259,8 @@ public final class TestUnicodeString {
 
 
        // Load in again and re-test
-       byte[] data = new byte[14];
-       System.arraycopy(b, 4, data, 0, data.length);
-       LittleEndianInputStream inp = new LittleEndianInputStream(
-             new ByteArrayInputStream(data)
-       );
+       byte[] data = Arrays.copyOfRange(b, 4, 4+14);
+       LittleEndianInputStream inp = new LittleEndianInputStream(new ByteArrayInputStream(data));
        ext = new ExtRst(inp, data.length);
 
        assertEquals(0, ext.getNumberOfRuns());

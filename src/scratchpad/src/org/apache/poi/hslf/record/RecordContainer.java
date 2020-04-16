@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -76,8 +77,7 @@ public abstract class RecordContainer extends Record
 	 */
 	private int appendChild(Record newChild) {
 		// Copy over, and pop the child in at the end
-		Record[] nc = new org.apache.poi.hslf.record.Record[(_children.length + 1)];
-		System.arraycopy(_children, 0, nc, 0, _children.length);
+		Record[] nc = Arrays.copyOf(_children, _children.length+1, org.apache.poi.hslf.record.Record[].class);
 		// Switch the arrays
 		nc[_children.length] = newChild;
 		_children = nc;

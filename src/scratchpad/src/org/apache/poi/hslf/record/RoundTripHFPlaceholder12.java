@@ -19,6 +19,7 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -55,7 +56,7 @@ public final class RoundTripHFPlaceholder12 extends RecordAtom {
         LittleEndian.putInt(_header, 4, 8);
         _placeholderId = 0;
     }
-    
+
     /**
      * Constructs the comment atom record from its source data.
      *
@@ -65,8 +66,7 @@ public final class RoundTripHFPlaceholder12 extends RecordAtom {
      */
     protected RoundTripHFPlaceholder12(byte[] source, int start, int len) {
         // Get the header.
-        _header = new byte[8];
-        System.arraycopy(source,start,_header,0,8);
+        _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the record data.
         _placeholderId = source[start+8];

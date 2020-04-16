@@ -106,8 +106,8 @@ public class EscherClientAnchorRecord extends EscherRecord {
             }
         }
         bytesRemaining -= size;
-        remainingData  = IOUtils.safelyAllocate(bytesRemaining, MAX_RECORD_LENGTH);
-        System.arraycopy( data, pos + size, remainingData, 0, bytesRemaining );
+        remainingData  = IOUtils.safelyClone(data, pos + size, bytesRemaining, MAX_RECORD_LENGTH);
+
         return 8 + size + bytesRemaining;
     }
 

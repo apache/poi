@@ -22,6 +22,7 @@ import static org.apache.poi.hslf.record.RecordTypes.OutlineTextRefAtom;
 import java.awt.Color;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.function.Consumer;
@@ -333,8 +334,7 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
             }
         }
 
-        org.apache.poi.hslf.record.Record[] result = new org.apache.poi.hslf.record.Record[length];
-        System.arraycopy(records, startIdx[0], result, 0, length);
+        org.apache.poi.hslf.record.Record[] result = Arrays.copyOfRange(records, startIdx[0], startIdx[0]+length, org.apache.poi.hslf.record.Record[].class);
         startIdx[0] += length;
 
         return result;

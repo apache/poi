@@ -25,6 +25,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.poifs.storage.RawDataUtil;
@@ -68,8 +69,7 @@ public final class TestPropertyFactory {
 		for (int readBytes; (readBytes = stream.read(buf)) != -1; ) {
 			byte[] bbuf = buf;
 			if (readBytes < 512) {
-				bbuf =  new byte[readBytes];
-				System.arraycopy(buf, 0, bbuf, 0, readBytes);
+				bbuf = Arrays.copyOf(buf, readBytes);
 			}
 
 			PropertyFactory.convertToProperties(bbuf, properties);

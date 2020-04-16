@@ -135,8 +135,7 @@ public class BinaryRC4Decryptor extends Decryptor {
             hashAlg.update(salt);
         }
 
-        hash = new byte[5];
-        System.arraycopy(hashAlg.digest(), 0, hash, 0, 5);
+        hash = Arrays.copyOf(hashAlg.digest(), 5);
         return new SecretKeySpec(hash, ver.getCipherAlgorithm().jceId);
     }
 

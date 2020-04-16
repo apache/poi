@@ -18,6 +18,8 @@
 package org.apache.poi.util;
 
 
+import java.util.Arrays;
+
 /**
  * Utility classes for dealing with arrays.
  */
@@ -54,8 +56,7 @@ public final class ArrayUtil {
     	}
 
     	// Grab the bit to move
-    	Object[] toMove = new Object[numToMove];
-    	System.arraycopy(array, moveFrom, toMove, 0, numToMove);
+    	Object[] toMove = Arrays.copyOfRange(array, moveFrom, moveFrom+numToMove);
 
     	// Grab the bit to be shifted
     	Object[] toShift;
@@ -63,14 +64,12 @@ public final class ArrayUtil {
     	if(moveFrom > moveTo) {
     		// Moving to an earlier point in the array
     		// Grab everything between the two points
-    		toShift = new Object[(moveFrom-moveTo)];
-    		System.arraycopy(array, moveTo, toShift, 0, toShift.length);
+    		toShift = Arrays.copyOfRange(array, moveTo, moveFrom);
     		shiftTo = moveTo + numToMove;
     	} else {
     		// Moving to a later point in the array
     		// Grab everything from after the toMove block, to the new point
-    		toShift = new Object[(moveTo-moveFrom)];
-    		System.arraycopy(array, moveFrom+numToMove, toShift, 0, toShift.length);
+    		toShift = Arrays.copyOfRange(array, moveFrom+numToMove, moveTo+numToMove);
     		shiftTo = moveFrom;
     	}
 

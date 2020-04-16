@@ -19,6 +19,7 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -70,33 +71,19 @@ public final class NotesAtom extends RecordAtom
 		if(len < 8) { len = 8; }
 
 		// Get the header
-		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+		_header = Arrays.copyOfRange(source, start, start+8);
 
 		// Get the slide ID
 		slideID = LittleEndian.getInt(source,start+8);
 
 		// Grok the flags, stored as bits
 		int flags = LittleEndian.getUShort(source,start+12);
-		if((flags&4) == 4) {
-			followMasterBackground = true;
-		} else {
-			followMasterBackground = false;
-		}
-		if((flags&2) == 2) {
-			followMasterScheme = true;
-		} else {
-			followMasterScheme = false;
-		}
-		if((flags&1) == 1) {
-			followMasterObjects = true;
-		} else {
-			followMasterObjects = false;
-		}
+		followMasterBackground = (flags & 4) == 4;
+		followMasterScheme = (flags & 2) == 2;
+		followMasterObjects = (flags & 1) == 1;
 
 		// There might be 2 more bytes, which are a reserved field
-		reserved = IOUtils.safelyAllocate(len-14, MAX_RECORD_LENGTH);
-		System.arraycopy(source,start+14,reserved,0,reserved.length);
+		reserved = IOUtils.safelyClone(source, start+14, len-14, MAX_RECORD_LENGTH);
 	}
 
 	/**

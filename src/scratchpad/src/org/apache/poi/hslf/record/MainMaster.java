@@ -20,6 +20,7 @@ package org.apache.poi.hslf.record;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Master slide
@@ -57,8 +58,7 @@ public final class MainMaster extends SheetContainer {
 	 */
 	protected MainMaster(byte[] source, int start, int len) {
 		// Grab the header
-		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+		_header = Arrays.copyOfRange(source, start, start+8);
 
 		// Find our children
 		_children = Record.findChildRecords(source,start+8,len-8);
@@ -66,19 +66,19 @@ public final class MainMaster extends SheetContainer {
 		ArrayList<TxMasterStyleAtom> tx = new ArrayList<>();
 		ArrayList<ColorSchemeAtom> clr = new ArrayList<>();
 		// Find the interesting ones in there
-		for(int i=0; i<_children.length; i++) {
-			if(_children[i] instanceof SlideAtom) {
-				slideAtom = (SlideAtom)_children[i];
-			} else if(_children[i] instanceof PPDrawing) {
-				ppDrawing = (PPDrawing)_children[i];
-			} else if(_children[i] instanceof TxMasterStyleAtom) {
-				tx.add( (TxMasterStyleAtom)_children[i] );
-			} else if(_children[i] instanceof ColorSchemeAtom) {
-				clr.add( (ColorSchemeAtom)_children[i] );
+		for (Record child : _children) {
+			if (child instanceof SlideAtom) {
+				slideAtom = (SlideAtom) child;
+			} else if (child instanceof PPDrawing) {
+				ppDrawing = (PPDrawing) child;
+			} else if (child instanceof TxMasterStyleAtom) {
+				tx.add((TxMasterStyleAtom) child);
+			} else if (child instanceof ColorSchemeAtom) {
+				clr.add((ColorSchemeAtom) child);
 			}
 
-			if(ppDrawing != null && _children[i] instanceof ColorSchemeAtom) {
-				_colorScheme = (ColorSchemeAtom)_children[i];
+			if (ppDrawing != null && child instanceof ColorSchemeAtom) {
+				_colorScheme = (ColorSchemeAtom) child;
 			}
 
 		}

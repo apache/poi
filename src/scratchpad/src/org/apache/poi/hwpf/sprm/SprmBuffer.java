@@ -127,9 +127,8 @@ public final class SprmBuffer implements Duplicatable {
             // commented - buffer shall not contain any additional bytes --
             // sergey
             // byte[] newBuf = new byte[_offset + addition + 6];
-            byte[] newBuf = IOUtils.safelyAllocate(_offset + addition, MAX_RECORD_LENGTH);
-            System.arraycopy(_buf, 0, newBuf, 0, _buf.length);
-            _buf = newBuf;
+            IOUtils.safelyAllocateCheck(_offset + addition, MAX_RECORD_LENGTH);
+            _buf = Arrays.copyOf(_buf, _offset + addition);
         }
     }
 

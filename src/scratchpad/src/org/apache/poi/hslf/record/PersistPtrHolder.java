@@ -20,6 +20,7 @@ package org.apache.poi.hslf.record;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -65,7 +66,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 
 	private static final BitField persistIdFld = BitFieldFactory.getInstance(0X000FFFFF);
 	private static final BitField cntPersistFld  = BitFieldFactory.getInstance(0XFFF00000);
-	
+
     /**
      * Return the value we were given at creation, be it 6001 or 6002
      */
@@ -93,7 +94,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 	public Map<Integer,Integer> getSlideLocationsLookup() {
 		return Collections.unmodifiableMap(_slideLocations);
 	}
-	
+
 	/**
 	 * Create a new holder for a PersistPtr record
 	 */
@@ -103,8 +104,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 		if(len < 8) { len = 8; }
 
 		// Treat as an atom, grab and hold everything
-		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+		_header = Arrays.copyOfRange(source, start, start+8);
 		_type = LittleEndian.getUShort(_header,2);
 
 		// Try to make sense of the data part:
@@ -115,8 +115,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 		//   count * 32 bit offsets
 		// Repeat as many times as you have data
 		_slideLocations = new HashMap<>();
-		_ptrData = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
-		System.arraycopy(source,start+8,_ptrData,0,_ptrData.length);
+		_ptrData = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
 
 		int pos = 0;
 		while(pos < _ptrData.length) {
@@ -127,7 +126,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 			// Remaining 12 bits = offset count
             int offset_no = persistIdFld.getValue(info);
 			int offset_count = cntPersistFld.getValue(info);
-			
+
 			// Wind on by the 4 byte info header
 			pos += 4;
 
@@ -145,13 +144,13 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 
     /**
      *  remove all slide references
-     *  
+     *
      *  Convenience method provided, for easier reviewing of invocations
      */
     public void clear() {
         _slideLocations.clear();
     }
-    
+
     /**
      * Adds a new slide, notes or similar, to be looked up by this.
      */
@@ -187,7 +186,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 
 	private void normalizePersistDirectory() {
         TreeMap<Integer,Integer> orderedSlideLocations = new TreeMap<>(_slideLocations);
-        
+
         @SuppressWarnings("resource")
         BufAccessBAOS bos = new BufAccessBAOS(); // NOSONAR
         byte[] intbuf = new byte[4];
@@ -200,7 +199,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
                 // Building the info block
                 // First 20 bits = offset number = slide ID (persistIdFld, i.e. first slide ID of a continuous group)
                 // Remaining 12 bits = offset count = 1 (cntPersistFld, i.e. continuous entries in a group)
-                
+
                 if (lastSlideId+1 == nextSlideId) {
                     // use existing PersistDirectoryEntry, need to increase entry count
                     assert(lastPersistEntry != -1);
@@ -225,14 +224,14 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
                 throw new HSLFException(e);
             }
         }
-        
+
         // Save the new ptr data
         _ptrData = bos.toByteArray();
 
         // Update the atom header
         LittleEndian.putInt(_header,4,bos.size());
 	}
-	
+
 	/**
 	 * Write the contents of the record back, so it can be written
 	 *  to disk
@@ -243,7 +242,7 @@ public final class PersistPtrHolder extends PositionDependentRecordAtom
 		out.write(_header);
 		out.write(_ptrData);
 	}
-	
+
     private static class BufAccessBAOS extends ByteArrayOutputStream {
         public byte[] getBuf() {
             return buf;

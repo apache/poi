@@ -39,7 +39,7 @@ public class ExcelToHtmlUtils extends AbstractExcelUtils {
      * Creates a map (i.e. two-dimensional array) filled with ranges. Allow fast
      * retrieving {@link CellRangeAddress} of any cell, if cell is contained in
      * range.
-     * 
+     *
      * @see #getMergedRange(CellRangeAddress[][], int, int)
      */
     public static CellRangeAddress[][] buildMergedRangesMap( Sheet sheet ) {
@@ -47,10 +47,7 @@ public class ExcelToHtmlUtils extends AbstractExcelUtils {
         for ( final CellRangeAddress cellRangeAddress : sheet.getMergedRegions() ) {
             final int requiredHeight = cellRangeAddress.getLastRow() + 1;
             if ( mergedRanges.length < requiredHeight ) {
-                CellRangeAddress[][] newArray = new CellRangeAddress[requiredHeight][];
-                System.arraycopy( mergedRanges, 0, newArray, 0,
-                        mergedRanges.length );
-                mergedRanges = newArray;
+                mergedRanges = Arrays.copyOf(mergedRanges, requiredHeight, CellRangeAddress[][].class);
             }
 
             for ( int r = cellRangeAddress.getFirstRow(); r <= cellRangeAddress
@@ -63,14 +60,9 @@ public class ExcelToHtmlUtils extends AbstractExcelUtils {
                     mergedRanges[r] = rowMerged;
                 } else {
                     final int rowMergedLength = rowMerged.length;
-                    if ( rowMergedLength < requiredWidth )
-                    {
-                        final CellRangeAddress[] newRow = new CellRangeAddress[requiredWidth];
-                        System.arraycopy( rowMerged, 0, newRow, 0,
-                                rowMergedLength );
-
-                        mergedRanges[r] = newRow;
-                        rowMerged = newRow;
+                    if ( rowMergedLength < requiredWidth ) {
+                        rowMerged = mergedRanges[r] =
+                            Arrays.copyOf(rowMerged, requiredWidth, CellRangeAddress[].class);
                     }
                 }
 

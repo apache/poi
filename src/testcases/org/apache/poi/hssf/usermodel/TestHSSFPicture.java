@@ -21,6 +21,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
@@ -279,8 +280,7 @@ public final class TestHSSFPicture extends BaseTestPicture {
                 byte[] pictureDataOut = wb2.getAllPictures().get(0).getData();
                 assertArrayEquals(pictureDataEmf, pictureDataOut);
 
-                byte[] wmfNoHeader = new byte[pictureDataWmf.length - 22];
-                System.arraycopy(pictureDataWmf, 22, wmfNoHeader, 0, pictureDataWmf.length - 22);
+                byte[] wmfNoHeader = Arrays.copyOfRange(pictureDataWmf, 22, pictureDataWmf.length);
                 pictureDataOut = wb2.getAllPictures().get(2).getData();
                 assertArrayEquals(wmfNoHeader, pictureDataOut);
             }

@@ -20,6 +20,7 @@ package org.apache.poi.hslf.record;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -50,12 +51,10 @@ public final class PPDrawingGroup extends RecordAtom {
 
     protected PPDrawingGroup(byte[] source, int start, int len) {
         // Get the header
-        _header = new byte[8];
-        System.arraycopy(source,start,_header,0,8);
+        _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the contents for now
-        byte[] contents = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
-        System.arraycopy(source,start,contents,0,len);
+        byte[] contents = IOUtils.safelyClone(source, start, len, MAX_RECORD_LENGTH);
 
         DefaultEscherRecordFactory erf = new HSLFEscherRecordFactory();
         EscherRecord child = erf.createRecord(contents, 0);

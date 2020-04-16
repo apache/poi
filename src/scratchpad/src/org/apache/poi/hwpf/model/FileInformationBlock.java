@@ -111,7 +111,6 @@ public final class FileInformationBlock
 
         _cbRgFcLcb = LittleEndian.getUShort( mainDocument, offset );
         offset += LittleEndianConsts.SHORT_SIZE;
-        assert offset == 154;
 
         // skip fibRgFcLcbBlob (read later at fillVariableFields)
         offset += _cbRgFcLcb * LittleEndianConsts.INT_SIZE * 2;
@@ -125,11 +124,8 @@ public final class FileInformationBlock
             offset += LittleEndianConsts.SHORT_SIZE;
 
             // first short is already read as _nFibNew
-            final int fibRgCswNewLength = ( _cswNew - 1 )
-                    * LittleEndianConsts.SHORT_SIZE;
-            _fibRgCswNew = IOUtils.safelyAllocate(fibRgCswNewLength, MAX_RECORD_LENGTH);
-            LittleEndian.getByteArray( mainDocument, offset, fibRgCswNewLength, MAX_RECORD_LENGTH );
-            offset += fibRgCswNewLength;
+            final int fibRgCswNewLength = ( _cswNew - 1 ) * LittleEndianConsts.SHORT_SIZE;
+            _fibRgCswNew = IOUtils.safelyClone(mainDocument, offset, fibRgCswNewLength, MAX_RECORD_LENGTH);
         }
         else
         {

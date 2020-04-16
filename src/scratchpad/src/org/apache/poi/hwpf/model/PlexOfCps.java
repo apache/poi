@@ -128,9 +128,7 @@ public final class PlexOfCps {
         int start = LittleEndian.getInt(buf, offset + getIntOffset(index));
         int end = LittleEndian.getInt(buf, offset + getIntOffset(index + 1));
 
-        byte[] struct = IOUtils.safelyAllocate(_cbStruct, MAX_RECORD_LENGTH);
-        System.arraycopy(buf, offset + getStructOffset(index), struct, 0,
-                _cbStruct);
+        byte[] struct = IOUtils.safelyClone(buf, offset + getStructOffset(index), _cbStruct, MAX_RECORD_LENGTH);
 
         return new GenericPropertyNode(start, end, struct);
     }

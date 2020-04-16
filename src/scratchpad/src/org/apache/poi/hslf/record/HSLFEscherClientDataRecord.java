@@ -68,8 +68,7 @@ public class HSLFEscherClientDataRecord extends EscherClientDataRecord {
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
-        byte[] remainingData = IOUtils.safelyAllocate(bytesRemaining, MAX_RECORD_LENGTH);
-        System.arraycopy(data, offset+8, remainingData, 0, bytesRemaining);
+        byte[] remainingData = IOUtils.safelyClone(data,  offset+8,  bytesRemaining, MAX_RECORD_LENGTH);
         setRemainingData(remainingData);
         return bytesRemaining + 8;
     }

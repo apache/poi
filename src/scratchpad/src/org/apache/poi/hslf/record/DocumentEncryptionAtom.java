@@ -20,6 +20,7 @@ package org.apache.poi.hslf.record;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -51,8 +52,7 @@ public final class DocumentEncryptionAtom extends PositionDependentRecordAtom {
 	 */
 	protected DocumentEncryptionAtom(byte[] source, int start, int len) {
 		// Get the header
-		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+		_header = Arrays.copyOfRange(source,start,start+8);
 
 		ByteArrayInputStream bis = new ByteArrayInputStream(source, start+8, len-8);
 		try (LittleEndianInputStream leis = new LittleEndianInputStream(bis)) {
@@ -67,10 +67,10 @@ public final class DocumentEncryptionAtom extends PositionDependentRecordAtom {
 	    LittleEndian.putShort(_header, 0, (short)0x000F);
 	    LittleEndian.putShort(_header, 2, (short)_type);
 	    // record length not yet known ...
-	    
+
 	    ei = new EncryptionInfo(EncryptionMode.cryptoAPI);
 	}
-	
+
 	/**
 	 * Initializes the encryption settings
 	 *
@@ -79,7 +79,7 @@ public final class DocumentEncryptionAtom extends PositionDependentRecordAtom {
 	public void initializeEncryptionInfo(int keyBits) {
 	    ei = new EncryptionInfo(EncryptionMode.cryptoAPI, CipherAlgorithm.rc4, HashAlgorithm.sha1, keyBits, -1, null);
 	}
-	
+
 	/**
 	 * Return the length of the encryption key, in bits
 	 */
@@ -100,8 +100,8 @@ public final class DocumentEncryptionAtom extends PositionDependentRecordAtom {
 	public EncryptionInfo getEncryptionInfo() {
 	    return ei;
 	}
-	
-	
+
+
 	/**
 	 * We are of type 12052
 	 */
@@ -119,10 +119,10 @@ public final class DocumentEncryptionAtom extends PositionDependentRecordAtom {
 		bos.writeShort(ei.getVersionMajor());
 		bos.writeShort(ei.getVersionMinor());
 		bos.writeInt(ei.getEncryptionFlags());
-		
+
 		((CryptoAPIEncryptionHeader)ei.getHeader()).write(bos);
 		((CryptoAPIEncryptionVerifier)ei.getVerifier()).write(bos);
-		
+
         // Header
 		LittleEndian.putInt(_header, 4, bos.getWriteIndex());
         out.write(_header);

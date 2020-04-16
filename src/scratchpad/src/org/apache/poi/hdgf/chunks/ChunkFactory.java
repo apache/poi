@@ -188,8 +188,7 @@ public final class ChunkFactory {
 		}
 
 		// Now, create the chunk
-		byte[] contents = IOUtils.safelyAllocate(header.getLength(), MAX_RECORD_LENGTH);
-		System.arraycopy(data, offset+header.getSizeInBytes(), contents, 0, contents.length);
+		byte[] contents = IOUtils.safelyClone(data, offset+header.getSizeInBytes(), header.getLength(), MAX_RECORD_LENGTH);
 		Chunk chunk = new Chunk(header, trailer, separator, contents);
 
 		// Feed in the stuff from  chunks_parse_cmds.tbl

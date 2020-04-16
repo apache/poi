@@ -101,8 +101,7 @@ public class TextPieceTable implements CharIndexTranslator {
             int textSizeBytes = textSizeChars * multiple;
 
             // Grab the data that makes up the piece
-            byte[] buf = IOUtils.safelyAllocate(textSizeBytes, MAX_RECORD_LENGTH);
-            System.arraycopy(documentStream, start, buf, 0, textSizeBytes);
+            byte[] buf = IOUtils.safelyClone(documentStream, start, textSizeBytes, MAX_RECORD_LENGTH);
 
             // And now build the piece
             final TextPiece newTextPiece = newTextPiece(nodeStartChars, nodeEndChars, buf,

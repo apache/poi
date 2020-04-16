@@ -19,10 +19,10 @@ package org.apache.poi.poifs.property;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.storage.RawDataUtil;
@@ -116,9 +116,7 @@ public final class TestRootProperty {
 			String sClsId) {
 		RootProperty property = new RootProperty(index, input, offset);
 		ByteArrayOutputStream stream = new ByteArrayOutputStream(128);
-		byte[] expected = new byte[128];
-
-		System.arraycopy(input, offset, expected, 0, 128);
+		byte[] expected = Arrays.copyOfRange(input, offset, offset+128);
 		try {
 			property.writeData(stream);
 		} catch (IOException e) {

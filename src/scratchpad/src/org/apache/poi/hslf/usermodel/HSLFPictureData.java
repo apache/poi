@@ -21,6 +21,7 @@ import java.awt.Dimension;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.security.MessageDigest;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -129,9 +130,7 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
      * Returns 16-byte checksum of this picture
      */
     public byte[] getUID(){
-        byte[] uid = new byte[16];
-        System.arraycopy(rawdata, 0, uid, 0, uid.length);
-        return uid;
+        return Arrays.copyOf(rawdata, 16);
     }
 
     @Override

@@ -19,6 +19,7 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -30,7 +31,7 @@ import org.apache.poi.util.LittleEndian;
  */
 public final class VBAInfoAtom extends RecordAtom {
     private static final long _type = RecordTypes.VBAInfoAtom.typeID;
-    
+
     /**
      * Record header.
      */
@@ -44,7 +45,7 @@ public final class VBAInfoAtom extends RecordAtom {
     private long version;
 
     /**
-     * Constructs an empty atom - not yet supported 
+     * Constructs an empty atom - not yet supported
      */
     private VBAInfoAtom() {
         _header = new byte[8];
@@ -54,7 +55,7 @@ public final class VBAInfoAtom extends RecordAtom {
         hasMacros = true;
         version = 2;
     }
-    
+
     /**
      * Constructs the vba atom record from its source data.
      *
@@ -64,8 +65,7 @@ public final class VBAInfoAtom extends RecordAtom {
      */
     public VBAInfoAtom(byte[] source, int start, int len) {
         // Get the header.
-        _header = new byte[8];
-        System.arraycopy(source,start,_header,0,8);
+        _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the record data.
         persistIdRef = LittleEndian.getUInt(source, start+8);

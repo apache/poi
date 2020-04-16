@@ -25,6 +25,7 @@ import java.util.List;
 
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
@@ -56,7 +57,7 @@ public class ComplexFileTable {
             offset++;
             int size = LittleEndian.getShort(tableStream, offset);
             offset += LittleEndianConsts.SHORT_SIZE;
-            byte[] bs = LittleEndian.getByteArray(tableStream, offset, size, MAX_RECORD_LENGTH);
+            byte[] bs = IOUtils.safelyClone(tableStream, offset, size, MAX_RECORD_LENGTH);
             offset += size;
 
             SprmBuffer sprmBuffer = new SprmBuffer(bs, false, 0);

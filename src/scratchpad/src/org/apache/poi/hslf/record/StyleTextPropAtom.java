@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -130,13 +131,11 @@ public final class StyleTextPropAtom extends RecordAtom {
         }
 
         // Get the header
-        _header = new byte[8];
-        System.arraycopy(source,start,_header,0,8);
+        _header = Arrays.copyOfRange(source, start, start+8);
 
         // Save the contents of the atom, until we're asked to go and
         //  decode them (via a call to setParentTextSize(int)
-        rawContents = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
-        System.arraycopy(source,start+8,rawContents,0,rawContents.length);
+        rawContents = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
         reserved = new byte[0];
 
         // Set empty lists, ready for when they call setParentTextSize
@@ -289,8 +288,7 @@ public final class StyleTextPropAtom extends RecordAtom {
 
         // Handle anything left over
         if(pos < rawContents.length) {
-            reserved = IOUtils.safelyAllocate(rawContents.length-pos, rawContents.length);
-            System.arraycopy(rawContents,pos,reserved,0,reserved.length);
+            reserved = IOUtils.safelyClone(rawContents, pos, rawContents.length-pos, rawContents.length);
         }
 
         initialised = true;

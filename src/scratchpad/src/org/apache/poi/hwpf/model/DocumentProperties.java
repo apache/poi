@@ -23,11 +23,10 @@ import java.io.IOException;
 import org.apache.poi.hwpf.model.types.DOPAbstractType;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.LittleEndian;
 
 /**
  * Comment me
- * 
+ *
  * @author Ryan Ackley
  */
 @Internal
@@ -54,8 +53,7 @@ public final class DocumentProperties extends DOPAbstractType
         final int supportedSize = DOPAbstractType.getSize();
         if ( length != supportedSize )
         {
-            this._preserved = LittleEndian.getByteArray( tableStream, offset
-                    + supportedSize, length - supportedSize, MAX_RECORD_LENGTH );
+            this._preserved = IOUtils.safelyClone( tableStream, offset + supportedSize, length - supportedSize, MAX_RECORD_LENGTH );
         }
         else
         {

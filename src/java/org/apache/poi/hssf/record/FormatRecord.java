@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -151,8 +152,7 @@ public final class FormatRecord extends StandardRecord {
         //there can be a remaining byte (without proper final '00')
         //that should be read as a byte
         if (ris.available() == 1) {
-            char[] tmp = new char[buf.length+1];
-            System.arraycopy(buf, 0, tmp, 0, buf.length);
+            char[] tmp = Arrays.copyOf(buf, buf.length+1);
             tmp[buf.length] = (char)ris.readUByte();
             buf = tmp;
         }

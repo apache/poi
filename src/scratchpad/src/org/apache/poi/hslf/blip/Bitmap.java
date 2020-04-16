@@ -39,9 +39,7 @@ public abstract class Bitmap extends HSLFPictureData {
     public byte[] getData(){
         byte[] rawdata = getRawData();
         int prefixLen = 16*getUIDInstanceCount()+1;
-        byte[] imgdata = IOUtils.safelyAllocate(rawdata.length-prefixLen, rawdata.length);
-        System.arraycopy(rawdata, prefixLen, imgdata, 0, imgdata.length);
-        return imgdata;
+        return IOUtils.safelyClone(rawdata, prefixLen, rawdata.length-prefixLen, rawdata.length);
     }
 
     @Override

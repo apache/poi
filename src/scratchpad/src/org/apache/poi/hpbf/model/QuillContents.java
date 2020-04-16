@@ -69,8 +69,7 @@ public final class QuillContents extends HPBFPart {
 				int from = (int)LittleEndian.getUInt(data, offset+16);
 				int len = (int)LittleEndian.getUInt(data, offset+20);
 
-				byte[] bitData = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
-				System.arraycopy(data, from, bitData, 0, len);
+				byte[] bitData = IOUtils.safelyClone(data, from, len, MAX_RECORD_LENGTH);
 
 				// Create
 				if(bitType.equals("TEXT")) {

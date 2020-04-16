@@ -21,7 +21,8 @@ package org.apache.poi.hwpf.model.types;
 
 import java.util.Arrays;
 
-import org.apache.poi.util.*;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndian;
 
 /**
  * The PICF structure specifies the type of a picture, as well as the size of the
@@ -29,17 +30,17 @@ import org.apache.poi.util.*;
         from Microsoft Office Word 97-2007
         Binary File Format and [MS-DOC] - v20110608 Word (.doc)
         Binary File Format
-    
+
  * <p>
  * NOTE: This source is automatically generated please do not modify this file.  Either subclass or
  *       remove the record in src/types/definitions.
  * <p>
- * This class is internal. It content or properties may change without notice 
+ * This class is internal. It content or properties may change without notice
  * due to changes in our knowledge of internal Microsoft Word binary structures.
 
  * @author Sergey Vladimirov; according to Microsoft Office Word 97-2007 Binary File Format
         Specification [*.doc] and [MS-DOC] - v20110608 Word (.doc) Binary File Format
-    
+
  */
 @Internal
 public abstract class PICFAbstractType
@@ -103,10 +104,10 @@ public abstract class PICFAbstractType
         field_18_dyaReserved2          = LittleEndian.getShort( data, 0x2a + offset );
         field_19_fReserved             = data[ 0x2c + offset ];
         field_20_bpp                   = data[ 0x2d + offset ];
-        field_21_brcTop80              = LittleEndian.getByteArray( data, 0x2e + offset,4 );
-        field_22_brcLeft80             = LittleEndian.getByteArray( data, 0x32 + offset,4 );
-        field_23_brcBottom80           = LittleEndian.getByteArray( data, 0x36 + offset,4 );
-        field_24_brcRight80            = LittleEndian.getByteArray( data, 0x3a + offset,4 );
+        field_21_brcTop80              = Arrays.copyOfRange( data, 0x2e + offset, 0x2e + offset + 4 );
+        field_22_brcLeft80             = Arrays.copyOfRange( data, 0x32 + offset, 0x32 + offset + 4 );
+        field_23_brcBottom80           = Arrays.copyOfRange( data, 0x36 + offset, 0x36 + offset + 4 );
+        field_24_brcRight80            = Arrays.copyOfRange( data, 0x3a + offset, 0x3a + offset + 4 );
         field_25_dxaReserved3          = LittleEndian.getShort( data, 0x3e + offset );
         field_26_dyaReserved3          = LittleEndian.getShort( data, 0x40 + offset );
         field_27_cProps                = LittleEndian.getShort( data, 0x42 + offset );

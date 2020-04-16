@@ -23,6 +23,7 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.poi.util.IOUtils;
 import org.junit.Test;
@@ -93,8 +94,7 @@ public final class TestDocumentOutputStream {
     @Test
     public void testWrite3() throws IOException {
         byte[] input = data(50);
-        byte[] expected = new byte[25];
-        System.arraycopy(input, 1, expected, 0, 25);
+        byte[] expected = Arrays.copyOfRange(input, 1, 1+25);
 
         POIFSWriterListener l = (event) -> {
             DocumentOutputStream dstream = event.getStream();

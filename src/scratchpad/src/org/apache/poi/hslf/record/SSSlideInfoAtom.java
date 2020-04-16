@@ -21,6 +21,7 @@ import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -31,7 +32,7 @@ import org.apache.poi.util.LittleEndianConsts;
 /**
  * A SlideShowSlideInfo Atom (type 1017).<br>
  * <br>
- *  
+ *
  * An atom record that specifies which transition effects to perform
  * during a slide show, and how to advance to the next presentation slide.<br>
  * <br>
@@ -70,30 +71,30 @@ public class SSSlideInfoAtom extends RecordAtom {
      * manually advanced by the user during the slide show.
      */
     public static final int MANUAL_ADVANCE_BIT     = 1 << 0;
-    
+
     /**
-     * A bit that specifies whether the corresponding slide is 
+     * A bit that specifies whether the corresponding slide is
      * hidden and is not displayed during the slide show.
      */
     public static final int HIDDEN_BIT             = 1 << 2;
-    
+
     /**
      * A bit that specifies whether to play the sound specified by soundIfRef.
      */
     public static final int SOUND_BIT              = 1 << 4;
-    
+
     /**
      * A bit that specifies whether the sound specified by soundIdRef is
      * looped continuously when playing until the next sound plays.
      */
     public static final int LOOP_SOUND_BIT         = 1 << 6;
-    
+
     /**
-     * A bit that specifies whether to stop any currently playing 
+     * A bit that specifies whether to stop any currently playing
      * sound when the transition starts.
      */
     public static final int STOP_SOUND_BIT         = 1 << 8;
-    
+
     /**
      * A bit that specifies whether the slide will automatically
      * advance after slideTime milliseconds during the slide show.
@@ -102,10 +103,10 @@ public class SSSlideInfoAtom extends RecordAtom {
 
     /**
      * A bit that specifies whether to display the cursor during
-     * the slide show. 
+     * the slide show.
      */
     public static final int CURSOR_VISIBLE_BIT     = 1 << 12;
-    
+
     // public static int RESERVED1_BIT       = 1 << 1;
     // public static int RESERVED2_BIT       = 1 << 3;
     // public static int RESERVED3_BIT       = 1 << 5;
@@ -144,9 +145,9 @@ public class SSSlideInfoAtom extends RecordAtom {
      * less than or equal to 86399000. It MUST be ignored unless AUTO_ADVANCE_BIT is TRUE.
      */
     private int _slideTime;
-    
+
     /**
-     * A SoundIdRef that specifies which sound to play when the transition starts. 
+     * A SoundIdRef that specifies which sound to play when the transition starts.
      */
     private int _soundIdRef;
 
@@ -155,23 +156,23 @@ public class SSSlideInfoAtom extends RecordAtom {
      * there are further restriction and specification of this field.
      */
     private short _effectDirection; // byte
-    
+
     /**
      * A byte that specifies which transition is used when transitioning to the
-     * next presentation slide during a slide show. Exact rendering of any transition is 
+     * next presentation slide during a slide show. Exact rendering of any transition is
      * determined by the rendering application. As such, the same transition can have
      * many variations depending on the implementation.
      */
     private short _effectType; // byte
-    
+
     /**
      * Various flags - see bitmask for more details
      */
     private short _effectTransitionFlags;
-    
+
     /**
      * A byte value that specifies how long the transition takes to run.
-     * (0x00 = 0.75 seconds, 0x01 = 0.5 seconds, 0x02 = 0.25 seconds) 
+     * (0x00 = 0.75 seconds, 0x01 = 0.5 seconds, 0x02 = 0.25 seconds)
      */
     private short _speed; // byte
     private byte[] _unused; // 3-byte
@@ -184,18 +185,18 @@ public class SSSlideInfoAtom extends RecordAtom {
         LittleEndian.putShort(_header, 6, (short)0);
         _unused = new byte[3];
     }
-    
+
     public SSSlideInfoAtom(byte[] source, int offset, int len) {
         int ofs = offset;
 
         // Sanity Checking
         if(len != 24) len = 24;
         assert(source.length >= offset+len);
-        
+
         // Get the header
-        _header = LittleEndian.getByteArray(source,ofs,8);
+        _header = Arrays.copyOfRange(source, ofs, ofs+8);
         ofs += _header.length;
-        
+
         assert(LittleEndian.getShort(_header, 0) == 0);
         assert(LittleEndian.getShort(_header, 2) == RecordTypes.SSSlideInfoAtom.typeID);
         assert(LittleEndian.getShort(_header, 4) == 0x10);
@@ -214,7 +215,7 @@ public class SSSlideInfoAtom extends RecordAtom {
         ofs += LittleEndianConsts.SHORT_SIZE;
         _speed = LittleEndian.getUByte(source, ofs);
         ofs += LittleEndianConsts.BYTE_SIZE;
-        _unused = LittleEndian.getByteArray(source,ofs,3);
+        _unused = Arrays.copyOfRange(source,ofs,ofs+3);
     }
 
     /**
@@ -232,7 +233,7 @@ public class SSSlideInfoAtom extends RecordAtom {
         out.write(byteBuf);
         LittleEndian.putUByte(byteBuf, 0, _effectType);
         out.write(byteBuf);
-        
+
         writeLittleEndian(_effectTransitionFlags, out);
         LittleEndian.putUByte(byteBuf, 0, _speed);
         out.write(byteBuf);
@@ -240,7 +241,7 @@ public class SSSlideInfoAtom extends RecordAtom {
         assert(_unused.length == 3);
         out.write(_unused);
     }
-    
+
     /**
      * We are of type 1017
      */
@@ -303,7 +304,7 @@ public class SSSlideInfoAtom extends RecordAtom {
     public boolean getEffectTransitionFlagByBit(int bitmask) {
         return ((_effectTransitionFlags & bitmask) != 0);
     }
-    
+
     public short getSpeed() {
         return _speed;
     }

@@ -19,6 +19,7 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -45,7 +46,7 @@ public final class StyleTextProp9Atom extends RecordAtom {
     private short version;
     private short recordId;
     private int length;
-    
+
     /**
      * Constructs the link related atom record from its
      *  source data.
@@ -57,35 +58,33 @@ public final class StyleTextProp9Atom extends RecordAtom {
     protected StyleTextProp9Atom(byte[] source, int start, int len) {
         // Get the header.
         final List<TextPFException9> schemes = new LinkedList<>();
-        header = new byte[8];
-        System.arraycopy(source,start, header,0,8);
+        header = Arrays.copyOfRange(source, start, start+8);
         this.version  = LittleEndian.getShort(header, 0);
         this.recordId = LittleEndian.getShort(header, 2);
         this.length   = LittleEndian.getInt(header, 4);
-        
+
         // Get the record data.
-        data = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
-        System.arraycopy(source, start+8, data, 0, len-8);
+        data = IOUtils.safelyClone(source,  start+8, len-8, MAX_RECORD_LENGTH);
         for (int i = 0; i < data.length; ) {
             final TextPFException9 item = new TextPFException9(data, i);
             schemes.add(item);
             i += item.getRecordLength();
-            
+
             if (i+4 >= data.length) {
                 break;
             }
             int textCfException9 = LittleEndian.getInt(data, i );
             i += 4;
             //TODO analyze textCfException when have some test data
-            
+
             if (i+4 >= data.length) {
                 break;
             }
             int textSiException = LittleEndian.getInt(data, i );
             i += 4;//TextCFException9 + SIException
-            
-            if (0 != (textSiException & 0x40)) { 
-                i += 2; //skip fBidi 
+
+            if (0 != (textSiException & 0x40)) {
+                i += 2; //skip fBidi
             }
             if (i+4 >= data.length) {
                 break;

@@ -36,8 +36,8 @@ import org.apache.poi.util.Units;
  */
 public final class PICT extends Metafile {
     private static final POILogger LOG = POILogFactory.getLogger(PICT.class);
-    
-    
+
+
     @Override
     public byte[] getData(){
         byte[] rawdata = getRawData();
@@ -95,7 +95,7 @@ public final class PICT extends Metafile {
         // skip the first 512 bytes - they are MAC specific crap
         final int nOffset = ImageHeaderPICT.PICT_HEADER_OFFSET;
         ImageHeaderPICT nHeader = new ImageHeaderPICT(data, nOffset);
-        
+
         Header header = new Header();
         int wmfSize = data.length - nOffset;
         header.setWmfSize(wmfSize);
@@ -144,12 +144,12 @@ public final class PICT extends Metafile {
                 break;
             default:
                 throw new IllegalArgumentException(signature+" is not a valid instance/signature value for PICT");
-        }        
+        }
     }
-    
-    
+
+
     /*
-     * initialize a smaller piece of the array and use the System.arraycopy 
+     * initialize a smaller piece of the array and use the System.arraycopy
      * call to fill in the rest of the array in an expanding binary fashion
      */
     private static void bytefill(byte[] array, byte value) {
@@ -161,7 +161,7 @@ public final class PICT extends Metafile {
         }
 
         for (int i = 1; i < len; i += i) {
-            System.arraycopy(array, 0, array, i, ((len - i) < i) ? (len - i) : i);
+            System.arraycopy(array, 0, array, i, Math.min(len - i, i));
         }
     }
 }

@@ -19,6 +19,7 @@ package org.apache.poi.hslf.record;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
 
@@ -30,15 +31,15 @@ import org.apache.poi.util.LittleEndian;
 public class ExObjList extends RecordContainer {
 	private byte[] _header;
 	private static final long _type = RecordTypes.ExObjList.typeID;
-	
+
 	// Links to our more interesting children
-	private ExObjListAtom exObjListAtom; 
-	
-	/** 
+	private ExObjListAtom exObjListAtom;
+
+	/**
 	 * Returns the ExObjListAtom of this list
-	 */ 
+	 */
 	public ExObjListAtom getExObjListAtom() { return exObjListAtom; }
-	
+
 	/**
 	 * Returns all the ExHyperlinks
 	 */
@@ -53,13 +54,12 @@ public class ExObjList extends RecordContainer {
 		return links.toArray(new ExHyperlink[0]);
 	}
 
-	/** 
+	/**
 	 * Set things up, and find our more interesting children
 	 */
 	protected ExObjList(byte[] source, int start, int len) {
 		// Grab the header
-		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+		_header = Arrays.copyOfRange(source, start, start+8);
 
 		// Find our children
 		_children = Record.findChildRecords(source,start+8,len-8);
@@ -70,7 +70,7 @@ public class ExObjList extends RecordContainer {
 	 * Go through our child records, picking out the ones that are
 	 *  interesting, and saving those for use by the easy helper
 	 *  methods.
-	 */	
+	 */
 	private void findInterestingChildren() {
 		// First child should be the atom
 		if(_children[0] instanceof ExObjListAtom) {
@@ -79,18 +79,18 @@ public class ExObjList extends RecordContainer {
 			throw new IllegalStateException("First child record wasn't a ExObjListAtom, was of type " + _children[0].getRecordType());
 		}
 	}
-	
+
 	/**
 	 * Create a new ExObjList, with blank fields
 	 */
 	public ExObjList() {
 		_header = new byte[8];
 		_children = new org.apache.poi.hslf.record.Record[1];
-		
+
 		// Setup our header block
 		_header[0] = 0x0f; // We are a container record
 		LittleEndian.putShort(_header, 2, (short)_type);
-		
+
 		// Setup our child records
 		_children[0] = new ExObjListAtom();
 		findInterestingChildren();

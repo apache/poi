@@ -26,6 +26,7 @@ import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator;
@@ -85,8 +86,7 @@ public final class TestCFRuleRecord {
             byte[] serializedRecord = record.serialize();
 
             // Strip header
-            byte[] recordData = new byte[serializedRecord.length - 4];
-            System.arraycopy(serializedRecord, 4, recordData, 0, recordData.length);
+            byte[] recordData = Arrays.copyOfRange(serializedRecord, 4, serializedRecord.length);
 
             // Deserialize
             record = new CFRuleRecord(TestcaseRecordInputStream.create(CFRuleRecord.sid, recordData));
@@ -109,8 +109,7 @@ public final class TestCFRuleRecord {
             byte[] serializedRecord = record.serialize();
 
             // Strip header
-            byte[] recordData = new byte[serializedRecord.length - 4];
-            System.arraycopy(serializedRecord, 4, recordData, 0, recordData.length);
+            byte[] recordData = Arrays.copyOfRange(serializedRecord, 4, serializedRecord.length);
 
             // Deserialize
             record = new CFRule12Record(TestcaseRecordInputStream.create(CFRule12Record.sid, recordData));
@@ -140,8 +139,7 @@ public final class TestCFRuleRecord {
             byte[] serializedRecord = record.serialize();
 
             // Strip header
-            byte[] recordData = new byte[serializedRecord.length - 4];
-            System.arraycopy(serializedRecord, 4, recordData, 0, recordData.length);
+            byte[] recordData = Arrays.copyOfRange(serializedRecord, 4, serializedRecord.length);
 
             // Deserialize
             record = new CFRule12Record(TestcaseRecordInputStream.create(CFRule12Record.sid, recordData));

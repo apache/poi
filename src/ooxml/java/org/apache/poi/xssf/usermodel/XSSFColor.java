@@ -41,7 +41,7 @@ public class XSSFColor extends ExtendedColor {
         //noinspection deprecation
         return color == null ? null : new XSSFColor(color, map);
     }
-    
+
     /**
      * Create an instance of XSSFColor from the supplied XML bean, with default color indexes
      * @param color The {@link CTColor} to use as color-value.
@@ -52,7 +52,7 @@ public class XSSFColor extends ExtendedColor {
     public XSSFColor(CTColor color) {
         this(color, new DefaultIndexedColorMap());
     }
-    
+
     /**
      * Create an instance of XSSFColor from the supplied XML bean, with the given color indexes
      * @param color The {@link CTColor} to use as color-value.
@@ -119,7 +119,7 @@ public class XSSFColor extends ExtendedColor {
         this(CTColor.Factory.newInstance(), colorMap);
         ctColor.setRgb(rgb);
     }
-    
+
     /**
      * @param indexedColor color index (Enum named for default colors)
      * @param colorMap The IndexedColorMap to use instead of the default one
@@ -167,7 +167,7 @@ public class XSSFColor extends ExtendedColor {
     public boolean isThemed() {
         return ctColor.isSetTheme();
     }
-    
+
     /**
      * @return true if the ctColor has a alpha
      */
@@ -215,14 +215,8 @@ public class XSSFColor extends ExtendedColor {
           return null;
       }
 
-      if(rgb.length == 4) {
-         // Need to trim off the alpha
-         byte[] tmp = new byte[3];
-         System.arraycopy(rgb, 1, tmp, 0, 3);
-         return tmp;
-      } else {
-         return rgb;
-      }
+       // Need to trim off the alpha
+       return rgb.length == 4 ? Arrays.copyOfRange(rgb, 1, 4) : rgb;
    }
 
    /**
@@ -258,7 +252,7 @@ public class XSSFColor extends ExtendedColor {
        }
        return null;
    }
-   
+
     /**
      * Standard Alpha Red Green Blue ctColor value (ARGB).
      */
@@ -403,7 +397,7 @@ public class XSSFColor extends ExtendedColor {
         }
         return (XSSFColor)color;
     }
-    
+
     @Override
     public int hashCode(){
         return ctColor.toString().hashCode();
@@ -437,7 +431,7 @@ public class XSSFColor extends ExtendedColor {
     private boolean sameAuto(XSSFColor other) {
         return isAuto() == other.isAuto();
     }
-    
+
     @Override
     public boolean equals(Object o){
         if(!(o instanceof XSSFColor)) {
@@ -445,7 +439,7 @@ public class XSSFColor extends ExtendedColor {
         }
 
         XSSFColor other = (XSSFColor)o;
-        
+
         // Compare each field in ctColor.
         // Cannot compare ctColor's XML string representation because equivalent
         // colors may have different relation namespace URI's

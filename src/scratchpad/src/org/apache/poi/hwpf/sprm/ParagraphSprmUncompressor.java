@@ -18,6 +18,7 @@
 package org.apache.poi.hwpf.sprm;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -314,11 +315,9 @@ public final class ParagraphSprmUncompressor
       case 0x3b:
         //obsolete
         break;
-      case 0x3e:
-      {
-        byte[] buf = new byte[sprm.size() - 3];
-        System.arraycopy(buf, 0, sprm.getGrpprl(), sprm.getGrpprlOffset(),
-                         buf.length);
+      case 0x3e: {
+        // TODO: REMOVEME
+        byte[] buf = Arrays.copyOfRange(sprm.getGrpprl(), sprm.getGrpprlOffset(), sprm.getGrpprlOffset() + (sprm.size() - 3));
         newPAP.setAnld(buf);
         break;
       }

@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.util.HexRead;
@@ -77,8 +78,7 @@ public final class TestObjRecord {
 
         byte [] recordBytes = record.serialize();
         assertEquals(26, recordBytes.length - 4);
-        byte[] subData = new byte[recdata.length];
-        System.arraycopy(recordBytes, 4, subData, 0, subData.length);
+        byte[] subData = Arrays.copyOfRange(recordBytes, 4, 4+recdata.length);
         assertArrayEquals(recdata, subData);
     }
 
@@ -99,8 +99,7 @@ public final class TestObjRecord {
         //serialize and read again
         byte [] recordBytes = record.serialize();
         //cut off the record header
-        byte [] bytes = new byte[recordBytes.length-4];
-        System.arraycopy(recordBytes, 4, bytes, 0, bytes.length);
+        byte [] bytes = Arrays.copyOfRange(recordBytes, 4, recordBytes.length);
 
         record = new ObjRecord(TestcaseRecordInputStream.create(ObjRecord.sid, bytes));
         List<SubRecord> subrecords = record.getSubRecords();

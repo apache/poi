@@ -192,17 +192,12 @@ public class CurrentUserAtom
 
 		// Grab the unicode username, if stored
 		int start = 28+(int)usernameLen+4;
-		int len = 2*(int)usernameLen;
 
-		if(_contents.length >= start+len) {
-			byte[] textBytes = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
-			System.arraycopy(_contents,start,textBytes,0,len);
-			lastEditUser = StringUtil.getFromUnicodeLE(textBytes);
+		if(_contents.length >= start+2*usernameLen) {
+			lastEditUser = StringUtil.getFromUnicodeLE(_contents, start, (int)usernameLen);
 		} else {
 			// Fake from the 8 bit version
-			byte[] textBytes = IOUtils.safelyAllocate(usernameLen, MAX_RECORD_LENGTH);
-			System.arraycopy(_contents,28,textBytes,0,(int)usernameLen);
-			lastEditUser = StringUtil.getFromCompressedUnicode(textBytes,0,(int)usernameLen);
+			lastEditUser = StringUtil.getFromCompressedUnicode(_contents, 28, (int)usernameLen);
 		}
 	}
 

@@ -72,9 +72,8 @@ public final class OldSectionTable extends SectionTable
         //  section properties, and we're trying to decode them as if they
         //  were the new ones, we sometimes "need" more data than we have.
         // As a workaround, have a few extra 0 bytes on the end!
-        byte[] buf = IOUtils.safelyAllocate(sepxSize+2, Short.MAX_VALUE+2);
         fileOffset += LittleEndianConsts.SHORT_SIZE;
-        System.arraycopy(documentStream, fileOffset, buf, 0, buf.length);
+        byte[] buf = IOUtils.safelyClone(documentStream, fileOffset, sepxSize+2, Short.MAX_VALUE+2);
         sepx = new SEPX(sed, startAt, endAt, buf);
       }
 

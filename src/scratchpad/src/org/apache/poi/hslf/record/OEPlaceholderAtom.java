@@ -19,6 +19,7 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -28,7 +29,7 @@ import org.apache.poi.util.LittleEndian;
 
 /**
  * OEPlaceholderAtom (3011).<p>
- * 
+ *
  * An atom record that specifies whether a shape is a placeholder shape.
  *
  * @see Placeholder
@@ -77,10 +78,8 @@ public final class OEPlaceholderAtom extends RecordAtom{
      * Build an instance of {@code OEPlaceholderAtom} from on-disk data
      */
 	protected OEPlaceholderAtom(byte[] source, int start, int len) {
-		_header = new byte[8];
-        int offset = start;
-        System.arraycopy(source,start,_header,0,8);
-        offset += _header.length;
+        _header = Arrays.copyOfRange(source, start, start+8);
+        int offset = start+8;
 
         placementId = LittleEndian.getInt(source, offset); offset += 4;
         placeholderId = LittleEndian.getUByte(source, offset); offset++;
@@ -96,7 +95,7 @@ public final class OEPlaceholderAtom extends RecordAtom{
 
     /**
      * Returns the placement Id.<p>
-     * 
+     *
      * The placement Id is a number assigned to the placeholder. It goes from -1 to the number of placeholders.
      * It SHOULD be unique among all PlacholderAtom records contained in the corresponding slide.
      * The value 0xFFFFFFFF specifies that the corresponding shape is not a placeholder shape.

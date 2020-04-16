@@ -62,7 +62,7 @@ public final class FontEntityAtom extends RecordAtom {
     /**
      * record header
      */
-    private final byte[] _header = new byte[8];
+    private final byte[] _header;
 
 	/**
      * record data
@@ -74,11 +74,10 @@ public final class FontEntityAtom extends RecordAtom {
      */
 	/* package */ FontEntityAtom(byte[] source, int start, int len) {
 		// Get the header
-		System.arraycopy(source,start,_header,0,8);
+        _header = Arrays.copyOfRange(source, start, start+8);
 
 		// Grab the record data
-		_recdata = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
-		System.arraycopy(source,start+8,_recdata,0,len-8);
+		_recdata = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
 	}
 
     /**
@@ -86,6 +85,7 @@ public final class FontEntityAtom extends RecordAtom {
      */
     public FontEntityAtom() {
         _recdata = new byte[68];
+        _header = new byte[8];
 
         LittleEndian.putShort(_header, 2, (short)getRecordType());
         LittleEndian.putInt(_header, 4, _recdata.length);

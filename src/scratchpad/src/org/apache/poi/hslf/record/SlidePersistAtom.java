@@ -21,6 +21,7 @@ import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -44,7 +45,7 @@ public final class SlidePersistAtom extends RecordAtom {
 	private static final String[] FLAGS_NAMES = { "HAS_SHAPES_OTHER_THAN_PLACEHOLDERS" };
 
 
-	private final byte[] _header = new byte[8];
+	private final byte[] _header;
 
 	/** Slide reference ID. Should correspond to the PersistPtr "sheet ID" of the matching slide/notes record */
 	private int refID;
@@ -91,7 +92,7 @@ public final class SlidePersistAtom extends RecordAtom {
 		if(len < 8) { len = 8; }
 
 		// Get the header
-		System.arraycopy(source,start,_header,0,8);
+		_header = Arrays.copyOfRange(source, start, start+8);
 
 		// Grab the reference ID
 		refID = LittleEndian.getInt(source,start+8);
@@ -107,14 +108,14 @@ public final class SlidePersistAtom extends RecordAtom {
 
 		// Finally you have typically 4 or 8 bytes of reserved fields,
 		//  all zero running from 24 bytes in to the end
-		reservedFields = IOUtils.safelyAllocate(len-24, MAX_RECORD_LENGTH);
-		System.arraycopy(source,start+24,reservedFields,0,reservedFields.length);
+		reservedFields = IOUtils.safelyClone(source,start+24, len-24, MAX_RECORD_LENGTH);
 	}
 
 	/**
 	 * Create a new SlidePersistAtom, for use with a new Slide
 	 */
 	public SlidePersistAtom() {
+		_header = new byte[8];
 		LittleEndian.putUShort(_header, 0, 0);
 		LittleEndian.putUShort(_header, 2, (int)_type);
 		LittleEndian.putInt(_header, 4, 20);

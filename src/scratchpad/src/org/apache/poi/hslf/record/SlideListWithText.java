@@ -20,6 +20,7 @@ package org.apache.poi.hslf.record;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.util.LittleEndian;
@@ -74,8 +75,7 @@ public final class SlideListWithText extends RecordContainer {
 	 */
 	protected SlideListWithText(byte[] source, int start, int len) {
 		// Grab the header
-		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+		_header = Arrays.copyOfRange(source, start, start+8);
 
 		// Find our children
 		_children = Record.findChildRecords(source,start+8,len-8);
@@ -96,8 +96,7 @@ public final class SlideListWithText extends RecordContainer {
 
 				// Create a SlideAtomsSets, not caring if they're empty
 				//if(emptySet) { continue; }
-				org.apache.poi.hslf.record.Record[] spaChildren = new org.apache.poi.hslf.record.Record[clen];
-				System.arraycopy(_children,i+1,spaChildren,0,clen);
+				org.apache.poi.hslf.record.Record[] spaChildren = Arrays.copyOfRange(_children,i+1, i+1+clen, org.apache.poi.hslf.record.Record[].class);
 				SlideAtomsSet set = new SlideAtomsSet((SlidePersistAtom)_children[i],spaChildren);
 				sets.add(set);
 

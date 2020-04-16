@@ -18,12 +18,13 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
 
 /**
- * This class represents the data of a link in the document. 
+ * This class represents the data of a link in the document.
  * @author Nick Burch
  */
 public class ExHyperlink extends RecordContainer {
@@ -35,12 +36,12 @@ public class ExHyperlink extends RecordContainer {
 	private ExHyperlinkAtom linkAtom;
 	private CString linkDetailsA;
 	private CString linkDetailsB;
-	
-	/** 
+
+	/**
 	 * Returns the ExHyperlinkAtom of this link
-	 */ 
+	 */
 	public ExHyperlinkAtom getExHyperlinkAtom() { return linkAtom; }
-	
+
 	/**
 	 * Returns the URL of the link.
      *
@@ -68,7 +69,7 @@ public class ExHyperlink extends RecordContainer {
 			linkDetailsB.setText(url);
 		}
 	}
-	
+
     public void setLinkOptions(int options) {
         if(linkDetailsB != null) {
             linkDetailsB.setOptions(options);
@@ -80,7 +81,7 @@ public class ExHyperlink extends RecordContainer {
             linkDetailsA.setText(title);
         }
     }
-    
+
 	/**
 	 * Get the link details (field A)
 	 */
@@ -94,13 +95,12 @@ public class ExHyperlink extends RecordContainer {
 		return linkDetailsB == null ? null : linkDetailsB.getText();
 	}
 
-	/** 
+	/**
 	 * Set things up, and find our more interesting children
 	 */
 	protected ExHyperlink(byte[] source, int start, int len) {
 		// Grab the header
-		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+		_header = Arrays.copyOfRange(source, start, start+8);
 
 		// Find our children
 		_children = Record.findChildRecords(source,start+8,len-8);
@@ -111,7 +111,7 @@ public class ExHyperlink extends RecordContainer {
 	 * Go through our child records, picking out the ones that are
 	 *  interesting, and saving those for use by the easy helper
 	 *  methods.
-	 */	
+	 */
 	private void findInterestingChildren() {
 
 		// First child should be the ExHyperlinkAtom
@@ -138,11 +138,11 @@ public class ExHyperlink extends RecordContainer {
 	public ExHyperlink() {
 		_header = new byte[8];
 		_children = new org.apache.poi.hslf.record.Record[3];
-		
+
 		// Setup our header block
 		_header[0] = 0x0f; // We are a container record
 		LittleEndian.putShort(_header, 2, (short)_type);
-		
+
 		// Setup our child records
 		CString csa = new CString();
 		CString csb = new CString();

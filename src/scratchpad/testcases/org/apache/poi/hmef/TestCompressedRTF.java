@@ -119,8 +119,7 @@ public final class TestCompressedRTF {
         MAPIRtfAttribute rtfAttr = (MAPIRtfAttribute) attr;
 
         // Truncate to header + flag + data for flag
-        byte[] data = new byte[16 + 12];
-        System.arraycopy(rtfAttr.getRawData(), 0, data, 0, data.length);
+        byte[] data = Arrays.copyOf(rtfAttr.getRawData(), 16 + 12);
 
         // Decompress it
         CompressedRTF comp = new CompressedRTF();

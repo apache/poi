@@ -74,7 +74,7 @@ public abstract class LVLFAbstractType
         field_1_iStartAt               = LittleEndian.getInt( data, 0x0 + offset );
         field_2_nfc                    = data[ 0x4 + offset ];
         field_3_info                   = data[ 0x5 + offset ];
-        field_4_rgbxchNums             = LittleEndian.getByteArray( data, 0x6 + offset,9 );
+        field_4_rgbxchNums             = Arrays.copyOfRange( data, 0x6 + offset, 0x6 + offset + 9 );
         field_5_ixchFollow             = data[ 0xf + offset ];
         field_6_dxaIndentSav           = LittleEndian.getInt( data, 0x10 + offset );
         field_7_unused2                = LittleEndian.getInt( data, 0x14 + offset );

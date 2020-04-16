@@ -20,6 +20,7 @@ package org.apache.poi.hslf.record;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -114,15 +115,13 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 	 */
 	PPDrawing(byte[] source, int start, int len) {
 		// Get the header
-		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+		_header = Arrays.copyOfRange(source, start, start+8);
 
 		// Get the type
 		_type = LittleEndian.getUShort(_header,2);
 
 		// Get the contents for now
-		final byte[] contents = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
-		System.arraycopy(source,start,contents,0,len);
+		final byte[] contents = IOUtils.safelyClone(source, start, len, MAX_RECORD_LENGTH);
 
 		// Build up a tree of Escher records contained within
 		final DefaultEscherRecordFactory erf = new HSLFEscherRecordFactory();
@@ -342,7 +341,7 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 		spContainer.addChildRecord(opt);
 
 		dgContainer.addChildRecord(spContainer);
-		
+
 		childRecords.add(dgContainer);
 	}
 
@@ -364,7 +363,7 @@ public final class PPDrawing extends RecordAtom implements Iterable<EscherRecord
 	public EscherContainerRecord getDgContainer() {
 		return (EscherContainerRecord)firstEscherRecord(this, EscherRecordTypes.DG_CONTAINER).orElse(null);
 	}
-	
+
 	/**
 	 * Return EscherDgRecord which keeps track of the number of shapes and shapeId in this drawing group
 	 *

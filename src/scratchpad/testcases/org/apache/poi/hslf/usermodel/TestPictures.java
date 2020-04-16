@@ -26,6 +26,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
@@ -49,7 +50,7 @@ import org.junit.Test;
  * @author Yegor Kozlov
  */
 public final class TestPictures {
-    private static POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+    private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
     /**
      * Test read/write Macintosh PICT
@@ -66,11 +67,11 @@ public final class TestPictures {
         Dimension nDim = nHeader.getSize();
         assertEquals(expWidth, nDim.getWidth(), 0);
         assertEquals(expHeight, nDim.getHeight(), 0);
-        
+
         Dimension dim = data.getImageDimensionInPixels();
         assertEquals(Units.pointsToPixel(expWidth), dim.getWidth(), 0);
         assertEquals(Units.pointsToPixel(expHeight), dim.getHeight(), 0);
-        
+
         HSLFPictureShape pict = new HSLFPictureShape(data);
         assertEquals(data.getIndex(), pict.getPictureIndex());
         slide.addShape(pict);
@@ -91,12 +92,12 @@ public final class TestPictures {
         //check picture data
         List<HSLFPictureData> pictures = ppt.getPictureData();
         assertEquals(1, pictures.size());
-        
+
         HSLFPictureData pd = pictures.get(0);
         dim = pd.getImageDimension();
         assertEquals(expWidth, dim.width);
         assertEquals(expHeight, dim.height);
-        
+
         //the Picture shape refers to the PictureData object in the Presentation
         assertEquals(pict.getPictureData(), pd);
 
@@ -107,10 +108,8 @@ public final class TestPictures {
         byte[] ppt_bytes = pd.getData();
         assertEquals(src_bytes.length, ppt_bytes.length);
         //in PICT the first 512 bytes are MAC specific and may not be preserved, ignore them
-        byte[] b1 = new byte[src_bytes.length-512];
-        System.arraycopy(src_bytes, 512, b1, 0, b1.length);
-        byte[] b2 = new byte[ppt_bytes.length-512];
-        System.arraycopy(ppt_bytes, 512, b2, 0, b2.length);
+        byte[] b1 = Arrays.copyOfRange(src_bytes, 512, src_bytes.length);
+        byte[] b2 = Arrays.copyOfRange(ppt_bytes, 512, ppt_bytes.length);
         assertArrayEquals(b1, b2);
     }
 
@@ -133,7 +132,7 @@ public final class TestPictures {
         Dimension dim = data.getImageDimensionInPixels();
         assertEquals(Units.pointsToPixel(expWidth), dim.getWidth(), 0);
         assertEquals(Units.pointsToPixel(expHeight), dim.getHeight(), 0);
-        
+
         HSLFPictureShape pict = new HSLFPictureShape(data);
         assertEquals(data.getIndex(), pict.getPictureIndex());
         slide.addShape(pict);
@@ -159,20 +158,18 @@ public final class TestPictures {
         dim = pd.getImageDimension();
         assertEquals(expWidth, dim.width);
         assertEquals(expHeight, dim.height);
-        
+
         //the Picture shape refers to the PictureData object in the Presentation
         assertEquals(pict.getPictureData(), pd);
-        
+
         assertEquals(PictureType.WMF, pd.getType());
         assertTrue(pd instanceof WMF);
         //compare the content of the initial file with what is stored in the PictureData
         byte[] ppt_bytes = pd.getData();
         assertEquals(src_bytes.length, ppt_bytes.length);
         //in WMF the first 22 bytes - is a metafile header
-        byte[] b1 = new byte[src_bytes.length-22];
-        System.arraycopy(src_bytes, 22, b1, 0, b1.length);
-        byte[] b2 = new byte[ppt_bytes.length-22];
-        System.arraycopy(ppt_bytes, 22, b2, 0, b2.length);
+        byte[] b1 = Arrays.copyOfRange(src_bytes, 22, src_bytes.length);
+        byte[] b2 = Arrays.copyOfRange(ppt_bytes, 22, ppt_bytes.length);
         assertArrayEquals(b1, b2);
     }
 
@@ -195,7 +192,7 @@ public final class TestPictures {
         Dimension dim = data.getImageDimensionInPixels();
         assertEquals(Units.pointsToPixel(expWidth), dim.getWidth(), 0);
         assertEquals(Units.pointsToPixel(expHeight), dim.getHeight(), 0);
-        
+
         HSLFPictureShape pict = new HSLFPictureShape(data);
         assertEquals(data.getIndex(), pict.getPictureIndex());
         slide.addShape(pict);
@@ -216,12 +213,12 @@ public final class TestPictures {
         //check picture data
         List<HSLFPictureData> pictures = ppt.getPictureData();
         assertEquals(1, pictures.size());
-        
+
         HSLFPictureData pd = pictures.get(0);
         dim = pd.getImageDimension();
         assertEquals(expWidth, dim.width);
         assertEquals(expHeight, dim.height);
-        
+
         //the Picture shape refers to the PictureData object in the Presentation
         assertEquals(pict.getPictureData(), pd);
 
@@ -393,10 +390,8 @@ public final class TestPictures {
         ppt_bytes = slTests.readFile("santa.wmf");
         assertEquals(src_bytes.length, ppt_bytes.length);
         //ignore the first 22 bytes - it is a WMF metafile header
-        b1 = new byte[src_bytes.length-22];
-        System.arraycopy(src_bytes, 22, b1, 0, b1.length);
-        b2 = new byte[ppt_bytes.length-22];
-        System.arraycopy(ppt_bytes, 22, b2, 0, b2.length);
+        b1 = Arrays.copyOfRange(src_bytes, 22, src_bytes.length);
+        b2 = Arrays.copyOfRange(ppt_bytes, 22, ppt_bytes.length);
         assertArrayEquals(b1, b2);
 
         pict = (HSLFPictureShape)slides.get(3).getShapes().get(0); //the forth slide contains PICT
@@ -407,10 +402,8 @@ public final class TestPictures {
         ppt_bytes = slTests.readFile("cow.pict");
         assertEquals(src_bytes.length, ppt_bytes.length);
         //ignore the first 512 bytes - it is a MAC specific crap
-        b1 = new byte[src_bytes.length-512];
-        System.arraycopy(src_bytes, 512, b1, 0, b1.length);
-        b2 = new byte[ppt_bytes.length-512];
-        System.arraycopy(ppt_bytes, 512, b2, 0, b2.length);
+        b1 = Arrays.copyOfRange(src_bytes, 512, src_bytes.length);
+        b2 = Arrays.copyOfRange(ppt_bytes, 512, ppt_bytes.length);
         assertArrayEquals(b1, b2);
 
         pict = (HSLFPictureShape)slides.get(4).getShapes().get(0); //the fifth slide contains EMF
@@ -457,7 +450,7 @@ public final class TestPictures {
         pdata = pict.getPictureData();
         assertTrue(pdata instanceof WMF);
         assertEquals(PictureType.WMF, pdata.getType());
-        
+
         ppt.close();
 	}
 

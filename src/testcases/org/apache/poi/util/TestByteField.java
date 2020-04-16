@@ -116,12 +116,9 @@ public final class TestByteField {
     @Test
     public void testReadFromStream() throws IOException {
         ByteField field  = new ByteField(0);
-        byte[]    buffer = new byte[ _test_array.length ];
+        ByteArrayInputStream stream = new ByteArrayInputStream(_test_array.clone());
 
-        System.arraycopy(_test_array, 0, buffer, 0, buffer.length);
-        ByteArrayInputStream stream = new ByteArrayInputStream(buffer);
-
-        for (int j = 0; j < buffer.length; j++) {
+        for (int j = 0; j < _test_array.length; j++) {
             field.readFromStream(stream);
             assertEquals("Testing " + j, _test_array[ j ], field.get());
         }

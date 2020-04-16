@@ -103,8 +103,8 @@ public final class EscherBSERecord extends EscherRecord {
         pos += 36 + bytesRead;
         bytesRemaining -= bytesRead;
 
-        _remainingData = IOUtils.safelyAllocate(bytesRemaining, MAX_RECORD_LENGTH);
-        System.arraycopy( data, pos, _remainingData, 0, bytesRemaining );
+        _remainingData = IOUtils.safelyClone(data, pos, bytesRemaining, MAX_RECORD_LENGTH);
+
         return bytesRemaining + 8 + 36 + (field_12_blipRecord == null ? 0 : field_12_blipRecord.getRecordSize()) ;
 
     }

@@ -225,9 +225,7 @@ public class HwmfText {
          * This does not include the extra optional padding on the byte array.
          */
         private byte[] getTextBytes() {
-            byte[] ret = IOUtils.safelyAllocate(stringLength, MAX_RECORD_LENGTH);
-            System.arraycopy(rawTextBytes, 0, ret, 0, stringLength);
-            return ret;
+            return IOUtils.safelyClone(rawTextBytes, 0, stringLength, MAX_RECORD_LENGTH);
         }
 
         @Override

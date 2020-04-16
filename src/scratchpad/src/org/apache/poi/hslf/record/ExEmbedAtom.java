@@ -19,6 +19,7 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -94,12 +95,10 @@ public class ExEmbedAtom extends RecordAtom {
      */
     protected ExEmbedAtom(byte[] source, int start, int len) {
         // Get the header.
-        _header = new byte[8];
-        System.arraycopy(source,start,_header,0,8);
+        _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the record data.
-        _data = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
-        System.arraycopy(source,start+8,_data,0,len-8);
+        _data = IOUtils.safelyClone(source,start+8,len-8, MAX_RECORD_LENGTH);
 
         // Must be at least 8 bytes long
         if(_data.length < 8) {
@@ -130,7 +129,7 @@ public class ExEmbedAtom extends RecordAtom {
     public void setCantLockServerB(boolean cantBeLocked) {
     	_data[4] = (byte)(cantBeLocked ? 1 : 0);
     }
-    
+
     /**
      * Gets whether it is not required to send the dimensions to the embedded object.
      *

@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -70,11 +71,9 @@ public final class TxMasterStyleAtom extends RecordAtom {
     private List<TextPropCollection> charStyles;
 
     protected TxMasterStyleAtom(byte[] source, int start, int len) {
-        _header = new byte[8];
-        System.arraycopy(source,start,_header,0,8);
+        _header = Arrays.copyOfRange(source, start, start+8);
 
-        _data = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
-        System.arraycopy(source,start+8,_data,0,_data.length);
+        _data = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
 
         //read available styles
         try {

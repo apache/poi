@@ -22,6 +22,7 @@ import static org.junit.Assert.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
@@ -95,9 +96,6 @@ public final class TestcaseRecordInputStream {
 	}
 
 	public static byte[] cut(byte[] data, int fromInclusive, int toExclusive) {
-		int length = toExclusive - fromInclusive;
-		byte[] result = new byte[length];
-		System.arraycopy( data, fromInclusive, result, 0, length);
-		return result;
+		return Arrays.copyOfRange(data, fromInclusive, toExclusive);
 	}
 }

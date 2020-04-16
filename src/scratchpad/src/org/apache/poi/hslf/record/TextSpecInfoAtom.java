@@ -21,6 +21,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -43,7 +44,7 @@ public final class TextSpecInfoAtom extends RecordAtom {
     private static final int MAX_RECORD_LENGTH = 100_000;
 
     private static final long _type = RecordTypes.TextSpecInfoAtom.typeID;
-    
+
     /**
      * Record header.
      */
@@ -55,14 +56,14 @@ public final class TextSpecInfoAtom extends RecordAtom {
     private byte[] _data;
 
     /**
-     * Constructs an empty atom, with a default run of size 1 
+     * Constructs an empty atom, with a default run of size 1
      */
     public TextSpecInfoAtom() {
         _header = new byte[8];
         LittleEndian.putUInt(_header, 4, _type);
         reset(1);
     }
-    
+
     /**
      * Constructs the link related atom record from its
      *  source data.
@@ -73,13 +74,10 @@ public final class TextSpecInfoAtom extends RecordAtom {
      */
     public TextSpecInfoAtom(byte[] source, int start, int len) {
         // Get the header.
-        _header = new byte[8];
-        System.arraycopy(source,start,_header,0,8);
+        _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the record data.
-        _data = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
-        System.arraycopy(source,start+8,_data,0,len-8);
-
+        _data = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
     }
     /**
      * Gets the record type.
@@ -157,7 +155,7 @@ public final class TextSpecInfoAtom extends RecordAtom {
         // Update the size (header bytes 5-8)
         LittleEndian.putInt(_header, 4, _data.length);
     }
-    
+
     /**
      * Get the number of characters covered by this records
      *

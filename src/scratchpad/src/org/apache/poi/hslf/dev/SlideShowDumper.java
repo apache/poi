@@ -58,7 +58,7 @@ public final class SlideShowDumper {
   private boolean ddfEscher;
   /** Do we use our own built-in basic escher groker to understand the escher objects? */
   private boolean basicEscher;
-  
+
   private PrintStream out;
 
   /**
@@ -213,8 +213,7 @@ public void walkTree(int depth, int startPos, int maxLen) throws IOException {
 
 	final String ind = (indent == 0) ? "%1$s" : "%1$"+indent+"s";
 
-	byte[] contents = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
-	System.arraycopy(docstream,pos,contents,0,len);
+    byte[] contents = IOUtils.safelyClone(docstream, pos, len, MAX_RECORD_LENGTH);
 	DefaultEscherRecordFactory erf = new HSLFEscherRecordFactory();
 	EscherRecord record = erf.createRecord(contents,0);
 
@@ -229,8 +228,8 @@ public void walkTree(int depth, int startPos, int maxLen) throws IOException {
 
     String fmt = ind+"At position %2$d (%2$04x): type is %3$d (%3$04x), len is %4$d (%4$04x) (%5$d) - record claims %6$d";
     out.println(String.format(Locale.ROOT, fmt, "", pos, atomType, atomLen, atomLen+8, recordLen));
-	
-	
+
+
 	// Check for corrupt / lying ones
 	if(recordLen != 8 && (recordLen != (atomLen+8))) {
 		out.println(String.format(Locale.ROOT, ind+"** Atom length of $2d ($3d) doesn't match record length of %4d", "", atomLen, atomLen+8, recordLen));

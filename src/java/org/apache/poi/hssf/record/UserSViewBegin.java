@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -74,9 +75,7 @@ public final class UserSViewBegin extends StandardRecord {
      * @return Globally unique identifier for the custom view
      */
     public byte[] getGuid(){
-        byte[] guid = new byte[16];
-        System.arraycopy(_rawData, 0, guid, 0, guid.length);
-        return guid;
+        return Arrays.copyOf(_rawData, 16);
     }
 
     @Override

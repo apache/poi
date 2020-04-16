@@ -87,17 +87,17 @@ public abstract class AbstractEscherHolderRecord extends Record {
     @Override
     public int serialize(int offset, byte[] data)
     {
-        LittleEndian.putShort( data, 0 + offset, getSid() );
+        LittleEndian.putShort(data,      offset, getSid() );
         LittleEndian.putShort( data, 2 + offset, (short) ( getRecordSize() - 4 ) );
         byte[] rawData = getRawData();
         if ( escherRecords.size() == 0 && rawData != null )
         {
-            LittleEndian.putShort(data, 0 + offset, getSid());
+            LittleEndian.putShort(data,     offset, getSid());
             LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
             System.arraycopy( rawData, 0, data, 4 + offset, rawData.length);
             return rawData.length + 4;
         }
-        LittleEndian.putShort(data, 0 + offset, getSid());
+        LittleEndian.putShort(data,     offset, getSid());
         LittleEndian.putShort(data, 2 + offset, (short)(getRecordSize() - 4));
 
         int pos = offset + 4;

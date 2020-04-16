@@ -116,8 +116,7 @@ public class Sttb
             _data[i] = StringUtil.getFromUnicodeLE( buffer, offset, cchData );
             offset += cchData * 2;
 
-            _extraData[i] = LittleEndian
-                    .getByteArray( buffer, offset, _cbExtra );
+            _extraData[i] = Arrays.copyOfRange( buffer, offset, offset+_cbExtra );
             offset += _cbExtra;
         }
     }

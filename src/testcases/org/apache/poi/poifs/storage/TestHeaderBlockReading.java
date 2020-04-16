@@ -22,6 +22,7 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.junit.Test;
 
@@ -56,11 +57,9 @@ public final class TestHeaderBlockReading {
 		assertEquals(-2, block.getPropertyStart());
 
 		// verify we can't read a short block
-		byte[] shortblock = new byte[511];
-
-		System.arraycopy(content, 0, shortblock, 0, 511);
+		byte[] shortblock = Arrays.copyOf(content, 511);
 		try {
-			block = new HeaderBlock(new ByteArrayInputStream(shortblock));
+			new HeaderBlock(new ByteArrayInputStream(shortblock));
 			fail("Should have caught IOException reading a short block");
 		} catch (IOException ignored) {
 
@@ -71,7 +70,7 @@ public final class TestHeaderBlockReading {
 		for (int index = 0; index < 8; index++) {
 			content[index] = (byte) (content[index] - 1);
 			try {
-				block = new HeaderBlock(new ByteArrayInputStream(content));
+				new HeaderBlock(new ByteArrayInputStream(content));
 				fail("Should have caught IOException corrupting byte " + index);
 			} catch (IOException ignored) {
 

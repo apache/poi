@@ -124,19 +124,13 @@ public abstract class Property implements Child, POIFSViewable {
      */
     protected Property(int index, byte [] array, int offset)
     {
-        _raw_data = new byte[ POIFSConstants.PROPERTY_SIZE ];
-        System.arraycopy(array, offset, _raw_data, 0,
-                         POIFSConstants.PROPERTY_SIZE);
+        _raw_data          = Arrays.copyOfRange(array, offset, offset + POIFSConstants.PROPERTY_SIZE);
         _name_size         = new ShortField(_name_size_offset, _raw_data);
-        _property_type     =
-            new ByteField(PropertyConstants.PROPERTY_TYPE_OFFSET, _raw_data);
+        _property_type     = new ByteField(PropertyConstants.PROPERTY_TYPE_OFFSET, _raw_data);
         _node_color        = new ByteField(_node_color_offset, _raw_data);
-        _previous_property = new IntegerField(_previous_property_offset,
-                                              _raw_data);
-        _next_property     = new IntegerField(_next_property_offset,
-                                              _raw_data);
-        _child_property    = new IntegerField(_child_property_offset,
-                                              _raw_data);
+        _previous_property = new IntegerField(_previous_property_offset, _raw_data);
+        _next_property     = new IntegerField(_next_property_offset, _raw_data);
+        _child_property    = new IntegerField(_child_property_offset, _raw_data);
         _storage_clsid     = new ClassID(_raw_data,_storage_clsid_offset);
         _user_flags        = new IntegerField(_user_flags_offset, 0, _raw_data);
         _seconds_1         = new IntegerField(_seconds_1_offset, _raw_data);
@@ -146,8 +140,7 @@ public abstract class Property implements Child, POIFSViewable {
         _start_block       = new IntegerField(_start_block_offset, _raw_data);
         _size              = new IntegerField(_size_offset, _raw_data);
         _index             = index;
-        int name_length = (_name_size.get() / LittleEndianConsts.SHORT_SIZE)
-                          - 1;
+        int name_length = (_name_size.get() / LittleEndianConsts.SHORT_SIZE) - 1;
 
         if (name_length < 1)
         {

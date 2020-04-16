@@ -110,8 +110,7 @@ public final class StyleDescription {
             int upxSize = LittleEndian.getShort(std, varOffset);
             varOffset += LittleEndianConsts.SHORT_SIZE;
 
-            byte[] upx = IOUtils.safelyAllocate(upxSize, Short.MAX_VALUE);
-            System.arraycopy(std, varOffset, upx, 0, upxSize);
+            byte[] upx = IOUtils.safelyClone(std, varOffset, upxSize, Short.MAX_VALUE);
             _upxs[x] = new UPX(upx);
             varOffset += upxSize;
 

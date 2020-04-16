@@ -59,8 +59,6 @@ public class EscherSpgrRecord extends EscherRecord {
         if (bytesRemaining != 0) {
             throw new RecordFormatException("Expected no remaining bytes but got " + bytesRemaining);
         }
-//        remainingData  =  new byte[bytesRemaining];
-//        System.arraycopy( data, pos + size, remainingData, 0, bytesRemaining );
         return 8 + size + bytesRemaining;
     }
 
@@ -76,8 +74,6 @@ public class EscherSpgrRecord extends EscherRecord {
         LittleEndian.putInt( data, offset + 12, field_2_rectY1 );
         LittleEndian.putInt( data, offset + 16, field_3_rectX2 );
         LittleEndian.putInt( data, offset + 20, field_4_rectY2 );
-//        System.arraycopy( remainingData, 0, data, offset + 26, remainingData.length );
-//        int pos = offset + 8 + 18 + remainingData.length;
         listener.afterRecordSerialize( offset + getRecordSize(), getRecordId(), offset + getRecordSize(), this );
         return 8 + 16;
     }

@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.Arrays;
+
 import org.apache.poi.ss.formula.TwoDEval;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
@@ -124,9 +126,9 @@ public final class Sumproduct implements Function {
 
 	private static ValueEval evaluateAreaSumProduct(ValueEval[] evalArgs) throws EvaluationException {
 		int maxN = evalArgs.length;
-		TwoDEval[] args = new TwoDEval[maxN];
+		TwoDEval[] args;
 		try {
-			System.arraycopy(evalArgs, 0, args, 0, maxN);
+			args = Arrays.copyOf(evalArgs, maxN, TwoDEval[].class);
 		} catch (ArrayStoreException e) {
 			// one of the other args was not an AreaRef
 			return ErrorEval.VALUE_INVALID;

@@ -88,14 +88,11 @@ public class EscherSpRecord extends EscherRecord {
 
     @Override
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
-        /*int bytesRemaining =*/ readHeader( data, offset );
+        readHeader( data, offset );
         int pos            = offset + 8;
         int size           = 0;
         field_1_shapeId    =  LittleEndian.getInt( data, pos + size );     size += 4;
         field_2_flags      =  LittleEndian.getInt( data, pos + size );     size += 4;
-//        bytesRemaining -= size;
-//        remainingData  =  new byte[bytesRemaining];
-//        System.arraycopy( data, pos + size, remainingData, 0, bytesRemaining );
         return getRecordSize();
     }
 
@@ -119,8 +116,6 @@ public class EscherSpRecord extends EscherRecord {
         LittleEndian.putInt( data, offset + 4, remainingBytes );
         LittleEndian.putInt( data, offset + 8, field_1_shapeId );
         LittleEndian.putInt( data, offset + 12, field_2_flags );
-//        System.arraycopy( remainingData, 0, data, offset + 26, remainingData.length );
-//        int pos = offset + 8 + 18 + remainingData.length;
         listener.afterRecordSerialize( offset + getRecordSize(), getRecordId(), getRecordSize(), this );
         return 8 + 8;
     }

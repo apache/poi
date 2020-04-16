@@ -17,16 +17,17 @@
 
 package org.apache.poi.hdgf.chunks;
 
+import java.util.Arrays;
+
 /**
  * A separator between the trailer of one chunk, and the
  *  header of the next one
  */
 public final class ChunkSeparator {
-	protected byte[] separatorData;
+	final byte[] separatorData;
 
 	public ChunkSeparator(byte[] data, int offset) {
-		separatorData = new byte[4];
-		System.arraycopy(data, offset, separatorData, 0, 4);
+		separatorData = Arrays.copyOfRange(data, offset, offset+4);
 	}
 
 	public String toString() {

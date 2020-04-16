@@ -56,8 +56,7 @@ public final class TestDocumentInputStream {
         }
 
         // Now create the POIFS Version
-        byte[] _workbook_data_only = new byte[_workbook_size];
-        System.arraycopy(_workbook_data, 0, _workbook_data_only, 0, _workbook_size);
+        byte[] _workbook_data_only = Arrays.copyOf(_workbook_data, _workbook_size);
 
         POIFSFileSystem poifs = new POIFSFileSystem();
         // Make it easy when debugging to see what isn't the doc

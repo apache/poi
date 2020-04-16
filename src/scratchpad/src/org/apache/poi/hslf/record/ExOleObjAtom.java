@@ -22,6 +22,7 @@ import static org.apache.poi.util.GenericRecordUtil.safeEnum;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -187,12 +188,10 @@ public class ExOleObjAtom extends RecordAtom {
      */
     protected ExOleObjAtom(byte[] source, int start, int len) {
         // Get the header.
-        _header = new byte[8];
-        System.arraycopy(source,start,_header,0,8);
+        _header = Arrays.copyOfRange(source, start, start+8);
 
         // Get the record data.
-        _data = IOUtils.safelyAllocate(len-8, MAX_RECORD_LENGTH);
-        System.arraycopy(source,start+8,_data,0,len-8);
+        _data = IOUtils.safelyClone(source, start+8, len-8, MAX_RECORD_LENGTH);
 
         // Must be at least 24 bytes long
         if(_data.length < 24) {
@@ -258,7 +257,7 @@ public class ExOleObjAtom extends RecordAtom {
 
     /**
      * Gets the type of OLE object.
-     * 
+     *
      * @return the sub-type, one of the {@code SUBTYPE_*} constants.
      */
     public int getSubType() {
@@ -303,7 +302,7 @@ public class ExOleObjAtom extends RecordAtom {
         // Even though this is a mere boolean, KOffice's code says it's an int.
         return LittleEndian.getInt(_data, 20) != 0;
     }
-    
+
     /**
      * Gets misc options (the last four bytes in the atom).
      *

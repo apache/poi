@@ -38,21 +38,19 @@ public final class CompressedStreamStore extends StreamStore {
 	 * We're not sure what this is, but it comes before the
 	 *  real contents in the de-compressed data
 	 */
-	private byte[] blockHeader = new byte[4];
+	private final byte[] blockHeader;
 	private boolean blockHeaderInContents;
 
-	protected byte[] _getCompressedContents() { return compressedContents; }
-	protected byte[] _getBlockHeader() { return blockHeader; }
+	byte[] _getCompressedContents() { return compressedContents; }
+	byte[] _getBlockHeader() { return blockHeader; }
 
 	/**
 	 * Creates a new compressed StreamStore, which will handle
 	 *  the decompression.
 	 */
-	protected CompressedStreamStore(byte[] data, int offset, int length) throws IOException {
+	CompressedStreamStore(byte[] data, int offset, int length) throws IOException {
 		this(decompress(data,offset,length));
-
-		compressedContents = IOUtils.safelyAllocate(length, MAX_RECORD_LENGTH);
-		System.arraycopy(data, offset, compressedContents, 0, length);
+		compressedContents = IOUtils.safelyClone(data, offset, length, MAX_RECORD_LENGTH);
 	}
 	/**
 	 * Handles passing the de-compressed data onto our superclass.

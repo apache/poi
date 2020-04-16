@@ -54,10 +54,8 @@ public final class EscherTextboxRecord extends EscherRecord {
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
 
-        // Save the data, ready for the calling code to do something
-        //  useful with it
-        thedata = IOUtils.safelyAllocate(bytesRemaining, MAX_RECORD_LENGTH);
-        System.arraycopy( data, offset + 8, thedata, 0, bytesRemaining );
+        // Save the data, ready for the calling code to do something useful with it
+        thedata = IOUtils.safelyClone(data, offset + 8, bytesRemaining, MAX_RECORD_LENGTH);
         return bytesRemaining + 8;
     }
 
@@ -103,10 +101,8 @@ public final class EscherTextboxRecord extends EscherRecord {
      * @param start the start position in the buffer
      * @param length the length of the block
      */
-    public void setData(byte[] b, int start, int length)
-    {
-        thedata = IOUtils.safelyAllocate(length, MAX_RECORD_LENGTH);
-        System.arraycopy(b,start,thedata,0,length);
+    public void setData(byte[] b, int start, int length) {
+        thedata = IOUtils.safelyClone(b, start, length, MAX_RECORD_LENGTH);
     }
 
     /**

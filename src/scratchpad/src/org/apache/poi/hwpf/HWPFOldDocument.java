@@ -60,12 +60,12 @@ public class HWPFOldDocument extends HWPFDocumentCore {
     private final static Charset DEFAULT_CHARSET = StringUtil.WIN_1252;
 
     private OldTextPieceTable tpt;
-    
+
     private StringBuilder _text;
 
     private final OldFontTable fontTable;
     private final Charset guessedCharset;
-    
+
     public HWPFOldDocument(POIFSFileSystem fs) throws IOException {
         this(fs.getRoot());
     }
@@ -73,7 +73,7 @@ public class HWPFOldDocument extends HWPFDocumentCore {
     public HWPFOldDocument(DirectoryNode directory)
             throws IOException {
         super(directory);
-        
+
         // Where are things?
         int sedTableOffset = LittleEndian.getInt(_mainStream, 0x88);
         int sedTableSize   = LittleEndian.getInt(_mainStream, 0x8c);
@@ -91,7 +91,7 @@ public class HWPFOldDocument extends HWPFDocumentCore {
         guessedCharset = guessCodePage(fontTable);
 
         int complexTableOffset = LittleEndian.getInt(_mainStream, 0x160);
-        
+
         // We need to get hold of the text that makes up the
         //  document, which might be regular or fast-saved
         ComplexFileTable cft = null;
@@ -101,7 +101,7 @@ public class HWPFOldDocument extends HWPFDocumentCore {
                     complexTableOffset, _fib.getFibBase().getFcMin(), guessedCharset
             );
             tpt = (OldTextPieceTable)cft.getTextPieceTable();
-            
+
         } else {
             // TODO Discover if these older documents can ever hold Unicode Strings?
             //  (We think not, because they seem to lack a Piece table)
@@ -118,7 +118,7 @@ public class HWPFOldDocument extends HWPFDocumentCore {
                 logger.log(POILogger.WARN, "Error with "+guessedCharset +". Backing off to Windows-1252");
             }
             tpt.add(tp);
-            
+
         }
         _text = tpt.getText();
 
@@ -171,19 +171,16 @@ public class HWPFOldDocument extends HWPFDocumentCore {
         // Generate a single Text Piece Table, with a single Text Piece
         //  which covers all the (8 bit only) text in the file
         tpt = new OldTextPieceTable();
-        byte[] textData = IOUtils.safelyAllocate(
-                _fib.getFibBase().getFcMac()-_fib.getFibBase().getFcMin(), MAX_RECORD_LENGTH);
-        System.arraycopy(_mainStream, _fib.getFibBase().getFcMin(), textData, 0, textData.length);
+
+        byte[] textData = IOUtils.safelyClone(_mainStream, _fib.getFibBase().getFcMin(),
+              _fib.getFibBase().getFcMac()-_fib.getFibBase().getFcMin(), MAX_RECORD_LENGTH);
 
         int numChars = textData.length;
         if (CodePageUtil.DOUBLE_BYTE_CHARSETS.contains(guessedCharset)) {
             numChars /= 2;
         }
 
-        return new TextPiece(
-                0, numChars, textData, pd
-        );
-
+        return new TextPiece(0, numChars, textData, pd);
     }
 
 

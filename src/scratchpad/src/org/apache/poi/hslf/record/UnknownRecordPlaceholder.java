@@ -53,8 +53,7 @@ public final class UnknownRecordPlaceholder extends RecordAtom
 		if(len < 0) { len = 0; }
 
 		// Treat as an atom, grab and hold everything
-		_contents = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
-		System.arraycopy(source,start,_contents,0,len);
+		_contents = IOUtils.safelyClone(source, start, len, MAX_RECORD_LENGTH);
 		_type = LittleEndian.getUShort(_contents,2);
 	}
 

@@ -19,6 +19,7 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
@@ -49,8 +50,7 @@ public class ExEmbed extends RecordContainer {
      */
     protected ExEmbed(final byte[] source, final int start, final int len) {
         // Grab the header
-        _header = new byte[8];
-        System.arraycopy(source,start,_header,0,8);
+        _header = Arrays.copyOfRange(source, start, start+8);
 
         // Find our children
         _children = Record.findChildRecords(source,start+8,len-8);
@@ -66,9 +66,9 @@ public class ExEmbed extends RecordContainer {
         this();
         _children[0] = this.embedAtom = embedAtom;
     }
-    
-    
-    
+
+
+
     /**
      * Create a new ExEmbed, with blank fields
      */
@@ -163,7 +163,7 @@ public class ExEmbed extends RecordContainer {
 
     /**
      * Gets the OLE Programmatic Identifier.
-     * 
+     *
      * @return the OLE Programmatic Identifier.
      */
     public String getProgId() {
@@ -175,8 +175,8 @@ public class ExEmbed extends RecordContainer {
         this.progId.setText(progId);
     }
 
-    
-    
+
+
     /**
      * Gets the name that appears in the paste special dialog.
      *
@@ -190,7 +190,7 @@ public class ExEmbed extends RecordContainer {
         this.clipboardName = safeCString(this.clipboardName, 0x3);
         this.clipboardName.setText(clipboardName);
     }
-    
+
     /**
      * Returns the type (held as a little endian in bytes 3 and 4)
      * that this class handles.
@@ -213,7 +213,7 @@ public class ExEmbed extends RecordContainer {
     public void writeOut(final OutputStream out) throws IOException {
         writeOut(_header[0],_header[1],getRecordType(),_children,out);
     }
-    
+
     private CString safeCString(CString oldStr, int optionsId) {
         CString newStr = oldStr;
         if (newStr == null) {
@@ -233,7 +233,7 @@ public class ExEmbed extends RecordContainer {
         if (!found) {
             appendChildRecord(newStr);
         }
-        
+
         return newStr;
     }
 }

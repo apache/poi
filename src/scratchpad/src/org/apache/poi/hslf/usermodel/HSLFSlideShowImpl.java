@@ -301,7 +301,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             // check for corrupted user edit atom and try to repair it
             // if the next user edit atom offset is already known, we would go into an endless loop
             if (usrOffset > 0 && recordMap.containsKey(usrOffset)) {
-                // a user edit atom is usually located 36 byte before the smallest known record offset 
+                // a user edit atom is usually located 36 byte before the smallest known record offset
                 usrOffset = recordMap.firstKey() - 36;
                 // check that we really are located on a user edit atom
                 int ver_inst = LittleEndian.getUShort(docstream, usrOffset);
@@ -415,8 +415,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                         pict.setSignature(signature);
 
                         // Copy the data, ready to pass to PictureData
-                        byte[] imgdata = IOUtils.safelyAllocate(imgsize, MAX_RECORD_LENGTH);
-                        System.arraycopy(pictstream, pos, imgdata, 0, imgdata.length);
+                        byte[] imgdata = IOUtils.safelyClone(pictstream, pos, imgsize, MAX_RECORD_LENGTH);
                         pict.setRawData(imgdata);
 
                         pict.setOffset(offset);
@@ -563,7 +562,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         validateInPlaceWritePossible();
 
         // Write the PowerPoint streams to the current FileSystem
-        // No need to do anything to other streams, already there! 
+        // No need to do anything to other streams, already there!
         write(getDirectory().getFileSystem(), false);
 
         // Sync with the File on disk
@@ -649,7 +648,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     }
 
     private void write(POIFSFileSystem outFS, boolean copyAllOtherNodes) throws IOException {
-        // read properties and pictures, with old encryption settings where appropriate 
+        // read properties and pictures, with old encryption settings where appropriate
         if (_pictures == null) {
             readPictures();
         }
@@ -673,8 +672,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             updateAndWriteDependantRecords(baos, null);
 
             // Update our cached copy of the bytes that make up the PPT stream
-            _docstream = new byte[baos.size()];
-            System.arraycopy(baos.getBuf(), 0, _docstream, 0, baos.size());
+            _docstream = baos.toByteArray();
             baos.close();
 
             // Write the PPT stream into the POIFS layer
@@ -701,7 +699,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             }
 
         }
-        
+
         // If requested, copy over any other streams we spot, eg Macros
         if (copyAllOtherNodes) {
             EntryUtils.copyNodes(getDirectory().getFileSystem(), outFS, writtenEntries);
@@ -715,9 +713,9 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         return (dea != null) ? dea.getEncryptionInfo() : null;
     }
 
-    
-    
-    
+
+
+
     /* ******************* adding methods follow ********************* */
 
     /**

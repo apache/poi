@@ -78,9 +78,7 @@ public final class HeaderFooterRecord extends StandardRecord {
      * @return the sheet view?s GUID
      */
     public byte[] getGuid(){
-        byte[] guid = new byte[16];
-        System.arraycopy(_rawData, 12, guid, 0, guid.length);
-        return guid;
+        return Arrays.copyOfRange(_rawData, 12, 12+16);
     }
 
     /**

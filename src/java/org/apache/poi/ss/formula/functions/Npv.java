@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.Arrays;
+
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
@@ -43,8 +45,7 @@ public final class Npv implements Function {
         try {
 			double rate = NumericFunction.singleOperandEvaluate(args[0], srcRowIndex, srcColumnIndex);
             // convert tail arguments into an array of doubles
-            ValueEval[] vargs = new ValueEval[args.length-1];
-            System.arraycopy(args, 1, vargs, 0, vargs.length);
+            ValueEval[] vargs = Arrays.copyOfRange(args, 1, args.length, ValueEval[].class);
             double[] values = AggregateFunction.ValueCollector.collectValues(vargs);
 
             double result = FinanceLib.npv(rate, values);

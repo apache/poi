@@ -25,6 +25,7 @@ import static org.junit.Assert.assertNotNull;
 import java.io.ByteArrayInputStream;
 import java.io.DataInputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hpsf.ClassIDPredefined;
@@ -262,7 +263,7 @@ public final class TestHyperlinkRecord {
     /**
      * From Bugzilla 47498
      */
-    private static byte[] data_47498 = {
+    private static final byte[] data_47498 = {
         0x02, 0x00, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, (byte)0xD0, (byte)0xC9,
         (byte)0xEA, 0x79, (byte)0xF9, (byte)0xBA, (byte)0xCE, 0x11, (byte)0x8C,
         (byte)0x82, 0x00, (byte)0xAA, 0x00, 0x4B, (byte)0xA9, 0x0B, 0x02, 0x00,
@@ -388,8 +389,7 @@ public final class TestHyperlinkRecord {
         link.setAddress("http://www.lakings.com/");
 
         byte[] tmp = link.serialize();
-        byte[] ser = new byte[tmp.length-4];
-        System.arraycopy(tmp, 4, ser, 0, ser.length);
+        byte[] ser = Arrays.copyOfRange(tmp, 4, tmp.length);
         assertEquals(data1.length, ser.length);
         assertArrayEquals(data1, ser);
     }
@@ -404,8 +404,7 @@ public final class TestHyperlinkRecord {
         link.setShortFilename("link1.xls");
 
         byte[] tmp = link.serialize();
-        byte[] ser = new byte[tmp.length-4];
-        System.arraycopy(tmp, 4, ser, 0, ser.length);
+        byte[] ser = Arrays.copyOfRange(tmp, 4, tmp.length);
         assertEquals(data2.length, ser.length);
         assertArrayEquals(data2, ser);
     }
@@ -420,8 +419,7 @@ public final class TestHyperlinkRecord {
         link.setTextMark("Sheet1!A1");
 
         byte[] tmp = link.serialize();
-        byte[] ser = new byte[tmp.length-4];
-        System.arraycopy(tmp, 4, ser, 0, ser.length);
+        byte[] ser = Arrays.copyOfRange(tmp, 4, tmp.length);
         assertEquals(data4.length, ser.length);
         assertArrayEquals(data4, ser);
     }
@@ -436,8 +434,7 @@ public final class TestHyperlinkRecord {
         link.setAddress("mailto:ebgans@mail.ru?subject=Hello,%20Ebgans!");
 
         byte[] tmp = link.serialize();
-        byte[] ser = new byte[tmp.length-4];
-        System.arraycopy(tmp, 4, ser, 0, ser.length);
+        byte[] ser = Arrays.copyOfRange(tmp, 4, tmp.length);
         assertEquals(data3.length, ser.length);
         assertArrayEquals(data3, ser);
     }

@@ -23,6 +23,7 @@ import org.apache.poi.ddf.DefaultEscherRecordFactory;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherRecord;
 import org.apache.poi.hwpf.model.types.PICFAbstractType;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 
@@ -55,8 +56,7 @@ public class PICFAndOfficeArtData
             _cchPicName = LittleEndian.getUByte( dataStream, offset );
             offset += 1;
 
-            _stPicName = LittleEndian.getByteArray( dataStream, offset,
-                    _cchPicName, MAX_RECORD_LENGTH);
+            _stPicName = IOUtils.safelyClone(dataStream, offset, _cchPicName, MAX_RECORD_LENGTH);
             offset += _cchPicName;
         }
 

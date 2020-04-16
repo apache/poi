@@ -23,6 +23,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
@@ -82,9 +83,7 @@ public final class TestDocumentProperty {
         DocumentProperty      property = new DocumentProperty(index, input,
                                              offset);
         ByteArrayOutputStream stream   = new ByteArrayOutputStream(128);
-        byte[]                expected = new byte[ 128 ];
-
-        System.arraycopy(input, offset, expected, 0, 128);
+        byte[]                expected = Arrays.copyOfRange(input, offset, offset+128);
         property.writeData(stream);
         byte[] output = stream.toByteArray();
 

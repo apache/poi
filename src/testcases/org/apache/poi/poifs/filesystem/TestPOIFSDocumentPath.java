@@ -23,6 +23,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+import java.util.Arrays;
+
 import org.junit.Test;
 
 /**
@@ -49,9 +51,7 @@ public final class TestPOIFSDocumentPath {
         String[] components = {"foo", "bar", "foobar", "fubar"};
 
         for (int j = 0; j < components.length; j++) {
-            String[] params = new String[ j ];
-
-            System.arraycopy(components, 0, params, 0, j);
+            String[] params = Arrays.copyOf(components, j);
             POIFSDocumentPath path = new POIFSDocumentPath(params);
 
             assertEquals(j, path.length());
@@ -91,16 +91,12 @@ public final class TestPOIFSDocumentPath {
         String[] initialComponents = {"a", "b", "c"};
 
         for (int n = 0; n < initialComponents.length; n++) {
-            String[] initialParams = new String[ n ];
-
-            System.arraycopy(initialComponents, 0, initialParams, 0, n);
+            String[] initialParams = Arrays.copyOf(initialComponents, n);
             POIFSDocumentPath base = new POIFSDocumentPath(initialParams);
             String[] components = {"foo", "bar", "foobar", "fubar"};
 
             for (int j = 0; j < components.length; j++) {
-                String[] params = new String[ j ];
-
-                System.arraycopy(components, 0, params, 0, j);
+                String[] params = Arrays.copyOf(components, j);
                 POIFSDocumentPath path = new POIFSDocumentPath(base, params);
 
                 assertEquals(j + n, path.length());

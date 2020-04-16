@@ -26,6 +26,7 @@ import java.io.OutputStreamWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
@@ -161,20 +162,18 @@ public final class PPTXMLDump {
     public void dumpPictures(byte[] data, int padding) throws IOException {
         int pos = 0;
         while (pos < data.length) {
-            byte[] header = new byte[PICT_HEADER_SIZE];
-
-            if(data.length - pos < header.length) {
+            if(data.length - pos < PICT_HEADER_SIZE) {
                 // corrupt file, cannot read header
                 return;
             }
-            System.arraycopy(data, pos, header, 0, header.length);
+            byte[] header = Arrays.copyOfRange(data, pos, pos + PICT_HEADER_SIZE);
             int size = LittleEndian.getInt(header, 4) - 17;
             if(size < 0) {
                 // corrupt file, negative image size
                 return;
             }
-            byte[] pictdata = IOUtils.safelyAllocate(size, MAX_RECORD_LENGTH);
-            System.arraycopy(data, pos + PICT_HEADER_SIZE, pictdata, 0, pictdata.length);
+
+            byte[] pictdata = IOUtils.safelyClone(data, pos + PICT_HEADER_SIZE, size, MAX_RECORD_LENGTH);
             pos += PICT_HEADER_SIZE + size;
 
             padding++;

@@ -81,8 +81,8 @@ public final class UnknownEscherRecord extends EscherRecord {
             bytesRemaining = 0;
         }
 
-        thedata = IOUtils.safelyAllocate(bytesRemaining, MAX_RECORD_LENGTH);
-        System.arraycopy( data, offset + 8, thedata, 0, bytesRemaining );
+        thedata = IOUtils.safelyClone(data, offset + 8, bytesRemaining, MAX_RECORD_LENGTH);
+
         return bytesRemaining + 8;
     }
 

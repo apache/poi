@@ -18,6 +18,7 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.POILogger;
@@ -31,22 +32,21 @@ import org.apache.poi.util.POILogger;
 public class InteractiveInfo extends RecordContainer {
 	private byte[] _header;
 	private static final long _type = RecordTypes.InteractiveInfo.typeID;
-	
+
 	// Links to our more interesting children
 	private InteractiveInfoAtom infoAtom;
-	
-	/** 
+
+	/**
 	 * Returns the InteractiveInfoAtom of this InteractiveInfo
-	 */ 
+	 */
 	public InteractiveInfoAtom getInteractiveInfoAtom() { return infoAtom; }
-	
-	/** 
+
+	/**
 	 * Set things up, and find our more interesting children
 	 */
 	protected InteractiveInfo(byte[] source, int start, int len) {
 		// Grab the header
-		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+		_header = Arrays.copyOfRange(source, start, start+8);
 
 		// Find our children
 		_children = Record.findChildRecords(source,start+8,len-8);
@@ -57,7 +57,7 @@ public class InteractiveInfo extends RecordContainer {
 	 * Go through our child records, picking out the ones that are
 	 *  interesting, and saving those for use by the easy helper
 	 *  methods.
-	 */	
+	 */
 	private void findInterestingChildren() {
 		// First child should be the InteractiveInfoAtom
 	    if (_children == null || _children.length == 0 || !(_children[0] instanceof InteractiveInfoAtom)) {
@@ -67,18 +67,18 @@ public class InteractiveInfo extends RecordContainer {
 
 	    infoAtom = (InteractiveInfoAtom)_children[0];
 	}
-	
+
 	/**
 	 * Create a new InteractiveInfo, with blank fields
 	 */
 	public InteractiveInfo() {
 		_header = new byte[8];
 		_children = new org.apache.poi.hslf.record.Record[1];
-		
+
 		// Setup our header block
 		_header[0] = 0x0f; // We are a container record
 		LittleEndian.putShort(_header, 2, (short)_type);
-		
+
 		// Setup our child records
 		infoAtom = new InteractiveInfoAtom();
 		_children[0] = infoAtom;

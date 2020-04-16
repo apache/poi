@@ -17,15 +17,16 @@
 
 package org.apache.poi.hdgf.chunks;
 
+import java.util.Arrays;
+
 /**
  * A trailer that follows a chunk
  */
 public final class ChunkTrailer {
-	private byte[] trailerData;
+	private final byte[] trailerData;
 
 	public ChunkTrailer(byte[] data, int offset) {
-		trailerData = new byte[8];
-		System.arraycopy(data, offset, trailerData, 0, 8);
+		trailerData = Arrays.copyOfRange(data, offset, offset+8);
 	}
 
 	public String toString() {

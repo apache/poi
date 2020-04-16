@@ -17,6 +17,8 @@
 
 package org.apache.poi.hwpf.sprm;
 
+import java.util.Arrays;
+
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.Internal;
@@ -75,9 +77,7 @@ public final class SprmOperation
 
     public byte[] toByteArray()
     {
-        byte[] result = new byte[size()];
-        System.arraycopy( _grpprl, _offset, result, 0, size() );
-        return result;
+        return Arrays.copyOfRange(_grpprl, _offset, _offset + size());
     }
 
     public byte[] getGrpprl()

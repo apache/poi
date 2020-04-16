@@ -50,8 +50,9 @@ public class EscherClientDataRecord extends EscherRecord {
     public int fillFields(byte[] data, int offset, EscherRecordFactory recordFactory) {
         int bytesRemaining = readHeader( data, offset );
         int pos            = offset + 8;
-        remainingData = (bytesRemaining == 0) ? EMPTY : IOUtils.safelyAllocate(bytesRemaining, MAX_RECORD_LENGTH);
-        System.arraycopy( data, pos, remainingData, 0, bytesRemaining );
+
+        remainingData = (bytesRemaining == 0) ? EMPTY : IOUtils.safelyClone(data, pos, bytesRemaining, MAX_RECORD_LENGTH);
+
         return 8 + bytesRemaining;
     }
 

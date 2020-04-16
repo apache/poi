@@ -68,9 +68,7 @@ public class OldTextPiece extends TextPiece {
 
     @Override
     public byte[] getRawBytes() {
-        byte[] buf = new byte[rawBytes.length];
-        System.arraycopy(rawBytes, 0, buf, 0, rawBytes.length);
-        return buf;
+        return rawBytes.clone();
     }
 
     /**

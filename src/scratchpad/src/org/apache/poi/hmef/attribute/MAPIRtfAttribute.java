@@ -28,7 +28,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.StringUtil;
 
 /**
- * A pure-MAPI attribute holding RTF (compressed or not), which applies 
+ * A pure-MAPI attribute holding RTF (compressed or not), which applies
  *  to a {@link HMEFMessage} or one of its {@link Attachment}s.
  */
 public final class MAPIRtfAttribute extends MAPIAttribute {
@@ -38,45 +38,44 @@ public final class MAPIRtfAttribute extends MAPIAttribute {
 
    private final byte[] decompressed;
    private final String data;
-   
+
    public MAPIRtfAttribute(MAPIProperty property, int type, byte[] data) throws IOException {
       super(property, type, data);
-      
+
       // Decompress it, removing any trailing padding as needed
       CompressedRTF rtf = new CompressedRTF();
       byte[] tmp = rtf.decompress(new ByteArrayInputStream(data));
       if(tmp.length > rtf.getDeCompressedSize()) {
-         this.decompressed = IOUtils.safelyAllocate(rtf.getDeCompressedSize(), MAX_RECORD_LENGTH);
-         System.arraycopy(tmp, 0, decompressed, 0, decompressed.length);
+         this.decompressed = IOUtils.safelyClone(tmp, 0, rtf.getDeCompressedSize(), MAX_RECORD_LENGTH);
       } else {
          this.decompressed = tmp;
       }
-      
+
       // Turn the RTF data into a more useful string
       this.data = StringUtil.getFromCompressedUnicode(decompressed, 0, decompressed.length);
    }
-   
+
    /**
     * Returns the original, compressed RTF
     */
    public byte[] getRawData() {
       return super.getData();
    }
-   
+
    /**
     * Returns the raw uncompressed RTF data
     */
    public byte[] getData() {
       return decompressed;
    }
-   
+
    /**
     * Returns the uncompressed RTF as a string
     */
    public String getDataString() {
       return data;
    }
-   
+
    public String toString() {
       return getProperty() + " " + data;
    }

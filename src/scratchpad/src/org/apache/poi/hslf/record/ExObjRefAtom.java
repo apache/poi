@@ -19,6 +19,7 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.function.Supplier;
 
@@ -55,17 +56,14 @@ public final class ExObjRefAtom extends RecordAtom {
 
     /**
      * Build an instance of <code>ExObjRefAtom</code> from on-disk data
-     * 
+     *
      * @param source the source data as a byte array.
      * @param start the start offset into the byte array.
      * @param len the length of the slice in the byte array.
      */
 	protected ExObjRefAtom(byte[] source, int start, int len) {
-		_header = new byte[8];
-        int offset = start;
-        System.arraycopy(source,start,_header,0,8);
-        offset += _header.length;
-        exObjIdRef = (int)LittleEndian.getUInt(source, offset);
+        _header = Arrays.copyOfRange(source, start, start+8);
+        exObjIdRef = (int)LittleEndian.getUInt(source, start+8);
 	}
 
     /**

@@ -224,16 +224,16 @@ public abstract class DOPAbstractType {
         field_32_view                  = LittleEndian.getShort(data, 0x52 + offset);
         field_33_docinfo4              = LittleEndian.getInt(data, 0x54 + offset);
         field_34_adt                   = LittleEndian.getShort(data, 0x58 + offset);
-        field_35_doptypography         = LittleEndian.getByteArray(data, 0x5a + offset,310);
-        field_36_dogrid                = LittleEndian.getByteArray(data, 0x190 + offset,10);
+        field_35_doptypography         = Arrays.copyOfRange(data, 0x5a + offset, 0x5a + offset+ 310);
+        field_36_dogrid                = Arrays.copyOfRange(data, 0x190 + offset,0x190 + offset + 10);
         field_37_docinfo5              = LittleEndian.getShort(data, 0x19a + offset);
         field_38_docinfo6              = LittleEndian.getShort(data, 0x19c + offset);
-        field_39_asumyi                = LittleEndian.getByteArray(data, 0x19e + offset,12);
+        field_39_asumyi                = Arrays.copyOfRange(data, 0x19e + offset, 0x19e + offset + 12);
         field_40_cChWS                 = LittleEndian.getInt(data, 0x1aa + offset);
         field_41_cChWSFtnEdn           = LittleEndian.getInt(data, 0x1ae + offset);
         field_42_grfDocEvents          = LittleEndian.getInt(data, 0x1b2 + offset);
         field_43_virusinfo             = LittleEndian.getInt(data, 0x1b6 + offset);
-        field_44_Spare                 = LittleEndian.getByteArray(data, 0x1ba + offset,30);
+        field_44_Spare                 = Arrays.copyOfRange(data, 0x1ba + offset, 0x1ba + offset + 30);
         field_45_reserved1             = LittleEndian.getInt(data, 0x1d8 + offset);
         field_46_reserved2             = LittleEndian.getInt(data, 0x1dc + offset);
         field_47_cDBC                  = LittleEndian.getInt(data, 0x1e0 + offset);
@@ -1473,7 +1473,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fFacingPages field value.
-     * 
+     *
      */
     @Internal
     public void setFFacingPages( boolean value )
@@ -1482,7 +1482,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fFacingPages field value.
      */
     @Internal
@@ -1493,7 +1493,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fWidowControl field value.
-     * 
+     *
      */
     @Internal
     public void setFWidowControl( boolean value )
@@ -1502,7 +1502,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fWidowControl field value.
      */
     @Internal
@@ -1513,7 +1513,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fPMHMainDoc field value.
-     * 
+     *
      */
     @Internal
     public void setFPMHMainDoc( boolean value )
@@ -1522,7 +1522,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fPMHMainDoc field value.
      */
     @Internal
@@ -1533,7 +1533,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the grfSupression field value.
-     * 
+     *
      */
     @Internal
     public void setGrfSupression( byte value )
@@ -1542,7 +1542,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the grfSupression field value.
      */
     @Internal
@@ -1553,7 +1553,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fpc field value.
-     * 
+     *
      */
     @Internal
     public void setFpc( byte value )
@@ -1562,7 +1562,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fpc field value.
      */
     @Internal
@@ -1573,7 +1573,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the unused1 field value.
-     * 
+     *
      */
     @Internal
     public void setUnused1( boolean value )
@@ -1582,7 +1582,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the unused1 field value.
      */
     @Internal
@@ -1593,7 +1593,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the rncFtn field value.
-     * 
+     *
      */
     @Internal
     public void setRncFtn( byte value )
@@ -1602,7 +1602,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the rncFtn field value.
      */
     @Internal
@@ -1613,7 +1613,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the nFtn field value.
-     * 
+     *
      */
     @Internal
     public void setNFtn( short value )
@@ -1622,7 +1622,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the nFtn field value.
      */
     @Internal
@@ -1633,7 +1633,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fOnlyMacPics field value.
-     * 
+     *
      */
     @Internal
     public void setFOnlyMacPics( boolean value )
@@ -1642,7 +1642,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fOnlyMacPics field value.
      */
     @Internal
@@ -1653,7 +1653,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fOnlyWinPics field value.
-     * 
+     *
      */
     @Internal
     public void setFOnlyWinPics( boolean value )
@@ -1662,7 +1662,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fOnlyWinPics field value.
      */
     @Internal
@@ -1673,7 +1673,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fLabelDoc field value.
-     * 
+     *
      */
     @Internal
     public void setFLabelDoc( boolean value )
@@ -1682,7 +1682,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fLabelDoc field value.
      */
     @Internal
@@ -1693,7 +1693,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fHyphCapitals field value.
-     * 
+     *
      */
     @Internal
     public void setFHyphCapitals( boolean value )
@@ -1702,7 +1702,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fHyphCapitals field value.
      */
     @Internal
@@ -1713,7 +1713,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fAutoHyphen field value.
-     * 
+     *
      */
     @Internal
     public void setFAutoHyphen( boolean value )
@@ -1722,7 +1722,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fAutoHyphen field value.
      */
     @Internal
@@ -1733,7 +1733,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fFormNoFields field value.
-     * 
+     *
      */
     @Internal
     public void setFFormNoFields( boolean value )
@@ -1742,7 +1742,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fFormNoFields field value.
      */
     @Internal
@@ -1753,7 +1753,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fLinkStyles field value.
-     * 
+     *
      */
     @Internal
     public void setFLinkStyles( boolean value )
@@ -1762,7 +1762,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fLinkStyles field value.
      */
     @Internal
@@ -1773,7 +1773,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fRevMarking field value.
-     * 
+     *
      */
     @Internal
     public void setFRevMarking( boolean value )
@@ -1782,7 +1782,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fRevMarking field value.
      */
     @Internal
@@ -1793,7 +1793,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fBackup field value.
-     * 
+     *
      */
     @Internal
     public void setFBackup( boolean value )
@@ -1802,7 +1802,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fBackup field value.
      */
     @Internal
@@ -1813,7 +1813,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fExactCWords field value.
-     * 
+     *
      */
     @Internal
     public void setFExactCWords( boolean value )
@@ -1822,7 +1822,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fExactCWords field value.
      */
     @Internal
@@ -1833,7 +1833,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fPagHidden field value.
-     * 
+     *
      */
     @Internal
     public void setFPagHidden( boolean value )
@@ -1842,7 +1842,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fPagHidden field value.
      */
     @Internal
@@ -1853,7 +1853,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fPagResults field value.
-     * 
+     *
      */
     @Internal
     public void setFPagResults( boolean value )
@@ -1862,7 +1862,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fPagResults field value.
      */
     @Internal
@@ -1873,7 +1873,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fLockAtn field value.
-     * 
+     *
      */
     @Internal
     public void setFLockAtn( boolean value )
@@ -1882,7 +1882,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fLockAtn field value.
      */
     @Internal
@@ -1893,7 +1893,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fMirrorMargins field value.
-     * 
+     *
      */
     @Internal
     public void setFMirrorMargins( boolean value )
@@ -1902,7 +1902,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fMirrorMargins field value.
      */
     @Internal
@@ -1913,7 +1913,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the unused3 field value.
-     * 
+     *
      */
     @Internal
     public void setUnused3( boolean value )
@@ -1922,7 +1922,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the unused3 field value.
      */
     @Internal
@@ -1933,7 +1933,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fDfltTrueType field value.
-     * 
+     *
      */
     @Internal
     public void setFDfltTrueType( boolean value )
@@ -1942,7 +1942,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fDfltTrueType field value.
      */
     @Internal
@@ -1953,7 +1953,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fPagSupressTopSpacing field value.
-     * 
+     *
      */
     @Internal
     public void setFPagSupressTopSpacing( boolean value )
@@ -1962,7 +1962,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fPagSupressTopSpacing field value.
      */
     @Internal
@@ -1973,7 +1973,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fProtEnabled field value.
-     * 
+     *
      */
     @Internal
     public void setFProtEnabled( boolean value )
@@ -1982,7 +1982,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fProtEnabled field value.
      */
     @Internal
@@ -1993,7 +1993,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fDispFormFldSel field value.
-     * 
+     *
      */
     @Internal
     public void setFDispFormFldSel( boolean value )
@@ -2002,7 +2002,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fDispFormFldSel field value.
      */
     @Internal
@@ -2013,7 +2013,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fRMView field value.
-     * 
+     *
      */
     @Internal
     public void setFRMView( boolean value )
@@ -2022,7 +2022,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fRMView field value.
      */
     @Internal
@@ -2033,7 +2033,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fRMPrint field value.
-     * 
+     *
      */
     @Internal
     public void setFRMPrint( boolean value )
@@ -2042,7 +2042,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fRMPrint field value.
      */
     @Internal
@@ -2053,7 +2053,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the unused4 field value.
-     * 
+     *
      */
     @Internal
     public void setUnused4( boolean value )
@@ -2062,7 +2062,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the unused4 field value.
      */
     @Internal
@@ -2073,7 +2073,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fLockRev field value.
-     * 
+     *
      */
     @Internal
     public void setFLockRev( boolean value )
@@ -2082,7 +2082,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fLockRev field value.
      */
     @Internal
@@ -2093,7 +2093,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fEmbedFonts field value.
-     * 
+     *
      */
     @Internal
     public void setFEmbedFonts( boolean value )
@@ -2102,7 +2102,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fEmbedFonts field value.
      */
     @Internal
@@ -2113,7 +2113,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the oldfNoTabForInd field value.
-     * 
+     *
      */
     @Internal
     public void setOldfNoTabForInd( boolean value )
@@ -2122,7 +2122,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the oldfNoTabForInd field value.
      */
     @Internal
@@ -2133,7 +2133,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the oldfNoSpaceRaiseLower field value.
-     * 
+     *
      */
     @Internal
     public void setOldfNoSpaceRaiseLower( boolean value )
@@ -2142,7 +2142,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the oldfNoSpaceRaiseLower field value.
      */
     @Internal
@@ -2153,7 +2153,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the oldfSuppressSpbfAfterPageBreak field value.
-     * 
+     *
      */
     @Internal
     public void setOldfSuppressSpbfAfterPageBreak( boolean value )
@@ -2162,7 +2162,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the oldfSuppressSpbfAfterPageBreak field value.
      */
     @Internal
@@ -2173,7 +2173,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the oldfWrapTrailSpaces field value.
-     * 
+     *
      */
     @Internal
     public void setOldfWrapTrailSpaces( boolean value )
@@ -2182,7 +2182,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the oldfWrapTrailSpaces field value.
      */
     @Internal
@@ -2193,7 +2193,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the oldfMapPrintTextColor field value.
-     * 
+     *
      */
     @Internal
     public void setOldfMapPrintTextColor( boolean value )
@@ -2202,7 +2202,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the oldfMapPrintTextColor field value.
      */
     @Internal
@@ -2213,7 +2213,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the oldfNoColumnBalance field value.
-     * 
+     *
      */
     @Internal
     public void setOldfNoColumnBalance( boolean value )
@@ -2222,7 +2222,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the oldfNoColumnBalance field value.
      */
     @Internal
@@ -2233,7 +2233,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the oldfConvMailMergeEsc field value.
-     * 
+     *
      */
     @Internal
     public void setOldfConvMailMergeEsc( boolean value )
@@ -2242,7 +2242,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the oldfConvMailMergeEsc field value.
      */
     @Internal
@@ -2253,7 +2253,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the oldfSupressTopSpacing field value.
-     * 
+     *
      */
     @Internal
     public void setOldfSupressTopSpacing( boolean value )
@@ -2262,7 +2262,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the oldfSupressTopSpacing field value.
      */
     @Internal
@@ -2273,7 +2273,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the oldfOrigWordTableRules field value.
-     * 
+     *
      */
     @Internal
     public void setOldfOrigWordTableRules( boolean value )
@@ -2282,7 +2282,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the oldfOrigWordTableRules field value.
      */
     @Internal
@@ -2293,7 +2293,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the oldfTransparentMetafiles field value.
-     * 
+     *
      */
     @Internal
     public void setOldfTransparentMetafiles( boolean value )
@@ -2302,7 +2302,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the oldfTransparentMetafiles field value.
      */
     @Internal
@@ -2313,7 +2313,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the oldfShowBreaksInFrames field value.
-     * 
+     *
      */
     @Internal
     public void setOldfShowBreaksInFrames( boolean value )
@@ -2322,7 +2322,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the oldfShowBreaksInFrames field value.
      */
     @Internal
@@ -2333,7 +2333,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the oldfSwapBordersFacingPgs field value.
-     * 
+     *
      */
     @Internal
     public void setOldfSwapBordersFacingPgs( boolean value )
@@ -2342,7 +2342,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the oldfSwapBordersFacingPgs field value.
      */
     @Internal
@@ -2353,7 +2353,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the unused5 field value.
-     * 
+     *
      */
     @Internal
     public void setUnused5( byte value )
@@ -2362,7 +2362,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the unused5 field value.
      */
     @Internal
@@ -2373,7 +2373,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the rncEdn field value.
-     * 
+     *
      */
     @Internal
     public void setRncEdn( byte value )
@@ -2382,7 +2382,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the rncEdn field value.
      */
     @Internal
@@ -2393,7 +2393,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the nEdn field value.
-     * 
+     *
      */
     @Internal
     public void setNEdn( short value )
@@ -2402,7 +2402,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the nEdn field value.
      */
     @Internal
@@ -2413,7 +2413,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the epc field value.
-     * 
+     *
      */
     @Internal
     public void setEpc( byte value )
@@ -2422,7 +2422,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the epc field value.
      */
     @Internal
@@ -2433,7 +2433,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the nfcFtnRef1 field value.
-     * 
+     *
      */
     @Internal
     public void setNfcFtnRef1( byte value )
@@ -2442,7 +2442,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the nfcFtnRef1 field value.
      */
     @Internal
@@ -2453,7 +2453,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the nfcEdnRef1 field value.
-     * 
+     *
      */
     @Internal
     public void setNfcEdnRef1( byte value )
@@ -2462,7 +2462,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the nfcEdnRef1 field value.
      */
     @Internal
@@ -2473,7 +2473,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fPrintFormData field value.
-     * 
+     *
      */
     @Internal
     public void setFPrintFormData( boolean value )
@@ -2482,7 +2482,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fPrintFormData field value.
      */
     @Internal
@@ -2493,7 +2493,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fSaveFormData field value.
-     * 
+     *
      */
     @Internal
     public void setFSaveFormData( boolean value )
@@ -2502,7 +2502,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fSaveFormData field value.
      */
     @Internal
@@ -2513,7 +2513,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fShadeFormData field value.
-     * 
+     *
      */
     @Internal
     public void setFShadeFormData( boolean value )
@@ -2522,7 +2522,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fShadeFormData field value.
      */
     @Internal
@@ -2533,7 +2533,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fWCFtnEdn field value.
-     * 
+     *
      */
     @Internal
     public void setFWCFtnEdn( boolean value )
@@ -2542,7 +2542,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fWCFtnEdn field value.
      */
     @Internal
@@ -2553,7 +2553,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the wvkSaved field value.
-     * 
+     *
      */
     @Internal
     public void setWvkSaved( byte value )
@@ -2562,7 +2562,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the wvkSaved field value.
      */
     @Internal
@@ -2573,7 +2573,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the wScaleSaved field value.
-     * 
+     *
      */
     @Internal
     public void setWScaleSaved( short value )
@@ -2582,7 +2582,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the wScaleSaved field value.
      */
     @Internal
@@ -2593,7 +2593,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the zkSaved field value.
-     * 
+     *
      */
     @Internal
     public void setZkSaved( byte value )
@@ -2602,7 +2602,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the zkSaved field value.
      */
     @Internal
@@ -2613,7 +2613,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fRotateFontW6 field value.
-     * 
+     *
      */
     @Internal
     public void setFRotateFontW6( boolean value )
@@ -2622,7 +2622,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fRotateFontW6 field value.
      */
     @Internal
@@ -2633,7 +2633,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the iGutterPos field value.
-     * 
+     *
      */
     @Internal
     public void setIGutterPos( boolean value )
@@ -2642,7 +2642,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the iGutterPos field value.
      */
     @Internal
@@ -2653,7 +2653,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fNoTabForInd field value.
-     * 
+     *
      */
     @Internal
     public void setFNoTabForInd( boolean value )
@@ -2662,7 +2662,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fNoTabForInd field value.
      */
     @Internal
@@ -2673,7 +2673,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fNoSpaceRaiseLower field value.
-     * 
+     *
      */
     @Internal
     public void setFNoSpaceRaiseLower( boolean value )
@@ -2682,7 +2682,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fNoSpaceRaiseLower field value.
      */
     @Internal
@@ -2693,7 +2693,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fSupressSpdfAfterPageBreak field value.
-     * 
+     *
      */
     @Internal
     public void setFSupressSpdfAfterPageBreak( boolean value )
@@ -2702,7 +2702,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fSupressSpdfAfterPageBreak field value.
      */
     @Internal
@@ -2713,7 +2713,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fWrapTrailSpaces field value.
-     * 
+     *
      */
     @Internal
     public void setFWrapTrailSpaces( boolean value )
@@ -2722,7 +2722,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fWrapTrailSpaces field value.
      */
     @Internal
@@ -2733,7 +2733,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fMapPrintTextColor field value.
-     * 
+     *
      */
     @Internal
     public void setFMapPrintTextColor( boolean value )
@@ -2742,7 +2742,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fMapPrintTextColor field value.
      */
     @Internal
@@ -2753,7 +2753,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fNoColumnBalance field value.
-     * 
+     *
      */
     @Internal
     public void setFNoColumnBalance( boolean value )
@@ -2762,7 +2762,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fNoColumnBalance field value.
      */
     @Internal
@@ -2773,7 +2773,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fConvMailMergeEsc field value.
-     * 
+     *
      */
     @Internal
     public void setFConvMailMergeEsc( boolean value )
@@ -2782,7 +2782,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fConvMailMergeEsc field value.
      */
     @Internal
@@ -2793,7 +2793,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fSupressTopSpacing field value.
-     * 
+     *
      */
     @Internal
     public void setFSupressTopSpacing( boolean value )
@@ -2802,7 +2802,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fSupressTopSpacing field value.
      */
     @Internal
@@ -2813,7 +2813,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fOrigWordTableRules field value.
-     * 
+     *
      */
     @Internal
     public void setFOrigWordTableRules( boolean value )
@@ -2822,7 +2822,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fOrigWordTableRules field value.
      */
     @Internal
@@ -2833,7 +2833,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fTransparentMetafiles field value.
-     * 
+     *
      */
     @Internal
     public void setFTransparentMetafiles( boolean value )
@@ -2842,7 +2842,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fTransparentMetafiles field value.
      */
     @Internal
@@ -2853,7 +2853,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fShowBreaksInFrames field value.
-     * 
+     *
      */
     @Internal
     public void setFShowBreaksInFrames( boolean value )
@@ -2862,7 +2862,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fShowBreaksInFrames field value.
      */
     @Internal
@@ -2873,7 +2873,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fSwapBordersFacingPgs field value.
-     * 
+     *
      */
     @Internal
     public void setFSwapBordersFacingPgs( boolean value )
@@ -2882,7 +2882,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fSwapBordersFacingPgs field value.
      */
     @Internal
@@ -2893,7 +2893,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fSuppressTopSPacingMac5 field value.
-     * 
+     *
      */
     @Internal
     public void setFSuppressTopSPacingMac5( boolean value )
@@ -2902,7 +2902,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fSuppressTopSPacingMac5 field value.
      */
     @Internal
@@ -2913,7 +2913,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fTruncDxaExpand field value.
-     * 
+     *
      */
     @Internal
     public void setFTruncDxaExpand( boolean value )
@@ -2922,7 +2922,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fTruncDxaExpand field value.
      */
     @Internal
@@ -2933,7 +2933,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fPrintBodyBeforeHdr field value.
-     * 
+     *
      */
     @Internal
     public void setFPrintBodyBeforeHdr( boolean value )
@@ -2942,7 +2942,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fPrintBodyBeforeHdr field value.
      */
     @Internal
@@ -2953,7 +2953,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fNoLeading field value.
-     * 
+     *
      */
     @Internal
     public void setFNoLeading( boolean value )
@@ -2962,7 +2962,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fNoLeading field value.
      */
     @Internal
@@ -2973,7 +2973,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fMWSmallCaps field value.
-     * 
+     *
      */
     @Internal
     public void setFMWSmallCaps( boolean value )
@@ -2982,7 +2982,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fMWSmallCaps field value.
      */
     @Internal
@@ -2993,7 +2993,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the lvl field value.
-     * 
+     *
      */
     @Internal
     public void setLvl( byte value )
@@ -3002,7 +3002,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the lvl field value.
      */
     @Internal
@@ -3013,7 +3013,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fGramAllDone field value.
-     * 
+     *
      */
     @Internal
     public void setFGramAllDone( boolean value )
@@ -3022,7 +3022,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fGramAllDone field value.
      */
     @Internal
@@ -3033,7 +3033,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fGramAllClean field value.
-     * 
+     *
      */
     @Internal
     public void setFGramAllClean( boolean value )
@@ -3042,7 +3042,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fGramAllClean field value.
      */
     @Internal
@@ -3053,7 +3053,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fSubsetFonts field value.
-     * 
+     *
      */
     @Internal
     public void setFSubsetFonts( boolean value )
@@ -3062,7 +3062,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fSubsetFonts field value.
      */
     @Internal
@@ -3073,7 +3073,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fHideLastVersion field value.
-     * 
+     *
      */
     @Internal
     public void setFHideLastVersion( boolean value )
@@ -3082,7 +3082,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fHideLastVersion field value.
      */
     @Internal
@@ -3093,7 +3093,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fHtmlDoc field value.
-     * 
+     *
      */
     @Internal
     public void setFHtmlDoc( boolean value )
@@ -3102,7 +3102,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fHtmlDoc field value.
      */
     @Internal
@@ -3113,7 +3113,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fSnapBorder field value.
-     * 
+     *
      */
     @Internal
     public void setFSnapBorder( boolean value )
@@ -3122,7 +3122,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fSnapBorder field value.
      */
     @Internal
@@ -3133,7 +3133,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fIncludeHeader field value.
-     * 
+     *
      */
     @Internal
     public void setFIncludeHeader( boolean value )
@@ -3142,7 +3142,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fIncludeHeader field value.
      */
     @Internal
@@ -3153,7 +3153,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fIncludeFooter field value.
-     * 
+     *
      */
     @Internal
     public void setFIncludeFooter( boolean value )
@@ -3162,7 +3162,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fIncludeFooter field value.
      */
     @Internal
@@ -3173,7 +3173,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fForcePageSizePag field value.
-     * 
+     *
      */
     @Internal
     public void setFForcePageSizePag( boolean value )
@@ -3182,7 +3182,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fForcePageSizePag field value.
      */
     @Internal
@@ -3193,7 +3193,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fMinFontSizePag field value.
-     * 
+     *
      */
     @Internal
     public void setFMinFontSizePag( boolean value )
@@ -3202,7 +3202,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fMinFontSizePag field value.
      */
     @Internal
@@ -3213,7 +3213,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fHaveVersions field value.
-     * 
+     *
      */
     @Internal
     public void setFHaveVersions( boolean value )
@@ -3222,7 +3222,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fHaveVersions field value.
      */
     @Internal
@@ -3233,7 +3233,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fAutoVersions field value.
-     * 
+     *
      */
     @Internal
     public void setFAutoVersions( boolean value )
@@ -3242,7 +3242,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fAutoVersions field value.
      */
     @Internal
@@ -3253,7 +3253,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fVirusPrompted field value.
-     * 
+     *
      */
     @Internal
     public void setFVirusPrompted( boolean value )
@@ -3262,7 +3262,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fVirusPrompted field value.
      */
     @Internal
@@ -3273,7 +3273,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the fVirusLoadSafe field value.
-     * 
+     *
      */
     @Internal
     public void setFVirusLoadSafe( boolean value )
@@ -3282,7 +3282,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the fVirusLoadSafe field value.
      */
     @Internal
@@ -3293,7 +3293,7 @@ public abstract class DOPAbstractType {
 
     /**
      * Sets the KeyVirusSession30 field value.
-     * 
+     *
      */
     @Internal
     public void setKeyVirusSession30( int value )
@@ -3302,7 +3302,7 @@ public abstract class DOPAbstractType {
     }
 
     /**
-     * 
+     *
      * @return  the KeyVirusSession30 field value.
      */
     @Internal

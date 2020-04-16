@@ -19,6 +19,7 @@ package org.apache.poi.hslf.record;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -89,8 +90,7 @@ public final class UserEditAtom extends PositionDependentRecordAtom
 
 		int offset = start;
 		// Get the header
-		_header = new byte[8];
-		System.arraycopy(source,offset,_header,0,8);
+		_header = Arrays.copyOfRange(source, start, start+8);
 		offset += 8;
 
 		// Get the last viewed slide ID
@@ -125,7 +125,7 @@ public final class UserEditAtom extends PositionDependentRecordAtom
 		// Last view type
 		lastViewType = LittleEndian.getShort(source,offset);
 		offset += LittleEndianConsts.SHORT_SIZE;
-		
+
 		// unused
 		unused = LittleEndian.getShort(source,offset);
 		offset += LittleEndianConsts.SHORT_SIZE;
@@ -135,7 +135,7 @@ public final class UserEditAtom extends PositionDependentRecordAtom
 		    encryptSessionPersistIdRef = LittleEndian.getInt(source,offset);
 		    offset += LittleEndianConsts.INT_SIZE;
 		}
-		
+
 		assert(offset-start == len);
 	}
 

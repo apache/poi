@@ -20,6 +20,7 @@ package org.apache.poi.hslf.record;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -108,11 +109,10 @@ public final class ColorSchemeAtom extends RecordAtom {
 		}
 
 		// Get the header
-		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+		_header = Arrays.copyOfRange(source, start, start+8);
 
 		// Grab the rgb values
-		backgroundColourRGB = LittleEndian.getInt(source,start+8+0);
+		backgroundColourRGB = LittleEndian.getInt(source, start+8);
 		textAndLinesColourRGB = LittleEndian.getInt(source,start+8+4);
 		shadowsColourRGB = LittleEndian.getInt(source,start+8+8);
 		titleTextColourRGB = LittleEndian.getInt(source,start+8+12);

@@ -17,6 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.Arrays;
+
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ThreeDEval;
 import org.apache.poi.ss.formula.TwoDEval;
@@ -67,20 +69,13 @@ public abstract class MultiOperandNumericFunction implements Function {
         }
 
         public double[] toArray() {
-            if (_count < 1) {
-                return EMPTY_DOUBLE_ARRAY;
-            }
-            double[] result = new double[_count];
-            System.arraycopy(_array, 0, result, 0, _count);
-            return result;
+            return _count < 1 ? EMPTY_DOUBLE_ARRAY : Arrays.copyOf(_array, _count);
         }
 
         private void ensureCapacity(int reqSize) {
             if (reqSize > _array.length) {
                 int newSize = reqSize * 3 / 2; // grow with 50% extra
-                double[] newArr = new double[newSize];
-                System.arraycopy(_array, 0, newArr, 0, _count);
-                _array = newArr;
+                _array = Arrays.copyOf(_array, newSize);
             }
         }
 
@@ -159,7 +154,7 @@ public abstract class MultiOperandNumericFunction implements Function {
     public boolean isHiddenRowCounted() {
         return true;
     }
-    
+
     /**
      * Collects values from a single argument
      */

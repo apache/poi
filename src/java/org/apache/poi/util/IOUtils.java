@@ -28,6 +28,7 @@ import java.io.OutputStream;
 import java.io.PushbackInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
+import java.util.Arrays;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
@@ -35,6 +36,8 @@ import org.apache.poi.EmptyFileException;
 import org.apache.poi.POIDocument;
 import org.apache.poi.ss.usermodel.Workbook;
 
+
+@Internal
 public final class IOUtils {
     private static final POILogger logger = POILogFactory.getLogger( IOUtils.class );
 
@@ -609,6 +612,18 @@ public final class IOUtils {
         }
         checkLength(length, maxLength);
     }
+
+    public static byte[] safelyClone(byte[] src, int offset, int length, int maxLength) {
+        if (src == null) {
+            return null;
+        }
+        assert(offset >= 0 && length >= 0 && maxLength >= 0);
+        safelyAllocateCheck(Math.min(src.length-offset,length), maxLength);
+        return Arrays.copyOfRange(src, offset, offset+length);
+    }
+
+
+
 
     /**
      * Simple utility function to check that you haven't hit EOF

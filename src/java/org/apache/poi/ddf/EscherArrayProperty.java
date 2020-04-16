@@ -96,7 +96,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
      * @param propertyNumber the property number part of the property id
      * @param isBlipId {@code true}, if it references a blip
      * @param complexData the data
-     *                    
+     *
      * @deprecated use {@link #EscherArrayProperty(EscherPropertyTypes, boolean, int)} and {@link #setComplexData(byte[])}
      */
     @Deprecated
@@ -124,7 +124,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
         // when called by user code, fix the size to be valid for the header
         return complexSize == 0 ? 6 : complexSize;
     }
-    
+
     public int getNumberOfElementsInArray() {
         return (emptyComplexPart) ? 0 : LittleEndian.getUShort(getComplexData(), 0);
     }
@@ -171,9 +171,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
 
     public byte[] getElement(int index) {
         int actualSize = getActualSizeOfElements(getSizeOfElements());
-        byte[] result = IOUtils.safelyAllocate(actualSize, MAX_RECORD_LENGTH);
-        System.arraycopy(getComplexData(), FIXED_SIZE + index * actualSize, result, 0, result.length );
-        return result;
+        return IOUtils.safelyClone(getComplexData(), FIXED_SIZE + index * actualSize, actualSize, MAX_RECORD_LENGTH);
     }
 
     public void setElement(int index, byte[] element) {
@@ -252,7 +250,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
             public boolean hasNext() {
                 return (idx < getNumberOfElementsInArray());
             }
-            
+
             @Override
             public byte[] next() {
                 if (!hasNext()) {
@@ -260,7 +258,7 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
                 }
                 return getElement(idx++);
             }
-            
+
             @Override
             public void remove() {
                 throw new UnsupportedOperationException("not yet implemented");

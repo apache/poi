@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,8 +48,7 @@ public final class FontCollection extends RecordContainer {
     private byte[] _header;
 
 	/* package */ FontCollection(byte[] source, int start, int len) {
-		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+        _header = Arrays.copyOfRange(source, start, start+8);
 
 		_children = Record.findChildRecords(source,start+8,len-8);
 
@@ -86,10 +86,10 @@ public final class FontCollection extends RecordContainer {
 
     /**
      * Add font with the given FontInfo configuration to the font collection.
-     * The returned FontInfo contains the HSLF specific details and the collection 
+     * The returned FontInfo contains the HSLF specific details and the collection
      * uniquely contains fonts based on their typeface, i.e. calling the method with FontInfo
      * objects having the same name results in the same HSLFFontInfo reference.
-     * 
+     *
      * @param fontInfo the FontInfo configuration, can be a instance of {@link HSLFFontInfo},
      *      {@link HSLFFontInfoPredefined} or a custom implementation
      * @return the register HSLFFontInfo object
@@ -168,9 +168,9 @@ public final class FontCollection extends RecordContainer {
 
     /**
      * Lookup a FontInfo object by its typeface
-     * 
+     *
      * @param typeface the full font name
-     * 
+     *
      * @return the HSLFFontInfo for the given name or {@code null} if not found
      */
     public HSLFFontInfo getFontInfo(String typeface) {
@@ -195,9 +195,9 @@ public final class FontCollection extends RecordContainer {
 
     /**
      * Lookup a FontInfo object by its internal font index
-     * 
+     *
      * @param index the internal font index
-     * 
+     *
      * @return the HSLFFontInfo for the given index or {@code null} if not found
      */
     public HSLFFontInfo getFontInfo(int index) {
@@ -208,7 +208,7 @@ public final class FontCollection extends RecordContainer {
         }
         return null;
     }
-    
+
     /**
      * @return the number of registered fonts
      */

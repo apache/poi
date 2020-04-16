@@ -17,6 +17,7 @@
 
 package org.apache.poi.hpsf;
 
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 /**
  * <p>Class to manipulate data in the Clipboard Variant ({@link
@@ -118,6 +119,9 @@ public final class Thumbnail {
      * <p>Clipboard Format - Bitmap</p>
      */
     public static final int CF_BITMAP = 2;
+
+    //arbitrarily selected; may need to increase
+    private static final int MAX_RECORD_LENGTH = 1_000_000;
 
     /**
      * <p>A <code>byte[]</code> to hold a thumbnail image in ({@link
@@ -260,13 +264,6 @@ public final class Thumbnail {
                                     "be CF_METAFILEPICT.");
         }
         byte[] thumbnail = getThumbnail();
-        int wmfImageLength = thumbnail.length - OFFSET_WMFDATA;
-        byte[] wmfImage = new byte[wmfImageLength];
-        System.arraycopy(thumbnail,
-                         OFFSET_WMFDATA,
-                         wmfImage,
-                         0,
-                         wmfImageLength);
-        return wmfImage;
+        return IOUtils.safelyClone(thumbnail, OFFSET_WMFDATA, thumbnail.length - OFFSET_WMFDATA, MAX_RECORD_LENGTH);
     }
 }

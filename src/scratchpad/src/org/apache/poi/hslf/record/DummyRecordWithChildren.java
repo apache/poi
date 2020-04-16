@@ -17,9 +17,11 @@
 
 package org.apache.poi.hslf.record;
 
-import org.apache.poi.util.LittleEndian;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.Arrays;
+
+import org.apache.poi.util.LittleEndian;
 
 /**
  * If we come across a record we know has children of (potential)
@@ -39,8 +41,7 @@ public final class DummyRecordWithChildren extends RecordContainer
 	 */
 	protected DummyRecordWithChildren(byte[] source, int start, int len) {
 		// Just grab the header, not the whole contents
-		_header = new byte[8];
-		System.arraycopy(source,start,_header,0,8);
+		_header = Arrays.copyOfRange(source, start, start+8);
 		_type = LittleEndian.getUShort(_header,2);
 
 		// Find our children
