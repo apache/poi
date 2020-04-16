@@ -252,7 +252,7 @@ public class POIFSMiniStore extends BlockStore
           if (!sbat.hasFreeSectors()) {
               blocksUsed += _filesystem.getBigBlockSizeDetails().getBATEntriesPerBlock();
           } else {
-              blocksUsed += sbat.getUsedSectors(false);
+              blocksUsed += sbat.getOccupiedSize();
           }
        }
        // Set the size on the root in terms of the number of SBAT blocks

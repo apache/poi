@@ -192,6 +192,25 @@ public final class BATBlock implements BlockWritable {
         return usedSectors;
     }
 
+    /**
+     * How much of this block is occupied?.
+     * This counts the number of sectors up and including the last used sector.
+     * Note that this is different from {@link #getUsedSectors(boolean)} which
+     * could be smaller as it does not count unused sectors where there are
+     * used ones after it (i.e. fragmentation).
+     */
+    public int getOccupiedSize() {
+        int usedSectors = _values.length;
+        for (int k = _values.length - 1; k >= 0; k--) {
+            if(_values[k] == POIFSConstants.UNUSED_BLOCK) {
+                usedSectors--;
+            } else {
+                break;
+            }
+        }
+        return usedSectors;
+    }
+
     public int getValueAt(int relativeOffset) {
        if(relativeOffset >= _values.length) {
           throw new ArrayIndexOutOfBoundsException(

@@ -175,6 +175,68 @@ public final class TestBATBlock {
         assertEquals(1024, block4096.getUsedSectors(false));
         assertEquals(1023, block4096.getUsedSectors(true));
     }
+    
+        @Test
+    public void testOccupiedSize() {
+        POIFSBigBlockSize b512 = POIFSConstants.SMALLER_BIG_BLOCK_SIZE_DETAILS;
+        POIFSBigBlockSize b4096 = POIFSConstants.LARGER_BIG_BLOCK_SIZE_DETAILS;
+        
+        // Try first with 512 block sizes, which can hold 128 entries
+        BATBlock block512 = BATBlock.createEmptyBATBlock(b512, false);
+        assertTrue(block512.hasFreeSectors());
+        assertEquals(0, block512.getUsedSectors(false));
+
+        // Allocate a few
+        block512.setValueAt(0, 42);
+        block512.setValueAt(10, 42);
+        block512.setValueAt(20, 42);
+        assertTrue(block512.hasFreeSectors());
+        assertEquals(21, block512.getOccupiedSize());
+        
+        // Release one in the middle should not lower size
+        block512.setValueAt(10, POIFSConstants.UNUSED_BLOCK);
+        assertTrue(block512.hasFreeSectors());
+        assertEquals(21, block512.getOccupiedSize());
+        
+        // Release the last one should lower the size
+        block512.setValueAt(20, POIFSConstants.UNUSED_BLOCK);
+        assertTrue(block512.hasFreeSectors());
+        assertEquals(1, block512.getOccupiedSize());
+        
+        // Release first one should lower the size
+        block512.setValueAt(0, POIFSConstants.UNUSED_BLOCK);
+        assertTrue(block512.hasFreeSectors());
+        assertEquals(0, block512.getOccupiedSize());
+        
+        // Set the last one
+        block512.setValueAt(127, 42);
+        assertTrue(block512.hasFreeSectors());
+        assertEquals(128, block512.getOccupiedSize());
+        
+        block512.setValueAt(126, 42);
+        assertTrue(block512.hasFreeSectors());
+        assertEquals(128, block512.getOccupiedSize());
+        
+        block512.setValueAt(127, POIFSConstants.UNUSED_BLOCK);
+        assertTrue(block512.hasFreeSectors());
+        assertEquals(127, block512.getOccupiedSize());
+        
+        // Allocate all
+        for (int i=0; i<b512.getBATEntriesPerBlock(); i++) {
+            block512.setValueAt(i, 82);
+        }
+        // Check
+        assertFalse(block512.hasFreeSectors());
+        assertEquals(128, block512.getOccupiedSize());
+        
+        // Release some in the beginning should not lower size
+        block512.setValueAt(0, POIFSConstants.UNUSED_BLOCK);
+        block512.setValueAt(1, POIFSConstants.UNUSED_BLOCK);
+        block512.setValueAt(13, POIFSConstants.UNUSED_BLOCK);
+        assertTrue(block512.hasFreeSectors());
+        assertEquals(128, block512.getOccupiedSize());
+        
+    }
 
     @Test
     public void testGetBATBlockAndIndex() {
