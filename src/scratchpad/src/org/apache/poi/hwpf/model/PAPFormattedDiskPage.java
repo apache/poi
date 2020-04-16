@@ -137,18 +137,13 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
     {
         int papxOffset = 2 * LittleEndian.getUByte(_fkp, _offset + (((_crun + 1) * FC_SIZE) + (index * BX_SIZE)));
         int size = 2 * LittleEndian.getUByte(_fkp, _offset + papxOffset);
-        if(size == 0)
-        {
+        if(size == 0) {
             size = 2 * LittleEndian.getUByte(_fkp, _offset + ++papxOffset);
-        }
-        else
-        {
+        } else {
             size--;
         }
 
-        byte[] papx = IOUtils.safelyAllocate(size, 512);
-        System.arraycopy(_fkp, _offset + ++papxOffset, papx, 0, size);
-        return papx;
+        return IOUtils.safelyClone(_fkp, _offset + papxOffset + 1, size, 512);
     }
 
     /**
@@ -273,8 +268,7 @@ public final class PAPFormattedDiskPage extends FormattedDiskPage {
                 // LittleEndian.putUShort( dataStream, hugeGrpprlOffset,
                 // grpprl.length - 2 );
 
-                byte[] hugePapx = new byte[grpprl.length - 2];
-                System.arraycopy( grpprl, 2, hugePapx, 0, grpprl.length - 2 );
+                byte[] hugePapx = Arrays.copyOfRange(grpprl, 2, grpprl.length);
                 int dataStreamOffset = dataStream.size();
                 dataStream.write( hugePapx );
 

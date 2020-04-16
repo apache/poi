@@ -195,25 +195,25 @@ public class TestBugs{
      */
     @Test
     public void test44431_2() throws IOException {
-        assertEqualsIgnoreNewline("File name=FieldsTest.doc\n" + 
-        		"\n" + 
-        		"\n" + 
-        		"STYLEREF test\n" + 
-        		"\n" + 
-        		"\n" + 
-        		"\n" + 
-        		"TEST TABLE OF CONTENTS\n" + 
-        		"\n" + 
-        		"Heading paragraph in next page\t2\n" + 
-        		"Another heading paragraph in further page\t3\n" + 
-        		"Another heading paragraph in further page\t3\n" + 
-        		"\n" + 
-        		"\n" + 
-        		"Heading paragraph in next page\n" + 
-        		"Another heading paragraph in further page\n" + 
-        		"\n" + 
-        		"\n" + 
-        		"\n" + 
+        assertEqualsIgnoreNewline("File name=FieldsTest.doc\n" +
+        		"\n" +
+        		"\n" +
+        		"STYLEREF test\n" +
+        		"\n" +
+        		"\n" +
+        		"\n" +
+        		"TEST TABLE OF CONTENTS\n" +
+        		"\n" +
+        		"Heading paragraph in next page\t2\n" +
+        		"Another heading paragraph in further page\t3\n" +
+        		"Another heading paragraph in further page\t3\n" +
+        		"\n" +
+        		"\n" +
+        		"Heading paragraph in next page\n" +
+        		"Another heading paragraph in further page\n" +
+        		"\n" +
+        		"\n" +
+        		"\n" +
         		"Page 3 of 3", getText("Bug44431.doc"));
     }
 
@@ -484,7 +484,7 @@ public class TestBugs{
             HWPFDocument hwpfDocument = HWPFTestDataSamples.openSampleFile(filename);
 
             assertNotNull(filename, hwpfDocument.getPicturesTable().getAllPictures());
-        
+
             hwpfDocument.close();
         }
     }
@@ -570,10 +570,8 @@ public class TestBugs{
     public void test51604p3() throws Exception {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("Bug51604.doc");
 
-        byte[] originalData = new byte[doc.getFileInformationBlock()
-                .getLcbDop()];
-        System.arraycopy(doc.getTableStream(), doc.getFileInformationBlock()
-                .getFcDop(), originalData, 0, originalData.length);
+        FileInformationBlock fib = doc.getFileInformationBlock();
+        byte[] originalData = Arrays.copyOfRange(doc.getTableStream(), fib.getFcDop(), fib.getFcDop()+fib.getLcbDop());
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         doc.getDocProperties().writeTo(outputStream);
@@ -731,11 +729,11 @@ public class TestBugs{
     public void testBug53380_4() throws Exception {
         assertNotNull(getText("Bug53380_4.doc"));
     }
-    
+
     /**
-     * java.lang.UnsupportedOperationException: Non-extended character 
+     * java.lang.UnsupportedOperationException: Non-extended character
      *  Pascal strings are not supported right now
-     * 
+     *
      * Disabled pending a fix for the bug
      */
     @Test
@@ -744,7 +742,7 @@ public class TestBugs{
                 HWPFTestDataSamples.openSampleFile("56880.doc");
         assertEqualsIgnoreNewline("Check Request", doc.getRange().text());
     }
-    
+
     /**
      * Bug 61268 - NegativeArraySizeException parsing word 97 document
      */
@@ -774,7 +772,7 @@ public class TestBugs{
                 }
                 else if(para.text().trim().equals("Section2")) {
                     assertSection2Margin(section);
-                    
+
                     // Change the margin widths
                     this.section2BottomMargin = (int)(1.5 * AbstractWordUtils.TWIPS_PER_INCH);
                     this.section2TopMargin = (int)(1.75 * AbstractWordUtils.TWIPS_PER_INCH);
@@ -787,7 +785,7 @@ public class TestBugs{
                 }
             }
         }
-        
+
         // Save away and re-read the document to prove the changes are permanent
         document = HWPFTestDataSamples.writeOutAndReadBack(document);
         overallRange = document.getOverallRange();
@@ -849,8 +847,8 @@ public class TestBugs{
         hwpfDocument2.close();
         hwpfDocument.close();
     }
-    
-    @Test(expected=ArrayIndexOutOfBoundsException.class)
+
+    @Test
     public void test57843() throws IOException {
         File f = POIDataSamples.getDocumentInstance().getFile("57843.doc");
         try (POIFSFileSystem fs = new POIFSFileSystem(f, true)) {
