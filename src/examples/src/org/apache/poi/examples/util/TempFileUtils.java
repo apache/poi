@@ -20,15 +20,15 @@
 package org.apache.poi.examples.util;
 
 import java.io.File;
-import java.io.IOException;
 
 import org.apache.poi.util.TempFile;
 
-public class TempFileUtils {
+public final class TempFileUtils {
     private TempFileUtils() {
     }
-    
-    public static void checkTempFiles() throws IOException {
+
+    @SuppressWarnings("java:S106")
+    public static void checkTempFiles() {
         String tmpDir = System.getProperty(TempFile.JAVA_IO_TMPDIR) + "/poifiles";
         File tempDir = new File(tmpDir);
         if(tempDir.exists()) {

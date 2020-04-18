@@ -19,13 +19,12 @@
 
 package org.apache.poi.crypt.examples;
 
-import java.io.BufferedReader;
-import java.io.Closeable;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
+import java.util.Optional;
+import java.util.function.Predicate;
 
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
@@ -33,88 +32,55 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 
 /**
  * Tries a list of possible passwords for an OOXML protected file
- * 
+ *
  * Note that this isn't very fast, and is aimed at when you have
  *  just a few passwords to check.
  * For serious processing, you'd be best off grabbing the hash
  *  out with POI or office2john.py, then running that against
  *  "John The Ripper" or GPU enabled version of "hashcat"
  */
-public class OOXMLPasswordsTry implements Closeable {
-    private POIFSFileSystem fs;
-    private EncryptionInfo info;
-    private Decryptor d;
-    
-    private OOXMLPasswordsTry(POIFSFileSystem fs) throws IOException {
-        info = new EncryptionInfo(fs);
-        d = Decryptor.getInstance(info);
-        this.fs = fs;
-    }
-    private OOXMLPasswordsTry(File file) throws IOException {
-        this(new POIFSFileSystem(file, true));
-    }
-    private OOXMLPasswordsTry(InputStream is) throws IOException {
-        this(new POIFSFileSystem(is));
-    }
-    
-    public void close() throws IOException {
-        fs.close();
-    }
-    
-    public String tryAll(File wordfile) throws IOException, GeneralSecurityException {
-        String valid = null;
-        // Load
-        try (BufferedReader r = new BufferedReader(new FileReader(wordfile))) {
-            long start = System.currentTimeMillis();
-            int count = 0;
+public final class OOXMLPasswordsTry {
 
-            // Try each password in turn, reporting progress
-            String password;
-            while ((password = r.readLine()) != null) {
-                if (isValid(password)) {
-                    valid = password;
-                    break;
-                }
-                count++;
+    private OOXMLPasswordsTry() {}
 
-                if (count % 1000 == 0) {
-                    int secs = (int) ((System.currentTimeMillis() - start) / 1000);
-                    System.out.println("Done " + count + " passwords, " +
-                                               secs + " seconds, last password " + password);
-                }
-            }
-
-        }
-        // Tidy and return (null if no match)
-        return valid;
-    }
-    public boolean isValid(String password) throws GeneralSecurityException {
-        return d.verifyPassword(password);
-    }
-    
+    @SuppressWarnings({"java:S106","java:S4823"})
     public static void main(String[] args) throws Exception {
         if (args.length < 2) {
             System.err.println("Use:");
             System.err.println("  OOXMLPasswordsTry <file.ooxml> <wordlist>");
             System.exit(1);
         }
-        File ooxml = new File(args[0]);
-        File words = new File(args[1]);
-        
+        String ooxml = args[0], words = args[1];
+
         System.out.println("Trying passwords from " + words + " against " + ooxml);
         System.out.println();
 
-        String password;
-        try (OOXMLPasswordsTry pt = new OOXMLPasswordsTry(ooxml)) {
-            password = pt.tryAll(words);
+        try (POIFSFileSystem fs = new POIFSFileSystem(new File(ooxml), true)) {
+            EncryptionInfo info = new EncryptionInfo(fs);
+            Decryptor d = Decryptor.getInstance(info);
+
+            final long start = System.currentTimeMillis();
+            final int[] count = { 0 };
+            Predicate<String> counter = (s) -> {
+                if (++count[0] % 1000 == 0) {
+                    int secs = (int) ((System.currentTimeMillis() - start) / 1000);
+                    System.out.println("Done " + count[0] + " passwords, " + secs + " seconds, last password " + s);
+                }
+                return true;
+            };
+
+            // Try each password in turn, reporting progress
+            Optional<String> found = Files.lines(Paths.get(words)).filter(counter).filter(w -> isValid(d, w)).findFirst();
+
+            System.out.println(found.map(s -> "Password found: " + s).orElse("Error - No password matched"));
         }
-        
-        System.out.println();
-        if (password == null) {
-            System.out.println("Error - No password matched");
-        } else {
-            System.out.println("Password found!");
-            System.out.println(password);
+    }
+
+    private static boolean isValid(Decryptor dec, String password) {
+        try {
+            return dec.verifyPassword(password);
+        } catch (GeneralSecurityException e) {
+            return false;
         }
     }
 }

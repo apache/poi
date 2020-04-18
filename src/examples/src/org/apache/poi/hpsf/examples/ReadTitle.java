@@ -24,7 +24,6 @@ import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.eventfilesystem.POIFSReader;
 import org.apache.poi.poifs.eventfilesystem.POIFSReaderEvent;
-import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
 
 /**
  * <p>Sample application showing how to read a OLE 2 document's
@@ -33,8 +32,8 @@ import org.apache.poi.poifs.eventfilesystem.POIFSReaderListener;
  *
  * <p>Explanations can be found in the HPSF HOW-TO.</p>
  */
-public final class ReadTitle
-{
+@SuppressWarnings({"java:S106","java:S4823"})
+public final class ReadTitle {
     private ReadTitle() {}
 
     /**
@@ -44,38 +43,22 @@ public final class ReadTitle
      * be the name of a POI filesystem to read.
      * @throws IOException if any I/O exception occurs.
      */
-    public static void main(final String[] args) throws IOException
-    {
+    public static void main(final String[] args) throws IOException {
         final String filename = args[0];
         POIFSReader r = new POIFSReader();
-        r.registerListener(new MyPOIFSReaderListener(), SummaryInformation.DEFAULT_STREAM_NAME);
+        r.registerListener(ReadTitle::processPOIFSReaderEvent, SummaryInformation.DEFAULT_STREAM_NAME);
         r.read(new File(filename));
     }
 
 
-    static class MyPOIFSReaderListener implements POIFSReaderListener
-    {
-        @Override
-        public void processPOIFSReaderEvent(final POIFSReaderEvent event)
-        {
-            SummaryInformation si;
-            try
-            {
-                si = (SummaryInformation)
-                    PropertySetFactory.create(event.getStream());
-            }
-            catch (Exception ex)
-            {
-                throw new RuntimeException
-                    ("Property set stream \"" +
-                     event.getPath() + event.getName() + "\": " + ex);
-            }
-            final String title = si.getTitle();
-            if (title != null)
-                System.out.println("Title: \"" + title + "\"");
-            else
-                System.out.println("Document has no title.");
+    private static void processPOIFSReaderEvent(final POIFSReaderEvent event) {
+        SummaryInformation si;
+        try {
+            si = (SummaryInformation) PropertySetFactory.create(event.getStream());
+        } catch (Exception ex) {
+            throw new RuntimeException("Property set stream \"" + event.getPath() + event.getName() + "\": " + ex);
         }
+        final String title = si.getTitle();
+        System.out.println(title != null ? "Title: \"" + title + "\"" : "Document has no title.");
     }
-
 }

@@ -19,6 +19,7 @@ package org.apache.poi.hssf.dev;
 
 import java.io.DataInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -393,21 +394,10 @@ public final class BiffViewer {
 		// args = new String[] { "--out", "", };
 		CommandArgs cmdArgs = CommandArgs.parse(args);
 
-		PrintWriter pw;
-		if (cmdArgs.shouldOutputToFile()) {
-			OutputStream os = new FileOutputStream(cmdArgs.getFile().getAbsolutePath() + ".out");
-			pw = new PrintWriter(new OutputStreamWriter(os, StringUtil.UTF8));
-		} else {
-		    // Use the system default encoding when sending to System Out
-			pw = new PrintWriter(new OutputStreamWriter(System.out, Charset.defaultCharset()));
-		}
-
-		POIFSFileSystem fs = null;
-		InputStream is = null;
-        try {
-            fs = new POIFSFileSystem(cmdArgs.getFile(), true);
-            is = getPOIFSInputStream(fs);
-
+        try (POIFSFileSystem fs = new POIFSFileSystem(cmdArgs.getFile(), true);
+             InputStream is = getPOIFSInputStream(fs);
+             PrintWriter pw = getOutputStream(cmdArgs.shouldOutputToFile() ? cmdArgs.getFile().getAbsolutePath() : null)
+         ) {
             if (cmdArgs.shouldOutputRawHexOnly()) {
                 byte[] data = IOUtils.toByteArray(is);
                 HexDump.dump(data, 0, System.out, 0);
@@ -417,12 +407,20 @@ public final class BiffViewer {
                 runBiffViewer(pw, is, dumpInterpretedRecords, dumpHex, dumpInterpretedRecords,
                         cmdArgs.suppressHeader());
             }
-        } finally {
-            IOUtils.closeQuietly(is);
-            IOUtils.closeQuietly(fs);
-            IOUtils.closeQuietly(pw);
         }
 	}
+
+	static PrintWriter getOutputStream(String outputPath) throws FileNotFoundException {
+        // Use the system default encoding when sending to System Out
+        OutputStream os = System.out;
+        Charset cs = Charset.defaultCharset();
+        if (outputPath != null) {
+            cs = StringUtil.UTF8;
+            os = new FileOutputStream(outputPath + ".out");
+        }
+        return new PrintWriter(new OutputStreamWriter(os, cs));
+    }
+
 
 	static InputStream getPOIFSInputStream(POIFSFileSystem fs) throws IOException {
 		String workbookName = HSSFWorkbook.getWorkbookDirEntryName(fs.getRoot());

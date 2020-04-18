@@ -25,7 +25,9 @@ import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 /**
  * Demonstrates how to set headers / footers
  */
-public abstract class HeadersFootersDemo {
+public final class HeadersFootersDemo {
+    private HeadersFootersDemo() {}
+
     public static void main(String[] args) throws IOException {
         try (HSLFSlideShow ppt = new HSLFSlideShow()) {
             HeadersFooters slideHeaders = ppt.getSlideHeadersFooters();

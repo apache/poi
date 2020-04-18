@@ -29,8 +29,10 @@ import org.apache.poi.hslf.usermodel.HSLFTextBox;
 /**
  * Demonstrates how to create hyperlinks in PowerPoint presentations
  */
-public abstract class CreateHyperlink {
-    
+public final class CreateHyperlink {
+
+    private CreateHyperlink() {}
+
     public static void main(String[] args) throws IOException {
         try (HSLFSlideShow ppt = new HSLFSlideShow()) {
             HSLFSlide slideA = ppt.createSlide();

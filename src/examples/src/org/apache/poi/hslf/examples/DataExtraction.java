@@ -19,6 +19,7 @@ package org.apache.poi.hslf.examples;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.hslf.usermodel.HSLFObjectData;
@@ -33,11 +34,15 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
+import org.apache.poi.util.IOUtils;
 
 /**
  * Demonstrates how you can extract misc embedded data from a ppt file
  */
+@SuppressWarnings({"java:S106","java:S4823"})
 public final class DataExtraction {
+
+    private DataExtraction() {}
 
     public static void main(String[] args) throws Exception {
 
@@ -46,20 +51,13 @@ public final class DataExtraction {
             return;
         }
 
-        try (FileInputStream is = new FileInputStream(args[0]);
-            HSLFSlideShow ppt = new HSLFSlideShow(is)) {
+        try (FileInputStream fis = new FileInputStream(args[0]);
+            HSLFSlideShow ppt = new HSLFSlideShow(fis)) {
 
             //extract all sound files embedded in this presentation
             HSLFSoundData[] sound = ppt.getSoundData();
             for (HSLFSoundData aSound : sound) {
-                String type = aSound.getSoundType();  //*.wav
-                String name = aSound.getSoundName();  //typically file name
-                byte[] data = aSound.getData();       //raw bytes
-
-                //save the sound  on disk
-                try (FileOutputStream out = new FileOutputStream(name + type)) {
-                    out.write(data);
-                }
+                handleSound(aSound);
             }
 
             int oleIdx = -1, picIdx = -1;
@@ -71,35 +69,18 @@ public final class DataExtraction {
                         HSLFObjectShape ole = (HSLFObjectShape) shape;
                         HSLFObjectData data = ole.getObjectData();
                         String name = ole.getInstanceName();
-                        if ("Worksheet".equals(name)) {
-
-                            //read xls
-                            @SuppressWarnings({"unused", "resource"})
-                            HSSFWorkbook wb = new HSSFWorkbook(data.getInputStream());
-
-                        } else if ("Document".equals(name)) {
-                            try (HWPFDocument doc = new HWPFDocument(data.getInputStream())) {
+                        switch (name == null ? "" : name) {
+                            case "Worksheet":
+                                //read xls
+                                handleWorkbook(data, name, oleIdx);
+                                break;
+                            case "Document":
                                 //read the word document
-                                Range r = doc.getRange();
-                                for (int k = 0; k < r.numParagraphs(); k++) {
-                                    Paragraph p = r.getParagraph(k);
-                                    System.out.println(p.text());
-                                }
-
-                                //save on disk
-                                try (FileOutputStream out = new FileOutputStream(name + "-(" + (oleIdx) + ").doc")) {
-                                    doc.write(out);
-                                }
-                            }
-                        } else {
-                            try (FileOutputStream out = new FileOutputStream(ole.getProgId() + "-" + (oleIdx + 1) + ".dat");
-                                InputStream dis = data.getInputStream()) {
-                                byte[] chunk = new byte[2048];
-                                int count;
-                                while ((count = dis.read(chunk)) >= 0) {
-                                    out.write(chunk, 0, count);
-                                }
-                            }
+                                handleDocument(data, name, oleIdx);
+                                break;
+                            default:
+                                handleUnknown(data, ole.getProgId(), oleIdx);
+                                break;
                         }
                     }
 
@@ -108,13 +89,57 @@ public final class DataExtraction {
                         picIdx++;
                         HSLFPictureShape p = (HSLFPictureShape) shape;
                         HSLFPictureData data = p.getPictureData();
-                        String ext = data.getType().extension;
-                        try (FileOutputStream out = new FileOutputStream("pict-" + picIdx + ext)) {
-                            out.write(data.getData());
-                        }
+                        handlePicture(data, picIdx);
                     }
                 }
             }
+        }
+    }
+
+    private static void handleWorkbook(HSLFObjectData data, String name, int oleIdx) throws IOException {
+        try (InputStream is = data.getInputStream();
+             HSSFWorkbook wb = new HSSFWorkbook(is);
+             FileOutputStream out = new FileOutputStream(name + "-(" + (oleIdx) + ").xls")) {
+            wb.write(out);
+        }
+    }
+
+    private static void handleDocument(HSLFObjectData data, String name, int oleIdx) throws IOException {
+        try (InputStream is = data.getInputStream();
+             HWPFDocument doc = new HWPFDocument(is);
+             FileOutputStream out = new FileOutputStream(name + "-(" + (oleIdx) + ").doc")) {
+            Range r = doc.getRange();
+            for (int k = 0; k < r.numParagraphs(); k++) {
+                Paragraph p = r.getParagraph(k);
+                System.out.println(p.text());
+            }
+
+            //save on disk
+            doc.write(out);
+        }
+    }
+
+    private static void handleUnknown(HSLFObjectData data, String name, int oleIdx) throws IOException {
+        try (InputStream is = data.getInputStream();
+             FileOutputStream out = new FileOutputStream(name + "-" + (oleIdx + 1) + ".dat")) {
+            IOUtils.copy(is, out);
+        }
+    }
+
+    private static void handlePicture(HSLFPictureData data, int picIdx) throws IOException {
+        String ext = data.getType().extension;
+        try (FileOutputStream out = new FileOutputStream("pict-" + picIdx + ext)) {
+            out.write(data.getData());
+        }
+    }
+
+    private static void handleSound(HSLFSoundData aSound) throws IOException {
+        String type = aSound.getSoundType();  //*.wav
+        String name = aSound.getSoundName();  //typically file name
+
+        //save the sound  on disk
+        try (FileOutputStream out = new FileOutputStream(name + type)) {
+            out.write(aSound.getData());
         }
     }
 

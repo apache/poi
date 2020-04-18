@@ -22,10 +22,12 @@ package org.apache.poi.xssf.usermodel.examples;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import org.apache.poi.crypt.examples.EncryptionUtils;
 import org.apache.poi.examples.util.TempFileUtils;
 import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.poifs.crypt.Decryptor;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.temp.AesZipFileZipEntrySource;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -35,9 +37,17 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * <li><code>AesZipFileZipEntrySource</code> is used to ensure that temp files are encrypted.
  * </ul><p>
  */
-public class LoadPasswordProtectedXlsx {
-    
+public final class LoadPasswordProtectedXlsx {
+
+    public interface EncryptionHandler {
+        void handle(final InputStream inputStream) throws Exception;
+    }
+
     public static void main(String[] args) throws Exception {
+        execute(args, LoadPasswordProtectedXlsx::printSheetCount);
+    }
+
+    public static void execute(String[] args, EncryptionHandler handler) throws Exception {
         if(args.length != 2) {
             throw new IllegalArgumentException("Expected 2 params: filename and password");
         }
@@ -45,13 +55,21 @@ public class LoadPasswordProtectedXlsx {
         String filename = args[0];
         String password = args[1];
         try (FileInputStream fis = new FileInputStream(filename);
-             InputStream unencryptedStream = EncryptionUtils.decrypt(fis, password)) {
-            printSheetCount(unencryptedStream);
+             POIFSFileSystem fs = new POIFSFileSystem(fis)) {
+            EncryptionInfo info = new EncryptionInfo(fs);
+            Decryptor d = Decryptor.getInstance(info);
+            if (!d.verifyPassword(password)) {
+                throw new RuntimeException("incorrect password");
+            }
+            try (InputStream unencryptedStream = d.getDataStream(fs)) {
+                handler.handle(unencryptedStream);
+            }
         }
         TempFileUtils.checkTempFiles();
     }
-    
-    public static void printSheetCount(final InputStream inputStream) throws Exception {
+
+
+    private static void printSheetCount(final InputStream inputStream) throws Exception {
         try (AesZipFileZipEntrySource source = AesZipFileZipEntrySource.createZipEntrySource(inputStream);
              OPCPackage pkg = OPCPackage.open(source);
              XSSFWorkbook workbook = new XSSFWorkbook(pkg)) {

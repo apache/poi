@@ -19,15 +19,13 @@
 
 package org.apache.poi.xssf.eventusermodel.examples;
 
-import java.io.FileInputStream;
 import java.io.InputStream;
 
-import org.apache.poi.crypt.examples.EncryptionUtils;
-import org.apache.poi.examples.util.TempFileUtils;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.crypt.temp.AesZipFileZipEntrySource;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.eventusermodel.XSSFReader.SheetIterator;
+import org.apache.poi.xssf.usermodel.examples.LoadPasswordProtectedXlsx;
 
 /**
  * An example that loads a password protected workbook and counts the sheets.
@@ -37,23 +35,16 @@ import org.apache.poi.xssf.eventusermodel.XSSFReader.SheetIterator;
  * <li><code>AesZipFileZipEntrySource</code> is used to ensure that temp files are encrypted.
  * </ul><p>
  */
-public class LoadPasswordProtectedXlsxStreaming {
+public final class LoadPasswordProtectedXlsxStreaming {
 
-    public static void main(String[] args) throws Exception {
-        if(args.length != 2) {
-            throw new IllegalArgumentException("Expected 2 params: filename and password");
-        }
-        TempFileUtils.checkTempFiles();
-        String filename = args[0];
-        String password = args[1];
-        try (FileInputStream fis = new FileInputStream(filename);
-             InputStream unencryptedStream = EncryptionUtils.decrypt(fis, password)) {
-            printSheetCount(unencryptedStream);
-        }
-        TempFileUtils.checkTempFiles();
+    private LoadPasswordProtectedXlsxStreaming() {
     }
 
-    public static void printSheetCount(final InputStream inputStream) throws Exception {
+    public static void main(String[] args) throws Exception {
+        LoadPasswordProtectedXlsx.execute(args, LoadPasswordProtectedXlsxStreaming::printSheetCount);
+    }
+
+    private static void printSheetCount(final InputStream inputStream) throws Exception {
         try (AesZipFileZipEntrySource source = AesZipFileZipEntrySource.createZipEntrySource(inputStream);
              OPCPackage pkg = OPCPackage.open(source)) {
             XSSFReader reader = new XSSFReader(pkg);

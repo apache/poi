@@ -28,7 +28,10 @@ import org.apache.poi.hslf.usermodel.HSLFSoundData;
 /**
  * For each slide iterate over shapes and found associated sound data.
  */
-public class SoundFinder {
+@SuppressWarnings({"java:S106", "java:S4823"})
+public final class SoundFinder {
+    private SoundFinder() {}
+
     public static void main(String[] args) throws IOException {
         try (FileInputStream fis = new FileInputStream(args[0])) {
             try (HSLFSlideShow ppt = new HSLFSlideShow(fis)) {
@@ -54,7 +57,7 @@ public class SoundFinder {
      * @return 0-based reference to a sound in the sound collection
      * or -1 if the shape is not associated with a sound
      */
-    protected static int getSoundReference(HSLFShape shape){
+    private static int getSoundReference(HSLFShape shape){
         int soundRef = -1;
         //dive into the shape container and search for InteractiveInfoAtom
         InteractiveInfoAtom info = shape.getClientDataRecord(RecordTypes.InteractiveInfo.typeID);

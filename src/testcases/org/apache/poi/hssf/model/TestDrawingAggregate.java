@@ -55,7 +55,6 @@ import org.apache.poi.hssf.usermodel.HSSFPatriarch;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFTestHelper;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.util.HexDump;
 import org.junit.Test;
 
 public class TestDrawingAggregate {
@@ -231,7 +230,7 @@ public class TestDrawingAggregate {
         for(EscherRecord r : records) {
             out.write(r.serialize());
         }
-        assertEquals(HexDump.toHex(dgBytes, 10), HexDump.toHex(out.toByteArray(), 10));
+        assertArrayEquals(dgBytes, out.toByteArray());
     }
 
     /**

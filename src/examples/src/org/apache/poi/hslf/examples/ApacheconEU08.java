@@ -51,9 +51,11 @@ import org.apache.poi.sl.usermodel.VerticalAlignment;
 @SuppressWarnings("java:S1192")
 public final class ApacheconEU08 {
 
+    private ApacheconEU08() {}
+
     public static void main(String[] args) throws IOException {
+        // use HSLFSlideShow or XMLSlideShow
         try (SlideShow<?,?> ppt = new HSLFSlideShow()) {
-            // SlideShow<?,?> ppt = new XMLSlideShow();
             ppt.setPageSize(new Dimension(720, 540));
 
             slide1(ppt);
@@ -394,7 +396,7 @@ public final class ApacheconEU08 {
         graphics.setFont(new Font("Arial", Font.BOLD, 10));
         for (int i = 0, idx = 1; i < def.length; i+=2, idx++) {
             graphics.setColor(Color.black);
-            int width = ((Integer)def[i+1]).intValue();
+            int width = (Integer) def[i + 1];
             graphics.drawString("Q" + idx, x-20, y+20);
             graphics.drawString(width + "%", x + width + 10, y + 20);
             graphics.setColor((Color)def[i]);

@@ -65,7 +65,10 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *
  * </ol>
  */
-public class ModifyDocumentSummaryInformation {
+@SuppressWarnings({"java:S106","java:S4823"})
+public final class ModifyDocumentSummaryInformation {
+
+    private ModifyDocumentSummaryInformation() {}
 
     /**
      * <p>Main method - see class description.</p>
@@ -91,6 +94,7 @@ public class ModifyDocumentSummaryInformation {
                 // There is no summary information yet. We have to create a new one
                 si = PropertySetFactory.newSummaryInformation();
             }
+            assert(si != null);
 
             /* Change the author to "Rainer Klute". Any former author value will
              * be lost. If there has been no author yet, it will be created. */
@@ -112,6 +116,7 @@ public class ModifyDocumentSummaryInformation {
                  * new one. */
                 dsi = PropertySetFactory.newDocumentSummaryInformation();
             }
+            assert(dsi != null);
 
             /* Change the category to "POI example". Any former category value will
              * be lost. If there has been no category yet, it will be created. */

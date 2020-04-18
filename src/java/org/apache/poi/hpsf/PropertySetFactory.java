@@ -23,7 +23,7 @@ import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
-import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.util.LittleEndianInputStream;
 
@@ -36,7 +36,7 @@ public class PropertySetFactory {
      * Creates the most specific {@link PropertySet} from an entry
      *  in the specified POIFS Directory. This is preferrably a {@link
      * DocumentSummaryInformation} or a {@link SummaryInformation}. If
-     * the specified entry does not contain a property set stream, an 
+     * the specified entry does not contain a property set stream, an
      * exception is thrown. If no entry is found with the given name,
      * an exception is thrown.
      *
@@ -52,19 +52,10 @@ public class PropertySetFactory {
      */
     public static PropertySet create(final DirectoryEntry dir, final String name)
     throws FileNotFoundException, NoPropertySetStreamException, IOException, UnsupportedEncodingException {
-        InputStream inp = null;
-        try {
-            DocumentEntry entry = (DocumentEntry)dir.getEntry(name);
-            inp = new DocumentInputStream(entry);
-            try {
-                return create(inp);
-            } catch (MarkUnsupportedException e) {
-                return null;
-            }
-        } finally {
-            if (inp != null) {
-                inp.close();
-            }
+        try (DocumentInputStream inp = ((DirectoryNode)dir).createDocumentInputStream(name)) {
+            return create(inp);
+        } catch (MarkUnsupportedException e) {
+            return null;
         }
     }
 
@@ -96,18 +87,18 @@ public class PropertySetFactory {
         byte[] clsIdBuf = new byte[ClassID.LENGTH];
         leis.readFully(clsIdBuf);
         int sectionCount = (int)leis.readUInt();
-        
+
         if (byteOrder != PropertySet.BYTE_ORDER_ASSERTION ||
             format != PropertySet.FORMAT_ASSERTION ||
             sectionCount < 0) {
             throw new NoPropertySetStreamException();
         }
-        
+
         if (sectionCount > 0) {
             leis.readFully(clsIdBuf);
         }
         stream.reset();
-        
+
         ClassID clsId = new ClassID(clsIdBuf, 0);
         if (sectionCount > 0 && PropertySet.matchesSummary(clsId, SummaryInformation.FORMAT_ID)) {
             return new SummaryInformation(stream);

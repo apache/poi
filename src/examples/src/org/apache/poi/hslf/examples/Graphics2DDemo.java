@@ -23,23 +23,24 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.io.FileOutputStream;
 
-import org.apache.poi.hslf.model.PPGraphics2D;
 import org.apache.poi.hslf.usermodel.HSLFGroupShape;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.sl.draw.SLGraphics;
 
 /**
  * Demonstrates how to draw into a slide using the HSLF Graphics2D driver.
- *
- * @author Yegor Kozlov
  */
 public final class Graphics2DDemo {
+
+    private Graphics2DDemo() {}
 
     /**
      * A simple bar chart demo
      */
     public static void main(String[] args) throws Exception {
-        try (HSLFSlideShow ppt = new HSLFSlideShow()) {
+        try (HSLFSlideShow ppt = new HSLFSlideShow();
+             FileOutputStream out = new FileOutputStream("hslf-graphics.ppt")) {
             //bar chart data. The first value is the bar color, the second is the width
             Object[] def = new Object[]{
                     Color.yellow, 40,
@@ -56,14 +57,14 @@ public final class Graphics2DDemo {
             group.setAnchor(bounds);
             group.setInteriorAnchor(new Rectangle(0, 0, 100, 100));
             slide.addShape(group);
-            Graphics2D graphics = new PPGraphics2D(group);
+            Graphics2D graphics = new SLGraphics(group);
 
             //draw a simple bar graph
             int x = 10, y = 10;
             graphics.setFont(new Font("Arial", Font.BOLD, 10));
             for (int i = 0, idx = 1; i < def.length; i += 2, idx++) {
                 graphics.setColor(Color.black);
-                int width = ((Integer) def[i + 1]).intValue();
+                int width = (Integer) def[i + 1];
                 graphics.drawString("Q" + idx, x - 5, y + 10);
                 graphics.drawString(width + "%", x + width + 3, y + 10);
                 graphics.setColor((Color) def[i]);
@@ -75,9 +76,7 @@ public final class Graphics2DDemo {
             graphics.draw(group.getInteriorAnchor());
             graphics.drawString("Performance", x + 30, y + 10);
 
-            try (FileOutputStream out = new FileOutputStream("hslf-graphics.ppt")) {
-                ppt.write(out);
-            }
+            ppt.write(out);
         }
     }
 }

@@ -18,11 +18,9 @@
 package org.apache.poi.hpsf.examples;
 
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.util.HashMap;
@@ -45,6 +43,7 @@ import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 
 /**
@@ -66,6 +65,7 @@ import org.apache.poi.util.TempFile;
  * with the same attributes, and the sections must contain the same properties.
  * Details like the ordering of the properties do not matter.</p>
  */
+@SuppressWarnings({"java:S106","java:S4823"})
 public final class CopyCompare {
     private CopyCompare() {}
 
@@ -85,8 +85,7 @@ public final class CopyCompare {
      * @throws UnsupportedEncodingException if a character encoding is not
      *                                      supported.
      */
-    public static void main(final String[] args)
-            throws UnsupportedEncodingException, IOException {
+    public static void main(final String[] args) throws IOException {
         String originalFileName = null;
         String copyFileName = null;
 
@@ -137,9 +136,8 @@ public final class CopyCompare {
      * PropertySet#PropertySet(PropertySet)} constructor.</p>
      */
     static class CopyFile implements POIFSReaderListener {
-        private String dstName;
-        private OutputStream out;
-        private POIFSFileSystem poiFs;
+        private final String dstName;
+        private final POIFSFileSystem poiFs;
 
 
         /**
@@ -166,23 +164,16 @@ public final class CopyCompare {
              * "event" object. */
             final POIFSDocumentPath path = event.getPath();
             final String name = event.getName();
-            final DocumentInputStream stream = event.getStream();
 
             Throwable t = null;
 
-            try {
+            try (final DocumentInputStream stream = event.getStream()) {
                 /* Find out whether the current document is a property set
                  * stream or not. */
                 if (stream != null && PropertySet.isPropertySetStream(stream)) {
                     /* Yes, the current document is a property set stream.
                      * Let's create a PropertySet instance from it. */
-                    PropertySet ps = null;
-                    try {
-                        ps = PropertySetFactory.create(stream);
-                    } catch (NoPropertySetStreamException ex) {
-                        /* This exception will not be thrown because we already
-                         * checked above. */
-                    }
+                    PropertySet ps = PropertySetFactory.create(stream);
 
                     /* Copy the property set to the destination POI file
                      * system. */
@@ -192,7 +183,7 @@ public final class CopyCompare {
                      * copy it unmodified to the destination POIFS. */
                     copy(poiFs, path, name, stream);
                 }
-            } catch (MarkUnsupportedException | WritingNotSupportedException | IOException ex) {
+            } catch (MarkUnsupportedException | WritingNotSupportedException | IOException | NoPropertySetStreamException ex) {
                 t = ex;
             }
 
@@ -254,20 +245,10 @@ public final class CopyCompare {
             // create the directories to the document
             final DirectoryEntry de = getPath(poiFs, path);
             // check the parameters after the directories have been created
-            if (stream == null || name == null) {
-                // Empty directory
-                return;
+            if (stream != null && name != null) {
+                byte[] data = IOUtils.toByteArray(stream);
+                de.createDocument(name, new ByteArrayInputStream(data));
             }
-            final ByteArrayOutputStream out = new ByteArrayOutputStream();
-            int c;
-            while ((c = stream.read()) != -1) {
-                out.write(c);
-            }
-            stream.close();
-            out.close();
-            final InputStream in =
-                    new ByteArrayInputStream(out.toByteArray());
-            de.createDocument(name, in);
         }
 
 
@@ -275,9 +256,9 @@ public final class CopyCompare {
          * Writes the POI file system to a disk file.
          */
         public void close() throws IOException {
-            out = new FileOutputStream(dstName);
-            poiFs.writeFilesystem(out);
-            out.close();
+            try (OutputStream fos = new FileOutputStream(dstName)) {
+                poiFs.writeFilesystem(fos);
+            }
         }
 
 
@@ -318,9 +299,10 @@ public final class CopyCompare {
                 /* Check whether this directory has already been created. */
                 final String s = path.toString();
                 DirectoryEntry de = paths.get(s);
-                if (de != null)
+                if (de != null) {
                     /* Yes: return the corresponding DirectoryEntry. */
                     return de;
+                }
 
                 /* No: We have to create the directory - or return the root's
                  * DirectoryEntry. */
@@ -334,8 +316,7 @@ public final class CopyCompare {
                      * ensure that the parent directory exists: */
                     de = getPath(poiFs, path.getParent());
                     /* Now create the target directory: */
-                    de = de.createDirectory(path.getComponent
-                            (path.length() - 1));
+                    de = de.createDirectory(path.getComponent(path.length() - 1));
                 }
                 paths.put(s, de);
                 return de;

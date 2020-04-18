@@ -34,15 +34,18 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * <p>This class is a simple sample application showing how to create a property
  * set and write it to disk.</p>
  */
-public class WriteTitle
-{
+@SuppressWarnings({"java:S106","java:S4823"})
+public final class WriteTitle {
+
+    private WriteTitle() {}
+
     /**
      * <p>Runs the example program.</p>
      *
-     * @param args Command-line arguments. The first and only command-line 
+     * @param args Command-line arguments. The first and only command-line
      * argument is the name of the POI file system to create.
      * @throws IOException if any I/O exception occurs.
-     * @throws WritingNotSupportedException if HPSF does not (yet) support 
+     * @throws WritingNotSupportedException if HPSF does not (yet) support
      * writing a certain property type.
      */
     public static void main(final String[] args)
@@ -51,8 +54,7 @@ public class WriteTitle
         /* Check whether we have exactly one command-line argument. */
         if (args.length != 1)
         {
-            System.err.println("Usage: " + WriteTitle.class.getName() +
-                               "destinationPOIFS");
+            System.err.println("Usage: " + WriteTitle.class.getName() + "destinationPOIFS");
             System.exit(1);
         }
 
@@ -70,7 +72,7 @@ public class WriteTitle
          * SectionIDMap.SUMMARY_INFORMATION_ID. */
         ms.setFormatID(SummaryInformation.FORMAT_ID);
 
-        /* Create an empty property. */    
+        /* Create an empty property. */
         final Property p = new Property();
 
         /* Fill the property with appropriate settings so that it specifies the
@@ -82,12 +84,13 @@ public class WriteTitle
         /* Place the property into the section. */
         ms.setProperty(p);
 
-        /* Create the POI file system the property set is to be written to. */
-        try (final POIFSFileSystem poiFs = new POIFSFileSystem()) {
-            /* For writing the property set into a POI file system it has to be
-             * handed over to the POIFS.createDocument() method as an input stream
-             * which produces the bytes making out the property set stream. */
-            final InputStream is = mps.toInputStream();
+        /* Create the POI file system the property set is to be written to.
+         * For writing the property set into a POI file system it has to be
+         * handed over to the POIFS.createDocument() method as an input stream
+         * which produces the bytes making out the property set stream. */
+        try (final POIFSFileSystem poiFs = new POIFSFileSystem();
+             final InputStream is = mps.toInputStream();
+             final FileOutputStream fos = new FileOutputStream(fileName)) {
 
             /* Create the summary information property set in the POI file
              * system. It is given the default name most (if not all) summary
@@ -95,9 +98,7 @@ public class WriteTitle
             poiFs.createDocument(is, SummaryInformation.DEFAULT_STREAM_NAME);
 
             /* Write the whole POI file system to a disk file. */
-            try (FileOutputStream fos = new FileOutputStream(fileName)) {
-                poiFs.writeFilesystem(fos);
-            }
+            poiFs.writeFilesystem(fos);
         }
     }
 }
