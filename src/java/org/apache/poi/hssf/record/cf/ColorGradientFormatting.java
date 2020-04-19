@@ -17,12 +17,17 @@
 
 package org.apache.poi.hssf.record.cf;
 
+import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.apache.poi.common.Duplicatable;
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hssf.record.common.ExtendedColor;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
@@ -34,13 +39,13 @@ import org.apache.poi.util.Removal;
  * (Called Color Gradient in the file format docs, but more commonly
  *  Color Scale in the UI)
  */
-public final class ColorGradientFormatting implements Duplicatable {
+public final class ColorGradientFormatting implements Duplicatable, GenericRecord {
     private static final POILogger log = POILogFactory.getLogger(ColorGradientFormatting.class);
 
     private static final BitField clamp = BitFieldFactory.getInstance(0x01);
     private static final BitField background = BitFieldFactory.getInstance(0x02);
 
-    private byte options;
+    private final byte options;
     private ColorGradientThreshold[] thresholds;
     private ExtendedColor[] colors;
 
@@ -132,23 +137,22 @@ public final class ColorGradientFormatting implements Duplicatable {
         }
     }
 
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "clampToCurve", this::isClampToCurve,
+            "background", this::isAppliesToBackground,
+            "thresholds", this::getThresholds,
+            "colors", this::getColors
+        );
+    }
+
     public String toString() {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("    [Color Gradient Formatting]\n");
-        buffer.append("          .clamp     = ").append(isClampToCurve()).append("\n");
-        buffer.append("          .background= ").append(isAppliesToBackground()).append("\n");
-        for (Threshold t : thresholds) {
-            buffer.append(t);
-        }
-        for (ExtendedColor c : colors) {
-            buffer.append(c);
-        }
-        buffer.append("    [/Color Gradient Formatting]\n");
-        return buffer.toString();
+        return GenericRecordJsonWriter.marshal(this);
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public ColorGradientFormatting clone() {

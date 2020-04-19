@@ -17,16 +17,21 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.HexDump;
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 
 /**
- * Base class for all old (Biff 2 - Biff 4) cell value records 
+ * Base class for all old (Biff 2 - Biff 4) cell value records
  *  (implementors of {@link CellValueRecordInterface}).
  * Subclasses are expected to manage the cell data values (of various types).
  */
-public abstract class OldCellRecord {
+public abstract class OldCellRecord implements GenericRecord {
     private final short    sid;
-    private final boolean  isBiff2;   
+    private final boolean  isBiff2;
     private final int      field_1_row;
     private final short    field_2_column;
     private int      field_3_cell_attrs; // Biff 2
@@ -37,7 +42,7 @@ public abstract class OldCellRecord {
         this.isBiff2 = isBiff2;
         field_1_row  = in.readUShort();
         field_2_column = in.readShort();
-        
+
         if (isBiff2) {
             field_3_cell_attrs = in.readUShort() << 8;
             field_3_cell_attrs += in.readUByte();
@@ -63,7 +68,7 @@ public abstract class OldCellRecord {
     public final short getXFIndex() {
         return field_3_xf_index;
     }
-    
+
     public int getCellAttrs()
     {
         return field_3_cell_attrs;
@@ -71,49 +76,30 @@ public abstract class OldCellRecord {
 
     /**
      * Is this a Biff2 record, or newer?
-     * 
+     *
      * @return true, if this is a Biff2 record or newer
      */
     public boolean isBiff2() {
         return isBiff2;
     }
-    
+
     public short getSid() {
         return sid;
     }
-    
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "row", this::getRow,
+            "column", this::getColumn,
+            "biff2", this::isBiff2,
+            "biff2CellAttrs", this::getCellAttrs,
+            "xfIndex", this::getXFIndex
+        );
+    }
+
     @Override
     public final String toString() {
-        StringBuilder sb = new StringBuilder();
-        String recordName = getRecordName();
-
-        sb.append("[").append(recordName).append("]\n");
-        sb.append("    .row    = ").append(HexDump.shortToHex(getRow())).append("\n");
-        sb.append("    .col    = ").append(HexDump.shortToHex(getColumn())).append("\n");
-        if (isBiff2()) {
-            sb.append("    .cellattrs = ").append(HexDump.shortToHex(getCellAttrs())).append("\n");
-        } else {
-            sb.append("    .xfindex   = ").append(HexDump.shortToHex(getXFIndex())).append("\n");
-        }
-        appendValueText(sb);
-        sb.append("\n");
-        sb.append("[/").append(recordName).append("]\n");
-        return sb.toString();
+        return GenericRecordJsonWriter.marshal(this);
     }
-    
-    /**
-     * Append specific debug info (used by {@link #toString()} for the value
-     * contained in this record. Trailing new-line should not be appended
-     * (superclass does that).
-     * 
-     * @param sb the StringBuilder to append to
-     */
-    protected abstract void appendValueText(StringBuilder sb);
-
-    /**
-     * Gets the debug info BIFF record type name (used by {@link #toString()}.
-     * 
-     * @return the debug info BIFF record type name
-     */
-    protected abstract String getRecordName();
 }

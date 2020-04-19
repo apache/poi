@@ -17,10 +17,18 @@
 
 package org.apache.poi.hssf.record.cf;
 
+import static org.apache.poi.util.GenericRecordUtil.getBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.common.Duplicatable;
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hssf.record.common.ExtendedColor;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
@@ -30,11 +38,11 @@ import org.apache.poi.util.Removal;
 /**
  * Data Bar Conditional Formatting Rule Record.
  */
-public final class DataBarFormatting implements Duplicatable {
-    private static POILogger log = POILogFactory.getLogger(DataBarFormatting.class);
+public final class DataBarFormatting implements Duplicatable, GenericRecord {
+    private static final POILogger LOG = POILogFactory.getLogger(DataBarFormatting.class);
 
-    private static final BitField iconOnly = BitFieldFactory.getInstance(0x01);
-    private static final BitField reversed = BitFieldFactory.getInstance(0x04);
+    private static final BitField ICON_ONLY = BitFieldFactory.getInstance(0x01);
+    private static final BitField REVERSED = BitFieldFactory.getInstance(0x04);
 
     private byte options;
     private byte percentMin;
@@ -64,9 +72,9 @@ public final class DataBarFormatting implements Duplicatable {
         percentMin = in.readByte();
         percentMax = in.readByte();
         if (percentMin < 0 || percentMin > 100)
-            log.log(POILogger.WARN, "Inconsistent Minimum Percentage found " + percentMin);
+            LOG.log(POILogger.WARN, "Inconsistent Minimum Percentage found " + percentMin);
         if (percentMax < 0 || percentMax > 100)
-            log.log(POILogger.WARN, "Inconsistent Minimum Percentage found " + percentMin);
+            LOG.log(POILogger.WARN, "Inconsistent Minimum Percentage found " + percentMin);
 
         color = new ExtendedColor(in);
         thresholdMin = new DataBarThreshold(in);
@@ -74,22 +82,22 @@ public final class DataBarFormatting implements Duplicatable {
     }
 
     public boolean isIconOnly() {
-        return getOptionFlag(iconOnly);
+        return getOptionFlag(ICON_ONLY);
     }
     public void setIconOnly(boolean only) {
-        setOptionFlag(only, iconOnly);
+        setOptionFlag(only, ICON_ONLY);
     }
 
     public boolean isReversed() {
-        return getOptionFlag(reversed);
+        return getOptionFlag(REVERSED);
     }
     public void setReversed(boolean rev) {
-        setOptionFlag(rev, reversed);
+        setOptionFlag(rev, REVERSED);
     }
 
     private boolean getOptionFlag(BitField field) {
         int value = field.getValue(options);
-        return value==0 ? false : true;
+        return value != 0;
     }
     private void setOptionFlag(boolean option, BitField field) {
         options = field.setByteBoolean(options, option);
@@ -130,20 +138,24 @@ public final class DataBarFormatting implements Duplicatable {
         this.thresholdMax = thresholdMax;
     }
 
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "options", getBitsAsString(() -> options, new BitField[]{ICON_ONLY, REVERSED}, new String[]{"ICON_ONLY", "REVERSED"}),
+            "color", this::getColor,
+            "percentMin", this::getPercentMin,
+            "percentMax", this::getPercentMax,
+            "thresholdMin", this::getThresholdMin,
+            "thresholdMax", this::getThresholdMax
+        );
+    }
+
     public String toString() {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("    [Data Bar Formatting]\n");
-        buffer.append("          .icon_only= ").append(isIconOnly()).append("\n");
-        buffer.append("          .reversed = ").append(isReversed()).append("\n");
-        buffer.append(color);
-        buffer.append(thresholdMin);
-        buffer.append(thresholdMax);
-        buffer.append("    [/Data Bar Formatting]\n");
-        return buffer.toString();
+        return GenericRecordJsonWriter.marshal(this);
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public DataBarFormatting clone()  {

@@ -17,9 +17,16 @@
 
 package org.apache.poi.hssf.record.cf;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.common.Duplicatable;
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
@@ -28,7 +35,7 @@ import org.apache.poi.util.Removal;
 /**
  * Border Formatting Block of the Conditional Formatting Rule Record.
  */
-public final class BorderFormatting implements Duplicatable {
+public final class BorderFormatting implements Duplicatable, GenericRecord {
     /** No border */
     public static final short    BORDER_NONE                = 0x0;
     /** Thin border */
@@ -436,26 +443,28 @@ public final class BorderFormatting implements Duplicatable {
         return bordTlBrLineOnOff.isSet(field_13_border_styles1);
     }
 
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+        m.put("borderLeft", this::getBorderLeft);
+        m.put("borderRight", this::getBorderRight);
+        m.put("borderTop", this::getBorderTop);
+        m.put("borderBottom", this::getBorderBottom);
+        m.put("leftBorderColor", this::getLeftBorderColor);
+        m.put("rightBorderColor", this::getRightBorderColor);
+        m.put("topBorderColor", this::getTopBorderColor);
+        m.put("bottomBorderColor", this::getBottomBorderColor);
+        m.put("forwardDiagonalOn", this::isForwardDiagonalOn);
+        m.put("backwardDiagonalOn", this::isBackwardDiagonalOn);
+        return Collections.unmodifiableMap(m);
+    }
 
     public String toString() {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("    [Border Formatting]\n");
-        buffer.append("          .lftln     = ").append(Integer.toHexString(getBorderLeft())).append("\n");
-        buffer.append("          .rgtln     = ").append(Integer.toHexString(getBorderRight())).append("\n");
-        buffer.append("          .topln     = ").append(Integer.toHexString(getBorderTop())).append("\n");
-        buffer.append("          .btmln     = ").append(Integer.toHexString(getBorderBottom())).append("\n");
-        buffer.append("          .leftborder= ").append(Integer.toHexString(getLeftBorderColor())).append("\n");
-        buffer.append("          .rghtborder= ").append(Integer.toHexString(getRightBorderColor())).append("\n");
-        buffer.append("          .topborder= ").append(Integer.toHexString(getTopBorderColor())).append("\n");
-        buffer.append("          .bottomborder= ").append(Integer.toHexString(getBottomBorderColor())).append("\n");
-        buffer.append("          .fwdiag= ").append(isForwardDiagonalOn()).append("\n");
-        buffer.append("          .bwdiag= ").append(isBackwardDiagonalOn()).append("\n");
-        buffer.append("    [/Border Formatting]\n");
-        return buffer.toString();
+        return GenericRecordJsonWriter.marshal(this);
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public BorderFormatting clone() {
@@ -467,7 +476,7 @@ public final class BorderFormatting implements Duplicatable {
     }
 
     public int serialize(int offset, byte [] data) {
-        LittleEndian.putInt(data, offset+0, field_13_border_styles1);
+        LittleEndian.putInt(data, offset, field_13_border_styles1);
         LittleEndian.putInt(data, offset+4, field_14_border_styles2);
         return 8;
     }

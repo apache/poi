@@ -19,7 +19,10 @@ package org.apache.poi.hssf.record.aggregates;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.CFHeader12Record;
 import org.apache.poi.hssf.record.CFHeaderBase;
@@ -32,6 +35,8 @@ import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.helpers.BaseRowColShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
@@ -44,7 +49,7 @@ import org.apache.poi.util.RecordFormatException;
  *  unlimited numbers, as can Apache OpenOffice. This is an Excel limitation,
  *  not a file format one.</p>
  */
-public final class CFRecordsAggregate extends RecordAggregate {
+public final class CFRecordsAggregate extends RecordAggregate implements GenericRecord {
     /** Excel 97-2003 allows up to 3 conditional formating rules */
     private static final int MAX_97_2003_CONDTIONAL_FORMAT_RULES = 3;
     private static final POILogger logger = POILogFactory.getLogger(CFRecordsAggregate.class);
@@ -188,25 +193,19 @@ public final class CFRecordsAggregate extends RecordAggregate {
         return rules.size();
     }
 
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "header", this::getHeader,
+            "rules", () -> rules
+        );
+    }
+
     /**
      * String representation of CFRecordsAggregate
      */
     public String toString() {
-        StringBuilder buffer = new StringBuilder();
-        String type = "CF";
-        if (header instanceof CFHeader12Record) {
-            type = "CF12";
-        }
-
-        buffer.append("[").append(type).append("]\n");
-        if( header != null ) {
-            buffer.append(header);
-        }
-        for (CFRuleBase cfRule : rules) {
-            buffer.append(cfRule);
-        }
-        buffer.append("[/").append(type).append("]\n");
-        return buffer.toString();
+        return GenericRecordJsonWriter.marshal(this);
     }
 
     public void visitContainedRecords(RecordVisitor rv) {

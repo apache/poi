@@ -17,9 +17,13 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.util.GenericRecordUtil;
 
 /**
  * Formula Record (0x0006 / 0x0206 / 0x0406) - holds a formula in
@@ -103,10 +107,18 @@ public final class OldFormulaRecord extends OldCellRecord {
         return field_6_parsed_expr;
     }
 
-    protected void appendValueText(StringBuilder sb) {
-        sb.append("    .value       = ").append(getValue()).append("\n");
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.FORMULA;
     }
-    protected String getRecordName() {
-        return "Old Formula";
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "options", this::getOptions,
+            "formula", this::getFormula,
+            "value", this::getValue
+        );
     }
 }

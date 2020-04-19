@@ -20,11 +20,11 @@
 package org.apache.poi.ss.usermodel;
 
 /**
- * High level representation for the Icon / Multi-State Formatting 
+ * High level representation for the Icon / Multi-State Formatting
  *  component of Conditional Formatting settings
  */
 public interface IconMultiStateFormatting {
-    public enum IconSet {
+    enum IconSet {
         /** Green Up / Yellow Side / Red Down arrows */
         GYR_3_ARROW(0, 3, "3Arrows"),
         /** Grey Up / Side / Down arrows */
@@ -33,11 +33,11 @@ public interface IconMultiStateFormatting {
         GYR_3_FLAGS(2, 3, "3Flags"),
         /** Green / Yellow / Red traffic lights (no background). Default */
         GYR_3_TRAFFIC_LIGHTS(3, 3, "3TrafficLights1"),
-        /** Green / Yellow / Red traffic lights on a black square background. 
+        /** Green / Yellow / Red traffic lights on a black square background.
          * Note, MS-XLS docs v20141018 say this is id=5 but seems to be id=4 */
         GYR_3_TRAFFIC_LIGHTS_BOX(4, 3, "3TrafficLights2"),
         /** Green Circle / Yellow Triangle / Red Diamond.
-         * Note, MS-XLS docs v20141018 say this is id=4 but seems to be id=5 */ 
+         * Note, MS-XLS docs v20141018 say this is id=4 but seems to be id=5 */
         GYR_3_SHAPES(5, 3, "3Signs"),
         /** Green Tick / Yellow ! / Red Cross on a circle background */
         GYR_3_SYMBOLS_CIRCLE(6, 3, "3Symbols"),
@@ -56,20 +56,18 @@ public interface IconMultiStateFormatting {
         GREY_5_ARROWS(0xE, 5, "5ArrowsGray"),
         RATINGS_5(0xF, 5, "5Rating"),
         QUARTERS_5(0x10, 5, "5Quarters");
-        
-        protected static final IconSet DEFAULT_ICONSET = IconSet.GYR_3_TRAFFIC_LIGHTS;
-        
+
         /** Numeric ID of the icon set */
         public final int id;
         /** How many icons in the set */
         public final int num;
         /** Name (system) of the set */
         public final String name;
-        
+
         public String toString() {
             return id + " - " + name;
         }
-        
+
         public static IconSet byId(int id) {
             return values()[id];
         }
@@ -79,26 +77,26 @@ public interface IconMultiStateFormatting {
             }
             return null;
         }
-        
-        private IconSet(int id, int num, String name) {
+
+        IconSet(int id, int num, String name) {
             this.id = id; this.num = num; this.name = name;
         }
     }
-    
+
     /**
      * Get the Icon Set used
      */
     IconSet getIconSet();
-    
+
     /**
      * Changes the Icon Set used
-     * 
+     *
      * <p>If the new Icon Set has a different number of
      *  icons to the old one, you <em>must</em> update the
      *  thresholds before saving!</p>
      */
     void setIconSet(IconSet set);
-    
+
     /**
      * Should Icon + Value be displayed, or only the Icon?
      */
@@ -107,10 +105,10 @@ public interface IconMultiStateFormatting {
      * Control if only the Icon is shown, or Icon + Value
      */
     void setIconOnly(boolean only);
-    
+
     boolean isReversed();
     void setReversed(boolean reversed);
-    
+
     /**
      * Gets the list of thresholds
      */

@@ -17,7 +17,12 @@
 
 package org.apache.poi.hssf.record.cf;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.common.Duplicatable;
+import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
@@ -26,7 +31,7 @@ import org.apache.poi.util.Removal;
  * Color Gradient / Color Scale specific Threshold / value (CFVO),
  *  for changes in Conditional Formatting
  */
-public final class ColorGradientThreshold extends Threshold implements Duplicatable {
+public final class ColorGradientThreshold extends Threshold implements Duplicatable, GenericRecord {
     private double position;
 
     public ColorGradientThreshold() {
@@ -71,5 +76,10 @@ public final class ColorGradientThreshold extends Threshold implements Duplicata
     public void serialize(LittleEndianOutput out) {
         super.serialize(out);
         out.writeDouble(position);
+    }
+
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("position", this::getPosition);
     }
 }

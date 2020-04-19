@@ -17,6 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
@@ -104,13 +108,16 @@ public final class OldLabelRecord extends OldCellRecord {
     }
 
     @Override
-    protected void appendValueText(StringBuilder sb) {
-        sb.append("    .string_len= ").append(HexDump.shortToHex(field_4_string_len)).append("\n");
-        sb.append("    .value       = ").append(getValue()).append("\n");
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.LABEL;
     }
 
     @Override
-    protected String getRecordName() {
-        return "OLD LABEL";
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "base", super::getGenericProperties,
+            "stringLength", this::getStringLength,
+            "value", this::getValue
+        );
     }
 }

@@ -17,12 +17,17 @@
 
 package org.apache.poi.hssf.record.cf;
 
+import java.util.Map;
+import java.util.function.Supplier;
 import java.util.stream.Stream;
 
 import org.apache.poi.common.Duplicatable;
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
@@ -32,15 +37,15 @@ import org.apache.poi.util.Removal;
 /**
  * Icon / Multi-State Conditional Formatting Rule Record.
  */
-public final class IconMultiStateFormatting implements Duplicatable {
-    private static final POILogger log = POILogFactory.getLogger(IconMultiStateFormatting.class);
+public final class IconMultiStateFormatting implements Duplicatable, GenericRecord {
+    private static final POILogger LOG = POILogFactory.getLogger(IconMultiStateFormatting.class);
+
+    private static BitField ICON_ONLY = BitFieldFactory.getInstance(0x01);
+    private static BitField REVERSED = BitFieldFactory.getInstance(0x04);
 
     private IconSet iconSet;
     private byte options;
     private Threshold[] thresholds;
-
-    private static BitField iconOnly = BitFieldFactory.getInstance(0x01);
-    private static BitField reversed = BitFieldFactory.getInstance(0x04);
 
     public IconMultiStateFormatting() {
         iconSet = IconSet.GYR_3_TRAFFIC_LIGHTS;
@@ -63,7 +68,7 @@ public final class IconMultiStateFormatting implements Duplicatable {
         int set = in.readByte();
         iconSet = IconSet.byId(set);
         if (iconSet.num != num) {
-            log.log(POILogger.WARN, "Inconsistent Icon Set defintion, found " + iconSet + " but defined as " + num + " entries");
+            LOG.log(POILogger.WARN, "Inconsistent Icon Set defintion, found " + iconSet + " but defined as " + num + " entries");
         }
         options = in.readByte();
 
@@ -88,42 +93,36 @@ public final class IconMultiStateFormatting implements Duplicatable {
     }
 
     public boolean isIconOnly() {
-        return getOptionFlag(iconOnly);
+        return ICON_ONLY.isSet(options);
     }
     public void setIconOnly(boolean only) {
-        setOptionFlag(only, iconOnly);
+        options = ICON_ONLY.setByteBoolean(options, only);
     }
 
     public boolean isReversed() {
-        return getOptionFlag(reversed);
+        return REVERSED.isSet(options);
     }
+
     public void setReversed(boolean rev) {
-        setOptionFlag(rev, reversed);
-    }
-
-    private boolean getOptionFlag(BitField field) {
-        int value = field.getValue(options);
-        return value==0 ? false : true;
-    }
-    private void setOptionFlag(boolean option, BitField field) {
-        options = field.setByteBoolean(options, option);
-    }
-
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("    [Icon Formatting]\n");
-        buffer.append("          .icon_set = ").append(iconSet).append("\n");
-        buffer.append("          .icon_only= ").append(isIconOnly()).append("\n");
-        buffer.append("          .reversed = ").append(isReversed()).append("\n");
-        for (Threshold t : thresholds) {
-            buffer.append(t);
-        }
-        buffer.append("    [/Icon Formatting]\n");
-        return buffer.toString();
+        options = REVERSED.setByteBoolean(options, rev);
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "iconSet", this::getIconSet,
+            "iconOnly", this::isIconOnly,
+            "reversed", this::isReversed,
+            "thresholds", this::getThresholds
+        );
+    }
+
+    public String toString() {
+        return GenericRecordJsonWriter.marshal(this);
+    }
+
+    @Override
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public IconMultiStateFormatting clone()  {

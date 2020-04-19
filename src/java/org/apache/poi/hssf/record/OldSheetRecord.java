@@ -18,8 +18,12 @@
 package org.apache.poi.hssf.record;
 
 import java.io.IOException;
+import java.util.Map;
+import java.util.function.Supplier;
 
-import org.apache.poi.util.HexDump;
+import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RecordFormatException;
 
@@ -29,17 +33,17 @@ import org.apache.poi.util.RecordFormatException;
  *               and tells where the Beginning of file record is within the HSSF
  *               file.
  */
-public final class OldSheetRecord {
+public final class OldSheetRecord implements GenericRecord {
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
 
     public static final short sid = 0x0085;
 
-    private int field_1_position_of_BOF;
-    private int field_2_visibility;
-    private int field_3_type;
-    private byte[] field_5_sheetname;
+    private final int field_1_position_of_BOF;
+    private final int field_2_visibility;
+    private final int field_3_type;
+    private final byte[] field_5_sheetname;
     private CodepageRecord codepage;
 
     public OldSheetRecord(RecordInputStream in) {
@@ -89,15 +93,22 @@ public final class OldSheetRecord {
         return OldStringRecord.getString(field_5_sheetname, codepage);
     }
 
-    public String toString() {
-        StringBuilder buffer = new StringBuilder();
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.BOUND_SHEET;
+    }
 
-        buffer.append("[BOUNDSHEET]\n");
-        buffer.append("    .bof        = ").append(HexDump.intToHex(getPositionOfBof())).append("\n");
-        buffer.append("    .visibility = ").append(HexDump.shortToHex(field_2_visibility)).append("\n");
-        buffer.append("    .type       = ").append(HexDump.byteToHex(field_3_type)).append("\n");
-        buffer.append("    .sheetname  = ").append(getSheetname()).append("\n");
-        buffer.append("[/BOUNDSHEET]\n");
-        return buffer.toString();
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "bof", this::getPositionOfBof,
+            "visibility", () -> field_2_visibility,
+            "type", () -> field_3_type,
+            "sheetName", this::getSheetname
+        );
+    }
+
+    public String toString() {
+        return GenericRecordJsonWriter.marshal(this);
     }
 }

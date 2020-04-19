@@ -17,9 +17,17 @@
 
 package org.apache.poi.hssf.record.cf;
 
+import static org.apache.poi.util.GenericRecordUtil.getEnumBitsAsString;
+
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.common.Duplicatable;
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
@@ -27,7 +35,7 @@ import org.apache.poi.util.Removal;
 /**
  * Pattern Formatting Block of the Conditional Formatting Rule Record.
  */
-public final class PatternFormatting implements Duplicatable {
+public final class PatternFormatting implements Duplicatable, GenericRecord {
     /**  No background */
     public static final short     NO_FILL             = 0  ;
     /**  Solidly filled */
@@ -162,18 +170,23 @@ public final class PatternFormatting implements Duplicatable {
         return patternColorIndex.getValue(field_16_pattern_color_indexes);
     }
 
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "fillPattern", getEnumBitsAsString(this::getFillPattern,
+                 new int[]{NO_FILL, SOLID_FOREGROUND, FINE_DOTS, ALT_BARS, SPARSE_DOTS, THICK_HORZ_BANDS, THICK_VERT_BANDS, THICK_BACKWARD_DIAG, THICK_FORWARD_DIAG, BIG_SPOTS, BRICKS, THIN_HORZ_BANDS, THIN_VERT_BANDS, THIN_BACKWARD_DIAG, THIN_FORWARD_DIAG, SQUARES, DIAMONDS, LESS_DOTS, LEAST_DOTS},
+                 new String[]{"NO_FILL", "SOLID_FOREGROUND", "FINE_DOTS", "ALT_BARS", "SPARSE_DOTS", "THICK_HORZ_BANDS", "THICK_VERT_BANDS", "THICK_BACKWARD_DIAG", "THICK_FORWARD_DIAG", "BIG_SPOTS", "BRICKS", "THIN_HORZ_BANDS", "THIN_VERT_BANDS", "THIN_BACKWARD_DIAG", "THIN_FORWARD_DIAG", "SQUARES", "DIAMONDS", "LESS_DOTS", "LEAST_DOTS"}),
+            "fillForegroundColor", this::getFillForegroundColor,
+            "fillBackgroundColor", this::getFillForegroundColor
+        );
+    }
+
     public String toString() {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("    [Pattern Formatting]\n");
-        buffer.append("          .fillpattern= ").append(Integer.toHexString(getFillPattern())).append("\n");
-        buffer.append("          .fgcoloridx= ").append(Integer.toHexString(getFillForegroundColor())).append("\n");
-        buffer.append("          .bgcoloridx= ").append(Integer.toHexString(getFillBackgroundColor())).append("\n");
-        buffer.append("    [/Pattern Formatting]\n");
-        return buffer.toString();
+        return GenericRecordJsonWriter.marshal(this);
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public PatternFormatting clone()  {

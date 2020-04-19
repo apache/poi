@@ -17,8 +17,13 @@
 
 package org.apache.poi.hssf.record.common;
 
+import java.util.Map;
+import java.util.function.Supplier;
+
 import org.apache.poi.common.Duplicatable;
-import org.apache.poi.util.HexDump;
+import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.Removal;
@@ -32,7 +37,7 @@ import org.apache.poi.util.Removal;
  *  Formatting, Sheet Extensions), this XSSF-style color record
  *  can be used.
  */
-public final class ExtendedColor implements Duplicatable {
+public final class ExtendedColor implements Duplicatable, GenericRecord {
     public static final int TYPE_AUTO = 0;
     public static final int TYPE_INDEXED = 1;
     public static final int TYPE_RGB = 2;
@@ -147,20 +152,23 @@ public final class ExtendedColor implements Duplicatable {
         this.tint = tint;
     }
 
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "type", this::getType,
+            "tint", this::getTint,
+            "colorIndex", this::getColorIndex,
+            "rgba", this::getRGBA,
+            "themeIndex", this::getThemeIndex
+        );
+    }
+
     public String toString() {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("    [Extended Color]\n");
-        buffer.append("          .type  = ").append(type).append("\n");
-        buffer.append("          .tint  = ").append(tint).append("\n");
-        buffer.append("          .c_idx = ").append(colorIndex).append("\n");
-        buffer.append("          .rgba  = ").append(HexDump.toHex(rgba)).append("\n");
-        buffer.append("          .t_idx = ").append(themeIndex).append("\n");
-        buffer.append("    [/Extended Color]\n");
-        return buffer.toString();
+        return GenericRecordJsonWriter.marshal(this);
     }
 
     @Override
-    @SuppressWarnings("squid:S2975")
+    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")
     public ExtendedColor clone() {

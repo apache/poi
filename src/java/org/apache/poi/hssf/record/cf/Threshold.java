@@ -17,18 +17,22 @@
 
 package org.apache.poi.hssf.record.cf;
 
-import java.util.Arrays;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 
 /**
  * Threshold / value (CFVO) for changes in Conditional Formatting
  */
-public abstract class Threshold {
+public abstract class Threshold implements GenericRecord {
     private byte type;
     private Formula formula;
     private Double value;
@@ -107,14 +111,17 @@ public abstract class Threshold {
         return len;
     }
 
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties(
+            "type", this::getType,
+            "formula", this::getFormula,
+            "value", this::getValue
+        );
+    }
+
     public String toString() {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append("    [CF Threshold]\n");
-        buffer.append("          .type    = ").append(Integer.toHexString(type)).append("\n");
-        buffer.append("          .formula = ").append(Arrays.toString(formula.getTokens())).append("\n");
-        buffer.append("          .value   = ").append(value).append("\n");
-        buffer.append("    [/CF Threshold]\n");
-        return buffer.toString();
+        return GenericRecordJsonWriter.marshal(this);
     }
 
     public void serialize(LittleEndianOutput out) {

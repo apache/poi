@@ -18,9 +18,14 @@
 package org.apache.poi.hssf.record;
 
 import java.io.UnsupportedEncodingException;
+import java.util.Map;
+import java.util.function.Supplier;
 
+import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hpsf.Property;
 import org.apache.poi.util.CodePageUtil;
+import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 
 
@@ -28,7 +33,7 @@ import org.apache.poi.util.IOUtils;
  * Biff2 - Biff 4 Label Record (0x0007 / 0x0207) - read only support for
  *  formula string results.
  */
-public final class OldStringRecord {
+public final class OldStringRecord implements GenericRecord {
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 100_000;
@@ -90,14 +95,17 @@ public final class OldStringRecord {
         }
     }
 
-    public String toString()
-    {
-        StringBuilder buffer = new StringBuilder();
+    @Override
+    public HSSFRecordTypes getGenericRecordType() {
+        return HSSFRecordTypes.STRING;
+    }
 
-        buffer.append("[OLD STRING]\n");
-        buffer.append("    .string            = ")
-            .append(getString()).append("\n");
-        buffer.append("[/OLD STRING]\n");
-        return buffer.toString();
+    @Override
+    public Map<String, Supplier<?>> getGenericProperties() {
+        return GenericRecordUtil.getGenericProperties("string", this::getString);
+    }
+
+    public String toString() {
+        return GenericRecordJsonWriter.marshal(this);
     }
 }

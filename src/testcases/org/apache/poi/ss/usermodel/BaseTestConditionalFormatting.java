@@ -563,8 +563,8 @@ public abstract class BaseTestConditionalFormatting {
                 ConditionalFormatting cf = sheetCF.getConditionalFormattingAt(i);
                 if (cf instanceof HSSFConditionalFormatting) {
                     String str = cf.toString();
-                    if (str.contains("[CF]")) fCF++;
-                    if (str.contains("[CF12]")) fCF12++;
+                    if (str.contains("/* CF_RULE */")) fCF++;
+                    if (str.contains("/* CF_RULE_12 */")) fCF12++;
                     if (str.contains("[CFEX]")) fCFEX++;
                 } else {
                     ConditionType type = cf.getRule(cf.getNumberOfRules() - 1).getConditionType();
