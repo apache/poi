@@ -159,6 +159,14 @@ public interface Name {
     boolean isDeleted();
 
     /**
+     * Checks if this name is hidden, eg one of the built-in Excel
+     *  internal names
+     *
+     * @return <code>true</code> if the name is a hidden name, <code>false</code> otherwise
+     */
+    boolean isHidden();
+
+    /**
      * Tell Excel that this name applies to the worksheet with the specified index instead of the entire workbook.
      *
      * @param sheetId the sheet index this name applies to, -1 unsets this property making the name workbook-global

@@ -264,6 +264,16 @@ public final class HSSFName implements Name {
         return _definedNameRec.isFunctionName();
     }
 
+    /**
+     * Checks if this name is hidden, eg one of the built-in Excel
+     *  internal names
+     *
+     * @return true if this name is a hidden one
+     */
+    public boolean isHidden() {
+        return _definedNameRec.isHiddenName();
+    }
+
     public String toString() {
         return getClass().getName() + " [" +
                 _definedNameRec.getNameText() +

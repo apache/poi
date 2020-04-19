@@ -306,6 +306,16 @@ public final class XSSFName implements Name {
     }
 
     /**
+     * Checks if this name is hidden, eg one of the built-in Excel
+     *  internal names
+     *
+     * @return true if this name is a hidden one
+     */
+    public boolean isHidden() {
+        return _ctName.getHidden();
+    }
+
+    /**
      * Returns the comment the user provided when the name was created.
      *
      * @return the user comment for this named range
