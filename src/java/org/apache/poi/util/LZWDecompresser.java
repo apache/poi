@@ -128,7 +128,7 @@ public abstract class LZWDecompresser {
         // These are bytes as looked up in the dictionary
         // It needs to be signed, as it'll get passed on to
         //  the output stream
-        final byte[] dataB = IOUtils.safelyAllocate(16 + codeLengthIncrease, MAX_RECORD_LENGTH);
+        final byte[] dataB = IOUtils.safelyAllocate(16L + codeLengthIncrease, MAX_RECORD_LENGTH);
         // This is an unsigned byte read from the stream
         // It needs to be unsigned, so that bit stuff works
         int dataI;

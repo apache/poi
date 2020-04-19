@@ -96,7 +96,6 @@ public class BigExample {
                     r.setHeight((short) 0x249);
                 }
 
-                //r.setRowNum(( short ) rownum);
                 // create 50 cells (0-49) (the += 2 becomes apparent later
                 for (int cellnum = 0; cellnum < 50; cellnum += 2) {
                     // create a numeric cell

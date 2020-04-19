@@ -17,10 +17,16 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.eval.*;
-import org.apache.poi.ss.usermodel.DataFormatter;
-
 import java.util.Locale;
+
+import org.apache.poi.ss.formula.eval.BoolEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.OperandResolver;
+import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.usermodel.DataFormatter;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -38,7 +44,7 @@ public abstract class TextFunction implements Function {
 		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
 		return OperandResolver.coerceValueToInt(ve);
 	}
-	
+
 	protected static double evaluateDoubleArg(ValueEval arg, int srcCellRow, int srcCellCol) throws EvaluationException {
 		ValueEval ve = OperandResolver.getSingleValue(arg, srcCellRow, srcCellCol);
 		return OperandResolver.coerceValueToDouble(ve);
@@ -112,7 +118,7 @@ public abstract class TextFunction implements Function {
 	 * Implementation of the PROPER function:
      * Normalizes all words (separated by non-word characters) by
      * making the first letter upper and the rest lower case.
-     * 
+     *
      * This is nearly equivalent to toTitleCase if the Java language had it
 	 */
 	public static final Function PROPER = new SingleArgTextFunc() {
@@ -147,7 +153,7 @@ public abstract class TextFunction implements Function {
 			return new StringEval(arg.trim());
 		}
 	};
-	
+
 	/**
 	 * An implementation of the CLEAN function:
 	 * In Excel, the Clean function removes all non-printable characters from a string.
@@ -244,11 +250,11 @@ public abstract class TextFunction implements Function {
 			} catch (EvaluationException e) {
 				return e.getErrorEval();
 			}
-			
+
 			if(index < 0) {
 				return ErrorEval.VALUE_INVALID;
 			}
-			
+
 			String result;
 			if (_isLeft) {
 				result = arg.substring(0, Math.min(arg.length(), index));
@@ -295,11 +301,11 @@ public abstract class TextFunction implements Function {
 
 	/**
 	 * An implementation of the TEXT function<br>
-	 * TEXT returns a number value formatted with the given number formatting string. 
+	 * TEXT returns a number value formatted with the given number formatting string.
 	 * This function is not a complete implementation of the Excel function, but
-	 *  handles most of the common cases. All work is passed down to 
+	 *  handles most of the common cases. All work is passed down to
 	 *  {@link DataFormatter} to be done, as this works much the same as the
-	 *  display focused work that that does. 
+	 *  display focused work that that does.
 	 *
 	 * <b>Syntax<b>:<br> <b>TEXT</b>(<b>value</b>, <b>format_text</b>)<br>
 	 */
@@ -314,7 +320,7 @@ public abstract class TextFunction implements Function {
 			} catch (EvaluationException e) {
 				return e.getErrorEval();
 			}
-			
+
 			try {
             // Ask DataFormatter to handle the String for us
 			   String formattedStr = formatter.formatRawCellContents(s0, -1, s1);
@@ -324,7 +330,7 @@ public abstract class TextFunction implements Function {
 			}
 		}
 	};
-	
+
 	private static final class SearchFind extends Var2or3ArgFunction {
 
 		private final boolean _isCaseSensitive;
@@ -367,7 +373,7 @@ public abstract class TextFunction implements Function {
 			if (result == -1) {
 				return ErrorEval.VALUE_INVALID;
 			}
-			return new NumberEval(result + 1);
+			return new NumberEval(result + 1.);
 		}
 	}
 	/**

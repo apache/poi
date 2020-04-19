@@ -17,10 +17,10 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPositiveSize2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTransform2D;
-import org.apache.poi.util.Internal;
 
 /**
  * @author Yegor Kozlov
@@ -71,7 +71,7 @@ public final class XSSFChildAnchor extends XSSFAnchor {
     }
 
     public void setDy2(int dy2) {
-        t2d.getExt().setCy(dy2 - getDy1());
+        t2d.getExt().setCy(dy2 - (long)getDy1());
     }
 
     public int getDx2() {
@@ -79,6 +79,6 @@ public final class XSSFChildAnchor extends XSSFAnchor {
     }
 
     public void setDx2(int dx2) {
-        t2d.getExt().setCx(dx2 - getDx1());
+        t2d.getExt().setCx(dx2 - (long)getDx1());
     }
 }

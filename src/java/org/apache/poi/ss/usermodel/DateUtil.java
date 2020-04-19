@@ -428,7 +428,7 @@ public class DateUtil {
         }
 
         LocalDateTime ldt = LocalDateTime.of(startYear, 1, 1, 0, 0);
-        ldt = ldt.plusDays(wholeDays+dayAdjust-1);
+        ldt = ldt.plusDays(wholeDays+dayAdjust-1L);
 
         long nanosTime =
             bd.subtract(BigDecimal.valueOf(wholeDays))

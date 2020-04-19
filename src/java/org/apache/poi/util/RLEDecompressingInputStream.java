@@ -17,14 +17,14 @@
 
 package org.apache.poi.util;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Locale;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 
 /**
- * Wrapper of InputStream which provides Run Length Encoding (RLE) 
+ * Wrapper of InputStream which provides Run Length Encoding (RLE)
  *  decompression on the fly. Uses MS-OVBA decompression algorithm. See
  * http://download.microsoft.com/download/2/4/8/24862317-78F0-4C4B-B355-C7B2C1D997DB/[MS-OVBA].pdf
  */
@@ -66,7 +66,7 @@ public class RLEDecompressingInputStream extends InputStream {
 
     /**
      * Creates a new wrapper RLE Decompression InputStream.
-     * 
+     *
      * @param in The stream to wrap with the RLE Decompression
      * @throws IOException
      */
@@ -131,7 +131,7 @@ public class RLEDecompressingInputStream extends InputStream {
                     return -1;
                 }
             }
-            int c = (int) Math.min(n, len - pos);
+            int c = (int) Math.min(n, len - (long)pos);
             pos += c;
             length -= c;
         }
@@ -150,7 +150,7 @@ public class RLEDecompressingInputStream extends InputStream {
 
     /**
      * Reads a single chunk from the underlying inputstream.
-     * 
+     *
      * @return number of bytes that were read, or -1 if the end of the stream was reached.
      * @throws IOException
      */
@@ -215,7 +215,7 @@ public class RLEDecompressingInputStream extends InputStream {
 
     /**
      * Helper method to determine how many bits in the CopyToken are used for the CopyLength.
-     * 
+     *
      * @param offset
      * @return returns the number of bits in the copy token (a value between 4 and 12)
      */
@@ -230,7 +230,7 @@ public class RLEDecompressingInputStream extends InputStream {
 
     /**
      * Convenience method for read a 2-bytes short in little endian encoding.
-     * 
+     *
      * @return short value from the stream, -1 if end of stream is reached
      * @throws IOException
      */
@@ -240,7 +240,7 @@ public class RLEDecompressingInputStream extends InputStream {
 
     /**
      * Convenience method for read a 4-bytes int in little endian encoding.
-     * 
+     *
      * @return integer value from the stream, -1 if end of stream is reached
      * @throws IOException
      */
@@ -279,7 +279,7 @@ public class RLEDecompressingInputStream extends InputStream {
     public static byte[] decompress(byte[] compressed) throws IOException {
         return decompress(compressed, 0, compressed.length);
     }
-    
+
     public static byte[] decompress(byte[] compressed, int offset, int length) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         InputStream instream = new ByteArrayInputStream(compressed, offset, length);

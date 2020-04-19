@@ -114,9 +114,11 @@ public final class WeekdayFunc implements Function {
 			} else if (returnOption == 3) {
 				result = (weekday + 6 - 1) % 7;
 			} else if (returnOption >= 11  &&  returnOption <= 17) {
-				result = (weekday + 6 - (returnOption - 10)) % 7 + 1;		// rotate in the value range 1 to 7
+				// rotate in the value range 1 to 7
+				result = (weekday + 6 - (returnOption - 10)) % 7 + 1.;
 			} else {
-				return ErrorEval.NUM_ERROR;		// EXCEL uses this and no VALUE_ERROR
+				// EXCEL uses this and no VALUE_ERROR
+				return ErrorEval.NUM_ERROR;
 			}
 
 			return new NumberEval(result);

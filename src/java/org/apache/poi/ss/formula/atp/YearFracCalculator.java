@@ -270,7 +270,7 @@ final class YearFracCalculator {
 		for (int i=startYear; i<=endYear; i++) {
 			dayCount += isLeapYear(i) ? DAYS_PER_LEAP_YEAR : DAYS_PER_NORMAL_YEAR;
 		}
-		double numberOfYears = endYear-startYear+1;
+		double numberOfYears = endYear-startYear+1.;
 		return dayCount / numberOfYears;
 	}
 

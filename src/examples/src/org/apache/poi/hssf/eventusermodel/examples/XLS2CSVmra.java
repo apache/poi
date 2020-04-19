@@ -43,7 +43,6 @@ import org.apache.poi.hssf.record.LabelSSTRecord;
 import org.apache.poi.hssf.record.NoteRecord;
 import org.apache.poi.hssf.record.NumberRecord;
 import org.apache.poi.hssf.record.RKRecord;
-import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SSTRecord;
 import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -54,6 +53,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  EventModel code to ensure it outputs all columns and rows.
  * @author Nick Burch
  */
+@SuppressWarnings({"java:S106","java:S4823"})
 public class XLS2CSVmra implements HSSFListener {
 	private int minColumns;
 	private POIFSFileSystem fs;
@@ -72,7 +72,7 @@ public class XLS2CSVmra implements HSSFListener {
 	// Records we pick up as we process
 	private SSTRecord sstRecord;
 	private FormatTrackingHSSFListener formatListener;
-	
+
 	/** So we known which sheet we're on */
 	private int sheetIndex = -1;
 	private BoundSheetRecord[] orderedBSRs;
@@ -149,7 +149,7 @@ public class XLS2CSVmra implements HSSFListener {
 				if(workbookBuildingListener != null && stubWorkbook == null) {
 					stubWorkbook = workbookBuildingListener.getStubHSSFWorkbook();
 				}
-				
+
 				// Output the worksheet name
 				// Works by ordering the BSRs by the location of
 				//  their BOFRecords, and then knowing that we
@@ -159,7 +159,7 @@ public class XLS2CSVmra implements HSSFListener {
 					orderedBSRs = BoundSheetRecord.orderByBofPosition(boundSheetRecords);
 				}
 				output.println();
-				output.println( 
+				output.println(
 						orderedBSRs[sheetIndex].getSheetname() +
 						" [" + (sheetIndex+1) + "]:"
 				);

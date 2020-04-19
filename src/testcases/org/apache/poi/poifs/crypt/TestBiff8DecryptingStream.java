@@ -26,7 +26,6 @@ import java.io.InputStream;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
-import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
 import org.junit.Test;
 
@@ -87,15 +86,15 @@ public final class TestBiff8DecryptingStream {
 		}
 
 		public void confirmByte(int expVal) {
-		    assertEquals(HexDump.byteToHex(expVal), HexDump.byteToHex(_bds.readUByte()));
+		    assertEquals(expVal, _bds.readUByte());
 		}
 
 		public void confirmShort(int expVal) {
-		    assertEquals(HexDump.shortToHex(expVal), HexDump.shortToHex(_bds.readShort()));
+		    assertEquals((short)expVal, _bds.readShort());
 		}
 
         public void confirmUShort(int expVal) {
-            assertEquals(HexDump.shortToHex(expVal), HexDump.shortToHex(_bds.readUShort()));
+            assertEquals(expVal, _bds.readUShort());
         }
 
         public short readShort() {
@@ -107,11 +106,11 @@ public final class TestBiff8DecryptingStream {
         }
 
 		public void confirmInt(int expVal) {
-			assertEquals(HexDump.intToHex(expVal), HexDump.intToHex(_bds.readInt()));
+			assertEquals(expVal, _bds.readInt());
 		}
 
 		public void confirmLong(long expVal) {
-		    assertEquals(HexDump.longToHex(expVal), HexDump.longToHex(_bds.readLong()));
+		    assertEquals(expVal, _bds.readLong());
 		}
 
 		public void confirmData(String expHexData) {

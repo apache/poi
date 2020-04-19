@@ -25,6 +25,7 @@ import java.nio.file.Paths;
 import java.security.GeneralSecurityException;
 import java.util.Optional;
 import java.util.function.Predicate;
+import java.util.stream.Stream;
 
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
@@ -50,7 +51,8 @@ public final class OOXMLPasswordsTry {
             System.err.println("  OOXMLPasswordsTry <file.ooxml> <wordlist>");
             System.exit(1);
         }
-        String ooxml = args[0], words = args[1];
+        String ooxml = args[0];
+        String words = args[1];
 
         System.out.println("Trying passwords from " + words + " against " + ooxml);
         System.out.println();
@@ -61,7 +63,7 @@ public final class OOXMLPasswordsTry {
 
             final long start = System.currentTimeMillis();
             final int[] count = { 0 };
-            Predicate<String> counter = (s) -> {
+            Predicate<String> counter = s -> {
                 if (++count[0] % 1000 == 0) {
                     int secs = (int) ((System.currentTimeMillis() - start) / 1000);
                     System.out.println("Done " + count[0] + " passwords, " + secs + " seconds, last password " + s);
@@ -70,9 +72,10 @@ public final class OOXMLPasswordsTry {
             };
 
             // Try each password in turn, reporting progress
-            Optional<String> found = Files.lines(Paths.get(words)).filter(counter).filter(w -> isValid(d, w)).findFirst();
-
-            System.out.println(found.map(s -> "Password found: " + s).orElse("Error - No password matched"));
+            try (Stream<String> lines = Files.lines(Paths.get(words))) {
+                Optional<String> found = lines.filter(counter).filter(w -> isValid(d, w)).findFirst();
+                System.out.println(found.map(s -> "Password found: " + s).orElse("Error - No password matched"));
+            }
         }
     }
 

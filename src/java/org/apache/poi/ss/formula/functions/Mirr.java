@@ -85,7 +85,7 @@ public class Mirr extends MultiOperandNumericFunction {
 
     private static double mirr(double[] in, double financeRate, double reinvestRate) {
         double value = 0;
-        int numOfYears = in.length - 1;
+        double numOfYears = in.length - 1;
         double pv = 0;
         double fv = 0;
 

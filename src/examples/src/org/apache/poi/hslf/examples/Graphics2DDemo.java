@@ -42,7 +42,7 @@ public final class Graphics2DDemo {
         try (HSLFSlideShow ppt = new HSLFSlideShow();
              FileOutputStream out = new FileOutputStream("hslf-graphics.ppt")) {
             //bar chart data. The first value is the bar color, the second is the width
-            Object[] def = new Object[]{
+            Object[] def = {
                     Color.yellow, 40,
                     Color.green, 60,
                     Color.gray, 30,

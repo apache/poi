@@ -93,7 +93,8 @@ public final class WriteAuthorAndTitle {
         }
 
         /* Read the names of the origin and destination POI filesystems. */
-        final String srcName = args[0], dstName = args[1];
+        final String srcName = args[0];
+        final String dstName = args[1];
 
         /* Read the origin POIFS using the eventing API. The real work is done
          * in the class ModifySICopyTheRest which is registered here as a
@@ -101,7 +102,7 @@ public final class WriteAuthorAndTitle {
         try (POIFSFileSystem poifs = new POIFSFileSystem();
              OutputStream out = new FileOutputStream(dstName)) {
             final POIFSReader r = new POIFSReader();
-            r.registerListener((e) -> handleEvent(poifs, e));
+            r.registerListener(e -> handleEvent(poifs, e));
             r.read(new File(srcName));
 
             /* Write the new POIFS to disk. */

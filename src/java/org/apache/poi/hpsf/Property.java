@@ -417,7 +417,7 @@ public class Property {
 
             // skip length field
             if(bos.size() > 2*LittleEndianConsts.INT_SIZE) {
-                final String hex = HexDump.dump(bos.toByteArray(), -2*LittleEndianConsts.INT_SIZE, 2*LittleEndianConsts.INT_SIZE);
+                final String hex = HexDump.dump(bos.toByteArray(), -2L*LittleEndianConsts.INT_SIZE, 2*LittleEndianConsts.INT_SIZE);
                 b.append(hex);
             }
         } else if (value instanceof byte[]) {

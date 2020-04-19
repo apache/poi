@@ -40,11 +40,11 @@ public final class DocumentOutputStream extends OutputStream {
 	private POIFSDocument _document;
 	/** and its Property */
 	private DocumentProperty _property;
-	
+
 	/** our buffer, when null we're into normal blocks */
-	private ByteArrayOutputStream _buffer = 
+	private ByteArrayOutputStream _buffer =
 	        new ByteArrayOutputStream(POIFSConstants.BIG_BLOCK_MINIMUM_DOCUMENT_SIZE);
-	
+
 	/** our main block stream, when we're into normal blocks */
 	private POIFSStream _stream;
 	private OutputStream _stream_output;
@@ -56,7 +56,7 @@ public final class DocumentOutputStream extends OutputStream {
 	/**
 	 * Create an OutputStream from the specified DocumentEntry.
 	 * The specified entry will be emptied.
-	 * 
+	 *
 	 * @param document the DocumentEntry to be written
 	 */
 	public DocumentOutputStream(DocumentEntry document) throws IOException {
@@ -65,7 +65,7 @@ public final class DocumentOutputStream extends OutputStream {
 
     /**
 	 * Create an OutputStream to create the specified new Entry
-	 * 
+	 *
 	 * @param parent Where to create the Entry
 	 * @param name Name of the new entry
 	 */
@@ -159,7 +159,7 @@ public final class DocumentOutputStream extends OutputStream {
             _property.updateSize(_document_size);
             _property.setStartBlock(_stream.getStartBlock());
         }
-        
+
         // No more!
         _closed = true;
     }
@@ -168,6 +168,6 @@ public final class DocumentOutputStream extends OutputStream {
      * @return the amount of written bytes
      */
     public long size() {
-	    return _document_size + (_buffer == null ? 0 : _buffer.size());
+	    return _document_size + (_buffer == null ? 0L : _buffer.size());
     }
 }

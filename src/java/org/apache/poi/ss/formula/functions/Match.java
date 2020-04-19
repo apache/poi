@@ -95,7 +95,7 @@ public final class Match extends Var2or3ArgFunction {
 			ValueEval lookupValue = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
 			ValueVector lookupRange = evaluateLookupRange(arg1);
 			int index = findIndexOfValue(lookupValue, lookupRange, matchExact, findLargestLessThanOrEqual);
-			return new NumberEval(index + 1); // +1 to convert to 1-based
+			return new NumberEval(index + 1.); // +1 to convert to 1-based
 		} catch (EvaluationException e) {
 			return e.getErrorEval();
 		}

@@ -423,7 +423,7 @@ public class XSSFRow implements Row, Comparable<XSSFRow> {
             throw new IllegalArgumentException("Invalid row number (" + rowIndex
                     + ") outside allowable range (0.." + maxrow + ")");
         }
-        _row.setR(rowIndex + 1);
+        _row.setR(rowIndex + 1L);
     }
 
     /**

@@ -265,7 +265,7 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
             // 2 bytes reserved
             in.readUShort();
         } else {
-            int len = readFormatOptions(in);
+            long len = readFormatOptions(in);
             if (len < ext_formatting_length) {
                 ext_formatting_data = IOUtils.safelyAllocate(ext_formatting_length-len, MAX_RECORD_LENGTH);
                 in.readFully(ext_formatting_data);

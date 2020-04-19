@@ -25,6 +25,10 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import java.util.Arrays;
+
+import org.apache.commons.math3.linear.SingularMatrixException;
+import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
 import org.apache.poi.ss.formula.CacheAreaEval;
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
@@ -36,15 +40,11 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.commons.math3.linear.SingularMatrixException;
-import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression;
-
-import java.util.Arrays;
 
 
 /**
  * Implementation for the Excel function TREND<p>
- * 
+ *
  * Syntax:<br>
  * TREND(known_y's, known_x's, new_x's, constant)
  *    <table border="0" cellpadding="1" cellspacing="0" summary="Parameter descriptions">
@@ -131,14 +131,14 @@ public final class Trend implements Function {
         } else {
             throw new EvaluationException(ErrorEval.VALUE_INVALID);
         }
-        
+
         return ar;
     }
 
     private static double[][] getDefaultArrayOneD(int w) {
         double[][] array = new double[w][1];
         for (int i = 0; i < w; i++) {
-            array[i][0] = i + 1;
+            array[i][0] = i + 1.;
         }
         return array;
     }
@@ -319,11 +319,11 @@ public final class Trend implements Function {
         } else if (newXOrig.length == 1 && newXOrig[0].length > 1 && xOrig.length > 1 && xOrig[0].length == 1) {
             newX = switchRowsColumns(newXOrig);
         }
-        
+
         if (newX[0].length != x[0].length) {
             throw new EvaluationException(ErrorEval.REF_INVALID);
         }
-        
+
         if (x[0].length >= x.length) {
             /* See comment at top of file */
             throw new NotImplementedException("Sample size too small");

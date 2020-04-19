@@ -20,11 +20,10 @@ package org.apache.poi.xdgf.usermodel;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 
+import com.microsoft.schemas.office.visio.x2012.main.PageType;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xdgf.geom.Dimension2dDouble;
-
-import com.microsoft.schemas.office.visio.x2012.main.PageType;
 
 /**
  * Provides the API to work with an underlying page
@@ -69,7 +68,7 @@ public class XDGFPage {
     }
 
     public long getPageNumber() {
-        return _pages.getPageList().indexOf(this) + 1;
+        return _pages.getPageList().indexOf(this) + 1L;
     }
 
     /**

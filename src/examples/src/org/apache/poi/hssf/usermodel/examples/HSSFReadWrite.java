@@ -40,7 +40,10 @@ import org.apache.poi.ss.util.CellRangeAddress;
  * It does contain sample API usage that may be educational to regular API
  * users.
  */
+@SuppressWarnings({"java:S106","java:S4823"})
 public final class HSSFReadWrite {
+
+	private HSSFReadWrite() {}
 
 	/**
 	 * creates an {@link HSSFWorkbook} with the specified OS filename.

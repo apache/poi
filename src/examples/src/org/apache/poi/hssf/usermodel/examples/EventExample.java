@@ -15,22 +15,28 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
-package org.apache.poi.hssf.usermodel.examples;
 
-import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
-import org.apache.poi.hssf.eventusermodel.HSSFListener;
-import org.apache.poi.hssf.eventusermodel.HSSFRequest;
-import org.apache.poi.hssf.record.*;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+package org.apache.poi.hssf.usermodel.examples;
 
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.hssf.eventusermodel.HSSFEventFactory;
+import org.apache.poi.hssf.eventusermodel.HSSFListener;
+import org.apache.poi.hssf.eventusermodel.HSSFRequest;
+import org.apache.poi.hssf.record.BOFRecord;
+import org.apache.poi.hssf.record.BoundSheetRecord;
+import org.apache.poi.hssf.record.LabelSSTRecord;
+import org.apache.poi.hssf.record.NumberRecord;
+import org.apache.poi.hssf.record.RowRecord;
+import org.apache.poi.hssf.record.SSTRecord;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+
 /**
  * This example shows how to use the event API for reading a file.
  */
+@SuppressWarnings({"java:S106","java:S4823"})
 public class EventExample implements HSSFListener {
     private SSTRecord sstrec;
 

@@ -36,7 +36,7 @@ public class ClipboardData {
 
     public void read( LittleEndianByteArrayInputStream lei ) {
         int offset = lei.getReadIndex();
-        int size = lei.readInt();
+        long size = lei.readInt();
 
         if ( size < 4 ) {
             String msg =

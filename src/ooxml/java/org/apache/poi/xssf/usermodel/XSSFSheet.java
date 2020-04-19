@@ -92,50 +92,7 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTAutoFilter;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBreak;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCommentList;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidation;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataValidations;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDrawing;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIgnoredError;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIgnoredErrors;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTLegacyDrawing;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCell;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTMergeCells;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOleObject;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOleObjects;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTOutlinePr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageBreak;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetUpPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPane;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPrintOptions;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSelection;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetCalcPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetFormatPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetProtection;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetView;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetViews;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTablePart;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableParts;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPane;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPaneState;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 
 /**
  * High level representation of a SpreadsheetML worksheet.
@@ -1916,9 +1873,11 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
     private void setBreak(int id, CTPageBreak ctPgBreak, int lastIndex) {
         CTBreak brk = ctPgBreak.addNewBrk();
-        brk.setId(id + 1); // this is id of the element which is 1-based: <row r="1" ... >
+        // this is id of the element which is 1-based: <row r="1" ... >
+        brk.setId(id + 1L);
         brk.setMan(true);
-        brk.setMax(lastIndex); //end column of the break
+        // end column of the break
+        brk.setMax(lastIndex);
 
         int nPageBreaks = ctPgBreak.sizeOfBrkArray();
         ctPgBreak.setCount(nPageBreaks);
@@ -2256,13 +2215,12 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         }
 
         if (ciMin == targetColumnIx || ciMax == targetColumnIx) {
-            // The target column is at either end of the multi-column ColumnInfo
-            // ci
+            // The target column is at either end of the multi-column ColumnInfo ci
             // we'll just divide the info and create a new one
             if (ciMin == targetColumnIx) {
-                ci.setMin(targetColumnIx + 1);
+                ci.setMin(targetColumnIx + 1L);
             } else {
-                ci.setMax(targetColumnIx - 1);
+                ci.setMax(targetColumnIx - 1L);
             }
             CTCol nci = columnHelper.cloneCol(cols, ci);
             nci.setMin(targetColumnIx);
@@ -2275,14 +2233,14 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             CTCol ciEnd = columnHelper.cloneCol(cols, ci);
             int lastcolumn = Math.toIntExact(ciMax);
 
-            ci.setMax(targetColumnIx - 1);
+            ci.setMax(targetColumnIx - 1L);
 
             ciMid.setMin(targetColumnIx);
             ciMid.setMax(targetColumnIx);
             unsetCollapsed(collapsed, ciMid);
             this.columnHelper.addCleanColIntoCols(cols, ciMid);
 
-            ciEnd.setMin(targetColumnIx + 1);
+            ciEnd.setMin(targetColumnIx + 1L);
             ciEnd.setMax(lastcolumn);
             this.columnHelper.addCleanColIntoCols(cols, ciEnd);
         }
@@ -4069,7 +4027,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         int currentCount = dataValidations.sizeOfDataValidationArray();
         CTDataValidation newval = dataValidations.addNewDataValidation();
         newval.set(xssfDataValidation.getCtDdataValidation());
-        dataValidations.setCount(currentCount + 1);
+        dataValidations.setCount(currentCount + 1L);
 
     }
 

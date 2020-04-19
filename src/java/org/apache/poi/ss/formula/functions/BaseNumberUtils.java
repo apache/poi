@@ -17,9 +17,7 @@
 package org.apache.poi.ss.formula.functions;
 
 /**
- * <p>Some utils for converting from and to any base<p>
- *
- * @author cedric dot walter @ gmail dot com
+ * Some utils for converting from and to any base
  */
 public class BaseNumberUtils {
 
@@ -43,11 +41,11 @@ public class BaseNumberUtils {
             long digit;
 
             if ('0' <= character && character <= '9') {
-                digit = character - '0';
+                digit = (long)character - '0';
             } else if ('A' <= character && character <= 'Z') {
-                digit = 10 + (character - 'A');
+                digit = 10L + (character - 'A');
             } else if ('a' <= character && character <= 'z') {
-                digit = 10 + (character - 'a');
+                digit = 10L + (character - 'a');
             } else {
                 digit = base;
             }

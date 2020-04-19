@@ -199,7 +199,7 @@ public class PathGradientPaint implements Paint {
                     // it doesn't work to use just a color with transparency ...
                     graphics.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC, rgb[3]/255.0f));
                 }
-                graphics.setStroke(new BasicStroke(i+1, capStyle, joinStyle));
+                graphics.setStroke(new BasicStroke(i+1F, capStyle, joinStyle));
                 graphics.setColor(c);
                 if (i == gradientSteps-1) {
                     graphics.fill(shape);

@@ -60,40 +60,38 @@ public final class DataExtraction {
                 handleSound(aSound);
             }
 
-            int oleIdx = -1, picIdx = -1;
+            int oleIdx = -1;
+            int picIdx = -1;
             for (HSLFSlide slide : ppt.getSlides()) {
                 //extract embedded OLE documents
                 for (HSLFShape shape : slide.getShapes()) {
                     if (shape instanceof HSLFObjectShape) {
-                        oleIdx++;
-                        HSLFObjectShape ole = (HSLFObjectShape) shape;
-                        HSLFObjectData data = ole.getObjectData();
-                        String name = ole.getInstanceName();
-                        switch (name == null ? "" : name) {
-                            case "Worksheet":
-                                //read xls
-                                handleWorkbook(data, name, oleIdx);
-                                break;
-                            case "Document":
-                                //read the word document
-                                handleDocument(data, name, oleIdx);
-                                break;
-                            default:
-                                handleUnknown(data, ole.getProgId(), oleIdx);
-                                break;
-                        }
-                    }
-
-                    //Pictures
-                    else if (shape instanceof HSLFPictureShape) {
-                        picIdx++;
-                        HSLFPictureShape p = (HSLFPictureShape) shape;
-                        HSLFPictureData data = p.getPictureData();
-                        handlePicture(data, picIdx);
+                        handleShape((HSLFObjectShape) shape, ++oleIdx);
+                    } else if (shape instanceof HSLFPictureShape) {
+                        handlePicture((HSLFPictureShape) shape, ++picIdx);
                     }
                 }
             }
         }
+    }
+
+    private static void handleShape(HSLFObjectShape ole, int oleIdx) throws IOException {
+        HSLFObjectData data = ole.getObjectData();
+        String name = ole.getInstanceName();
+        switch (name == null ? "" : name) {
+            case "Worksheet":
+                //read xls
+                handleWorkbook(data, name, oleIdx);
+                break;
+            case "Document":
+                //read the word document
+                handleDocument(data, name, oleIdx);
+                break;
+            default:
+                handleUnknown(data, ole.getProgId(), oleIdx);
+                break;
+        }
+
     }
 
     private static void handleWorkbook(HSLFObjectData data, String name, int oleIdx) throws IOException {
@@ -126,7 +124,8 @@ public final class DataExtraction {
         }
     }
 
-    private static void handlePicture(HSLFPictureData data, int picIdx) throws IOException {
+    private static void handlePicture(HSLFPictureShape p, int picIdx) throws IOException {
+        HSLFPictureData data = p.getPictureData();
         String ext = data.getType().extension;
         try (FileOutputStream out = new FileOutputStream("pict-" + picIdx + ext)) {
             out.write(data.getData());

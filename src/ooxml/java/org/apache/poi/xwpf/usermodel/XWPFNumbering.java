@@ -152,7 +152,7 @@ public class XWPFNumbering extends POIXMLDocumentPart {
         CTNum ctNum = this.ctNumbering.addNewNum();
         ctNum.addNewAbstractNumId();
         ctNum.getAbstractNumId().setVal(abstractNumID);
-        ctNum.setNumId(BigInteger.valueOf(nums.size() + 1));
+        ctNum.setNumId(BigInteger.valueOf(nums.size() + 1L));
         XWPFNum num = new XWPFNum(ctNum, this);
         nums.add(num);
         return ctNum.getNumId();

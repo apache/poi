@@ -26,7 +26,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 public final class Column implements Function0Arg, Function1Arg {
 
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex) {
-        return new NumberEval(srcColumnIndex+1);
+        return new NumberEval(srcColumnIndex+1.);
     }
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
         int rnum;
@@ -40,14 +40,14 @@ public final class Column implements Function0Arg, Function1Arg {
             return ErrorEval.VALUE_INVALID;
         }
 
-        return new NumberEval(rnum + 1);
+        return new NumberEval(rnum + 1.);
     }
     public ValueEval evaluate(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
         switch (args.length) {
             case 1:
                 return evaluate(srcRowIndex, srcColumnIndex, args[0]);
             case 0:
-                return new NumberEval(srcColumnIndex+1);
+                return new NumberEval(srcColumnIndex+1.);
         }
         return ErrorEval.VALUE_INVALID;
     }

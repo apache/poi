@@ -583,7 +583,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
     }
 
     private long newShapeId() {
-        return 1 + drawing.sizeOfAbsoluteAnchorArray() + drawing.sizeOfOneCellAnchorArray() + drawing
+        return 1L + drawing.sizeOfAbsoluteAnchorArray() + drawing.sizeOfOneCellAnchorArray() + drawing
             .sizeOfTwoCellAnchorArray();
     }
 

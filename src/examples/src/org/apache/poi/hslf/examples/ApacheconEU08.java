@@ -392,7 +392,8 @@ public final class ApacheconEU08 {
         Graphics2D graphics = new SLGraphics(group);
 
         //draw a simple bar graph
-        int x = bounds.x + 50, y = bounds.y + 50;
+        int x = bounds.x + 50;
+        int y = bounds.y + 50;
         graphics.setFont(new Font("Arial", Font.BOLD, 10));
         for (int i = 0, idx = 1; i < def.length; i+=2, idx++) {
             graphics.setColor(Color.black);

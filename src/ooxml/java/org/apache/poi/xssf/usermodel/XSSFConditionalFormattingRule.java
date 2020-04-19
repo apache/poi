@@ -22,11 +22,29 @@ package org.apache.poi.xssf.usermodel;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.ComparisonOperator;
+import org.apache.poi.ss.usermodel.ConditionFilterData;
+import org.apache.poi.ss.usermodel.ConditionFilterType;
+import org.apache.poi.ss.usermodel.ConditionType;
+import org.apache.poi.ss.usermodel.ConditionalFormattingRule;
 import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
+import org.apache.poi.ss.usermodel.ExcelNumberFormat;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.xssf.model.StylesTable;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfRule;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCfvo;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColorScale;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDataBar;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDxf;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTIconSet;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTNumFmt;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCfType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCfvoType;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STConditionalFormattingOperator;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.STIconSetType;
 
 /**
  * XSSF support for Conditional Formatting rules
@@ -34,7 +52,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
 public class XSSFConditionalFormattingRule implements ConditionalFormattingRule {
     private final CTCfRule _cfRule;
     private XSSFSheet _sh;
-    
+
     private static Map<STCfType.Enum, ConditionType> typeLookup = new HashMap<>();
     private static Map<STCfType.Enum, ConditionFilterType> filterTypeLookup = new HashMap<>();
     static {
@@ -43,7 +61,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         typeLookup.put(STCfType.COLOR_SCALE, ConditionType.COLOR_SCALE);
         typeLookup.put(STCfType.DATA_BAR, ConditionType.DATA_BAR);
         typeLookup.put(STCfType.ICON_SET, ConditionType.ICON_SET);
-        
+
         // These are all subtypes of Filter, we think...
         typeLookup.put(STCfType.TOP_10, ConditionType.FILTER);
         typeLookup.put(STCfType.UNIQUE_VALUES, ConditionType.FILTER);
@@ -58,7 +76,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         typeLookup.put(STCfType.NOT_CONTAINS_ERRORS, ConditionType.FILTER);
         typeLookup.put(STCfType.TIME_PERIOD, ConditionType.FILTER);
         typeLookup.put(STCfType.ABOVE_AVERAGE, ConditionType.FILTER);
-        
+
         filterTypeLookup.put(STCfType.TOP_10, ConditionFilterType.TOP_10);
         filterTypeLookup.put(STCfType.UNIQUE_VALUES, ConditionFilterType.UNIQUE_VALUES);
         filterTypeLookup.put(STCfType.DUPLICATE_VALUES, ConditionFilterType.DUPLICATE_VALUES);
@@ -74,7 +92,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         filterTypeLookup.put(STCfType.ABOVE_AVERAGE, ConditionFilterType.ABOVE_AVERAGE);
 
     }
-    
+
     /**
      * NOTE: does not set priority, so this assumes the rule will not be added to the sheet yet
      * @param sh
@@ -103,7 +121,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         if(create && dxf == null) {
             dxf = CTDxf.Factory.newInstance();
             int dxfId = styles.putDxf(dxf);
-            _cfRule.setDxfId(dxfId - 1);
+            _cfRule.setDxfId(dxfId - 1L);
         }
         return dxf;
     }
@@ -113,11 +131,11 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         // priorities start at 1, if it is less, it is undefined, use definition order in caller
         return priority >=1 ? priority : 0;
     }
-    
+
     public boolean getStopIfTrue() {
         return _cfRule.getStopIfTrue();
     }
-    
+
     /**
      * Create a new border formatting structure if it does not exist,
      * otherwise just return existing object.
@@ -201,7 +219,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
 
         return new XSSFPatternFormatting(dxf.getFill(), _sh.getWorkbook().getStylesSource().getIndexedColors());
     }
-    
+
     /**
      *
      * @param color
@@ -211,7 +229,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         // Is it already there?
         if (_cfRule.isSetDataBar() && _cfRule.getType() == STCfType.DATA_BAR)
             return getDataBarFormatting();
-        
+
         // Mark it as being a Data Bar
         _cfRule.setType(STCfType.DATA_BAR);
 
@@ -224,13 +242,13 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         }
         // Set the color
         bar.setColor(color.getCTColor());
-        
+
         // Add the default thresholds
         CTCfvo min = bar.addNewCfvo();
         min.setType(STCfvoType.Enum.forString(RangeType.MIN.name));
         CTCfvo max = bar.addNewCfvo();
         max.setType(STCfvoType.Enum.forString(RangeType.MAX.name));
-        
+
         // Wrap and return
         return new XSSFDataBarFormatting(bar, _sh.getWorkbook().getStylesSource().getIndexedColors());
     }
@@ -242,12 +260,12 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
             return null;
         }
     }
-    
+
     public XSSFIconMultiStateFormatting createMultiStateFormatting(IconSet iconSet) {
         // Is it already there?
         if (_cfRule.isSetIconSet() && _cfRule.getType() == STCfType.ICON_SET)
             return getMultiStateFormatting();
-        
+
         // Mark it as being an Icon Set
         _cfRule.setType(STCfType.ICON_SET);
 
@@ -263,7 +281,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
             STIconSetType.Enum xIconSet = STIconSetType.Enum.forString(iconSet.name);
             icons.setIconSet(xIconSet);
         }
-        
+
         // Add a default set of thresholds
         int jump = 100 / iconSet.num;
         STCfvoType.Enum type = STCfvoType.Enum.forString(RangeType.PERCENT.name);
@@ -272,7 +290,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
             cfvo.setType(type);
             cfvo.setVal(Integer.toString(i*jump));
         }
-        
+
         // Wrap and return
         return new XSSFIconMultiStateFormatting(icons);
     }
@@ -284,12 +302,12 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
             return null;
         }
     }
-    
+
     public XSSFColorScaleFormatting createColorScaleFormatting() {
         // Is it already there?
         if (_cfRule.isSetColorScale() && _cfRule.getType() == STCfType.COLOR_SCALE)
             return getColorScaleFormatting();
-        
+
         // Mark it as being a Color Scale
         _cfRule.setType(STCfType.COLOR_SCALE);
 
@@ -300,7 +318,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
         } else {
             scale = _cfRule.addNewColorScale();
         }
-        
+
         // Add a default set of thresholds and colors
         if (scale.sizeOfCfvoArray() == 0) {
             CTCfvo cfvo;
@@ -311,12 +329,12 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
             cfvo.setVal("50");
             cfvo = scale.addNewCfvo();
             cfvo.setType(STCfvoType.Enum.forString(RangeType.MAX.name));
-            
+
             for (int i=0; i<3; i++) {
                 scale.addNewColor();
             }
         }
-        
+
         // Wrap and return
         return new XSSFColorScaleFormatting(scale, _sh.getWorkbook().getStylesSource().getIndexedColors());
     }
@@ -336,11 +354,11 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
     public ExcelNumberFormat getNumberFormat() {
         CTDxf dxf = getDxf(false);
         if(dxf == null || !dxf.isSetNumFmt()) return null;
-        
+
         CTNumFmt numFmt = dxf.getNumFmt();
         return new ExcelNumberFormat((int) numFmt.getNumFmtId(), numFmt.getFormatCode());
     }
-    
+
     /**
      * Type of conditional formatting rule.
      */
@@ -356,11 +374,11 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
     public ConditionFilterType getConditionFilterType() {
         return filterTypeLookup.get(_cfRule.getType());
     }
-    
+
     public ConditionFilterData getFilterConfiguration() {
         return new XSSFConditionFilterData(_cfRule);
     }
-    
+
     /**
      * The comparison function used when the type of conditional formatting is set to
      * {@link ConditionType#CELL_VALUE_IS}
@@ -374,7 +392,7 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
     public byte getComparisonOperation(){
         STConditionalFormattingOperator.Enum op = _cfRule.getOperator();
         if(op == null) return ComparisonOperator.NO_COMPARISON;
-        
+
         switch(op.intValue()){
             case STConditionalFormattingOperator.INT_LESS_THAN: return ComparisonOperator.LT;
             case STConditionalFormattingOperator.INT_LESS_THAN_OR_EQUAL: return ComparisonOperator.LE;
@@ -416,11 +434,11 @@ public class XSSFConditionalFormattingRule implements ConditionalFormattingRule 
     public String getFormula2(){
         return _cfRule.sizeOfFormulaArray() == 2 ? _cfRule.getFormulaArray(1) : null;
     }
-    
+
     public String getText() {
         return _cfRule.getText();
     }
-    
+
     /**
      * Conditional format rules don't define stripes, so always 0
      * @see org.apache.poi.ss.usermodel.DifferentialStyleProvider#getStripeSize()

@@ -21,6 +21,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.poi.hpsf.HPSFRuntimeException;
 import org.apache.poi.hpsf.NoPropertySetStreamException;
 import org.apache.poi.hpsf.Property;
 import org.apache.poi.hpsf.PropertySet;
@@ -65,7 +66,7 @@ public final class ReadCustomPropertySets {
             out("No property set stream: \"" + streamName + "\"");
             return;
         } catch (Exception ex) {
-            throw new RuntimeException("Property set stream \"" + streamName + "\": " + ex);
+            throw new HPSFRuntimeException("Property set stream \"" + streamName + "\": " + ex);
         }
 
         /* Print the name of the property set stream: */

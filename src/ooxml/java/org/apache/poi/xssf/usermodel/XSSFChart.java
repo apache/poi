@@ -195,7 +195,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
     @Deprecated
     @Removal(version = "4.2")
     public XSSFValueAxis createValueAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
-        long id = axis.size() + 1;
+        long id = axis.size() + 1L;
         XSSFValueAxis valueAxis = new XSSFValueAxis(this, id, pos);
         if (axis.size() == 1) {
             ChartAxis ax = axis.get(0);
@@ -210,7 +210,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
     @Deprecated
     @Removal(version = "4.2")
     public XSSFCategoryAxis createCategoryAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
-        long id = axis.size() + 1;
+        long id = axis.size() + 1L;
         XSSFCategoryAxis categoryAxis = new XSSFCategoryAxis(this, id, pos);
         if (axis.size() == 1) {
             ChartAxis ax = axis.get(0);
@@ -225,7 +225,7 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
     @Deprecated
     @Removal(version = "4.2")
     public XSSFDateAxis createDateAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
-        long id = axis.size() + 1;
+        long id = axis.size() + 1L;
         XSSFDateAxis dateAxis = new XSSFDateAxis(this, id, pos);
         if (axis.size() == 1) {
             ChartAxis ax = axis.get(0);

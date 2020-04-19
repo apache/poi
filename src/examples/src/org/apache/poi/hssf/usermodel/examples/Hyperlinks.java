@@ -42,11 +42,11 @@ public class Hyperlinks {
 
             //cell style for hyperlinks
             //by default hyperlinks are blue and underlined
-            HSSFCellStyle hlink_style = wb.createCellStyle();
-            HSSFFont hlink_font = wb.createFont();
-            hlink_font.setUnderline(Font.U_SINGLE);
-            hlink_font.setColor(HSSFColorPredefined.BLUE.getIndex());
-            hlink_style.setFont(hlink_font);
+            HSSFCellStyle hlinkStyle = wb.createCellStyle();
+            HSSFFont hlinkFont = wb.createFont();
+            hlinkFont.setUnderline(Font.U_SINGLE);
+            hlinkFont.setColor(HSSFColorPredefined.BLUE.getIndex());
+            hlinkStyle.setFont(hlinkFont);
 
             HSSFCell cell;
             HSSFSheet sheet = wb.createSheet("Hyperlinks");
@@ -57,7 +57,7 @@ public class Hyperlinks {
             HSSFHyperlink link = helper.createHyperlink(HyperlinkType.URL);
             link.setAddress("https://poi.apache.org/");
             cell.setHyperlink(link);
-            cell.setCellStyle(hlink_style);
+            cell.setCellStyle(hlinkStyle);
 
             //link to a file in the current directory
             cell = sheet.createRow(1).createCell(0);
@@ -65,7 +65,7 @@ public class Hyperlinks {
             link = helper.createHyperlink(HyperlinkType.FILE);
             link.setAddress("link1.xls");
             cell.setHyperlink(link);
-            cell.setCellStyle(hlink_style);
+            cell.setCellStyle(hlinkStyle);
 
             //e-mail link
             cell = sheet.createRow(2).createCell(0);
@@ -74,7 +74,7 @@ public class Hyperlinks {
             //note, if subject contains white spaces, make sure they are url-encoded
             link.setAddress("mailto:poi@apache.org?subject=Hyperlinks");
             cell.setHyperlink(link);
-            cell.setCellStyle(hlink_style);
+            cell.setCellStyle(hlinkStyle);
 
             //link to a place in this workbook
 
@@ -87,7 +87,7 @@ public class Hyperlinks {
             link = helper.createHyperlink(HyperlinkType.DOCUMENT);
             link.setAddress("'Target Sheet'!A1");
             cell.setHyperlink(link);
-            cell.setCellStyle(hlink_style);
+            cell.setCellStyle(hlinkStyle);
 
             try (FileOutputStream out = new FileOutputStream("hssf-links.xls")) {
                 wb.write(out);
