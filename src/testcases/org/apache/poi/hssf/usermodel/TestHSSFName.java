@@ -150,11 +150,15 @@ public final class TestHSSFName extends BaseTestNamedRange {
         String reference = namedRange1.getRefersToFormula();
 
         assertEquals(sheetName+"!$A$1:$D$10", reference);
+        assertEquals(false, namedRange1.isDeleted());
+        assertEquals(false, namedRange1.isHidden());
 
         HSSFName namedRange2 = wb.getNameAt(1);
 
         assertEquals(sheetName+"!$D$17:$G$27", namedRange2.getRefersToFormula());
         assertEquals("SecondNamedRange", namedRange2.getNameName());
+        assertEquals(false, namedRange2.isDeleted());
+        assertEquals(false, namedRange2.isHidden());
         
         wb.close();
     }

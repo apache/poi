@@ -290,11 +290,15 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             assertEquals("NameB1", b1.getNameName());
             assertEquals("Sheet1", b1.getSheetName());
             assertEquals(-1, b1.getSheetIndex());
+            assertEquals(false, b1.isDeleted());
+            assertEquals(false, b1.isHidden());
 
             assertNotNull(b2);
             assertEquals("NameB2", b2.getNameName());
             assertEquals("Sheet1", b2.getSheetName());
             assertEquals(-1, b2.getSheetIndex());
+            assertEquals(false, b2.isDeleted());
+            assertEquals(false, b2.isHidden());
 
             assertNotNull(sheet2);
             assertEquals("NameSheet2", sheet2.getNameName());
