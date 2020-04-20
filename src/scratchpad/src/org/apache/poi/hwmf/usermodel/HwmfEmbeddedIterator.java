@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.apache.poi.hwmf.record.HwmfEscape;
 import org.apache.poi.hwmf.record.HwmfEscape.EscapeFunction;
@@ -85,7 +86,8 @@ public class HwmfEmbeddedIterator implements Iterator<HwmfEmbedded> {
         if ((emb = checkHwmfEscapeRecord()) != null) {
             return emb;
         }
-        return null;
+
+        throw new NoSuchElementException("no further embedded emf records found.");
     }
 
     private HwmfEmbedded checkHwmfImageRecord() {

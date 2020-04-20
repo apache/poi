@@ -23,15 +23,22 @@ import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.Deque;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import javax.imageio.ImageIO;
 
 import org.apache.poi.hemf.record.emf.HemfComment;
+import org.apache.poi.hemf.record.emf.HemfComment.EmfComment;
+import org.apache.poi.hemf.record.emf.HemfComment.EmfCommentDataFormat;
+import org.apache.poi.hemf.record.emf.HemfComment.EmfCommentDataGeneric;
+import org.apache.poi.hemf.record.emf.HemfComment.EmfCommentDataMultiformats;
+import org.apache.poi.hemf.record.emf.HemfComment.EmfCommentDataPlus;
+import org.apache.poi.hemf.record.emf.HemfComment.EmfCommentDataWMF;
 import org.apache.poi.hemf.record.emf.HemfRecord;
 import org.apache.poi.hemf.record.emfplus.HemfPlusImage.EmfPlusBitmapDataType;
 import org.apache.poi.hemf.record.emfplus.HemfPlusImage.EmfPlusImage;
-import org.apache.poi.hemf.record.emfplus.HemfPlusObject;
 import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObject;
+import org.apache.poi.hemf.record.emfplus.HemfPlusObject.EmfPlusObjectType;
 import org.apache.poi.hwmf.record.HwmfBitmapDib;
 import org.apache.poi.hwmf.record.HwmfFill;
 import org.apache.poi.hwmf.usermodel.HwmfEmbedded;
@@ -70,26 +77,26 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
             iter = iterStack.peek();
             while (iter.hasNext()) {
                 Object obj = iter.next();
-                if (obj instanceof HemfComment.EmfComment) {
-                    HemfComment.EmfCommentData cd = ((HemfComment.EmfComment)obj).getCommentData();
+                if (obj instanceof EmfComment) {
+                    HemfComment.EmfCommentData cd = ((EmfComment)obj).getCommentData();
                     if (
-                        cd instanceof HemfComment.EmfCommentDataWMF ||
-                        cd instanceof HemfComment.EmfCommentDataGeneric
+                        cd instanceof EmfCommentDataWMF ||
+                        cd instanceof EmfCommentDataGeneric
                     ) {
                         current = obj;
                         return true;
                     }
 
-                    if (cd instanceof HemfComment.EmfCommentDataMultiformats) {
-                        Iterator<?> iter2 = ((HemfComment.EmfCommentDataMultiformats)cd).getFormats().iterator();
+                    if (cd instanceof EmfCommentDataMultiformats) {
+                        Iterator<?> iter2 = ((EmfCommentDataMultiformats)cd).getFormats().iterator();
                         if (iter2.hasNext()) {
                             iterStack.push(iter2);
                             continue;
                         }
                     }
 
-                    if (cd instanceof HemfComment.EmfCommentDataPlus) {
-                        Iterator<?> iter2 = ((HemfComment.EmfCommentDataPlus)cd).getRecords().iterator();
+                    if (cd instanceof EmfCommentDataPlus) {
+                        Iterator<?> iter2 = ((EmfCommentDataPlus)cd).getRecords().iterator();
                         if (iter2.hasNext()) {
                             iter = iter2;
                             iterStack.push(iter2);
@@ -98,12 +105,12 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
                     }
                 }
 
-                if (obj instanceof HemfComment.EmfCommentDataFormat) {
+                if (obj instanceof EmfCommentDataFormat) {
                     current = obj;
                     return true;
                 }
 
-                if (obj instanceof EmfPlusObject && ((EmfPlusObject)obj).getObjectType() == HemfPlusObject.EmfPlusObjectType.IMAGE) {
+                if (obj instanceof EmfPlusObject && ((EmfPlusObject)obj).getObjectType() == EmfPlusObjectType.IMAGE) {
                     current = obj;
                     return true;
                 }
@@ -141,15 +148,15 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
             return emb;
         }
 
-        return null;
+        throw new NoSuchElementException("no further embedded wmf records found.");
     }
 
     private HwmfEmbedded checkEmfCommentDataWMF() {
-        if (!(current instanceof HemfComment.EmfCommentDataWMF && ((HemfComment.EmfComment)current).getCommentData() instanceof HemfComment.EmfCommentDataWMF)) {
+        if (!(current instanceof EmfComment && ((EmfComment)current).getCommentData() instanceof EmfCommentDataWMF)) {
             return null;
         }
 
-        HemfComment.EmfCommentDataWMF wmf = (HemfComment.EmfCommentDataWMF)((HemfComment.EmfComment)current).getCommentData();
+        EmfCommentDataWMF wmf = (EmfCommentDataWMF)((EmfComment)current).getCommentData();
         HwmfEmbedded emb = new HwmfEmbedded();
         emb.setEmbeddedType(HwmfEmbeddedType.WMF);
         emb.setData(wmf.getWMFData());
@@ -158,10 +165,10 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
     }
 
     private HwmfEmbedded checkEmfCommentDataGeneric() {
-        if (!(current instanceof HemfComment.EmfComment && ((HemfComment.EmfComment)current).getCommentData() instanceof HemfComment.EmfCommentDataGeneric)) {
+        if (!(current instanceof EmfComment && ((EmfComment)current).getCommentData() instanceof EmfCommentDataGeneric)) {
             return null;
         }
-        HemfComment.EmfCommentDataGeneric cdg = (HemfComment.EmfCommentDataGeneric)((HemfComment.EmfComment)current).getCommentData();
+        EmfCommentDataGeneric cdg = (EmfCommentDataGeneric)((EmfComment)current).getCommentData();
         HwmfEmbedded emb = new HwmfEmbedded();
         emb.setEmbeddedType(HwmfEmbeddedType.UNKNOWN);
         emb.setData(cdg.getPrivateData());
@@ -170,10 +177,10 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
     }
 
     private HwmfEmbedded checkEmfCommentDataFormat() {
-        if (!(current instanceof HemfComment.EmfCommentDataFormat)) {
+        if (!(current instanceof EmfCommentDataFormat)) {
             return null;
         }
-        HemfComment.EmfCommentDataFormat cdf = (HemfComment.EmfCommentDataFormat)current;
+        EmfCommentDataFormat cdf = (EmfCommentDataFormat)current;
         HwmfEmbedded emb = new HwmfEmbedded();
         boolean isEmf = (cdf.getSignature() == HemfComment.EmfFormatSignature.ENHMETA_SIGNATURE);
         emb.setEmbeddedType(isEmf ? HwmfEmbeddedType.EMF : HwmfEmbeddedType.EPS);
@@ -199,7 +206,7 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
         }
 
         EmfPlusObject epo = (EmfPlusObject)current;
-        assert(epo.getObjectType() == HemfPlusObject.EmfPlusObjectType.IMAGE);
+        assert(epo.getObjectType() == EmfPlusObjectType.IMAGE);
         EmfPlusImage img = epo.getObjectData();
         assert(img.getImageDataType() != null);
 
@@ -279,7 +286,7 @@ public class HemfEmbeddedIterator implements Iterator<HwmfEmbedded> {
 
     private HwmfEmbedded getEmfPlusImageData() {
         EmfPlusObject epo = (EmfPlusObject)current;
-        assert(epo.getObjectType() == HemfPlusObject.EmfPlusObjectType.IMAGE);
+        assert(epo.getObjectType() == EmfPlusObjectType.IMAGE);
 
         final int objectId = epo.getObjectId();
 

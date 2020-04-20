@@ -383,6 +383,8 @@ public final class PPTX2PNG {
                     proxy = new PPTHandler();
                     break;
             }
+            proxy.setIgnoreParse(ignoreParse);
+            proxy.setQuite(quiet);
             proxy.parse(file);
         }
 
