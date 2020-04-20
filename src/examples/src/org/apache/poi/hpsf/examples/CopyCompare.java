@@ -169,7 +169,9 @@ public final class CopyCompare {
                     de = (de.hasEntry(subDir)) ? (DirectoryEntry)de.getEntry(subDir) : de.createDirectory(subDir);
                 }
 
-                de.createDocument(event.getName(), is);
+                if (event.getName() != null) {
+                    de.createDocument(event.getName(), is);
+                }
             }
 
         } catch (HPSFException | IOException ex) {
