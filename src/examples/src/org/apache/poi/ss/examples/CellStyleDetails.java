@@ -37,12 +37,15 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 /**
  * Demonstrates how to read excel styles for cells
  */
-public class CellStyleDetails {
+@SuppressWarnings({"java:S106","java:S4823"})
+public final class CellStyleDetails {
+    private CellStyleDetails() {}
+
     public static void main(String[] args) throws Exception {
         if(args.length == 0) {
            throw new IllegalArgumentException("Filename must be given");
         }
-        
+
         try (Workbook wb = WorkbookFactory.create(new File(args[0]))) {
             DataFormatter formatter = new DataFormatter();
 
@@ -82,7 +85,7 @@ public class CellStyleDetails {
             }
         }
     }
-    
+
     private static String renderColor(Color color) {
        if(color instanceof HSSFColor) {
           return ((HSSFColor)color).getHexString();

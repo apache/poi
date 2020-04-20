@@ -16,17 +16,20 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel.examples;
 
+import java.io.ByteArrayOutputStream;
+
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xssf.extractor.XSSFExportToXml;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFMap;
-
-import java.io.ByteArrayOutputStream;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Print all custom XML mappings registered in the given workbook
  */
-public class CustomXMLMapping {
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
+public final class CustomXMLMapping {
+
+    private CustomXMLMapping() {}
 
     public static void main(String[] args) throws Exception {
         try (OPCPackage pkg = OPCPackage.open(args[0]);

@@ -30,7 +30,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 /**
  * Demonstrates how you can extract embedded data from a .xls file
  */
-@SuppressWarnings({"java:S106","java:S4823"})
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public final class EmbeddedObjects {
     private EmbeddedObjects() {}
 

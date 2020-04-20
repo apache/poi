@@ -45,8 +45,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *
  * @author Yegor Kozlov
  */
-@SuppressWarnings("java:S1192")
-public class BusinessPlan {
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
+public final class BusinessPlan {
 
     private static final String[] titles = {
             "ID", "Project Name", "Owner", "Days", "Start", "End"};
@@ -87,6 +87,8 @@ public class BusinessPlan {
             {"1.3.3", "Document information needs", "G. Lee, S. Jones", "1", "13-Aug", null,
                 null, null, null, null,  null, "x", null, null, null, null, null},
     };
+
+    private BusinessPlan() {}
 
     public static void main(String[] args) throws Exception {
         Workbook wb;

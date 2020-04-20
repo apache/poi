@@ -32,6 +32,7 @@ import org.apache.poi.hwpf.usermodel.CharacterRun;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
 
+@SuppressWarnings({"java:S106","java:S4823"})
 public final class Word2Forrest
 {
   Writer _out;

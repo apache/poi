@@ -16,11 +16,11 @@
 ==================================================================== */
 package org.apache.poi.ss.examples.formula;
 
-import java.io.File ;
+import java.io.File;
 
-import org.apache.poi.ss.formula.functions.FreeRefFunction ;
-import org.apache.poi.ss.formula.udf.DefaultUDFFinder ;
-import org.apache.poi.ss.formula.udf.UDFFinder ;
+import org.apache.poi.ss.formula.functions.FreeRefFunction;
+import org.apache.poi.ss.formula.udf.DefaultUDFFinder;
+import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
@@ -28,26 +28,29 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.apache.poi.ss.util.CellReference ;
+import org.apache.poi.ss.util.CellReference;
 
 
 /**
  * An example class of how to invoke a User Defined Function for a given
  * XLS instance using POI's UDFFinder implementation.
  */
-public class UserDefinedFunctionExample {
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
+public final class UserDefinedFunctionExample {
 
-    public static void main( String[] args ) throws Exception {
-        
+    private UserDefinedFunctionExample() {}
+
+    public static void main(String[] args ) throws Exception {
+
         if(  args.length != 2 ) {
             // e.g. src/examples/src/org/apache/poi/ss/examples/formula/mortgage-calculation.xls Sheet1!B4
             System.out.println( "usage: UserDefinedFunctionExample fileName cellId" ) ;
             return;
         }
-        
+
         System.out.println( "fileName: " + args[0] ) ;
         System.out.println( "cell: " + args[1] ) ;
-        
+
         File workbookFile = new File( args[0] ) ;
 
         try (Workbook workbook = WorkbookFactory.create(workbookFile, null, true)) {

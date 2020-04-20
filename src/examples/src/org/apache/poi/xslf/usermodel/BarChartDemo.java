@@ -41,6 +41,7 @@ import org.apache.poi.xddf.usermodel.chart.XDDFNumericalDataSource;
 /**
  * Build a bar chart from a template pptx
  */
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public final class BarChartDemo {
     private BarChartDemo() {}
 

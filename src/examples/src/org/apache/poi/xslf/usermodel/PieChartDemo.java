@@ -38,6 +38,7 @@ import org.apache.poi.xddf.usermodel.chart.XDDFPieChartData;
 /**
  * Build a pie chart from a template pptx
  */
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public final class PieChartDemo {
     private PieChartDemo() {}
 

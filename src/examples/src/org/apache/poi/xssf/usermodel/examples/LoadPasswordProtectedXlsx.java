@@ -37,7 +37,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * <li><code>AesZipFileZipEntrySource</code> is used to ensure that temp files are encrypted.
  * </ul><p>
  */
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public final class LoadPasswordProtectedXlsx {
+
+    private LoadPasswordProtectedXlsx() {}
 
     public interface EncryptionHandler {
         void handle(final InputStream inputStream) throws Exception;

@@ -36,13 +36,16 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * Excel Border Drawing - examples
- * 
+ *
  * <p>
  * Partly based on the code snippets from
  * org.apache.poi.ss.examples.ConditionalFormats
  * </p>
  */
-public class DrawingBorders {
+@SuppressWarnings({"java:S106","java:S4823"})
+public final class DrawingBorders {
+
+    private DrawingBorders() {}
 
     public static void main(String[] args) throws IOException {
         try (Workbook wb = (args.length > 0 && args[0].equals("-xls"))

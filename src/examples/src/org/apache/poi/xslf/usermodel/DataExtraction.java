@@ -14,7 +14,7 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
- * ==================================================================== 
+ * ====================================================================
  */
 
 package org.apache.poi.xslf.usermodel;
@@ -25,16 +25,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.PrintStream;
 
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 
 /**
  * Demonstrates how you can extract data from a .pptx file
  */
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public final class DataExtraction {
     private DataExtraction() {}
 
-    public static void main(String[] args) throws IOException, OpenXML4JException {
+    public static void main(String[] args) throws IOException {
 
         PrintStream out = System.out;
 
@@ -42,7 +42,7 @@ public final class DataExtraction {
            out.println("Input file is required");
            return;
         }
-        
+
         FileInputStream is = new FileInputStream(args[0]);
         try (XMLSlideShow ppt = new XMLSlideShow(is)) {
             is.close();

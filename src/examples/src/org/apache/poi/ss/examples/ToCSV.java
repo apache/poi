@@ -129,6 +129,7 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  *                                 either obeying Excel's or UNIX formatting
  *                                 conventions.
  */
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public class ToCSV {
 
     private Workbook workbook;

@@ -42,6 +42,7 @@ import org.xml.sax.helpers.DefaultHandler;
  * See {@link XLSX2CSV} for a fuller example of doing
  *  XSLX processing with the XSSF Event code.
  */
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public class FromHowTo {
     public void processFirstSheet(String filename) throws Exception {
         try (OPCPackage pkg = OPCPackage.open(filename, PackageAccess.READ)) {

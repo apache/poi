@@ -14,7 +14,7 @@
  *    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  *    See the License for the specific language governing permissions and
  *    limitations under the License.
- * ==================================================================== 
+ * ====================================================================
  */
 
 package org.apache.poi.xslf.usermodel;
@@ -25,6 +25,7 @@ import java.io.FileOutputStream;
 /**
  * Merge multiple pptx presentations together
  */
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public final class MergePresentations {
     private MergePresentations() {}
 

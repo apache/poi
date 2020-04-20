@@ -199,6 +199,7 @@ import org.apache.poi.util.IOUtils;
  *               2mm have been noted in testing. Further investigation will
  *               continue to rectify this issue.
  */
+@SuppressWarnings({"java:S106","java:S4823"})
 public class AddDimensionedImage {
 
     // Four constants that determine how - and indeed whether - the rows

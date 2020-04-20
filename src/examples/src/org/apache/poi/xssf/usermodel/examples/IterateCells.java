@@ -29,7 +29,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 /**
  *  Iterate over rows and cells
  */
-public class IterateCells {
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
+public final class IterateCells {
+
+    private IterateCells() {}
 
     public static void main(String[] args) throws IOException {
         try (

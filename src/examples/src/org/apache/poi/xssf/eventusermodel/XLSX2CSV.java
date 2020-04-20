@@ -61,10 +61,11 @@ import org.xml.sax.XMLReader;
  * For a more advanced implementation of SAX event parsing
  * of XLSX files, see {@link XSSFEventBasedExcelExtractor}
  * and {@link XSSFSheetXMLHandler}. Note that for many cases,
- * it may be possible to simply use those with a custom 
+ * it may be possible to simply use those with a custom
  * {@link SheetContentsHandler} and no SAX code needed of
  * your own!
  */
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public class XLSX2CSV {
     /**
      * Uses the XSSF Event SAX helpers to do most of the work
@@ -75,7 +76,7 @@ public class XLSX2CSV {
         private boolean firstCellOfRow;
         private int currentRow = -1;
         private int currentCol = -1;
-        
+
         private void outputMissingRows(int number) {
             for (int i=0; i<number; i++) {
                 for (int j=0; j<minColumns; j++) {
@@ -125,7 +126,7 @@ public class XLSX2CSV {
                 output.append(',');
             }
             currentCol = thisCol;
-            
+
             // Number or string?
             try {
                 //noinspection ResultOfMethodCallIgnored
@@ -183,7 +184,7 @@ public class XLSX2CSV {
     public void processSheet(
             Styles styles,
             SharedStrings strings,
-            SheetContentsHandler sheetHandler, 
+            SheetContentsHandler sheetHandler,
             InputStream sheetInputStream) throws IOException, SAXException {
         DataFormatter formatter = new DataFormatter();
         InputSource sheetSource = new InputSource(sheetInputStream);

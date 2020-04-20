@@ -43,12 +43,15 @@ import org.apache.xmlbeans.XmlException;
  * Loads embedded resources from Workbooks. Code taken from the website:
  *  https://poi.apache.org/spreadsheet/quick-guide.html#Embedded
  */
-public class LoadEmbedded {
-   public static void main(String[] args) throws IOException, EncryptedDocumentException, OpenXML4JException, XmlException {
+@SuppressWarnings({"java:S106","java:S4823"})
+public final class LoadEmbedded {
+    private LoadEmbedded() {}
+
+    public static void main(String[] args) throws IOException, EncryptedDocumentException, OpenXML4JException, XmlException {
        Workbook wb = WorkbookFactory.create(new File(args[0]));
        loadEmbedded(wb);
    }
-   
+
    public static void loadEmbedded(Workbook wb) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
        if (wb instanceof HSSFWorkbook) {
            loadEmbedded((HSSFWorkbook)wb);
@@ -60,7 +63,7 @@ public class LoadEmbedded {
            throw new IllegalArgumentException(wb.getClass().getName());
        }
    }
-   
+
    public static void loadEmbedded(HSSFWorkbook workbook) throws IOException {
        for (HSSFObjectData obj : workbook.getAllEmbeddedObjects()) {
            //the OLE2 Class Name of the object
@@ -92,7 +95,7 @@ public class LoadEmbedded {
            }
        }
    }
-   
+
    public static void loadEmbedded(XSSFWorkbook workbook) throws IOException, InvalidFormatException, OpenXML4JException, XmlException {
        for (PackagePart pPart : workbook.getAllEmbeddedParts()) {
            String contentType = pPart.getContentType();

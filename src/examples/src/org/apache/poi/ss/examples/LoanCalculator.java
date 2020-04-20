@@ -45,8 +45,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  *
  * @author Yegor Kozlov
  */
-@SuppressWarnings("java:S1192")
-public class LoanCalculator {
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
+public final class LoanCalculator {
+
+    private LoanCalculator() {}
 
     public static void main(String[] args) throws Exception {
         Workbook wb;

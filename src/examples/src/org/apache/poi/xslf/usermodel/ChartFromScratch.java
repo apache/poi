@@ -49,6 +49,7 @@ import org.apache.poi.xddf.usermodel.chart.XDDFValueAxis;
 /**
  * Build a chart without reading template file
  */
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public final class ChartFromScratch {
     private ChartFromScratch() {}
 

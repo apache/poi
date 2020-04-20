@@ -43,6 +43,7 @@ import org.apache.poi.xwpf.usermodel.XWPFDocument;
 /**
  * Build a bar chart from a template docx
  */
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public final class BarChartExample {
     private BarChartExample() {}
 

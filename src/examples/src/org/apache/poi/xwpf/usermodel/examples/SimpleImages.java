@@ -33,6 +33,7 @@ import org.apache.poi.xwpf.usermodel.XWPFRun;
 /**
  * Demonstrates how to add pictures in a .docx document
  */
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public final class SimpleImages {
 
     private SimpleImages() {}

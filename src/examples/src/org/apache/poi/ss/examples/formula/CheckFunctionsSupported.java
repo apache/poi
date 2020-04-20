@@ -45,6 +45,7 @@ import org.apache.poi.ss.util.CellReference;
  *  files using Apache POI, along with how to handle errors whilst
  *  doing so.
  */
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
 public class CheckFunctionsSupported {
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {
@@ -96,8 +97,8 @@ public class CheckFunctionsSupported {
         }
     }
 
-    private Workbook workbook;
-    private FormulaEvaluator evaluator;
+    private final Workbook workbook;
+    private final FormulaEvaluator evaluator;
     public CheckFunctionsSupported(Workbook workbook) {
         this.workbook = workbook;
         this.evaluator = workbook.getCreationHelper().createFormulaEvaluator();

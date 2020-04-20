@@ -46,7 +46,10 @@ import org.apache.poi.xssf.streaming.SXSSFSheet;
  * <li><code>SXSSFWorkbookWithCustomZipEntrySource</code> extends SXSSFWorkbook to ensure temp files are encrypted.
  * </ul><p>
  */
-public class SavePasswordProtectedXlsx {
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
+public final class SavePasswordProtectedXlsx {
+
+    private SavePasswordProtectedXlsx() {}
 
     public static void main(String[] args) throws Exception {
         if(args.length != 2) {
@@ -81,7 +84,7 @@ public class SavePasswordProtectedXlsx {
         }
         TempFileUtils.checkTempFiles();
     }
-    
+
     public static void save(final InputStream inputStream, final String filename, final String pwd)
             throws InvalidFormatException, IOException, GeneralSecurityException {
 

@@ -35,7 +35,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 /**
  * Demonstrates how to insert pictures in a SpreadsheetML document
  */
-public class WorkingWithPictures {
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
+public final class WorkingWithPictures {
+    private WorkingWithPictures() {}
+
     public static void main(String[] args) throws IOException {
 
         //create a new workbook

@@ -17,16 +17,26 @@
 
 package org.apache.poi.ss.examples;
 
-import org.apache.poi.xssf.usermodel.*;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.ss.usermodel.*;
-import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
 import java.io.FileOutputStream;
 import java.util.Calendar;
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
+
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.PrintSetup;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
  * A  monthly calendar created using Apache POI. Each month is on a separate sheet.
@@ -37,7 +47,8 @@ import java.util.HashMap;
  *
  * @author Yegor Kozlov
  */
-public class CalendarDemo {
+@SuppressWarnings({"java:S106","java:S4823","java:S1192"})
+public final class CalendarDemo {
 
     private static final String[] days = {
             "Sunday", "Monday", "Tuesday",
@@ -46,6 +57,8 @@ public class CalendarDemo {
     private static final String[]  months = {
             "January", "February", "March","April", "May", "June","July", "August",
             "September","October", "November", "December"};
+
+    private CalendarDemo() {}
 
     public static void main(String[] args) throws Exception {
 
