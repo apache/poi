@@ -74,7 +74,7 @@ public class HemfPalette {
             /* A 16-bit unsigned integer that specifies the version number of the system. This MUST be 0x0300. */
             int version = leis.readUShort();
             assert(version == 0x0300);
-            int size = readPaletteEntries(leis, -1);
+            long size = readPaletteEntries(leis, -1);
             return size + LittleEndianConsts.INT_SIZE + LittleEndianConsts.SHORT_SIZE;
         }
 
@@ -123,7 +123,7 @@ public class HemfPalette {
             // A 32-bit unsigned integer that specifies the number of entries.
             int nbrOfEntries = (int)leis.readUInt();
             int size = readPaletteEntries(leis, nbrOfEntries);
-            return size + 3*LittleEndianConsts.INT_SIZE;
+            return size + 3L*LittleEndianConsts.INT_SIZE;
         }
 
         @Override
@@ -170,7 +170,7 @@ public class HemfPalette {
             // The value MUST be less than or equal to 0x00000400 and greater than 0x00000000.
             numberOfEntries = (int)leis.readUInt();
 
-            return 2*LittleEndianConsts.INT_SIZE;
+            return 2L*LittleEndianConsts.INT_SIZE;
         }
 
         @Override

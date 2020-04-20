@@ -461,7 +461,7 @@ public class HemfPlusMisc {
 
             origin.setLocation(x,y);
 
-            return LittleEndianConsts.INT_SIZE*2;
+            return LittleEndianConsts.INT_SIZE*2L;
         }
 
         @Override

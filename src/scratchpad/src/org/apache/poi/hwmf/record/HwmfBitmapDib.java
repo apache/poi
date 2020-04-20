@@ -232,7 +232,7 @@ public class HwmfBitmapDib implements GenericRecord {
 
     public int init(LittleEndianInputStream leis, int recordSize) throws IOException {
         leis.mark(10000);
-        
+
         // need to read the header to calculate start of bitmap data correct
         introSize = readHeader(leis);
         assert(introSize == headerSize);
@@ -451,9 +451,9 @@ public class HwmfBitmapDib implements GenericRecord {
 
         // sometimes there are missing bytes after the imageData which will be 0-filled
         int imageSize = (int)Math.max(imageData.length, introSize+headerImageSize);
-        
+
         // create the image data and leave the parsing to the ImageIO api
-        byte[] buf = IOUtils.safelyAllocate(BMP_HEADER_SIZE + imageSize, MAX_RECORD_LENGTH);
+        byte[] buf = IOUtils.safelyAllocate(BMP_HEADER_SIZE + (long)imageSize, MAX_RECORD_LENGTH);
 
         // https://en.wikipedia.org/wiki/BMP_file_format #  Bitmap file header
         buf[0] = (byte)'B';
@@ -466,10 +466,10 @@ public class HwmfBitmapDib implements GenericRecord {
         LittleEndian.putInt(buf, 10, BMP_HEADER_SIZE + introSize);
         // fill the "known" image data
         System.arraycopy(imageData, 0, buf, BMP_HEADER_SIZE, imageData.length);
-        
+
         return buf;
     }
-    
+
     public BufferedImage getImage() {
         return getImage(null, null, false);
     }

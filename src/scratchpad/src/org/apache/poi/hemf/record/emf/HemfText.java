@@ -311,7 +311,7 @@ public class HemfText {
             // A 32-bit unsigned integer that specifies the index of the logical font object
             // in the EMF Object Table
             fontIdx = (int)leis.readUInt();
-            int size = font.init(leis, (int)(recordSize-LittleEndianConsts.INT_SIZE));
+            long size = font.init(leis, (int)(recordSize-LittleEndianConsts.INT_SIZE));
             return size+LittleEndianConsts.INT_SIZE;
         }
 

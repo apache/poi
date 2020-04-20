@@ -115,7 +115,7 @@ public class HemfComment {
 
         @Override
         public long init(LittleEndianInputStream leis, long recordSize, long recordId) throws IOException {
-            int startIdx = leis.getReadIndex();
+            long startIdx = leis.getReadIndex();
             data = new EmfCommentDataIterator(leis, (int)recordSize, true).next();
             return leis.getReadIndex()-startIdx;
         }
@@ -299,7 +299,7 @@ public class HemfComment {
         @Override
         public long init(final LittleEndianInputStream leis, final long dataSize)
         throws IOException {
-            final int startIdx = leis.getReadIndex();
+            final long startIdx = leis.getReadIndex();
             EmfComment.validateCommentType(leis, HemfCommentRecordType.emfPlus);
             new HemfPlusRecordIterator(leis, (int)dataSize-LittleEndianConsts.INT_SIZE).forEachRemaining(records::add);
             return leis.getReadIndex()-startIdx;
@@ -339,7 +339,7 @@ public class HemfComment {
 
         @Override
         public long init(final LittleEndianInputStream leis, final long dataSize) throws IOException {
-            final int startIdx = leis.getReadIndex();
+            final long startIdx = leis.getReadIndex();
             EmfComment.validateCommentType(leis, HemfCommentRecordType.emfBeginGroup);
             HemfDraw.readRectL(leis, bounds);
 
@@ -380,7 +380,7 @@ public class HemfComment {
         @Override
         public long init(final LittleEndianInputStream leis, final long dataSize)
         throws IOException {
-            final int startIdx = leis.getReadIndex();
+            final long startIdx = leis.getReadIndex();
             EmfComment.validateCommentType(leis, HemfCommentRecordType.emfEndGroup);
             return leis.getReadIndex()-startIdx;
         }
@@ -429,7 +429,7 @@ public class HemfComment {
                 }
             }
 
-            return leis.getReadIndex()-startIdx;
+            return leis.getReadIndex()-(long)startIdx;
         }
 
         public List<EmfCommentDataFormat> getFormats() {
@@ -510,7 +510,7 @@ public class HemfComment {
                 throw new RecordFormatException("offset for emrformat must be > 0");
             }
 
-            return 4*LittleEndianConsts.INT_SIZE;
+            return 4L*LittleEndianConsts.INT_SIZE;
         }
 
         public byte[] getRawData() {
@@ -543,7 +543,7 @@ public class HemfComment {
         @SuppressWarnings("unused")
         @Override
         public long init(final LittleEndianInputStream leis, final long dataSize) throws IOException {
-            final int startIdx = leis.getReadIndex();
+            final long startIdx = leis.getReadIndex();
             EmfComment.validateCommentType(leis, HemfCommentRecordType.emfWMF);
 
             // A 16-bit unsigned integer that specifies the WMF metafile version in terms

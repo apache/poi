@@ -157,7 +157,7 @@ public final class NameIdChunks implements ChunkGroup {
             if (propertyKind == 1 && propertyNameCRC32[0] < 0) {
                 // skip stream entry matching and return tag from property index from entry stream
                 // this code should not be reached
-                return 0x8000 + propertyIndex;
+                return 0x8000L + propertyIndex;
             }
 
             return getPropertyTag(streamID, nameOffset, propertyNameCRC32[0]);
@@ -182,7 +182,7 @@ public final class NameIdChunks implements ChunkGroup {
                 int matchPropertyKind = matchGuidIndex & 0x01;
 
                 if (nameCRC == (matchPropertyKind == 0 ? nameOffset : propertyNameCRC32)) {
-                    return 0x8000 + matchPropertyIndex;
+                    return 0x8000L + matchPropertyIndex;
                 }
             }
         }
@@ -221,7 +221,7 @@ public final class NameIdChunks implements ChunkGroup {
         Consumer<String> propertyNameSetter, Consumer<Long> propertyNameCRC32Setter) {
         if (propertyKind == 0) {
             // numerical named property
-            return 0x1000 + (nameOffset ^ (guidIndex << 1)) % 0x1F;
+            return 0x1000L + (nameOffset ^ (guidIndex << 1)) % 0x1F;
         }
 
         // string named property

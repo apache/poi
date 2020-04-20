@@ -38,7 +38,7 @@ public class StreamStore { // TODO - instantiable superclass
 	}
 
 	protected void prependContentsWith(byte[] b) {
-		byte[] newContents = IOUtils.safelyAllocate(contents.length + b.length, MAX_RECORD_LENGTH);
+		byte[] newContents = IOUtils.safelyAllocate(contents.length + (long)b.length, MAX_RECORD_LENGTH);
 		System.arraycopy(b, 0, newContents, 0, b.length);
 		System.arraycopy(contents, 0, newContents, b.length, contents.length);
 		contents = newContents;

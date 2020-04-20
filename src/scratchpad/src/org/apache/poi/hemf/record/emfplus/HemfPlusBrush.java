@@ -478,7 +478,7 @@ public class HemfPlusBrush {
             style = EmfPlusHatchStyle.valueOf(leis.readInt());
             foreColor = readARGB(leis.readInt());
             backColor = readARGB(leis.readInt());
-            return 3*LittleEndianConsts.INT_SIZE;
+            return 3L*LittleEndianConsts.INT_SIZE;
         }
 
         @Override

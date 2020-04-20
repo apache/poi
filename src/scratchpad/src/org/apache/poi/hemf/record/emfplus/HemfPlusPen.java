@@ -262,7 +262,7 @@ public class HemfPlusPen {
             // respect to the width of the EmfPlusPen object that is used to draw the lines.
             widthScale = leis.readFloat();
 
-            long size = 5*LittleEndianConsts.INT_SIZE;
+            long size = 5L*LittleEndianConsts.INT_SIZE;
 
             // An EmfPlusPointF object that is not currently used. It MUST be set to {0.0, 0.0}.
             size += readPointF(leis, fillHotSpot);
@@ -668,7 +668,7 @@ public class HemfPlusPen {
             // beginning of the line cap and the end of the line.
             baseInset = leis.readFloat();
 
-            long size = 3*LittleEndianConsts.INT_SIZE;
+            long size = 3L*LittleEndianConsts.INT_SIZE;
 
             size += super.init(leis);
 

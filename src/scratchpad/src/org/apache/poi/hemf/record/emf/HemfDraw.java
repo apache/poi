@@ -1238,13 +1238,13 @@ public final class HemfDraw {
         /* A 32-bit signed integer that defines the x coordinate, in logical coordinates,
          * of the ... corner of the rectangle.
          */
-        final int left = leis.readInt();
-        final int top = leis.readInt();
-        final int right = leis.readInt();
-        final int bottom = leis.readInt();
+        final double left = leis.readInt();
+        final double top = leis.readInt();
+        final double right = leis.readInt();
+        final double bottom = leis.readInt();
         bounds.setRect(left, top, right-left, bottom-top);
 
-        return 4 * LittleEndianConsts.INT_SIZE;
+        return 4L * LittleEndianConsts.INT_SIZE;
     }
 
     static long readPointS(LittleEndianInputStream leis, Point2D point) {
@@ -1254,7 +1254,7 @@ public final class HemfDraw {
         final int y = leis.readShort();
         point.setLocation(x, y);
 
-        return 2*LittleEndianConsts.SHORT_SIZE;
+        return 2L*LittleEndianConsts.SHORT_SIZE;
 
     }
     static long readPointL(LittleEndianInputStream leis, Point2D point) {
@@ -1264,7 +1264,7 @@ public final class HemfDraw {
         final int y = leis.readInt();
         point.setLocation(x, y);
 
-        return 2*LittleEndianConsts.INT_SIZE;
+        return 2L*LittleEndianConsts.INT_SIZE;
 
     }
 
@@ -1272,7 +1272,7 @@ public final class HemfDraw {
         final double width = leis.readFloat();
         final double height = leis.readFloat();
         dimension.setSize(width, height);
-        return 2*LittleEndianConsts.INT_SIZE;
+        return 2L*LittleEndianConsts.INT_SIZE;
     }
 
     static long readDimensionInt(LittleEndianInputStream leis, Dimension2D dimension) {
@@ -1280,7 +1280,7 @@ public final class HemfDraw {
         final double width = leis.readInt();
         final double height = leis.readInt();
         dimension.setSize(width, height);
-        return 2*LittleEndianConsts.INT_SIZE;
+        return 2L*LittleEndianConsts.INT_SIZE;
     }
 
     private static void polyTo(final HemfGraphics ctx, final Path2D poly, FillDrawStyle fillDrawStyle) {

@@ -197,7 +197,7 @@ public class HwmfText {
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             stringLength = leis.readShort();
-            rawTextBytes = IOUtils.safelyAllocate(stringLength+(stringLength&1), MAX_RECORD_LENGTH);
+            rawTextBytes = IOUtils.safelyAllocate(stringLength+(long)(stringLength&1), MAX_RECORD_LENGTH);
             leis.readFully(rawTextBytes);
             // A 16-bit signed integer that defines the vertical (y-axis) coordinate, in logical
             // units, of the point where drawing is to start.
@@ -413,7 +413,7 @@ public class HwmfText {
                 size += readRectS(leis, bounds);
             }
 
-            rawTextBytes = IOUtils.safelyAllocate(stringLength+(stringLength&1), MAX_RECORD_LENGTH);
+            rawTextBytes = IOUtils.safelyAllocate(stringLength+(long)(stringLength&1), MAX_RECORD_LENGTH);
             leis.readFully(rawTextBytes);
             size += rawTextBytes.length;
 

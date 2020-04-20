@@ -509,7 +509,7 @@ public final class HemfFill {
             long rgnDataSize = leis.readUInt();
             // A 32-bit unsigned integer that specifies the way to use the region.
             regionMode = HwmfRegionMode.valueOf((int)leis.readUInt());
-            long size = 2* LittleEndianConsts.INT_SIZE;
+            long size = 2L * LittleEndianConsts.INT_SIZE;
 
             // If RegionMode is RGN_COPY, this data can be omitted and the clip region
             // SHOULD be set to the default (NULL) clip region.
@@ -790,7 +790,7 @@ public final class HemfFill {
 
         final int dibSize = cbBmi+cbBits;
         if (undefinedSpace2 == 0) {
-            return undefinedSpace1 + bitmap.init(leis, dibSize);
+            return (long)undefinedSpace1 + bitmap.init(leis, dibSize);
         }
 
         final ByteArrayOutputStream bos = new ByteArrayOutputStream(cbBmi+cbBits);
@@ -803,7 +803,7 @@ public final class HemfFill {
         final LittleEndianInputStream leisDib = new LittleEndianInputStream(new ByteArrayInputStream(bos.toByteArray()));
         final int dibSizeAct = bitmap.init(leisDib, dibSize);
         assert (dibSizeAct <= dibSize);
-        return undefinedSpace1 + cbBmi + undefinedSpace2 + cbBits;
+        return (long)undefinedSpace1 + cbBmi + undefinedSpace2 + cbBits;
     }
 
 
@@ -820,7 +820,7 @@ public final class HemfFill {
         long rgnCntRect = leis.readUInt();
         // A 32-bit unsigned integer that specifies the size of the buffer of rectangles in bytes.
         long rgnCntBytes = leis.readUInt();
-        long size = 4*LittleEndianConsts.INT_SIZE;
+        long size = 4L*LittleEndianConsts.INT_SIZE;
         // A 128-bit WMF RectL object, which specifies the bounds of the region.
         Rectangle2D rgnBounds = new Rectangle2D.Double();
         size += readRectL(leis, rgnBounds);

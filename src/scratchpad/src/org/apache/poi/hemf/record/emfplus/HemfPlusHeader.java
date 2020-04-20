@@ -94,7 +94,7 @@ public class HemfPlusHeader implements HemfPlusRecord {
 
         logicalDpiX = leis.readUInt();
         logicalDpiY = leis.readUInt();
-        return 4* LittleEndianConsts.INT_SIZE;
+        return 4L*LittleEndianConsts.INT_SIZE;
     }
 
     public EmfPlusGraphicsVersion getVersion() {
