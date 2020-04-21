@@ -59,7 +59,6 @@ import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.EmbeddedObjectRefSubRecord;
 import org.apache.poi.hssf.record.NameRecord;
-import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.TabIdRecord;
 import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
@@ -2888,6 +2887,11 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
+    public void test55505() throws IOException {
+        simpleTest("bug55505.xls");
+    }
+
+    @Test
     public void test63940() throws IOException {
         simpleTest("SUBSTITUTE.xls");
     }
@@ -2910,6 +2914,11 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             HSSFRow r = s.createRow(10_000);
             HSSFCell c = r.createCell(0);
             c.setCellValue(10);
+
+            HSSFSheet tmpSheet = wb1.createSheet("POITESTSHEET");
+            tmpSheet.createRow(10).createCell(10).setCellValue("Test");
+            wb1.removeSheetAt(wb1.getSheetIndex(tmpSheet));
+
             simpleTestHelper(wb1, fileName);
 
             try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {

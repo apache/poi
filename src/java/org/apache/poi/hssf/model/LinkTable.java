@@ -30,6 +30,7 @@ import org.apache.poi.hssf.record.ExternalNameRecord;
 import org.apache.poi.hssf.record.NameCommentRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
+import org.apache.poi.hssf.record.SSTRecord;
 import org.apache.poi.hssf.record.SupBookRecord;
 import org.apache.poi.ss.formula.SheetNameFormatter;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
@@ -271,7 +272,10 @@ final class LinkTable {
 
         int idx = findFirstRecordLocBySid(CountryRecord.sid);
         if (idx < 0) {
-            throw new RuntimeException("CountryRecord not found");
+            idx = findFirstRecordLocBySid(SSTRecord.sid) - 1;
+            if (idx < 0) {
+                throw new RuntimeException("CountryRecord or SSTRecord not found");
+            }
         }
         _workbookRecordList.add(idx + 1, _externSheetRecord);
         _workbookRecordList.add(idx + 1, supbook);
