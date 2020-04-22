@@ -65,6 +65,9 @@ public final class IconMultiStateThreshold extends Threshold implements Duplicat
         return super.getDataLength() + 5;
     }
 
+    /**
+     * @deprecated use {@link #copy()} instead
+     */
     @Override
     @SuppressWarnings("squid:S2975")
     @Deprecated

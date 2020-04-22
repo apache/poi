@@ -112,6 +112,9 @@ public final class FeatHdrRecord extends StandardRecord {
 		return 12 + 2+1+4+rgbHdrData.length;
 	}
 
+	/**
+	 * @deprecated use {@link #copy()} instead
+	 */
 	@Override
 	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
 	@Deprecated

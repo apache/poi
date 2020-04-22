@@ -320,6 +320,9 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		return field_6_unknown;
 	}
 
+	/**
+	 * @deprecated use {@link #copy()} instead
+	 */
 	@Override
 	@SuppressWarnings("squid:S2975")
 	@Deprecated

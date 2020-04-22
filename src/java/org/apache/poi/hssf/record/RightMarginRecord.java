@@ -63,6 +63,9 @@ public final class RightMarginRecord extends StandardRecord implements Margin {
     public void setMargin( double field_1_margin )
     {        this.field_1_margin = field_1_margin;    }
 
+    /**
+     * @deprecated use {@link #copy()} instead
+     */
     @Override
     @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated

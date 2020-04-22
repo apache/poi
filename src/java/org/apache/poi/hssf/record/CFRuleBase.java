@@ -462,6 +462,9 @@ public abstract class CFRuleBase extends StandardRecord {
         return HSSFFormulaParser.parse(formula, sheet.getWorkbook(), FormulaType.CELL, sheetIndex);
     }
 
+    /**
+     * @deprecated use {@link #copy()} instead
+     */
     @Override
     @SuppressWarnings("squid:S2975")
     @Deprecated

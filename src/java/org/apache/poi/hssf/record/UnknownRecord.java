@@ -265,6 +265,9 @@ public final class UnknownRecord extends StandardRecord {
         return false;
     }
 
+    /**
+     * @deprecated use {@link #copy()} instead
+     */
     @Override
     @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated

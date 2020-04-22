@@ -167,6 +167,9 @@ public abstract class SubRecord implements Duplicatable, GenericRecord {
 			out.write(_data);
 		}
 
+		/**
+		 * @deprecated use {@link #copy()} instead
+		 */
 		@Override
 		@SuppressWarnings("squid:S2975")
 		@Deprecated

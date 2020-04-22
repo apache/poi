@@ -132,6 +132,9 @@ public final class BlankRecord extends StandardRecord implements CellValueRecord
         return 6;
     }
 
+    /**
+     * @deprecated use {@link #copy()} instead
+     */
     @Override
     @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated

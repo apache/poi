@@ -497,6 +497,9 @@ public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, G
         return extBit.isSet(getOptionFlags());
     }
 
+    /**
+     * @deprecated use {@link #copy()} instead
+     */
     @Override
     @SuppressWarnings("squid:S2975")
     @Deprecated

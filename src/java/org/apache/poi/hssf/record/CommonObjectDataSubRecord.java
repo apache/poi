@@ -136,6 +136,9 @@ public final class CommonObjectDataSubRecord extends SubRecord {
         return sid;
     }
 
+    /**
+     * @deprecated use {@link #copy()} instead
+     */
     @Override
     @SuppressWarnings("squid:S2975")
     @Deprecated

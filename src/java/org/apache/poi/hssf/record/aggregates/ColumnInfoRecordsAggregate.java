@@ -61,6 +61,9 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 		}
 	}
 
+	/**
+	 * @deprecated use {@link #copy()} instead
+	 */
 	@Override
 	@SuppressWarnings("squid:S2975")
 	@Deprecated

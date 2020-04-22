@@ -132,6 +132,9 @@ public final class CFRuleRecord extends CFRuleBase {
                getFormulaSize(getFormula2());
     }
 
+    /**
+     * @deprecated use {@link #copy()} instead
+     */
     @Override
     @SuppressWarnings("squid:S2975")
     @Deprecated

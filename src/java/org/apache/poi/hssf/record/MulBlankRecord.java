@@ -119,6 +119,9 @@ public final class MulBlankRecord extends StandardRecord {
 		return 6 + _xfs.length * 2;
 	}
 
+	/**
+	 * @deprecated use {@link #copy()} instead
+	 */
 	@Override
 	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
 	@Deprecated

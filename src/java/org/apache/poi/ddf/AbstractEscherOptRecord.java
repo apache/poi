@@ -153,6 +153,9 @@ public abstract class AbstractEscherOptRecord extends EscherRecord {
         sortProperties();
     }
 
+    /**
+     * @deprecated use {@link #removeEscherProperty(EscherPropertyTypes)} instead
+     */
     @Deprecated
     @Removal(version = "5.0.0")
     public void removeEscherProperty(int num){

@@ -39,6 +39,9 @@ public final class DataBarThreshold extends Threshold implements Duplicatable {
         super(in);
     }
 
+    /**
+     * @deprecated use {@link #copy()} instead
+     */
     @Override
     @SuppressWarnings("squid:S2975")
     @Deprecated

@@ -80,6 +80,9 @@ public final class SheetPropertiesRecord extends StandardRecord {
         return sid;
     }
 
+    /**
+     * @deprecated use {@link #copy()} instead
+     */
     @Override
     @SuppressWarnings("squid:S2975")
     @Deprecated

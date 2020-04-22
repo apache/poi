@@ -81,6 +81,9 @@ public final class ChartStartBlockRecord extends StandardRecord {
 		out.writeShort(iObjectInstance2);
 	}
 
+	/**
+	 * @deprecated use {@link #copy()} instead
+	 */
 	@Override
 	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
 	@Deprecated

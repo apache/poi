@@ -89,6 +89,9 @@ public final class CFHeader12Record extends CFHeaderBase implements FutureRecord
         return futureHeader.getAssociatedRange();
     }
 
+    /**
+     * @deprecated use {@link #copy()} instead
+     */
     @Override
     @SuppressWarnings("squid:S2975")
     @Deprecated

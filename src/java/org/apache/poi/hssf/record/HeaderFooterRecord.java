@@ -88,6 +88,9 @@ public final class HeaderFooterRecord extends StandardRecord {
         return Arrays.equals(getGuid(), BLANK_GUID);
     }
 
+    /**
+     * @deprecated use {@link #copy()} instead
+     */
     @Override
     @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated

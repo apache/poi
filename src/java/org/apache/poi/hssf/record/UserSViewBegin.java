@@ -78,6 +78,9 @@ public final class UserSViewBegin extends StandardRecord {
         return Arrays.copyOf(_rawData, 16);
     }
 
+    /**
+     * @deprecated use {@link #copy()} instead
+     */
     @Override
     @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated

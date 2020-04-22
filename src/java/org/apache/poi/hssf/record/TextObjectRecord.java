@@ -317,6 +317,9 @@ public final class TextObjectRecord extends ContinuableRecord {
 		return _linkRefPtg;
 	}
 
+	/**
+	 * @deprecated use {@link #copy()} instead
+	 */
 	@Override
 	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
 	@Deprecated

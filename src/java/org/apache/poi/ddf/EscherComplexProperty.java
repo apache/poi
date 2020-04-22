@@ -44,6 +44,8 @@ public class EscherComplexProperty extends EscherProperty {
      * @param id          The id consists of the property number, a flag indicating whether this is a blip id and a flag
      *                    indicating that this is a complex property.
      * @param complexData The value of this property.
+     *
+     * @deprecated use {@link #EscherComplexProperty(short, int)} and {@link #setComplexData(byte[])} instead
      */
     @Deprecated
     @Removal(version = "5.0.0")
@@ -59,6 +61,8 @@ public class EscherComplexProperty extends EscherProperty {
      * @param propertyNumber The property number
      * @param isBlipId       Whether this is a blip id.  Should be false.
      * @param complexData    The value of this complex property.
+     *
+     * @deprecated use {@link #EscherComplexProperty(EscherPropertyTypes, boolean, int)} and {@link #setComplexData(byte[])} instead
      */
     @Deprecated
     @Removal(version = "5.0.0")

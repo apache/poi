@@ -29,6 +29,7 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
 import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.Removal;
@@ -360,6 +361,9 @@ public final class ValueRecordsAggregate implements Iterable<CellValueRecordInte
 		return new ValueIterator();
 	}
 
+	/**
+	 * @deprecated use {@link org.apache.poi.hssf.usermodel.HSSFSheet#cloneSheet(HSSFWorkbook)} instead
+	 */
 	@Override
 	@SuppressWarnings("squid:S2975")
 	@Deprecated

@@ -86,6 +86,9 @@ public final class StringRecord extends ContinuableRecord {
         _is16bitUnicode = StringUtil.hasMultibyte(string);
     }
 
+    /**
+     * @deprecated use {@link #copy()} instead
+     */
     @Override
     @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated

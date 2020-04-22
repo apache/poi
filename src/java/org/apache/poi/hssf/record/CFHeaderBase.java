@@ -146,6 +146,9 @@ public abstract class CFHeaderBase extends StandardRecord {
         field_4_cell_ranges.serialize(out);
     }
 
+    /**
+     * @deprecated use {@link #copy()} instead
+     */
     @Override
     @SuppressWarnings("squid:S2975")
     @Deprecated

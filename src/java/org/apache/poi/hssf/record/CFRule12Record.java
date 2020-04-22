@@ -449,6 +449,9 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
         return len;
     }
 
+    /**
+     * @deprecated use {@link #copy()} instead
+     */
     @Override
     @SuppressWarnings("squid:S2975")
     @Deprecated

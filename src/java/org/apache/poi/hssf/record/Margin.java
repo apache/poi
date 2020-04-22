@@ -25,15 +25,15 @@ public interface Margin {
 	// TODO - introduce MarginBaseRecord
 	/**
 	 * Get the margin field for the Margin.
-	 * 
+	 *
 	 * @return the margin
 	 */
-	public double getMargin();
+	double getMargin();
 
 	/**
 	 * Set the margin field for the Margin.
-	 * 
+	 *
 	 * @param field_1_margin the margin
 	 */
-	public void setMargin(double field_1_margin);
+	void setMargin(double field_1_margin);
 }

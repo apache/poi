@@ -599,6 +599,9 @@ public final class HyperlinkRecord extends StandardRecord {
         setTextMark("");
     }
 
+    /**
+     * @deprecated use {@link #copy()} instead
+     */
     @Override
     @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated

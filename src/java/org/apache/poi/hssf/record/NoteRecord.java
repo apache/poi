@@ -241,6 +241,9 @@ public final class NoteRecord extends StandardRecord {
       field_5_hasMultibyte = StringUtil.hasMultibyte(author);
 	}
 
+	/**
+	 * @deprecated use {@link #copy()} instead
+	 */
 	@Override
 	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
 	@Deprecated

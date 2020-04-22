@@ -69,6 +69,9 @@ public final class LeftMarginRecord extends StandardRecord implements Margin {
         this.field_1_margin = field_1_margin;
     }
 
+    /**
+     * @deprecated use {@link #copy()} instead
+     */
     @Override
     @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
