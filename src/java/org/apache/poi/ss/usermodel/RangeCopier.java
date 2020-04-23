@@ -85,22 +85,24 @@ public abstract class RangeCopier {
         
         for(int rowNo = sourceRange.getFirstRow(); rowNo <= sourceRange.getLastRow(); rowNo++) {   
             Row sourceRow = sourceClone.getRow(rowNo); // copy from source copy, original source might be overridden in process!
-            for (int columnIndex = sourceRange.getFirstColumn(); columnIndex <= sourceRange.getLastColumn(); columnIndex++) {  
-                Cell sourceCell = sourceRow.getCell(columnIndex);
-                if(sourceCell == null)
-                    continue;
-                Row destRow = destSheet.getRow(rowNo + deltaY);
-                if(destRow == null)
-                    destRow = destSheet.createRow(rowNo + deltaY);
-                
-                Cell newCell = destRow.getCell(columnIndex + deltaX);
-                if(newCell == null) {
-                    newCell = destRow.createCell(columnIndex + deltaX);
-                }
+            if (sourceRow != null) {
+                for (int columnIndex = sourceRange.getFirstColumn(); columnIndex <= sourceRange.getLastColumn(); columnIndex++) {
+                    Cell sourceCell = sourceRow.getCell(columnIndex);
+                    if (sourceCell == null)
+                        continue;
+                    Row destRow = destSheet.getRow(rowNo + deltaY);
+                    if (destRow == null)
+                        destRow = destSheet.createRow(rowNo + deltaY);
 
-                cloneCellContent(sourceCell, newCell, null);
-                if(newCell.getCellType() == CellType.FORMULA)
-                    adjustCellReferencesInsideFormula(newCell, destSheet, deltaX, deltaY);
+                    Cell newCell = destRow.getCell(columnIndex + deltaX);
+                    if (newCell == null) {
+                        newCell = destRow.createCell(columnIndex + deltaX);
+                    }
+
+                    cloneCellContent(sourceCell, newCell, null);
+                    if (newCell.getCellType() == CellType.FORMULA)
+                        adjustCellReferencesInsideFormula(newCell, destSheet, deltaX, deltaY);
+                }
             }
         }
     }
