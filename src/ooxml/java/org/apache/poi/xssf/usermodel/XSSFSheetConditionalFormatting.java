@@ -194,10 +194,7 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
         if (cfRules.length == 0) {
             throw new IllegalArgumentException("cfRules must not be empty");
         }
-        if (cfRules.length > 3) {
-            throw new IllegalArgumentException("Number of rules must not exceed 3");
-        }
-
+        
         CellRangeAddress[] mergeCellRanges = CellRangeUtil.mergeCellRanges(regions);
         CTConditionalFormatting cf = _sheet.getCTWorksheet().addNewConditionalFormatting();
         List<String> refs = new ArrayList<>();
