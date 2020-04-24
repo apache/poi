@@ -55,8 +55,7 @@ Source code:
 
 * Official `Apache Subversion repo`_ at apache.org
 * `ViewVC repo browser`_ at apache.org
-* Official `Apache git mirror`_ at apache.org
-* Unofficial `GitHub git mirror`_ at github.com
+* `GitHub git mirror`_ at github.com
 
 Requires Java 1.8 or later.
 
@@ -74,7 +73,7 @@ Contributing
   * Binary formats and Common APIs: src/testcases/org/apache/poi/
   * OOXML APIs only: src/ooxml/testcases/org/apache/poi/
   * Scratchpad (Binary formats): src/scratchpad/testcases/org/apache/poi/
-  * test files: test-data/
+  * Test files: test-data/
 
 * Navigate the source, make changes, and run unit tests to verify
 
@@ -83,6 +82,7 @@ Contributing
   * Scratchpad (Binary formats): src/scratchpad/src/org/apache/poi/
   * Examples: src/examples/src/org/apache/poi/
 
+* More info: `How To Build page`_  at apache.org
 
 Building jar files
 ------------------
@@ -90,7 +90,6 @@ Building jar files
 To build the jar files for poi, poi-ooxml, poi-ooxml-schemas, and poi-examples::
 
     ant jar
-
 
 .. _Mailing lists: https://poi.apache.org/mailinglists.html
 .. _Developers: https://lists.apache.org/list.html?dev@poi.apache.org
@@ -101,7 +100,5 @@ To build the jar files for poi, poi-ooxml, poi-ooxml-schemas, and poi-examples::
 
 .. _Apache Subversion repo: https://svn.apache.org/repos/asf/poi/trunk
 .. _ViewVC repo browser: https://svn.apache.org/viewvc/poi/trunk
-.. _Apache git mirror: https://git.apache.org/poi.git/
 .. _GitHub git mirror: https://github.com/apache/poi
-
-
+.. _How To Build page: http://poi.apache.org/devel/
