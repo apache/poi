@@ -85,7 +85,9 @@ public abstract class RangeCopier {
         
         for(int rowNo = sourceRange.getFirstRow(); rowNo <= sourceRange.getLastRow(); rowNo++) {   
             Row sourceRow = sourceClone.getRow(rowNo); // copy from source copy, original source might be overridden in process!
-            if (sourceRow != null) {
+            if (sourceRow == null) {
+                continue;
+            } else {
                 for (int columnIndex = sourceRange.getFirstColumn(); columnIndex <= sourceRange.getLastColumn(); columnIndex++) {
                     Cell sourceCell = sourceRow.getCell(columnIndex);
                     if (sourceCell == null)
