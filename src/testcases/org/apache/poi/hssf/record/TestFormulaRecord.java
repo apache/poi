@@ -85,7 +85,9 @@ public final class TestFormulaRecord {
 		FormulaRecord record = new FormulaRecord(TestcaseRecordInputStream.create(FormulaRecord.sid, formulaByte));
 		assertEquals("Row", 0, record.getRow());
 		assertEquals("Column", 0, record.getColumn());
+		//noinspection deprecation
 		assertEquals(CellType.ERROR.getCode(), record.getCachedResultType());
+		assertEquals(CellType.ERROR, record.getCachedResultTypeEnum());
 
 		byte[] output = record.serialize();
 		assertEquals("Output size", 33, output.length); //includes sid+recordlength

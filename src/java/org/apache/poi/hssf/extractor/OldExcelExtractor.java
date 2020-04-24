@@ -50,10 +50,10 @@ import org.apache.poi.util.IOUtils;
 
 /**
  * A text extractor for old Excel files, which are too old for
- *  HSSFWorkbook to handle. This includes Excel 95, and very old 
+ *  HSSFWorkbook to handle. This includes Excel 95, and very old
  *  (pre-OLE2) Excel files, such as Excel 4 files.
  * <p>
- * Returns much (but not all) of the textual content of the file, 
+ * Returns much (but not all) of the textual content of the file,
  *  suitable for indexing by something like Apache Lucene, or used
  *  by Apache Tika, but not really intended for display to the user.
  * </p>
@@ -113,7 +113,7 @@ public class OldExcelExtractor implements Closeable {
     }
 
     private void open(InputStream biffStream) throws IOException {
-        BufferedInputStream bis = (biffStream instanceof BufferedInputStream) 
+        BufferedInputStream bis = (biffStream instanceof BufferedInputStream)
             ? (BufferedInputStream)biffStream
             : new BufferedInputStream(biffStream, 8);
 
@@ -150,7 +150,7 @@ public class OldExcelExtractor implements Closeable {
         if (book == null) {
             throw new IOException("No Excel 5/95 Book stream found");
         }
-        
+
         ris = new RecordInputStream(directory.createDocumentInputStream(book));
         prepare();
     }
@@ -165,13 +165,13 @@ public class OldExcelExtractor implements Closeable {
         System.out.println(extractor.getText());
         extractor.close();
     }
-    
+
     private void prepare() {
         if (! ris.hasNextRecord()) {
             throw new IllegalArgumentException("File contains no records!");
-        } 
+        }
         ris.nextRecord();
-        
+
         // Work out what version we're dealing with
         int bofSid = ris.getSid();
         switch (bofSid) {
@@ -188,9 +188,9 @@ public class OldExcelExtractor implements Closeable {
                 biffVersion = 5;
                 break;
             default:
-                throw new IllegalArgumentException("File does not begin with a BOF, found sid of " + bofSid); 
+                throw new IllegalArgumentException("File does not begin with a BOF, found sid of " + bofSid);
         }
-        
+
         // Get the type
         BOFRecord bof = new BOFRecord(ris);
         fileType = bof.getType();
@@ -198,18 +198,18 @@ public class OldExcelExtractor implements Closeable {
 
     /**
      * The Biff version, largely corresponding to the Excel version
-     * 
+     *
      * @return the Biff version
      */
     public int getBiffVersion() {
         return biffVersion;
     }
-    
+
     /**
      * The kind of the file, one of {@link BOFRecord#TYPE_WORKSHEET},
      *  {@link BOFRecord#TYPE_CHART}, {@link BOFRecord#TYPE_EXCEL_4_MACRO}
      *  or {@link BOFRecord#TYPE_WORKSPACE_FILE}
-     * 
+     *
      * @return the file type
      */
     public int getFileType() {
@@ -219,12 +219,12 @@ public class OldExcelExtractor implements Closeable {
     /**
      * Retrieves the text contents of the file, as best we can
      *  for these old file formats
-     * 
+     *
      * @return the text contents of the file
      */
     public String getText() {
         StringBuilder text = new StringBuilder();
-        
+
         // To track formats and encodings
         CodepageRecord codepage = null;
         // TODO track the XFs and Format Strings
@@ -245,7 +245,7 @@ public class OldExcelExtractor implements Closeable {
                     text.append(shr.getSheetname());
                     text.append('\n');
                     break;
-            
+
                 case OldLabelRecord.biff2_sid:
                 case OldLabelRecord.biff345_sid:
                     OldLabelRecord lr = new OldLabelRecord(ris);
@@ -260,7 +260,7 @@ public class OldExcelExtractor implements Closeable {
                     text.append(sr.getString());
                     text.append('\n');
                     break;
-                    
+
                 case NumberRecord.sid:
                     NumberRecord nr = new NumberRecord(ris);
                     handleNumericCell(text, nr.getValue());
@@ -271,12 +271,12 @@ public class OldExcelExtractor implements Closeable {
                     // Biff 2 and 5+ share the same SID, due to a bug...
                     if (biffVersion == 5) {
                         FormulaRecord fr = new FormulaRecord(ris);
-                        if (fr.getCachedResultType() == CellType.NUMERIC.getCode()) {
+                        if (fr.getCachedResultTypeEnum() == CellType.NUMERIC) {
                             handleNumericCell(text, fr.getValue());
                         }
                     } else {
                         OldFormulaRecord fr = new OldFormulaRecord(ris);
-                        if (fr.getCachedResultType() == CellType.NUMERIC.getCode()) {
+                        if (fr.getCachedResultTypeEnum() == CellType.NUMERIC) {
                             handleNumericCell(text, fr.getValue());
                         }
                     }
@@ -285,11 +285,11 @@ public class OldExcelExtractor implements Closeable {
                     RKRecord rr = new RKRecord(ris);
                     handleNumericCell(text, rr.getRKNumber());
                     break;
-                    
+
                 case CodepageRecord.sid:
                     codepage = new CodepageRecord(ris);
                     break;
-                    
+
                 default:
                     ris.readFully(IOUtils.safelyAllocate(ris.remaining(), MAX_RECORD_LENGTH));
             }

@@ -144,6 +144,10 @@ public final class FormulaSpecialCachedValue implements GenericRecord {
         return getClass().getName() + '[' + formatValue() + ']';
     }
 
+    /**
+     * @deprecated POI 4.1.3, will be removed in 5.0, use getValueTypeEnum until switch to enum is fully done
+     */
+    @Deprecated
     public int getValueType() {
         int typeCode = getTypeCode();
         switch (typeCode) {
@@ -154,6 +158,25 @@ public final class FormulaSpecialCachedValue implements GenericRecord {
                 return CellType.BOOLEAN.getCode();
             case ERROR_CODE:
                 return CellType.ERROR.getCode();
+        }
+        throw new IllegalStateException("Unexpected type id (" + typeCode + ")");
+    }
+
+    /**
+     * Returns the type of the cached value
+     * @return A CellType
+     * @since POI 4.1.3
+     */
+    public CellType getValueTypeEnum() {
+        int typeCode = getTypeCode();
+        switch (typeCode) {
+            case EMPTY: // is this correct?
+            case STRING:
+                return CellType.STRING;
+            case BOOLEAN:
+                return CellType.BOOLEAN;
+            case ERROR_CODE:
+                return CellType.ERROR;
         }
         throw new IllegalStateException("Unexpected type id (" + typeCode + ")");
     }

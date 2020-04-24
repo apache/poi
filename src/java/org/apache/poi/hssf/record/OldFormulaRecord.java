@@ -64,11 +64,27 @@ public final class OldFormulaRecord extends OldCellRecord {
         field_6_parsed_expr = Formula.read(expression_len, ris, nBytesAvailable);
     }
 
+    /**
+     * @deprecated POI 4.1.3, will be removed in 5.0, use getCachedResultTypeEnum until switch to enum is fully done
+     */
+    @Deprecated
     public int getCachedResultType() {
         if (specialCachedValue == null) {
             return CellType.NUMERIC.getCode();
         }
         return specialCachedValue.getValueType();
+    }
+
+    /**
+     * Returns the type of the cached result
+     * @return A CellType
+     * @since POI 4.1.3
+     */
+    public CellType getCachedResultTypeEnum() {
+        if (specialCachedValue == null) {
+            return CellType.NUMERIC;
+        }
+        return specialCachedValue.getValueTypeEnum();
     }
 
     public boolean getCachedBooleanValue() {

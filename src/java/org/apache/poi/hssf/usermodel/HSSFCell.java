@@ -653,7 +653,7 @@ public class HSSFCell extends CellBase {
         return new IllegalStateException(msg);
     }
     private static void checkFormulaCachedValueType(CellType expectedTypeCode, FormulaRecord fr) {
-        CellType cachedValueType = CellType.forInt(fr.getCachedResultType());
+        CellType cachedValueType = fr.getCachedResultTypeEnum();
         if (cachedValueType != expectedTypeCode) {
             throw typeMismatch(expectedTypeCode, cachedValueType, true);
         }
@@ -879,7 +879,7 @@ public class HSSFCell extends CellBase {
         }
         FormulaRecordAggregate fra = ((FormulaRecordAggregate)_record);
         FormulaRecord fr = fra.getFormulaRecord();
-        switch (CellType.forInt(fr.getCachedResultType())) {
+        switch (fr.getCachedResultTypeEnum()) {
             case BOOLEAN:
                 return fr.getCachedBooleanValue() ? "TRUE" : "FALSE";
             case STRING:
@@ -1174,8 +1174,8 @@ public class HSSFCell extends CellBase {
         if (_cellType != CellType.FORMULA) {
             throw new IllegalStateException("Only formula cells have cached results");
         }
-        int code = ((FormulaRecordAggregate)_record).getFormulaRecord().getCachedResultType();
-        return CellType.forInt(code);
+
+        return ((FormulaRecordAggregate)_record).getFormulaRecord().getCachedResultTypeEnum();
     }
 
     /**
