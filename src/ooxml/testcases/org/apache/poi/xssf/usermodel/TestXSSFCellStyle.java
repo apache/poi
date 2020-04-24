@@ -50,22 +50,15 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment;
 
 public class TestXSSFCellStyle {
 	private StylesTable stylesTable;
-	private CTBorder ctBorderA;
-	private CTFill ctFill;
-	private CTFont ctFont;
-	private CTXf cellStyleXf;
-	private CTXf cellXf;
-	private CTCellXfs cellXfs;
-	private XSSFCellStyle cellStyle;
-	private CTStylesheet ctStylesheet;
+    private XSSFCellStyle cellStyle;
 
-	@Before
+    @Before
 	public void setUp() {
 		stylesTable = new StylesTable();
 
-		ctStylesheet = stylesTable.getCTStylesheet();
+        CTStylesheet ctStylesheet = stylesTable.getCTStylesheet();
 
-		ctBorderA = CTBorder.Factory.newInstance();
+        CTBorder ctBorderA = CTBorder.Factory.newInstance();
 		XSSFCellBorder borderA = new XSSFCellBorder(ctBorderA);
 		long borderId = stylesTable.putBorder(borderA);
 		assertEquals(0, borderId);
@@ -73,23 +66,23 @@ public class TestXSSFCellStyle {
 		XSSFCellBorder borderB = new XSSFCellBorder();
 		assertEquals(0, stylesTable.putBorder(borderB));
 
-		ctFill = CTFill.Factory.newInstance();
+        CTFill ctFill = CTFill.Factory.newInstance();
 		XSSFCellFill fill = new XSSFCellFill(ctFill, null);
 		long fillId = stylesTable.putFill(fill);
 		assertEquals(2, fillId);
 
-		ctFont = CTFont.Factory.newInstance();
+        CTFont ctFont = CTFont.Factory.newInstance();
 		XSSFFont font = new XSSFFont(ctFont);
 		long fontId = stylesTable.putFont(font);
 		assertEquals(1, fontId);
 
-		cellStyleXf = ctStylesheet.addNewCellStyleXfs().addNewXf();
+        CTXf cellStyleXf = ctStylesheet.addNewCellStyleXfs().addNewXf();
 		cellStyleXf.setBorderId(1);
 		cellStyleXf.setFillId(1);
 		cellStyleXf.setFontId(1);
 
-		cellXfs = ctStylesheet.addNewCellXfs();
-		cellXf = cellXfs.addNewXf();
+        CTCellXfs cellXfs = ctStylesheet.addNewCellXfs();
+        CTXf cellXf = cellXfs.addNewXf();
 		cellXf.setXfId(1);
 		cellXf.setBorderId(1);
 		cellXf.setFillId(1);
@@ -253,7 +246,7 @@ public class TestXSSFCellStyle {
         //replacement:
         assertEquals(ctBorder.getTop().getStyle(), STBorderStyle.NONE);
     }
-    
+
     private void testGetSetBorderXMLBean(BorderStyle border, STBorderStyle.Enum expected) {
         cellStyle.setBorderTop(border);
         assertEquals(border, cellStyle.getBorderTop());
@@ -263,8 +256,8 @@ public class TestXSSFCellStyle {
         CTBorder ctBorder = stylesTable.getBorderAt(borderId).getCTBorder();
         assertEquals(expected, ctBorder.getTop().getStyle());
     }
-    
-    
+
+
     // Border Styles, in BorderStyle/STBorderStyle enum order
     @Test
     public void testGetSetBorderNone() {
@@ -287,67 +280,67 @@ public class TestXSSFCellStyle {
     public void testGetSetBorderThin() {
         testGetSetBorderXMLBean(BorderStyle.THIN, STBorderStyle.THIN);
     }
-    
+
     @Test
     public void testGetSetBorderMedium() {
         testGetSetBorderXMLBean(BorderStyle.MEDIUM, STBorderStyle.MEDIUM);
     }
-    
+
     @Test
     public void testGetSetBorderDashed() {
         testGetSetBorderXMLBean(BorderStyle.DASHED, STBorderStyle.DASHED);
     }
-    
+
     @Test
     public void testGetSetBorderDotted() {
         testGetSetBorderXMLBean(BorderStyle.DOTTED, STBorderStyle.DOTTED);
     }
-    
+
     @Test
     public void testGetSetBorderThick() {
         testGetSetBorderXMLBean(BorderStyle.THICK, STBorderStyle.THICK);
     }
-    
+
     @Test
     public void testGetSetBorderDouble() {
         testGetSetBorderXMLBean(BorderStyle.DOUBLE, STBorderStyle.DOUBLE);
     }
-    
+
     @Test
     public void testGetSetBorderHair() {
         testGetSetBorderXMLBean(BorderStyle.HAIR, STBorderStyle.HAIR);
     }
-    
+
     @Test
     public void testGetSetBorderMediumDashed() {
         testGetSetBorderXMLBean(BorderStyle.MEDIUM_DASHED, STBorderStyle.MEDIUM_DASHED);
     }
-    
+
     @Test
     public void testGetSetBorderDashDot() {
         testGetSetBorderXMLBean(BorderStyle.DASH_DOT, STBorderStyle.DASH_DOT);
     }
-    
+
     @Test
     public void testGetSetBorderMediumDashDot() {
         testGetSetBorderXMLBean(BorderStyle.MEDIUM_DASH_DOT, STBorderStyle.MEDIUM_DASH_DOT);
     }
-    
+
     @Test
     public void testGetSetBorderDashDotDot() {
         testGetSetBorderXMLBean(BorderStyle.DASH_DOT_DOT, STBorderStyle.DASH_DOT_DOT);
     }
-    
+
     @Test
     public void testGetSetBorderMediumDashDotDot() {
         testGetSetBorderXMLBean(BorderStyle.MEDIUM_DASH_DOT_DOT, STBorderStyle.MEDIUM_DASH_DOT_DOT);
     }
-    
+
     @Test
     public void testGetSetBorderSlantDashDot() {
         testGetSetBorderXMLBean(BorderStyle.SLANTED_DASH_DOT, STBorderStyle.SLANT_DASH_DOT);
     }
-    
+
     @Test
     public void testGetSetBottomBorderColor() {
         //defaults
@@ -703,7 +696,7 @@ public class TestXSSFCellStyle {
 		assertEquals(HorizontalAlignment.CENTER, cellStyle.getAlignment());
 		assertEquals(STHorizontalAlignment.CENTER, cellStyle.getCellAlignment().getCTCellAlignment().getHorizontal());
 	}
-	
+
 	@Test
     public void testGetSetReadingOrder() {
 	    assertEquals(ReadingOrder.CONTEXT, cellStyle.getReadingOrder());
@@ -716,7 +709,7 @@ public class TestXSSFCellStyle {
         cellStyle.setReadingOrder(ReadingOrder.RIGHT_TO_LEFT);
         assertEquals(ReadingOrder.RIGHT_TO_LEFT, cellStyle.getReadingOrder());
         assertEquals(ReadingOrder.RIGHT_TO_LEFT.getCode(), cellStyle.getCellAlignment().getCTCellAlignment().getReadingOrder());
-        
+
         cellStyle.setReadingOrder(ReadingOrder.CONTEXT);
         assertEquals(ReadingOrder.CONTEXT, cellStyle.getReadingOrder());
         assertEquals(ReadingOrder.CONTEXT.getCode(), cellStyle.getCellAlignment().getCTCellAlignment().getReadingOrder());
@@ -752,25 +745,25 @@ public class TestXSSFCellStyle {
     public void testCloneStyleSameWB() throws IOException {
       XSSFWorkbook wb = new XSSFWorkbook();
       assertEquals(1, wb.getNumberOfFonts());
-      
+
       XSSFFont fnt = wb.createFont();
       fnt.setFontName("TestingFont");
       assertEquals(2, wb.getNumberOfFonts());
-      
+
       XSSFCellStyle orig = wb.createCellStyle();
       orig.setAlignment(HorizontalAlignment.RIGHT);
       orig.setFont(fnt);
       orig.setDataFormat((short)18);
-      
+
       assertEquals(HorizontalAlignment.RIGHT, orig.getAlignment());
       assertEquals(fnt, orig.getFont());
       assertEquals(18, orig.getDataFormat());
-      
+
       XSSFCellStyle clone = wb.createCellStyle();
         assertNotSame(HorizontalAlignment.RIGHT, clone.getAlignment());
         assertNotSame(fnt, clone.getFont());
         assertNotEquals(18, clone.getDataFormat());
-      
+
       clone.cloneStyleFrom(orig);
       assertEquals(HorizontalAlignment.RIGHT, clone.getAlignment());
       assertEquals(fnt, clone.getFont());
@@ -780,7 +773,7 @@ public class TestXSSFCellStyle {
       XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb);
       assertNotNull(wb2);
       wb2.close();
-      
+
       wb.close();
 	}
 
@@ -810,6 +803,7 @@ public class TestXSSFCellStyle {
         orig.setFillForegroundColor(IndexedColors.BRIGHT_GREEN.getIndex());
 
         XSSFCellStyle origEmpty = wbOrig.createCellStyle();
+        assertNotNull(origEmpty);
 
         assertSame(HorizontalAlignment.RIGHT, orig.getAlignment());
         assertSame(fnt, orig.getFont());
@@ -883,7 +877,7 @@ public class TestXSSFCellStyle {
         XSSFWorkbook workbook = XSSFTestDataSamples.openSampleWorkbook("52348.xlsx");
         StylesTable st = workbook.getStylesSource();
         assertEquals(0, st._getStyleXfsSize());
-        
+
         XSSFCellStyle style = workbook.createCellStyle(); // no exception at this point
         assertNull(style.getStyleXf());
 
@@ -910,7 +904,7 @@ public class TestXSSFCellStyle {
         XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(workbook);
         assertNotNull(wb2);
         wb2.close();
-        
+
         workbook.close();
     }
 
@@ -947,17 +941,17 @@ public class TestXSSFCellStyle {
     	XSSFWorkbook wb4 = XSSFTestDataSamples.writeOutAndReadBack(wb2);
     	assertNotNull(wb4);
     	wb4.close();
-    	
+
     	XSSFWorkbook wb5 = XSSFTestDataSamples.writeOutAndReadBack(wb3);
     	assertNotNull(wb5);
     	wb5.close();
-    	
+
     	wb3.close();
     	wb2.close();
     	wb1.close();
-        
+
     }
-    
+
     @Test
     public void testSetColor() throws IOException {
         try(Workbook wb = new XSSFWorkbook()) {
@@ -1011,7 +1005,7 @@ public class TestXSSFCellStyle {
         Workbook reference = XSSFTestDataSamples.openSampleWorkbook("template.xlsx");
         Workbook target = new XSSFWorkbook();
         copyStyles(reference, target);
-        
+
         assertEquals(reference.getNumCellStyles(), target.getNumCellStyles());
         final Sheet sheet = target.createSheet();
         final Row row = sheet.createRow(0);
@@ -1027,11 +1021,11 @@ public class TestXSSFCellStyle {
 
         Workbook copy = XSSFTestDataSamples.writeOutAndReadBack(target);
 
-        // previously this failed because the border-element was not copied over 
+        // previously this failed because the border-element was not copied over
         copy.getCellStyleAt((short)1).getBorderBottom();
-        
+
         copy.close();
-        
+
         target.close();
         reference.close();
     }
@@ -1042,23 +1036,23 @@ public class TestXSSFCellStyle {
 
         cellStyle.setRotation((short)89);
         assertEquals(89, cellStyle.getRotation());
-        
+
         cellStyle.setRotation((short)90);
         assertEquals(90, cellStyle.getRotation());
-        
+
         cellStyle.setRotation((short)179);
         assertEquals(179, cellStyle.getRotation());
-        
+
         cellStyle.setRotation((short)180);
         assertEquals(180, cellStyle.getRotation());
-        
+
         // negative values are mapped to the correct values for compatibility between HSSF and XSSF
         cellStyle.setRotation((short)-1);
         assertEquals(91, cellStyle.getRotation());
-        
+
         cellStyle.setRotation((short)-89);
         assertEquals(179, cellStyle.getRotation());
-        
+
         cellStyle.setRotation((short)-90);
         assertEquals(180, cellStyle.getRotation());
     }
@@ -1088,7 +1082,7 @@ public class TestXSSFCellStyle {
 
         cellStyle.setRightBorderColor(null);
         assertNull(cellStyle.getRightBorderXSSFColor());
-        
+
         workbook.close();
     }
 }

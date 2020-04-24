@@ -57,7 +57,7 @@ public class XSSFCellBorder {
     public XSSFCellBorder(CTBorder border) {
         this(border, null, null);
     }
-    
+
     /**
      *
      * @param border The ooxml object for the border
@@ -83,12 +83,12 @@ public class XSSFCellBorder {
     public void setThemesTable(ThemesTable themes) {
        this._theme = themes;
     }
-    
+
     /**
      * The enumeration value indicating the side being used for a cell border.
      */
-    public static enum BorderSide {
-        TOP, RIGHT, BOTTOM, LEFT
+    public enum BorderSide {
+        TOP, RIGHT, BOTTOM, LEFT, DIAGONAL, VERTICAL, HORIZONTAL
     }
 
     /**
@@ -133,8 +133,8 @@ public class XSSFCellBorder {
      */
     public XSSFColor getBorderColor(BorderSide side) {
         CTBorderPr borderPr = getBorder(side);
-        
-        if(borderPr != null && borderPr.isSetColor()) { 
+
+        if(borderPr != null && borderPr.isSetColor()) {
             XSSFColor clr = XSSFColor.from(borderPr.getColor(), _indexedColorMap);
             if(_theme != null) {
                _theme.inheritFromThemeAsRequired(clr);
@@ -183,8 +183,20 @@ public class XSSFCellBorder {
                 borderPr = border.getLeft();
                 if (ensure && borderPr == null) borderPr = border.addNewLeft();
                 break;
+            case DIAGONAL:
+                borderPr = border.getDiagonal();
+                if (ensure && borderPr == null) borderPr = border.addNewDiagonal();
+                break;
+            case VERTICAL:
+                borderPr = border.getVertical();
+                if (ensure && borderPr == null) borderPr = border.addNewVertical();
+                break;
+            case HORIZONTAL:
+                borderPr = border.getHorizontal();
+                if (ensure && borderPr == null) borderPr = border.addNewHorizontal();
+                break;
             default:
-                throw new IllegalArgumentException("No suitable side specified for the border");
+                throw new IllegalArgumentException("No suitable side specified for the border, had " + side);
         }
         return borderPr;
     }
@@ -212,7 +224,36 @@ public class XSSFCellBorder {
                 break;
             }
         }
-        
-        return equal;
+        if(!equal) {
+            return false;
+        }
+
+        // we also need to compare some more boolean-values
+
+        // first all booleans need to have the same state of "defined" or "undefined"
+        if(this.border.isSetDiagonalUp() != cf.border.isSetDiagonalUp() ||
+                this.border.isSetDiagonalDown() != cf.border.isSetDiagonalDown() ||
+                this.border.isSetOutline() != cf.border.isSetOutline()) {
+            return false;
+        }
+
+        // then compare each value if necessary
+        if(this.border.isSetDiagonalUp() &&
+            this.border.getDiagonalUp() != cf.border.getDiagonalUp()) {
+            return false;
+        }
+
+        if(this.border.isSetDiagonalDown() &&
+            this.border.getDiagonalDown() != cf.border.getDiagonalDown()) {
+            return false;
+        }
+
+        //noinspection RedundantIfStatement
+        if(this.border.isSetOutline() &&
+            this.border.getOutline() != cf.border.getOutline()) {
+            return false;
+        }
+
+        return true;
     }
 }
