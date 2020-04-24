@@ -839,7 +839,7 @@ public class HSSFCell extends CellBase {
             case STRING:
                 int sstIndex = ((LabelSSTRecord)_record).getSSTIndex();
                 String text = _book.getWorkbook().getSSTString(sstIndex).getString();
-                return Boolean.valueOf(text).booleanValue();
+                return Boolean.parseBoolean(text);
             case NUMERIC:
                 return ((NumberRecord)_record).getValue() != 0;
 
@@ -1028,7 +1028,7 @@ public class HSSFCell extends CellBase {
      * Errors are displayed as #ERR&lt;errIdx&gt;
      */
     public String toString() {
-        switch (getCellTypeEnum()) {
+        switch (getCellType()) {
             case BLANK:
                 return "";
             case BOOLEAN:
@@ -1125,7 +1125,7 @@ public class HSSFCell extends CellBase {
         link.setFirstColumn(_record.getColumn());
         link.setLastColumn(_record.getColumn());
 
-        switch(link.getTypeEnum()){
+        switch(link.getType()){
             case EMAIL:
             case URL:
                 link.setLabel("url");

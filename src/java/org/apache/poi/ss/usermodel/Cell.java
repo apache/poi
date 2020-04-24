@@ -123,7 +123,8 @@ public interface Cell {
      * @return the cell type
      * @since POI 3.15 beta 3
      * @deprecated will be removed in 4.2
-     * Will be renamed to <code>getCellType()</code> when we make the CellType enum transition in POI 4.0. See bug 59791.
+     * Use <code>getCellType()</code>
+     * Was renamed to <code>getCellType()</code> when we made the CellType enum transition in POI 4.0. See bug 59791.
      */
     @Deprecated
     @Removal(version="4.2")

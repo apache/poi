@@ -98,7 +98,7 @@ public class TestSXSSFCell extends BaseTestXCell {
     @Test
     public void getCellTypeEnumDelegatesToGetCellType() {
         SXSSFCell instance = spy(new SXSSFCell(null, CellType.BLANK));
-        CellType result = instance.getCellTypeEnum();
+        CellType result = instance.getCellType();
         verify(instance).getCellType();
         assertEquals(CellType.BLANK, result);
     }
@@ -107,6 +107,7 @@ public class TestSXSSFCell extends BaseTestXCell {
     public void getCachedFormulaResultTypeEnum_delegatesTo_getCachedFormulaResultType() {
         SXSSFCell instance = spy(new SXSSFCell(null, CellType.BLANK));
         instance.setCellFormula("");
+        //noinspection deprecation
         instance.getCachedFormulaResultTypeEnum();
         verify(instance).getCachedFormulaResultType();
     }

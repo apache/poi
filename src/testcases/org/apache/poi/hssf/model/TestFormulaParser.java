@@ -162,10 +162,12 @@ public final class TestFormulaParser {
             // Verify that myFunc and yourFunc were successfully added to Workbook names
             try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb)) {
                 // HSSFWorkbook/EXCEL97-specific side-effects user-defined function names must be added to Workbook's defined names in order to be saved.
-                assertNotNull(wb2.getName("myFunc"));
-                assertEqualsIgnoreCase("myFunc", wb2.getName("myFunc").getNameName());
-                assertNotNull(wb2.getName("yourFunc"));
-                assertEqualsIgnoreCase("yourFunc", wb2.getName("yourFunc").getNameName());
+                HSSFName myFunc = wb2.getName("myFunc");
+                assertNotNull(myFunc);
+                assertEqualsIgnoreCase("myFunc", myFunc.getNameName());
+                HSSFName yourFunc = wb2.getName("yourFunc");
+                assertNotNull(yourFunc);
+                assertEqualsIgnoreCase("yourFunc", yourFunc.getNameName());
 
                 // Manually check to make sure file isn't corrupted
                 // TODO: develop a process for occasionally manually reviewing workbooks
@@ -542,14 +544,14 @@ public final class TestFormulaParser {
         assertEquals("Cash_Flow!A1", formula);
 
         // Then the other
-        cell.setCellFormula("\'Test Sheet\'!A1");
+        cell.setCellFormula("'Test Sheet'!A1");
         formula = cell.getCellFormula();
-        assertEquals("\'Test Sheet\'!A1", formula);
+        assertEquals("'Test Sheet'!A1", formula);
 
         // Now both
-        cell.setCellFormula("Cash_Flow:\'Test Sheet\'!A1");
+        cell.setCellFormula("Cash_Flow:'Test Sheet'!A1");
         formula = cell.getCellFormula();
-        assertEquals("Cash_Flow:\'Test Sheet\'!A1", formula);
+        assertEquals("Cash_Flow:'Test Sheet'!A1", formula);
 
 
         // References to a range (area) of cells:
@@ -560,14 +562,14 @@ public final class TestFormulaParser {
         assertEquals("Cash_Flow!A1:B2", formula);
 
         // Then the other
-        cell.setCellFormula("\'Test Sheet\'!A1:B2");
+        cell.setCellFormula("'Test Sheet'!A1:B2");
         formula = cell.getCellFormula();
-        assertEquals("\'Test Sheet\'!A1:B2", formula);
+        assertEquals("'Test Sheet'!A1:B2", formula);
 
         // Now both
-        cell.setCellFormula("Cash_Flow:\'Test Sheet\'!A1:B2");
+        cell.setCellFormula("Cash_Flow:'Test Sheet'!A1:B2");
         formula = cell.getCellFormula();
-        assertEquals("Cash_Flow:\'Test Sheet\'!A1:B2", formula);
+        assertEquals("Cash_Flow:'Test Sheet'!A1:B2", formula);
 
         wb.close();
     }
@@ -1085,13 +1087,13 @@ public final class TestFormulaParser {
         confirmTokenClasses(ptgs, ArrayPtg.class);
         Object element = ((ArrayPtg)ptgs[0]).getTokenArrayValues()[0][0];
 
-        assertEquals(-42.0, ((Double)element).doubleValue(), 0.0);
+        assertEquals(-42.0, (Double) element, 0.0);
 
         // Should be able to handle whitespace between unary minus and digits (Excel
         // accepts this formula after presenting the user with a confirmation dialog).
         ptgs = parseFormula("{- 5}");
         element = ((ArrayPtg)ptgs[0]).getTokenArrayValues()[0][0];
-        assertEquals(-5.0, ((Double)element).doubleValue(), 0.0);
+        assertEquals(-5.0, (Double) element, 0.0);
     }
 
     @Test

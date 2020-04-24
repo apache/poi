@@ -133,18 +133,15 @@ public abstract class BaseTestCell {
             assertProhibitedValueAccess(cell, CellType.BOOLEAN, CellType.STRING,
                                         CellType.FORMULA, CellType.ERROR);
 
-            String strNull = null;
-            cell.setCellValue(strNull);
+            cell.setCellValue((String)null);
             assertEquals("", cell.getStringCellValue());
             assertEquals(CellType.BLANK, cell.getCellType());
 
-            LocalDate ldNull = null;
-            cell.setCellValue(ldNull);
+            cell.setCellValue((LocalDate)null);
             assertNull(cell.getLocalDateTimeCellValue());
             assertEquals(CellType.BLANK, cell.getCellType());
 
-            LocalDateTime ldtNull = null;
-            cell.setCellValue(ldtNull);
+            cell.setCellValue((LocalDateTime)null);
             assertNull(cell.getLocalDateTimeCellValue());
             assertEquals(CellType.BLANK, cell.getCellType());
 
@@ -769,12 +766,12 @@ public abstract class BaseTestCell {
             Sheet sh = wb1.createSheet();
             Row row = sh.createRow(0);
             Cell cell = row.createCell(0);
-            cell.setCellValue(Integer.valueOf(23));
+            cell.setCellValue(23);
 
             cell.setCellValue("some");
 
             cell = row.createCell(1);
-            cell.setCellValue(Integer.valueOf(23));
+            cell.setCellValue(23);
 
             cell.setCellValue("24");
 

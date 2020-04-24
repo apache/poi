@@ -71,7 +71,7 @@ final class SXSSFEvaluationCell implements EvaluationCell {
     @Internal(since="POI 3.15 beta 3")
     @Override
     public CellType getCellTypeEnum() {
-        return _cell.getCellTypeEnum();
+        return _cell.getCellType();
     }
     @Override
     public int getColumnIndex() {
@@ -97,17 +97,17 @@ final class SXSSFEvaluationCell implements EvaluationCell {
     public String getStringCellValue() {
         return _cell.getRichStringCellValue().getString();
     }
-    
+
     @Override
 	public CellRangeAddress getArrayFormulaRange() {
 		return _cell.getArrayFormulaRange();
 	}
-	
+
 	@Override
 	public boolean isPartOfArrayFormulaGroup() {
 		return _cell.isPartOfArrayFormulaGroup();
 	}
-	
+
     /**
      * @return cell type of cached formula result
      */
