@@ -166,6 +166,11 @@ public class MAPIAttribute {
          if(isMV || isVL) {
             values = LittleEndian.readInt(inp);
          }
+
+         if (type == Types.NULL && values > 1) {
+            throw new IOException("Placeholder/NULL arrays aren't supported.");
+         }
+
          for(int j=0; j<values; j++) {
             int len = getLength(type, inp);
             byte[] data = IOUtils.safelyAllocate(len, MAX_RECORD_LENGTH);
