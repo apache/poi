@@ -32,15 +32,15 @@ public abstract class TestRangeCopier {
     protected Sheet sheet1;
     protected Sheet sheet2;
     protected Workbook workbook;
-    protected RangeCopier rangeCopier; 
-    protected RangeCopier transSheetRangeCopier; 
+    protected RangeCopier rangeCopier;
+    protected RangeCopier transSheetRangeCopier;
     protected ITestDataProvider testDataProvider;
 
     protected void initSheets() {
         sheet1 = workbook.getSheet("sheet1");
         sheet2 = workbook.getSheet("sheet2");
     }
-    
+
     @Test
     public void copySheetRangeWithoutFormulas() {
         CellRangeAddress rangeToCopy = CellRangeAddress.valueOf("B1:C2");   //2x2
@@ -53,21 +53,21 @@ public abstract class TestRangeCopier {
     @Test
     public void tileTheRangeAway() {
         CellRangeAddress tileRange = CellRangeAddress.valueOf("C4:D5");
-        CellRangeAddress destRange = CellRangeAddress.valueOf("F4:K5"); 
+        CellRangeAddress destRange = CellRangeAddress.valueOf("F4:K5");
         rangeCopier.copyRange(tileRange, destRange);
-        assertEquals("1.3", getCellContent(sheet1, "H4"));  
-        assertEquals("1.3", getCellContent(sheet1, "J4"));  
-        assertEquals("$C1+G$2", getCellContent(sheet1, "G5"));  
-        assertEquals("SUM(G3:I3)", getCellContent(sheet1, "H5"));   
-        assertEquals("$C1+I$2", getCellContent(sheet1, "I5"));  
+        assertEquals("1.3", getCellContent(sheet1, "H4"));
+        assertEquals("1.3", getCellContent(sheet1, "J4"));
+        assertEquals("$C1+G$2", getCellContent(sheet1, "G5"));
+        assertEquals("SUM(G3:I3)", getCellContent(sheet1, "H5"));
+        assertEquals("$C1+I$2", getCellContent(sheet1, "I5"));
         assertEquals("", getCellContent(sheet1, "L5"));  //out of borders
         assertEquals("", getCellContent(sheet1, "G7")); //out of borders
     }
-    
+
     @Test
     public void tileTheRangeOver() {
         CellRangeAddress tileRange = CellRangeAddress.valueOf("C4:D5");
-        CellRangeAddress destRange = CellRangeAddress.valueOf("A4:C5"); 
+        CellRangeAddress destRange = CellRangeAddress.valueOf("A4:C5");
         rangeCopier.copyRange(tileRange, destRange);
         assertEquals("1.3", getCellContent(sheet1, "A4"));
         assertEquals("$C1+B$2", getCellContent(sheet1, "B5"));
@@ -78,7 +78,7 @@ public abstract class TestRangeCopier {
     public void copyRangeToOtherSheet() {
         Sheet destSheet = sheet2;
         CellRangeAddress tileRange = CellRangeAddress.valueOf("C4:D5"); // on sheet1
-        CellRangeAddress destRange = CellRangeAddress.valueOf("F4:J6"); // on sheet2 
+        CellRangeAddress destRange = CellRangeAddress.valueOf("F4:J6"); // on sheet2
         transSheetRangeCopier.copyRange(tileRange, destRange);
         assertEquals("1.3", getCellContent(destSheet, "H4"));
         assertEquals("1.3", getCellContent(destSheet, "J4"));
@@ -86,7 +86,36 @@ public abstract class TestRangeCopier {
         assertEquals("SUM(G3:I3)", getCellContent(destSheet, "H5"));
         assertEquals("$C1+I$2", getCellContent(destSheet, "I5"));
     }
-    
+
+    @Test
+    public void testEmptyRow() {
+        // leave some rows empty in-between
+        Row row = sheet1.createRow(23);
+        row.createCell(0).setCellValue(1.2);
+
+        Sheet destSheet = sheet2;
+        CellRangeAddress tileRange = CellRangeAddress.valueOf("A1:A100"); // on sheet1
+        CellRangeAddress destRange = CellRangeAddress.valueOf("G1:G100"); // on sheet2
+        transSheetRangeCopier.copyRange(tileRange, destRange);
+
+        assertEquals("1.2", getCellContent(destSheet, "G24"));
+    }
+
+    @Test
+    public void testSameSheet() {
+        // leave some rows empty in-between
+        Row row = sheet1.createRow(23);
+        row.createCell(0).setCellValue(1.2);
+
+        CellRangeAddress tileRange = CellRangeAddress.valueOf("A1:A100"); // on sheet1
+        CellRangeAddress destRange = CellRangeAddress.valueOf("G1:G100"); // on sheet2
+
+        // use the a RangeCopier with the same Sheet for source and dest
+        rangeCopier.copyRange(tileRange, destRange);
+
+        assertEquals("1.2", getCellContent(sheet1, "G24"));
+    }
+
     protected static String getCellContent(Sheet sheet, String coordinates) {
         try {
             CellReference p = new CellReference(coordinates);

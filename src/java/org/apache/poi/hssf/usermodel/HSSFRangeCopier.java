@@ -32,6 +32,10 @@ public class HSSFRangeCopier extends RangeCopier {
         super(sourceSheet, destSheet);
     }
 
+    public HSSFRangeCopier(Sheet sheet) {
+        super(sheet);
+    }
+
     protected void adjustCellReferencesInsideFormula(Cell cell, Sheet destSheet, int deltaX, int deltaY) {
         FormulaRecordAggregate fra = (FormulaRecordAggregate)((HSSFCell)cell).getCellValueRecord();
         int destSheetIndex = destSheet.getWorkbook().getSheetIndex(destSheet);

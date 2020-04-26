@@ -36,13 +36,15 @@ public abstract class RangeCopier {
         this.sourceSheet = sourceSheet;
         this.destSheet = destSheet;
     }
+
     public RangeCopier(Sheet sheet) {
         this(sheet, sheet);
     }
-    /** Uses input pattern to tile destination region, overwriting existing content. Works in following manner : 
+
+    /** Uses input pattern to tile destination region, overwriting existing content. Works in following manner :
      * 1.Start from top-left of destination.
      * 2.Paste source but only inside of destination borders.
-     * 3.If there is space left on right or bottom side of copy, process it as in step 2. 
+     * 3.If there is space left on right or bottom side of copy, process it as in step 2.
      * @param tilePatternRange source range which should be copied in tiled manner
      * @param tileDestRange     destination range, which should be overridden
      */
@@ -50,49 +52,54 @@ public abstract class RangeCopier {
         Sheet sourceCopy = sourceSheet.getWorkbook().cloneSheet(sourceSheet.getWorkbook().getSheetIndex(sourceSheet));
         int sourceWidthMinus1 = tilePatternRange.getLastColumn() - tilePatternRange.getFirstColumn();
         int sourceHeightMinus1 = tilePatternRange.getLastRow() - tilePatternRange.getFirstRow();
-        int rightLimitToCopy; 
+        int rightLimitToCopy;
         int bottomLimitToCopy;
 
         int nextRowIndexToCopy = tileDestRange.getFirstRow();
-        do { 
+        do {
             int nextCellIndexInRowToCopy = tileDestRange.getFirstColumn();
             int heightToCopyMinus1 = Math.min(sourceHeightMinus1, tileDestRange.getLastRow() - nextRowIndexToCopy);
             bottomLimitToCopy = tilePatternRange.getFirstRow() + heightToCopyMinus1;
-            do { 
+            do {
                 int widthToCopyMinus1 = Math.min(sourceWidthMinus1, tileDestRange.getLastColumn() - nextCellIndexInRowToCopy);
                 rightLimitToCopy = tilePatternRange.getFirstColumn() + widthToCopyMinus1;
                 CellRangeAddress rangeToCopy = new CellRangeAddress(
                         tilePatternRange.getFirstRow(),     bottomLimitToCopy,
-                        tilePatternRange.getFirstColumn(),  rightLimitToCopy 
+                        tilePatternRange.getFirstColumn(),  rightLimitToCopy
                        );
                 copyRange(rangeToCopy, nextCellIndexInRowToCopy - rangeToCopy.getFirstColumn(), nextRowIndexToCopy - rangeToCopy.getFirstRow(), sourceCopy);
-                nextCellIndexInRowToCopy += widthToCopyMinus1 + 1; 
+                nextCellIndexInRowToCopy += widthToCopyMinus1 + 1;
             } while (nextCellIndexInRowToCopy <= tileDestRange.getLastColumn());
             nextRowIndexToCopy += heightToCopyMinus1 + 1;
         } while (nextRowIndexToCopy <= tileDestRange.getLastRow());
-        
+
         int tempCopyIndex = sourceSheet.getWorkbook().getSheetIndex(sourceCopy);
-        sourceSheet.getWorkbook().removeSheetAt(tempCopyIndex); 
+        sourceSheet.getWorkbook().removeSheetAt(tempCopyIndex);
     }
 
     private void copyRange(CellRangeAddress sourceRange, int deltaX, int deltaY, Sheet sourceClone) { //NOSONAR, it's a bit complex but monolith method, does not make much sense to divide it
         if(deltaX != 0)
-            horizontalFormulaShifter = FormulaShifter.createForColumnCopy(sourceSheet.getWorkbook().getSheetIndex(sourceSheet), 
+            horizontalFormulaShifter = FormulaShifter.createForColumnCopy(sourceSheet.getWorkbook().getSheetIndex(sourceSheet),
                     sourceSheet.getSheetName(), sourceRange.getFirstColumn(), sourceRange.getLastColumn(), deltaX, sourceSheet.getWorkbook().getSpreadsheetVersion());
         if(deltaY != 0)
-            verticalFormulaShifter = FormulaShifter.createForRowCopy(sourceSheet.getWorkbook().getSheetIndex(sourceSheet), 
+            verticalFormulaShifter = FormulaShifter.createForRowCopy(sourceSheet.getWorkbook().getSheetIndex(sourceSheet),
                     sourceSheet.getSheetName(), sourceRange.getFirstRow(), sourceRange.getLastRow(), deltaY, sourceSheet.getWorkbook().getSpreadsheetVersion());
-        
-        for(int rowNo = sourceRange.getFirstRow(); rowNo <= sourceRange.getLastRow(); rowNo++) {   
-            Row sourceRow = sourceClone.getRow(rowNo); // copy from source copy, original source might be overridden in process!
-            for (int columnIndex = sourceRange.getFirstColumn(); columnIndex <= sourceRange.getLastColumn(); columnIndex++) {  
+
+        for(int rowNo = sourceRange.getFirstRow(); rowNo <= sourceRange.getLastRow(); rowNo++) {
+            // copy from source copy, original source might be overridden in process!
+            Row sourceRow = sourceClone.getRow(rowNo);
+            if(sourceRow == null) {
+                continue;
+            }
+
+            for (int columnIndex = sourceRange.getFirstColumn(); columnIndex <= sourceRange.getLastColumn(); columnIndex++) {
                 Cell sourceCell = sourceRow.getCell(columnIndex);
                 if(sourceCell == null)
                     continue;
                 Row destRow = destSheet.getRow(rowNo + deltaY);
                 if(destRow == null)
                     destRow = destSheet.createRow(rowNo + deltaY);
-                
+
                 Cell newCell = destRow.getCell(columnIndex + deltaX);
                 if(newCell == null) {
                     newCell = destRow.createCell(columnIndex + deltaX);
@@ -104,56 +111,56 @@ public abstract class RangeCopier {
             }
         }
     }
-    
+
     protected abstract void adjustCellReferencesInsideFormula(Cell cell, Sheet destSheet, int deltaX, int deltaY); // this part is different for HSSF and XSSF
-    
+
     protected boolean adjustInBothDirections(Ptg[] ptgs, int sheetIndex, int deltaX, int deltaY) {
         boolean adjustSucceeded = true;
         if(deltaY != 0)
-            adjustSucceeded = verticalFormulaShifter.adjustFormula(ptgs, sheetIndex); 
+            adjustSucceeded = verticalFormulaShifter.adjustFormula(ptgs, sheetIndex);
         if(deltaX != 0)
             adjustSucceeded = adjustSucceeded && horizontalFormulaShifter.adjustFormula(ptgs, sheetIndex);
         return adjustSucceeded;
     }
-    
-    // TODO clone some more properties ? 
-    public static void cloneCellContent(Cell srcCell, Cell destCell, Map<Integer, CellStyle> styleMap) {   
-         if(styleMap != null) {   
-             if(srcCell.getSheet().getWorkbook() == destCell.getSheet().getWorkbook()){   
-                 destCell.setCellStyle(srcCell.getCellStyle());   
+
+    // TODO clone some more properties ?
+    public static void cloneCellContent(Cell srcCell, Cell destCell, Map<Integer, CellStyle> styleMap) {
+         if(styleMap != null) {
+             if(srcCell.getSheet().getWorkbook() == destCell.getSheet().getWorkbook()){
+                 destCell.setCellStyle(srcCell.getCellStyle());
              } else {
-                 int stHashCode = srcCell.getCellStyle().hashCode();   
-                 CellStyle newCellStyle = styleMap.get(stHashCode);   
-                 if(newCellStyle == null){   
-                     newCellStyle = destCell.getSheet().getWorkbook().createCellStyle();   
-                     newCellStyle.cloneStyleFrom(srcCell.getCellStyle());   
-                     styleMap.put(stHashCode, newCellStyle);   
-                 }   
-                 destCell.setCellStyle(newCellStyle);   
-             }   
-         }   
-         switch(srcCell.getCellType()) {   
-             case STRING:   
-                 destCell.setCellValue(srcCell.getStringCellValue());   
-                 break;   
+                 int stHashCode = srcCell.getCellStyle().hashCode();
+                 CellStyle newCellStyle = styleMap.get(stHashCode);
+                 if(newCellStyle == null){
+                     newCellStyle = destCell.getSheet().getWorkbook().createCellStyle();
+                     newCellStyle.cloneStyleFrom(srcCell.getCellStyle());
+                     styleMap.put(stHashCode, newCellStyle);
+                 }
+                 destCell.setCellStyle(newCellStyle);
+             }
+         }
+         switch(srcCell.getCellType()) {
+             case STRING:
+                 destCell.setCellValue(srcCell.getStringCellValue());
+                 break;
              case NUMERIC:
-                 destCell.setCellValue(srcCell.getNumericCellValue());   
-                 break;   
-             case BLANK:   
+                 destCell.setCellValue(srcCell.getNumericCellValue());
+                 break;
+             case BLANK:
                  destCell.setBlank();
-                 break;   
-             case BOOLEAN:   
-                 destCell.setCellValue(srcCell.getBooleanCellValue());   
-                 break;   
-             case ERROR:   
-                 destCell.setCellErrorValue(srcCell.getErrorCellValue());   
-                 break;   
-             case FORMULA: 
+                 break;
+             case BOOLEAN:
+                 destCell.setCellValue(srcCell.getBooleanCellValue());
+                 break;
+             case ERROR:
+                 destCell.setCellErrorValue(srcCell.getErrorCellValue());
+                 break;
+             case FORMULA:
                  String oldFormula = srcCell.getCellFormula();
-                 destCell.setCellFormula(oldFormula);   
-                 break;   
-             default:   
-                 break;   
-         }   
+                 destCell.setCellFormula(oldFormula);
+                 break;
+             default:
+                 break;
+         }
      }
 }

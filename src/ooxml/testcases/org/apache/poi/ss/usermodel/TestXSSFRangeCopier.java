@@ -34,9 +34,9 @@ import java.io.IOException;
 
 public class TestXSSFRangeCopier extends TestRangeCopier {
     public TestXSSFRangeCopier() {
-        super(); 
+        super();
         workbook = new XSSFWorkbook();
-        testDataProvider = XSSFITestDataProvider.instance; 
+        testDataProvider = XSSFITestDataProvider.instance;
     }
 
     @Before
@@ -60,5 +60,5 @@ public class TestXSSFRangeCopier extends TestRangeCopier {
         newRow.copyRowFrom(existingRow, policy);
         assertEquals("$C2+B$2", newRow.getCell(1).getCellFormula());
     }
-    
+
 }

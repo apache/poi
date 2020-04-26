@@ -27,9 +27,9 @@ import org.junit.Before;
 public class TestHSSFRangeCopier extends TestRangeCopier {
 
     public TestHSSFRangeCopier() {
-        super(); 
+        super();
         workbook = new HSSFWorkbook();
-        testDataProvider = HSSFITestDataProvider.instance; 
+        testDataProvider = HSSFITestDataProvider.instance;
     }
 
     @Before
