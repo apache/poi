@@ -47,7 +47,7 @@ import org.apache.poi.poifs.storage.HeaderBlock;
 
 public class POIFSStream implements Iterable<ByteBuffer>
 {
-	private BlockStore blockStore;
+	private final BlockStore blockStore;
 	private int startBlock;
 	private OutputStream outStream;
 
@@ -140,8 +140,8 @@ public class POIFSStream implements Iterable<ByteBuffer>
    /**
     * Class that handles a streaming read of one stream
     */
-   protected class StreamBlockByteBufferIterator implements Iterator<ByteBuffer> {
-      private ChainLoopDetector loopDetector;
+   private class StreamBlockByteBufferIterator implements Iterator<ByteBuffer> {
+      private final ChainLoopDetector loopDetector;
       private int nextBlock;
 
       StreamBlockByteBufferIterator(int firstBlock) {
@@ -221,6 +221,9 @@ public class POIFSStream implements Iterable<ByteBuffer>
               nextBlock = blockStore.getNextBlock(thisBlock);
            }
 
+           if (buffer != null) {
+               blockStore.releaseBuffer(buffer);
+           }
            buffer = blockStore.createBlockIfNeeded(thisBlock);
 
            // Update pointers

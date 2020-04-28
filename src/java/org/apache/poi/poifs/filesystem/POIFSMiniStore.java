@@ -37,11 +37,11 @@ import org.apache.poi.poifs.storage.HeaderBlock;
  */
 public class POIFSMiniStore extends BlockStore
 {
-    private POIFSFileSystem _filesystem;
+    private final POIFSFileSystem _filesystem;
     private POIFSStream _mini_stream;
-    private List<BATBlock>   _sbat_blocks;
-    private HeaderBlock      _header;
-    private RootProperty     _root;
+    private final List<BATBlock>   _sbat_blocks;
+    private final HeaderBlock      _header;
+    private final RootProperty     _root;
 
     POIFSMiniStore(POIFSFileSystem filesystem, RootProperty root,
                              List<BATBlock> sbats, HeaderBlock header)
@@ -93,7 +93,7 @@ public class POIFSMiniStore extends BlockStore
        if (! firstInStore) {
            try {
               return getBlockAt(offset);
-           } catch(NoSuchElementException e) {}
+           } catch(NoSuchElementException ignored) {}
        }
 
        // Need to extend the stream
@@ -258,5 +258,10 @@ public class POIFSMiniStore extends BlockStore
        // Set the size on the root in terms of the number of SBAT blocks
        // RootProperty.setSize does the sbat -> bytes conversion for us
        _filesystem._get_property_table().getRoot().setSize(blocksUsed);
+    }
+
+    @Override
+    protected void releaseBuffer(ByteBuffer buffer) {
+        _filesystem.releaseBuffer(buffer);
     }
 }

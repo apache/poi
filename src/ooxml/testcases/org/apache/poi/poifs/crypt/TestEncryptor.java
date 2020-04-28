@@ -16,6 +16,13 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt;
 
+import static org.apache.poi.poifs.crypt.CryptoFunctions.getMessageDigest;
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -23,7 +30,11 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.security.DigestInputStream;
+import java.security.GeneralSecurityException;
+import java.security.MessageDigest;
 import java.util.Iterator;
+import java.util.Random;
 
 import javax.crypto.Cipher;
 
@@ -33,8 +44,14 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.crypt.agile.AgileDecryptor;
 import org.apache.poi.poifs.crypt.agile.AgileEncryptionHeader;
 import org.apache.poi.poifs.crypt.agile.AgileEncryptionVerifier;
-import org.apache.poi.poifs.filesystem.*;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.DocumentEntry;
+import org.apache.poi.poifs.filesystem.DocumentNode;
+import org.apache.poi.poifs.filesystem.Entry;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.poifs.filesystem.TempFilePOIFSFileSystem;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
@@ -42,13 +59,11 @@ import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import static org.junit.Assert.*;
-
 public class TestEncryptor {
     @Test
     public void binaryRC4Encryption() throws Exception {
         // please contribute a real sample file, which is binary rc4 encrypted
-        // ... at least the output can be opened in Excel Viewer 
+        // ... at least the output can be opened in Excel Viewer
         String password = "pass";
 
         final byte[] payloadExpected;
@@ -80,7 +95,7 @@ public class TestEncryptor {
                 payloadActual = IOUtils.toByteArray(is);
             }
         }
-        
+
         assertArrayEquals(payloadExpected, payloadActual);
     }
 
@@ -167,7 +182,7 @@ public class TestEncryptor {
         // the hmacs of the file always differ, as we use PKCS5-padding to pad the bytes
         // whereas office just uses random bytes
         // byte integrityHash[] = d.getIntegrityHmacValue();
-        
+
         final EncryptionInfo infoActual = new EncryptionInfo(
               EncryptionMode.agile
             , infoExpected.getVerifier().getCipherAlgorithm()
@@ -211,7 +226,7 @@ public class TestEncryptor {
                 encPackActual = IOUtils.toByteArray(is, entry.getSize()-16);
             }
         }
-        
+
         AgileEncryptionHeader aehExpected = (AgileEncryptionHeader)infoExpected.getHeader();
         AgileEncryptionHeader aehActual = (AgileEncryptionHeader)infoActual.getHeader();
         assertArrayEquals(aehExpected.getEncryptedHmacKey(), aehActual.getEncryptedHmacKey());
@@ -219,7 +234,7 @@ public class TestEncryptor {
         assertArrayEquals(payloadExpected, payloadActual);
         assertArrayEquals(encPackExpected, encPackActual);
     }
-    
+
     @Test
     public void standardEncryption() throws Exception {
         File file = POIDataSamples.getDocumentInstance().getFile("bug53475-password-is-solrcell.docx");
@@ -247,8 +262,8 @@ public class TestEncryptor {
         final byte[] verifierExpected = d.getVerifier();
         final byte[] keySpec = d.getSecretKey().getEncoded();
         final byte[] keySalt = infoExpected.getHeader().getKeySalt();
-        
-        
+
+
         final EncryptionInfo infoActual = new EncryptionInfo(
               EncryptionMode.standard
             , infoExpected.getVerifier().getCipherAlgorithm()
@@ -257,7 +272,7 @@ public class TestEncryptor {
             , infoExpected.getHeader().getBlockSize()
             , infoExpected.getVerifier().getChainingMode()
         );
-        
+
         final Encryptor e = Encryptor.getInstance(infoActual);
         e.confirmPassword(pass, keySpec, keySalt, verifierExpected, verifierSaltExpected, null);
 
@@ -304,10 +319,10 @@ public class TestEncryptor {
 
         assertArrayEquals(payloadExpected, payloadActual);
     }
-    
+
     /**
      * Ensure we can encrypt a package that is missing the Core
-     *  Properties, eg one from dodgy versions of Jasper Reports 
+     *  Properties, eg one from dodgy versions of Jasper Reports
      * See https://github.com/nestoru/xlsxenc/ and
      * http://stackoverflow.com/questions/28593223
      */
@@ -341,7 +356,7 @@ public class TestEncryptor {
                 encBytes = baos.toByteArray();
             }
         }
-        
+
 
         try (POIFSFileSystem inpFS = new POIFSFileSystem(new ByteArrayInputStream(encBytes))) {
             // Check we can decrypt it
@@ -359,7 +374,7 @@ public class TestEncryptor {
             }
         }
     }
-    
+
     @Test
     @Ignore
     public void inPlaceRewrite() throws Exception {
@@ -369,7 +384,7 @@ public class TestEncryptor {
              InputStream fis = POIDataSamples.getPOIFSInstance().openResourceAsStream("protected_agile.docx")) {
             IOUtils.copy(fis, fos);
         }
-        
+
         try (POIFSFileSystem fs = new POIFSFileSystem(f, false)) {
 
             // decrypt the protected file - in this case it was encrypted with the default password
@@ -396,26 +411,26 @@ public class TestEncryptor {
             }
         }
     }
-    
-    
+
+
     private void listEntry(DocumentNode de, String ext, String path) throws IOException {
         path += "\\" + de.getName().replaceAll("[\\p{Cntrl}]", "_");
         System.out.println(ext+": "+path+" ("+de.getSize()+" bytes)");
-        
+
         String name = de.getName().replaceAll("[\\p{Cntrl}]", "_");
-        
+
         InputStream is = ((DirectoryNode)de.getParent()).createDocumentInputStream(de);
         FileOutputStream fos = new FileOutputStream("solr."+name+"."+ext);
         IOUtils.copy(is, fos);
         fos.close();
         is.close();
     }
-    
+
     @SuppressWarnings("unused")
     private void listDir(DirectoryNode dn, String ext, String path) throws IOException {
         path += "\\" + dn.getName().replace('\u0006', '_');
         System.out.println(ext+": "+path+" ("+dn.getStorageClsid()+")");
-        
+
         Iterator<Entry> iter = dn.getEntries();
         while (iter.hasNext()) {
             Entry ent = iter.next();
@@ -447,21 +462,21 @@ public class TestEncryptor {
         // @@ -208,6 +208,13 @@
         //      protected int invokeCipher(int posInChunk, boolean doFinal) throws GeneralSecurityException {
         //          byte plain[] = (_plainByteFlags.isEmpty()) ? null : _chunk.clone();
-        //  
+        //
         // +        if (posInChunk < 4096) {
         // +            _cipher.update(_chunk, 0, posInChunk, _chunk);
         // +            byte bla[] = { (byte)0x7A,(byte)0x0F,(byte)0x27,(byte)0xF0,(byte)0x17,(byte)0x6E,(byte)0x77,(byte)0x05,(byte)0xB9,(byte)0xDA,(byte)0x49,(byte)0xF9,(byte)0xD7,(byte)0x8E,(byte)0x03,(byte)0x1D };
         // +            System.arraycopy(bla, 0, _chunk, posInChunk-2, bla.length);
         // +            return posInChunk-2+bla.length;
         // +        }
-        // +        
+        // +
         //          int ciLen = (doFinal)
         //              ? _cipher.doFinal(_chunk, 0, posInChunk, _chunk)
         //              : _cipher.update(_chunk, 0, posInChunk, _chunk);
         //
         //      --- src/ooxml/java/org/apache/poi/poifs/crypt/agile/AgileDecryptor.java (revision 1766745)
         //      +++ src/ooxml/java/org/apache/poi/poifs/crypt/agile/AgileDecryptor.java (working copy)
-        //      
+        //
         //      @@ -300,7 +297,7 @@
         //      protected static Cipher initCipherForBlock(Cipher existing, int block, boolean lastChunk, EncryptionInfo encryptionInfo, SecretKey skey, int encryptionMode)
         //      throws GeneralSecurityException {
@@ -495,12 +510,12 @@ public class TestEncryptor {
         aehHeader.setCipherAlgorithm(CipherAlgorithm.aes128);
         aehHeader.setHashAlgorithm(HashAlgorithm.sha1);
         AgileEncryptionVerifier aehVerifier = (AgileEncryptionVerifier)eiNew.getVerifier();
-        
+
         // this cast might look strange - if the setters would be public, it will become obsolete
         // see http://stackoverflow.com/questions/5637650/overriding-protected-methods-in-java
         ((EncryptionVerifier)aehVerifier).setCipherAlgorithm(CipherAlgorithm.aes256);
         aehVerifier.setHashAlgorithm(HashAlgorithm.sha512);
-        
+
         Encryptor enc = eiNew.getEncryptor();
         enc.confirmPassword("Test001!!",
             infoOrig.getDecryptor().getSecretKey().getEncoded(),
@@ -529,10 +544,10 @@ public class TestEncryptor {
         }
 
         assertArrayEquals(epOrigBytes, epNewBytes);
-        
+
         Decryptor decReload = infoReload.getDecryptor();
         assertTrue(decReload.verifyPassword("Test001!!"));
-        
+
         AgileEncryptionHeader aehOrig = (AgileEncryptionHeader)infoOrig.getHeader();
         AgileEncryptionHeader aehReload = (AgileEncryptionHeader)infoReload.getHeader();
         assertEquals(aehOrig.getBlockSize(), aehReload.getBlockSize());
@@ -547,7 +562,7 @@ public class TestEncryptor {
         assertEquals(aehOrig.getHashAlgorithm(), aehReload.getHashAlgorithm());
         assertArrayEquals(aehOrig.getKeySalt(), aehReload.getKeySalt());
         assertEquals(aehOrig.getKeySize(), aehReload.getKeySize());
-        
+
         AgileEncryptionVerifier aevOrig = (AgileEncryptionVerifier)infoOrig.getVerifier();
         AgileEncryptionVerifier aevReload = (AgileEncryptionVerifier)infoReload.getVerifier();
         assertEquals(aevOrig.getBlockSize(), aevReload.getBlockSize());
@@ -563,11 +578,93 @@ public class TestEncryptor {
 
         AgileDecryptor adOrig = (AgileDecryptor)infoOrig.getDecryptor();
         AgileDecryptor adReload = (AgileDecryptor)infoReload.getDecryptor();
-        
+
         assertArrayEquals(adOrig.getIntegrityHmacKey(), adReload.getIntegrityHmacKey());
         // doesn't work without mocking ... see above
         // assertArrayEquals(adOrig.getIntegrityHmacValue(), adReload.getIntegrityHmacValue());
         assertArrayEquals(adOrig.getSecretKey().getEncoded(), adReload.getSecretKey().getEncoded());
         assertArrayEquals(adOrig.getVerifier(), adReload.getVerifier());
     }
+
+    @Test
+    public void smallFile() throws IOException, GeneralSecurityException {
+        // see https://stackoverflow.com/questions/61463301
+        final int tinyFileSize = 80_000_000;
+        final String pass = "s3cr3t";
+
+        File tmpFile = TempFile.createTempFile("tiny", ".bin");
+
+        // create/populate empty file
+        try (POIFSFileSystem poifs = new POIFSFileSystem();
+             FileOutputStream fos = new FileOutputStream(tmpFile)) {
+            poifs.writeFilesystem(fos);
+        }
+
+        EncryptionInfo info1 = new EncryptionInfo(EncryptionMode.agile);
+        Encryptor enc = info1.getEncryptor();
+        enc.confirmPassword(pass);
+
+        final MessageDigest md = getMessageDigest(HashAlgorithm.sha256);
+
+        // reopen as mmap-ed file
+        try (POIFSFileSystem poifs = new POIFSFileSystem(tmpFile, false)) {
+            try (OutputStream os = enc.getDataStream(poifs);
+                 RandomStream rs = new RandomStream(md)) {
+                IOUtils.copy(rs, os, tinyFileSize);
+            }
+            poifs.writeFilesystem();
+        }
+
+        final byte[] digest1 = md.digest();
+        md.reset();
+
+        // reopen and check the digest
+        try (POIFSFileSystem poifs = new POIFSFileSystem(tmpFile)) {
+            EncryptionInfo info2 = new EncryptionInfo(poifs);
+            Decryptor dec = info2.getDecryptor();
+            boolean passOk = dec.verifyPassword(pass);
+            assertTrue(passOk);
+
+            try (InputStream is = dec.getDataStream(poifs);
+                 DigestInputStream dis = new DigestInputStream(is, md);
+                 NullOutputStream nos = new NullOutputStream()) {
+                IOUtils.copy(dis, nos);
+            }
+        }
+
+        final byte[] digest2 = md.digest();
+        assertArrayEquals(digest1, digest2);
+
+        boolean isDeleted = tmpFile.delete();
+        assertTrue(isDeleted);
+    }
+
+    private static final class RandomStream extends InputStream {
+        private final Random rand = new Random();
+        private final byte[] buf = new byte[1024];
+        private final MessageDigest md;
+
+        private RandomStream(MessageDigest md) {
+            this.md = md;
+        }
+
+        @Override
+        public int read() {
+            int ret = rand.nextInt(256);
+            md.update((byte)ret);
+            return ret;
+        }
+
+        @Override
+        public int read(byte[] b, final int off, int len) {
+            for (int start = off; start-off < len; start += buf.length) {
+                rand.nextBytes(buf);
+                int copyLen = Math.min(buf.length, len-(start-off));
+                System.arraycopy(buf, 0, b, start, copyLen);
+                md.update(buf, 0, copyLen);
+            }
+            return len;
+        }
+    }
+
 }

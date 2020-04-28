@@ -83,8 +83,8 @@ public class POIFSFileSystem extends BlockStore
 
     private POIFSMiniStore _mini_store;
     private PropertyTable _property_table;
-    private List<BATBlock> _xbat_blocks;
-    private List<BATBlock> _bat_blocks;
+    private final List<BATBlock> _xbat_blocks;
+    private final List<BATBlock> _bat_blocks;
     private HeaderBlock _header;
     private DirectoryNode _root;
 
@@ -113,7 +113,7 @@ public class POIFSFileSystem extends BlockStore
     protected void createNewDataSource() {
         // Data needs to initially hold just the header block,
         //  a single bat block, and an empty properties section
-        long blockSize = ArithmeticUtils.mulAndCheck((long)bigBlockSize.getBigBlockSize(), (long)3);
+        long blockSize = ArithmeticUtils.mulAndCheck(bigBlockSize.getBigBlockSize(), 3L);
         _data = new ByteArrayBackedDataSource(IOUtils.safelyAllocate(blockSize, MAX_RECORD_LENGTH));
     }
 
@@ -409,7 +409,7 @@ public class POIFSFileSystem extends BlockStore
         // Ensure there's a spot in the file for it
         ByteBuffer buffer = ByteBuffer.allocate(bigBlockSize.getBigBlockSize());
         // Header isn't in BATs
-        long writeTo = ArithmeticUtils.mulAndCheck((1 + (long)offset), (long)bigBlockSize.getBigBlockSize());
+        long writeTo = ArithmeticUtils.mulAndCheck(1L + offset, bigBlockSize.getBigBlockSize());
         _data.write(buffer, writeTo);
         // All done
         return newBAT;
@@ -937,6 +937,12 @@ public class POIFSFileSystem extends BlockStore
         return _header;
     }
 
+    @Override
+    protected void releaseBuffer(ByteBuffer buffer) {
+        if (_data instanceof FileBackedDataSource) {
+            ((FileBackedDataSource)_data).releaseBuffer(buffer);
+        }
+    }
 
     private static void sanityCheckBlockCount(int block_count) throws IOException {
         if (block_count <= 0) {
