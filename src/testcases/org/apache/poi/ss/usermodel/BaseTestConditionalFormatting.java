@@ -97,14 +97,10 @@ public abstract class BaseTestConditionalFormatting {
                 assertTrue(e.getMessage().startsWith("cfRules must not be empty"));
             }
 
-            try {
-                sheetCF.addConditionalFormatting(
-                        new CellRangeAddress[]{CellRangeAddress.valueOf("A1:A3")},
-                        new ConditionalFormattingRule[]{rule1, rule2, rule3, rule4});
-                fail("expected exception");
-            } catch (IllegalArgumentException e) {
-                assertTrue(e.getMessage().startsWith("Number of rules must not exceed 3"));
-            }
+            //this is now allowed
+            sheetCF.addConditionalFormatting(
+                    new CellRangeAddress[]{CellRangeAddress.valueOf("A1:A3")},
+                    new ConditionalFormattingRule[]{rule1, rule2, rule3, rule4});
         }
     }
 
