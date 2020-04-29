@@ -132,17 +132,17 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
      */
     public XSSFConditionalFormattingRule createConditionalFormattingRule(XSSFColor color) {
         XSSFConditionalFormattingRule rule = new XSSFConditionalFormattingRule(_sheet);
-        
+
         // Have it setup, with suitable defaults
         rule.createDataBarFormatting(color);
-        
+
         // All done!
         return rule;
     }
     public XSSFConditionalFormattingRule createConditionalFormattingRule(ExtendedColor color) {
         return createConditionalFormattingRule((XSSFColor)color);
     }
-    
+
     /**
      * A factory method allowing the creation of conditional formatting
      *  rules using an Icon Set / Multi-State formatting.
@@ -154,10 +154,10 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
      */
     public XSSFConditionalFormattingRule createConditionalFormattingRule(IconSet iconSet) {
         XSSFConditionalFormattingRule rule = new XSSFConditionalFormattingRule(_sheet);
-        
+
         // Have it setup, with suitable defaults
         rule.createMultiStateFormatting(iconSet);
-        
+
         // All done!
         return rule;
     }
@@ -174,14 +174,14 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
      */
     public XSSFConditionalFormattingRule createConditionalFormattingColorScaleRule() {
         XSSFConditionalFormattingRule rule = new XSSFConditionalFormattingRule(_sheet);
-        
+
         // Have it setup, with suitable defaults
         rule.createColorScaleFormatting();
-        
+
         // All done!
         return rule;
     }
-    
+
     public int addConditionalFormatting(CellRangeAddress[] regions, ConditionalFormattingRule[] cfRules) {
         if (regions == null) {
             throw new IllegalArgumentException("regions must not be null");
@@ -193,9 +193,6 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
         }
         if (cfRules.length == 0) {
             throw new IllegalArgumentException("cfRules must not be empty");
-        }
-        if (cfRules.length > 3) {
-            throw new IllegalArgumentException("Number of rules must not exceed 3");
         }
 
         CellRangeAddress[] mergeCellRanges = CellRangeUtil.mergeCellRanges(regions);
@@ -218,22 +215,22 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
     }
 
     public int addConditionalFormatting(CellRangeAddress[] regions,
-            ConditionalFormattingRule rule1)
+                                        ConditionalFormattingRule rule1)
     {
         return addConditionalFormatting(regions,
                 rule1 == null ? null : new XSSFConditionalFormattingRule[] {
-                (XSSFConditionalFormattingRule)rule1
-        });
+                        (XSSFConditionalFormattingRule)rule1
+                });
     }
 
     public int addConditionalFormatting(CellRangeAddress[] regions,
-            ConditionalFormattingRule rule1, ConditionalFormattingRule rule2)
+                                        ConditionalFormattingRule rule1, ConditionalFormattingRule rule2)
     {
         return addConditionalFormatting(regions,
                 rule1 == null ? null : new XSSFConditionalFormattingRule[] {
-                    (XSSFConditionalFormattingRule)rule1,
-                    (XSSFConditionalFormattingRule)rule2
-            });
+                        (XSSFConditionalFormattingRule)rule1,
+                        (XSSFConditionalFormattingRule)rule2
+                });
     }
 
     /**
@@ -256,12 +253,12 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
     }
 
     /**
-    * gets Conditional Formatting object at a particular index
-    *
-    * @param index
-    *			of the Conditional Formatting object to fetch
-    * @return Conditional Formatting object
-    */
+     * gets Conditional Formatting object at a particular index
+     *
+     * @param index
+     *			of the Conditional Formatting object to fetch
+     * @return Conditional Formatting object
+     */
     public XSSFConditionalFormatting getConditionalFormattingAt(int index) {
         checkIndex(index);
         CTConditionalFormatting cf = _sheet.getCTWorksheet().getConditionalFormattingArray(index);
@@ -269,16 +266,16 @@ public class XSSFSheetConditionalFormatting implements SheetConditionalFormattin
     }
 
     /**
-    * @return number of Conditional Formatting objects of the sheet
-    */
+     * @return number of Conditional Formatting objects of the sheet
+     */
     public int getNumConditionalFormattings() {
         return _sheet.getCTWorksheet().sizeOfConditionalFormattingArray();
     }
 
     /**
-    * removes a Conditional Formatting object by index
-    * @param index of a Conditional Formatting object to remove
-    */
+     * removes a Conditional Formatting object by index
+     * @param index of a Conditional Formatting object to remove
+     */
     public void removeConditionalFormatting(int index) {
         checkIndex(index);
         _sheet.getCTWorksheet().removeConditionalFormatting(index);
