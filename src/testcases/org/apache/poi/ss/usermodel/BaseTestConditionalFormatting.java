@@ -46,7 +46,9 @@ public abstract class BaseTestConditionalFormatting {
         _testDataProvider = testDataProvider;
     }
 
-    protected boolean applyLimitOf3 = true;
+    protected boolean applyLimitOf3() {
+        return true;
+    }
 
     protected abstract void assertColour(String hexExpected, Color actual);
 
@@ -99,7 +101,7 @@ public abstract class BaseTestConditionalFormatting {
                 assertTrue(e.getMessage().startsWith("cfRules must not be empty"));
             }
 
-            if (applyLimitOf3) {
+            if (applyLimitOf3()) {
                 try {
                     sheetCF.addConditionalFormatting(
                             new CellRangeAddress[]{CellRangeAddress.valueOf("A1:A3")},

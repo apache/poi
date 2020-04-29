@@ -42,8 +42,6 @@ import org.junit.Test;
  */
 public class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting {
 
-    protected boolean applyLimitOf3 = false;
-
     public TestXSSFConditionalFormatting(){
         super(XSSFITestDataProvider.instance);
     }
@@ -132,5 +130,10 @@ public class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting
         assertNotNull(fontFormattingBack.getFontColor());
         assertEquals(extendedColor, fontFormattingBack.getFontColor());
         assertEquals(extendedColor, ruleBack.getPatternFormatting().getFillBackgroundColorColor());
+    }
+
+    @Override
+    protected boolean applyLimitOf3() {
+        return false;
     }
 }
