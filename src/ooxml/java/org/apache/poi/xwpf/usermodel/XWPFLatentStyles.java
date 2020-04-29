@@ -19,6 +19,16 @@ package org.apache.poi.xwpf.usermodel;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLatentStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLsdException;
 
+/*
+ * Latent styles are style names that are known to the client (i.e., Word) but that
+ * are mapped to real styles dynamically within the client. This means that the only
+ * thing you can know about a latent style is its name.
+ * <p>
+ * When generating DOCX files it is useful to know if a given style name is a
+ * latent style so the DOCX generator can distinguish between attempts to
+ * use a latent style and attempts to use a completely undefined style.
+ * </p>
+ */
 public class XWPFLatentStyles {
     // As of 2016-06-10, POI does not contain a LatentStyle class, nor was one included in the patch for bug 48574.
     protected XWPFStyles styles; //LatentStyle shall know styles
@@ -41,11 +51,14 @@ public class XWPFLatentStyles {
     }
 
     /**
-     * checks whether specific LatentStyleID is a latentStyle
+     * Determines if the specified style name is the name of a latent style.
+     * @param latentStyleName The name of the latent style to check for.
+     * @return true if the latent style is defined.
+     * @since 4.1.2
      */
-    protected boolean isLatentStyle(String latentStyleID) {
+    public boolean isLatentStyle(String latentStyleName) {
         for (CTLsdException lsd : latentStyles.getLsdExceptionArray()) {
-            if (lsd.getName().equals(latentStyleID)) {
+            if (lsd.getName().equals(latentStyleName)) {
                 return true;
             }
         }
