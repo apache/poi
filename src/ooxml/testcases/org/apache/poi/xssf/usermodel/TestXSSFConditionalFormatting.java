@@ -41,6 +41,9 @@ import org.junit.Test;
  * XSSF-specific Conditional Formatting tests
  */
 public class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting {
+
+    protected boolean applyLimitOf3 = false;
+
     public TestXSSFConditionalFormatting(){
         super(XSSFITestDataProvider.instance);
     }
