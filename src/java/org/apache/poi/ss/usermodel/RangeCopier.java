@@ -19,6 +19,7 @@
 
 package org.apache.poi.ss.usermodel;
 
+import java.util.HashMap;
 import java.util.Map;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.formula.ptg.Ptg;
@@ -49,7 +50,13 @@ public abstract class RangeCopier {
      * @param tileDestRange     destination range, which should be overridden
      */
     public void copyRange(CellRangeAddress tilePatternRange, CellRangeAddress tileDestRange) {
+        copyRange(tilePatternRange, tileDestRange, false);
+    }
+
+    public void copyRange(CellRangeAddress tilePatternRange, CellRangeAddress tileDestRange, boolean copyStyles) {
         Sheet sourceCopy = sourceSheet.getWorkbook().cloneSheet(sourceSheet.getWorkbook().getSheetIndex(sourceSheet));
+        Map<Integer, CellStyle> styleMap = copyStyles ? new HashMap<Integer, CellStyle>() {
+        } : null;
         int sourceWidthMinus1 = tilePatternRange.getLastColumn() - tilePatternRange.getFirstColumn();
         int sourceHeightMinus1 = tilePatternRange.getLastRow() - tilePatternRange.getFirstRow();
         int rightLimitToCopy;
@@ -67,7 +74,7 @@ public abstract class RangeCopier {
                         tilePatternRange.getFirstRow(),     bottomLimitToCopy,
                         tilePatternRange.getFirstColumn(),  rightLimitToCopy
                        );
-                copyRange(rangeToCopy, nextCellIndexInRowToCopy - rangeToCopy.getFirstColumn(), nextRowIndexToCopy - rangeToCopy.getFirstRow(), sourceCopy);
+                copyRange(rangeToCopy, nextCellIndexInRowToCopy - rangeToCopy.getFirstColumn(), nextRowIndexToCopy - rangeToCopy.getFirstRow(), sourceCopy, styleMap);
                 nextCellIndexInRowToCopy += widthToCopyMinus1 + 1;
             } while (nextCellIndexInRowToCopy <= tileDestRange.getLastColumn());
             nextRowIndexToCopy += heightToCopyMinus1 + 1;
@@ -77,7 +84,7 @@ public abstract class RangeCopier {
         sourceSheet.getWorkbook().removeSheetAt(tempCopyIndex);
     }
 
-    private void copyRange(CellRangeAddress sourceRange, int deltaX, int deltaY, Sheet sourceClone) { //NOSONAR, it's a bit complex but monolith method, does not make much sense to divide it
+    private void copyRange(CellRangeAddress sourceRange, int deltaX, int deltaY, Sheet sourceClone, Map<Integer, CellStyle> styleMap) { //NOSONAR, it's a bit complex but monolith method, does not make much sense to divide it
         if(deltaX != 0)
             horizontalFormulaShifter = FormulaShifter.createForColumnCopy(sourceSheet.getWorkbook().getSheetIndex(sourceSheet),
                     sourceSheet.getSheetName(), sourceRange.getFirstColumn(), sourceRange.getLastColumn(), deltaX, sourceSheet.getWorkbook().getSpreadsheetVersion());
@@ -105,7 +112,7 @@ public abstract class RangeCopier {
                     newCell = destRow.createCell(columnIndex + deltaX);
                 }
 
-                cloneCellContent(sourceCell, newCell, null);
+                cloneCellContent(sourceCell, newCell, styleMap);
                 if(newCell.getCellType() == CellType.FORMULA)
                     adjustCellReferencesInsideFormula(newCell, destSheet, deltaX, deltaY);
             }
