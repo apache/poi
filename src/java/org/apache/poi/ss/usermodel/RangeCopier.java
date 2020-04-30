@@ -55,8 +55,7 @@ public abstract class RangeCopier {
 
     public void copyRange(CellRangeAddress tilePatternRange, CellRangeAddress tileDestRange, boolean copyStyles) {
         Sheet sourceCopy = sourceSheet.getWorkbook().cloneSheet(sourceSheet.getWorkbook().getSheetIndex(sourceSheet));
-        Map<Integer, CellStyle> styleMap = copyStyles ? new HashMap<Integer, CellStyle>() {
-        } : null;
+        Map<Integer, CellStyle> styleMap = copyStyles ? new HashMap<Integer, CellStyle>() {} : null;
         int sourceWidthMinus1 = tilePatternRange.getLastColumn() - tilePatternRange.getFirstColumn();
         int sourceHeightMinus1 = tilePatternRange.getLastRow() - tilePatternRange.getFirstRow();
         int rightLimitToCopy;
