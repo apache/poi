@@ -116,13 +116,36 @@ public abstract class TestRangeCopier {
         assertEquals("1.2", getCellContent(sheet1, "G24"));
     }
 
-    protected static String getCellContent(Sheet sheet, String coordinates) {
+    @Test
+    public void testCopyStyles() {
+        String cellContent = "D6 aligned to the right";
+        HorizontalAlignment toTheRight = HorizontalAlignment.RIGHT;
+        // create cell with content aligned to the right
+        CellStyle style = workbook.createCellStyle();
+        style.setAlignment(toTheRight);
+        Cell cell = sheet1.createRow(5).createCell(3);
+        cell.setCellValue(cellContent);
+        cell.setCellStyle(style);
+
+        Sheet destSheet = sheet2;
+        CellRangeAddress tileRange = CellRangeAddress.valueOf("D6:D6"); // on sheet1
+        CellRangeAddress destRange = CellRangeAddress.valueOf("J6:J6"); // on sheet2
+        transSheetRangeCopier.copyRange(tileRange, destRange, true);
+        assertEquals(cellContent, getCellContent(destSheet, "J6"));
+        assertEquals(toTheRight, getCell(destSheet, "J6").getCellStyle().getAlignment());
+    }
+
+   protected static String getCellContent(Sheet sheet, String coordinates) {
+        Cell cell = getCell(sheet, coordinates);
+        return cell == null ? "" : cell.toString();
+   }
+   protected static Cell getCell(Sheet sheet, String coordinates) {
         try {
             CellReference p = new CellReference(coordinates);
-            return sheet.getRow(p.getRow()).getCell(p.getCol()).toString();
+            return sheet.getRow(p.getRow()).getCell(p.getCol());
         }
         catch (NullPointerException e) { // row or cell does not exist
-            return "";
+            return null;
         }
     }
 }
