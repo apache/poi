@@ -368,7 +368,10 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
                 break;
         }
 
-        return new Guide(name, "val "+Math.rint(adjval * (isDegreeUnit ? 65536. : 100000./21000.)));
+        Guide gd = new Guide();
+        gd.setName(name);
+        gd.setFmla("val "+Math.rint(adjval * (isDegreeUnit ? 65536. : 100000./21000.)));
+        return gd;
     }
 
     @Override

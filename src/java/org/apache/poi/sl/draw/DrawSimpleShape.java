@@ -225,7 +225,9 @@ public class DrawSimpleShape extends DrawShape {
                 break;
             case STEALTH:
             case ARROW:
-                p = new Path(false, true);
+                p = new Path();
+                p.setFill(PaintModifier.NONE);
+                p.setStroke(true);
                 Path2D.Double arrow = new Path2D.Double();
                 arrow.moveTo((-lineWidth * scaleX), (-lineWidth * scaleY / 2));
                 arrow.lineTo(0, 0);
@@ -297,7 +299,9 @@ public class DrawSimpleShape extends DrawShape {
                 break;
             case STEALTH:
             case ARROW:
-                p = new Path(false, true);
+                p = new Path();
+                p.setFill(PaintModifier.NONE);
+                p.setStroke(true);
                 Path2D.Double arrow = new Path2D.Double();
                 arrow.moveTo((lineWidth * scaleX), (-lineWidth * scaleY / 2));
                 arrow.lineTo(0, 0);

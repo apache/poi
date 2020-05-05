@@ -20,8 +20,10 @@ package org.apache.poi.xslf.geom;
 
 import static org.junit.Assert.assertEquals;
 
-import org.apache.poi.sl.draw.binding.CTCustomGeometry2D;
-import org.apache.poi.sl.draw.geom.*;
+import org.apache.poi.sl.draw.geom.Context;
+import org.apache.poi.sl.draw.geom.CustomGeometry;
+import org.apache.poi.sl.draw.geom.Formula;
+import org.apache.poi.sl.draw.geom.Guide;
 import org.junit.Test;
 
 /**
@@ -34,17 +36,17 @@ public class TestFormulaParser {
     public void testParse(){
 
         Formula[] ops = {
-            new Guide("adj1", "val 100"),
-            new Guide("adj2", "val 200"),
-            new Guide("adj3", "val -1"),
-            new Guide("a1", "*/ adj1 2 adj2"), // a1 = 100*2 / 200
-            new Guide("a2", "+- adj2 a1 adj1"), // a2 = 200 + a1 - 100
-            new Guide("a3", "+/ adj1 adj2 adj2"), // a3 = (100 + 200) / 200
-            new Guide("a4", "?: adj3 adj1 adj2"), // a4 = adj3 > 0 ? adj1 : adj2
-            new Guide("a5", "abs -2"),
+            newGuide("adj1", "val 100"),
+            newGuide("adj2", "val 200"),
+            newGuide("adj3", "val -1"),
+            newGuide("a1", "*/ adj1 2 adj2"), // a1 = 100*2 / 200
+            newGuide("a2", "+- adj2 a1 adj1"), // a2 = 200 + a1 - 100
+            newGuide("a3", "+/ adj1 adj2 adj2"), // a3 = (100 + 200) / 200
+            newGuide("a4", "?: adj3 adj1 adj2"), // a4 = adj3 > 0 ? adj1 : adj2
+            newGuide("a5", "abs -2"),
         };
 
-        CustomGeometry geom = new CustomGeometry(new CTCustomGeometry2D());
+        CustomGeometry geom = new CustomGeometry();
         Context ctx = new Context(geom, null, null);
         for(Formula fmla : ops) {
             ctx.evaluate(fmla);
@@ -57,5 +59,12 @@ public class TestFormulaParser {
         assertEquals(1.5, ctx.getValue("a3"), 0.0);
         assertEquals(200.0, ctx.getValue("a4"), 0.0);
         assertEquals(2.0, ctx.getValue("a5"), 0.0);
+    }
+
+    private static Guide newGuide(String name, String fmla) {
+        Guide gd = new Guide();
+        gd.setName(name);
+        gd.setFmla(fmla);
+        return gd;
     }
 }

@@ -24,28 +24,64 @@ import static org.apache.poi.sl.draw.geom.Formula.OOXML_DEGREE;
 import java.awt.geom.Arc2D;
 import java.awt.geom.Path2D;
 import java.awt.geom.Point2D;
+import java.util.Objects;
 
-import org.apache.poi.sl.draw.binding.CTPath2DArcTo;
 import org.apache.poi.util.Internal;
 
 /**
  * ArcTo command within a shape path in DrawingML:
- * {@code &lt;arcTo wR="wr" hR="hr" stAng="stAng" swAng="swAng"/&gt;}<p>
- *
- * Where {@code wr} and {@code wh} are the height and width radiuses
+ * {@code &lt;arcTo wR="wr" hR="hr" stAng="stAng" swAng="swAng"/&gt;}
+ * <p>
+ * Where {@code wr} and {@code wh} are the height and width radii
  * of the supposed circle being used to draw the arc.  This gives the circle
  * a total height of (2 * hR)  and a total width of (2 * wR)
- *
+ * <p>
  * stAng is the {@code start} angle and {@code swAng} is the swing angle
+ * <p>
+ * Java class for CT_Path2DArcTo complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="CT_Path2DArcTo"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;attribute name="wR" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_AdjCoordinate" /&gt;
+ *       &lt;attribute name="hR" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_AdjCoordinate" /&gt;
+ *       &lt;attribute name="stAng" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_AdjAngle" /&gt;
+ *       &lt;attribute name="swAng" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_AdjAngle" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * </pre>
  */
+// @XmlAccessorType(XmlAccessType.FIELD)
+// @XmlType(name = "CT_Path2DArcTo")
 public class ArcToCommand implements PathCommand {
-    private String hr, wr, stAng, swAng;
 
-    ArcToCommand(CTPath2DArcTo arc){
-        hr = arc.getHR();
-        wr = arc.getWR();
-        stAng = arc.getStAng();
-        swAng = arc.getSwAng();
+    // @XmlAttribute(name = "wR", required = true)
+    private String wr;
+    // @XmlAttribute(name = "hR", required = true)
+    private String hr;
+    // @XmlAttribute(name = "stAng", required = true)
+    private String stAng;
+    // @XmlAttribute(name = "swAng", required = true)
+    private String swAng;
+
+    public void setHR(String hr) {
+        this.hr = hr;
+    }
+
+    public void setWR(String wr) {
+        this.wr = wr;
+    }
+
+    public void setStAng(String stAng) {
+        this.stAng = stAng;
+    }
+
+    public void setSwAng(String swAng) {
+        this.swAng = swAng;
     }
 
     @Override
@@ -140,5 +176,22 @@ public class ArcToCommand implements PathCommand {
         // skew
         awtAngle = Math.toDegrees(Math.atan2(Math.tan(Math.toRadians(awtAngle2)), aspect)) + awtAngle3;
         return awtAngle;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ArcToCommand)) return false;
+        ArcToCommand that = (ArcToCommand) o;
+        return Objects.equals(wr, that.wr) &&
+                Objects.equals(hr, that.hr) &&
+                Objects.equals(stAng, that.stAng) &&
+                Objects.equals(swAng, that.swAng);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(wr, hr, stAng, swAng);
     }
 }

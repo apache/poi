@@ -21,13 +21,11 @@ package org.apache.poi.sl.draw.geom;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
 
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.net.URL;
 import java.util.Enumeration;
-import java.util.Map;
 
 import org.junit.Ignore;
 import org.junit.Test;
@@ -35,8 +33,9 @@ import org.junit.Test;
 public class TestPresetGeometries {
     @Test
     public void testRead(){
-        Map<String, CustomGeometry> shapes = PresetGeometries.getInstance();
+        PresetGeometries shapes = PresetGeometries.getInstance();
         assertEquals(187, shapes.size());
+        assertEquals(0x4533584F, shapes.hashCode());
 
         for(String name : shapes.keySet()) {
             CustomGeometry geom = shapes.get(name);
@@ -46,30 +45,17 @@ public class TestPresetGeometries {
                 assertNotNull(path);
             }
         }
-        
+
         // we get the same instance on further calls
         assertSame(shapes, PresetGeometries.getInstance());
-    }
-
-    // helper methods to adjust list of presets for other tests
-    public static void clearPreset() {
-        // ensure that we are initialized
-        assertNotNull(PresetGeometries.getInstance());
-        
-        // test handling if some presets are not found
-        PresetGeometries._inst.clear();
-    }
-    
-    public static void resetPreset() {
-        PresetGeometries._inst = null;
     }
 
     @Ignore("problem solved? Turn back on if this debugging is still in process.")
     @Test
     public void testCheckXMLParser() throws Exception{
-        // Gump reports a strange error because of an unavailable XML Parser, let's try to find out where 
+        // Gump reports a strange error because of an unavailable XML Parser, let's try to find out where
         // this comes from
-        // 
+        //
         Enumeration<URL> resources = this.getClass().getClassLoader().getResources("META-INF/services/javax.xml.stream.XMLEventFactory");
         printURLs(resources);
         resources = ClassLoader.getSystemResources("META-INF/services/javax.xml.stream.XMLEventFactory");

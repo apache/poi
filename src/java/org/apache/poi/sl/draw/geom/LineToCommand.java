@@ -20,26 +20,63 @@
 package org.apache.poi.sl.draw.geom;
 
 import java.awt.geom.Path2D;
+import java.util.Objects;
 
-import org.apache.poi.sl.draw.binding.CTAdjPoint2D;
+/**
+ * <p>Java class for CT_Path2DLineTo complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="CT_Path2DLineTo"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="pt" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_AdjPoint2D"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * </pre>
+ *
+ *
+ */
+// @XmlAccessorType(XmlAccessType.FIELD)
+// @XmlType(name = "CT_Path2DLineTo", propOrder = {"pt"})
+public final class LineToCommand implements PathCommand {
 
-public class LineToCommand implements PathCommand {
-    private String arg1, arg2;
+    // @XmlElement(required = true)
+    private final AdjustPoint pt = new AdjustPoint();
 
-    LineToCommand(CTAdjPoint2D pt){
-        arg1 = pt.getX();
-        arg2 = pt.getY();
+    public AdjustPoint getPt() {
+        return pt;
     }
 
-    LineToCommand(String s1, String s2){
-        arg1 = s1;
-        arg2 = s2;
+    public void setPt(AdjustPoint pt) {
+        if (pt != null) {
+            this.pt.setX(pt.getX());
+            this.pt.setY(pt.getY());
+        }
     }
 
     @Override
     public void execute(Path2D.Double path, Context ctx){
-        double x = ctx.getValue(arg1);
-        double y = ctx.getValue(arg2);
+        double x = ctx.getValue(pt.getX());
+        double y = ctx.getValue(pt.getY());
         path.lineTo(x, y);
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof LineToCommand)) return false;
+        LineToCommand that = (LineToCommand) o;
+        return Objects.equals(pt, that.pt);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pt);
     }
 }

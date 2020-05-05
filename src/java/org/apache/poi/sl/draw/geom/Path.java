@@ -22,84 +22,65 @@ package org.apache.poi.sl.draw.geom;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
-import org.apache.poi.sl.draw.binding.CTAdjPoint2D;
-import org.apache.poi.sl.draw.binding.CTPath2D;
-import org.apache.poi.sl.draw.binding.CTPath2DArcTo;
-import org.apache.poi.sl.draw.binding.CTPath2DClose;
-import org.apache.poi.sl.draw.binding.CTPath2DCubicBezierTo;
-import org.apache.poi.sl.draw.binding.CTPath2DLineTo;
-import org.apache.poi.sl.draw.binding.CTPath2DMoveTo;
-import org.apache.poi.sl.draw.binding.CTPath2DQuadBezierTo;
 import org.apache.poi.sl.usermodel.PaintStyle.PaintModifier;
 
 /**
  * Specifies a creation path consisting of a series of moves, lines and curves
  * that when combined forms a geometric shape
+ *
+ * <p>Java class for CT_Path2D complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="CT_Path2D"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;choice maxOccurs="unbounded" minOccurs="0"&gt;
+ *         &lt;element name="close" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DClose"/&gt;
+ *         &lt;element name="moveTo" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DMoveTo"/&gt;
+ *         &lt;element name="lnTo" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DLineTo"/&gt;
+ *         &lt;element name="arcTo" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DArcTo"/&gt;
+ *         &lt;element name="quadBezTo" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DQuadBezierTo"/&gt;
+ *         &lt;element name="cubicBezTo" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DCubicBezierTo"/&gt;
+ *       &lt;/choice&gt;
+ *       &lt;attribute name="w" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_PositiveCoordinate" default="0" /&gt;
+ *       &lt;attribute name="h" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_PositiveCoordinate" default="0" /&gt;
+ *       &lt;attribute name="fill" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_PathFillMode" default="norm" /&gt;
+ *       &lt;attribute name="stroke" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" /&gt;
+ *       &lt;attribute name="extrusionOk" type="{http://www.w3.org/2001/XMLSchema}boolean" default="true" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * </pre>
  */
-public class Path {
+// @XmlAccessorType(XmlAccessType.FIELD)
+// @XmlType(name = "CT_Path2D", propOrder = {"closeOrMoveToOrLnTo"})
+public final class Path {
 
-    private final List<PathCommand> commands;
-    PaintModifier _fill;
-    boolean _stroke;
-    long _w, _h;
+    // @XmlElements({
+    //     @XmlElement(name = "close", type = CTPath2DClose.class),
+    //     @XmlElement(name = "moveTo", type = CTPath2DMoveTo.class),
+    //     @XmlElement(name = "lnTo", type = CTPath2DLineTo.class),
+    //     @XmlElement(name = "arcTo", type = CTPath2DArcTo.class),
+    //     @XmlElement(name = "quadBezTo", type = CTPath2DQuadBezierTo.class),
+    //     @XmlElement(name = "cubicBezTo", type = CTPath2DCubicBezierTo.class)
+    // })
+    private final List<PathCommand> commands = new ArrayList<>();
+    // @XmlAttribute(name = "fill")
+    private PaintModifier fill = PaintModifier.NORM;
+    // @XmlAttribute(name = "stroke")
+    private boolean stroke = true;
+    // @XmlAttribute(name = "extrusionOk")
+    private boolean extrusionOk = false;
+    // @XmlAttribute(name = "w")
+    private long w = -1;
+    // @XmlAttribute(name = "h")
+    private long h = -1;
 
-    public Path(){
-        this(true, true);
-    }
 
-    public Path(boolean fill, boolean stroke){
-        commands = new ArrayList<>();
-        _w = -1;
-        _h = -1;
-        _fill = (fill) ? PaintModifier.NORM : PaintModifier.NONE;
-        _stroke = stroke;
-    }
-
-    public Path(CTPath2D spPath){
-        switch (spPath.getFill()) {
-            case NONE: _fill = PaintModifier.NONE; break;
-            case DARKEN: _fill = PaintModifier.DARKEN; break;
-            case DARKEN_LESS: _fill = PaintModifier.DARKEN_LESS; break;
-            case LIGHTEN: _fill = PaintModifier.LIGHTEN; break;
-            case LIGHTEN_LESS: _fill = PaintModifier.LIGHTEN_LESS; break;
-            default:
-            case NORM: _fill = PaintModifier.NORM; break;
-        }
-        _stroke = spPath.isStroke();
-        _w = spPath.isSetW() ? spPath.getW() : -1;
-        _h = spPath.isSetH() ? spPath.getH() : -1;
-
-        commands = new ArrayList<>();
-
-        for(Object ch : spPath.getCloseOrMoveToOrLnTo()){
-            if(ch instanceof CTPath2DMoveTo){
-                CTAdjPoint2D pt = ((CTPath2DMoveTo)ch).getPt();
-                commands.add(new MoveToCommand(pt));
-            } else if (ch instanceof CTPath2DLineTo){
-                CTAdjPoint2D pt = ((CTPath2DLineTo)ch).getPt();
-                commands.add(new LineToCommand(pt));
-            } else if (ch instanceof CTPath2DArcTo){
-                CTPath2DArcTo arc = (CTPath2DArcTo)ch;
-                commands.add(new ArcToCommand(arc));
-            } else if (ch instanceof CTPath2DQuadBezierTo){
-                CTPath2DQuadBezierTo bez = ((CTPath2DQuadBezierTo)ch);
-                CTAdjPoint2D pt1 = bez.getPt().get(0);
-                CTAdjPoint2D pt2 = bez.getPt().get(1);
-                commands.add(new QuadToCommand(pt1, pt2));
-            } else if (ch instanceof CTPath2DCubicBezierTo){
-                CTPath2DCubicBezierTo bez = ((CTPath2DCubicBezierTo)ch);
-                CTAdjPoint2D pt1 = bez.getPt().get(0);
-                CTAdjPoint2D pt2 = bez.getPt().get(1);
-                CTAdjPoint2D pt3 = bez.getPt().get(2);
-                commands.add(new CurveToCommand(pt1, pt2, pt3));
-            } else if (ch instanceof CTPath2DClose){
-                commands.add(new ClosePathCommand());
-            }  else {
-                throw new IllegalStateException("Unsupported path segment: " + ch);
-            }
-        }
-    }
 
     public void addCommand(PathCommand cmd){
         commands.add(cmd);
@@ -117,22 +98,65 @@ public class Path {
     }
 
     public boolean isStroked(){
-        return _stroke;
+        return stroke;
+    }
+
+    public void setStroke(boolean stroke) {
+        this.stroke = stroke;
     }
 
     public boolean isFilled(){
-        return _fill != PaintModifier.NONE;
+        return fill != PaintModifier.NONE;
     }
 
     public PaintModifier getFill() {
-        return _fill;
+        return fill;
+    }
+
+    public void setFill(PaintModifier fill) {
+        this.fill = fill;
     }
 
     public long getW(){
-    	return _w;
+    	return w;
+    }
+
+    public void setW(long w) {
+        this.w = w;
     }
 
     public long getH(){
-    	return _h;
+    	return h;
+    }
+
+    public void setH(long h) {
+        this.h = h;
+    }
+
+    public boolean isExtrusionOk() {
+        return extrusionOk;
+    }
+
+    public void setExtrusionOk(boolean extrusionOk) {
+        this.extrusionOk = extrusionOk;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Path)) return false;
+        Path ctPath2D = (Path) o;
+        return Objects.equals(commands, ctPath2D.commands) &&
+                Objects.equals(w, ctPath2D.w) &&
+                Objects.equals(h, ctPath2D.h) &&
+                fill == ctPath2D.fill &&
+                Objects.equals(stroke, ctPath2D.stroke) &&
+                Objects.equals(extrusionOk, ctPath2D.extrusionOk);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(commands, w, h, fill.ordinal(), stroke, extrusionOk);
     }
 }

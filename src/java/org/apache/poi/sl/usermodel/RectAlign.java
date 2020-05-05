@@ -21,8 +21,6 @@ package org.apache.poi.sl.usermodel;
 /**
  * Specifies possible rectangle alignment types.
  * See org.openxmlformats.schemas.drawingml.x2006.main.STRectAlignment
- * 
- * @see org.apache.poi.sl.draw.binding.STRectAlignment
  */
 public enum RectAlign {
     /** Top-Left rectangle alignment */

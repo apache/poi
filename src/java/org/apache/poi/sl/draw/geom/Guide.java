@@ -21,13 +21,29 @@ package org.apache.poi.sl.draw.geom;
 
 import static java.lang.Math.*;
 
+import java.util.Objects;
 import java.util.regex.Pattern;
 
-import org.apache.poi.sl.draw.binding.CTGeomGuide;
-
 /**
- * A simple pattern parser of shape guide formulas in DrawingML
+ * <p>Java class for CT_GeomGuide complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="CT_GeomGuide"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;attribute name="name" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_GeomGuideName" /&gt;
+ *       &lt;attribute name="fmla" use="required" type="{http://schemas.openxmlformats.org/drawingml/2006/main}ST_GeomGuideFormula" /&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * </pre>
+ *
+ *
  */
+// @XmlAccessorType(XmlAccessType.FIELD)
+// @XmlType(name = "CT_GeomGuide")
 public class Guide implements Formula {
     enum Op {
         muldiv,addsub,adddiv,ifelse,val,abs,sqrt,max,min,at2,sin,cos,tan,cat2,sat2,pin,mod
@@ -35,20 +51,30 @@ public class Guide implements Formula {
 
     private static final Pattern WHITESPACE = Pattern.compile("\\s+");
 
-    @SuppressWarnings({"FieldCanBeLocal", "unused"})
-    private final String name, fmla;
-    private final Op op;
-    private final String[] operands;
+    // @XmlAttribute(name = "name", required = true)
+    // @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
+    private String name;
+    // @XmlAttribute(name = "fmla", required = true)
+    private String fmla;
 
+    private Op op;
+    private String[] operands;
 
-    public Guide(CTGeomGuide gd) {
-        this(gd.getName(), gd.getFmla());
+    public String getName(){
+        return name;
     }
 
-    public Guide(String nm, String fm){
-        name = nm;
-        fmla = fm;
-        operands = WHITESPACE.split(fm);
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getFmla() {
+        return fmla;
+    }
+
+    public void setFmla(String fmla) {
+        this.fmla = fmla;
+        operands = WHITESPACE.split(fmla);
         switch (operands[0]) {
             case "*/": op = Op.muldiv; break;
             case "+-": op = Op.addsub; break;
@@ -56,10 +82,6 @@ public class Guide implements Formula {
             case "?:": op = Op.ifelse; break;
             default: op = Op.valueOf(operands[0]); break;
         }
-    }
-
-    public String getName(){
-        return name;
     }
 
     @Override
@@ -125,5 +147,19 @@ public class Guide implements Formula {
             default:
                 return 0;
         }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Guide guide = (Guide) o;
+        return Objects.equals(name, guide.name) &&
+                Objects.equals(fmla, guide.fmla);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(name, fmla);
     }
 }

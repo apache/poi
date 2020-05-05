@@ -20,25 +20,71 @@
 package org.apache.poi.sl.draw.geom;
 
 import java.awt.geom.Path2D;
+import java.util.Objects;
 
-import org.apache.poi.sl.draw.binding.CTAdjPoint2D;
+/**
+ * <p>Java class for CT_Path2DQuadBezierTo complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="CT_Path2DQuadBezierTo"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="pt" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_AdjPoint2D" maxOccurs="2" minOccurs="2"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * </pre>
+ *
+ *
+ */
+// @XmlAccessorType(XmlAccessType.FIELD)
+// @XmlType(name = "CT_Path2DQuadBezierTo", propOrder = {"pt"})
+public final class QuadToCommand implements PathCommand {
 
-public class QuadToCommand implements PathCommand {
-    private String arg1, arg2, arg3, arg4;
+    // @XmlElement(required = true)
+    private final AdjustPoint pt1 = new AdjustPoint();
+    // @XmlElement(required = true)
+    private final AdjustPoint pt2 = new AdjustPoint();
 
-    QuadToCommand(CTAdjPoint2D pt1, CTAdjPoint2D pt2){
-        arg1 = pt1.getX();
-        arg2 = pt1.getY();
-        arg3 = pt2.getX();
-        arg4 = pt2.getY();
+    public void setPt1(AdjustPoint pt1) {
+        if (pt1 != null) {
+            this.pt1.setX(pt1.getX());
+            this.pt1.setY(pt1.getY());
+        }
+    }
+
+    public void setPt2(AdjustPoint pt2) {
+        if (pt2 != null) {
+            this.pt2.setX(pt2.getX());
+            this.pt2.setY(pt2.getY());
+        }
     }
 
     @Override
     public void execute(Path2D.Double path, Context ctx){
-        double x1 = ctx.getValue(arg1);
-        double y1 = ctx.getValue(arg2);
-        double x2 = ctx.getValue(arg3);
-        double y2 = ctx.getValue(arg4);
+        double x1 = ctx.getValue(pt1.getX());
+        double y1 = ctx.getValue(pt1.getY());
+        double x2 = ctx.getValue(pt2.getX());
+        double y2 = ctx.getValue(pt2.getY());
         path.quadTo(x1, y1, x2, y2);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof QuadToCommand)) return false;
+        QuadToCommand that = (QuadToCommand) o;
+        return Objects.equals(pt1, that.pt1) &&
+                Objects.equals(pt2, that.pt2);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(pt1, pt2);
+    }
+
 }

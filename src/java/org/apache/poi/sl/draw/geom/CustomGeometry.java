@@ -22,55 +22,88 @@ package org.apache.poi.sl.draw.geom;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-
-import org.apache.poi.sl.draw.binding.CTCustomGeometry2D;
-import org.apache.poi.sl.draw.binding.CTGeomGuide;
-import org.apache.poi.sl.draw.binding.CTGeomGuideList;
-import org.apache.poi.sl.draw.binding.CTGeomRect;
-import org.apache.poi.sl.draw.binding.CTPath2D;
-import org.apache.poi.sl.draw.binding.CTPath2DList;
+import java.util.Objects;
 
 /**
  * Definition of a custom geometric shape
+ *
+ *
+ * <p>Java class for CT_CustomGeometry2D complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="CT_CustomGeometry2D"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *       &lt;sequence&gt;
+ *         &lt;element name="avLst" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_GeomGuideList" minOccurs="0"/&gt;
+ *         &lt;element name="gdLst" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_GeomGuideList" minOccurs="0"/&gt;
+ *         &lt;element name="ahLst" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_AdjustHandleList" minOccurs="0"/&gt;
+ *         &lt;element name="cxnLst" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_ConnectionSiteList" minOccurs="0"/&gt;
+ *         &lt;element name="rect" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_GeomRect" minOccurs="0"/&gt;
+ *         &lt;element name="pathLst" type="{http://schemas.openxmlformats.org/drawingml/2006/main}CT_Path2DList"/&gt;
+ *       &lt;/sequence&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * </pre>
  */
-public class CustomGeometry implements Iterable<Path>{
-    final List<Guide> adjusts = new ArrayList<>();
+public final class CustomGeometry implements Iterable<Path>{
+    final List<AdjustValue> adjusts = new ArrayList<>();
     final List<Guide> guides = new ArrayList<>();
     final List<Path> paths = new ArrayList<>();
+    final List<AdjustHandle> handles = new ArrayList<>();
+    final List<ConnectionSite> connections = new ArrayList<>();
     Path textBounds;
 
-    public CustomGeometry(CTCustomGeometry2D geom) {
-        CTGeomGuideList avLst = geom.getAvLst();
-        if(avLst != null) {
-            for(CTGeomGuide gd : avLst.getGd()){
-                adjusts.add(new AdjustValue(gd));
-            }
-        }
-
-        CTGeomGuideList gdLst = geom.getGdLst();
-        if(gdLst != null) {
-            for(CTGeomGuide gd : gdLst.getGd()){
-                guides.add(new Guide(gd));
-            }
-        }
-
-        CTPath2DList pathLst = geom.getPathLst();
-        if(pathLst != null) {
-            for(CTPath2D spPath : pathLst.getPath()){
-                paths.add(new Path(spPath));
-            }
-        }
-
-        CTGeomRect rect = geom.getRect();
-        if(rect != null) {
-            textBounds = new Path();
-            textBounds.addCommand(new MoveToCommand(rect.getL(), rect.getT()));
-            textBounds.addCommand(new LineToCommand(rect.getR(), rect.getT()));
-            textBounds.addCommand(new LineToCommand(rect.getR(), rect.getB()));
-            textBounds.addCommand(new LineToCommand(rect.getL(), rect.getB()));
-            textBounds.addCommand(new ClosePathCommand());
-        }
+    public void addAdjustGuide(AdjustValue guide) {
+        adjusts.add(guide);
     }
+
+    public void addGeomGuide(Guide guide) {
+        guides.add(guide);
+    }
+
+    public void addAdjustHandle(AdjustHandle handle) {
+        handles.add(handle);
+    }
+
+    public void addConnectionSite(ConnectionSite connection) {
+        connections.add(connection);
+    }
+
+    public void addPath(Path path) {
+        paths.add(path);
+    }
+
+    public void setTextBounds(String left, String top, String right, String bottom) {
+        textBounds = new Path();
+        textBounds.addCommand(moveTo(left,top));
+        textBounds.addCommand(lineTo(right, top));
+        textBounds.addCommand(lineTo(right, bottom));
+        textBounds.addCommand(lineTo(left, bottom));
+        textBounds.addCommand(new ClosePathCommand());
+    }
+
+    private static MoveToCommand moveTo(String x, String y) {
+        AdjustPoint pt = new AdjustPoint();
+        pt.setX(x);
+        pt.setY(y);
+        MoveToCommand cmd = new MoveToCommand();
+        cmd.setPt(pt);
+        return cmd;
+    }
+
+    private static LineToCommand lineTo(String x, String y) {
+        AdjustPoint pt = new AdjustPoint();
+        pt.setX(x);
+        pt.setY(y);
+        LineToCommand cmd = new LineToCommand();
+        cmd.setPt(pt);
+        return cmd;
+    }
+
 
     @Override
     public Iterator<Path> iterator() {
@@ -79,5 +112,24 @@ public class CustomGeometry implements Iterable<Path>{
 
     public Path getTextBounds(){
         return textBounds;
+    }
+
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof CustomGeometry)) return false;
+        CustomGeometry that = (CustomGeometry) o;
+        return Objects.equals(adjusts, that.adjusts) &&
+                Objects.equals(guides, that.guides) &&
+                Objects.equals(handles, that.handles) &&
+                Objects.equals(connections, that.connections) &&
+                Objects.equals(textBounds, that.textBounds) &&
+                Objects.equals(paths, that.paths);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(adjusts, guides, handles, connections, textBounds, paths);
     }
 }

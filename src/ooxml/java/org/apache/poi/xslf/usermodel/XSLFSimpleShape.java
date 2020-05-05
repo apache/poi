@@ -59,7 +59,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.*;
 @Beta
 public abstract class XSLFSimpleShape extends XSLFShape
     implements SimpleShape<XSLFShape,XSLFTextParagraph> {
-    private static CTOuterShadowEffect NO_SHADOW = CTOuterShadowEffect.Factory.newInstance();
+    private static final CTOuterShadowEffect NO_SHADOW = CTOuterShadowEffect.Factory.newInstance();
     private static final POILogger LOG = POILogFactory.getLogger(XSLFSimpleShape.class);
 
     /* package */XSLFSimpleShape(XmlObject shape, XSLFSheet sheet) {
@@ -981,7 +981,10 @@ public abstract class XSLFSimpleShape extends XSLFShape
             //noinspection deprecation
             for (CTGeomGuide g : gp.getPrstGeom().getAvLst().getGdArray()) {
                 if (g.getName().equals(name)) {
-                    return new Guide(g.getName(), g.getFmla());
+                    Guide gd = new Guide();
+                    gd.setName(g.getName());
+                    gd.setFmla(g.getFmla());
+                    return gd;
                 }
             }
         }

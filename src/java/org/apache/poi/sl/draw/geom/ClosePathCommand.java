@@ -21,13 +21,39 @@ package org.apache.poi.sl.draw.geom;
 
 import java.awt.geom.Path2D;
 
+/**
+ * <p>Java class for CT_Path2DClose complex type.
+ *
+ * <p>The following schema fragment specifies the expected content contained within this class.
+ *
+ * <pre>
+ * &lt;complexType name="CT_Path2DClose"&gt;
+ *   &lt;complexContent&gt;
+ *     &lt;restriction base="{http://www.w3.org/2001/XMLSchema}anyType"&gt;
+ *     &lt;/restriction&gt;
+ *   &lt;/complexContent&gt;
+ * &lt;/complexType&gt;
+ * </pre>
+ *
+ *
+ */
+// @XmlAccessorType(XmlAccessType.FIELD)
+// @XmlType(name = "CT_Path2DClose")
 public class ClosePathCommand implements PathCommand {
-
-    ClosePathCommand(){
-    }
 
     @Override
     public void execute(Path2D.Double path, Context ctx){
         path.closePath();
+    }
+
+
+    @Override
+    public int hashCode() {
+        return 0xC105E;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        return (obj instanceof ClosePathCommand);
     }
 }
