@@ -595,9 +595,14 @@ under the License.
         <mkdir dir="${main.lib}"/>
         <mkdir dir="${ooxml.lib}"/>
         <mkdir dir="${ooxml-tests.lib}"/>
+
+        <!-- remove jars from previous versions, but not the current version -->
+        <delete dir="compile-lib"/>
+        <delete dir="ooxml-lib"/>
+        <delete dir="ooxml-testlib"/>
+
         <delete verbose="true">
             <fileset dir="${basedir}/lib" includes="*.jar"/>
-            <!-- remove jars from previous versions, but not the current version -->
         </delete>
 
         <condition property="jars.present">
