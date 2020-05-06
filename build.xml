@@ -182,6 +182,7 @@ under the License.
         <attribute name="repo"/>
         <attribute name="snapshot"/>
         <attribute name="query"/>
+        <attribute name="target"/>
         <![CDATA[
             var parts = attributes.get("artifact").split(/:/);
             var packaging = attributes.get("packaging") || "jar";
@@ -191,8 +192,9 @@ under the License.
                 repo = project.getProperty("repository.m2");
             }
             var query = attributes.get("query") || "";
-            var jarLoc = project.getProperty("basedir")+"/lib/"+attributes.get("usage")+"/"+
-                parts[1]+"-"+parts[2]+"."+packaging;
+            var usageDir = attributes.get("usage");
+            usageDir = project.getProperty("basedir")+(usageDir.charAt(0) == '/' ? "" : "/lib/")+usageDir;
+            var jarLoc = usageDir+"/"+(attributes.get("target")||(parts[1]+"-"+parts[2]+"."+packaging));
             var urlLoc = repo+"/"+parts[0].replace(/\./g,"/")+"/"+parts[1]+"/"+parts[2]+"/"+
                 parts[1]+"-"+(attributes.get("snapshot") || parts[2])+"."+packaging+query;
             project.setProperty(attributes.get("prefix")+"."+packaging, jarLoc);
@@ -227,7 +229,7 @@ under the License.
     <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:2.1.5" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-ext-jdk15on:1.65" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk15on:1.65" usage="ooxml-provided"/>
-    <dependency prefix="dsig.sl4j-api" artifact="org.slf4j:slf4j-api:1.7.30" usage="ooxml-provided"/>
+    <dependency prefix="dsig.slf4j-api" artifact="org.slf4j:slf4j-api:1.7.30" usage="ooxml-provided"/>
 
     <!-- svg/batik libs - not part of the distribution -->
     <dependency prefix="svg.xml-apis-ext" artifact="xml-apis:xml-apis-ext:1.3.04" usage="ooxml-provided"/>
@@ -246,9 +248,9 @@ under the License.
 
     <!-- coverage libs -->
     <dependency prefix="jacoco" artifact="org.jacoco:jacoco:0.8.5" usage="util" packaging="zip"/>
-    <dependency prefix="asm" artifact="org.ow2.asm:asm:7.2" usage="util"/>
-    <dependency prefix="asmcommons" artifact="org.ow2.asm:asm-commons:7.2" usage="util"/>
-    <dependency prefix="asmtree" artifact="org.ow2.asm:asm-tree:7.2" usage="util"/>
+    <dependency prefix="asm" artifact="org.ow2.asm:asm:8.0.1" usage="util"/>
+    <dependency prefix="asm-commons" artifact="org.ow2.asm:asm-commons:8.0.1" usage="util"/>
+    <dependency prefix="asm-tree" artifact="org.ow2.asm:asm-tree:8.0.1" usage="util"/>
 
     <!-- license and api checks -->
     <dependency prefix="rat" artifact="org.apache.rat:apache-rat:0.12" usage="util"/>
@@ -309,8 +311,7 @@ under the License.
     <dependency prefix="dist.sqljet" artifact="org.tmatesoft.svnkit:sqljet:1.1.10" usage="util"/>
     <dependency prefix="dist.antlr" artifact="org.antlr:antlr-runtime:3.5.2" usage="util"/>
     <dependency prefix="dist.sequence-library" artifact="de.regnis.q.sequence:sequence-library:1.0.3" usage="util"/>
-    <dependency prefix="findbugs" artifact="findbugs:findbugs:3.0.1" usage="util"
-        repo="https://downloads.sourceforge.net/project" snapshot="noUpdateChecks-3.0.1" query="?download=" packaging="zip"/>
+
 
     <propertyset id="junit.properties">
         <propertyref name="POI.testdata.path"/>
@@ -359,7 +360,7 @@ under the License.
         <pathelement location="${dsig.xmlsec.jar}"/>
         <pathelement location="${dsig.bouncycastle-prov.jar}"/>
         <pathelement location="${dsig.bouncycastle-pkix.jar}"/>
-        <pathelement location="${dsig.sl4j-api.jar}"/>
+        <pathelement location="${dsig.slf4j-api.jar}"/>
     </path>
 
     <path id="ooxml.base.classpath">
@@ -603,6 +604,9 @@ under the License.
 
         <delete verbose="true">
             <fileset dir="${basedir}/lib" includes="*.jar"/>
+            <fileset dir="${basedir}/lib/util">
+                <include name="asm*7.2.jar"/>
+            </fileset>
         </delete>
 
         <condition property="jars.present">
@@ -623,15 +627,15 @@ under the License.
                     <available file="${main.ant.jar}"/>
                     <available file="${main.antlauncher.jar}"/>
                     <available file="${asm.jar}"/>
-                    <available file="${asmcommons.jar}"/>
-                    <available file="${asmtree.jar}"/>
+                    <available file="${asm-commons.jar}"/>
+                    <available file="${asm-tree.jar}"/>
                     <available file="${jacoco.zip}"/>
                     <available file="${rat.jar}"/>
                     <available file="${forbidden.jar}"/>
                     <available file="${dsig.bouncycastle-prov.jar}"/>
                     <available file="${dsig.bouncycastle-pkix.jar}"/>
                     <available file="${dsig.xmlsec.jar}"/>
-                    <available file="${dsig.sl4j-api.jar}"/>
+                    <available file="${dsig.slf4j-api.jar}"/>
                     <available file="${main.commons-collections4.jar}"/>
                     <available file="${main.commons-math3.jar}"/>
                     <available file="${main.com.zaxxer.jar}"/>
@@ -662,8 +666,8 @@ under the License.
         <downloadfile src="${main.ant.url}" dest="${main.ant.jar}"/>
         <downloadfile src="${main.antlauncher.url}" dest="${main.antlauncher.jar}"/>
         <downloadfile src="${asm.url}" dest="${asm.jar}"/>
-        <downloadfile src="${asmcommons.url}" dest="${asmcommons.jar}"/>
-        <downloadfile src="${asmtree.url}" dest="${asmtree.jar}"/>
+        <downloadfile src="${asm-commons.url}" dest="${asm-commons.jar}"/>
+        <downloadfile src="${asm-tree.url}" dest="${asm-tree.jar}"/>
         <downloadfile src="${jacoco.url}" dest="${jacoco.zip}"/>
         <downloadfile src="${main.commons-collections4.url}" dest="${main.commons-collections4.jar}"/>
         <downloadfile src="${main.commons-math3.url}" dest="${main.commons-math3.jar}"/>
@@ -679,7 +683,7 @@ under the License.
         <downloadfile src="${dsig.bouncycastle-prov.url}" dest="${dsig.bouncycastle-prov.jar}"/>
         <downloadfile src="${dsig.bouncycastle-pkix.url}" dest="${dsig.bouncycastle-pkix.jar}"/>
         <downloadfile src="${dsig.xmlsec.url}" dest="${dsig.xmlsec.jar}"/>
-        <downloadfile src="${dsig.sl4j-api.url}" dest="${dsig.sl4j-api.jar}"/>
+        <downloadfile src="${dsig.slf4j-api.url}" dest="${dsig.slf4j-api.jar}"/>
     </target>
 
     <target name="check-ooxml-jars">
@@ -2167,22 +2171,79 @@ under the License.
          see https://stackoverflow.com/a/48561534/2066598
          this should be replaced by spotbugs when available in the jenkins warnings plugin -->
     <target name="findbugs" depends="jar" unless="${isIBMVM}">
-        <downloadfile src="${findbugs.url}" dest="${findbugs.jar}"/>
+        <property name="spotbugs.home" value="build/findbugs" />
+        <property name="spotbugs.lib" value="/build/findbugs/lib" />
 
-        <property name="findbugs.home" value="build/findbugs" />
-        <delete dir="${findbugs.home}"/>
-        <unzip src="${findbugs.jar}" dest="${findbugs.home}">
-            <patternset includes="findbugs*/lib/**,findbugs*/plugin/**"/>
-            <cutdirsmapper dirs="1"/>
-        </unzip>
+        <!-- findbugs successor, spotbugs ... need to use the dependencies used in the spotbugs release. -->
+        <!-- compare with the entries found in the MANIFEST.MF of spotbugs.jar -->
+        <dependency prefix="spotbugs" artifact="com.github.spotbugs:spotbugs:4.0.2" usage="${spotbugs.lib}" target="spotbugs.jar"/>
+        <dependency prefix="spotbugs-ant" artifact="com.github.spotbugs:spotbugs-ant:4.0.2" usage="${spotbugs.lib}" target="spotbugs-ant.jar"/>
+        <dependency prefix="spotbugs-anno" artifact="com.github.spotbugs:spotbugs-annotations:4.0.2" usage="${spotbugs.lib}" target="spotbugs-annotations.jar"/>
+        <dependency prefix="spotbugs.asm" artifact="org.ow2.asm:asm:8.0.1" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.asm-analysis" artifact="org.ow2.asm:asm-analysis:8.0.1" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.asm-commons" artifact="org.ow2.asm:asm-commons:8.0.1" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.asm-tree" artifact="org.ow2.asm:asm-tree:8.0.1" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.asm-util" artifact="org.ow2.asm:asm-util:8.0.1" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.jsr305" artifact="com.google.code.findbugs:jsr305:3.0.2" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.dom4j" artifact="org.dom4j:dom4j:2.1.1" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.jaxen" artifact="jaxen:jaxen:1.1.6" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.bcel" artifact="org.apache.bcel:bcel:6.4.1" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.slf4j-api" artifact="org.slf4j:slf4j-api:1.8.0-beta4" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.commons-lang3" artifact="org.apache.commons:commons-lang3:3.10" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.commons-text" artifact="org.apache.commons:commons-text:1.8" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.jcip-annotations" artifact="net.jcip:jcip-annotations:1.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.icu4j" artifact="com.ibm.icu:icu4j:63.2" usage="${spotbugs.lib}" target="icu4j-63.1.jar"/>
+        <dependency prefix="spotbugs.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.13.1" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.13.1" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.log4j-slf4j18-impl" artifact="org.apache.logging.log4j:log4j-slf4j18-impl:2.13.1" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.saxon" artifact="net.sf.saxon:Saxon-HE:9.9.1-2" usage="${spotbugs.lib}"/>
 
-        <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask">
+        <mkdir dir="${basedir}${spotbugs.lib}/config"/>
+
+        <downloadfile src="${spotbugs.url}" dest="${spotbugs.jar}"/>
+        <downloadfile src="${spotbugs-ant.url}" dest="${spotbugs-ant.jar}"/>
+        <downloadfile src="${spotbugs-anno.url}" dest="${spotbugs-anno.jar}"/>
+        <downloadfile src="${spotbugs.dom4j.url}" dest="${spotbugs.dom4j.jar}"/>
+        <downloadfile src="${spotbugs.jaxen.url}" dest="${spotbugs.jaxen.jar}"/>
+        <downloadfile src="${spotbugs.bcel.url}" dest="${spotbugs.bcel.jar}"/>
+        <downloadfile src="${spotbugs.slf4j-api.url}" dest="${spotbugs.slf4j-api.jar}"/>
+        <downloadfile src="${spotbugs.commons-lang3.url}" dest="${spotbugs.commons-lang3.jar}"/>
+        <downloadfile src="${spotbugs.commons-text.url}" dest="${spotbugs.commons-text.jar}"/>
+        <downloadfile src="${spotbugs.jcip-annotations.url}" dest="${spotbugs.jcip-annotations.jar}"/>
+        <downloadfile src="${spotbugs.jsr305.url}" dest="${spotbugs.jsr305.jar}"/>
+        <downloadfile src="${spotbugs.asm.url}" dest="${spotbugs.asm.jar}"/>
+        <downloadfile src="${spotbugs.asm-analysis.url}" dest="${spotbugs.asm-analysis.jar}"/>
+        <downloadfile src="${spotbugs.asm-commons.url}" dest="${spotbugs.asm-commons.jar}"/>
+        <downloadfile src="${spotbugs.asm-tree.url}" dest="${spotbugs.asm-tree.jar}"/>
+        <downloadfile src="${spotbugs.asm-util.url}" dest="${spotbugs.asm-util.jar}"/>
+        <downloadfile src="${spotbugs.log4j-api.url}" dest="${spotbugs.log4j-api.jar}"/>
+        <downloadfile src="${spotbugs.log4j-core.url}" dest="${spotbugs.log4j-core.jar}"/>
+        <downloadfile src="${spotbugs.log4j-slf4j18-impl.url}" dest="${spotbugs.log4j-slf4j18-impl.jar}"/>
+        <downloadfile src="${spotbugs.saxon.url}" dest="${spotbugs.saxon.jar}"/>
+        <downloadfile src="${spotbugs.icu4j.url}" dest="${spotbugs.icu4j.jar}"/>
+
+        <taskdef resource="edu/umd/cs/findbugs/anttask/tasks.properties">
             <classpath>
-                <fileset dir="${findbugs.home}/lib" includes="*.jar"/>
+                <pathelement location="${spotbugs-ant.jar}"/>
             </classpath>
         </taskdef>
 
-        <findbugs home="${findbugs.home}"
+        <echo file="${basedir}${spotbugs.lib}/config/log4j2.xml"><![CDATA[<?xml version="1.0" encoding="UTF-8"?>
+            <Configuration status="WARN">
+                <Appenders>
+                    <Console name="Console" target="SYSTEM_OUT">
+                        <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger{36} - %msg%n"/>
+                    </Console>
+                </Appenders>
+                <Loggers>
+                    <Root level="error">
+                        <AppenderRef ref="Console"/>
+                    </Root>
+                </Loggers>
+            </Configuration>
+        ]]></echo>
+
+        <spotbugs home="${spotbugs.home}"
            output="xml:withMessages"
            outputFile="build/findbugs.xml"
            effort="max"
@@ -2196,7 +2257,7 @@ under the License.
             </fileset>
             <auxClasspath path="${dsig.bouncycastle-pkix.jar}" />
             <auxClasspath path="${dsig.bouncycastle-prov.jar}" />
-            <auxClasspath path="${dsig.sl4j-api.jar}" />
+            <auxClasspath path="${dsig.slf4j-api.jar}" />
             <auxClasspath path="${dsig.xmlsec.jar}" />
             <auxClasspath path="${ooxml.xsds.jar}" />
             <auxClasspath path="${ooxml.security.jar}" />
@@ -2218,19 +2279,23 @@ under the License.
             <sourcePath path="src/java" />
             <sourcePath path="src/ooxml/java" />
             <sourcePath path="src/scratchpad/src" />
-        </findbugs>
+        </spotbugs>
 
         <!-- instead of calling findbugs again, we simply transform the xml -->
-        <makeurl file="${findbugs.home}/lib/findbugs.jar" property="findbugs.jarurl"/>
+        <makeurl file="${basedir}${spotbugs.lib}/spotbugs.jar" property="findbugs.jarurl"/>
         <!-- although there's a findbugs history task too, it doesn't make much sense to provide it, -->
         <!-- as the build directory (i.e. the old findbugs.xml) is deleted regularly -->
         <xslt basedir="build" destdir="build" includes="findbugs.xml" force="true">
             <style>
-                <!-- fancy-hist is a bit less bugged than fancy ... -->
-                <url url="jar:${findbugs.jarurl}!/fancy-hist.xsl"/>
+                <url url="jar:${findbugs.jarurl}!/fancy.xsl"/>
             </style>
+            <classpath>
+                <pathelement location="${spotbugs.saxon.jar}"/>
+            </classpath>
+            <factory name="net.sf.saxon.TransformerFactoryImpl"/>
         </xslt>
     </target>
+
 
     <target name="test-scratchpad-download-resources">
         <!-- disable font downloading until TestFontRendering works on all plattforms -->
