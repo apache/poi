@@ -598,11 +598,11 @@ under the License.
         <mkdir dir="${ooxml-tests.lib}"/>
 
         <!-- remove jars from previous versions, but not the current version -->
-        <delete dir="compile-lib"/>
-        <delete dir="ooxml-lib"/>
-        <delete dir="ooxml-testlib"/>
+        <delete dir="compile-lib" failonerror="false"/>
+        <delete dir="ooxml-lib" failonerror="false"/>
+        <delete dir="ooxml-testlib" failonerror="false"/>
 
-        <delete verbose="true">
+        <delete verbose="true" failonerror="false">
             <fileset dir="${basedir}/lib" includes="*.jar"/>
             <fileset dir="${basedir}/lib/util">
                 <include name="asm*7.2.jar"/>
