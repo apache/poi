@@ -308,7 +308,7 @@ under the License.
         repo="https://dl.bintray.com/openmeetings/maven"/>
     <dependency prefix="dist.svnkit" artifact="org.tmatesoft.svnkit:svnkit:1.8.11" usage="util"/>
     <dependency prefix="dist.svnkit-javahl16" artifact="org.tmatesoft.svnkit:svnkit-javahl16:1.8.11" usage="util"/>
-    <dependency prefix="dist.sqljet" artifact="org.tmatesoft.svnkit:sqljet:1.1.10" usage="util"/>
+    <dependency prefix="dist.sqljet" artifact="org.tmatesoft.sqljet:sqljet:1.1.10" usage="util"/>
     <dependency prefix="dist.antlr" artifact="org.antlr:antlr-runtime:3.5.2" usage="util"/>
     <dependency prefix="dist.sequence-library" artifact="de.regnis.q.sequence:sequence-library:1.0.3" usage="util"/>
 
