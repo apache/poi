@@ -47,7 +47,7 @@ under the License.
 
     <property environment="env"/>
     <!-- the repository to download jars from -->
-    <property name="repository.m2" value="https://repo1.maven.org"/>
+    <property name="repository.m2" value="https://repo1.maven.org/maven2"/>
     <property name="repository.pentaho" value="https://nexus.pentaho.org/"/>
 
     <property name="main.lib" location="${basedir}/lib/main"/>
@@ -188,7 +188,7 @@ under the License.
             var version = attributes.get("snapshot") || parts[2];
             var repo = attributes.get("repo");
             if (repo == null) {
-                repo = project.getProperty("repository.m2")+"/maven2";
+                repo = project.getProperty("repository.m2");
             }
             var query = attributes.get("query") || "";
             var jarLoc = project.getProperty("basedir")+"/lib/"+attributes.get("usage")+"/"+
@@ -310,7 +310,7 @@ under the License.
     <dependency prefix="dist.antlr" artifact="org.antlr:antlr-runtime:3.5.2" usage="util"/>
     <dependency prefix="dist.sequence-library" artifact="de.regnis.q.sequence:sequence-library:1.0.3" usage="util"/>
     <dependency prefix="findbugs" artifact="findbugs:findbugs:3.0.1" usage="util"
-        repo="https://downloads.sourceforge.net/project" snapshot="noUpdateChecks-3.0.1" query="?download="/>
+        repo="https://downloads.sourceforge.net/project" snapshot="noUpdateChecks-3.0.1" query="?download=" packaging="zip"/>
 
     <propertyset id="junit.properties">
         <propertyref name="POI.testdata.path"/>
