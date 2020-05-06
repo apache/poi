@@ -1826,11 +1826,6 @@ under the License.
         </sequential>
     </macrodef>
 
-    <target name="bla" depends="compile-main, compile-version, -manifest">
-        <maven-jar src="${main.output.dir}"/>
-    </target>
-
-
     <target name="jar" depends="compile, compile-version, compile-ooxml-lite, -manifest" description="Creates jar files for distribution">
         <maven-jar src="${main.output.dir}"/>
         <maven-jar src="${scratchpad.output.dir}"/>
