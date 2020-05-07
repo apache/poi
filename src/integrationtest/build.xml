@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<!-- 
+<!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
 distributed with this work for additional information
@@ -20,7 +20,7 @@ under the License.
 <project name="POI Testbuild" default="run" basedir=".">
 
     <description>Test-Ant file which verifies that the Apache POI distribution build sources can be compiled successfully.
-	
+
 Before running this, you should execute the "assemble" target in the main build.xml to have the packaged files created correctly.
     </description>
 
@@ -63,16 +63,8 @@ Before running this, you should execute the "assemble" target in the main build.
 
         <!-- copy over required libs to avoid re-downloading them always -->
         <mkdir dir="${dirversion}/lib"/>
-        <mkdir dir="${dirversion}/ooxml-lib"/>
-        <mkdir dir="${dirversion}/compile-lib"/>
         <copy todir="${dirversion}/lib">
             <fileset dir="../../lib"/>
-        </copy>
-        <copy todir="${dirversion}/ooxml-lib">
-            <fileset dir="../../ooxml-lib"/>
-        </copy>
-        <copy todir="${dirversion}/compile-lib">
-            <fileset dir="../../compile-lib"/>
         </copy>
 
         <!-- finally call Ant on the extracted source to check if we can build the packages -->
@@ -115,21 +107,17 @@ Before running this, you should execute the "assemble" target in the main build.
 
         <echo message="Found jar packages at ${jarpackage}, dist: ${dist}"/>
         <path id="libs">
-            <fileset dir="../../lib">
+            <fileset dir="../../lib/main" includes="*.jar"/>
+            <fileset dir="../../lib/ooxml" includes="*.jar"/>
+            <fileset dir="../../lib/main-tests">
                 <include name="junit*.jar"/>
-                <include name="commons-compress*.jar"/>
-            </fileset>
-            <fileset dir="../../ooxml-lib">
-                <include name="ooxml-schemas-*.jar"/>
-                <include name="xmlbeans-3.*.jar"/>
-                <exclude name="xmlbeans-2.*.jar"/>
             </fileset>
         </path>
 
         <echo message="Compiling examples without linking to scratchpad.jar to ensure that only some specific ones require this jar"/>
-        <javac srcdir="../examples/src" destdir="${build}" 
+        <javac srcdir="../examples/src" destdir="${build}"
                target="1.8" source="1.8" debug="true"
-               encoding="ASCII" fork="yes" includeantruntime="false" 
+               encoding="ASCII" fork="yes" includeantruntime="false"
                excludes="org/apache/poi/hslf/**,org/apache/poi/hsmf/**,**/EmbeddedObjects.java,**/EmeddedObjects.java,**/LoadEmbedded.java,**/Word2Forrest.java"
                classpath="${jarpackage}" classpathref="libs">
         </javac>
@@ -151,9 +139,9 @@ Before running this, you should execute the "assemble" target in the main build.
         </pathconvert>
 
         <echo message="Compiling all examples with the additional scratchpad.jar"/>
-        <javac srcdir="../examples/src" destdir="${build}" 
+        <javac srcdir="../examples/src" destdir="${build}"
                target="1.8" source="1.8" debug="true"
-               encoding="ASCII" fork="yes" includeantruntime="false" 
+               encoding="ASCII" fork="yes" includeantruntime="false"
                classpath="${jarpackagescratchpad}" classpathref="libs">
         </javac>
     </target>
