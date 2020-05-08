@@ -50,10 +50,10 @@ public abstract class RangeCopier {
      * @param tileDestRange     destination range, which should be overridden
      */
     public void copyRange(CellRangeAddress tilePatternRange, CellRangeAddress tileDestRange) {
-        copyRange(tilePatternRange, tileDestRange, false);
+        copyRange(tilePatternRange, tileDestRange, false, false);
     }
 
-    public void copyRange(CellRangeAddress tilePatternRange, CellRangeAddress tileDestRange, boolean copyStyles) {
+    public void copyRange(CellRangeAddress tilePatternRange, CellRangeAddress tileDestRange, boolean copyStyles, boolean copyMergedRanges) {
         Sheet sourceCopy = sourceSheet.getWorkbook().cloneSheet(sourceSheet.getWorkbook().getSheetIndex(sourceSheet));
         Map<Integer, CellStyle> styleMap = copyStyles ? new HashMap<Integer, CellStyle>() {} : null;
         int sourceWidthMinus1 = tilePatternRange.getLastColumn() - tilePatternRange.getFirstColumn();
@@ -78,6 +78,10 @@ public abstract class RangeCopier {
             } while (nextCellIndexInRowToCopy <= tileDestRange.getLastColumn());
             nextRowIndexToCopy += heightToCopyMinus1 + 1;
         } while (nextRowIndexToCopy <= tileDestRange.getLastRow());
+
+        if (copyMergedRanges) {
+            sourceSheet.getMergedRegions().forEach((mergedRangeAddress) -> destSheet.addMergedRegion(mergedRangeAddress));
+        }
 
         int tempCopyIndex = sourceSheet.getWorkbook().getSheetIndex(sourceCopy);
         sourceSheet.getWorkbook().removeSheetAt(tempCopyIndex);

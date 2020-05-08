@@ -19,13 +19,13 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+
+import static org.junit.Assert.*;
 
 @Ignore
 public abstract class TestRangeCopier {
@@ -130,9 +130,29 @@ public abstract class TestRangeCopier {
         Sheet destSheet = sheet2;
         CellRangeAddress tileRange = CellRangeAddress.valueOf("D6:D6"); // on sheet1
         CellRangeAddress destRange = CellRangeAddress.valueOf("J6:J6"); // on sheet2
-        transSheetRangeCopier.copyRange(tileRange, destRange, true);
+        transSheetRangeCopier.copyRange(tileRange, destRange, true, false);
         assertEquals(cellContent, getCellContent(destSheet, "J6"));
         assertEquals(toTheRight, getCell(destSheet, "J6").getCellStyle().getAlignment());
+    }
+
+    @Test
+    public void testMergedRanges() {
+        String cellContent = "D6 merged to E7";
+
+//        create cell merged from D6 to E7
+        CellRangeAddress mergedRangeAddress = new CellRangeAddress(5,6,3,4);
+        Cell cell = sheet1.createRow(5).createCell(3);
+        cell.setCellValue(cellContent);
+        sheet1.addMergedRegion(mergedRangeAddress);
+
+        Sheet destSheet = sheet2;
+        CellRangeAddress tileRange = CellRangeAddress.valueOf("D6:E7"); // on sheet1
+        transSheetRangeCopier.copyRange(tileRange, tileRange, false, true);
+        assertEquals(cellContent, getCellContent(destSheet, "D6"));
+        assertFalse(destSheet.getMergedRegions().isEmpty());
+        destSheet.getMergedRegions().forEach((mergedRegion) -> {
+            assertTrue(mergedRegion.equals(mergedRangeAddress));
+        });
     }
 
    protected static String getCellContent(Sheet sheet, String coordinates) {
