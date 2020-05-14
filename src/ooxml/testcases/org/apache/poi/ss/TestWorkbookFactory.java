@@ -28,6 +28,10 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.EncryptedDocumentException;
@@ -437,10 +441,37 @@ public final class TestWorkbookFactory {
         closeOrRevert(wb);
     }
 
+    @Test
+    public void testOpenManyHSSF() throws Exception {
+        final int size = 1000;
+        ExecutorService executorService = Executors.newFixedThreadPool(10);
+        ArrayList<Future<Boolean>> futures = new ArrayList(size);
+        for (int i = 0; i < size; i++) {
+            futures.add(executorService.submit(() -> openHSSFFile()));
+        }
+        for (Future<Boolean> future: futures) {
+            assertTrue(future.get());
+        }
+    }
+
     @Test(expected = IOException.class)
     public void testInvalidFormatException() throws IOException {
         String filename = "OPCCompliance_DerivedPartNameFAIL.docx";
         WorkbookFactory.create(POIDataSamples.getOpenXML4JInstance().openResourceAsStream(filename));
     }
 
+    private boolean openHSSFFile() {
+        try {
+            // POIFS -> hssf
+            Workbook wb = WorkbookFactory.create(
+                    new POIFSFileSystem(HSSFTestDataSamples.openSampleFileStream(xls))
+            );
+            assertNotNull(wb);
+            assertTrue(wb instanceof HSSFWorkbook);
+            assertCloseDoesNotModifyFile(xls, wb);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
 }
