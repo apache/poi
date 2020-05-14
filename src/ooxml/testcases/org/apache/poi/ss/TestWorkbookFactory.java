@@ -45,6 +45,7 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.SuppressForbidden;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
@@ -442,6 +443,7 @@ public final class TestWorkbookFactory {
     }
 
     @Test
+    @SuppressForbidden("test code")
     public void testOpenManyHSSF() throws Exception {
         final int size = 1000;
         ExecutorService executorService = Executors.newFixedThreadPool(10);
