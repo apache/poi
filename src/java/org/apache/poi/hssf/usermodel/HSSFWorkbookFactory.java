@@ -33,6 +33,10 @@ import org.apache.poi.util.Internal;
 public class HSSFWorkbookFactory extends WorkbookFactory {
 
     static {
+        init();
+    }
+
+    public static void init() {
         WorkbookFactory.createHssfFromScratch = HSSFWorkbookFactory::createWorkbook;
         WorkbookFactory.createHssfByNode = HSSFWorkbookFactory::createWorkbook;
     }

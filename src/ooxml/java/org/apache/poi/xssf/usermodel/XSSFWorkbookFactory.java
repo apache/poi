@@ -31,12 +31,15 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 public class XSSFWorkbookFactory extends WorkbookFactory {
 
     static {
+        init();
+    }
+
+    public static void init() {
         WorkbookFactory.createXssfFromScratch = XSSFWorkbookFactory::createWorkbook;
         WorkbookFactory.createXssfByStream = XSSFWorkbookFactory::createWorkbook;
         WorkbookFactory.createXssfByPackage = o -> XSSFWorkbookFactory.createWorkbook((OPCPackage)o);
         WorkbookFactory.createXssfByFile = XSSFWorkbookFactory::createWorkbook;
     }
-
 
     /**
      * Create a new empty Workbook
