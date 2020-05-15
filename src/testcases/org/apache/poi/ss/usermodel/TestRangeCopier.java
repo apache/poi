@@ -19,13 +19,13 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
-
 import org.junit.Ignore;
 import org.junit.Test;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+
+import static org.junit.Assert.*;
 
 @Ignore
 public abstract class TestRangeCopier {
@@ -116,13 +116,57 @@ public abstract class TestRangeCopier {
         assertEquals("1.2", getCellContent(sheet1, "G24"));
     }
 
-    protected static String getCellContent(Sheet sheet, String coordinates) {
+    @Test
+    public void testCopyStyles() {
+        String cellContent = "D6 aligned to the right";
+        HorizontalAlignment toTheRight = HorizontalAlignment.RIGHT;
+        // create cell with content aligned to the right
+        CellStyle style = workbook.createCellStyle();
+        style.setAlignment(toTheRight);
+        Cell cell = sheet1.createRow(5).createCell(3);
+        cell.setCellValue(cellContent);
+        cell.setCellStyle(style);
+
+        Sheet destSheet = sheet2;
+        CellRangeAddress tileRange = CellRangeAddress.valueOf("D6:D6"); // on sheet1
+        CellRangeAddress destRange = CellRangeAddress.valueOf("J6:J6"); // on sheet2
+        transSheetRangeCopier.copyRange(tileRange, destRange, true, false);
+        assertEquals(cellContent, getCellContent(destSheet, "J6"));
+        assertEquals(toTheRight, getCell(destSheet, "J6").getCellStyle().getAlignment());
+    }
+
+    @Test
+    public void testMergedRanges() {
+        String cellContent = "D6 merged to E7";
+
+        // create cell merged from D6 to E7
+        CellRangeAddress mergedRangeAddress = new CellRangeAddress(5,6,3,4);
+        Cell cell = sheet1.createRow(5).createCell(3);
+        cell.setCellValue(cellContent);
+        sheet1.addMergedRegion(mergedRangeAddress);
+
+        Sheet destSheet = sheet2;
+        CellRangeAddress tileRange = CellRangeAddress.valueOf("D6:E7"); // on sheet1
+        transSheetRangeCopier.copyRange(tileRange, tileRange, false, true);
+        assertEquals(cellContent, getCellContent(destSheet, "D6"));
+        assertFalse(destSheet.getMergedRegions().isEmpty());
+        destSheet.getMergedRegions().forEach((mergedRegion) -> {
+            assertTrue(mergedRegion.equals(mergedRangeAddress));
+        });
+    }
+
+   protected static String getCellContent(Sheet sheet, String coordinates) {
+        Cell cell = getCell(sheet, coordinates);
+        return cell == null ? "" : cell.toString();
+   }
+
+   protected static Cell getCell(Sheet sheet, String coordinates) {
         try {
             CellReference p = new CellReference(coordinates);
-            return sheet.getRow(p.getRow()).getCell(p.getCol()).toString();
+            return sheet.getRow(p.getRow()).getCell(p.getCol());
         }
         catch (NullPointerException e) { // row or cell does not exist
-            return "";
+            return null;
         }
     }
 }
