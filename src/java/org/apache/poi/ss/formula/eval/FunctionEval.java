@@ -180,7 +180,7 @@ public final class FunctionEval {
         retval[129] = LogicalFunction.ISBLANK;
         retval[130] = new T();
         // 131: N
-        // 140: DATEVALUE
+        retval[140] = new DateValue();
         // 141: TIMEVALUE
         // 142: SLN
         // 143: SYD

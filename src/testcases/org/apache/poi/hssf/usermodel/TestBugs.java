@@ -2899,6 +2899,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     public void test64261() throws IOException {
         simpleTest("64261.xls");
     }
+    @Test
+    public void test63819() throws IOException {
+        simpleTest("63819.xls");
+    }
     // a simple test which rewrites the file once and evaluates its formulas
     private void simpleTest(String fileName) throws IOException {
         simpleTest(fileName, null);
