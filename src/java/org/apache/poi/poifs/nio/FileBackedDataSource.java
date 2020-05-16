@@ -39,6 +39,8 @@ public class FileBackedDataSource extends DataSource {
     private final static POILogger logger = POILogFactory.getLogger(FileBackedDataSource.class);
 
     private final FileChannel channel;
+    private Long channelSize;
+
     private final boolean writable;
     // remember file base, which needs to be closed too
     private RandomAccessFile srcFile;
@@ -97,8 +99,9 @@ public class FileBackedDataSource extends DataSource {
             // remember this buffer for cleanup
             buffersToClean.put(dst,dst);
         } else {
-            // allocate the buffer on the heap if we cannot map the data in directly
             channel.position(position);
+
+            // allocate the buffer on the heap if we cannot map the data in directly
             dst = ByteBuffer.allocate(length);
 
             // Read the contents and check that we could read some data
@@ -118,6 +121,11 @@ public class FileBackedDataSource extends DataSource {
     @Override
     public void write(ByteBuffer src, long position) throws IOException {
         channel.write(src, position);
+
+        // we have to re-read size if we write "after" the recorded one
+        if(channelSize != null && position >= channelSize) {
+            channelSize = null;
+        }
     }
 
     @Override
@@ -131,7 +139,13 @@ public class FileBackedDataSource extends DataSource {
 
     @Override
     public long size() throws IOException {
-        return channel.size();
+        // this is called often and profiling showed that channel.size()
+        // was taking a large part of processing-time, so we only read it
+        // once
+        if(channelSize == null) {
+            channelSize = channel.size();
+        }
+        return channelSize;
     }
 
     public void releaseBuffer(ByteBuffer buffer) {

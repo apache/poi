@@ -24,11 +24,18 @@ import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.nio.ByteBuffer;
+import java.util.HashMap;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hpsf.NoPropertySetStreamException;
+import org.apache.poi.hpsf.Property;
+import org.apache.poi.hpsf.PropertySet;
+import org.apache.poi.hpsf.Section;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.common.POIFSBigBlockSize;
 import org.apache.poi.poifs.common.POIFSConstants;
@@ -177,7 +184,7 @@ public final class TestPOIFSFileSystem {
 			fail("File is corrupt and shouldn't have been opened");
 		}
 	}
-	
+
 	/**
 	 * Tests that we can write and read a file that contains XBATs
 	 *  as well as regular BATs.
@@ -191,19 +198,19 @@ public final class TestPOIFSFileSystem {
 	   fs.getRoot().createDocument(
 	         "BIG", new ByteArrayInputStream(hugeStream)
 	   );
-	   
+
 	   ByteArrayOutputStream baos = new ByteArrayOutputStream();
 	   fs.writeFilesystem(baos);
 	   byte[] fsData = baos.toByteArray();
-	   
-	   
+
+
 	   // Check the header was written properly
-	   InputStream inp = new ByteArrayInputStream(fsData); 
+	   InputStream inp = new ByteArrayInputStream(fsData);
 	   HeaderBlock header = new HeaderBlock(inp);
 	   assertEquals(109+21, header.getBATCount());
 	   assertEquals(1, header.getXBATCount());
-	   
-	   
+
+
 	   // We should have 21 BATs in the XBAT
 	   ByteBuffer xbatData = ByteBuffer.allocate(512);
 	   xbatData.put(fsData, (1+header.getXBATIndex())*512, 512);
@@ -216,19 +223,19 @@ public final class TestPOIFSFileSystem {
 	      assertEquals(POIFSConstants.UNUSED_BLOCK, xbat.getValueAt(i));
 	   }
 	   assertEquals(POIFSConstants.END_OF_CHAIN, xbat.getValueAt(127));
-	   
-	   
+
+
 	   // Now load it and check
 	   fs = new POIFSFileSystem(
 	         new ByteArrayInputStream(fsData)
 	   );
-	   
+
 	   DirectoryNode root = fs.getRoot();
 	   assertEquals(1, root.getEntryCount());
 	   DocumentNode big = (DocumentNode)root.getEntry("BIG");
 	   assertEquals(hugeStream.length, big.getSize());
 	}
-	
+
 	/**
 	 * Most OLE2 files use 512byte blocks. However, a small number
 	 *  use 4k blocks. Check that we can open these.
@@ -292,5 +299,67 @@ public final class TestPOIFSFileSystem {
 		}
 
 		assertEquals(FileMagic.UNKNOWN, FileMagic.valueOf("foobaa".getBytes(UTF_8)));
+	}
+
+	@Test
+	public void test64322() throws NoPropertySetStreamException, IOException {
+		try (POIFSFileSystem poiFS = new POIFSFileSystem(_samples.getFile("64322.ole2"))) {
+			int count = recurseDir(poiFS.getRoot());
+
+			assertEquals("Expecting a fixed number of entries being found in the test-document",
+					1285, count);
+		}
+	}
+
+	@Test
+	public void test64322a() throws NoPropertySetStreamException, IOException {
+		try (POIFSFileSystem poiFS = new POIFSFileSystem(_samples.openResourceAsStream("64322.ole2"))) {
+			int count = recurseDir(poiFS.getRoot());
+
+			assertEquals("Expecting a fixed number of entries being found in the test-document",
+					1285, count);
+		}
+	}
+
+	private static int recurseDir(DirectoryEntry dir) throws IOException, NoPropertySetStreamException {
+		int count = 0;
+		for (Entry entry : dir) {
+			count++;
+			if (entry instanceof DirectoryEntry) {
+				count += recurseDir((DirectoryEntry) entry);
+			}
+			if (entry instanceof DocumentEntry) {
+				DocumentEntry de = (DocumentEntry) entry;
+				HashMap<String, String> props = new HashMap<>();
+				try (DocumentInputStream dis = new DocumentInputStream(de)) {
+					props.put("name", de.getName());
+
+					if (PropertySet.isPropertySetStream(dis)) {
+						dis.mark(10000000);
+						PropertySet ps = null;
+						try {
+							ps = new PropertySet(dis);
+
+						} catch (UnsupportedEncodingException e) {
+							// ignore
+						}
+						if (ps != null) {
+							for (Section section : ps.getSections()) {
+								for (Property p : section.getProperties()) {
+									String prop = section.getDictionary() != null
+											? section.getDictionary().get(p.getID())
+											: String.valueOf(p.getID());
+									if (p.getValue() != null)
+										props.put("property_" + prop, p.getValue().toString());
+								}
+							}
+						}
+						dis.reset();
+					}
+				}
+				assertTrue(props.size() > 0);
+			}
+		}
+		return count;
 	}
 }
