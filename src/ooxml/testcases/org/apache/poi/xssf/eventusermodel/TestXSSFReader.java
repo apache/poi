@@ -19,13 +19,18 @@ package org.apache.poi.xssf.eventusermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertNotContained;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.InputStream;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.HashSet;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ooxml.POIXMLException;
@@ -36,7 +41,6 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
 import org.junit.Ignore;
@@ -88,8 +92,8 @@ public final class TestXSSFReader {
 
             XSSFReader r = new XSSFReader(pkg);
 
-            assertEquals(11, r.getSharedStringsTable().getItems().size());
-            assertEquals("Test spreadsheet", new XSSFRichTextString(r.getSharedStringsTable().getEntryAt(0)).toString());
+            assertEquals(11, r.getSharedStringsTable().getSharedStringItems().size());
+            assertEquals("Test spreadsheet", r.getSharedStringsTable().getItemAt(0).toString());
         }
 	}
 
@@ -173,7 +177,7 @@ public final class TestXSSFReader {
           assertEquals(3, count);
       }
 	}
-   
+
    /**
     * Iterating over a workbook with chart sheets in it, using the
     *  XSSFReader method
@@ -293,7 +297,7 @@ public final class TestXSSFReader {
      * bug 61304: Call to XSSFReader.getSheetsData() returns duplicate sheets.
      *
      * The problem seems to be caused only by those xlsx files which have a specific
-     * order of the attributes inside the &lt;sheet&gt; tag of workbook.xml 
+     * order of the attributes inside the &lt;sheet&gt; tag of workbook.xml
      *
      * Example (which causes the problems):
      * &lt;sheet name="Sheet6" r:id="rId6" sheetId="4"/&gt;
@@ -323,6 +327,23 @@ public final class TestXSSFReader {
         try(Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("simple-table-named-range.xlsx")) {
             Name name = workbook.getName("total");
             System.out.println("workbook.getName(\"total\").getSheetName() returned: " + name.getSheetName());
+        }
+    }
+
+    @Test
+    public void test64420() throws Exception {
+        try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("64420.xlsm"))) {
+            XSSFReader reader = new XSSFReader(pkg);
+
+            Iterator<InputStream> iter = reader.getSheetsData();
+            byte[] data = new byte[4096];
+            while (iter.hasNext()) {
+                InputStream stream = iter.next();
+                assertNotNull(stream);
+                int read = IOUtils.readFully(stream, data);
+                assertTrue(read > 0);
+                stream.close();
+            }
         }
     }
 }

@@ -69,10 +69,9 @@ public class XSSFReader {
 
     private static final Set<String> WORKSHEET_RELS =
             Collections.unmodifiableSet(new HashSet<>(
-                    Arrays.asList(new String[]{
-                            XSSFRelation.WORKSHEET.getRelation(),
+                    Arrays.asList(XSSFRelation.WORKSHEET.getRelation(),
                             XSSFRelation.CHARTSHEET.getRelation(),
-                    })
+                            XSSFRelation.MACRO_SHEET_BIN.getRelation())
             ));
     private static final POILogger LOGGER = POILogFactory.getLogger(XSSFReader.class);
 
