@@ -274,26 +274,23 @@ public class ToCSV {
                                   String separator, int formattingConvention)
                        throws FileNotFoundException, IOException,
                               IllegalArgumentException {
-        File source = new File(strSource);
-        File destination = new File(strDestination);
-        File[] filesList;
-        String destinationFilename;
-
         // Check that the source file/folder exists.
+        File source = new File(strSource);
         if(!source.exists()) {
             throw new IllegalArgumentException("The source for the Excel " +
-                    "file(s) cannot be found.");
+                    "file(s) cannot be found at " + source);
         }
 
         // Ensure thaat the folder the user has chosen to save the CSV files
         // away into firstly exists and secondly is a folder rather than, for
         // instance, a data file.
+        File destination = new File(strDestination);
         if(!destination.exists()) {
-            throw new IllegalArgumentException("The folder/directory for the " +
+            throw new IllegalArgumentException("The destination directory " + destination + " for the " +
                     "converted CSV file(s) does not exist.");
         }
         if(!destination.isDirectory()) {
-            throw new IllegalArgumentException("The destination for the CSV " +
+            throw new IllegalArgumentException("The destination " + destination + " for the CSV " +
                     "file(s) is not a directory/folder.");
         }
 
@@ -302,7 +299,8 @@ public class ToCSV {
         if(formattingConvention != ToCSV.EXCEL_STYLE_ESCAPING &&
            formattingConvention != ToCSV.UNIX_STYLE_ESCAPING) {
             throw new IllegalArgumentException("The value passed to the " +
-                    "formattingConvention parameter is out of range.");
+                    "formattingConvention parameter is out of range: " + formattingConvention + ", expecting one of " +
+                    ToCSV.EXCEL_STYLE_ESCAPING + " or " + ToCSV.UNIX_STYLE_ESCAPING);
         }
 
         // Copy the spearator character and formatting convention into local
@@ -312,6 +310,7 @@ public class ToCSV {
 
         // Check to see if the sourceFolder variable holds a reference to
         // a file or a folder full of files.
+        final File[] filesList;
         if(source.isDirectory()) {
             // Get a list of all of the Excel spreadsheet files (workbooks) in
             // the source folder/directory
@@ -345,7 +344,7 @@ public class ToCSV {
 
                 // Build the name of the csv folder from that of the Excel workbook.
                 // Simply replace the .xls or .xlsx file extension with .csv
-                destinationFilename = excelFile.getName();
+                String destinationFilename = excelFile.getName();
                 destinationFilename = destinationFilename.substring(
                         0, destinationFilename.lastIndexOf('.')) +
                         ToCSV.CSV_FILE_EXTENSION;
@@ -403,7 +402,6 @@ public class ToCSV {
             // any rows.
             sheet = this.workbook.getSheetAt(i);
             if(sheet.getPhysicalNumberOfRows() > 0) {
-
                 // Note down the index number of the bottom-most row and
                 // then iterate through all of the rows on the sheet starting
                 // from the very first row - number 1 - even if it is missing.
