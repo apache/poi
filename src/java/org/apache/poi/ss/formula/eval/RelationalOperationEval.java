@@ -86,11 +86,11 @@ public abstract class RelationalOperationEval extends Fixed2ArgFunction implemen
 	}
 
 	private static int doCompare(ValueEval va, ValueEval vb) {
-		// special cases when one operand is blank
-		if (va == BlankEval.instance) {
+		// special cases when one operand is blank or missing
+		if (va == BlankEval.instance || va instanceof MissingArgEval) {
 			return compareBlank(vb);
 		}
-		if (vb == BlankEval.instance) {
+		if (vb == BlankEval.instance || vb instanceof MissingArgEval) {
 			return -compareBlank(va);
 		}
 
@@ -131,7 +131,7 @@ public abstract class RelationalOperationEval extends Fixed2ArgFunction implemen
 	}
 
 	private static int compareBlank(ValueEval v) {
-		if (v == BlankEval.instance) {
+		if (v == BlankEval.instance || v instanceof MissingArgEval) {
 			return 0;
 		}
 		if (v instanceof BoolEval) {

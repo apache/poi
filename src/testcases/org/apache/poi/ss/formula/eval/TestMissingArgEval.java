@@ -18,6 +18,8 @@
 package org.apache.poi.ss.formula.eval;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
@@ -51,6 +53,66 @@ public final class TestMissingArgEval {
 			cell.setCellFormula("\"abc\"&if(true,)");
 			fe.clearAllCachedResultValues();
 			assertEquals("abc", fe.evaluate(cell).getStringValue());
+		}
+	}
+
+	@Test
+	public void testCompareMissingArgs() throws IOException {
+		try (HSSFWorkbook wb = new HSSFWorkbook()) {
+			HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
+			HSSFSheet sheet = wb.createSheet("Sheet1");
+			HSSFCell cell = sheet.createRow(0).createCell(0);
+
+			cell.setCellFormula("iferror(0/0,)<0");
+			fe.clearAllCachedResultValues();
+			CellValue cv = fe.evaluate(cell);
+			assertFalse(cv.getBooleanValue());
+
+			cell.setCellFormula("iferror(0/0,)<=0");
+			fe.clearAllCachedResultValues();
+			cv = fe.evaluate(cell);
+			assertTrue(cv.getBooleanValue());
+
+			cell.setCellFormula("iferror(0/0,)=0");
+			fe.clearAllCachedResultValues();
+			cv = fe.evaluate(cell);
+			assertTrue(cv.getBooleanValue());
+
+			cell.setCellFormula("iferror(0/0,)>=0");
+			fe.clearAllCachedResultValues();
+			cv = fe.evaluate(cell);
+			assertTrue(cv.getBooleanValue());
+
+			cell.setCellFormula("iferror(0/0,)>0");
+			fe.clearAllCachedResultValues();
+			cv = fe.evaluate(cell);
+			assertFalse(cv.getBooleanValue());
+
+			// invert above for code coverage
+			cell.setCellFormula("0<iferror(0/0,)");
+            fe.clearAllCachedResultValues();
+            cv = fe.evaluate(cell);
+            assertFalse(cv.getBooleanValue());
+
+            cell.setCellFormula("0<=iferror(0/0,)");
+            fe.clearAllCachedResultValues();
+            cv = fe.evaluate(cell);
+            assertTrue(cv.getBooleanValue());
+
+            cell.setCellFormula("0=iferror(0/0,)");
+            fe.clearAllCachedResultValues();
+            cv = fe.evaluate(cell);
+            assertTrue(cv.getBooleanValue());
+
+            cell.setCellFormula("0>=iferror(0/0,)");
+            fe.clearAllCachedResultValues();
+            cv = fe.evaluate(cell);
+            assertTrue(cv.getBooleanValue());
+
+            cell.setCellFormula("0>iferror(0/0,)");
+            fe.clearAllCachedResultValues();
+            cv = fe.evaluate(cell);
+            assertFalse(cv.getBooleanValue());
 		}
 	}
 
