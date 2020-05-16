@@ -33,6 +33,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.util.LocaleUtil;
 
 /**
  * Implementation for the DATEVALUE() Excel function.<p>
@@ -101,7 +102,7 @@ public class DateValue extends Fixed1ArgFunction {
                     }
                     int year = format.hasYear
                             ? Integer.valueOf(groups.get(format.yearIndex))
-                            : LocalDate.now().getYear();
+                            : LocalDate.now(LocaleUtil.getUserTimeZone().toZoneId()).getYear();
                     int month = parseMonth(groups.get(format.monthIndex));
                     int day = Integer.valueOf(groups.get(format.dayIndex));
                     return new NumberEval(DateUtil.getExcelDate(LocalDate.of(year, month, day)));
@@ -124,9 +125,9 @@ public class DateValue extends Fixed1ArgFunction {
         }
 
 
-        String[] months = new DateFormatSymbols().getMonths();
+        String[] months = DateFormatSymbols.getInstance(LocaleUtil.getUserLocale()).getMonths();
         for (int month = 0; month < months.length; ++month) {
-            if (months[month].toLowerCase().startsWith(monthPart.toLowerCase())) {
+            if (months[month].toLowerCase(LocaleUtil.getUserLocale()).startsWith(monthPart.toLowerCase(LocaleUtil.getUserLocale()))) {
                 return month + 1;
             }
         }
