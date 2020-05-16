@@ -101,10 +101,10 @@ public class DateValue extends Fixed1ArgFunction {
                         groups.add(matchResult.group(i));
                     }
                     int year = format.hasYear
-                            ? Integer.valueOf(groups.get(format.yearIndex))
+                            ? Integer.parseInt(groups.get(format.yearIndex))
                             : LocalDate.now(LocaleUtil.getUserTimeZone().toZoneId()).getYear();
                     int month = parseMonth(groups.get(format.monthIndex));
-                    int day = Integer.valueOf(groups.get(format.dayIndex));
+                    int day = Integer.parseInt(groups.get(format.dayIndex));
                     return new NumberEval(DateUtil.getExcelDate(LocalDate.of(year, month, day)));
 
                 }
@@ -120,7 +120,7 @@ public class DateValue extends Fixed1ArgFunction {
 
     private int parseMonth(String monthPart) {
         try {
-            return Integer.valueOf(monthPart);
+            return Integer.parseInt(monthPart);
         } catch (NumberFormatException ignored) {
         }
 

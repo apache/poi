@@ -53,8 +53,9 @@ public abstract class WorkbookFactory {
         Workbook apply(T t, U u) throws IOException;
     }
 
-    private static Object hssfLock = new Object();
-    private static Object xssfLock = new Object();
+    private static final Object hssfLock = new Object();
+    private static final Object xssfLock = new Object();
+
     protected static CreateWorkbook0 createHssfFromScratch;
     protected static CreateWorkbook1<DirectoryNode> createHssfByNode;
 
@@ -338,7 +339,7 @@ public abstract class WorkbookFactory {
             synchronized (xssfLock) {
                 if (createXssfFromScratch == null) {
                     String factoryClass = "org.apache.poi.xssf.usermodel.XSSFWorkbookFactory";
-                    Class cls = initFactory(factoryClass, "poi-ooxml-*.jar");
+                    Class<?> cls = initFactory(factoryClass, "poi-ooxml-*.jar");
                     try {
                         cls.getMethod("init").invoke(null);
                     } catch (Exception e) {
@@ -355,7 +356,7 @@ public abstract class WorkbookFactory {
             synchronized (hssfLock) {
                 if (createHssfFromScratch == null) {
                     String factoryClass = "org.apache.poi.hssf.usermodel.HSSFWorkbookFactory";
-                    Class cls = initFactory(factoryClass, "poi-*.jar");
+                    Class<?> cls = initFactory(factoryClass, "poi-*.jar");
                     try {
                         cls.getMethod("init").invoke(null);
                     } catch (Exception e) {
@@ -366,7 +367,7 @@ public abstract class WorkbookFactory {
         }
     }
 
-    private static Class initFactory(String factoryClass, String jar) throws IOException {
+    private static Class<?> initFactory(String factoryClass, String jar) throws IOException {
         try {
             return Class.forName(factoryClass, true, WorkbookFactory.class.getClassLoader());
         } catch (ClassNotFoundException e) {

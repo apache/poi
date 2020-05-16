@@ -379,8 +379,7 @@ public class PropertySet {
      * stream, else {@code false}.
      * @exception IOException if an I/O error occurs
      */
-    public static boolean isPropertySetStream(final InputStream stream)
-    throws IOException {
+    public static boolean isPropertySetStream(final InputStream stream) throws IOException {
         /*
          * Read at most this many bytes.
          */
