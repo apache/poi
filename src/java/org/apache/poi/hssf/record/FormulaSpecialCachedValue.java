@@ -145,7 +145,7 @@ public final class FormulaSpecialCachedValue implements GenericRecord {
     }
 
     /**
-     * @deprecated POI 4.1.3, will be removed in 5.0, use getValueTypeEnum until switch to enum is fully done
+     * @deprecated POI 5.0.0, will be removed in 5.0, use getValueTypeEnum until switch to enum is fully done
      */
     @Deprecated
     public int getValueType() {
@@ -165,7 +165,7 @@ public final class FormulaSpecialCachedValue implements GenericRecord {
     /**
      * Returns the type of the cached value
      * @return A CellType
-     * @since POI 4.1.3
+     * @since POI 5.0.0
      */
     public CellType getValueTypeEnum() {
         int typeCode = getTypeCode();

@@ -325,7 +325,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
 
     /**
      * Remove the chart title.
-     * @since POI 4.1.3
+     * @since POI 5.0.0
      */
     public void removeTitle() {
         setAutoTitleDeleted(true);

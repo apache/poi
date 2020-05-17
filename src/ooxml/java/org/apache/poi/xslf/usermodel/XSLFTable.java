@@ -171,7 +171,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
     /**
      * Insert a new row at the given index.
      * @param rowIdx the row index.
-     * @since POI 4.1.3
+     * @since POI 5.0.0
      */
     public XSLFTableRow insertRow(int rowIdx) {
         if (getNumberOfRows() < rowIdx) {

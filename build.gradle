@@ -90,7 +90,7 @@ subprojects {
     // See https://github.com/melix/japicmp-gradle-plugin
     apply plugin: 'me.champeau.gradle.japicmp'
 
-    version = '4.1.3-SNAPSHOT'
+    version = '5.0.0-SNAPSHOT'
     ext {
         bouncyCastleVersion = '1.65'
         commonsCodecVersion = '1.14'

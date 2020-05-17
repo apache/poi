@@ -240,7 +240,7 @@ public class SignatureConfig {
     /**
      * @return the opc package to be used by this thread, stored as thread-local
      *
-     * @deprecated in POI 4.1.3 - use {@link SignatureInfo#setOpcPackage(OPCPackage)} instead
+     * @deprecated in POI 5.0.0 - use {@link SignatureInfo#setOpcPackage(OPCPackage)} instead
      */
     @Deprecated
     @Removal(version = "5.0.0")
@@ -251,7 +251,7 @@ public class SignatureConfig {
     /**
      * @param opcPackage the opc package to be handled by this thread, stored as thread-local
      *
-     * @deprecated in POI 4.1.3 - use {@link SignatureInfo#setOpcPackage(OPCPackage)} instead
+     * @deprecated in POI 5.0.0 - use {@link SignatureInfo#setOpcPackage(OPCPackage)} instead
      */
     @Deprecated
     @Removal(version = "5.0.0")
@@ -351,7 +351,7 @@ public class SignatureConfig {
     /**
      * @return the dereferencer used for Reference/@URI attributes, defaults to {@link OOXMLURIDereferencer}
      *
-     * @deprecated in POI 4.1.3 - use {@link SignatureInfo#getUriDereferencer()} instead
+     * @deprecated in POI 5.0.0 - use {@link SignatureInfo#getUriDereferencer()} instead
      */
     @Deprecated
     @Removal(version = "5.0.0")
@@ -362,7 +362,7 @@ public class SignatureConfig {
     /**
      * @param uriDereferencer the dereferencer used for Reference/@URI attributes
      *
-     * @deprecated in POI 4.1.3 - use {@link SignatureInfo#setUriDereferencer(URIDereferencer)} instead
+     * @deprecated in POI 5.0.0 - use {@link SignatureInfo#setUriDereferencer(URIDereferencer)} instead
      */
     @Deprecated
     @Removal(version = "5.0.0")
@@ -878,7 +878,7 @@ public class SignatureConfig {
     /**
      * @param signatureFactory the xml signature factory, saved as thread-local
      *
-     * @deprecated in POI 4.1.3 - use {@link SignatureInfo#setSignatureFactory(XMLSignatureFactory)}
+     * @deprecated in POI 5.0.0 - use {@link SignatureInfo#setSignatureFactory(XMLSignatureFactory)}
      */
     @Deprecated
     @Removal(version = "5.0.0")
@@ -889,7 +889,7 @@ public class SignatureConfig {
     /**
      * @return the xml signature factory (thread-local)
      *
-     * @deprecated in POI 4.1.3 - will be handled by SignatureInfo internally
+     * @deprecated in POI 5.0.0 - will be handled by SignatureInfo internally
      */
     @Deprecated
     @Removal(version = "5.0.0")
@@ -900,7 +900,7 @@ public class SignatureConfig {
     /**
      * @param keyInfoFactory the key factory, saved as thread-local
      *
-     * @deprecated in POI 4.1.3 - use {@link SignatureInfo#setKeyInfoFactory(KeyInfoFactory)}
+     * @deprecated in POI 5.0.0 - use {@link SignatureInfo#setKeyInfoFactory(KeyInfoFactory)}
      */
     @Deprecated
     @Removal(version = "5.0.0")
@@ -911,7 +911,7 @@ public class SignatureConfig {
     /**
      * @return the key factory (thread-local)
      *
-     * @deprecated in POI 4.1.3 - will be handled by SignatureInfo internally
+     * @deprecated in POI 5.0.0 - will be handled by SignatureInfo internally
      */
     @Deprecated
     @Removal(version = "5.0.0")
@@ -922,7 +922,7 @@ public class SignatureConfig {
     /**
      * Helper method to set provider
      * @param provider the provider
-     * @deprecated in POI 4.1.3 - use {@link SignatureInfo#setProvider(Provider)}
+     * @deprecated in POI 5.0.0 - use {@link SignatureInfo#setProvider(Provider)}
      */
     @Internal
     @Deprecated
@@ -934,7 +934,7 @@ public class SignatureConfig {
     /**
      * @return the cached provider or null if not set before
      *
-     * @deprecated in POI 4.1.3 - will be handled by SignatureInfo internally
+     * @deprecated in POI 5.0.0 - will be handled by SignatureInfo internally
      */
     @Deprecated
     @Removal(version = "5.0.0")

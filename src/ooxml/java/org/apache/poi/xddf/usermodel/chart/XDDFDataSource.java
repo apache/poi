@@ -55,7 +55,7 @@ public interface XDDFDataSource<T> {
     String getFormatCode();
 
     /**
-     * @since POI 4.1.3
+     * @since POI 5.0.0
      */
     @Internal
     default void fillNumericalCache(CTNumData cache) {

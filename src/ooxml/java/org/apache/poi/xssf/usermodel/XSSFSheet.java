@@ -117,7 +117,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
 
     /**
      * Kept for backwards-compatibility, use {@link Font#TWIPS_PER_POINT} instead.
-     * @deprecated POI 4.1.3
+     * @deprecated POI 5.0.0
      */
     public static final int TWIPS_PER_POINT = Font.TWIPS_PER_POINT;
 

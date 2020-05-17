@@ -61,7 +61,7 @@ public abstract class RangeCopier {
      * @param tileDestRange    destination range, which should be overridden
      * @param copyStyles       whether to copy the cell styles
      * @param copyMergedRanges whether to copy merged ranges
-     * @since 4.1.3
+     * @since 5.0.0
      */
     public void copyRange(CellRangeAddress tilePatternRange, CellRangeAddress tileDestRange, boolean copyStyles, boolean copyMergedRanges) {
         Sheet sourceCopy = sourceSheet.getWorkbook().cloneSheet(sourceSheet.getWorkbook().getSheetIndex(sourceSheet));
