@@ -57,6 +57,7 @@ public abstract class AbstractFileHandler implements FileHandler {
         EXPECTED_EXTRACTOR_FAILURES.add("hmef/bug63955-winmail.dat");
         EXPECTED_EXTRACTOR_FAILURES.add("hpsf/Test0313rur.adm");
         EXPECTED_EXTRACTOR_FAILURES.add("poifs/Notes.ole2");
+        EXPECTED_EXTRACTOR_FAILURES.add("poifs/64322.ole2");
     }
 
     @Override
