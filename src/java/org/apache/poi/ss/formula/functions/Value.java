@@ -36,7 +36,7 @@ import java.time.DateTimeException;
  * Scientific notation is also supported. If the supplied text does not convert
  * properly the result is <b>#VALUE!</b> error. Blank string converts to zero.
  */
-public final class Value extends Fixed1ArgFunction {
+public final class Value extends Fixed1ArgFunction implements ArrayFunction {
 
 	/** "1,0000" is valid, "1,00" is not */
 	private static final int MIN_DISTANCE_BETWEEN_THOUSANDS_SEPARATOR = 4;
@@ -56,6 +56,16 @@ public final class Value extends Fixed1ArgFunction {
 			return ErrorEval.VALUE_INVALID;
 		}
 		return new NumberEval(result.doubleValue());
+	}
+
+	@Override
+	public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex){
+		if (args.length != 1) {
+			return ErrorEval.VALUE_INVALID;
+		}
+		return evaluateOneArrayArg(args[0], srcRowIndex, srcColumnIndex, (valA) ->
+			evaluate(srcRowIndex, srcColumnIndex, valA)
+		);
 	}
 
 	/**

@@ -2903,6 +2903,20 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     public void test63819() throws IOException {
         simpleTest("63819.xls");
     }
+
+    /**
+     * Test that VALUE behaves properly as array function and its result is handled by aggregate function
+     */
+    @Test
+    public void testValueAsArrayFunction() throws IOException {
+        try (final Workbook wb = openSampleWorkbook("TestValueAsArrayFunction.xls")) {
+            wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+            Sheet sheet = wb.getSheetAt(0);
+            Row row = sheet.getRow(0);
+            Cell cell = row.getCell(0);
+            assertEquals(6.0, cell.getNumericCellValue(), 0.0);
+        }
+    }
     // a simple test which rewrites the file once and evaluates its formulas
     private void simpleTest(String fileName) throws IOException {
         simpleTest(fileName, null);
