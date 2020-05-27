@@ -71,10 +71,6 @@ public class XSLFTextRun implements TextRun {
         }
     }
 
-    XSLFTextParagraph getParentParagraph(){
-        return _p;
-    }
-
     @Override
     public String getRawText(){
         if (_r instanceof CTTextField) {
@@ -123,14 +119,14 @@ public class XSLFTextRun implements TextRun {
         CTTextCharacterProperties rPr = getRPr(true);
         CTSolidColorFillProperties fill = rPr.isSetSolidFill() ? rPr.getSolidFill() : rPr.addNewSolidFill();
 
-        XSLFSheet sheet = getParentParagraph().getParentShape().getSheet();
+        XSLFSheet sheet = getParagraph().getParentShape().getSheet();
         XSLFColor col = new XSLFColor(fill, sheet.getTheme(), fill.getSchemeClr(), sheet);
         col.setColor(c);
     }
 
     @Override
     public PaintStyle getFontColor(){
-        final boolean hasPlaceholder = getParentParagraph().getParentShape().getPlaceholder() != null;
+        final boolean hasPlaceholder = getParagraph().getParentShape().getPlaceholder() != null;
         CharacterPropertyFetcher<PaintStyle> fetcher = new CharacterPropertyFetcher<PaintStyle>(_p.getIndentLevel()){
             @Override
             public boolean fetch(CTTextCharacterProperties props){
@@ -182,7 +178,7 @@ public class XSLFTextRun implements TextRun {
     @Override
     public Double getFontSize(){
         double scale = 1;
-        final XSLFTextShape ps = getParentParagraph().getParentShape();
+        final XSLFTextShape ps = getParagraph().getParentShape();
         if (ps != null) {
             final CTTextBodyProperties tbp = ps.getTextBodyPr();
             if (tbp != null) {
