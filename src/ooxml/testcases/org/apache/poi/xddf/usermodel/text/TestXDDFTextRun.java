@@ -18,16 +18,22 @@ package org.apache.poi.xddf.usermodel.text;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.List;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
+import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
+import org.apache.poi.xslf.usermodel.XSLFTextRun;
 import org.apache.poi.xslf.usermodel.XSLFTextShape;
 import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
@@ -131,6 +137,31 @@ public class TestXDDFTextRun {
             assertFalse(run.isUnderline());
 
             assertNotNull(run.getText());
+        }
+    }
+
+    @Test
+    public void testDefaultRunProperties() throws IOException {
+        // bug #63290
+        POIDataSamples pds = POIDataSamples.getSlideShowInstance();
+        try (InputStream is = pds.openResourceAsStream("bug63290.pptx");
+             XMLSlideShow ppt = new XMLSlideShow(is)) {
+            XSLFSlide slide = ppt.getSlides().get(0);
+            for (XSLFShape shape : slide.getShapes()) {
+                if (shape instanceof  XSLFTextShape) {
+                    XSLFTextShape text = (XSLFTextShape) shape;
+                    XDDFTextParagraph paragraph = text.getTextBody().getParagraph(0);
+                    XDDFTextRun defaultRun = paragraph.getTextRuns().get(0);
+                    assertEquals("DefaultRunProperties", defaultRun.getText().trim());
+                    XDDFTextRun explicitRun = paragraph.getTextRuns().get(1);
+                    assertEquals("ExplicitRunProperties", explicitRun.getText().trim());
+                    assertEquals(defaultRun.getDirty(), explicitRun.getDirty());
+                    assertEquals(defaultRun.getFontSize(), explicitRun.getFontSize());
+                    assertEquals(defaultRun.getLanguage(), explicitRun.getLanguage());
+                    assertEquals(defaultRun.getSpellError(), explicitRun.getSpellError());
+                    assertNotEquals(defaultRun.getFontColor(), explicitRun.getFontColor());
+                }
+            }
         }
     }
 }

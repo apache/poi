@@ -21,11 +21,15 @@ package org.apache.poi.xslf.usermodel;
 import static org.apache.poi.sl.TestCommonSL.getColor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.awt.Color;
 import java.io.IOException;
+import java.io.InputStream;
 
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.sl.draw.DrawTextParagraph;
 import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;
@@ -118,4 +122,27 @@ public class TestXSLFTextRun {
 
         r.copy(s);
     }
+
+    @Test
+    public void testDefaultRunProperties() throws IOException {
+        // bug #63290
+        POIDataSamples pds = POIDataSamples.getSlideShowInstance();
+        try (InputStream is = pds.openResourceAsStream("bug63290.pptx");
+             XMLSlideShow ppt = new XMLSlideShow(is)) {
+            XSLFSlide slide = ppt.getSlides().get(0);
+            for (XSLFShape shape : slide.getShapes()) {
+                if (shape instanceof  XSLFTextShape) {
+                    XSLFTextShape text = (XSLFTextShape) shape;
+                    XSLFTextParagraph paragraph = text.getTextParagraphs().get(0);
+                    XSLFTextRun defaultRun = paragraph.getTextRuns().get(0);
+                    assertEquals("DefaultRunProperties", defaultRun.getRawText().trim());
+                    XSLFTextRun explicitRun = paragraph.getTextRuns().get(1);
+                    assertEquals("ExplicitRunProperties", explicitRun.getRawText().trim());
+                    assertEquals(defaultRun.getFontSize(), explicitRun.getFontSize());
+                    assertNotEquals(defaultRun.getFontColor(), explicitRun.getFontColor());
+                }
+            }
+        }
+    }
+
 }

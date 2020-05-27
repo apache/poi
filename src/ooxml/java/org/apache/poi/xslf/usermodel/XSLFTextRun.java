@@ -492,6 +492,9 @@ public class XSLFTextRun implements TextRun {
                 return tr.addNewRPr();
             }
         }
+        if (_p.getXmlObject().isSetPPr() && _p.getXmlObject().getPPr().isSetDefRPr()) {
+            return _p.getXmlObject().getPPr().getDefRPr();
+        }
         return null;
     }
 

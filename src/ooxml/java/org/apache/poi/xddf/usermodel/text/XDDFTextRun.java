@@ -612,7 +612,8 @@ public class XDDFTextRun {
         } else if (isRegularRun() && _rtr.isSetRPr()) {
             return _rtr.getRPr();
         }
-        return null;
+        XDDFRunProperties defaultProperties = _parent.getDefaultRunProperties();
+        return (defaultProperties == null) ? null : defaultProperties.getXmlObject();
     }
 
     private XDDFRunProperties getOrCreateProperties() {
