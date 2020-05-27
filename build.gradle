@@ -256,8 +256,8 @@ project('ooxml') {
 
         compile project(':main')
         compile project(':scratchpad')		// TODO: get rid of this dependency!
-        compile files('../../ooxml-lib/ooxml-schemas-1.4.jar')
-        compile files('../../ooxml-lib/ooxml-security-1.1.jar')
+        compile files('../../lib/ooxml/ooxml-schemas-1.4.jar')
+        compile files('../../lib/ooxml/ooxml-security-1.1.jar')
 
         testCompile "junit:junit:${junitVersion}"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
@@ -290,7 +290,7 @@ project('examples') {
         compile project(':ooxml')
         compile project(':scratchpad')
         compile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
-        compile files('../../ooxml-lib/ooxml-schemas-1.4.jar')
+        compile files('../../lib/ooxml/ooxml-schemas-1.4.jar')
         compile "org.apache.commons:commons-compress:${commonsCompressVersion}"
     }
 
@@ -335,7 +335,7 @@ project('integrationtest') {
 
         testCompile "junit:junit:${junitVersion}"
         testCompile  "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
-        testCompile files('../../ooxml-lib/ooxml-schemas-1.4.jar')
+        testCompile files('../../lib/ooxml/ooxml-schemas-1.4.jar')
     }
 
 	jar {
