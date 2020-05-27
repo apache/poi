@@ -54,34 +54,34 @@ ant.taskdef(name: "junit",
         classpath: configurations.antLibs.asPath)
 
 wrapper {
-	gradleVersion = '6.1.1'
+    gradleVersion = '6.1.1'
 }
 
 task adjustWrapperPropertiesFile {
-	doLast {
-		ant.replaceregexp(match:'^#.*', replace:'', flags:'g', byline:true) {
-			fileset(dir: project.projectDir, includes: 'gradle/wrapper/gradle-wrapper.properties')
-		}
-		new File(project.projectDir, 'gradle/wrapper/gradle-wrapper.properties').with { it.text = it.readLines().findAll { it }.sort().join('\n') }
-		ant.fixcrlf(file: 'gradle/wrapper/gradle-wrapper.properties', eol: 'lf')
-	}
+    doLast {
+        ant.replaceregexp(match:'^#.*', replace:'', flags:'g', byline:true) {
+            fileset(dir: project.projectDir, includes: 'gradle/wrapper/gradle-wrapper.properties')
+        }
+        new File(project.projectDir, 'gradle/wrapper/gradle-wrapper.properties').with { it.text = it.readLines().findAll { it }.sort().join('\n') }
+        ant.fixcrlf(file: 'gradle/wrapper/gradle-wrapper.properties', eol: 'lf')
+    }
 }
 wrapper.finalizedBy adjustWrapperPropertiesFile
 
 /**
 
-Define properties for all projects, including this one
+ Define properties for all projects, including this one
 
-*/
+ */
 allprojects {
     apply plugin: 'eclipse'
 }
 
 /**
 
-Define things that are only necessary in sub-projects, but not in the master-project itself
+ Define things that are only necessary in sub-projects, but not in the master-project itself
 
-*/
+ */
 subprojects {
     //Put instructions for each sub project, but not the master
     apply plugin: 'java'
@@ -256,8 +256,8 @@ project('ooxml') {
 
         compile project(':main')
         compile project(':scratchpad')		// TODO: get rid of this dependency!
-        compile files('../../ooxml-lib/ooxml-schemas-1.4.jar')
-        compile files('../../ooxml-lib/ooxml-security-1.1.jar')
+        compile files('../../lib/ooxml/ooxml-schemas-1.4.jar')
+        compile files('../../lib/ooxml/ooxml-security-1.1.jar')
 
         testCompile "junit:junit:${junitVersion}"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
@@ -276,7 +276,7 @@ project('ooxml') {
 
     japicmp.baseline = "org.apache.poi:poi:${japicmpversion}@jar"
 
-	test {
+    test {
         // for some reason catching the OOM does not work when run from Gradle
         exclude '**/MemoryUsage.class'
     }
@@ -290,7 +290,7 @@ project('examples') {
         compile project(':ooxml')
         compile project(':scratchpad')
         compile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
-        compile files('../../ooxml-lib/ooxml-schemas-1.4.jar')
+        compile files('../../lib/ooxml/ooxml-schemas-1.4.jar')
         compile "org.apache.commons:commons-compress:${commonsCompressVersion}"
     }
 
@@ -313,11 +313,11 @@ project('excelant') {
         testCompile "junit:junit:${junitVersion}"
     }
 
-	jar {
-		manifest {
-			attributes 'Automatic-Module-Name': 'org.apache.poi.excelant'
-		}
-	}
+    jar {
+        manifest {
+            attributes 'Automatic-Module-Name': 'org.apache.poi.excelant'
+        }
+    }
 
     japicmp.baseline = "org.apache.poi:poi-excelant:${japicmpversion}@jar"
 }
@@ -335,16 +335,16 @@ project('integrationtest') {
 
         testCompile "junit:junit:${junitVersion}"
         testCompile  "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
-        testCompile files('../../ooxml-lib/ooxml-schemas-1.4.jar')
+        testCompile files('../../lib/ooxml/ooxml-schemas-1.4.jar')
     }
 
-	jar {
-		manifest {
-			attributes 'Automatic-Module-Name': 'org.apache.poi.integrationtest'
-		}
-	}
+    jar {
+        manifest {
+            attributes 'Automatic-Module-Name': 'org.apache.poi.integrationtest'
+        }
+    }
 
-	test {
+    test {
         // exclude these from the normal test-run
         exclude '**/TestAllFiles.class'
         exclude '**/*FileHandler.class'
@@ -377,11 +377,11 @@ project('scratchpad') {
         testCompile project(path: ':main', configuration: 'tests')
     }
 
-	jar {
-		manifest {
-			attributes 'Automatic-Module-Name': 'org.apache.poi.scratchpad'
-		}
-	}
+    jar {
+        manifest {
+            attributes 'Automatic-Module-Name': 'org.apache.poi.scratchpad'
+        }
+    }
 
     japicmp.baseline = "org.apache.poi:poi:${japicmpversion}@jar"
 }
