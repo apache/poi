@@ -51,6 +51,7 @@ under the License.
     <property name="repository.pentaho" value="https://nexus.pentaho.org/"/>
 
     <property name="main.lib" location="${basedir}/lib/main"/>
+    <property name="main-tests.lib" location="${basedir}/lib/main-tests"/>
     <property name="ooxml.lib" location="${basedir}/lib/ooxml"/>
     <property name="ooxml-tests.lib" location="${basedir}/lib/ooxml-tests"/>
     <property name="util.lib" location="${basedir}/lib/util"/>
@@ -1926,20 +1927,18 @@ under the License.
                     <include name="commons-codec-*.jar"/>
                     <include name="commons-logging-*.jar"/>
                     <include name="commons-collections4-*.jar"/>
-                    <include name="commons-compress*.jar"/>
                     <include name="commons-math3-*.jar"/>
                     <include name="jaxb-api-*.jar"/>
                     <include name="jaxb-impl-*.jar"/>
                     <include name="jaxb-core-*.jar"/>
                     <include name="activation-*.jar"/>
-                    <include name="junit-*.jar"/>
                     <include name="log4j-*.jar"/>
                     <include name="SparseBitSet-*.jar"/>
                 </fileset>
                 <globmapper from="*" to="${zipdir}/lib/*"/>
             </mappedresources>
             <mappedresources cache="true">
-                <fileset dir="${ooxml.lib}" includes="xmlbeans-*.jar,curvesapi-*.jar"/>
+                <fileset dir="${ooxml.lib}" includes="xmlbeans-*.jar,curvesapi-*.jar,commons-compress*.jar"/>
                 <regexpmapper from="^(.*\.jar)$$" to="${zipdir}/ooxml-lib/\1"/>
             </mappedresources>
             <mappedresources cache="true">
