@@ -1928,9 +1928,6 @@ under the License.
                     <include name="commons-logging-*.jar"/>
                     <include name="commons-collections4-*.jar"/>
                     <include name="commons-math3-*.jar"/>
-                    <include name="jaxb-api-*.jar"/>
-                    <include name="jaxb-impl-*.jar"/>
-                    <include name="jaxb-core-*.jar"/>
                     <include name="activation-*.jar"/>
                     <include name="log4j-*.jar"/>
                     <include name="SparseBitSet-*.jar"/>
