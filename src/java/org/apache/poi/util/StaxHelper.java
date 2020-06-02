@@ -28,7 +28,7 @@ import javax.xml.stream.XMLOutputFactory;
  * @deprecated use {@link XMLHelper}
  */
 @Deprecated
-@Removal(version = "5.0.0")
+@Removal(version = "6.0.0")
 public final class StaxHelper {
     private StaxHelper() {
     }

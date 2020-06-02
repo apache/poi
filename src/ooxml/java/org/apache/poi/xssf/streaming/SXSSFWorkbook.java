@@ -113,7 +113,10 @@ public class SXSSFWorkbook implements Workbook {
      */
     private final SharedStringsTable _sharedStringSource;
 
-    private Zip64Mode zip64Mode = Zip64Mode.AsNeeded;
+    /**
+     * controls whether Zip64 mode is used - Always became the default in POI 5.0.0
+     */
+    private Zip64Mode zip64Mode = Zip64Mode.Always;
 
     /**
      * Construct a new workbook with default row window size

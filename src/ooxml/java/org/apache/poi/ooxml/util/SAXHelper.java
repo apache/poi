@@ -30,7 +30,7 @@ import org.xml.sax.XMLReader;
  * @deprecated use {@link XMLHelper}
  */
 @Deprecated
-@Removal(version = "5.0.0")
+@Removal(version = "6.0.0")
 public final class SAXHelper {
     /**
      * Creates a new SAX XMLReader, with sensible defaults
