@@ -41,7 +41,7 @@ public class DrawTextShape extends DrawSimpleShape {
     @Override
     public void drawContent(Graphics2D graphics) {
         TextShape<?,?> s = getShape();
-        
+
         Rectangle2D anchor = DrawShape.getAnchor(graphics, s);
         if(anchor == null) {
             return;
@@ -53,7 +53,7 @@ public class DrawTextShape extends DrawSimpleShape {
 
         // remember the initial transform
         AffineTransform tx = graphics.getTransform();
-    
+
         // Transform of text in flipped shapes is special.
         // At this point the flip and rotation transform is already applied
         // (see DrawShape#applyTransform ), but we need to restore it to avoid painting "upside down".
@@ -68,7 +68,7 @@ public class DrawTextShape extends DrawSimpleShape {
             horzFlip ^= ps.getFlipHorizontal();
             sc = ps.getParent();
         }
-        
+
         // Horizontal flipping applies only to shape outline and not to the text in the shape.
         // Applying flip second time restores the original not-flipped transform
         if (horzFlip ^ vertFlip) {
@@ -87,7 +87,7 @@ public class DrawTextShape extends DrawSimpleShape {
             graphics.rotate(Math.toRadians(textRot));
             graphics.translate(-cx, -cy);
         }
-        
+
         // first dry-run to calculate the total height of the text
         double textHeight;
 
@@ -115,7 +115,7 @@ public class DrawTextShape extends DrawSimpleShape {
             graphics.translate(cx, cy);
             graphics.rotate(Math.toRadians(deg));
             graphics.translate(-cx, -cy);
-            
+
             // old top/left edge is now bottom/left or top/right - as we operate on the already
             // rotated drawing context, both verticals can be moved in the same direction
             final double w = anchor.getWidth();
@@ -140,7 +140,7 @@ public class DrawTextShape extends DrawSimpleShape {
 
         double y0 = y;
         Iterator<? extends TextParagraph<?,?,? extends TextRun>> paragraphs = getShape().iterator();
-        
+
         boolean isFirstLine = true;
         for (int autoNbrIdx=0; paragraphs.hasNext(); autoNbrIdx++){
             TextParagraph<?,?,? extends TextRun> p = paragraphs.next();
@@ -172,9 +172,11 @@ public class DrawTextShape extends DrawSimpleShape {
                     y += -spaceBefore;
                 }
             }
-            isFirstLine = false;
-            
+
             dp.setPosition(x, y);
+            dp.setFirstParagraph(isFirstLine);
+            isFirstLine = false;
+
             dp.draw(graphics);
             y += dp.getY();
 
@@ -196,13 +198,13 @@ public class DrawTextShape extends DrawSimpleShape {
 
     /**
      * Compute the cumulative height occupied by the text
-     * 
+     *
      * @return the height in points
      */
     public double getTextHeight() {
         return getTextHeight(null);
     }
-    
+
     /**
      * Compute the cumulative height occupied by the text
      *

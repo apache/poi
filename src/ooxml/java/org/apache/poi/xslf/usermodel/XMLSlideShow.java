@@ -54,8 +54,6 @@ import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdList;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTPresentation;
@@ -281,10 +279,10 @@ public class XMLSlideShow extends POIXMLDocument
         slide.addRelation(null, XSLFRelation.CHART, chart);
         return chart;
     }
-    
+
     /**
      * This method is used to create template for chart XML.
-     * @return Xslf chart object 
+     * @return Xslf chart object
      * @since POI 4.1.0
      */
     public XSLFChart createChart() {
@@ -591,17 +589,6 @@ public class XMLSlideShow extends POIXMLDocument
 
     public XSLFTableStyles getTableStyles() {
         return _tableStyles;
-    }
-
-    CTTextParagraphProperties getDefaultParagraphStyle(int level) {
-        XmlObject[] o = _presentation.selectPath(
-                "declare namespace p='http://schemas.openxmlformats.org/presentationml/2006/main' " +
-                        "declare namespace a='http://schemas.openxmlformats.org/drawingml/2006/main' " +
-                        ".//p:defaultTextStyle/a:lvl" + (level + 1) + "pPr");
-        if (o.length == 1) {
-            return (CTTextParagraphProperties) o[0];
-        }
-        return null;
     }
 
     @SuppressWarnings("RedundantThrows")

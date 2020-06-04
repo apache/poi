@@ -30,6 +30,7 @@ import org.apache.poi.xslf.usermodel.XSLFShape;
 @Internal
 public abstract class PropertyFetcher<T> {
     private T _value;
+    private boolean isSet = false;
 
     /**
      *
@@ -44,5 +45,10 @@ public abstract class PropertyFetcher<T> {
 
     public void setValue(T val){
         _value = val;
+        isSet = true;
+    }
+
+    public boolean isSet() {
+        return isSet;
     }
 }

@@ -72,11 +72,7 @@ public class DrawTextParagraph implements Drawable {
     protected String rawText;
     protected DrawTextFragment bullet;
     protected int autoNbrIdx;
-
-    /**
-     * the highest line in this paragraph. Used for line spacing.
-     */
-    protected double maxLineHeight;
+    protected boolean firstParagraph = true;
 
     /**
      * Defines an attribute used for storing the hyperlink associated with
@@ -132,9 +128,10 @@ public class DrawTextParagraph implements Drawable {
             return;
         }
 
+        final boolean isHSLF = isHSLF();
+
         double penY = y;
 
-        boolean firstLine = true;
         int indentLevel = paragraph.getIndentLevel();
         Double leftMargin = paragraph.getLeftMargin();
         if (leftMargin == null) {
@@ -144,10 +141,6 @@ public class DrawTextParagraph implements Drawable {
         Double indent = paragraph.getIndent();
         if (indent == null) {
             indent = Units.toPoints(347663L*indentLevel);
-        }
-        if (isHSLF()) {
-            // special handling for HSLF
-            indent -= leftMargin;
         }
 
 //        Double rightMargin = paragraph.getRightMargin();
@@ -161,26 +154,41 @@ public class DrawTextParagraph implements Drawable {
             spacing = 100d;
         }
 
+        DrawTextFragment lastLine = null;
         for(DrawTextFragment line : lines){
             double penX;
 
-            if(firstLine) {
+
+            if (!(isFirstParagraph() && lastLine == null)) {
+                // penY is now on descent line of the last text fragment
+                // need to substract descent height to get back to the baseline of the last fragment
+                // then add a multiple of the line height of the current text height
+                penY -= line.getLeading() + ((lastLine == null) ? 0 : lastLine.getLayout().getDescent());
+
+                if(spacing > 0) {
+                    // If linespacing >= 0, then linespacing is a percentage of normal line height.
+                    penY += (spacing*0.01) * line.getHeight(); //  + (isHSLF ? line.getLayout().getLeading() : 0));
+                } else {
+                    // negative value means absolute spacing in points
+                    penY += -spacing;
+                }
+                penY -= line.getLayout().getAscent();
+            }
+
+            penX = x + (isHSLF ? leftMargin : leftMargin);
+            if (lastLine == null) {
                 if (!isEmptyParagraph()) {
                     // TODO: find out character style for empty, but bulleted/numbered lines
                     bullet = getBullet(graphics, line.getAttributedString().getIterator());
                 }
 
-                if (bullet != null){
-                    bullet.setPosition(x+leftMargin+indent, penY);
+                if (bullet != null) {
+                    bullet.setPosition(isHSLF ? x+indent : x+leftMargin+indent, penY);
                     bullet.draw(graphics);
                     // don't let text overlay the bullet and advance by the bullet width
                     double bulletWidth = bullet.getLayout().getAdvance() + 1;
-                    penX = x + Math.max(leftMargin, leftMargin+indent+bulletWidth);
-                } else {
-                    penX = x + leftMargin;
+                    penX = x + (isHSLF ? leftMargin : Math.max(leftMargin, leftMargin+indent+bulletWidth));
                 }
-            } else {
-                penX = x + leftMargin;
             }
 
             Rectangle2D anchor = DrawShape.getAnchor(graphics, paragraph.getParentShape());
@@ -207,16 +215,9 @@ public class DrawTextParagraph implements Drawable {
 
             line.setPosition(penX, penY);
             line.draw(graphics);
+            penY += line.getHeight();
 
-            if(spacing > 0) {
-                // If linespacing >= 0, then linespacing is a percentage of normal line height.
-                penY += spacing*0.01* line.getHeight();
-            } else {
-                // negative value means absolute spacing in points
-                penY += -spacing;
-            }
-
-            firstLine = false;
+            lastLine = line;
         }
 
         y = penY - y;
@@ -257,7 +258,6 @@ public class DrawTextParagraph implements Drawable {
         DrawFactory fact = DrawFactory.getInstance(graphics);
         StringBuilder text = new StringBuilder();
         AttributedString at = getAttributedString(graphics, text);
-        boolean emptyParagraph = text.toString().trim().isEmpty();
 
         AttributedCharacterIterator it = at.getIterator();
         LineBreakMeasurer measurer = new LineBreakMeasurer(it, graphics.getFontRenderContext());
@@ -271,41 +271,46 @@ public class DrawTextParagraph implements Drawable {
                 wrappingWidth = 1;
             }
 
-            int nextBreak = text.indexOf("\n", startIndex + 1);
-            if (nextBreak == -1) {
-                nextBreak = it.getEndIndex();
+            // usually "\n" is added after a line, if it occurs before it - only possible as first char -
+            // we need to add an empty line
+            TextLayout layout;
+            int endIndex;
+            if (startIndex == 0 && text.toString().startsWith("\n")) {
+                layout = measurer.nextLayout((float) wrappingWidth, 1, false);
+                endIndex = 1;
+            } else {
+                int nextBreak = text.indexOf("\n", startIndex + 1);
+                if (nextBreak == -1) {
+                    nextBreak = it.getEndIndex();
+                }
+
+                layout = measurer.nextLayout((float) wrappingWidth, nextBreak, true);
+                if (layout == null) {
+                    // layout can be null if the entire word at the current position
+                    // does not fit within the wrapping width. Try with requireNextWord=false.
+                    layout = measurer.nextLayout((float) wrappingWidth, nextBreak, false);
+                }
+
+                if (layout == null) {
+                    // exit if can't break any more
+                    break;
+                }
+
+                endIndex = measurer.getPosition();
+                // skip over new line breaks (we paint 'clear' text runs not starting or ending with \n)
+                if (endIndex < it.getEndIndex() && text.charAt(endIndex) == '\n') {
+                    measurer.setPosition(endIndex + 1);
+                }
+
+                TextAlign hAlign = paragraph.getTextAlign();
+                if (hAlign == TextAlign.JUSTIFY || hAlign == TextAlign.JUSTIFY_LOW) {
+                    layout = layout.getJustifiedLayout((float) wrappingWidth);
+                }
             }
 
-            TextLayout layout = measurer.nextLayout((float)wrappingWidth, nextBreak, true);
-            if (layout == null) {
-                 // layout can be null if the entire word at the current position
-                 // does not fit within the wrapping width. Try with requireNextWord=false.
-                 layout = measurer.nextLayout((float)wrappingWidth, nextBreak, false);
-            }
-
-            if(layout == null) {
-                // exit if can't break any more
-                break;
-            }
-
-            int endIndex = measurer.getPosition();
-            // skip over new line breaks (we paint 'clear' text runs not starting or ending with \n)
-            if(endIndex < it.getEndIndex() && text.charAt(endIndex) == '\n'){
-                measurer.setPosition(endIndex + 1);
-            }
-
-            TextAlign hAlign = paragraph.getTextAlign();
-            if(hAlign == TextAlign.JUSTIFY || hAlign == TextAlign.JUSTIFY_LOW) {
-                layout = layout.getJustifiedLayout((float)wrappingWidth);
-            }
-
-            AttributedString str = (emptyParagraph)
-                ? null // we will not paint empty paragraphs
-                : new AttributedString(it, startIndex, endIndex);
+            AttributedString str = new AttributedString(it, startIndex, endIndex);
             DrawTextFragment line = fact.getTextFragment(layout, str);
             lines.add(line);
-
-            maxLineHeight = Math.max(maxLineHeight, line.getHeight());
 
             if(endIndex == it.getEndIndex()) {
                 break;
@@ -450,6 +455,7 @@ public class DrawTextParagraph implements Drawable {
      * @return  wrapping width in points
      */
     protected double getWrappingWidth(boolean firstLine, Graphics2D graphics){
+        final long TAB_SIZE = 347663L;
         TextShape<?,?> ts = paragraph.getParentShape();
 
         // internal margins for the text box
@@ -465,11 +471,11 @@ public class DrawTextParagraph implements Drawable {
         Double leftMargin = paragraph.getLeftMargin();
         if (leftMargin == null) {
             // if the marL attribute is omitted, then a value of 347663 is implied
-            leftMargin = Units.toPoints(347663L*(indentLevel+1));
+            leftMargin = Units.toPoints(TAB_SIZE * indentLevel);
         }
         Double indent = paragraph.getIndent();
         if (indent == null) {
-            indent = Units.toPoints(347663L*indentLevel);
+            indent = 0.;
         }
         Double rightMargin = paragraph.getRightMargin();
         if (rightMargin == null) {
@@ -503,18 +509,9 @@ public class DrawTextParagraph implements Drawable {
                     width = anchor.getHeight() - leftInset - rightInset - leftMargin - rightMargin;
                     break;
             }
-            if (firstLine && !isHSLF()) {
-                if (bullet != null){
-                    if (indent > 0) {
-                        width -= indent;
-                    }
-                } else {
-                    if (indent > 0) {
-                        width -= indent; // first line indentation
-                    } else if (indent < 0) { // hanging indentation: the first line start at the left margin
-                        width += leftMargin;
-                    }
-                }
+            if (firstLine && bullet == null) {
+                // indent is usually negative in XSLF
+                width += isHSLF() ? (leftMargin - indent) : -indent;
             }
         }
 
@@ -726,5 +723,13 @@ public class DrawTextParagraph implements Drawable {
      */
     protected boolean isHSLF() {
         return DrawShape.isHSLF(paragraph.getParentShape());
+    }
+
+    protected boolean isFirstParagraph() {
+        return firstParagraph;
+    }
+
+    protected void setFirstParagraph(boolean firstParagraph) {
+        this.firstParagraph = firstParagraph;
     }
 }

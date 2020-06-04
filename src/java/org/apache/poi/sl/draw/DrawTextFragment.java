@@ -19,13 +19,15 @@ package org.apache.poi.sl.draw;
 
 import java.awt.Graphics2D;
 import java.awt.font.TextLayout;
-import java.text.*;
+import java.text.AttributedCharacterIterator;
+import java.text.AttributedString;
+import java.text.CharacterIterator;
 
 public class DrawTextFragment implements Drawable  {
     final TextLayout layout;
     final AttributedString str;
     double x, y;
-    
+
     public DrawTextFragment(TextLayout layout, AttributedString str) {
         this.layout = layout;
         this.str = str;
@@ -57,7 +59,7 @@ public class DrawTextFragment implements Drawable  {
 
     public void drawContent(Graphics2D graphics) {
     }
-    
+
     public TextLayout getLayout() {
         return layout;
     }
@@ -65,12 +67,12 @@ public class DrawTextFragment implements Drawable  {
     public AttributedString getAttributedString() {
         return str;
     }
-    
+
     /**
      * @return full height of this text run which is sum of ascent, descent and leading
      */
-    public float getHeight(){ 
-        double h = layout.getAscent() + layout.getDescent() + getLeading();
+    public float getHeight(){
+        double h = layout.getAscent() + layout.getDescent();
         return (float)h;
     }
 
@@ -80,6 +82,7 @@ public class DrawTextFragment implements Drawable  {
     public float getLeading() {
         // fix invalid leadings (leading == 0)
         double l = layout.getLeading();
+
         if (l == 0) {
             // see https://stackoverflow.com/questions/925147
             // we use a 115% value instead of the 120% proposed one, as this seems to be closer to LO/OO
@@ -87,7 +90,7 @@ public class DrawTextFragment implements Drawable  {
         }
         return (float)l;
     }
-    
+
     /**
      *
      * @return width if this text run
@@ -115,5 +118,5 @@ public class DrawTextFragment implements Drawable  {
     public String toString(){
         return "[" + getClass().getSimpleName() + "] " + getString();
     }
-    
+
 }

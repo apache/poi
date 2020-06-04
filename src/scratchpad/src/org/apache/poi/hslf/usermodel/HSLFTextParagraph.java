@@ -357,8 +357,18 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     @Override
     public Double getLeftMargin() {
-        TextProp tp = getPropVal(_paragraphStyle, "text.offset");
-        return (tp == null) ? null : Units.masterToPoints(tp.getValue());
+        Integer val = null;
+        if (_ruler != null) {
+            Integer[] toList = _ruler.getTextOffsets();
+            val = (toList.length > getIndentLevel()) ? toList[getIndentLevel()] : null;
+        }
+
+        if (val == null) {
+            TextProp tp = getPropVal(_paragraphStyle, "text.offset");
+            val = (tp == null) ? null : tp.getValue();
+        }
+
+        return (val == null) ? null : Units.masterToPoints(val);
     }
 
     @Override
@@ -380,8 +390,18 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
 
     @Override
     public Double getIndent() {
-        TextProp tp = getPropVal(_paragraphStyle, "bullet.offset");
-        return (tp == null) ? null : Units.masterToPoints(tp.getValue());
+        Integer val = null;
+        if (_ruler != null) {
+            Integer[] toList = _ruler.getBulletOffsets();
+            val = (toList.length > getIndentLevel()) ? toList[getIndentLevel()] : null;
+        }
+
+        if (val == null) {
+            TextProp tp = getPropVal(_paragraphStyle, "bullet.offset");
+            val = (tp == null) ? null : tp.getValue();
+        }
+
+        return (val == null) ? null : Units.masterToPoints(val);
     }
 
     @Override
@@ -592,8 +612,8 @@ public final class HSLFTextParagraph implements TextParagraph<HSLFShape,HSLFText
     @Override
     public void setIndentLevel(int level) {
        if( _paragraphStyle != null ) {
-        _paragraphStyle.setIndentLevel((short)level);
-    }
+            _paragraphStyle.setIndentLevel((short)level);
+        }
     }
 
     /**

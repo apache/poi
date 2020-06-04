@@ -17,6 +17,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import java.awt.Color;
+import java.util.function.Consumer;
 
 import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.common.usermodel.fonts.FontFamily;
@@ -34,6 +35,7 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher;
+import org.apache.poi.xslf.model.CharacterPropertyFetcher.CharPropFetcher;
 import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFFillProperties;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTFontCollection;
@@ -126,38 +128,34 @@ public class XSLFTextRun implements TextRun {
 
     @Override
     public PaintStyle getFontColor(){
-        final boolean hasPlaceholder = getParagraph().getParentShape().getPlaceholder() != null;
-        CharacterPropertyFetcher<PaintStyle> fetcher = new CharacterPropertyFetcher<PaintStyle>(_p.getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextCharacterProperties props){
-                if (props == null) {
-                    return false;
-                }
-
-                XSLFShape shape = _p.getParentShape();
-                CTShapeStyle style = shape.getSpStyle();
-                CTSchemeColor phClr = null;
-                if (style != null && style.getFontRef() != null) {
-                    phClr = style.getFontRef().getSchemeClr();
-                }
-
-                XSLFFillProperties fp = XSLFPropertiesDelegate.getFillDelegate(props);
-                XSLFSheet sheet = shape.getSheet();
-                PackagePart pp = sheet.getPackagePart();
-                XSLFTheme theme = sheet.getTheme();
-                PaintStyle ps = shape.selectPaint(fp, phClr, pp, theme, hasPlaceholder);
-
-                if (ps != null)  {
-                    setValue(ps);
-                    return true;
-                }
-
-                return false;
-            }
-        };
-        fetchCharacterProperty(fetcher);
-        return fetcher.getValue();
+        XSLFShape shape = getParagraph().getParentShape();
+        final boolean hasPlaceholder = shape.getPlaceholder() != null;
+        return fetchCharacterProperty((props, val) -> fetchFontColor(props, val, shape, hasPlaceholder));
     }
+
+    private static void fetchFontColor(CTTextCharacterProperties props, Consumer<PaintStyle> val, XSLFShape shape, boolean hasPlaceholder) {
+        if (props == null) {
+            return;
+        }
+
+        CTShapeStyle style = shape.getSpStyle();
+        CTSchemeColor phClr = null;
+        if (style != null && style.getFontRef() != null) {
+            phClr = style.getFontRef().getSchemeClr();
+        }
+
+        XSLFFillProperties fp = XSLFPropertiesDelegate.getFillDelegate(props);
+        XSLFSheet sheet = shape.getSheet();
+        PackagePart pp = sheet.getPackagePart();
+        XSLFTheme theme = sheet.getTheme();
+        PaintStyle ps = shape.selectPaint(fp, phClr, pp, theme, hasPlaceholder);
+
+        if (ps != null)  {
+            val.accept(ps);
+        }
+    }
+
+
 
     @Override
     public void setFontSize(Double fontSize){
@@ -189,18 +187,12 @@ public class XSLFTextRun implements TextRun {
             }
         }
 
-        final CharacterPropertyFetcher<Double> fetcher = new CharacterPropertyFetcher<Double>(_p.getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextCharacterProperties props){
-                if (props != null && props.isSetSz()) {
-                    setValue(props.getSz()*0.01);
-                    return true;
-                }
-                return false;
+        Double d = fetchCharacterProperty((props, val) -> {
+            if (props.isSetSz()) {
+                val.accept(props.getSz()*0.01);
             }
-        };
-        fetchCharacterProperty(fetcher);
-        return fetcher.getValue() == null ? null : fetcher.getValue()*scale;
+        });
+        return d == null ? null : d*scale;
     }
 
     /**
@@ -209,19 +201,12 @@ public class XSLFTextRun implements TextRun {
      */
     @SuppressWarnings("WeakerAccess")
     public double getCharacterSpacing(){
-
-        CharacterPropertyFetcher<Double> fetcher = new CharacterPropertyFetcher<Double>(_p.getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextCharacterProperties props){
-                if (props != null && props.isSetSpc()) {
-                    setValue(props.getSpc()*0.01);
-                    return true;
-                }
-                return false;
+        Double d = fetchCharacterProperty((props, val) -> {
+            if (props.isSetSpc()) {
+                val.accept(props.getSpc()*0.01);
             }
-        };
-        fetchCharacterProperty(fetcher);
-        return fetcher.getValue() == null ? 0 : fetcher.getValue();
+        });
+        return d == null ? 0 : d;
     }
 
     /**
@@ -300,34 +285,22 @@ public class XSLFTextRun implements TextRun {
 
     @Override
     public boolean isStrikethrough() {
-        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextCharacterProperties props){
-                if(props != null && props.isSetStrike()) {
-                    setValue(props.getStrike() != STTextStrikeType.NO_STRIKE);
-                    return true;
-                }
-                return false;
+        Boolean b = fetchCharacterProperty((props, val) -> {
+            if (props.isSetStrike()) {
+                val.accept(props.getStrike() != STTextStrikeType.NO_STRIKE);
             }
-        };
-        fetchCharacterProperty(fetcher);
-        return fetcher.getValue() == null ? false : fetcher.getValue();
+        });
+        return b != null && b;
     }
 
     @Override
     public boolean isSuperscript() {
-        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextCharacterProperties props){
-                if (props != null && props.isSetBaseline()) {
-                    setValue(props.getBaseline() > 0);
-                    return true;
-                }
-                return false;
+        Boolean b = fetchCharacterProperty((props, val) -> {
+            if (props.isSetBaseline()) {
+                val.accept(props.getBaseline() > 0);
             }
-        };
-        fetchCharacterProperty(fetcher);
-        return fetcher.getValue() == null ? false : fetcher.getValue();
+        });
+        return b != null && b;
     }
 
     /**
@@ -366,18 +339,12 @@ public class XSLFTextRun implements TextRun {
 
     @Override
     public boolean isSubscript() {
-        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextCharacterProperties props){
-                if (props != null && props.isSetBaseline()) {
-                    setValue(props.getBaseline() < 0);
-                    return true;
-                }
-                return false;
+        Boolean b = fetchCharacterProperty((props, val) -> {
+            if (props.isSetBaseline()) {
+                val.accept(props.getBaseline() < 0);
             }
-        };
-        fetchCharacterProperty(fetcher);
-        return fetcher.getValue() == null ? false : fetcher.getValue();
+        });
+        return b != null && b;
     }
 
     /**
@@ -385,19 +352,12 @@ public class XSLFTextRun implements TextRun {
      */
     @Override
     public TextCap getTextCap() {
-        CharacterPropertyFetcher<TextCap> fetcher = new CharacterPropertyFetcher<TextCap>(_p.getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextCharacterProperties props){
-                if (props != null && props.isSetCap()) {
-                    int idx = props.getCap().intValue() - 1;
-                    setValue(TextCap.values()[idx]);
-                    return true;
-                }
-                return false;
+        TextCap textCap = fetchCharacterProperty((props, val) -> {
+            if (props.isSetCap()) {
+                val.accept(TextCap.values()[props.getCap().intValue() - 1]);
             }
-        };
-        fetchCharacterProperty(fetcher);
-        return fetcher.getValue() == null ? TextCap.NONE : fetcher.getValue();
+        });
+        return textCap == null ? TextCap.NONE : textCap;
     }
 
     @Override
@@ -406,20 +366,15 @@ public class XSLFTextRun implements TextRun {
     }
 
     @Override
-    public boolean isBold(){
-        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextCharacterProperties props){
-                if (props != null && props.isSetB()) {
-                    setValue(props.getB());
-                    return true;
-                }
-                return false;
+    public boolean isBold() {
+        Boolean b = fetchCharacterProperty((props, val) -> {
+            if (props.isSetB()) {
+                val.accept(props.getB());
             }
-        };
-        fetchCharacterProperty(fetcher);
-        return fetcher.getValue() == null ? false : fetcher.getValue();
+        });
+        return b != null && b;
     }
+
 
     @Override
     public void setItalic(boolean italic){
@@ -427,19 +382,13 @@ public class XSLFTextRun implements TextRun {
     }
 
     @Override
-    public boolean isItalic(){
-        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextCharacterProperties props){
-                if (props != null && props.isSetI()) {
-                    setValue(props.getI());
-                    return true;
-                }
-                return false;
+    public boolean isItalic() {
+        Boolean b = fetchCharacterProperty((props, val) -> {
+            if (props.isSetI()) {
+                val.accept(props.getI());
             }
-        };
-        fetchCharacterProperty(fetcher);
-        return fetcher.getValue() == null ? false : fetcher.getValue();
+        });
+        return b != null && b;
     }
 
     @Override
@@ -449,18 +398,12 @@ public class XSLFTextRun implements TextRun {
 
     @Override
     public boolean isUnderlined(){
-        CharacterPropertyFetcher<Boolean> fetcher = new CharacterPropertyFetcher<Boolean>(_p.getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextCharacterProperties props){
-                if (props != null && props.isSetU()) {
-                    setValue(props.getU() != STTextUnderlineType.NONE);
-                    return true;
-                }
-                return false;
+        Boolean b = fetchCharacterProperty((props, val) -> {
+            if (props.isSetU()) {
+                val.accept(props.getU() != STTextUnderlineType.NONE);
             }
-        };
-        fetchCharacterProperty(fetcher);
-        return fetcher.getValue() == null ? false : fetcher.getValue();
+        });
+        return b != null && b;
     }
 
     /**
@@ -469,7 +412,8 @@ public class XSLFTextRun implements TextRun {
      * @param create if true, create an empty character properties object if it doesn't exist
      * @return the character properties or null if create was false and the properties haven't exist
      */
-    protected CTTextCharacterProperties getRPr(boolean create) {
+    @Internal
+    public CTTextCharacterProperties getRPr(boolean create) {
         if (_r instanceof CTTextField) {
             CTTextField tf = (CTTextField)_r;
             if (tf.isSetRPr()) {
@@ -527,23 +471,9 @@ public class XSLFTextRun implements TextRun {
         return new XSLFHyperlink(hl, _p.getParentShape().getSheet());
     }
 
-    private void fetchCharacterProperty(final CharacterPropertyFetcher<?> visitor){
-        XSLFTextShape shape = _p.getParentShape();
-
-        CTTextCharacterProperties rPr = getRPr(false);
-        if (rPr != null && visitor.fetch(rPr)) {
-            return;
-        }
-
-        if (shape.fetchShapeProperty(visitor)) {
-            return;
-        }
-
-        if (_p.fetchThemeProperty(visitor)) {
-            return;
-        }
-
-        _p.fetchMasterProperty(visitor);
+    private <T> T fetchCharacterProperty(CharPropFetcher<T> fetcher){
+        final XSLFTextShape shape = _p.getParentShape();
+        return new CharacterPropertyFetcher<>(this, fetcher).fetchProperty(shape);
     }
 
     void copy(XSLFTextRun r){
@@ -742,20 +672,12 @@ public class XSLFTextRun implements TextRun {
                 return getCTTextFont(getRPr(true), true);
             }
 
-            CharacterPropertyFetcher<CTTextFont> visitor = new CharacterPropertyFetcher<CTTextFont>(_p.getIndentLevel()){
-                @Override
-                public boolean fetch(CTTextCharacterProperties props){
-                    CTTextFont font = getCTTextFont(props, false);
-                    if (font == null) {
-                        return false;
-                    }
-                    setValue(font);
-                    return true;
+            return fetchCharacterProperty((props, val) -> {
+                CTTextFont font = getCTTextFont(props, false);
+                if (font != null) {
+                    val.accept(font);
                 }
-            };
-            fetchCharacterProperty(visitor);
-
-            return  visitor.getValue();
+            });
         }
 
         private CTTextFont getCTTextFont(CTTextCharacterProperties props, boolean create) {

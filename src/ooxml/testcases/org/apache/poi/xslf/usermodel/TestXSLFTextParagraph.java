@@ -141,8 +141,8 @@ public class TestXSLFTextParagraph {
         p.setIndent(-72.0);  // 1"
         indent = p.getIndent();
         assertEquals(-72.0, indent, 0);
-        expectedWidth = anchor.getWidth() - leftInset - rightInset;
-        assertEquals(280.0, expectedWidth, 0); // 300 - 10 - 10
+        expectedWidth = anchor.getWidth() - leftInset - rightInset - leftMargin - indent;
+        assertEquals(316.0, expectedWidth, 0); // 300 - 10 - 10
         assertEquals(expectedWidth, dtp.getWrappingWidth(true, null), 0); // first line is NOT indented
         // other lines are indented by leftMargin (the value of indent is not used)
         expectedWidth = anchor.getWidth() - leftInset - rightInset - leftMargin;

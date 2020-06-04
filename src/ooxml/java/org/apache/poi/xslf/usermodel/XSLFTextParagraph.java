@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
@@ -34,6 +35,7 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.ParagraphPropertyFetcher;
+import org.apache.poi.xslf.model.ParagraphPropertyFetcher.ParaPropFetcher;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
@@ -56,7 +58,6 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
     private interface Procedure {
         void accept();
     }
-
 
     XSLFTextParagraph(CTTextParagraph p, XSLFTextShape shape){
         _p = p;
@@ -150,19 +151,11 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
     @Override
     public TextAlign getTextAlign(){
-        ParagraphPropertyFetcher<TextAlign> fetcher = new ParagraphPropertyFetcher<TextAlign>(getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextParagraphProperties props){
-                if(props.isSetAlgn()){
-                    TextAlign val = TextAlign.values()[props.getAlgn().intValue() - 1];
-                    setValue(val);
-                    return true;
-                }
-                return false;
+        return fetchParagraphProperty((props,val) -> {
+            if (props.isSetAlgn()) {
+                val.accept(TextAlign.values()[props.getAlgn().intValue() - 1]);
             }
-        };
-        fetchParagraphProperty(fetcher);
-        return fetcher.getValue();
+        });
     }
 
     @Override
@@ -179,19 +172,11 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
     @Override
     public FontAlign getFontAlign(){
-        ParagraphPropertyFetcher<FontAlign> fetcher = new ParagraphPropertyFetcher<FontAlign>(getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextParagraphProperties props){
-                if(props.isSetFontAlgn()){
-                    FontAlign val = FontAlign.values()[props.getFontAlgn().intValue() - 1];
-                    setValue(val);
-                    return true;
-                }
-                return false;
+        return fetchParagraphProperty((props,val) -> {
+            if (props.isSetFontAlgn()) {
+                val.accept(FontAlign.values()[props.getFontAlgn().intValue() - 1]);
             }
-        };
-        fetchParagraphProperty(fetcher);
-        return fetcher.getValue();
+        });
     }
 
     /**
@@ -220,18 +205,11 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      */
     @SuppressWarnings("WeakerAccess")
     public String getBulletFont(){
-        ParagraphPropertyFetcher<String> fetcher = new ParagraphPropertyFetcher<String>(getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextParagraphProperties props){
-                if(props.isSetBuFont()){
-                    setValue(props.getBuFont().getTypeface());
-                    return true;
-                }
-                return false;
+        return fetchParagraphProperty((props, val) -> {
+            if (props.isSetBuFont()) {
+                val.accept(props.getBuFont().getTypeface());
             }
-        };
-        fetchParagraphProperty(fetcher);
-        return fetcher.getValue();
+        });
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -246,18 +224,11 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      */
     @SuppressWarnings("WeakerAccess")
     public String getBulletCharacter(){
-        ParagraphPropertyFetcher<String> fetcher = new ParagraphPropertyFetcher<String>(getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextParagraphProperties props){
-                if(props.isSetBuChar()){
-                    setValue(props.getBuChar().getChar());
-                    return true;
-                }
-                return false;
+        return fetchParagraphProperty((props, val) -> {
+            if (props.isSetBuChar()) {
+                val.accept(props.getBuChar().getChar());
             }
-        };
-        fetchParagraphProperty(fetcher);
-        return fetcher.getValue();
+        });
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -274,21 +245,17 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      */
     @SuppressWarnings("WeakerAccess")
     public PaintStyle getBulletFontColor(){
-        final XSLFTheme theme = getParentShape().getSheet().getTheme();
-        ParagraphPropertyFetcher<Color> fetcher = new ParagraphPropertyFetcher<Color>(getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextParagraphProperties props){
-                if(props.isSetBuClr()){
-                    XSLFColor c = new XSLFColor(props.getBuClr(), theme, null, _shape.getSheet());
-                    setValue(c.getColor());
-                    return true;
-                }
-                return false;
-            }
-        };
-        fetchParagraphProperty(fetcher);
-        Color col = fetcher.getValue();
+        Color col = fetchParagraphProperty(this::fetchBulletFontColor);
         return (col == null) ? null : DrawPaint.createSolidPaint(col);
+    }
+
+    private void fetchBulletFontColor(CTTextParagraphProperties props, Consumer<Color> val) {
+        final XSLFSheet sheet = getParentShape().getSheet();
+        final XSLFTheme theme = sheet.getTheme();
+        if(props.isSetBuClr()){
+            XSLFColor c = new XSLFColor(props.getBuClr(), theme, null, sheet);
+            val.accept(c.getColor());
+        }
     }
 
     @SuppressWarnings("WeakerAccess")
@@ -330,23 +297,18 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      */
     @SuppressWarnings("WeakerAccess")
     public Double getBulletFontSize(){
-        ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextParagraphProperties props){
-                if(props.isSetBuSzPct()){
-                    setValue(props.getBuSzPct().getVal() * 0.001);
-                    return true;
-                }
-                if(props.isSetBuSzPts()){
-                    setValue( - props.getBuSzPts().getVal() * 0.01);
-                    return true;
-                }
-                return false;
-            }
-        };
-        fetchParagraphProperty(fetcher);
-        return fetcher.getValue();
+        return fetchParagraphProperty(XSLFTextParagraph::fetchBulletFontSize);
     }
+
+    private static void fetchBulletFontSize(CTTextParagraphProperties props, Consumer<Double> val) {
+        if(props.isSetBuSzPct()){
+            val.accept(props.getBuSzPct().getVal() * 0.001);
+        }
+        if(props.isSetBuSzPts()){
+            val.accept( - props.getBuSzPts().getVal() * 0.01);
+        }
+    }
+
 
     /**
      * Sets the bullet size that is to be used within a paragraph.
@@ -380,44 +342,30 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      */
     @SuppressWarnings("WeakerAccess")
     public AutoNumberingScheme getAutoNumberingScheme() {
-        ParagraphPropertyFetcher<AutoNumberingScheme> fetcher = new ParagraphPropertyFetcher<AutoNumberingScheme>(getIndentLevel()) {
-            @Override
-            public boolean fetch(CTTextParagraphProperties props) {
-                if (props.isSetBuAutoNum()) {
-                    AutoNumberingScheme ans = AutoNumberingScheme.forOoxmlID(props.getBuAutoNum().getType().intValue());
-                    if (ans != null) {
-                        setValue(ans);
-                        return true;
-                    }
-                }
-                return false;
-            }
-        };
-        fetchParagraphProperty(fetcher);
-        return fetcher.getValue();
+        return fetchParagraphProperty(XSLFTextParagraph::fetchAutoNumberingScheme);
     }
+
+    private static void fetchAutoNumberingScheme(CTTextParagraphProperties props, Consumer<AutoNumberingScheme> val) {
+        if (props.isSetBuAutoNum()) {
+            AutoNumberingScheme ans = AutoNumberingScheme.forOoxmlID(props.getBuAutoNum().getType().intValue());
+            if (ans != null) {
+                val.accept(ans);
+            }
+        }
+    }
+
 
     /**
      * @return the auto numbering starting number, or null if not defined
      */
     @SuppressWarnings("WeakerAccess")
     public Integer getAutoNumberingStartAt() {
-        ParagraphPropertyFetcher<Integer> fetcher = new ParagraphPropertyFetcher<Integer>(getIndentLevel()) {
-            @Override
-            public boolean fetch(CTTextParagraphProperties props) {
-                if (props.isSetBuAutoNum()) {
-                    if (props.getBuAutoNum().isSetStartAt()) {
-                        setValue(props.getBuAutoNum().getStartAt());
-                        return true;
-                    }
-                }
-                return false;
+        return fetchParagraphProperty((props, val) -> {
+            if (props.isSetBuAutoNum() && props.getBuAutoNum().isSetStartAt()) {
+                val.accept(props.getBuAutoNum().getStartAt());
             }
-        };
-        fetchParagraphProperty(fetcher);
-        return fetcher.getValue();
+        });
     }
-
 
     @Override
     public void setIndent(Double indent){
@@ -436,21 +384,13 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
     @Override
     public Double getIndent() {
-
-        ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextParagraphProperties props){
-                if(props.isSetIndent()){
-                    setValue(Units.toPoints(props.getIndent()));
-                    return true;
-                }
-                return false;
+        return fetchParagraphProperty((props, val) -> {
+            if (props.isSetIndent()) {
+                val.accept(Units.toPoints(props.getIndent()));
             }
-        };
-        fetchParagraphProperty(fetcher);
-
-        return fetcher.getValue();
+        });
     }
+
 
     @Override
     public void setLeftMargin(Double leftMargin){
@@ -472,21 +412,12 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      * @return the left margin (in points) of the paragraph, null if unset
      */
     @Override
-    public Double getLeftMargin(){
-        ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextParagraphProperties props){
-                if(props.isSetMarL()){
-                    double val = Units.toPoints(props.getMarL());
-                    setValue(val);
-                    return true;
-                }
-                return false;
+    public Double getLeftMargin() {
+        return fetchParagraphProperty((props, val) -> {
+            if (props.isSetMarL()) {
+                val.accept(Units.toPoints(props.getMarL()));
             }
-        };
-        fetchParagraphProperty(fetcher);
-        // if the marL attribute is omitted, then a value of 347663 is implied
-        return fetcher.getValue();
+        });
     }
 
     @Override
@@ -510,58 +441,38 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      */
     @Override
     public Double getRightMargin(){
-        ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextParagraphProperties props){
-                if(props.isSetMarR()){
-                    double val = Units.toPoints(props.getMarR());
-                    setValue(val);
-                    return true;
-                }
-                return false;
+        return fetchParagraphProperty((props, val) -> {
+            if (props.isSetMarR()) {
+                val.accept(Units.toPoints(props.getMarR()));
             }
-        };
-        fetchParagraphProperty(fetcher);
-        return fetcher.getValue();
+        });
     }
 
     @Override
     public Double getDefaultTabSize(){
-        ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextParagraphProperties props){
-                if(props.isSetDefTabSz()){
-                    double val = Units.toPoints(props.getDefTabSz());
-                    setValue(val);
-                    return true;
-                }
-                return false;
+        return fetchParagraphProperty((props, val) -> {
+            if (props.isSetDefTabSz()) {
+                val.accept(Units.toPoints(props.getDefTabSz()));
             }
-        };
-        fetchParagraphProperty(fetcher);
-        return fetcher.getValue();
+        });
     }
 
     @SuppressWarnings("WeakerAccess")
     public double getTabStop(final int idx) {
-        ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextParagraphProperties props){
-                if (props.isSetTabLst()) {
-                    CTTextTabStopList tabStops = props.getTabLst();
-                    if(idx < tabStops.sizeOfTabArray() ) {
-                        CTTextTabStop ts = tabStops.getTabArray(idx);
-                        double val = Units.toPoints(ts.getPos());
-                        setValue(val);
-                        return true;
-                    }
-                }
-                return false;
-            }
-        };
-        fetchParagraphProperty(fetcher);
-        return fetcher.getValue() == null ? 0. : fetcher.getValue();
+        Double d = fetchParagraphProperty((props,val) -> fetchTabStop(idx,props,val));
+        return (d == null) ? 0. : d;
     }
+
+    private static void fetchTabStop(final int idx, CTTextParagraphProperties props, Consumer<Double> val) {
+        if (props.isSetTabLst()) {
+            CTTextTabStopList tabStops = props.getTabLst();
+            if(idx < tabStops.sizeOfTabArray() ) {
+                CTTextTabStop ts = tabStops.getTabArray(idx);
+                val.accept(Units.toPoints(ts.getPos()));
+            }
+        }
+    }
+
 
     @SuppressWarnings("WeakerAccess")
     public void addTabStop(double value){
@@ -650,31 +561,21 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
     }
 
     private Double getSpacing(final Function<CTTextParagraphProperties,Supplier<CTTextSpacing>> getSpc) {
-        final ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getIndentLevel()){
-            @Override
-            public boolean fetch(final CTTextParagraphProperties props){
-                final CTTextSpacing spc = getSpc.apply(props).get();
-
-                if (spc == null) {
-                    return false;
-                }
-
-                if (spc.isSetSpcPct()) {
-                    setValue( spc.getSpcPct().getVal()*0.001 );
-                    return true;
-                }
-
-                if (spc.isSetSpcPts()) {
-                    setValue( -spc.getSpcPts().getVal()*0.01 );
-                    return true;
-                }
-
-                return false;
-            }
-        };
-        fetchParagraphProperty(fetcher);
-        return fetcher.getValue();
+        return fetchParagraphProperty((props,val) -> fetchSpacing(getSpc,props,val));
     }
+
+    private static void fetchSpacing(final Function<CTTextParagraphProperties,Supplier<CTTextSpacing>> getSpc,
+                                        CTTextParagraphProperties props, Consumer<Double> val) {
+        final CTTextSpacing spc = getSpc.apply(props).get();
+        if (spc != null) {
+            if (spc.isSetSpcPct()) {
+                val.accept( spc.getSpcPct().getVal()*0.001 );
+            } else if (spc.isSetSpcPts()) {
+                val.accept( -spc.getSpcPts().getVal()*0.01 );
+            }
+        }
+    }
+
 
     @Override
     public void setIndentLevel(int level){
@@ -692,23 +593,18 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      * Returns whether this paragraph has bullets
      */
     public boolean isBullet() {
-        ParagraphPropertyFetcher<Boolean> fetcher = new ParagraphPropertyFetcher<Boolean>(getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextParagraphProperties props){
-                if(props.isSetBuNone()) {
-                    setValue(false);
-                    return true;
-                }
-                if(props.isSetBuFont() || props.isSetBuChar()){
-                    setValue(true);
-                    return true;
-                }
-                return false;
-            }
-        };
-        fetchParagraphProperty(fetcher);
-        return fetcher.getValue() == null ? false : fetcher.getValue();
+        Boolean b = fetchParagraphProperty(XSLFTextParagraph::fetchIsBullet);
+        return b == null ? false : b;
     }
+
+    private static void fetchIsBullet(CTTextParagraphProperties props, Consumer<Boolean> val) {
+        if (props.isSetBuNone()) {
+            val.accept(false);
+        } else if(props.isSetBuFont() || props.isSetBuChar()){
+            val.accept(true);
+        }
+    }
+
 
     /**
      *
@@ -789,7 +685,8 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
      * @return master style text paragraph properties, or <code>null</code> if
      * there are no master slides or the master slides do not contain a text paragraph
      */
-    private CTTextParagraphProperties getDefaultMasterStyle(){
+    @Internal
+    public CTTextParagraphProperties getDefaultMasterStyle(){
         CTPlaceholder ph = _shape.getPlaceholderDetails().getCTPlaceholder(false);
         String defaultStyleSelector;
         switch(ph == null ? -1 : ph.getType().intValue()) {
@@ -837,49 +734,11 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         return null;
     }
 
-    private void fetchParagraphProperty(final ParagraphPropertyFetcher<?> visitor){
+    private <T> T fetchParagraphProperty(ParaPropFetcher<T> fetcher){
         final XSLFTextShape shape = getParentShape();
-        final XSLFSheet sheet = shape.getSheet();
-
-        if (!(sheet instanceof XSLFSlideMaster)) {
-            if (_p.isSetPPr() && visitor.fetch(_p.getPPr())) {
-                return;
-            }
-
-            if (shape.fetchShapeProperty(visitor)) {
-                return;
-            }
-
-            if (fetchThemeProperty(visitor)) {
-                return;
-            }
-        }
-
-        fetchMasterProperty(visitor);
+        return new ParagraphPropertyFetcher<>(this, fetcher).fetchProperty(shape);
     }
 
-    void fetchMasterProperty(final ParagraphPropertyFetcher<?> visitor) {
-        // defaults for placeholders are defined in the slide master
-        final CTTextParagraphProperties defaultProps = getDefaultMasterStyle();
-        // TODO: determine master shape
-        if (defaultProps != null) {
-            visitor.fetch(defaultProps);
-        }
-    }
-
-    boolean fetchThemeProperty(final ParagraphPropertyFetcher<?> visitor) {
-        final XSLFTextShape shape = getParentShape();
-
-        if (shape.isPlaceholder()) {
-            return false;
-        }
-
-        // if it is a plain text box then take defaults from presentation.xml
-        @SuppressWarnings("resource")
-        final XMLSlideShow ppt = shape.getSheet().getSlideShow();
-        final CTTextParagraphProperties themeProps = ppt.getDefaultParagraphStyle(getIndentLevel());
-        return themeProps != null && visitor.fetch(themeProps);
-    }
 
     void copy(XSLFTextParagraph other){
         if (other == this) {
@@ -1074,24 +933,21 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
     @Override
     public List<XSLFTabStop> getTabStops() {
-        ParagraphPropertyFetcher<List<XSLFTabStop>> fetcher = new ParagraphPropertyFetcher<List<XSLFTabStop>>(getIndentLevel()){
-            @Override
-            public boolean fetch(CTTextParagraphProperties props) {
-                if (props.isSetTabLst()) {
-                    final List<XSLFTabStop> list = new ArrayList<>();
-                    //noinspection deprecation
-                    for (final CTTextTabStop ta : props.getTabLst().getTabArray()) {
-                        list.add(new XSLFTabStop(ta));
-                    }
-                    setValue(list);
-                    return true;
-                }
-                return false;
-            }
-        };
-        fetchParagraphProperty(fetcher);
-        return fetcher.getValue();
+        return fetchParagraphProperty(XSLFTextParagraph::fetchTabStops);
     }
+
+    private static void fetchTabStops(CTTextParagraphProperties props, Consumer<List<XSLFTabStop>> val) {
+        if (props.isSetTabLst()) {
+            final List<XSLFTabStop> list = new ArrayList<>();
+            //noinspection deprecation
+            for (final CTTextTabStop ta : props.getTabLst().getTabArray()) {
+                list.add(new XSLFTabStop(ta));
+            }
+            val.accept(list);
+        }
+    }
+
+
 
     @Override
     public void addTabStops(double positionInPoints, TabStopType tabStopType) {

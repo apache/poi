@@ -19,22 +19,94 @@
 
 package org.apache.poi.xslf.model;
 
+import static org.apache.poi.xslf.model.ParagraphPropertyFetcher.getThemeProps;
+import static org.apache.poi.xslf.model.ParagraphPropertyFetcher.select;
+
+import java.util.function.Consumer;
+
+import org.apache.poi.util.Internal;
+import org.apache.poi.xslf.usermodel.XSLFShape;
+import org.apache.poi.xslf.usermodel.XSLFSheet;
+import org.apache.poi.xslf.usermodel.XSLFSlideMaster;
+import org.apache.poi.xslf.usermodel.XSLFTextRun;
+import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraphProperties;
 
-public abstract class CharacterPropertyFetcher<T> extends ParagraphPropertyFetcher<T> {
-    public CharacterPropertyFetcher(int level) {
-        super(level);
+@Internal
+public final class CharacterPropertyFetcher<T> extends PropertyFetcher<T> {
+    public interface CharPropFetcher<S> {
+        void fetch (CTTextCharacterProperties props, Consumer<S> val);
     }
 
-    public boolean fetch(CTTextParagraphProperties props) {
-        if (props != null && props.isSetDefRPr()) {
-            return fetch(props.getDefRPr());
+    private final XSLFTextRun run;
+    int _level;
+    private final CharPropFetcher<T> fetcher;
+
+    public CharacterPropertyFetcher(XSLFTextRun run, CharPropFetcher<T> fetcher) {
+        _level = run.getParagraph().getIndentLevel();
+        this.fetcher = fetcher;
+        this.run = run;
+    }
+
+    public boolean fetch(XSLFShape shape) {
+        // this is only called when propagating to parent styles
+        try {
+            fetchProp(select(shape, _level));
+        } catch (XmlException ignored) {
+        }
+        return isSet();
+    }
+
+
+    public T fetchProperty(XSLFShape shape) {
+        final XSLFSheet sheet = shape.getSheet();
+
+
+        if (!(sheet instanceof XSLFSlideMaster)) {
+            fetchRunProp();
+            fetchShapeProp(shape);
+            fetchThemeProp(shape);
         }
 
-        return false;
+        fetchMasterProp();
+
+        return isSet() ? getValue() : null;
     }
 
-    public abstract boolean fetch(CTTextCharacterProperties props);
+    private void fetchRunProp() {
+        fetchProp(run.getRPr(false));
+    }
 
+    private void fetchShapeProp(XSLFShape shape) {
+        if (!isSet()) {
+            shape.fetchShapeProperty(this);
+        }
+    }
+
+    private void fetchThemeProp(XSLFShape shape) {
+        if (!isSet()) {
+            fetchProp(getThemeProps(shape, _level));
+        }
+    }
+
+    private void fetchMasterProp() {
+        // defaults for placeholders are defined in the slide master
+        // TODO: determine master shape
+        if (!isSet()) {
+            fetchProp(run.getParagraph().getDefaultMasterStyle());
+        }
+    }
+
+    private void fetchProp(CTTextParagraphProperties props) {
+        if (props != null) {
+            fetchProp(props.getDefRPr());
+        }
+    }
+
+    private void fetchProp(CTTextCharacterProperties props) {
+        if (props != null) {
+            fetcher.fetch(props, this::setValue);
+        }
+    }
 }

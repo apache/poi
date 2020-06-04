@@ -20,7 +20,6 @@ package org.apache.poi.hslf.record;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
@@ -53,11 +52,10 @@ public final class TestTextRulerAtom {
 		assertNotNull(tabStops);
 
 		Integer[] textOffsets = ruler.getTextOffsets();
-		assertArrayEquals(new Integer[]{226, 451, 903, 1129, 1526}, textOffsets);
+		assertArrayEquals(new Integer[]{117, 345, 794, 1016, 1526}, textOffsets);
 
 		Integer[] bulletOffsets = ruler.getBulletOffsets();
-		assertArrayEquals(new Integer[]{117, 345, 794, 1016, 1526}, bulletOffsets);
-
+		assertArrayEquals(new Integer[]{226, 451, 903, 1129, 1526}, bulletOffsets);
 	}
 
     @Test

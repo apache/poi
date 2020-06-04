@@ -492,7 +492,8 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
      * @return true if the property was fetched
      */
     @SuppressWarnings("WeakerAccess")
-    protected boolean fetchShapeProperty(PropertyFetcher<?> visitor) {
+    @Internal
+    public boolean fetchShapeProperty(PropertyFetcher<?> visitor) {
         // try shape properties in slide
         if (visitor.fetch(this)) {
             return true;

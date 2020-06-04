@@ -44,6 +44,7 @@ public class DrawFontManagerDefault implements DrawFontManager {
     public DrawFontManagerDefault() {
         knownSymbolFonts.add("Wingdings");
         knownSymbolFonts.add("Symbol");
+        // knownSymbolFonts.add("Monotype Sorts");
     }
 
     @Override

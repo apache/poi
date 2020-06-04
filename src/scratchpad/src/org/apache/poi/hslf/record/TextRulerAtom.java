@@ -202,14 +202,14 @@ public final class TextRulerAtom extends RecordAtom {
      * Paragraph's distance from shape's left margin, in master coordinates (576 dpi).
      */
     public Integer[] getTextOffsets(){
-        return indent;
+        return leftMargin;
     }
 
     /**
      * First line of paragraph's distance from shape's left margin, in master coordinates (576 dpi).
      */
     public Integer[] getBulletOffsets(){
-        return leftMargin;
+        return indent;
     }
 
     public static TextRulerAtom getParagraphInstance(){
