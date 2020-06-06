@@ -30,177 +30,189 @@ import java.time.DateTimeException;
  * Implementation for Excel VALUE() function.<p>
  *
  * <b>Syntax</b>:<br> <b>VALUE</b>(<b>text</b>)<br>
- *
+ * <p>
  * Converts the text argument to a number. Leading and/or trailing whitespace is
  * ignored. Currency symbols and thousands separators are stripped out.
  * Scientific notation is also supported. If the supplied text does not convert
  * properly the result is <b>#VALUE!</b> error. Blank string converts to zero.
  */
-public final class Value extends Fixed1ArgFunction {
+public final class Value extends Fixed1ArgFunction implements ArrayFunction {
 
-	/** "1,0000" is valid, "1,00" is not */
-	private static final int MIN_DISTANCE_BETWEEN_THOUSANDS_SEPARATOR = 4;
-	private static final Double ZERO = Double.valueOf(0.0);
+    /**
+     * "1,0000" is valid, "1,00" is not
+     */
+    private static final int MIN_DISTANCE_BETWEEN_THOUSANDS_SEPARATOR = 4;
+    private static final Double ZERO = Double.valueOf(0.0);
 
-	public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
-		ValueEval veText;
-		try {
-			veText = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
-		} catch (EvaluationException e) {
-			return e.getErrorEval();
-		}
-		String strText = OperandResolver.coerceValueToString(veText);
-		Double result = convertTextToNumber(strText);
-		if(result == null) result = parseDateTime(strText);
-		if (result == null) {
-			return ErrorEval.VALUE_INVALID;
-		}
-		return new NumberEval(result.doubleValue());
-	}
+    public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval arg0) {
+        ValueEval veText;
+        try {
+            veText = OperandResolver.getSingleValue(arg0, srcRowIndex, srcColumnIndex);
+        } catch (EvaluationException e) {
+            return e.getErrorEval();
+        }
+        String strText = OperandResolver.coerceValueToString(veText);
+        Double result = convertTextToNumber(strText);
+        if (result == null) result = parseDateTime(strText);
+        if (result == null) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        return new NumberEval(result.doubleValue());
+    }
 
-	/**
-	 * TODO see if the same functionality is needed in {@link OperandResolver#parseDouble(String)}
-	 *
-	 * @return <code>null</code> if there is any problem converting the text
-	 */
-	public static Double convertTextToNumber(String strText) {
-		boolean foundCurrency = false;
-		boolean foundUnaryPlus = false;
-		boolean foundUnaryMinus = false;
-		boolean foundPercentage = false;
+    @Override
+    public ValueEval evaluateArray(ValueEval[] args, int srcRowIndex, int srcColumnIndex) {
+        if (args.length != 1) {
+            return ErrorEval.VALUE_INVALID;
+        }
+        return evaluateOneArrayArg(args[0], srcRowIndex, srcColumnIndex, (valA) ->
+                evaluate(srcRowIndex, srcColumnIndex, valA)
+        );
+    }
 
-		int len = strText.length();
-		int i;
-		for (i = 0; i < len; i++) {
-			char ch = strText.charAt(i);
-			if (Character.isDigit(ch) || ch == '.') {
-				break;
-			}
-			switch (ch) {
-				case ' ':
-					// intervening spaces between '$', '-', '+' are OK
-					continue;
-				case '$':
-					if (foundCurrency) {
-						// only one currency symbols is allowed
-						return null;
-					}
-					foundCurrency = true;
-					continue;
-				case '+':
-					if (foundUnaryMinus || foundUnaryPlus) {
-						return null;
-					}
-					foundUnaryPlus = true;
-					continue;
-				case '-':
-					if (foundUnaryMinus || foundUnaryPlus) {
-						return null;
-					}
-					foundUnaryMinus = true;
-					continue;
-				default:
-					// all other characters are illegal
-					return null;
-			}
-		}
-		if (i >= len) {
-			// didn't find digits or '.'
-			if (foundCurrency || foundUnaryMinus || foundUnaryPlus) {
-				return null;
-			}
-			return ZERO;
-		}
+    /**
+     * TODO see if the same functionality is needed in {@link OperandResolver#parseDouble(String)}
+     *
+     * @return <code>null</code> if there is any problem converting the text
+     */
+    public static Double convertTextToNumber(String strText) {
+        boolean foundCurrency = false;
+        boolean foundUnaryPlus = false;
+        boolean foundUnaryMinus = false;
+        boolean foundPercentage = false;
 
-		// remove thousands separators
+        int len = strText.length();
+        int i;
+        for (i = 0; i < len; i++) {
+            char ch = strText.charAt(i);
+            if (Character.isDigit(ch) || ch == '.') {
+                break;
+            }
+            switch (ch) {
+                case ' ':
+                    // intervening spaces between '$', '-', '+' are OK
+                    continue;
+                case '$':
+                    if (foundCurrency) {
+                        // only one currency symbols is allowed
+                        return null;
+                    }
+                    foundCurrency = true;
+                    continue;
+                case '+':
+                    if (foundUnaryMinus || foundUnaryPlus) {
+                        return null;
+                    }
+                    foundUnaryPlus = true;
+                    continue;
+                case '-':
+                    if (foundUnaryMinus || foundUnaryPlus) {
+                        return null;
+                    }
+                    foundUnaryMinus = true;
+                    continue;
+                default:
+                    // all other characters are illegal
+                    return null;
+            }
+        }
+        if (i >= len) {
+            // didn't find digits or '.'
+            if (foundCurrency || foundUnaryMinus || foundUnaryPlus) {
+                return null;
+            }
+            return ZERO;
+        }
 
-		boolean foundDecimalPoint = false;
-		int lastThousandsSeparatorIndex = Short.MIN_VALUE;
+        // remove thousands separators
 
-		StringBuilder sb = new StringBuilder(len);
-		for (; i < len; i++) {
-			char ch = strText.charAt(i);
-			if (Character.isDigit(ch)) {
-				sb.append(ch);
-				continue;
-			}
-			switch (ch) {
-				case ' ':
-					String remainingTextTrimmed = strText.substring(i).trim();
+        boolean foundDecimalPoint = false;
+        int lastThousandsSeparatorIndex = Short.MIN_VALUE;
+
+        StringBuilder sb = new StringBuilder(len);
+        for (; i < len; i++) {
+            char ch = strText.charAt(i);
+            if (Character.isDigit(ch)) {
+                sb.append(ch);
+                continue;
+            }
+            switch (ch) {
+                case ' ':
+                    String remainingTextTrimmed = strText.substring(i).trim();
                     // support for value[space]%
                     if (remainingTextTrimmed.equals("%")) {
-                        foundPercentage= true;
+                        foundPercentage = true;
                         break;
                     }
                     if (remainingTextTrimmed.length() > 0) {
-						// intervening spaces not allowed once the digits start
-						return null;
-					}
-					break;
-				case '.':
-					if (foundDecimalPoint) {
-						return null;
-					}
-					if (i - lastThousandsSeparatorIndex < MIN_DISTANCE_BETWEEN_THOUSANDS_SEPARATOR) {
-						return null;
-					}
-					foundDecimalPoint = true;
-					sb.append('.');
-					continue;
-				case ',':
-					if (foundDecimalPoint) {
-						// thousands separators not allowed after '.' or 'E'
-						return null;
-					}
-					int distanceBetweenThousandsSeparators = i - lastThousandsSeparatorIndex;
-					// as long as there are 3 or more digits between
-					if (distanceBetweenThousandsSeparators < MIN_DISTANCE_BETWEEN_THOUSANDS_SEPARATOR) {
-						return null;
-					}
-					lastThousandsSeparatorIndex = i;
-					// don't append ','
-					continue;
+                        // intervening spaces not allowed once the digits start
+                        return null;
+                    }
+                    break;
+                case '.':
+                    if (foundDecimalPoint) {
+                        return null;
+                    }
+                    if (i - lastThousandsSeparatorIndex < MIN_DISTANCE_BETWEEN_THOUSANDS_SEPARATOR) {
+                        return null;
+                    }
+                    foundDecimalPoint = true;
+                    sb.append('.');
+                    continue;
+                case ',':
+                    if (foundDecimalPoint) {
+                        // thousands separators not allowed after '.' or 'E'
+                        return null;
+                    }
+                    int distanceBetweenThousandsSeparators = i - lastThousandsSeparatorIndex;
+                    // as long as there are 3 or more digits between
+                    if (distanceBetweenThousandsSeparators < MIN_DISTANCE_BETWEEN_THOUSANDS_SEPARATOR) {
+                        return null;
+                    }
+                    lastThousandsSeparatorIndex = i;
+                    // don't append ','
+                    continue;
 
-				case 'E':
-				case 'e':
-					if (i - lastThousandsSeparatorIndex < MIN_DISTANCE_BETWEEN_THOUSANDS_SEPARATOR) {
-						return null;
-					}
-					// append rest of strText and skip to end of loop
-					sb.append(strText.substring(i));
-					i = len;
-					break;
+                case 'E':
+                case 'e':
+                    if (i - lastThousandsSeparatorIndex < MIN_DISTANCE_BETWEEN_THOUSANDS_SEPARATOR) {
+                        return null;
+                    }
+                    // append rest of strText and skip to end of loop
+                    sb.append(strText.substring(i));
+                    i = len;
+                    break;
                 case '%':
                     foundPercentage = true;
                     break;
-				default:
-					// all other characters are illegal
-					return null;
-			}
-		}
-		if (!foundDecimalPoint) {
-			if (i - lastThousandsSeparatorIndex < MIN_DISTANCE_BETWEEN_THOUSANDS_SEPARATOR) {
-				return null;
-			}
-		}
-		double d;
-		try {
-			d = Double.parseDouble(sb.toString());
-		} catch (NumberFormatException e) {
-			// still a problem parsing the number - probably out of range
-			return null;
-		}
+                default:
+                    // all other characters are illegal
+                    return null;
+            }
+        }
+        if (!foundDecimalPoint) {
+            if (i - lastThousandsSeparatorIndex < MIN_DISTANCE_BETWEEN_THOUSANDS_SEPARATOR) {
+                return null;
+            }
+        }
+        double d;
+        try {
+            d = Double.parseDouble(sb.toString());
+        } catch (NumberFormatException e) {
+            // still a problem parsing the number - probably out of range
+            return null;
+        }
         double result = foundUnaryMinus ? -d : d;
-        return foundPercentage ? result/100. : result;
-	}
+        return foundPercentage ? result / 100. : result;
+    }
 
-	public static Double parseDateTime(String pText) {
+    public static Double parseDateTime(String pText) {
 
-		try {
-			return DateUtil.parseDateTime(pText);
-		} catch (DateTimeException e) {
-			return null;
-		}
+        try {
+            return DateUtil.parseDateTime(pText);
+        } catch (DateTimeException e) {
+            return null;
+        }
 
-	}
+    }
 }
