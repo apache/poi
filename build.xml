@@ -218,7 +218,7 @@ under the License.
     <dependency prefix="main.jmhAnnotation" artifact="org.openjdk.jmh:jmh-generator-annprocess:1.19" usage="main-tests"/>
     <dependency prefix="main.hamcrest" artifact="org.hamcrest:hamcrest-core:1.3" usage="main-tests"/>
     <dependency prefix="main.xmlunit" artifact="org.xmlunit:xmlunit-core:2.5.1" usage="main-tests"/>
-    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:3.2.4" usage="main-tests"/>
+    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:3.3.3" usage="main-tests"/>
     <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.10.1" usage="main-tests"/>
     <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.10.1" usage="main-tests"/>
     <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:2.6" usage="main-tests"/>

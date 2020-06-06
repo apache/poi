@@ -54,7 +54,7 @@ ant.taskdef(name: "junit",
         classpath: configurations.antLibs.asPath)
 
 wrapper {
-    gradleVersion = '6.1.1'
+    gradleVersion = '6.5'
 }
 
 task adjustWrapperPropertiesFile {
@@ -98,7 +98,7 @@ subprojects {
         commonsMathVersion = '3.6.1'
         japicmpversion = '4.1.2'
         junitVersion = '4.13'
-        mockitoVersion = '3.2.4'
+        mockitoVersion = '3.3.3'
         xmlbeansVersion = '3.1.0'
     }
 
@@ -188,9 +188,6 @@ project('main') {
         compile 'commons-logging:commons-logging:1.2'
         compile 'org.apache.commons:commons-collections4:4.4'
         compile "org.apache.commons:commons-math3:${commonsMathVersion}"
-        compile 'javax.xml.bind:jaxb-api:2.3.1'
-        compile 'com.sun.xml.bind:jaxb-impl:2.3.2'
-        compile 'com.sun.xml.bind:jaxb-core:2.3.0.1'
         compile 'javax.activation:activation:1.1.1'
         compile 'com.zaxxer:SparseBitSet:1.2'
 
