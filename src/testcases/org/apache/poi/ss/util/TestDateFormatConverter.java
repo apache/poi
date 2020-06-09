@@ -163,7 +163,7 @@ public final class TestDateFormatConverter {
     public void testAllKnownLocales() {
         Pattern p = Pattern.compile("\\[\\$-(\\p{XDigit}+)]");
 
-        Set<String> blacklist = Stream.of(
+        Set<String> excludeList = Stream.of(
             "sd-Deva", "tzm-Arab", "fuv", "plt", "yue", "tdd-Tale", "tdd",
             "khb-Talu", "khb", "qps", "ja-Ploc", "dz", "tmz", "ar-Ploc"
         ).collect(Collectors.toSet());
@@ -183,7 +183,7 @@ public final class TestDateFormatConverter {
                 Locale loc = Locale.forLanguageTag(partTag);
                 assertNotNull("Invalid language tag: "+partTag, loc);
 
-                if (blacklist.contains(partTag)) {
+                if (excludeList.contains(partTag)) {
                     continue;
                 }
 
