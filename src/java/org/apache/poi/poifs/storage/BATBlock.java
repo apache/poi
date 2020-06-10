@@ -192,6 +192,27 @@ public final class BATBlock implements BlockWritable {
         return usedSectors;
     }
 
+    /**
+     * How much of this block is occupied?.
+     * This counts the number of sectors up and including the last used sector.
+     * Note that this is different from {@link #getUsedSectors(boolean)} which
+     * could be smaller as it does not count unused sectors where there are
+     * used ones after it (i.e. fragmentation).
+     *
+     * @since POI 5.0.0
+     */
+    public int getOccupiedSize() {
+        int usedSectors = _values.length;
+        for (int k = _values.length - 1; k >= 0; k--) {
+            if(_values[k] == POIFSConstants.UNUSED_BLOCK) {
+                usedSectors--;
+            } else {
+                break;
+            }
+        }
+        return usedSectors;
+    }
+
     public int getValueAt(int relativeOffset) {
        if(relativeOffset >= _values.length) {
           throw new ArrayIndexOutOfBoundsException(
@@ -201,6 +222,7 @@ public final class BATBlock implements BlockWritable {
        }
        return _values[relativeOffset];
     }
+
     public void setValueAt(int relativeOffset, int value) {
        int oldValue = _values[relativeOffset];
        _values[relativeOffset] = value;
@@ -221,6 +243,7 @@ public final class BATBlock implements BlockWritable {
     public void setOurBlockIndex(int index) {
        this.ourBlockIndex = index;
     }
+
     /**
      * Retrieve where in the file we live
      */
@@ -237,7 +260,6 @@ public final class BATBlock implements BlockWritable {
      * @exception IOException on problems writing to the specified
      *            stream
      */
-
     public void writeBlocks(final OutputStream stream) throws IOException {
         // Save it out
         stream.write( serialize() );
