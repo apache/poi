@@ -3545,8 +3545,9 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             // see more details in https://issues.apache.org/bugzilla/show_bug.cgi?id=51710
             if(cellRef.getCol() > sfRef.getFirstColumn() || cellRef.getRow() > sfRef.getFirstRow()){
                 String effectiveRef = new CellRangeAddress(
-                        Math.max(cellRef.getRow(), sfRef.getFirstRow()), sfRef.getLastRow(),
-                        Math.max(cellRef.getCol(), sfRef.getFirstColumn()), sfRef.getLastColumn()).formatAsString();
+                        Math.max(cellRef.getRow(), sfRef.getFirstRow()), Math.max(cellRef.getRow(), sfRef.getLastRow()),
+                        Math.max(cellRef.getCol(), sfRef.getFirstColumn()), Math.max(cellRef.getCol(), sfRef.getLastColumn()))
+                        .formatAsString();
                 sf.setRef(effectiveRef);
             }
 

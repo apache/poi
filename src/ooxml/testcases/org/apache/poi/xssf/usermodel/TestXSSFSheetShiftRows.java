@@ -23,7 +23,6 @@ import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -397,7 +396,6 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
     // bug 59983:  Wrong update of shared formulas after shiftRow
     @Test
-    @Ignore
     public void testSharedFormulas() throws Exception {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("TestShiftRowSharedFormula.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);
