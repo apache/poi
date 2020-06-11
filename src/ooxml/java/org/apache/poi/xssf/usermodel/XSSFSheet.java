@@ -3044,7 +3044,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
             Long rownumL = ctRow.getR();
             ctRows.put(rownumL, ctRow);
         }
-        List<CTRow> ctRowList = new ArrayList<CTRow>(ctRows.values());
+        List<CTRow> ctRowList = new ArrayList<>(ctRows.values());
         CTRow[] ctRowArray = new CTRow[ctRowList.size()];
         ctRowArray = ctRowList.toArray(ctRowArray);
         sheetData.setRowArray(ctRowArray);
