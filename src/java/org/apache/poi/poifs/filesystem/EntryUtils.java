@@ -60,7 +60,7 @@ public final class EntryUtils {
 
     /**
      * Copies all the nodes from one POIFS Directory to another
-     * 
+     *
      * @param sourceRoot
      *            is the source Directory to copy from
      * @param targetRoot
@@ -75,7 +75,7 @@ public final class EntryUtils {
 
     /**
      * Copies all nodes from one POIFS to the other
-     * 
+     *
      * @param source
      *            is the source POIFS to copy from
      * @param target
@@ -85,13 +85,13 @@ public final class EntryUtils {
     throws IOException {
         copyNodes( source.getRoot(), target.getRoot() );
     }
-    
+
     /**
      * Copies nodes from one POIFS to the other, minus the excepts.
      * This delegates the filtering work to {@link FilteringDirectoryNode},
      *  so excepts can be of the form "NodeToExclude" or
      *  "FilteringDirectory/ExcludedChildNode"
-     * 
+     *
      * @param source is the source POIFS to copy from
      * @param target is the target POIFS to copy to
      * @param excepts is a list of Entry Names to be excluded from the copy
@@ -103,19 +103,23 @@ public final class EntryUtils {
               new FilteringDirectoryNode(target.getRoot(), excepts)
         );
     }
-    
+
     /**
      * Checks to see if the two Directories hold the same contents.
-     * For this to be true, they must have entries with the same names,
-     *  no entries in one but not the other, and the size+contents
-     *  of each entry must match, and they must share names.
+     * For this to be true ...
+     * <ul>
+     *     <li>they must have entries with the same names</li>
+     *     <li>no entries in one but not the other</li>
+     *     <li>the size+contents of each entry must match</li>
+     *     <li>the storage classid of the directories must match</li>
+     * </ul>
      * To exclude certain parts of the Directory from being checked,
      *  use a {@link FilteringDirectoryNode}
      */
     public static boolean areDirectoriesIdentical(DirectoryEntry dirA, DirectoryEntry dirB) {
         return new DirectoryDelegate(dirA).equals(new DirectoryDelegate(dirB));
     }
-    
+
     /**
      * Compares two {@link DocumentEntry} instances of a POI file system.
      * Documents that are not property set streams must be bitwise identical.
@@ -182,6 +186,10 @@ public final class EntryUtils {
 
             // Next up, check they have the same number of children
             if (dir.getEntryCount() != dd.dir.getEntryCount()) {
+                return false;
+            }
+
+            if (!dir.getStorageClsid().equals(dd.dir.getStorageClsid())) {
                 return false;
             }
 

@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,67 +14,63 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
 
 package org.apache.poi.poifs.eventfilesystem;
 
+import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSDocumentPath;
 
 /**
  * Class POIFSReaderEvent
- *
- * @author Marc Johnson (mjohnson at apache dot org)
- * @version %I%, %G%
  */
 
-public class POIFSReaderEvent
-{
+public class POIFSReaderEvent {
     private final DocumentInputStream stream;
-    private final POIFSDocumentPath   path;
-    private final String              documentName;
+    private final POIFSDocumentPath path;
+    private final String documentName;
+    private final ClassID storageClassId;
 
     /**
      * package scoped constructor
      *
-     * @param stream the DocumentInputStream, freshly opened
-     * @param path the path of the document
+     * @param stream       the DocumentInputStream, freshly opened
+     * @param path         the path of the document
      * @param documentName the name of the document
      */
-
     POIFSReaderEvent(final DocumentInputStream stream,
-                     final POIFSDocumentPath path, final String documentName)
-    {
-        this.stream       = stream;
-        this.path         = path;
+                     final POIFSDocumentPath path, final String documentName, final ClassID storageClassId) {
+        this.stream = stream;
+        this.path = path;
         this.documentName = documentName;
+        this.storageClassId = storageClassId;
     }
 
     /**
      * @return the DocumentInputStream, freshly opened
      */
-
-    public DocumentInputStream getStream()
-    {
+    public DocumentInputStream getStream() {
         return stream;
     }
 
     /**
      * @return the document's path
      */
-
-    public POIFSDocumentPath getPath()
-    {
+    public POIFSDocumentPath getPath() {
         return path;
     }
 
     /**
      * @return the document's name
      */
-
-    public String getName()
-    {
+    public String getName() {
         return documentName;
     }
-}   // end public class POIFSReaderEvent
 
+    /**
+     * @return the storage class id of the path
+     */
+    public ClassID getStorageClassId() {
+        return storageClassId;
+    }
+}

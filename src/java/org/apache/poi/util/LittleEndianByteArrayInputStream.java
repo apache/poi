@@ -91,8 +91,8 @@ public class LittleEndianByteArrayInputStream extends ByteArrayInputStream imple
 	   }
 	   this.pos = pos;
 	}
-	
-	
+
+
 	@Override
     public byte readByte() {
 		checkPosition(1);
@@ -140,14 +140,14 @@ public class LittleEndianByteArrayInputStream extends ByteArrayInputStream imple
 	}
 
 	public long readUInt() {
-	    return readInt() & 0x00FFFFFFFFL; 
+	    return readInt() & 0x00FFFFFFFFL;
     }
 
     @Override
     public double readDouble() {
         return Double.longBitsToDouble(readLong());
     }
-	
+
 	@Override
     public void readFully(byte[] buffer, int off, int len) {
 		checkPosition(len);
@@ -164,4 +164,12 @@ public class LittleEndianByteArrayInputStream extends ByteArrayInputStream imple
     public void readPlain(byte[] buf, int off, int len) {
         readFully(buf, off, len);
     }
+
+	/**
+	 * Change the limit of the ByteArrayInputStream
+	 * @param size the new limit - is truncated to length of internal buffer
+	 */
+	public void limit(int size) {
+		count = Math.min(size, buf.length);
+	}
 }

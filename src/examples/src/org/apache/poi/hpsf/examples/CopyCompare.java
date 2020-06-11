@@ -163,10 +163,20 @@ public final class CopyCompare {
                 // Ensures that the directory hierarchy for a document in a POI fileystem is in place.
                 // Get the root directory. It does not have to be created since it always exists in a POIFS.
                 DirectoryEntry de = poiFs.getRoot();
+                if ("/".equals(path.toString())) {
+                    de.setStorageClsid(event.getStorageClassId());
+                }
 
                 for (int i=0; i<path.length(); i++) {
                     String subDir = path.getComponent(i);
-                    de = (de.hasEntry(subDir)) ? (DirectoryEntry)de.getEntry(subDir) : de.createDirectory(subDir);
+                    if (de.hasEntry(subDir)) {
+                        de = (DirectoryEntry)de.getEntry(subDir);
+                    } else {
+                        de = de.createDirectory(subDir);
+                        if (i == path.length()-1) {
+                            de.setStorageClsid(event.getStorageClassId());
+                        }
+                    }
                 }
 
                 if (event.getName() != null) {

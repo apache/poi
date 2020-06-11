@@ -247,9 +247,9 @@ public final class XSSFRelation extends POIXMLRelation {
     );
 
     public static final XSSFRelation OLEEMBEDDINGS = new XSSFRelation(
-        null,
+        "application/vnd.openxmlformats-officedocument.oleObject",
         POIXMLDocument.OLE_OBJECT_REL_TYPE,
-        null
+        "/xl/embeddings/oleObject#.bin"
     );
 
     public static final XSSFRelation PACKEMBEDDINGS = new XSSFRelation(

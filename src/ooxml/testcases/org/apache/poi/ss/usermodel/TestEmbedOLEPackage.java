@@ -23,16 +23,29 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hpsf.ClassIDPredefined;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.poifs.crypt.CryptoFunctions;
+import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.EntryUtils;
+import org.apache.poi.poifs.filesystem.Ole10Native;
+import org.apache.poi.poifs.filesystem.Ole10NativeException;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.AutoShape;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.Slide;
@@ -41,20 +54,92 @@ import org.apache.poi.ss.extractor.EmbeddedData;
 import org.apache.poi.ss.extractor.EmbeddedExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xssf.XSSFTestDataSamples;
+import org.apache.poi.xssf.usermodel.XSSFObjectData;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 public class TestEmbedOLEPackage {
     private static byte[] samplePPT, samplePPTX, samplePNG;
-    
+
+    private static final POIDataSamples ssamples = POIDataSamples.getSpreadSheetInstance();
+
     @BeforeClass
     public static void init() throws IOException, ReflectiveOperationException {
         samplePPT = getSamplePPT(false);
         samplePPTX = getSamplePPT(true);
-        samplePNG = POIDataSamples.getSpreadSheetInstance().readFile("logoKarmokar4.png");
+        samplePNG = ssamples.readFile("logoKarmokar4.png");
     }
-    
+
+    @Test
+    public void embedPDF() throws IOException {
+        try (InputStream is = ssamples.openResourceAsStream("bug64512_embed.xlsx");
+            XSSFWorkbook wb = new XSSFWorkbook(is)) {
+            List<XSSFObjectData> oleShapes = new ArrayList<>();
+            List<Ole10Native> ole10s = new ArrayList<>();
+            List<String> digests = new ArrayList<>();
+
+            final boolean digestMatch =
+                wb.getSheetAt(0).getDrawingPatriarch().getShapes().stream()
+                .map(s -> (XSSFObjectData)s)
+                .filter(oleShapes::add)
+                .map(TestEmbedOLEPackage::extractOle10Native)
+                .filter(ole10s::add)
+                .map(TestEmbedOLEPackage::digest)
+                .allMatch("FUJBVHTAZ0ly/TNDNmEj1gQ4a2TbZwDMVF4WUkDQLaM="::equals);
+
+            assertEquals(2, oleShapes.size());
+            assertEquals("Package", oleShapes.get(0).getOLE2ClassName());
+            assertEquals("Package2", oleShapes.get(1).getOLE2ClassName());
+            assertTrue(digestMatch);
+
+            final String expLabel = "Apache_POI_project_logo_(2018).pdf";
+            final String expFilenName = "C:\\Dell\\Apache_POI_project_logo_(2018).pdf";
+            final String expCmd1 = "C:\\Users\\KIWIWI~1\\AppData\\Local\\Temp\\{84287F34-B79C-4F3A-9A92-6BB664586F48}\\Apache_POI_project_logo_(2018).pdf";
+            final String expCmd2 = "C:\\Users\\KIWIWI~1\\AppData\\Local\\Temp\\{84287F34-B79C-4F3A-9A92-6BB664586F48}\\Apache_POI_project_logo_(2).pdf";
+
+            assertTrue(ole10s.stream().map(Ole10Native::getLabel).allMatch(expLabel::equals));
+            assertTrue(ole10s.stream().map(Ole10Native::getFileName).allMatch(expFilenName::equals));
+            assertEquals(expCmd1, ole10s.get(0).getCommand());
+            assertEquals(expCmd2, ole10s.get(1).getCommand());
+
+            for (Ole10Native o : ole10s) {
+                assertEquals(o.getLabel(), o.getLabel2());
+                assertEquals(o.getCommand(), o.getCommand2());
+                assertEquals(o.getFileName(), o.getFileName2());
+            }
+
+            Ole10Native scratch = new Ole10Native(expLabel, expFilenName, expCmd1,  ole10s.get(0).getDataBuffer());
+            scratch.setLabel2(expLabel);
+            scratch.setFileName2(expFilenName);
+            scratch.setCommand2(expCmd1);
+
+            try (POIFSFileSystem scratchFS = new POIFSFileSystem();
+                POIFSFileSystem ole1FS = new POIFSFileSystem(new ByteArrayInputStream(oleShapes.get(0).getObjectData()))) {
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                scratch.writeOut(bos);
+                scratchFS.createDocument(new ByteArrayInputStream(bos.toByteArray()), Ole10Native.OLE10_NATIVE);
+                scratchFS.getRoot().setStorageClsid(ClassIDPredefined.OLE_V1_PACKAGE.getClassID());
+                assertTrue(EntryUtils.areDirectoriesIdentical(ole1FS.getRoot(), scratchFS.getRoot()));
+            }
+        }
+    }
+
+    private static Ole10Native extractOle10Native(XSSFObjectData objectData) {
+        try (InputStream is = objectData.getObjectPart().getInputStream();
+             POIFSFileSystem poifs = new POIFSFileSystem(is)) {
+            return Ole10Native.createFromEmbeddedOleObject(poifs);
+        } catch (IOException | Ole10NativeException e) {
+            throw new AssertionError(e.getMessage(), e);
+        }
+    }
+
+    private static String digest(Ole10Native ole10) {
+        MessageDigest sha = CryptoFunctions.getMessageDigest(HashAlgorithm.sha256);
+        byte[] digest = sha.digest(ole10.getDataBuffer());
+        return Base64.encodeBase64String(digest);
+    }
+
     @Test
     public void embedXSSF() throws IOException {
         Workbook wb1 = new XSSFWorkbook();
@@ -71,9 +156,9 @@ public class TestEmbedOLEPackage {
     public void embedHSSF() throws IOException {
         assumeFalse(xslfOnly());
 
-        Workbook wb1 = new HSSFWorkbook();
+        HSSFWorkbook wb1 = new HSSFWorkbook();
         addEmbeddedObjects(wb1);
-        Workbook wb2 = HSSFTestDataSamples.writeOutAndReadBack((HSSFWorkbook)wb1);
+        Workbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
         validateEmbeddedObjects(wb2);
 
         wb2.close();
@@ -97,17 +182,17 @@ public class TestEmbedOLEPackage {
             }
         }
     }
-    
+
     static void addEmbeddedObjects(Workbook wb) throws IOException {
         boolean ooxml = wb.getClass().getName().toLowerCase(Locale.ROOT).contains("xssf");
         int picIdx = wb.addPicture(samplePNG, Workbook.PICTURE_TYPE_PNG);
         byte[] data = (ooxml) ? samplePPTX : samplePPT;
         String ext = (ooxml) ? ".pptx" : ".ppt";
-        
+
         int oleIdx1a = wb.addOlePackage(data, "dummy1a"+ext, "dummy1a"+ext, "dummy1a"+ext);
         int oleIdx1b = wb.addOlePackage(data, "dummy1b"+ext, "dummy1b"+ext, "dummy1b"+ext);
         int oleIdx2 = wb.addOlePackage(data, "dummy2"+ext, "dummy2"+ext, "dummy2"+ext);
-        
+
         Sheet sh1 = wb.createSheet();
         Drawing<?> pat1 = sh1.createDrawingPatriarch();
         ClientAnchor anchor1a = pat1.createAnchor(0, 0, 0, 0, 1, 1, 3, 6);
@@ -120,7 +205,7 @@ public class TestEmbedOLEPackage {
         ClientAnchor anchor2 = pat2.createAnchor(0, 0, 0, 0, 1, 1, 3, 6);
         pat2.createObjectData(anchor2, oleIdx2, picIdx);
     }
-    
+
     static byte[] getSamplePPT(boolean ooxml) throws IOException, ReflectiveOperationException {
         SlideShow<?,?> ppt = (ooxml) ? new XMLSlideShow()
             : (SlideShow<?,?>)Class.forName("org.apache.poi.hslf.usermodel.HSLFSlideShow").newInstance();

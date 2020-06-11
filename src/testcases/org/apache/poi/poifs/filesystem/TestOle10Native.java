@@ -17,11 +17,9 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import static org.apache.poi.POITestCase.assertContains;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThat;
-import static org.junit.Assert.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -33,10 +31,16 @@ import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.RecordFormatException;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 public class TestOle10Native {
     private static final POIDataSamples dataSamples = POIDataSamples.getPOIFSInstance();
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void testOleNative() throws IOException, Ole10NativeException {
@@ -59,26 +63,26 @@ public class TestOle10Native {
                 POIDataSamples.getDocumentInstance().getFile("Bug53380_3.doc"),
                 POIDataSamples.getDocumentInstance().getFile("Bug47731.doc")
         };
-        
+
         for (File f : files) {
             POIFSFileSystem fs = new POIFSFileSystem(f, true);
             List<Entry> entries = new ArrayList<>();
             findOle10(entries, fs.getRoot(), "/");
-            
+
             for (Entry e : entries) {
                 ByteArrayOutputStream bosExp = new ByteArrayOutputStream();
                 InputStream is = ((DirectoryNode)e.getParent()).createDocumentInputStream(e);
                 IOUtils.copy(is,bosExp);
                 is.close();
-                
+
                 Ole10Native ole = Ole10Native.createFromEmbeddedOleObject((DirectoryNode)e.getParent());
-                
+
                 ByteArrayOutputStream bosAct = new ByteArrayOutputStream();
                 ole.writeOut(bosAct);
-                
+
                 assertThat(bosExp.toByteArray(), equalTo(bosAct.toByteArray()));
             }
-            
+
             fs.close();
         }
     }
@@ -97,14 +101,11 @@ public class TestOle10Native {
     }
 
     @Test
-    public void testOleNativeOOM() throws IOException {
+    public void testOleNativeOOM() throws IOException, Ole10NativeException {
         POIFSFileSystem fs = new POIFSFileSystem(dataSamples.openResourceAsStream("60256.bin"));
-        try {
-            Ole10Native.createFromEmbeddedOleObject(fs);
-            fail("Should have thrown exception because OLENative lacks a length parameter");
-        } catch (Ole10NativeException e) {
-            assertContains(e.getMessage(), "declared data length");
-        }
+        thrown.expect(RecordFormatException.class);
+        thrown.expectMessage("Tried to allocate");
+        Ole10Native.createFromEmbeddedOleObject(fs);
     }
 
 }

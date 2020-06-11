@@ -28,7 +28,6 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
-import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -441,14 +440,14 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
         long shapeId = (sheetIndex + 1L) * 1024 + newShapeId();
 
         // add reference to OLE part
+        final XSSFRelation rel = XSSFRelation.OLEEMBEDDINGS;
         PackagePartName olePN;
         try {
-            olePN = PackagingURIHelper.createPartName("/xl/embeddings/oleObject" + storageId + ".bin");
+            olePN = PackagingURIHelper.createPartName(rel.getFileName(storageId));
         } catch (InvalidFormatException e) {
             throw new POIXMLException(e);
         }
-        PackageRelationship olePR = sheetPart.addRelationship(olePN, TargetMode.INTERNAL,
-            POIXMLDocument.OLE_OBJECT_REL_TYPE);
+        PackageRelationship olePR = sheetPart.addRelationship(olePN, TargetMode.INTERNAL, rel.getRelation());
 
         // add reference to image part
         XSSFPictureData imgPD = sh.getWorkbook().getAllPictures().get(pictureIndex);

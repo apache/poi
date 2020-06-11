@@ -2383,19 +2383,20 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     @Override
     public int addOlePackage(byte[] oleData, String label, String fileName, String command)
             throws IOException {
+        final XSSFRelation rel = XSSFRelation.OLEEMBEDDINGS;
+
         // find an unused part name
         OPCPackage opc = getPackage();
         PackagePartName pnOLE;
-        int oleId=0;
-        do {
-            try {
-                pnOLE = PackagingURIHelper.createPartName( "/xl/embeddings/oleObject"+(++oleId)+".bin" );
-            } catch (InvalidFormatException e) {
-                throw new IOException("ole object name not recognized", e);
-            }
-        } while (opc.containPart(pnOLE));
+        int oleId;
+        try {
+            oleId = opc.getUnusedPartIndex(rel.getDefaultFileName());
+            pnOLE = PackagingURIHelper.createPartName(rel.getFileName(oleId));
+        } catch (InvalidFormatException e) {
+            throw new IOException("ole object name not recognized", e);
+        }
 
-        PackagePart pp = opc.createPart( pnOLE, "application/vnd.openxmlformats-officedocument.oleObject" );
+        PackagePart pp = opc.createPart( pnOLE, rel.getContentType() );
 
         Ole10Native ole10 = new Ole10Native(label, fileName, command, oleData);
 
