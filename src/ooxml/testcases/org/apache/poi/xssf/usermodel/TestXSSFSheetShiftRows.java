@@ -23,14 +23,11 @@ import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
 
-import static org.apache.poi.POITestCase.skipTest;
-import static org.apache.poi.POITestCase.testPassesNow;
 import static org.junit.Assert.*;
 
 public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
