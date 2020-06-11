@@ -24,6 +24,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.xmlbeans.impl.values.XmlValueDisconnectedException;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.io.IOException;
@@ -370,9 +371,6 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         wb.close();
     }
     
-    // This test is written as expected-to-fail and should be rewritten
-    // as expected-to-pass when the bug is fixed.
-    //@Ignore("Bug 59733 - shiftRows() causes org.apache.xmlbeans.impl.values.XmlValueDisconnectedException")
     @Test
     public void bug59733() throws IOException {
         Workbook workbook = new XSSFWorkbook();
@@ -384,25 +382,9 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         // Shift the 2nd row on top of the 0th row
         sheet.shiftRows(2, 2, -2);
         
-        /*
-         * The following error is thrown when shifting the 3rd row on top of the 0th row
-         * If the rows are not created, the error does not occur
+        sheet.removeRow(sheet.getRow(0));
+        assertEquals(1, sheet.getRow(1).getRowNum());
 
-        org.apache.xmlbeans.impl.values.XmlValueDisconnectedException
-            at org.apache.xmlbeans.impl.values.XmlObjectBase.check_orphaned(XmlObjectBase.java:1258)
-            at org.openxmlformats.schemas.spreadsheetml.x2006.main.impl.CTRowImpl.getR(Unknown Source)
-            at org.apache.poi.xssf.usermodel.XSSFRow.getRowNum(XSSFRow.java:363)
-            at org.apache.poi.xssf.usermodel.TestXSSFSheetShiftRows.bug59733(TestXSSFSheetShiftRows.java:393)
-         */
-        // FIXME: remove try, catch, and testPassesNow, skipTest when test passes
-        try {
-            sheet.removeRow(sheet.getRow(0));
-            assertEquals(1, sheet.getRow(1).getRowNum());
-            testPassesNow(59733);
-        } catch (XmlValueDisconnectedException e) {
-            skipTest(e);
-        }
-        
         workbook.close();
     }
 
@@ -418,6 +400,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
     // bug 59983:  Wrong update of shared formulas after shiftRow
     @Test
+    @Ignore
     public void testSharedFormulas() throws Exception {
         XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("TestShiftRowSharedFormula.xlsx");
         XSSFSheet sheet = wb.getSheetAt(0);

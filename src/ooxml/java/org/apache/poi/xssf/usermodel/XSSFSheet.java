@@ -3037,14 +3037,24 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     }
 
     private void rebuildRows() {
+        //rebuild the CTSheetData CTRow order
+        SortedMap<Long, CTRow> ctRows = new TreeMap<>();
+        CTSheetData sheetData = getCTWorksheet().getSheetData();
+        for (CTRow ctRow : sheetData.getRowList()) {
+            Long rownumL = ctRow.getR();
+            ctRows.put(rownumL, ctRow);
+        }
+        List<CTRow> ctRowList = new ArrayList<CTRow>(ctRows.values());
+        CTRow[] ctRowArray = new CTRow[ctRowList.size()];
+        ctRowArray = ctRowList.toArray(ctRowArray);
+        sheetData.setRowArray(ctRowArray);
+
         //rebuild the _rows map
-        List<XSSFRow> rowList = new ArrayList<>(_rows.values());
         _rows.clear();
-        for(XSSFRow r : rowList) {
-            // Performance optimization: explicit boxing is slightly faster than auto-unboxing, though may use more memory
-            //noinspection UnnecessaryBoxing
-            final Integer rownumI = new Integer(r.getRowNum()); // NOSONAR
-            _rows.put(rownumI, r);
+        for (CTRow ctRow : sheetData.getRowList()) {
+            XSSFRow row = new XSSFRow(ctRow, this);
+            Integer rownumI = Math.toIntExact(row.getRowNum());
+            _rows.put(rownumI, row);
         }
     }
 
