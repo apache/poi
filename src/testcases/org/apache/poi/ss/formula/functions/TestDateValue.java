@@ -18,12 +18,14 @@
 package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.util.LocaleUtil;
 import org.junit.Test;
+
+import java.util.Locale;
 
 import static org.junit.Assert.assertEquals;
 
@@ -49,10 +51,23 @@ public final class TestDateValue {
         confirmDateValue(new StringEval("FEB/1/2020"), 43862);
         confirmDateValue(new StringEval("2020/02/01"), 43862);
 
-        confirmDateValue(new StringEval(""), BlankEval.instance);
-        confirmDateValue(BlankEval.instance, BlankEval.instance);
+        confirmDateValue(new StringEval(""));
+        confirmDateValue(BlankEval.instance);
 
-        confirmDateValue(new StringEval("non-date text"), ErrorEval.VALUE_INVALID);
+        confirmDateValueError(new StringEval("non-date text"));
+
+        LocaleUtil.setUserLocale(Locale.ENGLISH);
+        try {
+            // // EXCEL
+            confirmDateValue(new StringEval("8/22/2011"), 40777); // Serial number of a date entered as text.
+            confirmDateValue(new StringEval("22-MAY-2011"), 40685); // Serial number of a date entered as text.
+            confirmDateValue(new StringEval("2011/02/23"), 40597); // Serial number of a date entered as text.
+
+            // LibreOffice compatibility
+            confirmDateValue(new StringEval("1954-07-20"), 19925);
+        } finally {
+            LocaleUtil.setUserLocale(null);
+        }
     }
 
     private ValueEval invokeDateValue(ValueEval text) {
@@ -65,14 +80,14 @@ public final class TestDateValue {
         assertEquals(expected, ((NumberEval) result).getNumberValue(), 0.0001);
     }
 
-    private void confirmDateValue(ValueEval text, BlankEval expected) {
+    private void confirmDateValue(ValueEval text) {
         ValueEval result = invokeDateValue(text);
         assertEquals(BlankEval.class, result.getClass());
     }
 
-    private void confirmDateValue(ValueEval text, ErrorEval expected) {
+    private void confirmDateValueError(ValueEval text) {
         ValueEval result = invokeDateValue(text);
         assertEquals(ErrorEval.class, result.getClass());
-        assertEquals(expected.getErrorCode(), ((ErrorEval) result).getErrorCode());
+        assertEquals(ErrorEval.VALUE_INVALID.getErrorCode(), ((ErrorEval) result).getErrorCode());
     }
 }
