@@ -513,6 +513,10 @@ final class LinkTable {
         if (thisWbIndex < 0) {
             throw new RuntimeException("Could not find 'internal references' EXTERNALBOOK");
         }
+        if (_externSheetRecord == null) {
+            throw new RuntimeException("Did not have an external sheet record, having blocks: " +
+                    _externalBookBlocks.length);
+        }
 
         //Trying to find reference to this sheet
         int i = _externSheetRecord.getRefIxForSheet(thisWbIndex, firstSheetIndex, lastSheetIndex);
