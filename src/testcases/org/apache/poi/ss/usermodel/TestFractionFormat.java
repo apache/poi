@@ -65,52 +65,52 @@ public final class TestFractionFormat {
     @Test
     public void testWithBigWholePart() {
         FractionFormat f = new FractionFormat("#", "???/???");
-        
+
         assertEquals("10100136259702", f.format(10100136259702d));
         assertEquals("-10100136259702", f.format(-10100136259702d));
-        
+
         // Excel displays fraction: 51/512
         assertEquals("10100136259702 10/100", f.format(10100136259702.1d));
         assertEquals("-10100136259702 10/100", f.format(-10100136259702.1d));
-        
+
         // Excel displays fraction: 461/512
         assertEquals("10100136259702 90/100", f.format(10100136259702.9d));
         assertEquals("-10100136259702 90/100", f.format(-10100136259702.9d));
     }
-     
+
     @Test
     public void testTruthFile() throws Exception {
         File truthFile = HSSFTestDataSamples.getSampleFile("54686_fraction_formats.txt");
-        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(truthFile), LocaleUtil.CHARSET_1252));
-        Workbook wb = HSSFTestDataSamples.openSampleWorkbook("54686_fraction_formats.xls");
-        Sheet sheet = wb.getSheetAt(0);
-        DataFormatter formatter = new DataFormatter();
-        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(truthFile), LocaleUtil.CHARSET_1252))) {
+            Workbook wb = HSSFTestDataSamples.openSampleWorkbook("54686_fraction_formats.xls");
+            Sheet sheet = wb.getSheetAt(0);
+            DataFormatter formatter = new DataFormatter();
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
-        // Skip over the header row
-        String truthLine = reader.readLine();
-        String[] headers = truthLine.split("\t");
-        truthLine = reader.readLine();
-
-        for (int i = 1; i < sheet.getLastRowNum() && truthLine != null; i++){
-            Row r = sheet.getRow(i);
-            String[] truths = truthLine.split("\t");
-            // Intentionally ignore the last column (tika-1132), for now
-            for (short j = 3; j < 12; j++){
-                Cell cell = r.getCell(j, MissingCellPolicy.CREATE_NULL_AS_BLANK);
-                String formatted = clean(formatter.formatCellValue(cell, evaluator));
-                if (truths.length <= j){
-                    continue;
-                }
-
-                String truth = clean(truths[j]);
-                String testKey = truths[0]+":"+truths[1]+":"+headers[j];
-                assertEquals(testKey, truth, formatted);
-            }
+            // Skip over the header row
+            String truthLine = reader.readLine();
+            String[] headers = truthLine.split("\t");
             truthLine = reader.readLine();
+
+            for (int i = 1; i < sheet.getLastRowNum() && truthLine != null; i++) {
+                Row r = sheet.getRow(i);
+                String[] truths = truthLine.split("\t");
+                // Intentionally ignore the last column (tika-1132), for now
+                for (short j = 3; j < 12; j++) {
+                    Cell cell = r.getCell(j, MissingCellPolicy.CREATE_NULL_AS_BLANK);
+                    String formatted = clean(formatter.formatCellValue(cell, evaluator));
+                    if (truths.length <= j) {
+                        continue;
+                    }
+
+                    String truth = clean(truths[j]);
+                    String testKey = truths[0] + ":" + truths[1] + ":" + headers[j];
+                    assertEquals(testKey, truth, formatted);
+                }
+                truthLine = reader.readLine();
+            }
+            wb.close();
         }
-        wb.close();
-        reader.close();
     }
 
     private String clean(String s){
