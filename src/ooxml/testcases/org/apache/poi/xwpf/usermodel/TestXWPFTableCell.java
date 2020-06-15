@@ -19,14 +19,26 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 
 import org.junit.Ignore;
 import org.junit.Test;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell.XWPFVertAlign;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHMerge;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTShd;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcBorders;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTcPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVMerge;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTVerticalJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STMerge;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STShd;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
 
 import java.util.List;
 
@@ -135,14 +147,14 @@ public class TestXWPFTableCell {
             }
         }
     }
-    
+
     @Test
     public void testCellGetSetWidth() throws Exception {
         XWPFDocument doc = new XWPFDocument();
         XWPFTable table = doc.createTable();
-        XWPFTableRow tr = table.createRow();        
+        XWPFTableRow tr = table.createRow();
         XWPFTableCell cell = tr.addNewTableCell();
-        
+
         cell.setWidth("50%");
         assertEquals(TableWidthType.PCT, cell.getWidthType());
         assertEquals(50.0, cell.getWidthDecimal(), 0.0);
@@ -214,5 +226,20 @@ public class TestXWPFTableCell {
         String actual = cell.getText();
         assertEquals(expected, actual);
         doc.close();
+    }
+
+    @Test
+    public void test63624() {
+        XWPFDocument doc = new XWPFDocument();
+        XWPFTable table = doc.createTable(1, 1);
+        XWPFTableRow row = table.getRow(0);
+        XWPFTableCell cell = row.getCell(0);
+
+        cell.setText("test text 1");
+        assertEquals("test text 1", cell.getText());
+
+        // currently the text is added, I am not sure if this is expected or not...
+        cell.setText("test text 2");
+        assertEquals("test text 1test text 2", cell.getText());
     }
 }
