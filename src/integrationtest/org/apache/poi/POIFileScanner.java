@@ -178,6 +178,13 @@ public class POIFileScanner {
             case RTF:
             case PDF:
             case HTML:
+            case XML:
+            case JPEG:
+            case GIF:
+            case TIFF:
+            case WMF:
+            case EMF:
+            case BMP:
                 return TestAllFiles.NullFileHandler.instance;
         }
 
