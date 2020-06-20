@@ -240,6 +240,8 @@ poijobs.each { poijob ->
                 writeDescription('Build was aborted due to timeout')
             }
             preBuildCleanup {
+                /* remove xmlbeans while 4.0 is not stable */
+                includePattern('**/lib/ooxml/xmlbeans*.jar')
                 includePattern('**/lib/ooxml/ooxml*.jar')
                 includePattern('sonar/*/target/**')
             }
