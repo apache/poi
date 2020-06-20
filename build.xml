@@ -613,6 +613,9 @@ under the License.
             <fileset dir="${basedir}/lib/util">
                 <include name="asm*7.2.jar"/>
             </fileset>
+            <fileset dir="${basedir}/lib/ooxml">
+                <include name="xmlbeans-3.1.0.jar"/>
+            </fileset>
         </delete>
 
         <condition property="jars.present">

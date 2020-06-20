@@ -240,7 +240,7 @@ poijobs.each { poijob ->
                 writeDescription('Build was aborted due to timeout')
             }
             preBuildCleanup {
-                includePattern('**/ooxml-lib/ooxml*.jar')
+                includePattern('**/lib/ooxml/ooxml*.jar')
                 includePattern('sonar/*/target/**')
             }
             if(poijob.sonar) {
@@ -448,7 +448,7 @@ poijobs.each { poijob ->
                     defaultEncoding('UTF-8')
                 }
                 // in archive, junit and jacoco publishers, matches beneath build/*/build/... are for Gradle-build results
-                archiveArtifacts('build/dist/*.tar.gz,build/findbugs.html,build/coverage/**,build/integration-test-results/**,ooxml-lib/**,build/*/build/libs/*.jar')
+                archiveArtifacts('build/dist/*.tar.gz,build/findbugs.html,build/coverage/**,build/integration-test-results/**,lib/ooxml/**,build/*/build/libs/*.jar')
                 warnings(['Java Compiler (javac)', 'JavaDoc Tool'], null) {
                     resolveRelativePaths()
                 }
