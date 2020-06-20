@@ -156,7 +156,7 @@ under the License.
     <property name="ooxml.lite.agent" location="build/ooxml-lite-agent.jar"/>
     <property name="ooxml.lite.report" location="build/ooxml-lite-report.txt"/>
     <property name="ooxml.lite.jar" location="build/ooxml-lite-classes.jar"/>
-    <property name="ooxml.lite.includes" value="^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|schemaorg_apache_xmlbeans)"/>
+    <property name="ooxml.lite.includes" value="^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|org/apache/poi/schemas)"/>
 
 
     <!-- Integration testing: -->
@@ -1550,8 +1550,8 @@ under the License.
 
         <patternset id="xsbfiles">
             <includesfile name="${ooxml.lite.report}-pat"/>
-            <include name="schemaorg_apache_xmlbeans/system/**/*.xsb"/>
-            <include name="schemaorg_apache_xmlbeans/element/**/*.xsb"/>
+            <include name="org/apache/poi/schemas/*/system/**/*.xsb"/>
+            <include name="org/apache/poi/schemas/*/element/**/*.xsb"/>
         </patternset>
 
         <jar destfile="${ooxml.lite.jar}" duplicate="preserve">
