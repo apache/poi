@@ -184,6 +184,7 @@ under the License.
         <attribute name="snapshot"/>
         <attribute name="query"/>
         <attribute name="target"/>
+        <attribute name="url"/>
         <![CDATA[
             var parts = attributes.get("artifact").split(/:/);
             var packaging = attributes.get("packaging") || "jar";
@@ -196,7 +197,8 @@ under the License.
             var usageDir = attributes.get("usage");
             usageDir = project.getProperty("basedir")+(usageDir.charAt(0) == '/' ? "" : "/lib/")+usageDir;
             var jarLoc = usageDir+"/"+(attributes.get("target")||(parts[1]+"-"+parts[2]+"."+packaging));
-            var urlLoc = repo+"/"+parts[0].replace(/\./g,"/")+"/"+parts[1]+"/"+parts[2]+"/"+
+            var urlLoc = attributes.get("url") ||
+                repo+"/"+parts[0].replace(/\./g,"/")+"/"+parts[1]+"/"+parts[2]+"/"+
                 parts[1]+"-"+(attributes.get("snapshot") || parts[2])+"."+packaging+query;
             project.setProperty(attributes.get("prefix")+"."+packaging, jarLoc);
             project.setProperty(attributes.get("prefix")+".url", urlLoc);
@@ -239,8 +241,11 @@ under the License.
 
     <!-- jars in the ooxml-lib directory, see the fetch-ooxml-jars target-->
     <dependency prefix="ooxml.curvesapi" artifact="com.github.virtuald:curvesapi:1.06" usage="ooxml"/>
-    <dependency prefix="ooxml.xmlbeans" artifact="org.apache.xmlbeans:xmlbeans:3.1.0" usage="ooxml"/>
+    <dependency prefix="ooxml.xmlbeans" artifact="org.apache.xmlbeans:xmlbeans:4.0.0" usage="ooxml"
+                url="https://builds.apache.org/view/P/view/POI/job/POI-XMLBeans-DSL-1.8/lastSuccessfulBuild/artifact/build/xmlbeans-4.0.0.jar"/>
     <dependency prefix="ooxml.commons-compress" artifact="org.apache.commons:commons-compress:1.20" usage="ooxml"/>
+    <!-- only used for compiling xmlbeans schemas -->
+<!--    <dependency prefix="ooxml.commons-compress" artifact="com.github.javaparser:javaparser-core:3.16.1" usage="ooxml-provided"/>-->
 
     <!-- jars in the ooxml-test-lib directory, see the fetch-ooxml-jars target-->
     <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.9.11" usage="ooxml-tests"/>
@@ -804,6 +809,7 @@ under the License.
                     noupa="@{noupa}"
                     nopvr="@{nopvr}"
                     typesystemname="@{typesystemname}"
+                    repackage="org.apache.xmlbeans.metadata:org.apache.poi.schemas.@{typesystemname}"
                     >
                 <classpath>
                     <path location="${ooxml.xmlbeans.jar}"/>
@@ -812,15 +818,8 @@ under the License.
             <local name="loaderMethod"/>
             <!-- the space between "public  static" is on purpose to prevent double execution -->
             <property name="loaderMethod"><![CDATA[
-        private static java.lang.ref.SoftReference<org.apache.xmlbeans.SchemaTypeLoader> typeLoader;
-
-        private static synchronized org.apache.xmlbeans.SchemaTypeLoader getTypeLoader() {
-            org.apache.xmlbeans.SchemaTypeLoader stl = (typeLoader == null) ? null : typeLoader.get();
-            if (stl == null) {
-                stl = org.apache.xmlbeans.XmlBeans.typeLoaderForClassLoader(\2.class.getClassLoader());
-                typeLoader = new java.lang.ref.SoftReference(stl);
-            }
-            return stl;
+        private static synchronized org.apache.poi.schemas.@{typesystemname}.system.@{typesystemname}.TypeSystemHolder getTypeLoader() {
+            return org.apache.poi.schemas.@{typesystemname}.system.@{typesystemname}.TypeSystemHolder.typeSystem;
         }
 
         public  static \2 newInstance\(\) \{]]></property>
@@ -877,7 +876,7 @@ under the License.
             <delete file="@{sources-jar}"/>
 
             <jar destfile="@{classes-jar}" level="9">
-                <fileset dir="${xmlbean.classes.dir}" excludes="org/apache/**"/>
+                <fileset dir="${xmlbean.classes.dir}"/>
                 <zipfileset prefix="META-INF/versions/9/" dir="@{multi-src}/java9" includes="**/*.class" if:true="${isJava8}"/>
                 <metainf dir="legal"/>
                 <manifest>
@@ -885,7 +884,7 @@ under the License.
                 </manifest>
             </jar>
             <jar destfile="@{sources-jar}" level="9">
-                <fileset dir="${xmlbean.sources.dir}" excludes="org/apache/**"/>
+                <fileset dir="${xmlbean.sources.dir}"/>
                 <zipfileset prefix="META-INF/versions/9/" dir="@{multi-src}/java9" excludes="**/*.class"/>
                 <metainf dir="legal"/>
             </jar>
@@ -905,7 +904,7 @@ under the License.
             classes-jar="${ooxml.xsds.jar}"
             sources-jar="${ooxml.xsds.src.jar}"
             multi-src="${basedir}/src/multimodule/ooxml-schemas"
-            typesystemname="OoxmlSchemas"
+            typesystemname="ooxml"
         >
             <xsds>
                 <zipfileset src="${ooxml.xsds.izip.1}"/>
@@ -913,13 +912,12 @@ under the License.
                 <fileset dir="${ooxml.schema.xsdconfig.dir}" includes="ooxmlSchemas.xsdconfig,markup-compatibility.xsd"/>
             </xsds>
         </compile-ooxml-xmlbean>
-
         <!-- Now do the same for the security schemas -->
         <compile-ooxml-xmlbean
             classes-jar="${ooxml.security.jar}"
             sources-jar="${ooxml.security.src.jar}"
             multi-src="${basedir}/src/multimodule/ooxml-security"
-            typesystemname="OoxmlSecurity"
+            typesystemname="security"
         >
             <xsds>
                 <zipfileset src="${ooxml.xsds.izip.2}" includes="opc-digSig.xsd,opc-relationships.xsd"/>
