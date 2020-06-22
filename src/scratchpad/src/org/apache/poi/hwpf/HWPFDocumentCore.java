@@ -67,7 +67,7 @@ public abstract class HWPFDocumentCore extends POIDocument {
     protected static final String STREAM_TABLE_1 = "1Table";
 
     //arbitrarily selected; may need to increase
-    private static final int MAX_RECORD_LENGTH = 1_000_000;
+    private static final int MAX_RECORD_LENGTH = 500_000_000;
 
     /**
      * Size of the not encrypted part of the FIB
@@ -328,7 +328,7 @@ public abstract class HWPFDocumentCore extends POIDocument {
 
         try (DocumentInputStream dis = dir.createDocumentInputStream(documentProps);
              InputStream is = isEncrypted ? getDecryptedStream(dis, streamSize, encryptionOffset) : dis) {
-            return IOUtils.toByteArray(is, Math.min(streamSize, len));
+            return IOUtils.toByteArray(is, Math.min(streamSize, len), MAX_RECORD_LENGTH);
         } catch (GeneralSecurityException e) {
             throw new IOException("Unable to decrypt data for entry: "+name, e);
         }

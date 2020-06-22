@@ -188,7 +188,7 @@ public final class IOUtils {
                 baos.write(buffer, 0, readBytes);
             }
 
-            checkByteSizeLimit(readBytes);
+            checkByteSizeLimit(totalBytes);
         } while (totalBytes < len && readBytes > -1);
 
         if (maxLength != Integer.MAX_VALUE && totalBytes == maxLength) {
