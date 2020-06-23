@@ -821,28 +821,6 @@ under the License.
                     <path location="${ooxml.xmlbeans.jar}"/>
                 </classpath>
             </xmlbean>
-            <local name="loaderMethod"/>
-            <!-- the space between "public  static" is on purpose to prevent double execution -->
-            <property name="loaderMethod"><![CDATA[
-        private static synchronized org.apache.poi.schemas.@{typesystemname}.system.@{typesystemname}.TypeSystemHolder getTypeLoader() {
-            return org.apache.poi.schemas.@{typesystemname}.system.@{typesystemname}.TypeSystemHolder.typeSystem;
-        }
-
-        public  static \2 newInstance\(\) \{]]></property>
-            <replaceregexp byline="true" match="(\s*)public static ([^ ]+) newInstance\(\) \{" replace="${loaderMethod}">
-                <fileset dir="${xmlbean.sources.dir}" includes="**/*.java" excludes="**/impl/**"/>
-            </replaceregexp>
-
-            <replace dir="${xmlbean.sources.dir}" includes="**/*.java" excludes="**/impl/**">
-                <replacetoken>org.apache.xmlbeans.XmlBeans.getContextTypeLoader</replacetoken>
-                <replacevalue>getTypeLoader</replacevalue>
-            </replace>
-
-            <!-- remove deprecated warnings, as we prefer the array methods - see #56854 -->
-            <replace dir="${xmlbean.sources.dir}" includes="**/*.java" excludes="**/impl/**">
-                <replacetoken><![CDATA[     * @deprecated
-]]></replacetoken>
-            </replace>
 
             <echo>Forking javac with max heap size ${ooxml.memory}</echo>
 
