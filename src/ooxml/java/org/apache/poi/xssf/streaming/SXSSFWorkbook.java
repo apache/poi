@@ -414,7 +414,7 @@ public class SXSSFWorkbook implements Workbook {
                         SXSSFSheet sxSheet = getSXSSFSheet(xSheet);
                         try (InputStream xis = sxSheet.getWorksheetXMLInputStream()) {
                             // copyStreamAndInjectWorksheet(is, zos, xis);
-                            copyStreamAndInjectWorksheet(is, zos, createSheetInjector(sxSheet));
+                            copyStreamAndInjectWorksheet(is, zos, createSheetInjector(xis));
                         }
                     } else {
                         IOUtils.copy(is, zos);
@@ -439,12 +439,9 @@ public class SXSSFWorkbook implements Workbook {
         }
     }
 
-    protected ISheetInjector createSheetInjector(SXSSFSheet sxSheet) throws IOException {
+    protected ISheetInjector createSheetInjector(InputStream xis) throws IOException {
         return (output) -> {
-            try (InputStream xis = sxSheet.getWorksheetXMLInputStream()) {
-                // Copy the worksheet data to "output".
-                IOUtils.copy(xis, output);
-            }
+            IOUtils.copy(xis, output);
         };
     }
 
