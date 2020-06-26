@@ -20,7 +20,9 @@ package org.apache.poi.xssf.streaming;
 import org.apache.poi.util.Beta;
 
 /**
- * IRowGenerator for Super-streaming XSSF sheets
+ * IRowGenerator for Emitting SXSSF sheets
+ *
+ * @see EmittingSXSSFWorkbook
  */
 @Beta
 public interface IRowGenerator {

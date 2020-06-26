@@ -30,59 +30,52 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
- * An update of SXSSFWorkbook avoids generating a temporary file and writes data directly to
+ * An variant of SXSSFWorkbook that avoids generating a temporary file and writes data directly to
  * the provided OutputStream.
- * @since 4.1.0
+ * 
+ * This variant is experimental and APIs may change at short notice.
+ * 
+ * @since 5.0.0
  */
 @Beta
-public class SuperSXSSFWorkbook extends SXSSFWorkbook {
-    private static final POILogger logger = POILogFactory.getLogger(SuperSXSSFWorkbook.class);
+public class EmittingSXSSFWorkbook extends SXSSFWorkbook {
+    private static final POILogger logger = POILogFactory.getLogger(EmittingSXSSFWorkbook.class);
     
-    public SuperSXSSFWorkbook() {
+    public EmittingSXSSFWorkbook() {
         this(null);
     }
     
-    public SuperSXSSFWorkbook(XSSFWorkbook workbook) {
+    public EmittingSXSSFWorkbook(XSSFWorkbook workbook) {
         this(workbook, SXSSFWorkbook.DEFAULT_WINDOW_SIZE);
     }
     
-    public SuperSXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize) {
-        setRandomAccessWindowSize(rowAccessWindowSize);
-        _sharedStringSource = null;
-        if (workbook == null) {
-            _wb = new XSSFWorkbook();
-        } else {
-            _wb = workbook;
-        }
-    }
-    
-    @Override
-    public void setCompressTempFiles(boolean compress) {
-        // NOOP
+    public EmittingSXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize) {
+        super(workbook, rowAccessWindowSize, false, false);
     }
     
     @Override
     protected SheetDataWriter createSheetDataWriter() throws IOException {
-        throw new RuntimeException("Not supported by SuperSXSSFWorkbook");
+        throw new RuntimeException("Not supported by EmittingSXSSFWorkbook");
     }
     
     protected StreamingSheetWriter createSheetDataWriter(OutputStream out) throws IOException {
         return new StreamingSheetWriter(out);
     }
     
-    @Override
-    protected ISheetInjector createSheetInjector(SXSSFSheet sxSheet) throws IOException {
-        SuperSXSSFSheet ssxSheet = (SuperSXSSFSheet) sxSheet;
-        return (output) -> {
-            ssxSheet.writeRows(output);
-        };
-    }
+//    @Override
+//    protected ISheetInjector createSheetInjector(InputStream xis) throws IOException
+//    protected ISheetInjector createSheetInjector(SXSSFSheet sxSheet) throws IOException {
+//        EmittingSXSSFSheet ssxSheet = (EmittingSXSSFSheet) sxSheet;
+//        return (output) -> {
+//            ssxSheet.writeRows(output);
+//        };
+//    }
     
     @Override
     SXSSFSheet createAndRegisterSXSSFSheet(XSSFSheet xSheet) {
-        final SuperSXSSFSheet sxSheet;
+        final EmittingSXSSFSheet sxSheet;
         try {
-            sxSheet = new SuperSXSSFSheet(this, xSheet);
+            sxSheet = new EmittingSXSSFSheet(this, xSheet);
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }
@@ -90,12 +83,12 @@ public class SuperSXSSFWorkbook extends SXSSFWorkbook {
         return sxSheet;
     }
     
-    public SuperSXSSFSheet createSheet() {
-        return (SuperSXSSFSheet) super.createSheet();
+    public EmittingSXSSFSheet createSheet() {
+        return (EmittingSXSSFSheet) super.createSheet();
     }
     
-    public SuperSXSSFSheet createSheet(String sheetname) {
-        return (SuperSXSSFSheet) super.createSheet(sheetname);
+    public EmittingSXSSFSheet createSheet(String sheetname) {
+        return (EmittingSXSSFSheet) super.createSheet(sheetname);
     }
     
     /**
@@ -125,7 +118,7 @@ public class SuperSXSSFWorkbook extends SXSSFWorkbook {
         @SuppressWarnings("unchecked")
         public T next() throws NoSuchElementException {
             final XSSFSheet xssfSheet = it.next();
-            SuperSXSSFSheet sxSheet = (SuperSXSSFSheet) getSXSSFSheet(xssfSheet);
+            EmittingSXSSFSheet sxSheet = (EmittingSXSSFSheet) getSXSSFSheet(xssfSheet);
             return (T) (sxSheet == null ? xssfSheet : sxSheet);
         }
         
@@ -150,7 +143,7 @@ public class SuperSXSSFWorkbook extends SXSSFWorkbook {
     
     @Override
     public SXSSFSheet getSheetAt(int index) {
-        throw new RuntimeException("Not supported by SuperSXSSFWorkbook");
+        throw new RuntimeException("Not supported by EmittingSXSSFWorkbook");
     }
     
     public XSSFSheet getXSSFSheetAt(int index) {
@@ -163,19 +156,19 @@ public class SuperSXSSFWorkbook extends SXSSFWorkbook {
      * @param index the index
      * @return the streaming sheet at
      */
-    public SuperSXSSFSheet getStreamingSheetAt(int index) {
+    public EmittingSXSSFSheet getStreamingSheetAt(int index) {
         XSSFSheet xSheet = _wb.getSheetAt(index);
         SXSSFSheet sxSheet = getSXSSFSheet(xSheet);
         if (sxSheet == null && xSheet != null) {
-            return (SuperSXSSFSheet) createAndRegisterSXSSFSheet(xSheet);
+            return (EmittingSXSSFSheet) createAndRegisterSXSSFSheet(xSheet);
         } else {
-            return (SuperSXSSFSheet) sxSheet;
+            return (EmittingSXSSFSheet) sxSheet;
         }
     }
     
     @Override
     public SXSSFSheet getSheet(String name) {
-        throw new RuntimeException("Not supported by SuperSXSSFWorkbook");
+        throw new RuntimeException("Not supported by EmittingSXSSFWorkbook");
     }
     
     public XSSFSheet getXSSFSheet(String name) {
@@ -188,11 +181,11 @@ public class SuperSXSSFWorkbook extends SXSSFWorkbook {
      * @param name the name
      * @return the streaming sheet
      */
-    public SuperSXSSFSheet getStreamingSheet(String name) {
+    public EmittingSXSSFSheet getStreamingSheet(String name) {
         XSSFSheet xSheet = _wb.getSheet(name);
-        SuperSXSSFSheet sxSheet = (SuperSXSSFSheet) getSXSSFSheet(xSheet);
+        EmittingSXSSFSheet sxSheet = (EmittingSXSSFSheet) getSXSSFSheet(xSheet);
         if (sxSheet == null && xSheet != null) {
-            return (SuperSXSSFSheet) createAndRegisterSXSSFSheet(xSheet);
+            return (EmittingSXSSFSheet) createAndRegisterSXSSFSheet(xSheet);
         } else {
             return sxSheet;
         }

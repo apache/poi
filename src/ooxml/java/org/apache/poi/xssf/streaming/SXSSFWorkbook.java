@@ -190,7 +190,7 @@ public class SXSSFWorkbook implements Workbook {
      * @param rowAccessWindowSize the number of rows that are kept in memory until flushed out, see above.
      */
     public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize){
-    	this(workbook,rowAccessWindowSize, false);
+        this(workbook,rowAccessWindowSize, false);
     }
 
     /**
@@ -214,7 +214,7 @@ public class SXSSFWorkbook implements Workbook {
      * @param rowAccessWindowSize the number of rows that are kept in memory until flushed out, see above.
      * @param compressTmpFiles whether to use gzip compression for temporary files
      */
-    public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize, boolean compressTmpFiles){
+    public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize, boolean compressTmpFiles) {
     	this(workbook,rowAccessWindowSize, compressTmpFiles, false);
     }
 
@@ -241,11 +241,11 @@ public class SXSSFWorkbook implements Workbook {
      * @param compressTmpFiles whether to use gzip compression for temporary files
      * @param useSharedStringsTable whether to use a shared strings table
      */
-    public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize, boolean compressTmpFiles, boolean useSharedStringsTable){
+    public SXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize, boolean compressTmpFiles, boolean useSharedStringsTable) {
         setRandomAccessWindowSize(rowAccessWindowSize);
         setCompressTempFiles(compressTmpFiles);
         if (workbook == null) {
-            _wb=new XSSFWorkbook();
+            _wb = new XSSFWorkbook();
             _sharedStringSource = useSharedStringsTable ? _wb.getSharedStringSource() : null;
         } else {
             _wb=workbook;
