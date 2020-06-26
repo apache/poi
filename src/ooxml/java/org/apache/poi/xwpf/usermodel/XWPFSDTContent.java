@@ -21,12 +21,7 @@ import java.util.List;
 
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentBlock;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtContentRun;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 /**
  * Experimental class to offer rudimentary read-only processing of
@@ -50,11 +45,19 @@ public class XWPFSDTContent implements ISDTContent {
         if (sdtRun == null) {
             return;
         }
-        for (CTR ctr : sdtRun.getRArray()) {
-            XWPFRun run = new XWPFRun(ctr, parent);
-            // runs.add(run);
-            bodyElements.add(run);
+        XmlCursor cursor = sdtRun.newCursor();
+        cursor.selectPath("./*");
+        while (cursor.toNextSelection()) {
+            XmlObject o = cursor.getObject();
+            if (o instanceof CTR) {
+                XWPFRun run = new XWPFRun((CTR) o, parent);
+                bodyElements.add(run);
+            } else if (o instanceof CTSdtRun) {
+                XWPFSDT c = new XWPFSDT(((CTSdtRun) o), part);
+                bodyElements.add(c);
+            }
         }
+        cursor.dispose();
     }
 
     public XWPFSDTContent(CTSdtContentBlock block, IBody part, IRunBody parent) {

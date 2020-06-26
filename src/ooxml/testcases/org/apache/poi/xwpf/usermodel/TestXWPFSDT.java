@@ -31,6 +31,17 @@ import org.junit.Test;
 public final class TestXWPFSDT {
 
     /**
+     * Test text extraction from nested SDTs
+     */
+    @Test
+    public void testNestedSDTs() throws Exception {
+        try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug64561.docx")) {
+            XWPFAbstractSDT sdt = extractAllSDTs(doc).get(0);
+            assertEquals("extracted text", "Subject", sdt.getContent().getText());
+        }
+    }
+
+    /**
      * Test simple tag and title extraction from SDT
      */
     @Test
