@@ -1911,8 +1911,7 @@ public class SXSSFSheet implements Sheet
         if (!allFlushed) {
             flushRows();
         }
-        if (_writer == null) return true; // EmittingSXSSFSheet initializes the writer only on write
-        return _writer.dispose();
+        return _writer == null || _writer.dispose();
     }
 
     @Override
