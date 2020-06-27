@@ -22,7 +22,6 @@ import org.apache.poi.ooxml.POIXMLRelation;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.util.Removal;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
-import org.apache.poi.xssf.usermodel.charts.XSSFChartAxis;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
@@ -34,8 +33,6 @@ import org.w3c.dom.Text;
 import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.List;
 
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
@@ -48,10 +45,6 @@ public final class XSSFChart extends XDDFChart {
      * Parent graphic frame.
      */
     private XSSFGraphicFrame frame;
-
-    @Deprecated
-    @Removal(version = "4.2")
-    List<XSSFChartAxis> axis = new ArrayList<>();
 
     /**
      * Create a new SpreadsheetML chart
