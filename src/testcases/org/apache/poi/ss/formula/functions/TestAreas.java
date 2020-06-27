@@ -54,7 +54,7 @@ public final class TestAreas {
         cell.setCellFormula(formulaText);
         fe.notifyUpdateCell(cell);
         CellValue result = fe.evaluate(cell);
-        assertEquals(result.getCellTypeEnum(), CellType.NUMERIC);
+        assertEquals(result.getCellType(), CellType.NUMERIC);
         assertEquals(expectedResult, result.getNumberValue(), 0);
     }
 }

@@ -18,7 +18,6 @@
 package org.apache.poi.ss.usermodel;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.util.Removal;
 
 /**
  * Mimics the 'data view' of a cell. This allows formula evaluator
@@ -27,7 +26,7 @@ import org.apache.poi.util.Removal;
  */
 public final class CellValue {
 	public static final CellValue TRUE = new CellValue(CellType.BOOLEAN, 0.0, true,  null, 0);
-	public static final CellValue FALSE= new CellValue(CellType.BOOLEAN, 0.0, false, null, 0);
+	public static final CellValue FALSE = new CellValue(CellType.BOOLEAN, 0.0, false, null, 0);
 
 	private final CellType _cellType;
 	private final double _numberValue;
@@ -82,17 +81,6 @@ public final class CellValue {
 	public String getStringValue() {
 		return _textValue;
 	}
-
-    /**
-     * Return the cell type.
-     *
-     * @return the cell type
-     * @since POI 3.15
-     * @deprecated use <code>getCellType</code> instead
-     */
-    @Deprecated
-    @Removal(version="4.2")
-    public CellType getCellTypeEnum() { return getCellType(); }
 
 	/**
 	 * Return the cell type.
