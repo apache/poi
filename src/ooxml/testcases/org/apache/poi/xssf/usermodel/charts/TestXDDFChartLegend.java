@@ -35,7 +35,7 @@ import org.junit.Test;
 /**
  * Tests ChartLegend
  */
-public final class TestXSSFChartLegend {
+public final class TestXDDFChartLegend {
     @Test
 	public void testLegendPositionAccessMethods() throws IOException {
 		XSSFWorkbook wb = new XSSFWorkbook();

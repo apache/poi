@@ -17,52 +17,32 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+import org.apache.poi.ooxml.POIXMLFactory;
+import org.apache.poi.ooxml.POIXMLRelation;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.util.Removal;
+import org.apache.poi.xddf.usermodel.chart.XDDFChart;
+import org.apache.poi.xssf.usermodel.charts.XSSFChartAxis;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.drawingml.x2006.chart.*;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.w3c.dom.Text;
 
+import javax.xml.namespace.QName;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.namespace.QName;
-
-import org.apache.poi.ooxml.POIXMLFactory;
-import org.apache.poi.ooxml.POIXMLRelation;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.ss.usermodel.Chart;
-import org.apache.poi.ss.usermodel.charts.ChartAxis;
-import org.apache.poi.ss.usermodel.charts.ChartAxisFactory;
-import org.apache.poi.ss.usermodel.charts.ChartData;
-import org.apache.poi.util.Removal;
-import org.apache.poi.xddf.usermodel.chart.XDDFChart;
-import org.apache.poi.xssf.usermodel.charts.XSSFCategoryAxis;
-import org.apache.poi.xssf.usermodel.charts.XSSFChartAxis;
-import org.apache.poi.xssf.usermodel.charts.XSSFChartDataFactory;
-import org.apache.poi.xssf.usermodel.charts.XSSFChartLegend;
-import org.apache.poi.xssf.usermodel.charts.XSSFDateAxis;
-import org.apache.poi.xssf.usermodel.charts.XSSFManualLayout;
-import org.apache.poi.xssf.usermodel.charts.XSSFValueAxis;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTCatAx;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTDateAx;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTPageMargins;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTPlotArea;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTPrintSettings;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTStrRef;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTTitle;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTTx;
-import org.openxmlformats.schemas.drawingml.x2006.chart.CTValAx;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.w3c.dom.Text;
+import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 
 /**
  * Represents a SpreadsheetML Chart
  */
-public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactory {
+public final class XSSFChart extends XDDFChart {
 
     /**
      * Parent graphic frame.
@@ -170,92 +150,6 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
         this.frame = frame;
     }
 
-    @Override
-    @Deprecated
-    @Removal(version = "4.2")
-    public XSSFChartDataFactory getChartDataFactory() {
-        return XSSFChartDataFactory.getInstance();
-    }
-
-    @Override
-    @Deprecated
-    @Removal(version = "4.2")
-    public XSSFChart getChartAxisFactory() {
-        return this;
-    }
-
-    @Override
-    @Deprecated
-    @Removal(version = "4.2")
-    public void plot(ChartData data, ChartAxis... chartAxis) {
-        data.fillChart(this, chartAxis);
-    }
-
-    @Override
-    @Deprecated
-    @Removal(version = "4.2")
-    public XSSFValueAxis createValueAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
-        long id = axis.size() + 1L;
-        XSSFValueAxis valueAxis = new XSSFValueAxis(this, id, pos);
-        if (axis.size() == 1) {
-            ChartAxis ax = axis.get(0);
-            ax.crossAxis(valueAxis);
-            valueAxis.crossAxis(ax);
-        }
-        axis.add(valueAxis);
-        return valueAxis;
-    }
-
-    @Override
-    @Deprecated
-    @Removal(version = "4.2")
-    public XSSFCategoryAxis createCategoryAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
-        long id = axis.size() + 1L;
-        XSSFCategoryAxis categoryAxis = new XSSFCategoryAxis(this, id, pos);
-        if (axis.size() == 1) {
-            ChartAxis ax = axis.get(0);
-            ax.crossAxis(categoryAxis);
-            categoryAxis.crossAxis(ax);
-        }
-        axis.add(categoryAxis);
-        return categoryAxis;
-    }
-
-    @Override
-    @Deprecated
-    @Removal(version = "4.2")
-    public XSSFDateAxis createDateAxis(org.apache.poi.ss.usermodel.charts.AxisPosition pos) {
-        long id = axis.size() + 1L;
-        XSSFDateAxis dateAxis = new XSSFDateAxis(this, id, pos);
-        if (axis.size() == 1) {
-            ChartAxis ax = axis.get(0);
-            ax.crossAxis(dateAxis);
-            dateAxis.crossAxis(ax);
-        }
-        axis.add(dateAxis);
-        return dateAxis;
-    }
-
-    /**
-     * @deprecated use {@link #getAxes()} instead
-     */
-    @Override
-    @Deprecated
-    @Removal(version = "4.2")
-    public List<? extends XSSFChartAxis> getAxis() {
-        if (axis.isEmpty() && hasAxis()) {
-            parseAxis();
-        }
-        return axis;
-    }
-
-    @Override
-    @Deprecated
-    @Removal(version = "4.2")
-    public XSSFManualLayout getManualLayout() {
-        return new XSSFManualLayout(this);
-    }
-
     /**
      * Returns the title static text, or null if none is set. Note that a title
      * formula may be set instead. Empty text result is for backward
@@ -348,54 +242,4 @@ public final class XSSFChart extends XDDFChart implements Chart, ChartAxisFactor
 
         strRef.setF(formula);
     }
-
-    @Override
-    @Deprecated
-    @Removal(version = "4.2")
-    public XSSFChartLegend getOrCreateLegend() {
-        return new XSSFChartLegend(this);
-    }
-
-    @Deprecated
-    @Removal(version = "4.2")
-    private boolean hasAxis() {
-        CTPlotArea ctPlotArea = chart.getPlotArea();
-        int totalAxisCount = ctPlotArea.sizeOfValAxArray() + ctPlotArea.sizeOfCatAxArray() + ctPlotArea
-            .sizeOfDateAxArray() + ctPlotArea.sizeOfSerAxArray();
-        return totalAxisCount > 0;
-    }
-
-    @Deprecated
-    @Removal(version = "4.2")
-    private void parseAxis() {
-        // TODO: add other axis types
-        parseCategoryAxis();
-        parseDateAxis();
-        parseValueAxis();
-    }
-
-    @Deprecated
-    @Removal(version = "4.2")
-    private void parseCategoryAxis() {
-        for (CTCatAx catAx : chart.getPlotArea().getCatAxArray()) {
-            axis.add(new XSSFCategoryAxis(this, catAx));
-        }
-    }
-
-    @Deprecated
-    @Removal(version = "4.2")
-    private void parseDateAxis() {
-        for (CTDateAx dateAx : chart.getPlotArea().getDateAxArray()) {
-            axis.add(new XSSFDateAxis(this, dateAx));
-        }
-    }
-
-    @Deprecated
-    @Removal(version = "4.2")
-    private void parseValueAxis() {
-        for (CTValAx valAx : chart.getPlotArea().getValAxArray()) {
-            axis.add(new XSSFValueAxis(this, valAx));
-        }
-    }
-
 }
