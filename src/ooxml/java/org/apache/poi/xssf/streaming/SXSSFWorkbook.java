@@ -852,22 +852,16 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     @Override
-    @Deprecated
-    public short getNumberOfFonts() {
-        return (short)getNumberOfFontsAsInt();
+    public int getNumberOfFonts() {
+        return _wb.getNumberOfFonts();
     }
 
     @Override
+    @Deprecated
+    @Removal(version = "6.0.0")
     public int getNumberOfFontsAsInt()
     {
-        return _wb.getNumberOfFontsAsInt();
-    }
-
-    @Override
-    @Deprecated
-    public Font getFontAt(short idx)
-    {
-        return getFontAt((int)idx);
+        return getNumberOfFonts();
     }
 
     @Override

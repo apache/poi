@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.poi.hssf.HSSFITestDataProvider;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
@@ -114,6 +116,25 @@ public abstract class BaseTestNamedRange {
         }
         
         wb.close();
+    }
+
+    @Test
+    public final void testUnicodeNamedRange() throws Exception {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        wb1.createSheet("Test");
+        Name name = wb1.createName();
+        name.setNameName("\u03B1");
+        name.setRefersToFormula("Test!$D$3:$E$8");
+
+
+        HSSFWorkbook wb2 = HSSFITestDataProvider.instance.writeOutAndReadBack(wb1);
+        Name name2 = wb2.getName("\u03B1");
+
+        assertEquals("\u03B1", name2.getNameName());
+        assertEquals("Test!$D$3:$E$8", name2.getRefersToFormula());
+
+        wb2.close();
+        wb1.close();
     }
 
     @Test

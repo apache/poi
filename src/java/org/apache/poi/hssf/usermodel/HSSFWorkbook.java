@@ -1196,20 +1196,14 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
 
     @Override
-    @Deprecated
-    public short getNumberOfFonts() {
-        return (short) getNumberOfFontsAsInt();
-    }
-
-    @Override
-    public int getNumberOfFontsAsInt() {
+    public int getNumberOfFonts() {
         return workbook.getNumberOfFontRecords();
     }
 
     @Override
     @Deprecated
-    public HSSFFont getFontAt(short idx) {
-        return getFontAt((int) idx);
+    public int getNumberOfFontsAsInt() {
+        return getNumberOfFonts();
     }
 
     @Override

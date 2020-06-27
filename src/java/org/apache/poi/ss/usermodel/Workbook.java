@@ -264,11 +264,9 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     /**
      * Get the number of fonts in the font table
      *
-     * @return number of fonts
-     * @deprecated use <code>getNumberOfFontsAsInt()</code> instead
+     * @return number of fonts (as int since POI 5.0.0)
      */
-    @Removal(version = "4.2")
-    short getNumberOfFonts();
+    int getNumberOfFonts();
 
     /**
      * Get the number of fonts in the font table
@@ -276,17 +274,9 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * @return number of fonts
      * @since 4.0.0
      */
+    @Deprecated
+    @Removal(version = "6.0.0")
     int getNumberOfFontsAsInt();
-
-    /**
-     * Get the font at the given index number
-     *
-     * @param idx  index number (0-based)
-     * @return font at the index
-     * @deprecated use <code>getFontAt(int)</code>
-     */
-    @Removal(version = "4.2")
-    Font getFontAt(short idx);
 
     /**
      * Get the font at the given index number

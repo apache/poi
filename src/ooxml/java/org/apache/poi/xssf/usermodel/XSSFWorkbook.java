@@ -978,11 +978,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     }
 
     @Override
-    public XSSFFont getFontAt(short idx) {
-        return stylesSource.getFontAt(idx);
-    }
-
-    @Override
     public XSSFFont getFontAt(int idx) {
         return stylesSource.getFontAt(idx);
     }
@@ -1076,13 +1071,15 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     }
 
     @Override
-    public short getNumberOfFonts() {
-        return (short)getNumberOfFontsAsInt();
+    public int getNumberOfFonts() {
+        return stylesSource.getFonts().size();
     }
 
     @Override
+    @Deprecated
+    @Removal(version = "6.0.0")
     public int getNumberOfFontsAsInt() {
-        return (short)stylesSource.getFonts().size();
+        return getNumberOfFonts();
     }
 
     /**

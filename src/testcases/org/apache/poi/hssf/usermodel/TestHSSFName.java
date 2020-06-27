@@ -244,25 +244,6 @@ public final class TestHSSFName extends BaseTestNamedRange {
     }
 
     @Test
-    public final void testUnicodeNamedRange() throws Exception {
-        HSSFWorkbook wb1 = new HSSFWorkbook();
-        wb1.createSheet("Test");
-        Name name = wb1.createName();
-        name.setNameName("\u03B1");
-        name.setRefersToFormula("Test!$D$3:$E$8");
-
-
-        HSSFWorkbook wb2 = HSSFITestDataProvider.instance.writeOutAndReadBack(wb1);
-        Name name2 = wb2.getNameAt(0);
-
-        assertEquals("\u03B1", name2.getNameName());
-        assertEquals("Test!$D$3:$E$8", name2.getRefersToFormula());
-
-        wb2.close();
-        wb1.close();
-    }
-
-    @Test
     public final void testHSSFAddRemove() throws Exception {
         HSSFWorkbook wb = HSSFITestDataProvider.instance.createWorkbook();
         assertEquals(0, wb.getNumberOfNames());
