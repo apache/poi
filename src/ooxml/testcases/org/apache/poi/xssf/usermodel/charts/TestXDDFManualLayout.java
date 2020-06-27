@@ -17,10 +17,7 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 
@@ -37,7 +34,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-public final class TestXSSFManualLayout {
+public final class TestXDDFManualLayout {
 
     private XSSFWorkbook wb;
     private XDDFManualLayout layout;
