@@ -687,9 +687,9 @@ public abstract class BaseTestWorkbook {
 
         Sheet sh1 = wb1.getSheetAt(0);
 
-        Name sale_2 = wb1.getNameAt(1);
-        Name sale_3 = wb1.getNameAt(2);
-        Name sale_4 = wb1.getNameAt(3);
+        Name sale_2 = wb1.getName("sale_2");
+        Name sale_3 = wb1.getName("sale_3");
+        Name sale_4 = wb1.getName("sale_4");
 
         assertEquals("sale_2", sale_2.getNameName());
         assertEquals("'Testing 47100'!$A$1", sale_2.getRefersToFormula());
@@ -736,9 +736,9 @@ public abstract class BaseTestWorkbook {
 
         sh1 = wb2.getSheetAt(0);
 
-        sale_2 = wb2.getNameAt(1);
-        sale_3 = wb2.getNameAt(2);
-        sale_4 = wb2.getNameAt(3);
+        sale_2 = wb2.getName("sale_2");
+        sale_3 = wb2.getName("sale_3");
+        sale_4 = wb2.getName("sale_4");
 
         cell0 = sh1.getRow(0).getCell(0);
         cell1 = sh1.getRow(1).getCell(0);

@@ -248,9 +248,7 @@ public final class TestAreaReference {
             assertEquals(ref, HSSFFormulaParser.toFormulaString(wb, nr.getNameDefinition()));
 
             // Check the high level definition
-            int idx = wb.getNameIndex("test");
-            assertEquals(0, idx);
-            HSSFName aNamedCell = wb.getNameAt(idx);
+            HSSFName aNamedCell = wb.getName("test");
 
             // Should have 2 references
             String formulaRefs = aNamedCell.getRefersToFormula();
