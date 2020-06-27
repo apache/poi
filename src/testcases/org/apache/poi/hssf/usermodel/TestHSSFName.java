@@ -25,6 +25,8 @@ import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.BaseTestNamedRange;
+import org.apache.poi.ss.usermodel.Name;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.Test;
 
@@ -50,7 +52,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
     }
 
     @Test
-    public void testRepeatingRowsAndColumsNames() throws Exception {
+    public void testRepeatingRowsAndColumnsNames() throws Exception {
          // First test that setting RR&C for same sheet more than once only creates a
          // single  Print_Titles built-in record
          HSSFWorkbook wb = new HSSFWorkbook();
@@ -238,6 +240,50 @@ public final class TestHSSFName extends BaseTestNamedRange {
         for (Ptg ptg : ptgs) {
             assertEquals('R', ptg.getRVAType());
         }
+        wb.close();
+    }
+
+    @Test
+    public final void testUnicodeNamedRange() throws Exception {
+        HSSFWorkbook wb1 = new HSSFWorkbook();
+        wb1.createSheet("Test");
+        Name name = wb1.createName();
+        name.setNameName("\u03B1");
+        name.setRefersToFormula("Test!$D$3:$E$8");
+
+
+        HSSFWorkbook wb2 = HSSFITestDataProvider.instance.writeOutAndReadBack(wb1);
+        Name name2 = wb2.getNameAt(0);
+
+        assertEquals("\u03B1", name2.getNameName());
+        assertEquals("Test!$D$3:$E$8", name2.getRefersToFormula());
+
+        wb2.close();
+        wb1.close();
+    }
+
+    @Test
+    public final void testHSSFAddRemove() throws Exception {
+        HSSFWorkbook wb = HSSFITestDataProvider.instance.createWorkbook();
+        assertEquals(0, wb.getNumberOfNames());
+        Name name1 = wb.createName();
+        name1.setNameName("name1");
+        assertEquals(1, wb.getNumberOfNames());
+
+        Name name2 = wb.createName();
+        name2.setNameName("name2");
+        assertEquals(2, wb.getNumberOfNames());
+
+        Name name3 = wb.createName();
+        name3.setNameName("name3");
+        assertEquals(3, wb.getNumberOfNames());
+
+        wb.removeName(wb.getName("name2"));
+        assertEquals(2, wb.getNumberOfNames());
+
+        wb.removeName(0);
+        assertEquals(1, wb.getNumberOfNames());
+
         wb.close();
     }
 }

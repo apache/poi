@@ -366,56 +366,11 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     List<? extends Name> getAllNames();
 
     /**
-     * @param nameIndex position of the named range (0-based)
-     * @return the defined name at the specified index
-     * @throws IllegalArgumentException if the supplied index is invalid
-     * @deprecated 4.0.0. New projects should avoid accessing named ranges by index.
-     */
-    @Deprecated
-    @Removal(version="5.0.0")
-    Name getNameAt(int nameIndex);
-
-    /**
      * Creates a new (uninitialised) defined name in this workbook
      *
      * @return new defined name object
      */
     Name createName();
-
-    /**
-     * Gets the defined name index by name<br>
-     * <i>Note:</i> Excel defined names are case-insensitive and
-     * this method performs a case-insensitive search.
-     *
-     * @param name the name of the defined name
-     * @return zero based index of the defined name. <tt>-1</tt> if not found.
-     * @deprecated 3.18. New projects should avoid accessing named ranges by index.
-     * Use {@link #getName(String)} instead.
-     */
-    @Deprecated
-    @Removal(version="3.20")
-    int getNameIndex(String name);
-
-    /**
-     * Remove the defined name at the specified index
-     *
-     * @param index named range index (0 based)
-     *
-     * @deprecated 3.18. New projects should use {@link #removeName(Name)}.
-     */
-    @Deprecated
-    @Removal(version="3.20")
-    void removeName(int index);
-
-    /**
-     * Remove a defined name by name
-     *
-     * @param name the name of the defined name
-     * @deprecated 3.18. New projects should use {@link #removeName(Name)}.
-     */
-    @Deprecated
-    @Removal(version="3.20")
-    void removeName(String name);
 
     /**
      * Remove a defined name

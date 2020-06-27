@@ -1019,28 +1019,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     }
 
     /**
-     * Get the named range at the given index.
-     *
-     * @param nameIndex the index of the named range
-     * @return the XSSFName at the given index
-     *
-     * @deprecated 3.16. New projects should avoid accessing named ranges by index.
-     */
-    @Override
-    @Deprecated
-    public XSSFName getNameAt(int nameIndex) {
-        int nNames = namedRanges.size();
-        if (nNames < 1) {
-            throw new IllegalStateException("There are no defined names in this workbook");
-        }
-        if (nameIndex < 0 || nameIndex > nNames) {
-            throw new IllegalArgumentException("Specified name index " + nameIndex
-                    + " is outside the allowable range (0.." + (nNames-1) + ").");
-        }
-        return namedRanges.get(nameIndex);
-    }
-
-    /**
      * Get a list of all the named ranges in the workbook.
      *
      * @return list of XSSFNames in the workbook
@@ -1048,25 +1026,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     @Override
     public List<XSSFName> getAllNames() {
         return Collections.unmodifiableList(namedRanges);
-    }
-
-    /**
-     * Gets the named range index by name.
-     *
-     * @param name named range name
-     * @return named range index. <code>-1</code> is returned if no named ranges could be found.
-     *
-     * @deprecated 3.16. New projects should avoid accessing named ranges by index.
-     * Use {@link #getName(String)} instead.
-     */
-    @Override
-    @Deprecated
-    public int getNameIndex(String name) {
-        XSSFName nm = getName(name);
-        if (nm != null) {
-            return namedRanges.indexOf(nm);
-        }
-        return -1;
     }
 
     /**
@@ -1264,43 +1223,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     public boolean isMacroEnabled() {
         return getPackagePart().getContentType().equals(XSSFRelation.MACROS_WORKBOOK.getContentType());
     }
-
-    /**
-     * Remove the named range at the given index.
-     *
-     * @param nameIndex the index of the named range name to remove
-     *
-     * @deprecated 3.16. New projects should use {@link #removeName(Name)}.
-     */
-    @Override
-    @Deprecated
-    public void removeName(int nameIndex) {
-        removeName(getNameAt(nameIndex));
-    }
-
-    /**
-     * Remove the first named range found with the given name.
-     *
-     * Note: names of named ranges are not unique (name + sheet
-     * index is unique), so {@link #removeName(Name)} should
-     * be used if possible.
-     *
-     * @param name the named range name to remove
-     *
-     * @throws IllegalArgumentException if no named range could be found
-     *
-     * @deprecated 3.16. New projects should use {@link #removeName(Name)}.
-     */
-    @Override
-    @Deprecated
-    public void removeName(String name) {
-        List<XSSFName> names = namedRangesByName.get(name.toLowerCase(Locale.ENGLISH));
-        if (names.isEmpty()) {
-            throw new IllegalArgumentException("Named range was not found: " + name);
-        }
-        removeName(names.get(0));
-    }
-
 
     /**
      * As {@link #removeName(String)} is not necessarily unique

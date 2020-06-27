@@ -1236,69 +1236,6 @@ public class SXSSFWorkbook implements Workbook {
     public void setSheetVisibility(int sheetIx, SheetVisibility visibility) {
         _wb.setSheetVisibility(sheetIx, visibility);
     }
-
-    /**
-     * @param nameIndex position of the named range (0-based)
-     * @return the defined name at the specified index
-     * @throws IllegalArgumentException if the supplied index is invalid
-     * @deprecated 3.16. New projects should avoid accessing named ranges by index.
-     */
-    @Override
-    @Deprecated
-    @Removal(version="3.20")
-    public Name getNameAt(int nameIndex) {
-        //noinspection deprecation
-        return _wb.getNameAt(nameIndex);
-    }
-
-    /**
-     * Gets the defined name index by name
-     *
-     * <i>Note:</i> Excel defined names are case-insensitive and
-     * this method performs a case-insensitive search.
-     *
-     * @param name the name of the defined name
-     * @return zero based index of the defined name. <code>-1</code> if not found.
-     *
-     * @deprecated 3.16. New projects should avoid accessing named ranges by index.
-     * Use {@link #getName(String)} instead.
-     */
-    @Override
-    @Deprecated
-    @Removal(version="3.20")
-    public int getNameIndex(String name) {
-        //noinspection deprecation
-        return _wb.getNameIndex(name);
-    }
-
-    /**
-     * Remove the defined name at the specified index
-     * @param index named range index (0 based)
-     *
-     * @deprecated 3.16. New projects should use {@link #removeName(Name)}.
-     */
-    @Override
-    @Deprecated
-    @Removal(version="3.20")
-    public void removeName(int index) {
-        //noinspection deprecation
-        _wb.removeName(index);
-    }
-
-    /**
-     * Remove a defined name by name
-     *
-     * @param name the name of the defined name
-     *
-     * @deprecated 3.16. New projects should use {@link #removeName(Name)}.
-     */
-    @Override
-    @Deprecated
-    @Removal(version="3.20")
-    public void removeName(String name) {
-        //noinspection deprecation
-        _wb.removeName(name);
-    }
     
     /**
      * <i>Not implemented for SXSSFWorkbook</i>

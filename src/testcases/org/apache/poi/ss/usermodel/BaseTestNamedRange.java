@@ -117,25 +117,6 @@ public abstract class BaseTestNamedRange {
     }
 
     @Test
-    public final void testUnicodeNamedRange() throws Exception {
-        Workbook wb1 = _testDataProvider.createWorkbook();
-        wb1.createSheet("Test");
-        Name name = wb1.createName();
-        name.setNameName("\u03B1");
-        name.setRefersToFormula("Test!$D$3:$E$8");
-
-
-        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
-        Name name2 = wb2.getNameAt(0);
-
-        assertEquals("\u03B1", name2.getNameName());
-        assertEquals("Test!$D$3:$E$8", name2.getRefersToFormula());
-        
-        wb2.close();
-        wb1.close();
-    }
-
-    @Test
     public final void testAddRemove() throws Exception {
         Workbook wb = _testDataProvider.createWorkbook();
         assertEquals(0, wb.getNumberOfNames());
@@ -151,12 +132,9 @@ public abstract class BaseTestNamedRange {
         name3.setNameName("name3");
         assertEquals(3, wb.getNumberOfNames());
 
-        wb.removeName("name2");
+        wb.removeName(wb.getName("name2"));
         assertEquals(2, wb.getNumberOfNames());
 
-        wb.removeName(0);
-        assertEquals(1, wb.getNumberOfNames());
-        
         wb.close();
     }
 
@@ -460,10 +438,8 @@ public abstract class BaseTestNamedRange {
         newNamedRange2.setNameName("AnotherTest");
         newNamedRange2.setRefersToFormula(sheetName + "!$F$1:$G$6");
 
-        wb1.getNameAt(0);
-
         Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
-        Name nm =wb2.getName("RangeTest");
+        Name nm = wb2.getName("RangeTest");
         assertEquals("Name is " + nm.getNameName(), "RangeTest", nm.getNameName());
         assertEquals("Reference is " + nm.getRefersToFormula(), (wb2.getSheetName(0) + "!$D$4:$E$8"), nm.getRefersToFormula());
 
@@ -474,6 +450,7 @@ public abstract class BaseTestNamedRange {
         wb2.close();
         wb1.close();
     }
+
     /**
      * Verifies correct functioning for "single cell named range" (aka "named cell")
      */
@@ -666,7 +643,7 @@ public abstract class BaseTestNamedRange {
         assertEquals("2", names.get(1).getRefersToFormula());
 
         assertEquals("1", wb.getName("x").getRefersToFormula());
-        wb.removeName("x");
+        wb.removeName(wb.getName("x"));
         assertEquals("2", wb.getName("x").getRefersToFormula());
         
         wb.close();
