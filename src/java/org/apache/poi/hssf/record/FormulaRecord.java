@@ -121,9 +121,10 @@ public final class FormulaRecord extends CellRecord {
 	}
 
 	/**
-	 * @deprecated POI 5.0.0, will be removed in 5.0, use getCachedResultTypeEnum until switch to enum is fully done
+	 * @deprecated POI 5.0.0, will be removed in 6.0, use getCachedResultTypeEnum until switch to enum is fully done
 	 */
 	@Deprecated
+	@Removal(version = "6.0.0")
 	public int getCachedResultType() {
 		if (specialCachedValue == null) {
 			return CellType.NUMERIC.getCode();
