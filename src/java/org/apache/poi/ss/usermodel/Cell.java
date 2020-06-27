@@ -113,24 +113,6 @@ public interface Cell {
     CellType getCellType();
 
     /**
-     * Return the cell type.  Tables in an array formula return
-     * {@link CellType#FORMULA} for all cells, even though the formula is only defined
-     * in the OOXML file for the top left cell of the array.
-     * <p>
-     * NOTE: POI does not support data table formulas.
-     * Cells in a data table appear to POI as plain cells typed from their cached value.
-     *
-     * @return the cell type
-     * @since POI 3.15 beta 3
-     * @deprecated will be removed in 4.2
-     * Use <code>getCellType()</code>
-     * Was renamed to <code>getCellType()</code> when we made the CellType enum transition in POI 4.0. See bug 59791.
-     */
-    @Deprecated
-    @Removal(version="4.2")
-    CellType getCellTypeEnum();
-
-    /**
      * Only valid for formula cells
      *
      * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
@@ -138,19 +120,6 @@ public interface Cell {
      *      on the cached value of the formula
      */
     CellType getCachedFormulaResultType();
-
-    /**
-     * Only valid for formula cells
-     * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
-     *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
-     * on the cached value of the formula
-     * @since POI 3.15 beta 3
-     * @deprecated will be removed in 4.2
-     * Will be renamed to <code>getCachedFormulaResultType()</code> when we make the CellType enum transition in POI 4.0. See bug 59791.
-     */
-    @Deprecated
-    @Removal(version = "4.2")
-    CellType getCachedFormulaResultTypeEnum();
 
     /**
      * Set a numeric value for the cell.

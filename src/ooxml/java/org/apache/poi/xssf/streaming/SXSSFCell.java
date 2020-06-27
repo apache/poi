@@ -150,21 +150,6 @@ public class SXSSFCell extends CellBase {
     }
 
     /**
-     * Only valid for formula cells
-     * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
-     *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
-     * on the cached value of the formula
-     * @since POI 3.15 beta 3
-     * @deprecated use <code>getCachedFormulaResultType</code> instead
-     */
-    @Deprecated
-    @Removal(version = "4.2")
-    @Override
-    public CellType getCachedFormulaResultTypeEnum() {
-        return getCachedFormulaResultType();
-    }
-
-    /**
      * {@inheritDoc}
      */
     @Override

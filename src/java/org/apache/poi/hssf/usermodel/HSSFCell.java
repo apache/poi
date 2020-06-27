@@ -652,6 +652,7 @@ public class HSSFCell extends CellBase {
             + " " + (isFormulaCell ? "formula " : "") + "cell";
         return new IllegalStateException(msg);
     }
+
     private static void checkFormulaCachedValueType(CellType expectedTypeCode, FormulaRecord fr) {
         CellType cachedValueType = fr.getCachedResultTypeEnum();
         if (cachedValueType != expectedTypeCode) {
@@ -1176,22 +1177,6 @@ public class HSSFCell extends CellBase {
         }
 
         return ((FormulaRecordAggregate)_record).getFormulaRecord().getCachedResultTypeEnum();
-    }
-
-    /**
-     * Only valid for formula cells
-     * @return one of ({@link CellType#NUMERIC}, {@link CellType#STRING},
-     *     {@link CellType#BOOLEAN}, {@link CellType#ERROR}) depending
-     * on the cached value of the formula
-     * @since POI 3.15 beta 3
-     * @deprecated use <code>getCachedFormulaResultType</code>
-     * Will be deleted when we make the CellType enum transition. See bug 59791.
-     */
-    @Deprecated
-    @Removal(version="4.2")
-    @Override
-    public CellType getCachedFormulaResultTypeEnum() {
-        return getCachedFormulaResultType();
     }
 
     void setCellArrayFormula(CellRangeAddress range) {

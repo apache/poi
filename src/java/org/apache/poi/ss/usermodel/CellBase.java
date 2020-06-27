@@ -127,16 +127,6 @@ public abstract class CellBase implements Cell {
     }
 
     /**
-     * {@inheritDoc}
-     */
-    @Deprecated
-    @Removal(version = "4.2")
-    @Override
-    public final CellType getCellTypeEnum() {
-        return getCellType();
-    }
-
-    /**
      * Implementation-specific setting the formula. Formula is not null.
      * Shall not change the value.
      * @param formula
