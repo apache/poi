@@ -1019,6 +1019,25 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     }
 
     /**
+     * Get the named range at the given index. No longer public and only used in tests.
+     *
+     * @param nameIndex the index of the named range
+     * @return the XSSFName at the given index
+     */
+    @Deprecated
+    XSSFName getNameAt(int nameIndex) {
+        int nNames = namedRanges.size();
+        if (nNames < 1) {
+            throw new IllegalStateException("There are no defined names in this workbook");
+        }
+        if (nameIndex < 0 || nameIndex > nNames) {
+            throw new IllegalArgumentException("Specified name index " + nameIndex
+                    + " is outside the allowable range (0.." + (nNames-1) + ").");
+        }
+        return namedRanges.get(nameIndex);
+    }
+
+    /**
      * Get a list of all the named ranges in the workbook.
      *
      * @return list of XSSFNames in the workbook
@@ -1026,6 +1045,24 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     @Override
     public List<XSSFName> getAllNames() {
         return Collections.unmodifiableList(namedRanges);
+    }
+
+    /**
+     * Gets the named range index by name. No longer public and only used in tests.
+     *
+     * @param name named range name
+     * @return named range index. <code>-1</code> is returned if no named ranges could be found.
+     *
+     * @deprecated 3.16. New projects should avoid accessing named ranges by index.
+     * Use {@link #getName(String)} instead.
+     */
+    @Deprecated
+    int getNameIndex(String name) {
+        XSSFName nm = getName(name);
+        if (nm != null) {
+            return namedRanges.indexOf(nm);
+        }
+        return -1;
     }
 
     /**
@@ -1225,9 +1262,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     }
 
     /**
-     * As {@link #removeName(String)} is not necessarily unique
-     * (name + sheet index is unique), this method is more accurate.
-     *
      * @param name the name to remove.
      *
      * @throws IllegalArgumentException if the named range is not a part of this XSSFWorkbook
