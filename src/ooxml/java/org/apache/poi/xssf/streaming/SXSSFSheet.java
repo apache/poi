@@ -61,18 +61,25 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
 
 /**
  * Streaming version of XSSFSheet implementing the "BigGridDemo" strategy.
-*/
+ */
 public class SXSSFSheet implements Sheet
 {
     /*package*/ final XSSFSheet _sh;
-    private final SXSSFWorkbook _workbook;
+    protected final SXSSFWorkbook _workbook;
     private final TreeMap<Integer,SXSSFRow> _rows = new TreeMap<>();
-    private final SheetDataWriter _writer;
+    protected SheetDataWriter _writer;
     private int _randomAccessWindowSize = SXSSFWorkbook.DEFAULT_WINDOW_SIZE;
-    private final AutoSizeColumnTracker _autoSizeColumnTracker;
+    protected final AutoSizeColumnTracker _autoSizeColumnTracker;
     private int outlineLevelRow;
     private int lastFlushedRowNumber = -1;
     private boolean allFlushed;
+
+    protected SXSSFSheet(SXSSFWorkbook workbook, XSSFSheet xSheet, int randomAccessWindowSize) {
+        _workbook = workbook;
+        _sh = xSheet;
+        setRandomAccessWindowSize(randomAccessWindowSize);
+        _autoSizeColumnTracker = new AutoSizeColumnTracker(this);
+    }
 
     public SXSSFSheet(SXSSFWorkbook workbook, XSSFSheet xSheet) throws IOException {
         _workbook = workbook;
@@ -90,8 +97,8 @@ public class SXSSFSheet implements Sheet
         return _writer;
     }
 
-/* Gets "<sheetData>" document fragment*/
-    public InputStream getWorksheetXMLInputStream() throws IOException 
+    /* Gets "<sheetData>" document fragment*/
+    public InputStream getWorksheetXMLInputStream() throws IOException
     {
         // flush all remaining data and close the temp file writer
         flushRows(0);
@@ -99,7 +106,7 @@ public class SXSSFSheet implements Sheet
         return _writer.getWorksheetXMLInputStream();
     }
 
-//start of interface implementation
+    //start of interface implementation
     @Override
     public Iterator<Row> iterator()
     {
@@ -128,7 +135,7 @@ public class SXSSFSheet implements Sheet
         if(rownum <= _writer.getLastFlushedRow() ) {
             throw new IllegalArgumentException(
                     "Attempting to write a row["+rownum+"] " +
-                    "in the range [0," + _writer.getLastFlushedRow() + "] that is already written to disk.");
+                            "in the range [0," + _writer.getLastFlushedRow() + "] that is already written to disk.");
         }
 
         // attempt to overwrite a existing row in the input template
@@ -143,7 +150,7 @@ public class SXSSFSheet implements Sheet
         allFlushed = false;
         if(_randomAccessWindowSize >= 0 && _rows.size() > _randomAccessWindowSize) {
             try {
-               flushRows(_randomAccessWindowSize);
+                flushRows(_randomAccessWindowSize);
             } catch (IOException ioe) {
                 throw new RuntimeException(ioe);
             }
@@ -274,7 +281,7 @@ public class SXSSFSheet implements Sheet
 
     /**
      * Get the actual column width in pixels
-     * 
+     *
      * <p>
      * Please note, that this method works correctly only for workbooks
      * with the default font size (Calibri 11pt for .xlsx).
@@ -283,8 +290,8 @@ public class SXSSFSheet implements Sheet
     @Override
     public float getColumnWidthInPixels(int columnIndex) {
         return _sh.getColumnWidthInPixels(columnIndex);
-    }    
-    
+    }
+
     /**
      * Set the default column width for the sheet (if the columns do not define their own width)
      * in characters
@@ -308,7 +315,7 @@ public class SXSSFSheet implements Sheet
     {
         return _sh.getDefaultColumnWidth();
     }
- 
+
 
     /**
      * Get the default row height for the sheet (if the rows do not define their own height) in
@@ -356,7 +363,7 @@ public class SXSSFSheet implements Sheet
     {
         _sh.setDefaultRowHeightInPoints(height);
     }
-    
+
 
     /**
      * Returns the CellStyle that applies to the given
@@ -461,7 +468,7 @@ public class SXSSFSheet implements Sheet
     {
         _sh.removeMergedRegion(index);
     }
-    
+
     /**
      * Removes a merged region of cells (hence letting them free)
      *
@@ -568,7 +575,7 @@ public class SXSSFSheet implements Sheet
     {
         return _sh.isDisplayZeros();
     }
-    
+
     /**
      * Sets whether the worksheet is displayed from right to left instead of from left to right.
      *
@@ -577,7 +584,7 @@ public class SXSSFSheet implements Sheet
     @Override
     public void setRightToLeft(boolean value)
     {
-       _sh.setRightToLeft(value);
+        _sh.setRightToLeft(value);
     }
 
     /**
@@ -588,7 +595,7 @@ public class SXSSFSheet implements Sheet
     @Override
     public boolean isRightToLeft()
     {
-       return _sh.isRightToLeft();
+        return _sh.isRightToLeft();
     }
 
     /**
@@ -733,7 +740,7 @@ public class SXSSFSheet implements Sheet
     {
         _sh.setPrintGridlines(show);
     }
-    
+
     /**
      * Returns whether row and column headings are printed.
      *
@@ -841,7 +848,7 @@ public class SXSSFSheet implements Sheet
     {
         return _sh.getProtect();
     }
-    
+
     /**
      * Sets the protection enabled as well as the password
      * @param password to set for protection. Pass <code>null</code> to remove protection
@@ -851,7 +858,7 @@ public class SXSSFSheet implements Sheet
     {
         _sh.protectSheet(password);
     }
-    
+
     /**
      * Answer whether scenario protection is enabled or disabled
      *
@@ -862,7 +869,7 @@ public class SXSSFSheet implements Sheet
     {
         return _sh.getScenarioProtect();
     }
-    
+
     /**
      * Window zoom magnification for current view representing percent values.
      * Valid values range from 10 to 400. Horizontal and Vertical scale together.
@@ -933,7 +940,7 @@ public class SXSSFSheet implements Sheet
      */
     @Override
     public void setForceFormulaRecalculation(boolean value) {
-       _sh.setForceFormulaRecalculation(value);
+        _sh.setForceFormulaRecalculation(value);
     }
 
     /**
@@ -942,12 +949,12 @@ public class SXSSFSheet implements Sheet
      */
     @Override
     public boolean getForceFormulaRecalculation() {
-       return _sh.getForceFormulaRecalculation();
+        return _sh.getForceFormulaRecalculation();
     }
 
     /**
      * <i>Not implemented for SXSSFSheets</i>
-     * 
+     *
      * Shifts rows between startRow and endRow n number of rows.
      * If you use a negative number, it will shift rows up.
      * Code ensures that rows don't wrap around.
@@ -969,7 +976,7 @@ public class SXSSFSheet implements Sheet
 
     /**
      * <i>Not implemented for SXSSFSheets</i>
-     * 
+     *
      * Shifts rows between startRow and endRow n number of rows.
      * If you use a negative number, it will shift rows up.
      * Code ensures that rows don't wrap around
@@ -1236,7 +1243,7 @@ public class SXSSFSheet implements Sheet
      *     Please note the rows being grouped <em>must</em> be in the current window,
      *     if the rows are already flushed then groupRow has no effect.
      * </p>
-     * 
+     *
      *      Correct code:
      *      <pre><code>
      *       Workbook wb = new SXSSFWorkbook(100);  // keep 100 rows in memory
@@ -1249,8 +1256,8 @@ public class SXSSFSheet implements Sheet
      *       }
      *
      *      </code></pre>
-     * 
-     * 
+     *
+     *
      *      Incorrect code:
      *      <pre><code>
      *       Workbook wb = new SXSSFWorkbook(100);  // keep 100 rows in memory
@@ -1261,7 +1268,7 @@ public class SXSSFSheet implements Sheet
      *       sh.groupRow(100, 200); // the rows in the range [100, 200] are already flushed and groupRows has no effect
      *
      *      </code></pre>
-     * 
+     *
      *
      * @param fromRow   start row (0-based)
      * @param toRow     end row (0-based)
@@ -1280,7 +1287,7 @@ public class SXSSFSheet implements Sheet
 
         setWorksheetOutlineLevelRow();
     }
-    
+
     /**
      * Set row groupings (like groupRow) in a stream-friendly manner
      *
@@ -1308,8 +1315,8 @@ public class SXSSFSheet implements Sheet
     private void setWorksheetOutlineLevelRow() {
         CTWorksheet ct = _sh.getCTWorksheet();
         CTSheetFormatPr pr = ct.isSetSheetFormatPr() ?
-            ct.getSheetFormatPr() :
-            ct.addNewSheetFormatPr();
+                ct.getSheetFormatPr() :
+                ct.addNewSheetFormatPr();
         if(outlineLevelRow > 0) {
             pr.setOutlineLevelRow((short)outlineLevelRow);
         }
@@ -1346,7 +1353,7 @@ public class SXSSFSheet implements Sheet
             throw new RuntimeException("Unable to expand row: Not Implemented");
         }
     }
-    
+
     /**
      * @param rowIndex the zero based row index to collapse
      */
@@ -1359,7 +1366,7 @@ public class SXSSFSheet implements Sheet
 
             // Hide all the columns until the end of the group
             int lastRow = writeHidden(row, startRow);
-            SXSSFRow lastRowObj = getRow(lastRow); 
+            SXSSFRow lastRowObj = getRow(lastRow);
             if (lastRowObj != null) {
                 lastRowObj.setCollapsed(true);
             } else {
@@ -1368,7 +1375,7 @@ public class SXSSFSheet implements Sheet
             }
         }
     }
-    
+
     /**
      * @param rowIndex the zero based row index to find from
      */
@@ -1388,7 +1395,7 @@ public class SXSSFSheet implements Sheet
         }
         return currentRow + 1;
     }
-    
+
     private int writeHidden(SXSSFRow xRow, int rowIndex) {
         int level = xRow.getOutlineLevel();
         SXSSFRow currRow = getRow(rowIndex);
@@ -1412,8 +1419,8 @@ public class SXSSFSheet implements Sheet
     {
         _sh.setDefaultColumnStyle(column, style);
     }
-    
-    
+
+
     /**
      * Track a column in the sheet for auto-sizing.
      * Note this has undefined behavior if a column is tracked after one or more rows are written to the sheet.
@@ -1428,7 +1435,7 @@ public class SXSSFSheet implements Sheet
     {
         _autoSizeColumnTracker.trackColumn(column);
     }
-    
+
     /**
      * Track several columns in the sheet for auto-sizing.
      * Note this has undefined behavior if columns are tracked after one or more rows are written to the sheet.
@@ -1441,7 +1448,7 @@ public class SXSSFSheet implements Sheet
     {
         _autoSizeColumnTracker.trackColumns(columns);
     }
-    
+
     /**
      * Tracks all columns in the sheet for auto-sizing. If this is called, individual columns do not need to be tracked.
      * Because determining the best-fit width for a cell is expensive, this may affect the performance.
@@ -1451,7 +1458,7 @@ public class SXSSFSheet implements Sheet
     {
         _autoSizeColumnTracker.trackAllColumns();
     }
-    
+
     /**
      * Removes a column that was previously marked for inclusion in auto-size column tracking.
      * When a column is untracked, the best-fit width is forgotten.
@@ -1467,7 +1474,7 @@ public class SXSSFSheet implements Sheet
     {
         return _autoSizeColumnTracker.untrackColumn(column);
     }
-    
+
     /**
      * Untracks several columns in the sheet for auto-sizing.
      * When a column is untracked, the best-fit width is forgotten.
@@ -1481,7 +1488,7 @@ public class SXSSFSheet implements Sheet
     {
         return _autoSizeColumnTracker.untrackColumns(columns);
     }
-    
+
     /**
      * Untracks all columns in the sheet for auto-sizing. Best-fit column widths are forgotten.
      * If this is called, individual columns do not need to be untracked.
@@ -1491,7 +1498,7 @@ public class SXSSFSheet implements Sheet
     {
         _autoSizeColumnTracker.untrackAllColumns();
     }
-    
+
     /**
      * Returns true if column is currently tracked for auto-sizing.
      *
@@ -1503,7 +1510,7 @@ public class SXSSFSheet implements Sheet
     {
         return _autoSizeColumnTracker.isColumnTracked(column);
     }
-    
+
     /**
      * Get the currently tracked columns for auto-sizing.
      * Note if all columns are tracked, this will only return the columns that have been explicitly or implicitly tracked,
@@ -1527,7 +1534,7 @@ public class SXSSFSheet implements Sheet
      * </p>
      * You can specify whether the content of merged cells should be considered or ignored.
      *  Default is to ignore merged cells.
-     *  
+     *
      *  <p>
      *  Special note about SXSSF implementation: You must register the columns you wish to track with
      *  the SXSSFSheet using {@link #trackColumnForAutoSizing(int)} or {@link #trackAllColumnsForAutoSizing()}.
@@ -1554,7 +1561,7 @@ public class SXSSFSheet implements Sheet
      * </p>
      * You can specify whether the content of merged cells should be considered or ignored.
      *  Default is to ignore merged cells.
-     *  
+     *
      *  <p>
      *  Special note about SXSSF implementation: You must register the columns you wish to track with
      *  the SXSSFSheet using {@link #trackColumnForAutoSizing(int)} or {@link #trackAllColumnsForAutoSizing()}.
@@ -1590,21 +1597,21 @@ public class SXSSFSheet implements Sheet
         catch (final IllegalStateException e) {
             throw new IllegalStateException("Could not auto-size column. Make sure the column was tracked prior to auto-sizing the column.", e);
         }
-        
+
         // get the best-fit width of rows currently in the random access window
         final int activeWidth = (int) (256 * SheetUtil.getColumnWidth(this, column, useMergedCells));
 
         // the best-fit width for both flushed rows and random access window rows
         // flushedWidth or activeWidth may be negative if column contains only blank cells
         final int bestFitWidth = Math.max(flushedWidth,  activeWidth);
-        
+
         if (bestFitWidth > 0) {
             final int maxColumnWidth = 255*256; // The maximum column width for an individual cell is 255 characters
             final int width = Math.min(bestFitWidth,  maxColumnWidth);
             setColumnWidth(column, width);
         }
     }
-    
+
     /**
      * Returns cell comment for the specified row and column
      *
@@ -1615,7 +1622,7 @@ public class SXSSFSheet implements Sheet
     {
         return _sh.getCellComment(ref);
     }
-    
+
     /**
      * Returns all cell comments on this sheet.
      * @return A map of each Comment in the sheet, keyed on the cell address where
@@ -1625,7 +1632,7 @@ public class SXSSFSheet implements Sheet
     public Map<CellAddress, XSSFComment> getCellComments() {
         return _sh.getCellComments();
     }
-    
+
     /**
      * Get a Hyperlink in this sheet anchored at row, column
      *
@@ -1637,7 +1644,7 @@ public class SXSSFSheet implements Sheet
     public XSSFHyperlink getHyperlink(int row, int column) {
         return _sh.getHyperlink(row, column);
     }
-    
+
     /**
      * Get a Hyperlink in this sheet located in a cell specified by {code addr}
      *
@@ -1649,7 +1656,7 @@ public class SXSSFSheet implements Sheet
     public XSSFHyperlink getHyperlink(CellAddress addr) {
         return _sh.getHyperlink(addr);
     }
-    
+
     /**
      * Get a list of Hyperlinks in this sheet
      *
@@ -1659,7 +1666,7 @@ public class SXSSFSheet implements Sheet
     public List<XSSFHyperlink> getHyperlinkList() {
         return _sh.getHyperlinkList();
     }
-    
+
     /**
      * {@inheritDoc}
      */
@@ -1744,7 +1751,7 @@ public class SXSSFSheet implements Sheet
 
         throw new RuntimeException("Not Implemented");
     }
-    
+
     @Override
     public DataValidationHelper getDataValidationHelper()
     {
@@ -1769,7 +1776,7 @@ public class SXSSFSheet implements Sheet
 
     /**
      * Enable filtering for a range of cells
-     * 
+     *
      * @param range the range of cells to filter
      */
     @Override
@@ -1782,30 +1789,30 @@ public class SXSSFSheet implements Sheet
     public SheetConditionalFormatting getSheetConditionalFormatting(){
         return _sh.getSheetConditionalFormatting();
     }
-    
-    
+
+
     @Override
     public CellRangeAddress getRepeatingRows() {
-      return _sh.getRepeatingRows();
+        return _sh.getRepeatingRows();
     }
-    
+
     @Override
     public CellRangeAddress getRepeatingColumns() {
-      return _sh.getRepeatingColumns();
+        return _sh.getRepeatingColumns();
     }
-    
+
     @Override
     public void setRepeatingRows(CellRangeAddress rowRangeRef) {
-      _sh.setRepeatingRows(rowRangeRef);
+        _sh.setRepeatingRows(rowRangeRef);
     }
-    
+
     @Override
     public void setRepeatingColumns(CellRangeAddress columnRangeRef) {
-      _sh.setRepeatingColumns(columnRangeRef);
+        _sh.setRepeatingColumns(columnRangeRef);
     }
-    
-    
-    
+
+
+
 //end of interface implementation
     /**
      * Specifies how many rows can be accessed at most via getRow().
@@ -1821,12 +1828,12 @@ public class SXSSFSheet implements Sheet
      */
     public void setRandomAccessWindowSize(int value)
     {
-         if(value == 0 || value < -1) {
-             throw new IllegalArgumentException("RandomAccessWindowSize must be either -1 or a positive integer");
-         }
-         _randomAccessWindowSize = value;
+        if(value == 0 || value < -1) {
+            throw new IllegalArgumentException("RandomAccessWindowSize must be either -1 or a positive integer");
+        }
+        _randomAccessWindowSize = value;
     }
-    
+
     /**
      * Are all rows flushed to disk?
      */
@@ -1880,7 +1887,7 @@ public class SXSSFSheet implements Sheet
     }
     public void changeRowNum(SXSSFRow row, int newRowNum)
     {
-        
+
         removeRow(row);
         _rows.put(newRowNum,row);
     }
@@ -1904,7 +1911,7 @@ public class SXSSFSheet implements Sheet
         if (!allFlushed) {
             flushRows();
         }
-        return _writer.dispose();
+        return _writer == null || _writer.dispose();
     }
 
     @Override
@@ -1935,21 +1942,21 @@ public class SXSSFSheet implements Sheet
     public void setTabColor(XSSFColor color) {
         _sh.setTabColor(color);
     }
-    
+
     /**
      * Enable sheet protection
      */
     public void enableLocking() {
         safeGetProtectionField().setSheet(true);
     }
-    
+
     /**
      * Disable sheet protection
      */
     public void disableLocking() {
         safeGetProtectionField().setSheet(false);
     }
-    
+
     /**
      * Enable or disable Autofilters locking.
      * This does not modify sheet protection status.
@@ -1958,7 +1965,7 @@ public class SXSSFSheet implements Sheet
     public void lockAutoFilter(boolean enabled) {
         safeGetProtectionField().setAutoFilter(enabled);
     }
-    
+
     /**
      * Enable or disable Deleting columns locking.
      * This does not modify sheet protection status.
@@ -1967,7 +1974,7 @@ public class SXSSFSheet implements Sheet
     public void lockDeleteColumns(boolean enabled) {
         safeGetProtectionField().setDeleteColumns(enabled);
     }
-    
+
     /**
      * Enable or disable Deleting rows locking.
      * This does not modify sheet protection status.
@@ -1976,7 +1983,7 @@ public class SXSSFSheet implements Sheet
     public void lockDeleteRows(boolean enabled) {
         safeGetProtectionField().setDeleteRows(enabled);
     }
-    
+
     /**
      * Enable or disable Formatting cells locking.
      * This does not modify sheet protection status.
@@ -1985,7 +1992,7 @@ public class SXSSFSheet implements Sheet
     public void lockFormatCells(boolean enabled) {
         safeGetProtectionField().setFormatCells(enabled);
     }
-    
+
     /**
      * Enable or disable Formatting columns locking.
      * This does not modify sheet protection status.
@@ -1994,7 +2001,7 @@ public class SXSSFSheet implements Sheet
     public void lockFormatColumns(boolean enabled) {
         safeGetProtectionField().setFormatColumns(enabled);
     }
-    
+
     /**
      * Enable or disable Formatting rows locking.
      * This does not modify sheet protection status.
@@ -2003,7 +2010,7 @@ public class SXSSFSheet implements Sheet
     public void lockFormatRows(boolean enabled) {
         safeGetProtectionField().setFormatRows(enabled);
     }
-    
+
     /**
      * Enable or disable Inserting columns locking.
      * This does not modify sheet protection status.
@@ -2012,7 +2019,7 @@ public class SXSSFSheet implements Sheet
     public void lockInsertColumns(boolean enabled) {
         safeGetProtectionField().setInsertColumns(enabled);
     }
-    
+
     /**
      * Enable or disable Inserting hyperlinks locking.
      * This does not modify sheet protection status.
@@ -2021,7 +2028,7 @@ public class SXSSFSheet implements Sheet
     public void lockInsertHyperlinks(boolean enabled) {
         safeGetProtectionField().setInsertHyperlinks(enabled);
     }
-    
+
     /**
      * Enable or disable Inserting rows locking.
      * This does not modify sheet protection status.
@@ -2030,7 +2037,7 @@ public class SXSSFSheet implements Sheet
     public void lockInsertRows(boolean enabled) {
         safeGetProtectionField().setInsertRows(enabled);
     }
-    
+
     /**
      * Enable or disable Pivot Tables locking.
      * This does not modify sheet protection status.
@@ -2039,7 +2046,7 @@ public class SXSSFSheet implements Sheet
     public void lockPivotTables(boolean enabled) {
         safeGetProtectionField().setPivotTables(enabled);
     }
-    
+
     /**
      * Enable or disable Sort locking.
      * This does not modify sheet protection status.
@@ -2048,7 +2055,7 @@ public class SXSSFSheet implements Sheet
     public void lockSort(boolean enabled) {
         safeGetProtectionField().setSort(enabled);
     }
-    
+
     /**
      * Enable or disable Objects locking.
      * This does not modify sheet protection status.
@@ -2057,7 +2064,7 @@ public class SXSSFSheet implements Sheet
     public void lockObjects(boolean enabled) {
         safeGetProtectionField().setObjects(enabled);
     }
-    
+
     /**
      * Enable or disable Scenarios locking.
      * This does not modify sheet protection status.
@@ -2066,7 +2073,7 @@ public class SXSSFSheet implements Sheet
     public void lockScenarios(boolean enabled) {
         safeGetProtectionField().setScenarios(enabled);
     }
-    
+
     /**
      * Enable or disable Selection of locked cells locking.
      * This does not modify sheet protection status.
@@ -2075,7 +2082,7 @@ public class SXSSFSheet implements Sheet
     public void lockSelectLockedCells(boolean enabled) {
         safeGetProtectionField().setSelectLockedCells(enabled);
     }
-    
+
     /**
      * Enable or disable Selection of unlocked cells locking.
      * This does not modify sheet protection status.
@@ -2085,7 +2092,7 @@ public class SXSSFSheet implements Sheet
         safeGetProtectionField().setSelectUnlockedCells(enabled);
     }
 
-    
+
     private CTSheetProtection safeGetProtectionField() {
         CTWorksheet ct = _sh.getCTWorksheet();
         if (!isSheetProtectionEnabled()) {
@@ -2093,12 +2100,12 @@ public class SXSSFSheet implements Sheet
         }
         return ct.getSheetProtection();
     }
-    
+
     /* package */ boolean isSheetProtectionEnabled() {
         CTWorksheet ct = _sh.getCTWorksheet();
         return (ct.isSetSheetProtection());
     }
-    
+
     /**
      * Set background color of the sheet tab
      *
@@ -2112,10 +2119,10 @@ public class SXSSFSheet implements Sheet
         color.setIndexed(colorIndex);
         pr.setTabColor(color);
     }
-    
-    @NotImplemented 
-    @Override 
-    public void shiftColumns(int startColumn, int endColumn, int n){ 
-      throw new UnsupportedOperationException("Not Implemented"); 
+
+    @NotImplemented
+    @Override
+    public void shiftColumns(int startColumn, int endColumn, int n){
+        throw new UnsupportedOperationException("Not Implemented");
     }
 }

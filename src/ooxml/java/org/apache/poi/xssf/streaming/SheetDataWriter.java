@@ -55,7 +55,7 @@ public class SheetDataWriter implements Closeable {
     private static final POILogger logger = POILogFactory.getLogger(SheetDataWriter.class);
 
     private final File _fd;
-    private final Writer _out;
+    protected final Writer _out;
     private int _rownum;
     private int _numberOfFlushedRows;
     private int _lowestIndexOfFlushedRows; // meaningful only of _numberOfFlushedRows>0
@@ -71,6 +71,11 @@ public class SheetDataWriter implements Closeable {
     public SheetDataWriter() throws IOException {
         _fd = createTempFile();
         _out = createWriter(_fd);
+    }
+    
+    public SheetDataWriter(Writer writer) throws IOException {
+        _fd = null;
+        _out = writer;
     }
 
     public SheetDataWriter(SharedStringsTable sharedStringsTable) throws IOException {
