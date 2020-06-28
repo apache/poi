@@ -19,35 +19,12 @@
 
 package org.apache.poi.xssf.streaming;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.util.Arrays;
-
-import org.apache.poi.POIDataSamples;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
-import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
-import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -55,6 +32,10 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.io.IOException;
+
+import static org.junit.Assert.*;
 
 public final class TestEmittingSXSSFWorkbook extends BaseTestXWorkbook {
     
@@ -299,190 +280,5 @@ public final class TestEmittingSXSSFWorkbook extends BaseTestXWorkbook {
         // the underlying writer is GZIPSheetDataWriter
         assertWorkbookDispose(wb2);
         wb2.close();
-    }
-    
-    @Ignore("currently writing the same sheet multiple times is not supported...")
-    @Test
-    public void bug53515() throws Exception {
-        Workbook wb1 = new SXSSFWorkbook(10);
-        populateWorkbook(wb1);
-        saveTwice(wb1);
-        Workbook wb2 = new XSSFWorkbook();
-        populateWorkbook(wb2);
-        saveTwice(wb2);
-        wb2.close();
-        wb1.close();
-    }
-    
-    @Ignore("Crashes the JVM because of documented JVM behavior with concurrent writing/reading of zip-files, "
-            + "see http://www.oracle.com/technetwork/java/javase/documentation/overview-156328.html")
-    @Test
-    public void bug53515a() throws Exception {
-        File out = new File("Test.xlsx");
-        assertTrue(!out.exists() || out.delete());
-        for (int i = 0; i < 2; i++) {
-            final SXSSFWorkbook wb;
-            if (out.exists()) {
-                wb = new SXSSFWorkbook((XSSFWorkbook) WorkbookFactory.create(out));
-            } else {
-                wb = new SXSSFWorkbook(10);
-            }
-            
-            try {
-                FileOutputStream outSteam = new FileOutputStream(out);
-                if (i == 0) {
-                    populateWorkbook(wb);
-                } else {
-                    System.gc();
-                    System.gc();
-                    System.gc();
-                }
-                
-                wb.write(outSteam);
-                // assertTrue(wb.dispose());
-                outSteam.close();
-            } finally {
-                assertTrue(wb.dispose());
-            }
-            wb.close();
-        }
-        assertTrue(out.exists());
-        assertTrue(out.delete());
-    }
-    
-    private static void populateWorkbook(Workbook wb) {
-        Sheet sh = wb.createSheet();
-        for (int rownum = 0; rownum < 100; rownum++) {
-            Row row = sh.createRow(rownum);
-            for (int cellnum = 0; cellnum < 10; cellnum++) {
-                Cell cell = row.createCell(cellnum);
-                String address = new CellReference(cell).formatAsString();
-                cell.setCellValue(address);
-            }
-        }
-    }
-    
-    private static void saveTwice(Workbook wb) throws Exception {
-        for (int i = 0; i < 2; i++) {
-            try {
-                NullOutputStream out = new NullOutputStream();
-                wb.write(out);
-                out.close();
-            } catch (Exception e) {
-                throw new Exception("ERROR: failed on " + (i + 1) + "th time calling " + wb.getClass().getName()
-                        + ".write() with exception " + e.getMessage(), e);
-            }
-        }
-    }
-    
-    @Test
-    public void closeDoesNotModifyWorkbook() throws IOException {
-        final String filename = "SampleSS.xlsx";
-        final File file = POIDataSamples.getSpreadSheetInstance().getFile(filename);
-        
-        // Some tests commented out because close() modifies the file
-        // See bug 58779
-        
-        // String
-        // wb = new SXSSFWorkbook(new XSSFWorkbook(file.getPath()));
-        // assertCloseDoesNotModifyFile(filename, wb);
-        
-        // File
-        // wb = new SXSSFWorkbook(new XSSFWorkbook(file));
-        // assertCloseDoesNotModifyFile(filename, wb);
-        
-        // InputStream
-        
-        try (FileInputStream fis = new FileInputStream(file);
-                XSSFWorkbook xwb = new XSSFWorkbook(fis);
-                SXSSFWorkbook wb = new SXSSFWorkbook(xwb)) {
-            assertCloseDoesNotModifyFile(filename, wb);
-        }
-        
-        // OPCPackage
-        // wb = new SXSSFWorkbook(new XSSFWorkbook(OPCPackage.open(file)));
-        // assertCloseDoesNotModifyFile(filename, wb);
-    }
-    
-    /**
-     * Bug #59743
-     * 
-     * this is only triggered on other files apart of sheet[1,2,...].xml as those are either copied uncompressed or with
-     * the use of GZIPInputStream so we use shared strings
-     */
-    @Test
-    public void testZipBombNotTriggeredOnUselessContent() throws IOException {
-        SXSSFWorkbook swb = new SXSSFWorkbook(null, 1, true, true);
-        SXSSFSheet s = swb.createSheet();
-        char[] useless = new char[32767];
-        Arrays.fill(useless, ' ');
-        
-        for (int row = 0; row < 1; row++) {
-            Row r = s.createRow(row);
-            for (int col = 0; col < 10; col++) {
-                char[] prefix = Integer.toHexString(row * 1000 + col).toCharArray();
-                Arrays.fill(useless, 0, 10, ' ');
-                System.arraycopy(prefix, 0, useless, 0, prefix.length);
-                String ul = new String(useless);
-                r.createCell(col, CellType.STRING).setCellValue(ul);
-            }
-        }
-        
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        swb.write(bos);
-        swb.dispose();
-        swb.close();
-    }
-    
-    /**
-     * To avoid accident changes to the template, you should be able to create a SXSSFWorkbook from a read-only XSSF
-     * one, then change + save that (only). See bug #60010 TODO Fix this to work!
-     */
-    @Test
-    @Ignore
-    public void createFromReadOnlyWorkbook() throws Exception {
-        String sheetName = "Test SXSSF";
-        File input = XSSFTestDataSamples.getSampleFile("sample.xlsx");
-        
-        try (OPCPackage pkg = OPCPackage.open(input, PackageAccess.READ)) {
-            ByteArrayOutputStream bos = new ByteArrayOutputStream();
-            try (XSSFWorkbook xssf = new XSSFWorkbook(pkg)) {
-                try (SXSSFWorkbook wb = new SXSSFWorkbook(xssf, 2)) {
-                    Sheet s = wb.createSheet(sheetName);
-                    for (int i = 0; i < 10; i++) {
-                        Row r = s.createRow(i);
-                        r.createCell(0).setCellValue(true);
-                        r.createCell(1).setCellValue(2.4);
-                        r.createCell(2).setCellValue("Test Row " + i);
-                    }
-                    assertEquals(10, s.getLastRowNum());
-                    
-                    wb.write(bos);
-                    wb.dispose();
-                }
-            }
-            
-            try (XSSFWorkbook xssf = new XSSFWorkbook(new ByteArrayInputStream(bos.toByteArray()))) {
-                Sheet s = xssf.getSheet(sheetName);
-                assertEquals(10, s.getLastRowNum());
-                assertTrue(s.getRow(0).getCell(0).getBooleanCellValue());
-                assertEquals("Test Row 9", s.getRow(9).getCell(2).getStringCellValue());
-            }
-        }
-    }
-    
-    @Test
-    public void test56557() throws IOException {
-        Workbook wb = XSSFTestDataSamples.openSampleWorkbook("56557.xlsx");
-        
-        // Using streaming XSSFWorkbook makes the output file invalid
-        wb = new SXSSFWorkbook(((XSSFWorkbook) wb));
-        
-        // Should not throw POIXMLException: java.io.IOException: Unable to parse xml bean when reading back
-        Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
-        assertNotNull(wbBack);
-        wbBack.close();
-        
-        wb.close();
     }
 }
