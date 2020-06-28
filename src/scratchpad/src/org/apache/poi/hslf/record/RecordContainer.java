@@ -27,7 +27,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.ArrayUtil;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.Removal;
 
 /**
  * Abstract class which all container records will extend. Providers
@@ -202,74 +201,6 @@ public abstract class RecordContainer extends Record
 		// Add at the place of the supplied record
 		addChildAt(newChild, loc);
 		return loc;
-	}
-
-	/**
-	 * Moves the given Child Record to before the supplied record
-     *
-     * @deprecated method is not used within POI and will be removed
-     */
-    @Removal(version="3.19")
-    @Deprecated
-	public void moveChildBefore(Record child, Record before) {
-		moveChildrenBefore(child, 1, before);
-	}
-
-	/**
-	 * Moves the given Child Records to before the supplied record
-     *
-     * @deprecated method is not used within POI and will be removed
-     */
-    @Removal(version="3.19")
-    @Deprecated
-	public void moveChildrenBefore(Record firstChild, int number, Record before) {
-		if(number < 1) { return; }
-
-		// Decide where we're going to put them
-		int newLoc = findChildLocation(before);
-		if(newLoc == -1) {
-			throw new IllegalArgumentException("Asked to move children before another record, but that record wasn't one of our children!");
-		}
-
-		// Figure out where they are now
-		int oldLoc = findChildLocation(firstChild);
-		if(oldLoc == -1) {
-			throw new IllegalArgumentException("Asked to move a record that wasn't a child!");
-		}
-
-		// Actually move
-		moveChildRecords(oldLoc, newLoc, number);
-	}
-
-	/**
-	 * Moves the given Child Records to after the supplied record
-	 *
-     * @param firstChild the first child to be moved
-     * @param number the number of records to move
-     * @param after the record after that the children are moved
-	 *
-	 * @deprecated method is not used within POI and will be removed
-	 */
-	@Removal(version="3.19")
-	@Deprecated
-	public void moveChildrenAfter(Record firstChild, int number, Record after) {
-		if(number < 1) { return; }
-		// Decide where we're going to put them
-		int newLoc = findChildLocation(after);
-		if(newLoc == -1) {
-			throw new IllegalArgumentException("Asked to move children before another record, but that record wasn't one of our children!");
-		}
-		// We actually want after this though
-		newLoc++;
-
-		// Figure out where they are now
-		int oldLoc = findChildLocation(firstChild);
-		if(oldLoc == -1) {
-			throw new IllegalArgumentException("Asked to move a record that wasn't a child!");
-		}
-
-		// Actually move
-		moveChildRecords(oldLoc, newLoc, number);
 	}
 
     /**
