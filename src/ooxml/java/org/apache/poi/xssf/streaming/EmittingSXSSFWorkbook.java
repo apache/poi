@@ -24,6 +24,7 @@ import java.util.NoSuchElementException;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.Beta;
+import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -44,6 +45,8 @@ public class EmittingSXSSFWorkbook extends SXSSFWorkbook {
     public EmittingSXSSFWorkbook() {
         this(null);
     }
+
+    public EmittingSXSSFWorkbook(int rowAccessWindowSize) { this(null, rowAccessWindowSize); }
     
     public EmittingSXSSFWorkbook(XSSFWorkbook workbook) {
         this(workbook, SXSSFWorkbook.DEFAULT_WINDOW_SIZE);
@@ -52,7 +55,8 @@ public class EmittingSXSSFWorkbook extends SXSSFWorkbook {
     public EmittingSXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize) {
         super(workbook, rowAccessWindowSize, false, false);
     }
-    
+
+    @NotImplemented
     @Override
     protected SheetDataWriter createSheetDataWriter() throws IOException {
         throw new RuntimeException("Not supported by EmittingSXSSFWorkbook");

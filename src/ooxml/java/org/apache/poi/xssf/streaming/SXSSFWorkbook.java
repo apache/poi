@@ -103,7 +103,7 @@ public class SXSSFWorkbook implements Workbook {
 
     private int _randomAccessWindowSize = DEFAULT_WINDOW_SIZE;
 
-    protected static interface ISheetInjector {
+    protected interface ISheetInjector {
         void writeSheetData(OutputStream out) throws IOException;
     }
 
