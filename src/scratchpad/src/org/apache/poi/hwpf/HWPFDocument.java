@@ -76,7 +76,6 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 
 /**
- *
  * This class acts as the bucket that we throw all of the Word data structures
  * into.
  */
@@ -88,68 +87,110 @@ public final class HWPFDocument extends HWPFDocumentCore {
 
     private static final String STREAM_DATA = "Data";
 
-    /** table stream buffer*/
+    /**
+     * table stream buffer
+     */
     private byte[] _tableStream;
 
-    /** data stream buffer*/
+    /**
+     * data stream buffer
+     */
     private byte[] _dataStream;
 
-    /** Document wide Properties*/
+    /**
+     * Document wide Properties
+     */
     private DocumentProperties _dop;
 
-    /** Contains text of the document wrapped in a obfuscated Word data
-     * structure*/
+    /**
+     * Contains text of the document wrapped in a obfuscated Word data
+     * structure
+     */
     private ComplexFileTable _cft;
 
-    /** Contains text buffer linked directly to single-piece document text piece */
+    /**
+     * Contains text buffer linked directly to single-piece document text piece
+     */
     private StringBuilder _text;
 
-    /** Holds the save history for this document. */
+    /**
+     * Holds the save history for this document.
+     */
     private SavedByTable _sbt;
 
-    /** Holds the revision mark authors for this document. */
+    /**
+     * Holds the revision mark authors for this document.
+     */
     private RevisionMarkAuthorTable _rmat;
 
-    /** Holds FSBA (shape) information */
+    /**
+     * Holds FSBA (shape) information
+     */
     private FSPATable _fspaHeaders;
 
-    /** Holds FSBA (shape) information */
+    /**
+     * Holds FSBA (shape) information
+     */
     private FSPATable _fspaMain;
 
-    /** Escher Drawing Group information */
+    /**
+     * Escher Drawing Group information
+     */
     private EscherRecordHolder _escherRecordHolder;
 
-    /** Holds pictures table */
+    /**
+     * Holds pictures table
+     */
     private PicturesTable _pictures;
 
-    /** Holds Office Art objects */
+    /**
+     * Holds Office Art objects
+     */
     private OfficeDrawingsImpl _officeDrawingsHeaders;
 
-    /** Holds Office Art objects */
+    /**
+     * Holds Office Art objects
+     */
     private OfficeDrawingsImpl _officeDrawingsMain;
 
-    /** Holds the bookmarks tables */
+    /**
+     * Holds the bookmarks tables
+     */
     private BookmarksTables _bookmarksTables;
 
-    /** Holds the bookmarks */
+    /**
+     * Holds the bookmarks
+     */
     private Bookmarks _bookmarks;
 
-    /** Holds the ending notes tables */
-    private NotesTables _endnotesTables = new NotesTables( NoteType.ENDNOTE );
+    /**
+     * Holds the ending notes tables
+     */
+    private NotesTables _endnotesTables = new NotesTables(NoteType.ENDNOTE);
 
-    /** Holds the footnotes */
-    private Notes _endnotes = new NotesImpl( _endnotesTables );
+    /**
+     * Holds the footnotes
+     */
+    private Notes _endnotes = new NotesImpl(_endnotesTables);
 
-    /** Holds the footnotes tables */
-    private NotesTables _footnotesTables = new NotesTables( NoteType.FOOTNOTE );
+    /**
+     * Holds the footnotes tables
+     */
+    private NotesTables _footnotesTables = new NotesTables(NoteType.FOOTNOTE);
 
-    /** Holds the footnotes */
-    private Notes _footnotes = new NotesImpl( _footnotesTables );
+    /**
+     * Holds the footnotes
+     */
+    private Notes _footnotes = new NotesImpl(_footnotesTables);
 
-    /** Holds the fields PLCFs */
+    /**
+     * Holds the fields PLCFs
+     */
     private FieldsTables _fieldsTables;
 
-    /** Holds the fields */
+    /**
+     * Holds the fields
+     */
     private Fields _fields;
 
     /**
@@ -157,12 +198,11 @@ public final class HWPFDocument extends HWPFDocumentCore {
      *
      * @param istream The InputStream that contains the Word document.
      * @throws IOException If there is an unexpected IOException from the passed
-     *         in InputStream.
+     *                     in InputStream.
      */
-    public HWPFDocument(InputStream istream) throws IOException
-    {
+    public HWPFDocument(InputStream istream) throws IOException {
         //do Ole stuff
-        this( verifyAndBuildPOIFS(istream) );
+        this(verifyAndBuildPOIFS(istream));
     }
 
     /**
@@ -170,30 +210,28 @@ public final class HWPFDocument extends HWPFDocumentCore {
      *
      * @param pfilesystem The POIFSFileSystem that contains the Word document.
      * @throws IOException If there is an unexpected IOException from the passed
-     *         in POIFSFileSystem.
+     *                     in POIFSFileSystem.
      */
-    public HWPFDocument(POIFSFileSystem pfilesystem) throws IOException
-    {
+    public HWPFDocument(POIFSFileSystem pfilesystem) throws IOException {
         this(pfilesystem.getRoot());
     }
 
     /**
      * This constructor loads a Word document from a specific point
-     *  in a POIFSFileSystem, probably not the default.
+     * in a POIFSFileSystem, probably not the default.
      * Used typically to open embeded documents.
      *
      * @param directory The DirectoryNode that contains the Word document.
      * @throws IOException If there is an unexpected IOException from the passed
-     *         in POIFSFileSystem.
+     *                     in POIFSFileSystem.
      */
-    public HWPFDocument(DirectoryNode directory) throws IOException
-    {
+    public HWPFDocument(DirectoryNode directory) throws IOException {
         // Load the main stream and FIB
         // Also handles HPSF bits
         super(directory);
 
         // Is this document too old for us?
-        if(_fib.getFibBase().getNFib() < 106) {
+        if (_fib.getFibBase().getNFib() < 106) {
             throw new OldWordFileFormatException("The document is too old - Word 95 or older. Try HWPFOldDocument instead?");
         }
 
@@ -219,7 +257,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         //fcMin = _fib.getFcMin()
 
         // Start to load up our standard structures.
-        _dop = new DocumentProperties(_tableStream, _fib.getFcDop(), _fib.getLcbDop() );
+        _dop = new DocumentProperties(_tableStream, _fib.getFcDop(), _fib.getLcbDop());
         _cft = new ComplexFileTable(_mainStream, _tableStream, _fib.getFcClx(), fcMin);
         TextPieceTable _tpt = _cft.getTextPieceTable();
 
@@ -236,14 +274,14 @@ public final class HWPFDocument extends HWPFDocumentCore {
          */
         boolean preserveBinTables = false;
         try {
-            preserveBinTables = Boolean.parseBoolean( System.getProperty( PROPERTY_PRESERVE_BIN_TABLES ) );
-        } catch ( Exception exc ) {
+            preserveBinTables = Boolean.parseBoolean(System.getProperty(PROPERTY_PRESERVE_BIN_TABLES));
+        } catch (Exception exc) {
             // ignore;
         }
 
-        if ( !preserveBinTables ) {
-            _cbt.rebuild( _cft );
-            _pbt.rebuild( _text, _cft );
+        if (!preserveBinTables) {
+            _cbt.rebuild(_cft);
+            _pbt.rebuild(_text, _cft);
         }
 
         /*
@@ -252,30 +290,28 @@ public final class HWPFDocument extends HWPFDocumentCore {
          */
         boolean preserveTextTable = false;
         try {
-            preserveTextTable = Boolean.parseBoolean( System.getProperty( PROPERTY_PRESERVE_TEXT_TABLE ) );
-        } catch ( Exception exc ) {
+            preserveTextTable = Boolean.parseBoolean(System.getProperty(PROPERTY_PRESERVE_TEXT_TABLE));
+        } catch (Exception exc) {
             // ignore;
         }
-        if ( !preserveTextTable ) {
+        if (!preserveTextTable) {
             _cft = new ComplexFileTable();
             _tpt = _cft.getTextPieceTable();
-            final TextPiece textPiece = new SinglentonTextPiece( _text );
-            _tpt.add( textPiece );
+            final TextPiece textPiece = new SinglentonTextPiece(_text);
+            _tpt.add(textPiece);
             _text = textPiece.getStringBuilder();
         }
 
         // Read FSPA and Escher information
         // _fspa = new FSPATable(_tableStream, _fib.getFcPlcspaMom(),
         // _fib.getLcbPlcspaMom(), getTextTable().getTextPieces());
-        _fspaHeaders = new FSPATable( _tableStream, _fib,
-                FSPADocumentPart.HEADER );
-        _fspaMain = new FSPATable( _tableStream, _fib, FSPADocumentPart.MAIN );
+        _fspaHeaders = new FSPATable(_tableStream, _fib,
+                FSPADocumentPart.HEADER);
+        _fspaMain = new FSPATable(_tableStream, _fib, FSPADocumentPart.MAIN);
 
-        if (_fib.getFcDggInfo() != 0)
-        {
+        if (_fib.getFcDggInfo() != 0) {
             _escherRecordHolder = new EscherRecordHolder(_tableStream, _fib.getFcDggInfo(), _fib.getLcbDggInfo());
-        } else
-        {
+        } else {
             _escherRecordHolder = new EscherRecordHolder();
         }
 
@@ -283,42 +319,39 @@ public final class HWPFDocument extends HWPFDocumentCore {
         _pictures = new PicturesTable(this, _dataStream, _mainStream, _fspaMain, _escherRecordHolder);
 
         // And escher pictures
-        _officeDrawingsHeaders = new OfficeDrawingsImpl( _fspaHeaders, _escherRecordHolder, _mainStream );
-        _officeDrawingsMain = new OfficeDrawingsImpl( _fspaMain , _escherRecordHolder, _mainStream);
+        _officeDrawingsHeaders = new OfficeDrawingsImpl(_fspaHeaders, _escherRecordHolder, _mainStream);
+        _officeDrawingsMain = new OfficeDrawingsImpl(_fspaMain, _escherRecordHolder, _mainStream);
 
-        _st = new SectionTable(_mainStream, _tableStream, _fib.getFcPlcfsed(), _fib.getLcbPlcfsed(), fcMin, _tpt, _fib.getSubdocumentTextStreamLength( SubdocumentType.MAIN));
+        _st = new SectionTable(_mainStream, _tableStream, _fib.getFcPlcfsed(), _fib.getLcbPlcfsed(), fcMin, _tpt, _fib.getSubdocumentTextStreamLength(SubdocumentType.MAIN));
         _ss = new StyleSheet(_tableStream, _fib.getFcStshf());
         _ft = new FontTable(_tableStream, _fib.getFcSttbfffn(), _fib.getLcbSttbfffn());
 
         int listOffset = _fib.getFcPlfLst();
         // int lfoOffset = _fib.getFcPlfLfo();
-        if ( listOffset != 0 && _fib.getLcbPlfLst() != 0 )
-        {
-            _lt = new ListTables( _tableStream, listOffset, _fib.getFcPlfLfo(),
-                    _fib.getLcbPlfLfo() );
+        if (listOffset != 0 && _fib.getLcbPlfLst() != 0) {
+            _lt = new ListTables(_tableStream, listOffset, _fib.getFcPlfLfo(),
+                    _fib.getLcbPlfLfo());
         }
 
         int sbtOffset = _fib.getFcSttbSavedBy();
         int sbtLength = _fib.getLcbSttbSavedBy();
-        if (sbtOffset != 0 && sbtLength != 0)
-        {
+        if (sbtOffset != 0 && sbtLength != 0) {
             _sbt = new SavedByTable(_tableStream, sbtOffset, sbtLength);
         }
 
         int rmarkOffset = _fib.getFcSttbfRMark();
         int rmarkLength = _fib.getLcbSttbfRMark();
-        if (rmarkOffset != 0 && rmarkLength != 0)
-        {
+        if (rmarkOffset != 0 && rmarkLength != 0) {
             _rmat = new RevisionMarkAuthorTable(_tableStream, rmarkOffset, rmarkLength);
         }
 
-        _bookmarksTables = new BookmarksTables( _tableStream, _fib );
-        _bookmarks = new BookmarksImpl( _bookmarksTables );
+        _bookmarksTables = new BookmarksTables(_tableStream, _fib);
+        _bookmarks = new BookmarksImpl(_bookmarksTables);
 
-        _endnotesTables = new NotesTables( NoteType.ENDNOTE, _tableStream, _fib );
-        _endnotes = new NotesImpl( _endnotesTables );
-        _footnotesTables = new NotesTables( NoteType.FOOTNOTE, _tableStream, _fib );
-        _footnotes = new NotesImpl( _footnotesTables );
+        _endnotesTables = new NotesTables(NoteType.ENDNOTE, _tableStream, _fib);
+        _endnotes = new NotesImpl(_endnotesTables);
+        _footnotesTables = new NotesTables(NoteType.FOOTNOTE, _tableStream, _fib);
+        _footnotes = new NotesImpl(_footnotesTables);
 
         _fieldsTables = new FieldsTables(_tableStream, _fib);
         _fields = new FieldsImpl(_fieldsTables);
@@ -326,20 +359,17 @@ public final class HWPFDocument extends HWPFDocumentCore {
 
     @Override
     @Internal
-    public TextPieceTable getTextTable()
-    {
+    public TextPieceTable getTextTable() {
         return _cft.getTextPieceTable();
     }
 
     @Internal
     @Override
-    public StringBuilder getText()
-    {
+    public StringBuilder getText() {
         return _text;
     }
 
-    public DocumentProperties getDocProperties()
-    {
+    public DocumentProperties getDocProperties() {
         return _dop;
     }
 
@@ -353,8 +383,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
      * any headers and footers.
      */
     @Override
-    public Range getRange()
-    {
+    public Range getRange() {
         // // First up, trigger a full-recalculate
         // // Needed in case of deletes etc
         // getOverallRange();
@@ -392,202 +421,177 @@ public final class HWPFDocument extends HWPFDocumentCore {
         return getRange(SubdocumentType.MAIN);
     }
 
-    private Range getRange( SubdocumentType subdocument )
-    {
+    private Range getRange(SubdocumentType subdocument) {
         int startCp = 0;
-        for ( SubdocumentType previos : SubdocumentType.ORDERED )
-        {
+        for (SubdocumentType previos : SubdocumentType.ORDERED) {
             int length = getFileInformationBlock()
-                    .getSubdocumentTextStreamLength( previos );
-            if ( subdocument == previos ) {
-                return new Range( startCp, startCp + length, this );
+                    .getSubdocumentTextStreamLength(previos);
+            if (subdocument == previos) {
+                return new Range(startCp, startCp + length, this);
             }
             startCp += length;
         }
         throw new UnsupportedOperationException(
-                "Subdocument type not supported: " + subdocument );
+                "Subdocument type not supported: " + subdocument);
     }
 
     /**
      * Returns the {@link Range} which covers all the Footnotes.
-     * 
+     *
      * @return the {@link Range} which covers all the Footnotes.
      */
-    public Range getFootnoteRange()
-    {
-        return getRange( SubdocumentType.FOOTNOTE );
+    public Range getFootnoteRange() {
+        return getRange(SubdocumentType.FOOTNOTE);
     }
 
     /**
      * Returns the {@link Range} which covers all endnotes.
-     * 
+     *
      * @return the {@link Range} which covers all endnotes.
      */
-    public Range getEndnoteRange()
-    {
-        return getRange( SubdocumentType.ENDNOTE );
+    public Range getEndnoteRange() {
+        return getRange(SubdocumentType.ENDNOTE);
     }
 
     /**
      * Returns the {@link Range} which covers all annotations.
-     * 
+     *
      * @return the {@link Range} which covers all annotations.
      */
-    public Range getCommentsRange()
-    {
-        return getRange( SubdocumentType.ANNOTATION );
+    public Range getCommentsRange() {
+        return getRange(SubdocumentType.ANNOTATION);
     }
 
     /**
      * Returns the {@link Range} which covers all textboxes.
-     * 
+     *
      * @return the {@link Range} which covers all textboxes.
      */
-    public Range getMainTextboxRange()
-    {
-        return getRange( SubdocumentType.TEXTBOX );
+    public Range getMainTextboxRange() {
+        return getRange(SubdocumentType.TEXTBOX);
     }
 
-  /**
-   * Returns the range which covers all "Header Stories".
-   * A header story contains a header, footer, end note
-   *  separators and footnote separators.
-   */
-  public Range getHeaderStoryRange() {
-      return getRange( SubdocumentType.HEADER );
-  }
+    /**
+     * Returns the range which covers all "Header Stories".
+     * A header story contains a header, footer, end note
+     * separators and footnote separators.
+     */
+    public Range getHeaderStoryRange() {
+        return getRange(SubdocumentType.HEADER);
+    }
 
-  /**
-   * Returns the character length of a document.
-   * @return the character length of a document
-   */
-  public int characterLength()
-  {
-      return _text.length();
-  }
+    /**
+     * Returns the character length of a document.
+     *
+     * @return the character length of a document
+     */
+    public int characterLength() {
+        return _text.length();
+    }
 
-  /**
-   * Gets a reference to the saved -by table, which holds the save history for the document.
-   *
-   * @return the saved-by table.
-   */
-  @Internal
-  public SavedByTable getSavedByTable()
-  {
-    return _sbt;
-  }
+    /**
+     * Gets a reference to the saved -by table, which holds the save history for the document.
+     *
+     * @return the saved-by table.
+     */
+    @Internal
+    public SavedByTable getSavedByTable() {
+        return _sbt;
+    }
 
-  /**
-   * Gets a reference to the revision mark author table, which holds the revision mark authors for the document.
-   *
-   * @return the saved-by table.
-   */
-  @Internal
-  public RevisionMarkAuthorTable getRevisionMarkAuthorTable()
-  {
-    return _rmat;
-  }
-  
-  /**
-   * @return PicturesTable object, that is able to extract images from this document
-   */
-  public PicturesTable getPicturesTable() {
-      return _pictures;
-  }
+    /**
+     * Gets a reference to the revision mark author table, which holds the revision mark authors for the document.
+     *
+     * @return the saved-by table.
+     */
+    @Internal
+    public RevisionMarkAuthorTable getRevisionMarkAuthorTable() {
+        return _rmat;
+    }
 
-  @Internal
-  public EscherRecordHolder getEscherRecordHolder() {
-      return _escherRecordHolder;
-  }
+    /**
+     * @return PicturesTable object, that is able to extract images from this document
+     */
+    public PicturesTable getPicturesTable() {
+        return _pictures;
+    }
 
-    public OfficeDrawings getOfficeDrawingsHeaders()
-    {
+    @Internal
+    public EscherRecordHolder getEscherRecordHolder() {
+        return _escherRecordHolder;
+    }
+
+    public OfficeDrawings getOfficeDrawingsHeaders() {
         return _officeDrawingsHeaders;
     }
 
-    public OfficeDrawings getOfficeDrawingsMain()
-    {
+    public OfficeDrawings getOfficeDrawingsMain() {
         return _officeDrawingsMain;
     }
 
     /**
      * @return user-friendly interface to access document bookmarks
      */
-    public Bookmarks getBookmarks()
-    {
+    public Bookmarks getBookmarks() {
         return _bookmarks;
     }
 
     /**
      * @return user-friendly interface to access document endnotes
      */
-    public Notes getEndnotes()
-    {
+    public Notes getEndnotes() {
         return _endnotes;
     }
 
     /**
      * @return user-friendly interface to access document footnotes
      */
-    public Notes getFootnotes()
-    {
+    public Notes getFootnotes() {
         return _footnotes;
     }
 
-  /**
-   * @return FieldsTables object, that is able to extract fields descriptors from this document
-   * @deprecated POI 3.8.
-   */
-    @Deprecated
-    @Internal
-  public FieldsTables getFieldsTables() {
-      return _fieldsTables;
-  }
-
     /**
      * Returns user-friendly interface to access document {@link Field}s
-     * 
+     *
      * @return user-friendly interface to access document {@link Field}s
      */
-    public Fields getFields()
-    {
+    public Fields getFields() {
         return _fields;
     }
 
     /**
-     * Write out the word file that is represented by this class, to the 
-     *  currently open {@link File}, via the writeable {@link POIFSFileSystem}
-     *  it was opened as. 
-     *  
+     * Write out the word file that is represented by this class, to the
+     * currently open {@link File}, via the writeable {@link POIFSFileSystem}
+     * it was opened as.
+     *
      * <p>This will fail (with an {@link IllegalStateException} if the
-     *  Document was opened read-only, opened from an {@link InputStream}
-     *   instead of a File, or if this is not the root document. For those cases, 
-     *   you must use {@link #write(OutputStream)} or {@link #write(File)} to 
-     *   write to a brand new document.
-     *         
+     * Document was opened read-only, opened from an {@link InputStream}
+     * instead of a File, or if this is not the root document. For those cases,
+     * you must use {@link #write(OutputStream)} or {@link #write(File)} to
+     * write to a brand new document.
+     *
      * @since 3.15
      */
     @Override
     public void write() throws IOException {
         validateInPlaceWritePossible();
-        
+
         // Update the Document+Properties streams in the file
         write(getDirectory().getFileSystem(), false);
-        
+
         // Sync with the File on disk
         getDirectory().getFileSystem().writeFilesystem();
     }
-    
+
     /**
      * Writes out the word file that is represented by an instance of this class.
-     * 
-     * If the {@link File} exists, it will be replaced, otherwise a new one 
+     * <p>
+     * If the {@link File} exists, it will be replaced, otherwise a new one
      * will be created
      *
      * @param newFile The File to write to.
      * @throws IOException If there is an unexpected IOException from writing
-     *         to the File.
-     *         
+     *                     to the File.
      * @since 3.15 beta 3
      */
     @Override
@@ -599,7 +603,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
 
     /**
      * Writes out the word file that is represented by an instance of this class.
-     * 
+     * <p>
      * For better performance when writing to files, use {@link #write(File)}.
      * If {@code stream} has a high cost/latency associated with each written byte,
      * consider wrapping the OutputStream in a {@link java.io.BufferedOutputStream}
@@ -607,13 +611,13 @@ public final class HWPFDocument extends HWPFDocumentCore {
      *
      * @param out The OutputStream to write to.
      * @throws IOException If there is an unexpected IOException from the passed
-     *         in OutputStream.
+     *                     in OutputStream.
      */
     @Override
     public void write(OutputStream out) throws IOException {
         POIFSFileSystem pfs = new POIFSFileSystem();
         write(pfs, true);
-        pfs.writeFilesystem( out );
+        pfs.writeFilesystem(out);
     }
 
     private void write(POIFSFileSystem pfs, boolean copyOtherEntries) throws IOException {
@@ -647,14 +651,14 @@ public final class HWPFDocument extends HWPFDocumentCore {
             if (ei.getEncryptionMode() == EncryptionMode.cryptoAPI) {
                 leos.writeInt(ei.getEncryptionFlags());
             }
-            
-            ((EncryptionRecord)ei.getHeader()).write(leos);
-            ((EncryptionRecord)ei.getVerifier()).write(leos);
+
+            ((EncryptionRecord) ei.getHeader()).write(leos);
+            ((EncryptionRecord) ei.getVerifier()).write(leos);
             tableStream.write(buf, 0, leos.getWriteIndex());
             tableOffset += leos.getWriteIndex();
             _fib.getFibBase().setLKey(tableOffset);
         }
-        
+
         // write out the StyleSheet.
         _fib.setFcStshf(tableOffset);
         _ss.writeTo(tableStream);
@@ -668,7 +672,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
          * clx (encoding of the sprm lists for a complex file and piece table
          * for a any file) Written immediately after the end of the previously
          * recorded structure. This is recorded in all Word documents
-         * 
+         *
          * Microsoft Office Word 97-2007 Binary File Format (.doc)
          * Specification; Page 23 of 210
          */
@@ -684,7 +688,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
          * dop (document properties record) Written immediately after the end of
          * the previously recorded structure. This is recorded in all Word
          * documents
-         * 
+         *
          * Microsoft Office Word 97-2007 Binary File Format (.doc)
          * Specification; Page 23 of 210
          */
@@ -698,33 +702,31 @@ public final class HWPFDocument extends HWPFDocumentCore {
         /*
          * plcfBkmkf (table recording beginning CPs of bookmarks) Written
          * immediately after the sttbfBkmk, if the document contains bookmarks.
-         * 
+         *
          * Microsoft Office Word 97-2007 Binary File Format (.doc)
          * Specification; Page 24 of 210
          */
-        if ( _bookmarksTables != null )
-        {
-            _bookmarksTables.writePlcfBkmkf( _fib, tableStream );
+        if (_bookmarksTables != null) {
+            _bookmarksTables.writePlcfBkmkf(_fib, tableStream);
             tableOffset = tableStream.size();
         }
 
         /*
          * plcfBkmkl (table recording limit CPs of bookmarks) Written
          * immediately after the plcfBkmkf, if the document contains bookmarks.
-         * 
+         *
          * Microsoft Office Word 97-2007 Binary File Format (.doc)
          * Specification; Page 24 of 210
          */
-        if ( _bookmarksTables != null )
-        {
-            _bookmarksTables.writePlcfBkmkl( _fib, tableStream );
+        if (_bookmarksTables != null) {
+            _bookmarksTables.writePlcfBkmkl(_fib, tableStream);
             tableOffset = tableStream.size();
         }
 
         /*
          * plcfbteChpx (bin table for CHP FKPs) Written immediately after the
          * previously recorded table. This is recorded in all Word documents.
-         * 
+         *
          * Microsoft Office Word 97-2007 Binary File Format (.doc)
          * Specification; Page 24 of 210
          */
@@ -738,7 +740,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         /*
          * plcfbtePapx (bin table for PAP FKPs) Written immediately after the
          * plcfbteChpx. This is recorded in all Word documents.
-         * 
+         *
          * Microsoft Office Word 97-2007 Binary File Format (.doc)
          * Specification; Page 24 of 210
          */
@@ -752,50 +754,49 @@ public final class HWPFDocument extends HWPFDocumentCore {
         /*
          * plcfendRef (endnote reference position table) Written immediately
          * after the previously recorded table if the document contains endnotes
-         * 
+         *
          * plcfendTxt (endnote text position table) Written immediately after
          * the plcfendRef if the document contains endnotes
-         * 
+         *
          * Microsoft Office Word 97-2007 Binary File Format (.doc)
          * Specification; Page 24 of 210
          */
-        _endnotesTables.writeRef( _fib, tableStream );
-        _endnotesTables.writeTxt( _fib, tableStream );
+        _endnotesTables.writeRef(_fib, tableStream);
+        _endnotesTables.writeTxt(_fib, tableStream);
         tableOffset = tableStream.size();
 
         /*
          * plcffld*** (table of field positions and statuses for annotation
          * subdocument) Written immediately after the previously recorded table,
          * if the ******* subdocument contains fields.
-         * 
+         *
          * Microsoft Office Word 97-2007 Binary File Format (.doc)
          * Specification; Page 24 of 210
          */
 
-        if ( _fieldsTables != null )
-        {
-            _fieldsTables.write( _fib, tableStream );
+        if (_fieldsTables != null) {
+            _fieldsTables.write(_fib, tableStream);
             tableOffset = tableStream.size();
         }
 
         /*
          * plcffndRef (footnote reference position table) Written immediately
          * after the stsh if the document contains footnotes
-         * 
+         *
          * plcffndTxt (footnote text position table) Written immediately after
          * the plcffndRef if the document contains footnotes
-         * 
+         *
          * Microsoft Office Word 97-2007 Binary File Format (.doc)
          * Specification; Page 24 of 210
          */
-        _footnotesTables.writeRef( _fib, tableStream );
-        _footnotesTables.writeTxt( _fib, tableStream );
+        _footnotesTables.writeRef(_fib, tableStream);
+        _footnotesTables.writeTxt(_fib, tableStream);
         tableOffset = tableStream.size();
 
         /*
          * plcfsed (section table) Written immediately after the previously
          * recorded table. Recorded in all Word documents
-         * 
+         *
          * Microsoft Office Word 97-2007 Binary File Format (.doc)
          * Specification; Page 25 of 210
          */
@@ -807,8 +808,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         tableOffset = tableStream.size();
 
         // write out the list tables
-        if ( _lt != null )
-        {
+        if (_lt != null) {
             /*
              * plcflst (list formats) Written immediately after the end of the
              * previously recorded, if there are any lists defined in the
@@ -817,11 +817,11 @@ public final class HWPFDocument extends HWPFDocumentCore {
              * by the allocated data hanging off the LSTFs. This data consists
              * of the array of LVLs for each LSTF. (Each LVL consists of an LVLF
              * followed by two grpprls and an XST.)
-             * 
+             *
              * Microsoft Office Word 97-2007 Binary File Format (.doc)
              * Specification; Page 25 of 210
              */
-            _lt.writeListDataTo( _fib, tableStream );
+            _lt.writeListDataTo(_fib, tableStream);
             tableOffset = tableStream.size();
 
             /*
@@ -831,38 +831,36 @@ public final class HWPFDocument extends HWPFDocumentCore {
              * records, followed by the allocated data (if any) hanging off the
              * LFOs. The allocated data consists of the array of LFOLVLFs for
              * each LFO (and each LFOLVLF is immediately followed by some LVLs).
-             * 
+             *
              * Microsoft Office Word 97-2007 Binary File Format (.doc)
              * Specification; Page 26 of 210
              */
-            _lt.writeListOverridesTo( _fib, tableStream );
+            _lt.writeListOverridesTo(_fib, tableStream);
             tableOffset = tableStream.size();
         }
 
         /*
          * sttbfBkmk (table of bookmark name strings) Written immediately after
          * the previously recorded table, if the document contains bookmarks.
-         * 
+         *
          * Microsoft Office Word 97-2007 Binary File Format (.doc)
          * Specification; Page 27 of 210
          */
-        if ( _bookmarksTables != null )
-        {
-            _bookmarksTables.writeSttbfBkmk( _fib, tableStream );
+        if (_bookmarksTables != null) {
+            _bookmarksTables.writeSttbfBkmk(_fib, tableStream);
             tableOffset = tableStream.size();
         }
 
         /*
          * sttbSavedBy (last saved by string table) Written immediately after
          * the previously recorded table.
-         * 
+         *
          * Microsoft Office Word 97-2007 Binary File Format (.doc)
          * Specification; Page 27 of 210
          */
 
         // write out the saved-by table.
-        if (_sbt != null)
-        {
+        if (_sbt != null) {
             _fib.setFcSttbSavedBy(tableOffset);
             _sbt.writeTo(tableStream);
             _fib.setLcbSttbSavedBy(tableStream.size() - tableOffset);
@@ -871,8 +869,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         }
 
         // write out the revision mark authors table.
-        if (_rmat != null)
-        {
+        if (_rmat != null) {
             _fib.setFcSttbfRMark(tableOffset);
             _rmat.writeTo(tableStream);
             _fib.setLcbSttbfRMark(tableStream.size() - tableOffset);
@@ -895,7 +892,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         byte[] mainBuf = fillUp4096(wordDocumentStream);
 
         // Table1 stream will be used
-        _fib.getFibBase().setFWhichTblStm( true );
+        _fib.getFibBase().setFWhichTblStm(true);
 
         // write out the FileInformationBlock.
         //_fib.serialize(mainBuf, 0);
@@ -903,7 +900,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
 
         byte[] tableBuf = fillUp4096(tableStream);
         byte[] dataBuf = fillUp4096(_dataStream);
-        
+
         // Create a new document - ignoring the order of the old entries
         if (ei == null) {
             write(pfs, mainBuf, STREAM_WORD_DOCUMENT);
@@ -922,27 +919,27 @@ public final class HWPFDocument extends HWPFDocumentCore {
             bos.reset();
         }
 
-        writeProperties( pfs );
-        
-        if ( copyOtherEntries && ei == null ) {
+        writeProperties(pfs);
+
+        if (copyOtherEntries && ei == null) {
             // For encrypted files:
             // The ObjectPool storage MUST NOT be present and if the file contains OLE objects, the storage
             // objects for the OLE objects MUST be stored in the Data stream as specified in sprmCPicLocation.
             DirectoryNode newRoot = pfs.getRoot();
-            _objectPool.writeTo( newRoot );
-        
+            _objectPool.writeTo(newRoot);
+
             for (Entry entry : getDirectory()) {
-                String entryName = entry.getName(); 
-                if ( !(
-                    STREAM_WORD_DOCUMENT.equals(entryName) ||
-                    STREAM_TABLE_0.equals(entryName) ||
-                    STREAM_TABLE_1.equals(entryName) ||
-                    STREAM_DATA.equals(entryName) ||
-                    STREAM_OBJECT_POOL.equals(entryName) ||
-                    SummaryInformation.DEFAULT_STREAM_NAME.equals(entryName) ||
-                    DocumentSummaryInformation.DEFAULT_STREAM_NAME.equals(entryName)
-                ) ) {
-                    EntryUtils.copyNodeRecursively( entry, newRoot );
+                String entryName = entry.getName();
+                if (!(
+                        STREAM_WORD_DOCUMENT.equals(entryName) ||
+                                STREAM_TABLE_0.equals(entryName) ||
+                                STREAM_TABLE_1.equals(entryName) ||
+                                STREAM_DATA.equals(entryName) ||
+                                STREAM_OBJECT_POOL.equals(entryName) ||
+                                SummaryInformation.DEFAULT_STREAM_NAME.equals(entryName) ||
+                                DocumentSummaryInformation.DEFAULT_STREAM_NAME.equals(entryName)
+                )) {
+                    EntryUtils.copyNodeRecursively(entry, newRoot);
                 }
             }
         }
@@ -955,7 +952,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
         this._tableStream = tableStream.toByteArray();
         this._dataStream = dataBuf;
     }
-        
+
     private void encryptBytes(byte[] plain, int encryptOffset, OutputStream bos) throws IOException {
         try {
             EncryptionInfo ei = getEncryptionInfo();
@@ -965,13 +962,13 @@ public final class HWPFDocument extends HWPFDocumentCore {
             if (encryptOffset > 0) {
                 os.writePlain(plain, 0, encryptOffset);
             }
-            os.write(plain, encryptOffset, plain.length-encryptOffset);
+            os.write(plain, encryptOffset, plain.length - encryptOffset);
             os.close();
         } catch (GeneralSecurityException e) {
             throw new IOException(e);
         }
     }
-    
+
     private static byte[] fillUp4096(byte[] buf) {
         if (buf == null) {
             return new byte[4096];
@@ -983,7 +980,7 @@ public final class HWPFDocument extends HWPFDocumentCore {
             return buf;
         }
     }
-    
+
     private static byte[] fillUp4096(ByteArrayOutputStream bos) {
         int fillSize = 4096 - bos.size();
         if (fillSize > 0) {
@@ -991,30 +988,27 @@ public final class HWPFDocument extends HWPFDocumentCore {
         }
         return bos.toByteArray();
     }
-    
+
     private static void write(POIFSFileSystem pfs, byte[] data, String name) throws IOException {
         pfs.createOrUpdateDocument(new ByteArrayInputStream(data), name);
     }
 
     @Internal
-    public byte[] getDataStream()
-    {
+    public byte[] getDataStream() {
         return _dataStream;
     }
+
     @Internal
-    public byte[] getTableStream()
-    {
+    public byte[] getTableStream() {
         return _tableStream;
     }
 
-    public int registerList( HWPFList list )
-    {
-        if ( _lt == null )
-        {
+    public int registerList(HWPFList list) {
+        if (_lt == null) {
             _lt = new ListTables();
         }
-        return _lt.addList( list.getListData(), list.getLFO(),
-                list.getLFOData() );
+        return _lt.addList(list.getListData(), list.getLFO(),
+                list.getLFOData());
     }
 
     public void delete(int start, int length) {

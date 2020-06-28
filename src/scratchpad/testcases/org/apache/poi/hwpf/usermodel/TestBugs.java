@@ -290,7 +290,6 @@ public class TestBugs{
      * [FAILING] Bug 47286 - Word documents saves in wrong format if source
      * contains form elements
      */
-    @SuppressWarnings("deprecation")
     @Test
     public void test47286() throws IOException {
         // Fetch the current text
@@ -322,12 +321,6 @@ public class TestBugs{
 
         assertEquals(doc1.getCharacterTable().getTextRuns().size(), doc2
                 .getCharacterTable().getTextRuns().size());
-
-        List<PlexOfField> expectedFields = doc1.getFieldsTables()
-                .getFieldsPLCF(FieldsDocumentPart.MAIN);
-        List<PlexOfField> actualFields = doc2.getFieldsTables().getFieldsPLCF(
-                FieldsDocumentPart.MAIN);
-        assertEquals(expectedFields.size(), actualFields.size());
 
         assertTableStructures(doc1.getRange(), doc2.getRange());
     }
