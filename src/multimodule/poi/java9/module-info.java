@@ -78,7 +78,6 @@ module org.apache.poi.poi {
     exports org.apache.poi.ss.formula.ptg;
     exports org.apache.poi.ss.formula.udf;
     exports org.apache.poi.ss.usermodel;
-    exports org.apache.poi.ss.usermodel.charts;
     exports org.apache.poi.ss.usermodel.helpers;
     exports org.apache.poi.ss.util;
     exports org.apache.poi.ss.util.cellwalk;
