@@ -22,7 +22,6 @@ import java.util.List;
 
 import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.ddf.EscherDggRecord;
-import org.apache.poi.util.Removal;
 
 
 /**
@@ -60,42 +59,6 @@ public class DrawingManager2 {
         dgg.addCluster( dgId, 0 );
         dgg.setDrawingsSaved( dgg.getDrawingsSaved() + 1 );
         return dg;
-    }
-
-    /**
-     * Allocates new shape id for the drawing group id.
-     * 
-     * @param drawingGroupId the drawing group id
-     * 
-     * @return a new shape id
-     * 
-     * @deprecated in POI 3.17-beta2, use allocateShapeId(EscherDgRecord) 
-     */
-    @Deprecated
-    @Removal(version="4.0")
-    public int allocateShapeId(short drawingGroupId) {
-        for (EscherDgRecord dg : drawingGroups) {
-            if (dg.getDrawingGroupId() == drawingGroupId) {
-                return allocateShapeId(dg);
-            }
-        }
-        throw new IllegalStateException("Drawing group id "+drawingGroupId+" doesn't exist.");
-    }
-
-    /**
-     * Allocates new shape id for the drawing group
-     *
-     * @param drawingGroupId the drawing group id
-     * @param dg the EscherDgRecord which receives the new shape
-     *
-     * @return a new shape id.
-     * 
-     * @deprecated in POI 3.17-beta2, use allocateShapeId(EscherDgRecord) 
-     */
-    @Deprecated
-    @Removal(version="4.0")
-    public int allocateShapeId(short drawingGroupId, EscherDgRecord dg) {
-        return allocateShapeId(dg);
     }
 
     /**

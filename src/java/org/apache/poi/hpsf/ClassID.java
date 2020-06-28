@@ -39,60 +39,6 @@ import org.apache.poi.util.LittleEndianOutput;
  * The ClassID (or CLSID) is a UUID - see RFC 4122
  */
 public class ClassID implements Duplicatable, GenericRecord {
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID OLE10_PACKAGE  = ClassIDPredefined.OLE_V1_PACKAGE.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID PPT_SHOW       = ClassIDPredefined.POWERPOINT_V8.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID XLS_WORKBOOK   = ClassIDPredefined.EXCEL_V7_WORKBOOK.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID TXT_ONLY       = ClassIDPredefined.TXT_ONLY.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID EXCEL_V3       = ClassIDPredefined.EXCEL_V3.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID EXCEL_V3_CHART = ClassIDPredefined.EXCEL_V3_CHART.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID EXCEL_V3_MACRO = ClassIDPredefined.EXCEL_V3_MACRO.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID EXCEL95        = ClassIDPredefined.EXCEL_V7.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID EXCEL95_CHART  = ClassIDPredefined.EXCEL_V7_CHART.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID EXCEL97        = ClassIDPredefined.EXCEL_V8.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID EXCEL97_CHART  = ClassIDPredefined.EXCEL_V8_CHART.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID EXCEL2003      = ClassIDPredefined.EXCEL_V11.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID EXCEL2007      = ClassIDPredefined.EXCEL_V12.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID EXCEL2007_MACRO= ClassIDPredefined.EXCEL_V12_MACRO.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID EXCEL2007_XLSB = ClassIDPredefined.EXCEL_V12_XLSB.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID EXCEL2010      = ClassIDPredefined.EXCEL_V14.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID EXCEL2010_CHART= ClassIDPredefined.EXCEL_V14_CHART.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID EXCEL2010_ODS  = ClassIDPredefined.EXCEL_V14_ODS.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID WORD95         = ClassIDPredefined.WORD_V7.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID WORD97         = ClassIDPredefined.WORD_V8.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID WORD2007       = ClassIDPredefined.WORD_V12.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID WORD2007_MACRO = ClassIDPredefined.WORD_V12_MACRO.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID POWERPOINT97   = ClassIDPredefined.POWERPOINT_V8.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID POWERPOINT95   = ClassIDPredefined.POWERPOINT_V7.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID POWERPOINT2007 = ClassIDPredefined.POWERPOINT_V12.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID POWERPOINT2007_MACRO = ClassIDPredefined.POWERPOINT_V12_MACRO.getClassID();
-    /** @deprecated use enum {@link ClassIDPredefined} */ @Deprecated
-    public static final ClassID EQUATION30     = ClassIDPredefined.EQUATION_V3.getClassID();
 
     /** The number of bytes occupied by this object in the byte stream. */
     public static final int LENGTH = 16;

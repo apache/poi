@@ -16,6 +16,7 @@
 ==================================================================== */
 
 package org.apache.poi.hssf.usermodel;
+
 import org.apache.poi.ddf.*;
 import org.apache.poi.hssf.model.DrawingManager2;
 import org.apache.poi.hssf.model.InternalSheet;
@@ -38,17 +39,7 @@ public class HSSFTestHelper {
         }
 
         @Override
-        public int allocateShapeId(short drawingGroupId) {
-            return 1025; //Mock value
-        }
-
-        @Override
         public int allocateShapeId(EscherDgRecord dg) {
-            return 1025;
-        }
-        
-        @Override
-        public int allocateShapeId(short drawingGroupId, EscherDgRecord dg) {
             return 1025;
         }
 

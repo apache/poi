@@ -788,26 +788,6 @@ public class PropertySet {
     }
 
 
-
-    /**
-     * If the {@link PropertySet} has only a single section this method returns it.
-     *
-     * @return The singleSection value
-     *
-     * @deprecated superfluous convenience method
-     */
-    @Deprecated
-    @Removal(version="5.0.0")
-    public Section getSingleSection() {
-        final int sectionCount = getSectionCount();
-        if (sectionCount != 1) {
-            throw new NoSingleSectionException("Property set contains " + sectionCount + " sections.");
-        }
-        return sections.get(0);
-    }
-
-
-
     /**
      * Returns {@code true} if the {@code PropertySet} is equal
      * to the specified parameter, else {@code false}.
