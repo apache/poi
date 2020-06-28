@@ -412,10 +412,7 @@ public class SXSSFWorkbook implements Workbook {
                     // See bug 56557, we should not inject data into the special ChartSheets
                     if (xSheet != null && !(xSheet instanceof XSSFChartSheet)) {
                         SXSSFSheet sxSheet = getSXSSFSheet(xSheet);
-                        try (InputStream xis = sxSheet.getWorksheetXMLInputStream()) {
-                            // copyStreamAndInjectWorksheet(is, zos, xis);
-                            copyStreamAndInjectWorksheet(is, zos, createSheetInjector(xis));
-                        }
+                        copyStreamAndInjectWorksheet(is, zos, createSheetInjector(sxSheet));
                     } else {
                         IOUtils.copy(is, zos);
                     }
@@ -439,9 +436,12 @@ public class SXSSFWorkbook implements Workbook {
         }
     }
 
-    protected ISheetInjector createSheetInjector(InputStream xis) throws IOException {
+    protected ISheetInjector createSheetInjector(SXSSFSheet sxSheet) throws IOException {
         return (output) -> {
-            IOUtils.copy(xis, output);
+            try (InputStream xis = sxSheet.getWorksheetXMLInputStream()) {
+                // Copy the worksheet data to "output".
+                IOUtils.copy(xis, output);
+            }
         };
     }
 

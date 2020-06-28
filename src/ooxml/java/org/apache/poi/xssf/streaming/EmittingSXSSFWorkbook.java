@@ -62,14 +62,13 @@ public class EmittingSXSSFWorkbook extends SXSSFWorkbook {
         return new StreamingSheetWriter(out);
     }
     
-//    @Override
-//    protected ISheetInjector createSheetInjector(InputStream xis) throws IOException
-//    protected ISheetInjector createSheetInjector(SXSSFSheet sxSheet) throws IOException {
-//        EmittingSXSSFSheet ssxSheet = (EmittingSXSSFSheet) sxSheet;
-//        return (output) -> {
-//            ssxSheet.writeRows(output);
-//        };
-//    }
+    @Override
+    protected ISheetInjector createSheetInjector(SXSSFSheet sxSheet) throws IOException {
+        EmittingSXSSFSheet ssxSheet = (EmittingSXSSFSheet) sxSheet;
+        return (output) -> {
+            ssxSheet.writeRows(output);
+        };
+    }
     
     @Override
     SXSSFSheet createAndRegisterSXSSFSheet(XSSFSheet xSheet) {
