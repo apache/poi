@@ -182,8 +182,6 @@ public final class IfFunc extends Var2or3ArgFunction implements ArrayFunction {
 
 				if(vA instanceof ErrorEval){
 					vals[idx++] = vA;
-				} else if (vB instanceof ErrorEval) {
-					vals[idx++] = vB;
 				} else {
 					Boolean b;
 					try {
