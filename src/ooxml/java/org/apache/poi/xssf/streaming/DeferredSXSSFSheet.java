@@ -25,33 +25,34 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 
 /**
- * A variant of SXSSFSheet that uses IRowGenerator to create rows.
+ * A variant of SXSSFSheet that uses a <code>RowGeneratorFunction</code></code> to lazily create rows.
  *
  *  This variant is experimental and APIs may change at short notice.
  *
- * @see EmittingSXSSFWorkbook
+ * @see DeferredSXSSFWorkbook
+ * @see RowGeneratorFunction
  * @since 5.0.0
  */
 @Beta
-public class EmittingSXSSFSheet extends SXSSFSheet {
-    private IRowGenerator rowGenerator;
+public class DeferredSXSSFSheet extends SXSSFSheet {
+    private RowGeneratorFunction rowGenerator;
     
-    public EmittingSXSSFSheet(EmittingSXSSFWorkbook workbook, XSSFSheet xSheet) throws IOException {
+    public DeferredSXSSFSheet(DeferredSXSSFWorkbook workbook, XSSFSheet xSheet) throws IOException {
         super(workbook, xSheet, workbook.getRandomAccessWindowSize());
     }
     
     @Override
     public InputStream getWorksheetXMLInputStream() throws IOException {
-        throw new RuntimeException("Not supported by EmittingSXSSFSheet");
+        throw new RuntimeException("Not supported by DeferredSXSSFSheet");
     }
     
-    public void setRowGenerator(IRowGenerator rowGenerator) {
+    public void setRowGenerator(RowGeneratorFunction rowGenerator) {
         this.rowGenerator = rowGenerator;
     }
     
     public void writeRows(OutputStream out) throws IOException {
         // delayed creation of SheetDataWriter
-        _writer = ((EmittingSXSSFWorkbook) _workbook).createSheetDataWriter(out);
+        _writer = ((DeferredSXSSFWorkbook) _workbook).createSheetDataWriter(out);
         try {
             if (this.rowGenerator != null) {
                 this.rowGenerator.generateRows(this);

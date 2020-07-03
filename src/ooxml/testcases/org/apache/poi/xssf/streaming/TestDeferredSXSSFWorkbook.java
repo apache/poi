@@ -37,9 +37,9 @@ import java.io.IOException;
 
 import static org.junit.Assert.*;
 
-public final class TestEmittingSXSSFWorkbook extends BaseTestXWorkbook {
+public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
     
-    public TestEmittingSXSSFWorkbook() {
+    public TestDeferredSXSSFWorkbook() {
         super(SXSSFITestDataProvider.instance);
     }
     
@@ -89,11 +89,11 @@ public final class TestEmittingSXSSFWorkbook extends BaseTestXWorkbook {
     public void existingWorkbook() throws IOException {
         XSSFWorkbook xssfWb1 = new XSSFWorkbook();
         xssfWb1.createSheet("S1");
-        EmittingSXSSFWorkbook wb1 = new EmittingSXSSFWorkbook(xssfWb1);
+        DeferredSXSSFWorkbook wb1 = new DeferredSXSSFWorkbook(xssfWb1);
         XSSFWorkbook xssfWb2 = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb1);
         assertTrue(wb1.dispose());
         
-        EmittingSXSSFWorkbook wb2 = new EmittingSXSSFWorkbook(xssfWb2);
+        DeferredSXSSFWorkbook wb2 = new DeferredSXSSFWorkbook(xssfWb2);
         assertEquals(1, wb2.getNumberOfSheets());
         Sheet sheet = wb2.getStreamingSheetAt(0);
         assertNotNull(sheet);
@@ -108,7 +108,7 @@ public final class TestEmittingSXSSFWorkbook extends BaseTestXWorkbook {
     
     @Test
     public void useSharedStringsTable() throws Exception {
-        // not supported with EmittingSXSSF
+        // not supported with DeferredSXSSF
     }
     
     @Test
@@ -119,14 +119,14 @@ public final class TestEmittingSXSSFWorkbook extends BaseTestXWorkbook {
         Row row = sheet.createRow(1);
         Cell cell = row.createCell(1);
         cell.setCellValue("value 2_1_1");
-        EmittingSXSSFWorkbook wb1 = new EmittingSXSSFWorkbook(xssfWb1);
+        DeferredSXSSFWorkbook wb1 = new DeferredSXSSFWorkbook(xssfWb1);
         XSSFWorkbook xssfWb2 = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb1);
         assertTrue(wb1.dispose());
         xssfWb1.close();
         
-        EmittingSXSSFWorkbook wb2 = new EmittingSXSSFWorkbook(xssfWb2);
+        DeferredSXSSFWorkbook wb2 = new DeferredSXSSFWorkbook(xssfWb2);
         // Add a row to the existing empty sheet
-        EmittingSXSSFSheet ssheet1 = wb2.getStreamingSheetAt(0);
+        DeferredSXSSFSheet ssheet1 = wb2.getStreamingSheetAt(0);
         ssheet1.setRowGenerator((ssxSheet) -> {
             Row row1_1 = ssxSheet.createRow(1);
             Cell cell1_1_1 = row1_1.createCell(1);
@@ -134,14 +134,14 @@ public final class TestEmittingSXSSFWorkbook extends BaseTestXWorkbook {
         });
         
         // Add a row to the existing non-empty sheet
-        EmittingSXSSFSheet ssheet2 = wb2.getStreamingSheetAt(1);
+        DeferredSXSSFSheet ssheet2 = wb2.getStreamingSheetAt(1);
         ssheet2.setRowGenerator((ssxSheet) -> {
             Row row2_2 = ssxSheet.createRow(2);
             Cell cell2_2_1 = row2_2.createCell(1);
             cell2_2_1.setCellValue("value 2_2_1");
         });
         // Add a sheet with one row
-        EmittingSXSSFSheet ssheet3 = wb2.createSheet("S3");
+        DeferredSXSSFSheet ssheet3 = wb2.createSheet("S3");
         ssheet3.setRowGenerator((ssxSheet) -> {
             Row row3_1 = ssxSheet.createRow(1);
             Cell cell3_1_1 = row3_1.createCell(1);
@@ -192,9 +192,9 @@ public final class TestEmittingSXSSFWorkbook extends BaseTestXWorkbook {
     
     @Test
     public void sheetdataWriter() throws IOException {
-        EmittingSXSSFWorkbook wb = new EmittingSXSSFWorkbook();
+        DeferredSXSSFWorkbook wb = new DeferredSXSSFWorkbook();
         SXSSFSheet sh = wb.createSheet();
-        assertSame(sh.getClass(), EmittingSXSSFSheet.class);
+        assertSame(sh.getClass(), DeferredSXSSFSheet.class);
         SheetDataWriter wr = sh.getSheetDataWriter();
         assertNull(wr);
         wb.close();
@@ -202,7 +202,7 @@ public final class TestEmittingSXSSFWorkbook extends BaseTestXWorkbook {
     
     @Test
     public void gzipSheetdataWriter() throws IOException {
-        EmittingSXSSFWorkbook wb = new EmittingSXSSFWorkbook();
+        DeferredSXSSFWorkbook wb = new DeferredSXSSFWorkbook();
         wb.setCompressTempFiles(true);
         
         final int rowNum = 1000;
@@ -232,25 +232,25 @@ public final class TestEmittingSXSSFWorkbook extends BaseTestXWorkbook {
         wb.close();
     }
     
-    private static void assertWorkbookDispose(EmittingSXSSFWorkbook wb) {
+    private static void assertWorkbookDispose(DeferredSXSSFWorkbook wb) {
         populateData(wb, 1000, 5);
         
         for (Sheet sheet : wb) {
-            EmittingSXSSFSheet sxSheet = (EmittingSXSSFSheet) sheet;
+            DeferredSXSSFSheet sxSheet = (DeferredSXSSFSheet) sheet;
             assertNull(sxSheet.getSheetDataWriter());
         }
         
         assertTrue(wb.dispose());
         
         for (Sheet sheet : wb) {
-            EmittingSXSSFSheet sxSheet = (EmittingSXSSFSheet) sheet;
+            DeferredSXSSFSheet sxSheet = (DeferredSXSSFSheet) sheet;
             assertNull(sxSheet.getSheetDataWriter());
         }
     }
     
-    private static void populateData(EmittingSXSSFWorkbook wb, final int rowNum, final int sheetNum) {
+    private static void populateData(DeferredSXSSFWorkbook wb, final int rowNum, final int sheetNum) {
         for (int i = 0; i < sheetNum; i++) {
-            EmittingSXSSFSheet sheet = wb.createSheet("sheet" + i);
+            DeferredSXSSFSheet sheet = wb.createSheet("sheet" + i);
             int index = i;
             sheet.setRowGenerator((sh) -> {
                 for (int j = 0; j < rowNum; j++) {
@@ -270,12 +270,12 @@ public final class TestEmittingSXSSFWorkbook extends BaseTestXWorkbook {
     
     @Test
     public void workbookDispose() throws IOException {
-        EmittingSXSSFWorkbook wb1 = new EmittingSXSSFWorkbook();
+        DeferredSXSSFWorkbook wb1 = new DeferredSXSSFWorkbook();
         // the underlying writer is SheetDataWriter
         assertWorkbookDispose(wb1);
         wb1.close();
         
-        EmittingSXSSFWorkbook wb2 = new EmittingSXSSFWorkbook();
+        DeferredSXSSFWorkbook wb2 = new DeferredSXSSFWorkbook();
         wb2.setCompressTempFiles(true);
         // the underlying writer is GZIPSheetDataWriter
         assertWorkbookDispose(wb2);

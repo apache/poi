@@ -39,27 +39,27 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
  * @since 5.0.0
  */
 @Beta
-public class EmittingSXSSFWorkbook extends SXSSFWorkbook {
-    private static final POILogger logger = POILogFactory.getLogger(EmittingSXSSFWorkbook.class);
+public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
+    private static final POILogger logger = POILogFactory.getLogger(DeferredSXSSFWorkbook.class);
     
-    public EmittingSXSSFWorkbook() {
+    public DeferredSXSSFWorkbook() {
         this(null);
     }
 
-    public EmittingSXSSFWorkbook(int rowAccessWindowSize) { this(null, rowAccessWindowSize); }
+    public DeferredSXSSFWorkbook(int rowAccessWindowSize) { this(null, rowAccessWindowSize); }
     
-    public EmittingSXSSFWorkbook(XSSFWorkbook workbook) {
+    public DeferredSXSSFWorkbook(XSSFWorkbook workbook) {
         this(workbook, SXSSFWorkbook.DEFAULT_WINDOW_SIZE);
     }
     
-    public EmittingSXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize) {
+    public DeferredSXSSFWorkbook(XSSFWorkbook workbook, int rowAccessWindowSize) {
         super(workbook, rowAccessWindowSize, false, false);
     }
 
     @NotImplemented
     @Override
     protected SheetDataWriter createSheetDataWriter() throws IOException {
-        throw new RuntimeException("Not supported by EmittingSXSSFWorkbook");
+        throw new RuntimeException("Not supported by DeferredSXSSFWorkbook");
     }
     
     protected StreamingSheetWriter createSheetDataWriter(OutputStream out) throws IOException {
@@ -68,7 +68,7 @@ public class EmittingSXSSFWorkbook extends SXSSFWorkbook {
     
     @Override
     protected ISheetInjector createSheetInjector(SXSSFSheet sxSheet) throws IOException {
-        EmittingSXSSFSheet ssxSheet = (EmittingSXSSFSheet) sxSheet;
+        DeferredSXSSFSheet ssxSheet = (DeferredSXSSFSheet) sxSheet;
         return (output) -> {
             ssxSheet.writeRows(output);
         };
@@ -76,9 +76,9 @@ public class EmittingSXSSFWorkbook extends SXSSFWorkbook {
     
     @Override
     SXSSFSheet createAndRegisterSXSSFSheet(XSSFSheet xSheet) {
-        final EmittingSXSSFSheet sxSheet;
+        final DeferredSXSSFSheet sxSheet;
         try {
-            sxSheet = new EmittingSXSSFSheet(this, xSheet);
+            sxSheet = new DeferredSXSSFSheet(this, xSheet);
         } catch (IOException ioe) {
             throw new RuntimeException(ioe);
         }
@@ -86,12 +86,12 @@ public class EmittingSXSSFWorkbook extends SXSSFWorkbook {
         return sxSheet;
     }
     
-    public EmittingSXSSFSheet createSheet() {
-        return (EmittingSXSSFSheet) super.createSheet();
+    public DeferredSXSSFSheet createSheet() {
+        return (DeferredSXSSFSheet) super.createSheet();
     }
     
-    public EmittingSXSSFSheet createSheet(String sheetname) {
-        return (EmittingSXSSFSheet) super.createSheet(sheetname);
+    public DeferredSXSSFSheet createSheet(String sheetname) {
+        return (DeferredSXSSFSheet) super.createSheet(sheetname);
     }
     
     /**
@@ -121,7 +121,7 @@ public class EmittingSXSSFWorkbook extends SXSSFWorkbook {
         @SuppressWarnings("unchecked")
         public T next() throws NoSuchElementException {
             final XSSFSheet xssfSheet = it.next();
-            EmittingSXSSFSheet sxSheet = (EmittingSXSSFSheet) getSXSSFSheet(xssfSheet);
+            DeferredSXSSFSheet sxSheet = (DeferredSXSSFSheet) getSXSSFSheet(xssfSheet);
             return (T) (sxSheet == null ? xssfSheet : sxSheet);
         }
         
@@ -146,7 +146,7 @@ public class EmittingSXSSFWorkbook extends SXSSFWorkbook {
     
     @Override
     public SXSSFSheet getSheetAt(int index) {
-        throw new RuntimeException("Not supported by EmittingSXSSFWorkbook");
+        throw new RuntimeException("Not supported by DeferredSXSSFWorkbook");
     }
     
     public XSSFSheet getXSSFSheetAt(int index) {
@@ -159,19 +159,19 @@ public class EmittingSXSSFWorkbook extends SXSSFWorkbook {
      * @param index the index
      * @return the streaming sheet at
      */
-    public EmittingSXSSFSheet getStreamingSheetAt(int index) {
+    public DeferredSXSSFSheet getStreamingSheetAt(int index) {
         XSSFSheet xSheet = _wb.getSheetAt(index);
         SXSSFSheet sxSheet = getSXSSFSheet(xSheet);
         if (sxSheet == null && xSheet != null) {
-            return (EmittingSXSSFSheet) createAndRegisterSXSSFSheet(xSheet);
+            return (DeferredSXSSFSheet) createAndRegisterSXSSFSheet(xSheet);
         } else {
-            return (EmittingSXSSFSheet) sxSheet;
+            return (DeferredSXSSFSheet) sxSheet;
         }
     }
     
     @Override
     public SXSSFSheet getSheet(String name) {
-        throw new RuntimeException("Not supported by EmittingSXSSFWorkbook");
+        throw new RuntimeException("Not supported by DeferredSXSSFWorkbook");
     }
     
     public XSSFSheet getXSSFSheet(String name) {
@@ -184,11 +184,11 @@ public class EmittingSXSSFWorkbook extends SXSSFWorkbook {
      * @param name the name
      * @return the streaming sheet
      */
-    public EmittingSXSSFSheet getStreamingSheet(String name) {
+    public DeferredSXSSFSheet getStreamingSheet(String name) {
         XSSFSheet xSheet = _wb.getSheet(name);
-        EmittingSXSSFSheet sxSheet = (EmittingSXSSFSheet) getSXSSFSheet(xSheet);
+        DeferredSXSSFSheet sxSheet = (DeferredSXSSFSheet) getSXSSFSheet(xSheet);
         if (sxSheet == null && xSheet != null) {
-            return (EmittingSXSSFSheet) createAndRegisterSXSSFSheet(xSheet);
+            return (DeferredSXSSFSheet) createAndRegisterSXSSFSheet(xSheet);
         } else {
             return sxSheet;
         }

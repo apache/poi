@@ -20,12 +20,12 @@ package org.apache.poi.xssf.streaming;
 import org.apache.poi.util.Beta;
 
 /**
- * IRowGenerator for Emitting SXSSF sheets
+ * RowGeneratorFunction for Deferred SXSSF sheets
  *
- * @see EmittingSXSSFWorkbook
+ * @see DeferredSXSSFWorkbook
  */
 @Beta
-public interface IRowGenerator {
+public interface RowGeneratorFunction {
     
     /**
      * Generate and add rows to the sheet
