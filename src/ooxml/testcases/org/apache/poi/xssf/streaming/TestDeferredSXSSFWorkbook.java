@@ -199,12 +199,36 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
         assertNull(wr);
         wb.close();
     }
+
+    @Test
+    public void removeSheet() throws IOException {
+        try (DeferredSXSSFWorkbook wb = new DeferredSXSSFWorkbook()) {
+            DeferredSXSSFSheet sheet1 = wb.createSheet("sheet1");
+            sheet1.setRowGenerator((sh) -> {
+                Row row = sh.createRow(0);
+                Cell cell = row.createCell(0);
+                cell.setCellValue("sheet1");
+            });
+            DeferredSXSSFSheet sheet2 = wb.createSheet("sheet2");
+            sheet2.setRowGenerator((sh) -> {
+                Row row = sh.createRow(0);
+                Cell cell = row.createCell(0);
+                cell.setCellValue("sheet2");
+            });
+            wb.removeSheetAt(0);
+            try (XSSFWorkbook wb2 = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb)) {
+                assertNull(wb2.getSheet(  "sheet1"));
+                XSSFSheet xssfSheet = wb2.getSheet(  "sheet2");
+                assertNotNull(xssfSheet);
+                assertEquals("sheet2", xssfSheet.getRow(0).getCell(0).getStringCellValue());
+            }
+        }
+    }
     
     @Test
     public void gzipSheetdataWriter() throws IOException {
         DeferredSXSSFWorkbook wb = new DeferredSXSSFWorkbook();
-        wb.setCompressTempFiles(true);
-        
+
         final int rowNum = 1000;
         final int sheetNum = 5;
         populateData(wb, 1000, 5);

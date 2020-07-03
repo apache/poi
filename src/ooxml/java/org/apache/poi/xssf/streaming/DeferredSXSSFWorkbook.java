@@ -101,41 +101,9 @@ public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
      */
     @Override
     public Iterator<Sheet> sheetIterator() {
-        return new SheetIterator<Sheet>();
+        return new SheetIterator<>();
     }
-    
-    private final class SheetIterator<T extends Sheet> implements Iterator<T> {
-        final private Iterator<XSSFSheet> it;
-        
-        @SuppressWarnings("unchecked")
-        public SheetIterator() {
-            it = (Iterator<XSSFSheet>) (Iterator<? extends Sheet>) _wb.iterator();
-        }
-        
-        @Override
-        public boolean hasNext() {
-            return it.hasNext();
-        }
-        
-        @Override
-        @SuppressWarnings("unchecked")
-        public T next() throws NoSuchElementException {
-            final XSSFSheet xssfSheet = it.next();
-            DeferredSXSSFSheet sxSheet = (DeferredSXSSFSheet) getSXSSFSheet(xssfSheet);
-            return (T) (sxSheet == null ? xssfSheet : sxSheet);
-        }
-        
-        /**
-         * Unexpected behavior may occur if sheets are reordered after iterator has been created. Support for the remove
-         * method may be added in the future if someone can figure out a reliable implementation.
-         */
-        @Override
-        public void remove() throws IllegalStateException {
-            throw new UnsupportedOperationException("remove method not supported on XSSFWorkbook.iterator(). "
-                    + "Use Sheet.removeSheetAt(int) instead.");
-        }
-    }
-    
+
     /**
      * Alias for {@link #sheetIterator()} to allow foreach loops
      */

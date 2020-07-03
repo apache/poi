@@ -367,18 +367,13 @@ public class SXSSFWorkbook implements Workbook {
 
     void deregisterSheetMapping(XSSFSheet xSheet)
     {
-        SXSSFSheet sxSheet=getSXSSFSheet(xSheet);
-
-        // ensure that the writer is closed in all cases to not have lingering writers
-        try {
-            sxSheet.getSheetDataWriter().close();
-        } catch (IOException e) {
-            // ignore exception here
+        SXSSFSheet sxSheet = getSXSSFSheet(xSheet);
+        if (sxSheet != null) {
+            // ensure that the writer is closed in all cases to not have lingering writers
+            IOUtils.closeQuietly(sxSheet.getSheetDataWriter());
+            _sxFromXHash.remove(sxSheet);
+            _xFromSxHash.remove(xSheet);
         }
-
-        _sxFromXHash.remove(sxSheet);
-
-        _xFromSxHash.remove(xSheet);
     }
 
     protected XSSFSheet getSheetFromZipEntryName(String sheetRef)
@@ -755,7 +750,7 @@ public class SXSSFWorkbook implements Workbook {
         return new SheetIterator<>();
     }
 
-    private final class SheetIterator<T extends Sheet> implements Iterator<T> {
+    protected final class SheetIterator<T extends Sheet> implements Iterator<T> {
         final private Iterator<XSSFSheet> it;
         @SuppressWarnings("unchecked")
         public SheetIterator() {
