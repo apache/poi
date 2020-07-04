@@ -20,6 +20,7 @@ package org.apache.poi.xddf.usermodel;
 import org.apache.poi.xddf.usermodel.chart.ErrorBarType;
 import org.apache.poi.xddf.usermodel.chart.ErrorDirection;
 import org.apache.poi.xddf.usermodel.chart.ErrorValueType;
+import org.apache.poi.xddf.usermodel.chart.XDDFErrorBars;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.chart.*;
@@ -165,6 +166,7 @@ public class TestNecessaryOOXMLClasses {
         Assert.assertNotNull(ErrorBarType.BOTH);
         Assert.assertNotNull(ErrorValueType.CUSTOM);
         Assert.assertNotNull(ErrorDirection.X);
+        Assert.assertNotNull(new XDDFErrorBars());
         STErrBarType.Enum e9 = STErrBarType.Enum.forString("both");
         Assert.assertNotNull(e9);
         STErrValType.Enum e10 = STErrValType.Enum.forString("percentage");
