@@ -88,7 +88,7 @@ public class XDDFErrorBars {
     }
 
     public ErrorBarType getErrorBarType() {
-        return ErrorBarType.valueOf(bars.getErrBarType().getVal());
+        return bars.getErrBarType() == null ? null : ErrorBarType.valueOf(bars.getErrBarType().getVal());
     }
 
     public void setErrorBarType(ErrorBarType barType) {
@@ -96,7 +96,7 @@ public class XDDFErrorBars {
     }
 
     public ErrorValueType getErrorValueType() {
-        return ErrorValueType.valueOf(bars.getErrValType().getVal());
+        return bars.getErrValType() == null ? null : ErrorValueType.valueOf(bars.getErrValType().getVal());
     }
 
     public void setErrorValueType(ErrorValueType valueType) {

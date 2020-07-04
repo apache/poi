@@ -166,7 +166,11 @@ public class TestNecessaryOOXMLClasses {
         Assert.assertNotNull(ErrorBarType.BOTH);
         Assert.assertNotNull(ErrorValueType.CUSTOM);
         Assert.assertNotNull(ErrorDirection.X);
-        Assert.assertNotNull(new XDDFErrorBars());
+        XDDFErrorBars xeb = new XDDFErrorBars();
+        Assert.assertNotNull(xeb);
+        Assert.assertNull(xeb.getErrorBarType());
+        Assert.assertNull(xeb.getErrorDirection());
+        Assert.assertNull(xeb.getErrorValueType());
         STErrBarType.Enum e9 = STErrBarType.Enum.forString("both");
         Assert.assertNotNull(e9);
         STErrValType.Enum e10 = STErrValType.Enum.forString("percentage");
