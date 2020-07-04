@@ -19,7 +19,7 @@ package org.apache.poi.xddf.usermodel.chart;
 
 import java.util.HashMap;
 
-import org.openxmlformats.schemas.drawingml.x2006.chart.STErrValType;;
+import org.openxmlformats.schemas.drawingml.x2006.chart.STErrValType;
 
 public enum ErrorValueType {
     CUSTOM(STErrValType.CUST),

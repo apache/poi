@@ -19,7 +19,7 @@ package org.apache.poi.xddf.usermodel.chart;
 
 import java.util.HashMap;
 
-import org.openxmlformats.schemas.drawingml.x2006.chart.STErrDir;;
+import org.openxmlformats.schemas.drawingml.x2006.chart.STErrDir;
 
 public enum ErrorDirection {
     X(STErrDir.X),
