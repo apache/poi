@@ -19,7 +19,7 @@ package org.apache.poi.xddf.usermodel.chart;
 
 import java.util.HashMap;
 
-import org.openxmlformats.schemas.drawingml.x2006.chart.STErrBarType;;
+import org.openxmlformats.schemas.drawingml.x2006.chart.STErrBarType;
 
 public enum ErrorBarType {
     BOTH(STErrBarType.BOTH),
