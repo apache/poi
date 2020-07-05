@@ -400,8 +400,7 @@ under the License.
     </path>
 
     <path id="ooxml.classpath">
-<pathelement location="/Users/pj.fanning/code/poi-5.0.0-SNAPSHOT/poi-ooxml-schemas-5.0.0-SNAPSHOT.jar"/> 
-     <!--   <pathelement location="${ooxml.xsds.jar}"/> -->
+        <pathelement location="${ooxml.xsds.jar}"/> 
         <path refid="ooxml.base.classpath"/>
         <path refid="batik.classpath"/>
     </path>
