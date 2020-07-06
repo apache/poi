@@ -1880,7 +1880,7 @@ public class SXSSFSheet implements Sheet
             SXSSFRow row = _rows.get(firstRowNum);
             // Update the best fit column widths for auto-sizing just before the rows are flushed
             _autoSizeColumnTracker.updateColumnWidths(row);
-            _writer.writeRow(rowIndex, row);
+            if (_writer != null) _writer.writeRow(rowIndex, row);
             _rows.remove(firstRowNum);
             lastFlushedRowNumber = rowIndex;
         }
