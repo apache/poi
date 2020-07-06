@@ -127,7 +127,6 @@ subprojects {
         exclude '**/BaseTestCellUtil.class'
         exclude '**/TestUnfixedBugs.class'
         exclude '**/TestOneFile.class'
-        include '**/TestDeferredSXSSFWorkbook.class'
 
         // Exclude Test Suites
         exclude '**/All*Tests.class'
