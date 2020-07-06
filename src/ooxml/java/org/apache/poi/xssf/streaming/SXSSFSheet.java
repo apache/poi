@@ -132,7 +132,7 @@ public class SXSSFSheet implements Sheet
         }
 
         // attempt to overwrite a row that is already flushed to disk
-        if(rownum <= _writer.getLastFlushedRow() ) {
+        if(_writer != null && rownum <= _writer.getLastFlushedRow() ) {
             throw new IllegalArgumentException(
                     "Attempting to write a row["+rownum+"] " +
                             "in the range [0," + _writer.getLastFlushedRow() + "] that is already written to disk.");

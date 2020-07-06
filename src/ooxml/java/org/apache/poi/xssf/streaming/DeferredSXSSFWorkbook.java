@@ -20,7 +20,6 @@ package org.apache.poi.xssf.streaming;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Iterator;
-import java.util.NoSuchElementException;
 
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.Beta;
@@ -103,23 +102,6 @@ public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
     public Iterator<Sheet> sheetIterator() {
         return new SheetIterator<>();
     }
-
-    /**
-     * Alias for {@link #sheetIterator()} to allow foreach loops
-     */
-    @Override
-    public Iterator<Sheet> iterator() {
-        return sheetIterator();
-    }
-    
-    @Override
-    public SXSSFSheet getSheetAt(int index) {
-        throw new RuntimeException("Not supported by DeferredSXSSFWorkbook");
-    }
-    
-    public XSSFSheet getXSSFSheetAt(int index) {
-        return _wb.getSheetAt(index);
-    }
     
     /**
      * Gets the sheet at the given index for streaming.
@@ -135,11 +117,6 @@ public class DeferredSXSSFWorkbook extends SXSSFWorkbook {
         } else {
             return (DeferredSXSSFSheet) sxSheet;
         }
-    }
-    
-    @Override
-    public SXSSFSheet getSheet(String name) {
-        throw new RuntimeException("Not supported by DeferredSXSSFWorkbook");
     }
     
     public XSSFSheet getXSSFSheet(String name) {
