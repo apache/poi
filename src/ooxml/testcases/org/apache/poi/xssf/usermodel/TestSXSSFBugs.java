@@ -238,4 +238,30 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
             }
         }
     }
+
+    @Test
+    public void test64595() throws Exception {
+        try (Workbook workbook = new SXSSFWorkbook(100)) {
+            Sheet sheet = workbook.createSheet("RawData");
+            Row row = sheet.createRow(0);
+            Cell cell;
+
+            cell = row.createCell(0);
+            cell.setCellValue("Ernie & Bert");
+
+            cell = row.createCell(1);
+            // Set a precalculated formula value containing a special character.
+            cell.setCellValue("Ernie & Bert are cool!");
+            cell.setCellFormula("A1 & \" are cool!\"");
+
+            // While unfixed reading the workbook would throw a POIXMLException
+            // since the file was corrupt due to missing quotation.
+            try (Workbook wbBack = SXSSFITestDataProvider.instance.writeOutAndReadBack(workbook)) {
+                assertNotNull(wbBack);
+                cell = wbBack.getSheetAt(0).getRow(0).getCell(1);
+                assertEquals("Ernie & Bert are cool!", cell.getStringCellValue());
+                assertEquals("A1 & \" are cool!\"", cell.getCellFormula());
+            }
+        }
+    }
 }

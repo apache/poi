@@ -298,7 +298,7 @@ public class SheetDataWriter implements Closeable {
                         String value = cell.getStringCellValue();
                         if(value != null && !value.isEmpty()) {
                             _out.write("<v>");
-                            _out.write(value);
+                            outputQuotedString(value);
                             _out.write("</v>");
                         }
                         break;
@@ -311,7 +311,7 @@ public class SheetDataWriter implements Closeable {
                         FormulaError error = FormulaError.forInt(cell.getErrorCellValue());
 
                         _out.write("><v>");
-                        _out.write(error.getString());
+                        outputQuotedString(error.getString());
                         _out.write("</v>");
                         break;
                     }
@@ -358,7 +358,7 @@ public class SheetDataWriter implements Closeable {
 
                 writeAttribute("t", "e");
                 _out.write("><v>");
-                _out.write(error.getString());
+                outputQuotedString(error.getString());
                 _out.write("</v>");
                 break;
             }
