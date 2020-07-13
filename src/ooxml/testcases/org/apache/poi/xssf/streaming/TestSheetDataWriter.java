@@ -58,7 +58,7 @@ public final class TestSheetDataWriter {
     public void testWriteUnicodeSurrogates() throws IOException {
         SheetDataWriter writer = new SheetDataWriter();
         try {
-            writer.outputQuotedString(unicodeSurrogates);
+            writer.outputEscapedString(unicodeSurrogates);
             writer.close();
             File file = writer.getTempFile();
             try (FileInputStream is = new FileInputStream(file)) {
@@ -73,7 +73,7 @@ public final class TestSheetDataWriter {
     public void testWriteNewLines() throws IOException {
         SheetDataWriter writer = new SheetDataWriter();
         try {
-            writer.outputQuotedString("\r\n");
+            writer.outputEscapedString("\r\n");
             writer.close();
             File file = writer.getTempFile();
             try (FileInputStream is = new FileInputStream(file)) {

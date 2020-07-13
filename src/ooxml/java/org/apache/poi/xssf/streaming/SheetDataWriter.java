@@ -283,7 +283,7 @@ public class SheetDataWriter implements Closeable {
                         break;
                 }
                 _out.write("><f>");
-                outputQuotedString(cell.getCellFormula());
+                outputEscapedString(cell.getCellFormula());
                 _out.write("</f>");
                 switch (cell.getCachedFormulaResultType()) {
                     case NUMERIC:
@@ -298,7 +298,7 @@ public class SheetDataWriter implements Closeable {
                         String value = cell.getStringCellValue();
                         if(value != null && !value.isEmpty()) {
                             _out.write("<v>");
-                            outputQuotedString(value);
+                            outputEscapedString(value);
                             _out.write("</v>");
                         }
                         break;
@@ -311,7 +311,7 @@ public class SheetDataWriter implements Closeable {
                         FormulaError error = FormulaError.forInt(cell.getErrorCellValue());
 
                         _out.write("><v>");
-                        outputQuotedString(error.getString());
+                        outputEscapedString(error.getString());
                         _out.write("</v>");
                         break;
                     }
@@ -334,7 +334,7 @@ public class SheetDataWriter implements Closeable {
                         writeAttribute("xml:space", "preserve");
                     }
                     _out.write(">");
-                    outputQuotedString(cell.getStringCellValue());
+                    outputEscapedString(cell.getStringCellValue());
                     _out.write("</t></is>");
                 }
                 break;
@@ -358,7 +358,7 @@ public class SheetDataWriter implements Closeable {
 
                 writeAttribute("t", "e");
                 _out.write("><v>");
-                outputQuotedString(error.getString());
+                outputEscapedString(error.getString());
                 _out.write("</v>");
                 break;
             }
@@ -390,7 +390,7 @@ public class SheetDataWriter implements Closeable {
         return false;
     }
 
-    protected void outputQuotedString(String s) throws IOException {
+    protected void outputEscapedString(String s) throws IOException {
         if (s == null || s.length() == 0) {
             return;
         }
