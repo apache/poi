@@ -217,6 +217,11 @@ public final class TestXWPFStyles {
                 assertNotNull(styles.getStyle("NoList"));
                 assertNull(styles.getStyle("EmptyCellLayoutStyle"));
                 assertNotNull(styles.getStyle("BalloonText"));
+                
+                // Bug 64600: styleExist throws NPE
+                assertTrue(styles.styleExist("NoList"));
+                assertFalse(styles.styleExist("EmptyCellLayoutStyle"));
+                assertTrue(styles.styleExist("BalloonText"));
             } catch (NullPointerException e) {
                 fail(e.toString());
             }
@@ -235,4 +240,5 @@ public final class TestXWPFStyles {
             assertEquals(styleName, style.getName());
         }
     }
+
 }

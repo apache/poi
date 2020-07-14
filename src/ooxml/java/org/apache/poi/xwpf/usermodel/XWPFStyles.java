@@ -154,11 +154,7 @@ public class XWPFStyles extends POIXMLDocumentPart {
      * @return true if style exist, false if style not exist
      */
     public boolean styleExist(String styleID) {
-        for (XWPFStyle style : listStyle) {
-            if (style.getStyleId().equals(styleID))
-                return true;
-        }
-        return false;
+        return null != getStyle(styleID);
     }
 
     /**
@@ -182,12 +178,8 @@ public class XWPFStyles extends POIXMLDocumentPart {
      */
     public XWPFStyle getStyle(String styleID) {
         for (XWPFStyle style : listStyle) {
-            try {
-                if (style.getStyleId().equals(styleID))
-                    return style;
-            } catch (NullPointerException e) {
-                // Ignore NPE
-            }
+            if (null != style.getStyleId() && style.getStyleId().equals(styleID))
+                return style;
         }
         return null;
     }
