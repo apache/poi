@@ -133,7 +133,7 @@ public class FromHowTo {
                 throws SAXException {
             // Process the last contents as required.
             // Do now, as characters() may be called more than once
-            if(nextIsString && !lastContents.isEmpty()) {
+            if(nextIsString && !lastContents.trim().isEmpty()) {
                 Integer idx = Integer.valueOf(lastContents);
                 lastContents = lruCache.get(idx);
                 if (lastContents == null && !lruCache.containsKey(idx)) {
