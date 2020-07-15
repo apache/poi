@@ -374,10 +374,13 @@ public final class XSSFCell extends CellBase {
                     rt = new XSSFRichTextString(_cell.isSetV() ? _cell.getV() : "");
                 } else {
                     if (_cell.isSetV()) {
-                        int idx = Integer.parseInt(_cell.getV());
-                        rt = new XSSFRichTextString(_sharedStringSource.getEntryAt(idx));
-                    }
-                    else {
+                        try {
+                            int idx = Integer.parseInt(_cell.getV());
+                            rt = new XSSFRichTextString(_sharedStringSource.getEntryAt(idx));
+                        } catch(Throwable t) {
+                            rt = new XSSFRichTextString("");
+                        }
+                    } else {
                         rt = new XSSFRichTextString("");
                     }
                 }
