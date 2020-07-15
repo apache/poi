@@ -19,7 +19,6 @@ package org.apache.poi.ss.formula;
 
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.Removal;
 
 /**
  * Abstracts a cell for the purpose of formula evaluation.  This interface represents both formula
@@ -40,13 +39,6 @@ public interface EvaluationCell {
 	int getRowIndex();
 	int getColumnIndex();
 	CellType getCellType();
-	/**
-	 * @since POI 3.15 beta 3
-	 * @deprecated POI 3.15 beta 3.
-	 */
-	@Deprecated
-	@Removal(version = "4.2")
-	CellType getCellTypeEnum();
 
 	double getNumericCellValue();
 	String getStringCellValue();
@@ -59,12 +51,4 @@ public interface EvaluationCell {
 	 * @return cell type of cached formula result
 	 */
 	CellType getCachedFormulaResultType();
-	/**
-	 * @since POI 3.15 beta 3
-	 * @deprecated POI 3.15 beta 3.
-	 * Will be deleted when we make the CellType enum transition. See bug 59791.
-	 */
-	@Deprecated
-	@Removal(version = "4.2")
-	CellType getCachedFormulaResultTypeEnum();
 }

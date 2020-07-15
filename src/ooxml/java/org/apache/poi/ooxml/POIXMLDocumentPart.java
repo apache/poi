@@ -40,7 +40,6 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 import org.apache.poi.xddf.usermodel.chart.XDDFChart;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -65,34 +64,10 @@ public class POIXMLDocumentPart {
      * to check whether embedded part is already committed
      *
      * @return return true if embedded part is committed
-     * @deprecated use @link{#isCommitted()}
-     */
-    @Removal(version = "5.0.0")
-    @Deprecated
-    public boolean isCommited() {
-        return isCommitted();
-    }
-
-    /**
-     * to check whether embedded part is already committed
-     *
-     * @return return true if embedded part is committed
      * @since 4.1.2
      */
     public boolean isCommitted() {
         return isCommitted;
-    }
-
-    /**
-     * setter method to set embedded part is committed
-     *
-     * @param isCommitted boolean value
-     * @deprecated use @link{#setCommitted(isCommitted)}
-     */
-    @Removal(version = "5.0.0")
-    @Deprecated
-    public void setCommited(boolean isCommitted) {
-        this.isCommitted = isCommitted;
     }
 
     /**

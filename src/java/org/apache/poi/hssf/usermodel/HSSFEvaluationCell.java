@@ -21,7 +21,6 @@ import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.Removal;
 
 /**
  * HSSF wrapper for a cell under evaluation
@@ -58,16 +57,6 @@ final class HSSFEvaluationCell implements EvaluationCell {
 	@Override
 	public CellType getCellType() {
 		return _cell.getCellType();
-	}
-	/**
-	 * @since POI 3.15 beta 3
-	 * @deprecated POI 3.15 beta 3.
-	 */
-	@Deprecated
-	@Removal(version = "4.2")
-	@Override
-	public CellType getCellTypeEnum() {
-		return getCellType();
 	}
 	@Override
 	public int getColumnIndex() {
@@ -110,16 +99,4 @@ final class HSSFEvaluationCell implements EvaluationCell {
 	 */
 	@Override
 	public CellType getCachedFormulaResultType() { return _cell.getCachedFormulaResultType(); }
-
-	/**
-	 * @since POI 3.15 beta 3
-	 * @deprecated POI 3.15 beta 3.
-	 * Will be deleted when we make the CellType enum transition. See bug 59791.
-	 */
-	@Deprecated
-	@Removal(version = "4.2")
-	@Override
-	public CellType getCachedFormulaResultTypeEnum() {
-		return getCachedFormulaResultType();
-	}
 }
