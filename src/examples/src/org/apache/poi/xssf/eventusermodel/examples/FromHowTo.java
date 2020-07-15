@@ -29,7 +29,6 @@ import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.eventusermodel.XLSX2CSV;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.model.SharedStringsTable;
-import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.xml.sax.Attributes;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
@@ -134,11 +133,11 @@ public class FromHowTo {
                 throws SAXException {
             // Process the last contents as required.
             // Do now, as characters() may be called more than once
-            if(nextIsString) {
+            if(nextIsString && !lastContents.isEmpty()) {
                 Integer idx = Integer.valueOf(lastContents);
                 lastContents = lruCache.get(idx);
                 if (lastContents == null && !lruCache.containsKey(idx)) {
-                    lastContents = new XSSFRichTextString(sst.getEntryAt(idx)).toString();
+                    lastContents = sst.getItemAt(idx).toString();
                     lruCache.put(idx, lastContents);
                 }
                 nextIsString = false;
