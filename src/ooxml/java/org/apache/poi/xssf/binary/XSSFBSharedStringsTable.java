@@ -28,6 +28,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.xssf.model.SharedStrings;
+import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.xml.sax.SAXException;
 
 /**
@@ -86,7 +87,7 @@ public class XSSFBSharedStringsTable implements SharedStrings {
 
     @Override
     public RichTextString getItemAt(int idx) {
-        return getItemAt(idx);
+        return new XSSFRichTextString(strings.get(idx));
     }
 
     /**
