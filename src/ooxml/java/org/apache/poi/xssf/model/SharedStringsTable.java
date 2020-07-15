@@ -33,6 +33,7 @@ import java.util.Map;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.RichTextString;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.xmlbeans.XmlException;
@@ -169,7 +170,7 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
      * @return the total count of unique strings in the workbook
      */
     @Override
-    public int getUniqueCount(){
+    public int getUniqueCount() {
         return uniqueCount;
     }
 
@@ -183,9 +184,9 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
      *
      * @param st the entry to add
      * @return index the index of added entry
-     * @deprecated use <code>addSharedStringItem(RichTextString string)</code> instead
      */
-    private int addEntry(CTRst st) {
+    @Internal
+    int addEntry(CTRst st) {
         String s = xmlText(st);
         count++;
         if (stmap.containsKey(s)) {

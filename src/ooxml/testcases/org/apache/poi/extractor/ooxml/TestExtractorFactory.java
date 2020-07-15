@@ -469,13 +469,6 @@ public class TestExtractorFactory {
                 POIDataSamples.getSpreadSheetInstance().getFile("59074.xls"));
     }
 
-    @SuppressWarnings("deprecation")
-    @Test(expected = IllegalStateException.class)
-    public void testGetEmbedFromXMLExtractor() {
-        // currently not implemented
-        ExtractorFactory.getEmbededDocsTextExtractors((POIXMLTextExtractor) null);
-    }
-
     @Test(expected = IllegalStateException.class)
     public void testGetEmbeddedFromXMLExtractor() {
         // currently not implemented
