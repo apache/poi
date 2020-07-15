@@ -105,6 +105,7 @@ import org.apache.poi.xssf.model.CalculationChain;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.xmlbeans.XmlException;
+import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcCell;
@@ -3544,6 +3545,19 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 assertEquals("Element 'v' should be set now as the formula was calculated manually",
                         "7.0", ((XSSFCell) cellBack).getCTCell().getV());
             }
+        }
+    }
+
+    @Test
+    public void testBug64508() throws IOException {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("64508.xlsx")) {
+            int activeSheet = wb.getActiveSheetIndex();
+            Sheet sheet1 = wb.getSheetAt(activeSheet);
+            Row row = sheet1.getRow(1);
+            CellReference aCellReference = new CellReference("E2");
+            Cell aCell = row.getCell(aCellReference.getCol());
+            Assert.assertEquals(CellType.STRING, aCell.getCellType());
+            Assert.assertEquals("", aCell.getStringCellValue());
         }
     }
 }
