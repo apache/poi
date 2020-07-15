@@ -376,7 +376,7 @@ public final class XSSFCell extends CellBase {
                     if (_cell.isSetV()) {
                         try {
                             int idx = Integer.parseInt(_cell.getV());
-                            rt = new XSSFRichTextString(_sharedStringSource.getEntryAt(idx));
+                            rt = (XSSFRichTextString)_sharedStringSource.getItemAt(idx);
                         } catch(Throwable t) {
                             rt = new XSSFRichTextString("");
                         }
@@ -1156,7 +1156,7 @@ public final class XSSFCell extends CellBase {
                 return TRUE_AS_STRING.equals(_cell.getV());
             case STRING:
                 int sstIndex = Integer.parseInt(_cell.getV());
-                XSSFRichTextString rt = new XSSFRichTextString(_sharedStringSource.getEntryAt(sstIndex));
+                RichTextString rt = _sharedStringSource.getItemAt(sstIndex);
                 String text = rt.getString();
                 return Boolean.parseBoolean(text);
             case NUMERIC:
@@ -1181,9 +1181,13 @@ public final class XSSFCell extends CellBase {
             case BOOLEAN:
                 return TRUE_AS_STRING.equals(_cell.getV()) ? TRUE : FALSE;
             case STRING:
-                int sstIndex = Integer.parseInt(_cell.getV());
-                XSSFRichTextString rt = new XSSFRichTextString(_sharedStringSource.getEntryAt(sstIndex));
-                return rt.getString();
+                try {
+                    int sstIndex = Integer.parseInt(_cell.getV());
+                    RichTextString rt = _sharedStringSource.getItemAt(sstIndex);
+                    return rt.getString();
+                } catch (Throwable t) {
+                    return "";
+                }
             case NUMERIC:
             case ERROR:
                 return _cell.getV();

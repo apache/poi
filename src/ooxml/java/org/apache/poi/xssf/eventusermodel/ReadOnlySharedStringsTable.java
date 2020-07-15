@@ -29,7 +29,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.usermodel.RichTextString;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.XMLHelper;
 import org.apache.poi.xssf.model.SharedStrings;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
@@ -204,36 +203,9 @@ public class ReadOnlySharedStringsTable extends DefaultHandler implements Shared
         return this.uniqueCount;
     }
 
-    /**
-     * Return the string at a given index.
-     * Formatting is ignored.
-     *
-     * @param idx index of item to return.
-     * @return the item at the specified position in this Shared String table.
-     * @deprecated use <code>getItemAt</code> instead
-     */
-    @Removal(version = "4.2")
-    @Deprecated
-    public String getEntryAt(int idx) {
-        return strings.get(idx);
-    }
-
-    /**
-     * Returns all the strings.
-     * Formatting is ignored.
-     *
-     * @return a list with all the strings
-     * @deprecated use <code>getItemAt</code> instead
-     */
-    @Removal(version = "4.2")
-    @Deprecated
-    public List<String> getItems() {
-        return strings;
-    }
-
     @Override
     public RichTextString getItemAt(int idx) {
-        return new XSSFRichTextString(getEntryAt(idx));
+        return new XSSFRichTextString(strings.get(idx));
     }
 
     //// ContentHandler methods ////

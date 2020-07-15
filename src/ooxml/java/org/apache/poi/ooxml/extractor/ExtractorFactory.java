@@ -279,21 +279,6 @@ public final class ExtractorFactory {
      * If there are no embedded documents, you'll get back an
      *  empty array. Otherwise, you'll get one open
      *  {@link POITextExtractor} for each embedded file.
-     *
-     *  @deprecated Use the method with correct "embedded"
-     */
-    @Deprecated
-    @Removal(version="4.2")
-    public static POITextExtractor[] getEmbededDocsTextExtractors(POIOLE2TextExtractor ext) throws IOException, OpenXML4JException, XmlException {
-        return getEmbeddedDocsTextExtractors(ext);
-    }
-
-    /**
-     * Returns an array of text extractors, one for each of
-     *  the embedded documents in the file (if there are any).
-     * If there are no embedded documents, you'll get back an
-     *  empty array. Otherwise, you'll get one open
-     *  {@link POITextExtractor} for each embedded file.
      */
     public static POITextExtractor[] getEmbeddedDocsTextExtractors(POIOLE2TextExtractor ext) throws IOException, OpenXML4JException, XmlException {
         // All the embedded directories we spotted
@@ -349,23 +334,6 @@ public final class ExtractorFactory {
             }
         }
         return textExtractors.toArray(new POITextExtractor[0]);
-    }
-
-    /**
-     * Returns an array of text extractors, one for each of
-     *  the embedded documents in the file (if there are any).
-     * If there are no embedded documents, you'll get back an
-     *  empty array. Otherwise, you'll get one open
-     *  {@link POITextExtractor} for each embedded file.
-     *
-     *  @deprecated Use the method with correct "embedded"
-     */
-    @Deprecated
-    @Removal(version="4.2")
-    @NotImplemented
-    @SuppressWarnings({"UnusedParameters", "UnusedReturnValue"})
-    public static POITextExtractor[] getEmbededDocsTextExtractors(POIXMLTextExtractor ext) {
-        return getEmbeddedDocsTextExtractors(ext);
     }
 
     /**

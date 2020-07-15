@@ -144,18 +144,6 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
      *
      * @param idx index of item to return.
      * @return the item at the specified position in this Shared String table.
-     * @deprecated use <code>getItemAt(int idx)</code> instead
-     */
-    @Removal(version = "4.2")
-    public CTRst getEntryAt(int idx) {
-        return strings.get(idx);
-    }
-
-    /**
-     * Return a string item by index
-     *
-     * @param idx index of item to return.
-     * @return the item at the specified position in this Shared String table.
      */
     @Override
     public RichTextString getItemAt(int idx) {
@@ -197,8 +185,7 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
      * @return index the index of added entry
      * @deprecated use <code>addSharedStringItem(RichTextString string)</code> instead
      */
-    @Removal(version = "4.2") //make private in 4.2
-    public int addEntry(CTRst st) {
+    private int addEntry(CTRst st) {
         String s = xmlText(st);
         count++;
         if (stmap.containsKey(s)) {
@@ -232,17 +219,6 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
             throw new IllegalArgumentException("Only XSSFRichTextString argument is supported");
         }
         return addEntry(((XSSFRichTextString) string).getCTRst());
-    }
-
-    /**
-     * Provide low-level access to the underlying array of CTRst beans
-     *
-     * @return array of CTRst beans
-     * @deprecated use <code>getSharedStringItems</code> instead
-     */
-    @Removal(version = "4.2")
-    public List<CTRst> getItems() {
-        return Collections.unmodifiableList(strings);
     }
 
     /**
