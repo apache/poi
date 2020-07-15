@@ -25,7 +25,6 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHyperlink;
 
 /**
@@ -161,19 +160,6 @@ public class XSSFHyperlink implements Hyperlink {
     @Override
     public HyperlinkType getType() {
         return _type;
-    }
-    
-    /**
-     * Return the type of this hyperlink
-     *
-     * @return the type of this hyperlink
-     * @deprecated use <code>getType</code> instead
-     */
-    @Deprecated
-    @Removal(version = "4.2")
-    @Override
-    public HyperlinkType getTypeEnum() {
-        return getType();
     }
 
     /**

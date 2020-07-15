@@ -20,7 +20,6 @@ import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.record.HyperlinkRecord;
 import org.apache.poi.ss.usermodel.Hyperlink;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 
 /**
  * Represents an Excel hyperlink.
@@ -263,19 +262,6 @@ public class HSSFHyperlink implements Hyperlink {
     @Override
     public HyperlinkType getType() {
         return link_type;
-    }
-
-    /**
-     * Return the type of this hyperlink
-     *
-     * @return the type of this hyperlink
-     * @deprecated use <code>getType()</code> instead
-     */
-    @Deprecated
-    @Removal(version = "4.2")
-    @Override
-    public HyperlinkType getTypeEnum() {
-        return getType();
     }
 
     /**

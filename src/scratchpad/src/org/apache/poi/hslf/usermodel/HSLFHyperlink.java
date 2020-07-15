@@ -33,7 +33,6 @@ import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.TxInteractiveInfoAtom;
 import org.apache.poi.sl.usermodel.Hyperlink;
 import org.apache.poi.sl.usermodel.Slide;
-import org.apache.poi.util.Removal;
 
 /**
  * Represents a hyperlink in a PowerPoint document
@@ -149,21 +148,6 @@ public final class HSLFHyperlink implements Hyperlink<HSLFShape,HSLFTextParagrap
             case InteractiveInfoAtom.LINK_NULL:
                 return HyperlinkType.NONE;
         }
-    }
-    
-    /**
-     * Gets the type of the hyperlink action.
-     * Must be a <code>LINK_*</code>  constant</code>
-     *
-     * @return the hyperlink URL
-     * @see InteractiveInfoAtom
-     * @deprecated use <code>getType</code> instead
-     */
-    @Deprecated
-    @Removal(version = "4.2")
-    @Override
-    public HyperlinkType getTypeEnum() {
-        return getType();
     }
 
     @Override
