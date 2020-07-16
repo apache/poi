@@ -868,13 +868,14 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * characters in the contents of this run when displayed.
      *
      * @return value representing the font size (non-integer size will be rounded with half rounding up)
-     * @deprecated use {@link #getFontSizeAsFloat()}
+     * @deprecated use {@link #getFontSizeAsDouble()}
      */
     @Deprecated
     @Removal(version = "6.0.0")
     @Override
     public int getFontSize() {
-        return getFontSizeAsBigDecimal(0).intValue();
+        BigDecimal bd = getFontSizeAsBigDecimal(0);
+        return bd == null ? -1 : bd.intValue();
     }
 
     /**
@@ -885,15 +886,16 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @since POI 5.0.0
      */
     @Override
-    public float getFontSizeAsFloat() {
-        return getFontSizeAsBigDecimal(1).floatValue();
+    public Double getFontSizeAsDouble() {
+        BigDecimal bd = getFontSizeAsBigDecimal(1);
+        return bd == null ? null : bd.doubleValue();
     }
 
     private BigDecimal getFontSizeAsBigDecimal(int scale) {
         CTRPr pr = getRunProperties(false);
         return (pr != null && pr.isSetSz()) ?
                 new BigDecimal(pr.getSz().getVal()).divide(BigDecimal.valueOf(2)).setScale(scale, RoundingMode.HALF_UP) :
-                BigDecimal.valueOf(-1);
+                null;
     }
 
     /**
@@ -930,7 +932,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @since POI 5.0.0
      */
     @Override
-    public void setFontSize(float size) {
+    public void setFontSize(double size) {
         BigDecimal bd = BigDecimal.valueOf(size);
         CTRPr pr = getRunProperties(true);
         CTHpsMeasure ctSize = pr.isSetSz() ? pr.getSz() : pr.addNewSz();

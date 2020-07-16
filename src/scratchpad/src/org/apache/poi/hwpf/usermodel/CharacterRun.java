@@ -352,9 +352,9 @@ public final class CharacterRun extends Range implements Duplicatable, org.apach
     return _props.getHps();
   }
 
-  public float getFontSizeAsFloat()
+  public Double getFontSizeAsDouble()
   {
-    return (float)getFontSize();
+    return (double)getFontSize();
   }
 
   public void setFontSize(int halfPoints)
@@ -365,7 +365,7 @@ public final class CharacterRun extends Range implements Duplicatable, org.apach
 
   }
 
-  public void setFontSize(float halfPoints)
+  public void setFontSize(double halfPoints)
   {
     setFontSize(BigDecimal.valueOf(halfPoints).setScale(0, RoundingMode.HALF_UP).intValue());
   }

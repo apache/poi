@@ -19,6 +19,9 @@ package org.apache.poi.xwpf.usermodel;
 
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /**
  * Default Character Run style, from which other styles will override
  * TODO Share logic with {@link XWPFRun} which also uses CTRPr
@@ -35,8 +38,18 @@ public class XWPFDefaultRunStyle {
     }
 
     public int getFontSize() {
-        if (rpr.isSetSz())
-            return rpr.getSz().getVal().intValue() / 2;
-        return -1;
+        BigDecimal bd = getFontSizeAsBigDecimal(0);
+        return bd == null ? -1 : bd.intValue();
+    }
+
+    public Double getFontSizeAsDouble() {
+        BigDecimal bd = getFontSizeAsBigDecimal(1);
+        return bd == null ? null : bd.doubleValue();
+    }
+
+    private BigDecimal getFontSizeAsBigDecimal(int scale) {
+        return (rpr != null && rpr.isSetSz()) ?
+                new BigDecimal(rpr.getSz().getVal()).divide(BigDecimal.valueOf(2)).setScale(scale, RoundingMode.HALF_UP) :
+                null;
     }
 }

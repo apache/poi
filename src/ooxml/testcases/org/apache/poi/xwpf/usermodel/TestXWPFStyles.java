@@ -202,6 +202,7 @@ public final class TestXWPFStyles {
             assertNotNull(styles.getDefaultParagraphStyle());
 
             assertEquals(11, styles.getDefaultRunStyle().getFontSize());
+            assertEquals(11.0, styles.getDefaultRunStyle().getFontSizeAsDouble(), 0.01);
             assertEquals(200, styles.getDefaultParagraphStyle().getSpacingAfter());
         }
     }
