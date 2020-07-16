@@ -28,6 +28,9 @@ import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
 import org.apache.poi.util.Removal;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+
 /**
  * This class represents a run of text that share common properties.
  */
@@ -349,12 +352,22 @@ public final class CharacterRun extends Range implements Duplicatable, org.apach
     return _props.getHps();
   }
 
+  public float getFontSizeAsFloat()
+  {
+    return (float)getFontSize();
+  }
+
   public void setFontSize(int halfPoints)
   {
     _props.setHps(halfPoints);
 
     _chpx.updateSprm(SPRM_HPS, (short)halfPoints);
 
+  }
+
+  public void setFontSize(float halfPoints)
+  {
+    setFontSize(BigDecimal.valueOf(halfPoints).setScale(0, RoundingMode.HALF_UP).intValue());
   }
 
   public int getCharacterSpacing()
