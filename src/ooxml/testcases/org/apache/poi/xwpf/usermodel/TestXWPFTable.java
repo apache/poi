@@ -73,8 +73,8 @@ public class TestXWPFTable {
         XWPFDocument doc = new XWPFDocument();
         CTTbl ctTable = CTTbl.Factory.newInstance();
         CTTblGrid cttblgrid = ctTable.addNewTblGrid();
-        cttblgrid.addNewGridCol().setW(new BigInteger("123"));
-        cttblgrid.addNewGridCol().setW(new BigInteger("321"));
+        cttblgrid.addNewGridCol().setW(BigInteger.valueOf(123));
+        cttblgrid.addNewGridCol().setW(BigInteger.valueOf(321));
 
         XWPFTable xtab = new XWPFTable(ctTable, doc);
         assertEquals(123, xtab.getCTTbl().getTblGrid().getGridColArray(0).getW().intValue());

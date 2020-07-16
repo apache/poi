@@ -52,7 +52,7 @@ public class TOC {
         this.block = block;
         CTSdtPr sdtPr = block.addNewSdtPr();
         CTDecimalNumber id = sdtPr.addNewId();
-        id.setVal(new BigInteger("4844945"));
+        id.setVal(BigInteger.valueOf(4844945));
         sdtPr.addNewDocPartObj().addNewDocPartGallery().setVal("Table of contents");
         CTSdtEndPr sdtEndPr = block.addNewSdtEndPr();
         CTRPr rPr = sdtEndPr.addNewRPr();
@@ -64,8 +64,8 @@ public class TOC {
         rPr.addNewB().setVal(STOnOff.OFF);
         rPr.addNewBCs().setVal(STOnOff.OFF);
         rPr.addNewColor().setVal("auto");
-        rPr.addNewSz().setVal(new BigInteger("24"));
-        rPr.addNewSzCs().setVal(new BigInteger("24"));
+        rPr.addNewSz().setVal(BigInteger.valueOf(24));
+        rPr.addNewSzCs().setVal(BigInteger.valueOf(24));
         CTSdtContentBlock content = block.addNewSdtContent();
         CTP p = content.addNewP();
         p.setRsidR("00EF7E24".getBytes(LocaleUtil.CHARSET_1252));
@@ -90,7 +90,7 @@ public class TOC {
         CTTabStop tab = tabs.addNewTab();
         tab.setVal(STTabJc.RIGHT);
         tab.setLeader(STTabTlc.DOT);
-        tab.setPos(new BigInteger("8290"));
+        tab.setPos(BigInteger.valueOf(8290));
         pPr.addNewRPr().addNewNoProof();
         CTR run = p.addNewR();
         run.addNewRPr().addNewNoProof();

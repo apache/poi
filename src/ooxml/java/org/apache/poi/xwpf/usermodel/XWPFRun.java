@@ -870,7 +870,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     @Override
     public int getFontSize() {
         CTRPr pr = getRunProperties(false);
-        return (pr != null && pr.isSetSz()) ? pr.getSz().getVal().divide(new BigInteger("2")).intValue() : -1;
+        return (pr != null && pr.isSetSz()) ? pr.getSz().getVal().divide(BigInteger.valueOf(2)).intValue() : -1;
     }
 
     /**
@@ -887,10 +887,10 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     @Override
     public void setFontSize(int size) {
-        BigInteger bint = new BigInteger(Integer.toString(size));
+        BigInteger bint = BigInteger.valueOf(size);
         CTRPr pr = getRunProperties(true);
         CTHpsMeasure ctSize = pr.isSetSz() ? pr.getSz() : pr.addNewSz();
-        ctSize.setVal(bint.multiply(new BigInteger("2")));
+        ctSize.setVal(bint.multiply(BigInteger.valueOf(2)));
     }
 
     /**

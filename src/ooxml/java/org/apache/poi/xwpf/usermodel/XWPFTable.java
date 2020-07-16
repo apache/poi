@@ -190,7 +190,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         table.addNewTr().addNewTc().addNewP();
 
         CTTblPr tblpro = table.addNewTblPr();
-        tblpro.addNewTblW().setW(new BigInteger("0"));
+        tblpro.addNewTblW().setW(BigInteger.valueOf(0));
         tblpro.getTblW().setType(STTblWidth.AUTO);
 
         // layout

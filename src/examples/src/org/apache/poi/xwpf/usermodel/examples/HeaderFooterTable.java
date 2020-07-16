@@ -66,7 +66,7 @@ public class HeaderFooterTable {
 
             // Now set up a grid for the table, cells will fit into the grid
             // Each cell width is 3120 in 1440ths of an inch, or 1/3rd of 6.5"
-            BigInteger w = new BigInteger("3120");
+            BigInteger w = BigInteger.valueOf(3120);
             CTTblGrid grid = ctTbl.addNewTblGrid();
             for (int i = 0; i < 3; i++) {
                 CTTblGridCol gridCol = grid.addNewGridCol();

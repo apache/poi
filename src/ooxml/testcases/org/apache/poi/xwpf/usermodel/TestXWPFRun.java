@@ -179,7 +179,7 @@ public class TestXWPFRun {
     @Test
     public void testSetGetFontSize() {
         CTRPr rpr = ctRun.addNewRPr();
-        rpr.addNewSz().setVal(new BigInteger("14"));
+        rpr.addNewSz().setVal(BigInteger.valueOf(14));
 
         XWPFRun run = new XWPFRun(ctRun, irb);
         assertEquals(7, run.getFontSize());

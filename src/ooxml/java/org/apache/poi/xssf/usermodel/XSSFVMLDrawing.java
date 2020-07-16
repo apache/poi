@@ -252,8 +252,8 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
         cldata.addNewSizeWithCells();
         cldata.addNewAnchor().setStringValue("1, 15, 0, 2, 3, 15, 3, 16");
         cldata.addNewAutoFill().setStringValue("False");
-        cldata.addNewRow().setBigIntegerValue(new BigInteger("0"));
-        cldata.addNewColumn().setBigIntegerValue(new BigInteger("0"));
+        cldata.addNewRow().setBigIntegerValue(BigInteger.valueOf(0));
+        cldata.addNewColumn().setBigIntegerValue(BigInteger.valueOf(0));
         _items.add(shape);
         _qnames.add(QNAME_SHAPE);
         return shape;

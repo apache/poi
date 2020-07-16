@@ -156,7 +156,7 @@ final class MutableFPNumber {
 	 * Holds values for quick multiplication and division by 10
 	 */
 	private static final class TenPower {
-		private static final BigInteger FIVE = new BigInteger("5");
+		private static final BigInteger FIVE = BigInteger.valueOf(5);
 		private static final TenPower[] _cache = new TenPower[350];
 
 		public final BigInteger _multiplicand;
