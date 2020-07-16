@@ -183,9 +183,15 @@ public class TestXWPFRun {
 
         XWPFRun run = new XWPFRun(ctRun, irb);
         assertEquals(7, run.getFontSize());
+        assertEquals(7.0f, run.getFontSizeAsFloat(), 0.01);
 
         run.setFontSize(24);
         assertEquals(48, rpr.getSz().getVal().longValue());
+
+        run.setFontSize(24.5f);
+        assertEquals(49, rpr.getSz().getVal().longValue());
+        assertEquals(25, run.getFontSize());
+        assertEquals(24.5f, run.getFontSizeAsFloat(), 0.01);
     }
 
     @Test

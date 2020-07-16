@@ -21,7 +21,9 @@ import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
+import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -865,12 +867,33 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Specifies the font size which shall be applied to all non complex script
      * characters in the contents of this run when displayed.
      *
-     * @return value representing the font size
+     * @return value representing the font size (non-integer size will be rounded with half rounding up)
+     * @deprecated use {@link #getFontSizeAsFloat()}
      */
+    @Deprecated
+    @Removal(version = "6.0.0")
     @Override
     public int getFontSize() {
+        return getFontSizeAsBigDecimal(0).intValue();
+    }
+
+    /**
+     * Specifies the font size which shall be applied to all non complex script
+     * characters in the contents of this run when displayed.
+     *
+     * @return value representing the font size
+     * @since POI 5.0.0
+     */
+    @Override
+    public float getFontSizeAsFloat() {
+        return getFontSizeAsBigDecimal(1).floatValue();
+    }
+
+    private BigDecimal getFontSizeAsBigDecimal(int scale) {
         CTRPr pr = getRunProperties(false);
-        return (pr != null && pr.isSetSz()) ? pr.getSz().getVal().divide(BigInteger.valueOf(2)).intValue() : -1;
+        return (pr != null && pr.isSetSz()) ?
+                new BigDecimal(pr.getSz().getVal()).divide(BigDecimal.valueOf(2)).setScale(scale, RoundingMode.HALF_UP) :
+                BigDecimal.valueOf(-1);
     }
 
     /**
@@ -891,6 +914,27 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         CTRPr pr = getRunProperties(true);
         CTHpsMeasure ctSize = pr.isSetSz() ? pr.getSz() : pr.addNewSz();
         ctSize.setVal(bint.multiply(BigInteger.valueOf(2)));
+    }
+
+    /**
+     * Specifies the font size which shall be applied to all non complex script
+     * characters in the contents of this run when displayed.
+     * <p>
+     * If this element is not present, the default value is to leave the value
+     * applied at previous level in the style hierarchy. If this element is
+     * never applied in the style hierarchy, then any appropriate font size may
+     * be used for non complex script characters.
+     * </p>
+     *
+     * @param size The font size as number of point measurements.
+     * @since POI 5.0.0
+     */
+    @Override
+    public void setFontSize(float size) {
+        BigDecimal bd = BigDecimal.valueOf(size);
+        CTRPr pr = getRunProperties(true);
+        CTHpsMeasure ctSize = pr.isSetSz() ? pr.getSz() : pr.addNewSz();
+        ctSize.setVal(bd.multiply(BigDecimal.valueOf(2)).setScale(0, RoundingMode.HALF_UP).toBigInteger());
     }
 
     /**
