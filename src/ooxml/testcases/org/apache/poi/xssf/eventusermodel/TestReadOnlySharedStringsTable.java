@@ -58,8 +58,7 @@ public final class TestReadOnlySharedStringsTable {
             for (int i = 0; i < stbl.getUniqueCount(); i++) {
                 RichTextString i1 = stbl.getItemAt(i);
                 RichTextString i2 = rtbl.getItemAt(i);
-                //TODO follow up fix
-                //assertEquals(i1.getString(), i2.getString());
+                assertEquals(i1.getString(), i2.getString());
             }
         }
 	}

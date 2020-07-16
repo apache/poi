@@ -37,8 +37,6 @@ public class TestXSSFBSharedStringsTable {
             assertEquals(1, parts.size());
 
             XSSFBSharedStringsTable rtbl = new XSSFBSharedStringsTable(parts.get(0));
-            //TODO fix
-            //assertEquals(49, rtbl.getCount());
 
             assertEquals("\u30B3\u30E1\u30F3\u30C8", rtbl.getItemAt(0).getString());
             assertEquals("\u65E5\u672C\u30AA\u30E9\u30AF\u30EB", rtbl.getItemAt(3).getString());

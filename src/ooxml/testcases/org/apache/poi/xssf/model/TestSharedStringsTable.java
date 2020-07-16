@@ -109,8 +109,6 @@ public final class TestSharedStringsTable {
         assertEquals(3, sst.getUniqueCount());
 
         //OK. the sst table is filled, check the contents
-        //TODO fix
-        //assertEquals(3, sst.getCount());
         assertEquals("Hello, World!", sst.getItemAt(0).toString());
         assertEquals("Second string", sst.getItemAt(1).toString());
         assertEquals("Second string", sst.getItemAt(2).toString());
