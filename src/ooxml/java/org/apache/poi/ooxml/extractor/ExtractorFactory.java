@@ -51,7 +51,6 @@ import org.apache.poi.util.NotImplemented;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xdgf.extractor.XDGFVisioExtractor;
-import org.apache.poi.xslf.extractor.XSLFPowerPointExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xssf.extractor.XSSFBEventBasedExcelExtractor;
@@ -78,6 +77,12 @@ public final class ExtractorFactory {
     public static final String CORE_DOCUMENT_REL = PackageRelationshipTypes.CORE_DOCUMENT;
     private static final String VISIO_DOCUMENT_REL = PackageRelationshipTypes.VISIO_CORE_DOCUMENT;
     private static final String STRICT_DOCUMENT_REL = PackageRelationshipTypes.STRICT_CORE_DOCUMENT;
+
+    private static final XSLFRelation[] SUPPORTED_XSLF_TYPES = new XSLFRelation[]{
+            XSLFRelation.MAIN, XSLFRelation.MACRO, XSLFRelation.MACRO_TEMPLATE,
+            XSLFRelation.PRESENTATIONML, XSLFRelation.PRESENTATIONML_TEMPLATE,
+            XSLFRelation.PRESENTATION_MACRO
+    };
 
     private ExtractorFactory() {
     }
@@ -225,7 +230,7 @@ public final class ExtractorFactory {
             }
 
             // Is it XSLF?
-            for (XSLFRelation rel : XSLFPowerPointExtractor.SUPPORTED_TYPES) {
+            for (XSLFRelation rel : SUPPORTED_XSLF_TYPES) {
                 if ( rel.getContentType().equals( contentType ) ) {
                     return new SlideShowExtractor<>(new XMLSlideShow(pkg));
                 }

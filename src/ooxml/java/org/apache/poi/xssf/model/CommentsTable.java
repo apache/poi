@@ -24,14 +24,11 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.usermodel.XSSFComment;
 import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
@@ -169,25 +166,6 @@ public class CommentsTable extends POIXMLDocumentPart implements Comments {
     public Iterator<CellAddress> getCellAddresses() {
         prepareCTCommentCache();
         return commentRefs.keySet().iterator();
-    }
-
-    /**
-     * Returns all cell comments on this sheet.
-     * @return A map of each Comment in this sheet, keyed on the cell address where
-     * the comment is located.
-     * @deprecated use <code>getCellAddresses</code> instead
-     */
-    @Removal(version = "4.2")
-    @Deprecated
-    public Map<CellAddress, XSSFComment> getCellComments() {
-        prepareCTCommentCache();
-        final TreeMap<CellAddress, XSSFComment> map = new TreeMap<>();
-        
-        for (final Entry<CellAddress, CTComment> e : commentRefs.entrySet()) {
-            map.put(e.getKey(), new XSSFComment(this, e.getValue(), null));
-        }
-        
-        return map;
     }
 
     /**

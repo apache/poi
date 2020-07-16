@@ -27,8 +27,6 @@ import java.util.function.Function;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.NotImplemented;
-import org.apache.poi.util.Removal;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
@@ -232,19 +230,6 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      */
     public String getText() {
         return text.toString();
-    }
-
-
-    /**
-     * This method has existed since 2008 without an implementation.
-     * It will be removed unless an implementation is provided.
-     * @deprecated 4.0.0 due to lack of implementation.
-     */
-    @Deprecated
-    @Removal
-    @NotImplemented
-    public void addNewRowBetween(int start, int end) {
-        throw new UnsupportedOperationException("XWPFTable#addNewRowBetween(int, int) not implemented");
     }
 
     /**

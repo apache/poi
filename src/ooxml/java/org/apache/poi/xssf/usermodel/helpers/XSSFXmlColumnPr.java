@@ -21,7 +21,6 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.apache.poi.xssf.usermodel.XSSFTableColumn;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXmlColumnPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXmlDataType.Enum;
 
@@ -52,14 +51,6 @@ public class XSSFXmlColumnPr {
     public XSSFXmlColumnPr(XSSFTableColumn tableColumn, CTXmlColumnPr ctXmlColumnPr) {
         this.table = tableColumn.getTable();
         this.tableColumn = tableColumn;
-        this.ctXmlColumnPr = ctXmlColumnPr;
-    }
-
-    @Deprecated
-    @Removal(version="4.2")
-    public XSSFXmlColumnPr(XSSFTable table, CTTableColumn ctTableColum, CTXmlColumnPr ctXmlColumnPr) {
-        this.table = table;
-        this.tableColumn = table.getColumns().get(table.findColumnIndex(ctTableColum.getName()));
         this.ctXmlColumnPr = ctXmlColumnPr;
     }
 

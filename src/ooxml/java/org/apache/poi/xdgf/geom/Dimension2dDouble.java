@@ -23,9 +23,10 @@ import org.apache.poi.util.Removal;
  * @deprecated in 4.1.0 - use org.apache.poi.util.Dimension2DDouble
  */
 @Deprecated
-@Removal(version = "5.0.0")
+@Removal(version = "6.0.0")
 public class Dimension2dDouble extends org.apache.poi.util.Dimension2DDouble {
     public Dimension2dDouble() {
+        super();
     }
 
     public Dimension2dDouble(double width, double height) {
