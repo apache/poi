@@ -867,7 +867,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Specifies the font size which shall be applied to all non complex script
      * characters in the contents of this run when displayed.
      *
-     * @return value representing the font size (non-integer size will be rounded with half rounding up)
+     * @return value representing the font size (non-integer size will be rounded with half rounding up,
+     * -1 is returned if size not set)
      * @deprecated use {@link #getFontSizeAsDouble()}
      */
     @Deprecated
@@ -882,7 +883,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * Specifies the font size which shall be applied to all non complex script
      * characters in the contents of this run when displayed.
      *
-     * @return value representing the font size
+     * @return value representing the font size (can be null if size not set)
      * @since POI 5.0.0
      */
     @Override

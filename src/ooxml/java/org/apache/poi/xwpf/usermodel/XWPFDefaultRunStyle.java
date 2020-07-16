@@ -17,6 +17,7 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import org.apache.poi.util.Removal;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 
 import java.math.BigDecimal;
@@ -37,11 +38,26 @@ public class XWPFDefaultRunStyle {
         return rpr;
     }
 
+    /**
+     * Specifies the font size.
+     *
+     * @return value representing the font size (non-integer size will be rounded with half rounding up,
+     * -1 is returned if size not set)
+     * @deprecated use {@link #getFontSizeAsDouble()}
+     */
+    @Deprecated
+    @Removal(version = "6.0.0")
     public int getFontSize() {
         BigDecimal bd = getFontSizeAsBigDecimal(0);
         return bd == null ? -1 : bd.intValue();
     }
 
+    /**
+     * Specifies the font size.
+     *
+     * @return value representing the font size (can be null if size is not set)
+     * @since POI 5.0.0
+     */
     public Double getFontSizeAsDouble() {
         BigDecimal bd = getFontSizeAsBigDecimal(1);
         return bd == null ? null : bd.doubleValue();
