@@ -909,6 +909,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * </p>
      *
      * @param size The font size as number of point measurements.
+     * @see #setFontSize(double)
      */
     @Override
     public void setFontSize(int size) {
@@ -929,6 +930,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * </p>
      *
      * @param size The font size as number of point measurements.
+     * @see #setFontSize(int)
      * @since POI 5.0.0
      */
     @Override
