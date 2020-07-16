@@ -65,21 +65,20 @@ public final class TestReadOnlySharedStringsTable {
 
 	//51519
     @Test
-    @Ignore("follow up fix")
 	public void testPhoneticRuns() throws Exception {
         try (OPCPackage pkg = OPCPackage.open(_ssTests.openResourceAsStream("51519.xlsx"))) {
             List < PackagePart > parts = pkg.getPartsByName(Pattern.compile("/xl/sharedStrings.xml"));
             assertEquals(1, parts.size());
 
             ReadOnlySharedStringsTable rtbl = new ReadOnlySharedStringsTable(parts.get(0), true);
-            assertEquals(49, rtbl.getCount());
+            assertEquals(49, rtbl.getUniqueCount());
 
             assertEquals("\u30B3\u30E1\u30F3\u30C8", rtbl.getItemAt(0).getString());
             assertEquals("\u65E5\u672C\u30AA\u30E9\u30AF\u30EB \u30CB\u30DB\u30F3", rtbl.getItemAt(3).getString());
 
             //now do not include phonetic runs
             rtbl = new ReadOnlySharedStringsTable(parts.get(0),false);
-            assertEquals(49, rtbl.getCount());
+            assertEquals(49, rtbl.getUniqueCount());
 
             assertEquals("\u30B3\u30E1\u30F3\u30C8", rtbl.getItemAt(0).getString());
             assertEquals("\u65E5\u672C\u30AA\u30E9\u30AF\u30EB", rtbl.getItemAt(3).getString());
