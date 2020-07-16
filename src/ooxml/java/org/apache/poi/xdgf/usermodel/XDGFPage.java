@@ -24,8 +24,6 @@ import com.microsoft.schemas.office.visio.x2012.main.PageType;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
-import org.apache.poi.xdgf.geom.Dimension2dDouble;
 
 /**
  * Provides the API to work with an underlying page
@@ -75,26 +73,8 @@ public class XDGFPage {
 
     /**
      * @return width/height of page
-     * @deprecated use {@link #getPageDimensions()}
      */
-    @Removal(version = "6.0.0")
-    @Deprecated
-    public Dimension2dDouble getPageSize() {
-        XDGFCell w = _pageSheet.getCell("PageWidth");
-        XDGFCell h = _pageSheet.getCell("PageHeight");
-
-        if (w == null || h == null)
-            throw new POIXMLException("Cannot determine page size");
-
-        return new Dimension2dDouble(Double.parseDouble(w.getValue()),
-                Double.parseDouble(h.getValue()));
-    }
-
-    /**
-     * @return width/height of page
-     * @since POI 5.0.0
-     */
-    public Dimension2DDouble getPageDimensions() {
+    public Dimension2DDouble getPageSize() {
         XDGFCell w = _pageSheet.getCell("PageWidth");
         XDGFCell h = _pageSheet.getCell("PageHeight");
 
@@ -128,7 +108,7 @@ public class XDGFPage {
      * @return bounding box of page
      */
     public Rectangle2D getBoundingBox() {
-        Dimension2DDouble sz = getPageDimensions();
+        Dimension2DDouble sz = getPageSize();
         Point2D.Double offset = getPageOffset();
 
         return new Rectangle2D.Double(-offset.getX(), -offset.getY(),

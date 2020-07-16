@@ -61,7 +61,7 @@ public class VsdxToPng {
     public static void renderToPng(XDGFPage page, File outFile, double scale,
             ShapeRenderer renderer) throws IOException {
 
-        Dimension2DDouble sz = page.getPageDimensions();
+        Dimension2DDouble sz = page.getPageSize();
 
         int width = (int) (scale * sz.getWidth());
         int height = (int) (scale * sz.getHeight());
