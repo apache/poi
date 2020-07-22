@@ -99,8 +99,8 @@ def xmlbeansSvnBase = 'https://svn.apache.org/repos/asf/xmlbeans/trunk'
 def defaultJdk = '1.8'
 def defaultTrigger = 'H/15 * * * *'     // check SCM every 60/15 = 4 minutes
 def defaultEmail = 'dev@poi.apache.org'
-def defaultAnt = 'Ant 1.9 (Latest)'
-def defaultAntWindows = 'Ant 1.9 (Latest Windows)'
+def defaultAnt = 'Ant 1.10 (Latest)'
+def defaultAntWindows = 'Ant 1.10 (Latest Windows)'
 def defaultMaven = 'Maven 3 (latest)'
 // currently a lot of H?? slaves don't have Ant installed ... H21 seems to have a SVN problem
 // H35 fails with ImageIO create cache file errors, although the java.io.tmpdir is writable
