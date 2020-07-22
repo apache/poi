@@ -16,53 +16,46 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
+import static org.apache.poi.poifs.crypt.EncryptionInfo.ENCRYPTION_INFO_ENTRY;
+
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ServiceLoader;
 
+import org.apache.poi.EmptyFileException;
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
 import org.apache.poi.poifs.filesystem.FileMagic;
-import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.Removal;
 
 /**
  * Factory for creating the appropriate kind of Workbook
  *  (be it {@link HSSFWorkbook} or XSSFWorkbook),
  *  by auto-detecting from the supplied input.
  */
-public abstract class WorkbookFactory {
+public final class WorkbookFactory {
 
-    protected interface CreateWorkbook0 {
-        Workbook apply() throws IOException;
+    private static class Singleton {
+        private static final WorkbookFactory INSTANCE = new WorkbookFactory();
     }
 
-    protected interface CreateWorkbook1<T> {
-        Workbook apply(T t) throws IOException;
+    private interface ProviderMethod {
+        Workbook create(WorkbookProvider prov) throws IOException;
     }
 
-    protected interface CreateWorkbook2<T, U> {
-        Workbook apply(T t, U u) throws IOException;
+    private final List<WorkbookProvider> provider = new ArrayList<>();
+
+    private WorkbookFactory() {
+        ServiceLoader.load(WorkbookProvider.class).forEach(provider::add);
     }
 
-    private static final Object hssfLock = new Object();
-    private static final Object xssfLock = new Object();
-
-    protected static CreateWorkbook0 createHssfFromScratch;
-    protected static CreateWorkbook1<DirectoryNode> createHssfByNode;
-
-    protected static CreateWorkbook0 createXssfFromScratch;
-    protected static CreateWorkbook1<InputStream> createXssfByStream;
-    protected static CreateWorkbook1<Object> createXssfByPackage;
-    protected static CreateWorkbook2<File,Boolean> createXssfByFile;
 
     /**
      * Create a new empty Workbook, either XSSF or HSSF depending
@@ -75,13 +68,7 @@ public abstract class WorkbookFactory {
      * @throws IOException if an error occurs while creating the objects
      */
     public static Workbook create(boolean xssf) throws IOException {
-        if(xssf) {
-            initXssf();
-            return createXssfFromScratch.apply();
-        } else {
-            initHssf();
-            return createHssfFromScratch.apply();
-        }
+        return wp(xssf ? FileMagic.OOXML : FileMagic.OLE2, WorkbookProvider::create);
     }
 
     /**
@@ -144,59 +131,10 @@ public abstract class WorkbookFactory {
     public static Workbook create(final DirectoryNode root, String password) throws IOException {
         // Encrypted OOXML files go inside OLE2 containers, is this one?
         if (root.hasEntry(Decryptor.DEFAULT_POIFS_ENTRY)) {
-            InputStream stream = null;
-            try {
-                stream = DocumentFactoryHelper.getDecryptedStream(root, password);
-                initXssf();
-                return createXssfByStream.apply(stream);
-            } finally {
-                IOUtils.closeQuietly(stream);
-
-                // as we processed the full stream already, we can close the filesystem here
-                // otherwise file handles are leaked
-                root.getFileSystem().close();
-            }
+            return wp(FileMagic.OOXML, w -> w.create(root, password));
+        } else {
+            return wp(FileMagic.OLE2, w ->  w.create(root, password));
         }
-
-        // If we get here, it isn't an encrypted PPTX file
-        // So, treat it as a regular HSLF PPT one
-        boolean passwordSet = false;
-        if (password != null) {
-            Biff8EncryptionKey.setCurrentUserPassword(password);
-            passwordSet = true;
-        }
-        try {
-            initHssf();
-            return createHssfByNode.apply(root);
-        } finally {
-            if (passwordSet) {
-                Biff8EncryptionKey.setCurrentUserPassword(null);
-            }
-        }
-    }
-
-    /**
-     * Creates a XSSFWorkbook from the given OOXML Package.
-     * As the WorkbookFactory is located in the POI module, which doesn't know about the OOXML formats,
-     * this can be only achieved by using an Object reference to the OPCPackage.
-     *
-     * <p>Note that in order to properly release resources the
-     *  Workbook should be closed after use.</p>
-     *
-     *  @param pkg The org.apache.poi.openxml4j.opc.OPCPackage opened for reading data.
-     *
-     *  @return The created Workbook
-     *
-     *  @throws IOException if an error occurs while reading the data
-     *
-     * @deprecated use {@link #create(File)}, {@link #create(InputStream)} or
-     *          XSSFWorkbookFactory.create(OPCPackage) instead.
-     */
-    @Deprecated
-    @Removal(version = "4.2.0")
-    public static Workbook create(Object pkg) throws IOException {
-        initXssf();
-        return createXssfByPackage.apply(pkg);
     }
 
     /**
@@ -248,18 +186,26 @@ public abstract class WorkbookFactory {
      */
     public static Workbook create(InputStream inp, String password) throws IOException, EncryptedDocumentException {
         InputStream is = FileMagic.prepareToCheckMagic(inp);
-        FileMagic fm = FileMagic.valueOf(is);
-
-        switch (fm) {
-            case OLE2:
-                POIFSFileSystem fs = new POIFSFileSystem(is);
-                return create(fs, password);
-            case OOXML:
-                initXssf();
-                return createXssfByStream.apply(is);
-            default:
-                throw new IOException("Your InputStream was neither an OLE2 stream, nor an OOXML stream");
+        byte[] emptyFileCheck = new byte[1];
+        is.mark(emptyFileCheck.length);
+        if (is.read(emptyFileCheck) < emptyFileCheck.length) {
+            throw new EmptyFileException();
         }
+        is.reset();
+
+        final FileMagic fm = FileMagic.valueOf(is);
+        if (FileMagic.OOXML == fm) {
+            return wp(fm, w -> w.create(is));
+        }
+
+        if (FileMagic.OLE2 != fm) {
+            throw new IOException("Can't open workbook - unsupported file type: "+fm);
+        }
+
+        POIFSFileSystem poifs = new POIFSFileSystem(is);
+        boolean isOOXML = poifs.getRoot().hasEntry(ENCRYPTION_INFO_ENTRY);
+
+        return wp(isOOXML ? FileMagic.OOXML : fm, w -> w.create(poifs.getRoot(), password));
     }
 
     /**
@@ -320,58 +266,33 @@ public abstract class WorkbookFactory {
             throw new FileNotFoundException(file.toString());
         }
 
-        POIFSFileSystem fs = null;
-        try {
-            fs = new POIFSFileSystem(file, readOnly);
-            return create(fs, password);
-        } catch(OfficeXmlFileException e) {
-            IOUtils.closeQuietly(fs);
-            initXssf();
-            return createXssfByFile.apply(file, readOnly);
-        } catch(RuntimeException e) {
-            IOUtils.closeQuietly(fs);
-            throw e;
+        if (file.length() == 0) {
+            throw new EmptyFileException();
         }
+
+        FileMagic fm = FileMagic.valueOf(file);
+        if (fm == FileMagic.OOXML) {
+            return wp(fm, w -> w.create(file, password, readOnly));
+        } else if (fm == FileMagic.OLE2) {
+            boolean ooxmlEnc = false;
+            try (POIFSFileSystem fs = new POIFSFileSystem(file, true)) {
+                ooxmlEnc = fs.getRoot().hasEntry(Decryptor.DEFAULT_POIFS_ENTRY);
+            }
+            return wp(ooxmlEnc ? FileMagic.OOXML : fm, w -> w.create(file, password, readOnly));
+        }
+
+        return null;
     }
 
-    private static void initXssf() throws IOException {
-        if (createXssfFromScratch == null) {
-            synchronized (xssfLock) {
-                if (createXssfFromScratch == null) {
-                    String factoryClass = "org.apache.poi.xssf.usermodel.XSSFWorkbookFactory";
-                    Class<?> cls = initFactory(factoryClass, "poi-ooxml-*.jar");
-                    try {
-                        cls.getMethod("init").invoke(null);
-                    } catch (Exception e) {
-                        throw new IOException(factoryClass+" failed to init.");
-                    }
-                }
+
+    private static Workbook wp(FileMagic fm, ProviderMethod fun) throws IOException {
+
+        for (WorkbookProvider prov : Singleton.INSTANCE.provider) {
+            if (prov.accepts(fm)) {
+                return fun.create(prov);
             }
         }
-    }
-
-    private static void initHssf() throws IOException {
-        if (createHssfFromScratch == null) {
-            // HSSF is part of the main jar, so this shouldn't fail ...
-            synchronized (hssfLock) {
-                if (createHssfFromScratch == null) {
-                    String factoryClass = "org.apache.poi.hssf.usermodel.HSSFWorkbookFactory";
-                    Class<?> cls = initFactory(factoryClass, "poi-*.jar");
-                    try {
-                        cls.getMethod("init").invoke(null);
-                    } catch (Exception e) {
-                        throw new IOException(factoryClass+" failed to init.");
-                    }
-                }
-            }
-        }
-    }
-
-    private static Class<?> initFactory(String factoryClass, String jar) throws IOException {
-        try {
-            return Class.forName(factoryClass, true, WorkbookFactory.class.getClassLoader());
-        } catch (ClassNotFoundException e) {
-            throw new IOException(factoryClass+" not found - check if " + jar + " is on the classpath.");
-        }
+        throw new IOException("Your InputStream was neither an OLE2 stream, nor an OOXML stream " +
+            "or you haven't provide the poi-ooxml*.jar in the classpath/modulepath - FileMagic: "+fm);
     }
 }

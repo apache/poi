@@ -27,7 +27,7 @@ import org.junit.Test;
 /**
  * Tests for {@link AttrPtg}.
  */
-public final class TestAttrPtg extends AbstractPtgTestCase {
+public final class TestAttrPtg extends BaseTestPtg {
 
 	/**
 	 * Fix for bug visible around svn r706772.

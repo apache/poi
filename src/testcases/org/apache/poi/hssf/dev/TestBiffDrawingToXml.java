@@ -26,7 +26,7 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.BeforeClass;
 
-public class TestBiffDrawingToXml extends BaseXLSIteratingTest {
+public class TestBiffDrawingToXml extends BaseTestIteratingXLS {
     @BeforeClass
     public static void setup() {
         EXCLUDED.clear();

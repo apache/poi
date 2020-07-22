@@ -21,8 +21,16 @@ module org.apache.poi.poi {
     requires commons.math3;
     requires SparseBitSet;
     requires commons.logging;
+    requires java.logging;
+    requires java.desktop;
 
+    uses org.apache.poi.ss.usermodel.WorkbookProvider;
 
+    provides org.apache.poi.ss.usermodel.WorkbookProvider with org.apache.poi.hssf.usermodel.HSSFWorkbookFactory;
+
+    exports org.apache.poi;
+    exports org.apache.poi.common;
+    exports org.apache.poi.common.usermodel;
     exports org.apache.poi.common.usermodel.fonts;
     exports org.apache.poi.ddf;
     exports org.apache.poi.extractor;
@@ -49,6 +57,7 @@ module org.apache.poi.poi {
     exports org.apache.poi.hssf.util;
     exports org.apache.poi.poifs.common;
     exports org.apache.poi.poifs.crypt;
+    exports org.apache.poi.poifs.crypt.agile;
     exports org.apache.poi.poifs.crypt.binaryrc4;
     exports org.apache.poi.poifs.crypt.cryptoapi;
     exports org.apache.poi.poifs.crypt.standard;

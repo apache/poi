@@ -86,7 +86,7 @@ public abstract class EncryptionHeader implements GenericRecord, Duplicatable {
         return flags;
     }
 
-    protected void setFlags(int flags) {
+    public void setFlags(int flags) {
         this.flags = flags;
     }
 
@@ -94,7 +94,7 @@ public abstract class EncryptionHeader implements GenericRecord, Duplicatable {
         return sizeExtra;
     }
 
-    protected void setSizeExtra(int sizeExtra) {
+    public void setSizeExtra(int sizeExtra) {
         this.sizeExtra = sizeExtra;
     }
 
@@ -102,7 +102,7 @@ public abstract class EncryptionHeader implements GenericRecord, Duplicatable {
         return cipherAlgorithm;
     }
 
-    protected void setCipherAlgorithm(CipherAlgorithm cipherAlgorithm) {
+    public void setCipherAlgorithm(CipherAlgorithm cipherAlgorithm) {
         this.cipherAlgorithm = cipherAlgorithm;
         if (cipherAlgorithm.allowedKeySize.length == 1) {
             setKeySize(cipherAlgorithm.defaultKeySize);
@@ -113,7 +113,7 @@ public abstract class EncryptionHeader implements GenericRecord, Duplicatable {
         return hashAlgorithm;
     }
 
-    protected void setHashAlgorithm(HashAlgorithm hashAlgorithm) {
+    public void setHashAlgorithm(HashAlgorithm hashAlgorithm) {
         this.hashAlgorithm = hashAlgorithm;
     }
 
@@ -128,7 +128,7 @@ public abstract class EncryptionHeader implements GenericRecord, Duplicatable {
      *
      * @param keyBits
      */
-    protected void setKeySize(int keyBits) {
+    public void setKeySize(int keyBits) {
         this.keyBits = keyBits;
         for (int allowedBits : getCipherAlgorithm().allowedKeySize) {
             if (allowedBits == keyBits) {
@@ -142,7 +142,7 @@ public abstract class EncryptionHeader implements GenericRecord, Duplicatable {
     	return blockSize;
     }
 
-    protected void setBlockSize(int blockSize) {
+    public void setBlockSize(int blockSize) {
         this.blockSize = blockSize;
     }
 
@@ -150,7 +150,7 @@ public abstract class EncryptionHeader implements GenericRecord, Duplicatable {
         return keySalt;
     }
 
-    protected void setKeySalt(byte[] salt) {
+    public void setKeySalt(byte[] salt) {
         this.keySalt = (salt == null) ? null : salt.clone();
     }
 
@@ -158,7 +158,7 @@ public abstract class EncryptionHeader implements GenericRecord, Duplicatable {
         return providerType;
     }
 
-    protected void setCipherProvider(CipherProvider providerType) {
+    public void setCipherProvider(CipherProvider providerType) {
         this.providerType = providerType;
     }
 
@@ -166,7 +166,7 @@ public abstract class EncryptionHeader implements GenericRecord, Duplicatable {
         return cspName;
     }
 
-    protected void setCspName(String cspName) {
+    public void setCspName(String cspName) {
         this.cspName = cspName;
     }
 

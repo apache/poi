@@ -17,7 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.formula.eval.forked.TestForkedEvaluator;
+import org.apache.poi.ss.formula.eval.forked.BaseTestForkedEvaluator;
 import org.apache.poi.xssf.usermodel.extensions.TestXSSFBorder;
 import org.apache.poi.xssf.usermodel.extensions.TestXSSFCellFill;
 import org.apache.poi.xssf.usermodel.helpers.TestColumnHelper;
@@ -58,7 +58,7 @@ import org.junit.runners.Suite;
     TestColumnHelper.class,
     TestHeaderFooterHelper.class,
     //TestXSSFPivotTable.class, //converted to junit4
-    TestForkedEvaluator.class
+    BaseTestForkedEvaluator.class
 })
 public final class AllXSSFUsermodelTests {
 }

@@ -685,7 +685,7 @@ public class DrawTextParagraph implements Drawable {
                     // handle (b) and (c)
                     attList.add(new AttributedStringData(TextAttribute.FAMILY, fontMapped.getFontName(Locale.ROOT), beginIndex+partBegin, beginIndex+partEnd));
                     if (LOG.check(POILogger.DEBUG)) {
-                        LOG.log(POILogger.DEBUG, "mapped: ",fontMapped.getFontName(Locale.ROOT)," ",(beginIndex+partBegin)," ",(beginIndex+partEnd)," - ",runText.substring(beginIndex+partBegin, beginIndex+partEnd));
+                        LOG.log(POILogger.DEBUG, "mapped: ",fontMapped.getFontName(Locale.ROOT)," ",(beginIndex+partBegin)," ",(beginIndex+partEnd)," - ",runText.substring(partBegin, partEnd));
                     }
                 }
 
@@ -697,7 +697,7 @@ public class DrawTextParagraph implements Drawable {
                     // handle (a) and (b)
                     attList.add(new AttributedStringData(TextAttribute.FAMILY, fontFallback.getFontName(Locale.ROOT), beginIndex+partBegin, beginIndex+partEnd));
                     if (LOG.check(POILogger.DEBUG)) {
-                        LOG.log(POILogger.DEBUG, "fallback: ",fontFallback.getFontName(Locale.ROOT)," ",(beginIndex+partBegin)," ",(beginIndex+partEnd)," - ",runText.substring(beginIndex+partBegin, beginIndex+partEnd));
+                        LOG.log(POILogger.DEBUG, "fallback: ",fontFallback.getFontName(Locale.ROOT)," ",(beginIndex+partBegin)," ",(beginIndex+partEnd)," - ",runText.substring(partBegin, partEnd));
                     }
                 }
             }

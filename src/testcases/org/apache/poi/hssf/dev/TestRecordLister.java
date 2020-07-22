@@ -25,7 +25,7 @@ import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.BeforeClass;
 
-public class TestRecordLister extends BaseXLSIteratingTest {
+public class TestRecordLister extends BaseTestIteratingXLS {
     @BeforeClass
     public static void setup() {
         EXCLUDED.clear();
@@ -40,7 +40,7 @@ public class TestRecordLister extends BaseXLSIteratingTest {
         EXCLUDED.put("61300.xls", RecordFormatException.class);
         EXCLUDED.put("64130.xls", OldExcelFormatException.class); //Biff 5
     }
-	
+
 	@Override
 	void runOneFile(File fileIn) throws IOException {
 		PrintStream save = System.out;

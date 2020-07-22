@@ -19,7 +19,7 @@
 
 package org.apache.poi.xssf.streaming;
 
-import org.apache.poi.ss.usermodel.BaseTestXRow;
+import org.apache.poi.ss.tests.usermodel.BaseTestXRow;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.junit.After;
 import org.junit.Ignore;
@@ -48,8 +48,8 @@ public final class TestSXSSFRow extends BaseTestXRow {
     @Override
     @Ignore ("see <https://bz.apache.org/bugzilla/show_bug.cgi?id=62030#c1>") @Test
     public void testCellShiftingLeft(){
-        // Remove when SXSSFRow.shiftCellsLeft() is implemented. 
+        // Remove when SXSSFRow.shiftCellsLeft() is implemented.
     }
 
-    
+
 }

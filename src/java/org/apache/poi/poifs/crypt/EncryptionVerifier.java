@@ -83,35 +83,35 @@ public abstract class EncryptionVerifier implements GenericRecord, Duplicatable 
         return chainingMode;
     }
 
-    protected void setSalt(byte[] salt) {
+    public void setSalt(byte[] salt) {
         this.salt = (salt == null) ? null : salt.clone();
     }
 
-    protected void setEncryptedVerifier(byte[] encryptedVerifier) {
+    public void setEncryptedVerifier(byte[] encryptedVerifier) {
         this.encryptedVerifier = (encryptedVerifier == null) ? null : encryptedVerifier.clone();
     }
 
-    protected void setEncryptedVerifierHash(byte[] encryptedVerifierHash) {
+    public void setEncryptedVerifierHash(byte[] encryptedVerifierHash) {
         this.encryptedVerifierHash = (encryptedVerifierHash == null) ? null : encryptedVerifierHash.clone();
     }
 
-    protected void setEncryptedKey(byte[] encryptedKey) {
+    public void setEncryptedKey(byte[] encryptedKey) {
         this.encryptedKey = (encryptedKey == null) ? null : encryptedKey.clone();
     }
 
-    protected void setSpinCount(int spinCount) {
+    public void setSpinCount(int spinCount) {
         this.spinCount = spinCount;
     }
 
-    protected void setCipherAlgorithm(CipherAlgorithm cipherAlgorithm) {
+    public void setCipherAlgorithm(CipherAlgorithm cipherAlgorithm) {
         this.cipherAlgorithm = cipherAlgorithm;
     }
 
-    protected void setChainingMode(ChainingMode chainingMode) {
+    public void setChainingMode(ChainingMode chainingMode) {
         this.chainingMode = chainingMode;
     }
 
-    protected void setHashAlgorithm(HashAlgorithm hashAlgorithm) {
+    public void setHashAlgorithm(HashAlgorithm hashAlgorithm) {
         this.hashAlgorithm = hashAlgorithm;
     }
 

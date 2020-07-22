@@ -31,7 +31,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class TestReSave extends BaseXLSIteratingTest {
+public class TestReSave extends BaseTestIteratingXLS {
     @BeforeClass
     public static void setup() {
         EXCLUDED.clear();

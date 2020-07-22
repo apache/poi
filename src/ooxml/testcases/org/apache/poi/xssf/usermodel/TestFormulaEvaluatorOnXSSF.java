@@ -33,7 +33,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.ss.formula.eval.TestFormulasFromSpreadsheet;
-import org.apache.poi.ss.formula.functions.TestMathX;
+import org.apache.poi.ss.formula.functions.BaseTestNumeric;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -55,10 +55,10 @@ import org.junit.runners.Parameterized.Parameters;
  *  except for a XSSF spreadsheet, not a HSSF one.
  * This allows us to check that all our Formula Evaluation code
  *  is able to work for XSSF, as well as for HSSF.
- * 
+ *
  * Periodically, you should open FormulaEvalTestData.xls in
  *  Excel 2007, and re-save it as FormulaEvalTestData_Copy.xlsx
- *  
+ *
  */
 @RunWith(Parameterized.class)
 public final class TestFormulaEvaluatorOnXSSF {
@@ -68,12 +68,12 @@ public final class TestFormulaEvaluatorOnXSSF {
     private static Sheet sheet;
     private static FormulaEvaluator evaluator;
     private static Locale userLocale;
-    
-	/** 
+
+	/**
 	 * This class defines constants for navigating around the test data spreadsheet used for these tests.
 	 */
 	private static interface SS {
-		
+
 		/**
 		 * Name of the test spreadsheet (found in the standard test data folder)
 		 */
@@ -119,7 +119,7 @@ public final class TestFormulaEvaluatorOnXSSF {
         LocaleUtil.setUserLocale(userLocale);
         workbook.close();
     }
-    
+
     @Parameters(name="{0}")
     public static Collection<Object[]> data() throws Exception {
         // Function "Text" uses custom-formats which are locale specific
@@ -131,9 +131,9 @@ public final class TestFormulaEvaluatorOnXSSF {
         workbook = new XSSFWorkbook( OPCPackage.open(HSSFTestDataSamples.getSampleFile(SS.FILENAME), PackageAccess.READ) );
         sheet = workbook.getSheetAt( 0 );
         evaluator = new XSSFFormulaEvaluator(workbook);
-        
+
         List<Object[]> data = new ArrayList<>();
-        
+
         processFunctionGroup(data, SS.START_OPERATORS_ROW_INDEX, null);
         processFunctionGroup(data, SS.START_FUNCTIONS_ROW_INDEX, null);
         // example for debugging individual functions/operators:
@@ -142,10 +142,10 @@ public final class TestFormulaEvaluatorOnXSSF {
 
         return data;
     }
-    
+
     /**
-     * @param startRowIndex row index in the spreadsheet where the first function/operator is found 
-     * @param testFocusFunctionName name of a single function/operator to test alone. 
+     * @param startRowIndex row index in the spreadsheet where the first function/operator is found
+     * @param testFocusFunctionName name of a single function/operator to test alone.
      * Typically pass <code>null</code> to test all functions
      */
     private static void processFunctionGroup(List<Object[]> data, int startRowIndex, String testFocusFunctionName) {
@@ -154,7 +154,7 @@ public final class TestFormulaEvaluatorOnXSSF {
 
             // only evaluate non empty row
             if(r == null) continue;
-            
+
             String targetFunctionName = getTargetFunctionName(r);
             assertNotNull("Test spreadsheet cell empty on row ("
                 + (rowIndex+1) + "). Expected function name or '"
@@ -165,14 +165,14 @@ public final class TestFormulaEvaluatorOnXSSF {
                 break;
             }
             if(testFocusFunctionName == null || targetFunctionName.equalsIgnoreCase(testFocusFunctionName)) {
-                
+
                 // expected results are on the row below
                 Row expectedValuesRow = sheet.getRow(rowIndex + 1);
                 // +1 for 1-based, +1 for next row
-                assertNotNull("Missing expected values row for function '" 
+                assertNotNull("Missing expected values row for function '"
                     + targetFunctionName + " (row " + rowIndex + 2 + ")"
                     , expectedValuesRow);
-                
+
                 data.add(new Object[]{targetFunctionName, rowIndex, rowIndex + 1});
             }
         }
@@ -183,7 +183,7 @@ public final class TestFormulaEvaluatorOnXSSF {
 	public void processFunctionRow() {
 	    Row formulasRow = sheet.getRow(formulasRowIdx);
 	    Row expectedValuesRow = sheet.getRow(expectedValuesRowIdx);
-	    
+
 		short endcolnum = formulasRow.getLastCellNum();
 
 		// iterate across the row for all the evaluation cases
@@ -198,10 +198,10 @@ public final class TestFormulaEvaluatorOnXSSF {
 
 			String msg = String.format(Locale.ROOT, "Function '%s': Formula: %s @ %d:%d"
 		        , targetFunctionName, c.getCellFormula(), formulasRow.getRowNum(), colnum);
-			
+
 			assertNotNull(msg + " - Bad setup data expected value is null", expValue);
 			assertNotNull(msg + " - actual value was null", actValue);
-	        
+
 	        final CellType expectedCellType = expValue.getCellType();
 	        switch (expectedCellType) {
 	            case BLANK:
@@ -221,7 +221,7 @@ public final class TestFormulaEvaluatorOnXSSF {
 	                fail("Cannot expect formula as result of formula evaluation: " + msg);
 	            case NUMERIC:
 	                assertEquals(msg, CellType.NUMERIC, actValue.getCellType());
-	                TestMathX.assertEquals(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
+					BaseTestNumeric.assertEquals(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), BaseTestNumeric.POS_ZERO, BaseTestNumeric.DIFF_TOLERANCE_FACTOR);
 //	              double delta = Math.abs(expValue.getNumericCellValue()-actValue.getNumberValue());
 //	              double pctExpValue = Math.abs(0.00001*expValue.getNumericCellValue());
 //	              assertTrue(msg, delta <= pctExpValue);
@@ -237,16 +237,16 @@ public final class TestFormulaEvaluatorOnXSSF {
 	}
 
 	/*
-	 * TODO - these are all formulas which currently (Apr-2008) break on ooxml 
+	 * TODO - these are all formulas which currently (Apr-2008) break on ooxml
 	 */
 	private static void ignoredFormulaTestCase(String cellFormula) {
         // full row ranges are not parsed properly yet.
-        // These cases currently work in svn trunk because of another bug which causes the 
-        // formula to get rendered as COLUMN($A$1:$IV$2) or ROW($A$2:$IV$3) 
+        // These cases currently work in svn trunk because of another bug which causes the
+        // formula to get rendered as COLUMN($A$1:$IV$2) or ROW($A$2:$IV$3)
 	    assumeFalse("COLUMN(1:2)".equals(cellFormula));
 	    assumeFalse("ROW(2:3)".equals(cellFormula));
 
-        // currently throws NPE because unknown function "currentcell" causes name lookup 
+        // currently throws NPE because unknown function "currentcell" causes name lookup
         // Name lookup requires some equivalent object of the Workbook within xSSFWorkbook.
 	    assumeFalse("ISREF(currentcell())".equals(cellFormula));
 	}
@@ -270,7 +270,7 @@ public final class TestFormulaEvaluatorOnXSSF {
 		if(cell.getCellType() == CellType.STRING) {
 			return cell.getRichStringCellValue().getString();
 		}
-		
+
 		fail("Bad cell type for 'function name' column: ("+cell.getColumnIndex()+") row ("+(r.getRowNum()+1)+")");
 		return null;
 	}

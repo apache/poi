@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula;
 
-import org.apache.poi.ss.formula.eval.forked.TestForkedEvaluator;
+import org.apache.poi.ss.formula.eval.forked.BaseTestForkedEvaluator;
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 
@@ -29,7 +29,7 @@ import org.junit.runners.Suite;
     TestCellCacheEntry.class,
     TestEvaluationCache.class,
     TestWorkbookEvaluator.class,
-    TestForkedEvaluator.class
+    BaseTestForkedEvaluator.class
 })
 public class AllSSFormulaTests {
 }

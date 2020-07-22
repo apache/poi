@@ -54,7 +54,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.openxml4j.opc.internal.MemoryPackagePart;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
-import org.apache.poi.ss.usermodel.BaseTestXWorkbook;
+import org.apache.poi.ss.tests.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Font;
@@ -81,7 +81,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbookPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCalcMode;
 
-public final class TestXSSFWorkbook extends BaseTestXWorkbook {
+public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
 
     public TestXSSFWorkbook() {
         super(XSSFITestDataProvider.instance);
@@ -1007,26 +1007,26 @@ public final class TestXSSFWorkbook extends BaseTestXWorkbook {
             assertTrue(file.exists());
 
             // read-only mode works!
-            Workbook workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ));
+            Workbook workbook = XSSFWorkbookFactory.createWorkbook(OPCPackage.open(file, PackageAccess.READ));
             Date dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).getDateCellValue();
             assertEquals(dateExp, dateAct);
             workbook.close();
             workbook = null;
 
-            workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ));
+            workbook = XSSFWorkbookFactory.createWorkbook(OPCPackage.open(file, PackageAccess.READ));
             dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).getDateCellValue();
             assertEquals(dateExp, dateAct);
             workbook.close();
             workbook = null;
 
             // now check read/write mode
-            workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ_WRITE));
+            workbook = XSSFWorkbookFactory.createWorkbook(OPCPackage.open(file, PackageAccess.READ_WRITE));
             dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).getDateCellValue();
             assertEquals(dateExp, dateAct);
             workbook.close();
             workbook = null;
 
-            workbook = WorkbookFactory.create(OPCPackage.open(file, PackageAccess.READ_WRITE));
+            workbook = XSSFWorkbookFactory.createWorkbook(OPCPackage.open(file, PackageAccess.READ_WRITE));
             dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).getDateCellValue();
             assertEquals(dateExp, dateAct);
             workbook.close();

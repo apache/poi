@@ -33,7 +33,7 @@ import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 
-public class TestBiffViewer extends BaseXLSIteratingTest {
+public class TestBiffViewer extends BaseTestIteratingXLS {
     @BeforeClass
     public static void setup() {
         EXCLUDED.clear();

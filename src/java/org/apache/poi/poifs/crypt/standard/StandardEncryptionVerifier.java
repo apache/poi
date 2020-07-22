@@ -74,7 +74,7 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
 
     // make method visible for this package
     @Override
-    protected void setSalt(byte[] salt) {
+    public void setSalt(byte[] salt) {
         if (salt == null || salt.length != 16) {
             throw new EncryptedDocumentException("invalid verifier salt");
         }
@@ -83,13 +83,13 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
 
     // make method visible for this package
     @Override
-    protected void setEncryptedVerifier(byte[] encryptedVerifier) {
+    public void setEncryptedVerifier(byte[] encryptedVerifier) {
         super.setEncryptedVerifier(encryptedVerifier);
     }
 
     // make method visible for this package
     @Override
-    protected void setEncryptedVerifierHash(byte[] encryptedVerifierHash) {
+    public void setEncryptedVerifierHash(byte[] encryptedVerifierHash) {
         super.setEncryptedVerifierHash(encryptedVerifierHash);
     }
 
@@ -121,7 +121,7 @@ public class StandardEncryptionVerifier extends EncryptionVerifier implements En
         bos.write(encryptedVerifierHash);
     }
 
-    protected int getVerifierHashSize() {
+    public int getVerifierHashSize() {
         return verifierHashSize;
     }
 

@@ -28,7 +28,7 @@ import org.junit.Test;
 /**
  * Tests for {@link UnionPtg}.
  */
-public final class TestUnionPtg extends AbstractPtgTestCase {
+public final class TestUnionPtg extends BaseTestPtg {
     /**
      * Tests reading a file containing this ptg.
      */

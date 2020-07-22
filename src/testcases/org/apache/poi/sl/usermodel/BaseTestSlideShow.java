@@ -31,6 +31,7 @@ import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
+import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.TabStop.TabStopType;
 import org.junit.Test;
@@ -40,24 +41,24 @@ public abstract class BaseTestSlideShow<
         P extends TextParagraph<S,P,? extends TextRun>
 > {
     protected static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
-    
+
     public abstract SlideShow<S,P> createSlideShow();
 
     public abstract SlideShow<S,P> reopen(SlideShow<S,P> show);
-    
+
     @Test
     public void addPicture_File() throws IOException {
         SlideShow<S,P> show = createSlideShow();
         File f = slTests.getFile("clock.jpg");
-        
+
         assertEquals(0, show.getPictureData().size());
         PictureData picture = show.addPicture(f, PictureType.JPEG);
         assertEquals(1, show.getPictureData().size());
         assertSame(picture, show.getPictureData().get(0));
-        
+
         show.close();
     }
-    
+
     @Test
     public void addPicture_Stream() throws IOException {
         try (SlideShow<S,P> show = createSlideShow();
@@ -68,34 +69,34 @@ public abstract class BaseTestSlideShow<
             assertSame(picture, show.getPictureData().get(0));
         }
     }
-    
+
     @Test
     public void addPicture_ByteArray() throws IOException {
         SlideShow<S,P> show = createSlideShow();
         byte[] data = slTests.readFile("clock.jpg");
-        
+
         assertEquals(0, show.getPictureData().size());
         PictureData picture = show.addPicture(data, PictureType.JPEG);
         assertEquals(1, show.getPictureData().size());
         assertSame(picture, show.getPictureData().get(0));
-        
+
         show.close();
     }
-    
+
     @Test
     public void findPicture() throws IOException {
         SlideShow<S,P> show = createSlideShow();
         byte[] data = slTests.readFile("clock.jpg");
-        
+
         assertNull(show.findPictureData(data));
         PictureData picture = show.addPicture(data, PictureType.JPEG);
         PictureData found = show.findPictureData(data);
         assertNotNull(found);
         assertEquals(picture, found);
-        
+
         show.close();
     }
-    
+
     @Test
     public void addTabStops() throws IOException {
         try (final SlideShow<S,P> show1 = createSlideShow()) {
@@ -109,7 +110,7 @@ public abstract class BaseTestSlideShow<
                 master1_tp.addTabStops(10+i1*10, tst);
                 i1++;
             }
-            
+
             // then set it on a normal slide
             final Slide<S,P> slide1 = show1.createSlide();
             final AutoShape<S,P> slide1_as = slide1.createAutoShape();
@@ -123,7 +124,7 @@ public abstract class BaseTestSlideShow<
                 slide1_tp.addTabStops(15+i2*5, tst);
                 i2++;
             }
-            
+
             try (final SlideShow<S,P> show2 = reopen(show1)) {
                 final MasterSheet<S,P> master2 = show2.getSlideMasters().get(0);
                 final AutoShape<S,P> master2_as = (AutoShape<S,P>)master2.getPlaceholder(Placeholder.BODY);
@@ -137,8 +138,8 @@ public abstract class BaseTestSlideShow<
                     assertEquals(tst, ts.getType());
                     i3++;
                 }
-                
-                
+
+
                 final Slide<S,P> slide2 = show2.getSlides().get(0);
                 @SuppressWarnings("unchecked")
                 final AutoShape<S,P> slide2_as = (AutoShape<S,P>)slide2.getShapes().get(0);
@@ -153,7 +154,7 @@ public abstract class BaseTestSlideShow<
                     i4++;
                 }
             }
-        }        
+        }
     }
 
     @Test
@@ -191,4 +192,11 @@ public abstract class BaseTestSlideShow<
             }
         }
     }
+
+    public static Color getColor(PaintStyle paintActual) {
+        return (paintActual instanceof PaintStyle.SolidPaint)
+                ? DrawPaint.applyColorTransform(((PaintStyle.SolidPaint)paintActual).getSolidColor())
+                : null;
+    }
+
 }

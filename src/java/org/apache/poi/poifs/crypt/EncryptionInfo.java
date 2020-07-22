@@ -43,6 +43,12 @@ import org.apache.poi.util.LittleEndianInput;
  * @see #getBuilder(EncryptionMode)
  */
 public class EncryptionInfo implements GenericRecord {
+
+    /**
+     * Document entry name for encryption info xml descriptor
+     */
+    public static final String ENCRYPTION_INFO_ENTRY = "EncryptionInfo";
+
     /**
      * A flag that specifies whether CryptoAPI RC4 or ECMA-376 encryption
      * ECMA-376 is used. It MUST be 1 unless flagExternal is 1. If flagExternal is 1, it MUST be 0.
@@ -110,25 +116,16 @@ public class EncryptionInfo implements GenericRecord {
             versionMinor = dis.readUShort();
         }
 
-        if (   versionMajor == xor.versionMajor
-            && versionMinor == xor.versionMinor) {
+        if (versionMajor == xor.versionMajor && versionMinor == xor.versionMinor) {
             encryptionMode = xor;
             encryptionFlags = -1;
-        } else if (   versionMajor == binaryRC4.versionMajor
-            && versionMinor == binaryRC4.versionMinor) {
+        } else if (versionMajor == binaryRC4.versionMajor && versionMinor == binaryRC4.versionMinor) {
             encryptionMode = binaryRC4;
             encryptionFlags = -1;
-        } else if (
-               2 <= versionMajor && versionMajor <= 4
-            && versionMinor == 2) {
+        } else if (2 <= versionMajor && versionMajor <= 4 && versionMinor == 2) {
             encryptionFlags = dis.readInt();
-            encryptionMode = (
-                preferredEncryptionMode == cryptoAPI
-                || !flagAES.isSet(encryptionFlags))
-                ? cryptoAPI : standard;
-        } else if (
-               versionMajor == agile.versionMajor
-            && versionMinor == agile.versionMinor){
+            encryptionMode = (preferredEncryptionMode == cryptoAPI || !flagAES.isSet(encryptionFlags)) ? cryptoAPI : standard;
+        } else if (versionMajor == agile.versionMajor && versionMinor == agile.versionMinor){
             encryptionMode = agile;
             encryptionFlags = dis.readInt();
         } else {

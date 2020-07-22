@@ -17,17 +17,17 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.junit.Assert.assertNotNull;
+
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.ss.formula.TestMissingWorkbook;
+import org.apache.poi.ss.formula.BaseTestMissingWorkbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Before;
-
-import static org.junit.Assert.assertNotNull;
 
 /**
  * XSSF Specific version of the Missing Workbooks test
  */
-public final class TestMissingWorkbookOnXSSF extends TestMissingWorkbook {
+public final class TestMissingWorkbookOnXSSF extends BaseTestMissingWorkbook {
     public TestMissingWorkbookOnXSSF() {
         super("52575_main.xlsx", "source_dummy.xlsx", "52575_source.xls");
     }

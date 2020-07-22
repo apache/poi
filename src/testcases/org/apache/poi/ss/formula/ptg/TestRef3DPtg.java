@@ -28,7 +28,7 @@ import org.junit.Test;
 /**
  * Tests for Ref3DPtg
  */
-public final class TestRef3DPtg extends AbstractPtgTestCase {
+public final class TestRef3DPtg extends BaseTestPtg {
 	@Test
 	public void testToFormulaString() throws IOException {
 

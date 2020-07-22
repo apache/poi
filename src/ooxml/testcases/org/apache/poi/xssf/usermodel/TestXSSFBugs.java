@@ -1994,7 +1994,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
         // Workbook Factory gives helpful error on package
         try {
-            XSSFWorkbookFactory.create(pkg).close();
+            XSSFWorkbookFactory.createWorkbook(pkg).close();
             fail(".xlsb files not supported");
         } catch (XLSBUnsupportedException e) {
             // Good, detected and warned

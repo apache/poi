@@ -23,6 +23,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.Mockito.spy;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -30,7 +31,7 @@ import java.nio.charset.StandardCharsets;
 import javax.xml.namespace.QName;
 
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.ss.usermodel.BaseTestXCell;
+import org.apache.poi.ss.tests.usermodel.BaseTestXCell;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.RichTextString;
@@ -45,9 +46,6 @@ import org.junit.AfterClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
-
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 
 /**
  * Tests various functionality having to do with {@link SXSSFCell}.  For instance support for

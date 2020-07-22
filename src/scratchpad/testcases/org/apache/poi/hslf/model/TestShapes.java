@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.model;
 
-import static org.apache.poi.sl.TestCommonSL.getColor;
+import static org.apache.poi.sl.usermodel.BaseTestSlideShow.getColor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;

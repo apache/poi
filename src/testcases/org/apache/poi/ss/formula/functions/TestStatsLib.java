@@ -29,7 +29,7 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 
-public class TestStatsLib extends AbstractNumericTestCase {
+public class TestStatsLib extends BaseTestNumeric {
 
     @Test
     public void testDevsq() {

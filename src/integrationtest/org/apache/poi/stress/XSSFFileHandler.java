@@ -38,8 +38,11 @@ import java.util.Set;
 import javax.xml.transform.TransformerException;
 
 import org.apache.poi.EncryptedDocumentException;
-import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.examples.ss.ExcelComparator;
+import org.apache.poi.examples.xssf.eventusermodel.FromHowTo;
+import org.apache.poi.examples.xssf.eventusermodel.XLSX2CSV;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
+import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
@@ -47,11 +50,8 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.ss.examples.ExcelComparator;
 import org.apache.poi.util.IOUtils;
-import org.apache.poi.xssf.eventusermodel.XLSX2CSV;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
-import org.apache.poi.xssf.eventusermodel.examples.FromHowTo;
 import org.apache.poi.xssf.extractor.XSSFExportToXml;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -99,27 +99,27 @@ public class XSSFFileHandler extends SpreadsheetHandler {
 
         // use the combined handler for HSSF/XSSF
         handleWorkbook(wb);
-        
+
         // TODO: some documents fail currently...
         //XSSFFormulaEvaluator evaluator = new XSSFFormulaEvaluator(wb);
         //evaluator.evaluateAll();
 
         // also verify general POIFS-stuff
         new POIXMLDocumentHandler().handlePOIXMLDocument(wb);
-        
+
         // and finally ensure that exporting to XML works
         exportToXML(wb);
 
         // this allows to trigger a heap-dump at this point to see which memory is still allocated
         //HeapDump.dumpHeap("/tmp/poi.hprof", false);
-        
+
         wb.close();
     }
 
 
     private void checkXSSFReader(OPCPackage p) throws IOException, OpenXML4JException {
         XSSFReader reader = new XSSFReader(p);
-        
+
         // these can be null...
         InputStream sharedStringsData = reader.getSharedStringsData();
         if(sharedStringsData != null) {
@@ -132,21 +132,21 @@ public class XSSFFileHandler extends SpreadsheetHandler {
             stylesData.close();
         }
         reader.getStylesTable();
-        
+
         InputStream themesData = reader.getThemesData();
         if(themesData != null) {
             themesData.close();
         }
 
         assertNotNull(reader.getWorkbookData());
-        
+
         Iterator<InputStream> sheetsData = reader.getSheetsData();
         while(sheetsData.hasNext()) {
             InputStream str = sheetsData.next();
             str.close();
         }
     }
-    
+
     private void exportToXML(XSSFWorkbook wb) throws SAXException,
             TransformerException {
         for (XSSFMap map : wb.getCustomXMLMappings()) {
@@ -221,8 +221,8 @@ public class XSSFFileHandler extends SpreadsheetHandler {
     public void testAdditional() throws Exception {
         handleAdditional(new File("test-data/spreadsheet/poc-xmlbomb.xlsx"));
     }
-    
-    // need to override all methods to omit calls to UTF-handling methods 
+
+    // need to override all methods to omit calls to UTF-handling methods
     static class NullPrintStream extends PrintStream {
         @SuppressWarnings("resource")
         NullPrintStream() {

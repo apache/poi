@@ -19,8 +19,8 @@
 
 package org.apache.poi.xssf.streaming;
 
-import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.apache.poi.POITestCase.assertEndsWith;
+import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
@@ -37,10 +37,9 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.POITestCase;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
-import org.apache.poi.ss.usermodel.BaseTestXWorkbook;
+import org.apache.poi.ss.tests.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
@@ -122,7 +121,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
 	    assertTrue(wb2.dispose());
 	    xssfWb2.close();
 	    xssfWb1.close();
-	    
+
 	    wb2.close();
 	    wb1.close();
     }
@@ -131,8 +130,8 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     public void useSharedStringsTable() throws Exception {
         SXSSFWorkbook wb = new SXSSFWorkbook(null, 10, false, true);
 
-        SharedStringsTable sss = POITestCase.getFieldValue(SXSSFWorkbook.class, wb, SharedStringsTable.class, "_sharedStringSource");
-        
+        SharedStringsTable sss = wb.getSharedStringSource();
+
         assertNotNull(sss);
 
         Row row = wb.createSheet("S1").createRow(0);
@@ -142,7 +141,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         row.createCell(2).setCellValue("A");
 
         XSSFWorkbook xssfWorkbook = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
-        sss = POITestCase.getFieldValue(SXSSFWorkbook.class, wb, SharedStringsTable.class, "_sharedStringSource");
+        sss = wb.getSharedStringSource();
         assertEquals(2, sss.getUniqueCount());
         assertTrue(wb.dispose());
 
@@ -199,7 +198,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
 
     	XSSFWorkbook xssfWb3 = SXSSFITestDataProvider.instance.writeOutAndReadBack(wb2);
     	wb2.close();
-    	
+
     	assertEquals(3, xssfWb3.getNumberOfSheets());
     	// Verify sheet 1
     	sheet1 = xssfWb3.getSheetAt(0);
@@ -233,7 +232,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     	cell3_1_1 = row3_1.getCell(1);
     	assertNotNull(cell3_1_1);
     	assertEquals("value 3_1_1", cell3_1_1.getStringCellValue());
-    	
+
         xssfWb2.close();
     	xssfWb3.close();
     	wb1.close();
@@ -437,15 +436,15 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
 
         // Some tests commented out because close() modifies the file
         // See bug 58779
-        
+
         // String
         //wb = new SXSSFWorkbook(new XSSFWorkbook(file.getPath()));
         //assertCloseDoesNotModifyFile(filename, wb);
-        
+
         // File
         //wb = new SXSSFWorkbook(new XSSFWorkbook(file));
         //assertCloseDoesNotModifyFile(filename, wb);
-        
+
         // InputStream
 
         try (FileInputStream fis = new FileInputStream(file);
@@ -453,15 +452,15 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
              SXSSFWorkbook wb = new SXSSFWorkbook(xwb)) {
             assertCloseDoesNotModifyFile(filename, wb);
         }
-        
+
         // OPCPackage
         //wb = new SXSSFWorkbook(new XSSFWorkbook(OPCPackage.open(file)));
         //assertCloseDoesNotModifyFile(filename, wb);
     }
-    
+
     /**
      * Bug #59743
-     * 
+     *
      * this is only triggered on other files apart of sheet[1,2,...].xml
      * as those are either copied uncompressed or with the use of GZIPInputStream
      * so we use shared strings
@@ -472,7 +471,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         SXSSFSheet s = swb.createSheet();
         char[] useless = new char[32767];
         Arrays.fill(useless, ' ');
-        
+
         for (int row=0; row<1; row++) {
             Row r = s.createRow(row);
             for (int col=0; col<10; col++) {
@@ -483,13 +482,13 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
                 r.createCell(col, CellType.STRING).setCellValue(ul);
             }
         }
-        
+
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         swb.write(bos);
         swb.dispose();
         swb.close();
     }
-    
+
     /**
      * To avoid accident changes to the template, you should be able
      *  to create a SXSSFWorkbook from a read-only XSSF one, then

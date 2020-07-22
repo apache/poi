@@ -18,7 +18,7 @@
  */
 package org.apache.poi.xslf.usermodel;
 
-import static org.apache.poi.sl.TestCommonSL.getColor;
+import static org.apache.poi.sl.usermodel.BaseTestSlideShow.getColor;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.sl.draw.DrawTextParagraph;
 import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextLineBreak;

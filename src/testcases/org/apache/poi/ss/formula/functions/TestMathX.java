@@ -30,7 +30,7 @@ import org.junit.Test;
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  *
  */
-public class TestMathX extends AbstractNumericTestCase {
+public class TestMathX extends BaseTestNumeric {
 
     @Test
     public void testAcosh() {

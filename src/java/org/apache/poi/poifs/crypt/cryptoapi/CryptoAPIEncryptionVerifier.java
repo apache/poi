@@ -41,17 +41,17 @@ public class CryptoAPIEncryptionVerifier extends StandardEncryptionVerifier {
     }
 
     @Override
-    protected void setSalt(byte[] salt) {
+    public void setSalt(byte[] salt) {
         super.setSalt(salt);
     }
 
     @Override
-    protected void setEncryptedVerifier(byte[] encryptedVerifier) {
+    public void setEncryptedVerifier(byte[] encryptedVerifier) {
         super.setEncryptedVerifier(encryptedVerifier);
     }
 
     @Override
-    protected void setEncryptedVerifierHash(byte[] encryptedVerifierHash) {
+    public void setEncryptedVerifierHash(byte[] encryptedVerifierHash) {
         super.setEncryptedVerifierHash(encryptedVerifierHash);
     }
 

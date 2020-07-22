@@ -28,7 +28,7 @@ import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.BeforeClass;
 
-public class TestFormulaViewer extends BaseXLSIteratingTest {
+public class TestFormulaViewer extends BaseTestIteratingXLS {
     @BeforeClass
     public static void setup() {
         EXCLUDED.clear();

@@ -31,8 +31,7 @@ import java.util.Locale;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
-import org.apache.poi.ss.formula.eval.TestFormulasFromSpreadsheet;
-import org.apache.poi.ss.formula.functions.TestMathX;
+import org.apache.poi.ss.formula.functions.BaseTestNumeric;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -53,7 +52,7 @@ import org.junit.runners.Parameterized.Parameters;
  */
 @RunWith(Parameterized.class)
 public final class TestMultiSheetFormulaEvaluatorOnXSSF {
-    private static final POILogger logger = POILogFactory.getLogger(TestFormulasFromSpreadsheet.class);
+    private static final POILogger logger = POILogFactory.getLogger(TestMultiSheetFormulaEvaluatorOnXSSF.class);
 
     private static XSSFWorkbook workbook;
     private static Sheet sheet;
@@ -204,7 +203,7 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
                 fail("Cannot expect formula as result of formula evaluation: " + msg);
             case NUMERIC:
                 assertEquals(msg, CellType.NUMERIC, actValue.getCellType());
-                TestMathX.assertEquals(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
+				BaseTestNumeric.assertEquals(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), BaseTestNumeric.POS_ZERO, BaseTestNumeric.DIFF_TOLERANCE_FACTOR);
 //              double delta = Math.abs(expected.getNumericCellValue()-actual.getNumberValue());
 //              double pctExpected = Math.abs(0.00001*expected.getNumericCellValue());
 //              assertTrue(msg, delta <= pctExpected);

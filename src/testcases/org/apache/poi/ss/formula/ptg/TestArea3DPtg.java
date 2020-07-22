@@ -28,7 +28,7 @@ import org.junit.Test;
 /**
  * Tests for Area3DPtg
  */
-public final class TestArea3DPtg extends AbstractPtgTestCase {
+public final class TestArea3DPtg extends BaseTestPtg {
 
 	/**
 	 * confirms that sheet names get properly escaped

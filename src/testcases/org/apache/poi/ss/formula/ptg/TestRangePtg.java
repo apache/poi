@@ -28,7 +28,7 @@ import org.junit.Test;
 /**
  * Tests for {@link RangePtg}.
  */
-public final class TestRangePtg extends AbstractPtgTestCase {
+public final class TestRangePtg extends BaseTestPtg {
     /**
      * Tests reading a file containing this ptg.
      */

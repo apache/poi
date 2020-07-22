@@ -17,11 +17,17 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.ss.usermodel.WorkbookProvider;
 import org.apache.poi.util.Internal;
 
 /**
@@ -30,15 +36,11 @@ import org.apache.poi.util.Internal;
  */
 @SuppressWarnings("unused")
 @Internal
-public class HSSFWorkbookFactory extends WorkbookFactory {
+public class HSSFWorkbookFactory implements WorkbookProvider {
 
-    static {
-        init();
-    }
-
-    public static void init() {
-        WorkbookFactory.createHssfFromScratch = HSSFWorkbookFactory::createWorkbook;
-        WorkbookFactory.createHssfByNode = HSSFWorkbookFactory::createWorkbook;
+    @Override
+    public boolean accepts(FileMagic fm) {
+        return FileMagic.OLE2 == fm;
     }
 
     /**
@@ -46,7 +48,7 @@ public class HSSFWorkbookFactory extends WorkbookFactory {
      *
      * @return The created workbook
      */
-    public static HSSFWorkbook createWorkbook() {
+    public HSSFWorkbook create() {
         return new HSSFWorkbook();
     }
 
@@ -64,7 +66,45 @@ public class HSSFWorkbookFactory extends WorkbookFactory {
      * Note that in order to properly release resources the
      * Workbook should be closed after use.
      */
-    public static HSSFWorkbook createWorkbook(final DirectoryNode root) throws IOException {
-        return new HSSFWorkbook(root, true);
+    public HSSFWorkbook create(final DirectoryNode root, String password) throws IOException {
+        boolean passwordSet = false;
+        if (password != null) {
+            Biff8EncryptionKey.setCurrentUserPassword(password);
+            passwordSet = true;
+        }
+        try {
+            return new HSSFWorkbook(root, true);
+        } finally {
+            if (passwordSet) {
+                Biff8EncryptionKey.setCurrentUserPassword(null);
+            }
+        }
+    }
+
+    @Override
+    public Workbook create(InputStream inp) throws IOException {
+        return create(inp, null);
+    }
+
+    @Override
+    public Workbook create(InputStream inp, String password) throws IOException {
+        POIFSFileSystem fs = new POIFSFileSystem(inp);
+        return create(fs.getRoot(), password);
+    }
+
+    @Override
+    public Workbook create(File file, String password, boolean readOnly) throws IOException {
+        boolean passwordSet = false;
+        if (password != null) {
+            Biff8EncryptionKey.setCurrentUserPassword(password);
+            passwordSet = true;
+        }
+        try {
+            return new HSSFWorkbook(new POIFSFileSystem(file, readOnly), true);
+        } finally {
+            if (passwordSet) {
+                Biff8EncryptionKey.setCurrentUserPassword(null);
+            }
+        }
     }
 }

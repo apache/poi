@@ -27,7 +27,7 @@ import org.junit.Test;
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
  *
  */
-public class TestFinanceLib extends AbstractNumericTestCase {
+public class TestFinanceLib extends BaseTestNumeric {
 
     @Test
     public void testFv() {

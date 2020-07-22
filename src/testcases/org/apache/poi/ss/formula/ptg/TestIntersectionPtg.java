@@ -28,7 +28,7 @@ import org.junit.Test;
 /**
  * Tests for {@link IntersectionPtg}.
  */
-public final class TestIntersectionPtg extends AbstractPtgTestCase {
+public final class TestIntersectionPtg extends BaseTestPtg {
     /**
      * Tests reading a file containing this ptg.
      */

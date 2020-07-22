@@ -16,7 +16,9 @@
 ==================================================================== */
 package org.apache.poi.ss.format;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -24,10 +26,12 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.stream.Stream;
 
 import javax.swing.JLabel;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
@@ -35,6 +39,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.AfterClass;
+import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
@@ -1012,5 +1017,13 @@ public class TestCellFormat {
     public void testBug62865() {
         CellFormat cf = CellFormat.getInstance("\"ca. \"0");
         assertEquals("ca. 5", cf.apply((double) 5).text);
+    }
+
+    @Test
+    public void testNamedColors() {
+        assertTrue(CellFormatPart.NAMED_COLORS.size() >= HSSFColor.HSSFColorPredefined.values().length);
+        Stream.of("GREEN", "Green", "RED", "Red", "BLUE", "Blue", "YELLOW", "Yellow")
+                .map(CellFormatPart.NAMED_COLORS::get)
+                .forEach(Assert::assertNotNull);
     }
 }

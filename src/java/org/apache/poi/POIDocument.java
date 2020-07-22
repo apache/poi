@@ -49,7 +49,7 @@ import org.apache.poi.util.POILogger;
 /**
  * This holds the common functionality for all POI
  *  Document classes.
- * Currently, this relates to Document Information Properties 
+ * Currently, this relates to Document Information Properties
  */
 public abstract class POIDocument implements Closeable {
     /** Holds metadata on our document */
@@ -76,7 +76,7 @@ public abstract class POIDocument implements Closeable {
 
     /**
      * Constructs from the default POIFS
-     * 
+     *
      * @param fs the filesystem the document is read from
      */
     protected POIDocument(POIFSFileSystem fs) {
@@ -85,8 +85,8 @@ public abstract class POIDocument implements Closeable {
 
     /**
      * Fetch the Document Summary Information of the document
-     * 
-     * @return The Document Summary Information or null 
+     *
+     * @return The Document Summary Information or null
      *      if it could not be read for this document.
      */
     public DocumentSummaryInformation getDocumentSummaryInformation() {
@@ -96,9 +96,9 @@ public abstract class POIDocument implements Closeable {
         return dsInf;
     }
 
-    /** 
+    /**
      * Fetch the Summary Information of the document
-     * 
+     *
      * @return The Summary information for the document or null
      *      if it could not be read for this document.
      */
@@ -108,7 +108,7 @@ public abstract class POIDocument implements Closeable {
         }
         return sInf;
     }
-	
+
     /**
      * Will create whichever of SummaryInformation
      *  and DocumentSummaryInformation (HPSF) properties
@@ -136,7 +136,8 @@ public abstract class POIDocument implements Closeable {
      * If a given property set is missing or corrupt,
      *  it will remain null;
      */
-    protected void readProperties() {
+    @Internal
+    public void readProperties() {
         if (initialized) {
             return;
         }
@@ -170,11 +171,11 @@ public abstract class POIDocument implements Closeable {
         }
         return null;
     }
-    
-    /** 
+
+    /**
      * For a given named property entry, either return it or null if
      *  if it wasn't found
-     *  
+     *
      *  @param setName The property to read
      *  @return The value of the given property or null if it wasn't found.
      *
@@ -184,11 +185,11 @@ public abstract class POIDocument implements Closeable {
     protected PropertySet getPropertySet(String setName) throws IOException {
         return getPropertySet(setName, getEncryptionInfo());
     }
-    
-    /** 
+
+    /**
      * For a given named property entry, either return it or null if
      *  if it wasn't found
-     *  
+     *
      *  @param setName The property to read
      *  @param encryptionInfo the encryption descriptor in case of cryptoAPI encryption
      *  @return The value of the given property or null if it wasn't found.
@@ -198,7 +199,7 @@ public abstract class POIDocument implements Closeable {
     @SuppressWarnings("WeakerAccess")
     protected PropertySet getPropertySet(String setName, EncryptionInfo encryptionInfo) throws IOException {
         DirectoryNode dirNode = directory;
-        
+
         POIFSFileSystem encPoifs = null;
         String step = "getting";
         try {
@@ -212,12 +213,12 @@ public abstract class POIDocument implements Closeable {
                 encPoifs = dec.getSummaryEntries(dirNode, encryptedStream);
                 dirNode = encPoifs.getRoot();
             }
-            
+
             //directory can be null when creating new documents
             if (dirNode == null || !dirNode.hasEntry(setName)) {
                 return null;
             }
-    
+
             // Find the entry, and get an input stream for it
             step = "getting";
             try (DocumentInputStream dis = dirNode.createDocumentInputStream(dirNode.getEntry(setName))) {
@@ -233,11 +234,11 @@ public abstract class POIDocument implements Closeable {
             IOUtils.closeQuietly(encPoifs);
         }
     }
-    
+
     /**
      * Writes out the updated standard Document Information Properties (HPSF)
      *  into the currently open POIFSFileSystem
-     * 
+     *
      * @throws IOException if an error when writing to the open
      *      {@link POIFSFileSystem} occurs
      */
@@ -249,19 +250,20 @@ public abstract class POIDocument implements Closeable {
     /**
      * Writes out the standard Document Information Properties (HPSF)
      * @param outFS the POIFSFileSystem to write the properties into
-     * 
-     * @throws IOException if an error when writing to the 
+     *
+     * @throws IOException if an error when writing to the
      *      {@link POIFSFileSystem} occurs
      */
-    protected void writeProperties(POIFSFileSystem outFS) throws IOException {
+    @Internal
+    public void writeProperties(POIFSFileSystem outFS) throws IOException {
         writeProperties(outFS, null);
     }
     /**
      * Writes out the standard Document Information Properties (HPSF)
      * @param outFS the {@link POIFSFileSystem} to write the properties into
      * @param writtenEntries a list of POIFS entries to add the property names too
-     * 
-     * @throws IOException if an error when writing to the 
+     *
+     * @throws IOException if an error when writing to the
      *      {@link POIFSFileSystem} occurs
      */
     protected void writeProperties(POIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
@@ -308,15 +310,15 @@ public abstract class POIDocument implements Closeable {
             writtenEntries.add(name);
         }
     }
-	
+
     /**
      * Writes out a given PropertySet
      *
      * @param name the (POIFS Level) name of the property to write
-     * @param set the PropertySet to write out 
+     * @param set the PropertySet to write out
      * @param outFS the {@link POIFSFileSystem} to write the property into
-     * 
-     * @throws IOException if an error when writing to the 
+     *
+     * @throws IOException if an error when writing to the
      *      {@link POIFSFileSystem} occurs
      */
     private void writePropertySet(String name, PropertySet set, POIFSFileSystem outFS) throws IOException {
@@ -341,7 +343,7 @@ public abstract class POIDocument implements Closeable {
      * Called during a {@link #write()} to ensure that the Document (and
      *  associated {@link POIFSFileSystem}) was opened in a way compatible
      *  with an in-place write.
-     * 
+     *
      * @throws IllegalStateException if the document was opened suitably
      */
     protected void validateInPlaceWritePossible() throws IllegalStateException {
@@ -356,32 +358,32 @@ public abstract class POIDocument implements Closeable {
             throw new IllegalStateException("Opened read-only or via an InputStream, a Writeable File is required");
         }
     }
-    
+
     /**
      * Writes the document out to the currently open {@link File}, via the
      *  writeable {@link POIFSFileSystem} it was opened from.
-     *  
+     *
      * <p>This will fail (with an {@link IllegalStateException} if the
      *  document was opened read-only, opened from an {@link InputStream}
-     *   instead of a File, or if this is not the root document. For those cases, 
-     *   you must use {@link #write(OutputStream)} or {@link #write(File)} to 
+     *   instead of a File, or if this is not the root document. For those cases,
+     *   you must use {@link #write(OutputStream)} or {@link #write(File)} to
      *   write to a brand new document.
-     *   
+     *
      * @since POI 3.15 beta 3
-     * 
+     *
      * @throws IOException thrown on errors writing to the file
      * @throws IllegalStateException if this isn't from a writable File
      */
     public abstract void write() throws IOException;
 
     /**
-     * Writes the document out to the specified new {@link File}. If the file 
+     * Writes the document out to the specified new {@link File}. If the file
      * exists, it will be replaced, otherwise a new one will be created
      *
      * @since POI 3.15 beta 3
-     * 
+     *
      * @param newFile The new File to write to.
-     * 
+     *
      * @throws IOException thrown on errors writing to the file
      */
     public abstract void write(File newFile) throws IOException;
@@ -389,20 +391,20 @@ public abstract class POIDocument implements Closeable {
     /**
      * Writes the document out to the specified output stream. The
      * stream is not closed as part of this operation.
-     * 
+     *
      * Note - if the Document was opened from a {@link File} rather
      *  than an {@link InputStream}, you <b>must</b> write out using
      *  {@link #write()} or to a different File. Overwriting the currently
      *  open file via an OutputStream isn't possible.
-     *  
+     *
      * If {@code stream} is a {@link java.io.FileOutputStream} on a networked drive
      * or has a high cost/latency associated with each written byte,
      * consider wrapping the OutputStream in a {@link java.io.BufferedOutputStream}
      * to improve write performance, or use {@link #write()} / {@link #write(File)}
      * if possible.
-     * 
+     *
      * @param out The stream to write to.
-     * 
+     *
      * @throws IOException thrown on errors writing to the stream
      */
     public abstract void write(OutputStream out) throws IOException;
@@ -429,7 +431,7 @@ public abstract class POIDocument implements Closeable {
     public DirectoryNode getDirectory() {
         return directory;
     }
-    
+
     /**
      * Clear/unlink the attached directory entry
      */
@@ -437,11 +439,11 @@ public abstract class POIDocument implements Closeable {
     protected void clearDirectory() {
         directory = null;
     }
-    
+
     /**
      * check if we were created by POIFS otherwise create a new dummy POIFS
      * for storing the package data
-     * 
+     *
      * @return {@code true} if dummy directory was created, {@code false} otherwise
      */
     @SuppressWarnings("resource")
@@ -453,7 +455,7 @@ public abstract class POIDocument implements Closeable {
         }
         return false;
     }
-    
+
     /**
      * Replaces the attached directory, e.g. if this document is written
      * to a new POIFSFileSystem

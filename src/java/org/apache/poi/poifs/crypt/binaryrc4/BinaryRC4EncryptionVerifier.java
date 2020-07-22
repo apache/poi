@@ -57,7 +57,7 @@ public class BinaryRC4EncryptionVerifier extends EncryptionVerifier implements E
     }
 
     @Override
-    protected void setSalt(byte[] salt) {
+    public void setSalt(byte[] salt) {
         if (salt == null || salt.length != 16) {
             throw new EncryptedDocumentException("invalid verifier salt");
         }
@@ -66,12 +66,12 @@ public class BinaryRC4EncryptionVerifier extends EncryptionVerifier implements E
     }
 
     @Override
-    protected void setEncryptedVerifier(byte[] encryptedVerifier) {
+    public void setEncryptedVerifier(byte[] encryptedVerifier) {
         super.setEncryptedVerifier(encryptedVerifier);
     }
 
     @Override
-    protected void setEncryptedVerifierHash(byte[] encryptedVerifierHash) {
+    public void setEncryptedVerifierHash(byte[] encryptedVerifierHash) {
         super.setEncryptedVerifierHash(encryptedVerifierHash);
     }
 

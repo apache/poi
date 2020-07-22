@@ -17,11 +17,11 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.formula.eval.forked.TestForkedEvaluator;
+import org.apache.poi.ss.formula.eval.forked.BaseTestForkedEvaluator;
 import org.apache.poi.ss.usermodel.Workbook;
 
-public class TestXSSFForkedEvaluator extends TestForkedEvaluator {
-    
+public class TestXSSFForkedEvaluator extends BaseTestForkedEvaluator {
+
     @Override
     protected Workbook newWorkbook() {
         return new XSSFWorkbook();

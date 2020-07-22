@@ -30,12 +30,12 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.apache.poi.examples.hpsf.CopyCompare;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
 import org.apache.poi.hpsf.MarkUnsupportedException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hpsf.examples.CopyCompare;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;

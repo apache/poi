@@ -18,7 +18,7 @@
 package org.apache.poi.hslf.record;
 
 
-import static org.apache.poi.ss.formula.functions.AbstractNumericTestCase.assertEquals;
+import static org.apache.poi.ss.formula.functions.BaseTestNumeric.assertEquals;
 import static org.junit.Assert.assertArrayEquals;
 
 import java.io.ByteArrayOutputStream;

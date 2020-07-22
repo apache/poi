@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.apache.poi.sl.TestCommonSL.getColor;
+import static org.apache.poi.sl.usermodel.BaseTestSlideShow.getColor;
 import static org.apache.poi.xslf.usermodel.TestXSLFSimpleShape.getSpPr;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;

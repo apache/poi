@@ -29,7 +29,7 @@ import org.junit.Test;
  *
  * @author Stephen Wolke (smwolke at geistig.com)
  */
-public final class TestTrunc extends AbstractNumericTestCase {
+public final class TestTrunc extends BaseTestNumeric {
 	private static final NumericFunction F = null;
 
 	@Test

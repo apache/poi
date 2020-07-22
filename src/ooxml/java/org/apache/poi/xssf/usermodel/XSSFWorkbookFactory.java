@@ -25,20 +25,20 @@ import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
-import org.apache.poi.openxml4j.opc.ZipPackage;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
+import org.apache.poi.poifs.filesystem.FileMagic;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.usermodel.WorkbookProvider;
+import org.apache.poi.util.Internal;
 
-public class XSSFWorkbookFactory extends WorkbookFactory {
+@Internal
+public class XSSFWorkbookFactory implements WorkbookProvider {
 
-    static {
-        init();
-    }
-
-    public static void init() {
-        WorkbookFactory.createXssfFromScratch = XSSFWorkbookFactory::createWorkbook;
-        WorkbookFactory.createXssfByStream = XSSFWorkbookFactory::createWorkbook;
-        WorkbookFactory.createXssfByPackage = o -> XSSFWorkbookFactory.createWorkbook((OPCPackage)o);
-        WorkbookFactory.createXssfByFile = XSSFWorkbookFactory::createWorkbook;
+    @Override
+    public boolean accepts(FileMagic fm) {
+        return fm == FileMagic.OOXML;
     }
 
     /**
@@ -46,41 +46,62 @@ public class XSSFWorkbookFactory extends WorkbookFactory {
      *
      * @return The created workbook
      */
-    public static XSSFWorkbook createWorkbook() {
+    @Override
+    public XSSFWorkbook create() {
         return new XSSFWorkbook();
     }
 
-    /**
-     * Creates a XSSFWorkbook from the given OOXML Package.
-     * This is a convenience method to go along the create-methods of the super class.
-     *
-     * <p>Note that in order to properly release resources the
-     *  Workbook should be closed after use.</p>
-     *
-     *  @param pkg The {@link OPCPackage} opened for reading data.
-     *
-     *  @return The created Workbook
-     *
-     *  @throws IOException if an error occurs while reading the data
-     */
-    public static XSSFWorkbook create(OPCPackage pkg) throws IOException {
-        return createWorkbook(pkg);
+    @Override
+    public XSSFWorkbook create(DirectoryNode root, String password) throws IOException {
+        try (InputStream stream = DocumentFactoryHelper.getDecryptedStream(root, password)) {
+            return create(stream);
+        } finally {
+            // as we processed the full stream already, we can close the filesystem here
+            // otherwise file handles are leaked
+            root.getFileSystem().close();
+        }
+    }
+
+    @Override
+    public Workbook create(InputStream inp, String password) throws IOException {
+        InputStream bufInp = FileMagic.prepareToCheckMagic(inp);
+        FileMagic fm = FileMagic.valueOf(bufInp);
+
+        if (fm == FileMagic.OLE2) {
+            try (POIFSFileSystem poifs = new POIFSFileSystem(bufInp);
+                 InputStream stream = DocumentFactoryHelper.getDecryptedStream(poifs.getRoot(), password)) {
+                return create(stream);
+            }
+        }
+
+        if (fm == FileMagic.OOXML) {
+            return create(bufInp);
+        }
+
+        return null;
     }
 
     /**
-     * Creates a XSSFWorkbook from the given OOXML Package
+     * Creates a XSSFWorkbook from the given InputStream
      *
      * <p>Note that in order to properly release resources the
-     *  Workbook should be closed after use.</p>
+     * Workbook should be closed after use.</p>
      *
-     *  @param pkg The {@link ZipPackage} opened for reading data.
+     * @param stream The {@link InputStream} to read data from.
      *
-     *  @return The created Workbook
+     * @return The created Workbook
      *
-     *  @throws IOException if an error occurs while reading the data
+     * @throws IOException if an error occurs while reading the data
      */
-    public static XSSFWorkbook createWorkbook(ZipPackage pkg) throws IOException {
-        return createWorkbook((OPCPackage)pkg);
+    @SuppressWarnings("resource")
+    @Override
+    public XSSFWorkbook create(InputStream stream) throws IOException {
+        try {
+            OPCPackage pkg = OPCPackage.open(stream);
+            return createWorkbook(pkg);
+        } catch (InvalidFormatException e) {
+            throw new IOException(e);
+        }
     }
 
     /**
@@ -122,31 +143,18 @@ public class XSSFWorkbookFactory extends WorkbookFactory {
      *  @throws EncryptedDocumentException If the wrong password is given for a protected file
      */
     @SuppressWarnings("resource")
-    public static XSSFWorkbook createWorkbook(File file, boolean readOnly) throws IOException {
+    public XSSFWorkbook create(File file, String password, boolean readOnly) throws IOException {
+        FileMagic fm = FileMagic.valueOf(file);
+
+        if (fm == FileMagic.OLE2) {
+            try (POIFSFileSystem poifs = new POIFSFileSystem(file, true);
+                 InputStream stream = DocumentFactoryHelper.getDecryptedStream(poifs.getRoot(), password)) {
+                return create(stream);
+            }
+        }
+
         try {
             OPCPackage pkg = OPCPackage.open(file, readOnly ? PackageAccess.READ : PackageAccess.READ_WRITE);
-            return createWorkbook(pkg);
-        } catch (InvalidFormatException e) {
-            throw new IOException(e);
-        }
-    }
-
-    /**
-     * Creates a XSSFWorkbook from the given InputStream
-     *
-     * <p>Note that in order to properly release resources the
-     * Workbook should be closed after use.</p>
-     *
-     * @param stream The {@link InputStream} to read data from.
-     *
-     * @return The created Workbook
-     *
-     * @throws IOException if an error occurs while reading the data
-     */
-    @SuppressWarnings("resource")
-    public static XSSFWorkbook createWorkbook(InputStream stream) throws IOException {
-        try {
-            OPCPackage pkg = OPCPackage.open(stream);
             return createWorkbook(pkg);
         } catch (InvalidFormatException e) {
             throw new IOException(e);

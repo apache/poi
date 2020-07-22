@@ -17,7 +17,9 @@
 
 
 open module org.apache.poi.ooxml.schemas {
-    requires transitive xmlbeans;
+    // this still throws "requires transitive directive for an automatic module" in JDK 14
+    // see https://bugs.openjdk.java.net/browse/JDK-8240847
+    requires transitive org.apache.xmlbeans;
     requires java.xml;
     exports com.microsoft.schemas.compatibility;
     exports com.microsoft.schemas.office.excel;
@@ -47,5 +49,11 @@ open module org.apache.poi.ooxml.schemas {
     exports org.openxmlformats.schemas.schemaLibrary.x2006.main;
     exports org.openxmlformats.schemas.spreadsheetml.x2006.main;
     exports org.openxmlformats.schemas.wordprocessingml.x2006.main;
-    // opens schemaorg_apache_xmlbeans.system.OoxmlSchemas to xmlbeans;
+
+    exports com.microsoft.schemas.office.x2006.digsig;
+    exports org.etsi.uri.x01903.v13;
+    exports org.etsi.uri.x01903.v14;
+    exports org.openxmlformats.schemas.xpackage.x2006.digitalSignature;
+    exports org.openxmlformats.schemas.xpackage.x2006.relationships;
+    exports org.w3.x2000.x09.xmldsig;
 }

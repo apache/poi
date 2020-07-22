@@ -17,6 +17,15 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -24,7 +33,7 @@ import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaParseException;
-import org.apache.poi.ss.usermodel.BaseTestXCell;
+import org.apache.poi.ss.tests.usermodel.BaseTestXCell;
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellCopyPolicy;
@@ -52,8 +61,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
-
-import static org.junit.Assert.*;
 
 public final class TestXSSFCell extends BaseTestXCell {
 

@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.functions.TestMathX;
+import org.apache.poi.ss.formula.functions.BaseTestNumeric;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
@@ -196,7 +196,7 @@ public final class TestMatrixFormulasFromXMLSpreadsheet {
                        fail("Cannot expect formula as result of formula evaluation: " + msg);
                    case NUMERIC:
                        assertEquals(msg, CellType.NUMERIC, actValue.getCellType());
-                       TestMathX.assertEquals(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
+                       BaseTestNumeric.assertEquals(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), BaseTestNumeric.POS_ZERO, BaseTestNumeric.DIFF_TOLERANCE_FACTOR);
                        break;
                    case STRING:
                        assertEquals(msg, CellType.STRING, actValue.getCellType());

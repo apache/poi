@@ -19,7 +19,16 @@
 
 package org.apache.poi.xssf.streaming;
 
-import org.apache.poi.ss.usermodel.BaseTestXWorkbook;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+
+import java.io.IOException;
+
+import org.apache.poi.ss.tests.usermodel.BaseTestXWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
@@ -33,21 +42,17 @@ import org.junit.After;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.IOException;
-
-import static org.junit.Assert.*;
-
 public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
-    
+
     public TestDeferredSXSSFWorkbook() {
         super(DeferredSXSSFITestDataProvider.instance);
     }
-    
+
     @After
     public void tearDown() {
         ((DeferredSXSSFITestDataProvider) _testDataProvider).cleanup();
     }
-    
+
     /**
      * cloning of sheets is not supported in SXSSF
      */
@@ -61,7 +66,7 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
             assertEquals("Not Implemented", e.getMessage());
         }
     }
-    
+
     /**
      * cloning of sheets is not supported in SXSSF
      */
@@ -75,7 +80,7 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
             assertEquals("Not Implemented", e.getMessage());
         }
     }
-    
+
     /**
      * Skip this test, as SXSSF doesn't update formulas on sheet name changes.
      */
@@ -101,7 +106,7 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
         DeferredSXSSFWorkbook wb1 = new DeferredSXSSFWorkbook(xssfWb1);
         XSSFWorkbook xssfWb2 = DeferredSXSSFITestDataProvider.instance.writeOutAndReadBack(wb1);
         assertTrue(wb1.dispose());
-        
+
         DeferredSXSSFWorkbook wb2 = new DeferredSXSSFWorkbook(xssfWb2);
         assertEquals(1, wb2.getNumberOfSheets());
         Sheet sheet = wb2.getStreamingSheetAt(0);
@@ -110,7 +115,7 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
         assertTrue(wb2.dispose());
         xssfWb2.close();
         xssfWb1.close();
-        
+
         wb2.close();
         wb1.close();
     }
@@ -127,7 +132,7 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
         XSSFWorkbook xssfWb2 = DeferredSXSSFITestDataProvider.instance.writeOutAndReadBack(wb1);
         assertTrue(wb1.dispose());
         xssfWb1.close();
-        
+
         DeferredSXSSFWorkbook wb2 = new DeferredSXSSFWorkbook(xssfWb2);
         // Add a row to the existing empty sheet
         DeferredSXSSFSheet ssheet1 = wb2.getStreamingSheetAt(0);
@@ -136,7 +141,7 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
             Cell cell1_1_1 = row1_1.createCell(1);
             cell1_1_1.setCellValue("value 1_1_1");
         });
-        
+
         // Add a row to the existing non-empty sheet
         DeferredSXSSFSheet ssheet2 = wb2.getStreamingSheetAt(1);
         ssheet2.setRowGenerator((ssxSheet) -> {
@@ -151,10 +156,10 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
             Cell cell3_1_1 = row3_1.createCell(1);
             cell3_1_1.setCellValue("value 3_1_1");
         });
-        
+
         XSSFWorkbook xssfWb3 = DeferredSXSSFITestDataProvider.instance.writeOutAndReadBack(wb2);
         wb2.close();
-        
+
         assertEquals(3, xssfWb3.getNumberOfSheets());
         // Verify sheet 1
         XSSFSheet sheet1 = xssfWb3.getSheetAt(0);
@@ -188,12 +193,12 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
         XSSFCell cell3_1_1 = row3_1.getCell(1);
         assertNotNull(cell3_1_1);
         assertEquals("value 3_1_1", cell3_1_1.getStringCellValue());
-        
+
         xssfWb2.close();
         xssfWb3.close();
         wb1.close();
     }
-    
+
     @Test
     public void sheetdataWriter() throws IOException {
         DeferredSXSSFWorkbook wb = new DeferredSXSSFWorkbook();
@@ -228,7 +233,7 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
             }
         }
     }
-    
+
     @Test
     public void gzipSheetdataWriter() throws IOException {
         DeferredSXSSFWorkbook wb = new DeferredSXSSFWorkbook();
@@ -236,7 +241,7 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
         final int rowNum = 1000;
         final int sheetNum = 5;
         populateData(wb, 1000, 5);
-        
+
         XSSFWorkbook xwb = DeferredSXSSFITestDataProvider.instance.writeOutAndReadBack(wb);
         for (int i = 0; i < sheetNum; i++) {
             Sheet sh = xwb.getSheetAt(i);
@@ -246,15 +251,15 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
                 assertNotNull("row[" + j + "]", row);
                 Cell cell1 = row.getCell(0);
                 assertEquals(new CellReference(cell1).formatAsString(), cell1.getStringCellValue());
-                
+
                 Cell cell2 = row.getCell(1);
                 assertEquals(i, (int) cell2.getNumericCellValue());
-                
+
                 Cell cell3 = row.getCell(2);
                 assertEquals(j, (int) cell3.getNumericCellValue());
             }
         }
-        
+
         assertTrue(wb.dispose());
         xwb.close();
         wb.close();
@@ -273,23 +278,23 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
         assertWorkbookDispose(wb2);
         wb2.close();
     }
-    
+
     private static void assertWorkbookDispose(DeferredSXSSFWorkbook wb) {
         populateData(wb, 1000, 5);
-        
+
         for (Sheet sheet : wb) {
             DeferredSXSSFSheet sxSheet = (DeferredSXSSFSheet) sheet;
             assertNull(sxSheet.getSheetDataWriter());
         }
-        
+
         assertTrue(wb.dispose());
-        
+
         for (Sheet sheet : wb) {
             DeferredSXSSFSheet sxSheet = (DeferredSXSSFSheet) sheet;
             assertNull(sxSheet.getSheetDataWriter());
         }
     }
-    
+
     private static void populateData(DeferredSXSSFWorkbook wb, final int rowNum, final int sheetNum) {
         for (int i = 0; i < sheetNum; i++) {
             DeferredSXSSFSheet sheet = wb.createSheet("sheet" + i);
@@ -299,10 +304,10 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
                     Row row = sh.createRow(j);
                     Cell cell1 = row.createCell(0);
                     cell1.setCellValue(new CellReference(cell1).formatAsString());
-                    
+
                     Cell cell2 = row.createCell(1);
                     cell2.setCellValue(index);
-                    
+
                     Cell cell3 = row.createCell(2);
                     cell3.setCellValue(j);
                 }

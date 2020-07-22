@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<!-- 
+<!--
 Licensed to the Apache Software Foundation (ASF) under one
 or more contributor license agreements.  See the NOTICE file
 distributed with this work for additional information
@@ -164,7 +164,7 @@ under the License.
     <target name="test-udf">
         <poi:excelant fileName="${data.dir.name}/spreadsheet/excelant.xls">
             <poi:udf functionAlias="calculatePayment"
-                     className="org.apache.poi.ss.examples.formula.CalculateMortgageFunction"/>
+                     className="org.apache.poi.ss.excelant.CalculateMortgageFunction"/>
             <poi:test>
                 <poi:setDouble cell="'MortageCalculatorFunction'!$B$1" value="240000"/>
                 <poi:setDouble cell="'MortageCalculatorFunction'!$B$2" value ="0.11"/>

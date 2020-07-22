@@ -24,7 +24,7 @@ import static org.junit.Assert.fail;
 
 import java.io.IOException;
 
-import org.apache.poi.ss.usermodel.BaseTestXSheet;
+import org.apache.poi.ss.tests.usermodel.BaseTestXSheet;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
@@ -44,7 +44,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
     public void tearDown(){
         SXSSFITestDataProvider.instance.cleanup();
     }
-    
+
     @Override
     protected void trackColumnsForAutoSizingIfSXSSF(Sheet sheet) {
         SXSSFSheet sxSheet = (SXSSFSheet) sheet;
@@ -70,7 +70,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
         thrown.expectMessage("Not Implemented");
         super.cloneSheetMultipleTimes();
     }
-    
+
     /**
      * shifting rows is not supported in SXSSF
      */
@@ -98,11 +98,11 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
     @Override
     @Test
     public void getCellComment() throws IOException {
-        // TODO: reading cell comments via Sheet does not work currently as it tries 
+        // TODO: reading cell comments via Sheet does not work currently as it tries
         // to access the underlying sheet for this, but comments are stored as
         // properties on Cells...
     }
-    
+
     @Override
     @Test
     public void defaultColumnStyle() {
@@ -133,7 +133,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
         Workbook wb = new SXSSFWorkbook(template);
         try {
             Sheet sheet = wb.getSheetAt(0);
-    
+
             try {
                 sheet.createRow(1);
                 fail("expected exception");
@@ -160,13 +160,13 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
         SXSSFRow row0 = sheet.createRow(0);
         SXSSFRow row1 = sheet.createRow(1);
         sheet.changeRowNum(row0, 2);
-        
+
         assertEquals("Row 1 knows its row number", 1, row1.getRowNum());
         assertEquals("Row 2 knows its row number", 2, row0.getRowNum());
         assertEquals("Sheet knows Row 1's row number", 1, sheet.getRowNum(row1));
         assertEquals("Sheet knows Row 2's row number", 2, sheet.getRowNum(row0));
         assertEquals("Sheet row iteratation order should be ascending", row1, sheet.iterator().next());
-        
+
         wb.close();
     }
 }

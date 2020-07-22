@@ -1546,7 +1546,8 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
         }
     }
 
-    /*package*/ InternalWorkbook getWorkbook() {
+    @Internal
+    public InternalWorkbook getWorkbook() {
         return workbook;
     }
 
