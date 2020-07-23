@@ -1233,7 +1233,7 @@ under the License.
             <attribute name="Automatic-Module-Name" value="org.apache.poi.stress"/>
         </manifest>
 
-        <jar destfile="lib/ooxml-tests/poi-integration.jar"
+        <jar destfile="build/dist/maven/poi-integration/poi-integration-${version.id}.jar"
              basedir="${integration.output.test.dir}"
              manifest="build/poi-manifest.mf"/>
     </target>
@@ -1538,6 +1538,7 @@ under the License.
             <pathelement path="build/dist/maven/poi-scratchpad"/>
             <pathelement path="build/dist/maven/poi-examples"/>
             <pathelement path="build/dist/maven/ooxml-schemas"/>
+            <pathelement path="build/dist/maven/poi-integration"/>
             <pathelement path="lib/main"/>
             <pathelement path="lib/main-tests"/>
             <pathelement path="lib/ooxml"/>
@@ -1965,10 +1966,6 @@ under the License.
     <target name="jar" depends="compile, compile-ooxml-lite" description="Creates jar files for distribution">
     </target>
 
-    <target name="integration-test-jar" depends="compile-integration,-manifest" description="target for packaging the integration-test code for mass regression test runs">
-        <maven-jar src="${integration.output.test.dir}"/>
-    </target>
-
     <target name="-do-jar-check-javadocs-package-list">
         <condition property="javadocs.package-list.present">
             <available file="${javadocs.report.dir}/package-list"/>
@@ -2140,7 +2137,7 @@ under the License.
 
     <!-- continuous integration targets -->
     <target name="jenkins"
-        depends="replaceVersion, compile, test-all, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check, integration-test-jar, help, fetch-svn-jars, maven-poms, maventask, mvn-install"
+        depends="replaceVersion, compile, test-all, jar, javadocs, assemble, findbugs, release-notes, rat-check, forbidden-apis-check, help, fetch-svn-jars, maven-poms, maventask, mvn-install"
         description="Target run by Jenkins on a continuous basis. Builds and tests POI, generates artifacts and documentation, and searches for problems."/>
 
     <target name="maventask" depends="init">
@@ -2260,10 +2257,10 @@ under the License.
             -->
             <signaturesFileset file="src/resources/devtools/forbidden-signatures.txt"/>
             <!-- sources -->
-            <!-- zipfileset src="build/dist/maven/poi/poi-5.0.0-SNAPSHOT.jar"/ -->
-            <!-- zipfileset src="build/dist/maven/poi-ooxml/poi-ooxml-5.0.0-SNAPSHOT.jar"/ -->
-            <zipfileset src="build/dist/maven/poi-scratchpad/poi-scratchpad-5.0.0-SNAPSHOT.jar"/>
-            <zipfileset src="build/dist/maven/poi-excelant/poi-excelant-5.0.0-SNAPSHOT.jar"/>
+            <!-- zipfileset src="build/dist/maven/poi/poi-${version.id}.jar"/ -->
+            <!-- zipfileset src="build/dist/maven/poi-ooxml/poi-ooxml-${version.id}.jar"/ -->
+            <zipfileset src="build/dist/maven/poi-scratchpad/poi-scratchpad-${version.id}.jar"/>
+            <zipfileset src="build/dist/maven/poi-excelant/poi-excelant-${version.id}.jar"/>
             <!--
             <fileset dir="${examples.output.dir}"/>
             -->
@@ -2285,12 +2282,11 @@ under the License.
             >
             <signaturesFileset file="src/resources/devtools/forbidden-signatures-prod.txt"/>
             <!-- sources -->
-            <zipfileset src="build/dist/maven/poi/poi-5.0.0-SNAPSHOT.jar"/>
-            <zipfileset src="build/dist/maven/poi-ooxml/poi-ooxml-5.0.0-SNAPSHOT.jar"/>
-            <zipfileset src="build/dist/maven/poi-scratchpad/poi-scratchpad-5.0.0-SNAPSHOT.jar"/>
-            <zipfileset src="build/dist/maven/poi-excelant/poi-excelant-5.0.0-SNAPSHOT.jar"/>
-
-            <zipfileset src="lib/ooxml-tests/poi-integration.jar"/>
+            <zipfileset src="build/dist/maven/poi/poi-${version.id}.jar"/>
+            <zipfileset src="build/dist/maven/poi-ooxml/poi-ooxml-${version.id}.jar"/>
+            <zipfileset src="build/dist/maven/poi-scratchpad/poi-scratchpad-${version.id}.jar"/>
+            <zipfileset src="build/dist/maven/poi-excelant/poi-excelant-${version.id}.jar"/>
+            <zipfileset src="build/dist/maven/poi-integration/poi-integration-${version.id}.jar"/>
         </forbiddenapis>
     </target>
 
