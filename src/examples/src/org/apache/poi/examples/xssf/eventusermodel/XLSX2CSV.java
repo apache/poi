@@ -135,7 +135,7 @@ public class XLSX2CSV {
                 //noinspection ResultOfMethodCallIgnored
                 Double.parseDouble(formattedValue);
                 output.append(formattedValue);
-            } catch (NumberFormatException e) {
+            } catch (Exception e) {
                 output.append('"');
                 output.append(formattedValue);
                 output.append('"');
