@@ -569,6 +569,10 @@ under the License.
             <fileset dir="${basedir}/lib/ooxml">
                 <include name="xmlbeans-3.1.0.jar"/>
             </fileset>
+            <fileset dir="${basedir}/lib/ooxml-provided">
+                <include name="bcpkix-jdk15on-1.65.jar"/>
+                <include name="bcprov-ext-jdk15on-1.65.jar"/>
+            </fileset>
             <fileset dir="${basedir}/lib/ooxml-tests">
                 <include name="guava-20.0.jar"/>
             </fileset>
