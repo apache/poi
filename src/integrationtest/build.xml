@@ -118,7 +118,7 @@ Before running this, you should execute the "assemble" target in the main build.
         <javac srcdir="../examples/src" destdir="${build}"
                target="1.8" source="1.8" debug="true"
                encoding="ASCII" fork="yes" includeantruntime="false"
-               excludes="org/apache/poi/hslf/**,org/apache/poi/hsmf/**,**/EmbeddedObjects.java,**/EmeddedObjects.java,**/LoadEmbedded.java,**/Word2Forrest.java"
+               excludes="org/apache/poi/examples/hslf/**,org/apache/poi/examples/hsmf/**,**/EmbeddedObjects.java,**/EmeddedObjects.java,**/LoadEmbedded.java,**/Word2Forrest.java"
                classpath="${jarpackage}" classpathref="libs">
         </javac>
 
