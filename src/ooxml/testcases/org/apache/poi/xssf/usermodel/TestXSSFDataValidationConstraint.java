@@ -23,6 +23,10 @@ import org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType;
 import org.apache.poi.ss.usermodel.DataValidationConstraint.OperatorType;
 import org.junit.Test;
 
+import java.util.Collections;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+
 public class TestXSSFDataValidationConstraint {
     static final int listType = ValidationType.LIST;
     static final int ignoredType = OperatorType.IGNORED;
@@ -49,6 +53,12 @@ public class TestXSSFDataValidationConstraint {
         assertArrayEquals(expected, constraint.getExplicitListValues());
         // Excel and DataValidationConstraint parser ignore (strip) whitespace; quotes should still be intact
         assertEquals(literal.replace(" ", ""), constraint.getFormula1());
+    }
+
+    @Test
+    public void listLiteralsGreaterThan255CharactersThrows() {
+        String[] literal = IntStream.range(0, 129).mapToObj(i -> "a").toArray(String[]::new);
+        assertThrows(IllegalArgumentException.class, () -> new XSSFDataValidationConstraint(literal));
     }
 
     @Test
