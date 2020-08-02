@@ -18,9 +18,12 @@ package org.apache.poi.xssf.usermodel;
 
 import static org.junit.Assert.*;
 
+import org.apache.poi.ss.formula.DataValidationEvaluator;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.apache.poi.ss.usermodel.DataValidationConstraint.ValidationType;
+import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.DataValidationConstraint.OperatorType;
+import org.apache.poi.ss.util.CellReference;
 import org.junit.Test;
 
 import java.util.Collections;
@@ -59,6 +62,14 @@ public class TestXSSFDataValidationConstraint {
     public void listLiteralsGreaterThan255CharactersThrows() {
         String[] literal = IntStream.range(0, 129).mapToObj(i -> "a").toArray(String[]::new);
         assertThrows(IllegalArgumentException.class, () -> new XSSFDataValidationConstraint(literal));
+    }
+    
+    @Test
+    public void dataValidationListLiteralTooLongFromFile() {
+        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("DataValidationListTooLong.xlsx");
+        XSSFFormulaEvaluator fEval = wb.getCreationHelper().createFormulaEvaluator();
+        DataValidationEvaluator dvEval = new DataValidationEvaluator(wb, fEval);
+        assertThrows(IllegalArgumentException.class, () -> dvEval.getValidationValuesForCell(new CellReference("Sheet0!A1")));
     }
 
     @Test
