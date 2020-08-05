@@ -849,7 +849,11 @@ under the License.
             <local name="cp_java"/>
             <pathconvert property="cp_java" pathsep=",">
                 <path><lib/></path>
-                <regexpmapper from="^${basedir}[/\\](.*)$" to="\1/*.jar"/>
+                <filtermapper>
+                    <replacestring from="${basedir}" to=""/>
+                    <replaceregex pattern="^." replace=""/>
+                    <suffixlines suffix="${file.separator}*.jar"/>
+                </filtermapper>
             </pathconvert>
 
             <local name="maven-name"/>
@@ -1106,7 +1110,11 @@ under the License.
             <local name="cp_java"/>
             <pathconvert property="cp_java" pathsep=",">
                 <path refid="@{modulepath-ref}"/>
-                <regexpmapper from="^${basedir}[/\\](.*)$" to="\1/*.jar"/>
+                <filtermapper>
+                    <replacestring from="${basedir}" to=""/>
+                    <replaceregex pattern="^." replace=""/>
+                    <suffixlines suffix="${file.separator}*.jar"/>
+                </filtermapper>
             </pathconvert>
 
             <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="@{jacocodest}">
