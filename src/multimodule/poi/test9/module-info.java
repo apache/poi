@@ -24,6 +24,9 @@ module org.apache.poi.poi {
     requires java.logging;
     requires java.desktop;
 
+    /* needed for CleanerUtil */
+    requires jdk.unsupported;
+
     uses org.apache.poi.ss.usermodel.WorkbookProvider;
 
     provides org.apache.poi.ss.usermodel.WorkbookProvider with org.apache.poi.hssf.usermodel.HSSFWorkbookFactory;
