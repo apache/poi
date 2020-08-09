@@ -67,6 +67,7 @@ import org.openxmlformats.schemas.drawingml.x2006.chart.CTChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTDateAx;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTDoughnutChart;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTExternalData;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLine3DChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTLineChart;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTPie3DChart;
@@ -1057,6 +1058,11 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
      */
     public void setExternalId(String id) {
         getCTChartSpace().addNewExternalData().setId(id);
+        CTChartSpace ctChartSpace = getCTChartSpace();
+        CTExternalData externalData = ctChartSpace.isSetExternalData()
+                ? ctChartSpace.getExternalData()
+                : ctChartSpace.addNewExternalData();
+        externalData.setId(id);
     }
 
     /**

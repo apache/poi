@@ -21,13 +21,34 @@ package org.apache.poi.xddf.usermodel.chart;
 import org.apache.poi.ooxml.POIXMLFactory;
 import org.apache.poi.ooxml.POIXMLRelation;
 import org.junit.Test;
+import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 public class TestXDDFChart {
     @Test
     public void testConstruct() {
         // minimal test to cause ooxml-lite to include all the classes in poi-ooxml-schemas
+        XDDFChart xddfChart = newXDDFChart();
+
+        assertNotNull(xddfChart.getCTChartSpace());
+        assertNotNull(xddfChart.getCTPlotArea());
+    }
+
+    @Test
+    public void testSetExternalId() {
+        XDDFChart xddfChart = newXDDFChart();
+        CTChartSpace ctChartSpace = xddfChart.getCTChartSpace();
+
+        xddfChart.setExternalId("rid1");
+        assertEquals("rid1", ctChartSpace.getExternalData().getId());
+        
+        xddfChart.setExternalId("rid2");
+        assertEquals("rid2", ctChartSpace.getExternalData().getId());
+    }
+
+    private XDDFChart newXDDFChart() {
         XDDFChart xddfChart = new XDDFChart() {
             @Override
             protected POIXMLRelation getChartRelation() {
@@ -44,7 +65,6 @@ public class TestXDDFChart {
                 return null;
             }
         };
-
-        assertNotNull(xddfChart.getCTPlotArea());
+        return xddfChart;
     }
 }
