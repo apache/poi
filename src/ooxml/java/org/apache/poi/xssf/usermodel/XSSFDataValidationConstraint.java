@@ -30,12 +30,14 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationOpera
 public class XSSFDataValidationConstraint implements DataValidationConstraint {
     /**
      * Excel validation constraints with static lists are delimited with optional whitespace and the Windows List Separator,
-     * which is typically comma, but can be changed by users.  POI will just assume comma.
+     * which is typically comma, but can be changed by users. POI will just assume comma.
+	 * In addition, Excel validation with static lists has a maximum size of 255 characters, including separators and excluding quotes.
      */
     private static final String LIST_SEPARATOR = ",";
     private static final Pattern LIST_SPLIT_REGEX = Pattern.compile("\\s*" + LIST_SEPARATOR + "\\s*");
     private static final String QUOTE = "\"";
-    
+	private static final int MAX_EXPLICIT_LIST_LENGTH = 257;
+
 	private String formula1;
 	private String formula2;
 	private int validationType = -1;
@@ -203,6 +205,9 @@ public class XSSFDataValidationConstraint implements DataValidationConstraint {
 		if (validationType==ValidationType.LIST ) {
 			if (isFormulaEmpty(formula1)) {
 				throw new IllegalArgumentException("A valid formula or a list of values must be specified for list validation.");
+			}
+			if(formula1.length() > MAX_EXPLICIT_LIST_LENGTH) {
+				throw new IllegalArgumentException("A valid formula or a list of values must be less than or equal to 255 characters (including separators).");
 			}
 		} else  {
 			if( isFormulaEmpty(formula1) ) {
