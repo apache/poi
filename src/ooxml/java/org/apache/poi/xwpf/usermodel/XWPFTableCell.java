@@ -421,6 +421,18 @@ public class XWPFTableCell implements IBody, ICell {
         tables.add(i, table);
     }
 
+    /**
+     * removes a table of this table cell
+     *
+     * @param pos The position in the list of tables, 0-based
+     */
+    public void removeTable(int pos) {
+        XWPFTable removedTable = tables.get(pos);
+        tables.remove(pos);
+        ctTc.removeTbl(pos);
+        bodyElements.remove(removedTable);
+    }
+
     public String getText() {
         StringBuilder text = new StringBuilder();
         for (XWPFParagraph p : paragraphs) {

@@ -28,6 +28,7 @@ import org.junit.Test;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell.XWPFVertAlign;
+import org.apache.xmlbeans.XmlCursor;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHMerge;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTShd;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
@@ -209,6 +210,31 @@ public class TestXWPFTableCell {
         assertEquals(1, cell.getParagraphs().size());
         assertEquals(1, cell.getBodyElements().size());
         assertEquals(p0, cell.getParagraphArray(0));
+        assertEquals(p0, cell.getBodyElements().get(0));
+
+        doc.close();
+    }
+
+    @Test
+    public void testRemoveTable() throws Exception {
+        XWPFDocument doc = new XWPFDocument();
+        XWPFTable table = doc.createTable();
+        XWPFTableRow tr = table.createRow();
+        XWPFTableCell cell = tr.addNewTableCell();
+
+        // cell have at least one paragraph by default
+        XWPFParagraph p0 = cell.getParagraphArray(0);
+        XmlCursor newCursor = p0.getCTP().newCursor();
+        cell.insertNewTbl(newCursor);
+        newCursor.dispose();
+
+        assertEquals(1, cell.getTables().size());
+        assertEquals(2, cell.getBodyElements().size());
+
+        // remove table
+        cell.removeTable(0);
+        assertEquals(0, cell.getTables().size());
+        assertEquals(1, cell.getBodyElements().size());
         assertEquals(p0, cell.getBodyElements().get(0));
 
         doc.close();
