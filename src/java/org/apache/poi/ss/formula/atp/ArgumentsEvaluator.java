@@ -27,7 +27,7 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.util.DateParser;
+import org.apache.poi.ss.util.DateParser;
 
 /**
  * Evaluator for formula arguments.

@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.util;
+package org.apache.poi.ss.util;
 
 import java.text.DateFormatSymbols;
 import java.time.LocalDate;

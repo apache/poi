@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.util.DateParser;
+import org.apache.poi.ss.util.DateParser;
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;

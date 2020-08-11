@@ -28,7 +28,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.util.DateParser;
+import org.apache.poi.ss.util.DateParser;
 
 /**
  * Implementation of Excel 'Analysis ToolPak' function YEARFRAC()<br>
