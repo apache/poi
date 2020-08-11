@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula.atp;
 
-import java.util.Calendar;
+import java.time.LocalDate;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
@@ -28,6 +28,8 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.util.DateParser;
+
 /**
  * Implementation of Excel 'Analysis ToolPak' function YEARFRAC()<br>
  *
@@ -90,7 +92,7 @@ final class YearFrac implements FreeRefFunction {
 			if (dVal != null) {
 				return dVal.doubleValue();
 			}
-			Calendar date = DateParser.parseDate(strVal);
+			LocalDate date = DateParser.parseLocalDate(strVal);
 			return DateUtil.getExcelDate(date, false);
 		}
 		return OperandResolver.coerceValueToDouble(ve);

@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.formula.atp;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 import org.apache.poi.ss.formula.eval.AreaEvalBase;
@@ -27,6 +27,7 @@ import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
+import org.apache.poi.ss.util.DateParser;
 
 /**
  * Evaluator for formula arguments.
@@ -59,7 +60,7 @@ final class ArgumentsEvaluator {
             if (dVal != null) {
                 return dVal.doubleValue();
             }
-            Calendar date = DateParser.parseDate(strVal);
+            LocalDate date = DateParser.parseLocalDate(strVal);
             return DateUtil.getExcelDate(date, false);
         }
         return OperandResolver.coerceValueToDouble(ve);

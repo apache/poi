@@ -17,23 +17,13 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import java.text.DateFormatSymbols;
-import java.time.DateTimeException;
-import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.MatchResult;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
+import org.apache.poi.ss.util.DateParser;
 import org.apache.poi.ss.formula.eval.BlankEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
-import org.apache.poi.util.LocaleUtil;
 
 /**
  * Implementation for the DATEVALUE() Excel function.<p>
@@ -56,32 +46,6 @@ import org.apache.poi.util.LocaleUtil;
  */
 public class DateValue extends Fixed1ArgFunction {
 
-    private enum Format {
-        YMD_DASHES("^(\\d{4})-(\\w+)-(\\d{1,2})$", "ymd"),
-        DMY_DASHES("^(\\d{1,2})-(\\w+)-(\\d{4})$", "dmy"),
-        MD_DASHES("^(\\w+)-(\\d{1,2})$", "md"),
-        MDY_SLASHES("^(\\w+)/(\\d{1,2})/(\\d{4})$", "mdy"),
-        YMD_SLASHES("^(\\d{4})/(\\w+)/(\\d{1,2})$", "ymd"),
-        MD_SLASHES("^(\\w+)/(\\d{1,2})$", "md");
-
-        private Pattern pattern;
-        private boolean hasYear;
-        private int yearIndex;
-        private int monthIndex;
-        private int dayIndex;
-
-        Format(String patternString, String groupOrder) {
-            this.pattern = Pattern.compile(patternString);
-            this.hasYear = groupOrder.contains("y");
-            if (hasYear) {
-                yearIndex = groupOrder.indexOf("y");
-            }
-            monthIndex = groupOrder.indexOf("m");
-            dayIndex = groupOrder.indexOf("d");
-        }
-
-    }
-
     @Override
     public ValueEval evaluate(int srcRowIndex, int srcColumnIndex, ValueEval dateTextArg) {
         try {
@@ -92,45 +56,9 @@ public class DateValue extends Fixed1ArgFunction {
                 return BlankEval.instance;
             }
 
-            for (Format format : Format.values()) {
-                Matcher matcher = format.pattern.matcher(dateText);
-                if (matcher.find()) {
-                    MatchResult matchResult = matcher.toMatchResult();
-                    List<String> groups = new ArrayList<>();
-                    for (int i = 1; i <= matchResult.groupCount(); ++i) {
-                        groups.add(matchResult.group(i));
-                    }
-                    int year = format.hasYear
-                            ? Integer.parseInt(groups.get(format.yearIndex))
-                            : LocalDate.now(LocaleUtil.getUserTimeZone().toZoneId()).getYear();
-                    int month = parseMonth(groups.get(format.monthIndex));
-                    int day = Integer.parseInt(groups.get(format.dayIndex));
-                    return new NumberEval(DateUtil.getExcelDate(LocalDate.of(year, month, day)));
-
-                }
-            }
-        } catch (DateTimeException e) {
-            return ErrorEval.VALUE_INVALID;
+            return new NumberEval(DateUtil.getExcelDate(DateParser.parseLocalDate(dateText)));
         } catch (EvaluationException e) {
             return e.getErrorEval();
         }
-
-        return ErrorEval.VALUE_INVALID;
-    }
-
-    private int parseMonth(String monthPart) {
-        try {
-            return Integer.parseInt(monthPart);
-        } catch (NumberFormatException ignored) {
-        }
-
-
-        String[] months = DateFormatSymbols.getInstance(LocaleUtil.getUserLocale()).getMonths();
-        for (int month = 0; month < months.length; ++month) {
-            if (months[month].toLowerCase(LocaleUtil.getUserLocale()).startsWith(monthPart.toLowerCase(LocaleUtil.getUserLocale()))) {
-                return month + 1;
-            }
-        }
-        return -1;
     }
 }
