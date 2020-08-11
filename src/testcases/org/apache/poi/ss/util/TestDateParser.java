@@ -15,7 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.ss.formula.atp;
+package org.apache.poi.ss.util;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
@@ -24,6 +24,7 @@ import java.util.Calendar;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.util.DateParser;
 import org.apache.poi.util.LocaleUtil;
 import org.junit.Test;
 
