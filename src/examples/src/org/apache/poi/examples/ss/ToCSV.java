@@ -40,12 +40,12 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  * Demonstrates <em>one</em> way to convert an Excel spreadsheet into a CSV
  * file. This class makes the following assumptions;
  * <list>
- * <li>1. Where the Excel workbook contains more that one worksheet, then a single
+ * <li>1. Where the Excel workbook contains more than one worksheet, then a single
  *    CSV file will contain the data from all of the worksheets.</li>
  * <li>2. The data matrix contained in the CSV file will be square. This means that
  *    the number of fields in each record of the CSV file will match the number
  *    of cells in the longest row found in the Excel workbook. Any short records
- *    will be 'padded' with empty fields - an empty field is represented in the
+ *    will be 'padded' with empty fields - an empty field is represented in
  *    the CSV file in this way - ,,.</li>
  * <li>3. Empty fields will represent missing cells.</li>
  * <li>4. A record consisting of empty fields will be used to represent an empty row
@@ -100,20 +100,20 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  * will again be surrounded by speech marks. On the other hand, if the file
  * should follow UNIX conventions then a single backslash will precede the
  * EOL character. There is no single applicable standard for UNIX and some
- * appications replace the CR with \r and the LF with \n but this class will
+ * applications replace the CR with \r and the LF with \n but this class will
  * not do so.
  * </p><p>
  * If the field contains double quotes then that character will be escaped. It
  * seems as though UNIX does not define a standard for this whilst Excel does.
- * Should the CSV file have to obey Excel's formmating rules then the speech
+ * Should the CSV file have to obey Excel's formatting rules then the speech
  * mark character will be escaped with a second set of speech marks. Finally, an
- * enclosing set of speah marks will also surround the entire field. Thus, if
+ * enclosing set of speech marks will also surround the entire field. Thus, if
  * the following line of text appeared in a cell - "Hello" he said - it would
  * look like this when converted into a field within a CSV file - """Hello"" he
  * said".
  * </p><p>
  * Finally, it is worth noting that talk of CSV 'standards' is really slightly
- * missleading as there is no such thing. It may well be that the code in this
+ * misleading as there is no such thing. It may well be that the code in this
  * class has to be modified to produce files to suit a specific application
  * or requirement.
  * </p>
@@ -184,8 +184,7 @@ public class ToCSV {
      *         folder.
      */
     public void convertExcelToCSV(String strSource, String strDestination)
-                       throws FileNotFoundException, IOException,
-                              IllegalArgumentException {
+            throws FileNotFoundException, IOException, IllegalArgumentException {
 
         // Simply chain the call to the overloaded convertExcelToCSV(String,
         // String, String, int) method, pass the default separator and ensure
@@ -226,8 +225,8 @@ public class ToCSV {
      */
     public void convertExcelToCSV(String strSource, String strDestination,
                                   String separator)
-                       throws FileNotFoundException, IOException,
-                              IllegalArgumentException {
+            throws FileNotFoundException, IOException,
+            IllegalArgumentException {
 
         // Simply chain the call to the overloaded convertExcelToCSV(String,
         // String, String, int) method and ensure that certain embedded
@@ -272,8 +271,8 @@ public class ToCSV {
      */
     public void convertExcelToCSV(String strSource, String strDestination,
                                   String separator, int formattingConvention)
-                       throws FileNotFoundException, IOException,
-                              IllegalArgumentException {
+            throws FileNotFoundException, IOException,
+            IllegalArgumentException {
         // Check that the source file/folder exists.
         File source = new File(strSource);
         if(!source.exists()) {
@@ -297,7 +296,7 @@ public class ToCSV {
         // Ensure the value passed to the formattingConvention parameter is
         // within range.
         if(formattingConvention != ToCSV.EXCEL_STYLE_ESCAPING &&
-           formattingConvention != ToCSV.UNIX_STYLE_ESCAPING) {
+                formattingConvention != ToCSV.UNIX_STYLE_ESCAPING) {
             throw new IllegalArgumentException("The value passed to the " +
                     "formattingConvention parameter is out of range: " + formattingConvention + ", expecting one of " +
                     ToCSV.EXCEL_STYLE_ESCAPING + " or " + ToCSV.UNIX_STYLE_ESCAPING);
@@ -365,8 +364,7 @@ public class ToCSV {
      * @throws java.io.FileNotFoundException Thrown if the file cannot be located.
      * @throws java.io.IOException Thrown if a problem occurs in the file system.
      */
-    private void openWorkbook(File file) throws FileNotFoundException,
-                                           IOException {
+    private void openWorkbook(File file) throws FileNotFoundException, IOException {
         System.out.println("Opening workbook [" + file.getName() + "]");
         try (FileInputStream fis = new FileInputStream(file)) {
 
@@ -592,7 +590,7 @@ public class ToCSV {
                 // with speech marks.
                 buffer = new StringBuilder(field);
                 if((buffer.indexOf(this.separator)) > -1 ||
-                         (buffer.indexOf("\n")) > -1) {
+                        (buffer.indexOf("\n")) > -1) {
                     buffer.insert(0, "\"");
                     buffer.append("\"");
                 }
@@ -655,33 +653,33 @@ public class ToCSV {
             }
             else if(args.length == 4) {
                 // The Source File/Folder, Destination Folder, Separator and
-                // Formatting Convnetion were passed to the main method.
+                // Formatting Convention were passed to the main method.
                 converter.convertExcelToCSV(args[0], args[1],
-                                            args[2], Integer.parseInt(args[3]));
+                        args[2], Integer.parseInt(args[3]));
             }
             else {
                 // None or more than four parameters were passed so display
                 //a Usage message.
                 System.out.println("Usage: java ToCSV [Source File/Folder] " +
-                    "[Destination Folder] [Separator] [Formatting Convention]\n" +
-                    "\tSource File/Folder\tThis argument should contain the name of and\n" +
-                    "\t\t\t\tpath to either a single Excel workbook or a\n" +
-                    "\t\t\t\tfolder containing one or more Excel workbooks.\n" +
-                    "\tDestination Folder\tThe name of and path to the folder that the\n" +
-                    "\t\t\t\tCSV files should be written out into. The\n" +
-                    "\t\t\t\tfolder must exist before running the ToCSV\n" +
-                    "\t\t\t\tcode as it will not check for or create it.\n" +
-                    "\tSeparator\t\tOptional. The character or characters that\n" +
-                    "\t\t\t\tshould be used to separate fields in the CSV\n" +
-                    "\t\t\t\trecord. If no value is passed then the comma\n" +
-                    "\t\t\t\twill be assumed.\n" +
-                    "\tFormatting Convention\tOptional. This argument can take one of two\n" +
-                    "\t\t\t\tvalues. Passing 0 (zero) will result in a CSV\n" +
-                    "\t\t\t\tfile that obeys Excel's formatting conventions\n" +
-                    "\t\t\t\twhilst passing 1 (one) will result in a file\n" +
-                    "\t\t\t\tthat obeys UNIX formatting conventions. If no\n" +
-                    "\t\t\t\tvalue is passed, then the CSV file produced\n" +
-                    "\t\t\t\twill obey Excel's formatting conventions.");
+                        "[Destination Folder] [Separator] [Formatting Convention]\n" +
+                        "\tSource File/Folder\tThis argument should contain the name of and\n" +
+                        "\t\t\t\tpath to either a single Excel workbook or a\n" +
+                        "\t\t\t\tfolder containing one or more Excel workbooks.\n" +
+                        "\tDestination Folder\tThe name of and path to the folder that the\n" +
+                        "\t\t\t\tCSV files should be written out into. The\n" +
+                        "\t\t\t\tfolder must exist before running the ToCSV\n" +
+                        "\t\t\t\tcode as it will not check for or create it.\n" +
+                        "\tSeparator\t\tOptional. The character or characters that\n" +
+                        "\t\t\t\tshould be used to separate fields in the CSV\n" +
+                        "\t\t\t\trecord. If no value is passed then the comma\n" +
+                        "\t\t\t\twill be assumed.\n" +
+                        "\tFormatting Convention\tOptional. This argument can take one of two\n" +
+                        "\t\t\t\tvalues. Passing 0 (zero) will result in a CSV\n" +
+                        "\t\t\t\tfile that obeys Excel's formatting conventions\n" +
+                        "\t\t\t\twhilst passing 1 (one) will result in a file\n" +
+                        "\t\t\t\tthat obeys UNIX formatting conventions. If no\n" +
+                        "\t\t\t\tvalue is passed, then the CSV file produced\n" +
+                        "\t\t\t\twill obey Excel's formatting conventions.");
                 converted = false;
             }
         }
@@ -701,7 +699,7 @@ public class ToCSV {
 
         if (converted) {
             System.out.println("Conversion took " +
-                  ((System.currentTimeMillis() - startTime)/1000) + " seconds");
+                    ((System.currentTimeMillis() - startTime)/1000) + " seconds");
         }
     }
 
