@@ -40,12 +40,12 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  * Demonstrates <em>one</em> way to convert an Excel spreadsheet into a CSV
  * file. This class makes the following assumptions;
  * <list>
- * <li>1. Where the Excel workbook contains more that one worksheet, then a single
+ * <li>1. Where the Excel workbook contains more than one worksheet, then a single
  *    CSV file will contain the data from all of the worksheets.</li>
  * <li>2. The data matrix contained in the CSV file will be square. This means that
  *    the number of fields in each record of the CSV file will match the number
  *    of cells in the longest row found in the Excel workbook. Any short records
- *    will be 'padded' with empty fields - an empty field is represented in the
+ *    will be 'padded' with empty fields - an empty field is represented in
  *    the CSV file in this way - ,,.</li>
  * <li>3. Empty fields will represent missing cells.</li>
  * <li>4. A record consisting of empty fields will be used to represent an empty row
@@ -100,20 +100,20 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
  * will again be surrounded by speech marks. On the other hand, if the file
  * should follow UNIX conventions then a single backslash will precede the
  * EOL character. There is no single applicable standard for UNIX and some
- * appications replace the CR with \r and the LF with \n but this class will
+ * applications replace the CR with \r and the LF with \n but this class will
  * not do so.
  * </p><p>
  * If the field contains double quotes then that character will be escaped. It
  * seems as though UNIX does not define a standard for this whilst Excel does.
- * Should the CSV file have to obey Excel's formmating rules then the speech
+ * Should the CSV file have to obey Excel's formatting rules then the speech
  * mark character will be escaped with a second set of speech marks. Finally, an
- * enclosing set of speah marks will also surround the entire field. Thus, if
+ * enclosing set of speech marks will also surround the entire field. Thus, if
  * the following line of text appeared in a cell - "Hello" he said - it would
  * look like this when converted into a field within a CSV file - """Hello"" he
  * said".
  * </p><p>
  * Finally, it is worth noting that talk of CSV 'standards' is really slightly
- * missleading as there is no such thing. It may well be that the code in this
+ * misleading as there is no such thing. It may well be that the code in this
  * class has to be modified to produce files to suit a specific application
  * or requirement.
  * </p>
