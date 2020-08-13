@@ -60,9 +60,9 @@ import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
 import org.apache.poi.UnsupportedFileFormatException;
+import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.ooxml.extractor.ExtractorFactory;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
@@ -836,7 +836,7 @@ public final class TestPackage {
 
 	@Test
 	public void testZipEntityExpansionExceedsMemory() throws IOException, OpenXML4JException, XmlException {
-		expectedEx.expect(POIXMLException.class);
+		expectedEx.expect(IOException.class);
 		expectedEx.expectMessage("unable to parse shared strings table");
 		expectedEx.expectCause(getCauseMatcher(SAXParseException.class, "The parser has encountered more than"));
 		openXmlBombFile("poc-xmlbomb.xlsx");
@@ -844,7 +844,7 @@ public final class TestPackage {
 
 	@Test
 	public void testZipEntityExpansionExceedsMemory2() throws IOException, OpenXML4JException, XmlException {
-		expectedEx.expect(POIXMLException.class);
+		expectedEx.expect(IOException.class);
 		expectedEx.expectMessage("unable to parse shared strings table");
 		expectedEx.expectCause(getCauseMatcher(SAXParseException.class, "The parser has encountered more than"));
     	openXmlBombFile("poc-xmlbomb-empty.xlsx");

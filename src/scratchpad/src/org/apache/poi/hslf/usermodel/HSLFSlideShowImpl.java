@@ -36,6 +36,7 @@ import java.util.NavigableMap;
 import java.util.TreeMap;
 
 import org.apache.poi.POIDocument;
+import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
@@ -714,8 +715,6 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     }
 
 
-
-
     /* ******************* adding methods follow ********************* */
 
     /**
@@ -848,6 +847,38 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
     @Override
     protected String getEncryptedPropertyStreamName() {
         return "EncryptedSummary";
+    }
+
+    void writePropertiesImpl() throws IOException {
+        super.writeProperties();
+    }
+
+    PropertySet getPropertySetImpl(String setName) throws IOException {
+        return super.getPropertySet(setName);
+    }
+
+    PropertySet getPropertySetImpl(String setName, EncryptionInfo encryptionInfo) throws IOException {
+        return super.getPropertySet(setName, encryptionInfo);
+    }
+
+    void writePropertiesImpl(POIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
+        super.writeProperties(outFS, writtenEntries);
+    }
+
+    void validateInPlaceWritePossibleImpl() throws IllegalStateException {
+        super.validateInPlaceWritePossible();
+    }
+
+    void clearDirectoryImpl() {
+        super.clearDirectory();
+    }
+
+    boolean initDirectoryImpl() {
+        return super.initDirectory();
+    }
+
+    void replaceDirectoryImpl(DirectoryNode newDirectory) {
+        super.replaceDirectory(newDirectory);
     }
 
     private static class BufAccessBAOS extends ByteArrayOutputStream {

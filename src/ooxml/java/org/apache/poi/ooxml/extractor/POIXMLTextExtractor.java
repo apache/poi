@@ -27,61 +27,48 @@ import org.apache.poi.ooxml.POIXMLProperties.ExtendedProperties;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 
-public abstract class POIXMLTextExtractor extends POITextExtractor {
-	/** The POIXMLDocument that's open */
-	private final POIXMLDocument _document;
-
-	/**
-	 * Creates a new text extractor for the given document
-	 * 
-	 * @param document the document to extract from
-	 */
-	public POIXMLTextExtractor(POIXMLDocument document) {
-		_document = document;
-	}
-
+public interface POIXMLTextExtractor extends POITextExtractor {
 	/**
 	 * Returns the core document properties
-	 * 
+	 *
 	 * @return the core document properties
 	 */
-	public CoreProperties getCoreProperties() {
-		 return _document.getProperties().getCoreProperties();
+	default CoreProperties getCoreProperties() {
+		 return getDocument().getProperties().getCoreProperties();
 	}
 	/**
 	 * Returns the extended document properties
-	 * 
+	 *
 	 * @return the extended document properties
 	 */
-	public ExtendedProperties getExtendedProperties() {
-		return _document.getProperties().getExtendedProperties();
+	default ExtendedProperties getExtendedProperties() {
+		return getDocument().getProperties().getExtendedProperties();
 	}
 	/**
 	 * Returns the custom document properties
-	 * 
+	 *
 	 * @return the custom document properties
 	 */
-	public CustomProperties getCustomProperties() {
-		return _document.getProperties().getCustomProperties();
+	default CustomProperties getCustomProperties() {
+		return getDocument().getProperties().getCustomProperties();
 	}
 
 	/**
 	 * Returns opened document
-	 * 
+	 *
 	 * @return the opened document
 	 */
 	@Override
-	public final POIXMLDocument getDocument() {
-		return _document;
-	}
+	POIXMLDocument getDocument();
 
 	/**
 	 * Returns the opened OPCPackage that contains the document
-	 * 
+	 *
 	 * @return the opened OPCPackage
 	 */
-	public OPCPackage getPackage() {
-	   return _document.getPackage();
+	default OPCPackage getPackage() {
+		POIXMLDocument doc = getDocument();
+	   	return doc != null ? doc.getPackage() : null;
 	}
 
 	/**
@@ -89,25 +76,24 @@ public abstract class POIXMLTextExtractor extends POITextExtractor {
 	 *  document properties metadata, such as title and author.
 	 */
 	@Override
-    public POIXMLPropertiesTextExtractor getMetadataTextExtractor() {
-		return new POIXMLPropertiesTextExtractor(_document);
+    default POIXMLPropertiesTextExtractor getMetadataTextExtractor() {
+		return new POIXMLPropertiesTextExtractor(getDocument());
 	}
 
 	@Override
-	public void close() throws IOException {
+	default void close() throws IOException {
 		// e.g. XSSFEventBaseExcelExtractor passes a null-document
-		if(_document != null) {
+		if (isCloseFilesystem()) {
 			@SuppressWarnings("resource")
-            OPCPackage pkg = _document.getPackage();
-			if(pkg != null) {
+            OPCPackage pkg = getPackage();
+			if (pkg != null) {
 			    // revert the package to not re-write the file, which is very likely not wanted for a TextExtractor!
 				pkg.revert();
 			}
 		}
-		super.close();
 	}
 
-	protected void checkMaxTextSize(CharSequence text, String string) {
+	default void checkMaxTextSize(CharSequence text, String string) {
         if(string == null) {
             return;
         }

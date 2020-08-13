@@ -28,8 +28,12 @@ module org.apache.poi.poi {
     requires jdk.unsupported;
 
     uses org.apache.poi.ss.usermodel.WorkbookProvider;
+    uses org.apache.poi.extractor.ExtractorProvider;
+
 
     provides org.apache.poi.ss.usermodel.WorkbookProvider with org.apache.poi.hssf.usermodel.HSSFWorkbookFactory;
+    provides org.apache.poi.extractor.ExtractorProvider with org.apache.poi.extractor.MainExtractorFactory;
+
 
     exports org.apache.poi;
     exports org.apache.poi.common;

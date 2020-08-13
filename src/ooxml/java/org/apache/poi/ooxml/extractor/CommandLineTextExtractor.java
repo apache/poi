@@ -18,14 +18,18 @@ package org.apache.poi.ooxml.extractor;
 
 import java.io.File;
 
+import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.extractor.POITextExtractor;
 
 /**
  * A command line wrapper around {@link ExtractorFactory}, useful
  * for when debugging.
  */
-public class CommandLineTextExtractor {
+public final class CommandLineTextExtractor {
     public static final String DIVIDER = "=======================";
+
+    private CommandLineTextExtractor() {
+    }
 
     public static void main(String[] args) throws Exception {
         if (args.length < 1) {

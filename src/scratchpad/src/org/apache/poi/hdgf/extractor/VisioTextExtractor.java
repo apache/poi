@@ -17,7 +17,6 @@
 
 package org.apache.poi.hdgf.extractor;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -38,11 +37,11 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * Can operate on the command line (outputs to stdout), or
  *  can return the text for you (example: for use with Lucene).
  */
-public final class VisioTextExtractor extends POIOLE2TextExtractor {
+public final class VisioTextExtractor implements POIOLE2TextExtractor {
 	private HDGFDiagram hdgf;
+	private boolean doCloseFilesystem = true;
 
 	public VisioTextExtractor(HDGFDiagram hdgf) {
-		super(hdgf);
 		this.hdgf = hdgf;
 	}
 	public VisioTextExtractor(POIFSFileSystem fs) throws IOException {
@@ -91,9 +90,7 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 						// Capture the text, as long as it isn't
 						//  simply an empty string
 						String str = cmd.getValue().toString();
-						if(str.isEmpty() || "\n".equals(str)) {
-							// Ignore empty strings
-						} else {
+						if (!(str.isEmpty() || "\n".equals(str))) {
 							text.add( str );
 						}
 					}
@@ -121,21 +118,23 @@ public final class VisioTextExtractor extends POIOLE2TextExtractor {
 		return text.toString();
 	}
 
-	public static void main(String[] args) throws Exception {
-		if(args.length == 0) {
-			System.err.println("Use:");
-			System.err.println("   VisioTextExtractor <file.vsd>");
-			System.exit(1);
-		}
+	@Override
+	public HDGFDiagram getDocument() {
+		return hdgf;
+	}
 
-		try (FileInputStream fis = new FileInputStream(args[0])) {
-			VisioTextExtractor extractor =
-				new VisioTextExtractor(fis);
+	@Override
+	public void setCloseFilesystem(boolean doCloseFilesystem) {
+		this.doCloseFilesystem = doCloseFilesystem;
+	}
 
-			// Print not PrintLn as already has \n added to it
-			System.out.print(extractor.getText());
+	@Override
+	public boolean isCloseFilesystem() {
+		return doCloseFilesystem;
+	}
 
-			extractor.close();
-		}
+	@Override
+	public HDGFDiagram getFilesystem() {
+		return hdgf;
 	}
 }

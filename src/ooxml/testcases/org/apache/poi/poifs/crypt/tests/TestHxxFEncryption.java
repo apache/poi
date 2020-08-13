@@ -35,14 +35,12 @@ import java.util.Collection;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIDocument;
+import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
-import org.apache.poi.ooxml.extractor.ExtractorFactory;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionHeader;
 import org.apache.poi.poifs.storage.RawDataUtil;
-import org.apache.xmlbeans.XmlException;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -91,7 +89,7 @@ public class TestHxxFEncryption {
     }
 
     @Test
-    public void extract() throws IOException, OpenXML4JException, XmlException {
+    public void extract() throws IOException {
         File f = sampleDir.getFile(file);
         Biff8EncryptionKey.setCurrentUserPassword(password);
         try (POITextExtractor te = ExtractorFactory.createExtractor(f)) {
@@ -103,16 +101,16 @@ public class TestHxxFEncryption {
     }
 
     @Test
-    public void changePassword() throws IOException, OpenXML4JException, XmlException {
+    public void changePassword() throws IOException {
         newPassword("test");
     }
 
     @Test
-    public void removePassword() throws IOException, OpenXML4JException, XmlException {
+    public void removePassword() throws IOException {
         newPassword(null);
     }
 
-    private void newPassword(String newPass) throws IOException, OpenXML4JException, XmlException {
+    private void newPassword(String newPass) throws IOException {
         File f = sampleDir.getFile(file);
         Biff8EncryptionKey.setCurrentUserPassword(password);
         try (POITextExtractor te1 = ExtractorFactory.createExtractor(f)) {
@@ -133,7 +131,7 @@ public class TestHxxFEncryption {
 
     /** changing the encryption mode and key size in poor mans style - see comments below */
     @Test
-    public void changeEncryption() throws IOException, OpenXML4JException, XmlException {
+    public void changeEncryption() throws IOException {
         File f = sampleDir.getFile(file);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         Biff8EncryptionKey.setCurrentUserPassword(password);
@@ -157,7 +155,7 @@ public class TestHxxFEncryption {
                  POIDocument doc = (POIDocument) te3.getDocument()) {
                 // need to cache data (i.e. read all data) before changing the key size
                 Class<?> clazz = doc.getClass();
-                if ("HSLFSlideShowImpl".equals(clazz.getSimpleName())) {
+                if ("HSLFSlideShow".equals(clazz.getSimpleName())) {
                     try {
                         clazz.getDeclaredMethod("getPictureData").invoke(doc);
                     } catch (ReflectiveOperationException e) {

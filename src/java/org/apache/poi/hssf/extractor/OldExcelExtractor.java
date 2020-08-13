@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.record.BOFRecord;
 import org.apache.poi.hssf.record.CodepageRecord;
@@ -58,7 +59,7 @@ import org.apache.poi.util.IOUtils;
  *  by Apache Tika, but not really intended for display to the user.
  * </p>
  */
-public class OldExcelExtractor implements Closeable {
+public class OldExcelExtractor implements POITextExtractor {
 
     private final static int FILE_PASS_RECORD_SID = 0x2f;
     //arbitrarily selected; may need to increase
@@ -295,24 +296,39 @@ public class OldExcelExtractor implements Closeable {
             }
         }
 
-        close();
         ris = null;
 
         return text.toString();
-    }
-
-    @Override
-    public void close() {
-        // some cases require this close here
-        if(toClose != null) {
-            IOUtils.closeQuietly(toClose);
-            toClose = null;
-        }
     }
 
     protected void handleNumericCell(StringBuilder text, double value) {
         // TODO Need to fetch / use format strings
         text.append(value);
         text.append('\n');
+    }
+
+    @Override
+    public POITextExtractor getMetadataTextExtractor() {
+        return null;
+    }
+
+    @Override
+    public void setCloseFilesystem(boolean doCloseFilesystem) {
+
+    }
+
+    @Override
+    public boolean isCloseFilesystem() {
+        return toClose != null;
+    }
+
+    @Override
+    public Closeable getFilesystem() {
+        return toClose;
+    }
+
+    @Override
+    public Object getDocument() {
+        return ris;
     }
 }

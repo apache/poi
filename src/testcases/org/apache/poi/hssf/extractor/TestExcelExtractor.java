@@ -43,9 +43,7 @@ public final class TestExcelExtractor {
     private static ExcelExtractor createExtractor(String sampleFileName) throws IOException {
 		File file = HSSFTestDataSamples.getSampleFile(sampleFileName);
         POIFSFileSystem fs = new POIFSFileSystem(file);
-        ExcelExtractor extractor = new ExcelExtractor(fs);
-        extractor.setFilesystem(fs);
-        return extractor;
+        return new ExcelExtractor(fs);
 	}
 
 	@Test
@@ -223,16 +221,16 @@ public final class TestExcelExtractor {
             extractor.setIncludeBlankCells(false);
             extractor.setIncludeSheetNames(false);
             String text = extractor.getText();
-            
+
             // Note - not all the formats in the file
             //  actually quite match what they claim to
             //  be, as some are auto-local builtins...
-            
+
             assertStartsWith(text, "Dates, all 24th November 2006\n");
             assertContains(text, "yyyy/mm/dd\t2006/11/24\n");
             assertContains(text, "yyyy-mm-dd\t2006-11-24\n");
             assertContains(text, "dd-mm-yy\t24-11-06\n");
-            
+
             assertContains(text, "nn.nn\t10.52\n");
             assertContains(text, "nn.nnn\t10.520\n");
             assertContains(text, "\u00a3nn.nn\t\u00a310.52\n");
@@ -247,7 +245,7 @@ public final class TestExcelExtractor {
 	@Test
     public void testWithEmbeded() throws Exception {
 		POIFSFileSystem fs = null;
-		
+
 		HSSFWorkbook wbA = null, wbB = null;
 		ExcelExtractor exA = null, exB = null;
 
@@ -257,7 +255,7 @@ public final class TestExcelExtractor {
 	        DirectoryNode objPool = (DirectoryNode) fs.getRoot().getEntry("ObjectPool");
 	        DirectoryNode dirA = (DirectoryNode) objPool.getEntry("_1269427460");
 	        DirectoryNode dirB = (DirectoryNode) objPool.getEntry("_1269427461");
-		    
+
 		    wbA = new HSSFWorkbook(dirA, fs, true);
 	        exA = new ExcelExtractor(wbA);
 	        wbB = new HSSFWorkbook(dirB, fs, true);
@@ -299,10 +297,10 @@ public final class TestExcelExtractor {
     		exB = new ExcelExtractor(wbB);
     		assertEquals("Sheet1\nTest excel file\nThis is the first file\nSheet2\nSheet3\n", exA.getText());
     		assertEquals("Sample Excel", exA.getSummaryInformation().getTitle());
-    
+
     		assertEquals("Sheet1\nAnother excel file\nThis is the second file\nSheet2\nSheet3\n", exB.getText());
     		assertEquals("Sample Excel 2", exB.getSummaryInformation().getTitle());
-        
+
     		// And the base file too
     		ex = new ExcelExtractor(fs);
     		assertEquals("Sheet1\nI have lots of embeded files in me\nSheet2\nSheet3\n", ex.getText());

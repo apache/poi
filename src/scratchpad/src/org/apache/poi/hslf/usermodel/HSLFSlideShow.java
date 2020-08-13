@@ -33,6 +33,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.POIDocument;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.ddf.EscherBSERecord;
@@ -40,6 +41,9 @@ import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hpsf.ClassIDPredefined;
+import org.apache.poi.hpsf.DocumentSummaryInformation;
+import org.apache.poi.hpsf.PropertySet;
+import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.hslf.exceptions.CorruptPowerPointFileException;
 import org.apache.poi.hslf.exceptions.HSLFException;
@@ -47,6 +51,7 @@ import org.apache.poi.hslf.model.HeadersFooters;
 import org.apache.poi.hslf.model.MovieShape;
 import org.apache.poi.hslf.record.*;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
+import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Ole10Native;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -66,7 +71,7 @@ import org.apache.poi.util.Units;
  * TODO: - figure out how to match notes to their correct sheet (will involve
  * understanding DocSlideList and DocNotesList) - handle Slide creation cleaner
  */
-public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagraph>, Closeable, GenericRecord {
+public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFShape,HSLFTextParagraph>, Closeable, GenericRecord {
 
 	//arbitrarily selected; may need to increase
 	private static final int MAX_RECORD_LENGTH = 10_000_000;
@@ -111,6 +116,8 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	 * @param hslfSlideShow the HSLFSlideShow to base on
 	 */
 	public HSLFSlideShow(HSLFSlideShowImpl hslfSlideShow) {
+		super(hslfSlideShow.getDirectory());
+
 	    loadSavePhase.set(LoadSavePhase.INIT);
 
 	    // Get useful things from our base slideshow
@@ -1080,7 +1087,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
     public HPSFPropertiesExtractor getMetadataTextExtractor() {
         return new HPSFPropertiesExtractor(getSlideShowImpl());
     }
-	
+
 	int addToObjListAtom(RecordContainer exObj) {
 		ExObjList lst = getDocumentRecord().getExObjList(true);
 		ExObjListAtom objAtom = lst.getExObjListAtom();
@@ -1097,7 +1104,7 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
     	Map<String,ClassID> olemap = new HashMap<>();
     	olemap.put(POWERPOINT_DOCUMENT, ClassIDPredefined.POWERPOINT_V8.getClassID());
     	// as per BIFF8 spec
-    	olemap.put("Workbook", ClassIDPredefined.EXCEL_V8.getClassID()); 
+    	olemap.put("Workbook", ClassIDPredefined.EXCEL_V8.getClassID());
     	// Typically from third party programs
     	olemap.put("WORKBOOK", ClassIDPredefined.EXCEL_V8.getClassID());
     	// Typically odd Crystal Reports exports
@@ -1178,5 +1185,95 @@ public final class HSLFSlideShow implements SlideShow<HSLFShape,HSLFTextParagrap
 	@Override
 	public List<? extends GenericRecord> getGenericChildren() {
 		return Arrays.asList(_hslfSlideShow.getRecords());
+	}
+
+	@Override
+	public void write() throws IOException {
+		getSlideShowImpl().write();
+	}
+
+	@Override
+	public void write(File newFile) throws IOException {
+		getSlideShowImpl().write(newFile);
+	}
+
+	@Override
+	public DocumentSummaryInformation getDocumentSummaryInformation() {
+		return getSlideShowImpl().getDocumentSummaryInformation();
+	}
+
+	@Override
+	public SummaryInformation getSummaryInformation() {
+		return getSlideShowImpl().getSummaryInformation();
+	}
+
+	@Override
+	public void createInformationProperties() {
+		getSlideShowImpl().createInformationProperties();
+	}
+
+	@Override
+	public void readProperties() {
+		getSlideShowImpl().readProperties();
+	}
+
+	@Override
+	protected PropertySet getPropertySet(String setName) throws IOException {
+		return getSlideShowImpl().getPropertySetImpl(setName);
+	}
+
+	@Override
+	protected PropertySet getPropertySet(String setName, EncryptionInfo encryptionInfo) throws IOException {
+		return getSlideShowImpl().getPropertySetImpl(setName, encryptionInfo);
+	}
+
+	@Override
+	protected void writeProperties() throws IOException {
+		getSlideShowImpl().writePropertiesImpl();
+	}
+
+	@Override
+	public void writeProperties(POIFSFileSystem outFS) throws IOException {
+		getSlideShowImpl().writeProperties(outFS);
+	}
+
+	@Override
+	protected void writeProperties(POIFSFileSystem outFS, List<String> writtenEntries) throws IOException {
+		getSlideShowImpl().writePropertiesImpl(outFS, writtenEntries);
+	}
+
+	@Override
+	protected void validateInPlaceWritePossible() throws IllegalStateException {
+		getSlideShowImpl().validateInPlaceWritePossibleImpl();
+	}
+
+	@Override
+	public DirectoryNode getDirectory() {
+		return getSlideShowImpl().getDirectory();
+	}
+
+	@Override
+	protected void clearDirectory() {
+		getSlideShowImpl().clearDirectoryImpl();
+	}
+
+	@Override
+	protected boolean initDirectory() {
+		return getSlideShowImpl().initDirectoryImpl();
+	}
+
+	@Override
+	protected void replaceDirectory(DirectoryNode newDirectory) {
+		getSlideShowImpl().replaceDirectoryImpl(newDirectory);
+	}
+
+	@Override
+	protected String getEncryptedPropertyStreamName() {
+		return getSlideShowImpl().getEncryptedPropertyStreamName();
+	}
+
+	@Override
+	public EncryptionInfo getEncryptionInfo() throws IOException {
+		return getSlideShowImpl().getEncryptionInfo();
 	}
 }

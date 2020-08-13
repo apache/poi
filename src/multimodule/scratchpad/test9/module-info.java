@@ -20,6 +20,8 @@ module org.apache.poi.scratchpad {
     requires java.desktop;
     requires commons.math3;
 
+    provides org.apache.poi.extractor.ExtractorProvider with org.apache.poi.extractor.ole2.OLE2ScratchpadExtractorFactory;
+
     exports org.apache.poi.hmef;
     exports org.apache.poi.hmef.dev;
     exports org.apache.poi.hmef.extractor;

@@ -42,9 +42,12 @@ import org.apache.poi.util.LocaleUtil;
  *
  * @since 4.1.2
  */
-public class OutlookTextExtractor extends POIOLE2TextExtractor {
+public class OutlookTextExtractor implements POIOLE2TextExtractor {
+    private final MAPIMessage msg;
+    private boolean doCloseFilesystem = true;
+
     public OutlookTextExtractor(MAPIMessage msg) {
-        super(msg);
+        this.msg = msg;
     }
 
     public OutlookTextExtractor(DirectoryNode poifsDir) throws IOException {
@@ -76,14 +79,13 @@ public class OutlookTextExtractor extends POIOLE2TextExtractor {
      * Returns the underlying MAPI message
      */
     public MAPIMessage getMAPIMessage() {
-        return (MAPIMessage) document;
+        return msg;
     }
 
     /**
      * Outputs something a little like a RFC822 email
      */
     public String getText() {
-        MAPIMessage msg = (MAPIMessage) document;
         StringBuilder s = new StringBuilder();
 
         // See if we can get a suitable encoding for any
@@ -200,5 +202,25 @@ public class OutlookTextExtractor extends POIOLE2TextExtractor {
             }
         }
         s.append("\n");
+    }
+
+    @Override
+    public MAPIMessage getDocument() {
+        return msg;
+    }
+
+    @Override
+    public void setCloseFilesystem(boolean doCloseFilesystem) {
+        this.doCloseFilesystem = doCloseFilesystem;
+    }
+
+    @Override
+    public boolean isCloseFilesystem() {
+        return doCloseFilesystem;
+    }
+
+    @Override
+    public MAPIMessage getFilesystem() {
+        return msg;
     }
 }

@@ -54,14 +54,14 @@ import org.apache.poi.util.POILogger;
 public class SlideShowExtractor<
     S extends Shape<S,P>,
     P extends TextParagraph<S,P,? extends TextRun>
-> extends POITextExtractor {
+> implements POITextExtractor {
     private static final POILogger LOG = POILogFactory.getLogger(SlideShowExtractor.class);
 
     // placeholder text for slide numbers
     private static final String SLIDE_NUMBER_PH = "‹#›";
 
 
-    private SlideShow<S,P> slideshow;
+    protected final SlideShow<S,P> slideshow;
 
     private boolean slidesByDefault = true;
     private boolean notesByDefault;
@@ -69,9 +69,9 @@ public class SlideShowExtractor<
     private boolean masterByDefault;
 
     private Predicate<Object> filter = o -> true;
+    private boolean doCloseFilesystem = true;
 
     public SlideShowExtractor(final SlideShow<S,P> slideshow) {
-        setFilesystem(slideshow);
         this.slideshow = slideshow;
     }
 
@@ -81,8 +81,8 @@ public class SlideShowExtractor<
      * @return the opened document
      */
     @Override
-    public final Object getDocument() {
-        return slideshow.getPersistDocument();
+    public SlideShow<S,P> getDocument() {
+        return slideshow;
     }
 
     /**
@@ -339,17 +339,17 @@ public class SlideShowExtractor<
             return raw;
         }
 
-        TextParagraph tp = tr.getParagraph();
-        TextShape ps = (tp != null) ? tp.getParentShape() : null;
-        Sheet sh = (ps != null) ? ps.getSheet() : null;
-        String slideNr = (sh instanceof Slide) ? Integer.toString(((Slide)sh).getSlideNumber() + 1) : "";
+        TextParagraph<?,?,?> tp = tr.getParagraph();
+        TextShape<?,?> ps = (tp != null) ? tp.getParentShape() : null;
+        Sheet<?,?> sh = (ps != null) ? ps.getSheet() : null;
+        String slideNr = (sh instanceof Slide) ? Integer.toString(((Slide<?,?>)sh).getSlideNumber() + 1) : "";
 
         return raw.replace(SLIDE_NUMBER_PH, slideNr);
     }
 
     private static String replaceTextCap(TextRun tr) {
-        final TextParagraph tp = tr.getParagraph();
-        final TextShape sh = (tp != null) ? tp.getParentShape() : null;
+        final TextParagraph<?,?,?> tp = tr.getParagraph();
+        final TextShape<?,?> sh = (tp != null) ? tp.getParentShape() : null;
         final Placeholder ph = (sh != null) ? sh.getPlaceholder() : null;
 
         // 0xB acts like cariage return in page titles and like blank in the others
@@ -437,5 +437,20 @@ public class SlideShowExtractor<
             typeface.equalsIgnoreCase(tr.getFontFamily()) &&
             (italic == null || tr.isItalic() == italic) &&
             (bold == null || tr.isBold() == bold);
+    }
+
+    @Override
+    public void setCloseFilesystem(boolean doCloseFilesystem) {
+        this.doCloseFilesystem = doCloseFilesystem;
+    }
+
+    @Override
+    public boolean isCloseFilesystem() {
+        return doCloseFilesystem;
+    }
+
+    @Override
+    public SlideShow<S,P> getFilesystem() {
+        return getDocument();
     }
 }

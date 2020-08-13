@@ -23,7 +23,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 
-import org.apache.poi.ooxml.extractor.ExtractorFactory;
+import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
@@ -37,11 +37,11 @@ public class XSLFFileHandler extends SlideShowHandler {
 		assertNotNull(slideInner.getPresentation());
 		assertNotNull(slideInner.getSlideMasterReferences());
 		assertNotNull(slideInner.getSlideReferences());
-		
+
 		new POIXMLDocumentHandler().handlePOIXMLDocument(slide);
 
 		handleSlideShow(slide);
-		
+
 		slideInner.close();
 		slide.close();
 	}
@@ -49,11 +49,12 @@ public class XSLFFileHandler extends SlideShowHandler {
 	@Override
     public void handleExtracting(File file) throws Exception {
         super.handleExtracting(file);
-        
-        
+
+
         // additionally try the other getText() methods
 
-		try (SlideShowExtractor extractor = ExtractorFactory.createExtractor(file)) {
+		//noinspection rawtypes
+		try (SlideShowExtractor extractor = (SlideShowExtractor) ExtractorFactory.createExtractor(file)) {
 			assertNotNull(extractor);
 			extractor.setSlidesByDefault(true);
 			extractor.setNotesByDefault(true);

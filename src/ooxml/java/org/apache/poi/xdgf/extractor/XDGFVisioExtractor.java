@@ -18,7 +18,6 @@ package org.apache.poi.xdgf.extractor;
 
 import java.io.IOException;
 
-import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.extractor.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xdgf.usermodel.XDGFPage;
@@ -28,12 +27,12 @@ import org.apache.poi.xdgf.usermodel.shape.ShapeTextVisitor;
 /**
  * Helper class to extract text from an OOXML Visio File
  */
-public class XDGFVisioExtractor extends POIXMLTextExtractor {
+public class XDGFVisioExtractor implements POIXMLTextExtractor {
 
     protected final XmlVisioDocument document;
-    
+    private boolean doCloseFilesystem = true;
+
     public XDGFVisioExtractor(XmlVisioDocument document) {
-        super(document);
         this.document = document;
     }
 
@@ -43,25 +42,31 @@ public class XDGFVisioExtractor extends POIXMLTextExtractor {
 
     public String getText() {
         ShapeTextVisitor visitor = new ShapeTextVisitor();
-        
+
         for (XDGFPage page: document.getPages()) {
             page.getContent().visitShapes(visitor);
         }
-        
+
         return visitor.getText();
     }
-    
-    public static void main(String [] args) throws IOException {
-        if (args.length < 1) {
-            System.err.println("Use:");
-            System.err.println("  XDGFVisioExtractor <filename.vsdx>");
-            System.exit(1);
-        }
-        POIXMLTextExtractor extractor =
-                new XDGFVisioExtractor(POIXMLDocument.openPackage(
-                        args[0]
-                ));
-        System.out.println(extractor.getText());
-        extractor.close();
+
+    @Override
+    public XmlVisioDocument getDocument() {
+        return document;
+    }
+
+    @Override
+    public void setCloseFilesystem(boolean doCloseFilesystem) {
+        this.doCloseFilesystem = doCloseFilesystem;
+    }
+
+    @Override
+    public boolean isCloseFilesystem() {
+        return doCloseFilesystem;
+    }
+
+    @Override
+    public XmlVisioDocument getFilesystem() {
+        return document;
     }
 }

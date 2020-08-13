@@ -522,7 +522,7 @@ public class TestXSLFBugs {
     private String getSlideText(XMLSlideShow ppt, XSLFSlide slide) throws IOException {
         try (SlideShowExtractor<XSLFShape,XSLFTextParagraph> extr = new SlideShowExtractor<>(ppt)) {
             // do not auto-close the slideshow
-            extr.setFilesystem(null);
+            extr.setCloseFilesystem(false);
             extr.setSlidesByDefault(true);
             extr.setNotesByDefault(false);
             extr.setMasterByDefault(false);

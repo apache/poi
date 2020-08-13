@@ -19,7 +19,6 @@ package org.apache.poi.xssf.extractor;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.ooxml.extractor.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.DataFormatter;
@@ -43,8 +42,7 @@ import org.xml.sax.SAXException;
  *
  * @since 3.16-beta3
  */
-public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor
-        implements org.apache.poi.ss.extractor.ExcelExtractor {
+public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor {
 
     private static final POILogger LOGGER = POILogFactory.getLogger(XSSFBEventBasedExcelExtractor.class);
 
@@ -60,18 +58,6 @@ public class XSSFBEventBasedExcelExtractor extends XSSFEventBasedExcelExtractor
 
     public XSSFBEventBasedExcelExtractor(OPCPackage container) throws XmlException, OpenXML4JException, IOException {
         super(container);
-    }
-
-    public static void main(String[] args) throws Exception {
-        if (args.length < 1) {
-            System.err.println("Use:");
-            System.err.println("  XSSFBEventBasedExcelExtractor <filename.xlsb>");
-            System.exit(1);
-        }
-        POIXMLTextExtractor extractor =
-                new XSSFBEventBasedExcelExtractor(args[0]);
-        System.out.println(extractor.getText());
-        extractor.close();
     }
 
     public void setHandleHyperlinksInCells(boolean handleHyperlinksInCells) {

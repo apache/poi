@@ -25,6 +25,7 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.POIXMLProperties;
 import org.apache.poi.ooxml.POIXMLProperties.CoreProperties;
 import org.apache.poi.ooxml.POIXMLProperties.CustomProperties;
@@ -57,13 +58,13 @@ import org.xml.sax.XMLReader;
  * Implementation of a text extractor from OOXML Excel
  * files that uses SAX event based parsing.
  */
-public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
-        implements org.apache.poi.ss.extractor.ExcelExtractor {
+public class XSSFEventBasedExcelExtractor
+    implements POIXMLTextExtractor, org.apache.poi.ss.extractor.ExcelExtractor {
 
     private static final POILogger LOGGER = POILogFactory.getLogger(XSSFEventBasedExcelExtractor.class);
 
-    protected OPCPackage container;
-    protected POIXMLProperties properties;
+    protected final OPCPackage container;
+    protected final POIXMLProperties properties;
 
     protected Locale locale;
     protected boolean includeTextBoxes = true;
@@ -73,27 +74,15 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     protected boolean formulasNotResults;
     protected boolean concatenatePhoneticRuns = true;
 
+    private boolean doCloseFilesystem = true;
+
     public XSSFEventBasedExcelExtractor(String path) throws XmlException, OpenXML4JException, IOException {
         this(OPCPackage.open(path));
     }
 
     public XSSFEventBasedExcelExtractor(OPCPackage container) throws XmlException, OpenXML4JException, IOException {
-        super(null);
         this.container = container;
-
         properties = new POIXMLProperties(container);
-    }
-
-    public static void main(String[] args) throws Exception {
-        if (args.length < 1) {
-            System.err.println("Use:");
-            System.err.println("  XSSFEventBasedExcelExtractor <filename.xlsx>");
-            System.exit(1);
-        }
-        POIXMLTextExtractor extractor =
-                new XSSFEventBasedExcelExtractor(args[0]);
-        System.out.println(extractor.getText());
-        extractor.close();
     }
 
     /**
@@ -319,12 +308,23 @@ public class XSSFEventBasedExcelExtractor extends POIXMLTextExtractor
     }
 
     @Override
-    public void close() throws IOException {
-        if (container != null) {
-            container.close();
-            container = null;
-        }
-        super.close();
+    public POIXMLDocument getDocument() {
+        return null;
+    }
+
+    @Override
+    public void setCloseFilesystem(boolean doCloseFilesystem) {
+        this.doCloseFilesystem = doCloseFilesystem;
+    }
+
+    @Override
+    public boolean isCloseFilesystem() {
+        return doCloseFilesystem;
+    }
+
+    @Override
+    public OPCPackage getFilesystem() {
+        return container;
     }
 
     protected class SheetTextExtractor implements SheetContentsHandler {

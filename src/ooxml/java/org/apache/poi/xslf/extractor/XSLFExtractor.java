@@ -14,23 +14,32 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-package org.apache.poi.xssf.extractor;
 
-import org.apache.poi.extractor.ExtractorFactory;
-import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.junit.After;
+package org.apache.poi.xslf.extractor;
+
+import org.apache.poi.ooxml.extractor.POIXMLPropertiesTextExtractor;
+import org.apache.poi.ooxml.extractor.POIXMLTextExtractor;
+import org.apache.poi.sl.extractor.SlideShowExtractor;
+import org.apache.poi.xslf.usermodel.XMLSlideShow;
+import org.apache.poi.xslf.usermodel.XSLFShape;
+import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 
 
-public class TestXSSFEventBasedExcelExtractorUsingFactory extends TestXSSFEventBasedExcelExtractor {
-	@Override
-	protected final XSSFEventBasedExcelExtractor getExtractor(String sampleName) throws Exception {
-		ExtractorFactory.setAllThreadsPreferEventExtractors(true);
-		return (XSSFEventBasedExcelExtractor) ExtractorFactory.createExtractor(HSSFTestDataSamples.openSampleFileStream(sampleName));
-	}
+/**
+ * Helper class to extract text from an OOXML Powerpoint file
+ */
+public class XSLFExtractor extends SlideShowExtractor<XSLFShape, XSLFTextParagraph> implements POIXMLTextExtractor {
+    public XSLFExtractor(XMLSlideShow slideshow) {
+        super(slideshow);
+    }
 
-	@After
-    public void tearDown() {
-	    // reset setting to not affect other tests
-	    ExtractorFactory.setAllThreadsPreferEventExtractors(null);
-	}
+    @Override
+    public XMLSlideShow getDocument() {
+        return (XMLSlideShow)slideshow;
+    }
+
+    @Override
+    public POIXMLPropertiesTextExtractor getMetadataTextExtractor() {
+        return POIXMLTextExtractor.super.getMetadataTextExtractor();
+    }
 }

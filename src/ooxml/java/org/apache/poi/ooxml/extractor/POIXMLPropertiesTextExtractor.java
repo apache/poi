@@ -36,9 +36,10 @@ import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProper
  * content of the OOXML file properties, eg author
  * and title.
  */
-public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
-
+public class POIXMLPropertiesTextExtractor implements POIXMLTextExtractor {
+    private final POIXMLDocument doc;
     private final DateFormat dateFormat;
+    private boolean doCloseFilesystem = true;
 
     /**
      * Creates a new POIXMLPropertiesTextExtractor for the given open document.
@@ -46,7 +47,7 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
      * @param doc the given open document
      */
     public POIXMLPropertiesTextExtractor(POIXMLDocument doc) {
-        super(doc);
+        this.doc = doc;
         DateFormatSymbols dfs = DateFormatSymbols.getInstance(Locale.ROOT);
         dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", dfs);
         dateFormat.setTimeZone(LocaleUtil.TIMEZONE_UTC);
@@ -242,7 +243,7 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
             }
 
          /*else if (property.isSetArray()) {
-            // TODO Fetch the array values and output 
+            // TODO Fetch the array values and output
          }
          else if (property.isSetVector()) {
             // TODO Fetch the vector values and output
@@ -280,5 +281,25 @@ public class POIXMLPropertiesTextExtractor extends POIXMLTextExtractor {
     @Override
     public POIXMLPropertiesTextExtractor getMetadataTextExtractor() {
         throw new IllegalStateException("You already have the Metadata Text Extractor, not recursing!");
+    }
+
+    @Override
+    public POIXMLDocument getDocument() {
+        return doc;
+    }
+
+    @Override
+    public void setCloseFilesystem(boolean doCloseFilesystem) {
+        this.doCloseFilesystem = doCloseFilesystem;
+    }
+
+    @Override
+    public boolean isCloseFilesystem() {
+        return doCloseFilesystem;
+    }
+
+    @Override
+    public POIXMLDocument getFilesystem() {
+        return null;
     }
 }

@@ -50,12 +50,13 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
  * To turn an excel file into a CSV or similar, then see
  *  the XLS2CSVmra example
  * </p>
- * 
+ *
  * @see <a href="http://svn.apache.org/repos/asf/poi/trunk/src/examples/src/org/apache/poi/hssf/eventusermodel/examples/XLS2CSVmra.java">XLS2CSVmra</a>
  */
-public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.poi.ss.extractor.ExcelExtractor {
+public class ExcelExtractor implements POIOLE2TextExtractor, org.apache.poi.ss.extractor.ExcelExtractor {
 	private final HSSFWorkbook _wb;
 	private final HSSFDataFormatter _formatter;
+	private boolean doCloseFilesystem = true;
 	private boolean _includeSheetNames = true;
 	private boolean _shouldEvaluateFormulas = true;
 	private boolean _includeCellComments;
@@ -63,13 +64,14 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 	private boolean _includeHeadersFooters = true;
 
 	public ExcelExtractor(HSSFWorkbook wb) {
-		super(wb);
 		_wb = wb;
 		_formatter = new HSSFDataFormatter();
 	}
+
 	public ExcelExtractor(POIFSFileSystem fs) throws IOException {
 		this(fs.getRoot());
 	}
+
 	public ExcelExtractor(DirectoryNode dir) throws IOException {
 		this(new HSSFWorkbook(dir, true));
 	}
@@ -201,9 +203,9 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 
 	/**
 	 * Command line extractor.
-	 * 
+	 *
 	 * @param args the command line parameters
-	 * 
+	 *
 	 * @throws IOException if the file can't be read or contains errors
 	 */
 	public static void main(String[] args) throws IOException {
@@ -225,7 +227,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 
 		try (InputStream is = cmdArgs.getInputFile() == null ? System.in : new FileInputStream(cmdArgs.getInputFile());
 			 HSSFWorkbook wb = new HSSFWorkbook(is);
-			 ExcelExtractor extractor = new ExcelExtractor(wb);
+			 ExcelExtractor extractor = new ExcelExtractor(wb)
 		) {
 			extractor.setIncludeSheetNames(cmdArgs.shouldShowSheetNames());
 			extractor.setFormulasNotResults(!cmdArgs.shouldEvaluateFormulas());
@@ -255,7 +257,7 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 	 * Should blank cells be output? Default is to only
 	 *  output cells that are present in the file and are
 	 *  non-blank.
-	 * 
+	 *
 	 * @param includeBlankCells {@code true} if blank cells should be included
 	 */
 	public void setIncludeBlankCells(boolean includeBlankCells) {
@@ -410,5 +412,25 @@ public class ExcelExtractor extends POIOLE2TextExtractor implements org.apache.p
 			text.append("\n");
 
 		return text.toString();
+	}
+
+	@Override
+	public HSSFWorkbook getDocument() {
+		return _wb;
+	}
+
+	@Override
+	public void setCloseFilesystem(boolean doCloseFilesystem) {
+		this.doCloseFilesystem = doCloseFilesystem;
+	}
+
+	@Override
+	public boolean isCloseFilesystem() {
+		return doCloseFilesystem;
+	}
+
+	@Override
+	public HSSFWorkbook getFilesystem() {
+		return _wb;
 	}
 }

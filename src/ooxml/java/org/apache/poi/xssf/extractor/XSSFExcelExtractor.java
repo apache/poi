@@ -20,8 +20,8 @@ import java.io.IOException;
 import java.util.Iterator;
 import java.util.Locale;
 
-import org.apache.poi.ooxml.extractor.POIXMLTextExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
+import org.apache.poi.ooxml.extractor.POIXMLTextExtractor;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.usermodel.Cell;
@@ -44,8 +44,8 @@ import org.apache.xmlbeans.XmlException;
 /**
  * Helper class to extract text from an OOXML Excel file
  */
-public class XSSFExcelExtractor extends POIXMLTextExtractor 
-       implements org.apache.poi.ss.extractor.ExcelExtractor {
+public class XSSFExcelExtractor
+       implements POIXMLTextExtractor, org.apache.poi.ss.extractor.ExcelExtractor {
     public static final XSSFRelation[] SUPPORTED_TYPES = new XSSFRelation[] {
         XSSFRelation.WORKBOOK, XSSFRelation.MACRO_TEMPLATE_WORKBOOK,
         XSSFRelation.MACRO_ADDIN_WORKBOOK, XSSFRelation.TEMPLATE_WORKBOOK,
@@ -53,32 +53,19 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
     };
 
     private Locale locale;
-    private XSSFWorkbook workbook;
+    private final XSSFWorkbook workbook;
     private boolean includeSheetNames = true;
     private boolean formulasNotResults;
     private boolean includeCellComments;
     private boolean includeHeadersFooters = true;
     private boolean includeTextBoxes = true;
+    private boolean doCloseFilesystem = true;
 
     public XSSFExcelExtractor(OPCPackage container) throws XmlException, OpenXML4JException, IOException {
         this(new XSSFWorkbook(container));
     }
     public XSSFExcelExtractor(XSSFWorkbook workbook) {
-        super(workbook);
         this.workbook = workbook;
-    }
-
-    public static void main(String[] args) throws Exception {
-        if(args.length < 1) {
-            System.err.println("Use:");
-            System.err.println("  XSSFExcelExtractor <filename.xlsx>");
-            System.exit(1);
-        }
-
-        try (OPCPackage pkg = OPCPackage.create(args[0]);
-             POIXMLTextExtractor extractor = new XSSFExcelExtractor(pkg)) {
-            System.out.println(extractor.getText());
-        }
     }
 
     /**
@@ -194,7 +181,7 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
                 }
                 text.append("\n");
             }
-            
+
             // add textboxes
             if (includeTextBoxes){
                 XSSFDrawing drawing = sheet.getDrawingPatriarch();
@@ -261,5 +248,25 @@ public class XSSFExcelExtractor extends POIXMLTextExtractor
 
     private String extractHeaderFooter(HeaderFooter hf) {
         return ExcelExtractor._extractHeaderFooter(hf);
+    }
+
+    @Override
+    public XSSFWorkbook getDocument() {
+        return workbook;
+    }
+
+    @Override
+    public void setCloseFilesystem(boolean doCloseFilesystem) {
+        this.doCloseFilesystem = doCloseFilesystem;
+    }
+
+    @Override
+    public boolean isCloseFilesystem() {
+        return doCloseFilesystem;
+    }
+
+    @Override
+    public XSSFWorkbook getFilesystem() {
+        return workbook;
     }
 }

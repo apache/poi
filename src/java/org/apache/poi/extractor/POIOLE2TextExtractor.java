@@ -30,55 +30,28 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
  *  org.apache.poi.[format].extractor .
  *
  * @see org.apache.poi.hssf.extractor.ExcelExtractor
- * @see org.apache.poi.hslf.extractor.PowerPointExtractor
  * @see org.apache.poi.hdgf.extractor.VisioTextExtractor
  * @see org.apache.poi.hwpf.extractor.WordExtractor
  */
-public abstract class POIOLE2TextExtractor extends POITextExtractor {
-	/** The POIDocument that's open */
-	protected POIDocument document;
-
-	/**
-	 * Creates a new text extractor for the given document
-	 *
-	 * @param document The POIDocument to use in this extractor.
-	 */
-	public POIOLE2TextExtractor(POIDocument document) {
-		this.document = document;
-
-		// Ensure any underlying resources, such as open files,
-		//  will get cleaned up if the user calls #close()
-		setFilesystem(document);
-	}
-
-	/**
-	 * Creates a new text extractor, using the same
-	 *  document as another text extractor. Normally
-	 *  only used by properties extractors.
-	 *
-	 * @param otherExtractor the extractor which document to be used
-	 */
-	protected POIOLE2TextExtractor(POIOLE2TextExtractor otherExtractor) {
-		this.document = otherExtractor.document;
-	}
-
+public interface POIOLE2TextExtractor extends POITextExtractor {
 	/**
 	 * Returns the document information metadata for the document
 	 *
      * @return The Document Summary Information or null
      *      if it could not be read for this document.
 	 */
-	public DocumentSummaryInformation getDocSummaryInformation() {
-		return document.getDocumentSummaryInformation();
+	default DocumentSummaryInformation getDocSummaryInformation() {
+		return getDocument().getDocumentSummaryInformation();
 	}
+
 	/**
 	 * Returns the summary information metadata for the document.
 	 *
      * @return The Summary information for the document or null
      *      if it could not be read for this document.
 	 */
-	public SummaryInformation getSummaryInformation() {
-		return document.getSummaryInformation();
+	default SummaryInformation getSummaryInformation() {
+		return getDocument().getSummaryInformation();
 	}
 
 	/**
@@ -88,7 +61,7 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
 	 * @return an instance of POIExtractor that can extract meta-data.
 	 */
 	@Override
-    public POITextExtractor getMetadataTextExtractor() {
+    default POITextExtractor getMetadataTextExtractor() {
 		return new HPSFPropertiesExtractor(this);
 	}
 
@@ -97,8 +70,8 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
 	 *
 	 * @return the DirectoryEntry that is associated with the POIDocument of this extractor.
 	 */
-    public DirectoryEntry getRoot() {
-        return document.getDirectory();
+    default DirectoryEntry getRoot() {
+        return getDocument().getDirectory();
     }
 
     /**
@@ -107,7 +80,5 @@ public abstract class POIOLE2TextExtractor extends POITextExtractor {
      * @return the underlying POIDocument
      */
     @Override
-    public POIDocument getDocument() {
-        return document;
-    }
+    POIDocument getDocument();
 }

@@ -29,20 +29,18 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.ooxml.extractor.ExtractorFactory;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
-import org.apache.xmlbeans.XmlException;
 import org.junit.Test;
 
 /**
  * Tests for XSLFPowerPointExtractor
  */
 public class TestXSLFPowerPointExtractor {
-    private static POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+    private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
 	/**
 	 * Get text out of the simple file
@@ -262,10 +260,11 @@ public class TestXSLFPowerPointExtractor {
     }
 
     @Test
-    public void test45541() throws IOException, OpenXML4JException, XmlException {
+    public void test45541() throws IOException {
         // extract text from a powerpoint that has a header in the notes-element
         final File headerFile = slTests.getFile("45541_Header.pptx");
-        try (final SlideShowExtractor extr = ExtractorFactory.createExtractor(headerFile)) {
+        //noinspection rawtypes
+        try (final SlideShowExtractor extr = (SlideShowExtractor) ExtractorFactory.createExtractor(headerFile)) {
             String text = extr.getText();
             assertNotNull(text);
             assertFalse("Had: " + text, text.contains("testdoc"));
@@ -280,7 +279,8 @@ public class TestXSLFPowerPointExtractor {
 
         // extract text from a powerpoint that has a footer in the master-slide
         final File footerFile = slTests.getFile("45541_Footer.pptx");
-        try (SlideShowExtractor extr = ExtractorFactory.createExtractor(footerFile)) {
+        //noinspection rawtypes
+        try (SlideShowExtractor extr = (SlideShowExtractor)ExtractorFactory.createExtractor(footerFile)) {
             String text = extr.getText();
             assertNotContained(text, "testdoc");
 

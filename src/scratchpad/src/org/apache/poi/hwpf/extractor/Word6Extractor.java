@@ -31,13 +31,14 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  * Class to extract the text from old (Word 6 / Word 95) Word Documents.
  *
  * This should only be used on the older files, for most uses you
- *  should call {@link WordExtractor} which deals properly 
+ *  should call {@link WordExtractor} which deals properly
  *  with HWPF.
  *
  * @author Nick Burch
  */
-public final class Word6Extractor extends POIOLE2TextExtractor {
+public final class Word6Extractor implements POIOLE2TextExtractor {
 	private HWPFOldDocument doc;
+	private boolean doCloseFilesystem = true;
 
 	/**
 	 * Create a new Word Extractor
@@ -49,12 +50,11 @@ public final class Word6Extractor extends POIOLE2TextExtractor {
 
     /**
      * Create a new Word Extractor
-     * 
+     *
      * @param fs
      *            POIFSFileSystem containing the word file
      */
-    public Word6Extractor( POIFSFileSystem fs ) throws IOException
-    {
+    public Word6Extractor( POIFSFileSystem fs ) throws IOException {
         this( fs.getRoot() );
     }
 
@@ -62,14 +62,11 @@ public final class Word6Extractor extends POIOLE2TextExtractor {
      * @deprecated Use {@link #Word6Extractor(DirectoryNode)} instead
      */
     @Deprecated
-    public Word6Extractor( DirectoryNode dir, POIFSFileSystem fs )
-            throws IOException
-    {
+    public Word6Extractor( DirectoryNode dir, POIFSFileSystem fs ) throws IOException {
         this( dir );
     }
 
-    public Word6Extractor( DirectoryNode dir ) throws IOException
-    {
+    public Word6Extractor( DirectoryNode dir ) throws IOException {
         this( new HWPFOldDocument( dir ) );
     }
 
@@ -78,7 +75,6 @@ public final class Word6Extractor extends POIOLE2TextExtractor {
 	 * @param doc The HWPFOldDocument to extract from
 	 */
 	public Word6Extractor(HWPFOldDocument doc) {
-		super(doc);
 		this.doc = doc;
 	}
 
@@ -101,7 +97,7 @@ public final class Word6Extractor extends POIOLE2TextExtractor {
 	        ret = new String[doc.getTextTable().getTextPieces().size()];
 	        for(int i=0; i<ret.length; i++) {
 	            ret[i] = doc.getTextTable().getTextPieces().get(i).getStringBuilder().toString();
-	            
+
 	            // Fix the line endings
 	            ret[i] = ret[i].replaceAll("\r", "\ufffe");
 	            ret[i] = ret[i].replaceAll("\ufffe","\r\n");
@@ -111,25 +107,40 @@ public final class Word6Extractor extends POIOLE2TextExtractor {
 	    return ret;
 	}
 
-    public String getText()
-    {
-        try
-        {
+    public String getText() {
+        try {
             WordToTextConverter wordToTextConverter = new WordToTextConverter();
             wordToTextConverter.processDocument( doc );
             return wordToTextConverter.getText();
-        }
-        catch ( Exception exc )
-        {
+        } catch ( Exception exc ) {
             // fall-back
             StringBuilder text = new StringBuilder();
 
-            for ( String t : getParagraphText() )
-            {
+            for ( String t : getParagraphText() ) {
                 text.append( t );
             }
 
             return text.toString();
         }
+    }
+
+    @Override
+    public HWPFOldDocument getDocument() {
+        return doc;
+    }
+
+    @Override
+    public void setCloseFilesystem(boolean doCloseFilesystem) {
+        this.doCloseFilesystem = doCloseFilesystem;
+    }
+
+    @Override
+    public boolean isCloseFilesystem() {
+        return doCloseFilesystem;
+    }
+
+    @Override
+    public HWPFOldDocument getFilesystem() {
+        return doc;
     }
 }

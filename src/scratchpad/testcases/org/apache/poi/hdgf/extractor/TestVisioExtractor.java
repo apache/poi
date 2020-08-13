@@ -19,12 +19,9 @@ package org.apache.poi.hdgf.extractor;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.PrintStream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hdgf.HDGFDiagram;
@@ -32,7 +29,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.junit.Test;
 
 public final class TestVisioExtractor {
-    private static POIDataSamples _dgTests = POIDataSamples.getDiagramInstance();
+    private static final POIDataSamples _dgTests = POIDataSamples.getDiagramInstance();
 
 	private final String defFilename = "Test_Visio-Some_Random_Text.vsd";
 	private final int defTextChunks = 5;
@@ -63,7 +60,7 @@ public final class TestVisioExtractor {
         is3.close();
         HDGFDiagram hdgf3 = new HDGFDiagram(poifs3);
 
-		
+
         VisioTextExtractor extractor3 = new VisioTextExtractor(hdgf3);
 		assertNotNull(extractor3);
 		assertNotNull(extractor3.getAllText());
@@ -97,7 +94,7 @@ public final class TestVisioExtractor {
     @Test
 	public void testProblemFiles() throws Exception {
 		String[] files = {
-		      "44594.vsd", "44594-2.vsd", 
+		      "44594.vsd", "44594-2.vsd",
 		      "ShortChunk1.vsd", "ShortChunk2.vsd", "ShortChunk3.vsd",
 		      "NegativeChunkLength.vsd", "NegativeChunkLength2.vsd"
 		};
@@ -108,31 +105,6 @@ public final class TestVisioExtractor {
         }
 	}
 
-    @Test
-	public void testMain() throws Exception {
-		PrintStream oldOut = System.out;
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		PrintStream capture = new PrintStream(baos);
-		System.setOut(capture);
-
-        String path = _dgTests.getFile(defFilename).getPath();
-        VisioTextExtractor.main(new String[] {path});
-
-		// Put things back
-		System.setOut(oldOut);
-
-		// Check
-		capture.flush();
-		String text = baos.toString();
-        // YK: stdout can contain lots of other stuff if logging is sent to console
-        // ( -Dorg.apache.poi.util.POILogger=org.apache.poi.util.SystemOutLogger)
-		assertTrue( text.contains(
-		      "text\nView\n" +
-		      "Test View\nI am a test view\n" +
-		      "Some random text, on a page\n"
-		      ));
-	}
-    
     private VisioTextExtractor openExtractor(String fileName) throws IOException {
         try (InputStream is = _dgTests.openResourceAsStream(fileName)) {
             return new VisioTextExtractor(is);

@@ -17,9 +17,6 @@
 
 package org.apache.poi.hpsf.extractor;
 
-import java.io.File;
-import java.io.IOException;
-
 import org.apache.poi.POIDocument;
 import org.apache.poi.extractor.POIOLE2TextExtractor;
 import org.apache.poi.extractor.POITextExtractor;
@@ -37,15 +34,20 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *  build in and custom, returning them in
  *  textual form.
  */
-public class HPSFPropertiesExtractor extends POIOLE2TextExtractor {
+public class HPSFPropertiesExtractor implements POIOLE2TextExtractor {
+    private final POIDocument document;
+    private boolean doCloseFilesystem = true;
+
     public HPSFPropertiesExtractor(POIOLE2TextExtractor mainExtractor) {
-        super(mainExtractor);
+        document = mainExtractor.getDocument();
     }
-    public HPSFPropertiesExtractor(POIDocument doc) {
-        super(doc);
+
+    public HPSFPropertiesExtractor(POIDocument document) {
+        this.document = document;
     }
+
     public HPSFPropertiesExtractor(POIFSFileSystem fs) {
-        super(new HPSFPropertiesOnlyDocument(fs));
+        document = new HPSFPropertiesOnlyDocument(fs);
     }
 
     public String getDocumentSummaryInformationText() {
@@ -122,11 +124,11 @@ public class HPSFPropertiesExtractor extends POIOLE2TextExtractor {
     }
 
     private static String getPropertyValueText(Object val) {
-        return (val == null) 
+        return (val == null)
             ? "(not set)"
             : PropertySet.getPropertyStringValue(val);
     }
-    
+
     @Override
     public boolean equals(Object o) {
         return super.equals(o);
@@ -137,12 +139,23 @@ public class HPSFPropertiesExtractor extends POIOLE2TextExtractor {
         return super.hashCode();
     }
 
-    public static void main(String[] args) throws IOException {
-        for (String file : args) {
-            try (HPSFPropertiesExtractor ext = new HPSFPropertiesExtractor(
-                    new POIFSFileSystem(new File(file)))) {
-                System.out.println(ext.getText());
-            }
-        }
+    @Override
+    public POIDocument getDocument() {
+        return document;
+    }
+
+    @Override
+    public void setCloseFilesystem(boolean doCloseFilesystem) {
+        this.doCloseFilesystem = doCloseFilesystem;
+    }
+
+    @Override
+    public boolean isCloseFilesystem() {
+        return doCloseFilesystem;
+    }
+
+    @Override
+    public POIDocument getFilesystem() {
+        return document;
     }
 }

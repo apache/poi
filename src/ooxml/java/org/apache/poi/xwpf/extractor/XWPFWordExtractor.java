@@ -19,9 +19,7 @@ package org.apache.poi.xwpf.extractor;
 import java.io.IOException;
 import java.util.List;
 
-import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.extractor.POIXMLTextExtractor;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xwpf.model.XWPFCommentsDecorator;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
@@ -39,44 +37,29 @@ import org.apache.poi.xwpf.usermodel.XWPFSDTCell;
 import org.apache.poi.xwpf.usermodel.XWPFTable;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell;
 import org.apache.poi.xwpf.usermodel.XWPFTableRow;
-import org.apache.xmlbeans.XmlException;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
 
 /**
  * Helper class to extract text from an OOXML Word file
  */
-public class XWPFWordExtractor extends POIXMLTextExtractor {
+public class XWPFWordExtractor implements POIXMLTextExtractor {
     public static final XWPFRelation[] SUPPORTED_TYPES = {
             XWPFRelation.DOCUMENT, XWPFRelation.TEMPLATE,
             XWPFRelation.MACRO_DOCUMENT,
             XWPFRelation.MACRO_TEMPLATE_DOCUMENT
     };
 
-    private XWPFDocument document;
+    private final XWPFDocument document;
     private boolean fetchHyperlinks;
     private boolean concatenatePhoneticRuns = true;
+    private boolean doCloseFilesystem = true;
 
-    public XWPFWordExtractor(OPCPackage container) throws XmlException, OpenXML4JException, IOException {
+    public XWPFWordExtractor(OPCPackage container) throws IOException {
         this(new XWPFDocument(container));
     }
 
     public XWPFWordExtractor(XWPFDocument document) {
-        super(document);
         this.document = document;
-    }
-
-    public static void main(String[] args) throws Exception {
-        if (args.length < 1) {
-            System.err.println("Use:");
-            System.err.println("  XWPFWordExtractor <filename.docx>");
-            System.exit(1);
-        }
-        POIXMLTextExtractor extractor =
-                new XWPFWordExtractor(POIXMLDocument.openPackage(
-                        args[0]
-                ));
-        System.out.println(extractor.getText());
-        extractor.close();
     }
 
     /**
@@ -216,5 +199,25 @@ public class XWPFWordExtractor extends POIXMLTextExtractor {
         if (hfPolicy.getDefaultHeader() != null) {
             text.append(hfPolicy.getDefaultHeader().getText());
         }
+    }
+
+    @Override
+    public XWPFDocument getDocument() {
+        return document;
+    }
+
+    @Override
+    public void setCloseFilesystem(boolean doCloseFilesystem) {
+        this.doCloseFilesystem = doCloseFilesystem;
+    }
+
+    @Override
+    public boolean isCloseFilesystem() {
+        return doCloseFilesystem;
+    }
+
+    @Override
+    public XWPFDocument getFilesystem() {
+        return document;
     }
 }

@@ -42,7 +42,6 @@ import org.apache.poi.hsmf.datatypes.PropertyValue;
 import org.apache.poi.hsmf.datatypes.PropertyValue.LongPropertyValue;
 import org.apache.poi.hsmf.datatypes.PropertyValue.TimePropertyValue;
 import org.apache.poi.hsmf.dev.HSMFDump;
-import org.apache.poi.hsmf.extractor.OutlookTextExtactor;
 import org.apache.poi.hsmf.extractor.OutlookTextExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
@@ -74,23 +73,23 @@ public final class TestFixedSizedProperties {
        fsMessageFails = new POIFSFileSystem(samples.getFile(messageFails));
 
        mapiMessageSucceeds = new MAPIMessage(fsMessageSucceeds);
-       mapiMessageFails = new MAPIMessage(fsMessageFails);        
-      
+       mapiMessageFails = new MAPIMessage(fsMessageFails);
+
        messageDateFormat = new SimpleDateFormat("E, d MMM yyyy HH:mm:ss", Locale.ROOT);
-       messageDateFormat.setTimeZone(LocaleUtil.TIMEZONE_UTC);       
+       messageDateFormat.setTimeZone(LocaleUtil.TIMEZONE_UTC);
 
        userTimeZone = LocaleUtil.getUserTimeZone();
        LocaleUtil.setUserTimeZone(LocaleUtil.TIMEZONE_UTC);
    }
-   
-   
+
+
    @AfterClass
    public static void closeFS() throws Exception {
        LocaleUtil.setUserTimeZone(userTimeZone);
        fsMessageSucceeds.close();
        fsMessageFails.close();
    }
-   
+
    /**
     * Check we can find a sensible number of properties on a few
     * of our test files
@@ -98,21 +97,21 @@ public final class TestFixedSizedProperties {
    @Test
    public void testPropertiesFound() {
        Map<MAPIProperty,List<PropertyValue>> props;
-       
+
        props = mapiMessageSucceeds.getMainChunks().getProperties();
        assertTrue(props.toString(), props.size() > 10);
-       
+
        props = mapiMessageFails.getMainChunks().getProperties();
        assertTrue(props.toString(), props.size() > 10);
    }
-   
+
    /**
     * Check we find properties of a variety of different types
     */
    @Test
    public void testPropertyValueTypes() {
        Chunks mainChunks = mapiMessageSucceeds.getMainChunks();
-       
+
        // Ask to have the values looked up
        Map<MAPIProperty,List<PropertyValue>> props = mainChunks.getProperties();
        HashSet<Class<? extends PropertyValue>> seenTypes =
@@ -126,7 +125,7 @@ public final class TestFixedSizedProperties {
        assertTrue(seenTypes.toString(), seenTypes.contains(LongPropertyValue.class));
        assertTrue(seenTypes.toString(), seenTypes.contains(TimePropertyValue.class));
        assertFalse(seenTypes.toString(), seenTypes.contains(ChunkBasedPropertyValue.class));
-       
+
        // Ask for the raw values
        seenTypes.clear();
        for (PropertyValue pv : mainChunks.getRawProperties().values()) {
@@ -144,22 +143,12 @@ public final class TestFixedSizedProperties {
    @Test
    public void testReadMessageDateSucceedsWithOutlookTextExtractor() throws Exception {
       OutlookTextExtractor ext = new OutlookTextExtractor(mapiMessageSucceeds);
-      ext.setFilesystem(null); // Don't close re-used test resources here
-      
+      ext.setCloseFilesystem(false);
+
       String text = ext.getText();
       assertContains(text, "Date: Fri, 22 Jun 2012 18:32:54 +0000\n");
       ext.close();
    }
-
-    @Test
-    public void testReadMessageDateSucceedsWithOutlookTextExtactor() throws Exception {
-        OutlookTextExtactor ext = new OutlookTextExtactor(mapiMessageSucceeds);
-        ext.setFilesystem(null); // Don't close re-used test resources here
-
-        String text = ext.getText();
-        assertContains(text, "Date: Fri, 22 Jun 2012 18:32:54 +0000\n");
-        ext.close();
-    }
 
     /**
     * Test to see if we can read the Date Chunk with OutlookTextExtractor.
@@ -167,8 +156,8 @@ public final class TestFixedSizedProperties {
    @Test
    public void testReadMessageDateFailsWithOutlookTextExtractor() throws Exception {
       OutlookTextExtractor ext = new OutlookTextExtractor(mapiMessageFails);
-      ext.setFilesystem(null); // Don't close re-used test resources here
-      
+      ext.setCloseFilesystem(false);
+
       String text = ext.getText();
       assertContains(text, "Date: Thu, 21 Jun 2012 14:14:04 +0000\n");
       ext.close();
@@ -182,7 +171,7 @@ public final class TestFixedSizedProperties {
        PrintStream stream = new PrintStream(new ByteArrayOutputStream());
        HSMFDump dump = new HSMFDump(fsMessageSucceeds);
        dump.dump(stream);
-   }	
+   }
 
    /**
     * Test to see if we can read the Date Chunk with HSMFDump.
@@ -202,19 +191,19 @@ public final class TestFixedSizedProperties {
        // Check via the message date
        Calendar clientSubmitTime = mapiMessageSucceeds.getMessageDate();
        assertEquals(
-               "Fri, 22 Jun 2012 18:32:54", 
+               "Fri, 22 Jun 2012 18:32:54",
                messageDateFormat.format(clientSubmitTime.getTime()));
-       
+
        // Fetch the property value directly
        Map<MAPIProperty,List<PropertyValue>> props =
                mapiMessageSucceeds.getMainChunks().getProperties();
-       List<PropertyValue> pv = props.get(MAPIProperty.CLIENT_SUBMIT_TIME); 
+       List<PropertyValue> pv = props.get(MAPIProperty.CLIENT_SUBMIT_TIME);
        assertNotNull(pv);
        assertEquals(1, pv.size());
-       
+
        clientSubmitTime = (Calendar)pv.get(0).getValue();
        assertEquals(
-               "Fri, 22 Jun 2012 18:32:54", 
+               "Fri, 22 Jun 2012 18:32:54",
                messageDateFormat.format(clientSubmitTime.getTime()));
    }
 }

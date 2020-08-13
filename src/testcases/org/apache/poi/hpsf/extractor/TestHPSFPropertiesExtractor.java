@@ -25,7 +25,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hpsf.*;
+import org.apache.poi.hpsf.Thumbnail;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -101,42 +101,31 @@ public final class TestHPSFPropertiesExtractor {
 
     @Test
     public void testConstructors() throws IOException {
-        POIFSFileSystem fs;
-        HSSFWorkbook wb;
-        try {
-            fs = new POIFSFileSystem(_samples.openResourceAsStream("TestUnicode.xls"));
-            wb = new HSSFWorkbook(fs);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        ExcelExtractor excelExt = new ExcelExtractor(wb);
-
         final String fsText;
-        HPSFPropertiesExtractor fsExt = new HPSFPropertiesExtractor(fs);
-        fsExt.setFilesystem(null); // Don't close re-used test resources!
-        try {
-            fsText = fsExt.getText();
-        } finally {
-            fsExt.close();
-        }
-
         final String hwText;
-        HPSFPropertiesExtractor hwExt = new HPSFPropertiesExtractor(wb);
-        hwExt.setFilesystem(null); // Don't close re-used test resources!
-        try {
-            hwText = hwExt.getText();
-        } finally {
-            hwExt.close();
-        }
-
         final String eeText;
-        HPSFPropertiesExtractor eeExt = new HPSFPropertiesExtractor(excelExt);
-        eeExt.setFilesystem(null); // Don't close re-used test resources!
-        try {
-            eeText = eeExt.getText();
-        } finally {
-            eeExt.close();
-            wb.close();
+
+        try (POIFSFileSystem fs = new POIFSFileSystem(_samples.openResourceAsStream("TestUnicode.xls"));
+        HSSFWorkbook wb = new HSSFWorkbook(fs);
+        ExcelExtractor excelExt = new ExcelExtractor(wb)) {
+
+            try (HPSFPropertiesExtractor fsExt = new HPSFPropertiesExtractor(fs)) {
+                // Don't close re-used test resources!
+                fsExt.setCloseFilesystem(false);
+                fsText = fsExt.getText();
+            }
+
+            try (HPSFPropertiesExtractor hwExt = new HPSFPropertiesExtractor(wb)) {
+                // Don't close re-used test resources!
+                hwExt.setCloseFilesystem(false);
+                hwText = hwExt.getText();
+            }
+
+            try (HPSFPropertiesExtractor eeExt = new HPSFPropertiesExtractor(excelExt)) {
+                // Don't close re-used test resources!
+                eeExt.setCloseFilesystem(false);
+                eeText = eeExt.getText();
+            }
         }
 
         assertEquals(fsText, hwText);

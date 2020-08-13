@@ -17,7 +17,6 @@
 
 package org.apache.poi.hwpf.extractor;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -39,8 +38,9 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  *
  * @author Nick Burch
  */
-public final class WordExtractor extends POIOLE2TextExtractor {
-    private HWPFDocument doc;
+public final class WordExtractor implements POIOLE2TextExtractor {
+    private final HWPFDocument doc;
+    private boolean doCloseFilesystem = true;
 
     /**
      * Create a new Word Extractor
@@ -73,27 +73,7 @@ public final class WordExtractor extends POIOLE2TextExtractor {
      *            The HWPFDocument to extract from
      */
     public WordExtractor( HWPFDocument doc ) {
-        super( doc );
         this.doc = doc;
-    }
-
-    /**
-     * Command line extractor, so people will stop moaning that they can't just
-     * run this.
-     */
-    public static void main( String[] args ) throws IOException {
-        if ( args.length == 0 ) {
-            System.err.println( "Use:" );
-            System.err
-                    .println( "   java org.apache.poi.hwpf.extractor.WordExtractor <filename>" );
-            System.exit( 1 );
-        }
-
-        // Process the first argument as a file
-        InputStream fin = new FileInputStream( args[0] );
-        try (WordExtractor extractor = new WordExtractor(fin)) {
-            System.out.println(extractor.getText());
-        }
     }
 
     /**
@@ -142,7 +122,7 @@ public final class WordExtractor extends POIOLE2TextExtractor {
         return getParagraphText( r );
     }
 
-    protected static String[] getParagraphText( Range r ) {
+    static String[] getParagraphText( Range r ) {
         String[] ret;
         ret = new String[r.numParagraphs()];
         for ( int i = 0; i < ret.length; i++ ) {
@@ -287,8 +267,27 @@ public final class WordExtractor extends POIOLE2TextExtractor {
     /**
      * Removes any fields (eg macros, page markers etc) from the string.
      */
-    public static String stripFields( String text )
-    {
+    public static String stripFields( String text ) {
         return Range.stripFields( text );
+    }
+
+    @Override
+    public HWPFDocument getDocument() {
+        return doc;
+    }
+
+    @Override
+    public void setCloseFilesystem(boolean doCloseFilesystem) {
+        this.doCloseFilesystem = doCloseFilesystem;
+    }
+
+    @Override
+    public boolean isCloseFilesystem() {
+        return doCloseFilesystem;
+    }
+
+    @Override
+    public HWPFDocument getFilesystem() {
+        return doc;
     }
 }
