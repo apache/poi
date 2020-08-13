@@ -34,7 +34,7 @@ import org.apache.poi.util.StringUtil;
 public final class MAPIRtfAttribute extends MAPIAttribute {
 
    //arbitrarily selected; may need to increase
-   private static final int MAX_RECORD_LENGTH = 1_000_000;
+   private static final int MAX_RECORD_LENGTH = 50_000_000;
 
    private final byte[] decompressed;
    private final String data;
