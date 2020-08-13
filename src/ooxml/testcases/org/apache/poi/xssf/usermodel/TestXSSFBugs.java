@@ -3560,4 +3560,12 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             Assert.assertEquals("", aCell.getStringCellValue());
         }
     }
+
+    @Test
+    public void testBug64667() throws IOException {
+        //test that an NPE isn't thrown on opening
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("64667.xlsx")) {
+            int activeSheet = wb.getActiveSheetIndex();
+        }
+    }
 }

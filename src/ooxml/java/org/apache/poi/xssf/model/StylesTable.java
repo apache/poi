@@ -239,7 +239,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
             if(styleDxfs != null) dxfs.addAll(Arrays.asList(styleDxfs.getDxfArray()));
 
             CTTableStyles ctTableStyles = styleSheet.getTableStyles();
-            if (ctTableStyles != null) {
+            if (ctTableStyles != null && styleDxfs != null) {
                 int idx = 0;
                 for (CTTableStyle style : ctTableStyles.getTableStyleArray()) {
                     tableStyles.put(style.getName(), new XSSFTableStyle(idx, styleDxfs, style, indexedColors));
