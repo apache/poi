@@ -30,9 +30,7 @@ import org.apache.poi.extractor.POIOLE2TextExtractor;
 import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
-import org.apache.poi.hslf.usermodel.HSLFShape;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
-import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.extractor.OutlookTextExtractor;
@@ -102,7 +100,7 @@ public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
             }
 
             if (poifsDir.hasEntry(HSLFSlideShow.POWERPOINT_DOCUMENT)) {
-                return new SlideShowExtractor<HSLFShape, HSLFTextParagraph>(SlideShowFactory.create(poifsDir));
+                return new SlideShowExtractor<>((HSLFSlideShow)SlideShowFactory.create(poifsDir));
             }
 
             if (poifsDir.hasEntry("VisioDocument")) {

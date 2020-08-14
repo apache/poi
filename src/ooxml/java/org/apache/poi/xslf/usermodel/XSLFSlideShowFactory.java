@@ -25,40 +25,81 @@ import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
-import org.apache.poi.sl.usermodel.SlideShowFactory;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
+import org.apache.poi.poifs.filesystem.FileMagic;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.sl.usermodel.SlideShowProvider;
 import org.apache.poi.util.Internal;
 
 @Internal
-public class XSLFSlideShowFactory extends SlideShowFactory {
+public class XSLFSlideShowFactory implements SlideShowProvider<XSLFShape,XSLFTextParagraph> {
 
-    static {
-        SlideShowFactory.createXslfByFile = XSLFSlideShowFactory::createSlideShow;
-        SlideShowFactory.createXslfByStream = XSLFSlideShowFactory::createSlideShow;
+    @Override
+    public boolean accepts(FileMagic fm) {
+        return fm == FileMagic.OOXML;
     }
 
     /**
-     * Creates a XMLSlideShow from the given OOXML Package.
-     * This is a convenience method to go along the create-methods of the super class.
+     * Create a new empty SlideShow
+     *
+     * @return The created SlideShow
+     */
+    @Override
+    public XMLSlideShow create() {
+        return new XMLSlideShow();
+    }
+
+    @Override
+    public XMLSlideShow create(DirectoryNode root, String password) throws IOException {
+        try (InputStream stream = DocumentFactoryHelper.getDecryptedStream(root, password)) {
+            return create(stream);
+        } finally {
+            // as we processed the full stream already, we can close the filesystem here
+            // otherwise file handles are leaked
+            root.getFileSystem().close();
+        }
+    }
+
+    @Override
+    public XMLSlideShow create(InputStream inp, String password) throws IOException {
+        InputStream bufInp = FileMagic.prepareToCheckMagic(inp);
+        FileMagic fm = FileMagic.valueOf(bufInp);
+
+        if (fm == FileMagic.OLE2) {
+            try (POIFSFileSystem poifs = new POIFSFileSystem(bufInp);
+                 InputStream stream = DocumentFactoryHelper.getDecryptedStream(poifs.getRoot(), password)) {
+                return create(stream);
+            }
+        }
+
+        if (fm == FileMagic.OOXML) {
+            return create(bufInp);
+        }
+
+        return null;
+    }
+
+    /**
+     * Creates a XMLSlideShow from the given InputStream
      *
      * <p>Note that in order to properly release resources the
-     *  SlideShow should be closed after use.</p>
+     * SlideShow should be closed after use.</p>
      *
-     *  @param pkg The {@link OPCPackage} opened for reading data.
+     * @param stream The {@link InputStream} to read data from.
      *
-     *  @return The created SlideShow
+     * @return The created SlideShow
      *
-     *  @throws IOException if an error occurs while reading the data
+     * @throws IOException if an error occurs while reading the data
      */
-    public static XMLSlideShow create(OPCPackage pkg) throws IOException {
+    @SuppressWarnings("resource")
+    @Override
+    public XMLSlideShow create(InputStream stream) throws IOException {
         try {
-            return new XMLSlideShow(pkg);
-        } catch (IllegalArgumentException ioe) {
-            // ensure that file handles are closed (use revert() to not re-write the file)
-            pkg.revert();
-            //pkg.close();
-
-            // rethrow exception
-            throw ioe;
+            OPCPackage pkg = OPCPackage.open(stream);
+            return createSlideShow(pkg);
+        } catch (InvalidFormatException e) {
+            throw new IOException(e);
         }
     }
 
@@ -77,7 +118,7 @@ public class XSLFSlideShowFactory extends SlideShowFactory {
     public static XMLSlideShow createSlideShow(OPCPackage pkg) throws IOException {
         try {
             return new XMLSlideShow(pkg);
-        } catch (IllegalArgumentException ioe) {
+        } catch (RuntimeException ioe) {
             // ensure that file handles are closed (use revert() to not re-write the file)
             pkg.revert();
             //pkg.close();
@@ -89,7 +130,7 @@ public class XSLFSlideShowFactory extends SlideShowFactory {
 
     /**
      * Creates the XMLSlideShow from the given File, which must exist and be readable.
-     * <p>Note that in order to properly release resources theSlideShow should be closed after use.
+     * <p>Note that in order to properly release resources the SlideShow should be closed after use.
      *
      *  @param file The file to read data from.
      *  @param readOnly If the SlideShow should be opened in read-only mode to avoid writing back
@@ -101,8 +142,16 @@ public class XSLFSlideShowFactory extends SlideShowFactory {
      *  @throws EncryptedDocumentException If the wrong password is given for a protected file
      */
     @SuppressWarnings("resource")
-    public static XMLSlideShow createSlideShow(File file, boolean readOnly)
-    throws IOException {
+    public XMLSlideShow create(File file, String password, boolean readOnly) throws IOException {
+        FileMagic fm = FileMagic.valueOf(file);
+
+        if (fm == FileMagic.OLE2) {
+            try (POIFSFileSystem poifs = new POIFSFileSystem(file, true);
+                 InputStream stream = DocumentFactoryHelper.getDecryptedStream(poifs.getRoot(), password)) {
+                return create(stream);
+            }
+        }
+
         try {
             OPCPackage pkg = OPCPackage.open(file, readOnly ? PackageAccess.READ : PackageAccess.READ_WRITE);
             return createSlideShow(pkg);
@@ -110,27 +159,4 @@ public class XSLFSlideShowFactory extends SlideShowFactory {
             throw new IOException(e);
         }
     }
-
-    /**
-     * Creates a XMLSlideShow from the given InputStream
-     *
-     * <p>Note that in order to properly release resources the
-     * SlideShow should be closed after use.</p>
-     *
-     * @param stream The {@link InputStream} to read data from.
-     *
-     * @return The created SlideShow
-     *
-     * @throws IOException if an error occurs while reading the data
-     */
-    @SuppressWarnings("resource")
-    public static XMLSlideShow createSlideShow(InputStream stream) throws IOException {
-        try {
-            OPCPackage pkg = OPCPackage.open(stream);
-            return createSlideShow(pkg);
-        } catch (InvalidFormatException e) {
-            throw new IOException(e);
-        }
-    }
-
 }

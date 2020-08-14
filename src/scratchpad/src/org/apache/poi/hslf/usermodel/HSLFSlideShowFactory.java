@@ -17,11 +17,16 @@
 
 package org.apache.poi.hslf.usermodel;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
+import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
+import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
+import org.apache.poi.sl.usermodel.SlideShowProvider;
 import org.apache.poi.util.Internal;
 
 /**
@@ -30,11 +35,20 @@ import org.apache.poi.util.Internal;
  */
 @SuppressWarnings("unused")
 @Internal
-public class HSLFSlideShowFactory extends SlideShowFactory {
+public class HSLFSlideShowFactory implements SlideShowProvider<HSLFShape,HSLFTextParagraph> {
 
-    static {
-        SlideShowFactory.createHslfByNode = HSLFSlideShowFactory::createSlideShow;
-        SlideShowFactory.createHslfByPoifs = HSLFSlideShowFactory::createSlideShow;
+    @Override
+    public boolean accepts(FileMagic fm) {
+        return FileMagic.OLE2 == fm;
+    }
+
+    /**
+     * Create a new empty SlideShow
+     *
+     * @return The created SlideShow
+     */
+    public HSLFSlideShow create() {
+        return new HSLFSlideShow();
     }
 
     /**
@@ -51,7 +65,45 @@ public class HSLFSlideShowFactory extends SlideShowFactory {
      * Note that in order to properly release resources the
      * SlideShow should be closed after use.
      */
-    public static HSLFSlideShow createSlideShow(final DirectoryNode root) throws IOException {
-        return new HSLFSlideShow(root);
+    public HSLFSlideShow create(final DirectoryNode root, String password) throws IOException {
+        boolean passwordSet = false;
+        if (password != null) {
+            Biff8EncryptionKey.setCurrentUserPassword(password);
+            passwordSet = true;
+        }
+        try {
+            return new HSLFSlideShow(root);
+        } finally {
+            if (passwordSet) {
+                Biff8EncryptionKey.setCurrentUserPassword(null);
+            }
+        }
+    }
+
+    @Override
+    public HSLFSlideShow create(InputStream inp) throws IOException {
+        return create(inp, null);
+    }
+
+    @Override
+    public HSLFSlideShow create(InputStream inp, String password) throws IOException {
+        POIFSFileSystem fs = new POIFSFileSystem(inp);
+        return create(fs.getRoot(), password);
+    }
+
+    @Override
+    public HSLFSlideShow create(File file, String password, boolean readOnly) throws IOException {
+        boolean passwordSet = false;
+        if (password != null) {
+            Biff8EncryptionKey.setCurrentUserPassword(password);
+            passwordSet = true;
+        }
+        try {
+            return new HSLFSlideShow(new POIFSFileSystem(file, readOnly));
+        } finally {
+            if (passwordSet) {
+                Biff8EncryptionKey.setCurrentUserPassword(null);
+            }
+        }
     }
 }

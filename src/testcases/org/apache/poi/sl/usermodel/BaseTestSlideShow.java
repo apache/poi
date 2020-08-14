@@ -160,8 +160,9 @@ public abstract class BaseTestSlideShow<
     @Test
     public void shapeAndSlideName() throws IOException {
         final String file = "SampleShow.ppt"+(getClass().getSimpleName().contains("XML")?"x":"");
+        //noinspection unchecked
         try (final InputStream is = slTests.openResourceAsStream(file);
-             final SlideShow<S,P> ppt = SlideShowFactory.create(is)) {
+             final SlideShow<S,P> ppt = (SlideShow<S,P>)SlideShowFactory.create(is)) {
             final List<S> shapes1 = ppt.getSlides().get(0).getShapes();
             assertEquals("The Title", shapes1.get(0).getShapeName());
             assertEquals("Another Subtitle", shapes1.get(1).getShapeName());

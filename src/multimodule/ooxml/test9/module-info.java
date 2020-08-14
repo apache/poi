@@ -28,8 +28,9 @@ module org.apache.poi.ooxml {
     requires java.desktop;
     requires java.security.jgss;
 
-    provides org.apache.poi.ss.usermodel.WorkbookProvider with org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
     provides org.apache.poi.extractor.ExtractorProvider with org.apache.poi.ooxml.extractor.POIXMLExtractorFactory;
+    provides org.apache.poi.ss.usermodel.WorkbookProvider with org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
+    provides org.apache.poi.sl.usermodel.SlideShowProvider with org.apache.poi.xslf.usermodel.XSLFSlideShowFactory;
 
     exports org.apache.poi.xwpf.extractor;
     exports org.apache.poi.xwpf.usermodel;

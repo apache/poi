@@ -98,7 +98,7 @@ public abstract class BaseTestSlideShowFactory {
         // from protected POIFS
         if (protectedFile.endsWith(".ppt") || protectedFile.endsWith(".pptx")) {
             POIFSFileSystem poifs = new POIFSFileSystem(fromFile(protectedFile));
-            ss = SlideShowFactory.create(poifs, password);
+            ss = SlideShowFactory.create(poifs.getRoot(), password);
             assertNotNull(ss);
             poifs.close();
             assertCloseDoesNotModifyFile(protectedFile, ss);
@@ -172,13 +172,13 @@ public abstract class BaseTestSlideShowFactory {
             assertArrayEquals(filename + " sample file was modified as a result of closing the slideshow",
                     before, after);
         } catch (AssertionError e) {
-            // if the file after closing is different, then re-set 
-            // the file to the state before in order to not have a dirty SCM 
+            // if the file after closing is different, then re-set
+            // the file to the state before in order to not have a dirty SCM
             // working tree when running this test
             try (FileOutputStream str = new FileOutputStream(_slTests.getFile(filename))) {
                 str.write(before);
             }
-            
+
             throw e;
         }
     }

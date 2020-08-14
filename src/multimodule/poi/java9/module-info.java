@@ -27,8 +27,9 @@ module org.apache.poi.poi {
     /* needed for CleanerUtil */
     requires jdk.unsupported;
 
-    uses org.apache.poi.ss.usermodel.WorkbookProvider;
     uses org.apache.poi.extractor.ExtractorProvider;
+    uses org.apache.poi.ss.usermodel.WorkbookProvider;
+    uses org.apache.poi.sl.usermodel.SlideShowProvider;
 
 
     provides org.apache.poi.ss.usermodel.WorkbookProvider with org.apache.poi.hssf.usermodel.HSSFWorkbookFactory;

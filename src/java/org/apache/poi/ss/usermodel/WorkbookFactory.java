@@ -274,7 +274,7 @@ public final class WorkbookFactory {
         if (fm == FileMagic.OOXML) {
             return wp(fm, w -> w.create(file, password, readOnly));
         } else if (fm == FileMagic.OLE2) {
-            boolean ooxmlEnc = false;
+            final boolean ooxmlEnc;
             try (POIFSFileSystem fs = new POIFSFileSystem(file, true)) {
                 ooxmlEnc = fs.getRoot().hasEntry(Decryptor.DEFAULT_POIFS_ENTRY);
             }
