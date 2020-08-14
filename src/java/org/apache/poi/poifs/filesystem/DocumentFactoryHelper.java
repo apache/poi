@@ -17,6 +17,8 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static org.apache.poi.extractor.ExtractorFactory.OOXML_PACKAGE;
+
 import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,7 +71,12 @@ public final class DocumentFactoryHelper {
      * @throws IOException If an error occurs while decrypting or if the password does not match
      */
     public static InputStream getDecryptedStream(final DirectoryNode root, String password)
-            throws IOException {
+    throws IOException {
+        // first check if the node contains an plain package
+        if (root.hasEntry(OOXML_PACKAGE)) {
+            return root.createDocumentInputStream(OOXML_PACKAGE);
+        }
+
         EncryptionInfo info = new EncryptionInfo(root);
         Decryptor d = Decryptor.getInstance(info);
 
@@ -97,11 +104,11 @@ public final class DocumentFactoryHelper {
     /**
      * Checks that the supplied InputStream (which MUST
      *  support mark and reset) has a OOXML (zip) header at the start of it.<p>
-     *  
+     *
      * If unsure if your InputStream does support mark / reset,
      *  use {@link FileMagic#prepareToCheckMagic(InputStream)} to wrap it and make
      *  sure to always use that, and not the original!
-     *  
+     *
      * @param inp An InputStream which supports either mark/reset
      *
      * @deprecated in 3.17-beta2, use {@link FileMagic#valueOf(InputStream)} == FileMagic.OOXML instead

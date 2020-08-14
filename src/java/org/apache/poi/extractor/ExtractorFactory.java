@@ -53,6 +53,13 @@ import org.apache.poi.util.POILogger;
  */
 @SuppressWarnings({"WeakerAccess", "JavadocReference"})
 public final class ExtractorFactory {
+    /**
+     * Some OPCPackages are packed in side an OLE2 container.
+     * If encrypted, the {@link DirectoryNode} is called {@link Decryptor#DEFAULT_POIFS_ENTRY "EncryptedPackage"},
+     * otherwise the node is called "Packge"
+     */
+    public static final String OOXML_PACKAGE = "Package";
+
     private static final POILogger LOGGER = POILogFactory.getLogger(ExtractorFactory.class);
 
     /** Should this thread prefer event based over usermodel based extractors? */
@@ -215,7 +222,7 @@ public final class ExtractorFactory {
 
     public static POITextExtractor createExtractor(final DirectoryNode root, String password) throws IOException {
         // Encrypted OOXML files go inside OLE2 containers, is this one?
-        if (root.hasEntry(Decryptor.DEFAULT_POIFS_ENTRY) || root.hasEntry("Package")) {
+        if (root.hasEntry(Decryptor.DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE)) {
             return wp(FileMagic.OOXML, w -> w.create(root, password));
         } else {
             return wp(FileMagic.OLE2, w ->  w.create(root, password));

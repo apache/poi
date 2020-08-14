@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
+import static org.apache.poi.extractor.ExtractorFactory.OOXML_PACKAGE;
 import static org.apache.poi.poifs.crypt.EncryptionInfo.ENCRYPTION_INFO_ENTRY;
 
 import java.io.BufferedInputStream;
@@ -130,7 +131,7 @@ public final class WorkbookFactory {
      */
     public static Workbook create(final DirectoryNode root, String password) throws IOException {
         // Encrypted OOXML files go inside OLE2 containers, is this one?
-        if (root.hasEntry(Decryptor.DEFAULT_POIFS_ENTRY)) {
+        if (root.hasEntry(Decryptor.DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE)) {
             return wp(FileMagic.OOXML, w -> w.create(root, password));
         } else {
             return wp(FileMagic.OLE2, w ->  w.create(root, password));
@@ -276,7 +277,8 @@ public final class WorkbookFactory {
         } else if (fm == FileMagic.OLE2) {
             final boolean ooxmlEnc;
             try (POIFSFileSystem fs = new POIFSFileSystem(file, true)) {
-                ooxmlEnc = fs.getRoot().hasEntry(Decryptor.DEFAULT_POIFS_ENTRY);
+                DirectoryNode root = fs.getRoot();
+                ooxmlEnc = root.hasEntry(Decryptor.DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE);
             }
             return wp(ooxmlEnc ? FileMagic.OOXML : fm, w -> w.create(file, password, readOnly));
         }

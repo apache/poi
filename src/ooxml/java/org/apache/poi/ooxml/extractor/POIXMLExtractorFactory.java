@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.ooxml.extractor;
 
+import static org.apache.poi.extractor.ExtractorFactory.OOXML_PACKAGE;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -253,8 +255,8 @@ public final class POIXMLExtractorFactory implements ExtractorProvider {
     @Override
     public POITextExtractor create(DirectoryNode poifsDir, String password) throws IOException {
         // First, check for plain OOXML package
-        if (poifsDir.hasEntry("Package")) {
-            try (InputStream is = poifsDir.createDocumentInputStream("Package")) {
+        if (poifsDir.hasEntry(OOXML_PACKAGE)) {
+            try (InputStream is = poifsDir.createDocumentInputStream(OOXML_PACKAGE)) {
                 return create(is, password);
             }
         }
