@@ -46,6 +46,7 @@ import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.ss.util.CellRangeAddress;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -612,5 +613,43 @@ public class TestWorkbookEvaluator {
         assertEquals(expectedResult, D1.getNumericCellValue(), EPSILON);
         
         testIFEqualsFormulaEvaluation_teardown(wb);
+    }
+
+    @Test
+    public void testRefToBlankCellInArrayFormula() {
+        Workbook wb = new HSSFWorkbook();
+        Sheet sheet = wb.createSheet();
+        Row row = sheet.createRow(0);
+        Cell cellA1 = row.createCell(0);
+        Cell cellB1 = row.createCell(1);
+        Cell cellC1 = row.createCell(2);
+        Row row2 = sheet.createRow(1);
+        Cell cellA2 = row2.createCell(0);
+        Cell cellB2 = row2.createCell(1);
+        Cell cellC2 = row2.createCell(2);
+        Row row3 = sheet.createRow(2);
+        Cell cellA3 = row3.createCell(0);
+        Cell cellB3 = row3.createCell(1);
+        Cell cellC3 = row3.createCell(2);
+
+        cellA1.setCellValue("1");
+        // cell B1 intentionally left blank
+        cellC1.setCellValue("3");
+
+        cellA2.setCellFormula("A1");
+        cellB2.setCellFormula("B1");
+        cellC2.setCellFormula("C1");
+
+        sheet.setArrayFormula("A1:C1", CellRangeAddress.valueOf("A3:C3"));
+
+        wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
+
+        assertEquals(cellA2.getStringCellValue(), "1");
+        assertEquals(cellB2.getNumericCellValue(),0, 0.00001);
+        assertEquals(cellC2.getStringCellValue(),"3");
+
+        assertEquals(cellA3.getStringCellValue(), "1");
+        assertEquals(cellB3.getNumericCellValue(),0, 0.00001);
+        assertEquals(cellC3.getStringCellValue(),"3");
     }
 }
