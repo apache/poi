@@ -119,7 +119,7 @@ public class RelationshipTransformService extends TransformService {
     public static synchronized void registerDsigProvider() {
         // the xml signature classes will try to find a special TransformerService,
         // which is of course unknown to JCE before ...
-        if (Security.getProperty(POIXmlDsigProvider.NAME) == null) {
+        if (Security.getProvider(POIXmlDsigProvider.NAME) == null) {
             Security.addProvider(new POIXmlDsigProvider());
         }
     }
