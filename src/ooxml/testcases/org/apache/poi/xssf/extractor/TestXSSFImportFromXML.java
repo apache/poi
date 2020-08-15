@@ -21,7 +21,6 @@ import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.text.DateFormatSymbols;
@@ -156,10 +155,10 @@ public class TestXSSFImportFromXML {
             //Check for Schema element
             XSSFSheet sheet = wb.getSheetAt(0);
 
-            assertEquals(new Double(id), sheet.getRow(28).getCell(1).getNumericCellValue(), 0);
+            assertEquals(id, sheet.getRow(28).getCell(1).getNumericCellValue(), 0);
             assertEquals(displayName, sheet.getRow(11).getCell(5).getStringCellValue());
             assertEquals(ref, sheet.getRow(14).getCell(7).getStringCellValue());
-            assertEquals(new Double(count), sheet.getRow(18).getCell(3).getNumericCellValue(), 0);
+            assertEquals(count, sheet.getRow(18).getCell(3).getNumericCellValue(), 0);
         }
     }
 
@@ -225,13 +224,13 @@ public class TestXSSFImportFromXML {
         assertEquals(date, rowData.getCell(0).getDateCellValue());
 
         assertEquals("Amount Int", rowHeadings.getCell(1).getStringCellValue());
-        assertEquals(new Double(Integer.MIN_VALUE), rowData.getCell(1).getNumericCellValue(), 0);
+        assertEquals(Integer.MIN_VALUE, rowData.getCell(1).getNumericCellValue(), 0);
 
         assertEquals("Amount Double", rowHeadings.getCell(2).getStringCellValue());
         assertEquals(1.0000123, rowData.getCell(2).getNumericCellValue(), 0);
 
         assertEquals("Amount UnsignedInt", rowHeadings.getCell(3).getStringCellValue());
-        assertEquals(new Double(12345), rowData.getCell(3).getNumericCellValue(), 0);
+        assertEquals(12345d, rowData.getCell(3).getNumericCellValue(), 0);
 
         wb.close();
     }

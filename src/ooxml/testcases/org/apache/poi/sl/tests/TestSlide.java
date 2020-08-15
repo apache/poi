@@ -29,6 +29,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
@@ -37,36 +38,36 @@ import org.junit.Test;
 public class TestSlide {
 
     @Test
-    public void hideHSLF() throws IOException, ReflectiveOperationException {
+    public void hideHSLF() throws IOException {
         assumeFalse(xslfOnly());
-        SlideShow<?,?> ppt1 = (SlideShow<?,?>)Class.forName("org.apache.poi.hslf.usermodel.HSLFSlideShow").newInstance();
-        hideSlide(ppt1);
-        ppt1.close();
+        try (SlideShow<?,?> ppt1 = SlideShowFactory.create(false)) {
+            hideSlide(ppt1);
+        }
     }
 
     @Test
     public void hideXSLF() throws IOException {
-        SlideShow<?,?> ppt1 = new XMLSlideShow();
-        hideSlide(ppt1);
-        ppt1.close();
+        try (SlideShow<?,?> ppt1 = new XMLSlideShow()) {
+            hideSlide(ppt1);
+        }
     }
 
     private void hideSlide(SlideShow<?,?> ppt1) throws IOException {
         ppt1.createSlide().setHidden(true);
         ppt1.createSlide();
 
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        ppt1.write(bos);
-        ppt1.close();
+        try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
+            ppt1.write(bos);
 
-        InputStream is = new ByteArrayInputStream(bos.toByteArray());
-        SlideShow<?,?> ppt2 = SlideShowFactory.create(is);
+            try (InputStream is = new ByteArrayInputStream(bos.toByteArray());
+                 SlideShow<?, ?> ppt2 = SlideShowFactory.create(is)) {
 
-        Boolean[] hiddenState = ppt2.getSlides().stream().map(e -> e.isHidden()).toArray(Boolean[]::new);
+                Boolean[] hiddenState = ppt2.getSlides().stream().map(Slide::isHidden).toArray(Boolean[]::new);
 
-        assertTrue(hiddenState[0]);
-        assertFalse(hiddenState[1]);
+                assertTrue(hiddenState[0]);
+                assertFalse(hiddenState[1]);
 
-        ppt2.close();
+            }
+        }
     }
 }

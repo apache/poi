@@ -220,7 +220,7 @@ public class TestStatsLib extends BaseTestNumeric {
     }
 
     private static void confirmMode(double[] v, double expectedResult) {
-    	confirmMode(v, new Double(expectedResult));
+    	confirmMode(v, (Double)expectedResult);
     }
 
     private static void confirmMode(double[] v, Double expectedResult) {

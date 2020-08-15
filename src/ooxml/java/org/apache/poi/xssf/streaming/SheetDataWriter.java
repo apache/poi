@@ -72,7 +72,7 @@ public class SheetDataWriter implements Closeable {
         _fd = createTempFile();
         _out = createWriter(_fd);
     }
-    
+
     public SheetDataWriter(Writer writer) throws IOException {
         _fd = null;
         _out = writer;
@@ -188,8 +188,6 @@ public class SheetDataWriter implements Closeable {
         if (_fd.exists() && !_fd.delete()) {
             logger.log(POILogger.ERROR, "Can't delete temporary encryption file: "+_fd);
         }
-
-        super.finalize();
     }
 
     /**

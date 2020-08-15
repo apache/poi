@@ -23,6 +23,7 @@ import java.awt.Insets;
 import java.awt.Paint;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureShape;
@@ -42,7 +43,7 @@ public class DrawPictureShape extends DrawSimpleShape {
     public DrawPictureShape(PictureShape<?,?> shape) {
         super(shape);
     }
-    
+
     @Override
     public void drawContent(Graphics2D graphics) {
         PictureShape<?,?> ps = getShape();
@@ -98,8 +99,8 @@ public class DrawPictureShape extends DrawSimpleShape {
         for (String kr : KNOWN_RENDERER) {
             final ImageRenderer ir;
             try {
-                ir = ((Class<? extends ImageRenderer>)cl.loadClass(kr)).newInstance();
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+                ir = ((Class<? extends ImageRenderer>)cl.loadClass(kr)).getConstructor().newInstance();
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
                 // scratchpad was not on the path, ignore and continue
                 LOG.log(POILogger.INFO, "Known image renderer '"+kr+" not found/loaded - include poi-scratchpad jar!", e);
                 continue;
@@ -125,7 +126,7 @@ public class DrawPictureShape extends DrawSimpleShape {
     protected PictureShape<?,?> getShape() {
         return (PictureShape<?,?>)shape;
     }
-    
+
     /**
      * Resize this picture to the default size.
      *

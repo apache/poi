@@ -20,6 +20,7 @@
 ==================================================================== */
 package org.apache.poi.ss.usermodel;
 
+import java.beans.PropertyChangeSupport;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.DateFormat;
@@ -36,8 +37,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Observable;
-import java.util.Observer;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -119,7 +118,7 @@ import org.apache.poi.util.POILogger;
  *   you need it.
  */
 @SuppressWarnings("unused")
-public class DataFormatter implements Observer {
+public class DataFormatter {
     private static final String defaultFractionWholePartFormat = "#";
     private static final String defaultFractionFractionPartFormat = "#/##";
     /** Pattern to find a number format: "0" or  "#" */
@@ -213,20 +212,8 @@ public class DataFormatter implements Observer {
     /** stores if the locale should change according to {@link LocaleUtil#getUserLocale()} */
     private boolean localeIsAdapting;
 
-    private class LocaleChangeObservable extends Observable {
-        void checkForLocaleChange() {
-            checkForLocaleChange(LocaleUtil.getUserLocale());
-        }
-        void checkForLocaleChange(Locale newLocale) {
-            if (!localeIsAdapting) return;
-            if (newLocale.equals(locale)) return;
-            super.setChanged();
-            notifyObservers(newLocale);
-        }
-    }
-
-    /** the Observable to notify, when the locale has been changed */
-    private final LocaleChangeObservable localeChangedObservable = new LocaleChangeObservable();
+    // contain a support object instead of extending the support class
+    private final PropertyChangeSupport pcs;
 
     /** For logging any problems we find */
     private static POILogger logger = POILogFactory.getLogger(DataFormatter.class);
@@ -270,9 +257,9 @@ public class DataFormatter implements Observer {
      */
     public DataFormatter(Locale locale, boolean localeIsAdapting, boolean emulateCSV) {
         this.localeIsAdapting = true;
-        localeChangedObservable.addObserver(this);
+        pcs = new PropertyChangeSupport(this);
         // localeIsAdapting must be true prior to this first checkForLocaleChange call.
-        localeChangedObservable.checkForLocaleChange(locale);
+        checkForLocaleChange(locale);
         // set localeIsAdapting so subsequent checks perform correctly
         // (whether a specific locale was provided to this DataFormatter or DataFormatter should
         // adapt to the current user locale as the locale changes)
@@ -319,7 +306,7 @@ public class DataFormatter implements Observer {
     }
 
     private Format getFormat(double cellValue, int formatIndex, String formatStrIn, boolean use1904Windowing) {
-        localeChangedObservable.checkForLocaleChange();
+        checkForLocaleChange();
 
         // Might be better to separate out the n p and z formats, falling back to p when n and z are not set.
         // That however would require other code to be re factored.
@@ -391,7 +378,7 @@ public class DataFormatter implements Observer {
     }
 
     private Format createFormat(double cellValue, int formatIndex, String sFormat) {
-        localeChangedObservable.checkForLocaleChange();
+        checkForLocaleChange();
 
         String formatStr = sFormat;
 
@@ -787,7 +774,7 @@ public class DataFormatter implements Observer {
         return getDefaultFormat(cell.getNumericCellValue());
     }
     private Format getDefaultFormat(double cellValue) {
-        localeChangedObservable.checkForLocaleChange();
+        checkForLocaleChange();
 
         // for numeric cells try user supplied default
         if (defaultNumFormat != null) {
@@ -891,7 +878,7 @@ public class DataFormatter implements Observer {
      * @see #formatCellValue(Cell)
      */
     public String formatRawCellContents(double value, int formatIndex, String formatString, boolean use1904Windowing) {
-        localeChangedObservable.checkForLocaleChange();
+        checkForLocaleChange();
 
         // Is it a date?
         if(DateUtil.isADateFormat(formatIndex,formatString)) {
@@ -929,7 +916,7 @@ public class DataFormatter implements Observer {
         else {
             result = numberFormat.format(new BigDecimal(textValue));
         }
-        
+
         // If they requested a non-abbreviated Scientific format,
         //  and there's an E## (but not E-##), add the missing '+' for E+##
         String fslc = formatString.toLowerCase(Locale.ROOT);
@@ -1006,7 +993,7 @@ public class DataFormatter implements Observer {
      * @return a string value of the cell
      */
     public String formatCellValue(Cell cell, FormulaEvaluator evaluator, ConditionalFormattingEvaluator cfEvaluator) {
-        localeChangedObservable.checkForLocaleChange();
+        checkForLocaleChange();
 
         if (cell == null) {
             return "";
@@ -1117,24 +1104,32 @@ public class DataFormatter implements Observer {
      * formats need to be refreshed. All formats which aren't originated from DataFormatter
      * itself, i.e. all Formats added via {@link DataFormatter#addFormat(String, Format)} and
      * {@link DataFormatter#setDefaultNumberFormat(Format)}, need to be added again.
-     * To notify callers, the returned {@link Observable} should be used.
-     * The Object in {@link Observer#update(Observable, Object)} is the new Locale.
+     * To notify callers, the returned {@link PropertyChangeSupport} should be used.
+     * The Locale in {@link #updateLocale(Locale)} is the new Locale.
      *
      * @return the listener object, where callers can register themselves
      */
-    public Observable getLocaleChangedObservable() {
-        return localeChangedObservable;
+    public PropertyChangeSupport getLocaleChangedObservable() {
+        return pcs;
+    }
+
+    private void checkForLocaleChange() {
+        checkForLocaleChange(LocaleUtil.getUserLocale());
+    }
+
+    private void checkForLocaleChange(Locale newLocale) {
+        if (!localeIsAdapting) return;
+        if (newLocale.equals(locale)) return;
+        updateLocale(newLocale);
+        pcs.firePropertyChange("locale", locale, newLocale);
     }
 
     /**
      * Update formats when locale has been changed
      *
-     * @param observable usually this is our own Observable instance
-     * @param localeObj only reacts on Locale objects
+     * @param newLocale the new locale
      */
-    public void update(Observable observable, Object localeObj) {
-        if (!(localeObj instanceof Locale))  return;
-        Locale newLocale = (Locale)localeObj;
+    public void updateLocale(Locale newLocale) {
         if (!localeIsAdapting || newLocale.equals(locale)) return;
 
         locale = newLocale;
@@ -1165,8 +1160,6 @@ public class DataFormatter implements Observer {
         addFormat("000\\-00\\-0000", ssnFormat);
         addFormat("000-00-0000", ssnFormat);
     }
-
-
 
     /**
      * Format class for Excel's SSN format. This class mimics Excel's built-in

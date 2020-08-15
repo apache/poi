@@ -39,19 +39,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
-import java.util.zip.ZipException;
 import java.util.zip.ZipFile;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.util.TempFile;
+import org.apache.poi.util.XMLHelper;
 import org.xml.sax.Attributes;
-import org.xml.sax.ContentHandler;
-import org.xml.sax.InputSource;
 import org.xml.sax.Locator;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
-import org.xml.sax.helpers.XMLReaderFactory;
+import org.xml.sax.helpers.DefaultHandler;
 
 /**
  * This class is not used during normal POI run-time but is used at development time to generate
@@ -229,7 +230,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 	/**
 	 * To avoid drag-in - parse XML using only JDK.
 	 */
-	private static class EFFDocHandler implements ContentHandler {
+	private static class EFFDocHandler extends DefaultHandler {
 		private static final String[] HEADING_PATH_NAMES = {
 			"office:document-content", "office:body", "office:text", "text:h",
 		};
@@ -339,7 +340,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 			processFunction(cellData, noteFlags, 0);
 			processFunction(cellData, noteFlags, 8);
 		}
-		
+
 		public void processFunction(String[] cellData, Boolean[] noteFlags, int i) {
 			String funcIxStr = cellData[i + 0];
 			if (funcIxStr.length() < 1) {
@@ -428,27 +429,18 @@ public final class ExcelFileFormatDocFunctionExtractor {
 	}
 
 	private static void extractFunctionData(FunctionDataCollector fdc, InputStream is) {
-		XMLReader xr;
+		SAXParserFactory sf = XMLHelper.getSaxParserFactory();
+		SAXParser xr;
 
 		try {
 			// First up, try the default one
-			xr = XMLReaderFactory.createXMLReader();
-		} catch (SAXException e) {
-			// Try one for java 1.4
-			System.setProperty("org.xml.sax.driver", "org.apache.crimson.parser.XMLReaderImpl");
-			try {
-				xr = XMLReaderFactory.createXMLReader();
-			} catch (SAXException e2) {
-				throw new RuntimeException(e2);
-			}
+			xr = sf.newSAXParser();
+		} catch (SAXException | ParserConfigurationException e) {
+			throw new RuntimeException(e);
 		}
-		xr.setContentHandler(new EFFDocHandler(fdc));
 
-		InputSource inSrc = new InputSource(is);
-
-		try {
-			xr.parse(inSrc);
-			is.close();
+		try (InputStream is2 = is) {
+			xr.parse(is2, new EFFDocHandler(fdc));
 		} catch (IOException | SAXException e) {
 			throw new RuntimeException(e);
 		}
@@ -463,7 +455,7 @@ public final class ExcelFileFormatDocFunctionExtractor {
 		public SimpleAsciiOutputStream(OutputStream os) {
 			_os = os;
 		}
-		
+
 		@Override
         public void write(int b) throws IOException {
 			checkByte(b);

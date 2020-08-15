@@ -21,7 +21,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertSame;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -45,41 +44,44 @@ import org.junit.Test;
  * Test <code>Table</code> object.
  */
 public final class TestTable {
-    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+    private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     /**
      * Test that ShapeFactory works properly and returns <code>Table</code>
      */
     @Test
     public void testShapeFactory() throws IOException {
-        HSLFSlideShow ppt = new HSLFSlideShow();
-
-        HSLFSlide slide = ppt.createSlide();
-
-        HSLFTable tbl = slide.createTable(2, 5);
-
-        HSLFTableCell cell = tbl.getCell(0, 0);
-        //table cells have type=TextHeaderAtom.OTHER_TYPE, see bug #46033
-        assertEquals(TextPlaceholder.OTHER.nativeId, cell.getTextParagraphs().get(0).getRunType());
-
-        HSLFShape tblSh = slide.getShapes().get(0);
-        assertTrue(tblSh instanceof HSLFTable);
-        HSLFTable tbl2 = (HSLFTable)tblSh;
-        assertEquals(tbl.getNumberOfColumns(), tbl2.getNumberOfColumns());
-        assertEquals(tbl.getNumberOfRows(), tbl2.getNumberOfRows());
-
+        final int noColumns, noRows;
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        ppt.write(out);
-        out.close();
-        ppt.close();
-        
-        ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
-        slide = ppt.getSlides().get(0);
-        assertTrue(slide.getShapes().get(0) instanceof HSLFTable);
-        HSLFTable tbl3 = (HSLFTable)slide.getShapes().get(0);
-        assertEquals(tbl.getNumberOfColumns(), tbl3.getNumberOfColumns());
-        assertEquals(tbl.getNumberOfRows(), tbl3.getNumberOfRows());
-        ppt.close();
+        try (HSLFSlideShow ppt = new HSLFSlideShow()) {
+            HSLFSlide slide = ppt.createSlide();
+
+            HSLFTable tbl = slide.createTable(2, 5);
+
+            HSLFTableCell cell = tbl.getCell(0, 0);
+            assertNotNull(cell);
+            noColumns = tbl.getNumberOfColumns();
+            noRows = tbl.getNumberOfRows();
+
+            //table cells have type=TextHeaderAtom.OTHER_TYPE, see bug #46033
+            assertEquals(TextPlaceholder.OTHER.nativeId, cell.getTextParagraphs().get(0).getRunType());
+
+            HSLFShape tblSh = slide.getShapes().get(0);
+            assertTrue(tblSh instanceof HSLFTable);
+            HSLFTable tbl2 = (HSLFTable) tblSh;
+            assertEquals(noColumns, tbl2.getNumberOfColumns());
+            assertEquals(noRows, tbl2.getNumberOfRows());
+
+            ppt.write(out);
+        }
+
+        try (HSLFSlideShow ppt = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()))) {
+            HSLFSlide slide = ppt.getSlides().get(0);
+            assertTrue(slide.getShapes().get(0) instanceof HSLFTable);
+            HSLFTable tbl3 = (HSLFTable) slide.getShapes().get(0);
+            assertEquals(noColumns, tbl3.getNumberOfColumns());
+            assertEquals(noRows, tbl3.getNumberOfRows());
+        }
     }
 
     /**
@@ -87,66 +89,65 @@ public final class TestTable {
      */
     @Test
     public void test45889() throws IOException {
-        HSLFSlideShow ppt = new HSLFSlideShow();
-        HSLFSlide slide = ppt.createSlide();
-        List<HSLFShape> shapes;
-        HSLFTable tbl1 = slide.createTable(1, 5);
-        assertEquals(5, tbl1.getNumberOfColumns());
-        assertEquals(1, tbl1.getNumberOfRows());
+        try (HSLFSlideShow ppt = new HSLFSlideShow()) {
+            HSLFSlide slide = ppt.createSlide();
+            List<HSLFShape> shapes;
+            HSLFTable tbl1 = slide.createTable(1, 5);
+            assertEquals(5, tbl1.getNumberOfColumns());
+            assertEquals(1, tbl1.getNumberOfRows());
 
-        shapes = slide.getShapes();
-        assertEquals(1, shapes.size());
+            shapes = slide.getShapes();
+            assertEquals(1, shapes.size());
 
-        HSLFTable tbl2 = (HSLFTable)shapes.get(0);
-        assertSame(tbl1.getSpContainer(), tbl2.getSpContainer());
+            HSLFTable tbl2 = (HSLFTable) shapes.get(0);
+            assertSame(tbl1.getSpContainer(), tbl2.getSpContainer());
 
-        assertEquals(tbl1.getNumberOfColumns(), tbl2.getNumberOfColumns());
-        assertEquals(tbl1.getNumberOfRows(), tbl2.getNumberOfRows());
-        ppt.close();
+            assertEquals(tbl1.getNumberOfColumns(), tbl2.getNumberOfColumns());
+            assertEquals(tbl1.getNumberOfRows(), tbl2.getNumberOfRows());
+        }
     }
 
+    // Table(rownum, colnum) must throw IllegalArgumentException if any of the arguments is less than 1
     @Test(expected=IllegalArgumentException.class)
     public void testIllegalRowCnstruction() throws IOException {
-        HSLFSlideShow ppt = new HSLFSlideShow();
-        HSLFSlide slide = ppt.createSlide();
-        slide.createTable(0, 5);
-        fail("Table(rownum, colnum) must throw IllegalArgumentException if any of tghe arguments is less than 1");
-        ppt.close();
+        try (HSLFSlideShow ppt = new HSLFSlideShow()) {
+            HSLFSlide slide = ppt.createSlide();
+            slide.createTable(0, 5);
+        }
     }
 
+    // Table(rownum, colnum) must throw IllegalArgumentException if any of the arguments is less than 1
     @Test(expected=IllegalArgumentException.class)
     public void testIllegalColConstruction() throws IOException {
-        HSLFSlideShow ppt = new HSLFSlideShow();
-        HSLFSlide slide = ppt.createSlide();
-        slide.createTable(5, 0);
-        fail("Table(rownum, colnum) must throw IllegalArgumentException if any of tghe arguments is less than 1");
-        ppt.close();
+        try (HSLFSlideShow ppt = new HSLFSlideShow()) {
+            HSLFSlide slide = ppt.createSlide();
+            slide.createTable(5, 0);
+        }
     }
-    
+
     /**
      * Bug 57820: initTable throws NullPointerException
      * when the table is positioned with its top at -1
      */
     @Test
     public void test57820() throws IOException {
-        SlideShow<?,?> ppt = new HSLFSlideShow(_slTests.openResourceAsStream("bug57820-initTableNullRefrenceException.ppt"));
+        try (SlideShow<?,?> ppt = new HSLFSlideShow(_slTests.openResourceAsStream("bug57820-initTableNullRefrenceException.ppt"))) {
 
-        List<? extends Slide<?,?>> slides = ppt.getSlides();
-        assertEquals(1, slides.size());
+            List<? extends Slide<?, ?>> slides = ppt.getSlides();
+            assertEquals(1, slides.size());
 
-        List<? extends Shape<?,?>> shapes = slides.get(0).getShapes(); //throws NullPointerException
+            List<? extends Shape<?, ?>> shapes = slides.get(0).getShapes(); //throws NullPointerException
 
-        TableShape<?,?> tbl = null;
-        for(Shape<?,?> s : shapes) {
-            if(s instanceof TableShape) {
-                tbl = (TableShape<?,?>)s;
-                break;
+            TableShape<?, ?> tbl = null;
+            for (Shape<?, ?> s : shapes) {
+                if (s instanceof TableShape) {
+                    tbl = (TableShape<?, ?>) s;
+                    break;
+                }
             }
-        }
 
-        assertNotNull(tbl);
-        assertEquals(-1, tbl.getAnchor().getY(), 0);
-        
-        ppt.close();
+            assertNotNull(tbl);
+            assertEquals(-1, tbl.getAnchor().getY(), 0);
+        }
     }
 }

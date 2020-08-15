@@ -18,6 +18,7 @@
 package org.apache.poi.ss.excelant.util;
 
 import java.io.FileInputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -114,9 +115,9 @@ public class ExcelAntWorkbookUtil extends Typedef {
      * @throws InstantiationException if the class cannot be constructed
      * @throws IllegalAccessException if the constructor or the class is not accessible
      */
-    public void addFunction(String name, String clazzName) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public void addFunction(String name, String clazzName) throws ClassNotFoundException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
         Class<?> clazzInst = Class.forName(clazzName);
-        Object newInst = clazzInst.newInstance();
+        Object newInst = clazzInst.getDeclaredConstructor().newInstance();
         if(newInst instanceof FreeRefFunction) {
             addFunction(name, (FreeRefFunction)newInst);
         }

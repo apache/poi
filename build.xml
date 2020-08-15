@@ -2261,7 +2261,7 @@ under the License.
         <forbiddenapis
                  classpathref="forbiddenapis.classpath"
                  suppressAnnotation="org.apache.poi.util.SuppressForbidden"
-                 targetVersion="${jdk.version.source}"
+                 targetVersion="${ant.java.version}"
             >
             <bundledsignatures name="jdk-unsafe"/>
             <bundledsignatures name="jdk-deprecated"/>

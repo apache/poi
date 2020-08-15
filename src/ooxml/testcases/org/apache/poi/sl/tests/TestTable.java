@@ -95,9 +95,9 @@ public class TestTable {
     }
 
     @Test
-    public void directionHSLF() throws IOException, ReflectiveOperationException {
+    public void directionHSLF() throws IOException {
         assumeFalse(xslfOnly());
-        SlideShow<?,?> ppt1 = (SlideShow<?,?>)Class.forName("org.apache.poi.hslf.usermodel.HSLFSlideShow").newInstance();
+        SlideShow<?,?> ppt1 = SlideShowFactory.create(false);
         testTextDirection(ppt1);
         ppt1.close();
     }

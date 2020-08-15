@@ -247,7 +247,7 @@ public final class XMLHelper {
         // Try built-in JVM one first, standalone if not
         for (String securityManagerClassName : SECURITY_MANAGERS) {
             try {
-                Object mgr = Class.forName(securityManagerClassName).newInstance();
+                Object mgr = Class.forName(securityManagerClassName).getDeclaredConstructor().newInstance();
                 Method setLimit = mgr.getClass().getMethod(METHOD_ENTITY_EXPANSION_XERCES, Integer.TYPE);
                 setLimit.invoke(mgr, 1);
                 // Stop once one can be setup without error

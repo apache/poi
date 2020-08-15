@@ -50,6 +50,7 @@ import org.apache.poi.sl.usermodel.AutoShape;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.ss.extractor.EmbeddedData;
 import org.apache.poi.ss.extractor.EmbeddedExtractor;
 import org.apache.poi.ss.usermodel.ClientAnchor;
@@ -58,7 +59,6 @@ import org.apache.poi.ss.usermodel.ObjectData;
 import org.apache.poi.ss.usermodel.Shape;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFObjectData;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -71,7 +71,7 @@ public class TestEmbedOLEPackage {
     private static final POIDataSamples ssamples = POIDataSamples.getSpreadSheetInstance();
 
     @BeforeClass
-    public static void init() throws IOException, ReflectiveOperationException {
+    public static void init() throws IOException {
         samplePPT = getSamplePPT(false);
         samplePPTX = getSamplePPT(true);
         samplePNG = ssamples.readFile("logoKarmokar4.png");
@@ -83,7 +83,6 @@ public class TestEmbedOLEPackage {
             XSSFWorkbook wb = new XSSFWorkbook(is)) {
             List<XSSFObjectData> oleShapes = new ArrayList<>();
             List<Ole10Native> ole10s = new ArrayList<>();
-            List<String> digests = new ArrayList<>();
 
             final boolean digestMatch =
                 wb.getSheetAt(0).getDrawingPatriarch().getShapes().stream()
@@ -212,9 +211,8 @@ public class TestEmbedOLEPackage {
         pat2.createObjectData(anchor2, oleIdx2, picIdx);
     }
 
-    static byte[] getSamplePPT(boolean ooxml) throws IOException, ReflectiveOperationException {
-        SlideShow<?,?> ppt = (ooxml) ? new XMLSlideShow()
-            : (SlideShow<?,?>)Class.forName("org.apache.poi.hslf.usermodel.HSLFSlideShow").newInstance();
+    static byte[] getSamplePPT(boolean ooxml) throws IOException {
+        SlideShow<?,?> ppt = SlideShowFactory.create(ooxml);
         Slide<?,?> slide = ppt.createSlide();
 
         AutoShape<?,?> sh1 = slide.createAutoShape();

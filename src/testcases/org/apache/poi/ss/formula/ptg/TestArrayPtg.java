@@ -67,7 +67,7 @@ public final class TestArrayPtg {
 
 		assertEquals(Boolean.TRUE, values[0][0]);
 		assertEquals("ABCD", values[0][1]);
-		assertEquals(new Double(0), values[1][0]);
+		assertEquals(0d, values[1][0]);
 		assertEquals(Boolean.FALSE, values[1][1]);
 		assertEquals("FG", values[1][2]);
 

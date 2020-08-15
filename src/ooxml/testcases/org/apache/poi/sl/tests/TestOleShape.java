@@ -147,12 +147,12 @@ public class TestOleShape {
         }
     }
 
-    private SlideShow<?,?> createSlideShow() throws ReflectiveOperationException {
+    private SlideShow<?,?> createSlideShow() throws IOException {
         if (api == Api.XSLF) {
             return new XMLSlideShow();
         } else {
             assumeFalse(xslfOnly());
-            return (SlideShow<?,?>)Class.forName("org.apache.poi.hslf.usermodel.HSLFSlideShow").newInstance();
+            return SlideShowFactory.create(false);
         }
     }
 
@@ -187,7 +187,7 @@ public class TestOleShape {
         }
     }
 
-    private void validateOleData(final InputStream in) throws IOException, InvalidFormatException, ReflectiveOperationException {
+    private void validateOleData(final InputStream in) throws IOException, ReflectiveOperationException {
         switch (app) {
         case EXCEL_V8:
         case EXCEL_V12:
@@ -196,6 +196,7 @@ public class TestOleShape {
             }
             break;
         case WORD_V8:
+            @SuppressWarnings("unchecked")
             Class<? extends POIDocument> clazz = (Class<? extends POIDocument>)Class.forName("org.apache.poi.hwpf.HWPFDocument");
             Constructor<? extends POIDocument> con = clazz.getDeclaredConstructor(InputStream.class);
             Method m = clazz.getMethod("getDocumentText");

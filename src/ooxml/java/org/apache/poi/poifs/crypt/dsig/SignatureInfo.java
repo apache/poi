@@ -701,7 +701,7 @@ public class SignatureInfo {
 
         private Provider getProvider(String className) {
             try {
-                return (Provider)Class.forName(className).newInstance();
+                return (Provider)Class.forName(className).getDeclaredConstructor().newInstance();
             } catch (Exception e) {
                 LOG.log(POILogger.DEBUG, "XMLDsig-Provider '"+className+"' can't be found - trying next.");
                 return null;

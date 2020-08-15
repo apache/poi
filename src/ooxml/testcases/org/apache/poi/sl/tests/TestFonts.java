@@ -40,6 +40,7 @@ import org.apache.poi.common.usermodel.fonts.FontGroup;
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
 import org.apache.poi.sl.usermodel.TextBox;
 import org.apache.poi.sl.usermodel.TextParagraph;
@@ -53,7 +54,7 @@ import org.junit.Test;
  * Test rendering - specific to font handling
  */
 public class TestFonts {
-    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+    private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     private static final String JPTEXT =
         "\u3061\u3087\u3063\u3068\u65E9\u3044\u3051\u3069T\u30B7\u30E3\u30C4\u304C\u7740\u305F\u304F\u306A" +
@@ -78,9 +79,9 @@ public class TestFonts {
     }
 
     @Test
-    public void resizeToFitTextHSLF() throws IOException, ReflectiveOperationException {
+    public void resizeToFitTextHSLF() throws IOException {
         assumeFalse(xslfOnly());
-        SlideShow<?,?> ppt = (SlideShow<?,?>)Class.forName("org.apache.poi.hslf.usermodel.HSLFSlideShow").newInstance();
+        SlideShow<?,?> ppt = SlideShowFactory.create(false);
         resizeToFitText(ppt);
         ppt.close();
     }

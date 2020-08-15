@@ -27,43 +27,43 @@ import org.apache.tools.ant.Task;
  * <p>
  * Its purpose is to provide a way to manipulate a workbook in the course
  * of an ExcelAnt task.  The idea being to model a way for test writers to
- * simulate the behaviors of the workbook. 
+ * simulate the behaviors of the workbook.
  * <p>
  * Suppose, for example, you have a workbook that has a worksheet that
  * reacts to values entered or selected by the user.  It's possible in
  * Excel to change other cells based on this but this isn't easily possible
  * in POI.  In ExcelAnt we handle this using the Handler, which is a Java
- * class you write to manipulate the workbook. 
+ * class you write to manipulate the workbook.
  * <p>
- * In order to use this tag you must write a class that implements the 
+ * In order to use this tag you must write a class that implements the
  * <code>IExcelAntWorkbookHandler</code> interface.  After writing the
- * class you should package it and it's dependencies into a jar file to 
+ * class you should package it and it's dependencies into a jar file to
  * add as library in your Ant build file.
- * 
+ *
  * @author Jon Svede ( jon [at] loquatic [dot] com )
  * @author Brian Bush ( brian [dot] bush [at] nrel [dot] gov )
  *
  */
 public class ExcelAntHandlerTask extends Task {
-    
+
     private String className ;
-    
+
     private ExcelAntWorkbookUtil wbUtil ;
 
     public void setClassName( String cName ) {
         className = cName ;
     }
-    
+
     protected void setEAWorkbookUtil( ExcelAntWorkbookUtil wkbkUtil ) {
         wbUtil = wkbkUtil ;
     }
-    
+
     @Override
     public void execute() throws BuildException {
         log( "handling the workbook with class " + className, Project.MSG_INFO ) ;
         try {
             Class<?> clazz = Class.forName( className ) ;
-            Object handlerObj = clazz.newInstance() ;
+            Object handlerObj = clazz.getDeclaredConstructor().newInstance() ;
             if( handlerObj instanceof IExcelAntWorkbookHandler ) {
                 IExcelAntWorkbookHandler iHandler = (IExcelAntWorkbookHandler)handlerObj ;
                 iHandler.setWorkbook( wbUtil.getWorkbook() ) ;

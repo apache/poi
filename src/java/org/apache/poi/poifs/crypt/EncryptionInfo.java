@@ -38,9 +38,7 @@ import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianInput;
 
 /**
- * This class may require {@code poi-ooxml} to be on the classpath to load
- * some {@link EncryptionMode}s.
- * @see #getBuilder(EncryptionMode)
+ * Wrapper for the EncryptionInfo node of encrypted documents
  */
 public class EncryptionInfo implements GenericRecord {
 
@@ -214,28 +212,13 @@ public class EncryptionInfo implements GenericRecord {
     }
 
     /**
-     * This method loads the builder class with reflection, which may generate
-     * a {@code ClassNotFoundException} if the class is not on the classpath.
-     * For example, {@link org.apache.poi.poifs.crypt.agile.AgileEncryptionInfoBuilder}
-     * is contained in the {@code poi-ooxml} package since the class makes use of some OOXML
-     * classes rather than using the {@code poi} package and plain XML DOM calls.
-     * As such, you may need to include {@code poi-ooxml} and {@code poi-ooxml-schemas} to load
-     * some encryption mode builders. See bug #60021 for more information.
-     * https://bz.apache.org/bugzilla/show_bug.cgi?id=60021
+     * Create the builder instance
      *
      * @param encryptionMode the encryption mode
      * @return an encryption info builder
-     * @throws ClassNotFoundException if the builder class is not on the classpath
-     * @throws IllegalAccessException if the builder class can't be loaded
-     * @throws InstantiationException if the builder class can't be loaded
      */
-    @SuppressWarnings({"WeakerAccess", "JavadocReference"})
-    protected static EncryptionInfoBuilder getBuilder(EncryptionMode encryptionMode)
-    throws ClassNotFoundException, IllegalAccessException, InstantiationException {
-        ClassLoader cl = EncryptionInfo.class.getClassLoader();
-        EncryptionInfoBuilder eib;
-        eib = (EncryptionInfoBuilder)cl.loadClass(encryptionMode.builder).newInstance();
-        return eib;
+    private static EncryptionInfoBuilder getBuilder(EncryptionMode encryptionMode) {
+        return encryptionMode.builder.get();
     }
 
     public int getVersionMajor() {

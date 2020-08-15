@@ -18,9 +18,9 @@
 /* ====================================================================
    This product contains an ASLv2 licensed version of the OOXML signer
    package from the eID Applet project
-   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt  
+   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt
    Copyright (C) 2008-2014 FedICT.
-   ================================================================= */ 
+   ================================================================= */
 
 package org.apache.poi.poifs.crypt.dsig.services;
 
@@ -52,6 +52,7 @@ import org.apache.jcp.xml.dsig.internal.dom.ApacheNodeSetData;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.SuppressForbidden;
 import org.apache.xml.security.signature.XMLSignatureInput;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -65,7 +66,7 @@ import org.w3c.dom.NodeList;
 
 /**
  * JSR105 implementation of the RelationshipTransform transformation.
- * 
+ *
  * <p>
  * Specs: http://openiso.org/Ecma/376/Part2/12.2.4#26
  * </p>
@@ -77,7 +78,7 @@ public class RelationshipTransformService extends TransformService {
     private final List<String> sourceIds;
 
     private static final POILogger LOG = POILogFactory.getLogger(RelationshipTransformService.class);
-    
+
     /**
      * Relationship Transform parameter specification class.
      */
@@ -90,8 +91,20 @@ public class RelationshipTransformService extends TransformService {
             return !sourceIds.isEmpty();
         }
     }
-    
-    
+
+    @SuppressForbidden("new Provider(String,String,String) is not available in Java 8")
+    private static final class POIXmlDsigProvider extends Provider {
+        static final long serialVersionUID = 1L;
+        private static final String NAME = "POIXmlDsigProvider";
+
+        private POIXmlDsigProvider() {
+            super(NAME, 1d, NAME);
+            put("TransformService." + TRANSFORM_URI, RelationshipTransformService.class.getName());
+            put("TransformService." + TRANSFORM_URI + " MechanismType", "DOM");
+        }
+    }
+
+
     public RelationshipTransformService() {
         super();
         LOG.log(POILogger.DEBUG, "constructor");
@@ -100,24 +113,18 @@ public class RelationshipTransformService extends TransformService {
 
     /**
      * Register the provider for this TransformService
-     * 
+     *
      * @see javax.xml.crypto.dsig.TransformService
      */
     public static synchronized void registerDsigProvider() {
         // the xml signature classes will try to find a special TransformerService,
-        // which is ofcourse unknown to JCE before ...
-        final String dsigProvider = "POIXmlDsigProvider";
-        if (Security.getProperty(dsigProvider) == null) {
-            Provider p = new Provider(dsigProvider, 1.0, dsigProvider){
-                static final long serialVersionUID = 1L;
-            };
-            p.put("TransformService." + TRANSFORM_URI, RelationshipTransformService.class.getName());
-            p.put("TransformService." + TRANSFORM_URI + " MechanismType", "DOM");
-            Security.addProvider(p);
+        // which is of course unknown to JCE before ...
+        if (Security.getProperty(POIXmlDsigProvider.NAME) == null) {
+            Security.addProvider(new POIXmlDsigProvider());
         }
     }
-    
-    
+
+
     @Override
     public void init(TransformParameterSpec params) throws InvalidAlgorithmParameterException {
         LOG.log(POILogger.DEBUG, "init(params)");
@@ -134,7 +141,7 @@ public class RelationshipTransformService extends TransformService {
         LOG.log(POILogger.DEBUG, "parent java type: " + parent.getClass().getName());
         DOMStructure domParent = (DOMStructure) parent;
         Node parentNode = domParent.getNode();
-        
+
         try {
             TransformDocument transDoc = TransformDocument.Factory.parse(parentNode, DEFAULT_XML_OPTIONS);
             XmlObject[] xoList = transDoc.getTransform().selectChildren(RelationshipReferenceDocument.type.getDocumentElementName());
@@ -157,7 +164,7 @@ public class RelationshipTransformService extends TransformService {
         DOMStructure domParent = (DOMStructure) parent;
         Element parentNode = (Element)domParent.getNode();
         Document doc = parentNode.getOwnerDocument();
-        
+
         for (String sourceId : this.sourceIds) {
             Element el = doc.createElementNS(OO_DIGSIG_NS, "mdssi:RelationshipReference");
             el.setAttributeNS(XML_NS, "xmlns:mdssi", OO_DIGSIG_NS);
@@ -165,7 +172,7 @@ public class RelationshipTransformService extends TransformService {
             parentNode.appendChild(el);
         }
     }
-    
+
     public AlgorithmParameterSpec getParameterSpec() {
         LOG.log(POILogger.DEBUG, "getParameterSpec");
         return null;
@@ -174,7 +181,7 @@ public class RelationshipTransformService extends TransformService {
     /**
      * The relationships transform takes the XML document from the Relationships part
      * and converts it to another XML document.
-     * 
+     *
      * @see <a href="https://www.ecma-international.org/activities/Office%20Open%20XML%20Formats/Draft%20ECMA-376%203rd%20edition,%20March%202011/Office%20Open%20XML%20Part%202%20-%20Open%20Packaging%20Conventions.pdf">13.2.4.24 Relationships Transform Algorithm</a>
      * @see <a href="https://stackoverflow.com/questions/36063375">XML Relationship Transform Algorithm</a>
      */
@@ -184,14 +191,14 @@ public class RelationshipTransformService extends TransformService {
         OctetStreamData octetStreamData = (OctetStreamData) data;
         LOG.log(POILogger.DEBUG, "URI: " + octetStreamData.getURI());
         InputStream octetStream = octetStreamData.getOctetStream();
-        
+
         Document doc;
         try {
             doc = DocumentHelper.readDocument(octetStream);
         } catch (Exception e) {
             throw new TransformException(e.getMessage(), e);
         }
-        
+
         // keep only those relationships which id is registered in the sourceIds
         Element root = doc.getDocumentElement();
         NodeList nl = root.getChildNodes();
@@ -215,9 +222,9 @@ public class RelationshipTransformService extends TransformService {
         for (Element el : rsList.values()) {
             root.appendChild(el);
         }
-        
+
         LOG.log(POILogger.DEBUG, "# Relationship elements: ", rsList.size());
-        
+
         return new ApacheNodeSetData(new XMLSignatureInput(root));
     }
 

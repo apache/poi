@@ -329,7 +329,7 @@ public final class CryptoFunctions {
             ClassLoader cl = CryptoFunctions.class.getClassLoader();
             String bcProviderName = "org.bouncycastle.jce.provider.BouncyCastleProvider";
             Class<Provider> clazz = (Class<Provider>)cl.loadClass(bcProviderName);
-            Security.addProvider(clazz.newInstance());
+            Security.addProvider(clazz.getDeclaredConstructor().newInstance());
         } catch (Exception e) {
             throw new EncryptedDocumentException("Only the BouncyCastle provider supports your encryption settings - please add it to the classpath.", e);
         }

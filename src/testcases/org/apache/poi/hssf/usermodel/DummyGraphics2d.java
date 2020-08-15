@@ -56,13 +56,13 @@ public class DummyGraphics2d extends Graphics2D {
     public DummyGraphics2d() {
         this(System.out);
     }
-    
+
     public DummyGraphics2d(PrintStream log) {
         bufimg = new BufferedImage(1000, 1000, 2);
         g2D = (Graphics2D)bufimg.getGraphics();
         this.log = log;
     }
-    
+
     public DummyGraphics2d(PrintStream log, Graphics2D g2D) {
         this.g2D = g2D;
         this.log = log;
@@ -86,7 +86,7 @@ public class DummyGraphics2d extends Graphics2D {
 
     public void draw(Shape s) {
         String l =
-            "draw(Shape):" + 
+            "draw(Shape):" +
             "\n  s = " + s;
         log.println( l );
         g2D.draw( s );
@@ -715,8 +715,8 @@ public class DummyGraphics2d extends Graphics2D {
     @Override
     public final void finalize() {
         log.println( "finalize():" );
-        g2D.finalize(); // NOSOLAR
-        super.finalize();
+        g2D.dispose();
+        dispose();
     }
 
     public Shape getClip() {
