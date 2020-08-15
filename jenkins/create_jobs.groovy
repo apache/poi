@@ -444,10 +444,13 @@ poijobs.each { poijob ->
                 }
             }
             publishers {
-                findbugs('build/findbugs.xml', false) {
-                    healthLimits(3, 20)
-                    thresholdLimit('low')
-                    defaultEncoding('UTF-8')
+                recordIssues {
+                    tools {
+                        spotbugs {
+                            pattern('build/findbugs.xml')
+                            reportEncoding('UTF-8')
+                        }
+                    }
                 }
                 // in archive, junit and jacoco publishers, matches beneath build/*/build/... are for Gradle-build results
                 archiveArtifacts('build/dist/*.tar.gz,build/findbugs.html,build/coverage/**,build/integration-test-results/**,lib/ooxml/**,build/*/build/libs/*.jar')
