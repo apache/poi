@@ -23,6 +23,8 @@ import java.util.Map.Entry;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
+import com.microsoft.schemas.office.visio.x2012.main.RowType;
+import com.microsoft.schemas.office.visio.x2012.main.SectionType;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.xdgf.geom.SplineCollector;
 import org.apache.poi.xdgf.usermodel.XDGFCell;
@@ -30,13 +32,9 @@ import org.apache.poi.xdgf.usermodel.XDGFShape;
 import org.apache.poi.xdgf.usermodel.XDGFSheet;
 import org.apache.poi.xdgf.usermodel.section.geometry.Ellipse;
 import org.apache.poi.xdgf.usermodel.section.geometry.GeometryRow;
-import org.apache.poi.xdgf.usermodel.section.geometry.GeometryRowFactory;
 import org.apache.poi.xdgf.usermodel.section.geometry.InfiniteLine;
 import org.apache.poi.xdgf.usermodel.section.geometry.SplineKnot;
 import org.apache.poi.xdgf.usermodel.section.geometry.SplineStart;
-
-import com.microsoft.schemas.office.visio.x2012.main.RowType;
-import com.microsoft.schemas.office.visio.x2012.main.SectionType;
 
 public class GeometrySection extends XDGFSection {
 
@@ -52,7 +50,7 @@ public class GeometrySection extends XDGFSection {
             if (_rows.containsKey(row.getIX()))
                 throw new POIXMLException("Index element '" + row.getIX() + "' already exists");
 
-            _rows.put(row.getIX(), GeometryRowFactory.load(row));
+            _rows.put(row.getIX(), GeometryRowTypes.load(row));
         }
     }
 
