@@ -23,7 +23,9 @@ import java.awt.Insets;
 import java.awt.Paint;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
+import java.util.ServiceLoader;
+import java.util.function.Supplier;
+import java.util.stream.StreamSupport;
 
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureShape;
@@ -77,44 +79,31 @@ public class DrawPictureShape extends DrawSimpleShape {
      * @param graphics the graphics context
      * @return the image renderer
      */
-    @SuppressWarnings({"unchecked"})
     public static ImageRenderer getImageRenderer(Graphics2D graphics, String contentType) {
         final ImageRenderer renderer = (graphics != null) ? (ImageRenderer)graphics.getRenderingHint(Drawable.IMAGE_RENDERER) : null;
         if (renderer != null && renderer.canRender(contentType)) {
             return renderer;
         }
 
-        // first try with our default image renderer
-        final BitmapImageRenderer bir = new BitmapImageRenderer();
-        if (bir.canRender(contentType)) {
-            return bir;
+        final BitmapImageRenderer fallback = new BitmapImageRenderer();
+        if (fallback.canRender(contentType)) {
+            return fallback;
         }
 
-        // then iterate through the scratchpad renderers
-        //
-        // this could be nicely implemented via a j.u.ServiceLoader, but OSGi makes things complicated ...
-        // https://blog.osgi.org/2013/02/javautilserviceloader-in-osgi.html
-        // ... therefore falling back to classloading attempts
-        ClassLoader cl = ImageRenderer.class.getClassLoader();
-        for (String kr : KNOWN_RENDERER) {
-            final ImageRenderer ir;
-            try {
-                ir = ((Class<? extends ImageRenderer>)cl.loadClass(kr)).getConstructor().newInstance();
-            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | NoSuchMethodException | InvocationTargetException e) {
-                // scratchpad was not on the path, ignore and continue
-                LOG.log(POILogger.INFO, "Known image renderer '"+kr+" not found/loaded - include poi-scratchpad jar!", e);
-                continue;
-            }
-            if (ir.canRender(contentType)) {
-                return ir;
-            }
-        }
+        // the fallback is the BitmapImageRenderer, at least it gracefully handles invalid images
+        final Supplier<ImageRenderer> getFallback = () -> {
+            LOG.log(POILogger.WARN, "No suiteable image renderer found for content-type '"+
+            contentType+"' - include poi-scratchpad (for wmf/emf) or poi-ooxml (for svg) jars!");
+            return fallback;
+        };
 
-        LOG.log(POILogger.WARN, "No suiteable image renderer found for content-type '"+
-                contentType+"' - include poi-scratchpad jar!");
-
-        // falling back to BitmapImageRenderer, at least it gracefully handles invalid images
-        return bir;
+        ClassLoader cl = DrawPictureShape.class.getClassLoader();
+        return StreamSupport
+            .stream(ServiceLoader.load(ImageRenderer.class, cl).spliterator(), false)
+            .filter(ir -> ir.canRender(contentType))
+            .findFirst()
+            .orElseGet(getFallback)
+        ;
     }
 
     @Override
