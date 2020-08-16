@@ -60,7 +60,7 @@ def poijobs = [
           email: 'kiwiwings@apache.org'
         ],
         [ name: 'POI-DSL-SonarQube-Gradle', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true,
-                disabled: true // this one does run, but does not actually send data to Sonarqube for some reason, we need to investigate some more
+          disabled: true // this one does run, but does not actually send data to Sonarqube for some reason, we need to investigate some more
         ],
         [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
         ],
@@ -79,7 +79,7 @@ def poijobs = [
 
 def xmlbeansjobs = [
         [ name: 'POI-XMLBeans-DSL-1.6', jdk: '1.6', trigger: 'H */12 * * *', skipcigame: true,
-                disabled: true // XMLBeans does not support Java 6 any more
+          disabled: true // XMLBeans does not support Java 6 any more
         ],
         [ name: 'POI-XMLBeans-DSL-1.8', jdk: '1.8', trigger: 'H */12 * * *', skipcigame: true,
         ],
@@ -213,7 +213,7 @@ poijobs.each { poijob ->
     def slaves = poijob.slaves ?: defaultSlaves + (poijob.slaveAdd ?: '')
     def antRT = poijob.windows ? defaultAntWindows : defaultAnt
 
-    job(poijob.name) {
+    job('POI/' + poijob.name) {
         if (poijob.disabled) {
             disabled()
         }
@@ -233,6 +233,7 @@ poijobs.each { poijob ->
             }
             env('FORREST_HOME', poijob.windows ? 'f:\\jenkins\\tools\\forrest\\latest' : '/home/jenkins/tools/forrest/latest')
         }
+
         wrappers {
             timeout {
                 absolute(180)
@@ -287,13 +288,14 @@ poijobs.each { poijob ->
                 stringParam('sha1', 'origin/pr/9/head', 'Provide a branch-spec, e.g. origin/pr/9/head')
             }
             triggers {
-                githubPullRequest {
+                pullRequestBuildTrigger()
+                /*githubPullRequest {
                     admins(['centic9', 'poi-benchmark', 'tballison', 'gagravarr', 'onealj', 'pjfanning', 'Alain-Bearez'])
                     userWhitelist(['centic9', 'poi-benchmark', 'tballison', 'gagravarr', 'onealj', 'pjfanning', 'Alain-Bearez'])
                     orgWhitelist(['apache'])
                     cron('H/5 * * * *')
                     triggerPhrase('OK to test')
-                }
+                }*/
             }
         } else {
             triggers {
@@ -446,7 +448,7 @@ poijobs.each { poijob ->
             publishers {
                 recordIssues {
                     tools {
-                        spotbugs {
+                        spotBugs {
                             pattern('build/findbugs.xml')
                             reportEncoding('UTF-8')
                         }
@@ -477,6 +479,16 @@ poijobs.each { poijob ->
                 mailer(email, false, false)
             }
         }
+
+
+        if (poijob.githubpr) {
+            configure {
+                it / 'properties' << 'com.cloudbees.jenkins.plugins.git.vmerge.JobPropertyImpl'(plugin: 'git-validated-merge') {
+                    credentialsId('ASF_Cloudbees_Jenkins_ci-builds')
+                    postBuildPushFailureHandler(class: 'com.cloudbees.jenkins.plugins.git.vmerge.pbph.PushFailureIsFailure')
+                }
+            }
+        }
     }
 }
 
@@ -487,7 +499,7 @@ xmlbeansjobs.each { xjob ->
     def slaves = xjob.slaves ?: defaultSlaves + (xjob.slaveAdd ?: '')
     def antRT = xjob.windows ? defaultAntWindows : defaultAnt
 
-    job(xjob.name) {
+    job('POI/' + xjob.name) {
         if (xjob.disabled) {
             disabled()
         }
@@ -574,9 +586,9 @@ Add a special job which spans a two-dimensional matrix of all JDKs that we want 
 all slaves that we would like to use and test if the java and ant binaries are available
 on that machine correctly.
  */
-matrixJob('POI-DSL-Test-Environment') {
+matrixJob('POI/POI-DSL-Test-Environment') {
     description(
-'''Check installed version of Java/Ant on all build-nodes
+            '''Check installed version of Java/Ant on all build-nodes
 
 This job is used to verify which machines actually have the required programs installed.
 
@@ -601,11 +613,7 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'JDK 14 (latest)',
                 'JDK 15 (latest)'
         )
-        elasticAxis {
-            name('Nodes')
-            labelString('!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21&&!H35&&!websites1&&!couchdb&&!plc4x&&!ppc64le')
-            ignoreOffline(true)
-        }
+        label('Nodes','H25','H29','H31','H34','H35','H36','H39','H42','H43','H44','H48','H50','lucene1','lucene2','master')
     }
     steps {
         conditionalSteps {
@@ -614,7 +622,7 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 runner('DontRun')
                 steps {
                     shell(
-'''which svn || true
+                            '''which svn || true
 which javac
 javac -version
 echo '<?xml version="1.0"?><project name="POI Build" default="test"><target name="test"><echo>Using Ant: ${ant.version} from ${ant.home}</echo></target></project>' > build.xml
@@ -642,7 +650,7 @@ echo '<project><modelVersion>4.0.0</modelVersion><groupId>org.apache.poi</groupI
                 steps {
                     batchFile {
                         command(
-'''@echo off
+                                '''@echo off
 echo .
 where javac.exe
 echo .
