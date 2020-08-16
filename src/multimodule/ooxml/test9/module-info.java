@@ -31,6 +31,7 @@ module org.apache.poi.ooxml {
     provides org.apache.poi.extractor.ExtractorProvider with org.apache.poi.ooxml.extractor.POIXMLExtractorFactory;
     provides org.apache.poi.ss.usermodel.WorkbookProvider with org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
     provides org.apache.poi.sl.usermodel.SlideShowProvider with org.apache.poi.xslf.usermodel.XSLFSlideShowFactory;
+    provides org.apache.poi.sl.draw.ImageRenderer with org.apache.poi.xslf.draw.SVGImageRenderer;
 
     exports org.apache.poi.xwpf.extractor;
     exports org.apache.poi.xwpf.usermodel;

@@ -31,7 +31,8 @@ import org.apache.poi.util.Dimension2DDouble;
 
 /**
  * Classes can implement this interfaces to support other formats, for
- * example, use Apache Batik to render WMF, PICT can be rendered using Apple QuickTime API for Java:
+ * example, use Apache Batik to render WMF (since POI 4.0, there's an internal WMF/EMF/EMF+ renderer in POI),
+ * PICT can be rendered using Apple QuickTime API for Java:
  *
  * <pre>
  * <code>
@@ -132,11 +133,11 @@ public interface ImageRenderer {
     /**
      * @param dim the dimension in pixels of the returned image
      * @return the image as buffered image or null if image could not be loaded
-     * 
+     *
      * @since POI 3.15-beta2
      */
     BufferedImage getImage(Dimension2D dim);
-    
+
     /**
      * Render picture data into the supplied graphics
      *

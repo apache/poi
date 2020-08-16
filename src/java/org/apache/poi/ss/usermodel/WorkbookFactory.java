@@ -54,7 +54,8 @@ public final class WorkbookFactory {
     private final List<WorkbookProvider> provider = new ArrayList<>();
 
     private WorkbookFactory() {
-        ServiceLoader.load(WorkbookProvider.class).forEach(provider::add);
+        ClassLoader cl = WorkbookFactory.class.getClassLoader();
+        ServiceLoader.load(WorkbookProvider.class, cl).forEach(provider::add);
     }
 
 

@@ -137,3 +137,6 @@ java.lang.String#toString()
 
 @defaultMessage DatatypeConverter is not available in Java 9+ without adding add-opens - use java.util.Base64
 javax.xml.bind.DatatypeConverter
+
+@defaultMessage don't rely on the threads ContextClassLoader - provide the classloader via load(Class, Classloader)
+java.util.ServiceLoader#load(java.lang.Class)

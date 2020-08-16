@@ -27,12 +27,15 @@ module org.apache.poi.poi {
     /* needed for CleanerUtil */
     requires jdk.unsupported;
 
+    /* for JPMS / OSGi interaction see https://blog.osgi.org/2013/02/javautilserviceloader-in-osgi.html */
     uses org.apache.poi.extractor.ExtractorProvider;
     uses org.apache.poi.ss.usermodel.WorkbookProvider;
     uses org.apache.poi.sl.usermodel.SlideShowProvider;
+    uses org.apache.poi.sl.draw.ImageRenderer;
 
-    provides org.apache.poi.ss.usermodel.WorkbookProvider with org.apache.poi.hssf.usermodel.HSSFWorkbookFactory;
     provides org.apache.poi.extractor.ExtractorProvider with org.apache.poi.extractor.MainExtractorFactory;
+    provides org.apache.poi.ss.usermodel.WorkbookProvider with org.apache.poi.hssf.usermodel.HSSFWorkbookFactory;
+    provides org.apache.poi.sl.draw.ImageRenderer with org.apache.poi.sl.draw.BitmapImageRenderer;
 
     exports org.apache.poi;
     exports org.apache.poi.common;

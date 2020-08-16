@@ -81,7 +81,8 @@ public final class ExtractorFactory {
 
 
     private ExtractorFactory() {
-        ServiceLoader.load(ExtractorProvider.class).forEach(provider::add);
+        ClassLoader cl = ExtractorFactory.class.getClassLoader();
+        ServiceLoader.load(ExtractorProvider.class, cl).forEach(provider::add);
     }
 
     /**

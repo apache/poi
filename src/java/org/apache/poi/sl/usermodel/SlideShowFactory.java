@@ -48,7 +48,8 @@ public final class SlideShowFactory {
     private final List<SlideShowProvider<?,?>> provider = new ArrayList<>();
 
     private SlideShowFactory() {
-        ServiceLoader.load(SlideShowProvider.class).forEach(provider::add);
+        ClassLoader cl = SlideShowFactory.class.getClassLoader();
+        ServiceLoader.load(SlideShowProvider.class, cl).forEach(provider::add);
     }
 
     /**
