@@ -276,7 +276,7 @@ under the License.
     <!-- jars in the ooxml-lib directory, see the fetch-ooxml-jars target-->
     <dependency prefix="ooxml.curvesapi" artifact="com.github.virtuald:curvesapi:1.06" usage="ooxml"/>
     <dependency prefix="ooxml.xmlbeans" artifact="org.apache.xmlbeans:xmlbeans:4.0.0" usage="ooxml"
-                url="https://builds.apache.org/view/P/view/POI/job/POI-XMLBeans-DSL-1.8/lastSuccessfulBuild/artifact/build/xmlbeans-4.0.0.jar"/>
+                url="https://ci-builds.apache.org/job/POI/job/POI-XMLBeans-DSL-1.8/lastSuccessfulBuild/artifact/build//xmlbeans-4.0.0.jar"/>
     <dependency prefix="ooxml.commons-compress" artifact="org.apache.commons:commons-compress:1.20" usage="ooxml"/>
     <!-- only used for compiling xmlbeans schemas -->
 <!--    <dependency prefix="ooxml.commons-compress" artifact="com.github.javaparser:javaparser-core:3.16.1" usage="ooxml-provided"/>-->
