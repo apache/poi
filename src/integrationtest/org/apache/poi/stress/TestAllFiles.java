@@ -295,7 +295,7 @@ public class TestAllFiles {
         "spreadsheet/54764-2.xlsx",   // see TestXSSFBugs.bug54764()
         "spreadsheet/54764.xlsx",     // see TestXSSFBugs.bug54764()
         "poifs/unknown_properties.msg", // POIFS properties corrupted
-        (IGNORE_SCRATCHPAD ? "" : "poifs/only-zero-byte-streams.ole2"), // No actual contents
+        "poifs/only-zero-byte-streams.ole2", // No actual contents
         "spreadsheet/poc-xmlbomb.xlsx",  // contains xml-entity-expansion
         "spreadsheet/poc-xmlbomb-empty.xlsx",  // contains xml-entity-expansion
         "spreadsheet/poc-shared-strings.xlsx",  // contains shared-string-entity-expansion
