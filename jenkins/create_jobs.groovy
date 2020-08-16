@@ -18,7 +18,7 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-OpenJDK', jdk: 'OpenJDK 1.8', trigger: 'H */12 * * *',
           // only a limited set of nodes still have OpenJDK 8 (on Ubuntu) installed
-          slaves: 'H0||H2||H6||H9||H10||H12||H14||H22||H23||H25||H27||H34||H36||H37||H39||H40||H42||H44||H48||H50',
+          slaves: 'ubuntu',
           skipcigame: true
         ],
         [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays, skipcigame: true
@@ -26,8 +26,6 @@ def poijobs = [
         [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true
         ],
         [ name: 'POI-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
-          // H43 has outdated JDK12 installed
-          slaveAdd: '&&!H43',
           // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA now
           disabled: true
         ],
@@ -102,9 +100,8 @@ def defaultEmail = 'dev@poi.apache.org'
 def defaultAnt = 'Ant 1.10 (Latest)'
 def defaultAntWindows = 'Ant 1.10 (Latest Windows)'
 def defaultMaven = 'Maven 3 (latest)'
-// currently a lot of H?? slaves don't have Ant installed ... H21 seems to have a SVN problem
-// H35 fails with ImageIO create cache file errors, although the java.io.tmpdir is writable
-def defaultSlaves = '(ubuntu)&&!beam&&!cloud-slave&&!H15&&!H17&&!H18&&!H24&&!ubuntu-4&&!H21&&!H35'
+// H29 seems to have very little memory
+def defaultSlaves = '(ubuntu)&&!beam&&!cloud-slave&&!H29'
 
 def jdkMapping = [
         '1.6': 'JDK 1.6 (latest)',
