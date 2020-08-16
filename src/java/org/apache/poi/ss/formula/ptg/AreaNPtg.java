@@ -34,7 +34,8 @@ public final class AreaNPtg extends Area2DPtgBase {
 		super(in);
 	}
 
-	protected byte getSid() {
+	@Override
+	public byte getSid() {
 		return sid;
 	}
 

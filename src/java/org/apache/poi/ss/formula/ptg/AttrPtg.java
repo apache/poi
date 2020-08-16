@@ -186,6 +186,11 @@ public final class AttrPtg extends ControlPtg {
         }
     }
 
+    @Override
+    public byte getSid() {
+        return sid;
+    }
+
     public int getSize() {
         if (_jumpTable != null) {
             return SIZE + (_jumpTable.length + 1) * LittleEndianConsts.SHORT_SIZE;

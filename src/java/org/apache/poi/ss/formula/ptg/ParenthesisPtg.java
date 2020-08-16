@@ -42,6 +42,11 @@ public final class ParenthesisPtg extends ControlPtg {
 		out.writeByte(sid + getPtgClass());
 	}
 
+	@Override
+	public byte getSid() {
+		return sid;
+	}
+
 	public int getSize() {
 		return SIZE;
 	}

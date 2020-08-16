@@ -58,6 +58,11 @@ public final class AreaErrPtg extends OperandPtg {
 		return Ptg.CLASS_REF;
 	}
 
+	@Override
+	public byte getSid() {
+		return sid;
+	}
+
 	public int getSize() {
 		return 9;
 	}

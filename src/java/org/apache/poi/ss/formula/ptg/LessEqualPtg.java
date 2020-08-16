@@ -33,8 +33,9 @@ public final class LessEqualPtg extends ValueOperatorPtg {
     	// enforce singleton
     }
 
-    protected byte getSid() {
-    	return sid;
+    @Override
+    public byte getSid() {
+        return sid;
     }
 
     public int getNumberOfOperands() {
@@ -42,11 +43,7 @@ public final class LessEqualPtg extends ValueOperatorPtg {
     }
 
     public String toFormulaString(String[] operands) {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append( operands[0] );
-        buffer.append("<=");
-        buffer.append( operands[1] );
-        return buffer.toString();
+        return operands[0] + "<=" + operands[1];
     }
 
     @Override

@@ -32,8 +32,9 @@ public final class PercentPtg extends ValueOperatorPtg {
     	// enforce singleton
     }
 
-    protected byte getSid() {
-    	return sid;
+    @Override
+    public byte getSid() {
+        return sid;
     }
 
     public int getNumberOfOperands() {
@@ -41,11 +42,7 @@ public final class PercentPtg extends ValueOperatorPtg {
     }
 
     public String toFormulaString(String[] operands) {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append(operands[ 0 ]);
-        buffer.append(PERCENT);
-        return buffer.toString();
+        return operands[0] + PERCENT;
     }
 
     @Override

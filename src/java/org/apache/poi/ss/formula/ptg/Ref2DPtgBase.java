@@ -55,8 +55,6 @@ abstract class Ref2DPtgBase extends RefPtgBase {
 		return formatReferenceAsString();
 	}
 
-	protected abstract byte getSid();
-
 	@Override
     public final int getSize() {
 		return SIZE;

@@ -95,4 +95,9 @@ final class ArrayInitialPtg extends Ptg {
 			"reserved2", () -> _reserved2
 		);
 	}
+
+	@Override
+	public byte getSid() {
+		return -1;
+	}
 }

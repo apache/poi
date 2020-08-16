@@ -40,6 +40,11 @@ public final class MissingArgPtg extends ScalarConstantPtg {
 		out.writeByte(sid + getPtgClass());
 	}
 
+	@Override
+	public byte getSid() {
+		return sid;
+	}
+
 	public int getSize() {
 		return SIZE;
 	}

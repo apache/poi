@@ -59,6 +59,12 @@ public final class DeletedArea3DPtg extends OperandPtg implements WorkbookDepend
 	public byte getDefaultOperandClass() {
 		return Ptg.CLASS_REF;
 	}
+
+	@Override
+	public byte getSid() {
+		return sid;
+	}
+
 	public int getSize() {
 		return 11;
 	}

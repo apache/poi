@@ -31,8 +31,9 @@ public final class UnaryMinusPtg extends ValueOperatorPtg {
     	// enforce singleton
     }
 
-    protected byte getSid() {
-    	return sid;
+    @Override
+    public byte getSid() {
+        return sid;
     }
 
     public int getNumberOfOperands() {
@@ -41,10 +42,7 @@ public final class UnaryMinusPtg extends ValueOperatorPtg {
 
    /** implementation of method from OperationsPtg*/
     public String toFormulaString(String[] operands) {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(MINUS);
-        buffer.append(operands[ 0]);
-        return buffer.toString();
+        return MINUS + operands[0];
     }
 
     @Override

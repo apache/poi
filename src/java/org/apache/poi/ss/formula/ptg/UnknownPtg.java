@@ -22,7 +22,7 @@ import java.util.function.Supplier;
 import org.apache.poi.util.LittleEndianOutput;
 
 public class UnknownPtg extends Ptg {
-    private short size = 1;
+    private final short size = 1;
     private final int _sid;
 
     public UnknownPtg(int sid) {
@@ -34,6 +34,11 @@ public class UnknownPtg extends Ptg {
     }
     public void write(LittleEndianOutput out) {
         out.writeByte(_sid);
+    }
+
+    @Override
+    public byte getSid() {
+        return (byte)_sid;
     }
 
     public int getSize() {

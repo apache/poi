@@ -98,6 +98,11 @@ public final class Ref3DPxg extends RefPtgBase implements Pxg3D {
         return sb.toString();
     }
 
+    @Override
+    public byte getSid() {
+        return -1;
+    }
+
     public int getSize() {
         return 1;
     }

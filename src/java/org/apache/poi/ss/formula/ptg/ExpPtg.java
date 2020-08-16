@@ -49,6 +49,11 @@ public final class ExpPtg extends ControlPtg {
     }
 
     @Override
+    public byte getSid() {
+        return sid;
+    }
+
+    @Override
     public int getSize() {
         return SIZE;
     }

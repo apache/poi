@@ -41,6 +41,11 @@ public final class MemFuncPtg extends OperandPtg {
 		field_1_len_ref_subexpression = subExprLen;
 	}
 
+	@Override
+	public byte getSid() {
+		return sid;
+	}
+
 	public int getSize() {
 		return 3;
 	}

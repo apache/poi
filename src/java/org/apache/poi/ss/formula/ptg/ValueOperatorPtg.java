@@ -43,8 +43,6 @@ public abstract class ValueOperatorPtg extends OperationPtg {
 		out.writeByte(getSid());
 	}
 
-	protected abstract byte getSid();
-
 	public final int getSize() {
 		return 1;
 	}

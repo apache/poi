@@ -17,12 +17,24 @@
 
 package org.apache.poi.ss.formula;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Modifier;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.poi.ss.formula.eval.ConcatEval;
+import org.apache.poi.ss.formula.eval.FunctionEval;
+import org.apache.poi.ss.formula.eval.IntersectionEval;
+import org.apache.poi.ss.formula.eval.PercentEval;
+import org.apache.poi.ss.formula.eval.RangeEval;
+import org.apache.poi.ss.formula.eval.RelationalOperationEval;
+import org.apache.poi.ss.formula.eval.TwoOperandNumericOperation;
+import org.apache.poi.ss.formula.eval.UnaryMinusEval;
+import org.apache.poi.ss.formula.eval.UnaryPlusEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
+import org.apache.poi.ss.formula.functions.ArrayFunction;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
+import org.apache.poi.ss.formula.functions.Function;
+import org.apache.poi.ss.formula.functions.Indirect;
 import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
 import org.apache.poi.ss.formula.ptg.AddPtg;
 import org.apache.poi.ss.formula.ptg.ConcatPtg;
@@ -42,20 +54,6 @@ import org.apache.poi.ss.formula.ptg.RangePtg;
 import org.apache.poi.ss.formula.ptg.SubtractPtg;
 import org.apache.poi.ss.formula.ptg.UnaryMinusPtg;
 import org.apache.poi.ss.formula.ptg.UnaryPlusPtg;
-import org.apache.poi.ss.formula.eval.ConcatEval;
-import org.apache.poi.ss.formula.eval.FunctionEval;
-import org.apache.poi.ss.formula.eval.IntersectionEval;
-import org.apache.poi.ss.formula.eval.PercentEval;
-import org.apache.poi.ss.formula.eval.RangeEval;
-import org.apache.poi.ss.formula.eval.RelationalOperationEval;
-import org.apache.poi.ss.formula.eval.TwoOperandNumericOperation;
-import org.apache.poi.ss.formula.eval.UnaryMinusEval;
-import org.apache.poi.ss.formula.eval.UnaryPlusEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.function.FunctionMetadataRegistry;
-import org.apache.poi.ss.formula.functions.ArrayFunction;
-import org.apache.poi.ss.formula.functions.Function;
-import org.apache.poi.ss.formula.functions.Indirect;
 import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
@@ -66,45 +64,34 @@ import org.apache.poi.ss.util.CellRangeAddress;
  */
 final class OperationEvaluatorFactory {
 
-	private static final Map<OperationPtg, Function> _instancesByPtgClass = initialiseInstancesMap();
+	private static final Map<Byte, Function> _instancesByPtgClass = initialiseInstancesMap();
 
 	private OperationEvaluatorFactory() {
 		// no instances of this class
 	}
 
-	private static Map<OperationPtg, Function> initialiseInstancesMap() {
-		Map<OperationPtg, Function> m = new HashMap<>(32);
+	private static Map<Byte, Function> initialiseInstancesMap() {
+		Map<Byte, Function> m = new HashMap<>(32);
 
-		put(m, EqualPtg.instance, RelationalOperationEval.EqualEval);
-		put(m, GreaterEqualPtg.instance, RelationalOperationEval.GreaterEqualEval);
-		put(m, GreaterThanPtg.instance, RelationalOperationEval.GreaterThanEval);
-		put(m, LessEqualPtg.instance, RelationalOperationEval.LessEqualEval);
-		put(m, LessThanPtg.instance, RelationalOperationEval.LessThanEval);
-		put(m, NotEqualPtg.instance, RelationalOperationEval.NotEqualEval);
+		m.put(AddPtg.instance.getSid(), TwoOperandNumericOperation.AddEval); // 0x03
+		m.put(SubtractPtg.instance.getSid(), TwoOperandNumericOperation.SubtractEval); // 0x04
+		m.put(MultiplyPtg.instance.getSid(), TwoOperandNumericOperation.MultiplyEval); // 0x05
+		m.put(DividePtg.instance.getSid(), TwoOperandNumericOperation.DivideEval); // 0x06
+		m.put(PowerPtg.instance.getSid(), TwoOperandNumericOperation.PowerEval); // 0x07
+		m.put(ConcatPtg.instance.getSid(), ConcatEval.instance); // 0x08
+		m.put(LessThanPtg.instance.getSid(), RelationalOperationEval.LessThanEval); // 0x09
+		m.put(LessEqualPtg.instance.getSid(), RelationalOperationEval.LessEqualEval); // 0x0a
+		m.put(EqualPtg.instance.getSid(), RelationalOperationEval.EqualEval); // 0x0b
+		m.put(GreaterEqualPtg.instance.getSid(), RelationalOperationEval.GreaterEqualEval); // 0x0c
+		m.put(GreaterThanPtg.instance.getSid(), RelationalOperationEval.GreaterThanEval); // 0x0D
+		m.put(NotEqualPtg.instance.getSid(), RelationalOperationEval.NotEqualEval); // 0x0e
+		m.put(IntersectionPtg.instance.getSid(), IntersectionEval.instance); // 0x0f
+		m.put(RangePtg.instance.getSid(), RangeEval.instance); // 0x11
+		m.put(UnaryPlusPtg.instance.getSid(), UnaryPlusEval.instance); // 0x12
+		m.put(UnaryMinusPtg.instance.getSid(), UnaryMinusEval.instance); // 0x13
+		m.put(PercentPtg.instance.getSid(), PercentEval.instance); // 0x14
 
-		put(m, ConcatPtg.instance, ConcatEval.instance);
-		put(m, AddPtg.instance, TwoOperandNumericOperation.AddEval);
-		put(m, DividePtg.instance, TwoOperandNumericOperation.DivideEval);
-		put(m, MultiplyPtg.instance, TwoOperandNumericOperation.MultiplyEval);
-		put(m, PercentPtg.instance, PercentEval.instance);
-		put(m, PowerPtg.instance, TwoOperandNumericOperation.PowerEval);
-		put(m, SubtractPtg.instance, TwoOperandNumericOperation.SubtractEval);
-		put(m, UnaryMinusPtg.instance, UnaryMinusEval.instance);
-		put(m, UnaryPlusPtg.instance, UnaryPlusEval.instance);
-		put(m, RangePtg.instance, RangeEval.instance);
-		put(m, IntersectionPtg.instance, IntersectionEval.instance);
 		return m;
-	}
-
-	private static void put(Map<OperationPtg, Function> m, OperationPtg ptgKey,
-			Function instance) {
-		// make sure ptg has single private constructor because map lookups assume singleton keys
-		Constructor<?>[] cc = ptgKey.getClass().getDeclaredConstructors();
-		if (cc.length > 1 || !Modifier.isPrivate(cc[0].getModifiers())) {
-			throw new RuntimeException("Failed to verify instance ("
-					+ ptgKey.getClass().getName() + ") is a singleton.");
-		}
-		m.put(ptgKey, instance);
 	}
 
 	/**
@@ -116,7 +103,7 @@ final class OperationEvaluatorFactory {
 		if(ptg == null) {
 			throw new IllegalArgumentException("ptg must not be null");
 		}
-		Function result = _instancesByPtgClass.get(ptg);
+		Function result = _instancesByPtgClass.get(ptg.getSid());
 		FreeRefFunction udfFunc = null;
 		if (result == null) {
 			if (ptg instanceof AbstractFunctionPtg) {
@@ -149,7 +136,7 @@ final class OperationEvaluatorFactory {
 					return func.evaluateArray(args, ec.getRowIndex(), ec.getColumnIndex());
 				}
 			}
-		                
+
 			return  result.evaluate(args, ec.getRowIndex(), ec.getColumnIndex());
 		} else if (udfFunc != null){
 			return  udfFunc.evaluate(args, ec);

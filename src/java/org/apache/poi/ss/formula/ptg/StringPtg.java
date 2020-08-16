@@ -84,6 +84,11 @@ public final class StringPtg extends ScalarConstantPtg {
         }
     }
 
+    @Override
+    public byte getSid() {
+        return sid;
+    }
+
     public int getSize() {
     	return 3 +  field_3_string.length() * (_is16bitUnicode ? 2 : 1);
     }

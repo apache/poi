@@ -71,6 +71,11 @@ public final class NamePtg extends OperandPtg implements WorkbookDependentFormul
 	}
 
 	@Override
+	public byte getSid() {
+		return sid;
+	}
+
+	@Override
 	public int getSize() {
 		return SIZE;
 	}

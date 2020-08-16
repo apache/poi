@@ -43,8 +43,6 @@ public abstract class Area2DPtgBase extends AreaPtgBase {
 		readCoordinates(in);
 	}
 
-	protected abstract byte getSid();
-
 	public final void write(LittleEndianOutput out) {
 		out.writeByte(getSid() + getPtgClass());
 		writeCoordinates(out);

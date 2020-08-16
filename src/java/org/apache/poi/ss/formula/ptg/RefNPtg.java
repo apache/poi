@@ -31,9 +31,10 @@ public final class RefNPtg extends Ref2DPtgBase {
 	    super(other);
     }
 
-	protected byte getSid() {
-		return sid;
-	}
+    @Override
+    public byte getSid() {
+        return sid;
+    }
 
     protected final String formatReferenceAsString() {
         StringBuilder builder = new StringBuilder();

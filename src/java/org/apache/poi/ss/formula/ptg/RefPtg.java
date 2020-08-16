@@ -50,7 +50,8 @@ public final class RefPtg extends Ref2DPtgBase {
 		super(cr);
 	}
 
-	protected byte getSid() {
+	@Override
+	public byte getSid() {
 		return sid;
 	}
 

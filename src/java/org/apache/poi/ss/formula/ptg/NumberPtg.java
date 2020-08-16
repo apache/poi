@@ -62,6 +62,11 @@ public final class NumberPtg extends ScalarConstantPtg {
 		out.writeDouble(getValue());
 	}
 
+	@Override
+	public byte getSid() {
+		return sid;
+	}
+
 	public int getSize() {
 		return SIZE;
 	}

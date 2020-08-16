@@ -78,6 +78,11 @@ public final class Area3DPtg extends AreaPtgBase implements WorkbookDependentFor
 	}
 
 	@Override
+	public byte getSid() {
+		return sid;
+	}
+
+	@Override
 	public int getSize() {
 		return SIZE;
 	}

@@ -35,8 +35,9 @@ public final class LessThanPtg extends ValueOperatorPtg {
     	// enforce singleton
     }
 
-    protected byte getSid() {
-    	return sid;
+    @Override
+    public byte getSid() {
+        return sid;
     }
 
     /**
@@ -52,13 +53,8 @@ public final class LessThanPtg extends ValueOperatorPtg {
      * @param operands a String array of operands
      * @return String the Formula as a String
      */
-    public String toFormulaString(String[] operands)
-    {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(operands[ 0 ]);
-        buffer.append(LESSTHAN);
-        buffer.append(operands[ 1 ]);
-        return buffer.toString();
+    public String toFormulaString(String[] operands) {
+        return operands[0] + LESSTHAN + operands[1];
     }
 
     @Override

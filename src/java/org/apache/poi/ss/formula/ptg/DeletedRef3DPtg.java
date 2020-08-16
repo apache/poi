@@ -59,6 +59,12 @@ public final class DeletedRef3DPtg extends OperandPtg implements WorkbookDepende
 	public byte getDefaultOperandClass() {
 		return Ptg.CLASS_REF;
 	}
+
+	@Override
+	public byte getSid() {
+		return sid;
+	}
+
 	public int getSize() {
 		return 7;
 	}

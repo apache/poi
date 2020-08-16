@@ -70,6 +70,11 @@ public final class NameXPtg extends OperandPtg implements WorkbookDependentFormu
 		out.writeShort(_reserved);
 	}
 
+	@Override
+	public byte getSid() {
+		return sid;
+	}
+
 	public int getSize() {
 		return SIZE;
 	}

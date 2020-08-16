@@ -99,6 +99,11 @@ public final class Area3DPxg extends AreaPtgBase implements Pxg3D {
         return sb.toString();
     }
 
+    @Override
+    public byte getSid() {
+        return -1;
+    }
+
     public int getSize() {
         return 1;
     }

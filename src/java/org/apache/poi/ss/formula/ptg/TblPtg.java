@@ -58,6 +58,11 @@ public final class TblPtg extends ControlPtg {
         out.writeShort(field_2_first_col);
     }
 
+    @Override
+    public byte getSid() {
+        return sid;
+    }
+
     public int getSize() {
         return SIZE;
     }

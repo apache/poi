@@ -31,8 +31,9 @@ public final class AddPtg extends ValueOperatorPtg {
     	// enforce singleton
     }
 
-    protected byte getSid() {
-    	return sid;
+    @Override
+    public byte getSid() {
+        return sid;
     }
 
     public int getNumberOfOperands() {
@@ -41,12 +42,7 @@ public final class AddPtg extends ValueOperatorPtg {
 
    /** implementation of method from OperationsPtg*/
     public String toFormulaString(String[] operands) {
-        StringBuilder buffer = new StringBuilder();
-
-        buffer.append(operands[ 0 ]);
-        buffer.append(ADD);
-        buffer.append(operands[ 1 ]);
-        return buffer.toString();
+        return operands[0] + ADD + operands[1];
     }
 
     @Override

@@ -88,6 +88,11 @@ public final class FuncVarPtg extends AbstractFunctionPtg {
         out.writeShort(getFunctionIndex());
     }
 
+    @Override
+    public byte getSid() {
+        return sid;
+    }
+
     public int getSize() {
         return SIZE;
     }

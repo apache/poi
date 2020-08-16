@@ -52,8 +52,12 @@ public final class RefErrorPtg extends OperandPtg {
         out.writeInt(field_1_reserved);
     }
 
-    public int getSize()
-    {
+    @Override
+    public byte getSid() {
+        return sid;
+    }
+
+    public int getSize() {
         return SIZE;
     }
 

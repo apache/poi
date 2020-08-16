@@ -52,6 +52,11 @@ public final class MemAreaPtg extends OperandPtg {
 		out.writeShort(field_2_subex_len);
 	}
 
+	@Override
+	public byte getSid() {
+		return sid;
+	}
+
 	public int getSize() {
 		return SIZE;
 	}

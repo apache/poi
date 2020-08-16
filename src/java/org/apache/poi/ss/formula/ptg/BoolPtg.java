@@ -56,6 +56,11 @@ public final class BoolPtg extends ScalarConstantPtg {
 		out.writeByte(_value ? 1 : 0);
 	}
 
+	@Override
+	public byte getSid() {
+		return sid;
+	}
+
 	public int getSize() {
 		return SIZE;
 	}

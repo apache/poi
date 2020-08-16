@@ -94,6 +94,11 @@ public final class NameXPxg extends OperandPtg implements Pxg {
         return Ptg.CLASS_VALUE;
     }
 
+    @Override
+    public byte getSid() {
+        return -1;
+    }
+
     public int getSize() {
         return 1;
     }

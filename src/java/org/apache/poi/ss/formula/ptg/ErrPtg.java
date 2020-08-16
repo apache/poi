@@ -69,6 +69,11 @@ public final class ErrPtg extends ScalarConstantPtg {
         return FormulaError.forInt(field_1_error_code).getString();
     }
 
+    @Override
+    public byte getSid() {
+        return sid;
+    }
+
     public int getSize() {
         return SIZE;
     }

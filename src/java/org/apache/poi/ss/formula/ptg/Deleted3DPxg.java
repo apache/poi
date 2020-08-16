@@ -78,9 +78,15 @@ public final class Deleted3DPxg extends OperandPtg implements Pxg {
         return Ptg.CLASS_VALUE;
     }
 
+    @Override
+    public byte getSid() {
+        return -1;
+    }
+
     public int getSize() {
         return 1;
     }
+
     public void write(LittleEndianOutput out) {
         throw new IllegalStateException("XSSF-only Ptg, should not be serialised");
     }

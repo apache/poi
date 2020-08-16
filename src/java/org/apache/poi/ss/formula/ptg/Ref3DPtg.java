@@ -67,6 +67,11 @@ public final class Ref3DPtg extends RefPtgBase implements WorkbookDependentFormu
         writeCoordinates(out);
     }
 
+    @Override
+    public byte getSid() {
+        return sid;
+    }
+
     public int getSize() {
         return SIZE;
     }

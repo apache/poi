@@ -49,6 +49,11 @@ public class TestAbstractFunctionPtg  {
             super(functionIndex, pReturnClass, paramTypes, nParams);
         }
 
+        @Override
+        public byte getSid() {
+            return -1;
+        }
+
         public int getSize() {
             return 0;
         }

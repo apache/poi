@@ -164,6 +164,11 @@ public final class ArrayPtg extends Ptg {
 			+ ConstantValueParser.getEncodedSize(_arrayValues);
 	}
 
+	@Override
+	public byte getSid() {
+		return sid;
+	}
+
 	public String toFormulaString() {
 		StringBuilder b = new StringBuilder();
 		b.append("{");

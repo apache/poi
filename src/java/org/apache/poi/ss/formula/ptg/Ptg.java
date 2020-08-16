@@ -319,4 +319,9 @@ public abstract class Ptg implements Duplicatable, GenericRecord {
 
 	@Override
 	public abstract Ptg copy();
+
+	/**
+	 * @return structure id of the parsed thing, or {@code -1} if the record has no sid
+	 */
+	public abstract byte getSid();
 }

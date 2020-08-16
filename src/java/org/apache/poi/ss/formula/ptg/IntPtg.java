@@ -66,6 +66,11 @@ public final class IntPtg extends ScalarConstantPtg {
 		out.writeShort(getValue());
 	}
 
+	@Override
+	public byte getSid() {
+		return sid;
+	}
+
 	public int getSize() {
 		return SIZE;
 	}
