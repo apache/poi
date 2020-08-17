@@ -21,15 +21,19 @@ def poijobs = [
           slaves: 'ubuntu',
           skipcigame: true
         ],
-        [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays, skipcigame: true
+        [ name: 'POI-DSL-1.10', jdk: '1.10', trigger: triggerSundays, skipcigame: true,
+          // let's save some CPU cycles here, 10 had EOL in September 2018
+          disabled: true
         ],
         [ name: 'POI-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true
         ],
         [ name: 'POI-DSL-1.12', jdk: '1.12', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA now
+          // let's save some CPU cycles here, 12 is not a LTS and JDK 13 is GA as of 17 September 2019
           disabled: true
         ],
-        [ name: 'POI-DSL-1.13', jdk: '1.13', trigger: triggerSundays, skipcigame: true
+        [ name: 'POI-DSL-1.13', jdk: '1.13', trigger: triggerSundays, skipcigame: true,
+          // let's save some CPU cycles here, 13 is not a LTS and JDK 14 is GA as of 17 March 2020
+          disabled: true
         ],
         [ name: 'POI-DSL-1.14', jdk: '1.14', trigger: triggerSundays, skipcigame: true
         ],
