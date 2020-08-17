@@ -42,6 +42,7 @@ import org.apache.poi.openxml4j.util.ZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipFileZipEntrySource;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.CreationHelper;
@@ -53,7 +54,14 @@ import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.SheetVisibility;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.*;
+import org.apache.poi.util.Beta;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.NotImplemented;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFChartSheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -1311,5 +1319,9 @@ public class SXSSFWorkbook implements Workbook {
         return _wb.addOlePackage(oleData, label, fileName, command);
     }
 
-//end of interface implementation
+
+    @Override
+    public EvaluationWorkbook createEvaluationWorkbook() {
+        return SXSSFEvaluationWorkbook.create(this);
+    }
 }

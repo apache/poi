@@ -2251,4 +2251,10 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
             }
         }
     }
+
+
+    @Override
+    public HSSFEvaluationWorkbook createEvaluationWorkbook() {
+        return HSSFEvaluationWorkbook.create(this);
+    }
 }

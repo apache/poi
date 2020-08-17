@@ -2390,4 +2390,9 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     public boolean getCellFormulaValidation() {
         return this.cellFormulaValidation;
     }
+
+    @Override
+    public XSSFEvaluationWorkbook createEvaluationWorkbook() {
+        return XSSFEvaluationWorkbook.create(this);
+    }
 }

@@ -17,22 +17,20 @@
 
 package org.apache.poi.ss.formula.eval.forked;
 
-import org.apache.poi.ss.formula.eval.BoolEval;
-import org.apache.poi.ss.formula.eval.ErrorEval;
-import org.apache.poi.ss.formula.eval.NumberEval;
-import org.apache.poi.ss.formula.eval.StringEval;
-import org.apache.poi.ss.formula.eval.ValueEval;
-import org.apache.poi.ss.formula.udf.UDFFinder;
+import java.util.stream.Stream;
 
-import java.lang.reflect.Method;
-
-import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.CollaboratingWorkbooksEnvironment;
 import org.apache.poi.ss.formula.EvaluationCell;
 import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
+import org.apache.poi.ss.formula.eval.BoolEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Workbook;
 
 /**
@@ -45,34 +43,19 @@ import org.apache.poi.ss.usermodel.Workbook;
  */
 public final class ForkedEvaluator {
 
-	private WorkbookEvaluator _evaluator;
-	private ForkedEvaluationWorkbook _sewb;
+	private final WorkbookEvaluator _evaluator;
+	private final ForkedEvaluationWorkbook _sewb;
 
 	private ForkedEvaluator(EvaluationWorkbook masterWorkbook, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
 		_sewb = new ForkedEvaluationWorkbook(masterWorkbook);
 		_evaluator = new WorkbookEvaluator(_sewb, stabilityClassifier, udfFinder);
-	}
-	private static EvaluationWorkbook createEvaluationWorkbook(Workbook wb) {
-		if (wb instanceof HSSFWorkbook) {
-			return HSSFEvaluationWorkbook.create((HSSFWorkbook) wb);
-		} else {
-		    try {
-		        // TODO: check if this is Java 9 compatible ...
-		        Class<?> evalWB = Class.forName("org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook");
-		        Class<?> xssfWB = Class.forName("org.apache.poi.xssf.usermodel.XSSFWorkbook");
-		        Method createM = evalWB.getDeclaredMethod("create", xssfWB);
-		        return (EvaluationWorkbook)createM.invoke(null, wb);
-		    } catch (Exception e) {
-		        throw new IllegalArgumentException("Unexpected workbook type (" + wb.getClass().getName() + ") - check for poi-ooxml and poi-ooxml schemas jar in the classpath", e);
-		    }
-		}
 	}
 
 	/**
 	 * @param udfFinder pass <code>null</code> for default (AnalysisToolPak only)
 	 */
 	public static ForkedEvaluator create(Workbook wb, IStabilityClassifier stabilityClassifier, UDFFinder udfFinder) {
-		return new ForkedEvaluator(createEvaluationWorkbook(wb), stabilityClassifier, udfFinder);
+		return new ForkedEvaluator(wb.createEvaluationWorkbook(), stabilityClassifier, udfFinder);
 	}
 
 	/**
@@ -137,10 +120,7 @@ public final class ForkedEvaluator {
 	 * @param evaluators all evaluators for the full set of workbooks required by the formulas.
 	 */
 	public static void setupEnvironment(String[] workbookNames, ForkedEvaluator[] evaluators) {
-		WorkbookEvaluator[] wbEvals = new WorkbookEvaluator[evaluators.length];
-		for (int i = 0; i < wbEvals.length; i++) {
-			wbEvals[i] = evaluators[i]._evaluator;
-		}
+		WorkbookEvaluator[] wbEvals = Stream.of(evaluators).map(e -> e._evaluator).toArray(WorkbookEvaluator[]::new);
 		CollaboratingWorkbooksEnvironment.setup(workbookNames, wbEvals);
 	}
 }

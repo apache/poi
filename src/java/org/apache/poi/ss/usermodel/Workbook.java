@@ -24,6 +24,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.ss.SpreadsheetVersion;
+import org.apache.poi.ss.formula.EvaluationWorkbook;
 import org.apache.poi.ss.formula.udf.UDFFinder;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.util.Removal;
@@ -206,7 +207,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      */
     Sheet cloneSheet(int sheetNum);
 
-    
+
     /**
      *  Returns an iterator of the sheets in the workbook
      *  in sheet order. Includes hidden and very hidden sheets.
@@ -253,7 +254,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * @return new font object
      */
     Font createFont();
-    
+
     /**
      * Finds a font that matches the one with the supplied attributes
      *
@@ -513,9 +514,9 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
 
     /**
      * Hide or unhide a sheet.
-     * 
-     * Please note that the sheet currently set as active sheet (sheet 0 in a newly 
-     * created workbook or the one set via setActiveSheet()) cannot be hidden. 
+     *
+     * Please note that the sheet currently set as active sheet (sheet 0 in a newly
+     * created workbook or the one set via setActiveSheet()) cannot be hidden.
      *
      * @param sheetIx the sheet index (0-based)
      * @param hidden True to mark the sheet as hidden, false otherwise
@@ -535,9 +536,9 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     /**
      * Hide or unhide a sheet.
      *
-     * Please note that the sheet currently set as active sheet (sheet 0 in a newly 
+     * Please note that the sheet currently set as active sheet (sheet 0 in a newly
      * created workbook or the one set via setActiveSheet()) cannot be hidden.
-     *  
+     *
      * @param sheetIx     the sheet index (0-based)
      * @param visibility  the sheet visibility to set
      * @since POI 3.16 beta 2
@@ -576,10 +577,10 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * @since 3.8
      */
     boolean getForceFormulaRecalculation();
-    
+
     /**
      * Returns the spreadsheet version of this workbook
-     * 
+     *
      * @return SpreadsheetVersion enum
      * @since 3.14 beta 2
      */
@@ -592,10 +593,15 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
      * @param label the label of the payload
      * @param fileName the original filename
      * @param command the command to open the payload
-     * 
+     *
      * @return the index of the added ole object, i.e. the storage id
-     * 
+     *
      * @throws IOException if the object can't be embedded
      */
     int addOlePackage(byte[] oleData, String label, String fileName, String command) throws IOException;
+
+    /**
+     * @return an evaluation workbook
+     */
+    EvaluationWorkbook createEvaluationWorkbook();
 }
