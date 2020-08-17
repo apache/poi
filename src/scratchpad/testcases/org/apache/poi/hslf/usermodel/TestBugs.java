@@ -35,16 +35,17 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.PrintStream;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedCharacterIterator.Attribute;
 import java.text.CharacterIterator;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
@@ -59,7 +60,6 @@ import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 import org.apache.poi.hslf.model.HeadersFooters;
 import org.apache.poi.hslf.record.DocInfoListContainer;
 import org.apache.poi.hslf.record.Document;
-import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.record.SlideListWithText.SlideAtomsSet;
@@ -88,6 +88,7 @@ import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.NullPrintStream;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
 import org.junit.Test;
@@ -291,7 +292,7 @@ public final class TestBugs {
                 }
             }
         }
-        
+
         ppt.close();
     }
 
@@ -375,7 +376,7 @@ public final class TestBugs {
         HSLFPictureData pict = f.getPictureData();
         assertNotNull(pict);
         assertEquals(PictureType.JPEG, pict.getType());
-        
+
         ppt.close();
     }
 
@@ -405,7 +406,7 @@ public final class TestBugs {
         List<List<HSLFTextParagraph>> run = slide.getTextParagraphs();
         assertEquals(3, run.size());
         assertEquals("Fundera, planera och involvera.", HSLFTextParagraph.getRawText(run.get(2)));
-        
+
         ppt.close();
     }
 
@@ -445,7 +446,7 @@ public final class TestBugs {
         HSLFSlideShow ppt = open("41246-1.ppt");
 
         HSLFTestDataSamples.writeOutAndReadBack(ppt).close();
-        
+
         ppt.close();
     }
 
@@ -454,7 +455,7 @@ public final class TestBugs {
         HSLFSlideShow ppt = open("41246-2.ppt");
 
         HSLFTestDataSamples.writeOutAndReadBack(ppt).close();
-        
+
         ppt.close();
     }
 
@@ -463,31 +464,32 @@ public final class TestBugs {
      */
     @Test
     public void bug45776() throws IOException {
-        HSLFSlideShow ppt = open("45776.ppt");
+        DateFormat df = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ROOT);
+        try (HSLFSlideShow ppt = open("45776.ppt")) {
 
-        // get slides
-        for (HSLFSlide slide : ppt.getSlides()) {
-            for (HSLFShape shape : slide.getShapes()) {
-                if (!(shape instanceof HSLFTextBox)) {
-                    continue;
+            // get slides
+            for (HSLFSlide slide : ppt.getSlides()) {
+                for (HSLFShape shape : slide.getShapes()) {
+                    if (!(shape instanceof HSLFTextBox)) {
+                        continue;
+                    }
+                    HSLFTextBox tb = (HSLFTextBox) shape;
+                    // work with TextBox
+                    String str = tb.getText();
+
+                    if (!str.contains("$$DATE$$")) {
+                        continue;
+                    }
+                    str = str.replace("$$DATE$$", df.format(new Date()));
+                    tb.setText(str);
+
+                    List<HSLFTextParagraph> tr = tb.getTextParagraphs();
+                    assertEquals(str.length() + 1, tr.get(0).getParagraphStyle().getCharactersCovered());
+                    assertEquals(str.length() + 1, tr.get(0).getTextRuns().get(0).getCharacterStyle().getCharactersCovered());
                 }
-                HSLFTextBox tb = (HSLFTextBox) shape;
-                // work with TextBox
-                String str = tb.getText();
-
-                if (!str.contains("$$DATE$$")) {
-                    continue;
-                }
-                str = str.replace("$$DATE$$", new Date().toString());
-                tb.setText(str);
-
-                List<HSLFTextParagraph> tr = tb.getTextParagraphs();
-                assertEquals(str.length()+1,tr.get(0).getParagraphStyle().getCharactersCovered());
-                assertEquals(str.length()+1,tr.get(0).getTextRuns().get(0).getCharacterStyle().getCharactersCovered());
             }
+
         }
-        
-        ppt.close();
     }
 
     @Test
@@ -501,7 +503,7 @@ public final class TestBugs {
             HeadersFooters hf = slide.getHeadersFooters();
             /*boolean visible =*/ hf.isHeaderVisible(); // exception happens here
         }
-        
+
         ppt.close();
     }
 
@@ -538,7 +540,7 @@ public final class TestBugs {
             }
         }
         assertEquals(2, str);
-        
+
         ppt.close();
     }
 
@@ -781,7 +783,7 @@ public final class TestBugs {
 
         HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1);
         ppt1.close();
-        
+
         HSLFTextShape ts = (HSLFTextShape)ppt2.getSlides().get(0).getShapes().get(0);
         tp = ts.getTextParagraphs().get(0);
         tr = tp.getTextRuns().get(0);
@@ -841,9 +843,9 @@ public final class TestBugs {
     @Test
     public void bug55030() throws IOException {
         HSLFSlideShow ppt = open("bug55030.ppt");
-        
+
         String expFamily = "\u96b6\u4e66";
-        
+
         HSLFSlide sl = ppt.getSlides().get(0);
         for (List<HSLFTextParagraph> paraList : sl.getTextParagraphs()) {
             for (HSLFTextParagraph htp : paraList) {
@@ -853,7 +855,7 @@ public final class TestBugs {
                 }
             }
         }
-        
+
         ppt.close();
     }
 
@@ -873,27 +875,22 @@ public final class TestBugs {
         assertEquals(hlRun.getStartIndex(), hlShape.getStartIndex());
         assertEquals(hlRun.getEndIndex(), hlShape.getEndIndex());
 
-        OutputStream nullOutput = new OutputStream(){
-            @Override
-            public void write(int b) throws IOException {}
-        };
-
         final boolean[] found = {false};
-        DummyGraphics2d dgfx = new DummyGraphics2d(new PrintStream(nullOutput)){
+        DummyGraphics2d dgfx = new DummyGraphics2d(new NullPrintStream()){
             @Override
             public void drawString(AttributedCharacterIterator iterator, float x, float y) {
                 // For the test file, common sl draws textruns one by one and not mixed
                 // so we evaluate the whole iterator
                 Map<Attribute, Object> attributes = null;
                 StringBuilder sb = new StringBuilder();
-                
+
                 for (char c = iterator.first();
                         c != CharacterIterator.DONE;
                         c = iterator.next()) {
                     sb.append(c);
                     attributes = iterator.getAttributes();
                 }
-    
+
                 if ("Jakarta HSSF".equals(sb.toString())) {
                     // this is a test for a manually modified ppt, for real hyperlink label
                     // one would need to access the screen tip record
@@ -905,17 +902,17 @@ public final class TestBugs {
                 }
             }
         };
-        
+
         ppt.getSlides().get(1).draw(dgfx);
         assertTrue(found[0]);
-        
+
         ppt.close();
     }
 
     @Test
     public void bug59056() throws IOException {
         HSLFSlideShow ppt = open("54541_cropped_bitmap.ppt");
-        
+
         for (HSLFShape shape : ppt.getSlides().get(0).getShapes()) {
             BufferedImage img = new BufferedImage(500, 300, BufferedImage.TYPE_INT_ARGB);
             Graphics2D graphics = img.createGraphics();
@@ -927,11 +924,11 @@ public final class TestBugs {
             graphics.dispose();
             // ImageIO.write(img, "png", new File("bla"+shape.getShapeId()+".png"));
         }
-            
+
         ppt.close();
-        
+
     }
-    
+
     private static HSLFSlideShow open(String fileName) throws IOException {
         File sample = HSLFTestDataSamples.getSampleFile(fileName);
         // Note: don't change the code here, it is required for Eclipse to compile the code
@@ -950,10 +947,10 @@ public final class TestBugs {
         fs.setPath(new Path2D.Double(el));
         Color cExp = new Color(50,100,150,200);
         fs.setFillColor(cExp);
-        
+
         HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1);
         ppt1.close();
-        
+
         sl = ppt2.getSlides().get(0);
         fs = (HSLFFreeformShape)sl.getShapes().get(0);
         Color cAct = fs.getFillColor();
@@ -961,7 +958,7 @@ public final class TestBugs {
         assertEquals(cExp.getGreen(), cAct.getGreen());
         assertEquals(cExp.getBlue(), cAct.getBlue());
         assertEquals(cExp.getAlpha(), cAct.getAlpha(), 1);
-        
+
         PaintStyle ps = fs.getFillStyle().getPaint();
         assertTrue(ps instanceof SolidPaint);
         ColorStyle cs = ((SolidPaint)ps).getSolidColor();
@@ -971,7 +968,7 @@ public final class TestBugs {
         assertEquals(cExp.getBlue(), cAct.getBlue());
         assertEquals(255, cAct.getAlpha());
         assertEquals(cExp.getAlpha()*100000./255., cs.getAlpha(), 1);
-        
+
         ppt2.close();
     }
 
@@ -1016,7 +1013,7 @@ public final class TestBugs {
                     }
                 }
             }
-            
+
             ppt.close();
 
         } finally {

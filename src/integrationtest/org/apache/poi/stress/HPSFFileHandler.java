@@ -104,7 +104,7 @@ public class HPSFFileHandler extends POIFSFileHandler {
         }
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        PrintStream psNew = new PrintStream(bos);
+        PrintStream psNew = new PrintStream(bos, true, "ISO-8859-1");
         PrintStream ps = System.out;
         try {
             System.setOut(psNew);

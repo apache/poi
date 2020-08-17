@@ -36,6 +36,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -62,7 +63,7 @@ public final class CalendarDemo {
 
     public static void main(String[] args) throws Exception {
 
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = LocaleUtil.getLocaleCalendar();
         boolean xlsx = true;
         for (String arg : args) {
             if (arg.charAt(0) == '-') {

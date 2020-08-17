@@ -24,7 +24,7 @@ import java.io.PrintStream;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
-import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.NullPrintStream;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.BeforeClass;
 
@@ -32,10 +32,10 @@ public class TestFormulaViewer extends BaseTestIteratingXLS {
     @BeforeClass
     public static void setup() {
         EXCLUDED.clear();
-        EXCLUDED.put("35897-type4.xls", EncryptedDocumentException.class); // unsupported crypto api header 
+        EXCLUDED.put("35897-type4.xls", EncryptedDocumentException.class); // unsupported crypto api header
         EXCLUDED.put("51832.xls", EncryptedDocumentException.class);
-        EXCLUDED.put("xor-encryption-abc.xls", EncryptedDocumentException.class); 
-        EXCLUDED.put("password.xls", EncryptedDocumentException.class); 
+        EXCLUDED.put("xor-encryption-abc.xls", EncryptedDocumentException.class);
+        EXCLUDED.put("password.xls", EncryptedDocumentException.class);
         EXCLUDED.put("46904.xls", OldExcelFormatException.class);
         EXCLUDED.put("59074.xls", OldExcelFormatException.class);
         EXCLUDED.put("testEXCEL_2.xls", OldExcelFormatException.class);  // Biff 2 / Excel 2, pre-OLE2
@@ -49,13 +49,13 @@ public class TestFormulaViewer extends BaseTestIteratingXLS {
         EXCLUDED.put("61300.xls", RecordFormatException.class);
         EXCLUDED.put("64130.xls", OldExcelFormatException.class); //Biff 5
     }
-	
+
     @Override
 	void runOneFile(File fileIn) throws Exception {
 		PrintStream save = System.out;
 		try {
 			// redirect standard out during the test to avoid spamming the console with output
-			System.setOut(new PrintStream(NULL_OUTPUT_STREAM,true,LocaleUtil.CHARSET_1252.name()));
+			System.setOut(new NullPrintStream());
 
             FormulaViewer viewer = new FormulaViewer();
             viewer.setFile(fileIn.getAbsolutePath());

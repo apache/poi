@@ -31,6 +31,7 @@ import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
@@ -67,9 +68,9 @@ public class CreatePivotTable2 {
     }
 
     public static void setCellData(XSSFSheet sheet){
-        Calendar cal1 = Calendar.getInstance();
+        Calendar cal1 = LocaleUtil.getLocaleCalendar();
         cal1.set(2017, 0, 1, 0, 0, 0);
-        Calendar cal2 = Calendar.getInstance();
+        Calendar cal2 = LocaleUtil.getLocaleCalendar();
         cal2.set(2017, 1, 1, 0, 0, 0);
         Row row1 = sheet.createRow(0);
         // Create a cell and put a value in it.

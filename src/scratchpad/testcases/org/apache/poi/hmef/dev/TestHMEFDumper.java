@@ -24,7 +24,7 @@ import java.io.File;
 import java.io.PrintStream;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.util.NullOutputStream;
+import org.apache.poi.util.NullPrintStream;
 import org.junit.Test;
 
 public class TestHMEFDumper {
@@ -48,7 +48,7 @@ public class TestHMEFDumper {
     private static void doMain(String... args) throws Exception {
         PrintStream ps = System.out;
         try {
-            System.setOut(new PrintStream(new NullOutputStream(), true, "UTF-8"));
+            System.setOut(new NullPrintStream());
             HMEFDumper.main(args);
         } finally {
             System.setOut(ps);

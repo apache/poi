@@ -23,6 +23,7 @@ import java.io.InputStream;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
+import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.BeforeClass;
 
@@ -30,10 +31,10 @@ public class TestBiffDrawingToXml extends BaseTestIteratingXLS {
     @BeforeClass
     public static void setup() {
         EXCLUDED.clear();
-        EXCLUDED.put("35897-type4.xls", EncryptedDocumentException.class); // unsupported crypto api header 
+        EXCLUDED.put("35897-type4.xls", EncryptedDocumentException.class); // unsupported crypto api header
         EXCLUDED.put("51832.xls", EncryptedDocumentException.class);
-        EXCLUDED.put("xor-encryption-abc.xls", EncryptedDocumentException.class); 
-        EXCLUDED.put("password.xls", EncryptedDocumentException.class); 
+        EXCLUDED.put("xor-encryption-abc.xls", EncryptedDocumentException.class);
+        EXCLUDED.put("password.xls", EncryptedDocumentException.class);
         EXCLUDED.put("46904.xls", OldExcelFormatException.class);
         EXCLUDED.put("59074.xls", OldExcelFormatException.class);
         EXCLUDED.put("testEXCEL_2.xls", OldExcelFormatException.class);  // Biff 2 / Excel 2, pre-OLE2
@@ -47,11 +48,11 @@ public class TestBiffDrawingToXml extends BaseTestIteratingXLS {
         EXCLUDED.put("61300.xls", RecordFormatException.class);
         EXCLUDED.put("64130.xls", OldExcelFormatException.class); // BIFF 5
     }
-	
+
 	@Override
 	void runOneFile(File pFile) throws Exception {
         try (InputStream wb = new FileInputStream(pFile)) {
-            BiffDrawingToXml.writeToFile(NULL_OUTPUT_STREAM, wb, false, new String[0]);
+            BiffDrawingToXml.writeToFile(new NullOutputStream(), wb, false, new String[0]);
         }
 	}
 }

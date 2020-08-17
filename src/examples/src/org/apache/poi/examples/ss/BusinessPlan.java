@@ -21,6 +21,7 @@ import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -36,6 +37,7 @@ import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 /**
@@ -96,7 +98,7 @@ public final class BusinessPlan {
         if(args.length > 0 && args[0].equals("-xls")) wb = new HSSFWorkbook();
         else wb = new XSSFWorkbook();
 
-        final SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM");
+        final SimpleDateFormat fmt = new SimpleDateFormat("dd-MMM", Locale.ROOT);
 
         Map<String, CellStyle> styles = createStyles(wb);
 
@@ -124,7 +126,7 @@ public final class BusinessPlan {
             cell.setCellStyle(styles.get("header"));
         }
         //columns for 11 weeks starting from 9-Jul
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = LocaleUtil.getLocaleCalendar();
         int year = calendar.get(Calendar.YEAR);
 
         calendar.setTime(fmt.parse("9-Jul"));

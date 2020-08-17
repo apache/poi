@@ -20,7 +20,9 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 
 import com.sun.management.HotSpotDiagnosticMXBean;
+import org.apache.poi.util.SuppressForbidden;
 
+@SuppressForbidden("class only exists for manual tests in XSSFFileHandler")
 public class HeapDump {
     // This is the name of the HotSpot Diagnostic MBean
     private static final String HOTSPOT_BEAN_NAME =

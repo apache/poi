@@ -44,6 +44,7 @@ import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.util.LocaleUtil;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -53,7 +54,7 @@ public class TestExtractEmbeddedMSG {
 
     /**
      * Initialize this test, load up the attachment_msg_pdf.msg mapi message.
-     * 
+     *
      * @throws Exception
      */
     @BeforeClass
@@ -70,9 +71,9 @@ public class TestExtractEmbeddedMSG {
     /**
      * Test to see if embedded message properties can be read, extracted, and
      * re-parsed
-     * 
+     *
      * @throws ChunkNotFoundException
-     * 
+     *
      */
     @Test
     public void testEmbeddedMSGProperties() throws IOException, ChunkNotFoundException {
@@ -102,7 +103,7 @@ public class TestExtractEmbeddedMSG {
         msg.setReturnNullOnMissingChunk(true);
         Calendar messageDate = msg.getMessageDate();
         assertNotNull(messageDate);
-        Calendar expectedMessageDate = Calendar.getInstance();
+        Calendar expectedMessageDate = LocaleUtil.getLocaleCalendar();
         expectedMessageDate.set(2010, 05, 17, 23, 52, 19); // 2010/06/17 23:52:19 GMT
         expectedMessageDate.setTimeZone(TimeZone.getTimeZone("GMT"));
         expectedMessageDate.set(Calendar.MILLISECOND, 0);

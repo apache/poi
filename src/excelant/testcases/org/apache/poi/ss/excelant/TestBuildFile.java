@@ -28,6 +28,7 @@ import java.io.File;
 import java.io.PrintStream;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.util.NullPrintStream;
 import org.apache.tools.ant.BuildEvent;
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildListener;
@@ -140,12 +141,8 @@ public class TestBuildFile {
         try {
             sysOut.flush();
             sysErr.flush();
-            StringBuilder outBuffer = new StringBuilder();
-            PrintStream out = new PrintStream(new AntOutputStream(outBuffer));
-            System.setOut(out);
-            StringBuilder errBuffer = new StringBuilder();
-            PrintStream err = new PrintStream(new AntOutputStream(errBuffer));
-            System.setErr(err);
+            System.setOut(new NullPrintStream());
+            System.setErr(new NullPrintStream());
             logBuffer = new StringBuilder();
             fullLogBuffer = new StringBuilder();
             buildException = null;

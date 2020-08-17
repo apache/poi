@@ -28,6 +28,7 @@ import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.PrintOrientation;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.util.CellRangeAddress;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
@@ -61,7 +62,7 @@ public class CalendarDemo {
 
     public static void main(String[] args) throws Exception {
 
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = LocaleUtil.getLocaleCalendar();
         if(args.length > 0) calendar.set(Calendar.YEAR, Integer.parseInt(args[0]));
 
         int year = calendar.get(Calendar.YEAR);

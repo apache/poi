@@ -20,7 +20,6 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,7 +28,6 @@ import java.util.Map;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.util.NullOutputStream;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -46,8 +44,6 @@ import org.junit.runners.Parameterized.Parameters;
  */
 @RunWith(Parameterized.class)
 public abstract class BaseTestIteratingXLS {
-    protected static final OutputStream NULL_OUTPUT_STREAM = new NullOutputStream();
-
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
@@ -74,9 +70,9 @@ public abstract class BaseTestIteratingXLS {
         assertNotNull("Did not find any xls files in directory " + dir, files);
 
         for(String file : files) {
-            list.add(new Object[] { new File(dir, file) });
+                list.add(new Object[]{new File(dir, file)});
+            }
         }
-    }
 
     @Parameter
     public File file;

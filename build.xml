@@ -1549,7 +1549,7 @@ under the License.
         <delete dir="build" includes="test-integration.log*"/>
 
         <path id="test-integration.modules">
-            <pathelement path="build/dist/maven/poi"/>
+            <pathelement path="build/dist/maven/poi-tests"/>
             <pathelement path="build/dist/maven/poi-ooxml"/>
             <pathelement path="build/dist/maven/poi-scratchpad"/>
             <pathelement path="build/dist/maven/poi-examples"/>
@@ -2252,16 +2252,22 @@ under the License.
             <fileset dir="lib/ooxml-provided" includes="*.jar"/>
             <fileset dir="lib/excelant" includes="*.jar"/>
             <pathelement location="${ooxml.xsds.jar}"/>
+            <pathelement location="build/dist/maven/poi-tests/poi-${version.id}-tests.jar"/>
             <pathelement location="build/dist/maven/poi-examples/poi-examples-${version.id}.jar"/>
             <path path="${env.CLASSPATH}"/>
         </path>
 
+        <!-- forbiddenapis bundled signatures max supported version is 14 -->
+        <condition property="forbiddenVersion" value="14">
+            <javaversion atleast="15"/>
+        </condition>
+        <property name="forbiddenVersion" value="${ant.java.version}"/>
 
         <!-- first check rules that apply to all the source code -->
         <forbiddenapis
                  classpathref="forbiddenapis.classpath"
                  suppressAnnotation="org.apache.poi.util.SuppressForbidden"
-                 targetVersion="${ant.java.version}"
+                 targetVersion="${forbiddenVersion}"
             >
             <bundledsignatures name="jdk-unsafe"/>
             <bundledsignatures name="jdk-deprecated"/>
@@ -2272,29 +2278,20 @@ under the License.
             <bundledsignatures name="jdk-system-out"/>
             -->
             <signaturesFileset file="src/resources/devtools/forbidden-signatures.txt"/>
-            <!-- sources -->
-            <!-- zipfileset src="build/dist/maven/poi/poi-${version.id}.jar"/ -->
-            <!-- zipfileset src="build/dist/maven/poi-ooxml/poi-ooxml-${version.id}.jar"/ -->
-            <zipfileset src="build/dist/maven/poi-scratchpad/poi-scratchpad-${version.id}.jar"/>
-            <zipfileset src="build/dist/maven/poi-excelant/poi-excelant-${version.id}.jar"/>
-            <!--
-            <fileset dir="${examples.output.dir}"/>
-            -->
             <!-- test-sources (incl. sources) -->
             <zipfileset src="build/dist/maven/poi-tests/poi-${version.id}-tests.jar"/>
             <zipfileset src="build/dist/maven/poi-ooxml-tests/poi-ooxml-${version.id}-tests.jar"/>
-            <!--
-            <fileset dir="${scratchpad.output.test.dir}"/>
-            <fileset dir="${excelant.output.test.dir}"/>
-            <fileset dir="${integration.output.test.dir}"/>
-            -->
+            <zipfileset src="build/dist/maven/poi-scratchpad-tests/poi-scratchpad-${version.id}-tests.jar"/>
+            <zipfileset src="build/dist/maven/poi-excelant-tests/poi-excelant-${version.id}-tests.jar"/>
+            <zipfileset src="build/dist/maven/poi-examples/poi-examples-${version.id}.jar"/>
+            <zipfileset src="build/dist/maven/poi-integration/poi-integration-${version.id}.jar"/>
         </forbiddenapis>
 
         <!-- then check some advanced rules which we only apply to the core code and not tests or examples -->
         <forbiddenapis
                  classpathref="forbiddenapis.classpath"
                  suppressAnnotation="org.apache.poi.util.SuppressForbidden"
-                 targetVersion="${jdk.version.source}"
+                 targetVersion="${forbiddenVersion}"
             >
             <signaturesFileset file="src/resources/devtools/forbidden-signatures-prod.txt"/>
             <!-- sources -->

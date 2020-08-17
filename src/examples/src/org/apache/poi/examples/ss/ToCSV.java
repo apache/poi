@@ -22,9 +22,10 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 import org.apache.poi.ss.usermodel.Cell;
@@ -431,7 +432,7 @@ public class ToCSV {
         String csvLineElement;
 
         // Open a writer onto the CSV file.
-        try (BufferedWriter bw = new BufferedWriter(new FileWriter(file))) {
+        try (BufferedWriter bw = Files.newBufferedWriter(file.toPath(), StandardCharsets.ISO_8859_1)) {
 
             System.out.println("Saving the CSV file [" + file.getName() + "]");
 

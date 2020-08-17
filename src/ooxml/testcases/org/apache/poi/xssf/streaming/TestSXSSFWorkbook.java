@@ -417,10 +417,8 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
 
     private static void saveTwice(Workbook wb) throws Exception {
         for (int i = 0; i < 2; i++) {
-            try {
-                NullOutputStream out = new NullOutputStream();
+            try (NullOutputStream out = new NullOutputStream()) {
                 wb.write(out);
-                out.close();
             } catch (Exception e) {
                 throw new Exception("ERROR: failed on " + (i + 1)
                         + "th time calling " + wb.getClass().getName()

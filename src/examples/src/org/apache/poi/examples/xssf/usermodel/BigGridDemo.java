@@ -40,6 +40,7 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFDataFormat;
 import org.apache.poi.xssf.usermodel.XSSFFont;
@@ -155,7 +156,7 @@ public final class BigGridDemo {
 
     private static void generate(Writer out, Map<String, XSSFCellStyle> styles) throws Exception {
 
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = LocaleUtil.getLocaleCalendar();
 
         SpreadsheetWriter sw = new SpreadsheetWriter(out);
         sw.beginSheet();

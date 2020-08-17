@@ -168,7 +168,7 @@ public final class TestFixedSizedProperties {
     */
    @Test
    public void testReadMessageDateSucceedsWithHSMFDump() throws IOException {
-       PrintStream stream = new PrintStream(new ByteArrayOutputStream());
+       PrintStream stream = new PrintStream(new ByteArrayOutputStream(), true, "ISO-8859-1");
        HSMFDump dump = new HSMFDump(fsMessageSucceeds);
        dump.dump(stream);
    }
@@ -178,7 +178,7 @@ public final class TestFixedSizedProperties {
     */
    @Test
    public void testReadMessageDateFailsWithHSMFDump() throws Exception {
-       PrintStream stream = new PrintStream(new ByteArrayOutputStream());
+       PrintStream stream = new PrintStream(new ByteArrayOutputStream(), true, "ISO-8859-1");
        HSMFDump dump = new HSMFDump(fsMessageFails);
        dump.dump(stream);
    }

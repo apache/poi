@@ -23,6 +23,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -39,6 +40,7 @@ import org.apache.poi.ss.usermodel.VerticalAlignment;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
@@ -75,7 +77,7 @@ public final class SSPerformanceTest {
         runWithArgs(type, rows, cols, saveFile);
         long timeFinished = System.currentTimeMillis();
 
-        System.out.printf("Elapsed %.2f seconds for arguments %s\n", ((double)timeFinished - timeStarted) / 1000, Arrays.toString(args));
+        System.out.printf(Locale.ROOT, "Elapsed %.2f seconds for arguments %s\n", ((double)timeFinished - timeStarted) / 1000, Arrays.toString(args));
     }
 
     private static void runWithArgs(String type, int rows, int cols, boolean saveFile) throws IOException {
@@ -103,7 +105,7 @@ public final class SSPerformanceTest {
         int sheetNo = 0;
         int rowIndexInSheet = 1;
         double value = 0;
-        Calendar calendar = Calendar.getInstance();
+        Calendar calendar = LocaleUtil.getLocaleCalendar();
         for (int rowIndex = 0; rowIndex < rows; rowIndex++) {
             if (isHType && sheetNo != rowIndex / 0x10000) {
                 sheet = workBook.createSheet("Spillover from sheet " + (++sheetNo));

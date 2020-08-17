@@ -21,7 +21,7 @@ import java.io.IOException;
 import java.io.PrintStream;
 
 import org.apache.poi.hssf.OldExcelFormatException;
-import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.NullPrintStream;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.BeforeClass;
 
@@ -46,7 +46,7 @@ public class TestRecordLister extends BaseTestIteratingXLS {
 		PrintStream save = System.out;
 		try {
 			// redirect standard out during the test to avoid spamming the console with output
-			System.setOut(new PrintStream(NULL_OUTPUT_STREAM,true,LocaleUtil.CHARSET_1252.name()));
+			System.setOut(new NullPrintStream());
 
 			RecordLister viewer = new RecordLister();
             viewer.setFile(fileIn.getAbsolutePath());

@@ -17,7 +17,7 @@
 # This file contains API signatures which are specific to POI.
 # The goal is to minimize implicit defaults
 
-@defaultMessage POI forbidden APIs which are tolerated in non-production code, e.g. in tests and examples
+@defaultMessage POI forbidden APIs which are not tolerated in production code
 
 # We have applications which use this to return error codes on invalid commandline parameters...
 #@defaultMessage Please do not terminate the application

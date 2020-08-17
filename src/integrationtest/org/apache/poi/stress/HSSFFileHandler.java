@@ -22,7 +22,6 @@ import static org.junit.Assert.assertNotNull;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.HashSet;
 import java.util.Set;
@@ -34,6 +33,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.util.NullPrintStream;
 import org.junit.Test;
 
 public class HSSFFileHandler extends SpreadsheetHandler {
@@ -88,11 +88,7 @@ public class HSSFFileHandler extends SpreadsheetHandler {
 		PrintStream oldOut = System.out;
 		String fileWithParent = file.getParentFile().getName() + "/" + file.getName();
 		try {
-			System.setOut(new PrintStream(new OutputStream() {
-				@Override
-				public void write(int b) {
-				}
-			}));
+			System.setOut(new NullPrintStream());
 
 			BiffViewer.main(new String[]{file.getAbsolutePath()});
 

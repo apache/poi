@@ -19,15 +19,16 @@ package org.apache.poi.examples.ss.html;
 import java.io.BufferedReader;
 import java.io.Closeable;
 import java.io.FileInputStream;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.nio.charset.StandardCharsets;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -189,10 +190,7 @@ public final class ToHtml {
             return;
         }
 
-        try (
-                FileWriter fw = new FileWriter(args[1]);
-                PrintWriter pw = new PrintWriter(fw)
-            ) {
+        try (PrintWriter pw = new PrintWriter(args[1], "UTF-8")) {
             ToHtml toHtml = create(args[0], pw);
             toHtml.setCompleteHTML(true);
             toHtml.printPage();
@@ -243,7 +241,7 @@ public final class ToHtml {
 
     private void ensureOut() {
         if (out == null) {
-            out = new Formatter(output);
+            out = new Formatter(output, Locale.ROOT);
         }
     }
 
@@ -252,7 +250,7 @@ public final class ToHtml {
 
         // First, copy the base css
         try (BufferedReader in = new BufferedReader(new InputStreamReader(
-                getClass().getResourceAsStream("excelStyle.css")))){
+                getClass().getResourceAsStream("excelStyle.css"), StandardCharsets.ISO_8859_1))){
             String line;
             while ((line = in.readLine()) != null) {
                 out.format("%s%n", line);
@@ -325,7 +323,7 @@ public final class ToHtml {
             style = wb.getCellStyleAt((short) 0);
         }
         StringBuilder sb = new StringBuilder();
-        try (Formatter fmt = new Formatter(sb)) {
+        try (Formatter fmt = new Formatter(sb, Locale.ROOT)) {
             fmt.format("style_%02x", style.getIndex());
             return fmt.toString();
         }

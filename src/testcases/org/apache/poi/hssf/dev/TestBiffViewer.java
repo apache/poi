@@ -28,6 +28,7 @@ import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
+import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
@@ -62,7 +63,7 @@ public class TestBiffViewer extends BaseTestIteratingXLS {
         try (POIFSFileSystem fs = new POIFSFileSystem(fileIn, true);
              InputStream is = BiffViewer.getPOIFSInputStream(fs)) {
             // use a NullOutputStream to not write the bytes anywhere for best runtime
-            PrintWriter dummy = new PrintWriter(new OutputStreamWriter(NULL_OUTPUT_STREAM, LocaleUtil.CHARSET_1252));
+            PrintWriter dummy = new PrintWriter(new OutputStreamWriter(new NullOutputStream(), LocaleUtil.CHARSET_1252));
             BiffViewer.runBiffViewer(dummy, is, true, true, true, false);
         }
     }

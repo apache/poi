@@ -62,7 +62,7 @@ public class Msg2txt {
 	public void processMessage() throws IOException {
 		String txtFileName = fileNameStem + ".txt";
 		String attDirName = fileNameStem + "-att";
-        try (PrintWriter txtOut = new PrintWriter(txtFileName)) {
+        try (PrintWriter txtOut = new PrintWriter(txtFileName, "UTF-8")) {
             try {
                 String displayFrom = msg.getDisplayFrom();
                 txtOut.println("From: " + displayFrom);

@@ -17,6 +17,8 @@
 package org.apache.poi.examples.ss;
 
 import java.io.File;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -94,6 +96,8 @@ public class ExcelComparator {
     }
 
     List<String> listOfDifferences = new ArrayList<>();
+    private final DateFormat dateFormat = new SimpleDateFormat("EEE MMM dd HH:mm:ss zzz yyyy", Locale.ROOT);
+
 
     public static void main(String[] args) throws Exception {
         if (args.length != 2 || !(new File(args[0]).exists()) || !(new File(args[1]).exists())) {
@@ -429,7 +433,7 @@ public class ExcelComparator {
         Date date1 = loc1.cell.getDateCellValue();
         Date date2 = loc2.cell.getDateCellValue();
         if (!date1.equals(date2)) {
-            addMessage(loc1, loc2, CELL_DATA_DOES_NOT_MATCH, date1.toString(), date2.toString());
+            addMessage(loc1, loc2, CELL_DATA_DOES_NOT_MATCH, dateFormat.format(date1), dateFormat.format(date2));
         }
     }
 

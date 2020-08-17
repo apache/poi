@@ -16,22 +16,9 @@
 ==================================================================== */
 package org.apache.poi.hslf.dev;
 
-import org.apache.poi.POIDataSamples;
-import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
-import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
-import org.apache.poi.util.IOUtils;
-import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.NullOutputStream;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import static org.junit.Assert.assertNotNull;
 
 import java.io.File;
-import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -42,12 +29,21 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
-import static org.junit.Assert.assertNotNull;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
+import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
+import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.NullPrintStream;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Rule;
+import org.junit.Test;
+import org.junit.rules.ExpectedException;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 @RunWith(Parameterized.class)
 public abstract class BasePPTIteratingTest {
-    protected static final OutputStream NULL_OUTPUT_STREAM = new NullOutputStream();
-
     protected static final Set<String> OLD_FILES = new HashSet<>();
     static {
         OLD_FILES.add("PPT95.ppt");
@@ -89,7 +85,7 @@ public abstract class BasePPTIteratingTest {
         IOUtils.setByteArrayMaxOverride(5*1024*1024);
 
         // redirect standard out during the test to avoid spamming the console with output
-        System.setOut(new PrintStream(NULL_OUTPUT_STREAM, true, LocaleUtil.CHARSET_1252.name()));
+        System.setOut(new NullPrintStream());
     }
 
     @After
