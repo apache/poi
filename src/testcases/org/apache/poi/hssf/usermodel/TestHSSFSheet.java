@@ -18,15 +18,7 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.apache.poi.hssf.HSSFTestDataSamples.writeOutAndReadBack;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -1042,9 +1034,11 @@ public final class TestHSSFSheet extends BaseTestSheet {
             Sheet sheet = wb.createSheet();
             sheet.showInPane(2, 3);
 
-            thrown.expect(IllegalArgumentException.class);
-            thrown.expectMessage("Maximum row number is 65535");
-            sheet.showInPane(Integer.MAX_VALUE, 3);
+            IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> sheet.showInPane(Integer.MAX_VALUE, 3)
+            );
+            assertEquals("Maximum row number is 65535", ex.getMessage());
         }
     }
 

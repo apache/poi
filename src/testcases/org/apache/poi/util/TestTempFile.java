@@ -19,6 +19,7 @@ package org.apache.poi.util;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -29,16 +30,11 @@ import java.util.Arrays;
 import org.apache.poi.poifs.dev.TestPOIFSDump;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class TestTempFile {
     private String previousTempDir;
     private File tempDir;
-    
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Before
     public void setUp() throws IOException {
@@ -109,14 +105,14 @@ public class TestTempFile {
         // Solution: set TempFileCreationStrategy to something that the unit test can trigger a deletion"
         assertTrue("Unable to delete temp file", tempFile.delete());
     }
-    
+
     @Test
     public void createTempFileWithDefaultSuffix() throws IOException {
         File tempFile = TempFile.createTempFile("test", null);
         assertTrue("temp file's name should end with .tmp",
                 tempFile.getName().endsWith(".tmp"));
     }
-    
+
     @Test
     public void testCreateTempDirectory() throws IOException
     {
@@ -132,11 +128,11 @@ public class TestTempFile {
         // Solution: set TempFileCreationStrategy to something that the unit test can trigger a deletion"
         assertTrue("Unable to delete tempDir", tempDir.delete());
     }
-    
+
     @Test
     public void testSetTempFileCreationStrategy() throws IOException {
         TempFile.setTempFileCreationStrategy(new DefaultTempFileCreationStrategy());
-        
+
         // Should be able to create two tempfiles with same prefix and suffix
         File file1 = TempFile.createTempFile("TestTempFile", ".tst");
         File file2 = TempFile.createTempFile("TestTempFile", ".tst");
@@ -145,9 +141,8 @@ public class TestTempFile {
         assertTrue(file2.delete());
         assertNotNull(file1);
         assertTrue(file1.delete());
-        
-        thrown.expect(IllegalArgumentException.class);
+
         //noinspection ConstantConditions
-        TempFile.setTempFileCreationStrategy(null);
+        assertThrows(IllegalArgumentException.class, () -> TempFile.setTempFileCreationStrategy(null));
     }
 }

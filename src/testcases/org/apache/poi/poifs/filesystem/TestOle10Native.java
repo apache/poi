@@ -17,9 +17,11 @@
 
 package org.apache.poi.poifs.filesystem;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -32,15 +34,10 @@ import java.util.List;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RecordFormatException;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class TestOle10Native {
     private static final POIDataSamples dataSamples = POIDataSamples.getPOIFSInstance();
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @Test
     public void testOleNative() throws IOException, Ole10NativeException {
@@ -101,11 +98,14 @@ public class TestOle10Native {
     }
 
     @Test
-    public void testOleNativeOOM() throws IOException, Ole10NativeException {
-        POIFSFileSystem fs = new POIFSFileSystem(dataSamples.openResourceAsStream("60256.bin"));
-        thrown.expect(RecordFormatException.class);
-        thrown.expectMessage("Tried to allocate");
-        Ole10Native.createFromEmbeddedOleObject(fs);
+    public void testOleNativeOOM() throws IOException {
+        try (POIFSFileSystem fs = new POIFSFileSystem(dataSamples.openResourceAsStream("60256.bin"))) {
+            RecordFormatException ex = assertThrows(
+                RecordFormatException.class,
+                () -> Ole10Native.createFromEmbeddedOleObject(fs)
+            );
+            assertTrue(ex.getMessage().contains("Tried to allocate"));
+        }
     }
 
 }

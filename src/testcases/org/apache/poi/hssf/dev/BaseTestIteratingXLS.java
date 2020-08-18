@@ -17,9 +17,9 @@
 package org.apache.poi.hssf.dev;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,10 +27,7 @@ import java.util.Locale;
 import java.util.Map;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameter;
@@ -44,11 +41,7 @@ import org.junit.runners.Parameterized.Parameters;
  */
 @RunWith(Parameterized.class)
 public abstract class BaseTestIteratingXLS {
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-	protected static final Map<String,Class<? extends Throwable>> EXCLUDED =
-            new HashMap<>();
+	protected static final Map<String,Class<? extends Throwable>> EXCLUDED = new HashMap<>();
 
     @Parameters(name="{index}: {0}")
     public static Iterable<Object[]> files() {
@@ -80,20 +73,15 @@ public abstract class BaseTestIteratingXLS {
 	@Test
 	public void testMain() throws Exception {
 	    String fileName = file.getName();
-	    if (EXCLUDED.containsKey(fileName)) {
-	        thrown.expect(EXCLUDED.get(fileName));
-	    }
 
-		try {
-			runOneFile(file);
-		} catch (Exception e) {
-			// try to read it in HSSFWorkbook to quickly fail if we cannot read the file there at all and thus probably should use EXCLUDED instead
-            try (FileInputStream stream = new FileInputStream(file); HSSFWorkbook wb = new HSSFWorkbook(stream)) {
-                assertNotNull(wb);
-            }
+	    Class<? extends Throwable> t = EXCLUDED.get(fileName);
 
-			throw e;
-		}
+        if (t == null) {
+            runOneFile(file);
+        } else {
+            assertThrows(t, () -> runOneFile(file));
+        }
+
 	}
 
 	abstract void runOneFile(File pFile) throws Exception;

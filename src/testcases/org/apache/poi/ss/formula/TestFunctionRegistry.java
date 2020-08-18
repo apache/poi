@@ -20,6 +20,8 @@
 package org.apache.poi.ss.formula;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
@@ -37,9 +39,7 @@ import org.apache.poi.ss.usermodel.CellValue;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.FixMethodOrder;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runners.MethodSorters;
 
 @FixMethodOrder(MethodSorters.NAME_ASCENDING)
@@ -67,14 +67,10 @@ public class TestFunctionRegistry {
         fe = null;
     }
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-    @Test
+    @Test(expected = NotImplementedException.class)
 	public void testRegisterInRuntimeA() {
         HSSFCell cellA = row.createCell(0);
         cellA.setCellFormula("FISHER(A5)");
-        thrown.expect(NotImplementedException.class);
         fe.evaluate(cellA);
     }
 
@@ -87,11 +83,10 @@ public class TestFunctionRegistry {
         assertEquals(ErrorEval.NA.getErrorCode(), cv.getErrorValue());
     }
 
-    @Test
+    @Test(expected = NotImplementedException.class)
     public void testRegisterInRuntimeC() {
         HSSFCell cellB = row.createCell(1);
         cellB.setCellFormula("CUBEMEMBERPROPERTY(A5)");
-        thrown.expect(NotImplementedException.class);
         fe.evaluate(cellB);
     }
 
@@ -112,24 +107,31 @@ public class TestFunctionRegistry {
 
     @Test
     public void testExceptionsA() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("POI already implememts SUM. You cannot override POI's implementations of Excel functions");
-        FunctionEval.registerFunction("SUM", TestFunctionRegistry::na);
+        IllegalArgumentException ex = assertThrows(
+            IllegalArgumentException.class,
+            () -> FunctionEval.registerFunction("SUM", TestFunctionRegistry::na)
+        );
+        assertEquals("POI already implements SUM. You cannot override POI's implementations of Excel functions", ex.getMessage());
     }
 
     @Test
     public void testExceptionsB() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("Unknown function: SUMXXX");
-        FunctionEval.registerFunction("SUMXXX", TestFunctionRegistry::na);
+        IllegalArgumentException ex = assertThrows(
+            IllegalArgumentException.class,
+            () -> FunctionEval.registerFunction("SUMXXX", TestFunctionRegistry::na)
+        );
+        assertTrue(ex.getMessage().contains("Unknown function: SUMXXX"));
     }
 
     @Test
     public void testExceptionsC() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("ISODD is a function from the Excel Analysis Toolpack. " +
-            "Use AnalysisToolpack.registerFunction(String name, FreeRefFunction func) instead.");
-        FunctionEval.registerFunction("ISODD", TestFunctionRegistry::na);
+        IllegalArgumentException ex = assertThrows(
+            IllegalArgumentException.class,
+            () -> FunctionEval.registerFunction("ISODD", TestFunctionRegistry::na)
+        );
+        assertEquals("ISODD is a function from the Excel Analysis Toolpack. " +
+             "Use AnalysisToolpack.registerFunction(String name, FreeRefFunction func) instead.",
+             ex.getMessage());
     }
 
     private static ValueEval atpFunc(ValueEval[] args, OperationEvaluationContext ec) {
@@ -138,23 +140,30 @@ public class TestFunctionRegistry {
 
     @Test
     public void testExceptionsD() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("POI already implememts ISODD. You cannot override POI's implementations of Excel functions");
-        AnalysisToolPak.registerFunction("ISODD", TestFunctionRegistry::atpFunc);
+        IllegalArgumentException ex = assertThrows(
+            IllegalArgumentException.class,
+            () -> AnalysisToolPak.registerFunction("ISODD", TestFunctionRegistry::atpFunc)
+        );
+        assertEquals("POI already implements ISODD. You cannot override POI's implementations of Excel functions", ex.getMessage());
     }
 
     @Test
     public void testExceptionsE() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("ISODDXXX is not a function from the Excel Analysis Toolpack.");
-        AnalysisToolPak.registerFunction("ISODDXXX", TestFunctionRegistry::atpFunc);
+        IllegalArgumentException ex = assertThrows(
+            IllegalArgumentException.class,
+            () -> AnalysisToolPak.registerFunction("ISODDXXX", TestFunctionRegistry::atpFunc)
+        );
+        assertEquals("ISODDXXX is not a function from the Excel Analysis Toolpack.", ex.getMessage());
     }
 
     @Test
     public void testExceptionsF() {
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("SUM is a built-in Excel function. " +
-             "Use FunctoinEval.registerFunction(String name, Function func) instead.");
-        AnalysisToolPak.registerFunction("SUM", TestFunctionRegistry::atpFunc);
+        IllegalArgumentException ex = assertThrows(
+            IllegalArgumentException.class,
+            () -> AnalysisToolPak.registerFunction("SUM", TestFunctionRegistry::atpFunc)
+        );
+        assertEquals("SUM is a built-in Excel function. " +
+             "Use FunctoinEval.registerFunction(String name, Function func) instead.",
+             ex.getMessage());
     }
 }

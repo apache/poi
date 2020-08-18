@@ -19,6 +19,7 @@ package org.apache.poi.ss.formula.eval.forked;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 
 import java.io.IOException;
 
@@ -28,14 +29,9 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public class BaseTestForkedEvaluator {
-
-    @Rule
-    public ExpectedException expectedEx = ExpectedException.none();
 
     protected Workbook newWorkbook() {
         return new HSSFWorkbook();
@@ -66,34 +62,33 @@ public class BaseTestForkedEvaluator {
 	 */
 	@Test
 	public void testBasic() throws IOException {
-		Workbook wb = createWorkbook();
+		try (Workbook wb = createWorkbook()) {
 
-		// The stability classifier is useful to reduce memory consumption of caching logic
-		IStabilityClassifier stabilityClassifier = (sheetIndex, rowIndex, columnIndex) -> sheetIndex == 1;
+			// The stability classifier is useful to reduce memory consumption of caching logic
+			IStabilityClassifier stabilityClassifier = (sheetIndex, rowIndex, columnIndex) -> sheetIndex == 1;
 
-		ForkedEvaluator fe1 = ForkedEvaluator.create(wb, stabilityClassifier, null);
-		ForkedEvaluator fe2 = ForkedEvaluator.create(wb, stabilityClassifier, null);
+			ForkedEvaluator fe1 = ForkedEvaluator.create(wb, stabilityClassifier, null);
+			ForkedEvaluator fe2 = ForkedEvaluator.create(wb, stabilityClassifier, null);
 
-		// fe1 and fe2 can be used concurrently on separate threads
+			// fe1 and fe2 can be used concurrently on separate threads
 
-		fe1.updateCell("Inputs", 0, 0, new NumberEval(4.0));
-		fe1.updateCell("Inputs", 0, 1, new NumberEval(1.1));
+			fe1.updateCell("Inputs", 0, 0, new NumberEval(4.0));
+			fe1.updateCell("Inputs", 0, 1, new NumberEval(1.1));
 
-		fe2.updateCell("Inputs", 0, 0, new NumberEval(1.2));
-		fe2.updateCell("Inputs", 0, 1, new NumberEval(2.0));
+			fe2.updateCell("Inputs", 0, 0, new NumberEval(1.2));
+			fe2.updateCell("Inputs", 0, 1, new NumberEval(2.0));
 
-		NumberEval eval1 = (NumberEval) fe1.evaluate("Calculations", 0, 0);
-		assertNotNull(eval1);
-		assertEquals(18.9, eval1.getNumberValue(), 0.0);
-		NumberEval eval2 = (NumberEval) fe2.evaluate("Calculations", 0, 0);
-		assertNotNull(eval2);
-		assertEquals(4.0, eval2.getNumberValue(), 0.0);
-		fe1.updateCell("Inputs", 0, 0, new NumberEval(3.0));
-		eval1 = (NumberEval) fe1.evaluate("Calculations", 0, 0);
-		assertNotNull(eval1);
-		assertEquals(13.9, eval1.getNumberValue(), 0.0);
-
-		wb.close();
+			NumberEval eval1 = (NumberEval) fe1.evaluate("Calculations", 0, 0);
+			assertNotNull(eval1);
+			assertEquals(18.9, eval1.getNumberValue(), 0.0);
+			NumberEval eval2 = (NumberEval) fe2.evaluate("Calculations", 0, 0);
+			assertNotNull(eval2);
+			assertEquals(4.0, eval2.getNumberValue(), 0.0);
+			fe1.updateCell("Inputs", 0, 0, new NumberEval(3.0));
+			eval1 = (NumberEval) fe1.evaluate("Calculations", 0, 0);
+			assertNotNull(eval1);
+			assertEquals(13.9, eval1.getNumberValue(), 0.0);
+		}
 	}
 
 	/**
@@ -108,13 +103,15 @@ public class BaseTestForkedEvaluator {
 	 */
 	@Test
 	public void testMissingInputCellH() throws IOException {
-	    expectedEx.expect(UnsupportedOperationException.class);
-	    expectedEx.expectMessage("Underlying cell 'A2' is missing in master sheet.");
 
 		try (Workbook wb = createWorkbook()) {
 			ForkedEvaluator fe = ForkedEvaluator.create(wb, null, null);
 			// attempt update input at cell A2 (which is missing)
-			fe.updateCell("Inputs", 1, 0, new NumberEval(4.0));
+			UnsupportedOperationException ex = assertThrows(
+				UnsupportedOperationException.class,
+				 () -> fe.updateCell("Inputs", 1, 0, new NumberEval(4.0))
+			);
+			assertEquals("Underlying cell 'A2' is missing in master sheet.", ex.getMessage());
 		}
 	}
 }

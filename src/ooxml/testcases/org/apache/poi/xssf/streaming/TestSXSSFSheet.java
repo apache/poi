@@ -20,6 +20,7 @@
 package org.apache.poi.xssf.streaming;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.fail;
 
 import java.io.IOException;
@@ -57,18 +58,16 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
      */
     @Override
     @Test
-    public void cloneSheet() throws IOException {
-        thrown.expect(RuntimeException.class);
-        thrown.expectMessage("Not Implemented");
-        super.cloneSheet();
+    public void cloneSheet() {
+        RuntimeException ex = assertThrows(RuntimeException.class, super::cloneSheet);
+        assertEquals("Not Implemented", ex.getMessage());
     }
 
     @Override
     @Test
-    public void cloneSheetMultipleTimes() throws IOException {
-        thrown.expect(RuntimeException.class);
-        thrown.expectMessage("Not Implemented");
-        super.cloneSheetMultipleTimes();
+    public void cloneSheetMultipleTimes() {
+        RuntimeException ex = assertThrows(RuntimeException.class, super::cloneSheetMultipleTimes);
+        assertEquals("Not Implemented", ex.getMessage());
     }
 
     /**
@@ -76,10 +75,9 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
      */
     @Override
     @Test
-    public void shiftMerged() throws IOException {
-        thrown.expect(RuntimeException.class);
-        thrown.expectMessage("Not Implemented");
-        super.shiftMerged();
+    public void shiftMerged() {
+        RuntimeException ex = assertThrows(RuntimeException.class, super::shiftMerged);
+        assertEquals("Not Implemented", ex.getMessage());
     }
 
     /**
@@ -89,15 +87,14 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
      */
     @Override
     @Test
-    public void bug35084() throws IOException {
-        thrown.expect(RuntimeException.class);
-        thrown.expectMessage("Not Implemented");
-        super.bug35084();
+    public void bug35084() {
+        RuntimeException ex = assertThrows(RuntimeException.class, super::bug35084);
+        assertEquals("Not Implemented", ex.getMessage());
     }
 
     @Override
     @Test
-    public void getCellComment() throws IOException {
+    public void getCellComment() {
         // TODO: reading cell comments via Sheet does not work currently as it tries
         // to access the underlying sheet for this, but comments are stored as
         // properties on Cells...
@@ -119,9 +116,8 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
             sheet.createRow(3);
             sheet.createRow(4);
 
-            thrown.expect(Throwable.class);
-            thrown.expectMessage("Attempting to write a row[1] in the range [0,1] that is already written to disk.");
-            sheet.createRow(1);
+            Throwable ex = assertThrows(Throwable.class, () -> sheet.createRow(1));
+            assertEquals("Attempting to write a row[1] in the range [0,1] that is already written to disk.", ex.getMessage());
         }
     }
 

@@ -21,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -42,14 +43,11 @@ import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.poifs.filesystem.FileMagic;
-import org.apache.poi.poifs.filesystem.NotOLE2FileException;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.xmlbeans.XmlException;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 /**
  * Test that the extractor factory plays nicely
@@ -129,9 +127,6 @@ public class TestExtractorFactory {
         R apply(T t) throws IOException, OpenXML4JException, XmlException;
     }
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
     @Test
     public void testFile() throws Exception {
         for (int i = 0; i < TEST_SET.length; i += 4) {
@@ -142,11 +137,12 @@ public class TestExtractorFactory {
     }
 
     @Test
-    public void testFileInvalid() throws Exception {
-        thrown.expectMessage("Can't create extractor - unsupported file type: UNKNOWN");
-        thrown.expect(IOException.class);
-        // Text
-        ExtractorFactory.createExtractor(txt);
+    public void testFileInvalid() {
+        IOException ex = assertThrows(
+            IOException.class,
+            () -> ExtractorFactory.createExtractor(txt)
+        );
+        assertEquals("Can't create extractor - unsupported file type: UNKNOWN", ex.getMessage());
     }
 
     @Test
@@ -155,10 +151,11 @@ public class TestExtractorFactory {
     }
 
     @Test
-    public void testInputStreamInvalid() throws Exception {
-        thrown.expectMessage("Can't create extractor - unsupported file type: UNKNOWN");
-        thrown.expect(IOException.class);
-        testInvalid(ExtractorFactory::createExtractor);
+    public void testInputStreamInvalid() throws IOException {
+        try (FileInputStream fis = new FileInputStream(txt)) {
+            IOException ex = assertThrows(IOException.class, () -> ExtractorFactory.createExtractor(fis));
+            assertTrue(ex.getMessage().contains(FileMagic.UNKNOWN.name()));
+        }
     }
 
     @Test
@@ -167,10 +164,12 @@ public class TestExtractorFactory {
     }
 
     @Test
-    public void testPOIFSInvalid() throws Exception {
-        thrown.expectMessage("Invalid header signature; read 0x3D20726F68747541, expected 0xE11AB1A1E011CFD0");
-        thrown.expect(NotOLE2FileException.class);
-        testInvalid((f) -> ExtractorFactory.createExtractor(new POIFSFileSystem(f)));
+    public void testPOIFSInvalid() {
+        IOException ex = assertThrows(
+            IOException.class,
+            () -> ExtractorFactory.createExtractor(new POIFSFileSystem(txt))
+        );
+        assertTrue(ex.getMessage().contains("Invalid header signature; read 0x3D20726F68747541, expected 0xE11AB1A1E011CFD0"));
     }
 
     private void testStream(final FunctionEx<FileInputStream, POITextExtractor> poifsIS, final boolean loadOOXML)
@@ -196,17 +195,6 @@ public class TestExtractorFactory {
             assertContains(actual.toLowerCase(Locale.ROOT), "test");
         } else {
             assertTrue("extracted content too short for " + testcase, actual.length() > minLength);
-        }
-    }
-
-    private void testInvalid(FunctionEx<FileInputStream, POITextExtractor> poifs) throws IOException, OpenXML4JException, XmlException {
-        // Text
-        try (FileInputStream fis = new FileInputStream(txt);
-             POITextExtractor ignored = poifs.apply(fis)) {
-            fail("extracting from invalid package");
-        } catch (IllegalArgumentException e) {
-            assertTrue("Had: " + e, e.getMessage().contains(FileMagic.UNKNOWN.name()));
-            throw e;
         }
     }
 
@@ -273,6 +261,7 @@ public class TestExtractorFactory {
             }
 
             try (POITextExtractor extractor = xmlFactory.create(OPCPackage.open(xlsx.toString(), PackageAccess.READ))) {
+                assertNotNull(extractor);
                 assertTrue(extractor.getText().length() > 200);
             }
         } finally {
@@ -296,6 +285,7 @@ public class TestExtractorFactory {
             assertTrue(extractor instanceof XSSFExcelExtractor);
         }
         try (POITextExtractor extractor = xmlFactory.create(OPCPackage.open(xlsx.toString()))) {
+            assertNotNull(extractor);
             assertTrue(extractor.getText().length() > 200);
         }
     }

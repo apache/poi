@@ -208,9 +208,19 @@ under the License.
             <loadresource property="versionDir">
                 <string>@{artifact}</string>
                 <filterchain>
-                    <replaceregex pattern="[^:]+:[^:]+:(.*)" replace="\1"/>
+                    <replaceregex pattern="[^:]+:[^:]+:([^:]+).*" replace="\1"/>
                 </filterchain>
             </loadresource>
+
+            <local name="classifier"/>
+            <loadresource property="classifier">
+                <string>@{artifact}</string>
+                <filterchain>
+                    <replaceregex pattern="[^:]+:[^:]+:[^:]+:?([^:]*)" replace="\1"/>
+                    <replaceregex pattern="(.+)" replace="-\1"/>
+                </filterchain>
+            </loadresource>
+            <property name="classifier" value=""/>
 
             <local name="version"/>
             <property name="version" value="${versionDir}" if:blank="@{snapshot}"/>
@@ -225,13 +235,23 @@ under the License.
                 </filterchain>
             </loadresource>
 
+            <local name="jarName"/>
+            <property name="jarName" value="${artifactId}-${version}${classifier}.@{packaging}"/>
+
+            <!-- delete old versions -->
+            <delete failonerror="false">
+                <fileset dir="${usageDir}" excludes="${jarName}">
+                    <filename regex="^${artifactId}-[0-9].*${classifier}\.@{packaging}"/>
+                </fileset>
+            </delete>
+
             <local name="jarLoc"/>
             <property name="jarLoc" value="${usageDir}/@{target}" unless:blank="@{target}"/>
-            <property name="jarLoc" value="${usageDir}/${artifactId}-${version}.@{packaging}"/>
+            <property name="jarLoc" value="${usageDir}/${jarName}"/>
 
             <local name="urlLoc"/>
             <property name="urlLoc" value="@{url}" unless:blank="@{url}"/>
-            <property name="urlLoc" value="@{repo}/${groupDir}/${artifactId}/${versionDir}/${artifactId}-${version}.@{packaging}@{query}"/>
+            <property name="urlLoc" value="@{repo}/${groupDir}/${artifactId}/${versionDir}/${jarName}@{query}"/>
 
             <property name="@{prefix}.@{packaging}" value="${jarLoc}"/>
             <property name="@{prefix}.url" value="${urlLoc}"/>
@@ -250,50 +270,50 @@ under the License.
     <dependency prefix="main.com.zaxxer" artifact="com.zaxxer:SparseBitSet:1.2" usage="main"/>
 
     <dependency prefix="main.junit" artifact="junit:junit:4.13" usage="main-tests"/>
-    <dependency prefix="main.jmh" artifact="org.openjdk.jmh:jmh-core:1.19" usage="main-tests"/>
-    <dependency prefix="main.jmhAnnotation" artifact="org.openjdk.jmh:jmh-generator-annprocess:1.19" usage="main-tests"/>
-    <dependency prefix="main.hamcrest" artifact="org.hamcrest:hamcrest-core:1.3" usage="main-tests"/>
-    <dependency prefix="main.xmlunit" artifact="org.xmlunit:xmlunit-core:2.5.1" usage="main-tests"/>
-    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:3.3.3" usage="main-tests"/>
-    <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.10.1" usage="main-tests"/>
-    <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.10.1" usage="main-tests"/>
-    <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:2.6" usage="main-tests"/>
+    <dependency prefix="main.jmh" artifact="org.openjdk.jmh:jmh-core:1.25" usage="main-tests"/>
+    <dependency prefix="main.jmhAnnotation" artifact="org.openjdk.jmh:jmh-generator-annprocess:1.25" usage="main-tests"/>
+    <dependency prefix="main.hamcrest" artifact="org.hamcrest:hamcrest:2.2" usage="main-tests"/>
+    <dependency prefix="main.xmlunit" artifact="org.xmlunit:xmlunit-core:2.7.0" usage="main-tests"/>
+    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:3.5.0" usage="main-tests"/>
+    <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.10.14" usage="main-tests"/>
+    <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.10.14" usage="main-tests"/>
+    <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:3.1" usage="main-tests"/>
 
     <dependency prefix="main.ant" artifact="org.apache.ant:ant:1.10.8" usage="excelant"/>
     <dependency prefix="main.antlauncher" artifact="org.apache.ant:ant-launcher:1.10.8" usage="excelant"/>
 
     <!-- xml signature libs - not part of the distribution -->
-    <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:2.1.5" usage="ooxml-provided"/>
+    <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:2.2.0" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-ext-jdk15on:1.66" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk15on:1.66" usage="ooxml-provided"/>
     <dependency prefix="dsig.slf4j-api" artifact="org.slf4j:slf4j-api:1.7.30" usage="ooxml-provided"/>
+    <!-- only used for signing the release - not used with the ooxml signatures -->
+    <dependency prefix="dsig.bouncycastle-bcpg" artifact="org.bouncycastle:bcpg-jdk15on:1.66" usage="util"/>
 
     <!-- svg/batik libs - not part of the distribution -->
     <dependency prefix="svg.xml-apis-ext" artifact="xml-apis:xml-apis-ext:1.3.04" usage="ooxml-provided"/>
-    <dependency prefix="svg.xmlgraphics-commons" artifact="org.apache.xmlgraphics:xmlgraphics-commons:2.3" usage="ooxml-provided"/>
-    <dependency prefix="svg.batik-all" artifact="org.apache.xmlgraphics:batik-all:1.12" usage="ooxml-provided"/>
+    <dependency prefix="svg.xmlgraphics-commons" artifact="org.apache.xmlgraphics:xmlgraphics-commons:2.4" usage="ooxml-provided"/>
+    <dependency prefix="svg.batik-all" artifact="org.apache.xmlgraphics:batik-all:1.13" usage="ooxml-provided"/>
 
     <!-- jars in the ooxml-lib directory, see the fetch-ooxml-jars target-->
     <dependency prefix="ooxml.curvesapi" artifact="com.github.virtuald:curvesapi:1.06" usage="ooxml"/>
     <dependency prefix="ooxml.xmlbeans" artifact="org.apache.xmlbeans:xmlbeans:4.0.0" usage="ooxml"
                 url="https://ci-builds.apache.org/job/POI/job/POI-XMLBeans-DSL-1.8/lastSuccessfulBuild/artifact/build//xmlbeans-4.0.0.jar"/>
     <dependency prefix="ooxml.commons-compress" artifact="org.apache.commons:commons-compress:1.20" usage="ooxml"/>
-    <!-- only used for compiling xmlbeans schemas -->
-<!--    <dependency prefix="ooxml.commons-compress" artifact="com.github.javaparser:javaparser-core:3.16.1" usage="ooxml-provided"/>-->
 
     <!-- jars in the ooxml-test-lib directory, see the fetch-ooxml-jars target-->
-    <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.9.11" usage="ooxml-tests"/>
+    <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.9.12" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.guava" artifact="com.google.guava:guava:29.0-jre" usage="ooxml-tests"/>
-    <dependency prefix="ooxml.test.javassist" artifact="org.javassist:javassist:3.21.0-GA" usage="ooxml-tests"/>
+    <dependency prefix="ooxml.test.javassist" artifact="org.javassist:javassist:3.27.0-GA" usage="ooxml-tests"/>
 
     <!-- coverage libs -->
     <dependency prefix="jacoco" artifact="org.jacoco:jacoco:0.8.5" usage="util" packaging="zip"/>
-    <dependency prefix="asm" artifact="org.ow2.asm:asm:8.0.1" usage="util"/>
-    <dependency prefix="asm-commons" artifact="org.ow2.asm:asm-commons:8.0.1" usage="util"/>
-    <dependency prefix="asm-tree" artifact="org.ow2.asm:asm-tree:8.0.1" usage="util"/>
+    <dependency prefix="asm" artifact="org.ow2.asm:asm:9.0-beta" usage="util"/>
+    <dependency prefix="asm-commons" artifact="org.ow2.asm:asm-commons:9.0-beta" usage="util"/>
+    <dependency prefix="asm-tree" artifact="org.ow2.asm:asm-tree:9.0-beta" usage="util"/>
 
     <!-- license and api checks -->
-    <dependency prefix="rat" artifact="org.apache.rat:apache-rat:0.12" usage="util"/>
+    <dependency prefix="rat" artifact="org.apache.rat:apache-rat:0.13" usage="util"/>
     <dependency prefix="forbidden" artifact="de.thetaphi:forbiddenapis:3.0.1" usage="util"/>
 
     <property name="maven.ooxml.xsds.version.id" value="1.5"/>
@@ -332,23 +352,30 @@ under the License.
     <property name="halt.on.test.failure" value="true"/>
 
     <!-- helper jars for pgp signing, building and nexus staging -->
-    <dependency prefix="dist.bouncycastle-prov" artifact="org.bouncycastle:bcprov-ext-jdk15on:1.65" usage="util"/>
-    <dependency prefix="dist.bouncycastle-prov" artifact="org.bouncycastle:bcpg-jdk15on:1.65" usage="util"/>
     <dependency prefix="dist.commons-openpgp" artifact="org.apache.commons:commons-openpgp:1.0-SNAPSHOT" usage="util"
         repo="https://repository.apache.org/content/groups/snapshots" snapshot="1.0-20190121.221905-12"/>
-    <dependency prefix="dist.nexus-staging" artifact="org.sonatype.nexus.ant:nexus-staging-ant-tasks:1.6.3-uber" usage="util"/>
+    <dependency prefix="dist.nexus-staging" artifact="org.sonatype.nexus.ant:nexus-staging-ant-tasks:1.6.3:uber" usage="util"/>
 
     <!-- jars required for maven helper targets -->
     <dependency prefix="maven.ant" artifact="org.apache.maven:maven-ant-tasks:2.1.3" usage="util"/>
+
+    <!-- subclipse.tigris.org is gone - left-over is hosted at https://bintray.com/openmeetings/maven/org.tigris.subclipse.svnant -->
+    <!-- request will be forwarded to d29vzk4ow07wi7.cloudfront.net which is an Atlassian Marketplace instance -->
     <dependency prefix="dist.svnant" artifact="org.tigris.subclipse:svnant:1.3.1" usage="util"
         repo="https://dl.bintray.com/openmeetings/maven"/>
-    <dependency prefix="dist.svnclient" artifact="org.tigris.subclipse:svnclientadapter:1.3.1" usage="util"
-        repo="https://dl.bintray.com/openmeetings/maven"/>
-    <dependency prefix="dist.svnkit" artifact="org.tmatesoft.svnkit:svnkit:1.8.11" usage="util"/>
-    <dependency prefix="dist.svnkit-javahl16" artifact="org.tmatesoft.svnkit:svnkit-javahl16:1.8.11" usage="util"/>
-    <dependency prefix="dist.sqljet" artifact="org.tmatesoft.sqljet:sqljet:1.1.10" usage="util"/>
+
+    <!-- hosted at https://bintray.com/subclipse/maven/svnclientadapter - https://github.com/subclipse/svnclientadapter -->
+    <dependency prefix="dist.svnclientadapter-base" artifact="org.tigris.svnclientadapter:adapter-base:1.12.0" usage="util"
+        repo="https://dl.bintray.com/subclipse/maven"/>
+    <dependency prefix="dist.svnclientadapter-svnkit" artifact="org.tigris.svnclientadapter:adapter-svnkit:1.12.0" usage="util"
+        repo="https://dl.bintray.com/subclipse/maven"/>
+    <dependency prefix="dist.svnclientadapter-javahl" artifact="org.tigris.svnclientadapter:adapter-javahl:1.12.0" usage="util"
+        repo="https://dl.bintray.com/subclipse/maven"/>
+    <dependency prefix="dist.svnkit" artifact="org.tmatesoft.svnkit:svnkit:1.10.1" usage="util"/>
+    <dependency prefix="dist.svnkit-javahl16" artifact="org.tmatesoft.svnkit:svnkit-javahl16:1.10.1" usage="util"/>
+    <dependency prefix="dist.sqljet" artifact="org.tmatesoft.sqljet:sqljet:1.1.13" usage="util"/>
     <dependency prefix="dist.antlr" artifact="org.antlr:antlr-runtime:3.5.2" usage="util"/>
-    <dependency prefix="dist.sequence-library" artifact="de.regnis.q.sequence:sequence-library:1.0.3" usage="util"/>
+    <dependency prefix="dist.sequence-library" artifact="de.regnis.q.sequence:sequence-library:1.0.4" usage="util"/>
 
 
     <propertyset id="junit.properties">
@@ -560,29 +587,9 @@ under the License.
         <delete dir="compile-lib" failonerror="false"/>
         <delete dir="ooxml-lib" failonerror="false"/>
         <delete dir="ooxml-testlib" failonerror="false"/>
-
-        <delete verbose="true" failonerror="false">
-            <fileset dir="${basedir}/lib" includes="*.jar"/>
-            <fileset dir="${basedir}/lib/main-tests">
-                <include name="mockito-core-3.2.4.jar"/>
-            </fileset>
-            <fileset dir="${basedir}/lib/ooxml">
-                <include name="xmlbeans-3.1.0.jar"/>
-            </fileset>
-            <fileset dir="${basedir}/lib/ooxml-provided">
-                <include name="bcpkix-jdk15on-1.65.jar"/>
-                <include name="bcprov-ext-jdk15on-1.65.jar"/>
-            </fileset>
-            <fileset dir="${basedir}/lib/ooxml-tests">
-                <include name="guava-20.0.jar"/>
-            </fileset>
-            <fileset dir="${basedir}/lib/util">
-                <include name="asm*7.2.jar"/>
-                <include name="forbiddenapis-2.6.jar"/>
-            </fileset>
-            <fileset dir="${basedir}/lib/excelant">
-                <include name="ant*1.10.1.jar"/>
-            </fileset>
+        <delete dir="${basedir}/lib" includes="*.jar" failonerror="false"/>
+        <delete>
+            <fileset dir="lib/main-tests" includes="hamcrest-core*"/>
         </delete>
 
         <condition property="jars.present">
@@ -694,12 +701,15 @@ under the License.
         <downloadfile src="${svg.xml-apis-ext.url}" dest="${svg.xml-apis-ext.jar}"/>
         <downloadfile src="${svg.xmlgraphics-commons.url}" dest="${svg.xmlgraphics-commons.jar}"/>
     </target>
+
     <target name="check-svn-jars">
         <condition property="svn.jars.present">
             <or>
                 <and>
                     <available file="${dist.svnant.jar}"/>
-                    <available file="${dist.svnclient.jar}"/>
+                    <available file="${dist.svnclientadapter-base.jar}"/>
+                    <available file="${dist.svnclientadapter-svnkit.jar}"/>
+                    <available file="${dist.svnclientadapter-javahl.jar}"/>
                     <available file="${dist.svnkit.jar}"/>
                     <available file="${dist.svnkit-javahl16.jar}"/>
                     <available file="${dist.sqljet.jar}"/>
@@ -712,7 +722,9 @@ under the License.
     </target>
     <target name="fetch-svn-jars" depends="check-svn-jars" unless="svn.jars.present">
         <downloadfile src="${dist.svnant.url}" dest="${dist.svnant.jar}"/>
-        <downloadfile src="${dist.svnclient.url}" dest="${dist.svnclient.jar}"/>
+        <downloadfile src="${dist.svnclientadapter-base.url}" dest="${dist.svnclientadapter-base.jar}"/>
+        <downloadfile src="${dist.svnclientadapter-svnkit.url}" dest="${dist.svnclientadapter-svnkit.jar}"/>
+        <downloadfile src="${dist.svnclientadapter-javahl.url}" dest="${dist.svnclientadapter-javahl.jar}"/>
         <downloadfile src="${dist.svnkit.url}" dest="${dist.svnkit.jar}"/>
         <downloadfile src="${dist.svnkit-javahl16.url}" dest="${dist.svnkit-javahl16.jar}"/>
         <downloadfile src="${dist.sqljet.url}" dest="${dist.sqljet.jar}"/>
@@ -2475,15 +2487,14 @@ under the License.
 
         <fixcrlf srcDir="${dist.dir}" includes="**/*.md5,**/*.sha1,**/*.sha256,**/*.sha512" eol="unix"/>
 
-        <downloadfile src="${dist.bouncycastle-prov.url}" dest="${dist.bouncycastle-prov.jar}"/>
-        <downloadfile src="${dist.bouncycastle-bcpg.url}" dest="${dist.bouncycastle-bcpg.jar}"/>
+        <downloadfile src="${dsig.bouncycastle-bcpg.url}" dest="${dsig.bouncycastle-bcpg.jar}"/>
         <downloadfile src="${dist.commons-openpgp.url}" dest="${dist.commons-openpgp.jar}"/>
 
         <taskdef resource="org/apache/commons/openpgp/ant/antlib.xml" uri="antlib:org.apache.commons.openpgp.ant">
             <classpath>
                 <pathelement path="${dist.commons-openpgp.jar}"/>
-                <pathelement path="${dist.bouncycastle-prov.jar}"/>
-                <pathelement path="${dist.bouncycastle-bcpg.jar}"/>
+                <pathelement path="${dsig.bouncycastle-prov.jar}"/>
+                <pathelement path="${dsig.bouncycastle-bcpg.jar}"/>
             </classpath>
         </taskdef>
 
@@ -2592,7 +2603,9 @@ under the License.
 
         <path id="path.svnant">
             <pathelement location="${dist.svnant.jar}"/>
-            <pathelement location="${dist.svnclient.jar}"/>
+            <pathelement location="${dist.svnclientadapter-base.jar}"/>
+            <pathelement location="${dist.svnclientadapter-svnkit.jar}"/>
+            <pathelement location="${dist.svnclientadapter-javahl.jar}"/>
             <pathelement location="${dist.svnkit.jar}"/>
             <pathelement location="${dist.svnkit-javahl16.jar}"/>
             <pathelement location="${dist.sqljet.jar}"/>

@@ -19,6 +19,7 @@ package org.apache.poi.openxml4j.opc;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -29,9 +30,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.internal.ContentType;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 /**
  * Tests for content type (ContentType class).
@@ -39,9 +38,6 @@ import org.junit.rules.ExpectedException;
 public final class TestContentType {
 
     private static final String FEATURE_DISALLOW_DOCTYPE_DECL = "http://apache.org/xml/features/disallow-doctype-decl";
-
-    @Rule
-    public ExpectedException exception = ExpectedException.none();
 
     /**
      * Check rule M1.13: Package implementers shall only create and only
@@ -158,12 +154,13 @@ public final class TestContentType {
      */
     @Test
     public void testFileWithContentTypeEntities() throws Exception {
-        if (!isOldXercesActive()) {
-            exception.expect(InvalidFormatException.class);
+        try (InputStream is = OpenXML4JTestDataSamples.openSampleStream("ContentTypeHasEntities.ooxml")) {
+            if (isOldXercesActive()) {
+                OPCPackage.open(is);
+            } else {
+                assertThrows(InvalidFormatException.class, () -> OPCPackage.open(is));
+            }
         }
-
-        InputStream is = OpenXML4JTestDataSamples.openSampleStream("ContentTypeHasEntities.ooxml");
-        OPCPackage.open(is);
     }
 
     /**

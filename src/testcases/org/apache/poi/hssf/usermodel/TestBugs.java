@@ -92,9 +92,7 @@ import org.junit.AfterClass;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 /**
  * Testcases for bugs entered in bugzilla
@@ -104,9 +102,6 @@ import org.junit.rules.ExpectedException;
  * define the test in the base class {@link BaseTestBugzillaIssues}</b>
  */
 public final class TestBugs extends BaseTestBugzillaIssues {
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     public TestBugs() {
         super(HSSFITestDataProvider.instance);
@@ -923,7 +918,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     @Test
     public void bug45338() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
-            assertEquals(4, wb.getNumberOfFontsAsInt());
+            assertEquals(4, wb.getNumberOfFonts());
 
             HSSFSheet s = wb.createSheet();
             s.createRow(0);
@@ -931,7 +926,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             s.getRow(0).createCell(0);
             s.getRow(1).createCell(0);
 
-            assertEquals(4, wb.getNumberOfFontsAsInt());
+            assertEquals(4, wb.getNumberOfFonts());
 
             HSSFFont f1 = wb.getFontAt(0);
             assertFalse(f1.getBold());
@@ -947,7 +942,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             assertNull(wb.findFont(false, (short) 123, (short) 22, "Thingy", false, true, (short) 2, (byte) 2));
 
             HSSFFont nf = wb.createFont();
-            assertEquals(5, wb.getNumberOfFontsAsInt());
+            assertEquals(5, wb.getNumberOfFonts());
 
             assertEquals(5, nf.getIndex());
             assertEquals(nf, wb.getFontAt(5));
@@ -961,7 +956,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             nf.setTypeOffset((short) 2);
             nf.setUnderline((byte) 2);
 
-            assertEquals(5, wb.getNumberOfFontsAsInt());
+            assertEquals(5, wb.getNumberOfFonts());
             assertEquals(nf, wb.getFontAt(5));
 
             // Find it now
@@ -1480,10 +1475,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * (is an excel 95 file though)
      */
     @Test
-    public void bug46904a() throws Exception {
-        thrown.expect(OldExcelFormatException.class);
-        thrown.expectMessage("The supplied spreadsheet seems to be Excel");
-        simpleTest("46904.xls");
+    public void bug46904a() {
+        OldExcelFormatException ex = assertThrows(
+            OldExcelFormatException.class,
+            () -> simpleTest("46904.xls")
+        );
+        assertTrue(ex.getMessage().contains("The supplied spreadsheet seems to be Excel"));
     }
 
     /**
@@ -2735,8 +2732,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
             assertEquals(CellType.BLANK, cell.getCellType());
             assertEquals("", cell.getStringCellValue());
-            thrown.expect(IllegalStateException.class);
-            assertNull(cell.getCellFormula());
+
+            assertThrows(IllegalStateException.class, cell::getCellFormula);
         }
     }
 
@@ -2835,9 +2832,11 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             DocumentEntry entry =
                     (DocumentEntry) poifs.getRoot().getEntry(SummaryInformation.DEFAULT_STREAM_NAME);
 
-            thrown.expect(RuntimeException.class);
-            thrown.expectMessage("Can't read negative number of bytes");
-            new PropertySet(new DocumentInputStream(entry));
+            RuntimeException ex = assertThrows(
+                RuntimeException.class,
+                () -> new PropertySet(new DocumentInputStream(entry))
+            );
+            assertEquals("Can't read negative number of bytes", ex.getMessage());
         }
     }
 

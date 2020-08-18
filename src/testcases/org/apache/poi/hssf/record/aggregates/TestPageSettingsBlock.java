@@ -21,6 +21,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -54,20 +55,14 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.RecordFormatException;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 /**
  * Tess for {@link PageSettingsBlock}
  */
 public final class TestPageSettingsBlock {
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
-
 	@Test
 	public void testPrintSetup_bug46548() {
-
 		// PageSettingBlock in this file contains PLS (sid=x004D) record
 		// followed by ContinueRecord (sid=x003C)
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex46548-23133.xls");
@@ -202,14 +197,16 @@ public final class TestPageSettingsBlock {
 	public void testDuplicatePSBRecord_bug47199() {
 		// Hypothetical setup of PSB records which should cause POI to crash
 		org.apache.poi.hssf.record.Record[] recs = {
-				new HeaderRecord("&LSales Figures"),
-				new HeaderRecord("&LInventory"),
+			new HeaderRecord("&LSales Figures"),
+			new HeaderRecord("&LInventory"),
 		};
 		RecordStream rs = new RecordStream(Arrays.asList(recs), 0);
 
-		thrown.expectMessage("Duplicate PageSettingsBlock record (sid=0x14)");
-		thrown.expect(RecordFormatException.class);
-		new PageSettingsBlock(rs);
+		RecordFormatException ex = assertThrows(
+			RecordFormatException.class,
+			() -> new PageSettingsBlock(rs)
+		);
+		assertEquals("Duplicate PageSettingsBlock record (sid=0x14)", ex.getMessage());
 	}
 
 	/**

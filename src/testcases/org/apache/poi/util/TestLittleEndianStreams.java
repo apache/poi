@@ -20,22 +20,19 @@ package org.apache.poi.util;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 /**
  * Class to test {@link LittleEndianInputStream} and {@link LittleEndianOutputStream}
  */
 public final class TestLittleEndianStreams {
-
-	@Rule
-	public ExpectedException thrown = ExpectedException.none();
 
 	@Test
 	public void testRead() throws IOException {
@@ -95,9 +92,8 @@ public final class TestLittleEndianStreams {
 		assertEquals(0x8899, lei.readUShort());
 
 		// only one byte left, so this should fail
-		thrown.expect(RuntimeException.class);
-		thrown.expectMessage("Buffer overrun");
-		lei.readFully(new byte[4]);
+		RuntimeException ex = assertThrows(RuntimeException.class, () -> lei.readFully(new byte[4]));
+		assertTrue(ex.getMessage().contains("Buffer overrun"));
 	}
 
 	@Test
@@ -106,9 +102,8 @@ public final class TestLittleEndianStreams {
 		LittleEndianInput lei = new LittleEndianByteArrayInputStream(srcBuf, 2);
 
 		// only one byte left, so this should fail
-		thrown.expect(RuntimeException.class);
-		thrown.expectMessage("Buffer overrun");
-		lei.readFully(new byte[4]);
+		RuntimeException ex = assertThrows(RuntimeException.class, () -> lei.readFully(new byte[4]));
+		assertTrue(ex.getMessage().contains("Buffer overrun"));
 	}
 
 	@Test
@@ -117,8 +112,7 @@ public final class TestLittleEndianStreams {
 		LittleEndianInput lei = new LittleEndianByteArrayInputStream(srcBuf, 2, 2);
 
 		// only one byte left, so this should fail
-		thrown.expect(RuntimeException.class);
-		thrown.expectMessage("Buffer overrun");
-		lei.readFully(new byte[4]);
+		RuntimeException ex = assertThrows(RuntimeException.class, () -> lei.readFully(new byte[4]));
+		assertTrue(ex.getMessage().contains("Buffer overrun"));
 	}
 }

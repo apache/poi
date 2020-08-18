@@ -16,18 +16,19 @@
 ==================================================================== */
 package org.apache.poi.hslf.dev;
 
-import org.apache.poi.EmptyFileException;
-import org.apache.poi.hslf.HSLFTestDataSamples;
-import org.apache.poi.util.IOUtils;
-import org.junit.Test;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.fail;
+import org.apache.poi.EmptyFileException;
+import org.apache.poi.hslf.HSLFTestDataSamples;
+import org.apache.poi.util.IOUtils;
+import org.junit.Test;
 
 public class TestSlideShowDumper extends BasePPTIteratingTest {
     private static final Set<String> FAILING = new HashSet<>();
@@ -39,8 +40,6 @@ public class TestSlideShowDumper extends BasePPTIteratingTest {
 
     @Test
     public void testMain() throws IOException {
-        SlideShowDumper.main(new String[0]);
-
         // SlideShowDumper calls IOUtils.toByteArray(is), which would fail if a different size is defined
         IOUtils.setByteArrayMaxOverride(-1);
 
@@ -75,5 +74,15 @@ public class TestSlideShowDumper extends BasePPTIteratingTest {
                 throw e;
             }
         }
+    }
+
+    @Override
+    protected Set<String> getFailedEncryptedFiles() {
+        return Collections.emptySet();
+    }
+
+    @Override
+    protected Set<String> getFailedOldFiles() {
+        return Collections.emptySet();
     }
 }

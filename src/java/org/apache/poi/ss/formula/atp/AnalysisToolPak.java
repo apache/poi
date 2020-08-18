@@ -260,7 +260,7 @@ public final class AnalysisToolPak implements UDFFinder {
         }
         FreeRefFunction f = inst.findFunction(name);
         if(f != null && !(f instanceof NotImplemented)) {
-            throw new IllegalArgumentException("POI already implememts " + name +
+            throw new IllegalArgumentException("POI already implements " + name +
                     ". You cannot override POI's implementations of Excel functions");
         }
 

@@ -119,6 +119,7 @@ import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Removal;
 
 /**
  * High level representation of a workbook.  This is the first object most users
@@ -1151,7 +1152,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public HSSFFont createFont() {
         /*FontRecord font =*/
         workbook.createNewFont();
-        int fontindex = getNumberOfFontsAsInt() - 1;
+        int fontindex = getNumberOfFonts() - 1;
 
         if (fontindex > 3) {
             fontindex++;   // THERE IS NO FOUR!!
@@ -1172,7 +1173,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     public HSSFFont findFont(boolean bold, short color, short fontHeight,
                              String name, boolean italic, boolean strikeout,
                              short typeOffset, byte underline) {
-        int numberOfFonts = getNumberOfFontsAsInt();
+        int numberOfFonts = getNumberOfFonts();
         for (int i = 0; i <= numberOfFonts; i++) {
             // Remember - there is no 4!
             if (i == 4) {
@@ -1202,6 +1203,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
 
     @Override
     @Deprecated
+    @Removal(version="6.0.0")
     public int getNumberOfFontsAsInt() {
         return getNumberOfFonts();
     }

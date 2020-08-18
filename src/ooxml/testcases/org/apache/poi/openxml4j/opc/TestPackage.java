@@ -22,11 +22,11 @@ import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getSampleFile;
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getSampleFileName;
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.openSampleStream;
 import static org.apache.poi.openxml4j.opc.PackagingURIHelper.createPartName;
-import static org.hamcrest.core.StringContains.containsString;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -50,6 +50,7 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.function.BiConsumer;
 import java.util.regex.Pattern;
+import java.util.stream.Stream;
 
 import com.google.common.hash.Hashing;
 import com.google.common.io.Files;
@@ -88,13 +89,9 @@ import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.xmlbeans.XmlException;
-import org.hamcrest.Description;
-import org.hamcrest.TypeSafeMatcher;
-import org.hamcrest.core.AllOf;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.function.ThrowingRunnable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -106,9 +103,6 @@ public final class TestPackage {
 	private static final String NS_OOXML_WP_MAIN = "http://schemas.openxmlformats.org/wordprocessingml/2006/main";
 	private static final String CONTENT_EXT_PROPS = "application/vnd.openxmlformats-officedocument.extended-properties+xml";
 	private static final POIDataSamples xlsSamples = POIDataSamples.getSpreadSheetInstance();
-
-	@Rule
-	public ExpectedException expectedEx = ExpectedException.none();
 
 	/**
 	 * Test that just opening and closing the file doesn't alter the document.
@@ -645,115 +639,46 @@ public final class TestPackage {
 		}
     }
 
-
 	@Test
-	public void NonOOXML_OLE2Stream() throws Exception {
-    	expectedEx.expect(OLE2NotOfficeXmlFileException.class);
-    	expectedEx.expectMessage(AllOf.allOf(
-			containsString("The supplied data appears to be in the OLE2 Format"),
-			containsString("You are calling the part of POI that deals with OOXML")
-		));
-		try (InputStream stream = xlsSamples.openResourceAsStream("SampleSS.xls");
-			 OPCPackage p = OPCPackage.open(stream)) {
-			assertNotNull(p);
-			fail("Shouldn't be able to open OLE2");
+	public void NonOOXML_File() throws Exception {
+    	handleNonOOXML(
+			"SampleSS.xls", OLE2NotOfficeXmlFileException.class,
+			"The supplied data appears to be in the OLE2 Format",
+			"You are calling the part of POI that deals with OOXML"
+		);
+
+    	handleNonOOXML(
+			"SampleSS.xml", NotOfficeXmlFileException.class,
+			"The supplied data appears to be a raw XML file",
+			"Formats such as Office 2003 XML"
+		);
+
+    	handleNonOOXML(
+			"SampleSS.ods", ODFNotOfficeXmlFileException.class,
+			"The supplied data appears to be in ODF",
+			"Formats like these (eg ODS"
+		);
+
+    	handleNonOOXML(
+			"SampleSS.txt", NotOfficeXmlFileException.class,
+			"No valid entries or contents found",
+			"not a valid OOXML"
+		);
+	}
+
+	private void handleNonOOXML(String file, Class<? extends UnsupportedFileFormatException> exception, String... messageParts) throws IOException {
+		try (InputStream stream = xlsSamples.openResourceAsStream(file)) {
+			ThrowingRunnable[] trs = {
+				() -> OPCPackage.open(stream),
+				() -> OPCPackage.open(xlsSamples.getFile(file))
+			};
+			for (ThrowingRunnable tr : trs) {
+				Exception ex = assertThrows("Shouldn't be able to open "+file, exception, tr);
+				Stream.of(messageParts).forEach(mp -> assertTrue(ex.getMessage().contains(mp)));
+			}
 		}
 	}
 
-	@Test
-	public void NonOOXML_OLE2File() throws Exception {
-		expectedEx.expect(OLE2NotOfficeXmlFileException.class);
-		expectedEx.expectMessage(AllOf.allOf(
-			containsString("The supplied data appears to be in the OLE2 Format"),
-			containsString("You are calling the part of POI that deals with OOXML")
-		));
-		try (OPCPackage p = OPCPackage.open(xlsSamples.getFile("SampleSS.xls"))) {
-			assertNotNull(p);
-			fail("Shouldn't be able to open OLE2");
-		}
-	}
-
-	@Test
-	public void NonOOXML_RawXmlStream() throws Exception {
-		expectedEx.expect(NotOfficeXmlFileException.class);
-		expectedEx.expectMessage(AllOf.allOf(
-			containsString("The supplied data appears to be a raw XML file"),
-			containsString("Formats such as Office 2003 XML")
-		));
-		try (InputStream stream = xlsSamples.openResourceAsStream("SampleSS.xml");
-			 OPCPackage p = OPCPackage.open(stream)) {
-			assertNotNull(p);
-			fail("Shouldn't be able to open XML");
-		}
-	}
-
-	@Test
-	public void NonOOXML_RawXmlFile() throws Exception {
-		expectedEx.expect(NotOfficeXmlFileException.class);
-		expectedEx.expectMessage(AllOf.allOf(
-			containsString("The supplied data appears to be a raw XML file"),
-			containsString("Formats such as Office 2003 XML")
-		));
-		try (OPCPackage p = OPCPackage.open(xlsSamples.getFile("SampleSS.xml"))) {
-			assertNotNull(p);
-			fail("Shouldn't be able to open XML");
-		}
-	}
-
-	@Test
-	public void NonOOXML_ODFStream() throws Exception {
-		expectedEx.expect(ODFNotOfficeXmlFileException.class);
-		expectedEx.expectMessage(AllOf.allOf(
-			containsString("The supplied data appears to be in ODF"),
-			containsString("Formats like these (eg ODS")
-		));
-		try (InputStream stream = xlsSamples.openResourceAsStream("SampleSS.ods");
-			 OPCPackage p = OPCPackage.open(stream)) {
-			assertNotNull(p);
-			fail("Shouldn't be able to open ODS");
-		}
-	}
-
-	@Test
-	public void NonOOXML_ODFFile() throws Exception {
-		expectedEx.expect(ODFNotOfficeXmlFileException.class);
-		expectedEx.expectMessage(AllOf.allOf(
-			containsString("The supplied data appears to be in ODF"),
-			containsString("Formats like these (eg ODS")
-		));
-		try (OPCPackage p = OPCPackage.open(xlsSamples.getFile("SampleSS.ods"))) {
-			assertNotNull(p);
-			fail("Shouldn't be able to open ODS");
-		}
-	}
-
-	@Test
-	public void NonOOXML_TextStream() throws Exception {
-		expectedEx.expect(NotOfficeXmlFileException.class);
-		expectedEx.expectMessage(AllOf.allOf(
-				containsString("No valid entries or contents found"),
-				containsString("not a valid OOXML")
-		));
-		try (InputStream stream = xlsSamples.openResourceAsStream("SampleSS.txt");
-			 OPCPackage p = OPCPackage.open(stream)) {
-			assertNotNull(p);
-			fail("Shouldn't be able to open Plain Text");
-		}
-	}
-
-	@Test
-	public void NonOOXML_TextFile() throws Exception {
-		// Unhelpful low-level error, sorry
-		expectedEx.expect(UnsupportedFileFormatException.class);
-		expectedEx.expectMessage(AllOf.allOf(
-				containsString("No valid entries or contents found"),
-				containsString("not a valid OOXML")
-		));
-		try (OPCPackage p = OPCPackage.open(xlsSamples.getFile("SampleSS.txt"))) {
-			assertNotNull(p);
-			fail("Shouldn't be able to open Plain Text");
-		}
-	}
 
 	/**
 	 * Zip bomb handling test
@@ -805,29 +730,32 @@ public final class TestPackage {
 			}
 		}
 
-		expectedEx.expect(IOException.class);
-		expectedEx.expectMessage("Zip bomb detected!");
-
-		try (Workbook wb = WorkbookFactory.create(new ByteArrayInputStream(bos.toByteArray()))) {
-			wb.getSheetAt(0);
-		}
+		IOException ex = assertThrows(
+			IOException.class,
+			() -> WorkbookFactory.create(new ByteArrayInputStream(bos.toByteArray()))
+		);
+        assertTrue(ex.getMessage().contains("Zip bomb detected!"));
     }
 
 	@Test
-	public void testZipEntityExpansionTerminates() throws IOException, OpenXML4JException, XmlException {
-		expectedEx.expect(IllegalStateException.class);
-		expectedEx.expectMessage("The text would exceed the max allowed overall size of extracted text.");
-		openXmlBombFile("poc-shared-strings.xlsx");
+	public void testZipEntityExpansionTerminates() {
+		IllegalStateException ex = assertThrows(
+			IllegalStateException.class,
+			() -> openXmlBombFile("poc-shared-strings.xlsx")
+		);
+		assertTrue(ex.getMessage().contains("The text would exceed the max allowed overall size of extracted text."));
 	}
 
 	@Test
-	public void testZipEntityExpansionSharedStringTableEvents() throws IOException, OpenXML4JException, XmlException {
+	public void testZipEntityExpansionSharedStringTableEvents() {
 		boolean before = ExtractorFactory.getThreadPrefersEventExtractors();
 		ExtractorFactory.setThreadPrefersEventExtractors(true);
 		try {
-			expectedEx.expect(IllegalStateException.class);
-			expectedEx.expectMessage("The text would exceed the max allowed overall size of extracted text.");
-			openXmlBombFile("poc-shared-strings.xlsx");
+			IllegalStateException ex = assertThrows(
+				IllegalStateException.class,
+				() -> openXmlBombFile("poc-shared-strings.xlsx")
+			);
+			assertTrue(ex.getMessage().contains("The text would exceed the max allowed overall size of extracted text."));
 		} finally {
 			ExtractorFactory.setThreadPrefersEventExtractors(before);
 		}
@@ -835,19 +763,33 @@ public final class TestPackage {
 
 
 	@Test
-	public void testZipEntityExpansionExceedsMemory() throws IOException, OpenXML4JException, XmlException {
-		expectedEx.expect(IOException.class);
-		expectedEx.expectMessage("unable to parse shared strings table");
-		expectedEx.expectCause(getCauseMatcher(SAXParseException.class, "The parser has encountered more than"));
-		openXmlBombFile("poc-xmlbomb.xlsx");
+	public void testZipEntityExpansionExceedsMemory() {
+		IOException ex = assertThrows(
+			IOException.class,
+			() -> openXmlBombFile("poc-xmlbomb.xlsx")
+		);
+		assertTrue(ex.getMessage().contains("unable to parse shared strings table"));
+		assertTrue(matchSAXEx(ex));
 	}
 
 	@Test
-	public void testZipEntityExpansionExceedsMemory2() throws IOException, OpenXML4JException, XmlException {
-		expectedEx.expect(IOException.class);
-		expectedEx.expectMessage("unable to parse shared strings table");
-		expectedEx.expectCause(getCauseMatcher(SAXParseException.class, "The parser has encountered more than"));
-    	openXmlBombFile("poc-xmlbomb-empty.xlsx");
+	public void testZipEntityExpansionExceedsMemory2() {
+		IOException ex = assertThrows(
+			IOException.class,
+			() -> openXmlBombFile("poc-xmlbomb-empty.xlsx")
+		);
+		assertTrue(ex.getMessage().contains("unable to parse shared strings table"));
+		assertTrue(matchSAXEx(ex));
+	}
+
+	private static boolean matchSAXEx(Exception root) {
+		for (Throwable t = root; t != null; t = t.getCause()) {
+			if (t.getClass().isAssignableFrom(SAXParseException.class) &&
+				t.getMessage().contains("The parser has encountered more than")) {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private void openXmlBombFile(String file) throws IOException, OpenXML4JException, XmlException {
@@ -873,24 +815,28 @@ public final class TestPackage {
 	}
 
 	@Test
-	public void zipBombCheckSizesRatioTooSmall() throws IOException, EncryptedDocumentException {
-		expectedEx.expect(POIXMLException.class);
-		expectedEx.expectMessage("You can adjust this limit via ZipSecureFile.setMinInflateRatio()");
-		getZipStatsAndConsume((max_size, min_ratio) -> {
-			// check ratio out of bounds
-			ZipSecureFile.setMinInflateRatio(min_ratio+0.002);
-		});
+	public void zipBombCheckSizesRatioTooSmall() {
+		POIXMLException ex = assertThrows(
+			POIXMLException.class,
+			() -> getZipStatsAndConsume((max_size, min_ratio) -> {
+				// check ratio out of bounds
+				ZipSecureFile.setMinInflateRatio(min_ratio+0.002);
+			})
+		);
+		assertTrue(ex.getMessage().contains("You can adjust this limit via ZipSecureFile.setMinInflateRatio()"));
 	}
 
 	@Test
 	public void zipBombCheckSizesSizeTooBig() throws IOException, EncryptedDocumentException {
-		expectedEx.expect(POIXMLException.class);
-		expectedEx.expectMessage("You can adjust this limit via ZipSecureFile.setMaxEntrySize()");
-		getZipStatsAndConsume((max_size, min_ratio) -> {
-			// check max entry size ouf of bounds
-			ZipSecureFile.setMinInflateRatio(min_ratio-0.002);
-			ZipSecureFile.setMaxEntrySize(max_size-200);
-		});
+		POIXMLException ex = assertThrows(
+			POIXMLException.class,
+			() -> getZipStatsAndConsume((max_size, min_ratio) -> {
+				// check max entry size ouf of bounds
+				ZipSecureFile.setMinInflateRatio(min_ratio-0.002);
+				ZipSecureFile.setMaxEntrySize(max_size-200);
+			})
+		);
+		assertTrue(ex.getMessage().contains("You can adjust this limit via ZipSecureFile.setMaxEntrySize()"));
 	}
 
 	private void getZipStatsAndConsume(BiConsumer<Long,Double> ratioCon) throws IOException {
@@ -1118,42 +1064,6 @@ public final class TestPackage {
 				assertNotNull(pkgTest.getZipArchive());
 				assertTrue(pkgTest.getZipArchive().isClosed());
 			}
-		}
-	}
-
-	@SuppressWarnings("SameParameterValue")
-	private static <T extends Throwable> AnyCauseMatcher<T> getCauseMatcher(Class<T> cause, String message) {
-    	// junit is only using hamcrest-core, so instead of adding hamcrest-beans, we provide the throwable
-		// search with the basics...
-		// see https://stackoverflow.com/a/47703937/2066598
-		return new AnyCauseMatcher<>(cause, message);
-	}
-
-	private static class AnyCauseMatcher<T extends Throwable> extends TypeSafeMatcher<T> {
-		private final Class<T> expectedType;
-		private final String expectedMessage;
-
-		AnyCauseMatcher(Class<T> expectedType, String expectedMessage) {
-			this.expectedType = expectedType;
-			this.expectedMessage = expectedMessage;
-		}
-
-		@Override
-		protected boolean matchesSafely(final Throwable root) {
-			for (Throwable t = root; t != null; t = t.getCause()) {
-				if (t.getClass().isAssignableFrom(expectedType) && t.getMessage().contains(expectedMessage)) {
-					return true;
-				}
-			}
-			return false;
-		}
-
-		@Override
-		public void describeTo(Description description) {
-			description.appendText("expects type ")
-					.appendValue(expectedType)
-					.appendText(" and a message ")
-					.appendValue(expectedMessage);
 		}
 	}
 

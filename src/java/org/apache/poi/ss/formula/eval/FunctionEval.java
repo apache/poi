@@ -189,7 +189,7 @@ public final class FunctionEval {
         retval[FunctionID.INDIRECT] = null; // Indirect.evaluate has different signature
 
         retval[162] = TextFunction.CLEAN;
-        
+
         retval[163] = MatrixFunction.MDETERM;
         retval[164] = MatrixFunction.MINVERSE;
         retval[165] = MatrixFunction.MMULT;
@@ -394,7 +394,7 @@ public final class FunctionEval {
         if(functions[idx] instanceof NotImplementedFunction) {
             functions[idx] = func;
         } else {
-            throw new IllegalArgumentException("POI already implememts " + name +
+            throw new IllegalArgumentException("POI already implements " + name +
                     ". You cannot override POI's implementations of Excel functions");
         }
     }

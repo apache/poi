@@ -19,12 +19,12 @@ package org.apache.poi.poifs.filesystem;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -42,9 +42,7 @@ import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.storage.BATBlock;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.util.IOUtils;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 /**
  * Tests for the older OPOIFS-based POIFSFileSystem
@@ -166,9 +164,6 @@ public final class TestPOIFSFileSystem {
 		}
 	}
 
-	@Rule
-	public ExpectedException expectedEx = ExpectedException.none();
-
 	/**
 	 * Check that we do the right thing when the list of which
 	 *  sectors are BAT blocks points off the list of
@@ -176,12 +171,13 @@ public final class TestPOIFSFileSystem {
 	 */
 	@Test
 	public void testFATandDIFATsectors() throws Exception {
-        // Open the file up
-		expectedEx.expect(IndexOutOfBoundsException.class);
-		expectedEx.expectMessage("Block 1148 not found");
 		try (InputStream stream = _samples.openResourceAsStream("ReferencesInvalidSectors.mpp")) {
-			new POIFSFileSystem(stream);
-			fail("File is corrupt and shouldn't have been opened");
+			IndexOutOfBoundsException ex = assertThrows(
+				"File is corrupt and shouldn't have been opened",
+				IndexOutOfBoundsException.class,
+				() -> new POIFSFileSystem(stream)
+			);
+			assertTrue(ex.getMessage().contains("Block 1148 not found"));
 		}
 	}
 

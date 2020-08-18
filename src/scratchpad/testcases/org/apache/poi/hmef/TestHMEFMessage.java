@@ -21,6 +21,7 @@ import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
@@ -39,15 +40,10 @@ import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.Types;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public final class TestHMEFMessage {
     private static final POIDataSamples _samples = POIDataSamples.getHMEFInstance();
-
-    @Rule
-    public ExpectedException thrown =  ExpectedException.none();
 
     @Test
     public void testCounts() throws Exception {
@@ -161,12 +157,13 @@ public final class TestHMEFMessage {
     }
 
     @Test
-    public void testInvalidMessage() throws Exception {
+    public void testInvalidMessage() {
         InputStream str = new ByteArrayInputStream(new byte[4]);
-
-        thrown.expect(IllegalArgumentException.class);
-        thrown.expectMessage("TNEF signature not detected in file, expected 574529400 but got 0");
-        new HMEFMessage(str);
+        IllegalArgumentException ex = assertThrows(
+            IllegalArgumentException.class,
+            () -> new HMEFMessage(str)
+        );
+        assertEquals("TNEF signature not detected in file, expected 574529400 but got 0", ex.getMessage());
     }
 
     @Test
@@ -200,10 +197,11 @@ public final class TestHMEFMessage {
         LittleEndian.putUShort(90, out);
 
         InputStream str = new ByteArrayInputStream(out.toByteArray());
-
-        thrown.expect(IllegalStateException.class);
-        thrown.expectMessage("Unhandled level 90");
-        new HMEFMessage(str);
+        IllegalStateException ex = assertThrows(
+            IllegalStateException.class,
+            () -> new HMEFMessage(str)
+        );
+        assertEquals("Unhandled level 90", ex.getMessage());
     }
 
     @Test

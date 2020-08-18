@@ -23,6 +23,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -37,9 +38,7 @@ import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.NullOutputStream;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public abstract class BaseTestWorkbook {
 
@@ -48,10 +47,6 @@ public abstract class BaseTestWorkbook {
     protected BaseTestWorkbook(ITestDataProvider testDataProvider) {
         _testDataProvider = testDataProvider;
     }
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
 
     @Test
     public void sheetIterator_forEach() throws IOException {
@@ -131,14 +126,15 @@ public abstract class BaseTestWorkbook {
 
             //getting a sheet by invalid index or non-existing name
             assertNull(wb.getSheet("Sheet1"));
-            try {
-                wb.getSheetAt(0);
-                fail("should have thrown exceptiuon due to invalid sheet index");
-            } catch (IllegalArgumentException e) {
-                // expected during successful test
-                // no negative index in the range message
-                assertFalse(e.getMessage().contains("-1"));
-            }
+            IllegalArgumentException ex = assertThrows(
+                "should have thrown exception due to invalid sheet index",
+                IllegalArgumentException.class,
+                () -> wb.getSheetAt(0)
+            );
+            // expected during successful test no negative index in the range message
+            assertFalse(ex.getMessage().contains("-1"));
+
+            assertThrows(IllegalArgumentException.class, () -> wb.getSheetAt(0));
 
             Sheet sheet0 = wb.createSheet();
             Sheet sheet1 = wb.createSheet();
@@ -155,25 +151,24 @@ public abstract class BaseTestWorkbook {
             assertEquals("Sheet3", fetchedSheet.getSheetName());
             assertEquals(3, wb.getNumberOfSheets());
             assertSame(originalSheet, fetchedSheet);
-            try {
-                wb.createSheet("sHeeT3");
-                fail("should have thrown exceptiuon due to duplicate sheet name");
-            } catch (IllegalArgumentException e) {
-                // expected during successful test
-                assertEquals("The workbook already contains a sheet named 'sHeeT3'", e.getMessage());
-            }
+            ex = assertThrows(
+                "should have thrown exception due to duplicate sheet name",
+                IllegalArgumentException.class,
+                () -> wb.createSheet("sHeeT3")
+            );
+            // expected during successful test
+            assertEquals("The workbook already contains a sheet named 'sHeeT3'", ex.getMessage());
 
             //names cannot be blank or contain any of /\*?[]
             String[] invalidNames = {"", "Sheet/", "Sheet\\",
                     "Sheet?", "Sheet*", "Sheet[", "Sheet]", "'Sheet'",
                     "My:Sheet"};
             for (String sheetName : invalidNames) {
-                try {
-                    wb.createSheet(sheetName);
-                    fail("should have thrown exception due to invalid sheet name: " + sheetName);
-                } catch (IllegalArgumentException e) {
-                    // expected during successful test
-                }
+                assertThrows(
+                    "should have thrown exception due to invalid sheet name: " + sheetName,
+                    IllegalArgumentException.class,
+                    () -> wb.createSheet(sheetName)
+                );
             }
             //still have 3 sheets
             assertEquals(3, wb.getNumberOfSheets());
@@ -854,28 +849,27 @@ public abstract class BaseTestWorkbook {
 
     @Test
     public void getSheetIndex() throws IOException {
-        final Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sheet1 = wb.createSheet("Sheet1");
-        Sheet sheet2 = wb.createSheet("Sheet2");
-        Sheet sheet3 = wb.createSheet("Sheet3");
-        Sheet sheet4 = wb.createSheet("Sheet4");
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sheet1 = wb.createSheet("Sheet1");
+            Sheet sheet2 = wb.createSheet("Sheet2");
+            Sheet sheet3 = wb.createSheet("Sheet3");
+            Sheet sheet4 = wb.createSheet("Sheet4");
 
-        assertEquals(0, wb.getSheetIndex(sheet1));
-        assertEquals(1, wb.getSheetIndex(sheet2));
-        assertEquals(2, wb.getSheetIndex(sheet3));
-        assertEquals(3, wb.getSheetIndex(sheet4));
+            assertEquals(0, wb.getSheetIndex(sheet1));
+            assertEquals(1, wb.getSheetIndex(sheet2));
+            assertEquals(2, wb.getSheetIndex(sheet3));
+            assertEquals(3, wb.getSheetIndex(sheet4));
 
-        // remove sheets
-        wb.removeSheetAt(0);
-        wb.removeSheetAt(2);
+            // remove sheets
+            wb.removeSheetAt(0);
+            wb.removeSheetAt(2);
 
-        // ensure that sheets are moved up and removed sheets are not found any more
-        assertEquals(-1, wb.getSheetIndex(sheet1));
-        assertEquals(0, wb.getSheetIndex(sheet2));
-        assertEquals(1, wb.getSheetIndex(sheet3));
-        assertEquals(-1, wb.getSheetIndex(sheet4));
-
-        wb.close();
+            // ensure that sheets are moved up and removed sheets are not found any more
+            assertEquals(-1, wb.getSheetIndex(sheet1));
+            assertEquals(0, wb.getSheetIndex(sheet2));
+            assertEquals(1, wb.getSheetIndex(sheet3));
+            assertEquals(-1, wb.getSheetIndex(sheet4));
+        }
     }
 
     @Test
@@ -884,9 +878,11 @@ public abstract class BaseTestWorkbook {
             Sheet sheet1 = wb.createSheet("Sheet1");
             assertNotNull(sheet1);
 
-            thrown.expect(IllegalArgumentException.class);
-            thrown.expectMessage("already contains a sheet named 'Sheet1'");
-            wb.createSheet("Sheet1");
+            IllegalArgumentException ex = assertThrows(
+                IllegalArgumentException.class,
+                () -> wb.createSheet("Sheet1")
+            );
+            assertEquals("The workbook already contains a sheet named 'Sheet1'", ex.getMessage());
         }
     }
 

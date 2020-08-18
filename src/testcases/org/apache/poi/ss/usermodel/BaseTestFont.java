@@ -17,7 +17,13 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 
@@ -58,7 +64,7 @@ public abstract class BaseTestFont {
     @Test
     public final void testGetNumberOfFonts() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
-        int num0 = wb.getNumberOfFontsAsInt();
+        int num0 = wb.getNumberOfFonts();
 
         Font f1=wb.createFont();
         f1.setBold(true);
@@ -103,7 +109,7 @@ public abstract class BaseTestFont {
         font.setFontName("Courier");
         int font1Idx = font.getIndexAsInt();
         wb1.createCellStyle().setFont(font);
-        assertEquals(num0 + 1, wb1.getNumberOfFontsAsInt());
+        assertEquals(num0 + 1, wb1.getNumberOfFonts());
 
         CellStyle cellStyleTitle=wb1.createCellStyle();
         cellStyleTitle.setFont(font);
@@ -114,7 +120,7 @@ public abstract class BaseTestFont {
         wb1.close();
         s1 = wb2.getSheetAt(0);
 
-        assertEquals(num0 + 1, wb2.getNumberOfFontsAsInt());
+        assertEquals(num0 + 1, wb2.getNumberOfFonts());
         int idx = s1.getRow(0).getCell(0).getCellStyle().getFontIndexAsInt();
         Font fnt = wb2.getFontAt(idx);
         assertNotNull(fnt);
@@ -127,7 +133,7 @@ public abstract class BaseTestFont {
         font2.setFontHeightInPoints((short)15);
         int font2Idx = font2.getIndexAsInt();
         wb2.createCellStyle().setFont(font2);
-        assertEquals(num0 + 2, wb2.getNumberOfFontsAsInt());
+        assertEquals(num0 + 2, wb2.getNumberOfFonts());
 
         // Save and re-load
         Workbook wb3 = _testDataProvider.writeOutAndReadBack(wb2);
@@ -135,7 +141,7 @@ public abstract class BaseTestFont {
         s1 = wb3.getSheetAt(0);
         assertNotNull(s1);
 
-        assertEquals(num0 + 2, wb3.getNumberOfFontsAsInt());
+        assertEquals(num0 + 2, wb3.getNumberOfFonts());
         assertNotNull(wb3.getFontAt(font1Idx));
         assertNotNull(wb3.getFontAt(font2Idx));
 
@@ -150,7 +156,7 @@ public abstract class BaseTestFont {
     @Test
     public final void test45338() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
-        int num0 = wb.getNumberOfFontsAsInt();
+        int num0 = wb.getNumberOfFonts();
 
         Sheet s = wb.createSheet();
         s.createRow(0);
@@ -178,7 +184,7 @@ public abstract class BaseTestFont {
 
         Font nf = wb.createFont();
         int nfIdx = nf.getIndexAsInt();
-        assertEquals(num0 + 1, wb.getNumberOfFontsAsInt());
+        assertEquals(num0 + 1, wb.getNumberOfFonts());
 
         assertSame(nf, wb.getFontAt(nfIdx));
 
@@ -191,7 +197,7 @@ public abstract class BaseTestFont {
         nf.setTypeOffset((short)2);
         nf.setUnderline((byte)2);
 
-        assertEquals(num0 + 1, wb.getNumberOfFontsAsInt());
+        assertEquals(num0 + 1, wb.getNumberOfFonts());
         assertEquals(nf, wb.getFontAt(nfIdx));
 
         assertEquals(wb.getFontAt(nfIdx), wb.getFontAt(nfIdx));

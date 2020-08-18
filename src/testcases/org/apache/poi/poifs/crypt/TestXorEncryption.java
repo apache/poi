@@ -17,9 +17,9 @@
 
 package org.apache.poi.poifs.crypt;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,9 +37,9 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 public class TestXorEncryption {
-    
+
     private static final HSSFTestDataSamples samples = new HSSFTestDataSamples();
-    
+
     @Test
     public void testXorEncryption() {
         // Xor-Password: abc

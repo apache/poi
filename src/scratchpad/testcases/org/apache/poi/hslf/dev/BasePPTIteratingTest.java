@@ -17,6 +17,7 @@
 package org.apache.poi.hslf.dev;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertThrows;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -36,9 +37,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.NullPrintStream;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
@@ -57,9 +56,6 @@ public abstract class BasePPTIteratingTest {
         ENCRYPTED_FILES.add("Password_Protected-56-hello.ppt");
         ENCRYPTED_FILES.add("Password_Protected-hello.ppt");
     }
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     protected static final Map<String,Class<? extends Throwable>> EXCLUDED =
             new HashMap<>();
@@ -112,24 +108,29 @@ public abstract class BasePPTIteratingTest {
     @Test
     public void testAllFiles() throws Exception {
         String fileName = file.getName();
+        Class<? extends Throwable> t = null;
         if (EXCLUDED.containsKey(fileName)) {
-            thrown.expect(EXCLUDED.get(fileName));
+            t = EXCLUDED.get(fileName);
+        } else if (getFailedOldFiles().contains(fileName)) {
+            t = OldPowerPointFormatException.class;
+        } else if (getFailedEncryptedFiles().contains(fileName)) {
+            t = EncryptedPowerPointFileException.class;
         }
 
-        try {
+        if (t == null) {
             runOneFile(file);
-        } catch (OldPowerPointFormatException e) {
-            // expected for some files
-            if(!OLD_FILES.contains(file.getName())) {
-                throw e;
-            }
-        } catch (EncryptedPowerPointFileException e) {
-            // expected for some files
-            if(!ENCRYPTED_FILES.contains(file.getName())) {
-                throw e;
-            }
+        } else {
+            assertThrows(t, () -> runOneFile(file));
         }
     }
 
     abstract void runOneFile(File pFile) throws Exception;
+
+    protected Set<String> getFailedEncryptedFiles() {
+        return ENCRYPTED_FILES;
+    }
+
+    protected Set<String> getFailedOldFiles() {
+        return OLD_FILES;
+    }
 }

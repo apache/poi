@@ -16,20 +16,18 @@
 ==================================================================== */
 package org.apache.poi.hslf.dev;
 
-import org.apache.poi.EmptyFileException;
-import org.apache.poi.hslf.HSLFTestDataSamples;
-import org.junit.Test;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.fail;
+import org.apache.poi.EmptyFileException;
+import org.apache.poi.hslf.HSLFTestDataSamples;
+import org.junit.Test;
 
 public class TestSlideShowRecordDumper extends BasePPTIteratingTest {
     @Test
     public void testMain() throws IOException {
-        SlideShowRecordDumper.main(new String[0]);
-
         SlideShowRecordDumper.main(new String[] {
                 HSLFTestDataSamples.getSampleFile("slide_master.ppt").getAbsolutePath(),
         });

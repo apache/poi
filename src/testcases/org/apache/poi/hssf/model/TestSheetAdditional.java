@@ -18,16 +18,12 @@
 package org.apache.poi.hssf.model;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
 
 import org.apache.poi.hssf.record.ColumnInfoRecord;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 public final class TestSheetAdditional {
-	@Rule
-	public ExpectedException thrown= ExpectedException.none();
-
 	@Test
 	public void testGetCellWidth() {
 		InternalSheet sheet = InternalSheet.createSheet();
@@ -65,8 +61,10 @@ public final class TestSheetAdditional {
 		sheet.setColumnWidth(0, 255*256);
 
 		// over the limit
-		thrown.expect(IllegalArgumentException.class);
-		thrown.expectMessage("The maximum column width for an individual cell is 255 characters.");
-		sheet.setColumnWidth(0, 256*256);
+		IllegalArgumentException ex = assertThrows(
+			IllegalArgumentException.class,
+			() -> sheet.setColumnWidth(0, 256*256)
+		);
+		assertEquals("The maximum column width for an individual cell is 255 characters.", ex.getMessage());
 	}
 }

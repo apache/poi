@@ -299,7 +299,7 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
                  * and will be missing from the c14n resulting nodes.
                  */
                 Canonicalizer c14n = Canonicalizer.getInstance(c14nAlgoId);
-                c14nValue.write(c14n.canonicalizeSubtree(node));
+                c14n.canonicalizeSubtree(node, c14nValue);
             }
         } catch (RuntimeException e) {
             throw e;

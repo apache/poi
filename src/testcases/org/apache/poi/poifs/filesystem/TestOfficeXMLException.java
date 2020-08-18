@@ -20,6 +20,8 @@ package org.apache.poi.poifs.filesystem;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -27,9 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 /**
  * Class to test that POIFS complains when given an Office 2003 XML
@@ -37,32 +37,23 @@ import org.junit.rules.ExpectedException;
  */
 public class TestOfficeXMLException {
 
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
-
-
     private static InputStream openSampleStream(String sampleFileName) {
         return HSSFTestDataSamples.openSampleFileStream(sampleFileName);
     }
 
     @Test
     public void testOOXMLException() throws IOException {
-        thrown.expect(OfficeXmlFileException.class);
-        thrown.expectMessage("You are calling the part of POI that deals with OLE2 Office Documents");
-
-        try (InputStream in = openSampleStream("sample.xlsx");
-             POIFSFileSystem fs = new POIFSFileSystem(in)) {
-
+        try (InputStream in = openSampleStream("sample.xlsx")) {
+            OfficeXmlFileException ex = assertThrows(OfficeXmlFileException.class, () -> new POIFSFileSystem(in));
+            assertTrue(ex.getMessage().contains("You are calling the part of POI that deals with OLE2 Office Documents"));
         }
     }
 
     @Test
     public void test2003XMLException() throws IOException {
-        thrown.expect(NotOLE2FileException.class);
-        thrown.expectMessage("The supplied data appears to be a raw XML file");
-
-        try (InputStream in = openSampleStream("SampleSS.xml");
-             POIFSFileSystem fs = new POIFSFileSystem(in)) {
+        try (InputStream in = openSampleStream("SampleSS.xml")) {
+            NotOLE2FileException ex = assertThrows(NotOLE2FileException.class, () -> new POIFSFileSystem(in));
+            assertTrue(ex.getMessage().contains("The supplied data appears to be a raw XML file"));
         }
     }
 

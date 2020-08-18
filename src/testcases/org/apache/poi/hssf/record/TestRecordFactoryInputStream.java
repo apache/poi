@@ -19,16 +19,15 @@ package org.apache.poi.hssf.record;
 
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertThrows;
+import static org.junit.Assert.assertTrue;
 
 import java.io.ByteArrayInputStream;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.util.HexRead;
-import org.junit.After;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 
 /**
  * Tests for {@link RecordFactoryInputStream}
@@ -57,10 +56,7 @@ public final class TestRecordFactoryInputStream {
 	private static final String SAMPLE_WINDOW1 = "3D 00 12 00"
 		+ "00 00 00 00 40 38 55 23 38 00 00 00 00 00 01 00 58 02";
 
-	@Rule
-	public ExpectedException expectedEx = ExpectedException.none();
 
-	
 	/**
 	 * Makes sure that a default password mismatch condition is represented with {@link EncryptedDocumentException}
 	 */
@@ -76,11 +72,13 @@ public final class TestRecordFactoryInputStream {
 				+ SAMPLE_WINDOW1_ENCR1
 		);
 
-	    expectedEx.expect(EncryptedDocumentException.class);
-	    expectedEx.expectMessage("Default password is invalid for salt/verifier/verifierHash");
-		createRFIS(dataWrongDefault);
+		EncryptedDocumentException ex = assertThrows(
+			EncryptedDocumentException.class,
+			() -> createRFIS(dataWrongDefault)
+		);
+		assertTrue(ex.getMessage().contains("Default password is invalid for salt/verifier/verifierHash"));
 	}
-	
+
     @Test
     public void defaultPasswordOK() {
         // This encodng depends on docId, password and stream position
@@ -96,7 +94,7 @@ public final class TestRecordFactoryInputStream {
         RecordFactoryInputStream rfis = createRFIS(dataCorrectDefault);
         confirmReadInitialRecords(rfis);
     }
-	
+
 
 	/**
 	 * Makes sure that an incorrect user supplied password condition is represented with {@link EncryptedDocumentException}
@@ -113,12 +111,13 @@ public final class TestRecordFactoryInputStream {
 				+ SAMPLE_WINDOW1_ENCR2
 		);
 
-		expectedEx.expect(EncryptedDocumentException.class);
-		expectedEx.expectMessage("Supplied password is invalid for salt/verifier/verifierHash");
-
 		Biff8EncryptionKey.setCurrentUserPassword("passw0rd");
 		try {
-			createRFIS(dataWrongDefault);
+			EncryptedDocumentException ex = assertThrows(
+				EncryptedDocumentException.class,
+				() -> createRFIS(dataWrongDefault)
+			);
+			assertEquals("Supplied password is invalid for salt/verifier/verifierHash", ex.getMessage());
 		} finally {
 			Biff8EncryptionKey.setCurrentUserPassword(null);
 		}
@@ -144,8 +143,8 @@ public final class TestRecordFactoryInputStream {
 			Biff8EncryptionKey.setCurrentUserPassword(null);
 		}
     }
-	
-	
+
+
 	/**
 	 * makes sure the record stream starts with {@link BOFRecord}, {@link FilePassRecord} and then {@link WindowOneRecord}
 	 * The third record is decrypted so this method also checks its content.

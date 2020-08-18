@@ -145,9 +145,7 @@ import org.junit.AfterClass;
 import org.junit.Assume;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
-import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.w3.x2000.x09.xmldsig.ReferenceType;
 import org.w3.x2000.x09.xmldsig.SignatureDocument;
 import org.w3c.dom.Document;
@@ -159,9 +157,6 @@ public class TestSignatureInfo {
     private static Calendar cal;
     private KeyPair keyPair;
     private X509Certificate x509;
-
-    @Rule
-    public ExpectedException thrown = ExpectedException.none();
 
     @AfterClass
     public static void removeUserLocale() {
