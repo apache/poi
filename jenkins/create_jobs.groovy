@@ -571,6 +571,14 @@ xmlbeansjobs.each { xjob ->
                     publishTestStabilityData()
                 }
             }
+            recordIssues {
+                tools {
+                    spotBugs {
+                        pattern('build/findbugs.xml')
+                        reportEncoding('UTF-8')
+                    }
+                }
+            }
 
             if (!xjob.skipcigame) {
                 configure { project ->
