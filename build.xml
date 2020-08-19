@@ -588,7 +588,7 @@ under the License.
         <delete dir="ooxml-lib" failonerror="false"/>
         <delete dir="ooxml-testlib" failonerror="false"/>
         <delete dir="${basedir}/lib" includes="*.jar" failonerror="false"/>
-        <delete>
+        <delete failonerror="false">
             <fileset dir="lib/main-tests" includes="hamcrest-core*"/>
         </delete>
 
@@ -2070,7 +2070,6 @@ under the License.
                     <include name="commons-logging-*.jar"/>
                     <include name="commons-collections4-*.jar"/>
                     <include name="commons-math3-*.jar"/>
-                    <include name="activation-*.jar"/>
                     <include name="log4j-*.jar"/>
                     <include name="SparseBitSet-*.jar"/>
                 </fileset>
