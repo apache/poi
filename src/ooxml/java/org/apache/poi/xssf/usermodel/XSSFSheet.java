@@ -4037,7 +4037,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         }
         int currentCount = dataValidations.sizeOfDataValidationArray();
         CTDataValidation newval = dataValidations.addNewDataValidation();
-        newval.set(xssfDataValidation.getCtDdataValidation());
+        newval.set(xssfDataValidation.getCtDataValidation());
         dataValidations.setCount(currentCount + 1L);
 
     }

@@ -38,7 +38,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STDataValidationOpera
 public class XSSFDataValidation implements DataValidation {
     private static final int MAX_TEXT_LENGTH = 255;
 
-    private CTDataValidation ctDdataValidation;
+    private CTDataValidation ctDataValidation;
     private XSSFDataValidationConstraint validationConstraint;
     private CellRangeAddressList regions;
 
@@ -90,12 +90,12 @@ public class XSSFDataValidation implements DataValidation {
     public XSSFDataValidation(XSSFDataValidationConstraint constraint,CellRangeAddressList regions,CTDataValidation ctDataValidation) {
         super();
         this.validationConstraint = constraint;
-        this.ctDdataValidation = ctDataValidation;
+        this.ctDataValidation = ctDataValidation;
         this.regions = regions;
     }
  
-    CTDataValidation getCtDdataValidation() {
-        return ctDdataValidation;
+    CTDataValidation getCtDataValidation() {
+        return ctDataValidation;
     }
 
 
@@ -111,8 +111,8 @@ public class XSSFDataValidation implements DataValidation {
         if(text != null && text.length() > MAX_TEXT_LENGTH) {
             throw new IllegalStateException("Error-text cannot be longer than 255 characters, but had: " + text);
         }
-        ctDdataValidation.setErrorTitle(encodeUtf(title));
-        ctDdataValidation.setError(encodeUtf(text));
+        ctDataValidation.setErrorTitle(encodeUtf(title));
+        ctDataValidation.setError(encodeUtf(text));
     }
 
     /* (non-Javadoc)
@@ -126,8 +126,8 @@ public class XSSFDataValidation implements DataValidation {
         if(text != null && text.length() > MAX_TEXT_LENGTH) {
             throw new IllegalStateException("Error-text cannot be longer than 255 characters, but had: " + text);
         }
-        ctDdataValidation.setPromptTitle(encodeUtf(title));
-        ctDdataValidation.setPrompt(encodeUtf(text));
+        ctDataValidation.setPromptTitle(encodeUtf(title));
+        ctDataValidation.setPrompt(encodeUtf(text));
     }
 
     /**
@@ -165,63 +165,63 @@ public class XSSFDataValidation implements DataValidation {
      * @see org.apache.poi.ss.usermodel.DataValidation#getEmptyCellAllowed()
      */
     public boolean getEmptyCellAllowed() {
-        return ctDdataValidation.getAllowBlank();
+        return ctDataValidation.getAllowBlank();
     }
 
     /* (non-Javadoc)
      * @see org.apache.poi.ss.usermodel.DataValidation#getErrorBoxText()
      */
     public String getErrorBoxText() {
-        return ctDdataValidation.getError();
+        return ctDataValidation.getError();
     }
 
     /* (non-Javadoc)
      * @see org.apache.poi.ss.usermodel.DataValidation#getErrorBoxTitle()
      */
     public String getErrorBoxTitle() {
-        return ctDdataValidation.getErrorTitle();
+        return ctDataValidation.getErrorTitle();
     }
 
     /* (non-Javadoc)
      * @see org.apache.poi.ss.usermodel.DataValidation#getErrorStyle()
      */
     public int getErrorStyle() {
-        return reverseErrorStyleMappings.get(ctDdataValidation.getErrorStyle());
+        return reverseErrorStyleMappings.get(ctDataValidation.getErrorStyle());
     }
 
     /* (non-Javadoc)
      * @see org.apache.poi.ss.usermodel.DataValidation#getPromptBoxText()
      */
     public String getPromptBoxText() {
-        return ctDdataValidation.getPrompt();
+        return ctDataValidation.getPrompt();
     }
 
     /* (non-Javadoc)
      * @see org.apache.poi.ss.usermodel.DataValidation#getPromptBoxTitle()
      */
     public String getPromptBoxTitle() {
-        return ctDdataValidation.getPromptTitle();
+        return ctDataValidation.getPromptTitle();
     }
 
     /* (non-Javadoc)
      * @see org.apache.poi.ss.usermodel.DataValidation#getShowErrorBox()
      */
     public boolean getShowErrorBox() {
-        return ctDdataValidation.getShowErrorMessage();
+        return ctDataValidation.getShowErrorMessage();
     }
 
     /* (non-Javadoc)
      * @see org.apache.poi.ss.usermodel.DataValidation#getShowPromptBox()
      */
     public boolean getShowPromptBox() {
-        return ctDdataValidation.getShowInputMessage();
+        return ctDataValidation.getShowInputMessage();
     }
 
     /* (non-Javadoc)
      * @see org.apache.poi.ss.usermodel.DataValidation#getSuppressDropDownArrow()
      */
     public boolean getSuppressDropDownArrow() {
-        return !ctDdataValidation.getShowDropDown();
+        return !ctDataValidation.getShowDropDown();
     }
 
     /* (non-Javadoc)
@@ -235,28 +235,28 @@ public class XSSFDataValidation implements DataValidation {
      * @see org.apache.poi.ss.usermodel.DataValidation#setEmptyCellAllowed(boolean)
      */
     public void setEmptyCellAllowed(boolean allowed) {
-        ctDdataValidation.setAllowBlank(allowed);
+        ctDataValidation.setAllowBlank(allowed);
     }
 
     /* (non-Javadoc)
      * @see org.apache.poi.ss.usermodel.DataValidation#setErrorStyle(int)
      */
     public void setErrorStyle(int errorStyle) {
-        ctDdataValidation.setErrorStyle(errorStyleMappings.get(errorStyle));
+        ctDataValidation.setErrorStyle(errorStyleMappings.get(errorStyle));
     }
 
     /* (non-Javadoc)
      * @see org.apache.poi.ss.usermodel.DataValidation#setShowErrorBox(boolean)
      */
     public void setShowErrorBox(boolean show) {
-        ctDdataValidation.setShowErrorMessage(show);
+        ctDataValidation.setShowErrorMessage(show);
     }
 
     /* (non-Javadoc)
      * @see org.apache.poi.ss.usermodel.DataValidation#setShowPromptBox(boolean)
      */
     public void setShowPromptBox(boolean show) {
-        ctDdataValidation.setShowInputMessage(show);
+        ctDataValidation.setShowInputMessage(show);
     }
 
     /* (non-Javadoc)
@@ -264,7 +264,7 @@ public class XSSFDataValidation implements DataValidation {
      */
     public void setSuppressDropDownArrow(boolean suppress) {
         if (validationConstraint.getValidationType()==ValidationType.LIST) {
-            ctDdataValidation.setShowDropDown(!suppress);
+            ctDataValidation.setShowDropDown(!suppress);
         }
     }
 

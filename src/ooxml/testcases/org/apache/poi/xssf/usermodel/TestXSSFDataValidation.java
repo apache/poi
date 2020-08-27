@@ -325,7 +325,7 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
             sheet.addValidationData(validation);
 
             final List<XSSFDataValidation> dataValidations = sheet.getDataValidations();
-            assertTrue(dataValidations.get(0).getCtDdataValidation().getAllowBlank());
+            assertTrue(dataValidations.get(0).getCtDataValidation().getAllowBlank());
         }
     }
 
@@ -335,12 +335,12 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
             XSSFSheet sheet = wb.createSheet();
 
             final XSSFDataValidation validation = createValidation(sheet);
-            validation.getCtDdataValidation().setAllowBlank(false);
+            validation.getCtDataValidation().setAllowBlank(false);
 
             sheet.addValidationData(validation);
 
             final List<XSSFDataValidation> dataValidations = sheet.getDataValidations();
-            assertFalse(dataValidations.get(0).getCtDdataValidation().getAllowBlank());
+            assertFalse(dataValidations.get(0).getCtDataValidation().getAllowBlank());
         }
     }
 
@@ -350,12 +350,12 @@ public class TestXSSFDataValidation extends BaseTestDataValidation {
             XSSFSheet sheet = wb.createSheet();
 
             final XSSFDataValidation validation = createValidation(sheet);
-            validation.getCtDdataValidation().setAllowBlank(true);
+            validation.getCtDataValidation().setAllowBlank(true);
 
             sheet.addValidationData(validation);
 
             final List<XSSFDataValidation> dataValidations = sheet.getDataValidations();
-            assertTrue(dataValidations.get(0).getCtDdataValidation().getAllowBlank());
+            assertTrue(dataValidations.get(0).getCtDataValidation().getAllowBlank());
         }
     }
 
