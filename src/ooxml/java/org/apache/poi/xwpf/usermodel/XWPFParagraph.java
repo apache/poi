@@ -1167,6 +1167,32 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
     }
 
     /**
+     * Get the indentation which is placed at the left/start of this paragraph
+     *
+     * @return indentation in hundredths of a character unit or -1 if indentation is not set
+     */
+    public int getIndentationLeftChars() {
+        CTInd indentation = getCTInd(false);
+        return (indentation != null && indentation.isSetLeftChars()) ? indentation.getLeftChars().intValue()
+                : -1;
+    }
+
+    /**
+     * Specifies the indentation which shall be placed at the left/start of this paragraph
+     * <p>
+     * If this attribute is omitted, its value shall be assumed to be zero.
+     * if the left/start attribute is specified, then its value is ignored, and is superseded by this value.
+     * </p>
+     *
+     * @param indentation this value is specified in hundredths of a character unit
+     */
+    public void setIndentationLeftChars(int indentation) {
+        CTInd indent = getCTInd(true);
+        BigInteger bi = new BigInteger(Integer.toString(indentation));
+        indent.setLeftChars(bi);
+    }
+
+    /**
      * Specifies the indentation which shall be placed between the right text
      * margin for this paragraph and the right edge of that paragraph's content
      * in a left to right paragraph, and the right text margin and the right
@@ -1203,6 +1229,32 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         CTInd indent = getCTInd(true);
         BigInteger bi = new BigInteger(Integer.toString(indentation));
         indent.setRight(bi);
+    }
+
+    /**
+     * Get the indentation which is placed at the right/end of this paragraph
+     *
+     * @return indentation in hundredths of a character unit or -1 if indentation is not set
+     */
+    public int getIndentationRightChars() {
+        CTInd indentation = getCTInd(false);
+        return (indentation != null && indentation.isSetRightChars()) ? indentation.getRightChars().intValue()
+                : -1;
+    }
+
+    /**
+     * Specifies the indentation which shall be placed at the right/end of this paragraph
+     * <p>
+     * If this attribute is omitted, its value shall be assumed to be zero.
+     * if the right/end attribute is specified, then its value is ignored, and is superseded by this value.
+     * </p>
+     *
+     * @param indentation this value is specified in hundredths of a character unit
+     */
+    public void setIndentationRightChars(int indentation) {
+        CTInd indent = getCTInd(true);
+        BigInteger bi = new BigInteger(Integer.toString(indentation));
+        indent.setRightChars(bi);
     }
 
     /**

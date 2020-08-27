@@ -202,6 +202,22 @@ public final class TestXWPFParagraph {
     }
 
     @Test
+    public void testSetGetIndentationChars() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            XWPFParagraph p = doc.createParagraph();
+
+            assertEquals(-1, p.getIndentationLeftChars());
+            assertEquals(-1, p.getIndentationRightChars());
+            // set 1.5 characters
+            p.setIndentationLeftChars(150);
+            assertEquals(150, p.getIndentationLeftChars());
+
+            p.setIndentationRightChars(250);
+            assertEquals(250, p.getIndentationRightChars());
+        }
+    }
+
+    @Test
     public void testSetGetIndentation() throws IOException {
         try (XWPFDocument doc = new XWPFDocument()) {
             XWPFParagraph p = doc.createParagraph();
@@ -221,7 +237,6 @@ public final class TestXWPFParagraph {
             assertEquals(100, ind.getLeft().intValue());
         }
     }
-
     @Test
     public void testSetGetVerticalAlignment() throws IOException {
         //new clean instance of paragraph
