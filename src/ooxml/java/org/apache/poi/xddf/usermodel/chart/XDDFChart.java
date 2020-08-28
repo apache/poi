@@ -650,7 +650,7 @@ public abstract class XDDFChart extends POIXMLDocumentPart implements TextContai
         Map<Long, XDDFChartAxis> categories = null;
         Map<Long, XDDFValueAxis> mapValues = null;
 
-        if (ChartTypes.PIE != type && ChartTypes.PIE3D != type) {
+        if (ChartTypes.PIE != type && ChartTypes.PIE3D != type && ChartTypes.DOUGHNUT != type) {
             categories = Collections.singletonMap(category.getId(), category);
             mapValues = Collections.singletonMap(values.getId(), values);
         }
