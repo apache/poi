@@ -28,6 +28,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -37,7 +38,6 @@ import java.util.PrimitiveIterator.OfInt;
 import java.util.function.BiFunction;
 import java.util.function.Supplier;
 
-import org.apache.commons.codec.Charsets;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.MatrixUtils;
 import org.apache.commons.math3.linear.RealMatrix;
@@ -748,12 +748,12 @@ public final class HemfPlusDraw {
             }
 
             if (REALIZED_ADVANCE.isSet(optionsFlags)) {
-                byte[] buf = glyphs.getBytes(Charsets.UTF_16LE);
+                byte[] buf = glyphs.getBytes(StandardCharsets.UTF_16LE);
                 ctx.drawString(buf, buf.length, glyphPos.get(0), null, null, null, null, true);
             } else {
                 final OfInt glyphIter = glyphs.codePoints().iterator();
                 glyphPos.forEach(p -> {
-                    byte[] buf = new String(new int[]{glyphIter.next()}, 0, 1).getBytes(Charsets.UTF_16LE);
+                    byte[] buf = new String(new int[]{glyphIter.next()}, 0, 1).getBytes(StandardCharsets.UTF_16LE);
                     ctx.drawString(buf, buf.length, p, null, null, null, null, true);
                 });
             }

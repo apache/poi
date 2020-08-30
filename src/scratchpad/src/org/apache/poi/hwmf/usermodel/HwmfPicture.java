@@ -24,6 +24,7 @@ import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -46,6 +47,7 @@ import org.apache.poi.hwmf.record.HwmfWindowing.WmfSetWindowOrg;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
@@ -56,11 +58,13 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
     public static final int MAX_RECORD_LENGTH = 50_000_000;
 
     private static final POILogger logger = POILogFactory.getLogger(HwmfPicture.class);
-    
+
     final List<HwmfRecord> records = new ArrayList<>();
     final HwmfPlaceableHeader placeableHeader;
     final HwmfHeader header;
-    
+    /** The default charset */
+    private Charset defaultCharset = LocaleUtil.CHARSET_1252;
+
     public HwmfPicture(InputStream inputStream) throws IOException {
 
         try (LittleEndianInputStream leis = new LittleEndianInputStream(inputStream)) {
@@ -110,6 +114,10 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
                         throw new RecordFormatException("Tried to skip "+remainingSize + " but skipped: "+skipped);
                     }
                 }
+
+                if (wr instanceof HwmfCharsetAware) {
+                    ((HwmfCharsetAware)wr).setCharsetProvider(this::getDefaultCharset);
+                }
             }
         }
     }
@@ -126,7 +134,7 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
         Rectangle2D bounds = new Rectangle2D.Double(0,0,width,height);
         draw(ctx, bounds);
     }
-    
+
     public void draw(Graphics2D ctx, Rectangle2D graphicsBounds) {
         HwmfGraphicsState state = new HwmfGraphicsState();
         state.backup(ctx);
@@ -198,7 +206,7 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
             }
             if (wOrg != null && wExt != null) {
                 return new Rectangle2D.Double(wOrg.getX(), wOrg.getY(), wExt.getSize().getWidth(), wExt.getSize().getHeight());
-        }
+            }
         }
         return null;
     }
@@ -259,5 +267,13 @@ public class HwmfPicture implements Iterable<HwmfRecord>, GenericRecord {
     @Override
     public List<? extends GenericRecord> getGenericChildren() {
         return getRecords();
+    }
+
+    public void setDefaultCharset(Charset defaultCharset) {
+        this.defaultCharset = defaultCharset;
+    }
+
+    public Charset getDefaultCharset() {
+        return defaultCharset;
     }
 }

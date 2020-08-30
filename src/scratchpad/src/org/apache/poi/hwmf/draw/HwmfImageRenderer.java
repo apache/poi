@@ -27,6 +27,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Iterator;
 
 import org.apache.poi.common.usermodel.GenericRecord;
@@ -34,6 +35,7 @@ import org.apache.poi.hwmf.usermodel.HwmfEmbedded;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.sl.draw.BitmapImageRenderer;
 import org.apache.poi.sl.draw.DrawPictureShape;
+import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.draw.EmbeddedExtractor;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
@@ -47,6 +49,7 @@ import org.apache.poi.util.Units;
 public class HwmfImageRenderer implements ImageRenderer, EmbeddedExtractor {
     HwmfPicture image;
     double alpha;
+    boolean charsetInitialized = false;
 
     @Override
     public boolean canRender(String contentType) {
@@ -87,9 +90,9 @@ public class HwmfImageRenderer implements ImageRenderer, EmbeddedExtractor {
     @Override
     public BufferedImage getImage(Dimension2D dim) {
         if (image == null) {
-            return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB); 
+            return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         }
-        
+
         BufferedImage bufImg = new BufferedImage((int)dim.getWidth(), (int)dim.getHeight(), BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = bufImg.createGraphics();
         g.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -101,7 +104,7 @@ public class HwmfImageRenderer implements ImageRenderer, EmbeddedExtractor {
 
         return BitmapImageRenderer.setAlpha(bufImg, alpha);
     }
-    
+
     @Override
     public boolean drawImage(Graphics2D graphics, Rectangle2D anchor) {
         return drawImage(graphics, anchor, null);
@@ -111,6 +114,11 @@ public class HwmfImageRenderer implements ImageRenderer, EmbeddedExtractor {
     public boolean drawImage(Graphics2D graphics, Rectangle2D anchor, Insets clip) {
         if (image == null) {
             return false;
+        }
+
+        Charset cs = (Charset)graphics.getRenderingHint(Drawable.DEFAULT_CHARSET);
+        if (cs != null && !charsetInitialized) {
+            setDefaultCharset(cs);
         }
 
         HwmfGraphicsState graphicsState = new HwmfGraphicsState();
@@ -184,5 +192,11 @@ public class HwmfImageRenderer implements ImageRenderer, EmbeddedExtractor {
     @Override
     public Rectangle2D getBounds() {
         return Units.pointsToPixel(image == null ? new Rectangle2D.Double() : image.getBoundsInPoints());
+    }
+
+    @Override
+    public void setDefaultCharset(Charset defaultCharset) {
+        image.setDefaultCharset(defaultCharset);
+        charsetInitialized = true;
     }
 }

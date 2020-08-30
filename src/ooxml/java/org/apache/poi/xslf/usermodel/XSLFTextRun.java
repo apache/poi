@@ -738,7 +738,9 @@ public class XSLFTextRun implements TextRun {
                 // SYMBOL is missing
 
                 if (font == null || !font.isSetTypeface() || "".equals(font.getTypeface())) {
-                    font = coll.getLatin();
+                    // don't fallback to latin but bubble up in the style hierarchy (slide -> layout -> master -> theme)
+                    return null;
+//                    font = coll.getLatin();
                 }
             }
 

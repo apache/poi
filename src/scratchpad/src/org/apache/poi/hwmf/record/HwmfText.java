@@ -35,6 +35,7 @@ import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hwmf.draw.HwmfDrawProperties;
 import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetMapMode;
+import org.apache.poi.hwmf.usermodel.HwmfCharsetAware;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordJsonWriter;
@@ -42,6 +43,7 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -172,7 +174,7 @@ public class HwmfText {
      * The META_TEXTOUT record outputs a character string at the specified location by using the font,
      * background color, and text color that are defined in the playback device context.
      */
-    public static class WmfTextOut implements HwmfRecord {
+    public static class WmfTextOut implements HwmfRecord, HwmfCharsetAware {
         /**
          * A 16-bit signed integer that defines the length of the string, in bytes, pointed to by String.
          */
@@ -188,6 +190,8 @@ public class HwmfText {
         private byte[] rawTextBytes;
 
         protected Point2D reference = new Point2D.Double();
+
+        protected Supplier<Charset> charsetProvider = () -> LocaleUtil.CHARSET_1252;
 
         @Override
         public HwmfRecordType getWmfRecordType() {
@@ -211,6 +215,7 @@ public class HwmfText {
 
         @Override
         public void draw(HwmfGraphics ctx) {
+            ctx.setCharsetProvider(charsetProvider);
             ctx.drawString(getTextBytes(), stringLength, reference);
         }
 
@@ -234,6 +239,11 @@ public class HwmfText {
                 "text", () -> getText(StandardCharsets.US_ASCII),
                 "reference", () -> reference
             );
+        }
+
+        @Override
+        public void setCharsetProvider(Supplier<Charset> provider) {
+            charsetProvider = provider;
         }
     }
 
@@ -343,7 +353,7 @@ public class HwmfText {
      * are defined in the playback device context. Optionally, dimensions can be provided for clipping,
      * opaquing, or both.
      */
-    public static class WmfExtTextOut implements HwmfRecord {
+    public static class WmfExtTextOut implements HwmfRecord, HwmfCharsetAware {
         /**
          * The location, in logical units, where the text string is to be placed.
          */
@@ -382,6 +392,8 @@ public class HwmfText {
          * number of values as there are characters in the string.
          */
         protected final List<Integer> dx = new ArrayList<>();
+
+        protected Supplier<Charset> charsetProvider = () -> LocaleUtil.CHARSET_1252;
 
         public WmfExtTextOut() {
             this(new WmfExtTextOutOptions());
@@ -437,6 +449,7 @@ public class HwmfText {
 
         @Override
         public void draw(HwmfGraphics ctx) {
+            ctx.setCharsetProvider(charsetProvider);
             ctx.drawString(rawTextBytes, stringLength, reference, null, bounds, options, dx, false);
         }
 
@@ -445,8 +458,7 @@ public class HwmfText {
                 return "";
             }
             String ret = new String(rawTextBytes, charset);
-            return ret.substring(0,
-                    Math.min(ret.length(), stringLength));
+            return ret.substring(0, Math.min(ret.length(), stringLength));
         }
 
         public Point2D getReference() {
@@ -468,7 +480,7 @@ public class HwmfText {
 
         private String getGenericText() {
             try {
-                return getText(isUnicode() ? StandardCharsets.UTF_16LE : StandardCharsets.US_ASCII);
+                return getText(isUnicode() ? StandardCharsets.UTF_16LE : charsetProvider.get());
             } catch (IOException e) {
                 return "";
             }
@@ -482,6 +494,11 @@ public class HwmfText {
                 "text", this::getGenericText,
                 "dx", () -> dx
             );
+        }
+
+        @Override
+        public void setCharsetProvider(Supplier<Charset> provider) {
+            charsetProvider = provider;
         }
     }
 

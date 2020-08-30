@@ -25,6 +25,7 @@ import java.awt.geom.Rectangle2D;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Collections;
 
 import org.apache.poi.common.usermodel.GenericRecord;
@@ -110,5 +111,10 @@ class EMFHandler extends MFProxy {
         return (imgr instanceof EmbeddedExtractor)
             ? ((EmbeddedExtractor) imgr).getEmbeddings()
             : Collections.emptyList();
+    }
+
+    @Override
+    void setDefaultCharset(Charset charset) {
+        imgr.setDefaultCharset(charset);
     }
 }

@@ -26,6 +26,12 @@ import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.awt.image.BufferedImage;
+import java.awt.image.ColorModel;
+import java.awt.image.ComponentColorModel;
+import java.awt.image.DirectColorModel;
+import java.awt.image.IndexColorModel;
+import java.awt.image.PackedColorModel;
 import java.io.Closeable;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -57,6 +63,7 @@ public class GenericRecordJsonWriter implements Closeable {
     private static final String ZEROS = "0000000000000000";
     private static final Pattern ESC_CHARS = Pattern.compile("[\"\\p{Cntrl}\\\\]");
     private static final String NL = System.getProperty("line.separator");
+
 
     @FunctionalInterface
     protected interface GenericRecordHandler {
@@ -92,6 +99,7 @@ public class GenericRecordJsonWriter implements Closeable {
         handler(Path2D.class, GenericRecordJsonWriter::printPath);
         handler(AffineTransform.class, GenericRecordJsonWriter::printAffineTransform);
         handler(Color.class, GenericRecordJsonWriter::printColor);
+        handler(BufferedImage.class, GenericRecordJsonWriter::printImage);
         handler(Array.class, GenericRecordJsonWriter::printArray);
         handler(Object.class, GenericRecordJsonWriter::printObject);
     }
@@ -480,6 +488,40 @@ public class GenericRecordJsonWriter implements Closeable {
         }
         childIndex = oldChildIndex;
         fw.write(tabs() + "\t]");
+        return true;
+    }
+
+    protected boolean printImage(String name, Object o) {
+        BufferedImage img = (BufferedImage)o;
+
+        final String[] COLOR_SPACES = {
+            "XYZ","Lab","Luv","YCbCr","Yxy","RGB","GRAY","HSV","HLS","CMYK","Unknown","CMY","Unknown"
+        };
+
+        final String[] IMAGE_TYPES = {
+                "CUSTOM","INT_RGB","INT_ARGB","INT_ARGB_PRE","INT_BGR","3BYTE_BGR","4BYTE_ABGR","4BYTE_ABGR_PRE",
+                "USHORT_565_RGB","USHORT_555_RGB","BYTE_GRAY","USHORT_GRAY","BYTE_BINARY","BYTE_INDEXED"
+        };
+
+        printName(name);
+        ColorModel cm = img.getColorModel();
+        String colorType =
+            (cm instanceof IndexColorModel) ? "indexed" :
+            (cm instanceof ComponentColorModel) ? "component" :
+            (cm instanceof DirectColorModel) ? "direct" :
+            (cm instanceof PackedColorModel) ? "packed" : "unknown";
+        fw.write(
+            "{ \"width\": "+img.getWidth()+
+            ", \"height\": "+img.getHeight()+
+            ", \"type\": \""+IMAGE_TYPES[img.getType()]+"\""+
+            ", \"colormodel\": \""+colorType+"\""+
+            ", \"pixelBits\": "+cm.getPixelSize()+
+            ", \"numComponents\": "+cm.getNumComponents()+
+            ", \"colorSpace\": \""+COLOR_SPACES[Math.min(cm.getColorSpace().getType(),12)]+"\""+
+            ", \"transparency\": "+cm.getTransparency()+
+            ", \"alpha\": "+cm.hasAlpha()+
+            "}"
+        );
         return true;
     }
 

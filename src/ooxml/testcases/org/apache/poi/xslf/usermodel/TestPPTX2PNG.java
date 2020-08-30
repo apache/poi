@@ -19,10 +19,13 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import static java.util.Arrays.asList;
 import static org.junit.Assume.assumeFalse;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -39,13 +42,14 @@ import org.junit.runners.Parameterized.Parameters;
 /**
  * Test class for testing PPTX2PNG utility which renders .ppt and .pptx slideshows
  */
+@SuppressWarnings("ConstantConditions")
 @RunWith(Parameterized.class)
 public class TestPPTX2PNG {
     private static boolean xslfOnly;
     private static final POIDataSamples samples = POIDataSamples.getSlideShowInstance();
     private static final File basedir = null;
     private static final String files =
-        "53446.ppt, alterman_security.ppt, alterman_security.pptx, KEY02.pptx, themes.pptx, " +
+        "bug64693.pptx, 53446.ppt, alterman_security.ppt, alterman_security.pptx, KEY02.pptx, themes.pptx, " +
         "backgrounds.pptx, layouts.pptx, sample.pptx, shapes.pptx, 54880_chinese.ppt, keyframes.pptx," +
         "customGeo.pptx, customGeo.ppt, wrench.emf, santa.wmf, missing-moveto.ppt";
 
@@ -62,7 +66,6 @@ public class TestPPTX2PNG {
     @Parameter
     public String pptFile;
 
-    @SuppressWarnings("ConstantConditions")
     @Parameters(name="{0}")
     public static Collection<String> data() {
         Function<String, Stream<String>> fun = (basedir == null) ? Stream::of :
@@ -75,7 +78,9 @@ public class TestPPTX2PNG {
     public void render() throws Exception {
         assumeFalse("ignore HSLF (.ppt) / HEMF (.emf) / HWMF (.wmf) files in no-scratchpad run", xslfOnly && pptFile.matches(".*\\.(ppt|emf|wmf)$"));
 
-        String[] args = {
+        // bug64693.pptx
+
+        final List<String> args = new ArrayList<>(asList(
             "-format", "null", // png,gif,jpg,svg or null for test
             "-slide", "-1", // -1 for all
             "-outdir", new File("build/tmp/").getCanonicalPath(),
@@ -84,10 +89,17 @@ public class TestPPTX2PNG {
             "-dump", "null",
             "-quiet",
             "-fixside", "long",
-            "-scale", "800",
-            // "-scale", "1.333333333",
-            (basedir == null ? samples.getFile(pptFile) : new File(basedir, pptFile)).getAbsolutePath()
-        };
-        PPTX2PNG.main(args);
+            "-scale", "800"
+        ));
+
+        if ("bug64693.pptx".equals(pptFile)) {
+            args.addAll(asList(
+                "-charset", "GBK"
+            ));
+        }
+
+        args.add((basedir == null ? samples.getFile(pptFile) : new File(basedir, pptFile)).getAbsolutePath());
+
+        PPTX2PNG.main(args.toArray(new String[0]));
     }
 }

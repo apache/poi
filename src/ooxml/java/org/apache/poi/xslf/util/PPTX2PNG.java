@@ -27,15 +27,18 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.poifs.filesystem.FileMagic;
+import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.draw.EmbeddedExtractor.EmbeddedPart;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.GenericRecordJsonWriter;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xslf.util.OutputFormat.BitmapFormat;
 import org.apache.poi.xslf.util.OutputFormat.SVGFormat;
 
@@ -71,7 +74,8 @@ public final class PPTX2PNG {
             "    -inputType <type> default input file type (OLE2,WMF,EMF), default is OLE2 = Powerpoint\n" +
             "                      some files (usually wmf) don't have a header, i.e. an identifiable file magic\n" +
             "    -textAsShapes     text elements are saved as shapes in SVG, necessary for variable spacing\n" +
-            "                      often found in math formulas";
+            "                      often found in math formulas\n" +
+            "    -charset          sets the default charset to be used, defaults to Windows-1252";
 
         System.out.println(msg);
         // no System.exit here, as we also run in junit tests!
@@ -99,6 +103,7 @@ public final class PPTX2PNG {
     private boolean extractEmbedded = false;
     private FileMagic defaultFileType = FileMagic.OLE2;
     private boolean textAsShapes = false;
+    private Charset charset = LocaleUtil.CHARSET_1252;
 
     private PPTX2PNG() {
     }
@@ -176,6 +181,15 @@ public final class PPTX2PNG {
                 case "-extractEmbedded":
                     extractEmbedded = true;
                     break;
+                case "-charset":
+                    if (opt != null) {
+                        charset = Charset.forName(opt);
+                        i++;
+                    } else {
+                        charset = LocaleUtil.CHARSET_1252;
+                    }
+                    break;
+
                 default:
                     file = new File(args[i]);
                     break;
@@ -264,6 +278,7 @@ public final class PPTX2PNG {
                     graphics.setRenderingHint(RenderingHints.KEY_COLOR_RENDERING, RenderingHints.VALUE_COLOR_RENDER_SPEED);
                     graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
                     graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
+                    graphics.setRenderingHint(Drawable.DEFAULT_CHARSET, getDefaultCharset());
 
                     graphics.scale(scale / lenSide, scale / lenSide);
 
@@ -315,7 +330,7 @@ public final class PPTX2PNG {
     }
 
     private void dumpRecords(MFProxy proxy) throws IOException {
-        if (dumpfile == null) {
+        if (dumpfile == null || "null".equals(dumpfile.getPath())) {
             return;
         }
         GenericRecord gr = proxy.getRoot();
@@ -387,6 +402,7 @@ public final class PPTX2PNG {
             proxy.setQuite(quiet);
             proxy.parse(file);
         }
+        proxy.setDefaultCharset(charset);
 
         return proxy;
     }
@@ -398,6 +414,10 @@ public final class PPTX2PNG {
         String inname = String.format(Locale.ROOT, "%04d|%s|%s", slideNo, format, file.getName());
         String outpat = (proxy.getSlideCount() > 1 ? outPattern : outPattern.replaceAll("-?\\$\\{slideno}", ""));
         return INPUT_PATTERN.matcher(inname).replaceAll(outpat);
+    }
+
+    private Charset getDefaultCharset() {
+        return charset;
     }
 
     static class NoScratchpadException extends IOException {

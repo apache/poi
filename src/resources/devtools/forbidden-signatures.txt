@@ -140,3 +140,6 @@ javax.xml.bind.DatatypeConverter
 
 @defaultMessage don't rely on the threads ContextClassLoader - provide the classloader via load(Class, Classloader)
 java.util.ServiceLoader#load(java.lang.Class)
+
+@defaultMessage use java.nio.charset.StandardCharsets instead
+org.apache.commons.codec.Charsets

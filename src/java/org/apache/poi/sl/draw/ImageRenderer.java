@@ -25,6 +25,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.Dimension2DDouble;
@@ -154,4 +155,11 @@ public interface ImageRenderer {
 
     default GenericRecord getGenericRecord() { return null; }
 
+    /**
+     * Sets the default charset to render text elements.
+     * Opposed to other windows libraries in POI this simply defaults to Windows-1252.
+     *
+     * @param defaultCharset the default charset
+     */
+    default void setDefaultCharset(Charset defaultCharset) {}
 }

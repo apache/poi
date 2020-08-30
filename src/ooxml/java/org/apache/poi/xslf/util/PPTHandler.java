@@ -27,6 +27,7 @@ import java.awt.geom.Dimension2D;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Set;
 import java.util.Spliterator;
 import java.util.Spliterators;
@@ -49,12 +50,14 @@ import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.LocaleUtil;
 
 /** Handler for ppt and pptx files */
 @Internal
 class PPTHandler extends MFProxy {
     private SlideShow<?,?> ppt;
     private Slide<?,?> slide;
+    private Charset defaultCharset = LocaleUtil.CHARSET_1252;
 
     @Override
     public void parse(File file) throws IOException {
@@ -66,6 +69,9 @@ class PPTHandler extends MFProxy {
             } else {
                 throw e;
             }
+        }
+        if (ppt == null) {
+            throw new IOException("Unknown file format or missing poi-scratchpad.jar / poi-ooxml.jar");
         }
         slide = ppt.getSlides().get(0);
     }
@@ -80,6 +86,9 @@ class PPTHandler extends MFProxy {
             } else {
                 throw e;
             }
+        }
+        if (ppt == null) {
+            throw new IOException("Unknown file format or missing poi-scratchpad.jar / poi-ooxml.jar");
         }
         slide = ppt.getSlides().get(0);
     }
@@ -162,8 +171,8 @@ class PPTHandler extends MFProxy {
         ;
     }
 
-    private static EmbeddedPart fromObjectShape(Shape s) {
-        final ObjectShape os = (ObjectShape)s;
+    private static EmbeddedPart fromObjectShape(Shape<?,?> s) {
+        final ObjectShape<?,?> os = (ObjectShape<?,?>)s;
         final ObjectData od = os.getObjectData();
         EmbeddedPart embed = new EmbeddedPart();
         embed.setName(od.getFileName());
@@ -176,5 +185,9 @@ class PPTHandler extends MFProxy {
             }
         });
         return embed;
+    }
+
+    @Override
+    void setDefaultCharset(Charset charset) {
     }
 }

@@ -40,6 +40,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
 import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.BitSet;
@@ -51,8 +52,9 @@ import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
-import org.apache.commons.codec.Charsets;
+import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfFont;
@@ -64,6 +66,7 @@ import org.apache.poi.hwmf.record.HwmfPenStyle;
 import org.apache.poi.hwmf.record.HwmfPenStyle.HwmfLineDash;
 import org.apache.poi.hwmf.record.HwmfRegionMode;
 import org.apache.poi.hwmf.record.HwmfText.WmfExtTextOutOptions;
+import org.apache.poi.hwmf.usermodel.HwmfCharsetAware;
 import org.apache.poi.sl.draw.BitmapImageRenderer;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawFontManager;
@@ -72,7 +75,7 @@ import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
 
-public class HwmfGraphics {
+public class HwmfGraphics implements HwmfCharsetAware {
 
     public enum FillDrawStyle {
         NONE(FillDrawStyle::fillNone),
@@ -128,9 +131,9 @@ public class HwmfGraphics {
     private final AffineTransform initialAT = new AffineTransform();
 
 
-    private static final Charset DEFAULT_CHARSET = LocaleUtil.CHARSET_1252;
     /** Bounding box from the placeable header */
     private final Rectangle2D bbox;
+    private Supplier<Charset> charsetProvider = () -> LocaleUtil.CHARSET_1252;
 
     /**
      * Initialize a graphics context for wmf rendering
@@ -595,16 +598,26 @@ public class HwmfGraphics {
         }
     }
 
-    private static Charset getCharset(HwmfFont font, boolean isUnicode) {
+    private Charset getCharset(HwmfFont font, boolean isUnicode) {
         if (isUnicode) {
-            return Charsets.UTF_16LE;
+            return StandardCharsets.UTF_16LE;
         }
 
-        Charset charset = font.getCharset().getCharset();
-        return (charset == null) ? DEFAULT_CHARSET : charset;
+        FontCharset fc = font.getCharset();
+        if (fc == FontCharset.DEFAULT) {
+            return charsetProvider.get();
+        }
+
+        Charset charset = fc.getCharset();
+        return (charset == null) ? charsetProvider.get() : charset;
     }
 
-    private static String trimText(HwmfFont font, boolean isUnicode, byte[] text, int length) {
+    @Override
+    public void setCharsetProvider(Supplier<Charset> provider) {
+        charsetProvider = provider;
+    }
+
+    private String trimText(HwmfFont font, boolean isUnicode, byte[] text, int length) {
         final Charset charset = getCharset(font, isUnicode);
 
         int trimLen;
@@ -717,7 +730,9 @@ public class HwmfGraphics {
                 graphicsCtx.fill(dstBounds);
                 break;
             default:
+            case SRCAND:
             case SRCCOPY:
+            case SRCINVERT:
                 if (img == null) {
                     return;
                 }
@@ -746,7 +761,20 @@ public class HwmfGraphics {
                 // the difference is, that clippings are 0-based, whereas the srcBounds are absolute in the user-space
                 // of the referenced image and can be also negative
                 Composite old = graphicsCtx.getComposite();
-                graphicsCtx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+                int newComp;
+                switch (prop.getRasterOp()) {
+                    default:
+                    case SRCCOPY:
+                        newComp = AlphaComposite.SRC_OVER;
+                        break;
+                    case SRCINVERT:
+                        newComp = AlphaComposite.SRC_IN;
+                        break;
+                    case SRCAND:
+                        newComp = AlphaComposite.SRC;
+                        break;
+                }
+                graphicsCtx.setComposite(AlphaComposite.getInstance(newComp));
 
                 boolean useDeviceBounds = (img instanceof HwmfImageRenderer);
 

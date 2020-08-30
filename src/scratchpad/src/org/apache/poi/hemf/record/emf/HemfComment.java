@@ -19,6 +19,7 @@ package org.apache.poi.hemf.record.emf;
 
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -33,6 +34,7 @@ import org.apache.poi.hemf.draw.HemfGraphics;
 import org.apache.poi.hemf.draw.HemfGraphics.EmfRenderState;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecord;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecordIterator;
+import org.apache.poi.hwmf.usermodel.HwmfCharsetAware;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
@@ -105,7 +107,7 @@ public class HemfComment {
         }
     }
 
-    public static class EmfComment implements HemfRecord {
+    public static class EmfComment implements HemfRecord, HwmfCharsetAware {
         private EmfCommentData data;
 
         @Override
@@ -145,6 +147,13 @@ public class HemfComment {
                 commentIdentifier = (int)leis.readUInt();
             }
             assert(commentIdentifier == commentType.id);
+        }
+
+        @Override
+        public void setCharsetProvider(Supplier<Charset> provider) {
+            if (data instanceof HwmfCharsetAware) {
+                ((HwmfCharsetAware)data).setCharsetProvider(provider);
+            }
         }
     }
 
@@ -250,8 +259,9 @@ public class HemfComment {
      * Private data is unknown to EMF; it is meaningful only to applications that know the format of the
      * data and how to use it. EMR_COMMENT private data records MAY be ignored.
      */
-    public static class EmfCommentDataGeneric implements EmfCommentData {
+    public static class EmfCommentDataGeneric implements EmfCommentData, HwmfCharsetAware {
         private byte[] privateData;
+        private Supplier<Charset> charsetProvider = () -> LocaleUtil.CHARSET_1252;
 
         @Override
         public HemfCommentRecordType getCommentRecordType() {
@@ -275,7 +285,7 @@ public class HemfComment {
         }
 
         public String getPrivateDataAsString() {
-            return new String(privateData, LocaleUtil.CHARSET_1252);
+            return new String(privateData, charsetProvider.get());
         }
 
         @Override
@@ -284,6 +294,11 @@ public class HemfComment {
                 "privateData", this::getPrivateData,
                 "privateDataAsString", this::getPrivateDataAsString
             );
+        }
+
+        @Override
+        public void setCharsetProvider(Supplier<Charset> provider) {
+            charsetProvider = provider;
         }
     }
 

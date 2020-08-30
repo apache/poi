@@ -485,11 +485,14 @@ public class HwmfBitmapDib implements GenericRecord {
 
         if (foreground != null && background != null && headerBitCount == HwmfBitmapDib.BitCount.BI_BITCOUNT_1) {
             IndexColorModel cmOld = (IndexColorModel)bi.getColorModel();
-            int transPixel = hasAlpha ? (((cmOld.getRGB(0) & 0xFFFFFF) == 0) ? 0 : 1) : -1;
+            int fg = foreground.getRGB();
+            int bg = background.getRGB() & (hasAlpha ? 0xFFFFFF : 0xFFFFFFFF);
+            boolean ordered = (cmOld.getRGB(0) & 0xFFFFFF) == (bg & 0xFFFFFF);
+            int transPixel = ordered ? 0 : 1;
+            int[] cmap = ordered ? new int[]{ bg, fg } : new int[]{ fg, bg };
             int transferType = bi.getData().getTransferType();
-            int fg = foreground.getRGB(), bg = background.getRGB();
-            int[] cmap = { (transPixel == 0 ? bg : fg), (transPixel == 1 ? bg : fg) };
-            IndexColorModel cmNew = new IndexColorModel(1, cmap.length, cmap, 0, hasAlpha, transPixel, transferType);
+
+            IndexColorModel cmNew = new IndexColorModel(1, 2, cmap, 0, hasAlpha, transPixel, transferType);
             bi = new BufferedImage(cmNew, bi.getRaster(), false, null);
         }
 

@@ -206,6 +206,7 @@ public class HemfText {
             // the axis to convert from page space units to .01mm units.
             // This SHOULD be used only if the graphics mode specified by iGraphicsMode is GM_COMPATIBLE.
             Dimension2D scl = graphicsMode == EmfGraphicsMode.GM_COMPATIBLE ? scale : null;
+            ctx.setCharsetProvider(charsetProvider);
             ctx.drawString(rawTextBytes, stringLength, reference, scl, bounds, options, dx, isUnicode());
         }
 

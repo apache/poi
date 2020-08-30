@@ -17,10 +17,13 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import org.apache.commons.codec.Charsets;
-import org.apache.poi.POIDataSamples;
-import org.apache.poi.util.TempFile;
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNotSame;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -28,32 +31,35 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Random;
 
-import static org.junit.Assert.*;
+import org.apache.poi.POIDataSamples;
+import org.apache.poi.util.TempFile;
+import org.junit.Test;
 
 public class TestFileMagic {
     @Test
     public void testFileMagic() {
         assertEquals(FileMagic.XML, FileMagic.valueOf("XML"));
-        assertEquals(FileMagic.XML, FileMagic.valueOf("<?xml".getBytes(Charsets.UTF_8)));
+        assertEquals(FileMagic.XML, FileMagic.valueOf("<?xml".getBytes(StandardCharsets.UTF_8)));
 
         assertEquals(FileMagic.HTML, FileMagic.valueOf("HTML"));
-        assertEquals(FileMagic.HTML, FileMagic.valueOf("<!DOCTYP".getBytes(Charsets.UTF_8)));
-        assertEquals(FileMagic.HTML, FileMagic.valueOf("<!DOCTYPE".getBytes(Charsets.UTF_8)));
-        assertEquals(FileMagic.HTML, FileMagic.valueOf("<html".getBytes(Charsets.UTF_8)));
-        assertEquals(FileMagic.HTML, FileMagic.valueOf("\n\r<html".getBytes(Charsets.UTF_8)));
-        assertEquals(FileMagic.HTML, FileMagic.valueOf("\n<html".getBytes(Charsets.UTF_8)));
-        assertEquals(FileMagic.HTML, FileMagic.valueOf("\r\n<html".getBytes(Charsets.UTF_8)));
-        assertEquals(FileMagic.HTML, FileMagic.valueOf("\r<html".getBytes(Charsets.UTF_8)));
+        assertEquals(FileMagic.HTML, FileMagic.valueOf("<!DOCTYP".getBytes(StandardCharsets.UTF_8)));
+        assertEquals(FileMagic.HTML, FileMagic.valueOf("<!DOCTYPE".getBytes(StandardCharsets.UTF_8)));
+        assertEquals(FileMagic.HTML, FileMagic.valueOf("<html".getBytes(StandardCharsets.UTF_8)));
+        assertEquals(FileMagic.HTML, FileMagic.valueOf("\n\r<html".getBytes(StandardCharsets.UTF_8)));
+        assertEquals(FileMagic.HTML, FileMagic.valueOf("\n<html".getBytes(StandardCharsets.UTF_8)));
+        assertEquals(FileMagic.HTML, FileMagic.valueOf("\r\n<html".getBytes(StandardCharsets.UTF_8)));
+        assertEquals(FileMagic.HTML, FileMagic.valueOf("\r<html".getBytes(StandardCharsets.UTF_8)));
 
         assertEquals(FileMagic.JPEG, FileMagic.valueOf(new byte[]{ (byte)0xFF, (byte)0xD8, (byte)0xFF, (byte)0xDB }));
         assertEquals(FileMagic.JPEG, FileMagic.valueOf(new byte[]{ (byte)0xFF, (byte)0xD8, (byte)0xFF, (byte)0xE0, 'a', 'b', 'J', 'F', 'I', 'F', 0x00, 0x01 }));
         assertEquals(FileMagic.JPEG, FileMagic.valueOf(new byte[]{ (byte)0xFF, (byte)0xD8, (byte)0xFF, (byte)0xEE }));
         assertEquals(FileMagic.JPEG, FileMagic.valueOf(new byte[]{ (byte)0xFF, (byte)0xD8, (byte)0xFF, (byte)0xE1, 'd', 'c', 'E', 'x', 'i', 'f', 0x00, 0x00 }));
 
-        assertEquals(FileMagic.UNKNOWN, FileMagic.valueOf("something".getBytes(Charsets.UTF_8)));
+        assertEquals(FileMagic.UNKNOWN, FileMagic.valueOf("something".getBytes(StandardCharsets.UTF_8)));
         assertEquals(FileMagic.UNKNOWN, FileMagic.valueOf(new byte[0]));
 
         try {

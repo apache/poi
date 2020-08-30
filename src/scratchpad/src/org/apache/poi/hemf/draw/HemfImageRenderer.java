@@ -28,12 +28,14 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.hemf.usermodel.HemfPicture;
 import org.apache.poi.hwmf.draw.HwmfGraphicsState;
 import org.apache.poi.hwmf.draw.HwmfImageRenderer;
 import org.apache.poi.sl.draw.BitmapImageRenderer;
+import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.draw.EmbeddedExtractor;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.poi.sl.usermodel.PictureData;
@@ -43,6 +45,7 @@ import org.apache.poi.util.Units;
 public class HemfImageRenderer implements ImageRenderer, EmbeddedExtractor {
     HemfPicture image;
     double alpha;
+    boolean charsetInitialized = false;
 
     @Override
     public boolean canRender(String contentType) {
@@ -104,6 +107,11 @@ public class HemfImageRenderer implements ImageRenderer, EmbeddedExtractor {
             return false;
         }
 
+        Charset cs = (Charset)graphics.getRenderingHint(Drawable.DEFAULT_CHARSET);
+        if (cs != null && !charsetInitialized) {
+            setDefaultCharset(cs);
+        }
+
         HwmfGraphicsState graphicsState = new HwmfGraphicsState();
         graphicsState.backup(graphics);
 
@@ -140,5 +148,11 @@ public class HemfImageRenderer implements ImageRenderer, EmbeddedExtractor {
     @Override
     public Rectangle2D getBounds() {
         return Units.pointsToPixel(image == null ? new Rectangle2D.Double() : image.getBoundsInPoints());
+    }
+
+    @Override
+    public void setDefaultCharset(Charset defaultCharset) {
+        image.setDefaultCharset(defaultCharset);
+        charsetInitialized = true;
     }
 }

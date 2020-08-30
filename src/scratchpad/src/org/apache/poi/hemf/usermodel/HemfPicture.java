@@ -26,6 +26,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Dimension2D;
 import java.awt.geom.Rectangle2D;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -41,10 +42,12 @@ import org.apache.poi.hemf.record.emf.HemfHeader;
 import org.apache.poi.hemf.record.emf.HemfRecord;
 import org.apache.poi.hemf.record.emf.HemfRecordIterator;
 import org.apache.poi.hemf.record.emf.HemfWindowing;
+import org.apache.poi.hwmf.usermodel.HwmfCharsetAware;
 import org.apache.poi.hwmf.usermodel.HwmfEmbedded;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInputStream;
+import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.Units;
 
 /**
@@ -55,6 +58,7 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
     private final LittleEndianInputStream stream;
     private final List<HemfRecord> records = new ArrayList<>();
     private boolean isParsed = false;
+    private Charset defaultCharset = LocaleUtil.CHARSET_1252;
 
     public HemfPicture(InputStream is) {
         this(new LittleEndianInputStream(is));
@@ -79,6 +83,9 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
                     header[0] = (HemfHeader) r;
                 }
                 r.setHeader(header[0]);
+                if (r instanceof HwmfCharsetAware) {
+                    ((HwmfCharsetAware)r).setCharsetProvider(this::getDefaultCharset);
+                }
                 records.add(r);
             });
         }
@@ -198,5 +205,13 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
     @Override
     public Map<String, Supplier<?>> getGenericProperties() {
         return null;
+    }
+
+    public void setDefaultCharset(Charset defaultCharset) {
+        this.defaultCharset = defaultCharset;
+    }
+
+    public Charset getDefaultCharset() {
+        return defaultCharset;
     }
 }

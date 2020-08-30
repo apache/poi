@@ -25,6 +25,7 @@ import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.util.Collections;
 import java.util.Set;
 
@@ -64,4 +65,6 @@ abstract class MFProxy implements Closeable {
     abstract GenericRecord getRoot();
 
     abstract Iterable<EmbeddedPart> getEmbeddings(int slideNo);
+
+    abstract void setDefaultCharset(Charset charset);
 }
