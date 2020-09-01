@@ -91,9 +91,9 @@ public class SharedStringsTable extends POIXMLDocumentPart implements SharedStri
 
     private static final XmlOptions options = new XmlOptions();
     static {
-        options.put( XmlOptions.SAVE_INNER );
-        options.put( XmlOptions.SAVE_AGGRESSIVE_NAMESPACES );
-        options.put( XmlOptions.SAVE_USE_DEFAULT_NAMESPACE );
+        options.setSaveInner();
+        options.setSaveAggressiveNamespaces();
+        options.setUseDefaultNamespace(true);
         options.setSaveImplicitNamespaces(Collections.singletonMap("", NS_SPREADSHEETML));
     }
 
