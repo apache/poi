@@ -17,6 +17,7 @@
 
 package org.apache.poi.xwpf.usermodel;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -139,6 +140,20 @@ public class TestXWPFTableRow {
             isCantSplit = tr.isCantSplitRow();
             assertTrue(isCantSplit);
         }
+    }
+
+    @Test
+    public void testRemoveCell() throws IOException {
+        XWPFDocument doc = new XWPFDocument();
+        XWPFTableRow tr = doc.createTable(1, 1).createRow();
+
+        assertEquals(1, tr.getTableCells().size());
+        assertEquals(tr.getTableCells().size(), tr.getCtRow().sizeOfTcArray());
+
+        tr.removeCell(0);
+        assertEquals(0, tr.getTableCells().size());
+        assertEquals(tr.getTableCells().size(), tr.getCtRow().sizeOfTcArray());
+        doc.close();
     }
 
     @Test

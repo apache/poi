@@ -74,6 +74,7 @@ public class XWPFTableRow {
     public void removeCell(int pos) {
         if (pos >= 0 && pos < ctRow.sizeOfTcArray()) {
             tableCells.remove(pos);
+            ctRow.removeTc(pos);
         }
     }
 
