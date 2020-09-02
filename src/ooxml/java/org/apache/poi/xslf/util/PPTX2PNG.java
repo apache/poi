@@ -75,7 +75,7 @@ public final class PPTX2PNG {
             "                      some files (usually wmf) don't have a header, i.e. an identifiable file magic\n" +
             "    -textAsShapes     text elements are saved as shapes in SVG, necessary for variable spacing\n" +
             "                      often found in math formulas\n" +
-            "    -charset          sets the default charset to be used, defaults to Windows-1252";
+            "    -charset <cs>     sets the default charset to be used, defaults to Windows-1252";
 
         System.out.println(msg);
         // no System.exit here, as we also run in junit tests!
