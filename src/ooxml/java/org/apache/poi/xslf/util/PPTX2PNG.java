@@ -213,7 +213,7 @@ public final class PPTX2PNG {
                 usage("When reading from STDIN, you need to specify an outdir.");
                 return false;
             } else {
-                outdir = file.getParentFile();
+                outdir = file.getAbsoluteFile().getParentFile();
             }
         }
         if (!outdir.exists()) {
