@@ -116,7 +116,7 @@ public final class PPTX2PNG {
 
         for (int i = 0; i < args.length; i++) {
             String opt = (i+1 < args.length) ? args[i+1] : null;
-            switch (args[i]) {
+            switch (args[i].toLowerCase(Locale.ROOT)) {
                 case "-scale":
                     if (opt != null) {
                         scale = Float.parseFloat(opt);
@@ -164,7 +164,7 @@ public final class PPTX2PNG {
                         fixSide = "long";
                     }
                     break;
-                case "-inputType":
+                case "-inputtype":
                     if (opt != null) {
                         defaultFileType = FileMagic.valueOf(opt);
                         i++;
@@ -172,13 +172,13 @@ public final class PPTX2PNG {
                         defaultFileType = FileMagic.OLE2;
                     }
                     break;
-                case "-textAsShapes":
+                case "-textasshapes":
                     textAsShapes = true;
                     break;
-                case "-ignoreParse":
+                case "-ignoreparse":
                     ignoreParse = true;
                     break;
-                case "-extractEmbedded":
+                case "-extractembedded":
                     extractEmbedded = true;
                     break;
                 case "-charset":

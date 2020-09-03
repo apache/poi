@@ -2076,11 +2076,15 @@ under the License.
                 <globmapper from="*" to="${zipdir}/lib/*"/>
             </mappedresources>
             <mappedresources cache="true">
-                <fileset dir="${ooxml.lib}" includes="xmlbeans-*.jar,curvesapi-*.jar,commons-compress*.jar"/>
+                <fileset dir="${ooxml.lib}"/>
                 <regexpmapper from="^(.*\.jar)$$" to="${zipdir}/ooxml-lib/\1"/>
             </mappedresources>
             <mappedresources cache="true">
-                <fileset dir="${dist.dir}/maven" includes="**/*.jar" excludes="**/*-javadoc.jar,**/*-sources.jar"/>
+                <fileset dir="${ooxml-provided.lib}"/>
+                <regexpmapper from="^(.*\.jar)$$" to="${zipdir}/auxiliary/\1"/>
+            </mappedresources>
+            <mappedresources cache="true">
+                <fileset dir="${dist.dir}/maven" includes="**/*.jar" excludes="**/*-javadoc.jar,**/*-sources.jar,**/*-tests.jar"/>
                 <chainedmapper>
                     <flattenmapper/>
                     <globmapper from="*" to="${zipdir}/*"/>
