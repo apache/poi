@@ -18,9 +18,9 @@
 /* ====================================================================
    This product contains an ASLv2 licensed version of the OOXML signer
    package from the eID Applet project
-   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt  
+   http://code.google.com/p/eid-applet/source/browse/trunk/README.txt
    Copyright (C) 2008-2014 FedICT.
-   ================================================================= */ 
+   ================================================================= */
 
 package org.apache.poi.poifs.crypt.dsig;
 
@@ -49,7 +49,7 @@ public class KeyInfoKeySelector extends KeySelector implements KeySelectorResult
 
     private static final POILogger LOG = POILogFactory.getLogger(KeyInfoKeySelector.class);
 
-    private List<X509Certificate> certChain = new ArrayList<>();
+    private final List<X509Certificate> certChain = new ArrayList<>();
 
     @SuppressWarnings("unchecked")
     @Override
@@ -89,14 +89,14 @@ public class KeyInfoKeySelector extends KeySelector implements KeySelectorResult
     /**
      * Gives back the X509 certificate used during the last signature
      * verification operation.
-     * 
+     *
      * @return the certificate which was used to sign the xml content
      */
     public X509Certificate getSigner() {
         // The first certificate is presumably the signer.
         return certChain.isEmpty() ? null : certChain.get(0);
     }
-    
+
     public List<X509Certificate> getCertChain() {
         return certChain;
     }

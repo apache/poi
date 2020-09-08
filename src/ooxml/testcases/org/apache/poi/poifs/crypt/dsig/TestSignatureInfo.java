@@ -652,6 +652,8 @@ public class TestSignatureInfo {
 
     @Test
     public void testCertChain() throws Exception {
+        final boolean isIBM = System.getProperty("java.vendor").contains("IBM");
+
         KeyStore keystore = KeyStore.getInstance("PKCS12");
         String password = "test";
         try (InputStream is = testdata.openResourceAsStream("chaintest.pfx")) {
@@ -688,7 +690,10 @@ public class TestSignatureInfo {
                 X509Certificate signer = sp.getSigner();
                 assertNotNull("signer undefined?!", signer);
                 List<X509Certificate> certChainRes = sp.getCertChain();
-                assertEquals(3, certChainRes.size());
+
+                // IBM JDK is still buggy, even after fix for APAR IJ21985
+                int exp = isIBM ? 1 : 3;
+                assertEquals(exp, certChainRes.size());
             }
 
         }
