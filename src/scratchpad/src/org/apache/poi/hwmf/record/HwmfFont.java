@@ -18,6 +18,7 @@
 package org.apache.poi.hwmf.record;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -220,39 +221,39 @@ public class HwmfFont implements FontInfo, GenericRecord {
          * Specifies that the character quality of the font does not matter, so DRAFT_QUALITY can be used.
          */
         DEFAULT_QUALITY (0x00),
-        
+
         /**
          * Specifies that the character quality of the font is less important than the
          * matching of logical attribuetes. For rasterized fonts, scaling SHOULD be enabled, which
          * means that more font sizes are available.
          */
         DRAFT_QUALITY (0x01),
-        
+
         /**
          * Specifies that the character quality of the font is more important than the
          * matching of logical attributes. For rasterized fonts, scaling SHOULD be disabled, and the font
          * closest in size SHOULD be chosen.
          */
         PROOF_QUALITY (0x02),
-        
+
         /**
          * Specifies that anti-aliasing SHOULD NOT be used when rendering text.
          */
         NONANTIALIASED_QUALITY (0x03),
-        
+
         /**
          * Specifies that anti-aliasing SHOULD be used when rendering text, if the font supports it.
          */
         ANTIALIASED_QUALITY (0x04),
-        
+
         /**
          * Specifies that ClearType anti-aliasing SHOULD be used when rendering text, if the font supports it.
-         * 
+         *
          * Fonts that do not support ClearType anti-aliasing include type 1 fonts, PostScript fonts,
          * OpenType fonts without TrueType outlines, rasterized fonts, vector fonts, and device fonts.
          */
         CLEARTYPE_QUALITY (0x05);
-        
+
         int flag;
         WmfFontQuality(int flag) {
             this.flag = flag;
@@ -267,7 +268,7 @@ public class HwmfFont implements FontInfo, GenericRecord {
             return null;
         }
     }
-    
+
 
     /**
      * A 16-bit signed integer that specifies the height, in logical units, of the font's
@@ -373,14 +374,14 @@ public class HwmfFont implements FontInfo, GenericRecord {
      * specifying fonts when the exact typeface wanted is not available.
      */
     protected int pitchAndFamily;
-    
+
     /**
      * Font families specify the look of fonts in a general way and are
      * intended for specifying fonts when the exact typeface wanted is not available.
      * (LSB 4 bits)
      */
     protected FontFamily family;
-    
+
     /**
      * A property of a font that describes the pitch (MSB 2 bits)
      */
@@ -409,7 +410,7 @@ public class HwmfFont implements FontInfo, GenericRecord {
         pitchAndFamily = leis.readUByte();
 
         StringBuilder sb = new StringBuilder();
-        int readBytes = readString(leis, sb, 32);
+        int readBytes = readString(leis, sb, 32, charSet.getCharset());
         if (readBytes == -1) {
             throw new IOException("Font facename can't be determined.");
         }
@@ -506,7 +507,11 @@ public class HwmfFont implements FontInfo, GenericRecord {
         return GenericRecordJsonWriter.marshal(this);
     }
 
-    protected int readString(LittleEndianInputStream leis, StringBuilder sb, int limit) throws IOException {
+    protected int readString(LittleEndianInputStream leis, StringBuilder sb, int limit) {
+        return readString(leis, sb, limit, StandardCharsets.ISO_8859_1);
+    }
+
+    protected int readString(LittleEndianInputStream leis, StringBuilder sb, int limit, Charset charset) {
         byte[] buf = new byte[limit];
         byte b;
         byte readBytes = 0;
@@ -518,7 +523,7 @@ public class HwmfFont implements FontInfo, GenericRecord {
             buf[readBytes++] = b = leis.readByte();
         } while (b != 0 && b != -1 && readBytes <= limit);
 
-        sb.append(new String(buf, 0, readBytes-1, StandardCharsets.ISO_8859_1));
+        sb.append(new String(buf, 0, readBytes-1, charset == null ? StandardCharsets.ISO_8859_1 : charset));
 
         return readBytes;
     }
