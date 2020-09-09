@@ -127,7 +127,7 @@ subprojects {
         exclude '**/BaseTestCellUtil.class'
         exclude '**/TestUnfixedBugs.class'
         exclude '**/TestOneFile.class'
-include '**/TestUnicodeString.class'
+
         // Exclude Test Suites
         exclude '**/All*Tests.class'
         exclude '**/HSSFTests.class'
