@@ -58,6 +58,7 @@ public class ExtRst implements Comparable<ExtRst>, GenericRecord {
     }
 
     protected ExtRst(ExtRst other) {
+        this();
         reserved = other.reserved;
         formattingFontIndex = other.formattingFontIndex;
         formattingOptions = other.formattingOptions;

@@ -367,6 +367,60 @@ public final class TestUnicodeString {
         wb.close();
     }
 
+    @Test
+    public void copyExtRst() {
+        ExtRst ext = new ExtRst();
+
+        assertEquals(0, ext.getNumberOfRuns());
+        assertEquals(0, ext.getFormattingFontIndex());
+        assertEquals(0, ext.getFormattingOptions());
+        assertEquals("", ext.getPhoneticText());
+        assertEquals(0, ext.getPhRuns().length);
+        assertEquals(10, ext.getDataSize()); // Excludes 4 byte header
+
+        ExtRst copied = ext.copy();
+
+        assertEquals(0, copied.getNumberOfRuns());
+        assertEquals(0, copied.getFormattingFontIndex());
+        assertEquals(0, copied.getFormattingOptions());
+        assertEquals("", copied.getPhoneticText());
+        assertEquals(0, copied.getPhRuns().length);
+        assertEquals(10, copied.getDataSize());
+    }
+
+    @Test
+    public void copyExtRstFromData() {
+        byte[] data = new byte[]{
+                1, 0, 0x0C, 0,
+                0, 0, 0x37, 0,
+                0, 0,
+                0, 0, 0, 0,
+                0, 0 // Cruft at the end, as found from real files
+        };
+        assertEquals(16, data.length);
+
+        LittleEndianInputStream inp = new LittleEndianInputStream(
+                new ByteArrayInputStream(data)
+        );
+        ExtRst ext = new ExtRst(inp, data.length);
+        assertEquals(0x0c, ext.getDataSize()); // Excludes 4 byte header
+
+        assertEquals(0, ext.getNumberOfRuns());
+        assertEquals(0x37, ext.getFormattingOptions());
+        assertEquals(0, ext.getFormattingFontIndex());
+        assertEquals("", ext.getPhoneticText());
+        assertEquals(0, ext.getPhRuns().length);
+
+        ExtRst copied = ext.copy();
+        assertEquals(10, copied.getDataSize()); // Excludes 4 byte header
+
+        assertEquals(0, copied.getNumberOfRuns());
+        assertEquals(0x37, copied.getFormattingOptions());
+        assertEquals(0, copied.getFormattingFontIndex());
+        assertEquals("", copied.getPhoneticText());
+        assertEquals(0, copied.getPhRuns().length);
+    }
+
     private static UnicodeString makeUnicodeString(String s) {
         UnicodeString st = new UnicodeString(s);
         st.setOptionFlags((byte)0);
