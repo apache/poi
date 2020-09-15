@@ -31,6 +31,7 @@ import java.awt.Shape;
 import java.awt.TexturePaint;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
+import java.awt.font.LineBreakMeasurer;
 import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.awt.geom.AffineTransform;
@@ -475,6 +476,9 @@ public class HwmfGraphics implements HwmfCharsetAware {
 
         calculateDx(textString, dx, font, fontInfo, frc, as);
 
+        LineBreakMeasurer lbm = new LineBreakMeasurer(as.getIterator(), frc);
+        TextLayout textLayout = lbm.nextLayout(Integer.MAX_VALUE);
+
         final double angle = Math.toRadians(-font.getEscapement()/10.);
 
         final Point2D dst = getRotatedOffset(angle, frc, as);
@@ -494,6 +498,19 @@ public class HwmfGraphics implements HwmfCharsetAware {
             graphicsCtx.translate(dst.getX(), dst.getY());
             graphicsCtx.setColor(prop.getTextColor().getColor());
             graphicsCtx.drawString(as.getIterator(), 0, 0);
+
+            // move current location to the end of string
+            AffineTransform atRev = new AffineTransform();
+            atRev.translate(-dst.getX(), -dst.getY());
+            if (scale != null) {
+                atRev.scale(scale.getWidth() < 0 ? 1 : -1, scale.getHeight() < 0 ? 1 : -1);
+            }
+            atRev.rotate(-angle);
+
+            Point2D deltaX = new Point2D.Double(textLayout.getBounds().getWidth(), 0);
+            Point2D oldLoc = prop.getLocation();
+            prop.setLocation(oldLoc.getX() + deltaX.getX(), oldLoc.getY() + deltaX.getY());
+
         } finally {
             graphicsCtx.setTransform(at);
             graphicsCtx.setClip(clipShape);
