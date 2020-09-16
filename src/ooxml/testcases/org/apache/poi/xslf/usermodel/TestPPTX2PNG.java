@@ -51,7 +51,8 @@ public class TestPPTX2PNG {
     private static final String files =
         "bug64693.pptx, 53446.ppt, alterman_security.ppt, alterman_security.pptx, KEY02.pptx, themes.pptx, " +
         "backgrounds.pptx, layouts.pptx, sample.pptx, shapes.pptx, 54880_chinese.ppt, keyframes.pptx," +
-        "customGeo.pptx, customGeo.ppt, wrench.emf, santa.wmf, missing-moveto.ppt";
+        "customGeo.pptx, customGeo.ppt, wrench.emf, santa.wmf, missing-moveto.ppt, " +
+        "64716_image1.wmf, 64716_image2.wmf, 64716_image3.wmf";
 
     @BeforeClass
     public static void checkHslf() {
