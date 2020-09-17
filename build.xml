@@ -779,14 +779,12 @@ under the License.
                  classname="org.apache.xmlbeans.impl.tool.XMLBean"
                  classpath="${ooxml.xmlbeans.jar}"/>
 
-        <!-- javasource > 1.5 will not generate all array accessor -->
         <xmlbean
             schema="${xmlbean.xsds.dir}"
             srcgendir="${xmlbean.sources.dir}"
             classgendir="${xmlbean.classes.dir}"
             destfile="${xmlbean.xsds.dir}.jar"
             srconly="true"
-            javasource="1.5"
             failonerror="true"
             fork="true"
             memoryMaximumSize="${ooxml.memory}"
