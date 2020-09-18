@@ -80,6 +80,7 @@
                             org.apache.xml.resolver.*;resolution:=optional,
                             org.apache.xml.security.*;resolution:=optional,
                             org.bouncycastle.*;resolution:=optional,
+                            org.apache.commons.logging.*;resolution:=optional,
                             !com.github.luben.zstd.*,
                             !org.tukaani.xz.*,
                             !org.brotli.dec.*,
