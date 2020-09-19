@@ -362,46 +362,42 @@ public final class PPTX2PNG {
         }
     }
 
+    private interface ProxyConsumer {
+        void parse(MFProxy proxy) throws IOException;
+    }
+
     @SuppressWarnings({"resource", "squid:S2095"})
     private MFProxy initProxy(File file) throws IOException {
         MFProxy proxy;
         final String fileName = file.getName().toLowerCase(Locale.ROOT);
+        FileMagic fm;
+        ProxyConsumer con;
         if ("stdin".equals(fileName)) {
             InputStream bis = FileMagic.prepareToCheckMagic(System.in);
-            FileMagic fm = FileMagic.valueOf(bis);
-            if (fm == FileMagic.UNKNOWN) {
-                fm = defaultFileType;
-            }
-            switch (fm) {
-                case EMF:
-                    proxy = new EMFHandler();
-                    break;
-                case WMF:
-                    proxy = new WMFHandler();
-                    break;
-                default:
-                    proxy = new PPTHandler();
-                    break;
-            }
-            proxy.setIgnoreParse(ignoreParse);
-            proxy.setQuite(quiet);
-            proxy.parse(bis);
+            fm = FileMagic.valueOf(bis);
+            con = (p) -> p.parse(bis);
         } else {
-            switch (fileName.contains(".") ? fileName.substring(fileName.lastIndexOf('.')) : "") {
-                case ".emf":
-                    proxy = new EMFHandler();
-                    break;
-                case ".wmf":
-                    proxy = new WMFHandler();
-                    break;
-                default:
-                    proxy = new PPTHandler();
-                    break;
-            }
-            proxy.setIgnoreParse(ignoreParse);
-            proxy.setQuite(quiet);
-            proxy.parse(file);
+            fm = FileMagic.valueOf(file);
+            con = (p) -> p.parse(file);
         }
+
+        if (fm == FileMagic.UNKNOWN) {
+            fm = defaultFileType;
+        }
+        switch (fm) {
+            case EMF:
+                proxy = new EMFHandler();
+                break;
+            case WMF:
+                proxy = new WMFHandler();
+                break;
+            default:
+                proxy = new PPTHandler();
+                break;
+        }
+        proxy.setIgnoreParse(ignoreParse);
+        proxy.setQuite(quiet);
+        con.parse(proxy);
         proxy.setDefaultCharset(charset);
 
         return proxy;
