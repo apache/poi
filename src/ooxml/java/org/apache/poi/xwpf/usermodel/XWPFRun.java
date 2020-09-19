@@ -31,8 +31,8 @@ import java.util.List;
 import javax.xml.namespace.QName;
 
 import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ooxml.util.DocumentHelper;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
@@ -465,7 +465,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     /**
      * Set the underline color for the run's underline, if any.
      *
-     * @param color An RGB color value (e.g, "a0C6F3") or "auto". 
+     * @param color An RGB color value (e.g, "a0C6F3") or "auto".
      * @since 4.0.0
      */
     public void setUnderlineColor(String color) {
@@ -473,7 +473,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         SimpleValue svColor = null;
         if (color.equals("auto")) {
             STHexColorAuto hexColor = STHexColorAuto.Factory.newInstance();
-            hexColor.set(STHexColorAuto.Enum.forString(color));
+            hexColor.setEnumValue(STHexColorAuto.Enum.forString(color));
             svColor = (SimpleValue) hexColor;
         } else {
             STHexColorRGB rgbColor = STHexColorRGB.Factory.newInstance();
@@ -482,11 +482,11 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         }
         underline.setColor(svColor);
     }
-    
+
     /**
      * Set the underline theme color for the run's underline, if any.
      *
-     * @param themeColor A theme color name (see {@link STThemeColor.Enum}). 
+     * @param themeColor A theme color name (see {@link STThemeColor.Enum}).
      * @since 4.0.0
      */
     public void setUnderlineThemeColor(String themeColor) {
@@ -496,7 +496,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             underline.setThemeColor(val);
         }
     }
-    
+
     /**
      * Get the underline theme color for the run's underline, if any.
      *
@@ -511,7 +511,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         }
         return color;
     }
-    
+
     /**
      * Get the underline color for the run's underline, if any.
      *
@@ -532,7 +532,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         }
         return colorName;
     }
-    
+
     /**
      * Specifies that the contents of this run shall be displayed with a single
      * horizontal line through the center of the line.
@@ -1248,7 +1248,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public List<XWPFPicture> getEmbeddedPictures() {
         return pictures;
     }
-    
+
     /**
      * Set the style ID for the run.
      *
@@ -1283,7 +1283,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
         return style.getVal();
     }
-    
+
 
     /**
      * Returns the string version of the text and the phonetic string
@@ -1461,7 +1461,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public void setTextScale(int percentage) {
         CTRPr pr = getRunProperties(true);
         CTTextScale scale = pr.isSetW() ? pr.getW() : pr.addNewW();
-        scale.setVal(percentage);        
+        scale.setVal(percentage);
     }
 
     /**
@@ -1491,14 +1491,14 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         CTHighlight highlight = pr.isSetHighlight() ? pr.getHighlight() : pr.addNewHighlight();
         STHighlightColor color = highlight.xgetVal();
         if (color == null) {
-            color = STHighlightColor.Factory.newInstance();            
+            color = STHighlightColor.Factory.newInstance();
         }
         STHighlightColor.Enum val = STHighlightColor.Enum.forString(colorName);
         if (val != null) {
             color.setStringValue(val.toString());
             highlight.xsetVal(color);
         }
-         
+
     }
 
     /**
@@ -1513,9 +1513,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         STHighlightColor color = highlight.xgetVal();
         if (color == null) {
             color = STHighlightColor.Factory.newInstance();
-            color.set(STHighlightColor.NONE);
+            color.setEnumValue(STHighlightColor.NONE);
         }
-        return (STHighlightColor.Enum)(color.enumValue());
+        return (STHighlightColor.Enum)(color.getEnumValue());
     }
 
     /**
@@ -1530,7 +1530,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     }
 
     /**
-     * The vanish (hidden text) property for the run. 
+     * The vanish (hidden text) property for the run.
      *
      * @param value Set to true to make the run hidden text.
      * @since 4.0.0
@@ -1568,15 +1568,15 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         CTVerticalAlignRun vertAlign = pr.isSetVertAlign() ? pr.getVertAlign() : pr.addNewVertAlign();
         STVerticalAlignRun align = vertAlign.xgetVal();
         if (align == null) {
-            align = STVerticalAlignRun.Factory.newInstance();            
+            align = STVerticalAlignRun.Factory.newInstance();
         }
         STVerticalAlignRun.Enum val = STVerticalAlignRun.Enum.forString(verticalAlignment);
         if (val != null) {
             align.setStringValue(val.toString());
             vertAlign.xsetVal(align);
         }
-        
-        
+
+
     }
 
     /**
@@ -1588,7 +1588,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public STEm.Enum getEmphasisMark() {
         CTRPr pr = getRunProperties(true);
         CTEm emphasis = pr.isSetEm() ? pr.getEm() : pr.addNewEm();
-        
+
         STEm.Enum val = emphasis.getVal();
         if (val == null) {
             val = STEm.NONE;
@@ -1608,7 +1608,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         CTEm emphasisMark = pr.isSetEm() ? pr.getEm() : pr.addNewEm();
         STEm mark = emphasisMark.xgetVal();
         if (mark == null) {
-            mark = STEm.Factory.newInstance();            
+            mark = STEm.Factory.newInstance();
         }
         STEm.Enum val = STEm.Enum.forString(markType);
         if (val != null) {
@@ -1616,9 +1616,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             emphasisMark.xsetVal(mark);
         }
 
-        
+
     }
-    
+
     /**
      * Get the run properties for the run.
      *
