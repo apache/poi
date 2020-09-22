@@ -50,6 +50,9 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Bundle-Activator>
+                            org.apache.poi.osgi.Activator
+                        </Bundle-Activator>
                         <Export-Package>
                             org.apache.poi.*,
                             org.openxmlformats.schemas.*,

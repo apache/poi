@@ -17,12 +17,44 @@
 
 package org.apache.poi.osgi;
 
+import org.apache.poi.extractor.ExtractorFactory;
+import org.apache.poi.extractor.MainExtractorFactory;
+import org.apache.poi.extractor.ole2.OLE2ScratchpadExtractorFactory;
+import org.apache.poi.hslf.usermodel.HSLFSlideShowFactory;
+import org.apache.poi.hssf.usermodel.HSSFWorkbookFactory;
+import org.apache.poi.ooxml.extractor.POIXMLExtractorFactory;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
+import org.apache.poi.xslf.usermodel.XSLFSlideShowFactory;
+import org.apache.poi.xssf.usermodel.XSSFWorkbookFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 public class Activator implements BundleActivator {
-    public void start(BundleContext context) throws Exception {
+
+    @Override
+    public void start(BundleContext context) {
+        WorkbookFactory.addProvider(new HSSFWorkbookFactory());
+        WorkbookFactory.addProvider(new XSSFWorkbookFactory());
+
+        SlideShowFactory.addProvider(new HSLFSlideShowFactory());
+        SlideShowFactory.addProvider(new XSLFSlideShowFactory());
+
+        ExtractorFactory.addProvider(new OLE2ScratchpadExtractorFactory());
+        ExtractorFactory.addProvider(new POIXMLExtractorFactory());
+        ExtractorFactory.addProvider(new MainExtractorFactory());
     }
-    public void stop(BundleContext context) throws Exception {
+
+    @Override
+    public void stop(BundleContext context) {
+        WorkbookFactory.removeProvider(HSSFWorkbookFactory.class);
+        WorkbookFactory.removeProvider(XSSFWorkbookFactory.class);
+
+        SlideShowFactory.removeProvider(HSLFSlideShowFactory.class);
+        SlideShowFactory.removeProvider(XSLFSlideShowFactory.class);
+
+        ExtractorFactory.removeProvider(OLE2ScratchpadExtractorFactory.class);
+        ExtractorFactory.removeProvider(POIXMLExtractorFactory.class);
+        ExtractorFactory.removeProvider(MainExtractorFactory.class);
     }
 }

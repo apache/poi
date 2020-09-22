@@ -298,4 +298,12 @@ public final class WorkbookFactory {
         throw new IOException("Your InputStream was neither an OLE2 stream, nor an OOXML stream " +
             "or you haven't provide the poi-ooxml*.jar in the classpath/modulepath - FileMagic: "+fm);
     }
+
+    public static void addProvider(WorkbookProvider provider){
+        Singleton.INSTANCE.provider.add(provider);
+    }
+
+    public static void removeProvider(Class<? extends WorkbookProvider> provider){
+        Singleton.INSTANCE.provider.removeIf(p -> p.getClass().getName().equals(provider.getName()));
+    }
 }

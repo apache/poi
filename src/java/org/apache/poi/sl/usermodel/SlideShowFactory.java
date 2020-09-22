@@ -292,4 +292,12 @@ public final class SlideShowFactory {
         throw new IOException("Your InputStream was neither an OLE2 stream, nor an OOXML stream " +
                                       "or you haven't provide the poi-ooxml*.jar in the classpath/modulepath - FileMagic: "+fm);
     }
+
+    public static void addProvider(SlideShowProvider<?,?> provider){
+        Singleton.INSTANCE.provider.add(provider);
+    }
+
+    public static void removeProvider(Class<? extends SlideShowProvider> provider){
+        Singleton.INSTANCE.provider.removeIf(p -> p.getClass().getName().equals(provider.getName()));
+    }
 }

@@ -17,85 +17,47 @@
 
 package org.apache.poi.osgi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.ops4j.pax.exam.CoreOptions.bundle;
-import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.options;
-
-import javax.inject.Inject;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.lang.invoke.MethodHandles;
-import java.util.Arrays;
-
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
-import org.osgi.framework.BundleContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.ops4j.pax.exam.spi.reactors.PerClass;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+
+import static org.junit.Assert.assertEquals;
 
 /**
  * Test to ensure that all our main formats can create, write
- *  and read back in, when running under OSGi
+ * and read back in, when running under OSGi
  */
 @RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
-public class OSGiSpreadsheetIT {
-    private final static Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+@ExamReactorStrategy(PerClass.class)
+public class OSGiSpreadsheetIT extends BaseOSGiTestCase {
 
-    public static final String POI_BUNDLE_SYMBOLIC_NAME = "org.apache.poi.bundle";
-
-    @Inject
-    private BundleContext bc;
-
-    @Configuration
-    public Option[] configuration() throws IOException {
-        String bundlePath = System.getProperty("bundle.filename");
-        return options(
-                junitBundles(),
-                bundle(new File(bundlePath).toURI().toURL().toString()));
-    }
-
-    @Test
-    public void testBundleLoaded()  {
-        boolean hasBundle = Arrays.stream(bc.getBundles()).anyMatch(b ->
-                POI_BUNDLE_SYMBOLIC_NAME.equals(b.getSymbolicName()));
-        assertTrue(POI_BUNDLE_SYMBOLIC_NAME + " not found", hasBundle);
-    }
 
     // create a workbook, validate and write back
     void testWorkbook(Workbook wb) throws Exception {
-        logger.info("testing " + wb.getClass().getSimpleName());
-
         Sheet s = wb.createSheet("OSGi");
         s.createRow(0).createCell(0).setCellValue("With OSGi");
+        s.createRow(1).createCell(0).setCellFormula("SUM(A1:B3)");
 
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         wb.write(baos);
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
 
-        if(wb instanceof HSSFWorkbook)
-            wb = new HSSFWorkbook(bais);
-        else
-            wb = new XSSFWorkbook(bais);
+        wb = WorkbookFactory.create(bais);
         assertEquals(1, wb.getNumberOfSheets());
 
         s = wb.getSheet("OSGi");
         assertEquals("With OSGi", s.getRow(0).getCell(0).toString());
+        assertEquals("SUM(A1:B3)", s.getRow(1).getCell(0).toString());
 
 
     }
@@ -112,6 +74,12 @@ public class OSGiSpreadsheetIT {
 
     @Test
     public void testSXSSF() throws Exception {
-        testWorkbook(new SXSSFWorkbook());
+        testWorkbook(new XSSFWorkbook());
     }
+
+    @Test
+    public void testFormulaEvaluation() throws Exception {
+        testWorkbook(new XSSFWorkbook());
+    }
+
 }

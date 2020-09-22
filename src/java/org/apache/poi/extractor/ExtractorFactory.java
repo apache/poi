@@ -309,4 +309,11 @@ public final class ExtractorFactory {
             "or you haven't provide the poi-ooxml*.jar and/or poi-scratchpad*.jar in the classpath/modulepath - FileMagic: "+fm);
     }
 
+    public static void addProvider(ExtractorProvider provider){
+        Singleton.INSTANCE.provider.add(provider);
+    }
+
+    public static void removeProvider(Class<? extends ExtractorProvider> provider){
+        Singleton.INSTANCE.provider.removeIf(p -> p.getClass().getName().equals(provider.getName()));
+    }
 }
