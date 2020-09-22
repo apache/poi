@@ -91,12 +91,16 @@ under the License.
     <!-- issue warnings if source code contains unmappable characters for encoding ASCII  -->
     <property name="java.source.encoding" value="UTF-8"/>
 
-    <scriptdef name="propertyreset" language="javascript"
-        description="Allows to assign @{property} new value">
+    <macrodef name="propertyreset">
         <attribute name="name"/>
         <attribute name="value"/>
-            project.setProperty(attributes.get("name"), attributes.get("value"));
-    </scriptdef>
+        <sequential>
+            <mkdir dir="build/poi-ant-contrib"/>
+            <javac srcdir="src/excelant/poi-ant-contrib" destdir="build/poi-ant-contrib" includeantruntime="true"/>
+            <taskdef name="PropertyResetHelper" classname="PropertyReset" classpath="build/poi-ant-contrib"/>
+            <PropertyResetHelper name="@{name}" value="@{value}" />
+        </sequential>
+    </macrodef>
 
     <!--
       JVM system properties for running tests,
@@ -547,11 +551,12 @@ under the License.
         <echo message="Using Java: ${java.version}/${java.runtime.version}/${java.vm.version}/${java.vm.name} from ${java.vm.vendor} on ${os.name}: ${os.version}" />
         <echo message="Building Apache POI version ${version.id} and RC: ${release.rc}" />
 
-        <scriptdef name="release_tag" language="javascript">
-            var rel = ("REL_"+project.getProperty("version.id")).toUpperCase().replace(/\W/g,"_");
-            project.setProperty("RELEASE_TAG", rel);
-        </scriptdef>
-        <release_tag/>
+        <loadresource property="RELEASE_TAG">
+            <string>REL_${version.id}</string>
+            <filterchain>
+                <replaceregex pattern="\W" replace="_" flags="g"/>
+            </filterchain>
+        </loadresource>
     </target>
 
     <target name="clean" description="Remove generated artefacts">
@@ -2650,12 +2655,8 @@ under the License.
             <format property="tstamp_next" pattern="yyyy-MM" offset="3" unit="month"/>
         </tstamp>
 
-        <scriptdef name="getnextrel" language="javascript">
-            var relCurr = new String(project.getProperty("version.id"));
-            var relNext = relCurr.replace(/[0-9]+$/, function(lastNum){ return new String(new Number(lastNum)+1); });
-            project.setProperty("rel_next", relNext);
-        </scriptdef>
-        <getnextrel/>
+        <taskdef name="NextRelease" classname="NextRelease" classpath="build/poi-ant-contrib"/>
+        <NextRelease property="rel_next"/>
 
         <antcall target="-update-build.xml">
             <param name="version_id" value="${version.id}"/>
@@ -2778,15 +2779,17 @@ under the License.
         </tstamp>
 
 
-        <scriptdef name="getnextrel" language="javascript">
-            var relPrev = new String(project.getProperty("version.id"))
-                .replace(/([0-9]+)[^0-9]*$/, function(all,lastNum){ return new String(new Number(lastNum)-1); });
-            project.setProperty("rel_prev", relPrev);
-            var fileDateIso = new String(project.getProperty("file_date"))
-                .replace(/([0-9]{4})([0-9]{2})([0-9]{2})/, "$1-$2-$3");
-            project.setProperty("file_date_iso", fileDateIso);
-        </scriptdef>
-        <getnextrel/>
+        <taskdef name="NextRelease" classname="NextRelease" classpath="build/poi-ant-contrib"/>
+        <NextRelease property="rel_prev" increment="-1"/>
+
+        <!-- we don't simply generate a new iso file date with tstamp,
+            but potentially use the date given as an argument to ant -->
+        <loadresource property="file_date_iso">
+            <string>${file_date}</string>
+            <filterchain>
+                <replaceregex pattern="([0-9]{4})([0-9]{2})([0-9]{2})" replace="\1-\2-\3"/>
+            </filterchain>
+        </loadresource>
 
         <replaceregexp file="build.gradle" match="( +version += +)'[^']+'" replace="\1'${version.id}'"/>
         <replaceregexp file="build.gradle" match="(japicmpversion += +)'[^']+'" replace="\1'${rel_prev}'"/>
@@ -2853,15 +2856,6 @@ under the License.
         </sequential>
     </macrodef>
 
-    <scriptdef name="bytes2mega" language="javascript"
-        description="Convert size in bytes to megabytes">
-        <attribute name="property"/>
-        <attribute name="bytes"/>
-        var bytes = Number(attributes.get("bytes"));
-        var mega = String((bytes/(1024.0*1024.0)).toFixed(2));
-        project.setProperty(attributes.get("property"), mega);
-    </scriptdef>
-
     <macrodef name="download-line">
         <attribute name="prop"/>
         <attribute name="dist"/>
@@ -2887,6 +2881,7 @@ under the License.
                 </filterchain>
             </loadfile>
 
+            <taskdef name="bytes2mega" classname="Bytes2Mega" classpath="build/poi-ant-contrib"/>
             <local name="fileSizeMb"/>
             <bytes2mega property="fileSizeMb" bytes="${fileSize}"/>
 
