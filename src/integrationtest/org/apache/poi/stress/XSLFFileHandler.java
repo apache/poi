@@ -52,9 +52,7 @@ public class XSLFFileHandler extends SlideShowHandler {
 
 
         // additionally try the other getText() methods
-
-		//noinspection rawtypes
-		try (SlideShowExtractor extractor = (SlideShowExtractor) ExtractorFactory.createExtractor(file)) {
+		try (SlideShowExtractor<?,?> extractor = (SlideShowExtractor<?, ?>) ExtractorFactory.createExtractor(file)) {
 			assertNotNull(extractor);
 			extractor.setSlidesByDefault(true);
 			extractor.setNotesByDefault(true);

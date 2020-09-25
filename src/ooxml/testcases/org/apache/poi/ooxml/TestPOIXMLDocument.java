@@ -37,7 +37,6 @@ import java.util.List;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.ooxml.util.PackageHelper;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -87,7 +86,7 @@ public final class TestPOIXMLDocument {
         }
     }
 
-    private static void traverse(POIXMLDocument doc) throws IOException{
+    private static void traverse(POIXMLDocument doc) {
         HashMap<String,POIXMLDocumentPart> context = new HashMap<>();
         for (RelationPart p : doc.getRelationParts()){
             traverse(p, context);
@@ -97,7 +96,7 @@ public final class TestPOIXMLDocument {
     /**
      * Recursively traverse a OOXML document and assert that same logical parts have the same physical instances
      */
-    private static void traverse(RelationPart rp, HashMap<String,POIXMLDocumentPart> context) throws IOException{
+    private static void traverse(RelationPart rp, HashMap<String,POIXMLDocumentPart> context) {
         POIXMLDocumentPart dp = rp.getDocumentPart();
         assertEquals(rp.getRelationship().getTargetURI().toString(), dp.getPackagePart().getPartName().getName());
 
@@ -255,7 +254,7 @@ public final class TestPOIXMLDocument {
     }
 
     @Test
-    public void testCommitNullPart() throws IOException, InvalidFormatException {
+    public void testCommitNullPart() throws IOException {
         POIXMLDocumentPart part = new POIXMLDocumentPart();
         part.prepareForCommit();
         part.commit();
@@ -311,6 +310,7 @@ public final class TestPOIXMLDocument {
         try (InputStream is = pds.openResourceAsStream("bug62513.pptx");
             XMLSlideShow ppt = new XMLSlideShow(is)) {
             POIXMLDocumentPart doc = ppt.getSlides().get(12).getRelationById("rId3");
+            assertNotNull(doc);
             assertEquals(POIXMLDocumentPart.class, doc.getClass());
         }
     }
@@ -320,19 +320,17 @@ public final class TestPOIXMLDocument {
         // the schema type loader is cached per thread in POIXMLTypeLoader.
         // So create a new Thread and change the context class loader (which would normally be used)
         // to not contain the OOXML classes
-        Runnable run = new Runnable() {
-            public void run() {
-                InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream("table_test.pptx");
-                XMLSlideShow ppt = null;
-                try {
-                    ppt = new XMLSlideShow(is);
-                    ppt.getSlides().get(0).getShapes();
-                } catch (IOException e) {
-                    fail("failed to load XMLSlideShow");
-                } finally {
-                    IOUtils.closeQuietly(ppt);
-                    IOUtils.closeQuietly(is);
-                }
+        Runnable run = () -> {
+            InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream("table_test.pptx");
+            XMLSlideShow ppt = null;
+            try {
+                ppt = new XMLSlideShow(is);
+                ppt.getSlides().get(0).getShapes();
+            } catch (IOException e) {
+                fail("failed to load XMLSlideShow");
+            } finally {
+                IOUtils.closeQuietly(ppt);
+                IOUtils.closeQuietly(is);
             }
         };
 
@@ -348,15 +346,15 @@ public final class TestPOIXMLDocument {
                 ta[i].setUncaughtExceptionHandler(uh);
                 ta[i].start();
             }
-            for (int i=0; i<ta.length; i++) {
+            for (Thread thread : ta) {
                 try {
-                    ta[i].join();
+                    thread.join();
                 } catch (InterruptedException e) {
                     fail("failed to join thread");
                 }
             }
         }
-        assertFalse(uh.hasException());
+        assertFalse("Should not have an exception now, but had " + uh.e, uh.hasException());
     }
 
     private static class UncaughtHandler implements UncaughtExceptionHandler {

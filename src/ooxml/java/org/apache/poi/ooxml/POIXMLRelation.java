@@ -56,17 +56,17 @@ public abstract class POIXMLRelation {
     /**
      * Describes the content stored in a part.
      */
-    private String _type;
+    private final String _type;
 
     /**
      * The kind of connection between a source part and a target part in a package.
      */
-    private String _relation;
+    private final String _relation;
 
     /**
      * The path component of a pack URI.
      */
-    private String _defaultName;
+    private final String _defaultName;
 
     /**
      * Constructors or factory method to construct instances of this relationship

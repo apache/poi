@@ -33,7 +33,6 @@ import java.util.Set;
 import org.apache.poi.examples.hpsf.CopyCompare;
 import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.HPSFPropertiesOnlyDocument;
-import org.apache.poi.hpsf.MarkUnsupportedException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
@@ -85,7 +84,7 @@ public class HPSFFileHandler extends POIFSFileHandler {
 		handlePOIDocument(hpsf);
 	}
 
-	private static boolean hasPropertyStream(POIFSFileSystem poifs, String streamName) throws IOException, MarkUnsupportedException {
+	private static boolean hasPropertyStream(POIFSFileSystem poifs, String streamName) throws IOException {
         DirectoryNode root = poifs.getRoot();
 	    if (!root.hasEntry(streamName)) {
 	        return false;
@@ -121,7 +120,7 @@ public class HPSFFileHandler extends POIFSFileHandler {
     @Test
     @SuppressWarnings("java:S2699")
 	public void test() throws Exception {
-	    String path = "test-data/hpsf/Test0313rur.adm";
+	    String path = "test-data/diagram/44501.vsd";
         try (InputStream stream = new FileInputStream(path)) {
             handleFile(stream, path);
         }
