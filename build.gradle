@@ -45,8 +45,8 @@ configurations {
 
 dependencies {
     antLibs("junit:junit:4.13")
-    antLibs("org.apache.ant:ant-junit:1.10.4")
-    antLibs("org.apache.ant:ant-junit4:1.10.4")
+    antLibs("org.apache.ant:ant-junit:1.10.8")
+    antLibs("org.apache.ant:ant-junit4:1.10.8")
 }
 
 ant.taskdef(name: "junit",
@@ -152,7 +152,7 @@ subprojects {
     }
 
     jacoco {
-        toolVersion = '0.8.5'
+        toolVersion = '0.8.6'
     }
 
     // ensure the build-dir exists
@@ -301,7 +301,7 @@ project('excelant') {
     sourceSets.test.java.srcDirs = ['../../src/excelant/testcases']
 
     dependencies {
-        compile 'org.apache.ant:ant:1.10.4'
+        compile 'org.apache.ant:ant:1.10.8'
 
         compile project(':main')
         compile project(':ooxml')
@@ -323,7 +323,7 @@ project('integrationtest') {
     sourceSets.test.java.srcDirs = ['../../src/integrationtest']
 
     dependencies {
-        compile 'org.apache.ant:ant:1.10.4'
+        compile 'org.apache.ant:ant:1.10.8'
 
         compile project(':main')
         compile project(':ooxml')

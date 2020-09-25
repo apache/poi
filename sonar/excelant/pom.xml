@@ -29,12 +29,12 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/src/main/java</outputDirectory>
-							<resources>          
+							<resources>
 								<resource>
 									<directory>../../src/excelant/java</directory>
 								</resource>
-							</resources>              
-						</configuration>            
+							</resources>
+						</configuration>
 					</execution>
 					<execution>
 						<id>copy-resources</id>
@@ -45,12 +45,12 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/src/main/resources</outputDirectory>
-							<resources>          
+							<resources>
 								<resource>
 									<directory>../../src/excelant/resources</directory>
 								</resource>
-							</resources>              
-						</configuration>            
+							</resources>
+						</configuration>
 					</execution>
 					<execution>
 						<id>copy-tests</id>
@@ -61,12 +61,12 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/src/test/java</outputDirectory>
-							<resources>          
+							<resources>
 								<resource>
 									<directory>../../src/excelant/testcases</directory>
 								</resource>
-							</resources>              
-						</configuration>            
+							</resources>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -82,7 +82,7 @@
                         </fileset>
                     </filesets>
                 </configuration>
-            </plugin>			
+            </plugin>
 		</plugins>
     </build>
 
@@ -108,7 +108,7 @@
 		<dependency>
 			<groupId>org.apache.ant</groupId>
 			<artifactId>ant</artifactId>
-			<version>1.10.1</version>
+			<version>1.10.8</version>
         </dependency>
     </dependencies>
 </project>

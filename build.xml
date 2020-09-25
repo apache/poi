@@ -311,7 +311,7 @@ under the License.
     <dependency prefix="ooxml.test.javassist" artifact="org.javassist:javassist:3.27.0-GA" usage="ooxml-tests"/>
 
     <!-- coverage libs -->
-    <dependency prefix="jacoco" artifact="org.jacoco:jacoco:0.8.5" usage="util" packaging="zip"/>
+    <dependency prefix="jacoco" artifact="org.jacoco:jacoco:0.8.6" usage="util" packaging="zip"/>
     <dependency prefix="asm" artifact="org.ow2.asm:asm:9.0-beta" usage="util"/>
     <dependency prefix="asm-commons" artifact="org.ow2.asm:asm-commons:9.0-beta" usage="util"/>
     <dependency prefix="asm-tree" artifact="org.ow2.asm:asm-tree:9.0-beta" usage="util"/>
@@ -592,9 +592,34 @@ under the License.
         <delete dir="compile-lib" failonerror="false"/>
         <delete dir="ooxml-lib" failonerror="false"/>
         <delete dir="ooxml-testlib" failonerror="false"/>
-        <delete dir="${basedir}/lib" includes="*.jar" failonerror="false"/>
-        <delete failonerror="false">
-            <fileset dir="lib/main-tests" includes="hamcrest-core*"/>
+        <delete verbose="true" failonerror="false">
+            <fileset dir="${basedir}/lib" includes="*.jar"/>
+            <fileset dir="${basedir}/lib/excelant">
+                <include name="ant*-1.10.1.jar"/>
+            </fileset>
+            <fileset dir="${basedir}/lib/main-tests">
+                <include name="mockito-core-3.2.4.jar"/>
+                <include name="hamcrest-core*"/>
+            </fileset>
+            <fileset dir="${basedir}/lib/ooxml">
+                <include name="xmlbeans-3.1.0.jar"/>
+            </fileset>
+            <fileset dir="${basedir}/lib/ooxml-provided">
+                <include name="bcpkix-jdk15on-1.65.jar"/>
+                <include name="bcprov-ext-jdk15on-1.65.jar"/>
+            </fileset>
+            <fileset dir="${basedir}/lib/ooxml-tests">
+                <include name="guava-20.0.jar"/>
+            </fileset>
+            <fileset dir="${basedir}/lib/util">
+                <include name="asm*7.2.jar"/>
+            </fileset>
+            <fileset dir="${basedir}/lib/util">
+                <include name="jacoco-0.8.5.zip"/>
+            </fileset>
+            <fileset dir="${basedir}/lib/excelant">
+                <include name="ant*1.10.1.jar"/>
+            </fileset>
         </delete>
 
         <condition property="jars.present">

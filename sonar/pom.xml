@@ -81,10 +81,10 @@
         <sonar.coverage.jacoco.xmlReportPaths>target/site/jacoco/jacoco.xml</sonar.coverage.jacoco.xmlReportPaths>
 
         <!-- define some of the third-party or plugin-versions globally to use the same in all modules -->
-        <xmlbeans.version>3.1.0</xmlbeans.version>
+        <xmlbeans.version>4.0.0</xmlbeans.version>
         <junit.version>4.13</junit.version>
-        <xmlunit.version>2.6.3</xmlunit.version>
-        <mockito.version>2.13.0</mockito.version>
+        <xmlunit.version>2.7.0</xmlunit.version>
+        <mockito.version>3.5.0</mockito.version>
         <maven.plugin.resources.version>3.1.0</maven.plugin.resources.version>
         <maven.plugin.jar.version>3.2.0</maven.plugin.jar.version>
         <maven.plugin.clean.version>3.1.0</maven.plugin.clean.version>
@@ -145,7 +145,7 @@
             <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
-                <version>0.8.5</version>
+                <version>0.8.6</version>
                 <executions>
                     <execution>
                         <goals>
