@@ -241,6 +241,19 @@ project('ooxml') {
     sourceSets.main.resources.srcDirs = ['../../src/ooxml/resources', '../../src/resources/ooxml']
     sourceSets.test.java.srcDirs = ['../../src/ooxml/testcases']
 
+    configurations {
+        antdep
+    }
+
+    dependencies {
+        antdep 'org.apache.ant:ant:1.10.8'
+    }
+
+    // we need to ensure that the custom ant tasks are compiled before we import the build.xml file
+    ant.mkdir(dir: "../../build/poi-ant-contrib")
+    ant.javac(srcdir: "../../src/excelant/poi-ant-contrib", destdir: "../../build/poi-ant-contrib",
+        classpath: configurations.antdep.asPath)
+
     // for now import the ant-task for building the jars from build.xml
     // we need to rename the tasks as e.g. task "jar" conflicts with :ooxml:jar
     ant.importBuild('../../build.xml') { antTargetName ->
