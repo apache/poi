@@ -24,9 +24,9 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.List;
 
+import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
 
 /**
@@ -68,7 +68,7 @@ public class HSSFRecordsStresser {
     // a test-case to test this locally without executing the full TestAllFiles
     @Test
     public void test() throws Exception {
-        try (InputStream stream = new FileInputStream(XSSFTestDataSamples.getSampleFile("15556.xls"))) {
+        try (InputStream stream = new FileInputStream(HSSFTestDataSamples.getSampleFile("15556.xls"))) {
             HSSFWorkbook wb = new HSSFWorkbook(stream);
             handleWorkbook(wb);
             wb.close();
