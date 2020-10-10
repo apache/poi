@@ -22,26 +22,14 @@ import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.io.StringReader;
 import java.math.BigInteger;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
-
-import org.apache.poi.ooxml.POIXMLDocumentPart;
-import org.apache.poi.openxml4j.opc.PackagePart;
-import org.apache.poi.ooxml.util.DocumentHelper;
-import org.apache.poi.util.ReplacingInputStream;
-import org.apache.xmlbeans.XmlCursor;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
 import com.microsoft.schemas.office.excel.CTClientData;
 import com.microsoft.schemas.office.excel.STObjectType;
@@ -49,6 +37,8 @@ import com.microsoft.schemas.office.office.CTIdMap;
 import com.microsoft.schemas.office.office.CTShapeLayout;
 import com.microsoft.schemas.office.office.STConnectType;
 import com.microsoft.schemas.office.office.STInsetMode;
+import com.microsoft.schemas.office.office.ShapelayoutDocument;
+import com.microsoft.schemas.vml.CTGroup;
 import com.microsoft.schemas.vml.CTPath;
 import com.microsoft.schemas.vml.CTShadow;
 import com.microsoft.schemas.vml.CTShape;
@@ -56,6 +46,17 @@ import com.microsoft.schemas.vml.CTShapetype;
 import com.microsoft.schemas.vml.STExt;
 import com.microsoft.schemas.vml.STStrokeJoinStyle;
 import com.microsoft.schemas.vml.STTrueFalse;
+import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.util.DocumentHelper;
+import org.apache.poi.openxml4j.opc.PackagePart;
+import org.apache.poi.schemas.vmldrawing.XmlDocument;
+import org.apache.poi.util.ReplacingInputStream;
+import org.apache.xmlbeans.XmlCursor;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.w3c.dom.Document;
+import org.xml.sax.SAXException;
 
 /**
  * Represents a SpreadsheetML VML drawing.
@@ -71,29 +72,31 @@ import com.microsoft.schemas.vml.STTrueFalse;
  * considered a deprecated format included in Office Open XML for legacy reasons only and new applications that
  * need a file format for drawings are strongly encouraged to use preferentially DrawingML
  * </p>
- * 
+ *
  * <p>
  * Warning - Excel is known to put invalid XML into these files!
  *  For example, &gt;br&lt; without being closed or escaped crops up.
  * </p>
  *
  * See 6.4 VML - SpreadsheetML Drawing in Office Open XML Part 4 - Markup Language Reference.pdf
- *
- * @author Yegor Kozlov
  */
 public final class XSSFVMLDrawing extends POIXMLDocumentPart {
-    private static final QName QNAME_SHAPE_LAYOUT = new QName("urn:schemas-microsoft-com:office:office", "shapelayout");
-    private static final QName QNAME_SHAPE_TYPE = new QName("urn:schemas-microsoft-com:vml", "shapetype");
-    private static final QName QNAME_SHAPE = new QName("urn:schemas-microsoft-com:vml", "shape");
-    private static final String COMMENT_SHAPE_TYPE_ID = "_x0000_t202"; // this ID value seems to have significance to Excel >= 2010; see https://issues.apache.org/bugzilla/show_bug.cgi?id=55409
+    // this ID value seems to have significance to Excel >= 2010;
+    // see https://issues.apache.org/bugzilla/show_bug.cgi?id=55409
+    private static final String COMMENT_SHAPE_TYPE_ID = "_x0000_t202";
+
+    /**
+     * to actually process the namespace-less vmldrawing, we've introduced a proxy namespace.
+     * this namespace is active in-memory, but will be removed on saving to the file
+     */
+    public static final QName QNAME_VMLDRAWING = new QName("urn:schemas-poi-apache-org:vmldrawing", "xml");
 
     /**
      * regexp to parse shape ids, in VML they have weird form of id="_x0000_s1026"
      */
     private static final Pattern ptrn_shapeId = Pattern.compile("_x0000_s(\\d+)");
 
-    private List<QName> _qnames = new ArrayList<>();
-    private List<XmlObject> _items = new ArrayList<>();
+    private XmlDocument root;
     private String _shapeTypeId;
     private int _shapeId = 1024;
 
@@ -112,13 +115,18 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
      *
      * @param part the package part holding the drawing data,
      * the content type must be <code>application/vnd.openxmlformats-officedocument.drawing+xml</code>
-     * 
+     *
      * @since POI 3.14-Beta1
      */
     protected XSSFVMLDrawing(PackagePart part) throws IOException, XmlException {
         super(part);
         read(getPackagePart().getInputStream());
     }
+
+    public XmlDocument getDocument() {
+        return root;
+    }
+
 
     protected void read(InputStream is) throws IOException, XmlException {
         Document doc;
@@ -133,92 +141,84 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
         } catch (SAXException e) {
             throw new XmlException(e.getMessage(), e);
         }
-        XmlObject root = XmlObject.Factory.parse(doc, DEFAULT_XML_OPTIONS);
 
-        _qnames = new ArrayList<>();
-        _items = new ArrayList<>();
-        for(XmlObject obj : root.selectPath("$this/xml/*")) {
-            Node nd = obj.getDomNode();
-            QName qname = new QName(nd.getNamespaceURI(), nd.getLocalName());
-            if (qname.equals(QNAME_SHAPE_LAYOUT)) {
-                _items.add(CTShapeLayout.Factory.parse(obj.xmlText(), DEFAULT_XML_OPTIONS));
-            } else if (qname.equals(QNAME_SHAPE_TYPE)) {
-                CTShapetype st = CTShapetype.Factory.parse(obj.xmlText(), DEFAULT_XML_OPTIONS);
-                _items.add(st);
-                _shapeTypeId = st.getId();
-            } else if (qname.equals(QNAME_SHAPE)) {
-                CTShape shape = CTShape.Factory.parse(obj.xmlText(), DEFAULT_XML_OPTIONS);
-                String id = shape.getId();
-                if(id != null) {
-                    Matcher m = ptrn_shapeId.matcher(id);
-                    if(m.find()) {
-                        _shapeId = Math.max(_shapeId, Integer.parseInt(m.group(1)));
+        XmlOptions xopt = new XmlOptions(DEFAULT_XML_OPTIONS);
+        xopt.setLoadSubstituteNamespaces(Collections.singletonMap("", QNAME_VMLDRAWING.getNamespaceURI()));
+
+        root = XmlDocument.Factory.parse(doc, xopt);
+        XmlCursor cur = root.getXml().newCursor();
+
+        try {
+            for (boolean found = cur.toFirstChild(); found; found = cur.toNextSibling()) {
+                XmlObject xo = cur.getObject();
+                if (xo instanceof CTShapetype) {
+                    _shapeTypeId = ((CTShapetype)xo).getId();
+                } else if (xo instanceof CTShape) {
+                    CTShape shape = (CTShape)xo;
+                    String id = shape.getId();
+                    if(id != null) {
+                        Matcher m = ptrn_shapeId.matcher(id);
+                        if(m.find()) {
+                            _shapeId = Math.max(_shapeId, Integer.parseInt(m.group(1)));
+                        }
                     }
                 }
-                _items.add(shape);
-            } else {
-                Document doc2;
-                try {
-                    InputSource is2 = new InputSource(new StringReader(obj.xmlText()));
-                    doc2 = DocumentHelper.readDocument(is2);
-                } catch (SAXException e) {
-                    throw new XmlException(e.getMessage(), e);
-                }
-                
-                _items.add(XmlObject.Factory.parse(doc2, DEFAULT_XML_OPTIONS));
             }
-            _qnames.add(qname);
+        } finally {
+            cur.dispose();
         }
     }
 
     protected List<XmlObject> getItems(){
-        return _items;
+        List<XmlObject> items = new ArrayList<>();
+
+        XmlCursor cur = root.getXml().newCursor();
+        try {
+            for (boolean found = cur.toFirstChild(); found; found = cur.toNextSibling()) {
+                items.add(cur.getObject());
+            }
+        } finally {
+            cur.dispose();
+        }
+
+        return items;
     }
 
     protected void write(OutputStream out) throws IOException {
-        XmlObject rootObject = XmlObject.Factory.newInstance();
-        XmlCursor rootCursor = rootObject.newCursor();
-        rootCursor.toNextToken();
-        rootCursor.beginElement("xml");
-
-        for(int i=0; i < _items.size(); i++){
-            XmlCursor xc = _items.get(i).newCursor();
-            rootCursor.beginElement(_qnames.get(i));
-            while(xc.toNextToken() == XmlCursor.TokenType.ATTR) {
-                Node anode = xc.getDomNode();
-                rootCursor.insertAttributeWithValue(anode.getLocalName(), anode.getNamespaceURI(), anode.getNodeValue());
-            }
-            xc.toStartDoc();
-            xc.copyXmlContents(rootCursor);
-            rootCursor.toNextToken();
-            xc.dispose();
-        }
-        rootCursor.dispose();
-
-        rootObject.save(out, DEFAULT_XML_OPTIONS);
+        XmlOptions xopt = new XmlOptions(DEFAULT_XML_OPTIONS);
+        xopt.setSaveImplicitNamespaces(Collections.singletonMap("", QNAME_VMLDRAWING.getNamespaceURI()));
+        root.save(out, xopt);
     }
 
     @Override
     protected void commit() throws IOException {
         PackagePart part = getPackagePart();
-        OutputStream out = part.getOutputStream();
-        write(out);
-        out.close();
+        try (OutputStream out = part.getOutputStream()) {
+            write(out);
+        }
     }
 
     /**
      * Initialize a new Speadsheet VML drawing
      */
     private void newDrawing(){
-        CTShapeLayout layout = CTShapeLayout.Factory.newInstance();
+        root = XmlDocument.Factory.newInstance();
+        XmlCursor xml = root.addNewXml().newCursor();
+
+        ShapelayoutDocument layDoc = ShapelayoutDocument.Factory.newInstance();
+        CTShapeLayout layout = layDoc.addNewShapelayout();
         layout.setExt(STExt.EDIT);
         CTIdMap idmap = layout.addNewIdmap();
         idmap.setExt(STExt.EDIT);
         idmap.setData("1");
-        _items.add(layout);
-        _qnames.add(QNAME_SHAPE_LAYOUT);
 
-        CTShapetype shapetype = CTShapetype.Factory.newInstance();
+        xml.toEndToken();
+        XmlCursor layCur = layDoc.newCursor();
+        layCur.copyXmlContents(xml);
+        layCur.dispose();
+
+        CTGroup grp = CTGroup.Factory.newInstance();
+        CTShapetype shapetype = grp.addNewShapetype();
         _shapeTypeId = COMMENT_SHAPE_TYPE_ID;
         shapetype.setId(_shapeTypeId);
         shapetype.setCoordsize("21600,21600");
@@ -228,12 +228,17 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
         CTPath path = shapetype.addNewPath();
         path.setGradientshapeok(STTrueFalse.T);
         path.setConnecttype(STConnectType.RECT);
-        _items.add(shapetype);
-        _qnames.add(QNAME_SHAPE_TYPE);
+
+        xml.toEndToken();
+        XmlCursor grpCur = grp.newCursor();
+        grpCur.copyXmlContents(xml);
+        grpCur.dispose();
     }
 
     protected CTShape newCommentShape(){
-        CTShape shape = CTShape.Factory.newInstance();
+        CTGroup grp = CTGroup.Factory.newInstance();
+
+        CTShape shape = grp.addNewShape();
         shape.setId("_x0000_s" + (++_shapeId));
         shape.setType("#" + _shapeTypeId);
         shape.setStyle("position:absolute; visibility:hidden");
@@ -254,8 +259,16 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
         cldata.addNewAutoFill().setStringValue("False");
         cldata.addNewRow().setBigIntegerValue(BigInteger.valueOf(0));
         cldata.addNewColumn().setBigIntegerValue(BigInteger.valueOf(0));
-        _items.add(shape);
-        _qnames.add(QNAME_SHAPE);
+
+        XmlCursor xml = root.getXml().newCursor();
+        xml.toEndToken();
+        XmlCursor grpCur = grp.newCursor();
+        grpCur.copyXmlContents(xml);
+        xml.toPrevSibling();
+        shape = (CTShape)xml.getObject();
+        grpCur.dispose();
+        xml.dispose();
+
         return shape;
     }
 
@@ -265,26 +278,45 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
      * @return the comment shape or <code>null</code>
      */
     public CTShape findCommentShape(int row, int col){
-        for(XmlObject itm : _items){
-            if(itm instanceof CTShape){
-                CTShape sh = (CTShape)itm;
-                if(sh.sizeOfClientDataArray() > 0){
-                    CTClientData cldata = sh.getClientDataArray(0);
-                    if(cldata.getObjectType() == STObjectType.NOTE){
-                        int crow = cldata.getRowArray(0).intValue();
-                        int ccol = cldata.getColumnArray(0).intValue();
-                        if(crow == row && ccol == col) {
-                            return sh;
-                        }
-                    }
-                }
+        XmlCursor cur = root.getXml().newCursor();
+        for (boolean found = cur.toFirstChild(); found; found = cur.toNextSibling()) {
+            XmlObject itm = cur.getObject();
+            if (matchCommentShape(itm, row, col)) {
+                return (CTShape)itm;
             }
         }
         return null;
     }
 
+    private boolean matchCommentShape(XmlObject itm, int row, int col) {
+        if (!(itm instanceof CTShape)) {
+            return false;
+        }
+
+        CTShape sh = (CTShape)itm;
+        if (sh.sizeOfClientDataArray() == 0) {
+            return false;
+        }
+
+        CTClientData cldata = sh.getClientDataArray(0);
+        if(cldata.getObjectType() != STObjectType.NOTE) {
+            return false;
+        }
+
+        int crow = cldata.getRowArray(0).intValue();
+        int ccol = cldata.getColumnArray(0).intValue();
+        return (crow == row && ccol == col);
+    }
+
     protected boolean removeCommentShape(int row, int col){
-        CTShape shape = findCommentShape(row, col);
-        return shape != null && _items.remove(shape);
+        XmlCursor cur = root.getXml().newCursor();
+        for (boolean found = cur.toFirstChild(); found; found = cur.toNextSibling()) {
+            XmlObject itm = cur.getObject();
+            if (matchCommentShape(itm, row, col)) {
+                cur.removeXml();
+                return true;
+            }
+        }
+        return false;
     }
 }

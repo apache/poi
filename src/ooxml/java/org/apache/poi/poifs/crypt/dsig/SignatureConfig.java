@@ -45,6 +45,7 @@ import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 
 import org.apache.poi.EncryptedDocumentException;
+import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.facets.KeyInfoSignatureFacet;
@@ -89,10 +90,10 @@ public class SignatureConfig {
     );
 
 
-    private ThreadLocal<OPCPackage> opcPackage = new ThreadLocal<>();
-    private ThreadLocal<XMLSignatureFactory> signatureFactory = new ThreadLocal<>();
-    private ThreadLocal<KeyInfoFactory> keyInfoFactory = new ThreadLocal<>();
-    private ThreadLocal<Provider> provider = new ThreadLocal<>();
+    private final ThreadLocal<OPCPackage> opcPackage = new ThreadLocal<>();
+    private final ThreadLocal<XMLSignatureFactory> signatureFactory = new ThreadLocal<>();
+    private final ThreadLocal<KeyInfoFactory> keyInfoFactory = new ThreadLocal<>();
+    private final ThreadLocal<Provider> provider = new ThreadLocal<>();
 
     private List<SignatureFacet> signatureFacets = new ArrayList<>();
     private HashAlgorithm digestAlgo = HashAlgorithm.sha256;
@@ -164,6 +165,26 @@ public class SignatureConfig {
      * signing. The default value is "Office OpenXML Document".
      */
     private String signatureDescription = "Office OpenXML Document";
+
+    /**
+     * Only applies when working with visual signatures:
+     * Specifies a GUID which can be cross-referenced with the GUID of the signature line stored in the document content.
+     * I.e. the signatureline element id attribute in the document/sheet has to be references in the SetupId element.
+     */
+    private ClassID signatureImageSetupId;
+
+    /**
+     * Provides a signature image for visual signature lines
+     */
+    private byte[] signatureImage;
+    /**
+     * The image shown, when the signature is valid
+     */
+    private byte[] signatureImageValid;
+    /**
+     * The image shown, when the signature is invalid
+     */
+    private byte[] signatureImageInvalid;
 
     /**
      * The process of signing includes the marshalling of xml structures.
@@ -384,6 +405,38 @@ public class SignatureConfig {
      */
     public void setSignatureDescription(String signatureDescription) {
         this.signatureDescription = signatureDescription;
+    }
+
+    public byte[] getSignatureImage() {
+        return signatureImage;
+    }
+
+    public byte[] getSignatureImageValid() {
+        return signatureImageValid;
+    }
+
+    public byte[] getSignatureImageInvalid() {
+        return signatureImageInvalid;
+    }
+
+    public ClassID getSignatureImageSetupId() {
+        return signatureImageSetupId;
+    }
+
+    public void setSignatureImageSetupId(ClassID signatureImageSetupId) {
+        this.signatureImageSetupId = signatureImageSetupId;
+    }
+
+    public void setSignatureImage(byte[] signatureImage) {
+        this.signatureImage = (signatureImage == null) ? null : signatureImage.clone();
+    }
+
+    public void setSignatureImageValid(byte[] signatureImageValid) {
+        this.signatureImageValid = (signatureImageValid == null) ? null : signatureImageValid.clone();
+    }
+
+    public void setSignatureImageInvalid(byte[] signatureImageInvalid) {
+        this.signatureImageInvalid = (signatureImageInvalid == null) ? null : signatureImageInvalid.clone();
     }
 
     /**

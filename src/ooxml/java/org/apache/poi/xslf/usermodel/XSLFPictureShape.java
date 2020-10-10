@@ -35,6 +35,7 @@ import javax.imageio.ImageIO;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.poi.ooxml.util.XPathHelper;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.sl.usermodel.PictureData;
@@ -175,7 +176,7 @@ public class XSLFPictureShape extends XSLFSimpleShape
         }
 
         try {
-            return selectProperty(CTBlipFillProperties.class, XSLFPictureShape::parse, BLIP_FILL);
+            return XPathHelper.selectProperty(getXmlObject(), CTBlipFillProperties.class, XSLFPictureShape::parse, BLIP_FILL);
         } catch (XmlException xe) {
             return null;
         }

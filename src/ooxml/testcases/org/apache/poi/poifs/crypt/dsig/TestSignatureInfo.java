@@ -62,11 +62,14 @@ import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 import java.security.spec.RSAKeyGenParameterSpec;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.Supplier;
 
 import javax.xml.crypto.MarshalException;
 import javax.xml.crypto.dsig.CanonicalizationMethod;
@@ -76,6 +79,7 @@ import javax.xml.crypto.dsig.dom.DOMSignContext;
 import org.apache.jcp.xml.dsig.internal.dom.DOMSignedInfo;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.ooxml.POIXMLDocument;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -98,9 +102,16 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
+import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFSignatureLine;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.poi.xwpf.usermodel.XWPFSignatureLine;
 import org.apache.xmlbeans.SystemProperties;
+import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.bouncycastle.asn1.DEROctetString;
 import org.bouncycastle.asn1.ocsp.OCSPObjectIdentifiers;
@@ -854,6 +865,100 @@ public class TestSignatureInfo {
         assertEquals("2018-06-10T09:00:54Z", sic.formatExecutionTime());
         assertEquals(CanonicalizationMethod.INCLUSIVE, sic.getCanonicalizationMethod());
     }
+
+    private interface XmlDocumentPackageInit {
+        POIXMLDocument init(SignatureLine line, OPCPackage pkg) throws IOException, XmlException;
+    }
+
+    @Test
+    public void testSignatureImage() throws Exception {
+        initKeyPair();
+
+        List<Supplier<SignatureLine>> lines = Arrays.asList(XSSFSignatureLine::new, XWPFSignatureLine::new);
+        for (Supplier<SignatureLine> sup : lines) {
+            SignatureLine line = sup.get();
+            line.setSuggestedSigner("Jack Sparrow");
+            line.setSuggestedSigner2("Captain");
+            line.setSuggestedSignerEmail("jack.bl@ck.perl");
+            line.setInvalidStamp("Bungling!");
+            line.setPlainSignature(testdata.readFile("jack-sign.emf"));
+
+            String[] ext = { "" };
+            BiFunction<SignatureLine,String[],POIXMLDocument> init =
+                (line instanceof XSSFSignatureLine)
+                ? this::initSignatureImageXSSF
+                : this::initSignatureImageXWPF;
+
+            File signDoc;
+            try (POIXMLDocument xmlDoc = init.apply(line,ext)) {
+                signDoc = TempFile.createTempFile("visual-signature", ext[0]);
+                try (FileOutputStream fos = new FileOutputStream(signDoc)) {
+                    xmlDoc.write(fos);
+                }
+            }
+
+            try (OPCPackage pkg = OPCPackage.open(signDoc, PackageAccess.READ_WRITE)) {
+                SignatureConfig sic = new SignatureConfig();
+                sic.setKey(keyPair.getPrivate());
+                sic.setSigningCertificateChain(Collections.singletonList(x509));
+
+                line.updateSignatureConfig(sic);
+
+                sic.setDigestAlgo(HashAlgorithm.sha1);
+                SignatureInfo si = new SignatureInfo();
+                si.setOpcPackage(pkg);
+                si.setSignatureConfig(sic);
+                // hash > sha1 doesn't work in excel viewer ...
+                si.confirmSignature();
+            }
+
+            XmlDocumentPackageInit reinit =
+                (line instanceof XSSFSignatureLine)
+                ? this::initSignatureImageXSSF
+                : this::initSignatureImageXWPF;
+
+            try (OPCPackage pkg = OPCPackage.open(signDoc, PackageAccess.READ)) {
+                SignatureLine line2 = sup.get();
+                try (POIXMLDocument doc = reinit.init(line2, pkg)) {
+                    line2.parse();
+                    assertEquals(line.getSuggestedSigner(), line2.getSuggestedSigner());
+                    assertEquals(line.getSuggestedSigner2(), line2.getSuggestedSigner2());
+                    assertEquals(line.getSuggestedSignerEmail(), line2.getSuggestedSignerEmail());
+                }
+
+                pkg.revert();
+            }
+        }
+    }
+
+    private XWPFDocument initSignatureImageXWPF(SignatureLine line, String[] ext) {
+        XWPFDocument doc = new XWPFDocument();
+        ((XWPFSignatureLine)line).add(doc.createParagraph());
+        ext[0] = ".docx";
+        return doc;
+    }
+
+    private XWPFDocument initSignatureImageXWPF(SignatureLine line, OPCPackage pkg) throws IOException, XmlException {
+        XWPFDocument doc = new XWPFDocument(pkg);
+        ((XWPFSignatureLine)line).parse(doc);
+        return doc;
+    }
+
+    private XSSFWorkbook initSignatureImageXSSF(SignatureLine line, String[] ext) {
+        XSSFWorkbook xls = new XSSFWorkbook();
+        XSSFSheet sheet = xls.createSheet();
+        XSSFClientAnchor anchor = new XSSFClientAnchor(0,0,0,0,3,3,8,13);
+        ((XSSFSignatureLine)line).add(sheet, anchor);
+        ext[0] = ".xlsx";
+        return xls;
+    }
+
+    private XSSFWorkbook initSignatureImageXSSF(SignatureLine line, OPCPackage pkg) throws IOException, XmlException {
+        XSSFWorkbook xls = new XSSFWorkbook(pkg);
+        ((XSSFSignatureLine)line).parse(xls.getSheetAt(0));
+        return xls;
+    }
+
 
     private SignatureConfig prepareConfig(String pfxInput) throws Exception {
         initKeyPair(pfxInput);

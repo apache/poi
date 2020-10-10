@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+import static org.apache.poi.xssf.usermodel.XSSFVMLDrawing.QNAME_VMLDRAWING;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -27,13 +29,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
-
-import org.apache.poi.POIDataSamples;
-import org.apache.xmlbeans.XmlException;
-import org.apache.xmlbeans.XmlObject;
-import org.junit.Test;
 
 import com.microsoft.schemas.office.excel.CTClientData;
 import com.microsoft.schemas.office.excel.STObjectType;
@@ -46,6 +44,11 @@ import com.microsoft.schemas.vml.CTShape;
 import com.microsoft.schemas.vml.CTShapetype;
 import com.microsoft.schemas.vml.STExt;
 import com.microsoft.schemas.vml.STTrueFalse;
+import org.apache.poi.POIDataSamples;
+import org.apache.xmlbeans.XmlException;
+import org.apache.xmlbeans.XmlObject;
+import org.apache.xmlbeans.XmlOptions;
+import org.junit.Test;
 
 public class TestXSSFVMLDrawing {
 
@@ -59,7 +62,7 @@ public class TestXSSFVMLDrawing {
         assertEquals(STExt.EDIT, layout.getExt());
         assertEquals(STExt.EDIT, layout.getIdmap().getExt());
         assertEquals("1", layout.getIdmap().getData());
-    
+
         assertTrue(items.get(1) instanceof CTShapetype);
         CTShapetype type = (CTShapetype)items.get(1);
         assertEquals("21600,21600", type.getCoordsize());
@@ -70,6 +73,7 @@ public class TestXSSFVMLDrawing {
         assertEquals(STConnectType.RECT, type.getPathArray(0).getConnecttype());
 
         CTShape shape = vml.newCommentShape();
+        items = vml.getItems();
         assertEquals(3, items.size());
         assertSame(items.get(2),  shape);
         assertEquals("#_x0000_t202", shape.getType());
@@ -110,7 +114,7 @@ public class TestXSSFVMLDrawing {
 
     @Test
     public void testFindCommentShape() throws IOException, XmlException {
-        
+
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
         try (InputStream stream = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("vmlDrawing1.vml")) {
             vml.read(stream);
@@ -158,17 +162,21 @@ public class TestXSSFVMLDrawing {
         assertNull(vml.findCommentShape(0, 0));
 
     }
-    
+
     @Test
     public void testEvilUnclosedBRFixing() throws IOException, XmlException {
         XSSFVMLDrawing vml = new XSSFVMLDrawing();
         try (InputStream stream = POIDataSamples.getOpenXML4JInstance().openResourceAsStream("bug-60626.vml")) {
             vml.read(stream);
         }
+
+        XmlOptions xopt = new XmlOptions(DEFAULT_XML_OPTIONS);
+        xopt.setSaveImplicitNamespaces(Collections.singletonMap("", QNAME_VMLDRAWING.getNamespaceURI()));
+
         Pattern p = Pattern.compile("<br/>");
         int count = 0;
         for (XmlObject xo : vml.getItems()) {
-            String[] split = p.split(xo.toString());
+            String[] split = p.split(xo.xmlText(xopt));
             count += split.length-1;
         }
         assertEquals(16, count);

@@ -31,6 +31,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
@@ -62,6 +63,7 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackageRelationshipCollection;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
+import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.poifs.crypt.dsig.services.RelationshipTransformService;
@@ -256,10 +258,20 @@ public class OOXMLSignatureFacet implements SignatureFacet {
 
         SignatureInfoV1Document sigV1 = SignatureInfoV1Document.Factory.newInstance();
         CTSignatureInfoV1 ctSigV1 = sigV1.addNewSignatureInfoV1();
-        ctSigV1.setManifestHashAlgorithm(signatureConfig.getDigestMethodUri());
+        if (signatureConfig.getDigestAlgo() != HashAlgorithm.sha1) {
+            ctSigV1.setManifestHashAlgorithm(signatureConfig.getDigestMethodUri());
+        }
 
-        if (signatureConfig.getSignatureDescription() != null) {
-            ctSigV1.setSignatureComments(signatureConfig.getSignatureDescription());
+        String desc = signatureConfig.getSignatureDescription();
+        if (desc != null) {
+            ctSigV1.setSignatureComments(desc);
+        }
+
+        byte[] image = signatureConfig.getSignatureImage();
+        if (image != null) {
+            ctSigV1.setSetupID(signatureConfig.getSignatureImageSetupId().toString());
+            ctSigV1.setSignatureImage(image);
+            ctSigV1.setSignatureType(2);
         }
 
         Element n = (Element)document.importNode(ctSigV1.getDomNode(), true);
@@ -282,6 +294,27 @@ public class OOXMLSignatureFacet implements SignatureFacet {
 
         Reference reference = newReference(signatureInfo, "#" + objectId, null, XML_DIGSIG_NS+"Object", null, null);
         references.add(reference);
+
+        Base64.Encoder enc = Base64.getEncoder();
+        byte[] imageValid = signatureConfig.getSignatureImageValid();
+        if (imageValid != null) {
+            objectId = "idValidSigLnImg";
+            DOMStructure tn = new DOMStructure(document.createTextNode(enc.encodeToString(imageValid)));
+            objects.add(sigFac.newXMLObject(Collections.singletonList(tn), objectId, null, null));
+
+            reference = newReference(signatureInfo, "#" + objectId, null, XML_DIGSIG_NS+"Object", null, null);
+            references.add(reference);
+        }
+
+        byte[] imageInvalid = signatureConfig.getSignatureImageInvalid();
+        if (imageInvalid != null) {
+            objectId = "idInvalidSigLnImg";
+            DOMStructure tn = new DOMStructure(document.createTextNode(enc.encodeToString(imageInvalid)));
+            objects.add(sigFac.newXMLObject(Collections.singletonList(tn), objectId, null, null));
+
+            reference = newReference(signatureInfo, "#" + objectId, null, XML_DIGSIG_NS+"Object", null, null);
+            references.add(reference);
+        }
     }
 
     protected static String getRelationshipReferenceURI(String zipEntryName) {

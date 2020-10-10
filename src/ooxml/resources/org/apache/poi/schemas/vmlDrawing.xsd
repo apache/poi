@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xsd:schema
+  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+  xmlns="urn:schemas-poi-apache-org:vmldrawing"
+  targetNamespace="urn:schemas-poi-apache-org:vmldrawing"
+>
+  <xsd:import namespace="urn:schemas-microsoft-com:vml" schemaLocation="vml-main.xsd"/>
+  <xsd:import namespace="urn:schemas-microsoft-com:office:office" schemaLocation="vml-officeDrawing.xsd"/>
+  <xsd:import namespace="urn:schemas-microsoft-com:office:excel" schemaLocation="vml-spreadsheetDrawing.xsd"/>
+  <xsd:element name="xml" type="CT_XML"/>
+  <xsd:complexType name="CT_XML">
+      <xsd:choice maxOccurs="unbounded">
+        <xsd:any namespace="urn:schemas-microsoft-com:office:office"/>
+        <xsd:any namespace="urn:schemas-microsoft-com:vml"/>
+        <xsd:any namespace="urn:schemas-microsoft-com:office:excel"/>
+      </xsd:choice>
+  </xsd:complexType>
+</xsd:schema>

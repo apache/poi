@@ -19,6 +19,7 @@
 
 package org.apache.poi.xslf.model;
 
+import static org.apache.poi.ooxml.util.XPathHelper.selectProperty;
 import static org.apache.poi.xslf.model.ParagraphPropertyFetcher.DML_NS;
 import static org.apache.poi.xslf.model.ParagraphPropertyFetcher.PML_NS;
 
@@ -37,7 +38,7 @@ public abstract class TextBodyPropertyFetcher<T> extends PropertyFetcher<T> {
     public boolean fetch(XSLFShape shape) {
         CTTextBodyProperties props = null;
         try {
-            props = shape.selectProperty(
+            props = selectProperty(shape.getXmlObject(),
                     CTTextBodyProperties.class, TextBodyPropertyFetcher::parse, TX_BODY, BODY_PR);
             return (props != null) && fetch(props);
         } catch (XmlException e) {

@@ -30,6 +30,7 @@ import javax.xml.stream.XMLStreamReader;
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.ooxml.util.XPathHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -76,7 +77,7 @@ public class XSLFObjectShape extends XSLFGraphicFrame implements ObjectShape<XSL
         // select oleObj potentially under AlternateContent
         // usually the mc:Choice element will be selected first
         try {
-            _oleObject = selectProperty(CTOleObject.class, null, GRAPHIC, GRAPHIC_DATA, OLE_OBJ);
+            _oleObject = XPathHelper.selectProperty(getXmlObject(), CTOleObject.class, null, GRAPHIC, GRAPHIC_DATA, OLE_OBJ);
         } catch (XmlException e) {
             // ole objects should be also inside AlternateContent tags, even with ECMA 376 edition 1
             throw new IllegalStateException(e);
@@ -146,8 +147,8 @@ public class XSLFObjectShape extends XSLFGraphicFrame implements ObjectShape<XSL
 
     protected CTBlipFillProperties getBlipFill() {
         try {
-            CTPicture pic = selectProperty
-                (CTPicture.class, XSLFObjectShape::parse, GRAPHIC, GRAPHIC_DATA, OLE_OBJ, CT_PICTURE);
+            CTPicture pic = XPathHelper.selectProperty
+                (getXmlObject(), CTPicture.class, XSLFObjectShape::parse, GRAPHIC, GRAPHIC_DATA, OLE_OBJ, CT_PICTURE);
             return (pic != null) ? pic.getBlipFill() : null;
         } catch (XmlException e) {
             return null;

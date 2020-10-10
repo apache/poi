@@ -43,4 +43,8 @@
     <xb:package>com.microsoft.schemas.compatibility</xb:package>
   </xb:namespace>
 
+  <xb:namespace uri="urn:schemas-poi-apache-org:vmldrawing">
+    <xb:package>org.apache.poi.schemas.vmldrawing</xb:package>
+  </xb:namespace>
+
 </xb:config>

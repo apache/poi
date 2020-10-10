@@ -19,6 +19,8 @@
 
 package org.apache.poi.xslf.model;
 
+import static org.apache.poi.ooxml.util.XPathHelper.selectProperty;
+
 import java.util.function.Consumer;
 
 import javax.xml.namespace.QName;
@@ -113,7 +115,7 @@ public final class ParagraphPropertyFetcher<T> extends PropertyFetcher<T> {
 
     static CTTextParagraphProperties select(XSLFShape shape, int level) throws XmlException {
         QName[] lvlProp = { new QName(DML_NS, "lvl" + (level + 1) + "pPr") };
-        return shape.selectProperty(
+        return selectProperty(shape.getXmlObject(),
             CTTextParagraphProperties.class, ParagraphPropertyFetcher::parse, TX_BODY, LST_STYLE, lvlProp);
     }
 

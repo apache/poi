@@ -56,4 +56,6 @@ open module org.apache.poi.ooxml.schemas {
     exports org.openxmlformats.schemas.xpackage.x2006.digitalSignature;
     exports org.openxmlformats.schemas.xpackage.x2006.relationships;
     exports org.w3.x2000.x09.xmldsig;
+
+    exports org.apache.poi.schemas.vmldrawing;
 }

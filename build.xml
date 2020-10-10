@@ -792,7 +792,7 @@ under the License.
         <copy todir="${xmlbean.xsds.dir}">
             <zipfileset src="${ooxml.xsds.izip.1}"/>
             <fileset dir="${ooxml.visio.xsd.dir}"/>
-            <fileset dir="${ooxml.schema.xsdconfig.dir}" includes="ooxmlSchemas.xsdconfig,markup-compatibility.xsd"/>
+            <fileset dir="${ooxml.schema.xsdconfig.dir}" includes="ooxmlSchemas.xsdconfig,markup-compatibility.xsd,vmlDrawing.xsd"/>
             <zipfileset src="${ooxml.xsds.izip.2}" includes="opc-digSig.xsd,opc-relationships.xsd"/>
             <fileset dir="${ooxml.security.xsd.dir}" includes="signatureInfo.xsd"/>
             <fileset dir="${ooxml.schema.xsdconfig.dir}" includes="XAdES*.xsd,*.xsdconfig,xmldsig*.xsd"/>

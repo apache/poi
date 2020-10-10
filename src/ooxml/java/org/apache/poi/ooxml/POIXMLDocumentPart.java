@@ -531,7 +531,8 @@ public class POIXMLDocumentPart {
      * @param minIdx     The minimum free index to assign, use -1 for any
      * @return The next free part number, or -1 if none available
      */
-    protected final int getNextPartNumber(POIXMLRelation descriptor, int minIdx) {
+    @Internal
+    public final int getNextPartNumber(POIXMLRelation descriptor, int minIdx) {
         OPCPackage pkg = packagePart.getPackage();
 
         try {

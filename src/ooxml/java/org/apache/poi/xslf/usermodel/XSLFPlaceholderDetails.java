@@ -17,6 +17,7 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.ooxml.util.XPathHelper.selectProperty;
 import static org.apache.poi.xslf.usermodel.XSLFShape.PML_NS;
 
 import java.util.function.Consumer;
@@ -220,7 +221,7 @@ public class XSLFPlaceholderDetails implements PlaceholderDetails {
 
     private CTApplicationNonVisualDrawingProps getNvProps() {
         try {
-            return shape.selectProperty(CTApplicationNonVisualDrawingProps.class, null, NV_CONTAINER, NV_PROPS);
+            return selectProperty(shape.getXmlObject(), CTApplicationNonVisualDrawingProps.class, null, NV_CONTAINER, NV_PROPS);
         } catch (XmlException e) {
             return null;
         }

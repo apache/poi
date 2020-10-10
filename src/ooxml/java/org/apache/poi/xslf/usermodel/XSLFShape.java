@@ -21,13 +21,11 @@ package org.apache.poi.xslf.usermodel;
 
 import java.awt.Graphics2D;
 import java.awt.geom.Rectangle2D;
-import java.util.Locale;
 
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
-import com.microsoft.schemas.compatibility.AlternateContentDocument;
-import com.microsoft.schemas.compatibility.AlternateContentDocument.AlternateContent;
+import org.apache.poi.ooxml.util.XPathHelper;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawPaint;
@@ -45,7 +43,6 @@ import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFFillProperties;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
-import org.apache.xmlbeans.impl.values.XmlAnyTypeImpl;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupShapeProperties;
@@ -76,10 +73,6 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
 
     static final String DML_NS = "http://schemas.openxmlformats.org/drawingml/2006/main";
     static final String PML_NS = "http://schemas.openxmlformats.org/presentationml/2006/main";
-    private static final String MC_NS = "http://schemas.openxmlformats.org/markup-compatibility/2006";
-    private static final String MAC_DML_NS = "http://schemas.microsoft.com/office/mac/drawingml/2008/main";
-
-    private static final QName ALTERNATE_CONTENT_TAG = new QName(MC_NS, "AlternateContent");
 
     private static final QName[] NV_CONTAINER = {
         new QName(PML_NS, "nvSpPr"),
@@ -92,12 +85,6 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
     private static final QName[] CNV_PROPS = {
         new QName(PML_NS, "cNvPr")
     };
-
-    private static final String OSGI_ERROR =
-        "Schemas (*.xsb) for <CLASS> can't be loaded - usually this happens when OSGI " +
-        "loading is used and the thread context classloader has no reference to " +
-        "the xmlbeans classes - please either verify if the <XSB>.xsb is on the " +
-        "classpath or alternatively try to use the full ooxml-schemas-x.x.jar";
 
     private final XmlObject _shape;
     private final XSLFSheet _sheet;
@@ -239,7 +226,7 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
     protected CTNonVisualDrawingProps getCNvPr() {
         try {
             if (_nvPr == null) {
-                _nvPr = selectProperty(CTNonVisualDrawingProps.class, null, NV_CONTAINER, CNV_PROPS);
+                _nvPr = XPathHelper.selectProperty(getXmlObject(), CTNonVisualDrawingProps.class, null, NV_CONTAINER, CNV_PROPS);
             }
             return _nvPr;
         } catch (XmlException e) {
@@ -321,160 +308,6 @@ public abstract class XSLFShape implements Shape<XSLFShape,XSLFTextParagraph> {
         }
         return (resultClass.isInstance(rs[0])) ? (T)rs[0] : null;
     }
-
-    /**
-     * Internal code - API may change any time!
-     * <p>
-     * The {@link #selectProperty(Class, String)} xquery method has some performance penalties,
-     * which can be workaround by using {@link XmlCursor}. This method also takes into account
-     * that {@code AlternateContent} tags can occur anywhere on the given path.
-     * <p>
-     * It returns the first element found - the search order is:
-     * <ul>
-     *     <li>searching for a direct child</li>
-     *     <li>searching for a AlternateContent.Choice child</li>
-     *     <li>searching for a AlternateContent.Fallback child</li>
-     * </ul>
-     * Currently POI OOXML is based on the first edition of the ECMA 376 schema, which doesn't
-     * allow AlternateContent tags to show up everywhere. The factory flag is
-     * a workaround to process files based on a later edition. But it comes with the drawback:
-     * any change on the returned XmlObject aren't saved back to the underlying document -
-     * so it's a non updatable clone. If factory is null, a XmlException is
-     * thrown if the AlternateContent is not allowed by the surrounding element or if the
-     * extracted object is of the generic type XmlAnyTypeImpl.
-     *
-     * @param resultClass the requested result class
-     * @param factory a factory parse method reference to allow reparsing of elements
-     *                extracted from AlternateContent elements. Usually the enclosing XmlBeans type needs to be used
-     *                to parse the stream
-     * @param path the elements path, each array must contain at least 1 QName,
-     *             but can contain additional alternative tags
-     * @return the xml object at the path location, or null if not found
-     *
-     * @throws XmlException If factory is null, a XmlException is
-     *      thrown if the AlternateContent is not allowed by the surrounding element or if the
-     *      extracted object is of the generic type XmlAnyTypeImpl.
-     *
-     * @since POI 4.1.2
-     */
-    @SuppressWarnings("unchecked")
-    @Internal
-    public <T extends XmlObject> T selectProperty(Class<T> resultClass, ReparseFactory<T> factory, QName[]... path)
-    throws XmlException {
-        XmlObject xo = getXmlObject();
-        XmlCursor cur = xo.newCursor();
-        XmlCursor innerCur = null;
-        try {
-            innerCur = selectProperty(cur, path, 0, factory != null, false);
-            if (innerCur == null) {
-                return null;
-            }
-
-            // Pesky XmlBeans bug - see Bugzilla #49934
-            // it never happens when using the full ooxml-schemas jar but may happen with the abridged poi-ooxml-schemas
-            xo = innerCur.getObject();
-            if (xo instanceof XmlAnyTypeImpl) {
-                String errorTxt = OSGI_ERROR
-                    .replace("<CLASS>", resultClass.getSimpleName())
-                    .replace("<XSB>", resultClass.getSimpleName().toLowerCase(Locale.ROOT)+"*");
-                if (factory == null) {
-                    throw new XmlException(errorTxt);
-                } else {
-                    xo = factory.parse(innerCur.newXMLStreamReader());
-                }
-            }
-
-            return (T)xo;
-        } finally {
-            cur.dispose();
-            if (innerCur != null) {
-                innerCur.dispose();
-            }
-        }
-    }
-
-    private XmlCursor selectProperty(final XmlCursor cur, final QName[][] path, final int offset, final boolean reparseAlternate, final boolean isAlternate)
-    throws XmlException {
-        // first try the direct children
-        for (QName qn : path[offset]) {
-            if (cur.toChild(qn)) {
-                if (offset == path.length-1) {
-                    return cur;
-                }
-                cur.push();
-                XmlCursor innerCur = selectProperty(cur, path, offset+1, reparseAlternate, false);
-                if (innerCur != null) {
-                    return innerCur;
-                }
-                cur.pop();
-            }
-        }
-        // if we were called inside an alternate content handling don't look for alternates again
-        if (isAlternate || !cur.toChild(ALTERNATE_CONTENT_TAG)) {
-            return null;
-        }
-
-        // otherwise check first the choice then the fallback content
-        XmlObject xo = cur.getObject();
-        AlternateContent alterCont;
-        if (xo instanceof AlternateContent) {
-            alterCont = (AlternateContent)xo;
-        } else {
-            // Pesky XmlBeans bug - see Bugzilla #49934
-            // it never happens when using the full ooxml-schemas jar but may happen with the abridged poi-ooxml-schemas
-            if (!reparseAlternate) {
-                throw new XmlException(OSGI_ERROR
-                    .replace("<CLASS>", "AlternateContent")
-                    .replace("<XSB>", "alternatecontentelement")
-                );
-            }
-            try {
-                AlternateContentDocument acd = AlternateContentDocument.Factory.parse(cur.newXMLStreamReader());
-                alterCont = acd.getAlternateContent();
-            } catch (XmlException e) {
-                throw new XmlException("unable to parse AlternateContent element", e);
-            }
-        }
-
-        final int choices = alterCont.sizeOfChoiceArray();
-        for (int i=0; i<choices; i++) {
-            // TODO: check [Requires] attribute of [Choice] element, if we can handle the content
-            AlternateContent.Choice choice = alterCont.getChoiceArray(i);
-            XmlCursor cCur = choice.newCursor();
-            XmlCursor innerCur = null;
-            try {
-                String requiresNS = cCur.namespaceForPrefix(choice.getRequires());
-                if (MAC_DML_NS.equalsIgnoreCase(requiresNS)) {
-                    // Mac DML usually contains PDFs ...
-                    continue;
-                }
-                innerCur = selectProperty(cCur, path, offset, reparseAlternate, true);
-                if (innerCur != null) {
-                    return innerCur;
-                }
-            } finally {
-                if (innerCur != cCur) {
-                    cCur.dispose();
-                }
-            }
-        }
-
-        if (!alterCont.isSetFallback()) {
-            return null;
-        }
-
-        XmlCursor fCur = alterCont.getFallback().newCursor();
-        XmlCursor innerCur = null;
-        try {
-            innerCur = selectProperty(fCur, path, offset, reparseAlternate, true);
-            return innerCur;
-        } finally {
-            if (innerCur != fCur) {
-                fCur.dispose();
-            }
-        }
-    }
-
 
     /**
      * Walk up the inheritance tree and fetch shape properties.<p>
