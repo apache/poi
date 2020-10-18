@@ -17,7 +17,7 @@
 package org.apache.poi.ss.usermodel;
 
 import static org.apache.poi.extractor.ExtractorFactory.OOXML_PACKAGE;
-import static org.apache.poi.poifs.crypt.EncryptionInfo.ENCRYPTION_INFO_ENTRY;
+import static org.apache.poi.poifs.crypt.Decryptor.DEFAULT_POIFS_ENTRY;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -31,7 +31,6 @@ import java.util.ServiceLoader;
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
@@ -132,7 +131,7 @@ public final class WorkbookFactory {
      */
     public static Workbook create(final DirectoryNode root, String password) throws IOException {
         // Encrypted OOXML files go inside OLE2 containers, is this one?
-        if (root.hasEntry(Decryptor.DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE)) {
+        if (root.hasEntry(DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE)) {
             return wp(FileMagic.OOXML, w -> w.create(root, password));
         } else {
             return wp(FileMagic.OLE2, w ->  w.create(root, password));
@@ -205,9 +204,10 @@ public final class WorkbookFactory {
         }
 
         POIFSFileSystem poifs = new POIFSFileSystem(is);
-        boolean isOOXML = poifs.getRoot().hasEntry(ENCRYPTION_INFO_ENTRY);
+        DirectoryNode root = poifs.getRoot();
+        boolean isOOXML = root.hasEntry(DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE);
 
-        return wp(isOOXML ? FileMagic.OOXML : fm, w -> w.create(poifs.getRoot(), password));
+        return wp(isOOXML ? FileMagic.OOXML : fm, w -> w.create(root, password));
     }
 
     /**
@@ -279,7 +279,7 @@ public final class WorkbookFactory {
             final boolean ooxmlEnc;
             try (POIFSFileSystem fs = new POIFSFileSystem(file, true)) {
                 DirectoryNode root = fs.getRoot();
-                ooxmlEnc = root.hasEntry(Decryptor.DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE);
+                ooxmlEnc = root.hasEntry(DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE);
             }
             return wp(ooxmlEnc ? FileMagic.OOXML : fm, w -> w.create(file, password, readOnly));
         }

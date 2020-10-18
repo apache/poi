@@ -17,7 +17,7 @@
 package org.apache.poi.extractor;
 
 import static org.apache.poi.hssf.record.crypto.Biff8EncryptionKey.getCurrentUserPassword;
-import static org.apache.poi.poifs.crypt.EncryptionInfo.ENCRYPTION_INFO_ENTRY;
+import static org.apache.poi.poifs.crypt.Decryptor.DEFAULT_POIFS_ENTRY;
 
 import java.io.File;
 import java.io.IOException;
@@ -168,9 +168,10 @@ public final class ExtractorFactory {
         }
 
         POIFSFileSystem poifs = new POIFSFileSystem(is);
-        boolean isOOXML = poifs.getRoot().hasEntry(ENCRYPTION_INFO_ENTRY);
+        DirectoryNode root = poifs.getRoot();
+        boolean isOOXML = root.hasEntry(DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE);
 
-        return wp(isOOXML ? FileMagic.OOXML : fm, w -> w.create(poifs.getRoot(), password));
+        return wp(isOOXML ? FileMagic.OOXML : fm, w -> w.create(root, password));
     }
 
     public static POITextExtractor createExtractor(File file) throws IOException {
@@ -193,8 +194,9 @@ public final class ExtractorFactory {
 
         POIFSFileSystem poifs = new POIFSFileSystem(file, true);
         try {
-            boolean isOOXML = poifs.getRoot().hasEntry(ENCRYPTION_INFO_ENTRY);
-            return wp(isOOXML ? FileMagic.OOXML : fm, w -> w.create(poifs.getRoot(), password));
+            DirectoryNode root = poifs.getRoot();
+            boolean isOOXML = root.hasEntry(DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE);
+            return wp(isOOXML ? FileMagic.OOXML : fm, w -> w.create(root, password));
         } catch (IOException | RuntimeException e) {
             IOUtils.closeQuietly(poifs);
             throw e;
@@ -223,7 +225,7 @@ public final class ExtractorFactory {
 
     public static POITextExtractor createExtractor(final DirectoryNode root, String password) throws IOException {
         // Encrypted OOXML files go inside OLE2 containers, is this one?
-        if (root.hasEntry(Decryptor.DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE)) {
+        if (root.hasEntry(DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE)) {
             return wp(FileMagic.OOXML, w -> w.create(root, password));
         } else {
             return wp(FileMagic.OLE2, w ->  w.create(root, password));

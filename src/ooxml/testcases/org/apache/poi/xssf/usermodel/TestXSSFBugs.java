@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.apache.poi.extractor.ExtractorFactory.OOXML_PACKAGE;
 import static org.apache.poi.openxml4j.opc.TestContentType.isOldXercesActive;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -52,13 +53,10 @@ import org.apache.commons.compress.archivers.zip.ZipArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.common.usermodel.HyperlinkType;
-import org.apache.poi.hslf.usermodel.HSLFObjectData;
-import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.ooxml.POIXMLException;
@@ -73,9 +71,14 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
+import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.sl.usermodel.ObjectShape;
+import org.apache.poi.sl.usermodel.Slide;
+import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.ConditionalFormattingEvaluator;
@@ -3573,27 +3576,33 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             int activeSheet = wb.getActiveSheetIndex();
         }
     }
-    
+
+
+
     @Test
     public void testXLSXinPPT() throws Exception {
-        try (HSLFSlideShow ppt = new HSLFSlideShow(
-                HSLFTestDataSamples.openSampleFileStream("testPPT_oleWorkbook.ppt"))) {
-            assertEquals(1, ppt.getEmbeddedObjects().length);
+        try (SlideShow<?,?> ppt = SlideShowFactory.create(
+                POIDataSamples.getSlideShowInstance().openResourceAsStream("testPPT_oleWorkbook.ppt"))) {
 
-            HSLFObjectData data = ppt.getEmbeddedObjects()[0];
-            assertEquals(null, data.getFileName());
+            Slide<?, ?> slide = ppt.getSlides().get(1);
+            ObjectShape<?,?> oleShape = (ObjectShape<?,?>)slide.getShapes().get(2);
+
+            org.apache.poi.sl.usermodel.ObjectData data = oleShape.getObjectData();
+            assertNull(data.getFileName());
 
             // Will be OOXML wrapped in OLE2, not directly SpreadSheet
             POIFSFileSystem fs = new POIFSFileSystem(data.getInputStream());
-            assertEquals(true, fs.getRoot().hasEntry("Package"));
-            assertEquals(false, fs.getRoot().hasEntry("Workbook"));
+            assertTrue(fs.getRoot().hasEntry(OOXML_PACKAGE));
+            assertFalse(fs.getRoot().hasEntry("Workbook"));
+
 
             // Can fetch Package to get OOXML
-            DocumentInputStream dis = new DocumentInputStream((DocumentEntry)fs.getRoot().getEntry("Package"));
-            try (OPCPackage pkg = OPCPackage.open(dis)) {
-                XSSFWorkbook wb = new XSSFWorkbook(pkg);
+            DirectoryNode root = fs.getRoot();
+            DocumentEntry docEntry = (DocumentEntry) root.getEntry(OOXML_PACKAGE);
+            try (DocumentInputStream dis = new DocumentInputStream(docEntry);
+                 OPCPackage pkg = OPCPackage.open(dis);
+                 XSSFWorkbook wb = new XSSFWorkbook(pkg)) {
                 assertEquals(1, wb.getNumberOfSheets());
-                wb.close();
             }
 
             // Via the XSSF Factory
@@ -3602,15 +3611,14 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 assertEquals(1, wb.getNumberOfSheets());
             }
 
+
             // Or can open via the normal Factory, as stream or OLE2
-            /* this part test is currently broken - https://bz.apache.org/bugzilla/show_bug.cgi?id=64817
             try (Workbook wb = WorkbookFactory.create(fs)) {
                 assertEquals(1, wb.getNumberOfSheets());
             }
             try (Workbook wb = WorkbookFactory.create(data.getInputStream())) {
                 assertEquals(1, wb.getNumberOfSheets());
             }
-             */
         }
     }
 }

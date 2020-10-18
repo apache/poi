@@ -17,7 +17,7 @@
 package org.apache.poi.sl.usermodel;
 
 import static org.apache.poi.extractor.ExtractorFactory.OOXML_PACKAGE;
-import static org.apache.poi.poifs.crypt.EncryptionInfo.ENCRYPTION_INFO_ENTRY;
+import static org.apache.poi.poifs.crypt.Decryptor.DEFAULT_POIFS_ENTRY;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -198,7 +198,8 @@ public final class SlideShowFactory {
         }
 
         POIFSFileSystem poifs = new POIFSFileSystem(is);
-        boolean isOOXML = poifs.getRoot().hasEntry(ENCRYPTION_INFO_ENTRY);
+        DirectoryNode root = poifs.getRoot();
+        boolean isOOXML = root.hasEntry(DEFAULT_POIFS_ENTRY) || root.hasEntry(OOXML_PACKAGE);
 
         return wp(isOOXML ? FileMagic.OOXML : fm, w -> w.create(poifs.getRoot(), password));
     }
