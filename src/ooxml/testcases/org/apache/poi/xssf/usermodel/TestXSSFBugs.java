@@ -114,6 +114,7 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellFill;
 import org.apache.xmlbeans.XmlException;
 import org.junit.Assert;
+import org.junit.Assume;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcCell;
@@ -3581,6 +3582,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     @Test
     public void testXLSXinPPT() throws Exception {
+        Assume.assumeFalse(Boolean.getBoolean("scratchpad.ignore"));
+
         try (SlideShow<?,?> ppt = SlideShowFactory.create(
                 POIDataSamples.getSlideShowInstance().openResourceAsStream("testPPT_oleWorkbook.ppt"))) {
 
