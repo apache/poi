@@ -98,9 +98,9 @@ def xmlbeansSvnBase = 'https://svn.apache.org/repos/asf/xmlbeans/trunk'
 def defaultJdk = '1.8'
 def defaultTrigger = 'H/15 * * * *'     // check SCM every 60/15 = 4 minutes
 def defaultEmail = 'dev@poi.apache.org'
-def defaultAnt = 'Ant 1.10 (Latest)'
-def defaultAntWindows = 'Ant 1.10 (Latest Windows)'
-def defaultMaven = 'Maven 3 (latest)'
+def defaultAnt = 'ant_1.10_latest'
+def defaultAntWindows = 'ant_1.10_latest_windows'
+def defaultMaven = 'maven_3_latest'
 // H29 seems to have very little memory
 def defaultSlaves = '(ubuntu)&&!beam&&!cloud-slave&&!H29'
 
