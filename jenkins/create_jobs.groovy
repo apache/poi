@@ -80,9 +80,6 @@ def poijobs = [
 ]
 
 def xmlbeansjobs = [
-        [ name: 'POI-XMLBeans-DSL-1.6', jdk: '1.6', trigger: 'H */12 * * *', skipcigame: true,
-          disabled: true // XMLBeans does not support Java 6 any more
-        ],
         [ name: 'POI-XMLBeans-DSL-1.8', jdk: '1.8', trigger: 'H */12 * * *', skipcigame: true,
         ],
         [ name: 'POI-XMLBeans-DSL-1.11', jdk: '1.11', trigger: triggerSundays, skipcigame: true,
@@ -108,16 +105,15 @@ def defaultMaven = 'Maven 3 (latest)'
 def defaultSlaves = '(ubuntu)&&!beam&&!cloud-slave&&!H29'
 
 def jdkMapping = [
-        '1.6': 'JDK 1.6 (latest)',
-        '1.8': 'JDK 1.8 (latest)',
-        '1.10': 'JDK 10 (latest)',
-        '1.11': 'JDK 11 (latest)',
-        '1.12': 'JDK 12 (latest)',
-        '1.13': 'JDK 13 (latest)',
-        '1.14': 'JDK 14 (latest)',
-        '1.15': 'JDK 15 (latest)',
-        'OpenJDK 1.8': 'OpenJDK 1.8.0_242',
-        'IBMJDK': 'IBM 1.8 64-bit (on Ubuntu only)',
+        '1.8': 'jdk_1.8_latest',
+        '1.10': 'jdk_10_latest',
+        '1.11': 'jdk_11_latest',
+        '1.12': 'jdk_12_latest',
+        '1.13': 'jdk_13_latest',
+        '1.14': 'jdk_14_latest',
+        '1.15': 'jdk_15_latest',
+        'OpenJDK 1.8': 'openjdk_1.8.0_252',
+        'IBMJDK': 'ibmjdk_1.8.0_261',
 ]
 
 static def shellEx(def context, String cmd, def poijob) {
