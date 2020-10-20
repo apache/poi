@@ -30,56 +30,56 @@ import org.junit.Test;
  * @author Stephen Wolke (smwolke at geistig.com)
  */
 public final class TestTrunc extends BaseTestNumeric {
-	private static final NumericFunction F = null;
+    private static final NumericFunction F = null;
 
-	@Test
-	public void testTruncWithStringArg() {
+    @Test
+    public void testTruncWithStringArg() {
 
-		ValueEval strArg = new StringEval("abc");
-		ValueEval[] args = { strArg, new NumberEval(2) };
-		ValueEval result = NumericFunction.TRUNC.evaluate(args, -1, (short)-1);
-		Assert.assertEquals(ErrorEval.VALUE_INVALID, result);
-	}
+        ValueEval strArg = new StringEval("abc");
+        ValueEval[] args = { strArg, new NumberEval(2) };
+        ValueEval result = NumericFunction.TRUNC.evaluate(args, -1, (short)-1);
+        Assert.assertEquals(ErrorEval.VALUE_INVALID, result);
+    }
 
-	@Test
-	public void testTruncWithWholeNumber() {
-		ValueEval[] args = { new NumberEval(200), new NumberEval(2) };
-		@SuppressWarnings("static-access")
-		ValueEval result = F.TRUNC.evaluate(args, -1, (short)-1);
-		assertEquals("TRUNC", (new NumberEval(200d)).getNumberValue(), ((NumberEval)result).getNumberValue());
-	}
+    @Test
+    public void testTruncWithWholeNumber() {
+        ValueEval[] args = { new NumberEval(200), new NumberEval(2) };
+        @SuppressWarnings("static-access")
+        ValueEval result = F.TRUNC.evaluate(args, -1, (short)-1);
+        assertEquals("TRUNC", (new NumberEval(200d)).getNumberValue(), ((NumberEval)result).getNumberValue());
+    }
 
-	@Test
-	public void testTruncWithDecimalNumber() {
-		ValueEval[] args = { new NumberEval(2.612777), new NumberEval(3) };
-		@SuppressWarnings("static-access")
-		ValueEval result = F.TRUNC.evaluate(args, -1, (short)-1);
-		assertEquals("TRUNC", (new NumberEval(2.612d)).getNumberValue(), ((NumberEval)result).getNumberValue());
-	}
+    @Test
+    public void testTruncWithDecimalNumber() {
+        ValueEval[] args = { new NumberEval(2.612777), new NumberEval(3) };
+        @SuppressWarnings("static-access")
+        ValueEval result = F.TRUNC.evaluate(args, -1, (short)-1);
+        assertEquals("TRUNC", (new NumberEval(2.612d)).getNumberValue(), ((NumberEval)result).getNumberValue());
+    }
 
-	@Test
-	public void testTruncWithProblematicDecimalNumber() {
-		ValueEval[] args = { new NumberEval(0.29), new NumberEval(2) };
-		ValueEval result = NumericFunction.TRUNC.evaluate(args, -1, (short)-1);
-		assertEquals("TRUNC", (new NumberEval(0.29d)).getNumberValue(), ((NumberEval)result).getNumberValue());
-	}
+    @Test
+    public void testTruncWithProblematicDecimalNumber() {
+        ValueEval[] args = { new NumberEval(0.29), new NumberEval(2) };
+        ValueEval result = NumericFunction.TRUNC.evaluate(args, -1, (short)-1);
+        assertEquals("TRUNC", (new NumberEval(0.29d)).getNumberValue(), ((NumberEval)result).getNumberValue());
+    }
 
-	@Test
-	public void testTruncWithProblematicCalculationResult() {
+    @Test
+    public void testTruncWithProblematicCalculationResult() {
 
-		ValueEval[] args = { new NumberEval(21.624d / 24d + .009d), new NumberEval(2) };
-		ValueEval result = NumericFunction.TRUNC.evaluate(args, -1, (short)-1);
-		assertEquals("TRUNC", (new NumberEval(0.91d)).getNumberValue(), ((NumberEval)result).getNumberValue());
-	}
+        ValueEval[] args = { new NumberEval(21.624d / 24d + .009d), new NumberEval(2) };
+        ValueEval result = NumericFunction.TRUNC.evaluate(args, -1, (short)-1);
+        assertEquals("TRUNC", (new NumberEval(0.91d)).getNumberValue(), ((NumberEval)result).getNumberValue());
+    }
 
-	@Test
-	public void testTruncWithDecimalNumberOneArg() {
-		ValueEval[] args = { new NumberEval(2.612777) };
-		ValueEval result = NumericFunction.TRUNC.evaluate(args, -1, (short)-1);
-		assertEquals("TRUNC", (new NumberEval(2d)).getNumberValue(), ((NumberEval)result).getNumberValue());
-	}
+    @Test
+    public void testTruncWithDecimalNumberOneArg() {
+        ValueEval[] args = { new NumberEval(2.612777) };
+        ValueEval result = NumericFunction.TRUNC.evaluate(args, -1, (short)-1);
+        assertEquals("TRUNC", (new NumberEval(2d)).getNumberValue(), ((NumberEval)result).getNumberValue());
+    }
 
-	@Test
+    @Test
     public void testNegative() {
         ValueEval[] args = { new NumberEval(-8.9), new NumberEval(0) };
         @SuppressWarnings("static-access")
