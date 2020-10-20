@@ -315,9 +315,7 @@ project('examples') {
         compile project(':ooxml')
         compile project(':scratchpad')
 
-        // revert this back to a normal dependency after XMLBeans 4.0.0 is released
-        //compile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
-        compile urlFile('https://ci-builds.apache.org/job/POI/job/POI-XMLBeans-DSL-1.8/lastSuccessfulBuild/artifact/build/xmlbeans-4.0.0.jar', 'xmlbeans')
+        compile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
 
         compile files('../../build/dist/maven/ooxml-schemas/ooxml-schemas-1.5.jar')
         compile "org.apache.commons:commons-compress:${commonsCompressVersion}"
@@ -364,9 +362,7 @@ project('integrationtest') {
 
         testCompile "junit:junit:${junitVersion}"
 
-        // revert this back to a normal dependency after XMLBeans 4.0.0 is released
-        //testCompile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
-        testCompile urlFile('https://ci-builds.apache.org/job/POI/job/POI-XMLBeans-DSL-1.8/lastSuccessfulBuild/artifact/build/xmlbeans-4.0.0.jar', 'xmlbeans')
+        testCompile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
 
         testCompile files('../../build/dist/maven/ooxml-schemas/ooxml-schemas-1.5.jar')
         testCompile files(this.project(':ooxml').sourceSets.test.runtimeClasspath)
