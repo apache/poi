@@ -58,6 +58,21 @@ public final class TestTrunc extends BaseTestNumeric {
 	}
 
 	@Test
+	public void testTruncWithProblematicDecimalNumber() {
+		ValueEval[] args = { new NumberEval(0.29), new NumberEval(2) };
+		ValueEval result = NumericFunction.TRUNC.evaluate(args, -1, (short)-1);
+		assertEquals("TRUNC", (new NumberEval(0.29d)).getNumberValue(), ((NumberEval)result).getNumberValue());
+	}
+
+	@Test
+	public void testTruncWithProblematicCalculationResult() {
+
+		ValueEval[] args = { new NumberEval(21.624d / 24d + .009d), new NumberEval(2) };
+		ValueEval result = NumericFunction.TRUNC.evaluate(args, -1, (short)-1);
+		assertEquals("TRUNC", (new NumberEval(0.91d)).getNumberValue(), ((NumberEval)result).getNumberValue());
+	}
+
+	@Test
 	public void testTruncWithDecimalNumberOneArg() {
 		ValueEval[] args = { new NumberEval(2.612777) };
 		ValueEval result = NumericFunction.TRUNC.evaluate(args, -1, (short)-1);

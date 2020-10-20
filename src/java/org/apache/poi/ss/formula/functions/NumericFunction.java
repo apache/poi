@@ -330,9 +330,7 @@ public abstract class NumericFunction implements Function {
 			try {
 				double d0 = singleOperandEvaluate(arg0, srcRowIndex, srcColumnIndex);
 				double d1 = singleOperandEvaluate(arg1, srcRowIndex, srcColumnIndex);
-				double multi = Math.pow(10d,d1);
-				if(d0 < 0) result = -Math.floor(-d0 * multi) / multi;
-                else result = Math.floor(d0 * multi) / multi;
+				result = MathX.roundDown(d0, (int)d1);
 				checkValue(result);
 			}catch (EvaluationException e) {
 				return e.getErrorEval();
