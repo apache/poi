@@ -269,7 +269,7 @@ public final class XMLHelper {
             return true;
         } catch (Exception e) {
             logThrowable(e, "SAX Feature unsupported", name);
-        } catch (AbstractMethodError ame) {
+        } catch (Error ame) {
             logThrowable(ame, "Cannot set SAX feature because outdated XML parser in classpath", name);
         }
         return false;
@@ -281,7 +281,8 @@ public final class XMLHelper {
             return true;
         } catch (Exception e) {
             logThrowable(e, "SAX Feature unsupported", name);
-        } catch (AbstractMethodError ame) {
+        } catch (Error ame) {
+            // ignore all top error object - GraalVM in native mode is not coping with java.xml error message resources
             logThrowable(ame, "Cannot set SAX feature because outdated XML parser in classpath", name);
         }
         return false;

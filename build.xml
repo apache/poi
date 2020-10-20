@@ -1938,6 +1938,16 @@ under the License.
                 </replacetokens>
             </filterchain>
         </copy>
+
+        <mkdir dir="${dist.dir}/maven/ooxml-schemas"/>
+        <copy tofile="${dist.dir}/maven/ooxml-schemas/ooxml-schemas-${maven.ooxml.xsds.version.id}.pom" file="maven/ooxml-schemas.pom">
+            <filterchain>
+                <replacetokens>
+                    <token key="VERSION" value="${maven.ooxml.xsds.version.id}"/>
+                </replacetokens>
+            </filterchain>
+        </copy>
+
         <echo>Maven POMs are located in ${dist.dir}</echo>
         <echo>Use ant dist-nexus to deploy the artifacts in the remote repository</echo>
     </target>
@@ -2211,22 +2221,25 @@ under the License.
     </target>
 
     <macrodef name="m2-install">
-      <attribute name="artifactId"/>
+        <attribute name="artifactId"/>
+        <attribute name="versionId" default="${version.id}"/>
 
-      <sequential>
-        <mvn:install file="${dist.dir}/maven/@{artifactId}/@{artifactId}-${version.id}.jar">
-          <pom file="${dist.dir}/maven/@{artifactId}/@{artifactId}-${version.id}.pom"/>
-        </mvn:install>
-      </sequential>
+        <sequential>
+            <mvn:install file="${dist.dir}/maven/@{artifactId}/@{artifactId}-@{versionId}.jar">
+                <pom file="${dist.dir}/maven/@{artifactId}/@{artifactId}-@{versionId}.pom"/>
+            </mvn:install>
+        </sequential>
     </macrodef>
 
     <target name="mvn-install" depends="maventask,jar,maven-poms" description="Install POI artifacts into the local repository. Equivalent of 'mvn install'">
-      <m2-install artifactId="poi"/>
-      <m2-install artifactId="poi-scratchpad"/>
-      <m2-install artifactId="poi-ooxml"/>
-      <m2-install artifactId="poi-examples"/>
-      <m2-install artifactId="poi-ooxml-schemas"/>
-      <m2-install artifactId="poi-excelant"/>
+        <m2-install artifactId="poi"/>
+        <m2-install artifactId="poi-scratchpad"/>
+        <m2-install artifactId="poi-ooxml"/>
+        <m2-install artifactId="poi-examples"/>
+        <m2-install artifactId="poi-ooxml-schemas"/>
+        <m2-install artifactId="poi-excelant"/>
+        <m2-install artifactId="poi-excelant"/>
+        <m2-install artifactId="ooxml-schemas" versionId="${maven.ooxml.xsds.version.id}"/>
     </target>
 
     <target name="rat-check" depends="init" description="Runs the Apache Creadur Rat check against the source code, to spot any files which are missing the correct license headers">
