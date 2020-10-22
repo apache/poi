@@ -108,12 +108,12 @@ subprojects {
     version = '5.0.0-SNAPSHOT'
     ext {
         bouncyCastleVersion = '1.66'
-        commonsCodecVersion = '1.14'
+        commonsCodecVersion = '1.15'
         commonsCompressVersion = '1.20'
         commonsMathVersion = '3.6.1'
         japicmpversion = '4.1.2'
         junitVersion = '4.13'
-        mockitoVersion = '3.5.0'
+        mockitoVersion = '3.5.15'
         xmlbeansVersion = '4.0.0'
     }
 
