@@ -18,27 +18,103 @@
 		<!-- see http://docs.codehaus.org/display/SONAR/Narrowing+the+Focus for details of this property -->
 		<sonar.exclusions>target/generated-sources/*</sonar.exclusions>
 		<maven.compiler.fork>true</maven.compiler.fork>
-		<xmlbeans.xsdconfig>${basedir}/../../src/ooxml/resources/org/apache/poi/schemas/ooxmlSchemas.xsdconfig</xmlbeans.xsdconfig>
 	</properties>
 
     <build>
 		<plugins>
-			<!-- Download and unpack the OfficeOpenXML Schema and use xmlbeans to create classes from the XSDs -->
 			<plugin>
-				<groupId>com.googlecode.maven-download-plugin</groupId>
-				<artifactId>download-maven-plugin</artifactId>
-				<version>${maven.plugin.download.version}</version>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>${maven.plugin.antrun.version}</version>
 				<executions>
 					<execution>
-						<id>download-xsds</id>
+						<id>copy-xmltype-and-xsdconfig</id>
 						<phase>generate-sources</phase>
 						<goals>
-							<goal>wget</goal>
+							<goal>run</goal>
 						</goals>
 						<configuration>
-							<url>https://www.ecma-international.org/publications/files/ECMA-ST/Office%20Open%20XML%201st%20edition%20Part%204%20(PDF).zip</url>
-							<unpack>true</unpack>
-							<md5>abe6bb6e7799e854934b3c634e8bcf7b</md5>
+							<target>
+								<property name="xsdir" value="${basedir}/../../src/ooxml/resources/org/apache/poi"/>
+								<copy todir="${basedir}/target/schemas">
+									<zipfileset src="${xsdir}/schemas/OfficeOpenXML-XMLSchema.zip"/>
+									<zipfileset src="${xsdir}/schemas/OpenPackagingConventions-XMLSchema.zip" includes="opc-digSig.xsd,opc-relationships.xsd"/>
+									<fileset dir="${xsdir}/xdgf" includes="*.xsd,*.xsdconfig"/>
+									<fileset dir="${xsdir}/schemas" includes="*.xsd,*.xsdconfig"/>
+									<fileset dir="${xsdir}/poifs/crypt" includes="signatureInfo.xsd"/>
+								</copy>
+							</target>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>exec-maven-plugin</artifactId>
+				<version>3.0.0</version>
+				<executions>
+					<execution>
+						<phase>process-sources</phase>
+						<goals>
+							<!-- need to use exec instead of java, because SchemaCompiler calls System.exit() -->
+							<goal>exec</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<executable>java</executable>
+					<arguments>
+						<argument>-classpath</argument>
+						<!-- automatically creates the classpath using all project dependencies,
+							 also adding the project build directory -->
+						<classpath/>
+						<argument>org.apache.xmlbeans.impl.tool.SchemaCompiler</argument>
+						<argument>-srconly</argument>
+						<argument>-name</argument>
+						<argument>ooxml</argument>
+						<argument>-repackage</argument>
+						<argument>org.apache.xmlbeans.metadata:org.apache.poi.schemas.ooxml</argument>
+						<argument>-d</argument>
+						<argument>${basedir}/target/generated-resources</argument>
+						<argument>-src</argument>
+						<argument>${basedir}/target/generated-sources</argument>
+						<argument>${basedir}/target/schemas</argument>
+					</arguments>
+					<additionalClasspathElements>
+						<additionalClasspathElement>
+							${basedir}/../../lib/ooxml/xmlbeans-4.0.0.jar
+						</additionalClasspathElement>
+					</additionalClasspathElements>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>build-helper-maven-plugin</artifactId>
+				<version>3.2.0</version>
+				<executions>
+					<execution>
+						<id>add-source</id>
+						<goals>
+							<goal>add-source</goal>
+							<goal>add-resource</goal>
+						</goals>
+						<configuration>
+							<resources>
+								<resource>
+									<directory>${basedir}/target/generated-resources</directory>
+								</resource>
+								<resource>
+									<directory>${basedir}/../../src/multimodule/ooxml-schemas/java9</directory>
+									<targetPath>META-INF/versions/9</targetPath>
+									<includes>
+										<include>*.class</include>
+									</includes>
+								</resource>
+							</resources>
+							<sources>
+								<source>${basedir}/target/generated-sources</source>
+							</sources>
 						</configuration>
 					</execution>
 				</executions>
@@ -46,30 +122,21 @@
 
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-antrun-plugin</artifactId>
-				<version>${maven.plugin.antrun.version}</version>
-				<executions>
-					<execution>
-						<id>unzip-schema</id>
-						<phase>generate-sources</phase>
-						<configuration>
-							<target>
-								<echo message="unzip schemas" />
-								<unzip src="target/OfficeOpenXML-XMLSchema.zip" dest="target/schemas" />
-								<copy file="../../src/ooxml/resources/org/apache/poi/xdgf/visio.xsd"
-									todir="target/schemas"/>
-							</target>
-						</configuration>
-						<goals>
-							<goal>run</goal>
-						</goals>
-					</execution>
-				</executions>
+				<artifactId>maven-jar-plugin</artifactId>
+				<version>3.2.0</version>
+				<configuration>
+					<archive>
+						<manifestEntries>
+							<Multi-Release>true</Multi-Release>
+							<Automatic-Module-Name>org.apache.poi.ooxml.schemas</Automatic-Module-Name>
+						</manifestEntries>
+					</archive>
+				</configuration>
 			</plugin>
 		</plugins>
     </build>
 
-    <dependencies>
+	<dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>poi-main</artifactId>

@@ -18,7 +18,7 @@
             <!-- copy sources, resources and tests in place as otherwise Sonar does not pick them up correctly! -->
             <plugin>
                 <artifactId>maven-resources-plugin</artifactId>
-                <version>${maven.plugin.resources.version}</version>
+<!--                <version>${mavnen.plugin.resources.version}</version>-->
                 <executions>
                     <execution>
                         <id>copy-tests</id>
@@ -31,6 +31,15 @@
                             <resources>
                                 <resource>
                                     <directory>../../src/integrationtest</directory>
+                                </resource>
+                                <resource>
+                                    <directory>../../src/testcases</directory>
+                                    <includes>
+                                        <include>org/apache/poi/POIDataSamples.java</include>
+                                        <include>org/apache/poi/util/NullPrintStream.java</include>
+                                        <include>org/apache/poi/util/NullOutputStream.java</include>
+                                        <include>org/apache/poi/hssf/HSSFTestDataSamples.java</include>
+                                    </includes>
                                 </resource>
                             </resources>
                         </configuration>

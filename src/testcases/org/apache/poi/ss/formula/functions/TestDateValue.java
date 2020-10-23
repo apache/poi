@@ -17,17 +17,19 @@
 
 package org.apache.poi.ss.formula.functions;
 
+import static org.junit.Assert.assertEquals;
+
+import java.util.Locale;
+
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.util.LocaleUtil;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
-
-import java.util.Locale;
-
-import static org.junit.Assert.assertEquals;
 
 /**
  * Tests for Excel function DATEVALUE()
@@ -35,6 +37,16 @@ import static org.junit.Assert.assertEquals;
  * @author Milosz Rembisz
  */
 public final class TestDateValue {
+
+    @BeforeClass
+    public static void init() {
+        LocaleUtil.setUserLocale(Locale.US);
+    }
+
+    @AfterClass
+    public static void clear() {
+        LocaleUtil.setUserLocale(null);
+    }
 
     @Test
     public void testDateValue() {
@@ -56,18 +68,13 @@ public final class TestDateValue {
 
         confirmDateValueError(new StringEval("non-date text"));
 
-        LocaleUtil.setUserLocale(Locale.ENGLISH);
-        try {
-            // // EXCEL
-            confirmDateValue(new StringEval("8/22/2011"), 40777); // Serial number of a date entered as text.
-            confirmDateValue(new StringEval("22-MAY-2011"), 40685); // Serial number of a date entered as text.
-            confirmDateValue(new StringEval("2011/02/23"), 40597); // Serial number of a date entered as text.
+        // // EXCEL
+        confirmDateValue(new StringEval("8/22/2011"), 40777); // Serial number of a date entered as text.
+        confirmDateValue(new StringEval("22-MAY-2011"), 40685); // Serial number of a date entered as text.
+        confirmDateValue(new StringEval("2011/02/23"), 40597); // Serial number of a date entered as text.
 
-            // LibreOffice compatibility
-            confirmDateValue(new StringEval("1954-07-20"), 19925);
-        } finally {
-            LocaleUtil.setUserLocale(null);
-        }
+        // LibreOffice compatibility
+        confirmDateValue(new StringEval("1954-07-20"), 19925);
     }
 
     private ValueEval invokeDateValue(ValueEval text) {

@@ -58,8 +58,6 @@
     <modules>
         <module>main</module>
         <module>ooxml-schema</module>
-        <module>ooxml-schema-encryption</module>
-        <module>ooxml-schema-security</module>
         <module>ooxml</module>
         <module>scratchpad</module>
         <module>excelant</module>
@@ -85,12 +83,12 @@
         <junit.version>4.13</junit.version>
         <xmlunit.version>2.7.0</xmlunit.version>
         <mockito.version>3.5.15</mockito.version>
-        <maven.plugin.resources.version>3.1.0</maven.plugin.resources.version>
+        <maven.plugin.resources.version>3.2.0</maven.plugin.resources.version>
         <maven.plugin.jar.version>3.2.0</maven.plugin.jar.version>
         <maven.plugin.clean.version>3.1.0</maven.plugin.clean.version>
-        <maven.plugin.download.version>1.5.0</maven.plugin.download.version>
-        <maven.plugin.antrun.version>1.8</maven.plugin.antrun.version>
-        <maven.plugin.surefire.version>3.0.0-M4</maven.plugin.surefire.version>
+        <maven.plugin.download.version>1.6.0</maven.plugin.download.version>
+        <maven.plugin.antrun.version>3.0.0</maven.plugin.antrun.version>
+        <maven.plugin.surefire.version>3.0.0-M5</maven.plugin.surefire.version>
     </properties>
 
     <build>
@@ -126,8 +124,7 @@
                         <org.apache.poi.util.POILogger>org.apache.poi.util.NullLogger</org.apache.poi.util.POILogger>
                     </systemPropertyVariables>
                     <!-- use to following to analyze OOM issues:	-XX:+HeapDumpOnOutOfMemoryError -XX:HeapDumpPath=/tmp -->
-                    <argLine>@{argLine} -Duser.language=en -Duser.country=US -Xmx1024m -Djava.io.tmpdir=${basedir}/target/tmp
-                    </argLine>
+                    <argLine>@{argLine} -Duser.language=en -Duser.country=US -Xmx1024m -Djava.io.tmpdir=${basedir}/target/tmp -XX:-OmitStackTraceInFastThrow</argLine>
                     <excludes>
                         <exclude>**/All*Tests.java</exclude>
                         <exclude>**/TestUnfixedBugs.java</exclude>
@@ -221,140 +218,5 @@
             </properties>
         </profile>
 
-        <profile>
-            <id>xmlbean</id>
-            <activation>
-                <file>
-                    <exists>xmlbeans.marker</exists>
-                </file>
-            </activation>
-            <build>
-                <plugins>
-                    <plugin>
-                        <groupId>org.codehaus.mojo</groupId>
-                        <artifactId>xmlbeans-maven-plugin</artifactId>
-                        <version>2.3.3</version>
-                        <executions>
-                            <execution>
-                                <phase>process-sources</phase>
-                                <goals>
-                                    <goal>xmlbeans</goal>
-                                </goals>
-                                <configuration>
-                                    <schemaDirectory>${basedir}/target/schemas</schemaDirectory>
-                                    <javaSource>1.5</javaSource>
-                                    <noJavac>true</noJavac>
-                                    <noUpa>${xmlbeans.noUpa}</noUpa>
-                                    <noPvr>${xmlbeans.noPvr}</noPvr>
-                                    <xmlConfigs>
-                                        <xmlConfig implementation="java.io.File">
-                                            ${basedir}/../../src/ooxml/resources/org/apache/poi/poifs/crypt/encryptionCertificate.xsdconfig
-                                        </xmlConfig>
-                                        <xmlConfig implementation="java.io.File">
-                                            ${basedir}/../../src/ooxml/resources/org/apache/poi/poifs/crypt/encryptionInfo.xsdconfig
-                                        </xmlConfig>
-                                        <xmlConfig implementation="java.io.File">
-                                            ${basedir}/../../src/ooxml/resources/org/apache/poi/poifs/crypt/encryptionPassword.xsdconfig
-                                        </xmlConfig>
-                                        <xmlConfig implementation="java.io.File">
-                                            ${basedir}/../../src/ooxml/resources/org/apache/poi/schemas/ooxmlSchemas.xsdconfig
-                                        </xmlConfig>
-                                    </xmlConfigs>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-
-                    <plugin>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <version>${maven.plugin.antrun.version}</version>
-                        <executions>
-                            <execution>
-                                <id>copy-xmltype-and-xsdconfig</id>
-                                <phase>generate-sources</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <copy todir="${basedir}/target/schemas">
-                                            <fileset dir="${basedir}/../../src/ooxml/resources/org/apache/poi/schemas" excludes="XAdES*.xsd"/>
-                                        </copy>
-                                    </target>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>replace-xmltypeloader</id>
-                                <phase>process-sources</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <!-- the space between "public  static" is on purpose to prevent double execution -->
-                                        <property name="loaderMethod"><![CDATA[
-        private static java.lang.ref.SoftReference<org.apache.xmlbeans.SchemaTypeLoader> typeLoader;
-
-        private static synchronized org.apache.xmlbeans.SchemaTypeLoader getTypeLoader() {
-            org.apache.xmlbeans.SchemaTypeLoader stl = (typeLoader == null) ? null : typeLoader.get();
-            if (stl == null) {
-                stl = org.apache.xmlbeans.XmlBeans.typeLoaderForClassLoader(\2.class.getClassLoader());
-                typeLoader = new java.lang.ref.SoftReference(stl);
-            }
-            return stl;
-        }
-
-        public  static \2 newInstance\(\) \{]]></property>
-
-                                        <fileset id="xsrc" dir="${basedir}/target/generated-sources/xmlbeans" includes="**/*.java" excludes="**/impl/**"/>
-
-                                        <replaceregexp byline="true"
-                                                       match="(\s*)public static ([^ ]+) newInstance\(\) \{"
-                                                       replace="${loaderMethod}">
-                                            <fileset refid="xsrc"/>
-                                        </replaceregexp>
-
-                                        <replace>
-                                            <fileset refid="xsrc"/>
-                                            <replacetoken>org.apache.xmlbeans.XmlBeans.getContextTypeLoader
-                                            </replacetoken>
-                                            <replacevalue>getTypeLoader</replacevalue>
-                                        </replace>
-
-                                        <!-- remove deprecated warnings, as we prefer the array methods - see #56854 -->
-                                        <replace>
-                                            <fileset refid="xsrc"/>
-                                            <replacetoken><![CDATA[     * @deprecated
-]]></replacetoken>
-                                        </replace>
-                                    </target>
-                                </configuration>
-                            </execution>
-                            <execution>
-                                <id>remove-xmltypeloader-from-schema-jar</id>
-                                <phase>prepare-package</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <touch file="${basedir}/target/generated-sources/xmlbeans/.staleFlag"/>
-                                        <delete dir="${basedir}/target/classes/org/apache"/>
-                                    </target>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
-                </plugins>
-            </build>
-
-            <dependencies>
-                <dependency>
-                    <groupId>org.apache.xmlbeans</groupId>
-                    <artifactId>xmlbeans</artifactId>
-                    <version>${xmlbeans.version}</version>
-                </dependency>
-            </dependencies>
-        </profile>
     </profiles>
 </project>

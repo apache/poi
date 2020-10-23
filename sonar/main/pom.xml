@@ -28,12 +28,12 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/src/main/java</outputDirectory>
-							<resources>          
+							<resources>
 								<resource>
 									<directory>../../src/java</directory>
 								</resource>
-							</resources>              
-						</configuration>            
+							</resources>
+						</configuration>
 					</execution>
 					<execution>
 						<id>copy-resources</id>
@@ -43,12 +43,12 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/src/main/resources</outputDirectory>
-							<resources>          
+							<resources>
 								<resource>
 									<directory>../../src/resources/main</directory>
 								</resource>
-							</resources>              
-						</configuration>            
+							</resources>
+						</configuration>
 					</execution>
 					<execution>
 						<id>copy-tests</id>
@@ -59,12 +59,12 @@
 						</goals>
 						<configuration>
 							<outputDirectory>${basedir}/src/test/java</outputDirectory>
-							<resources>          
+							<resources>
 								<resource>
 									<directory>../../src/testcases</directory>
 								</resource>
-							</resources>              
-						</configuration>            
+							</resources>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -81,8 +81,8 @@
                         </fileset>
                     </filesets>
                 </configuration>
-            </plugin>			
-      			
+            </plugin>
+
 			<!-- provide the test-jar for other modules -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -96,16 +96,6 @@
 					</execution>
 				</executions>
 			</plugin>
-
-            <!-- set jvm parameters for surefire plugin -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>${maven.plugin.surefire.version}</version>
-                <configuration>
-                    <argLine>@{argLine} -Duser.language=en -Duser.country=US -Xmx1024m -Djava.io.tmpdir=${basedir}/target/tmp -XX:-OmitStackTraceInFastThrow</argLine>
-                </configuration>
-            </plugin>
 		</plugins>
     </build>
 
@@ -134,26 +124,6 @@
             <groupId>commons-logging</groupId>
             <artifactId>commons-logging</artifactId>
             <version>1.2</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.xml.bind</groupId>
-            <artifactId>jaxb-api</artifactId>
-            <version>2.3.1</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-            <version>2.3.2</version>
-        </dependency>
-        <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-core</artifactId>
-            <version>2.3.0.1</version>
-        </dependency>
-        <dependency>
-            <groupId>javax.activation</groupId>
-            <artifactId>activation</artifactId>
-            <version>1.1.1</version>
         </dependency>
     </dependencies>
 </project>

@@ -134,6 +134,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             }
             SIMPLE_REFS.put(fileName, wb.getCreationHelper().createFormulaEvaluator());
         }
+
+        LocaleUtil.setUserLocale(Locale.US);
     }
 
     @AfterClass
