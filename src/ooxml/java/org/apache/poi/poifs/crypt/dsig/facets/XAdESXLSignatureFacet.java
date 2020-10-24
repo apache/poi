@@ -50,7 +50,6 @@ import javax.xml.crypto.MarshalException;
 import org.apache.poi.poifs.crypt.dsig.SignatureConfig;
 import org.apache.poi.poifs.crypt.dsig.SignatureInfo;
 import org.apache.poi.poifs.crypt.dsig.services.RevocationData;
-import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.xml.security.c14n.Canonicalizer;
@@ -315,18 +314,12 @@ public class XAdESXLSignatureFacet implements SignatureFacet {
             return null;
         }
 
-        try {
-            ASN1InputStream asn1IS1 = null, asn1IS2 = null;
-            try {
-                asn1IS1 = new ASN1InputStream(crlNumberExtensionValue);
-                ASN1OctetString octetString = (ASN1OctetString)asn1IS1.readObject();
-                byte[] octets = octetString.getOctets();
-                asn1IS2 = new ASN1InputStream(octets);
-                ASN1Integer integer = (ASN1Integer)asn1IS2.readObject();
+        try (ASN1InputStream asn1IS1 = new ASN1InputStream(crlNumberExtensionValue)) {
+            ASN1OctetString octetString = (ASN1OctetString)asn1IS1.readObject();
+            byte[] octets = octetString.getOctets();
+            try (ASN1InputStream asn1IS2 = new ASN1InputStream(octets)) {
+                ASN1Integer integer = (ASN1Integer) asn1IS2.readObject();
                 return integer.getPositiveValue();
-            } finally {
-                IOUtils.closeQuietly(asn1IS2);
-                IOUtils.closeQuietly(asn1IS1);
             }
         } catch (IOException e) {
             throw new RuntimeException("I/O error: " + e.getMessage(), e);

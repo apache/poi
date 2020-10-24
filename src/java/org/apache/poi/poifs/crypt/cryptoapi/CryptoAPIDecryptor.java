@@ -175,10 +175,11 @@ public class CryptoAPIDecryptor extends Decryptor {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         IOUtils.copy(dis, bos);
         dis.close();
-        CryptoAPIDocumentInputStream sbis = new CryptoAPIDocumentInputStream(this, bos.toByteArray());
-        LittleEndianInputStream leis = new LittleEndianInputStream(sbis);
         POIFSFileSystem fsOut = null;
-        try {
+        try (
+            CryptoAPIDocumentInputStream sbis = new CryptoAPIDocumentInputStream(this, bos.toByteArray());
+            LittleEndianInputStream leis = new LittleEndianInputStream(sbis)
+        ) {
             int streamDescriptorArrayOffset = (int) leis.readUInt();
             /* int streamDescriptorArraySize = (int) */ leis.readUInt();
             long skipN = streamDescriptorArrayOffset - 8L;
@@ -207,9 +208,9 @@ public class CryptoAPIDecryptor extends Decryptor {
             for (StreamDescriptorEntry entry : entries) {
                 sbis.seek(entry.streamOffset);
                 sbis.setBlock(entry.block);
-                InputStream is = new BoundedInputStream(sbis, entry.streamSize);
-                fsOut.createDocument(is, entry.streamName);
-                is.close();
+                try (InputStream is = new BoundedInputStream(sbis, entry.streamSize)) {
+                    fsOut.createDocument(is, entry.streamName);
+                }
             }
         } catch (Exception e) {
             IOUtils.closeQuietly(fsOut);
@@ -220,9 +221,6 @@ public class CryptoAPIDecryptor extends Decryptor {
             } else {
                 throw new IOException("summary entries can't be read", e);
             }
-        } finally {
-            IOUtils.closeQuietly(leis);
-            IOUtils.closeQuietly(sbis);
         }
         return fsOut;
     }

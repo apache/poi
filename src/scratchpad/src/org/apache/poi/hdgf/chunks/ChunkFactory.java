@@ -72,55 +72,45 @@ public final class ChunkFactory {
 	 *  of all the different possible chunk commands.
 	 */
 	private void processChunkParseCommands() throws IOException {
-		String line;
-		InputStream cpd = null;
-		BufferedReader inp = null;
-		try {
-	        cpd = ChunkFactory.class.getResourceAsStream(chunkTableName);
+		try (InputStream cpd = ChunkFactory.class.getResourceAsStream(chunkTableName)) {
 	        if(cpd == null) {
 	            throw new IllegalStateException("Unable to find HDGF chunk definition on the classpath - " + chunkTableName);
 	        }
 
-	        inp = new BufferedReader(new InputStreamReader(cpd, LocaleUtil.CHARSET_1252));
+	        try (BufferedReader inp = new BufferedReader(new InputStreamReader(cpd, LocaleUtil.CHARSET_1252))) {
+				String line;
+				while ((line = inp.readLine()) != null) {
+					if (line.isEmpty() || "# \t".contains(line.substring(0, 1))) {
+						continue;
+					}
 
-		    while( (line = inp.readLine()) != null ) {
-    			if (line.isEmpty() || "# \t".contains(line.substring(0,1))) {
-    			    continue;
-    			}
+					// Start xxx
+					if (!line.matches("^start [0-9]+$")) {
+						throw new IllegalStateException("Expecting start xxx, found " + line);
+					}
+					int chunkType = Integer.parseInt(line.substring(6));
+					ArrayList<CommandDefinition> defsL = new ArrayList<>();
 
-    			// Start xxx
-    			if(!line.matches("^start [0-9]+$")) {
-    				throw new IllegalStateException("Expecting start xxx, found " + line);
-    			}
-    			int chunkType = Integer.parseInt(line.substring(6));
-    			ArrayList<CommandDefinition> defsL = new ArrayList<>();
+					// Data entries
+					while ((line = inp.readLine()) != null) {
+						if (line.startsWith("end")) {
+							break;
+						}
+						StringTokenizer st = new StringTokenizer(line, " ");
+						int defType = Integer.parseInt(st.nextToken());
+						int offset = Integer.parseInt(st.nextToken());
+						String name = st.nextToken("\uffff").substring(1);
 
-    			// Data entries
-    			while( (line = inp.readLine()) != null ) {
-    			    if (line.startsWith("end")) {
-    			        break;
-    			    }
-    				StringTokenizer st = new StringTokenizer(line, " ");
-    				int defType = Integer.parseInt(st.nextToken());
-    				int offset = Integer.parseInt(st.nextToken());
-    				String name = st.nextToken("\uffff").substring(1);
+						CommandDefinition def = new CommandDefinition(defType, offset, name);
+						defsL.add(def);
+					}
 
-    				CommandDefinition def = new CommandDefinition(defType,offset,name);
-    				defsL.add(def);
-    			}
+					CommandDefinition[] defs = defsL.toArray(new CommandDefinition[0]);
 
-    			CommandDefinition[] defs = defsL.toArray(new CommandDefinition[0]);
-
-    			// Add to the map
-    			chunkCommandDefinitions.put(chunkType, defs);
-    		}
-		} finally {
-    		if (inp != null) {
-    		    inp.close();
-    		}
-    		if (cpd != null) {
-    		    cpd.close();
-    		}
+					// Add to the map
+					chunkCommandDefinitions.put(chunkType, defs);
+				}
+			}
 		}
 	}
 

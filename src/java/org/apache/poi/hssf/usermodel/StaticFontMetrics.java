@@ -44,7 +44,7 @@ final class StaticFontMetrics {
 	private static final Map<String, FontDetails> fontDetailsMap = new HashMap<>();
 
 	private StaticFontMetrics() {}
-	
+
 	/**
 	 * Retrieves the fake font details for a given font.
 	 *
@@ -84,7 +84,7 @@ final class StaticFontMetrics {
 		// If not, check with the font style added
 		String fontHeight = FontDetails.buildFontHeightProperty(fontName);
 		String styleHeight = FontDetails.buildFontHeightProperty(fontName + "." + fontStyle);
-		
+
 		if (fontMetricsProps.get(fontHeight) == null
 			&& fontMetricsProps.get(styleHeight) != null) {
 			// Need to add on the style to the font name
@@ -99,7 +99,7 @@ final class StaticFontMetrics {
 		}
         return fontDetails;
 	}
-	
+
 	private static Properties loadMetrics() throws IOException {
         // Check to see if the font metric file was specified
         // as a system property
@@ -117,26 +117,19 @@ final class StaticFontMetrics {
             LOGGER.log(POILogger.WARN, "Can't access font.metrics.filename system property", e);
         }
 
-        InputStream metricsIn = null;
-        try {
-            if (propFile != null) {
-                metricsIn = new FileInputStream(propFile);
-            } else {
-                // Use the built-in font metrics file off the classpath
-                metricsIn =  FontDetails.class.getResourceAsStream("/font_metrics.properties");
-                if (metricsIn == null) {
-                    String err = "font_metrics.properties not found in classpath";
-                    throw new IOException(err);
-                }
-            }
+        try (InputStream metricsIn = (propFile != null)
+				? new FileInputStream(propFile)
+				: FontDetails.class.getResourceAsStream("/font_metrics.properties")
+		)  {
+			// Use the built-in font metrics file off the classpath
+			if (metricsIn == null) {
+				String err = "font_metrics.properties not found in classpath";
+				throw new IOException(err);
+			}
 
             Properties props = new Properties();
             props.load(metricsIn);
             return props;
-        } finally {
-            if (metricsIn != null) {
-                metricsIn.close();
-            }
         }
 	}
 }

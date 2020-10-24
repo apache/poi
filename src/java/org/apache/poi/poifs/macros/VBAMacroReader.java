@@ -42,8 +42,8 @@ import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.DocumentNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.FileMagic;
-import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
+import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.macros.Module.ModuleType;
 import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.HexDump;
@@ -64,7 +64,7 @@ import org.apache.poi.util.StringUtil;
  * module for an example of how to do this. Patches that make macro
  * extraction from .ppt more elegant are welcomed!
  * </p>
- * 
+ *
  * @since 3.15-beta2
  */
 public class VBAMacroReader implements Closeable {
@@ -76,7 +76,7 @@ public class VBAMacroReader implements Closeable {
     protected static final String VBA_PROJECT_POIFS = "VBA";
 
     private POIFSFileSystem fs;
-    
+
     public VBAMacroReader(InputStream rstream) throws IOException {
         InputStream is = FileMagic.prepareToCheckMagic(rstream);
         FileMagic fm = FileMagic.valueOf(is);
@@ -86,7 +86,7 @@ public class VBAMacroReader implements Closeable {
             openOOXML(is);
         }
     }
-    
+
     public VBAMacroReader(File file) throws IOException {
         try {
             this.fs = new POIFSFileSystem(file);
@@ -97,7 +97,7 @@ public class VBAMacroReader implements Closeable {
     public VBAMacroReader(POIFSFileSystem fs) {
         this.fs = fs;
     }
-    
+
     private void openOOXML(InputStream zipFile) throws IOException {
         try(ZipInputStream zis = new ZipInputStream(zipFile)) {
             ZipEntry zipEntry;
@@ -119,7 +119,7 @@ public class VBAMacroReader implements Closeable {
         }
         throw new IllegalArgumentException("No VBA project found");
     }
-    
+
     public void close() throws IOException {
         fs.close();
         fs = null;
@@ -145,7 +145,7 @@ public class VBAMacroReader implements Closeable {
     }
 
     /**
-     * Reads all macros from all modules of the opened office file. 
+     * Reads all macros from all modules of the opened office file.
      * @return All the macros and their contents
      *
      * @since 3.15-beta2
@@ -158,7 +158,7 @@ public class VBAMacroReader implements Closeable {
         }
         return moduleSources;
     }
-    
+
     protected static class ModuleImpl implements Module {
         Integer offset;
         byte[] buf;
@@ -180,7 +180,7 @@ public class VBAMacroReader implements Closeable {
     protected static class ModuleMap extends HashMap<String, ModuleImpl> {
         Charset charset = StringUtil.WIN_1252; // default charset
     }
-    
+
     /**
      * Recursively traverses directory structure rooted at <tt>dir</tt>.
      * For each macro module that is found, the module's name and code are
@@ -204,13 +204,13 @@ public class VBAMacroReader implements Closeable {
             }
         }
     }
-    
 
-    
+
+
     /**
      * reads module from DIR node in input stream and adds it to the modules map for decompression later
      * on the second pass through this function, the module will be decompressed
-     * 
+     *
      * Side-effects: adds a new module to the module map or sets the buf field on the module
      * to the decompressed stream contents (the VBA code for one module)
      *
@@ -237,7 +237,7 @@ public class VBAMacroReader implements Closeable {
             stream.close();
         }
     }
-    
+
     private static void readModuleFromDocumentStream(DocumentNode documentNode, String name, ModuleMap modules) throws IOException {
         ModuleImpl module = modules.get(name);
         // TODO Refactor this to fetch dir then do the rest
@@ -256,34 +256,28 @@ public class VBAMacroReader implements Closeable {
             }
 
             //try the general case, where module.offset is accurate
-            InputStream decompressed = null;
-            InputStream compressed = new DocumentInputStream(documentNode);
-            try {
+            try (InputStream compressed = new DocumentInputStream(documentNode)) {
                 // we know the offset already, so decompress immediately on-the-fly
                 trySkip(compressed, module.offset);
-                decompressed = new RLEDecompressingInputStream(compressed);
-                module.read(decompressed);
+                try (InputStream decompressed = new RLEDecompressingInputStream(compressed)) {
+                    module.read(decompressed);
+                }
                 return;
             } catch (IllegalArgumentException | IllegalStateException e) {
-            } finally {
-                IOUtils.closeQuietly(compressed);
-                IOUtils.closeQuietly(decompressed);
             }
 
             //bad module.offset, try brute force
-            compressed = new DocumentInputStream(documentNode);
+            ;
             byte[] decompressedBytes;
-            try {
+            try (InputStream compressed = new DocumentInputStream(documentNode)) {
                 decompressedBytes = findCompressedStreamWBruteForce(compressed);
-            } finally {
-                IOUtils.closeQuietly(compressed);
             }
 
             if (decompressedBytes != null) {
                 module.read(new ByteArrayInputStream(decompressedBytes));
             }
         }
-        
+
     }
 
     /**
@@ -305,7 +299,7 @@ public class VBAMacroReader implements Closeable {
             }
         }
     }
-    
+
     // Constants from MS-OVBA: https://msdn.microsoft.com/en-us/library/office/cc313094(v=office.12).aspx
     private static final int STREAMNAME_RESERVED = 0x0032;
     private static final int PROJECT_CONSTANTS_RESERVED = 0x003C;
@@ -319,7 +313,7 @@ public class VBAMacroReader implements Closeable {
      * <tt>macroDir</tt> into <tt>modules</tt>.
      *
      * @since 3.15-beta2
-     */    
+     */
     protected void readMacros(DirectoryNode macroDir, ModuleMap modules) throws IOException {
         //bug59858 shows that dirstream may not be in this directory (\MBD00082648\_VBA_PROJECT_CUR\VBA ENTRY NAME)
         //but may be in another directory (\_VBA_PROJECT_CUR\VBA ENTRY NAME)
@@ -333,7 +327,7 @@ public class VBAMacroReader implements Closeable {
 
         for (Entry entry : macroDir) {
             if (! (entry instanceof DocumentNode)) { continue; }
-            
+
             String name = entry.getName();
             DocumentNode document = (DocumentNode)entry;
 
