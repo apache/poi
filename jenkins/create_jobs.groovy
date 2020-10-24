@@ -618,7 +618,7 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'JDK 14 (latest)',
                 'JDK 15 (latest)'
         )
-        label('Nodes','H25','H29','H31','H34','H35','H36','H39','H42','H43','H44','H48','H50','lucene1','lucene2','master')
+        label('Nodes','H22','H23','H24','H25','H26','H27','H28','H29','H30','H31','H32','H33','H34','H35','H36','H37','H38','H39','H40','H41','H42','H43','H44','H48','lucene1','lucene2','master')
     }
     steps {
         conditionalSteps {
