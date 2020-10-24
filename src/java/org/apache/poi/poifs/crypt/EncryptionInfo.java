@@ -102,7 +102,7 @@ public class EncryptionInfo implements GenericRecord {
      * Opens for decryption
      */
     public EncryptionInfo(DirectoryNode dir) throws IOException {
-        this(dir.createDocumentInputStream("EncryptionInfo"), null);
+        this(dir.createDocumentInputStream(ENCRYPTION_INFO_ENTRY), null);
     }
 
     public EncryptionInfo(LittleEndianInput dis, EncryptionMode preferredEncryptionMode) throws IOException {

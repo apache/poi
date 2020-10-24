@@ -19,6 +19,8 @@
 
 package org.apache.poi.xslf.usermodel;
 
+import static org.apache.poi.openxml4j.opc.PackageRelationshipTypes.CORE_PROPERTIES_ECMA376_NS;
+
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 
@@ -177,7 +179,7 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
             XmlObject[] obj = getGraphicalData().selectPath(xpath);
             if (obj != null && obj.length == 1) {
                 XmlCursor c = obj[0].newCursor();
-                QName idQualifiedName = new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "id");
+                QName idQualifiedName = new QName(CORE_PROPERTIES_ECMA376_NS, "id");
                 id = c.getAttributeText(idQualifiedName);
                 c.dispose();
             }
@@ -216,7 +218,7 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
             XmlCursor c = obj[0].newCursor();
             try {
                 // duplicate chart with embedded workbook
-                QName idQualifiedName = new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "id");
+                QName idQualifiedName = new QName(CORE_PROPERTIES_ECMA376_NS, "id");
                 String id = c.getAttributeText(idQualifiedName);
                 XSLFChart srcChart = (XSLFChart) src.getRelationById(id);
                 XSLFChart chartCopy = slide.getSlideShow().createChart(slide);
@@ -239,22 +241,22 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
 
             XSLFSheet sheet = srcShape.getSheet();
             try {
-                String dm = c.getAttributeText(new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "dm"));
+                String dm = c.getAttributeText(new QName(CORE_PROPERTIES_ECMA376_NS, "dm"));
                 PackageRelationship dmRel = sheet.getPackagePart().getRelationship(dm);
                 PackagePart dmPart = sheet.getPackagePart().getRelatedPart(dmRel);
                 getSheet().importPart(dmRel, dmPart);
 
-                String lo = c.getAttributeText(new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "lo"));
+                String lo = c.getAttributeText(new QName(CORE_PROPERTIES_ECMA376_NS, "lo"));
                 PackageRelationship loRel = sheet.getPackagePart().getRelationship(lo);
                 PackagePart loPart = sheet.getPackagePart().getRelatedPart(loRel);
                 getSheet().importPart(loRel, loPart);
 
-                String qs = c.getAttributeText(new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "qs"));
+                String qs = c.getAttributeText(new QName(CORE_PROPERTIES_ECMA376_NS, "qs"));
                 PackageRelationship qsRel = sheet.getPackagePart().getRelationship(qs);
                 PackagePart qsPart = sheet.getPackagePart().getRelatedPart(qsRel);
                 getSheet().importPart(qsRel, qsPart);
 
-                String cs = c.getAttributeText(new QName("http://schemas.openxmlformats.org/officeDocument/2006/relationships", "cs"));
+                String cs = c.getAttributeText(new QName(CORE_PROPERTIES_ECMA376_NS, "cs"));
                 PackageRelationship csRel = sheet.getPackagePart().getRelationship(cs);
                 PackagePart csPart = sheet.getPackagePart().getRelatedPart(csRel);
                 getSheet().importPart(csRel, csPart);

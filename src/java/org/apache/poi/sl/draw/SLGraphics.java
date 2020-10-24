@@ -383,9 +383,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      */
     @NotImplemented
     public void clip(Shape s){
-        if (LOG.check(POILogger.WARN)) {
-            LOG.log(POILogger.WARN, "Not implemented");
-        }
+        logNotImplemented();
     }
 
     /**
@@ -406,9 +404,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      */
     @NotImplemented
     public Shape getClip(){
-        if (LOG.check(POILogger.WARN)) {
-            LOG.log(POILogger.WARN, "Not implemented");
-        }
+        logNotImplemented();
         return null;
     }
 
@@ -675,10 +671,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
     public boolean drawImage(Image img, int x, int y,
                              Color bgcolor,
                              ImageObserver observer){
-        if (LOG.check(POILogger.WARN)) {
-            LOG.log(POILogger.WARN, "Not implemented");
-        }
-
+        logNotImplemented();
         return false;
     }
 
@@ -725,10 +718,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
                              int width, int height,
                              Color bgcolor,
                              ImageObserver observer){
-        if (LOG.check(POILogger.WARN)) {
-            LOG.log(POILogger.WARN, "Not implemented");
-        }
-
+        logNotImplemented();
         return false;
     }
 
@@ -785,9 +775,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
                              int dx1, int dy1, int dx2, int dy2,
                              int sx1, int sy1, int sx2, int sy2,
                              ImageObserver observer){
-        if (LOG.check(POILogger.WARN)) {
-            LOG.log(POILogger.WARN, "Not implemented");
-        }
+        logNotImplemented();
         return false;
     }
 
@@ -850,9 +838,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
                              int sx1, int sy1, int sx2, int sy2,
                              Color bgcolor,
                              ImageObserver observer){
-        if (LOG.check(POILogger.WARN)) {
-            LOG.log(POILogger.WARN, "Not implemented");
-        }
+        logNotImplemented();
         return false;
     }
 
@@ -891,9 +877,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
     @NotImplemented
     public boolean drawImage(Image img, int x, int y,
                              ImageObserver observer) {
-        if (LOG.check(POILogger.WARN)) {
-            LOG.log(POILogger.WARN, "Not implemented");
-        }
+        logNotImplemented();
         return false;
     }
 
@@ -1078,9 +1062,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      */
     @NotImplemented
     public void setClip(Shape clip) {
-        if (LOG.check(POILogger.WARN)) {
-            LOG.log(POILogger.WARN, "Not implemented");
-        }
+        logNotImplemented();
     }
 
     /**
@@ -1101,9 +1083,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      * @since       JDK1.1
      */
     public Rectangle getClipBounds(){
-        if (LOG.check(POILogger.WARN)) {
-            LOG.log(POILogger.WARN, "Not implemented");
-        }
+        logNotImplemented();
         return null;
     }
 
@@ -1377,9 +1357,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      */
     @NotImplemented
     public void setComposite(Composite comp){
-        if (LOG.check(POILogger.WARN)) {
-            LOG.log(POILogger.WARN, "Not implemented");
-        }
+        logNotImplemented();
     }
 
     /**
@@ -1391,9 +1369,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      */
     @NotImplemented
     public Composite getComposite(){
-        if (LOG.check(POILogger.WARN)) {
-            LOG.log(POILogger.WARN, "Not implemented");
-        }
+        logNotImplemented();
         return null;
     }
 
@@ -1535,9 +1511,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      */
     @NotImplemented
     public void drawString(AttributedCharacterIterator iterator, float x, float y) {
-        if (LOG.check(POILogger.WARN)) {
-            LOG.log(POILogger.WARN, "Not implemented");
-        }
+        logNotImplemented();
     }
 
     /**
@@ -1642,9 +1616,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      */
     @NotImplemented
     public boolean drawImage(Image img, AffineTransform xform, ImageObserver obs) {
-        if (LOG.check(POILogger.WARN)) {
-            LOG.log(POILogger.WARN, "Not implemented");
-        }
+        logNotImplemented();
         return false;
     }
 
@@ -1688,9 +1660,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
     public boolean drawImage(Image img, int x, int y,
                              int width, int height,
                              ImageObserver observer) {
-        if (LOG.check(POILogger.WARN)) {
-            LOG.log(POILogger.WARN, "Not implemented");
-        }
+        logNotImplemented();
         return false;
     }
 
@@ -1739,9 +1709,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      */
     @NotImplemented
     public void setXORMode(Color c1) {
-        if (LOG.check(POILogger.WARN)) {
-            LOG.log(POILogger.WARN, "Not implemented");
-        }
+        logNotImplemented();
     }
 
     /**
@@ -1753,9 +1721,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      */
     @NotImplemented
     public void setPaintMode() {
-        if (LOG.check(POILogger.WARN)) {
-            LOG.log(POILogger.WARN, "Not implemented");
-        }
+        logNotImplemented();
     }
 
     /**
@@ -1791,9 +1757,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      */
     @NotImplemented
     public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
-        if (LOG.check(POILogger.WARN)) {
-            LOG.log(POILogger.WARN, "Not implemented");
-        }
+        logNotImplemented();
     }
 
     /**
@@ -1819,9 +1783,7 @@ public class SLGraphics extends Graphics2D implements Cloneable {
      */
     @NotImplemented
     public void drawRenderableImage(RenderableImage img, AffineTransform xform) {
-        if (LOG.check(POILogger.WARN)) {
-            LOG.log(POILogger.WARN, "Not implemented");
-        }
+        logNotImplemented();
     }
 
     protected void applyStroke(SimpleShape<?,?> shape) {
@@ -1839,6 +1801,12 @@ public class SLGraphics extends Graphics2D implements Cloneable {
     protected void applyPaint(SimpleShape<?,?> shape) {
         if (_paint instanceof Color) {
             shape.setFillColor((Color)_paint);
+        }
+    }
+
+    private void logNotImplemented() {
+        if (LOG.check(POILogger.WARN)) {
+            LOG.log(POILogger.WARN, "Not implemented");
         }
     }
 }

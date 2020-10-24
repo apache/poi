@@ -42,10 +42,10 @@ public interface PackageRelationshipTypes {
     String CORE_PROPERTIES_ECMA376 = "http://schemas.openxmlformats.org/officedocument/2006/relationships/metadata/core-properties";
 
     /**
-     * Namespace of Core properties relationship type as defiend in ECMA 376
+     * Namespace of Core properties relationship type as defined in ECMA 376
      */
     String CORE_PROPERTIES_ECMA376_NS = "http://schemas.openxmlformats.org/officeDocument/2006/relationships";
-    
+
     /**
      * Digital signature relationship type.
      */
