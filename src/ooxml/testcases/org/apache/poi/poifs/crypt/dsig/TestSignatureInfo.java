@@ -1016,6 +1016,7 @@ public class TestSignatureInfo {
         final String alias = "Test";
         final char[] password = "test".toCharArray();
         File file = new File("build/test.pfx");
+        file.getParentFile().mkdir();
 
         KeyStore keystore = KeyStore.getInstance("PKCS12");
 
