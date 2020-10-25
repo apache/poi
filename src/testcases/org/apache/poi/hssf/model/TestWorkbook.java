@@ -154,4 +154,22 @@ public final class TestWorkbook {
 
         wb.close();
     }
+
+    @Test
+    public void testWriteAccess() {
+        HSSFWorkbook wb = new HSSFWorkbook();
+        InternalWorkbook iwb = TestHSSFWorkbook.getInternalWorkbook(wb);
+
+        int oldRecordsCount = iwb.getNumRecords();
+        //System.out.println("records count = " + oldRecordsCount);
+        assertEquals("records count", 68, oldRecordsCount);
+
+        WriteAccessRecord writeAccess = iwb.getWriteAccess();
+        assertNotNull(writeAccess);
+        assertEquals(WriteAccessRecord.sid, writeAccess.getSid());
+
+        int newRecordsCount = iwb.getNumRecords();
+        //System.out.println("records count after 'getWriteAccess' = " + newRecordsCount);
+        assertEquals("records count after getWriteAccess", oldRecordsCount, newRecordsCount);
+    }
 }

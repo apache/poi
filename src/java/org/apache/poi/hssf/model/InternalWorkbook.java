@@ -336,7 +336,8 @@ public final class InternalWorkbook {
         records.add(new InterfaceHdrRecord(CODEPAGE));
         records.add(createMMS());
         records.add(InterfaceEndRecord.instance);
-        records.add(createWriteAccess());
+        // store the write-access record at the proper position
+        retval.getWriteAccess();
         records.add(createCodepage());
         records.add(createDSF());
         records.add(createTabId());
