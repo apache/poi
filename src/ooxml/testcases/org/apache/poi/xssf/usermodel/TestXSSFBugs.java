@@ -130,7 +130,7 @@ import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
 
 public final class TestXSSFBugs extends BaseTestBugzillaIssues {
-    private static POILogger LOG = POILogFactory.getLogger(TestXSSFBugs.class);
+    private static final POILogger LOG = POILogFactory.getLogger(TestXSSFBugs.class);
 
     public TestXSSFBugs() {
         super(XSSFITestDataProvider.instance);
@@ -300,15 +300,15 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             assertEquals("NameB1", b1.getNameName());
             assertEquals("Sheet1", b1.getSheetName());
             assertEquals(-1, b1.getSheetIndex());
-            assertEquals(false, b1.isDeleted());
-            assertEquals(false, b1.isHidden());
+            assertFalse(b1.isDeleted());
+            assertFalse(b1.isHidden());
 
             assertNotNull(b2);
             assertEquals("NameB2", b2.getNameName());
             assertEquals("Sheet1", b2.getSheetName());
             assertEquals(-1, b2.getSheetIndex());
-            assertEquals(false, b2.isDeleted());
-            assertEquals(false, b2.isHidden());
+            assertFalse(b2.isDeleted());
+            assertFalse(b2.isHidden());
 
             assertNotNull(sheet2);
             assertEquals("NameSheet2", sheet2.getNameName());
@@ -3525,11 +3525,19 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 Cell cellBack = wbBack.getSheetAt(0).getRow(0).getCell(0);
                 assertNull("Element 'v' should not be set for formulas unless the value was calculated",
                         ((XSSFCell) cellBack).getCTCell().getV());
+                assertNotNull("Formula should be set internally now",
+                        ((XSSFCell) cellBack).getCTCell().getF());
 
                 wbBack.getCreationHelper().createFormulaEvaluator().evaluateInCell(cellBack);
 
                 assertEquals("Element 'v' should be set now as the formula was calculated manually",
                         "0.0", ((XSSFCell) cellBack).getCTCell().getV());
+
+                cellBack.setCellValue("123");
+                assertEquals("String value should be set now",
+                        "123", cellBack.getStringCellValue());
+                assertNull("No formula should be set any more",
+                        ((XSSFCell) cellBack).getCTCell().getF());
             }
         }
     }
@@ -3575,6 +3583,8 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         //test that an NPE isn't thrown on opening
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("64667.xlsx")) {
             int activeSheet = wb.getActiveSheetIndex();
+            assertEquals(0, activeSheet);
+            assertNotNull(wb.getSheetAt(activeSheet));
         }
     }
 
