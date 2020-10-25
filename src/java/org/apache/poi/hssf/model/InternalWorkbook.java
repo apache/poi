@@ -142,7 +142,7 @@ public final class InternalWorkbook {
     /** whether 1904 date windowing is being used */
     private boolean uses1904datewindowing;
     private DrawingManager2 drawingManager;
-    private List<EscherBSERecord> escherBSERecords;
+    private final List<EscherBSERecord> escherBSERecords;
     private WindowOneRecord windowOne;
     private FileSharingRecord fileShare;
     private WriteAccessRecord writeAccess;
@@ -248,7 +248,7 @@ public final class InternalWorkbook {
                     logObj = "format";
                     FormatRecord fr = (FormatRecord) rec;
                     retval.formats.add(fr);
-                    retval.maxformatid = retval.maxformatid >= fr.getIndexCode() ? retval.maxformatid : fr.getIndexCode();
+                    retval.maxformatid = Math.max(retval.maxformatid, fr.getIndexCode());
                     break;
 
                 case DateWindow1904Record.sid :
@@ -367,7 +367,7 @@ public final class InternalWorkbook {
         // set up format records
         for (int i = 0; i <= 7; i++) {
             FormatRecord rec = createFormat(i);
-            retval.maxformatid = retval.maxformatid >= rec.getIndexCode() ? retval.maxformatid : rec.getIndexCode();
+            retval.maxformatid = Math.max(retval.maxformatid, rec.getIndexCode());
             formats.add(rec);
             records.add(rec);
         }
@@ -1036,7 +1036,7 @@ public final class InternalWorkbook {
             }
             pos += len;
         }
-        
+
         LOG.log( DEBUG, "Exiting serialize workbook" );
         return pos;
     }
@@ -1850,7 +1850,7 @@ public final class InternalWorkbook {
         drawingManager = findDrawingManager(dg, escherBSERecords);
         return drawingManager;
     }
-    
+
     private static DrawingManager2 findDrawingManager(DrawingGroupRecord dg, List<EscherBSERecord> escherBSERecords) {
         if (dg == null) {
             return null;
@@ -1874,7 +1874,7 @@ public final class InternalWorkbook {
         if(dgg == null) {
             return null;
         }
-            
+
         DrawingManager2 dm = new DrawingManager2(dgg);
         if(bStore != null){
             for(EscherRecord bs : bStore.getChildRecords()){
@@ -2110,7 +2110,7 @@ public final class InternalWorkbook {
         if(aggLoc == -1) {
             return;
         }
-        
+
         EscherAggregate agg = (EscherAggregate) sheet.findFirstRecordBySid(EscherAggregate.sid);
         EscherContainerRecord escherContainer = agg.getEscherContainer();
         if (escherContainer == null) {

@@ -18,7 +18,6 @@
 package org.apache.poi.examples.hssf.eventusermodel;
 
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.ArrayList;
@@ -55,15 +54,15 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
  */
 @SuppressWarnings({"java:S106","java:S4823"})
 public class XLS2CSVmra implements HSSFListener {
-	private int minColumns;
-	private POIFSFileSystem fs;
-	private PrintStream output;
+	private final int minColumns;
+	private final POIFSFileSystem fs;
+	private final PrintStream output;
 
 	private int lastRowNumber;
 	private int lastColumnNumber;
 
 	/** Should we output the formula, or the value it has? */
-	private boolean outputFormulaValues = true;
+	private final boolean outputFormulaValues = true;
 
 	/** For parsing Formulas */
 	private SheetRecordCollectingListener workbookBuildingListener;
@@ -76,7 +75,7 @@ public class XLS2CSVmra implements HSSFListener {
 	/** So we known which sheet we're on */
 	private int sheetIndex = -1;
 	private BoundSheetRecord[] orderedBSRs;
-	private List<BoundSheetRecord> boundSheetRecords = new ArrayList<>();
+	private final List<BoundSheetRecord> boundSheetRecords = new ArrayList<>();
 
 	// For handling formulas with string results
 	private int nextRow;
@@ -100,7 +99,7 @@ public class XLS2CSVmra implements HSSFListener {
 	 * @param filename The file to process
 	 * @param minColumns The minimum number of columns to output, or -1 for no minimum
 	 */
-	public XLS2CSVmra(String filename, int minColumns) throws IOException, FileNotFoundException {
+	public XLS2CSVmra(String filename, int minColumns) throws IOException {
 		this(
 				new POIFSFileSystem(new FileInputStream(filename)),
 				System.out, minColumns

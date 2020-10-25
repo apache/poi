@@ -29,10 +29,9 @@ import java.io.IOException;
 import org.apache.poi.hssf.record.CountryRecord;
 import org.apache.poi.hssf.record.FontRecord;
 import org.apache.poi.hssf.record.RecalcIdRecord;
+import org.apache.poi.hssf.record.WriteAccessRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.usermodel.TestHSSFWorkbook;
-import org.apache.poi.ss.formula.OperationEvaluationContext;
-import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.DefaultUDFFinder;
@@ -108,11 +107,8 @@ public final class TestWorkbook {
         InternalWorkbook wb = TestHSSFWorkbook.getInternalWorkbook(hwb);
         assertNotNull(wb.getNameXPtg("ISODD", AggregatingUDFFinder.DEFAULT));
 
-        FreeRefFunction NotImplemented = new FreeRefFunction() {
-            @Override
-            public ValueEval evaluate(ValueEval[] args, OperationEvaluationContext ec) {
-                throw new RuntimeException("not implemented");
-            }
+        FreeRefFunction NotImplemented = (args, ec) -> {
+            throw new RuntimeException("not implemented");
         };
 
         /*
@@ -155,7 +151,7 @@ public final class TestWorkbook {
         wb.setForceFormulaRecalculation(true); // resets the EngineId flag to zero
         assertEquals(0, record.getEngineId());
         assertFalse(wb.getForceFormulaRecalculation());
-        
+
         wb.close();
     }
 }
