@@ -35,9 +35,13 @@ def poijobs = [
           // let's save some CPU cycles here, 13 is not a LTS and JDK 14 is GA as of 17 March 2020
           disabled: true
         ],
-        [ name: 'POI-DSL-1.14', jdk: '1.14', trigger: triggerSundays, skipcigame: true
+        [ name: 'POI-DSL-1.14', jdk: '1.14', trigger: triggerSundays, skipcigame: true,
+          // let's save some CPU cycles here, 13 is not a LTS and JDK 15 is GA as of 15 September 2020
+          disabled: true
         ],
         [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true
+        ],
+        [ name: 'POI-DSL-1.16', jdk: '1.16', trigger: triggerSundays, skipcigame: true
         ],
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true
         ],
@@ -112,6 +116,7 @@ def jdkMapping = [
         '1.13': 'jdk_13_latest',
         '1.14': 'jdk_14_latest',
         '1.15': 'jdk_15_latest',
+        '1.16': 'jdk_16_latest',
         'OpenJDK 1.8': 'openjdk_1.8.0_252',
         'IBMJDK': 'ibmjdk_1.8.0_261',
 ]
@@ -513,7 +518,7 @@ xmlbeansjobs.each { xjob ->
                 // when using JDK 9/10 for running Ant, we need to provide more modules for the forbidden-api-checks task
                 // on JDK 11 and newer there is no such module any more, so do not add it here
                 env('ANT_OPTS', '--add-modules=java.xml.bind --add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
-            } else if (jdkKey == '1.11' || jdkKey == '1.12' || jdkKey == '1.13' || jdkKey == '1.14' || jdkKey == '1.15') {
+            } else if (jdkKey == '1.11' || jdkKey == '1.12' || jdkKey == '1.13' || jdkKey == '1.14' || jdkKey == '1.15' || jdkKey == '1.16') {
                 env('ANT_OPTS', '--add-opens=java.xml/com.sun.org.apache.xerces.internal.util=ALL-UNNAMED --add-opens=java.base/java.lang=ALL-UNNAMED')
             }
             // will be needed for forbidden-apis-check: env('ANT_HOME', xjob.windows ? 'f:\\jenkins\\tools\\ant\\latest' : '/usr/share/ant')
@@ -609,16 +614,18 @@ Unfortunately we often see builds break because of changes/new machines...''')
     }
     axes {
         jdk(
-                'JDK 1.8 (latest)',
-                'OpenJDK 1.8.0_242',
-                'IBM 1.8 64-bit (on Ubuntu only)',
-                'JDK 11 (latest)',
-                'JDK 12 (latest)',
-                'JDK 13 (latest)',
-                'JDK 14 (latest)',
-                'JDK 15 (latest)'
+                'jdk_1.8_latest',
+                'jdk_10_latest',
+                'jdk_11_latest',
+                'jdk_12_latest',
+                'jdk_13_latest',
+                'jdk_14_latest',
+                'jdk_15_latest',
+                'jdk_16_latest',
+                'openjdk_1.8.0_252',
+                'ibmjdk_1.8.0_261'
         )
-        label('Nodes','H22','H23','H24','H25','H26','H27','H28','H29','H30','H31','H32','H33','H34','H35','H36','H37','H38','H39','H40','H41','H42','H43','H44','H48','lucene1','lucene2','master')
+        label('Nodes','H22','H23','H24','H25','H26','H27','H28','H29','H30','H31','H32','H33','H34','H35','H36','H37','H38','H39','H40','H41','H42','H43','H44','H48','H50','lucene1','lucene2','master')
     }
     steps {
         conditionalSteps {
