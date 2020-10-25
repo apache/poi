@@ -185,6 +185,10 @@ subprojects {
                 // as we currently use build/<module>/ as project-basedir, we need to tell Sonar to use
                 // the root-folder as "basedir" for the projects
                 property "sonar.projectBaseDir", "$projectDir/../.."
+
+                // the plugin seems to not detect our non-standard build-layout
+                property "sonar.junit.reportPaths", "$projectDir/build/test-results/test"
+                property "sonar.coverage.jacoco.xmlReportPaths", "$projectDir/build/jacoco/test.exec"
             }
         }
     }
