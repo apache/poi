@@ -67,8 +67,8 @@ def poijobs = [
         [ name: 'POI-DSL-SonarQube', trigger: 'H 7 * * *', maven: true, sonar: true, skipcigame: true,
           email: 'kiwiwings@apache.org'
         ],
-        // set trigger empty as it is not stable yet, we can replace the Sonar Maven run when this is fully working
-        [ name: 'POI-DSL-SonarQube-Gradle', trigger: '', gradle: true, sonar: true, skipcigame: true
+        // set trigger empty as it is not stable yet, we can remove the Sonar Maven run when this is fully working
+        [ name: 'POI-DSL-SonarQube-Gradle', jdk: '1.11', trigger: '', gradle: true, sonar: true, skipcigame: true
         ],
         [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
         ],
@@ -396,9 +396,9 @@ poijobs.each { poijob ->
 
                 gradle {
                     switches('-PenableSonar')
-                    switches('-Psonar.login=${POI_SONAR_TOKEN}')
+                    switches('-Dsonar.login=${POI_SONAR_TOKEN}')
                     switches('-Dsonar.organization=apache')
-                    switches('-Psonar.projectKey=poi-parent')
+                    switches('-Dsonar.projectKey=poi-parent')
                     tasks('sonarqube')
                     useWrapper(false)
                 }
