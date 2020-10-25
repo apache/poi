@@ -41,7 +41,9 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true
         ],
-        [ name: 'POI-DSL-1.16', jdk: '1.16', trigger: triggerSundays, skipcigame: true
+        // building with JDK 16 fails currently because of findbugs/spotbugs
+        // therefore we do not set a trigger for now and only run it manually
+        [ name: 'POI-DSL-1.16', jdk: '1.16', trigger: '', skipcigame: true
         ],
         [ name: 'POI-DSL-IBM-JDK', jdk: 'IBMJDK', trigger: triggerSundays, skipcigame: true
         ],
@@ -65,8 +67,8 @@ def poijobs = [
         [ name: 'POI-DSL-SonarQube', trigger: 'H 7 * * *', maven: true, sonar: true, skipcigame: true,
           email: 'kiwiwings@apache.org'
         ],
-        [ name: 'POI-DSL-SonarQube-Gradle', trigger: 'H 9 * * *', gradle: true, sonar: true, skipcigame: true,
-          disabled: true // this one does run, but does not actually send data to Sonarqube for some reason, we need to investigate some more
+        // set trigger empty as it is not stable yet, we can replace the Sonar Maven run when this is fully working
+        [ name: 'POI-DSL-SonarQube-Gradle', trigger: '', gradle: true, sonar: true, skipcigame: true
         ],
         [ name: 'POI-DSL-Windows-1.8', trigger: 'H */12 * * *', windows: true, slaves: 'Windows'
         ],
@@ -394,7 +396,9 @@ poijobs.each { poijob ->
 
                 gradle {
                     switches('-PenableSonar')
-                    switches('-Dsonar.login=${POI_SONAR_TOKEN}')
+                    switches('-Psonar.login=${POI_SONAR_TOKEN}')
+                    switches('-Dsonar.organization=apache')
+                    switches('-Psonar.projectKey=poi-parent')
                     tasks('sonarqube')
                     useWrapper(false)
                 }
@@ -625,7 +629,8 @@ Unfortunately we often see builds break because of changes/new machines...''')
                 'openjdk_1.8.0_252',
                 'ibmjdk_1.8.0_261'
         )
-        label('Nodes','H22','H23','H24','H25','H26','H27','H28','H29','H30','H31','H32','H33','H34','H35','H36','H37','H38','H39','H40','H41','H42','H43','H44','H48','H50','lucene1','lucene2','master')
+        // Note H50 is reserved according to it's node-descripion
+        label('Nodes','H22','H23','H24','H25','H26','H27','H28','H29','H30','H31','H32','H33','H34','H35','H36','H37','H38','H39','H40','H41','H42','H43','H44','H48','lucene1','lucene2','master')
     }
     steps {
         conditionalSteps {
