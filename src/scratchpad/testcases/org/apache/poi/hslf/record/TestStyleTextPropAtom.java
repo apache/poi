@@ -143,9 +143,9 @@ public final class TestStyleTextPropAtom {
         StyleTextPropAtom stpa = new StyleTextPropAtom(data_a,0,data_a.length);
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
         StyleTextPropAtom stpc = new StyleTextPropAtom(data_c,0,data_c.length);
-        assertEquals(4001l, stpa.getRecordType());
-        assertEquals(4001l, stpb.getRecordType());
-        assertEquals(4001l, stpc.getRecordType());
+        assertEquals(4001L, stpa.getRecordType());
+        assertEquals(4001L, stpb.getRecordType());
+        assertEquals(4001L, stpc.getRecordType());
     }
 
 
@@ -392,12 +392,12 @@ public final class TestStyleTextPropAtom {
         TextPropCollection b_ch_2 = b_ch_l.get(1);
         TextPropCollection b_ch_3 = b_ch_l.get(2);
         TextPropCollection b_ch_4 = b_ch_l.get(3);
-        
+
         assertNotNull(b_p_1);
         assertNotNull(b_p_2);
         assertNotNull(b_p_3);
         assertNotNull(b_p_4);
-        
+
         assertNotNull(b_ch_1);
         assertNotNull(b_ch_2);
         assertNotNull(b_ch_3);
@@ -524,8 +524,7 @@ public final class TestStyleTextPropAtom {
 
         tp = tpca.addWithName("font.size");
         tp.setValue(20);
-        CharFlagsTextProp cftp = (CharFlagsTextProp)
-            tpca.addWithName("char_flags");
+        CharFlagsTextProp cftp = tpca.addWithName("char_flags");
         assertEquals(0, cftp.getValue());
         cftp.setSubValue(true, CharFlagsTextProp.BOLD_IDX);
         assertEquals(1, cftp.getValue());
@@ -537,7 +536,7 @@ public final class TestStyleTextPropAtom {
         tp.setValue(20);
         tp = tpcb.addWithName("font.color");
         tp.setValue(0x05000000);
-        cftp = (CharFlagsTextProp)tpcb.addWithName("char_flags");
+        cftp = tpcb.addWithName("char_flags");
         cftp.setSubValue(true, CharFlagsTextProp.ITALIC_IDX);
         assertEquals(2, cftp.getValue());
 
@@ -556,7 +555,7 @@ public final class TestStyleTextPropAtom {
         tp.setValue(24);
         tp = tpcd.addWithName("font.index");
         tp.setValue(1);
-        cftp = (CharFlagsTextProp)tpcd.addWithName("char_flags");
+        cftp = tpcd.addWithName("char_flags");
         cftp.setSubValue(true, CharFlagsTextProp.UNDERLINE_IDX);
         assertEquals(4, cftp.getValue());
 
@@ -569,7 +568,7 @@ public final class TestStyleTextPropAtom {
         tp.setValue(1);
         tp = tpce.addWithName("font.color");
         tp.setValue(0xfe0033ff);
-        cftp = (CharFlagsTextProp)tpce.addWithName("char_flags");
+        cftp = tpce.addWithName("char_flags");
         cftp.setSubValue(true, CharFlagsTextProp.UNDERLINE_IDX);
         assertEquals(4, cftp.getValue());
 
@@ -646,28 +645,28 @@ public final class TestStyleTextPropAtom {
     }
 
     @Test
-    public void testWriteA() {
+    public void testWriteA() throws IOException {
         doReadWrite(data_a, -1);
     }
 
     @Test
-    public void testLoadWriteA() {
+    public void testLoadWriteA() throws IOException {
         doReadWrite(data_b, data_b_text_len);
     }
 
 
     @Test
-    public void testWriteB() {
+    public void testWriteB() throws IOException {
         doReadWrite(data_b, -1);
     }
 
     @Test
-    public void testLoadWriteB() {
+    public void testLoadWriteB() throws IOException {
         doReadWrite(data_b, data_b_text_len);
     }
 
     @Test
-    public void testLoadWriteC() {
+    public void testLoadWriteC() throws IOException {
         // BitMaskTextProperties will sanitize the output
         byte[] expected = data_c.clone();
         expected[56] = 0;
@@ -676,33 +675,25 @@ public final class TestStyleTextPropAtom {
     }
 
     @Test
-    public void testLoadWriteD() {
+    public void testLoadWriteD() throws IOException {
         doReadWrite(data_d, data_d_text_len);
     }
 
-    protected void doReadWrite(byte[] data, int textlen) {
+    protected void doReadWrite(byte[] data, int textlen) throws IOException {
         doReadWrite(data, data, textlen);
     }
-    
-    protected void doReadWrite(byte[] data, byte[] expected, int textlen) {
+
+    protected void doReadWrite(byte[] data, byte[] expected, int textlen) throws IOException {
         StyleTextPropAtom stpb = new StyleTextPropAtom(data, 0,data.length);
         if(textlen != -1) stpb.setParentTextSize(textlen);
 
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        try {
-            stpb.writeOut(out);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        stpb.writeOut(out);
         byte[] bytes = out.toByteArray();
 
         assertEquals(expected.length, bytes.length);
-        try {
-            assertArrayEquals(expected, bytes);
-        } catch (Throwable e){
-            //print hex dump if failed
-            assertEquals(HexDump.toHex(expected), HexDump.toHex(bytes));
-        }
+        assertArrayEquals("Had: " + HexDump.toHex(expected) + "\nand: " + HexDump.toHex(bytes),
+                expected, bytes);
     }
 
     @Test
@@ -743,7 +734,7 @@ public final class TestStyleTextPropAtom {
      * Check the test data for Bug 42677.
      */
      @Test
-     public void test42677() {
+     public void test42677() throws IOException {
         int length = 18;
         byte[] data = {
             0x00, 0x00, (byte)0xA1, 0x0F, 0x28, 0x00, 0x00, 0x00,
@@ -769,7 +760,7 @@ public final class TestStyleTextPropAtom {
      * </StyleTextPropAtom>
      */
      @Test
-    public void test45815() {
+    public void test45815() throws IOException {
         int length = 19;
         byte[] data = {
                 0x00, 0x00, (byte)0xA1, 0x0F, 0x5E, 0x00, 0x00, 0x00, 0x14, 0x00,
@@ -789,8 +780,7 @@ public final class TestStyleTextPropAtom {
         // the bitmask text properties will sanitize the bytes and thus the bytes differ
         byte[] exptected = data.clone();
         exptected[18] = 0;
-        
+
         doReadWrite(data, exptected, length);
     }
-
 }

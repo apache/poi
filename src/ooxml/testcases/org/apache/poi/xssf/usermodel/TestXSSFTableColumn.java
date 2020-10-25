@@ -71,9 +71,8 @@ public final class TestXSSFTableColumn {
 
             assertNotNull(tableColumns.get(0).getXmlColumnPr());
             assertNull(tableColumns.get(1).getXmlColumnPr()); // unmapped column
-            assertNotNull(tableColumns.get(2).getColumnIndex());
-            assertNotNull(tableColumns.get(3).getColumnIndex());
-
+            assertEquals(2, tableColumns.get(2).getColumnIndex());
+            assertEquals(3, tableColumns.get(3).getColumnIndex());
         }
     }
 }

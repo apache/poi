@@ -19,7 +19,7 @@ package org.apache.poi.hslf.record;
 
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.assertFalse;
 
 import java.io.ByteArrayOutputStream;
 
@@ -97,14 +97,15 @@ public final class TestCString {
 		ca.setText("Comments");
 		ca.setOptions(0x10);
 
-		try {
-			for(int i=0; i<data_a.length; i++) {
-				assertEquals(data_a[i],data_b[i]);
+		// Check bytes weren't the same
+		boolean equals = true;
+		for(int i=0; i<data_a.length; i++) {
+			if (data_a[i] != data_b[i]) {
+				equals = false;
+				break;
 			}
-			fail();
-		} catch(Error e) {
-			// Good, they're not the same
 		}
+		assertFalse("Arrays should not be equals", equals);
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ca.writeOut(baos);
