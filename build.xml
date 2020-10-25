@@ -2369,14 +2369,14 @@ under the License.
 
         <!-- findbugs successor, spotbugs ... need to use the dependencies used in the spotbugs release. -->
         <!-- compare with the entries found in the MANIFEST.MF of spotbugs.jar -->
-        <dependency prefix="spotbugs" artifact="com.github.spotbugs:spotbugs:4.0.2" usage="${spotbugs.lib}" target="spotbugs.jar"/>
-        <dependency prefix="spotbugs-ant" artifact="com.github.spotbugs:spotbugs-ant:4.0.2" usage="${spotbugs.lib}" target="spotbugs-ant.jar"/>
-        <dependency prefix="spotbugs-anno" artifact="com.github.spotbugs:spotbugs-annotations:4.0.2" usage="${spotbugs.lib}" target="spotbugs-annotations.jar"/>
-        <dependency prefix="spotbugs.asm" artifact="org.ow2.asm:asm:8.0.1" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.asm-analysis" artifact="org.ow2.asm:asm-analysis:8.0.1" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.asm-commons" artifact="org.ow2.asm:asm-commons:8.0.1" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.asm-tree" artifact="org.ow2.asm:asm-tree:8.0.1" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.asm-util" artifact="org.ow2.asm:asm-util:8.0.1" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs" artifact="com.github.spotbugs:spotbugs:4.1.4" usage="${spotbugs.lib}" target="spotbugs.jar"/>
+        <dependency prefix="spotbugs-ant" artifact="com.github.spotbugs:spotbugs-ant:4.1.4" usage="${spotbugs.lib}" target="spotbugs-ant.jar"/>
+        <dependency prefix="spotbugs-anno" artifact="com.github.spotbugs:spotbugs-annotations:4.1.4" usage="${spotbugs.lib}" target="spotbugs-annotations.jar"/>
+        <dependency prefix="spotbugs.asm" artifact="org.ow2.asm:asm:9.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.asm-analysis" artifact="org.ow2.asm:asm-analysis:9.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.asm-commons" artifact="org.ow2.asm:asm-commons:9.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.asm-tree" artifact="org.ow2.asm:asm-tree:9.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.asm-util" artifact="org.ow2.asm:asm-util:9.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.jsr305" artifact="com.google.code.findbugs:jsr305:3.0.2" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.dom4j" artifact="org.dom4j:dom4j:2.1.1" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.jaxen" artifact="jaxen:jaxen:1.1.6" usage="${spotbugs.lib}"/>
