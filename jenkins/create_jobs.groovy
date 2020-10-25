@@ -400,6 +400,7 @@ poijobs.each { poijob ->
                     switches('-Dsonar.organization=apache')
                     switches('-Dsonar.projectKey=poi-parent')
                     tasks('check')
+                    tasks('jacocoTestReport')
                     tasks('sonarqube')
                     useWrapper(false)
                 }
