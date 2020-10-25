@@ -1273,6 +1273,7 @@ under the License.
                unless:true="${isJava8}">
             <compilerarg line="--patch-module org.apache.poi.stress=${integration.output.test.dir}"/>
             <modulepath>
+                <pathelement path="build/dist/maven/ooxml-schemas"/>
                 <pathelement path="build/dist/maven/poi"/>
                 <pathelement path="build/dist/maven/poi-ooxml"/>
                 <pathelement path="build/dist/maven/poi-scratchpad"/>
