@@ -50,31 +50,36 @@ public final class TestDateValue {
 
     @Test
     public void testDateValue() {
-        confirmDateValue(new StringEval("2020-02-01"), 43862);
-        confirmDateValue(new StringEval("01-02-2020"), 43862);
-        confirmDateValue(new StringEval("2020-FEB-01"), 43862);
-        confirmDateValue(new StringEval("2020-Feb-01"), 43862);
-        confirmDateValue(new StringEval("2020-FEBRUARY-01"), 43862);
-        confirmDateValue(new StringEval("FEB-01"), 43862);
-        confirmDateValue(new StringEval("2/1/2020"), 43862);
-        confirmDateValue(new StringEval("2/1"), 43862);
-        confirmDateValue(new StringEval("2020/2/1"), 43862);
-        confirmDateValue(new StringEval("2020/FEB/1"), 43862);
-        confirmDateValue(new StringEval("FEB/1/2020"), 43862);
-        confirmDateValue(new StringEval("2020/02/01"), 43862);
+        LocaleUtil.setUserLocale(Locale.ENGLISH);
+        try {
+            confirmDateValue(new StringEval("2020-02-01"), 43862);
+            confirmDateValue(new StringEval("01-02-2020"), 43862);
+            confirmDateValue(new StringEval("2020-FEB-01"), 43862);
+            confirmDateValue(new StringEval("2020-Feb-01"), 43862);
+            confirmDateValue(new StringEval("2020-FEBRUARY-01"), 43862);
+            confirmDateValue(new StringEval("FEB-01"), 43862);
+            confirmDateValue(new StringEval("2/1/2020"), 43862);
+            confirmDateValue(new StringEval("2/1"), 43862);
+            confirmDateValue(new StringEval("2020/2/1"), 43862);
+            confirmDateValue(new StringEval("2020/FEB/1"), 43862);
+            confirmDateValue(new StringEval("FEB/1/2020"), 43862);
+            confirmDateValue(new StringEval("2020/02/01"), 43862);
 
-        confirmDateValue(new StringEval(""));
-        confirmDateValue(BlankEval.instance);
+            confirmDateValue(new StringEval(""));
+            confirmDateValue(BlankEval.instance);
 
-        confirmDateValueError(new StringEval("non-date text"));
+            confirmDateValueError(new StringEval("non-date text"));
 
-        // // EXCEL
-        confirmDateValue(new StringEval("8/22/2011"), 40777); // Serial number of a date entered as text.
-        confirmDateValue(new StringEval("22-MAY-2011"), 40685); // Serial number of a date entered as text.
-        confirmDateValue(new StringEval("2011/02/23"), 40597); // Serial number of a date entered as text.
+            // // EXCEL
+            confirmDateValue(new StringEval("8/22/2011"), 40777); // Serial number of a date entered as text.
+            confirmDateValue(new StringEval("22-MAY-2011"), 40685); // Serial number of a date entered as text.
+            confirmDateValue(new StringEval("2011/02/23"), 40597); // Serial number of a date entered as text.
 
-        // LibreOffice compatibility
-        confirmDateValue(new StringEval("1954-07-20"), 19925);
+            // LibreOffice compatibility
+            confirmDateValue(new StringEval("1954-07-20"), 19925);
+        } finally {
+            LocaleUtil.setUserLocale(null);
+        }
     }
 
     private ValueEval invokeDateValue(ValueEval text) {

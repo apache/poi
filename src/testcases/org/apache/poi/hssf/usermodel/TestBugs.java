@@ -2902,7 +2902,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
     @Test
     public void test63819() throws IOException {
-        simpleTest("63819.xls");
+        LocaleUtil.setUserLocale(Locale.UK);
+        try {
+            simpleTest("63819.xls");
+        } finally {
+            LocaleUtil.resetUserLocale();
+        }
     }
 
     /**
@@ -2961,8 +2966,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         evals.add(wb.getCreationHelper().createFormulaEvaluator());
         evals.addAll(SIMPLE_REFS.values());
 
-        HSSFFormulaEvaluator.setupEnvironment( files.toArray(new String[0]), evals.toArray(new HSSFFormulaEvaluator[0]) );
-        evals.get(0).evaluateAll();
+        try {
+            HSSFFormulaEvaluator.setupEnvironment(files.toArray(new String[0]), evals.toArray(new HSSFFormulaEvaluator[0]));
+            evals.get(0).evaluateAll();
+        } catch (RuntimeException e) {
+            throw new RuntimeException("While handling files " + files + " and evals " + evals, e);
+        }
     }
 
 

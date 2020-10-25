@@ -18,6 +18,7 @@
 package org.apache.poi.ss.util;
 
 import java.text.DateFormatSymbols;
+import java.time.DateTimeException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -83,7 +84,7 @@ public class DateParser {
 
     /**
      * Parses a date from a string.
-     * 
+     *
      * @param strVal a string with a date pattern.
      * @return a date parsed from argument.
      * @throws EvaluationException exception upon parsing.
@@ -102,7 +103,11 @@ public class DateParser {
                     : LocalDate.now(LocaleUtil.getUserTimeZone().toZoneId()).getYear();
                 int month = parseMonth(groups.get(format.monthIndex));
                 int day = Integer.parseInt(groups.get(format.dayIndex));
-                return LocalDate.of(year, month, day);
+                try {
+                    return LocalDate.of(year, month, day);
+                } catch (DateTimeException e) {
+                    throw new DateTimeException("Failed to parse date-string " + strVal);
+                }
 
             }
         }
