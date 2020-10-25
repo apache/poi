@@ -22,7 +22,7 @@ buildscript {
     dependencies {
         // 2.x fails with "Could not get unknown property 'me'"
         classpath 'me.champeau.gradle:japicmp-gradle-plugin:0.1.2'
-        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.8"
+        classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:3.0"
     }
 }
 
