@@ -25,6 +25,7 @@ import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
@@ -133,7 +134,7 @@ final class LookupUtils {
 		return new ColumnVector(tableArray, relativeColumnIndex);
 	}
 	/**
-	 * @return <code>null</code> if the supplied area is neither a single row nor a single colum
+	 * @return <code>null</code> if the supplied area is neither a single row nor a single column
 	 */
 	public static ValueVector createVector(TwoDEval ae) {
 		if (ae.isColumn()) {
@@ -144,7 +145,7 @@ final class LookupUtils {
 		}
 		return null;
 	}
-	
+
 	public static ValueVector createVector(RefEval re) {
 	    return new SheetVector(re);
 	}
@@ -276,11 +277,11 @@ final class LookupUtils {
 
 
     private static final class StringLookupComparer extends LookupValueComparerBase {
-		
-        private String _value;
+
+        private final String _value;
         private final Pattern _wildCardPattern;
-        private boolean _matchExact;
-        private boolean _isMatchFunction;
+        private final boolean _matchExact;
+        private final boolean _isMatchFunction;
 
         protected StringLookupComparer(StringEval se, boolean matchExact, boolean isMatchFunction) {
 			super(se);
@@ -311,7 +312,7 @@ final class LookupUtils {
 		}
 	}
 	private static final class NumberLookupComparer extends LookupValueComparerBase {
-		private double _value;
+		private final double _value;
 
 		protected NumberLookupComparer(NumberEval ne) {
 			super(ne);
@@ -326,7 +327,7 @@ final class LookupUtils {
 		}
 	}
 	private static final class BooleanLookupComparer extends LookupValueComparerBase {
-		private boolean _value;
+		private final boolean _value;
 
 		protected BooleanLookupComparer(BoolEval be) {
 			super(be);
@@ -434,6 +435,11 @@ final class LookupUtils {
 	public static boolean resolveRangeLookupArg(ValueEval rangeLookupArg, int srcCellRow, int srcCellCol) throws EvaluationException {
 
 		ValueEval valEval = OperandResolver.getSingleValue(rangeLookupArg, srcCellRow, srcCellCol);
+		if(valEval == MissingArgEval.instance) {
+			// Tricky:
+			// forth arg exists but is not supplied: "=VLOOKUP(A1,A2:A4,2,)"
+			return false;
+		}
 		if(valEval instanceof BlankEval) {
 			// Tricky:
 			// fourth arg supplied but evaluates to blank
@@ -457,7 +463,7 @@ final class LookupUtils {
 			Boolean b = Countif.parseBoolean(stringValue);
 			if(b != null) {
 				// string converted to boolean OK
-				return b.booleanValue();
+				return b;
 			}
 			// Even more trickiness:
 			// Note - even if the StringEval represents a number value (for example "1"),
