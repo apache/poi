@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record;
 
 import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
-import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
@@ -114,8 +113,6 @@ public final class TestNameRecord {
 			"gRiGSUjEMmxCNbRiCEJHpKEahqEbGqEhqiEJFRGGQkhDbMMiFMQ0jLM4padlmIZB6IhuaIT2Pz4c3188+VoNSaiIMBRCGh7PGc9h" +
 			"EQpiGoagbEQ3NMJCVEMSJiIMhTAMjxdcz2ERGmIaBqEiuqERElENSQhEGMrT+APX2vm3iyMAAA=="
 		);
-
-        assertArrayEquals(data1, data1);
 
         RecordInputStream in1 = TestcaseRecordInputStream.create(data1);
         NameRecord nr1 = new NameRecord(in1);

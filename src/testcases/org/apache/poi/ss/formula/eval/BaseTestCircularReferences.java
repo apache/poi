@@ -175,7 +175,7 @@ public abstract class BaseTestCircularReferences {
             fe.clearAllCachedResultValues();
             cv = fe.evaluate(cellB1);
             // Identified bug 46898
-            assertNotEquals(cv.getCellType(), ErrorEval.CIRCULAR_REF_ERROR.getErrorCode());
+            assertNotEquals(cv.getErrorValue(), ErrorEval.CIRCULAR_REF_ERROR.getErrorCode());
             assertEquals(CellType.NUMERIC, cv.getCellType());
             assertEquals(46.0, cv.getNumberValue(), 0.0);
 
@@ -184,7 +184,6 @@ public abstract class BaseTestCircularReferences {
             cv = fe.evaluate(cellE1);
             assertEquals(CellType.NUMERIC, cv.getCellType());
             assertEquals(43.0, cv.getNumberValue(), 0.0);
-
         }
     }
 }

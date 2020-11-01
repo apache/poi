@@ -36,7 +36,7 @@ public class TestLocaleUtil {
     private static final Locale ja_JP = Locale.JAPAN;
     private static final TimeZone TOKYO = TimeZone.getTimeZone("Asia/Tokyo");
     private static final Calendar JAPAN_CALENDAR = Calendar.getInstance(TOKYO, ja_JP);
-    
+
     /**
      * Reset the Locale to the user default before the test so that it isn't influenced
      * by the LocaleUtil's state being changed by previous tests.
@@ -51,7 +51,7 @@ public class TestLocaleUtil {
         // http://www.codeaffine.com/2014/07/21/a-junit-rule-to-run-a-test-in-its-own-thread/
         LocaleUtil.setUserLocale(Locale.getDefault());
         LocaleUtil.setUserTimeZone(TimeZone.getDefault());
-        
+
         assumeFalse(ja_JP.equals(LocaleUtil.getUserLocale()));
         assumeFalse(TOKYO.equals(LocaleUtil.getUserTimeZone()));
     }
@@ -65,48 +65,48 @@ public class TestLocaleUtil {
         LocaleUtil.resetUserLocale();
         LocaleUtil.resetUserTimeZone();
     }
-    
+
     @Test
     @SuppressForbidden("implementation around default locales in POI")
     public void userLocale() {
         Locale DEFAULT_LOCALE = LocaleUtil.getUserLocale();
-        
+
         assertEquals(DEFAULT_LOCALE, LocaleUtil.getUserLocale());
         assertNotEquals(ja_JP, LocaleUtil.getUserLocale());
-        
+
         LocaleUtil.setUserLocale(ja_JP);
         assertEquals(ja_JP, LocaleUtil.getUserLocale());
-        
+
         LocaleUtil.resetUserLocale();
         assertEquals(DEFAULT_LOCALE, LocaleUtil.getUserLocale());
     }
-    
+
     @Test
     @SuppressForbidden("implementation around default locales in POI")
     public void userTimeZone() {
         TimeZone DEFAULT_TIME_ZONE = LocaleUtil.getUserTimeZone();
-        
+
         assertEquals(DEFAULT_TIME_ZONE, LocaleUtil.getUserTimeZone());
-        assertNotEquals(TOKYO, LocaleUtil.getUserLocale());
-        
+        assertNotEquals(TOKYO, LocaleUtil.getUserTimeZone());
+
         LocaleUtil.setUserTimeZone(TOKYO);
         assertEquals(TOKYO, LocaleUtil.getUserTimeZone());
     }
-    
+
     @Test
     @SuppressForbidden("implementation around default locales in POI")
     public void localeCalendar() {
         Locale DEFAULT_LOCALE = LocaleUtil.getUserLocale();
         TimeZone DEFAULT_TIME_ZONE = LocaleUtil.getUserTimeZone();
         Calendar DEFAULT_CALENDAR = LocaleUtil.getLocaleCalendar();
-        
+
         assertEquals(DEFAULT_LOCALE, LocaleUtil.getUserLocale());
         assertEquals(DEFAULT_TIME_ZONE, LocaleUtil.getUserTimeZone());
         assertCalendarEquals(DEFAULT_CALENDAR, LocaleUtil.getLocaleCalendar());
         assertNotEquals(ja_JP, LocaleUtil.getUserLocale());
         assertNotEquals(TOKYO, LocaleUtil.getUserTimeZone());
         assertCalendarNotEquals(JAPAN_CALENDAR, LocaleUtil.getLocaleCalendar());
-        
+
         LocaleUtil.setUserLocale(ja_JP);
         LocaleUtil.setUserTimeZone(TOKYO);
         assertCalendarEquals(JAPAN_CALENDAR, LocaleUtil.getLocaleCalendar());
@@ -115,7 +115,7 @@ public class TestLocaleUtil {
         //assertCalendarEquals(JAPAN_CALENDAR, LocaleUtil.getLocaleCalendar(2016, 00, 01));
         //assertCalendarEquals(JAPAN_CALENDAR, LocaleUtil.getLocaleCalendar(2016, 00, 01, 00, 00, 00));
     }
-    
+
     private static void assertCalendarNotEquals(Calendar expected, Calendar actual) {
         // FIXME: add more tests to compare calendars, ignoring whether the dates are equal
         assertNotEquals("time zone", expected.getTimeZone(), actual.getTimeZone());

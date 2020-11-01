@@ -49,7 +49,7 @@ import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
 public class TestHxxFEncryption {
-    @Parameter(value = 0)
+    @Parameter
     public POIDataSamples sampleDir;
 
     @Parameter(value = 1)

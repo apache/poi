@@ -296,7 +296,8 @@ public final class WorkbookFactory {
             }
         }
         throw new IOException("Your InputStream was neither an OLE2 stream, nor an OOXML stream " +
-            "or you haven't provide the poi-ooxml*.jar in the classpath/modulepath - FileMagic: "+fm);
+            "or you haven't provide the poi-ooxml*.jar in the classpath/modulepath - FileMagic: " + fm +
+                ", having providers: " + Singleton.INSTANCE.provider);
     }
 
     public static void addProvider(WorkbookProvider provider){

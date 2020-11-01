@@ -45,12 +45,14 @@ import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 
 public class TestThemesTable {
-    private final String testFileSimple = "Themes.xlsx";
-    private final String testFileComplex = "Themes2.xlsx";
-    // TODO .xls version available too, add HSSF support then check 
+    private static final String testFileComplex = "Themes2.xlsx";
+    // TODO .xls version available too, add HSSF support then check
+
+    // For offline testing
+    private static final boolean createFiles = false;
 
     // What colours they should show up as
-    private static String[] rgbExpected = {
+    private static final String[] rgbExpected = {
             "ffffff", // Lt1
             "000000", // Dk1
             "eeece1", // Lt2
@@ -68,6 +70,7 @@ public class TestThemesTable {
     @Test
     public void testThemesTableColors() throws Exception {
         // Load our two test workbooks
+        String testFileSimple = "Themes.xlsx";
         XSSFWorkbook simple = XSSFTestDataSamples.openSampleWorkbook(testFileSimple);
         XSSFWorkbook complex = XSSFTestDataSamples.openSampleWorkbook(testFileComplex);
         // Save and re-load them, to check for stability across that
@@ -84,13 +87,10 @@ public class TestThemesTable {
         workbooks.put("Re-Saved_" + testFileSimple, simpleRS);
         workbooks.put(testFileComplex, complex);
         workbooks.put("Re-Saved_" + testFileComplex, complexRS);
-        
+
         // Sanity check
-        assertEquals(rgbExpected.length, rgbExpected.length);
-        
-        // For offline testing
-        boolean createFiles = false;
-        
+        assertEquals(12, rgbExpected.length);
+
         // Check each workbook in turn, and verify that the colours
         //  for the theme-applied cells in Column A are correct
         for (String whatWorkbook : workbooks.keySet()) {
@@ -98,7 +98,7 @@ public class TestThemesTable {
             XSSFSheet sheet = workbook.getSheetAt(0);
             int startRN = 0;
             if (whatWorkbook.endsWith(testFileComplex)) startRN++;
-            
+
             for (int rn=startRN; rn<rgbExpected.length+startRN; rn++) {
                 XSSFRow row = sheet.getRow(rn);
                 assertNotNull("Missing row " + rn + " in " + whatWorkbook, row);
@@ -119,7 +119,7 @@ public class TestThemesTable {
                 assertNotNull(ctColor);
                 assertTrue(ctColor.isSetTheme());
                 assertEquals(themeElem.idx, ctColor.getTheme());
-                
+
                 // Get the colour, via the theme
                 XSSFColor color = font.getXSSFColor();
                 // Theme colours aren't tinted
@@ -132,7 +132,7 @@ public class TestThemesTable {
                 assertEquals(
                         "Wrong theme index " + expectedThemeIdx + " on " + whatWorkbook,
                         expectedThemeIdx, themeIdx);
-                
+
                 if (createFiles) {
                     XSSFCellStyle cs = row.getSheet().getWorkbook().createCellStyle();
                     cs.setFillForegroundColor(color);
@@ -140,7 +140,7 @@ public class TestThemesTable {
                     row.createCell(1).setCellStyle(cs);
                 }
             }
-            
+
             if (createFiles) {
                 FileOutputStream fos = new FileOutputStream("Generated_"+whatWorkbook);
                 workbook.write(fos);
@@ -162,8 +162,8 @@ public class TestThemesTable {
      * Column C = Explicit Colour Foreground
      * Column E = Explicit Colour Background, Black Foreground
      * Column G = Conditional Formatting Backgrounds
-     * 
-     * Note - Grey Row has an odd way of doing the styling... 
+     *
+     * Note - Grey Row has an odd way of doing the styling...
      */
     @Test
     public void themedAndNonThemedColours() throws IOException {
@@ -239,31 +239,31 @@ public class TestThemesTable {
                 assertNull(color.getARGBHex());
             }
         }
-        
+
         // Check the CF colours
         // TODO
     }
     private static void assertCellContents(String expected, XSSFCell cell) {
         assertNotNull(cell);
-        assertEquals(expected.toLowerCase(Locale.ROOT), 
+        assertEquals(expected.toLowerCase(Locale.ROOT),
                      cell.getStringCellValue().toLowerCase(Locale.ROOT));
     }
-    
+
     @Test
     @SuppressWarnings("resource")
     public void testAddNew() {
         XSSFWorkbook wb = new XSSFWorkbook();
         wb.createSheet();
         assertNull(wb.getTheme());
-        
+
         StylesTable styles = wb.getStylesSource();
         assertNull(styles.getTheme());
-        
+
         styles.ensureThemesTable();
-        
+
         assertNotNull(styles.getTheme());
         assertNotNull(wb.getTheme());
-        
+
         wb = XSSFTestDataSamples.writeOutAndReadBack(wb);
         styles = wb.getStylesSource();
         assertNotNull(styles.getTheme());

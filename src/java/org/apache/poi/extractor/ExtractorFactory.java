@@ -307,8 +307,10 @@ public final class ExtractorFactory {
                 }
             }
         }
-        throw new IOException("Your InputStream was neither an OLE2 stream, nor an OOXML stream " +
-            "or you haven't provide the poi-ooxml*.jar and/or poi-scratchpad*.jar in the classpath/modulepath - FileMagic: "+fm);
+        throw new IOException(
+            "Your InputStream was neither an OLE2 stream, nor an OOXML stream " +
+            "or you haven't provide the poi-ooxml*.jar and/or poi-scratchpad*.jar in the classpath/modulepath - FileMagic: " + fm +
+            ", providers: " + Singleton.INSTANCE.provider);
     }
 
     public static void addProvider(ExtractorProvider provider){
