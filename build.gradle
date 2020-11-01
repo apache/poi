@@ -180,11 +180,18 @@ subprojects {
     projectDir.mkdirs()
 
     if (project.hasProperty('enableSonar')) {
+        // See https://docs.sonarqube.org/latest/analysis/scan/sonarscanner-for-gradle/ and
+        // https://docs.sonarqube.org/display/SONARQUBE52/Analyzing+with+SonarQube+Scanner+for+Gradle
+        // for documentation of properties.
+        //
+        // Some additional properties are currently set in the Jenkins-DSL, see jenksin/create_jobs.groovy
+        //
         sonarqube {
             properties {
                 // as we currently use build/<module>/ as project-basedir, we need to tell Sonar to use
                 // the root-folder as "basedir" for the projects
                 property "sonar.projectBaseDir", "$projectDir/../.."
+                // currently supported providers on Jenkins: "hg,git": property "sonar.scm.provider", "svn"
 
                 // the plugin seems to not detect our non-standard build-layout
                 property "sonar.junit.reportPaths", "$projectDir/build/test-results/test"
