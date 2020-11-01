@@ -872,7 +872,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         return super.initDirectory();
     }
 
-    void replaceDirectoryImpl(DirectoryNode newDirectory) {
+    void replaceDirectoryImpl(DirectoryNode newDirectory) throws IOException {
         super.replaceDirectory(newDirectory);
     }
 

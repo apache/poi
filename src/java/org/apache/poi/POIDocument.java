@@ -463,7 +463,21 @@ public abstract class POIDocument implements Closeable {
      * @param newDirectory the new directory
      */
     @Internal
-    protected void replaceDirectory(DirectoryNode newDirectory) {
+    protected void replaceDirectory(DirectoryNode newDirectory) throws IOException {
+        if (
+                // do not close if it is actually the same directory or
+                newDirectory == directory ||
+
+                // also for different directories, but same FileSystem
+                (newDirectory != null && directory != null && newDirectory.getFileSystem() == directory.getFileSystem())) {
+            return;
+        }
+
+        // close any previous opened DataSource
+        if (directory != null && directory.getFileSystem() != null) {
+            directory.getFileSystem().close();
+        }
+
         directory = newDirectory;
     }
 

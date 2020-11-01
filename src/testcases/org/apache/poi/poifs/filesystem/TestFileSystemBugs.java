@@ -37,8 +37,8 @@ import org.junit.Test;
  * Tests bugs for POIFSFileSystem
  */
 public final class TestFileSystemBugs {
-    private static POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
-    private static POIDataSamples _ssSamples = POIDataSamples.getSpreadSheetInstance();
+    private static final POIDataSamples _samples = POIDataSamples.getPOIFSInstance();
+    private static final POIDataSamples _ssSamples = POIDataSamples.getSpreadSheetInstance();
 
     private List<POIFSFileSystem> openedFSs;
 
@@ -110,7 +110,7 @@ public final class TestFileSystemBugs {
         assertTrue(entry.isDocumentEntry());
         assertEquals("\u0001CompObj", entry.getName());
     }
-    
+
     /**
      * Ensure that a file with a corrupted property in the
      *  properties table can still be loaded, and the remaining
@@ -123,7 +123,7 @@ public final class TestFileSystemBugs {
         DirectoryNode root = openSample("unknown_properties.msg");
         assertEquals(42, root.getEntryCount());
     }
-    
+
     /**
      * With heavily nested documents, ensure we still re-write the same
      */

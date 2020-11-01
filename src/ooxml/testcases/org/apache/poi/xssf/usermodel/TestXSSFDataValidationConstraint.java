@@ -26,8 +26,7 @@ import org.apache.poi.ss.usermodel.DataValidationConstraint.OperatorType;
 import org.apache.poi.ss.util.CellReference;
 import org.junit.Test;
 
-import java.util.Collections;
-import java.util.stream.Collectors;
+import java.io.IOException;
 import java.util.stream.IntStream;
 
 public class TestXSSFDataValidationConstraint {
@@ -46,7 +45,7 @@ public class TestXSSFDataValidationConstraint {
         // FIXME: whitespace wasn't stripped
         assertEquals(literal, constraint.getFormula1());
     }
-    
+
     @Test
     public void listLiteralsQuotesAreStripped_arrayConstructor() {
         // literal list, using array constructor
@@ -63,13 +62,14 @@ public class TestXSSFDataValidationConstraint {
         String[] literal = IntStream.range(0, 129).mapToObj(i -> "a").toArray(String[]::new);
         assertThrows(IllegalArgumentException.class, () -> new XSSFDataValidationConstraint(literal));
     }
-    
+
     @Test
-    public void dataValidationListLiteralTooLongFromFile() {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("DataValidationListTooLong.xlsx");
-        XSSFFormulaEvaluator fEval = wb.getCreationHelper().createFormulaEvaluator();
-        DataValidationEvaluator dvEval = new DataValidationEvaluator(wb, fEval);
-        assertThrows(IllegalArgumentException.class, () -> dvEval.getValidationValuesForCell(new CellReference("Sheet0!A1")));
+    public void dataValidationListLiteralTooLongFromFile() throws IOException {
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("DataValidationListTooLong.xlsx")) {
+            XSSFFormulaEvaluator fEval = wb.getCreationHelper().createFormulaEvaluator();
+            DataValidationEvaluator dvEval = new DataValidationEvaluator(wb, fEval);
+            assertThrows(IllegalArgumentException.class, () -> dvEval.getValidationValuesForCell(new CellReference("Sheet0!A1")));
+        }
     }
 
     @Test
@@ -80,7 +80,7 @@ public class TestXSSFDataValidationConstraint {
         assertNull(constraint.getExplicitListValues());
         assertEquals("A1:A5", constraint.getFormula1());
     }
-    
+
     @Test
     public void namedRangeReference() {
         // named range list
@@ -90,4 +90,4 @@ public class TestXSSFDataValidationConstraint {
         assertEquals("MyNamedRange", constraint.getFormula1());
     }
 
-}        
+}

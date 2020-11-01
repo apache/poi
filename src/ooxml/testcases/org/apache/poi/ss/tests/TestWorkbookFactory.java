@@ -346,6 +346,8 @@ public final class TestWorkbookFactory {
             fail("Shouldn't be able to open with the wrong password");
         } catch (EncryptedDocumentException e) {
             // expected here
+        } finally {
+            wb.close();
         }
 
         try {

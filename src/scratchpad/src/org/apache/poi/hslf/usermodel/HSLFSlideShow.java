@@ -1263,7 +1263,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 	}
 
 	@Override
-	protected void replaceDirectory(DirectoryNode newDirectory) {
+	protected void replaceDirectory(DirectoryNode newDirectory) throws IOException {
 		getSlideShowImpl().replaceDirectoryImpl(newDirectory);
 	}
 

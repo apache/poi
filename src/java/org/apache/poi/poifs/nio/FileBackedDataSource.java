@@ -43,7 +43,7 @@ public class FileBackedDataSource extends DataSource {
 
     private final boolean writable;
     // remember file base, which needs to be closed too
-    private RandomAccessFile srcFile;
+    private final RandomAccessFile srcFile;
 
     // Buffers which map to a file-portion are not closed automatically when the Channel is closed
     // therefore we need to keep the list of mapped buffers and do some ugly reflection to try to
@@ -63,11 +63,15 @@ public class FileBackedDataSource extends DataSource {
     }
 
     public FileBackedDataSource(RandomAccessFile srcFile, boolean readOnly) {
-        this(srcFile.getChannel(), readOnly);
-        this.srcFile = srcFile;
+        this(srcFile, srcFile.getChannel(), readOnly);
     }
 
     public FileBackedDataSource(FileChannel channel, boolean readOnly) {
+        this(null, channel, readOnly);
+    }
+
+    private FileBackedDataSource(RandomAccessFile srcFile, FileChannel channel, boolean readOnly) {
+        this.srcFile = srcFile;
         this.channel = channel;
         this.writable = !readOnly;
     }

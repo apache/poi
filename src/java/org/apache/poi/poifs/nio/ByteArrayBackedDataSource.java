@@ -32,15 +32,16 @@ public class ByteArrayBackedDataSource extends DataSource {
 
    private byte[] buffer;
    private long size;
-   
+
    public ByteArrayBackedDataSource(byte[] data, int size) { // NOSONAR
       this.buffer = data;
       this.size = size;
    }
+   
    public ByteArrayBackedDataSource(byte[] data) {
       this(data, data.length);
    }
-                
+
    @Override
    public ByteBuffer read(int length, long position) {
       if(position >= size) {
@@ -49,28 +50,28 @@ public class ByteArrayBackedDataSource extends DataSource {
                position + " in stream of length " + size
          );
       }
-      
+
       int toRead = (int)Math.min(length, size - position);
       return ByteBuffer.wrap(buffer, (int)position, toRead);
    }
-   
+
    @Override
    public void write(ByteBuffer src, long position) {
       // Extend if needed
-      long endPosition = position + src.capacity(); 
+      long endPosition = position + src.capacity();
       if(endPosition > buffer.length) {
          extend(endPosition);
       }
-      
+
       // Now copy
       src.get(buffer, (int)position, src.capacity());
-      
+
       // Update size if needed
       if(endPosition > size) {
          size = endPosition;
       }
    }
-   
+
    private void extend(long length) {
       // Consider extending by a bit more than requested
       long difference = length - buffer.length;
@@ -86,17 +87,17 @@ public class ByteArrayBackedDataSource extends DataSource {
       System.arraycopy(buffer, 0, nb, 0, (int)size);
       buffer = nb;
    }
-   
+
    @Override
    public void copyTo(OutputStream stream) throws IOException {
       stream.write(buffer, 0, (int)size);
    }
-   
+
    @Override
    public long size() {
       return size;
    }
-   
+
    @Override
    public void close() {
       buffer = null;
