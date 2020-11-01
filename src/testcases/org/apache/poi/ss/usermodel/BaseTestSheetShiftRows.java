@@ -764,6 +764,38 @@ public abstract class BaseTestSheetShiftRows {
     }
 
 
+    @Test
+    public void checkMergedRegions56454() {
+        Workbook wb = _testDataProvider.createWorkbook();
+        Sheet sheet = wb.createSheet();
+
+        // populate sheet cells
+        for (int i = 0; i < 10; i++) {
+            Row row = sheet.createRow(i);
+
+            for (int j = 0; j < 10; j++) {
+                Cell cell = row.createCell(j, CellType.STRING);
+
+                cell.setCellValue(i + "x" + j);
+            }
+        }
+
+        CellRangeAddress region1 = new CellRangeAddress(3, 6, 0, 1);
+        CellRangeAddress region2 = new CellRangeAddress(3, 6, 2, 3);
+
+        sheet.addMergedRegion(region1);
+        sheet.addMergedRegion(region2);
+
+        sheet.shiftRows(4, sheet.getLastRowNum(), 1);
+
+        // check, if all regions still start at row 3
+        for (int i = 0; i < sheet.getNumMergedRegions(); i++) {
+            CellRangeAddress cr = sheet.getMergedRegion(i);
+
+            assertEquals(cr.getFirstRow(), 3);
+        }
+    }
+
 
 
 
