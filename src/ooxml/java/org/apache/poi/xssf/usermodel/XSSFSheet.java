@@ -103,7 +103,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.*;
  * contain text, numbers, dates, and formulas. Cells can also be formatted.
  * </p>
  */
-@SuppressWarnings("deprecation")
 public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     private static final POILogger logger = POILogFactory.getLogger(XSSFSheet.class);
 
@@ -136,7 +135,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     private Map<Integer, CTCellFormula> sharedFormulas;
     private SortedMap<String,XSSFTable> tables;
     private List<CellRangeAddress> arrayFormulas;
-    private XSSFDataValidationHelper dataValidationHelper;
+    private final XSSFDataValidationHelper dataValidationHelper;
 
     /**
      * Creates new XSSFSheet   - called by XSSFWorkbook to create a sheet from scratch.
@@ -3027,7 +3026,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         FormulaShifter formulaShifter = FormulaShifter.createForColumnShift(this.getWorkbook().getSheetIndex(this), this.getSheetName(), startColumn, endColumn, n, SpreadsheetVersion.EXCEL2007);
         XSSFColumnShifter columnShifter = new XSSFColumnShifter(this);
         columnShifter.shiftColumns(startColumn, endColumn, n);
-        columnShifter.shiftMergedRegions(startColumn, startColumn, n);
+        columnShifter.shiftMergedRegions(startColumn, endColumn, n);
         columnShifter.updateFormulas(formulaShifter);
         columnShifter.updateConditionalFormatting(formulaShifter);
         columnShifter.updateHyperlinks(formulaShifter);

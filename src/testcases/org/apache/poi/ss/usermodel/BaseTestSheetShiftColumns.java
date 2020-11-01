@@ -95,6 +95,7 @@ public abstract class BaseTestSheetShiftColumns {
         style.setVerticalAlignment(VerticalAlignment.BOTTOM);
         return style;
     }
+
     @Test
     public void testShiftOneColumnRight() {
         sheet1.shiftColumns(1, 2, 1);
