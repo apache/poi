@@ -27,6 +27,8 @@ import java.util.ServiceLoader;
 import java.util.function.Supplier;
 import java.util.stream.StreamSupport;
 
+import org.apache.poi.common.usermodel.PictureType;
+import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.RectAlign;
@@ -36,11 +38,6 @@ import org.apache.poi.util.POILogger;
 
 public class DrawPictureShape extends DrawSimpleShape {
     private static final POILogger LOG = POILogFactory.getLogger(DrawPictureShape.class);
-    private static final String[] KNOWN_RENDERER = {
-        "org.apache.poi.hwmf.draw.HwmfImageRenderer",
-        "org.apache.poi.hemf.draw.HemfImageRenderer",
-        "org.apache.poi.xslf.draw.SVGImageRenderer"
-    };
 
     public DrawPictureShape(PictureShape<?,?> shape) {
         super(shape);
@@ -60,10 +57,14 @@ public class DrawPictureShape extends DrawSimpleShape {
             }
 
             try {
-                String ct = data.getContentType();
+                byte[] dataBytes = data.getData();
+
+                PictureType type = PictureType.valueOf(FileMagic.valueOf(dataBytes));
+                String ct = (type == PictureType.UNKNOWN) ? data.getContentType() : type.getContentType();
+
                 ImageRenderer renderer = getImageRenderer(graphics, ct);
                 if (renderer.canRender(ct)) {
-                    renderer.loadImage(data.getData(), ct);
+                    renderer.loadImage(dataBytes, ct);
                     renderer.drawImage(graphics, anchor, insets);
                     return;
                 }
@@ -92,7 +93,7 @@ public class DrawPictureShape extends DrawSimpleShape {
 
         // the fallback is the BitmapImageRenderer, at least it gracefully handles invalid images
         final Supplier<ImageRenderer> getFallback = () -> {
-            LOG.log(POILogger.WARN, "No suiteable image renderer found for content-type '"+
+            LOG.log(POILogger.WARN, "No suitable image renderer found for content-type '"+
             contentType+"' - include poi-scratchpad (for wmf/emf) or poi-ooxml (for svg) jars!");
             return fallback;
         };

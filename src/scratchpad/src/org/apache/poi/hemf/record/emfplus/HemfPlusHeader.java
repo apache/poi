@@ -20,6 +20,7 @@ package org.apache.poi.hemf.record.emfplus;
 
 import static org.apache.poi.util.GenericRecordUtil.getEnumBitsAsString;
 
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -132,6 +133,11 @@ public class HemfPlusHeader implements HemfPlusRecord {
         // currently EMF is better supported than EMF+ ... so if there's a complete set of EMF records available,
         // disable EMF+ rendering for now
         ctx.setRenderState(EmfRenderState.EMF_DCONTEXT);
+    }
+
+    @Override
+    public void calcBounds(Rectangle2D window, Rectangle2D viewport, EmfRenderState[] renderState) {
+        renderState[0] = EmfRenderState.EMF_DCONTEXT;
     }
 
     @Override

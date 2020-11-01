@@ -22,6 +22,7 @@ import static org.apache.poi.hemf.record.emf.HemfDraw.readPointL;
 import static org.apache.poi.hwmf.record.HwmfDraw.normalizeBounds;
 
 import java.awt.geom.Dimension2D;
+import java.awt.geom.Rectangle2D;
 import java.io.IOException;
 import java.util.Map;
 import java.util.function.Supplier;
@@ -56,6 +57,13 @@ public class HemfWindowing {
         public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
+
+        @Override
+        public void calcBounds(Rectangle2D window, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) {
+            double x = window.getX();
+            double y = window.getY();
+            window.setRect(x,y,size.getWidth(),size.getHeight());
+        }
     }
 
     /**
@@ -75,6 +83,13 @@ public class HemfWindowing {
         @Override
         public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
+        }
+
+        @Override
+        public void calcBounds(Rectangle2D window, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) {
+            double w = window.getWidth();
+            double h = window.getHeight();
+            window.setRect(origin.getX(),origin.getY(),w,h);
         }
     }
 
@@ -96,6 +111,13 @@ public class HemfWindowing {
         public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
+
+        @Override
+        public void calcBounds(Rectangle2D window, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) {
+            double x = viewport.getX();
+            double y = viewport.getY();
+            viewport.setRect(x,y,extents.getWidth(),extents.getHeight());
+        }
     }
 
     /**
@@ -115,6 +137,13 @@ public class HemfWindowing {
         @Override
         public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
+        }
+
+        @Override
+        public void calcBounds(Rectangle2D window, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) {
+            double w = viewport.getWidth();
+            double h = viewport.getHeight();
+            viewport.setRect(origin.getX(), origin.getY(), w, h);
         }
     }
 
@@ -200,6 +229,16 @@ public class HemfWindowing {
         public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
         }
+
+        @Override
+        public void calcBounds(Rectangle2D window, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) {
+            double x = viewport.getX();
+            double y = viewport.getY();
+            double w = viewport.getWidth();
+            double h = viewport.getHeight();
+            viewport.setRect(x,y,w * scale.getWidth(),h * scale.getHeight());
+        }
+
     }
 
     /**
@@ -220,6 +259,15 @@ public class HemfWindowing {
         @Override
         public HemfRecordType getGenericRecordType() {
             return getEmfRecordType();
+        }
+
+        @Override
+        public void calcBounds(Rectangle2D window, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) {
+            double x = window.getX();
+            double y = window.getY();
+            double w = window.getWidth();
+            double h = window.getHeight();
+            window.setRect(x,y,w * scale.getWidth(),h * scale.getHeight());
         }
     }
 

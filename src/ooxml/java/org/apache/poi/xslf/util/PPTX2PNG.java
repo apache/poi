@@ -75,7 +75,8 @@ public final class PPTX2PNG {
             "                      some files (usually wmf) don't have a header, i.e. an identifiable file magic\n" +
             "    -textAsShapes     text elements are saved as shapes in SVG, necessary for variable spacing\n" +
             "                      often found in math formulas\n" +
-            "    -charset <cs>     sets the default charset to be used, defaults to Windows-1252";
+            "    -charset <cs>     sets the default charset to be used, defaults to Windows-1252\n" +
+            "    -emfHeaderBounds  force the usage of the emf header bounds to calculate the bounding box";
 
         System.out.println(msg);
         // no System.exit here, as we also run in junit tests!
@@ -104,6 +105,7 @@ public final class PPTX2PNG {
     private FileMagic defaultFileType = FileMagic.OLE2;
     private boolean textAsShapes = false;
     private Charset charset = LocaleUtil.CHARSET_1252;
+    private boolean emfHeaderBounds = false;
 
     private PPTX2PNG() {
     }
@@ -189,7 +191,9 @@ public final class PPTX2PNG {
                         charset = LocaleUtil.CHARSET_1252;
                     }
                     break;
-
+                case "-emfheaderbounds":
+                    emfHeaderBounds = true;
+                    break;
                 default:
                     file = new File(args[i]);
                     break;
@@ -279,6 +283,7 @@ public final class PPTX2PNG {
                     graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
                     graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
                     graphics.setRenderingHint(Drawable.DEFAULT_CHARSET, getDefaultCharset());
+                    graphics.setRenderingHint(Drawable.EMF_FORCE_HEADER_BOUNDS, emfHeaderBounds);
 
                     graphics.scale(scale / lenSide, scale / lenSide);
 

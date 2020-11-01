@@ -35,7 +35,6 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.BiFunction;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -519,7 +518,7 @@ public class HemfPlusBrush {
     public static class EmfPlusLinearGradientBrushData implements EmfPlusBrushData {
         private int dataFlags;
         private EmfPlusWrapMode wrapMode;
-        private Rectangle2D rect = new Rectangle2D.Double();
+        private final Rectangle2D rect = new Rectangle2D.Double();
         private Color startColor, endColor;
         private AffineTransform blendTransform;
         private float[] positions;
@@ -529,8 +528,8 @@ public class HemfPlusBrush {
         private float[] positionsH;
         private float[] blendFactorsH;
 
-        private static int[] FLAG_MASKS = { 0x02, 0x04, 0x08, 0x10, 0x80 };
-        private static String[] FLAG_NAMES = { "TRANSFORM", "PRESET_COLORS", "BLEND_FACTORS_H", "BLEND_FACTORS_V", "BRUSH_DATA_IS_GAMMA_CORRECTED" };
+        private static final int[] FLAG_MASKS = {0x02, 0x04, 0x08, 0x10, 0x80};
+        private static final String[] FLAG_NAMES = {"TRANSFORM", "PRESET_COLORS", "BLEND_FACTORS_H", "BLEND_FACTORS_V", "BRUSH_DATA_IS_GAMMA_CORRECTED"};
 
         @Override
         public long init(LittleEndianInputStream leis, long dataSize) throws IOException {
@@ -543,7 +542,7 @@ public class HemfPlusBrush {
             // gradient is repeated.
             wrapMode = EmfPlusWrapMode.valueOf(leis.readInt());
 
-            int size = 2*LittleEndianConsts.INT_SIZE;
+            int size = 2 * LittleEndianConsts.INT_SIZE;
             size += readRectF(leis, rect);
 
             // An EmfPlusARGB object that specifies the color at the starting/ending boundary point of the linear gradient brush.
@@ -551,9 +550,9 @@ public class HemfPlusBrush {
             endColor = readARGB(leis.readInt());
 
             // skip reserved1/2 fields
-            leis.skipFully(2*LittleEndianConsts.INT_SIZE);
+            leis.skipFully(2 * LittleEndianConsts.INT_SIZE);
 
-            size += 4*LittleEndianConsts.INT_SIZE;
+            size += 4 * LittleEndianConsts.INT_SIZE;
 
             if (TRANSFORM.isSet(dataFlags)) {
                 size += readXForm(leis, (blendTransform = new AffineTransform()));
@@ -586,7 +585,7 @@ public class HemfPlusBrush {
             setColorProps(prop::setBrushColorsV, positionsV, this::getBlendVColorAt);
 
             if (!(isPreset() || isBlendH() || isBlendV())) {
-                prop.setBrushColorsH(Arrays.asList(kv(0f,startColor), kv(1f,endColor)));
+                prop.setBrushColorsH(Arrays.asList(kv(0f, startColor), kv(1f, endColor)));
             }
         }
 
@@ -607,7 +606,7 @@ public class HemfPlusBrush {
 
         @Override
         public Map<String, Supplier<?>> getGenericProperties() {
-            final Map<String,Supplier<?>> m = new LinkedHashMap<>();
+            final Map<String, Supplier<?>> m = new LinkedHashMap<>();
             m.put("flags", GenericRecordUtil.getBitsAsString(() -> dataFlags, FLAG_MASKS, FLAG_NAMES));
             m.put("wrapMode", () -> wrapMode);
             m.put("rect", () -> rect);
@@ -635,24 +634,24 @@ public class HemfPlusBrush {
             return BLEND_FACTORS_V.isSet(dataFlags);
         }
 
-        private Map.Entry<Float,Color> getBlendColorAt(int index) {
+        private Map.Entry<Float, Color> getBlendColorAt(int index) {
             return kv(positions[index], blendColors[index]);
         }
 
-        private Map.Entry<Float,Color> getBlendHColorAt(int index) {
-            return kv(positionsH[index],interpolateColors(blendFactorsH[index]));
+        private Map.Entry<Float, Color> getBlendHColorAt(int index) {
+            return kv(positionsH[index], interpolateColors(blendFactorsH[index]));
         }
 
-        private Map.Entry<Float,Color> getBlendVColorAt(int index) {
-            return kv(positionsV[index],interpolateColors(blendFactorsV[index]));
+        private Map.Entry<Float, Color> getBlendVColorAt(int index) {
+            return kv(positionsV[index], interpolateColors(blendFactorsV[index]));
         }
 
-        private static Map.Entry<Float,Color> kv(Float position, Color color) {
+        private static Map.Entry<Float, Color> kv(Float position, Color color) {
             return new AbstractMap.SimpleEntry<>(position, color);
         }
 
         private static void setColorProps(
-            Consumer<List<? extends Map.Entry<Float, Color>>> setter, float[] positions, Function<Integer,? extends Map.Entry<Float, Color>> sup) {
+                Consumer<List<? extends Map.Entry<Float, Color>>> setter, float[] positions, Function<Integer, ? extends Map.Entry<Float, Color>> sup) {
             if (positions == null) {
                 setter.accept(null);
             } else {
@@ -661,8 +660,26 @@ public class HemfPlusBrush {
         }
 
         private Color interpolateColors(final double factor) {
-            // https://stackoverflow.com/questions/1416560/hsl-interpolation
+            return interpolateColorsRGB(factor);
+        }
 
+        private Color interpolateColorsRGB(final double factor) {
+            // TODO: check IS_GAMMA_CORRECTED flag and maybe don't convert into scRGB
+            double[] start = DrawPaint.RGB2SCRGB(startColor);
+            double[] end = DrawPaint.RGB2SCRGB(endColor);
+
+            // compute the interpolated color in linear space
+            int a = (int)Math.round(startColor.getAlpha() + factor * (endColor.getAlpha() - startColor.getAlpha()));
+            double r = start[0] + factor * (end[0] - start[0]);
+            double g = start[1] + factor * (end[1] - start[1]);
+            double b = start[2] + factor * (end[2] - start[2]);
+
+            Color inter = DrawPaint.SCRGB2RGB(r,g,b);
+            return new Color(inter.getRed(), inter.getGreen(), inter.getBlue(), a);
+        }
+
+        /*
+        private Color interpolateColorsHSL(final double factor) {
             final double[] hslStart = DrawPaint.RGB2HSL(startColor);
             final double[] hslStop = DrawPaint.RGB2HSL(endColor);
 
@@ -673,16 +690,24 @@ public class HemfPlusBrush {
             double sat = linearInter.apply(hslStart[1],hslStop[1]);
             double lum = linearInter.apply(hslStart[2],hslStop[2]);
 
-            double hue1 = (hslStart[0]+hslStop[0])/2.;
-            double hue2 = (hslStart[0]+hslStop[0]+360.)/2.;
+            // find closest match - decide if need to go clockwise or counter-clockwise
+            // https://stackoverflow.com/questions/1416560/hsl-interpolation
+            double hueMidCW = (hslStart[0]+hslStop[0])/2.;
+            double hueMidCCW = (hslStart[0]+hslStop[0]+360.)/2.;
 
             Function<Double,Double> hueDelta = (hue) ->
                 Math.min(Math.abs(hslStart[0]-hue), Math.abs(hslStop[0]-hue));
 
-            double hue = hueDelta.apply(hue1) < hueDelta.apply(hue2) ? hue1 : hue2;
+            double hslDiff;
+            if (hueDelta.apply(hueMidCW) > hueDelta.apply(hueMidCCW)) {
+                hslDiff = (hslStart[0] < hslStop[0]) ? hslStop[0]-hslStart[0] : (360-hslStart[0])+hslStop[0];
+            } else {
+                hslDiff = (hslStart[0] < hslStop[0]) ? -hslStart[0]-(360-hslStop[0]) : -(hslStart[0]-hslStop[0]);
+            }
+            double hue = (hslStart[0]+hslDiff*factor)%360.;
 
             return DrawPaint.HSL2RGB(hue, sat, lum, alpha/255.);
-        }
+        } */
     }
 
     /** The EmfPlusPathGradientBrushData object specifies a path gradient for a graphics brush. */

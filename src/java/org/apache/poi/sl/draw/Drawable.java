@@ -49,6 +49,7 @@ public interface Drawable {
             case 12: return "CURRENT_SLIDE";
             case 13: return "BUFFERED_IMAGE";
             case 14: return "DEFAULT_CHARSET";
+            case 15: return "EMF_FORCE_HEADER_BOUNDS";
             default: return "UNKNOWN_ID "+intKey();
             }
         }
@@ -153,6 +154,17 @@ public interface Drawable {
      */
     DrawableHint DEFAULT_CHARSET = new DrawableHint(14);
 
+    /**
+     * A boolean value to force the usage of the bounding box, which is specified in the EMF header.
+     * Defaults to {@code FALSE} - in this case the records are scanned for window and
+     * viewport records to determine the initial bounding box by using the following
+     * condition: {@code isValid(viewport) ? viewport : isValid(window) ? window : headerBounds }
+     * <p>
+     * This is a workaround switch, which might be removed in future releases, when the bounding box
+     * determination for the special cases is fixed.
+     * In most cases it's recommended to leave the default value.
+     */
+    DrawableHint EMF_FORCE_HEADER_BOUNDS = new DrawableHint(15);
 
     /**
      * Apply 2-D transforms before drawing this shape. This includes rotation and flipping.

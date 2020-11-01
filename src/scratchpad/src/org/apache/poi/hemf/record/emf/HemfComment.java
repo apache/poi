@@ -101,6 +101,9 @@ public class HemfComment {
          */
         default void draw(HemfGraphics ctx) {}
 
+        default void calcBounds(Rectangle2D bounds, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) { }
+
+
         @Override
         default HemfCommentRecordType getGenericRecordType() {
             return getCommentRecordType();
@@ -129,6 +132,11 @@ public class HemfComment {
         @Override
         public void draw(HemfGraphics ctx) {
             data.draw(ctx);
+        }
+
+        @Override
+        public void calcBounds(Rectangle2D window, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) {
+            data.calcBounds(window, viewport, renderState);
         }
 
         @Override
@@ -330,6 +338,17 @@ public class HemfComment {
             // EMF records cease being processed when the next EMF+ record is encountered.
             ctx.setRenderState(EmfRenderState.EMFPLUS_ONLY);
             records.forEach(ctx::draw);
+        }
+
+        @Override
+        public void calcBounds(Rectangle2D window, Rectangle2D viewport, EmfRenderState[] renderState) {
+            renderState[0] = EmfRenderState.EMFPLUS_ONLY;
+            for (HemfPlusRecord r : records) {
+                r.calcBounds(window, viewport, renderState);
+                if (!window.isEmpty() && !viewport.isEmpty()) {
+                    break;
+                }
+            }
         }
 
         @Override

@@ -17,6 +17,8 @@
 
 package org.apache.poi.common.usermodel;
 
+import org.apache.poi.poifs.filesystem.FileMagic;
+
 /**
  * General enum class to define a picture format/type
  *
@@ -64,5 +66,38 @@ public enum PictureType {
     PictureType(String contentType,String extension) {
         this.contentType = contentType;
         this.extension = extension;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public String getExtension() {
+        return extension;
+    }
+
+    public static PictureType valueOf(FileMagic fm) {
+        switch (fm) {
+            case BMP:
+                return PictureType.BMP;
+            case GIF:
+                return PictureType.GIF;
+            case JPEG:
+                return PictureType.JPEG;
+            case PNG:
+                return PictureType.PNG;
+            case XML:
+                // this is quite fuzzy, to suppose all XMLs are SVGs when handling pictures ...
+                return PictureType.SVG;
+            case WMF:
+                return PictureType.WMF;
+            case EMF:
+                return PictureType.EMF;
+            case TIFF:
+                return PictureType.TIFF;
+            default:
+            case UNKNOWN:
+                return PictureType.UNKNOWN;
+        }
     }
 }

@@ -19,6 +19,8 @@ package org.apache.poi.hemf.usermodel;
 
 
 import static java.lang.Math.abs;
+import static org.apache.poi.hemf.draw.HemfGraphics.EmfRenderState.EMFPLUS_ONLY;
+import static org.apache.poi.hemf.draw.HemfGraphics.EmfRenderState.EMF_ONLY;
 
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -36,14 +38,14 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.poi.common.usermodel.GenericRecord;
-import org.apache.poi.hemf.draw.HemfDrawProperties;
 import org.apache.poi.hemf.draw.HemfGraphics;
+import org.apache.poi.hemf.record.emf.HemfComment;
 import org.apache.poi.hemf.record.emf.HemfHeader;
 import org.apache.poi.hemf.record.emf.HemfRecord;
 import org.apache.poi.hemf.record.emf.HemfRecordIterator;
-import org.apache.poi.hemf.record.emf.HemfWindowing;
 import org.apache.poi.hwmf.usermodel.HwmfCharsetAware;
 import org.apache.poi.hwmf.usermodel.HwmfEmbedded;
+import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndianInputStream;
@@ -114,26 +116,36 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
      */
     public Rectangle2D getBounds() {
         Rectangle2D dim = getHeader().getFrameRectangle();
-        double x = dim.getX(), y = dim.getY();
-        double width = dim.getWidth(), height = dim.getHeight();
-        if (dim.isEmpty() || Math.rint(width) == 0 || Math.rint(height) == 0) {
-            for (HemfRecord r : getRecords()) {
-                if (r instanceof HemfWindowing.EmfSetWindowExtEx) {
-                    HemfWindowing.EmfSetWindowExtEx extEx = (HemfWindowing.EmfSetWindowExtEx)r;
-                    Dimension2D d = extEx.getSize();
-                    width = d.getWidth();
-                    height = d.getHeight();
-                    // keep searching - sometimes there's another record
-                }
-                if (r instanceof HemfWindowing.EmfSetWindowOrgEx) {
-                    HemfWindowing.EmfSetWindowOrgEx orgEx = (HemfWindowing.EmfSetWindowOrgEx)r;
-                    x = orgEx.getX();
-                    y = orgEx.getY();
-                }
+        boolean isInvalid = ReluctantRectangle2D.isEmpty(dim);
+        if (isInvalid) {
+            Rectangle2D lastDim = new ReluctantRectangle2D();
+            getInnerBounds(lastDim, new ReluctantRectangle2D());
+            if (!lastDim.isEmpty()) {
+                return lastDim;
             }
         }
+        return dim;
+    }
 
-        return new Rectangle2D.Double(x, y, width, height);
+    public void getInnerBounds(Rectangle2D window, Rectangle2D viewport) {
+        HemfGraphics.EmfRenderState[] renderState = { HemfGraphics.EmfRenderState.INITIAL };
+        for (HemfRecord r : getRecords()) {
+            if (
+                (renderState[0] == EMF_ONLY && r instanceof HemfComment.EmfComment) ||
+                (renderState[0] == EMFPLUS_ONLY && !(r instanceof HemfComment.EmfComment))
+            ) {
+                continue;
+            }
+
+            try {
+                r.calcBounds(window, viewport, renderState);
+            } catch (RuntimeException ignored) {
+            }
+
+            if (!window.isEmpty() && !viewport.isEmpty()) {
+                break;
+            }
+        }
     }
 
     /**
@@ -154,32 +166,36 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
         final Rectangle2D b = getBoundsInPoints();
         return new Dimension2DDouble(abs(b.getWidth()), abs(b.getHeight()));
     }
-
-    private static double minX(Rectangle2D bounds) {
-        return Math.min(bounds.getMinX(), bounds.getMaxX());
-    }
-
-    private static double minY(Rectangle2D bounds) {
-        return Math.min(bounds.getMinY(), bounds.getMaxY());
-    }
-
     public void draw(Graphics2D ctx, Rectangle2D graphicsBounds) {
         final Shape clip = ctx.getClip();
         final AffineTransform at = ctx.getTransform();
         try {
             Rectangle2D emfBounds = getHeader().getBoundsRectangle();
+            Rectangle2D winBounds = new ReluctantRectangle2D();
+            Rectangle2D viewBounds = new ReluctantRectangle2D();
+            getInnerBounds(winBounds, viewBounds);
 
-            // scale output bounds to image bounds
+            Boolean forceHeader = (Boolean)ctx.getRenderingHint(Drawable.EMF_FORCE_HEADER_BOUNDS);
+            if (forceHeader == null) {
+                forceHeader = false;
+            }
+            // this is a compromise ... sometimes winBounds are totally off :(
+            // but mostly they fit better than the header bounds
+            Rectangle2D b =
+                !viewBounds.isEmpty() && !forceHeader
+                ? viewBounds
+                : !winBounds.isEmpty() && !forceHeader
+                ? winBounds
+                : emfBounds;
+
             ctx.translate(graphicsBounds.getCenterX(), graphicsBounds.getCenterY());
-            ctx.scale(graphicsBounds.getWidth()/emfBounds.getWidth(), graphicsBounds.getHeight()/emfBounds.getHeight());
-            ctx.translate(-emfBounds.getCenterX(), -emfBounds.getCenterY());
+            ctx.scale(
+                graphicsBounds.getWidth()/b.getWidth(),
+                graphicsBounds.getHeight()/b.getHeight()
+            );
+            ctx.translate(-b.getCenterX(),-b.getCenterY());
 
-            HemfGraphics g = new HemfGraphics(ctx, emfBounds);
-            HemfDrawProperties prop = g.getProperties();
-            prop.setWindowOrg(emfBounds.getX(), emfBounds.getY());
-            prop.setWindowExt(emfBounds.getWidth(), emfBounds.getHeight());
-            prop.setViewportOrg(emfBounds.getX(), emfBounds.getY());
-            prop.setViewportExt(emfBounds.getWidth(), emfBounds.getHeight());
+            HemfGraphics g = new HemfGraphics(ctx, b);
 
             for (HemfRecord r : getRecords()) {
                 try {
@@ -213,5 +229,44 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
 
     public Charset getDefaultCharset() {
         return defaultCharset;
+    }
+
+
+    private static class ReluctantRectangle2D extends Rectangle2D.Double {
+        private boolean offsetSet = false;
+        private boolean rangeSet = false;
+
+        public ReluctantRectangle2D() {
+            super(-1,-1,0,0);
+        }
+
+        @Override
+        public void setRect(double x, double y, double w, double h) {
+            if (offsetSet && rangeSet) {
+                return;
+            }
+            super.setRect(
+                offsetSet ? this.x : x,
+                offsetSet ? this.y : y,
+                rangeSet ? this.width : w,
+                rangeSet ? this.height : h);
+            offsetSet |= (x != -1 || y != -1);
+            rangeSet |= (w != 0 || h != 0);
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return isEmpty(this);
+        }
+
+        public static boolean isEmpty(Rectangle2D r) {
+            double w = Math.rint(r.getWidth());
+            double h = Math.rint(r.getHeight());
+            return
+                (w <= 0.0) || (h <= 0.0) ||
+                (r.getX() == -1 && r.getY() == -1) ||
+                // invalid emf bound have sometimes 1,1 as dimension
+                (w == 1 && h == 1);
+        }
     }
 }

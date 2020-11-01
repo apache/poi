@@ -321,33 +321,10 @@ public abstract class SignatureLine {
      */
     protected byte[] plainPng() throws IOException {
         byte[] plain = getPlainSignature();
-        PictureType pictureType;
-        switch (FileMagic.valueOf(plain)) {
-            case PNG:
-                return plain;
-            case BMP:
-                pictureType = PictureType.BMP;
-                break;
-            case EMF:
-                pictureType = PictureType.EMF;
-                break;
-            case GIF:
-                pictureType = PictureType.GIF;
-                break;
-            case JPEG:
-                pictureType = PictureType.JPEG;
-                break;
-            case XML:
-                pictureType = PictureType.SVG;
-                break;
-            case TIFF:
-                pictureType = PictureType.TIFF;
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported picture format");
+        PictureType pictureType = PictureType.valueOf(FileMagic.valueOf(plain));
+        if (pictureType == PictureType.UNKNOWN) {
+            throw new IllegalArgumentException("Unsupported picture format");
         }
-
-
 
         ImageRenderer rnd = DrawPictureShape.getImageRenderer(null, pictureType.contentType);
         if (rnd == null) {
@@ -375,11 +352,8 @@ public abstract class SignatureLine {
 
     /**
      * Generate the image for a signature line
-     * @param caption three lines separated by "\n" - usually something like "First name Last name\nRole\nname of the key"
-     * @param inputImage the plain signature - supported formats are PNG,GIF,JPEG,(SVG),EMF,WMF.
-     *                   for SVG,EMF,WMF poi-scratchpad needs to be in the class-/modulepath
-     *                   if {@code null}, the inputImage is not rendered
-     * @param invalidText for invalid signature images, use the given text
+     * @param showSignature show signature image - use {@code false} for placeholder images in to-be-signed documents
+     * @param showInvalidStamp print invalid stamp over the signature
      * @return the signature image in PNG format as byte array
      */
     protected byte[] generateImage(boolean showSignature, boolean showInvalidStamp) throws IOException {
@@ -462,28 +436,11 @@ public abstract class SignatureLine {
 
     private void determineContentType() {
         FileMagic fm = FileMagic.valueOf(plainSignature);
-        switch (fm) {
-            case GIF:
-                contentType = PictureType.GIF.contentType;
-                break;
-            case PNG:
-                contentType = PictureType.PNG.contentType;
-                break;
-            case JPEG:
-                contentType = PictureType.JPEG.contentType;
-                break;
-            case XML:
-                contentType = PictureType.SVG.contentType;
-                break;
-            case EMF:
-                contentType = PictureType.EMF.contentType;
-                break;
-            case WMF:
-                contentType = PictureType.WMF.contentType;
-                break;
-            default:
-                throw new IllegalArgumentException("unknown image type");
+        PictureType type = PictureType.valueOf(fm);
+        if (type == PictureType.UNKNOWN) {
+            throw new IllegalArgumentException("unknown image type");
         }
+        contentType = type.contentType;
     }
 
 }

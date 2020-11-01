@@ -163,6 +163,11 @@ public class HemfPlusMisc {
         public void draw(HemfGraphics ctx) {
             ctx.setRenderState(HemfGraphics.EmfRenderState.EMF_DCONTEXT);
         }
+
+        @Override
+        public void calcBounds(Rectangle2D window, Rectangle2D viewport, HemfGraphics.EmfRenderState[] renderState) {
+            renderState[0] = HemfGraphics.EmfRenderState.EMF_DCONTEXT;
+        }
     }
 
     /**
