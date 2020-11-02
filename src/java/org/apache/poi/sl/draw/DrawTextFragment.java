@@ -17,7 +17,9 @@
 
 package org.apache.poi.sl.draw;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.font.TextAttribute;
 import java.awt.font.TextLayout;
 import java.text.AttributedCharacterIterator;
 import java.text.AttributedString;
@@ -50,7 +52,22 @@ public class DrawTextFragment implements Drawable  {
         if(textMode != null && textMode == Drawable.TEXT_AS_SHAPES){
             layout.draw(graphics, (float)x, (float)yBaseline);
         } else {
-            graphics.drawString(str.getIterator(), (float)x, (float)yBaseline );
+            try {
+                graphics.drawString(str.getIterator(), (float) x, (float) yBaseline);
+            } catch (ClassCastException e) {
+                // workaround: batik issue, which expects only Color as forground color
+                replaceForgroundPaintWithBlack(str);
+                graphics.drawString(str.getIterator(), (float) x, (float) yBaseline);
+            }
+        }
+    }
+
+    private void replaceForgroundPaintWithBlack(AttributedString as) {
+        AttributedCharacterIterator iter = as.getIterator(new TextAttribute[]{TextAttribute.FOREGROUND});
+        for (char ch = iter.first();
+             ch != CharacterIterator.DONE;
+             ch = iter.next()) {
+            as.addAttribute(TextAttribute.FOREGROUND, Color.BLACK, iter.getBeginIndex(), iter.getEndIndex());
         }
     }
 

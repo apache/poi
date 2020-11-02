@@ -20,24 +20,46 @@
 package org.apache.poi.xslf.util;
 
 import java.awt.Graphics2D;
-import java.io.Closeable;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.lang.ref.WeakReference;
 
+import javax.imageio.ImageIO;
+
+import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.util.Internal;
 
-/**
- * Output formats for PPTX2PNG
- */
 @Internal
-interface OutputFormat extends Closeable {
+public class BitmapFormat implements OutputFormat {
+    private final String format;
+    private BufferedImage img;
+    private Graphics2D graphics;
 
-    Graphics2D addSlide(double width, double height) throws IOException;
+    public BitmapFormat(String format) {
+        this.format = format;
+    }
 
-    void writeSlide(MFProxy proxy, File outFile) throws IOException;
+    @Override
+    public Graphics2D addSlide(double width, double height) {
+        img = new BufferedImage((int)width, (int)height, BufferedImage.TYPE_INT_ARGB);
+        graphics = img.createGraphics();
+        graphics.setRenderingHint(Drawable.BUFFERED_IMAGE, new WeakReference<>(img));
+        return graphics;
+    }
 
-    default void writeDocument(MFProxy proxy, File outFile) throws IOException {};
+    @Override
+    public void writeSlide(MFProxy proxy, File outFile) throws IOException {
+        if (!"null".equals(format)) {
+            ImageIO.write(img, format, outFile);
+        }
+    }
 
-
-
+    @Override
+    public void close() throws IOException {
+        if (graphics != null) {
+            graphics.dispose();
+            img.flush();
+        }
+    }
 }

@@ -39,8 +39,6 @@ import org.apache.poi.sl.draw.EmbeddedExtractor.EmbeddedPart;
 import org.apache.poi.util.Dimension2DDouble;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.xslf.util.OutputFormat.BitmapFormat;
-import org.apache.poi.xslf.util.OutputFormat.SVGFormat;
 
 /**
  * An utility to convert slides of a .pptx slide show to a PNG image
@@ -62,7 +60,7 @@ public final class PPTX2PNG {
             "    -scale <float>    scale factor\n" +
             "    -fixSide <side>   specify side (long,short,width,height) to fix - use <scale> as amount of pixels\n" +
             "    -slide <integer>  1-based index of a slide to render\n" +
-            "    -format <type>    png,gif,jpg,svg (,null for testing)\n" +
+            "    -format <type>    png,gif,jpg,svg,pdf (,null for testing)\n" +
             "    -outdir <dir>     output directory, defaults to origin of the ppt/pptx file\n" +
             "    -outfile <file>   output filename, defaults to '"+OUTPUT_PAT_REGEX+"'\n" +
             "    -outpat <pattern> output filename pattern, defaults to '"+OUTPUT_PAT_REGEX+"'\n" +
@@ -207,7 +205,7 @@ public final class PPTX2PNG {
             return false;
         }
 
-        if (format == null || !format.matches("^(png|gif|jpg|null|svg)$")) {
+        if (format == null || !format.matches("^(png|gif|jpg|null|svg|pdf)$")) {
             usage("Invalid format given");
             return false;
         }
@@ -262,19 +260,19 @@ public final class PPTX2PNG {
             final int width = Math.max((int)Math.rint(dim.getWidth()),1);
             final int height = Math.max((int)Math.rint(dim.getHeight()),1);
 
-            for (int slideNo : slidenum) {
-                proxy.setSlideNo(slideNo);
-                if (!quiet) {
-                    String title = proxy.getTitle();
-                    System.out.println("Rendering slide " + slideNo + (title == null ? "" : ": " + title.trim()));
-                }
+            try (OutputFormat outputFormat = getOutput()) {
+                for (int slideNo : slidenum) {
+                    proxy.setSlideNo(slideNo);
+                    if (!quiet) {
+                        String title = proxy.getTitle();
+                        System.out.println("Rendering slide " + slideNo + (title == null ? "" : ": " + title.trim()));
+                    }
 
-                dumpRecords(proxy);
+                    dumpRecords(proxy);
 
-                extractEmbedded(proxy, slideNo);
+                    extractEmbedded(proxy, slideNo);
 
-                try (OutputFormat outputFormat = ("svg".equals(format)) ? new SVGFormat(textAsShapes) : new BitmapFormat(format)) {
-                    Graphics2D graphics = outputFormat.getGraphics2D(width, height);
+                    Graphics2D graphics = outputFormat.addSlide(width, height);
 
                     // default rendering options
                     graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
@@ -294,9 +292,12 @@ public final class PPTX2PNG {
                     // draw stuff
                     proxy.draw(graphics);
 
-                    outputFormat.writeOut(proxy, new File(outdir, calcOutFile(proxy, slideNo)));
+                    outputFormat.writeSlide(proxy, new File(outdir, calcOutFile(proxy, slideNo)));
                 }
+
+                outputFormat.writeDocument(proxy, new File(outdir, calcOutFile(proxy, 0)));
             }
+
         } catch (NoScratchpadException e) {
             usage("'"+file.getName()+"': Format not supported - try to include poi-scratchpad.jar into the CLASSPATH.");
             return;
@@ -304,6 +305,17 @@ public final class PPTX2PNG {
 
         if (!quiet) {
             System.out.println("Done");
+        }
+    }
+
+    private OutputFormat getOutput() {
+        switch (format) {
+            case "svg":
+                return new SVGFormat(textAsShapes);
+            case "pdf":
+                return new PDFFormat();
+            default:
+                return new BitmapFormat(format);
         }
     }
 
@@ -413,7 +425,7 @@ public final class PPTX2PNG {
             return outfile;
         }
         String inname = String.format(Locale.ROOT, "%04d|%s|%s", slideNo, format, file.getName());
-        String outpat = (proxy.getSlideCount() > 1 ? outPattern : outPattern.replaceAll("-?\\$\\{slideno}", ""));
+        String outpat = (proxy.getSlideCount() > 1 && slideNo > 0 ? outPattern : outPattern.replaceAll("-?\\$\\{slideno}", ""));
         return INPUT_PATTERN.matcher(inname).replaceAll(outpat);
     }
 
