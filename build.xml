@@ -2484,6 +2484,9 @@ under the License.
             <auxClasspath path="${svg.batik-all.jar}"/>
             <auxClasspath path="${svg.xml-apis-ext.jar}"/>
             <auxClasspath path="${svg.xmlgraphics-commons.jar}"/>
+            <auxClasspath path="${pdf.pdfbox.jar}"/>
+            <auxClasspath path="${pdf.fontbox.jar}"/>
+            <auxClasspath path="${pdf.graphics2d.jar}"/>
             <sourcePath path="src/java" />
             <sourcePath path="src/ooxml/java" />
             <sourcePath path="src/scratchpad/src" />

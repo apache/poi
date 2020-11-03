@@ -189,5 +189,12 @@
             <artifactId>batik-all</artifactId>
             <version>1.13</version>
         </dependency>
+
+        <dependency>
+            <!-- don't add it to the distribution -->
+            <groupId>de.rototor.pdfbox</groupId>
+            <artifactId>graphics2d</artifactId>
+            <version>0.27</version>
+        </dependency>
     </dependencies>
 </project>

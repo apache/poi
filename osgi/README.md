@@ -28,6 +28,15 @@ These are required to sign or validate signed Office documents. The OSGi bundles
     - XML Commons Resolver: https://mvnrepository.com/artifact/xml-resolver/xml-resolver/1.2-osgi
     
     - Bouncy Castle: https://mvnrepository.com/artifact/org.bouncycastle/bcprov-ext-jdk15on/1.66, https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk15on/1.66
+4. PDFBox and PDFBox Graphics2D  
+Required to render to PDF documents.
+The required jars can be downloaded from:
+
+    - PDFBox:  
+      https://mvnrepository.com/artifact/org.apache.pdfbox/pdfbox
+      https://mvnrepository.com/artifact/org.apache.pdfbox/fontbox
+    - PDFBox Graphics2D:  
+      https://mvnrepository.com/artifact/de.rototor.pdfbox/graphics2d
 
 ## Blocked Imports
 
