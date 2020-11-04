@@ -42,7 +42,17 @@ public class BitmapFormat implements OutputFormat {
 
     @Override
     public Graphics2D addSlide(double width, double height) {
-        img = new BufferedImage((int)width, (int)height, BufferedImage.TYPE_INT_ARGB);
+        int type;
+        switch (format) {
+            case "png":
+            case "gif":
+                type = BufferedImage.TYPE_INT_ARGB;
+                break;
+            default:
+                type = BufferedImage.TYPE_INT_RGB;
+                break;
+        }
+        img = new BufferedImage((int)width, (int)height, type);
         graphics = img.createGraphics();
         graphics.setRenderingHint(Drawable.BUFFERED_IMAGE, new WeakReference<>(img));
         return graphics;
