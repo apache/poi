@@ -23,6 +23,7 @@ import static java.util.Arrays.asList;
 import static org.junit.Assume.assumeFalse;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -54,6 +55,12 @@ public class TestPPTX2PNG {
         "customGeo.pptx, customGeo.ppt, wrench.emf, santa.wmf, missing-moveto.ppt, " +
         "64716_image1.wmf, 64716_image2.wmf, 64716_image3.wmf";
 
+    private static final String svgFiles =
+        "bug64693.pptx";
+
+    private static final String pdfFiles =
+        "alterman_security.ppt";
+
     @BeforeClass
     public static void checkHslf() {
         try {
@@ -78,29 +85,38 @@ public class TestPPTX2PNG {
     @Test
     public void render() throws Exception {
         assumeFalse("ignore HSLF (.ppt) / HEMF (.emf) / HWMF (.wmf) files in no-scratchpad run", xslfOnly && pptFile.matches(".*\\.(ppt|emf|wmf)$"));
+        PPTX2PNG.main(getArgs("null"));
+        if (svgFiles.contains(pptFile)) {
+            PPTX2PNG.main(getArgs("svg"));
+        }
+        if (pdfFiles.contains(pptFile)) {
+            PPTX2PNG.main(getArgs("pdf"));
+        }
+    }
 
-        // bug64693.pptx
-
+    private String[] getArgs(String format) throws IOException {
         final List<String> args = new ArrayList<>(asList(
-            "-format", "null", // png,gif,jpg,svg or null for test
-            "-slide", "-1", // -1 for all
-            "-outdir", new File("build/tmp/").getCanonicalPath(),
-            "-outpat", "${basename}-${slideno}-${ext}.${format}",
-            // "-dump", new File("build/tmp/", pptFile+".json").getCanonicalPath(),
-            "-dump", "null",
-            "-quiet",
-            "-fixside", "long",
-            "-scale", "800"
+                "-format", format, // png,gif,jpg,svg,pdf or null for test
+                "-slide", "-1", // -1 for all
+                "-outdir", new File("build/tmp/").getCanonicalPath(),
+                "-outpat", "${basename}-${slideno}-${ext}.${format}",
+                // "-dump", new File("build/tmp/", pptFile+".json").getCanonicalPath(),
+                "-dump", "null",
+                "-quiet",
+                // "-charset", "GBK",
+                // "-emfHeaderBounds",
+                "-fixside", "long",
+                "-scale", "800"
         ));
 
         if ("bug64693.pptx".equals(pptFile)) {
             args.addAll(asList(
-                "-charset", "GBK"
+                    "-charset", "GBK"
             ));
         }
 
         args.add((basedir == null ? samples.getFile(pptFile) : new File(basedir, pptFile)).getAbsolutePath());
 
-        PPTX2PNG.main(args.toArray(new String[0]));
+        return args.toArray(new String[0]);
     }
 }
