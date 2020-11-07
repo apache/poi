@@ -1916,6 +1916,7 @@ public class SXSSFSheet implements Sheet
         } finally {
             ret = _writer == null || _writer.dispose();
         }
+        return ret;
     }
 
     @Override
