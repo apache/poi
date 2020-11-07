@@ -1908,10 +1908,14 @@ public class SXSSFSheet implements Sheet
      * @return true if the file was deleted, false if it wasn't.
      */
     boolean dispose() throws IOException {
-        if (!allFlushed) {
-            flushRows();
+        boolean ret;
+        try {
+            if (!allFlushed) {
+                flushRows();
+            }
+        } finally {
+            ret = _writer == null || _writer.dispose();
         }
-        return _writer == null || _writer.dispose();
     }
 
     @Override
