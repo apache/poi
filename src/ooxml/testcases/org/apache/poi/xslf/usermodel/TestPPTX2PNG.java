@@ -49,6 +49,7 @@ public class TestPPTX2PNG {
     private static boolean xslfOnly;
     private static final POIDataSamples samples = POIDataSamples.getSlideShowInstance();
     private static final File basedir = null;
+
     private static final String files =
         "bug64693.pptx, 53446.ppt, alterman_security.ppt, alterman_security.pptx, KEY02.pptx, themes.pptx, " +
         "backgrounds.pptx, layouts.pptx, sample.pptx, shapes.pptx, 54880_chinese.ppt, keyframes.pptx," +
@@ -73,6 +74,8 @@ public class TestPPTX2PNG {
     // use filename instead of File object to omit full pathname in test name
     @Parameter
     public String pptFile;
+
+
 
     @Parameters(name="{0}")
     public static Collection<String> data() {
@@ -105,6 +108,7 @@ public class TestPPTX2PNG {
                 "-quiet",
                 // "-charset", "GBK",
                 // "-emfHeaderBounds",
+                // "-textAsShapes",
                 "-fixside", "long",
                 "-scale", "800"
         ));

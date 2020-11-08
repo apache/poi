@@ -575,16 +575,18 @@ public class HwmfGraphics implements HwmfCharsetAware {
     }
 
     private void addAttributes(BiConsumer<TextAttribute,Object> attributes, HwmfFont font, String typeface) {
-        attributes.accept(TextAttribute.FAMILY, typeface);
-        attributes.accept(TextAttribute.SIZE, getFontHeight(font));
+        Map<TextAttribute,Object> att = new HashMap<>();
+        att.put(TextAttribute.FAMILY, typeface);
+        att.put(TextAttribute.SIZE, getFontHeight(font));
+
         if (font.isStrikeOut()) {
-            attributes.accept(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
+            att.put(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
         }
         if (font.isUnderline()) {
-            attributes.accept(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+            att.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
         }
         if (font.isItalic()) {
-            attributes.accept(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
+            att.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
         }
         // convert font weight to awt font weight - usually a font weight of 400 is regarded as regular
         final int fw = font.getWeight();
@@ -595,7 +597,10 @@ public class HwmfGraphics implements HwmfCharsetAware {
                 break;
             }
         }
-        attributes.accept(TextAttribute.WEIGHT, awtFW);
+        att.put(TextAttribute.WEIGHT, awtFW);
+        att.put(TextAttribute.FONT, new Font(att));
+
+        att.forEach(attributes);
     }
 
     private double getFontHeight(HwmfFont font) {

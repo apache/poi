@@ -74,7 +74,10 @@ public final class PPTX2PNG {
             "    -textAsShapes     text elements are saved as shapes in SVG, necessary for variable spacing\n" +
             "                      often found in math formulas\n" +
             "    -charset <cs>     sets the default charset to be used, defaults to Windows-1252\n" +
-            "    -emfHeaderBounds  force the usage of the emf header bounds to calculate the bounding box";
+            "    -emfHeaderBounds  force the usage of the emf header bounds to calculate the bounding box\n" +
+            "    -fontdir <dir>    (PDF only) font directories separated by \";\" - use $HOME for current users home dir\n" +
+            "                      defaults to the usual plattform directories\n" +
+            "    -fontTtf <regex>  (PDF only) regex to match the .ttf filenames";
 
         System.out.println(msg);
         // no System.exit here, as we also run in junit tests!
@@ -104,6 +107,8 @@ public final class PPTX2PNG {
     private boolean textAsShapes = false;
     private Charset charset = LocaleUtil.CHARSET_1252;
     private boolean emfHeaderBounds = false;
+    private String fontDir = null;
+    private String fontTtf = null;
 
     private PPTX2PNG() {
     }
@@ -191,6 +196,22 @@ public final class PPTX2PNG {
                     break;
                 case "-emfheaderbounds":
                     emfHeaderBounds = true;
+                    break;
+                case "-fontdir":
+                    if (opt != null) {
+                        fontDir = opt;
+                        i++;
+                    } else {
+                        fontDir = null;
+                    }
+                    break;
+                case "-fontttf":
+                    if (opt != null) {
+                        fontTtf = opt;
+                        i++;
+                    } else {
+                        fontTtf = null;
+                    }
                     break;
                 default:
                     file = new File(args[i]);
@@ -313,7 +334,7 @@ public final class PPTX2PNG {
             case "svg":
                 return new SVGFormat(textAsShapes);
             case "pdf":
-                return new PDFFormat();
+                return new PDFFormat(textAsShapes,fontDir,fontTtf);
             default:
                 return new BitmapFormat(format);
         }

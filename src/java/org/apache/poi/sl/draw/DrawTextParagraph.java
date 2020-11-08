@@ -32,8 +32,10 @@ import java.text.AttributedCharacterIterator.Attribute;
 import java.text.AttributedString;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.apache.poi.common.usermodel.fonts.FontGroup;
 import org.apache.poi.common.usermodel.fonts.FontGroup.FontGroupRange;
@@ -257,9 +259,18 @@ public class DrawTextParagraph implements Drawable {
 
         DrawFactory fact = DrawFactory.getInstance(graphics);
         StringBuilder text = new StringBuilder();
-        AttributedString at = getAttributedString(graphics, text);
 
-        AttributedCharacterIterator it = at.getIterator();
+        List<AttributedStringData> attList = getAttributedString(graphics, text);
+        AttributedString as = new AttributedString(text.toString());
+        AttributedString asNoCR = new AttributedString(text.toString().replaceAll("[\\r\\n]", " "));
+
+        for (AttributedStringData asd : attList) {
+            as.addAttribute(asd.attribute, asd.value, asd.beginIndex, asd.endIndex);
+            asNoCR.addAttribute(asd.attribute, asd.value, asd.beginIndex, asd.endIndex);
+        }
+
+        AttributedCharacterIterator it = as.getIterator();
+        AttributedCharacterIterator itNoCR = asNoCR.getIterator();
         LineBreakMeasurer measurer = new LineBreakMeasurer(it, graphics.getFontRenderContext());
         for (;;) {
             int startIndex = measurer.getPosition();
@@ -308,7 +319,7 @@ public class DrawTextParagraph implements Drawable {
                 }
             }
 
-            AttributedString str = new AttributedString(it, startIndex, endIndex);
+            AttributedString str = new AttributedString(itNoCR, startIndex, endIndex);
             DrawTextFragment line = fact.getTextFragment(layout, str);
             lines.add(line);
 
@@ -369,10 +380,14 @@ public class DrawTextParagraph implements Drawable {
         // TODO: check font group defaulting to Symbol
         buFont = dfm.getMappedFont(graphics, buFont);
 
+        Map<TextAttribute,Object> att = new HashMap<>();
+        att.put(TextAttribute.FOREGROUND, fgPaint);
+        att.put(TextAttribute.FAMILY, buFont.getTypeface());
+        att.put(TextAttribute.SIZE, fontSize);
+        att.put(TextAttribute.FONT, new Font(att));
+
         AttributedString str = new AttributedString(dfm.mapFontCharset(graphics,buFont,buCharacter));
-        str.addAttribute(TextAttribute.FOREGROUND, fgPaint);
-        str.addAttribute(TextAttribute.FAMILY, buFont.getTypeface());
-        str.addAttribute(TextAttribute.SIZE, fontSize);
+        att.forEach(str::addAttribute);
 
         TextLayout layout = new TextLayout(str.getIterator(), graphics.getFontRenderContext());
         DrawFactory fact = DrawFactory.getInstance(graphics);
@@ -559,8 +574,7 @@ public class DrawTextParagraph implements Drawable {
         };
     }
 
-    protected AttributedString getAttributedString(Graphics2D graphics, StringBuilder text){
-        List<AttributedStringData> attList = new ArrayList<>();
+    protected List<AttributedStringData> getAttributedString(Graphics2D graphics, StringBuilder text) {
         if (text == null) {
             text = new StringBuilder();
         }
@@ -569,6 +583,9 @@ public class DrawTextParagraph implements Drawable {
         DrawFontManager dfm = DrawFactory.getInstance(graphics).getFontManager(graphics);
         assert(dfm != null);
 
+        final Map<Attribute,Object> att = new HashMap<>();
+        final List<AttributedStringData> attList = new ArrayList<>();
+
         for (TextRun run : paragraph){
             String runText = getRenderableText(graphics, run);
             // skip empty runs
@@ -576,48 +593,61 @@ public class DrawTextParagraph implements Drawable {
                 continue;
             }
 
-            // user can pass an custom object to convert fonts
+            att.clear();
 
-            runText = dfm.mapFontCharset(graphics, run.getFontInfo(null), runText);
-            int beginIndex = text.length();
+            // user can pass an custom object to convert fonts
+            FontInfo fontInfo = run.getFontInfo(null);
+            runText = dfm.mapFontCharset(graphics, fontInfo, runText);
+            final int beginIndex = text.length();
             text.append(runText);
-            int endIndex = text.length();
+            final int endIndex = text.length();
 
             PaintStyle fgPaintStyle = run.getFontColor();
             Paint fgPaint = dp.getPaint(graphics, fgPaintStyle);
-            attList.add(new AttributedStringData(TextAttribute.FOREGROUND, fgPaint, beginIndex, endIndex));
+
+            att.put(TextAttribute.FOREGROUND, fgPaint);
 
             Double fontSz = run.getFontSize();
             if (fontSz == null) {
                 fontSz = paragraph.getDefaultFontSize();
             }
-            attList.add(new AttributedStringData(TextAttribute.SIZE, fontSz.floatValue(), beginIndex, endIndex));
+            att.put(TextAttribute.SIZE, fontSz.floatValue());
 
             if(run.isBold()) {
-                attList.add(new AttributedStringData(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD, beginIndex, endIndex));
+                att.put(TextAttribute.WEIGHT, TextAttribute.WEIGHT_BOLD);
             }
             if(run.isItalic()) {
-                attList.add(new AttributedStringData(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE, beginIndex, endIndex));
+                att.put(TextAttribute.POSTURE, TextAttribute.POSTURE_OBLIQUE);
             }
             if(run.isUnderlined()) {
-                attList.add(new AttributedStringData(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON, beginIndex, endIndex));
-                attList.add(new AttributedStringData(TextAttribute.INPUT_METHOD_UNDERLINE, TextAttribute.UNDERLINE_LOW_TWO_PIXEL, beginIndex, endIndex));
+                att.put(TextAttribute.UNDERLINE, TextAttribute.UNDERLINE_ON);
+                att.put(TextAttribute.INPUT_METHOD_UNDERLINE, TextAttribute.UNDERLINE_LOW_TWO_PIXEL);
             }
             if(run.isStrikethrough()) {
-                attList.add(new AttributedStringData(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON, beginIndex, endIndex));
+                att.put(TextAttribute.STRIKETHROUGH, TextAttribute.STRIKETHROUGH_ON);
             }
             if(run.isSubscript()) {
-                attList.add(new AttributedStringData(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB, beginIndex, endIndex));
+                att.put(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUB);
             }
             if(run.isSuperscript()) {
-                attList.add(new AttributedStringData(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUPER, beginIndex, endIndex));
+                att.put(TextAttribute.SUPERSCRIPT, TextAttribute.SUPERSCRIPT_SUPER);
             }
 
             Hyperlink<?,?> hl = run.getHyperlink();
             if (hl != null) {
-                attList.add(new AttributedStringData(HYPERLINK_HREF, hl.getAddress(), beginIndex, endIndex));
-                attList.add(new AttributedStringData(HYPERLINK_LABEL, hl.getLabel(), beginIndex, endIndex));
+                att.put(HYPERLINK_HREF, hl.getAddress());
+                att.put(HYPERLINK_LABEL, hl.getLabel());
             }
+
+            if (fontInfo != null) {
+                att.put(TextAttribute.FAMILY, fontInfo.getTypeface());
+            } else {
+                att.put(TextAttribute.FAMILY, paragraph.getDefaultFontFamily());
+            }
+
+            att.put(TextAttribute.FONT, new Font(att));
+
+            att.forEach((k,v) -> attList.add(new AttributedStringData(k,v,beginIndex,endIndex)));
 
             processGlyphs(graphics, dfm, attList, beginIndex, run, runText);
         }
@@ -625,17 +655,17 @@ public class DrawTextParagraph implements Drawable {
         // ensure that the paragraph contains at least one character
         // We need this trick to correctly measure text
         if (text.length() == 0) {
-            Double fontSz = paragraph.getDefaultFontSize();
             text.append(" ");
-            attList.add(new AttributedStringData(TextAttribute.SIZE, fontSz.floatValue(), 0, 1));
+
+            Double fontSz = paragraph.getDefaultFontSize();
+            att.put(TextAttribute.SIZE, fontSz.floatValue());
+            att.put(TextAttribute.FAMILY, paragraph.getDefaultFontFamily());
+            att.put(TextAttribute.FONT, new Font(att));
+
+            att.forEach((k,v) -> attList.add(new AttributedStringData(k,v,0,1)));
         }
 
-        AttributedString string = new AttributedString(text.toString());
-        for (AttributedStringData asd : attList) {
-            string.addAttribute(asd.attribute, asd.value, asd.beginIndex, asd.endIndex);
-        }
-
-        return string;
+        return attList;
     }
 
     /**

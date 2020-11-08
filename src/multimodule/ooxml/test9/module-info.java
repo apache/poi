@@ -89,6 +89,14 @@ module org.apache.poi.ooxml {
     requires org.bouncycastle.pkix;
 
 
+    /* optional dependencies for slideshow rendering via PPTX2PNG */
+    requires batik.all;
+    requires org.apache.pdfbox;
+    requires org.apache.fontbox;
+    requires de.rototor.pdfbox.graphics2d;
+    requires xmlgraphics.commons;
+
+
     // test specific exports
     requires junit;
     requires com.google.common;

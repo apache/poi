@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.IOException;
 
 import de.rototor.pdfbox.graphics2d.PdfBoxGraphics2D;
+import de.rototor.pdfbox.graphics2d.PdfBoxGraphics2DFontTextDrawer;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -36,17 +37,25 @@ public class PDFFormat implements OutputFormat {
     private final PDDocument document;
     private PDPageContentStream contentStream;
     private PdfBoxGraphics2D pdfBoxGraphics2D;
+    private PdfBoxGraphics2DFontTextDrawer fontTextDrawer;
 
-    public PDFFormat() {
+    public PDFFormat(boolean textAsShapes, String fontDir, String fontTtf) {
+        if (!textAsShapes) {
+            fontTextDrawer = new PDFFontMapper(fontDir, fontTtf);
+        }
+
         document = new PDDocument();
     }
 
     @Override
-    public Graphics2D addSlide(double width, double height)  throws IOException {
+    public Graphics2D addSlide(double width, double height) throws IOException {
         PDPage page = new PDPage(new PDRectangle((float) width, (float) height));
         document.addPage(page);
         contentStream = new PDPageContentStream(document, page);
-        pdfBoxGraphics2D = new PdfBoxGraphics2D(document, (float)width, (float)height);
+        pdfBoxGraphics2D = new PdfBoxGraphics2D(document, (float) width, (float) height);
+        if (fontTextDrawer != null) {
+            pdfBoxGraphics2D.setFontTextDrawer(fontTextDrawer);
+        }
         return pdfBoxGraphics2D;
     }
 
@@ -67,5 +76,9 @@ public class PDFFormat implements OutputFormat {
     @Override
     public void close() throws IOException {
         document.close();
+        if (fontTextDrawer != null) {
+            fontTextDrawer.close();
+        }
     }
+
 }

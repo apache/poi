@@ -87,4 +87,11 @@ module org.apache.poi.ooxml {
     requires static org.apache.santuario.xmlsec;
     requires static org.bouncycastle.provider;
     requires static org.bouncycastle.pkix;
+
+    /* optional dependencies for slideshow rendering via PPTX2PNG */
+    requires static batik.all;
+    requires static org.apache.pdfbox;
+    requires static org.apache.fontbox;
+    requires static de.rototor.pdfbox.graphics2d;
+    requires static xmlgraphics.commons;
 }
