@@ -32,9 +32,10 @@ import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
+import de.rototor.pdfbox.graphics2d.PdfBoxGraphics2DFontTextDrawer;
 import org.apache.pdfbox.pdmodel.font.PDFont;
 
-public class PDFFontMapper extends PDFFontMapper2 /* PdfBoxGraphics2DFontTextDrawer */ {
+public class PDFFontMapper extends PdfBoxGraphics2DFontTextDrawer {
 
     private static final String DEFAULT_TTF_PATTERN = ".*\\.tt[fc]";
 
