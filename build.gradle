@@ -44,9 +44,9 @@ configurations {
 }
 
 dependencies {
-    antLibs("junit:junit:4.13")
-    antLibs("org.apache.ant:ant-junit:1.10.8")
-    antLibs("org.apache.ant:ant-junit4:1.10.8")
+    antLibs("junit:junit:4.13.1")
+    antLibs("org.apache.ant:ant-junit:1.10.9")
+    antLibs("org.apache.ant:ant-junit4:1.10.9")
 }
 
 ant.taskdef(name: "junit",
@@ -107,13 +107,13 @@ subprojects {
 
     version = '5.0.0-SNAPSHOT'
     ext {
-        bouncyCastleVersion = '1.66'
+        bouncyCastleVersion = '1.67'
         commonsCodecVersion = '1.15'
         commonsCompressVersion = '1.20'
         commonsMathVersion = '3.6.1'
         japicmpversion = '4.1.2'
-        junitVersion = '4.13'
-        mockitoVersion = '3.5.15'
+        junitVersion = '4.13.1'
+        mockitoVersion = '3.6.0'
         xmlbeansVersion = '4.0.0'
     }
 
@@ -263,7 +263,7 @@ project('ooxml') {
     }
 
     dependencies {
-        antdep 'org.apache.ant:ant:1.10.8'
+        antdep 'org.apache.ant:ant:1.10.9'
     }
 
     // we need to ensure that the custom ant tasks are compiled before we import the build.xml file
@@ -293,8 +293,8 @@ project('ooxml') {
         compile 'xml-apis:xml-apis-ext:1.3.04'
         compile 'org.apache.xmlgraphics:xmlgraphics-commons:2.4'
 
-        compile 'org.apache.pdfbox:pdfbox:2.0.19'
-        compile 'org.apache.pdfbox:fontbox:2.0.19'
+        compile 'org.apache.pdfbox:pdfbox:2.0.21'
+        compile 'org.apache.pdfbox:fontbox:2.0.21'
         compile 'de.rototor.pdfbox:graphics2d:0.28'
 
         // for ooxml-lite, should we move this somewhere else?
@@ -306,12 +306,12 @@ project('ooxml') {
 
         testCompile "junit:junit:${junitVersion}"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
-        testCompile 'org.xmlunit:xmlunit-core:2.7.0'
+        testCompile 'org.xmlunit:xmlunit-core:2.8.0'
         testCompile 'org.reflections:reflections:0.9.12'
         testCompile project(path: ':main', configuration: 'tests')
-        testCompile 'org.openjdk.jmh:jmh-core:1.25'
-        testCompile 'org.openjdk.jmh:jmh-generator-annprocess:1.25'
-        testCompile 'com.google.guava:guava:29.0-jre'
+        testCompile 'org.openjdk.jmh:jmh-core:1.26'
+        testCompile 'org.openjdk.jmh:jmh-generator-annprocess:1.26'
+        testCompile 'com.google.guava:guava:30.0-jre'
     }
 
     jar {
@@ -352,7 +352,7 @@ project('excelant') {
     sourceSets.test.java.srcDirs = ['../../src/excelant/testcases']
 
     dependencies {
-        compile 'org.apache.ant:ant:1.10.8'
+        compile 'org.apache.ant:ant:1.10.9'
 
         compile project(':main')
         compile project(':ooxml')
@@ -374,7 +374,7 @@ project('integrationtest') {
     sourceSets.test.java.srcDirs = ['../../src/integrationtest']
 
     dependencies {
-        compile 'org.apache.ant:ant:1.10.8'
+        compile 'org.apache.ant:ant:1.10.9'
 
         compile project(':main')
         compile project(':ooxml')

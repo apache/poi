@@ -80,9 +80,9 @@
 
         <!-- define some of the third-party or plugin-versions globally to use the same in all modules -->
         <xmlbeans.version>4.0.0</xmlbeans.version>
-        <junit.version>4.13</junit.version>
-        <xmlunit.version>2.7.0</xmlunit.version>
-        <mockito.version>3.5.15</mockito.version>
+        <junit.version>4.13.1</junit.version>
+        <xmlunit.version>2.8.0</xmlunit.version>
+        <mockito.version>3.6.0</mockito.version>
         <maven.plugin.resources.version>3.2.0</maven.plugin.resources.version>
         <maven.plugin.jar.version>3.2.0</maven.plugin.jar.version>
         <maven.plugin.clean.version>3.1.0</maven.plugin.clean.version>

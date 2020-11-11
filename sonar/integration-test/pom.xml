@@ -112,13 +112,13 @@
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
             <artifactId>jmh-core</artifactId>
-            <version>1.25</version>
+            <version>1.26</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.ant</groupId>
             <artifactId>ant</artifactId>
-            <version>1.10.8</version>
+            <version>1.10.9</version>
             <scope>test</scope>
         </dependency>
 

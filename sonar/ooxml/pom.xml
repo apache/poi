@@ -127,12 +127,12 @@
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcpkix-jdk15on</artifactId>
-            <version>1.66</version>
+            <version>1.67</version>
         </dependency>
         <dependency>
             <groupId>org.bouncycastle</groupId>
             <artifactId>bcprov-jdk15on</artifactId>
-            <version>1.66</version>
+            <version>1.67</version>
         </dependency>
         <dependency>
             <groupId>org.apache.santuario</groupId>
@@ -166,35 +166,31 @@
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
             <artifactId>jmh-core</artifactId>
-            <version>1.25</version>
+            <version>1.26</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.openjdk.jmh</groupId>
             <artifactId>jmh-generator-annprocess</artifactId>
-            <version>1.25</version>
+            <version>1.26</version>
             <scope>test</scope>
         </dependency>
 
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
-            <version>29.0-jre</version>
+            <version>30.0-jre</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
-            <!-- don't add it to the distribution -->
             <groupId>org.apache.xmlgraphics</groupId>
             <artifactId>batik-all</artifactId>
             <version>1.13</version>
         </dependency>
-
         <dependency>
-            <!-- don't add it to the distribution -->
             <groupId>de.rototor.pdfbox</groupId>
             <artifactId>graphics2d</artifactId>
-            <version>0.27</version>
+            <version>0.28</version>
         </dependency>
     </dependencies>
 </project>
