@@ -204,15 +204,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
         return null;
     }
 
-    /**
-     * if there is a corresponding {@link XWPFParagraph} of the parameter p in the paragraphList of this header or footer
-     * the method will return that paragraph, otherwise the method will return null.
-     *
-     * @param p The CTP paragraph to find the corresponding {@link XWPFParagraph} for.
-     * @return The {@link XWPFParagraph} that corresponds to the CTP paragraph in the paragraph
-     * list of this footnote or null if no paragraph is found.
-     * @see org.apache.poi.xwpf.usermodel.IBody#getParagraph(CTP p)
-     */
+    @Override
     public XWPFParagraph getParagraph(CTP p) {
         for (XWPFParagraph paragraph : paragraphs) {
             if (paragraph.getCTP().equals(p))

@@ -175,15 +175,7 @@ public class XWPFTableCell implements IBody, ICell {
         bodyElements.remove(removedParagraph);
     }
 
-    /**
-     * if there is a corresponding {@link XWPFParagraph} of the parameter ctTable in the paragraphList of this table
-     * the method will return this paragraph
-     * if there is no corresponding {@link XWPFParagraph} the method will return null
-     *
-     * @param p is instance of CTP and is searching for an XWPFParagraph
-     * @return null if there is no XWPFParagraph with an corresponding CTPparagraph in the paragraphList of this table
-     * XWPFParagraph with the correspondig CTP p
-     */
+    @Override
     public XWPFParagraph getParagraph(CTP p) {
         for (XWPFParagraph paragraph : paragraphs) {
             if (p.equals(paragraph.getCTP())) {
