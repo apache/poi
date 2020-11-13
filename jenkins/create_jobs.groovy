@@ -36,7 +36,7 @@ def poijobs = [
           disabled: true
         ],
         [ name: 'POI-DSL-1.14', jdk: '1.14', trigger: triggerSundays, skipcigame: true,
-          // let's save some CPU cycles here, 13 is not a LTS and JDK 15 is GA as of 15 September 2020
+          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA as of 15 September 2020
           disabled: true
         ],
         [ name: 'POI-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true
@@ -95,6 +95,10 @@ def xmlbeansjobs = [
           disabled: true
         ],
         [ name: 'POI-XMLBeans-DSL-1.14', jdk: '1.14', trigger: triggerSundays, skipcigame: true,
+          // let's save some CPU cycles here, 14 is not a LTS and JDK 15 is GA now
+          disabled: true
+        ],
+        [ name: 'POI-XMLBeans-DSL-1.15', jdk: '1.15', trigger: triggerSundays, skipcigame: true,
         ]
 ]
 
