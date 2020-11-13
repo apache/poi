@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.lang.management.ManagementFactory;
 
 import com.sun.management.HotSpotDiagnosticMXBean;
+import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.util.SuppressForbidden;
 
 @SuppressForbidden("class only exists for manual tests in XSSFFileHandler")
@@ -42,7 +43,17 @@ public class HeapDump {
     public static void dumpHeap(String fileName, boolean live) throws IOException {
         // initialize hotspot diagnostic MBean
         initHotspotMBean();
-        hotspotMBean.dumpHeap(fileName, live);
+        throw new NotImplementedException("Developer: You need to uncomment the corresponding line here.");
+
+        // If running on a JVM using HotSpot:
+//        hotspotMBean.dumpHeap(fileName, live);
+
+        // If running on an IBM spec JVM:
+//        try {
+//            com.ibm.jvm.Dump.heapDumpToFile(fileName);
+//        } catch (com.ibm.jvm.InvalidDumpOptionException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     // initialize the hotspot diagnostic MBean field
