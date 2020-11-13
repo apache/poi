@@ -18,6 +18,8 @@ package org.apache.poi.stress;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import com.sun.management.HotSpotDiagnosticMXBean;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
@@ -41,19 +43,18 @@ public class HeapDump {
      *             only the live objects
      */
     public static void dumpHeap(String fileName, boolean live) throws IOException {
-        // initialize hotspot diagnostic MBean
-        initHotspotMBean();
-        throw new NotImplementedException("Developer: You need to uncomment the corresponding line here.");
+        try {
+            if (isIbmVm()) {
+                dumpHeapJ9(fileName);
+            } else {
 
-        // If running on a JVM using HotSpot:
-//        hotspotMBean.dumpHeap(fileName, live);
-
-        // If running on an IBM spec JVM:
-//        try {
-//            com.ibm.jvm.Dump.heapDumpToFile(fileName);
-//        } catch (com.ibm.jvm.InvalidDumpOptionException e) {
-//            throw new RuntimeException(e);
-//        }
+                // initialize hotspot diagnostic MBean
+                initHotspotMBean();
+                dumpHeapHotSpot(fileName, live);
+            }
+        } catch (NoSuchMethodException | IllegalAccessException | InvocationTargetException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     // initialize the hotspot diagnostic MBean field
@@ -71,5 +72,27 @@ public class HeapDump {
     private static HotSpotDiagnosticMXBean getHotspotMBean() throws IOException {
         return ManagementFactory.newPlatformMXBeanProxy(ManagementFactory.getPlatformMBeanServer(),
                         HOTSPOT_BEAN_NAME, HotSpotDiagnosticMXBean.class);
+    }
+
+    private static boolean isIbmVm() {
+        try {
+            Class.forName("com.ibm.jvm.Dump");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return false;
+        }
+    }
+
+    private static void dumpHeapJ9(String fileName) throws ClassNotFoundException, NoSuchMethodException,
+            InvocationTargetException, IllegalAccessException {
+        Class<?> dump = Class.forName("com.ibm.jvm.Dump");
+        Method heapDumpToFile = dump.getMethod("heapDumpToFile", String.class);
+        heapDumpToFile.invoke(dump, fileName);
+    }
+    
+    private static void dumpHeapHotSpot(String fileName, boolean live) throws NoSuchMethodException,
+            InvocationTargetException, IllegalAccessException {
+        Method dumpHeap = hotspotMBean.getClass().getMethod("dumpHeap", String.class, boolean.class);
+        dumpHeap.invoke(hotspotMBean, fileName, live);
     }
 }
