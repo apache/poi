@@ -22,7 +22,6 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import com.sun.management.HotSpotDiagnosticMXBean;
-import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.util.SuppressForbidden;
 
 @SuppressForbidden("class only exists for manual tests in XSSFFileHandler")
