@@ -71,13 +71,11 @@ public interface IBody {
     public List<XWPFTable> getTables();
 
     /**
-     * if there is a corresponding {@link XWPFParagraph} of the parameter ctTable in the paragraphList of this header or footer
-     * the method will return this paragraph
-     * if there is no corresponding {@link XWPFParagraph} the method will return null
+     * Returns the paragraph corresponding to the provided {@link CTP}.
      *
      * @param p is instance of CTP and is searching for an XWPFParagraph
-     * @return null if there is no XWPFParagraph with an corresponding CTPparagraph in the paragraphList of this header or footer
-     * XWPFParagraph with the correspondig CTP p
+     * @return The paragraph corresponding to the {@link CTP}, or {@code null} if there is no corresponding paragraph in
+     * this body.
      */
     public XWPFParagraph getParagraph(CTP p);
 

@@ -90,7 +90,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
                 XWPFSDT c = new XWPFSDT((CTSdtBlock) o, this);
                 bodyElements.add(c);
             }
-    
+
         }
         cursor.dispose();
     }
@@ -182,7 +182,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
             i++;
         }
         tables.add(i, table);
-    
+
     }
 
     /**
@@ -204,15 +204,7 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
         return null;
     }
 
-    /**
-     * if there is a corresponding {@link XWPFParagraph} of the parameter p in the paragraphList of this header or footer
-     * the method will return that paragraph, otherwise the method will return null.
-     *
-     * @param p The CTP paragraph to find the corresponding {@link XWPFParagraph} for.
-     * @return The {@link XWPFParagraph} that corresponds to the CTP paragraph in the paragraph
-     * list of this footnote or null if no paragraph is found.
-     * @see org.apache.poi.xwpf.usermodel.IBody#getParagraph(CTP p)
-     */
+    @Override
     public XWPFParagraph getParagraph(CTP p) {
         for (XWPFParagraph paragraph : paragraphs) {
             if (paragraph.getCTP().equals(p))
@@ -456,10 +448,10 @@ public abstract class XWPFAbstractFootnoteEndnote  implements Iterable<XWPFParag
         XWPFParagraph p = new XWPFParagraph(this.ctFtnEdn.addNewP(), this);
         paragraphs.add(p);
         bodyElements.add(p);
-    
+
         // If the paragraph is the first paragraph in the footnote, 
         // ensure that it has a footnote reference run.
-        
+
         if (p.equals(getParagraphs().get(0))) {
             ensureFootnoteRef(p);
         }

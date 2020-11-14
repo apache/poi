@@ -1546,17 +1546,11 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
         return styles;
     }
 
-    /**
-     * get the paragraph with the CTP class p
-     *
-     * @param p
-     * @return the paragraph with the CTP class p
-     */
     @Override
     public XWPFParagraph getParagraph(CTP p) {
-        for (int i = 0; i < getParagraphs().size(); i++) {
-            if (getParagraphs().get(i).getCTP() == p) {
-                return getParagraphs().get(i);
+        for (XWPFParagraph paragraph : paragraphs) {
+            if (paragraph.getCTP() == p) {
+                return paragraph;
             }
         }
         return null;
