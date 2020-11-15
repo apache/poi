@@ -158,6 +158,11 @@ public final class HwmfDraw {
                 }
             }
 
+            if (addClose()) {
+                // polygons are closed / polylines not
+                poly.closePath();
+            }
+
             return LittleEndianConsts.SHORT_SIZE+numberofPoints*LittleEndianConsts.INT_SIZE;
         }
 
@@ -185,6 +190,13 @@ public final class HwmfDraw {
             return poly;
         }
 
+        /**
+         * @return {@code true} if the path needs to be closed
+         */
+        protected boolean addClose() {
+            return true;
+        }
+
         @Override
         public Map<String, Supplier<?>> getGenericProperties() {
             return GenericRecordUtil.getGenericProperties("poly", this::getPoly);
@@ -205,6 +217,11 @@ public final class HwmfDraw {
         @Override
         protected FillDrawStyle getFillDrawStyle() {
             return FillDrawStyle.DRAW;
+        }
+
+        @Override
+        protected boolean addClose() {
+            return false;
         }
     }
 

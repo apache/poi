@@ -831,6 +831,7 @@ public class HemfMisc {
                     break;
             }
             ctx.updateWindowMapMode();
+            ctx.getProperties().setLocation(0,0);
         }
 
         @Override

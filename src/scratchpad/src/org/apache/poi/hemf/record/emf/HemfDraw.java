@@ -206,6 +206,11 @@ public final class HemfDraw {
         }
 
         @Override
+        protected boolean addClose() {
+            return false;
+        }
+
+        @Override
         public Map<String, Supplier<?>> getGenericProperties() {
             return GenericRecordUtil.getGenericProperties(
                 "base", super::getGenericProperties,
@@ -351,6 +356,11 @@ public final class HemfDraw {
         protected FillDrawStyle getFillDrawStyle() {
             // The line segments SHOULD be drawn using the current pen.
             return FillDrawStyle.DRAW;
+        }
+
+        @Override
+        protected boolean addClose() {
+            return false;
         }
     }
 
@@ -950,6 +960,11 @@ public final class HemfDraw {
 
         public Rectangle2D getBounds() {
             return bounds;
+        }
+
+        @Override
+        protected boolean addClose() {
+            return false;
         }
 
         @Override

@@ -469,6 +469,10 @@ public class HwmfText {
             return bounds;
         }
 
+        public WmfExtTextOutOptions getOptions() {
+            return options;
+        }
+
         protected boolean isUnicode() {
             return false;
         }
@@ -491,6 +495,7 @@ public class HwmfText {
             return GenericRecordUtil.getGenericProperties(
                 "reference", this::getReference,
                 "bounds", this::getBounds,
+                "options", this::getOptions,
                 "text", this::getGenericText,
                 "dx", () -> dx
             );

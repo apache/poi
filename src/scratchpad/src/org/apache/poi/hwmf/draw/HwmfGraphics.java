@@ -495,6 +495,7 @@ public class HwmfGraphics implements HwmfCharsetAware {
             if (scale != null) {
                 graphicsCtx.scale(scale.getWidth() < 0 ? -1 : 1, scale.getHeight() < 0 ? -1 : 1);
             }
+            graphicsCtx.scale(at.getScaleX() < 0 ? -1 : 1, at.getScaleY() < 0 ? -1 : 1);
             graphicsCtx.translate(dst.getX(), dst.getY());
             graphicsCtx.setColor(prop.getTextColor().getColor());
             graphicsCtx.drawString(as.getIterator(), 0, 0);

@@ -95,7 +95,7 @@ public class HemfText {
 
             // A WMF PointL object that specifies the coordinates of the reference point used to position the string.
             // The reference point is defined by the last EMR_SETTEXTALIGN record.
-            // If no such record has been set, the default alignment is TA_LEFT,TA_TOP.
+            // If no such record has been set, the defaulint alignment is TA_LEFT,TA_TOP.
             size += readPointL(leis, reference);
             // A 32-bit unsigned integer that specifies the number of characters in the string.
             stringLength = (int)leis.readUInt();
