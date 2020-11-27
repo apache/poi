@@ -17,6 +17,9 @@
 
 package org.apache.poi.hwmf.record;
 
+import java.util.Arrays;
+import java.util.Deque;
+
 /**
  * Each ternary raster operation code represents a Boolean operation in which the values of the pixels in
  * the source, the selected brush, and the destination are combined. Following are the three operands
@@ -41,17 +44,17 @@ package org.apache.poi.hwmf.record;
  * All Boolean operations are presented in reverse Polish notation. For example, the following operation
  * replaces the values of the pixels in the destination bitmap with a combination of the pixel values of the
  * source and brush: PSo.
- * 
+ *
  * The following operation combines the values of the pixels in the source and brush with the pixel values
  * of the destination bitmap: DPSoo (there are alternative spellings of some functions, so although a
  * particular spelling MAY NOT be listed in the enumeration, an equivalent form SHOULD be).
- * 
+ *
  * Each raster operation code is a 32-bit integer whose high-order word is a Boolean operation index and
  * whose low-order word is the operation code. The 16-bit operation index is a zero-extended, 8-bit
  * value that represents the result of the Boolean operation on predefined brush, source, and destination
  * values. For example, the operation indexes for the PSo and DPSoo operations are shown in the
  * following list.
- * 
+ *
  * <table>
  * <tr><th>P</th><th>S</th><th>D</th><th>DPo</th><th>DPan</th></tr>
  * <tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr>
@@ -63,304 +66,338 @@ package org.apache.poi.hwmf.record;
  * <tr><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td></tr>
  * <tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
  * </table>
- * 
+ *
  * The operation indexes are determined by reading the binary values in a column of the table from the
  * bottom up. For example, in the PSo column, the binary value is 11111100, which is equivalent to 00FC
  * (hexadecimal is implicit for these values), which is the operation index for PSo.
- * 
+ *
  * Using this method, DPSoo can be seen to have the operation index 00FE. Operation indexes define the
  * locations of corresponding raster operation codes in the preceding enumeration. The PSo operation is
  * in line 252 (0x00FC) of the enumeration; DPSoo is in line 254 (0x00FE).
- * 
+ *
  * The most commonly used raster operations have been given explicit enumeration names, which
  * SHOULD be used; examples are PATCOPY and WHITENESS.
- * 
+ *
  * When the source and destination bitmaps are monochrome, a bit value of 0 represents a black pixel
  * and a bit value of 1 represents a white pixel. When the source and the destination bitmaps are color,
  * those colors are represented with red green blue (RGB) values.
  */
+@SuppressWarnings("unused")
 public enum HwmfTernaryRasterOp {
-    BLACKNESS(0x0000,0x0042,"0"),
-    DPSOON(0x0001,0x0289,"DPSoon"),
-    DPSONA(0x0002,0x0C89,"DPSona"),
-    PSON(0x0003,0x00AA,"PSon"),
-    SDPONA(0x0004,0x0C88,"SDPona"),
-    DPON(0x0005,0x00A9,"DPon"),
-    PDSXNON(0x0006,0x0865,"PDSxnon"),
-    PDSAON(0x0007,0x02C5,"PDSaon"),
-    SDPNAA(0x0008,0x0F08,"SDPnaa"),
-    PDSXON(0x0009,0x0245,"PDSxon"),
-    DPNA(0x000A,0x0329,"DPna"),
-    PSDNAON(0x000B,0x0B2A,"PSDnaon"),
-    SPNA(0x000C,0x0324,"SPna"),
-    PDSNAON(0x000D,0x0B25,"PDSnaon"),
-    PDSONON(0x000E,0x08A5,"PDSonon"),
-    PN(0x000F,0x0001,"Pn"),
-    PDSONA(0x0010,0x0C85,"PDSona"),
-    NOTSRCERASE(0x0011,0x00A6,"DSon"),
-    SDPXNON(0x0012,0x0868,"SDPxnon"),
-    SDPAON(0x0013,0x02C8,"SDPaon"),
-    DPSXNON(0x0014,0x0869,"DPSxnon"),
-    DPSAON(0x0015,0x02C9,"DPSaon"),
-    PSDPSANAXX(0x0016,0x5CCA,"PSDPSanaxx"),
-    SSPXDSXAXN(0x0017,0x1D54,"SSPxDSxaxn"),
-    SPXPDXA(0x0018,0x0D59,"SPxPDxa"),
-    SDPSANAXN(0x0019,0x1CC8,"SDPSanaxn"),
-    PDSPAOX(0x001A,0x06C5,"PDSPaox"),
-    SDPSXAXN(0x001B,0x0768,"SDPSxaxn"),
-    PSDPAOX(0x001C,0x06CA,"PSDPaox"),
-    DSPDXAXN(0x001D,0x0766,"DSPDxaxn"),
-    PDSOX(0x001E,0x01A5,"PDSox"),
-    PDSOAN(0x001F,0x0385,"PDSoan"),
-    DPSNAA(0x0020,0x0F09,"DPSnaa"),
-    SDPXON(0x0021,0x0248,"SDPxon"),
-    DSNA(0x0022,0x0326,"DSna"),
-    SPDNAON(0x0023,0x0B24,"SPDnaon"),
-    SPXDSXA(0x0024,0x0D55,"SPxDSxa"),
-    PDSPANAXN(0x0025,0x1CC5,"PDSPanaxn"),
-    SDPSAOX(0x0026,0x06C8,"SDPSaox"),
-    SDPSXNOX(0x0027,0x1868,"SDPSxnox"),
-    DPSXA(0x0028,0x0369,"DPSxa"),
-    PSDPSAOXXN(0x0029,0x16CA,"PSDPSaoxxn"),
-    DPSANA(0x002A,0x0CC9,"DPSana"),
-    SSPXPDXAXN(0x002B,0x1D58,"SSPxPDxaxn"),
-    SPDSOAX(0x002C,0x0784,"SPDSoax"),
-    PSDNOX(0x002D,0x060A,"PSDnox"),
-    PSDPXOX(0x002E,0x064A,"PSDPxox"),
-    PSDNOAN(0x002F,0x0E2A,"PSDnoan"),
-    PSNA(0x0030,0x032A,"PSna"),
-    SDPNAON(0x0031,0x0B28,"SDPnaon"),
-    SDPSOOX(0x0032,0x0688,"SDPSoox"),
-    NOTSRCCOPY(0x0033,0x0008,"Sn"),
-    SPDSAOX(0x0034,0x06C4,"SPDSaox"),
-    SPDSXNOX(0x0035,0x1864,"SPDSxnox"),
-    SDPOX(0x0036,0x01A8,"SDPox"),
-    SDPOAN(0x0037,0x0388,"SDPoan"),
-    PSDPOAX(0x0038,0x078A,"PSDPoax"),
-    SPDNOX(0x0390,0x604,"SPDnox"),
-    SPDSXOX(0x003A,0x0644,"SPDSxox"),
-    SPDNOAN(0x003B,0x0E24,"SPDnoan"),
-    PSX(0x003C,0x004A,"PSx"),
-    SPDSONOX(0x003D,0x18A4,"SPDSonox"),
-    SPDSNAOX(0x003E,0x1B24,"SPDSnaox"),
-    PSAN(0x003F,0x00EA,"PSan"),
-    PSDNAA(0x0040,0x0F0A,"PSDnaa"),
-    DPSXON(0x0041,0x0249,"DPSxon"),
-    SDXPDXA(0x0042,0x0D5D,"SDxPDxa"),
-    SPDSANAXN(0x0043,0x1CC4,"SPDSanaxn"),
-    SRCERASE(0x0044,0x0328,"SDna"),
-    DPSNAON(0x0045,0x0B29,"DPSnaon"),
-    DSPDAOX(0x0046,0x06C6,"DSPDaox"),
-    PSDPXAXN(0x0047,0x076A,"PSDPxaxn"),
-    SDPXA(0x0048,0x0368,"SDPxa"),
-    PDSPDAOXXN(0x0049,0x16C5,"PDSPDaoxxn"),
-    DPSDOAX(0x004A,0x0789,"DPSDoax"),
-    PDSNOX(0x004B,0x0605,"PDSnox"),
-    SDPANA(0x004C,0x0CC8,"SDPana"),
-    SSPXDSXOXN(0x004D,0x1954,"SSPxDSxoxn"),
-    PDSPXOX(0x004E,0x0645,"PDSPxox"),
-    PDSNOAN(0x004F,0x0E25,"PDSnoan"),
-    PDNA(0x0050,0x0325,"PDna"),
-    DSPNAON(0x0051,0x0B26,"DSPnaon"),
-    DPSDAOX(0x0052,0x06C9,"DPSDaox"),
-    SPDSXAXN(0x0053,0x0764,"SPDSxaxn"),
-    DPSONON(0x0054,0x08A9,"DPSonon"),
-    DSTINVERT(0x0055,0x0009,"Dn"),
-    DPSOX(0x0056,0x01A9,"DPSox"),
-    DPSOAN(0x0005,0x70389,"DPSoan"),
-    PDSPOAX(0x0058,0x0785,"PDSPoax"),
-    DPSNOX(0x0059,0x0609,"DPSnox"),
-    PATINVERT(0x005A,0x0049,"DPx"),
-    DPSDONOX(0x005B,0x18A9,"DPSDonox"),
-    DPSDXOX(0x005C,0x0649,"DPSDxox"),
-    DPSNOAN(0x005D,0x0E29,"DPSnoan"),
-    DPSDNAOX(0x005E,0x1B29,"DPSDnaox"),
-    DPAN(0x005F,0x00E9,"DPan"),
-    PDSXA(0x0060,0x0365,"PDSxa"),
-    DSPDSAOXXN(0x0061,0x16C6,"DSPDSaoxxn"),
-    DSPDOAX(0x0062,0x0786,"DSPDoax"),
-    SDPNOX(0x0063,0x0608,"SDPnox"),
-    SDPSOAX(0x0064,0x0788,"SDPSoax"),
-    DSPNOX(0x0065,0x0606,"DSPnox"),
-    SRCINVERT(0x0066,0x0046,"DSx"),
-    SDPSONOX(0x0067,0x18A8,"SDPSonox"),
-    DSPDSONOXXN(0x0068,0x58A6,"DSPDSonoxxn"),
-    PDSXXN(0x0069,0x0145,"PDSxxn"),
-    DPSAX(0x006A,0x01E9,"DPSax"),
-    PSDPSOAXXN(0x006B,0x178A,"PSDPSoaxxn"),
-    SDPAX(0x006C,0x01E8,"SDPax"),
-    PDSPDOAXXN(0x006D,0x1785,"PDSPDoaxxn"),
-    SDPSNOAX(0x006E,0x1E28,"SDPSnoax"),
-    // PDXNAN(0x006F,0x0C65,"PDXnan"), // invalid combo
-    PDSANA(0x0070,0x0CC5,"PDSana"),
-    SSDXPDXAXN(0x0071,0x1D5C,"SSDxPDxaxn"),
-    SDPSXOX(0x0072,0x0648,"SDPSxox"),
-    SDPNOAN(0x0073,0x0E28,"SDPnoan"),
-    DSPDXOX(0x0074,0x0646,"DSPDxox"),
-    DSPNOAN(0x0075,0x0E26,"DSPnoan"),
-    SDPSNAOX(0x0076,0x1B28,"SDPSnaox"),
-    DSAN(0x0077,0x00E6,"DSan"),
-    PDSAX(0x0078,0x01E5,"PDSax"),
-    DSPDSOAXXN(0x0079,0x1786,"DSPDSoaxxn"),
-    DPSDNOAX(0x007A,0x1E29,"DPSDnoax"),
-    SDPXNAN(0x007B,0x0C68,"SDPxnan"),
-    SPDSNOAX(0x007C,0x1E24,"SPDSnoax"),
-    DPSXNAN(0x007D,0x0C69,"DPSxnan"),
-    SPXDSXO(0x007E,0x0955,"SPxDSxo"),
-    DPSAAN(0x007F,0x03C9,"DPSaan"),
-    DPSAA(0x0080,0x03E9,"DPSaa"),
-    SPXDSXON(0x0081,0x0975,"SPxDSxon"),
-    DPSXNA(0x0082,0x0C49,"DPSxna"),
-    SPDSNOAXN(0x0083,0x1E04,"SPDSnoaxn"),
-    SDPXNA(0x0084,0x0C48,"SDPxna"),
-    PDSPNOAXN(0x0085,0x1E05,"PDSPnoaxn"),
-    DSPDSOAXX(0x0086,0x17A6,"DSPDSoaxx"),
-    PDSAXN(0x0087,0x01C5,"PDSaxn"),
-    SRCAND(0x0088,0x00C6,"DSa"),
-    SDPSNAOXN(0x0089,0x1B08,"SDPSnaoxn"),
-    DSPNOA(0x008A,0x0E06,"DSPnoa"),
-    DSPDXOXN(0x008B,0x0666,"DSPDxoxn"),
-    SDPNOA(0x008C,0x0E08,"SDPnoa"),
-    SDPSXOXN(0x008D,0x0668,"SDPSxoxn"),
-    SSDXPDXAX(0x008E,0x1D7C,"SSDxPDxax"),
-    PDSANAN(0x008F,0x0CE5,"PDSanan"),
-    PDSXNA(0x0090,0x0C45,"PDSxna"),
-    SDPSNOAXN(0x0091,0x1E08,"SDPSnoaxn"),
-    DPSDPOAXX(0x0092,0x17A9,"DPSDPoaxx"),
-    SPDAXN(0x0093,0x01C4,"SPDaxn"),
-    PSDPSOAXX(0x0094,0x17AA,"PSDPSoaxx"),
-    DPSAXN(0x0095,0x01C9,"DPSaxn"),
-    DPSXX(0x0096,0x0169,"DPSxx"),
-    PSDPSONOXX(0x0097,0x588A,"PSDPSonoxx"),
-    SDPSONOXN(0x0098,0x1888,"SDPSonoxn"),
-    DSXN(0x0099,0x0066,"DSxn"),
-    DPSNAX(0x009A,0x0709,"DPSnax"),
-    SDPSOAXN(0x009B,0x07A8,"SDPSoaxn"),
-    SPDNAX(0x009C,0x0704,"SPDnax"),
-    DSPDOAXN(0x009D,0x07A6,"DSPDoaxn"),
-    DSPDSAOXX(0x009E,0x16E6,"DSPDSaoxx"),
-    PDSXAN(0x009F,0x0345,"PDSxan"),
-    DPA(0x00A0,0x00C9,"DPa"),
-    PDSPNAOXN(0x00A1,0x1B05,"PDSPnaoxn"),
-    DPSNOA(0x00A2,0x0E09,"DPSnoa"),
-    DPSDXOXN(0x00A3,0x0669,"DPSDxoxn"),
-    PDSPONOXN(0x00A4,0x1885,"PDSPonoxn"),
-    PDXN(0x00A5,0x0065,"PDxn"),
-    DSPNAX(0x00A6,0x0706,"DSPnax"),
-    PDSPOAXN(0x00A7,0x07A5,"PDSPoaxn"),
-    DPSOA(0x00A8,0x03A9,"DPSoa"),
-    DPSOXN(0x00A9,0x0189,"DPSoxn"),
-    D(0x00AA,0x0029,"D"),
-    DPSONO(0x00AB,0x0889,"DPSono"),
-    SPDSXAX(0x00AC,0x0744,"SPDSxax"),
-    DPSDAOXN(0x00AD,0x06E9,"DPSDaoxn"),
-    DSPNAO(0x00AE,0x0B06,"DSPnao"),
-    DPNO(0x00AF,0x0229,"DPno"),
-    PDSNOA(0x00B0,0x0E05,"PDSnoa"),
-    PDSPXOXN(0x00B1,0x0665,"PDSPxoxn"),
-    SSPXDSXOX(0x00B2,0x1974,"SSPxDSxox"),
-    SDPANAN(0x00B3,0x0CE8,"SDPanan"),
-    PSDNAX(0x00B4,0x070A,"PSDnax"),
-    DPSDOAXN(0x00B5,0x07A9,"DPSDoaxn"),
-    DPSDPAOXX(0x00B6,0x16E9,"DPSDPaoxx"),
-    SDPXAN(0x00B7,0x0348,"SDPxan"),
-    PSDPXAX(0x00B8,0x074A,"PSDPxax"),
-    DSPDAOXN(0x00B9,0x06E6,"DSPDaoxn"),
-    DPSNAO(0x00BA,0x0B09,"DPSnao"),
-    MERGEPAINT(0x00BB,0x0226,"DSno"),
-    SPDSANAX(0x00BC,0x1CE4,"SPDSanax"),
-    SDXPDXAN(0x00BD,0x0D7D,"SDxPDxan"),
-    DPSXO(0x00BE,0x0269,"DPSxo"),
-    DPSANO(0x00BF,0x08C9,"DPSano"),
-    MERGECOPY(0x00C0,0x00CA,"PSa"),
-    SPDSNAOXN(0x00C1,0x1B04,"SPDSnaoxn"),
-    SPDSONOXN(0x00C2,0x1884,"SPDSonoxn"),
-    PSXN(0x00C3,0x006A,"PSxn"),
-    SPDNOA(0x00C4,0x0E04,"SPDnoa"),
-    SPDSXOXN(0x00C5,0x0664,"SPDSxoxn"),
-    SDPNAX(0x00C6,0x0708,"SDPnax"),
-    PSDPOAXN(0x00C7,0x07AA,"PSDPoaxn"),
-    SDPOA(0x00C8,0x03A8,"SDPoa"),
-    SPDOXN(0x00C9,0x0184,"SPDoxn"),
-    DPSDXAX(0x00CA,0x0749,"DPSDxax"),
-    SPDSAOXN(0x00CB,0x06E4,"SPDSaoxn"),
-    SRCCOPY(0x00CC,0x0020,"S"),
-    SDPONO(0x00CD,0x0888,"SDPono"),
-    SDPNAO(0x00CE,0x0B08,"SDPnao"),
-    SPNO(0x00CF,0x0224,"SPno"),
-    PSDNOA(0x00D0,0x0E0A,"PSDnoa"),
-    PSDPXOXN(0x00D1,0x066A,"PSDPxoxn"),
-    PDSNAX(0x00D2,0x0705,"PDSnax"),
-    SPDSOAXN(0x00D3,0x07A4,"SPDSoaxn"),
-    SSPXPDXAX(0x00D4,0x1D78,"SSPxPDxax"),
-    DPSANAN(0x00D5,0x0CE9,"DPSanan"),
-    PSDPSAOXX(0x00D6,0x16EA,"PSDPSaoxx"),
-    DPSXAN(0x00D7,0x0349,"DPSxan"),
-    PDSPXAX(0x00D8,0x0745,"PDSPxax"),
-    SDPSAOXN(0x00D9,0x06E8,"SDPSaoxn"),
-    DPSDANAX(0x00DA,0x1CE9,"DPSDanax"),
-    SPXDSXAN(0x00DB,0x0D75,"SPxDSxan"),
-    SPDNAO(0x00DC,0x0B04,"SPDnao"),
-    SDNO(0x00DD,0x0228,"SDno"),
-    SDPXO(0x00DE,0x0268,"SDPxo"),
-    SDPANO(0x00DF,0x08C8,"SDPano"),
-    PDSOA(0x00E0,0x03A5,"PDSoa"),
-    PDSOXN(0x00E1,0x0185,"PDSoxn"),
-    DSPDXAX(0x00E2,0x0746,"DSPDxax"),
-    PSDPAOXN(0x00E3,0x06EA,"PSDPaoxn"),
-    SDPSXAX(0x00E4,0x0748,"SDPSxax"),
-    PDSPAOXN(0x00E5,0x06E5,"PDSPaoxn"),
-    SDPSANAX(0x00E6,0x1CE8,"SDPSanax"),
-    SPXPDXAN(0x00E7,0x0D79,"SPxPDxan"),
-    SSPXDSXAX(0x00E8,0x1D74,"SSPxDSxax"),
-    DSPDSANAXXN(0x00E9,0x5CE6,"DSPDSanaxxn"),
-    DPSAO(0x00EA,0x02E9,"DPSao"),
-    DPSXNO(0x00EB,0x0849,"DPSxno"),
-    SDPAO(0x00EC,0x02E8,"SDPao"),
-    SDPXNO(0x00ED,0x0848,"SDPxno"),
-    SRCPAINT(0x00EE,0x0086,"DSo"),
-    SDPNOO(0x00EF,0x0A08,"SDPnoo"),
-    PATCOPY(0x00F0,0x0021,"P"),
-    PDSONO(0x00F1,0x0885,"PDSono"),
-    PDSNAO(0x00F2,0x0B05,"PDSnao"),
-    PSNO(0x00F3,0x022A,"PSno"),
-    PSDNAO(0x00F4,0x0B0A,"PSDnao"),
-    PDNO(0x00F5,0x0225,"PDno"),
-    PDSXO(0x00F6,0x0265,"PDSxo"),
-    PDSANO(0x00F7,0x08C5,"PDSano"),
-    PDSAO(0x00F8,0x02E5,"PDSao"),
-    PDSXNO(0x00F9,0x0845,"PDSxno"),
-    DPO(0x00FA,0x0089,"DPo"),
-    PATPAINT(0x00FB,0x0A09,"DPSnoo"),
-    PSO(0x00FC,0x008A,"PSo"),
-    PSDNOO(0x00FD,0x0A0A,"PSDnoo"),
-    DPSOO(0x00FE,0x02A9,"DPSoo"),
-    WHITENESS(0x00FF,0x0062,"1");
+    /** Fills the destination rectangle with black */
+    BLACKNESS(0x00000042),
+    DPSOON(0x00010289),
+    DPSONA(0x00020C89),
+    PSON(0x000300AA),
+    SDPONA(0x00040C88),
+    DPON(0x000500A9),
+    PDSXNON(0x00060865),
+    PDSAON(0x000702C5),
+    SDPNAA(0x00080F08),
+    PDSXON(0x00090245),
+    DPNA(0x000A0329),
+    PSDNAON(0x000B0B2A),
+    SPNA(0x000C0324),
+    PDSNAON(0x000D0B25),
+    PDSONON(0x000E08A5),
+    PN(0x000F0001),
+    PDSONA(0x00100C85),
+    /** Fills the destination area with (not (Dst or Src)) */
+    NOTSRCERASE(0x001100A6),
+    SDPXNON(0x00120868),
+    SDPAON(0x001302C8),
+    DPSXNON(0x00140869),
+    DPSAON(0x001502C9),
+    PSDPSANAXX(0x00165CCA),
+    SSPXDSXAXN(0x00171D54),
+    SPXPDXA(0x00180D59),
+    SDPSANAXN(0x00191CC8),
+    PDSPAOX(0x001A06C5),
+    SDPSXAXN(0x001B0768),
+    PSDPAOX(0x001C06CA),
+    DSPDXAXN(0x001D0766),
+    PDSOX(0x001E01A5),
+    PDSOAN(0x001F0385),
+    DPSNAA(0x00200F09),
+    SDPXON(0x00210248),
+    DSNA(0x00220326),
+    SPDNAON(0x00230B24),
+    SPXDSXA(0x00240D55),
+    PDSPANAXN(0x00251CC5),
+    SDPSAOX(0x002606C8),
+    SDPSXNOX(0x00271868),
+    DPSXA(0x00280369),
+    PSDPSAOXXN(0x002916CA),
+    DPSANA(0x002A0CC9),
+    SSPXPDXAXN(0x002B1D58),
+    SPDSOAX(0x002C0784),
+    PSDNOX(0x002D060A),
+    PSDPXOX(0x002E064A),
+    PSDNOAN(0x002F0E2A),
+    PSNA(0x0030032A),
+    SDPNAON(0x00310B28),
+    SDPSOOX(0x00320688),
+    /** Fills the destination area with (not Src) */
+    NOTSRCCOPY(0x00330008),
+    SPDSAOX(0x003406C4),
+    SPDSXNOX(0x00351864),
+    SDPOX(0x003601A8),
+    SDPOAN(0x00370388),
+    PSDPOAX(0x0038078A),
+    SPDNOX(0x0390604),
+    SPDSXOX(0x003A0644),
+    SPDNOAN(0x003B0E24),
+    PSX(0x003C004A),
+    SPDSONOX(0x003D18A4),
+    SPDSNAOX(0x003E1B24),
+    PSAN(0x003F00EA),
+    PSDNAA(0x00400F0A),
+    DPSXON(0x00410249),
+    SDXPDXA(0x00420D5D),
+    SPDSANAXN(0x00431CC4),
+    /** Fills the destination area with ((not Dst) and Src) */
+    SRCERASE(0x00440328),
+    DPSNAON(0x00450B29),
+    DSPDAOX(0x004606C6),
+    PSDPXAXN(0x0047076A),
+    SDPXA(0x00480368),
+    PDSPDAOXXN(0x004916C5),
+    DPSDOAX(0x004A0789),
+    PDSNOX(0x004B0605),
+    SDPANA(0x004C0CC8),
+    SSPXDSXOXN(0x004D1954),
+    PDSPXOX(0x004E0645),
+    PDSNOAN(0x004F0E25),
+    PDNA(0x00500325),
+    DSPNAON(0x00510B26),
+    DPSDAOX(0x005206C9),
+    SPDSXAXN(0x00530764),
+    DPSONON(0x005408A9),
+    /** Inverts the colors of the destination area */
+    DSTINVERT(0x00550009),
+    DPSOX(0x005601A9),
+    DPSOAN(0x000570389),
+    PDSPOAX(0x00580785),
+    DPSNOX(0x00590609),
+    /** Fills the destination area with (Dst xor Pattern) */
+    PATINVERT(0x005A0049),
+    DPSDONOX(0x005B18A9),
+    DPSDXOX(0x005C0649),
+    DPSNOAN(0x005D0E29),
+    DPSDNAOX(0x005E1B29),
+    DPAN(0x005F00E9),
+    PDSXA(0x00600365),
+    DSPDSAOXXN(0x006116C6),
+    DSPDOAX(0x00620786),
+    SDPNOX(0x00630608),
+    SDPSOAX(0x00640788),
+    DSPNOX(0x00650606),
+    /** Fills the destination area with (Dst xor Src) */
+    SRCINVERT(0x00660046),
+    SDPSONOX(0x006718A8),
+    DSPDSONOXXN(0x006858A6),
+    PDSXXN(0x00690145),
+    DPSAX(0x006A01E9),
+    PSDPSOAXXN(0x006B178A),
+    SDPAX(0x006C01E8),
+    PDSPDOAXXN(0x006D1785),
+    SDPSNOAX(0x006E1E28),
+    PDSXNAN(0x006F0C65),
+    PDSANA(0x00700CC5),
+    SSDXPDXAXN(0x00711D5C),
+    SDPSXOX(0x00720648),
+    SDPNOAN(0x00730E28),
+    DSPDXOX(0x00740646),
+    DSPNOAN(0x00750E26),
+    SDPSNAOX(0x00761B28),
+    DSAN(0x007700E6),
+    PDSAX(0x007801E5),
+    DSPDSOAXXN(0x00791786),
+    DPSDNOAX(0x007A1E29),
+    SDPXNAN(0x007B0C68),
+    SPDSNOAX(0x007C1E24),
+    DPSXNAN(0x007D0C69),
+    SPXDSXO(0x007E0955),
+    DPSAAN(0x007F03C9),
+    DPSAA(0x008003E9),
+    SPXDSXON(0x00810975),
+    DPSXNA(0x00820C49),
+    SPDSNOAXN(0x00831E04),
+    SDPXNA(0x00840C48),
+    PDSPNOAXN(0x00851E05),
+    DSPDSOAXX(0x008617A6),
+    PDSAXN(0x008701C5),
+    /** Fills the destination area with (Dst and Src) */
+    SRCAND(0x008800C6),
+    SDPSNAOXN(0x00891B08),
+    DSPNOA(0x008A0E06),
+    DSPDXOXN(0x008B0666),
+    SDPNOA(0x008C0E08),
+    SDPSXOXN(0x008D0668),
+    SSDXPDXAX(0x008E1D7C),
+    PDSANAN(0x008F0CE5),
+    PDSXNA(0x00900C45),
+    SDPSNOAXN(0x00911E08),
+    DPSDPOAXX(0x009217A9),
+    SPDAXN(0x009301C4),
+    PSDPSOAXX(0x009417AA),
+    DPSAXN(0x009501C9),
+    DPSXX(0x00960169),
+    PSDPSONOXX(0x0097588A),
+    SDPSONOXN(0x00981888),
+    DSXN(0x00990066),
+    DPSNAX(0x009A0709),
+    SDPSOAXN(0x009B07A8),
+    SPDNAX(0x009C0704),
+    DSPDOAXN(0x009D07A6),
+    DSPDSAOXX(0x009E16E6),
+    PDSXAN(0x009F0345),
+    DPA(0x00A000C9),
+    PDSPNAOXN(0x00A11B05),
+    DPSNOA(0x00A20E09),
+    DPSDXOXN(0x00A30669),
+    PDSPONOXN(0x00A41885),
+    PDXN(0x00A50065),
+    DSPNAX(0x00A60706),
+    PDSPOAXN(0x00A707A5),
+    DPSOA(0x00A803A9),
+    DPSOXN(0x00A90189),
+    D(0x00AA0029),
+    DPSONO(0x00AB0889),
+    SPDSXAX(0x00AC0744),
+    DPSDAOXN(0x00AD06E9),
+    DSPNAO(0x00AE0B06),
+    DPNO(0x00AF0229),
+    PDSNOA(0x00B00E05),
+    PDSPXOXN(0x00B10665),
+    SSPXDSXOX(0x00B21974),
+    SDPANAN(0x00B30CE8),
+    PSDNAX(0x00B4070A),
+    DPSDOAXN(0x00B507A9),
+    DPSDPAOXX(0x00B616E9),
+    SDPXAN(0x00B70348),
+    PSDPXAX(0x00B8074A),
+    DSPDAOXN(0x00B906E6),
+    DPSNAO(0x00BA0B09),
+    /** Fills the destination area with (Dst or not Src) */
+    MERGEPAINT(0x00BB0226),
+    SPDSANAX(0x00BC1CE4),
+    SDXPDXAN(0x00BD0D7D),
+    DPSXO(0x00BE0269),
+    DPSANO(0x00BF08C9),
+    /** Fills the destination area with (Src and Pattern) */
+    MERGECOPY(0x00C000CA),
+    SPDSNAOXN(0x00C11B04),
+    SPDSONOXN(0x00C21884),
+    PSXN(0x00C3006A),
+    SPDNOA(0x00C40E04),
+    SPDSXOXN(0x00C50664),
+    SDPNAX(0x00C60708),
+    PSDPOAXN(0x00C707AA),
+    SDPOA(0x00C803A8),
+    SPDOXN(0x00C90184),
+    DPSDXAX(0x00CA0749),
+    SPDSAOXN(0x00CB06E4),
+    /** Fills the destination area with Src */
+    SRCCOPY(0x00CC0020),
+    SDPONO(0x00CD0888),
+    SDPNAO(0x00CE0B08),
+    SPNO(0x00CF0224),
+    PSDNOA(0x00D00E0A),
+    PSDPXOXN(0x00D1066A),
+    PDSNAX(0x00D20705),
+    SPDSOAXN(0x00D307A4),
+    SSPXPDXAX(0x00D41D78),
+    DPSANAN(0x00D50CE9),
+    PSDPSAOXX(0x00D616EA),
+    DPSXAN(0x00D70349),
+    PDSPXAX(0x00D80745),
+    SDPSAOXN(0x00D906E8),
+    DPSDANAX(0x00DA1CE9),
+    SPXDSXAN(0x00DB0D75),
+    SPDNAO(0x00DC0B04),
+    SDNO(0x00DD0228),
+    SDPXO(0x00DE0268),
+    SDPANO(0x00DF08C8),
+    PDSOA(0x00E003A5),
+    PDSOXN(0x00E10185),
+    DSPDXAX(0x00E20746),
+    PSDPAOXN(0x00E306EA),
+    SDPSXAX(0x00E40748),
+    PDSPAOXN(0x00E506E5),
+    SDPSANAX(0x00E61CE8),
+    SPXPDXAN(0x00E70D79),
+    SSPXDSXAX(0x00E81D74),
+    DSPDSANAXXN(0x00E95CE6),
+    DPSAO(0x00EA02E9),
+    DPSXNO(0x00EB0849),
+    SDPAO(0x00EC02E8),
+    SDPXNO(0x00ED0848),
+    /** Combines the colors of the source and the destination using the operator OR on each pixel */
+    SRCPAINT(0x00EE0086),
+    SDPNOO(0x00EF0A08),
+    /** Fills the destination area with (Pattern) */
+    PATCOPY(0x00F00021),
+    PDSONO(0x00F10885),
+    PDSNAO(0x00F20B05),
+    PSNO(0x00F3022A),
+    PSDNAO(0x00F40B0A),
+    PDNO(0x00F50225),
+    PDSXO(0x00F60265),
+    PDSANO(0x00F708C5),
+    PDSAO(0x00F802E5),
+    PDSXNO(0x00F90845),
+    DPO(0x00FA0089),
+    /** Fills the destination area with (Dst or (not Src) or Pattern) */
+    PATPAINT(0x00FB0A09),
+    PSO(0x00FC008A),
+    PSDNOO(0x00FD0A0A),
+    DPSOO(0x00FE02A9),
+    /** Fills the destination rectangle with white */
+    WHITENESS(0x00FF0062);
 
-    int opIndex;
-    int opCode;
-    String opCmd;
 
-    HwmfTernaryRasterOp(int opIndex, int opCode, String opCmd) {
-        this.opIndex=opIndex;
-        this.opCode=opCode;
-        this.opCmd=opCmd;
+    private static final String[] ARG_ORDER = {
+        "SSSSSS","PPPPPP","DDDDDD",null,
+        "SPDSPD","PDSPDS","DSPDSP",null,
+        "SDPSDP","DPSDPS","PSDPSD",null,
+        null,     null,    null,   null,
+        null,     null,    null,   null,
+        "SSP.DS", "SP.DS", null,   null,
+        "SSP.PD", "SP.PD", null,   null,
+        "SSD.PD", "SD.PD", null,   null
+    };
+
+    private static final String OPS = "nxoa";
+
+    public int opValue;
+
+    HwmfTernaryRasterOp(int opValue) {
+        this.opValue=opValue;
     }
 
     public static HwmfTernaryRasterOp valueOf(int opIndex) {
         for (HwmfTernaryRasterOp bb : HwmfTernaryRasterOp.values()) {
-            if (bb.opIndex == opIndex) {
+            if (bb.getOpIndex() == opIndex) {
                 return bb;
             }
         }
         return null;
     }
 
+    public int getOpIndex() {
+        return opValue >>> 16;
+    }
+
+    public int getOpCode() {
+        return opValue & 0xFF;
+    }
+
     public String describeCmd() {
         String[] stack = new String[10];
         int stackPnt = 0;
 
-        for (char c : opCmd.toCharArray()) {
+        for (char c : calcCmd().toCharArray()) {
             switch (c) {
                 case 'S':
                 case 'D':
@@ -394,5 +431,134 @@ public enum HwmfTernaryRasterOp {
         }
 
         return stack[--stackPnt];
+    }
+
+
+    public String calcCmd() {
+        // taken from https://wiki.winehq.org/Ternary_Raster_Ops
+
+        // bit 0-4: Specify the order of arguments to the raster operation
+        String argOrder = ARG_ORDER[this.opValue & 0x001F];
+        assert(argOrder != null);
+
+        // The boolean operators, 1st (6-7 bit), 2nd (8-9 bit), 3rd (a-b bit), 4th (c-d bit), 5th (e-f bit)
+        int nbrOfOps = 0;
+        int[] opArr = new int[5];
+        for (int i=0, bit=6; i<opArr.length; i++, bit+=2) {
+            if ((opArr[i] = (this.opValue >>> bit) & 0x03) != 0) {
+                nbrOfOps = i+1;
+            }
+        }
+
+        StringBuilder sbArg = new StringBuilder(), sbOp = new StringBuilder();
+        sbArg.append(argOrder.charAt(0));
+        for (int opIdx=0,argIdx=1; opIdx < nbrOfOps; opIdx++) {
+            char opCh = OPS.charAt(opArr[opIdx]);
+            char ch = argOrder.charAt(argIdx);
+            sbOp.append(opCh);
+            if (ch == '.') {
+                sbArg.insert(argIdx, sbOp.charAt(0));
+                sbOp.deleteCharAt(0);
+            }
+            if (opCh == 'n') {
+                continue;
+            }
+            sbArg.append(ch == '.' ? argOrder.charAt(++argIdx) : ch);
+            argIdx++;
+        }
+        sbArg.append(sbOp);
+
+        // bit 5: Used to apply the NOT operator to the results of the other operations
+        // if 0, there are a ODD number of operations, even number otherwise
+        if ((nbrOfOps % 2) == ((this.opValue >>> 0x05) & 1)) {
+            sbArg.append('n');
+        }
+
+        String ret = sbArg.toString();
+        return ret.startsWith("DDx") ? "DDx".equals(ret) ? "0" : "1" : ret;
+    }
+
+    public void process(Deque<int[]> stack, int[] dst, int[] src, int[] pat) {
+        for (char op : calcCmd().toCharArray()) {
+            switch (op) {
+                case 'S': opS(stack, dst, src, pat); break;
+                case 'P': opP(stack, dst, src, pat); break;
+                case 'D': opD(stack, dst, src, pat); break;
+                case 'n': opN(stack, dst, src, pat); break;
+                case 'a': opA(stack, dst, src, pat); break;
+                case 'o': opO(stack, dst, src, pat); break;
+                case 'x': opX(stack, dst, src, pat); break;
+                case '1': op1(stack, dst, src, pat); break;
+                case '0': op0(stack, dst, src, pat); break;
+                default: throw new IllegalStateException();
+            }
+        }
+    }
+
+    private static void opS(Deque<int[]> stack, int[] dst, int[] src, int[] pat) {
+        stack.push(src);
+    }
+
+    private static void opP(Deque<int[]> stack, int[] dst, int[] src, int[] pat) {
+        stack.push(pat);
+    }
+
+    private static void opD(Deque<int[]> stack, int[] dst, int[] src, int[] pat) {
+        stack.push(dst);
+    }
+
+    private static void opN(Deque<int[]> stack, int[] dst, int[] src, int[] pat) {
+        int[] oper = checkClone(stack.pop(), dst, src, pat, true);
+        for (int i=0; i<oper.length; i++) {
+            oper[i] = (oper[i]&0xFF000000) | (~oper[i] & 0x00FFFFFF);
+        }
+        stack.push(oper);
+    }
+
+    private static void opA(Deque<int[]> stack, int[] dst, int[] src, int[] pat) {
+        int[] oper1 = checkClone(stack.pop(), dst, src, pat, true);
+        int[] oper2 = checkClone(stack.pop(), dst, src, pat, false);
+        for (int i=0; i<oper1.length; i++) {
+            oper1[i] = (oper1[i]&0xFF000000) | ((oper1[i] & oper2[i]) & 0x00FFFFFF);
+        }
+        stack.push(oper1);
+    }
+
+    private static void opO(Deque<int[]> stack, int[] dst, int[] src, int[] pat) {
+        int[] oper1 = checkClone(stack.pop(), dst, src, pat, true);
+        int[] oper2 = checkClone(stack.pop(), dst, src, pat, false);
+        for (int i=0; i<oper1.length; i++) {
+            oper1[i] = (oper1[i]&0xFF000000) | ((oper1[i] | oper2[i]) & 0x00FFFFFF);
+        }
+        stack.push(oper1);
+    }
+
+    private static void opX(Deque<int[]> stack, int[] dst, int[] src, int[] pat) {
+        int[] oper1 = checkClone(stack.pop(), dst, src, pat, true);
+        int[] oper2 = checkClone(stack.pop(), dst, src, pat, false);
+        for (int i=0; i<oper1.length; i++) {
+            oper1[i] = (oper1[i]&0xFF000000) | ((oper1[i] ^ oper2[i]) & 0x00FFFFFF);
+        }
+        stack.push(oper1);
+    }
+
+    private static void op1(Deque<int[]> stack, int[] dst, int[] src, int[] pat) {
+        int[] oper = new int[dst.length];
+        Arrays.fill(oper, 0xFFFFFFFF);
+        stack.push(oper);
+    }
+
+    private static void op0(Deque<int[]> stack, int[] dst, int[] src, int[] pat) {
+        int[] oper = new int[dst.length];
+        Arrays.fill(oper, 0xFF000000);
+        stack.push(oper);
+    }
+
+    private static int[] checkClone(int[] oper, int[] dst, int[] src, int[] pat, boolean force) {
+        if (force && (oper == src || oper == pat || oper == dst)) {
+            return oper.clone();
+        } else {
+            return oper;
+        }
     }
 }

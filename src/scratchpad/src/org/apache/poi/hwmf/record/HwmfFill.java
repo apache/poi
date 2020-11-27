@@ -66,7 +66,7 @@ public class HwmfFill {
          */
         byte[] getBMPData();
     }
-    
+
     /**
      * The ColorUsage Enumeration (a 16-bit unsigned integer) specifies whether a color table
      * exists in a device-independent bitmap (DIB) and how to interpret its values,
@@ -100,13 +100,13 @@ public class HwmfFill {
             return null;
         }
     }
-    
-    
+
+
     /**
      * The META_FILLREGION record fills a region using a specified brush.
      */
     public static class WmfFillRegion implements HwmfRecord {
-        
+
         /**
          * A 16-bit unsigned integer used to index into the WMF Object Table to get
          * the region to be filled.
@@ -118,12 +118,12 @@ public class HwmfFill {
          * brush to use for filling the region.
          */
         protected int brushIndex;
-        
+
         @Override
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.fillRegion;
         }
-        
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             regionIndex = leis.readUShort();
@@ -135,7 +135,7 @@ public class HwmfFill {
         public void draw(HwmfGraphics ctx) {
             ctx.applyObjectTableEntry(regionIndex);
             ctx.applyObjectTableEntry(brushIndex);
-            
+
             Shape region = ctx.getProperties().getRegion();
             if (region != null) {
                 ctx.fill(region);
@@ -164,7 +164,7 @@ public class HwmfFill {
      * defined in the playback device context.
      */
     public static class WmfPaintRegion implements HwmfRecord {
-        
+
         /**
          * A 16-bit unsigned integer used to index into the WMF Object Table to get
          * the region to be painted.
@@ -174,7 +174,7 @@ public class HwmfFill {
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.paintRegion;
         }
-        
+
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             regionIndex = leis.readUShort();
             return LittleEndianConsts.SHORT_SIZE;
@@ -187,7 +187,7 @@ public class HwmfFill {
             Shape region = ctx.getProperties().getRegion();
             if (region != null) {
                 ctx.fill(region);
-            }        
+            }
         }
 
         public int getRegionIndex() {
@@ -199,14 +199,14 @@ public class HwmfFill {
             return GenericRecordUtil.getGenericProperties("regionIndex", this::getRegionIndex);
         }
     }
-    
-    
+
+
     /**
      * The META_FLOODFILL record fills an area of the output surface with the brush that
      * is defined in the playback device context.
      */
     public static class WmfFloodFill implements HwmfRecord {
-        
+
         /** A 32-bit ColorRef Object that defines the color value. */
         protected final HwmfColorRef colorRef = new HwmfColorRef();
 
@@ -217,7 +217,7 @@ public class HwmfFill {
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.floodFill;
         }
-        
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             int size = colorRef.init(leis);
@@ -227,7 +227,7 @@ public class HwmfFill {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            
+
         }
 
         public HwmfColorRef getColorRef() {
@@ -287,12 +287,12 @@ public class HwmfFill {
          * This MUST be one of the values: ALTERNATE = 0x0001, WINDING = 0x0002
          */
         protected HwmfPolyfillMode polyFillMode;
-        
+
         @Override
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setPolyFillMode;
         }
-        
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             polyFillMode = HwmfPolyfillMode.valueOf(leis.readUShort() & 3);
@@ -341,12 +341,12 @@ public class HwmfFill {
         }
 
         protected HwmfFloodFillMode mode;
-        
+
         @Override
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.extFloodFill;
         }
-        
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             // A 16-bit unsigned integer that defines the fill operation to be performed. This
@@ -357,7 +357,7 @@ public class HwmfFill {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            
+
         }
 
         public HwmfFloodFillMode getMode() {
@@ -374,18 +374,18 @@ public class HwmfFill {
      * The META_INVERTREGION record draws a region in which the colors are inverted.
      */
     public static class WmfInvertRegion implements HwmfRecord {
-        
+
         /**
          * A 16-bit unsigned integer used to index into the WMF Object Table to get
          * the region to be inverted.
          */
         private int regionIndex;
-        
+
         @Override
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.invertRegion;
         }
-        
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             regionIndex = leis.readUShort();
@@ -394,7 +394,7 @@ public class HwmfFill {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            
+
         }
 
         public int getRegionIndex() {
@@ -406,7 +406,7 @@ public class HwmfFill {
             return GenericRecordUtil.getGenericProperties("regionIndex", this::getRegionIndex);
         }
     }
-    
+
 
     /**
      * The META_PATBLT record paints a specified rectangle using the brush that is defined in the playback
@@ -414,20 +414,20 @@ public class HwmfFill {
      * raster operation.
      */
     public static class WmfPatBlt implements HwmfRecord {
-        
+
         /**
          * A 32-bit unsigned integer that defines the raster operation code.
          * This code MUST be one of the values in the Ternary Raster Operation enumeration table.
          */
         private HwmfTernaryRasterOp rasterOperation;
-        
+
         private final Rectangle2D bounds = new Rectangle2D.Double();
 
         @Override
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.patBlt;
         }
-        
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             rasterOperation = readRasterOperation(leis);
@@ -436,7 +436,7 @@ public class HwmfFill {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            
+
         }
 
         public HwmfTernaryRasterOp getRasterOperation() {
@@ -469,7 +469,7 @@ public class HwmfFill {
     public static class WmfStretchBlt implements HwmfRecord {
         /**
          * A 32-bit unsigned integer that defines how the source pixels, the current brush
-         * in the playback device context, and the destination pixels are to be combined to form the new 
+         * in the playback device context, and the destination pixels are to be combined to form the new
          * image. This code MUST be one of the values in the Ternary Raster Operation Enumeration
          */
         protected HwmfTernaryRasterOp rasterOperation;
@@ -485,13 +485,13 @@ public class HwmfFill {
          * This object MUST be specified, even if the raster operation does not require a source.
          */
         protected HwmfBitmap16 target;
-        
+
         @Override
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.stretchBlt;
         }
-        
-        
+
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             final boolean hasBitmap = hasBitmap(recordSize, recordFunction);
@@ -513,13 +513,13 @@ public class HwmfFill {
                 target = new HwmfBitmap16();
                 size += target.init(leis);
             }
-            
+
             return size;
         }
 
         @Override
         public void draw(HwmfGraphics ctx) {
-            
+
         }
 
         @Override
@@ -582,17 +582,17 @@ public class HwmfFill {
         protected final Rectangle2D dstBounds = new Rectangle2D.Double();
 
         /**
-         * A variable-sized DeviceIndependentBitmap Object (section 2.2.2.9) that is the 
+         * A variable-sized DeviceIndependentBitmap Object (section 2.2.2.9) that is the
          * source of the color data.
          */
         protected final HwmfBitmapDib bitmap = new HwmfBitmapDib();
-        
+
         @Override
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.stretchDib;
         }
-        
-        
+
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             rasterOperation = readRasterOperation(leis);
@@ -606,7 +606,7 @@ public class HwmfFill {
             size += bitmap.init(leis, (int)(recordSize-6-size));
 
             return size;
-        }        
+        }
 
         @Override
         public void draw(HwmfGraphics ctx) {
@@ -666,14 +666,14 @@ public class HwmfFill {
             );
         }
     }
-    
+
     public static class WmfBitBlt extends WmfStretchBlt {
 
         @Override
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.bitBlt;
         }
-        
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             final boolean hasBitmap = hasBitmap(recordSize/2, recordFunction);
@@ -698,7 +698,7 @@ public class HwmfFill {
             }
 
             srcBounds.setRect(srcPnt.getX(), srcPnt.getY(), dstBounds.getWidth(), dstBounds.getHeight());
-            
+
             return size;
         }
     }
@@ -715,7 +715,7 @@ public class HwmfFill {
          * A 16-bit unsigned integer that defines whether the Colors field of the
          * DIB contains explicit RGB values or indexes into a palette.
          */
-        private ColorUsage colorUsage;  
+        private ColorUsage colorUsage;
         /**
          * A 16-bit unsigned integer that defines the number of scan lines in the source.
          */
@@ -723,7 +723,7 @@ public class HwmfFill {
         /**
          * A 16-bit unsigned integer that defines the starting scan line in the source.
          */
-        private int startScan;  
+        private int startScan;
 
         /** the source rectangle */
         protected final Rectangle2D srcBounds = new Rectangle2D.Double();
@@ -734,14 +734,14 @@ public class HwmfFill {
         /**
          * A variable-sized DeviceIndependentBitmap Object that is the source of the color data.
          */
-        private HwmfBitmapDib dib;        
-        
-        
+        private HwmfBitmapDib dib;
+
+
         @Override
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.setDibToDev;
         }
-        
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             colorUsage = ColorUsage.valueOf(leis.readUShort());
@@ -761,16 +761,16 @@ public class HwmfFill {
             srcBounds.setRect(srcPnt.getX(), srcPnt.getY(), dstBounds.getWidth(), dstBounds.getHeight());
 
             return size;
-        }        
+        }
 
         @Override
         public void draw(HwmfGraphics ctx) {
             ctx.addObjectTableEntry(this);
         }
-        
+
         @Override
         public void applyObject(HwmfGraphics ctx) {
-            
+
         }
 
         @Override
@@ -822,7 +822,7 @@ public class HwmfFill {
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.dibBitBlt;
         }
-        
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             final boolean hasBitmap = hasBitmap(recordSize/2, recordFunction);
@@ -885,7 +885,7 @@ public class HwmfFill {
         public HwmfRecordType getWmfRecordType() {
             return HwmfRecordType.dibStretchBlt;
         }
-        
+
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             final boolean hasBitmap = hasBitmap(recordSize, recordFunction);
@@ -905,7 +905,7 @@ public class HwmfFill {
                 target = new HwmfBitmapDib();
                 size += target.init(leis, (int)(recordSize-6-size));
             }
-            
+
             return size;
         }
 
@@ -983,7 +983,7 @@ public class HwmfFill {
         int rasterOpIndex = leis.readUShort();
 
         HwmfTernaryRasterOp rasterOperation = HwmfTernaryRasterOp.valueOf(rasterOpIndex);
-        assert(rasterOperation != null && rasterOpCode == rasterOperation.opCode);
+        assert(rasterOperation != null && rasterOpCode == rasterOperation.getOpCode());
         return rasterOperation;
     }
 }

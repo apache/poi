@@ -17,6 +17,9 @@
 
 package org.apache.poi.hwmf.record;
 
+import java.util.Arrays;
+import java.util.function.BiConsumer;
+
 /**
  * The BinaryRasterOperation Enumeration section lists the binary raster-operation codes.
  * Rasteroperation codes define how metafile processing combines the bits from the selected
@@ -62,42 +65,44 @@ package org.apache.poi.hwmf.record;
  */
 public enum HwmfBinaryRasterOp {
     /** 0, Pixel is always 0 */
-    R2_BLACK(0x0001),
+    R2_BLACK(0x0001, HwmfBinaryRasterOp::R2_BLACK),
     /** DPon, Pixel is the inverse of the R2_MERGEPEN color. */
-    R2_NOTMERGEPEN(0x0002),
+    R2_NOTMERGEPEN(0x0002, HwmfBinaryRasterOp::R2_NOTMERGEPEN),
     /** DPna, Pixel is a combination of the screen color and the inverse of the pen color. */
-    R2_MASKNOTPEN(0x0003),
+    R2_MASKNOTPEN(0x0003, HwmfBinaryRasterOp::R2_MASKNOTPEN),
     /** Pn, Pixel is the inverse of the pen color. */
-    R2_NOTCOPYPEN(0x0004),
+    R2_NOTCOPYPEN(0x0004, HwmfBinaryRasterOp::R2_NOTCOPYPEN),
     /** PDna, Pixel is a combination of the colors common to both the pen and the inverse of the screen. */
-    R2_MASKPENNOT(0x0005),
+    R2_MASKPENNOT(0x0005, HwmfBinaryRasterOp::R2_MASKPENNOT),
     /** Dn, Pixel is the inverse of the screen color. */
-    R2_NOT(0x0006),
+    R2_NOT(0x0006, HwmfBinaryRasterOp::R2_NOT),
     /** DPx, Pixel is a combination of the colors in the pen or in the screen, but not in both. */
-    R2_XORPEN(0x0007),
+    R2_XORPEN(0x0007, HwmfBinaryRasterOp::R2_XORPEN),
     /** DPan, Pixel is the inverse of the R2_MASKPEN color. */
-    R2_NOTMASKPEN(0x0008),
+    R2_NOTMASKPEN(0x0008, HwmfBinaryRasterOp::R2_NOTMASKPEN),
     /** DPa, Pixel is a combination of the colors common to both the pen and the screen. */
-    R2_MASKPEN(0x0009),
+    R2_MASKPEN(0x0009, HwmfBinaryRasterOp::R2_MASKPEN),
     /** DPxn, Pixel is the inverse of the R2_XORPEN color. */
-    R2_NOTXORPEN(0x000A),
+    R2_NOTXORPEN(0x000A, HwmfBinaryRasterOp::R2_NOTXORPEN),
     /** D, Pixel remains unchanged. */
-    R2_NOP(0x000B),
+    R2_NOP(0x000B, HwmfBinaryRasterOp::R2_NOP),
     /** DPno, Pixel is a combination of the colors common to both the screen and the inverse of the pen. */
-    R2_MERGENOTPEN(0x000C),
+    R2_MERGENOTPEN(0x000C, HwmfBinaryRasterOp::R2_MERGENOTPEN),
     /** P, Pixel is the pen color. */
-    R2_COPYPEN(0x000D),
+    R2_COPYPEN(0x000D, HwmfBinaryRasterOp::R2_COPYPEN),
     /** PDno, Pixel is a combination of the pen color and the inverse of the screen color.*/
-    R2_MERGEPENNOT(0x000E),
+    R2_MERGEPENNOT(0x000E, HwmfBinaryRasterOp::R2_MERGEPENNOT),
     /** DPo, Pixel is a combination of the pen color and the screen color. */
-    R2_MERGEPEN(0x000F),
+    R2_MERGEPEN(0x000F, HwmfBinaryRasterOp::R2_MERGEPEN),
     /** 1, Pixel is always 1 */
-    R2_WHITE(0x0010);
+    R2_WHITE(0x0010, HwmfBinaryRasterOp::R2_WHITE);
 
-    int opIndex;
+    public int opIndex;
+    private BiConsumer<int[],int[]> op;
 
-    HwmfBinaryRasterOp(int opIndex) {
-        this.opIndex=opIndex;
+    HwmfBinaryRasterOp(int opIndex, BiConsumer<int[],int[]> op) {
+        this.opIndex = opIndex;
+        this.op = op;
     }
 
     public static HwmfBinaryRasterOp valueOf(int opIndex) {
@@ -109,4 +114,111 @@ public enum HwmfBinaryRasterOp {
         return null;
     }
 
+    public void process(int[] srcPixels, int[] dstPixels) {
+        op.accept(srcPixels, dstPixels);
+    }
+
+    /** 0, Pixel is always 0 */
+    private static void R2_BLACK(int[] srcPixels, int[] dstPixels) {
+        Arrays.fill(dstPixels, 0xFF000000);
+    }
+
+    /** DPon, Pixel is the inverse of the R2_MERGEPEN color */
+    private static void R2_NOTMERGEPEN(int[] srcPixels, int[] dstPixels) {
+        for (int x = 0; x < srcPixels.length; x++) {
+            dstPixels[x] = (dstPixels[x] & 0xFF000000) | (~(dstPixels[x] | srcPixels[x]) & 0x00FFFFFF);
+        }
+    }
+
+    /** DPna, Pixel is a combination of the screen color and the inverse of the pen color. */
+    private static void R2_MASKNOTPEN(int[] srcPixels, int[] dstPixels) {
+        for (int x = 0; x < srcPixels.length; x++) {
+            dstPixels[x] = (dstPixels[x] & 0xFF000000) | ((dstPixels[x] & ~srcPixels[x]) & 0x00FFFFFF);
+        }
+    }
+
+    /** Pn, Pixel is the inverse of the pen color. */
+    private static void R2_NOTCOPYPEN(int[] srcPixels, int[] dstPixels) {
+        for (int x = 0; x < srcPixels.length; x++) {
+            dstPixels[x] = (dstPixels[x] & 0xFF000000) | (~srcPixels[x] & 0x00FFFFFF);
+        }
+    }
+
+    /** PDna, Pixel is a combination of the colors common to both the pen and the inverse of the screen. */
+    private static void R2_MASKPENNOT(int[] srcPixels, int[] dstPixels) {
+        for (int x = 0; x < srcPixels.length; x++) {
+            dstPixels[x] = (dstPixels[x] & 0xFF000000) | ((srcPixels[x] & ~dstPixels[x]) & 0x00FFFFFF);
+        }
+    }
+
+    /** Dn, Pixel is the inverse of the screen color. */
+    private static void R2_NOT(int[] srcPixels, int[] dstPixels) {
+        for (int x = 0; x < srcPixels.length; x++) {
+            dstPixels[x] = (dstPixels[x] & 0xFF000000) | (~dstPixels[x] & 0x00FFFFFF);
+        }
+    }
+
+    /** DPx, Pixel is a combination of the colors in the pen or in the screen, but not in both. */
+    private static void R2_XORPEN(int[] srcPixels, int[] dstPixels) {
+        for (int x = 0; x < srcPixels.length; x++) {
+            dstPixels[x] = (dstPixels[x] & 0xFF000000) | ((dstPixels[x] ^ srcPixels[x]) & 0x00FFFFFF);
+        }
+    }
+
+    /** DPan, Pixel is the inverse of the R2_MASKPEN color. */
+    private static void R2_NOTMASKPEN(int[] srcPixels, int[] dstPixels) {
+        for (int x = 0; x < srcPixels.length; x++) {
+            dstPixels[x] = (dstPixels[x] & 0xFF000000) | (~(dstPixels[x] & srcPixels[x]) & 0x00FFFFFF);
+        }
+    }
+
+    /** DPa, Pixel is a combination of the colors common to both the pen and the screen. */
+    private static void R2_MASKPEN(int[] srcPixels, int[] dstPixels) {
+        for (int x = 0; x < srcPixels.length; x++) {
+            dstPixels[x] = (dstPixels[x] & 0xFF000000) | ((dstPixels[x] & srcPixels[x]) & 0x00FFFFFF);
+        }
+    }
+
+    /** DPxn, Pixel is the inverse of the R2_XORPEN color. */
+    private static void R2_NOTXORPEN(int[] srcPixels, int[] dstPixels) {
+        for (int x = 0; x < srcPixels.length; x++) {
+            dstPixels[x] = (dstPixels[x] & 0xFF000000) | (~(dstPixels[x] ^ srcPixels[x]) & 0x00FFFFFF);
+        }
+    }
+
+    /** D, Pixel remains unchanged. */
+    private static void R2_NOP(int[] srcPixels, int[] dstPixels) {
+    }
+
+    /** DPno, Pixel is a combination of the colors common to both the screen and the inverse of the pen. */
+    private static void R2_MERGENOTPEN(int[] srcPixels, int[] dstPixels) {
+        for (int x = 0; x < srcPixels.length; x++) {
+            dstPixels[x] = (dstPixels[x] & 0xFF000000) | ((dstPixels[x] | ~srcPixels[x]) & 0x00FFFFFF);
+        }
+    }
+
+    /** P, Pixel is the pen color. */
+    private static void R2_COPYPEN(int[] srcPixels, int[] dstPixels) {
+        // TODO: keep targets alpha?
+        System.arraycopy(srcPixels, 0, dstPixels, 0, srcPixels.length);
+    }
+
+    /** PDno, Pixel is a combination of the pen color and the inverse of the screen color. */
+    private static void R2_MERGEPENNOT(int[] srcPixels, int[] dstPixels) {
+        for (int x = 0; x < srcPixels.length; x++) {
+            dstPixels[x] = (dstPixels[x] & 0xFF000000) | ((srcPixels[x] & ~dstPixels[x]) & 0x00FFFFFF);
+        }
+    }
+
+    /** DPo, Pixel is a combination of the pen color and the screen color. */
+    private static void R2_MERGEPEN(int[] srcPixels, int[] dstPixels) {
+        for (int x = 0; x < srcPixels.length; x++) {
+            dstPixels[x] = (dstPixels[x] & 0xFF000000) | ((dstPixels[x] | srcPixels[x]) & 0x00FFFFFF);
+        }
+    }
+
+    /** 1, Pixel is always 1 */
+    private static void R2_WHITE(int[] srcPixels, int[] dstPixels) {
+        Arrays.fill(dstPixels, 0xFFFFFFFF);
+    }
 }
