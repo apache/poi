@@ -68,7 +68,7 @@ public class HwmfDrawProperties {
     private HwmfTextVerticalAlignment textVAlignLatin;
     private HwmfTextAlignment textAlignAsian;
     private HwmfTextVerticalAlignment textVAlignAsian;
-    private HwmfTernaryRasterOp rasterOp;
+    private HwmfTernaryRasterOp rasterOp3;
     protected Shape clip;
     protected final AffineTransform transform = new AffineTransform();
 
@@ -92,7 +92,7 @@ public class HwmfDrawProperties {
         textVAlignLatin = HwmfTextVerticalAlignment.TOP;
         textAlignAsian = HwmfTextAlignment.RIGHT;
         textVAlignAsian = HwmfTextVerticalAlignment.TOP;
-        rasterOp = HwmfTernaryRasterOp.PATCOPY;
+        rasterOp3 = HwmfTernaryRasterOp.PATCOPY;
         clip = null;
         font = new HwmfFont();
         font.initDefaults();
@@ -128,7 +128,7 @@ public class HwmfDrawProperties {
         this.textVAlignLatin = other.textVAlignLatin;
         this.textAlignAsian = other.textAlignAsian;
         this.textVAlignAsian = other.textVAlignAsian;
-        this.rasterOp = other.rasterOp;
+        this.rasterOp3 = other.rasterOp3;
         this.transform.setTransform(other.transform);
         this.clip = other.clip;
     }
@@ -388,12 +388,12 @@ public class HwmfDrawProperties {
         return getPolyfillMode().awtFlag;
     }
 
-    public HwmfTernaryRasterOp getRasterOp() {
-        return rasterOp;
+    public HwmfTernaryRasterOp getRasterOp3() {
+        return rasterOp3;
     }
 
-    public void setRasterOp(HwmfTernaryRasterOp rasterOp) {
-        this.rasterOp = rasterOp;
+    public void setRasterOp3(HwmfTernaryRasterOp rasterOp3) {
+        this.rasterOp3 = rasterOp3;
     }
 
     public AffineTransform getTransform() {

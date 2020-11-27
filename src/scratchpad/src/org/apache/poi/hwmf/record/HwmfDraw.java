@@ -476,7 +476,7 @@ public final class HwmfDraw {
 
         @Override
         public HwmfRecordType getWmfRecordType() {
-            return HwmfRecordType.frameRegion;
+            return HwmfRecordType.rectangle;
         }
 
         @Override

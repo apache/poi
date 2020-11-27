@@ -450,13 +450,13 @@ public final class HemfPlusDraw {
 
             AffineTransform txSaved = ctx.getTransform();
             AffineTransform tx = (AffineTransform)txSaved.clone();
-            HwmfTernaryRasterOp oldOp = prop.getRasterOp();
+            HwmfTernaryRasterOp oldOp = prop.getRasterOp3();
             HwmfBkMode oldBk = prop.getBkMode();
             try {
                 tx.concatenate(trans);
                 ctx.setTransform(tx);
 
-                prop.setRasterOp(HwmfTernaryRasterOp.SRCCOPY);
+                prop.setRasterOp3(HwmfTernaryRasterOp.SRCCOPY);
                 prop.setBkMode(HwmfBkMode.TRANSPARENT);
 
                 // transformation from srcRect to destRect was already applied,
@@ -464,7 +464,7 @@ public final class HemfPlusDraw {
                 ctx.drawImage(ir, srcRect, srcRect);
             } finally {
                 prop.setBkMode(oldBk);
-                prop.setRasterOp(oldOp);
+                prop.setRasterOp3(oldOp);
                 ctx.setTransform(txSaved);
             }
         }
@@ -539,7 +539,7 @@ public final class HemfPlusDraw {
             ctx.applyPlusObjectTableEntry(getObjectId());
 
             HemfDrawProperties prop = ctx.getProperties();
-            prop.setRasterOp(HwmfTernaryRasterOp.SRCCOPY);
+            prop.setRasterOp3(HwmfTernaryRasterOp.SRCCOPY);
             prop.setBkMode(HwmfBkMode.TRANSPARENT);
 
             ctx.drawImage(prop.getEmfPlusImage(), srcRect, rectData);

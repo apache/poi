@@ -611,7 +611,7 @@ public class HwmfFill {
         @Override
         public void draw(HwmfGraphics ctx) {
             HwmfDrawProperties prop = ctx.getProperties();
-            prop.setRasterOp(rasterOperation);
+            prop.setRasterOp3(rasterOperation);
             if (bitmap.isValid()) {
                 BufferedImage bi = bitmap.getImage(prop.getPenColor().getColor(), prop.getBackgroundColor().getColor(),
                                                    prop.getBkMode() == HwmfBkMode.TRANSPARENT);
@@ -912,7 +912,7 @@ public class HwmfFill {
         @Override
         public void draw(HwmfGraphics ctx) {
             HwmfDrawProperties prop = ctx.getProperties();
-            prop.setRasterOp(rasterOperation);
+            prop.setRasterOp3(rasterOperation);
             // TODO: implement second operation based on playback device context
             if (target != null) {
                 HwmfBkMode oldMode = prop.getBkMode();

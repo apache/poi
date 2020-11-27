@@ -48,6 +48,7 @@ import java.util.BitSet;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -461,7 +462,8 @@ public class HwmfGraphics implements HwmfCharsetAware {
             return;
         }
 
-        String textString = trimText(font, isUnicode, text, length);
+        final Charset charset = getCharset(font, isUnicode);
+        String textString = trimText(charset, text, length);
         if (textString.isEmpty()) {
             return;
         }
@@ -481,7 +483,12 @@ public class HwmfGraphics implements HwmfCharsetAware {
 
         final double angle = Math.toRadians(-font.getEscapement()/10.);
 
-        final Point2D dst = getRotatedOffset(angle, frc, as);
+        // TODO: find out when to use asian align
+        boolean useAsianAlign = (opts == null) &&
+            textString.codePoints().anyMatch(Character::isIdeographic) &&
+            charset.displayName(Locale.ROOT). startsWith("GB");
+
+        final Point2D dst = getRotatedOffset(angle, frc, as, useAsianAlign);
         final Shape clipShape = graphicsCtx.getClip();
 
         try {
@@ -640,8 +647,7 @@ public class HwmfGraphics implements HwmfCharsetAware {
         charsetProvider = provider;
     }
 
-    private String trimText(HwmfFont font, boolean isUnicode, byte[] text, int length) {
-        final Charset charset = getCharset(font, isUnicode);
+    private String trimText(Charset charset, byte[] text, int length) {
 
         int trimLen;
         for (trimLen=0; trimLen<text.length; trimLen+=2) {
@@ -660,7 +666,8 @@ public class HwmfGraphics implements HwmfCharsetAware {
         return textString.substring(0, Math.min(textString.length(), length));
     }
 
-    private void updateHorizontalAlign(AffineTransform tx, TextLayout layout) {
+    private void updateHorizontalAlign(AffineTransform tx, TextLayout layout, boolean useAsianAlign) {
+        // TODO: using prop.getTextAlignAsian doesn't look good ...
         switch (prop.getTextAlignLatin()) {
             default:
             case LEFT:
@@ -674,9 +681,9 @@ public class HwmfGraphics implements HwmfCharsetAware {
         }
     }
 
-    private void updateVerticalAlign(AffineTransform tx, TextLayout layout) {
+    private void updateVerticalAlign(AffineTransform tx, TextLayout layout, boolean useAsianAlign) {
         // TODO: check min/max orientation
-        switch (prop.getTextVAlignLatin()) {
+        switch (useAsianAlign ? prop.getTextVAlignAsian() : prop.getTextVAlignLatin()) {
             case TOP:
                 tx.translate(0, layout.getAscent());
                 break;
@@ -710,11 +717,11 @@ public class HwmfGraphics implements HwmfCharsetAware {
         graphicsCtx.setTransform(at);
     }
 
-    private Point2D getRotatedOffset(double angle, FontRenderContext frc, AttributedString as) {
+    private Point2D getRotatedOffset(double angle, FontRenderContext frc, AttributedString as, boolean useAsianAlign) {
         final TextLayout layout = new TextLayout(as.getIterator(), frc);
         final AffineTransform tx = new AffineTransform();
-        updateHorizontalAlign(tx, layout);
-        updateVerticalAlign(tx, layout);
+        updateHorizontalAlign(tx, layout, useAsianAlign);
+        updateVerticalAlign(tx, layout, useAsianAlign);
 
         tx.rotate(angle);
         Point2D src = new Point2D.Double();
@@ -736,7 +743,7 @@ public class HwmfGraphics implements HwmfCharsetAware {
         // are not supported, as we would need to extract the destination image area from the underlying buffered image
         // and therefore would make it mandatory that the graphics context must be from a buffered image
         // furthermore I doubt the purpose of bitwise image operations on non-black/white images
-        switch (prop.getRasterOp()) {
+        switch (prop.getRasterOp3()) {
             case D:
                 // keep destination, i.e. do nothing
                 break;
@@ -785,7 +792,7 @@ public class HwmfGraphics implements HwmfCharsetAware {
                 // of the referenced image and can be also negative
                 Composite old = graphicsCtx.getComposite();
                 int newComp;
-                switch (prop.getRasterOp()) {
+                switch (prop.getRasterOp3()) {
                     default:
                     case SRCCOPY:
                         newComp = AlphaComposite.SRC_OVER;

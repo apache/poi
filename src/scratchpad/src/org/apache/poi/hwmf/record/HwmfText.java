@@ -146,7 +146,7 @@ public class HwmfText {
 
         @Override
         public HwmfRecordType getWmfRecordType() {
-            return HwmfRecordType.setBkColor;
+            return HwmfRecordType.setTextJustification;
         }
 
         @Override
@@ -236,7 +236,7 @@ public class HwmfText {
         @Override
         public Map<String, Supplier<?>> getGenericProperties() {
             return GenericRecordUtil.getGenericProperties(
-                "text", () -> getText(StandardCharsets.US_ASCII),
+                "text", () -> getText(charsetProvider.get()),
                 "reference", () -> reference
             );
         }

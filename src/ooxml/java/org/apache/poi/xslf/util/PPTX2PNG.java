@@ -28,9 +28,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.charset.Charset;
+import java.util.Arrays;
 import java.util.Locale;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.poifs.filesystem.FileMagic;
@@ -77,7 +80,8 @@ public final class PPTX2PNG {
             "    -emfHeaderBounds  force the usage of the emf header bounds to calculate the bounding box\n" +
             "    -fontdir <dir>    (PDF only) font directories separated by \";\" - use $HOME for current users home dir\n" +
             "                      defaults to the usual plattform directories\n" +
-            "    -fontTtf <regex>  (PDF only) regex to match the .ttf filenames";
+            "    -fontTtf <regex>  (PDF only) regex to match the .ttf filenames\n" +
+            "    -fontMap <map>    \";\"-separated list of font mappings <typeface from>:<typeface to>";
 
         System.out.println(msg);
         // no System.exit here, as we also run in junit tests!
@@ -109,6 +113,7 @@ public final class PPTX2PNG {
     private boolean emfHeaderBounds = false;
     private String fontDir = null;
     private String fontTtf = null;
+    private String fontMap = null;
 
     private PPTX2PNG() {
     }
@@ -213,6 +218,14 @@ public final class PPTX2PNG {
                         fontTtf = null;
                     }
                     break;
+                case "-fontmap":
+                    if (opt != null) {
+                        fontMap = opt;
+                        i++;
+                    }  else {
+                        fontMap = null;
+                    }
+                    break;
                 default:
                     file = new File(args[i]);
                     break;
@@ -303,6 +316,12 @@ public final class PPTX2PNG {
                     graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
                     graphics.setRenderingHint(Drawable.DEFAULT_CHARSET, getDefaultCharset());
                     graphics.setRenderingHint(Drawable.EMF_FORCE_HEADER_BOUNDS, emfHeaderBounds);
+                    if (fontMap != null) {
+                        Map<String,String> fmap = Arrays.stream(fontMap.split(";"))
+                            .map(s -> s.split(":"))
+                            .collect(Collectors.toMap(s -> s[0], s -> s[1]));
+                        graphics.setRenderingHint(Drawable.FONT_MAP, fmap);
+                    }
 
                     graphics.scale(scale / lenSide, scale / lenSide);
 
