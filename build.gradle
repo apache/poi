@@ -295,7 +295,7 @@ project('ooxml') {
 
         compile 'org.apache.pdfbox:pdfbox:2.0.21'
         compile 'org.apache.pdfbox:fontbox:2.0.21'
-        compile 'de.rototor.pdfbox:graphics2d:0.28'
+        compile 'de.rototor.pdfbox:graphics2d:0.29'
 
         // for ooxml-lite, should we move this somewhere else?
         compile "junit:junit:${junitVersion}"
