@@ -40,6 +40,8 @@ import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
+import java.awt.image.IndexColorModel;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.text.AttributedString;
@@ -60,7 +62,6 @@ import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfFont;
-import org.apache.poi.hwmf.record.HwmfHatchStyle;
 import org.apache.poi.hwmf.record.HwmfMapMode;
 import org.apache.poi.hwmf.record.HwmfMisc.WmfSetBkMode.HwmfBkMode;
 import org.apache.poi.hwmf.record.HwmfObjectTableEntry;
@@ -190,18 +191,18 @@ public class HwmfGraphics implements HwmfCharsetAware {
     public void fill(Shape shape) {
         HwmfDrawProperties prop = getProperties();
 
-        Composite old = graphicsCtx.getComposite();
-        graphicsCtx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
         if (prop.getBrushStyle() != HwmfBrushStyle.BS_NULL) {
-            if (prop.getBkMode() == HwmfBkMode.OPAQUE) {
-                graphicsCtx.setPaint(prop.getBackgroundColor().getColor());
-                graphicsCtx.fill(shape);
-            }
+            Composite old = graphicsCtx.getComposite();
+            graphicsCtx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
+//            if (prop.getBkMode() == HwmfBkMode.OPAQUE) {
+//                graphicsCtx.setPaint(prop.getBackgroundColor().getColor());
+//                graphicsCtx.fill(shape);
+//            }
 
             graphicsCtx.setPaint(getFill());
             graphicsCtx.fill(shape);
+            graphicsCtx.setComposite(old);
         }
-        graphicsCtx.setComposite(old);
 
         draw(shape);
     }
@@ -253,31 +254,27 @@ public class HwmfGraphics implements HwmfCharsetAware {
     }
 
     protected Paint getHatchedFill() {
-        int dim = 7, mid = 3;
-        BufferedImage bi = new BufferedImage(dim, dim, BufferedImage.TYPE_4BYTE_ABGR);
-        Graphics2D g = bi.createGraphics();
-        Color c = (getProperties().getBkMode() == HwmfBkMode.TRANSPARENT)
-            ? new Color(0, true)
-            : getProperties().getBackgroundColor().getColor();
-        g.setColor(c);
-        g.fillRect(0, 0, dim, dim);
-        g.setColor(getProperties().getBrushColor().getColor());
-        HwmfHatchStyle h = getProperties().getBrushHatch();
-        if (h == HwmfHatchStyle.HS_HORIZONTAL || h == HwmfHatchStyle.HS_CROSS) {
-            g.drawLine(0, mid, dim, mid);
+        HwmfDrawProperties prop = getProperties();
+        BufferedImage pattern = getPatternFromLong(
+            prop.getBrushHatch().pattern,
+            prop.getBackgroundColor().getColor(),
+            prop.getBrushColor().getColor(),
+            prop.getBkMode() == HwmfBkMode.TRANSPARENT
+        );
+        return new TexturePaint(pattern, new Rectangle(0,0,8,8));
+    }
+
+    public static BufferedImage getPatternFromLong(long patternLng, Color background, Color foreground, boolean hasAlpha) {
+        final int[] cmap = {background.getRGB(), foreground.getRGB()};
+        final IndexColorModel icm = new IndexColorModel(1, 2, cmap, 0, hasAlpha, hasAlpha ? 0 : -1, DataBuffer.TYPE_BYTE);
+        final BufferedImage pattern = new BufferedImage(8, 8, BufferedImage.TYPE_BYTE_INDEXED, icm);
+
+        byte[] pt = new byte[64];
+        for (int i=0; i<pt.length; i++) {
+            pt[i] = (byte)((patternLng >>> i) & 1);
         }
-        if (h == HwmfHatchStyle.HS_VERTICAL || h == HwmfHatchStyle.HS_CROSS) {
-            g.drawLine(mid, 0, mid, dim);
-        }
-        if (h == HwmfHatchStyle.HS_FDIAGONAL || h == HwmfHatchStyle.HS_DIAGCROSS) {
-            g.drawLine(0, 0, dim, dim);
-        }
-        if (h == HwmfHatchStyle.HS_BDIAGONAL || h == HwmfHatchStyle.HS_DIAGCROSS) {
-            g.drawLine(0, dim, dim, 0);
-        }
-        // TODO: handle new HS_* enumeration values
-        g.dispose();
-        return new TexturePaint(bi, new Rectangle(0,0,dim,dim));
+        pattern.getRaster().setDataElements(0, 0, 8, 8, pt);
+        return pattern;
     }
 
     protected Paint getPatternPaint() {

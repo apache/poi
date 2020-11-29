@@ -28,6 +28,7 @@ import java.awt.image.BufferedImage;
 import java.util.List;
 
 import org.apache.poi.hwmf.draw.HwmfGraphics.BufferedImageRenderer;
+import org.apache.poi.hwmf.record.HwmfBinaryRasterOp;
 import org.apache.poi.hwmf.record.HwmfBrushStyle;
 import org.apache.poi.hwmf.record.HwmfColorRef;
 import org.apache.poi.hwmf.record.HwmfFill.WmfSetPolyfillMode.HwmfPolyfillMode;
@@ -68,6 +69,7 @@ public class HwmfDrawProperties {
     private HwmfTextVerticalAlignment textVAlignLatin;
     private HwmfTextAlignment textAlignAsian;
     private HwmfTextVerticalAlignment textVAlignAsian;
+    private HwmfBinaryRasterOp rasterOp2;
     private HwmfTernaryRasterOp rasterOp3;
     protected Shape clip;
     protected final AffineTransform transform = new AffineTransform();
@@ -92,7 +94,8 @@ public class HwmfDrawProperties {
         textVAlignLatin = HwmfTextVerticalAlignment.TOP;
         textAlignAsian = HwmfTextAlignment.RIGHT;
         textVAlignAsian = HwmfTextVerticalAlignment.TOP;
-        rasterOp3 = HwmfTernaryRasterOp.PATCOPY;
+        rasterOp2 = HwmfBinaryRasterOp.R2_COPYPEN;
+        rasterOp3 = null; // default: PATCOPY?
         clip = null;
         font = new HwmfFont();
         font.initDefaults();
@@ -128,6 +131,7 @@ public class HwmfDrawProperties {
         this.textVAlignLatin = other.textVAlignLatin;
         this.textAlignAsian = other.textAlignAsian;
         this.textVAlignAsian = other.textVAlignAsian;
+        this.rasterOp2 = other.rasterOp2;
         this.rasterOp3 = other.rasterOp3;
         this.transform.setTransform(other.transform);
         this.clip = other.clip;
@@ -284,7 +288,7 @@ public class HwmfDrawProperties {
     }
 
     public void setBrushBitmap(BufferedImage brushBitmap) {
-        this.brushBitmap = new BufferedImageRenderer(brushBitmap);
+        this.brushBitmap = (brushBitmap == null) ? null : new BufferedImageRenderer(brushBitmap);
     }
 
     /**
@@ -422,5 +426,12 @@ public class HwmfDrawProperties {
         } else {
             this.brushTransform.setTransform(brushTransform);
         }
+    }
+    public HwmfBinaryRasterOp getRasterOp2() {
+        return rasterOp2;
+    }
+
+    public void setRasterOp2(HwmfBinaryRasterOp rasterOp2) {
+        this.rasterOp2 = rasterOp2;
     }
 }

@@ -390,18 +390,19 @@ public class HemfGraphics extends HwmfGraphics {
     @Override
     public void fill(Shape shape) {
         HemfDrawProperties prop = getProperties();
+        if (prop.getBrushStyle() == HwmfBrushStyle.BS_NULL) {
+            return;
+        }
 
         Composite old = graphicsCtx.getComposite();
         graphicsCtx.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER));
-        if (prop.getBrushStyle() != HwmfBrushStyle.BS_NULL) {
-            if (prop.getBkMode() == HwmfMisc.WmfSetBkMode.HwmfBkMode.OPAQUE) {
-                graphicsCtx.setPaint(prop.getBackgroundColor().getColor());
-                graphicsCtx.fill(shape);
-            }
+//        if (prop.getBkMode() == HwmfMisc.WmfSetBkMode.HwmfBkMode.OPAQUE) {
+//            graphicsCtx.setPaint(prop.getBackgroundColor().getColor());
+//            graphicsCtx.fill(shape);
+//        }
 
-            graphicsCtx.setPaint(getFill());
-            graphicsCtx.fill(shape);
-        }
+        graphicsCtx.setPaint(getFill());
+        graphicsCtx.fill(shape);
         graphicsCtx.setComposite(old);
     }
 

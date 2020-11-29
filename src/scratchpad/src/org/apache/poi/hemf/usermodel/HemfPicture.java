@@ -197,11 +197,13 @@ public class HemfPicture implements Iterable<HemfRecord>, GenericRecord {
 
             HemfGraphics g = new HemfGraphics(ctx, b);
 
+            int idx=0;
             for (HemfRecord r : getRecords()) {
                 try {
                     g.draw(r);
                 } catch (RuntimeException ignored) {
                 }
+                idx++;
             }
         } finally {
             ctx.setTransform(at);

@@ -390,7 +390,7 @@ public enum HwmfTernaryRasterOp {
     }
 
     public int getOpCode() {
-        return opValue & 0xFF;
+        return opValue & 0xFFFF;
     }
 
     public String describeCmd() {

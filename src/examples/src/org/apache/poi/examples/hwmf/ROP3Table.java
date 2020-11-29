@@ -29,12 +29,12 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Ellipse2D;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
-import java.awt.image.IndexColorModel;
 import java.io.File;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.apache.poi.hwmf.draw.HwmfGraphics;
 import org.apache.poi.hwmf.draw.HwmfROP3Composite;
 import org.apache.poi.hwmf.record.HwmfTernaryRasterOp;
 
@@ -44,28 +44,17 @@ import org.apache.poi.hwmf.record.HwmfTernaryRasterOp;
  * inspired from http://www.evmsoft.net/en/roptest.html
  */
 public final class ROP3Table {
-    private ROP3Table() {
-    }
+    private ROP3Table() {}
 
-    private static byte[] PATTERN = {
-        1, 0, 1, 0, 1, 0, 1, 0,
-        0, 1, 0, 1, 0, 1, 0, 1,
-        1, 0, 1, 1, 1, 0, 1, 1,
-        0, 1, 0, 1, 0, 1, 0, 1,
-        1, 0, 1, 0, 1, 0, 1, 0,
-        0, 1, 0, 1, 0, 1, 0, 1,
-        1, 0, 1, 1, 1, 0, 1, 1,
-        0, 1, 0, 1, 0, 1, 0, 1,
-    };
-
+    private static final long PATTERN = 0xAADDAA55AADDAA55L;
     private static final HwmfTernaryRasterOp[] OPS = HwmfTernaryRasterOp.values();
-    private static final int COLS = 16;
-    private static final double BOX = 100, SCALE = 1, HEADER = 1.1;
+    private static final int COLS = 16, BOX = 100;
+    private static final double SCALE = 2, HEADER = 1.1;
 
-    private static final Rectangle2D RECT = new Rectangle2D.Double(0.05* BOX, 0.05* BOX, 0.90* BOX, 0.90* BOX);
-    private static final Shape CIRCLE_BIG = new Ellipse2D.Double(0.15* BOX, 0.15* BOX, 0.70* BOX, 0.70* BOX);
-    private static final Shape CIRCLE_SMALL = new Ellipse2D.Double(0.40* BOX, 0.40* BOX, 0.20* BOX, 0.20* BOX);
-    private static final Shape LABEL_BOX = new Rectangle.Double(0.06* BOX, 0.85* BOX, 0.88* BOX, 0.10* BOX);
+    private static final Rectangle2D RECT = new Rectangle2D.Double(0.05*BOX, 0.05*BOX, 0.90*BOX, 0.90*BOX);
+    private static final Shape CIRCLE_BIG = new Ellipse2D.Double(0.15*BOX, 0.15*BOX, 0.70*BOX, 0.70*BOX);
+    private static final Shape CIRCLE_SMALL = new Ellipse2D.Double(0.40*BOX, 0.40*BOX, 0.20*BOX, 0.20*BOX);
+    private static final Shape LABEL_BOX = new Rectangle.Double(0.06*BOX, 0.85*BOX, 0.88*BOX, 0.10*BOX);
 
     private static final AlphaComposite SRC_OVER = AlphaComposite.getInstance(AlphaComposite.SRC_OVER);
 
@@ -77,29 +66,23 @@ public final class ROP3Table {
 
         BufferedImage dest = new BufferedImage(
                 (int)(BOX * COLS * SCALE),
-                (int)(BOX *(Math.max(OPS.length/COLS,1) + HEADER)* SCALE),
+                (int)(BOX * (Math.max(OPS.length/COLS,1) + HEADER) * SCALE),
                 BufferedImage.TYPE_INT_ARGB);
         Graphics2D g = dest.createGraphics();
-
-        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
-
         g.setTransform(INIT_AT);
+        g.setFont(new Font(Font.SANS_SERIF, Font.PLAIN, 10));
+        g.translate(BOX * (COLS-5) / 2., 0);
         g.setColor(Color.BLACK);
 
-        for (int i=0; i<3; i++) {
-            String str = new String[]{"Dest:","Source:","Pattern:"}[i];
-            TextLayout t = new TextLayout(str, g.getFont(), g.getFontRenderContext());
-            Rectangle2D b = t.getBounds();
-            g.drawString(str, (float)(((i*2+0.95)*BOX - b.getWidth())), (float)(0.55 * BOX));
-        }
-
-        g.translate(BOX, 0);
         fillDest(g);
+        fillLabel(g, "Dest");
         g.translate(2*BOX, 0);
         g.drawImage(source, 0, 0, null);
+        fillLabel(g, "Source");
         g.translate(2*BOX, 0);
         g.setPaint(new TexturePaint(pattern, RECT));
         g.fill(RECT);
+        fillLabel(g, "Pattern");
 
         int idx=0;
         for (HwmfTernaryRasterOp op : OPS) {
@@ -109,7 +92,7 @@ public final class ROP3Table {
 
             fillDest(g);
             fillPattern(g, op, pattern, source);
-            fillLabel(g, op);
+            fillLabel(g, op.name());
             idx++;
         }
 
@@ -118,20 +101,17 @@ public final class ROP3Table {
     }
 
     private static BufferedImage getPattern() {
-        byte[] bw = { 0, -1 };
-        BufferedImage pattern = new BufferedImage(8, 8, BufferedImage.TYPE_BYTE_INDEXED, new IndexColorModel(1, 2, bw, bw, bw));
-        pattern.getRaster().setDataElements(0, 0, 8, 8, PATTERN);
-        return pattern;
+        return HwmfGraphics.getPatternFromLong(PATTERN, Color.BLACK, Color.WHITE, false);
     }
 
     private static BufferedImage getSource() {
-        BufferedImage checker = new BufferedImage((int) BOX, (int) BOX, BufferedImage.TYPE_INT_ARGB);
+        BufferedImage checker = new BufferedImage(BOX, BOX, BufferedImage.TYPE_INT_ARGB);
         Graphics2D cg = checker.createGraphics();
         cg.setColor(Color.PINK);
-        cg.fill(new Rectangle2D.Double(0.05* BOX, 0.05* BOX, 0.90* BOX, 0.90* BOX));
+        cg.fill(RECT);
         cg.setColor(new Color(0xE6E6FA, false));
-        cg.fill(new Rectangle2D.Double(0.05* BOX, 0.05* BOX, 0.45* BOX, 0.45* BOX));
-        cg.fill(new Rectangle2D.Double(0.50* BOX, 0.50* BOX, 0.45* BOX, 0.45* BOX));
+        cg.fill(new Rectangle2D.Double(0.05*BOX, 0.05*BOX, 0.45*BOX, 0.45*BOX));
+        cg.fill(new Rectangle2D.Double(0.50*BOX, 0.50*BOX, 0.45*BOX, 0.45*BOX));
         cg.dispose();
         return checker;
     }
@@ -154,15 +134,13 @@ public final class ROP3Table {
         g.setComposite(SRC_OVER);
     }
 
-        private static void fillLabel(Graphics2D g, HwmfTernaryRasterOp op) {
+    private static void fillLabel(Graphics2D g, String str) {
         g.setColor(Color.WHITE);
         g.fill(LABEL_BOX);
         g.setColor(Color.BLACK);
 
-        TextLayout t = new TextLayout(op.name(), g.getFont(), g.getFontRenderContext());
+        TextLayout t = new TextLayout(str, g.getFont(), g.getFontRenderContext());
         Rectangle2D b = t.getBounds();
-        g.drawString(op.name(), (float)((BOX -b.getWidth())/2.), (float)(0.94* BOX));
-
+        g.drawString(str, (float)((BOX -b.getWidth())/2.), (float)(0.94*BOX));
     }
-
 }

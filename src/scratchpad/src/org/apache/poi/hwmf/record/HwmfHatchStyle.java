@@ -22,34 +22,37 @@ package org.apache.poi.hwmf.record;
  */
 public enum HwmfHatchStyle {
     /** ----- - A horizontal hatch */
-    HS_HORIZONTAL(0x0000),
+    HS_HORIZONTAL(0x0000, 0x000000FF000000FFL),
     /** ||||| - A vertical hatch */
-    HS_VERTICAL(0x0001),
+    HS_VERTICAL(0x0001, 0x8888888888888888L),
     /** \\\\\ - A 45-degree downward, left-to-right hatch. */
-    HS_FDIAGONAL(0x0002),
+    HS_FDIAGONAL(0x0002, 0x0804020180402010L),
     /** ///// - A 45-degree upward, left-to-right hatch. */
-    HS_BDIAGONAL(0x0003),
+    HS_BDIAGONAL(0x0003, 0x1020408001020408L),
     /** +++++ - A horizontal and vertical cross-hatch. */
-    HS_CROSS(0x0004),
+    HS_CROSS(0x0004, 0x111111FF111111FFL),
     /** xxxxx - A 45-degree crosshatch. */
-    HS_DIAGCROSS(0x0005),
+    HS_DIAGCROSS(0x0005, 0x1824428181422418L),
     /** The hatch is not a pattern, but is a solid color. */
-    HS_SOLIDCLR(0x0006),
+    HS_SOLIDCLR(0x0006, 0xFFFFFFFFFFFFFFFFL),
     /** The hatch is not a pattern, but is a dithered color. */
-    HS_DITHEREDCLR(0x0007),
+    HS_DITHEREDCLR(0x0007, 0xAA55AA55AA55AA55L),
     /** The hatch is not a pattern, but is a solid color, defined by the current text (foreground) color. */
-    HS_SOLIDTEXTCLR(0x0008),
+    HS_SOLIDTEXTCLR(0x0008, 0xFFFFFFFFFFFFFFFFL),
     /** The hatch is not a pattern, but is a dithered color, defined by the current text (foreground) color. */
-    HS_DITHEREDTEXTCLR(0x0009),
+    HS_DITHEREDTEXTCLR(0x0009, 0xAA55AA55AA55AA55L),
     /** The hatch is not a pattern, but is a solid color, defined by the current background color. */
-    HS_SOLIDBKCLR(0x000A),
+    HS_SOLIDBKCLR(0x000A, 0x0000000000000000L),
     /** The hatch is not a pattern, but is a dithered color, defined by the current background color. */
-    HS_DITHEREDBKCLR(0x000B)
+    HS_DITHEREDBKCLR(0x000B, 0xAA55AA55AA55AA55L)
     ;
 
     int flag;
-    HwmfHatchStyle(int flag) {
+    public long pattern;
+
+    HwmfHatchStyle(int flag, long pattern) {
         this.flag = flag;
+        this.pattern = pattern;
     }
 
     public static HwmfHatchStyle valueOf(int flag) {

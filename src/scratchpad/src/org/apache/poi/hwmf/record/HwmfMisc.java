@@ -373,7 +373,8 @@ public class HwmfMisc {
 
         @Override
         public void draw(HwmfGraphics ctx) {
-
+            HwmfDrawProperties prop = ctx.getProperties();
+            prop.setRasterOp2(drawMode);
         }
 
         @Override
@@ -532,7 +533,7 @@ public class HwmfMisc {
         public void draw(HwmfGraphics ctx) {
             ctx.addObjectTableEntry(this);
         }
-        
+
         @Override
         public void applyObject(HwmfGraphics ctx) {
             if (patternDib != null && !patternDib.isValid()) {
@@ -658,7 +659,7 @@ public class HwmfMisc {
         public void draw(HwmfGraphics ctx) {
             ctx.addObjectTableEntry(this);
         }
-        
+
         @Override
         public void applyObject(HwmfGraphics ctx) {
             HwmfDrawProperties dp = ctx.getProperties();
@@ -708,7 +709,7 @@ public class HwmfMisc {
         public void draw(HwmfGraphics ctx) {
             ctx.addObjectTableEntry(this);
         }
-        
+
         @Override
         public void applyObject(HwmfGraphics ctx) {
             HwmfDrawProperties p = ctx.getProperties();
@@ -814,7 +815,7 @@ public class HwmfMisc {
         public void draw(HwmfGraphics ctx) {
             ctx.addObjectTableEntry(this);
         }
-        
+
         @Override
         public void applyObject(HwmfGraphics ctx) {
             HwmfDrawProperties p = ctx.getProperties();
