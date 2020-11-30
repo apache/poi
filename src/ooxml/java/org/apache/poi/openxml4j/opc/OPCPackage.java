@@ -646,13 +646,13 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 * Retrieve parts by relationship type.
 	 *
 	 * @param relationshipType
-	 *            Relationship type.
+	 *            Relationship type. Must not be {@code null}.
 	 * @return All parts which are the target of a relationship with the
-	 *         specified type, if the method can't retrieve relationships from
-	 *         the package, then return <code>null</code>.
+	 *         specified type. If no such parts are found, the list is empty.
+	 * @throws InvalidOperationException If called on a write-only package.
 	 */
 	public ArrayList<PackagePart> getPartsByRelationshipType(
-			String relationshipType) {
+			String relationshipType) throws InvalidOperationException {
 		if (relationshipType == null) {
 			throw new IllegalArgumentException("relationshipType");
 		}
