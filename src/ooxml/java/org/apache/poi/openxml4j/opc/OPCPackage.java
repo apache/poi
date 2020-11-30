@@ -659,9 +659,15 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 		}
 		ArrayList<PackagePart> retArr = new ArrayList<>();
 		for (PackageRelationship rel : getRelationshipsByType(relationshipType)) {
-			PackagePart part = getPart(rel);
+			PackagePart part = null;
+			try {
+				part = getPart(PackagingURIHelper.createPartName(rel.getTargetURI()));
+			} catch (InvalidFormatException ignored) {
+				// The relationship already exists, so the part should have a valid URI.
+			}
+
 			if (part != null) {
-			    retArr.add(part);
+				retArr.add(part);
 			}
 		}
 		Collections.sort(retArr);
