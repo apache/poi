@@ -19,8 +19,7 @@ package org.apache.poi.xslf;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openxmlformats.schemas.presentationml.x2006.main.CTHeaderFooter;
-import org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderSize;
+import org.openxmlformats.schemas.presentationml.x2006.main.*;
 
 // aim is to get these classes loaded and included in poi-ooxml-schemas.jar
 public class TestNecessaryOOXMLClasses {
@@ -31,5 +30,22 @@ public class TestNecessaryOOXMLClasses {
         Assert.assertNotNull(stPlaceholderSize);
         CTHeaderFooter ctHeaderFooter = CTHeaderFooter.Factory.newInstance();
         Assert.assertNotNull(ctHeaderFooter);
+        //the following are used in LinkVideoToPptx example
+        STTLTimeIndefinite sttlTimeIndefinite = STTLTimeIndefinite.Factory.newInstance();
+        Assert.assertNotNull(sttlTimeIndefinite);
+        STTLTimeNodeFillType sttlTimeNodeFillType = STTLTimeNodeFillType.Factory.newInstance();
+        Assert.assertNotNull(sttlTimeNodeFillType);
+        STTLTimeNodeRestartType sttlTimeNodeRestartType = STTLTimeNodeRestartType.Factory.newInstance();
+        Assert.assertNotNull(sttlTimeNodeRestartType);
+        STTLTimeNodeType sttlTimeNodeType = STTLTimeNodeType.Factory.newInstance();
+        Assert.assertNotNull(sttlTimeNodeType);
+        CTExtension ctExtension = CTExtension.Factory.newInstance();
+        Assert.assertNotNull(ctExtension);
+        CTTLCommonMediaNodeData cttlCommonMediaNodeData = CTTLCommonMediaNodeData.Factory.newInstance();
+        Assert.assertNotNull(cttlCommonMediaNodeData);
+        CTTLCommonTimeNodeData cttlCommonTimeNodeData = CTTLCommonTimeNodeData.Factory.newInstance();
+        Assert.assertNotNull(cttlCommonTimeNodeData);
+        CTTimeNodeList ctTimeNodeList = CTTimeNodeList.Factory.newInstance();
+        Assert.assertNotNull(ctTimeNodeList);
     }
 }
