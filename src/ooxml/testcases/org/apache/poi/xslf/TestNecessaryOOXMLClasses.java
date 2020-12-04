@@ -17,35 +17,42 @@
 
 package org.apache.poi.xslf;
 
-import org.junit.Assert;
+import static org.junit.Assert.assertNotNull;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Supplier;
+
+import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
-import org.openxmlformats.schemas.presentationml.x2006.main.*;
 
 // aim is to get these classes loaded and included in poi-ooxml-schemas.jar
 public class TestNecessaryOOXMLClasses {
 
     @Test
     public void testProblemClasses() {
-        STPlaceholderSize stPlaceholderSize = STPlaceholderSize.Factory.newInstance();
-        Assert.assertNotNull(stPlaceholderSize);
-        CTHeaderFooter ctHeaderFooter = CTHeaderFooter.Factory.newInstance();
-        Assert.assertNotNull(ctHeaderFooter);
-        //the following are used in LinkVideoToPptx example
-        STTLTimeIndefinite sttlTimeIndefinite = STTLTimeIndefinite.Factory.newInstance();
-        Assert.assertNotNull(sttlTimeIndefinite);
-        STTLTimeNodeFillType sttlTimeNodeFillType = STTLTimeNodeFillType.Factory.newInstance();
-        Assert.assertNotNull(sttlTimeNodeFillType);
-        STTLTimeNodeRestartType sttlTimeNodeRestartType = STTLTimeNodeRestartType.Factory.newInstance();
-        Assert.assertNotNull(sttlTimeNodeRestartType);
-        STTLTimeNodeType sttlTimeNodeType = STTLTimeNodeType.Factory.newInstance();
-        Assert.assertNotNull(sttlTimeNodeType);
-        CTExtension ctExtension = CTExtension.Factory.newInstance();
-        Assert.assertNotNull(ctExtension);
-        CTTLCommonMediaNodeData cttlCommonMediaNodeData = CTTLCommonMediaNodeData.Factory.newInstance();
-        Assert.assertNotNull(cttlCommonMediaNodeData);
-        CTTLCommonTimeNodeData cttlCommonTimeNodeData = CTTLCommonTimeNodeData.Factory.newInstance();
-        Assert.assertNotNull(cttlCommonTimeNodeData);
-        CTTimeNodeList ctTimeNodeList = CTTimeNodeList.Factory.newInstance();
-        Assert.assertNotNull(ctTimeNodeList);
+        List<Supplier<XmlObject>> sup = Arrays.asList(
+            org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderSize.Factory::newInstance,
+            org.openxmlformats.schemas.presentationml.x2006.main.CTHeaderFooter.Factory::newInstance,
+            //the following are used in LinkVideoToPptx example
+            org.openxmlformats.schemas.drawingml.x2006.main.CTVideoFile.Factory::newInstance,
+            org.openxmlformats.schemas.presentationml.x2006.main.STTLTimeIndefinite.Factory::newInstance,
+            org.openxmlformats.schemas.presentationml.x2006.main.STTLTimeNodeFillType.Factory::newInstance,
+            org.openxmlformats.schemas.presentationml.x2006.main.STTLTimeNodeRestartType.Factory::newInstance,
+            org.openxmlformats.schemas.presentationml.x2006.main.STTLTimeNodeType.Factory::newInstance,
+            org.openxmlformats.schemas.presentationml.x2006.main.CTExtension.Factory::newInstance,
+            org.openxmlformats.schemas.presentationml.x2006.main.CTTLCommonMediaNodeData.Factory::newInstance,
+            org.openxmlformats.schemas.presentationml.x2006.main.CTTLCommonTimeNodeData.Factory::newInstance,
+            org.openxmlformats.schemas.presentationml.x2006.main.CTTimeNodeList.Factory::newInstance,
+            org.openxmlformats.schemas.presentationml.x2006.main.CTExtensionList.Factory::newInstance,
+            org.openxmlformats.schemas.presentationml.x2006.main.CTSlideTiming.Factory::newInstance,
+            org.openxmlformats.schemas.presentationml.x2006.main.CTTLMediaNodeVideo.Factory::newInstance,
+            org.openxmlformats.schemas.presentationml.x2006.main.CTTLTimeConditionList.Factory::newInstance,
+            org.openxmlformats.schemas.presentationml.x2006.main.CTTLTimeTargetElement.Factory::newInstance
+        );
+
+        for (Supplier<XmlObject> xo : sup) {
+            assertNotNull(xo.get());
+        }
     }
 }
