@@ -28,6 +28,7 @@ import java.net.URISyntaxException;
 
 import javax.xml.namespace.QName;
 
+import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
@@ -55,7 +56,7 @@ public class TestXSLFExamples {
     @Test
     public void LinkVideoToPptx() throws IOException, URISyntaxException {
             String videoFileName = "file_example_MP4_640_3MG.mp4";
-            File previewJpg = new File("test-data/document/abstract1.jpg");
+            File previewJpg = POIDataSamples.getDocumentInstance().getFile("abstract1.jpg");
 
             XMLSlideShow pptx = new XMLSlideShow();
 
