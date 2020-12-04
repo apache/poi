@@ -33,22 +33,7 @@ public class TestNecessaryOOXMLClasses {
     public void testProblemClasses() {
         List<Supplier<XmlObject>> sup = Arrays.asList(
             org.openxmlformats.schemas.presentationml.x2006.main.STPlaceholderSize.Factory::newInstance,
-            org.openxmlformats.schemas.presentationml.x2006.main.CTHeaderFooter.Factory::newInstance,
-            //the following are used in LinkVideoToPptx example
-            org.openxmlformats.schemas.drawingml.x2006.main.CTVideoFile.Factory::newInstance,
-            org.openxmlformats.schemas.presentationml.x2006.main.STTLTimeIndefinite.Factory::newInstance,
-            org.openxmlformats.schemas.presentationml.x2006.main.STTLTimeNodeFillType.Factory::newInstance,
-            org.openxmlformats.schemas.presentationml.x2006.main.STTLTimeNodeRestartType.Factory::newInstance,
-            org.openxmlformats.schemas.presentationml.x2006.main.STTLTimeNodeType.Factory::newInstance,
-            org.openxmlformats.schemas.presentationml.x2006.main.CTExtension.Factory::newInstance,
-            org.openxmlformats.schemas.presentationml.x2006.main.CTTLCommonMediaNodeData.Factory::newInstance,
-            org.openxmlformats.schemas.presentationml.x2006.main.CTTLCommonTimeNodeData.Factory::newInstance,
-            org.openxmlformats.schemas.presentationml.x2006.main.CTTimeNodeList.Factory::newInstance,
-            org.openxmlformats.schemas.presentationml.x2006.main.CTExtensionList.Factory::newInstance,
-            org.openxmlformats.schemas.presentationml.x2006.main.CTSlideTiming.Factory::newInstance,
-            org.openxmlformats.schemas.presentationml.x2006.main.CTTLMediaNodeVideo.Factory::newInstance,
-            org.openxmlformats.schemas.presentationml.x2006.main.CTTLTimeConditionList.Factory::newInstance,
-            org.openxmlformats.schemas.presentationml.x2006.main.CTTLTimeTargetElement.Factory::newInstance
+            org.openxmlformats.schemas.presentationml.x2006.main.CTHeaderFooter.Factory::newInstance
         );
 
         for (Supplier<XmlObject> xo : sup) {
