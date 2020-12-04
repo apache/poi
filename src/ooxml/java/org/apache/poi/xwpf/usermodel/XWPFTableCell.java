@@ -107,7 +107,6 @@ public class XWPFTableCell implements IBody, ICell {
             }
             if (o instanceof CTSdtRun) {
                 XWPFSDT c = new XWPFSDT((CTSdtRun) o, this);
-                System.out.println(c.getContent().getText());
                 bodyElements.add(c);
             }
         }
@@ -156,7 +155,7 @@ public class XWPFTableCell implements IBody, ICell {
     /**
      * add a Paragraph to this TableCell
      *
-     * @param p the paragaph which has to be added
+     * @param p the paragraph which has to be added
      */
     public void addParagraph(XWPFParagraph p) {
         paragraphs.add(p);
