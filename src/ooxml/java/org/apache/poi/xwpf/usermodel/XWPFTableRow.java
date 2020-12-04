@@ -30,6 +30,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtCell;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTrPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHeightRule;
 
 
 /**
@@ -117,6 +118,37 @@ public class XWPFTableRow {
         CTTrPr properties = getTrPr();
         CTHeight h = properties.sizeOfTrHeightArray() == 0 ? properties.addNewTrHeight() : properties.getTrHeightArray(0);
         h.setVal(new BigInteger(Integer.toString(height)));
+    }
+
+    /**
+     * Returns the meaning of the height specified for this table row.
+     * <p>
+     * If hRule is omitted, then its value shall be assumed to be auto.
+     * </p>
+     *
+     * @return the height rule of this row.
+     */
+    public TableRowHeightRule getHeightRule() {
+        CTTrPr properties = getTrPr();
+        return properties.sizeOfTrHeightArray() == 0 ? TableRowHeightRule.AUTO
+                : TableRowHeightRule.valueOf(properties.getTrHeightArray(0).getHRule().intValue());
+    }
+
+    /**
+     * Specifies the height rule for this table row.
+     * <p>
+     * If the value of hRule is auto, then the table row's height should be automatically determined based on the
+     * height of its contents. The h value is ignored.
+     * If the value of hRule is atLeast, then the table row's height should be at least the value the h attribute.
+     * If the value of hRule is exact, then the table row's height should be exactly the value of the h attribute.
+     * </p>
+     *
+     * @param heightRule the height rule to apply to this row.
+     */
+    public void setHeightRule(TableRowHeightRule heightRule) {
+        CTTrPr properties = getTrPr();
+        CTHeight h = properties.sizeOfTrHeightArray() == 0 ? properties.addNewTrHeight() : properties.getTrHeightArray(0);
+        h.setHRule(STHeightRule.Enum.forInt(heightRule.getValue()));
     }
 
     private CTTrPr getTrPr() {

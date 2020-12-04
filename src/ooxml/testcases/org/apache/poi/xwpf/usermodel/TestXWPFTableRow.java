@@ -157,6 +157,20 @@ public class TestXWPFTableRow {
     }
 
     @Test
+    public void testGetSetHeightRule() throws IOException {
+        XWPFDocument doc = new XWPFDocument();
+        XWPFTableRow tr = doc.createTable(1, 1).createRow();
+        assertEquals(TableRowHeightRule.AUTO, tr.getHeightRule());
+
+        tr.setHeightRule(TableRowHeightRule.AT_LEAST);
+        assertEquals(TableRowHeightRule.AT_LEAST, tr.getHeightRule());
+
+        tr.setHeightRule(TableRowHeightRule.EXACT);
+        assertEquals(TableRowHeightRule.EXACT, tr.getHeightRule());
+        doc.close();
+    }
+
+    @Test
     public void testBug62174() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples
                 .openSampleDocument("Bug60337.docx")) {
