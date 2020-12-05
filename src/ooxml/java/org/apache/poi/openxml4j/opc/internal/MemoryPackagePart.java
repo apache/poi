@@ -134,8 +134,4 @@ public final class MemoryPackagePart extends PackagePart {
 		// Do nothing
 	}
 
-	@Override
-	public void flush() {
-		// Do nothing
-	}
 }

@@ -724,13 +724,6 @@ public abstract class PackagePart implements RelationshipSource, Comparable<Pack
     public abstract void close();
 
     /**
-     * Flush the content of this part. If the input stream and/or output stream
-     * as in a waiting state to read or write, the must to empty their
-     * respective buffer.
-     */
-    public abstract void flush();
-
-    /**
      * Allows sub-classes to clean up before new data is added.
      */
     public void clear() {

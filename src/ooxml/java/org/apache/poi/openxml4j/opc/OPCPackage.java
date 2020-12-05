@@ -416,11 +416,6 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 	 */
 	public void flush() {
 		throwExceptionIfReadOnly();
-
-		if (this.packageProperties != null) {
-			this.packageProperties.flush();
-		}
-
 		this.flushImpl();
 	}
 

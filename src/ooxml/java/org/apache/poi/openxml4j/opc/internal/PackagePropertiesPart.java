@@ -752,8 +752,4 @@ public final class PackagePropertiesPart extends PackagePart implements PackageP
         // Do nothing
     }
 
-    @Override
-    public void flush() {
-        // Do nothing
-    }
 }

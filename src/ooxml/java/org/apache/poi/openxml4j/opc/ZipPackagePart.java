@@ -140,9 +140,4 @@ public class ZipPackagePart extends PackagePart {
 		throw new InvalidOperationException("Method not implemented !");
 	}
 
-	@Override
-	@NotImplemented
-	public void flush() {
-		throw new InvalidOperationException("Method not implemented !");
-	}
 }
