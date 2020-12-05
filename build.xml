@@ -1685,25 +1685,44 @@ under the License.
             </modulepath>
         </javac>
 
-        <local name="lite.classes"/>
-        <loadresource property="lite.classes">
-            <file file="${ooxml.lite.report}"/>
+        <copy file="${ooxml.lite.report}" tofile="build/ooxml-lite-classes.txt" overwrite="true">
             <filterchain>
                 <tokenfilter>
-                    <replaceregex pattern="(.*)" replace="\1.class \1$*.class "/>
+                    <replaceregex pattern="(.*)" replace="\1.class${line.separator}\1$*.class "/>
                 </tokenfilter>
-                <striplinebreaks/>
+            </filterchain>
+        </copy>
+
+        <local name="ooxml.lite.xsbs"/>
+        <loadresource property="ooxml.lite.xsbs">
+            <file file="${ooxml.lite.report}"/>
+            <filterchain>
+                <linecontains negate="true" matchany="true">
+                    <contains value="$"/>
+                    <contains value="TypeSystemHolder"/>
+                </linecontains>
+                <suffixlines suffix=".java"/>
             </filterchain>
         </loadresource>
+
+        <concat dest="build/ooxml-lite-classes.txt" append="true">
+            <filelist dir="build/xmlbean-sources" files="${ooxml.lite.xsbs}"/>
+            <filterchain>
+                <linecontains>
+                    <contains value="resolveHandle"/>
+                </linecontains>
+                <replaceregex pattern='.*"([^"]+)".*' replace="org/apache/poi/schemas/ooxml/system/ooxml/\1.xsb"/>
+            </filterchain>
+        </concat>
 
         <mkdir dir="build/dist/maven/poi-ooxml-schemas"/>
 
         <jar destfile="${ooxml.lite.jar}" duplicate="preserve">
             <zipfileset dir="${basedir}/src/multimodule/ooxml-lite/java9" prefix="META-INF/versions/9" excludes="*.java"/>
             <zipfileset src="${ooxml.xsds.jar}">
-                <patternset includes="${lite.classes}">
-                    <include name="org/apache/poi/schemas/*/system/**/*.xsb"/>
-                    <include name="org/apache/poi/schemas/*/element/**/*.xsb"/>
+                <patternset includesfile="build/ooxml-lite-classes.txt">
+                    <include name="org/apache/poi/schemas/ooxml/element/**/*.xsb"/>
+                    <include name="org/apache/poi/schemas/ooxml/system/ooxml/index.xsb"/>
                 </patternset>
             </zipfileset>
             <zipfileset dir="src/multimodule/ooxml-schemas/java9" prefix="META-INF/versions/9" excludes="*.java"/>
