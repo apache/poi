@@ -219,10 +219,10 @@ public class HWPFOldDocument extends HWPFDocumentCore {
 
     /**
      * Use {@link #getOldFontTable()} instead!!!
-     * This always throws an IllegalArgumentException.
+     * This always throws an {@link UnsupportedOperationException}.
      *
      * @return nothing
-     * @throws UnsupportedOperationException
+     * @throws UnsupportedOperationException Always.
      */
     @Override
     @NotImplemented

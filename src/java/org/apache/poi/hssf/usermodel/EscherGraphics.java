@@ -123,7 +123,6 @@ public class EscherGraphics extends Graphics
 
 
     @Override
-    @NotImplemented
     public void clearRect(int x, int y, int width, int height)
     {
         Color color = foreground;
