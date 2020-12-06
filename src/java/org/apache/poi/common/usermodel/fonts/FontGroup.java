@@ -65,12 +65,15 @@ public enum FontGroup {
     }
 
     private static class Range {
-        final int upper;
-        final FontGroup fontGroup;
+        private final int upper;
+        private final FontGroup fontGroup;
         Range(int upper, FontGroup fontGroup) {
             this.upper = upper;
             this.fontGroup = fontGroup;
         }
+
+        int getUpper() { return upper; }
+        FontGroup getFontGroup() { return fontGroup; }
     }
 
     private static NavigableMap<Integer,Range> UCS_RANGES;
@@ -154,8 +157,8 @@ public enum FontGroup {
 
     private static FontGroup lookup(int codepoint) {
         // Do a lookup for a match in UCS_RANGES
-        Map.Entry<Integer,Range> entry = UCS_RANGES.floorEntry(codepoint);
+        Map.Entry<Integer, Range> entry = UCS_RANGES.floorEntry(codepoint);
         Range range = (entry != null) ? entry.getValue() : null;
-        return (range != null && codepoint <= range.upper) ? range.fontGroup : EAST_ASIAN;
+        return (range != null && codepoint <= range.getUpper()) ? range.getFontGroup() : EAST_ASIAN;
     }
 }
