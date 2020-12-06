@@ -17,6 +17,7 @@ limitations under the License.
 
 package org.apache.poi.common.usermodel.fonts;
 
+import org.apache.poi.Nullable;
 import org.apache.poi.util.Beta;
 
 /**
@@ -69,6 +70,7 @@ public interface FontFacet {
     /**
      * @return the wrapper object holding the font data
      */
+    @Nullable
     default Object getFontData() {
         return null;
     }

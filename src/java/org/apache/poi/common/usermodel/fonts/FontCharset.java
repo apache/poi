@@ -20,6 +20,7 @@ package org.apache.poi.common.usermodel.fonts;
 import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
+import org.apache.poi.Nullable;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 
@@ -111,6 +112,7 @@ public enum FontCharset {
      * @return charset for the font or <code>null</code> if there is no matching charset or
      *         if the charset is a &quot;default&quot;
      */
+    @Nullable
     public Charset getCharset() {
         return charset;
     }
@@ -119,6 +121,7 @@ public enum FontCharset {
         return nativeId;
     }
 
+    @Nullable
     public static FontCharset valueOf(int value){
         return (value < 0 || value >= _table.length) ? null : _table[value];
     }

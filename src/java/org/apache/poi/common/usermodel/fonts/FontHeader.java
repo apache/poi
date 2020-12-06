@@ -28,6 +28,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.function.Supplier;
 
+import org.apache.poi.Nullable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
@@ -213,6 +214,7 @@ public class FontHeader implements FontInfo, GenericRecord {
         return charset;
     }
 
+    @Nullable
     public FontCharset getCharset() {
         return FontCharset.valueOf(getCharsetByte());
     }
