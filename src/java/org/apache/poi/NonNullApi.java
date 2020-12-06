@@ -33,7 +33,7 @@ import javax.annotation.meta.TypeQualifierDefault;
  *
  * <p>Should be used at package level in association with {@link Nullable} annotations at parameter and return value
  * level.
-
+ *
  * @see Nullable
  */
 @Target(ElementType.PACKAGE)
