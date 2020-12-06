@@ -17,8 +17,6 @@ limitations under the License.
 
 package org.apache.poi.common.usermodel.fonts;
 
-import org.apache.poi.util.Removal;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
