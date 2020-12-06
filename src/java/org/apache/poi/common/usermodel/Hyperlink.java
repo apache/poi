@@ -55,7 +55,6 @@ public interface Hyperlink {
      * Return the type of this hyperlink
      *
      * @return the type of this hyperlink
-     * @see HyperlinkType#forInt(int)
      */
     public HyperlinkType getType();
 }

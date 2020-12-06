@@ -155,7 +155,6 @@ public class XSSFHyperlink implements Hyperlink {
      * Return the type of this hyperlink
      *
      * @return the type of this hyperlink
-     * @see HyperlinkType#forInt
      */
     @Override
     public HyperlinkType getType() {

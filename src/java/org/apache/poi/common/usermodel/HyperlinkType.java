@@ -16,9 +16,6 @@
 ==================================================================== */
 package org.apache.poi.common.usermodel;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.poi.util.Internal;
 
 /**
@@ -70,38 +67,13 @@ public enum HyperlinkType {
         this.code = code;
     }
     
-    private static final Map<Integer, HyperlinkType> map = new HashMap<>();
-    static {
-        for (HyperlinkType type : values()) {
-            map.put(type.getCode(), type);
-        }
-    }
-    
     /**
      * @deprecated POI 3.15 beta 3
      *
      * @return the old integer code for a HyperlinkType enum
      */
     @Internal(since="3.15 beta 3")
-    @Deprecated
-    public int getCode() {
+    int getCode() {
         return code;
-    }
-    
-    /**
-     * @deprecated POI 3.15 beta 3
-     *
-     * @param code the old integer code
-     * @return the corresponding HyperlinkEnum, if it exists
-     * @throws IllegalArgumentException if {@code code} is not a valid HyperlinkType.
-     */
-    @Internal(since="3.15 beta 3")
-    @Deprecated
-    public static HyperlinkType forInt(int code) {
-        HyperlinkType type = map.get(code);
-        if (type == null) {
-            throw new IllegalArgumentException("Invalid type: " + code);
-        }
-        return type;
     }
 }
