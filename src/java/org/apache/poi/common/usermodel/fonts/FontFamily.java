@@ -17,6 +17,8 @@ limitations under the License.
 
 package org.apache.poi.common.usermodel.fonts;
 
+import org.apache.poi.Nullable;
+
 /**
  * A property of a font that describes its general appearance.
  * 
@@ -60,6 +62,7 @@ public enum FontFamily {
         return nativeId;
     }
 
+    @Nullable
     public static FontFamily valueOf(int nativeId) {
         for (FontFamily ff : values()) {
             if (ff.nativeId == nativeId) {
@@ -76,6 +79,7 @@ public enum FontFamily {
      *
      * @return The resulting FontFamily
      */
+    @Nullable
     public static FontFamily valueOfPitchFamily(byte pitchAndFamily) {
         return valueOf(pitchAndFamily >>> 4);
     }

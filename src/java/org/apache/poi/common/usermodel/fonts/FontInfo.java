@@ -20,6 +20,7 @@ package org.apache.poi.common.usermodel.fonts;
 import java.util.Collections;
 import java.util.List;
 
+import org.apache.poi.Nullable;
 import org.apache.poi.util.Beta;
 
 /**
@@ -43,6 +44,7 @@ public interface FontInfo {
      * @return unique index number of the underlying record this Font represents
      *   (probably you don't care unless you're comparing which one is which)
      */
+    @Nullable
     default Integer getIndex() {
         return null;
     }
@@ -109,6 +111,7 @@ public interface FontInfo {
     /**
      * @return the font pitch or {@code null} if unsupported
      */
+    @Nullable
     default FontPitch getPitch() {
         return null;
     }
@@ -127,6 +130,7 @@ public interface FontInfo {
     /**
      * @return panose info in binary form or {@code null} if unknown
      */
+    @Nullable
     default byte[] getPanose() {
         return null;
     }

@@ -17,6 +17,8 @@
 
 package org.apache.poi.common.usermodel.fonts;
 
+import org.apache.poi.Nullable;
+
 /**
  * A property of a font that describes the pitch, of the characters.
  * 
@@ -48,6 +50,7 @@ public enum FontPitch {
         return nativeId;
     }
 
+    @Nullable
     public static FontPitch valueOf(int flag) {
         for (FontPitch fp : values()) {
             if (fp.nativeId == flag) return fp;
@@ -76,6 +79,7 @@ public enum FontPitch {
      *
      * @return The resulting FontPitch enumeration value
      */
+    @Nullable
     public static FontPitch valueOfPitchFamily(byte pitchAndFamily) {
         return valueOf(pitchAndFamily & 0x3);
     }

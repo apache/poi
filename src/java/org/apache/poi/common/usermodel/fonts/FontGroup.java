@@ -17,6 +17,8 @@ limitations under the License.
 
 package org.apache.poi.common.usermodel.fonts;
 
+import org.apache.poi.Nullable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -42,10 +44,14 @@ public enum FontGroup {
     COMPLEX_SCRIPT
     ;
 
-
     public static class FontGroupRange {
         private int len;
-        private FontGroup fontGroup;
+        private final FontGroup fontGroup;
+
+        public FontGroupRange(FontGroup fontGroup) {
+            this.fontGroup = fontGroup;
+        }
+
         public int getLength() {
             return len;
         }
@@ -110,7 +116,7 @@ public enum FontGroup {
      * @param runText the text which font groups are to be analyzed
      * @return the FontGroup
      */
-    public static List<FontGroupRange> getFontGroupRanges(final String runText) {
+    public static List<FontGroupRange> getFontGroupRanges(@Nullable final String runText) {
         final List<FontGroupRange> ttrList = new ArrayList<>();
         if (runText == null || runText.isEmpty()) {
             return ttrList;
@@ -130,8 +136,7 @@ public enum FontGroup {
             }
 
             if (ttrLast == null || ttrLast.fontGroup != tt) {
-                ttrLast = new FontGroupRange();
-                ttrLast.fontGroup = tt;
+                ttrLast = new FontGroupRange(tt);
                 ttrList.add(ttrLast);
             }
             ttrLast.len += charCount;
@@ -139,7 +144,7 @@ public enum FontGroup {
         return ttrList;
     }
 
-    public static FontGroup getFontGroupFirst(String runText) {
+    public static FontGroup getFontGroupFirst(@Nullable String runText) {
         return (runText == null || runText.isEmpty()) ? LATIN : lookup(runText.codePointAt(0));
     }
 
