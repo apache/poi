@@ -1715,6 +1715,32 @@ under the License.
             </filterchain>
         </concat>
 
+        <!-- the following xsb files aren't detected, i.e. not directly loaded by XmlBeans interface classes -->
+        <echo file="build/ooxml-lite-classes.txt" append="true">
+org/apache/poi/schemas/ooxml/system/ooxml/index.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/picelement.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/groupelement.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/group7d3fdoctype.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/shapelayoutelement.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/shapetypeelement.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/shapetypeb89bdoctype.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/shapeelement.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/shapeaee1doctype.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/tblelement.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/tbleb1bdoctype.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/relationshipreferenceelement.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/qualifyingpropertieselement.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/oleobjelement.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/oleobj8482doctype.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/stcellspans60f6type.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/stcellspanf3a5type.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/alternatecontentelement.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/chartelement.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/chartf85cdoctype.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/rectelement.xsb
+org/apache/poi/schemas/ooxml/system/ooxml/rectaf36doctype.xsb
+        </echo>
+
         <mkdir dir="build/dist/maven/poi-ooxml-schemas"/>
 
         <jar destfile="${ooxml.lite.jar}" duplicate="preserve">
@@ -1722,7 +1748,6 @@ under the License.
             <zipfileset src="${ooxml.xsds.jar}">
                 <patternset includesfile="build/ooxml-lite-classes.txt">
                     <include name="org/apache/poi/schemas/ooxml/element/**/*.xsb"/>
-                    <include name="org/apache/poi/schemas/ooxml/system/ooxml/index.xsb"/>
                 </patternset>
             </zipfileset>
             <zipfileset dir="src/multimodule/ooxml-schemas/java9" prefix="META-INF/versions/9" excludes="*.java"/>
