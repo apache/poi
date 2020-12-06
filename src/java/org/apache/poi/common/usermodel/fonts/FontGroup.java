@@ -17,6 +17,8 @@ limitations under the License.
 
 package org.apache.poi.common.usermodel.fonts;
 
+import org.apache.poi.util.Removal;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,19 +46,29 @@ public enum FontGroup {
 
 
     public static class FontGroupRange {
-        private int len;
-        private FontGroup fontGroup;
+        private final FontGroup fontGroup;
+        private int len = 0;
+
+        FontGroupRange(FontGroup fontGroup) {
+            this.fontGroup = fontGroup;
+        }
+
         public int getLength() {
             return len;
         }
+
         public FontGroup getFontGroup( ) {
             return fontGroup;
+        }
+
+        void increaseLength(int len) {
+            this.len += len;
         }
     }
 
     private static class Range {
-        int upper;
-        FontGroup fontGroup;
+        final int upper;
+        final FontGroup fontGroup;
         Range(int upper, FontGroup fontGroup) {
             this.upper = upper;
             this.fontGroup = fontGroup;
@@ -130,11 +142,10 @@ public enum FontGroup {
             }
 
             if (ttrLast == null || ttrLast.fontGroup != tt) {
-                ttrLast = new FontGroupRange();
-                ttrLast.fontGroup = tt;
+                ttrLast = new FontGroupRange(tt);
                 ttrList.add(ttrLast);
             }
-            ttrLast.len += charCount;
+            ttrLast.increaseLength(charCount);
         }
         return ttrList;
     }
