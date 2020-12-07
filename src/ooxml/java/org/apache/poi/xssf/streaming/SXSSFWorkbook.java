@@ -682,7 +682,7 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
-     * Sreate an Sheet for this Workbook, adds it to the sheets and returns
+     * Create a Sheet for this Workbook, adds it to the sheets and returns
      * the high level representation.  Use this to create new sheets.
      *
      * @return Sheet representing the new sheet.
@@ -709,7 +709,7 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
-     * Create an Sheet for this Workbook, adds it to the sheets and returns
+     * Create a Sheet for this Workbook, adds it to the sheets and returns
      * the high level representation.  Use this to create new sheets.
      *
      * @param sheetname  sheetname to set for the sheet.
@@ -725,7 +725,7 @@ public class SXSSFWorkbook implements Workbook {
     /**
      * <i>Not implemented for SXSSFWorkbook</i>
      *
-     * Create an Sheet from an existing sheet in the Workbook.
+     * Create a Sheet from an existing sheet in the Workbook.
      *
      * @return Sheet representing the cloned sheet.
      */

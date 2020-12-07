@@ -201,7 +201,7 @@ public interface Workbook extends Closeable, Iterable<Sheet> {
     Sheet createSheet(String sheetname);
 
     /**
-     * Create an Sheet from an existing sheet in the Workbook.
+     * Create a Sheet from an existing sheet in the Workbook.
      *
      * @return Sheet representing the cloned sheet.
      */
