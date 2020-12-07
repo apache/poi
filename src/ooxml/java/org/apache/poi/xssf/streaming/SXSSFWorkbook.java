@@ -682,8 +682,8 @@ public class SXSSFWorkbook implements Workbook {
     }
 
     /**
-     * Sreate an Sheet for this Workbook, adds it to the sheets and returns
-     * the high level representation.  Use this to create new sheets.
+     * Creates a Sheet for this Workbook, adds it to the sheets and returns
+     * the high level representation. Use this to create new sheets.
      *
      * @return Sheet representing the new sheet.
      */
