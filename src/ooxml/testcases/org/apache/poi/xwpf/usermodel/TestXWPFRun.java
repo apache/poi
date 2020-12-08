@@ -716,7 +716,6 @@ public class TestXWPFRun {
         rpr.addNewVertAlign().setVal(STVerticalAlignRun.SUBSCRIPT);
 
         XWPFRun run = new XWPFRun(ctRun, irb);
-        assertEquals(VerticalAlign.SUBSCRIPT, run.getSubscript());
 
         run.setSubscript(VerticalAlign.BASELINE);
         assertEquals(STVerticalAlignRun.BASELINE, rpr.getVertAlign().getVal());
