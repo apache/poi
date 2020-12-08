@@ -831,6 +831,7 @@ public class HSSFCell extends CellBase {
      * setCellValue(boolean) straight afterwards.  This method only exists to give
      * the cell a somewhat reasonable value until the setCellValue() call (if at all).
      * TODO - perhaps a method like setCellTypeAndValue(int, Object) should be introduced to avoid this
+     * @throws IllegalStateException if cell type cannot be converted to boolean
      */
     private boolean convertCellValueToBoolean() {
 
@@ -855,8 +856,9 @@ public class HSSFCell extends CellBase {
             case BLANK:
                 return false;
         }
-        throw new RuntimeException("Unexpected cell type (" + _cellType + ")");
+        throw new IllegalStateException("Unexpected cell type (" + _cellType + ")");
     }
+
     private String convertCellValueToString() {
 
         switch (_cellType) {

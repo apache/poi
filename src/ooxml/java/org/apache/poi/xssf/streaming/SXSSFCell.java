@@ -915,11 +915,12 @@ public class SXSSFCell extends CellBase {
             }
         }
     }
+
 //COPIED FROM https://svn.apache.org/repos/asf/poi/trunk/src/ooxml/java/org/apache/poi/xssf/usermodel/XSSFCell.java since the functions are declared private there
     /**
      * Used to help format error messages
      */
-    private static RuntimeException typeMismatch(CellType expectedTypeCode, CellType actualTypeCode, boolean isFormulaCell) {
+    private static IllegalStateException typeMismatch(CellType expectedTypeCode, CellType actualTypeCode, boolean isFormulaCell) {
         String msg = "Cannot get a " + expectedTypeCode + " value from a " + actualTypeCode
                 + " " + (isFormulaCell ? "formula " : "") + "cell";
         return new IllegalStateException(msg);
@@ -944,7 +945,8 @@ public class SXSSFCell extends CellBase {
             case ERROR:
             case BLANK:
                 return false;
-            default: throw new RuntimeException("Unexpected cell type (" + cellType + ")");
+            default:
+                throw new IllegalStateException("Unexpected cell type (" + cellType + ")");
         }
 
     }
