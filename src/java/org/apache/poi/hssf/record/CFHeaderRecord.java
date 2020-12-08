@@ -18,7 +18,6 @@
 package org.apache.poi.hssf.record;
 
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.apache.poi.util.Removal;
 
 /**
  * Conditional Formatting Header record CFHEADER (0x01B0).
@@ -50,17 +49,6 @@ public final class CFHeaderRecord extends CFHeaderBase {
 
     public short getSid() {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public CFHeaderRecord clone() {
-        return copy();
     }
 
     @Override

@@ -34,7 +34,6 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 
 /**
  * Conditional Formatting Rules. This can hold old-style rules
@@ -461,15 +460,6 @@ public abstract class CFRuleBase extends StandardRecord {
         int sheetIndex = sheet.getWorkbook().getSheetIndex(sheet);
         return HSSFFormulaParser.parse(formula, sheet.getWorkbook(), FormulaType.CELL, sheetIndex);
     }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public abstract CFRuleBase clone();
 
     @Override
     public abstract CFRuleBase copy();

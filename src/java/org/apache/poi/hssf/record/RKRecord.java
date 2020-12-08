@@ -97,7 +97,6 @@ public final class RKRecord extends CellRecord {
     /**
      * @deprecated use {@link #copy()} instead
      */
-    @Override
     @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")

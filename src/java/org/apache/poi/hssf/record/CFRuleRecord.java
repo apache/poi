@@ -21,7 +21,6 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Conditional Formatting Rule Record (0x01B1).
@@ -130,17 +129,6 @@ public final class CFRuleRecord extends CFRuleBase {
         return 6 + getFormattingBlockSize() +
                getFormulaSize(getFormula1())+
                getFormulaSize(getFormula2());
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public CFRuleRecord clone() {
-        return copy();
     }
 
     @Override

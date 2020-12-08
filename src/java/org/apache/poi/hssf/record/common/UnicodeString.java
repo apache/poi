@@ -36,7 +36,6 @@ import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 
 /**
  * Unicode String - just standard fields that are in several records.
@@ -495,17 +494,6 @@ public class UnicodeString implements Comparable<UnicodeString>, Duplicatable, G
 
     private boolean isExtendedText() {
         return extBit.isSet(getOptionFlags());
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public UnicodeString clone() {
-        return copy();
     }
 
     @Override

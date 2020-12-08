@@ -26,7 +26,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Optional record defining a square area of cells to "merged" into one cell.
@@ -101,17 +100,6 @@ public final class MergeCellsRecord extends StandardRecord {
         for (int i = 0; i < _numberOfRegions; i++) {
 			_regions[_startIndex + i].serialize(out);
 		}
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @Override
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public MergeCellsRecord clone() {
-        return copy();
     }
 
     @Override

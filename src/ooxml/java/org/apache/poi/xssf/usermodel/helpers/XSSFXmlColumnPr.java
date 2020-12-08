@@ -18,7 +18,6 @@
 package org.apache.poi.xssf.usermodel.helpers;
 
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.apache.poi.xssf.usermodel.XSSFTableColumn;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXmlColumnPr;
@@ -70,19 +69,6 @@ public class XSSFXmlColumnPr {
 
     public String getXPath() {
         return ctXmlColumnPr.getXpath();
-    }
-
-    /**
-     * (see Open Office XML Part 4: chapter 3.5.1.3)
-     * 
-     * @deprecated Use {@link XSSFTableColumn#getId()} instead.
-     * 
-     * @return An integer representing the unique identifier of this column.
-     */
-    @Deprecated
-    @Removal(version="4.2")
-    public long getId() {
-        return tableColumn.getId();
     }
 
     /**

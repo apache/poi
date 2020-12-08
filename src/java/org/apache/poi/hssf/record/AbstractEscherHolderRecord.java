@@ -27,7 +27,6 @@ import org.apache.poi.ddf.EscherRecordFactory;
 import org.apache.poi.ddf.NullEscherSerializationListener;
 import org.apache.poi.hssf.util.LazilyConcatenatedByteArray;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.Removal;
 
 /**
  * The escher container record is used to hold escher records.  It is abstract and
@@ -125,17 +124,6 @@ public abstract class AbstractEscherHolderRecord extends Record {
 
     @Override
     public abstract short getSid();
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @Override
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public AbstractEscherHolderRecord clone() {
-        return copy();
-    }
 
     @Override
     public abstract AbstractEscherHolderRecord copy();

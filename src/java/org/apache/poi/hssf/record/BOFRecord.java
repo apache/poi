@@ -23,7 +23,6 @@ import java.util.Map;
 import java.util.function.Supplier;
 
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Somewhat of a misnomer, its used for the beginning of a set of records that
@@ -260,17 +259,6 @@ public final class BOFRecord extends StandardRecord {
 
     public short getSid(){
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @Override
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public BOFRecord clone() {
-        return copy();
     }
 
     @Override

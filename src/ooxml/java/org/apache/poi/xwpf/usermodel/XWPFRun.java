@@ -678,22 +678,6 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     /**
      * Specifies the alignment which shall be applied to the contents of this
-     * run in relation to the default appearance of the run's text.
-     * This allows the text to be repositioned as subscript or superscript without
-     * altering the font size of the run properties.
-     *
-     * @return VerticalAlign
-     * @see {@link VerticalAlign} all possible value that could be applyed to this run
-     * @deprecated use {@link XWPFRun.getVerticalAlignment}
-     */
-    @Removal(version = "4.2")
-    public VerticalAlign getSubscript() {
-        CTRPr pr = getRunProperties(false);
-        return (pr != null && pr.isSetVertAlign()) ? VerticalAlign.valueOf(pr.getVertAlign().getVal().intValue()) : VerticalAlign.BASELINE;
-    }
-
-    /**
-     * Specifies the alignment which shall be applied to the contents of this
      * run in relation to the default appearance of the run's text. This allows
      * the text to be repositioned as subscript or superscript without altering
      * the font size of the run properties.

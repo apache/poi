@@ -25,7 +25,6 @@ import org.apache.poi.ss.formula.Formula;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * ARRAY (0x0221)<p>
@@ -87,17 +86,6 @@ public final class ArrayRecord extends SharedValueRecordBase {
 
 	public short getSid() {
 		return sid;
-	}
-
-	/**
-	 * @deprecated use {@link #copy()} instead
-	 */
-	@Override
-	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-	@Deprecated
-	@Removal(version = "5.0.0")
-	public ArrayRecord clone() {
-		return copy();
 	}
 
 	@Override

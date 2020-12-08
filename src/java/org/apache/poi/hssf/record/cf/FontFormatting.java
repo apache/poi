@@ -491,7 +491,6 @@ public final class FontFormatting implements Duplicatable, GenericRecord {
     /**
      * @deprecated use {@link #copy()} instead
      */
-    @Override
     @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")

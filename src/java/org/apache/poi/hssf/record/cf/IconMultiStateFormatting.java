@@ -124,7 +124,6 @@ public final class IconMultiStateFormatting implements Duplicatable, GenericReco
     /**
      * @deprecated use {@link #copy()} instead
      */
-    @Override
     @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")

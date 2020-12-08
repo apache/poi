@@ -27,7 +27,6 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.Removal;
 
 /**
  * Common functionality across file formats for evaluating formula cells.<p>
@@ -186,34 +185,6 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
         // cell remains a formula cell, but the cached value is changed
         setCellValue(cell, cv);
         return cv.getCellType();
-    }
-    
-    /**
-     * If cell contains formula, it evaluates the formula,
-     *  and saves the result of the formula. The cell
-     *  remains as a formula cell.
-     * Else if cell does not contain formula, this method leaves
-     *  the cell unchanged.
-     * Note that the type of the formula result is returned,
-     *  so you know what kind of value is also stored with
-     *  the formula.
-     * <pre>
-     * CellType evaluatedCellType = evaluator.evaluateFormulaCell(cell);
-     * </pre>
-     * Be aware that your cell will hold both the formula,
-     *  and the result. If you want the cell replaced with
-     *  the result of the formula, use {@link #evaluate(org.apache.poi.ss.usermodel.Cell)} }
-     * @param cell The cell to evaluate
-     * @return The type of the formula result (the cell's type remains as CellType.FORMULA however)
-     *         If cell is not a formula cell, returns {@link CellType#_NONE} rather than throwing an exception.
-     * @since POI 3.15 beta 3
-     * @deprecated use <code>evaluateFormulaCell(cell)</code> instead
-     */
-    @Deprecated
-    @Removal(version = "4.2")
-    @Override
-    public CellType evaluateFormulaCellEnum(Cell cell) {
-        return evaluateFormulaCell(cell);
     }
 
     /**

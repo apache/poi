@@ -25,7 +25,6 @@ import org.apache.poi.hssf.record.common.FutureRecord;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Conditional Formatting Header v12 record CFHEADER12 (0x0879),
@@ -87,17 +86,6 @@ public final class CFHeader12Record extends CFHeaderBase implements FutureRecord
     }
     public CellRangeAddress getAssociatedRange() {
         return futureHeader.getAssociatedRange();
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public CFHeader12Record clone() {
-        return copy();
     }
 
     @Override

@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Represents a column in a row with no value but with styling.
@@ -130,17 +129,6 @@ public final class BlankRecord extends StandardRecord implements CellValueRecord
 
     protected int getDataSize() {
         return 6;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @Override
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public BlankRecord clone() {
-        return copy();
     }
 
     @Override

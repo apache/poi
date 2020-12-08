@@ -24,7 +24,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * The AutoFilterInfo record specifies the number of columns that have AutoFilter enabled
@@ -82,17 +81,6 @@ public final class AutoFilterInfoRecord extends StandardRecord {
     public short getSid()
     {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @Override
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public AutoFilterInfoRecord clone() {
-        return copy();
     }
 
     @Override

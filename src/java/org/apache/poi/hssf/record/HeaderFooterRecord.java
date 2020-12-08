@@ -23,7 +23,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * The HEADERFOOTER record stores information added in Office Excel 2007 for headers/footers.
@@ -86,17 +85,6 @@ public final class HeaderFooterRecord extends StandardRecord {
      */
     public boolean isCurrentSheet(){
         return Arrays.equals(getGuid(), BLANK_GUID);
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @Override
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public HeaderFooterRecord clone() {
-        return copy();
     }
 
     @Override

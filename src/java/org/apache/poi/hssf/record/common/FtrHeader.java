@@ -27,7 +27,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Title: FtrHeader (Future Record Header) common record part
@@ -94,17 +93,6 @@ public final class FtrHeader implements Duplicatable, GenericRecord {
     }
     public void setAssociatedRange(CellRangeAddress associatedRange) {
         this.associatedRange = associatedRange;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @Override
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public FtrHeader clone() {
-        return copy();
     }
 
     public FtrHeader copy() {

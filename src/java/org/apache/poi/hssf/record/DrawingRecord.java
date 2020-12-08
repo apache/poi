@@ -83,7 +83,6 @@ public final class DrawingRecord extends StandardRecord {
         recordData = thedata;
     }
 
-    @Override
     @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
     @Deprecated
     @Removal(version = "5.0.0")

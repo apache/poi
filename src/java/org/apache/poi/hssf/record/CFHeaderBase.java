@@ -25,7 +25,6 @@ import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.ss.util.CellRangeUtil;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Parent of Conditional Formatting Header records,
@@ -145,15 +144,6 @@ public abstract class CFHeaderBase extends StandardRecord {
         field_3_enclosing_cell_range.serialize(out);
         field_4_cell_ranges.serialize(out);
     }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public abstract CFHeaderBase clone();
 
     @Override
     public abstract CFHeaderBase copy();
