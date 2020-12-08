@@ -146,7 +146,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
         return 0;
     }
 
-    public Long getChecksum() {
+    public long getChecksum() {
         if (this.checksum == null) {
             InputStream is = null;
             byte[] data;
@@ -214,10 +214,10 @@ public class XWPFPictureData extends POIXMLDocumentPart {
             }
         }
 
-        Long foreignChecksum = picData.getChecksum();
-        Long localChecksum = getChecksum();
+        long foreignChecksum = picData.getChecksum();
+        long localChecksum = getChecksum();
 
-        if (!(localChecksum.equals(foreignChecksum))) {
+        if (localChecksum != foreignChecksum) {
             return false;
         }
         return Arrays.equals(this.getData(), picData.getData());
@@ -225,7 +225,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
 
     @Override
     public int hashCode() {
-        return getChecksum().hashCode();
+        return Long.hashCode(getChecksum());
     }
 
     /**
