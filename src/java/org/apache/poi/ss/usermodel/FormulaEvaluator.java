@@ -103,32 +103,6 @@ public interface FormulaEvaluator {
      *      Note: the cell's type remains as CellType.FORMULA however.
      */
     CellType evaluateFormulaCell(Cell cell);
-    
-    /**
-     * If cell contains formula, it evaluates the formula,
-     *  and saves the result of the formula. The cell
-     *  remains as a formula cell.
-     * Else if cell does not contain formula, this method leaves
-     *  the cell unchanged.
-     * Note that the type of the formula result is returned,
-     *  so you know what kind of value is also stored with
-     *  the formula.
-     * <pre>
-     * CellType evaluatedCellType = evaluator.evaluateFormulaCell(cell);
-     * </pre>
-     * Be aware that your cell will hold both the formula,
-     *  and the result. If you want the cell replaced with
-     *  the result of the formula, use {@link #evaluateInCell(Cell)}
-     * @param cell The cell to evaluate
-     * @return The type of the formula result, i.e. -1 if the cell is not a formula, 
-     *      or one of {@link CellType#NUMERIC}, {@link CellType#STRING},
-     *      {@link CellType#BOOLEAN}, {@link CellType#ERROR}
-     *      Note: the cell's type remains as CellType.FORMULA however.
-     * @deprecated use <code>evaluateFormulaCell(cell)</code>
-     */
-    @Deprecated
-    @Removal(version = "4.2")
-    CellType evaluateFormulaCellEnum(Cell cell);
 
     /**
      * If cell contains formula, it evaluates the formula, and
