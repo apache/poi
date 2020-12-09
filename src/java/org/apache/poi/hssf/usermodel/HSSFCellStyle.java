@@ -294,12 +294,6 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
         return HorizontalAlignment.forInt(_format.getAlignment());
     }
 
-    @Override
-    public HorizontalAlignment getAlignmentEnum()
-    {
-        return getAlignment();
-    }
-
     /**
      * set whether the text should be wrapped
      * @param wrapped  wrap text or not
@@ -334,11 +328,6 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     @Override
     public VerticalAlignment getVerticalAlignment() {
         return VerticalAlignment.forInt(_format.getVerticalAlignment());
-    }
-
-    @Override
-    public VerticalAlignment getVerticalAlignmentEnum() {
-        return getVerticalAlignment();
     }
 
     /**
@@ -430,9 +419,6 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
         return BorderStyle.valueOf(_format.getBorderLeft());
     }
 
-    @Override
-    public BorderStyle getBorderLeftEnum() { return getBorderLeft(); }
-
     /**
      * set the type of border to use for the right border of the cell
      * @param border type
@@ -450,9 +436,6 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     {
         return BorderStyle.valueOf(_format.getBorderRight());
     }
-
-    @Override
-    public BorderStyle getBorderRightEnum() { return getBorderRight(); }
 
     /**
      * set the type of border to use for the top border of the cell
@@ -472,9 +455,6 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
         return BorderStyle.valueOf(_format.getBorderTop());
     }
 
-    @Override
-    public BorderStyle getBorderTopEnum() { return getBorderTop(); }
-
     /**
      * set the type of border to use for the bottom border of the cell
      * @param border type
@@ -492,9 +472,6 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     {
         return BorderStyle.valueOf(_format.getBorderBottom());
     }
-
-    @Override
-    public BorderStyle getBorderBottomEnum() { return getBorderBottom(); }
 
     /**
      * set the color to use for the left border
@@ -597,9 +574,6 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     {
         return FillPatternType.forInt(_format.getAdtlFillPattern());
     }
-
-    @Override
-    public FillPatternType getFillPatternEnum() { return getFillPattern(); }
 
     /**
      * Checks if the background and foreground fills are set correctly when one

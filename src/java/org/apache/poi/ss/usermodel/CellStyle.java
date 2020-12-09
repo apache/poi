@@ -121,15 +121,6 @@ public interface CellStyle {
     HorizontalAlignment getAlignment();
 
     /**
-     * get the type of horizontal alignment for the cell
-     * @return align - the type of alignment
-     * @deprecated use <code>getAlignment()</code> instead
-     */
-    @Removal(version = "4.2")
-    @Deprecated
-    HorizontalAlignment getAlignmentEnum();
-
-    /**
      * Set whether the text should be wrapped.
      * Setting this flag to <code>true</code> make all content visible
      * within a cell by displaying it on multiple lines
@@ -155,15 +146,6 @@ public interface CellStyle {
      * @return align the type of alignment
      */
     VerticalAlignment getVerticalAlignment();
-
-    /**
-     * get the type of vertical alignment for the cell
-     * @return align the type of alignment
-     * @deprecated use <code>getVerticalAlignment()</code> instead
-     */
-    @Removal(version = "4.2")
-    @Deprecated
-    VerticalAlignment getVerticalAlignmentEnum();
 
     /**
      * set the degree of rotation for the text in the cell.
@@ -215,16 +197,6 @@ public interface CellStyle {
     BorderStyle getBorderLeft();
 
     /**
-     * get the type of border to use for the left border of the cell
-     * @return border type
-     * @since POI 3.15
-     * @deprecated use <code>getBorderLeft()</code> instead
-     */
-    @Removal(version = "4.2")
-    @Deprecated
-    BorderStyle getBorderLeftEnum();
-
-    /**
      * set the type of border to use for the right border of the cell
      * @param border type
      * @since POI 3.15
@@ -237,16 +209,6 @@ public interface CellStyle {
      * @since POI 4.0.0
      */
     BorderStyle getBorderRight();
-
-    /**
-     * get the type of border to use for the right border of the cell
-     * @return border type
-     * @since POI 3.15
-     * @deprecated use <code>getBorderRight()</code> instead
-     */
-    @Removal(version = "4.2")
-    @Deprecated
-    BorderStyle getBorderRightEnum();
 
     /**
      * set the type of border to use for the top border of the cell
@@ -263,16 +225,6 @@ public interface CellStyle {
     BorderStyle getBorderTop();
 
     /**
-     * get the type of border to use for the top border of the cell
-     * @return border type
-     * @since POI 3.15
-     * @deprecated use <code>getBorderTop()</code> instead
-     */
-    @Removal(version = "4.2")
-    @Deprecated
-    BorderStyle getBorderTopEnum();
-
-    /**
      * set the type of border to use for the bottom border of the cell
      * @param border type
      * @since POI 3.15
@@ -285,16 +237,6 @@ public interface CellStyle {
      * @since POI 4.0.0
      */
     BorderStyle getBorderBottom();
-
-    /**
-     * get the type of border to use for the bottom border of the cell
-     * @return border type
-     * @since POI 3.15
-     * @deprecated use <code>getBorderBottom()</code> instead
-     */
-    @Removal(version = "4.2")
-    @Deprecated
-    BorderStyle getBorderBottomEnum();
 
     /**
      * set the color to use for the left border
@@ -359,17 +301,6 @@ public interface CellStyle {
      * @since POI 4.0.0
      */
     FillPatternType getFillPattern();
-
-    /**
-     * Get the fill pattern
-     *
-     * @return the fill pattern, default value is {@link FillPatternType#NO_FILL}
-     * @since POI 3.15 beta 3
-     * @deprecated use <code>getFillPattern()</code> instead
-     */
-    @Removal(version = "4.2")
-    @Deprecated
-    FillPatternType getFillPatternEnum();
 
     /**
      * set the background fill color.

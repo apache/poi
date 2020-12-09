@@ -230,11 +230,6 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     }
 
     @Override
-    public HorizontalAlignment getAlignmentEnum() {
-        return getAlignment();
-    }
-
-    @Override
     public BorderStyle getBorderBottom() {
         if(!_cellXf.getApplyBorder()) return BorderStyle.NONE;
 
@@ -245,11 +240,6 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
             return BorderStyle.NONE;
         }
         return BorderStyle.valueOf((short)(ptrn.intValue() - 1));
-    }
-
-    @Override
-    public BorderStyle getBorderBottomEnum() {
-        return getBorderBottom();
     }
 
     @Override
@@ -266,9 +256,6 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     }
 
     @Override
-    public BorderStyle getBorderLeftEnum() { return getBorderLeft(); }
-
-    @Override
     public BorderStyle getBorderRight() {
         if(!_cellXf.getApplyBorder()) return BorderStyle.NONE;
 
@@ -282,11 +269,6 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     }
 
     @Override
-    public BorderStyle getBorderRightEnum() {
-        return getBorderRight();
-    }
-
-    @Override
     public BorderStyle getBorderTop() {
         if(!_cellXf.getApplyBorder()) return BorderStyle.NONE;
 
@@ -297,11 +279,6 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
             return BorderStyle.NONE;
         }
         return BorderStyle.valueOf((short) (ptrn.intValue() - 1));
-    }
-
-    @Override
-    public BorderStyle getBorderTopEnum() {
-         return getBorderTop();
     }
 
     /**
@@ -446,11 +423,6 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
         STPatternType.Enum ptrn = fill.getPatternType();
         if(ptrn == null) return FillPatternType.NO_FILL;
         return FillPatternType.forInt(ptrn.intValue() - 1);
-    }
-
-    @Override
-    public FillPatternType getFillPatternEnum() {
-        return getFillPattern();
     }
 
     /**
@@ -659,11 +631,6 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
             return VerticalAlignment.forInt(align.getVertical().intValue()-1);
         }
         return VerticalAlignment.BOTTOM;
-    }
-
-    @Override
-    public VerticalAlignment getVerticalAlignmentEnum() {
-        return getVerticalAlignment();
     }
 
     /**

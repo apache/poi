@@ -105,7 +105,6 @@ public final class TestHSSFPalette {
         assertEquals(64, cellA.getCellStyle().getFillBackgroundColor());
         assertEquals(Font.COLOR_NORMAL, cellA.getCellStyle().getFont(book).getColor());
         assertEquals(FillPatternType.NO_FILL, cellA.getCellStyle().getFillPattern());
-        assertEquals(FillPatternType.NO_FILL, cellA.getCellStyle().getFillPatternEnum());
         assertEquals("0:0:0", p.getColor((short)64).getHexString());
         assertNull(p.getColor((short) 32767));
 
@@ -115,7 +114,6 @@ public final class TestHSSFPalette {
         assertEquals(64, cellB.getCellStyle().getFillBackgroundColor());
         assertEquals(10, cellB.getCellStyle().getFont(book).getColor());
         assertEquals(FillPatternType.NO_FILL, cellB.getCellStyle().getFillPattern());
-        assertEquals(FillPatternType.NO_FILL, cellB.getCellStyle().getFillPatternEnum());
         assertEquals("0:0:0", p.getColor((short)64).getHexString());
         assertEquals("FFFF:0:0", p.getColor((short)10).getHexString());
 
@@ -125,7 +123,6 @@ public final class TestHSSFPalette {
         assertEquals(64, cellC.getCellStyle().getFillBackgroundColor());
         assertEquals(10, cellC.getCellStyle().getFont(book).getColor());
         assertEquals(FillPatternType.SOLID_FOREGROUND, cellC.getCellStyle().getFillPattern());
-        assertEquals(FillPatternType.SOLID_FOREGROUND, cellC.getCellStyle().getFillPatternEnum());
         assertEquals("0:FFFF:0", p.getColor((short)11).getHexString());
         assertEquals("FFFF:0:0", p.getColor((short)10).getHexString());
 
@@ -135,7 +132,6 @@ public final class TestHSSFPalette {
         assertEquals(64, cellD.getCellStyle().getFillBackgroundColor());
         assertEquals(14, cellD.getCellStyle().getFont(book).getColor());
         assertEquals(FillPatternType.NO_FILL, cellD.getCellStyle().getFillPattern());
-        assertEquals(FillPatternType.NO_FILL, cellD.getCellStyle().getFillPatternEnum());
         assertEquals("FFFF:FFFF:0", p.getColor((short)13).getHexString());
         assertEquals("FFFF:0:FFFF", p.getColor((short)14).getHexString());
 
@@ -145,7 +141,6 @@ public final class TestHSSFPalette {
         assertEquals(64, cellE.getCellStyle().getFillBackgroundColor());
         assertEquals(14, cellE.getCellStyle().getFont(book).getColor());
         assertEquals(FillPatternType.NO_FILL, cellE.getCellStyle().getFillPattern());
-        assertEquals(FillPatternType.NO_FILL, cellE.getCellStyle().getFillPatternEnum());
         assertEquals("FFFF:FFFF:0", p.getColor((short)13).getHexString());
         assertEquals("FFFF:0:FFFF", p.getColor((short)14).getHexString());
     }

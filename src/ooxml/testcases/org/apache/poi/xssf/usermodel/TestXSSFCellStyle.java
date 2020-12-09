@@ -590,13 +590,11 @@ public class TestXSSFCellStyle {
         assertEquals(IndexedColors.AUTOMATIC.getIndex(), defaultStyle.getFillForegroundColor());
         assertNull(defaultStyle.getFillForegroundXSSFColor());
         assertEquals(FillPatternType.NO_FILL, defaultStyle.getFillPattern());
-        assertEquals(FillPatternType.NO_FILL, defaultStyle.getFillPatternEnum());
 
         XSSFCellStyle customStyle = wb.createCellStyle();
 
         customStyle.setFillPattern(FillPatternType.SOLID_FOREGROUND);
         assertEquals(FillPatternType.SOLID_FOREGROUND, customStyle.getFillPattern());
-        assertEquals(FillPatternType.SOLID_FOREGROUND, customStyle.getFillPatternEnum());
         assertEquals(3, styles.getFills().size());
 
         customStyle.setFillForegroundColor(IndexedColors.BRIGHT_GREEN.getIndex());
@@ -838,7 +836,7 @@ public class TestXSSFCellStyle {
         assertEquals("TestingFont", clone.getFont().getFontName());
         assertEquals(fmtClone.getFormat("Test##"), clone.getDataFormat());
         assertNotEquals(fmtClone.getFormat("Test##"), fmt.getFormat("Test##"));
-        assertEquals(clone.getFillPatternEnum(), FillPatternType.SOLID_FOREGROUND);
+        assertEquals(clone.getFillPattern(), FillPatternType.SOLID_FOREGROUND);
         assertEquals(clone.getFillForegroundColor(), IndexedColors.BRIGHT_GREEN.getIndex());
 
         // Save it and re-check
@@ -852,7 +850,7 @@ public class TestXSSFCellStyle {
         assertEquals("TestingFont", reload.getFont().getFontName());
         assertEquals(fmtClone.getFormat("Test##"), reload.getDataFormat());
         assertNotEquals(fmtClone.getFormat("Test##"), fmt.getFormat("Test##"));
-        assertEquals(clone.getFillPatternEnum(), FillPatternType.SOLID_FOREGROUND);
+        assertEquals(clone.getFillPattern(), FillPatternType.SOLID_FOREGROUND);
         assertEquals(clone.getFillForegroundColor(), IndexedColors.BRIGHT_GREEN.getIndex());
 
         XSSFWorkbook wbOrig2 = XSSFTestDataSamples.writeOutAndReadBack(wbOrig);

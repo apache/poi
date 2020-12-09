@@ -33,7 +33,6 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 
 /**
  * Data Bar Conditional Formatting Rule Record.
@@ -152,16 +151,6 @@ public final class DataBarFormatting implements Duplicatable, GenericRecord {
 
     public String toString() {
         return GenericRecordJsonWriter.marshal(this);
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public DataBarFormatting clone()  {
-        return copy();
     }
 
     public DataBarFormatting copy()  {
