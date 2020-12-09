@@ -29,7 +29,6 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -279,16 +278,6 @@ public class LbsDataSubRecord extends SubRecord {
                 out.writeByte(val ? 1 : 0);
             }
         }
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public LbsDataSubRecord clone() {
-        return copy();
     }
 
     @Override

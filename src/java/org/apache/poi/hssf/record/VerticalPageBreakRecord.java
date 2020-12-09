@@ -17,8 +17,6 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.Removal;
-
 /**
  * VerticalPageBreak (0x001A) record that stores page breaks at columns
  *
@@ -46,17 +44,6 @@ public final class VerticalPageBreakRecord extends PageBreakRecord {
 
 	public short getSid() {
 		return sid;
-	}
-
-	/**
-	 * @deprecated use {@link #copy()} instead
-	 */
-	@Override
-	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-	@Deprecated
-	@Removal(version = "5.0.0")
-	public VerticalPageBreakRecord clone() {
-		return copy();
 	}
 
 	@Override

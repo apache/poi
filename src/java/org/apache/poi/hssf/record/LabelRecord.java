@@ -25,7 +25,6 @@ import org.apache.poi.util.HexDump;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
-import org.apache.poi.util.Removal;
 
 /**
  * Label Record (0x0204) - read only support for strings stored directly in the cell...
@@ -173,19 +172,7 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
      * no op!
      */
     @Override
-    public void setXFIndex(short xf)
-    {
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public LabelRecord clone() {
-        return copy();
-    }
+    public void setXFIndex(short xf) {}
 
     @Override
     public LabelRecord copy() {

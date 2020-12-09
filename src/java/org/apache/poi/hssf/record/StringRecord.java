@@ -23,7 +23,6 @@ import java.util.function.Supplier;
 import org.apache.poi.hssf.record.cont.ContinuableRecord;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -84,16 +83,6 @@ public final class StringRecord extends ContinuableRecord {
     public void setString(String string) {
         _text = string;
         _is16bitUnicode = StringUtil.hasMultibyte(string);
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public StringRecord clone() {
-        return copy();
     }
 
     public StringRecord copy() {

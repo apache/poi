@@ -29,7 +29,6 @@ import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.RecordFormatException;
-import org.apache.poi.util.Removal;
 
 /**
  * OBJRECORD (0x005D)<p>
@@ -213,16 +212,6 @@ public final class ObjRecord extends Record {
 
     public boolean addSubRecord(SubRecord o) {
         return subrecords.add(o);
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public ObjRecord clone() {
-        return copy();
     }
 
     @Override

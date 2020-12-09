@@ -17,8 +17,6 @@
 
 package org.apache.poi.hssf.record;
 
-import org.apache.poi.util.Removal;
-
 /**
  * HorizontalPageBreak (0x001B) record that stores page breaks at rows
  *
@@ -46,17 +44,6 @@ public final class HorizontalPageBreakRecord extends PageBreakRecord {
 
 	public short getSid() {
 		return sid;
-	}
-
-	/**
-	 * @deprecated use {@link #copy()} instead
-	 */
-	@Override
-	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-	@Deprecated
-	@Removal(version = "5.0.0")
-	public PageBreakRecord clone() {
-		return copy();
 	}
 
 	@Override

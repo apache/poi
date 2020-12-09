@@ -24,7 +24,6 @@ import java.util.function.Supplier;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.Removal;
 
 /**
  * A complex property differs from a simple property in that the data can not fit inside a 32 bit
@@ -36,40 +35,6 @@ public class EscherComplexProperty extends EscherProperty {
     private static final int MAX_RECORD_LENGTH = 100_000_000;
 
     private byte[] complexData;
-
-    /**
-     * Create a complex property using the property id and a byte array containing the complex
-     * data value.
-     *
-     * @param id          The id consists of the property number, a flag indicating whether this is a blip id and a flag
-     *                    indicating that this is a complex property.
-     * @param complexData The value of this property.
-     *
-     * @deprecated use {@link #EscherComplexProperty(short, int)} and {@link #setComplexData(byte[])} instead
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public EscherComplexProperty(short id, byte[] complexData) {
-        this(id, complexData == null ? 0 : complexData.length);
-        setComplexData(complexData);
-    }
-
-    /**
-     * Create a complex property using the property number, a flag to indicate whether this is a
-     * blip reference and the complex property data.
-     *
-     * @param propertyNumber The property number
-     * @param isBlipId       Whether this is a blip id.  Should be false.
-     * @param complexData    The value of this complex property.
-     *
-     * @deprecated use {@link #EscherComplexProperty(EscherPropertyTypes, boolean, int)} and {@link #setComplexData(byte[])} instead
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public EscherComplexProperty(short propertyNumber, boolean isBlipId, byte[] complexData) {
-        this(propertyNumber, isBlipId, complexData == null ? 0 : complexData.length);
-        setComplexData(complexData);
-    }
 
     /**
      * Create a complex property using the property id and a byte array containing the complex

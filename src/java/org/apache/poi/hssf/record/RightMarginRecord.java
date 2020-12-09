@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Record for the right margin.
@@ -62,16 +61,6 @@ public final class RightMarginRecord extends StandardRecord implements Margin {
      */
     public void setMargin( double field_1_margin )
     {        this.field_1_margin = field_1_margin;    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public RightMarginRecord clone() {
-        return copy();
-    }
 
     public RightMarginRecord copy() {
         return new RightMarginRecord(this);

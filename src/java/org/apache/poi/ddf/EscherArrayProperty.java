@@ -56,24 +56,6 @@ public final class EscherArrayProperty extends EscherComplexProperty implements 
 
     /**
      * Create an instance of an escher array property.
-     * This constructor defaults to a 6 bytes header if the complexData is null or byte[0].
-     *
-     * @param id          The id consists of the property number, a flag indicating whether this is a blip id and a flag
-     *                    indicating that this is a complex property.
-     * @param complexData The value of this property.
-     *
-     * @deprecated use {@link #EscherArrayProperty(EscherPropertyTypes, boolean, int)} and {@link #setComplexData(byte[])}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    @Internal
-    public EscherArrayProperty(short id, byte[] complexData) {
-        this(id, safeSize(complexData == null ? 0 : complexData.length));
-        setComplexData(complexData);
-    }
-
-    /**
-     * Create an instance of an escher array property.
      * This constructor can be used to create emptyComplexParts with a complexSize = 0.
      * Preferably use {@link #EscherArrayProperty(EscherPropertyTypes, boolean, int)} with {@link #setComplexData(byte[])}.
      *

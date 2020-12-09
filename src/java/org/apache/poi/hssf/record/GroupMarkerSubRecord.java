@@ -24,7 +24,6 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * ftGmo (0x0006)<p>
@@ -73,16 +72,6 @@ public final class GroupMarkerSubRecord extends SubRecord {
     public short getSid()
     {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public GroupMarkerSubRecord clone() {
-        return copy();
     }
 
     @Override

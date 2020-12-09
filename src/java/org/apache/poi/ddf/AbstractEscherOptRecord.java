@@ -24,7 +24,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.Removal;
 
 /**
  * Common abstract class for {@link EscherOptRecord} and
@@ -151,15 +150,6 @@ public abstract class AbstractEscherOptRecord extends EscherRecord {
         properties.removeIf(prop -> prop.getId() == value.getId());
         properties.add( value );
         sortProperties();
-    }
-
-    /**
-     * @deprecated use {@link #removeEscherProperty(EscherPropertyTypes)} instead
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public void removeEscherProperty(int num){
-        properties.removeIf(prop -> prop.getPropertyNumber() == num);
     }
 
     public void removeEscherProperty(EscherPropertyTypes type){

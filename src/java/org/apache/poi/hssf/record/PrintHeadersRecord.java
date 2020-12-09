@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Whether or not to print the row/column headers when you enjoy your spreadsheet in the physical form.
@@ -77,16 +76,6 @@ public final class PrintHeadersRecord extends StandardRecord {
     public short getSid()
     {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public PrintHeadersRecord clone() {
-        return copy();
     }
 
     public PrintHeadersRecord copy() {

@@ -30,7 +30,6 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.RecordFormatException;
-import org.apache.poi.util.Removal;
 
 /**
  * The TXO record (0x01B6) is used to define the properties of a text box. It is
@@ -315,17 +314,6 @@ public final class TextObjectRecord extends ContinuableRecord {
 
 	public Ptg getLinkRefPtg() {
 		return _linkRefPtg;
-	}
-
-	/**
-	 * @deprecated use {@link #copy()} instead
-	 */
-	@Override
-	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-	@Deprecated
-	@Removal(version = "5.0.0")
-	public TextObjectRecord clone() {
-		return copy();
 	}
 
 	@Override

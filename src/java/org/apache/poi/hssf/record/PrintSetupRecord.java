@@ -28,7 +28,6 @@ import org.apache.poi.ss.usermodel.PrintSetup;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Stores print setup options -- bogus for HSSF (and marked as such)
@@ -314,16 +313,6 @@ public final class PrintSetupRecord extends StandardRecord {
     public short getSid()
     {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public PrintSetupRecord clone() {
-        return copy();
     }
 
     @Override
