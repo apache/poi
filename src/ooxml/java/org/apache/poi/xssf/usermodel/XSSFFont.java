@@ -127,8 +127,7 @@ public class XSSFFont implements Font {
      */
     public int getCharSet() {
         CTIntProperty charset = _ctFont.sizeOfCharsetArray() == 0 ? null : _ctFont.getCharsetArray(0);
-        return charset == null ? org.apache.poi.ss.usermodel.FontCharset.ANSI.getValue() :
-                org.apache.poi.ss.usermodel.FontCharset.valueOf(charset.getVal()).getValue();
+        return charset == null ? FontCharset.ANSI.getNativeId() : FontCharset.valueOf(charset.getVal()).getNativeId();
     }
 
 
@@ -313,7 +312,7 @@ public class XSSFFont implements Font {
      * set character-set to use.
      *
      * @param charset - charset
-     * @see org.apache.poi.ss.usermodel.FontCharset
+     * @see FontCharset
      */
     public void setCharSet(byte charset) {
        int cs = charset & 0xff;
@@ -324,14 +323,14 @@ public class XSSFFont implements Font {
      * set character-set to use.
      *
      * @param charset - charset
-     * @see org.apache.poi.ss.usermodel.FontCharset
+     * @see FontCharset
      */
     public void setCharSet(int charset) {
-        org.apache.poi.ss.usermodel.FontCharset fontCharset = org.apache.poi.ss.usermodel.FontCharset.valueOf(charset);
+        FontCharset fontCharset = FontCharset.valueOf(charset);
         if(fontCharset != null) {
            setCharSet(fontCharset);
         } else {
-           throw new POIXMLException("Attention: an attempt to set a type of unknow charset and charset");
+           throw new POIXMLException("Attention: an attempt to set a type of unknown charset and charset");
         }
     }
 
@@ -339,7 +338,10 @@ public class XSSFFont implements Font {
      * set character-set to use.
      *
      * @param charSet
+     * @deprecated use {@link #setCharSet(FontCharset)} instead
      */
+    @Deprecated
+    @Removal(version = "6.0.0")
     public void setCharSet(org.apache.poi.ss.usermodel.FontCharset charSet) {
        CTIntProperty charsetProperty;
        if(_ctFont.sizeOfCharsetArray() == 0) {

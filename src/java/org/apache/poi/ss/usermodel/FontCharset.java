@@ -25,7 +25,7 @@ import org.apache.poi.util.Removal;
  * 
  * @deprecated enum will be replaced by common version org.apache.poi.common.usermodel.FontCharset
  */
-@Removal(version="4.0")
+@Removal(version="6.0.0")
 @Deprecated
 public enum FontCharset {
 
