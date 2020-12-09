@@ -312,7 +312,7 @@ public abstract class BaseTestCell {
                 cs = c.getCellStyle();
 
                 assertNotNull("Formula Cell Style", cs);
-                assertEquals("Font Index Matches", f.getIndexAsInt(), cs.getFontIndexAsInt());
+                assertEquals("Font Index Matches", f.getIndexAsInt(), cs.getFontIndex());
                 assertEquals("Top Border", BorderStyle.THIN, cs.getBorderTop());
                 assertEquals("Left Border", BorderStyle.THIN, cs.getBorderLeft());
                 assertEquals("Right Border", BorderStyle.THIN, cs.getBorderRight());
@@ -731,7 +731,7 @@ public abstract class BaseTestCell {
             assertTrue(style.getLocked());
             assertFalse(style.getHidden());
             assertEquals(0, style.getIndention());
-            assertEquals(0, style.getFontIndexAsInt());
+            assertEquals(0, style.getFontIndex());
             assertEquals(HorizontalAlignment.GENERAL, style.getAlignment());
             assertEquals(0, style.getDataFormat());
             assertFalse(style.getWrapText());

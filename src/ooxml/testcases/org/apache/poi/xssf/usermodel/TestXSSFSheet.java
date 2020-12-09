@@ -324,7 +324,7 @@ public final class TestXSSFSheet extends BaseTestXSheet {
         cellXf.setXfId(1);
         stylesTable.putCellXf(cellXf);
         XSSFCellStyle cellStyle = new XSSFCellStyle(1, 1, stylesTable, null);
-        assertEquals(1, cellStyle.getFontIndexAsInt());
+        assertEquals(1, cellStyle.getFontIndex());
 
         sheet.setDefaultColumnStyle(3, cellStyle);
         assertEquals(1, ctWorksheet.getColsArray(0).getColArray(0).getStyle());

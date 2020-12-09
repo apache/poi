@@ -313,17 +313,17 @@ public abstract class BaseTestCellUtil {
         // should be assertSame, but a new HSSFCellStyle is returned for each getCellStyle() call. 
         // HSSFCellStyle wraps an underlying style record, and the underlying
         // style record is the same between multiple getCellStyle() calls.
-        assertEquals(defaultFontIndex, A1.getCellStyle().getFontIndexAsInt());
-        assertEquals(defaultFontIndex, B1.getCellStyle().getFontIndexAsInt());
+        assertEquals(defaultFontIndex, A1.getCellStyle().getFontIndex());
+        assertEquals(defaultFontIndex, B1.getCellStyle().getFontIndex());
 
         // get/set alignment modifies the cell's style
         CellUtil.setFont(A1, font);
-        assertEquals(customFontIndex, A1.getCellStyle().getFontIndexAsInt());
+        assertEquals(customFontIndex, A1.getCellStyle().getFontIndex());
 
         // get/set alignment doesn't affect the style of cells with
         // the same style prior to modifying the style
         assertNotEquals(A1.getCellStyle(), B1.getCellStyle());
-        assertEquals(defaultFontIndex, B1.getCellStyle().getFontIndexAsInt());
+        assertEquals(defaultFontIndex, B1.getCellStyle().getFontIndex());
 
         wb.close();
     }

@@ -299,7 +299,7 @@ public final class ToHtml {
     }
 
     private void fontStyle(CellStyle style) {
-        Font font = wb.getFontAt(style.getFontIndexAsInt());
+        Font font = wb.getFontAt(style.getFontIndex());
 
         if (font.getBold()) {
             out.format("  font-weight: bold;%n");

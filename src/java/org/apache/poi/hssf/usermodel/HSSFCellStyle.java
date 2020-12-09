@@ -214,11 +214,11 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     /**
      * gets the font for this style
      * @param parentWorkbook The HSSFWorkbook that this style belongs to
-     * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#getFontIndexAsInt()
+     * @see org.apache.poi.hssf.usermodel.HSSFCellStyle#getFontIndex()
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(int)
      */
     public HSSFFont getFont(org.apache.poi.ss.usermodel.Workbook parentWorkbook) {
-        return ((HSSFWorkbook) parentWorkbook).getFontAt(getFontIndexAsInt());
+        return ((HSSFWorkbook) parentWorkbook).getFontAt(getFontIndex());
     }
 
     /**
@@ -831,7 +831,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
             FontRecord fr = _workbook.createNewFont();
             fr.cloneStyleFrom(
                     source._workbook.getFontRecordAt(
-                            source.getFontIndexAsInt()
+                            source.getFontIndex()
                     )
             );
 

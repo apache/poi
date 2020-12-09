@@ -2850,12 +2850,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
             Cell cell = row.getCell(1);
             CellStyle style = cell.getCellStyle();
-            assertEquals(26, style.getFontIndexAsInt());
+            assertEquals(26, style.getFontIndex());
 
             row = sheet.getRow(3);
             cell = row.getCell(1);
             style = cell.getCellStyle();
-            assertEquals(28, style.getFontIndexAsInt());
+            assertEquals(28, style.getFontIndex());
 
             // check the two fonts
             HSSFFont font = wb.getFontAt(26);

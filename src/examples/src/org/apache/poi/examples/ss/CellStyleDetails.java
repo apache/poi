@@ -66,7 +66,7 @@ public final class CellStyleDetails {
                         System.out.print("FG=" + renderColor(style.getFillForegroundColorColor()) + " ");
                         System.out.print("BG=" + renderColor(style.getFillBackgroundColorColor()) + " ");
 
-                        Font font = wb.getFontAt(style.getFontIndexAsInt());
+                        Font font = wb.getFontAt(style.getFontIndex());
                         System.out.print("Font=" + font.getFontName() + " ");
                         System.out.print("FontColor=");
                         if (font instanceof HSSFFont) {
