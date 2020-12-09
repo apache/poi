@@ -20,7 +20,6 @@ package org.apache.poi.hssf.record.cf;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Icon / Multi-State specific Threshold / value (CFVO),
@@ -63,16 +62,6 @@ public final class IconMultiStateThreshold extends Threshold implements Duplicat
 
     public int getDataLength() {
         return super.getDataLength() + 5;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public IconMultiStateThreshold clone() {
-        return copy();
     }
 
     @Override

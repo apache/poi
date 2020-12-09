@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Refers to a string in the shared string table and is a column value.
@@ -82,16 +81,6 @@ public final class LabelSSTRecord extends CellRecord {
     @Override
     public short getSid() {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public LabelSSTRecord clone() {
-        return copy();
     }
 
     @Override

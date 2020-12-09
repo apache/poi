@@ -21,7 +21,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Whether to center between horizontal margins
@@ -71,16 +70,6 @@ public final class HCenterRecord extends StandardRecord {
     public short getSid()
     {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public HCenterRecord clone() {
-        return copy();
     }
 
     @Override

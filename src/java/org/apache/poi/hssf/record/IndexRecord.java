@@ -24,7 +24,6 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.IntList;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
-import org.apache.poi.util.Removal;
 
 /**
  * Occurs right after BOF, tells you where the DBCELL records are for a sheet Important for locating cells
@@ -139,16 +138,6 @@ public final class IndexRecord extends StandardRecord {
     @Override
     public short getSid() {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public IndexRecord clone() {
-        return copy();
     }
 
     @Override

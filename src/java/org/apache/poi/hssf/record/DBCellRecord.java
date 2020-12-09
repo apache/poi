@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Used by Excel and other MS apps to quickly find rows in the sheets.
@@ -65,16 +64,6 @@ public final class DBCellRecord extends StandardRecord {
 
     public short getSid() {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public DBCellRecord clone() {
-        return copy();
     }
 
     @Override

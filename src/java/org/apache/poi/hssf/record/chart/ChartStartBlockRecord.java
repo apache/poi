@@ -25,7 +25,6 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * STARTBLOCK - Chart Future Record Type Start Block (0x0852)
@@ -79,17 +78,6 @@ public final class ChartStartBlockRecord extends StandardRecord {
 		out.writeShort(iObjectContext);
 		out.writeShort(iObjectInstance1);
 		out.writeShort(iObjectInstance2);
-	}
-
-	/**
-	 * @deprecated use {@link #copy()} instead
-	 */
-	@Override
-	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-	@Deprecated
-	@Removal(version = "5.0.0")
-	public ChartStartBlockRecord clone() {
-		return copy();
 	}
 
 	@Override
