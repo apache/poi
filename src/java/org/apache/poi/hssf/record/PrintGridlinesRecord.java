@@ -21,7 +21,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Whether to print the gridlines when you enjoy the spreadsheet on paper.
@@ -73,16 +72,6 @@ public final class PrintGridlinesRecord extends StandardRecord {
     public short getSid()
     {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public PrintGridlinesRecord clone() {
-        return copy();
     }
 
     public PrintGridlinesRecord copy() {

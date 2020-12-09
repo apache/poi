@@ -27,7 +27,6 @@ import org.apache.poi.ss.formula.SharedFormula;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Primarily used as an excel optimization so that multiple similar formulas are not
@@ -101,16 +100,6 @@ public final class SharedFormulaRecord extends SharedValueRecordBase {
 
         SharedFormula sf = new SharedFormula(SpreadsheetVersion.EXCEL97);
         return sf.convertSharedFormulas(field_7_parsed_expr.getTokens(), formulaRow, formulaColumn);
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public SharedFormulaRecord clone() {
-        return copy();
     }
 
     @Override

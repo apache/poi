@@ -488,16 +488,6 @@ public final class FontFormatting implements Duplicatable, GenericRecord {
         return GenericRecordJsonWriter.marshal(this);
     }
 
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public FontFormatting clone() {
-        return copy();
-    }
-
     @Override
     public FontFormatting copy() {
         return new FontFormatting(this);

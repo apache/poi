@@ -31,7 +31,6 @@ import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * The text record is used to define text stored on a chart.
@@ -154,13 +153,6 @@ public final class TextRecord extends StandardRecord {
     public short getSid()
     {
         return sid;
-    }
-
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public TextRecord clone() {
-        return copy();
     }
 
     @Override

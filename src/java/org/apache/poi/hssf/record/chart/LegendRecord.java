@@ -30,7 +30,6 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Defines a legend for a chart.
@@ -106,22 +105,10 @@ public final class LegendRecord extends StandardRecord {
         return sid;
     }
 
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public LegendRecord clone() {
-        return copy();
-    }
-
     @Override
     public LegendRecord copy() {
         return new LegendRecord(this);
     }
-
-
 
 
     /**

@@ -36,7 +36,6 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -597,16 +596,6 @@ public final class HyperlinkRecord extends StandardRecord {
         _moniker = FILE_MONIKER.getClassID();
         setAddress("");
         setTextMark("");
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public HyperlinkRecord clone() {
-        return copy();
     }
 
     @Override

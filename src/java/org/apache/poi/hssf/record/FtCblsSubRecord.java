@@ -25,8 +25,6 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
-import org.apache.poi.util.Removal;
-
 
 /**
  * This structure appears as part of an Obj record that represents a checkbox or radio button.
@@ -85,16 +83,6 @@ public final class FtCblsSubRecord extends SubRecord {
     public short getSid()
     {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public FtCblsSubRecord clone() {
-        return copy();
     }
 
     @Override

@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * NUMBER (0x0203) Contains a numeric cell value.
@@ -84,16 +83,6 @@ public final class NumberRecord extends CellRecord {
     @Override
     public short getSid() {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public NumberRecord clone() {
-        return copy();
     }
 
     @Override

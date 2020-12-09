@@ -247,17 +247,6 @@ public final class FormulaRecord extends CellRecord {
 		return "FORMULA";
 	}
 
-	/**
-	 * @deprecated use {@link #copy()} instead
-	 */
-	@Override
-	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-	@Deprecated
-	@Removal(version = "5.0.0")
-	public FormulaRecord clone() {
-		return copy();
-	}
-
 	@Override
 	public FormulaRecord copy() {
 		return new FormulaRecord(this);

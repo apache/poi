@@ -31,7 +31,6 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 
 /**
  * Title: Feat (Feature) Record
@@ -179,17 +178,6 @@ public final class FeatRecord extends StandardRecord {
 		} else {
 			cbFeatData = 0;
 		}
-	}
-
-	/**
-	 * @deprecated use {@link #copy()} instead
-	 */
-	@Override
-	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-	@Deprecated
-	@Removal(version = "5.0.0")
-	public FeatRecord clone() {
-		return copy();
 	}
 
 	@Override
