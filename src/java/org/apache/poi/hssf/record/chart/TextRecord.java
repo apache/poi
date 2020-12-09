@@ -156,7 +156,6 @@ public final class TextRecord extends StandardRecord {
         return sid;
     }
 
-    @Override
     @SuppressWarnings("squid:S2975")
     @Deprecated
     @Removal(version = "5.0.0")

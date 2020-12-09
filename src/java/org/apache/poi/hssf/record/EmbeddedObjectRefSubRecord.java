@@ -35,7 +35,6 @@ import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.RecordFormatException;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -318,17 +317,6 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 
 	public byte[] getObjectData() {
 		return field_6_unknown;
-	}
-
-	/**
-	 * @deprecated use {@link #copy()} instead
-	 */
-	@Override
-	@SuppressWarnings("squid:S2975")
-	@Deprecated
-	@Removal(version = "5.0.0")
-	public EmbeddedObjectRefSubRecord clone() {
-		return copy();
 	}
 
 	@Override

@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * This record is the list header of all data validation records (0x01BE) in the current sheet.
@@ -154,17 +153,6 @@ public final class DVALRecord extends StandardRecord {
     public short getSid() {
         return sid;
     }
-
-	/**
-	 * @deprecated use {@link #copy()} instead
-	 */
-	@Override
-	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-	@Deprecated
-	@Removal(version = "5.0.0")
-	public DVALRecord clone() {
-		return copy();
-	}
 
 	@Override
     public DVALRecord copy() {

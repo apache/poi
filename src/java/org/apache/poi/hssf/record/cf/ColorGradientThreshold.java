@@ -63,7 +63,6 @@ public final class ColorGradientThreshold extends Threshold implements Duplicata
     /**
      * @deprecated use {@link #copy()} instead
      */
-    @Override
     @SuppressWarnings("squid:S2975")
     @Deprecated
     @Removal(version = "5.0.0")

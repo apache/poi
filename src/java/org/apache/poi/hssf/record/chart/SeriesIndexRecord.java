@@ -61,7 +61,6 @@ public final class SeriesIndexRecord extends StandardRecord {
     /**
      * @deprecated use {@link #copy()} instead
      */
-    @Override
     @SuppressWarnings("squid:S2975")
     @Deprecated
     @Removal(version = "5.0.0")

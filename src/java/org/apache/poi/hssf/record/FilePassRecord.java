@@ -35,7 +35,6 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.LittleEndianOutputStream;
-import org.apache.poi.util.Removal;
 
 /**
  * File Pass Record (0x002F) <p>
@@ -137,16 +136,6 @@ public final class FilePassRecord extends StandardRecord {
     public short getSid() {
 		return sid;
 	}
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public FilePassRecord clone() {
-        return copy();
-    }
 
     @Override
 	public FilePassRecord copy() {

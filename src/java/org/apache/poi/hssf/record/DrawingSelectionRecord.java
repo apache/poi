@@ -24,7 +24,6 @@ import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * MsoDrawingSelection (0x00ED)<p>
@@ -112,17 +111,6 @@ public final class DrawingSelectionRecord extends StandardRecord {
 		for (int shapeId : _shapeIds) {
 			out.writeInt(shapeId);
 		}
-	}
-
-	/**
-	 * @deprecated use {@link #copy()} instead
-	 */
-	@Override
-	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-	@Deprecated
-	@Removal(version = "5.0.0")
-	public DrawingSelectionRecord clone() {
-		return copy();
 	}
 
 	@Override

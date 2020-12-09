@@ -26,7 +26,6 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Tells the GUI if this was written by something that can use "natural language" formulas. HSSF can't.
@@ -66,16 +65,6 @@ public final class UseSelFSRecord extends StandardRecord {
 
     public short getSid() {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public UseSelFSRecord clone() {
-        return copy();
     }
 
     @Override

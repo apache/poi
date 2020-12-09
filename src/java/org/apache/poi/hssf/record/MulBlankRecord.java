@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Represents a set of columns in a row with no value but with styling.
@@ -117,17 +116,6 @@ public final class MulBlankRecord extends StandardRecord {
 	protected int getDataSize() {
 		// 3 short fields + array of shorts
 		return 6 + _xfs.length * 2;
-	}
-
-	/**
-	 * @deprecated use {@link #copy()} instead
-	 */
-	@Override
-	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-	@Deprecated
-	@Removal(version = "5.0.0")
-	public MulBlankRecord clone() {
-		return copy();
 	}
 
 	@Override

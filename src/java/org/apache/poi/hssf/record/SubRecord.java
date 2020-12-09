@@ -32,7 +32,6 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.LittleEndianOutputStream;
-import org.apache.poi.util.Removal;
 
 /**
  * Subrecords are part of the OBJ class.
@@ -167,17 +166,6 @@ public abstract class SubRecord implements Duplicatable, GenericRecord {
 			out.write(_data);
 		}
 
-		/**
-		 * @deprecated use {@link #copy()} instead
-		 */
-		@Override
-		@SuppressWarnings("squid:S2975")
-		@Deprecated
-		@Removal(version = "5.0.0")
-		public UnknownSubRecord clone() {
-			return copy();
-		}
-
 		@Override
 		public UnknownSubRecord copy() {
 			return this;
@@ -196,12 +184,6 @@ public abstract class SubRecord implements Duplicatable, GenericRecord {
 			);
 		}
 	}
-
-	@Override
-	@SuppressWarnings("squid:S2975")
-	@Deprecated
-	@Removal(version = "5.0.0")
-	public abstract SubRecord  clone();
 
 	@Override
 	public abstract SubRecord copy();

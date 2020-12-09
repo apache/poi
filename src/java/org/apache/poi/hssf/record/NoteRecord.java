@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -238,19 +237,9 @@ public final class NoteRecord extends StandardRecord {
 	 */
 	public void setAuthor(String author) {
 		field_6_author = author;
-      field_5_hasMultibyte = StringUtil.hasMultibyte(author);
+      	field_5_hasMultibyte = StringUtil.hasMultibyte(author);
 	}
 
-	/**
-	 * @deprecated use {@link #copy()} instead
-	 */
-	@Override
-	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-	@Deprecated
-	@Removal(version = "5.0.0")
-	public NoteRecord clone() {
-		return copy();
-	}
 
 	@Override
 	public NoteRecord copy() {

@@ -41,7 +41,6 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 
 /**
  * Conditional Formatting v12 Rule Record (0x087A).
@@ -447,17 +446,6 @@ public final class CFRule12Record extends CFRuleBase implements FutureRecord {
             len += multistate.getDataLength();
         }
         return len;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public CFRule12Record clone() {
-        return copy();
     }
 
     @Override

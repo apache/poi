@@ -24,7 +24,6 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Defines with width and formatting for a range of columns
@@ -237,16 +236,6 @@ public final class ColumnInfoRecord extends StandardRecord {
 
     protected int getDataSize() {
         return 12;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public ColumnInfoRecord clone() {
-        return copy();
     }
 
     @Override

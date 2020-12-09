@@ -24,7 +24,6 @@ import java.util.stream.Stream;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Shows the user's selection on the sheet for write set num refs to 0
@@ -171,16 +170,6 @@ public final class SelectionRecord extends StandardRecord {
     @Override
     public short getSid() {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public SelectionRecord clone() {
-        return copy();
     }
 
     @Override

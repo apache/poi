@@ -28,7 +28,6 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
-import org.apache.poi.util.Removal;
 
 /**
  * The common object data record is used to store all common preferences for an excel object.
@@ -134,17 +133,6 @@ public final class CommonObjectDataSubRecord extends SubRecord {
     public short getSid()
     {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public CommonObjectDataSubRecord clone() {
-        return copy();
     }
 
     @Override

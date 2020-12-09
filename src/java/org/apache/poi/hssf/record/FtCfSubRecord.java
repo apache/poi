@@ -26,7 +26,6 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
-import org.apache.poi.util.Removal;
 
 
 /**
@@ -97,17 +96,6 @@ public final class FtCfSubRecord extends SubRecord {
     public short getSid()
     {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public FtCfSubRecord clone() {
-        return copy();
     }
 
     @Override

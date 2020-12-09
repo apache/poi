@@ -30,7 +30,6 @@ import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -329,17 +328,6 @@ public final class DVRecord extends StandardRecord {
 
 	public short getSid() {
 		return sid;
-	}
-
-	/**
-	 * @deprecated use {@link #copy()} instead
-	 */
-	@Override
-	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-	@Deprecated
-	@Removal(version = "5.0.0")
-	public DVRecord clone() {
-		return copy();
 	}
 
 	/** Clones the object. */

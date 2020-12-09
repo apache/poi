@@ -26,7 +26,6 @@ import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
 
 /**
@@ -105,16 +104,6 @@ public final class FormatRecord extends StandardRecord {
 
     public short getSid() {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public FormatRecord clone() {
-        return copy();
     }
 
     @Override

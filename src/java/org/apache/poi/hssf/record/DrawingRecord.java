@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 public final class DrawingRecord extends StandardRecord {
     public static final short sid = 0x00EC;
@@ -81,13 +80,6 @@ public final class DrawingRecord extends StandardRecord {
             throw new IllegalArgumentException("data must not be null");
         }
         recordData = thedata;
-    }
-
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public DrawingRecord clone() {
-        return copy();
     }
 
     /**

@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Helper class used primarily for SST Records<p>
@@ -64,16 +63,6 @@ public final class ContinueRecord extends StandardRecord {
 
     public ContinueRecord(RecordInputStream in) {
         _data = in.readRemainder();
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public ContinueRecord clone() {
-        return copy();
     }
 
     @Override

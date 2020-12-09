@@ -30,7 +30,6 @@ import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Pattern Formatting Block of the Conditional Formatting Rule Record.
@@ -183,16 +182,6 @@ public final class PatternFormatting implements Duplicatable, GenericRecord {
 
     public String toString() {
         return GenericRecordJsonWriter.marshal(this);
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public PatternFormatting clone()  {
-        return copy();
     }
 
     public PatternFormatting copy()  {

@@ -23,7 +23,6 @@ import java.util.function.Supplier;
 import org.apache.poi.hssf.util.RKUtil;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * An internal 32 bit number with the two most significant bits storing the type.
@@ -92,16 +91,6 @@ public final class RKRecord extends CellRecord {
     @Override
     public short getSid() {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public RKRecord clone() {
-        return copy();
     }
 
     @Override

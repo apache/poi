@@ -24,7 +24,6 @@ import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
-import org.apache.poi.util.Removal;
 
 /**
  * Creates new BoolErrRecord. (0x0205)
@@ -176,17 +175,6 @@ public final class BoolErrRecord extends CellRecord {
 
 	public short getSid() {
 		return sid;
-	}
-
-	/**
-	 * @deprecated use {@link #copy()} instead
-	 */
-	@Override
-	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-	@Deprecated
-	@Removal(version = "5.0.0")
-	public BoolErrRecord clone() {
-		return copy();
 	}
 
 	@Override
