@@ -25,7 +25,6 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /** The font index record indexes into the font table for the text record. */
 public final class FontIndexRecord extends StandardRecord {
@@ -56,22 +55,10 @@ public final class FontIndexRecord extends StandardRecord {
         return sid;
     }
 
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public FontIndexRecord clone() {
-        return copy();
-    }
-
     @Override
     public FontIndexRecord copy() {
         return new FontIndexRecord(this);
     }
-
-
 
 
     /**

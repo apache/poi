@@ -22,7 +22,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Stores the encrypted password for a sheet or workbook (HSSF doesn't support encryption)
@@ -75,16 +74,6 @@ public final class PasswordRecord extends StandardRecord {
 
     public short getSid() {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public PasswordRecord clone() {
-        return copy();
     }
 
     /**

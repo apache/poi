@@ -25,7 +25,6 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * The axis size and location
@@ -77,16 +76,6 @@ public final class AxisParentRecord extends StandardRecord {
     public short getSid()
     {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public AxisParentRecord clone() {
-        return copy();
     }
 
     /**

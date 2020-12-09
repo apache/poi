@@ -24,7 +24,6 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Sheet window settings
@@ -459,16 +458,6 @@ public final class WindowTwoRecord extends StandardRecord {
     public short getSid()
     {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public WindowTwoRecord clone() {
-        return copy();
     }
 
     @Override

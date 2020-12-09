@@ -27,7 +27,6 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * The frame record indicates whether there is a border around the displayed text of a chart.
@@ -69,16 +68,6 @@ public final class FrameRecord extends StandardRecord {
     public short getSid()
     {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public FrameRecord clone() {
-        return copy();
     }
 
     @Override

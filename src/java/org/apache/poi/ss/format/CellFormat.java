@@ -37,7 +37,6 @@ import org.apache.poi.ss.usermodel.DataFormatter;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.DateFormatConverter;
 import org.apache.poi.util.LocaleUtil;
-import org.apache.poi.util.Removal;
 
 /**
  * Format a value according to the standard Excel behavior.  This "standard" is
@@ -445,24 +444,6 @@ public class CellFormat {
             return cell.getCachedFormulaResultType();
         else
             return type;
-    }
-
-    /**
-     * Returns the ultimate cell type, following the results of formulas.  If
-     * the cell is a {@link CellType#FORMULA}, this returns the result of
-     * {@link Cell#getCachedFormulaResultType()}.  Otherwise this returns the
-     * result of {@link Cell#getCellType()}.
-     *
-     * @param cell The cell.
-     *
-     * @return The ultimate type of this cell.
-     * @since POI 3.15 beta 3
-     * @deprecated use <code>ultimateType</code> instead
-     */
-    @Deprecated
-    @Removal(version = "4.2")
-    public static CellType ultimateTypeEnum(Cell cell) {
-        return ultimateType(cell);
     }
 
     /**

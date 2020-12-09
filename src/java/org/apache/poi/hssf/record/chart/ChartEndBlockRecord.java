@@ -25,7 +25,6 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * ENDBLOCK - Chart Future Record Type End Block (0x0853)
@@ -79,17 +78,6 @@ public final class ChartEndBlockRecord extends StandardRecord {
 		out.writeShort(iObjectKind);
 		// 6 bytes unused
 		out.write(unused);
-	}
-
-	/**
-	 * @deprecated use {@link #copy()} instead
-	 */
-	@Override
-	@SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-	@Deprecated
-	@Removal(version = "5.0.0")
-	public ChartEndBlockRecord clone() {
-		return copy();
 	}
 
 	@Override

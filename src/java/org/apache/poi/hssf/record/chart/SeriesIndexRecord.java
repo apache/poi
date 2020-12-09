@@ -25,7 +25,6 @@ import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * links a series to its position in the series list.
@@ -56,16 +55,6 @@ public final class SeriesIndexRecord extends StandardRecord {
     public short getSid()
     {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public SeriesIndexRecord clone() {
-        return copy();
     }
 
     @Override

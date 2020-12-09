@@ -24,7 +24,6 @@ import java.util.function.Supplier;
 import org.apache.poi.hssf.record.aggregates.PageSettingsBlock;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Unknown record just tells you the sid so you can figure out what records you are missing.
@@ -263,16 +262,6 @@ public final class UnknownRecord extends StandardRecord {
                 return true;
         }
         return false;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public UnknownRecord clone() {
-        return copy();
     }
 
     @Override

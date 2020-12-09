@@ -23,7 +23,6 @@ import java.util.regex.Pattern;
 
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.SpreadsheetVersion;
-import org.apache.poi.util.Removal;
 
 /**
  * Formats sheet names for use in formula expressions.
@@ -53,40 +52,6 @@ public final class SheetNameFormatter {
 		appendFormat(sb, rawSheetName);
 		return sb.toString();
 	}
-
-    /**
-     * @deprecated Only kept for binary compatibility, will be replaced by the version with Appendable as parameter
-     */
-    @Deprecated
-    @Removal(version="5.0.0")
-    public static void appendFormat(StringBuffer out, String rawSheetName) {
-        appendFormat((Appendable)out, rawSheetName);
-    }
-
-    /**
-     * @deprecated Only kept for binary compatibility, will be replaced by the version with Appendable as parameter
-     */
-    @Deprecated
-    @Removal(version="5.0.0")
-    public static void appendFormat(StringBuffer out, String workbookName, String rawSheetName) {
-        appendFormat((Appendable)out, workbookName, rawSheetName);
-    }
-
-    /**
-     * Only kept for binary compatibility, will be replaced by the version with Appendable as parameter
-     */
-    @Removal(version="5.0.0")
-    public static void appendFormat(StringBuilder out, String rawSheetName) {
-        appendFormat((Appendable)out, rawSheetName);
-    }
-
-    /**
-     * Only kept for binary compatibility, will be replaced by the version with Appendable as parameter
-     */
-    @Removal(version="5.0.0")
-    public static void appendFormat(StringBuilder out, String workbookName, String rawSheetName) {
-        appendFormat((Appendable)out, workbookName, rawSheetName);
-    }
 
     /**
      * Convenience method for ({@link #format(String)}) when a StringBuffer is already available.

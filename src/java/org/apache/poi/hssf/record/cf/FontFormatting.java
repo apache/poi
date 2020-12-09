@@ -33,7 +33,6 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.Removal;
 
 /**
  * Font Formatting Block of the Conditional Formatting Rule Record.
@@ -65,71 +64,6 @@ public final class FontFormatting implements Duplicatable, GenericRecord {
     private static final BitField OUTLINE = BitFieldFactory.getInstance(0x00000008);
     private static final BitField SHADOW = BitFieldFactory.getInstance(0x00000010);
     private static final BitField CANCELLATION = BitFieldFactory.getInstance(0x00000080);
-
-    /**
-     * Escapement type - None
-     *
-     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#SS_NONE}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public static final short SS_NONE  = 0;
-    /**
-     * Escapement type - Superscript
-     *
-     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#SS_SUPER}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public static final short SS_SUPER = 1;
-    /**
-     * Escapement type - Subscript
-     *
-     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#SS_SUB}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public static final short SS_SUB   = 2;
-    /**
-     * Underline type - None
-     *
-     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#U_NONE}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public static final byte U_NONE               = 0;
-    /**
-     * Underline type - Single
-     *
-     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#U_SINGLE}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public static final byte U_SINGLE             = 1;
-    /**
-     * Underline type - Double
-     *
-     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#U_DOUBLE}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public static final byte U_DOUBLE             = 2;
-    /**
-     * Underline type - Single Accounting
-     *
-     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#U_SINGLE_ACCOUNTING}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public static final byte U_SINGLE_ACCOUNTING  = 0x21;
-    /**
-     * Underline type - Double Accounting
-     *
-     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#U_DOUBLE_ACCOUNTING}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public static final byte U_DOUBLE_ACCOUNTING  = 0x22;
 
     /** Normal boldness (not bold) */
     private static final short FONT_WEIGHT_NORMAL = 0x190;

@@ -26,8 +26,6 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.RecordFormatException;
-import org.apache.poi.util.Removal;
-
 
 /**
  * This structure appears as part of an Obj record that represents image display properties.
@@ -151,16 +149,6 @@ public final class FtPioGrbitSubRecord extends SubRecord {
     public short getSid()
     {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public FtPioGrbitSubRecord clone() {
-        return copy();
     }
 
     @Override

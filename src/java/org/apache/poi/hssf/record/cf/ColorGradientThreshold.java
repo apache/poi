@@ -25,7 +25,6 @@ import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Color Gradient / Color Scale specific Threshold / value (CFVO),
@@ -58,16 +57,6 @@ public final class ColorGradientThreshold extends Threshold implements Duplicata
 
     public int getDataLength() {
         return super.getDataLength() + 8;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public ColorGradientThreshold clone() {
-        return copy();
     }
 
     @Override

@@ -32,7 +32,6 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 
 /**
  * Color Gradient / Color Scale Conditional Formatting Rule Record.
@@ -149,16 +148,6 @@ public final class ColorGradientFormatting implements Duplicatable, GenericRecor
 
     public String toString() {
         return GenericRecordJsonWriter.marshal(this);
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public ColorGradientFormatting clone() {
-        return copy();
     }
 
     public ColorGradientFormatting copy()  {

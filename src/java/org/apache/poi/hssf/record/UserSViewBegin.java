@@ -23,7 +23,6 @@ import java.util.function.Supplier;
 
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * The UserSViewBegin record specifies settings for a custom view associated with the sheet.
@@ -76,16 +75,6 @@ public final class UserSViewBegin extends StandardRecord {
      */
     public byte[] getGuid(){
         return Arrays.copyOf(_rawData, 16);
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public UserSViewBegin clone() {
-        return copy();
     }
 
     @Override

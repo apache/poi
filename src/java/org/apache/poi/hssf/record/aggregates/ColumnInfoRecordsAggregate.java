@@ -23,7 +23,6 @@ import java.util.List;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.ColumnInfoRecord;
-import org.apache.poi.util.Removal;
 
 public final class ColumnInfoRecordsAggregate extends RecordAggregate implements Duplicatable {
 	/**
@@ -59,17 +58,6 @@ public final class ColumnInfoRecordsAggregate extends RecordAggregate implements
 		if (!isInOrder) {
 			records.sort(ColumnInfoRecordsAggregate::compareColInfos);
 		}
-	}
-
-	/**
-	 * @deprecated use {@link #copy()} instead
-	 */
-	@Override
-	@SuppressWarnings("squid:S2975")
-	@Deprecated
-	@Removal(version = "5.0.0")
-	public ColumnInfoRecordsAggregate clone() {
-		return copy();
 	}
 
 	@Override

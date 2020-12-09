@@ -27,7 +27,6 @@ import java.util.function.Supplier;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Stores the row information for the sheet.
@@ -44,7 +43,7 @@ public final class RowRecord extends StandardRecord {
 
     private static final BitField outlineLevel  = BitFieldFactory.getInstance(0x07);
     // bit 3 reserved
-    private static final BitField colapsed      = BitFieldFactory.getInstance(0x10);
+    private static final BitField collapsed     = BitFieldFactory.getInstance(0x10);
     private static final BitField zeroHeight    = BitFieldFactory.getInstance(0x20);
     private static final BitField badFontHeight = BitFieldFactory.getInstance(0x40);
     private static final BitField formatted     = BitFieldFactory.getInstance(0x80);
@@ -52,7 +51,7 @@ public final class RowRecord extends StandardRecord {
     private static final BitField xfIndex       = BitFieldFactory.getInstance(0xFFF);
     private static final BitField topBorder     = BitFieldFactory.getInstance(0x1000);
     private static final BitField bottomBorder  = BitFieldFactory.getInstance(0x2000);
-    private static final BitField phoeneticGuide  = BitFieldFactory.getInstance(0x4000);
+    private static final BitField phoneticGuide = BitFieldFactory.getInstance(0x4000);
     // bit 15 is unused
 
     private int field_1_row_number;
@@ -175,7 +174,7 @@ public final class RowRecord extends StandardRecord {
      * @param c - collapse or not
      */
     public void setColapsed(boolean c) {
-        field_7_option_flags = colapsed.setBoolean(field_7_option_flags, c);
+        field_7_option_flags = collapsed.setBoolean(field_7_option_flags, c);
     }
 
     /**
@@ -238,7 +237,7 @@ public final class RowRecord extends StandardRecord {
      * @param f use phoenetic guide
      */
     public void setPhoeneticGuide(boolean f) {
-    	field_8_option_flags = phoeneticGuide.setBoolean(field_8_option_flags, f);
+    	field_8_option_flags = phoneticGuide.setBoolean(field_8_option_flags, f);
     }
 
     /**
@@ -307,7 +306,7 @@ public final class RowRecord extends StandardRecord {
      * @see #getOptionFlags()
      */
     public boolean getColapsed() {
-        return (colapsed.isSet(field_7_option_flags));
+        return (collapsed.isSet(field_7_option_flags));
     }
 
     /**
@@ -381,7 +380,7 @@ public final class RowRecord extends StandardRecord {
      * @return has phoentic guide
      */
     public boolean getPhoeneticGuide() {
-    	return phoeneticGuide.isSet(field_8_option_flags);
+    	return phoneticGuide.isSet(field_8_option_flags);
     }
 
     public void serialize(LittleEndianOutput out) {
@@ -401,16 +400,6 @@ public final class RowRecord extends StandardRecord {
 
     public short getSid() {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public RowRecord clone() {
-        return copy();
     }
 
     @Override
@@ -433,11 +422,11 @@ public final class RowRecord extends StandardRecord {
         m.put("optimized", this::getOptimize);
         m.put("reserved", () -> field_6_reserved);
         m.put("options", getBitsAsString(this::getOptionFlags,
-            new BitField[]{colapsed,zeroHeight,badFontHeight,formatted},
+            new BitField[]{collapsed,zeroHeight,badFontHeight,formatted},
             new String[]{"COLAPSED","ZERO_HEIGHT","BAD_FONT_HEIGHT","FORMATTED"}));
         m.put("outlineLevel", this::getOutlineLevel);
         m.put("optionFlags2", getBitsAsString(this::getOptionFlags2,
-            new BitField[]{topBorder, bottomBorder, phoeneticGuide},
+            new BitField[]{topBorder, bottomBorder, phoneticGuide},
             new String[]{"TOP_BORDER","BOTTOM_BORDER","PHOENETIC_GUIDE"}));
         m.put("xfIndex", this::getXFIndex);
         return Collections.unmodifiableMap(m);

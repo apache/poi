@@ -32,7 +32,6 @@ import org.apache.poi.hwpf.sprm.TableSprmCompressor;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 
 public class Paragraph extends Range implements Duplicatable {
     private static final POILogger log = POILogFactory.getLogger( Paragraph.class );
@@ -590,14 +589,6 @@ public class Paragraph extends Range implements Duplicatable {
      */
     public ParagraphProperties cloneProperties() {
         return _props.copy();
-    }
-
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public Paragraph clone() {
-        return copy();
     }
 
     @Override

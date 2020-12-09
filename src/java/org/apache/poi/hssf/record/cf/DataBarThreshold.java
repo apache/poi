@@ -19,7 +19,6 @@ package org.apache.poi.hssf.record.cf;
 
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.LittleEndianInput;
-import org.apache.poi.util.Removal;
 
 /**
  * Data Bar specific Threshold / value (CFVO),
@@ -37,16 +36,6 @@ public final class DataBarThreshold extends Threshold implements Duplicatable {
     /** Creates new Data Bar Threshold */
     public DataBarThreshold(LittleEndianInput in) {
         super(in);
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public DataBarThreshold clone() {
-        return copy();
     }
 
     @Override

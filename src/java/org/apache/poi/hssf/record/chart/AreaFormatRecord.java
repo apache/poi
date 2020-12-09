@@ -28,7 +28,6 @@ import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * The area format record is used to define the colours and patterns for an area.
@@ -84,16 +83,6 @@ public final class AreaFormatRecord extends StandardRecord {
     public short getSid()
     {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public AreaFormatRecord clone() {
-        return copy();
     }
 
     /**

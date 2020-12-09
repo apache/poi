@@ -30,7 +30,6 @@ import org.apache.poi.util.GenericRecordJsonWriter;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * Border Formatting Block of the Conditional Formatting Rule Record.
@@ -461,16 +460,6 @@ public final class BorderFormatting implements Duplicatable, GenericRecord {
 
     public String toString() {
         return GenericRecordJsonWriter.marshal(this);
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public BorderFormatting clone() {
-        return copy();
     }
 
     public BorderFormatting copy() {

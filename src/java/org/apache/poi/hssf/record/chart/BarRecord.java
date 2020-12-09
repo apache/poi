@@ -28,7 +28,6 @@ import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndianOutput;
-import org.apache.poi.util.Removal;
 
 /**
  * The bar record is used to define a bar chart.
@@ -74,16 +73,6 @@ public final class BarRecord extends StandardRecord {
     public short getSid()
     {
         return sid;
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public BarRecord clone() {
-        return copy();
     }
 
     /**

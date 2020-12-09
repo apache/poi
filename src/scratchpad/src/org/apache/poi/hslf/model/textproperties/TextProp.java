@@ -25,7 +25,6 @@ import java.util.function.Supplier;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.util.GenericRecordUtil;
-import org.apache.poi.util.Removal;
 
 /**
  * Definition of a property of some text, or its paragraph. Defines
@@ -95,14 +94,6 @@ public class TextProp implements Duplicatable, GenericRecord {
 	 * Set the value of the text property.
 	 */
 	public void setValue(int val) { dataValue = val; }
-
-	@Override
-	@SuppressWarnings("squid:S2975")
-	@Deprecated
-	@Removal(version = "5.0.0")
-	public TextProp clone() {
-		return copy();
-	}
 
 	/**
 	 * Clone, eg when you want to actually make use of one of these.

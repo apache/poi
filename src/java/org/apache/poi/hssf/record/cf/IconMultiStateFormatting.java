@@ -32,7 +32,6 @@ import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 
 /**
  * Icon / Multi-State Conditional Formatting Rule Record.
@@ -119,16 +118,6 @@ public final class IconMultiStateFormatting implements Duplicatable, GenericReco
 
     public String toString() {
         return GenericRecordJsonWriter.marshal(this);
-    }
-
-    /**
-     * @deprecated use {@link #copy()} instead
-     */
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public IconMultiStateFormatting clone()  {
-        return copy();
     }
 
     @Override
