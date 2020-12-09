@@ -20,7 +20,6 @@ package org.apache.poi.hwpf.usermodel;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.model.Colorref;
 import org.apache.poi.hwpf.model.types.SHD80AbstractType;
-import org.apache.poi.util.Removal;
 
 /**
  * The SHD80 is a substructure of the CHP and PAP, and TC for Word 97.
@@ -40,14 +39,6 @@ public final class ShadingDescriptor80 extends SHD80AbstractType implements Dupl
 
     public ShadingDescriptor80( short value ) {
         field_1_value = value;
-    }
-
-    @Override
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public ShadingDescriptor80 clone() {
-        return copy();
     }
 
     @Override

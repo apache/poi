@@ -22,7 +22,6 @@ import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.Removal;
 
 /**
  * Mapping class for BRC80 structure (Border Code for Word 97)
@@ -86,14 +85,6 @@ public final class BorderCode implements Duplicatable {
   public int hashCode() {
       assert false : "hashCode not designed";
       return 42; // any arbitrary constant will do
-  }
-
-  @Override
-  @SuppressWarnings("squid:S2975")
-  @Deprecated
-  @Removal(version = "5.0.0")
-  public BorderCode clone() {
-    return copy();
   }
 
   @Override

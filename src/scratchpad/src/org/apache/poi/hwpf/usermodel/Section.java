@@ -20,7 +20,6 @@ package org.apache.poi.hwpf.usermodel;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.model.SEPX;
-import org.apache.poi.util.Removal;
 
 public final class Section extends Range implements Duplicatable {
     private final SectionProperties _props;
@@ -38,14 +37,6 @@ public final class Section extends Range implements Duplicatable {
             _props = new SectionProperties();
         else
             _props = sepx.getSectionProperties();
-    }
-
-    @Override
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public Section clone() {
-        return copy();
     }
 
     @Override

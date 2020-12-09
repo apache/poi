@@ -20,7 +20,6 @@ package org.apache.poi.hwpf.usermodel;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.model.Colorref;
 import org.apache.poi.hwpf.model.types.CHPAbstractType;
-import org.apache.poi.util.Removal;
 
 @SuppressWarnings("unused")
 public final class CharacterProperties extends CHPAbstractType implements Duplicatable {
@@ -369,14 +368,6 @@ public final class CharacterProperties extends CHPAbstractType implements Duplic
     public void setIco24( int colour24 )
     {
         setCv( new Colorref( colour24 & 0xFFFFFF ) );
-    }
-
-    @Override
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public CharacterProperties clone() {
-        return copy();
     }
 
     @Override

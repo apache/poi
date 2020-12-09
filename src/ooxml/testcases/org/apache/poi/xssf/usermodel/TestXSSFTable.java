@@ -89,7 +89,7 @@ public final class TestXSSFTable {
         XSSFSheet sheet = outputWorkbook.createSheet();
 
         //Create
-        XSSFTable outputTable = sheet.createTable();
+        XSSFTable outputTable = sheet.createTable(null);
         outputTable.setDisplayName("Test");
         CTTable outputCTTable = outputTable.getCTTable();
 
@@ -224,15 +224,6 @@ public final class TestXSSFTable {
     }
 
     @Test
-    public void getNumberOfMappedColumns() throws IOException {
-        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx")) {
-            XSSFTable table = wb.getTable("\\_Prime.1");
-            //noinspection deprecation
-            assertEquals(3, table.getNumberOfMappedColumns());
-        }
-    }
-
-    @Test
     public void getColumnCount() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("StructuredReferences.xlsx")) {
             XSSFTable table = wb.getTable("\\_Prime.1");
@@ -258,7 +249,7 @@ public final class TestXSSFTable {
         // can be synchronized with the underlying CTTable
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sh = wb.createSheet();
-            XSSFTable table = sh.createTable();
+            XSSFTable table = sh.createTable(null);
             assertNotNull(table.getDisplayName());
             assertNotNull(table.getCTTable().getDisplayName());
             CTTable ctTable = table.getCTTable();
@@ -289,7 +280,7 @@ public final class TestXSSFTable {
     public void getRowCount() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sh = wb.createSheet();
-            XSSFTable table = sh.createTable();
+            XSSFTable table = sh.createTable(null);
             CTTable ctTable = table.getCTTable();
 
             assertEquals(0, table.getRowCount());

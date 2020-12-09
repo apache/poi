@@ -21,7 +21,6 @@ import java.util.Objects;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 
 @Internal
 public final class PropertyModifier implements Duplicatable {
@@ -53,14 +52,6 @@ public final class PropertyModifier implements Duplicatable {
 
     public PropertyModifier( PropertyModifier other ) {
         value = other.value;
-    }
-
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    protected PropertyModifier clone() {
-        return copy();
     }
 
     @Override

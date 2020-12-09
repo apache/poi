@@ -156,7 +156,7 @@ public class CHPBinTable
 
                 if ( hasChp )
                 {
-                    SprmBuffer newSprmBuffer = sprmBuffer.clone();
+                    SprmBuffer newSprmBuffer = sprmBuffer.copy();
 
                     CHPX chpx = new CHPX( textPiece.getStart(),
                             textPiece.getEnd(), newSprmBuffer );

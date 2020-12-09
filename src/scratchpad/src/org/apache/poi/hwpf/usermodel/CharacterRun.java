@@ -26,7 +26,6 @@ import org.apache.poi.hwpf.model.Ffn;
 import org.apache.poi.hwpf.model.NilPICFAndBinData;
 import org.apache.poi.hwpf.model.StyleSheet;
 import org.apache.poi.hwpf.sprm.SprmBuffer;
-import org.apache.poi.util.Removal;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -565,19 +564,6 @@ public final class CharacterRun extends Range implements Duplicatable, org.apach
   public void setIco24(int colour24)
   {
     _props.setIco24(colour24);
-  }
-
-  /**
-   * Used to create a deep copy of this object.
-   *
-   * @return A deep copy.
-   */
-  @Override
-  @SuppressWarnings("squid:S2975")
-  @Deprecated
-  @Removal(version = "5.0.0")
-  public CharacterRun clone() {
-    return copy();
   }
 
   @Override

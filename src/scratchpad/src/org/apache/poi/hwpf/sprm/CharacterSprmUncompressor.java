@@ -45,7 +45,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
     public static CharacterProperties uncompressCHP(
             CharacterProperties parent, byte[] grpprl, int offset )
     {
-        CharacterProperties newProperties = parent.clone();
+        CharacterProperties newProperties = parent.copy();
         applySprms( parent, grpprl, offset, true, newProperties );
         return newProperties;
     }
@@ -61,7 +61,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
         }
         else
         {
-            newProperties = parStyle.clone();
+            newProperties = parStyle.copy();
         }
 
         /*
@@ -84,7 +84,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
         }
 
         CharacterProperties styleProperties = newProperties;
-        newProperties = styleProperties.clone();
+        newProperties = styleProperties.copy();
 
         try
         {
@@ -329,7 +329,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
         case 0x33:
             // preserve the fSpec setting from the original CHP
             boolean fSpec = newCHP.isFSpec();
-            newCHP = oldCHP.clone();
+            newCHP = oldCHP.copy();
             newCHP.setFSpec( fSpec );
             return;
       case 0x34:

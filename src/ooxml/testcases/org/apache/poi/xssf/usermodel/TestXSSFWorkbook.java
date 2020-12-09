@@ -1102,7 +1102,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
 
        // If a table is added after getTable is called it should still be reachable by XSSFWorkbook.getTable
        // This test makes sure that if any caching is done that getTable never uses a stale cache
-       XSSFTable table2 = wb.getSheet("Foglio2").createTable();
+       XSSFTable table2 = wb.getSheet("Foglio2").createTable(null);
        table2.setName("Table2");
        assertSame("Did not find Table2", table2, wb.getTable("Table2"));
 

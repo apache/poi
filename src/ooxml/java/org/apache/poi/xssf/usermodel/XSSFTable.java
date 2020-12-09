@@ -220,18 +220,11 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
         }
         return tableColumns;
     }
-    
+
     /**
-     * Note this list is static - once read, it does not notice later changes to the underlying column structures
-     * To clear the cache, call {@link #updateHeaders}
-     * 
-     * @deprecated Use {@link XSSFTableColumn#getXmlColumnPr()} instead.
-     * 
-     * @return List of XSSFXmlColumnPr
+     * Use {@link XSSFTableColumn#getXmlColumnPr()} instead.
      */
-    @Deprecated
-    @Removal(version="4.2.0")
-    public List<XSSFXmlColumnPr> getXmlColumnPrs() {
+    private List<XSSFXmlColumnPr> getXmlColumnPrs() {
         if (xmlColumnPrs == null) {
             xmlColumnPrs = new ArrayList<>();
             for (XSSFTableColumn column: getColumns()) {
@@ -436,17 +429,6 @@ public class XSSFTable extends POIXMLDocumentPart implements Table {
             throw new IllegalArgumentException("Display name must not be null or empty");
         }
         ctTable.setDisplayName(name);
-    }
-
-    /**
-     * @deprecated Use {@link #getColumnCount()} instead.
-     * 
-     * @return  the number of mapped table columns (see Open Office XML Part 4: chapter 3.5.1.4)
-     */
-    @Deprecated
-    @Removal(version = "4.2.0")
-    public long getNumberOfMappedColumns() {
-        return ctTable.getTableColumns().getCount();
     }
 
     /**

@@ -24,7 +24,6 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.Removal;
 
 @Internal
 public final class SprmBuffer implements Duplicatable {
@@ -105,14 +104,6 @@ public final class SprmBuffer implements Duplicatable {
         ensureCapacity(grpprl.length - offset);
         System.arraycopy(grpprl, offset, _buf, _offset, grpprl.length - offset);
         _offset += grpprl.length - offset;
-    }
-
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public SprmBuffer clone() {
-        return copy();
     }
 
     @Override

@@ -4070,19 +4070,6 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     }
 
     /**
-     * Creates a new Table, and associates it with this Sheet. The table does
-     * not yet have an area defined and needs to be initialized by calling
-     * {@link XSSFTable#setArea(AreaReference)}.
-     *
-     * @deprecated Use {@link #createTable(AreaReference))} instead
-     */
-    @Deprecated
-    @Removal(version = "4.2.0")
-    public XSSFTable createTable() {
-        return createTable(null);
-    }
-
-    /**
      * Creates a new Table, and associates it with this Sheet.
      * <p>
      * The table is assigned a default display name (since 4.1.1) which can be overridden

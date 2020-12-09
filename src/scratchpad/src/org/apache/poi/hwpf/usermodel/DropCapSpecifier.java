@@ -21,7 +21,6 @@ import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.BitField;
 import org.apache.poi.util.BitFieldFactory;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.Removal;
 
 /**
  * This data structure is used by a paragraph to determine how it should drop
@@ -48,14 +47,6 @@ public final class DropCapSpecifier implements Duplicatable {
 
     public DropCapSpecifier( short fdct ) {
         this._fdct = fdct;
-    }
-
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public DropCapSpecifier clone() {
-        return copy();
     }
 
     @Override

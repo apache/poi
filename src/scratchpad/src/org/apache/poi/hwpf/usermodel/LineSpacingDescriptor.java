@@ -20,7 +20,6 @@ package org.apache.poi.hwpf.usermodel;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
-import org.apache.poi.util.Removal;
 
 /**
  * This class is used to determine line spacing for a paragraph.
@@ -43,14 +42,6 @@ public final class LineSpacingDescriptor implements Duplicatable {
   public LineSpacingDescriptor(byte[] buf, int offset) {
     _dyaLine = LittleEndian.getShort(buf, offset);
     _fMultiLinespace = LittleEndian.getShort(buf, offset + LittleEndianConsts.SHORT_SIZE);
-  }
-
-  @Override
-  @SuppressWarnings("squid:S2975")
-  @Deprecated
-  @Removal(version = "5.0.0")
-  public LineSpacingDescriptor clone() {
-    return copy();
   }
 
   @Override

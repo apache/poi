@@ -19,7 +19,6 @@ package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.model.types.SHDAbstractType;
-import org.apache.poi.util.Removal;
 
 /**
  * The SHD is a substructure of the CHP, PAP, and TC for Word 2000.
@@ -34,14 +33,6 @@ public final class ShadingDescriptor extends SHDAbstractType implements Duplicat
 
     public ShadingDescriptor( byte[] buf, int offset ) {
         fillFields( buf, offset );
-    }
-
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public ShadingDescriptor clone() {
-        return copy();
     }
 
     @Override

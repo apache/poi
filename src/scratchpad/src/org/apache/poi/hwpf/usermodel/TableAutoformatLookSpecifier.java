@@ -20,7 +20,6 @@ import java.util.Objects;
 
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.model.types.TLPAbstractType;
-import org.apache.poi.util.Removal;
 
 public class TableAutoformatLookSpecifier extends TLPAbstractType implements Duplicatable {
     public static final int SIZE = 4;
@@ -33,14 +32,6 @@ public class TableAutoformatLookSpecifier extends TLPAbstractType implements Dup
 
     public TableAutoformatLookSpecifier( byte[] data, int offset ) {
         fillFields( data, offset );
-    }
-
-    @Override
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public TableAutoformatLookSpecifier clone() {
-        return copy();
     }
 
     @Override

@@ -19,7 +19,6 @@ package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.model.types.PAPAbstractType;
-import org.apache.poi.util.Removal;
 
 @SuppressWarnings("unused")
 public final class ParagraphProperties extends PAPAbstractType implements Duplicatable {
@@ -34,14 +33,6 @@ public final class ParagraphProperties extends PAPAbstractType implements Duplic
     public ParagraphProperties(ParagraphProperties other) {
         super(other);
         jcLogical = other.jcLogical;
-    }
-
-    @Override
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public ParagraphProperties clone() {
-        return copy();
     }
 
     @Override

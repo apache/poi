@@ -20,7 +20,6 @@ package org.apache.poi.hwpf.usermodel;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.model.types.TCAbstractType;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.Removal;
 
 public final class TableCellDescriptor extends TCAbstractType implements Duplicatable {
   public static final int SIZE = 20;
@@ -49,14 +48,6 @@ public final class TableCellDescriptor extends TCAbstractType implements Duplica
       getBrcLeft().serialize(data, 0x8 + offset);
       getBrcBottom().serialize(data, 0xc + offset);
       getBrcRight().serialize(data, 0x10 + offset);
-  }
-
-  @Override
-  @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-  @Deprecated
-  @Removal(version = "5.0.0")
-  public TableCellDescriptor clone() {
-    return copy();
   }
 
   @Override

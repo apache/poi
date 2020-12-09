@@ -21,7 +21,6 @@ import java.util.Objects;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.model.types.BKFAbstractType;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 
 @Internal
 public final class BookmarkFirstDescriptor extends BKFAbstractType implements Duplicatable {
@@ -33,14 +32,6 @@ public final class BookmarkFirstDescriptor extends BKFAbstractType implements Du
 
     public BookmarkFirstDescriptor( byte[] data, int offset ) {
         fillFields( data, offset );
-    }
-
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    protected BookmarkFirstDescriptor clone() {
-        return copy();
     }
 
     @Override

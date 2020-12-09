@@ -19,7 +19,6 @@ package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.model.types.SEPAbstractType;
-import org.apache.poi.util.Removal;
 
 public final class SectionProperties extends SEPAbstractType implements Duplicatable {
     private short field_60_rncftn;
@@ -48,14 +47,6 @@ public final class SectionProperties extends SEPAbstractType implements Duplicat
         field_63_nfcftnref = other.field_63_nfcftnref;
         field_64_nedn = other.field_64_nedn;
         field_65_nfcednref = other.field_65_nfcednref;
-    }
-
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public SectionProperties clone() {
-        return copy();
     }
 
     @Override

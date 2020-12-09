@@ -19,7 +19,6 @@ package org.apache.poi.hwpf.model;
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.Removal;
 
 /**
  * 24-bit color structure
@@ -85,14 +84,6 @@ public class Colorref implements Duplicatable {
 
     public Colorref( int value ) {
         this.value = value;
-    }
-
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public Colorref clone() {
-        return copy();
     }
 
     @Override

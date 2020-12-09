@@ -25,7 +25,6 @@ import org.apache.poi.common.Duplicatable;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 
 /**
  * Represents a lightweight node in the Trees used to store content
@@ -150,14 +149,6 @@ public abstract class PropertyNode<T extends PropertyNode<T>> implements Compara
             return _buf.equals(testBuf);
         }
         return false;
-    }
-
-    @Override
-    @Deprecated
-    @Removal(version = "5.0.0")
-    @SuppressWarnings({"unchecked","squid:S2975"})
-    public T clone() {
-        return (T) copy();
     }
 
     @Override

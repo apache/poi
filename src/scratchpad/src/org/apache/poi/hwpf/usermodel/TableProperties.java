@@ -19,7 +19,6 @@ package org.apache.poi.hwpf.usermodel;
 
 import org.apache.poi.common.Duplicatable;
 import org.apache.poi.hwpf.model.types.TAPAbstractType;
-import org.apache.poi.util.Removal;
 
 public final class TableProperties extends TAPAbstractType implements Duplicatable {
 
@@ -62,14 +61,6 @@ public final class TableProperties extends TAPAbstractType implements Duplicatab
 
         setRgdxaCenter( new short[columns] );
         setRgdxaCenterPrint( new short[columns] );
-    }
-
-    @Override
-    @SuppressWarnings({"squid:S2975", "MethodDoesntCallSuperMethod"})
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public TableProperties clone() {
-        return copy();
     }
 
     @Override
