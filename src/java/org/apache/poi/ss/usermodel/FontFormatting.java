@@ -19,80 +19,12 @@
 
 package org.apache.poi.ss.usermodel;
 
-import org.apache.poi.util.Removal;
-
 /**
  * High level representation for Font Formatting component
  * of Conditional Formatting settings
  */
 public interface FontFormatting {
     // TODO: refactor and unify Font & FontFormatting in POI 5.0.0
-
-    /**
-     * Escapement type - None
-     *
-     * @deprecated use {@link Font#SS_NONE} instead
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    short SS_NONE  = 0;
-    /**
-     * Escapement type - Superscript
-     *
-     * @deprecated use {@link Font#SS_SUPER} instead
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    short SS_SUPER = 1;
-    /**
-     * Escapement type - Subscript
-     *
-     * @deprecated use {@link Font#SS_SUB} instead
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    short SS_SUB   = 2;
-
-    /**
-     * Underline type - None
-     *
-     * @deprecated use {@link Font#U_NONE} instead
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    byte U_NONE              = 0;
-    /**
-     * Underline type - Single
-     *
-     * @deprecated use {@link Font#U_SINGLE} instead
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    byte U_SINGLE            = 1;
-    /**
-     * Underline type - Double
-     *
-     * @deprecated use {@link Font#U_DOUBLE} instead
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    byte U_DOUBLE            = 2;
-    /**
-     * Underline type - Single Accounting
-     *
-     * @deprecated use {@link Font#U_SINGLE_ACCOUNTING} instead
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    byte U_SINGLE_ACCOUNTING = 0x21;
-    /**
-     * Underline type - Double Accounting
-     *
-     * @deprecated use {@link Font#U_DOUBLE_ACCOUNTING} instead
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    byte U_DOUBLE_ACCOUNTING = 0x22;
 
     /**
      * get the type of super or subscript for the font
