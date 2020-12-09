@@ -121,7 +121,7 @@ public class HSSFPictureData implements PictureData
     }
     
     /**
-     * @return the POI internal image type, 0 if not unknown image type (was -1 prior to 5.0.0 but
+     * @return the POI internal image type, 0 if unknown image type (was -1 prior to 5.0.0 but
      * that was inconsistent with other {@link PictureData} implementations)
      *
      * @see Workbook#PICTURE_TYPE_DIB
