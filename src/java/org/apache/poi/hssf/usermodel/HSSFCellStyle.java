@@ -182,7 +182,7 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     }
     public void setFont(HSSFFont font) {
         _format.setIndentNotParentFont(true);
-        short fontindex = font.getIndex();
+        short fontindex = (short) font.getIndex();
         _format.setFontIndex(fontindex);
     }
 

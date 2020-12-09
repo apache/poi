@@ -19,10 +19,10 @@ package org.apache.poi.xssf.usermodel;
 
 import java.io.IOException;
 
+import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ss.usermodel.BaseTestFont;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.FontCharset;
 import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.FontScheme;
 import org.apache.poi.ss.usermodel.FontUnderline;
@@ -82,30 +82,30 @@ public final class TestXSSFFont extends BaseTestFont{
 
 	@SuppressWarnings("deprecation")
 	@Test
-	public void testCharSet() throws IOException {
+	public void testCharSetWithDeprecatedFontCharset() throws IOException {
 		CTFont ctFont=CTFont.Factory.newInstance();
 		CTIntProperty prop=ctFont.addNewCharset();
-		prop.setVal(FontCharset.ANSI.getValue());
+		prop.setVal(org.apache.poi.ss.usermodel.FontCharset.ANSI.getValue());
 
 		ctFont.setCharsetArray(0,prop);
 		XSSFFont xssfFont=new XSSFFont(ctFont);
 		assertEquals(Font.ANSI_CHARSET,xssfFont.getCharSet());
 
-		xssfFont.setCharSet(FontCharset.DEFAULT);
-		assertEquals(FontCharset.DEFAULT.getValue(),ctFont.getCharsetArray(0).getVal());
+		xssfFont.setCharSet(org.apache.poi.ss.usermodel.FontCharset.DEFAULT);
+		assertEquals(org.apache.poi.ss.usermodel.FontCharset.DEFAULT.getValue(),ctFont.getCharsetArray(0).getVal());
 
 		// Try with a few less usual ones:
 		// Set with the Charset itself
-        xssfFont.setCharSet(FontCharset.RUSSIAN);
-        assertEquals(FontCharset.RUSSIAN.getValue(), xssfFont.getCharSet());
+        xssfFont.setCharSet(org.apache.poi.ss.usermodel.FontCharset.RUSSIAN);
+        assertEquals(org.apache.poi.ss.usermodel.FontCharset.RUSSIAN.getValue(), xssfFont.getCharSet());
         // And set with the Charset index
-        xssfFont.setCharSet(FontCharset.ARABIC.getValue());
-        assertEquals(FontCharset.ARABIC.getValue(), xssfFont.getCharSet());
-        xssfFont.setCharSet((byte)(FontCharset.ARABIC.getValue()));
-        assertEquals(FontCharset.ARABIC.getValue(), xssfFont.getCharSet());
+        xssfFont.setCharSet(org.apache.poi.ss.usermodel.FontCharset.ARABIC.getValue());
+        assertEquals(org.apache.poi.ss.usermodel.FontCharset.ARABIC.getValue(), xssfFont.getCharSet());
+        xssfFont.setCharSet((byte)(org.apache.poi.ss.usermodel.FontCharset.ARABIC.getValue()));
+        assertEquals(org.apache.poi.ss.usermodel.FontCharset.ARABIC.getValue(), xssfFont.getCharSet());
 
         // This one isn't allowed
-        assertNull(FontCharset.valueOf(9999));
+        assertNull(org.apache.poi.ss.usermodel.FontCharset.valueOf(9999));
         try {
            xssfFont.setCharSet(9999);
            fail("Shouldn't be able to set an invalid charset");
@@ -129,6 +129,55 @@ public final class TestXSSFFont extends BaseTestFont{
               wb2.getSheetAt(0).getRow(0).getCell(0).getCellStyle().getFont().getCharSet()
         );
         wb2.close();
+	}
+
+	@Test
+	public void testCharSet() throws IOException {
+		CTFont ctFont=CTFont.Factory.newInstance();
+		CTIntProperty prop=ctFont.addNewCharset();
+		prop.setVal(FontCharset.ANSI.getNativeId());
+
+		ctFont.setCharsetArray(0,prop);
+		XSSFFont xssfFont=new XSSFFont(ctFont);
+		assertEquals(Font.ANSI_CHARSET,xssfFont.getCharSet());
+
+		xssfFont.setCharSet(FontCharset.DEFAULT);
+		assertEquals(FontCharset.DEFAULT.getNativeId(),ctFont.getCharsetArray(0).getVal());
+
+		// Try with a few less usual ones:
+		// Set with the Charset itself
+		xssfFont.setCharSet(FontCharset.RUSSIAN);
+		assertEquals(FontCharset.RUSSIAN.getNativeId(), xssfFont.getCharSet());
+		// And set with the Charset index
+		xssfFont.setCharSet(FontCharset.ARABIC.getNativeId());
+		assertEquals(FontCharset.ARABIC.getNativeId(), xssfFont.getCharSet());
+		xssfFont.setCharSet((byte)(FontCharset.ARABIC.getNativeId()));
+		assertEquals(FontCharset.ARABIC.getNativeId(), xssfFont.getCharSet());
+
+		// This one isn't allowed
+		assertNull(FontCharset.valueOf(9999));
+		try {
+			xssfFont.setCharSet(9999);
+			fail("Shouldn't be able to set an invalid charset");
+		} catch(POIXMLException e) {
+			// expected here
+		}
+
+		// Now try with a few sample files
+
+		// Normal charset
+		XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("Formatting.xlsx");
+		assertEquals(0,
+				wb1.getSheetAt(0).getRow(0).getCell(0).getCellStyle().getFont().getCharSet()
+		);
+		wb1.close();
+
+		// GB2312 charset
+		XSSFWorkbook wb2 = XSSFTestDataSamples.openSampleWorkbook("49273.xlsx");
+		assertEquals(134,
+				wb2.getSheetAt(0).getRow(0).getCell(0).getCellStyle().getFont().getCharSet()
+		);
+		wb2.close();
 	}
 
 	@Test
