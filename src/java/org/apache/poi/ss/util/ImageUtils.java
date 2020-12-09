@@ -40,20 +40,12 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
 public final class ImageUtils {
     private static final POILogger logger = POILogFactory.getLogger(ImageUtils.class);
-
-    /**
-     * @deprecated use {@link Units#PIXEL_DPI}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public static final int PIXEL_DPI = 96;
 
     private static final int WIDTH_UNITS = 1024;
     private static final int HEIGHT_UNITS = 256;

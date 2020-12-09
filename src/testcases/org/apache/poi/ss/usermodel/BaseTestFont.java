@@ -68,17 +68,17 @@ public abstract class BaseTestFont {
 
         Font f1=wb.createFont();
         f1.setBold(true);
-        short idx1 = f1.getIndex();
+        int idx1 = f1.getIndex();
         wb.createCellStyle().setFont(f1);
 
         Font f2=wb.createFont();
         f2.setUnderline(Font.U_DOUBLE);
-        short idx2 = f2.getIndex();
+        int idx2 = f2.getIndex();
         wb.createCellStyle().setFont(f2);
 
         Font f3=wb.createFont();
         f3.setFontHeightInPoints((short)23);
-        short idx3 = f3.getIndex();
+        int idx3 = f3.getIndex();
         wb.createCellStyle().setFont(f3);
 
         assertEquals(num0 + 3,wb.getNumberOfFonts());
@@ -107,7 +107,7 @@ public abstract class BaseTestFont {
         font.setStrikeout(true);
         font.setColor(IndexedColors.YELLOW.getIndex());
         font.setFontName("Courier");
-        int font1Idx = font.getIndexAsInt();
+        int font1Idx = font.getIndex();
         wb1.createCellStyle().setFont(font);
         assertEquals(num0 + 1, wb1.getNumberOfFonts());
 
@@ -131,7 +131,7 @@ public abstract class BaseTestFont {
         Font font2 = wb2.createFont();
         font2.setItalic(true);
         font2.setFontHeightInPoints((short)15);
-        int font2Idx = font2.getIndexAsInt();
+        int font2Idx = font2.getIndex();
         wb2.createCellStyle().setFont(font2);
         assertEquals(num0 + 2, wb2.getNumberOfFonts());
 
@@ -183,7 +183,7 @@ public abstract class BaseTestFont {
         );
 
         Font nf = wb.createFont();
-        int nfIdx = nf.getIndexAsInt();
+        int nfIdx = nf.getIndex();
         assertEquals(num0 + 1, wb.getNumberOfFonts());
 
         assertSame(nf, wb.getFontAt(nfIdx));

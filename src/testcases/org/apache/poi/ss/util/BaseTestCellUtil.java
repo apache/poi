@@ -305,7 +305,7 @@ public abstract class BaseTestCellUtil {
         final int defaultFontIndex = 0;
         Font font = wb.createFont();
         font.setItalic(true);
-        final int customFontIndex = font.getIndexAsInt();
+        final int customFontIndex = font.getIndex();
 
         // Assumptions
         assertNotEquals(defaultFontIndex, customFontIndex);

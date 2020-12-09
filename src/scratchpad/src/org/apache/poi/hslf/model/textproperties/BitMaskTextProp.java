@@ -25,7 +25,6 @@ import java.util.function.Supplier;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 
 /**
  * Definition of a special kind of property of some text, or its
@@ -183,14 +182,6 @@ public abstract class BitMaskTextProp extends TextProp {
             newVal &= ~subPropMasks[idx];
         }
         super.setValue(newVal);
-	}
-
-	@Override
-	@SuppressWarnings("squid:S2975")
-	@Deprecated
-	@Removal(version = "5.0.0")
-	public BitMaskTextProp clone() {
-		return copy();
 	}
 
 	/**

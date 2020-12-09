@@ -32,7 +32,6 @@ import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.LittleEndianInput;
 import org.apache.poi.util.LittleEndianOutput;
 import org.apache.poi.util.LittleEndianOutputStream;
-import org.apache.poi.util.Removal;
 
 /**
  * Container for tabstop lists
@@ -107,14 +106,6 @@ public class HSLFTabStopPropCollection extends TextProp {
 
     public void addTabStop(HSLFTabStop ts) {
         tabStops.add(ts);
-    }
-
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public HSLFTabStopPropCollection clone() {
-        return copy();
     }
 
     @Override

@@ -22,6 +22,7 @@ import java.util.Objects;
 import org.apache.poi.hssf.record.FontRecord;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Font;
+import org.apache.poi.util.Removal;
 
 /**
  * Represents a Font used in a workbook.
@@ -75,26 +76,17 @@ public final class HSSFFont implements Font {
      * @return String representing the name of the font to use
      * @see #FONT_ARIAL
      */
-
     public String getFontName()
     {
         return font.getFontName();
     }
 
-    /**
-     * get the index within the HSSFWorkbook (sequence within the collection of Font objects)
-     * @return unique index number of the underlying record this Font represents (probably you don't care
-     *  unless you're comparing which one is which)
-     */
+    @Override
+    public int getIndex() { return index; }
 
-    public short getIndex() { return (short)index; }
-
-    /**
-     * get the index within the HSSFWorkbook (sequence within the collection of Font objects)
-     * @return unique index number of the underlying record this Font represents (probably you don't care
-     *  unless you're comparing which one is which)
-     */
-
+    @Deprecated
+    @Removal(version = "6.0.0")
+    @Override
     public int getIndexAsInt()
     {
         return index;

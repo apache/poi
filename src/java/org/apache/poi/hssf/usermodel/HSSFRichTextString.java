@@ -168,7 +168,7 @@ public final class HSSFRichTextString implements Comparable<HSSFRichTextString>,
      * @param font          The index of the font to use.
      */
     public void applyFont(int startIndex, int endIndex, Font font) {
-        applyFont(startIndex, endIndex, font.getIndex());
+        applyFont(startIndex, endIndex, (short)font.getIndex());
     }
 
     /**

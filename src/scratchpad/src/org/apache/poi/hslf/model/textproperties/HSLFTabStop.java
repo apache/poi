@@ -26,7 +26,6 @@ import org.apache.poi.common.usermodel.GenericRecord;
 import org.apache.poi.sl.usermodel.TabStop;
 import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.Internal;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 
 @Internal
@@ -84,14 +83,6 @@ public class HSLFTabStop implements TabStop, Duplicatable, GenericRecord {
     @Override
     public void setType(TabStopType type) {
         this.type = type;
-    }
-
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public HSLFTabStop clone() {
-        return copy();
     }
 
     @Override

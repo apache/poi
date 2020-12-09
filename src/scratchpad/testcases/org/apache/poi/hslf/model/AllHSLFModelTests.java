@@ -32,7 +32,6 @@ import org.junit.runners.Suite;
     TestMovieShape.class,
     TestOleEmbedding.class,
     TestPPFont.class,
-    TestPPGraphics2D.class,
     TestSetBoldItalic.class,
     TestShapes.class,
     TestSheet.class,

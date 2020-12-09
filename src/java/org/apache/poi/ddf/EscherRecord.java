@@ -33,7 +33,6 @@ import org.apache.poi.util.GenericRecordUtil;
 import org.apache.poi.util.GenericRecordXmlWriter;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.Removal;
 
 /**
  * The base abstract record from which all escher records are defined.  Subclasses will need
@@ -234,20 +233,6 @@ public abstract class EscherRecord implements Duplicatable, GenericRecord {
      */
     public void setChildRecords(List<EscherRecord> childRecords) {
         throw new UnsupportedOperationException("This record does not support child records.");
-    }
-
-    /**
-     * Escher records may need to be clonable in the future.
-     *
-     * @return the cloned object
-     * @deprecated use {@link #copy()}
-     */
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public final EscherRecord clone() {
-        return copy();
     }
 
     /**

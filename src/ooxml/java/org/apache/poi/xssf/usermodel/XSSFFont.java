@@ -18,14 +18,15 @@ package org.apache.poi.xssf.usermodel;
 
 import java.util.Objects;
 
+import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ss.usermodel.Font;
-import org.apache.poi.ss.usermodel.FontCharset;
 import org.apache.poi.ss.usermodel.FontFamily;
 import org.apache.poi.ss.usermodel.FontScheme;
 import org.apache.poi.ss.usermodel.FontUnderline;
 import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.ThemesTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
@@ -126,7 +127,8 @@ public class XSSFFont implements Font {
      */
     public int getCharSet() {
         CTIntProperty charset = _ctFont.sizeOfCharsetArray() == 0 ? null : _ctFont.getCharsetArray(0);
-        return charset == null ? FontCharset.ANSI.getValue() : FontCharset.valueOf(charset.getVal()).getValue();
+        return charset == null ? org.apache.poi.ss.usermodel.FontCharset.ANSI.getValue() :
+                org.apache.poi.ss.usermodel.FontCharset.valueOf(charset.getVal()).getValue();
     }
 
 
@@ -311,20 +313,21 @@ public class XSSFFont implements Font {
      * set character-set to use.
      *
      * @param charset - charset
-     * @see FontCharset
+     * @see org.apache.poi.ss.usermodel.FontCharset
      */
     public void setCharSet(byte charset) {
        int cs = charset & 0xff;
        setCharSet(cs);
     }
+
     /**
      * set character-set to use.
      *
      * @param charset - charset
-     * @see FontCharset
+     * @see org.apache.poi.ss.usermodel.FontCharset
      */
     public void setCharSet(int charset) {
-        FontCharset fontCharset = FontCharset.valueOf(charset);
+        org.apache.poi.ss.usermodel.FontCharset fontCharset = org.apache.poi.ss.usermodel.FontCharset.valueOf(charset);
         if(fontCharset != null) {
            setCharSet(fontCharset);
         } else {
@@ -337,7 +340,7 @@ public class XSSFFont implements Font {
      *
      * @param charSet
      */
-    public void setCharSet(FontCharset charSet) {
+    public void setCharSet(org.apache.poi.ss.usermodel.FontCharset charSet) {
        CTIntProperty charsetProperty;
        if(_ctFont.sizeOfCharsetArray() == 0) {
           charsetProperty = _ctFont.addNewCharset();
@@ -347,6 +350,24 @@ public class XSSFFont implements Font {
        // We know that FontCharset only has valid entries in it,
        //  so we can just set the int value from it
        charsetProperty.setVal( charSet.getValue() );
+    }
+
+    /**
+     * set character-set to use.
+     *
+     * @param charSet
+     * @since 5.0.0
+     */
+    public void setCharSet(FontCharset charSet) {
+        CTIntProperty charsetProperty;
+        if(_ctFont.sizeOfCharsetArray() == 0) {
+            charsetProperty = _ctFont.addNewCharset();
+        } else {
+            charsetProperty = _ctFont.getCharsetArray(0);
+        }
+        // We know that FontCharset only has valid entries in it,
+        //  so we can just set the int value from it
+        charsetProperty.setVal( charSet.getNativeId() );
     }
 
     /**
@@ -624,11 +645,12 @@ public class XSSFFont implements Font {
     }
 
     @Override
-    @Deprecated
-    public short getIndex() {
-        return (short)getIndexAsInt();
+    public int getIndex() {
+        return _index;
     }
 
+    @Deprecated
+    @Removal(version = "6.0.0")
     @Override
     public int getIndexAsInt()
     {

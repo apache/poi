@@ -384,7 +384,7 @@ public final class TestXSSFFont extends BaseTestFont{
 		XSSFFont nf = wb.createFont();
 		assertEquals(2, wb.getNumberOfFonts());
 
-		assertEquals(1, nf.getIndexAsInt());
+		assertEquals(1, nf.getIndex());
 		assertEquals(nf, wb.getFontAt(1));
 
 		nf.setBold(false);
@@ -422,7 +422,7 @@ public final class TestXSSFFont extends BaseTestFont{
 		assertNotNull(font);
 		assertEquals(
 				1,
-				font.getIndexAsInt()
+				font.getIndex()
 		);
 		assertEquals(nf,
 				wb.findFont(
