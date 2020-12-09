@@ -121,7 +121,8 @@ public class HSSFPictureData implements PictureData
     }
     
     /**
-     * @return the POI internal image type, -1 if not unknown image type
+     * @return the POI internal image type, 0 if not unknown image type (was -1 prior to 5.0.0 but
+     * that was inconsistent with other {@link PictureData} implementations)
      *
      * @see Workbook#PICTURE_TYPE_DIB
      * @see Workbook#PICTURE_TYPE_EMF
@@ -145,7 +146,7 @@ public class HSSFPictureData implements PictureData
             case BLIP_DIB:
                 return Workbook.PICTURE_TYPE_DIB;
             default:
-                return -1;
+                return 0;
         }        
     }
 }
