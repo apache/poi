@@ -21,8 +21,6 @@ import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.SheetContainer;
 import org.apache.poi.hslf.record.TextHeaderAtom;
 import org.apache.poi.sl.usermodel.MasterSheet;
-import org.apache.poi.sl.usermodel.SimpleShape;
-import org.apache.poi.util.Removal;
 
 /**
  * The superclass of all master sheets - Slide masters, Notes masters, etc.
@@ -47,20 +45,4 @@ public abstract class HSLFMasterSheet extends HSLFSheet implements MasterSheet<H
      */
     public abstract TextPropCollection getPropCollection(int txtype, int level, String name, boolean isCharacter);
 
-
-    /**
-     * Checks if the shape is a placeholder.
-     * (placeholders aren't normal shapes, they are visible only in the Edit Master mode)
-     *
-     *
-     * @return true if the shape is a placeholder
-     * 
-     * @deprecated use {@link SimpleShape#isPlaceholder()}
-     */
-    @Deprecated
-    @Removal(version="4.1.0")
-    public static boolean isPlaceholder(HSLFShape shape){
-        return shape instanceof SimpleShape 
-            && ((SimpleShape<?,?>)shape).isPlaceholder();
-    }
 }

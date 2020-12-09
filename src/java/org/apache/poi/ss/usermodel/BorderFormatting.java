@@ -19,8 +19,6 @@
 
 package org.apache.poi.ss.usermodel;
 
-import org.apache.poi.util.Removal;
-
 /**
  * High level representation for Border Formatting component
  * of Conditional Formatting settings
@@ -55,66 +53,6 @@ public interface BorderFormatting {
      */
     BorderStyle getBorderHorizontal();
 
-    /**
-     * @since POI 3.15
-     * @deprecated use <code>getBorderBottom</code> instead
-     */
-    @Removal(version = "4.2")
-    @Deprecated
-    BorderStyle getBorderBottomEnum();
-
-    /**
-     * @since POI 3.15
-     * @deprecated use <code>getBorderDiagonal</code> instead
-     */
-    @Removal(version = "4.2")
-    @Deprecated
-    BorderStyle getBorderDiagonalEnum();
-
-    /**
-     * @since POI 3.15
-     * @deprecated use <code>getBorderLeft</code> instead
-     */
-    @Removal(version = "4.2")
-    @Deprecated
-    BorderStyle getBorderLeftEnum();
-
-    /**
-     * @since POI 3.15
-     * @deprecated use <code>getBorderRight</code> instead
-     */
-    @Removal(version = "4.2")
-    @Deprecated
-    BorderStyle getBorderRightEnum();
-
-    /**
-     * @since POI 3.15
-     * @deprecated use <code>getBorderTop</code> instead
-     */
-    @Removal(version = "4.2")
-    @Deprecated
-    BorderStyle getBorderTopEnum();
-
-    /**
-     * Only valid for range borders, such as table styles
-     * @since 3.17 beta 1
-     * @return border style
-     * @deprecated use <code>getBorderVertical</code> instead
-     */
-    @Removal(version = "4.2")
-    @Deprecated
-    BorderStyle getBorderVerticalEnum();
-
-    /**
-     * Only valid for range borders, such as table styles
-     * @since 3.17 beta 1
-     * @return border style
-     * @deprecated use <code>getBorderHorizontal</code> instead
-     */
-    @Removal(version = "4.2")
-    @Deprecated
-    BorderStyle getBorderHorizontalEnum();
-    
     short getBottomBorderColor();
     Color getBottomBorderColorColor();
 

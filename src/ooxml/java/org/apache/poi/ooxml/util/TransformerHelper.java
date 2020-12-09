@@ -25,7 +25,7 @@ import org.apache.poi.util.XMLHelper;
 /**
  * @deprecated use {@link XMLHelper}
  */
-@Removal(version = "5.0.0")
+@Removal(version = "6.0.0")
 @Deprecated
 public final class TransformerHelper {
     private TransformerHelper() {}

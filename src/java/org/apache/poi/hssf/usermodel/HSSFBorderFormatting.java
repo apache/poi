@@ -326,53 +326,6 @@ public final class HSSFBorderFormatting implements org.apache.poi.ss.usermodel.B
         return BorderStyle.NONE;
     }
 
-    @Override
-    public BorderStyle getBorderBottomEnum() {
-        return getBorderBottom();
-    }
-
-    @Override
-    public BorderStyle getBorderDiagonalEnum() {
-        return getBorderDiagonal();
-    }
-
-    @Override
-    public BorderStyle getBorderLeftEnum() {
-        return getBorderLeft();
-    }
-
-    @Override
-    public BorderStyle getBorderRightEnum() {
-        return getBorderRight();
-    }
-
-    @Override
-    public BorderStyle getBorderTopEnum() {
-        return getBorderTop();
-    }
-
-    /**
-     * HSSF doesn't support table borders, so always {@link BorderStyle#NONE}
-     *
-     * @see org.apache.poi.ss.usermodel.BorderFormatting#getBorderVertical()
-     */
-    @Deprecated
-    @Override
-    public BorderStyle getBorderVerticalEnum() {
-        return getBorderVertical();
-    }
-
-    /**
-     * HSSF doesn't support table borders, so always {@link BorderStyle#NONE}
-     *
-     * @see org.apache.poi.ss.usermodel.BorderFormatting#getBorderHorizontal()
-     */
-    @Deprecated
-    @Override
-    public BorderStyle getBorderHorizontalEnum() {
-        return getBorderHorizontal();
-    }
-
     /**
      * HSSF Doesn't support table borders, so always {@link HSSFColorPredefined#AUTOMATIC}
      *

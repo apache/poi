@@ -58,23 +58,6 @@ public class XSSFBorderFormatting implements BorderFormatting  {
     }
 
     @Override
-    public BorderStyle getBorderTopEnum() { return getBorderTop(); }
-
-    @Override
-    public BorderStyle getBorderBottomEnum() { return getBorderBottom(); }
-
-    @Override
-    public BorderStyle getBorderDiagonalEnum() { return getBorderDiagonal(); }
-
-    @Override
-    public BorderStyle getBorderLeftEnum() {
-        return getBorderLeft();
-    }
-
-    @Override
-    public BorderStyle getBorderRightEnum() { return getBorderRight(); }
-
-    @Override
     public BorderStyle getBorderTop() {
         return getBorderStyle(_border.getTop());
     }
@@ -273,12 +256,6 @@ public class XSSFBorderFormatting implements BorderFormatting  {
     public BorderStyle getBorderHorizontal() {
         return getBorderStyle(_border.getHorizontal());
     }
-
-    @Override
-    public BorderStyle getBorderVerticalEnum() { return getBorderVertical(); }
-
-    @Override
-    public BorderStyle getBorderHorizontalEnum() { return getBorderHorizontal(); }
 
     public short getVerticalBorderColor() {
         return getIndexedColor(getVerticalBorderColorColor());

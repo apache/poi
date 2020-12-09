@@ -35,6 +35,7 @@ import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.util.Removal;
 
 /**
  * High level representation of the style of a cell in a sheet of a workbook.
@@ -187,11 +188,11 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
 
     /**
      * gets the index of the font for this style
-     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(short)
+     * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(int)
+     * @since 5.0.0 (used to return a short value)
      */
     @Override
-    @Deprecated
-    public short getFontIndex()
+    public int getFontIndex()
     {
         return _format.getFontIndex();
     }
@@ -199,8 +200,11 @@ public final class HSSFCellStyle implements CellStyle, Duplicatable {
     /**
      * gets the index of the font for this style
      * @see org.apache.poi.hssf.usermodel.HSSFWorkbook#getFontAt(int)
+     * @deprecated use {@link #getFontIndex()} instead
      * @since 4.0.0
      */
+    @Deprecated
+    @Removal(version = "6.0.0")
     @Override
     public int getFontIndexAsInt()
     {

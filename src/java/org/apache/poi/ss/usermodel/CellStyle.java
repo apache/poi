@@ -55,17 +55,19 @@ public interface CellStyle {
 
     /**
      * gets the index of the font for this style
-     * @see Workbook#getFontAt(short)
-     * @deprecated use <code>getFontIndexAsInt()</code> instead
+     * @see Workbook#getFontAt(int)
+     * @since 5.0.0 (used to return a short value)
      */
-    @Removal(version = "4.2")
-    short getFontIndex();
+    int getFontIndex();
 
     /**
      * gets the index of the font for this style
      * @see Workbook#getFontAt(int)
+     * @deprecated use {@link #getFontIndex()} instead
      * @since 4.0.0
      */
+    @Deprecated
+    @Removal(version = "6.0.0")
     int getFontIndexAsInt();
 
     /**

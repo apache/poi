@@ -36,62 +36,13 @@ import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.Picture;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.ImageUtils;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.StringUtil;
 
 /**
  * Represents a escher picture.  Eg. A GIF, JPEG etc...
  */
 public class HSSFPicture extends HSSFSimpleShape implements Picture {
-    /**
-     * Windows Enhanced Metafile
-     * @deprecated use {@link Workbook#PICTURE_TYPE_EMF}
-     */
-    @Removal(version = "5.0.0")
-    @Deprecated
-    public static final int PICTURE_TYPE_EMF = Workbook.PICTURE_TYPE_EMF;
-
-    /**
-     * Windows Metafile
-     * @deprecated use {@link Workbook#PICTURE_TYPE_WMF}
-     */
-    @Removal(version = "5.0.0")
-    @Deprecated
-    public static final int PICTURE_TYPE_WMF = Workbook.PICTURE_TYPE_WMF;
-
-    /**
-     * Macintosh PICT
-     * @deprecated use {@link Workbook#PICTURE_TYPE_PICT}
-     */
-    @Removal(version = "5.0.0")
-    @Deprecated
-    public static final int PICTURE_TYPE_PICT = Workbook.PICTURE_TYPE_PICT;
-
-    /**
-     * JFIF / JPEG
-     * @deprecated use {@link Workbook#PICTURE_TYPE_JPEG}
-     */
-    @Removal(version = "5.0.0")
-    @Deprecated
-    public static final int PICTURE_TYPE_JPEG = Workbook.PICTURE_TYPE_JPEG;
-
-    /**
-     * PNG
-     * @deprecated use {@link Workbook#PICTURE_TYPE_PNG}
-     */
-    @Removal(version = "5.0.0")
-    @Deprecated
-    public static final int PICTURE_TYPE_PNG = Workbook.PICTURE_TYPE_PNG;
-
-    /**
-     * Windows DIB
-     * @deprecated use {@link Workbook#PICTURE_TYPE_DIB}
-     */
-    @Removal(version = "5.0.0")
-    @Deprecated
-    public static final int PICTURE_TYPE_DIB = Workbook.PICTURE_TYPE_DIB;
 
     public HSSFPicture(EscherContainerRecord spContainer, ObjRecord objRecord) {
         super(spContainer, objRecord);

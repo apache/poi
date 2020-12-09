@@ -439,22 +439,25 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     /**
      * Gets the index of the font for this style
      *
-     * @return short - font index
-     * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getFontAt(short)
+     * @return font index
+     * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getFontAt(int)
+     * @since 5.0.0 (used to return a short value)
      */
     @Override
-    @Deprecated
-    public short getFontIndex() {
-        return (short) getFontId();
+    public int getFontIndex() {
+        return getFontId();
     }
 
     /**
      * Gets the index of the font for this style
      *
-     * @return short - font index
+     * @return font index
      * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getFontAt(int)
+     * @deprecated use {@link #getFontIndex()} instead
      * @since 4.0.0
      */
+    @Deprecated
+    @Removal(version = "6.0.0")
     @Override
     public int getFontIndexAsInt() {
         return getFontId();
@@ -1270,14 +1273,6 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
 
         XSSFCellStyle cf = (XSSFCellStyle)o;
         return _cellXf.toString().equals(cf.getCoreXf().toString());
-    }
-
-    @Override
-    @SuppressWarnings("squid:S2975")
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public XSSFCellStyle clone() {
-        return copy();
     }
 
     /**

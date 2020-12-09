@@ -21,7 +21,6 @@ import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.cf.FontFormatting;
 import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.ss.usermodel.Color;
-import org.apache.poi.util.Removal;
 
 /**
  * High level representation for Font Formatting component
@@ -29,41 +28,6 @@ import org.apache.poi.util.Removal;
  */
 @SuppressWarnings("unused")
 public final class HSSFFontFormatting implements org.apache.poi.ss.usermodel.FontFormatting {
-    /**
-     * Underline type - None
-     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#U_NONE}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public final static byte U_NONE              = org.apache.poi.ss.usermodel.Font.U_NONE;
-    /**
-     * Underline type - Single
-     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#U_SINGLE}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public final static byte U_SINGLE            = org.apache.poi.ss.usermodel.Font.U_SINGLE;
-    /**
-     * Underline type - Double
-     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#U_DOUBLE}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public final static byte U_DOUBLE            = org.apache.poi.ss.usermodel.Font.U_DOUBLE;
-    /**
-     * Underline type - Single Accounting
-     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#U_SINGLE_ACCOUNTING}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public final static byte U_SINGLE_ACCOUNTING = org.apache.poi.ss.usermodel.Font.U_SINGLE_ACCOUNTING;
-    /**
-     * Underline type - Double Accounting
-     * @deprecated use {@link org.apache.poi.ss.usermodel.Font#U_DOUBLE_ACCOUNTING}
-     */
-    @Deprecated
-    @Removal(version = "5.0.0")
-    public final static byte U_DOUBLE_ACCOUNTING = org.apache.poi.ss.usermodel.Font.U_DOUBLE_ACCOUNTING;
 
     private final FontFormatting fontFormatting;
     private final HSSFWorkbook workbook;
