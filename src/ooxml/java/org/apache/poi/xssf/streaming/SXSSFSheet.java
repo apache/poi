@@ -146,6 +146,7 @@ public class SXSSFSheet implements Sheet
         }
 
         SXSSFRow newRow = new SXSSFRow(this);
+        newRow.setNumber(rownum);
         _rows.put(rownum, newRow);
         allFlushed = false;
         if(_randomAccessWindowSize >= 0 && _rows.size() > _randomAccessWindowSize) {
@@ -1889,18 +1890,13 @@ public class SXSSFSheet implements Sheet
     {
 
         removeRow(row);
+        row.setNumber(newRowNum);
         _rows.put(newRowNum,row);
     }
 
     public int getRowNum(SXSSFRow row)
     {
-        for (Map.Entry<Integer, SXSSFRow> entry : _rows.entrySet()) {
-            if (entry.getValue() == row) {
-                return entry.getKey().intValue();
-            }
-        }
-
-        return -1;
+        return row.getRowNum();
     }
 
     /**
