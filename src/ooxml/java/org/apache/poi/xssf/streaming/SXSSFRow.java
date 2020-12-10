@@ -49,6 +49,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     // use Boolean to have a tri-state for on/off/undefined
     private Boolean _hidden = UNDEFINED;
     private Boolean _collapsed = UNDEFINED;
+    private int _rowNum;
 
     public SXSSFRow(SXSSFSheet sheet)
     {
@@ -59,6 +60,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     {
         return new CellIterator();
     }
+
     public boolean hasCustomHeight()
     {
         return _height!=-1;
@@ -195,7 +197,8 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     @Override
     public void setRowNum(int rowNum)
     {
-        _sheet.changeRowNum(this,rowNum);
+        this._rowNum = rowNum;
+        _sheet.changeRowNum(this, rowNum);
     }
 
     /**
@@ -206,7 +209,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     @Override
     public int getRowNum()
     {
-        return _sheet.getRowNum(this);
+        return _rowNum;
     }
 
     /**
@@ -393,15 +396,15 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      */
     @Override
     public CellStyle getRowStyle() {
-       if(!isFormatted()) {
-        return null;
-    }
+        if(!isFormatted()) {
+            return null;
+        }
 
-       return getSheet().getWorkbook().getCellStyleAt(_style);
+        return getSheet().getWorkbook().getCellStyleAt(_style);
     }
 
     @Internal
-    /*package*/ int getRowStyleIndex() {
+        /*package*/ int getRowStyleIndex() {
         return _style;
     }
 
@@ -411,11 +414,11 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
      */
     @Override
     public void setRowStyle(CellStyle style) {
-       if(style == null) {
-          _style = -1;
-       } else {
-          _style = style.getIndex();
-       }
+        if(style == null) {
+            _style = -1;
+        } else {
+            _style = style.getIndex();
+        }
     }
 
     /**
@@ -437,8 +440,13 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     {
         return _sheet;
     }
+
 //end of interface implementation
 
+    void setRowNumWithoutUpdatingSheet(int rowNum)
+    {
+        this._rowNum = rowNum;
+    }
 
     /**
      * Create an iterator over the cells from [0, getLastCellNum()).
@@ -543,7 +551,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
         SXSSFRow other = (SXSSFRow) obj;
 
         return (this.getRowNum() == other.getRowNum()) &&
-               (this.getSheet() == other.getSheet());
+                (this.getSheet() == other.getSheet());
     }
 
     @Override
@@ -563,4 +571,3 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     }
 
 }
-

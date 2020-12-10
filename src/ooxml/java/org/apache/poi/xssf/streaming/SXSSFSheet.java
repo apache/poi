@@ -146,6 +146,7 @@ public class SXSSFSheet implements Sheet
         }
 
         SXSSFRow newRow = new SXSSFRow(this);
+        newRow.setRowNumWithoutUpdatingSheet(rownum);
         _rows.put(rownum, newRow);
         allFlushed = false;
         if(_randomAccessWindowSize >= 0 && _rows.size() > _randomAccessWindowSize) {
@@ -1293,8 +1294,8 @@ public class SXSSFSheet implements Sheet
      *
      * <p>
      *    groupRows requires all rows in the group to be in the current window.
-     *    This is not always practical.  Instead use setRowOutlineLevel to 
-     *    explicitly set the group level.  Level 1 is the top level group, 
+     *    This is not always practical.  Instead use setRowOutlineLevel to
+     *    explicitly set the group level.  Level 1 is the top level group,
      *    followed by 2, etc.  It is up to the user to ensure that level 2
      *    groups are correctly nested under level 1, etc.
      * </p>
@@ -1588,7 +1589,7 @@ public class SXSSFSheet implements Sheet
         // to recalculate the best-fit width for the flushed rows. This is an
         // inherent limitation of SXSSF. If having correct auto-sizing is
         // critical, the flushed rows would need to be re-read by the read-only
-        // XSSF eventmodel (SAX) or the memory-heavy XSSF usermodel (DOM). 
+        // XSSF eventmodel (SAX) or the memory-heavy XSSF usermodel (DOM).
         final int flushedWidth;
         try {
             // get the best fit width of rows already flushed to disk
@@ -1885,22 +1886,17 @@ public class SXSSFSheet implements Sheet
             lastFlushedRowNumber = rowIndex;
         }
     }
+
     public void changeRowNum(SXSSFRow row, int newRowNum)
     {
-
         removeRow(row);
-        _rows.put(newRowNum,row);
+        row.setRowNumWithoutUpdatingSheet(newRowNum);
+        _rows.put(newRowNum, row);
     }
 
     public int getRowNum(SXSSFRow row)
     {
-        for (Map.Entry<Integer, SXSSFRow> entry : _rows.entrySet()) {
-            if (entry.getValue() == row) {
-                return entry.getKey().intValue();
-            }
-        }
-
-        return -1;
+        return row.getRowNum();
     }
 
     /**
