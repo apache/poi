@@ -39,6 +39,7 @@ import org.apache.poi.util.NotImplemented;
 public class SXSSFRow implements Row, Comparable<SXSSFRow>
 {
     private static final Boolean UNDEFINED = null;
+
     private final SXSSFSheet _sheet; // parent sheet
     private final SortedMap<Integer, SXSSFCell> _cells = new TreeMap<>();
     private short _style = -1; // index of cell style in style table
@@ -48,7 +49,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     // use Boolean to have a tri-state for on/off/undefined
     private Boolean _hidden = UNDEFINED;
     private Boolean _collapsed = UNDEFINED;
-    private int number;
+    private int _rowNumber;
 
     public SXSSFRow(SXSSFSheet sheet)
     {
@@ -206,7 +207,7 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
     @Override
     public int getRowNum()
     {
-        return number;
+        return _rowNumber;
     }
 
     /**
@@ -438,8 +439,8 @@ public class SXSSFRow implements Row, Comparable<SXSSFRow>
         return _sheet;
     }
 
-	public void setNumber(int rownum) {
-        number = rownum;
+	public void setRowNumber(int rowNumber) {
+        _rowNumber = rowNumber;
 	}
 //end of interface implementation
 

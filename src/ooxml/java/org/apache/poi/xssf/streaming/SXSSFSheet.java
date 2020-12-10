@@ -146,7 +146,7 @@ public class SXSSFSheet implements Sheet
         }
 
         SXSSFRow newRow = new SXSSFRow(this);
-        newRow.setNumber(rownum);
+        newRow.setRowNumber(rownum);
         _rows.put(rownum, newRow);
         allFlushed = false;
         if(_randomAccessWindowSize >= 0 && _rows.size() > _randomAccessWindowSize) {
@@ -1890,7 +1890,7 @@ public class SXSSFSheet implements Sheet
     {
 
         removeRow(row);
-        row.setNumber(newRowNum);
+        row.setRowNumber(newRowNum);
         _rows.put(newRowNum,row);
     }
 
