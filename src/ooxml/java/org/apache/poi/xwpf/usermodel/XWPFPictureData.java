@@ -124,7 +124,7 @@ public class XWPFPictureData extends POIXMLDocumentPart {
     /**
      * Return an integer constant that specifies type of this picture
      *
-     * @return an integer constant that specifies type of this picture
+     * @return an integer constant that specifies type of this picture, returns 0 if an unknown type
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_EMF
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_WMF
      * @see org.apache.poi.xwpf.usermodel.Document#PICTURE_TYPE_PICT
@@ -217,15 +217,22 @@ public class XWPFPictureData extends POIXMLDocumentPart {
         Long foreignChecksum = picData.getChecksum();
         Long localChecksum = getChecksum();
 
-        if (!(localChecksum.equals(foreignChecksum))) {
-            return false;
+        if (localChecksum == null) {
+            if (foreignChecksum != null) {
+                return false;
+            }
+        } else {
+            if (!(localChecksum.equals(foreignChecksum))) {
+                return false;
+            }
         }
         return Arrays.equals(this.getData(), picData.getData());
     }
 
     @Override
     public int hashCode() {
-        return getChecksum().hashCode();
+        Long checksum = getChecksum();
+        return checksum == null ? super.hashCode() : checksum.hashCode();
     }
 
     /**
