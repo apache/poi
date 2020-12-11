@@ -379,12 +379,19 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
         CTMergeCells ctMergeCells = worksheet.isSetMergeCells() ? worksheet.getMergeCells() : worksheet.addNewMergeCells();
         CTMergeCell ctMergeCell = ctMergeCells.addNewMergeCell();
         ctMergeCell.setRef(region.formatAsString());
-        final int numMergeRegions=ctMergeCells.sizeOfMergeCellArray();
+
+        long count = ctMergeCells.getCount();
+
+        if (count == 0) {
+            count=ctMergeCells.sizeOfMergeCellArray();
+        } else {
+            count++;
+        }
 
         // also adjust the number of merged regions overall
-        ctMergeCells.setCount(numMergeRegions);
+        ctMergeCells.setCount(count);
 
-        return numMergeRegions-1;
+        return Math.toIntExact(count-1);
     }
 
     /**

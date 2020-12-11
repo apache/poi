@@ -3450,6 +3450,60 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             assertEquals(1, numMergedRegions);
             assertEquals(1, ctMergeCellCount);
             assertEquals(1, ctMergeCellListSize);
+
+        }
+    }
+
+    @Test
+    public void bug60397() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+
+            CellRangeAddress region = new CellRangeAddress(1, 1, 1, 2);
+            assertEquals(0, sheet.addMergedRegion(region));
+            //System.out.println(String.format("%s: index=%d", "testAddMergedRegion", index));
+
+            List<CellRangeAddress> ranges = sheet.getMergedRegions();
+            int numMergedRegions = sheet.getNumMergedRegions();
+            CTWorksheet ctSheet = sheet.getCTWorksheet();
+            CTMergeCells ctMergeCells = ctSheet.getMergeCells();
+            List<CTMergeCell> ctMergeCellList = ctMergeCells.getMergeCellList();
+            long ctMergeCellCount = ctMergeCells.getCount();
+            int ctMergeCellListSize = ctMergeCellList.size();
+
+            /*System.out.println(String.format("\ntestMergeRegions(%s)", "After adding first region"));
+            System.out.println(String.format("ranges.size=%d", ranges.size()));
+            System.out.println(String.format("numMergedRegions=%d", numMergedRegions));
+            System.out.println(String.format("ctMergeCellCount=%d", ctMergeCellCount));
+            System.out.println(String.format("ctMergeCellListSize=%d", ctMergeCellListSize)); */
+
+            assertEquals(1, ranges.size());
+            assertEquals(1, numMergedRegions);
+            assertEquals(1, ctMergeCellCount);
+            assertEquals(1, ctMergeCellListSize);
+
+            CellRangeAddress region2 = new CellRangeAddress(1, 2, 4, 6);
+            assertEquals(1, sheet.addMergedRegion(region2));
+            //System.out.println(String.format("%s: index=%d", "testAddMergedRegion", index));
+
+            ranges = sheet.getMergedRegions();
+            numMergedRegions = sheet.getNumMergedRegions();
+            ctSheet = sheet.getCTWorksheet();
+            ctMergeCells = ctSheet.getMergeCells();
+            ctMergeCellList = ctMergeCells.getMergeCellList();
+            ctMergeCellCount = ctMergeCells.getCount();
+            ctMergeCellListSize = ctMergeCellList.size();
+
+            /*System.out.println(String.format("\ntestMergeRegions(%s)", "After adding second region"));
+            System.out.println(String.format("ranges.size=%d", ranges.size()));
+            System.out.println(String.format("numMergedRegions=%d", numMergedRegions));
+            System.out.println(String.format("ctMergeCellCount=%d", ctMergeCellCount));
+            System.out.println(String.format("ctMergeCellListSize=%d", ctMergeCellListSize));*/
+
+            assertEquals(2, ranges.size());
+            assertEquals(2, numMergedRegions);
+            assertEquals(2, ctMergeCellCount);
+            assertEquals(2, ctMergeCellListSize);
         }
     }
 
