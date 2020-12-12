@@ -35,6 +35,7 @@ import javax.imageio.ImageIO;
 import javax.xml.namespace.QName;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.ooxml.util.XPathHelper;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -216,7 +217,12 @@ public class XSLFPictureShape extends XSLFSimpleShape
     @Override
     public Insets getClipping(){
         CTRelativeRect r = getBlipFill().getSrcRect();
-        return (r == null) ? null : new Insets(r.getT(), r.getL(), r.getB(), r.getR());
+
+        return (r == null) ? null : new Insets(
+            POIXMLUnits.parsePercent(r.xgetT()),
+            POIXMLUnits.parsePercent(r.xgetL()),
+            POIXMLUnits.parsePercent(r.xgetB()),
+            POIXMLUnits.parsePercent(r.xgetR()));
     }
 
     /**

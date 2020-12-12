@@ -17,6 +17,7 @@
 
 package org.apache.poi.xddf.usermodel;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTDashStop;
@@ -36,7 +37,7 @@ public class XDDFDashStop {
     }
 
     public int getDashLength() {
-        return stop.getD();
+        return POIXMLUnits.parsePercent(stop.xgetD());
     }
 
     public void setDashLength(int length) {
@@ -44,7 +45,7 @@ public class XDDFDashStop {
     }
 
     public int getSpaceLength() {
-        return stop.getSp();
+        return POIXMLUnits.parsePercent(stop.xgetSp());
     }
 
     public void setSpaceLength(int length) {

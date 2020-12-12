@@ -21,6 +21,11 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.fail;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
+
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -46,10 +51,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.List;
 
 public final class TestContentTypeManager {
 
@@ -176,10 +177,10 @@ public final class TestContentTypeManager {
                         anchor = (XSSFClientAnchor) helper.createClientAnchor();
                         CTMarker markerFrom = oldAnchor.getFrom();
                         CTMarker markerTo = oldAnchor.getTo();
-                        anchor.setDx1((int) markerFrom.getColOff());
-                        anchor.setDx2((int) markerTo.getColOff());
-                        anchor.setDy1((int) markerFrom.getRowOff());
-                        anchor.setDy2((int) markerTo.getRowOff());
+                        anchor.setDx1((int) POIXMLUnits.parseLength(markerFrom.xgetColOff()));
+                        anchor.setDx2((int) POIXMLUnits.parseLength(markerTo.xgetColOff()));
+                        anchor.setDy1((int) POIXMLUnits.parseLength(markerFrom.xgetRowOff()));
+                        anchor.setDy2((int) POIXMLUnits.parseLength(markerTo.xgetRowOff()));
                         anchor.setCol1(markerFrom.getCol());
                         anchor.setCol2(markerTo.getCol());
                         anchor.setRow1(markerFrom.getRow());

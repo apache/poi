@@ -17,6 +17,7 @@
 
 package org.apache.poi.xddf.usermodel.text;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
@@ -56,7 +57,7 @@ public class XDDFTabStop {
 
     public Double getPosition() {
         if (stop.isSetPos()) {
-            return Units.toPoints(stop.getPos());
+            return Units.toPoints(POIXMLUnits.parseLength(stop.xgetPos()));
         } else {
             return null;
         }

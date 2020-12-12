@@ -16,6 +16,19 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.math.BigInteger;
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.Units;
@@ -28,16 +41,19 @@ import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.math.BigInteger;
-import java.util.Iterator;
-import java.util.List;
-
-import static org.junit.Assert.*;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STVerticalAlignRun;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBrClear;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STEm;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHighlightColor;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STThemeColor;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
 
 /**
  * Tests for XWPF Run
@@ -88,34 +104,34 @@ public class TestXWPFRun {
     @Test
     public void testCTOnOff() {
         CTRPr rpr = ctRun.addNewRPr();
-        CTOnOff bold = rpr.addNewB();        
+        CTOnOff bold = rpr.addNewB();
         XWPFRun run = new XWPFRun(ctRun, irb);
 
         // True values: "true", "1", "on"
-        bold.setVal(STOnOff.TRUE);
+        bold.setVal(STOnOff1.ON);
         assertTrue(run.isBold());
 
-        bold.setVal(STOnOff.X_1);
+        bold.setVal(STOnOff1.ON);
         assertTrue(run.isBold());
 
-        bold.setVal(STOnOff.ON);
+        bold.setVal(STOnOff1.ON);
         assertTrue(run.isBold());
 
         // False values: "false", "0", "off"
-        bold.setVal(STOnOff.FALSE);
+        bold.setVal(STOnOff1.OFF);
         assertFalse(run.isBold());
 
-        bold.setVal(STOnOff.X_0);
+        bold.setVal(STOnOff1.OFF);
         assertFalse(run.isBold());
 
-        bold.setVal(STOnOff.OFF);
+        bold.setVal(STOnOff1.OFF);
         assertFalse(run.isBold());
     }
 
     @Test
     public void testSetGetBold() {
         CTRPr rpr = ctRun.addNewRPr();
-        rpr.addNewB().setVal(STOnOff.TRUE);
+        rpr.addNewB().setVal(STOnOff1.ON);
 
         XWPFRun run = new XWPFRun(ctRun, irb);
         assertTrue(run.isBold());
@@ -123,31 +139,31 @@ public class TestXWPFRun {
         run.setBold(false);
         // Implementation detail: POI natively prefers <w:b w:val="false"/>,
         // but should correctly read val="0" and val="off"
-        assertEquals(STOnOff.FALSE, rpr.getB().getVal());
+        assertEquals("off", rpr.getB().getVal());
     }
 
     @Test
     public void testSetGetItalic() {
         CTRPr rpr = ctRun.addNewRPr();
-        rpr.addNewI().setVal(STOnOff.TRUE);
+        rpr.addNewI().setVal(STOnOff1.ON);
 
         XWPFRun run = new XWPFRun(ctRun, irb);
         assertTrue(run.isItalic());
 
         run.setItalic(false);
-        assertEquals(STOnOff.FALSE, rpr.getI().getVal());
+        assertEquals("off", rpr.getI().getVal());
     }
 
     @Test
     public void testSetGetStrike() {
         CTRPr rpr = ctRun.addNewRPr();
-        rpr.addNewStrike().setVal(STOnOff.TRUE);
+        rpr.addNewStrike().setVal(STOnOff1.ON);
 
         XWPFRun run = new XWPFRun(ctRun, irb);
         assertTrue(run.isStrikeThrough());
 
         run.setStrikeThrough(false);
-        assertEquals(STOnOff.FALSE, rpr.getStrike().getVal());
+        assertEquals("off", rpr.getStrike().getVal());
     }
 
     @Test
@@ -186,10 +202,10 @@ public class TestXWPFRun {
         assertEquals(7.0, run.getFontSizeAsDouble(), 0.01);
 
         run.setFontSize(24);
-        assertEquals(48, rpr.getSz().getVal().longValue());
+        assertEquals("48", rpr.getSz().getVal().toString());
 
         run.setFontSize(24.5f);
-        assertEquals(49, rpr.getSz().getVal().longValue());
+        assertEquals("49", rpr.getSz().getVal().toString());
         assertEquals(25, run.getFontSize());
         assertEquals(24.5, run.getFontSizeAsDouble(), 0.01);
     }
@@ -203,7 +219,7 @@ public class TestXWPFRun {
         assertEquals(4000, run.getTextPosition());
 
         run.setTextPosition(2400);
-        assertEquals(2400, rpr.getPosition().getVal().longValue());
+        assertEquals("2400", rpr.getPosition().getVal().toString());
     }
 
     @Test
@@ -408,7 +424,7 @@ public class TestXWPFRun {
         assertFalse(run.isItalic());
         assertFalse(run.isStrikeThrough());
         assertNull(run.getCTR().getRPr());
-        
+
         doc.close();
     }
 
@@ -481,17 +497,17 @@ public class TestXWPFRun {
 
         assertEquals(1, doc.getAllPictures().size());
         assertEquals(1, r.getEmbeddedPictures().size());
-        
+
         XWPFDocument docBack = XWPFTestDataSamples.writeOutAndReadBack(doc);
         XWPFParagraph pBack = docBack.getParagraphArray(2);
         XWPFRun rBack = pBack.getRuns().get(0);
-        
+
         assertEquals(1, docBack.getAllPictures().size());
         assertEquals(1, rBack.getEmbeddedPictures().size());
         docBack.close();
         doc.close();
     }
-    
+
     /**
      * Bugzilla #58237 - Unable to add image to word document header
      */
@@ -501,7 +517,7 @@ public class TestXWPFRun {
         XWPFHeader hdr = doc.createHeader(HeaderFooterType.DEFAULT);
         XWPFParagraph p = hdr.createParagraph();
         XWPFRun r = p.createRun();
-        
+
         assertEquals(0, hdr.getAllPictures().size());
         assertEquals(0, r.getEmbeddedPictures().size());
 
@@ -509,23 +525,23 @@ public class TestXWPFRun {
 
         assertEquals(1, hdr.getAllPictures().size());
         assertEquals(1, r.getEmbeddedPictures().size());
-        
+
         XWPFPicture pic = r.getEmbeddedPictures().get(0);
         CTPicture ctPic = pic.getCTPicture();
         CTBlipFillProperties ctBlipFill = ctPic.getBlipFill();
 
         assertNotNull(ctBlipFill);
-        
+
         CTBlip ctBlip = ctBlipFill.getBlip();
-        
+
         assertNotNull(ctBlip);
         assertEquals("rId1", ctBlip.getEmbed());
-        
+
         XWPFDocument docBack = XWPFTestDataSamples.writeOutAndReadBack(doc);
         XWPFHeader hdrBack = docBack.getHeaderArray(0);
         XWPFParagraph pBack = hdrBack.getParagraphArray(0);
         XWPFRun rBack = pBack.getRuns().get(0);
-        
+
         assertEquals(1, hdrBack.getAllPictures().size());
         assertEquals(1, rBack.getEmbeddedPictures().size());
         docBack.close();
@@ -633,7 +649,7 @@ public class TestXWPFRun {
 
         run.setTextPosition(-1);
         assertEquals(-1, run.getTextPosition());
-        
+
         document.close();
     }
 
@@ -658,7 +674,7 @@ public class TestXWPFRun {
         run.setImprinted(true);
         run.setItalic(true);
     }
-    
+
     @Test
     public void testSetGetTextScale() throws IOException {
         XWPFDocument document = new XWPFDocument();
@@ -668,7 +684,7 @@ public class TestXWPFRun {
         assertEquals(200, run.getTextScale());
         document.close();
     }
-    
+
     @Test
     public void testSetGetTextHighlightColor() throws IOException {
         XWPFDocument document = new XWPFDocument();
@@ -680,7 +696,7 @@ public class TestXWPFRun {
         assertTrue(run.isHighlighted());
         run.setTextHighlightColor("none");
         assertFalse(run.isHighlighted());
-        
+
         document.close();
     }
 
@@ -695,7 +711,7 @@ public class TestXWPFRun {
         assertFalse(run.isVanish());
         document.close();
     }
-    
+
     @Test
     public void testSetGetVerticalAlignment() throws IOException {
         XWPFDocument document = new XWPFDocument();
@@ -732,7 +748,7 @@ public class TestXWPFRun {
         assertEquals(STEm.DOT, run.getEmphasisMark());
         document.close();
     }
-    
+
     @Test
     public void testSetGetUnderlineColor() throws IOException {
         XWPFDocument document = new XWPFDocument();
@@ -747,7 +763,7 @@ public class TestXWPFRun {
         assertEquals("auto", run.getUnderlineColor());
         document.close();
     }
-    
+
     @Test
     public void testSetGetUnderlineThemeColor() throws IOException {
         XWPFDocument document = new XWPFDocument();
@@ -762,13 +778,13 @@ public class TestXWPFRun {
         assertEquals(STThemeColor.NONE, run.getUnderlineThemeColor());
         document.close();
     }
-    
+
 
     @Test
     public void testSetStyleId() throws IOException {
         XWPFDocument document = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
         final XWPFRun run = document.createParagraph().createRun();
-        
+
         String styleId = "bolditalic";
         run.setStyle(styleId);
         String candStyleId = run.getCTR().getRPr().getRStyle().getVal();

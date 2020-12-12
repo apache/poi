@@ -23,7 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
@@ -528,8 +530,8 @@ public class XWPFTableCell implements IBody, ICell {
      * @return Width value as a double-precision decimal.
      * @since 4.0.0
      */
-    public double getWidthDecimal() {                
-        return XWPFTable.getWidthDecimal(getTcWidth());    
+    public double getWidthDecimal() {
+        return XWPFTable.getWidthDecimal(getTcWidth());
     }
 
     /**
@@ -541,7 +543,7 @@ public class XWPFTableCell implements IBody, ICell {
      * @since 4.0.0
      */
     public TableWidthType getWidthType() {
-        return XWPFTable.getWidthType(getTcWidth());    
+        return XWPFTable.getWidthType(getTcWidth());
     }
 
     /**
@@ -551,7 +553,7 @@ public class XWPFTableCell implements IBody, ICell {
      * @since 4.0.0
      */
     public void setWidth(String widthValue) {
-        XWPFTable.setWidthValue(widthValue, getTcWidth());    
+        XWPFTable.setWidthValue(widthValue, getTcWidth());
     }
 
     private CTTblWidth getTcWidth() {
@@ -582,6 +584,6 @@ public class XWPFTableCell implements IBody, ICell {
     }
 
     public int getWidth() {
-        return getTcWidth().getW().intValue();
+        return (int) Units.toDXA(POIXMLUnits.parseLength(getTcWidth().xgetW()));
     }
 }

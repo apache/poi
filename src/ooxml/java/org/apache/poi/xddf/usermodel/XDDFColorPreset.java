@@ -50,7 +50,7 @@ public class XDDFColorPreset extends XDDFColor {
     }
 
     public PresetColor getValue() {
-        if (color.isSetVal()) {
+        if (color.xgetVal() != null) {
             return PresetColor.valueOf(color.getVal());
         } else {
             return null;
@@ -59,8 +59,9 @@ public class XDDFColorPreset extends XDDFColor {
 
     public void setValue(PresetColor value) {
         if (value == null) {
-            if (color.isSetVal()) {
-                color.unsetVal();
+            if (color.xgetVal() != null) {
+                // TODO: val is a requires attribute - removing a preset must be done in the parent container
+                color.setVal(PresetColor.WHITE.underlying);
             }
         } else {
             color.setVal(value.underlying);

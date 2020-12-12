@@ -41,6 +41,7 @@ open module org.apache.poi.ooxml.schemas {
     exports org.openxmlformats.schemas.officeDocument.x2006.docPropsVTypes;
     exports org.openxmlformats.schemas.officeDocument.x2006.extendedProperties;
     exports org.openxmlformats.schemas.officeDocument.x2006.relationships;
+    exports org.openxmlformats.schemas.officeDocument.x2006.sharedTypes;
     exports org.openxmlformats.schemas.presentationml.x2006.main;
     exports org.openxmlformats.schemas.spreadsheetml.x2006.main;
     exports org.openxmlformats.schemas.wordprocessingml.x2006.main;

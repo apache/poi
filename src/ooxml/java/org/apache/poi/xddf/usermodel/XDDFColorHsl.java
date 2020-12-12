@@ -17,6 +17,7 @@
 
 package org.apache.poi.xddf.usermodel;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlObject;
@@ -60,7 +61,7 @@ public class XDDFColorHsl extends XDDFColor {
     }
 
     public int getSaturation() {
-        return color.getSat2();
+        return POIXMLUnits.parsePercent(color.xgetSat2()) / 1000;
     }
 
     public void setSaturation(int saturation) {
@@ -68,7 +69,7 @@ public class XDDFColorHsl extends XDDFColor {
     }
 
     public int getLuminance() {
-        return color.getLum2();
+        return POIXMLUnits.parsePercent(color.xgetLum2()) / 1000;
     }
 
     public void setLuminance(int lightness) {

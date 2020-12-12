@@ -124,5 +124,8 @@ public class TestXDDFColor {
         built = (XDDFColorRgbPercent) XDDFColor.from(654321, 654321, 654321);
         assertEquals(expected, built.getXmlObject().toString());
         assertEquals("FFFFFF", built.toRGBHex());
+
+        built = (XDDFColorRgbPercent) XDDFColor.from(75000, 50000, 25000);
+        assertEquals("BF7F3F", built.toRGBHex());
     }
 }

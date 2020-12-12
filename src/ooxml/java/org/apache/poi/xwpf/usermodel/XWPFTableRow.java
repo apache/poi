@@ -20,10 +20,12 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Internal;
-import org.apache.poi.xwpf.model.WMLHelper;
+import org.apache.poi.util.Units;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHeight;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
@@ -101,7 +103,7 @@ public class XWPFTableRow {
      */
     public int getHeight() {
         CTTrPr properties = getTrPr();
-        return properties.sizeOfTrHeightArray() == 0 ? 0 : properties.getTrHeightArray(0).getVal().intValue();
+        return properties.sizeOfTrHeightArray() == 0 ? 0 : (int) Units.toDXA(POIXMLUnits.parseLength(properties.getTrHeightArray(0).xgetVal()));
     }
 
     /**
@@ -229,7 +231,7 @@ public class XWPFTableRow {
             CTTrPr trpr = getTrPr();
             if (trpr.sizeOfCantSplitArray() > 0) {
                 CTOnOff onoff = trpr.getCantSplitArray(0);
-                isCant = (onoff.isSetVal() ? WMLHelper.convertSTOnOffToBoolean(onoff.getVal()) : true);
+                isCant = !onoff.isSetVal() || POIXMLUnits.parseOnOff(onoff.xgetVal());
             }
         }
         return isCant;
@@ -246,7 +248,7 @@ public class XWPFTableRow {
     public void setCantSplitRow(boolean split) {
         CTTrPr trpr = getTrPr();
         CTOnOff onoff = (trpr.sizeOfCantSplitArray() > 0 ? trpr.getCantSplitArray(0) : trpr.addNewCantSplit());
-        onoff.setVal(WMLHelper.convertBooleanToSTOnOff(split));
+        onoff.setVal(split ? STOnOff1.ON : STOnOff1.OFF);
     }
 
     /**
@@ -254,7 +256,7 @@ public class XWPFTableRow {
      * table split across pages. NOTE - Word will not repeat a table row unless
      * all preceding rows of the table are also repeated. This function returns
      * false if the row will not be repeated even if the repeat tag is present
-     * for this row. 
+     * for this row.
      *
      * @return true if table's header row should be repeated at the top of each
      * page of table, false otherwise.
@@ -269,14 +271,14 @@ public class XWPFTableRow {
         }
         return repeat;
     }
-    
+
     private boolean getRepeat() {
         boolean repeat = false;
         if (ctRow.isSetTrPr()) {
             CTTrPr trpr = getTrPr();
             if (trpr.sizeOfTblHeaderArray() > 0) {
                 CTOnOff rpt = trpr.getTblHeaderArray(0);
-                repeat = (rpt.isSetVal() ? WMLHelper.convertSTOnOffToBoolean(rpt.getVal()) : true);
+                repeat = !rpt.isSetVal() || POIXMLUnits.parseOnOff(rpt.xgetVal());
             }
         }
         return repeat;
@@ -293,6 +295,6 @@ public class XWPFTableRow {
     public void setRepeatHeader(boolean repeat) {
         CTTrPr trpr = getTrPr();
         CTOnOff onoff = (trpr.sizeOfTblHeaderArray() > 0 ? trpr.getTblHeaderArray(0) : trpr.addNewTblHeader());
-        onoff.setVal(WMLHelper.convertBooleanToSTOnOff(repeat));
+        onoff.setVal(repeat ? STOnOff1.ON : STOnOff1.OFF);
     }
 }

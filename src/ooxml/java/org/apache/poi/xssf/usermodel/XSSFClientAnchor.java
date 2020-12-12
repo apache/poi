@@ -17,6 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
@@ -32,15 +33,15 @@ import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
  * <li>A position relative to a cell (top-left) and sized relative to another cell (bottom right)
  * </ol>
  *
- * which method is used is determined by the {@link AnchorType}.  
+ * which method is used is determined by the {@link AnchorType}.
  */
 public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
-    
+
     /**
      * placeholder for zeros when needed for dynamic position calculations
      */
     private static final CTMarker EMPTY_MARKER = CTMarker.Factory.newInstance();
-    
+
     private AnchorType anchorType;
 
     /**
@@ -59,18 +60,18 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
      * if present, fixed size of the object to use instead of cell2, which is inferred instead
      */
     private CTPositiveSize2D size;
-    
+
     /**
      * if present, fixed top-left position to use instead of cell1, which is inferred instead
      */
     private CTPoint2D position;
-    
+
     /**
      * sheet to base dynamic calculations on, if needed.  Required if size and/or position or set.
      * Not needed if cell1/2 are set explicitly (dynamic sizing and position relative to cells).
      */
     private XSSFSheet sheet;
-    
+
     /**
      * Creates a new client anchor and defaults all the anchor positions to 0.
      * Sets the type to {@link AnchorType#MOVE_AND_RESIZE} relative to cell range A1:A1.
@@ -134,7 +135,7 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
         this.cell1 = cell1;
 //        this.cell2 = calcCell(sheet, cell1, size.getCx(), size.getCy());
     }
-    
+
     /**
      * Create XSSFClientAnchor from existing xml beans, sized and positioned relative to a pair of cells.
      * Sets the type to {@link AnchorType#DONT_MOVE_AND_RESIZE}.
@@ -152,18 +153,18 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
 //        this.cell1 = calcCell(sheet, EMPTY_MARKER, position.getCx(), position.getCy());
 //        this.cell2 = calcCell(sheet, cell1, size.getCx(), size.getCy());
     }
-    
+
     private CTMarker calcCell(CTMarker cell, long w, long h) {
         CTMarker c2 = CTMarker.Factory.newInstance();
-        
+
         int r = cell.getRow();
         int c = cell.getCol();
-        
+
         int cw = Units.columnWidthToEMU(sheet.getColumnWidth(c));
-        
+
         // start with width - offset, then keep adding column widths until the next one puts us over w
-        long wPos = cw - cell.getColOff();
-        
+        long wPos = cw - POIXMLUnits.parseLength(cell.xgetColOff());
+
         while (wPos < w) {
             c++;
             cw = Units.columnWidthToEMU(sheet.getColumnWidth(c));
@@ -172,11 +173,11 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
         // now wPos >= w, so end column = c, now figure offset
         c2.setCol(c);
         c2.setColOff(cw - (wPos - w));
-        
+
         int rh = Units.toEMU(getRowHeight(sheet, r));
         // start with height - offset, then keep adding row heights until the next one puts us over h
-        long hPos = rh - cell.getRowOff();
-        
+        long hPos = rh - POIXMLUnits.parseLength(cell.xgetRowOff());
+
         while (hPos < h) {
             r++;
             rh = Units.toEMU(getRowHeight(sheet, r));
@@ -185,10 +186,10 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
         // now hPos >= h, so end row = r, now figure offset
         c2.setRow(r);
         c2.setRowOff(rh - (hPos - h));
-        
+
         return c2;
     }
-    
+
     /**
      * @param sheet
      * @param row
@@ -198,15 +199,15 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
         XSSFRow r = sheet.getRow(row);
         return r == null ? sheet.getDefaultRowHeightInPoints() : r.getHeightInPoints();
     }
-    
+
     private CTMarker getCell1() {
-        return cell1 != null ? cell1 : calcCell(EMPTY_MARKER, position.getX(), position.getY());
+        return cell1 != null ? cell1 : calcCell(EMPTY_MARKER, POIXMLUnits.parseLength(position.xgetX()), POIXMLUnits.parseLength(position.xgetY()));
     }
-    
+
     private CTMarker getCell2() {
         return cell2 != null ? cell2 : calcCell(getCell1(), size.getCx(), size.getCy());
     }
-    
+
     public short getCol1() {
         return (short)getCell1().getCol();
     }
@@ -256,7 +257,7 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
     }
 
     public int getDx1() {
-        return Math.toIntExact(getCell1().getColOff());
+        return Math.toIntExact(POIXMLUnits.parseLength(getCell1().xgetColOff()));
     }
 
     /**
@@ -268,7 +269,7 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
     }
 
     public int getDy1() {
-        return Math.toIntExact(getCell1().getRowOff());
+        return Math.toIntExact(POIXMLUnits.parseLength(getCell1().xgetRowOff()));
     }
 
     /**
@@ -280,7 +281,7 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
     }
 
     public int getDy2() {
-        return Math.toIntExact(getCell2().getRowOff());
+        return Math.toIntExact(POIXMLUnits.parseLength(getCell2().xgetRowOff()));
     }
 
     /**
@@ -292,7 +293,7 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
     }
 
     public int getDx2() {
-        return Math.toIntExact(getCell2().getColOff());
+        return Math.toIntExact(POIXMLUnits.parseLength(getCell2().xgetColOff()));
     }
 
     /**
@@ -365,7 +366,7 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
     public CTPoint2D getPosition() {
         return position;
     }
-    
+
     /**
      * Sets the top-left absolute position of the object.  To use this, "from" must be set to null.
      * @param position
@@ -383,7 +384,7 @@ public class XSSFClientAnchor extends XSSFAnchor implements ClientAnchor {
     public CTPositiveSize2D getSize() {
         return size;
     }
-    
+
     /**
      * Sets the size of the object.  To use this, "to" must be set to null.
      * @param size

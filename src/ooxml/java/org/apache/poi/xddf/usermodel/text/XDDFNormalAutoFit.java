@@ -17,6 +17,7 @@
 
 package org.apache.poi.xddf.usermodel.text;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextNormalAutofit;
@@ -42,7 +43,7 @@ public class XDDFNormalAutoFit implements XDDFAutoFit {
     @Override
     public int getFontScale() {
         if (autofit.isSetFontScale()) {
-            return autofit.getFontScale();
+            return POIXMLUnits.parsePercent(autofit.xgetFontScale());
         } else {
             return 100_000;
         }
@@ -61,7 +62,7 @@ public class XDDFNormalAutoFit implements XDDFAutoFit {
     @Override
     public int getLineSpaceReduction() {
         if (autofit.isSetLnSpcReduction()) {
-            return autofit.getLnSpcReduction();
+            return POIXMLUnits.parsePercent(autofit.xgetLnSpcReduction());
         } else {
             return 0;
         }

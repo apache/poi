@@ -32,6 +32,7 @@ import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 import org.openxmlformats.schemas.drawingml.x2006.picture.PicDocument;
 import org.openxmlformats.schemas.drawingml.x2006.picture.impl.PicDocumentImpl;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBookmark;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTInd;
@@ -46,7 +47,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTextAlignment;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STLineSpacingRule;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTextAlignment;
 
 /**
@@ -163,9 +163,9 @@ public final class TestXWPFParagraph {
             assertEquals(10, p.getSpacingBefore());
 
             p.setSpacingAfter(100);
-            assertEquals(100, spacing.getAfter().intValue());
+            assertEquals("100", spacing.xgetAfter().getStringValue());
             p.setSpacingBefore(100);
-            assertEquals(100, spacing.getBefore().intValue());
+            assertEquals("100", spacing.xgetBefore().getStringValue());
 
             p.setSpacingBetween(.25, LineSpacingRule.EXACT);
             assertEquals(.25, p.getSpacingBetween(), 0.01);
@@ -197,7 +197,7 @@ public final class TestXWPFParagraph {
             assertEquals(LineSpacingRule.AT_LEAST, p.getSpacingLineRule());
 
             p.setSpacingAfter(100);
-            assertEquals(100, spacing.getAfter().intValue());
+            assertEquals("100", spacing.xgetAfter().getStringValue());
         }
     }
 
@@ -234,7 +234,7 @@ public final class TestXWPFParagraph {
             assertEquals(10, p.getIndentationLeft());
 
             p.setIndentationLeft(100);
-            assertEquals(100, ind.getLeft().intValue());
+            assertEquals("100", ind.xgetLeft().getStringValue());
         }
     }
     @Test
@@ -264,11 +264,11 @@ public final class TestXWPFParagraph {
             CTPPr ppr = ctp.getPPr() == null ? ctp.addNewPPr() : ctp.getPPr();
 
             CTOnOff wordWrap = ppr.addNewWordWrap();
-            wordWrap.setVal(STOnOff.FALSE);
+            wordWrap.setVal(STOnOff1.OFF);
             assertFalse(p.isWordWrap());
 
             p.setWordWrapped(true);
-            assertEquals(STOnOff.TRUE, ppr.getWordWrap().getVal());
+            assertEquals("on", ppr.getWordWrap().getVal());
         }
     }
 
@@ -281,11 +281,11 @@ public final class TestXWPFParagraph {
             CTPPr ppr = ctp.getPPr() == null ? ctp.addNewPPr() : ctp.getPPr();
 
             CTOnOff pageBreak = ppr.addNewPageBreakBefore();
-            pageBreak.setVal(STOnOff.FALSE);
+            pageBreak.setVal(STOnOff1.OFF);
             assertFalse(p.isPageBreak());
 
             p.setPageBreak(true);
-            assertEquals(STOnOff.TRUE, ppr.getPageBreakBefore().getVal());
+            assertEquals("on", ppr.getPageBreakBefore().getVal());
         }
     }
 
@@ -713,7 +713,7 @@ public final class TestXWPFParagraph {
             assertTrue(p.removeRun(0));
         }
     }
-    
+
     @Test
     public void testFieldRuns() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("FldSimple.docx")) {
@@ -777,7 +777,7 @@ public final class TestXWPFParagraph {
 
     /**
      * Tests for numbered lists
-     * 
+     *
      * See also https://github.com/jimklo/apache-poi-sample/blob/master/src/main/java/com/sri/jklo/StyledDocument.java
      * for someone else trying a similar thing
      */

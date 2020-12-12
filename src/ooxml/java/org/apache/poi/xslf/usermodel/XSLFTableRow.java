@@ -24,6 +24,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableRow;
@@ -39,7 +40,6 @@ public class XSLFTableRow implements Iterable<XSLFTableCell> {
     /*package*/ XSLFTableRow(CTTableRow row, XSLFTable table){
         _row = row;
         _table = table;
-        @SuppressWarnings("deprecation")
         CTTableCell[] tcArray = _row.getTcArray();
         _cells = new ArrayList<>(tcArray.length);
         for(CTTableCell cell : tcArray) {
@@ -61,7 +61,7 @@ public class XSLFTableRow implements Iterable<XSLFTableCell> {
     }
 
     public double getHeight(){
-        return Units.toPoints(_row.getH());
+        return Units.toPoints(POIXMLUnits.parseLength(_row.xgetH()));
     }
 
     public void setHeight(double height){

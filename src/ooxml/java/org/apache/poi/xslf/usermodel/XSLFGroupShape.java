@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.sl.draw.DrawPictureShape;
 import org.apache.poi.sl.usermodel.GroupShape;
 import org.apache.poi.sl.usermodel.PictureData;
@@ -49,14 +50,14 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
 /**
  * Represents a group shape that consists of many shapes grouped together.
- * 
+ *
  * @author Yegor Kozlov
  */
 @Beta
 public class XSLFGroupShape extends XSLFShape
 implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
     private final static POILogger _logger = POILogFactory.getLogger(XSLFGroupShape.class);
-    
+
     private final List<XSLFShape> _shapes;
     private final CTGroupShapeProperties _grpSpPr;
     private XSLFDrawing _drawing;
@@ -71,12 +72,12 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
     protected CTGroupShapeProperties getGrpSpPr() {
         return _grpSpPr;
     }
-    
+
     private CTGroupTransform2D getSafeXfrm() {
         CTGroupTransform2D xfrm = getXfrm();
         return (xfrm == null ? getGrpSpPr().addNewXfrm() : xfrm);
     }
-    
+
     protected CTGroupTransform2D getXfrm() {
         return getGrpSpPr().getXfrm();
     }
@@ -85,8 +86,8 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
     public Rectangle2D getAnchor(){
         CTGroupTransform2D xfrm = getXfrm();
         CTPoint2D off = xfrm.getOff();
-        double x = Units.toPoints(off.getX());
-        double y = Units.toPoints(off.getY());
+        double x = Units.toPoints(POIXMLUnits.parseLength(off.xgetX()));
+        double y = Units.toPoints(POIXMLUnits.parseLength(off.xgetY()));
         CTPositiveSize2D ext = xfrm.getExt();
         double cx = Units.toPoints(ext.getCx());
         double cy = Units.toPoints(ext.getCy());
@@ -118,8 +119,8 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
     public Rectangle2D getInteriorAnchor(){
         CTGroupTransform2D xfrm = getXfrm();
         CTPoint2D off = xfrm.getChOff();
-        double x = Units.toPoints(off.getX());
-        double y = Units.toPoints(off.getY());
+        double x = Units.toPoints(POIXMLUnits.parseLength(off.xgetX()));
+        double y = Units.toPoints(POIXMLUnits.parseLength(off.xgetY()));
         CTPositiveSize2D ext = xfrm.getChExt();
         double cx = Units.toPoints(ext.getCx());
         double cy = Units.toPoints(ext.getCy());
@@ -287,20 +288,20 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         Dimension dim = pictureData.getImageDimension();
         oleObj.setImgW(Units.toEMU(dim.getWidth()));
         oleObj.setImgH(Units.toEMU(dim.getHeight()));
-        
-        
+
+
         getShapes().add(sh);
         sh.setParent(this);
         return sh;
     }
-    
+
     public XSLFTable createTable(){
         XSLFTable sh = getDrawing().createTable();
         _shapes.add(sh);
         sh.setParent(this);
         return sh;
     }
-    
+
     @Override
     public XSLFTable createTable(int numRows, int numCols){
         if (numRows < 1 || numCols < 1) {
@@ -318,7 +319,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         return sh;
     }
 
-    
+
     @Override
     public void setFlipHorizontal(boolean flip){
         getSafeXfrm().setFlipH(flip);
@@ -359,7 +360,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
         // recursively update each shape
         List<XSLFShape> tgtShapes = getShapes();
         List<XSLFShape> srcShapes = gr.getShapes();
-        
+
         // workaround for a call by XSLFSheet.importContent:
         // if we have already the same amount of child shapes
         // then assume, that we've been called by import content and only need to update the children
@@ -367,13 +368,13 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
             for(int i = 0; i < tgtShapes.size(); i++){
                 XSLFShape s1 = srcShapes.get(i);
                 XSLFShape s2 = tgtShapes.get(i);
-    
+
                 s2.copy(s1);
             }
         } else {
             // otherwise recreate the shapes from scratch
             clear();
-            
+
             // recursively update each shape
             for(XSLFShape shape : srcShapes) {
                 XSLFShape newShape;
@@ -398,7 +399,7 @@ implements XSLFShapeContainer, GroupShape<XSLFShape,XSLFTextParagraph> {
                     _logger.log(POILogger.WARN, "copying of class "+shape.getClass()+" not supported.");
                     continue;
                 }
-    
+
                 newShape.copy(shape);
             }
         }

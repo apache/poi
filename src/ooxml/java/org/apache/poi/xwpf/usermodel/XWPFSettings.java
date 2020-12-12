@@ -29,19 +29,20 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STAlgClass;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STAlgType;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STCryptProv;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocProtect;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSettings;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTZoom;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STAlgClass;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STAlgType;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STCryptProv;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.SettingsDocument;
 
 public class XWPFSettings extends POIXMLDocumentPart {
@@ -54,7 +55,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
     public XWPFSettings(PackagePart part) throws IOException {
         super(part);
     }
-    
+
     public XWPFSettings() {
         super();
         ctSettings = CTSettings.Factory.newInstance();
@@ -86,12 +87,8 @@ public class XWPFSettings extends POIXMLDocumentPart {
             zoom = ctSettings.getZoom();
         }
 
-        
-        BigInteger percent = zoom.getPercent();
-        if(percent == null) {
-            return 100;
-        }
-        return percent.longValue();
+
+        return (zoom.getPercent() == null) ? 100 : POIXMLUnits.parsePercent(zoom.xgetPercent()) / 1000;
     }
 
     /**
@@ -111,7 +108,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
         CTZoom zoom = ctSettings.getZoom();
         zoom.setPercent(BigInteger.valueOf(zoomPercent));
     }
-	
+
 	/**
      * Verifies the documentProtection tag inside settings.xml file <br>
      * if the protection is enforced (w:enforcement="1") <br>
@@ -127,12 +124,8 @@ public class XWPFSettings extends POIXMLDocumentPart {
      */
 	public boolean isEnforcedWith() {
         CTDocProtect ctDocProtect = ctSettings.getDocumentProtection();
+        return ctDocProtect != null && POIXMLUnits.parseOnOff(ctDocProtect.xgetEnforcement());
 
-        if (ctDocProtect == null) {
-            return false;
-        }
-
-        return ctDocProtect.getEnforcement().equals(STOnOff.X_1);
     }
 
     /**
@@ -151,12 +144,8 @@ public class XWPFSettings extends POIXMLDocumentPart {
      */
     public boolean isEnforcedWith(STDocProtect.Enum editValue) {
         CTDocProtect ctDocProtect = ctSettings.getDocumentProtection();
+        return ctDocProtect != null && POIXMLUnits.parseOnOff(ctDocProtect.xgetEnforcement()) && ctDocProtect.getEdit().equals(editValue);
 
-        if (ctDocProtect == null) {
-            return false;
-        }
-
-        return ctDocProtect.getEnforcement().equals(STOnOff.X_1) && ctDocProtect.getEdit().equals(editValue);
     }
 
     /**
@@ -173,7 +162,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
      * </pre>
      */
     public void setEnforcementEditValue(org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect.Enum editValue) {
-        safeGetDocumentProtection().setEnforcement(STOnOff.X_1);
+        safeGetDocumentProtection().setEnforcement(STOnOff1.ON);
         safeGetDocumentProtection().setEdit(editValue);
     }
 
@@ -196,7 +185,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
      */
     public void setEnforcementEditValue(org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect.Enum editValue,
                                         String password, HashAlgorithm hashAlgo) {
-        safeGetDocumentProtection().setEnforcement(STOnOff.X_1);
+        safeGetDocumentProtection().setEnforcement(STOnOff1.ON);
         safeGetDocumentProtection().setEdit(editValue);
 
         if (password == null) {
@@ -233,7 +222,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
             if (hashAlgo == null) {
                 hashAlgo = HashAlgorithm.sha1;
             }
-            
+
             switch (hashAlgo) {
                 case md2:
                     providerType = STCryptProv.RSA_FULL;
@@ -295,7 +284,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
     /**
      * Validates the existing password
      *
-     * @param password
+     * @param password the password
      * @return true, only if password was set and equals, false otherwise
      */
     public boolean validateProtectionPassword(String password) {
@@ -348,7 +337,7 @@ public class XWPFSettings extends POIXMLDocumentPart {
      * it sets the value of enforcement to "0" (w:enforcement="0") <br>
      */
     public void removeEnforcement() {
-        safeGetDocumentProtection().setEnforcement(STOnOff.X_0);
+        safeGetDocumentProtection().setEnforcement(STOnOff1.OFF);
     }
 
     /**
@@ -365,12 +354,12 @@ public class XWPFSettings extends POIXMLDocumentPart {
      */
     public void setUpdateFields() {
         CTOnOff onOff = CTOnOff.Factory.newInstance();
-        onOff.setVal(STOnOff.TRUE);
+        onOff.setVal(STOnOff1.ON);
         ctSettings.setUpdateFields(onOff);
     }
 
     boolean isUpdateFields() {
-        return ctSettings.isSetUpdateFields() && ctSettings.getUpdateFields().getVal() == STOnOff.TRUE;
+        return ctSettings.isSetUpdateFields() && POIXMLUnits.parseOnOff(ctSettings.getUpdateFields().xgetVal());
     }
 
     /**
@@ -443,12 +432,12 @@ public class XWPFSettings extends POIXMLDocumentPart {
     /**
      * Turn separate even-and-odd headings on or off
      *
-     * @param enable <code>true</code> to turn on separate even and odd headings, 
+     * @param enable <code>true</code> to turn on separate even and odd headings,
      * <code>false</code> to turn off even and odd headings.
      */
     public void setEvenAndOddHeadings(boolean enable) {
         CTOnOff onOff = CTOnOff.Factory.newInstance();
-        onOff.setVal(enable ? STOnOff.TRUE : STOnOff.FALSE);
+        onOff.setVal(enable ? STOnOff1.ON : STOnOff1.OFF);
         ctSettings.setEvenAndOddHeaders(onOff);
     }
 
@@ -464,12 +453,12 @@ public class XWPFSettings extends POIXMLDocumentPart {
     /**
      * Turn mirrored margins on or off
      *
-     * @param enable <code>true</code> to turn on mirrored margins, 
+     * @param enable <code>true</code> to turn on mirrored margins,
      * <code>false</code> to turn off mirrored marginss.
      */
     public void setMirrorMargins(boolean enable) {
         CTOnOff onOff = CTOnOff.Factory.newInstance();
-        onOff.setVal(enable ? STOnOff.TRUE : STOnOff.FALSE);
+        onOff.setVal(enable ? STOnOff1.ON : STOnOff1.OFF);
         ctSettings.setMirrorMargins(onOff);
     }
 

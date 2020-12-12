@@ -17,6 +17,7 @@
 
 package org.apache.poi.xddf.usermodel;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTLineJoinMiterProperties;
@@ -40,7 +41,7 @@ public class XDDFLineJoinMiterProperties implements XDDFLineJoinProperties {
 
     public Integer getLimit() {
         if (join.isSetLim()) {
-            return join.getLim();
+            return POIXMLUnits.parsePercent(join.xgetLim());
         } else {
             return null;
         }

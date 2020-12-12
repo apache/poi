@@ -16,6 +16,10 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
+import java.awt.Color;
+
+import org.apache.poi.ooxml.util.POIXMLUnits;
+import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRegularTextRun;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
@@ -24,8 +28,6 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTTextFont;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextNormalAutofit;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextStrikeType;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
-
-import java.awt.Color;
 
 /**
  * Represents a run of text within the containing text body. The run element is the
@@ -80,7 +82,7 @@ public class XSSFTextRun {
                 CTSRgbColor clr = fill.getSrgbClr();
                 byte[] rgb = clr.getVal();
                 return new Color(0xFF & rgb[0], 0xFF & rgb[1], 0xFF & rgb[2]);
-            }	
+            }
         }
 
         return new Color(0, 0, 0);
@@ -115,7 +117,7 @@ public class XSSFTextRun {
 
         CTTextCharacterProperties rPr = getRPr();
         if(rPr.isSetSz()){
-            size = rPr.getSz()*0.01;        
+            size = rPr.getSz()*0.01;
         }
 
         return size * scale;
@@ -129,7 +131,7 @@ public class XSSFTextRun {
     public double getCharacterSpacing(){
         CTTextCharacterProperties rPr = getRPr();
         if(rPr.isSetSpc()){
-            return rPr.getSpc()*0.01;
+            return Units.toPoints(POIXMLUnits.parseLength(rPr.xgetSpc()));
         }
         return 0;
     }
@@ -229,7 +231,7 @@ public class XSSFTextRun {
     public boolean isSuperscript() {
         CTTextCharacterProperties rPr = getRPr();
         if(rPr.isSetBaseline()){
-            return rPr.getBaseline() > 0;
+            return POIXMLUnits.parsePercent(rPr.xgetBaseline()) > 0;
         }
         return false;
     }
@@ -273,7 +275,7 @@ public class XSSFTextRun {
     public boolean isSubscript() {
         CTTextCharacterProperties rPr = getRPr();
         if(rPr.isSetBaseline()){
-            return rPr.getBaseline() < 0;
+            return POIXMLUnits.parsePercent(rPr.xgetBaseline()) < 0;
         }
         return false;
     }
@@ -281,7 +283,7 @@ public class XSSFTextRun {
     /**
      * @return whether a run of text will be formatted as a superscript text. Default is false.
      */
-    public TextCap getTextCap() {    	
+    public TextCap getTextCap() {
         CTTextCharacterProperties rPr = getRPr();
         if(rPr.isSetCap()){
             return TextCap.values()[rPr.getCap().intValue() - 1];

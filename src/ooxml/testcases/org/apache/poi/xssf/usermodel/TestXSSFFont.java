@@ -17,6 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
+import static org.junit.Assert.*;
+
 import java.io.IOException;
 
 import org.apache.poi.common.usermodel.fonts.FontCharset;
@@ -33,9 +35,11 @@ import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.junit.Test;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STVerticalAlignRun;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontFamily;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontName;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontScheme;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontSize;
@@ -44,9 +48,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTUnderlineProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTVerticalAlignFontProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STFontScheme;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignRun;
-
-import static org.junit.Assert.*;
 
 public final class TestXSSFFont extends BaseTestFont{
 
@@ -330,7 +331,7 @@ public final class TestXSSFFont extends BaseTestFont{
 	@Test
 	public void testFamily() {
 		CTFont ctFont=CTFont.Factory.newInstance();
-		CTIntProperty family=ctFont.addNewFamily();
+		CTFontFamily family=ctFont.addNewFamily();
 		family.setVal(FontFamily.MODERN.getValue());
 		ctFont.setFamilyArray(0,family);
 

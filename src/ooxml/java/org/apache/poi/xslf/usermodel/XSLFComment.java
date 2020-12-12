@@ -21,6 +21,7 @@ import java.awt.geom.Point2D;
 import java.util.Calendar;
 import java.util.Date;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.sl.usermodel.Comment;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.Units;
@@ -111,7 +112,9 @@ public class XSLFComment implements Comment {
     @Override
     public Point2D getOffset() {
         final CTPoint2D pos = comment.getPos();
-        return new Point2D.Double(Units.toPoints(pos.getX()), Units.toPoints(pos.getY()));
+        return new Point2D.Double(
+            Units.toPoints(POIXMLUnits.parseLength(pos.xgetX())),
+            Units.toPoints(POIXMLUnits.parseLength(pos.xgetY())));
     }
 
     @Override

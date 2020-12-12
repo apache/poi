@@ -25,12 +25,14 @@ import java.util.function.Predicate;
 
 import org.apache.poi.common.usermodel.fonts.FontGroup;
 import org.apache.poi.ooxml.POIXMLRelation;
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Units;
 import org.apache.poi.xddf.usermodel.XDDFColor;
 import org.apache.poi.xddf.usermodel.XDDFFillProperties;
 import org.apache.poi.xddf.usermodel.XDDFLineProperties;
@@ -294,7 +296,8 @@ public class XDDFTextRun {
     public boolean isSubscript() {
         return findDefinedProperty(
                 CTTextCharacterProperties::isSetBaseline,
-                CTTextCharacterProperties::getBaseline)
+                CTTextCharacterProperties::xgetBaseline)
+            .map(POIXMLUnits::parsePercent)
             .map(baseline -> baseline < 0)
             .orElse(false);
     }
@@ -306,7 +309,8 @@ public class XDDFTextRun {
     public boolean isSuperscript() {
         return findDefinedProperty(
                 CTTextCharacterProperties::isSetBaseline,
-                CTTextCharacterProperties::getBaseline)
+                CTTextCharacterProperties::xgetBaseline)
+            .map(POIXMLUnits::parsePercent)
             .map(baseline -> baseline > 0)
             .orElse(false);
     }
@@ -488,8 +492,9 @@ public class XDDFTextRun {
     public Double getCharacterSpacing() {
         return findDefinedProperty(
                 CTTextCharacterProperties::isSetSpc,
-                CTTextCharacterProperties::getSpc)
-            .map(spacing -> 0.01 * spacing)
+                CTTextCharacterProperties::xgetSpc)
+            .map(POIXMLUnits::parseLength)
+            .map(Units::toPoints)
             .orElse(null);
     }
 

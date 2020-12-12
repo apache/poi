@@ -17,13 +17,14 @@
 
 package org.apache.poi.xddf.usermodel;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRelativeRect;
 
 @Beta
 public class XDDFRelativeRectangle {
-    private CTRelativeRect rect;
+    private final CTRelativeRect rect;
 
     public XDDFRelativeRectangle() {
         this(CTRelativeRect.Factory.newInstance());
@@ -40,7 +41,7 @@ public class XDDFRelativeRectangle {
 
     public Integer getBottom() {
         if (rect.isSetB()) {
-            return rect.getB();
+            return POIXMLUnits.parsePercent(rect.xgetB());
         } else {
             return null;
         }
@@ -58,7 +59,7 @@ public class XDDFRelativeRectangle {
 
     public Integer getLeft() {
         if (rect.isSetL()) {
-            return rect.getL();
+            return POIXMLUnits.parsePercent(rect.xgetL());
         } else {
             return null;
         }
@@ -76,7 +77,7 @@ public class XDDFRelativeRectangle {
 
     public Integer getRight() {
         if (rect.isSetR()) {
-            return rect.getR();
+            return POIXMLUnits.parsePercent(rect.xgetR());
         } else {
             return null;
         }
@@ -94,7 +95,7 @@ public class XDDFRelativeRectangle {
 
     public Integer getTop() {
         if (rect.isSetT()) {
-            return rect.getT();
+            return POIXMLUnits.parsePercent(rect.xgetT());
         } else {
             return null;
         }

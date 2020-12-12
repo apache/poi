@@ -22,6 +22,7 @@ import java.awt.Color;
 
 import javax.xml.namespace.QName;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.AbstractColorStyle;
 import org.apache.poi.sl.usermodel.ColorStyle;
@@ -52,10 +53,10 @@ public class XSLFColor {
     private static final POILogger LOGGER = POILogFactory.getLogger(XSLFColor.class);
     private static final QName VAL_ATTR = new QName("val");
 
-    private XmlObject _xmlObject;
-    private Color _color;
-    private CTSchemeColor _phClr;
-    private XSLFSheet _sheet;
+    private final XmlObject _xmlObject;
+    private final Color _color;
+    private final CTSchemeColor _phClr;
+    private final XSLFSheet _sheet;
 
     @SuppressWarnings("WeakerAccess")
     public XSLFColor(XmlObject obj, XSLFTheme theme, CTSchemeColor phClr, XSLFSheet sheet) {
@@ -88,8 +89,8 @@ public class XSLFColor {
     private Color toColor(CTHslColor hsl) {
         return DrawPaint.HSL2RGB(
             hsl.getHue2() / 60000d,
-            hsl.getSat2() / 1000d,
-            hsl.getLum2() / 1000d,
+            POIXMLUnits.parsePercent(hsl.xgetSat2()) / 1000d,
+            POIXMLUnits.parsePercent(hsl.xgetLum2()) / 1000d,
             1d);
     }
 
@@ -112,7 +113,10 @@ public class XSLFColor {
 
     private Color toColor(CTScRgbColor scrgb) {
         // percental [0..100000] scRGB color space  needs to be gamma corrected for AWT/sRGB colorspace
-        return DrawPaint.SCRGB2RGB(scrgb.getR()/100_000d,scrgb.getG()/100_000d,scrgb.getB()/100_000d);
+        return DrawPaint.SCRGB2RGB(
+            POIXMLUnits.parsePercent(scrgb.xgetR())/100_000d,
+            POIXMLUnits.parsePercent(scrgb.xgetG())/100_000d,
+            POIXMLUnits.parsePercent(scrgb.xgetB())/100_000d);
     }
 
     private Color toColor(CTSRgbColor srgb) {
@@ -487,9 +491,9 @@ public class XSLFColor {
     }
 
     private static class XSLFColorStyle extends AbstractColorStyle {
-        private XmlObject xmlObject;
-        private Color color;
-        private CTSchemeColor phClr;
+        private final XmlObject xmlObject;
+        private final Color color;
+        private final CTSchemeColor phClr;
 
         XSLFColorStyle(XmlObject xmlObject, Color color, CTSchemeColor phClr) {
             this.xmlObject = xmlObject;

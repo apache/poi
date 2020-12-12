@@ -27,6 +27,7 @@ import java.util.function.Predicate;
 
 import org.apache.commons.collections4.iterators.IteratorIterable;
 import org.apache.commons.collections4.iterators.ReverseListIterator;
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.LocaleUtil;
@@ -361,8 +362,8 @@ public class XDDFTextParagraph {
     public Double getDefaultTabSize() {
         return findDefinedParagraphProperty(
                 CTTextParagraphProperties::isSetDefTabSz,
-                CTTextParagraphProperties::getDefTabSz)
-            .map(Units::toPoints).orElse(null);
+                CTTextParagraphProperties::xgetDefTabSz)
+            .map(POIXMLUnits::parseLength).map(Units::toPoints).orElse(null);
     }
 
     /**

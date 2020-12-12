@@ -17,26 +17,26 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPr;
+import org.apache.poi.ooxml.util.POIXMLUnits;
+import org.apache.poi.util.Units;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTPPrGeneral;
 
 /**
  * Default Paragraph style, from which other styles will override
  * TODO Share logic with {@link XWPFParagraph} which also uses CTPPr
  */
 public class XWPFDefaultParagraphStyle {
-    private CTPPr ppr;
+    private final CTPPrGeneral ppr;
 
-    public XWPFDefaultParagraphStyle(CTPPr ppr) {
+    public XWPFDefaultParagraphStyle(CTPPrGeneral ppr) {
         this.ppr = ppr;
     }
 
-    protected CTPPr getPPr() {
+    protected CTPPrGeneral getPPr() {
         return ppr;
     }
 
     public int getSpacingAfter() {
-        if (ppr.isSetSpacing())
-            return ppr.getSpacing().getAfter().intValue();
-        return -1;
+        return ppr.isSetSpacing() ? (int) Units.toDXA(POIXMLUnits.parseLength(ppr.getSpacing().xgetAfter())) : -1;
     }
 }

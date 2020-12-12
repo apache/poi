@@ -29,6 +29,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 
 import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawTextShape;
 import org.apache.poi.sl.usermodel.Insets2D;
@@ -277,7 +278,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
             }
         };
         fetchShapeProperty(fetcher);
-        return fetcher.getValue() == null ? false : fetcher.getValue();
+        return fetcher.getValue() != null && fetcher.getValue();
     }
 
     @Override
@@ -348,7 +349,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
             @Override
             public boolean fetch(CTTextBodyProperties props) {
                 if (props.isSetBIns()) {
-                    double val = Units.toPoints(props.getBIns());
+                    double val = Units.toPoints(POIXMLUnits.parseLength(props.xgetBIns()));
                     setValue(val);
                     return true;
                 }
@@ -372,7 +373,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
             @Override
             public boolean fetch(CTTextBodyProperties props) {
                 if (props.isSetLIns()) {
-                    double val = Units.toPoints(props.getLIns());
+                    double val = Units.toPoints(POIXMLUnits.parseLength(props.xgetLIns()));
                     setValue(val);
                     return true;
                 }
@@ -396,7 +397,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
             @Override
             public boolean fetch(CTTextBodyProperties props) {
                 if (props.isSetRIns()) {
-                    double val = Units.toPoints(props.getRIns());
+                    double val = Units.toPoints(POIXMLUnits.parseLength(props.xgetRIns()));
                     setValue(val);
                     return true;
                 }
@@ -419,7 +420,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
             @Override
             public boolean fetch(CTTextBodyProperties props) {
                 if (props.isSetTIns()) {
-                    double val = Units.toPoints(props.getTIns());
+                    double val = Units.toPoints(POIXMLUnits.parseLength(props.xgetTIns()));
                     setValue(val);
                     return true;
                 }
@@ -533,7 +534,7 @@ public abstract class XSLFTextShape extends XSLFSimpleShape
             }
         };
         fetchShapeProperty(fetcher);
-        return fetcher.getValue() == null ? true : fetcher.getValue();
+        return fetcher.getValue() == null || fetcher.getValue();
     }
 
     @Override

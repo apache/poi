@@ -20,6 +20,8 @@ package org.apache.poi.xwpf.usermodel;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
+
 /**
  * Specifies all types of alignment which are available to be applied to objects in a
  * WordprocessingML document
@@ -29,18 +31,21 @@ import java.util.Map;
 public enum ParagraphAlignment {
     //YK: TODO document each alignment option
 
-    LEFT(1),
-    CENTER(2),
-    RIGHT(3),
-    BOTH(4),
-    MEDIUM_KASHIDA(5),
-    DISTRIBUTE(6),
-    NUM_TAB(7),
-    HIGH_KASHIDA(8),
-    LOW_KASHIDA(9),
-    THAI_DISTRIBUTE(10);
+    START(STJc.INT_START), // 1
+    CENTER(STJc.INT_CENTER), // 2
+    END(STJc.INT_END), // 3
+    BOTH(STJc.INT_BOTH), // 4
+    MEDIUM_KASHIDA(STJc.INT_MEDIUM_KASHIDA), // 5
+    DISTRIBUTE(STJc.INT_DISTRIBUTE), // 6
+    NUM_TAB(STJc.INT_NUM_TAB), // 7
+    HIGH_KASHIDA(STJc.INT_HIGH_KASHIDA), // 8
+    LOW_KASHIDA(STJc.INT_LOW_KASHIDA), // 9
+    THAI_DISTRIBUTE(STJc.INT_THAI_DISTRIBUTE), // 10
+    LEFT(STJc.INT_LEFT), // 11
+    RIGHT(STJc.INT_RIGHT) // 12
+    ;
 
-    private static Map<Integer, ParagraphAlignment> imap = new HashMap<>();
+    private static final Map<Integer, ParagraphAlignment> imap = new HashMap<>();
 
     static {
         for (ParagraphAlignment p : values()) {

@@ -27,6 +27,7 @@ import java.io.IOException;
 import javax.xml.namespace.QName;
 
 import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -64,8 +65,8 @@ public class XSLFGraphicFrame extends XSLFShape implements GraphicalFrame<XSLFSh
     public Rectangle2D getAnchor(){
         CTTransform2D xfrm = ((CTGraphicalObjectFrame)getXmlObject()).getXfrm();
         CTPoint2D off = xfrm.getOff();
-        double x = Units.toPoints(off.getX());
-        double y = Units.toPoints(off.getY());
+        double x = Units.toPoints(POIXMLUnits.parseLength(off.xgetX()));
+        double y = Units.toPoints(POIXMLUnits.parseLength(off.xgetY()));
         CTPositiveSize2D ext = xfrm.getExt();
         double cx = Units.toPoints(ext.getCx());
         double cy = Units.toPoints(ext.getCy());

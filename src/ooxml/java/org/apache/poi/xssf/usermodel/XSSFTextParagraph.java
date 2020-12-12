@@ -17,17 +17,18 @@
 package org.apache.poi.xssf.usermodel;
 
 
+import java.awt.Color;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.model.ParagraphPropertyFetcher;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
-
-import java.awt.Color;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Represents a paragraph of text within the containing text body.
@@ -142,7 +143,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
             }
         };
         fetchParagraphProperty(fetcher);
-        return fetcher.getValue() == null ? TextAlign.LEFT : fetcher.getValue();        
+        return fetcher.getValue() == null ? TextAlign.LEFT : fetcher.getValue();
     }
 
     /**
@@ -159,12 +160,12 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         } else {
             pr.setAlgn(STTextAlignType.Enum.forInt(align.ordinal() + 1));
         }
-    }    
+    }
 
     /**
      * Returns where vertically on a line of text the actual words are positioned. This deals
      * with vertical placement of the characters with respect to the baselines.
-     * 
+     *
      * If this attribute is omitted, then a value of baseline is implied.
      * @return alignment that is applied to the paragraph
      */
@@ -180,7 +181,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
             }
         };
         fetchParagraphProperty(fetcher);
-        return fetcher.getValue() == null ? TextFontAlign.BASELINE : fetcher.getValue();        
+        return fetcher.getValue() == null ? TextFontAlign.BASELINE : fetcher.getValue();
     }
 
     /**
@@ -295,7 +296,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){
                 if(props.isSetBuSzPct()){
-                    setValue(props.getBuSzPct().getVal() * 0.001);
+                    setValue(POIXMLUnits.parsePercent(props.getBuSzPct().xgetVal()) * 0.001);
                     return true;
                 }
                 if(props.isSetBuSzPts()){
@@ -323,7 +324,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         if(bulletSize >= 0) {
             // percentage
             CTTextBulletSizePercent pt = pr.isSetBuSzPct() ? pr.getBuSzPct() : pr.addNewBuSzPct();
-            pt.setVal((int)(bulletSize*1000));
+            pt.setVal(Integer.toString((int)(bulletSize*1000)));
             // unset points if percentage is now set
             if(pr.isSetBuSzPts()) pr.unsetBuSzPts();
         } else {
@@ -338,7 +339,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
     /**
      * Specifies the indent size that will be applied to the first line of text in the paragraph.
      *
-     * @param value the indent in points, -1 to unset indent and use the default of 0. 
+     * @param value the indent in points, -1 to unset indent and use the default of 0.
      */
     public void setIndent(double value){
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
@@ -441,8 +442,8 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         };
         fetchParagraphProperty(fetcher);
         // if the marL attribute is omitted, then a value of 347663 is implied
-        return fetcher.getValue() == null ? 0 : fetcher.getValue();        
-    }    
+        return fetcher.getValue() == null ? 0 : fetcher.getValue();
+    }
 
     /**
      *
@@ -452,7 +453,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         ParagraphPropertyFetcher<Double> fetcher = new ParagraphPropertyFetcher<Double>(getLevel()){
             public boolean fetch(CTTextParagraphProperties props){
                 if(props.isSetDefTabSz()){
-                    double val = Units.toPoints(props.getDefTabSz());
+                    double val = Units.toPoints(POIXMLUnits.parseLength(props.xgetDefTabSz()));
                     setValue(val);
                     return true;
                 }
@@ -470,7 +471,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
                     CTTextTabStopList tabStops = props.getTabLst();
                     if(idx < tabStops.sizeOfTabArray() ) {
                         CTTextTabStop ts = tabStops.getTabArray(idx);
-                        double val = Units.toPoints(ts.getPos());
+                        double val = Units.toPoints(POIXMLUnits.parseLength(ts.xgetPos()));
                         setValue(val);
                         return true;
                     }
@@ -483,8 +484,8 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
     }
     /**
      * Add a single tab stop to be used on a line of text when there are one or more tab characters
-     * present within the text. 
-     * 
+     * present within the text.
+     *
      * @param value the position of the tab stop relative to the left margin
      */
     public void addTabStop(double value){
@@ -511,7 +512,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
      *      // spacing will be 48 points
      *      paragraph.setLineSpacing(-48.0);
      * </code></pre>
-     * 
+     *
      * @param linespacing the vertical line spacing
      */
     public void setLineSpacing(double linespacing){
@@ -538,7 +539,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
                 if(props.isSetLnSpc()){
                     CTTextSpacing spc = props.getLnSpc();
 
-                    if(spc.isSetSpcPct()) setValue( spc.getSpcPct().getVal()*0.001 );
+                    if(spc.isSetSpcPct()) setValue( POIXMLUnits.parsePercent(spc.getSpcPct().xgetVal())*0.001 );
                     else if (spc.isSetSpcPts()) setValue( -spc.getSpcPts().getVal()*0.01 );
                     return true;
                 }
@@ -556,7 +557,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
                 lnSpc *= scale;
             }
         }
-        
+
         return lnSpc;
     }
 
@@ -603,7 +604,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
                 if(props.isSetSpcBef()){
                     CTTextSpacing spc = props.getSpcBef();
 
-                    if(spc.isSetSpcPct()) setValue( spc.getSpcPct().getVal()*0.001 );
+                    if(spc.isSetSpcPct()) setValue( POIXMLUnits.parsePercent(spc.getSpcPct().xgetVal())*0.001 );
                     else if (spc.isSetSpcPts()) setValue( -spc.getSpcPts().getVal()*0.01 );
                     return true;
                 }
@@ -658,7 +659,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
                 if(props.isSetSpcAft()){
                     CTTextSpacing spc = props.getSpcAft();
 
-                    if(spc.isSetSpcPct()) setValue( spc.getSpcPct().getVal()*0.001 );
+                    if(spc.isSetSpcPct()) setValue( POIXMLUnits.parsePercent(spc.getSpcPct().xgetVal())*0.001 );
                     else if (spc.isSetSpcPts()) setValue( -spc.getSpcPts().getVal()*0.01 );
                     return true;
                 }
@@ -676,7 +677,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
      * that this paragraph belongs to (therefore in the parent shape).
      * <p>
      * Note that the closest properties object to the text is used, therefore if there is
-     * a conflict between the text paragraph properties and the list style properties for 
+     * a conflict between the text paragraph properties and the list style properties for
      * this level then the text paragraph properties will take precedence.
      * </p>
      *
@@ -690,7 +691,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
 
     /**
      * Returns the level of text properties that this paragraph will follow.
-     * 
+     *
      * @return the text level of this paragraph (0-based). Default is 0.
      */
     public int getLevel(){
@@ -699,7 +700,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
 
         return pr.getLvl();
     }
-    
+
 
     /**
      * Returns whether this paragraph has bullets
@@ -727,10 +728,10 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         fetchParagraphProperty(fetcher);
         return fetcher.getValue() == null ? false : fetcher.getValue();
     }
-    
+
     /**
      * Set or unset this paragraph as a bullet point
-     * 
+     *
      * @param flag whether text in this paragraph has bullets
      */
     public void setBullet(boolean flag) {
@@ -739,7 +740,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         if(!flag) {
             pr.addNewBuNone();
-            
+
             if(pr.isSetBuAutoNum()) pr.unsetBuAutoNum();
             if(pr.isSetBuBlip()) pr.unsetBuBlip();
             if(pr.isSetBuChar()) pr.unsetBuChar();
@@ -767,17 +768,17 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
     public void setBullet(ListAutoNumber scheme, int startAt) {
         if(startAt < 1) throw new IllegalArgumentException("Start Number must be greater or equal that 1") ;
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
-        CTTextAutonumberBullet lst = pr.isSetBuAutoNum() ? pr.getBuAutoNum() : pr.addNewBuAutoNum();        
+        CTTextAutonumberBullet lst = pr.isSetBuAutoNum() ? pr.getBuAutoNum() : pr.addNewBuAutoNum();
         lst.setType(STTextAutonumberScheme.Enum.forInt(scheme.ordinal() + 1));
         lst.setStartAt(startAt);
-        
+
         if(!pr.isSetBuFont()) pr.addNewBuFont().setTypeface("Arial");
-        if(pr.isSetBuNone()) pr.unsetBuNone();        
+        if(pr.isSetBuNone()) pr.unsetBuNone();
         // remove these elements if present as it results in invalid content when opening in Excel.
         if(pr.isSetBuBlip()) pr.unsetBuBlip();
-        if(pr.isSetBuChar()) pr.unsetBuChar();        
+        if(pr.isSetBuChar()) pr.unsetBuChar();
     }
-    
+
     /**
      * Set this paragraph as an automatic numbered bullet point
      *
@@ -787,14 +788,14 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         CTTextParagraphProperties pr = _p.isSetPPr() ? _p.getPPr() : _p.addNewPPr();
         CTTextAutonumberBullet lst = pr.isSetBuAutoNum() ? pr.getBuAutoNum() : pr.addNewBuAutoNum();
         lst.setType(STTextAutonumberScheme.Enum.forInt(scheme.ordinal() + 1));
-        
+
         if(!pr.isSetBuFont()) pr.addNewBuFont().setTypeface("Arial");
         if(pr.isSetBuNone()) pr.unsetBuNone();
         // remove these elements if present as it results in invalid content when opening in Excel.
         if(pr.isSetBuBlip()) pr.unsetBuBlip();
         if(pr.isSetBuChar()) pr.unsetBuChar();
     }
-    
+
     /**
      * Returns whether this paragraph has automatic numbered bullets
      */
@@ -811,7 +812,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         fetchParagraphProperty(fetcher);
         return fetcher.getValue() == null ? false : fetcher.getValue();
     }
-    
+
     /**
      * Returns the starting number if this paragraph has automatic numbered bullets, otherwise returns 0
      */
@@ -828,7 +829,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         fetchParagraphProperty(fetcher);
         return fetcher.getValue() == null ? 0 : fetcher.getValue();
     }
-    
+
     /**
      * Returns the auto number scheme if this paragraph has automatic numbered bullets, otherwise returns ListAutoNumber.ARABIC_PLAIN
      */
@@ -843,12 +844,12 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
             }
         };
         fetchParagraphProperty(fetcher);
-        
+
         // Note: documentation does not define a default, return ListAutoNumber.ARABIC_PLAIN (1,2,3...)
         return fetcher.getValue() == null ? ListAutoNumber.ARABIC_PLAIN : fetcher.getValue();
-    }    
+    }
 
- 
+
     @SuppressWarnings("rawtypes")
     private boolean fetchParagraphProperty(ParagraphPropertyFetcher visitor){
         boolean ok = false;
@@ -861,7 +862,7 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
 
         return ok;
     }
-    
+
     @Override
     public String toString(){
         return "[" + getClass() + "]" + getText();

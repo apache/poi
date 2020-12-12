@@ -35,10 +35,10 @@ import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 
+import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.ooxml.util.XPathHelper;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.util.CellReference;
-import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
@@ -49,7 +49,6 @@ import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.apache.poi.xssf.usermodel.XSSFTableColumn;
 import org.apache.poi.xssf.usermodel.helpers.XSSFSingleXmlCell;
 import org.apache.poi.xssf.usermodel.helpers.XSSFXmlColumnPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXmlDataType;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -104,7 +103,7 @@ public class XSSFImportFromXML {
 
         for (XSSFSingleXmlCell singleXmlCell : singleXmlCells) {
 
-            STXmlDataType.Enum xmlDataType = singleXmlCell.getXmlDataType();
+            String xmlDataType = singleXmlCell.getXmlDataType();
             String xpathString = singleXmlCell.getXpath();
             Node result = (Node) xpath.evaluate(xpathString, doc, XPathConstants.NODE);
             // result can be null if value is optional (xsd:minOccurs=0), see bugzilla 55864
@@ -166,22 +165,22 @@ public class XSSFImportFromXML {
         }
     }
 
-    
 
-    private static enum DataType {
-        BOOLEAN(STXmlDataType.BOOLEAN), //
-        DOUBLE(STXmlDataType.DOUBLE), //
-        INTEGER(STXmlDataType.INT, STXmlDataType.UNSIGNED_INT, STXmlDataType.INTEGER), //
-        STRING(STXmlDataType.STRING), //
-        DATE(STXmlDataType.DATE);
 
-        private Set<STXmlDataType.Enum> xmlDataTypes;
+    private enum DataType {
+        BOOLEAN("boolean"), //
+        DOUBLE("double"), //
+        INTEGER("int", "unsignedInt", "integer"), //
+        STRING("string"), //
+        DATE("date");
 
-        private DataType(STXmlDataType.Enum... xmlDataTypes) {
+        private Set<String> xmlDataTypes;
+
+        DataType(String... xmlDataTypes) {
             this.xmlDataTypes = new HashSet<>(Arrays.asList(xmlDataTypes));
         }
 
-        public static DataType getDataType(STXmlDataType.Enum xmlDataType) {
+        public static DataType getDataType(String xmlDataType) {
             for (DataType dataType : DataType.values()) {
                 if (dataType.xmlDataTypes.contains(xmlDataType)) {
                     return dataType;
@@ -191,7 +190,7 @@ public class XSSFImportFromXML {
         }
     }
 
-    private void setCellValue(String value, XSSFCell cell, STXmlDataType.Enum xmlDataType) {
+    private void setCellValue(String value, XSSFCell cell, String xmlDataType) {
         DataType type = DataType.getDataType(xmlDataType);
         try {
             if (value.isEmpty() || type == null) {

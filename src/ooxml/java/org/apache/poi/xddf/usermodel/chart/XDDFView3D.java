@@ -19,6 +19,7 @@
 
 package org.apache.poi.xddf.usermodel.chart;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTView3D;
 
@@ -128,11 +129,7 @@ public class XDDFView3D {
     }
 
     public Integer getDepthPercent() {
-        if (view3D.isSetDepthPercent()) {
-            return view3D.getDepthPercent().getVal();
-        } else {
-            return null;
-        }
+        return (view3D.isSetDepthPercent()) ? POIXMLUnits.parsePercent(view3D.getDepthPercent().xgetVal()) : null;
     }
 
     public void setDepthPercent(Integer percent) {
@@ -153,11 +150,7 @@ public class XDDFView3D {
     }
 
     public Integer getHPercent() {
-        if (view3D.isSetHPercent()) {
-            return view3D.getHPercent().getVal();
-        } else {
-            return null;
-        }
+        return (view3D.isSetHPercent()) ? POIXMLUnits.parsePercent(view3D.getHPercent().xgetVal()) : null;
     }
 
     public void setHPercent(Integer percent) {

@@ -17,6 +17,7 @@
 
 package org.apache.poi.xddf.usermodel.text;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextSpacing;
@@ -49,7 +50,7 @@ public class XDDFSpacingPercent extends XDDFSpacing {
     }
 
     public double getPercent() {
-        return percent.getVal() * scale;
+        return POIXMLUnits.parsePercent(percent.xgetVal()) * scale;
     }
 
     public void setPercent(double value) {

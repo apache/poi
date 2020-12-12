@@ -27,6 +27,7 @@ import java.util.List;
 
 import javax.xml.namespace.QName;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.sl.draw.DrawFactory;
 import org.apache.poi.sl.draw.DrawTableShape;
 import org.apache.poi.sl.draw.DrawTextShape;
@@ -52,8 +53,8 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
     TableShape<XSLFShape,XSLFTextParagraph> {
     /* package */ static final String TABLE_URI = "http://schemas.openxmlformats.org/drawingml/2006/table";
 
-    private CTTable _table;
-    private List<XSLFTableRow> _rows;
+    private final CTTable _table;
+    private final List<XSLFTableRow> _rows;
 
     /*package*/ XSLFTable(CTGraphicalObjectFrame shape, XSLFSheet sheet){
         super(shape, sheet);
@@ -123,8 +124,8 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
 
     @Override
     public double getColumnWidth(int idx){
-        return Units.toPoints(
-                _table.getTblGrid().getGridColArray(idx).getW());
+        return Units.toPoints(POIXMLUnits.parseLength(
+                _table.getTblGrid().getGridColArray(idx).xgetW()));
     }
 
     @Override
@@ -134,7 +135,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
 
     @Override
     public double getRowHeight(int row) {
-        return Units.toPoints(_table.getTrArray(row).getH());
+        return Units.toPoints(POIXMLUnits.parseLength(_table.getTrArray(row).xgetH()));
     }
 
     @Override
@@ -201,7 +202,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
      * @since POI 4.1.2
      */
     public void addColumn() {
-        long width = _table.getTblGrid().getGridColArray(getNumberOfColumns() - 1).getW();
+        long width = POIXMLUnits.parseLength(_table.getTblGrid().getGridColArray(getNumberOfColumns() - 1).xgetW());
         CTTableCol col = _table.getTblGrid().addNewGridCol();
         col.setW(width);
         for (XSLFTableRow row : _rows) {
@@ -219,7 +220,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
         if (getNumberOfColumns() < colIdx) {
             throw new IndexOutOfBoundsException("Cannot insert column at " + colIdx + "; table has only " + getNumberOfColumns() + "columns.");
         }
-        long width = _table.getTblGrid().getGridColArray(colIdx).getW();
+        long width = POIXMLUnits.parseLength(_table.getTblGrid().getGridColArray(colIdx).xgetW());
         CTTableCol col = _table.getTblGrid().insertNewGridCol(colIdx);
         col.setW(width);
         for (XSLFTableRow row : _rows) {

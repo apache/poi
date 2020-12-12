@@ -19,6 +19,7 @@ package org.apache.poi.xddf.usermodel.chart;
 
 import java.util.Map;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xddf.usermodel.XDDFShapeProperties;
@@ -113,11 +114,7 @@ public class XDDFBarChartData extends XDDFChartData {
     }
 
     public Integer getGapWidth() {
-        if (chart.isSetGapWidth()) {
-            return chart.getGapWidth().getVal();
-        } else {
-            return null;
-        }
+        return (chart.isSetGapWidth()) ? (int)(POIXMLUnits.parsePercent(chart.getGapWidth().xgetVal()) / 1000.) : null;
     }
 
     public void setGapWidth(Integer width) {
@@ -135,11 +132,7 @@ public class XDDFBarChartData extends XDDFChartData {
     }
 
     public Byte getOverlap() {
-        if (chart.isSetOverlap()) {
-            return chart.getOverlap().getVal();
-        } else {
-            return null;
-        }
+        return chart.isSetOverlap() ? (byte)(POIXMLUnits.parsePercent(chart.getOverlap().xgetVal())/1000) : null;
     }
 
     /**

@@ -21,13 +21,12 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.xssf.usermodel.XSSFTable;
 import org.apache.poi.xssf.usermodel.XSSFTableColumn;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXmlColumnPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXmlDataType.Enum;
 
 /**
- * 
+ *
  * This class is a wrapper around the CTXmlColumnPr (Open Office XML Part 4:
  * chapter 3.5.1.7)
- * 
+ *
  *
  * @author Roberto Manicardi
  */
@@ -73,7 +72,7 @@ public class XSSFXmlColumnPr {
 
     /**
      * If the XPath is, for example, /Node1/Node2/Node3 and /Node1/Node2 is the common XPath for the table, the local XPath is /Node3
-     * 
+     *
      * @return the local XPath
      */
     public String getLocalXPath() {
@@ -87,7 +86,7 @@ public class XSSFXmlColumnPr {
         return localXPath.toString();
     }
 
-    public Enum getXmlDataType() {
+    public String getXmlDataType() {
 
         return ctXmlColumnPr.getXmlDataType();
     }

@@ -23,10 +23,13 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Units;
 import org.apache.poi.wp.usermodel.Paragraph;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 /**
@@ -429,7 +432,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public boolean isKeepNext() {
         if (getCTP() != null && getCTP().getPPr() != null && getCTP().getPPr().isSetKeepNext()) {
-            return getCTP().getPPr().getKeepNext().getVal() == STOnOff.ON;
+            return POIXMLUnits.parseOnOff(getCTP().getPPr().getKeepNext().xgetVal());
         }
         return false;
     }
@@ -441,7 +444,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public void setKeepNext(boolean keepNext) {
         CTOnOff state = CTOnOff.Factory.newInstance();
-        state.setVal(keepNext ? STOnOff.ON : STOnOff.OFF);
+        state.setVal(keepNext ? STOnOff1.ON : STOnOff1.OFF);
         getCTP().getPPr().setKeepNext(state);
     }
 
@@ -874,24 +877,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         if (ctPageBreak == null) {
             return false;
         }
-        return isTruelike(ctPageBreak.getVal());
-    }
-
-    private static boolean isTruelike(final STOnOff.Enum value) {
-        if (value == null) {
-            return false;
-        }
-        switch (value.intValue()) {
-            case STOnOff.INT_TRUE:
-            case STOnOff.INT_X_1:
-            case STOnOff.INT_ON:
-                return true;
-            /*STOnOff.INT_FALSE:
-            STOnOff.INT_X_0:
-            STOnOff.INT_OFF:*/
-            default:
-                return false;
-        }
+        return POIXMLUnits.parseOnOff(ctPageBreak.xgetVal());
     }
 
     /**
@@ -914,11 +900,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         CTPPr ppr = getCTPPr();
         CTOnOff ctPageBreak = ppr.isSetPageBreakBefore() ? ppr
                 .getPageBreakBefore() : ppr.addNewPageBreakBefore();
-        if (pageBreak) {
-            ctPageBreak.setVal(STOnOff.TRUE);
-        } else {
-            ctPageBreak.setVal(STOnOff.FALSE);
-        }
+        ctPageBreak.setVal(pageBreak ? STOnOff1.ON : STOnOff1.OFF);
     }
 
     /**
@@ -929,7 +911,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public int getSpacingAfter() {
         CTSpacing spacing = getCTSpacing(false);
-        return (spacing != null && spacing.isSetAfter()) ? spacing.getAfter().intValue() : -1;
+        return (spacing != null && spacing.isSetAfter()) ? (int)Units.toDXA(POIXMLUnits.parseLength(spacing.xgetAfter())) : -1;
     }
 
     /**
@@ -995,7 +977,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public int getSpacingBefore() {
         CTSpacing spacing = getCTSpacing(false);
-        return (spacing != null && spacing.isSetBefore()) ? spacing.getBefore().intValue() : -1;
+        return (spacing != null && spacing.isSetBefore()) ? (int)Units.toDXA(POIXMLUnits.parseLength(spacing.xgetBefore())) : -1;
     }
 
     /**
@@ -1088,12 +1070,11 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
         CTSpacing spacing = getCTSpacing(false);
         if (spacing == null || !spacing.isSetLine()) {
             return -1;
-        } else if (spacing.getLineRule() == null || spacing.getLineRule() == STLineSpacingRule.AUTO) {
-            BigInteger[] val = spacing.getLine().divideAndRemainder(BigInteger.valueOf(240L));
-            return val[0].doubleValue() + (val[1].doubleValue() / 240L);
         }
-        BigInteger[] val = spacing.getLine().divideAndRemainder(BigInteger.valueOf(20L));
-        return val[0].doubleValue() + (val[1].doubleValue() / 20L);
+
+        double twips = Units.toDXA(POIXMLUnits.parseLength(spacing.xgetLine()));
+
+        return twips / ((spacing.getLineRule() == null || spacing.getLineRule() == STLineSpacingRule.AUTO) ? 240 : 20);
     }
 
     /**
@@ -1143,8 +1124,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public int getIndentationLeft() {
         CTInd indentation = getCTInd(false);
-        return (indentation != null && indentation.isSetLeft()) ? indentation.getLeft().intValue()
-                : -1;
+        return (indentation != null && indentation.isSetLeft())
+            ? (int)Units.toDXA(POIXMLUnits.parseLength(indentation.xgetLeft()))
+            : -1;
     }
 
     /**
@@ -1208,8 +1190,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
 
     public int getIndentationRight() {
         CTInd indentation = getCTInd(false);
-        return (indentation != null && indentation.isSetRight()) ? indentation.getRight().intValue()
-                : -1;
+        return (indentation != null && indentation.isSetRight())
+            ? (int)Units.toDXA(POIXMLUnits.parseLength(indentation.xgetRight()))
+            : -1;
     }
 
     /**
@@ -1272,7 +1255,8 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public int getIndentationHanging() {
         CTInd indentation = getCTInd(false);
-        return (indentation != null && indentation.isSetHanging()) ? indentation.getHanging().intValue() : -1;
+        return (indentation != null && indentation.isSetHanging())
+            ? (int)Units.toDXA(POIXMLUnits.parseLength(indentation.xgetHanging())) : -1;
     }
 
     /**
@@ -1312,8 +1296,9 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     public int getIndentationFirstLine() {
         CTInd indentation = getCTInd(false);
-        return (indentation != null && indentation.isSetFirstLine()) ? indentation.getFirstLine().intValue()
-                : -1;
+        return (indentation != null && indentation.isSetFirstLine())
+            ? (int)Units.toDXA(POIXMLUnits.parseLength(indentation.xgetFirstLine()))
+            : -1;
     }
 
     /**
@@ -1376,12 +1361,7 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     @Override
     public boolean isWordWrapped() {
-        CTOnOff wordWrap = getCTPPr().isSetWordWrap() ? getCTPPr()
-                .getWordWrap() : null;
-        if (wordWrap != null) {
-            return isTruelike(wordWrap.getVal());
-        }
-        return false;
+        return getCTPPr().isSetWordWrap() && POIXMLUnits.parseOnOff(getCTPPr().getWordWrap());
     }
 
     /**
@@ -1394,12 +1374,14 @@ public class XWPFParagraph implements IBodyElement, IRunBody, ISDTContents, Para
      */
     @Override
     public void setWordWrapped(boolean wrap) {
-        CTOnOff wordWrap = getCTPPr().isSetWordWrap() ? getCTPPr()
-                .getWordWrap() : getCTPPr().addNewWordWrap();
+        CTPPr ppr = getCTPPr();
         if (wrap) {
-            wordWrap.setVal(STOnOff.TRUE);
+            CTOnOff wordWrap = ppr.isSetWordWrap() ? ppr.getWordWrap() : ppr.addNewWordWrap();
+            wordWrap.setVal(STOnOff1.ON);
         } else {
-            wordWrap.unsetVal();
+            if (ppr.isSetWordWrap()) {
+                ppr.unsetWordWrap();
+            }
         }
     }
 

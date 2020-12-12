@@ -35,7 +35,6 @@ import java.util.regex.Pattern;
 
 import com.microsoft.schemas.office.excel.CTClientData;
 import com.microsoft.schemas.office.excel.STObjectType;
-import com.microsoft.schemas.office.excel.STTrueFalseBlank;
 import com.microsoft.schemas.office.office.CTShapeLayout;
 import com.microsoft.schemas.office.office.STConnectType;
 import com.microsoft.schemas.office.office.STInsetMode;
@@ -43,12 +42,13 @@ import com.microsoft.schemas.vml.CTShadow;
 import com.microsoft.schemas.vml.CTShape;
 import com.microsoft.schemas.vml.CTShapetype;
 import com.microsoft.schemas.vml.STExt;
-import com.microsoft.schemas.vml.STTrueFalse;
 import org.apache.poi.POIDataSamples;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.junit.Test;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STTrueFalse;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STTrueFalseBlank;
 
 public class TestXSSFVMLDrawing {
 

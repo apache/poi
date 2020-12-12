@@ -24,64 +24,63 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSingleXmlCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXmlCellPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXmlPr;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STXmlDataType.Enum;
 
 /**
- * 
+ *
  * This class is a wrapper around the CTSingleXmlCell  (Open Office XML Part 4:
- * chapter 3.5.2.1) 
- * 
+ * chapter 3.5.2.1)
+ *
 
- * 
+ *
  * @author Roberto Manicardi
  *
  */
 public class XSSFSingleXmlCell {
-	
+
 	private CTSingleXmlCell singleXmlCell;
 	private SingleXmlCells parent;
-	
-	
+
+
 	public XSSFSingleXmlCell(CTSingleXmlCell singleXmlCell, SingleXmlCells parent){
 		this.singleXmlCell = singleXmlCell;
 		this.parent = parent;
 	}
-	
+
 	/**
 	 * Gets the XSSFCell referenced by the R attribute or creates a new one if cell doesn't exists
 	 * @return the referenced XSSFCell, null if the cell reference is invalid
 	 */
 	public XSSFCell getReferencedCell(){
 		XSSFCell cell = null;
-		
-		
-		CellReference cellReference =  new CellReference(singleXmlCell.getR()); 
-		
+
+
+		CellReference cellReference =  new CellReference(singleXmlCell.getR());
+
 		XSSFRow row = parent.getXSSFSheet().getRow(cellReference.getRow());
 		if(row==null){
 			row = parent.getXSSFSheet().createRow(cellReference.getRow());
 		}
-		
-		cell = row.getCell(cellReference.getCol());  
+
+		cell = row.getCell(cellReference.getCol());
 		if(cell==null){
 			cell = row.createCell(cellReference.getCol());
 		}
-		
-		
+
+
 		return cell;
 	}
-	
+
 	public String getXpath(){
 		CTXmlCellPr xmlCellPr = singleXmlCell.getXmlCellPr();
 		CTXmlPr xmlPr = xmlCellPr.getXmlPr();
         return xmlPr.getXpath();
 	}
-	
+
 	public long getMapId(){
 		return singleXmlCell.getXmlCellPr().getXmlPr().getMapId();
 	}
 
-	public Enum getXmlDataType() {
+	public String getXmlDataType() {
 		CTXmlCellPr xmlCellPr = singleXmlCell.getXmlCellPr();
 		CTXmlPr xmlPr = xmlCellPr.getXmlPr();
 		return xmlPr.getXmlDataType();

@@ -25,6 +25,7 @@ import java.awt.geom.Rectangle2D;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.draw.geom.CustomGeometry;
@@ -129,8 +130,8 @@ public abstract class XSLFSimpleShape extends XSLFShape
         }
 
         CTPoint2D off = xfrm.getOff();
-        double x = Units.toPoints(off.getX());
-        double y = Units.toPoints(off.getY());
+        double x = Units.toPoints(POIXMLUnits.parseLength(off.xgetX()));
+        double y = Units.toPoints(POIXMLUnits.parseLength(off.xgetY()));
         CTPositiveSize2D ext = xfrm.getExt();
         double cx = Units.toPoints(ext.getCx());
         double cy = Units.toPoints(ext.getCy());
@@ -978,7 +979,6 @@ public abstract class XSLFSimpleShape extends XSLFShape
         XSLFGeometryProperties gp = XSLFPropertiesDelegate.getGeometryDelegate(getShapeProperties());
 
         if (gp != null && gp.isSetPrstGeom() && gp.getPrstGeom().isSetAvLst()) {
-            //noinspection deprecation
             for (CTGeomGuide g : gp.getPrstGeom().getAvLst().getGdArray()) {
                 if (g.getName().equals(name)) {
                     Guide gd = new Guide();

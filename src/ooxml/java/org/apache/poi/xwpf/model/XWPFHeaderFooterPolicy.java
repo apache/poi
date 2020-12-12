@@ -16,6 +16,17 @@
 ==================================================================== */
 package org.apache.poi.xwpf.model;
 
+import com.microsoft.schemas.office.office.CTLock;
+import com.microsoft.schemas.office.office.STConnectType;
+import com.microsoft.schemas.vml.CTFormulas;
+import com.microsoft.schemas.vml.CTGroup;
+import com.microsoft.schemas.vml.CTH;
+import com.microsoft.schemas.vml.CTHandles;
+import com.microsoft.schemas.vml.CTPath;
+import com.microsoft.schemas.vml.CTShape;
+import com.microsoft.schemas.vml.CTShapetype;
+import com.microsoft.schemas.vml.CTTextPath;
+import com.microsoft.schemas.vml.STExt;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
@@ -26,6 +37,7 @@ import org.apache.poi.xwpf.usermodel.XWPFHeaderFooter;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.apache.xmlbeans.impl.values.XmlValueOutOfRangeException;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STTrueFalse;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBody;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTHdrFtrRef;
@@ -39,19 +51,6 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.FtrDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.HdrDocument;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHdrFtr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHdrFtr.Enum;
-
-import com.microsoft.schemas.office.office.CTLock;
-import com.microsoft.schemas.office.office.STConnectType;
-import com.microsoft.schemas.vml.CTFormulas;
-import com.microsoft.schemas.vml.CTGroup;
-import com.microsoft.schemas.vml.CTH;
-import com.microsoft.schemas.vml.CTHandles;
-import com.microsoft.schemas.vml.CTPath;
-import com.microsoft.schemas.vml.CTShape;
-import com.microsoft.schemas.vml.CTShapetype;
-import com.microsoft.schemas.vml.CTTextPath;
-import com.microsoft.schemas.vml.STExt;
-import com.microsoft.schemas.vml.STTrueFalse;
 
 /**
  * A .docx file can have no headers/footers, the same header/footer
@@ -305,7 +304,7 @@ public class XWPFHeaderFooterPolicy {
         ref.setType(type);
         ref.setId(doc.getRelationId(wrapper));
     }
-    
+
     public XWPFHeader getFirstPageHeader() {
         return firstPageHeader;
     }
@@ -361,7 +360,7 @@ public class XWPFHeaderFooterPolicy {
         }
         return defaultHeader;
     }
-    
+
     /**
      * Get this section header for the given type
      *
@@ -392,7 +391,7 @@ public class XWPFHeaderFooterPolicy {
         }
         return defaultFooter;
     }
-    
+
     /**
      * Get this section footer for the given type
      *
@@ -407,7 +406,7 @@ public class XWPFHeaderFooterPolicy {
         }
         return defaultFooter;
     }
-    
+
 
     public void createWatermark(String text) {
         XWPFParagraph[] pars = new XWPFParagraph[1];

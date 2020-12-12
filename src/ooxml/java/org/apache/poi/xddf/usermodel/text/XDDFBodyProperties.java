@@ -17,6 +17,7 @@
 
 package org.apache.poi.xddf.usermodel.text;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Units;
@@ -123,7 +124,7 @@ public class XDDFBodyProperties {
 
     public Double getBottomInset() {
         if (props.isSetBIns()) {
-            return Units.toPoints(props.getBIns());
+            return Units.toPoints(POIXMLUnits.parseLength(props.xgetBIns()));
         } else {
             return null;
         }
@@ -141,7 +142,7 @@ public class XDDFBodyProperties {
 
     public Double getLeftInset() {
         if (props.isSetLIns()) {
-            return Units.toPoints(props.getLIns());
+            return Units.toPoints(POIXMLUnits.parseLength(props.xgetLIns()));
         } else {
             return null;
         }
@@ -159,7 +160,7 @@ public class XDDFBodyProperties {
 
     public Double getRightInset() {
         if (props.isSetRIns()) {
-            return Units.toPoints(props.getRIns());
+            return Units.toPoints(POIXMLUnits.parseLength(props.xgetRIns()));
         } else {
             return null;
         }
@@ -177,7 +178,7 @@ public class XDDFBodyProperties {
 
     public Double getTopInset() {
         if (props.isSetTIns()) {
-            return Units.toPoints(props.getTIns());
+            return Units.toPoints(POIXMLUnits.parseLength(props.xgetTIns()));
         } else {
             return null;
         }

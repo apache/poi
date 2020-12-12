@@ -17,6 +17,7 @@
 
 package org.apache.poi.xddf.usermodel;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTileInfoProperties;
@@ -64,7 +65,7 @@ public class XDDFTileInfoProperties {
 
     public Integer getSx() {
         if (props.isSetSx()) {
-            return props.getSx();
+            return POIXMLUnits.parsePercent(props.xgetSx());
         } else {
             return null;
         }
@@ -82,7 +83,7 @@ public class XDDFTileInfoProperties {
 
     public Integer getSy() {
         if (props.isSetSy()) {
-            return props.getSy();
+            return POIXMLUnits.parsePercent(props.xgetSy());
         } else {
             return null;
         }
@@ -100,7 +101,7 @@ public class XDDFTileInfoProperties {
 
     public Long getTx() {
         if (props.isSetTx()) {
-            return props.getTx();
+            return POIXMLUnits.parseLength(props.xgetTx());
         } else {
             return null;
         }
@@ -118,7 +119,7 @@ public class XDDFTileInfoProperties {
 
     public Long getTy() {
         if (props.isSetTy()) {
-            return props.getTy();
+            return POIXMLUnits.parseLength(props.xgetTy());
         } else {
             return null;
         }

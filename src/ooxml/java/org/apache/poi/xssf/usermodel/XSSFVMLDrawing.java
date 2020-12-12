@@ -45,7 +45,6 @@ import com.microsoft.schemas.vml.CTShape;
 import com.microsoft.schemas.vml.CTShapetype;
 import com.microsoft.schemas.vml.STExt;
 import com.microsoft.schemas.vml.STStrokeJoinStyle;
-import com.microsoft.schemas.vml.STTrueFalse;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.openxml4j.opc.PackagePart;
@@ -55,6 +54,7 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STTrueFalse;
 import org.w3c.dom.Document;
 import org.xml.sax.SAXException;
 

@@ -64,27 +64,8 @@ import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBody;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTComment;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDocument1;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFtnEdn;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTOnOff;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSdtBlock;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTSectPr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTStyles;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTbl;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CommentsDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.DocumentDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.EndnotesDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.FootnotesDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.NumberingDocument;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STDocProtect;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHdrFtr;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STOnOff;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 
 /**
  * <p>High(ish) level class for working with .docx files.</p>
@@ -508,7 +489,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             CTSectPr ctSectPr = getSection();
             if (!ctSectPr.isSetTitlePg()) {
                 CTOnOff titlePg = ctSectPr.addNewTitlePg();
-                titlePg.setVal(STOnOff.ON);
+                titlePg.setVal(STOnOff1.ON);
             }
             // } else if (type == HeaderFooterType.EVEN) {
             // TODO Add support for Even/Odd headings and footers
@@ -530,7 +511,7 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
             CTSectPr ctSectPr = getSection();
             if (!ctSectPr.isSetTitlePg()) {
                 CTOnOff titlePg = ctSectPr.addNewTitlePg();
-                titlePg.setVal(STOnOff.ON);
+                titlePg.setVal(STOnOff1.ON);
             }
             // } else if (type == HeaderFooterType.EVEN) {
             // TODO Add support for Even/Odd headings and footers

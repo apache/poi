@@ -326,13 +326,13 @@ under the License.
 
     <!-- See https://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
-    <property name="ooxml.xsds.izip.1" value="${basedir}/src/ooxml/resources/org/apache/poi/schemas/OfficeOpenXML-XMLSchema.zip"/>
+    <property name="ooxml.xsds.izip.1" value="${basedir}/src/ooxml/resources/org/apache/poi/schemas/OfficeOpenXML-XMLSchema-Transitional.zip"/>
     <property name="ooxml.xsds.src.dir" location="build/ooxml-xsds-src"/>
     <property name="ooxml.xsds.src.jar" location="build/dist/maven/ooxml-schemas/ooxml-schemas-${maven.ooxml.xsds.version.id}-sources.jar"/>
     <property name="ooxml.xsds.jar" location="build/dist/maven/ooxml-schemas/ooxml-schemas-${maven.ooxml.xsds.version.id}.jar"/>
 
     <!-- additional schemas are packed into the poi schemas jar, -->
-    <!-- so we don't have to care about a seperate versioning of the original ooxml schemas -->
+    <!-- so we don't have to care about a separate versioning of the original ooxml schemas -->
     <property name="ooxml.xsds.izip.2" value="${basedir}/src/ooxml/resources/org/apache/poi/schemas/OpenPackagingConventions-XMLSchema.zip"/>
     <property name="ooxml.security.src.dir" location="build/ooxml-security-src"/>
     <property name="ooxml.security.xsd.dir" location="src/ooxml/resources/org/apache/poi/poifs/crypt"/>

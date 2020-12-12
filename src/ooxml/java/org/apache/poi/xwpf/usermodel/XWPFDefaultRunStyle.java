@@ -17,11 +17,13 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import org.apache.poi.util.Removal;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+
+import org.apache.poi.ooxml.util.POIXMLUnits;
+import org.apache.poi.util.Removal;
+import org.apache.poi.util.Units;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRPr;
 
 /**
  * Default Character Run style, from which other styles will override
@@ -64,8 +66,8 @@ public class XWPFDefaultRunStyle {
     }
 
     private BigDecimal getFontSizeAsBigDecimal(int scale) {
-        return (rpr != null && rpr.isSetSz()) ?
-                new BigDecimal(rpr.getSz().getVal()).divide(BigDecimal.valueOf(2)).setScale(scale, RoundingMode.HALF_UP) :
-                null;
+        return (rpr != null && rpr.isSetSz())
+            ? BigDecimal.valueOf(Units.toPoints(POIXMLUnits.parseLength(rpr.getSz().xgetVal()))).divide(BigDecimal.valueOf(4), scale, RoundingMode.HALF_UP)
+            : null;
     }
 }

@@ -34,8 +34,8 @@ public class XDDFFont {
     public XDDFFont(FontGroup group, String typeface, Byte charset, Byte pitch, byte[] panose) {
         this(group, CTTextFont.Factory.newInstance());
         if (typeface == null) {
-            if (font.isSetTypeface()) {
-                font.unsetTypeface();
+            if (font.getTypeface() != null && !font.getTypeface().equals("")) {
+                font.setTypeface("");
             }
         } else {
             font.setTypeface(typeface);
@@ -79,11 +79,7 @@ public class XDDFFont {
     }
 
     public String getTypeface() {
-        if (font.isSetTypeface()) {
-            return font.getTypeface();
-        } else {
-            return null;
-        }
+        return font.getTypeface();
     }
 
     public Byte getCharset() {

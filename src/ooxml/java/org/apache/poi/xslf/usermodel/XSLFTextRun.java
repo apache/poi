@@ -24,6 +24,7 @@ import org.apache.poi.common.usermodel.fonts.FontFamily;
 import org.apache.poi.common.usermodel.fonts.FontGroup;
 import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.common.usermodel.fonts.FontPitch;
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JRuntimeException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.draw.DrawPaint;
@@ -34,6 +35,7 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
+import org.apache.poi.util.Units;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher;
 import org.apache.poi.xslf.model.CharacterPropertyFetcher.CharPropFetcher;
 import org.apache.poi.xslf.usermodel.XSLFPropertiesDelegate.XSLFFillProperties;
@@ -182,7 +184,7 @@ public class XSLFTextRun implements TextRun {
             if (tbp != null) {
                 CTTextNormalAutofit afit = tbp.getNormAutofit();
                 if (afit != null && afit.isSetFontScale()) {
-                    scale = afit.getFontScale() / 100000.;
+                    scale = POIXMLUnits.parsePercent(afit.xgetFontScale()) / 100000.;
                 }
             }
         }
@@ -203,7 +205,7 @@ public class XSLFTextRun implements TextRun {
     public double getCharacterSpacing(){
         Double d = fetchCharacterProperty((props, val) -> {
             if (props.isSetSpc()) {
-                val.accept(props.getSpc()*0.01);
+                val.accept(Units.toPoints(POIXMLUnits.parseLength(props.xgetSpc())));
             }
         });
         return d == null ? 0 : d;
@@ -297,7 +299,7 @@ public class XSLFTextRun implements TextRun {
     public boolean isSuperscript() {
         Boolean b = fetchCharacterProperty((props, val) -> {
             if (props.isSetBaseline()) {
-                val.accept(props.getBaseline() > 0);
+                val.accept(POIXMLUnits.parsePercent(props.xgetBaseline()) > 0);
             }
         });
         return b != null && b;
@@ -341,7 +343,7 @@ public class XSLFTextRun implements TextRun {
     public boolean isSubscript() {
         Boolean b = fetchCharacterProperty((props, val) -> {
             if (props.isSetBaseline()) {
-                val.accept(props.getBaseline() < 0);
+                val.accept(POIXMLUnits.parsePercent(props.xgetBaseline()) < 0);
             }
         });
         return b != null && b;
@@ -565,7 +567,7 @@ public class XSLFTextRun implements TextRun {
         @Override
         public String getTypeface() {
             CTTextFont tf = getXmlObject(false);
-            return (tf != null && tf.isSetTypeface()) ? tf.getTypeface() : null;
+            return (tf != null) ? tf.getTypeface() : null;
         }
 
         @Override
@@ -718,7 +720,10 @@ public class XSLFTextRun implements TextRun {
                 return null;
             }
 
-            String typeface = font.isSetTypeface() ? font.getTypeface() : "";
+            String typeface = font.getTypeface();
+            if (typeface == null) {
+                typeface = "";
+            }
             if (typeface.startsWith("+mj-") || typeface.startsWith("+mn-")) {
                 //  "+mj-lt".equals(typeface) || "+mn-lt".equals(typeface)
                 final XSLFTheme theme = _p.getParentShape().getSheet().getTheme();
@@ -737,7 +742,7 @@ public class XSLFTextRun implements TextRun {
                 }
                 // SYMBOL is missing
 
-                if (font == null || !font.isSetTypeface() || "".equals(font.getTypeface())) {
+                if (font == null || font.getTypeface() == null || "".equals(font.getTypeface())) {
                     // don't fallback to latin but bubble up in the style hierarchy (slide -> layout -> master -> theme)
                     return null;
 //                    font = coll.getLatin();

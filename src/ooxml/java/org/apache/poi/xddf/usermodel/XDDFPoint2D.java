@@ -17,6 +17,7 @@
 
 package org.apache.poi.xddf.usermodel;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Beta;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTPoint2D;
 
@@ -39,7 +40,7 @@ public class XDDFPoint2D {
         if (point == null) {
             return x;
         } else  {
-            return point.getX();
+            return POIXMLUnits.parseLength(point.xgetX());
         }
     }
 
@@ -47,7 +48,7 @@ public class XDDFPoint2D {
         if (point == null) {
             return y;
         } else  {
-            return point.getY();
+            return POIXMLUnits.parseLength(point.xgetY());
         }
     }
 }

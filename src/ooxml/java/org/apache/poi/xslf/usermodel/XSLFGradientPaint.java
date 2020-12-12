@@ -19,6 +19,7 @@ package org.apache.poi.xslf.usermodel;
 
 import java.util.Arrays;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.sl.usermodel.ColorStyle;
 import org.apache.poi.sl.usermodel.Insets2D;
 import org.apache.poi.sl.usermodel.PaintStyle;
@@ -43,8 +44,8 @@ public class XSLFGradientPaint implements PaintStyle.GradientPaint {
                 new CTGradientStop[0] : gradFill.getGsLst().getGsArray();
 
         Arrays.sort(gs, (o1, o2) -> {
-            int pos1 = o1.getPos();
-            int pos2 = o2.getPos();
+            int pos1 = POIXMLUnits.parsePercent(o1.xgetPos());
+            int pos2 = POIXMLUnits.parsePercent(o2.xgetPos());
             return Integer.compare(pos1, pos2);
         });
 
@@ -58,7 +59,7 @@ public class XSLFGradientPaint implements PaintStyle.GradientPaint {
                 phClrCgs = cgs.getSchemeClr();
             }
             cs[i] = new XSLFColor(cgs, theme, phClrCgs, sheet).getColorStyle();
-            fractions[i] = cgs.getPos() / 100000.f;
+            fractions[i] = POIXMLUnits.parsePercent(cgs.xgetPos()) / 100000.f;
             i++;
         }
 
@@ -113,7 +114,12 @@ public class XSLFGradientPaint implements PaintStyle.GradientPaint {
         if (gradFill.isSetPath() && gradFill.getPath().isSetFillToRect()) {
             final double base = 100_000;
             CTRelativeRect rect = gradFill.getPath().getFillToRect();
-            return new Insets2D(rect.getT()/base, rect.getL()/base, rect.getB()/base, rect.getR()/base);
+            return new Insets2D(
+                POIXMLUnits.parsePercent(rect.xgetT())/base,
+                POIXMLUnits.parsePercent(rect.xgetL())/base,
+                POIXMLUnits.parsePercent(rect.xgetB())/base,
+                POIXMLUnits.parsePercent(rect.xgetR())/base
+            );
         }
         return null;
     }

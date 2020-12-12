@@ -19,15 +19,17 @@ package org.apache.poi.xddf.usermodel;
 
 import java.util.Locale;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTScRgbColor;
+import org.openxmlformats.schemas.drawingml.x2006.main.STPercentage;
 
 @Beta
 public class XDDFColorRgbPercent extends XDDFColor {
-    private CTScRgbColor color;
+    private final CTScRgbColor color;
 
     public XDDFColorRgbPercent(int red, int green, int blue) {
         this(CTScRgbColor.Factory.newInstance(), CTColor.Factory.newInstance());
@@ -54,7 +56,7 @@ public class XDDFColorRgbPercent extends XDDFColor {
     }
 
     public int getRed() {
-        return color.getR();
+        return POIXMLUnits.parsePercent(color.xgetR());
     }
 
     public void setRed(int red) {
@@ -62,7 +64,7 @@ public class XDDFColorRgbPercent extends XDDFColor {
     }
 
     public int getGreen() {
-        return color.getG();
+        return POIXMLUnits.parsePercent(color.xgetG());
     }
 
     public void setGreen(int green) {
@@ -70,7 +72,7 @@ public class XDDFColorRgbPercent extends XDDFColor {
     }
 
     public int getBlue() {
-        return color.getB();
+        return POIXMLUnits.parsePercent(color.xgetB());
     }
 
     public void setBlue(int blue) {
@@ -78,25 +80,14 @@ public class XDDFColorRgbPercent extends XDDFColor {
     }
 
     private int normalize(int value) {
-        if (value < 0) {
-            return 0;
-        }
-        if (100_000 < value) {
-            return 100_000;
-        }
-        return value;
+        return value < 0 ? 0 : Math.min(100_000, value);
     }
 
     public String toRGBHex() {
-        StringBuilder sb = new StringBuilder(6);
-        appendHex(sb, color.getR());
-        appendHex(sb, color.getG());
-        appendHex(sb, color.getB());
-        return sb.toString().toUpperCase(Locale.ROOT);
-    }
-
-    private void appendHex(StringBuilder sb, int value) {
-        int b = value * 255 / 100_000;
-        sb.append(String.format(Locale.ROOT, "%02X", b));
+        int c = 0;
+        for (STPercentage pct : new STPercentage[] { color.xgetR(), color.xgetG(), color.xgetB() }) {
+            c = c << 8 | ((POIXMLUnits.parsePercent(pct) * 255 / 100_000) & 0xFF);
+        }
+        return String.format(Locale.ROOT, "%06X", c);
     }
 }

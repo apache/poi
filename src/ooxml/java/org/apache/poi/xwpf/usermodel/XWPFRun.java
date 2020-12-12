@@ -32,10 +32,12 @@ import javax.xml.namespace.QName;
 
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.ooxml.util.DocumentHelper;
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
+import org.apache.poi.util.Units;
 import org.apache.poi.wp.usermodel.CharacterRun;
 import org.apache.xmlbeans.SimpleValue;
 import org.apache.xmlbeans.XmlCursor;
@@ -61,6 +63,9 @@ import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPictureNonVisual;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTAnchor;
 import org.openxmlformats.schemas.drawingml.x2006.wordprocessingDrawing.CTInline;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STHexColorRGB;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STOnOff1;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STVerticalAlignRun;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.*;
 import org.w3c.dom.NodeList;
 import org.w3c.dom.Text;
@@ -223,15 +228,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * For isBold, isItalic etc
      */
     private static boolean isCTOnOff(CTOnOff onoff) {
-        if (!onoff.isSetVal()) {
-            return true;
-        }
-        final STOnOff.Enum val = onoff.getVal();
-        return (
-                (STOnOff.TRUE == val) ||
-                        (STOnOff.X_1 == val) ||
-                        (STOnOff.ON == val)
-        );
+        return !onoff.isSetVal() || POIXMLUnits.parseOnOff(onoff);
     }
 
     /**
@@ -297,7 +294,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public void setBold(boolean value) {
         CTRPr pr = getRunProperties(true);
         CTOnOff bold = pr.isSetB() ? pr.getB() : pr.addNewB();
-        bold.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
+        bold.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
     /**
@@ -408,7 +405,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public void setItalic(boolean value) {
         CTRPr pr = getRunProperties(true);
         CTOnOff italic = pr.isSetI() ? pr.getI() : pr.addNewI();
-        italic.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
+        italic.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
     /**
@@ -573,7 +570,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public void setStrikeThrough(boolean value) {
         CTRPr pr = getRunProperties(true);
         CTOnOff strike = pr.isSetStrike() ? pr.getStrike() : pr.addNewStrike();
-        strike.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
+        strike.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
     @Deprecated
@@ -608,7 +605,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public void setDoubleStrikethrough(boolean value) {
         CTRPr pr = getRunProperties(true);
         CTOnOff dstrike = pr.isSetDstrike() ? pr.getDstrike() : pr.addNewDstrike();
-        dstrike.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
+        dstrike.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
     @Override
@@ -621,7 +618,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public void setSmallCaps(boolean value) {
         CTRPr pr = getRunProperties(true);
         CTOnOff caps = pr.isSetSmallCaps() ? pr.getSmallCaps() : pr.addNewSmallCaps();
-        caps.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
+        caps.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
     @Override
@@ -634,7 +631,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public void setCapitalized(boolean value) {
         CTRPr pr = getRunProperties(true);
         CTOnOff caps = pr.isSetCaps() ? pr.getCaps() : pr.addNewCaps();
-        caps.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
+        caps.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
     @Override
@@ -647,7 +644,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public void setShadow(boolean value) {
         CTRPr pr = getRunProperties(true);
         CTOnOff shadow = pr.isSetShadow() ? pr.getShadow() : pr.addNewShadow();
-        shadow.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
+        shadow.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
     @Override
@@ -660,7 +657,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public void setImprinted(boolean value) {
         CTRPr pr = getRunProperties(true);
         CTOnOff imprinted = pr.isSetImprint() ? pr.getImprint() : pr.addNewImprint();
-        imprinted.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
+        imprinted.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
     @Override
@@ -673,7 +670,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public void setEmbossed(boolean value) {
         CTRPr pr = getRunProperties(true);
         CTOnOff emboss = pr.isSetEmboss() ? pr.getEmboss() : pr.addNewEmboss();
-        emboss.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
+        emboss.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
     /**
@@ -704,7 +701,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         if (pr == null || !pr.isSetKern()) {
             return 0;
         }
-        return pr.getKern().getVal().intValue();
+        return (int)POIXMLUnits.parseLength(pr.getKern().xgetVal());
     }
 
     @Override
@@ -735,7 +732,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         if (pr == null || !pr.isSetSpacing()) {
             return 0;
         }
-        return pr.getSpacing().getVal().intValue();
+        return (int)Units.toDXA(POIXMLUnits.parseLength(pr.getSpacing().xgetVal()));
     }
 
     @Override
@@ -878,9 +875,9 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     private BigDecimal getFontSizeAsBigDecimal(int scale) {
         CTRPr pr = getRunProperties(false);
-        return (pr != null && pr.isSetSz()) ?
-                new BigDecimal(pr.getSz().getVal()).divide(BigDecimal.valueOf(2)).setScale(scale, RoundingMode.HALF_UP) :
-                null;
+        return (pr != null && pr.isSetSz())
+            ? BigDecimal.valueOf(Units.toPoints(POIXMLUnits.parseLength(pr.getSz().xgetVal()))).divide(BigDecimal.valueOf(4), scale, RoundingMode.HALF_UP)
+            : null;
     }
 
     /**
@@ -936,7 +933,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public int getTextPosition() {
         CTRPr pr = getRunProperties(false);
-        return (pr != null && pr.isSetPosition()) ? pr.getPosition().getVal().intValue()
+        return (pr != null && pr.isSetPosition()) ? (int)(Units.toPoints(POIXMLUnits.parseLength(pr.getPosition().xgetVal())) / 2.)
                 : -1;
     }
 
@@ -1385,11 +1382,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             if (ctfldChar.getFldCharType() == STFldCharType.BEGIN) {
                 if (ctfldChar.getFfData() != null) {
                     for (CTFFCheckBox checkBox : ctfldChar.getFfData().getCheckBoxList()) {
-                        if (checkBox.getDefault() != null && checkBox.getDefault().getVal() == STOnOff.X_1) {
-                            text.append("|X|");
-                        } else {
-                            text.append("|_|");
-                        }
+                        text.append((checkBox.getDefault() != null && POIXMLUnits.parseOnOff(checkBox.getDefault().xgetVal())) ? "|X|" : "|_|");
                     }
                 }
             }
@@ -1455,13 +1448,14 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      * @since 4.0.0
      */
     public int getTextScale() {
-        CTRPr pr = getRunProperties(true);
-        CTTextScale scale = pr.isSetW() ? pr.getW() : pr.addNewW();
-        int value = scale.getVal();
-        if (value == 0) {
-            value = 100; // 100% scaling, that is, no change. See 17.3.2.43 w (Expanded/Compressed Text)
+        CTRPr pr = getRunProperties(false);
+        if (pr == null || !pr.isSetW()) {
+            return 100;
         }
-        return value;
+
+        int value = POIXMLUnits.parsePercent(pr.getW().xgetVal());
+        // 100% scaling, that is, no change. See 17.3.2.43 w (Expanded/Compressed Text)
+        return value == 0 ? 100 : value / 1000;
     }
 
     /**
@@ -1522,7 +1516,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public void setVanish(boolean value) {
         CTRPr pr = getRunProperties(true);
         CTOnOff vanish = pr.isSetVanish() ? pr.getVanish() : pr.addNewVanish();
-        vanish.setVal(value ? STOnOff.TRUE : STOnOff.FALSE);
+        vanish.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
     /**

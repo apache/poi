@@ -29,9 +29,11 @@ import org.apache.poi.util.Internal;
 import org.apache.poi.util.Removal;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.model.ThemesTable;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STVerticalAlignRun;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontFamily;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontName;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontScheme;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFontSize;
@@ -40,7 +42,6 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTUnderlineProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTVerticalAlignFontProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STFontScheme;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STUnderlineValues;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignRun;
 
 /**
  * Represents a font used in a workbook.
@@ -618,7 +619,7 @@ public class XSSFFont implements Font {
      * @see org.apache.poi.ss.usermodel.FontFamily
      */
     public int getFamily() {
-        CTIntProperty family = _ctFont.sizeOfFamilyArray() == 0 ? null : _ctFont.getFamilyArray(0);
+        CTFontFamily family = _ctFont.sizeOfFamilyArray() == 0 ? null : _ctFont.getFamilyArray(0);
         return family == null ? FontFamily.NOT_APPLICABLE.getValue() : FontFamily.valueOf(family.getVal()).getValue();
     }
 
@@ -631,7 +632,7 @@ public class XSSFFont implements Font {
      * @see FontFamily
      */
     public void setFamily(int value) {
-        CTIntProperty family = _ctFont.sizeOfFamilyArray() == 0 ? _ctFont.addNewFamily() : _ctFont.getFamilyArray(0);
+        CTFontFamily family = _ctFont.sizeOfFamilyArray() == 0 ? _ctFont.addNewFamily() : _ctFont.getFamilyArray(0);
         family.setVal(value);
     }
 

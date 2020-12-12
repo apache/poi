@@ -17,6 +17,7 @@
 
 package org.apache.poi.xddf.usermodel;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGradientStop;
@@ -42,7 +43,7 @@ public class XDDFGradientStop {
     }
 
     public int getPosition() {
-        return stop.getPos();
+        return POIXMLUnits.parsePercent(stop.xgetPos());
     }
 
     public void setPosition(int position) {

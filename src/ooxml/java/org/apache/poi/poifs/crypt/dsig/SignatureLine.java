@@ -42,7 +42,6 @@ import javax.imageio.ImageIO;
 import javax.xml.namespace.QName;
 
 import com.microsoft.schemas.office.office.CTSignatureLine;
-import com.microsoft.schemas.office.office.STTrueFalse;
 import com.microsoft.schemas.vml.CTGroup;
 import com.microsoft.schemas.vml.CTImageData;
 import com.microsoft.schemas.vml.CTShape;
@@ -56,6 +55,7 @@ import org.apache.poi.sl.draw.DrawPictureShape;
 import org.apache.poi.sl.draw.ImageRenderer;
 import org.apache.xmlbeans.XmlCursor;
 import org.apache.xmlbeans.XmlObject;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STTrueFalse;
 
 /**
  * Base class for SignatureLines (XSSF,XWPF only)

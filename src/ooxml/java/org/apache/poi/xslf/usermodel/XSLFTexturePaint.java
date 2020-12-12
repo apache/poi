@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Supplier;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
@@ -40,6 +41,7 @@ import org.openxmlformats.schemas.drawingml.x2006.main.CTDuotoneEffect;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTRelativeRect;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSchemeColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTileInfoProperties;
+import org.openxmlformats.schemas.drawingml.x2006.main.STPercentage;
 import org.openxmlformats.schemas.drawingml.x2006.main.STTileFlipMode;
 
 @Internal
@@ -92,7 +94,7 @@ public class XSLFTexturePaint implements PaintStyle.TexturePaint {
     @Override
     public int getAlpha() {
         return (blip.sizeOfAlphaModFixArray() > 0)
-                ? blip.getAlphaModFixArray(0).getAmt()
+                ? POIXMLUnits.parsePercent(blip.getAlphaModFixArray(0).xgetAmt())
                 : 100000;
     }
 
@@ -105,16 +107,16 @@ public class XSLFTexturePaint implements PaintStyle.TexturePaint {
     public Dimension2D getScale() {
         CTTileInfoProperties tile = blipFill.getTile();
         return (tile == null) ? null : new Dimension2DDouble(
-                tile.isSetSx() ? tile.getSx()/100_000. : 1,
-                tile.isSetSy() ? tile.getSy()/100_000. : 1);
+                tile.isSetSx() ? POIXMLUnits.parsePercent(tile.xgetSx())/100_000. : 1,
+                tile.isSetSy() ? POIXMLUnits.parsePercent(tile.xgetSy())/100_000. : 1);
     }
 
     @Override
     public Point2D getOffset() {
         CTTileInfoProperties tile = blipFill.getTile();
         return (tile == null) ? null : new Point2D.Double(
-                tile.isSetTx() ? Units.toPoints(tile.getTx()) : 0,
-                tile.isSetTy() ? Units.toPoints(tile.getTy()) : 0);
+                tile.isSetTx() ? Units.toPoints(POIXMLUnits.parseLength(tile.xgetTx())) : 0,
+                tile.isSetTy() ? Units.toPoints(POIXMLUnits.parseLength(tile.xgetTy())) : 0);
     }
 
     @Override
@@ -166,14 +168,14 @@ public class XSLFTexturePaint implements PaintStyle.TexturePaint {
 
     private static Insets2D getRectVal(CTRelativeRect rect) {
         return rect == null ? null : new Insets2D(
-            getRectVal(rect::isSetT, rect::getT),
-            getRectVal(rect::isSetL, rect::getL),
-            getRectVal(rect::isSetB, rect::getB),
-            getRectVal(rect::isSetR, rect::getR)
+            getRectVal(rect::isSetT, rect::xgetT),
+            getRectVal(rect::isSetL, rect::xgetL),
+            getRectVal(rect::isSetB, rect::xgetB),
+            getRectVal(rect::isSetR, rect::xgetR)
         );
     }
 
-    private static int getRectVal(Supplier<Boolean> isSet, Supplier<Integer> val) {
-        return isSet.get() ? val.get() : 0;
+    private static int getRectVal(Supplier<Boolean> isSet, Supplier<STPercentage> val) {
+        return isSet.get() ? POIXMLUnits.parsePercent(val.get()) : 0;
     }
 }

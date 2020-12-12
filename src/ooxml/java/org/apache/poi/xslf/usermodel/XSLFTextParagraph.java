@@ -25,6 +25,7 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.apache.poi.sl.usermodel.PaintStyle;
@@ -302,7 +303,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
     private static void fetchBulletFontSize(CTTextParagraphProperties props, Consumer<Double> val) {
         if(props.isSetBuSzPct()){
-            val.accept(props.getBuSzPct().getVal() * 0.001);
+            val.accept(POIXMLUnits.parsePercent(props.getBuSzPct().xgetVal()) * 0.001);
         }
         if(props.isSetBuSzPts()){
             val.accept( - props.getBuSzPts().getVal() * 0.01);
@@ -324,7 +325,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
         if(bulletSize >= 0) {
             CTTextBulletSizePercent pt = pr.isSetBuSzPct() ? pr.getBuSzPct() : pr.addNewBuSzPct();
-            pt.setVal((int)(bulletSize*1000));
+            pt.setVal(Integer.toString((int)(bulletSize*1000)));
             if(pr.isSetBuSzPts()) {
                 pr.unsetBuSzPts();
             }
@@ -452,7 +453,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
     public Double getDefaultTabSize(){
         return fetchParagraphProperty((props, val) -> {
             if (props.isSetDefTabSz()) {
-                val.accept(Units.toPoints(props.getDefTabSz()));
+                val.accept(Units.toPoints(POIXMLUnits.parseLength(props.xgetDefTabSz())));
             }
         });
     }
@@ -468,7 +469,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
             CTTextTabStopList tabStops = props.getTabLst();
             if(idx < tabStops.sizeOfTabArray() ) {
                 CTTextTabStop ts = tabStops.getTabArray(idx);
-                val.accept(Units.toPoints(ts.getPos()));
+                val.accept(Units.toPoints(POIXMLUnits.parseLength(ts.xgetPos())));
             }
         }
     }
@@ -493,7 +494,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
             // check if the percentage value is scaled
             final CTTextNormalAutofit normAutofit = getParentShape().getTextBodyPr().getNormAutofit();
             if (normAutofit != null) {
-                final double scale = 1 - (double)normAutofit.getLnSpcReduction() / 100000;
+                final double scale = 1 - POIXMLUnits.parsePercent(normAutofit.xgetLnSpcReduction()) / 100_000.;
                 return lnSpc * scale;
             }
         }
@@ -569,7 +570,7 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
         final CTTextSpacing spc = getSpc.apply(props).get();
         if (spc != null) {
             if (spc.isSetSpcPct()) {
-                val.accept( spc.getSpcPct().getVal()*0.001 );
+                val.accept( POIXMLUnits.parsePercent(spc.getSpcPct().xgetVal())*0.001 );
             } else if (spc.isSetSpcPts()) {
                 val.accept( -spc.getSpcPts().getVal()*0.01 );
             }

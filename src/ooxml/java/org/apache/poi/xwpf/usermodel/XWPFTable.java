@@ -26,10 +26,12 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.util.Internal;
+import org.apache.poi.util.Units;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTDecimalNumber;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTJcTable;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTString;
@@ -40,7 +42,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblPr;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblWidth;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTc;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STBorder;
-import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJc;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STJcTable;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STTblWidth;
 
 /**
@@ -279,7 +281,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      */
     public int getWidth() {
         CTTblPr tblPr = getTblPr();
-        return tblPr.isSetTblW() ? tblPr.getTblW().getW().intValue() : -1;
+        return tblPr.isSetTblW() ? (int)Units.toDXA(POIXMLUnits.parseLength(tblPr.getTblW().xgetW())) : -1;
     }
 
     /**
@@ -407,8 +409,8 @@ public class XWPFTable implements IBodyElement, ISDTContents {
      */
     public void setTableAlignment(TableRowAlign tra) {
         CTTblPr tPr = getTblPr(true);
-        CTJc jc = tPr.isSetJc() ? tPr.getJc() : tPr.addNewJc();
-        jc.setVal(STJc.Enum.forInt(tra.getValue()));
+        CTJcTable jc = tPr.isSetJc() ? tPr.getJc() : tPr.addNewJc();
+        jc.setVal(STJcTable.Enum.forInt(tra.getValue()));
     }
 
     /**
@@ -985,7 +987,7 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         if (tcm != null) {
             CTTblWidth tw = margin.apply(tcm);
             if (tw != null) {
-                return tw.getW().intValue();
+                return (int) Units.toDXA(POIXMLUnits.parseLength(tw.xgetW()));
             }
         }
         return 0;
@@ -1154,11 +1156,11 @@ public class XWPFTable implements IBodyElement, ISDTContents {
         if (typeValue == STTblWidth.DXA
                 || typeValue == STTblWidth.AUTO
                 || typeValue == STTblWidth.NIL) {
-            result = 0.0 + ctWidth.getW().intValue();
+            result = 0.0 + Units.toDXA(POIXMLUnits.parseLength(ctWidth.xgetW()));
         } else if (typeValue == STTblWidth.PCT) {
             // Percentage values are stored as integers that are 50 times
             // percentage.
-            result = ctWidth.getW().intValue() / 50.0;
+            result = Units.toDXA(POIXMLUnits.parseLength(ctWidth.xgetW())) / 50.0;
         } else {
             // Should never get here
         }

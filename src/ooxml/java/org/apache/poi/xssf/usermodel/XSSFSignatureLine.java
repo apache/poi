@@ -23,9 +23,7 @@ import java.io.OutputStream;
 import javax.xml.namespace.QName;
 
 import com.microsoft.schemas.office.excel.CTClientData;
-import com.microsoft.schemas.office.excel.STCF;
 import com.microsoft.schemas.office.excel.STObjectType;
-import com.microsoft.schemas.office.excel.STTrueFalseBlank;
 import com.microsoft.schemas.office.office.CTSignatureLine;
 import com.microsoft.schemas.vml.CTImageData;
 import com.microsoft.schemas.vml.CTShape;
@@ -38,6 +36,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.crypt.dsig.SignatureLine;
 import org.apache.poi.schemas.vmldrawing.CTXML;
 import org.apache.xmlbeans.XmlException;
+import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STTrueFalseBlank;
 
 public class XSSFSignatureLine extends SignatureLine {
     private static final String MS_VML_URN = "urn:schemas-microsoft-com:vml";
@@ -78,7 +77,7 @@ public class XSSFSignatureLine extends SignatureLine {
         clientData.addAnchor(anchorStr);
         clientData.setObjectType(STObjectType.PICT);
         clientData.addSizeWithCells(STTrueFalseBlank.X);
-        clientData.addCF(STCF.PICT);
+        clientData.addCF("pict");
         clientData.addAutoPict(STTrueFalseBlank.X);
     }
 

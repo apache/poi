@@ -28,6 +28,7 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.apache.poi.ooxml.POIXMLTypeLoader;
+import org.apache.poi.ooxml.util.POIXMLUnits;
 import org.apache.poi.sl.draw.geom.CustomGeometry;
 import org.apache.poi.sl.draw.geom.PresetGeometries;
 import org.apache.poi.sl.usermodel.FreeformShape;
@@ -113,7 +114,7 @@ public class XSLFFreeformShape extends XSLFAutoShape
             numPoints += Math.max(points.length, 1);
             it.next();
         }
-        
+
         XmlObject xo = getShapeProperties();
         if (!(xo instanceof CTShapeProperties)) {
             return -1;
@@ -157,9 +158,8 @@ public class XSLFFreeformShape extends XSLFAutoShape
         if (!(xo instanceof CTShapeProperties)) {
             return null;
         }
-        
+
         final CTCustomGeometry2D geom = ((CTShapeProperties)xo).getCustGeom();
-        //noinspection deprecation
         for(CTPath2D spPath : geom.getPathLst().getPathArray()){
             XmlCursor cursor = spPath.newCursor();
             try {
@@ -193,7 +193,7 @@ public class XSLFFreeformShape extends XSLFAutoShape
 
         final CTTransform2D xfrm = getXfrm(false);
         final Rectangle2D xfrm2d = new Rectangle2D.Double
-                (xfrm.getOff().getX(), xfrm.getOff().getY(), xfrm.getExt().getCx(), xfrm.getExt().getCy());
+                (POIXMLUnits.parseLength(xfrm.getOff().xgetX()), POIXMLUnits.parseLength(xfrm.getOff().xgetY()), xfrm.getExt().getCx(), xfrm.getExt().getCy());
 
         final Rectangle2D bounds = getAnchor();
         at.translate(bounds.getX()+bounds.getCenterX(), bounds.getY()+bounds.getCenterY());
