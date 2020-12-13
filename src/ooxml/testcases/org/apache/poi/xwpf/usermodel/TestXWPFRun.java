@@ -659,7 +659,7 @@ public class TestXWPFRun {
         final XWPFRun run = document.createParagraph().createRun();
 
         // at least trigger some of the setters to ensure classes are included in
-        // the poi-ooxml-schemas
+        // the poi-ooxml-lite
         run.setBold(true);
         run.setCapitalized(true);
         run.setCharacterSpacing(2);

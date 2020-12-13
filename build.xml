@@ -160,7 +160,7 @@ under the License.
 
     <property name="ooxml.lite.agent" location="lib/ooxml-tests/ooxml-lite-agent.jar"/>
     <property name="ooxml.lite.report" location="build/ooxml-lite-report.txt"/>
-    <property name="ooxml.lite.jar" location="build/dist/maven/poi-ooxml-schemas/poi-ooxml-schemas-${version.id}.jar"/>
+    <property name="ooxml.lite.jar" location="build/dist/maven/poi-ooxml-lite/poi-ooxml-lite-${version.id}.jar"/>
     <property name="ooxml.lite.includes" value="^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|org/apache/poi/schemas)"/>
 
 
@@ -328,8 +328,8 @@ under the License.
     <!-- "Copy these file(s), free of charge" -->
     <property name="ooxml.xsds.izip.1" value="${basedir}/src/ooxml/resources/org/apache/poi/schemas/OfficeOpenXML-XMLSchema-Transitional.zip"/>
     <property name="ooxml.xsds.src.dir" location="build/ooxml-xsds-src"/>
-    <property name="ooxml.xsds.src.jar" location="build/dist/maven/ooxml-schemas/ooxml-schemas-${maven.ooxml.xsds.version.id}-sources.jar"/>
-    <property name="ooxml.xsds.jar" location="build/dist/maven/ooxml-schemas/ooxml-schemas-${maven.ooxml.xsds.version.id}.jar"/>
+    <property name="ooxml.xsds.src.jar" location="build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version.id}-sources.jar"/>
+    <property name="ooxml.xsds.jar" location="build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version.id}.jar"/>
 
     <!-- additional schemas are packed into the poi schemas jar, -->
     <!-- so we don't have to care about a separate versioning of the original ooxml schemas -->
@@ -467,7 +467,7 @@ under the License.
     </path>
 
     <path id="ooxml.lite.verify.classpath">
-        <pathelement location="build/dist/maven/poi-ooxml-schemas/poi-ooxml-schemas-${version.id}.jar"/>
+        <pathelement location="build/dist/maven/poi-ooxml-lite/poi-ooxml-lite-${version.id}.jar"/>
         <path refid="ooxml.base.classpath"/>
     </path>
 
@@ -856,8 +856,8 @@ under the License.
         </javac>
 
         <javac release="9"
-               srcdir="${basedir}/src/multimodule/ooxml-schemas/java9"
-               destdir="${basedir}/src/multimodule/ooxml-schemas/java9"
+               srcdir="${basedir}/src/multimodule/ooxml-full/java9"
+               destdir="${basedir}/src/multimodule/ooxml-full/java9"
                includeantruntime="false"
                fork="true"
                modulepath="lib/ooxml"
@@ -865,11 +865,11 @@ under the License.
             <compilerarg line="--patch-module org.apache.poi.ooxml.schemas=${xmlbean.classes.dir}"/>
         </javac>
 
-        <mkdir dir="build/dist/maven/ooxml-schemas"/>
+        <mkdir dir="build/dist/maven/poi-ooxml-full"/>
 
         <jar destfile="${ooxml.xsds.jar}">
             <fileset dir="${xmlbean.classes.dir}"/>
-            <zipfileset dir="${basedir}/src/multimodule/ooxml-schemas/java9" prefix="META-INF/versions/9" excludes="*.java"/>
+            <zipfileset dir="${basedir}/src/multimodule/ooxml-full/java9" prefix="META-INF/versions/9" excludes="*.java"/>
             <metainf dir="legal/"/>
             <manifest>
                 <attribute name="Multi-Release" value="true"/>
@@ -887,7 +887,7 @@ under the License.
 
         <jar destfile="${ooxml.xsds.src.jar}">
             <fileset dir="${xmlbean.sources.dir}"/>
-            <zipfileset dir="${basedir}/src/multimodule/ooxml-schemas/java9" prefix="META-INF/versions/9/" excludes="*.class"/>
+            <zipfileset dir="${basedir}/src/multimodule/ooxml-full/java9" prefix="META-INF/versions/9/" excludes="*.class"/>
             <metainf dir="legal"/>
         </jar>
     </target>
@@ -1090,7 +1090,7 @@ under the License.
         <compile-jar module="examples"
                      java="${examples.src}" classes="${examples.output.dir}">
             <lib>
-                <pathelement path="build/dist/maven/ooxml-schemas"/>
+                <pathelement path="build/dist/maven/poi-ooxml-full"/>
                 <pathelement path="build/dist/maven/poi-tests"/>
                 <pathelement path="build/dist/maven/poi-scratchpad-tests"/>
                 <pathelement path="build/dist/maven/poi-ooxml-tests"/>
@@ -1107,7 +1107,7 @@ under the License.
             <lib>
                 <pathelement path="build/dist/maven/poi-tests"/>
                 <pathelement path="build/dist/maven/poi-scratchpad-tests"/>
-                <pathelement path="build/dist/maven/ooxml-schemas"/>
+                <pathelement path="build/dist/maven/poi-ooxml-full"/>
                 <pathelement path="lib/main"/>
                 <pathelement path="lib/main-tests"/>
                 <pathelement path="lib/ooxml"/>
@@ -1208,12 +1208,12 @@ under the License.
     </macrodef>
 
     <target name="retest-ooxml" depends="jar"
-        description="run ooxml tests with poi-ooxml-schemas (= lite schema)">
+        description="run ooxml tests with poi-ooxml-lite">
         <path id="restest.modules">
             <pathelement path="build/dist/maven/poi-tests"/>
             <pathelement path="build/dist/maven/poi-scratchpad-tests"/>
             <pathelement path="build/dist/maven/poi-ooxml-tests"/>
-            <pathelement path="build/dist/maven/poi-ooxml-schemas"/>
+            <pathelement path="build/dist/maven/poi-ooxml-lite"/>
             <pathelement path="lib/main"/>
             <pathelement path="lib/main-tests"/>
             <pathelement path="lib/ooxml"/>
@@ -1290,7 +1290,7 @@ under the License.
                unless:true="${isJava8}">
             <compilerarg line="--patch-module org.apache.poi.stress=${integration.output.test.dir}"/>
             <modulepath>
-                <pathelement path="build/dist/maven/ooxml-schemas"/>
+                <pathelement path="build/dist/maven/poi-ooxml-full"/>
                 <pathelement path="build/dist/maven/poi"/>
                 <pathelement path="build/dist/maven/poi-ooxml"/>
                 <pathelement path="build/dist/maven/poi-scratchpad"/>
@@ -1574,7 +1574,7 @@ under the License.
             description="test OOXML classes">
         <path id="test-ooxml.modules">
             <!-- full schema -->
-            <pathelement path="build/dist/maven/ooxml-schemas"/>
+            <pathelement path="build/dist/maven/poi-ooxml-full"/>
             <pathelement path="build/dist/maven/poi-tests"/>
             <pathelement path="build/dist/maven/poi-ooxml-tests"/>
             <pathelement path="build/dist/maven/poi-scratchpad-tests"/>
@@ -1611,7 +1611,7 @@ under the License.
             <pathelement path="build/dist/maven/poi-ooxml"/>
             <pathelement path="build/dist/maven/poi-scratchpad"/>
             <pathelement path="build/dist/maven/poi-examples"/>
-            <pathelement path="build/dist/maven/ooxml-schemas"/>
+            <pathelement path="build/dist/maven/poi-ooxml-full"/>
             <pathelement path="build/dist/maven/poi-integration"/>
             <pathelement path="lib/main"/>
             <pathelement path="lib/main-tests"/>
@@ -1662,7 +1662,7 @@ under the License.
 
         <local name="full.schema"/>
         <loadresource property="full.schema">
-            <file file="${basedir}/src/multimodule/ooxml-schemas/java9/module-info.java"/>
+            <file file="${basedir}/src/multimodule/ooxml-full/java9/module-info.java"/>
             <filterchain>
                 <linecontains negate="true" matchany="true">
                     <contains value="exports"/>
@@ -1741,7 +1741,7 @@ org/apache/poi/schemas/ooxml/system/ooxml/rectelement.xsb
 org/apache/poi/schemas/ooxml/system/ooxml/rectaf36doctype.xsb
         </echo>
 
-        <mkdir dir="build/dist/maven/poi-ooxml-schemas"/>
+        <mkdir dir="build/dist/maven/poi-ooxml-lite"/>
 
         <jar destfile="${ooxml.lite.jar}" duplicate="preserve">
             <zipfileset dir="${basedir}/src/multimodule/ooxml-lite/java9" prefix="META-INF/versions/9" excludes="*.java"/>
@@ -1750,7 +1750,7 @@ org/apache/poi/schemas/ooxml/system/ooxml/rectaf36doctype.xsb
                     <include name="org/apache/poi/schemas/ooxml/element/**/*.xsb"/>
                 </patternset>
             </zipfileset>
-            <zipfileset dir="src/multimodule/ooxml-schemas/java9" prefix="META-INF/versions/9" excludes="*.java"/>
+            <zipfileset dir="src/multimodule/ooxml-full/java9" prefix="META-INF/versions/9" excludes="*.java"/>
             <manifest>
                 <attribute name="Multi-Release" value="true"/>
                 <attribute name="Automatic-Module-Name" value="org.apache.poi.ooxml.schemas"/>
@@ -1760,11 +1760,11 @@ org/apache/poi/schemas/ooxml/system/ooxml/rectaf36doctype.xsb
 
     <target name="test-ooxml-lite" depends="jacocotask,compile-ooxml-lite">
         <delete file="${ooxml.testokfile}"/>
-        <echo message="Running ooxml tests against 'poi-ooxml-schemas'"/>
+        <echo message="Running ooxml tests against 'poi-ooxml-lite'"/>
 
         <path id="test-ooxml-lite.modules">
             <!-- lite schema -->
-            <pathelement path="build/dist/maven/poi-ooxml-schemas"/>
+            <pathelement path="build/dist/maven/poi-ooxml-lite"/>
             <pathelement path="build/dist/maven/poi-tests"/>
             <pathelement path="build/dist/maven/poi-ooxml-tests"/>
             <pathelement path="build/dist/maven/poi-scratchpad-tests"/>
@@ -1803,7 +1803,7 @@ org/apache/poi/schemas/ooxml/system/ooxml/rectaf36doctype.xsb
             <pathelement path="lib/excelant"/>
             <pathelement path="build/dist/maven/poi-tests"/>
             <pathelement path="build/dist/maven/poi-ooxml-tests"/>
-            <pathelement path="build/dist/maven/poi-ooxml-schemas"/>
+            <pathelement path="build/dist/maven/poi-ooxml-lite"/>
             <pathelement path="build/dist/maven/poi-scratchpad-tests"/>
             <pathelement path="build/dist/maven/poi-excelant-tests"/>
         </path>
@@ -2002,11 +2002,11 @@ org/apache/poi/schemas/ooxml/system/ooxml/rectaf36doctype.xsb
             </filterchain>
         </copy>
 
-        <mkdir dir="${dist.dir}/maven/ooxml-schemas"/>
-        <copy tofile="${dist.dir}/maven/ooxml-schemas/ooxml-schemas-${maven.ooxml.xsds.version.id}.pom" file="maven/ooxml-schemas.pom">
+        <mkdir dir="${dist.dir}/maven/poi-ooxml-full"/>
+        <copy tofile="${dist.dir}/maven/poi-ooxml-full/poi-ooxml-full-${version.id}.pom" file="maven/poi-ooxml-full.pom">
             <filterchain>
                 <replacetokens>
-                    <token key="VERSION" value="${maven.ooxml.xsds.version.id}"/>
+                    <token key="VERSION" value="${version.id}"/>
                 </replacetokens>
             </filterchain>
         </copy>
@@ -2042,7 +2042,7 @@ org/apache/poi/schemas/ooxml/system/ooxml/rectaf36doctype.xsb
                     <chainedmapper>
                         <filtermapper>
                             <replaceregex pattern=".jar" replace="" flags="g"/>
-                            <replaceregex pattern="ooxml-lite" replace="ooxml-schemas" flags="g"/>
+<!--                            <replaceregex pattern="ooxml-lite" replace="ooxml-schemas" flags="g"/>-->
                             <replaceregex pattern="(.java|.src)$$" replace="-sources"/>
                             <replaceregex pattern=".*(?:build|src).?(.*)?" replace="\1"/>
                             <replaceregex pattern="(.*)(-classes|-sources)" replace="poi-\1/poi-\1-${version.id}\2"/>
@@ -2299,10 +2299,9 @@ org/apache/poi/schemas/ooxml/system/ooxml/rectaf36doctype.xsb
         <m2-install artifactId="poi-scratchpad"/>
         <m2-install artifactId="poi-ooxml"/>
         <m2-install artifactId="poi-examples"/>
-        <m2-install artifactId="poi-ooxml-schemas"/>
+        <m2-install artifactId="poi-ooxml-lite"/>
+        <m2-install artifactId="poi-ooxml-full"/>
         <m2-install artifactId="poi-excelant"/>
-        <m2-install artifactId="poi-excelant"/>
-        <m2-install artifactId="ooxml-schemas" versionId="${maven.ooxml.xsds.version.id}"/>
     </target>
 
     <target name="rat-check" depends="init" description="Runs the Apache Creadur Rat check against the source code, to spot any files which are missing the correct license headers">
@@ -2623,7 +2622,8 @@ org/apache/poi/schemas/ooxml/system/ooxml/rectaf36doctype.xsb
         <nexus-upload artifactId="poi-examples"/>
         <nexus-upload artifactId="poi-excelant"/>
         <nexus-upload artifactId="poi-ooxml"/>
-        <nexus-upload artifactId="poi-ooxml-schemas"/>
+        <nexus-upload artifactId="poi-ooxml-lite"/>
+        <nexus-upload artifactId="poi-ooxml-full"/>
         <nexus-upload artifactId="poi-scratchpad"/>
     </target>
 

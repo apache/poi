@@ -26,7 +26,7 @@ import java.util.function.Supplier;
 import org.apache.xmlbeans.XmlObject;
 import org.junit.Test;
 
-// aim is to get these classes loaded and included in poi-ooxml-schemas.jar
+// aim is to get these classes loaded and included in poi-ooxml-lite.jar
 public class TestNecessaryOOXMLClasses {
 
     @Test

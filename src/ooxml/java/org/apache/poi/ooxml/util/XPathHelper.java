@@ -40,7 +40,7 @@ public final class XPathHelper {
         "Schemas (*.xsb) for <CLASS> can't be loaded - usually this happens when OSGI " +
         "loading is used and the thread context classloader has no reference to " +
         "the xmlbeans classes - please either verify if the <XSB>.xsb is on the " +
-        "classpath or alternatively try to use the full ooxml-schemas-x.x.jar";
+        "classpath or alternatively try to use the poi-ooxml-full-x.x.jar";
 
     private static final String MC_NS = "http://schemas.openxmlformats.org/markup-compatibility/2006";
     private static final String MAC_DML_NS = "http://schemas.microsoft.com/office/mac/drawingml/2008/main";
@@ -119,7 +119,7 @@ public final class XPathHelper {
             }
 
             // Pesky XmlBeans bug - see Bugzilla #49934
-            // it never happens when using the full ooxml-schemas jar but may happen with the abridged poi-ooxml-schemas
+            // it never happens when using poi-ooxml-full jar but may happen with the abridged poi-ooxml-lite jar
             xo = innerCur.getObject();
             if (xo instanceof XmlAnyTypeImpl) {
                 String errorTxt = OSGI_ERROR
@@ -169,7 +169,7 @@ public final class XPathHelper {
             alterCont = (AlternateContentDocument.AlternateContent)xo;
         } else {
             // Pesky XmlBeans bug - see Bugzilla #49934
-            // it never happens when using the full ooxml-schemas jar but may happen with the abridged poi-ooxml-schemas
+            // it never happens when using poi-ooxml-full jar but may happen with the abridged poi-ooxml-lite jar
             if (!reparseAlternate) {
                 throw new XmlException(OSGI_ERROR
                                                .replace("<CLASS>", "AlternateContent")

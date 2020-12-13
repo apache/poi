@@ -57,7 +57,7 @@
 
     <modules>
         <module>main</module>
-        <module>ooxml-schema</module>
+        <module>ooxml-full</module>
         <module>ooxml</module>
         <module>scratchpad</module>
         <module>excelant</module>
@@ -118,6 +118,7 @@
                     </dependency>
                 </dependencies>
                 <configuration>
+                    <printSummary>false</printSummary>
                     <systemPropertyVariables>
                         <POI.testdata.path>../../test-data</POI.testdata.path>
                         <java.awt.headless>true</java.awt.headless>

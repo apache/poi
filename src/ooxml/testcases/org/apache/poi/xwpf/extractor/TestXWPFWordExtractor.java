@@ -17,16 +17,6 @@
 
 package org.apache.poi.xwpf.extractor;
 
-import org.apache.poi.util.StringUtil;
-import org.apache.poi.xwpf.XWPFTestDataSamples;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.util.Locale;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertEndsWith;
 import static org.apache.poi.POITestCase.assertNotContained;
@@ -34,6 +24,16 @@ import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
+import java.io.IOException;
+import java.util.Locale;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import org.apache.poi.util.StringUtil;
+import org.apache.poi.xwpf.XWPFTestDataSamples;
+import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.junit.Test;
 
 /**
  * Tests for HXFWordExtractor
@@ -431,7 +431,7 @@ public class TestXWPFWordExtractor {
 
     @Test
     public void testCTPictureBase() throws IOException {
-        //This forces ctpicturebase to be included in the poi-ooxml-schemas jar
+        //This forces ctpicturebase to be included in the poi-ooxml-lite jar
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("61991.docx");
             XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
             String txt = extractor.getText();

@@ -24,7 +24,7 @@
     <artifactId>poi-ooxml</artifactId>
     <version>@VERSION@</version>
     <packaging>jar</packaging>
-    <name>Apache POI</name>
+    <name>Apache POI - API based on OPC and OOXML schemas</name>
     <url>https://poi.apache.org/</url>
     <description>Apache POI - Java API To Access Microsoft Format Files</description>
 
@@ -63,7 +63,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml-schemas</artifactId>
+            <artifactId>poi-ooxml-lite</artifactId>
             <version>@VERSION@</version>
         </dependency>
         <dependency>

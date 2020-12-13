@@ -68,7 +68,7 @@ public class XSLFTable extends XSLFGraphicFrame implements Iterable<XSLFTableRow
 
             XmlObject xo = xc.getObject();
             // Pesky XmlBeans bug - see Bugzilla #49934
-            // it never happens when using the full ooxml-schemas jar but may happen with the abridged poi-ooxml-schemas
+            // it never happens when using poi-ooxml-full jar but may happen with the abridged poi-ooxml-lite jar
             if (xo instanceof XmlAnyTypeImpl){
                 String errStr =
                     "Schemas (*.xsb) for CTTable can't be loaded - usually this happens when OSGI " +

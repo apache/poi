@@ -272,7 +272,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     /**
-     * ensure that CTPhoneticPr is loaded by the ooxml test suite so that it is included in poi-ooxml-schemas
+     * ensure that CTPhoneticPr is loaded by the ooxml test suite so that it is included in poi-ooxml-lite
      */
     @Test
     public void bug49325() throws IOException {
@@ -1969,7 +1969,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
 
     /**
      * CTDefinedNamesImpl should be included in the smaller
-     * poi-ooxml-schemas jar
+     * poi-ooxml-lite jar
      */
     @Test
     public void bug57176() throws IOException {

@@ -94,7 +94,7 @@ public final class TestXWPFStyles {
 
     /**
      * YK: tests below don't make much sense,
-     * they exist only to copy xml beans to pi-ooxml-schemas.jar
+     * they exist only to copy xml beans to pi-ooxml-lite.jar
      */
     @SuppressWarnings("resource")
     @Test
@@ -206,7 +206,7 @@ public final class TestXWPFStyles {
             assertEquals(200, styles.getDefaultParagraphStyle().getSpacingAfter());
         }
     }
-    
+
     // Bug 60329: style with missing StyleID throws NPE
     @Test
     public void testMissingStyleId() throws IOException {
@@ -218,7 +218,7 @@ public final class TestXWPFStyles {
                 assertNotNull(styles.getStyle("NoList"));
                 assertNull(styles.getStyle("EmptyCellLayoutStyle"));
                 assertNotNull(styles.getStyle("BalloonText"));
-                
+
                 // Bug 64600: styleExist throws NPE
                 assertTrue(styles.styleExist("NoList"));
                 assertFalse(styles.styleExist("EmptyCellLayoutStyle"));
@@ -228,7 +228,7 @@ public final class TestXWPFStyles {
             }
         }
     }
-    
+
     @Test
     public void testGetStyleByName() throws IOException {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx")) {

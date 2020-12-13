@@ -26,7 +26,7 @@ TEST-org.apache.poi*.xml
 sonar/main/src/
 sonar/ooxml/src/
 sonar/scratchpad/src/
-sonar/ooxml-schema-security/src/
+sonar/ooxml-full/src/
 sonar/examples/src/
 sonar/excelant/src/
 sonar/target

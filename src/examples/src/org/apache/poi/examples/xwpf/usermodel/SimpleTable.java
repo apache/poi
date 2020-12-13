@@ -41,10 +41,10 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.STVerticalJc;
 
 /**
  * This program creates a simple WordprocessingML table using POI XWPF API, and
- * a more complex, styled table using both XWPF and ooxml-schema. It's possible
- * that not all referenced wordprocessingml classes are defined in
- * poi-ooxml-schemas-3.8-beta4. If this is the case, you'll need to use the full
- * ooxml-schemas.jar library.
+ * a more complex, styled table using both XWPF and poi-ooxml-full. It's possible
+ * that not all referenced wordprocessingml classes are defined in the
+ * poi-ooxml-lite jar. If this is the case, you'll need to use the
+ * poi-ooxml-full jar library.
  *
  * @author gisella bronzetti (original)
  * @author Gregg Morris (styled table)

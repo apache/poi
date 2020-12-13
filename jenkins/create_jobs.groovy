@@ -323,10 +323,6 @@ poijobs.each { poijob ->
                     localRepository(LocalRepositoryLocation.LOCAL_TO_WORKSPACE)
                     mavenInstallation(defaultMaven)
                 }
-                /* Currently not done, let's see if it is still necessary:
-                    # Maven-Download fails for strange reasons, try to workaround...
-                    mkdir -p sonar/ooxml-schema-security/target/schemas && wget -O sonar/ooxml-schema-security/target/schemas/xmldsig-core-schema.xsd http://www.w3.org/TR/2002/REC-xmldsig-core-20020212/xmldsig-core-schema.xsd
-                */
                 maven {
                     if (poijob.sonar) {
                         goals('clean package sonar:sonar')

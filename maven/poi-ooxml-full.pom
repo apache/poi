@@ -22,22 +22,15 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<modelVersion>4.0.0</modelVersion>
-	<groupId>org.apache.poi</groupId>
-	<artifactId>poi-ooxml-schemas</artifactId>
-	<version>@VERSION@</version>
-	<packaging>jar</packaging>
-	<name>Apache POI</name>
-	<url>https://poi.apache.org/</url>
-	<description>Apache POI - Java API To Access Microsoft Format Files</description>
-
-    <repositories>
-        <repository>
-            <id>apache-releases-repo</id>
-            <name>apache releases repo</name>
-            <url>https://repository.apache.org/content/repositories/releases</url>
-        </repository>
-    </repositories>
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.apache.poi</groupId>
+  <artifactId>poi-ooxml-full</artifactId>
+  <version>@VERSION@</version>
+  <packaging>jar</packaging>
+  <name>Apache POI - OOXML schemas (full)</name>
+  <description>XmlBeans generated from the Ecma supplied xsds (since POI 5.0.0, the 3rd edition is used):
+    https://www.ecma-international.org/publications/standards/Ecma-376.htm</description>
+  <url>https://poi.apache.org/</url>
 
   <mailingLists>
     <mailingList>
@@ -58,6 +51,7 @@
     <license>
       <name>Apache License, Version 2.0</name>
       <url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+      <distribution>repo</distribution>
     </license>
   </licenses>
 

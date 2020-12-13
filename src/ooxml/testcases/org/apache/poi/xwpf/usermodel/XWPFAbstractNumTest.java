@@ -16,15 +16,15 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertNull;
+
+import org.junit.Test;
 
 public class XWPFAbstractNumTest {
 
     @Test
     public void getXmlObject() {
-        // minimal test to include generated classes in poi-ooxml-schemas
+        // minimal test to include generated classes in poi-ooxml-lite
         XWPFAbstractNum num = new XWPFAbstractNum();
         assertNull(num.getCTAbstractNum());
     }

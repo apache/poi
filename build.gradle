@@ -302,7 +302,7 @@ project('ooxml') {
 
         compile project(':main')
         compile project(':scratchpad')		// TODO: get rid of this dependency!
-        compile files('../../build/dist/maven/ooxml-schemas/ooxml-schemas-1.5.jar')
+        compile files('../../build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version}.jar')
 
         testCompile "junit:junit:${junitVersion}"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
@@ -338,7 +338,7 @@ project('examples') {
 
         compile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
 
-        compile files('../../build/dist/maven/ooxml-schemas/ooxml-schemas-1.5.jar')
+        compile files('../../build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version}.jar')
         compile "org.apache.commons:commons-compress:${commonsCompressVersion}"
     }
 
@@ -385,7 +385,7 @@ project('integrationtest') {
 
         testCompile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
 
-        testCompile files('../../build/dist/maven/ooxml-schemas/ooxml-schemas-1.5.jar')
+        testCompile files('../../build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version}.jar')
         testCompile files(this.project(':ooxml').sourceSets.test.runtimeClasspath)
     }
 

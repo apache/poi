@@ -102,7 +102,7 @@
     <dependencies>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>poi-ooxml-schema</artifactId>
+            <artifactId>poi-ooxml-lite</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

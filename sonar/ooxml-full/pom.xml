@@ -9,7 +9,7 @@
         <version>5.0.0-SNAPSHOT</version>
         <relativePath>..</relativePath>
     </parent>
-    <artifactId>poi-ooxml-schema</artifactId>
+    <artifactId>poi-ooxml-lite</artifactId>
     <packaging>jar</packaging>
 
     <name>Apache POI - Openxmlformats Schema package</name>
@@ -36,7 +36,7 @@
 							<target>
 								<property name="xsdir" value="${basedir}/../../src/ooxml/resources/org/apache/poi"/>
 								<copy todir="${basedir}/target/schemas">
-									<zipfileset src="${xsdir}/schemas/OfficeOpenXML-XMLSchema.zip"/>
+									<zipfileset src="${xsdir}/schemas/OfficeOpenXML-XMLSchema-Transitional.zip"/>
 									<zipfileset src="${xsdir}/schemas/OpenPackagingConventions-XMLSchema.zip" includes="opc-digSig.xsd,opc-relationships.xsd"/>
 									<fileset dir="${xsdir}/xdgf" includes="*.xsd,*.xsdconfig"/>
 									<fileset dir="${xsdir}/schemas" includes="*.xsd,*.xsdconfig"/>
@@ -105,7 +105,7 @@
 									<directory>${basedir}/target/generated-resources</directory>
 								</resource>
 								<resource>
-									<directory>${basedir}/../../src/multimodule/ooxml-schemas/java9</directory>
+									<directory>${basedir}/../../src/multimodule/ooxml-full/java9</directory>
 									<targetPath>META-INF/versions/9</targetPath>
 									<includes>
 										<include>*.class</include>

@@ -22,7 +22,7 @@ import org.junit.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData;
 
-// aim is to get these classes loaded and included in poi-ooxml-schemas.jar
+// aim is to get these classes loaded and included in poi-ooxml-lite.jar
 public class TestNecessaryOOXMLClasses {
 
     @Test

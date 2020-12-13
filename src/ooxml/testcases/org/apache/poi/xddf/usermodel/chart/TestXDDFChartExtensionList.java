@@ -16,15 +16,16 @@
 ==================================================================== */
 package org.apache.poi.xddf.usermodel.chart;
 
-import org.junit.Test;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 
-import static org.junit.Assert.*;
+import org.junit.Test;
 
 public class TestXDDFChartExtensionList {
 
     @Test
     public void getXmlObject() {
-        // minimal test to include generated classes in poi-ooxml-schemas
+        // minimal test to include generated classes in poi-ooxml-lite
         XDDFChartExtensionList list = new XDDFChartExtensionList();
         assertNotNull(list.getXmlObject());
 

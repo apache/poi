@@ -96,7 +96,7 @@
                             poi;inline=true,
                             poi-scratchpad;inline=true,
                             poi-ooxml;inline=true,
-                            poi-ooxml-schemas;inline=true,
+                            poi-ooxml-lite;inline=true,
                             xmlbeans;inline=true,
                             SparseBitSet,
                             curvesapi,
@@ -150,7 +150,7 @@
         </dependency>
         <dependency>
             <groupId>org.apache.poi</groupId>
-            <artifactId>poi-ooxml-schemas</artifactId>
+            <artifactId>poi-ooxml-lite</artifactId>
             <version>${poi.version}</version>
         </dependency>
 

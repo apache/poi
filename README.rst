@@ -87,7 +87,7 @@ Contributing
 Building jar files
 ------------------
 
-To build the jar files for poi, poi-ooxml, poi-ooxml-schemas, and poi-examples::
+To build the jar files for poi, poi-ooxml, poi-ooxml-lite, poi-ooxml-full and poi-examples::
 
     ant jar
 

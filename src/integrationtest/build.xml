@@ -86,7 +86,7 @@ Before running this, you should execute the "assemble" target in the main build.
                     <fileset dir="${dist}">
                         <include name="**/poi-5.*.jar"/>
                         <include name="**/poi-ooxml-5.*.jar"/>
-                        <include name="**/poi-ooxml-schemas-5.*.jar"/>
+                        <include name="**/poi-ooxml-lite-5.*.jar"/>
                         <exclude name="**/*-javadoc*"/>
                         <exclude name="**/*-sources*"/>
                     </fileset>
@@ -129,7 +129,7 @@ Before running this, you should execute the "assemble" target in the main build.
                     <fileset dir="${dist}">
                         <include name="**/poi-5.*.jar"/>
                         <include name="**/poi-ooxml-5.*.jar"/>
-                        <include name="**/poi-ooxml-schemas-5.*.jar"/>
+                        <include name="**/poi-ooxml-lite-5.*.jar"/>
                         <include name="**/poi-scratchpad-5.*.jar"/>
                         <exclude name="**/*-javadoc*"/>
                         <exclude name="**/*-sources*"/>

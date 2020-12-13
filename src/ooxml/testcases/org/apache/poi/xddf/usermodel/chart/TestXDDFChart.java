@@ -18,18 +18,18 @@
  */
 package org.apache.poi.xddf.usermodel.chart;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+
 import org.apache.poi.ooxml.POIXMLFactory;
 import org.apache.poi.ooxml.POIXMLRelation;
 import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.chart.CTChartSpace;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-
 public class TestXDDFChart {
     @Test
     public void testConstruct() {
-        // minimal test to cause ooxml-lite to include all the classes in poi-ooxml-schemas
+        // minimal test to cause ooxml-lite to include all the classes in poi-ooxml-lite
         XDDFChart xddfChart = newXDDFChart();
 
         assertNotNull(xddfChart.getCTChartSpace());
@@ -43,7 +43,7 @@ public class TestXDDFChart {
 
         xddfChart.setExternalId("rid1");
         assertEquals("rid1", ctChartSpace.getExternalData().getId());
-        
+
         xddfChart.setExternalId("rid2");
         assertEquals("rid2", ctChartSpace.getExternalData().getId());
     }

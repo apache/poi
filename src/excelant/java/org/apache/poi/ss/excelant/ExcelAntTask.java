@@ -32,20 +32,20 @@ import org.apache.tools.ant.Task;
  * Ant task class for testing Excel workbook cells.
  */
 public class ExcelAntTask extends Task {
-    
+
     public static final String VERSION = "0.5.0" ;
-	
+
 	private String excelFileName ;
-	
+
 	private boolean failOnError;
-	
+
 	private ExcelAntWorkbookUtil workbookUtil ;
-	
+
 	private ExcelAntPrecision precision ;
-	
+
 	private LinkedList<ExcelAntTest> tests ;
 	private LinkedList<ExcelAntUserDefinedFunction> functions ;
-	
+
 	public ExcelAntTask() {
 		tests = new LinkedList<>() ;
 		functions = new LinkedList<>() ;
@@ -54,29 +54,29 @@ public class ExcelAntTask extends Task {
 	public void addPrecision( ExcelAntPrecision prec ) {
 		precision = prec ;
 	}
-	
+
 	public void setFailOnError( boolean value ) {
 		failOnError = value ;
 	}
 	public void setFileName( String fileName ) {
 		excelFileName = fileName ;
 	}
-	
+
 	public void addTest( ExcelAntTest testElement ) {
 		tests.add( testElement ) ;
 	}
-	
+
 	public void addUdf( ExcelAntUserDefinedFunction def ) {
 		functions.add( def ) ;
 	}
-	
+
 	@Override
     public void execute() throws BuildException {
         checkClassPath();
 
 		int totalCount = 0 ;
 		int successCount = 0 ;
-		
+
 		StringBuilder versionBffr = new StringBuilder() ;
 		versionBffr.append(  "ExcelAnt version " ) ;
 		versionBffr.append( VERSION ) ;
@@ -88,11 +88,11 @@ public class ExcelAntTask extends Task {
 		    versionBffr.append( currYear ) ;
 		}
 		log( versionBffr.toString(), Project.MSG_INFO ) ;
-		
+
 		log( "Using input file: " + excelFileName, Project.MSG_INFO ) ;
 
         workbookUtil = ExcelAntWorkbookUtilFactory.getInstance(excelFileName);
-		
+
 		for (ExcelAntTest test : tests) {
 			log("executing test: " + test.getName(), Project.MSG_DEBUG);
 
@@ -133,7 +133,7 @@ public class ExcelAntTask extends Task {
 		}
         workbookUtil = null;
 	}
-	
+
 
     /**
      * ExcelAnt depends on external libraries not included in the Ant distribution.
@@ -147,7 +147,7 @@ public class ExcelAntTask extends Task {
             throw new BuildException(
                     "The <classpath> for <excelant> must include poi.jar and poi-ooxml.jar " +
                     "if not in Ant's own classpath. Processing .xlsx spreadsheets requires " +
-                    "additional poi-ooxml-schemas.jar, xmlbeans.jar" ,
+                    "additional poi-ooxml-lite.jar, xmlbeans.jar" ,
                     e, getLocation());
         }
 
