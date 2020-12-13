@@ -20,12 +20,29 @@
 ==================================================================== */
 package org.apache.poi.hdgf.dev;
 
+import java.io.File;
+import java.io.PrintStream;
+
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.util.NullPrintStream;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.File;
-
 public class TestVSDDumper {
+    private static PrintStream oldStdOut;
+
+    @BeforeClass
+    public static void muteStdout() {
+        oldStdOut = System.out;
+        System.setOut(new NullPrintStream());
+    }
+
+    @AfterClass
+    public static void restoreStdout() {
+        System.setOut(oldStdOut);
+    }
+
     @Test
     public void main() throws Exception {
         File file = POIDataSamples.getDiagramInstance().getFile("Test_Visio-Some_Random_Text.vsd");

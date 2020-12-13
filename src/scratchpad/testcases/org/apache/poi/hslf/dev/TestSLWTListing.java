@@ -16,15 +16,32 @@
 ==================================================================== */
 package org.apache.poi.hslf.dev;
 
-import org.apache.poi.EmptyFileException;
-import org.junit.Test;
+import static org.junit.Assert.fail;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.PrintStream;
 
-import static org.junit.Assert.fail;
+import org.apache.poi.EmptyFileException;
+import org.apache.poi.util.NullPrintStream;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
+import org.junit.Test;
 
 public class TestSLWTListing extends BasePPTIteratingTest {
+    private static PrintStream oldStdErr;
+
+    @BeforeClass
+    public static void muteStdErr() {
+        oldStdErr = System.err;
+        System.setErr(new NullPrintStream());
+    }
+
+    @AfterClass
+    public static void restoreStdErr() {
+        System.setErr(oldStdErr);
+    }
+
     @Test
     public void testMain() throws IOException {
         // calls System.exit(): SLWTListing.main(new String[0]);

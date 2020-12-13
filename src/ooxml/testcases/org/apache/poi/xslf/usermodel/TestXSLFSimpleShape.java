@@ -306,11 +306,18 @@ public class TestXSLFSimpleShape {
 
     @Test
     public void testArrayStoreException() throws Exception {
+        File tmpDir = new File("build/tmp/");
+
+        // fix maven build errors
+        if (!tmpDir.exists()) {
+            assertTrue(tmpDir.mkdirs());
+        }
+
         File file = POIDataSamples.getSlideShowInstance().getFile("aascu.org_workarea_downloadasset.aspx_id=5864.pptx");
         String[] args = {
                 "-format", "null", // png,gif,jpg,svg or null for test
                 "-slide", "-1", // -1 for all
-                "-outdir", new File("build/tmp/").getCanonicalPath(),
+                "-outdir", tmpDir.getCanonicalPath(),
                 "-quiet",
                 "-fixside", "long",
                 "-scale", "800",

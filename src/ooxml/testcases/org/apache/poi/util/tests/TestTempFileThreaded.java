@@ -157,7 +157,7 @@ public class TestTempFileThreaded {
                 files.get(threadNum).add(file);
 
                 if (iter % 30 == 0) {
-                    System.out.println("thread: " + threadNum + ", iter: " + iter + ": " + file);
+                    // System.out.println("thread: " + threadNum + ", iter: " + iter + ": " + file);
                 }
             }
         }

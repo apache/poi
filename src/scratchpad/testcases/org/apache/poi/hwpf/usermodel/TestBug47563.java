@@ -16,19 +16,19 @@
 ==================================================================== */
 package org.apache.poi.hwpf.usermodel;
 
-import org.apache.poi.hwpf.HWPFDocument;
-import org.apache.poi.hwpf.HWPFTestDataSamples;
-import org.apache.poi.util.HexDump;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import static org.junit.Assert.assertTrue;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.Assert.assertTrue;
+import org.apache.poi.hwpf.HWPFDocument;
+import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.apache.poi.util.HexDump;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 /**
  * Bug 47563 - Exception when working with table
@@ -59,9 +59,6 @@ public class TestBug47563 {
 
 	@Test
 	public void test() throws Exception {
-		System.out.println();
-		System.out.println("Testing with rows: " + rows + ", columns: " + columns);
-
 		// POI apparently can't create a document from scratch,
 		// so we need an existing empty dummy document
 		try (HWPFDocument doc = HWPFTestDataSamples.openSampleFile("empty.doc")) {
@@ -75,13 +72,9 @@ public class TestBug47563 {
 				TableRow row = table.getRow(rowIdx);
 				row.sanityCheck();
 
-				System.out.println("row " + rowIdx);
 				for (int colIdx = 0; colIdx < row.numCells(); colIdx++) {
 					TableCell cell = row.getCell(colIdx);
 					cell.sanityCheck();
-
-					System.out.println("column " + colIdx + ", num paragraphs "
-							+ cell.numParagraphs());
 
 					Paragraph par = cell.getParagraph(0);
 					par.sanityCheck();

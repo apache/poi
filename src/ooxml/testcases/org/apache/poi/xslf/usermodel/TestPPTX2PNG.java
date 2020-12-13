@@ -20,6 +20,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import static java.util.Arrays.asList;
+import static org.junit.Assert.assertTrue;
 import static org.junit.Assume.assumeFalse;
 
 import java.io.File;
@@ -98,10 +99,17 @@ public class TestPPTX2PNG {
     }
 
     private String[] getArgs(String format) throws IOException {
+        File tmpDir = new File("build/tmp/");
+
+        // fix maven build errors
+        if (!tmpDir.exists()) {
+            assertTrue(tmpDir.mkdirs());
+        }
+
         final List<String> args = new ArrayList<>(asList(
                 "-format", format, // png,gif,jpg,svg,pdf or null for test
                 "-slide", "-1", // -1 for all
-                "-outdir", new File("build/tmp/").getCanonicalPath(),
+                "-outdir", tmpDir.getCanonicalPath(),
                 "-outpat", "${basename}-${slideno}-${ext}.${format}",
                 // "-dump", new File("build/tmp/", pptFile+".json").getCanonicalPath(),
                 "-dump", "null",

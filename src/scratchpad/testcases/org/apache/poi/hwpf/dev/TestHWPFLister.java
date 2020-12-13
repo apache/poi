@@ -16,13 +16,30 @@
 ==================================================================== */
 package org.apache.poi.hwpf.dev;
 
+import java.io.File;
+import java.io.PrintStream;
+
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.util.NullPrintStream;
 import org.junit.After;
+import org.junit.AfterClass;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
-import java.io.File;
-
 public class TestHWPFLister {
+    private static PrintStream oldStdOut;
+
+    @BeforeClass
+    public static void muteStdout() {
+        oldStdOut = System.out;
+        System.setOut(new NullPrintStream());
+    }
+
+    @AfterClass
+    public static void restoreStdout() {
+        System.setOut(oldStdOut);
+    }
+
     @After
     public void tearDown() {
         // the main-method sets these properties, we need to revert them here to not affect other tests

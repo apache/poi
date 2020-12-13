@@ -17,13 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.ss.util.CellAddress;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -31,8 +26,13 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.util.CellAddress;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 
 public class TestXSSFSheetShiftRowsAndColumns {
     private static final File resultDir = new File("build/custom-reports-test");
@@ -81,8 +81,6 @@ public class TestXSSFSheetShiftRowsAndColumns {
          */
         final CellRangeAddress range = new CellRangeAddress(FIRST_MERGE_ROW,LAST_MERGE_ROW,FIRST_MERGE_COL,LAST_MERGE_COL);
         sheet.addMergedRegion(range);
-        System.out.println(String.format(Locale.US, "\n%s: mergeArea=%s", procName,range));
-
         writeFile(procName);
     }
 
@@ -94,12 +92,10 @@ public class TestXSSFSheetShiftRowsAndColumns {
     public void cleanup() throws IOException {
         final String procName = "TestXSSFSheetRemoveTable.cleanup";
         if (workbook == null) {
-            System.out.println(String.format(Locale.ROOT,"%s: workbook==null",procName));
             return;
         }
 
         if(fileName == null) {
-            System.out.println(String.format(Locale.ROOT, "%s: fileName==null",procName));
             return;
         }
 
@@ -112,7 +108,6 @@ public class TestXSSFSheetShiftRowsAndColumns {
         final File file = new File(resultDir,fileName);
         try (OutputStream fileOut = new FileOutputStream(file)) {
             workbook.write(fileOut);
-            System.out.println(String.format(Locale.ROOT, "%s: test file written to %s",procName,file.getAbsolutePath()));
         }
     }
 
@@ -126,8 +121,6 @@ public class TestXSSFSheetShiftRowsAndColumns {
 
         testCellAddresses(procName,0,0);
         testMergeRegion(procName,0,0);
-
-        System.out.println(String.format(Locale.US, "%s: finished without error", procName));
     }
 
     @Test
@@ -138,7 +131,6 @@ public class TestXSSFSheetShiftRowsAndColumns {
 
         sheet.shiftRows(INSERT_ROW, numRows-1, nRowsToShift);
         testCellAddresses(procName,nRowsToShift,0);
-        System.out.println(String.format(Locale.US, "%s: finished without error", procName));
     }
 
     @Test
@@ -149,7 +141,6 @@ public class TestXSSFSheetShiftRowsAndColumns {
 
         sheet.shiftRows(INSERT_ROW, numRows-1, nRowsToShift);
         testMergeRegion(procName,nRowsToShift,0);
-        System.out.println(String.format(Locale.US, "%s: finished without error", procName));
     }
 
     @Test
@@ -160,7 +151,6 @@ public class TestXSSFSheetShiftRowsAndColumns {
 
         sheet.shiftColumns(INSERT_COLUMN, numCols-1, nShift);
         testCellAddresses(procName,0,nShift);
-        System.out.println(String.format(Locale.US, "%s: finished without error", procName));
     }
 
     @Test
@@ -171,7 +161,6 @@ public class TestXSSFSheetShiftRowsAndColumns {
 
         sheet.shiftColumns(INSERT_COLUMN, numCols-1, nShift);
         testMergeRegion(procName,0, nShift);
-        System.out.println(String.format(Locale.US, "%s: finished without error", procName));
     }
 
     /**
@@ -183,24 +172,18 @@ public class TestXSSFSheetShiftRowsAndColumns {
         for(int nRow = 0;nRow<nNumRows;++nRow) {
             final XSSFRow row = sheet.getRow(nRow);
             if(row == null) {
-                System.out.println(String.format(Locale.US, "%s: Row %d is empty", procName,nRow));
                 continue;
             }
             for(int nCol = 0;nCol<nNumCols;++nCol) {
                 final String address = new CellAddress(nRow,nCol).formatAsString();
                 final XSSFCell cell = row.getCell(nCol);
                 if(cell == null) {
-                    System.out.println(String.format(Locale.US, "%s: Cell %s is empty", procName,address));
                     continue;
                 }
                 final CTCell ctCell = cell.getCTCell();
                 final Object cellAddress = cell.getAddress().formatAsString();
                 final Object r = ctCell.getR();
 
-                if(nCol == 0 || nRow == 0) {
-                    System.out.println(String.format(Locale.US, "%s: Row %d col %d address=%s cell.address=%s cell.getR=%s", procName, nRow,
-                            nCol, address, cellAddress, ctCell.getR()));
-                }
                 assertEquals(String.format(Locale.US, "%s: Testing cell.getAddress",procName),address,cellAddress);
                 assertEquals(String.format(Locale.US, "%s: Testing ctCell.getR",procName),address,r);
             }
