@@ -66,8 +66,8 @@ public class XWPFDefaultRunStyle {
     }
 
     private BigDecimal getFontSizeAsBigDecimal(int scale) {
-        return (rpr != null && rpr.isSetSz())
-            ? BigDecimal.valueOf(Units.toPoints(POIXMLUnits.parseLength(rpr.getSz().xgetVal()))).divide(BigDecimal.valueOf(4), scale, RoundingMode.HALF_UP)
+        return (rpr != null && rpr.sizeOfSzArray() > 0)
+            ? BigDecimal.valueOf(Units.toPoints(POIXMLUnits.parseLength(rpr.getSzArray(0).xgetVal()))).divide(BigDecimal.valueOf(4), scale, RoundingMode.HALF_UP)
             : null;
     }
 }

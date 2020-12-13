@@ -28,7 +28,7 @@
   <version>@VERSION@</version>
   <packaging>jar</packaging>
   <name>Apache POI - OOXML schemas (full)</name>
-  <description>XmlBeans generated from the Ecma supplied xsds (since POI 5.0.0, the 3rd edition is used):
+  <description>XmlBeans generated from the Ecma supplied xsds (since POI 5.0.0, the 5th edition is used):
     https://www.ecma-international.org/publications/standards/Ecma-376.htm</description>
   <url>https://poi.apache.org/</url>
 

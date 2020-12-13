@@ -139,7 +139,7 @@ public class TestXWPFRun {
         run.setBold(false);
         // Implementation detail: POI natively prefers <w:b w:val="false"/>,
         // but should correctly read val="0" and val="off"
-        assertEquals("off", rpr.getB().getVal());
+        assertEquals("off", rpr.getBArray(0).getVal());
     }
 
     @Test
@@ -151,7 +151,7 @@ public class TestXWPFRun {
         assertTrue(run.isItalic());
 
         run.setItalic(false);
-        assertEquals("off", rpr.getI().getVal());
+        assertEquals("off", rpr.getIArray(0).getVal());
     }
 
     @Test
@@ -163,7 +163,7 @@ public class TestXWPFRun {
         assertTrue(run.isStrikeThrough());
 
         run.setStrikeThrough(false);
-        assertEquals("off", rpr.getStrike().getVal());
+        assertEquals("off", rpr.getStrikeArray(0).getVal());
     }
 
     @Test
@@ -176,7 +176,7 @@ public class TestXWPFRun {
                 .getValue());
 
         run.setUnderline(UnderlinePatterns.NONE);
-        assertEquals(STUnderline.NONE.intValue(), rpr.getU().getVal()
+        assertEquals(STUnderline.NONE.intValue(), rpr.getUArray(0).getVal()
                 .intValue());
     }
 
@@ -189,7 +189,7 @@ public class TestXWPFRun {
         assertEquals("Times New Roman", run.getFontFamily());
 
         run.setFontFamily("Verdana");
-        assertEquals("Verdana", rpr.getRFonts().getAscii());
+        assertEquals("Verdana", rpr.getRFontsArray(0).getAscii());
     }
 
     @Test
@@ -202,10 +202,10 @@ public class TestXWPFRun {
         assertEquals(7.0, run.getFontSizeAsDouble(), 0.01);
 
         run.setFontSize(24);
-        assertEquals("48", rpr.getSz().getVal().toString());
+        assertEquals("48", rpr.getSzArray(0).getVal().toString());
 
         run.setFontSize(24.5f);
-        assertEquals("49", rpr.getSz().getVal().toString());
+        assertEquals("49", rpr.getSzArray(0).getVal().toString());
         assertEquals(25, run.getFontSize());
         assertEquals(24.5, run.getFontSizeAsDouble(), 0.01);
     }
@@ -219,7 +219,7 @@ public class TestXWPFRun {
         assertEquals(4000, run.getTextPosition());
 
         run.setTextPosition(2400);
-        assertEquals("2400", rpr.getPosition().getVal().toString());
+        assertEquals("2400", rpr.getPositionArray(0).getVal().toString());
     }
 
     @Test
@@ -331,8 +331,8 @@ public class TestXWPFRun {
         assertTrue(run.isBold());
         assertTrue(run.isItalic());
         assertFalse(run.isStrikeThrough());
-        assertTrue(run.getCTR().getRPr().isSetB());
-        assertFalse(run.getCTR().getRPr().getB().isSetVal());
+        assertTrue(run.getCTR().getRPr().sizeOfBArray() > 0);
+        assertFalse(run.getCTR().getRPr().getBArray(0).isSetVal());
 
 
         // Back to normal
@@ -477,10 +477,10 @@ public class TestXWPFRun {
         run.getCTR().addNewRPr().addNewLang().setVal("en-CA");
         assertEquals("en-CA", run.getLang());
 
-        run.getCTR().getRPr().getLang().setVal("fr-CA");
+        run.getCTR().getRPr().getLangArray(0).setVal("fr-CA");
         assertEquals("fr-CA", run.getLang());
 
-        run.getCTR().getRPr().getLang().setVal(null);
+        run.getCTR().getRPr().getLangArray(0).setVal(null);
         assertNull(run.getLang());
     }
 
@@ -734,7 +734,7 @@ public class TestXWPFRun {
         XWPFRun run = new XWPFRun(ctRun, irb);
 
         run.setSubscript(VerticalAlign.BASELINE);
-        assertEquals(STVerticalAlignRun.BASELINE, rpr.getVertAlign().getVal());
+        assertEquals(STVerticalAlignRun.BASELINE, rpr.getVertAlignArray(0).getVal());
     }
 
     @Test
@@ -787,7 +787,7 @@ public class TestXWPFRun {
 
         String styleId = "bolditalic";
         run.setStyle(styleId);
-        String candStyleId = run.getCTR().getRPr().getRStyle().getVal();
+        String candStyleId = run.getCTR().getRPr().getRStyleArray(0).getVal();
         assertNotNull("Expected to find a run style ID", candStyleId);
         assertEquals(styleId, candStyleId);
 

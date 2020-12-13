@@ -30,7 +30,18 @@ import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFCellStyle;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.DataFormat;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.ReadingOrder;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.VerticalAlignment;
+import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.extensions.XSSFCellBorder;
@@ -716,7 +727,8 @@ public class TestXSSFCellStyle {
     @Test
     public void testGetSetVerticalAlignment() {
 		assertEquals(VerticalAlignment.BOTTOM, cellStyle.getVerticalAlignment());
-		assertNull(cellStyle.getCellAlignment().getCTCellAlignment().getVertical());
+		assertFalse(cellStyle.getCellAlignment().getCTCellAlignment().isSetVertical());
+		assertEquals(STVerticalAlignment.BOTTOM, cellStyle.getCellAlignment().getCTCellAlignment().getVertical());
 
 		cellStyle.setVerticalAlignment(VerticalAlignment.CENTER);
 		assertEquals(VerticalAlignment.CENTER, cellStyle.getVerticalAlignment());

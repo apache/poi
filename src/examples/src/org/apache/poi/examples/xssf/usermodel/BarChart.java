@@ -113,7 +113,7 @@ public final class BarChart {
 
     private static void solidFillSeries(XDDFChartData data, int index, PresetColor color) {
         XDDFSolidFillProperties fill = new XDDFSolidFillProperties(XDDFColor.from(color));
-        XDDFChartData.Series series = data.getSeries().get(index);
+        XDDFChartData.Series series = data.getSeries(index);
         XDDFShapeProperties properties = series.getShapeProperties();
         if (properties == null) {
             properties = new XDDFShapeProperties();

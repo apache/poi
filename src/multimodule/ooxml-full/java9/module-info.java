@@ -30,7 +30,6 @@ open module org.apache.poi.ooxml.schemas {
     exports com.microsoft.schemas.vml;
     exports org.openxmlformats.schemas.drawingml.x2006.chart;
     exports org.openxmlformats.schemas.drawingml.x2006.chartDrawing;
-    exports org.openxmlformats.schemas.drawingml.x2006.compatibility;
     exports org.openxmlformats.schemas.drawingml.x2006.diagram;
     exports org.openxmlformats.schemas.drawingml.x2006.lockedCanvas;
     exports org.openxmlformats.schemas.drawingml.x2006.main;

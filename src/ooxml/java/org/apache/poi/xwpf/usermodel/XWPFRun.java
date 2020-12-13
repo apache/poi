@@ -76,10 +76,10 @@ import org.xml.sax.SAXException;
  * XWPFRun object defines a region of text with a common set of properties
  */
 public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
-    private CTR run;
-    private String pictureText;
-    private IRunBody parent;
-    private List<XWPFPicture> pictures;
+    private final CTR run;
+    private final String pictureText;
+    private final IRunBody parent;
+    private final List<XWPFPicture> pictures;
 
     /**
      * @param r the CTR bean which holds the run attributes
@@ -238,7 +238,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public String getLang() {
         CTRPr pr = getRunProperties(false);
-        Object lang = pr == null || !pr.isSetLang() ? null : pr.getLang().getVal();
+        Object lang = (pr == null || pr.sizeOfLangArray() == 0) ? null : pr.getLangArray(0).getVal();
         return (String) lang;
     }
 
@@ -250,7 +250,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public void setLang(String lang) {
         CTRPr pr = getRunProperties(true);
-        CTLanguage ctLang = pr.isSetLang() ? pr.getLang() : pr.addNewLang();
+        CTLanguage ctLang = pr.sizeOfLangArray() > 0 ? pr.getLangArray(0) : pr.addNewLang();
         ctLang.setVal(lang);
     }
 
@@ -263,7 +263,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     @Override
     public boolean isBold() {
         CTRPr pr = getRunProperties(false);
-        return pr != null && pr.isSetB() && isCTOnOff(pr.getB());
+        return pr != null && pr.sizeOfBArray() > 0 && isCTOnOff(pr.getBArray(0));
     }
 
     /**
@@ -293,7 +293,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     @Override
     public void setBold(boolean value) {
         CTRPr pr = getRunProperties(true);
-        CTOnOff bold = pr.isSetB() ? pr.getB() : pr.addNewB();
+        CTOnOff bold = pr.sizeOfBArray() > 0 ? pr.getBArray(0) : pr.addNewB();
         bold.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
@@ -304,8 +304,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         String color = null;
         if (run.isSetRPr()) {
             CTRPr pr = getRunProperties(false);
-            if (pr != null && pr.isSetColor()) {
-                CTColor clr = pr.getColor();
+            if (pr != null && pr.sizeOfColorArray() > 0) {
+                CTColor clr = pr.getColorArray(0);
                 color = clr.xgetVal().getStringValue();
             }
         }
@@ -319,7 +319,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public void setColor(String rgbStr) {
         CTRPr pr = getRunProperties(true);
-        CTColor color = pr.isSetColor() ? pr.getColor() : pr.addNewColor();
+        CTColor color = pr.sizeOfColorArray() > 0 ? pr.getColorArray(0) : pr.addNewColor();
         color.setVal(rgbStr);
     }
 
@@ -373,7 +373,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     @Override
     public boolean isItalic() {
         CTRPr pr = getRunProperties(false);
-        return pr != null && pr.isSetI() && isCTOnOff(pr.getI());
+        return pr != null && pr.sizeOfIArray() > 0 && isCTOnOff(pr.getIArray(0));
     }
 
     /**
@@ -404,7 +404,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     @Override
     public void setItalic(boolean value) {
         CTRPr pr = getRunProperties(true);
-        CTOnOff italic = pr.isSetI() ? pr.getI() : pr.addNewI();
+        CTOnOff italic = pr.sizeOfIArray() > 0 ? pr.getIArray(0) : pr.addNewI();
         italic.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
@@ -452,11 +452,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     private CTUnderline getCTUnderline(boolean create) {
         CTRPr pr = getRunProperties(true);
-        CTUnderline underline = pr.getU();
-        if (create && underline == null) {
-            underline = pr.addNewU();
-        }
-        return underline;
+        return pr.sizeOfUArray() > 0 ? pr.getUArray(0) : (create ? pr.addNewU() : null);
     }
 
     /**
@@ -539,7 +535,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     @Override
     public boolean isStrikeThrough() {
         CTRPr pr = getRunProperties(false);
-        return pr != null && pr.isSetStrike() && isCTOnOff(pr.getStrike());
+        return pr != null && pr.sizeOfStrikeArray() > 0 && isCTOnOff(pr.getStrikeArray(0));
     }
 
     /**
@@ -569,7 +565,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     @Override
     public void setStrikeThrough(boolean value) {
         CTRPr pr = getRunProperties(true);
-        CTOnOff strike = pr.isSetStrike() ? pr.getStrike() : pr.addNewStrike();
+        CTOnOff strike = pr.sizeOfStrikeArray() > 0 ? pr.getStrikeArray(0) : pr.addNewStrike();
         strike.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
@@ -592,7 +588,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     @Override
     public boolean isDoubleStrikeThrough() {
         CTRPr pr = getRunProperties(false);
-        return pr != null && pr.isSetDstrike() && isCTOnOff(pr.getDstrike());
+        return pr != null && pr.sizeOfDstrikeArray() > 0 && isCTOnOff(pr.getDstrikeArray(0));
     }
 
     /**
@@ -604,72 +600,72 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     @Override
     public void setDoubleStrikethrough(boolean value) {
         CTRPr pr = getRunProperties(true);
-        CTOnOff dstrike = pr.isSetDstrike() ? pr.getDstrike() : pr.addNewDstrike();
+        CTOnOff dstrike = pr.sizeOfDstrikeArray() > 0 ? pr.getDstrikeArray(0) : pr.addNewDstrike();
         dstrike.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
     @Override
     public boolean isSmallCaps() {
         CTRPr pr = getRunProperties(false);
-        return pr != null && pr.isSetSmallCaps() && isCTOnOff(pr.getSmallCaps());
+        return pr != null && pr.sizeOfSmallCapsArray() > 0 && isCTOnOff(pr.getSmallCapsArray(0));
     }
 
     @Override
     public void setSmallCaps(boolean value) {
         CTRPr pr = getRunProperties(true);
-        CTOnOff caps = pr.isSetSmallCaps() ? pr.getSmallCaps() : pr.addNewSmallCaps();
+        CTOnOff caps = pr.sizeOfSmallCapsArray() > 0 ? pr.getSmallCapsArray(0) : pr.addNewSmallCaps();
         caps.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
     @Override
     public boolean isCapitalized() {
         CTRPr pr = getRunProperties(false);
-        return pr != null && pr.isSetCaps() && isCTOnOff(pr.getCaps());
+        return pr != null && pr.sizeOfCapsArray() > 0 && isCTOnOff(pr.getCapsArray(0));
     }
 
     @Override
     public void setCapitalized(boolean value) {
         CTRPr pr = getRunProperties(true);
-        CTOnOff caps = pr.isSetCaps() ? pr.getCaps() : pr.addNewCaps();
+        CTOnOff caps = pr.sizeOfCapsArray() > 0 ? pr.getCapsArray(0) : pr.addNewCaps();
         caps.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
     @Override
     public boolean isShadowed() {
         CTRPr pr = getRunProperties(false);
-        return pr != null && pr.isSetShadow() && isCTOnOff(pr.getShadow());
+        return pr != null && pr.sizeOfShadowArray() > 0 && isCTOnOff(pr.getShadowArray(0));
     }
 
     @Override
     public void setShadow(boolean value) {
         CTRPr pr = getRunProperties(true);
-        CTOnOff shadow = pr.isSetShadow() ? pr.getShadow() : pr.addNewShadow();
+        CTOnOff shadow = pr.sizeOfShadowArray() > 0 ? pr.getShadowArray(0) : pr.addNewShadow();
         shadow.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
     @Override
     public boolean isImprinted() {
         CTRPr pr = getRunProperties(false);
-        return pr != null && pr.isSetImprint() && isCTOnOff(pr.getImprint());
+        return pr != null && pr.sizeOfImprintArray() > 0 && isCTOnOff(pr.getImprintArray(0));
     }
 
     @Override
     public void setImprinted(boolean value) {
         CTRPr pr = getRunProperties(true);
-        CTOnOff imprinted = pr.isSetImprint() ? pr.getImprint() : pr.addNewImprint();
+        CTOnOff imprinted = pr.sizeOfImprintArray() > 0 ? pr.getImprintArray(0) : pr.addNewImprint();
         imprinted.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
     @Override
     public boolean isEmbossed() {
         CTRPr pr = getRunProperties(false);
-        return pr != null && pr.isSetEmboss() && isCTOnOff(pr.getEmboss());
+        return pr != null && pr.sizeOfEmbossArray() > 0 && isCTOnOff(pr.getEmbossArray(0));
     }
 
     @Override
     public void setEmbossed(boolean value) {
         CTRPr pr = getRunProperties(true);
-        CTOnOff emboss = pr.isSetEmboss() ? pr.getEmboss() : pr.addNewEmboss();
+        CTOnOff emboss = pr.sizeOfEmbossArray() > 0 ? pr.getEmbossArray(0) : pr.addNewEmboss();
         emboss.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
@@ -691,33 +687,33 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public void setSubscript(VerticalAlign valign) {
         CTRPr pr = getRunProperties(true);
-        CTVerticalAlignRun ctValign = pr.isSetVertAlign() ? pr.getVertAlign() : pr.addNewVertAlign();
+        CTVerticalAlignRun ctValign = pr.sizeOfVertAlignArray() > 0 ? pr.getVertAlignArray(0) : pr.addNewVertAlign();
         ctValign.setVal(STVerticalAlignRun.Enum.forInt(valign.getValue()));
     }
 
     @Override
     public int getKerning() {
         CTRPr pr = getRunProperties(false);
-        if (pr == null || !pr.isSetKern()) {
+        if (pr == null || pr.sizeOfKernArray() == 0) {
             return 0;
         }
-        return (int)POIXMLUnits.parseLength(pr.getKern().xgetVal());
+        return (int)POIXMLUnits.parseLength(pr.getKernArray(0).xgetVal());
     }
 
     @Override
     public void setKerning(int kern) {
         CTRPr pr = getRunProperties(true);
-        CTHpsMeasure kernmes = pr.isSetKern() ? pr.getKern() : pr.addNewKern();
+        CTHpsMeasure kernmes = pr.sizeOfKernArray() > 0 ? pr.getKernArray(0) : pr.addNewKern();
         kernmes.setVal(BigInteger.valueOf(kern));
     }
 
     @Override
     public boolean isHighlighted() {
         CTRPr pr = getRunProperties(false);
-        if (pr == null || !pr.isSetHighlight()) {
+        if (pr == null || pr.sizeOfHighlightArray() == 0) {
             return false;
         }
-        STHighlightColor.Enum val = pr.getHighlight().getVal();
+        STHighlightColor.Enum val = pr.getHighlightArray(0).getVal();
         if (val == null || val == STHighlightColor.NONE) {
             return false;
         }
@@ -729,16 +725,16 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     @Override
     public int getCharacterSpacing() {
         CTRPr pr = getRunProperties(false);
-        if (pr == null || !pr.isSetSpacing()) {
+        if (pr == null || pr.sizeOfSpacingArray() == 0) {
             return 0;
         }
-        return (int)Units.toDXA(POIXMLUnits.parseLength(pr.getSpacing().xgetVal()));
+        return (int)Units.toDXA(POIXMLUnits.parseLength(pr.getSpacingArray(0).xgetVal()));
     }
 
     @Override
     public void setCharacterSpacing(int twips) {
         CTRPr pr = getRunProperties(true);
-        CTSignedTwipsMeasure spc = pr.isSetSpacing() ? pr.getSpacing() : pr.addNewSpacing();
+        CTSignedTwipsMeasure spc = pr.sizeOfSpacingArray() > 0 ? pr.getSpacingArray(0) : pr.addNewSpacing();
         spc.setVal(BigInteger.valueOf(twips));
     }
 
@@ -784,11 +780,11 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public String getFontFamily(FontCharRange fcr) {
         CTRPr pr = getRunProperties(false);
-        if (pr == null || !pr.isSetRFonts()) {
+        if (pr == null || pr.sizeOfRFontsArray() == 0) {
             return null;
         }
 
-        CTFonts fonts = pr.getRFonts();
+        CTFonts fonts = pr.getRFontsArray(0);
         switch (fcr == null ? FontCharRange.ascii : fcr) {
             default:
             case ascii:
@@ -813,7 +809,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public void setFontFamily(String fontFamily, FontCharRange fcr) {
         CTRPr pr = getRunProperties(true);
-        CTFonts fonts = pr.isSetRFonts() ? pr.getRFonts() : pr.addNewRFonts();
+        CTFonts fonts = pr.sizeOfRFontsArray() > 0 ? pr.getRFontsArray(0) : pr.addNewRFonts();
 
         if (fcr == null) {
             fonts.setAscii(fontFamily);
@@ -875,8 +871,8 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
 
     private BigDecimal getFontSizeAsBigDecimal(int scale) {
         CTRPr pr = getRunProperties(false);
-        return (pr != null && pr.isSetSz())
-            ? BigDecimal.valueOf(Units.toPoints(POIXMLUnits.parseLength(pr.getSz().xgetVal()))).divide(BigDecimal.valueOf(4), scale, RoundingMode.HALF_UP)
+        return (pr != null && pr.sizeOfSzArray() > 0)
+            ? BigDecimal.valueOf(Units.toPoints(POIXMLUnits.parseLength(pr.getSzArray(0).xgetVal()))).divide(BigDecimal.valueOf(4), scale, RoundingMode.HALF_UP)
             : null;
     }
 
@@ -897,7 +893,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public void setFontSize(int size) {
         BigInteger bint = BigInteger.valueOf(size);
         CTRPr pr = getRunProperties(true);
-        CTHpsMeasure ctSize = pr.isSetSz() ? pr.getSz() : pr.addNewSz();
+        CTHpsMeasure ctSize = pr.sizeOfSzArray() > 0 ? pr.getSzArray(0) : pr.addNewSz();
         ctSize.setVal(bint.multiply(BigInteger.valueOf(2)));
     }
 
@@ -919,7 +915,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public void setFontSize(double size) {
         BigDecimal bd = BigDecimal.valueOf(size);
         CTRPr pr = getRunProperties(true);
-        CTHpsMeasure ctSize = pr.isSetSz() ? pr.getSz() : pr.addNewSz();
+        CTHpsMeasure ctSize = pr.sizeOfSzArray() > 0 ? pr.getSzArray(0) : pr.addNewSz();
         ctSize.setVal(bd.multiply(BigDecimal.valueOf(2)).setScale(0, RoundingMode.HALF_UP).toBigInteger());
     }
 
@@ -933,7 +929,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public int getTextPosition() {
         CTRPr pr = getRunProperties(false);
-        return (pr != null && pr.isSetPosition()) ? (int)(Units.toPoints(POIXMLUnits.parseLength(pr.getPosition().xgetVal())) / 2.)
+        return (pr != null && pr.sizeOfPositionArray() > 0) ? (int)(Units.toPoints(POIXMLUnits.parseLength(pr.getPositionArray(0).xgetVal())) / 2.)
                 : -1;
     }
 
@@ -963,7 +959,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
     public void setTextPosition(int val) {
         BigInteger bint = new BigInteger(Integer.toString(val));
         CTRPr pr = getRunProperties(true);
-        CTSignedHpsMeasure position = pr.isSetPosition() ? pr.getPosition() : pr.addNewPosition();
+        CTSignedHpsMeasure position = pr.sizeOfPositionArray() > 0 ? pr.getPositionArray(0) : pr.addNewPosition();
         position.setVal(bint);
     }
 
@@ -1241,7 +1237,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
         if (null == pr) {
            pr = getCTR().addNewRPr();
         }
-        CTString style = pr.getRStyle() != null ? pr.getRStyle() : pr.addNewRStyle();
+        CTString style = pr.sizeOfRStyleArray() > 0 ? pr.getRStyleArray(0) : pr.addNewRStyle();
         style.setVal(styleId);
     }
 
@@ -1257,7 +1253,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
             return "";
         }
 
-        CTString style = pr.getRStyle();
+        CTString style = pr.getRStyleArray(0);
         if (style == null) {
             return "";
         }
@@ -1437,7 +1433,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public void setTextScale(int percentage) {
         CTRPr pr = getRunProperties(true);
-        CTTextScale scale = pr.isSetW() ? pr.getW() : pr.addNewW();
+        CTTextScale scale = pr.sizeOfWArray() > 0 ? pr.getWArray(0) : pr.addNewW();
         scale.setVal(percentage);
     }
 
@@ -1449,11 +1445,11 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public int getTextScale() {
         CTRPr pr = getRunProperties(false);
-        if (pr == null || !pr.isSetW()) {
+        if (pr == null || pr.sizeOfWArray() == 0) {
             return 100;
         }
 
-        int value = POIXMLUnits.parsePercent(pr.getW().xgetVal());
+        int value = POIXMLUnits.parsePercent(pr.getWArray(0).xgetVal());
         // 100% scaling, that is, no change. See 17.3.2.43 w (Expanded/Compressed Text)
         return value == 0 ? 100 : value / 1000;
     }
@@ -1466,7 +1462,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public void setTextHighlightColor(String colorName) {
         CTRPr pr = getRunProperties(true);
-        CTHighlight highlight = pr.isSetHighlight() ? pr.getHighlight() : pr.addNewHighlight();
+        CTHighlight highlight = pr.sizeOfHighlightArray() > 0 ? pr.getHighlightArray(0) : pr.addNewHighlight();
         STHighlightColor color = highlight.xgetVal();
         if (color == null) {
             color = STHighlightColor.Factory.newInstance();
@@ -1487,7 +1483,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public STHighlightColor.Enum getTextHightlightColor() {
         CTRPr pr = getRunProperties(true);
-        CTHighlight highlight = pr.isSetHighlight() ? pr.getHighlight() : pr.addNewHighlight();
+        CTHighlight highlight = pr.sizeOfHighlightArray() > 0 ? pr.getHighlightArray(0) : pr.addNewHighlight();
         STHighlightColor color = highlight.xgetVal();
         if (color == null) {
             color = STHighlightColor.Factory.newInstance();
@@ -1504,7 +1500,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public boolean isVanish() {
         CTRPr pr = getRunProperties(true);
-        return pr != null && pr.isSetVanish() && isCTOnOff(pr.getVanish());
+        return pr != null && pr.sizeOfVanishArray() > 0 && isCTOnOff(pr.getVanishArray(0));
     }
 
     /**
@@ -1515,7 +1511,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public void setVanish(boolean value) {
         CTRPr pr = getRunProperties(true);
-        CTOnOff vanish = pr.isSetVanish() ? pr.getVanish() : pr.addNewVanish();
+        CTOnOff vanish = pr.sizeOfVanishArray() > 0 ? pr.getVanishArray(0) : pr.addNewVanish();
         vanish.setVal(value ? STOnOff1.ON : STOnOff1.OFF);
     }
 
@@ -1527,7 +1523,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public STVerticalAlignRun.Enum getVerticalAlignment() {
         CTRPr pr = getRunProperties(true);
-        CTVerticalAlignRun vertAlign = pr.isSetVertAlign() ? pr.getVertAlign() : pr.addNewVertAlign();
+        CTVerticalAlignRun vertAlign = pr.sizeOfVertAlignArray() > 0 ? pr.getVertAlignArray(0) : pr.addNewVertAlign();
         STVerticalAlignRun.Enum val = vertAlign.getVal();
         if (val == null) {
             val = STVerticalAlignRun.BASELINE;
@@ -1543,7 +1539,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public void setVerticalAlignment(String verticalAlignment) {
         CTRPr pr = getRunProperties(true);
-        CTVerticalAlignRun vertAlign = pr.isSetVertAlign() ? pr.getVertAlign() : pr.addNewVertAlign();
+        CTVerticalAlignRun vertAlign = pr.sizeOfVertAlignArray() > 0 ? pr.getVertAlignArray(0) : pr.addNewVertAlign();
         STVerticalAlignRun align = vertAlign.xgetVal();
         if (align == null) {
             align = STVerticalAlignRun.Factory.newInstance();
@@ -1565,7 +1561,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public STEm.Enum getEmphasisMark() {
         CTRPr pr = getRunProperties(true);
-        CTEm emphasis = pr.isSetEm() ? pr.getEm() : pr.addNewEm();
+        CTEm emphasis = pr.sizeOfEmArray() > 0 ? pr.getEmArray(0) : pr.addNewEm();
 
         STEm.Enum val = emphasis.getVal();
         if (val == null) {
@@ -1583,7 +1579,7 @@ public class XWPFRun implements ISDTContents, IRunElement, CharacterRun {
      */
     public void setEmphasisMark(String markType) {
         CTRPr pr = getRunProperties(true);
-        CTEm emphasisMark = pr.isSetEm() ? pr.getEm() : pr.addNewEm();
+        CTEm emphasisMark = pr.sizeOfEmArray() > 0 ? pr.getEmArray(0) : pr.addNewEm();
         STEm mark = emphasisMark.xgetVal();
         if (mark == null) {
             mark = STEm.Factory.newInstance();

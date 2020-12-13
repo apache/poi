@@ -109,7 +109,7 @@ public class TestXSLFExamples {
             ctn.setFill(STTLTimeNodeFillType.HOLD);
             ctn.setDisplay(false);
             ctn.addNewStCondLst().addNewCond().setDelay(STTLTimeIndefinite.INDEFINITE);
-            cmedia.addNewTgtEl().addNewSpTgt().setSpid(""+pic1.getShapeId());
+            cmedia.addNewTgtEl().addNewSpTgt().setSpid(pic1.getShapeId());
 
 
             // write to file - use FileOutputStream instead

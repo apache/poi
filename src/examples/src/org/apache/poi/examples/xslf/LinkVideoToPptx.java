@@ -107,7 +107,7 @@ public class LinkVideoToPptx {
         ctn.setFill(STTLTimeNodeFillType.HOLD);
         ctn.setDisplay(false);
         ctn.addNewStCondLst().addNewCond().setDelay(STTLTimeIndefinite.INDEFINITE);
-        cmedia.addNewTgtEl().addNewSpTgt().setSpid(""+pic1.getShapeId());
+        cmedia.addNewTgtEl().addNewSpTgt().setSpid(pic1.getShapeId());
 
 
         try (FileOutputStream fos = new FileOutputStream("mp4test/mp4test-poi.pptx")) {

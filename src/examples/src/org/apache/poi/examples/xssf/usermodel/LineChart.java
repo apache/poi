@@ -117,7 +117,7 @@ public final class LineChart {
         XDDFSolidFillProperties fill = new XDDFSolidFillProperties(XDDFColor.from(color));
         XDDFLineProperties line = new XDDFLineProperties();
         line.setFillProperties(fill);
-        XDDFChartData.Series series = data.getSeries().get(index);
+        XDDFChartData.Series series = data.getSeries(index);
         XDDFShapeProperties properties = series.getShapeProperties();
         if (properties == null) {
             properties = new XDDFShapeProperties();

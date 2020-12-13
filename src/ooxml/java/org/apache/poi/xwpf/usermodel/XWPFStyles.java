@@ -50,7 +50,7 @@ import org.openxmlformats.schemas.wordprocessingml.x2006.main.StylesDocument;
  */
 public class XWPFStyles extends POIXMLDocumentPart {
     private CTStyles ctStyles;
-    private List<XWPFStyle> listStyle = new ArrayList<>();
+    private final List<XWPFStyle> listStyle = new ArrayList<>();
 
     private XWPFLatentStyles latentStyles;
     private XWPFDefaultRunStyle defaultRunStyle;
@@ -234,8 +234,8 @@ public class XWPFStyles extends POIXMLDocumentPart {
         ensureDocDefaults();
 
         CTLanguage lang = null;
-        if (defaultRunStyle.getRPr().isSetLang()) {
-            lang = defaultRunStyle.getRPr().getLang();
+        if (defaultRunStyle.getRPr().sizeOfLangArray() > 0) {
+            lang = defaultRunStyle.getRPr().getLangArray(0);
         } else {
             lang = defaultRunStyle.getRPr().addNewLang();
         }
@@ -273,7 +273,10 @@ public class XWPFStyles extends POIXMLDocumentPart {
         ensureDocDefaults();
 
         CTRPr runProps = defaultRunStyle.getRPr();
-        runProps.setRFonts(fonts);
+        if (runProps.sizeOfRFontsArray() == 0) {
+            runProps.addNewRFonts();
+        }
+        runProps.setRFontsArray(0, fonts);
     }
 
     /**

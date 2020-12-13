@@ -16,6 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel.extensions;
 
+import java.math.BigInteger;
+
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 import org.apache.poi.ss.usermodel.ReadingOrder;
 import org.apache.poi.ss.usermodel.VerticalAlignment;
@@ -29,7 +31,7 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STVerticalAlignment;
  * Cell settings available in the Format/Alignment tab
  */
 public class XSSFCellAlignment {
-    private CTCellAlignment cellAlignement;
+    private final CTCellAlignment cellAlignement;
 
     /**
      * Creates a Cell Alignment from the supplied XML definition
@@ -85,7 +87,7 @@ public class XSSFCellAlignment {
     public void setHorizontal(HorizontalAlignment align) {
         cellAlignement.setHorizontal(STHorizontalAlignment.Enum.forInt(align.ordinal() + 1));
     }
-    
+
     /**
      * Set the type of reading order for the cell
      *
@@ -95,7 +97,7 @@ public class XSSFCellAlignment {
     public void setReadingOrder(ReadingOrder order) {
         cellAlignement.setReadingOrder(order.getCode());
     }
-    
+
     /**
      * Get the reading order for the cell
      *
@@ -108,7 +110,7 @@ public class XSSFCellAlignment {
         }
         return ReadingOrder.CONTEXT;
     }
-    
+
     /**
      * Get the number of spaces to indent the text in the cell
      *
@@ -142,7 +144,7 @@ public class XSSFCellAlignment {
      * @return rotation degrees (between 0 and 180 degrees)
      */
     public long getTextRotation() {
-        return cellAlignement.getTextRotation();
+        return cellAlignement.isSetTextRotation() ? cellAlignement.getTextRotation().longValue() : 0;
     }
 
     /**
@@ -157,8 +159,8 @@ public class XSSFCellAlignment {
      * <code>[degrees below horizon] = 90 - textRotation.</code>
      * </p>
      *
-     * Note: HSSF uses values from -90 to 90 degrees, whereas XSSF 
-     * uses values from 0 to 180 degrees. The implementations of this method will map between these two value-ranges 
+     * Note: HSSF uses values from -90 to 90 degrees, whereas XSSF
+     * uses values from 0 to 180 degrees. The implementations of this method will map between these two value-ranges
      * accordingly, however the corresponding getter is returning values in the range mandated by the current type
      * of Excel file-format that this CellStyle is applied to.
      *
@@ -168,7 +170,7 @@ public class XSSFCellAlignment {
         if(rotation < 0 && rotation >= -90) {
             rotation = 90 + ((-1)*rotation);
         }
-        cellAlignement.setTextRotation(rotation);
+        cellAlignement.setTextRotation(BigInteger.valueOf(rotation));
     }
 
     /**
@@ -192,11 +194,11 @@ public class XSSFCellAlignment {
     public boolean getShrinkToFit() {
     	return cellAlignement.getShrinkToFit();
     }
-    
+
     public void setShrinkToFit(boolean shrink) {
     	cellAlignement.setShrinkToFit(shrink);
     }
-    
+
     /**
      * Access to low-level data
      */
