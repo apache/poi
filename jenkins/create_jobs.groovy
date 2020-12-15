@@ -601,7 +601,7 @@ xmlbeansjobs.each { xjob ->
 
 /*
 Add a special job which spans a two-dimensional matrix of all JDKs that we want to use and
-all slaves that we would like to use and test if the java and ant binaries are available
+all worker nodes that we would like to use and test if the java and ant binaries are available
 on that machine correctly.
  */
 matrixJob('POI/POI-DSL-Test-Environment') {

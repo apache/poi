@@ -87,7 +87,7 @@ public final class CleanerUtil {
         }
     }
 
-    @SuppressForbidden("Java 9 Jigsaw whitelists access to sun.misc.Cleaner, so setAccessible works")
+    @SuppressForbidden("Java 9 Jigsaw allows access to sun.misc.Cleaner, so setAccessible works")
     private static Object unmapHackImpl() {
         final MethodHandles.Lookup lookup = MethodHandles.lookup();
         try {

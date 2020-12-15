@@ -3059,7 +3059,7 @@ org/apache/poi/schemas/ooxml/system/ooxml/rectaf36doctype.xsb
 ]]></echo>
     </target>
 
-    <target name="test-env" description="tests if ant is available on the jenkins slave">
+    <target name="test-env" description="tests if ant is available on the jenkins worker">
       <echo>Using Ant: ${ant.version} from ${ant.home}</echo>
     </target>
 
