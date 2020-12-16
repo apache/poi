@@ -271,7 +271,7 @@ public final class POIXMLExtractorFactory implements ExtractorProvider {
                 try (InputStream is = dec.getDataStream(poifsDir)) {
                     return create(is, password);
                 }
-            } catch (IOException e) {
+            } catch (IOException | RuntimeException e) {
                 throw e;
             } catch (Exception e) {
                 throw new IOException(e);

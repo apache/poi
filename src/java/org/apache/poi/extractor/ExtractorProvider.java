@@ -53,6 +53,9 @@ public interface ExtractorProvider {
      * @param password the password or {@code null} if not encrypted
      * @return the extractor
      * @throws IOException if node can't be parsed
+     * @throws IllegalStateException if processing fails for some other reason,
+     *              e.g. missing JCE Unlimited Strength Jurisdiction Policy files
+     *              while handling encrypted files.
      */
     POITextExtractor create(DirectoryNode poifsDir, String password) throws IOException;
 
