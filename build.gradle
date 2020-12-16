@@ -114,6 +114,7 @@ subprojects {
         japicmpversion = '4.1.2'
         junitVersion = '4.13.1'
         mockitoVersion = '3.6.0'
+        slf4jVersion = '1.7.30'
         xmlbeansVersion = '4.0.0'
     }
 
@@ -220,12 +221,14 @@ project('main') {
         compile 'commons-logging:commons-logging:1.2'
         compile 'org.apache.commons:commons-collections4:4.4'
         compile "org.apache.commons:commons-math3:${commonsMathVersion}"
+        compile "org.slf4j:slf4j-api:${slf4jVersion}"
         compile 'javax.activation:activation:1.1.1'
         compile 'com.zaxxer:SparseBitSet:1.2'
 
         testCompile "junit:junit:${junitVersion}"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
         testCompile 'org.reflections:reflections:0.9.12'
+        testCompile "org.slf4j:slf4j-simple:${slf4jVersion}"
     }
 
     jar {
