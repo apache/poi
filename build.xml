@@ -310,6 +310,7 @@ under the License.
     <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.9.12" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.guava" artifact="com.google.guava:guava:30.0-jre" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.javassist" artifact="org.javassist:javassist:3.27.0-GA" usage="ooxml-tests"/>
+    <dependency prefix="ooxml.test.log4j" artifact="log4j:log4j:1.2.17" usage="ooxml-tests"/>
 
     <!-- coverage libs -->
     <dependency prefix="jacoco" artifact="org.jacoco:jacoco:0.8.6" usage="util" packaging="zip"/>
@@ -440,6 +441,7 @@ under the License.
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${ooxml.test.guava.jar}"/>
+        <pathelement location="${ooxml.test.log4j.jar}"/>
         <!-- classes are omitted on test cases outside the xml-dsign area to avoid classpath poisioning -->
         <!--path refid="ooxml.xmlsec.classpath"/-->
         <!-- Used only for ExtractorFactory, see #57963 -->
@@ -474,6 +476,7 @@ under the License.
         <pathelement location="${ooxml.test.reflections.jar}"/>
         <pathelement location="${ooxml.test.guava.jar}"/>
         <pathelement location="${ooxml.test.javassist.jar}"/>
+        <pathelement location="${ooxml.test.log4j.jar}"/>
     </path>
 
     <path id="test.ooxml.lite.verify.classpath">
@@ -606,11 +609,11 @@ under the License.
                 <include name="ant*-1.10.1.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/main">
-                <include name="log4j*.jar"/>
+                <include name="log4j-1.2*.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/main-tests">
                 <include name="mockito-core-3.2*.jar"/>
-                <include name="mockito-core-3.5.0.jar"/>
+                <include name="mockito-core-3.5*.jar"/>
                 <include name="hamcrest-core*"/>
             </fileset>
             <fileset dir="${basedir}/lib/ooxml">
@@ -618,6 +621,7 @@ under the License.
             </fileset>
             <fileset dir="${basedir}/lib/ooxml-provided">
                 <include name="bcpkix-jdk15on-1.65.jar"/>
+                <include name="bcpkix-jdk15on-1.66.jar"/>
                 <include name="bcprov-ext-jdk15on-1.65.jar"/>
                 <include name="bcprov-ext-jdk15on-1.66.jar"/>
             </fileset>
@@ -720,6 +724,7 @@ under the License.
                     <available file="${ooxml.test.reflections.jar}"/>
                     <available file="${ooxml.test.guava.jar}"/>
                     <available file="${ooxml.test.javassist.jar}"/>
+                    <available file="${ooxml.test.log4j.jar}"/>
                     <available file="${svg.xml-apis-ext.jar}"/>
                     <available file="${svg.batik-all.jar}"/>
                     <available file="${svg.xmlgraphics-commons.jar}"/>
@@ -734,13 +739,13 @@ under the License.
     <target name="fetch-ooxml-jars" depends="check-ooxml-jars" unless="ooxml.jars.present">
         <mkdir dir="${ooxml.lib}"/>
         <mkdir dir="${ooxml-tests.lib}"/>
-<!--        <downloadfile src="${ooxml.xml-apis.url}" dest="${ooxml.xml-apis.jar}"/>-->
         <downloadfile src="${ooxml.curvesapi.url}" dest="${ooxml.curvesapi.jar}"/>
         <downloadfile src="${ooxml.xmlbeans.url}" dest="${ooxml.xmlbeans.jar}"/>
         <downloadfile src="${ooxml.commons-compress.url}" dest="${ooxml.commons-compress.jar}"/>
         <downloadfile src="${ooxml.test.reflections.url}" dest="${ooxml.test.reflections.jar}"/>
         <downloadfile src="${ooxml.test.guava.url}" dest="${ooxml.test.guava.jar}"/>
         <downloadfile src="${ooxml.test.javassist.url}" dest="${ooxml.test.javassist.jar}"/>
+        <downloadfile src="${ooxml.test.log4j.url}" dest="${ooxml.test.log4j.jar}"/>
         <downloadfile src="${svg.batik-all.url}" dest="${svg.batik-all.jar}"/>
         <downloadfile src="${svg.xml-apis-ext.url}" dest="${svg.xml-apis-ext.jar}"/>
         <downloadfile src="${svg.xmlgraphics-commons.url}" dest="${svg.xmlgraphics-commons.jar}"/>

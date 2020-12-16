@@ -28,9 +28,10 @@
 	<classpathentry exported="true" kind="lib" path="compile-lib/slf4j-api-1.7.30.jar"/>
 	<classpathentry kind="lib" path="lib/ooxml-provided/bcpkix-jdk15on-1.67.jar"/>
 	<classpathentry kind="lib" path="lib/ooxml-provided/bcprov-jdk15on-1.67.jar"/>
-	<classpathentry kind="lib" path="ooxml-tests/reflections.jar"/>
-	<classpathentry kind="lib" path="ooxml-tests/guava.jar"/>
-	<classpathentry kind="lib" path="ooxml-tests/javassist.jar"/>
+	<classpathentry kind="lib" path="lib/ooxml-tests/reflections-0.9.12.jar"/>
+	<classpathentry kind="lib" path="lib/ooxml-tests/guava-30.0-jre.jar"/>
+	<classpathentry kind="lib" path="lib/ooxml-tests/javassist-3.27.0-GA.jar"/>
+	<classpathentry kind="lib" path="lib/ooxml-tests/log4j-1.2.17.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/ooxml-provided/xmlsec-2.2.0.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-codec-1.15.jar"/>
 	<classpathentry exported="true" kind="lib" path="lib/commons-logging-1.2.jar"/>
