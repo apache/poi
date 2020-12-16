@@ -268,7 +268,6 @@ under the License.
     <!-- jars in the /lib directory, see the fetch-jars target-->
     <dependency prefix="main.commons-logging" artifact="commons-logging:commons-logging:1.2" usage="main"/>
     <dependency prefix="main.commons-codec" artifact="commons-codec:commons-codec:1.15" usage="main"/>
-    <dependency prefix="main.log4j" artifact="log4j:log4j:1.2.17" usage="main"/>
     <dependency prefix="main.commons-collections4" artifact="org.apache.commons:commons-collections4:4.4" usage="main"/>
     <dependency prefix="main.commons-math3" artifact="org.apache.commons:commons-math3:3.6.1" usage="main"/>
     <dependency prefix="main.com.zaxxer" artifact="com.zaxxer:SparseBitSet:1.2" usage="main"/>
@@ -606,6 +605,9 @@ under the License.
             <fileset dir="${basedir}/lib/excelant">
                 <include name="ant*-1.10.1.jar"/>
             </fileset>
+            <fileset dir="${basedir}/lib/main">
+                <include name="log4j*.jar"/>
+            </fileset>
             <fileset dir="${basedir}/lib/main-tests">
                 <include name="mockito-core-3.2*.jar"/>
                 <include name="mockito-core-3.5.0.jar"/>
@@ -638,7 +640,6 @@ under the License.
                 <and>
                     <available file="${main.commons-logging.jar}"/>
                     <available file="${main.commons-codec.jar}"/>
-                    <available file="${main.log4j.jar}"/>
                     <available file="${main.junit.jar}"/>
                     <available file="${main.jmh.jar}"/>
                     <available file="${main.jmhAnnotation.jar}"/>
@@ -677,7 +678,6 @@ under the License.
         <mkdir dir="${main.lib}"/>
         <downloadfile src="${main.commons-logging.url}" dest="${main.commons-logging.jar}"/>
         <downloadfile src="${main.commons-codec.url}" dest="${main.commons-codec.jar}"/>
-        <downloadfile src="${main.log4j.url}" dest="${main.log4j.jar}"/>
         <downloadfile src="${main.junit.url}" dest="${main.junit.jar}"/>
         <downloadfile src="${main.jmh.url}" dest="${main.jmh.jar}"/>
         <downloadfile src="${main.jmhAnnotation.url}" dest="${main.jmhAnnotation.jar}"/>
@@ -2170,7 +2170,6 @@ org/apache/poi/schemas/ooxml/system/ooxml/rectaf36doctype.xsb
                     <include name="commons-logging-*.jar"/>
                     <include name="commons-collections4-*.jar"/>
                     <include name="commons-math3-*.jar"/>
-                    <include name="log4j-*.jar"/>
                     <include name="SparseBitSet-*.jar"/>
                 </fileset>
                 <globmapper from="*" to="${zipdir}/lib/*"/>
