@@ -118,8 +118,6 @@ under the License.
     </condition>
     <!-- Fix for strange woodstox references in gump build -->
     <property name="javax.xml.stream.XMLInputFactory" value="com.sun.xml.internal.stream.XMLInputFactoryImpl"/>
-    <!-- need to override POILogger property before commons logging works -->
-    <property name="org.apache.commons.logging.Log" value="org.apache.commons.logging.impl.Log4JLogger"/>
     <property name="tempdir" value="build/tmp"/>
 
     <!-- Main: -->
@@ -271,6 +269,7 @@ under the License.
     <dependency prefix="main.commons-collections4" artifact="org.apache.commons:commons-collections4:4.4" usage="main"/>
     <dependency prefix="main.commons-math3" artifact="org.apache.commons:commons-math3:3.6.1" usage="main"/>
     <dependency prefix="main.com.zaxxer" artifact="com.zaxxer:SparseBitSet:1.2" usage="main"/>
+    <dependency prefix="main.slf4j-api" artifact="org.slf4j:slf4j-api:1.7.30" usage="main"/>
 
     <dependency prefix="main.junit" artifact="junit:junit:4.13.1" usage="main-tests"/>
     <dependency prefix="main.jmh" artifact="org.openjdk.jmh:jmh-core:1.26" usage="main-tests"/>
@@ -281,6 +280,7 @@ under the License.
     <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.10.18" usage="main-tests"/>
     <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.10.18" usage="main-tests"/>
     <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:3.1" usage="main-tests"/>
+    <dependency prefix="main.slf4j-simple" artifact="org.slf4j:slf4j-api:1.7.30" usage="main-tests"/>
 
     <dependency prefix="main.ant" artifact="org.apache.ant:ant:1.10.9" usage="excelant"/>
     <dependency prefix="main.antlauncher" artifact="org.apache.ant:ant-launcher:1.10.9" usage="excelant"/>
@@ -289,7 +289,6 @@ under the License.
     <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:2.2.0" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-jdk15on:1.67" usage="ooxml-provided"/>
     <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk15on:1.67" usage="ooxml-provided"/>
-    <dependency prefix="dsig.slf4j-api" artifact="org.slf4j:slf4j-api:1.7.30" usage="ooxml-provided"/>
     <!-- only used for signing the release - not used with the ooxml signatures -->
     <dependency prefix="dsig.bouncycastle-bcpg" artifact="org.bouncycastle:bcpg-jdk15on:1.67" usage="util"/>
 
@@ -310,7 +309,6 @@ under the License.
     <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.9.12" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.guava" artifact="com.google.guava:guava:30.0-jre" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.javassist" artifact="org.javassist:javassist:3.27.0-GA" usage="ooxml-tests"/>
-    <dependency prefix="ooxml.test.log4j" artifact="log4j:log4j:1.2.17" usage="ooxml-tests"/>
 
     <!-- coverage libs -->
     <dependency prefix="jacoco" artifact="org.jacoco:jacoco:0.8.6" usage="util" packaging="zip"/>
@@ -420,6 +418,7 @@ under the License.
         <pathelement location="${main.byte-buddy.jar}"/>
         <pathelement location="${main.byte-buddy-agent.jar}"/>
         <pathelement location="${main.objenesis.jar}"/>
+        <pathelement location="${main.slf4j-simple.jar}"/>
     </path>
 
     <path id="scratchpad.classpath">
@@ -431,7 +430,6 @@ under the License.
         <pathelement location="${dsig.xmlsec.jar}"/>
         <pathelement location="${dsig.bouncycastle-prov.jar}"/>
         <pathelement location="${dsig.bouncycastle-pkix.jar}"/>
-        <pathelement location="${dsig.slf4j-api.jar}"/>
     </path>
 
     <path id="ooxml.base.classpath">
@@ -441,7 +439,6 @@ under the License.
         <path refid="main.classpath"/>
         <pathelement location="${main.output.dir}"/>
         <pathelement location="${ooxml.test.guava.jar}"/>
-        <pathelement location="${ooxml.test.log4j.jar}"/>
         <!-- classes are omitted on test cases outside the xml-dsign area to avoid classpath poisioning -->
         <!--path refid="ooxml.xmlsec.classpath"/-->
         <!-- Used only for ExtractorFactory, see #57963 -->
@@ -476,7 +473,6 @@ under the License.
         <pathelement location="${ooxml.test.reflections.jar}"/>
         <pathelement location="${ooxml.test.guava.jar}"/>
         <pathelement location="${ooxml.test.javassist.jar}"/>
-        <pathelement location="${ooxml.test.log4j.jar}"/>
     </path>
 
     <path id="test.ooxml.lite.verify.classpath">
@@ -655,6 +651,8 @@ under the License.
                     <available file="${main.objenesis.jar}"/>
                     <available file="${main.ant.jar}"/>
                     <available file="${main.antlauncher.jar}"/>
+                    <available file="${main.slf4j-api.jar}"/>
+                    <available file="${main.slf4j-simple.jar}"/>
                     <available file="${asm.jar}"/>
                     <available file="${asm-commons.jar}"/>
                     <available file="${asm-tree.jar}"/>
@@ -664,7 +662,6 @@ under the License.
                     <available file="${dsig.bouncycastle-prov.jar}"/>
                     <available file="${dsig.bouncycastle-pkix.jar}"/>
                     <available file="${dsig.xmlsec.jar}"/>
-                    <available file="${dsig.slf4j-api.jar}"/>
                     <available file="${main.commons-collections4.jar}"/>
                     <available file="${main.commons-math3.jar}"/>
                     <available file="${main.com.zaxxer.jar}"/>
@@ -693,6 +690,8 @@ under the License.
         <downloadfile src="${main.objenesis.url}" dest="${main.objenesis.jar}"/>
         <downloadfile src="${main.ant.url}" dest="${main.ant.jar}"/>
         <downloadfile src="${main.antlauncher.url}" dest="${main.antlauncher.jar}"/>
+        <downloadfile src="${main.slf4j-api.url}" dest="${main.slf4j-api.jar}"/>
+        <downloadfile src="${main.slf4j-simple.url}" dest="${main.slf4j-simple.jar}"/>
         <downloadfile src="${asm.url}" dest="${asm.jar}"/>
         <downloadfile src="${asm-commons.url}" dest="${asm-commons.jar}"/>
         <downloadfile src="${asm-tree.url}" dest="${asm-tree.jar}"/>
@@ -711,7 +710,6 @@ under the License.
         <downloadfile src="${dsig.bouncycastle-prov.url}" dest="${dsig.bouncycastle-prov.jar}"/>
         <downloadfile src="${dsig.bouncycastle-pkix.url}" dest="${dsig.bouncycastle-pkix.jar}"/>
         <downloadfile src="${dsig.xmlsec.url}" dest="${dsig.xmlsec.jar}"/>
-        <downloadfile src="${dsig.slf4j-api.url}" dest="${dsig.slf4j-api.jar}"/>
     </target>
 
     <target name="check-ooxml-jars">
@@ -724,7 +722,6 @@ under the License.
                     <available file="${ooxml.test.reflections.jar}"/>
                     <available file="${ooxml.test.guava.jar}"/>
                     <available file="${ooxml.test.javassist.jar}"/>
-                    <available file="${ooxml.test.log4j.jar}"/>
                     <available file="${svg.xml-apis-ext.jar}"/>
                     <available file="${svg.batik-all.jar}"/>
                     <available file="${svg.xmlgraphics-commons.jar}"/>
@@ -745,7 +742,6 @@ under the License.
         <downloadfile src="${ooxml.test.reflections.url}" dest="${ooxml.test.reflections.jar}"/>
         <downloadfile src="${ooxml.test.guava.url}" dest="${ooxml.test.guava.jar}"/>
         <downloadfile src="${ooxml.test.javassist.url}" dest="${ooxml.test.javassist.jar}"/>
-        <downloadfile src="${ooxml.test.log4j.url}" dest="${ooxml.test.log4j.jar}"/>
         <downloadfile src="${svg.batik-all.url}" dest="${svg.batik-all.jar}"/>
         <downloadfile src="${svg.xml-apis-ext.url}" dest="${svg.xml-apis-ext.jar}"/>
         <downloadfile src="${svg.xmlgraphics-commons.url}" dest="${svg.xmlgraphics-commons.jar}"/>
@@ -1608,7 +1604,7 @@ under the License.
 
     <target name="test-integration" depends="compile-integration,-test-integration-check,jacocotask"
             unless="integration.test.notRequired">
-        <propertyreset name="org.apache.poi.util.POILogger" value="org.apache.poi.util.CommonsLogger"/>
+        <propertyreset name="org.apache.poi.util.POILogger" value="org.apache.poi.util.SLF4JLogger"/>
         <delete dir="build" includes="test-integration.log*"/>
 
         <path id="test-integration.modules">
@@ -2514,7 +2510,6 @@ org/apache/poi/schemas/ooxml/system/ooxml/rectaf36doctype.xsb
             </fileset>
             <auxClasspath path="${dsig.bouncycastle-pkix.jar}" />
             <auxClasspath path="${dsig.bouncycastle-prov.jar}" />
-            <auxClasspath path="${dsig.slf4j-api.jar}" />
             <auxClasspath path="${dsig.xmlsec.jar}" />
             <auxClasspath path="${ooxml.xsds.jar}" />
             <auxClasspath path="${ooxml.curvesapi.jar}" />
@@ -2524,6 +2519,8 @@ org/apache/poi/schemas/ooxml/system/ooxml/rectaf36doctype.xsb
             <auxClasspath path="${main.commons-math3.jar}" />
             <auxClasspath path="${main.commons-codec.jar}" />
             <auxClasspath path="${main.commons-logging.jar}" />
+            <auxClasspath path="${main.slf4j-api.jar}" />
+            <auxClasspath path="${main.slf4j-simple.jar}" />
             <auxClasspath path="${main.junit.jar}" />
             <auxClasspath path="${main.jmh.jar}"/>
             <auxClasspath path="${main.jmhAnnotation.jar}"/>
