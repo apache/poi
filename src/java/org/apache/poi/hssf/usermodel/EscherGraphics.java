@@ -123,7 +123,6 @@ public class EscherGraphics extends Graphics
 
 
     @Override
-    @NotImplemented
     public void clearRect(int x, int y, int width, int height)
     {
         Color color = foreground;
@@ -136,16 +135,14 @@ public class EscherGraphics extends Graphics
     @NotImplemented
     public void clipRect(int x, int y, int width, int height)
     {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"clipRect not supported");
+        logger.log(POILogger.WARN,"clipRect not supported");
     }
 
     @Override
     @NotImplemented
     public void copyArea(int x, int y, int width, int height, int dx, int dy)
     {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"copyArea not supported");
+        logger.log(POILogger.WARN,"copyArea not supported");
     }
 
     @Override
@@ -165,8 +162,7 @@ public class EscherGraphics extends Graphics
     public void drawArc(int x, int y, int width, int height,
 				 int startAngle, int arcAngle)
     {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"drawArc not supported");
+        logger.log(POILogger.WARN,"drawArc not supported");
     }
 
     @Override
@@ -177,8 +173,7 @@ public class EscherGraphics extends Graphics
 				      Color bgcolor,
 				      ImageObserver observer)
     {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"drawImage not supported");
+        logger.log(POILogger.WARN,"drawImage not supported");
 
         return true;
     }
@@ -190,8 +185,7 @@ public class EscherGraphics extends Graphics
 				      int sx1, int sy1, int sx2, int sy2,
 				      ImageObserver observer)
     {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"drawImage not supported");
+        logger.log(POILogger.WARN,"drawImage not supported");
         return true;
     }
 
@@ -272,16 +266,14 @@ public class EscherGraphics extends Graphics
     public void drawPolyline(int[] xPoints, int[] yPoints,
                              int nPoints)
     {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"drawPolyline not supported");
+        logger.log(POILogger.WARN,"drawPolyline not supported");
     }
 
     @Override
     @NotImplemented
     public void drawRect(int x, int y, int width, int height)
     {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"drawRect not supported");
+        logger.log(POILogger.WARN,"drawRect not supported");
     }
 
     @Override
@@ -289,8 +281,7 @@ public class EscherGraphics extends Graphics
     public void drawRoundRect(int x, int y, int width, int height,
 				       int arcWidth, int arcHeight)
     {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"drawRoundRect not supported");
+        logger.log(POILogger.WARN,"drawRoundRect not supported");
     }
 
     @Override
@@ -497,7 +488,7 @@ public class EscherGraphics extends Graphics
     @NotImplemented
     public void setClip(Shape shape)
     {
-        // ignore... not implemented
+        logger.log(POILogger.WARN,"setClip not supported");
     }
 
     @Override
@@ -516,23 +507,21 @@ public class EscherGraphics extends Graphics
     @NotImplemented
     public void setPaintMode()
     {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"setPaintMode not supported");
+        logger.log(POILogger.WARN,"setPaintMode not supported");
     }
 
     @Override
     @NotImplemented
     public void setXORMode(Color color)
     {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"setXORMode not supported");
+        logger.log(POILogger.WARN,"setXORMode not supported");
     }
+
     @Override
     @NotImplemented
     public void translate(int x, int y)
     {
-        if (logger.check( POILogger.WARN ))
-            logger.log(POILogger.WARN,"translate not supported");
+        logger.log(POILogger.WARN,"translate not supported");
     }
 
     public Color getBackground()
