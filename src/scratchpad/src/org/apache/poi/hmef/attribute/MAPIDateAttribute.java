@@ -80,7 +80,7 @@ public final class MAPIDateAttribute extends MAPIAttribute {
          return ((MAPIDateAttribute)attr).getDate();
       }
       
-      logger.log(POILogger.WARN, "Warning, non date property found: " + attr);
+      logger.log(POILogger.WARN, "Warning, non date property found: ", attr);
       return null;
   }
 }

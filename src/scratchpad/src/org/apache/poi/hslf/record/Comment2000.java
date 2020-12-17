@@ -129,7 +129,7 @@ public final class Comment2000 extends RecordContainer {
             } else if (r instanceof Comment2000Atom){
                 commentAtom = (Comment2000Atom)r;
             } else {
-                logger.log(POILogger.WARN, "Unexpected record with type="+r.getRecordType()+" in Comment2000: " + r.getClass().getName());
+                logger.log(POILogger.WARN, "Unexpected record with type=", r.getRecordType(), " in Comment2000: ", r.getClass().getName());
             }
         }
 

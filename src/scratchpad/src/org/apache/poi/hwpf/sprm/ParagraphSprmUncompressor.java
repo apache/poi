@@ -413,7 +413,7 @@ public final class ParagraphSprmUncompressor
           newPAP.setRsid( sprm.getOperand() );
           break;
         default:
-            logger.log( POILogger.DEBUG, "Unknown PAP sprm ignored: " + sprm );
+            logger.log( POILogger.DEBUG, "Unknown PAP sprm ignored: ", sprm );
             break;
         }
   }

@@ -378,7 +378,7 @@ public class SignatureInfo {
          */
         List<XMLObject> objects = new ArrayList<>();
         for (SignatureFacet signatureFacet : signatureConfig.getSignatureFacets()) {
-            LOG.log(POILogger.DEBUG, "invoking signature facet: " + signatureFacet.getClass().getSimpleName());
+            LOG.log(POILogger.DEBUG, "invoking signature facet: ", signatureFacet.getClass().getSimpleName());
             signatureFacet.preSign(this, document, references, objects);
         }
 
@@ -415,10 +415,10 @@ public class SignatureInfo {
          * Completion of undigested ds:References in the ds:Manifests.
          */
         for (XMLObject object : objects) {
-            LOG.log(POILogger.DEBUG, "object java type: " + object.getClass().getName());
+            LOG.log(POILogger.DEBUG, "object java type: ", object.getClass().getName());
             List<XMLStructure> objectContentList = object.getContent();
             for (XMLStructure objectContent : objectContentList) {
-                LOG.log(POILogger.DEBUG, "object content java type: " + objectContent.getClass().getName());
+                LOG.log(POILogger.DEBUG, "object content java type: ", objectContent.getClass().getName());
                 if (!(objectContent instanceof Manifest)) {
                     continue;
                 }
@@ -593,7 +593,8 @@ public class SignatureInfo {
             return (Element)sigValNl.item(0);
         }
 
-        LOG.log(POILogger.WARN, "Signature element '"+localName+"' was "+(sigValNl.getLength() == 0 ? "not found" : "multiple times"));
+        LOG.log(POILogger.WARN, "Signature element '", localName, "' was ",
+                (sigValNl.getLength() == 0 ? "not found" : "multiple times"));
 
         return null;
     }
@@ -703,7 +704,7 @@ public class SignatureInfo {
             try {
                 return (Provider)Class.forName(className).getDeclaredConstructor().newInstance();
             } catch (Exception e) {
-                LOG.log(POILogger.DEBUG, "XMLDsig-Provider '"+className+"' can't be found - trying next.");
+                LOG.log(POILogger.DEBUG, "XMLDsig-Provider '", className, "' can't be found - trying next.");
                 return null;
             }
         }

@@ -634,8 +634,8 @@ public class TestBugs{
         {
             PictureType pictureType = picture.suggestPictureType();
             logger.log(POILogger.DEBUG,
-                    "Picture at offset " + picture.getStartOffset()
-                            + " has type " + pictureType);
+                    "Picture at offset ", picture.getStartOffset(),
+                            " has type ", pictureType);
         }
     }
 

@@ -400,12 +400,12 @@ public final class InternalSheet {
     public static InternalSheet createSheet() {
         return new InternalSheet();
     }
+
     private InternalSheet() {
         _mergedCellsTable = new MergedCellsTable();
         List<RecordBase> records = new ArrayList<>(32);
 
-        if (log.check( POILogger.DEBUG ))
-            log.log(POILogger.DEBUG, "Sheet createsheet from scratch called");
+        log.log(POILogger.DEBUG, "Sheet createsheet from scratch called");
 
         records.add(createBOF());
 
@@ -452,8 +452,7 @@ public final class InternalSheet {
         records.add(EOFRecord.instance);
 
         _records = records;
-        if (log.check( POILogger.DEBUG ))
-            log.log(POILogger.DEBUG, "Sheet createsheet from scratch exit");
+        log.log(POILogger.DEBUG, "Sheet createsheet from scratch exit");
     }
 
     public RowRecordsAggregate getRowsAggregate() {
@@ -551,8 +550,7 @@ public final class InternalSheet {
         _dimensions.setFirstRow(firstrow);
         _dimensions.setLastCol(lastcol);
         _dimensions.setLastRow(lastrow);
-        if (log.check( POILogger.DEBUG ))
-            log.log(POILogger.DEBUG, "Sheet.setDimensions exiting");
+        log.log(POILogger.DEBUG, "Sheet.setDimensions exiting");
     }
 
     public void visitContainedRecords(RecordVisitor rv, int offset) {

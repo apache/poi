@@ -187,9 +187,9 @@ public class RelationshipTransformService extends TransformService {
      */
     public Data transform(Data data, XMLCryptoContext context) throws TransformException {
         LOG.log(POILogger.DEBUG, "transform(data,context)");
-        LOG.log(POILogger.DEBUG, "data java type: " + data.getClass().getName());
+        LOG.log(POILogger.DEBUG, "data java type: ", data.getClass().getName());
         OctetStreamData octetStreamData = (OctetStreamData) data;
-        LOG.log(POILogger.DEBUG, "URI: " + octetStreamData.getURI());
+        LOG.log(POILogger.DEBUG, "URI: ", octetStreamData.getURI());
         InputStream octetStream = octetStreamData.getOctetStream();
 
         Document doc;

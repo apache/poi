@@ -263,7 +263,7 @@ public final class HSLFFill {
             case FILL_PICTURE:
                 return getTexturePaint();
             default:
-                LOG.log(POILogger.WARN, "unsuported fill type: " + fillType);
+                LOG.log(POILogger.WARN, "unsuported fill type: ", fillType);
                 return null;
         }
     }

@@ -202,7 +202,7 @@ public class AttachmentChunks implements ChunkGroup {
         } else if (chunkId == ATTACH_CONTENT_ID.id) {
             attachContentId = (StringChunk) chunk;
         } else {
-            LOG.log(POILogger.WARN, "Currently unsupported attachment chunk property will be ignored. " + chunk.getEntryName());
+            LOG.log(POILogger.WARN, "Currently unsupported attachment chunk property will be ignored. ", chunk.getEntryName());
         }
 
         // And add to the main list

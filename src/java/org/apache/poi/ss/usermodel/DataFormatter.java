@@ -598,7 +598,7 @@ public class DataFormatter {
         try {
             return new ExcelStyleDateFormatter(formatStr, dateSymbols);
         } catch(IllegalArgumentException iae) {
-            logger.log(POILogger.DEBUG, "Formatting failed for format " + formatStr + ", falling back", iae);
+            logger.log(POILogger.DEBUG, "Formatting failed for format ", formatStr, ", falling back", iae);
             // the pattern could not be parsed correctly,
             // so fall back to the default number format
             return getDefaultFormat(cellValue);
@@ -758,7 +758,7 @@ public class DataFormatter {
         try {
             return new InternalDecimalFormatWithScale(format, symbols);
         } catch(IllegalArgumentException iae) {
-            logger.log(POILogger.DEBUG, "Formatting failed for format " + formatStr + ", falling back", iae);
+            logger.log(POILogger.DEBUG, "Formatting failed for format ", formatStr, ", falling back", iae);
             // the pattern could not be parsed correctly,
             // so fall back to the default number format
             return getDefaultFormat(cellValue);

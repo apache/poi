@@ -66,7 +66,7 @@ public final class ChunkStream extends Stream {
 
 					pos += chunk.getOnDiskSize();
 				} else {
-					logger.log(POILogger.WARN, "Needed " + headerSize + " bytes to create the next chunk header, but only found " + (contents.length-pos) + " bytes, ignoring rest of data");
+					logger.log(POILogger.WARN, "Needed ", headerSize, " bytes to create the next chunk header, but only found ", (contents.length-pos), " bytes, ignoring rest of data");
 					pos = contents.length;
 				}
 			}

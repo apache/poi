@@ -177,7 +177,7 @@ public final class FileInformationBlock
             /* The Word spec has a much smaller list of "valid" values
              * to what the large CommonCrawl corpus contains!
              */
-            logger.log(POILogger.WARN, "Invalid file format version number: " + nfib + "("+nfibHex+")");
+            logger.log(POILogger.WARN, "Invalid file format version number: ", nfib, "(", nfibHex, ")");
         }
     }
 
@@ -213,7 +213,7 @@ public final class FileInformationBlock
             assertCswNew( "0x0112", 0x0005, "0x0005", _cswNew );
             break;
         default:
-            logger.log(POILogger.WARN, "Invalid file format version number: " + getNFib());
+            logger.log(POILogger.WARN, "Invalid file format version number: ", getNFib());
         }
     }
 

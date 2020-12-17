@@ -95,7 +95,7 @@ public final class TNEFDateAttribute extends TNEFAttribute {
          return ((TNEFDateAttribute)attr).getDate();
       }
       
-      logger.log(POILogger.WARN, "Warning, non date property found: " + attr);
+      logger.log(POILogger.WARN, "Warning, non date property found: ", attr);
       return null;
   }
 }

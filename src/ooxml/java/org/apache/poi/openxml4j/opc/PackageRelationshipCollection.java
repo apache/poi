@@ -300,7 +300,7 @@ public final class PackageRelationshipCollection implements
     public void parseRelationshipsPart(PackagePart relPart)
             throws InvalidFormatException {
         try {
-            logger.log(POILogger.DEBUG, "Parsing relationship: " + relPart.getPartName());
+            logger.log(POILogger.DEBUG, "Parsing relationship: ", relPart.getPartName());
             Document xmlRelationshipsDoc = DocumentHelper.readDocument(relPart.getInputStream());
 
             // Browse default types

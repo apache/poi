@@ -577,9 +577,9 @@ public class WordToFoConverter extends AbstractWordConverter
         {
             logger.log(
                     POILogger.WARN,
-                    "Table without body starting on offset "
-                            + table.getStartOffset() + " -- "
-                            + table.getEndOffset() );
+                    "Table without body starting on offset ",
+                            table.getStartOffset(), " -- ",
+                            table.getEndOffset() );
         }
     }
 

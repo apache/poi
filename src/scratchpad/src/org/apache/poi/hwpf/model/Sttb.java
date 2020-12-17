@@ -83,8 +83,8 @@ public class Sttb
         {
             POILogFactory.getLogger(Sttb.class).log(
                     POILogger.WARN,
-                    "Non-extended character Pascal strings are not supported right now. "
-                            + "Creating empty values in the RevisionMarkAuthorTable for now.  " +
+                    "Non-extended character Pascal strings are not supported right now. ",
+                    "Creating empty values in the RevisionMarkAuthorTable for now.  ",
                     "Please, contact POI developers for update.");
             //set data and extraData to empty values to avoid
             //downstream NPE in case someone calls getEntries on RevisionMarkAuthorTable

@@ -44,12 +44,9 @@ public class NilPICFAndBinData
 
         if ( cbHeader != 0x44 )
         {
-            if (log.check(POILogger.WARN)) {
-                log.log(POILogger.WARN, "NilPICFAndBinData at offset ", offset,
-                        " cbHeader 0x" + Integer.toHexString(cbHeader)
-                                + " != 0x44"
-                );
-            }
+            log.log(POILogger.WARN, "NilPICFAndBinData at offset ", offset,
+                    " cbHeader 0x", Integer.toHexString(cbHeader), " != 0x44"
+            );
         }
 
         // skip the 62 ignored bytes

@@ -113,7 +113,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
                 if ( warnAboutNonChpSprms )
                 {
                     logger.log( POILogger.WARN,
-                            "Non-CHP SPRM returned by SprmIterator: " + sprm );
+                            "Non-CHP SPRM returned by SprmIterator: ", sprm );
                 }
                 continue;
             }
@@ -706,7 +706,7 @@ public final class CharacterSprmUncompressor extends SprmUncompressor
 					oldCHP.isFNoProof()));
 			break;
       default:
-          logger.log( POILogger.DEBUG, "Unknown CHP sprm ignored: " + sprm );
+          logger.log( POILogger.DEBUG, "Unknown CHP sprm ignored: ", sprm );
           break;
     }
   }

@@ -189,11 +189,10 @@ public final class TableRow extends Range
         if ( cells.size() != expectedCellsCount )
         {
             logger.log( POILogger.WARN,
-                    "Number of found table cells (" + cells.size()
-                            + ") for table row [" + getStartOffset() + "c; "
-                            + getEndOffset()
-                            + "c] not equals to stored property value "
-                            + expectedCellsCount );
+                    "Number of found table cells (", cells.size(),
+                            ") for table row [", getStartOffset(), "c; ",
+                            getEndOffset(), "c] not equals to stored property value ",
+                            expectedCellsCount );
             _tprops.setItcMac( (short) cells.size() );
         }
 

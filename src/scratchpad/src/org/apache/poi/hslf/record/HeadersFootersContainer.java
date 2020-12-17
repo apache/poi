@@ -89,11 +89,11 @@ public final class HeadersFootersContainer extends RecordContainer {
                         csFooter = cs;
                         break;
                     default:
-                        logger.log(POILogger.WARN, "Unexpected CString.Options in HeadersFootersContainer: " + opts);
+                        logger.log(POILogger.WARN, "Unexpected CString.Options in HeadersFootersContainer: ", opts);
                         break;
                 }
             } else {
-                logger.log(POILogger.WARN, "Unexpected record in HeadersFootersContainer: " + child);
+                logger.log(POILogger.WARN, "Unexpected record in HeadersFootersContainer: ", child);
             }
         }
     }

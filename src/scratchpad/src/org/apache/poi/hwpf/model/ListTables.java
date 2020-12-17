@@ -141,18 +141,13 @@ public final class ListTables
   {
     ListData lst = _listMap.get(lsid);
     if (lst == null) {
-        if (log.check(POILogger.WARN)) {
-            log.log(POILogger.WARN, "ListData for " +
-                    lsid + " was null.");
-        }
+        log.log(POILogger.WARN, "ListData for ", lsid, " was null.");
         return null;
     }
     if(level < lst.numLevels()) {
         return lst.getLevels()[level];
     }
-    if (log.check(POILogger.WARN)) {
-        log.log(POILogger.WARN, "Requested level " + level + " which was greater than the maximum defined (" + lst.numLevels() + ")");
-    }
+    log.log(POILogger.WARN, "Requested level ", level, " which was greater than the maximum defined (", lst.numLevels(), ")");
 	return null;
   }
 

@@ -72,14 +72,13 @@ public abstract class PropertyNode<T extends PropertyNode<T>> implements Compara
         _buf = buf;
 
         if (_cpStart < 0) {
-            _logger.log(POILogger.WARN, "A property claimed to start before zero, at " + _cpStart + "! Resetting it to zero, and hoping for the best");
+            _logger.log(POILogger.WARN, "A property claimed to start before zero, at ", _cpStart, "! Resetting it to zero, and hoping for the best");
             _cpStart = 0;
         }
 
         if (_cpEnd < _cpStart) {
-            _logger.log(POILogger.WARN, "A property claimed to end (" + _cpEnd
-                    + ") before start! "
-                    + "Resetting end to start, and hoping for the best");
+            _logger.log(POILogger.WARN, "A property claimed to end (", _cpEnd,
+                    ") before start! Resetting end to start, and hoping for the best");
             _cpEnd = _cpStart;
         }
     }

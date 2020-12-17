@@ -641,7 +641,7 @@ public final class XSSFDrawing extends POIXMLDocumentPart implements Drawing<XSS
                             shape = new XSSFShapeGroup(this, (CTGroupShape) obj);
                         } else if (obj instanceof XmlAnyTypeImpl) {
                             LOG.log(POILogger.WARN,
-                                "trying to parse AlternateContent, " + "this unlinks the returned Shapes from the underlying xml content, " + "so those shapes can't be used to modify the drawing, " + "i.e. modifications will be ignored!");
+                                "trying to parse AlternateContent, this unlinks the returned Shapes from the underlying xml content, so those shapes can't be used to modify the drawing, i.e. modifications will be ignored!");
 
                             // XmlAnyTypeImpl is returned for AlternateContent
                             // parts, which might contain a CTDrawing

@@ -148,9 +148,10 @@ public abstract class BitMaskTextProp extends TextProp {
 	    setWriteMask(writeMask);
 	    super.setValue(maskValue(val));
 	    if (val != super.getValue()) {
-	        logger.log(POILogger.WARN, "Style properties of '"+getName()+"' don't match mask - output will be sanitized");
+	        logger.log(POILogger.WARN, "Style properties of '", getName(), "' don't match mask - output will be sanitized");
 	        if (logger.check(POILogger.DEBUG)) {
-	            StringBuilder sb = new StringBuilder("The following style attributes of the '"+getName()+"' property will be ignored:\n");
+	            StringBuilder sb = new StringBuilder("The following style attributes of the '")
+						.append(getName()).append("' property will be ignored:\n");
 	            int i=0;
 	            for (int mask : subPropMasks) {
 	                if (!subPropMatches[i] && (val & mask) != 0) {

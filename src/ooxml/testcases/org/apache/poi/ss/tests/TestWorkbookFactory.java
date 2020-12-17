@@ -94,8 +94,7 @@ public final class TestWorkbookFactory {
             else {
                 // TODO: close() re-writes the sample-file?! Resort to revert() for now to close file handle...
                 LOGGER.log(POILogger.WARN,
-                        "reverting XSSFWorkbook rather than closing it to avoid close() modifying the file on disk. " +
-                        "Refer to bug 58779.");
+                        "reverting XSSFWorkbook rather than closing it to avoid close() modifying the file on disk. Refer to bug 58779.");
                 xwb.getPackage().revert();
             }
         } else {

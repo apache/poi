@@ -1445,9 +1445,7 @@ public abstract class BaseTestBugzillaIssues {
         // Create a workbook
         try (Workbook wb = _testDataProvider.createWorkbook(nrows+1)) {
             final Sheet sh = wb.createSheet();
-            if (logger.check(POILogger.DEBUG)) {
-                logger.log(POILogger.DEBUG, wb.getClass().getName() + " column autosizing timing...");
-            }
+            logger.log(POILogger.DEBUG, wb.getClass().getName(), " column autosizing timing...");
 
             final long t0 = time();
             _testDataProvider.trackAllColumnsForAutosizing(sh);
@@ -1461,7 +1459,7 @@ public abstract class BaseTestBugzillaIssues {
             final double populateSheetTime = delta(t0);
             final double populateSheetTimePerCell_ns = (1000000 * populateSheetTime / (nrows * ncols));
             if (logger.check(POILogger.DEBUG)) {
-                logger.log(POILogger.DEBUG, "Populate sheet time: " + populateSheetTime + " ms (" + populateSheetTimePerCell_ns + " ns/cell)");
+                logger.log(POILogger.DEBUG, "Populate sheet time: ", populateSheetTime, " ms (", populateSheetTimePerCell_ns, " ns/cell)");
 
                 logger.log(POILogger.DEBUG, "Autosizing...");
             }
@@ -1469,24 +1467,19 @@ public abstract class BaseTestBugzillaIssues {
             for (int c = 0; c < ncols; c++) {
                 final long t2 = time();
                 sh.autoSizeColumn(c);
-                if (logger.check(POILogger.DEBUG)) {
-                    logger.log(POILogger.DEBUG, "Column " + c + " took " + delta(t2) + " ms");
-                }
-
+                logger.log(POILogger.DEBUG, "Column ", c, " took ", delta(t2), " ms");
             }
             final double autoSizeColumnsTime = delta(t1);
             final double autoSizeColumnsTimePerColumn = autoSizeColumnsTime / ncols;
             final double bestFitWidthTimePerCell_ns = 1000000 * autoSizeColumnsTime / (ncols * nrows);
 
             if (logger.check(POILogger.DEBUG)) {
-                logger.log(POILogger.DEBUG, "Auto sizing columns took a total of " + autoSizeColumnsTime + " ms (" + autoSizeColumnsTimePerColumn + " ms per column)");
-                logger.log(POILogger.DEBUG, "Best fit width time per cell: " + bestFitWidthTimePerCell_ns + " ns");
+                logger.log(POILogger.DEBUG, "Auto sizing columns took a total of ", autoSizeColumnsTime, " ms (", autoSizeColumnsTimePerColumn, " ms per column)");
+                logger.log(POILogger.DEBUG, "Best fit width time per cell: ", bestFitWidthTimePerCell_ns, " ns");
             }
 
             final double totalTime_s = (populateSheetTime + autoSizeColumnsTime) / 1000;
-            if (logger.check(POILogger.DEBUG)) {
-                logger.log(POILogger.DEBUG, "Total time: " + totalTime_s + " s");
-            }
+            logger.log(POILogger.DEBUG, "Total time: ", totalTime_s, " s");
         }
 
         //if (bestFitWidthTimePerCell_ns > 50000) {

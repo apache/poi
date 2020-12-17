@@ -171,11 +171,9 @@ public final class FIBFieldHandler
         {
           if (dsOffset + dsSize > tableStream.length)
           {
-              if (log.check(POILogger.WARN)) {
-                  log.log(POILogger.WARN, "Unhandled data structure points to outside the buffer. " +
-                          "offset = " + dsOffset + ", length = " + dsSize +
-                          ", buffer length = " + tableStream.length);
-              }
+              log.log(POILogger.WARN, "Unhandled data structure points to outside the buffer. ",
+                      "offset = ", dsOffset, ", length = ", dsSize,
+                      ", buffer length = ", tableStream.length);
           }
           else
           {

@@ -617,7 +617,7 @@ public class MAPIMessage extends POIReadOnlyDocument {
       } else if (mc.equalsIgnoreCase("IPM.Post")) {
          return MESSAGE_CLASS.POST;
       } else {
-         logger.log(POILogger.WARN, "I don't recognize message class '"+mc+"'. " +
+         logger.log(POILogger.WARN, "I don't recognize message class '", mc, "'. ",
                  "Please open an issue on POI's bugzilla");
          return MESSAGE_CLASS.UNKNOWN;
       }

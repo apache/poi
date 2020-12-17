@@ -350,7 +350,7 @@ public class SignatureConfig {
             try {
                 this.executionTime = fmt.parse(executionTime);
             } catch (ParseException e) {
-                LOG.log(POILogger.WARN, "Illegal execution time: "+executionTime);
+                LOG.log(POILogger.WARN, "Illegal execution time: ", executionTime);
             }
         }
     }

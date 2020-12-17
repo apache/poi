@@ -177,7 +177,7 @@ public class CurrentUserAtom
 		long usernameLen = LittleEndian.getUShort(_contents,20);
 		if(usernameLen > 512) {
 			// Handle the case of it being garbage
-			logger.log(POILogger.WARN, "Warning - invalid username length " + usernameLen + " found, treating as if there was no username set");
+			logger.log(POILogger.WARN, "Warning - invalid username length ", usernameLen, " found, treating as if there was no username set");
 			usernameLen = 0;
 		}
 

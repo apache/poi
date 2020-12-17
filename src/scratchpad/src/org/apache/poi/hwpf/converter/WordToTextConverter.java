@@ -355,7 +355,7 @@ public class WordToTextConverter extends AbstractWordConverter
             logger.log( POILogger.WARN, "There is an OLE object entry '",
                     entry.getName(),
                     "', but there is no text extractor for this object type ",
-                    "or text extractor factory is not available: ", "" + exc );
+                    "or text extractor factory is not available: ", "", exc );
             return false;
         }
 

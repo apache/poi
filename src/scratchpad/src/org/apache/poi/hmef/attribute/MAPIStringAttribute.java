@@ -77,7 +77,7 @@ public final class MAPIStringAttribute extends MAPIAttribute {
          return ((MAPIRtfAttribute)attr).getDataString();
       }
       
-      logger.log(POILogger.WARN, "Warning, non string property found: " + attr);
+      logger.log(POILogger.WARN, "Warning, non string property found: ", attr);
       return null;
   }
 }

@@ -104,8 +104,7 @@ public class MessageSubmissionChunk extends Chunk {
                         date.clear(Calendar.MILLISECOND);
                     } else {
                         LOG.log(POILogger.WARN,
-                                "Warning - unable to make sense of date "
-                                        + dateS);
+                                "Warning - unable to make sense of date ", dateS);
                     }
                 }
             }

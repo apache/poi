@@ -69,7 +69,7 @@ public final class OldFfn {
         Charset charset = null;
         FontCharset wmfCharset = FontCharset.valueOf(chs & 0xff);
         if (wmfCharset == null) {
-            logger.log(POILogger.WARN, "Couldn't find font for type: " + (chs & 0xff));
+            logger.log(POILogger.WARN, "Couldn't find font for type: ", (chs & 0xff));
         } else {
             charset = wmfCharset.getCharset();
         }

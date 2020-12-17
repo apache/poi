@@ -311,7 +311,7 @@ public final class ZipPackage extends OPCPackage {
                     : PackagingURIHelper.createPartName(ZipHelper.getOPCNameFromZipItemName(entryName));
             } catch (Exception e) {
                 // We assume we can continue, even in degraded mode ...
-                LOG.log(POILogger.WARN,"Entry " + entryName + " is not valid, so this part won't be add to the package.", e);
+                LOG.log(POILogger.WARN,"Entry ", entryName, " is not valid, so this part won't be add to the package.", e);
             }
 
             this.partName = ppn;
@@ -437,9 +437,9 @@ public final class ZipPackage extends OPCPackage {
 			} finally {
 				// Either the save operation succeed or not, we delete the temporary file
 				if (!tempFile.delete()) {
-					LOG.log(POILogger.WARN, "The temporary file: '"
-					+ targetFile.getAbsolutePath()
-					+ "' cannot be deleted ! Make sure that no other application use it.");
+					LOG.log(POILogger.WARN, "The temporary file: '",
+					    targetFile.getAbsolutePath(),
+					    "' cannot be deleted ! Make sure that no other application use it.");
 				}
 			}
 		}
@@ -534,7 +534,7 @@ public final class ZipPackage extends OPCPackage {
                 }
 
 				final PackagePartName ppn = part.getPartName();
-				LOG.log(POILogger.DEBUG,"Save part '" + ZipHelper.getZipItemNameFromOPCName(ppn.getName()) + "'");
+				LOG.log(POILogger.DEBUG,"Save part '", ZipHelper.getZipItemNameFromOPCName(ppn.getName()), "'");
 				final PartMarshaller marshaller = partMarshallers.get(part._contentType);
 
 				final PartMarshaller pm = (marshaller != null) ? marshaller : defaultPartMarshaller;

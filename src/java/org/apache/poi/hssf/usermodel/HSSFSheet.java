@@ -231,9 +231,9 @@ public final class HSSFSheet implements org.apache.poi.ss.usermodel.Sheet {
             }
             if (log.check( POILogger.DEBUG )) {
                 if (cval instanceof Record) {
-                log.log( DEBUG, "record id = " + Integer.toHexString( ( (org.apache.poi.hssf.record.Record) cval ).getSid() ) );
+                    log.log( DEBUG, "record id = ", Integer.toHexString( ( (org.apache.poi.hssf.record.Record) cval ).getSid() ) );
                 } else {
-                    log.log( DEBUG, "record = " + cval );
+                    log.log( DEBUG, "record = ", cval );
                 }
             }
             hrow.createCellFromRecord( cval );

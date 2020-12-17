@@ -66,7 +66,7 @@ public class ErrorConstant {
     			default:    break;
     		}
 	    }
-		logger.log( POILogger.WARN, "Warning - unexpected error code (" + errorCode + ")");
+		logger.log( POILogger.WARN, "Warning - unexpected error code (", errorCode, ")");
 		return new ErrorConstant(errorCode);
 	}
 

@@ -427,9 +427,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
      */
 
     private void convertLabelRecords(List<org.apache.poi.hssf.record.Record> records, int offset) {
-        if (log.check(POILogger.DEBUG)) {
-            log.log(POILogger.DEBUG, "convertLabelRecords called");
-        }
+        log.log(POILogger.DEBUG, "convertLabelRecords called");
         for (int k = offset; k < records.size(); k++) {
             Record rec = records.get(k);
 
@@ -448,9 +446,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
                 records.add(k, newrec);
             }
         }
-        if (log.check(POILogger.DEBUG)) {
-            log.log(POILogger.DEBUG, "convertLabelRecords exit");
-        }
+        log.log(POILogger.DEBUG, "convertLabelRecords exit");
     }
 
     /**

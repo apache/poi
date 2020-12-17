@@ -251,7 +251,7 @@ public final class StyleTextPropAtom extends RecordAtom {
 
         }
         if (rawContents.length > 0 && textHandled != (size+1)){
-            logger.log(POILogger.WARN, "Problem reading paragraph style runs: textHandled = " + textHandled + ", text.size+1 = " + (size+1));
+            logger.log(POILogger.WARN, "Problem reading paragraph style runs: textHandled = ", textHandled, ", text.size+1 = ", (size+1));
         }
 
         // Now do the character stylings
@@ -283,7 +283,7 @@ public final class StyleTextPropAtom extends RecordAtom {
             }
         }
         if (rawContents.length > 0 && textHandled != (size+1)){
-            logger.log(POILogger.WARN, "Problem reading character style runs: textHandled = " + textHandled + ", text.size+1 = " + (size+1));
+            logger.log(POILogger.WARN, "Problem reading character style runs: textHandled = ", textHandled, ", text.size+1 = ", (size+1));
         }
 
         // Handle anything left over
@@ -296,8 +296,8 @@ public final class StyleTextPropAtom extends RecordAtom {
 
     private int checkTextLength(int readLength, int handledSoFar, int overallSize) {
         if (readLength + handledSoFar > overallSize + 1) {
-            logger.log(POILogger.WARN, "Style length of " + readLength + " at " + handledSoFar +
-                    " larger than stated size of " + overallSize + ", truncating");
+            logger.log(POILogger.WARN, "Style length of ", readLength, " at ", handledSoFar,
+                    " larger than stated size of ", overallSize, ", truncating");
             return overallSize + 1 - handledSoFar;
         }
         return readLength;

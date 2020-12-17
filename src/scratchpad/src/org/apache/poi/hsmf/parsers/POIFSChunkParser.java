@@ -234,7 +234,7 @@ public final class POIFSChunkParser {
                     return new StringChunk(namePrefix, chunkId, type);
                 }
                 // Type of an unsupported type! Skipping...
-                LOG.log(POILogger.WARN, "UNSUPPORTED PROP TYPE " + entryName);
+                LOG.log(POILogger.WARN, "UNSUPPORTED PROP TYPE ", entryName);
                 return null;
             }
         }
@@ -249,7 +249,7 @@ public final class POIFSChunkParser {
             try {
                 multiValueIdx = Long.parseLong(mvidxstr) & 0xFFFFFFFFL;
             } catch (NumberFormatException ignore) {
-                LOG.log(POILogger.WARN, "Can't read multi value idx from entry " + entry.getName());
+                LOG.log(POILogger.WARN, "Can't read multi value idx from entry ", entry.getName());
             }
         }
 
@@ -270,7 +270,7 @@ public final class POIFSChunkParser {
                 chunk = new StringChunk(namePrefix, chunkId, type);
             } else {
                 // Type of an unsupported multivalued type! Skipping...
-                LOG.log(POILogger.WARN, "Unsupported multivalued prop type for entry " + entry.getName());
+                LOG.log(POILogger.WARN, "Unsupported multivalued prop type for entry ", entry.getName());
                 return null;
             }
             mc.addChunk((int) multiValueIdx, chunk);

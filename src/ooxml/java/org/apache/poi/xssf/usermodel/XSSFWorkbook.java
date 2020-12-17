@@ -416,7 +416,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
                 for (CTExternalReference er : this.workbook.getExternalReferences().getExternalReferenceArray()) {
                     ExternalLinksTable el = elIdMap.get(er.getId());
                     if(el == null) {
-                        logger.log(POILogger.WARN, "ExternalLinksTable with r:id " + er.getId()+ " was defined, but didn't exist in package, skipping");
+                        logger.log(POILogger.WARN, "ExternalLinksTable with r:id ", er.getId(), " was defined, but didn't exist in package, skipping");
                         continue;
                     }
                     externalLinks.add(el);
@@ -437,7 +437,8 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
     public void parseSheet(Map<String, XSSFSheet> shIdMap, CTSheet ctSheet) {
         XSSFSheet sh = shIdMap.get(ctSheet.getId());
         if(sh == null) {
-            logger.log(POILogger.WARN, "Sheet with name " + ctSheet.getName() + " and r:id " + ctSheet.getId()+ " was defined, but didn't exist in package, skipping");
+            logger.log(POILogger.WARN, "Sheet with name ", ctSheet.getName(), " and r:id ",
+                    ctSheet.getId(), " was defined, but didn't exist in package, skipping");
             return;
         }
         sh.sheet = ctSheet;

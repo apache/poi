@@ -62,7 +62,7 @@ public abstract class POIXMLFactory {
                 }
             }
 
-            LOGGER.log(POILogger.DEBUG, "using default POIXMLDocumentPart for " + rel.getRelationshipType());
+            LOGGER.log(POILogger.DEBUG, "using default POIXMLDocumentPart for ", rel.getRelationshipType());
             return new POIXMLDocumentPart(parent, part);
         } catch (IOException | XmlException e) {
             throw new POIXMLException(e.getMessage(), e);

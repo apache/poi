@@ -178,7 +178,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
 
                 if (relationshipType.endsWith("customXml")
                     && !(contentType.equals("inkml+xml") || contentType.equals("text/xml"))) {
-                    LOG.log(POILogger.DEBUG, "skipping customXml with content type: " + contentType);
+                    LOG.log(POILogger.DEBUG, "skipping customXml with content type: ", contentType);
                     continue;
                 }
 
@@ -212,7 +212,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         }
         try {
             pn = new URI(pn).normalize().getPath().replace('\\', '/');
-            LOG.log(POILogger.DEBUG, "part name: " + pn);
+            LOG.log(POILogger.DEBUG, "part name: ", pn);
         } catch (URISyntaxException e) {
             throw new XMLSignatureException(e);
         }
@@ -230,7 +230,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
         CTSignatureTime ctTime = sigTime.addNewSignatureTime();
         ctTime.setFormat("YYYY-MM-DDThh:mm:ssTZD");
         ctTime.setValue(signatureConfig.formatExecutionTime());
-        LOG.log(POILogger.DEBUG, "execution time: " + ctTime.getValue());
+        LOG.log(POILogger.DEBUG, "execution time: ", ctTime.getValue());
 
         Element n = (Element)document.importNode(ctTime.getDomNode(),true);
         List<XMLStructure> signatureTimeContent = new ArrayList<>();
@@ -328,7 +328,7 @@ public class OOXMLSignatureFacet implements SignatureFacet {
     }
 
     protected static boolean isSignedRelationship(String relationshipType) {
-        LOG.log(POILogger.DEBUG, "relationship type: " + relationshipType);
+        LOG.log(POILogger.DEBUG, "relationship type: ", relationshipType);
         String rt = relationshipType.replaceFirst(".*/relationships/", "");
         return (signed.contains(rt) || rt.endsWith("customXml"));
     }

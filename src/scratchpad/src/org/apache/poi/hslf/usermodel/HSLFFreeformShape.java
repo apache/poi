@@ -150,7 +150,7 @@ public final class HSLFFreeformShape extends HSLFAutoShape implements FreeformSh
                     numPoints++;
                     break;
                 default:
-                    LOG.log(POILogger.WARN, "Ignoring invalid segment type "+type);
+                    LOG.log(POILogger.WARN, "Ignoring invalid segment type ", type);
                     break;
             }
 

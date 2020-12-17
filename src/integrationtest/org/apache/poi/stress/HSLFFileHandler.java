@@ -67,7 +67,7 @@ public class HSLFFileHandler extends SlideShowHandler {
             try {
                 testOneFile(file);
             } catch (Throwable e) {
-                logger.log(POILogger.WARN, "Failed to handle file " + file, e);
+                logger.log(POILogger.WARN, "Failed to handle file ", file, e);
             }
         }
     }

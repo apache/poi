@@ -140,7 +140,7 @@ public final class ChunkFactory {
 		//  as required
 		if(endOfDataPos > data.length) {
 			logger.log(POILogger.WARN,
-				"Header called for " + header.getLength() +" bytes, but that would take us past the end of the data!");
+				"Header called for ", header.getLength(), " bytes, but that would take us past the end of the data!");
 
 			endOfDataPos = data.length;
 			header.setLength(data.length - offset - header.getSizeInBytes());

@@ -824,10 +824,10 @@ public class Range {
         initAll();
         if ( tableEndInclusive >= this._parEnd )
         {
-            logger.log( POILogger.WARN, "The table's bounds ", "["
-                    + this._parStart + "; " + tableEndInclusive + ")",
-                    " fall outside of this Range paragraphs numbers ", "["
-                            + this._parStart + "; " + this._parEnd + ")" );
+            logger.log( POILogger.WARN, "The table's bounds ", "[",
+                    this._parStart, "; ", tableEndInclusive, ")",
+                    " fall outside of this Range paragraphs numbers [",
+                    this._parStart, "; ", this._parEnd, ")" );
         }
 
         if ( tableEndInclusive < 0 )

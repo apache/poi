@@ -78,7 +78,7 @@ public final class TNEFStringAttribute extends TNEFAttribute {
          return ((TNEFStringAttribute)attr).getString();
       }
       
-      logger.log(POILogger.WARN, "Warning, non string property found: " + attr);
+      logger.log(POILogger.WARN, "Warning, non string property found: ", attr);
       return null;
   }
 }

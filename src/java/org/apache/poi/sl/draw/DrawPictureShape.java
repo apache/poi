@@ -93,8 +93,8 @@ public class DrawPictureShape extends DrawSimpleShape {
 
         // the fallback is the BitmapImageRenderer, at least it gracefully handles invalid images
         final Supplier<ImageRenderer> getFallback = () -> {
-            LOG.log(POILogger.WARN, "No suitable image renderer found for content-type '"+
-            contentType+"' - include poi-scratchpad (for wmf/emf) or poi-ooxml (for svg) jars!");
+            LOG.log(POILogger.WARN, "No suitable image renderer found for content-type '",
+                contentType, "' - include poi-scratchpad (for wmf/emf) or poi-ooxml (for svg) jars!");
             return fallback;
         };
 

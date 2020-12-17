@@ -357,7 +357,7 @@ public class TestSignatureInfo {
                 assertNotNull(result);
                 assertEquals("test-file: " + testFile, 1, result.size());
                 X509Certificate signer = result.get(0);
-                LOG.log(POILogger.DEBUG, "signer: " + signer.getSubjectX500Principal());
+                LOG.log(POILogger.DEBUG, "signer: ", signer.getSubjectX500Principal());
 
                 boolean b = si.verifySignature();
                 assertTrue("test-file: " + testFile, b);
@@ -385,8 +385,8 @@ public class TestSignatureInfo {
             assertEquals("test-file: " + testFile, 2, result.size());
             X509Certificate signer1 = result.get(0);
             X509Certificate signer2 = result.get(1);
-            LOG.log(POILogger.DEBUG, "signer 1: " + signer1.getSubjectX500Principal());
-            LOG.log(POILogger.DEBUG, "signer 2: " + signer2.getSubjectX500Principal());
+            LOG.log(POILogger.DEBUG, "signer 1: ", signer1.getSubjectX500Principal());
+            LOG.log(POILogger.DEBUG, "signer 2: ", signer2.getSubjectX500Principal());
 
             boolean b = si.verifySignature();
             assertTrue("test-file: " + testFile, b);
@@ -527,8 +527,8 @@ public class TestSignatureInfo {
             } else {
                 TimeStampServiceValidator tspValidator = (validateChain, revocationData) -> {
                     for (X509Certificate certificate : validateChain) {
-                        LOG.log(POILogger.DEBUG, "certificate: " + certificate.getSubjectX500Principal());
-                        LOG.log(POILogger.DEBUG, "validity: " + certificate.getNotBefore() + " - " + certificate.getNotAfter());
+                        LOG.log(POILogger.DEBUG, "certificate: ", certificate.getSubjectX500Principal());
+                        LOG.log(POILogger.DEBUG, "validity: ", certificate.getNotBefore(), " - ", certificate.getNotAfter());
                     }
                 };
                 signatureConfig.setTspValidator(tspValidator);

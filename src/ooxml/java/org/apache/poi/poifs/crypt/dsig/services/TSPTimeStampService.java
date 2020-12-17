@@ -188,11 +188,11 @@ public class TSPTimeStampService implements TimeStampService {
         timeStampResponse.validate(request);
 
         if (0 != timeStampResponse.getStatus()) {
-            LOG.log(POILogger.DEBUG, "status: " + timeStampResponse.getStatus());
-            LOG.log(POILogger.DEBUG, "status string: " + timeStampResponse.getStatusString());
+            LOG.log(POILogger.DEBUG, "status: ", timeStampResponse.getStatus());
+            LOG.log(POILogger.DEBUG, "status string: ", timeStampResponse.getStatusString());
             PKIFailureInfo failInfo = timeStampResponse.getFailInfo();
             if (null != failInfo) {
-                LOG.log(POILogger.DEBUG, "fail info int value: " + failInfo.intValue());
+                LOG.log(POILogger.DEBUG, "fail info int value: ", failInfo.intValue());
                 if (/*PKIFailureInfo.unacceptedPolicy*/(1 << 8) == failInfo.intValue()) {
                     LOG.log(POILogger.DEBUG, "unaccepted policy");
                 }
@@ -204,8 +204,8 @@ public class TSPTimeStampService implements TimeStampService {
         SignerId signerId = timeStampToken.getSID();
         BigInteger signerCertSerialNumber = signerId.getSerialNumber();
         X500Name signerCertIssuer = signerId.getIssuer();
-        LOG.log(POILogger.DEBUG, "signer cert serial number: " + signerCertSerialNumber);
-        LOG.log(POILogger.DEBUG, "signer cert issuer: " + signerCertIssuer);
+        LOG.log(POILogger.DEBUG, "signer cert serial number: ", signerCertSerialNumber);
+        LOG.log(POILogger.DEBUG, "signer cert issuer: ", signerCertIssuer);
 
         // TSP signer certificates retrieval
         Collection<X509CertificateHolder> certificates = timeStampToken.getCertificates().getMatches(null);
@@ -229,7 +229,7 @@ public class TSPTimeStampService implements TimeStampService {
         x509converter.setProvider("BC");
         X509CertificateHolder certificate = signerCert;
         do {
-            LOG.log(POILogger.DEBUG, "adding to certificate chain: " + certificate.getSubject());
+            LOG.log(POILogger.DEBUG, "adding to certificate chain: ", certificate.getSubject());
             tspCertificateChain.add(x509converter.getCertificate(certificate));
             if (certificate.getSubject().equals(certificate.getIssuer())) {
                 break;
@@ -253,8 +253,8 @@ public class TSPTimeStampService implements TimeStampService {
             signatureConfig.getTspValidator().validate(tspCertificateChain, revocationData);
         }
 
-        LOG.log(POILogger.DEBUG, "time-stamp token time: "
-                + timeStampToken.getTimeStampInfo().getGenTime());
+        LOG.log(POILogger.DEBUG, "time-stamp token time: ",
+                timeStampToken.getTimeStampInfo().getGenTime());
 
         return timeStampToken.getEncoded();
     }

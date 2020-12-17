@@ -450,8 +450,8 @@ public abstract class AbstractWordConverter
             if ( previous > range.getEndOffset() )
             {
                 logger.log( POILogger.WARN, "Latest structure in ", range,
-                        " ended at #" + previous, " after range boundaries [",
-                        range.getStartOffset() + "; " + range.getEndOffset(),
+                        " ended at #", previous, " after range boundaries [",
+                        range.getStartOffset(), "; ", range.getEndOffset(),
                         ")" );
                 return true;
             }
@@ -747,8 +747,8 @@ public abstract class AbstractWordConverter
                 .getOfficeDrawingAt( characterRun.getStartOffset() );
         if ( officeDrawing == null )
         {
-            logger.log( POILogger.WARN, "Characters #" + characterRun
-                    + " references missing drawn object" );
+            logger.log( POILogger.WARN, "Characters #", characterRun,
+                    " references missing drawn object" );
             return;
         }
 
@@ -812,8 +812,8 @@ public abstract class AbstractWordConverter
         {
             if ( !field.hasSeparator() )
             {
-                logger.log( POILogger.WARN, parentRange + " contains " + field
-                        + " with 'Embedded Object' but without separator mark" );
+                logger.log( POILogger.WARN, parentRange, " contains ", field,
+                        " with 'Embedded Object' but without separator mark" );
                 return;
             }
 
@@ -898,8 +898,8 @@ public abstract class AbstractWordConverter
         }
         }
 
-        logger.log( POILogger.WARN, parentRange + " contains " + field
-                + " with unsupported type or format" );
+        logger.log( POILogger.WARN, parentRange, " contains ", field,
+                " with unsupported type or format" );
         processCharacters( wordDocument, currentTableLevel,
                 field.secondSubrange( parentRange ), currentBlock );
     }

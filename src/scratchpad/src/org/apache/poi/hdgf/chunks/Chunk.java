@@ -180,7 +180,7 @@ public final class Chunk {
             // Check we seem to have enough data
             if(offset >= contents.length) {
                 logger.log(POILogger.WARN,
-                        "Command offset " + offset + " past end of data at " + contents.length
+                        "Command offset ", offset, " past end of data at ", contents.length
                 );
                 continue;
             }
