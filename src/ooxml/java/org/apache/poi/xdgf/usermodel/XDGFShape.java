@@ -28,6 +28,8 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
+import com.microsoft.schemas.office.visio.x2012.main.ShapeSheetType;
+import com.microsoft.schemas.office.visio.x2012.main.TextType;
 import org.apache.poi.ooxml.POIXMLException;
 import org.apache.poi.util.Internal;
 import org.apache.poi.xdgf.exceptions.XDGFException;
@@ -36,9 +38,6 @@ import org.apache.poi.xdgf.usermodel.section.GeometrySection;
 import org.apache.poi.xdgf.usermodel.section.XDGFSection;
 import org.apache.poi.xdgf.usermodel.shape.ShapeVisitor;
 import org.apache.poi.xdgf.usermodel.shape.exceptions.StopVisitingThisBranch;
-
-import com.microsoft.schemas.office.visio.x2012.main.ShapeSheetType;
-import com.microsoft.schemas.office.visio.x2012.main.TextType;
 
 /**
  * A shape is a collection of Geometry Visualization, Format, Text, Images, and
@@ -723,7 +722,6 @@ public class XDGFShape extends XDGFSheet {
         float lineWeight = getLineWeight().floatValue();
         int cap;
         int join = BasicStroke.JOIN_MITER;
-        float miterlimit = 10.0f;
 
         switch (getLineCap()) {
         case 0:
@@ -826,7 +824,7 @@ public class XDGFShape extends XDGFSheet {
             }
         }
 
-        return new BasicStroke(lineWeight, cap, join, miterlimit, dash, 0);
+        return new BasicStroke(lineWeight, cap, join, 10, dash, 0);
     }
 
     //

@@ -254,6 +254,6 @@ public class DrawShape implements Drawable {
 
         int lineJoin = BasicStroke.JOIN_ROUND;
 
-        return new BasicStroke(lineWidth, lineCap, lineJoin, lineWidth, dashPatF, dash_phase);
+        return new BasicStroke(lineWidth, lineCap, lineJoin, 10, dashPatF, dash_phase);
     }
 }

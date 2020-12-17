@@ -17,6 +17,8 @@
 package org.apache.poi.xslf;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.sl.draw.DrawTextParagraph.HYPERLINK_HREF;
+import static org.apache.poi.sl.draw.DrawTextParagraph.HYPERLINK_LABEL;
 import static org.apache.poi.xslf.XSLFTestDataSamples.openSampleDocument;
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
@@ -25,6 +27,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+import static org.junit.Assume.assumeFalse;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -39,16 +42,23 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
+import java.text.AttributedCharacterIterator;
+import java.text.AttributedCharacterIterator.Attribute;
+import java.text.CharacterIterator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.imageio.ImageIO;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.common.usermodel.HyperlinkType;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.ooxml.POIXMLDocumentPart.RelationPart;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
@@ -57,6 +67,7 @@ import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
+import org.apache.poi.sl.usermodel.Hyperlink;
 import org.apache.poi.sl.usermodel.PaintStyle;
 import org.apache.poi.sl.usermodel.PaintStyle.SolidPaint;
 import org.apache.poi.sl.usermodel.PaintStyle.TexturePaint;
@@ -66,8 +77,13 @@ import org.apache.poi.sl.usermodel.PictureShape;
 import org.apache.poi.sl.usermodel.Shape;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.Slide;
+import org.apache.poi.sl.usermodel.SlideShow;
+import org.apache.poi.sl.usermodel.SlideShowFactory;
+import org.apache.poi.sl.usermodel.TextRun;
+import org.apache.poi.sl.usermodel.TextShape;
 import org.apache.poi.sl.usermodel.VerticalAlignment;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.NullPrintStream;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFAutoShape;
 import org.apache.poi.xslf.usermodel.XSLFGroupShape;
@@ -87,6 +103,8 @@ import org.apache.poi.xslf.usermodel.XSLFTableRow;
 import org.apache.poi.xslf.usermodel.XSLFTextBox;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
 import org.apache.poi.xslf.usermodel.XSLFTextRun;
+import org.apache.poi.xslf.util.DummyGraphics2d;
+import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOuterShadowEffect;
@@ -94,6 +112,17 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
 public class TestXSLFBugs {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+
+    private static boolean xslfOnly;
+
+    @BeforeClass
+    public static void checkHslf() {
+        try {
+            Class.forName("org.apache.poi.hslf.usermodel.HSLFSlideShow");
+        } catch (Exception e) {
+            xslfOnly = true;
+        }
+    }
 
     @Test
     public void bug62929() throws Exception {
@@ -247,9 +276,9 @@ public class TestXSLFBugs {
     public void bug62587() throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try (XMLSlideShow ppt = new XMLSlideShow()) {
-            Slide slide = ppt.createSlide();
+            Slide<?,?> slide = ppt.createSlide();
             XSLFPictureData pd = ppt.addPicture(slTests.getFile("wrench.emf"), PictureType.EMF);
-            PictureShape ps = slide.createPicture(pd);
+            PictureShape<?,?> ps = slide.createPicture(pd);
             ps.setAnchor(new Rectangle2D.Double(100,100,100,100));
             ppt.write(bos);
         }
@@ -584,9 +613,7 @@ public class TestXSLFBugs {
         // Some dummy pictures
         byte[][] pics = new byte[15][3];
         for (int i=0; i<pics.length; i++) {
-            for (int j=0; j<pics[i].length; j++) {
-                pics[i][j] = (byte)i;
-            }
+            Arrays.fill(pics[i], (byte) i);
         }
 
         // Add a few pictures
@@ -1009,6 +1036,55 @@ public class TestXSLFBugs {
             XSLFPictureShape ps = (XSLFPictureShape)slide.getShapes().get(0);
             assertEquals("image4.png", ps.getPictureData().getFileName());
             assertEquals("Picture 5", ps.getShapeName());
+        }
+    }
+
+
+    @Test
+    public void bug57796() throws IOException {
+        assumeFalse(xslfOnly);
+
+        try (SlideShow<?,?> ppt = SlideShowFactory.create(slTests.getFile("WithLinks.ppt"))) {
+            Slide<?,?> slide = ppt.getSlides().get(0);
+            TextShape<?,?> shape = (TextShape<?,?>) slide.getShapes().get(1);
+            TextRun r = shape.getTextParagraphs().get(1).getTextRuns().get(0);
+            Hyperlink<?,?> hlRun = r.getHyperlink();
+            assertNotNull(hlRun);
+            assertEquals("http://jakarta.apache.org/poi/", hlRun.getAddress());
+            assertEquals("http://jakarta.apache.org/poi/", hlRun.getLabel());
+            assertEquals(HyperlinkType.URL, hlRun.getType());
+
+            final List<Object> strings = new ArrayList<>();
+
+            DummyGraphics2d dgfx = new DummyGraphics2d(new NullPrintStream()) {
+                @Override
+                public void drawString(AttributedCharacterIterator iterator, float x, float y) {
+                    // For the test file, common sl draws textruns one by one and not mixed
+                    // so we evaluate the whole iterator
+                    Map<Attribute, Object> attributes = null;
+                    StringBuilder sb = new StringBuilder();
+
+                    for (char c = iterator.first();
+                         c != CharacterIterator.DONE;
+                         c = iterator.next()) {
+                        sb.append(c);
+                        attributes = iterator.getAttributes();
+                    }
+
+                    if ("Jakarta HSSF".equals(sb.toString())) {
+                        // this is a test for a manually modified ppt, for real hyperlink label
+                        // one would need to access the screen tip record
+                        Attribute[] obj = { HYPERLINK_HREF, HYPERLINK_LABEL };
+                        assertNotNull(attributes);
+                        Stream.of(obj).map(attributes::get).forEach(strings::add);
+                    }
+                }
+            };
+
+            ppt.getSlides().get(1).draw(dgfx);
+            assertEquals(2, strings.size());
+            assertEquals("http://jakarta.apache.org/poi/hssf/", strings.get(0));
+            assertEquals("Open Jakarta POI HSSF module test  ", strings.get(1));
         }
     }
 }

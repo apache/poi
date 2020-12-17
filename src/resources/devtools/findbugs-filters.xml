@@ -24,7 +24,7 @@
 	</Match>
 
 	<Match>
-		<Class name="org.apache.poi.hssf.usermodel.DummyGraphics2d"/>
+		<Class name="org.apache.poi.xslf.util.DummyGraphics2d"/>
 		<Bug code="FI" />
 	</Match>
 
@@ -119,7 +119,7 @@
 		<Method name="readData" params="java.io.InputStream,int" />
 		<Bug pattern="SF_SWITCH_FALLTHROUGH" />
 	</Match>
-	
+
 
     <!-- invalid performance issues - e.g. see #57840 -->
     <Match>

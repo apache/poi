@@ -225,7 +225,7 @@ public class HwmfGraphics implements HwmfCharsetAware {
         // Instead, it is a floating-point value that specifies a linear distance.
         float dashStart = (dashAlt && dashes != null && dashes.length > 1) ? dashes[0] : 0;
 
-        return new BasicStroke(width, cap, join, miterLimit, dashes, dashStart);
+        return new BasicStroke(width, cap, join, Math.max(1,miterLimit), dashes, dashStart);
     }
 
     protected Paint getFill() {

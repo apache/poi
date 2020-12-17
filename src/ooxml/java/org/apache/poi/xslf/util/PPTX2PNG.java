@@ -63,7 +63,7 @@ public final class PPTX2PNG {
             "    -scale <float>    scale factor\n" +
             "    -fixSide <side>   specify side (long,short,width,height) to fix - use <scale> as amount of pixels\n" +
             "    -slide <integer>  1-based index of a slide to render\n" +
-            "    -format <type>    png,gif,jpg,svg,pdf (,null for testing)\n" +
+            "    -format <type>    png,gif,jpg,svg,pdf (,log,null for testing)\n" +
             "    -outdir <dir>     output directory, defaults to origin of the ppt/pptx file\n" +
             "    -outfile <file>   output filename, defaults to '"+OUTPUT_PAT_REGEX+"'\n" +
             "    -outpat <pattern> output filename pattern, defaults to '"+OUTPUT_PAT_REGEX+"'\n" +
@@ -239,7 +239,7 @@ public final class PPTX2PNG {
             return false;
         }
 
-        if (format == null || !format.matches("^(png|gif|jpg|null|svg|pdf)$")) {
+        if (format == null || !format.matches("^(png|gif|jpg|null|svg|pdf|log)$")) {
             usage("Invalid format given");
             return false;
         }
@@ -354,6 +354,8 @@ public final class PPTX2PNG {
                 return new SVGFormat(textAsShapes);
             case "pdf":
                 return new PDFFormat(textAsShapes,fontDir,fontTtf);
+            case "log":
+                return new DummyFormat();
             default:
                 return new BitmapFormat(format);
         }
