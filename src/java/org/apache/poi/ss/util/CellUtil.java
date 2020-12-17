@@ -385,9 +385,7 @@ public final class CellUtil {
             } else if (FILL_PATTERN.equals(key)) {
                 dest.put(key, getFillPattern(src, key));
             } else {
-                if (log.check(POILogger.INFO)) {
-                    log.log(POILogger.INFO, "Ignoring unrecognized CellUtil format properties key: " + key);
-                }
+                log.log(POILogger.INFO, "Ignoring unrecognized CellUtil format properties key: ", key);
             }
         }
     }

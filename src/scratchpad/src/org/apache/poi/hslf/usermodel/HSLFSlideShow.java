@@ -758,8 +758,8 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
 		// Add in to the list of Slides
 		_slides.add(slide);
-		logger.log(POILogger.INFO, "Added slide " + _slides.size() + " with ref " + sp.getRefID()
-				+ " and identifier " + sp.getSlideIdentifier());
+		logger.log(POILogger.INFO, "Added slide ", _slides.size(), " with ref ", sp.getRefID(),
+				" and identifier ", sp.getSlideIdentifier());
 
 		// Add the core records for this new Slide to the record tree
 		Slide slideRecord = slide.getSlideRecord();
@@ -1144,7 +1144,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 		int slideOffset = slideRecord.getLastOnDiskOffset();
 		slideRecord.setLastOnDiskOffset(slideOffset);
 		ptr.addSlideLookup(psrId, slideOffset);
-		logger.log(POILogger.INFO, "New slide/object ended up at " + slideOffset);
+		logger.log(POILogger.INFO, "New slide/object ended up at ", slideOffset);
 
 		return psrId;
     }

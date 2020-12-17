@@ -322,7 +322,7 @@ public abstract class HSLFSimpleShape extends HSLFShape implements SimpleShape<H
     @Override
     public Guide getAdjustValue(String name) {
         if (name == null || !name.matches("adj([1-9]|10)?")) {
-            LOG.log(POILogger.INFO, "Adjust value '"+name+"' not supported. Using default value.");
+            LOG.log(POILogger.INFO, "Adjust value '", name, "' not supported. Using default value.");
             return null;
         }
 

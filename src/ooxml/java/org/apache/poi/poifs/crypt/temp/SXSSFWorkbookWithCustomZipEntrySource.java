@@ -60,8 +60,8 @@ public class SXSSFWorkbookWithCustomZipEntrySource extends SXSSFWorkbook {
     @Override
     protected SheetDataWriter createSheetDataWriter() throws IOException {
         //log values to ensure these values are accessible to subclasses
-        LOG.log(POILogger.INFO, "isCompressTempFiles: " + isCompressTempFiles());
-        LOG.log(POILogger.INFO, "SharedStringSource: " + getSharedStringSource());
+        LOG.log(POILogger.INFO, "isCompressTempFiles: ", isCompressTempFiles());
+        LOG.log(POILogger.INFO, "SharedStringSource: ", getSharedStringSource());
         return new SheetDataWriterWithDecorator();
     }
 }

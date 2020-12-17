@@ -41,7 +41,7 @@ public class Outlines implements Closeable {
                 String log = (String) Outlines.class.getDeclaredMethod("test" + i).invoke(o);
                 String filename = "outline" + i + ".xls";
                 o.writeOut(filename);
-                LOGGER.log(POILogger.INFO, filename + " written. " + log);
+                LOGGER.log(POILogger.INFO, filename, " written. ", log);
             }
         }
     }

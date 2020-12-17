@@ -43,7 +43,7 @@ public class TestXSSFSheetMergeRegions {
                 if (millis < 2000) {
                     break;
                 }
-                LOG.log(POILogger.INFO, "Retry " + i + " because run-time is too high: " + millis);
+                LOG.log(POILogger.INFO, "Retry ", i, " because run-time is too high: ", millis);
             }
 
             boolean inGump = false;

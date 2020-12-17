@@ -149,7 +149,7 @@ public final class FormatRecord extends StandardRecord {
         }
 
         if (ris.available() > 0) {
-            logger.log(POILogger.INFO, "FormatRecord has "+ris.available()+" unexplained bytes. Silently skipping");
+            logger.log(POILogger.INFO, "FormatRecord has ", ris.available(), " unexplained bytes. Silently skipping");
             //swallow what's left
             while (ris.available() > 0) {
                 ris.readByte();

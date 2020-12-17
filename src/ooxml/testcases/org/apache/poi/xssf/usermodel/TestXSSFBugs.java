@@ -3549,14 +3549,14 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             LOG.log(POILogger.INFO, "Autosizing columns...");
 
             for (int i = 0; i < 3; ++i) {
-                LOG.log(POILogger.INFO, "Autosize " + i + " - " + Duration.between(start, Instant.now()));
+                LOG.log(POILogger.INFO, "Autosize ", i, " - ", Duration.between(start, Instant.now()));
                 sheet.autoSizeColumn(i);
             }
 
             for (int i = 0; i < 69 - 35 + 1; ++i)
                 for (int j = 0; j < 8; ++j) {
                     int col = 3 + 2 + i * (8 + 2) + j;
-                    LOG.log(POILogger.INFO, "Autosize " + col + " - " + Duration.between(start, Instant.now()));
+                    LOG.log(POILogger.INFO, "Autosize ", col, " - ", Duration.between(start, Instant.now()));
                     sheet.autoSizeColumn(col);
                 }
             LOG.log(POILogger.INFO, Duration.between(start, Instant.now()));

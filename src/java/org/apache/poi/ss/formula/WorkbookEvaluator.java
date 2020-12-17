@@ -406,7 +406,7 @@ public final class WorkbookEvaluator {
             // since we don't know how to handle these yet :(
             Ptg ptg = ptgs[i];
             if (dbgEvaluationOutputIndent > 0) {
-                EVAL_LOG.log(POILogger.INFO, dbgIndentStr + "  * ptg " + i + ": " + ptg + ", stack: " + stack);
+                EVAL_LOG.log(POILogger.INFO, dbgIndentStr, "  * ptg ", i, ": ", ptg, ", stack: ", stack);
             }
             if (ptg instanceof AttrPtg) {
                 AttrPtg attrPtg = (AttrPtg) ptg;
@@ -551,7 +551,7 @@ public final class WorkbookEvaluator {
 //            logDebug("push " + opResult);
             stack.push(opResult);
             if (dbgEvaluationOutputIndent > 0) {
-                EVAL_LOG.log(POILogger.INFO, dbgIndentStr + "    = " + opResult);
+                EVAL_LOG.log(POILogger.INFO, dbgIndentStr, "    = ", opResult);
             }
         }
 
@@ -570,9 +570,9 @@ public final class WorkbookEvaluator {
         }
 
         if (dbgEvaluationOutputIndent > 0) {
-            EVAL_LOG.log(POILogger.INFO, dbgIndentStr + "finshed eval of "
-                            + new CellReference(ec.getRowIndex(), ec.getColumnIndex()).formatAsString()
-                            + ": " + result);
+            EVAL_LOG.log(POILogger.INFO, dbgIndentStr, "finished eval of ",
+                            new CellReference(ec.getRowIndex(), ec.getColumnIndex()).formatAsString(),
+                            ": ", result);
             dbgEvaluationOutputIndent--;
             if (dbgEvaluationOutputIndent == 1) {
                 // this evaluation is done, reset indent to stop logging

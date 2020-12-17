@@ -63,8 +63,8 @@ public final class OldLabelRecord extends OldCellRecord {
 
         if (in.remaining() > 0) {
             logger.log(POILogger.INFO,
-                    "LabelRecord data remains: " + in.remaining() +
-                    " : " + HexDump.toHex(in.readRemainder())
+                    "LabelRecord data remains: ", in.remaining(),
+                    " : ", HexDump.toHex(in.readRemainder())
                     );
         }
     }

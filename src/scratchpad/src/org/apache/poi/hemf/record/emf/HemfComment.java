@@ -601,8 +601,8 @@ public class HemfComment {
             // some emf comments are truncated, so we don't use readFully here
             int readBytes = leis.read(wmfData);
             if (readBytes < wmfData.length) {
-                logger.log(POILogger.INFO, "Emf comment with WMF: expected "+wmfData.length+
-                        " bytes - received only "+readBytes+" bytes.");
+                logger.log(POILogger.INFO, "Emf comment with WMF: expected ", wmfData.length,
+                        " bytes - received only ", readBytes, " bytes.");
             }
 
             return leis.getReadIndex()-startIdx;

@@ -79,7 +79,7 @@ public interface POILogger {
      * An example:
      * <code><pre>
      * if (logger.check(POILogger.INFO)) {
-     *     logger.log(POILogger.INFO, "Avoid concatenating " + " strings and evaluating " + functions());
+     *     logger.log(POILogger.INFO, "Avoid concatenating ", " strings and evaluating ", functions());
      * }
      * </pre></code>
      *

@@ -242,12 +242,11 @@ public final class Chunk {
 
                 default:
                     logger.log(POILogger.INFO,
-                            "Command of type " + type + " not processed!");
+                            "Command of type ", type, " not processed!");
                 }
             }
             catch (Exception e) {
-                logger.log(POILogger.ERROR, "Unexpected error processing command, ignoring and continuing. Command: " +
-                        command, e);
+                logger.log(POILogger.ERROR, "Unexpected error processing command, ignoring and continuing. Command: ", command, e);
             }
 
             // Add to the array

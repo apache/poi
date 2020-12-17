@@ -78,8 +78,8 @@ public final class LabelRecord extends Record implements CellValueRecordInterfac
 
         if (in.remaining() > 0) {
            logger.log(POILogger.INFO,
-                   "LabelRecord data remains: " + in.remaining() +
-                           " : " + HexDump.toHex(in.readRemainder())
+                   "LabelRecord data remains: ", in.remaining(),
+                           " : ", HexDump.toHex(in.readRemainder())
            );
         }
     }

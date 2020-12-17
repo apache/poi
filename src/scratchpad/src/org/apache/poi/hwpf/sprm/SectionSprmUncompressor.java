@@ -241,7 +241,7 @@ public final class SectionSprmUncompressor extends SprmUncompressor
         newSEP.setNfcEdnRef(sprm.getOperand());
         break;
       default:
-        logger.log(POILogger.INFO, "Unsupported Sprm operation: " + operation + " (" + HexDump.byteToHex(operation) + ")");
+        logger.log(POILogger.INFO, "Unsupported Sprm operation: ", operation, " (", HexDump.byteToHex(operation), ")");
         break;
     }
 

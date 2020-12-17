@@ -427,7 +427,7 @@ public class AbstractWordUtils
     {
 
         if ( format != 0 )
-        	logger.log( POILogger.INFO, "NYI: toListItemNumberLabel(): " + format );
+        	logger.log( POILogger.INFO, "NYI: toListItemNumberLabel(): ", format );
 
         return String.valueOf( number );
     }
