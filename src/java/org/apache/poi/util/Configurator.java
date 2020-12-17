@@ -29,7 +29,7 @@ public class Configurator {
         try {
             result = Integer.parseInt(property);
         } catch (Exception e) {
-            logger.log(POILogger.ERROR, "System property -D"+systemProperty +" do not contains a valid integer " + property);
+            logger.log(POILogger.ERROR, "System property -D", systemProperty, " does not contains a valid integer: ", property);
         }
         return result;
     }

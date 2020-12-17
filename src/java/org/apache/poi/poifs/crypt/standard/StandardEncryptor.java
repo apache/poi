@@ -193,7 +193,7 @@ public class StandardEncryptor extends Encryptor {
                     IOUtils.copy(fis, leos);
                 }
                 if (!fileOut.delete()) {
-                    logger.log(POILogger.ERROR, "Can't delete temporary encryption file: "+fileOut);
+                    logger.log(POILogger.ERROR, "Can't delete temporary encryption file: ", fileOut);
                 }
 
                 leos.close();

@@ -127,7 +127,7 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
                     return pd;
                 }
             }
-            LOG.log(POILogger.ERROR, "no picture found for our BSE offset " + bse.getOffset());
+            LOG.log(POILogger.ERROR, "no picture found for our BSE offset ", bse.getOffset());
         }
         return null;
     }

@@ -73,8 +73,7 @@ public final class ParagraphSprmUncompressor
           {
               logger.log(
                       POILogger.ERROR,
-                      "Unable to apply SPRM operation '"
-                              + sprm.getOperation() + "': ", exc );
+                      "Unable to apply SPRM operation '", sprm.getOperation(), "': ", exc );
           }
       }
     }

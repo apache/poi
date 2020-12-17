@@ -330,7 +330,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         try {
             currentUser = new CurrentUserAtom(getDirectory());
         } catch (IOException ie) {
-            logger.log(POILogger.ERROR, "Error finding Current User Atom:\n" + ie);
+            logger.log(POILogger.ERROR, "Error finding Current User Atom", ie);
             currentUser = new CurrentUserAtom();
         }
     }
@@ -394,8 +394,8 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                 // If they type (including the bonus 0xF018) is 0, skip it
                 PictureType pt = PictureType.forNativeID(type - 0xF018);
                 if (pt == null) {
-                    logger.log(POILogger.ERROR, "Problem reading picture: Invalid image type 0, on picture with length " + imgsize + ".\nYou document will probably become corrupted if you save it!");
-                    logger.log(POILogger.ERROR, "" + pos);
+                    logger.log(POILogger.ERROR, "Problem reading picture: Invalid image type 0, on picture with length ", imgsize, ".\nYou document will probably become corrupted if you save it!");
+                    logger.log(POILogger.ERROR, "position: ", pos);
                 } else {
                     //The pictstream can be truncated halfway through a picture.
                     //This is not a problem if the pictstream contains extra pictures
@@ -418,7 +418,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                         pict.setIndex(_pictures.size());
                         _pictures.add(pict);
                     } catch (IllegalArgumentException e) {
-                        logger.log(POILogger.ERROR, "Problem reading picture: " + e + "\nYou document will probably become corrupted if you save it!");
+                        logger.log(POILogger.ERROR, "Problem reading picture: ", e, "\nYou document will probably become corrupted if you save it!");
                     }
                 }
 

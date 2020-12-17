@@ -73,7 +73,7 @@ public final class ChunkStream extends Stream {
 		}
 		catch (Exception e)
 		{
-			logger.log(POILogger.ERROR, "Failed to create chunk at " + pos + ", ignoring rest of data." + e);
+			logger.log(POILogger.ERROR, "Failed to create chunk at ", pos, ", ignoring rest of data." + e);
 		}
 
 		chunks = chunksA.toArray(new Chunk[0]);

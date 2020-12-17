@@ -60,7 +60,12 @@ public class SystemOutLogger implements POILogger {
         if (!check(level)) {
             return;
         }
-        System.out.println("[" + _cat + "]" + LEVEL_STRINGS_SHORT.charAt(Math.min(LEVEL_STRINGS_SHORT.length()-1, level)) + " " + obj1);
+        System.out.print("[");
+        System.out.print(_cat);
+        System.out.print("]");
+        System.out.print(LEVEL_STRINGS_SHORT.charAt(Math.min(LEVEL_STRINGS_SHORT.length()-1, level)));
+        System.out.print(" ");
+        System.out.println(obj1);
         if (exception != null) {
             exception.printStackTrace(System.out);
         }

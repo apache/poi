@@ -394,7 +394,7 @@ public final class IOUtils {
         try {
             closeable.close();
         } catch ( Exception exc ) {
-            logger.log( POILogger.ERROR, "Unable to close resource: " + exc,
+            logger.log( POILogger.ERROR, "Unable to close resource: ", exc,
                     exc );
         }
     }

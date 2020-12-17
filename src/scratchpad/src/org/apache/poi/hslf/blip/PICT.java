@@ -85,7 +85,7 @@ public final class PICT extends Metafile {
                 out.write(chunk, 0, lastLen);
             }
             // End of picture marker for PICT is 0x00 0xFF
-            LOG.log(POILogger.ERROR, "PICT zip-stream is invalid, read as much as possible. Uncompressed length of header: " + header.getWmfSize() + " / Read bytes: " + out.size(), e);
+            LOG.log(POILogger.ERROR, "PICT zip-stream is invalid, read as much as possible. Uncompressed length of header: ", header.getWmfSize(), " / Read bytes: ", out.size(), e);
         }
         return out.toByteArray();
     }

@@ -81,7 +81,7 @@ public final class BiffViewer {
             try {
                 hasNext = recStream.hasNextRecord();
             } catch (LeftoverDataException e) {
-                logger.log(POILogger.ERROR, "Discarding " + recStream.remaining() + " bytes and continuing", e);
+                logger.log(POILogger.ERROR, "Discarding ", recStream.remaining(), " bytes and continuing", e);
                 recStream.readRemainder();
                 hasNext = recStream.hasNextRecord();
             }

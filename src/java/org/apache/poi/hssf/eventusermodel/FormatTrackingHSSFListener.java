@@ -155,8 +155,8 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 		if (formatIndex >= HSSFDataFormat.getNumberOfBuiltinBuiltinFormats()) {
 			FormatRecord tfr = _customFormatRecords.get(Integer.valueOf(formatIndex));
 			if (tfr == null) {
-				logger.log( POILogger.ERROR, "Requested format at index " + formatIndex
-						+ ", but it wasn't found");
+				logger.log( POILogger.ERROR, "Requested format at index ", formatIndex,
+						", but it wasn't found");
 			} else {
 				format = tfr.getFormatString();
 			}
@@ -192,8 +192,8 @@ public class FormatTrackingHSSFListener implements HSSFListener {
 	public int getFormatIndex(CellValueRecordInterface cell) {
 		ExtendedFormatRecord xfr = _xfRecords.get(cell.getXFIndex());
 		if (xfr == null) {
-			logger.log( POILogger.ERROR, "Cell " + cell.getRow() + "," + cell.getColumn()
-					+ " uses XF with index " + cell.getXFIndex() + ", but we don't have that");
+			logger.log( POILogger.ERROR, "Cell ", cell.getRow(), ",", cell.getColumn(),
+					" uses XF with index ", cell.getXFIndex(), ", but we don't have that");
 			return -1;
 		}
 		return xfr.getFormatIndex();

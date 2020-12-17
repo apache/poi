@@ -165,7 +165,7 @@ public final class ChunkFactory {
 					data, endOfDataPos);
 				endOfDataPos += 8;
 			} else {
-				logger.log(POILogger.ERROR, "Header claims a length to " + endOfDataPos + " there's then no space for the trailer in the data (" + data.length + ")");
+				logger.log(POILogger.ERROR, "Header claims a length to ", endOfDataPos, " there's then no space for the trailer in the data (", data.length, ")");
 			}
 		}
 		if(header.hasSeparator()) {
@@ -173,7 +173,7 @@ public final class ChunkFactory {
 				separator = new ChunkSeparator(
 						data, endOfDataPos);
 			} else {
-				logger.log(POILogger.ERROR, "Header claims a length to " + endOfDataPos + " there's then no space for the separator in the data (" + data.length + ")");
+				logger.log(POILogger.ERROR, "Header claims a length to ", endOfDataPos, " there's then no space for the separator in the data (", data.length, ")");
 			}
 		}
 

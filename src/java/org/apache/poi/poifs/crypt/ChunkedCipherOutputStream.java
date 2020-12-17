@@ -324,7 +324,7 @@ public abstract class ChunkedCipherOutputStream extends FilterOutputStream {
                 }
 
                 if (!fileOut.delete()) {
-                    LOG.log(POILogger.ERROR, "Can't delete temporary encryption file: "+fileOut);
+                    LOG.log(POILogger.ERROR, "Can't delete temporary encryption file: ", fileOut);
                 }
             } catch (IOException e) {
                 throw new EncryptedDocumentException(e);

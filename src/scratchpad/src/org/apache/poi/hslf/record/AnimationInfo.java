@@ -58,7 +58,7 @@ public final class AnimationInfo extends RecordContainer {
 		if(_children[0] instanceof AnimationInfoAtom) {
 			animationAtom = (AnimationInfoAtom)_children[0];
 		} else {
-			logger.log(POILogger.ERROR, "First child record wasn't a AnimationInfoAtom, was of type " + _children[0].getRecordType());
+			logger.log(POILogger.ERROR, "First child record wasn't a AnimationInfoAtom, was of type ", _children[0].getRecordType());
 		}
 	}
 

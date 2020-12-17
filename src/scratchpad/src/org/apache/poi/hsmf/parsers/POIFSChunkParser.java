@@ -149,7 +149,7 @@ public final class POIFSChunkParser {
             try (DocumentInputStream inp = new DocumentInputStream((DocumentNode) entry)) {
                 chunk.readValue(inp);
             } catch (IOException e) {
-                LOG.log(POILogger.ERROR, "Error reading from part " + entry.getName(), e);
+                LOG.log(POILogger.ERROR, "Error reading from part ", entry.getName(), e);
             }
         }
 

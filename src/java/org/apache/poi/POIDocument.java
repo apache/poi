@@ -333,9 +333,9 @@ public abstract class POIDocument implements Closeable {
             // Create or Update the Property Set stream in the POIFS
             outFS.createOrUpdateDocument(bIn, name);
 
-            logger.log(POILogger.INFO, "Wrote property set " + name + " of size " + data.length);
+            logger.log(POILogger.INFO, "Wrote property set ", name, " of size ", data.length);
         } catch(WritingNotSupportedException ignored) {
-            logger.log( POILogger.ERROR, "Couldn't write property set with name " + name + " as not supported by HPSF yet");
+            logger.log( POILogger.ERROR, "Couldn't write property set with name ", name, " as not supported by HPSF yet");
         }
     }
 

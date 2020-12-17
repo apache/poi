@@ -348,8 +348,8 @@ public final class PackageRelationshipCollection implements
                     // package
                     target = PackagingURIHelper.toURI(value);
                 } catch (URISyntaxException e) {
-                    logger.log(POILogger.ERROR, "Cannot convert " + value
-                            + " in a valid relationship URI-> dummy-URI used", e);
+                    logger.log(POILogger.ERROR, "Cannot convert ", value,
+                            " in a valid relationship URI-> dummy-URI used", e);
                 }
                 addRelationship(target, targetMode, type, id);
             }

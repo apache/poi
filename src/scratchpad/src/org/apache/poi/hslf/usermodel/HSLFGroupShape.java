@@ -289,7 +289,7 @@ implements HSLFShapeContainer, GroupShape<HSLFShape,HSLFTextParagraph> {
             } else {
                 // Should we do anything special with these non
                 //  Container records?
-                LOG.log(POILogger.ERROR, "Shape contained non container escher record, was " + r.getClass().getName());
+                LOG.log(POILogger.ERROR, "Shape contained non container escher record, was ", r.getClass().getName());
             }
         }
 

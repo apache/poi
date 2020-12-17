@@ -50,18 +50,18 @@ class SSTDeserializer
       for (int i=0;i<stringCount;i++) {
          // Extract exactly the count of strings from the SST record.
          UnicodeString str;
-         if(in.available() == 0 && ! in.hasNextRecord()) {
-        	 logger.log( POILogger.ERROR, "Ran out of data before creating all the strings! String at index " + i + "");
-            str = new UnicodeString("");
-         } else {
-            str = new UnicodeString(in);
-         }
+          if (in.available() == 0 && !in.hasNextRecord()) {
+              logger.log(POILogger.ERROR, "Ran out of data before creating all the strings! String at index ", i);
+              str = new UnicodeString("");
+          } else {
+              str = new UnicodeString(in);
+          }
          addToStringTable( strings, str );
       }
     }
 
     static public void addToStringTable( IntMapper<UnicodeString> strings, UnicodeString string )
     {
-      strings.add(string);
+        strings.add(string);
     }
 }

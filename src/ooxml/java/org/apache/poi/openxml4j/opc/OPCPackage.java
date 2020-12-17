@@ -1006,9 +1006,8 @@ public abstract class OPCPackage implements RelationshipSource, Closeable {
 				sourcePartName = PackagingURIHelper.createPartName(sourceURI);
 			} catch (InvalidFormatException e) {
 				logger
-						.log(POILogger.ERROR, "Part name URI '"
-								+ sourceURI
-								+ "' is not valid ! This message is not intended to be displayed !");
+						.log(POILogger.ERROR, "Part name URI '", sourceURI,
+								"' is not valid ! This message is not intended to be displayed !");
 				return;
 			}
 			if (sourcePartName.getURI().equals(

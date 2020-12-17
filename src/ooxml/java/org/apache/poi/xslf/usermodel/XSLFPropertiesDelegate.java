@@ -1848,7 +1848,7 @@ import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperti
         } else if (props instanceof CTTextCharacterProperties) {
             obj = new TextCharDelegate((CTTextCharacterProperties)props);
         } else {
-            LOG.log(POILogger.ERROR, props.getClass() +" is an unknown properties type");
+            LOG.log(POILogger.ERROR, props.getClass(), " is an unknown properties type");
             return null;
         }
 

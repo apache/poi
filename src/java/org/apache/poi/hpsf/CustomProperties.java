@@ -393,7 +393,7 @@ public class CustomProperties implements Map<String,Object> {
         try {
             cps = CodePageUtil.codepageToEncoding(cp, false);
         } catch (UnsupportedEncodingException e) {
-            LOG.log(POILogger.ERROR, "Codepage '"+cp+"' can't be found.");
+            LOG.log(POILogger.ERROR, "Codepage '", cp, "' can't be found.");
         }
         if (!cps.isEmpty() && Charset.forName(cps).newEncoder().canEncode(value)) {
             return;

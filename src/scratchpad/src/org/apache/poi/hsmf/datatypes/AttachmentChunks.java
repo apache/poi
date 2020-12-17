@@ -187,7 +187,7 @@ public class AttachmentChunks implements ChunkGroup {
             } else if (chunk instanceof DirectoryChunk) {
                 attachmentDirectory = (DirectoryChunk) chunk;
             } else {
-                LOG.log(POILogger.ERROR, "Unexpected data chunk of type " + chunk.getEntryName());
+                LOG.log(POILogger.ERROR, "Unexpected data chunk of type ", chunk.getEntryName());
             }
         } else if (chunkId == ATTACH_EXTENSION.id) {
             attachExtension = (StringChunk) chunk;

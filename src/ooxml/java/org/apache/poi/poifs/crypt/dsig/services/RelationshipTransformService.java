@@ -138,7 +138,7 @@ public class RelationshipTransformService extends TransformService {
     @Override
     public void init(XMLStructure parent, XMLCryptoContext context) throws InvalidAlgorithmParameterException {
         LOG.log(POILogger.DEBUG, "init(parent,context)");
-        LOG.log(POILogger.DEBUG, "parent java type: " + parent.getClass().getName());
+        LOG.log(POILogger.DEBUG, "parent java type: ", parent.getClass().getName());
         DOMStructure domParent = (DOMStructure) parent;
         Node parentNode = domParent.getNode();
 

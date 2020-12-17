@@ -71,8 +71,8 @@ public class ZipContentTypeManager extends ContentTypeManager {
 				zos.closeArchiveEntry();
 			}
 		} catch (IOException ioe) {
-			logger.log(POILogger.ERROR, "Cannot write: " + CONTENT_TYPES_PART_NAME
-					+ " in Zip !", ioe);
+			logger.log(POILogger.ERROR, "Cannot write: ", CONTENT_TYPES_PART_NAME,
+					" in Zip !", ioe);
 			return false;
 		}
 	}

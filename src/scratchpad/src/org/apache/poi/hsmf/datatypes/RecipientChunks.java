@@ -88,8 +88,7 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
             try {
                 recipientNumber = Integer.parseInt(number, 16);
             } catch (NumberFormatException e) {
-                LOG.log(POILogger.ERROR,
-                        "Invalid recipient number in name " + name);
+                LOG.log(POILogger.ERROR, "Invalid recipient number in name ", name);
             }
         }
     }

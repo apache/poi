@@ -651,7 +651,7 @@ public class POIXMLDocumentPart {
 
                 final PackagePart p = packagePart.getPackage().getPart(relName);
                 if (p == null) {
-                    logger.log(POILogger.ERROR, "Skipped invalid entry " + rel.getTargetURI());
+                    logger.log(POILogger.ERROR, "Skipped invalid entry ", rel.getTargetURI());
                     continue;
                 }
 

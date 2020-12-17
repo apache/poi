@@ -557,7 +557,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                     break;
                 }
             }
-            logger.log(POILogger.ERROR, "Can't find drawing with id=" + ctDrawing.getId() + " in the list of the sheet's relationships");
+            logger.log(POILogger.ERROR, "Can't find drawing with id=", ctDrawing.getId(), " in the list of the sheet's relationships");
         }
         return null;
     }
@@ -629,7 +629,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                 }
             }
             if(drawing == null){
-                logger.log(POILogger.ERROR, "Can't find VML drawing with id=" + id + " in the list of the sheet's relationships");
+                logger.log(POILogger.ERROR, "Can't find VML drawing with id=", id, " in the list of the sheet's relationships");
             }
         }
         return drawing;

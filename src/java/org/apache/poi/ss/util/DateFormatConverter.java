@@ -152,7 +152,7 @@ public final class DateFormatConverter  {
 				loc = LocaleID.lookupByLanguageTag(languageTag.substring(0, idx));
 			}
 			if (loc == null) {
-				logger.log( POILogger.ERROR, "Unable to find prefix for Locale '" + languageTag + "' or its parent locales." );
+				logger.log( POILogger.ERROR, "Unable to find prefix for Locale '", languageTag, "' or its parent locales." );
 				return "";
 			}
 		}

@@ -157,7 +157,7 @@ public final class EmbeddedObjectRefSubRecord extends SubRecord {
 		int nUnexpectedPadding = remaining - dataLenAfterFormula;
 
 		if (nUnexpectedPadding > 0) {
-			logger.log( POILogger.ERROR, "Discarding " + nUnexpectedPadding + " unexpected padding bytes ");
+			logger.log( POILogger.ERROR, "Discarding ", nUnexpectedPadding, " unexpected padding bytes");
 			readRawData(in, nUnexpectedPadding);
 			remaining-=nUnexpectedPadding;
 		}

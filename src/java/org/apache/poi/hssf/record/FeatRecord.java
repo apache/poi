@@ -108,7 +108,7 @@ public final class FeatRecord extends StandardRecord {
 			sharedFeature = new FeatSmartTag(in);
 			break;
 		default:
-			logger.log( POILogger.ERROR, "Unknown Shared Feature " + isf_sharedFeatureType + " found!");
+			logger.log( POILogger.ERROR, "Unknown Shared Feature ", isf_sharedFeatureType, " found!");
 		}
 	}
 

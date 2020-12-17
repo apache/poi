@@ -290,8 +290,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 			return _mostRecentCoreRecords[coreRecordId];
 		}
 		logger.log(POILogger.ERROR,
-				"We tried to look up a reference to a core record, but there was no core ID for reference ID "
-						+ refID);
+				"We tried to look up a reference to a core record, but there was no core ID for reference ID ", refID);
 		return null;
 	}
 
@@ -388,7 +387,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
             // Ensure it really is a notes record
             if (!(r instanceof Notes)) {
-                logger.log(POILogger.ERROR, loggerLoc+", but that was actually a " + r);
+                logger.log(POILogger.ERROR, loggerLoc, ", but that was actually a ", r);
                 continue;
             }
 
@@ -420,10 +419,10 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
             // Ensure it really is a slide record
             if (!(r instanceof Slide)) {
-                logger.log(POILogger.ERROR, "A Slide SlideAtomSet at " + idx
-                        + " said its record was at refID "
-                        + spa.getRefID()
-                        + ", but that was actually a " + r);
+                logger.log(POILogger.ERROR, "A Slide SlideAtomSet at ", idx,
+                        " said its record was at refID ",
+                        spa.getRefID(),
+                        ", but that was actually a ", r);
                 continue;
             }
 
@@ -439,7 +438,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
                 if (notesPos != null && 0 <= notesPos && notesPos < _notes.size()) {
                     notes = _notes.get(notesPos);
                 } else {
-                    logger.log(POILogger.ERROR, "Notes not found for noteId=" + noteId);
+                    logger.log(POILogger.ERROR, "Notes not found for noteId=", noteId);
                 }
             }
 

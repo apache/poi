@@ -186,7 +186,7 @@ public class SheetDataWriter implements Closeable {
     @Override
     protected void finalize() throws Throwable {
         if (_fd.exists() && !_fd.delete()) {
-            logger.log(POILogger.ERROR, "Can't delete temporary encryption file: "+_fd);
+            logger.log(POILogger.ERROR, "Can't delete temporary encryption file: ", _fd);
         }
     }
 

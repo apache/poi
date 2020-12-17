@@ -360,7 +360,7 @@ public class XSSFSheetXMLHandler extends DefaultHandler {
                        thisStr = rtss.toString();
                    }
                    catch (NumberFormatException ex) {
-                       logger.log(POILogger.ERROR, "Failed to parse SST index '" + sstIndex, ex);
+                       logger.log(POILogger.ERROR, "Failed to parse SST index '", sstIndex, ex);
                    }
                    break;
 
