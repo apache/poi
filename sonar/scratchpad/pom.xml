@@ -13,71 +13,71 @@
 
     <name>Apache POI Scratchpad package</name>
 
-	<properties>
-		<!-- Exclude some generated code from Sonar analysis -->
-		<sonar.exclusions>src/main/java/org/apache/poi/hwpf/model/types/*,src/main/java/org/apache/poi/hdf/model/hdftypes/definitions/*</sonar.exclusions>
-	</properties>
+    <properties>
+        <!-- Exclude some generated code from Sonar analysis -->
+        <sonar.exclusions>src/main/java/org/apache/poi/hwpf/model/types/*,src/main/java/org/apache/poi/hdf/model/hdftypes/definitions/*</sonar.exclusions>
+    </properties>
  
 
     <build>
-		<plugins>
-			<!-- copy sources, resources and tests in place as otherwise Sonar does not pick them up correctly! -->
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>${maven.plugin.resources.version}</version>
-				<executions>
-					<execution>
-						<id>copy-sources</id>
-						<!-- here the phase you need -->
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/src/main/java</outputDirectory>
-							<resources>          
-								<resource>
-									<directory>../../src/scratchpad/src</directory>
-								</resource>
-							</resources>              
-						</configuration>            
-					</execution>
-					<execution>
-						<id>copy-resources</id>
-						<!-- here the phase you need -->
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/src/main/resources</outputDirectory>
-							<resources>          
-								<resource>
-									<directory>../../src/resources/scratchpad</directory>
-								</resource>
-							</resources>              
-						</configuration>            
-					</execution>
-					<execution>
-						<id>copy-tests</id>
-						<!-- here the phase you need -->
-						<phase>generate-test-sources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/src/test/java</outputDirectory>
-							<resources>          
-								<resource>
-									<directory>../../src/scratchpad/testcases</directory>
-								</resource>
-							</resources>              
-						</configuration>            
-					</execution>
-				</executions>
-			</plugin>
-			<!-- clean copied sources afterwards -->
-			<plugin>
+        <plugins>
+            <!-- copy sources, resources and tests in place as otherwise Sonar does not pick them up correctly! -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven.plugin.resources.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy-sources</id>
+                        <!-- here the phase you need -->
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/src/main/java</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../../src/scratchpad/src</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-resources</id>
+                        <!-- here the phase you need -->
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/src/main/resources</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../../src/resources/scratchpad</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-tests</id>
+                        <!-- here the phase you need -->
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/src/test/java</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../../src/scratchpad/testcases</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- clean copied sources afterwards -->
+            <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>${maven.plugin.clean.version}</version>
                 <configuration>
@@ -89,21 +89,21 @@
                     </filesets>
                 </configuration>
             </plugin>			
-		</plugins>
+        </plugins>
     </build>
 
     <dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>poi-main</artifactId>
-			<version>${project.version}</version>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>poi-main</artifactId>
+            <version>${project.version}</version>
         </dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>poi-main</artifactId>
-			<version>${project.version}</version>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>poi-main</artifactId>
+            <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
-		</dependency>
+        </dependency>
     </dependencies>
 </project>

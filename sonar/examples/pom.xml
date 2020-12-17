@@ -13,38 +13,38 @@
 
     <name>Apache POI Examples package</name>
 
-	<properties>
-		<!-- There are no junit tests in the examples module -->
-		<maven.test.skip>true</maven.test.skip>
-	</properties>
+    <properties>
+        <!-- There are no junit tests in the examples module -->
+        <maven.test.skip>true</maven.test.skip>
+    </properties>
 
     <build>
-		<plugins>
-			<!-- copy sources, resources and tests in place as otherwise Sonar does not pick them up correctly! -->
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>${maven.plugin.resources.version}</version>
-				<executions>
-					<execution>
-						<id>copy-sources</id>
-						<!-- here the phase you need -->
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/src/main/java</outputDirectory>
-							<resources>
-								<resource>
-									<directory>../../src/examples/src</directory>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- clean copied sources afterwards -->
-			<plugin>
+        <plugins>
+            <!-- copy sources, resources and tests in place as otherwise Sonar does not pick them up correctly! -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven.plugin.resources.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy-sources</id>
+                        <!-- here the phase you need -->
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/src/main/java</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../../src/examples/src</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- clean copied sources afterwards -->
+            <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>${maven.plugin.clean.version}</version>
                 <configuration>
@@ -56,19 +56,19 @@
                     </filesets>
                 </configuration>
             </plugin>
-		</plugins>
+        </plugins>
     </build>
 
     <dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>poi-main</artifactId>
-			<version>${project.version}</version>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>poi-main</artifactId>
+            <version>${project.version}</version>
         </dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>poi-ooxml</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 </project>

@@ -14,64 +14,64 @@
     <name>Apache POI ExcelAnt package</name>
 
     <build>
-		<plugins>
-			<!-- copy sources, resources and tests in place as otherwise Sonar does not pick them up correctly! -->
-			<plugin>
-				<artifactId>maven-resources-plugin</artifactId>
-				<version>${maven.plugin.resources.version}</version>
-				<executions>
-					<execution>
-						<id>copy-sources</id>
-						<!-- here the phase you need -->
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/src/main/java</outputDirectory>
-							<resources>
-								<resource>
-									<directory>../../src/excelant/java</directory>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-resources</id>
-						<!-- here the phase you need -->
-						<phase>generate-resources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/src/main/resources</outputDirectory>
-							<resources>
-								<resource>
-									<directory>../../src/excelant/resources</directory>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-					<execution>
-						<id>copy-tests</id>
-						<!-- here the phase you need -->
-						<phase>generate-test-sources</phase>
-						<goals>
-							<goal>copy-resources</goal>
-						</goals>
-						<configuration>
-							<outputDirectory>${basedir}/src/test/java</outputDirectory>
-							<resources>
-								<resource>
-									<directory>../../src/excelant/testcases</directory>
-								</resource>
-							</resources>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<!-- clean copied sources afterwards -->
-			<plugin>
+        <plugins>
+            <!-- copy sources, resources and tests in place as otherwise Sonar does not pick them up correctly! -->
+            <plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven.plugin.resources.version}</version>
+                <executions>
+                    <execution>
+                        <id>copy-sources</id>
+                        <!-- here the phase you need -->
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/src/main/java</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../../src/excelant/java</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-resources</id>
+                        <!-- here the phase you need -->
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/src/main/resources</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../../src/excelant/resources</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-tests</id>
+                        <!-- here the phase you need -->
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${basedir}/src/test/java</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>../../src/excelant/testcases</directory>
+                                </resource>
+                            </resources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <!-- clean copied sources afterwards -->
+            <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
                 <version>${maven.plugin.clean.version}</version>
                 <configuration>
@@ -83,32 +83,32 @@
                     </filesets>
                 </configuration>
             </plugin>
-		</plugins>
+        </plugins>
     </build>
 
     <dependencies>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>poi-main</artifactId>
-			<version>${project.version}</version>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>poi-main</artifactId>
+            <version>${project.version}</version>
         </dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>poi-main</artifactId>
-			<version>${project.version}</version>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>poi-main</artifactId>
+            <version>${project.version}</version>
             <type>test-jar</type>
             <scope>test</scope>
-		</dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>poi-ooxml</artifactId>
-			<version>${project.version}</version>
-		</dependency>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>poi-ooxml</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
-		<dependency>
-			<groupId>org.apache.ant</groupId>
-			<artifactId>ant</artifactId>
-			<version>1.10.9</version>
+        <dependency>
+            <groupId>org.apache.ant</groupId>
+            <artifactId>ant</artifactId>
+            <version>1.10.9</version>
         </dependency>
     </dependencies>
 </project>
