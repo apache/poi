@@ -228,7 +228,7 @@ project('main') {
         testCompile "junit:junit:${junitVersion}"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
         testCompile 'org.reflections:reflections:0.9.12'
-        testCompile "org.slf4j:slf4j-simple:${slf4jVersion}"
+        testRuntime "org.slf4j:slf4j-simple:${slf4jVersion}"
     }
 
     jar {
