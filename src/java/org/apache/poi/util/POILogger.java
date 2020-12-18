@@ -96,17 +96,26 @@ public interface POILogger {
      */
     default void log(int level, Object... objs) {
         if (!check(level)) return;
-        StringBuilder sb = new StringBuilder(32);
         Throwable lastEx = null;
-        for (int i=0; i<objs.length; i++) {
-            if (i == objs.length-1 && objs[i] instanceof Throwable) {
-                lastEx = (Throwable)objs[i];
-            } else {
-                sb.append(objs[i]);
+        String msg;
+        if (objs.length == 0) {
+            msg = "";
+        } else if (objs.length == 1) {
+            if (objs[0] instanceof Throwable) {
+                lastEx = (Throwable)objs[0];
             }
+            msg = objs[0].toString();
+        } else {
+            StringBuilder sb = new StringBuilder(32);
+            for (int i=0; i<objs.length; i++) {
+                if (i == objs.length-1 && objs[i] instanceof Throwable) {
+                    lastEx = (Throwable)objs[i];
+                } else {
+                    sb.append(objs[i]);
+                }
+            }
+            msg = sb.toString();
         }
-
-        String msg = sb.toString();
         // log forging escape
         msg = msg.replaceAll("[\r\n]+", " ");
 
