@@ -38,7 +38,6 @@ import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.util.LittleEndian;
-import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.Units;
 
 /**
@@ -151,23 +150,13 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
      * Write this picture into <code>OutputStream</code>
      */
     public void write(OutputStream out) throws IOException {
-        byte[] data;
+        LittleEndian.putUShort(getSignature(), out);
 
-        data = new byte[LittleEndianConsts.SHORT_SIZE];
-        LittleEndian.putUShort(data, 0, getSignature());
-        out.write(data);
-
-        data = new byte[LittleEndianConsts.SHORT_SIZE];
         PictureType pt = getType();
-        LittleEndian.putUShort(data, 0, pt.nativeId + 0xF018);
-        out.write(data);
+        LittleEndian.putUShort(pt.nativeId + 0xF018, out);
 
         byte[] rd = getRawData();
-
-        data = new byte[LittleEndianConsts.INT_SIZE];
-        LittleEndian.putInt(data, 0, rd.length);
-        out.write(data);
-
+        LittleEndian.putInt(rd.length, out);
         out.write(rd);
     }
 
