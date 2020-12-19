@@ -324,7 +324,7 @@ under the License.
 
     <!-- See https://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
-    <property name="ooxml.xsds.izip.1" value="${basedir}/src/ooxml/resources/org/apache/poi/schemas/OfficeOpenXML-XMLSchema-Transitional.zip"/>
+    <property name="ooxml.xsds.izip.1" value="${basedir}/src/ooxml/resources/org/apache/poi/schemas/OfficeOpenXML-XMLSchema-Strict.zip"/>
     <property name="ooxml.xsds.src.dir" location="build/ooxml-xsds-src"/>
     <property name="ooxml.xsds.src.jar" location="build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version.id}-sources.jar"/>
     <property name="ooxml.xsds.jar" location="build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version.id}.jar"/>
