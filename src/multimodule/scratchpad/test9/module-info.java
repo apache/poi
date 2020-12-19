@@ -82,6 +82,7 @@ module org.apache.poi.scratchpad {
     exports org.apache.poi.hemf.hemfplus.extractor to junit;
     exports org.apache.poi.hslf to junit;
     exports org.apache.poi.hwmf to junit;
+    exports org.apache.poi.hwpf.util to junit;
 
     opens org.apache.poi.hwpf.model to org.mockito;
     opens org.apache.poi.hwpf.model.types to org.mockito;

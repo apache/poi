@@ -20,7 +20,7 @@ package org.apache.poi.hwpf.model;
 
 import java.nio.charset.Charset;
 
-import org.apache.poi.util.CodePageUtil;
+import org.apache.poi.hwpf.util.DoubleByteUtil;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.StringUtil;
 
@@ -77,8 +77,8 @@ public class TextPiece extends PropertyNode<TextPiece> {
      * Create the StringBuilder from the text and unicode flag
      */
     private static StringBuilder buildInitSB(byte[] text, PieceDescriptor pd) {
-        if (StringUtil.BIG5.equals(pd.getCharset())) {
-            return new StringBuilder(CodePageUtil.cp950ToString(text, 0, text.length));
+        if (DoubleByteUtil.BIG5.equals(pd.getCharset())) {
+            return new StringBuilder(DoubleByteUtil.cp950ToString(text, 0, text.length));
         }
 
         String str = new String(text, 0, text.length, (pd.isUnicode()) ? StringUtil.UTF16LE : pd.getCharset());

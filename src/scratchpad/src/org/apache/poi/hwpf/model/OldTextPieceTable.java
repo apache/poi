@@ -20,7 +20,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import org.apache.poi.util.CodePageUtil;
+import org.apache.poi.hwpf.util.DoubleByteUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.Internal;
 
@@ -73,7 +73,7 @@ public class OldTextPieceTable extends TextPieceTable {
             boolean unicode = pieces[x].isUnicode();
             int multiple = 1;
             if (unicode ||
-                    (charset != null && CodePageUtil.DOUBLE_BYTE_CHARSETS.contains(charset))) {
+                    (charset != null && DoubleByteUtil.DOUBLE_BYTE_CHARSETS.contains(charset))) {
                 multiple = 2;
             }
 
@@ -106,7 +106,7 @@ public class OldTextPieceTable extends TextPieceTable {
     @Override
     protected int getEncodingMultiplier(TextPiece textPiece) {
         Charset charset = textPiece.getPieceDescriptor().getCharset();
-        if (charset != null && CodePageUtil.DOUBLE_BYTE_CHARSETS.contains(charset)) {
+        if (charset != null && DoubleByteUtil.DOUBLE_BYTE_CHARSETS.contains(charset)) {
             return 2;
         }
         return 1;
