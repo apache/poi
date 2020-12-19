@@ -20,7 +20,6 @@ package org.apache.poi.hslf.blip;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
@@ -45,15 +44,20 @@ public abstract class Bitmap extends HSLFPictureData {
     @Override
     public void setData(byte[] data) throws IOException {
         byte[] checksum = getChecksum(data);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        out.write(checksum);
-        if (getUIDInstanceCount() == 2) {
-            out.write(checksum);
-        }
-        out.write(0);
-        out.write(data);
+        byte[] rawData = new byte[checksum.length * getUIDInstanceCount() + 1 + data.length];
+        int offset = 0;
 
-        setRawData(out.toByteArray());
+        System.arraycopy(checksum, 0, rawData, offset, checksum.length);
+        offset += checksum.length;
+
+        if (getUIDInstanceCount() == 2) {
+            System.arraycopy(checksum, 0, rawData, offset, checksum.length);
+            offset += checksum.length;
+        }
+
+        offset++;
+        System.arraycopy(data, 0, rawData, offset, data.length);
+        setRawData(rawData);
     }
 
     @Override
