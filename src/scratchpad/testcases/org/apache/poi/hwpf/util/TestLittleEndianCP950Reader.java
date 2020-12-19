@@ -15,8 +15,7 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.util;
-
+package org.apache.poi.hwpf.util;
 
 import static org.junit.Assert.assertEquals;
 

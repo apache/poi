@@ -37,7 +37,7 @@ import org.apache.poi.hwpf.model.TextPieceTable;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.apache.poi.util.CodePageUtil;
+import org.apache.poi.hwpf.util.DoubleByteUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.NotImplemented;
@@ -176,7 +176,7 @@ public class HWPFOldDocument extends HWPFDocumentCore {
               _fib.getFibBase().getFcMac()-_fib.getFibBase().getFcMin(), MAX_RECORD_LENGTH);
 
         int numChars = textData.length;
-        if (CodePageUtil.DOUBLE_BYTE_CHARSETS.contains(guessedCharset)) {
+        if (DoubleByteUtil.DOUBLE_BYTE_CHARSETS.contains(guessedCharset)) {
             numChars /= 2;
         }
 

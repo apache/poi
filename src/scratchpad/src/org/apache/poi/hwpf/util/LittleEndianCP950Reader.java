@@ -15,12 +15,17 @@
    limitations under the License.
 ==================================================================== */
 
-package org.apache.poi.util;
+package org.apache.poi.hwpf.util;
+
 import java.io.IOException;
 import java.io.Reader;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.CharsetDecoder;
+
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.POILogFactory;
+import org.apache.poi.util.POILogger;
 
 /**
  * Stream that converts CP950 (MSOffice's dialect of Big5), with
@@ -31,11 +36,10 @@ public class LittleEndianCP950Reader extends Reader {
 
     private static final POILogger LOGGER = POILogFactory.getLogger(LittleEndianCP950Reader.class);
 
-
     private static final char UNMAPPABLE = '?';
     private final ByteBuffer doubleByteBuffer = ByteBuffer.allocate(2);
     private final CharBuffer charBuffer = CharBuffer.allocate(2);
-    private final CharsetDecoder decoder = StringUtil.BIG5.newDecoder();
+    private final CharsetDecoder decoder = DoubleByteUtil.BIG5.newDecoder();
 
     //https://en.wikipedia.org/wiki/Code_page_950
     //see private use area

@@ -34,7 +34,6 @@ public final class StringUtil {
     public static final Charset UTF16LE = StandardCharsets.UTF_16LE;
     public static final Charset UTF8 = StandardCharsets.UTF_8;
     public static final Charset WIN_1252 = Charset.forName("cp1252");
-    public static final Charset BIG5 = Charset.forName("Big5");
 
     private StringUtil() {
         // no instances of this class
