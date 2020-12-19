@@ -415,8 +415,8 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                         pict.setRawData(imgdata);
 
                         pict.setOffset(offset);
-                        pict.setIndex(_pictures.size());
                         _pictures.add(pict);
+                        pict.setIndex(_pictures.size());
                     } catch (IllegalArgumentException e) {
                         logger.log(POILogger.ERROR, "Problem reading picture: ", e, "\nYou document will probably become corrupted if you save it!");
                     }

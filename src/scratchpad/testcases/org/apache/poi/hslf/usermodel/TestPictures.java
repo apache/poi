@@ -551,4 +551,12 @@ public final class TestPictures {
         HSLFPictureShape p = (HSLFPictureShape)ppt.getSlides().get(0).getShapes().get(0);
         assertEquals("tomcat.png", p.getPictureName());
     }
+
+    @Test
+    public void testPictureIndexIsOneBased() throws IOException {
+        try (HSLFSlideShow ppt = new HSLFSlideShow(slTests.openResourceAsStream("ppt_with_png.ppt"))) {
+            HSLFPictureData picture = ppt.getPictureData().get(0);
+            assertEquals(1, picture.getIndex());
+        }
+    }
 }
