@@ -25,9 +25,15 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.zip.DeflaterOutputStream;
 
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianInputStream;
 import org.apache.poi.util.LittleEndianOutputStream;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 
 /**
@@ -35,6 +41,29 @@ import org.apache.poi.util.Units;
  * A metafile is stored compressed using the ZIP deflate/inflate algorithm.
  */
 public abstract class Metafile extends HSLFPictureData {
+
+    /**
+     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of it's overloads to create new
+     *             {@link Metafile}. This API led to detached {@link Metafile} instances (See Bugzilla
+     *             46122) and prevented adding additional functionality.
+     */
+    @Deprecated
+    @Removal(version = "5.3")
+    public Metafile() {
+        this(new EscherContainerRecord(), new EscherBSERecord());
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param recordContainer Record tracking all pictures. Should be attached to the slideshow that this picture is
+     *                        linked to.
+     * @param bse Record referencing this picture. Should be attached to the slideshow that this picture is linked to.
+     */
+    @Internal
+    protected Metafile(EscherContainerRecord recordContainer, EscherBSERecord bse) {
+        super(recordContainer, bse);
+    }
 
     /**
      *  A structure which represents a 34-byte header preceding the compressed metafile data
@@ -117,6 +146,44 @@ public abstract class Metafile extends HSLFPictureData {
             leos.writeByte(filter);
         }
 
+        void write(byte[] destination, int offset) {
+            //hmf
+            LittleEndian.putInt(destination, offset, wmfsize);
+            offset += 4;
+
+            //left
+            LittleEndian.putInt(destination, offset, bounds.x);
+            offset += 4;
+
+            //top
+            LittleEndian.putInt(destination, offset, bounds.y);
+            offset += 4;
+
+            //right
+            LittleEndian.putInt(destination, offset, bounds.x + bounds.width);
+            offset += 4;
+
+            //bottom
+            LittleEndian.putInt(destination, offset, bounds.y + bounds.height);
+            offset += 4;
+
+            //inch
+            LittleEndian.putInt(destination, offset, size.width);
+            offset += 4;
+
+            //inch
+            LittleEndian.putInt(destination, offset, size.height);
+            offset += 4;
+
+            LittleEndian.putInt(destination, offset, zipsize);
+            offset += 4;
+
+            destination[offset] = (byte) compression;
+            offset++;
+
+            destination[offset] = (byte) filter;
+        }
+
         public int getSize(){
             return 34;
         }
@@ -146,11 +213,16 @@ public abstract class Metafile extends HSLFPictureData {
         }
     }
 
-    protected static byte[] compress(byte[] bytes, int offset, int length) throws IOException {
+    protected static byte[] compress(byte[] bytes, int offset, int length) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
-        DeflaterOutputStream  deflater = new DeflaterOutputStream( out );
-        deflater.write(bytes, offset, length);
-        deflater.close();
+        try (DeflaterOutputStream deflater = new DeflaterOutputStream(out)) {
+            deflater.write(bytes, offset, length);
+        } catch (IOException e) {
+            // IOException won't get thrown by the DeflaterOutputStream in this configuration because:
+            //  1. ByteArrayOutputStream doesn't throw an IOException during writes.
+            //  2. The DeflaterOutputStream is not finished until we're done writing.
+            throw new AssertionError("Won't happen", e);
+        }
         return out.toByteArray();
     }
 

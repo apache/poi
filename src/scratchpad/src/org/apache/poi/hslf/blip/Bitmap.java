@@ -20,13 +20,17 @@ package org.apache.poi.hslf.blip;
 import java.awt.Dimension;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import javax.imageio.ImageIO;
 
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 
 /**
@@ -34,6 +38,29 @@ import org.apache.poi.util.Units;
  * The data is not compressed and the exact file content is written in the stream.
  */
 public abstract class Bitmap extends HSLFPictureData {
+
+    /**
+     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of it's overloads to create new
+     *             {@link Bitmap}. This API led to detached {@link Bitmap} instances (See Bugzilla
+     *             46122) and prevented adding additional functionality.
+     */
+    @Deprecated
+    @Removal(version = "5.3")
+    public Bitmap() {
+        this(new EscherContainerRecord(), new EscherBSERecord());
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param recordContainer Record tracking all pictures. Should be attached to the slideshow that this picture is
+     *                        linked to.
+     * @param bse Record referencing this picture. Should be attached to the slideshow that this picture is linked to.
+     */
+    @Internal
+    protected Bitmap(EscherContainerRecord recordContainer, EscherBSERecord bse) {
+        super(recordContainer, bse);
+    }
 
     @Override
     public byte[] getData(){
@@ -43,17 +70,22 @@ public abstract class Bitmap extends HSLFPictureData {
     }
 
     @Override
-    public void setData(byte[] data) throws IOException {
+    protected byte[] formatImageForSlideshow(byte[] data) {
         byte[] checksum = getChecksum(data);
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        out.write(checksum);
-        if (getUIDInstanceCount() == 2) {
-            out.write(checksum);
-        }
-        out.write(0);
-        out.write(data);
+        byte[] rawData = new byte[checksum.length * getUIDInstanceCount() + 1 + data.length];
+        int offset = 0;
 
-        setRawData(out.toByteArray());
+        System.arraycopy(checksum, 0, rawData, offset, checksum.length);
+        offset += checksum.length;
+
+        if (getUIDInstanceCount() == 2) {
+            System.arraycopy(checksum, 0, rawData, offset, checksum.length);
+            offset += checksum.length;
+        }
+
+        offset++;
+        System.arraycopy(data, 0, rawData, offset, data.length);
+        return rawData;
     }
 
     @Override

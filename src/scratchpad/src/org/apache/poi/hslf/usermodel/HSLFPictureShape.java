@@ -125,7 +125,9 @@ public class HSLFPictureShape extends HSLFSimpleShape implements PictureShape<HS
             LOG.atError().log("no reference to picture data found ");
         } else {
             for (HSLFPictureData pd : pict) {
-                if (pd.getOffset() ==  bse.getOffset()){
+
+                // Reference equals is safe because these BSE belong to the same slideshow
+                if (pd.bse == bse) {
                     return pd;
                 }
             }

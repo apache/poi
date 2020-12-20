@@ -23,11 +23,18 @@ import java.io.OutputStream;
 import java.security.MessageDigest;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.function.Supplier;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.apache.poi.common.usermodel.GenericRecord;
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherRecordTypes;
 import org.apache.poi.hslf.blip.DIB;
 import org.apache.poi.hslf.blip.EMF;
@@ -38,8 +45,10 @@ import org.apache.poi.hslf.blip.WMF;
 import org.apache.poi.poifs.crypt.CryptoFunctions;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.sl.usermodel.PictureData;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianConsts;
+import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 
 /**
@@ -47,19 +56,37 @@ import org.apache.poi.util.Units;
  */
 public abstract class HSLFPictureData implements PictureData, GenericRecord {
 
+    private static final Logger LOGGER = LogManager.getLogger(HSLFPictureData.class);
+
     /**
      * Size of the image checksum calculated using MD5 algorithm.
      */
     protected static final int CHECKSUM_SIZE = 16;
 
     /**
-    * Binary data of the picture
-    */
-    private byte[] rawdata;
-    /**
-     * The offset to the picture in the stream
+     * Size of the image preamble in bytes.
+     * <p>
+     * The preamble describes how the image should be decoded. All image types have the same preamble format. The
+     * preamble has little endian encoding. Below is a diagram of the preamble contents.
+     *
+     * <pre>
+     *  0               1               2               3
+     *  0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7 0 1 2 3 4 5 6 7
+     * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     * |           Signature           |          Picture Type         |
+     * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     * |                       Formatted Length                        |
+     * +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
+     * </pre>
      */
-    private int offset;
+    static final int PREAMBLE_SIZE = 8;
+
+    /**
+     * Binary data of the picture, formatted as it will be stored in the {@link HSLFSlideShow}.
+     * <p>
+     * This does not include the {@link #PREAMBLE_SIZE preamble}.
+     */
+    private byte[] formattedData;
 
     /**
      * The instance type/signatures defines if one or two UID instances will be included
@@ -70,6 +97,43 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
      * The 1-based index within the pictures stream
      */
     private int index = -1;
+
+    /**
+     * {@link EscherRecordTypes#BSTORE_CONTAINER BStore} record tracking all pictures. Should be attached to the
+     * slideshow that this picture is linked to.
+     */
+    final EscherContainerRecord bStore;
+
+    /**
+     * Record referencing this picture. Should be attached to the slideshow that this picture is linked to.
+     */
+    final EscherBSERecord bse;
+
+    /**
+     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of it's overloads to create new
+     *             {@link HSLFPictureData}. This API led to detached {@link HSLFPictureData} instances (See Bugzilla
+     *             46122) and prevented adding additional functionality.
+     */
+    @Deprecated
+    @Removal(version = "5.3")
+    public HSLFPictureData() {
+        this(new EscherContainerRecord(), new EscherBSERecord());
+        LOGGER.atWarn().log("The no-arg constructor is deprecated. Some functionality such as updating pictures won't " +
+                "work.");
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param bStore {@link EscherRecordTypes#BSTORE_CONTAINER BStore} record tracking all pictures. Should be attached
+     *               to the slideshow that this picture is linked to.
+     * @param bse Record referencing this picture. Should be attached to the slideshow that this picture is linked to.
+     */
+    @Internal
+    protected HSLFPictureData(EscherContainerRecord bStore, EscherBSERecord bse) {
+        this.bStore = Objects.requireNonNull(bStore);
+        this.bse = Objects.requireNonNull(bse);
+    }
 
     /**
      * Blip signature.
@@ -95,17 +159,34 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
     }
 
     /**
-     * Returns the raw binary data of this Picture excluding the first 8 bytes
-     * which hold image signature and size of the image data.
+     * Returns the formatted, binary data of this picture excluding the {@link #PREAMBLE_SIZE preamble} bytes.
+     * <p>
+     * Primarily intended for internal POI use. Use {@link #getData()} to retrieve the picture represented by this
+     * object.
      *
-     * @return picture data
+     * @return Picture data formatted for the HSLF format.
+     * @see #getData()
+     * @see #formatImageForSlideshow(byte[])
      */
     public byte[] getRawData(){
-        return rawdata;
+        return formattedData;
     }
 
+    /**
+     * Sets the formatted data for this picture.
+     * <p>
+     * Primarily intended for internal POI use. Use {@link #setData(byte[])} to change the picture represented by this
+     * object.
+     *
+     * @param data Picture data formatted for the HSLF format. Excludes the {@link #PREAMBLE_SIZE preamble}.
+     * @see #setData(byte[])
+     * @see #formatImageForSlideshow(byte[])
+     * @deprecated Set image data using {@link #setData(byte[])}.
+     */
+    @Deprecated
+    @Removal(version = "5.3")
     public void setRawData(byte[] data){
-        rawdata = (data == null) ? null : data.clone();
+        formattedData = (data == null) ? null : data.clone();
     }
 
     /**
@@ -114,7 +195,7 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
      * @return offset in the 'Pictures' stream
      */
     public int getOffset(){
-        return offset;
+        return bse.getOffset();
     }
 
     /**
@@ -122,21 +203,25 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
      * We need to set it when a new picture is created.
      *
      * @param offset in the 'Pictures' stream
+     * @deprecated This function was only intended for POI internal use. If you have a use case you're concerned about,
+     * please open an issue in the POI issue tracker.
      */
+    @Deprecated
+    @Removal(version = "5.3")
     public void setOffset(int offset){
-        this.offset = offset;
+        LOGGER.atWarn().log("HSLFPictureData#setOffset is deprecated.");
     }
 
     /**
      * Returns 16-byte checksum of this picture
      */
     public byte[] getUID(){
-        return Arrays.copyOf(rawdata, 16);
+        return Arrays.copyOf(formattedData, CHECKSUM_SIZE);
     }
 
     @Override
     public byte[] getChecksum() {
-        return getChecksum(getData());
+        return getUID();
     }
 
     /**
@@ -173,25 +258,105 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
     }
 
     /**
-     * Create an instance of <code>PictureData</code> by type.
+     * Create an instance of {@link HSLFPictureData} by type.
      *
-     * @param type type of the picture data.
-     * Must be one of the static constants defined in the <code>Picture<code> class.
-     * @return concrete instance of <code>PictureData</code>
+     * @param type type of picture.
+     * @return concrete instance of {@link HSLFPictureData}.
+     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of it's overloads to create new
+     *             {@link HSLFPictureData}. This API led to detached {@link HSLFPictureData} instances (See Bugzilla
+     *             46122) and prevented adding additional functionality.
      */
+    @Deprecated
+    @Removal(version = "5.3")
      public static HSLFPictureData create(PictureType type){
-        HSLFPictureData pict;
-        switch (type){
-            case EMF: pict = new EMF(); break;
-            case WMF: pict = new WMF(); break;
-            case PICT: pict = new PICT(); break;
-            case JPEG: pict = new JPEG(); break;
-            case PNG: pict = new PNG(); break;
-            case DIB: pict = new DIB(); break;
+        LOGGER.atWarn().log("HSLFPictureData#create(PictureType) is deprecated. Some functionality such " +
+                "as updating pictures won't work.");
+
+        // This record code is a stub. It exists only for API compatibility.
+        EscherContainerRecord record = new EscherContainerRecord();
+        EscherBSERecord bse = new EscherBSERecord();
+        return new HSLFSlideShowImpl.PictureFactory(record, type, new byte[0], 0, 0)
+                .setRecord(bse)
+                .build();
+    }
+
+    /**
+     * Creates a new instance of the given image type using data already formatted for storage inside the slideshow.
+     * <p>
+     * This function is most handy when parsing an existing slideshow, as the picture data are already formatted.
+     * @param type Image type.
+     * @param recordContainer Record tracking all pictures. Should be attached to the slideshow that this picture is
+     *                        linked to.
+     * @param bse Record referencing this picture. Should be attached to the slideshow that this picture is linked to.
+     * @param data Image data formatted for storage in the slideshow. This does not include the
+     *        {@link #PREAMBLE_SIZE preamble}.
+     * @param signature Image format-specific signature. See subclasses for signature details.
+     * @return New instance.
+     *
+     * @see #createFromImageData(PictureType, EscherContainerRecord, EscherBSERecord, byte[])
+     */
+    static HSLFPictureData createFromSlideshowData(
+            PictureType type,
+            EscherContainerRecord recordContainer,
+            EscherBSERecord bse,
+            byte[] data,
+            int signature
+    ) {
+        HSLFPictureData instance = newInstance(type, recordContainer, bse);
+        instance.setSignature(signature);
+        instance.formattedData = data;
+        return instance;
+    }
+
+    /**
+     * Creates a new instance of the given image type using data already formatted for storage inside the slideshow.
+     * <p>
+     * This function is most handy when adding new pictures to a slideshow, as the image data provided by users is not
+     * yet formatted.
+     *
+     * @param type Image type.
+     * @param recordContainer Record tracking all pictures. Should be attached to the slideshow that this picture is
+     *                        linked to.
+     * @param bse Record referencing this picture. Should be attached to the slideshow that this picture is linked to.
+     * @param data Original image data. If these bytes were written to a disk, a common image viewer would be able to
+     *             render the image.
+     * @return New instance.
+     *
+     * @see #createFromSlideshowData(PictureType, EscherContainerRecord, EscherBSERecord, byte[], int)
+     * @see #setData(byte[])
+     */
+    static HSLFPictureData createFromImageData(
+            PictureType type,
+            EscherContainerRecord recordContainer,
+            EscherBSERecord bse,
+            byte[] data
+    ) {
+        HSLFPictureData instance = newInstance(type, recordContainer, bse);
+        instance.formattedData = instance.formatImageForSlideshow(data);
+        return instance;
+    }
+
+    private static HSLFPictureData newInstance(
+            PictureType type,
+            EscherContainerRecord recordContainer,
+            EscherBSERecord bse
+    ) {
+        switch (type) {
+            case EMF:
+                return new EMF(recordContainer, bse);
+            case WMF:
+                return new WMF(recordContainer, bse);
+            case PICT:
+                return new PICT(recordContainer, bse);
+            case JPEG:
+                return new JPEG(recordContainer, bse);
+            case PNG:
+                return new PNG(recordContainer, bse);
+            case DIB:
+                return new DIB(recordContainer, bse);
             default:
                 throw new IllegalArgumentException("Unsupported picture type: " + type);
         }
-        return pict;
     }
 
     /**
@@ -204,14 +369,15 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
      * @return the 24 byte header which preceeds the actual picture data.
      */
     public byte[] getHeader() {
-        byte[] header = new byte[16 + 8];
+        byte[] header = new byte[CHECKSUM_SIZE + PREAMBLE_SIZE];
         LittleEndian.putInt(header, 0, getSignature());
         LittleEndian.putInt(header, 4, getRawData().length);
-        System.arraycopy(rawdata, 0, header, 8, 16);
+        System.arraycopy(formattedData, 0, header, PREAMBLE_SIZE, CHECKSUM_SIZE);
         return header;
     }
 
     /**
+     * Returns the 1-based index of this picture.
      * @return the 1-based index of this pictures within the pictures stream
      */
     public int getIndex() {
@@ -223,6 +389,71 @@ public abstract class HSLFPictureData implements PictureData, GenericRecord {
      */
     public void setIndex(int index) {
         this.index = index;
+    }
+
+    /**
+     * Formats the picture data for storage in the slideshow.
+     * <p>
+     * Images stored in {@link HSLFSlideShow}s are represented differently than when they are standalone files. The
+     * exact formatting differs for each image type.
+     *
+     * @param data Original image data. If these bytes were written to a disk, a common image viewer would be able to
+     *             render the image.
+     * @return Formatted image representation.
+     */
+    protected abstract byte[] formatImageForSlideshow(byte[] data);
+
+    /**
+     * @return Size of this picture when stored in the image stream inside the {@link HSLFSlideShow}.
+     */
+    int getBseSize() {
+        return formattedData.length + PREAMBLE_SIZE;
+    }
+
+    @Override
+    public final void setData(byte[] data) throws IOException {
+        /*
+         * When working with slideshow pictures, we need to be aware of 2 container units. The first is a list of
+         * HSLFPictureData that are the programmatic reference for working with the pictures. The second is the
+         * Blip Store. For the purposes of this function, you can think of the Blip Store as containing a list of
+         * pointers (with a small summary) to the picture in the slideshow.
+         *
+         * When updating a picture, we need to update the in-memory data structure (this instance), but we also need to
+         * update the stored pointer. When modifying the pointer, we also need to modify all subsequent pointers, since
+         * they might shift based on a change in the byte count of the underlying image.
+         */
+        int oldSize = getBseSize();
+        formattedData = formatImageForSlideshow(data);
+        int newSize = getBseSize();
+        int changeInSize = newSize - oldSize;
+        byte[] newUid = getUID();
+
+        boolean foundBseForOldImage = false;
+
+        // Get the BSE records & sort the list by offset, so we can proceed to shift offsets
+        @SuppressWarnings("unchecked") // The BStore only contains BSE records
+        List<EscherBSERecord> bseRecords = (List<EscherBSERecord>) (Object) bStore.getChildRecords();
+        bseRecords.sort(Comparator.comparingInt(EscherBSERecord::getOffset));
+
+        for (EscherBSERecord bse : bseRecords) {
+
+            if (foundBseForOldImage) {
+
+                // The BSE for this picture was modified in a previous iteration, and we are now adjusting
+                //  subsequent offsets.
+                bse.setOffset(bse.getOffset() + changeInSize);
+
+            } else if (bse == this.bse) { // Reference equals is safe because these BSE belong to the same slideshow
+
+                // This BSE matches the current image. Update the size and UID.
+                foundBseForOldImage = true;
+
+                bse.setUid(newUid);
+
+                // Image byte count may have changed, so update the pointer.
+                bse.setSize(newSize);
+            }
+        }
     }
 
     @Override

@@ -17,10 +17,13 @@
 
 package org.apache.poi.hslf.blip;
 
-import java.io.IOException;
-
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.util.IOUtils;
+import org.apache.poi.util.Internal;
 import org.apache.poi.util.LittleEndian;
+import org.apache.poi.util.Removal;
 
 /**
  * Represents a DIB picture data in a PPT file
@@ -34,6 +37,29 @@ public final class DIB extends Bitmap {
      * Size of the BITMAPFILEHEADER structure preceding the actual DIB bytes
      */
     private static final int HEADER_SIZE = 14;
+
+    /**
+     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of it's overloads to create new
+     *             {@link DIB}. This API led to detached {@link DIB} instances (See Bugzilla
+     *             46122) and prevented adding additional functionality.
+     */
+    @Deprecated
+    @Removal(version = "5.3")
+    public DIB() {
+        this(new EscherContainerRecord(), new EscherBSERecord());
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param recordContainer Record tracking all pictures. Should be attached to the slideshow that this picture is
+     *                        linked to.
+     * @param bse Record referencing this picture. Should be attached to the slideshow that this picture is linked to.
+     */
+    @Internal
+    public DIB(EscherContainerRecord recordContainer, EscherBSERecord bse) {
+        super(recordContainer, bse);
+    }
 
     @Override
     public PictureType getType(){
@@ -100,9 +126,9 @@ public final class DIB extends Bitmap {
     }
 
     @Override
-    public void setData(byte[] data) throws IOException {
+    protected byte[] formatImageForSlideshow(byte[] data) {
         //cut off the bitmap file-header
         byte[] dib = IOUtils.safelyClone(data, HEADER_SIZE, data.length-HEADER_SIZE, data.length);
-        super.setData(dib);
+        return super.formatImageForSlideshow(dib);
     }
 }

@@ -570,7 +570,9 @@ public final class HSLFFill {
         } else {
             EscherBSERecord bse = (EscherBSERecord)lst.get(idx - 1);
             for (HSLFPictureData pd : pict) {
-                if (pd.getOffset() ==  bse.getOffset()){
+
+                // Reference equals is safe because these BSE belong to the same slideshow
+                if (pd.bse == bse) {
                     return pd;
                 }
             }

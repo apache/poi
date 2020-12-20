@@ -17,12 +17,40 @@
 
 package org.apache.poi.hslf.blip;
 
+import org.apache.poi.ddf.EscherBSERecord;
+import org.apache.poi.ddf.EscherContainerRecord;
+import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.image.ImageHeaderPNG;
+import org.apache.poi.util.Internal;
+import org.apache.poi.util.Removal;
 
 /**
  * Represents a PNG picture data in a PPT file
  */
 public final class PNG extends Bitmap {
+
+    /**
+     * @deprecated Use {@link HSLFSlideShow#addPicture(byte[], PictureType)} or one of it's overloads to create new
+     *             {@link PNG}. This API led to detached {@link PNG} instances (See Bugzilla
+     *             46122) and prevented adding additional functionality.
+     */
+    @Deprecated
+    @Removal(version = "5.3")
+    public PNG() {
+        this(new EscherContainerRecord(), new EscherBSERecord());
+    }
+
+    /**
+     * Creates a new instance.
+     *
+     * @param recordContainer Record tracking all pictures. Should be attached to the slideshow that this picture is
+     *                        linked to.
+     * @param bse Record referencing this picture. Should be attached to the slideshow that this picture is linked to.
+     */
+    @Internal
+    public PNG(EscherContainerRecord recordContainer, EscherBSERecord bse) {
+        super(recordContainer, bse);
+    }
 
     @Override
     public byte[] getData() {
