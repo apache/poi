@@ -592,7 +592,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
     @Override
     public short getRotation() {
         CTCellAlignment align = _cellXf.getAlignment();
-        return align == null ? 0 : align.getTextRotation().shortValue();
+        return align == null || align.getTextRotation() == null ? 0 : align.getTextRotation().shortValue();
     }
 
     @Override
