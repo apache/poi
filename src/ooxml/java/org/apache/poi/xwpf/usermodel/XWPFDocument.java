@@ -1477,22 +1477,33 @@ public class XWPFDocument extends POIXMLDocument implements Document, IBody {
     }
 
     /**
-     * get the next free ImageNumber
+     * Calculates the index within the package of the next image of a given format.
      *
-     * @param format
-     * @return the next free ImageNumber
-     * @throws InvalidFormatException If the format of the picture is not known.
+     * Images within the package are indexed by image format. Loosely, this can be thought of as a
+     * {@code MultiMap<Format, Index>}. For example, a package with 2 JPEGs and 1 PNG may organize the images like:
+     * <pre>
+     * {
+     *     JPEG: [1.jpeg, 2.jpeg],
+     *     PNG: [1.png]
+     * }
+     * </pre>.
+     *
+     * The index returned is not guaranteed to be the highest index. For example, a package could already have
+     * {@code [1.png, 3.png]}, in which case this method may return {@code 2}.
+     *
+     * @param format Image format identifier. See {@code PICTURE_TYPE_*} constants in {@link Document} for allowed
+     * values.
+     * @return the index of the next next slot for the given format.
+     * @throws InvalidFormatException If the specified format is unknown.
      */
     public int getNextPicNameNumber(int format) throws InvalidFormatException {
-        int img = getAllPackagePictures().size() + 1;
-        String proposal = XWPFPictureData.RELATIONS[format].getFileName(img);
-        PackagePartName createPartName = PackagingURIHelper.createPartName(proposal);
-        while (this.getPackage().getPart(createPartName) != null) {
-            img++;
-            proposal = XWPFPictureData.RELATIONS[format].getFileName(img);
-            createPartName = PackagingURIHelper.createPartName(proposal);
+        POIXMLRelation relation;
+        try {
+            relation = XWPFPictureData.RELATIONS[format];
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new InvalidFormatException("Unknown image format " + format);
         }
-        return img;
+        return getPackage().getUnusedPartIndex(relation.getDefaultFileName());
     }
 
     /**

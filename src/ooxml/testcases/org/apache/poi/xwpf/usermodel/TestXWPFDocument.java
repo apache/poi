@@ -17,14 +17,6 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-
 import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Arrays;
@@ -46,6 +38,8 @@ import org.apache.xmlbeans.XmlCursor;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
+
+import static org.junit.Assert.*;
 
 public final class TestXWPFDocument {
 
@@ -488,6 +482,51 @@ public final class TestXWPFDocument {
         }
         try (XWPFWordExtractor ext = new XWPFWordExtractor(doc)) {
             assertEquals(origText, ext.getText());
+        }
+    }
+
+    @Test
+    public void getNextPicNameNumberThrowsInvalidFormatExceptionForUnknownFormat() throws IOException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+            try {
+                doc.getNextPicNameNumber(Integer.MAX_VALUE);
+                fail("Expected InvalidFormatException");
+            } catch (InvalidFormatException expected) {
+            }
+        }
+    }
+
+    @Test
+    public void getNextPicNameNumberReturnsAvailableIndex() throws IOException, InvalidFormatException {
+        try (XWPFDocument doc = new XWPFDocument()) {
+
+            // For an empty document, slot 1 makes sense, but any slot will result in a valid document.
+            int slot1 = doc.getNextPicNameNumber(Document.PICTURE_TYPE_JPEG);
+            assertTrue(slot1 > 0);
+
+            // For a document with 1 image in it, slot 2 makes sense, but any slot will result in a valid document as
+            // long as the new slot is different than the first slot.
+            doc.addPictureData(new byte[1], Document.PICTURE_TYPE_JPEG);
+            int slot2 = doc.getNextPicNameNumber(Document.PICTURE_TYPE_JPEG);
+            assertNotEquals(slot1, slot2);
+            assertTrue(slot2 > 0);
+
+            // For a document with 2 images that are separated by a gap, as in [1.jpeg, 3.jpeg], it makes sense for the
+            // gap to be filled, but any slot will result in a valid document as long as the new slot is different than
+            // the existing slots.
+            String image2 = doc.addPictureData(new byte[2], Document.PICTURE_TYPE_JPEG);
+            int slot3 = doc.getNextPicNameNumber(Document.PICTURE_TYPE_JPEG);
+            doc.addPictureData(new byte[3], Document.PICTURE_TYPE_JPEG);
+            doc.getPackage().removePart(doc.getPartById(image2));
+            slot2 = doc.getNextPicNameNumber(Document.PICTURE_TYPE_JPEG);
+            assertNotEquals(slot1, slot2);
+            assertNotEquals(slot3, slot2);
+            assertTrue(slot2 > 0);
+
+            // When adding an image of a different format, it makes sense to start the indexing from 1, but any slot
+            // will result in a valid document.
+            int pngSlot1 = doc.getNextPicNameNumber(Document.PICTURE_TYPE_PNG);
+            assertTrue(pngSlot1 > 0);
         }
     }
 }
