@@ -30,7 +30,9 @@ public class TestColumn {
         table.addNewCol();
 
         int expectedNumberOfColumns = 5;
-        table.tableRows.forEach(row -> assertEquals(expectedNumberOfColumns, row.getTableCells().size()));
+        for (int i = 0; i < table.tableRows.size(); i++) {
+            assertEquals(expectedNumberOfColumns, table.tableRows.get(i).getTableCells().size());
+        }
         doc.close();
     }
 
@@ -55,7 +57,9 @@ public class TestColumn {
             table.addNewCol();
 
             int expectedNumberOfColumns = 5;
-            table.tableRows.forEach(row -> assertEquals(expectedNumberOfColumns, row.getTableCells().size()));
+            for (int i = 0; i < table.tableRows.size(); i++) {
+                assertEquals(expectedNumberOfColumns, table.tableRows.get(i).getTableCells().size());
+            }
         }
     }
 
