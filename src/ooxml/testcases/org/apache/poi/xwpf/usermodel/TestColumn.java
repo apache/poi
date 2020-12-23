@@ -24,7 +24,7 @@ import static org.junit.Assert.assertEquals;
 
 public class TestColumn {
     @Test
-    public void testAddNewCol() throws IOException {
+    public void testAddNewColWithCorrectAmountOfColumns() throws IOException {
         XWPFDocument doc = new XWPFDocument();
         XWPFTable table = doc.createTable(2, 4);
         table.addNewCol();
