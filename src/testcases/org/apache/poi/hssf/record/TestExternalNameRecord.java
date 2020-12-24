@@ -18,15 +18,15 @@
 package org.apache.poi.hssf.record;
 
 import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestExternalNameRecord {
 
@@ -64,7 +64,7 @@ public final class TestExternalNameRecord {
 	@Test
 	public void testBasicSize() {
 		ExternalNameRecord enr = createSimpleENR(dataFDS);
-		assertNotEquals("Identified bug 44695",13, enr.getRecordSize());
+		assertNotEquals(13, enr.getRecordSize(), "Identified bug 44695");
 		assertEquals(17, enr.getRecordSize());
 
 		assertNotNull(enr.serialize());

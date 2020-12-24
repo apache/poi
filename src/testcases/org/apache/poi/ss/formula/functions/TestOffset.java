@@ -17,10 +17,9 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -31,7 +30,9 @@ import org.apache.poi.ss.formula.functions.Offset.LinearOffsetRange;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * Tests for OFFSET function implementation
@@ -40,42 +41,21 @@ import org.junit.Test;
  */
 public final class TestOffset {
 
-	private static void confirmDoubleConvert(double doubleVal, int expected) {
-		try {
-			assertEquals(expected, Offset.evaluateIntArg(new NumberEval(doubleVal), -1, -1));
-		} catch (EvaluationException e) {
-			fail("Unexpected error '" + e.getErrorEval() + "'.");
-		}
-	}
 	/**
 	 * Excel's double to int conversion (for function 'OFFSET()') behaves more like Math.floor().
 	 * Note - negative values are not symmetrical
 	 * Fractional values are silently truncated.
 	 * Truncation is toward negative infinity.
 	 */
-	@Test
-	public void testDoubleConversion() {
-
-		confirmDoubleConvert(100.09, 100);
-		confirmDoubleConvert(100.01, 100);
-		confirmDoubleConvert(100.00, 100);
-		confirmDoubleConvert(99.99, 99);
-
-		confirmDoubleConvert(+2.01, +2);
-		confirmDoubleConvert(+2.00, +2);
-		confirmDoubleConvert(+1.99, +1);
-		confirmDoubleConvert(+1.01, +1);
-		confirmDoubleConvert(+1.00, +1);
-		confirmDoubleConvert(+0.99,  0);
-		confirmDoubleConvert(+0.01,  0);
-		confirmDoubleConvert( 0.00,  0);
-		confirmDoubleConvert(-0.01, -1);
-		confirmDoubleConvert(-0.99, -1);
-		confirmDoubleConvert(-1.00, -1);
-		confirmDoubleConvert(-1.01, -2);
-		confirmDoubleConvert(-1.99, -2);
-		confirmDoubleConvert(-2.00, -2);
-		confirmDoubleConvert(-2.01, -3);
+	@ParameterizedTest
+	@CsvSource({
+		"100.09, 100", "100.01, 100", "100.00, 100", "99.99, 99", "+2.01, +2",
+		"+2.00, +2", "+1.99, +1", "+1.01, +1", "+1.00, +1", "+0.99,  0",
+		"+0.01,  0", "0.00,  0","-0.01, -1", "-0.99, -1", "-1.00, -1",
+		"-1.01, -2", "-1.99, -2", "-2.00, -2", "-2.01, -3"
+	})
+	public void testDoubleConversion(double doubleVal, int expected) throws EvaluationException {
+		assertEquals(expected, Offset.evaluateIntArg(new NumberEval(doubleVal), -1, -1));
 	}
 
 	@Test

@@ -17,14 +17,14 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.StyleSheet;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestBug49820 {
 

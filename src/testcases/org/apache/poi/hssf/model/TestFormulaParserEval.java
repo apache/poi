@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
@@ -30,7 +30,7 @@ import org.apache.poi.ss.formula.ptg.NamePtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the low level formula parser functionality,
@@ -70,7 +70,7 @@ public final class TestFormulaParserEval {
 	 */
 	private static void confirmParseFormula(HSSFWorkbook workbook) {
 		Ptg[] ptgs = HSSFFormulaParser.parse("SUM(testName)", workbook);
-        assertEquals("two tokens expected, got " + ptgs.length, 2, ptgs.length);
+        assertEquals(2, ptgs.length, "two tokens expected, got " + ptgs.length);
 		assertEquals(NamePtg.class, ptgs[0].getClass());
 		assertEquals(AttrPtg.class, ptgs[1].getClass());
 	}

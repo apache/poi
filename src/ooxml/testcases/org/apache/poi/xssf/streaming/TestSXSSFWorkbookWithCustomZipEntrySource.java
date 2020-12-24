@@ -19,9 +19,9 @@
 
 package org.apache.poi.xssf.streaming;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 import java.io.ByteArrayInputStream;
@@ -31,7 +31,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.charset.Charset;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
@@ -46,17 +45,17 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * This class tests that an SXSSFWorkbook can be written and read where all temporary disk I/O
  * is encrypted, but the final saved workbook is not encrypted
  */
 public final class TestSXSSFWorkbookWithCustomZipEntrySource {
-    
+
     final String sheetName = "TestSheet1";
     final String cellValue = "customZipEntrySource";
-    
+
     // write an unencrypted workbook to disk, but any temporary files are encrypted
     @Test
     public void customZipEntrySource() throws IOException {
@@ -77,7 +76,7 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
         assertEquals(cellValue, xc1.getStringCellValue());
         xwb.close();
     }
-    
+
     // write an encrypted workbook to disk, and encrypt any temporary files as well
     @Test
     public void customZipEntrySourceForWriteAndRead() throws IOException, GeneralSecurityException, InvalidFormatException {
@@ -105,7 +104,7 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
             }
         }
     }
-    
+
     @Test
     public void validateTempFilesAreEncrypted() throws IOException {
         TempFileRecordingSXSSFWorkbookWithCustomZipEntrySource workbook = new TempFileRecordingSXSSFWorkbookWithCustomZipEntrySource();
@@ -119,7 +118,7 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
         List<File> tempFiles = workbook.getTempFiles();
         assertEquals(1, tempFiles.size());
         File tempFile = tempFiles.get(0);
-        assertTrue("tempFile exists?", tempFile.exists());
+        assertTrue(tempFile.exists(), "tempFile exists?");
         try (InputStream stream = new FileInputStream(tempFile)) {
             byte[] data = IOUtils.toByteArray(stream);
             String text = new String(data, UTF_8);
@@ -127,6 +126,6 @@ public final class TestSXSSFWorkbookWithCustomZipEntrySource {
             assertFalse(text.contains(cellValue));
         }
         workbook.dispose();
-        assertFalse("tempFile deleted after dispose?", tempFile.exists());
+        assertFalse(tempFile.exists(), "tempFile deleted after dispose?");
     }
 }

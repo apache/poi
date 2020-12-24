@@ -17,12 +17,12 @@
 
 package org.apache.poi.hssf.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -36,7 +36,7 @@ import org.apache.poi.ss.formula.functions.FreeRefFunction;
 import org.apache.poi.ss.formula.udf.AggregatingUDFFinder;
 import org.apache.poi.ss.formula.udf.DefaultUDFFinder;
 import org.apache.poi.ss.formula.udf.UDFFinder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for the Workbook class.
@@ -161,15 +161,13 @@ public final class TestWorkbook {
         InternalWorkbook iwb = TestHSSFWorkbook.getInternalWorkbook(wb);
 
         int oldRecordsCount = iwb.getNumRecords();
-        //System.out.println("records count = " + oldRecordsCount);
-        assertEquals("records count", 68, oldRecordsCount);
+        assertEquals(68, oldRecordsCount, "records count");
 
         WriteAccessRecord writeAccess = iwb.getWriteAccess();
         assertNotNull(writeAccess);
         assertEquals(WriteAccessRecord.sid, writeAccess.getSid());
 
         int newRecordsCount = iwb.getNumRecords();
-        //System.out.println("records count after 'getWriteAccess' = " + newRecordsCount);
-        assertEquals("records count after getWriteAccess", oldRecordsCount, newRecordsCount);
+        assertEquals(oldRecordsCount, newRecordsCount, "records count after getWriteAccess");
     }
 }

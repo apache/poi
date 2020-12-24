@@ -17,11 +17,11 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.io.IOException;
 
@@ -29,7 +29,7 @@ import org.apache.poi.ss.usermodel.BaseTestSheetUpdateArrayFormulas;
 import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.XSSFITestDataProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
@@ -100,7 +100,7 @@ public final class TestXSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateA
         confirmArrayFormulaCell(c, cellRef, null, null);
     }
     private static void confirmArrayFormulaCell(XSSFCell c, String cellRef, String formulaText, String arrayRangeRef) {
-        assertNotNull("Cell should not be null.", c);
+        assertNotNull(c, "Cell should not be null.");
         CTCell ctCell = c.getCTCell();
         assertEquals(cellRef, ctCell.getR());
         if (formulaText == null) {

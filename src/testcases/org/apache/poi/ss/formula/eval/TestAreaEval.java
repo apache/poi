@@ -18,14 +18,14 @@
 package org.apache.poi.ss.formula.eval;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.functions.EvalFactory;
 import org.apache.poi.ss.formula.ptg.AreaPtg;
 import org.apache.poi.ss.util.AreaReference;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for <tt>AreaEval</tt>
@@ -46,7 +46,7 @@ public final class TestAreaEval {
 				new NumberEval(6),
 		};
 		AreaEval ae = EvalFactory.createAreaEval(ptg, values);
-		assertNotEquals("Identified bug 44950 a", one, ae.getAbsoluteValue(1, 2));
+		assertNotEquals(one, ae.getAbsoluteValue(1, 2), "Identified bug 44950 a");
 		confirm(1, ae, 1, 1);
 		confirm(2, ae, 1, 2);
 		confirm(3, ae, 1, 3);

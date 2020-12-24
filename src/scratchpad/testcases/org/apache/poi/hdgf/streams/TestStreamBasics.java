@@ -18,21 +18,21 @@
 package org.apache.poi.hdgf.streams;
 
 import static org.apache.poi.poifs.storage.RawDataUtil.decompress;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
 import org.apache.poi.hdgf.pointers.Pointer;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public final class TestStreamBasics extends StreamTest {
 	private static byte[] compressedStream, uncompressedStream;
 
-	@BeforeClass
+	@BeforeAll
 	public static void init() throws IOException {
         compressedStream = decompress(
             "H4sIAAAAAAAAAAFTAaz+e8QC6/ABAAC48/BO4PsBAAPr8AoFBOvwFQnr8Gfr8CLc/zQPRg94WA/5/u"+
@@ -43,7 +43,7 @@ public final class TestStreamBasics extends StreamTest {
             "AA2OvwpEJ/VQFidwAA0E8S/TLvAUNVAVGBANcADgYEET/BEURVvwEeiAAAKk8SRH7r8LRFVQFmiUgl"+
             "AGEhwtTYaVMBAAA="
         );
-	        
+
         uncompressedStream = decompress(
             "H4sIAAAAAAAAAGNgZGDYAcSogJGBGUjCMAsQcwJxOhAroSulEkB2Qqsogw4I41KrMU/BL23vv0cOGn"+
             "v7t5eAGU7VnLlgBobUibUb0fVX5HnDrROB0mJA/GW9M2MDkA4BYjcGcSDpc8Of8QqQVgCLgkT2AEV+"+
@@ -53,7 +53,7 @@ public final class TestStreamBasics extends StreamTest {
             "ROmAgIAAD6SJPAdAIAAA=="
         );
 	}
-	        
+
 
 	@Test
 	public void testCompressedStream() {

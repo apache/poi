@@ -17,9 +17,9 @@
 
 package org.apache.poi.hpsf.basic;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -38,8 +38,8 @@ import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hpsf.Variant;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test case for OLE2 files with empty properties.
@@ -69,7 +69,7 @@ public final class TestEmptyProperties {
      * does not exist
      * @exception IOException if an I/O exception occurs
      */
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         final File data = samples.getFile(POI_FS);
         poiFiles = Util.readPOIFiles(data);

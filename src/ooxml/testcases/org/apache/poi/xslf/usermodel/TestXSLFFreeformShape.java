@@ -18,7 +18,7 @@ package org.apache.poi.xslf.usermodel;
 
 
 import org.apache.poi.sl.draw.SLGraphics;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTGroupShape;
 
 import java.awt.Color;
@@ -34,7 +34,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import static org.apache.poi.xslf.usermodel.TestXSLFSimpleShape.getSpPr;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class TestXSLFFreeformShape {
 
@@ -58,7 +58,7 @@ public class TestXSLFFreeformShape {
         shape2.setPath(path2);
 
         assertEquals(getSpPr(shape1).getCustGeom().toString(), getSpPr(shape2).getCustGeom().toString());
-        
+
         ppt.close();
     }
 

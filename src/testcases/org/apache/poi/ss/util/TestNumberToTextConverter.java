@@ -17,14 +17,14 @@
 
 package org.apache.poi.ss.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.ss.formula.constant.ConstantValueParser;
 import org.apache.poi.ss.formula.ptg.NumberPtg;
 import org.apache.poi.ss.util.NumberToTextConversionExamples.ExampleConversion;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link NumberToTextConverter}

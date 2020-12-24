@@ -16,14 +16,14 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Yegor Kozlov
@@ -36,7 +36,7 @@ public class TestXSLFGroupShape {
         XSLFSlide slide = ppt.createSlide();
 
         ppt.setPageSize(new Dimension(792, 612));
-        
+
         XSLFGroupShape group = slide.createGroup();
         assertEquals(1, slide.getShapes().size());
 
@@ -85,7 +85,7 @@ public class TestXSLFGroupShape {
         group.removeShape(shape1);
         group.removeShape(shape4);
         assertTrue(group.getShapes().isEmpty());
-        
+
         ppt.close();
     }
 

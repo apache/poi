@@ -17,10 +17,10 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
@@ -29,7 +29,7 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases for Excel function T()
@@ -44,7 +44,7 @@ public final class TestTFunc {
 	private static ValueEval invokeT(ValueEval arg) {
 		ValueEval[] args = { arg, };
 		ValueEval result = new T().evaluate(args, -1, (short)-1);
-		assertNotNull("result may never be null", result);
+		assertNotNull(result, "result may never be null");
 		return result;
 	}
 

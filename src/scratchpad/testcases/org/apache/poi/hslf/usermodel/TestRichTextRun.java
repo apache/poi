@@ -18,11 +18,11 @@
 package org.apache.poi.hslf.usermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -35,9 +35,9 @@ import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test that the friendly getters and setters on RichTextRun
@@ -53,27 +53,27 @@ public final class TestRichTextRun {
     private HSLFSlideShow ssChinese;
     private static String filenameC;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         // Basic (non rich) test file
         ss = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
 
         // Rich test file A
         ssRichA = HSLFTestDataSamples.getSlideShow("Single_Coloured_Page.ppt");
-        
+
         // Rich test file B
         ssRichB = HSLFTestDataSamples.getSlideShow("Single_Coloured_Page_With_Fonts_and_Alignments.ppt");
-        
+
         // Rich test file C - has paragraph styles that run out before
         //   the character ones do
         filenameC = "ParagraphStylesShorterThanCharStyles.ppt";
         ssRichC = HSLFTestDataSamples.getSlideShow(filenameC);
-        
+
         // Rich test file with Chinese + English text in it
         ssChinese = HSLFTestDataSamples.getSlideShow("54880_chinese.ppt");
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws IOException {
         ss.close();
         ssRichA.close();
@@ -81,7 +81,7 @@ public final class TestRichTextRun {
         ssRichC.close();
         ssChinese.close();
     }
-    
+
 	/**
 	 * Test the stuff about getting/setting bold
 	 *  on a non rich text run
@@ -162,13 +162,16 @@ public final class TestRichTextRun {
 
 		// Start off with rich one
 		// First run has defaults
+		assertNotNull(rtrRa.getFontSize());
 		assertEquals(44, rtrRa.getFontSize(), 0);
 		assertEquals(defaultFont, rtrRa.getFontFamily());
 
 		// Second is size 20, default font
+		assertNotNull(rtrRb.getFontSize());
 		assertEquals(20, rtrRb.getFontSize(), 0);
 		assertEquals(defaultFont, rtrRb.getFontFamily());
 		// Third is size 24, alt font
+		assertNotNull(rtrRc.getFontSize());
 		assertEquals(24, rtrRc.getFontSize(), 0);
 		assertEquals("Times New Roman", rtrRc.getFontFamily());
 
@@ -182,6 +185,7 @@ public final class TestRichTextRun {
 
 
 		// Now do non rich one
+		assertNotNull(rtr.getFontSize());
 		assertEquals(44, rtr.getFontSize(), 0);
 		assertEquals(defaultFont, rtr.getFontFamily());
 		assertEquals(1, ss.getFontCollection().getChildRecords().length); // Default
@@ -213,7 +217,7 @@ public final class TestRichTextRun {
 			HSLFSlide slideOne = h.getSlides().get(0);
 			List<List<HSLFTextParagraph>> textParass = slideOne.getTextParagraphs();
 			HSLFTextRun rtr = textParass.get(0).get(0).getTextRuns().get(0);
-			
+
 			rtr.setBold(true);
 			rtr.setFontSize(18d);
 			rtr.setFontFamily("Courier");
@@ -221,6 +225,7 @@ public final class TestRichTextRun {
 
 			// Check it took those
 			assertTrue(rtr.isBold());
+			assertNotNull(rtr.getFontSize());
 			assertEquals(18., rtr.getFontSize(), 0);
 			assertEquals("Courier", rtr.getFontFamily());
 
@@ -245,6 +250,7 @@ public final class TestRichTextRun {
 			HSLFTextRun rtrRRa = textParassRR.get(0).get(0).getTextRuns().get(0);
 
 			assertTrue(rtrRRa.isBold());
+			assertNotNull(rtrRRa.getFontSize());
 			assertEquals(18., rtrRRa.getFontSize(), 0);
 			assertEquals("Courier", rtrRRa.getFontFamily());
 			readS.close();
@@ -361,7 +367,6 @@ public final class TestRichTextRun {
 	 *  SlideListWithText out, and compares it to the write
 	 *  out of the supplied SlideShow. Also compares the
 	 *  contents.
-	 * @param s
 	 */
 	private void assertMatchesSLTWC(HSLFSlideShow s) throws IOException {
 		// Grab a new copy of slideshow C
@@ -409,11 +414,11 @@ public final class TestRichTextRun {
 		is = fs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT);
 		byte[] raw_ss = IOUtils.toByteArray(is);
         is.close();
-        fs.close();		
-		
+        fs.close();
+
 		// different paragraph mask, because of sanitizing
 		raw_ss[169030] = 0x0a;
-		
+
 		// Ensure they're the same
 		assertArrayEquals(raw_file, raw_ss);
 	}
@@ -441,57 +446,58 @@ public final class TestRichTextRun {
 
     @Test
 	public void testReadParagraphStyles() throws Exception {
-		HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("bullets.ppt");
-		assertTrue("No Exceptions while reading file", true);
+		try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("bullets.ppt")) {
+			HSLFTextParagraph rt;
+			List<List<HSLFTextParagraph>> txt;
+			List<HSLFSlide> slide = ppt.getSlides();
+			assertEquals(2, slide.size());
 
-		HSLFTextParagraph rt;
-		List<List<HSLFTextParagraph>> txt;
-		List<HSLFSlide> slide = ppt.getSlides();
-		assertEquals(2, slide.size());
+			txt = slide.get(0).getTextParagraphs();
+			assertEquals(2, txt.size());
 
-		txt = slide.get(0).getTextParagraphs();
-		assertEquals(2, txt.size());
+			assertEquals("Title text", HSLFTextParagraph.getRawText(txt.get(0)));
+			assertEquals(1, txt.get(0).size());
+			rt = txt.get(0).get(0);
+			assertFalse(rt.isBullet());
 
-		assertEquals("Title text", HSLFTextParagraph.getRawText(txt.get(0)));
-		assertEquals(1, txt.get(0).size());
-		rt = txt.get(0).get(0);
-		assertFalse(rt.isBullet());
-
-		String expected =
-	        "This is a text placeholder that \r" +
-            "follows the design pattern\r" +
-            "Defined in the slide master\r" +
-            "and has bullets by default";
-		assertEquals(expected, HSLFTextParagraph.getRawText(txt.get(1)));
-		assertEquals(4, txt.get(1).size());
-		rt = txt.get(1).get(0);
-		assertEquals('\u2022', (char)rt.getBulletChar());
-		assertTrue(rt.isBullet());
+			String expected =
+				"This is a text placeholder that \r" +
+					"follows the design pattern\r" +
+					"Defined in the slide master\r" +
+					"and has bullets by default";
+			assertEquals(expected, HSLFTextParagraph.getRawText(txt.get(1)));
+			assertEquals(4, txt.get(1).size());
+			rt = txt.get(1).get(0);
+			assertNotNull(rt.getBulletChar());
+			assertEquals('\u2022', (char) rt.getBulletChar());
+			assertTrue(rt.isBullet());
 
 
-		txt = slide.get(1).getTextParagraphs();
-		assertEquals(2, txt.size());
+			txt = slide.get(1).getTextParagraphs();
+			assertEquals(2, txt.size());
 
-		expected =
-	        "I\u2019m a text box\r" +
-            "With bullets\r" +
-            "That follow the design pattern\r" +
-            "From the slide master";
-		assertEquals(expected, HSLFTextParagraph.getRawText(txt.get(0)));
-		assertEquals(4, txt.get(0).size());
-		rt = txt.get(0).get(0);
-		assertTrue(rt.isBullet());
-		assertEquals('\u2022', (char)rt.getBulletChar());
+			expected =
+				"I\u2019m a text box\r" +
+					"With bullets\r" +
+					"That follow the design pattern\r" +
+					"From the slide master";
+			assertEquals(expected, HSLFTextParagraph.getRawText(txt.get(0)));
+			assertEquals(4, txt.get(0).size());
+			rt = txt.get(0).get(0);
+			assertTrue(rt.isBullet());
+			assertNotNull(rt.getBulletChar());
+			assertEquals('\u2022', (char) rt.getBulletChar());
 
-		expected =
-            "I\u2019m a text box with user-defined\r" +
-            "bullet character";
-        assertEquals(expected, HSLFTextParagraph.getRawText(txt.get(1)));
-		assertEquals(2, txt.get(1).size());
-		rt = txt.get(1).get(0);
-		assertTrue(rt.isBullet());
-		assertEquals('\u263A', (char)rt.getBulletChar());
-		ppt.close();
+			expected =
+				"I\u2019m a text box with user-defined\r" +
+					"bullet character";
+			assertEquals(expected, HSLFTextParagraph.getRawText(txt.get(1)));
+			assertEquals(2, txt.get(1).size());
+			rt = txt.get(1).get(0);
+			assertTrue(rt.isBullet());
+			assertNotNull(rt.getBulletChar());
+			assertEquals('\u263A', (char) rt.getBulletChar());
+		}
 	}
 
     @Test
@@ -514,10 +520,14 @@ public final class TestRichTextRun {
 		rt.setBulletChar('\u263A');
 		slide.addShape(shape);
 
+		assertNotNull(tr.getFontSize());
 		assertEquals(42.0, tr.getFontSize(), 0);
 		assertTrue(rt.isBullet());
+		assertNotNull(rt.getLeftMargin());
 		assertEquals(50.0, rt.getLeftMargin(), 0);
+		assertNotNull(rt.getIndent());
 		assertEquals(0, rt.getIndent(), 0);
+		assertNotNull(rt.getBulletChar());
 		assertEquals('\u263A', (char)rt.getBulletChar());
 
 		shape.setAnchor(new java.awt.Rectangle(50, 50, 500, 300));
@@ -529,10 +539,14 @@ public final class TestRichTextRun {
 		shape = (HSLFTextBox)slide.getShapes().get(0);
 		rt = shape.getTextParagraphs().get(0);
 		tr = rt.getTextRuns().get(0);
+		assertNotNull(tr.getFontSize());
 		assertEquals(42.0, tr.getFontSize(), 0);
 		assertTrue(rt.isBullet());
+		assertNotNull(rt.getLeftMargin());
 		assertEquals(50.0, rt.getLeftMargin(), 0);
+		assertNotNull(rt.getIndent());
 		assertEquals(0, rt.getIndent(), 0);
+		assertNotNull(rt.getBulletChar());
 		assertEquals('\u263A', (char)rt.getBulletChar());
 		ppt2.close();
 		ppt1.close();
@@ -540,80 +554,79 @@ public final class TestRichTextRun {
 
     @Test
 	public void testAddText() throws Exception {
-		HSLFSlideShow ppt1 = HSLFTestDataSamples.getSlideShow("bullets.ppt");
-		assertTrue("No Exceptions while reading file", true);
+		try (HSLFSlideShow ppt1 = HSLFTestDataSamples.getSlideShow("bullets.ppt")) {
 
-		HSLFTextParagraph rt;
-		HSLFTextRun tr;
-		List<List<HSLFTextParagraph>> txt;
-		List<HSLFSlide> slides = ppt1.getSlides();
+			HSLFTextParagraph rt;
+			HSLFTextRun tr;
+			List<List<HSLFTextParagraph>> txt;
+			List<HSLFSlide> slides = ppt1.getSlides();
 
-		assertEquals(2, slides.size());
-		txt = slides.get(0).getTextParagraphs();
-		assertEquals(2, txt.size());
+			assertEquals(2, slides.size());
+			txt = slides.get(0).getTextParagraphs();
+			assertEquals(2, txt.size());
 
-		assertEquals("Title text", HSLFTextParagraph.getRawText(txt.get(0)));
-		assertEquals(1, txt.get(0).size());
-		rt = txt.get(0).get(0);
-		assertFalse(rt.isBullet());
+			assertEquals("Title text", HSLFTextParagraph.getRawText(txt.get(0)));
+			assertEquals(1, txt.get(0).size());
+			rt = txt.get(0).get(0);
+			assertFalse(rt.isBullet());
 
-		// Add some new text
-		HSLFTextParagraph.appendText(txt.get(0), "Foo! I'm new!", true);
-		assertEquals(2, txt.get(0).size());
+			// Add some new text
+			HSLFTextParagraph.appendText(txt.get(0), "Foo! I'm new!", true);
+			assertEquals(2, txt.get(0).size());
 
-		rt = txt.get(0).get(0);
-		tr = rt.getTextRuns().get(0);
-		assertFalse(tr.isBold());
-		assertEquals("Title text\r", tr.getRawText());
-		rt = txt.get(0).get(1);
-		tr = rt.getTextRuns().get(0);
-		assertFalse(tr.isBold());
-		assertEquals("Foo! I'm new!", tr.getRawText());
-		tr.setBold(true);
-		HSLFTextParagraph.storeText(txt.get(0));
+			rt = txt.get(0).get(0);
+			tr = rt.getTextRuns().get(0);
+			assertFalse(tr.isBold());
+			assertEquals("Title text\r", tr.getRawText());
+			rt = txt.get(0).get(1);
+			tr = rt.getTextRuns().get(0);
+			assertFalse(tr.isBold());
+			assertEquals("Foo! I'm new!", tr.getRawText());
+			tr.setBold(true);
+			HSLFTextParagraph.storeText(txt.get(0));
 
-		// And some more, attributes will be copied from previous run
-		HSLFTextParagraph.appendText(txt.get(0), "Me too!", true);
-		HSLFTextParagraph.storeText(txt.get(0));
-		assertEquals(3, txt.get(0).size());
-		rt = txt.get(0).get(0);
-		tr = rt.getTextRuns().get(0);
-		assertFalse(tr.isBold());
-		assertEquals("Title text\r", tr.getRawText());
-		rt = txt.get(0).get(1);
-		tr = rt.getTextRuns().get(0);
-		assertTrue(tr.isBold());
-		assertEquals("Foo! I'm new!\r", tr.getRawText());
-		rt = txt.get(0).get(2);
-		tr = rt.getTextRuns().get(0);
-		assertTrue(tr.isBold());
-		assertEquals("Me too!", tr.getRawText());
+			// And some more, attributes will be copied from previous run
+			HSLFTextParagraph.appendText(txt.get(0), "Me too!", true);
+			HSLFTextParagraph.storeText(txt.get(0));
+			assertEquals(3, txt.get(0).size());
+			rt = txt.get(0).get(0);
+			tr = rt.getTextRuns().get(0);
+			assertFalse(tr.isBold());
+			assertEquals("Title text\r", tr.getRawText());
+			rt = txt.get(0).get(1);
+			tr = rt.getTextRuns().get(0);
+			assertTrue(tr.isBold());
+			assertEquals("Foo! I'm new!\r", tr.getRawText());
+			rt = txt.get(0).get(2);
+			tr = rt.getTextRuns().get(0);
+			assertTrue(tr.isBold());
+			assertEquals("Me too!", tr.getRawText());
 
-		// Save and re-open
-		HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1);
-		slides = ppt2.getSlides();
+			// Save and re-open
+			try (HSLFSlideShow ppt2 = HSLFTestDataSamples.writeOutAndReadBack(ppt1)) {
+				slides = ppt2.getSlides();
 
-		assertEquals(2, slides.size());
+				assertEquals(2, slides.size());
 
-		txt = slides.get(0).getTextParagraphs();
-		assertEquals(2, txt.size());
-		assertEquals(3, txt.get(0).size());
-		rt = txt.get(0).get(0);
-		tr = rt.getTextRuns().get(0);
-		assertFalse(tr.isBold());
-		assertEquals("Title text\r", tr.getRawText());
-		rt = txt.get(0).get(1);
-		tr = rt.getTextRuns().get(0);
-		assertTrue(tr.isBold());
-		assertEquals("Foo! I'm new!\r", tr.getRawText());
-		rt = txt.get(0).get(2);
-		tr = rt.getTextRuns().get(0);
-		assertTrue(tr.isBold());
-		assertEquals("Me too!", tr.getRawText());
-		ppt2.close();
-		ppt1.close();
+				txt = slides.get(0).getTextParagraphs();
+				assertEquals(2, txt.size());
+				assertEquals(3, txt.get(0).size());
+				rt = txt.get(0).get(0);
+				tr = rt.getTextRuns().get(0);
+				assertFalse(tr.isBold());
+				assertEquals("Title text\r", tr.getRawText());
+				rt = txt.get(0).get(1);
+				tr = rt.getTextRuns().get(0);
+				assertTrue(tr.isBold());
+				assertEquals("Foo! I'm new!\r", tr.getRawText());
+				rt = txt.get(0).get(2);
+				tr = rt.getTextRuns().get(0);
+				assertTrue(tr.isBold());
+				assertEquals("Me too!", tr.getRawText());
+			}
+		}
 	}
-	
+
     @Test
 	public void testChineseParagraphs() {
       List<HSLFTextRun> rts;
@@ -623,27 +636,27 @@ public final class TestRichTextRun {
 
       // One slide
       assertEquals(1, slides.size());
-      
+
       // One block of text within that
       txt = slides.get(0).getTextParagraphs();
       assertEquals(1, txt.size());
-      
+
       // One rich block of text in that - text is all the same style
       // TODO Is this completely correct?
       rts = txt.get(0).get(0).getTextRuns();
       assertEquals(1, rts.size());
       rt = rts.get(0);
-      
+
       // Check we can get the english text out of that
       String text = rt.getRawText();
       assertContains(text, "Single byte");
       // And the chinese
       assertContains(txt.get(0).get(3).getTextRuns().get(0).getRawText(), "\uff8a\uff9d\uff76\uff78");
-      
+
       // It isn't bold or italic
       assertFalse(rt.isBold());
       assertFalse(rt.isItalic());
-      
+
       // Font is Calibri
       assertEquals("Calibri", rt.getFontFamily());
 	}

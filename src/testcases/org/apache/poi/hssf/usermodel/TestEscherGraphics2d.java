@@ -17,9 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -27,9 +26,9 @@ import java.awt.FontMetrics;
 import java.awt.geom.Line2D;
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the Graphics2d drawing capability.
@@ -39,7 +38,7 @@ public final class TestEscherGraphics2d {
 	private HSSFShapeGroup escherGroup;
 	private EscherGraphics2d graphics;
 
-	@Before
+	@BeforeEach
     public void setUp() {
 		workbook = new HSSFWorkbook();
 		HSSFSheet sheet = workbook.createSheet("test");
@@ -48,8 +47,8 @@ public final class TestEscherGraphics2d {
 		EscherGraphics g = new EscherGraphics(escherGroup, workbook, Color.black, 1.0f);
 		graphics = new EscherGraphics2d(g);
 	}
-	
-	@After
+
+	@AfterEach
 	public void closeResources() throws IOException {
 	    workbook.close();
 	}
@@ -77,12 +76,7 @@ public final class TestEscherGraphics2d {
 		// But with an invalid font, we get an exception
 		font = new Font("IamAmadeUPfont", Font.PLAIN, 22);
 		graphics.setFont(font);
-		try {
-			graphics.drawString("This is another test", 10, 10);
-			fail();
-		} catch(IllegalArgumentException e) {
-			// expected
-		}
+		assertThrows(IllegalArgumentException.class, () -> graphics.drawString("This is another test", 10, 10));
 	}
 
 	@Test

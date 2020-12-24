@@ -17,13 +17,13 @@
 
 package org.apache.poi.hslf.model;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 
 import org.apache.poi.hslf.usermodel.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test setting text properties of newly added TextBoxes

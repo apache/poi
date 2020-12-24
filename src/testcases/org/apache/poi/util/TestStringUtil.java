@@ -17,14 +17,15 @@
 
 package org.apache.poi.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.nio.charset.Charset;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for StringUtil
@@ -66,82 +67,60 @@ public class TestStringUtil {
         StringUtil.putCompressedUnicode( input, output, 0 );
         for ( int j = 0; j < expected_output.length; j++ )
         {
-            assertEquals( "testing offset " + j, expected_output[j],
-                    output[j] );
+            assertEquals( expected_output[j], output[j], "testing offset " + j );
         }
         StringUtil.putCompressedUnicode( input, output,
                 100 - expected_output.length );
         for ( int j = 0; j < expected_output.length; j++ )
         {
-            assertEquals( "testing offset " + j, expected_output[j],
-                    output[100 + j - expected_output.length] );
+            assertEquals( expected_output[j], output[100 + j - expected_output.length], "testing offset " + j );
         }
-        try
-        {
-            StringUtil.putCompressedUnicode( input, output,
-                    101 - expected_output.length );
-            fail( "Should have caught ArrayIndexOutOfBoundsException" );
-        }
-        catch ( ArrayIndexOutOfBoundsException ignored )
-        {
-            // as expected
-        }
+
+        assertThrows(ArrayIndexOutOfBoundsException.class,
+            () -> StringUtil.putCompressedUnicode( input, output, 101 - expected_output.length ));
     }
 
     @Test
     public void testPutUncompressedUnicode() {
         byte[] output = new byte[100];
         String input = "Hello World";
-        byte[] expected_output =
-                {
-                    (byte) 'H', (byte) 0, (byte) 'e', (byte) 0, (byte) 'l',
-                    (byte) 0, (byte) 'l', (byte) 0, (byte) 'o', (byte) 0,
-                    (byte) ' ', (byte) 0, (byte) 'W', (byte) 0, (byte) 'o',
-                    (byte) 0, (byte) 'r', (byte) 0, (byte) 'l', (byte) 0,
-                    (byte) 'd', (byte) 0
-                };
+        byte[] expected_output = {
+            (byte) 'H', (byte) 0, (byte) 'e', (byte) 0, (byte) 'l',
+            (byte) 0, (byte) 'l', (byte) 0, (byte) 'o', (byte) 0,
+            (byte) ' ', (byte) 0, (byte) 'W', (byte) 0, (byte) 'o',
+            (byte) 0, (byte) 'r', (byte) 0, (byte) 'l', (byte) 0,
+            (byte) 'd', (byte) 0
+        };
 
         StringUtil.putUnicodeLE( input, output, 0 );
-        for ( int j = 0; j < expected_output.length; j++ )
-        {
-            assertEquals( "testing offset " + j, expected_output[j],
-                    output[j] );
+        for ( int j = 0; j < expected_output.length; j++ ) {
+            assertEquals( expected_output[j], output[j], "testing offset " + j );
         }
-        StringUtil.putUnicodeLE( input, output,
-                100 - expected_output.length );
-        for ( int j = 0; j < expected_output.length; j++ )
-        {
-            assertEquals( "testing offset " + j, expected_output[j],
-                    output[100 + j - expected_output.length] );
+        StringUtil.putUnicodeLE( input, output, 100 - expected_output.length );
+        for ( int j = 0; j < expected_output.length; j++ ) {
+            assertEquals( expected_output[j], output[100 + j - expected_output.length], "testing offset " + j );
         }
-        try
-        {
-            StringUtil.putUnicodeLE( input, output,
-                    101 - expected_output.length );
-            fail( "Should have caught ArrayIndexOutOfBoundsException" );
-        }
-        catch ( ArrayIndexOutOfBoundsException ignored )
-        {
-            // as expected
-        }
+
+        assertThrows(ArrayIndexOutOfBoundsException.class, () ->
+            StringUtil.putUnicodeLE( input, output, 101 - expected_output.length ));
     }
 
     @Test
     public void startsWithIgnoreCase() {
-        assertTrue("same string", StringUtil.startsWithIgnoreCase("Apache POI", "Apache POI"));
-        assertTrue("longer string", StringUtil.startsWithIgnoreCase("Apache POI project", "Apache POI"));
-        assertTrue("different case", StringUtil.startsWithIgnoreCase("APACHE POI", "Apache POI"));
-        assertFalse("leading whitespace should not be ignored", StringUtil.startsWithIgnoreCase(" Apache POI project", "Apache POI"));
-        assertFalse("shorter string", StringUtil.startsWithIgnoreCase("Apache", "Apache POI"));
+        assertTrue(StringUtil.startsWithIgnoreCase("Apache POI", "Apache POI"), "same string");
+        assertTrue(StringUtil.startsWithIgnoreCase("Apache POI project", "Apache POI"), "longer string");
+        assertTrue(StringUtil.startsWithIgnoreCase("APACHE POI", "Apache POI"), "different case");
+        assertFalse(StringUtil.startsWithIgnoreCase(" Apache POI project", "Apache POI"), "leading whitespace should not be ignored");
+        assertFalse(StringUtil.startsWithIgnoreCase("Apache", "Apache POI"), "shorter string");
     }
 
     @Test
     public void endsWithIgnoreCase() {
-        assertTrue("same string", StringUtil.endsWithIgnoreCase("Apache POI", "Apache POI"));
-        assertTrue("longer string", StringUtil.endsWithIgnoreCase("Project Apache POI", "Apache POI"));
-        assertTrue("different case", StringUtil.endsWithIgnoreCase("APACHE POI", "Apache POI"));
-        assertFalse("trailing whitespace should not be ignored", StringUtil.endsWithIgnoreCase("Apache POI project ", "Apache POI"));
-        assertFalse("shorter string", StringUtil.endsWithIgnoreCase("Apache", "Apache POI"));
+        assertTrue(StringUtil.endsWithIgnoreCase("Apache POI", "Apache POI"), "same string");
+        assertTrue(StringUtil.endsWithIgnoreCase("Project Apache POI", "Apache POI"), "longer string");
+        assertTrue(StringUtil.endsWithIgnoreCase("APACHE POI", "Apache POI"), "different case");
+        assertFalse(StringUtil.endsWithIgnoreCase("Apache POI project ", "Apache POI"), "trailing whitespace should not be ignored");
+        assertFalse(StringUtil.endsWithIgnoreCase("Apache", "Apache POI"), "shorter string");
     }
 
     @Test
@@ -152,27 +131,27 @@ public class TestStringUtil {
         assertEquals("5|8.5|true|string", StringUtil.join("|", 5, 8.5, true, "string")); //assumes Locale prints number decimal point as a period rather than a comma
 
         String[] arr = new String[] { "Apache", "POI", "project" };
-        assertEquals("no separator", "ApachePOIproject", StringUtil.join(arr));
-        assertEquals("separator", "Apache POI project", StringUtil.join(arr, " "));
+        assertEquals("ApachePOIproject", StringUtil.join(arr), "no separator");
+        assertEquals("Apache POI project", StringUtil.join(arr, " "), "separator");
     }
 
     @Test
     public void count() {
         String test = "Apache POI project\n\u00a9 Copyright 2016";
         // supports search in null or empty string
-        assertEquals("null", 0, StringUtil.countMatches(null, 'A'));
-        assertEquals("empty string", 0, StringUtil.countMatches("", 'A'));
+        assertEquals(0, StringUtil.countMatches(null, 'A'), "null");
+        assertEquals(0, StringUtil.countMatches("", 'A'), "empty string");
 
-        assertEquals("normal", 2, StringUtil.countMatches(test, 'e'));
-        assertEquals("normal, should not find a in escaped copyright", 1, StringUtil.countMatches(test, 'a'));
+        assertEquals(2, StringUtil.countMatches(test, 'e'), "normal");
+        assertEquals(1, StringUtil.countMatches(test, 'a'), "normal, should not find a in escaped copyright");
 
         // search for non-printable characters
-        assertEquals("null character", 0, StringUtil.countMatches(test, '\0'));
-        assertEquals("CR", 0, StringUtil.countMatches(test, '\r'));
-        assertEquals("LF", 1, StringUtil.countMatches(test, '\n'));
+        assertEquals(0, StringUtil.countMatches(test, '\0'), "null character");
+        assertEquals(0, StringUtil.countMatches(test, '\r'), "CR");
+        assertEquals(1, StringUtil.countMatches(test, '\n'), "LF");
 
         // search for unicode characters
-        assertEquals("Unicode", 1, StringUtil.countMatches(test, '\u00a9'));
+        assertEquals(1, StringUtil.countMatches(test, '\u00a9'), "Unicode");
     }
 }
 

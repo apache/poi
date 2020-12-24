@@ -18,10 +18,10 @@
 package org.apache.poi.ss.tests.usermodel;
 
 import static org.apache.poi.sl.tests.SLCommonUtils.xslfOnly;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -62,15 +62,15 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFObjectData;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class TestEmbedOLEPackage {
     private static byte[] samplePPT, samplePPTX, samplePNG;
 
     private static final POIDataSamples ssamples = POIDataSamples.getSpreadSheetInstance();
 
-    @BeforeClass
+    @BeforeAll
     public static void init() throws IOException {
         samplePPT = getSamplePPT(false);
         samplePPTX = getSamplePPT(true);

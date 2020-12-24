@@ -19,7 +19,7 @@
 
 package org.apache.poi.ss.tests.formula.functions;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
@@ -28,7 +28,7 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *

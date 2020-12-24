@@ -18,12 +18,12 @@
 package org.apache.poi.hslf.record;
 
 
-import static org.apache.poi.ss.formula.functions.BaseTestNumeric.assertEquals;
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.io.ByteArrayOutputStream;
 
-import org.junit.Test;
+import org.apache.poi.ss.formula.functions.BaseTestNumeric;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that ExObjListAtom works properly.
@@ -42,7 +42,7 @@ public class TestExObjListAtom {
 	@Test
 	public void testRecordType() {
 		ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
-		assertEquals(1034L, eoa.getRecordType());
+		BaseTestNumeric.assertDouble(1034L, eoa.getRecordType());
 	}
 
 	@Test
@@ -50,8 +50,8 @@ public class TestExObjListAtom {
 		ExObjListAtom eoa = new ExObjListAtom(data_a, 0, data_a.length);
 		ExObjListAtom eob = new ExObjListAtom(data_b, 0, data_b.length);
 
-		assertEquals(1, eoa.getObjectIDSeed());
-		assertEquals(4, eob.getObjectIDSeed());
+		BaseTestNumeric.assertDouble(1, eoa.getObjectIDSeed());
+		BaseTestNumeric.assertDouble(4, eob.getObjectIDSeed());
 	}
 
 	@Test

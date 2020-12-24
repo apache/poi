@@ -17,11 +17,11 @@
 
 package org.apache.poi.xssf.usermodel.helpers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -32,7 +32,7 @@ import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
@@ -255,7 +255,7 @@ public final class TestColumnHelper {
 
     /**
      * Creates and adds a hidden column and then a best fit column with the given min/max pairs.
-     * Suitable for testing handling of overlap. 
+     * Suitable for testing handling of overlap.
      */
     private static CTCols createHiddenAndBestFitColsWithHelper(int hiddenMin, int hiddenMax, int bestFitMin, int bestFitMax) {
         CTWorksheet worksheet = CTWorksheet.Factory.newInstance();
@@ -388,7 +388,7 @@ public final class TestColumnHelper {
         columnHelper.setColDefaultStyle(11, cellStyle);
         assertEquals(0, col_2.getStyle());
         assertEquals(1, columnHelper.getColDefaultStyle(10));
-        
+
         workbook.close();
     }
 

@@ -17,14 +17,14 @@
 
 package org.apache.poi.hssf.record.chart;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.util.HexRead;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link ChartFormatRecord} Test data taken directly from a real
@@ -48,7 +48,7 @@ public final class TestChartFormatRecord {
 	public void testLoad() {
 		RecordInputStream in = TestcaseRecordInputStream.create(data);
 		ChartFormatRecord record = new ChartFormatRecord(in);
-		assertNotEquals("Identified bug 44693d", 2, in.remaining());
+		assertNotEquals(2, in.remaining(), "Identified bug 44693d");
 		assertEquals(0, in.remaining());
 		assertEquals(24, record.getRecordSize());
 

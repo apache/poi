@@ -17,12 +17,12 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.record.*;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the record setup done by SlideShow
@@ -37,7 +37,7 @@ public final class TestRecordSetup {
     private HSLFSlideShow ss;
 	private HSLFSlideShowImpl hss;
 
-	@Before
+	@BeforeEach
 	public void init() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 		hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));

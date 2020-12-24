@@ -17,18 +17,18 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
 import org.openxmlformats.schemas.drawingml.x2006.picture.PicDocument;
 import org.openxmlformats.schemas.drawingml.x2006.picture.impl.PicDocumentImpl;
@@ -771,7 +771,7 @@ public final class TestXWPFParagraph {
                 str.append(par.getText()).append("\n");
             }
             String s = str.toString();
-            assertTrue("Having text: \n" + s + "\nTrimmed length: " + s.trim().length(), s.trim().length() > 0);
+            assertTrue(s.trim().length() > 0, "Having text: \n" + s + "\nTrimmed length: " + s.trim().length());
         }
     }
 

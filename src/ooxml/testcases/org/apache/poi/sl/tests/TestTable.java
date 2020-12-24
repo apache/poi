@@ -21,12 +21,12 @@ package org.apache.poi.sl.tests;
 
 import static org.apache.poi.sl.tests.SLCommonUtils.openSampleSlideshow;
 import static org.apache.poi.sl.tests.SLCommonUtils.xslfOnly;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
@@ -41,7 +41,7 @@ import org.apache.poi.sl.usermodel.TableCell;
 import org.apache.poi.sl.usermodel.TableShape;
 import org.apache.poi.sl.usermodel.TextShape.TextDirection;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestTable {
 
@@ -80,17 +80,15 @@ public class TestTable {
         int colsx = tableB.getNumberOfColumns();
         int rowsx = tableB.getNumberOfRows();
 
-        assertEquals("tables should have same number of columns", cols, colsx);
-        assertEquals("tables should have same number of rows", rows, rowsx);
+        assertEquals(cols, colsx, "tables should have same number of columns");
+        assertEquals(rows, rowsx, "tables should have same number of rows");
 
         for (int i=0; i<cols; i++) {
-            assertEquals("Width of column " + i + " should be equal",
-                    tableA.getColumnWidth(i), tableB.getColumnWidth(i), 0.2);
+            assertEquals(tableA.getColumnWidth(i), tableB.getColumnWidth(i), 0.2, "Width of column " + i + " should be equal");
         }
 
         for (int i=0; i<rows; i++) {
-            assertEquals("Height of row " + i + " should be equal",
-                    tableA.getRowHeight(i), tableB.getRowHeight(i), 0.3);
+            assertEquals(tableA.getRowHeight(i), tableB.getRowHeight(i), 0.3, "Height of row " + i + " should be equal");
         }
     }
 
@@ -164,29 +162,29 @@ public class TestTable {
                         case 22:
                         case 51:
                             if (f.endsWith("ppt")) {
-                                assertNull(msg, tc);
+                                assertNull(tc, msg);
                             } else {
-                                assertNotNull(msg, tc);
-                                assertTrue(msg, tc.isMerged());
+                                assertNotNull(tc, msg);
+                                assertTrue(tc.isMerged(), msg);
                             }
                             break;
                         case 21:
-                            assertNotNull(msg, tc);
-                            assertEquals(msg, 1, tc.getRowSpan());
-                            assertEquals(msg, 2, tc.getGridSpan());
-                            assertFalse(msg, tc.isMerged());
+                            assertNotNull(tc, msg);
+                            assertEquals(1, tc.getRowSpan(), msg);
+                            assertEquals(2, tc.getGridSpan(), msg);
+                            assertFalse(tc.isMerged(), msg);
                             break;
                         case 41:
-                            assertNotNull(msg, tc);
-                            assertEquals(msg, 2, tc.getRowSpan());
-                            assertEquals(msg, 1, tc.getGridSpan());
-                            assertFalse(msg, tc.isMerged());
+                            assertNotNull(tc, msg);
+                            assertEquals(2, tc.getRowSpan(), msg);
+                            assertEquals(1, tc.getGridSpan(), msg);
+                            assertFalse(tc.isMerged(), msg);
                             break;
                         default:
-                            assertNotNull(msg, tc);
-                            assertEquals(msg, 1, tc.getRowSpan());
-                            assertEquals(msg, 1, tc.getGridSpan());
-                            assertFalse(msg, tc.isMerged());
+                            assertNotNull(tc, msg);
+                            assertEquals(1, tc.getRowSpan(), msg);
+                            assertEquals(1, tc.getGridSpan(), msg);
+                            assertFalse(tc.isMerged(), msg);
                             break;
                     }
                 }

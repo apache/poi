@@ -19,12 +19,12 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFTableCell.XWPFVertAlign;
@@ -132,7 +132,7 @@ public class TestXWPFTableCell {
     }
 
     // This is not a very useful test as written. It is not worth the execution time for a unit test
-    @Ignore
+    @Disabled
     @Test
     public void testCellVerticalAlignShouldNotThrowNPE() throws Exception {
         XWPFDocument docx = XWPFTestDataSamples.openSampleDocument("TestTableCellAlign.docx");

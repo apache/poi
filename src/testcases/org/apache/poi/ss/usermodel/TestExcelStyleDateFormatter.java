@@ -17,9 +17,9 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.DateFormatSymbols;
 import java.text.FieldPosition;
@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.poi.util.LocaleUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestExcelStyleDateFormatter {
     private static final String EXCEL_DATE_FORMAT = "MMMMM";
@@ -77,9 +77,9 @@ public class TestExcelStyleDateFormatter {
 
                 int actIdx = localeIndex(locale);
 
-                assertNotNull(msg, result);
-                assertTrue(msg, result.length() > actIdx);
-                assertEquals(msg, expected.charAt(month), result.charAt(actIdx));
+                assertNotNull(result, msg);
+                assertTrue(result.length() > actIdx, msg);
+                assertEquals(expected.charAt(month), result.charAt(actIdx), msg);
                 month++;
             }
         }

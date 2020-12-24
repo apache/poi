@@ -17,13 +17,13 @@
 
 package org.apache.poi.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test IntegerField code
@@ -34,48 +34,26 @@ public final class TestIntegerField {
 
     @Test
     public void testConstructors() {
-        try
-        {
-            new IntegerField(-1);
-            fail("Should have caught ArrayIndexOutOfBoundsException");
-        } catch (ArrayIndexOutOfBoundsException ignored_e) {
-            // as expected
-        }
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> new IntegerField(-1));
         IntegerField field = new IntegerField(2);
 
         assertEquals(0, field.get());
-        try
-        {
-            new IntegerField(-1, 1);
-            fail("Should have caught ArrayIndexOutOfBoundsException");
-        } catch (ArrayIndexOutOfBoundsException ignored_e) {
-            // as expected
-        }
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> new IntegerField(-1, 1));
         field = new IntegerField(2, 0x12345678);
         assertEquals(0x12345678, field.get());
-        byte[] array = new byte[ 6 ];
 
-        try
-        {
-            new IntegerField(-1, 1, array);
-            fail("Should have caught ArrayIndexOutOfBoundsException");
-        } catch (ArrayIndexOutOfBoundsException ignored_e) {
-            // as expected
-        }
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> new IntegerField(-1, 1, new byte[ 6 ]));
+
+        byte[] array = new byte[ 6 ];
         field = new IntegerField(2, 0x12345678, array);
         assertEquals(0x12345678, field.get());
         assertEquals(( byte ) 0x78, array[ 2 ]);
         assertEquals(( byte ) 0x56, array[ 3 ]);
         assertEquals(( byte ) 0x34, array[ 4 ]);
         assertEquals(( byte ) 0x12, array[ 5 ]);
-        array = new byte[ 5 ];
-        try
-        {
-            new IntegerField(2, 5, array);
-            fail("should have gotten ArrayIndexOutOfBoundsException");
-        } catch (ArrayIndexOutOfBoundsException ignored_e) {
-            // as expected
-        }
+
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> new IntegerField(2, 5, new byte[ 5 ]));
+
         for (int element : _test_array) {
             array = new byte[ 4 ];
             new IntegerField(0, element, array);
@@ -90,43 +68,31 @@ public final class TestIntegerField {
 
         for (int j = 0; j < _test_array.length; j++) {
             field.set(_test_array[ j ]);
-            assertEquals("testing _1 " + j, _test_array[ j ], field.get());
+            assertEquals(_test_array[ j ], field.get(), "testing _1 " + j);
             field = new IntegerField(0);
             field.set(_test_array[ j ], array);
-            assertEquals("testing _2 ", _test_array[ j ], field.get());
-            assertEquals("testing _3.0 " + _test_array[ j ],
-                         ( byte ) (_test_array[ j ] % 256), array[ 0 ]);
-            assertEquals("testing _3.1 " + _test_array[ j ],
-                         ( byte ) ((_test_array[ j ] >> 8) % 256),
-                         array[ 1 ]);
-            assertEquals("testing _3.2 " + _test_array[ j ],
-                         ( byte ) ((_test_array[ j ] >> 16) % 256),
-                         array[ 2 ]);
-            assertEquals("testing _3.3 " + _test_array[ j ],
-                         ( byte ) ((_test_array[ j ] >> 24) % 256),
-                         array[ 3 ]);
+            assertEquals(_test_array[ j ], field.get(), "testing _2 ");
+            assertEquals(( byte ) (_test_array[ j ] % 256), array[ 0 ], "testing _3.0 " + _test_array[ j ]);
+            assertEquals(( byte ) ((_test_array[ j ] >> 8) % 256), array[ 1 ], "testing _3.1 " + _test_array[ j ]);
+            assertEquals(( byte ) ((_test_array[ j ] >> 16) % 256), array[ 2 ], "testing _3.2 " + _test_array[ j ]);
+            assertEquals(( byte ) ((_test_array[ j ] >> 24) % 256), array[ 3 ], "testing _3.3 " + _test_array[ j ]);
         }
     }
 
     @Test
     public void testReadFromBytes() {
-        IntegerField field = new IntegerField(1);
+        IntegerField field1 = new IntegerField(1);
         byte[]       array = new byte[ 4 ];
 
-        try {
-            field.readFromBytes(array);
-            fail("should have caught ArrayIndexOutOfBoundsException");
-        } catch (ArrayIndexOutOfBoundsException ignored_e) {
-            // as expected
-        }
-        field = new IntegerField(0);
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> field1.readFromBytes(array));
+        IntegerField field2 = new IntegerField(0);
         for (int j = 0; j < _test_array.length; j++) {
             array[ 0 ] = ( byte ) (_test_array[ j ] % 256);
             array[ 1 ] = ( byte ) ((_test_array[ j ] >> 8) % 256);
             array[ 2 ] = ( byte ) ((_test_array[ j ] >> 16) % 256);
             array[ 3 ] = ( byte ) ((_test_array[ j ] >> 24) % 256);
-            field.readFromBytes(array);
-            assertEquals("testing " + j, _test_array[ j ], field.get());
+            field2.readFromBytes(array);
+            assertEquals(_test_array[ j ], field2.get(), "testing " + j);
         }
     }
 
@@ -145,7 +111,7 @@ public final class TestIntegerField {
 
         for (int j = 0; j < buffer.length / 4; j++) {
             field.readFromStream(stream);
-            assertEquals("Testing " + j, _test_array[ j ], field.get());
+            assertEquals(_test_array[ j ], field.get(), "Testing " + j);
         }
     }
 
@@ -163,7 +129,7 @@ public final class TestIntegerField {
             val += (array[ 2 ] << 16) & 0x00FF0000;
             val += (array[ 1 ] << 8) & 0x0000FF00;
             val += (array[ 0 ] & 0x000000FF);
-            assertEquals("testing ", b, val);
+            assertEquals(b, val, "testing ");
         }
     }
 }

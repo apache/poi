@@ -17,36 +17,33 @@
 
 package org.apache.poi.ooxml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Optional;
 
 import org.apache.poi.ooxml.POIXMLProperties.CoreProperties;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test setting extended and custom OOXML properties
@@ -57,7 +54,7 @@ public final class TestPOIXMLProperties {
     private POIXMLProperties _props;
     private CoreProperties _coreProperties;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         sampleDoc = XWPFTestDataSamples.openSampleDocument("documentProperties.docx");
         sampleNoThumb = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
@@ -68,7 +65,7 @@ public final class TestPOIXMLProperties {
         assertNotNull(_props);
     }
 
-    @After
+    @AfterEach
     public void closeResources() throws Exception {
         sampleDoc.close();
         sampleNoThumb.close();
@@ -158,53 +155,48 @@ public final class TestPOIXMLProperties {
      */
     @Test
     public void testCustomProperties() throws Exception {
-        POIXMLDocument wb1 = new XSSFWorkbook();
+        try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
 
-        POIXMLProperties.CustomProperties customProps = wb1.getProperties().getCustomProperties();
-        customProps.addProperty("test-1", "string val");
-        customProps.addProperty("test-2", 1974);
-        customProps.addProperty("test-3", 36.6);
-        //adding a duplicate
-        try {
+            POIXMLProperties.CustomProperties customProps = wb1.getProperties().getCustomProperties();
+            customProps.addProperty("test-1", "string val");
+            customProps.addProperty("test-2", 1974);
             customProps.addProperty("test-3", 36.6);
-            fail("expected exception");
-        } catch(IllegalArgumentException e){
+            //adding a duplicate
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> customProps.addProperty("test-3", 36.6));
             assertEquals("A property with this name already exists in the custom properties", e.getMessage());
+            customProps.addProperty("test-4", true);
+
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties ctProps =
+                    wb2.getProperties().getCustomProperties().getUnderlyingProperties();
+                assertEquals(4, ctProps.sizeOfPropertyArray());
+                org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty p;
+
+                p = ctProps.getPropertyArray(0);
+                assertEquals("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}", p.getFmtid());
+                assertEquals("test-1", p.getName());
+                assertEquals("string val", p.getLpwstr());
+                assertEquals(2, p.getPid());
+
+                p = ctProps.getPropertyArray(1);
+                assertEquals("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}", p.getFmtid());
+                assertEquals("test-2", p.getName());
+                assertEquals(1974, p.getI4());
+                assertEquals(3, p.getPid());
+
+                p = ctProps.getPropertyArray(2);
+                assertEquals("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}", p.getFmtid());
+                assertEquals("test-3", p.getName());
+                assertEquals(36.6, p.getR8(), 0);
+                assertEquals(4, p.getPid());
+
+                p = ctProps.getPropertyArray(3);
+                assertEquals("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}", p.getFmtid());
+                assertEquals("test-4", p.getName());
+                assertTrue(p.getBool());
+                assertEquals(5, p.getPid());
+            }
         }
-        customProps.addProperty("test-4", true);
-
-        POIXMLDocument wb2 = XSSFTestDataSamples.writeOutAndReadBack((XSSFWorkbook)wb1);
-        wb1.close();
-        org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperties ctProps =
-                wb2.getProperties().getCustomProperties().getUnderlyingProperties();
-        assertEquals(4, ctProps.sizeOfPropertyArray());
-        org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty p;
-
-        p = ctProps.getPropertyArray(0);
-        assertEquals("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}", p.getFmtid());
-        assertEquals("test-1", p.getName());
-        assertEquals("string val", p.getLpwstr());
-        assertEquals(2, p.getPid());
-
-        p = ctProps.getPropertyArray(1);
-        assertEquals("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}", p.getFmtid());
-        assertEquals("test-2", p.getName());
-        assertEquals(1974, p.getI4());
-        assertEquals(3, p.getPid());
-
-        p = ctProps.getPropertyArray(2);
-        assertEquals("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}", p.getFmtid());
-        assertEquals("test-3", p.getName());
-        assertEquals(36.6, p.getR8(), 0);
-        assertEquals(4, p.getPid());
-
-        p = ctProps.getPropertyArray(3);
-        assertEquals("{D5CDD505-2E9C-101B-9397-08002B2CF9AE}", p.getFmtid());
-        assertEquals("test-4", p.getName());
-        assertTrue(p.getBool());
-        assertEquals(5, p.getPid());
-        
-        wb2.close();
     }
 
     @Test
@@ -246,7 +238,7 @@ public final class TestPOIXMLProperties {
     @Test
     public void testGetSetRevision() {
         String revision = _coreProperties.getRevision();
-        assertTrue("Revision number is 1", Integer.parseInt(revision) > 1);
+        assertTrue(Integer.parseInt(revision) > 1, "Revision number is 1");
         _coreProperties.setRevision("20");
         assertEquals("20", _coreProperties.getRevision());
         _coreProperties.setRevision("20xx");
@@ -264,17 +256,17 @@ public final class TestPOIXMLProperties {
     public static boolean dateTimeEqualToUTCString(Date dateTime, String utcString) {
         Calendar utcCalendar = LocaleUtil.getLocaleCalendar(LocaleUtil.TIMEZONE_UTC);
         utcCalendar.setTimeInMillis(dateTime.getTime());
-        String dateTimeUtcString = utcCalendar.get(Calendar.YEAR) + "-" + 
-                zeroPad((utcCalendar.get(Calendar.MONTH)+1)) + "-" + 
-                zeroPad(utcCalendar.get(Calendar.DAY_OF_MONTH)) + "T" + 
+        String dateTimeUtcString = utcCalendar.get(Calendar.YEAR) + "-" +
+                zeroPad((utcCalendar.get(Calendar.MONTH)+1)) + "-" +
+                zeroPad(utcCalendar.get(Calendar.DAY_OF_MONTH)) + "T" +
                 zeroPad(utcCalendar.get(Calendar.HOUR_OF_DAY)) + ":" +
-                zeroPad(utcCalendar.get(Calendar.MINUTE)) + ":" + 
+                zeroPad(utcCalendar.get(Calendar.MINUTE)) + ":" +
                 zeroPad(utcCalendar.get(Calendar.SECOND)) + "Z";
 
         return utcString.equals(dateTimeUtcString);
     }
 
-    @Ignore("Fails to add some of the thumbnails, needs more investigation")
+    @Disabled("Fails to add some of the thumbnails, needs more investigation")
     @Test
     public void testThumbnails() throws Exception {
         POIXMLProperties noThumbProps = sampleNoThumb.getProperties();
@@ -329,7 +321,7 @@ public final class TestPOIXMLProperties {
 
     @Test
     public void testBug60977() throws IOException {
-        
+
         try (final XSSFWorkbook workbook = new XSSFWorkbook()) {
             final Sheet sheet = workbook.createSheet("sheet");
             final Row row = sheet.createRow(0);
@@ -346,24 +338,24 @@ public final class TestPOIXMLProperties {
             XSSFWorkbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(workbook);
             assertNotNull(wbBack);
             // properties documents are read lazily, so we have to access them to verify they parse properly
-            assertNotNull("First writeOutAndReadBack", wbBack.getProperties());
-            assertEquals("First prop check", propValue, wbBack.getProperties().getCustomProperties().getProperty(propName).getLpwstr());
+            assertNotNull(wbBack.getProperties(), "First writeOutAndReadBack");
+            assertEquals(propValue, wbBack.getProperties().getCustomProperties().getProperty(propName).getLpwstr(), "First prop check");
 
             customProperties.addProperty(propName + "1", propValue);
             wbBack = XSSFTestDataSamples.writeOutAndReadBack(workbook);
             assertNotNull(wbBack);
             // properties documents are read lazily, so we have to access them to verify they parse properly
-            assertNotNull("Second writeOutAndReadBack", wbBack.getProperties());
-            assertEquals("Second prop check", propValue, wbBack.getProperties().getCustomProperties().getProperty(propName).getLpwstr());
-            assertEquals("Second prop check1", propValue, wbBack.getProperties().getCustomProperties().getProperty(propName + "1").getLpwstr());
+            assertNotNull(wbBack.getProperties(), "Second writeOutAndReadBack");
+            assertEquals(propValue, wbBack.getProperties().getCustomProperties().getProperty(propName).getLpwstr(), "Second prop check");
+            assertEquals(propValue, wbBack.getProperties().getCustomProperties().getProperty(propName + "1").getLpwstr(), "Second prop check1");
 
             wbBack = XSSFTestDataSamples.writeOutAndReadBack(workbook);
             assertNotNull(wbBack);
             // properties documents are read lazily, so we have to access them to verify they parse properly
-            assertNotNull("Third writeOutAndReadBack", wbBack.getProperties());
-            assertEquals("Third prop check", propValue, wbBack.getProperties().getCustomProperties().getProperty(propName).getLpwstr());
-            assertEquals("Third prop check1", propValue, wbBack.getProperties().getCustomProperties().getProperty(propName + "1").getLpwstr());
-            
+            assertNotNull(wbBack.getProperties(), "Third writeOutAndReadBack");
+            assertEquals(propValue, wbBack.getProperties().getCustomProperties().getProperty(propName).getLpwstr(), "Third prop check");
+            assertEquals(propValue, wbBack.getProperties().getCustomProperties().getProperty(propName + "1").getLpwstr(), "Third prop check1");
+
             /* Manual test to write out the file more than once:
             File test1 = File.createTempFile("test1", ".xlsx", new File("C:\\temp"));
             File test2 = File.createTempFile("test2", ".xlsx", new File("C:\\temp"));
@@ -379,7 +371,7 @@ public final class TestPOIXMLProperties {
             try (final java.io.FileOutputStream fs = new java.io.FileOutputStream(test2)) {
                 workbook.write(fs);
             }
-            
+
             try (final XSSFWorkbook wb = new XSSFWorkbook(test2)) {
                 assertNotNull(wb.getProperties());
             } catch (InvalidFormatException e) {

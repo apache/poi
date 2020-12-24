@@ -17,10 +17,10 @@
 
 package org.apache.poi.hslf.record;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,8 +29,8 @@ import org.apache.poi.hslf.model.textproperties.TextProp;
 import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 /**
@@ -41,7 +41,7 @@ import org.junit.Test;
 public final class TestTxMasterStyleAtom {
     private HSLFSlideShow _ppt;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         _ppt = new HSLFSlideShow();
     }
@@ -116,10 +116,8 @@ public final class TestTxMasterStyleAtom {
 
         List<TextPropCollection> prstyles = txmaster.getParagraphStyles();
         List<TextPropCollection> chstyles = txmaster.getCharacterStyles();
-        assertEquals("TxMasterStyleAtom for TextHeaderAtom.BODY_TYPE " +
-                "must contain styles for 5 indentation levels", 5, prstyles.size());
-        assertEquals("TxMasterStyleAtom for TextHeaderAtom.BODY_TYPE " +
-                "must contain styles for 5 indentation levels", 5, chstyles.size());
+        assertEquals(5, prstyles.size(), "TxMasterStyleAtom for TextHeaderAtom.BODY_TYPE must contain styles for 5 indentation levels");
+        assertEquals(5, chstyles.size(), "TxMasterStyleAtom for TextHeaderAtom.BODY_TYPE must contain styles for 5 indentation levels");
 
         //paragraph styles
         props = prstyles.get(0);
@@ -129,8 +127,8 @@ public final class TestTxMasterStyleAtom {
 
 
         for (int i = 0; i < prstyles.size(); i++) {
-            assertNotNull("text.offset is null for indentation level " + i, prstyles.get(i).findByName("text.offset"));
-            assertNotNull("bullet.offset is null for indentation level " + i, prstyles.get(i).findByName("bullet.offset"));
+            assertNotNull(prstyles.get(i).findByName("text.offset"), "text.offset is null for indentation level " + i);
+            assertNotNull(prstyles.get(i).findByName("bullet.offset"), "bullet.offset is null for indentation level " + i);
         }
 
         //character styles
@@ -217,22 +215,22 @@ public final class TestTxMasterStyleAtom {
                         cnt++;
                     }
                 }
-                assertEquals("MainMaster must contain 7 TxMasterStyleAtoms ", 7, cnt);
+                assertEquals(7, cnt, "MainMaster must contain 7 TxMasterStyleAtoms ");
             } else if(coreRec.getRecordType() == RecordTypes.Document.typeID){
                 TxMasterStyleAtom txstyle = null;
                 Document doc = (Document)coreRec;
                 Record[] rec = doc.getEnvironment().getChildRecords();
                 for (final Record atom : rec) {
                     if (atom instanceof TxMasterStyleAtom) {
-                        assertNull("Document.Environment must contain 1 TxMasterStyleAtom", txstyle);
+                        assertNull(txstyle, "Document.Environment must contain 1 TxMasterStyleAtom");
                         txstyle = (TxMasterStyleAtom)atom;
                     }
                 }
 
-                assertNotNull("TxMasterStyleAtom not found in Document.Environment", txstyle);
+                assertNotNull(txstyle, "TxMasterStyleAtom not found in Document.Environment");
 
-                assertEquals("Document.Environment must contain TxMasterStyleAtom  with type=TextHeaderAtom.OTHER_TYPE",
-                        TextPlaceholder.OTHER.nativeId, txstyle.getTextType());
+                assertEquals(TextPlaceholder.OTHER.nativeId, txstyle.getTextType(),
+                    "Document.Environment must contain TxMasterStyleAtom  with type=TextHeaderAtom.OTHER_TYPE");
                 lst.add(txstyle);
             }
         }

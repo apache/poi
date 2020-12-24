@@ -19,12 +19,13 @@ package org.apache.poi.hssf.usermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleWorkbook;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -70,14 +71,17 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * Tests for {@link HSSFWorkbook}
  */
 public final class TestHSSFWorkbook extends BaseTestWorkbook {
     private static final HSSFITestDataProvider _testDataProvider = HSSFITestDataProvider.instance;
+    private static final POIDataSamples samples = POIDataSamples.getSpreadSheetInstance();
 
     public TestHSSFWorkbook() {
         super(_testDataProvider);
@@ -208,9 +212,9 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
         // Demonstrate bug 44525:
         // Well... not quite, since isActive + isSelected were also added in the same bug fix
-        assertFalse("Identified bug 44523 a", sheet1.isSelected());
+        assertFalse(sheet1.isSelected(), "Identified bug 44523 a");
         wb.setActiveSheet(1);
-        assertFalse("Identified bug 44523 b", sheet1.isActive());
+        assertFalse(sheet1.isActive(), "Identified bug 44523 b");
 
         confirmActiveSelected(sheet1, false);
         confirmActiveSelected(sheet2, true);
@@ -229,7 +233,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     private static void assertCollectionsEquals(Collection<Integer> expected, Collection<Integer> actual) {
-        assertEquals("size", expected.size(), actual.size());
+        assertEquals(expected.size(), actual.size());
         for (int e : expected) {
             assertTrue(actual.contains(e));
         }
@@ -278,22 +282,6 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertFalse(sheet0.isActive());
         assertTrue(sheet2.isActive());
 
-        /*{ // helpful if viewing this workbook in excel:
-            sheet0.createRow(0).createCell(0).setCellValue(new HSSFRichTextString("Sheet0"));
-            sheet1.createRow(0).createCell(0).setCellValue(new HSSFRichTextString("Sheet1"));
-            sheet2.createRow(0).createCell(0).setCellValue(new HSSFRichTextString("Sheet2"));
-            sheet3.createRow(0).createCell(0).setCellValue(new HSSFRichTextString("Sheet3"));
-
-            try {
-                File fOut = TempFile.createTempFile("sheetMultiSelect", ".xls");
-                FileOutputStream os = new FileOutputStream(fOut);
-                wb.write(os);
-                os.close();
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }*/
-
         wb.close();
     }
 
@@ -325,8 +313,8 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
         wb.removeSheetAt(3);
         // after removing the only active/selected sheet, another should be active/selected in its place
-        assertTrue("identified bug 40414 a", sheet4.isSelected());
-        assertTrue("identified bug 40414 b", sheet4.isActive());
+        assertTrue(sheet4.isSelected(), "identified bug 40414 a");
+        assertTrue(sheet4.isActive(), "identified bug 40414 b");
 
         confirmActiveSelected(sheet0, false);
         confirmActiveSelected(sheet1, false);
@@ -370,8 +358,8 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
     private static void confirmActiveSelected(HSSFSheet sheet,
             boolean expectedActive, boolean expectedSelected) {
-        assertEquals("active", expectedActive, sheet.isActive());
-        assertEquals("selected", expectedSelected, sheet.isSelected());
+        assertEquals(expectedActive, sheet.isActive(), "active");
+        assertEquals(expectedSelected, sheet.isSelected(), "selected");
     }
 
     /**
@@ -382,21 +370,15 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      */
     @Test
     public void sheetSerializeSizeMismatch_bug45066() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        InternalSheet sheet = wb.createSheet("Sheet1").getSheet();
-        List<RecordBase> sheetRecords = sheet.getRecords();
-        // one way (of many) to cause the discrepancy is with a badly behaved record:
-        sheetRecords.add(new BadlyBehavedRecord());
-        // There is also much logic inside Sheet that (if buggy) might also cause the discrepancy
-        try {
-            wb.getBytes();
-            fail("Identified bug 45066 a");
-        } catch (IllegalStateException e) {
-            // Expected badly behaved sheet record to cause exception
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            InternalSheet sheet = wb.createSheet("Sheet1").getSheet();
+            List<RecordBase> sheetRecords = sheet.getRecords();
+            // one way (of many) to cause the discrepancy is with a badly behaved record:
+            sheetRecords.add(new BadlyBehavedRecord());
+            // There is also much logic inside Sheet that (if buggy) might also cause the discrepancy
+            IllegalStateException e = assertThrows(IllegalStateException.class, wb::getBytes, "Identified bug 45066 a");
             assertTrue(e.getMessage().startsWith("Actual serialized sheet size"));
         }
-
-        wb.close();
     }
 
     /**
@@ -572,7 +554,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      */
     @Test
     public void bug47920() throws IOException {
-        POIFSFileSystem fs1 = new POIFSFileSystem(POIDataSamples.getSpreadSheetInstance().openResourceAsStream("47920.xls"));
+        POIFSFileSystem fs1 = new POIFSFileSystem(samples.openResourceAsStream("47920.xls"));
         HSSFWorkbook wb = new HSSFWorkbook(fs1);
         ClassID clsid1 = fs1.getRoot().getStorageClsid();
 
@@ -593,34 +575,19 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
      * If we try to open an old (pre-97) workbook, we get a helpful
      *  Exception give to explain what we've done wrong
      */
-    @Test
-    public void helpfulExceptionOnOldFiles() throws Exception {
-        InputStream excel4 = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("testEXCEL_4.xls");
-        try {
-            new HSSFWorkbook(excel4).close();
-            fail("Shouldn't be able to load an Excel 4 file");
-        } catch (OldExcelFormatException e) {
-            assertContains(e.getMessage(), "BIFF4");
+    @ParameterizedTest
+    @CsvSource({
+        "testEXCEL_4.xls,BIFF4",
+        "testEXCEL_5.xls,BIFF5",
+        "testEXCEL_95.xls,BIFF5"
+    })
+    public void helpfulExceptionOnOldFiles(String file, String format) throws Exception {
+        POIDataSamples xlsData = samples;
+        try (InputStream is = xlsData.openResourceAsStream(file)) {
+            OldExcelFormatException e = assertThrows(OldExcelFormatException.class, () -> new HSSFWorkbook(is),
+                "Shouldn't be able to load an Excel " + format + " file");
+            assertContains(e.getMessage(), format);
         }
-        excel4.close();
-
-        InputStream excel5 = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("testEXCEL_5.xls");
-        try {
-            new HSSFWorkbook(excel5).close();
-            fail("Shouldn't be able to load an Excel 5 file");
-        } catch (OldExcelFormatException e) {
-            assertContains(e.getMessage(), "BIFF5");
-        }
-        excel5.close();
-
-        InputStream excel95 = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("testEXCEL_95.xls");
-        try {
-            new HSSFWorkbook(excel95).close();
-            fail("Shouldn't be able to load an Excel 95 file");
-        } catch (OldExcelFormatException e) {
-            assertContains(e.getMessage(), "BIFF5");
-        }
-        excel95.close();
     }
 
     /**
@@ -717,25 +684,20 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
     @Test
     public void cellStylesLimit() throws IOException {
-        Workbook wb = new HSSFWorkbook();
-        int numBuiltInStyles = wb.getNumCellStyles();
-        int MAX_STYLES = 4030;
-        int limit = MAX_STYLES - numBuiltInStyles;
-        for(int i=0; i < limit; i++){
-            /* HSSFCellStyle style =*/ wb.createCellStyle();
-        }
+        try (Workbook wb = new HSSFWorkbook()) {
+            int numBuiltInStyles = wb.getNumCellStyles();
+            int MAX_STYLES = 4030;
+            int limit = MAX_STYLES - numBuiltInStyles;
+            for (int i = 0; i < limit; i++) {
+                wb.createCellStyle();
+            }
 
-        assertEquals(MAX_STYLES, wb.getNumCellStyles());
-        try {
-            /*HSSFCellStyle style =*/ wb.createCellStyle();
-            fail("expected exception");
-        } catch (IllegalStateException e){
+            assertEquals(MAX_STYLES, wb.getNumCellStyles());
+            IllegalStateException e = assertThrows(IllegalStateException.class, wb::createCellStyle);
             assertEquals("The maximum number of cell styles was exceeded. " +
-                    "You can define up to 4000 styles in a .xls workbook", e.getMessage());
+                "You can define up to 4000 styles in a .xls workbook", e.getMessage());
+            assertEquals(MAX_STYLES, wb.getNumCellStyles());
         }
-        assertEquals(MAX_STYLES, wb.getNumCellStyles());
-
-        wb.close();
     }
 
     @Test
@@ -831,10 +793,10 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     }
 
     // Should throw exception about invalid POIFSFileSystem
-    @Test(expected=IllegalArgumentException.class)
+    @Test
     public void emptyDirectoryNode() throws IOException {
         try (POIFSFileSystem fs = new POIFSFileSystem()) {
-            new HSSFWorkbook(fs).close();
+            assertThrows(IllegalArgumentException.class, () -> new HSSFWorkbook(fs).close());
         }
     }
 
@@ -856,9 +818,9 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
         // Demonstrate bug 44525:
         // Well... not quite, since isActive + isSelected were also added in the same bug fix
-        assertFalse("Identified bug 44523 a", sheet1.isSelected());
+        assertFalse(sheet1.isSelected(), "Identified bug 44523 a");
         wb.setActiveSheet(1);
-        assertFalse("Identified bug 44523 b", sheet1.isActive());
+        assertFalse(sheet1.isActive(), "Identified bug 44523 b");
 
         confirmActiveSelected(sheet1, false);
         confirmActiveSelected(sheet2, true);
@@ -876,12 +838,8 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     public void names() throws IOException {
         HSSFWorkbook wb=new HSSFWorkbook();
 
-        try {
-            wb.getNameAt(0);
-            fail("Fails without any defined names");
-        } catch (IllegalStateException e) {
-            assertTrue(e.getMessage(), e.getMessage().contains("no defined names"));
-        }
+        IllegalStateException ex1 = assertThrows(IllegalStateException.class, () -> wb.getNameAt(0));
+        assertTrue(ex1.getMessage().contains("no defined names"));
 
         HSSFName name = wb.createName();
         assertNotNull(name);
@@ -894,19 +852,11 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         assertEquals(0, wb.getNameIndex(name));
         assertEquals(0, wb.getNameIndex("myname"));
 
-        try {
-            wb.getNameAt(5);
-            fail("Fails without any defined names");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage(), e.getMessage().contains("outside the allowable range"));
-        }
+        IllegalArgumentException ex2 = assertThrows(IllegalArgumentException.class, () -> wb.getNameAt(5));
+        assertTrue(ex2.getMessage().contains("outside the allowable range"));
 
-        try {
-            wb.getNameAt(-3);
-            fail("Fails without any defined names");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage(), e.getMessage().contains("outside the allowable range"));
-        }
+        IllegalArgumentException ex = assertThrows(IllegalArgumentException.class, () -> wb.getNameAt(-3));
+        assertTrue(ex.getMessage().contains("outside the allowable range"));
 
         wb.close();
     }
@@ -929,13 +879,6 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
         wb.writeProtectWorkbook("mypassword", "myuser");
         assertTrue(wb.isWriteProtected());
-
-//        OutputStream os = new FileOutputStream("/tmp/protected.xls");
-//        try {
-//            wb.write(os);
-//        } finally {
-//            os.close();
-//        }
 
         wb.unwriteProtectWorkbook();
         assertFalse(wb.isWriteProtected());
@@ -969,8 +912,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 		int expected = wb.getWorkbook().getSize();
 		int written = wb.getWorkbook().serialize(0, new byte[expected*2]);
 
-		assertEquals("Did not have the expected size when writing the workbook: written: " + written + ", but expected: " + expected,
-				expected, written);
+		assertEquals(expected, written, "Did not have the expected size when writing the workbook");
 
 		HSSFWorkbook read = HSSFTestDataSamples.writeOutAndReadBack(wb);
 		assertSheetOrder(read, "Invoice", "Invoice1", "Digest", "Deferred", "Received");
@@ -1012,8 +954,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 		int expected = wb.getWorkbook().getSize();
 		int written = wb.getWorkbook().serialize(0, new byte[expected*2]);
 
-		assertEquals("Did not have the expected size when writing the workbook: written: " + written + ", but expected: " + expected,
-				expected, written);
+		assertEquals(expected, written, "Did not have the expected size when writing the workbook");
 
 		HSSFWorkbook read = HSSFTestDataSamples.writeOutAndReadBack(wb);
 		assertSheetOrder(read, "Invoice", "Deferred", "Received", "Digest");
@@ -1105,7 +1046,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
             }
         }
 
-        assertTrue("Should find some images via Client or Child anchors, but did not find any at all", found);
+        assertTrue(found, "Should find some images via Client or Child anchors, but did not find any at all");
         workbook.close();
     }
 
@@ -1159,7 +1100,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     @Test
     public void closeDoesNotModifyWorkbook() throws IOException {
         final String filename = "SampleSS.xls";
-        final File file = POIDataSamples.getSpreadSheetInstance().getFile(filename);
+        final File file = samples.getFile(filename);
         Workbook wb;
 
         // File via POIFileStream (java.nio)
@@ -1186,47 +1127,29 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
 
     @Test
     public void invalidInPlaceWrite() throws Exception {
-        HSSFWorkbook wb;
-
         // Can't work for new files
-        wb = new HSSFWorkbook();
-        try {
-            wb.write();
-            fail("Shouldn't work for new files");
-        } catch (IllegalStateException e) {
-            // expected here
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            assertThrows(IllegalStateException.class, wb::write, "Shouldn't work for new files");
         }
-        wb.close();
 
         // Can't work for InputStream opened files
-        wb = new HSSFWorkbook(
-            POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SampleSS.xls"));
-        try {
-            wb.write();
-            fail("Shouldn't work for InputStream");
-        } catch (IllegalStateException e) {
-            // expected here
+        try (InputStream is = samples.openResourceAsStream("SampleSS.xls");
+            HSSFWorkbook wb = new HSSFWorkbook(is)) {
+            assertThrows(IllegalStateException.class, wb::write, "Shouldn't work for InputStream");
         }
-        wb.close();
 
         // Can't work for Read-Only files
-        POIFSFileSystem fs = new POIFSFileSystem(
-                POIDataSamples.getSpreadSheetInstance().getFile("SampleSS.xls"), true);
-        wb = new HSSFWorkbook(fs);
-        try {
-            wb.write();
-            fail("Shouldn't work for Read Only");
-        } catch (IllegalStateException e) {
-            // expected here
+        try (POIFSFileSystem fs = new POIFSFileSystem(samples.getFile("SampleSS.xls"), true);
+             HSSFWorkbook wb = new HSSFWorkbook(fs)) {
+            assertThrows(IllegalStateException.class, wb::write, "Shouldn't work for Read Only");
         }
-        wb.close();
     }
 
     @Test
     public void inPlaceWrite() throws Exception {
         // Setup as a copy of a known-good file
         final File file = TempFile.createTempFile("TestHSSFWorkbook", ".xls");
-        try (InputStream inputStream = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SampleSS.xls");
+        try (InputStream inputStream = samples.openResourceAsStream("SampleSS.xls");
              FileOutputStream outputStream = new FileOutputStream(file)) {
             IOUtils.copy(inputStream, outputStream);
         }
@@ -1255,7 +1178,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
     public void testWriteToNewFile() throws Exception {
         // Open from a Stream
         HSSFWorkbook wb = new HSSFWorkbook(
-                POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SampleSS.xls"));
+                samples.openResourceAsStream("SampleSS.xls"));
 
         // Save to a new temp file
         final File file = TempFile.createTempFile("TestHSSFWorkbook", ".xls");
@@ -1268,7 +1191,7 @@ public final class TestHSSFWorkbook extends BaseTestWorkbook {
         wb.close();
     }
 
-    @Ignore
+    @Disabled
     @Test
     @Override
     public void createDrawing() throws Exception {

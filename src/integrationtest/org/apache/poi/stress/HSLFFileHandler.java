@@ -16,16 +16,18 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStream;
 
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.SystemOutLogger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class HSLFFileHandler extends SlideShowHandler {
     @Override
@@ -38,16 +40,16 @@ public class HSLFFileHandler extends SlideShowHandler {
         org.apache.poi.hslf.record.Record[] records = slide.getRecords();
         assertNotNull(records);
         for(org.apache.poi.hslf.record.Record record : records) {
-            assertNotNull("Found a record which was null", record);
+            assertNotNull( record, "Found a record which was null" );
             assertTrue(record.getRecordType() >= 0);
         }
-        
+
         handlePOIDocument(slide);
-        
+
         HSLFSlideShow ss = new HSLFSlideShow(slide);
         handleSlideShow(ss);
     }
-    
+
     @Test
     public void testOne() throws Exception {
         testOneFile(new File("test-data/slideshow/54880_chinese.ppt"));

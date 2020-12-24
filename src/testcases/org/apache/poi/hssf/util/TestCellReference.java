@@ -17,13 +17,13 @@
 
 package org.apache.poi.hssf.util;
 
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.CellReference.NameType;
-import org.apache.poi.ss.SpreadsheetVersion;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the HSSF and SS versions of CellReference.
@@ -41,7 +41,7 @@ public final class TestCellReference {
         assertEquals(701, CellReference.convertColStringToIndex("ZZ"));
         assertEquals(702, CellReference.convertColStringToIndex("AAA"));
         assertEquals(18277, CellReference.convertColStringToIndex("ZZZ"));
-        
+
         assertEquals("A", CellReference.convertNumToColString(0));
         assertEquals("B", CellReference.convertNumToColString(1));
         assertEquals("Z", CellReference.convertNumToColString(25));
@@ -49,19 +49,15 @@ public final class TestCellReference {
         assertEquals("ZZ", CellReference.convertNumToColString(701));
         assertEquals("AAA", CellReference.convertNumToColString(702));
         assertEquals("ZZZ", CellReference.convertNumToColString(18277));
-        
+
         // Absolute references are allowed for the string ones
         assertEquals(0, CellReference.convertColStringToIndex("$A"));
         assertEquals(25, CellReference.convertColStringToIndex("$Z"));
         assertEquals(26, CellReference.convertColStringToIndex("$AA"));
-        
+
         // $ sign isn't allowed elsewhere though
-        try {
-            CellReference.convertColStringToIndex("A$B$");
-            fail("Column reference is invalid and shouldn't be accepted");
-        } catch (IllegalArgumentException e) {
-            // expected here
-        }
+        assertThrows(IllegalArgumentException.class, () -> CellReference.convertColStringToIndex("A$B$"),
+            "Column reference is invalid and shouldn't be accepted");
     }
 
     @Test
@@ -129,11 +125,11 @@ public final class TestCellReference {
             int expCol, boolean expIsRowAbs, boolean expIsColAbs, String expText) {
 
         assertEquals(expSheetName, cf.getSheetName());
-        assertEquals("row index is wrong", expRow, cf.getRow());
-        assertEquals("col index is wrong", expCol, cf.getCol());
-        assertEquals("isRowAbsolute is wrong", expIsRowAbs, cf.isRowAbsolute());
-        assertEquals("isColAbsolute is wrong", expIsColAbs, cf.isColAbsolute());
-        assertEquals("text is wrong", expText, cf.formatAsString());
+        assertEquals(expRow, cf.getRow(), "row index is wrong");
+        assertEquals(expCol, cf.getCol(), "col index is wrong");
+        assertEquals(expIsRowAbs, cf.isRowAbsolute(), "isRowAbsolute is wrong");
+        assertEquals(expIsColAbs, cf.isColAbsolute(), "isColAbsolute is wrong");
+        assertEquals(expText, cf.formatAsString(), "text is wrong");
     }
 
     @Test

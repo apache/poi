@@ -17,10 +17,11 @@
 
 package org.apache.poi.hslf.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -38,7 +39,7 @@ import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.TableShape;
 import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test <code>Table</code> object.
@@ -108,20 +109,20 @@ public final class TestTable {
     }
 
     // Table(rownum, colnum) must throw IllegalArgumentException if any of the arguments is less than 1
-    @Test(expected=IllegalArgumentException.class)
+    @Test
     public void testIllegalRowCnstruction() throws IOException {
         try (HSLFSlideShow ppt = new HSLFSlideShow()) {
             HSLFSlide slide = ppt.createSlide();
-            slide.createTable(0, 5);
+            assertThrows(IllegalArgumentException.class, () -> slide.createTable(0, 5));
         }
     }
 
     // Table(rownum, colnum) must throw IllegalArgumentException if any of the arguments is less than 1
-    @Test(expected=IllegalArgumentException.class)
+    @Test
     public void testIllegalColConstruction() throws IOException {
         try (HSLFSlideShow ppt = new HSLFSlideShow()) {
             HSLFSlide slide = ppt.createSlide();
-            slide.createTable(5, 0);
+            assertThrows(IllegalArgumentException.class, () -> slide.createTable(5, 0));
         }
     }
 

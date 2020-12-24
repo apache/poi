@@ -19,7 +19,7 @@ package org.apache.poi.hsmf.extractor;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertNotContained;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.FileInputStream;
 import java.text.SimpleDateFormat;
@@ -31,9 +31,9 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests to verify that the text extractor works
@@ -43,13 +43,13 @@ public final class TestOutlookTextExtractor {
 
     private static TimeZone userTZ;
 
-    @BeforeClass
+    @BeforeAll
     public static void initTimeZone() {
         userTZ = LocaleUtil.getUserTimeZone();
         LocaleUtil.setUserTimeZone(LocaleUtil.TIMEZONE_UTC);
     }
 
-    @AfterClass
+    @AfterAll
     public static void resetTimeZone() {
         LocaleUtil.setUserTimeZone(userTZ);
     }

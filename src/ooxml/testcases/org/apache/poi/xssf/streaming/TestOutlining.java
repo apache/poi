@@ -19,20 +19,19 @@
 
 package org.apache.poi.xssf.streaming;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestOutlining {
     @Test
@@ -58,7 +57,7 @@ public final class TestOutlining {
 		r = sheet2.getRow(12);
 		assertNull(r.getHidden());
 		wb2.dispose();
-		
+
 		wb2.close();
 	}
 
@@ -76,34 +75,18 @@ public final class TestOutlining {
 		sheet2.groupRow(4, 9);
 		sheet2.groupRow(11, 19);
 
-		try {
-			sheet2.setRowGroupCollapsed(3, true);
-			fail("Should fail with an exception");
-		} catch (IllegalArgumentException e) {
-			assertTrue(e.getMessage().contains("row (3)"));
-		}
+        IllegalArgumentException e;
+		e = assertThrows(IllegalArgumentException.class, () -> sheet2.setRowGroupCollapsed(3, true));
+        assertTrue(e.getMessage().contains("row (3)"));
 
-		try {
-			sheet2.setRowGroupCollapsed(10, true);
-			fail("Should fail with an exception");
-		} catch (IllegalArgumentException e) {
-			assertTrue(e.getMessage().contains("row (10)"));
-		}
+        e = assertThrows(IllegalArgumentException.class, () -> sheet2.setRowGroupCollapsed(10, true));
+        assertTrue(e.getMessage().contains("row (10)"));
 
-		try {
-			sheet2.setRowGroupCollapsed(0, true);
-			fail("Should fail with an exception");
-		} catch (IllegalArgumentException e) {
-			assertTrue(e.getMessage().contains("row (0)"));
-		}
+        e = assertThrows(IllegalArgumentException.class, () -> sheet2.setRowGroupCollapsed(0, true));
+        assertTrue(e.getMessage().contains("row (0)"));
 
-		try {
-			sheet2.setRowGroupCollapsed(20, true);
-			fail("Should fail with an exception");
-		} catch (IllegalArgumentException e) {
-			assertTrue("Had: " + e.getMessage(), 
-					e.getMessage().contains("Row does not exist"));
-		}
+        e = assertThrows(IllegalArgumentException.class, () -> sheet2.setRowGroupCollapsed(20, true));
+        assertTrue(e.getMessage().contains("Row does not exist"), "Had: " + e.getMessage());
 
 		SXSSFRow r = sheet2.getRow(8);
 		assertNotNull(r);
@@ -113,10 +96,10 @@ public final class TestOutlining {
 		r = sheet2.getRow(12);
 		assertNull(r.getHidden());
 		wb2.dispose();
-		
+
 		wb2.close();
 	}
-	
+
     @Test
     public void testOutlineGettersHSSF() throws IOException {
         HSSFWorkbook hssfWorkbook = new HSSFWorkbook();
@@ -136,7 +119,7 @@ public final class TestOutlining {
         assertEquals(0, hssfSheet.getRow(4).getOutlineLevel());
         hssfWorkbook.close();
     }
-    
+
     @Test
     public void testOutlineGettersXSSF() throws IOException {
         XSSFWorkbook xssfWorkbook = new XSSFWorkbook();
@@ -156,18 +139,18 @@ public final class TestOutlining {
         assertEquals(0, xssfSheet.getRow(4).getOutlineLevel());
         xssfWorkbook.close();
     }
-    
+
     @Test
     public void testOutlineGettersSXSSF() throws IOException {
         SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
-        Sheet sxssfSheet = sxssfWorkbook.createSheet();
+        SXSSFSheet sxssfSheet = sxssfWorkbook.createSheet();
         sxssfSheet.createRow(0);
         sxssfSheet.createRow(1);
         sxssfSheet.createRow(2);
         sxssfSheet.createRow(3);
         sxssfSheet.createRow(4);
         sxssfSheet.createRow(5);
-        
+
         // nothing happens with empty row-area
         sxssfSheet.groupRow(1, 0);
         assertEquals(0, sxssfSheet.getRow(0).getOutlineLevel());
@@ -176,7 +159,7 @@ public final class TestOutlining {
         assertEquals(0, sxssfSheet.getRow(3).getOutlineLevel());
         assertEquals(0, sxssfSheet.getRow(4).getOutlineLevel());
         assertEquals(0, sxssfSheet.getRow(5).getOutlineLevel());
-        
+
         sxssfSheet.groupRow(1, 3);
         sxssfSheet.groupRow(2, 3);
 
@@ -186,33 +169,33 @@ public final class TestOutlining {
         assertEquals(2, sxssfSheet.getRow(3).getOutlineLevel());
         assertEquals(0, sxssfSheet.getRow(4).getOutlineLevel());
         assertEquals(0, sxssfSheet.getRow(5).getOutlineLevel());
-        
+
         // add tests for direct setting - add row 4 to deepest group
-        ((SXSSFSheet)sxssfSheet).setRowOutlineLevel(4, 2);
+        sxssfSheet.setRowOutlineLevel(4, 2);
         assertEquals(0, sxssfSheet.getRow(0).getOutlineLevel());
         assertEquals(1, sxssfSheet.getRow(1).getOutlineLevel());
         assertEquals(2, sxssfSheet.getRow(2).getOutlineLevel());
         assertEquals(2, sxssfSheet.getRow(3).getOutlineLevel());
         assertEquals(2, sxssfSheet.getRow(4).getOutlineLevel());
         assertEquals(0, sxssfSheet.getRow(5).getOutlineLevel());
-        
+
         sxssfWorkbook.dispose();
         sxssfWorkbook.close();
     }
-    
+
     @Test
     public void testOutlineGettersSXSSFSetOutlineLevel() throws IOException {
         SXSSFWorkbook sxssfWorkbook = new SXSSFWorkbook();
-        Sheet sxssfSheet = sxssfWorkbook.createSheet();
+        SXSSFSheet sxssfSheet = sxssfWorkbook.createSheet();
         sxssfSheet.createRow(0);
         sxssfSheet.createRow(1);
         sxssfSheet.createRow(2);
         sxssfSheet.createRow(3);
         sxssfSheet.createRow(4);
         sxssfSheet.createRow(5);
-    
+
         // what happens with level below 1
-        ((SXSSFSheet)sxssfSheet).setRowOutlineLevel(0, -2);
+        sxssfSheet.setRowOutlineLevel(0, -2);
         assertEquals(-2, sxssfSheet.getRow(0).getOutlineLevel());
         assertEquals(0, sxssfSheet.getRow(1).getOutlineLevel());
         assertEquals(0, sxssfSheet.getRow(2).getOutlineLevel());
@@ -221,14 +204,14 @@ public final class TestOutlining {
         assertEquals(0, sxssfSheet.getRow(5).getOutlineLevel());
 
         // add tests for direct setting
-        ((SXSSFSheet)sxssfSheet).setRowOutlineLevel(4, 2);
+        sxssfSheet.setRowOutlineLevel(4, 2);
         assertEquals(-2, sxssfSheet.getRow(0).getOutlineLevel());
         assertEquals(0, sxssfSheet.getRow(1).getOutlineLevel());
         assertEquals(0, sxssfSheet.getRow(2).getOutlineLevel());
         assertEquals(0, sxssfSheet.getRow(3).getOutlineLevel());
         assertEquals(2, sxssfSheet.getRow(4).getOutlineLevel());
         assertEquals(0, sxssfSheet.getRow(5).getOutlineLevel());
-        
+
         sxssfWorkbook.dispose();
         sxssfWorkbook.close();
     }

@@ -17,10 +17,10 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,9 +34,9 @@ import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public final class TestXSSFChartAxis {
 
@@ -44,7 +44,7 @@ public final class TestXSSFChartAxis {
 	private XSSFWorkbook wb;
 	private XDDFChartAxis axis;
 
-	@Before
+	@BeforeEach
 	public void setup() {
 		wb = new XSSFWorkbook();
 		XSSFSheet sheet = wb.createSheet();
@@ -54,7 +54,7 @@ public final class TestXSSFChartAxis {
 		axis = chart.createValueAxis(AxisPosition.BOTTOM);
 	}
 
-	@After
+	@AfterEach
 	public void teardown() throws IOException {
 		wb.close();
 		wb = null;

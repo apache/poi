@@ -17,16 +17,16 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCol;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 
@@ -52,26 +52,26 @@ public class TestXSSFColGrouping {
      */
 	@Test
     public void testNoColsWithoutWidthWhenGrouping() throws IOException {
-		XSSFWorkbook wb1 = new XSSFWorkbook();
-		XSSFSheet sheet = wb1.createSheet("test");
+		try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb1.createSheet("test");
 
-        sheet.setColumnWidth(4, 5000);
-        sheet.setColumnWidth(5, 5000);
+            sheet.setColumnWidth(4, 5000);
+            sheet.setColumnWidth(5, 5000);
 
-        sheet.groupColumn((short) 4, (short) 7);
-        sheet.groupColumn((short) 9, (short) 12);
+            sheet.groupColumn((short) 4, (short) 7);
+            sheet.groupColumn((short) 9, (short) 12);
 
-        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1, "testNoColsWithoutWidthWhenGrouping");
-        sheet = wb2.getSheet("test");
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1, "testNoColsWithoutWidthWhenGrouping")) {
+                sheet = wb2.getSheet("test");
 
-        CTCols cols = sheet.getCTWorksheet().getColsArray(0);
-        logger.log(POILogger.DEBUG, "test52186/cols:" + cols);
-        for (CTCol col : cols.getColArray()) {
-			assertTrue("Col width attribute is unset: " + col, col.isSetWidth());
-		}
+                CTCols cols = sheet.getCTWorksheet().getColsArray(0);
+                logger.log(POILogger.DEBUG, "test52186/cols:" + cols);
+                for (CTCol col : cols.getColArray()) {
+                    assertTrue(col.isSetWidth(), "Col width attribute is unset: " + col);
+                }
 
-        wb2.close();
-        wb1.close();
+            }
+        }
     }
 
     /**
@@ -80,31 +80,31 @@ public class TestXSSFColGrouping {
      */
 	@Test
 	public void testNoColsWithoutWidthWhenGroupingAndCollapsing() throws IOException {
-		XSSFWorkbook wb1 = new XSSFWorkbook();
-		XSSFSheet sheet = wb1.createSheet("test");
+		try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb1.createSheet("test");
 
-        sheet.setColumnWidth(4, 5000);
-        sheet.setColumnWidth(5, 5000);
+            sheet.setColumnWidth(4, 5000);
+            sheet.setColumnWidth(5, 5000);
 
-        sheet.groupColumn((short) 4, (short) 5);
+            sheet.groupColumn((short) 4, (short) 5);
 
-        sheet.setColumnGroupCollapsed(4, true);
+            sheet.setColumnGroupCollapsed(4, true);
 
-        CTCols cols = sheet.getCTWorksheet().getColsArray(0);
-        logger.log(POILogger.DEBUG, "test52186_2/cols:" + cols);
+            CTCols cols = sheet.getCTWorksheet().getColsArray(0);
+            logger.log(POILogger.DEBUG, "test52186_2/cols:" + cols);
 
-        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1, "testNoColsWithoutWidthWhenGroupingAndCollapsing");
-        sheet = wb2.getSheet("test");
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1, "testNoColsWithoutWidthWhenGroupingAndCollapsing")) {
+                sheet = wb2.getSheet("test");
 
-        for (int i = 4; i <= 5; i++) {
-        	assertEquals("Unexpected width of column "+ i, 5000, sheet.getColumnWidth(i));
+                for (int i = 4; i <= 5; i++) {
+                    assertEquals(5000, sheet.getColumnWidth(i), "Unexpected width of column " + i);
+                }
+                cols = sheet.getCTWorksheet().getColsArray(0);
+                for (CTCol col : cols.getColArray()) {
+                    assertTrue(col.isSetWidth(), "Col width attribute is unset: " + col);
+                }
+            }
         }
-        cols = sheet.getCTWorksheet().getColsArray(0);
-        for (CTCol col : cols.getColArray()) {
-			assertTrue("Col width attribute is unset: " + col, col.isSetWidth());
-		}
-        wb2.close();
-        wb1.close();
     }
 
     /**
@@ -112,47 +112,47 @@ public class TestXSSFColGrouping {
      */
 	@Test
     public void testMergingOverlappingCols_OVERLAPS_2_WRAPS() throws IOException {
-		XSSFWorkbook wb1 = new XSSFWorkbook();
-		XSSFSheet sheet = wb1.createSheet("test");
+		try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb1.createSheet("test");
 
-        CTCols cols = sheet.getCTWorksheet().getColsArray(0);
-        CTCol col = cols.addNewCol();
-        col.setMin(1 + 1);
-        col.setMax(4 + 1);
-        col.setWidth(20);
-        col.setCustomWidth(true);
+            CTCols cols = sheet.getCTWorksheet().getColsArray(0);
+            CTCol col = cols.addNewCol();
+            col.setMin(1 + 1);
+            col.setMax(4 + 1);
+            col.setWidth(20);
+            col.setCustomWidth(true);
 
-        sheet.groupColumn((short) 2, (short) 3);
+            sheet.groupColumn((short) 2, (short) 3);
 
-        sheet.getCTWorksheet().getColsArray(0);
-        logger.log(POILogger.DEBUG, "testMergingOverlappingCols_OVERLAPS_2_WRAPS/cols:" + cols);
+            sheet.getCTWorksheet().getColsArray(0);
+            logger.log(POILogger.DEBUG, "testMergingOverlappingCols_OVERLAPS_2_WRAPS/cols:" + cols);
 
-        assertEquals(0, cols.getColArray(0).getOutlineLevel());
-        assertEquals(2, cols.getColArray(0).getMin()); // 1 based
-        assertEquals(2, cols.getColArray(0).getMax()); // 1 based
-        assertTrue(cols.getColArray(0).getCustomWidth());
+            assertEquals(0, cols.getColArray(0).getOutlineLevel());
+            assertEquals(2, cols.getColArray(0).getMin()); // 1 based
+            assertEquals(2, cols.getColArray(0).getMax()); // 1 based
+            assertTrue(cols.getColArray(0).getCustomWidth());
 
-        assertEquals(1, cols.getColArray(1).getOutlineLevel());
-        assertEquals(3, cols.getColArray(1).getMin()); // 1 based
-        assertEquals(4, cols.getColArray(1).getMax()); // 1 based
-        assertTrue(cols.getColArray(1).getCustomWidth());
+            assertEquals(1, cols.getColArray(1).getOutlineLevel());
+            assertEquals(3, cols.getColArray(1).getMin()); // 1 based
+            assertEquals(4, cols.getColArray(1).getMax()); // 1 based
+            assertTrue(cols.getColArray(1).getCustomWidth());
 
-        assertEquals(0, cols.getColArray(2).getOutlineLevel());
-        assertEquals(5, cols.getColArray(2).getMin()); // 1 based
-        assertEquals(5, cols.getColArray(2).getMax()); // 1 based
-        assertTrue(cols.getColArray(2).getCustomWidth());
+            assertEquals(0, cols.getColArray(2).getOutlineLevel());
+            assertEquals(5, cols.getColArray(2).getMin()); // 1 based
+            assertEquals(5, cols.getColArray(2).getMax()); // 1 based
+            assertTrue(cols.getColArray(2).getCustomWidth());
 
-        assertEquals(3, cols.sizeOfColArray());
+            assertEquals(3, cols.sizeOfColArray());
 
-        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1, "testMergingOverlappingCols_OVERLAPS_2_WRAPS");
-        sheet = wb2.getSheet("test");
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1, "testMergingOverlappingCols_OVERLAPS_2_WRAPS")) {
+                sheet = wb2.getSheet("test");
 
-        for (int i = 1; i <= 4; i++) {
-        	assertEquals("Unexpected width of column "+ i, 20 * 256, sheet.getColumnWidth(i));
+                for (int i = 1; i <= 4; i++) {
+                    assertEquals(20 * 256, sheet.getColumnWidth(i), "Unexpected width of column " + i);
+                }
+
+            }
         }
-
-        wb2.close();
-        wb1.close();
     }
 
     /**
@@ -160,47 +160,47 @@ public class TestXSSFColGrouping {
      */
 	@Test
     public void testMergingOverlappingCols_OVERLAPS_1_WRAPS() throws IOException {
-		XSSFWorkbook wb1 = new XSSFWorkbook();
-		XSSFSheet sheet = wb1.createSheet("test");
+		try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb1.createSheet("test");
 
-        CTCols cols = sheet.getCTWorksheet().getColsArray(0);
-        CTCol col = cols.addNewCol();
-        col.setMin(2 + 1);
-        col.setMax(4 + 1);
-        col.setWidth(20);
-        col.setCustomWidth(true);
+            CTCols cols = sheet.getCTWorksheet().getColsArray(0);
+            CTCol col = cols.addNewCol();
+            col.setMin(2 + 1);
+            col.setMax(4 + 1);
+            col.setWidth(20);
+            col.setCustomWidth(true);
 
-        sheet.groupColumn((short) 1, (short) 5);
+            sheet.groupColumn((short) 1, (short) 5);
 
-        cols = sheet.getCTWorksheet().getColsArray(0);
-        logger.log(POILogger.DEBUG, "testMergingOverlappingCols_OVERLAPS_1_WRAPS/cols:" + cols);
+            cols = sheet.getCTWorksheet().getColsArray(0);
+            logger.log(POILogger.DEBUG, "testMergingOverlappingCols_OVERLAPS_1_WRAPS/cols:" + cols);
 
-        assertEquals(1, cols.getColArray(0).getOutlineLevel());
-        assertEquals(2, cols.getColArray(0).getMin()); // 1 based
-        assertEquals(2, cols.getColArray(0).getMax()); // 1 based
-        assertFalse(cols.getColArray(0).getCustomWidth());
+            assertEquals(1, cols.getColArray(0).getOutlineLevel());
+            assertEquals(2, cols.getColArray(0).getMin()); // 1 based
+            assertEquals(2, cols.getColArray(0).getMax()); // 1 based
+            assertFalse(cols.getColArray(0).getCustomWidth());
 
-        assertEquals(1, cols.getColArray(1).getOutlineLevel());
-        assertEquals(3, cols.getColArray(1).getMin()); // 1 based
-        assertEquals(5, cols.getColArray(1).getMax()); // 1 based
-        assertTrue(cols.getColArray(1).getCustomWidth());
+            assertEquals(1, cols.getColArray(1).getOutlineLevel());
+            assertEquals(3, cols.getColArray(1).getMin()); // 1 based
+            assertEquals(5, cols.getColArray(1).getMax()); // 1 based
+            assertTrue(cols.getColArray(1).getCustomWidth());
 
-        assertEquals(1, cols.getColArray(2).getOutlineLevel());
-        assertEquals(6, cols.getColArray(2).getMin()); // 1 based
-        assertEquals(6, cols.getColArray(2).getMax()); // 1 based
-        assertFalse(cols.getColArray(2).getCustomWidth());
+            assertEquals(1, cols.getColArray(2).getOutlineLevel());
+            assertEquals(6, cols.getColArray(2).getMin()); // 1 based
+            assertEquals(6, cols.getColArray(2).getMax()); // 1 based
+            assertFalse(cols.getColArray(2).getCustomWidth());
 
-        assertEquals(3, cols.sizeOfColArray());
+            assertEquals(3, cols.sizeOfColArray());
 
-        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1, "testMergingOverlappingCols_OVERLAPS_1_WRAPS");
-        sheet = wb2.getSheet("test");
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1, "testMergingOverlappingCols_OVERLAPS_1_WRAPS")) {
+                sheet = wb2.getSheet("test");
 
-        for (int i = 2; i <= 4; i++) {
-        	assertEquals("Unexpected width of column "+ i, 20 * 256, sheet.getColumnWidth(i));
+                for (int i = 2; i <= 4; i++) {
+                    assertEquals(20 * 256, sheet.getColumnWidth(i), "Unexpected width of column " + i);
+                }
+
+            }
         }
-
-        wb2.close();
-        wb1.close();
     }
 
     /**
@@ -208,48 +208,48 @@ public class TestXSSFColGrouping {
      */
 	@Test
     public void testMergingOverlappingCols_OVERLAPS_1_MINOR() throws IOException {
-		XSSFWorkbook wb1 = new XSSFWorkbook();
-		XSSFSheet sheet = wb1.createSheet("test");
+		try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb1.createSheet("test");
 
-        CTCols cols = sheet.getCTWorksheet().getColsArray(0);
-        CTCol col = cols.addNewCol();
-        col.setMin(2 + 1);
-        col.setMax(4 + 1);
-        col.setWidth(20);
-        col.setCustomWidth(true);
+            CTCols cols = sheet.getCTWorksheet().getColsArray(0);
+            CTCol col = cols.addNewCol();
+            col.setMin(2 + 1);
+            col.setMax(4 + 1);
+            col.setWidth(20);
+            col.setCustomWidth(true);
 
-        sheet.groupColumn((short) 3, (short) 5);
+            sheet.groupColumn((short) 3, (short) 5);
 
-        cols = sheet.getCTWorksheet().getColsArray(0);
-        logger.log(POILogger.DEBUG, "testMergingOverlappingCols_OVERLAPS_1_MINOR/cols:" + cols);
+            cols = sheet.getCTWorksheet().getColsArray(0);
+            logger.log(POILogger.DEBUG, "testMergingOverlappingCols_OVERLAPS_1_MINOR/cols:" + cols);
 
-        assertEquals(0, cols.getColArray(0).getOutlineLevel());
-        assertEquals(3, cols.getColArray(0).getMin()); // 1 based
-        assertEquals(3, cols.getColArray(0).getMax()); // 1 based
-        assertTrue(cols.getColArray(0).getCustomWidth());
+            assertEquals(0, cols.getColArray(0).getOutlineLevel());
+            assertEquals(3, cols.getColArray(0).getMin()); // 1 based
+            assertEquals(3, cols.getColArray(0).getMax()); // 1 based
+            assertTrue(cols.getColArray(0).getCustomWidth());
 
-        assertEquals(1, cols.getColArray(1).getOutlineLevel());
-        assertEquals(4, cols.getColArray(1).getMin()); // 1 based
-        assertEquals(5, cols.getColArray(1).getMax()); // 1 based
-        assertTrue(cols.getColArray(1).getCustomWidth());
+            assertEquals(1, cols.getColArray(1).getOutlineLevel());
+            assertEquals(4, cols.getColArray(1).getMin()); // 1 based
+            assertEquals(5, cols.getColArray(1).getMax()); // 1 based
+            assertTrue(cols.getColArray(1).getCustomWidth());
 
-        assertEquals(1, cols.getColArray(2).getOutlineLevel());
-        assertEquals(6, cols.getColArray(2).getMin()); // 1 based
-        assertEquals(6, cols.getColArray(2).getMax()); // 1 based
-        assertFalse(cols.getColArray(2).getCustomWidth());
+            assertEquals(1, cols.getColArray(2).getOutlineLevel());
+            assertEquals(6, cols.getColArray(2).getMin()); // 1 based
+            assertEquals(6, cols.getColArray(2).getMax()); // 1 based
+            assertFalse(cols.getColArray(2).getCustomWidth());
 
-        assertEquals(3, cols.sizeOfColArray());
+            assertEquals(3, cols.sizeOfColArray());
 
-        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1, "testMergingOverlappingCols_OVERLAPS_1_MINOR");
-        sheet = wb2.getSheet("test");
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1, "testMergingOverlappingCols_OVERLAPS_1_MINOR")) {
+                sheet = wb2.getSheet("test");
 
-        for (int i = 2; i <= 4; i++) {
-        	assertEquals("Unexpected width of column "+ i, 20 * 256L, sheet.getColumnWidth(i));
+                for (int i = 2; i <= 4; i++) {
+                    assertEquals(20 * 256L, sheet.getColumnWidth(i), "Unexpected width of column " + i);
+                }
+                assertEquals(sheet.getDefaultColumnWidth() * 256L, sheet.getColumnWidth(5), "Unexpected width of column " + 5);
+
+            }
         }
-    	assertEquals("Unexpected width of column "+ 5, sheet.getDefaultColumnWidth() * 256L, sheet.getColumnWidth(5));
-
-    	wb2.close();
-    	wb1.close();
     }
 
     /**
@@ -257,48 +257,48 @@ public class TestXSSFColGrouping {
      */
 	@Test
     public void testMergingOverlappingCols_OVERLAPS_2_MINOR() throws IOException {
-		XSSFWorkbook wb1 = new XSSFWorkbook();
-		XSSFSheet sheet = wb1.createSheet("test");
+		try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb1.createSheet("test");
 
-        CTCols cols = sheet.getCTWorksheet().getColsArray(0);
-        CTCol col = cols.addNewCol();
-        col.setMin(2 + 1);
-        col.setMax(4 + 1);
-        col.setWidth(20);
-        col.setCustomWidth(true);
+            CTCols cols = sheet.getCTWorksheet().getColsArray(0);
+            CTCol col = cols.addNewCol();
+            col.setMin(2 + 1);
+            col.setMax(4 + 1);
+            col.setWidth(20);
+            col.setCustomWidth(true);
 
-        sheet.groupColumn((short) 1, (short) 3);
+            sheet.groupColumn((short) 1, (short) 3);
 
-        cols = sheet.getCTWorksheet().getColsArray(0);
-        logger.log(POILogger.DEBUG, "testMergingOverlappingCols_OVERLAPS_2_MINOR/cols:" + cols);
+            cols = sheet.getCTWorksheet().getColsArray(0);
+            logger.log(POILogger.DEBUG, "testMergingOverlappingCols_OVERLAPS_2_MINOR/cols:" + cols);
 
-        assertEquals(1, cols.getColArray(0).getOutlineLevel());
-        assertEquals(2, cols.getColArray(0).getMin()); // 1 based
-        assertEquals(2, cols.getColArray(0).getMax()); // 1 based
-        assertFalse(cols.getColArray(0).getCustomWidth());
+            assertEquals(1, cols.getColArray(0).getOutlineLevel());
+            assertEquals(2, cols.getColArray(0).getMin()); // 1 based
+            assertEquals(2, cols.getColArray(0).getMax()); // 1 based
+            assertFalse(cols.getColArray(0).getCustomWidth());
 
-        assertEquals(1, cols.getColArray(1).getOutlineLevel());
-        assertEquals(3, cols.getColArray(1).getMin()); // 1 based
-        assertEquals(4, cols.getColArray(1).getMax()); // 1 based
-        assertTrue(cols.getColArray(1).getCustomWidth());
+            assertEquals(1, cols.getColArray(1).getOutlineLevel());
+            assertEquals(3, cols.getColArray(1).getMin()); // 1 based
+            assertEquals(4, cols.getColArray(1).getMax()); // 1 based
+            assertTrue(cols.getColArray(1).getCustomWidth());
 
-        assertEquals(0, cols.getColArray(2).getOutlineLevel());
-        assertEquals(5, cols.getColArray(2).getMin()); // 1 based
-        assertEquals(5, cols.getColArray(2).getMax()); // 1 based
-        assertTrue(cols.getColArray(2).getCustomWidth());
+            assertEquals(0, cols.getColArray(2).getOutlineLevel());
+            assertEquals(5, cols.getColArray(2).getMin()); // 1 based
+            assertEquals(5, cols.getColArray(2).getMax()); // 1 based
+            assertTrue(cols.getColArray(2).getCustomWidth());
 
-        assertEquals(3, cols.sizeOfColArray());
+            assertEquals(3, cols.sizeOfColArray());
 
-        XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1, "testMergingOverlappingCols_OVERLAPS_2_MINOR");
-        sheet = wb2.getSheet("test");
+            try (XSSFWorkbook wb2 = XSSFTestDataSamples.writeOutAndReadBack(wb1, "testMergingOverlappingCols_OVERLAPS_2_MINOR")) {
+                sheet = wb2.getSheet("test");
 
-        for (int i = 2; i <= 4; i++) {
-        	assertEquals("Unexpected width of column "+ i, 20 * 256L, sheet.getColumnWidth(i));
+                for (int i = 2; i <= 4; i++) {
+                    assertEquals(20 * 256L, sheet.getColumnWidth(i), "Unexpected width of column " + i);
+                }
+                assertEquals(sheet.getDefaultColumnWidth() * 256L, sheet.getColumnWidth(1), "Unexpected width of column " + 1);
+
+            }
         }
-    	assertEquals("Unexpected width of column "+ 1, sheet.getDefaultColumnWidth() * 256L, sheet.getColumnWidth(1));
-
-    	wb2.close();
-    	wb1.close();
     }
 
 }

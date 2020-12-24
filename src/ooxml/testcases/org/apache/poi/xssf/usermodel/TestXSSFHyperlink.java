@@ -27,11 +27,11 @@ import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public final class TestXSSFHyperlink extends BaseTestHyperlink {
     public TestXSSFHyperlink() {
@@ -98,23 +98,19 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
 
     @Test
     public void testInvalidURLs() throws IOException {
-        XSSFWorkbook workbook = new XSSFWorkbook();
-        XSSFCreationHelper createHelper = workbook.getCreationHelper();
+        try (XSSFWorkbook workbook = new XSSFWorkbook()) {
+            XSSFCreationHelper createHelper = workbook.getCreationHelper();
 
-        String[] invalidURLs = {
+            String[] invalidURLs = {
                 "http:\\apache.org",
                 "www.apache .org",
                 "c:\\temp",
                 "\\poi"};
-        for(String s : invalidURLs){
-            try {
-                createHelper.createHyperlink(HyperlinkType.URL).setAddress(s);
-                fail("expected IllegalArgumentException: " + s);
-            } catch (IllegalArgumentException e){
-                // expected here
+            for (String s : invalidURLs) {
+                assertThrows(IllegalArgumentException.class,
+                    () -> createHelper.createHyperlink(HyperlinkType.URL).setAddress(s));
             }
         }
-        workbook.close();
     }
 
     @Test
@@ -312,24 +308,24 @@ public final class TestXSSFHyperlink extends BaseTestHyperlink {
         CellAddress A7 = new CellAddress("A7");
 
         XSSFHyperlink link = sh.getHyperlink(A2);
-        assertEquals("address", "A2", link.getCellRef());
-        assertEquals("link type", HyperlinkType.URL, link.getType());
-        assertEquals("link target", "http://twitter.com/#!/apacheorg", link.getAddress());
+        assertEquals("A2", link.getCellRef(), "address");
+        assertEquals(HyperlinkType.URL, link.getType(), "link type");
+        assertEquals("http://twitter.com/#!/apacheorg", link.getAddress(), "link target");
 
         link = sh.getHyperlink(A3);
-        assertEquals("address", "A3", link.getCellRef());
-        assertEquals("link type", HyperlinkType.URL, link.getType());
-        assertEquals("link target", "http://www.bailii.org/databases.html#ie", link.getAddress());
+        assertEquals("A3", link.getCellRef(), "address");
+        assertEquals(HyperlinkType.URL, link.getType(), "link type");
+        assertEquals("http://www.bailii.org/databases.html#ie", link.getAddress(), "link target");
 
         link = sh.getHyperlink(A4);
-        assertEquals("address", "A4", link.getCellRef());
-        assertEquals("link type", HyperlinkType.URL, link.getType());
-        assertEquals("link target", "https://en.wikipedia.org/wiki/Apache_POI#See_also", link.getAddress());
+        assertEquals("A4", link.getCellRef(), "address");
+        assertEquals(HyperlinkType.URL, link.getType(), "link type");
+        assertEquals("https://en.wikipedia.org/wiki/Apache_POI#See_also", link.getAddress(), "link target");
 
         link = sh.getHyperlink(A7);
-        assertEquals("address", "A7", link.getCellRef());
-        assertEquals("link type", HyperlinkType.DOCUMENT, link.getType());
-        assertEquals("link target", "Sheet1", link.getAddress());
+        assertEquals("A7", link.getCellRef(), "address");
+        assertEquals(HyperlinkType.DOCUMENT, link.getType(), "link type");
+        assertEquals("Sheet1", link.getAddress(), "link target");
 
         wb.close();
     }

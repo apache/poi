@@ -18,13 +18,13 @@
 package org.apache.poi.hssf.record.chart;
 
 import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.util.HexRead;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the serialization and deserialization of the SeriesTextRecord class
@@ -88,7 +88,7 @@ public final class TestSeriesTextRecord {
 		// "Bad requested string length (-126)"
 		SeriesTextRecord str = new SeriesTextRecord(in);
 
-		assertTrue("Identified bug 45784b", str.getRecordSize() >= 0);
+		assertTrue(str.getRecordSize() >= 0, "Identified bug 45784b");
 		byte[] ser = str.serialize();
 		confirmRecordEncoding(SeriesTextRecord.sid, data, ser);
 	}

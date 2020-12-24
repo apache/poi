@@ -17,16 +17,15 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import java.util.Collection;
+import java.util.stream.Stream;
 
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.provider.Arguments;
 
 /**
  * Tests WeekNum() as loaded from a test data 2013 excel spreadsheet.<p>
  */
 public class TestWeekNumFunctionsFromSpreadsheet2013 extends BaseTestFunctionsFromSpreadsheet {
-    @Parameters(name="{0}")
-    public static Collection<Object[]> data() throws Exception {
+    public static Stream<Arguments> data() throws Exception {
         //Only open this file with Excel 2013 to keep binary specific to that version
         return data(TestWeekNumFunctionsFromSpreadsheet2013.class, "WeekNumFunctionTestCaseData2013.xls");
     }

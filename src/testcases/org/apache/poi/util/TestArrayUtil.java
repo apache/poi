@@ -18,12 +18,12 @@
 
 package org.apache.poi.util;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for ArrayUtil
@@ -83,19 +83,11 @@ public class TestArrayUtil {
 		}
 
 		// Check can't shift more than we have
-		try {
-			ArrayUtil.arrayMoveWithin(getIntsList(), 7, 3, 5);
-			fail();
-		} catch(IllegalArgumentException e) {
-			// Good, we don't have 5 from 7 onwards
-		}
+		assertThrows(IllegalArgumentException.class, () -> ArrayUtil.arrayMoveWithin(getIntsList(), 7, 3, 5));
+		// Good, we don't have 5 from 7 onwards
 
 		// Check can't shift where would overshoot
-		try {
-			ArrayUtil.arrayMoveWithin(getIntsList(), 2, 7, 5);
-			fail();
-		} catch(IllegalArgumentException e) {
-			// Good, we can't fit 5 in starting at 7
-		}
+		assertThrows(IllegalArgumentException.class, () -> ArrayUtil.arrayMoveWithin(getIntsList(), 2, 7, 5));
+		// Good, we can't fit 5 in starting at 7
 	}
 }

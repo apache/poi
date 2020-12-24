@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xddf.usermodel.chart;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,9 +28,9 @@ import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test case for bug 63153
@@ -53,7 +53,7 @@ public class TestXDDFChartRemoveSeries {
      * This creates a workbook with one worksheet, which contains a single
      * scatter chart.
      */
-    @Before
+    @BeforeEach
     public void setup() {
         final boolean bDebug = false;
         workbook = new XSSFWorkbook();
@@ -98,7 +98,7 @@ public class TestXDDFChartRemoveSeries {
     /**
      * This method writes the workbook to resultDir/fileName.
      */
-    @After
+    @AfterEach
     public void cleanup() {
         if (workbook == null) {
             System.out.println(String.format(Locale.ROOT, "%s: workbook==null", procName));

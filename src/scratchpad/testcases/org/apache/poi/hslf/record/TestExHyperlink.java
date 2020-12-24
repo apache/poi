@@ -18,9 +18,9 @@
 package org.apache.poi.hslf.record;
 
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,7 +30,7 @@ import java.util.List;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that ExHyperlink works properly.
@@ -45,14 +45,14 @@ public final class TestExHyperlink {
         );
 	    ExHyperlink exHyperlink = new ExHyperlink(exHyperlinkBytes, 0, exHyperlinkBytes.length);
 
-	    
+
 	    assertEquals(4055l, exHyperlink.getRecordType());
         assertEquals(3, exHyperlink.getExHyperlinkAtom().getNumber());
         String expURL = "http://jakarta.apache.org/poi/hssf/";
         assertEquals(expURL, exHyperlink.getLinkURL());
         assertEquals(expURL, exHyperlink._getDetailsA());
         assertEquals(expURL, exHyperlink._getDetailsB());
-	
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         exHyperlink.writeOut(baos);
         assertArrayEquals(exHyperlinkBytes, baos.toByteArray());

@@ -17,9 +17,9 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -27,8 +27,8 @@ import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.PAPX;
 import org.apache.poi.hwpf.model.StyleSheet;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests to ensure that our ranges end up with
@@ -68,7 +68,7 @@ public final class TestRangeProperties {
     private HWPFDocument u;
     private HWPFDocument a;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         u = HWPFTestDataSamples.openSampleFile("HeaderFooterUnicode.doc");
         a = HWPFTestDataSamples.openSampleFile("SampleDoc.doc");

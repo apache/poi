@@ -19,13 +19,13 @@ package org.apache.poi.hssf.record.chart;
 
 
 import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.ss.formula.ptg.Area3DPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the serialization and deserialization of the LinkedDataRecord

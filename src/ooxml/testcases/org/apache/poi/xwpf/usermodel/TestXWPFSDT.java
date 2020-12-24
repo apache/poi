@@ -18,15 +18,15 @@
 package org.apache.poi.xwpf.usermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestXWPFSDT {
 
@@ -37,7 +37,7 @@ public final class TestXWPFSDT {
     public void testNestedSDTs() throws Exception {
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug64561.docx")) {
             XWPFAbstractSDT sdt = extractAllSDTs(doc).get(0);
-            assertEquals("extracted text", "Subject", sdt.getContent().getText());
+            assertEquals("Subject", sdt.getContent().getText(), "extracted text");
         }
     }
 
@@ -58,10 +58,10 @@ public final class TestXWPFSDT {
                 }
 
             }
-            assertEquals("controls size", 13, sdts.size());
+            assertEquals(13, sdts.size(), "controls size");
 
-            assertEquals("tag", "MyTag", tag);
-            assertEquals("title", "MyTitle", title);
+            assertEquals("MyTag", tag, "tag");
+            assertEquals("MyTitle", title, "title");
         }
     }
 
@@ -86,11 +86,11 @@ public final class TestXWPFSDT {
         try (XWPFDocument doc =XWPFTestDataSamples.openSampleDocument("Bug54849.docx")) {
             List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
 
-            assertEquals("number of sdts", contents.length, sdts.size());
+            assertEquals(contents.length, sdts.size(), "number of sdts");
 
             for (int i = 0; i < contents.length; i++) {
                 XWPFAbstractSDT sdt = sdts.get(i);
-                assertEquals(i + ": " + contents[i], contents[i], sdt.getContent().toString());
+                assertEquals(contents[i], sdt.getContent().toString(), i + ": " + contents[i]);
             }
         }
     }
@@ -100,7 +100,7 @@ public final class TestXWPFSDT {
      */
     @Test
     public void testSDTAsCell() throws Exception {
-        //Bug54771a.docx and Bug54771b.docx test slightly 
+        //Bug54771a.docx and Bug54771b.docx test slightly
         //different recursion patterns. Keep both!
         try (XWPFDocument doc = XWPFTestDataSamples.openSampleDocument("Bug54771a.docx")) {
             List<XWPFAbstractSDT> sdts = extractAllSDTs(doc);
@@ -146,7 +146,7 @@ public final class TestXWPFSDT {
 
             for (int i = 0; i < sdts.size(); i++) {
                 XWPFAbstractSDT sdt = sdts.get(i);
-                assertEquals(targs.get(i), targs.get(i), sdt.getContent().getText());
+                assertEquals(targs.get(i), sdt.getContent().getText());
             }
         }
     }

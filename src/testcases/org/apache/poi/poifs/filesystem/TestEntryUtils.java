@@ -17,11 +17,11 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestEntryUtils {
     private static final byte[] dataSmallA = new byte[] { 12, 42, 11, -12, -121 };
@@ -42,23 +42,23 @@ public class TestEntryUtils {
        POIFSFileSystem fs = new POIFSFileSystem();
        DirectoryEntry dirA = fs.createDirectory("DirA");
        DirectoryEntry dirB = fs.createDirectory("DirB");
-       
+
        DocumentEntry entryR = fs.createDocument(new ByteArrayInputStream(dataSmallA), "EntryRoot");
        DocumentEntry entryA1 = dirA.createDocument("EntryA1", new ByteArrayInputStream(dataSmallA));
        DocumentEntry entryA2 = dirA.createDocument("EntryA2", new ByteArrayInputStream(dataSmallB));
-       
+
        // Copy docs
        assertEquals(0, fsD.getRoot().getEntryCount());
        EntryUtils.copyNodeRecursively(entryR, fsD.getRoot());
-       
+
        assertEquals(1, fsD.getRoot().getEntryCount());
        assertNotNull(fsD.getRoot().getEntry("EntryRoot"));
-       
+
        EntryUtils.copyNodeRecursively(entryA1, fsD.getRoot());
        assertEquals(2, fsD.getRoot().getEntryCount());
        assertNotNull(fsD.getRoot().getEntry("EntryRoot"));
        assertNotNull(fsD.getRoot().getEntry("EntryA1"));
-       
+
        EntryUtils.copyNodeRecursively(entryA2, fsD.getRoot());
        assertEquals(3, fsD.getRoot().getEntryCount());
        assertNotNull(fsD.getRoot().getEntry("EntryRoot"));
@@ -66,16 +66,16 @@ public class TestEntryUtils {
        assertNotNull(fsD.getRoot().getEntry("EntryA2"));
 
        fsD.close();
-       
+
        // Copy directories
        fsD = new POIFSFileSystem();
        assertEquals(0, fsD.getRoot().getEntryCount());
-       
+
        EntryUtils.copyNodeRecursively(dirB, fsD.getRoot());
        assertEquals(1, fsD.getRoot().getEntryCount());
        assertNotNull(fsD.getRoot().getEntry("DirB"));
        assertEquals(0, ((DirectoryEntry)fsD.getRoot().getEntry("DirB")).getEntryCount());
-       
+
        EntryUtils.copyNodeRecursively(dirA, fsD.getRoot());
        assertEquals(2, fsD.getRoot().getEntryCount());
        assertNotNull(fsD.getRoot().getEntry("DirB"));
@@ -83,11 +83,11 @@ public class TestEntryUtils {
        assertNotNull(fsD.getRoot().getEntry("DirA"));
        assertEquals(2, ((DirectoryEntry)fsD.getRoot().getEntry("DirA")).getEntryCount());
        fsD.close();
-       
+
        // Copy the whole lot
        fsD = new POIFSFileSystem();
        assertEquals(0, fsD.getRoot().getEntryCount());
-       
+
        EntryUtils.copyNodes(fs, fsD, new ArrayList<>());
        assertEquals(3, fsD.getRoot().getEntryCount());
        assertNotNull(fsD.getRoot().getEntry(dirA.getName()));
@@ -104,32 +104,32 @@ public class TestEntryUtils {
        POIFSFileSystem fs = new POIFSFileSystem();
        DirectoryEntry dirA = fs.createDirectory("DirA");
        DirectoryEntry dirB = fs.createDirectory("DirB");
-       
+
        DocumentEntry entryA1 = dirA.createDocument("Entry1", new ByteArrayInputStream(dataSmallA));
        DocumentEntry entryA1b = dirA.createDocument("Entry1b", new ByteArrayInputStream(dataSmallA));
        DocumentEntry entryA2 = dirA.createDocument("Entry2", new ByteArrayInputStream(dataSmallB));
        DocumentEntry entryB1 = dirB.createDocument("Entry1", new ByteArrayInputStream(dataSmallA));
-       
-       
+
+
        // Names must match
        assertNotEquals(entryA1.getName(), entryA1b.getName());
        assertFalse(EntryUtils.areDocumentsIdentical(entryA1, entryA1b));
-       
+
        // Contents must match
        assertFalse(EntryUtils.areDocumentsIdentical(entryA1, entryA2));
-       
+
        // Parents don't matter if contents + names are the same
        assertNotEquals(entryA1.getParent(), entryB1.getParent());
        assertTrue(EntryUtils.areDocumentsIdentical(entryA1, entryB1));
-       
-       
+
+
        // Can work with POIFS
        ByteArrayOutputStream tmpO = new ByteArrayOutputStream();
        fs.writeFilesystem(tmpO);
-       
+
        ByteArrayInputStream tmpI = new ByteArrayInputStream(tmpO.toByteArray());
        POIFSFileSystem nfs = new POIFSFileSystem(tmpI);
-       
+
        DirectoryEntry dN1 = (DirectoryEntry)nfs.getRoot().getEntry("DirA");
        DirectoryEntry dN2 = (DirectoryEntry)nfs.getRoot().getEntry("DirB");
        DocumentEntry eNA1 = (DocumentEntry)dN1.getEntry(entryA1.getName());
@@ -153,59 +153,59 @@ public class TestEntryUtils {
        POIFSFileSystem fs = new POIFSFileSystem();
        DirectoryEntry dirA = fs.createDirectory("DirA");
        DirectoryEntry dirB = fs.createDirectory("DirB");
-       
+
        // Names must match
        assertFalse(EntryUtils.areDirectoriesIdentical(dirA, dirB));
-       
+
        // Empty dirs are fine
-       DirectoryEntry dirA1 = dirA.createDirectory("TheDir"); 
+       DirectoryEntry dirA1 = dirA.createDirectory("TheDir");
        DirectoryEntry dirB1 = dirB.createDirectory("TheDir");
        assertEquals(0, dirA1.getEntryCount());
        assertEquals(0, dirB1.getEntryCount());
        assertTrue(EntryUtils.areDirectoriesIdentical(dirA1, dirB1));
-       
+
        // Otherwise children must match
        dirA1.createDocument("Entry1", new ByteArrayInputStream(dataSmallA));
        assertFalse(EntryUtils.areDirectoriesIdentical(dirA1, dirB1));
-       
+
        dirB1.createDocument("Entry1", new ByteArrayInputStream(dataSmallA));
        assertTrue(EntryUtils.areDirectoriesIdentical(dirA1, dirB1));
-       
+
        dirA1.createDirectory("DD");
        assertFalse(EntryUtils.areDirectoriesIdentical(dirA1, dirB1));
        dirB1.createDirectory("DD");
        assertTrue(EntryUtils.areDirectoriesIdentical(dirA1, dirB1));
-       
-       
+
+
        // Excludes support
        List<String> excl = Arrays.asList("Ignore1", "IgnDir/Ign2");
        FilteringDirectoryNode fdA = new FilteringDirectoryNode(dirA1, excl);
        FilteringDirectoryNode fdB = new FilteringDirectoryNode(dirB1, excl);
 
        assertTrue(EntryUtils.areDirectoriesIdentical(fdA, fdB));
-       
+
        // Add an ignored doc, no notice is taken
        fdA.createDocument("Ignore1", new ByteArrayInputStream(dataSmallA));
        assertTrue(EntryUtils.areDirectoriesIdentical(fdA, fdB));
-       
+
        // Add a directory with filtered contents, not the same
        DirectoryEntry dirAI = dirA1.createDirectory("IgnDir");
        assertFalse(EntryUtils.areDirectoriesIdentical(fdA, fdB));
-       
+
        DirectoryEntry dirBI = dirB1.createDirectory("IgnDir");
        assertTrue(EntryUtils.areDirectoriesIdentical(fdA, fdB));
-       
+
        // Add something to the filtered subdir that gets ignored
        dirAI.createDocument("Ign2", new ByteArrayInputStream(dataSmallA));
        assertTrue(EntryUtils.areDirectoriesIdentical(fdA, fdB));
-       
+
        // And something that doesn't
        dirAI.createDocument("IgnZZ", new ByteArrayInputStream(dataSmallA));
        assertFalse(EntryUtils.areDirectoriesIdentical(fdA, fdB));
-       
+
        dirBI.createDocument("IgnZZ", new ByteArrayInputStream(dataSmallA));
        assertTrue(EntryUtils.areDirectoriesIdentical(fdA, fdB));
-       
+
        fs.close();
     }
 }

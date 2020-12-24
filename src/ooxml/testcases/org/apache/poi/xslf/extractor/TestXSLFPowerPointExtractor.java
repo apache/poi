@@ -19,10 +19,10 @@ package org.apache.poi.xslf.extractor;
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertNotContained;
 import static org.apache.poi.POITestCase.assertStartsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +34,7 @@ import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFShape;
 import org.apache.poi.xslf.usermodel.XSLFTextParagraph;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for XSLFPowerPointExtractor
@@ -245,11 +245,11 @@ public class TestXSLFPowerPointExtractor {
                 String text = extractor.getText();
                 if (extension.equals("thmx")) {
                     // Theme file doesn't have any textual content
-                    assertEquals(filename, 0, text.length());
+                    assertEquals(0, text.length(), filename);
                     continue;
                 }
 
-                assertTrue(filename, text.length() > 0);
+                assertTrue(text.length() > 0, filename);
                 assertContains(filename, text, "Attachment Test");
                 assertContains(filename, text, "This is a test file data with the same content");
                 assertContains(filename, text, "content parsing");
@@ -267,7 +267,7 @@ public class TestXSLFPowerPointExtractor {
         try (final SlideShowExtractor extr = (SlideShowExtractor) ExtractorFactory.createExtractor(headerFile)) {
             String text = extr.getText();
             assertNotNull(text);
-            assertFalse("Had: " + text, text.contains("testdoc"));
+            assertFalse(text.contains("testdoc"), "Had: " + text);
 
             extr.setSlidesByDefault(false);
             extr.setNotesByDefault(true);

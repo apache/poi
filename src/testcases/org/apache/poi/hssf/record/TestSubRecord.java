@@ -20,15 +20,15 @@ package org.apache.poi.hssf.record;
 
 
 import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.Arrays;
 
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndian;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests Subrecord components of an OBJ record.  Test data taken directly
@@ -79,7 +79,7 @@ public final class TestSubRecord {
 		RecordInputStream in = TestcaseRecordInputStream.create(dataAutoFilter);
 		ObjRecord or = new ObjRecord(in);
 		byte[] data2 = or.serialize();
-		assertNotEquals("Identified bug 45778", 8228, data2.length);
+		assertNotEquals(8228, data2.length, "Identified bug 45778");
 		assertEquals(74, data2.length);
 		assertArrayEquals(dataAutoFilter, data2);
 	}
@@ -100,9 +100,9 @@ public final class TestSubRecord {
 		RecordInputStream in = TestcaseRecordInputStream.create(data);
 		ObjRecord or = new ObjRecord(in);
 		byte[] data2 = or.serialize();
-		assertNotEquals("Identified bug 45778", 8228, data2.length);
-		assertEquals("Encoded length", data.length, data2.length);
-		assertArrayEquals("Encoded data differs", data, data2);
+		assertNotEquals(8228, data2.length, "Identified bug 45778");
+		assertEquals(data.length, data2.length, "Encoded length");
+		assertArrayEquals(data, data2, "Encoded data differs");
 	}
 
 	/**

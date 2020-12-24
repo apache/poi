@@ -21,12 +21,13 @@ package org.apache.poi.xssf.streaming;
 
 import static org.apache.poi.POITestCase.assertEndsWith;
 import static org.apache.poi.POITestCase.assertStartsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -52,9 +53,9 @@ import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.SharedStringsTable;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
 
@@ -62,7 +63,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         super(SXSSFITestDataProvider.instance);
     }
 
-    @After
+    @AfterEach
     public void tearDown(){
         ((SXSSFITestDataProvider)_testDataProvider).cleanup();
     }
@@ -73,12 +74,8 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     @Override
     @Test
     public void cloneSheet() throws IOException {
-        try {
-            super.cloneSheet();
-            fail("expected exception");
-        } catch (RuntimeException e){
-            assertEquals("Not Implemented", e.getMessage());
-        }
+        RuntimeException e = assertThrows(RuntimeException.class, super::cloneSheet);
+        assertEquals("Not Implemented", e.getMessage());
     }
 
     /**
@@ -87,12 +84,8 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
     @Override
     @Test
     public void sheetClone() throws IOException {
-        try {
-            super.sheetClone();
-            fail("expected exception");
-        } catch (RuntimeException e){
-            assertEquals("Not Implemented", e.getMessage());
-        }
+        RuntimeException e = assertThrows(RuntimeException.class, super::sheetClone);
+        assertEquals("Not Implemented", e.getMessage());
     }
 
     /**
@@ -100,7 +93,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
      *  changes.
      */
     @Override
-    @Ignore("SXSSF doesn't update formulas on sheet name changes, as most cells probably aren't in memory at the time")
+    @Disabled("SXSSF doesn't update formulas on sheet name changes, as most cells probably aren't in memory at the time")
     @Test
     public void setSheetName() {
     }
@@ -288,7 +281,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
             assertEquals("sheet" + i, sh.getSheetName());
             for(int j = 0; j < rowNum; j++){
                 Row row = sh.getRow(j);
-                assertNotNull("row[" + j + "]", row);
+                assertNotNull(row, "row[" + j + "]");
                 Cell cell1 = row.getCell(0);
                 assertEquals(new CellReference(cell1).formatAsString(), cell1.getStringCellValue());
 
@@ -353,7 +346,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         wb2.close();
     }
 
-    @Ignore("currently writing the same sheet multiple times is not supported...")
+    @Disabled("currently writing the same sheet multiple times is not supported...")
     @Test
     public void bug53515() throws Exception {
         Workbook wb1 = new SXSSFWorkbook(10);
@@ -366,7 +359,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
         wb1.close();
     }
 
-    @Ignore("Crashes the JVM because of documented JVM behavior with concurrent writing/reading of zip-files, "
+    @Disabled("Crashes the JVM because of documented JVM behavior with concurrent writing/reading of zip-files, "
             + "see http://www.oracle.com/technetwork/java/javase/documentation/overview-156328.html")
     @Test
     public void bug53515a() throws Exception {
@@ -494,7 +487,7 @@ public final class TestSXSSFWorkbook extends BaseTestXWorkbook {
      * TODO Fix this to work!
      */
     @Test
-    @Ignore
+    @Disabled
     public void createFromReadOnlyWorkbook() throws Exception {
         String sheetName = "Test SXSSF";
         File input = XSSFTestDataSamples.getSampleFile("sample.xlsx");

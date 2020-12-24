@@ -16,10 +16,10 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -90,20 +90,20 @@ public abstract class AbstractFileHandler implements FileHandler {
         String fileAndParentName = file.getParentFile().getName() + "/" + file.getName();
         try {
             extractor = ExtractorFactory.createExtractor(file);
-            assertNotNull("Should get a POITextExtractor but had none for file " + file, extractor);
+            assertNotNull(extractor, "Should get a POITextExtractor but had none for file " + file);
 
-            assertNotNull("Should get some text but had none for file " + file, extractor.getText());
+            assertNotNull(extractor.getText(), "Should get some text but had none for file " + file);
 
             // also try metadata
             @SuppressWarnings("resource")
             POITextExtractor metadataExtractor = extractor.getMetadataTextExtractor();
             assertNotNull(metadataExtractor.getText());
 
-            assertFalse("Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!",
-                    EXPECTED_EXTRACTOR_FAILURES.contains(fileAndParentName));
+            assertFalse(EXPECTED_EXTRACTOR_FAILURES.contains(fileAndParentName),
+                "Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!");
 
-            assertEquals("File should not be modified by extractor", length, file.length());
-            assertEquals("File should not be modified by extractor", modified, file.lastModified());
+            assertEquals(length, file.length(), "File should not be modified by extractor");
+            assertEquals(modified, file.lastModified(), "File should not be modified by extractor");
 
             handleExtractingAsStream(file);
 

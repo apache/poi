@@ -17,15 +17,15 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.hslf.HSLFTestDataSamples;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that SlideShow returns Sheets in the right order
@@ -36,13 +36,13 @@ public final class TestSlideOrdering {
 	// Complex slideshow, record order doesn't match slide order
 	private HSLFSlideShow ssB;
 
-	@Before
+	@BeforeEach
 	public void init() throws IOException {
 		ssA = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
 		ssB = HSLFTestDataSamples.getSlideShow("incorrect_slide_order.ppt");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws IOException {
 	    ssA.close();
 	    ssB.close();
@@ -91,7 +91,7 @@ public final class TestSlideOrdering {
 		assertEquals(titles.length, slide.size());
 		for (int i = 0; i < slide.size(); i++) {
 			String title = slide.get(i).getTitle();
-			assertEquals("Wrong slide title in " + filename, titles[i], title);
+			assertEquals(titles[i], title, "Wrong slide title in " + filename);
 		}
 		ppt.close();
 	}

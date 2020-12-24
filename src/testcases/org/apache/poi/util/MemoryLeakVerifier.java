@@ -17,11 +17,11 @@
 
 package org.apache.poi.util;
 
+import static org.junit.jupiter.api.Assertions.assertNull;
+
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.Assert.assertNull;
 
 /**
  * A simple utility class that can verify that objects have been successfully garbage collected.
@@ -100,7 +100,6 @@ public class MemoryLeakVerifier {
 			Thread.sleep(GC_SLEEP_TIME);
 	    }
 
-	    assertNull("Object should not exist after " + MAX_GC_ITERATIONS + " collections, but still had: " + ref.get(),
-	    		ref.get());
+	    assertNull(ref.get(), "Object should not exist after " + MAX_GC_ITERATIONS + " collections, but still had: " + ref.get());
 	}
 }

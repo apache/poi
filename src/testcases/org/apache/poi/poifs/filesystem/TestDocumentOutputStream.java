@@ -18,15 +18,16 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.poi.util.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test DocumentOutputStream functionality
@@ -51,12 +52,7 @@ public final class TestDocumentOutputStream {
                 fail("stream exhausted too early");
             }
 
-            try {
-                dstream.write(0);
-                fail("Should have caught IOException");
-            }
-            catch (IOException ignored) {
-            }
+            assertThrows(IOException.class, () -> dstream.write(0));
         };
 
         compare(l, expected);
@@ -78,11 +74,7 @@ public final class TestDocumentOutputStream {
                 fail("stream exhausted too early");
             }
 
-            try {
-                dstream.write(new byte[]{'7','7','7','7'});
-                fail("Should have caught IOException");
-            } catch (IOException ignored) {
-            }
+            assertThrows(IOException.class, () -> dstream.write(new byte[]{'7','7','7','7'}));
         };
 
         compare(l, expected);
@@ -103,11 +95,7 @@ public final class TestDocumentOutputStream {
             } catch (IOException ignored) {
                 fail("stream exhausted too early");
             }
-            try {
-                dstream.write(input, 0, 1);
-                fail("Should have caught IOException");
-            }
-            catch (IOException ignored) {}
+            assertThrows(IOException.class, () -> dstream.write(input, 0, 1));
         };
 
         compare(l, expected);

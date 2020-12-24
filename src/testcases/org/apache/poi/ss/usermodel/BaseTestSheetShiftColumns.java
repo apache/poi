@@ -18,11 +18,12 @@
  */
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -31,8 +32,8 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public abstract class BaseTestSheetShiftColumns {
     protected Sheet sheet1;
@@ -41,7 +42,7 @@ public abstract class BaseTestSheetShiftColumns {
 
     protected ITestDataProvider _testDataProvider;
 
-    @Before
+    @BeforeEach
     public void init() {
         int rowIndex = 0;
         sheet1 = workbook.createSheet("sheet1");
@@ -157,9 +158,9 @@ public abstract class BaseTestSheetShiftColumns {
         assertNull(newb6Null);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testShiftTwoColumnsLeft() {
-        sheet1.shiftColumns(1, 2, -2);
+        assertThrows(IllegalStateException.class, () -> sheet1.shiftColumns(1, 2, -2));
     }
 
     @Test
@@ -229,8 +230,8 @@ public abstract class BaseTestSheetShiftColumns {
         verifyHyperlink(shiftedRow.getCell(4), HyperlinkType.URL, "https://poi.apache.org/");
 
         // Make sure hyperlinks were moved and not copied
-        assertNull("Document hyperlink should be moved, not copied", sh.getHyperlink(0, 0));
-        assertNull("URL hyperlink should be moved, not copied", sh.getHyperlink(1, 0));
+        assertNull(sh.getHyperlink(0, 0), "Document hyperlink should be moved, not copied");
+        assertNull(sh.getHyperlink(1, 0), "URL hyperlink should be moved, not copied");
 
         assertEquals(4, sh.getHyperlinkList().size());
         read.close();
@@ -245,11 +246,10 @@ public abstract class BaseTestSheetShiftColumns {
 
     private void verifyHyperlink(Cell cell, HyperlinkType linkType, String ref) {
         assertTrue(cellHasHyperlink(cell));
-        if (cell != null) {
-            Hyperlink link = cell.getHyperlink();
-            assertEquals(linkType, link.getType());
-            assertEquals(ref, link.getAddress());
-        }
+        assertNotNull(cell);
+        Hyperlink link = cell.getHyperlink();
+        assertEquals(linkType, link.getType());
+        assertEquals(ref, link.getAddress());
     }
 
     private boolean cellHasHyperlink(Cell cell) {

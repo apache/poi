@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,7 +25,7 @@ import java.io.InputStream;
 import org.apache.poi.hpbf.HPBFDocument;
 import org.apache.poi.hpbf.extractor.PublisherTextExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class HPBFFileHandler extends POIFSFileHandler {
 	@Override
@@ -34,11 +34,11 @@ public class HPBFFileHandler extends POIFSFileHandler {
 		assertNotNull(pub.getEscherDelayStm());
 		assertNotNull(pub.getMainContents());
 		assertNotNull(pub.getQuillContents());
-		
+
 		// writing is not yet implemented... handlePOIDocument(pub);
 		pub.close();
 	}
-	
+
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Override
     @Test
@@ -51,9 +51,9 @@ public class HPBFFileHandler extends POIFSFileHandler {
 		} finally {
 			stream.close();
 		}
-		
+
 		handleExtracting(file);
-		
+
 		stream = new FileInputStream(file);
 		try {
 			try (PublisherTextExtractor extractor = new PublisherTextExtractor(stream)) {
@@ -63,5 +63,5 @@ public class HPBFFileHandler extends POIFSFileHandler {
 			stream.close();
 		}
 	}
-	
+
 }

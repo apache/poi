@@ -18,16 +18,16 @@
 package org.apache.poi.hssf.record;
 
 import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.util.HexRead;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the serialization and deserialization of the ObjRecord class works correctly.
@@ -111,11 +111,7 @@ public final class TestObjRecord {
     @Test
     public void testReadWriteWithPadding_bug45133() {
         ObjRecord record = new ObjRecord(TestcaseRecordInputStream.create(recdataNeedingPadding));
-
-        if (record.getRecordSize() == 34) {
-            fail("Identified bug 45133");
-        }
-
+        assertNotEquals(34, record.getRecordSize(), "Identified bug 45133");
         assertEquals(36, record.getRecordSize());
 
         List<SubRecord> subrecords = record.getSubRecords();

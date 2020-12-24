@@ -17,14 +17,14 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
 import org.apache.poi.ss.ITestDataProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests of implementation of {@link DataFormat}
@@ -116,7 +116,7 @@ public abstract class BaseTestDataFormat {
             DataFormat dataFormat = wb.createDataFormat();
             short fmtIdx = dataFormat.getFormat(fmt);
             String readbackFmt = dataFormat.getFormat(fmtIdx);
-            assertEquals(msg, fmt, readbackFmt);
+            assertEquals(fmt, readbackFmt, msg);
         }
     }
 
@@ -158,10 +158,10 @@ public abstract class BaseTestDataFormat {
             String expWhole = r.getCell(2).getStringCellValue();
             String exp3dp   = r.getCell(4).getStringCellValue();
 
-            assertEquals("Wrong formatting of " + value + " for row " + rn,
-                         expWhole, fmt.formatCellValue(r.getCell(1), eval));
-            assertEquals("Wrong formatting of " + value + " for row " + rn,
-                         exp3dp, fmt.formatCellValue(r.getCell(3), eval));
+            assertEquals(expWhole, fmt.formatCellValue(r.getCell(1), eval),
+                "Wrong formatting of " + value + " for row " + rn);
+            assertEquals(exp3dp, fmt.formatCellValue(r.getCell(3), eval),
+                "Wrong formatting of " + value + " for row " + rn);
         }
     }
 
@@ -198,7 +198,7 @@ public abstract class BaseTestDataFormat {
         assertEquals("-"+pound+"   12,345", formatter.formatCellValue(nve));
         // TODO Fix this to not have an extra 0 at the end
         //assertEquals(pound+"   -  ", formatter.formatCellValue(zero));
-        
+
         wb.close();
     }
 

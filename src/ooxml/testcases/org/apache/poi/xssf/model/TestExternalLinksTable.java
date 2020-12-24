@@ -17,16 +17,16 @@
 
 package org.apache.poi.xssf.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.Name;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Test;
-
-import java.io.IOException;
+import org.junit.jupiter.api.Test;
 
 public final class TestExternalLinksTable {
     @Test
@@ -36,7 +36,7 @@ public final class TestExternalLinksTable {
             assertEquals(0, wb.getExternalLinksTable().size());
         }
     }
-    
+
     @Test
     public void basicRead() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx")) {
@@ -66,7 +66,7 @@ public final class TestExternalLinksTable {
             assertEquals("56737.xlsx", links.getLinkedFileName());
         }
     }
-    
+
     @Test
     public void basicReadWriteRead() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref-56737.xlsx")) {
@@ -91,7 +91,7 @@ public final class TestExternalLinksTable {
             assertEquals("$A$1", name.getRefersToFormula());
         }
     }
-    
+
     @Test
     public void readWithReferencesToTwoExternalBooks() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("ref2-56737.xlsx")) {

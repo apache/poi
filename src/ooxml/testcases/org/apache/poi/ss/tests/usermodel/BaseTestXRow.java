@@ -23,7 +23,7 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestRow;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class for combined testing of XML-specific functionality of

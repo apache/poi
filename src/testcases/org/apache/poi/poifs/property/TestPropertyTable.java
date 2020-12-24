@@ -17,10 +17,10 @@
 
 package org.apache.poi.poifs.property;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,7 +37,7 @@ import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.filesystem.POIFSStream;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.poifs.storage.RawDataUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test PropertyTable functionality
@@ -180,7 +180,7 @@ public final class TestPropertyTable {
 			}
 		}
 
-      
+
 		// get property table from the document
 		PropertyTable table = new PropertyTable(header_block, data_blocks);
 
@@ -192,8 +192,8 @@ public final class TestPropertyTable {
 			lastChild = p;
 			++count;
 		}
-		
-		assertNotNull("no children found", lastChild);
+
+		assertNotNull(lastChild, "no children found");
 		assertEquals(1, count);
 		assertTrue(lastChild.isDirectory());
 		count = 0;

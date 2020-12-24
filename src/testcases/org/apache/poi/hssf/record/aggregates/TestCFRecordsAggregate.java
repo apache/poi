@@ -17,12 +17,12 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -36,13 +36,12 @@ import org.apache.poi.hssf.record.CFRule12Record;
 import org.apache.poi.hssf.record.CFRuleBase;
 import org.apache.poi.hssf.record.CFRuleBase.ComparisonOperator;
 import org.apache.poi.hssf.record.CFRuleRecord;
-import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordFactory;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LittleEndian;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the serialization and deserialization of the CFRecordsAggregate
@@ -138,7 +137,7 @@ public final class TestCFRecordsAggregate {
         agg.serialize(0, serializedRecord);
 
         int nRules = LittleEndian.getUShort(serializedRecord, 4);
-        assertNotEquals("Identified bug 45682 b", 0, nRules);
+        assertNotEquals(0, nRules, "Identified bug 45682 b");
         assertEquals(rules.length, nRules);
     }
 
@@ -150,27 +149,20 @@ public final class TestCFRecordsAggregate {
                 new CellRangeAddress(0,1,0,0),
                 new CellRangeAddress(0,1,2,2),
         };
-        CFRuleBase[] rules = {
+        CFRuleBase[] rules1 = {
                 CFRuleRecord.create(sheet, "7"),
                 CFRule12Record.create(sheet, ComparisonOperator.BETWEEN, "2", "5"),
         };
-        try {
-            new CFRecordsAggregate(cellRanges, rules);
-            fail("Shouldn't be able to mix between types");
-        } catch (IllegalArgumentException e) {
-            // expected here
-        }
+
+        assertThrows(IllegalArgumentException.class, () -> new CFRecordsAggregate(cellRanges, rules1),
+            "Shouldn't be able to mix between types");
 
 
-        rules = new CFRuleBase[] { CFRuleRecord.create(sheet, "7") };
-        CFRecordsAggregate agg = new CFRecordsAggregate(cellRanges, rules);
+        CFRuleBase[] rules2 = { CFRuleRecord.create(sheet, "7") };
+        CFRecordsAggregate agg = new CFRecordsAggregate(cellRanges, rules2);
         assertTrue(agg.getHeader().getNeedRecalculation());
 
-        try {
-            agg.addRule(CFRule12Record.create(sheet, "7"));
-            fail("Shouldn't be able to mix between types");
-        } catch (IllegalArgumentException e) {
-            // expected here
-        }
+        assertThrows(IllegalArgumentException.class, () -> agg.addRule(CFRule12Record.create(sheet, "7")),
+            "Shouldn't be able to mix between types");
     }
 }

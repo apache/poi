@@ -17,15 +17,14 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -38,7 +37,7 @@ import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.NullOutputStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public abstract class BaseTestWorkbook {
 
@@ -67,7 +66,7 @@ public abstract class BaseTestWorkbook {
      * should not be able to advance an iterator when the
      * underlying data has been reordered
      */
-    @Test(expected=ConcurrentModificationException.class)
+    @Test
     public void sheetIterator_sheetsReordered() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             wb.createSheet("Sheet0");
@@ -79,7 +78,7 @@ public abstract class BaseTestWorkbook {
             wb.setSheetOrder("Sheet2", 1);
 
             // Iterator order should be fixed when iterator is created
-            assertEquals("Sheet1", it.next().getSheetName());
+            assertThrows(ConcurrentModificationException.class, it::next);
         }
     }
 
@@ -88,7 +87,7 @@ public abstract class BaseTestWorkbook {
      * should not be able to advance an iterator when the
      * underlying data has been reordered
      */
-    @Test(expected=ConcurrentModificationException.class)
+    @Test
     public void sheetIterator_sheetRemoved() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             wb.createSheet("Sheet0");
@@ -99,7 +98,7 @@ public abstract class BaseTestWorkbook {
             wb.removeSheetAt(1);
 
             // Iterator order should be fixed when iterator is created
-            it.next();
+            assertThrows(ConcurrentModificationException.class, it::next);
         }
     }
 
@@ -107,14 +106,14 @@ public abstract class BaseTestWorkbook {
      * Expected UnsupportedOperationException:
      * should not be able to remove sheets from the sheet iterator
      */
-    @Test(expected=UnsupportedOperationException.class)
+    @Test
     public void sheetIterator_remove() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             wb.createSheet("Sheet0");
 
             Iterator<Sheet> it = wb.sheetIterator();
             it.next(); //Sheet0
-            it.remove();
+            assertThrows(UnsupportedOperationException.class, it::remove);
         }
     }
 
@@ -127,9 +126,9 @@ public abstract class BaseTestWorkbook {
             //getting a sheet by invalid index or non-existing name
             assertNull(wb.getSheet("Sheet1"));
             IllegalArgumentException ex = assertThrows(
-                "should have thrown exception due to invalid sheet index",
                 IllegalArgumentException.class,
-                () -> wb.getSheetAt(0)
+                () -> wb.getSheetAt(0),
+                "should have thrown exception due to invalid sheet index"
             );
             // expected during successful test no negative index in the range message
             assertFalse(ex.getMessage().contains("-1"));
@@ -145,16 +144,15 @@ public abstract class BaseTestWorkbook {
             //fetching sheets by name is case-insensitive
             Sheet originalSheet = wb.createSheet("Sheet3");
             Sheet fetchedSheet = wb.getSheet("sheet3");
-            if (fetchedSheet == null) {
-                fail("Identified bug 44892");
-            }
+            assertNotNull(fetchedSheet, "Identified bug 44892");
+
             assertEquals("Sheet3", fetchedSheet.getSheetName());
             assertEquals(3, wb.getNumberOfSheets());
             assertSame(originalSheet, fetchedSheet);
             ex = assertThrows(
-                "should have thrown exception due to duplicate sheet name",
                 IllegalArgumentException.class,
-                () -> wb.createSheet("sHeeT3")
+                () -> wb.createSheet("sHeeT3"),
+                "should have thrown exception due to duplicate sheet name"
             );
             // expected during successful test
             assertEquals("The workbook already contains a sheet named 'sHeeT3'", ex.getMessage());
@@ -165,9 +163,9 @@ public abstract class BaseTestWorkbook {
                     "My:Sheet"};
             for (String sheetName : invalidNames) {
                 assertThrows(
-                    "should have thrown exception due to invalid sheet name: " + sheetName,
                     IllegalArgumentException.class,
-                    () -> wb.createSheet(sheetName)
+                    () -> wb.createSheet(sheetName),
+                    "should have thrown exception due to invalid sheet name: " + sheetName
                 );
             }
             //still have 3 sheets
@@ -177,28 +175,12 @@ public abstract class BaseTestWorkbook {
             wb.setSheetName(2, "I changed!");
 
             //try to assign an invalid name to the 2nd sheet
-            try {
-                wb.setSheetName(1, "[I'm invalid]");
-                fail("should have thrown exceptiuon due to invalid sheet name");
-            } catch (IllegalArgumentException e) {
-                // expected during successful test
-            }
+            assertThrows(IllegalArgumentException.class, () -> wb.setSheetName(1, "[I'm invalid]"));
 
             //try to assign an invalid name to the 2nd sheet
-            try {
-                wb.createSheet(null);
-                fail("should have thrown exceptiuon due to invalid sheet name");
-            } catch (IllegalArgumentException e) {
-                // expected during successful test
-            }
+            assertThrows(IllegalArgumentException.class, () -> wb.createSheet(null));
 
-            try {
-                wb.setSheetName(2, null);
-
-                fail("should have thrown exceptiuon due to invalid sheet name");
-            } catch (IllegalArgumentException e) {
-                // expected during successful test
-            }
+            assertThrows(IllegalArgumentException.class, () -> wb.setSheetName(2, null));
 
             //check
             assertEquals(0, wb.getSheetIndex("sheet0"));
@@ -244,14 +226,9 @@ public abstract class BaseTestWorkbook {
 
             String sheetName2 = "My very long sheet name which is longer than 31 chars " +
                     "and sheetName2.substring(0, 31) == sheetName1.substring(0, 31)";
-            try {
-                /*Sheet sh2 =*/
-                wb1.createSheet(sheetName2);
-                fail("expected exception");
-            } catch (IllegalArgumentException e) {
-                // expected during successful test
-                assertEquals("The workbook already contains a sheet named 'My very long sheet name which is longer than 31 chars and sheetName2.substring(0, 31) == sheetName1.substring(0, 31)'", e.getMessage());
-            }
+
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> wb1.createSheet(sheetName2));
+            assertEquals("The workbook already contains a sheet named 'My very long sheet name which is longer than 31 chars and sheetName2.substring(0, 31) == sheetName1.substring(0, 31)'", e.getMessage());
 
             String sheetName3 = "POI allows creating sheets with names longer than 31 characters";
             String truncatedSheetName3 = sheetName3.substring(0, 31);
@@ -777,11 +754,9 @@ public abstract class BaseTestWorkbook {
 		for(int i = 0;i < wb.getNumberOfSheets();i++) {
 			sheetNames.append(wb.getSheetAt(i).getSheetName()).append(",");
 		}
-		assertEquals("Had: " + sheetNames,
-				sheets.length, wb.getNumberOfSheets());
+		assertEquals(sheets.length, wb.getNumberOfSheets(), "Had: " + sheetNames);
 		for(int i = 0;i < wb.getNumberOfSheets();i++) {
-			assertEquals("Had: " + sheetNames,
-					sheets[i], wb.getSheetAt(i).getSheetName());
+			assertEquals(sheets[i], wb.getSheetAt(i).getSheetName(), "Had: " + sheetNames);
 		}
 	}
 
@@ -823,8 +798,7 @@ public abstract class BaseTestWorkbook {
         final byte[] before = HSSFTestDataSamples.getTestDataFileContent(filename);
         wb.close();
         final byte[] after = HSSFTestDataSamples.getTestDataFileContent(filename);
-        assertArrayEquals(filename + " sample file was modified as a result of closing the workbook",
-                before, after);
+        assertArrayEquals(before, after, filename + " sample file was modified as a result of closing the workbook");
     }
 
     @Test

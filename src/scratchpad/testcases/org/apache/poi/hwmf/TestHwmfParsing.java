@@ -18,7 +18,8 @@
 package org.apache.poi.hwmf;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -36,8 +37,8 @@ import org.apache.poi.hwmf.record.HwmfText;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class TestHwmfParsing {
 
@@ -56,16 +57,16 @@ public class TestHwmfParsing {
         }
     }
 
-    @Test(expected = RecordFormatException.class)
+    @Test
     public void testInfiniteLoop() throws Exception {
         try (InputStream is = samples.openResourceAsStream("61338.wmf")) {
-            new HwmfPicture(is);
+            assertThrows(RecordFormatException.class, () -> new HwmfPicture(is));
         }
     }
 
 
     @Test
-    @Ignore("If we decide we can use common crawl file specified, we can turn this back on")
+    @Disabled("If we decide we can use common crawl file specified, we can turn this back on")
     public void testCyrillic() throws Exception {
         //TODO: move test file to framework and fix this
         File dir = new File("C:/somethingOrOther");

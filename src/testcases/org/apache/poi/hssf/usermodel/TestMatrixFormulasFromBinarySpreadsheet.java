@@ -17,14 +17,15 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Stream;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -38,14 +39,11 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.junit.AfterClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
 public final class TestMatrixFormulasFromBinarySpreadsheet {
 
     private static final POILogger LOG = POILogFactory.getLogger(TestMatrixFormulasFromBinarySpreadsheet.class);
@@ -65,7 +63,7 @@ public final class TestMatrixFormulasFromBinarySpreadsheet {
      * then adding matrix size parameter would be useful and parsing would be based off that.
      */
 
-    private static interface Navigator {
+    private interface Navigator {
         /**
          * Name of the test spreadsheet (found in the standard test data folder)
          */
@@ -98,20 +96,15 @@ public final class TestMatrixFormulasFromBinarySpreadsheet {
     }
 
     /* Parameters for test case */
-    @Parameter(0)
-    public String targetFunctionName;
-    @Parameter(1)
-    public int formulasRowIdx;
 
-    @AfterClass
+    @AfterAll
     public static void closeResource() throws Exception {
         LocaleUtil.setUserLocale(userLocale);
         workbook.close();
     }
 
     /* generating parameter instances */
-    @Parameters(name="{0}")
-    public static Collection<Object[]> data() throws Exception {
+    public static Stream<Arguments> data() throws Exception {
         // Function "Text" uses custom-formats which are locale specific
         // can't set the locale on a per-testrun execution, as some settings have been
         // already set, when we would try to change the locale by then
@@ -122,37 +115,32 @@ public final class TestMatrixFormulasFromBinarySpreadsheet {
         sheet = workbook.getSheetAt(0);
         evaluator = new HSSFFormulaEvaluator(workbook);
 
-        List<Object[]> data = new ArrayList<Object[]>();
+        List<Arguments> data = new ArrayList<>();
 
-        processFunctionGroup(data, Navigator.START_OPERATORS_ROW_INDEX, null);
+        processFunctionGroup(data);
 
-        return data;
+        return data.stream();
     }
 
-    /**
-     * @param startRowIndex row index in the spreadsheet where the first function/operator is found
-     * @param testFocusFunctionName name of a single function/operator to test alone.
-     * Typically pass <code>null</code> to test all functions
-     */
-    private static void processFunctionGroup(List<Object[]> data, int startRowIndex, String testFocusFunctionName) {
+    private static void processFunctionGroup(List<Arguments> data) {
+        int startRowIndex = Navigator.START_OPERATORS_ROW_INDEX;
         for (int rowIndex = startRowIndex; true; rowIndex += Navigator.ROW_OFF_NEXT_OP) {
             Row r = sheet.getRow(rowIndex);
             String targetFunctionName = getTargetFunctionName(r);
-            assertNotNull("Test spreadsheet cell empty on row ("
+            assertNotNull(targetFunctionName, "Test spreadsheet cell empty on row ("
                     + (rowIndex) + "). Expected function name or '"
-                    + Navigator.END_OF_TESTS + "'", targetFunctionName);
+                    + Navigator.END_OF_TESTS + "'");
             if(targetFunctionName.equals(Navigator.END_OF_TESTS)) {
                 // found end of functions list
                 break;
             }
-            if(testFocusFunctionName == null || targetFunctionName.equalsIgnoreCase(testFocusFunctionName)) {
-                data.add(new Object[]{targetFunctionName, rowIndex});
-            }
+            data.add(Arguments.of(targetFunctionName, rowIndex));
         }
     }
 
-    @Test
-    public void processFunctionRow() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void processFunctionRow(String targetFunctionName, int formulasRowIdx) {
 
        int endColNum = Navigator.START_RESULT_COL_INDEX + Navigator.COL_OFF_EXPECTED_RESULT;
 
@@ -177,31 +165,32 @@ public final class TestMatrixFormulasFromBinarySpreadsheet {
                String msg = String.format(Locale.ROOT, "Function '%s': Formula: %s @ %d:%d"
                        , targetFunctionName, c.getCellFormula(), rowNum, colNum);
 
-               assertNotNull(msg + " - Bad setup data expected value is null", expValue);
-               assertNotNull(msg + " - actual value was null", actValue);
+               assertNotNull(expValue, msg + " - Bad setup data expected value is null");
+               assertNotNull(actValue, msg + " - actual value was null");
 
                final CellType cellType = expValue.getCellType();
                switch (cellType) {
                    case BLANK:
-                       assertEquals(msg, CellType.BLANK, actValue.getCellType());
+                       assertEquals(CellType.BLANK, actValue.getCellType(), msg);
                        break;
                    case BOOLEAN:
-                       assertEquals(msg, CellType.BOOLEAN, actValue.getCellType());
-                       assertEquals(msg, expValue.getBooleanCellValue(), actValue.getBooleanValue());
+                       assertEquals(CellType.BOOLEAN, actValue.getCellType(), msg);
+                       assertEquals(expValue.getBooleanCellValue(), actValue.getBooleanValue(), msg);
                        break;
                    case ERROR:
-                       assertEquals(msg, CellType.ERROR, actValue.getCellType());
-                       assertEquals(msg, ErrorEval.getText(expValue.getErrorCellValue()), ErrorEval.getText(actValue.getErrorValue()));
+                       assertEquals(CellType.ERROR, actValue.getCellType(), msg);
+                       assertEquals(ErrorEval.getText(expValue.getErrorCellValue()), ErrorEval.getText(actValue.getErrorValue()), msg);
                        break;
                    case FORMULA: // will never be used, since we will call method after formula evaluation
                        fail("Cannot expect formula as result of formula evaluation: " + msg);
+                       break;
                    case NUMERIC:
-                       assertEquals(msg, CellType.NUMERIC, actValue.getCellType());
-                       TestMathX.assertEquals(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
+                       assertEquals(CellType.NUMERIC, actValue.getCellType(), msg);
+                       TestMathX.assertDouble(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
                        break;
                    case STRING:
-                       assertEquals(msg, CellType.STRING, actValue.getCellType());
-                       assertEquals(msg, expValue.getRichStringCellValue().getString(), actValue.getStringValue());
+                       assertEquals(CellType.STRING, actValue.getCellType(), msg);
+                       assertEquals(expValue.getRichStringCellValue().getString(), actValue.getStringValue(), msg);
                        break;
                    default:
                        fail("Unexpected cell type: " + cellType);
@@ -215,7 +204,6 @@ public final class TestMatrixFormulasFromBinarySpreadsheet {
      */
     private static String getTargetFunctionName(Row r) {
         if(r == null) {
-
             LOG.log(POILogger.WARN,"Warning - given null row, can't figure out function name");
             return null;
         }
@@ -226,20 +214,10 @@ public final class TestMatrixFormulasFromBinarySpreadsheet {
                     "Warning - Row " + r.getRowNum() + " has no cell " + Navigator.START_OPERATORS_COL_INDEX + ", can't figure out function name");
             return null;
         }
-        if(cell.getCellType() == CellType.BLANK) {
-            return null;
-        }
-        if(cell.getCellType() == CellType.STRING) {
-            return cell.getRichStringCellValue().getString();
-        }
 
-        fail("Bad cell type for 'function name' column: (" + cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
-        return "";
+        CellType ct = cell.getCellType();
+        assertTrue(ct == CellType.BLANK || ct == CellType.STRING,
+            "Bad cell type for 'function name' column: (" + cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
+        return (ct == CellType.STRING) ? cell.getRichStringCellValue().getString() : null;
     }
-
-
-
-
-
-
 }

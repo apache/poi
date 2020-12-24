@@ -17,13 +17,13 @@
 
 package org.apache.poi.hwpf.model;
 
+import static org.apache.poi.POITestCase.assertReflectEquals;
+
 import org.apache.poi.hwpf.HWPFDocFixture;
 import org.apache.poi.hwpf.model.types.DOPAbstractType;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-
-import static org.apache.poi.POITestCase.assertReflectEquals;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 // TODO: Add DocumentProperties#equals ???
 
@@ -31,7 +31,7 @@ public final class TestDocumentProperties {
     private DocumentProperties _documentProperties;
     private HWPFDocFixture _hWPFDocFixture;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         // TODO verify the constructors
         _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
@@ -39,7 +39,7 @@ public final class TestDocumentProperties {
         _documentProperties = new DocumentProperties(_hWPFDocFixture._tableStream, _hWPFDocFixture._fib.getFcDop(), _hWPFDocFixture._fib.getLcbDop());
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         _documentProperties = null;
         _hWPFDocFixture.tearDown();

@@ -16,9 +16,10 @@
 ==================================================================== */
 package org.apache.poi.xwpf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,8 +39,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.xmlbeans.XmlException;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.DocumentDocument;
 
 public class TestXWPFBugs {
@@ -71,7 +71,7 @@ public class TestXWPFBugs {
 
         // Check it can be decoded
         Decryptor d = Decryptor.getInstance(info);
-        assertTrue("Unable to process: document is encrypted", d.verifyPassword("solrcell"));
+        assertTrue(d.verifyPassword("solrcell"), "Unable to process: document is encrypted");
 
         // Check we can read the word document in that
         InputStream dataStream = d.getDataStream(filesystem);
@@ -93,7 +93,7 @@ public class TestXWPFBugs {
     @Test
     public void bug53475_aes256() throws Exception {
         int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
-        Assume.assumeTrue("Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256", maxKeyLen == 2147483647);
+        assumeTrue(maxKeyLen == 0x7FFFFFFF, "Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256");
 
         File file = samples.getFile("bug53475-password-is-pass.docx");
         POIFSFileSystem filesystem = new POIFSFileSystem(file, true);
@@ -107,7 +107,7 @@ public class TestXWPFBugs {
 
         // Check it can be decoded
         Decryptor d = Decryptor.getInstance(info);
-        assertTrue("Unable to process: document is encrypted", d.verifyPassword("pass"));
+        assertTrue(d.verifyPassword("pass"), "Unable to process: document is encrypted");
 
         // Check we can read the word document in that
         InputStream dataStream = d.getDataStream(filesystem);
@@ -123,7 +123,7 @@ public class TestXWPFBugs {
         filesystem.close();
     }
 
-    
+
     @Test
     public void bug59058() throws IOException, XmlException {
         String[] files = {"bug57031.docx", "bug59058.docx"};

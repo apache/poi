@@ -16,23 +16,23 @@
 
    2012 - Alfresco Software, Ltd.
    Alfresco Software has modified source of this file
-   The details of changes as svn diff can be found in svn at location root/projects/3rd-party/src 
+   The details of changes as svn diff can be found in svn at location root/projects/3rd-party/src
 ==================================================================== */
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
 import org.apache.poi.ss.ITestDataProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests of {@link BorderStyle}
  */
 public abstract class BaseTestBorderStyle {
-    
+
     private final ITestDataProvider _testDataProvider;
 
     protected BaseTestBorderStyle(ITestDataProvider testDataProvider) {
@@ -48,7 +48,7 @@ public abstract class BaseTestBorderStyle {
         String ext = _testDataProvider.getStandardFileNameExtension();
         Workbook wb = _testDataProvider.openSampleWorkbook("59264."+ext);
         Sheet sh = wb.getSheetAt(0);
-        
+
         assertBorderStyleEquals(BorderStyle.NONE, getDiagonalCell(sh, 0));
         assertBorderStyleEquals(BorderStyle.THIN, getDiagonalCell(sh, 1));
         assertBorderStyleEquals(BorderStyle.MEDIUM, getDiagonalCell(sh, 2));
@@ -63,14 +63,14 @@ public abstract class BaseTestBorderStyle {
         assertBorderStyleEquals(BorderStyle.DASH_DOT_DOT, getDiagonalCell(sh, 11));
         assertBorderStyleEquals(BorderStyle.MEDIUM_DASH_DOT_DOT, getDiagonalCell(sh, 12));
         assertBorderStyleEquals(BorderStyle.SLANTED_DASH_DOT, getDiagonalCell(sh, 13));
-        
+
         wb.close();
     }
-    
+
     private Cell getDiagonalCell(Sheet sheet, int n) {
         return sheet.getRow(n).getCell(n);
     }
-    
+
     protected void assertBorderStyleEquals(BorderStyle expected, Cell cell) {
         CellStyle style = cell.getCellStyle();
         assertEquals(expected, style.getBorderTop());

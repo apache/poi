@@ -18,14 +18,14 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.apache.poi.hssf.HSSFTestDataSamples.writeOutAndReadBack;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.FillPatternType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test row styling functionality
@@ -58,8 +58,8 @@ public final class TestRowStyle {
             try (HSSFWorkbook wb2 = writeOutAndReadBack(wb)) {
                 SanityChecker sanityChecker = new SanityChecker();
                 sanityChecker.checkHSSFWorkbook(wb2);
-                assertEquals("LAST ROW == 99", 99, s.getLastRowNum());
-                assertEquals("FIRST ROW == 0", 0, s.getFirstRowNum());
+                assertEquals(99, s.getLastRowNum(), "LAST ROW == 99");
+                assertEquals(0, s.getFirstRowNum(), "FIRST ROW == 0");
             }
         }
     }
@@ -90,8 +90,8 @@ public final class TestRowStyle {
                 SanityChecker sanityChecker = new SanityChecker();
                 sanityChecker.checkHSSFWorkbook(wb2);
 
-                assertEquals("LAST ROW ", 1, s.getLastRowNum());
-                assertEquals("FIRST ROW ", 0, s.getFirstRowNum());
+                assertEquals(1, s.getLastRowNum(), "LAST ROW");
+                assertEquals(0, s.getFirstRowNum(), "FIRST ROW");
             }
         }
     }
@@ -109,7 +109,6 @@ public final class TestRowStyle {
     public void testWriteSheetStyle() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet();
-            HSSFRow r = null;
             HSSFFont fnt = wb.createFont();
             HSSFCellStyle cs = wb.createCellStyle();
             HSSFCellStyle cs2 = wb.createCellStyle();
@@ -126,7 +125,7 @@ public final class TestRowStyle {
             cs2.setFillPattern(FillPatternType.BRICKS);
             cs2.setFont(fnt);
             for (int rownum = 0; rownum < 100; rownum++) {
-                r = s.createRow(rownum);
+                HSSFRow r = s.createRow(rownum);
                 r.setRowStyle(cs);
                 r.createCell(0);
 
@@ -140,34 +139,34 @@ public final class TestRowStyle {
             try (HSSFWorkbook wb2 = writeOutAndReadBack(wb)) {
                 SanityChecker sanityChecker = new SanityChecker();
                 sanityChecker.checkHSSFWorkbook(wb2);
-                assertEquals("LAST ROW == 99", 99, s.getLastRowNum());
-                assertEquals("FIRST ROW == 0", 0, s.getFirstRowNum());
+                assertEquals(99, s.getLastRowNum(), "LAST ROW == 99");
+                assertEquals(0, s.getFirstRowNum(), "FIRST ROW == 0");
 
                 s = wb2.getSheetAt(0);
-                assertNotNull("Sheet is not null", s);
+                assertNotNull(s, "Sheet is not null");
 
                 for (int rownum = 0; rownum < 100; rownum++) {
-                    r = s.getRow(rownum);
-                    assertNotNull("Row is not null", r);
+                    HSSFRow r = s.getRow(rownum);
+                    assertNotNull(r, "Row is not null");
 
                     cs = r.getRowStyle();
                     assertNotNull(cs);
-                    assertEquals("Bottom Border Style for row:", BorderStyle.THIN, cs.getBorderBottom());
-                    assertEquals("Left Border Style for row:", BorderStyle.THIN, cs.getBorderLeft());
-                    assertEquals("Right Border Style for row:", BorderStyle.THIN, cs.getBorderRight());
-                    assertEquals("Top Border Style for row:", BorderStyle.THIN, cs.getBorderTop());
-                    assertEquals("FillForegroundColor for row:", 0xA, cs.getFillForegroundColor());
-                    assertEquals("FillPattern for row:", FillPatternType.BRICKS, cs.getFillPattern());
+                    assertEquals(BorderStyle.THIN, cs.getBorderBottom(), "Bottom Border Style for row:");
+                    assertEquals(BorderStyle.THIN, cs.getBorderLeft(), "Left Border Style for row:");
+                    assertEquals(BorderStyle.THIN, cs.getBorderRight(), "Right Border Style for row:");
+                    assertEquals(BorderStyle.THIN, cs.getBorderTop(), "Top Border Style for row:");
+                    assertEquals(0xA, cs.getFillForegroundColor(), "FillForegroundColor for row:");
+                    assertEquals(FillPatternType.BRICKS, cs.getFillPattern(), "FillPattern for row:");
 
                     rownum++;
                     if (rownum >= 100) break; // I feel too lazy to check if this isreqd :-/
 
                     r = s.getRow(rownum);
-                    assertNotNull("Row is not null", r);
+                    assertNotNull(r, "Row is not null");
                     cs2 = r.getRowStyle();
                     assertNotNull(cs2);
-                    assertEquals("FillForegroundColor for row: ", cs2.getFillForegroundColor(), (short) 0x0);
-                    assertEquals("FillPattern for row: ", cs2.getFillPattern(), FillPatternType.BRICKS);
+                    assertEquals(cs2.getFillForegroundColor(), (short) 0x0, "FillForegroundColor for row:");
+                    assertEquals(cs2.getFillPattern(), FillPatternType.BRICKS, "FillPattern for row:");
                 }
             }
         }

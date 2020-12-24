@@ -16,7 +16,8 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -39,8 +40,7 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentInputStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.TempFile;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class HPSFFileHandler extends POIFSFileHandler {
     private static final String NL = System.getProperty("line.separator");
@@ -70,7 +70,7 @@ public class HPSFFileHandler extends POIFSFileHandler {
 
     @Override
     public void handleFile(InputStream stream, String path) throws Exception {
-        Assume.assumeFalse(EXCLUDES_HANDLE_FILE.contains(path));
+        assumeFalse(EXCLUDES_HANDLE_FILE.contains(path));
 	    POIFSFileSystem poifs = new POIFSFileSystem(stream);
 		HPSFPropertiesOnlyDocument hpsf = new HPSFPropertiesOnlyDocument(poifs);
 		DocumentSummaryInformation dsi = hpsf.getDocumentSummaryInformation();
@@ -96,7 +96,7 @@ public class HPSFFileHandler extends POIFSFileHandler {
 
     @Override
     public void handleAdditional(File file) throws Exception {
-        Assume.assumeFalse(EXCLUDES_HANDLE_ADD.contains(file.getParentFile().getName()+"/"+file.getName()));
+        assumeFalse(EXCLUDES_HANDLE_ADD.contains(file.getParentFile().getName()+"/"+file.getName()));
         if (copyOutput == null) {
             copyOutput = TempFile.createTempFile("hpsfCopy", "out");
             copyOutput.deleteOnExit();

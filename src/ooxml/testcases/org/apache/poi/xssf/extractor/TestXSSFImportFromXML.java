@@ -17,10 +17,11 @@
 
 package org.apache.poi.xssf.extractor;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.text.DateFormatSymbols;
@@ -37,7 +38,8 @@ import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.Timeout;
 import org.xml.sax.SAXException;
 
 public class TestXSSFImportFromXML {
@@ -85,7 +87,8 @@ public class TestXSSFImportFromXML {
         }
     }
 
-    @Test(timeout=60000)
+    @Timeout(value = 60, unit = SECONDS)
+    @Test
     public void testMultiTable() throws IOException, XPathExpressionException, SAXException{
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMappings-complex-type.xlsx")) {
             String cellC6 = "c6";
@@ -196,7 +199,7 @@ public class TestXSSFImportFromXML {
 
             // Value for OptionalRating is declared optional (minOccurs=0) in 55864.xlsx
             assertEquals("OptionalRating", rowHeadings.getCell(3).getStringCellValue());
-            assertNull("", rowData.getCell(3));
+            assertNull(rowData.getCell(3), "");
         }
     }
 

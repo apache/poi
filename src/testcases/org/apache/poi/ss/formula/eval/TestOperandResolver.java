@@ -17,14 +17,14 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for <tt>OperandResolver</tt>
@@ -42,7 +42,7 @@ public final class TestOperandResolver {
 		String value = ".1";
 		Double resolvedValue = OperandResolver.parseDouble(value);
 
-		assertNotNull("Identified bug 49723", resolvedValue);
+		assertNotNull(resolvedValue, "Identified bug 49723");
 	}
 
 	/**

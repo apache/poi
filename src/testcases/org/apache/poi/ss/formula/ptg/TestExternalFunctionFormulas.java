@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.HSSFFormulaParser;
@@ -26,7 +26,7 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellValue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for functions from external workbooks (e.g. YEARFRAC).
@@ -34,27 +34,27 @@ import org.junit.Test;
 public final class TestExternalFunctionFormulas {
 
 	/**
-	 * tests <tt>NameXPtg.toFormulaString(Workbook)</tt> and logic in Workbook below that   
+	 * tests <tt>NameXPtg.toFormulaString(Workbook)</tt> and logic in Workbook below that
 	 */
     @Test
 	public void testReadFormulaContainingExternalFunction() throws Exception {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
-		
+
 		String expectedFormula = "YEARFRAC(B1,C1)";
 		HSSFSheet sht = wb.getSheetAt(0);
 		String cellFormula = sht.getRow(0).getCell(0).getCellFormula();
 		assertEquals(expectedFormula, cellFormula);
-		
+
 		wb.close();
 	}
-	
+
     @Test
     public void testParse() throws Exception {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
 		Ptg[] ptgs = HSSFFormulaParser.parse("YEARFRAC(B1,C1)", wb);
 		assertEquals(4, ptgs.length);
 		assertEquals(NameXPtg.class, ptgs[0].getClass());
-		
+
 		wb.getSheetAt(0).getRow(0).createCell(6).setCellFormula("YEARFRAC(C1,B1)");
 //		if (false) {
 //			// In case you fancy checking in excel
@@ -70,7 +70,7 @@ public final class TestExternalFunctionFormulas {
 //		}
 		wb.close();
 	}
-	
+
     @Test
 	public void testEvaluate() throws Exception {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("externalFunctionExample.xls");
@@ -84,7 +84,7 @@ public final class TestExternalFunctionFormulas {
 		wb.close();
 	}
 
-	private static void confirmCellEval(HSSFSheet sheet, int rowIx, int colIx, 
+	private static void confirmCellEval(HSSFSheet sheet, int rowIx, int colIx,
 			HSSFFormulaEvaluator fe, String expectedFormula, double expectedResult) {
 		HSSFCell cell = sheet.getRow(rowIx).getCell(colIx);
 		assertEquals(expectedFormula, cell.getCellFormula());

@@ -17,6 +17,13 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
@@ -24,9 +31,7 @@ import org.apache.poi.hssf.record.BlankRecord;
 import org.apache.poi.hssf.record.RowRecord;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.usermodel.BaseTestRow;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test HSSFRow is okay.
@@ -67,9 +72,8 @@ public final class TestHSSFRow extends BaseTestRow {
         HSSFRow row = new HSSFRow(workbook, sheet, rowRec);
         HSSFCell cell = row.createCellFromRecord(br);
 
-        if (row.getFirstCellNum() == 2 && row.getLastCellNum() == 5) {
-            fail("Identified bug 46654a");
-        }
+        assertFalse(row.getFirstCellNum() == 2 && row.getLastCellNum() == 5, "Identified bug 46654a");
+
         assertEquals(COL_IX, row.getFirstCellNum());
         assertEquals(COL_IX + 1, row.getLastCellNum());
         row.removeCell(cell);
@@ -100,20 +104,10 @@ public final class TestHSSFRow extends BaseTestRow {
         assertEquals(4, row.getLastCellNum());
 
         // Try to move to somewhere else that's used
-        try {
-            row.moveCell(cellB2, (short)3);
-            fail("IllegalArgumentException should have been thrown");
-        } catch(IllegalArgumentException e) {
-            // expected during successful test
-        }
+        assertThrows(IllegalArgumentException.class, () -> row.moveCell(cellB2, (short)3));
 
         // Try to move one off a different row
-        try {
-            row.moveCell(cellA2, (short)3);
-            fail("IllegalArgumentException should have been thrown");
-        } catch(IllegalArgumentException e) {
-            // expected during successful test
-        }
+        assertThrows(IllegalArgumentException.class, () -> row.moveCell(cellA2, (short)3));
 
         // Move somewhere spare
         assertNotNull(row.getCell(1));
@@ -124,7 +118,7 @@ public final class TestHSSFRow extends BaseTestRow {
         assertEquals(5, cellB2.getColumnIndex());
         assertEquals(2, row.getFirstCellNum());
         assertEquals(6, row.getLastCellNum());
-        
+
         workbook.close();
     }
 

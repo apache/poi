@@ -18,19 +18,19 @@
  */
 package org.apache.poi.hpsf;
 
-import static org.junit.Assert.*;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.math.BigInteger;
 
 import org.apache.poi.hpsf.wellknown.PropertyIDMap;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestVariantSupport {
     @Test
@@ -52,10 +52,10 @@ public class TestVariantSupport {
         Object hdrs =  s.getProperty(PropertyIDMap.PID_HEADINGPAIR);
         assertNotNull(hdrs);
         assertEquals(byte[].class, hdrs.getClass());
-        
+
         // parse the value
         Vector v = new Vector((short)Variant.VT_VARIANT);
-        LittleEndianByteArrayInputStream lei = new LittleEndianByteArrayInputStream((byte[])hdrs, 0); 
+        LittleEndianByteArrayInputStream lei = new LittleEndianByteArrayInputStream((byte[])hdrs, 0);
         v.read(lei);
 
         TypedPropertyValue[] items = v.getValues();
@@ -70,7 +70,7 @@ public class TestVariantSupport {
         assertEquals(1, i);
 
     }
-    
+
     @Test
     public void newNumberTypes() throws Exception {
         ClipboardData cd = new ClipboardData();
@@ -90,8 +90,7 @@ public class TestVariantSupport {
                 {Variant.VT_R4, -999.99f},
                 {Variant.VT_R8, -999.99d},
         };
-        
-        HSSFWorkbook wb = new HSSFWorkbook();
+
         POIFSFileSystem poifs = new POIFSFileSystem();
         DocumentSummaryInformation dsi = PropertySetFactory.newDocumentSummaryInformation();
         CustomProperties cpList = new CustomProperties();
@@ -99,7 +98,7 @@ public class TestVariantSupport {
             int type = (Integer)o[0];
             Property p = new Property(PropertyIDMap.PID_MAX+type, type, o[1]);
             cpList.put("testprop"+type, new CustomProperty(p, "testprop"+type));
-            
+
         }
         dsi.setCustomProperties(cpList);
         dsi.write(poifs.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
@@ -108,14 +107,15 @@ public class TestVariantSupport {
         poifs.close();
         poifs = new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
         dsi = (DocumentSummaryInformation)PropertySetFactory.create(poifs.getRoot(), DocumentSummaryInformation.DEFAULT_STREAM_NAME);
+        assertNotNull(dsi);
         cpList = dsi.getCustomProperties();
         int i=0;
         for (Object[] o : exp) {
             Object obj = cpList.get("testprop"+o[0]);
             if (o[1] instanceof byte[]) {
-                assertArrayEquals("property "+i, (byte[])o[1], (byte[])obj);
+                assertArrayEquals((byte[])o[1], (byte[])obj, "property "+i);
             } else {
-                assertEquals("property "+i, o[1], obj);
+                assertEquals(o[1], obj, "property "+i);
             }
             i++;
         }

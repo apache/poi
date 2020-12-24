@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xssf.streaming;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ import org.apache.poi.ss.usermodel.DataValidationHelper;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestSXSSFDataValidation extends BaseTestDataValidation {
 

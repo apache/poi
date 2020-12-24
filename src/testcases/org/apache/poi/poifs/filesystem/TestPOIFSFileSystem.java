@@ -18,10 +18,9 @@
 package org.apache.poi.poifs.filesystem;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -42,7 +41,7 @@ import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.storage.BATBlock;
 import org.apache.poi.poifs.storage.HeaderBlock;
 import org.apache.poi.util.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the older OPOIFS-based POIFSFileSystem
@@ -113,23 +112,17 @@ public final class TestPOIFSFileSystem {
 	 */
 	@Test
 	public void testAlwaysClose() throws IOException {
-		TestIS testIS;
-
 		// Normal case - read until EOF and close
-		testIS = new TestIS(openSampleStream("13224.xls"), -1);
-		try (POIFSFileSystem ignored = new POIFSFileSystem(testIS)){
-			assertTrue("input stream was not closed", testIS.isClosed());
+		try (TestIS testIS = new TestIS(openSampleStream("13224.xls"), -1);
+			POIFSFileSystem ignored = new POIFSFileSystem(testIS)){
+			assertTrue(testIS.isClosed(), "input stream was not closed");
 		}
 
 		// intended to crash after reading 10000 bytes
-		testIS = new TestIS(openSampleStream("13224.xls"), 10000);
-		try (POIFSFileSystem ignored = new POIFSFileSystem(testIS)){
-			fail("ex should have been thrown");
-		} catch (MyEx e) {
-			// expected
-			assertTrue("input stream was not closed", testIS.isClosed()); // but still should close
-		} catch (Exception e) {
-			fail("MyEx is expected to be thrown");
+		try (TestIS testIS = new TestIS(openSampleStream("13224.xls"), 10000)){
+			assertThrows(MyEx.class, () -> new POIFSFileSystem(testIS));
+			// but still should close
+			assertTrue(testIS.isClosed(), "input stream was not closed");
 		}
 	}
 
@@ -173,9 +166,9 @@ public final class TestPOIFSFileSystem {
 	public void testFATandDIFATsectors() throws Exception {
 		try (InputStream stream = _samples.openResourceAsStream("ReferencesInvalidSectors.mpp")) {
 			IndexOutOfBoundsException ex = assertThrows(
-				"File is corrupt and shouldn't have been opened",
 				IndexOutOfBoundsException.class,
-				() -> new POIFSFileSystem(stream)
+				() -> new POIFSFileSystem(stream),
+				"File is corrupt and shouldn't have been opened"
 			);
 			assertTrue(ex.getMessage().contains("Block 1148 not found"));
 		}
@@ -302,8 +295,7 @@ public final class TestPOIFSFileSystem {
 		try (POIFSFileSystem poiFS = new POIFSFileSystem(_samples.getFile("64322.ole2"))) {
 			int count = recurseDir(poiFS.getRoot());
 
-			assertEquals("Expecting a fixed number of entries being found in the test-document",
-					1285, count);
+			assertEquals(1285, count, "Expecting a fixed number of entries being found in the test-document");
 		}
 	}
 
@@ -312,8 +304,7 @@ public final class TestPOIFSFileSystem {
 		try (POIFSFileSystem poiFS = new POIFSFileSystem(_samples.openResourceAsStream("64322.ole2"))) {
 			int count = recurseDir(poiFS.getRoot());
 
-			assertEquals("Expecting a fixed number of entries being found in the test-document",
-					1285, count);
+			assertEquals(1285, count, "Expecting a fixed number of entries being found in the test-document");
 		}
 	}
 

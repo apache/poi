@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -28,7 +28,7 @@ import java.io.InputStream;
 import org.apache.poi.POIDocument;
 import org.apache.poi.hpsf.extractor.HPSFPropertiesExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class POIFSFileHandler extends AbstractFileHandler {
 
@@ -56,17 +56,17 @@ public class POIFSFileHandler extends AbstractFileHandler {
 		assertNotNull(fs);
 		assertNotNull(fs.getRoot());
 	}
-	
+
 	protected void handlePOIDocument(POIDocument doc) throws Exception {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		doc.write(out);
-		
+
 		ByteArrayInputStream in = new ByteArrayInputStream(out.toByteArray());
 		POIFSFileSystem fs = new POIFSFileSystem(in);
 		handlePOIFSFileSystem(fs);
 		fs.close();
 	}
-	
+
     // a test-case to test this locally without executing the full TestAllFiles
     @Test
     public void test() throws Exception {
@@ -75,7 +75,7 @@ public class POIFSFileHandler extends AbstractFileHandler {
         try (InputStream stream = new FileInputStream(file)) {
             handleFile(stream, file.getPath());
         }
-        
+
         //handleExtracting(file);
     }
 }

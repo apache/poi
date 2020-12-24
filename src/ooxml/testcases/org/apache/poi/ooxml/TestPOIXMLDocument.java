@@ -17,13 +17,17 @@
 
 package org.apache.poi.ooxml;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -47,7 +51,8 @@ import org.apache.poi.util.TempFile;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 /**
  * Test recursive read and write of OPC packages
@@ -110,110 +115,88 @@ public final class TestPOIXMLDocument {
                 traverse(p, context);
             } else {
                 POIXMLDocumentPart prev = context.get(uri);
-                assertSame("Duplicate POIXMLDocumentPart instance for targetURI=" + uri, prev, p.getDocumentPart());
+                assertSame(prev, p.getDocumentPart(), "Duplicate POIXMLDocumentPart instance for targetURI=" + uri);
             }
         }
     }
 
-    public void assertReadWrite(OPCPackage pkg1) throws Exception {
+    private void assertReadWrite(POIDataSamples samples, String filename) throws Exception {
+        try (InputStream is = samples.openResourceAsStream(filename);
+            OPCPackage pkg1 = PackageHelper.open(is)){
+            File tmp = TempFile.createTempFile("poi-ooxml", ".tmp");
+            try (FileOutputStream out = new FileOutputStream(tmp);
+                OPCParser doc = new OPCParser(pkg1)) {
+                doc.parse(new TestFactory());
+                traverse(doc);
+                doc.write(out);
+                out.close();
 
-        OPCParser doc = new OPCParser(pkg1);
-        doc.parse(new TestFactory());
+                // Should not be able to write to an output stream that has been closed
+                // FIXME: A better exception class (IOException?) and message should be raised
+                // indicating that the document could not be written because the output stream is closed.
+                // see {@link org.apache.poi.openxml4j.opc.ZipPackage#saveImpl(java.io.OutputStream)}
+                OpenXML4JRuntimeException e = assertThrows(OpenXML4JRuntimeException.class, () -> doc.write(out),
+                    "Should not be able to write to an output stream that has been closed.");
+                assertTrue(e.getMessage().matches("Fail to save: an error occurs while saving the package : " +
+                    "The part .+ failed to be saved in the stream with marshaller .+"));
 
-        traverse(doc);
+                // Should not be able to write a document that has been closed
+                doc.close();
+                IOException e2 = assertThrows(IOException.class, () -> doc.write(new NullOutputStream()),
+                    "Should not be able to write a document that has been closed.");
+                assertEquals("Cannot write data, document seems to have been closed already", e2.getMessage());
 
-        File tmp = TempFile.createTempFile("poi-ooxml", ".tmp");
-        FileOutputStream out = new FileOutputStream(tmp);
-        doc.write(out);
-        out.close();
-
-        // Should not be able to write to an output stream that has been closed
-        try {
-            doc.write(out);
-            fail("Should not be able to write to an output stream that has been closed.");
-        } catch (final OpenXML4JRuntimeException e) {
-            // FIXME: A better exception class (IOException?) and message should be raised
-            // indicating that the document could not be written because the output stream is closed.
-            // see {@link org.apache.poi.openxml4j.opc.ZipPackage#saveImpl(java.io.OutputStream)}
-            if (e.getMessage().matches("Fail to save: an error occurs while saving the package : The part .+ failed to be saved in the stream with marshaller .+")) {
-                // expected
-            } else {
-                throw e;
+                // Should be able to close a document multiple times, though subsequent closes will have no effect.
             }
-        }
-
-        // Should not be able to write a document that has been closed
-        doc.close();
-        try {
-            doc.write(new NullOutputStream());
-            fail("Should not be able to write a document that has been closed.");
-        } catch (final IOException e) {
-            if (e.getMessage().equals("Cannot write data, document seems to have been closed already")) {
-                // expected
-            } else {
-                throw e;
-            }
-        }
-
-        // Should be able to close a document multiple times, though subsequent closes will have no effect.
-        doc.close();
 
 
-        @SuppressWarnings("resource")
-        OPCPackage pkg2 = OPCPackage.open(tmp.getAbsolutePath());
-        doc = new OPCParser(pkg1);
-        try {
-            doc.parse(new TestFactory());
-            traverse(doc);
+            try (OPCPackage pkg2 = OPCPackage.open(tmp.getAbsolutePath());
+                 OPCParser doc = new OPCParser(pkg1)) {
+                doc.parse(new TestFactory());
+                traverse(doc);
 
-            assertEquals(pkg1.getRelationships().size(), pkg2.getRelationships().size());
+                assertEquals(pkg1.getRelationships().size(), pkg2.getRelationships().size());
 
-            ArrayList<PackagePart> l1 = pkg1.getParts();
-            ArrayList<PackagePart> l2 = pkg2.getParts();
+                ArrayList<PackagePart> l1 = pkg1.getParts();
+                ArrayList<PackagePart> l2 = pkg2.getParts();
 
-            assertEquals(l1.size(), l2.size());
-            for (int i=0; i < l1.size(); i++){
-                PackagePart p1 = l1.get(i);
-                PackagePart p2 = l2.get(i);
+                assertEquals(l1.size(), l2.size());
+                for (int i = 0; i < l1.size(); i++) {
+                    PackagePart p1 = l1.get(i);
+                    PackagePart p2 = l2.get(i);
 
-                assertEquals(p1.getContentType(), p2.getContentType());
-                assertEquals(p1.hasRelationships(), p2.hasRelationships());
-                if(p1.hasRelationships()){
-                    assertEquals(p1.getRelationships().size(), p2.getRelationships().size());
+                    assertEquals(p1.getContentType(), p2.getContentType());
+                    assertEquals(p1.hasRelationships(), p2.hasRelationships());
+                    if (p1.hasRelationships()) {
+                        assertEquals(p1.getRelationships().size(), p2.getRelationships().size());
+                    }
+                    assertEquals(p1.getPartName(), p2.getPartName());
                 }
-                assertEquals(p1.getPartName(), p2.getPartName());
             }
-        } finally {
-            doc.close();
-            pkg1.close();
-            pkg2.close();
         }
     }
 
     @Test
     public void testPPTX() throws Exception {
-        POIDataSamples pds = POIDataSamples.getSlideShowInstance();
-        assertReadWrite(PackageHelper.open(pds.openResourceAsStream("PPTWithAttachments.pptm")));
+        assertReadWrite(POIDataSamples.getSlideShowInstance(), "PPTWithAttachments.pptm");
     }
 
     @Test
     public void testXLSX() throws Exception {
-        POIDataSamples pds = POIDataSamples.getSpreadSheetInstance();
-        assertReadWrite(PackageHelper.open(pds.openResourceAsStream("ExcelWithAttachments.xlsm")));
+        assertReadWrite(POIDataSamples.getSpreadSheetInstance(), "ExcelWithAttachments.xlsm");
     }
 
     @Test
     public void testDOCX() throws Exception {
-        POIDataSamples pds = POIDataSamples.getDocumentInstance();
-        assertReadWrite(PackageHelper.open(pds.openResourceAsStream("WordWithAttachments.docx")));
+        assertReadWrite(POIDataSamples.getDocumentInstance(), "WordWithAttachments.docx");
     }
 
     @Test
     public void testRelationOrder() throws Exception {
         POIDataSamples pds = POIDataSamples.getDocumentInstance();
-        @SuppressWarnings("resource")
-        OPCPackage pkg = PackageHelper.open(pds.openResourceAsStream("WordWithAttachments.docx"));
-        try (OPCParser doc = new OPCParser(pkg)) {
+        try (InputStream is = pds.openResourceAsStream("WordWithAttachments.docx");
+            OPCPackage pkg = PackageHelper.open(is);
+            OPCParser doc = new OPCParser(pkg)) {
             doc.parse(new TestFactory());
 
             for (POIXMLDocumentPart rel : doc.getRelations()) {
@@ -226,9 +209,9 @@ public final class TestPOIXMLDocument {
     @Test
     public void testGetNextPartNumber() throws Exception {
         POIDataSamples pds = POIDataSamples.getDocumentInstance();
-        @SuppressWarnings("resource")
-        OPCPackage pkg = PackageHelper.open(pds.openResourceAsStream("WordWithAttachments.docx"));
-        try (OPCParser doc = new OPCParser(pkg)) {
+        try (InputStream is = pds.openResourceAsStream("WordWithAttachments.docx");
+            OPCPackage pkg = PackageHelper.open(is);
+            OPCParser doc = new OPCParser(pkg)) {
             doc.parse(new TestFactory());
 
             // Non-indexed parts: Word is taken, Excel is not
@@ -272,34 +255,32 @@ public final class TestPOIXMLDocument {
     @Test
     public void testVSDX() throws Exception {
         POIDataSamples pds = POIDataSamples.getDiagramInstance();
-        @SuppressWarnings("resource")
-        OPCPackage open = PackageHelper.open(pds.openResourceAsStream("test.vsdx"));
-        POIXMLDocument part = new OPCParser(open, PackageRelationshipTypes.VISIO_CORE_DOCUMENT);
-
-        assertNotNull(part);
-        assertEquals(0, part.getRelationCounter());
-        part.close();
+        try (InputStream is = pds.openResourceAsStream("test.vsdx");
+             OPCPackage open = PackageHelper.open(is);
+             POIXMLDocument part = new OPCParser(open, PackageRelationshipTypes.VISIO_CORE_DOCUMENT)) {
+            assertNotNull(part);
+            assertEquals(0, part.getRelationCounter());
+        }
     }
 
     @Test
     public void testVSDXPart() throws IOException {
         POIDataSamples pds = POIDataSamples.getDiagramInstance();
-        OPCPackage open = PackageHelper.open(pds.openResourceAsStream("test.vsdx"));
+        try (InputStream is = pds.openResourceAsStream("test.vsdx");
+            OPCPackage open = PackageHelper.open(is)) {
 
-        POIXMLDocumentPart part = new POIXMLDocumentPart(open, PackageRelationshipTypes.VISIO_CORE_DOCUMENT);
+            POIXMLDocumentPart part = new POIXMLDocumentPart(open, PackageRelationshipTypes.VISIO_CORE_DOCUMENT);
 
-        assertNotNull(part);
-        assertEquals(0, part.getRelationCounter());
-
-        open.close();
+            assertNotNull(part);
+            assertEquals(0, part.getRelationCounter());
+        }
     }
 
-    @Test(expected=POIXMLException.class)
+    @Test
     public void testInvalidCoreRel() throws IOException {
         POIDataSamples pds = POIDataSamples.getDiagramInstance();
-
         try (OPCPackage open = PackageHelper.open(pds.openResourceAsStream("test.vsdx"))) {
-            new POIXMLDocumentPart(open, "somethingillegal");
+            assertThrows(POIXMLException.class, () -> new POIXMLDocumentPart(open, "somethingillegal"));
         }
     }
 
@@ -316,23 +297,20 @@ public final class TestPOIXMLDocument {
     }
 
     @Test
-    public void testOSGIClassLoading() {
+    public void testOSGIClassLoading() throws IOException {
+        byte[] data;
+        try (InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream("table_test.pptx")) {
+            data = IOUtils.toByteArray(is);
+        }
+
         // the schema type loader is cached per thread in POIXMLTypeLoader.
         // So create a new Thread and change the context class loader (which would normally be used)
         // to not contain the OOXML classes
-        Runnable run = () -> {
-            InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream("table_test.pptx");
-            XMLSlideShow ppt = null;
-            try {
-                ppt = new XMLSlideShow(is);
-                ppt.getSlides().get(0).getShapes();
-            } catch (IOException e) {
-                fail("failed to load XMLSlideShow");
-            } finally {
-                IOUtils.closeQuietly(ppt);
-                IOUtils.closeQuietly(is);
-            }
-        };
+        Runnable run = () -> assertDoesNotThrow(() -> {
+            try (XMLSlideShow ppt = new XMLSlideShow(new ByteArrayInputStream(data))) {
+                assertNotNull(ppt.getSlides().get(0).getShapes());
+            }}
+        );
 
         ClassLoader cl = getClass().getClassLoader();
         UncaughtHandler uh = new UncaughtHandler();
@@ -347,14 +325,10 @@ public final class TestPOIXMLDocument {
                 ta[i].start();
             }
             for (Thread thread : ta) {
-                try {
-                    thread.join();
-                } catch (InterruptedException e) {
-                    fail("failed to join thread");
-                }
+                assertDoesNotThrow((Executable) thread::join, "failed to join thread");
             }
         }
-        assertFalse("Should not have an exception now, but had " + uh.e, uh.hasException());
+        assertFalse(uh.hasException(), "Should not have an exception now, but had " + uh.e);
     }
 
     private static class UncaughtHandler implements UncaughtExceptionHandler {
@@ -362,7 +336,6 @@ public final class TestPOIXMLDocument {
 
         public synchronized void uncaughtException(Thread t, Throwable e) {
             this.e = e;
-
         }
 
         public synchronized boolean hasException() {

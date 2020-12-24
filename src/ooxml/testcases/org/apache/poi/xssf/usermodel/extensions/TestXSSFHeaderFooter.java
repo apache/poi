@@ -17,23 +17,23 @@
 
 package org.apache.poi.xssf.usermodel.extensions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.poi.xssf.usermodel.XSSFOddHeader;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTHeaderFooter;
 
 public class TestXSSFHeaderFooter {
-    
+
     private XSSFWorkbook wb;
     private XSSFSheet sheet;
     private XSSFHeaderFooter hO;
@@ -42,8 +42,8 @@ public class TestXSSFHeaderFooter {
     private XSSFHeaderFooter fO;
     private XSSFHeaderFooter fE;
     private XSSFHeaderFooter fF;
-    
-    @Before
+
+    @BeforeEach
     public void before() {
         wb = new XSSFWorkbook();
         sheet = wb.createSheet();
@@ -54,15 +54,15 @@ public class TestXSSFHeaderFooter {
         fE = (XSSFHeaderFooter) sheet.getEvenFooter();
         fF = (XSSFHeaderFooter) sheet.getFirstFooter();
     }
-    
-    @After
+
+    @AfterEach
     public void after() throws Exception {
         wb.close();
     }
 
     @Test
     public void testGetHeaderFooter() {
-        CTHeaderFooter ctHf; 
+        CTHeaderFooter ctHf;
         ctHf = hO.getHeaderFooter();
         assertNotNull(ctHf);
         ctHf = hE.getHeaderFooter();
@@ -111,14 +111,12 @@ public class TestXSSFHeaderFooter {
         assertEquals("&CCenterFvalue1&LLeftFvalue1&RRightFvalue1", fF.getValue());
     }
 
-    @Ignore("Test not yet created")
+    @Disabled("Test not yet created")
     public void testAreFieldsStripped() {
-        fail("Not yet implemented");
     }
 
-    @Ignore("Test not yet created")
+    @Disabled("Test not yet created")
     public void testSetAreFieldsStripped() {
-        fail("Not yet implemented");
     }
 
     @Test
@@ -129,30 +127,30 @@ public class TestXSSFHeaderFooter {
         String withFont = "I&22 am a&\"Arial,bold\" test header";
         String withOtherAnds = "I am a&P test header&&";
         String withOtherAnds2 = "I am a&P test header&a&b";
-        
+
         assertEquals(simple, XSSFOddHeader.stripFields(simple));
         assertEquals(simple, XSSFOddHeader.stripFields(withPage));
         assertEquals(simple, XSSFOddHeader.stripFields(withLots));
         assertEquals(simple, XSSFOddHeader.stripFields(withFont));
         assertEquals(simple + "&&", XSSFOddHeader.stripFields(withOtherAnds));
         assertEquals(simple + "&a&b", XSSFOddHeader.stripFields(withOtherAnds2));
-        
+
         // Now test the default strip flag
         hE.setCenter("Center");
         hE.setLeft("In the left");
-    
+
         assertEquals("In the left", hE.getLeft());
         assertEquals("Center", hE.getCenter());
         assertEquals("", hE.getRight());
-        
+
         hE.setLeft("Top &P&F&D Left");
         assertEquals("Top &P&F&D Left", hE.getLeft());
         assertFalse(hE.areFieldsStripped());
-        
+
         hE.setAreFieldsStripped(true);
         assertEquals("Top  Left", hE.getLeft());
         assertTrue(hE.areFieldsStripped());
-        
+
         // Now even more complex
         hE.setCenter("HEADER TEXT &P&N&D&T&Z&F&F&A&V");
         assertEquals("HEADER TEXT &V", hE.getCenter());
@@ -289,12 +287,12 @@ public class TestXSSFHeaderFooter {
         assertEquals("&RRightEvalue1", fE.getValue());
         assertEquals("&RRightFvalue1", fF.getValue());
     }
-    
- 
+
+
 
     @Test
     public void testGetSetCenterLeftRight() {
-        
+
         assertEquals("", fO.getCenter());
         fO.setCenter("My first center section");
         assertEquals("My first center section", fO.getCenter());
@@ -304,7 +302,7 @@ public class TestXSSFHeaderFooter {
         fO.setRight("Finally the right section is added");
         assertEquals("And add a left one", fO.getLeft());
         assertEquals("Finally the right section is added", fO.getRight());
-        
+
         // Test changing the three sections value
         fO.setCenter("Second center version");
         fO.setLeft("Second left version");
@@ -312,6 +310,6 @@ public class TestXSSFHeaderFooter {
         assertEquals("Second center version", fO.getCenter());
         assertEquals("Second left version", fO.getLeft());
         assertEquals("Second right version", fO.getRight());
-        
-    }    
+
+    }
 }

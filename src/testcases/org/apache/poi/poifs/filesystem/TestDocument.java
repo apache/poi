@@ -18,10 +18,10 @@
 package org.apache.poi.poifs.filesystem;
 
 import static org.apache.poi.poifs.common.POIFSConstants.LARGER_BIG_BLOCK_SIZE;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -32,7 +32,7 @@ import java.util.stream.IntStream;
 import org.apache.poi.poifs.property.DocumentProperty;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.util.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test POIFSDocument functionality

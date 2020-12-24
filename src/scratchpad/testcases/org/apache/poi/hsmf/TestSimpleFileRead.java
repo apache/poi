@@ -17,14 +17,14 @@
 
 package org.apache.poi.hsmf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests to verify that we can read a simple msg file, that is in plain/text
@@ -142,8 +142,7 @@ public final class TestSimpleFileRead {
             try (MAPIMessage mapiMessage = new MAPIMessage(
                     POIDataSamples.getHSMFInstance().getFile("msgClass" + messageClass + ".msg"))) {
                 MAPIMessage.MESSAGE_CLASS mc = mapiMessage.getMessageClassEnum();
-                assertTrue(mc + " but expected " + messageClass,
-                        messageClass.equalsIgnoreCase(mc.toString().replaceAll("_", "")));
+                assertTrue( messageClass.equalsIgnoreCase(mc.toString().replaceAll("_", "")), mc + " but expected " + messageClass );
             }
         }
     }

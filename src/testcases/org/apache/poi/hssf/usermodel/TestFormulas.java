@@ -18,10 +18,10 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.apache.poi.hssf.HSSFTestDataSamples.writeOutAndReadBack;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -40,7 +40,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.TempFile;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestFormulas {
 
@@ -66,7 +66,7 @@ public final class TestFormulas {
                 r = s.getRow(1);
                 c = r.getCell(1);
 
-                assertEquals("Formula is as expected", "1+1", c.getCellFormula());
+                assertEquals("1+1", c.getCellFormula(), "Formula is as expected");
             }
         }
     }
@@ -201,9 +201,10 @@ public final class TestFormulas {
             for (int y = 1; y < 256 && y > 0; y=(short)(y+2)) {
 
                 HSSFCell c = r.getCell(y);
-                assertNotNull("got a formula", c.getCellFormula());
+                assertNotNull(c.getCellFormula(), "got a formula");
 
-                assertEquals("loop Formula is as expected " + x + "." + y + operator + y + "." + x + "!=" + c.getCellFormula(), ("" + x + "." + y + operator + y + "." + x), c.getCellFormula());
+                assertEquals(("" + x + "." + y + operator + y + "." + x), c.getCellFormula(),
+                    "loop Formula is as expected " + x + "." + y + operator + y + "." + x + "!=" + c.getCellFormula());
             }
         }
     }
@@ -281,7 +282,8 @@ public final class TestFormulas {
         HSSFRow r = s.getRow(0);
         HSSFCell c = r.getCell(1);
         //get our minimum values
-        assertEquals("minval Formula is as expected A2" + operator + "A3 != " + c.getCellFormula(), ("A2" + operator + "A3"), c.getCellFormula());
+        assertEquals(("A2" + operator + "A3"), c.getCellFormula(),
+            "minval Formula is as expected A2" + operator + "A3 != " + c.getCellFormula());
 
 
         for (int x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
@@ -301,7 +303,8 @@ public final class TestFormulas {
                 String ref2=cr.formatAsString();
 
 
-                assertEquals("loop Formula is as expected " + ref + operator + ref2 + "!=" + c.getCellFormula(), ("" + ref + operator + ref2), c.getCellFormula());
+                assertEquals(("" + ref + operator + ref2), c.getCellFormula(),
+                    "loop Formula is as expected " + ref + operator + ref2 + "!=" + c.getCellFormula());
             }
         }
 
@@ -332,7 +335,7 @@ public final class TestFormulas {
                 //get our minimum values
                 r = s.getRow(0);
                 c = r.getCell(1);
-                assertEquals("minval Formula is as expected", formula, c.getCellFormula());
+                assertEquals(formula, c.getCellFormula(), "minval Formula is as expected");
             }
         }
     }
@@ -382,14 +385,16 @@ public final class TestFormulas {
         //get our minimum values
         HSSFRow r = s.getRow(0);
         HSSFCell c = r.getCell(1);
-        assertEquals("minval Formula is as expected 1" + operator + "1 != " + c.getCellFormula(), ("1" + operator + "1"), c.getCellFormula());
+        assertEquals(("1" + operator + "1"), c.getCellFormula(),
+            "minval Formula is as expected 1" + operator + "1 != " + c.getCellFormula());
 
         for (int x = 1; x < Short.MAX_VALUE && x > 0; x=(short)(x*2)) {
             r = s.getRow(x);
 
             for (int y = 1; y < 256 && y > 0; y++) {
                 c = r.getCell(y);
-                assertEquals("loop Formula is as expected " + x + operator + y + "!=" + c.getCellFormula(), ("" + x + operator + y), c.getCellFormula());
+                assertEquals(("" + x + operator + y), c.getCellFormula(),
+                    "loop Formula is as expected " + x + operator + y + "!=" + c.getCellFormula());
             }
         }
 
@@ -397,7 +402,8 @@ public final class TestFormulas {
         r = s.getRow(0);
         c = r.getCell(0);
 
-        assertEquals("maxval Formula is as expected", ("" + Short.MAX_VALUE + operator + Short.MAX_VALUE), c.getCellFormula());
+        assertEquals(("" + Short.MAX_VALUE + operator + Short.MAX_VALUE), c.getCellFormula(),
+            "maxval Formula is as expected");
     }
 
     /**
@@ -415,7 +421,8 @@ public final class TestFormulas {
                 r = s.getRow(0);
                 c = r.getCell(0);
 
-                assertEquals("function =" + function + "(A2:A3)", function + "(A2:A3)", c.getCellFormula());
+                assertEquals(function + "(A2:A3)", c.getCellFormula(),
+                    "function =" + function + "(A2:A3)");
             }
         }
     }
@@ -436,7 +443,7 @@ public final class TestFormulas {
                 r = s.getRow(0);
                 c = r.getCell(0);
 
-                assertEquals("function =" + function + "(A2,A3)", (function + "(A2,A3)"), c.getCellFormula());
+                assertEquals((function + "(A2,A3)"), c.getCellFormula(), "function =" + function + "(A2,A3)");
             }
         }
     }
@@ -461,10 +468,10 @@ public final class TestFormulas {
                 r = s.getRow(0);
                 c = r.getCell(0);
 
-                assertEquals("function =" + function + "(A2:A4,B2:B4)", (function + "(A2:A4,B2:B4)"), c.getCellFormula());
+                assertEquals((function + "(A2:A4,B2:B4)"), c.getCellFormula(), "function =" + function + "(A2:A4,B2:B4)");
 
                 c = r.getCell(1);
-                assertEquals("function =" + function + "($A$2:$A4,B$2:B4)", (function + "($A$2:$A4,B$2:B4)"), c.getCellFormula());
+                assertEquals((function + "($A$2:$A4,B$2:B4)"), c.getCellFormula(), "function =" + function + "($A$2:$A4,B$2:B4)");
             }
         }
     }
@@ -490,15 +497,15 @@ public final class TestFormulas {
                 s = wb2.getSheetAt(0);
                 r = s.getRow(0);
                 c = r.getCell(0);
-                assertEquals("A3+A2", ("A3+A2"), c.getCellFormula());
+                assertEquals("A3+A2", c.getCellFormula());
                 c = r.getCell(1);
-                assertEquals("$A3+$A2", ("$A3+$A2"), c.getCellFormula());
+                assertEquals("$A3+$A2", c.getCellFormula());
                 c = r.getCell(2);
-                assertEquals("A$3+A$2", ("A$3+A$2"), c.getCellFormula());
+                assertEquals("A$3+A$2", c.getCellFormula());
                 c = r.getCell(3);
-                assertEquals("$A$3+$A$2", ("$A$3+$A$2"), c.getCellFormula());
+                assertEquals("$A$3+$A$2", c.getCellFormula());
                 c = r.getCell(4);
-                assertEquals("SUM($A$3,$A$2)", ("SUM($A$3,$A$2)"), c.getCellFormula());
+                assertEquals("SUM($A$3,$A$2)", c.getCellFormula());
             }
         }
     }
@@ -526,9 +533,11 @@ public final class TestFormulas {
                 s = wb2.getSheet("B");
                 r = s.getRow(0);
                 c = r.getCell(0);
-                assertEquals("expected: AVERAGE(A!A1:B1) got: " + c.getCellFormula(), ("AVERAGE(A!A1:B1)"), c.getCellFormula());
+                assertEquals("AVERAGE(A!A1:B1)", c.getCellFormula(),
+                    "expected: AVERAGE(A!A1:B1) got: " + c.getCellFormula());
                 c = r.getCell(1);
-                assertEquals("expected: A!A1+A!B1 got: " + c.getCellFormula(), ("A!A1+A!B1"), c.getCellFormula());
+                assertEquals("A!A1+A!B1", c.getCellFormula(),
+                    "expected: A!A1+A!B1 got: " + c.getCellFormula());
             }
         }
     }
@@ -568,7 +577,7 @@ public final class TestFormulas {
             try (FileOutputStream out = new FileOutputStream(file)) {
                 wb.write(out);
             }
-            assertTrue("file exists", file.exists());
+            assertTrue(file.exists());
         }
     }
 
@@ -607,7 +616,7 @@ public final class TestFormulas {
                 s = wb2.getSheetAt(0);
                 r = s.getRow(0);
                 c = r.getCell(1);
-                assertEquals("Formula in cell 1 ", "IF(A1<A2,B1,B2)", c.getCellFormula());
+                assertEquals("IF(A1<A2,B1,B2)", c.getCellFormula(), "Formula in cell 1 ");
             }
         }
     }
@@ -661,7 +670,8 @@ public final class TestFormulas {
                 r = s.getRow(0);
                 c = r.getCell(4);
 
-                assertEquals("expected: IF(A1=D1,\"A1\",\"B1\") got " + c.getCellFormula(), ("IF(A1=D1,\"A1\",\"B1\")"), c.getCellFormula());
+                assertEquals("IF(A1=D1,\"A1\",\"B1\")", c.getCellFormula(),
+                    "expected: IF(A1=D1,\"A1\",\"B1\") got " + c.getCellFormula());
             }
         }
 
@@ -669,7 +679,8 @@ public final class TestFormulas {
             HSSFSheet s = wb1.getSheetAt(0);
             HSSFRow r = s.getRow(3);
             HSSFCell c = r.getCell(0);
-            assertEquals("expected: IF(A3=A1,\"A1\",\"A2\") got " + c.getCellFormula(), ("IF(A3=A1,\"A1\",\"A2\")"), c.getCellFormula());
+            assertEquals("IF(A3=A1,\"A1\",\"A2\")", c.getCellFormula(),
+                "expected: IF(A3=A1,\"A1\",\"A2\") got " + c.getCellFormula());
             //c = r.getCell((short)1);
             //assertTrue("expected: A!A1+A!B1 got: "+c.getCellFormula(), ("A!A1+A!B1").equals(c.getCellFormula()));
         }
@@ -805,7 +816,7 @@ public final class TestFormulas {
     public void testStringFormulaRead() throws IOException {
         try (HSSFWorkbook w = openSample("StringFormulas.xls")) {
             HSSFCell c = w.getSheetAt(0).getRow(0).getCell(0);
-            assertEquals("String Cell value", "XYZ", c.getRichStringCellValue().getString());
+            assertEquals("XYZ", c.getRichStringCellValue().getString(), "String Cell value");
         }
     }
 
@@ -834,7 +845,7 @@ public final class TestFormulas {
     public void test27272_1() throws IOException {
         try (HSSFWorkbook wb = openSample("27272_1.xls")) {
             wb.getSheetAt(0);
-            assertEquals("Reference for named range ", "Compliance!#REF!", wb.getNameAt(0).getRefersToFormula());
+            assertEquals("Compliance!#REF!", wb.getNameAt(0).getRefersToFormula(), "Reference for named range");
             writeOutAndReadBack(wb).close();
         }
     }
@@ -843,7 +854,7 @@ public final class TestFormulas {
     @Test
     public void test27272_2() throws IOException {
         try (HSSFWorkbook wb = openSample("27272_2.xls")) {
-            assertEquals("Reference for named range ", "LOAD.POD_HISTORIES!#REF!", wb.getNameAt(0).getRefersToFormula());
+            assertEquals("LOAD.POD_HISTORIES!#REF!", wb.getNameAt(0).getRefersToFormula(), "Reference for named range");
             writeOutAndReadBack(wb).close();
         }
     }

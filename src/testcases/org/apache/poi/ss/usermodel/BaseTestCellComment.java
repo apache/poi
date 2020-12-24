@@ -18,20 +18,21 @@
 package org.apache.poi.ss.usermodel;
 
 import static org.apache.poi.util.Units.EMU_PER_PIXEL;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.util.Units;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Common superclass for testing implementations of
@@ -102,7 +103,7 @@ public abstract class BaseTestCellComment {
 
         Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
         wb1.close();
-        
+
         sheet = wb2.getSheetAt(0);
         cell = sheet.getRow(cellRow).getCell(cellColumn);
         comment = cell.getCellComment();
@@ -135,7 +136,7 @@ public abstract class BaseTestCellComment {
         // Test Comment.equals and Comment.hashCode
         assertEquals(comment, cell.getCellComment());
         assertEquals(comment.hashCode(), cell.getCellComment().hashCode());
-        
+
         wb3.close();
     }
 
@@ -157,7 +158,7 @@ public abstract class BaseTestCellComment {
             row = sheet.getRow(rownum);
             cell = row.getCell(0);
             comment = cell.getCellComment();
-            assertNull("Cells in the first column are not commented", comment);
+            assertNull(comment, "Cells in the first column are not commented");
             assertNull(sheet.getCellComment(new CellAddress(rownum, 0)));
         }
 
@@ -165,15 +166,15 @@ public abstract class BaseTestCellComment {
             row = sheet.getRow(rownum);
             cell = row.getCell(1);
             comment = cell.getCellComment();
-            assertNotNull("Cells in the second column have comments", comment);
-            assertNotNull("Cells in the second column have comments", sheet.getCellComment(new CellAddress(rownum, 1)));
+            assertNotNull(comment, "Cells in the second column have comments");
+            assertNotNull(sheet.getCellComment(new CellAddress(rownum, 1)), "Cells in the second column have comments");
 
             assertEquals("Yegor Kozlov", comment.getAuthor());
             assertFalse(comment.getString().getString().isEmpty());
             assertEquals(rownum, comment.getRow());
             assertEquals(cell.getColumnIndex(), comment.getColumn());
         }
-        
+
         wb.close();
     }
 
@@ -212,7 +213,7 @@ public abstract class BaseTestCellComment {
             assertEquals("Mofified[" + rownum + "] by Yegor", comment.getAuthor());
             assertEquals("Modified comment at row " + rownum, comment.getString().getString());
         }
-        
+
         wb2.close();
     }
 
@@ -242,7 +243,7 @@ public abstract class BaseTestCellComment {
         assertNull(sheet.getRow(0).getCell(1).getCellComment());
         assertNotNull(sheet.getRow(1).getCell(1).getCellComment());
         assertNull(sheet.getRow(2).getCell(1).getCellComment());
-        
+
         wb2.close();
     }
 
@@ -280,24 +281,24 @@ public abstract class BaseTestCellComment {
         assertEquals("Apache POI", comment.getAuthor());
         assertEquals(3, comment.getRow());
         assertEquals(5, comment.getColumn());
-        
+
         wb2.close();
     }
 
     @Test
     public void getClientAnchor() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
-        
+
         Sheet sheet = wb.createSheet();
         Row row = sheet.createRow(10);
         Cell cell = row.createCell(5);
         CreationHelper factory = wb.getCreationHelper();
-        
+
         Drawing<?> drawing = sheet.createDrawingPatriarch();
-        
+
         double r_mul, c_mul;
         if (sheet instanceof HSSFSheet) {
-            double rowheight = Units.toEMU(row.getHeightInPoints())/EMU_PER_PIXEL;
+            double rowheight = Units.toEMU(row.getHeightInPoints())/(double)EMU_PER_PIXEL;
             r_mul = 256.0/rowheight;
             double colwidth = sheet.getColumnWidthInPixels(2);
             c_mul = 1024.0/colwidth;
@@ -313,12 +314,12 @@ public abstract class BaseTestCellComment {
         int row1 = row.getRowNum();
         int col2 = cell.getColumnIndex()+2;
         int row2 = row.getRowNum()+1;
-        
+
         ClientAnchor anchor = drawing.createAnchor(dx1, dy1, dx2, dy2, col1, row1, col2, row2);
         Comment comment = drawing.createCellComment(anchor);
         comment.setVisible(true);
         cell.setCellComment(comment);
-        
+
         anchor = comment.getClientAnchor();
         assertEquals(dx1, anchor.getDx1());
         assertEquals(dy1, anchor.getDy1());
@@ -333,7 +334,7 @@ public abstract class BaseTestCellComment {
         comment = drawing.createCellComment(anchor);
         cell.setCellComment(comment);
         anchor = comment.getClientAnchor();
-        
+
         if (sheet instanceof HSSFSheet) {
             assertEquals(0, anchor.getCol1());
             assertEquals(0, anchor.getDx1());
@@ -342,7 +343,7 @@ public abstract class BaseTestCellComment {
             assertEquals(0, anchor.getCol2());
             assertEquals(0, anchor.getDx2());
             assertEquals(0, anchor.getRow2());
-            assertEquals(0, anchor.getDy2());            
+            assertEquals(0, anchor.getDy2());
         } else {
             // when anchor is initialized without parameters, the comment anchor attributes default to
             // "1, 15, 0, 2, 3, 15, 3, 16" ... see XSSFVMLDrawing.newCommentShape()
@@ -355,33 +356,35 @@ public abstract class BaseTestCellComment {
             assertEquals( 3, anchor.getRow2());
             assertEquals(16*EMU_PER_PIXEL, anchor.getDy2());
         }
-        
+
         wb.close();
     }
-    
+
     @Test
     public void attemptToSave2CommentsWithSameCoordinates() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet sh = wb.createSheet();
-        CreationHelper factory = wb.getCreationHelper();
-        Drawing<?> patriarch = sh.createDrawingPatriarch();
-        patriarch.createCellComment(factory.createClientAnchor());
-        
-        try {
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet sh = wb.createSheet();
+            CreationHelper factory = wb.getCreationHelper();
+            Drawing<?> patriarch = sh.createDrawingPatriarch();
             patriarch.createCellComment(factory.createClientAnchor());
-            _testDataProvider.writeOutAndReadBack(wb);
-            fail("Should not be able to create a corrupted workbook with multiple cell comments in one cell");
-        } catch (IllegalStateException e) {
-            // HSSFWorkbooks fail when writing out workbook
-            assertEquals("found multiple cell comments for cell $A$1", e.getMessage());
-        } catch (IllegalArgumentException e) {
-            // XSSFWorkbooks fail when creating and setting the cell address of the comment
-            assertEquals("Multiple cell comments in one cell are not allowed, cell: A1", e.getMessage());
-        } finally {
-            wb.close();
+
+            RuntimeException e = assertThrows(RuntimeException.class, () -> {
+                patriarch.createCellComment(factory.createClientAnchor());
+                _testDataProvider.writeOutAndReadBack(wb);
+            }, "Should not be able to create a corrupted workbook with multiple cell comments in one cell");
+
+            if (wb instanceof HSSFWorkbook) {
+                // HSSFWorkbooks fail when writing out workbook
+                assertTrue(e instanceof IllegalStateException);
+                assertEquals("found multiple cell comments for cell $A$1", e.getMessage());
+            } else {
+                // XSSFWorkbooks fail when creating and setting the cell address of the comment
+                assertTrue(e instanceof IllegalArgumentException);
+                assertEquals("Multiple cell comments in one cell are not allowed, cell: A1", e.getMessage());
+            }
         }
     }
-    
+
     @Test
     public void getAddress() {
         Workbook wb = _testDataProvider.createWorkbook();
@@ -389,13 +392,13 @@ public abstract class BaseTestCellComment {
         CreationHelper factory = wb.getCreationHelper();
         Drawing<?> patriarch = sh.createDrawingPatriarch();
         Comment comment = patriarch.createCellComment(factory.createClientAnchor());
-        
+
         assertEquals(CellAddress.A1, comment.getAddress());
         Cell C2 = sh.createRow(1).createCell(2);
         C2.setCellComment(comment);
         assertEquals(new CellAddress("C2"), comment.getAddress());
     }
-    
+
     @Test
     public void setAddress() {
         Workbook wb = _testDataProvider.createWorkbook();
@@ -403,13 +406,13 @@ public abstract class BaseTestCellComment {
         CreationHelper factory = wb.getCreationHelper();
         Drawing<?> patriarch = sh.createDrawingPatriarch();
         Comment comment = patriarch.createCellComment(factory.createClientAnchor());
-        
+
         assertEquals(CellAddress.A1, comment.getAddress());
         CellAddress C2 = new CellAddress("C2");
         assertEquals("C2", C2.formatAsString());
         comment.setAddress(C2);
         assertEquals(C2, comment.getAddress());
-        
+
         CellAddress E10 = new CellAddress(9, 4);
         assertEquals("E10", E10.formatAsString());
         comment.setAddress(9, 4);

@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
@@ -30,7 +30,7 @@ import org.apache.poi.ss.formula.functions.EvalFactory;
 import org.apache.poi.ss.formula.functions.NumericFunctionInvoker;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for percent operator evaluator.

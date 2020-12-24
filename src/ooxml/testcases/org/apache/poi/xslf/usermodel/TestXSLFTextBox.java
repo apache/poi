@@ -16,13 +16,13 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 
 import org.apache.poi.sl.usermodel.Placeholder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 
 /**
@@ -42,7 +42,7 @@ public class TestXSLFTextBox {
         shape.setPlaceholder(null);
         assertNull(shape.getTextType());
         shape.setText("Apache POI");
-        
+
         ppt.close();
     }
 
@@ -84,7 +84,7 @@ public class TestXSLFTextBox {
 
         pPr.unsetSz();  // Should never be
         assertNull(r.getFontSize());
-        
+
         ppt.close();
     }
 }

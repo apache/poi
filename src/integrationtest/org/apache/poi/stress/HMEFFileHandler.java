@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -30,7 +30,7 @@ import org.apache.poi.hmef.attribute.TNEFProperty;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.util.LittleEndian;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class HMEFFileHandler extends AbstractFileHandler {
 
@@ -58,8 +58,8 @@ public class HMEFFileHandler extends AbstractFileHandler {
 		} else {
 			bodyStr = msg.getBody();
 		}
-		assertNotNull("Body is not set", bodyStr);
-		assertNotNull("Subject is not set", msg.getSubject());
+		assertNotNull( bodyStr, "Body is not set" );
+		assertNotNull( msg.getSubject(), "Subject is not set" );
 	}
 
 	// a test-case to test this locally without executing the full TestAllFiles

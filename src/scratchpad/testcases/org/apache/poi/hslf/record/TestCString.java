@@ -18,12 +18,12 @@
 package org.apache.poi.hslf.record;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.ByteArrayOutputStream;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that CString works properly
@@ -105,7 +105,7 @@ public final class TestCString {
 				break;
 			}
 		}
-		assertFalse("Arrays should not be equals", equals);
+		assertFalse(equals, "Arrays should not be equals");
 
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		ca.writeOut(baos);

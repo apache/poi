@@ -17,7 +17,7 @@
 package org.apache.poi.xdgf.extractor;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,9 +25,9 @@ import java.io.InputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.xdgf.usermodel.XmlVisioDocument;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestXDGFVisioExtractor {
 
@@ -35,13 +35,13 @@ public class TestXDGFVisioExtractor {
     private OPCPackage pkg;
     private XmlVisioDocument xml;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         pkg = OPCPackage.open(SAMPLES.openResourceAsStream("test_text_extraction.vsdx"));
         xml = new XmlVisioDocument(pkg);
     }
-    
-    @After
+
+    @AfterEach
     public void closeResources() throws IOException {
         if(xml != null) {
             xml.close();
@@ -53,14 +53,14 @@ public class TestXDGFVisioExtractor {
     public void testGetSimpleText() throws IOException {
         new XDGFVisioExtractor(xml).close();
         new XDGFVisioExtractor(pkg).close();
-        
+
         XDGFVisioExtractor extractor = new XDGFVisioExtractor(xml);
         extractor.getText();
-        
+
         String text = extractor.getText();
         String expected = "Text here\nText there\nText, text, everywhere!\nRouter here\n";
         assertEquals(expected, text);
-        
+
         extractor.close();
     }
 
@@ -77,7 +77,7 @@ public class TestXDGFVisioExtractor {
         assertContains(text, "Arrears");
         extractor.close();
     }
-    
+
     /**
      * Some confusion on PolylineTo vs PolyLineTo, both should be handled.
      * Previously failed with:

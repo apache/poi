@@ -17,9 +17,9 @@
 
 package org.apache.poi.ddf;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -33,8 +33,8 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.util.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestEscherDump {
     private static final String recordData =
@@ -67,7 +67,7 @@ public class TestEscherDump {
     private ByteArrayOutputStream baos = new ByteArrayOutputStream();
     private PrintStream stream;
 
-    @Before
+    @BeforeEach
     public void setup() throws UnsupportedEncodingException {
         stream = new PrintStream(baos, true, StandardCharsets.UTF_8.name());
     }

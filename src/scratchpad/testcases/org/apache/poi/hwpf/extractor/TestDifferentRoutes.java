@@ -17,20 +17,19 @@
 
 package org.apache.poi.hwpf.extractor;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
-
-import org.junit.Test;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.usermodel.Paragraph;
 import org.apache.poi.hwpf.usermodel.Range;
 import org.apache.poi.util.StringUtil;
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the different routes to extracting text
@@ -57,12 +56,12 @@ public final class TestDifferentRoutes {
 
 	private HWPFDocument doc;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		doc = HWPFTestDataSamples.openSampleFile("test2.doc");
 	}
-	
-	@After
+
+	@AfterEach
 	public void tearDown() throws IOException {
 		doc.close();
 	}

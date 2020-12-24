@@ -19,7 +19,7 @@ package org.apache.poi.hslf;
 
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,9 +33,9 @@ import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.UserEditAtom;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that HSLFSlideShow writes the powerpoint bit of data back out
@@ -49,14 +49,14 @@ public final class TestReWriteSanity {
     // POIFS primed on the test data
     private POIFSFileSystem pfs;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
         pfs = new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
         ss = new HSLFSlideShowImpl(pfs);
     }
-    
-    @After
+
+    @AfterEach
     public void tearDown() throws Exception {
         pfs.close();
         ss.close();
@@ -113,7 +113,7 @@ public final class TestReWriteSanity {
         CurrentUserAtom cua = wss.getCurrentUserAtom();
         int listedUEPos = (int)cua.getCurrentEditOffset();
         assertEquals(lastUEPos,listedUEPos);
-        
+
         wss.close();
     }
 }

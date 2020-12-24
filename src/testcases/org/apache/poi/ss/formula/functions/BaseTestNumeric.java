@@ -20,7 +20,7 @@
  */
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
@@ -37,35 +37,30 @@ public abstract class BaseTestNumeric {
      * for comparing doubles. DO NOT use that.
      * TODO: This class should really be in an abstract super class
      * to avoid code duplication across this project.
-     * @param message
-     * @param baseval
-     * @param checkval
      */
-    public static void assertEquals(String message, double baseval, double checkval, double almostZero, double diffToleranceFactor) {
+    public static void assertDouble(String message, double baseval, double checkval, double almostZero, double diffToleranceFactor) {
         double posZero = Math.abs(almostZero);
         double negZero = -1 * posZero;
         if (Double.isNaN(baseval)) {
-            assertTrue(message+": Expected " + baseval + " but was " + checkval
-                    , Double.isNaN(baseval));
+            assertTrue(Double.isNaN(baseval), message+": Expected " + baseval + " but was " + checkval);
         }
         else if (Double.isInfinite(baseval)) {
-            assertTrue(message+": Expected " + baseval + " but was " + checkval
-                    , Double.isInfinite(baseval) && ((baseval<0) == (checkval<0)));
+            assertTrue(Double.isInfinite(baseval) && ((baseval<0) == (checkval<0)), message+": Expected " + baseval + " but was " + checkval);
         }
         else {
-            assertTrue(message+": Expected " + baseval + " but was " + checkval
-                ,baseval != 0
-                    ? Math.abs(baseval - checkval) <= Math.abs(diffToleranceFactor * baseval)
-                    : checkval < posZero && checkval > negZero);
+            assertTrue(baseval != 0
+                ? Math.abs(baseval - checkval) <= Math.abs(diffToleranceFactor * baseval)
+                : checkval < posZero && checkval > negZero,
+                message+": Expected " + baseval + " but was " + checkval);
         }
     }
 
-    public static void assertEquals(String msg, double baseval, double checkval) {
-        assertEquals(msg, baseval, checkval, POS_ZERO, DIFF_TOLERANCE_FACTOR);
+    public static void assertDouble(String msg, double baseval, double checkval) {
+        assertDouble(msg, baseval, checkval, POS_ZERO, DIFF_TOLERANCE_FACTOR);
     }
 
 
-    public static void assertEquals(double baseval, double checkval) {
-        assertEquals("", baseval, checkval, POS_ZERO, DIFF_TOLERANCE_FACTOR);
+    public static void assertDouble(double baseval, double checkval) {
+        assertDouble("", baseval, checkval, POS_ZERO, DIFF_TOLERANCE_FACTOR);
     }
 }

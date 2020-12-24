@@ -17,11 +17,11 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.InputStream;
 
@@ -30,7 +30,7 @@ import javax.xml.parsers.DocumentBuilderFactory;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.internal.ContentType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for content type (ContentType class).
@@ -81,12 +81,8 @@ public final class TestContentType {
                 "te{xt/xml", "tex}t/xml", "te xt/xml",
                 "text" + (char) 9 + "/xml", "text xml", " text/xml "};
         for (String contentType : contentTypesToTest) {
-            try {
-                new ContentType(contentType);
-            } catch (InvalidFormatException e) {
-                continue;
-            }
-            fail("Must have fail for content type: '" + contentType + "' !");
+            assertThrows(InvalidFormatException.class, () -> new ContentType(contentType),
+                "Must have fail for content type: '" + contentType + "' !");
         }
     }
 
@@ -120,12 +116,8 @@ public final class TestContentType {
                 "text/\u0080" // characters above ASCII are not allowed
         };
         for (String contentType : contentTypesToTest) {
-            try {
-                new ContentType(contentType);
-            } catch (InvalidFormatException e) {
-                continue;
-            }
-            fail("Must have fail for content type: '" + contentType + "' !");
+            assertThrows(InvalidFormatException.class, () -> new ContentType(contentType),
+                "Must have fail for content type: '" + contentType + "' !");
         }
     }
 
@@ -138,12 +130,8 @@ public final class TestContentType {
     public void testContentTypeCommentFailure() {
         String[] contentTypesToTest = new String[]{"text/xml(comment)"};
         for (String contentType : contentTypesToTest) {
-            try {
-                new ContentType(contentType);
-            } catch (InvalidFormatException e) {
-                continue;
-            }
-            fail("Must have fail for content type: '" + contentType + "' !");
+            assertThrows(InvalidFormatException.class, () -> new ContentType(contentType),
+                "Must have fail for content type: '" + contentType + "' !");
         }
     }
 

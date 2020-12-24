@@ -19,7 +19,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -27,7 +27,7 @@ import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.util.CellReference;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases for RANK()
@@ -57,15 +57,15 @@ public final class TestRank {
         for(int rownum = 1; rownum<= 10; rownum ++){
             HSSFCell cellD = example3.getRow(rownum).getCell(3);
             double cachedResultD = cellD.getNumericCellValue(); //cached formula result
-            assertEquals(new CellReference(cellD).formatAsString(), cachedResultD, fe.evaluate(cellD).getNumberValue(), 0);
+            assertEquals(cachedResultD, fe.evaluate(cellD).getNumberValue(), 0, new CellReference(cellD).formatAsString());
 
             HSSFCell cellE = example3.getRow(rownum).getCell(4);
             double cachedResultE = cellE.getNumericCellValue(); //cached formula result
-            assertEquals(new CellReference(cellE).formatAsString(), cachedResultE, fe.evaluate(cellE).getNumberValue(), 0);
+            assertEquals(cachedResultE, fe.evaluate(cellE).getNumberValue(), 0, new CellReference(cellE).formatAsString());
 
             HSSFCell cellF = example3.getRow(rownum).getCell(5);
             double cachedResultF = cellF.getNumericCellValue(); //cached formula result
-            assertEquals(new CellReference(cellF).formatAsString(), cachedResultF, fe.evaluate(cellF).getNumberValue(), 0);
+            assertEquals(cachedResultF, fe.evaluate(cellF).getNumberValue(), 0, new CellReference(cellF).formatAsString());
         }
     }
 }

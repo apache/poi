@@ -17,16 +17,15 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.hssf.record.ColumnInfoRecord;
-import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.RecordBase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestColumnInfoRecordsAggregate {
 
@@ -109,7 +108,7 @@ public final class TestColumnInfoRecordsAggregate {
 		cirs.clear();
 		agg.visitContainedRecords(cirs::add);
 		assertEquals(4, cirs.size());
-		assertTrue("Inner group should still be hidden", ((ColumnInfoRecord)cirs.get(1)).getHidden());
+		assertTrue(((ColumnInfoRecord)cirs.get(1)).getHidden(), "Inner group should still be hidden");
 		confirmCIR(cirs, 0,  1,  3, 1, true, false);
 		confirmCIR(cirs, 1,  4, 12, 2, true, false);
 		confirmCIR(cirs, 2, 13, 15, 1, true, false);
@@ -119,10 +118,10 @@ public final class TestColumnInfoRecordsAggregate {
 	private static void confirmCIR(List<org.apache.poi.hssf.record.Record> cirs, int ix, int startColIx, int endColIx, int level, boolean isHidden, boolean isCollapsed) {
 		assertTrue(cirs.get(ix) instanceof ColumnInfoRecord);
 		ColumnInfoRecord cir = (ColumnInfoRecord)cirs.get(ix);
-		assertEquals("startColIx", startColIx, cir.getFirstColumn());
-		assertEquals("endColIx", endColIx, cir.getLastColumn());
-		assertEquals("level", level, cir.getOutlineLevel());
-		assertEquals("hidden", isHidden, cir.getHidden());
-		assertEquals("collapsed", isCollapsed, cir.getCollapsed());
+		assertEquals(startColIx, cir.getFirstColumn(), "startColIx");
+		assertEquals(endColIx, cir.getLastColumn(), "endColIx");
+		assertEquals(level, cir.getOutlineLevel(), "level");
+		assertEquals(isHidden, cir.getHidden(), "hidden");
+		assertEquals(isCollapsed, cir.getCollapsed(), "collapsed");
 	}
 }

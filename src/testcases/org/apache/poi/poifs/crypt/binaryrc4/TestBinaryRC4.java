@@ -18,9 +18,8 @@
 package org.apache.poi.poifs.crypt.binaryrc4;
 
 import static org.apache.poi.util.HexRead.readFromString;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.security.GeneralSecurityException;
 
@@ -29,20 +28,20 @@ import javax.crypto.SecretKey;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.EncryptionMode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestBinaryRC4 {
     @Test
-    public void createKeyDigest() throws GeneralSecurityException {
+    public void createKeyDigest() {
         byte[] docIdData = readFromString("17 F6 D1 6B 09 B1 5F 7B 4C 9D 03 B4 81 B5 B4 4A");
         byte[] expResult = readFromString("C2 D9 56 B2 6B");
-        
+
         EncryptionInfo ei = new EncryptionInfo(EncryptionMode.binaryRC4);
         BinaryRC4EncryptionVerifier ver = (BinaryRC4EncryptionVerifier)ei.getVerifier();
         ver.setSalt(docIdData);
         SecretKey sk = BinaryRC4Decryptor.generateSecretKey("MoneyForNothing", ver);
-        
-        assertArrayEquals("keyDigest mismatch", expResult, sk.getEncoded());
+
+        assertArrayEquals(expResult, sk.getEncoded(), "keyDigest mismatch");
     }
 
     @Test
@@ -81,7 +80,7 @@ public class TestBinaryRC4 {
             String docIdHex, String saltDataHex, String saltHashHex) throws GeneralSecurityException {
         confirmValid(expectedResult, docIdHex, saltDataHex, saltHashHex, null);
     }
-    
+
     private static void confirmValid(boolean expectedResult, String docIdHex,
             String saltDataHex, String saltHashHex, String password) throws GeneralSecurityException {
         byte[] docId = readFromString(docIdHex);
@@ -96,11 +95,6 @@ public class TestBinaryRC4 {
 
         String pass = password == null ? Decryptor.DEFAULT_PASSWORD : password;
         boolean actResult = ei.getDecryptor().verifyPassword(pass);
-        if (expectedResult) {
-            assertTrue("validate failed", actResult);
-        } else {
-            assertFalse("validate succeeded unexpectedly", actResult);
-        }        
+        assertEquals(expectedResult, actResult, expectedResult ? "validate failed" : "validate succeeded unexpectedly");
     }
-    
 }

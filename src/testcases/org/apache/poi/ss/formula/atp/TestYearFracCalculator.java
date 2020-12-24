@@ -17,14 +17,14 @@
 
 package org.apache.poi.ss.formula.atp;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Calendar;
 
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Specific test cases for YearFracCalculator
@@ -56,7 +56,7 @@ public final class TestYearFracCalculator {
 			System.out.println(startDate + " " + endDate + " off by " + hours + " hours");
 			assertEquals(expectedValue, actualValue, 0.000000001);
 		}
-		
+
 	}
 
 	private static double md(int year, int month, int day) {

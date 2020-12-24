@@ -17,14 +17,15 @@
 
 package org.apache.poi.hsmf;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 /**
@@ -36,7 +37,7 @@ public final class TestBlankFileRead {
     /**
      * Initialize this test, load up the blank.msg mapi message.
      */
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         POIDataSamples samples = POIDataSamples.getHSMFInstance();
         mapiMessage = new MAPIMessage(samples.openResourceAsStream("blank.msg"));
@@ -45,9 +46,9 @@ public final class TestBlankFileRead {
     /**
      * Check if we can read the body of the blank message, we expect "".
      */
-    @Test(expected = ChunkNotFoundException.class)
-    public void testReadBody() throws ChunkNotFoundException {
-        mapiMessage.getTextBody();
+    @Test
+    public void testReadBody() {
+        assertThrows(ChunkNotFoundException.class, mapiMessage::getTextBody);
     }
 
 
@@ -76,9 +77,9 @@ public final class TestBlankFileRead {
     /**
      * Test to see if we can read the FROM Chunk.
      */
-    @Test(expected = ChunkNotFoundException.class)
-    public void testReadDisplayFrom() throws ChunkNotFoundException {
-        mapiMessage.getDisplayFrom();
+    @Test
+    public void testReadDisplayFrom() {
+        assertThrows(ChunkNotFoundException.class, mapiMessage::getDisplayFrom);
     }
 
     /**
@@ -106,8 +107,8 @@ public final class TestBlankFileRead {
     /**
      * Check if we can read the subject line of the blank message, we expect ""
      */
-    @Test(expected = ChunkNotFoundException.class)
-    public void testReadConversationTopic() throws ChunkNotFoundException {
-        mapiMessage.getConversationTopic();
+    @Test
+    public void testReadConversationTopic() {
+        assertThrows(ChunkNotFoundException.class, mapiMessage::getConversationTopic);
     }
 }

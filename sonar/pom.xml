@@ -80,7 +80,7 @@
 
         <!-- define some of the third-party or plugin-versions globally to use the same in all modules -->
         <xmlbeans.version>4.0.0</xmlbeans.version>
-        <junit.version>4.13.1</junit.version>
+        <junit.version>5.7.0</junit.version>
         <xmlunit.version>2.8.0</xmlunit.version>
         <mockito.version>3.6.0</mockito.version>
         <maven.plugin.resources.version>3.2.0</maven.plugin.resources.version>
@@ -110,13 +110,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${maven.plugin.surefire.version}</version>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.apache.maven.surefire</groupId>
-                        <artifactId>surefire-junit47</artifactId>
-                        <version>${maven.plugin.surefire.version}</version>
-                    </dependency>
-                </dependencies>
                 <configuration>
                     <printSummary>false</printSummary>
                     <systemPropertyVariables>
@@ -164,8 +157,8 @@
 
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
@@ -179,6 +172,12 @@
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
             <version>${mockito.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest</artifactId>
+            <version>2.2</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

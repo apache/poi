@@ -17,16 +17,16 @@
 
 package org.apache.poi.hwpf.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.hwpf.HWPFDocFixture;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public final class TestStyleSheet {
   private StyleSheet _styleSheet;
@@ -64,7 +64,7 @@ public final class TestStyleSheet {
     assertEquals(newStyleSheet, _styleSheet);
   }
 
-  @Before
+  @BeforeEach
   public void setUp() throws IOException {
     /**@todo verify the constructors*/
     _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
@@ -77,7 +77,7 @@ public final class TestStyleSheet {
     _styleSheet = new StyleSheet(tableStream, fib.getFcStshf());
   }
 
-  @After
+  @AfterEach
   public void tearDown() throws Exception {
     _styleSheet = null;
     _hWPFDocFixture.tearDown();

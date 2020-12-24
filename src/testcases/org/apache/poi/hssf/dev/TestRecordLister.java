@@ -23,10 +23,10 @@ import java.io.PrintStream;
 import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.util.NullPrintStream;
 import org.apache.poi.util.RecordFormatException;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 
 public class TestRecordLister extends BaseTestIteratingXLS {
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         EXCLUDED.clear();
         EXCLUDED.put("46904.xls", OldExcelFormatException.class);

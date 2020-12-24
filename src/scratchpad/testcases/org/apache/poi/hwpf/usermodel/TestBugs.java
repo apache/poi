@@ -18,9 +18,10 @@ package org.apache.poi.hwpf.usermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertNotContained;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -41,17 +42,15 @@ import org.apache.poi.hwpf.converter.WordToHtmlConverter;
 import org.apache.poi.hwpf.converter.WordToTextConverter;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.extractor.WordExtractor;
-import org.apache.poi.hwpf.model.FieldsDocumentPart;
 import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.PicturesTable;
-import org.apache.poi.hwpf.model.PlexOfField;
 import org.apache.poi.hwpf.model.SubdocumentType;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
 import org.apache.poi.util.XMLHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
 /**
@@ -78,9 +77,8 @@ public class TestBugs{
             Paragraph actParagraph = actual.getParagraph(p);
 
             assertEqualsIgnoreNewline(expParagraph.text(), actParagraph.text());
-            assertEquals("Different isInTable flags for paragraphs #" + p
-                    + " -- " + expParagraph + " -- " + actParagraph + ".",
-                    expParagraph.isInTable(), actParagraph.isInTable());
+            assertEquals( expParagraph.isInTable(), actParagraph.isInTable(), "Different isInTable flags for paragraphs #" + p
+                    + " -- " + expParagraph + " -- " + actParagraph + "." );
             assertEquals(expParagraph.isTableRowEnd(),
                     actParagraph.isTableRowEnd());
 
@@ -476,7 +474,7 @@ public class TestBugs{
         for (String filename : filenames) {
             HWPFDocument hwpfDocument = HWPFTestDataSamples.openSampleFile(filename);
 
-            assertNotNull(filename, hwpfDocument.getPicturesTable().getAllPictures());
+            assertNotNull( hwpfDocument.getPicturesTable().getAllPictures(), filename );
 
             hwpfDocument.close();
         }
@@ -832,13 +830,11 @@ public class TestBugs{
         assertNotNull(hwpfDocument);
     }
 
-    @Test(expected=ArrayIndexOutOfBoundsException.class)
+    @Test
     public void test57603SevenRowTable() throws Exception {
-        HWPFDocument hwpfDocument = HWPFTestDataSamples.openSampleFile("57603-seven_columns.doc");
-        HWPFDocument hwpfDocument2 = HWPFTestDataSamples.writeOutAndReadBack(hwpfDocument);
-        assertNotNull(hwpfDocument2);
-        hwpfDocument2.close();
-        hwpfDocument.close();
+        try (HWPFDocument hwpfDocument = HWPFTestDataSamples.openSampleFile("57603-seven_columns.doc")) {
+            assertThrows(ArrayIndexOutOfBoundsException.class, () -> HWPFTestDataSamples.writeOutAndReadBack(hwpfDocument));
+        }
     }
 
     @Test

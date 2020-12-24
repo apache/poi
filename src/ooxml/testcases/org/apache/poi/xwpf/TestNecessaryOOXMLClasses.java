@@ -17,8 +17,10 @@
 
 package org.apache.poi.xwpf;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTEm;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTTblLayoutType;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STEm;
@@ -30,13 +32,13 @@ public class TestNecessaryOOXMLClasses {
     @Test
     public void testProblemClasses() {
         CTTblLayoutType ctTblLayoutType = CTTblLayoutType.Factory.newInstance();
-        Assert.assertNotNull(ctTblLayoutType);
+        assertNotNull(ctTblLayoutType);
         STTblLayoutType stTblLayoutType = STTblLayoutType.Factory.newInstance();
-        Assert.assertNotNull(stTblLayoutType);
+        assertNotNull(stTblLayoutType);
         CTEm ctEm = CTEm.Factory.newInstance();
-        Assert.assertNotNull(ctEm);
+        assertNotNull(ctEm);
         STEm stEm = STEm.Factory.newInstance();
-        Assert.assertNotNull(stEm);
-        Assert.assertEquals(STEm.CIRCLE, STEm.Enum.forString("circle"));
+        assertNotNull(stEm);
+        assertEquals(STEm.CIRCLE, STEm.Enum.forString("circle"));
     }
 }

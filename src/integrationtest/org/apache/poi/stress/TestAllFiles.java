@@ -17,9 +17,8 @@
 package org.apache.poi.stress;
 
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -34,18 +33,16 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.apache.poi.OldFileFormatException;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.crypt.Decryptor;
 import org.apache.tools.ant.DirectoryScanner;
-import org.junit.AssumptionViolatedException;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.opentest4j.TestAbortedException;
 
 /**
  *  This is an integration test which performs various actions on all stored test-files and tries
@@ -54,7 +51,7 @@ import org.junit.runners.Parameterized.Parameters;
  *  This test looks for any file under the test-data directory and tries to do some useful
  *  processing with it based on it's type.
  *
- *  The test is implemented as a junit {@link Parameterized} test, which leads
+ *  The test is implemented as a junit {@link ParameterizedTest} test, which leads
  *  to one test-method call for each file (currently around 950 files are handled).
  *
  *  There is a a mapping of extension to implementations of the interface
@@ -71,7 +68,6 @@ import org.junit.runners.Parameterized.Parameters;
  *  here as well! This is to ensure that files that should not work really do not work, e.g.
  *  that we do not remove expected sanity checks.
  */
-@RunWith(Parameterized.class)
 public class TestAllFiles {
     private static final File ROOT_DIR = new File("test-data");
     private static final boolean IGNORE_SCRATCHPAD = Boolean.getBoolean("scratchpad.ignore");
@@ -344,8 +340,7 @@ public class TestAllFiles {
         "spreadsheet/61300.xls"//intentionally fuzzed -- used to cause infinite loop
     );
 
-    @Parameters(name="{index}: {0} using {1}")
-    public static Iterable<Object[]> files() {
+    public static Stream<Arguments> files() {
         DirectoryScanner scanner = new DirectoryScanner();
         scanner.setBasedir(ROOT_DIR);
         scanner.setExcludes(SCAN_EXCLUDES);
@@ -354,7 +349,7 @@ public class TestAllFiles {
 
         System.out.println("Handling " + scanner.getIncludedFiles().length + " files");
 
-        List<Object[]> files = new ArrayList<>();
+        List<Arguments> files = new ArrayList<>();
         for(String file : scanner.getIncludedFiles()) {
             file = file.replace('\\', '/'); // ... failures/handlers lookup doesn't work on windows otherwise
             if (IGNORED.contains(file)) {
@@ -362,49 +357,41 @@ public class TestAllFiles {
                 continue;
             }
             FileHandler handler = HANDLERS.get(getExtension(file));
-            files.add(new Object[] { file, handler });
+            files.add(Arguments.of( file, handler ));
 
             // for some file-types also run OPCFileHandler
             if(handler instanceof XSSFFileHandler ||
                 handler instanceof XWPFFileHandler ||
                 handler instanceof XSLFFileHandler ||
                 handler instanceof XDGFFileHandler) {
-                files.add(new Object[] { file, new OPCFileHandler() });
+                files.add(Arguments.of( file, new OPCFileHandler() ));
             }
 
             if (handler instanceof HSSFFileHandler ||
                 handler instanceof HSLFFileHandler ||
                 handler instanceof HWPFFileHandler ||
                 handler instanceof HDGFFileHandler) {
-                files.add(new Object[] { file, new HPSFFileHandler() });
+                files.add(Arguments.of( file, new HPSFFileHandler() ));
             }
         }
 
-        return files;
+        return files.stream();
     }
 
-    @SuppressWarnings("DefaultAnnotationParam")
-    @Parameter(value=0)
-    public String file;
+    // the display name annotation is ignored by ants junitlauncher listeners :(
+    // ... even when using a custom display name generator
+    @ParameterizedTest(name = "#{index} {0}" )
+    @MethodSource("files")
+    public void testAllFiles(String file, FileHandler handler) throws Exception {
+        assertNotNull(handler, "Did not find a handler for file " + file);
 
-    @Parameter(value=1)
-    public FileHandler handler;
-
-    @Before
-    public void setPassword() {
         // this also removes the password for non encrypted files
         String pass = TestAllFiles.FILE_PASSWORD.get(file);
         Biff8EncryptionKey.setCurrentUserPassword(pass);
-    }
 
-    @Test
-    public void testAllFiles() throws Exception {
-        if(handler == null) {
-            fail("Did not find a handler for file " + file);
-        }
 
         System.out.println("Reading " + file + " with " + handler.getClass().getSimpleName());
-        assertNotNull("Unknown file extension for file: " + file + ": " + getExtension(file), handler);
+        assertNotNull( handler, "Unknown file extension for file: " + file + ": " + getExtension(file) );
         File inputFile = new File(ROOT_DIR, file);
 
         // special cases where docx-handling breaks, but OPCPackage handling works
@@ -416,14 +403,12 @@ public class TestAllFiles {
         try {
             try (InputStream stream = new BufferedInputStream(new FileInputStream(inputFile), 64 * 1024)) {
                 handler.handleFile(stream, file);
-                assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!",
-                        OLD_FILES_HWPF.contains(file) && !ignoreHPSF);
+                assertFalse( OLD_FILES_HWPF.contains(file) && !ignoreHPSF, "Expected to fail for file " + file + " and handler " + handler + ", but did not fail!" );
             }
 
             handler.handleExtracting(inputFile);
 
-            assertFalse("Expected to fail for file " + file + " and handler " + handler + ", but did not fail!",
-                EXPECTED_FAILURES.contains(file) && !ignoredOPC && !ignoreHPSF);
+            assertFalse( EXPECTED_FAILURES.contains(file) && !ignoredOPC && !ignoreHPSF, "Expected to fail for file " + file + " and handler " + handler + ", but did not fail!" );
         } catch (OldFileFormatException e) {
             // for old word files we should still support extracting text
             if(OLD_FILES_HWPF.contains(file)) {
@@ -435,7 +420,7 @@ public class TestAllFiles {
                     throw new Exception("While handling " + file, e);
                 }
             }
-        } catch (AssumptionViolatedException e) {
+        } catch (TestAbortedException e) {
             // file handler ignored this file
         } catch (Exception e) {
             // check if we expect failure for this file
@@ -448,7 +433,7 @@ public class TestAllFiles {
         try {
             // let some file handlers do additional stuff
             handler.handleAdditional(inputFile);
-        } catch (AssumptionViolatedException e) {
+        } catch (TestAbortedException e) {
             // file handler ignored this file
         } catch (Exception e) {
             if(!EXPECTED_FAILURES.contains(file) && !AbstractFileHandler.EXPECTED_EXTRACTOR_FAILURES.contains(file)) {

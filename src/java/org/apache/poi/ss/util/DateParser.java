@@ -35,7 +35,7 @@ import org.apache.poi.util.LocaleUtil;
  * Parser for java dates.
  */
 public class DateParser {
-    private DateParser() {
+    protected DateParser() {
         // enforcing singleton
     }
 

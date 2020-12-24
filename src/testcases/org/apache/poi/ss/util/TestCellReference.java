@@ -17,24 +17,24 @@
 
 package org.apache.poi.ss.util;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
-
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the common CellReference works as we need it to.
@@ -288,7 +288,7 @@ public final class TestCellReference {
         confirmCrInRange(false, "XFD", "1048577", v2007);
         confirmCrInRange(false, "XFE", "1048576", v2007);
 
-        assertFalse("Identified bug 47312a", CellReference.cellReferenceIsWithinRange("B", "0", v97));
+        assertFalse(CellReference.cellReferenceIsWithinRange("B", "0", v97), "Identified bug 47312a");
 
         confirmCrInRange(false, "A", "0", v97);
         confirmCrInRange(false, "A", "0", v2007);
@@ -296,35 +296,17 @@ public final class TestCellReference {
 
     @Test
     public void testInvalidReference() {
-        try {
-            new CellReference("Sheet1!#REF!");
-            fail("Shouldn't be able to create a #REF! refence");
-        } catch(IllegalArgumentException expected) {
-            // expected here
-        }
-
-        try {
-            new CellReference("'MySheetName'!#REF!");
-            fail("Shouldn't be able to create a #REF! refence");
-        } catch(IllegalArgumentException expected) {
-            // expected here
-        }
-
-        try {
-            new CellReference("#REF!");
-            fail("Shouldn't be able to create a #REF! refence");
-        } catch(IllegalArgumentException expected) {
-            // expected here
+        for (String s : new String[]{"Sheet1!#REF!", "'MySheetName'!#REF!", "#REF!"}) {
+            assertThrows(IllegalArgumentException.class, () -> new CellReference(s),
+                "Shouldn't be able to create a #REF! "+s);
         }
     }
 
-    private static void confirmCrInRange(boolean expResult, String colStr, String rowStr,
-            SpreadsheetVersion sv) {
-        if (expResult == CellReference.cellReferenceIsWithinRange(colStr, rowStr, sv)) {
-            return;
-        }
-        fail("expected (c='" + colStr + "', r='" + rowStr + "' to be "
-                + (expResult ? "within" : "out of") + " bounds for version " + sv.name());
+    private static void confirmCrInRange(boolean expResult, String colStr, String rowStr, SpreadsheetVersion sv) {
+        assertEquals(expResult, CellReference.cellReferenceIsWithinRange(colStr, rowStr, sv),
+            "expected (c='" + colStr + "', r='" + rowStr + "' to be "
+            + (expResult ? "within" : "out of") + " bounds for version " + sv.name()
+        );
     }
 
     @Test
@@ -338,12 +320,9 @@ public final class TestCellReference {
         assertEquals(0, CellReference.convertColStringToIndex("$A"));
         assertEquals(1, CellReference.convertColStringToIndex("$B"));
 
-        try {
-            CellReference.convertColStringToIndex("A$");
-            fail("Should throw exception here");
-        } catch (IllegalArgumentException expected) {
-            assertTrue(expected.getMessage().contains("A$"));
-        }
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+            () -> CellReference.convertColStringToIndex("A$"));
+        assertTrue(e.getMessage().contains("A$"));
     }
 
     @Test
@@ -368,10 +347,10 @@ public final class TestCellReference {
         assertEquals("HOME", ref.getSheetName());
         assertEquals(168, ref.getRow());
         assertEquals(-1, ref.getCol());
-        assertTrue("row absolute", ref.isRowAbsolute());
+        assertTrue(ref.isRowAbsolute(), "row absolute");
         //assertFalse("column absolute/relative is undefined", ref.isColAbsolute());
     }
-    
+
     @Test
     public void getSheetName() {
         assertNull(new CellReference("A5").getSheetName());
@@ -381,39 +360,38 @@ public final class TestCellReference {
         assertEquals("Sheet1", new CellReference("Sheet1!A5").getSheetName());
         assertEquals("Sheet 1", new CellReference("'Sheet 1'!A5").getSheetName());
     }
-    
+
     @Test
     public void testToString() {
         CellReference ref = new CellReference("'Sheet 1'!A5");
         assertEquals("org.apache.poi.ss.util.CellReference ['Sheet 1'!A5]", ref.toString());
     }
-    
+
     @Test
     public void testEqualsAndHashCode() {
         CellReference ref1 = new CellReference("'Sheet 1'!A5");
         CellReference ref2 = new CellReference("Sheet 1", 4, 0, false, false);
-        assertEquals("equals", ref1, ref2);
-        assertEquals("hash code", ref1.hashCode(), ref2.hashCode());
+        assertEquals(ref1, ref2);
+        assertEquals(ref1.hashCode(), ref2.hashCode());
 
         //noinspection ObjectEqualsNull
-        assertNotEquals("null", null, ref1);
-        assertNotEquals("3D vs 2D", ref1, new CellReference("A5"));
-        assertNotEquals("type", ref1, 0L);
+        assertNotEquals(null, ref1);
+        assertNotEquals(ref1, new CellReference("A5"));
     }
 
     @Test
     public void isRowWithinRange() {
         SpreadsheetVersion ss = SpreadsheetVersion.EXCEL2007;
-        assertFalse("1 before first row", CellReference.isRowWithinRange("0", ss));
-        assertTrue("first row", CellReference.isRowWithinRange("1", ss));
-        assertTrue("last row", CellReference.isRowWithinRange("1048576", ss));
-        assertFalse("1 beyond last row", CellReference.isRowWithinRange("1048577", ss));
+        assertFalse(CellReference.isRowWithinRange("0", ss), "1 before first row");
+        assertTrue(CellReference.isRowWithinRange("1", ss), "first row");
+        assertTrue(CellReference.isRowWithinRange("1048576", ss), "last row");
+        assertFalse(CellReference.isRowWithinRange("1048577", ss), "1 beyond last row");
 
         // int versions of above, using 0-based indices
-        assertFalse("1 before first row", CellReference.isRowWithinRange(-1, ss));
-        assertTrue("first row", CellReference.isRowWithinRange(0, ss));
-        assertTrue("last row", CellReference.isRowWithinRange(1048575, ss));
-        assertFalse("1 beyond last row", CellReference.isRowWithinRange(1048576, ss));
+        assertFalse(CellReference.isRowWithinRange(-1, ss), "1 before first row");
+        assertTrue(CellReference.isRowWithinRange(0, ss), "first row");
+        assertTrue(CellReference.isRowWithinRange(1048575, ss), "last row");
+        assertFalse(CellReference.isRowWithinRange(1048576, ss), "1 beyond last row");
     }
 
     @Test
@@ -421,63 +399,59 @@ public final class TestCellReference {
         String rowNum = "4000000000";
         assertFalse(CellReference.isRowWithinRange(rowNum, SpreadsheetVersion.EXCEL2007));
     }
-    
-    @Test(expected=NumberFormatException.class)
+
+    @Test
     public void isRowWithinRangeNonInteger_Alpha() {
         String rowNum = "NotANumber";
-        CellReference.isRowWithinRange(rowNum, SpreadsheetVersion.EXCEL2007);
+        assertThrows(NumberFormatException.class, () -> CellReference.isRowWithinRange(rowNum, SpreadsheetVersion.EXCEL2007));
     }
 
     @Test
     public void isColWithinRange() {
         SpreadsheetVersion ss = SpreadsheetVersion.EXCEL2007;
-        assertTrue("(empty)", CellReference.isColumnWithinRange("", ss));
-        assertTrue("first column (A)", CellReference.isColumnWithinRange("A", ss));
-        assertTrue("last column (XFD)", CellReference.isColumnWithinRange("XFD", ss));
-        assertFalse("1 beyond last column (XFE)", CellReference.isColumnWithinRange("XFE", ss));
-    }
-    
-    @Test(expected=IllegalArgumentException.class)
-    public void unquotedSheetName() {
-        new CellReference("'Sheet 1!A5");
+        assertTrue(CellReference.isColumnWithinRange("", ss), "(empty)");
+        assertTrue(CellReference.isColumnWithinRange("A", ss), "first column (A)");
+        assertTrue(CellReference.isColumnWithinRange("XFD", ss), "last column (XFD)");
+        assertFalse(CellReference.isColumnWithinRange("XFE", ss), "1 beyond last column (XFE)");
     }
 
-    @Test(expected=IllegalArgumentException.class)
-    public void mismatchedQuotesSheetName() {
-        new CellReference("Sheet 1!A5");
+    @Test
+    public void unquotedSheetName() {
+        assertThrows(IllegalArgumentException.class, () -> new CellReference("'Sheet 1!A5"));
     }
-    
+
+    @Test
+    public void mismatchedQuotesSheetName() {
+        assertThrows(IllegalArgumentException.class, () -> new CellReference("Sheet 1!A5"));
+    }
+
     @Test
     public void escapedSheetName() {
         String escapedName = "'Don''t Touch'!A5";
         String unescapedName = "'Don't Touch'!A5";
         new CellReference(escapedName);
-        try {
-            new CellReference(unescapedName);
-            fail("Sheet names containing apostrophe's must be escaped via a repeated apostrophe");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().startsWith("Bad sheet name quote escaping: "));
-        }
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> new CellReference(unescapedName));
+        assertTrue(e.getMessage().startsWith("Bad sheet name quote escaping: "));
     }
-    
-    @Test(expected=IllegalArgumentException.class)
+
+    @Test
     public void negativeRow() {
-        new CellReference("sheet", -2, 0, false, false);
+        assertThrows(IllegalArgumentException.class, () -> new CellReference("sheet", -2, 0, false, false));
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test
     public void negativeColumn() {
-        new CellReference("sheet", 0, -2, false, false);
-    }
-    
-    @Test(expected=IllegalArgumentException.class)
-    public void classifyEmptyStringCellReference() {
-        CellReference.classifyCellReference("", SpreadsheetVersion.EXCEL2007);
+        assertThrows(IllegalArgumentException.class, () -> new CellReference("sheet", 0, -2, false, false));
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test
+    public void classifyEmptyStringCellReference() {
+        assertThrows(IllegalArgumentException.class, () -> CellReference.classifyCellReference("", SpreadsheetVersion.EXCEL2007));
+    }
+
+    @Test
     public void classifyInvalidFirstCharCellReference() {
-        CellReference.classifyCellReference("!A5", SpreadsheetVersion.EXCEL2007);
+        assertThrows(IllegalArgumentException.class, () -> CellReference.classifyCellReference("!A5", SpreadsheetVersion.EXCEL2007));
     }
 
     @Test

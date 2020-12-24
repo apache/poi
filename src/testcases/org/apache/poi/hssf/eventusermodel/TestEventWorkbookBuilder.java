@@ -17,9 +17,9 @@
 
 package org.apache.poi.hssf.eventusermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,14 +31,13 @@ import org.apache.poi.hssf.eventusermodel.EventWorkbookBuilder.SheetRecordCollec
 import org.apache.poi.hssf.model.HSSFFormulaParser;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.Ref3DPtg;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link EventWorkbookBuilder}
@@ -47,7 +46,7 @@ public final class TestEventWorkbookBuilder {
     private final List<FormulaRecord> fRecs = new ArrayList<>();
     private SheetRecordCollectingListener listener;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         HSSFRequest req = new HSSFRequest();
         fRecs.clear();

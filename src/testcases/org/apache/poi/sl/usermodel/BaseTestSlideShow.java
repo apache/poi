@@ -16,11 +16,11 @@
 ==================================================================== */
 package org.apache.poi.sl.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
@@ -34,7 +34,7 @@ import org.apache.poi.common.usermodel.fonts.FontInfo;
 import org.apache.poi.sl.draw.DrawPaint;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.TabStop.TabStopType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public abstract class BaseTestSlideShow<
         S extends Shape<S,P>,
@@ -44,7 +44,7 @@ public abstract class BaseTestSlideShow<
 
     public abstract SlideShow<S,P> createSlideShow();
 
-    public abstract SlideShow<S,P> reopen(SlideShow<S,P> show);
+    public abstract SlideShow<S,P> reopen(SlideShow<S,P> show) throws IOException;
 
     @Test
     public void addPicture_File() throws IOException {

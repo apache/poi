@@ -24,8 +24,7 @@ import java.io.IOException;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
-import org.junit.AfterClass;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestCryptoAPI {
     final HSSFITestDataProvider ssTests = HSSFITestDataProvider.instance;
@@ -44,7 +43,7 @@ public class TestCryptoAPI {
         // CryptoAPI
         validateContent("35897-type4.xls", "freedom", "Sheet1\nhello there!\n");
     }
-    
+
     private void validateContent(String wbFile, String password, String textExpected) throws IOException {
         Biff8EncryptionKey.setCurrentUserPassword(password);
         try (HSSFWorkbook wb = ssTests.openSampleWorkbook(wbFile);

@@ -27,10 +27,10 @@ import static org.apache.poi.hssf.record.SupBookRecord.CH_UP_DIR;
 import static org.apache.poi.hssf.record.SupBookRecord.CH_VOLUME;
 import static org.apache.poi.hssf.record.SupBookRecord.PATH_SEPERATOR;
 import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the serialization and deserialization of the SupBook record

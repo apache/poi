@@ -20,7 +20,7 @@ import org.apache.poi.ss.formula.EvaluationSheet;
 import org.apache.poi.ss.usermodel.BaseTestXEvaluationSheet;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 
 import java.io.IOException;
 import java.util.AbstractMap;
@@ -31,7 +31,7 @@ import java.util.Map;
 public class TestSXSSFEvaluationSheet extends BaseTestXEvaluationSheet {
     private List<Workbook> workbooksToClose = new ArrayList<>();
 
-    @After
+    @AfterEach
     public void closeWorkbooks() throws IOException {
         for (Workbook workbook : workbooksToClose) {
             workbook.close();

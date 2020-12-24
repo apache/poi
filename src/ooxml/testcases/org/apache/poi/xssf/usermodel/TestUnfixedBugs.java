@@ -17,10 +17,10 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -51,7 +51,7 @@ import org.apache.poi.ss.util.RegionUtil;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 
 /**
@@ -105,13 +105,12 @@ public final class TestUnfixedBugs {
         int millisecondsInDay2 = (int)((value2 - wholeDays2) * DateUtil.DAY_MILLISECONDS + 0.5);
 
         assertEquals(wholeDays1, wholeDays2);
-        // here we see that the time-value is 5 milliseconds apart, one is 86399000 and the other is 86398995, 
+        // here we see that the time-value is 5 milliseconds apart, one is 86399000 and the other is 86398995,
         // thus one is one second higher than the other
-        assertEquals("The time-values are 5 milliseconds apart",
-                millisecondsInDay1, millisecondsInDay2);
+        assertEquals(millisecondsInDay1, millisecondsInDay2, "The time-values are 5 milliseconds apart");
 
         // when we do the calendar-stuff, there is a boolean which determines if
-        // the milliseconds are rounded or not, having this at "false" causes the 
+        // the milliseconds are rounded or not, having this at "false" causes the
         // second to be different here!
         int startYear = 1900;
         int dayAdjust = -1; // Excel thinks 2/29/1900 is a valid date, which it isn't
@@ -133,7 +132,7 @@ public final class TestUnfixedBugs {
         assertEquals(DateUtil.getJavaDate(value1, false), DateUtil.getJavaDate(value2, false));
     }
 
-    // When this is fixed, the test case should go to BaseTestXCell with 
+    // When this is fixed, the test case should go to BaseTestXCell with
     // adjustments to use _testDataProvider to also verify this for XSSF
     @Test
     public void testBug57294() throws IOException {
@@ -263,8 +262,7 @@ public final class TestUnfixedBugs {
         checkRow57423(testSheet, 8, "8");
         checkRow57423(testSheet, 9, "9");
 
-        assertNull("Row number 10 should be gone after the shift",
-                testSheet.getRow(10));
+        assertNull(testSheet.getRow(10), "Row number 10 should be gone after the shift");
 
         checkRow57423(testSheet, 11, "11");
         checkRow57423(testSheet, 12, "10");
@@ -291,21 +289,19 @@ public final class TestUnfixedBugs {
         assertTrue(posR12 != -1);
         assertTrue(posR13 != -1);
 
-        assertTrue("Need to find row 12 before row 13 after the shifting, but had row 12 at " + posR12 + " and row 13 at " + posR13,
-                posR12 < posR13);
+        assertTrue(posR12 < posR13, "Need to find row 12 before row 13 after the shifting, but had row 12 at " + posR12 + " and row 13 at " + posR13);
     }
 
     private void checkRow57423(Sheet testSheet, int rowNum, String contents) {
         Row row = testSheet.getRow(rowNum);
-        assertNotNull("Expecting row at rownum " + rowNum, row);
+        assertNotNull(row, "Expecting row at rownum " + rowNum);
 
         CTRow ctRow = ((XSSFRow)row).getCTRow();
         assertEquals(rowNum+1, ctRow.getR());
 
         Cell cell = row.getCell(0);
-        assertNotNull("Expecting cell at rownum " + rowNum, cell);
-        assertEquals("Did not have expected contents at rownum " + rowNum,
-                contents + ".0", cell.toString());
+        assertNotNull(cell, "Expecting cell at rownum " + rowNum);
+        assertEquals( contents + ".0", cell.toString(), "Did not have expected contents at rownum " + rowNum );
     }
 
     @Test
@@ -338,8 +334,7 @@ public final class TestUnfixedBugs {
         long maxSeenRowNum = 0; //1-based
         for (final CTRow ctRow : wb.getSheetAt(0).getCTWorksheet().getSheetData().getRowList()) {
             final long rowNum = ctRow.getR(); //1-based
-            assertTrue("Row " + rowNum + " (1-based) is not in ascending order; previously saw " + maxSeenRowNum,
-                    rowNum > maxSeenRowNum);
+            assertTrue(rowNum > maxSeenRowNum, "Row " + rowNum + " (1-based) is not in ascending order; previously saw " + maxSeenRowNum);
             maxSeenRowNum = rowNum;
         }
     }
@@ -371,10 +366,10 @@ public final class TestUnfixedBugs {
         }
     }
 
-    public class HsGetValue implements FreeRefFunction {
+    public static class HsGetValue implements FreeRefFunction {
         public static final String name = "HsGetValue";
 
-        private Hashtable<CellAddress, String> cellValues;
+        private final Hashtable<CellAddress, String> cellValues;
 
         public HsGetValue(Hashtable<CellAddress, String> cellValues) {
             super();

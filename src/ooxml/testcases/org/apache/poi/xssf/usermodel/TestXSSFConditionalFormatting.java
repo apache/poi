@@ -18,8 +18,8 @@
  */
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
@@ -35,7 +35,7 @@ import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.XSSFITestDataProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * XSSF-specific Conditional Formatting tests
@@ -47,13 +47,13 @@ public class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting
     }
 
     @Override
-    protected void assertColour(String hexExpected, Color actual) {
-        assertNotNull("Colour must be given", actual);
-        XSSFColor colour = (XSSFColor)actual;
+    protected void assertColor(String hexExpected, Color actual) {
+        assertNotNull(actual, "Color must be given");
+        XSSFColor color = (XSSFColor)actual;
         if (hexExpected.length() == 8) {
-            assertEquals(hexExpected, colour.getARGBHex());
+            assertEquals(hexExpected, color.getARGBHex());
         } else {
-            assertEquals(hexExpected, colour.getARGBHex().substring(2));
+            assertEquals(hexExpected, color.getARGBHex().substring(2));
         }
     }
 
@@ -61,7 +61,7 @@ public class TestXSSFConditionalFormatting extends BaseTestConditionalFormatting
     public void testRead() throws IOException {
         testRead("WithConditionalFormatting.xlsx");
     }
-    
+
     @Test
     public void testReadOffice2007() throws IOException {
         testReadOffice2007("NewStyleConditionalFormattings.xlsx");

@@ -22,13 +22,14 @@ import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getSampleFile;
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.getSampleFileName;
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.openSampleStream;
 import static org.apache.poi.openxml4j.opc.PackagingURIHelper.createPartName;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -70,12 +71,12 @@ import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.ODFNotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
-import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.opc.internal.ZipHelper;
 import org.apache.poi.openxml4j.util.ZipSecureFile;
+import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
@@ -88,10 +89,9 @@ import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
-import org.apache.xmlbeans.XmlException;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.function.ThrowingRunnable;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -288,7 +288,7 @@ public final class TestPackage {
         for (int i = 0; i < nodeCount; i++) {
             Element element = (Element) nodeList.item(i);
             String value = element.getAttribute(PackageRelationship.TARGET_ATTRIBUTE_NAME);
-            assertTrue("Root target must not start with a leading slash ('/'): " + value, value.charAt(0) != '/');
+            assertTrue(value.charAt(0) != '/', "Root target must not start with a leading slash ('/'): " + value);
         }
 
     }
@@ -340,11 +340,7 @@ public final class TestPackage {
 		StreamHelper.saveXmlInStream(doc, corePart.getOutputStream());
 
 		// Save and close
-		try {
-			pkg.close();
-		} catch (IOException e) {
-			fail();
-		}
+		assertDoesNotThrow(pkg::close);
 
 		ZipFileAssert.assertEquals(expectedFile, targetFile);
 		assertTrue(targetFile.delete());
@@ -406,7 +402,7 @@ public final class TestPackage {
      * TODO: fix and enable
      */
     @Test
-	@Ignore
+	@Disabled
     public void removePartRecursive() throws IOException, InvalidFormatException, URISyntaxException {
 		String originalFile = getSampleFileName("TestPackageCommon.docx");
 		File targetFile = getOutputFile("TestPackageRemovePartRecursiveOUTPUT.docx");
@@ -519,12 +515,8 @@ public final class TestPackage {
         FileHelper.copyFile(origFile, tempFile);
 		try (OPCPackage p = OPCPackage.open(tempFile.toString(), PackageAccess.READ_WRITE)) {
 			// Save it to the same file - not allowed
-			try {
-				p.save(tempFile);
-				fail("You shouldn't be able to call save(File) to overwrite the current file");
-			} catch(InvalidOperationException e) {
-				// expected here
-			}
+			assertThrows(InvalidOperationException.class, () -> p.save(tempFile),
+				"You shouldn't be able to call save(File) to overwrite the current file");
 		}
         // Delete it
         assertTrue(tempFile.delete());
@@ -668,12 +660,12 @@ public final class TestPackage {
 
 	private void handleNonOOXML(String file, Class<? extends UnsupportedFileFormatException> exception, String... messageParts) throws IOException {
 		try (InputStream stream = xlsSamples.openResourceAsStream(file)) {
-			ThrowingRunnable[] trs = {
+			Executable[] trs = {
 				() -> OPCPackage.open(stream),
 				() -> OPCPackage.open(xlsSamples.getFile(file))
 			};
-			for (ThrowingRunnable tr : trs) {
-				Exception ex = assertThrows("Shouldn't be able to open "+file, exception, tr);
+			for (Executable tr : trs) {
+				Exception ex = assertThrows(exception, tr, "Shouldn't be able to open "+file);
 				Stream.of(messageParts).forEach(mp -> assertTrue(ex.getMessage().contains(mp)));
 			}
 		}
@@ -792,7 +784,7 @@ public final class TestPackage {
 		return false;
 	}
 
-	private void openXmlBombFile(String file) throws IOException, OpenXML4JException, XmlException {
+	private void openXmlBombFile(String file) throws IOException {
 		final double minInf = ZipSecureFile.getMinInflateRatio();
 		ZipSecureFile.setMinInflateRatio(0.002);
 		try (POITextExtractor extractor = ExtractorFactory.createExtractor(XSSFTestDataSamples.getSampleFile(file))) {
@@ -827,7 +819,7 @@ public final class TestPackage {
 	}
 
 	@Test
-	public void zipBombCheckSizesSizeTooBig() throws IOException, EncryptedDocumentException {
+	public void zipBombCheckSizesSizeTooBig() throws EncryptedDocumentException {
 		POIXMLException ex = assertThrows(
 			POIXMLException.class,
 			() -> getZipStatsAndConsume((max_size, min_ratio) -> {
@@ -896,10 +888,10 @@ public final class TestPackage {
     }
 
     // bug 60128
-    @Test(expected=NotOfficeXmlFileException.class)
-    public void testCorruptFile() throws InvalidFormatException {
+    @Test
+    public void testCorruptFile() {
         File file = getSampleFile("invalid.xlsx");
-        OPCPackage.open(file, PackageAccess.READ);
+        assertThrows(NotOfficeXmlFileException.class, () -> OPCPackage.open(file, PackageAccess.READ));
     }
 
 	private interface CountingStream {
@@ -944,16 +936,19 @@ public final class TestPackage {
 						break;
 				}
 			}
-			assertTrue("Core not found in " + p.getParts(), foundCoreProps);
-			assertFalse("Document should not be found in " + p.getParts(), foundDocument);
-			assertFalse("Theme1 should not found in " + p.getParts(), foundTheme1);
+			assertTrue(foundCoreProps, "Core not found in " + p.getParts());
+			assertFalse(foundDocument, "Document should not be found in " + p.getParts());
+			assertFalse(foundTheme1, "Theme1 should not found in " + p.getParts());
 		}
 	}
 
 	@Test
 	public void unparseableCentralDirectory() throws IOException {
 		File f = getSampleFile("at.pzp.www_uploads_media_PP_Scheinecker-jdk6error.pptx");
-		SlideShowFactory.create(f, null, true).close();
+		try (SlideShow<?,?> ppt = SlideShowFactory.create(f, null, true)) {
+			assertNotNull(ppt);
+			assertNotNull(ppt.getSlides().get(0));
+		}
 	}
 
 	@Test
@@ -967,15 +962,13 @@ public final class TestPackage {
 		}
 
 		// feed the corrupted zip file to OPCPackage
-		try {
-			OPCPackage.open(tmp, PackageAccess.READ);
-		} catch (Exception e) {
-			// expected: the zip file is invalid
-			// this test does not care if open() throws an exception or not.
-		}
+		// expected: the zip file is invalid
+		// this test does not care if open() throws an exception or not.
+		assertThrows(Exception.class, () -> OPCPackage.open(tmp, PackageAccess.READ));
+
 		// If the stream is not closed on exception, it will keep a file descriptor to tmp,
 		// and requests to the OS to delete the file will fail.
-		assertTrue("Can't delete tmp file", tmp.delete());
+		assertTrue(tmp.delete(), "Can't delete tmp file");
 	}
 
 	/**
@@ -984,30 +977,31 @@ public final class TestPackage {
 	 *  stream / file the broken file is being read from.
 	 * See bug #60128 for more
 	 */
-	@Test(expected = NotOfficeXmlFileException.class)
+	@Test
 	public void testTidyStreamOnInvalidFile1() throws Exception {
 		openInvalidFile("SampleSS.ods", false);
 	}
 
-	@Test(expected = NotOfficeXmlFileException.class)
+	@Test
 	public void testTidyStreamOnInvalidFile2() throws Exception {
 		openInvalidFile("SampleSS.ods", true);
 	}
 
-	@Test(expected = NotOfficeXmlFileException.class)
+	@Test
 	public void testTidyStreamOnInvalidFile3() throws Exception {
 		openInvalidFile("SampleSS.txt", false);
 	}
 
-	@Test(expected = NotOfficeXmlFileException.class)
+	@Test
 	public void testTidyStreamOnInvalidFile4() throws Exception {
 		openInvalidFile("SampleSS.txt", true);
 	}
 
-	@Test(expected = InvalidFormatException.class)
+	@Test
 	public void testBug62592() throws Exception {
-		InputStream is = openSampleStream("62592.thmx");
-		/*OPCPackage p =*/ OPCPackage.open(is);
+		try (InputStream is = openSampleStream("62592.thmx")) {
+			assertThrows(InvalidFormatException.class, () -> OPCPackage.open(is));
+		}
 	}
 
 	@Test
@@ -1049,20 +1043,23 @@ public final class TestPackage {
 
 
 
-	private static void openInvalidFile(final String name, final boolean useStream) throws IOException, InvalidFormatException {
-		ZipPackage pkgTest = null;
+	private static void openInvalidFile(final String name, final boolean useStream) throws IOException {
+		ZipPackage[] pkgTest = { null };
 		try (final InputStream is = (useStream) ? xlsSamples.openResourceAsStream(name) : null) {
-			try (final ZipPackage pkg = (useStream) ? new ZipPackage(is, PackageAccess.READ) : new ZipPackage(xlsSamples.getFile(name), PackageAccess.READ)) {
-				pkgTest = pkg;
-				assertNotNull(pkg.getZipArchive());
-				assertFalse(pkg.getZipArchive().isClosed());
-				pkg.getParts();
-				fail("Shouldn't work");
-			}
+			assertThrows(NotOfficeXmlFileException.class, () -> {
+				try (final ZipPackage pkg = (useStream)
+					? new ZipPackage(is, PackageAccess.READ)
+					: new ZipPackage(xlsSamples.getFile(name), PackageAccess.READ)) {
+					pkgTest[0] = pkg;
+					assertNotNull(pkg.getZipArchive());
+					assertFalse(pkg.getZipArchive().isClosed());
+					pkg.getParts();
+				}
+			});
 		} finally {
-			if (pkgTest != null) {
-				assertNotNull(pkgTest.getZipArchive());
-				assertTrue(pkgTest.getZipArchive().isClosed());
+			if (pkgTest[0] != null) {
+				assertNotNull(pkgTest[0].getZipArchive());
+				assertTrue(pkgTest[0].getZipArchive().isClosed());
 			}
 		}
 	}
@@ -1075,7 +1072,7 @@ public final class TestPackage {
 		Files.copy(testFile, tmpFile);
 
 		int numPartsBefore = 0;
-		String md5Before = Files.hash(tmpFile, Hashing.md5()).toString();
+		String md5Before = Files.asByteSource(tmpFile).hash(Hashing.sha256()).toString();
 
 		RuntimeException ex = null;
 		try(OPCPackage pkg = OPCPackage.open(tmpFile, PackageAccess.READ_WRITE))
@@ -1091,11 +1088,11 @@ public final class TestPackage {
 			ex = e;
 		}
 		// verify there was an exception while closing the file
-		assertNotNull("Fail to save: an error occurs while saving the package : Bugzilla 63029", ex);
+		assertNotNull(ex, "Fail to save: an error occurs while saving the package : Bugzilla 63029");
 		assertEquals("Fail to save: an error occurs while saving the package : Bugzilla 63029", ex.getMessage());
 
 		// assert that md5 after closing is the same, i.e. the source is left intact
-		String md5After = Files.hash(tmpFile, Hashing.md5()).toString();
+		String md5After = Files.asByteSource(tmpFile).hash(Hashing.sha256()).toString();
 		assertEquals(md5Before, md5After);
 
 		// try to read the source file once again

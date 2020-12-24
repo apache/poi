@@ -18,7 +18,15 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.apache.poi.hssf.HSSFTestDataSamples.writeOutAndReadBack;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -43,7 +51,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests HSSFSheet.  This test case is very incomplete at the moment.
@@ -390,10 +398,10 @@ public final class TestHSSFSheet extends BaseTestSheet {
             HSSFSheet s = wb.createSheet();
             s.protectSheet("abcdefghij");
             WorksheetProtectionBlock pb = s.getSheet().getProtectionBlock();
-            assertTrue("protection should be on", pb.isSheetProtected());
-            assertTrue("object protection should be on", pb.isObjectProtected());
-            assertTrue("scenario protection should be on", pb.isScenarioProtected());
-            assertEquals("well known value for top secret hash should be " + Integer.toHexString(expectedHash).substring(4), expectedHash, pb.getPasswordHash());
+            assertTrue(pb.isSheetProtected(), "protection should be on");
+            assertTrue(pb.isObjectProtected(), "object protection should be on");
+            assertTrue(pb.isScenarioProtected(), "scenario protection should be on");
+            assertEquals(expectedHash, pb.getPasswordHash(), "well known value for top secret hash should be " + Integer.toHexString(expectedHash).substring(4));
         }
     }
 
@@ -465,30 +473,18 @@ public final class TestHSSFSheet extends BaseTestSheet {
             assertEquals(sclLoc, window2Loc + 1);
 
             // verify limits
-            try {
-                sheet.setZoom(0);
-                fail("Should catch Exception here");
-            } catch (IllegalArgumentException e) {
-                assertEquals("Numerator must be greater than 0 and less than 65536", e.getMessage());
-            }
-            try {
-                sheet.setZoom(65536);
-                fail("Should catch Exception here");
-            } catch (IllegalArgumentException e) {
-                assertEquals("Numerator must be greater than 0 and less than 65536", e.getMessage());
-            }
-            try {
-                sheet.setZoom(2, 0);
-                fail("Should catch Exception here");
-            } catch (IllegalArgumentException e) {
-                assertEquals("Denominator must be greater than 0 and less than 65536", e.getMessage());
-            }
-            try {
-                sheet.setZoom(2, 65536);
-                fail("Should catch Exception here");
-            } catch (IllegalArgumentException e) {
-                assertEquals("Denominator must be greater than 0 and less than 65536", e.getMessage());
-            }
+            IllegalArgumentException e;
+            e = assertThrows(IllegalArgumentException.class, () -> sheet.setZoom(0));
+            assertEquals("Numerator must be greater than 0 and less than 65536", e.getMessage());
+
+            e = assertThrows(IllegalArgumentException.class, () -> sheet.setZoom(65536));
+            assertEquals("Numerator must be greater than 0 and less than 65536", e.getMessage());
+
+            e = assertThrows(IllegalArgumentException.class, () -> sheet.setZoom(2, 0));
+            assertEquals("Denominator must be greater than 0 and less than 65536", e.getMessage());
+
+            e = assertThrows(IllegalArgumentException.class, () -> sheet.setZoom(2, 65536));
+            assertEquals("Denominator must be greater than 0 and less than 65536", e.getMessage());
         }
     }
 
@@ -504,26 +500,26 @@ public final class TestHSSFSheet extends BaseTestSheet {
             HSSFSheet sheet = wb1.getSheetAt(0);
             assertNotNull(sheet);
 
-            assertEquals("1 row page break", 1, sheet.getRowBreaks().length);
-            assertEquals("1 column page break", 1, sheet.getColumnBreaks().length);
+            assertEquals(1, sheet.getRowBreaks().length, "1 row page break");
+            assertEquals(1, sheet.getColumnBreaks().length, "1 column page break");
 
-            assertTrue("No row page break", sheet.isRowBroken(22));
-            assertTrue("No column page break", sheet.isColumnBroken((short) 4));
+            assertTrue(sheet.isRowBroken(22), "No row page break");
+            assertTrue(sheet.isColumnBroken((short) 4), "No column page break");
 
             sheet.setRowBreak(10);
             sheet.setColumnBreak((short) 13);
 
-            assertEquals("row breaks number", 2, sheet.getRowBreaks().length);
-            assertEquals("column breaks number", 2, sheet.getColumnBreaks().length);
+            assertEquals(2, sheet.getRowBreaks().length, "row breaks number");
+            assertEquals(2, sheet.getColumnBreaks().length, "column breaks number");
 
             try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
                 sheet = wb2.getSheetAt(0);
 
-                assertTrue("No row page break", sheet.isRowBroken(22));
-                assertTrue("No column page break", sheet.isColumnBroken((short) 4));
+                assertTrue(sheet.isRowBroken(22), "No row page break");
+                assertTrue(sheet.isColumnBroken((short) 4), "No column page break");
 
-                assertEquals("row breaks number", 2, sheet.getRowBreaks().length);
-                assertEquals("column breaks number", 2, sheet.getColumnBreaks().length);
+                assertEquals(2, sheet.getRowBreaks().length, "row breaks number");
+                assertEquals(2, sheet.getColumnBreaks().length, "column breaks number");
             }
         }
     }
@@ -532,8 +528,8 @@ public final class TestHSSFSheet extends BaseTestSheet {
     public void dbcsName () throws IOException {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("DBCSSheetName.xls")) {
             wb.getSheetAt(1);
-            assertEquals("DBCS Sheet Name 2", wb.getSheetName(1), "\u090f\u0915");
-            assertEquals("DBCS Sheet Name 1", wb.getSheetName(0), "\u091c\u093e");
+            assertEquals(wb.getSheetName(1), "\u090f\u0915", "DBCS Sheet Name 2");
+            assertEquals(wb.getSheetName(0), "\u091c\u093e", "DBCS Sheet Name 1");
         }
     }
 
@@ -551,8 +547,8 @@ public final class TestHSSFSheet extends BaseTestSheet {
             short toprow = (short) 100;
             short leftcol = (short) 50;
             sheet.showInPane(toprow, leftcol);
-            assertEquals("HSSFSheet.getTopRow()", toprow, sheet.getTopRow());
-            assertEquals("HSSFSheet.getLeftCol()", leftcol, sheet.getLeftCol());
+            assertEquals(toprow, sheet.getTopRow(), "HSSFSheet.getTopRow()");
+            assertEquals(leftcol, sheet.getLeftCol(), "HSSFSheet.getLeftCol()");
         }
     }
 
@@ -597,8 +593,8 @@ public final class TestHSSFSheet extends BaseTestSheet {
             // autoSize the first column and check its size before the merged region (1,0,1,1) is set:
             // it has to be based on the 2nd row width
             sheet.autoSizeColumn((short) 0);
-            assertTrue("Column autosized with only one row: wrong width", sheet.getColumnWidth(0) >= minWithRow1And2);
-            assertTrue("Column autosized with only one row: wrong width", sheet.getColumnWidth(0) <= maxWithRow1And2);
+            assertTrue(sheet.getColumnWidth(0) >= minWithRow1And2, "Column autosized with only one row: wrong width");
+            assertTrue(sheet.getColumnWidth(0) <= maxWithRow1And2, "Column autosized with only one row: wrong width");
 
             //create a region over the 2nd row and auto size the first column
             assertEquals(1, sheet.addMergedRegion(new CellRangeAddress(1, 1, 0, 1)));
@@ -779,11 +775,11 @@ public final class TestHSSFSheet extends BaseTestSheet {
         try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex41187-19267.xls")) {
             HSSFSheet sheet = wb.getSheetAt(0);
             HSSFRow row = sheet.getRow(0);
-            assertNotNull("Identified bug 41187 a", row);
+            assertNotNull(row, "Identified bug 41187 a");
 
-            assertNotEquals("Identified bug 41187 b", (short) 0, row.getHeight());
+            assertNotEquals((short) 0, row.getHeight(), "Identified bug 41187 b");
 
-            assertEquals("Hi Excel!", row.getCell(0).getRichStringCellValue().getString());
+            assertEquals(row.getCell(0).getRichStringCellValue().getString(), "Hi Excel!");
             // check row height for 'default' flag
             assertEquals((short) 0xFF, row.getHeight());
 
@@ -838,12 +834,10 @@ public final class TestHSSFSheet extends BaseTestSheet {
             final String SAME_PREFIX = "A123456789B123456789C123456789"; // 30 chars
 
             wb.createSheet(SAME_PREFIX + "Dxxxx");
-            try {
-                wb.createSheet(SAME_PREFIX + "Dyyyy"); // identical up to the 32nd char
-                fail("Expected exception not thrown");
-            } catch (IllegalArgumentException e) {
-                assertEquals("The workbook already contains a sheet named 'A123456789B123456789C123456789Dyyyy'", e.getMessage());
-            }
+            // identical up to the 32nd char
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> wb.createSheet(SAME_PREFIX + "Dyyyy"));
+            assertEquals("The workbook already contains a sheet named 'A123456789B123456789C123456789Dyyyy'", e.getMessage());
+
             wb.createSheet(SAME_PREFIX + "Exxxx"); // OK - differs in the 31st char
         }
     }
@@ -923,8 +917,8 @@ public final class TestHSSFSheet extends BaseTestSheet {
 
             // The built-in name for auto-filter must consist of a single Area3d Ptg.
             Ptg[] ptg = name.getNameDefinition();
-            assertEquals("The built-in name for auto-filter must consist of a single Area3d Ptg", 1, ptg.length);
-            assertTrue("The built-in name for auto-filter must consist of a single Area3d Ptg", ptg[0] instanceof Area3DPtg);
+            assertEquals(1, ptg.length, "The built-in name for auto-filter must consist of a single Area3d Ptg");
+            assertTrue(ptg[0] instanceof Area3DPtg, "The built-in name for auto-filter must consist of a single Area3d Ptg");
 
             Area3DPtg aref = (Area3DPtg) ptg[0];
             assertEquals(range.getFirstColumn(), aref.getFirstColumn());
@@ -1003,12 +997,10 @@ public final class TestHSSFSheet extends BaseTestSheet {
             assertEquals(40000, sheet.getColumnWidth((short) 10));
 
             //The maximum column width for an individual cell is 255 characters
-            try {
-                sheet.setColumnWidth((short) 9, 256 * 256);
-                fail("expected exception");
-            } catch (IllegalArgumentException e) {
-                assertEquals("The maximum column width for an individual cell is 255 characters.", e.getMessage());
-            }
+            Sheet sheet2 = sheet;
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () ->
+                sheet2.setColumnWidth((short) 9, 256 * 256));
+            assertEquals("The maximum column width for an individual cell is 255 characters.", e.getMessage());
 
             //serialize and read again
             try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {

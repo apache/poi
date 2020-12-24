@@ -17,11 +17,11 @@
 
 package org.apache.poi.hwpf;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hwpf.usermodel.Range;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test that we pull out the right bits of a file into the different ranges
@@ -94,7 +94,7 @@ public final class TestHWPFRangeParts {
 	 */
 	private HWPFDocument docUnicode;
 
-	@Before
+	@BeforeEach
     public void setUp() {
 		docUnicode = HWPFTestDataSamples.openSampleFile("HeaderFooterUnicode.doc");
 		docAscii = HWPFTestDataSamples.openSampleFile("ThreeColHeadFoot.doc");

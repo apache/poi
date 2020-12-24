@@ -17,9 +17,9 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import java.util.Collection;
+import java.util.stream.Stream;
 
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.provider.Arguments;
 
 /**
  * Tests lookup functions (VLOOKUP, HLOOKUP, LOOKUP, MATCH) as loaded from a test data spreadsheet.<p>
@@ -31,8 +31,7 @@ import org.junit.runners.Parameterized.Parameters;
  *  more easily.
  */
 public final class TestLookupFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
-    @Parameters(name="{0}")
-    public static Collection<Object[]> data() throws Exception {
+    public static Stream<Arguments> data() throws Exception {
         return data(TestLookupFunctionsFromSpreadsheet.class, "LookupFunctionsTestCaseData.xls");
     }
 }

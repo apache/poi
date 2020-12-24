@@ -17,13 +17,13 @@
 
 package org.apache.poi.ss.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.math.BigInteger;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link ExpandedDouble}
@@ -34,7 +34,7 @@ public final class TestExpandedDouble {
 	@Test
 	public void testNegative() {
 		ExpandedDouble hd = new ExpandedDouble(0xC010000000000000L);
-		assertNotEquals("identified bug - sign bit not masked out of exponent", -2046, hd.getBinaryExponent());
+		assertNotEquals(-2046, hd.getBinaryExponent(), "identified bug - sign bit not masked out of exponent");
 		assertEquals(2, hd.getBinaryExponent());
 		BigInteger frac = hd.getSignificand();
 		assertEquals(64, frac.bitLength());
@@ -44,7 +44,7 @@ public final class TestExpandedDouble {
 	@Test
 	public void testSubnormal() {
 		ExpandedDouble hd = new ExpandedDouble(0x0000000000000001L);
-		assertNotEquals("identified bug - subnormal numbers not decoded properly", -1023, hd.getBinaryExponent());
+		assertNotEquals(-1023, hd.getBinaryExponent(), "identified bug - subnormal numbers not decoded properly");
 		assertEquals(-1086, hd.getBinaryExponent());
 		BigInteger frac = hd.getSignificand();
 		assertEquals(64, frac.bitLength());
@@ -91,7 +91,7 @@ public final class TestExpandedDouble {
 		checkNormaliseBaseTenResult(ed1, nd2);
 
 		ExpandedDouble ed3 = nd2.normaliseBaseTwo();
-		assertEquals("bin exp mismatch", ed3.getBinaryExponent(), ed1.getBinaryExponent());
+		assertEquals(ed3.getBinaryExponent(), ed1.getBinaryExponent(), "bin exp mismatch");
 
 		BigInteger diff = ed3.getSignificand().subtract(ed1.getSignificand()).abs();
 		if (diff.signum() == 0) {
@@ -127,6 +127,6 @@ public final class TestExpandedDouble {
 		}
 		BigInteger diff = subDigsB.subtract(subDigsO).abs();
 		// 100/32768 ~= 0.003
-		assertTrue("minor mistake", diff.intValue() <= 100);
+		assertTrue(diff.intValue() <= 100, "minor mistake");
 	}
 }

@@ -17,9 +17,9 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -35,9 +35,9 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for HSSFDataFormatter.java
@@ -45,14 +45,14 @@ import org.junit.Test;
 public final class TestHSSFDataFormatter {
     private static TimeZone userTimeZone;
 
-    @BeforeClass
+    @BeforeAll
     public static void setTimeZone() {
         userTimeZone = LocaleUtil.getUserTimeZone();
         LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
         LocaleUtil.setUserLocale(Locale.US);
     }
 
-    @AfterClass
+    @AfterAll
     public static void resetTimeZone() {
         LocaleUtil.setUserTimeZone(userTimeZone);
         LocaleUtil.setUserLocale(Locale.ROOT);
@@ -109,10 +109,10 @@ public final class TestHSSFDataFormatter {
         String[] goodTimePatterns = {
             "HH:MM",
             "HH:MM:SS",
-            "HH:MM;HH:MM;HH:MM", 
+            "HH:MM;HH:MM;HH:MM",
             // This is fun - blue if positive time,
             //  red if negative time or green for zero!
-            "[BLUE]HH:MM;[RED]HH:MM;[GREEN]HH:MM", 
+            "[BLUE]HH:MM;[RED]HH:MM;[GREEN]HH:MM",
             "yyyy-mm-dd hh:mm",
             "yyyy-mm-dd hh:mm:ss",
         };
@@ -241,7 +241,7 @@ public final class TestHSSFDataFormatter {
 
             // should not be equal to "555.555"
             assertTrue( DateUtil.isCellDateFormatted(cell) );
-            assertFalse("555.555".equals(fmtval));
+            assertNotEquals(fmtval, "555.555");
 
             String fmt = cell.getCellStyle().getDataFormatString();
 
@@ -257,7 +257,7 @@ public final class TestHSSFDataFormatter {
                 jul = jul.substring(0,1);
             }
             // check we found july properly
-            assertTrue("Format came out incorrect - " + fmt, fmtval.contains(jul));
+            assertTrue(fmtval.contains(jul), "Format came out incorrect - " + fmt);
         }
 
         row = wb.getSheetAt(0).getRow(1);
@@ -271,11 +271,11 @@ public final class TestHSSFDataFormatter {
 
             // should not be equal to "555.47431"
             assertTrue( DateUtil.isCellDateFormatted(cell) );
-            assertFalse("555.47431".equals(fmtval));
+            assertNotEquals(fmtval, "555.47431");
 
             // check we found the time properly
-            assertTrue("Format came out incorrect - " + fmt + " - found " + fmtval + 
-                       ", but expected to find '11:23'", fmtval.contains("11:23"));
+            assertTrue(fmtval.contains("11:23"),
+                "Format came out incorrect - " + fmt + " - found " + fmtval + ", but expected to find '11:23'");
         }
 
         // test number formats
@@ -367,10 +367,10 @@ public final class TestHSSFDataFormatter {
             Cell cell = it.next();
             cell.setCellValue(cell.getNumericCellValue() * Math.random() / 1000000 - 1000);
             log(formatter.formatCellValue(cell));
-            
-            String formatted = formatter.formatCellValue(cell); 
-            assertTrue("Doesn't start with Balance: " + formatted, formatted.startsWith("Balance "));
-            assertTrue("Doesn't end with USD: " + formatted, formatted.endsWith(" USD"));
+
+            String formatted = formatter.formatCellValue(cell);
+            assertTrue(formatted.startsWith("Balance "), "Doesn't start with Balance: " + formatted);
+            assertTrue(formatted.endsWith(" USD"), "Doesn't end with USD: " + formatted);
         }
     }
 

@@ -17,15 +17,15 @@
 
 package org.apache.poi.util;
 
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test IntList
@@ -50,18 +50,17 @@ public final class TestIntList {
 
     @Test
     public void testAdd() {
-        IntList list      = new IntList();
-        int[]   testArray =
-        {
-            0, 1, 2, 3, 5
-        };
+        IntList list = new IntList();
+        int[] testArray =
+            {
+                0, 1, 2, 3, 5
+            };
 
         for (int element : testArray) {
             list.add(element);
         }
-        for (int j = 0; j < testArray.length; j++)
-        {
-            assertEquals(testArray[ j ], list.get(j));
+        for (int j = 0; j < testArray.length; j++) {
+            assertEquals(testArray[j], list.get(j));
         }
         assertEquals(testArray.length, list.size());
 
@@ -69,59 +68,44 @@ public final class TestIntList {
         list.add(0, -1);
         assertEquals(-1, list.get(0));
         assertEquals(testArray.length + 1, list.size());
-        for (int j = 0; j < testArray.length; j++)
-        {
-            assertEquals(testArray[ j ], list.get(j + 1));
+        for (int j = 0; j < testArray.length; j++) {
+            assertEquals(testArray[j], list.get(j + 1));
         }
 
         // add in the middle
         list.add(5, 4);
         assertEquals(4, list.get(5));
         assertEquals(testArray.length + 2, list.size());
-        for (int j = 0; j < list.size(); j++)
-        {
+        for (int j = 0; j < list.size(); j++) {
             assertEquals(j - 1, list.get(j));
         }
 
         // add at the end
         list.add(list.size(), 6);
         assertEquals(testArray.length + 3, list.size());
-        for (int j = 0; j < list.size(); j++)
-        {
+        for (int j = 0; j < list.size(); j++) {
             assertEquals(j - 1, list.get(j));
         }
 
         // add past end
-        try
-        {
-            list.add(list.size() + 1, 8);
-            fail("should have thrown exception");
-        }
-        catch (IndexOutOfBoundsException e)
-        {
-
-            // as expected
-        }
+        IntList list2 = list;
+        assertThrows(IndexOutOfBoundsException.class, () -> list2.add(list2.size() + 1, 8));
 
         // test growth
         list = new IntList(0);
-        for (int j = 0; j < 1000; j++)
-        {
+        for (int j = 0; j < 1000; j++) {
             list.add(j);
         }
         assertEquals(1000, list.size());
-        for (int j = 0; j < 1000; j++)
-        {
+        for (int j = 0; j < 1000; j++) {
             assertEquals(j, list.get(j));
         }
         list = new IntList(0);
-        for (int j = 0; j < 1000; j++)
-        {
+        for (int j = 0; j < 1000; j++) {
             list.add(0, j);
         }
         assertEquals(1000, list.size());
-        for (int j = 0; j < 1000; j++)
-        {
+        for (int j = 0; j < 1000; j++) {
             assertEquals(j, list.get(999 - j));
         }
     }
@@ -130,8 +114,7 @@ public final class TestIntList {
     public void testAddAll() {
         IntList list = new IntList();
 
-        for (int j = 0; j < 5; j++)
-        {
+        for (int j = 0; j < 5; j++) {
             list.add(j);
         }
         IntList list2 = new IntList(0);
@@ -139,29 +122,19 @@ public final class TestIntList {
         list2.addAll(list);
         list2.addAll(list);
         assertEquals(2 * list.size(), list2.size());
-        for (int j = 0; j < 5; j++)
-        {
+        for (int j = 0; j < 5; j++) {
             assertEquals(list2.get(j), j);
             assertEquals(list2.get(j + list.size()), j);
         }
         IntList empty = new IntList();
-        int     limit = list.size();
+        int limit = list.size();
 
-        for (int j = 0; j < limit; j++)
-        {
+        for (int j = 0; j < limit; j++) {
             assertTrue(list.addAll(j, empty));
             assertEquals(limit, list.size());
         }
-        try
-        {
-            list.addAll(limit + 1, empty);
-            fail("should have thrown an exception");
-        }
-        catch (IndexOutOfBoundsException e)
-        {
 
-            // as expected
-        }
+        assertThrows(IndexOutOfBoundsException.class, () -> list.addAll(limit + 1, empty));
 
         // try add at beginning
         empty.addAll(0, list);
@@ -215,20 +188,17 @@ public final class TestIntList {
     public void testClear() {
         IntList list = new IntList();
 
-        for (int j = 0; j < 500; j++)
-        {
+        for (int j = 0; j < 500; j++) {
             list.add(j);
         }
         assertEquals(500, list.size());
         list.clear();
         assertEquals(0, list.size());
-        for (int j = 0; j < 500; j++)
-        {
+        for (int j = 0; j < 500; j++) {
             list.add(j + 1);
         }
         assertEquals(500, list.size());
-        for (int j = 0; j < 500; j++)
-        {
+        for (int j = 0; j < 500; j++) {
             assertEquals(j + 1, list.get(j));
         }
     }
@@ -237,18 +207,13 @@ public final class TestIntList {
     public void testContains() {
         IntList list = new IntList();
 
-        for (int j = 0; j < 1000; j += 2)
-        {
+        for (int j = 0; j < 1000; j += 2) {
             list.add(j);
         }
-        for (int j = 0; j < 1000; j++)
-        {
-            if (j % 2 == 0)
-            {
+        for (int j = 0; j < 1000; j++) {
+            if (j % 2 == 0) {
                 assertTrue(list.contains(j));
-            }
-            else
-            {
+            } else {
                 assertFalse(list.contains(j));
             }
         }
@@ -259,8 +224,7 @@ public final class TestIntList {
         IntList list = new IntList();
 
         assertTrue(list.containsAll(list));
-        for (int j = 0; j < 10; j++)
-        {
+        for (int j = 0; j < 10; j++) {
             list.add(j);
         }
         IntList list2 = new IntList(list);
@@ -306,46 +270,27 @@ public final class TestIntList {
     public void testGet() {
         IntList list = new IntList();
 
-        for (int j = 0; j < 1000; j++)
-        {
+        for (int j = 0; j < 1000; j++) {
             list.add(j);
         }
-        for (int j = 0; j < 1001; j++)
-        {
-            try
-            {
-                assertEquals(j, list.get(j));
-                if (j == 1000)
-                {
-                    fail("should have gotten exception");
-                }
-            }
-            catch (IndexOutOfBoundsException e)
-            {
-                if (j != 1000)
-                {
-                    fail("unexpected IndexOutOfBoundsException");
-                }
-            }
+        for (int j = 0; j < 1000; j++) {
+            assertEquals(j, list.get(j));
         }
+
+        assertThrows(IndexOutOfBoundsException.class, () -> list.get(1000));
     }
 
     @Test
     public void testIndexOf() {
         IntList list = new IntList();
 
-        for (int j = 0; j < 1000; j++)
-        {
+        for (int j = 0; j < 1000; j++) {
             list.add(j / 2);
         }
-        for (int j = 0; j < 1000; j++)
-        {
-            if (j < 500)
-            {
+        for (int j = 0; j < 1000; j++) {
+            if (j < 500) {
                 assertEquals(j * 2, list.indexOf(j));
-            }
-            else
-            {
+            } else {
                 assertEquals(-1, list.indexOf(j));
             }
         }
@@ -378,18 +323,13 @@ public final class TestIntList {
     public void testLastIndexOf() {
         IntList list = new IntList();
 
-        for (int j = 0; j < 1000; j++)
-        {
+        for (int j = 0; j < 1000; j++) {
             list.add(j / 2);
         }
-        for (int j = 0; j < 1000; j++)
-        {
-            if (j < 500)
-            {
+        for (int j = 0; j < 1000; j++) {
+            if (j < 500) {
                 assertEquals(1 + j * 2, list.lastIndexOf(j));
-            }
-            else
-            {
+            } else {
                 assertEquals(-1, list.indexOf(j));
             }
         }
@@ -399,48 +339,33 @@ public final class TestIntList {
     public void testRemove() {
         IntList list = new IntList();
 
-        for (int j = 0; j < 1000; j++)
-        {
+        for (int j = 0; j < 1000; j++) {
             list.add(j);
         }
-        for (int j = 0; j < 1000; j++)
-        {
+        for (int j = 0; j < 1000; j++) {
             assertEquals(j, list.remove(0));
             assertEquals(999 - j, list.size());
         }
-        for (int j = 0; j < 1000; j++)
-        {
+        for (int j = 0; j < 1000; j++) {
             list.add(j);
         }
-        for (int j = 0; j < 1000; j++)
-        {
+        for (int j = 0; j < 1000; j++) {
             assertEquals(999 - j, list.remove(999 - j));
             assertEquals(999 - j, list.size());
         }
-        try
-        {
-            list.remove(0);
-            fail("should have caught IndexOutOfBoundsException");
-        }
-        catch (IndexOutOfBoundsException e)
-        {
 
-            // as expected
-        }
+        assertThrows(IndexOutOfBoundsException.class, () -> list.remove(0));
     }
 
     @Test
     public void testRemoveValue() {
         IntList list = new IntList();
 
-        for (int j = 0; j < 1000; j++)
-        {
+        for (int j = 0; j < 1000; j++) {
             list.add(j / 2);
         }
-        for (int j = 0; j < 1000; j++)
-        {
-            if (j < 500)
-            {
+        for (int j = 0; j < 1000; j++) {
+            if (j < 500) {
                 assertTrue(list.removeValue(j));
                 assertTrue(list.removeValue(j));
             }
@@ -452,22 +377,17 @@ public final class TestIntList {
     public void testRemoveAll() {
         IntList list = new IntList();
 
-        for (int j = 0; j < 1000; j++)
-        {
+        for (int j = 0; j < 1000; j++) {
             list.add(j);
         }
         IntList listCopy = new IntList(list);
-        IntList listOdd  = new IntList();
+        IntList listOdd = new IntList();
         IntList listEven = new IntList();
 
-        for (int j = 0; j < 1000; j++)
-        {
-            if (j % 2 == 0)
-            {
+        for (int j = 0; j < 1000; j++) {
+            if (j % 2 == 0) {
                 listEven.add(j);
-            }
-            else
-            {
+            } else {
                 listOdd.add(j);
             }
         }
@@ -494,22 +414,17 @@ public final class TestIntList {
     public void testRetainAll() {
         IntList list = new IntList();
 
-        for (int j = 0; j < 1000; j++)
-        {
+        for (int j = 0; j < 1000; j++) {
             list.add(j);
         }
         IntList listCopy = new IntList(list);
-        IntList listOdd  = new IntList();
+        IntList listOdd = new IntList();
         IntList listEven = new IntList();
 
-        for (int j = 0; j < 1000; j++)
-        {
-            if (j % 2 == 0)
-            {
+        for (int j = 0; j < 1000; j++) {
+            if (j % 2 == 0) {
                 listEven.add(j);
-            }
-            else
-            {
+            } else {
                 listOdd.add(j);
             }
         }
@@ -535,43 +450,26 @@ public final class TestIntList {
     public void testSet() {
         IntList list = new IntList();
 
-        for (int j = 0; j < 1000; j++)
-        {
+        for (int j = 0; j < 1000; j++) {
             list.add(j);
         }
-        for (int j = 0; j < 1001; j++)
-        {
-            try
-            {
-                list.set(j, j + 1);
-                if (j == 1000)
-                {
-                    fail("Should have gotten exception");
-                }
-                assertEquals(j + 1, list.get(j));
-            }
-            catch (IndexOutOfBoundsException e)
-            {
-                if (j != 1000)
-                {
-                    fail("premature exception");
-                }
-            }
+        for (int j = 0; j < 1000; j++) {
+            list.set(j, j + 1);
+            assertEquals(j + 1, list.get(j));
         }
+        assertThrows(IndexOutOfBoundsException.class, () -> list.set(1000, 1001));
     }
 
     @Test
     public void testSize() {
         IntList list = new IntList();
 
-        for (int j = 0; j < 1000; j++)
-        {
+        for (int j = 0; j < 1000; j++) {
             assertEquals(j, list.size());
             list.add(j);
             assertEquals(j + 1, list.size());
         }
-        for (int j = 0; j < 1000; j++)
-        {
+        for (int j = 0; j < 1000; j++) {
             assertEquals(1000 - j, list.size());
             list.removeValue(j);
             assertEquals(999 - j, list.size());
@@ -582,41 +480,36 @@ public final class TestIntList {
     public void testToArray() {
         IntList list = new IntList();
 
-        for (int j = 0; j < 1000; j++)
-        {
+        for (int j = 0; j < 1000; j++) {
             list.add(j);
         }
         int[] a1 = list.toArray();
 
         assertEquals(a1.length, list.size());
-        for (int j = 0; j < 1000; j++)
-        {
-            assertEquals(a1[ j ], list.get(j));
+        for (int j = 0; j < 1000; j++) {
+            assertEquals(a1[j], list.get(j));
         }
-        int[] a2 = new int[ list.size() ];
+        int[] a2 = new int[list.size()];
         int[] a3 = list.toArray(a2);
 
         assertSame(a2, a3);
-        for (int j = 0; j < 1000; j++)
-        {
-            assertEquals(a2[ j ], list.get(j));
+        for (int j = 0; j < 1000; j++) {
+            assertEquals(a2[j], list.get(j));
         }
-        int[] aShort = new int[ list.size() - 1 ];
-        int[] aLong  = new int[ list.size() + 1 ];
-        int[] a4     = list.toArray(aShort);
-        int[] a5     = list.toArray(aLong);
+        int[] aShort = new int[list.size() - 1];
+        int[] aLong = new int[list.size() + 1];
+        int[] a4 = list.toArray(aShort);
+        int[] a5 = list.toArray(aLong);
 
         assertNotSame(a4, aShort);
         assertNotSame(a5, aLong);
         assertEquals(a4.length, list.size());
-        for (int j = 0; j < 1000; j++)
-        {
-            assertEquals(a3[ j ], list.get(j));
+        for (int j = 0; j < 1000; j++) {
+            assertEquals(a3[j], list.get(j));
         }
         assertEquals(a5.length, list.size());
-        for (int j = 0; j < 1000; j++)
-        {
-            assertEquals(a5[ j ], list.get(j));
+        for (int j = 0; j < 1000; j++) {
+            assertEquals(a5[j], list.get(j));
         }
     }
 }

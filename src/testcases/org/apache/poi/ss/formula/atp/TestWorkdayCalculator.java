@@ -18,14 +18,14 @@
 package org.apache.poi.ss.formula.atp;
 
 import static java.util.Calendar.SATURDAY;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Calendar;
 import java.util.Date;
 
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestWorkdayCalculator {
 
@@ -139,8 +139,7 @@ public class TestWorkdayCalculator {
         final double holiday1 = DateUtil.getExcelDate(d(2016, 12, 25));
         final double holiday2 = DateUtil.getExcelDate(d(2016, 12, 26));
         int count = WorkdayCalculator.instance.calculateNonWeekendHolidays(start, end, new double[]{holiday1, holiday2});
-        assertEquals("Expected 1 non-weekend-holiday for " + start + " to " + end + " and " + holiday1 + " and " + holiday2,
-                1, count);
+        assertEquals(1, count, "Expected 1 non-weekend-holiday for " + start + " to " + end + " and " + holiday1 + " and " + holiday2);
     }
 
     @Test
@@ -150,7 +149,6 @@ public class TestWorkdayCalculator {
         final double holiday1 = DateUtil.getExcelDate(d(2016, 12, 25));
         final double holiday2 = DateUtil.getExcelDate(d(2016, 12, 26));
         int count = WorkdayCalculator.instance.calculateNonWeekendHolidays(start, end, new double[]{holiday1, holiday2});
-        assertEquals("Expected 1 non-weekend-holiday for " + start + " to " + end + " and " + holiday1 + " and " + holiday2,
-                1, count);
+        assertEquals(1, count, "Expected 1 non-weekend-holiday for " + start + " to " + end + " and " + holiday1 + " and " + holiday2);
     }
 }

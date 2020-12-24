@@ -17,17 +17,17 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Yegor Kozlov
@@ -129,7 +129,7 @@ public final class TestXSSFPictureData {
         List<XSSFShape> shapes1 = sheet1.createDrawingPatriarch().getShapes();
         assertNotNull(shapes1);
         assertEquals(5, shapes1.size());
-        
+
         for(int i = 0; i < wb.getNumberOfSheets(); i++){
             XSSFSheet sheet = wb.getSheetAt(i);
             XSSFDrawing drawing = sheet.createDrawingPatriarch();

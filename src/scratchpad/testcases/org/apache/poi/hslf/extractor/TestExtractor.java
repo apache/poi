@@ -20,10 +20,10 @@ package org.apache.poi.hslf.extractor;
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertContainsIgnoreCase;
 import static org.apache.poi.POITestCase.assertNotContained;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -45,7 +45,7 @@ import org.apache.poi.sl.usermodel.ObjectShape;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.util.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the extractor correctly gets the text out of our sample file
@@ -74,19 +74,18 @@ public final class TestExtractor {
     /**
      * Where our embeded files live
      */
-    private static POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
+    private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
-    @SuppressWarnings("unchecked")
     private SlideShowExtractor<?,?> openExtractor(String fileName) throws IOException {
         try (InputStream is = slTests.openResourceAsStream(fileName)) {
-            return new SlideShowExtractor(SlideShowFactory.create(is));
+            return new SlideShowExtractor<>(SlideShowFactory.create(is));
         }
     }
-    
+
     @Test
     public void testReadSheetText() throws IOException {
         // Basic 2 page example
-        try (SlideShowExtractor ppe = openExtractor("basic_test_ppt_file.ppt")) {
+        try (SlideShowExtractor<?,?> ppe = openExtractor("basic_test_ppt_file.ppt")) {
             assertEquals(EXPECTED_PAGE1+EXPECTED_PAGE2, ppe.getText());
         }
 
@@ -98,7 +97,7 @@ public final class TestExtractor {
             "Plain Text \n";
 
         // 1 page example with text boxes
-        try (SlideShowExtractor ppe = openExtractor("with_textbox.ppt")) {
+        try (SlideShowExtractor<?,?> ppe = openExtractor("with_textbox.ppt")) {
             assertEquals(expectText2, ppe.getText());
         }
     }
@@ -106,7 +105,7 @@ public final class TestExtractor {
     @Test
     public void testReadNoteText() throws IOException {
         // Basic 2 page example
-        try (SlideShowExtractor ppe = openExtractor("basic_test_ppt_file.ppt")) {
+        try (SlideShowExtractor<?,?> ppe = openExtractor("basic_test_ppt_file.ppt")) {
             ppe.setNotesByDefault(true);
             ppe.setSlidesByDefault(false);
             ppe.setMasterByDefault(false);
@@ -115,7 +114,7 @@ public final class TestExtractor {
         }
 
         // Other one doesn't have notes
-        try (SlideShowExtractor ppe = openExtractor("with_textbox.ppt")) {
+        try (SlideShowExtractor<?,?> ppe = openExtractor("with_textbox.ppt")) {
             ppe.setNotesByDefault(true);
             ppe.setSlidesByDefault(false);
             ppe.setMasterByDefault(false);
@@ -130,7 +129,7 @@ public final class TestExtractor {
         String[] slText = { EXPECTED_PAGE1, EXPECTED_PAGE2 };
         String[] ntText = { NOTES_PAGE1, NOTES_PAGE2 };
 
-        try (SlideShowExtractor ppe = openExtractor("basic_test_ppt_file.ppt")) {
+        try (SlideShowExtractor<?,?> ppe = openExtractor("basic_test_ppt_file.ppt")) {
             ppe.setSlidesByDefault(true);
             ppe.setNotesByDefault(false);
             assertEquals(slText[0] + slText[1], ppe.getText());
@@ -199,10 +198,10 @@ public final class TestExtractor {
     @Test
     public void testExtractFromOwnEmbeded() throws IOException {
         try (SlideShowExtractor<?,?> ppe = openExtractor("ppt_with_embeded.ppt")) {
-            List<? extends ObjectShape> shapes = ppe.getOLEShapes();
-            assertEquals("Expected 6 ole shapes", 6, shapes.size());
+            List<? extends ObjectShape<?,?>> shapes = ppe.getOLEShapes();
+            assertEquals(6, shapes.size(), "Expected 6 ole shapes");
             int num_ppt = 0, num_doc = 0, num_xls = 0;
-            for (ObjectShape ole : shapes) {
+            for (ObjectShape<?,?> ole : shapes) {
                 String name = ((HSLFObjectShape)ole).getInstanceName();
                 InputStream data = ole.getObjectData().getInputStream();
                 if ("Worksheet".equals(name)) {
@@ -220,9 +219,9 @@ public final class TestExtractor {
                 }
                 data.close();
             }
-            assertEquals("Expected 2 embedded Word Documents", 2, num_doc);
-            assertEquals("Expected 2 embedded Excel Spreadsheets", 2, num_xls);
-            assertEquals("Expected 2 embedded PowerPoint Presentations", 2, num_ppt);
+            assertEquals(2, num_doc, "Expected 2 embedded Word Documents");
+            assertEquals(2, num_xls, "Expected 2 embedded Excel Spreadsheets");
+            assertEquals(2, num_ppt, "Expected 2 embedded PowerPoint Presentations");
         }
     }
 
@@ -232,7 +231,7 @@ public final class TestExtractor {
     @Test
     public void test52991() throws IOException {
         try (SlideShowExtractor<?,?> ppe = openExtractor("badzip.ppt")) {
-            for (ObjectShape shape : ppe.getOLEShapes()) {
+            for (ObjectShape<?,?> shape : ppe.getOLEShapes()) {
                 IOUtils.copy(shape.getObjectData().getInputStream(), new ByteArrayOutputStream());
             }
         }
@@ -243,9 +242,9 @@ public final class TestExtractor {
      */
     @Test
     public void testWithComments() throws IOException {
-        try (final SlideShowExtractor ppe = openExtractor("WithComments.ppt")) {
+        try (final SlideShowExtractor<?,?> ppe = openExtractor("WithComments.ppt")) {
             String text = ppe.getText();
-            assertFalse("Comments not in by default", text.contains("This is a test comment"));
+            assertFalse(text.contains("This is a test comment"), "Comments not in by default");
 
             ppe.setCommentsByDefault(true);
 
@@ -255,9 +254,9 @@ public final class TestExtractor {
 
 
         // And another file
-        try (SlideShowExtractor ppe = openExtractor("45543.ppt")) {
+        try (SlideShowExtractor<?,?> ppe = openExtractor("45543.ppt")) {
             String text = ppe.getText();
-            assertFalse("Comments not in by default", text.contains("testdoc"));
+            assertFalse(text.contains("testdoc"), "Comments not in by default");
 
             ppe.setCommentsByDefault(true);
 
@@ -294,8 +293,8 @@ public final class TestExtractor {
     private void testHeaderFooterInner(final HSLFSlideShow ppt) throws IOException {
         try (final SlideShowExtractor<?,?> ppe = new SlideShowExtractor<>(ppt)) {
             String text = ppe.getText();
-            assertFalse("Header shouldn't be there by default\n" + text, text.contains("testdoc"));
-            assertFalse("Header shouldn't be there by default\n" + text, text.contains("test phrase"));
+            assertFalse(text.contains("testdoc"), "Header shouldn't be there by default\n" + text);
+            assertFalse(text.contains("test phrase"), "Header shouldn't be there by default\n" + text);
 
             ppe.setNotesByDefault(true);
             text = ppe.getText();
@@ -309,7 +308,7 @@ public final class TestExtractor {
         String masterTitleText = "This is the Master Title";
         String masterRandomText = "This text comes from the Master Slide";
         String masterFooterText = "Footer from the master slide";
-        try (final SlideShowExtractor ppe = openExtractor("WithMaster.ppt")) {
+        try (final SlideShowExtractor<?,?> ppe = openExtractor("WithMaster.ppt")) {
             ppe.setMasterByDefault(true);
 
             String text = ppe.getText();
@@ -329,7 +328,7 @@ public final class TestExtractor {
 
     @Test
     public void testSlideMasterText2() throws IOException {
-        try (final SlideShowExtractor ppe = openExtractor("bug62591.ppt")) {
+        try (final SlideShowExtractor<?,?> ppe = openExtractor("bug62591.ppt")) {
             ppe.setMasterByDefault(true);
             String text = ppe.getText();
             assertNotContained(text, "Titelmasterformat");
@@ -338,7 +337,7 @@ public final class TestExtractor {
 
     @Test
     public void testMasterText() throws IOException {
-        try (final SlideShowExtractor ppe = openExtractor("master_text.ppt")) {
+        try (final SlideShowExtractor<?,?> ppe = openExtractor("master_text.ppt")) {
             // Initially not there
             String text = ppe.getText();
             assertFalse(text.contains("Text that I added to the master slide"));
@@ -354,7 +353,7 @@ public final class TestExtractor {
 
         // Now with another file only containing master text
         // Will always show up
-        try (final SlideShowExtractor ppe = openExtractor("WithMaster.ppt")) {
+        try (final SlideShowExtractor<?,?> ppe = openExtractor("WithMaster.ppt")) {
             String masterText = "Footer from the master slide";
 
             String text = ppe.getText();
@@ -368,7 +367,7 @@ public final class TestExtractor {
      */
     @Test
     public void testChineseText() throws IOException {
-        try (final SlideShowExtractor ppe = openExtractor("54880_chinese.ppt")) {
+        try (final SlideShowExtractor<?,?> ppe = openExtractor("54880_chinese.ppt")) {
             String text = ppe.getText();
 
             // Check for the english text line
@@ -405,7 +404,7 @@ public final class TestExtractor {
 
     @Test
     public void testTable() throws Exception {
-        try (SlideShowExtractor ppe = openExtractor("54111.ppt")) {
+        try (SlideShowExtractor<?,?> ppe = openExtractor("54111.ppt")) {
             String text = ppe.getText();
             String target = "TH Cell 1\tTH Cell 2\tTH Cell 3\tTH Cell 4\n" +
                     "Row 1, Cell 1\tRow 1, Cell 2\tRow 1, Cell 3\tRow 1, Cell 4\n" +
@@ -416,7 +415,7 @@ public final class TestExtractor {
             assertContains(text, target);
         }
 
-        try (SlideShowExtractor ppe = openExtractor("54722.ppt")) {
+        try (SlideShowExtractor<?,?> ppe = openExtractor("54722.ppt")) {
             String text = ppe.getText();
 
             String target = "this\tText\tis\twithin\ta\n" +
@@ -428,7 +427,7 @@ public final class TestExtractor {
     // bug 60003
     @Test
     public void testExtractMasterSlideFooterText() throws Exception {
-        try (SlideShowExtractor ppe = openExtractor("60003.ppt")) {
+        try (SlideShowExtractor<?,?> ppe = openExtractor("60003.ppt")) {
             ppe.setMasterByDefault(true);
 
             String text = ppe.getText();
@@ -438,7 +437,7 @@ public final class TestExtractor {
 
     @Test
     public void testExtractGroupedShapeText() throws Exception {
-        try (final SlideShowExtractor ppe = openExtractor("bug62092.ppt")) {
+        try (final SlideShowExtractor<?,?> ppe = openExtractor("bug62092.ppt")) {
             final String text = ppe.getText();
 
             //this tests that we're ignoring text shapes at depth=0
@@ -476,7 +475,7 @@ public final class TestExtractor {
             "Times New Roman", "\t\n ,-./01234679:ABDEFGILMNOPRSTVWabcdefghijklmnoprstuvwxyz\u00F3\u201C\u201D",
             "Arial", " Lacdilnost"
         };
-        try (SlideShowExtractor ppt = openExtractor("45543.ppt")) {
+        try (SlideShowExtractor<?,?> ppt = openExtractor("45543.ppt")) {
             for (int i=0; i<expected.length; i+=2) {
                 BitSet l = ppt.getCodepoints(expected[i], null, null);
                 String s = l.stream().mapToObj(Character::toChars).map(String::valueOf).collect(Collectors.joining());

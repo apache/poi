@@ -17,9 +17,9 @@
 
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,7 +36,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.BaseTestSlideShowFactory;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestXSLFSlideShowFactory extends BaseTestSlideShowFactory {
     private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
@@ -50,11 +50,8 @@ public final class TestXSLFSlideShowFactory extends BaseTestSlideShowFactory {
     public void testFactoryFromFile() {
         // Remove thrown.* when bug 58779 is resolved
         // In the mean time, this function will modify SampleShow.pptx on disk.
-        AssertionError ex = assertThrows(
-            "Bug 58779: " + removeExpectedExceptionMsg,
-            AssertionError.class,
-            () -> testFactoryFromFile(filename)
-        );
+        AssertionError ex = assertThrows(AssertionError.class, () -> testFactoryFromFile(filename),
+            "Bug 58779: " + removeExpectedExceptionMsg);
         assertTrue(ex.getMessage().contains("SampleShow.pptx sample file was modified as a result of closing the slideshow"));
     }
 
@@ -66,10 +63,8 @@ public final class TestXSLFSlideShowFactory extends BaseTestSlideShowFactory {
     @Test
     public void testFactoryFromNative()  {
         // Remove thrown.* when unit test for XSLF SlideShowFactory.create(OPCPackage) is implemented
-        UnsupportedOperationException ex = assertThrows(
-            removeExpectedExceptionMsg,
-            UnsupportedOperationException.class,
-            () -> testFactoryFromNative(filename)
+        UnsupportedOperationException ex = assertThrows(UnsupportedOperationException.class,
+            () -> testFactoryFromNative(filename), removeExpectedExceptionMsg
         );
         assertEquals("Test not implemented", ex.getMessage());
     }

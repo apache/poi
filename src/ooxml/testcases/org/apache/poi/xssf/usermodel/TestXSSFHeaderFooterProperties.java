@@ -17,27 +17,27 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestXSSFHeaderFooterProperties {
-    
+
     private XSSFWorkbook wb;
     private XSSFSheet sheet;
     private XSSFHeaderFooterProperties hfProp;
-    
-    @Before
+
+    @BeforeEach
     public void before() {
         wb = new XSSFWorkbook();
         sheet = wb.createSheet();
         hfProp = sheet.getHeaderFooterProperties();
     }
-    
-    @After
+
+    @AfterEach
     public void after() throws Exception {
         wb.close();
     }

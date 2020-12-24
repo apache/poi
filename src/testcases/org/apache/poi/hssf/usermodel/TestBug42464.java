@@ -17,19 +17,19 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Iterator;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
-import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.Row;
-import org.junit.Test;
+import org.apache.poi.ss.util.CellReference;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -42,7 +42,7 @@ public final class TestBug42464 {
 		process(wb);
 		wb.close();
 	}
-    
+
     @Test
 	public void testExpSharedBadFile() throws Exception {
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("42464-ExpPtg-bad.xls");

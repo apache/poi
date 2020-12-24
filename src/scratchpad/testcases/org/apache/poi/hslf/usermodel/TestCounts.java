@@ -18,13 +18,13 @@
 package org.apache.poi.hslf.usermodel;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.hslf.HSLFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that SlideShow returns the right number of Sheets and MetaSheets
@@ -33,7 +33,7 @@ public final class TestCounts {
     @Test
 	public void testSheetsCount() throws IOException {
 	    HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
-	    
+
 		List<HSLFSlide> slides = ppt.getSlides();
 		// Two sheets - master sheet is separate
 		assertEquals(2, slides.size());
@@ -49,14 +49,14 @@ public final class TestCounts {
 		// These are slides 1+2 -> 256+257
 		assertEquals(256, slides.get(0)._getSheetNumber());
 		assertEquals(257, slides.get(1)._getSheetNumber());
-		
+
 		ppt.close();
 	}
 
     @Test
     public void testNotesCount() throws IOException {
         HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
-        
+
 		List<HSLFNotes> notes = ppt.getNotes();
 		// Two sheets -> two notes
 		// Note: there are also notes on the slide master
@@ -73,7 +73,7 @@ public final class TestCounts {
 		// They happen to go between the two slides in Ref terms
 		assertEquals(5, notes.get(0)._getSheetRefId());
 		assertEquals(7, notes.get(1)._getSheetRefId());
-		
+
 		ppt.close();
 	}
 }

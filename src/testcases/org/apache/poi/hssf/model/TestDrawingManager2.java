@@ -17,18 +17,18 @@
 
 package org.apache.poi.hssf.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.ddf.EscherDggRecord;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public final class TestDrawingManager2 {
     private DrawingManager2 drawingManager2;
     private EscherDggRecord dgg;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         dgg = new EscherDggRecord();
         dgg.setFileIdClusters( new EscherDggRecord.FileIdCluster[0] );

@@ -17,16 +17,15 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.junit.runners.Parameterized.Parameters;
+import java.util.stream.Stream;
 
-import java.util.Collection;
+import org.junit.jupiter.params.provider.Arguments;
 
 /**
  * Tests IF() as loaded from a test data spreadsheet.<p>
  */
 public class TestIFFunctionFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
-    @Parameters(name="{0}")
-    public static Collection<Object[]> data() throws Exception {
+    public static Stream<Arguments> data() throws Exception {
         return data(TestIFFunctionFromSpreadsheet.class, "IfFunctionTestCaseData.xls");
     }
 }

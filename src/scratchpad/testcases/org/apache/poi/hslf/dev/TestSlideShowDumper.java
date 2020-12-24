@@ -16,7 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hslf.dev;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -28,7 +29,7 @@ import java.util.Set;
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.util.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestSlideShowDumper extends BasePPTIteratingTest {
     private static final Set<String> FAILING = new HashSet<>();
@@ -47,13 +48,7 @@ public class TestSlideShowDumper extends BasePPTIteratingTest {
                 HSLFTestDataSamples.getSampleFile("slide_master.ppt").getAbsolutePath(),
                 HSLFTestDataSamples.getSampleFile("pictures.ppt").getAbsolutePath()
         });
-
-        try {
-            SlideShowDumper.main(new String[]{"invalidfile"});
-            fail("Should catch exception here");
-        } catch (EmptyFileException e) {
-            // expected here
-        }
+        assertThrows(EmptyFileException.class, () -> SlideShowDumper.main(new String[]{"invalidfile"}));
     }
 
     @Override

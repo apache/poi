@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt.tests;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
@@ -26,8 +26,7 @@ import org.apache.poi.poifs.crypt.CipherProvider;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestEncryptionInfo {
     @Test
@@ -39,11 +38,11 @@ public class TestEncryptionInfo {
         assertEquals(3, info.getVersionMajor());
         assertEquals(2, info.getVersionMinor());
 
-        Assert.assertEquals(CipherAlgorithm.aes128, info.getHeader().getCipherAlgorithm());
-        Assert.assertEquals(HashAlgorithm.sha1, info.getHeader().getHashAlgorithm());
+        assertEquals(CipherAlgorithm.aes128, info.getHeader().getCipherAlgorithm());
+        assertEquals(HashAlgorithm.sha1, info.getHeader().getHashAlgorithm());
         assertEquals(128, info.getHeader().getKeySize());
         assertEquals(32, info.getVerifier().getEncryptedVerifierHash().length);
-        Assert.assertEquals(CipherProvider.aes, info.getHeader().getCipherProvider());
+        assertEquals(CipherProvider.aes, info.getHeader().getCipherProvider());
         assertEquals("Microsoft Enhanced RSA and AES Cryptographic Provider", info.getHeader().getCspName());
 
         fs.close();

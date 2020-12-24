@@ -17,12 +17,12 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.apache.poi.poifs.storage.RawDataUtil.decompress;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -44,7 +44,7 @@ import org.apache.poi.ss.usermodel.RichTextString;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests TestHSSFCellComment.
@@ -97,10 +97,10 @@ public final class TestHSSFComment extends BaseTestCellComment {
         cell = sheet.getRow(5).getCell(2);
         comment = cell.getCellComment();
         assertEquals("c6", comment.getString().getString());
-        
+
         wb.close();
     }
-    
+
     @Test
     public void testBug56380InsertComments() throws Exception {
         HSSFWorkbook workbook = new HSSFWorkbook();
@@ -108,7 +108,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
         Drawing<?> drawing = sheet.createDrawingPatriarch();
         int noOfRows = 1025;
         String comment = "c";
-        
+
         for(int i = 0; i < noOfRows; i++) {
             Row row = sheet.createRow(i);
             Cell cell = row.createCell(0);
@@ -125,14 +125,14 @@ public final class TestHSSFComment extends BaseTestCellComment {
         } finally {
             fs.close();
         }*/
-        
+
         // save and recreate the workbook from the saved file
         HSSFWorkbook workbookBack = HSSFTestDataSamples.writeOutAndReadBack(workbook);
         sheet = workbookBack.getSheetAt(0);
-        
+
         // assert that the comments are created properly after reading back in
         checkComments(sheet, noOfRows, comment);
-        
+
         workbook.close();
         workbookBack.close();
     }
@@ -173,7 +173,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
         for(int i = 0; i < noOfRows; i++) {
             assertNotNull(sheet.getRow(i));
             assertNotNull(sheet.getRow(i).getCell(0));
-            assertNotNull("Did not get a Cell Comment for row " + i, sheet.getRow(i).getCell(0).getCellComment());
+            assertNotNull(sheet.getRow(i).getCell(0).getCellComment(), "Did not get a Cell Comment for row " + i);
             assertNotNull(sheet.getRow(i).getCell(0).getCellComment().getString());
             assertEquals(comment + i, sheet.getRow(i).getCell(0).getCellComment().getString().getString());
         }
@@ -181,27 +181,27 @@ public final class TestHSSFComment extends BaseTestCellComment {
 
     private Comment insertComment(Drawing<?> drawing, Cell cell, String message) {
         CreationHelper factory = cell.getSheet().getWorkbook().getCreationHelper();
-        
+
         ClientAnchor anchor = factory.createClientAnchor();
         anchor.setCol1(cell.getColumnIndex());
         anchor.setCol2(cell.getColumnIndex() + 1);
         anchor.setRow1(cell.getRowIndex());
         anchor.setRow2(cell.getRowIndex() + 1);
-        anchor.setDx1(100); 
+        anchor.setDx1(100);
         anchor.setDx2(100);
         anchor.setDy1(100);
         anchor.setDy2(100);
-            
+
         Comment comment = drawing.createCellComment(anchor);
-        
+
         RichTextString str = factory.createRichTextString(message);
         comment.setString(str);
         comment.setAuthor("fanfy");
         cell.setCellComment(comment);
-        
+
         return comment;
     }
-    
+
     @Test
     public void resultEqualsToNonExistingAbstractShape() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
@@ -308,7 +308,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
         assertEquals(((HSSFComment) patriarch.getChildren().get(0)).getString().getString(), "comment1");
         assertEquals(((HSSFComment) patriarch.getChildren().get(1)).getString().getString(), "comment2");
         assertEquals(((HSSFComment) patriarch.getChildren().get(2)).getString().getString(), "comment3");
-        
+
         wb.close();
         wbBack.close();
         wbBack2.close();
@@ -364,7 +364,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
         assertEquals(comment.getColumn(), 32);
         assertEquals(comment.getRow(), 42);
         assertTrue(comment.isVisible());
-        
+
         wb.close();
         wbBack.close();
         wbBack2.close();
@@ -403,7 +403,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
 
         assertNotNull(sh.findCellComment(5, 4));
         assertNull(sh.findCellComment(5, 5));
-        
+
         wb.close();
         wbBack.close();
     }
@@ -424,7 +424,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
         assertNotNull(shape);
 
         assertEquals(comment.getOptRecord().getEscherProperties().size(), 10);
-        
+
         wb.close();
     }
 
@@ -446,7 +446,7 @@ public final class TestHSSFComment extends BaseTestCellComment {
         assertEquals(2024, spRecord.getShapeId(), 2024);
         assertEquals(2024, comment.getShapeId(), 2024);
         assertEquals(2024, comment.getNoteRecord().getShapeId());
-        
+
         wb.close();
     }
 }

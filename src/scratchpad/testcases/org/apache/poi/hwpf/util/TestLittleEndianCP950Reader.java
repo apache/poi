@@ -17,12 +17,12 @@
 
 package org.apache.poi.hwpf.util;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.io.Reader;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestLittleEndianCP950Reader {
 
@@ -63,6 +63,6 @@ public class TestLittleEndianCP950Reader {
         int c = reader.read();
         assertEquals((int) expected, c);
         int eof = reader.read();
-        assertEquals("should be end of stream", -1, eof);
+        assertEquals(-1, eof, "should be end of stream");
     }
 }

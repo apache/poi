@@ -17,13 +17,13 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link PercentPtg}.
@@ -37,12 +37,12 @@ public final class TestPercentPtg extends BaseTestPtg {
         try (HSSFWorkbook workbook = loadWorkbook("PercentPtg.xls")) {
             HSSFSheet sheet = workbook.getSheetAt(0);
 
-            assertEquals("Wrong numeric value for original number", 53000.0,
-                         sheet.getRow(0).getCell(0).getNumericCellValue(), 0.0);
-            assertEquals("Wrong numeric value for percent formula result", 5300.0,
-                         sheet.getRow(1).getCell(0).getNumericCellValue(), 0.0);
-            assertEquals("Wrong formula string for percent formula", "A1*10%",
-                         sheet.getRow(1).getCell(0).getCellFormula());
+            assertEquals(53000.0, sheet.getRow(0).getCell(0).getNumericCellValue(), 0.0,
+                         "Wrong numeric value for original number");
+            assertEquals(5300.0, sheet.getRow(1).getCell(0).getNumericCellValue(), 0.0,
+                         "Wrong numeric value for percent formula result");
+            assertEquals("A1*10%", sheet.getRow(1).getCell(0).getCellFormula(),
+                         "Wrong formula string for percent formula");
         }
     }
 }

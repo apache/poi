@@ -17,9 +17,9 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -35,7 +35,7 @@ import java.util.stream.Stream;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.Property;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Verify the order of entries <code>DirectoryProperty</code> .

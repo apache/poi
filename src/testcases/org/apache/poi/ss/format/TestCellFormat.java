@@ -16,9 +16,9 @@
 ==================================================================== */
 package org.apache.poi.ss.format;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -38,23 +38,23 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class TestCellFormat {
 
     private static TimeZone userTimeZone;
 
-    @BeforeClass
+    @BeforeAll
     public static void setTimeZone() {
         userTimeZone = LocaleUtil.getUserTimeZone();
         LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CET"));
         LocaleUtil.setUserLocale(Locale.US);
     }
 
-    @AfterClass
+    @AfterAll
     public static void resetTimeZone() {
         LocaleUtil.setUserTimeZone(userTimeZone);
         LocaleUtil.setUserLocale(Locale.ROOT);
@@ -1024,6 +1024,6 @@ public class TestCellFormat {
         assertTrue(CellFormatPart.NAMED_COLORS.size() >= HSSFColor.HSSFColorPredefined.values().length);
         Stream.of("GREEN", "Green", "RED", "Red", "BLUE", "Blue", "YELLOW", "Yellow")
                 .map(CellFormatPart.NAMED_COLORS::get)
-                .forEach(Assert::assertNotNull);
+                .forEach(Assertions::assertNotNull);
     }
 }

@@ -17,15 +17,15 @@
 
 package org.apache.poi.hpbf.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpbf.HPBFDocument;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestEscherParts {
     private static final POIDataSamples _samples = POIDataSamples.getPublisherInstance();
@@ -51,7 +51,7 @@ public final class TestEscherParts {
 
     @Test
     public void testComplex() throws Exception {
-        InputStream is = _samples.openResourceAsStream("SampleBrochure.pub"); 
+        InputStream is = _samples.openResourceAsStream("SampleBrochure.pub");
 		HPBFDocument doc1 = new HPBFDocument(is);
 		is.close();
 
@@ -68,7 +68,7 @@ public final class TestEscherParts {
 		doc1.close();
 
 		// Now do another complex file
-		InputStream is2 = _samples.openResourceAsStream("SampleNewsletter.pub"); 
+		InputStream is2 = _samples.openResourceAsStream("SampleNewsletter.pub");
         HPBFDocument doc2 = new HPBFDocument(is2);
 		is2.close();
 

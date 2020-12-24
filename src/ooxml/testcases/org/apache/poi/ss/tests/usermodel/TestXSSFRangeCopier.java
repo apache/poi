@@ -19,7 +19,7 @@
 
 package org.apache.poi.ss.tests.usermodel;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
@@ -31,9 +31,9 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFRangeCopier;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestXSSFRangeCopier extends BaseTestRangeCopier {
     public TestXSSFRangeCopier() {
@@ -42,7 +42,7 @@ public class TestXSSFRangeCopier extends BaseTestRangeCopier {
         testDataProvider = XSSFITestDataProvider.instance;
     }
 
-    @Before
+    @BeforeEach
     public void init() {
         workbook = XSSFTestDataSamples.openSampleWorkbook("tile-range-test.xlsx");
         initSheets();
@@ -50,7 +50,7 @@ public class TestXSSFRangeCopier extends BaseTestRangeCopier {
         transSheetRangeCopier = new XSSFRangeCopier(sheet1, sheet2);
     }
 
-    @After
+    @AfterEach
     public void shutdown() throws IOException {
         workbook.close();
     }

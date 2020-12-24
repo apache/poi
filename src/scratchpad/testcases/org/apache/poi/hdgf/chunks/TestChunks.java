@@ -17,22 +17,22 @@
 
 package org.apache.poi.hdgf.chunks;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
 import org.apache.poi.hdgf.chunks.ChunkFactory.CommandDefinition;
 import org.apache.poi.poifs.storage.RawDataUtil;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public final class TestChunks {
 	private static byte[] data_a, data_b;
 
-	@BeforeClass
+	@BeforeAll
 	public static void setup() throws IOException {
 		data_a = RawDataUtil.decompress(
 			"H4sIAAAAAAAAAHNjYGD4DwRMQNqFAQygFAMTWAIbYIBqQqZRARMSOwNKMwOxChAzMoRIACkeNC3MUAwDjEjGTEISb" +

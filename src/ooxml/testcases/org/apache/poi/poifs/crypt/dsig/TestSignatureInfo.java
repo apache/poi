@@ -23,11 +23,12 @@
    ================================================================= */
 package org.apache.poi.poifs.crypt.dsig;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -152,11 +153,10 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 import org.bouncycastle.operator.jcajce.JcaDigestCalculatorProviderBuilder;
 import org.etsi.uri.x01903.v13.DigestAlgAndValueType;
 import org.etsi.uri.x01903.v13.QualifyingPropertiesType;
-import org.junit.AfterClass;
-import org.junit.Assume;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.w3.x2000.x09.xmldsig.ReferenceType;
 import org.w3.x2000.x09.xmldsig.SignatureDocument;
 import org.w3c.dom.Document;
@@ -169,12 +169,12 @@ public class TestSignatureInfo {
     private KeyPair keyPair;
     private X509Certificate x509;
 
-    @AfterClass
+    @AfterAll
     public static void removeUserLocale() {
         LocaleUtil.resetUserLocale();
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void initBouncy() {
         CryptoFunctions.registerBouncyCastle();
 
@@ -189,8 +189,8 @@ public class TestSignatureInfo {
         // in the xmlsec jar file
         String additionalJar = System.getProperty("additionaljar");
         //System.out.println("Having: " + additionalJar);
-        Assume.assumeTrue("Not running TestSignatureInfo because we are testing with additionaljar set to " + additionalJar,
-                          additionalJar == null || additionalJar.trim().length() == 0);
+        assumeTrue(additionalJar == null || additionalJar.trim().length() == 0,
+            "Not running TestSignatureInfo because we are testing with additionaljar set to " + additionalJar);
 
         System.setProperty("org.apache.xml.security.ignoreLineBreaks", "true");
 
@@ -198,7 +198,7 @@ public class TestSignatureInfo {
         // System.setProperty("line.separator", "\n");
     }
 
-    @Ignore("This test is very sensitive, it breaks with every little change to the produced XML")
+    @Disabled("This test is very sensitive, it breaks with every little change to the produced XML")
     @Test
     public void bug61182() throws Exception {
         final String pfxInput =
@@ -277,7 +277,7 @@ public class TestSignatureInfo {
             // separator set to the various system configurations
             String sep = SystemProperties.getProperty("line.separator");
             String signExp;
-            assumeTrue("Hashes only known for Windows/Unix/Mac", sep == null || "\n".equals(sep) || "\r\n".equals(sep) || "\r".equals(sep));
+            assumeTrue(sep == null || "\n".equals(sep) || "\r\n".equals(sep) || "\r".equals(sep), "Hashes only known for Windows/Unix/Mac");
             signExp = (sep == null || "\n".equals(sep)) ? unixSignExp : ("\r\n".equals(sep)) ? winSignExp : macSignExp;
 
             String signAct = si.getSignatureParts().iterator().next().
@@ -355,12 +355,12 @@ public class TestSignatureInfo {
                 }
 
                 assertNotNull(result);
-                assertEquals("test-file: " + testFile, 1, result.size());
+                assertEquals(1, result.size(), "test-file: " + testFile);
                 X509Certificate signer = result.get(0);
                 LOG.log(POILogger.DEBUG, "signer: ", signer.getSubjectX500Principal());
 
                 boolean b = si.verifySignature();
-                assertTrue("test-file: " + testFile, b);
+                assertTrue(b, "test-file: " + testFile);
                 pkg.revert();
             }
         }
@@ -382,14 +382,14 @@ public class TestSignatureInfo {
             }
 
             assertNotNull(result);
-            assertEquals("test-file: " + testFile, 2, result.size());
+            assertEquals(2, result.size(), "test-file: " + testFile);
             X509Certificate signer1 = result.get(0);
             X509Certificate signer2 = result.get(1);
             LOG.log(POILogger.DEBUG, "signer 1: ", signer1.getSubjectX500Principal());
             LOG.log(POILogger.DEBUG, "signer 2: ", signer2.getSubjectX500Principal());
 
             boolean b = si.verifySignature();
-            assertTrue("test-file: " + testFile, b);
+            assertTrue(b, "test-file: " + testFile);
             pkg.revert();
         }
     }
@@ -433,7 +433,7 @@ public class TestSignatureInfo {
                 si.setOpcPackage(pkg);
                 si.setSignatureConfig(sic);
                 boolean b = si.verifySignature();
-                assertFalse("signature should be broken", b);
+                assertFalse(b, "signature should be broken");
             }
         }
     }
@@ -555,21 +555,21 @@ public class TestSignatureInfo {
                     throw e;
                 }
                 if ((e.getCause() instanceof ConnectException) || (e.getCause() instanceof SocketTimeoutException)) {
-                    Assume.assumeFalse("Only allowing ConnectException with 'timed out' as message here, but had: " + e,
-                                       e.getCause().getMessage().contains("timed out"));
+                    assumeFalse(e.getCause().getMessage().contains("timed out"),
+                        "Only allowing ConnectException with 'timed out' as message here, but had: " + e);
                 } else if (e.getCause() instanceof IOException) {
-                    Assume.assumeFalse("Only allowing IOException with 'Error contacting TSP server' as message here, but had: " + e,
-                                       e.getCause().getMessage().contains("Error contacting TSP server"));
+                    assumeFalse(e.getCause().getMessage().contains("Error contacting TSP server"),
+                        "Only allowing IOException with 'Error contacting TSP server' as message here, but had: " + e);
                 } else if (e.getCause() instanceof RuntimeException) {
-                    Assume.assumeFalse("Only allowing RuntimeException with 'This site is cur' as message here, but had: " + e,
-                                       e.getCause().getMessage().contains("This site is cur"));
+                    assumeFalse(e.getCause().getMessage().contains("This site is cur"),
+                        "Only allowing RuntimeException with 'This site is cur' as message here, but had: " + e);
                 }
                 throw e;
             }
 
             // verify
             Iterator<SignaturePart> spIter = si.getSignatureParts().iterator();
-            assertTrue("Had: " + pkg.getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE_ORIGIN), spIter.hasNext());
+            assertTrue(spIter.hasNext(), "Had: " + pkg.getRelationshipsByType(PackageRelationshipTypes.DIGITAL_SIGNATURE_ORIGIN));
             SignaturePart sp = spIter.next();
             boolean valid = sp.validate();
             assertTrue(valid);
@@ -697,9 +697,9 @@ public class TestSignatureInfo {
             si.confirmSignature();
 
             for (SignaturePart sp : si.getSignatureParts()) {
-                assertTrue("Could not validate", sp.validate());
+                assertTrue(sp.validate(), "Could not validate");
                 X509Certificate signer = sp.getSigner();
-                assertNotNull("signer undefined?!", signer);
+                assertNotNull(signer, "signer undefined?!");
                 List<X509Certificate> certChainRes = sp.getCertChain();
 
                 // IBM JDK is still buggy, even after fix for APAR IJ21985
@@ -731,9 +731,9 @@ public class TestSignatureInfo {
 
                 si.confirmSignature();
                 boolean b = si.verifySignature();
-                assertTrue("Signature not correctly calculated for " + ha, b);
+                assertTrue(b, "Signature not correctly calculated for " + ha);
             } catch (EncryptedDocumentException e) {
-                Assume.assumeTrue(e.getMessage().startsWith("Export Restrictions"));
+                assumeTrue(e.getMessage().startsWith("Export Restrictions"));
             }
         }
     }
@@ -758,7 +758,7 @@ public class TestSignatureInfo {
                 si.setOpcPackage(pkg);
                 si.setSignatureConfig(signatureConfig);
                 si.confirmSignature();
-                assertTrue("invalid signature", si.verifySignature());
+                assertTrue(si.verifySignature(), "invalid signature");
             }
         }
     }
@@ -1087,7 +1087,7 @@ public class TestSignatureInfo {
         // in the Sonar Maven runs where we are at a different source directory
         File buildDir = new File("build");
         if(!buildDir.exists()) {
-            assertTrue("Failed to create " + buildDir.getAbsolutePath(), buildDir.mkdirs());
+            assertTrue(buildDir.mkdirs(), "Failed to create " + buildDir.getAbsolutePath());
         }
         File tmpFile = new File(buildDir, "sigtest"+extension);
 

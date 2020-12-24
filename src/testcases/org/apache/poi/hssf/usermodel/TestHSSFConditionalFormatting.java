@@ -18,14 +18,19 @@
 package org.apache.poi.hssf.usermodel;
 
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.util.HSSFColor;
-import org.apache.poi.ss.usermodel.*;
-import org.junit.Test;
+import org.apache.poi.ss.usermodel.BaseTestConditionalFormatting;
+import org.apache.poi.ss.usermodel.Color;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.apache.poi.ss.usermodel.SheetConditionalFormatting;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.jupiter.api.Test;
 
 /**
  * HSSF-specific Conditional Formatting tests
@@ -35,8 +40,8 @@ public final class TestHSSFConditionalFormatting extends BaseTestConditionalForm
         super(HSSFITestDataProvider.instance);
     }
     @Override
-    protected void assertColour(String hexExpected, Color actual) {
-        assertNotNull("Colour must be given", actual);
+    protected void assertColor(String hexExpected, Color actual) {
+        assertNotNull(actual, "Colour must be given");
         if (actual instanceof HSSFColor) {
             HSSFColor colour = (HSSFColor)actual;
             assertEquals(hexExpected, colour.getHexString());
@@ -54,7 +59,7 @@ public final class TestHSSFConditionalFormatting extends BaseTestConditionalForm
     public void testRead() throws IOException {
         testRead("WithConditionalFormatting.xls");
     }
-    
+
     @Test
     public void testReadOffice2007() throws IOException {
         testReadOffice2007("NewStyleConditionalFormattings.xls");
@@ -73,10 +78,10 @@ public final class TestHSSFConditionalFormatting extends BaseTestConditionalForm
         }
 
         wb.removeSheetAt(1);*/
-        
+
         // initially it is good
         writeTemp53691(wb, "agood");
-        
+
         // clone sheet corrupts it
         Sheet sheet = wb.cloneSheet(0);
         writeTemp53691(wb, "bbad");
@@ -84,28 +89,28 @@ public final class TestHSSFConditionalFormatting extends BaseTestConditionalForm
         // removing the sheet makes it good again
         wb.removeSheetAt(wb.getSheetIndex(sheet));
         writeTemp53691(wb, "cgood");
-        
+
         // cloning again and removing the conditional formatting makes it good again
         sheet = wb.cloneSheet(0);
-        removeConditionalFormatting(sheet);        
+        removeConditionalFormatting(sheet);
         writeTemp53691(wb, "dgood");
-        
+
         // cloning the conditional formatting manually makes it bad again
         cf = sheet.getSheetConditionalFormatting();
         SheetConditionalFormatting scf = wb.getSheetAt(0).getSheetConditionalFormatting();
         for (int j = 0; j < scf.getNumConditionalFormattings(); j++) {
             cf.addConditionalFormatting(scf.getConditionalFormattingAt(j));
-        }        
+        }
         writeTemp53691(wb, "ebad");
 
         // remove all conditional formatting for comparing BIFF output
-        removeConditionalFormatting(sheet);        
-        removeConditionalFormatting(wb.getSheetAt(0));        
+        removeConditionalFormatting(sheet);
+        removeConditionalFormatting(wb.getSheetAt(0));
         writeTemp53691(wb, "fgood");
-        
+
         wb.close();
     }
-    
+
     private void removeConditionalFormatting(Sheet sheet) {
         SheetConditionalFormatting cf = sheet.getSheetConditionalFormatting();
         for (int j = 0; j < cf.getNumConditionalFormattings(); j++) {

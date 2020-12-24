@@ -17,7 +17,8 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -34,14 +35,14 @@ import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test various write situations
  */
 public final class TestHWPFWrite extends HWPFTestCase {
     private static final POIDataSamples SAMPLES = POIDataSamples.getDocumentInstance();
-    
+
     /**
      * Write to a stream
      */
@@ -124,26 +125,22 @@ public final class TestHWPFWrite extends HWPFTestCase {
         poifs.close();
     }
 
-    @Test(expected=IllegalStateException.class)
+    @Test
     public void testInvalidInPlaceWriteInputStream() throws IOException {
         // Can't work for InputStream opened files
 
         try (InputStream is = SAMPLES.openResourceAsStream("SampleDoc.doc");
              HWPFDocument doc = new HWPFDocument(is)) {
-            doc.write();
+            assertThrows(IllegalStateException.class, doc::write);
         }
     }
-    
-    @Test(expected=IllegalStateException.class)
+
+    @Test
     public void testInvalidInPlaceWritePOIFS() throws Exception {
         // Can't work for Read-Only files
-        POIFSFileSystem fs = new POIFSFileSystem(SAMPLES.getFile("SampleDoc.doc"), true);
-        HWPFDocument doc = new HWPFDocument(fs.getRoot());
-        try {
-            doc.write();
-        } finally {
-            doc.close();
-            fs.close();
+        try (POIFSFileSystem fs = new POIFSFileSystem(SAMPLES.getFile("SampleDoc.doc"), true);
+            HWPFDocument doc = new HWPFDocument(fs.getRoot())) {
+            assertThrows(IllegalStateException.class, doc::write);
         }
     }
 }

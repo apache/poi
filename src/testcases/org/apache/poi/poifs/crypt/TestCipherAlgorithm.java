@@ -17,16 +17,17 @@
 
 package org.apache.poi.poifs.crypt;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.poi.EncryptedDocumentException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestCipherAlgorithm {
     @Test
     public void validInputs() {
         assertEquals(128, CipherAlgorithm.aes128.defaultKeySize);
-        
+
         for(CipherAlgorithm alg : CipherAlgorithm.values()) {
             assertEquals(alg, CipherAlgorithm.valueOf(alg.toString()));
         }
@@ -34,19 +35,11 @@ public class TestCipherAlgorithm {
         assertEquals(CipherAlgorithm.aes128, CipherAlgorithm.fromEcmaId(0x660E));
         assertEquals(CipherAlgorithm.aes192, CipherAlgorithm.fromXmlId("AES", 192));
     }
-    
-    @Test(expected=EncryptedDocumentException.class)
-    public void invalidEcmaId() {
-        CipherAlgorithm.fromEcmaId(0);
-    }
-    
-    @Test(expected=EncryptedDocumentException.class)
-    public void invalidXmlId1() {
-        CipherAlgorithm.fromXmlId("AES", 1);
-    }
-    
-    @Test(expected=EncryptedDocumentException.class)
-    public void invalidXmlId2() {
-        CipherAlgorithm.fromXmlId("RC1", 0x40);
+
+    @Test
+    public void invalidInputs() {
+        assertThrows(EncryptedDocumentException.class, () -> CipherAlgorithm.fromEcmaId(0));
+        assertThrows(EncryptedDocumentException.class, () -> CipherAlgorithm.fromXmlId("AES", 1));
+        assertThrows(EncryptedDocumentException.class, () -> CipherAlgorithm.fromXmlId("RC1", 0x40));
     }
 }

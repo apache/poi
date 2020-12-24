@@ -17,8 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -34,38 +34,32 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.CreationHelper;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
- * 
+ *
  */
 public final class TestOLE2Embeding {
 
     @Test
     public void testEmbeding() throws Exception {
         // This used to break, until bug #43116 was fixed
-        HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("ole2-embedding.xls");
-
-        // Check we can get at the Escher layer still
-        workbook.getAllPictures();
-        
-        workbook.close();
+        try (HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("ole2-embedding.xls")) {
+            // Check we can get at the Escher layer still
+            workbook.getAllPictures();
+        }
     }
 
     @Test
     public void testEmbeddedObjects() throws Exception {
-        HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("ole2-embedding.xls");
-
-        List<HSSFObjectData> objects = workbook.getAllEmbeddedObjects();
-        assertEquals("Wrong number of objects", 2, objects.size());
-        assertEquals("Wrong name for first object", "MBD06CAB431",
-                objects.get(0).getDirectory().getName());
-        assertEquals("Wrong name for second object", "MBD06CAC85A",
-                objects.get(1).getDirectory().getName());
-        
-        workbook.close();
+        try (HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook("ole2-embedding.xls")) {
+            List<HSSFObjectData> objects = workbook.getAllEmbeddedObjects();
+            assertEquals(2, objects.size(), "Wrong number of objects");
+            assertEquals("MBD06CAB431", objects.get(0).getDirectory().getName(), "Wrong name for first object");
+            assertEquals("MBD06CAC85A", objects.get(1).getDirectory().getName(), "Wrong name for second object");
+        }
     }
-    
+
     @Test
     public void testReallyEmbedSomething() throws Exception {
     	HSSFWorkbook wb1 = new HSSFWorkbook();
@@ -81,7 +75,7 @@ public final class TestOLE2Embeding {
     	int imgPPT = wb1.addPicture(picturePPT, HSSFWorkbook.PICTURE_TYPE_JPEG);
     	int xlsIdx = wb1.addOlePackage(xlsPoifs, "Sample-XLS", "sample.xls", "sample.xls");
     	int txtIdx = wb1.addOlePackage(getSampleTXT(), "Sample-TXT", "sample.txt", "sample.txt");
-    	
+
         int rowoffset = 5;
         int coloffset = 5;
 
@@ -89,21 +83,21 @@ public final class TestOLE2Embeding {
         HSSFClientAnchor anchor = (HSSFClientAnchor)ch.createClientAnchor();
         anchor.setAnchor((short)(2+coloffset), 1+rowoffset, 0, 0, (short)(3+coloffset), 5+rowoffset, 0, 0);
         anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
-    	
+
         patriarch.createObjectData(anchor, pptIdx, imgPPT);
 
         anchor = (HSSFClientAnchor)ch.createClientAnchor();
         anchor.setAnchor((short)(5+coloffset), 1+rowoffset, 0, 0, (short)(6+coloffset), 5+rowoffset, 0, 0);
         anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
-        
+
         patriarch.createObjectData(anchor, xlsIdx, imgIdx);
-        
+
         anchor = (HSSFClientAnchor)ch.createClientAnchor();
         anchor.setAnchor((short)(3+coloffset), 10+rowoffset, 0, 0, (short)(5+coloffset), 11+rowoffset, 0, 0);
         anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
-        
+
         patriarch.createObjectData(anchor, txtIdx, imgIdx);
-        
+
         anchor = (HSSFClientAnchor)ch.createClientAnchor();
         anchor.setAnchor((short)(1+coloffset), -2+rowoffset, 0, 0, (short)(7+coloffset), 14+rowoffset, 0, 0);
         anchor.setAnchorType(AnchorType.DONT_MOVE_AND_RESIZE);
@@ -117,10 +111,10 @@ public final class TestOLE2Embeding {
 //	        wb.write(fos);
 //	        fos.close();
 //        }
-        
+
         HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
         wb1.close();
-        
+
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         HSSFObjectData od = wb2.getAllEmbeddedObjects().get(0);
         Ole10Native ole10 = Ole10Native.createFromEmbeddedOleObject((DirectoryNode)od.getDirectory());
@@ -137,21 +131,21 @@ public final class TestOLE2Embeding {
         od = wb2.getAllEmbeddedObjects().get(2);
         ole10 = Ole10Native.createFromEmbeddedOleObject((DirectoryNode)od.getDirectory());
         assertArrayEquals(ole10.getDataBuffer(), getSampleTXT());
-    
+
         xlsPoifs.close();
         pptPoifs.close();
         wb2.close();
     }
-    
+
     static POIFSFileSystem getSamplePPT() throws IOException {
     	// scratchpad classes are not available, so we use something pre-cooked
     	InputStream is = POIDataSamples.getSlideShowInstance().openResourceAsStream("with_textbox.ppt");
     	POIFSFileSystem poifs = new POIFSFileSystem(is);
     	is.close();
-        
+
         return poifs;
     }
-    
+
     static POIFSFileSystem getSampleXLS() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet();
@@ -163,8 +157,8 @@ public final class TestOLE2Embeding {
 
         return new POIFSFileSystem(new ByteArrayInputStream(bos.toByteArray()));
     }
-    
+
     static byte[] getSampleTXT() {
         return "All your base are belong to us".getBytes(LocaleUtil.CHARSET_1252);
-    }    
+    }
 }

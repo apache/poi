@@ -17,13 +17,13 @@
 
 package org.apache.poi.ddf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestUnknownEscherRecord {
     @Test
@@ -81,7 +81,7 @@ public final class TestUnknownEscherRecord {
         assertTrue( r.isContainerRecord() );
         assertEquals( 1, r.getChildRecords().size() );
         assertEquals( (short) 0xFFFF, r.getChild( 0 ).getRecordId() );
-        
+
         //Add by Zhang Zhang test error situation when remaining bytes > avalible bytes
         testData =
             "00 02 " + // options
@@ -91,7 +91,7 @@ public final class TestUnknownEscherRecord {
 
 	    r = new UnknownEscherRecord();
 	    r.fillFields( HexRead.readFromString( testData ), factory );
-	
+
 	    assertEquals( 0x0200, r.getOptions() );
 	    assertEquals( (short) 0xF111, r.getRecordId() );
 	    assertEquals( 12, r.getRecordSize() );
@@ -102,7 +102,7 @@ public final class TestUnknownEscherRecord {
 	    assertEquals( 2, r.getData()[1] );
 	    assertEquals( 3, r.getData()[2] );
 	    assertEquals( 4, r.getData()[3] );
-	    
+
         testData =
             "0F 02 " + // options
             "11 F1 " + // record id
@@ -113,7 +113,7 @@ public final class TestUnknownEscherRecord {
 
 	    r = new UnknownEscherRecord();
 	    r.fillFields( HexRead.readFromString( testData ), factory );
-	
+
 	    assertEquals( 0x020F, r.getOptions() );
 	    assertEquals( (short) 0xF111, r.getRecordId() );
 	    assertEquals( 8, r.getRecordSize() );

@@ -18,12 +18,12 @@
 package org.apache.poi.hwpf.model;
 
 import static org.apache.poi.POITestCase.assertReflectEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.poi.hwpf.HWPFDocFixture;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public final class TestFileInformationBlock {
     private FileInformationBlock _fileInformationBlock;
@@ -43,7 +43,7 @@ public final class TestFileInformationBlock {
         assertNotNull(_fileInformationBlock.toString());
     }
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         /** @todo verify the constructors */
         _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
@@ -51,7 +51,7 @@ public final class TestFileInformationBlock {
         _fileInformationBlock = _hWPFDocFixture._fib;
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         _fileInformationBlock = null;
         _hWPFDocFixture.tearDown();

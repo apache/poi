@@ -17,15 +17,15 @@
  */
 package org.apache.poi.ss.excelant;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.poi.ss.usermodel.Workbook;
 
 public class MockExcelAntWorkbookHandler implements IExcelAntWorkbookHandler {
     public static boolean executed;
     public static Workbook workbook;
-    
-    
+
+
     @Override
     public void setWorkbook(Workbook workbook) {
         MockExcelAntWorkbookHandler.workbook = workbook;

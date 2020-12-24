@@ -21,7 +21,7 @@ import java.io.InputStream;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
 import org.apache.poi.xdgf.usermodel.XmlVisioDocument;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class XDGFFileHandler extends AbstractFileHandler {
     @Override

@@ -17,11 +17,10 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -31,7 +30,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link Dec2Hex}
@@ -58,19 +57,19 @@ public final class TestDec2Hex {
 	private static void confirmValue(String msg, String number1, String number2, String expected) {
 		ValueEval result = invokeValue(number1, number2);
 		assertEquals(StringEval.class, result.getClass());
-		assertEquals(msg, expected, ((StringEval) result).getStringValue());
+		assertEquals(expected, ((StringEval) result).getStringValue(), msg);
 	}
 
     private static void confirmValue(String msg, String number1, String expected) {
 		ValueEval result = invokeValue(number1);
 		assertEquals(StringEval.class, result.getClass());
-		assertEquals(msg, expected, ((StringEval) result).getStringValue());
+		assertEquals(expected, ((StringEval) result).getStringValue(), msg);
 	}
 
     private static void confirmValueError(String msg, String number1, String number2, ErrorEval numError) {
         ValueEval result = invokeValue(number1, number2);
         assertEquals(ErrorEval.class, result.getClass());
-        assertEquals(msg, numError, result);
+        assertEquals(numError, result, msg);
     }
 
     @Test
@@ -98,11 +97,11 @@ public final class TestDec2Hex {
         assertEquals("2147483648", maxIntPlusOne);
         confirmValue("Converts INT_MAX + 1 to hexadecimal", maxIntPlusOne, "80000000");
 
-        String maxLong = Long.toString(549755813887l);
+        String maxLong = Long.toString(549755813887L);
         assertEquals("549755813887", maxLong);
         confirmValue("Converts the max supported value to hexadecimal", maxLong, "7FFFFFFFFF");
 
-        String minLong = Long.toString(-549755813888l);
+        String minLong = Long.toString(-549755813888L);
         assertEquals("-549755813888", minLong);
         confirmValue("Converts the min supported value to hexadecimal", minLong, "FF80000000");
 	}
@@ -139,15 +138,8 @@ public final class TestDec2Hex {
         cell.setCellValue("-8");
 
         HSSFEvaluationWorkbook workbook = HSSFEvaluationWorkbook.create(wb);
-        WorkbookEvaluator workbookEvaluator = new WorkbookEvaluator(workbook, new IStabilityClassifier() {
-
-            @Override
-            public boolean isCellFinal(int sheetIndex, int rowIndex, int columnIndex) {
-                return true;
-            }
-        }, null);
-        return new OperationEvaluationContext(workbookEvaluator,
-                workbook, 0, 0, 0, null);
+        WorkbookEvaluator workbookEvaluator = new WorkbookEvaluator(workbook, (sheetIndex, rowIndex, columnIndex) -> true, null);
+        return new OperationEvaluationContext(workbookEvaluator, workbook, 0, 0, 0, null);
     }
 
     @Test
@@ -157,7 +149,7 @@ public final class TestDec2Hex {
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0) };
         ValueEval result = new Dec2Hex().evaluate(args, -1, -1);
 
-        assertEquals("Had: " + result, StringEval.class, result.getClass());
+        assertEquals(StringEval.class, result.getClass(), "Had: " + result);
         assertEquals("7B", ((StringEval) result).getStringValue());
     }
 
@@ -168,7 +160,7 @@ public final class TestDec2Hex {
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 1) };
         ValueEval result = new Dec2Hex().evaluate(args, -1, -1);
 
-        assertEquals("Had: " + result, StringEval.class, result.getClass());
+        assertEquals(StringEval.class, result.getClass(), "Had: " + result);
         assertEquals("0000007B", ((StringEval) result).getStringValue());
     }
 
@@ -179,7 +171,7 @@ public final class TestDec2Hex {
         ValueEval[] args = new ValueEval[] { ctx.getRefEval(0, 0), ctx.getRefEval(0, 1) };
         ValueEval result = new Dec2Hex().evaluate(args, ctx);
 
-        assertEquals("Had: " + result, StringEval.class, result.getClass());
+        assertEquals(StringEval.class, result.getClass(), "Had: " + result);
         assertEquals("0000007B", ((StringEval) result).getStringValue());
     }
 
@@ -242,15 +234,12 @@ public final class TestDec2Hex {
     public void testBackAndForth() {
         for (int i = -512; i < 512; i++) {
             ValueEval result = invokeValue(Integer.toString(i));
-            assertEquals("Had: " + result, StringEval.class,
-                    result.getClass());
+            assertEquals(StringEval.class, result.getClass(), "Had: " + result);
 
             ValueEval back = invokeBack(((StringEval) result).getStringValue());
-            assertEquals("Had: " + back, NumberEval.class,
-                    back.getClass());
+            assertEquals(NumberEval.class, back.getClass(), "Had: " + back);
 
-            assertEquals(Integer.toString(i),
-                    ((NumberEval) back).getStringValue());
+            assertEquals(Integer.toString(i), ((NumberEval) back).getStringValue());
         }
     }
 }

@@ -17,18 +17,21 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+
+import java.io.IOException;
+import java.util.Arrays;
+
 import org.apache.poi.ddf.EscherDgRecord;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.record.CommonObjectDataSubRecord;
 import org.apache.poi.hssf.record.EscherAggregate;
 import org.apache.poi.ss.usermodel.BaseTestCloneSheet;
-import org.junit.Test;
-
-import java.io.IOException;
-import java.util.Arrays;
-
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the ability to clone a sheet.
@@ -46,7 +49,7 @@ public final class TestCloneSheet extends BaseTestCloneSheet {
         HSSFWorkbook b = new HSSFWorkbook();
         HSSFSheet s = b.createSheet("Test");
         HSSFSheet s2 = s.cloneSheet(b);
-        
+
         assertNull(s.getDrawingPatriarch());
         assertNull(s2.getDrawingPatriarch());
         assertEquals(HSSFTestHelper.getSheetForTest(s).getRecords().size(), HSSFTestHelper.getSheetForTest(s2).getRecords().size());
@@ -97,7 +100,7 @@ public final class TestCloneSheet extends BaseTestCloneSheet {
         c.setColumn(1);
         c.setRow(2);
         c.setString(new HSSFRichTextString("qwertyuio"));
-        
+
         HSSFSheet sh2 = wb.cloneSheet(0);
         HSSFPatriarch p2 = sh2.getDrawingPatriarch();
         HSSFComment c2 = (HSSFComment) p2.getChildren().get(0);
@@ -106,11 +109,11 @@ public final class TestCloneSheet extends BaseTestCloneSheet {
         assertEquals(c.getRow(), c2.getRow());
         assertEquals(c.getColumn(), c2.getColumn());
 
-        // The ShapeId is not equal? 
+        // The ShapeId is not equal?
         // assertEquals(c.getNoteRecord().getShapeId(), c2.getNoteRecord().getShapeId());
-        
+
         assertArrayEquals(c2.getTextObjectRecord().serialize(), c.getTextObjectRecord().serialize());
-        
+
         // ShapeId is different
         CommonObjectDataSubRecord subRecord = (CommonObjectDataSubRecord) c2.getObjRecord().getSubRecords().get(0);
         subRecord.setObjectId(1025);
@@ -126,7 +129,7 @@ public final class TestCloneSheet extends BaseTestCloneSheet {
         EscherSpRecord sp = (EscherSpRecord) c2.getEscherContainer().getChild(0);
         sp.setShapeId(1025);
         assertArrayEquals(c2.getEscherContainer().serialize(), c.getEscherContainer().serialize());
-        
+
         wb.close();
     }
 }

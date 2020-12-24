@@ -16,9 +16,9 @@
 ==================================================================== */
 
 package org.apache.poi.hssf.eventusermodel;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -28,9 +28,9 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.CellValueRecordInterface;
 import org.apache.poi.hssf.record.FormulaRecord;
 import org.apache.poi.hssf.record.NumberRecord;
-import org.apache.poi.hssf.record.Record;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 /**
  * Tests for FormatTrackingHSSFListener
  */
@@ -43,14 +43,14 @@ public final class TestFormatTrackingHSSFListener {
 		mockListen = new MockHSSFListener();
 		listener = new FormatTrackingHSSFListener(mockListen);
 		req.addListenerForAllRecords(listener);
-		
+
         File file = HSSFTestDataSamples.getSampleFile(filename);
 		HSSFEventFactory factory = new HSSFEventFactory();
 		POIFSFileSystem fs = new POIFSFileSystem(file);
 		factory.processWorkbookEvents(req, fs);
 		fs.close();
-	} 
-	
+	}
+
 	@Test
 	public void testFormats() throws Exception {
 		processFile("MissingBits.xls");
@@ -60,7 +60,7 @@ public final class TestFormatTrackingHSSFListener {
 		assertEquals("_(* #,##0.00_);_(* (#,##0.00);_(* \"-\"??_);_(@_)", listener.getFormatString(43));
 		assertEquals("_(\"$\"* #,##0.00_);_(\"$\"* (#,##0.00);_(\"$\"* \"-\"??_);_(@_)", listener.getFormatString(44));
 	}
-	
+
 	/**
 	 * Ensure that all number and formula records can be
 	 *  turned into strings without problems.
@@ -70,40 +70,40 @@ public final class TestFormatTrackingHSSFListener {
 	 */
 	@Test
 	public void testTurnToString() throws Exception {
-		String[] files = new String[] { 
-				"45365.xls", "45365-2.xls", "MissingBits.xls" 
+		String[] files = new String[] {
+				"45365.xls", "45365-2.xls", "MissingBits.xls"
 		};
 		for (String file : files) {
 			processFile(file);
-			
+
 			// Check we found our formats
 			assertTrue(listener.getNumberOfCustomFormats() > 5);
 			assertTrue(listener.getNumberOfExtendedFormats() > 5);
-			
+
 			// Now check we can turn all the numeric
 			//  cells into strings without error
 			for(org.apache.poi.hssf.record.Record r : mockListen._records) {
 				CellValueRecordInterface cvr = null;
-				
+
 				if(r instanceof NumberRecord) {
 					cvr = (CellValueRecordInterface)r;
 				}
 				if(r instanceof FormulaRecord) {
 					cvr = (CellValueRecordInterface)r;
 				}
-				
+
 				if(cvr != null) {
-					// Should always give us a string 
+					// Should always give us a string
 					String s = listener.formatNumberDateCell(cvr);
 					assertNotNull(s);
 					assertTrue(s.length() > 0);
 				}
 			}
-			
+
 			// TODO - test some specific format strings
 		}
 	}
-	
+
 	private static final class MockHSSFListener implements HSSFListener {
 		public MockHSSFListener() {}
 		private final List<org.apache.poi.hssf.record.Record> _records = new ArrayList<>();

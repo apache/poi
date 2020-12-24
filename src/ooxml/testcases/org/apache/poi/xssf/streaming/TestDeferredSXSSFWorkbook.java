@@ -19,12 +19,12 @@
 
 package org.apache.poi.xssf.streaming;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -38,9 +38,9 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.After;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
 
@@ -48,7 +48,7 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
         super(DeferredSXSSFITestDataProvider.instance);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         ((DeferredSXSSFITestDataProvider) _testDataProvider).cleanup();
     }
@@ -59,12 +59,8 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
     @Override
     @Test
     public void cloneSheet() throws IOException {
-        try {
-            super.cloneSheet();
-            fail("expected exception");
-        } catch (RuntimeException e) {
-            assertEquals("Not Implemented", e.getMessage());
-        }
+        RuntimeException e = assertThrows(RuntimeException.class, super::cloneSheet);
+        assertEquals("Not Implemented", e.getMessage());
     }
 
     /**
@@ -73,29 +69,25 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
     @Override
     @Test
     public void sheetClone() throws IOException {
-        try {
-            super.sheetClone();
-            fail("expected exception");
-        } catch (RuntimeException e) {
-            assertEquals("Not Implemented", e.getMessage());
-        }
+        RuntimeException e = assertThrows(RuntimeException.class, super::sheetClone);
+        assertEquals("Not Implemented", e.getMessage());
     }
 
     /**
      * Skip this test, as SXSSF doesn't update formulas on sheet name changes.
      */
     @Override
-    @Ignore("SXSSF doesn't update formulas on sheet name changes, as most cells probably aren't in memory at the time")
+    @Disabled("SXSSF doesn't update formulas on sheet name changes, as most cells probably aren't in memory at the time")
     @Test
     public void setSheetName() {}
 
     @Override
-    @Ignore("DeferredSXSSF code disposes rows in a way that breaks this test")
+    @Disabled("DeferredSXSSF code disposes rows in a way that breaks this test")
     @Test
     public void parentReferences() {}
 
     @Override
-    @Ignore("DeferredSXSSF code disposes rows in a way that breaks this test")
+    @Disabled("DeferredSXSSF code disposes rows in a way that breaks this test")
     @Test
     public void unicodeInAll() {}
 
@@ -248,7 +240,7 @@ public final class TestDeferredSXSSFWorkbook extends BaseTestXWorkbook {
             assertEquals("sheet" + i, sh.getSheetName());
             for (int j = 0; j < rowNum; j++) {
                 Row row = sh.getRow(j);
-                assertNotNull("row[" + j + "]", row);
+                assertNotNull(row, "row[" + j + "]");
                 Cell cell1 = row.getCell(0);
                 assertEquals(new CellReference(cell1).formatAsString(), cell1.getStringCellValue());
 

@@ -25,4 +25,8 @@ module org.apache.poi.excelant {
     exports org.apache.poi.ss.excelant.util;
 
     opens org.apache.poi.ss.excelant;
+
+    // test specific exports
+    requires org.junit.jupiter.api;
+    requires org.junit.jupiter.params;
 }

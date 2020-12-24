@@ -17,7 +17,7 @@
 package org.apache.poi.hwpf.converter;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.StringWriter;
 
@@ -29,7 +29,7 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.util.XMLHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.w3c.dom.Document;
 
 /**

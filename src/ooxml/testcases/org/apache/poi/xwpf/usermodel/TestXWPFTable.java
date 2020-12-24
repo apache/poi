@@ -16,9 +16,9 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -26,7 +26,7 @@ import java.util.List;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFTable.XWPFBorderType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTRow;
@@ -553,15 +553,15 @@ public class TestXWPFTable {
 
             // assert the table is empty
             List<XWPFTableRow> rows = table.getRows();
-            assertEquals("Table has less rows than requested.", noRows, rows.size());
+            assertEquals(noRows, rows.size(), "Table has less rows than requested.");
             for (XWPFTableRow xwpfRow : rows) {
                 assertNotNull(xwpfRow);
                 for (int i = 0; i < 7; i++) {
                     XWPFTableCell xwpfCell = xwpfRow.getCell(i);
                     assertNotNull(xwpfCell);
-                    assertEquals("Empty cells should not have one paragraph.", 1, xwpfCell.getParagraphs().size());
+                    assertEquals(1, xwpfCell.getParagraphs().size(), "Empty cells should not have one paragraph.");
                     xwpfCell = xwpfRow.getCell(i);
-                    assertEquals("Calling 'getCell' must not modify cells content.", 1, xwpfCell.getParagraphs().size());
+                    assertEquals(1, xwpfCell.getParagraphs().size(), "Calling 'getCell' must not modify cells content.");
                 }
             }
             doc.getPackage().revert();

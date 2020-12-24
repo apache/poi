@@ -18,15 +18,16 @@
 package org.apache.poi.hssf.record;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LittleEndianByteArrayInputStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the serialization and deserialization of the StringRecord
@@ -58,10 +59,10 @@ public final class TestStringRecord {
 		byte [] recordBytes = record.serialize();
 		assertEquals(recordBytes.length - 4, data.length);
 		for (int i = 0; i < data.length; i++) {
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+            assertEquals(data[i], recordBytes[i+4], "At offset " + i);
         }
 	}
-    
+
 	@Test
     public void testContinue() throws IOException {
 		int MAX_BIFF_DATA = RecordInputStream.MAX_RECORD_DATA_SIZE;
@@ -77,9 +78,8 @@ public final class TestStringRecord {
 		sr.setString(sb.toString());
 		byte[] ser = sr.serialize();
 		assertEquals(StringRecord.sid, LittleEndian.getUShort(ser, 0));
-		if (LittleEndian.getUShort(ser, 2) > MAX_BIFF_DATA) {
-		    fail("StringRecord should have been split with a continue record");
-		}
+		assertTrue(LittleEndian.getUShort(ser, 2) <= MAX_BIFF_DATA,
+			"StringRecord should have been split with a continue record");
 		// Confirm expected size of first record, and ushort strLen.
 		assertEquals(MAX_BIFF_DATA, LittleEndian.getUShort(ser, 2));
 		assertEquals(TEXT_LEN, LittleEndian.getUShort(ser, 4));

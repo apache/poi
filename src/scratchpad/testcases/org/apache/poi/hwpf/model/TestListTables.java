@@ -17,14 +17,14 @@
 
 package org.apache.poi.hwpf.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.hwpf.HWPFTestCase;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestListTables extends HWPFTestCase {
 
@@ -36,21 +36,21 @@ public final class TestListTables extends HWPFTestCase {
         int listOffset = fib.getFcPlfLst();
         int lfoOffset = fib.getFcPlfLfo();
         int bLfoOffset = fib.getLcbPlfLfo();
-        
+
         if (listOffset != 0 && bLfoOffset != 0) {
             // TODO: this is actually never executed ...
-            
+
             ListTables listTables = new ListTables(tableStream, listOffset, lfoOffset, bLfoOffset);
             HWPFFileSystem fileSys = new HWPFFileSystem();
-    
+
             ByteArrayOutputStream tableOut = fileSys.getStream("1Table");
-    
+
             listTables.writeListDataTo(fib, tableOut);
             listTables.writeListOverridesTo(fib, tableOut);
-    
+
             ListTables newTables = new ListTables(tableOut.toByteArray(),
                     fib.getFcPlfLst(), fib.getFcPlfLfo(), fib.getLcbPlfLfo());
-    
+
             assertEquals(listTables, newTables);
         }
     }

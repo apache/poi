@@ -17,13 +17,12 @@
 package org.apache.poi.extractor.ooxml;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -31,7 +30,6 @@ import java.io.IOException;
 import java.util.Locale;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.UnsupportedFileFormatException;
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.extractor.POIOLE2TextExtractor;
 import org.apache.poi.extractor.POITextExtractor;
@@ -39,6 +37,7 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.EventBasedExcelExtractor;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.ooxml.extractor.POIXMLExtractorFactory;
+import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackageAccess;
@@ -47,7 +46,7 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.xmlbeans.XmlException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test that the extractor factory plays nicely
@@ -86,17 +85,17 @@ public class TestExtractorFactory {
     private static final File vsd = getFileAndCheck(dgTests, "Test_Visio-Some_Random_Text.vsd");
     private static final File vsdx = getFileAndCheck(dgTests, "test.vsdx");
 
-    private static POIDataSamples pubTests = POIDataSamples.getPublisherInstance();
-    private static File pub = getFileAndCheck(pubTests, "Simple.pub");
+    private static final POIDataSamples pubTests = POIDataSamples.getPublisherInstance();
+    private static final File pub = getFileAndCheck(pubTests, "Simple.pub");
 
     private static final POIXMLExtractorFactory xmlFactory = new POIXMLExtractorFactory();
 
     private static File getFileAndCheck(POIDataSamples samples, String name) {
         File file = samples.getFile(name);
 
-        assertNotNull("Did not get a file for " + name, file);
-        assertTrue("Did not get a type file for " + name, file.isFile());
-        assertTrue("File did not exist: " + name, file.exists());
+        assertNotNull(file, "Did not get a file for " + name);
+        assertTrue(file.isFile(), "Did not get a type file for " + name);
+        assertTrue(file.exists(), "File did not exist: " + name);
 
         return file;
     }
@@ -127,6 +126,7 @@ public class TestExtractorFactory {
         R apply(T t) throws IOException, OpenXML4JException, XmlException;
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void testFile() throws Exception {
         for (int i = 0; i < TEST_SET.length; i += 4) {
@@ -172,6 +172,7 @@ public class TestExtractorFactory {
         assertTrue(ex.getMessage().contains("Invalid header signature; read 0x3D20726F68747541, expected 0xE11AB1A1E011CFD0"));
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void testStream(final FunctionEx<FileInputStream, POITextExtractor> poifsIS, final boolean loadOOXML)
     throws IOException, OpenXML4JException, XmlException {
         for (int i = 0; i < TEST_SET.length; i += 4) {
@@ -182,22 +183,21 @@ public class TestExtractorFactory {
             try (FileInputStream fis = new FileInputStream(testFile);
                  POITextExtractor ext = poifsIS.apply(fis)) {
                 testExtractor(ext, (String) TEST_SET[i], (String) TEST_SET[i + 2], (Integer) TEST_SET[i + 3]);
-            } catch (IllegalArgumentException e) {
-                fail("failed to process "+testFile);
             }
         }
     }
 
     private void testExtractor(final POITextExtractor ext, final String testcase, final String extrClass, final Integer minLength) {
-        assertEquals("invalid extractor for " + testcase, extrClass, ext.getClass().getSimpleName());
+        assertEquals(extrClass, ext.getClass().getSimpleName(), "invalid extractor for " + testcase);
         final String actual = ext.getText();
         if (minLength == -1) {
             assertContains(actual.toLowerCase(Locale.ROOT), "test");
         } else {
-            assertTrue("extracted content too short for " + testcase, actual.length() > minLength);
+            assertTrue(actual.length() > minLength, "extracted content too short for " + testcase);
         }
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void testPackage() throws Exception {
         for (int i = 0; i < TEST_SET.length; i += 4) {
@@ -208,19 +208,17 @@ public class TestExtractorFactory {
 
             try (final OPCPackage pkg = OPCPackage.open(testFile, PackageAccess.READ);
                  final POITextExtractor ext = xmlFactory.create(pkg)) {
+                assertNotNull(ext);
                 testExtractor(ext, (String) TEST_SET[i], (String) TEST_SET[i + 2], (Integer) TEST_SET[i + 3]);
                 pkg.revert();
             }
         }
     }
 
-    @Test(expected = UnsupportedFileFormatException.class)
-    public void testPackageInvalid() throws Exception {
+    @Test
+    public void testPackageInvalid() {
         // Text
-        try (final OPCPackage pkg = OPCPackage.open(txt, PackageAccess.READ);
-             final POITextExtractor ignored = xmlFactory.create(pkg)) {
-            fail("extracting from invalid package");
-        }
+        assertThrows(NotOfficeXmlFileException.class, () -> OPCPackage.open(txt, PackageAccess.READ));
     }
 
     @Test
@@ -334,7 +332,7 @@ public class TestExtractorFactory {
 
                 final String actual = embeds.length+"-"+numWord+"-"+numXls+"-"+numPpt+"-"+numMsg+"-"+numWordX;
                 final String expected = (String)testObj[i+2];
-                assertEquals("invalid number of embeddings - "+testObj[i], expected, actual);
+                assertEquals(expected, actual, "invalid number of embeddings - "+testObj[i]);
             }
         }
 
@@ -445,28 +443,31 @@ public class TestExtractorFactory {
      *  #59074 - Excel 95 files should give a helpful message, not just
      *   "No supported documents found in the OLE2 stream"
      */
+    @Test
     public void bug59074() throws Exception {
         try (POITextExtractor extractor = ExtractorFactory.createExtractor(POIDataSamples.getSpreadSheetInstance().getFile("59074.xls"))) {
             String text = extractor.getText();
-            assertContains(text, "testdoc");
+            assertContains(text, "Exotic warrant");
         }
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void testGetEmbeddedFromXMLExtractor() throws IOException {
+    @Test
+    public void testGetEmbeddedFromXMLExtractor() {
         // currently not implemented
-        ExtractorFactory.getEmbeddedDocsTextExtractors(null);
+        assertThrows(IllegalStateException.class, () -> ExtractorFactory.getEmbeddedDocsTextExtractors(null));
     }
 
     // This bug is currently open. This test will fail with "expected error not thrown" when the bug has been fixed.
     // When this happens, change this from @Test(expected=...) to @Test
     // bug 45565: text within TextBoxes is extracted by ExcelExtractor and WordExtractor
-    @Test(expected=AssertionError.class)
+    @Test
     public void test45565() throws Exception {
         try (POITextExtractor extractor = ExtractorFactory.createExtractor(HSSFTestDataSamples.getSampleFile("45565.xls"))) {
             String text = extractor.getText();
-            assertContains(text, "testdoc");
-            assertContains(text, "test phrase");
+            assertThrows(AssertionError.class, () -> {
+                assertContains(text, "testdoc");
+                assertContains(text, "test phrase");
+            });
         }
     }
 }

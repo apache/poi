@@ -18,12 +18,12 @@
 package org.apache.poi.hwpf.usermodel;
 
 import static org.apache.poi.hwpf.HWPFTestDataSamples.openSampleFile;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
 import org.apache.poi.hwpf.HWPFDocument;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  *	Test to see if Range.replaceText() works even if the Range contains a

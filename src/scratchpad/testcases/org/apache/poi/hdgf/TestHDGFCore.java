@@ -17,17 +17,17 @@
 
 package org.apache.poi.hdgf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hdgf.streams.PointerContainingStream;
 import org.apache.poi.hdgf.streams.TrailerStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public final class TestHDGFCore {
     private static POIDataSamples _dgTests = POIDataSamples.getDiagramInstance();
@@ -36,11 +36,11 @@ public final class TestHDGFCore {
     private HDGFDiagram hdgf;
     private VisioTextExtractor textExtractor;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         fs = new POIFSFileSystem(_dgTests.openResourceAsStream("Test_Visio-Some_Random_Text.vsd"));
     }
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (textExtractor != null) textExtractor.close();
         if (hdgf != null) hdgf.close();

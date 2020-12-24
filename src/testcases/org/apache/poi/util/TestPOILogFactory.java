@@ -17,7 +17,7 @@
 
 package org.apache.poi.util;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestPOILogFactory {
 

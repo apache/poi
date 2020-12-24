@@ -19,17 +19,17 @@
 
 package org.apache.poi.hssf.record;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.poi.util.LittleEndianOutputStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit tests for DConRefRecord class.
@@ -214,7 +214,7 @@ public class TestDConRefRecord {
         d.serialize(o);
         o.flush();
 
-        assertArrayEquals(message, data, bos.toByteArray());
+        assertArrayEquals(data, bos.toByteArray(), message);
     }
 
     /**
@@ -241,14 +241,14 @@ public class TestDConRefRecord {
         DConRefRecord instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data1));
         int expResult = data1.length;
         int result = instance.getDataSize();
-        assertEquals("single byte external reference, volume type path data size", expResult, result);
+        assertEquals(expResult, result, "single byte external reference, volume type path data size");
         instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data2));
-        assertEquals("double byte self reference data size", data2.length, instance.getDataSize());
+        assertEquals(data2.length, instance.getDataSize(), "double byte self reference data size");
         instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data3));
-        assertEquals("single byte self reference data size", data3.length, instance.getDataSize());
+        assertEquals(data3.length, instance.getDataSize(), "single byte self reference data size");
         instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data4));
-        assertEquals("double byte external reference, UNC volume type path data size", data4.length,
-                instance.getDataSize());
+        assertEquals(data4.length, instance.getDataSize(),
+            "double byte external reference, UNC volume type path data size");
     }
 
     /**
@@ -259,7 +259,7 @@ public class TestDConRefRecord {
         DConRefRecord instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data1));
         short expResult = 81;
         short result = instance.getSid();
-        assertEquals("SID", expResult, result);
+        assertEquals(expResult, result, "SID");
     }
 
     /**
@@ -271,7 +271,7 @@ public class TestDConRefRecord {
         DConRefRecord instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data1));
         byte[] expResult = Arrays.copyOfRange(data1, 9, data1.length);
         byte[] result = instance.getPath();
-        assertArrayEquals("get path", expResult, result);
+        assertArrayEquals(expResult, result, "get path");
     }
 
     /**
@@ -280,8 +280,8 @@ public class TestDConRefRecord {
     @Test
     public void testIsExternalRef() {
         DConRefRecord instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data1));
-        assertTrue("external reference", instance.isExternalRef());
+        assertTrue(instance.isExternalRef(), "external reference");
         instance = new DConRefRecord(TestcaseRecordInputStream.create(81, data2));
-        assertFalse("internal reference", instance.isExternalRef());
+        assertFalse(instance.isExternalRef(), "internal reference");
     }
 }

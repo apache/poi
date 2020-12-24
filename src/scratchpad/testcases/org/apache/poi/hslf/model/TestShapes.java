@@ -18,11 +18,11 @@
 package org.apache.poi.hslf.model;
 
 import static org.apache.poi.sl.usermodel.BaseTestSlideShow.getColor;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -56,19 +56,19 @@ import org.apache.poi.hslf.usermodel.HSLFTextShape;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test drawing shapes via Graphics2D
  */
 public final class TestShapes {
-    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+    private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     private HSLFSlideShow ppt;
     private HSLFSlideShow pptB;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         try (InputStream is1 = _slTests.openResourceAsStream("empty.ppt");
              InputStream is2 = _slTests.openResourceAsStream("empty_textbox.ppt")) {
@@ -386,14 +386,14 @@ public final class TestShapes {
         HSLFSlideShow ss = new HSLFSlideShow(_slTests.openResourceAsStream(file));
         HSLFSlide sl = ss.getSlides().get(0);
         List<HSLFShape> sh = sl.getShapes();
-        assertEquals("expected four shaped in " + file, 4, sh.size());
+        assertEquals(4, sh.size(), "expected four shaped in " + file);
         //remove all
         for (int i = 0; i < sh.size(); i++) {
             boolean ok = sl.removeShape(sh.get(i));
-            assertTrue("Failed to delete shape #" + i, ok);
+            assertTrue(ok, "Failed to delete shape #" + i);
         }
         //now Slide.getShapes() should return an empty array
-        assertEquals("expected 0 shaped in " + file, 0, sl.getShapes().size());
+        assertEquals(0, sl.getShapes().size(), "expected 0 shaped in " + file);
 
         //serialize and read again. The file should be readable and contain no shapes
         ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -403,7 +403,7 @@ public final class TestShapes {
 
         ss = new HSLFSlideShow(new ByteArrayInputStream(out.toByteArray()));
         sl = ss.getSlides().get(0);
-        assertEquals("expected 0 shaped in " + file, 0, sl.getShapes().size());
+        assertEquals(0, sl.getShapes().size(), "expected 0 shaped in " + file);
         ss.close();
     }
 
@@ -449,9 +449,9 @@ public final class TestShapes {
             assertEquals(dgShapesUsed + 1, dg.getNumShapes());
 
             //check that EscherDggRecord is updated
-            assertEquals("mismatch @"+i, shape.getShapeId() + 1, dgg.getShapeIdMax());
-            assertEquals("mismatch @"+i, dggMaxId + 1, dgg.getShapeIdMax());
-            assertEquals("mismatch @"+i, dggShapesUsed + 1, dgg.getNumShapesSaved());
+            assertEquals(shape.getShapeId() + 1, dgg.getShapeIdMax(), "mismatch @"+i);
+            assertEquals(dggMaxId + 1, dgg.getShapeIdMax(), "mismatch @"+i);
+            assertEquals(dggShapesUsed + 1, dgg.getNumShapesSaved(), "mismatch @"+i);
 
             dggShapesUsed = dgg.getNumShapesSaved();
             dggMaxId = dgg.getShapeIdMax();

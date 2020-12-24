@@ -17,16 +17,16 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTR;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTText;
@@ -231,25 +231,25 @@ public final class TestXWPFHeader {
         }
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testAddPictureData() {
         // TODO
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testGetAllPictures() {
         // TODO
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testGetAllPackagePictures() {
         // TODO
     }
 
-    @Ignore
+    @Disabled
     @Test
     public void testGetPictureDataById() {
         // TODO

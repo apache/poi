@@ -19,10 +19,10 @@
 
 package org.apache.poi.ss.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -46,7 +46,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.LocaleID;
 import org.apache.poi.util.TempFile;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestDateFormatConverter {
     private void outputLocaleDataFormats( Date date, boolean dates, boolean times, int style, String styleName ) throws Exception {
@@ -181,20 +181,20 @@ public final class TestDateFormatConverter {
                 final String partTag = langTag.substring(0, idx);
 
                 Locale loc = Locale.forLanguageTag(partTag);
-                assertNotNull("Invalid language tag: "+partTag, loc);
+                assertNotNull(loc, "Invalid language tag: "+partTag);
 
                 if (excludeList.contains(partTag)) {
                     continue;
                 }
 
                 String prefix = DateFormatConverter.getPrefixForLocale(loc);
-                assertNotNull("Prefix not found - language tag: "+partTag, prefix);
-                assertNotEquals("Prefix not found - language tag: "+partTag,"", prefix);
+                assertNotNull(prefix, "Prefix not found - language tag: "+partTag);
+                assertNotEquals("", prefix, "Prefix not found - language tag: "+partTag);
                 Matcher m = p.matcher(prefix);
-                assertTrue("Invalid prefix: "+prefix, m.matches());
+                assertTrue(m.matches(), "Invalid prefix: "+prefix);
 
                 LocaleID partLid = LocaleID.lookupByLanguageTag(partTag);
-                assertNotNull("LocaleID not found for part: "+partTag, partLid);
+                assertNotNull(partLid, "LocaleID not found for part: "+partTag);
                 assertEquals(partLid.getLcid(), Integer.parseInt(m.group(1), 16));
             }
         }

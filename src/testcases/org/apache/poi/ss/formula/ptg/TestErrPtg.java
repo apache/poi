@@ -17,13 +17,13 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link ErrPtg}.
@@ -36,8 +36,8 @@ public final class TestErrPtg extends BaseTestPtg {
     public void testReading() throws IOException {
         try (HSSFWorkbook workbook = loadWorkbook("ErrPtg.xls")) {
             HSSFCell cell = workbook.getSheetAt(0).getRow(3).getCell(0);
-            assertEquals("Wrong cell value", 4.0, cell.getNumericCellValue(), 0.0);
-            assertEquals("Wrong cell formula", "ERROR.TYPE(#REF!)", cell.getCellFormula());
+            assertEquals(4.0, cell.getNumericCellValue(), 0.0, "Wrong cell value");
+            assertEquals("ERROR.TYPE(#REF!)", cell.getCellFormula(), "Wrong cell formula");
         }
     }
 }

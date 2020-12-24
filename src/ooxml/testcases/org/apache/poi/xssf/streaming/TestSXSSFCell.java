@@ -19,10 +19,11 @@
 
 package org.apache.poi.xssf.streaming;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.spy;
 
 import java.io.IOException;
@@ -42,9 +43,9 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRichTextString;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.xmlbeans.XmlCursor;
-import org.junit.AfterClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRst;
 
 /**
@@ -57,7 +58,7 @@ public class TestSXSSFCell extends BaseTestXCell {
         super(SXSSFITestDataProvider.instance);
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDownClass() {
         SXSSFITestDataProvider.instance.cleanup();
     }
@@ -87,26 +88,26 @@ public class TestSXSSFCell extends BaseTestXCell {
             c.toNextToken();
             String t = c.getAttributeText(new QName("http://www.w3.org/XML/1998/namespace", "space"));
             c.dispose();
-            assertEquals("expected xml:spaces=\"preserve\" \"" + str + "\"", "preserve", t);
+            assertEquals( "preserve", t, "expected xml:spaces=\"preserve\" \"" + str + "\"" );
             xwb.close();
             swb.close();
         }
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void getCachedFormulaResultType_throwsISE_whenNotAFormulaCell() {
         SXSSFCell instance = new SXSSFCell(null, CellType.BLANK);
-        instance.getCachedFormulaResultType();
+        assertThrows(IllegalStateException.class, instance::getCachedFormulaResultType);
     }
 
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void setCellValue_withTooLongRichTextString_throwsIAE() {
         Cell cell = spy(new SXSSFCell(null, CellType.BLANK));
         int length = SpreadsheetVersion.EXCEL2007.getMaxTextLength() + 1;
         String string = new String(new byte[length], StandardCharsets.UTF_8).replace("\0", "x");
         RichTextString richTextString = new XSSFRichTextString(string);
-        cell.setCellValue(richTextString);
+        assertThrows(IllegalArgumentException.class, () -> cell.setCellValue(richTextString));
     }
 
     @Test
@@ -136,7 +137,7 @@ public class TestSXSSFCell extends BaseTestXCell {
      * However, this test should be enabled if array formulas are implemented for SXSSF.
      */
     @Override
-    @Ignore
+    @Disabled
     public void setBlank_removesArrayFormula_ifCellIsPartOfAnArrayFormulaGroupContainingOnlyThisCell() {
     }
 
@@ -145,34 +146,34 @@ public class TestSXSSFCell extends BaseTestXCell {
      * However, this test should be enabled if array formulas are implemented for SXSSF.
      */
     @Override
-    @Ignore
+    @Disabled
     @Test // <- annotation is necessary to override expected exception
     public void setBlank_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() {
     }
 
     @Override
-    @Ignore
+    @Disabled
     @Test
     public void setCellFormula_throwsISE_ifCellIsPartOfAnArrayFormulaGroupContainingOtherCells() {
     }
 
     @Override
-    @Ignore
+    @Disabled
     public void removeFormula_turnsCellToBlank_whenFormulaWasASingleCellArrayFormula() {
     }
 
     @Override
-    @Ignore
+    @Disabled
     public void setCellFormula_onASingleCellArrayFormulaCell_preservesTheValue() {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void setCellFormula_isExceptionSafe_onBlankCell() {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void setCellType_FORMULA_onAnArrayFormulaCell_doesNothing() {
     }
 }

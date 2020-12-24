@@ -17,10 +17,11 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -37,8 +38,8 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
 
@@ -104,12 +105,12 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
 
                 CellValue cv_noformula = evaluator.evaluate(cell_noformula);
                 CellValue cv_formula = evaluator.evaluate(cell_formula);
-                assertEquals("Wrong evaluation result in " + ref_formula.formatAsString(),
-                        cv_noformula.getNumberValue(), cv_formula.getNumberValue(), 0);
+                assertEquals(cv_noformula.getNumberValue(), cv_formula.getNumberValue(), 0,
+                    "Wrong evaluation result in " + ref_formula.formatAsString());
             }
         }
     }
-    
+
     /**
      * Related to bugs #56737 and #56752 - XSSF workbooks which have
      *  formulas that refer to cells and named ranges in multiple other
@@ -149,73 +150,55 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
 
             // Try to evaluate without references, won't work
             // (At least, not unit we fix bug #56752 that is)
-            try {
-                evaluator.evaluate(cXSL_cell);
-                fail("Without a fix for #56752, shouldn't be able to evaluate a " +
-                        "reference to a non-provided linked workbook");
-            } catch (Exception e) {
-                // expected here
-            }
+            assertThrows(Exception.class, () -> evaluator.evaluate(cXSL_cell),
+                "Without a fix for #56752, shouldn't be able to evaluate a reference to a non-provided linked workbook");
 
             // Setup the environment
             Map<String, FormulaEvaluator> evaluators = new HashMap<>();
             evaluators.put("ref2-56737.xlsx", evaluator);
-            Workbook wbEval1 = _testDataProvider.openSampleWorkbook("56737.xlsx");
-            evaluators.put("56737.xlsx",
-                    wbEval1.getCreationHelper().createFormulaEvaluator());
-            Workbook wbEval2 = HSSFTestDataSamples.openSampleWorkbook("56737.xls");
-            evaluators.put("56737.xls",
-                    wbEval2.getCreationHelper().createFormulaEvaluator());
-            evaluator.setupReferencedWorkbooks(evaluators);
+            try (Workbook wbEval1 = _testDataProvider.openSampleWorkbook("56737.xlsx");
+                 Workbook wbEval2 = HSSFTestDataSamples.openSampleWorkbook("56737.xls")) {
+                evaluators.put("56737.xlsx", wbEval1.getCreationHelper().createFormulaEvaluator());
+                evaluators.put("56737.xls", wbEval2.getCreationHelper().createFormulaEvaluator());
+                evaluator.setupReferencedWorkbooks(evaluators);
 
-            // Try evaluating all of them, ensure we don't blow up
-            for (Row r : s) {
-                for (Cell c : r) {
-                    evaluator.evaluate(c);
+                // Try evaluating all of them, ensure we don't blow up
+                for (Row r : s) {
+                    for (Cell c : r) {
+                        evaluator.evaluate(c);
+                    }
                 }
+                // And evaluate the other way too
+                evaluator.evaluateAll();
+
+                // Static evaluator won't work, as no references passed in
+                assertThrows(Exception.class, () -> XSSFFormulaEvaluator.evaluateAllFormulaCells(wb),
+                    "Static method lacks references, shouldn't work");
+
+                // Evaluate specific cells and check results
+                assertEquals("\"Hello!\"", evaluator.evaluate(cXSLX_cell).formatAsString());
+                assertEquals("\"Test A1\"", evaluator.evaluate(cXSLX_sNR).formatAsString());
+                assertEquals("142.0", evaluator.evaluate(cXSLX_gNR).formatAsString());
+
+                assertEquals("\"Hello!\"", evaluator.evaluate(cXSL_cell).formatAsString());
+                assertEquals("\"Test A1\"", evaluator.evaluate(cXSL_sNR).formatAsString());
+                assertEquals("142.0", evaluator.evaluate(cXSL_gNR).formatAsString());
+
+
+                // Add another formula referencing these workbooks
+                Cell cXSL_cell2 = rXSL.createCell(40);
+                cXSL_cell2.setCellFormula("[56737.xls]Uses!$C$1");
+                // TODO Shouldn't it become [2] like the others?
+                assertEquals("[56737.xls]Uses!$C$1", cXSL_cell2.getCellFormula());
+                assertEquals("\"Hello!\"", evaluator.evaluate(cXSL_cell2).formatAsString());
+
+
+                // Now add a formula that refers to yet another (different) workbook
+                // Won't work without the workbook being linked
+                Cell cXSLX_nw_cell = rXSLX.createCell(42);
+                assertThrows(Exception.class, () -> cXSLX_nw_cell.setCellFormula("[alt.xlsx]Sheet1!$A$1"),
+                    "New workbook not linked, shouldn't be able to add");
             }
-            // And evaluate the other way too
-            evaluator.evaluateAll();
-
-            // Static evaluator won't work, as no references passed in
-            try {
-                XSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
-                fail("Static method lacks references, shouldn't work");
-            } catch (Exception e) {
-                // expected here
-            }
-
-
-            // Evaluate specific cells and check results
-            assertEquals("\"Hello!\"", evaluator.evaluate(cXSLX_cell).formatAsString());
-            assertEquals("\"Test A1\"", evaluator.evaluate(cXSLX_sNR).formatAsString());
-            assertEquals("142.0", evaluator.evaluate(cXSLX_gNR).formatAsString());
-
-            assertEquals("\"Hello!\"", evaluator.evaluate(cXSL_cell).formatAsString());
-            assertEquals("\"Test A1\"", evaluator.evaluate(cXSL_sNR).formatAsString());
-            assertEquals("142.0", evaluator.evaluate(cXSL_gNR).formatAsString());
-
-
-            // Add another formula referencing these workbooks
-            Cell cXSL_cell2 = rXSL.createCell(40);
-            cXSL_cell2.setCellFormula("[56737.xls]Uses!$C$1");
-            // TODO Shouldn't it become [2] like the others?
-            assertEquals("[56737.xls]Uses!$C$1", cXSL_cell2.getCellFormula());
-            assertEquals("\"Hello!\"", evaluator.evaluate(cXSL_cell2).formatAsString());
-
-
-            // Now add a formula that refers to yet another (different) workbook
-            // Won't work without the workbook being linked
-            Cell cXSLX_nw_cell = rXSLX.createCell(42);
-            try {
-                cXSLX_nw_cell.setCellFormula("[alt.xlsx]Sheet1!$A$1");
-                fail("New workbook not linked, shouldn't be able to add");
-            } catch (Exception e) {
-                // expected here
-            }
-
-            wbEval1.close();
-            wbEval2.close();
 
             // Link and re-try
             try (Workbook alt = new XSSFWorkbook()) {
@@ -229,10 +212,8 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             assertEquals("[alt.xlsx]Sheet1!$A$1", cXSLX_nw_cell.getCellFormula());
 
             // Evaluate it, without a link to that workbook
-            try {
-                evaluator.evaluate(cXSLX_nw_cell);
-                fail("No cached value and no link to workbook, shouldn't evaluate");
-            } catch(Exception e) {}
+            assertThrows(Exception.class, () -> evaluator.evaluate(cXSLX_nw_cell),
+                "No cached value and no link to workbook, shouldn't evaluate");
 
             // Add a link, check it does
             evaluators.put("alt.xlsx", alt.getCreationHelper().createFormulaEvaluator());
@@ -244,7 +225,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             }
         }
     }
-    
+
     /**
      * If a formula references cells or named ranges in another workbook,
      *  but that isn't available at evaluation time, the cached values
@@ -252,13 +233,10 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
      * TODO Add the support then add a unit test
      * See bug #56752
      */
-    @Test
-    @Ignore
+    @Disabled
     public void testCachedReferencesToOtherWorkbooks() {
-        // TODO
-        fail("unit test not written yet");
     }
-    
+
     /**
      * A handful of functions (such as SUM, COUNTA, MIN) support
      *  multi-sheet references (eg Sheet1:Sheet3!A1 = Cell A1 from
@@ -275,57 +253,57 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
             Sheet s1 = wb.getSheetAt(0);
 
-            
+
             // Simple SUM over numbers
             Cell sumF = s1.getRow(2).getCell(0);
             assertNotNull(sumF);
             assertEquals("SUM(Sheet1:Sheet3!A1)", sumF.getCellFormula());
-            assertEquals("Failed for " + wb.getClass(), "66.0", evaluator.evaluate(sumF).formatAsString());
-            
-            
+            assertEquals("66.0", evaluator.evaluate(sumF).formatAsString(), "Failed for " + wb.getClass());
+
+
             // Various Stats formulas on numbers
             Cell avgF = s1.getRow(2).getCell(1);
             assertNotNull(avgF);
             assertEquals("AVERAGE(Sheet1:Sheet3!A1)", avgF.getCellFormula());
             assertEquals("22.0", evaluator.evaluate(avgF).formatAsString());
-            
+
             Cell minF = s1.getRow(3).getCell(1);
             assertNotNull(minF);
             assertEquals("MIN(Sheet1:Sheet3!A$1)", minF.getCellFormula());
             assertEquals("11.0", evaluator.evaluate(minF).formatAsString());
-            
+
             Cell maxF = s1.getRow(4).getCell(1);
             assertNotNull(maxF);
             assertEquals("MAX(Sheet1:Sheet3!A$1)", maxF.getCellFormula());
             assertEquals("33.0", evaluator.evaluate(maxF).formatAsString());
-            
+
             Cell countF = s1.getRow(5).getCell(1);
             assertNotNull(countF);
             assertEquals("COUNT(Sheet1:Sheet3!A$1)", countF.getCellFormula());
             assertEquals("3.0", evaluator.evaluate(countF).formatAsString());
-            
-            
+
+
             // Various CountAs on Strings
             Cell countA_1F = s1.getRow(2).getCell(2);
             assertNotNull(countA_1F);
             assertEquals("COUNTA(Sheet1:Sheet3!C1)", countA_1F.getCellFormula());
             assertEquals("3.0", evaluator.evaluate(countA_1F).formatAsString());
-            
+
             Cell countA_2F = s1.getRow(2).getCell(3);
             assertNotNull(countA_2F);
             assertEquals("COUNTA(Sheet1:Sheet3!D1)", countA_2F.getCellFormula());
             assertEquals("0.0", evaluator.evaluate(countA_2F).formatAsString());
-            
+
             Cell countA_3F = s1.getRow(2).getCell(4);
             assertNotNull(countA_3F);
             assertEquals("COUNTA(Sheet1:Sheet3!E1)", countA_3F.getCellFormula());
             assertEquals("3.0", evaluator.evaluate(countA_3F).formatAsString());
         }
-        
+
         wb2.close();
         wb1.close();
     }
-    
+
     /**
      * A handful of functions (such as SUM, COUNTA, MIN) support
      *  multi-sheet areas (eg Sheet1:Sheet3!A1:B2 = Cell A1 to Cell B2,
@@ -342,36 +320,36 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
             Sheet s1 = wb.getSheetAt(0);
 
-            
+
             // SUM over a range
             Cell sumFA = s1.getRow(2).getCell(7);
             assertNotNull(sumFA);
             assertEquals("SUM(Sheet1:Sheet3!A1:B2)", sumFA.getCellFormula());
-            assertEquals("Failed for " + wb.getClass(), "110.0", evaluator.evaluate(sumFA).formatAsString());
+            assertEquals("110.0", evaluator.evaluate(sumFA).formatAsString(), "Failed for " + wb.getClass());
 
-            
+
             // Various Stats formulas on ranges of numbers
             Cell avgFA = s1.getRow(2).getCell(8);
             assertNotNull(avgFA);
             assertEquals("AVERAGE(Sheet1:Sheet3!A1:B2)", avgFA.getCellFormula());
             assertEquals("27.5", evaluator.evaluate(avgFA).formatAsString());
-            
+
             Cell minFA = s1.getRow(3).getCell(8);
             assertNotNull(minFA);
             assertEquals("MIN(Sheet1:Sheet3!A$1:B$2)", minFA.getCellFormula());
             assertEquals("11.0", evaluator.evaluate(minFA).formatAsString());
-            
+
             Cell maxFA = s1.getRow(4).getCell(8);
             assertNotNull(maxFA);
             assertEquals("MAX(Sheet1:Sheet3!A$1:B$2)", maxFA.getCellFormula());
             assertEquals("44.0", evaluator.evaluate(maxFA).formatAsString());
-            
+
             Cell countFA = s1.getRow(5).getCell(8);
             assertNotNull(countFA);
             assertEquals("COUNT(Sheet1:Sheet3!$A$1:$B$2)", countFA.getCellFormula());
             assertEquals("4.0", evaluator.evaluate(countFA).formatAsString());
         }
-        
+
         wb2.close();
         wb1.close();
     }
@@ -381,9 +359,9 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
     public void structuredReferences() throws IOException {
         verifyAllFormulasInWorkbookCanBeEvaluated("evaluate_formula_with_structured_table_references.xlsx");
     }
-    
+
     // bug 57840
-    @Ignore("Takes over a minute to evaluate all formulas in this large workbook. Run this test when profiling for formula evaluation speed.")
+    @Disabled("Takes over a minute to evaluate all formulas in this large workbook. Run this test when profiling for formula evaluation speed.")
     @Test
     public void testLotsOfFormulasWithStructuredReferencesToCalculatedTableColumns() throws IOException {
         verifyAllFormulasInWorkbookCanBeEvaluated("StructuredRefs-lots-with-lookups.xlsx");
@@ -412,7 +390,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             assertEquals(1, value.getNumberValue(), 0.001);
         }
     }
-    
+
     @Test
     public void evaluateInCellReturnsSameDataType() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
@@ -423,7 +401,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             assertSame(cell, same);
         }
     }
-    
+
     @Test
     public void testBug61468() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("simple-monthly-budget.xlsx")) {
@@ -435,9 +413,9 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
             assertEquals(3750, value.getNumberValue(), 0.001);
         }
     }
-    
+
     @Test
-    @Ignore // this is from an open bug/discussion over handling localization for number formats
+    @Disabled // this is from an open bug/discussion over handling localization for number formats
     public void testBug61495() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("61495-test.xlsm")) {
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
@@ -453,7 +431,7 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
         }
     }
 
-    
+
     /**
      * see bug 62834, handle when a shared formula range doesn't contain only formula cells
      */
@@ -464,17 +442,17 @@ public final class TestXSSFFormulaEvaluation extends BaseTestFormulaEvaluator {
 
             Cell a2 = wb.getSheetAt(0).getRow(1).getCell(0);
             Cell value = evaluator.evaluateInCell(a2);
-            assertEquals("wrong value A2", "a value", value.getStringCellValue());
-            
+            assertEquals("a value", value.getStringCellValue(), "wrong value A2");
+
 //            evaluator.clearAllCachedResultValues();
-            
+
             Cell a3 = wb.getSheetAt(0).getRow(2).getCell(0);
             value = evaluator.evaluateInCell(a3);
-            assertEquals("wrong value A3", "a value", value.getStringCellValue());
-            
+            assertEquals("a value", value.getStringCellValue(), "wrong value A3");
+
             Cell a5 = wb.getSheetAt(0).getRow(4).getCell(0);
             value = evaluator.evaluateInCell(a5);
-            assertEquals("wrong value A5", "another value", value.getStringCellValue());
+            assertEquals("another value", value.getStringCellValue(), "wrong value A5");
         }
     }
 }

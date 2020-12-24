@@ -17,7 +17,7 @@
 
 package org.apache.poi.xssf.util;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,7 +26,7 @@ import java.nio.charset.StandardCharsets;
 
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.ReplacingInputStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestEvilUnclosedBRFixingInputStream {
 

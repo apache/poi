@@ -17,8 +17,9 @@
 
 package org.apache.poi.xssf;
 
-import org.junit.Assert;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRow;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTSheetData;
 
@@ -30,7 +31,7 @@ public class TestNecessaryOOXMLClasses {
         CTRow row = CTRow.Factory.newInstance();
         CTSheetData sheetData = CTSheetData.Factory.newInstance();
         // need to get the inner class that implements the row list class loaded
-        Assert.assertTrue(sheetData.getRowList().add(row));
-        Assert.assertTrue(sheetData.getRowList().iterator().hasNext());
+        assertTrue(sheetData.getRowList().add(row));
+        assertTrue(sheetData.getRowList().iterator().hasNext());
     }
 }

@@ -17,12 +17,11 @@
 
 package org.apache.poi.hpsf.basic;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -38,9 +37,10 @@ import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+
 /**
  * Basing on: src/examples/src/org/apache/poi/hpsf/examples/ModifyDocumentSummaryInformation.java
  * This class tests reading and writing of meta data. No actual document is created. All information
@@ -52,7 +52,7 @@ public final class TestMetaDataIPI {
 	private DocumentSummaryInformation dsi;
 	private SummaryInformation si;
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 	    poifs.close();
 	}
@@ -61,7 +61,7 @@ public final class TestMetaDataIPI {
 	 * Setup is used to get the document ready. Gets the DocumentSummaryInformation and the
 	 * SummaryInformation to reasonable values
 	 */
-	@Before
+	@BeforeEach
     public void setUp() throws Exception {
         poifs = new POIFSFileSystem();
         dsi = PropertySetFactory.newDocumentSummaryInformation();
@@ -113,15 +113,15 @@ public final class TestMetaDataIPI {
 		assertNotNull(dsi);
 		assertNotNull(si);
 
-		assertEquals("Category", "xxxCategoryxxx", dsi.getCategory());
-		assertEquals("Company", "xxxCompanyxxx", dsi.getCompany());
-		assertEquals("Manager", "xxxManagerxxx", dsi.getManager());
+		assertEquals("xxxCategoryxxx", dsi.getCategory(), "Category");
+		assertEquals("xxxCompanyxxx", dsi.getCompany(), "Company");
+		assertEquals("xxxManagerxxx", dsi.getManager(), "Manager");
 
-		assertEquals("", "xxxAuthorxxx", si.getAuthor());
-		assertEquals("", "xxxTitlexxx", si.getTitle());
-		assertEquals("", "xxxCommentsxxx", si.getComments());
-		assertEquals("", "xxxKeyWordsxxx", si.getKeywords());
-		assertEquals("", "xxxSubjectxxx", si.getSubject());
+		assertEquals("xxxAuthorxxx", si.getAuthor());
+		assertEquals("xxxTitlexxx", si.getTitle());
+		assertEquals("xxxCommentsxxx", si.getComments());
+		assertEquals("xxxKeyWordsxxx", si.getKeywords());
+		assertEquals("xxxSubjectxxx", si.getSubject());
 
 		/*
 		 * Read the custom properties. If there are no custom properties yet,
@@ -133,21 +133,21 @@ public final class TestMetaDataIPI {
 
 		/* Insert some custom properties into the container. */
 		String a1 = (String) customProperties.get("Key1");
-		assertEquals("Key1", "Value1", a1);
+		assertEquals("Value1", a1, "Key1");
 		String a2 = (String) customProperties.get("Schl\u00fcssel2");
-		assertEquals("Schl\u00fcssel2", "Wert2", a2);
+		assertEquals("Wert2", a2, "Schl\u00fcssel2");
 		Integer a3 = (Integer) customProperties.get("Sample Integer");
-		assertEquals("Sample Number", 12345, (int)a3);
+		assertEquals(12345, (int)a3, "Sample Number");
 		Boolean a4 = (Boolean) customProperties.get("Sample Boolean");
-		assertTrue("Sample Boolean", a4);
+		assertTrue(a4, "Sample Boolean");
 		Date a5 = (Date) customProperties.get("Sample Date");
-		assertEquals("Custom Date:", date, a5);
+		assertEquals(date, a5, "Custom Date:");
 
 		Double a6 = (Double) customProperties.get("Sample Double");
-		assertEquals("Custom Float", -1.0001, a6, 0);
+		assertEquals(-1.0001, a6, 0, "Custom Float");
 
 		Integer a7 = (Integer) customProperties.get("Sample Negative Integer");
-		assertEquals("Neg", -100000, (int)a7);
+		assertEquals(-100000, (int)a7, "Neg");
 	}
 
 	/**
@@ -201,15 +201,15 @@ public final class TestMetaDataIPI {
 		 * Change the category to "POI example". Any former category value will
 		 * be lost. If there has been no category yet, it will be created.
 		 */
-		assertEquals("Category", category, dsi.getCategory());
-		assertEquals("Company", company, dsi.getCompany());
-		assertEquals("Manager", manager, dsi.getManager());
+		assertEquals(category, dsi.getCategory(), "Category");
+		assertEquals(company, dsi.getCompany(), "Company");
+		assertEquals(manager, dsi.getManager(), "Manager");
 
-		assertEquals("", author, si.getAuthor());
-		assertEquals("", title, si.getTitle());
-		assertEquals("", comments, si.getComments());
-		assertEquals("", keywords, si.getKeywords());
-		assertEquals("", subject, si.getSubject());
+		assertEquals(author, si.getAuthor());
+		assertEquals(title, si.getTitle());
+		assertEquals(comments, si.getComments());
+		assertEquals(keywords, si.getKeywords());
+		assertEquals(subject, si.getSubject());
 
 		/*
 		 * Read the custom properties. If there are no custom properties yet,
@@ -217,21 +217,19 @@ public final class TestMetaDataIPI {
 		 * serve as a container for custom properties.
 		 */
 		customProperties = dsi.getCustomProperties();
-		if (customProperties == null) {
-			fail();
-		}
+		assertNotNull(customProperties);
 
 		/* Insert some custom properties into the container. */
 		String a1 = (String) customProperties.get(k1);
-		assertEquals("Key1", p1, a1);
+		assertEquals(p1, a1, "Key1");
 		String a2 = (String) customProperties.get(k2);
-		assertEquals("Schl\u00fcssel2", p2, a2);
+		assertEquals(p2, a2, "Schl\u00fcssel2");
 		Integer a3 = (Integer) customProperties.get("Sample Number");
-		assertEquals("Sample Number", 12345, (int)a3);
+		assertEquals(12345, (int)a3, "Sample Number");
 		Boolean a4 = (Boolean) customProperties.get("Sample Boolean");
-		assertTrue("Sample Boolean", a4);
+		assertTrue(a4, "Sample Boolean");
 		Date a5 = (Date) customProperties.get("Sample Date");
-		assertEquals("Custom Date:", date, a5);
+		assertEquals(date, a5, "Custom Date:");
 
 	}
 
@@ -287,15 +285,15 @@ public final class TestMetaDataIPI {
 		 * Change the category to "POI example". Any former category value will
 		 * be lost. If there has been no category yet, it will be created.
 		 */
-		assertEquals("Category", category, dsi.getCategory());
-		assertEquals("Company", company, dsi.getCompany());
-		assertEquals("Manager", manager, dsi.getManager());
+		assertEquals(category, dsi.getCategory(), "Category");
+		assertEquals(company, dsi.getCompany(), "Company");
+		assertEquals(manager, dsi.getManager(), "Manager");
 
-		assertEquals("", author, si.getAuthor());
-		assertEquals("", title, si.getTitle());
-		assertEquals("", comments, si.getComments());
-		assertEquals("", keywords, si.getKeywords());
-		assertEquals("", subject, si.getSubject());
+		assertEquals(author, si.getAuthor());
+		assertEquals(title, si.getTitle());
+		assertEquals(comments, si.getComments());
+		assertEquals(keywords, si.getKeywords());
+		assertEquals(subject, si.getSubject());
 
 		/*
 		 * Read the custom properties. If there are no custom properties yet,
@@ -303,22 +301,20 @@ public final class TestMetaDataIPI {
 		 * serve as a container for custom properties.
 		 */
 		customProperties = dsi.getCustomProperties();
-		if (customProperties == null) {
-			fail();
-		}
+		assertNotNull(customProperties);
 
 		/* Insert some custom properties into the container. */
 		// System.out.println(k1);
 		String a1 = (String) customProperties.get(k1);
-		assertEquals("Key1", p1, a1);
+		assertEquals(p1, a1, "Key1");
 		String a2 = (String) customProperties.get(k2);
-		assertEquals("Schl\u00fcssel2", p2, a2);
+		assertEquals(p2, a2, "Schl\u00fcssel2");
 		Integer a3 = (Integer) customProperties.get("Sample Number");
-		assertEquals("Sample Number", 12345, (int)a3);
+		assertEquals(12345, (int)a3, "Sample Number");
 		Boolean a4 = (Boolean) customProperties.get("Sample Boolean");
-		assertFalse("Sample Boolean", a4);
+		assertFalse(a4, "Sample Boolean");
 		Date a5 = (Date) customProperties.get("Sample Date");
-		assertEquals("Custom Date:", date, a5);
+		assertEquals(date, a5, "Custom Date:");
 
 	}
 
@@ -380,15 +376,15 @@ public final class TestMetaDataIPI {
 		 * Change the category to "POI example". Any former category value will
 		 * be lost. If there has been no category yet, it will be created.
 		 */
-		assertEquals("Category", category, dsi.getCategory());
-		assertEquals("Company", company, dsi.getCompany());
-		assertEquals("Manager", manager, dsi.getManager());
+		assertEquals(category, dsi.getCategory(), "Category");
+		assertEquals(company, dsi.getCompany(), "Company");
+		assertEquals(manager, dsi.getManager(), "Manager");
 
-		assertEquals("", author, si.getAuthor());
-		assertEquals("", title, si.getTitle());
-		assertEquals("", comments, si.getComments());
-		assertEquals("", keywords, si.getKeywords());
-		assertEquals("", subject, si.getSubject());
+		assertEquals(author, si.getAuthor());
+		assertEquals(title, si.getTitle());
+		assertEquals(comments, si.getComments());
+		assertEquals(keywords, si.getKeywords());
+		assertEquals(subject, si.getSubject());
 
 		/*
 		 * Read the custom properties. If there are no custom properties yet,
@@ -401,15 +397,15 @@ public final class TestMetaDataIPI {
 		/* Insert some custom properties into the container. */
 		// System.out.println(k1);
 		String a1 = (String) customProperties.get(k1);
-		assertEquals("Key1", p1, a1);
+		assertEquals(p1, a1, "Key1");
 		String a2 = (String) customProperties.get(k2);
-		assertEquals("Schl\u00fcssel2", p2, a2);
+		assertEquals(p2, a2, "Schl\u00fcssel2");
 		Integer a3 = (Integer) customProperties.get("Sample Number");
-		assertEquals("Sample Number", 12345, (int)a3);
+		assertEquals(12345, (int)a3, "Sample Number");
 		Boolean a4 = (Boolean) customProperties.get("Sample Boolean");
-		assertTrue("Sample Boolean", a4);
+		assertTrue(a4, "Sample Boolean");
 		Date a5 = (Date) customProperties.get("Sample Date");
-		assertEquals("Custom Date:", date, a5);
+		assertEquals(date, a5, "Custom Date:");
 	}
 
 
@@ -479,38 +475,36 @@ public final class TestMetaDataIPI {
 		 * serve as a container for custom properties.
 		 */
 		customProperties = dsi.getCustomProperties();
-		if (customProperties == null) {
-			fail();
-		}
+		assertNotNull(customProperties);
 
 		/* Insert some custom properties into the container. */
 
 		Integer a3 = (Integer) customProperties.get("int");
-		assertEquals("int", 12345, (int)a3);
+		assertEquals(12345, (int)a3, "int");
 
 		a3 = (Integer) customProperties.get("negint");
-		assertEquals("negint", -12345, (int)a3);
+		assertEquals(-12345, (int)a3, "negint");
 
 		Long al = (Long) customProperties.get("neglong");
-		assertEquals("neglong", -12345L, (long)al);
+		assertEquals(-12345L, (long)al, "neglong");
 
 		al = (Long) customProperties.get("long");
-		assertEquals("long", 12345L, (long)al);
+		assertEquals(12345L, (long)al, "long");
 
 		Boolean a4 = (Boolean) customProperties.get("boolean");
-		assertTrue("boolean", a4);
+		assertTrue(a4, "boolean");
 
 		Date a5 = (Date) customProperties.get("date");
-		assertEquals("Custom Date:", date, a5);
+		assertEquals(date, a5, "Custom Date:");
 
 		Double d = (Double) customProperties.get("double");
-		assertEquals("int", 12345.2, d, 0);
+		assertEquals(12345.2, d, 0, "int");
 
 		d = (Double) customProperties.get("negdouble");
-		assertEquals("string", -12345.3, d, 0);
+		assertEquals(-12345.3, d, 0, "string");
 
 		String s = (String) customProperties.get("string");
-		assertEquals("sring", "a String", s);
+		assertEquals("a String", s, "string");
 
 
 		assertTrue(customProperties.get("string") instanceof String);

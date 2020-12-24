@@ -19,9 +19,10 @@
 package org.apache.poi.hemf.usermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.geom.Point2D;
 import java.io.ByteArrayInputStream;
@@ -49,7 +50,7 @@ import org.apache.poi.hwmf.usermodel.HwmfEmbeddedType;
 import org.apache.poi.hwmf.usermodel.HwmfPicture;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RecordFormatException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("StatementWithEmptyBody")
 public class TestHemfPicture {
@@ -274,27 +275,22 @@ public class TestHemfPicture {
         }
     }
 
-    @Test(expected = RecordFormatException.class)
+    @Test
     public void testInfiniteLoopOnFile() throws Exception {
         try (InputStream is = ss_samples.openResourceAsStream("61294.emf")) {
             HemfPicture pic = new HemfPicture(is);
-            for (HemfRecord ignored : pic) {
-
-            }
+            assertThrows(RecordFormatException.class, () -> pic.forEach(r -> {}));
         }
     }
 
-    @Test(expected = RecordFormatException.class)
+    @Test
     public void testInfiniteLoopOnByteArray() throws Exception {
         try (InputStream is = ss_samples.openResourceAsStream("61294.emf")) {
             ByteArrayOutputStream bos = new ByteArrayOutputStream();
             IOUtils.copy(is, bos);
-            is.close();
 
             HemfPicture pic = new HemfPicture(new ByteArrayInputStream(bos.toByteArray()));
-            for (HemfRecord ignored : pic) {
-
-            }
+            assertThrows(RecordFormatException.class, () -> pic.forEach(r -> {}));
         }
     }
 

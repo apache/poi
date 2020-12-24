@@ -17,10 +17,10 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.TimeZone;
@@ -29,9 +29,9 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class TestHSSFDateUtil
@@ -39,14 +39,14 @@ import org.junit.Test;
 public class TestHSSFDateUtil {
 
     static TimeZone userTimeZone;
-    
-    @BeforeClass
+
+    @BeforeAll
     public static void setCEST() {
         userTimeZone = LocaleUtil.getUserTimeZone();
         LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CEST"));
     }
-    
-    @AfterClass
+
+    @AfterAll
     public static void resetTimeZone() {
         LocaleUtil.setUserTimeZone(userTimeZone);
     }
@@ -54,7 +54,7 @@ public class TestHSSFDateUtil {
     /**
      * Test that against a real, test file, we still do everything
      *  correctly
-     * @throws IOException 
+     * @throws IOException
      */
     @Test
     public void onARealFile() throws IOException {

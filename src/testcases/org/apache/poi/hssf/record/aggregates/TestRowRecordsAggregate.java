@@ -17,10 +17,11 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -41,7 +42,7 @@ import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.CellRangeAddress8Bit;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link RowRecordsAggregate}
@@ -58,8 +59,8 @@ public final class TestRowRecordsAggregate {
 		RowRecord rr1 = rra.getRow(4);
 
 		assertNotNull(rr1);
-		assertEquals("Row number is 1", 4, rr1.getRowNumber());
-        assertSame("Row record retrieved is identical ", rr1, rr);
+		assertEquals(4, rr1.getRowNumber(), "Row number is 1");
+        assertSame(rr1, rr, "Row record retrieved is identical ");
 	}
 
 	/**
@@ -108,11 +109,8 @@ public final class TestRowRecordsAggregate {
 			if (rec.getClass() == shfClass) {
 				result++;
 				Record prevRec = recs.get(i-1);
-				if (!(prevRec instanceof FormulaRecord)) {
-					fail("Bad record order at index "
-							+ i + ": Formula record expected but got ("
-							+ prevRec.getClass().getName() + ")");
-				}
+				assertTrue(prevRec instanceof FormulaRecord,
+					"Bad record order at index " + i + ": Formula record expected but got (" + prevRec.getClass().getName() + ")");
 				verifySharedFormula((FormulaRecord) prevRec, rec);
 			}
 		}

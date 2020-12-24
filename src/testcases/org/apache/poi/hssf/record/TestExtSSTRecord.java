@@ -19,12 +19,12 @@
 
 package org.apache.poi.hssf.record;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
 import org.apache.poi.poifs.storage.RawDataUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestExtSSTRecord {
 

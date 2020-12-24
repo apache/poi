@@ -16,14 +16,14 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 import java.io.IOException;
 
 import org.apache.poi.sl.usermodel.PresetColor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTHslColor;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTSRgbColor;
@@ -157,7 +157,7 @@ public class TestXSLFColor {
             xml = CTColor.Factory.newInstance();
             STPresetColorVal.Enum preVal = STPresetColorVal.Enum.forString(pc.ooxmlId);
             STSystemColorVal.Enum sysVal = STSystemColorVal.Enum.forString(pc.ooxmlId);
-            assertTrue(pc.ooxmlId, preVal != null || sysVal != null);
+            assertTrue(preVal != null || sysVal != null, pc.ooxmlId);
             if (preVal != null) {
                 xml.addNewPrstClr().setVal(preVal);
             } else {

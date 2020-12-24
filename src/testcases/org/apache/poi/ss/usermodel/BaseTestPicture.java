@@ -17,9 +17,9 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.awt.BasicStroke;
 import java.awt.Color;
@@ -43,7 +43,7 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.ImageUtils;
 import org.apache.poi.util.Units;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public abstract class BaseTestPicture {
 
@@ -64,12 +64,12 @@ public abstract class BaseTestPicture {
 
         double emuPX = Units.EMU_PER_PIXEL;
 
-        assertEquals("the image height differs", inpDim.getHeight(), cmpDim.getHeight(), emuPX*6);
-        assertEquals("the image width differs", inpDim.getWidth(),  cmpDim.getWidth(),  emuPX*6);
-        assertEquals("the starting column differs", inpCA.getCol1(), cmpCA.getCol1());
-        assertEquals("the column x-offset differs", inpCA.getDx1(), cmpCA.getDx1(), 1);
-        assertEquals("the column y-offset differs", inpCA.getDy1(), cmpCA.getDy1(), 1);
-        assertEquals("the ending columns differs", inpCA.getCol2(), cmpCA.getCol2());
+        assertEquals(inpDim.getHeight(), cmpDim.getHeight(), emuPX*6, "the image height differs");
+        assertEquals(inpDim.getWidth(),  cmpDim.getWidth(),  emuPX*6, "the image width differs");
+        assertEquals(inpCA.getCol1(), cmpCA.getCol1(), "the starting column differs");
+        assertEquals(inpCA.getDx1(), cmpCA.getDx1(), 1, "the column x-offset differs");
+        assertEquals(inpCA.getDy1(), cmpCA.getDy1(), 1, "the column y-offset differs");
+        assertEquals(inpCA.getCol2(), cmpCA.getCol2(), "the ending columns differs");
         // can't compare row heights because of variable test heights
 
         input.resize();
@@ -77,8 +77,8 @@ public abstract class BaseTestPicture {
 
         Dimension imgDim = input.getImageDimension();
 
-        assertEquals("the image height differs", imgDim.getHeight(), inpDim.getHeight()/emuPX, 1);
-        assertEquals("the image width differs",  imgDim.getWidth(), inpDim.getWidth()/emuPX,  1);
+        assertEquals(imgDim.getHeight(), inpDim.getHeight()/emuPX, 1, "the image height differs");
+        assertEquals(imgDim.getWidth(), inpDim.getWidth()/emuPX,  1, "the image width differs");
     }
 
 

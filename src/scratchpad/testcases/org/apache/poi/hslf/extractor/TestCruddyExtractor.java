@@ -18,14 +18,14 @@
 package org.apache.poi.hslf.extractor;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.StringUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the QuickButCruddyTextExtractor works correctly
@@ -62,7 +62,7 @@ public final class TestCruddyExtractor {
 		"This is page two\nIt has several blocks of text\nNone of them have formatting",
 	};
 
-	@Before
+	@BeforeEach
     public void setup() throws Exception {
 		te = new QuickButCruddyTextExtractor(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
     }

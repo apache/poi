@@ -18,12 +18,12 @@
 package org.apache.poi.hssf.record;
 
 import static org.apache.poi.hssf.record.TestcaseRecordInputStream.cut;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.util.HexDump;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestDrawingGroupRecord {
     private static final int MAX_RECORD_SIZE = 8228;

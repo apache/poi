@@ -18,10 +18,10 @@ package org.apache.poi.xssf;
 
 import static org.apache.poi.xssf.XSSFTestDataSamples.openSampleWorkbook;
 import static org.apache.poi.xssf.XSSFTestDataSamples.writeOutAndReadBack;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -42,14 +42,14 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestWorkbookProtection {
 
     @Test
     public void workbookAndRevisionPassword() throws Exception {
         String password = "test";
-        
+
         // validate password with an actual office file (Excel 2010)
         try (XSSFWorkbook workbook = openSampleWorkbook("workbookProtection-workbook_password_user_range-2010.xlsx")) {
             assertTrue(workbook.validateWorkbookPassword(password));
@@ -94,7 +94,7 @@ public class TestWorkbookProtection {
             assertTrue(workbook.validateRevisionsPassword(password));
         }
     }
-    
+
     @Test
     public void shouldReadWorkbookProtection() throws Exception {
         try (XSSFWorkbook workbook = openSampleWorkbook("workbookProtection_not_protected.xlsx")) {
@@ -181,7 +181,7 @@ public class TestWorkbookProtection {
             }
         }
     }
-    
+
     @SuppressWarnings("resource")
     @Test
     public void testIntegration() throws Exception {
@@ -199,7 +199,7 @@ public class TestWorkbookProtection {
             }
         }
     }
-    
+
     @Test
     public void testEncryptDecrypt() throws Exception {
         final String password = "abc123";

@@ -19,12 +19,12 @@ package org.apache.poi.xssf.usermodel;
 
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTChartsheet;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public final class TestXSSFChartSheet {
 
@@ -48,8 +48,7 @@ public final class TestXSSFChartSheet {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chart_sheet.xlsx")) {
             XSSFChartSheet sheet = (XSSFChartSheet) wb.getSheetAt(2);
 
-            assertFalse("Row iterator for charts sheets should return zero rows",
-                    sheet.iterator().hasNext());
+            assertFalse(sheet.iterator().hasNext(), "Row iterator for charts sheets should return zero rows");
 
             //access to a arbitrary row
             assertNull(sheet.getRow(1));
@@ -68,7 +67,7 @@ public final class TestXSSFChartSheet {
             assertNotNull(sheet.getCTChartsheet());
         }
     }
-    
+
     @Test
     public void testGetCharts() throws Exception {
        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("chart_sheet.xlsx")) {

@@ -25,7 +25,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTable;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableColumn;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTTableStyleInfo;
@@ -38,10 +38,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public final class TestXSSFTable {
 
@@ -72,11 +73,11 @@ public final class TestXSSFTable {
             CTTable ctTable = wb2.getSheetAt(0).getTables().get(0).getCTTable();
             CTTableColumn[] ctTableColumnArray = ctTable.getTableColumns().getTableColumnArray();
 
-            assertEquals("number of headers in xml table should match number of header cells in worksheet",
-                    headers.size(), ctTableColumnArray.length);
+            assertEquals(headers.size(), ctTableColumnArray.length,
+                "number of headers in xml table should match number of header cells in worksheet");
             for (int i = 0; i < headers.size(); i++) {
-                assertEquals("header name in xml table should match number of header cells in worksheet",
-                        headers.get(i), ctTableColumnArray[i].getName());
+                assertEquals(headers.get(i), ctTableColumnArray[i].getName(),
+                    "header name in xml table should match number of header cells in worksheet");
             }
             assertTrue(outputFile.delete());
             wb2.close();
@@ -101,17 +102,15 @@ public final class TestXSSFTable {
 
         XSSFWorkbook inputWorkbook = XSSFTestDataSamples.writeOutAndReadBack(outputWorkbook);
         List<XSSFTable> tables = inputWorkbook.getSheetAt(0).getTables();
-        assertEquals("Tables number", 1, tables.size());
+        assertEquals(1, tables.size(), "Tables number");
 
         XSSFTable inputTable = tables.get(0);
-        assertEquals("Table display name", outputTable.getDisplayName(), inputTable.getDisplayName());
+        assertEquals(outputTable.getDisplayName(), inputTable.getDisplayName(), "Table display name");
 
         CTTableStyleInfo inputStyleInfo = inputTable.getCTTable().getTableStyleInfo();
-        assertEquals("Style name", outputStyleInfo.getName(), inputStyleInfo.getName());
-        assertEquals("Show column stripes",
-                outputStyleInfo.getShowColumnStripes(), inputStyleInfo.getShowColumnStripes());
-        assertEquals("Show row stripes",
-                outputStyleInfo.getShowRowStripes(), inputStyleInfo.getShowRowStripes());
+        assertEquals(outputStyleInfo.getName(), inputStyleInfo.getName(), "Style name");
+        assertEquals(outputStyleInfo.getShowColumnStripes(), inputStyleInfo.getShowColumnStripes(), "Show column stripes");
+        assertEquals(outputStyleInfo.getShowRowStripes(), inputStyleInfo.getShowRowStripes(), "Show row stripes");
 
         inputWorkbook.close();
         outputWorkbook.close();
@@ -123,12 +122,11 @@ public final class TestXSSFTable {
 
             XSSFTable table = wb.getTable("\\_Prime.1");
             assertNotNull(table);
-            assertEquals("column header has special escaped characters",
-                    0, table.findColumnIndex("calc='#*'#"));
+            assertEquals(0, table.findColumnIndex("calc='#*'#"), "column header has special escaped characters");
             assertEquals(1, table.findColumnIndex("Name"));
             assertEquals(2, table.findColumnIndex("Number"));
 
-            assertEquals("case insensitive", 2, table.findColumnIndex("NuMbEr"));
+            assertEquals(2, table.findColumnIndex("NuMbEr"), "case insensitive");
 
             // findColumnIndex should return -1 if no column header name matches
             assertEquals(-1, table.findColumnIndex(null));
@@ -323,7 +321,7 @@ public final class TestXSSFTable {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sh = wb.createSheet();
 
-            // 1 header row + 1 data row 
+            // 1 header row + 1 data row
             AreaReference tableArea = new AreaReference("C10:C11", wb.getSpreadsheetVersion());
             XSSFTable table = sh.createTable(tableArea);
 
@@ -438,18 +436,19 @@ public final class TestXSSFTable {
             assertEquals(2, table.getRowCount());
 
             // column IDs start at 1, and increase in the order columns are added (see bug #62740)
-            assertEquals("Column c ID", 1, c1.getId());
-            assertTrue("Column B ID", c1.getId() < cB.getId());
-            assertTrue("Column D ID", cB.getId() < cD.getId());
-            assertTrue("Column C ID", cD.getId() < cC.getId());
-            assertEquals("Column 1", table.getColumns().get(0).getName()); // generated name
-            assertEquals("Column B", table.getColumns().get(1).getName());
-            assertEquals("Column C", table.getColumns().get(2).getName());
-            assertEquals("Column D", table.getColumns().get(3).getName());
+            assertEquals(1, c1.getId(), "Column c ID");
+            assertTrue  (c1.getId() < cB.getId(), "Column B ID");
+            assertTrue  (cB.getId() < cD.getId(), "Column D ID");
+            assertTrue  (cD.getId() < cC.getId(), "Column C ID");
+            // generated name
+            assertEquals(table.getColumns().get(0).getName(), "Column 1");
+            assertEquals(table.getColumns().get(1).getName(), "Column B");
+            assertEquals(table.getColumns().get(2).getName(), "Column C");
+            assertEquals(table.getColumns().get(3).getName(), "Column D");
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCreateColumnInvalidIndex() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sh = wb.createSheet();
@@ -458,7 +457,8 @@ public final class TestXSSFTable {
 
             // add columns
             table.createColumn("Column 2", 1);
-            table.createColumn("Column 3", 3); // out of bounds
+            // out of bounds
+            assertThrows(IllegalArgumentException.class, () -> table.createColumn("Column 3", 3));
         }
     }
 
@@ -563,7 +563,7 @@ public final class TestXSSFTable {
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testSetDisplayNameNull() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
@@ -572,11 +572,11 @@ public final class TestXSSFTable {
                     new CellReference(0, 0), new CellReference(2, 2));
 
             XSSFTable table1 = sheet.createTable(reference1);
-            table1.setDisplayName(null);
+            assertThrows(IllegalArgumentException.class, () -> table1.setDisplayName(null));
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testSetDisplayNameEmpty() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
             XSSFSheet sheet = wb.createSheet();
@@ -585,7 +585,7 @@ public final class TestXSSFTable {
                     new CellReference(0, 0), new CellReference(2, 2));
 
             XSSFTable table1 = sheet.createTable(reference1);
-            table1.setDisplayName("");
+            assertThrows(IllegalArgumentException.class, () -> table1.setDisplayName(""));
         }
     }
 
@@ -597,10 +597,11 @@ public final class TestXSSFTable {
         try (XSSFWorkbook workbook = new XSSFWorkbook()) {
             XSSFSheet sheet0 = workbook.createSheet();
             XSSFTable table = addTable(sheet0, 3, 0, 2, 2);
+            assertNotNull(table);
 
-            final String procName = "testXSSFTableGetName";
-            final String name = table.getName();
-            System.out.println(String.format(Locale.ROOT, "%s: table.getName=%s", procName, name));
+            // final String procName = "testXSSFTableGetName";
+            // final String name = table.getName();
+            // System.out.printf(Locale.ROOT, "%s: table.getName=%s%n", procName, name);
         }
     }
 

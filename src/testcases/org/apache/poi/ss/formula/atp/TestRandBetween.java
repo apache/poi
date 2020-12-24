@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.atp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -27,23 +27,22 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testcase for 'Analysis Toolpak' function RANDBETWEEN()
  */
 public class TestRandBetween {
 
-	private Workbook wb;
 	private FormulaEvaluator evaluator;
 	private Cell bottomValueCell;
 	private Cell topValueCell;
 	private Cell formulaCell;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
-		wb = HSSFTestDataSamples.openSampleWorkbook("TestRandBetween.xls");
+		Workbook wb = HSSFTestDataSamples.openSampleWorkbook("TestRandBetween.xls");
 		evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
 		Sheet sheet = wb.createSheet("RandBetweenSheet");
@@ -76,8 +75,8 @@ public class TestRandBetween {
             formulaCell.setCellFormula("RANDBETWEEN(0,9999999999)");
             evaluator.evaluateFormulaCell(formulaCell);
             double value = formulaCell.getNumericCellValue();
-            assertTrue("rand is greater than or equal to lowerbound", value >= 0.0);
-            assertTrue("rand is less than or equal to upperbound", value <= 9999999999.0);
+            assertTrue(value >= 0.0, "rand is greater than or equal to lowerbound");
+            assertTrue(value <= 9999999999.0, "rand is less than or equal to upperbound");
         }
 	}
 

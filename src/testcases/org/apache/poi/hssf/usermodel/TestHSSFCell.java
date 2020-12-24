@@ -17,11 +17,11 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -35,7 +35,6 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.record.DBCellRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.StringRecord;
 import org.apache.poi.ss.usermodel.BaseTestCell;
 import org.apache.poi.ss.usermodel.Cell;
@@ -46,7 +45,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests various functionality having to do with {@link HSSFCell}.  For instance support for
@@ -72,18 +71,18 @@ public final class TestHSSFCell extends BaseTestCell {
 		try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("1900DateWindowing.xls")) {
 			HSSFSheet sheet = wb.getSheetAt(0);
 
-			assertEquals("Date from file using 1900 Date Windowing",
-						 date.getTime(),
-						 sheet.getRow(0).getCell(0).getDateCellValue().getTime());
+			assertEquals(date.getTime(),
+						 sheet.getRow(0).getCell(0).getDateCellValue().getTime(),
+						 "Date from file using 1900 Date Windowing");
 		}
 
 		// now check a file with 1904 Date Windowing
 		try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("1904DateWindowing.xls")) {
 			HSSFSheet sheet = wb.getSheetAt(0);
 
-			assertEquals("Date from file using 1904 Date Windowing",
-						 date.getTime(),
-						 sheet.getRow(0).getCell(0).getDateCellValue().getTime());
+			assertEquals(date.getTime(),
+						 sheet.getRow(0).getCell(0).getDateCellValue().getTime(),
+						 "Date from file using 1904 Date Windowing");
 		}
 	}
 
@@ -106,9 +105,9 @@ public final class TestHSSFCell extends BaseTestCell {
 			setCell(wb1, 0, 1, date);
 			try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
 
-				assertEquals("Date from file using 1900 Date Windowing",
-							 date.getTime(),
-							 readCell(wb2, 0, 1).getTime());
+				assertEquals(date.getTime(),
+							 readCell(wb2, 0, 1).getTime(),
+							 "Date from file using 1900 Date Windowing");
 			}
 		}
 
@@ -116,9 +115,9 @@ public final class TestHSSFCell extends BaseTestCell {
 		try (HSSFWorkbook wb1 = HSSFTestDataSamples.openSampleWorkbook("1904DateWindowing.xls")) {
 			setCell(wb1, 0, 1, date);
 			try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
-				assertEquals("Date from file using 1900 Date Windowing",
-							 date.getTime(),
-							 readCell(wb2, 0, 1).getTime());
+				assertEquals(date.getTime(),
+							 readCell(wb2, 0, 1).getTime(),
+							 "Date from file using 1900 Date Windowing");
 			}
 		}
 	}
@@ -152,28 +151,22 @@ public final class TestHSSFCell extends BaseTestCell {
 			//check initial position
 			HSSFSheet umSheet = wb1.getSheetAt(0);
 			InternalSheet s = umSheet.getSheet();
-			assertEquals("Initial active cell should be in col 0",
-						 (short) 0, s.getActiveCellCol());
-			assertEquals("Initial active cell should be on row 1",
-						 1, s.getActiveCellRow());
+			assertEquals((short) 0, s.getActiveCellCol(), "Initial active cell should be in col 0");
+			assertEquals(1, s.getActiveCellRow(), "Initial active cell should be on row 1");
 
 			//modify position through HSSFCell
 			HSSFCell cell = umSheet.createRow(3).createCell(2);
 			cell.setAsActiveCell();
-			assertEquals("After modify, active cell should be in col 2",
-						 (short) 2, s.getActiveCellCol());
-			assertEquals("After modify, active cell should be on row 3",
-						 3, s.getActiveCellRow());
+			assertEquals((short) 2, s.getActiveCellCol(), "After modify, active cell should be in col 2");
+			assertEquals(3, s.getActiveCellRow(), "After modify, active cell should be on row 3");
 
 			//write book to temp file; read and verify that position is serialized
 			try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
 				umSheet = wb2.getSheetAt(0);
 				s = umSheet.getSheet();
 
-				assertEquals("After serialize, active cell should be in col 2",
-							 (short) 2, s.getActiveCellCol());
-				assertEquals("After serialize, active cell should be on row 3",
-							 3, s.getActiveCellRow());
+				assertEquals((short) 2, s.getActiveCellCol(), "After serialize, active cell should be in col 2");
+				assertEquals(3, s.getActiveCellRow(), "After serialize, active cell should be on row 3");
 			}
 		}
 	}
@@ -278,36 +271,16 @@ public final class TestHSSFCell extends BaseTestCell {
 
 			styA.verifyBelongsToWorkbook(wbA);
 			styB.verifyBelongsToWorkbook(wbB);
-			try {
-				styA.verifyBelongsToWorkbook(wbB);
-				fail("expected IllegalArgumentException");
-			} catch (IllegalArgumentException e) {
-				// expected during successful test
-			}
-			try {
-				styB.verifyBelongsToWorkbook(wbA);
-				fail("expected IllegalArgumentException");
-			} catch (IllegalArgumentException e) {
-				// expected during successful test
-			}
+			assertThrows(IllegalArgumentException.class, () -> styA.verifyBelongsToWorkbook(wbB));
+			assertThrows(IllegalArgumentException.class, () -> styB.verifyBelongsToWorkbook(wbA));
 
 			Cell cellA = wbA.createSheet().createRow(0).createCell(0);
 			Cell cellB = wbB.createSheet().createRow(0).createCell(0);
 
 			cellA.setCellStyle(styA);
 			cellB.setCellStyle(styB);
-			try {
-				cellA.setCellStyle(styB);
-				fail("expected IllegalArgumentException");
-			} catch (IllegalArgumentException e) {
-				// expected during successful test
-			}
-			try {
-				cellB.setCellStyle(styA);
-				fail("expected IllegalArgumentException");
-			} catch (IllegalArgumentException e) {
-				// expected during successful test
-			}
+			assertThrows(IllegalArgumentException.class, () -> cellA.setCellStyle(styB));
+			assertThrows(IllegalArgumentException.class, () -> cellB.setCellStyle(styA));
 		}
 	}
 
@@ -329,7 +302,7 @@ public final class TestHSSFCell extends BaseTestCell {
 
 			final List<org.apache.poi.hssf.record.Record> recs = new ArrayList<>();
 			sheet.getSheet().visitContainedRecords(recs::add, 0);
-			assertFalse("Identified bug - leftover StringRecord", recs.size() == 28 && recs.get(23) instanceof StringRecord);
+			assertFalse(recs.size() == 28 && recs.get(23) instanceof StringRecord, "Identified bug - leftover StringRecord");
 			confirmStringRecord(sheet, false);
 
 			// string to error code
@@ -390,12 +363,7 @@ public final class TestHSSFCell extends BaseTestCell {
 			// cover some deprecated methods and other smaller stuff...
 			assertEquals(wb.getWorkbook(), cell.getBoundWorkbook());
 
-			try {
-				cell.getCachedFormulaResultType();
-				fail("Should catch exception");
-			} catch (IllegalStateException e) {
-				// expected here
-			}
+			assertThrows(IllegalStateException.class, cell::getCachedFormulaResultType);
 
 			cell.removeCellComment();
 			cell.removeCellComment();
@@ -410,7 +378,7 @@ public final class TestHSSFCell extends BaseTestCell {
 			Cell cell = row.createCell(0);
 
 			cell.setBlank();
-			assertNull(null, cell.getDateCellValue());
+			assertNull(cell.getDateCellValue());
 			assertFalse(cell.getBooleanCellValue());
 			assertEquals("", cell.toString());
 
@@ -440,11 +408,11 @@ public final class TestHSSFCell extends BaseTestCell {
 		}
     }
 
-	@Test(expected = IllegalStateException.class)
+	@Test
 	public void getErrorCellValue_throwsISE_onABlankCell() throws IOException {
 		try (HSSFWorkbook wb = new HSSFWorkbook()) {
 			Cell cell = wb.createSheet().createRow(0).createCell(0);
-			cell.getErrorCellValue();
+			assertThrows(IllegalStateException.class, cell::getErrorCellValue);
 		}
 	}
 }

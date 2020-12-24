@@ -18,9 +18,9 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.apache.poi.poifs.storage.RawDataUtil.decompress;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -29,7 +29,7 @@ import org.apache.poi.ddf.EscherPropertyTypes;
 import org.apache.poi.ddf.EscherSpRecord;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.ObjRecord;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestPolygon {
     @Test
@@ -71,7 +71,7 @@ public class TestPolygon {
 
         assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);
-        
+
         wb.close();
     }
 
@@ -100,10 +100,10 @@ public class TestPolygon {
             "</elements>" +
             "</record>";
         String actual = verticesProp1.toXml("").replaceAll("[\r\n\t]","");
-        
+
         assertEquals(verticesProp1.getNumberOfElementsInArray(), 5);
         assertEquals(expected, actual);
-        
+
         polygon.setPoints(new int[]{1,2,3}, new int[] {4,5,6});
         assertArrayEquals(polygon.getXPoints(), new int[]{1, 2, 3});
         assertArrayEquals(polygon.getYPoints(), new int[]{4, 5, 6});
@@ -121,10 +121,10 @@ public class TestPolygon {
             "<item>AQAEAA==</item>" +
             "</elements></record>";
         actual = verticesProp1.toXml("").replaceAll("[\r\n\t]","");
-        
+
         assertEquals(verticesProp1.getNumberOfElementsInArray(), 4);
         assertEquals(expected, actual);
-        
+
         wb.close();
     }
 
@@ -173,7 +173,7 @@ public class TestPolygon {
         assertArrayEquals(polygon.getYPoints(), new int[]{41, 51, 61});
         assertEquals(polygon.getDrawAreaHeight(), 1011);
         assertEquals(polygon.getDrawAreaWidth(), 1021);
-        
+
         wb3.close();
     }
 
@@ -227,7 +227,7 @@ public class TestPolygon {
         assertArrayEquals(polygon2.getYPoints(), new int[]{24,25,26});
         assertEquals(polygon2.getDrawAreaHeight(), 204);
         assertEquals(polygon2.getDrawAreaWidth(), 203);
-        
+
         wb3.close();
     }
 
@@ -243,7 +243,7 @@ public class TestPolygon {
         assertEquals(polygon.getDrawAreaWidth(), 3686175);
         assertArrayEquals(polygon.getXPoints(), new int[]{0, 0, 31479, 16159, 19676, 20502});
         assertArrayEquals(polygon.getYPoints(), new int[]{0, 0, 36, 56, 34, 18});
-        
+
         wb.close();
     }
 

@@ -21,7 +21,7 @@ import static org.apache.poi.POITestCase.assertContains;
 import java.io.IOException;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for reading SmartTags from Word docx.

@@ -18,26 +18,26 @@ package org.apache.poi.xssf;
 
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TestSheetProtection {
 	private XSSFWorkbook workbook;
 	private XSSFSheet sheet;
-	
-	@Before
+
+	@BeforeEach
 	public void setUp() {
 		workbook = XSSFTestDataSamples.openSampleWorkbook("sheetProtection_not_protected.xlsx");
 		sheet = workbook.getSheetAt(0);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws IOException {
 		workbook.close();
 	}

@@ -17,17 +17,17 @@
 
 package org.apache.poi.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.TimeZone;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 
 public class TestLocaleUtil {
@@ -41,7 +41,7 @@ public class TestLocaleUtil {
      * Reset the Locale to the user default before the test so that it isn't influenced
      * by the LocaleUtil's state being changed by previous tests.
      */
-    @Before
+    @BeforeEach
     @SuppressForbidden("implementation around default locales in POI")
     public void setUp() {
         // reset the user locale and time zone so that tests do not interfere with each other
@@ -60,7 +60,7 @@ public class TestLocaleUtil {
      * Reset the Locale to the user default after the test so that it doesn't influence
      * other tests.
      */
-    @After
+    @AfterEach
     public void tearDown() {
         LocaleUtil.resetUserLocale();
         LocaleUtil.resetUserTimeZone();
@@ -118,10 +118,10 @@ public class TestLocaleUtil {
 
     private static void assertCalendarNotEquals(Calendar expected, Calendar actual) {
         // FIXME: add more tests to compare calendars, ignoring whether the dates are equal
-        assertNotEquals("time zone", expected.getTimeZone(), actual.getTimeZone());
+        assertNotEquals(expected.getTimeZone(), actual.getTimeZone(), "time zone");
     }
     private static void assertCalendarEquals(Calendar expected, Calendar actual) {
         // FIXME: add more tests to compare calendars, ignoring whether the set dates are equal
-        assertEquals("time zone", expected.getTimeZone(), actual.getTimeZone());
+        assertEquals(expected.getTimeZone(), actual.getTimeZone(), "time zone");
     }
 }

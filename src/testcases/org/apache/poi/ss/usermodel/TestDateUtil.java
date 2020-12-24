@@ -24,12 +24,12 @@ import static java.util.Calendar.JULY;
 import static java.util.Calendar.MARCH;
 import static java.util.Calendar.MAY;
 import static java.util.Calendar.OCTOBER;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -45,21 +45,21 @@ import org.apache.poi.hssf.usermodel.HSSFDataFormat;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class TestDateUtil {
 
     static TimeZone userTimeZone;
 
-    @BeforeClass
+    @BeforeAll
     public static void setCEST() {
         userTimeZone = LocaleUtil.getUserTimeZone();
         LocaleUtil.setUserTimeZone(TimeZone.getTimeZone("CEST"));
     }
 
-    @AfterClass
+    @AfterAll
     public static void resetTimeZone() {
         LocaleUtil.setUserTimeZone(userTimeZone);
     }
@@ -194,12 +194,12 @@ public class TestDateUtil {
         for (int hour = 0; hour < 24; hour++) {
             double excelDate = DateUtil.getExcelDate(cal.getTime(), false);
 
-            assertEquals("getJavaDate: Checking hour = " + hour, cal.getTime().getTime(),
-                    DateUtil.getJavaDate(excelDate, false).getTime());
+            assertEquals(cal.getTime().getTime(), DateUtil.getJavaDate(excelDate, false).getTime(),
+                "getJavaDate: Checking hour = " + hour);
 
             LocalDateTime ldt = LocalDateTime.ofInstant(cal.toInstant(), cal.getTimeZone().toZoneId());
-            assertEquals("getLocalDateTime: Checking hour = " + hour, ldt,
-                    DateUtil.getLocalDateTime(excelDate, false));
+            assertEquals(ldt, DateUtil.getLocalDateTime(excelDate, false),
+                "getLocalDateTime: Checking hour = " + hour);
 
             cal.add(Calendar.HOUR_OF_DAY, 1);
         }
@@ -214,21 +214,17 @@ public class TestDateUtil {
         cal.add(Calendar.DATE,1); // now Jan. 2, 2004
         Date dateIf1904 = cal.getTime();
         // 1900 windowing
-        assertEquals("Checking 1900 Date Windowing",
-                dateIf1900.getTime(),
-                DateUtil.getJavaDate(excelDate,false).getTime());
+        assertEquals(dateIf1900.getTime(), DateUtil.getJavaDate(excelDate,false).getTime(),
+            "Checking 1900 Date Windowing");
         // 1904 windowing
-        assertEquals("Checking 1904 Date Windowing",
-                dateIf1904.getTime(),
-                DateUtil.getJavaDate(excelDate,true).getTime());
+        assertEquals(dateIf1904.getTime(), DateUtil.getJavaDate(excelDate,true).getTime(),
+            "Checking 1904 Date Windowing");
         // 1900 windowing (LocalDateTime)
-        assertEquals("Checking 1900 Date Windowing",
-                LocalDateTime.of(2000,1,1,0,0),
-                DateUtil.getLocalDateTime(excelDate,false));
+        assertEquals(LocalDateTime.of(2000,1,1,0,0), DateUtil.getLocalDateTime(excelDate,false),
+            "Checking 1900 Date Windowing");
         // 1904 windowing (LocalDateTime)
-        assertEquals("Checking 1904 Date Windowing",
-                LocalDateTime.of(2004,1,2,0,0),
-                DateUtil.getLocalDateTime(excelDate,true));
+        assertEquals(LocalDateTime.of(2004,1,2,0,0), DateUtil.getLocalDateTime(excelDate,true),
+            "Checking 1904 Date Windowing");
     }
 
     /**
@@ -252,12 +248,9 @@ public class TestDateUtil {
             double difference = excelDate - Math.floor(excelDate);
             int differenceInHours = (int) (difference * 24 * 60 + 0.5) / 60;
 
-            assertEquals("Checking " + hour + " hour on Daylight Saving Time start date",
-                    hour,
-                    differenceInHours);
-            assertEquals("Checking " + hour + " hour on Daylight Saving Time start date",
-                    javaDate.getTime(),
-                    DateUtil.getJavaDate(excelDate, false).getTime());
+            assertEquals(hour, differenceInHours, "Checking " + hour + " hour on Daylight Saving Time start date");
+            assertEquals(javaDate.getTime(), DateUtil.getJavaDate(excelDate, false).getTime(),
+                "Checking " + hour + " hour on Daylight Saving Time start date");
 
             // perform the same checks with LocalDateTime
             LocalDateTime localDate = LocalDateTime.of(2004,3,28,hour,0,0);
@@ -265,12 +258,10 @@ public class TestDateUtil {
             double differenceLocalDate = excelLocalDate - Math.floor(excelLocalDate);
             int differenceLocalDateInHours = (int) (differenceLocalDate * 24 * 60 + 0.5) / 60;
 
-            assertEquals("Checking " + hour + " hour on Daylight Saving Time start date (LocalDateTime)",
-                    hour,
-                    differenceLocalDateInHours);
-            assertEquals("Checking " + hour + " hour on Daylight Saving Time start date (LocalDateTime)",
-                    localDate,
-                    DateUtil.getLocalDateTime(excelLocalDate, false));
+            assertEquals(hour, differenceLocalDateInHours,
+                "Checking " + hour + " hour on Daylight Saving Time start date (LocalDateTime)");
+            assertEquals(localDate, DateUtil.getLocalDateTime(excelLocalDate, false),
+                "Checking " + hour + " hour on Daylight Saving Time start date (LocalDateTime)");
         }
     }
 
@@ -295,15 +286,15 @@ public class TestDateUtil {
             cal.set(Calendar.HOUR_OF_DAY, hour);
             Date javaDate = DateUtil.getJavaDate(excelDate, false);
             double actDate = DateUtil.getExcelDate(javaDate, false);
-            assertEquals("Checking " + hour + " hours on Daylight Saving Time start date",
-                    excelDate, actDate, oneMinute);
+            assertEquals(excelDate, actDate, oneMinute,
+                "Checking " + hour + " hours on Daylight Saving Time start date");
 
             // perform the same check with LocalDateTime
             cal.set(Calendar.HOUR_OF_DAY, hour);
             LocalDateTime localDate = DateUtil.getLocalDateTime(excelDate, false);
             double actLocalDate = DateUtil.getExcelDate(localDate, false);
-            assertEquals("Checking " + hour + " hours on Daylight Saving Time start date (LocalDateTime)",
-                    excelDate, actLocalDate, oneMinute);
+            assertEquals(excelDate, actLocalDate, oneMinute,
+                "Checking " + hour + " hours on Daylight Saving Time start date (LocalDateTime)");
         }
     }
 
@@ -320,23 +311,19 @@ public class TestDateUtil {
             double excelDate = DateUtil.getExcelDate(javaDate, false);
             double difference = excelDate - Math.floor(excelDate);
             int differenceInHours = (int) (difference * 24 * 60 + 0.5) / 60;
-            assertEquals("Checking " + hour + " hour on Daylight Saving Time end date",
-                    hour,
-                    differenceInHours);
-            assertEquals("Checking " + hour + " hour on Daylight Saving Time start date",
-                    javaDate.getTime(),
-                    DateUtil.getJavaDate(excelDate, false).getTime());
+            assertEquals(hour, differenceInHours,
+                "Checking " + hour + " hour on Daylight Saving Time end date");
+            assertEquals(javaDate.getTime(), DateUtil.getJavaDate(excelDate, false).getTime(),
+                "Checking " + hour + " hour on Daylight Saving Time start date");
 
             // perform the same checks using LocalDateTime
             LocalDateTime localDate = LocalDateTime.of(2004,10,31,hour,0,0);
             double excelLocalDate = DateUtil.getExcelDate(localDate, false);
             int differenceLocalDateInHours = (int) (difference * 24 * 60 + 0.5) / 60;
-            assertEquals("Checking " + hour + " hour on Daylight Saving Time end date (LocalDateTime)",
-                    hour,
-                    differenceLocalDateInHours);
-            assertEquals("Checking " + hour + " hour on Daylight Saving Time start date (LocalDateTime)",
-                    localDate,
-                    DateUtil.getLocalDateTime(excelLocalDate, false));
+            assertEquals(hour, differenceLocalDateInHours,
+                "Checking " + hour + " hour on Daylight Saving Time end date (LocalDateTime)");
+            assertEquals(localDate, DateUtil.getLocalDateTime(excelLocalDate, false),
+                "Checking " + hour + " hour on Daylight Saving Time start date (LocalDateTime)");
         }
     }
 
@@ -353,15 +340,13 @@ public class TestDateUtil {
         for (int hour = 0; hour < 24; hour++, excelDate += oneHour) {
             cal.set(Calendar.HOUR_OF_DAY, hour);
             Date javaDate = DateUtil.getJavaDate(excelDate, false);
-            assertEquals("Checking " + hour + " hours on Daylight Saving Time start date",
-                    excelDate,
-                    DateUtil.getExcelDate(javaDate, false), oneMinute);
+            assertEquals(excelDate, DateUtil.getExcelDate(javaDate, false), oneMinute,
+                "Checking " + hour + " hours on Daylight Saving Time start date");
 
             // perform the same checks using LocalDateTime
             LocalDateTime localDate = DateUtil.getLocalDateTime(excelDate, false);
-            assertEquals("Checking " + hour + " hours on Daylight Saving Time start date",
-                    excelDate,
-                    DateUtil.getExcelDate(localDate, false), oneMinute);
+            assertEquals(excelDate, DateUtil.getExcelDate(localDate, false), oneMinute,
+                "Checking " + hour + " hours on Daylight Saving Time start date");
         }
     }
 
@@ -386,7 +371,7 @@ public class TestDateUtil {
                 Date javaDate = DateUtil.getJavaDate(excelDate);
 
                 // Should match despite time-zone
-                assertEquals("Checking timezone " + id, expected.getTime(), javaDate.getTime());
+                assertEquals(expected.getTime(), javaDate.getTime(), "Checking timezone " + id);
             }
 
             // Check that the timezone aware getter works correctly
@@ -398,8 +383,8 @@ public class TestDateUtil {
 
             // Same, no change
             assertEquals(
-                    DateUtil.getJavaDate(excelDate, false).getTime(),
-                    DateUtil.getJavaDate(excelDate, false, cet).getTime()
+                DateUtil.getJavaDate(excelDate, false).getTime(),
+                DateUtil.getJavaDate(excelDate, false, cet).getTime()
             );
 
             // London vs Copenhagen, should differ by an hour
@@ -464,10 +449,7 @@ public class TestDateUtil {
                 "[yeLLow]yyyy-mm-dd"
         };
         for (String format : formats) {
-            assertTrue(
-                    format + " is a date format",
-                    DateUtil.isADateFormat(formatId, format)
-            );
+            assertTrue(DateUtil.isADateFormat(formatId, format), format + " is a date format");
         }
 
         // Then time based ones too
@@ -482,10 +464,7 @@ public class TestDateUtil {
                 "[hh]", "[mm]", "[ss]", "[SS]", "[red][hh]"
         };
         for (String format : formats) {
-            assertTrue(
-                    format + " is a datetime format",
-                    DateUtil.isADateFormat(formatId, format)
-            );
+            assertTrue(DateUtil.isADateFormat(formatId, format), format + " is a datetime format");
         }
 
         // Then invalid ones
@@ -498,10 +477,7 @@ public class TestDateUtil {
                 "", null
         };
         for (String format : formats) {
-            assertFalse(
-                    format + " is not a date or datetime format",
-                    DateUtil.isADateFormat(formatId, format)
-            );
+            assertFalse(DateUtil.isADateFormat(formatId, format), format + " is not a date or datetime format");
         }
 
         // And these are ones we probably shouldn't allow,
@@ -624,47 +600,26 @@ public class TestDateUtil {
     public void absoluteDay() {
         // 1 Jan 1900 is 1 day after 31 Dec 1899
         Calendar cal = LocaleUtil.getLocaleCalendar(1900,JANUARY,1,0,0,0);
-        assertEquals("Checking absolute day (1 Jan 1900)", 1, DateUtil.absoluteDay(cal, false));
+        assertEquals(1, DateUtil.absoluteDay(cal, false), "Checking absolute day (1 Jan 1900)");
         LocalDateTime ldt = LocalDateTime.of(1900,1,1,0,0,0);
-        assertEquals("Checking absolute day (1 Jan 1900) (LocalDateTime)", 1, DateUtil.absoluteDay(ldt, false));
+        assertEquals(1, DateUtil.absoluteDay(ldt, false), "Checking absolute day (1 Jan 1900) (LocalDateTime)");
         // 1 Jan 1901 is 366 days after 31 Dec 1899
         ldt = LocalDateTime.of(1901,1,1,0,0,0);
         cal.set(1901,JANUARY,1,0,0,0);
-        assertEquals("Checking absolute day (1 Jan 1901) (LocalDateTime)", 366, DateUtil.absoluteDay(ldt, false));
+        assertEquals(366, DateUtil.absoluteDay(ldt, false), "Checking absolute day (1 Jan 1901) (LocalDateTime)");
     }
 
     @Test
     public void absoluteDayYearTooLow() {
         Calendar cal = LocaleUtil.getLocaleCalendar(1899,JANUARY,1,0,0,0);
-        try {
-            DateUtil.absoluteDay(cal, false);
-            fail("Should fail here");
-        } catch (IllegalArgumentException e) {
-            // expected here
-        }
+        assertThrows(IllegalArgumentException.class, () -> DateUtil.absoluteDay(cal, false));
 
-        try {
-            cal.set(1903,JANUARY,1,0,0,0);
-            DateUtil.absoluteDay(cal, true);
-            fail("Should fail here");
-        } catch (IllegalArgumentException e) {
-            // expected here
-        }
+        cal.set(1903,JANUARY,1,0,0,0);
+        assertThrows(IllegalArgumentException.class, () -> DateUtil.absoluteDay(cal, true));
 
         // same for LocalDateTime
-        try {
-            DateUtil.absoluteDay(LocalDateTime.of(1899,1,1,0,0,0), false);
-            fail("Should fail here");
-        } catch (IllegalArgumentException e) {
-            // expected here
-        }
-
-        try {
-            DateUtil.absoluteDay(LocalDateTime.of(1903,1,1,0,0,0), true);
-            fail("Should fail here");
-        } catch (IllegalArgumentException e) {
-            // expected here
-        }
+        assertThrows(IllegalArgumentException.class, () -> DateUtil.absoluteDay(LocalDateTime.of(1899,1,1,0,0,0), false));
+        assertThrows(IllegalArgumentException.class, () -> DateUtil.absoluteDay(LocalDateTime.of(1903,1,1,0,0,0), true));
     }
 
     @Test

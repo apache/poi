@@ -17,13 +17,13 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,7 +45,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.TempFile;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test cell styling functionality
@@ -97,8 +97,8 @@ public final class TestCellStyle {
 
             SanityChecker sanityChecker = new SanityChecker();
             sanityChecker.checkHSSFWorkbook(wb);
-            assertEquals("LAST ROW == 99", 99, s.getLastRowNum());
-            assertEquals("FIRST ROW == 0", 0, s.getFirstRowNum());
+            assertEquals(99, s.getLastRowNum(), "LAST ROW == 99");
+            assertEquals(0, s.getFirstRowNum(), "FIRST ROW == 0");
         }
 
         // assert((s.getLastRowNum() == 99));
@@ -134,8 +134,8 @@ public final class TestCellStyle {
             SanityChecker sanityChecker = new SanityChecker();
             sanityChecker.checkHSSFWorkbook(wb);
 
-            assertEquals("LAST ROW ", 0, s.getLastRowNum());
-            assertEquals("FIRST ROW ", 0, s.getFirstRowNum());
+            assertEquals(0, s.getLastRowNum(), "LAST ROW");
+            assertEquals(0, s.getFirstRowNum(), "FIRST ROW");
         }
     }
 
@@ -185,8 +185,6 @@ public final class TestCellStyle {
         File file = TempFile.createTempFile("testWriteSheetStyle", ".xls");
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet s = wb.createSheet();
-            HSSFRow r = null;
-            HSSFCell c = null;
             HSSFFont fnt = wb.createFont();
             HSSFCellStyle cs = wb.createCellStyle();
             HSSFCellStyle cs2 = wb.createCellStyle();
@@ -203,10 +201,10 @@ public final class TestCellStyle {
             cs2.setFillPattern(FillPatternType.DIAMONDS);
             cs2.setFont(fnt);
             for (int rownum = 0; rownum < 100; rownum++) {
-                r = s.createRow(rownum);
+                HSSFRow r = s.createRow(rownum);
 
                 for (int cellnum = 0; cellnum < 50; cellnum += 2) {
-                    c = r.createCell(cellnum);
+                    HSSFCell c = r.createCell(cellnum);
                     c.setCellValue(rownum * 10000 + cellnum
                                            + (((double) rownum / 1000)
                             + ((double) cellnum / 10000)));
@@ -221,8 +219,8 @@ public final class TestCellStyle {
             }
             SanityChecker sanityChecker = new SanityChecker();
             sanityChecker.checkHSSFWorkbook(wb);
-            assertEquals("LAST ROW == 99", 99, s.getLastRowNum());
-            assertEquals("FIRST ROW == 0", 0, s.getFirstRowNum());
+            assertEquals(99, s.getLastRowNum(), "LAST ROW == 99");
+            assertEquals(0, s.getFirstRowNum(), "FIRST ROW == 0");
         }
     }
 
@@ -455,13 +453,13 @@ public final class TestCellStyle {
                         Sheet sheet = wb.getSheetAt(0);
 
                         for (Row row : sheet) {
-                            for (Integer idxCell = 0; idxCell < row.getLastCellNum(); idxCell++) {
+                            for (int idxCell = 0; idxCell < row.getLastCellNum(); idxCell++) {
 
                                 Cell cell = row.getCell(idxCell);
                                 cell.getCellStyle().getDataFormatString();
                                 if (cell.getCellType() == CellType.NUMERIC) {
                                     boolean isDate = DateUtil.isCellDateFormatted(cell);
-                                    assertFalse("cell " + idxCell + " is not a date.", idxCell > 0 && isDate);
+                                    assertFalse(idxCell > 0 && isDate, "cell " + idxCell + " is not a date.");
                                 }
                             }
                         }

@@ -17,15 +17,15 @@
 
 package org.apache.poi.hsmf;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.Calendar;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public final class TestMessageSubmissionChunkY2KRead {
 
@@ -36,7 +36,7 @@ public final class TestMessageSubmissionChunkY2KRead {
     /**
      * Initialise this test, load up the three test messages.
      */
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         POIDataSamples samples = POIDataSamples.getHSMFInstance();
         mapiMessage1979 = new MAPIMessage(samples.openResourceAsStream("message_1979.msg"));

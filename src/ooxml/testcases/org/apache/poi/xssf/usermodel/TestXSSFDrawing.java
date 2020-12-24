@@ -24,10 +24,9 @@ import org.apache.poi.ss.usermodel.ClientAnchor;
 import org.apache.poi.ss.usermodel.FontUnderline;
 import org.apache.poi.ss.usermodel.ShapeTypes;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTGroupTransform2D;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextCharacterProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTextParagraph;
@@ -35,21 +34,17 @@ import org.openxmlformats.schemas.drawingml.x2006.main.STTextUnderlineType;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTDrawing;
 
 import java.awt.*;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestXSSFDrawing {
     @Test
     public void bug54803() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("bug54803.xlsx")) {
             XSSFSheet sheet = wb.getSheetAt(0);
-            XSSFDrawing drawing = sheet.createDrawingPatriarch();
+            sheet.createDrawingPatriarch();
             XSSFTestDataSamples.writeOutAndReadBack(wb).close();
         }
     }
@@ -835,22 +830,19 @@ public class TestXSSFDrawing {
         wb2.close();
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test
     public void testBug56835CellComment() throws IOException {
-        XSSFWorkbook wb = new XSSFWorkbook();
-        XSSFSheet sheet = wb.createSheet();
-        XSSFDrawing drawing = sheet.createDrawingPatriarch();
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
 
-        // first comment works
-        ClientAnchor anchor = new XSSFClientAnchor(1, 1, 2, 2, 3, 3, 4, 4);
-        XSSFComment comment = drawing.createCellComment(anchor);
-        assertNotNull(comment);
+            // first comment works
+            ClientAnchor anchor = new XSSFClientAnchor(1, 1, 2, 2, 3, 3, 4, 4);
+            XSSFComment comment = drawing.createCellComment(anchor);
+            assertNotNull(comment);
 
-        // Should fail if we try to add the same comment for the same cell
-        try {
-            drawing.createCellComment(anchor);
-        } finally {
-            wb.close();
+            // Should fail if we try to add the same comment for the same cell
+            assertThrows(IllegalArgumentException.class, () -> drawing.createCellComment(anchor));
         }
     }
 

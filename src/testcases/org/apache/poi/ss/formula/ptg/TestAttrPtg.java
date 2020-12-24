@@ -17,12 +17,12 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndianInput;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link AttrPtg}.

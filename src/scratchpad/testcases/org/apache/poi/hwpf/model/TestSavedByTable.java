@@ -17,7 +17,7 @@
 
 package org.apache.poi.hwpf.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -28,7 +28,7 @@ import java.util.List;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for {@link SavedByTable} and {@link SavedByEntry}.
@@ -64,8 +64,7 @@ public final class TestSavedByTable {
         HWPFDocument doc = HWPFTestDataSamples.openSampleFile("saved-by-table.doc");
 
         // Check what we just read.
-        assertEquals("List of saved-by entries was not as expected", expected,
-                doc.getSavedByTable().getEntries());
+        assertEquals( expected, doc.getSavedByTable().getEntries(), "List of saved-by entries was not as expected" );
 
         // Now write the entire document out, and read it back in...
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
@@ -75,9 +74,8 @@ public final class TestSavedByTable {
         HWPFDocument copy = new HWPFDocument(copyStream);
 
         // And check again.
-        assertEquals("List of saved-by entries was incorrect after writing",
-                expected, copy.getSavedByTable().getEntries());
-        
+        assertEquals( expected, copy.getSavedByTable().getEntries(), "List of saved-by entries was incorrect after writing" );
+
         copy.close();
     }
 }

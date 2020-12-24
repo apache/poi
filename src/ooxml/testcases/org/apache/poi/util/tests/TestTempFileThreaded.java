@@ -18,7 +18,7 @@ package org.apache.poi.util.tests;
 
 import static org.apache.poi.util.DefaultTempFileCreationStrategy.POIFILES;
 import static org.apache.poi.util.TempFile.JAVA_IO_TMPDIR;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -36,9 +36,9 @@ import org.apache.poi.util.TempFile;
 import org.apache.poi.util.TempFileCreationStrategy;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestTempFileThreaded {
     private static final int NUMBER_OF_THREADS = 10;
@@ -72,7 +72,7 @@ public class TestTempFileThreaded {
         };
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() throws IOException {
         String tmpDir = System.getProperty(JAVA_IO_TMPDIR);
         if (tmpDir == null) {
@@ -82,7 +82,7 @@ public class TestTempFileThreaded {
         TempFile.setTempFileCreationStrategy(createTempFileCreationStrategy(new File(new File(tmpDir, POIFILES), "TestTempFileThreaded")));
     }
 
-    @Before
+    @BeforeEach
     public void setUp() {
         // Initialize array to allow to summarize afterwards
         executions = new int[NUMBER_OF_THREADS];
@@ -111,9 +111,7 @@ public class TestTempFileThreaded {
         // make sure the resulting number of executions is correct
         for (int i = 0; i < NUMBER_OF_THREADS; i++) {
             // check if enough items were performed
-            assertEquals("Thread " + i
-                            + " did not execute all iterations", NUMBER_OF_TESTS,
-                    executions[i]);
+            assertEquals(NUMBER_OF_TESTS, executions[i], "Thread " + i + " did not execute all iterations");
         }
     }
 
@@ -155,10 +153,6 @@ public class TestTempFileThreaded {
                 }
 
                 files.get(threadNum).add(file);
-
-                if (iter % 30 == 0) {
-                    // System.out.println("thread: " + threadNum + ", iter: " + iter + ": " + file);
-                }
             }
         }
     }

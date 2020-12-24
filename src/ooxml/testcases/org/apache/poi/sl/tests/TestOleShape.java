@@ -23,10 +23,10 @@ import static org.apache.poi.sl.usermodel.ObjectMetaData.Application.EXCEL_V8;
 import static org.apache.poi.sl.usermodel.ObjectMetaData.Application.PDF;
 import static org.apache.poi.sl.usermodel.ObjectMetaData.Application.WORD_V12;
 import static org.apache.poi.sl.usermodel.ObjectMetaData.Application.WORD_V8;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
@@ -37,13 +37,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.stream.Stream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIDocument;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.sl.usermodel.ObjectMetaData;
 import org.apache.poi.sl.usermodel.ObjectShape;
@@ -58,14 +56,11 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
 public class TestOleShape {
     private static final String PDF_SAMPLE =
         "H4sIAAAAAAAAAJWUezRUWxzHe+o2FXncVtxLpxi3FPOeKYspjMdM5J1S4TTOaDIzxzpzJo9CUrnrSiUxIeT" +
@@ -98,42 +93,35 @@ public class TestOleShape {
     enum Api { HSLF, XSLF }
 
 
-    @Parameter(value = 0)
-    public Api api;
-    @Parameter(value = 1)
-    public ObjectMetaData.Application app;
-
-
     private static File pictureFile;
 
-    @BeforeClass
+    @BeforeAll
     public static void initPicture() {
         pictureFile = POIDataSamples.getSlideShowInstance().getFile("wrench.emf");
     }
 
-
-    @Parameters(name="{0} {1}")
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {
-            { Api.HSLF, EXCEL_V8 },
-            { Api.HSLF, WORD_V8 },
-            { Api.HSLF, PDF },
-            { Api.XSLF, EXCEL_V12 },
-            { Api.XSLF, WORD_V12 },
-            { Api.XSLF, PDF },
-        });
+    public static Stream<Arguments> data() {
+        return Stream.of(
+            Arguments.of( Api.HSLF, EXCEL_V8 ),
+            Arguments.of( Api.HSLF, WORD_V8 ),
+            Arguments.of( Api.HSLF, PDF ),
+            Arguments.of( Api.XSLF, EXCEL_V12 ),
+            Arguments.of( Api.XSLF, WORD_V12 ),
+            Arguments.of( Api.XSLF, PDF )
+        );
     }
 
-    @Test
-    public void embedData() throws IOException, InvalidFormatException, ReflectiveOperationException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void embedData(Api api, ObjectMetaData.Application app) throws IOException, ReflectiveOperationException {
         final ByteArrayInputStream pptBytes;
-        try (SlideShow<?,?> ppt = createSlideShow()) {
+        try (SlideShow<?,?> ppt = createSlideShow(api)) {
             final PictureData picData = ppt.addPicture(pictureFile,  PictureType.EMF);
             final Slide<?,?> slide = ppt.createSlide();
             final ObjectShape<?,?> oleShape = slide.createOleShape(picData);
             oleShape.setAnchor(new Rectangle2D.Double(100,100,100,100));
             try (OutputStream os = oleShape.updateObjectData(app, null)) {
-                fillOleData(os);
+                fillOleData(app, os);
             }
             final ByteArrayOutputStream bos = new ByteArrayOutputStream(50000);
             ppt.write(bos);
@@ -142,12 +130,12 @@ public class TestOleShape {
         try (SlideShow<?,?> ppt = SlideShowFactory.create(pptBytes)) {
             final ObjectShape<?,?> oleShape = (ObjectShape<?,?>)ppt.getSlides().get(0).getShapes().get(0);
             try (InputStream bis = oleShape.readObjectData()) {
-                validateOleData(bis);
+                validateOleData(app, bis);
             }
         }
     }
 
-    private SlideShow<?,?> createSlideShow() throws IOException {
+    private SlideShow<?,?> createSlideShow(Api api) throws IOException {
         if (api == Api.XSLF) {
             return new XMLSlideShow();
         } else {
@@ -157,7 +145,7 @@ public class TestOleShape {
     }
 
 
-    private void fillOleData(final OutputStream out) throws IOException {
+    private void fillOleData(ObjectMetaData.Application app, final OutputStream out) throws IOException {
         switch (app) {
         case EXCEL_V8:
         case EXCEL_V12:
@@ -187,7 +175,7 @@ public class TestOleShape {
         }
     }
 
-    private void validateOleData(final InputStream in) throws IOException, ReflectiveOperationException {
+    private void validateOleData(ObjectMetaData.Application app, final InputStream in) throws IOException, ReflectiveOperationException {
         switch (app) {
         case EXCEL_V8:
         case EXCEL_V12:

@@ -16,20 +16,19 @@
 ==================================================================== */
 package org.apache.poi.ss.util;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
-
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for {@link AreaReference} handling of max rows.
- * 
+ *
  * @author David North
  */
 public class TestAreaReference {
@@ -63,7 +62,7 @@ public class TestAreaReference {
         assertEquals(0, oldStyle.getFirstCell().getRow());
         assertEquals(SpreadsheetVersion.EXCEL97.getLastColumnIndex(), oldStyle.getLastCell().getCol());
         assertEquals(1, oldStyle.getLastCell().getRow());
-        
+
         AreaReference newStyle = AreaReference.getWholeRow(SpreadsheetVersion.EXCEL2007, "1", "2");
         assertEquals(0, newStyle.getFirstCell().getCol());
         assertEquals(0, newStyle.getFirstCell().getRow());

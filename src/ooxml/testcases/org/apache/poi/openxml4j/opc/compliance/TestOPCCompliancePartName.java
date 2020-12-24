@@ -17,19 +17,20 @@
 
 package org.apache.poi.openxml4j.opc.compliance;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.apache.poi.openxml4j.opc.PackagingURIHelper.createPartName;
+import static org.apache.poi.openxml4j.opc.PackagingURIHelper.isValidPartName;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.PackagePartName;
-import org.apache.poi.openxml4j.opc.PackagingURIHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test part name Open Packaging Convention compliance.
@@ -100,8 +101,7 @@ public final class TestOPCCompliancePartName {
                 assertEquals("[Content_Types].xml", s);
                 continue;
             }
-            assertFalse("This part name SHOULD NOT be valid: " + s,
-                    PackagingURIHelper.isValidPartName(uri));
+            assertFalse(isValidPartName(uri), "This part name SHOULD NOT be valid: " + s);
         }
     }
 
@@ -110,24 +110,19 @@ public final class TestOPCCompliancePartName {
      */
     @Test
     public void testValidPartNames() throws URISyntaxException {
-        String[] validNames = { "/xml/item1.xml", "/document.xml",
-                "/a/%D1%86.xml" };
-        for (String s : validNames)
-            assertTrue("This part name SHOULD be valid: " + s,
-                    PackagingURIHelper.isValidPartName(new URI(s)));
+        String[] validNames = { "/xml/item1.xml", "/document.xml", "/a/%D1%86.xml" };
+        for (String s : validNames) {
+            assertTrue(isValidPartName(new URI(s)), "This part name SHOULD be valid: " + s);
+        }
     }
 
     /**
      * A part name shall not be empty. [M1.1]
      */
     @Test
-    public void testEmptyPartNameFailure() throws URISyntaxException {
-        try {
-            PackagingURIHelper.createPartName(new URI(""));
-            fail("A part name shall not be empty. [M1.1]");
-        } catch (InvalidFormatException e) {
-            // Normal behaviour
-        }
+    public void testEmptyPartNameFailure() {
+        assertThrows(InvalidFormatException.class, () -> createPartName(new URI("")),
+            "A part name shall not be empty. [M1.1]");
     }
 
     /**
@@ -138,18 +133,13 @@ public final class TestOPCCompliancePartName {
      * A segment shall include at least one non-dot character. [M1.10]
      */
     @Test
-    public void testPartNameWithInvalidSegmentsFailure() {
+    public void testPartNameWithInvalidSegmentsFailure() throws URISyntaxException {
         String[] invalidNames = { "//document.xml", "//word/document.xml",
                 "/word//document.rels", "/word//rels//document.rels",
                 "/xml./doc.xml", "/document.", "/./document.xml",
                 "/word/./doc.rels", "/%2F/document.xml" };
-        try {
-            for (String s : invalidNames)
-                assertFalse(
-                        "A part name shall not have empty segments. [M1.3]",
-                        PackagingURIHelper.isValidPartName(new URI(s)));
-        } catch (URISyntaxException e) {
-            fail();
+        for (String s : invalidNames) {
+            assertFalse(isValidPartName(new URI(s)), "A part name shall not have empty segments. [M1.3]");
         }
     }
 
@@ -158,16 +148,11 @@ public final class TestOPCCompliancePartName {
      * [M1.6].
      */
     @Test
-    public void testPartNameWithNonPCharCharacters() {
+    public void testPartNameWithNonPCharCharacters() throws URISyntaxException {
         String[] validNames = { "/doc&.xml" };
-        try {
-            for (String s : validNames)
-                assertTrue(
-                        "A segment shall not contain non pchar characters [M1.6] : "
-                                + s, PackagingURIHelper
-                                .isValidPartName(new URI(s)));
-        } catch (URISyntaxException e) {
-            fail();
+        for (String s : validNames) {
+            assertTrue(isValidPartName(new URI(s)),
+                "A segment shall not contain non pchar characters [M1.6] : " + s);
         }
     }
 
@@ -175,16 +160,10 @@ public final class TestOPCCompliancePartName {
      * A segment shall not contain percent-encoded unreserved characters [M1.8].
      */
     @Test
-    public void testPartNameWithUnreservedEncodedCharactersFailure() {
+    public void testPartNameWithUnreservedEncodedCharactersFailure() throws URISyntaxException {
         String[] invalidNames = { "/a/docum%65nt.xml" };
-        try {
-            for (String s : invalidNames)
-                assertFalse(
-                        "A segment shall not contain percent-encoded unreserved characters [M1.8] : "
-                                + s, PackagingURIHelper
-                                .isValidPartName(new URI(s)));
-        } catch (URISyntaxException e) {
-            fail();
+        for (String s : invalidNames) {
+            assertFalse(isValidPartName(new URI(s)), "A segment shall not contain percent-encoded unreserved characters [M1.8] : " + s);
         }
     }
 
@@ -192,28 +171,18 @@ public final class TestOPCCompliancePartName {
      * A part name shall start with a forward slash ('/') character. [M1.4]
      */
     @Test
-    public void testPartNameStartsWithAForwardSlashFailure()
-            throws URISyntaxException {
-        try {
-            PackagingURIHelper.createPartName(new URI("document.xml"));
-            fail("A part name shall start with a forward slash ('/') character. [M1.4]");
-        } catch (InvalidFormatException e) {
-            // Normal behaviour
-        }
+    public void testPartNameStartsWithAForwardSlashFailure() {
+        assertThrows(InvalidFormatException.class, () -> createPartName(new URI("document.xml")),
+            "A part name shall start with a forward slash ('/') character. [M1.4]");
     }
 
     /**
      * A part name shall not have a forward slash as the last character. [M1.5]
      */
     @Test
-    public void testPartNameEndsWithAForwardSlashFailure()
-            throws URISyntaxException {
-        try {
-            PackagingURIHelper.createPartName(new URI("/document.xml/"));
-            fail("A part name shall not have a forward slash as the last character. [M1.5]");
-        } catch (InvalidFormatException e) {
-            // Normal behaviour
-        }
+    public void testPartNameEndsWithAForwardSlashFailure() {
+        assertThrows(InvalidFormatException.class, () -> createPartName(new URI("/document.xml/")),
+            "A part name shall not have a forward slash as the last character. [M1.5]");
     }
 
     /**
@@ -225,8 +194,8 @@ public final class TestOPCCompliancePartName {
         String[] partName1 = { "/word/document.xml", "/docProps/core.xml", "/rels/.rels" };
         String[] partName2 = { "/WORD/DocUment.XML", "/docProps/core.xml", "/rels/.rels" };
         for (int i = 0; i < partName1.length || i < partName2.length; ++i) {
-            PackagePartName p1 = PackagingURIHelper.createPartName(partName1[i]);
-            PackagePartName p2 = PackagingURIHelper.createPartName(partName2[i]);
+            PackagePartName p1 = createPartName(partName1[i]);
+            PackagePartName p2 = createPartName(partName2[i]);
             assertEquals(p1, p2);
             assertEquals(0, p1.compareTo(p2));
             assertEquals(p1.hashCode(), p2.hashCode());
@@ -244,8 +213,8 @@ public final class TestOPCCompliancePartName {
         String[] partName1 = { "/word/document.xml", "/docProps/core.xml", "/rels/.rels" };
         String[] partName2 = { "/WORD/DocUment.XML2", "/docProp/core.xml", "/rels/rels" };
         for (int i = 0; i < partName1.length || i < partName2.length; ++i) {
-            PackagePartName p1 = PackagingURIHelper.createPartName(partName1[i]);
-            PackagePartName p2 = PackagingURIHelper.createPartName(partName2[i]);
+            PackagePartName p1 = createPartName(partName1[i]);
+            PackagePartName p2 = createPartName(partName2[i]);
             assertNotEquals(p1, p2);
             assertNotEquals(0, p1.compareTo(p2));
             assertNotEquals(p1.hashCode(), p2.hashCode());

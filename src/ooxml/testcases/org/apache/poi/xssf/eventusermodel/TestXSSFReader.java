@@ -19,12 +19,13 @@ package org.apache.poi.xssf.eventusermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertNotContained;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.InputStream;
 import java.util.HashSet;
@@ -43,15 +44,15 @@ import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.model.StylesTable;
 import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFSimpleShape;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link XSSFReader}
  */
 public final class TestXSSFReader {
 
-    private static POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();
+    private static final POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();
 
     @Test
     public void testGetBits() throws Exception {
@@ -231,24 +232,19 @@ public final class TestXSSFReader {
     @Test
     public void testBug57914() throws Exception {
         try (OPCPackage pkg = XSSFTestDataSamples.openSamplePackage("57914.xlsx")) {
-            final XSSFReader r;
-
             // for now expect this to fail, when we fix 57699, this one should fail so we know we should adjust
             // this test as well
-            try {
-                r = new XSSFReader(pkg);
-                fail("This will fail until bug 57699 is fixed");
-            } catch (POIXMLException e) {
-                assertContains(e.getMessage(), "57699");
-                return;
-            }
+            POIXMLException e = assertThrows(POIXMLException.class, () -> {
+                final XSSFReader r = new XSSFReader(pkg);
 
-            XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
+                XSSFReader.SheetIterator it = (XSSFReader.SheetIterator) r.getSheetsData();
 
-            String text = getShapesString(it);
-            assertContains(text, "Line 1");
-            assertContains(text, "Line 2");
-            assertContains(text, "Line 3");
+                String text = getShapesString(it);
+                assertContains(text, "Line 1");
+                assertContains(text, "Line 2");
+                assertContains(text, "Line 3");
+            });
+            assertContains(e.getMessage(), "57699");
         }
     }
 
@@ -322,7 +318,7 @@ public final class TestXSSFReader {
     }
 
     @Test
-    @Ignore("until we fix issue https://bz.apache.org/bugzilla/show_bug.cgi?id=61701")
+    @Disabled("until we fix issue https://bz.apache.org/bugzilla/show_bug.cgi?id=61701")
     public void test61701() throws Exception {
         try(Workbook workbook = XSSFTestDataSamples.openSampleWorkbook("simple-table-named-range.xlsx")) {
             Name name = workbook.getName("total");

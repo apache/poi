@@ -17,16 +17,16 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.util.Arrays;
-import org.junit.Test;
 
 import org.apache.poi.ss.usermodel.BaseTestNamedRange;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.XSSFITestDataProvider;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Yegor Kozlov
@@ -76,7 +76,7 @@ public final class TestXSSFName extends BaseTestNamedRange {
         // Save and re-open
         XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb);
         wb.close();
-        
+
         assertEquals(1, nwb.getNumberOfNames());
         nr1 = nwb.getName(XSSFName.BUILTIN_PRINT_TITLE);
 
@@ -142,12 +142,8 @@ public final class TestXSSFName extends BaseTestNamedRange {
 
         // Cell addresses/references are not allowed
         for (String ref : Arrays.asList("A1", "$A$1", "A1:B2")) {
-            try {
-                name.setNameName(ref);
-                fail("cell addresses are not allowed: " + ref);
-            } catch (final IllegalArgumentException e) {
-                // expected
-            }
+            assertThrows(IllegalArgumentException.class, () -> name.setNameName(ref),
+                "cell addresses are not allowed: " + ref);
         }
 
         // Name that looks similar to a cell reference but is outside the cell reference row and column limits

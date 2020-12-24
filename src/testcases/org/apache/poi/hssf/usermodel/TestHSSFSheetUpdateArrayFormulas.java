@@ -17,13 +17,13 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -33,14 +33,13 @@ import org.apache.poi.POITestCase;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.record.ArrayRecord;
 import org.apache.poi.hssf.record.FormulaRecord;
-import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.aggregates.FormulaRecordAggregate;
 import org.apache.poi.hssf.record.aggregates.RowRecordsAggregate;
 import org.apache.poi.hssf.record.aggregates.SharedValueManager;
 import org.apache.poi.ss.usermodel.BaseTestSheetUpdateArrayFormulas;
 import org.apache.poi.ss.usermodel.CellRange;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test array formulas in HSSF
@@ -113,7 +112,7 @@ public final class TestHSSFSheetUpdateArrayFormulas extends BaseTestSheetUpdateA
             RowRecordsAggregate rra = s.getSheet().getRowsAggregate();
 
             SharedValueManager svm = POITestCase.getFieldValue(RowRecordsAggregate.class, rra, SharedValueManager.class, "_sharedValueManager");
-            assertNull("Array record was not cleaned up properly.", svm.getArrayRecord(4, 1));
+            assertNull(svm.getArrayRecord(4, 1), "Array record was not cleaned up properly.");
         }
     }
 }

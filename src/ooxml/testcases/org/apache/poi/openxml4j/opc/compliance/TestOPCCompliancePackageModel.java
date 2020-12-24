@@ -17,8 +17,10 @@
 
 package org.apache.poi.openxml4j.opc.compliance;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.File;
 import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
@@ -31,42 +33,31 @@ import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackageRelationshipTypes;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
-import org.junit.Test;
+import org.apache.poi.util.TempFile;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test Open Packaging Convention package model compliance.
  *
  * M1.11 : A package implementer shall neither create nor recognize a part with
  * a part name derived from another part name by appending segments to it.
- *
- * @author Julien Chable
  */
 public class TestOPCCompliancePackageModel {
 
-    /**
-     * A package implementer shall neither create nor recognize a part with a
-     * part name derived from another part name by appending segments to it.
-     * [M1.11]
-     */
-    @Test
-    public void testPartNameDerivationAdditionFailure() {
-        OPCPackage pkg = OPCPackage.create("TODELETEIFEXIST.docx");
-        try {
-            PackagePartName name = PackagingURIHelper
-                    .createPartName("/word/document.xml");
-            PackagePartName nameDerived = PackagingURIHelper
-                    .createPartName("/word/document.xml/image1.gif");
-            pkg.createPart(name, ContentTypes.XML);
-            pkg.createPart(nameDerived, ContentTypes.EXTENSION_GIF);
-        } catch (InvalidOperationException e) {
-            pkg.revert();
-            return;
-        } catch (InvalidFormatException e) {
-            fail(e.getMessage());
+    private static File TESTFILE;
+
+    @BeforeAll
+    public static void setup() throws IOException {
+        TESTFILE = TempFile.createTempFile("TODELETEIFEXIST", ".docx");
+    }
+
+    @BeforeEach
+    public void tearDown() {
+        if (TESTFILE.exists()) {
+            assertTrue(TESTFILE.delete());
         }
-        fail("A package implementer shall neither create nor recognize a part with a"
-                + " part name derived from another part name by appending segments to it."
-                + " [M1.11]");
     }
 
     /**
@@ -75,16 +66,32 @@ public class TestOPCCompliancePackageModel {
      * [M1.11]
      */
     @Test
-    public void testPartNameDerivationReadingFailure() throws IOException {
-        String filename = "OPCCompliance_DerivedPartNameFAIL.docx";
-        try {
-            OPCPackage.open(POIDataSamples.getOpenXML4JInstance().openResourceAsStream(filename));
-        } catch (InvalidFormatException e) {
-            return;
+    public void testPartNameDerivationAdditionFailure() throws InvalidFormatException, IOException {
+        try (OPCPackage pkg = OPCPackage.create(TESTFILE)) {
+            PackagePartName name = PackagingURIHelper.createPartName("/word/document.xml");
+            PackagePartName nameDerived = PackagingURIHelper.createPartName("/word/document.xml/image1.gif");
+            pkg.createPart(name, ContentTypes.XML);
+
+            assertThrows(InvalidOperationException.class, () -> pkg.createPart(nameDerived, ContentTypes.EXTENSION_GIF),
+                "A package implementer shall neither create nor recognize a part with a part name derived from another " +
+                "part name by appending segments to it. [M1.11]");
+            pkg.revert();
         }
-        fail("A package implementer shall neither create nor recognize a part with a"
-                + " part name derived from another part name by appending segments to it."
-                + " [M1.11]");
+    }
+
+    /**
+     * A package implementer shall neither create nor recognize a part with a
+     * part name derived from another part name by appending segments to it.
+     * [M1.11]
+     */
+    @Test
+    public void testPartNameDerivationReadingFailure() {
+        String filename = "OPCCompliance_DerivedPartNameFAIL.docx";
+        assertThrows(InvalidFormatException.class, () ->
+            OPCPackage.open(POIDataSamples.getOpenXML4JInstance().openResourceAsStream(filename)),
+            "A package implementer shall neither create nor recognize a part with a part name derived from another" +
+            " part name by appending segments to it. [M1.11]"
+        );
     }
 
     /**
@@ -94,22 +101,17 @@ public class TestOPCCompliancePackageModel {
      */
     @Test
     public void testAddPackageAlreadyAddFailure() throws Exception {
-        OPCPackage pkg = OPCPackage.create("DELETEIFEXISTS.docx");
-        PackagePartName name1 = null;
-        PackagePartName name2 = null;
-        try {
-            name1 = PackagingURIHelper.createPartName("/word/document.xml");
-            name2 = PackagingURIHelper.createPartName("/word/document.xml");
-        } catch (InvalidFormatException e) {
-            throw new Exception(e.getMessage());
+        try (OPCPackage pkg = OPCPackage.create(TESTFILE)) {
+            PackagePartName name1 = PackagingURIHelper.createPartName("/word/document.xml");
+            PackagePartName name2 = PackagingURIHelper.createPartName("/word/document.xml");
+
+            pkg.createPart(name1, ContentTypes.XML);
+            assertThrows(PartAlreadyExistsException.class, () -> pkg.createPart(name2, ContentTypes.XML),
+                "Packages shall not contain equivalent part names and package implementers shall neither create nor " +
+                    "recognize packages with equivalent part names. [M1.12]"
+            );
+            pkg.revert();
         }
-        pkg.createPart(name1, ContentTypes.XML);
-        try {
-            pkg.createPart(name2, ContentTypes.XML);
-        } catch (PartAlreadyExistsException e) {
-            return;
-        }
-        fail("Packages shall not contain equivalent part names and package implementers shall neither create nor recognize packages with equivalent part names. [M1.12]");
     }
 
     /**
@@ -119,20 +121,15 @@ public class TestOPCCompliancePackageModel {
      */
     @Test
     public void testAddPackageAlreadyAddFailure2() throws Exception {
-        OPCPackage pkg = OPCPackage.create("DELETEIFEXISTS.docx");
-        PackagePartName partName = null;
-        try {
-            partName = PackagingURIHelper.createPartName("/word/document.xml");
-        } catch (InvalidFormatException e) {
-            throw new Exception(e.getMessage());
-        }
-        pkg.createPart(partName, ContentTypes.XML);
-        try {
+        try (OPCPackage pkg = OPCPackage.create(TESTFILE)) {
+            PackagePartName partName = PackagingURIHelper.createPartName("/word/document.xml");
             pkg.createPart(partName, ContentTypes.XML);
-        } catch (InvalidOperationException e) {
-            return;
+            assertThrows(InvalidOperationException.class, () -> pkg.createPart(partName, ContentTypes.XML),
+                "Packages shall not contain equivalent part names and package implementers shall neither create nor " +
+                    "recognize packages with equivalent part names. [M1.12]"
+            );
+            pkg.revert();
         }
-        fail("Packages shall not contain equivalent part names and package implementers shall neither create nor recognize packages with equivalent part names. [M1.12]");
     }
 
     /**
@@ -144,22 +141,15 @@ public class TestOPCCompliancePackageModel {
      * relationship as invalid.
      */
     @Test
-    public void testAddRelationshipRelationshipsPartFailure() {
-        OPCPackage pkg = OPCPackage.create("DELETEIFEXISTS.docx");
-        PackagePartName name1 = null;
-        try {
-            name1 = PackagingURIHelper
-                    .createPartName("/test/_rels/document.xml.rels");
-        } catch (InvalidFormatException e) {
-            fail("This exception should never happen !");
-        }
+    public void testAddRelationshipRelationshipsPartFailure() throws IOException, InvalidFormatException {
+        try (OPCPackage pkg = OPCPackage.create(TESTFILE)) {
+            PackagePartName name1 = PackagingURIHelper.createPartName("/test/_rels/document.xml.rels");
 
-        try {
-            pkg.addRelationship(name1, TargetMode.INTERNAL,
-                    PackageRelationshipTypes.CORE_DOCUMENT);
-        } catch (InvalidOperationException e) {
-            return;
+            assertThrows(InvalidOperationException.class,
+                () -> pkg.addRelationship(name1, TargetMode.INTERNAL, PackageRelationshipTypes.CORE_DOCUMENT),
+                "The Relationships part shall not have relationships to any other part [M1.25]"
+            );
+            pkg.revert();
         }
-        fail("Fail test -> M1.25: The Relationships part shall not have relationships to any other part");
     }
 }

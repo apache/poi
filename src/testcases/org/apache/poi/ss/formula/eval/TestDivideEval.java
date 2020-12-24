@@ -17,11 +17,11 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.ss.formula.functions.EvalFactory;
 import org.apache.poi.ss.formula.functions.NumericFunctionInvoker;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for divide operator evaluator.

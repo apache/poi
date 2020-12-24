@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
@@ -37,7 +37,7 @@ import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link Subtotal}
@@ -345,7 +345,7 @@ public final class TestSubtotal {
         CellValue value = evaluator.evaluate(cell);
         if (value.getErrorValue() != 0)
             throw new RuntimeException(msg + ": " + value.formatAsString());
-        assertEquals(msg, expected, value.getNumberValue(), 0);
+        assertEquals(expected, value.getNumberValue(), 0, msg);
     }
 
     @Test
@@ -354,16 +354,16 @@ public final class TestSubtotal {
         HSSFSheet sheet = workbook.getSheetAt(0);
         FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
 
-        assertEquals("B2", 10.0, sheet.getRow(1).getCell(1).getNumericCellValue(), 0);
-        assertEquals("B3", 20.0, sheet.getRow(2).getCell(1).getNumericCellValue(), 0);
+        assertEquals(10.0, sheet.getRow(1).getCell(1).getNumericCellValue(), 0, "B2");
+        assertEquals(20.0, sheet.getRow(2).getCell(1).getNumericCellValue(), 0, "B3");
 
         //Test simple subtotal over one area
         Cell cellA3 = sheet.getRow(3).getCell(1);
         confirmExpectedResult(evaluator, "B4", cellA3, 30.0);
 
         //Test existence of the second area
-        assertNotNull("C2 must not be null", sheet.getRow(1).getCell(2));
-        assertEquals("C2", 7.0, sheet.getRow(1).getCell(2).getNumericCellValue(), 0);
+        assertNotNull(sheet.getRow(1).getCell(2), "C2 must not be null");
+        assertEquals(7.0, sheet.getRow(1).getCell(2).getNumericCellValue(), 0, "C2");
 
         Cell cellC1 = sheet.getRow(1).getCell(3);
         Cell cellC2 = sheet.getRow(2).getCell(3);
@@ -375,7 +375,7 @@ public final class TestSubtotal {
         confirmExpectedResult(evaluator, "SUBTOTAL(SUM;B2:B8;C2:C8)", cellC1, 37.0);
         confirmExpectedResult(evaluator, "SUBTOTAL(COUNT;B2:B8,C2:C8)", cellC2, 3.0);
         confirmExpectedResult(evaluator, "SUBTOTAL(COUNTA;B2:B8,C2:C8)", cellC3, 5.0);
-    
+
         // test same functions ignoring hidden rows over a copy of the same data
         cellC1 = sheet.getRow(11).getCell(3);
         cellC2 = sheet.getRow(12).getCell(3);
@@ -383,8 +383,8 @@ public final class TestSubtotal {
         confirmExpectedResult(evaluator, "SUBTOTAL(SUM NO HIDDEN;B22:B28;C22:C28)", cellC1, 17.0);
         confirmExpectedResult(evaluator, "SUBTOTAL(COUNT NO HIDDEN;B22:B28,C22:C28)", cellC2, 2.0);
         confirmExpectedResult(evaluator, "SUBTOTAL(COUNTA NO HIDDEN;B22:B28,C22:C28)", cellC3, 4.0);
-        
-        
+
+
         workbook.close();
     }
 
@@ -396,7 +396,7 @@ public final class TestSubtotal {
 
         Sheet sh = wb.createSheet();
         Cell a3 = sh.createRow(3).createCell(1);
-        
+
         // formula, throws NotImplemnted?
         String[][] formulas = {
             { "SUBTOTAL(8,B2:B3)", NotImplementedException.class.getName() },
@@ -406,25 +406,25 @@ public final class TestSubtotal {
             { "SUBTOTAL(9)", FormulaParseException.class.getName() },
             { "SUBTOTAL()", FormulaParseException.class.getName() },
         };
-        
+
         for (String[] f : formulas) {
             Exception actualEx = null;
             try {
                 a3.setCellFormula(f[0]);
                 fe.evaluateAll();
-                assertEquals(f[0], FormulaError.VALUE.getCode(), a3.getErrorCellValue());
+                assertEquals(FormulaError.VALUE.getCode(), a3.getErrorCellValue(), f[0]);
             } catch (Exception e) {
                 actualEx = e;
             }
             String msg =
                 "Check "+(f[1] == null ? "unexpected exception" : f[1])+" here, "+
                 "adjust these tests if it was actually implemented - "+f[0];
-            assertEquals(msg, f[1], (actualEx == null ? null : actualEx.getClass().getName()));
+            assertEquals(f[1], (actualEx == null ? null : actualEx.getClass().getName()), msg);
         }
 
         Subtotal subtotal = new Subtotal();
         assertEquals(ErrorEval.VALUE_INVALID, subtotal.evaluate(new ValueEval[] {}, 0, 0));
-        
+
         wb.close();
     }
 }

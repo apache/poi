@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
@@ -25,7 +25,7 @@ import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.LFO;
 import org.apache.poi.hwpf.model.ListLevel;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestBug50075 {
 

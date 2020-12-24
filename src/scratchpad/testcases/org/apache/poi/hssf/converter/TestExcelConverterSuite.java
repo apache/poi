@@ -16,13 +16,15 @@
 ==================================================================== */
 package org.apache.poi.hssf.converter;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Transformer;
@@ -32,39 +34,34 @@ import javax.xml.transform.stream.StreamResult;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.XMLHelper;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
 public class TestExcelConverterSuite
 {
     /**
      * YK: a quick hack to exclude failing documents from the suite.
      */
     @SuppressWarnings("ArraysAsListWithZeroOrOneArgument")
-    private static List<String> failingFiles = Arrays.asList(
+    private static final List<String> failingFiles = Arrays.asList(
             /* not failing, but requires more memory */
             "ex45698-22488.xls" );
 
-    @Parameterized.Parameters(name="{index}: {0}")
-    public static Iterable<Object[]> files() {
-        List<Object[]> files = new ArrayList<>();
+    public static Stream<Arguments> files() {
+        List<Arguments> files = new ArrayList<>();
         File directory = POIDataSamples.getDocumentInstance().getFile(
                 "../spreadsheet" );
-        for ( final File child : directory.listFiles((dir,name) ->  name.endsWith( ".xls" ) && !failingFiles.contains( name ))) {
-            files.add(new Object[] { child });
+        for ( final File child : Objects.requireNonNull(directory.listFiles((dir, name) -> name.endsWith(".xls") && !failingFiles.contains(name)))) {
+            files.add(Arguments.of(child));
         }
 
-        return files;
+        return files.stream();
     }
 
-
-    @Parameterized.Parameter
-    public File child;
-
-    @Test
-    public void testFo() throws Exception
+    @ParameterizedTest
+    @MethodSource("files")
+    public void testFo(File child) throws Exception
     {
         HSSFWorkbook workbook;
         try {
@@ -88,8 +85,9 @@ public class TestExcelConverterSuite
         assertNotNull(stringWriter.toString());
     }
 
-    @Test
-    public void testHtml() throws Exception
+    @ParameterizedTest
+    @MethodSource("files")
+    public void testHtml(File child) throws Exception
     {
         HSSFWorkbook workbook;
         try {

@@ -16,10 +16,10 @@
 ==================================================================== */
 package org.apache.poi.ss.formula;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -37,7 +37,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test setting / evaluating of Analysis Toolpack and user-defined functions
@@ -96,42 +96,38 @@ public abstract class BaseTestExternalFunctions {
 
     @Test
     public void testExternalFunctions() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
-        Sheet sh = wb.createSheet();
+            Sheet sh = wb.createSheet();
 
-        Cell cell1 = sh.createRow(0).createCell(0);
-        // functions from the Excel Analysis Toolpack
-        cell1.setCellFormula("ISODD(1)+ISEVEN(2)");
-        assertEquals("ISODD(1)+ISEVEN(2)", cell1.getCellFormula());
+            Cell cell1 = sh.createRow(0).createCell(0);
+            // functions from the Excel Analysis Toolpack
+            cell1.setCellFormula("ISODD(1)+ISEVEN(2)");
+            assertEquals("ISODD(1)+ISEVEN(2)", cell1.getCellFormula());
 
-        Cell cell2 = sh.createRow(1).createCell(0);
-        // unregistered functions are parseable and renderable, but may not be evaluateable
-        cell2.setCellFormula("MYFUNC(\"B1\")"); 
-        try {
-            evaluator.evaluate(cell2);
-            fail("Expected NotImplementedFunctionException/NotImplementedException");
-        } catch (final NotImplementedException e) {
+            Cell cell2 = sh.createRow(1).createCell(0);
+            // unregistered functions are parseable and renderable, but may not be evaluateable
+            cell2.setCellFormula("MYFUNC(\"B1\")");
+            NotImplementedException e = assertThrows(NotImplementedException.class, () -> evaluator.evaluate(cell2),
+                "Expected NotImplementedFunctionException/NotImplementedException");
             assertTrue(e.getCause() instanceof NotImplementedFunctionException);
             // Alternatively, a future implementation of evaluate could return #NAME? error to align behavior with Excel
             // assertEquals(ErrorEval.NAME_INVALID, ErrorEval.valueOf(evaluator.evaluate(cell2).getErrorValue()));
+
+            wb.addToolPack(customToolpack);
+
+            cell2.setCellFormula("MYFUNC(\"B1\")");
+            assertEquals("MYFUNC(\"B1\")", cell2.getCellFormula());
+
+            Cell cell3 = sh.createRow(2).createCell(0);
+            cell3.setCellFormula("MYFUNC2(\"C1\")&\"-\"&A2");  //where A2 is defined above
+            assertEquals("MYFUNC2(\"C1\")&\"-\"&A2", cell3.getCellFormula());
+
+            assertEquals(2.0, evaluator.evaluate(cell1).getNumberValue(), 0);
+            assertEquals("B1abc", evaluator.evaluate(cell2).getStringValue());
+            assertEquals("C1abc2-B1abc", evaluator.evaluate(cell3).getStringValue());
         }
-
-        wb.addToolPack(customToolpack);
-
-        cell2.setCellFormula("MYFUNC(\"B1\")");
-        assertEquals("MYFUNC(\"B1\")", cell2.getCellFormula());
-
-        Cell cell3 = sh.createRow(2).createCell(0);
-        cell3.setCellFormula("MYFUNC2(\"C1\")&\"-\"&A2");  //where A2 is defined above
-        assertEquals("MYFUNC2(\"C1\")&\"-\"&A2", cell3.getCellFormula());
-
-        assertEquals(2.0, evaluator.evaluate(cell1).getNumberValue(), 0);
-        assertEquals("B1abc", evaluator.evaluate(cell2).getStringValue());
-        assertEquals("C1abc2-B1abc", evaluator.evaluate(cell3).getStringValue());
-
-        wb.close();
     }
 
     /**

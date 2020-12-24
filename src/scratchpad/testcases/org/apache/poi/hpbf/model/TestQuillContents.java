@@ -19,10 +19,10 @@ package org.apache.poi.hpbf.model;
 
 import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.apache.poi.POITestCase.assertEndsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -33,7 +33,7 @@ import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type12;
 import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type4;
 import org.apache.poi.hpbf.model.qcbits.QCPLCBit.Type8;
 import org.apache.poi.hpbf.model.qcbits.QCTextBit;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestQuillContents {
     private static final POIDataSamples _samples = POIDataSamples.getPublisherInstance();

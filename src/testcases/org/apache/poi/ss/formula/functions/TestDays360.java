@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -29,7 +29,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestDays360 {
 
@@ -60,7 +60,7 @@ public final class TestDays360 {
         // longer time spans
         confirm(562, 2008, 8, 11, 2010, 3, 3);
         confirm(916, 2007, 2, 23, 2009, 9, 9);
-        
+
         // other tests
         confirm(1, makeDate(1993, 2, 28), makeDate(1993, 3, 1), false);
         confirm(1, makeDate(1996, 2, 29), makeDate(1996, 3, 1), false);
@@ -78,7 +78,7 @@ public final class TestDays360 {
         confirm(expResult, makeDate(y1, m1, d1), makeDate(y2, m2, d2), false);
         confirm(-expResult, makeDate(y2, m2, d2), makeDate(y1, m1, d1), false);
     }
-    
+
     /**
      * The <tt>method</tt> parameter only makes a difference when the second parameter
      * is the last day of the month that does <em>not</em> have 30 days.
@@ -148,17 +148,17 @@ public final class TestDays360 {
         } else {
             ve = invokeDays360(convert(firstArg), convert(secondArg));
         }
-        assertTrue("wrong return type (" + ve.getClass().getName() + ")", ve instanceof NumberEval);
+        assertTrue(ve instanceof NumberEval, "wrong return type (" + ve.getClass().getName() + ")");
 
         NumberEval numberEval = (NumberEval) ve;
         String err = String.format(Locale.ROOT, "days360(%tF,%tF,%b) wrong result", firstArg, secondArg, method);
-        assertEquals(err, expResult, numberEval.getNumberValue(), 0);
+        assertEquals(expResult, numberEval.getNumberValue(), 0, err);
     }
-    
+
     private static ValueEval invokeDays360(ValueEval...args) {
         return new Days360().evaluate(args, -1, -1);
     }
-    
+
     private static NumberEval convert(Date d) {
         return new NumberEval(DateUtil.getExcelDate(d));
     }

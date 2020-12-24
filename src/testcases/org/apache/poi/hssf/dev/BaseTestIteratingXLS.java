@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hssf.dev;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -25,53 +25,45 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.stream.Stream;
 
 import org.apache.poi.POIDataSamples;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Base class for integration-style tests which iterate over all test-files
  * and execute the same action to find out if any change breaks these applications.
- *
- * This test uses {@link Parameterized} to run the test for each file separatedely.
  */
-@RunWith(Parameterized.class)
 public abstract class BaseTestIteratingXLS {
 	protected static final Map<String,Class<? extends Throwable>> EXCLUDED = new HashMap<>();
 
-    @Parameters(name="{index}: {0}")
-    public static Iterable<Object[]> files() {
+    private static Stream<Arguments> files() {
         String dataDirName = System.getProperty(POIDataSamples.TEST_PROPERTY);
         if(dataDirName == null) {
             dataDirName = "test-data";
         }
 
-        List<Object[]> files = new ArrayList<>();
+        List<Arguments> files = new ArrayList<>();
         findFile(files, dataDirName + "/spreadsheet");
         findFile(files, dataDirName + "/hpsf");
 
-        return files;
+        return files.stream();
     }
 
-    private static void findFile(List<Object[]> list, String dir) {
+    private static void findFile(List<Arguments> list, String dir) {
         String[] files = new File(dir).list((arg0, arg1) -> arg1.toLowerCase(Locale.ROOT).endsWith(".xls"));
-
-        assertNotNull("Did not find any xls files in directory " + dir, files);
+        assertNotNull(files, "Did not find any xls files in directory " + dir);
 
         for(String file : files) {
-                list.add(new Object[]{new File(dir, file)});
-            }
+            list.add(Arguments.of(new File(dir, file)));
         }
+    }
 
-    @Parameter
-    public File file;
-
-	@Test
-	public void testMain() throws Exception {
+    @ParameterizedTest
+    @MethodSource("files")
+	public void testMain(File file) throws Exception {
 	    String fileName = file.getName();
 
 	    Class<? extends Throwable> t = EXCLUDED.get(fileName);

@@ -17,9 +17,9 @@
 
 package org.apache.poi.ss.formula;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -52,7 +52,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests {@link org.apache.poi.ss.formula.EvaluationCache}.  Makes sure that where possible (previously calculated) cached
@@ -219,11 +219,10 @@ public class TestEvaluationCache {
 
 		private final HSSFSheet _sheet;
 		private final WorkbookEvaluator _evaluator;
-		private final HSSFWorkbook _wb;
 		private final EvalListener _evalListener;
 
 		public MySheet() {
-			_wb = new HSSFWorkbook();
+			HSSFWorkbook _wb = new HSSFWorkbook();
 			_evalListener = new EvalListener(_wb);
 			_evaluator = WorkbookEvaluatorTestHelper.createEvaluator(_wb, _evalListener);
 			_sheet = _wb.createSheet("Sheet1");
@@ -621,7 +620,7 @@ public class TestEvaluationCache {
 		cv = fe.evaluate(cellA1);
 
 		// looks like left-over cached result from before change to B1
-		assertNotEquals("Identified bug 46053", 2.2, cv.getNumberValue());
+		assertNotEquals(2.2, cv.getNumberValue(), "Identified bug 46053");
 		assertEquals(2.6, cv.getNumberValue(), 0.0);
 	}
 
@@ -666,7 +665,7 @@ public class TestEvaluationCache {
 
 	private static void confirmLog(MySheet ms, String[] expectedLog) {
 		String[] actualLog = ms.getAndClearLog();
-		assertArrayEquals("Log entry mismatch", expectedLog, actualLog);
+		assertArrayEquals(expectedLog, actualLog, "Log entry mismatch");
 	}
 
 	@Test

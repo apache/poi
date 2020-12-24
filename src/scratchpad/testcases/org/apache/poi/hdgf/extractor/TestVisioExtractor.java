@@ -17,8 +17,8 @@
 
 package org.apache.poi.hdgf.extractor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +26,7 @@ import java.io.InputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hdgf.HDGFDiagram;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestVisioExtractor {
     private static final POIDataSamples _dgTests = POIDataSamples.getDiagramInstance();

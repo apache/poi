@@ -17,10 +17,10 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Yegor Kozlov
@@ -31,24 +31,18 @@ public final class TestIndexedColors {
     public void fromInt() {
         int[] illegalIndices = { -1, 65 };
         for (int index : illegalIndices) {
-            try {
-                IndexedColors.fromInt(index);
-                fail("Expected IllegalArgumentException: " + index);
-            }
-            catch (final IllegalArgumentException e) {
-                // expected
-            }
+            assertThrows(IllegalArgumentException.class, () -> IndexedColors.fromInt(index));
         }
         assertEquals(IndexedColors.BLACK, IndexedColors.fromInt(8));
         assertEquals(IndexedColors.GOLD, IndexedColors.fromInt(51));
         assertEquals(IndexedColors.AUTOMATIC, IndexedColors.fromInt(64));
     }
-    
+
     @Test
     public void getIndex() {
         assertEquals(51, IndexedColors.GOLD.getIndex());
     }
-    
+
     @Test
     public void index() {
         assertEquals(51, IndexedColors.GOLD.index);

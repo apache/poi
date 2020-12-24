@@ -18,14 +18,14 @@
 package org.apache.poi.hssf.record.pivot;
 
 import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.record.pivottable.ViewFieldsRecord;
 import org.apache.poi.util.HexRead;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link ViewFieldsRecord}
@@ -37,7 +37,7 @@ public final class TestViewFieldsRecord {
 		byte[] data = HexRead.readFromString("01 00 01 00 01 00 04 00 05 00 00 6D 61 72 63 6F");
 		RecordInputStream in = TestcaseRecordInputStream.create(ViewFieldsRecord.sid, data);
 		ViewFieldsRecord rec = new ViewFieldsRecord(in);
-		assertNotEquals("Identified bug 46693b", 1, in.remaining());
+		assertNotEquals(1, in.remaining(), "Identified bug 46693b");
 		assertEquals(0, in.remaining());
 		assertEquals(4+data.length, rec.getRecordSize());
 	}

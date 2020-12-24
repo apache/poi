@@ -17,19 +17,19 @@
 
 package org.apache.poi.hsmf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests to verify that we can read attachments from msg file
@@ -42,7 +42,7 @@ public class TestFileWithAttachmentsRead {
     /**
      * Initialize this test, load up the attachment_test_msg.msg mapi message.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws IOException {
         POIDataSamples samples = POIDataSamples.getHSMFInstance();
         twoSimpleAttachments = new MAPIMessage(samples.openResourceAsStream("attachment_test_msg.msg"));
@@ -50,7 +50,7 @@ public class TestFileWithAttachmentsRead {
         inlineImgMsgAttachments = new MAPIMessage(samples.openResourceAsStream("attachment_msg_inlineImg.msg"));
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws IOException {
         twoSimpleAttachments.close();
         pdfMsgAttachments.close();

@@ -103,8 +103,11 @@ module org.apache.poi.poi {
     exports org.apache.poi.wp.usermodel;
 
     // test specific exports
-    requires junit;
     requires net.bytebuddy;
-    opens org.apache.poi.hpsf.basic to junit;
-    opens org.apache.poi.hssf.record.pivot to junit;
+    requires org.junit.jupiter.api;
+    requires org.junit.jupiter.params;
+
+    opens org.apache.poi.hpsf.basic to org.junit.platform.commons;
+    opens org.apache.poi.hssf.record.pivot to org.junit.platform.commons;
+    opens org.apache.poi.hssf.dev to org.junit.platform.commons;
 }

@@ -16,9 +16,9 @@
 ==================================================================== */
 package org.apache.poi.ooxml;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -30,7 +30,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.util.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test that HXF correctly detects OOXML
@@ -52,15 +52,14 @@ public class TestDetectAsOOXML {
         };
 
 	    for (Object[] fm : fileAndMagic) {
-	        InputStream is = HSSFTestDataSamples.openSampleFileStream((String)fm[0]);
-	        is = FileMagic.prepareToCheckMagic(is);
-	        FileMagic act = FileMagic.valueOf(is);
+	        try (InputStream is = FileMagic.prepareToCheckMagic(HSSFTestDataSamples.openSampleFileStream((String)fm[0]))) {
+				FileMagic act = FileMagic.valueOf(is);
 
-			assertEquals("OOXML files should be detected, others not",
-					act == FileMagic.OOXML, DocumentFactoryHelper.hasOOXMLHeader(is));
+				assertEquals(act == FileMagic.OOXML, DocumentFactoryHelper.hasOOXMLHeader(is),
+					"OOXML files should be detected, others not");
 
-	        assertEquals("file magic failed for "+fm[0], fm[1], act);
-	        is.close();
+				assertEquals(fm[1], act, "file magic failed for " + fm[0]);
+			}
 	    }
 	}
 

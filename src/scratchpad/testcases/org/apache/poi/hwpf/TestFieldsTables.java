@@ -19,7 +19,7 @@
 
 package org.apache.poi.hwpf;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 
@@ -27,7 +27,7 @@ import org.apache.poi.hwpf.model.FieldsDocumentPart;
 import org.apache.poi.hwpf.model.FieldsTables;
 import org.apache.poi.hwpf.model.FileInformationBlock;
 import org.apache.poi.hwpf.model.PlexOfField;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test case for the fields tables, this test is based on the test-fields.doc

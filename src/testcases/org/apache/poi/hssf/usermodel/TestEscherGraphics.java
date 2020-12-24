@@ -17,9 +17,9 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 import java.awt.Font;
@@ -28,9 +28,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the capabilities of the EscherGraphics class.
@@ -45,7 +45,7 @@ public final class TestEscherGraphics {
     private HSSFShapeGroup escherGroupA;
     private EscherGraphics graphics;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         workbook = new HSSFWorkbook();
 
@@ -55,8 +55,8 @@ public final class TestEscherGraphics {
         patriarch.createGroup(new HSSFClientAnchor(20,30,500,200,(short)0,0,(short) 0,0));
         graphics = new EscherGraphics(escherGroupA, workbook, Color.black, 1.0f);
     }
-    
-    @After
+
+    @AfterEach
     public void closeResources() throws IOException {
         workbook.close();
     }
@@ -268,9 +268,9 @@ public final class TestEscherGraphics {
     	assertEquals(40, patriarch.getY2());
 
     	// Check the two groups and the text
-    	// Result of patriarch.countOfAllChildren() makes no sense: 
+    	// Result of patriarch.countOfAllChildren() makes no sense:
     	// Returns 4 for 2 empty groups + 1 TextBox.
-    	//assertEquals(3, patriarch.countOfAllChildren()); 
+    	//assertEquals(3, patriarch.countOfAllChildren());
     	assertEquals(3, patriarch.getChildren().size());
 
     	// Should be two groups and a text

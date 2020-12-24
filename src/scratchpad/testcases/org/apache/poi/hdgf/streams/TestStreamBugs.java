@@ -27,8 +27,8 @@ import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.pointers.PointerFactory;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for bugs with streams
@@ -39,7 +39,7 @@ public final class TestStreamBugs extends StreamTest {
 	private PointerFactory ptrFactory;
 	private POIFSFileSystem filesystem;
 
-	@Before
+	@BeforeEach
     public void setUp() throws IOException {
 		ptrFactory = new PointerFactory(11);
 		chunkFactory = new ChunkFactory(11);

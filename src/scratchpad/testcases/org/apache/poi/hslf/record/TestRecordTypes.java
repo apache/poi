@@ -18,10 +18,10 @@
 package org.apache.poi.hslf.record;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.ddf.EscherRecordTypes;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that RecordTypes returns the right records and classes when asked

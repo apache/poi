@@ -17,13 +17,14 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.TreeMap;
@@ -33,7 +34,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STXstring;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFont;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
@@ -124,13 +125,7 @@ public final class TestXSSFRichTextString {
 
         StylesTable tbl = new StylesTable();
         rt.setStylesTableReference(tbl);
-
-        try {
-            rt.applyFont(0, 10, (short)1);
-            fail("Fails without styles in the table");
-        } catch (IndexOutOfBoundsException e) {
-            // expected
-        }
+        assertThrows(IndexOutOfBoundsException.class, () -> rt.applyFont(0, 10, (short)1), "Fails without styles in the table");
 
         tbl.putFont(new XSSFFont());
         rt.applyFont(0, 10, (short)1);
@@ -142,27 +137,15 @@ public final class TestXSSFRichTextString {
         XSSFRichTextString rt = new XSSFRichTextString("Apache POI");
 
         rt.applyFont(0, 0, (short)1);
+        IllegalArgumentException e;
+        e = assertThrows(IllegalArgumentException.class, () -> rt.applyFont(11, 10, (short)1));
+        assertTrue(e.getMessage().contains("11"));
 
-        try {
-            rt.applyFont(11, 10, (short)1);
-            fail("Should catch Exception here");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().contains("11"));
-        }
+        e = assertThrows(IllegalArgumentException.class, () -> rt.applyFont(-1, 10, (short)1));
+        assertTrue(e.getMessage().contains("-1"));
 
-        try {
-            rt.applyFont(-1, 10, (short)1);
-            fail("Should catch Exception here");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().contains("-1"));
-        }
-
-        try {
-            rt.applyFont(0, 555, (short)1);
-            fail("Should catch Exception here");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().contains("555"));
-        }
+        e = assertThrows(IllegalArgumentException.class, () -> rt.applyFont(0, 555, (short)1));
+        assertTrue(e.getMessage().contains("555"));
     }
 
     @Test

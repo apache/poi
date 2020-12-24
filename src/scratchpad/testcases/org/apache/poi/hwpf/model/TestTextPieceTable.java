@@ -18,9 +18,9 @@
 package org.apache.poi.hwpf.model;
 
 import static org.apache.poi.POITestCase.assertStartsWith;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,15 +29,15 @@ import org.apache.poi.hwpf.HWPFDocFixture;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 @SuppressWarnings("deprecation")
 public final class TestTextPieceTable {
     private HWPFDocFixture _hWPFDocFixture;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         System.setProperty("org.apache.poi.hwpf.preserveTextTable",
                 Boolean.TRUE.toString());
@@ -47,7 +47,7 @@ public final class TestTextPieceTable {
         _hWPFDocFixture.setUp();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         _hWPFDocFixture.tearDown();
         _hWPFDocFixture = null;

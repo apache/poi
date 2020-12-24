@@ -17,9 +17,9 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -45,8 +45,8 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  *
@@ -55,7 +55,7 @@ public final class TestFormulaEvaluatorBugs {
     private static boolean OUTPUT_TEST_FILES;
     private static String tmpDirName;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() {
         tmpDirName = System.getProperty("java.io.tmpdir");
         OUTPUT_TEST_FILES = Boolean.parseBoolean(
@@ -95,7 +95,7 @@ public final class TestFormulaEvaluatorBugs {
             System.err.println("Existing file for bug #44636 written to " + existing);
         }
         wb.close();
-        
+
         // Now, do a new file from scratch
         wb = new HSSFWorkbook();
         sheet = wb.createSheet();
@@ -182,7 +182,7 @@ public final class TestFormulaEvaluatorBugs {
         cell = row.getCell(0);
         assertEquals("-1000000-3000000", cell.getCellFormula());
         assertEquals(-4000000, eva.evaluate(cell).getNumberValue(), 0);
-        
+
         wb.close();
     }
 
@@ -243,7 +243,7 @@ public final class TestFormulaEvaluatorBugs {
         HSSFCell cellSUM2D = rowSUM2D.getCell(0);
         assertEquals("SUM(C:D)", cellSUM2D.getCellFormula());
         assertEquals(66, eva.evaluate(cellSUM2D).getNumberValue(), 0);
-        
+
         wb.close();
     }
 
@@ -267,7 +267,7 @@ public final class TestFormulaEvaluatorBugs {
             fail("Identified bug 44508");
         }
         assertTrue(cell.getBooleanCellValue());
-        
+
         wb.close();
     }
 
@@ -292,27 +292,24 @@ public final class TestFormulaEvaluatorBugs {
                 }
             }
         }
-        
+
         wb.close();
     }
 
     @Test
     public void testEvaluateInCellWithErrorCode_bug44950() throws Exception {
-        HSSFWorkbook wb = new HSSFWorkbook();
-        HSSFSheet sheet = wb.createSheet("Sheet1");
-        HSSFRow row = sheet.createRow(1);
-        HSSFCell cell = row.createCell(0);
-        cell.setCellFormula("na()"); // this formula evaluates to an Excel error code '#N/A'
-        HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-        try {
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
+            HSSFSheet sheet = wb.createSheet("Sheet1");
+            HSSFRow row = sheet.createRow(1);
+            HSSFCell cell = row.createCell(0);
+            cell.setCellFormula("na()"); // this formula evaluates to an Excel error code '#N/A'
+            HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
             fe.evaluateInCell(cell);
         } catch (NumberFormatException e) {
             if (e.getMessage().equals("You cannot get an error value from a non-error cell")) {
                 fail("Identified bug 44950 b");
             }
             throw e;
-        } finally {
-            wb.close();
         }
     }
 
@@ -357,7 +354,7 @@ public final class TestFormulaEvaluatorBugs {
         cell.setCellFormula("DATE(2012,2-12,1+4)");
         fe.notifyUpdateCell(cell);
         assertEquals(40579.0, fe.evaluate(cell).getNumberValue(), 0);
-        
+
         wb.close();
     }
 
@@ -420,13 +417,11 @@ public final class TestFormulaEvaluatorBugs {
         WorkbookEvaluator evaluator = WorkbookEvaluatorTestHelper.createEvaluator(wb, evalListener);
         ValueEval ve = evaluator.evaluate(HSSFEvaluationTestHelper.wrapCell(cell));
         int evalCount = evalListener.getCountCacheMisses();
-        if (evalCount > 10) {
-            // Without caching, evaluating cell 'A9' takes 21845 evaluations which consumes
-            // much time (~3 sec on Core 2 Duo 2.2GHz)
-            // short-circuit-if optimisation cuts this down to 255 evaluations which is still too high
-            // System.err.println("Cell A9 took " + evalCount + " intermediate evaluations");
-            fail("Identifed bug 45376 - Formula evaluator should cache values");
-        }
+        // Without caching, evaluating cell 'A9' takes 21845 evaluations which consumes
+        // much time (~3 sec on Core 2 Duo 2.2GHz)
+        // short-circuit-if optimisation cuts this down to 255 evaluations which is still too high
+        // System.err.println("Cell A9 took " + evalCount + " intermediate evaluations");
+        assertTrue(evalCount <= 10, "Identifed bug 45376 - Formula evaluator should cache values");
         // With caching, the evaluationCount is 8 which is exactly the
         // number of formula cells that needed to be evaluated.
         assertEquals(8, evalCount);
@@ -440,7 +435,7 @@ public final class TestFormulaEvaluatorBugs {
 
         // confirm the evaluation result too
         assertEquals(ErrorEval.NA, ve);
-        
+
         wb.close();
     }
 
@@ -527,22 +522,22 @@ public final class TestFormulaEvaluatorBugs {
         cell = row.getCell(CellReference.convertColStringToIndex("B"));
         assertRefPtgA1('V', getPtgs(cell), 0);
 //      assertRefPtgA1('V', getPtgs(cell), 4); // FIXME!
-        
+
         cell = row.getCell(CellReference.convertColStringToIndex("D"));
         assertRefPtgA1('V', getPtgs(cell), 0);
 //      assertRefPtgA1('V', getPtgs(cell), 6); // FIXME!
-        
+
         cell = row.getCell(CellReference.convertColStringToIndex("F"));
         assertRefPtgA1('V', getPtgs(cell), 0);
 //      assertRefPtgA1('V', getPtgs(cell), 4); // FIXME!
 //      assertRefPtgA1('V', getPtgs(cell), 9); // FIXME!
-        
+
         cell = row.getCell(CellReference.convertColStringToIndex("G"));
         assertRefPtgA1('V', getPtgs(cell), 0);
 //      assertRefPtgA1('V', getPtgs(cell), 4); // FIXME!
 //      assertRefPtgA1('V', getPtgs(cell), 9); // FIXME!
-        
-        
+
+
         // Check our cached values were correctly evaluated
         cell = row.getCell(CellReference.convertColStringToIndex("A"));
         assertEquals("abc", cell.getStringCellValue());

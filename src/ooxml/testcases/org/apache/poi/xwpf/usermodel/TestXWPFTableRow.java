@@ -17,15 +17,15 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STHeightRule;
 
 public class TestXWPFTableRow {
@@ -51,7 +51,7 @@ public class TestXWPFTableRow {
         // Assert the repeat header is false by default
         boolean isCantSplit = tr.isCantSplitRow();
         assertFalse(isCantSplit);
-        
+
         // Repeat the header
         tr.setCantSplitRow(true);
         isCantSplit = tr.isCantSplitRow();
@@ -61,7 +61,7 @@ public class TestXWPFTableRow {
         tr.setCantSplitRow(false);
         isCantSplit = tr.isCantSplitRow();
         assertFalse(isCantSplit);
-        
+
         doc.close();
     }
 
@@ -73,11 +73,11 @@ public class TestXWPFTableRow {
         // table has a single row by default; grab it
         XWPFTableRow tr = table.getRow(0);
         assertNotNull(tr);
-        
+
         // Assert the repeat header is false by default
         boolean isRpt = tr.isRepeatHeader();
         assertFalse(isRpt);
-        
+
         // Repeat the header
         tr.setRepeatHeader(true);
         isRpt = tr.isRepeatHeader();
@@ -87,7 +87,7 @@ public class TestXWPFTableRow {
         tr.setRepeatHeader(false);
         isRpt = tr.isRepeatHeader();
         assertFalse(isRpt);
-        
+
         // If the third row is set to repeat, but not the second,
         // isRepeatHeader should report false because Word will
         // ignore it.
@@ -95,10 +95,10 @@ public class TestXWPFTableRow {
         tr.setRepeatHeader(true);
         isRpt = tr.isRepeatHeader();
         assertFalse(isRpt);
-        
+
         doc.close();
     }
-    
+
     // Test that validates the table header value can be parsed from a document
     // generated in Word
     @Test
@@ -119,8 +119,8 @@ public class TestXWPFTableRow {
             assertFalse(isRpt);
         }
     }
-    
-    
+
+
     // Test that validates the table header value can be parsed from a document
     // generated in Word
     @Test

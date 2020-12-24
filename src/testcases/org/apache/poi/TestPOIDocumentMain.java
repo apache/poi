@@ -17,9 +17,9 @@
 
 package org.apache.poi;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,8 +31,8 @@ import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that POIDocument correctly loads and saves the common
@@ -49,7 +49,7 @@ public final class TestPOIDocumentMain {
     /**
      * Set things up, two spreadsheets for our testing
      */
-    @Before
+    @BeforeEach
     public void setUp() {
         doc = HSSFTestDataSamples.openSampleWorkbook("DateFormats.xls");
         doc2 = HSSFTestDataSamples.openSampleWorkbook("StringFormulas.xls");
@@ -114,7 +114,7 @@ public final class TestPOIDocumentMain {
         // Check they're still there
         POIDocument doc3 = new HPSFPropertiesOnlyDocument(inFS);
         doc3.readProperties();
-        
+
         // Delegate test
         readPropertiesHelper(doc3);
         doc3.close();
@@ -144,7 +144,7 @@ public final class TestPOIDocumentMain {
 
         assertNotNull(doc.getSummaryInformation());
         assertNotNull(doc.getDocumentSummaryInformation());
-        
+
         doc.close();
     }
 
@@ -159,9 +159,9 @@ public final class TestPOIDocumentMain {
         // Write out and back in again, no change
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         doc.write(baos);
-        
+
         doc.close();
-        
+
         ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
         doc = new HSSFWorkbook(bais);
 
@@ -176,7 +176,7 @@ public final class TestPOIDocumentMain {
         // Save and re-load
         baos = new ByteArrayOutputStream();
         doc.write(baos);
-        
+
         doc.close();
 
         bais = new ByteArrayInputStream(baos.toByteArray());

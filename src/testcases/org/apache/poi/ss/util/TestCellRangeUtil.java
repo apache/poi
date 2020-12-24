@@ -17,13 +17,14 @@
 
 package org.apache.poi.ss.util;
 
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.HashSet;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests CellRangeUtil.
@@ -31,7 +32,7 @@ import java.util.HashSet;
  * @see org.apache.poi.ss.util.CellRangeUtil
  */
 public final class TestCellRangeUtil {
-    
+
     private static final CellRangeAddress A1 = new CellRangeAddress(0, 0, 0, 0);
     private static final CellRangeAddress B1 = new CellRangeAddress(0, 0, 1, 1);
     private static final CellRangeAddress A2 = new CellRangeAddress(1, 1, 0, 0);
@@ -39,7 +40,7 @@ public final class TestCellRangeUtil {
     private static final CellRangeAddress A1_B2 = new CellRangeAddress(0, 1, 0, 1);
     private static final CellRangeAddress A1_B1 = new CellRangeAddress(0, 0, 0, 1);
     private static final CellRangeAddress A1_A2 = new CellRangeAddress(0, 1, 0, 0);
-    
+
     @Test
     public void testMergeCellRanges() {
         // Note that the order of the output array elements does not matter
@@ -56,7 +57,7 @@ public final class TestCellRangeUtil {
         // Partially mergeable: multiple possible merges
         //    A B
         //  1 x x   A1,A2,B1 --> A1:B1,A2 or A1:A2,B1
-        //  2 x 
+        //  2 x
         assertCellRangesEqual(asArray(A1_B1, A2), merge(A1, B1, A2));
         assertCellRangesEqual(asArray(A1_A2, B1), merge(A2, A1, B1));
         assertCellRangesEqual(asArray(A1_B1, A2), merge(B1, A2, A1));

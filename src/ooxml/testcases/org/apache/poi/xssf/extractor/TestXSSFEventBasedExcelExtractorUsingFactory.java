@@ -18,7 +18,7 @@ package org.apache.poi.xssf.extractor;
 
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 
 
 public class TestXSSFEventBasedExcelExtractorUsingFactory extends TestXSSFEventBasedExcelExtractor {
@@ -28,7 +28,7 @@ public class TestXSSFEventBasedExcelExtractorUsingFactory extends TestXSSFEventB
 		return (XSSFEventBasedExcelExtractor) ExtractorFactory.createExtractor(HSSFTestDataSamples.openSampleFileStream(sampleName));
 	}
 
-	@After
+	@AfterEach
     public void tearDown() {
 	    // reset setting to not affect other tests
 	    ExtractorFactory.setAllThreadsPreferEventExtractors(null);

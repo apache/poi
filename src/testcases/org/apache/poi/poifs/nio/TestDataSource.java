@@ -19,10 +19,10 @@
 
 package org.apache.poi.poifs.nio;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -35,31 +35,25 @@ import java.nio.ByteBuffer;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the datasource implementations
  */
 public class TestDataSource {
-    private static POIDataSamples data = POIDataSamples.getPOIFSInstance();
+    private static final POIDataSamples data = POIDataSamples.getPOIFSInstance();
 
     @Test
     public void testFile() throws Exception {
         File f = data.getFile("Notes.ole2");
 
-        FileBackedDataSource ds = new FileBackedDataSource(f);
-        try {
+        try (FileBackedDataSource ds = new FileBackedDataSource(f)) {
             checkDataSource(ds, false);
-        } finally {
-            ds.close();
         }
 
         // try a second time
-        ds = new FileBackedDataSource(f);
-        try {
+        try (FileBackedDataSource ds = new FileBackedDataSource(f)) {
             checkDataSource(ds, false);
-        } finally {
-            ds.close();
         }
     }
 
@@ -69,25 +63,19 @@ public class TestDataSource {
         try {
             writeDataToFile(temp);
 
-            FileBackedDataSource ds = new FileBackedDataSource(temp, false);
-            try {
+            try (FileBackedDataSource ds = new FileBackedDataSource(temp, false))  {
                 checkDataSource(ds, true);
-            } finally {
-                ds.close();
             }
 
             // try a second time
-            ds = new FileBackedDataSource(temp, false);
-            try {
+            try (FileBackedDataSource ds = new FileBackedDataSource(temp, false)) {
                 checkDataSource(ds, true);
-            } finally {
-                ds.close();
             }
 
             writeDataToFile(temp);
         } finally {
             assertTrue(temp.exists());
-            assertTrue("Could not delete file " + temp, temp.delete());
+            assertTrue(temp.delete(), "Could not delete file " + temp);
         }
     }
 
@@ -98,25 +86,21 @@ public class TestDataSource {
         try {
             writeDataToFile(temp);
 
-            FileBackedDataSource ds = new FileBackedDataSource(temp, true);
-            try {
+            ;
+            try (FileBackedDataSource ds = new FileBackedDataSource(temp, true)) {
                 ByteBuffer buf = ds.read(0, 10);
                 assertNotNull(buf);
                 buf = ds.read(8, 0x400);
                 assertNotNull(buf);
-            } finally {
-                ds.close();
             }
 
             // try a second time
-            ds = new FileBackedDataSource(temp, true);
-            try {
+            ;
+            try (FileBackedDataSource ds = new FileBackedDataSource(temp, true)) {
                 ByteBuffer buf = ds.read(0, 10);
                 assertNotNull(buf);
                 buf = ds.read(8, 0x400);
                 assertNotNull(buf);
-            } finally {
-                ds.close();
             }
 
             writeDataToFile(temp);
@@ -140,7 +124,7 @@ public class TestDataSource {
 
         // rewriting changes the size
         if (writeable) {
-            assertTrue("Had: " + ds.size(), ds.size() == 8192 || ds.size() == 8198);
+            assertTrue(ds.size() == 8192 || ds.size() == 8198, "Had: " + ds.size());
         } else {
             assertEquals(8192, ds.size());
         }
@@ -174,21 +158,16 @@ public class TestDataSource {
 
         // Can go to the end, but not past it
         bs = ds.read(8, 8190);
-        assertEquals(0, bs.position()); // TODO How best to warn of a short read?
+        // TODO How best to warn of a short read?
+        assertEquals(0, bs.position());
 
         // Can't go off the end
-        try {
-            ds.read(4, 8192);
-            if (!writeable) {
-                fail("Shouldn't be able to read off the end of the file");
-            }
-        } catch (IndexOutOfBoundsException e) {
-            // expected here
-        }
+        assertThrows(IndexOutOfBoundsException.class, () -> ds.read(4, ds.size()),
+            "Shouldn't be able to read off the end of the file");
     }
 
     @Test
-    public void testByteArray() throws Exception {
+    public void testByteArray() {
         byte[] data = new byte[256];
         byte b;
         for (int i = 0; i < data.length; i++) {
@@ -226,20 +205,10 @@ public class TestDataSource {
         bs = ds.read(4, 254);
         assertEquals(-2, bs.get());
         assertEquals(-1, bs.get());
-        try {
-            bs.get();
-            fail("Shouldn't be able to read off the end");
-        } catch (BufferUnderflowException e) {
-            // expected here
-        }
+        assertThrows(BufferUnderflowException.class, bs::get, "Shouldn't be able to read off the end");
 
         // Past the end
-        try {
-            ds.read(4, 256);
-            fail("Shouldn't be able to read off the end");
-        } catch (IndexOutOfBoundsException e) {
-            // expected here
-        }
+        assertThrows(IndexOutOfBoundsException.class, () -> ds.read(4, 256), "Shouldn't be able to read off the end");
 
 
         // Overwrite

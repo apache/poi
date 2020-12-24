@@ -18,9 +18,9 @@
  */
 package org.apache.poi.sl.draw.geom;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Date: 10/24/11

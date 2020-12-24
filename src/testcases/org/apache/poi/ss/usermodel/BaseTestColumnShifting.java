@@ -18,21 +18,20 @@
  */
 package org.apache.poi.ss.usermodel;
 
-import org.junit.Before;
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.poi.ss.usermodel.helpers.ColumnShifter;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public abstract class BaseTestColumnShifting {
     protected Workbook wb;
     protected Sheet sheet1;
     protected ColumnShifter columnShifter;
 
-    @Before
+    @BeforeEach
     public void init() {
         int rowIndex = 0;
         sheet1 = wb.createSheet("sheet1");
@@ -63,7 +62,7 @@ public abstract class BaseTestColumnShifting {
     @Test
     public void testShift3ColumnsRight() {
         columnShifter.shiftColumns(1, 2, 3);
-        
+
         Cell cell = sheet1.getRow(0).getCell(4);
         assertNull(cell);
         cell = sheet1.getRow(1).getCell(4);
@@ -76,12 +75,7 @@ public abstract class BaseTestColumnShifting {
 
     @Test
     public void testShiftLeft() {
-        try {
-            columnShifter.shiftColumns(1, 2, -3);
-            fail("Shift to negative indices should throw exception");
-        }
-        catch(IllegalStateException e){
-            assertTrue(true);
-        }
+        assertThrows(IllegalStateException.class, () -> columnShifter.shiftColumns(1, 2, -3),
+            "Shift to negative indices should throw exception");
     }
 }

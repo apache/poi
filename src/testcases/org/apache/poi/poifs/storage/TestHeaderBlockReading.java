@@ -17,14 +17,14 @@
 
 package org.apache.poi.poifs.storage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test HeaderBlockReader functionality
@@ -58,24 +58,13 @@ public final class TestHeaderBlockReading {
 
 		// verify we can't read a short block
 		byte[] shortblock = Arrays.copyOf(content, 511);
-		try {
-			new HeaderBlock(new ByteArrayInputStream(shortblock));
-			fail("Should have caught IOException reading a short block");
-		} catch (IOException ignored) {
-
-			// as expected
-		}
+		assertThrows(IOException.class, () -> new HeaderBlock(new ByteArrayInputStream(shortblock)));
 
 		// try various forms of corruption
 		for (int index = 0; index < 8; index++) {
 			content[index] = (byte) (content[index] - 1);
-			try {
-				new HeaderBlock(new ByteArrayInputStream(content));
-				fail("Should have caught IOException corrupting byte " + index);
-			} catch (IOException ignored) {
-
-				// as expected
-			}
+			assertThrows(IOException.class, () -> new HeaderBlock(new ByteArrayInputStream(content)),
+				"Should have caught IOException corrupting byte " + index);
 
 			// restore byte value
 			content[index] = (byte) (content[index] + 1);

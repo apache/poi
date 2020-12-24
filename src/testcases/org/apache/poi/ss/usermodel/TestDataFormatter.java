@@ -16,19 +16,22 @@
 
    2012 - Alfresco Software, Ltd.
    Alfresco Software has modified source of this file
-   The details of changes as svn diff can be found in svn at location root/projects/3rd-party/src 
+   The details of changes as svn diff can be found in svn at location root/projects/3rd-party/src
 ==================================================================== */
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.text.DateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 
@@ -41,9 +44,9 @@ import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.ss.util.NumberToTextConverter;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.SuppressForbidden;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests of {@link DataFormatter}
@@ -54,7 +57,7 @@ import org.junit.Test;
 public class TestDataFormatter {
     private static final double _15_MINUTES = 0.041666667;
 
-    @BeforeClass
+    @BeforeAll
     @SuppressForbidden
     public static void setUpClass() {
         // some pre-checks to hunt for a problem in the Maven build
@@ -74,8 +77,8 @@ public class TestDataFormatter {
 
         CellFormat cfmt = CellFormat.getInstance("_-* #,##0.00_-;-* #,##0.00_-;_-* \"-\"??_-;_-@_-");
         CellFormatResult result = cfmt.apply(cellValueO);
-        assertEquals("This failure can indicate that the wrong locale is used during test-execution, ensure you run with english/US via -Duser.language=en -Duser.country=US",
-                "    1,234.56 ", result.text);
+        assertEquals("    1,234.56 ", result.text,
+            "This failure can indicate that the wrong locale is used during test-execution, ensure you run with english/US via -Duser.language=en -Duser.country=US");
     }
 
     /**
@@ -109,7 +112,7 @@ public class TestDataFormatter {
 
         // Regular numeric style formats
         assertEquals("63", dfUS.formatRawCellContents(63.0, -1, "[$-1010409]##"));
-        assertEquals("63", dfUS.formatRawCellContents(63.0, -1, "[$-1010409]00"));        
+        assertEquals("63", dfUS.formatRawCellContents(63.0, -1, "[$-1010409]00"));
 
     }
 
@@ -148,14 +151,14 @@ public class TestDataFormatter {
         };
         for (String format : formats) {
             assertEquals(
-                "Wrong format for: " + format,
                 "12.34",
-                dfUS.formatRawCellContents(12.343, -1, format)
+                dfUS.formatRawCellContents(12.343, -1, format),
+                "Wrong format for: " + format
             );
             assertEquals(
-                "Wrong format for: " + format,
                 "-12.34",
-                dfUS.formatRawCellContents(-12.343, -1, format)
+                dfUS.formatRawCellContents(-12.343, -1, format),
+                "Wrong format for: " + format
             );
         }
 
@@ -172,14 +175,14 @@ public class TestDataFormatter {
         String[] formats = { "#,##0.00;[Blue](#,##0.00)" };
         for (String format : formats) {
             assertEquals(
-                "Wrong format for: " + format,
                 "12.34",
-                dfUS.formatRawCellContents(12.343, -1, format)
+                dfUS.formatRawCellContents(12.343, -1, format),
+                "Wrong format for: " + format
             );
             assertEquals(
-                "Wrong format for: " + format,
                 "(12.34)",
-                dfUS.formatRawCellContents(-12.343, -1, format)
+                dfUS.formatRawCellContents(-12.343, -1, format),
+                "Wrong format for: " + format
             );
         }
 
@@ -187,14 +190,14 @@ public class TestDataFormatter {
         formats = new String[] { "$#,##0.00;[Red]($#,##0.00)" };
         for (String format : formats) {
             assertEquals(
-                "Wrong format for: " + format,
                 "$12.34",
-                dfUS.formatRawCellContents(12.343, -1, format)
+                dfUS.formatRawCellContents(12.343, -1, format),
+                "Wrong format for: " + format
             );
             assertEquals(
-                "Wrong format for: " + format,
                 "($12.34)",
-                dfUS.formatRawCellContents(-12.343, -1, format)
+                dfUS.formatRawCellContents(-12.343, -1, format),
+                "Wrong format for: " + format
             );
         }
     }
@@ -204,8 +207,8 @@ public class TestDataFormatter {
         DataFormatter dfUS = new DataFormatter(Locale.US);
 
         String format = "[>=10]#,##0;[<10]0.0";
-        assertEquals("Wrong format for " + format, "17,876", dfUS.formatRawCellContents(17876.000, -1, format));
-        assertEquals("Wrong format for " + format, "9.7", dfUS.formatRawCellContents(9.71, -1, format));
+        assertEquals("17,876", dfUS.formatRawCellContents(17876.000, -1, format), "Wrong format for " + format);
+        assertEquals("9.7", dfUS.formatRawCellContents(9.71, -1, format), "Wrong format for " + format);
     }
 
     /**
@@ -646,7 +649,7 @@ public class TestDataFormatter {
      * TODO Fix these so that they work
      */
     @Test
-    @Ignore
+    @Disabled
     public void testCustomFormats() {
         DataFormatter dfUS = new DataFormatter(Locale.US, true);
         String fmt;
@@ -700,7 +703,7 @@ public class TestDataFormatter {
         String format = "[h]\"\"h\"\" m\"\"m\"\"";
         assertTrue(DateUtil.isADateFormat(-1,format));
         assertTrue(DateUtil.isValidExcelDate(_15_MINUTES));
-        
+
         assertEquals("1h 0m", formatter.formatRawCellContents(_15_MINUTES, -1, format, false));
         assertEquals("0.041666667", formatter.formatRawCellContents(_15_MINUTES, -1, "[h]'h'", false));
         assertEquals("1h 0m\"", formatter.formatRawCellContents(_15_MINUTES, -1, "[h]\"\"h\"\" m\"\"m\"\"\"", false));
@@ -710,15 +713,13 @@ public class TestDataFormatter {
         assertEquals(" 60", formatter.formatRawCellContents(_15_MINUTES, -1, " [m]", false));
         assertEquals("h60", formatter.formatRawCellContents(_15_MINUTES, -1, "\"\"h\"\"[m]", false));
         assertEquals("m1", formatter.formatRawCellContents(_15_MINUTES, -1, "\"\"m\"\"h", false));
-        
-        try {
-            assertEquals("1h 0m\"", formatter.formatRawCellContents(_15_MINUTES, -1, "[h]\"\"h\"\" m\"\"m\"\"\"\"", false));
-            fail("Catches exception because of invalid format, i.e. trailing quoting");
-        } catch (IllegalArgumentException e) {
-            assertTrue(e.getMessage().contains("Cannot format given Object as a Number"));
-        }
+
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () ->
+            formatter.formatRawCellContents(_15_MINUTES, -1, "[h]\"\"h\"\" m\"\"m\"\"\"\"", false),
+            "Catches exception because of invalid format, i.e. trailing quoting");
+        assertTrue(e.getMessage().contains("Cannot format given Object as a Number"));
     }
-    
+
     @Test
     public void testIsADateFormat() {
         // first check some cases that should not be a date, also call multiple times to ensure the cache is used
@@ -926,7 +927,7 @@ public class TestDataFormatter {
         String value = df.formatCellValue(cell, wb.getCreationHelper().createFormulaEvaluator());
         assertEquals("-130", value);
     }
-    
+
     /**
      * Bug #63292
      */
@@ -965,7 +966,7 @@ public class TestDataFormatter {
         doFormatTestSequential(formatter1);
         doFormatTestConcurrent(formatter1, formatter2);
     }
-    
+
     /**
      * Bug #64319
      *
@@ -976,24 +977,24 @@ public class TestDataFormatter {
     @Test
     public void testWithEinFormat() throws Exception {
         DataFormatter formatter = new DataFormatter();
-        
+
         // Format string literals with an E in them shouldn't be
         //  treated as a Scientific format, so shouldn't become E+
-        assertEquals("TRUE", formatter.formatRawCellContents(1.0, 170, 
+        assertEquals("TRUE", formatter.formatRawCellContents(1.0, 170,
                        "\"TRUE\";\"FALSE\";\"ZERO\""));
-        assertEquals("ZERO", formatter.formatRawCellContents(0.0, 170, 
+        assertEquals("ZERO", formatter.formatRawCellContents(0.0, 170,
                        "\"TRUE\";\"FALSE\";\"ZERO\""));
-        assertEquals("FALSE", formatter.formatRawCellContents(-1.0, 170, 
+        assertEquals("FALSE", formatter.formatRawCellContents(-1.0, 170,
                        "\"TRUE\";\"FALSE\";\"ZERO\""));
 
         // Explicit Scientific format does need E+
-        assertEquals("1E+05", formatter.formatRawCellContents(1e05, 170, 
+        assertEquals("1E+05", formatter.formatRawCellContents(1e05, 170,
                        "0E+00"));
-        assertEquals("1E+10", formatter.formatRawCellContents(1e10, 170, 
+        assertEquals("1E+10", formatter.formatRawCellContents(1e10, 170,
                        "0E+00"));
-        assertEquals("1E-10", formatter.formatRawCellContents(1e-10, 170, 
+        assertEquals("1E-10", formatter.formatRawCellContents(1e-10, 170,
                       "0E+00"));
-        
+
         // Large numbers with "General" need E+
         assertEquals("100000", formatter.formatRawCellContents(1e05, -1, "General"));
         assertEquals("1E+12", formatter.formatRawCellContents(1e12, -1, "General"));
@@ -1001,20 +1002,20 @@ public class TestDataFormatter {
         // Less common Scientific-like formats which don't ask for
         //  the + on >1 exponentials don't need it adding
         // (Java will put the -ve ones in for E-## automatically)
-        assertEquals("1E5", formatter.formatRawCellContents(1e05, 170, 
+        assertEquals("1E5", formatter.formatRawCellContents(1e05, 170,
                        "0E0"));
-        assertEquals("1E10", formatter.formatRawCellContents(1e10, 170, 
+        assertEquals("1E10", formatter.formatRawCellContents(1e10, 170,
                        "0E0"));
-        assertEquals("1E-10", formatter.formatRawCellContents(1e-10, 170, 
+        assertEquals("1E-10", formatter.formatRawCellContents(1e-10, 170,
                        "0E0"));
 
-        assertEquals("1E5", formatter.formatRawCellContents(1e05, 170, 
+        assertEquals("1E5", formatter.formatRawCellContents(1e05, 170,
                        "0E-0"));
-        assertEquals("1E10", formatter.formatRawCellContents(1e10, 170, 
+        assertEquals("1E10", formatter.formatRawCellContents(1e10, 170,
                        "0E-0"));
-        assertEquals("1E-10", formatter.formatRawCellContents(1e-10, 170, 
+        assertEquals("1E-10", formatter.formatRawCellContents(1e-10, 170,
                        "0E-0"));
-        
+
     }
 
     private void doFormatTestSequential(DataFormatter formatter) {
@@ -1052,7 +1053,7 @@ public class TestDataFormatter {
         int formatIndex = 105;
         String formatString = "[$-F400]m/d/yy h:mm:ss\\ AM/PM;[$-F400]m/d/yy h:mm:ss\\ AM/PM;_-* \"\"??_-;_-@_-";
         String actual = formatter.formatRawCellContents(n, formatIndex, formatString);
-        assertEquals("Failed on iteration " + iteration, expected, actual);
+        assertEquals(expected, actual, "Failed on iteration " + iteration);
         return true;
     }
 

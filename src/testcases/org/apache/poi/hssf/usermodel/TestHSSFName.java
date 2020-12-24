@@ -17,6 +17,12 @@
 
 package org.apache.poi.hssf.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.apache.poi.POITestCase;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -26,11 +32,8 @@ import org.apache.poi.ss.formula.FormulaType;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.BaseTestNamedRange;
 import org.apache.poi.ss.usermodel.Name;
-import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests various functionality having to do with {@link org.apache.poi.ss.usermodel.Name}.
@@ -126,7 +129,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
 
         HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
         HSSFName nm = wb2.getNameAt(wb2.getNameIndex("RangeTest"));
-        assertEquals("Name is " + nm.getNameName(), "RangeTest", nm.getNameName());
+        assertEquals("RangeTest", nm.getNameName(), "Name is " + nm.getNameName());
         assertEquals(wb2.getSheetName(0)+"!$D$4:$E$8", nm.getRefersToFormula());
         wb2.close();
         wb1.close();
@@ -152,16 +155,16 @@ public final class TestHSSFName extends BaseTestNamedRange {
         String reference = namedRange1.getRefersToFormula();
 
         assertEquals(sheetName+"!$A$1:$D$10", reference);
-        assertEquals(false, namedRange1.isDeleted());
-        assertEquals(false, namedRange1.isHidden());
+        assertFalse(namedRange1.isDeleted());
+        assertFalse(namedRange1.isHidden());
 
         HSSFName namedRange2 = wb.getNameAt(1);
 
         assertEquals(sheetName+"!$D$17:$G$27", namedRange2.getRefersToFormula());
         assertEquals("SecondNamedRange", namedRange2.getNameName());
-        assertEquals(false, namedRange2.isDeleted());
-        assertEquals(false, namedRange2.isHidden());
-        
+        assertFalse(namedRange2.isDeleted());
+        assertFalse(namedRange2.isHidden());
+
         wb.close();
     }
 
@@ -184,7 +187,7 @@ public final class TestHSSFName extends BaseTestNamedRange {
 
         name.setRefersToFormula(newReference);
         assertEquals(newReference, name.getRefersToFormula());
-        
+
         wb.close();
     }
 
@@ -204,26 +207,23 @@ public final class TestHSSFName extends BaseTestNamedRange {
 
     @Test
     public void testDeletedReference() throws Exception {
-        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("24207.xls");
-        assertEquals(2, wb.getNumberOfNames());
+        try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("24207.xls")) {
+            assertEquals(2, wb.getNumberOfNames());
 
-        HSSFName name1 = wb.getNameAt(0);
-        assertEquals("a", name1.getNameName());
-        assertEquals("Sheet1!$A$1", name1.getRefersToFormula());
-        wb.getCreationHelper().createAreaReference(name1.getRefersToFormula());
-        assertTrue("Successfully constructed first reference", true);
+            HSSFName name1 = wb.getNameAt(0);
+            assertEquals("a", name1.getNameName());
+            assertEquals("Sheet1!$A$1", name1.getRefersToFormula());
+            wb.getCreationHelper().createAreaReference(name1.getRefersToFormula());
 
-        HSSFName name2 = wb.getNameAt(1);
-        assertEquals("b", name2.getNameName());
-        assertEquals("Sheet1!#REF!", name2.getRefersToFormula());
-        assertTrue(name2.isDeleted());
-        try {
-            wb.getCreationHelper().createAreaReference(name2.getRefersToFormula());
-            fail("attempt to supply an invalid reference to AreaReference constructor results in exception");
-        } catch (IllegalArgumentException e) { // TODO - use a stronger typed exception for this condition
-            // expected during successful test
+            HSSFName name2 = wb.getNameAt(1);
+            assertEquals("b", name2.getNameName());
+            assertEquals("Sheet1!#REF!", name2.getRefersToFormula());
+            assertTrue(name2.isDeleted());
+            // TODO - use a stronger typed exception for this condition
+            assertThrows(IllegalArgumentException.class, () ->
+                wb.getCreationHelper().createAreaReference(name2.getRefersToFormula()),
+                "attempt to supply an invalid reference to AreaReference constructor results in exception");
         }
-        wb.close();
     }
 
     /**

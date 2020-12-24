@@ -17,10 +17,10 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ss.usermodel.DifferentialStyleProvider;
 import org.apache.poi.ss.usermodel.FontFormatting;
@@ -30,7 +30,7 @@ import org.apache.poi.ss.usermodel.TableStyle;
 import org.apache.poi.ss.usermodel.TableStyleInfo;
 import org.apache.poi.ss.usermodel.TableStyleType;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test built-in table styles
@@ -43,37 +43,35 @@ public class TestTableStyles {
     @Test
     public void testBuiltinStyleInit() {
         TableStyle style = XSSFBuiltinTableStyle.TableStyleMedium2.getStyle();
-        assertNotNull("no style found for Medium2", style);
-        assertNull("Should not have style info for blankRow", style.getStyle(TableStyleType.blankRow));
+        assertNotNull(style, "no style found for Medium2");
+        assertNull(style.getStyle(TableStyleType.blankRow), "Should not have style info for blankRow");
         DifferentialStyleProvider headerRow = style.getStyle(TableStyleType.headerRow);
-        assertNotNull("no header row style", headerRow);
+        assertNotNull(headerRow, "no header row style");
         FontFormatting font = headerRow.getFontFormatting();
-        assertNotNull("No header row font formatting", font);
-        assertTrue("header row not bold", font.isBold());
+        assertNotNull(font, "No header row font formatting");
+        assertTrue(font.isBold(), "header row not bold");
         PatternFormatting fill = headerRow.getPatternFormatting();
-        assertNotNull("No header fill", fill);
-        assertEquals("wrong header fill", 4, ((XSSFColor) fill.getFillBackgroundColorColor()).getTheme());
+        assertNotNull(fill, "No header fill");
+        assertEquals(4, ((XSSFColor) fill.getFillBackgroundColorColor()).getTheme(), "wrong header fill");
     }
 
     @Test
     public void testCustomStyle() throws Exception {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("tableStyle.xlsx");
-        
-        Table table = wb.getTable("Table1");
-        assertNotNull("missing table", table);
-        
-        TableStyleInfo style = table.getStyle();
-        assertNotNull("Missing table style info", style);
-        assertNotNull("Missing table style", style.getStyle());
-        assertEquals("Wrong name", "TestTableStyle", style.getName());
-        assertEquals("Wrong name", "TestTableStyle", style.getStyle().getName());
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("tableStyle.xlsx")) {
+            Table table = wb.getTable("Table1");
+            assertNotNull(table, "missing table");
 
-        DifferentialStyleProvider firstColumn = style.getStyle().getStyle(TableStyleType.firstColumn);
-        assertNotNull("no first column style", firstColumn);
-        FontFormatting font = firstColumn.getFontFormatting();
-        assertNotNull("no first col font", font);
-        assertTrue("wrong first col bold", font.isBold());
-        
-        wb.close();
+            TableStyleInfo style = table.getStyle();
+            assertNotNull(style, "Missing table style info");
+            assertNotNull(style.getStyle(), "Missing table style");
+            assertEquals("TestTableStyle", style.getName(), "Wrong name");
+            assertEquals("TestTableStyle", style.getStyle().getName(), "Wrong name");
+
+            DifferentialStyleProvider firstColumn = style.getStyle().getStyle(TableStyleType.firstColumn);
+            assertNotNull(firstColumn, "no first column style");
+            FontFormatting font = firstColumn.getFontFormatting();
+            assertNotNull(font, "no first col font");
+            assertTrue(font.isBold(), "wrong first col bold");
+        }
     }
 }

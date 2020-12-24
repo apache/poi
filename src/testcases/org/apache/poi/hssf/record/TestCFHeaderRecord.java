@@ -18,12 +18,12 @@
 package org.apache.poi.hssf.record;
 
 import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the serialization and deserialization of the {@link CFHeaderRecord}
@@ -133,7 +133,7 @@ public final class TestCFHeaderRecord {
 
 		CFHeaderRecord record = new CFHeaderRecord(TestcaseRecordInputStream.create(CFHeaderRecord.sid, recordData));
 
-		assertEquals("#CFRULES", 3, record.getNumberOfConditionalFormats());
+		assertEquals(3, record.getNumberOfConditionalFormats(), "#CFRULES");
 		assertTrue(record.getNeedRecalculation());
 		confirm(record.getEnclosingCellRange(), 0, 3, 0, 3);
 		CellRangeAddress[] ranges = record.getCellRanges();
@@ -180,7 +180,7 @@ public final class TestCFHeaderRecord {
 		// bug 44739b - invalid cell range (-25536, 2, -15536, 2)
 		CFHeaderRecord record = new CFHeaderRecord(TestcaseRecordInputStream.create(CFHeaderRecord.sid, recordData));
 
-		assertEquals("#CFRULES", 19, record.getNumberOfConditionalFormats());
+		assertEquals(19, record.getNumberOfConditionalFormats(), "#CFRULES");
 		assertFalse(record.getNeedRecalculation());
 		confirm(record.getEnclosingCellRange(), 0, 65535, 0, 255);
 		CellRangeAddress[] ranges = record.getCellRanges();
@@ -194,9 +194,9 @@ public final class TestCFHeaderRecord {
 	}
 
 	private static void confirm(CellRangeAddress cr, int expFirstRow, int expLastRow, int expFirstCol, int expLastColumn) {
-		assertEquals("first row", expFirstRow, cr.getFirstRow());
-		assertEquals("last row", expLastRow, cr.getLastRow());
-		assertEquals("first column", expFirstCol, cr.getFirstColumn());
-		assertEquals("last column", expLastColumn, cr.getLastColumn());
+		assertEquals(expFirstRow, cr.getFirstRow(), "first row");
+		assertEquals(expLastRow, cr.getLastRow(), "last row");
+		assertEquals(expFirstCol, cr.getFirstColumn(), "first column");
+		assertEquals(expLastColumn, cr.getLastColumn(), "last column");
 	}
 }

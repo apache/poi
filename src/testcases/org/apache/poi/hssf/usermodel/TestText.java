@@ -18,15 +18,15 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.apache.poi.poifs.storage.RawDataUtil.decompress;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.ObjRecord;
 import org.apache.poi.hssf.record.TextObjectRecord;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Evgeniy Berlog
@@ -75,7 +75,7 @@ public class TestText {
 
         assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);
-        
+
         TextObjectRecord tor = textbox.getTextObjectRecord();
 
         expected = decompress("H4sIAAAAAAAAANvGKMQgxMSABgBGi8T+FgAAAA==");
@@ -83,7 +83,7 @@ public class TestText {
 
         assertEquals(expected.length, actual.length);
         assertArrayEquals(expected, actual);
-        
+
         wb.close();
     }
 
@@ -118,7 +118,7 @@ public class TestText {
         assertEquals(((HSSFTextbox) patriarch.getChildren().get(0)).getString().getString(), "just for test");
         assertEquals(((HSSFTextbox) patriarch.getChildren().get(1)).getString().getString(), "just for test2");
         assertEquals(((HSSFTextbox) patriarch.getChildren().get(2)).getString().getString(), "text3");
-        
+
         wb3.close();
     }
 
@@ -191,7 +191,7 @@ public class TestText {
         assertEquals(textbox.getMarginLeft(), 81);
         assertEquals(textbox.getMarginRight(), 91);
         assertEquals(textbox.getMarginTop(), 101);
-        
+
         wb3.close();
     }
 

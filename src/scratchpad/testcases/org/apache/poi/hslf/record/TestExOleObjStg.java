@@ -18,10 +18,9 @@
 package org.apache.poi.hslf.record;
 
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,8 +28,8 @@ import java.io.InputStream;
 
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that {@link ExOleObjStg} works properly
@@ -40,8 +39,8 @@ public final class TestExOleObjStg {
     // From a real file (embedded SWF control)
     // <ExOleObjStg info="16" type="4113" size="347" offset="4322" header="10 00 11 10 5B 01 00 00 ">....
     private static byte[] data;
-    
-    @BeforeClass
+
+    @BeforeAll
     public static void init() throws IOException {
         data = org.apache.poi.poifs.storage.RawDataUtil.decompress(
         "H4sIAAAAAAAAAAFjAZz+EAAREFsBAAAADgAAeJy7cF7wwcKNUg8Z0IAdAzPDv/+cDGxIYoxAzATjCDAwsEDF/"+
@@ -62,12 +61,10 @@ public final class TestExOleObjStg {
         byte[] oledata = readAll(record.getData());
         assertEquals(len, oledata.length);
 
-        POIFSFileSystem fs = new POIFSFileSystem(record.getData());
-        assertTrue("Constructed POIFS from ExOleObjStg data", true);
-        DocumentEntry doc = (DocumentEntry)fs.getRoot().getEntry("Contents");
-        assertNotNull(doc);
-        assertTrue("Fetched the Contents stream containing OLE properties", true);
-        fs.close();
+        try (POIFSFileSystem fs = new POIFSFileSystem(record.getData())) {
+            DocumentEntry doc = (DocumentEntry) fs.getRoot().getEntry("Contents");
+            assertNotNull(doc);
+        }
     }
 
     @Test

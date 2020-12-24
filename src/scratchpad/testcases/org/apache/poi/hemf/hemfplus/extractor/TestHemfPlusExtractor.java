@@ -18,7 +18,7 @@
 package org.apache.poi.hemf.hemfplus.extractor;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.InputStream;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import org.apache.poi.hemf.record.emfplus.HemfPlusHeader;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecord;
 import org.apache.poi.hemf.record.emfplus.HemfPlusRecordType;
 import org.apache.poi.hemf.usermodel.HemfPicture;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestHemfPlusExtractor {
 

@@ -17,17 +17,8 @@
 
 package org.apache.poi.xssf;
 
-import org.apache.poi.ooxml.POIXMLException;
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.apache.poi.openxml4j.opc.OPCPackage;
-import org.apache.poi.util.MemoryLeakVerifier;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFRow;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.After;
-import org.junit.Test;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -36,8 +27,17 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.fail;
+import org.apache.poi.ooxml.POIXMLException;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
+import org.apache.poi.openxml4j.opc.OPCPackage;
+import org.apache.poi.util.MemoryLeakVerifier;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 
 /**
  * A test which uses {@link MemoryLeakVerifier} to ensure that certain
@@ -52,9 +52,9 @@ public class XSSFMemoryLeakTests {
     // verify that they do not keep certain objects in memory,
     // e.g. nested CT... objects which should be released
     @SuppressWarnings("MismatchedQueryAndUpdateOfCollection")
-    private List<Object> references = new ArrayList<>();
+    private final List<Object> references = new ArrayList<>();
 
-    @After
+    @AfterEach
     public void tearDown() {
         verifier.assertGarbageCollected();
     }
@@ -76,10 +76,8 @@ public class XSSFMemoryLeakTests {
         }
 
         CTCell ctCell = cell.getCTCell();
-        assertSame("The CTCell should not be replaced",
-                cell.getCTCell(), ctCell);
-        assertSame("The CTCell in the row should not be replaced",
-                row.getCTRow().getCArray(0), ctCell);
+        assertSame(cell.getCTCell(), ctCell, "The CTCell should not be replaced");
+        assertSame(row.getCTRow().getCArray(0), ctCell, "The CTCell in the row should not be replaced");
 
         wb.close();
     }
@@ -147,23 +145,19 @@ public class XSSFMemoryLeakTests {
         wb1.close();
     }
 
-    @Test(expected = POIXMLException.class)
-    public void testFileLeak() throws IOException, InvalidFormatException {
+    @Test
+    public void testFileLeak() {
         File file = XSSFTestDataSamples.getSampleFile("xlsx-corrupted.xlsx");
         verifier.addObject(file);
-        try (XSSFWorkbook ignored = new XSSFWorkbook(file)) {
-            fail("Should catch exception as the file is corrupted");
-        }
+        assertThrows(POIXMLException.class, () -> new XSSFWorkbook(file), "Should catch exception as the file is corrupted");
     }
 
-    @Test(expected = POIXMLException.class)
+    @Test
     public void testFileLeak2() throws IOException, InvalidFormatException {
         File file = XSSFTestDataSamples.getSampleFile("xlsx-corrupted.xlsx");
         verifier.addObject(file);
         try (OPCPackage pkg = OPCPackage.open(file)) {
-            try (XSSFWorkbook ignored = new XSSFWorkbook(pkg)) {
-                fail("Should catch exception as the file is corrupted");
-            }
+            assertThrows(POIXMLException.class, () -> new XSSFWorkbook(pkg), "Should catch exception as the file is corrupted");
         }
     }
 }

@@ -18,10 +18,10 @@
  */
 package org.apache.poi.ss.tests.formula;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -38,7 +38,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFEvaluationWorkbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test {@link FormulaParser}'s handling of row numbers at the edge of the
@@ -51,13 +51,8 @@ public class TestFormulaParser {
     @Test
     public void testHSSFFailsForOver65536() {
         FormulaParsingWorkbook workbook = HSSFEvaluationWorkbook.create(new HSSFWorkbook());
-        try {
-            FormulaParser.parse("Sheet1!1:65537", workbook, FormulaType.CELL, 0);
-            fail("Expected exception");
-        }
-        catch (FormulaParseException expected) {
-            // expected here
-        }
+        assertThrows(FormulaParseException.class, () ->
+            FormulaParser.parse("Sheet1!1:65537", workbook, FormulaType.CELL, 0));
     }
 
     private static void checkHSSFFormula(String formula) {
@@ -90,13 +85,8 @@ public class TestFormulaParser {
     @Test
     public void testXSSFFailCase() {
         FormulaParsingWorkbook workbook = XSSFEvaluationWorkbook.create(new XSSFWorkbook());
-        try {
-            FormulaParser.parse("Sheet1!1:1048577", workbook, FormulaType.CELL, 0); // one more than max rows.
-            fail("Expected exception");
-        }
-        catch (FormulaParseException expected) {
-            // expected here
-        }
+        assertThrows(FormulaParseException.class, () ->
+            FormulaParser.parse("Sheet1!1:1048577", workbook, FormulaType.CELL, 0), "one more than max rows");
     }
 
     // copied from org.apache.poi.hssf.model.TestFormulaParser
@@ -175,13 +165,9 @@ public class TestFormulaParser {
     /** confirm formula has invalid syntax and parsing the formula results in FormulaParseException
      */
     private static void parseExpectedException(String formula, FormulaParsingWorkbook wb) {
-        try {
-            FormulaParser.parse(formula, wb, FormulaType.CELL, -1);
-            fail("Expected FormulaParseException: " + formula);
-        } catch (final FormulaParseException e) {
-            // expected during successful test
-            assertNotNull(e.getMessage());
-        }
+        FormulaParseException e = assertThrows(FormulaParseException.class, () ->
+            FormulaParser.parse(formula, wb, FormulaType.CELL, -1));
+        assertNotNull(e.getMessage());
     }
 
     // trivial case for bug 60219: FormulaParser can't parse external references when sheet name is quoted
@@ -191,13 +177,13 @@ public class TestFormulaParser {
         XSSFEvaluationWorkbook fpwb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs = FormulaParser.parse("[1]Sheet1!A1", fpwb, FormulaType.CELL, -1);
         // org.apache.poi.ss.formula.ptg.Ref3DPxg [ [workbook=1] sheet=Sheet 1 ! A1]
-        assertEquals("Ptgs length", 1, ptgs.length);
-        assertTrue("Ptg class", ptgs[0] instanceof Ref3DPxg);
+        assertEquals(1, ptgs.length, "Ptgs length");
+        assertTrue(ptgs[0] instanceof Ref3DPxg, "Ptg class");
         Ref3DPxg pxg = (Ref3DPxg) ptgs[0];
-        assertEquals("External workbook number", 1, pxg.getExternalWorkbookNumber());
-        assertEquals("Sheet name", "Sheet1", pxg.getSheetName());
-        assertEquals("Row", 0, pxg.getRow());
-        assertEquals("Column", 0, pxg.getColumn());
+        assertEquals(1, pxg.getExternalWorkbookNumber(), "External workbook number");
+        assertEquals("Sheet1", pxg.getSheetName(), "Sheet name");
+        assertEquals(0, pxg.getRow(), "Row");
+        assertEquals(0, pxg.getColumn(), "Column");
         wb.close();
     }
 
@@ -208,13 +194,13 @@ public class TestFormulaParser {
         XSSFEvaluationWorkbook fpwb = XSSFEvaluationWorkbook.create(wb);
         Ptg[] ptgs = FormulaParser.parse("'[1]Sheet 1'!A1", fpwb, FormulaType.CELL, -1);
         // org.apache.poi.ss.formula.ptg.Ref3DPxg [ [workbook=1] sheet=Sheet 1 ! A1]
-        assertEquals("Ptgs length", 1, ptgs.length);
-        assertTrue("Ptg class", ptgs[0] instanceof Ref3DPxg);
+        assertEquals(1, ptgs.length, "Ptgs length");
+        assertTrue(ptgs[0] instanceof Ref3DPxg, "Ptg class");
         Ref3DPxg pxg = (Ref3DPxg) ptgs[0];
-        assertEquals("External workbook number", 1, pxg.getExternalWorkbookNumber());
-        assertEquals("Sheet name", "Sheet 1", pxg.getSheetName());
-        assertEquals("Row", 0, pxg.getRow());
-        assertEquals("Column", 0, pxg.getColumn());
+        assertEquals(1, pxg.getExternalWorkbookNumber(), "External workbook number");
+        assertEquals("Sheet 1", pxg.getSheetName(), "Sheet name");
+        assertEquals(0, pxg.getRow(), "Row");
+        assertEquals(0, pxg.getColumn(), "Column");
         wb.close();
     }
 

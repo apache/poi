@@ -17,18 +17,17 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.formula.IStabilityClassifier;
 import org.apache.poi.ss.formula.OperationEvaluationContext;
 import org.apache.poi.ss.formula.WorkbookEvaluator;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link Bin2Dec}
@@ -44,14 +43,14 @@ public final class TestBin2Dec {
 
     private static void confirmValue(String msg, String number1, String expected) {
 		ValueEval result = invokeValue(number1);
-		assertEquals("Had: " + result, NumberEval.class, result.getClass());
-		assertEquals(msg, expected, ((NumberEval) result).getStringValue());
+		assertEquals(NumberEval.class, result.getClass(), "Had: " + result);
+		assertEquals(expected, ((NumberEval) result).getStringValue(), msg);
 	}
 
     private static void confirmValueError(String msg, String number1, ErrorEval numError) {
         ValueEval result = invokeValue(number1);
         assertEquals(ErrorEval.class, result.getClass());
-        assertEquals(msg, numError, result);
+        assertEquals(numError, result, msg);
     }
 
     @Test
@@ -95,15 +94,8 @@ public final class TestBin2Dec {
         HSSFWorkbook wb = new HSSFWorkbook();
         wb.createSheet();
         HSSFEvaluationWorkbook workbook = HSSFEvaluationWorkbook.create(wb);
-        WorkbookEvaluator workbookEvaluator = new WorkbookEvaluator(workbook, new IStabilityClassifier() {
-
-            @Override
-            public boolean isCellFinal(int sheetIndex, int rowIndex, int columnIndex) {
-                return true;
-            }
-        }, null);
-        return new OperationEvaluationContext(workbookEvaluator,
-                workbook, 0, 0, 0, null);
+        WorkbookEvaluator workbookEvaluator = new WorkbookEvaluator(workbook, (sheetIndex, rowIndex, columnIndex) -> true, null);
+        return new OperationEvaluationContext(workbookEvaluator, workbook, 0, 0, 0, null);
     }
 
     @Test

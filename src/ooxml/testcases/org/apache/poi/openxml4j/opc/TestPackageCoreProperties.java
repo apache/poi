@@ -33,11 +33,11 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.officeDocument.x2006.customProperties.CTProperty;
 
 import static org.apache.poi.openxml4j.opc.TestContentType.isOldXercesActive;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public final class TestPackageCoreProperties {
 	/**
@@ -204,7 +204,7 @@ public final class TestPackageCoreProperties {
         props.setModifiedProperty(strDate);
         assertEquals(strDate, props.getModifiedPropertyString());
         assertEquals(date, props.getModifiedProperty().get());
-        
+
         // Tidy
         pkg.close();
     }
@@ -229,57 +229,55 @@ public final class TestPackageCoreProperties {
 
 	@Test
 	public void testEntitiesInCoreProps_56164() throws Exception {
-        InputStream is = OpenXML4JTestDataSamples.openSampleStream("CorePropertiesHasEntities.ooxml");
-        OPCPackage p = OPCPackage.open(is);
-        is.close();
+        try (InputStream is = OpenXML4JTestDataSamples.openSampleStream("CorePropertiesHasEntities.ooxml");
+        OPCPackage p = OPCPackage.open(is)) {
 
-        // Should have 3 root relationships
-        boolean foundDocRel = false, foundCorePropRel = false, foundExtPropRel = false;
-        for (PackageRelationship pr : p.getRelationships()) {
-            if (pr.getRelationshipType().equals(PackageRelationshipTypes.CORE_DOCUMENT))
-                foundDocRel = true;
-            if (pr.getRelationshipType().equals(PackageRelationshipTypes.CORE_PROPERTIES))
-                foundCorePropRel = true;
-            if (pr.getRelationshipType().equals(PackageRelationshipTypes.EXTENDED_PROPERTIES))
-                foundExtPropRel = true;
+            // Should have 3 root relationships
+            boolean foundDocRel = false, foundCorePropRel = false, foundExtPropRel = false;
+            for (PackageRelationship pr : p.getRelationships()) {
+                if (pr.getRelationshipType().equals(PackageRelationshipTypes.CORE_DOCUMENT))
+                    foundDocRel = true;
+                if (pr.getRelationshipType().equals(PackageRelationshipTypes.CORE_PROPERTIES))
+                    foundCorePropRel = true;
+                if (pr.getRelationshipType().equals(PackageRelationshipTypes.EXTENDED_PROPERTIES))
+                    foundExtPropRel = true;
+            }
+            assertTrue(foundDocRel, "Core Doc Relationship not found in " + p.getRelationships());
+            assertTrue(foundCorePropRel, "Core Props Relationship not found in " + p.getRelationships());
+            assertTrue(foundExtPropRel, "Ext Props Relationship not found in " + p.getRelationships());
+
+            // Get the Core Properties
+            PackagePropertiesPart props = (PackagePropertiesPart) p.getPackageProperties();
+
+            // used to resolve a value but now we ignore DTD entities for security reasons
+            assertEquals(isOldXercesActive(), props.getCreatorProperty().isPresent());
         }
-        assertTrue("Core/Doc Relationship not found in " + p.getRelationships(), foundDocRel);
-        assertTrue("Core Props Relationship not found in " + p.getRelationships(), foundCorePropRel);
-        assertTrue("Ext Props Relationship not found in " + p.getRelationships(), foundExtPropRel);
-
-        // Get the Core Properties
-        PackagePropertiesPart props = (PackagePropertiesPart)p.getPackageProperties();
-        
-        // used to resolve a value but now we ignore DTD entities for security reasons
-        assertEquals(isOldXercesActive(), props.getCreatorProperty().isPresent());
-
-        p.close();
     }
-    
+
 	@Test
 	public void testListOfCustomProperties() throws Exception {
         File inp = POIDataSamples.getSpreadSheetInstance().getFile("ExcelWithAttachments.xlsm");
         OPCPackage pkg = OPCPackage.open(inp, PackageAccess.READ);
         XSSFWorkbook wb = new XSSFWorkbook(pkg);
-        
+
         assertNotNull(wb.getProperties());
         assertNotNull(wb.getProperties().getCustomProperties());
-        
+
         for (CTProperty prop : wb.getProperties().getCustomProperties().getUnderlyingProperties().getPropertyList()) {
             assertNotNull(prop);
         }
-        
+
         wb.close();
         pkg.close();
     }
-	
+
 	@Test
 	public void testAlternateCorePropertyTimezones() throws Exception {
         InputStream is = OpenXML4JTestDataSamples.openSampleStream("OPCCompliance_CoreProperties_AlternateTimezones.docx");
         OPCPackage pkg = OPCPackage.open(is);
         PackagePropertiesPart props = (PackagePropertiesPart)pkg.getPackageProperties();
         is.close();
-        
+
         // We need predictable dates for testing!
         SimpleDateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'", Locale.ROOT);
         df.setTimeZone(LocaleUtil.TIMEZONE_UTC);
@@ -287,37 +285,37 @@ public final class TestPackageCoreProperties {
         // Check text properties first
         assertEquals("Lorem Ipsum", props.getTitleProperty().get());
         assertEquals("Apache POI", props.getCreatorProperty().get());
-        
+
         // Created at has a +3 timezone and milliseconds
         //   2006-10-13T18:06:00.123+03:00
         // = 2006-10-13T15:06:00.123+00:00
         assertEquals("2006-10-13T15:06:00Z", props.getCreatedPropertyString());
         assertEquals("2006-10-13T15:06:00.123Z", df.format(props.getCreatedProperty().get()));
-        
+
         // Modified at has a -13 timezone but no milliseconds
         //   2007-06-20T07:59:00-13:00
         // = 2007-06-20T20:59:00-13:00
         assertEquals("2007-06-20T20:59:00Z", props.getModifiedPropertyString());
         assertEquals("2007-06-20T20:59:00.000Z", df.format(props.getModifiedProperty().get()));
-        
-        
+
+
         // Ensure we can change them with other timezones and still read back OK
         props.setCreatedProperty("2007-06-20T20:57:00+13:00");
         props.setModifiedProperty("2007-06-20T20:59:00.123-13:00");
-        
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         pkg.save(baos);
         pkg = OPCPackage.open(new ByteArrayInputStream(baos.toByteArray()));
-        
+
         // Check text properties first - should be unchanged
         assertEquals("Lorem Ipsum", props.getTitleProperty().get());
         assertEquals("Apache POI", props.getCreatorProperty().get());
-        
+
         // Check the updated times
         //   2007-06-20T20:57:00+13:00
         // = 2007-06-20T07:57:00Z
         assertEquals("2007-06-20T07:57:00.000Z", df.format(props.getCreatedProperty().get()));
-        
+
         //   2007-06-20T20:59:00.123-13:00
         // = 2007-06-21T09:59:00.123Z
         assertEquals("2007-06-21T09:59:00.123Z", df.format(props.getModifiedProperty().get()));

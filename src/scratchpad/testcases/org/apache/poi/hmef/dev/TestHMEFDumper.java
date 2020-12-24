@@ -20,17 +20,20 @@
 ==================================================================== */
 package org.apache.poi.hmef.dev;
 
+
+import static org.junit.jupiter.api.Assertions.assertThrows;
+
 import java.io.File;
 import java.io.PrintStream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.NullPrintStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestHMEFDumper {
-    @Test(expected = IllegalArgumentException.class)
-    public void noArguments() throws Exception {
-        doMain();
+    @Test
+    public void noArguments() {
+        assertThrows(IllegalArgumentException.class, TestHMEFDumper::doMain);
     }
 
     @Test

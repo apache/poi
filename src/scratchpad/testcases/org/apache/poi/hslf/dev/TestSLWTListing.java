@@ -16,7 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hslf.dev;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.IOException;
@@ -24,20 +25,20 @@ import java.io.PrintStream;
 
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.util.NullPrintStream;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class TestSLWTListing extends BasePPTIteratingTest {
     private static PrintStream oldStdErr;
 
-    @BeforeClass
+    @BeforeAll
     public static void muteStdErr() {
         oldStdErr = System.err;
         System.setErr(new NullPrintStream());
     }
 
-    @AfterClass
+    @AfterAll
     public static void restoreStdErr() {
         System.setErr(oldStdErr);
     }
@@ -45,12 +46,7 @@ public class TestSLWTListing extends BasePPTIteratingTest {
     @Test
     public void testMain() throws IOException {
         // calls System.exit(): SLWTListing.main(new String[0]);
-        try {
-            SLWTListing.main(new String[]{"invalidfile"});
-            fail("Should catch exception here");
-        } catch (EmptyFileException e) {
-            // expected here
-        }
+        assertThrows(EmptyFileException.class, () -> SLWTListing.main(new String[]{"invalidfile"}));
     }
 
     @Override

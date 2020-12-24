@@ -16,13 +16,17 @@
 ==================================================================== */
 package org.apache.poi.hssf.usermodel;
 
-import java.io.IOException;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.apache.poi.ss.usermodel.*;
-import org.junit.Test;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import org.apache.poi.ss.usermodel.BorderStyle;
+import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.FillPatternType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.apache.poi.ss.usermodel.IndexedColors;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.ss.usermodel.Workbook;
+import org.junit.jupiter.api.Test;
 
 public final class TestHSSFOptimiser {
     @Test
@@ -324,8 +328,8 @@ public final class TestHSSFOptimiser {
     @Test
     public void testColumnAndRowStyles() {
         HSSFWorkbook wb = new HSSFWorkbook();
-        assertEquals("Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()",
-                21, wb.getNumCellStyles());
+        assertEquals(21, wb.getNumCellStyles(),
+            "Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()");
 
         HSSFSheet sheet = wb.createSheet();
 
@@ -357,8 +361,8 @@ public final class TestHSSFOptimiser {
     @Test
     public void testUnusedStyle() {
         HSSFWorkbook wb = new HSSFWorkbook();
-        assertEquals("Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()",
-                21, wb.getNumCellStyles());
+        assertEquals(21, wb.getNumCellStyles(),
+            "Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()");
 
         HSSFSheet sheet = wb.createSheet();
 
@@ -395,8 +399,8 @@ public final class TestHSSFOptimiser {
     @Test
     public void testUnusedStyleOneUsed() {
         HSSFWorkbook wb = new HSSFWorkbook();
-        assertEquals("Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()",
-                21, wb.getNumCellStyles());
+        assertEquals(21, wb.getNumCellStyles(),
+            "Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()");
 
         HSSFSheet sheet = wb.createSheet();
 
@@ -431,10 +435,10 @@ public final class TestHSSFOptimiser {
     }
 
     @Test
-    public void testDefaultColumnStyleWitoutCell() throws IOException {
+    public void testDefaultColumnStyleWitoutCell() {
         HSSFWorkbook wb = new HSSFWorkbook();
-        assertEquals("Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()",
-                21, wb.getNumCellStyles());
+        assertEquals(21, wb.getNumCellStyles(),
+            "Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()");
 
         HSSFSheet sheet = wb.createSheet();
 
@@ -473,10 +477,10 @@ public final class TestHSSFOptimiser {
     }
 
     @Test
-    public void testUserDefinedStylesAreNeverOptimizedAway() throws IOException {
+    public void testUserDefinedStylesAreNeverOptimizedAway() {
         HSSFWorkbook wb = new HSSFWorkbook();
-        assertEquals("Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()",
-                21, wb.getNumCellStyles());
+        assertEquals(21, wb.getNumCellStyles(),
+            "Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()");
 
         HSSFSheet sheet = wb.createSheet();
 
@@ -532,10 +536,10 @@ public final class TestHSSFOptimiser {
     }
 
     @Test
-    public void testBug57517() throws IOException {
+    public void testBug57517() {
         HSSFWorkbook wb = new HSSFWorkbook();
-        assertEquals("Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()",
-                21, wb.getNumCellStyles());
+        assertEquals(21, wb.getNumCellStyles(),
+            "Usually we have 21 pre-defined styles in a newly created Workbook, see InternalWorkbook.createWorkbook()");
 
         HSSFSheet sheet = wb.createSheet();
 
@@ -599,7 +603,7 @@ public final class TestHSSFOptimiser {
         // Create a test font and style, and use them
         for (int i = 3; i < 6; i++) {
             // Set Cell Color : GREEN
-            HSSFRow row = sheet.getRow(0 + 9);
+            HSSFRow row = sheet.getRow(9);
             row.createCell(i - 3).setCellStyle(
                     createColorStyle(wb, IndexedColors.GREEN));
             obj_cnt++;

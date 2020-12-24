@@ -17,15 +17,15 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestMultiOperandNumericFunction {
 
@@ -36,7 +36,7 @@ public class TestMultiOperandNumericFunction {
             protected double evaluate(double[] values) throws EvaluationException {
                 return 0;
             }
-            
+
         };
         assertEquals(SpreadsheetVersion.EXCEL2007.getMaxFunctionArgs(), fun.getMaxNumOperands());
     }

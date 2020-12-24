@@ -98,28 +98,29 @@ module org.apache.poi.ooxml {
 
 
     // test specific exports
-    requires junit;
+    requires org.junit.jupiter.api;
+    requires org.junit.jupiter.params;
     requires com.google.common;
 
-    exports org.apache.poi.extractor.ooxml to junit;
-    exports org.apache.poi.openxml4j.opc.compliance to junit;
-    exports org.apache.poi.poifs.crypt.tests to junit;
-    exports org.apache.poi.sl.tests to junit;
-    exports org.apache.poi.sl.tests.draw to junit;
-    exports org.apache.poi.ss.tests to junit;
-    exports org.apache.poi.ss.tests.extractor to junit;
-    exports org.apache.poi.ss.tests.format to junit;
-    exports org.apache.poi.ss.tests.formula to junit;
-    exports org.apache.poi.ss.tests.formula.eval to junit;
-    exports org.apache.poi.ss.tests.formula.functions to junit;
-    exports org.apache.poi.ss.tests.usermodel to junit;
-    exports org.apache.poi.ss.tests.util to junit;
-    exports org.apache.poi.util.tests to junit;
-    exports org.apache.poi.xslf to junit;
-    exports org.apache.poi.xslf.extractor to junit;
-    exports org.apache.poi.xssf.io to junit;
-    exports org.apache.poi.xssf.usermodel.charts to junit;
-    exports org.apache.poi.xwpf to junit;
+    exports org.apache.poi.extractor.ooxml to org.junit.platform.commons;
+    exports org.apache.poi.openxml4j.opc.compliance to org.junit.platform.commons;
+    exports org.apache.poi.poifs.crypt.tests to org.junit.platform.commons;
+    exports org.apache.poi.sl.tests to org.junit.platform.commons;
+    exports org.apache.poi.sl.tests.draw to org.junit.platform.commons;
+    exports org.apache.poi.ss.tests to org.junit.platform.commons;
+    exports org.apache.poi.ss.tests.extractor to org.junit.platform.commons;
+    exports org.apache.poi.ss.tests.format to org.junit.platform.commons;
+    exports org.apache.poi.ss.tests.formula to org.junit.platform.commons;
+    exports org.apache.poi.ss.tests.formula.eval to org.junit.platform.commons;
+    exports org.apache.poi.ss.tests.formula.functions to org.junit.platform.commons;
+    exports org.apache.poi.ss.tests.usermodel to org.junit.platform.commons;
+    exports org.apache.poi.ss.tests.util to org.junit.platform.commons;
+    exports org.apache.poi.util.tests to org.junit.platform.commons;
+    exports org.apache.poi.xslf to org.junit.platform.commons;
+    exports org.apache.poi.xslf.extractor to org.junit.platform.commons;
+    exports org.apache.poi.xssf.io to org.junit.platform.commons;
+    exports org.apache.poi.xssf.usermodel.charts to org.junit.platform.commons;
+    exports org.apache.poi.xwpf to org.junit.platform.commons;
 
 
 }

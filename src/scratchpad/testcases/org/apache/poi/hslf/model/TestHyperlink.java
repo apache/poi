@@ -19,8 +19,8 @@ package org.apache.poi.hslf.model;
 
 import static org.apache.poi.hslf.usermodel.HSLFTextParagraph.getRawText;
 import static org.apache.poi.hslf.usermodel.HSLFTextParagraph.toExternalString;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.awt.geom.Rectangle2D;
 import java.io.IOException;
@@ -37,8 +37,7 @@ import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFTextBox;
 import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.hslf.usermodel.HSLFTextRun;
-import org.apache.poi.sl.usermodel.Hyperlink;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test Hyperlink.

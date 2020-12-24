@@ -17,15 +17,15 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -34,8 +34,8 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.formula.FormulaParseException;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Common superclass for testing usermodel API for array formulas.<br>
@@ -77,12 +77,8 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
             Sheet sheet = workbook.createSheet();
             Cell cell = sheet.createRow(0).createCell(0);
             assertFalse(cell.isPartOfArrayFormulaGroup());
-            try {
-                cell.getArrayFormulaRange();
-                fail("expected exception");
-            } catch (IllegalStateException e) {
-                assertEquals("Cell Sheet0!A1 is not part of an array formula.", e.getMessage());
-            }
+            IllegalStateException e = assertThrows(IllegalStateException.class, cell::getArrayFormulaRange);
+            assertEquals("Cell Sheet0!A1 is not part of an array formula.", e.getMessage());
 
             // row 3 does not yet exist
             assertNull(sheet.getRow(2));
@@ -139,12 +135,12 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
      * Passing an incorrect formula to sheet.setArrayFormula
      *  should throw FormulaParseException
      */
-    @Test(expected = FormulaParseException.class)
+    @Test
     public final void testSetArrayFormula_incorrectFormula() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             Sheet sheet = workbook.createSheet();
             CellRangeAddress cra = new CellRangeAddress(10, 10, 10, 10);
-            sheet.setArrayFormula("incorrect-formula(C11_C12*D11_D12)", cra);
+            assertThrows(FormulaParseException.class, () -> sheet.setArrayFormula("incorrect-formula(C11_C12*D11_D12)", cra));
         }
     }
 
@@ -159,19 +155,11 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
 
             Cell cell = sheet.createRow(0).createCell(0);
             assertFalse(cell.isPartOfArrayFormulaGroup());
-            try {
-                cell.getArrayFormulaRange();
-                fail("expected exception");
-            } catch (IllegalStateException e) {
-                assertEquals("Cell Sheet0!A1 is not part of an array formula.", e.getMessage());
-            }
+            IllegalStateException e = assertThrows(IllegalStateException.class, cell::getArrayFormulaRange);
+            assertEquals("Cell Sheet0!A1 is not part of an array formula.", e.getMessage());
 
-            try {
-                sheet.removeArrayFormula(cell);
-                fail("expected exception");
-            } catch (IllegalArgumentException e) {
-                assertEquals("Cell Sheet0!A1 is not part of an array formula.", e.getMessage());
-            }
+            IllegalArgumentException e2 = assertThrows(IllegalArgumentException.class, () -> sheet.removeArrayFormula(cell));
+            assertEquals("Cell Sheet0!A1 is not part of an array formula.", e.getMessage());
         }
     }
 
@@ -201,13 +189,9 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
             // cells C4:C6 are not included in array formula,
             // invocation of sheet.removeArrayFormula on any of them throws IllegalArgumentException
             for (Cell acell : cr) {
-                try {
-                    sheet.removeArrayFormula(acell);
-                    fail("expected exception");
-                } catch (IllegalArgumentException e) {
-                    String ref = new CellReference(acell).formatAsString();
-                    assertEquals("Cell " + ref + " is not part of an array formula.", e.getMessage());
-                }
+                IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> sheet.removeArrayFormula(acell));
+                String ref = new CellReference(acell).formatAsString();
+                assertEquals("Cell " + ref + " is not part of an array formula.", e.getMessage());
             }
         }
     }
@@ -299,15 +283,12 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
             CellRange<? extends Cell> mrange =
                     sheet.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
             for (Cell mcell : mrange) {
-                try {
-                    assertEquals(CellType.FORMULA, mcell.getCellType());
-                    mcell.setCellType(CellType.NUMERIC);
-                    fail("expected exception");
-                } catch (IllegalStateException e) {
-                    CellReference ref = new CellReference(mcell);
-                    String msg = "Cell " + ref.formatAsString() + " is part of a multi-cell array formula. You cannot change part of an array.";
-                    assertEquals(msg, e.getMessage());
-                }
+                assertEquals(CellType.FORMULA, mcell.getCellType());
+                IllegalStateException e = assertThrows(IllegalStateException.class, () -> mcell.setCellType(CellType.NUMERIC));
+                CellReference ref = new CellReference(mcell);
+                String msg = "Cell " + ref.formatAsString() + " is part of a multi-cell array formula. You cannot change part of an array.";
+                assertEquals(msg, e.getMessage());
+
                 // a failed invocation of Cell.setCellType leaves the cell
                 // in the state that it was in prior to the invocation
                 assertEquals(CellType.FORMULA, mcell.getCellType());
@@ -342,15 +323,12 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
                     sheet.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
             for (Cell mcell : mrange) {
                 //we cannot set individual formulas for cells included in an array formula
-                try {
-                    assertEquals("A1:A3*B1:B3", mcell.getCellFormula());
-                    mcell.setCellFormula("A1+A2");
-                    fail("expected exception");
-                } catch (IllegalStateException e) {
-                    CellReference ref = new CellReference(mcell);
-                    String msg = "Cell " + ref.formatAsString() + " is part of a multi-cell array formula. You cannot change part of an array.";
-                    assertEquals(msg, e.getMessage());
-                }
+                assertEquals("A1:A3*B1:B3", mcell.getCellFormula());
+                IllegalStateException e = assertThrows(IllegalStateException.class, () -> mcell.setCellFormula("A1+A2"));
+                CellReference ref = new CellReference(mcell);
+                String msg = "Cell " + ref.formatAsString() + " is part of a multi-cell array formula. You cannot change part of an array.";
+                assertEquals(msg, e.getMessage());
+
                 // a failed invocation of Cell.setCellFormula leaves the cell
                 // in the state that it was in prior to the invocation
                 assertEquals("A1:A3*B1:B3", mcell.getCellFormula());
@@ -386,14 +364,11 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
             for (Cell mcell : mrange) {
                 int columnIndex = mcell.getColumnIndex();
                 Row mrow = mcell.getRow();
-                try {
-                    mrow.removeCell(mcell);
-                    fail("expected exception");
-                } catch (IllegalStateException e) {
-                    CellReference ref = new CellReference(mcell);
-                    String msg = "Cell " + ref.formatAsString() + " is part of a multi-cell array formula. You cannot change part of an array.";
-                    assertEquals(msg, e.getMessage());
-                }
+                IllegalStateException e = assertThrows(IllegalStateException.class, () -> mrow.removeCell(mcell));
+                CellReference ref = new CellReference(mcell);
+                String msg = "Cell " + ref.formatAsString() + " is part of a multi-cell array formula. You cannot change part of an array.";
+                assertEquals(msg, e.getMessage());
+
                 // a failed invocation of Row.removeCell leaves the row
                 // in the state that it was in prior to the invocation
                 assertSame(mcell, mrow.getCell(columnIndex));
@@ -432,13 +407,10 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
             for (Cell mcell : mrange) {
                 int columnIndex = mcell.getColumnIndex();
                 Row mrow = mcell.getRow();
-                try {
-                    sheet.removeRow(mrow);
-                    fail("expected exception");
-                } catch (IllegalStateException e) {
-                    // String msg = "Row[rownum="+mrow.getRowNum()+"] contains cell(s) included in a multi-cell array formula. You cannot change part of an array.";
-                    // assertEquals(msg, e.getMessage());
-                }
+                assertThrows(IllegalStateException.class, () -> sheet.removeRow(mrow));
+                // String msg = "Row[rownum="+mrow.getRowNum()+"] contains cell(s) included in a multi-cell array formula. You cannot change part of an array.";
+                // assertEquals(msg, e.getMessage());
+
                 // a failed invocation of Row.removeCell leaves the row
                 // in the state that it was in prior to the invocation
                 assertSame(mrow, sheet.getRow(mrow.getRowNum()));
@@ -485,13 +457,9 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
                     "B1:D6", "B1:G3", "E1:G6", "B4:G6"  // 2-row/2-column intersection
             )) {
                 CellRangeAddress cra = CellRangeAddress.valueOf(ref);
-                try {
-                    sheet.addMergedRegion(cra);
-                    fail("expected exception with ref " + ref);
-                } catch (IllegalStateException e) {
-                    String msg = "The range " + cra.formatAsString() + " intersects with a multi-cell array formula. You cannot merge cells of an array.";
-                    assertEquals(msg, e.getMessage());
-                }
+                IllegalStateException e = assertThrows(IllegalStateException.class, () -> sheet.addMergedRegion(cra));
+                String msg = "The range " + cra.formatAsString() + " intersects with a multi-cell array formula. You cannot merge cells of an array.";
+                assertEquals(msg, e.getMessage());
             }
             //the number of merged regions remains the same
             assertEquals(expectedNumMergedRegions, sheet.getNumMergedRegions());
@@ -503,13 +471,9 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
                     "C6:F6",  //bottom
                     "B2:B5", "H7:J9")) {
                 CellRangeAddress cra = CellRangeAddress.valueOf(ref);
-                try {
-                    sheet.addMergedRegion(cra);
-                    expectedNumMergedRegions++;
-                    assertEquals(expectedNumMergedRegions, sheet.getNumMergedRegions());
-                } catch (IllegalStateException e) {
-                    fail("did not expect exception with ref: " + ref + "\n" + e.getMessage());
-                }
+                sheet.addMergedRegion(cra);
+                expectedNumMergedRegions++;
+                assertEquals(expectedNumMergedRegions, sheet.getNumMergedRegions());
             }
 
         }
@@ -522,7 +486,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
 
             //single-cell array formulas behave just like normal cells - we can change the cell type
             CellRange<? extends Cell> srange =
-                    sheet.setArrayFormula("SUM(A4:A6,B4:B6)", CellRangeAddress.valueOf("B5"));
+                sheet.setArrayFormula("SUM(A4:A6,B4:B6)", CellRangeAddress.valueOf("B5"));
             Cell scell = srange.getTopLeftCell();
             assertEquals("SUM(A4:A6,B4:B6)", scell.getCellFormula());
             sheet.shiftRows(0, 0, 1);
@@ -530,14 +494,9 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
 
             //we cannot set individual formulas for cells included in an array formula
             sheet.setArrayFormula("A1:A3*B1:B3", CellRangeAddress.valueOf("C1:C3"));
-
-            try {
-                sheet.shiftRows(0, 0, 1);
-                fail("expected exception");
-            } catch (IllegalStateException e) {
-                String msg = "Row[rownum=0] contains cell(s) included in a multi-cell array formula. You cannot change part of an array.";
-                assertEquals(msg, e.getMessage());
-            }
+            IllegalStateException e = assertThrows(IllegalStateException.class, () -> sheet.shiftRows(0, 0, 1));
+            String msg = "Row[rownum=0] contains cell(s) included in a multi-cell array formula. You cannot change part of an array.";
+            assertEquals(msg, e.getMessage());
         /*
          TODO: enable shifting the whole array
 
@@ -556,8 +515,8 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
         }
     }
 
-    @Ignore("See bug 59728")
-    @Test(expected = IllegalStateException.class)
+    @Disabled("See bug 59728")
+    @Test
     public void shouldNotBeAbleToCreateArrayFormulaOnPreexistingMergedRegion() throws IOException {
         /*
          *  m  = merged region
@@ -578,7 +537,7 @@ public abstract class BaseTestSheetUpdateArrayFormulas {
             assumeTrue(mergedRegion.intersects(arrayFormula));
             assumeTrue(arrayFormula.intersects(mergedRegion));
             // expected exception: should not be able to create an array formula that intersects with a merged region
-            sheet.setArrayFormula("SUM(A1:A3)", arrayFormula);
+            assertThrows(IllegalStateException.class, () -> sheet.setArrayFormula("SUM(A1:A3)", arrayFormula));
         }
     }
 }

@@ -17,13 +17,13 @@
 
 package org.apache.poi.hwpf.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hwpf.HWPFDocFixture;
 import org.apache.poi.util.LittleEndian;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public final class TestPlexOfCps {
   private PlexOfCps _plexOfCps;
@@ -59,7 +59,7 @@ public final class TestPlexOfCps {
     }
   }
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     /**@todo verify the constructors*/
     _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
@@ -67,7 +67,7 @@ public final class TestPlexOfCps {
     _hWPFDocFixture.setUp();
   }
 
-  @After
+  @AfterEach
   public void tearDown() throws Exception {
     _plexOfCps = null;
     _hWPFDocFixture.tearDown();

@@ -17,8 +17,8 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -35,7 +35,7 @@ import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.record.Document;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.sl.usermodel.ShapeType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 /**

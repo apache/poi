@@ -17,10 +17,10 @@
 
 package org.apache.poi.hmef.extractor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -29,7 +29,7 @@ import java.util.Arrays;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.TempFile;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestHMEFContentsExtractor {
     @Test
@@ -44,16 +44,16 @@ public class TestHMEFContentsExtractor {
                 "message.rtf", // from extractMessageBody
                 "quick.txt", "quick.pdf", "quick.xml", "quick.doc", "quick.html" // from extractAttachments
         };
-        
+
         for (String filename : contents) {
             File f = new File(outputDirectory, filename);
-            assertTrue(f + " does not exist", f.exists());
+            assertTrue(f.exists(), f + " does not exist");
             assertTrue(f.delete());
         }
 
         String[] list = outputDirectory.list();
         assertNotNull(list);
-        assertEquals( "Had: " + Arrays.toString(list), 0, list.length);
+        assertEquals( 0, list.length, "Had: " + Arrays.toString(list));
         assertTrue(outputDirectory.delete());
     }
 
@@ -67,7 +67,7 @@ public class TestHMEFContentsExtractor {
         assertTrue(out.size() > 0);
         byte[] expectedMagic = new byte[] { '{', '\\', 'r', 't', 'f' };
         byte[] magic = Arrays.copyOf(out.toByteArray(), 5);
-        assertArrayEquals("RTF magic number", expectedMagic, magic);
+        assertArrayEquals(expectedMagic, magic, "RTF magic number");
         out.close();
     }
 
@@ -79,6 +79,6 @@ public class TestHMEFContentsExtractor {
         File rtf = TempFile.createTempFile("quick-winmail-message-body", ".rtf");
         assertTrue(rtf.delete());
         extractor.extractMessageBody(rtf);
-        assertTrue("RTF message body is empty", rtf.length() > 0);
+        assertTrue(rtf.length() > 0, "RTF message body is empty");
     }
 }

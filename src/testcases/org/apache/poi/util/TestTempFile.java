@@ -16,11 +16,11 @@
 ==================================================================== */
 package org.apache.poi.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -28,20 +28,20 @@ import java.io.IOException;
 import java.util.Arrays;
 
 import org.apache.poi.poifs.dev.TestPOIFSDump;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestTempFile {
     private String previousTempDir;
     private File tempDir;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         previousTempDir = System.getProperty(TempFile.JAVA_IO_TMPDIR);
         if(previousTempDir != null) {
-            assertTrue("Failed to create directory " + previousTempDir,
-                    new File(previousTempDir).exists() || new File(previousTempDir).mkdirs());
+            assertTrue(new File(previousTempDir).exists() || new File(previousTempDir).mkdirs(),
+                "Failed to create directory " + previousTempDir);
         }
 
         // use a separate tempdir for the tests to be able to check for leftover files
@@ -51,19 +51,19 @@ public class TestTempFile {
         System.setProperty(TempFile.JAVA_IO_TMPDIR, tempDir.getAbsolutePath());
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws IOException {
         if(tempDir != null) {
             String[] files = tempDir.list();
             assertNotNull(files);
             // can have the "poifiles" subdir
             if (files.length == 1) {
-                assertEquals("Had: " + Arrays.toString(files), DefaultTempFileCreationStrategy.POIFILES, files[0]);
+                assertEquals(DefaultTempFileCreationStrategy.POIFILES, files[0], "Had: " + Arrays.toString(files));
                 files = new File(tempDir, files[0]).list();
                 assertNotNull(files);
-                assertEquals("Had: " + Arrays.toString(files), 0, files.length);
+                assertEquals(0, files.length, "Had: " + Arrays.toString(files));
             } else {
-                assertEquals("Had: " + Arrays.toString(files), 0, files.length);
+                assertEquals(0, files.length, "Had: " + Arrays.toString(files));
             }
 
             // remove the directory after the tests
@@ -92,41 +92,35 @@ public class TestTempFile {
         FileOutputStream fos = new FileOutputStream(tempFile);
         fos.write(1); //file can be written to
         fos.close();
-        assertTrue("temp file exists", tempFile.exists());
-        assertTrue("temp file is a file", tempFile.isFile());
-        assertTrue("temp file's name should start with test",
-                tempFile.getName().startsWith("test"));
-        assertTrue("temp file's name should end with .txt",
-                tempFile.getName().endsWith(".txt"));
-        assertEquals("temp file is saved in poifiles directory",
-                DefaultTempFileCreationStrategy.POIFILES, tempFile.getParentFile().getName());
+        assertTrue(tempFile.exists());
+        assertTrue(tempFile.isFile());
+        assertTrue(tempFile.getName().startsWith("test"));
+        assertTrue(tempFile.getName().endsWith(".txt"));
+        assertEquals(DefaultTempFileCreationStrategy.POIFILES, tempFile.getParentFile().getName());
 
         // Can't think of a good way to check whether a file is actually deleted since it would require the VM to stop.
         // Solution: set TempFileCreationStrategy to something that the unit test can trigger a deletion"
-        assertTrue("Unable to delete temp file", tempFile.delete());
+        assertTrue(tempFile.delete());
     }
 
     @Test
     public void createTempFileWithDefaultSuffix() throws IOException {
         File tempFile = TempFile.createTempFile("test", null);
-        assertTrue("temp file's name should end with .tmp",
-                tempFile.getName().endsWith(".tmp"));
+        assertTrue(tempFile.getName().endsWith(".tmp"));
     }
 
     @Test
     public void testCreateTempDirectory() throws IOException
     {
         File tempDir = TempFile.createTempDirectory("testDir");
-        assertTrue("testDir exists", tempDir.exists());
-        assertTrue("testDir is a directory", tempDir.isDirectory());
-        assertTrue("testDir's name starts with testDir",
-                tempDir.getName().startsWith("testDir"));
-        assertEquals("tempDir is saved in poifiles directory",
-                DefaultTempFileCreationStrategy.POIFILES, tempDir.getParentFile().getName());
+        assertTrue(tempDir.exists());
+        assertTrue(tempDir.isDirectory());
+        assertTrue(tempDir.getName().startsWith("testDir"));
+        assertEquals(DefaultTempFileCreationStrategy.POIFILES, tempDir.getParentFile().getName());
 
         // Can't think of a good way to check whether a directory is actually deleted since it would require the VM to stop.
         // Solution: set TempFileCreationStrategy to something that the unit test can trigger a deletion"
-        assertTrue("Unable to delete tempDir", tempDir.delete());
+        assertTrue(tempDir.delete());
     }
 
     @Test

@@ -19,9 +19,9 @@ package org.apache.poi.poifs.filesystem;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -34,7 +34,7 @@ import java.util.List;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.RecordFormatException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestOle10Native {
     private static final POIDataSamples dataSamples = POIDataSamples.getPOIFSInstance();

@@ -16,13 +16,13 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.xslf.XSLFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * test common properties for sheets (slides, masters, layouts, etc.)
@@ -30,7 +30,7 @@ import org.junit.Test;
  * @author Yegor Kozlov
  */
 public class TestXSLFSheet {
-    
+
     @Test
     public void testCreateShapes() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
@@ -68,7 +68,7 @@ public class TestXSLFSheet {
         assertTrue(shapes.get(1) instanceof XSLFTextBox);
         assertTrue(shapes.get(2) instanceof XSLFConnectorShape);
         assertTrue(shapes.get(3) instanceof XSLFGroupShape);
-        
+
         ppt.close();
         ppt2.close();
     }

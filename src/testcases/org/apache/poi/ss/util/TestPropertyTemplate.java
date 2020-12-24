@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 import java.io.IOException;
 
@@ -31,7 +31,7 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests Spreadsheet PropertyTemplate
@@ -799,12 +799,12 @@ public final class TestPropertyTemplate {
             }
         }
     }
-    
+
     @Test
     public void drawBordersWithColors() throws IOException {
         CellRangeAddress a1c3 = new CellRangeAddress(0, 2, 0, 2);
         PropertyTemplate pt = new PropertyTemplate();
-        
+
         pt.drawBorders(a1c3, BorderStyle.MEDIUM, IndexedColors.RED.getIndex(), BorderExtent.ALL);
         for (int i = 0; i <= 2; i++) {
             for (int j = 0; j <= 2; j++) {
@@ -855,10 +855,10 @@ public final class TestPropertyTemplate {
         PropertyTemplate pt = new PropertyTemplate();
         Workbook wb = new HSSFWorkbook();
         Sheet sheet = wb.createSheet();
-        
+
         pt.drawBorders(a1c3, BorderStyle.THIN, IndexedColors.RED.getIndex(), BorderExtent.ALL);
         pt.applyBorders(sheet);
-        
+
         for (Row row: sheet) {
             for (Cell cell: row) {
                 CellStyle cs = cell.getCellStyle();
@@ -872,10 +872,10 @@ public final class TestPropertyTemplate {
                 assertEquals(IndexedColors.RED.getIndex(), cs.getRightBorderColor());
             }
         }
-        
+
         pt.drawBorders(b2, BorderStyle.NONE, BorderExtent.ALL);
         pt.applyBorders(sheet);
-        
+
         for (Row row: sheet) {
             for (Cell cell: row) {
                 CellStyle cs = cell.getCellStyle();
@@ -905,10 +905,10 @@ public final class TestPropertyTemplate {
                 }
             }
         }
-        
+
         wb.close();
     }
-    
+
     @Test
     public void clonePropertyTemplate() throws IOException {
         CellRangeAddress a1c3 = new CellRangeAddress(0, 2, 0, 2);
@@ -922,14 +922,14 @@ public final class TestPropertyTemplate {
                 assertEquals(4, pt2.getNumBorderColors(i, j));
             }
         }
-        
+
         CellRangeAddress b2 = new CellRangeAddress(1,1,1,1);
         pt2.drawBorders(b2, BorderStyle.THIN, BorderExtent.ALL);
-        
+
         Workbook wb = new HSSFWorkbook();
         Sheet sheet = wb.createSheet();
         pt.applyBorders(sheet);
-        
+
         for (Row row : sheet) {
             for (Cell cell : row) {
                 CellStyle cs = cell.getCellStyle();
@@ -943,7 +943,7 @@ public final class TestPropertyTemplate {
                 assertEquals(IndexedColors.RED.getIndex(), cs.getRightBorderColor());
             }
         }
-        
+
         wb.close();
     }
 }

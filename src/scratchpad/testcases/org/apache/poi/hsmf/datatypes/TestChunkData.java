@@ -17,9 +17,9 @@
 
 package org.apache.poi.hsmf.datatypes;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Verifies that the Chunks class is actually setup properly and hasn't been changed in ways

@@ -17,8 +17,8 @@
 
 package org.apache.poi.hsmf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -45,9 +45,9 @@ import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.EntryUtils;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class TestExtractEmbeddedMSG {
     private static MAPIMessage pdfMsgAttachments;
@@ -57,13 +57,13 @@ public class TestExtractEmbeddedMSG {
      *
      * @throws Exception
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws IOException {
         POIDataSamples samples = POIDataSamples.getHSMFInstance();
         pdfMsgAttachments = new MAPIMessage(samples.openResourceAsStream("attachment_msg_pdf.msg"));
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws IOException {
         pdfMsgAttachments.close();
     }

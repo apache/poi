@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -32,7 +32,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestEOMonth {
 
@@ -76,10 +76,10 @@ public class TestEOMonth {
     @Test
     public void testEOMonthZeroDate() {
         NumberEval result = (NumberEval) eOMonth.evaluate(new ValueEval[] {new NumberEval(0), new NumberEval(0)}, ec);
-        assertEquals("0 startDate is 1900-01-00", DATE_1900_01_31, result.getNumberValue(), 0);
+        assertEquals(DATE_1900_01_31, result.getNumberValue(), 0, "0 startDate is 1900-01-00");
 
         result = (NumberEval) eOMonth.evaluate(new ValueEval[] {new NumberEval(0), new NumberEval(1)}, ec);
-        assertEquals("0 startDate is 1900-01-00", DATE_1900_02_28, result.getNumberValue(), 0);
+        assertEquals(DATE_1900_02_28, result.getNumberValue(), 0, "0 startDate is 1900-01-00");
     }
 
     @Test
@@ -114,7 +114,7 @@ public class TestEOMonth {
             };
             NumberEval result = (NumberEval) eOMonth.evaluate(ve, ec);
             Date actDate = DateUtil.getJavaDate(result.getNumberValue());
-            
+
             assertEquals(expDate, actDate);
         }
     }
@@ -136,17 +136,17 @@ public class TestEOMonth {
     @Test
     public void testEOMonthBlankValueEval() {
         NumberEval evaluate = (NumberEval) eOMonth.evaluate(new ValueEval[] {BlankEval.instance, new NumberEval(0)}, ec);
-        assertEquals("Blank is handled as 0", DATE_1900_01_31, evaluate.getNumberValue(), 0);
+        assertEquals(DATE_1900_01_31, evaluate.getNumberValue(), 0, "Blank is handled as 0");
     }
 
     @Test
     public void testEOMonthBlankRefValueEval() {
         ValueEval[] ve1 = {new RefEvalImplementation(BlankEval.instance), new NumberEval(1)};
         NumberEval result = (NumberEval) eOMonth.evaluate(ve1, ec);
-        assertEquals("Blank is handled as 0", DATE_1900_02_28, result.getNumberValue(), 0);
+        assertEquals(DATE_1900_02_28, result.getNumberValue(), 0, "Blank is handled as 0");
 
         ValueEval[] ve2 = {new NumberEval(1), new RefEvalImplementation(BlankEval.instance)};
         result = (NumberEval) eOMonth.evaluate(ve2, ec);
-        assertEquals("Blank is handled as 0", DATE_1900_01_31, result.getNumberValue(), 0);
+        assertEquals(DATE_1900_01_31, result.getNumberValue(), 0, "Blank is handled as 0");
     }
 }

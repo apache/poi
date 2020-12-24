@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Locale;
 
@@ -27,9 +27,9 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for Excel function DATEVALUE()
@@ -38,12 +38,12 @@ import org.junit.Test;
  */
 public final class TestDateValue {
 
-    @BeforeClass
+    @BeforeAll
     public static void init() {
         LocaleUtil.setUserLocale(Locale.US);
     }
 
-    @AfterClass
+    @AfterAll
     public static void clear() {
         LocaleUtil.setUserLocale(null);
     }

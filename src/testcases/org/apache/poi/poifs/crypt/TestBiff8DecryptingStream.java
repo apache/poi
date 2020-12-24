@@ -17,9 +17,9 @@
 
 package org.apache.poi.poifs.crypt;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.InputStream;
 
@@ -27,7 +27,7 @@ import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.poi.hssf.record.crypto.Biff8DecryptingStream;
 import org.apache.poi.util.HexRead;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link Biff8DecryptingStream}
@@ -118,7 +118,7 @@ public final class TestBiff8DecryptingStream {
 			byte[] expData = HexRead.readFromString(expHexData);
 			byte[] actData = new byte[expData.length];
 			_bds.readFully(actData);
-			assertArrayEquals("Data mismatch", expData, actData);
+			assertArrayEquals(expData, actData, "Data mismatch");
 		}
 	}
 
@@ -180,9 +180,9 @@ public final class TestBiff8DecryptingStream {
 		Biff8DecryptingStream bds = st.getBDS();
 		int hval = bds.readDataSize();   // unencrypted
 		int nextInt = bds.readInt();
-		assertNotEquals("Indentified bug in key alignment after call to readHeaderUShort()",0x8F534029, nextInt);
+		assertNotEquals(0x8F534029, nextInt, "Indentified bug in key alignment after call to readHeaderUShort()");
 		assertEquals(0x16885243, nextInt);
-		assertNotEquals("readHeaderUShort() incorrectly decrypted result", 0x283E, hval);
+		assertNotEquals(0x283E, hval, "readHeaderUShort() incorrectly decrypted result");
 		assertEquals(0x504F, hval);
 
 		// confirm next key change

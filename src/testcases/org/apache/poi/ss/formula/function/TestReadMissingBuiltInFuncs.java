@@ -17,8 +17,10 @@
 
 package org.apache.poi.ss.formula.function;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.lang.reflect.InvocationTargetException;
 
@@ -26,9 +28,9 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.RecordFormatException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests reading from a sample spreadsheet some built-in functions that were not properly
@@ -44,7 +46,7 @@ public final class TestReadMissingBuiltInFuncs {
 	private static HSSFWorkbook wb;
 	private static HSSFSheet _sheet;
 
-	@BeforeClass
+	@BeforeAll
 	public static void initSheet() {
         wb = HSSFTestDataSamples.openSampleWorkbook(SAMPLE_SPREADSHEET_FILE_NAME);
         try {
@@ -54,9 +56,8 @@ public final class TestReadMissingBuiltInFuncs {
                 InvocationTargetException ite = (InvocationTargetException) e.getCause();
                 if(ite.getTargetException() instanceof RuntimeException) {
                     RuntimeException re = (RuntimeException) ite.getTargetException();
-                    if(re.getMessage().equals("Invalid built-in function index (189)")) {
-                        fail("DPRODUCT() registered with wrong index");
-                    }
+					assertNotEquals("Invalid built-in function index (189)", re.getMessage(),
+						"DPRODUCT() registered with wrong index");
                 }
             }
             // some other unexpected error
@@ -64,7 +65,7 @@ public final class TestReadMissingBuiltInFuncs {
         }
 	}
 
-	@AfterClass
+	@AfterAll
 	public static void closeResources() throws Exception {
 	    wb.close();
 	}
@@ -76,9 +77,8 @@ public final class TestReadMissingBuiltInFuncs {
 			formula = getCellFormula(0);
 		} catch (IllegalStateException e) {
 		    if(e.getMessage().startsWith("Too few arguments")) {
-				if(e.getMessage().indexOf("AttrPtg") > 0) {
-					fail("tAttrVolatile not supported in FormulaParser.toFormulaString");
-				}
+		    	assertFalse(e.getMessage().contains("AttrPtg"),
+					"tAttrVolatile not supported in FormulaParser.toFormulaString");
 				fail("NOW() registered with 1 arg instead of 0");
 			}
 			if(e.getMessage().startsWith("too much stuff")) {
@@ -89,31 +89,25 @@ public final class TestReadMissingBuiltInFuncs {
 		}
 		assertEquals("DATEDIF(NOW(),NOW(),\"d\")", formula);
 	}
-	
+
 	@Test
 	public void testDdb() {
 		String formula = getCellFormula(1);
-		if("externalflag(1,1,1,1,1)".equals(formula)) {
-			fail("DDB() not registered");
-		}
+		assertNotEquals("externalflag(1,1,1,1,1)", formula, "DDB() not registered");
 		assertEquals("DDB(1,1,1,1,1)", formula);
 	}
-	
+
 	@Test
 	public void testAtan() {
 		String formula = getCellFormula(2);
-		if("ARCTAN(1)".equals(formula)) {
-			fail("func ix 18 registered as ARCTAN() instead of ATAN()");
-		}
+		assertNotEquals("ARCTAN(1)", formula, "func ix 18 registered as ARCTAN() instead of ATAN()");
 		assertEquals("ATAN(1)", formula);
 	}
 
 	@Test
 	public void testUsdollar() {
 		String formula = getCellFormula(3);
-		if("YEN(1)".equals(formula)) {
-			fail("func ix 204 registered as YEN() instead of USDOLLAR()");
-		}
+		assertNotEquals("YEN(1)", formula, "func ix 204 registered as YEN() instead of USDOLLAR()");
 		assertEquals("USDOLLAR(1)", formula);
 	}
 
@@ -123,35 +117,29 @@ public final class TestReadMissingBuiltInFuncs {
 		try {
 			formula = getCellFormula(4);
 		} catch (IllegalStateException e) {
-			if(e.getMessage().startsWith("too much stuff")) {
-				fail("DBCS() not registered");
-			}
+			assertFalse(e.getMessage().startsWith("too much stuff"), "DBCS() not registered");
 			// some other unexpected error
 			throw e;
 		} catch (NegativeArraySizeException e) {
 			fail("found err- DBCS() registered with -1 args");
 		}
-		if("JIS(\"abc\")".equals(formula)) {
-			fail("func ix 215 registered as JIS() instead of DBCS()");
-		}
+		assertNotEquals("JIS(\"abc\")", formula, "func ix 215 registered as JIS() instead of DBCS()");
 		assertEquals("DBCS(\"abc\")", formula);
 	}
-	
+
 	@Test
 	public void testIsnontext() {
 		String formula;
 		try {
 			formula = getCellFormula(5);
 		} catch (IllegalStateException e) {
-			if(e.getMessage().startsWith("too much stuff")) {
-				fail("ISNONTEXT() registered with wrong index");
-			}
+			assertFalse(e.getMessage().startsWith("too much stuff"), "ISNONTEXT() registered with wrong index");
 			// some other unexpected error
 			throw e;
 		}
 		assertEquals("ISNONTEXT(\"abc\")", formula);
 	}
-	
+
 	@Test
 	public void testDproduct() {
 		String formula = getCellFormula(6);

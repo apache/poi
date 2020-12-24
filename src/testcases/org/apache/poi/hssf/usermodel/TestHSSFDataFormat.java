@@ -17,8 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -32,7 +32,7 @@ import org.apache.poi.ss.usermodel.DataFormat;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link HSSFDataFormat}
@@ -62,12 +62,12 @@ public final class TestHSSFDataFormat extends BaseTestDataFormat {
         short customFmtIdx = dataFormat.getFormat("\u00a3##.00[Yellow]");
         assertTrue(customFmtIdx >= BuiltinFormats.FIRST_USER_DEFINED_FORMAT_INDEX );
         assertEquals("\u00a3##.00[Yellow]", dataFormat.getFormat(customFmtIdx));
-        
+
         wb.close();
     }
 
     /**
-     * [Bug 58532] Handle formats that go numnum, numK, numM etc 
+     * [Bug 58532] Handle formats that go numnum, numK, numM etc
      */
     @Override
     @Test

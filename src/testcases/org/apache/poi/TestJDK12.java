@@ -23,7 +23,7 @@ import java.awt.font.TextLayout;
 import java.awt.image.BufferedImage;
 import java.text.AttributedString;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Minimal Test-Class found when running the Apache POI regression tests.

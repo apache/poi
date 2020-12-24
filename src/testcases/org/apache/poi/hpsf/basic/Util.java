@@ -18,7 +18,8 @@
 
 package org.apache.poi.hpsf.basic;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -47,7 +48,7 @@ final class Util {
      * as an array of {@link POIFile} instances. This method loads all
      * files into memory and thus does not cope well with large POI
      * filessystems.</p>
-     * 
+     *
      * @param poiFs The name of the POI filesystem as seen by the
      * operating system. (This is the "filename".)
      *
@@ -55,28 +56,24 @@ final class Util {
      *
      * @return The POI files. The elements are ordered in the same way
      * as the files in the POI filesystem.
-     * 
-     * @exception FileNotFoundException if the file containing the POI 
+     *
+     * @exception FileNotFoundException if the file containing the POI
      * filesystem does not exist
-     * 
+     *
      * @exception IOException if an I/O exception occurs
      */
     static List<POIFile> readPOIFiles(final File poiFs, final String... poiFiles) throws IOException {
         final List<POIFile> files = new ArrayList<>();
         POIFSReader r = new POIFSReader();
-        POIFSReaderListener pfl = event -> {
-            try {
-                final POIFile f = new POIFile();
-                f.setName(event.getName());
-                f.setPath(event.getPath());
-                final InputStream in = event.getStream();
-                f.setBytes(IOUtils.toByteArray(in));
-                in.close();
-                files.add(f);
-            } catch (IOException ex) {
-                fail(ex.getMessage());
-            }
-        };
+        POIFSReaderListener pfl = event -> assertDoesNotThrow(() -> {
+            final POIFile f = new POIFile();
+            f.setName(event.getName());
+            f.setPath(event.getPath());
+            final InputStream in = event.getStream();
+            f.setBytes(IOUtils.toByteArray(in));
+            in.close();
+            files.add(f);
+        });
         if (poiFiles.length == 0) {
             /* Register the listener for all POI files. */
             r.registerListener(pfl);
@@ -98,32 +95,28 @@ final class Util {
      * <p>Read all files from a POI filesystem which are property set streams
      * and returns them as an array of {@link org.apache.poi.hpsf.PropertySet}
      * instances.</p>
-     * 
+     *
      * @param poiFs The name of the POI filesystem as seen by the
      * operating system. (This is the "filename".)
      *
      * @return The property sets. The elements are ordered in the same way
      * as the files in the POI filesystem.
-     * 
+     *
      * @exception IOException if an I/O exception occurs
      */
     static List<POIFile> readPropertySets(final File poiFs) throws IOException {
         final List<POIFile> files = new ArrayList<>(7);
         final POIFSReader r = new POIFSReader();
-        final POIFSReaderListener pfl = event -> {
-            try {
-                final POIFile f = new POIFile();
-                f.setName(event.getName());
-                f.setPath(event.getPath());
-                final InputStream in = event.getStream();
-                if (PropertySet.isPropertySetStream(in)) {
-                    f.setBytes(IOUtils.toByteArray(in));
-                    files.add(f);
-                }
-            } catch (Exception ex) {
-                fail(ex.getMessage());
+        final POIFSReaderListener pfl = event -> assertDoesNotThrow(() -> {
+            final POIFile f = new POIFile();
+            f.setName(event.getName());
+            f.setPath(event.getPath());
+            final InputStream in = event.getStream();
+            if (PropertySet.isPropertySetStream(in)) {
+                f.setBytes(IOUtils.toByteArray(in));
+                files.add(f);
             }
-        };
+        });
 
         /* Register the listener for all POI files. */
         r.registerListener(pfl);

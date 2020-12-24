@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.util;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.BorderStyle;
@@ -27,9 +27,9 @@ import org.apache.poi.ss.usermodel.IndexedColors;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
@@ -44,18 +44,18 @@ public final class TestRegionUtil {
     private static final int DEFAULT_COLOR = 0;
     private Workbook wb;
     private Sheet sheet;
-    
-    @Before
+
+    @BeforeEach
     public void setUp() {
         wb = new HSSFWorkbook();
         sheet = wb.createSheet();
     }
-    
-    @After
+
+    @AfterEach
     public void tearDown() throws IOException {
         wb.close();
     }
-    
+
     private CellStyle getCellStyle(int rowIndex, int columnIndex) {
         Row row = sheet.getRow(rowIndex);
         if (row == null) row = sheet.createRow(rowIndex);
@@ -63,7 +63,7 @@ public final class TestRegionUtil {
         if (cell == null) cell = row.createCell(columnIndex);
         return cell.getCellStyle();
     }
-    
+
     @Test
     public void setBorderTop() {
         assertEquals(NONE, getCellStyle(0, 0).getBorderTop());
@@ -104,7 +104,7 @@ public final class TestRegionUtil {
         assertEquals(THIN, getCellStyle(1, 0).getBorderLeft());
         assertEquals(THIN, getCellStyle(2, 0).getBorderLeft());
     }
-    
+
     @Test
     public void setTopBorderColor() {
         assertEquals(DEFAULT_COLOR, getCellStyle(0, 0).getTopBorderColor());
@@ -145,7 +145,7 @@ public final class TestRegionUtil {
         assertEquals(RED, getCellStyle(1, 0).getLeftBorderColor());
         assertEquals(RED, getCellStyle(2, 0).getLeftBorderColor());
     }
-    
+
     @Test
     public void bordersCanBeAddedToNonExistantCells() {
         RegionUtil.setBorderTop(THIN, A1C3, sheet);

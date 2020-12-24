@@ -17,8 +17,8 @@
 
 package org.apache.poi.poifs.property;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,7 +27,7 @@ import java.util.Arrays;
 import org.apache.poi.poifs.common.POIFSConstants;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test RootProperty functionality
@@ -53,7 +53,7 @@ public final class TestRootProperty {
 			_testblock[index] = (byte) 0;
 		}
 		String name = "Root Entry";
-		int limit = Math.min(31, name.length());
+		int limit = name.length();
 
 		_testblock[index++] = (byte) (2 * (limit + 1));
 		_testblock[index++] = (byte) 0;
@@ -87,7 +87,7 @@ public final class TestRootProperty {
 
 		assertEquals(_testblock.length, output.length);
 		for (int j = 0; j < _testblock.length; j++) {
-			assertEquals("mismatch at offset " + j, _testblock[j], output[j]);
+			assertEquals(_testblock[j], output[j], "mismatch at offset " + j);
 		}
 	}
 
@@ -96,7 +96,7 @@ public final class TestRootProperty {
 		for (int j = 0; j < 10; j++) {
 			createBasicRootProperty();
 			_property.setSize(j);
-			assertEquals("trying block count of " + j, j * 64, _property.getSize());
+			assertEquals(j * 64, _property.getSize(), "trying block count of " + j);
 		}
 	}
 
@@ -126,7 +126,7 @@ public final class TestRootProperty {
 
 		assertEquals(128, output.length);
 		for (int j = 0; j < 128; j++) {
-			assertEquals("mismatch at offset " + j, expected[j], output[j]);
+			assertEquals(expected[j], output[j], "mismatch at offset " + j);
 		}
 		assertEquals(index, property.getIndex());
 		assertEquals(name, property.getName());

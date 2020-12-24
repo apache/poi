@@ -18,7 +18,7 @@
 package org.apache.poi.hslf.usermodel;
 
 import org.apache.poi.sl.usermodel.BaseTestSlideShowFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestHSLFSlideShowFactory extends BaseTestSlideShowFactory {
     @Test

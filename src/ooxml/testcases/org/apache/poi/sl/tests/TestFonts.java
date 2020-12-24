@@ -18,8 +18,8 @@
 package org.apache.poi.sl.tests;
 
 import static org.apache.poi.sl.tests.SLCommonUtils.xslfOnly;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -46,8 +46,8 @@ import org.apache.poi.sl.usermodel.TextBox;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 
 /**
@@ -69,7 +69,7 @@ public class TestFonts {
 
     private static final String[] INIT_FONTS = {"mona.ttf"};
 
-    @BeforeClass
+    @BeforeAll
     public static void initGE() throws FontFormatException, IOException {
         GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
         for (String s : INIT_FONTS) {

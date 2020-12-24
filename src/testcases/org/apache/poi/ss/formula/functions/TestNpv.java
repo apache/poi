@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -26,7 +26,7 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellValue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link Npv}
@@ -91,7 +91,7 @@ public final class TestNpv {
             }
         }
 
-        assertEquals("IRR evaluations failed", 0, failureCount);
+        assertEquals(0, failureCount, "IRR evaluations failed");
     }
 
     private static void assertFormulaResult(CellValue cv, HSSFCell cell){

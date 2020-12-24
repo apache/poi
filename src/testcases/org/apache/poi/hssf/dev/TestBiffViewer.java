@@ -27,10 +27,10 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.util.RecordFormatException;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 
 public class TestBiffViewer extends BaseTestIteratingXLS {
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         EXCLUDED.clear();
         EXCLUDED.put("35897-type4.xls", IllegalArgumentException.class); // unsupported crypto api header

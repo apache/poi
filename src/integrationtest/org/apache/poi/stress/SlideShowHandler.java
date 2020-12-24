@@ -16,6 +16,18 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.RenderingHints;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.lang.ref.WeakReference;
+
 import org.apache.poi.sl.draw.Drawable;
 import org.apache.poi.sl.usermodel.GroupShape;
 import org.apache.poi.sl.usermodel.Notes;
@@ -28,18 +40,6 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
-
-import java.awt.Dimension;
-import java.awt.Graphics2D;
-import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.lang.ref.WeakReference;
-
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 public abstract class SlideShowHandler extends POIFSFileHandler {
     public void handleSlideShow(SlideShow<?,?> ss) throws IOException {
@@ -127,10 +127,8 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
     private void readPictures(SlideShow<?,?> ss) {
         for (PictureData pd : ss.getPictureData()) {
             Dimension dim = pd.getImageDimension();
-            assertTrue("Expecting a valid height, but had an image with height: " + dim.getHeight(),
-                    dim.getHeight() >= 0);
-            assertTrue("Expecting a valid width, but had an image with width: " + dim.getWidth(),
-                    dim.getWidth() >= 0);
+            assertTrue( dim.getHeight() >= 0, "Expecting a valid height, but had an image with height: " + dim.getHeight() );
+            assertTrue( dim.getWidth() >= 0, "Expecting a valid width, but had an image with width: " + dim.getWidth() );
         }
     }
 

@@ -17,14 +17,15 @@
 
 package org.apache.poi.hpsf.basic;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Locale;
 
 import org.apache.poi.hpsf.ClassID;
 import org.apache.poi.hpsf.ClassIDPredefined;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests ClassID structure.
@@ -52,14 +53,14 @@ public final class TestClassID {
      * Try to write to a buffer that is too small. This should
      *   throw an Exception
      */
-    @Test(expected = ArrayStoreException.class)
+    @Test
     public void testWriteArrayStoreException1() {
-        new ClassID(BUF16, 0).write(new byte[15], 0);
+        assertThrows(ArrayStoreException.class, () -> new ClassID(BUF16, 0).write(new byte[15], 0));
     }
 
-    @Test(expected = ArrayIndexOutOfBoundsException.class)
+    @Test
     public void testWriteArrayStoreException2() {
-        new ClassID(BUF16, 0).write(new byte[16], 1);
+        assertThrows(ArrayIndexOutOfBoundsException.class, () ->  new ClassID(BUF16, 0).write(new byte[16], 1));
     }
 
     @Test

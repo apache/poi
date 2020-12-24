@@ -18,13 +18,13 @@
 
 package org.apache.poi.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for ByteField class
@@ -86,11 +86,11 @@ public final class TestByteField {
 
         for (int j = 0; j < _test_array.length; j++) {
             field.set(_test_array[ j ]);
-            assertEquals("testing _1 " + j, _test_array[ j ], field.get());
+            assertEquals(_test_array[ j ], field.get(), "testing _1 " + j);
             field = new ByteField(0);
             field.set(_test_array[ j ], array);
-            assertEquals("testing _2 ", _test_array[ j ], field.get());
-            assertEquals("testing _3 ", _test_array[ j ], array[ 0 ]);
+            assertEquals(_test_array[ j ], field.get(), "testing _2 ");
+            assertEquals(_test_array[ j ], array[ 0 ], "testing _3 ");
         }
     }
 
@@ -109,7 +109,7 @@ public final class TestByteField {
         for (int j = 0; j < _test_array.length; j++) {
             array[ 0 ] = _test_array[ j ];
             field.readFromBytes(array);
-            assertEquals("testing " + j, _test_array[ j ], field.get());
+            assertEquals(_test_array[ j ], field.get(), "testing " + j);
         }
     }
 
@@ -120,7 +120,7 @@ public final class TestByteField {
 
         for (int j = 0; j < _test_array.length; j++) {
             field.readFromStream(stream);
-            assertEquals("Testing " + j, _test_array[ j ], field.get());
+            assertEquals(_test_array[ j ], field.get(), "Testing " + j);
         }
     }
 
@@ -132,7 +132,7 @@ public final class TestByteField {
         for (byte b : _test_array) {
             field.set(b);
             field.writeToBytes(array);
-            assertEquals("testing ", b, array[ 0 ]);
+            assertEquals(b, array[ 0 ], "testing ");
         }
     }
 }

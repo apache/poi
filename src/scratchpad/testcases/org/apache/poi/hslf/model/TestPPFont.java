@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
@@ -26,7 +26,7 @@ import org.apache.poi.common.usermodel.fonts.FontPitch;
 import org.apache.poi.hslf.usermodel.HSLFFontInfo;
 import org.apache.poi.hslf.usermodel.HSLFFontInfoPredefined;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 /**
@@ -57,7 +57,7 @@ public final class TestPPFont {
         assertEquals(HSLFFontInfoPredefined.WINGDINGS.getTypeface(), font3.getTypeface());
         assertEquals(FontCharset.SYMBOL, font3.getCharset());
         assertEquals(FontPitch.VARIABLE, font3.getPitch());
-        
+
         ppt.close();
     }
 }

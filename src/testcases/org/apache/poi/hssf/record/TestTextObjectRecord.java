@@ -17,9 +17,9 @@
 
 package org.apache.poi.hssf.record;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 
@@ -28,7 +28,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndian;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that serialization and deserialization of the TextObjectRecord .
@@ -97,7 +97,7 @@ public final class TestTextObjectRecord {
         byte [] ser = record.serialize();
 
         int formatDataLen = LittleEndian.getUShort(ser, 16);
-        assertEquals("formatDataLength", 0, formatDataLen);
+        assertEquals(0, formatDataLen, "formatDataLength");
 
         assertEquals(22, ser.length); // just the TXO record
 

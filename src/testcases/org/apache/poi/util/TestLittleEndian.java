@@ -17,16 +17,16 @@
 
 package org.apache.poi.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.util.LittleEndian.BufferUnderrunException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test LittleEndian functionality
@@ -81,7 +81,7 @@ public final class TestLittleEndian {
         assertEquals(testdata3[2], (byte)0xFF);
         assertEquals(expected2, LittleEndian.getUShort(testdata3));
         assertEquals(expected3, LittleEndian.getUShort(testdata3, 1));
-        
+
     }
 
     private static final byte[]   _double_array =
@@ -239,13 +239,13 @@ public final class TestLittleEndian {
         assertTrue(compareByteArrays(received, expected, 1, LittleEndianConsts.LONG_SIZE));
     }
 
-    private static byte[] _good_array = {
-        0x01, 0x02, 0x01, 0x02, 
-        0x01, 0x02, 0x01, 0x02, 
+    private static final byte[] _good_array = {
+        0x01, 0x02, 0x01, 0x02,
+        0x01, 0x02, 0x01, 0x02,
         0x01, 0x02, 0x01, 0x02,
         0x01, 0x02, 0x01, 0x02,
     };
-    private static byte[] _bad_array  = {
+    private static final byte[] _bad_array  = {
         0x01
     };
 
@@ -269,13 +269,8 @@ public final class TestLittleEndian {
         }
         assertEquals(count,
                      _good_array.length / LittleEndianConsts.SHORT_SIZE);
-        stream = new ByteArrayInputStream(_bad_array);
-        try {
-            LittleEndian.readShort(stream);
-            fail("Should have caught BufferUnderrunException");
-        } catch (BufferUnderrunException ignored) {
-            // as expected
-        }
+        ByteArrayInputStream stream2 = new ByteArrayInputStream(_bad_array);
+        assertThrows(BufferUnderrunException.class, () -> LittleEndian.readShort(stream2));
     }
 
     /**
@@ -297,14 +292,8 @@ public final class TestLittleEndian {
             }
         }
         assertEquals(count, _good_array.length / LittleEndianConsts.INT_SIZE);
-        stream = new ByteArrayInputStream(_bad_array);
-        try {
-            LittleEndian.readInt(stream);
-            fail("Should have caught BufferUnderrunException");
-        } catch (BufferUnderrunException ignored) {
-
-            // as expected
-        }
+        ByteArrayInputStream  stream2 = new ByteArrayInputStream(_bad_array);
+        assertThrows(BufferUnderrunException.class, () -> LittleEndian.readInt(stream2));
     }
 
     /**
@@ -325,18 +314,12 @@ public final class TestLittleEndian {
                 break;
             }
         }
-        assertEquals(count,
-                     _good_array.length / LittleEndianConsts.LONG_SIZE);
-        stream = new ByteArrayInputStream(_bad_array);
-        try {
-            LittleEndian.readLong(stream);
-            fail("Should have caught BufferUnderrunException");
-        } catch (BufferUnderrunException ignored) {
-            // as expected
-        }
+        assertEquals(count, _good_array.length / LittleEndianConsts.LONG_SIZE);
+        ByteArrayInputStream stream2 = new ByteArrayInputStream(_bad_array);
+        assertThrows(BufferUnderrunException.class, () -> LittleEndian.readLong(stream2));
     }
 
-    @Test(expected = BufferUnderrunException.class)
+    @Test
     public void testReadFromStream() throws IOException {
         int actual;
         actual = LittleEndian.readUShort(new ByteArrayInputStream(new byte[] { 5, -128, }));
@@ -345,7 +328,8 @@ public final class TestLittleEndian {
         actual = LittleEndian.readUShort(new ByteArrayInputStream(new byte[] { 1, 2, 3, 4, }));
         assertEquals(513, actual);
 
-        LittleEndian.readInt(new ByteArrayInputStream(new byte[] { 1, 2, 3, }));
+        assertThrows(BufferUnderrunException.class, () ->
+            LittleEndian.readInt(new ByteArrayInputStream(new byte[] { 1, 2, 3, })));
     }
 
     @Test

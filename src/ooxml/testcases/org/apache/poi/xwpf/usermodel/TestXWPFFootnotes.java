@@ -22,12 +22,12 @@ import java.math.BigInteger;
 import java.util.List;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.STFtnEdn;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 public class TestXWPFFootnotes {
     @Test
@@ -81,7 +81,7 @@ public class TestXWPFFootnotes {
                     }
                 }
             }
-            assertEquals("Load footnotes once", 1, hits);
+            assertEquals(1, hits, "Load footnotes once");
         }
     }
 }

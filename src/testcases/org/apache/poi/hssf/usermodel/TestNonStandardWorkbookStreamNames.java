@@ -17,8 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,11 +26,11 @@ import java.io.InputStream;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for how HSSFWorkbook behaves with XLS files
- *  with a WORKBOOK or BOOK directory entry (instead of 
+ *  with a WORKBOOK or BOOK directory entry (instead of
  *  the more usual, Workbook)
  */
 public final class TestNonStandardWorkbookStreamNames {
@@ -54,7 +54,7 @@ public final class TestNonStandardWorkbookStreamNames {
 
 		// But not a Workbook one
 		assertFalse(root.hasEntry("Workbook"));
-		
+
 		wb.close();
 	}
 
@@ -75,7 +75,7 @@ public final class TestNonStandardWorkbookStreamNames {
       // But not a Workbook one and not a Summary one
       assertFalse(root.hasEntry("Workbook"));
       assertFalse(root.hasEntry(SummaryInformation.DEFAULT_STREAM_NAME));
-      
+
       wb.close();
    }
 
@@ -93,9 +93,9 @@ public final class TestNonStandardWorkbookStreamNames {
            // Check now it can be opened
            HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb);
            wb.close();
-           
+
            DirectoryNode root = wb2.getDirectory();
-       
+
            // Check that we have the new entries
            assertTrue(root.hasEntry("Workbook"));
            assertFalse(root.hasEntry("BOOK"));
@@ -115,7 +115,7 @@ public final class TestNonStandardWorkbookStreamNames {
 		InputStream is = HSSFTestDataSamples.openSampleFileStream(xlsA);
         HSSFWorkbook wb = new HSSFWorkbook(is,true);
         is.close();
-        
+
         // Check now it can be opened
         HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb);
         wb.close();

@@ -16,14 +16,14 @@
 ==================================================================== */
 package org.apache.poi.ss.excelant;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.poi.ss.excelant.util.ExcelAntWorkbookUtil;
 import org.apache.poi.ss.excelant.util.ExcelAntWorkbookUtilFactory;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestExcelAntSet {
 
@@ -35,12 +35,12 @@ public class TestExcelAntSet {
     private static final String mortgageCalculatorFileName =
         TestBuildFile.getDataDir() + "/spreadsheet/mortgage-calculation.xls" ;
 
-    @Before
+    @BeforeEach
 	public void setUp() {
 		fixture = new ExcelAntSetDoubleCell() ;
 	}
 
-    @After
+    @AfterEach
 	public void tearDown() {
 		fixture = null ;
 	}

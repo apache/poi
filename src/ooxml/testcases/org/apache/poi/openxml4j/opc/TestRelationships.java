@@ -19,10 +19,10 @@ package org.apache.poi.openxml4j.opc;
 
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.openSampleStream;
 import static org.apache.poi.openxml4j.opc.TestContentType.isOldXercesActive;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 public class TestRelationships {
@@ -66,7 +66,7 @@ public class TestRelationships {
                 assertNotNull(rel);
                 PackagePartName relName = PackagingURIHelper.createPartName(rel.getTargetURI());
                 PackagePart sheetPart = pkg.getPart(relName);
-                assertEquals("Number of relationships1 for " + sheetPart.getPartName(), 1, sheetPart.getRelationships().size());
+                assertEquals(1, sheetPart.getRelationships().size(), "Number of relationships1 for " + sheetPart.getPartName());
             }
         }
     }
@@ -430,16 +430,13 @@ public class TestRelationships {
             // Should have 3 root relationships
             boolean foundDocRel = false, foundCorePropRel = false, foundExtPropRel = false;
             for (PackageRelationship pr : p.getRelationships()) {
-                if (pr.getRelationshipType().equals(PackageRelationshipTypes.CORE_DOCUMENT))
-                    foundDocRel = true;
-                if (pr.getRelationshipType().equals(PackageRelationshipTypes.CORE_PROPERTIES))
-                    foundCorePropRel = true;
-                if (pr.getRelationshipType().equals(PackageRelationshipTypes.EXTENDED_PROPERTIES))
-                    foundExtPropRel = true;
+                foundDocRel |= pr.getRelationshipType().equals(PackageRelationshipTypes.CORE_DOCUMENT);
+                foundCorePropRel |= pr.getRelationshipType().equals(PackageRelationshipTypes.CORE_PROPERTIES);
+                foundExtPropRel |= pr.getRelationshipType().equals(PackageRelationshipTypes.EXTENDED_PROPERTIES);
             }
-            assertEquals("Core/Doc Relationship not found in " + p.getRelationships(), isOldXercesActive(), foundDocRel);
-            assertEquals("Core Props Relationship not found in " + p.getRelationships(), isOldXercesActive(), foundCorePropRel);
-            assertEquals("Ext Props Relationship not found in " + p.getRelationships(), isOldXercesActive(), foundExtPropRel);
+            assertEquals(isOldXercesActive(), foundDocRel, "Core Doc Relationship not found in " + p.getRelationships());
+            assertEquals(isOldXercesActive(), foundCorePropRel, "Core Props Relationship not found in " + p.getRelationships());
+            assertEquals(isOldXercesActive(), foundExtPropRel, "Ext Props Relationship not found in " + p.getRelationships());
         }
     }
 }

@@ -17,14 +17,14 @@
 
 package org.apache.poi.hslf.record;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that Document works properly (Also tests Environment while we're at it)
@@ -37,7 +37,7 @@ public final class TestDocument {
 	// POIFS primed on the test data
 	private POIFSFileSystem pfs;
 
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
 		pfs = new POIFSFileSystem(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 		ss = new HSLFSlideShowImpl(pfs);

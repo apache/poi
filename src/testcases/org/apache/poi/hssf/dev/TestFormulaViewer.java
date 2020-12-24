@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hssf.dev;
 
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -26,10 +26,10 @@ import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.NullPrintStream;
 import org.apache.poi.util.RecordFormatException;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 
 public class TestFormulaViewer extends BaseTestIteratingXLS {
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         EXCLUDED.clear();
         EXCLUDED.put("35897-type4.xls", EncryptedDocumentException.class); // unsupported crypto api header

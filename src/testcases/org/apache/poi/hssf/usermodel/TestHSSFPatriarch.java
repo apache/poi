@@ -17,13 +17,13 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestHSSFPatriarch {
 

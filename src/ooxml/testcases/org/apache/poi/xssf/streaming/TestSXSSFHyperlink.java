@@ -19,7 +19,7 @@
 
 package org.apache.poi.xssf.streaming;
 
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 
 import org.apache.poi.ss.usermodel.BaseTestHyperlink;
 import org.apache.poi.ss.usermodel.Hyperlink;
@@ -38,11 +38,11 @@ public class TestSXSSFHyperlink extends BaseTestHyperlink {
     }
 
 
-    @After
+    @AfterEach
     public void tearDown(){
         SXSSFITestDataProvider.instance.cleanup();
     }
-    
+
     @Override
     public XSSFHyperlink copyHyperlink(Hyperlink link) {
         // FIXME: replace with SXSSFHyperlink if it ever gets created

@@ -17,10 +17,11 @@
 
 package org.apache.poi.hssf.eventusermodel;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -40,7 +41,7 @@ import org.apache.poi.hssf.record.SelectionRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testing for {@link HSSFEventFactory}
@@ -115,11 +116,11 @@ public final class TestHSSFEventFactory {
         openSample("WORKBOOK_in_capitals.xls");
     }
 
-    @Test(expected = EncryptedDocumentException.class)
+    @Test
     @SuppressWarnings("java:S2699")
-    public void testWithPasswordProtectedWorkbooksNoPass() throws Exception {
+    public void testWithPasswordProtectedWorkbooksNoPass() {
         // Without a password, can't be read
-        openSample("xor-encryption-abc.xls");
+        assertThrows(EncryptedDocumentException.class, () -> openSample("xor-encryption-abc.xls"));
     }
 
     @Test
@@ -157,10 +158,10 @@ public final class TestHSSFEventFactory {
                 }
             }
 
-            assertTrue("Sheet record not found", hasSheet);
-            assertTrue("Numeric record for A1 not found", hasA1);
-            assertTrue("Numeric record for A2 not found", hasA2);
-            assertTrue("Numeric record for A3 not found", hasA3);
+            assertTrue(hasSheet, "Sheet record not found");
+            assertTrue(hasA1, "Numeric record for A1 not found");
+            assertTrue(hasA2, "Numeric record for A2 not found");
+            assertTrue(hasA3, "Numeric record for A3 not found");
         } finally {
             Biff8EncryptionKey.setCurrentUserPassword(null);
         }

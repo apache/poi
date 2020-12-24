@@ -18,7 +18,7 @@
 package org.apache.poi.hslf;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.record.Notes;
@@ -26,8 +26,8 @@ import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.Slide;
 import org.apache.poi.hslf.record.SlideListWithText;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that HSLFSlideShow returns the right numbers of key records when
@@ -39,7 +39,7 @@ public final class TestRecordCounts {
 	// HSLFSlideShow primed on the test data
 	private HSLFSlideShowImpl ss;
 
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
 		ss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));
 	}

@@ -96,7 +96,7 @@ under the License.
         <attribute name="value"/>
         <sequential>
             <mkdir dir="build/poi-ant-contrib"/>
-            <javac srcdir="src/excelant/poi-ant-contrib" destdir="build/poi-ant-contrib" includeantruntime="true"/>
+            <javac srcdir="src/excelant/poi-ant-contrib" destdir="build/poi-ant-contrib" includeantruntime="true" excludes="Junit5Progress.java"/>
             <taskdef name="PropertyResetHelper" classname="PropertyReset" classpath="build/poi-ant-contrib"/>
             <PropertyResetHelper name="@{name}" value="@{value}" />
         </sequential>
@@ -271,7 +271,16 @@ under the License.
     <dependency prefix="main.com.zaxxer" artifact="com.zaxxer:SparseBitSet:1.2" usage="main"/>
     <dependency prefix="main.slf4j-api" artifact="org.slf4j:slf4j-api:1.7.30" usage="main"/>
 
-    <dependency prefix="main.junit" artifact="junit:junit:4.13.1" usage="main-tests"/>
+    <dependency prefix="main.junit-api" artifact="org.junit.jupiter:junit-jupiter-api:5.7.0" usage="main-tests"/>
+    <dependency prefix="main.junit-jengine" artifact="org.junit.jupiter:junit-jupiter-engine:5.7.0" usage="main-tests"/>
+    <dependency prefix="main.junit-params" artifact="org.junit.jupiter:junit-jupiter-params:5.7.0" usage="main-tests"/>
+    <dependency prefix="main.junit-opentest4j" artifact="org.opentest4j:opentest4j:1.2.0" usage="main-tests"/>
+    <dependency prefix="main.junit-apiguardian" artifact="org.apiguardian:apiguardian-api:1.1.0" usage="main-tests"/>
+    <dependency prefix="main.junit-pcommons" artifact="org.junit.platform:junit-platform-commons:1.7.0" usage="main-tests"/>
+    <dependency prefix="main.junit-pengine" artifact="org.junit.platform:junit-platform-engine:1.7.0" usage="main-tests"/>
+    <dependency prefix="main.junit-plauncher" artifact="org.junit.platform:junit-platform-launcher:1.7.0" usage="main-tests"/>
+
+
     <dependency prefix="main.jmh" artifact="org.openjdk.jmh:jmh-core:1.26" usage="main-tests"/>
     <dependency prefix="main.jmhAnnotation" artifact="org.openjdk.jmh:jmh-generator-annprocess:1.26" usage="main-tests"/>
     <dependency prefix="main.hamcrest" artifact="org.hamcrest:hamcrest:2.2" usage="main-tests"/>
@@ -409,7 +418,14 @@ under the License.
 
     <!-- some libraries should only be required for compiling/running tests -->
     <path id="test.jar.classpath">
-        <pathelement location="${main.junit.jar}"/>
+        <pathelement location="${main.junit-api.jar}"/>
+        <pathelement location="${main.junit-jengine.jar}"/>
+        <pathelement location="${main.junit-params.jar}"/>
+        <pathelement location="${main.junit-plauncher.jar}"/>
+        <pathelement location="${main.junit-pengine.jar}"/>
+        <pathelement location="${main.junit-pcommons.jar}"/>
+        <pathelement location="${main.junit-opentest4j.jar}"/>
+        <pathelement location="${main.junit-apiguardian.jar}"/>
         <pathelement location="${main.jmh.jar}"/>
         <pathelement location="${main.jmhAnnotation.jar}"/>
         <pathelement location="${main.hamcrest.jar}"/>
@@ -507,9 +523,9 @@ under the License.
     </path>
 
     <patternset id="exclude-scratchpad-test">
-        <exclude name="**/TestExtractorFactory.java"/>
-        <exclude name="**/TestEmbedOLEPackage.java"/>
-        <exclude name="**/TestHxxFEncryption.java"/>
+        <exclude name="**/TestExtractorFactory.class"/>
+        <exclude name="**/TestEmbedOLEPackage.class"/>
+        <exclude name="**/TestHxxFEncryption.class"/>
     </patternset>
 
     <!-- Prints POI's Ant usage help -->
@@ -611,6 +627,7 @@ under the License.
                 <include name="mockito-core-3.2*.jar"/>
                 <include name="mockito-core-3.5*.jar"/>
                 <include name="hamcrest-core*"/>
+                <include name="junit-4*.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/ooxml">
                 <include name="xmlbeans-3.1.0.jar"/>
@@ -640,7 +657,14 @@ under the License.
                 <and>
                     <available file="${main.commons-logging.jar}"/>
                     <available file="${main.commons-codec.jar}"/>
-                    <available file="${main.junit.jar}"/>
+                    <available file="${main.junit-api.jar}"/>
+                    <available file="${main.junit-jengine.jar}"/>
+                    <available file="${main.junit-params.jar}"/>
+                    <available file="${main.junit-plauncher.jar}"/>
+                    <available file="${main.junit-pengine.jar}"/>
+                    <available file="${main.junit-pcommons.jar}"/>
+                    <available file="${main.junit-opentest4j.jar}"/>
+                    <available file="${main.junit-apiguardian.jar}"/>
                     <available file="${main.jmh.jar}"/>
                     <available file="${main.jmhAnnotation.jar}"/>
                     <available file="${main.hamcrest.jar}"/>
@@ -679,7 +703,14 @@ under the License.
         <mkdir dir="${main.lib}"/>
         <downloadfile src="${main.commons-logging.url}" dest="${main.commons-logging.jar}"/>
         <downloadfile src="${main.commons-codec.url}" dest="${main.commons-codec.jar}"/>
-        <downloadfile src="${main.junit.url}" dest="${main.junit.jar}"/>
+        <downloadfile src="${main.junit-api.url}" dest="${main.junit-api.jar}"/>
+        <downloadfile src="${main.junit-jengine.url}" dest="${main.junit-jengine.jar}"/>
+        <downloadfile src="${main.junit-params.url}" dest="${main.junit-params.jar}"/>
+        <downloadfile src="${main.junit-plauncher.url}" dest="${main.junit-plauncher.jar}"/>
+        <downloadfile src="${main.junit-pengine.url}" dest="${main.junit-pengine.jar}"/>
+        <downloadfile src="${main.junit-pcommons.url}" dest="${main.junit-pcommons.jar}"/>
+        <downloadfile src="${main.junit-opentest4j.url}" dest="${main.junit-opentest4j.jar}"/>
+        <downloadfile src="${main.junit-apiguardian.url}" dest="${main.junit-apiguardian.jar}"/>
         <downloadfile src="${main.jmh.url}" dest="${main.jmh.jar}"/>
         <downloadfile src="${main.jmhAnnotation.url}" dest="${main.jmhAnnotation.jar}"/>
         <downloadfile src="${main.hamcrest.url}" dest="${main.hamcrest.jar}"/>
@@ -1147,6 +1178,9 @@ under the License.
         <attribute name="showoutput" default="false"/>
         <attribute name="jacocodest" default="build/jacoco-dest.exec"/>
         <attribute name="modulepath-ref"/>
+        <attribute name="module1" default=""/>
+        <attribute name="module2" default=""/>
+        <attribute name="outputDir"/>
         <element name="elements" implicit="true"/>
         <sequential>
             <local name="no.jit.sherlock"/>
@@ -1166,6 +1200,23 @@ under the License.
                 </filterchain>
             </loadresource>
 
+            <path id="junit-jars">
+                <pathelement location="${main.junit-api.jar}"/>
+                <pathelement location="${main.junit-jengine.jar}"/>
+                <pathelement location="${main.junit-params.jar}"/>
+                <pathelement location="${main.junit-opentest4j.jar}"/>
+                <pathelement location="${main.junit-apiguardian.jar}"/>
+                <pathelement location="${main.junit-pcommons.jar}"/>
+                <pathelement location="${main.junit-pengine.jar}"/>
+                <pathelement location="${main.junit-plauncher.jar}"/>
+            </path>
+
+
+            <mkdir dir="build/poi-ant-contrib"/>
+            <javac srcdir="src/excelant/poi-ant-contrib" destdir="build/poi-ant-contrib"
+                   includeantruntime="true" includes="Junit5Progress.java" classpathref="junit-jars"/>
+
+
             <local name="ooxml.lite.agent.exists"/>
             <available property="ooxml.lite.agent.exists" file="${ooxml.lite.agent}"/>
 
@@ -1179,32 +1230,64 @@ under the License.
                 </filtermapper>
             </pathconvert>
 
-            <jacoco:coverage enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="@{jacocodest}">
-                <junit printsummary="yes" fork="yes" forkmode="once" haltonfailure="${halt.on.test.failure}"
-                       failureproperty="@{failureproperty}" showoutput="@{showoutput}" filtertrace="off">
-                    <syspropertyset refid="junit.properties"/>
-                    <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
-                    <jvmarg value="-Xmx@{heap}M"/>
-                    <jvmarg value="-ea"/>
+            <local name="use_module1"/>
+            <local name="use_module2"/>
+            <condition property="use_module1" value="true" unless:true="${isJava8}">
+                <length string="@{module1}" when="greater" length="0"/>
+            </condition>
+            <condition property="use_module2" value="true" unless:true="${isJava8}">
+                <length string="@{module2}" when="greater" length="0"/>
+            </condition>
 
-                    <!-- some "add-opens" and other properties are needed when running with Java 9 or newer -->
-                    <sysproperty key="sun.reflect.debugModuleAccessChecks" value="true" if:true="${addOpens}" />
-                    <sysproperty key="com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize" value="true" if:true="${addOpens}" />
-                    <jvmarg value="--illegal-access=warn" if:true="${addOpens}" />
-                    <jvmarg value="-javaagent:${ooxml.lite.agent}=${ooxml.lite.report}|${ooxml.lite.includes}" if:true="${ooxml.lite.agent.exists}"/>
+            <delete file="build/status-as-tests-run.txt" failonerror="false"/>
 
-                    <!-- jvmarg value="-Duser.timezone=UTC"/ -->
-                    <jvmarg value="${file.leak.detector}" />
-                    <jvmarg value="-Xjit:verbose={compileStart|compileEnd},vlog=build/jit.log${no.jit.sherlock}" if:true="${isIBMVM}"/>
-                    <formatter type="plain"/>
-                    <formatter type="xml"/>
-                    <modulepath refid="@{modulepath-ref}" unless:true="${isJava8}"/>
-                    <classpath if:true="${isJava8}">
-                        <fileset dir="${basedir}" includes="${cp_java}"/>
-                    </classpath>
+            <!-- As of 2018, JaCoCo is managing expectations and stay on Java 5 and therefore don't support junitlauncher -->
+            <!-- https://github.com/jacoco/jacoco/issues/673  ... m( -->
+
+            <jacoco:agent property="jacocoagent" enabled="${coverage.enabled}" excludes="${coverage.excludes}" destfile="@{jacocodest}"/>
+
+            <junitlauncher printsummary="false" haltonfailure="${halt.on.test.failure}" failureproperty="@{failureproperty}">
+                <classpath>
+                    <path refid="junit-jars" if:true="${isJava8}"/>
+                    <fileset dir="${basedir}" includes="${cp_java}" if:true="${isJava8}"/>
+                    <pathelement location="build/poi-ant-contrib"/>
+                </classpath>
+
+                <testclasses outputDir="@{outputDir}">
+                    <fork>
+                        <syspropertyset refid="junit.properties"/>
+                        <sysproperty key="java.io.tmpdir" value="${tempdir}"/>
+                        <jvmarg value="-Xmx@{heap}M"/>
+                        <jvmarg value="-ea"/>
+
+                        <!-- some "add-opens" and other properties are needed when running with Java 9 or newer -->
+                        <sysproperty key="sun.reflect.debugModuleAccessChecks" value="true" if:true="${addOpens}" />
+                        <sysproperty key="com.sun.xml.bind.v2.bytecode.ClassTailor.noOptimize" value="true" if:true="${addOpens}" />
+                        <jvmarg value="--illegal-access=warn" if:true="${addOpens}" />
+                        <jvmarg value="-javaagent:${ooxml.lite.agent}=${ooxml.lite.report}|${ooxml.lite.includes}" if:true="${ooxml.lite.agent.exists}"/>
+                        <jvmarg line="${jacocoagent}"/>
+
+                        <!-- jvmarg value="-Duser.timezone=UTC"/ -->
+                        <jvmarg value="${file.leak.detector}" />
+                        <jvmarg value="-Xjit:verbose={compileStart|compileEnd},vlog=build/jit.log${no.jit.sherlock}" if:true="${isIBMVM}"/>
+
+                        <modulepath refid="@{modulepath-ref}" unless:true="${isJava8}"/>
+
+                        <jvmarg line="--add-modules org.junit.platform.launcher" unless:true="${isJava8}"/>
+                        <jvmarg line="--add-modules org.junit.jupiter.params" unless:true="${isJava8}"/>
+                        <jvmarg line="--add-modules org.apache.poi.@{module1}" if:set="use_module1"/>
+                        <jvmarg line="--add-modules org.apache.poi.@{module2}" if:set="use_module2"/>
+                    </fork>
+
+                    <listener type="legacy-plain" sendSysOut="true" outputDir="@{outputDir}"/>
+                    <listener type="legacy-xml" sendSysOut="true" sendSysErr="true" outputDir="@{outputDir}"/>
+                    <listener classname="Junit5Progress"/>
                     <elements/>
-                </junit>
-            </jacoco:coverage>
+                </testclasses>
+            </junitlauncher>
+
+            <loadfile property="contents" srcFile="build/status-as-tests-run.txt" />
+            <echo message="${contents}" />
         </sequential>
     </macrodef>
 
@@ -1222,20 +1305,16 @@ under the License.
             <pathelement path="lib/ooxml-tests"/>
         </path>
 
-        <poiunit failureproperty="ooxml.test.failed" heap="768"
-            modulepath-ref="restest.modules">
-            <jvmarg line="--add-modules org.apache.poi.ooxml" unless:true="${isJava8}"/>
-            <jvmarg line="--add-modules org.apache.poi.scratchpad" unless:true="${isJava8}"/>
-            <batchtest todir="${ooxml.reports.test}">
-                <fileset dir="${ooxml.src.test}">
-                    <include name="**/${testpattern}.java"/>
-                    <exclude name="**/TestUnfixedBugs.java"/>
-                    <exclude name="**/All*Tests.java"/>
-                    <exclude name="**/TestSignatureInfo.java"/>
-                    <exclude name="**/${testexcludepattern}.java"/>
-                    <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
-                </fileset>
-            </batchtest>
+        <poiunit failureproperty="ooxml.test.failed" heap="768" modulepath-ref="restest.modules"
+            module1="ooxml" module2="scratchpad" outputDir="${ooxml.reports.test}">
+            <zipfileset src="build/dist/maven/poi-ooxml-tests/poi-ooxml-${version.id}-tests.jar">
+                <include name="**/${testpattern}.class"/>
+                <exclude name="**/TestUnfixedBugs.class"/>
+                <exclude name="**/All*Tests.class"/>
+                <exclude name="**/TestSignatureInfo.class"/>
+                <exclude name="**/${testexcludepattern}.class"/>
+                <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
+            </zipfileset>
         </poiunit>
     </target>
 
@@ -1461,19 +1540,15 @@ under the License.
         </path>
 
         <poiunit failureproperty="main.test.failed" heap="256" showoutput="true" jacocodest="build/jacoco-main.exec"
-            modulepath-ref="test-main.modules">
-            <jvmarg line="--add-modules org.apache.poi.poi" unless:true="${isJava8}"/>
-
-            <batchtest todir="${main.reports.test}">
-                <fileset dir="${main.src.test}">
-                    <include name="**/${testpattern}.java"/>
-                    <exclude name="**/All*Tests.java"/>
-                    <exclude name="**/TestUnfixedBugs.java"/>
-                    <exclude name="**/TestcaseRecordInputStream.java"/>
-                    <exclude name="**/${testexcludepattern}.java"/>
-                    <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
-                </fileset>
-            </batchtest>
+                 modulepath-ref="test-main.modules" module1="poi" outputDir="${main.reports.test}">
+            <zipfileset src="build/dist/maven/poi-tests/poi-${version.id}-tests.jar">
+                <include name="**/${testpattern}.class"/>
+                <exclude name="**/All*Tests.class"/>
+                <exclude name="**/TestUnfixedBugs.class"/>
+                <exclude name="**/TestcaseRecordInputStream.class"/>
+                <exclude name="**/${testexcludepattern}.class"/>
+                <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
+            </zipfileset>
         </poiunit>
 
         <delete file="${main.testokfile}"/>
@@ -1521,17 +1596,13 @@ under the License.
         </path>
 
         <poiunit failureproperty="scratchpad.test.failed" heap="512" jacocodest="build/jacoco-scratchpad.exec"
-            modulepath-ref="test-scratchpad.modules">
-            <jvmarg line="--add-modules org.apache.poi.scratchpad" unless:true="${isJava8}"/>
-
-            <batchtest todir="${scratchpad.reports.test}">
-                <fileset dir="${scratchpad.src.test}">
-                    <include name="**/${testpattern}.java"/>
-                    <exclude name="**/AllTests.java"/>
-                    <exclude name="**/${testexcludepattern}.java"/>
-                    <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
-                </fileset>
-            </batchtest>
+                 modulepath-ref="test-scratchpad.modules" module1="scratchpad" outputDir="${scratchpad.reports.test}">
+            <zipfileset src="build/dist/maven/poi-scratchpad-tests/poi-scratchpad-${version.id}-tests.jar">
+                <include name="**/${testpattern}.class"/>
+                <exclude name="**/All*Tests.class"/>
+                <exclude name="**/${testexcludepattern}.class"/>
+                <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
+            </zipfileset>
         </poiunit>
         <delete file="${scratchpad.testokfile}"/>
         <antcall target="-test-scratchpad-write-testfile"/>
@@ -1554,19 +1625,14 @@ under the License.
         <attribute name="type"/>
         <sequential>
             <poiunit failureproperty="ooxml.test.failed" heap="768" jacocodest="build/jacoco-@{type}.exec"
-                modulepath-ref="@{modulepath-ref}">
-                <jvmarg line="--add-modules org.apache.poi.ooxml" unless:true="${isJava8}"/>
-                <jvmarg line="--add-modules org.apache.poi.scratchpad" unless:true="${isJava8}"/>
-
-                <batchtest todir="${ooxml.reports.test}">
-                    <fileset dir="${ooxml.src.test}">
-                        <include name="**/${testpattern}.java"/>
-                        <exclude name="**/TestUnfixedBugs.java"/>
-                        <exclude name="**/All*Tests.java"/>
-                        <exclude name="**/${testexcludepattern}.java"/>
-                        <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
-                    </fileset>
-                </batchtest>
+                     modulepath-ref="@{modulepath-ref}" module1="ooxml" module2="scratchpad" outputDir="${ooxml.reports.test}">
+                <zipfileset src="build/dist/maven/poi-ooxml-tests/poi-ooxml-${version.id}-tests.jar">
+                    <include name="**/${testpattern}.class"/>
+                    <exclude name="**/All*Tests.class"/>
+                    <exclude name="**/TestUnfixedBugs.class"/>
+                    <exclude name="**/${testexcludepattern}.class"/>
+                    <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
+                </zipfileset>
             </poiunit>
         </sequential>
     </macrodef>
@@ -1622,16 +1688,12 @@ under the License.
         </path>
 
         <poiunit failureproperty="integration.test.failed" heap="1512" showoutput="true" jacocodest="build/jacoco-integration.exec"
-            modulepath-ref="test-integration.modules">
-            <jvmarg line="--add-modules org.apache.poi.stress" unless:true="${isJava8}"/>
-
-            <batchtest todir="${integration.reports.test}">
-                <fileset dir="${integration.src.test}">
-                    <include name="**/${testpattern}.java"/>
-                    <exclude name="**/${testexcludepattern}.java"/>
-                    <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
-                </fileset>
-            </batchtest>
+                 modulepath-ref="test-integration.modules" module1="stress" outputDir="${integration.reports.test}">
+            <zipfileset src="build/dist/maven/poi-integration/poi-integration-${version.id}.jar">
+                <include name="**/${testpattern}.class"/>
+                <exclude name="**/${testexcludepattern}.class"/>
+                <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
+            </zipfileset>
         </poiunit>
         <delete file="${integration.testokfile}"/>
         <antcall target="-test-integration-write-testfile"/>
@@ -1810,16 +1872,12 @@ org/apache/poi/schemas/ooxml/system/ooxml/rectaf36doctype.xsb
         </path>
 
         <poiunit failureproperty="excelant.test.failed" jacocodest="build/jacoco-excelant.exec"
-            modulepath-ref="test-excelant.modules">
-            <jvmarg line="--add-modules org.apache.poi.excelant" unless:true="${isJava8}"/>
-
-            <batchtest todir="${excelant.reports.test}">
-                <fileset dir="${excelant.src.test}">
-                    <include name="**/${testpattern}.java"/>
-                    <exclude name="**/${testexcludepattern}.java"/>
-                    <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
-                </fileset>
-            </batchtest>
+                 modulepath-ref="test-excelant.modules" module1="excelant" outputDir="${excelant.reports.test}">
+            <zipfileset src="build/dist/maven/poi-excelant-tests/poi-excelant-${version.id}-tests.jar">
+                <include name="**/${testpattern}.class"/>
+                <exclude name="**/${testexcludepattern}.class"/>
+                <patternset refid="exclude-scratchpad-test" if:true="${scratchpad.ignore}"/>
+            </zipfileset>
         </poiunit>
         <delete file="${excelant.testokfile}"/>
         <antcall target="-test-excelant-write-testfile"/>
@@ -2521,7 +2579,14 @@ org/apache/poi/schemas/ooxml/system/ooxml/rectaf36doctype.xsb
             <auxClasspath path="${main.commons-logging.jar}" />
             <auxClasspath path="${main.slf4j-api.jar}" />
             <auxClasspath path="${main.slf4j-simple.jar}" />
-            <auxClasspath path="${main.junit.jar}" />
+            <auxClasspath path="${main.junit-api.jar}" />
+            <auxClasspath path="${main.junit-jengine.jar}" />
+            <auxClasspath path="${main.junit-params.jar}" />
+            <auxClasspath path="${main.junit-plauncher.jar}" />
+            <auxClasspath path="${main.junit-pengine.jar}" />
+            <auxClasspath path="${main.junit-pcommons.jar}" />
+            <auxClasspath path="${main.junit-opentest4j.jar}" />
+            <auxClasspath path="${main.junit-apiguardian.jar}" />
             <auxClasspath path="${main.jmh.jar}"/>
             <auxClasspath path="${main.jmhAnnotation.jar}"/>
             <auxClasspath path="${main.ant.jar}" />

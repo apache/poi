@@ -16,13 +16,13 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.awt.Color;
 import java.io.IOException;
 import java.util.List;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestXSSFTextRun {
     @Test
@@ -58,12 +58,8 @@ public class TestXSSFTextRun {
             assertEquals(11.0, run.getFontSize(), 0.01);
             run.setFontSize(-1.0);
             assertEquals(11.0, run.getFontSize(), 0.01);
-            try {
-                run.setFontSize(0.9);
-                fail("Should fail");
-            } catch (IllegalArgumentException e) {
-                assertTrue(e.getMessage().contains("0.9"));
-            }
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> run.setFontSize(0.9));
+            assertTrue(e.getMessage().contains("0.9"));
             assertEquals(11.0, run.getFontSize(), 0.01);
 
             assertEquals(0.0, run.getCharacterSpacing(), 0.01);

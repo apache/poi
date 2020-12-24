@@ -17,16 +17,17 @@
 
 package org.apache.poi.hssf.record;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.util.HexRead;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests BoundSheetRecord.
@@ -45,10 +46,10 @@ public final class TestBoundSheetRecord {
 		assertEquals(24, record.getRecordSize());
 	}
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testName() {
 		BoundSheetRecord record = new BoundSheetRecord("1234567890223456789032345678904");
-		record.setSheetname("s//*s");
+		assertThrows(IllegalArgumentException.class, () -> record.setSheetname("s//*s"));
 	}
 
 	@Test

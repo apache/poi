@@ -17,10 +17,10 @@
 
 package org.apache.poi.hssf.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -31,8 +31,8 @@ import org.apache.poi.ss.formula.functions.MatrixFunction;
 import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
 import org.apache.poi.ss.formula.ptg.FuncVarPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests specific formula examples in <tt>OperandClassTransformer</tt>.
@@ -41,7 +41,7 @@ public final class TestOperandClassTransformer {
 
     private static Ptg[] parseFormula(String formula) {
         Ptg[] result = HSSFFormulaParser.parse(formula, null);
-        assertNotNull("Ptg array should not be null", result);
+        assertNotNull(result, "Ptg array should not be null");
         return result;
     }
 
@@ -79,7 +79,7 @@ public final class TestOperandClassTransformer {
      * This test has been added but disabled in order to document this issue.
      */
     @Test
-    @Ignore
+    @Disabled
     public void testIndexPi1() {
         String formula = "INDEX(PI(),1)";
         Ptg[] ptgs = parseFormula(formula);
@@ -144,7 +144,7 @@ public final class TestOperandClassTransformer {
 
     private void confirmTokenClass(Ptg[] ptgs, int i, byte operandClass) {
         Ptg ptg = ptgs[i];
-        assertFalse("ptg[" + i + "] is a base token", ptg.isBaseToken());
+        assertFalse(ptg.isBaseToken(), "ptg[" + i + "] is a base token");
         assertEquals(operandClass, ptg.getPtgClass());
     }
 }

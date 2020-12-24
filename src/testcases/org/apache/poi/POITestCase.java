@@ -23,10 +23,10 @@ import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeNoException;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.lang.reflect.Field;
 import java.security.AccessController;
@@ -84,9 +84,7 @@ public final class POITestCase {
         assertNotNull(needle);
         String hay = haystack.toLowerCase(locale);
         String n = needle.toLowerCase(locale);
-        assertTrue("Unable to find expected text '" + needle + "' in text:\n" + haystack,
-                hay.contains(n)
-        );
+        assertTrue(hay.contains(n), "Unable to find expected text '" + needle + "' in text:\n" + haystack);
     }
     public static void assertContainsIgnoreCase(String haystack, String needle) {
         assertContainsIgnoreCase(haystack, needle, Locale.ROOT);
@@ -103,17 +101,11 @@ public final class POITestCase {
      * @param key needle
      */
     public static  <T> void assertContains(Map<T, ?> map, T key) {
-        if (map.containsKey(key)) {
-            return;
-        }
-        fail("Unable to find " + key + " in " + map);
+        assertTrue(map.containsKey(key), "Unable to find " + key + " in " + map);
     }
 
     public static <T> void assertNotContained(Set<T> set, T element) {
-        assertThat(set, not(hasItem(element)));
-        /*if (set.contains(element)) {
-            fail("Set should not contain " + element);
-        }*/
+        assertThat("Set should not contain " + element, set, not(hasItem(element)));
     }
 
     /**
@@ -123,7 +115,7 @@ public final class POITestCase {
     @SuppressWarnings({"unused", "unchecked"})
     @SuppressForbidden("For test usage only")
     public static <R,T> R getFieldValue(final Class<? super T> clazz, final T instance, final Class<R> fieldType, final String fieldName) {
-        assertTrue("Reflection of private fields is only allowed for POI classes.", clazz.getName().startsWith("org.apache.poi."));
+        assertTrue(clazz.getName().startsWith("org.apache.poi."), "Reflection of private fields is only allowed for POI classes.");
         try {
             return AccessController.doPrivileged((PrivilegedExceptionAction<R>) () -> {
                 Field f = clazz.getDeclaredField(fieldName);
@@ -193,7 +185,7 @@ public final class POITestCase {
      * be raised when the bug is fixed
      */
     public static void skipTest(Throwable e) {
-        assumeNoException("This test currently fails with", e);
+        assumeTrue(e != null, "This test currently fails with");
     }
     /**
      * @see #skipTest(Throwable)
@@ -205,9 +197,7 @@ public final class POITestCase {
     }
 
     public static void assertBetween(String message, int value, int min, int max) {
-        assertTrue(message + ": " + value + " is less than the minimum value of " + min,
-                min <= value);
-        assertTrue(message + ": " + value + " is greater than the maximum value of " + max,
-                value <= max);
+        assertTrue(min <= value, message + ": " + value + " is less than the minimum value of " + min);
+        assertTrue(value <= max, message + ": " + value + " is greater than the maximum value of " + max);
     }
 }

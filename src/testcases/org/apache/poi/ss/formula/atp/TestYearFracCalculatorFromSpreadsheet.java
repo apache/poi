@@ -17,9 +17,9 @@
 
 package org.apache.poi.ss.formula.atp;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Calendar;
 import java.util.Iterator;
@@ -35,13 +35,13 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests YearFracCalculator using test-cases listed in a sample spreadsheet
  */
 public final class TestYearFracCalculatorFromSpreadsheet {
-	
+
 	private static final class SS {
 
 		public static final int BASIS_COLUMN = 1; // "B"
@@ -53,7 +53,7 @@ public final class TestYearFracCalculatorFromSpreadsheet {
 
 	@Test
 	public void testAll() throws Exception {
-		
+
 		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("yearfracExamples.xls");
 		HSSFSheet sheet = wb.getSheetAt(0);
 		HSSFFormulaEvaluator formulaEvaluator = new HSSFFormulaEvaluator(wb);
@@ -61,7 +61,7 @@ public final class TestYearFracCalculatorFromSpreadsheet {
 		Iterator<Row> rowIterator = sheet.rowIterator();
 		while(rowIterator.hasNext()) {
 			HSSFRow row = (HSSFRow) rowIterator.next();
-			
+
 			HSSFCell cell = row.getCell(SS.YEARFRAC_FORMULA_COLUMN);
 			if (cell == null || cell.getCellType() != CellType.FORMULA) {
 				continue;
@@ -70,26 +70,26 @@ public final class TestYearFracCalculatorFromSpreadsheet {
             nSuccess++;
 		}
 
-		assertTrue("No test sample cases found", nSuccess > 0);
+		assertTrue(nSuccess > 0, "No test sample cases found");
 		wb.close();
 	}
-	
+
 	private void processRow(HSSFRow row, HSSFCell cell, HSSFFormulaEvaluator formulaEvaluator)
 	throws EvaluationException {
-		
+
 		double startDate = makeDate(row, SS.START_YEAR_COLUMN);
 		double endDate = makeDate(row, SS.END_YEAR_COLUMN);
-		
+
 		int basis = getIntCell(row, SS.BASIS_COLUMN);
-		
+
 		double expectedValue = getDoubleCell(row, SS.EXPECTED_RESULT_COLUMN);
-		
+
 		double actualValue = YearFracCalculator.calculate(startDate, endDate, basis);
 
 		String loc = " - row " + (row.getRowNum()+1);
-		assertEquals("Direct calculate failed"+loc, expectedValue, actualValue, 0);
+		assertEquals(expectedValue, actualValue, 0, "Direct calculate failed"+loc);
 		actualValue = formulaEvaluator.evaluate(cell).getNumberValue();
-		assertEquals("Formula evaluate failed"+loc, expectedValue, actualValue, 0);
+		assertEquals(expectedValue, actualValue, 0, "Formula evaluate failed"+loc);
 	}
 
 	private static double makeDate(HSSFRow row, int yearColumn) {
@@ -103,13 +103,13 @@ public final class TestYearFracCalculatorFromSpreadsheet {
 	private static int getIntCell(HSSFRow row, int colIx) {
 		double dVal = getDoubleCell(row, colIx);
 		String msg = "Non integer value (" + dVal + ") cell found at column " + (char)('A' + colIx);
-		assertEquals(msg, Math.floor(dVal), dVal, 0);
+		assertEquals(Math.floor(dVal), dVal, 0, msg);
 		return (int)dVal;
 	}
 
 	private static double getDoubleCell(HSSFRow row, int colIx) {
 		HSSFCell cell = row.getCell(colIx);
-		assertNotNull("No cell found at column " + colIx, cell);
+		assertNotNull(cell, "No cell found at column " + colIx);
         return cell.getNumericCellValue();
 	}
 }

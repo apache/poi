@@ -17,14 +17,15 @@
 
 package org.apache.poi.xssf.model;
 
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.Map;
@@ -39,8 +40,8 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 public final class TestStylesTable {
     private static final String testFile = "Formatting.xlsx";
     private static final String customDataFormat = "YYYY-mm-dd";
-    
-    @BeforeClass
+
+    @BeforeAll
     public static void assumeCustomDataFormatIsNotBuiltIn() {
         assertEquals(-1, BuiltinFormats.getBuiltinFormat(customDataFormat));
     }
@@ -120,7 +121,7 @@ public final class TestStylesTable {
         assertNotNull(st.getStyleAt(0));
         assertNotNull(st.getStyleAt(1));
         assertNotNull(st.getStyleAt(2));
-        
+
         assertEquals(0, st.getStyleAt(0).getDataFormat());
         assertEquals(14, st.getStyleAt(1).getDataFormat());
         assertEquals(0, st.getStyleAt(2).getDataFormat());
@@ -189,7 +190,7 @@ public final class TestStylesTable {
             assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(workbook));
         }
     }
-    
+
     @Test
     public void exceedNumberFormatLimit() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
@@ -206,14 +207,14 @@ public final class TestStylesTable {
             }
         }
     }
-    
+
     private static <K,V> void assertNotContainsKey(Map<K,V> map, K key) {
         assertFalse(map.containsKey(key));
     }
     private static <K,V> void assertNotContainsValue(Map<K,V> map, V value) {
         assertFalse(map.containsValue(value));
     }
-    
+
     @Test
     public void removeNumberFormat() throws IOException {
         try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
@@ -230,14 +231,8 @@ public final class TestStylesTable {
             assertEquals(fmt, wb1.getStylesSource().getNumberFormatAt(fmtIdx));
 
             // remove the number format from the workbook
-            assertTrue("The format is removed on first call",
-                    wb1.getStylesSource().removeNumberFormat(fmt));
-            try {
-                wb1.getStylesSource().removeNumberFormat(fmt);
-                fail("Should fail here");
-            } catch (IllegalStateException e) {
-                // expected here
-            }
+            assertTrue(wb1.getStylesSource().removeNumberFormat(fmt), "The format is removed on first call");
+            assertThrows(IllegalStateException.class, () -> wb1.getStylesSource().removeNumberFormat(fmt));
 
             // number format in CellStyles should be restored to default number format
             final short defaultFmtIdx = 0;
@@ -272,7 +267,7 @@ public final class TestStylesTable {
             }
         }
     }
-    
+
     @Test
     public void maxNumberOfDataFormats() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
@@ -290,17 +285,12 @@ public final class TestStylesTable {
             assertEquals(n, styles.getMaxNumberOfDataFormats());
 
             // Check negative (illegal) limits
-            try {
-                styles.setMaxNumberOfDataFormats(-1);
-                fail("Expected to get an IllegalArgumentException(\"Maximum Number of Data Formats must be greater than or equal to 0\")");
-            } catch (final IllegalArgumentException e) {
-                if (!e.getMessage().startsWith("Maximum Number of Data Formats must be greater than or equal to 0")) {
-                    throw e;
-                }
-            }
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> styles.setMaxNumberOfDataFormats(-1),
+                "Expected to get an IllegalArgumentException(\"Maximum Number of Data Formats must be greater than or equal to 0\")");
+            assertTrue(e.getMessage().startsWith("Maximum Number of Data Formats must be greater than or equal to 0"));
         }
     }
-    
+
     @Test
     public void addDataFormatsBeyondUpperLimit() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
@@ -308,17 +298,11 @@ public final class TestStylesTable {
             styles.setMaxNumberOfDataFormats(0);
 
             // Try adding a format beyond the upper limit
-            try {
-                styles.putNumberFormat("\"test \"0");
-                fail("Expected to raise IllegalStateException");
-            } catch (final IllegalStateException e) {
-                if (!e.getMessage().startsWith("The maximum number of Data Formats was exceeded.")) {
-                    throw e;
-                }
-            }
+            IllegalStateException e = assertThrows(IllegalStateException.class, () -> styles.putNumberFormat("\"test \"0"));
+            assertTrue(e.getMessage().startsWith("The maximum number of Data Formats was exceeded."));
         }
     }
-    
+
     @Test
     public void decreaseUpperLimitBelowCurrentNumDataFormats() throws IOException {
         try (XSSFWorkbook wb = new XSSFWorkbook()) {
@@ -326,14 +310,8 @@ public final class TestStylesTable {
             styles.putNumberFormat(customDataFormat);
 
             // Try decreasing the upper limit below the current number of formats
-            try {
-                styles.setMaxNumberOfDataFormats(0);
-                fail("Expected to raise IllegalStateException");
-            } catch (final IllegalStateException e) {
-                if (!e.getMessage().startsWith("Cannot set the maximum number of data formats less than the current quantity.")) {
-                    throw e;
-                }
-            }
+            IllegalStateException e = assertThrows(IllegalStateException.class, () -> styles.setMaxNumberOfDataFormats(0));
+            assertTrue(e.getMessage().startsWith("Cannot set the maximum number of data formats less than the current quantity."));
         }
     }
 

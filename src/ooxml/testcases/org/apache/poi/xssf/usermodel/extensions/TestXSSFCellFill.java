@@ -18,9 +18,9 @@
 package org.apache.poi.xssf.usermodel.extensions;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 
@@ -30,7 +30,7 @@ import org.apache.poi.xssf.usermodel.XSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTFill;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPatternFill;
@@ -104,15 +104,15 @@ public class TestXSSFCellFill {
             assertEquals(rgbWithTint[2], -80);
         }
     }
-    
+
     @Test
     public void testFillWithoutColors() throws IOException {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("FillWithoutColor.xlsx")) {
             XSSFCell cellWithFill = wb.getSheetAt(0).getRow(5).getCell(1);
             XSSFCellStyle style = cellWithFill.getCellStyle();
             assertNotNull(style);
-            assertNull("had an empty background color", style.getFillBackgroundColorColor());
-            assertNull("had an empty background color", style.getFillBackgroundXSSFColor());
+            assertNull(style.getFillBackgroundColorColor(), "had an empty background color");
+            assertNull(style.getFillBackgroundXSSFColor(), "had an empty background color");
         }
     }
 }

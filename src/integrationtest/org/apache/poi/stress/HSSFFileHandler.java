@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -34,7 +34,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.NullPrintStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class HSSFFileHandler extends SpreadsheetHandler {
 	private final POIFSFileHandler delegate = new POIFSFileHandler();
@@ -92,8 +92,7 @@ public class HSSFFileHandler extends SpreadsheetHandler {
 
 			BiffViewer.main(new String[]{file.getAbsolutePath()});
 
-			assertFalse("Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!",
-					EXPECTED_ADDITIONAL_FAILURES.contains(fileWithParent));
+			assertFalse( EXPECTED_ADDITIONAL_FAILURES.contains(fileWithParent), "Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!" );
 		} catch (OldExcelFormatException e) {
 			// old excel formats are not supported here
 		} catch (RuntimeException e) {

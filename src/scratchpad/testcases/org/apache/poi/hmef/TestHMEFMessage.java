@@ -17,12 +17,12 @@
 
 package org.apache.poi.hmef;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,7 +40,7 @@ import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.hsmf.datatypes.Types;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestHMEFMessage {
     private static final POIDataSamples _samples = POIDataSamples.getHMEFInstance();
@@ -66,8 +66,8 @@ public final class TestHMEFMessage {
             int mapiAttrCount = attach.getMAPIAttributes().size();
 
             assertEquals(6, attrCount);
-            assertTrue("Should be 20-25 mapi attributes, found " + mapiAttrCount, mapiAttrCount >= 20);
-            assertTrue("Should be 20-25 mapi attributes, found " + mapiAttrCount, mapiAttrCount <= 25);
+            assertTrue(mapiAttrCount >= 20, "Should be 20-25 mapi attributes, found " + mapiAttrCount);
+            assertTrue(mapiAttrCount <= 25, "Should be 20-25 mapi attributes, found " + mapiAttrCount);
         }
     }
 

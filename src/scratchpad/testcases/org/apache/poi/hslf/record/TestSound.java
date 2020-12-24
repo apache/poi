@@ -17,15 +17,15 @@
 
 package org.apache.poi.hslf.record;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests Sound-related records: SoundCollection(2020), Sound(2022) and
@@ -59,7 +59,7 @@ public final class TestSound {
 				k++;
 			}
 		}
-		
+
 		assertNotNull(sound);
 		assertEquals(1, k);
 

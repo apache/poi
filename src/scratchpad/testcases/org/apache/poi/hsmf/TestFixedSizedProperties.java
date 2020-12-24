@@ -18,10 +18,10 @@
 package org.apache.poi.hsmf;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -45,9 +45,9 @@ import org.apache.poi.hsmf.dev.HSMFDump;
 import org.apache.poi.hsmf.extractor.OutlookTextExtractor;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that we can read fixed sized properties, as well as variable
@@ -66,7 +66,7 @@ public final class TestFixedSizedProperties {
    /**
     * Initialize this test, load up the messages.
     */
-   @BeforeClass
+   @BeforeAll
    public static void initMapi()  throws Exception {
        POIDataSamples samples = POIDataSamples.getHSMFInstance();
        fsMessageSucceeds = new POIFSFileSystem(samples.getFile(messageSucceeds));
@@ -83,7 +83,7 @@ public final class TestFixedSizedProperties {
    }
 
 
-   @AfterClass
+   @AfterAll
    public static void closeFS() throws Exception {
        LocaleUtil.setUserTimeZone(userTimeZone);
        fsMessageSucceeds.close();
@@ -99,10 +99,10 @@ public final class TestFixedSizedProperties {
        Map<MAPIProperty,List<PropertyValue>> props;
 
        props = mapiMessageSucceeds.getMainChunks().getProperties();
-       assertTrue(props.toString(), props.size() > 10);
+       assertTrue(props.size() > 10, props.toString());
 
        props = mapiMessageFails.getMainChunks().getProperties();
-       assertTrue(props.toString(), props.size() > 10);
+       assertTrue(props.size() > 10, props.toString());
    }
 
    /**
@@ -121,20 +121,20 @@ public final class TestFixedSizedProperties {
                seenTypes.add(pv.getClass());
            }
        }
-       assertTrue(seenTypes.toString(), seenTypes.size() > 3);
-       assertTrue(seenTypes.toString(), seenTypes.contains(LongPropertyValue.class));
-       assertTrue(seenTypes.toString(), seenTypes.contains(TimePropertyValue.class));
-       assertFalse(seenTypes.toString(), seenTypes.contains(ChunkBasedPropertyValue.class));
+       assertTrue(seenTypes.size() > 3, seenTypes.toString());
+       assertTrue(seenTypes.contains(LongPropertyValue.class), seenTypes.toString());
+       assertTrue(seenTypes.contains(TimePropertyValue.class), seenTypes.toString());
+       assertFalse(seenTypes.contains(ChunkBasedPropertyValue.class), seenTypes.toString());
 
        // Ask for the raw values
        seenTypes.clear();
        for (PropertyValue pv : mainChunks.getRawProperties().values()) {
            seenTypes.add(pv.getClass());
        }
-       assertTrue(seenTypes.toString(), seenTypes.size() > 3);
-       assertTrue(seenTypes.toString(), seenTypes.contains(LongPropertyValue.class));
-       assertTrue(seenTypes.toString(), seenTypes.contains(TimePropertyValue.class));
-       assertTrue(seenTypes.toString(), seenTypes.contains(ChunkBasedPropertyValue.class));
+       assertTrue(seenTypes.size() > 3, seenTypes.toString());
+       assertTrue(seenTypes.contains(LongPropertyValue.class), seenTypes.toString());
+       assertTrue(seenTypes.contains(TimePropertyValue.class), seenTypes.toString());
+       assertTrue(seenTypes.contains(ChunkBasedPropertyValue.class), seenTypes.toString());
    }
 
    /**

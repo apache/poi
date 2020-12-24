@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -25,7 +25,7 @@ import java.io.InputStream;
 import org.apache.poi.hsmf.MAPIMessage;
 import org.apache.poi.hsmf.datatypes.AttachmentChunks;
 import org.apache.poi.hsmf.datatypes.DirectoryChunk;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class HSMFFileHandler extends POIFSFileHandler {
 	@Override
@@ -52,18 +52,18 @@ public class HSMFFileHandler extends POIFSFileHandler {
 		// write out the file
 		File file = TempFile.createTempFile("StressTest", ".msg");
 		writeToFile(mapi, file);
-		
+
 		MAPIMessage read = new MAPIMessage(file.getAbsolutePath());
 		assertNotNull(read.getAttachmentFiles());
 		assertNotNull(read.getDisplayBCC());
 		assertNotNull(read.getMessageDate());
 		*/
-		
+
 		// writing is not yet supported... handlePOIDocument(mapi);
-		
+
 		mapi.close();
 	}
-	
+
 //	private void writeToFile(MAPIMessage mapi, File file)
 //			throws FileNotFoundException, IOException {
 //		OutputStream stream = new FileOutputStream(file);
@@ -82,7 +82,7 @@ public class HSMFFileHandler extends POIFSFileHandler {
 		try (InputStream stream = new FileInputStream(file)) {
 			handleFile(stream, file.getPath());
 		}
-		
+
 		handleExtracting(file);
 	}
 }

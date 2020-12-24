@@ -17,11 +17,11 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,7 +44,7 @@ import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.HexRead;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link ValueRecordsAggregate}
@@ -78,8 +78,8 @@ public final class TestValueRecordsAggregate {
 		assertEquals(1, cvrs.size());
 
 		CellValueRecordInterface record = cvrs.get(0);
-		assertNotNull( "Row contains a value", record );
-		assertTrue( "First record is a FormulaRecordsAggregate", ( record instanceof FormulaRecordAggregate ) );
+		assertNotNull( record, "Row contains a value" );
+		assertTrue( ( record instanceof FormulaRecordAggregate ), "First record is a FormulaRecordsAggregate");
 	}
 
 	private void constructValueRecord(List<org.apache.poi.hssf.record.Record> records) {
@@ -258,13 +258,13 @@ public final class TestValueRecordsAggregate {
 		String cellFormula;
 		cellFormula = getFormulaFromFirstCell(s, 0); // row "1"
 		// the problem is not observable in the first row of the shared formula
-		assertEquals("Something else wrong with this test case", "\"first formula\"", cellFormula);
+		assertEquals("\"first formula\"", cellFormula, "Something else wrong with this test case");
 
 		// but the problem is observable in rows 2,3,4
 		cellFormula = getFormulaFromFirstCell(s, 1); // row "2"
-		assertNotEquals("found bug 44449 (Wrong SharedFormulaRecord was used).", "\"second formula\"", cellFormula);
+		assertNotEquals("\"second formula\"", cellFormula, "found bug 44449 (Wrong SharedFormulaRecord was used).");
 
-		assertEquals("Something else wrong with this test case", "\"first formula\"", cellFormula);
+		assertEquals("\"first formula\"", cellFormula, "Something else wrong with this test case");
 
 		wb.close();
 	}

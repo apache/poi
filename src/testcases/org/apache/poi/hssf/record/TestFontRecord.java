@@ -19,13 +19,13 @@ package org.apache.poi.hssf.record;
 
 
 import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.util.HexRead;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the serialization and deserialization of the {@link FontRecord}
@@ -111,7 +111,7 @@ public final class TestFontRecord {
         byte [] recordBytes = other.serialize();
         assertEquals(recordBytes.length - 4, data.length);
         for (int i = 0; i < data.length; i++)
-            assertEquals("At offset " + i, data[i], recordBytes[i+4]);
+            assertEquals(data[i], recordBytes[i+4], "At offset " + i);
     }
 
     @Test

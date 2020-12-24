@@ -16,16 +16,17 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt.tests;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import javax.crypto.Cipher;
 
@@ -39,55 +40,44 @@ import org.apache.poi.poifs.crypt.Encryptor;
 import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
-import org.junit.Assume;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
 public class TestAgileEncryptionParameters {
 
     static byte[] testData;
 
-    @Parameter(value = 0)
-    public CipherAlgorithm ca;
-    @Parameter(value = 1)
-    public HashAlgorithm ha;
-    @Parameter(value = 2)
-    public ChainingMode cm;
-
-    @Parameters(name="{0} {1} {2}")
-    public static Collection<Object[]> data() {
+    public static Stream<Arguments> data() {
         CipherAlgorithm[] caList = {CipherAlgorithm.aes128, CipherAlgorithm.aes192, CipherAlgorithm.aes256, CipherAlgorithm.rc2, CipherAlgorithm.des, CipherAlgorithm.des3};
         HashAlgorithm[] haList = {HashAlgorithm.sha1, HashAlgorithm.sha256, HashAlgorithm.sha384, HashAlgorithm.sha512, HashAlgorithm.md5};
         ChainingMode[] cmList = {ChainingMode.cbc, ChainingMode.cfb};
 
-        List<Object[]> data = new ArrayList<>();
+        List<Arguments> data = new ArrayList<>();
         for (CipherAlgorithm ca : caList) {
             for (HashAlgorithm ha : haList) {
                 for (ChainingMode cm : cmList) {
-                    data.add(new Object[]{ca,ha,cm});
+                    data.add(Arguments.of(ca,ha,cm));
                 }
             }
         }
 
-        return data;
+        return data.stream();
     }
 
-    @BeforeClass
+    @BeforeAll
     public static void initTestData() throws Exception {
         InputStream testFile = POIDataSamples.getDocumentInstance().openResourceAsStream("SampleDoc.docx");
         testData = IOUtils.toByteArray(testFile);
         testFile.close();
     }
 
-    @Test
-    public void testAgileEncryptionModes() throws Exception {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void testAgileEncryptionModes(CipherAlgorithm ca, HashAlgorithm ha, ChainingMode cm) throws Exception {
         int maxKeyLen = Cipher.getMaxAllowedKeyLength(ca.jceId);
-        Assume.assumeTrue("Please install JCE Unlimited Strength Jurisdiction Policy files", maxKeyLen >= ca.defaultKeySize);
+        assumeTrue(maxKeyLen >= ca.defaultKeySize, "Please install JCE Unlimited Strength Jurisdiction Policy files");
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
@@ -111,6 +101,6 @@ public class TestAgileEncryptionParameters {
         byte[] actualData = IOUtils.toByteArray(is);
         is.close();
         fsDec.close();
-        assertArrayEquals("Failed roundtrip - "+ca+"-"+ha+"-"+cm, testData, actualData);
+        assertArrayEquals(testData, actualData, "Failed roundtrip - "+ca+"-"+ha+"-"+cm);
     }
 }

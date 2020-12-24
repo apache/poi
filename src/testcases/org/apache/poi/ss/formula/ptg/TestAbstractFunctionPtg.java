@@ -17,10 +17,11 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.poi.util.LittleEndianOutput;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestAbstractFunctionPtg  {
 
@@ -32,14 +33,14 @@ public class TestAbstractFunctionPtg  {
         assertEquals(255, ptg.getNumberOfOperands());
     }
 
-    @Test(expected=RuntimeException.class)
+    @Test
     public void testInvalidFunctionIndex() {
-        new FunctionPtg(40000, 2, null, 255);
+        assertThrows(RuntimeException.class, () -> new FunctionPtg(40000, 2, null, 255));
     }
 
-    @Test(expected=RuntimeException.class)
+    @Test
     public void testInvalidRuntimeClass() {
-        new FunctionPtg(1, 300, null, 255);
+        assertThrows(RuntimeException.class, () -> new FunctionPtg(1, 300, null, 255));
     }
 
     private static class FunctionPtg extends AbstractFunctionPtg {

@@ -17,10 +17,10 @@
 
 package org.apache.poi.poifs.property;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -31,7 +31,7 @@ import java.util.List;
 
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test DirectoryProperty functionality
@@ -154,7 +154,7 @@ public final class TestDirectoryProperty {
     }
 
     private void createBasicDirectoryProperty() {
-        String name = "MyDirectory";
+        final String name = "MyDirectory";
 
         _property  = new DirectoryProperty(name);
         _testblock = new byte[ 128 ];
@@ -164,7 +164,7 @@ public final class TestDirectoryProperty {
         {
             _testblock[ index ] = ( byte ) 0;
         }
-        int limit = Math.min(31, name.length());
+        int limit = name.length();
 
         _testblock[ index++ ] = ( byte ) (2 * (limit + 1));
         _testblock[ index++ ] = ( byte ) 0;
@@ -195,8 +195,7 @@ public final class TestDirectoryProperty {
         assertEquals(_testblock.length, output.length);
         for (int j = 0; j < _testblock.length; j++)
         {
-            assertEquals("mismatch at offset " + j, _testblock[ j ],
-                         output[ j ]);
+            assertEquals(_testblock[ j ], output[ j ], "mismatch at offset " + j);
         }
     }
 
@@ -205,26 +204,8 @@ public final class TestDirectoryProperty {
         createBasicDirectoryProperty();
         _property.addChild(new LocalProperty(1));
         _property.addChild(new LocalProperty(2));
-        try
-        {
-            _property.addChild(new LocalProperty(1));
-            fail("should have caught IOException");
-        }
-        catch (IOException ignored)
-        {
-
-            // as expected
-        }
-        try
-        {
-            _property.addChild(new LocalProperty(2));
-            fail("should have caught IOException");
-        }
-        catch (IOException ignored)
-        {
-
-            // as expected
-        }
+        assertThrows(IOException.class, () -> _property.addChild(new LocalProperty(1)));
+        assertThrows(IOException.class, () -> _property.addChild(new LocalProperty(2)));
         _property.addChild(new LocalProperty(3));
     }
 
@@ -234,16 +215,7 @@ public final class TestDirectoryProperty {
         Property p1 = new LocalProperty(1);
 
         _property.addChild(p1);
-        try
-        {
-            _property.addChild(new LocalProperty(1));
-            fail("should have caught IOException");
-        }
-        catch (IOException ignored)
-        {
-
-            // as expected
-        }
+        assertThrows(IOException.class, () -> _property.addChild(new LocalProperty(1)));
         assertTrue(_property.deleteChild(p1));
         assertFalse(_property.deleteChild(p1));
         _property.addChild(new LocalProperty(1));
@@ -292,7 +264,7 @@ public final class TestDirectoryProperty {
 
         assertEquals(128, output.length);
         for (int j = 0; j < 128; j++) {
-            assertEquals("mismatch at offset " + j, expected[j], output[j]);
+            assertEquals(expected[j], output[j], "mismatch at offset " + j);
         }
         assertEquals(index, property.getIndex());
         assertEquals(name, property.getName());

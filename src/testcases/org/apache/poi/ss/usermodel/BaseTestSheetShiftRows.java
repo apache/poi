@@ -19,12 +19,12 @@ package org.apache.poi.ss.usermodel;
 
 import static org.apache.poi.POITestCase.skipTest;
 import static org.apache.poi.POITestCase.testPassesNow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -36,7 +36,7 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellReference;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests row shifting capabilities.
@@ -136,16 +136,17 @@ public abstract class BaseTestSheetShiftRows {
      * When shifting rows, the page breaks should go with it
      */
     @Test
-    public void testShiftRowBreaks() throws IOException { // TODO - enable XSSF test
-        Workbook wb = _testDataProvider.createWorkbook();
-        Sheet s = wb.createSheet();
-        Row row = s.createRow(4);
-        row.createCell(0).setCellValue("test");
-        s.setRowBreak(4);
+    public void testShiftRowBreaks() throws IOException {
+        // TODO - enable XSSF test
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            Sheet s = wb.createSheet();
+            Row row = s.createRow(4);
+            row.createCell(0).setCellValue("test");
+            s.setRowBreak(4);
 
-        s.shiftRows(4, 4, 2);
-        assertTrue("Row number 6 should have a pagebreak", s.isRowBroken(6));
-        wb.close();
+            s.shiftRows(4, 4, 2);
+            assertTrue(s.isRowBroken(6), "Row number 6 should have a pagebreak");
+        }
     }
 
     @Test
@@ -219,8 +220,8 @@ public abstract class BaseTestSheetShiftRows {
             assertEquals(2, sheet.getLastRowNum());
 
             // Verify comments are in the position expected
-            assertNull("Had: " + (sheet.getCellComment(new CellAddress(0,0)) == null ? "null" : sheet.getCellComment(new CellAddress(0,0)).getString()),
-                    sheet.getCellComment(new CellAddress(0,0)));
+            assertNull(sheet.getCellComment(new CellAddress(0,0)),
+                "Had: " + (sheet.getCellComment(new CellAddress(0,0)) == null ? "null" : sheet.getCellComment(new CellAddress(0,0)).getString()));
             assertNotNull(sheet.getCellComment(new CellAddress(1,0)));
             assertNotNull(sheet.getCellComment(new CellAddress(2,0)));
         }
@@ -570,18 +571,17 @@ public abstract class BaseTestSheetShiftRows {
         verifyHyperlink(shiftedRow.getCell(1), HyperlinkType.URL, "https://poi.apache.org/");
 
         // Make sure hyperlinks were moved and not copied
-        assertNull("Document hyperlink should be moved, not copied", sh.getHyperlink(0, 0));
-        assertNull("URL hyperlink should be moved, not copied", sh.getHyperlink(0, 1));
+        assertNull(sh.getHyperlink(0, 0), "Document hyperlink should be moved, not copied");
+        assertNull(sh.getHyperlink(0, 1), "URL hyperlink should be moved, not copied");
 
         // Make sure hyperlink in overwritten row is deleted
         assertEquals(3, sh.getHyperlinkList().size());
         CellAddress unexpectedLinkAddress = new CellAddress("C4");
         for (Hyperlink link : sh.getHyperlinkList()) {
             final CellAddress linkAddress = new CellAddress(link.getFirstRow(), link.getFirstColumn());
-            if (linkAddress.equals(unexpectedLinkAddress)) {
-                fail("Row 4, including the hyperlink at C4, should have " +
-                     "been deleted when Row 1 was shifted on top of it.");
-            }
+            assertNotEquals(linkAddress, unexpectedLinkAddress,
+                "Row 4, including the hyperlink at C4, should have " +
+                    "been deleted when Row 1 was shifted on top of it.");
         }
 
         // Make sure unaffected rows are not shifted

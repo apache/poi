@@ -17,11 +17,12 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,8 +43,8 @@ import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.streaming.SXSSFRow;
 import org.apache.poi.xssf.streaming.SXSSFSheet;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellType;
 
 public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
@@ -52,11 +53,16 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     // override some tests which do not work for SXSSF
-    @Override @Ignore("cloneSheet() not implemented") @Test public void bug18800() { /* cloneSheet() not implemented */ }
-    @Override @Ignore("cloneSheet() not implemented") @Test public void bug22720() { /* cloneSheet() not implemented */ }
-    @Override @Ignore("Evaluation is not fully supported") @Test public void bug47815() { /* Evaluation is not supported */ }
-    @Override @Ignore("Evaluation is not fully supported") @Test public void bug46729_testMaxFunctionArguments() { /* Evaluation is not supported */ }
-    @Override @Ignore("Reading data is not supported") @Test public void bug57798() { /* Reading data is not supported */ }
+    @Override @Disabled("cloneSheet() not implemented") @Test
+    public void bug18800() { /* cloneSheet() not implemented */ }
+    @Override @Disabled("cloneSheet() not implemented") @Test
+    public void bug22720() { /* cloneSheet() not implemented */ }
+    @Override @Disabled("Evaluation is not fully supported") @Test
+    public void bug47815() { /* Evaluation is not supported */ }
+    @Override @Disabled("Evaluation is not fully supported") @Test
+    public void bug46729_testMaxFunctionArguments() { /* Evaluation is not supported */ }
+    @Override @Disabled("Reading data is not supported") @Test
+    public void bug57798() { /* Reading data is not supported */ }
 
     /**
      * Setting repeating rows and columns shouldn't break
@@ -122,10 +128,8 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
 
         // does not work
         try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
-            writeWorkbook(wb, SXSSFITestDataProvider.instance);
-            fail("Should catch exception here");
-        } catch (RuntimeException e) {
-            // this is not implemented yet
+            assertThrows(RuntimeException.class, () -> writeWorkbook(wb, SXSSFITestDataProvider.instance),
+                "this is not implemented yet");
         }
     }
 
@@ -173,7 +177,7 @@ public final class TestSXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    @Ignore("takes too long for the normal test run")
+    @Disabled("takes too long for the normal test run")
     public void test62872() throws Exception {
         final int COLUMN_COUNT = 300;
         final int ROW_COUNT = 600000;

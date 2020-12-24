@@ -18,11 +18,11 @@
 
 package org.apache.poi.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the log class.
@@ -30,7 +30,7 @@ import org.junit.Test;
 public final class TestPOILogger implements POILogger {
     private String lastLog = "";
     private Throwable lastEx;
-    
+
     /**
      * Test different types of log output.
      */
@@ -41,23 +41,23 @@ public final class TestPOILogger implements POILogger {
             POILogFactory._loggerClassName = TestPOILogger.class.getName();
             POILogger log = POILogFactory.getLogger( "foo" );
             assertTrue(log instanceof TestPOILogger);
-            
+
             TestPOILogger tLog = (TestPOILogger)log;
-    
+
             log.log(POILogger.WARN, "Test = ", 1);
             assertEquals("Test = 1", tLog.lastLog);
-            
+
             log.log(POILogger.ERROR, "Test ", 1,2,new Exception("bla"));
             assertEquals("Test 12", tLog.lastLog);
             assertNotNull(tLog.lastEx);
-            
+
             log.log(POILogger.ERROR, "log\nforging", "\nevil","\nlog");
             assertEquals("log forging evil log", tLog.lastLog);
         } finally {
             POILogFactory._loggerClassName = oldLCN;
         }
     }
-    
+
     // ---------- POI Logger methods implemented for testing ----------
 
     @Override

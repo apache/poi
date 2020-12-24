@@ -17,13 +17,13 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link IntersectionPtg}.
@@ -36,8 +36,8 @@ public final class TestIntersectionPtg extends BaseTestPtg {
     public void testReading() throws IOException {
         try (HSSFWorkbook workbook = loadWorkbook("IntersectionPtg.xls")) {
             HSSFCell cell = workbook.getSheetAt(0).getRow(4).getCell(2);
-            assertEquals("Wrong cell value", 5.0, cell.getNumericCellValue(), 0.0);
-            assertEquals("Wrong cell formula", "SUM(A1:B2 B2:C3)", cell.getCellFormula());
+            assertEquals(5.0, cell.getNumericCellValue(), 0.0, "Wrong cell value");
+            assertEquals("SUM(A1:B2 B2:C3)", cell.getCellFormula(), "Wrong cell formula");
         }
     }
 }

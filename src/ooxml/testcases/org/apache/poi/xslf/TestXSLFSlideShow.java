@@ -33,25 +33,25 @@ import org.apache.poi.xslf.usermodel.XSLFRelation;
 import org.apache.poi.xslf.usermodel.XSLFSlide;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
 import org.apache.xmlbeans.XmlException;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.officeDocument.x2006.extendedProperties.CTProperties;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestXSLFSlideShow {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
     private OPCPackage pack;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
 		pack = OPCPackage.open(slTests.openResourceAsStream("sample.pptx"));
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws IOException {
     	pack.close();
 	}
@@ -73,18 +73,18 @@ public class TestXSLFSlideShow {
 		XSLFSlideShow xml = new XSLFSlideShow(pack);
 		// Check the core
 		assertNotNull(xml.getPresentation());
-		
+
 		// Check it has some slides
 		assertNotEquals(0, xml.getSlideReferences().sizeOfSldIdArray());
 		assertNotEquals(0, xml.getSlideMasterReferences().sizeOfSldMasterIdArray());
-		
+
 		xml.close();
 	}
-	
+
     @Test
 	public void testSlideBasics() throws IOException, OpenXML4JException, XmlException {
 		XSLFSlideShow xml = new XSLFSlideShow(pack);
-		
+
 		// Should have 1 master
 		assertEquals(1, xml.getSlideMasterReferences().sizeOfSldMasterIdArray());
 
@@ -98,62 +98,62 @@ public class TestXSLFSlideShow {
 		assertEquals(257, slides[1].getId());
 		assertEquals("rId2", slides[0].getId2());
 		assertEquals("rId3", slides[1].getId2());
-		
+
 		// Now get those objects
 		assertNotNull(xml.getSlide(slides[0]));
 		assertNotNull(xml.getSlide(slides[1]));
-		
+
 		// And check they have notes as expected
 		assertNotNull(xml.getNotes(slides[0]));
 		assertNotNull(xml.getNotes(slides[1]));
-		
+
 		// And again for the master
 		CTSlideMasterIdListEntry[] masters = xml.getSlideMasterReferences().getSldMasterIdArray();
-		
+
 		// see SlideAtom.USES_MASTER_SLIDE_ID
 		assertEquals(0x80000000L, masters[0].getId());
 		assertEquals("rId1", masters[0].getId2());
 		assertNotNull(xml.getSlideMaster(masters[0]));
-		
+
 		xml.close();
 	}
-	
+
     @Test
 	public void testMetadataBasics() throws IOException, OpenXML4JException, XmlException {
 		XSLFSlideShow xml = new XSLFSlideShow(pack);
-		
+
 		assertNotNull(xml.getProperties().getCoreProperties());
 		assertNotNull(xml.getProperties().getExtendedProperties());
-		
+
 		CTProperties props = xml.getProperties().getExtendedProperties().getUnderlyingProperties();
 		assertEquals("Microsoft Office PowerPoint", props.getApplication());
 		assertEquals(0, props.getCharacters());
 		assertEquals(0, props.getLines());
-		
+
 		CoreProperties cprops = xml.getProperties().getCoreProperties();
 		assertNull(cprops.getTitle());
 		assertFalse(cprops.getUnderlyingProperties().getSubjectProperty().isPresent());
-		
+
 		xml.close();
 	}
-    
+
     @Test
     public void testMasterBackground() throws IOException {
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFBackground b = ppt.getSlideMasters().get(0).getBackground();
         b.setFillColor(Color.RED);
-        
+
         XSLFSlide sl = ppt.createSlide();
         XSLFAutoShape as = sl.createAutoShape();
         as.setAnchor(new Rectangle2D.Double(100,100,100,100));
         as.setShapeType(ShapeType.CLOUD);
-        
+
         XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt);
         ppt.close();
-        
+
         XSLFBackground b2 = ppt2.getSlideMasters().get(0).getBackground();
         assertEquals(Color.RED, b2.getFillColor());
-        
+
         ppt2.close();
     }
 }

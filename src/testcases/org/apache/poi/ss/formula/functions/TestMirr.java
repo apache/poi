@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -30,7 +30,7 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link org.apache.poi.ss.formula.functions.Mirr}
@@ -51,28 +51,28 @@ public final class TestMirr {
         double[] values = {-120000d, 39000d, 30000d, 21000d, 37000d, 46000d, reinvestRate, financeRate};
         // MIRR should not failed with these parameters
         mirrValue = mirr.evaluate(values);
-        assertEquals("mirr", 0.126094130366, mirrValue, 0.0000000001);
+        assertEquals(0.126094130366, mirrValue, 0.0000000001);
 
         reinvestRate = 0.05;
         financeRate = 0.08;
         values = new double[]{-7500d, 3000d, 5000d, 1200d, 4000d, reinvestRate, financeRate};
         // MIRR should not failed with these parameters
         mirrValue = mirr.evaluate(values);
-        assertEquals("mirr", 0.18736225093, mirrValue, 0.0000000001);
+        assertEquals(0.18736225093, mirrValue, 0.0000000001);
 
         reinvestRate = 0.065;
         financeRate = 0.1;
         values = new double[]{-10000, 3400d, 6500d, 1000d, reinvestRate, financeRate};
         // MIRR should not failed with these parameters
         mirrValue = mirr.evaluate(values);
-        assertEquals("mirr", 0.07039493966, mirrValue, 0.0000000001);
+        assertEquals(0.07039493966, mirrValue, 0.0000000001);
 
         reinvestRate = 0.07;
         financeRate = 0.01;
         values = new double[]{-10000d, -3400d, -6500d, -1000d, reinvestRate, financeRate};
         // MIRR should not failed with these parameters
         mirrValue = mirr.evaluate(values);
-        assertEquals("mirr", -1, mirrValue, 0.0);
+        assertEquals(-1, mirrValue, 0.0);
 
     }
 
@@ -83,13 +83,9 @@ public final class TestMirr {
         double reinvestRate = 0.05;
         double financeRate = 0.08;
         double[] incomes = {120000d, 39000d, 30000d, 21000d, 37000d, 46000d, reinvestRate, financeRate};
-        try {
-            mirr.evaluate(incomes);
-        } catch (EvaluationException e) {
-            assertEquals(ErrorEval.DIV_ZERO, e.getErrorEval());
-            return;
-        }
-        fail("MIRR should failed with all these positives values");
+
+        EvaluationException e = assertThrows(EvaluationException.class, () -> mirr.evaluate(incomes));
+        assertEquals(ErrorEval.DIV_ZERO, e.getErrorEval());
     }
 
     @Test
@@ -141,13 +137,13 @@ public final class TestMirr {
         CellValue cv = fe.evaluate(cellA);
         assertEquals(ErrorEval.DIV_ZERO.getErrorCode(), cv.getErrorValue());
 
-        assertEquals("IRR assertions failed", 0, failureCount);
+        assertEquals(0, failureCount, "IRR assertions failed");
     }
 
     private static void assertFormulaResult(CellValue cv, HSSFCell cell) {
         double actualValue = cv.getNumberValue();
         double expectedValue = cell.getNumericCellValue(); // cached formula result calculated by Excel
-        assertEquals("Invalid formula result: " + cv, CellType.NUMERIC, cv.getCellType());
+        assertEquals(CellType.NUMERIC, cv.getCellType(), "Invalid formula result: " + cv);
         assertEquals(expectedValue, actualValue, 1E-8);
     }
 }

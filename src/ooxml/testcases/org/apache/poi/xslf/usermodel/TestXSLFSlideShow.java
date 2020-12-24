@@ -16,9 +16,9 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.awt.Dimension;
 import java.io.IOException;
@@ -26,7 +26,7 @@ import java.util.List;
 
 import org.apache.poi.ooxml.POIXMLDocumentPart;
 import org.apache.poi.xslf.XSLFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Yegor Kozlov
@@ -56,7 +56,7 @@ public class TestXSLFSlideShow {
         XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt);
         assertEquals(2, ppt2.getSlides().size());
         rels =  ppt2.getSlides().get(0).getRelations();
-        
+
         ppt2.close();
         ppt.close();
     }
@@ -81,7 +81,7 @@ public class TestXSLFSlideShow {
 
         XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(ppt);
         assertEquals(1, ppt2.getSlides().size());
-        
+
         ppt2.close();
         ppt.close();
     }

@@ -17,9 +17,9 @@
 
 package org.apache.poi.hssf.record;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ss.formula.ptg.AttrPtg;
 import org.apache.poi.ss.formula.ptg.FuncVarPtg;
@@ -28,7 +28,7 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.FormulaError;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link FormulaRecord}
@@ -83,17 +83,18 @@ public final class TestFormulaRecord {
 		};
 
 		FormulaRecord record = new FormulaRecord(TestcaseRecordInputStream.create(FormulaRecord.sid, formulaByte));
-		assertEquals("Row", 0, record.getRow());
-		assertEquals("Column", 0, record.getColumn());
+		assertEquals(0, record.getRow(), "Row");
+		assertEquals(0, record.getColumn(), "Column");
 		//noinspection deprecation
 		assertEquals(CellType.ERROR.getCode(), record.getCachedResultType());
 		assertEquals(CellType.ERROR, record.getCachedResultTypeEnum());
 
 		byte[] output = record.serialize();
-		assertEquals("Output size", 33, output.length); //includes sid+recordlength
+		// includes sid+recordlength
+		assertEquals(33, output.length, "Output size");
 
 		for (int i = 5; i < 13;i++) {
-			assertEquals("FormulaByte NaN doesn't match", formulaByte[i], output[i+4]);
+			assertEquals(formulaByte[i], output[i+4], "FormulaByte NaN doesn't match");
 		}
 	}
 
@@ -111,11 +112,12 @@ public final class TestFormulaRecord {
 		formulaByte[20]=(byte)0x05;
 		formulaByte[22]=(byte)0x01;
 		FormulaRecord record = new FormulaRecord(TestcaseRecordInputStream.create(FormulaRecord.sid, formulaByte));
-		assertEquals("Row", 0, record.getRow());
-		assertEquals("Column", 0, record.getColumn());
+		assertEquals(0, record.getRow(), "Row");
+		assertEquals(0, record.getColumn(), "Column");
 		byte[] output = record.serialize();
-		assertEquals("Output size", 31, output.length); //includes sid+recordlength
-		assertEquals("Offset 22", 1, output[26]);
+		// includes sid+recordlength
+		assertEquals(31, output.length, "Output size");
+		assertEquals(1, output[26], "Offset 22");
 	}
 
 	@Test
@@ -191,7 +193,7 @@ public final class TestFormulaRecord {
 
 		fr0.setCachedResultBoolean(false);
 		fr1.setCachedResultBoolean(true);
-		assertFalse("Identified bug 46479c", fr0.getCachedBooleanValue() && !fr1.getCachedBooleanValue());
+		assertFalse(fr0.getCachedBooleanValue() && !fr1.getCachedBooleanValue(), "Identified bug 46479c");
         assertFalse(fr0.getCachedBooleanValue());
         assertTrue(fr1.getCachedBooleanValue());
 	}

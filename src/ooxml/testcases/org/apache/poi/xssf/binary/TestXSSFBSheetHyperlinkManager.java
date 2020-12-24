@@ -17,8 +17,8 @@
 
 package org.apache.poi.xssf.binary;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.xssf.eventusermodel.XSSFBReader;
 import org.apache.poi.xssf.eventusermodel.XSSFReader;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestXSSFBSheetHyperlinkManager {
     private static POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();

@@ -22,7 +22,7 @@ import org.apache.poi.ss.usermodel.PaperSize;
 import org.apache.poi.ss.usermodel.PrintCellComments;
 import org.apache.poi.ss.usermodel.PrintOrientation;
 import org.apache.poi.xssf.XSSFITestDataProvider;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageMargins;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageSetup;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorksheet;
@@ -30,9 +30,9 @@ import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellComments;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STOrientation;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STPageOrder;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for {@link XSSFPrintSetup}
@@ -254,23 +254,23 @@ public class TestXSSFPrintSetup {
        XSSFSheet s1 = wb.createSheet();
         assertFalse(s1.getCTWorksheet().isSetPageSetup());
         assertTrue(s1.getCTWorksheet().isSetPageMargins());
-       
+
        XSSFPrintSetup print = s1.getPrintSetup();
         assertTrue(s1.getCTWorksheet().isSetPageSetup());
         assertTrue(s1.getCTWorksheet().isSetPageMargins());
-       
+
        print.setCopies((short)3);
        print.setLandscape(true);
        assertEquals(3, print.getCopies());
         assertTrue(print.getLandscape());
-       
+
        XSSFSheet s2 = wb.createSheet();
         assertFalse(s2.getCTWorksheet().isSetPageSetup());
         assertTrue(s2.getCTWorksheet().isSetPageMargins());
-       
+
        // Round trip and check
        XSSFWorkbook wbBack = XSSFITestDataProvider.instance.writeOutAndReadBack(wb);
-       
+
        s1 = wbBack.getSheetAt(0);
        s2 = wbBack.getSheetAt(1);
 
@@ -278,11 +278,11 @@ public class TestXSSFPrintSetup {
         assertTrue(s1.getCTWorksheet().isSetPageMargins());
         assertFalse(s2.getCTWorksheet().isSetPageSetup());
         assertTrue(s2.getCTWorksheet().isSetPageMargins());
-       
+
        print = s1.getPrintSetup();
        assertEquals(3, print.getCopies());
         assertTrue(print.getLandscape());
-       
+
        wb.close();
     }
 
@@ -298,12 +298,12 @@ public class TestXSSFPrintSetup {
     @Test
     public void testSetLandscapeFalse() {
         XSSFPrintSetup ps = new XSSFPrintSetup(CTWorksheet.Factory.newInstance());
-        
+
         assertFalse(ps.getLandscape());
-        
+
         ps.setLandscape(true);
         assertTrue(ps.getLandscape());
-        
+
         ps.setLandscape(false);
         assertFalse(ps.getLandscape());
     }
@@ -311,12 +311,12 @@ public class TestXSSFPrintSetup {
     @Test
     public void testSetLeftToRight() {
         XSSFPrintSetup ps = new XSSFPrintSetup(CTWorksheet.Factory.newInstance());
-        
+
         assertFalse(ps.getLeftToRight());
-        
+
         ps.setLeftToRight(true);
         assertTrue(ps.getLeftToRight());
-        
+
         ps.setLeftToRight(false);
         assertFalse(ps.getLeftToRight());
     }

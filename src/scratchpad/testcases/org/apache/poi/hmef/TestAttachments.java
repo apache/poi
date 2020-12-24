@@ -18,8 +18,8 @@
 package org.apache.poi.hmef;
 
 import static org.apache.poi.hmef.TestHMEFMessage.openSample;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.text.DateFormat;
@@ -28,13 +28,13 @@ import java.util.List;
 import java.util.Locale;
 
 import org.apache.poi.util.LocaleUtil;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public final class TestAttachments {
     private static HMEFMessage quick;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws IOException {
         quick = openSample("quick-winmail.dat");
     }

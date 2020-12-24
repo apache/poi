@@ -17,13 +17,13 @@
 
 package org.apache.poi.hsmf.datatypes;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Arrays;
 
 import org.apache.poi.hsmf.datatypes.AttachmentChunks.AttachmentChunksSorter;
 import org.apache.poi.hsmf.datatypes.RecipientChunks.RecipientChunksSorter;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Checks that the sorters on the chunk groups order chunks properly.

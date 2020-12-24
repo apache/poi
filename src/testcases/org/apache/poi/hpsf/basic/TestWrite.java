@@ -19,12 +19,14 @@ package org.apache.poi.hpsf.basic;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -71,8 +73,8 @@ import org.apache.poi.util.CodePageUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndianConsts;
 import org.apache.poi.util.TempFile;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests HPSF's writing functionality
@@ -120,7 +122,7 @@ public class TestWrite {
      *
      * @exception IOException if an I/O exception occurs
      */
-    @Test(expected=NoFormatIDException.class)
+    @Test
     public void withoutAFormatID() throws Exception {
         final File filename = TempFile.createTempFile(POI_FS, ".doc");
 
@@ -134,7 +136,7 @@ public class TestWrite {
         try (OutputStream out = new FileOutputStream(filename);
              POIFSFileSystem poiFs = new POIFSFileSystem();
              ByteArrayOutputStream psStream = new ByteArrayOutputStream()) {
-            ps.write(psStream);
+            assertThrows(NoFormatIDException.class, () -> ps.write(psStream));
             poiFs.createDocument(new ByteArrayInputStream(psStream.toByteArray()), SummaryInformation.DEFAULT_STREAM_NAME);
             poiFs.writeFilesystem(out);
         }
@@ -270,11 +272,7 @@ public class TestWrite {
         final PropertySet[] psa = new PropertySet[1];
         final POIFSReader r = new POIFSReader();
         final POIFSReaderListener listener = (event) -> {
-            try {
-                psa[0] = PropertySetFactory.create(event.getStream());
-            } catch (Exception ex) {
-                fail(ex.getMessage());
-            }
+            assertDoesNotThrow(() -> psa[0] = PropertySetFactory.create(event.getStream()));
         };
 
         r.registerListener(listener,STREAM_NAME);
@@ -291,13 +289,7 @@ public class TestWrite {
     }
 
     private static POIFSReaderListener getListener(List<PropertySet> psa) {
-        return event -> {
-            try {
-                psa.add(PropertySetFactory.create(event.getStream()));
-            } catch (Exception ex) {
-                fail(ex.getMessage());
-            }
-        };
+        return event -> assertDoesNotThrow(() -> psa.add(PropertySetFactory.create(event.getStream())));
     }
 
     /**
@@ -307,7 +299,7 @@ public class TestWrite {
     @Test
     public void variantTypes() throws Exception {
         final int codepage = CODEPAGE_DEFAULT;
-        Assume.assumeTrue(IMPROPER_DEFAULT_CHARSET_MESSAGE, hasProperDefaultCharset());
+        Assumptions.assumeTrue(hasProperDefaultCharset(), IMPROPER_DEFAULT_CHARSET_MESSAGE);
 
         check(Variant.VT_EMPTY, null, codepage);
         check(Variant.VT_BOOL, Boolean.TRUE, codepage);
@@ -358,12 +350,9 @@ public class TestWrite {
 
         final int[] invalidCodepages = new int[] {0, 1, 2, 4711, 815};
         for (int cp : invalidCodepages) {
-            try {
-                checkString(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", cp);
-                fail("UnsupportedEncodingException for codepage " + cp + " expected.");
-            } catch (UnsupportedEncodingException ex) {
-                /* This is the expected behaviour. */
-            }
+            assertThrows(UnsupportedEncodingException.class,
+                () -> checkString(Variant.VT_LPSTR, "\u00e4\u00f6\u00fc\u00c4\u00d6\u00dc\u00df", cp),
+                "UnsupportedEncodingException for codepage " + cp + " expected.");
         }
 
     }
@@ -683,7 +672,7 @@ public class TestWrite {
      * Tests writing and reading back a proper dictionary with an invalid
      * codepage. (HPSF writes Unicode dictionaries only.)
      */
-    @Test(expected=UnsupportedEncodingException.class)
+    @Test
     public void dictionaryWithInvalidCodepage() throws IOException, HPSFException {
         final File copy = TempFile.createTempFile("Test-HPSF", "ole2");
         copy.deleteOnExit();
@@ -703,7 +692,7 @@ public class TestWrite {
             s.setFormatID(DocumentSummaryInformation.FORMAT_ID[0]);
             int codepage = 12345;
             s.setProperty(PropertyIDMap.PID_CODEPAGE, Variant.VT_I2, codepage);
-            poiFs.createDocument(ps1.toInputStream(), "Test");
+            assertThrows(UnsupportedEncodingException.class, () -> poiFs.createDocument(ps1.toInputStream(), "Test"));
             poiFs.writeFilesystem(out);
         }
     }

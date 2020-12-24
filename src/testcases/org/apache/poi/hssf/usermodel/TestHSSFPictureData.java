@@ -17,9 +17,9 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -31,15 +31,15 @@ import javax.imageio.IIOException;
 import javax.imageio.ImageIO;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test <code>HSSFPictureData</code>.
  * The code to retrieve images from a workbook provided by Trejkaz (trejkaz at trypticon dot org) in Bug 41223.
  */
 public final class TestHSSFPictureData {
-    @BeforeClass
+    @BeforeAll
     public static void setUpClass() {
         final String tmpDirProperty = System.getProperty("java.io.tmpdir");
         if(tmpDirProperty == null || "".equals(tmpDirProperty)) {
@@ -86,7 +86,7 @@ public final class TestHSSFPictureData {
                 }
             }
         } catch (IIOException e) {
-            assertFalse(e.getMessage(), e.getMessage().contains("Can't create cache file"));
+            assertFalse(e.getMessage().contains("Can't create cache file"), e.getMessage());
         }
     }
 
@@ -100,7 +100,7 @@ public final class TestHSSFPictureData {
 
             HSSFPictureData pict = lst.get(0);
             String ext = pict.suggestFileExtension();
-            assertEquals("Expected a PNG.", "png", ext);
+            assertEquals("png", ext, "Expected a PNG.");
 
             //try to read image data using javax.imageio.* (JDK 1.4+)
             byte[] data = pict.getData();
@@ -111,7 +111,7 @@ public final class TestHSSFPictureData {
             assertEquals(HSSFWorkbook.PICTURE_TYPE_PNG, pict.getFormat());
             assertEquals("image/png", pict.getMimeType());
         } catch (IIOException e) {
-            assertFalse(e.getMessage(), e.getMessage().contains("Can't create cache file"));
+            assertFalse(e.getMessage().contains("Can't create cache file"), e.getMessage());
         }
     }
 

@@ -17,13 +17,13 @@
 
 package org.apache.poi.hssf.record;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.ByteArrayInputStream;
 
 import org.apache.poi.util.LittleEndian;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestDVALRecord {
     @Test
@@ -45,7 +45,7 @@ public final class TestDVALRecord {
         assertEquals(56, dv.getHorizontalPos());
         assertEquals(57, dv.getVerticalPos());
         assertEquals(58, dv.getObjectID());
-        assertNotEquals("Identified bug 44510",0, dv.getDVRecNo());
+        assertNotEquals(0, dv.getDVRecNo(), "Identified bug 44510");
         assertEquals(59, dv.getDVRecNo());
     }
 }

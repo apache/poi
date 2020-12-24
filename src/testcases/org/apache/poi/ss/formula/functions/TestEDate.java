@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -30,7 +30,7 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestEDate {
 
@@ -53,7 +53,7 @@ public class TestEDate {
         NumberEval result = (NumberEval) eDate.evaluate(new ValueEval[]{new NumberEval(startDate), new NumberEval(monthInc)}, null);
         assertEquals(expectedResult, result.getNumberValue(), 0);
     }
-    
+
     @Test
     public void testEDateInvalidValues() {
         EDate eDate = new EDate();
@@ -87,9 +87,9 @@ public class TestEDate {
         instance.add(Calendar.MONTH, offset);
         assertEquals(resultDate, instance.getTime());
     }
-    
+
     @Test
-    public void testBug56688() {        
+    public void testBug56688() {
         EDate eDate = new EDate();
         NumberEval result = (NumberEval) eDate.evaluate(new ValueEval[]{new NumberEval(1000), new RefEvalImplementation(new NumberEval(0))}, null);
         assertEquals(1000d, result.getNumberValue(), 0);
@@ -119,11 +119,9 @@ public class TestEDate {
     public void testEDateBlankRefValueEval() {
         EDate eDate = new EDate();
         NumberEval result = (NumberEval) eDate.evaluate(new ValueEval[]{new RefEvalImplementation(BlankEval.instance), new NumberEval(0)}, null);
-        assertEquals("0 startDate triggers BAD_DATE currently, thus -1.0!", 
-                -1.0d, result.getNumberValue(), 0);
+        assertEquals(-1.0d, result.getNumberValue(), 0, "0 startDate triggers BAD_DATE currently, thus -1.0!");
 
         result = (NumberEval) eDate.evaluate(new ValueEval[]{new NumberEval(1), new RefEvalImplementation(BlankEval.instance)}, null);
-        assertEquals("Blank is handled as 0 otherwise", 
-                1.0d, result.getNumberValue(), 0);
+        assertEquals(1.0d, result.getNumberValue(), 0, "Blank is handled as 0 otherwise");
     }
 }

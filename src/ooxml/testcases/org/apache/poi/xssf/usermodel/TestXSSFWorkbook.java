@@ -17,14 +17,15 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -74,7 +75,7 @@ import org.apache.poi.xddf.usermodel.chart.XDDFChartData;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.StylesTable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotCache;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTWorkbook;
@@ -98,7 +99,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
         CTWorkbookPr pr = wb1.getCTWorkbook().getWorkbookPr();
         assertNotNull(pr);
         assertTrue(pr.isSetDate1904());
-        assertFalse("XSSF must use the 1900 date system", pr.getDate1904());
+        assertFalse(pr.getDate1904(), "XSSF must use the 1900 date system");
 
         Sheet sheet1 = wb1.createSheet("sheet1");
         Sheet sheet2 = wb1.createSheet("sheet2");
@@ -443,45 +444,40 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     @Test
     public void bug49702() throws IOException {
         // First try with a new file
-        XSSFWorkbook wb1 = new XSSFWorkbook();
+        try (XSSFWorkbook wb1 = new XSSFWorkbook()) {
 
-        // Should have one style
-        assertEquals(1, wb1.getNumCellStyles());
-        wb1.getCellStyleAt((short)0);
-        assertNull("Shouldn't be able to get style at 0 that doesn't exist",
-                wb1.getCellStyleAt((short)1));
+            // Should have one style
+            assertEquals(1, wb1.getNumCellStyles());
+            wb1.getCellStyleAt((short) 0);
+            assertNull(wb1.getCellStyleAt((short) 1), "Shouldn't be able to get style at 0 that doesn't exist");
 
-        // Add another one
-        CellStyle cs = wb1.createCellStyle();
-        cs.setDataFormat((short)11);
+            // Add another one
+            CellStyle cs = wb1.createCellStyle();
+            cs.setDataFormat((short) 11);
 
-        // Re-check
-        assertEquals(2, wb1.getNumCellStyles());
-        wb1.getCellStyleAt((short)0);
-        wb1.getCellStyleAt((short)1);
-        assertNull("Shouldn't be able to get style at 2 that doesn't exist",
-                wb1.getCellStyleAt((short)2));
+            // Re-check
+            assertEquals(2, wb1.getNumCellStyles());
+            wb1.getCellStyleAt((short) 0);
+            wb1.getCellStyleAt((short) 1);
+            assertNull(wb1.getCellStyleAt((short) 2), "Shouldn't be able to get style at 2 that doesn't exist");
 
-        // Save and reload
-        XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb1);
-        assertEquals(2, nwb.getNumCellStyles());
-        nwb.getCellStyleAt((short)0);
-        nwb.getCellStyleAt((short)1);
-        assertNull("Shouldn't be able to get style at 2 that doesn't exist",
-                nwb.getCellStyleAt((short)2));
+            // Save and reload
+            try (XSSFWorkbook nwb = XSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                assertEquals(2, nwb.getNumCellStyles());
+                nwb.getCellStyleAt((short) 0);
+                nwb.getCellStyleAt((short) 1);
+                assertNull(nwb.getCellStyleAt((short) 2), "Shouldn't be able to get style at 2 that doesn't exist");
 
-        // Now with an existing file
-        XSSFWorkbook wb2 = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx");
-        assertEquals(3, wb2.getNumCellStyles());
-        wb2.getCellStyleAt((short)0);
-        wb2.getCellStyleAt((short)1);
-        wb2.getCellStyleAt((short)2);
-        assertNull("Shouldn't be able to get style at 3 that doesn't exist",
-                wb2.getCellStyleAt((short)3));
-
-        wb2.close();
-        wb1.close();
-        nwb.close();
+                // Now with an existing file
+                try (XSSFWorkbook wb2 = XSSFTestDataSamples.openSampleWorkbook("sample.xlsx")) {
+                    assertEquals(3, wb2.getNumCellStyles());
+                    wb2.getCellStyleAt((short) 0);
+                    wb2.getCellStyleAt((short) 1);
+                    wb2.getCellStyleAt((short) 2);
+                    assertNull(wb2.getCellStyleAt((short) 3), "Shouldn't be able to get style at 3 that doesn't exist");
+                }
+            }
+        }
     }
 
     @Test
@@ -723,9 +719,9 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
         assertSheetOrder(read, "Sheet1-Renamed", "Sheet2", "Sheet3");
         XSSFSheet sheet = (XSSFSheet) read.getSheet("Sheet1-Renamed");
         XDDFChartData.Series series = sheet.getDrawingPatriarch().getCharts().get(0).getChartSeries().get(0).getSeries(0);
-        assertTrue("should be a bar chart data series", series instanceof XDDFBarChartData.Series);
-        String formula = ((XDDFBarChartData.Series) series).getCategoryData().getFormula();
-        assertTrue("should contain new sheet name", formula.startsWith("'Sheet1-Renamed'!"));
+        assertTrue(series instanceof XDDFBarChartData.Series, "should be a bar chart data series");
+        String formula = series.getCategoryData().getFormula();
+        assertTrue(formula.startsWith("'Sheet1-Renamed'!"), "should contain new sheet name");
         read.close();
         wb.close();
     }
@@ -765,7 +761,7 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
         }
     }
 
-    protected void setPivotData(XSSFWorkbook wb){
+    private void setPivotData(XSSFWorkbook wb){
         XSSFSheet sheet = wb.createSheet();
 
         Row row1 = sheet.createRow(0);
@@ -994,7 +990,6 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
         wb.close();
     }
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testBug56957CloseWorkbook() throws Exception {
         File file = TempFile.createTempFile("TestBug56957_", ".xlsx");
@@ -1007,30 +1002,26 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
             assertTrue(file.exists());
 
             // read-only mode works!
-            Workbook workbook = XSSFWorkbookFactory.createWorkbook(OPCPackage.open(file, PackageAccess.READ));
-            Date dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).getDateCellValue();
-            assertEquals(dateExp, dateAct);
-            workbook.close();
-            workbook = null;
+            try (Workbook workbook = XSSFWorkbookFactory.createWorkbook(OPCPackage.open(file, PackageAccess.READ))) {
+                Date dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).getDateCellValue();
+                assertEquals(dateExp, dateAct);
+            }
 
-            workbook = XSSFWorkbookFactory.createWorkbook(OPCPackage.open(file, PackageAccess.READ));
-            dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).getDateCellValue();
-            assertEquals(dateExp, dateAct);
-            workbook.close();
-            workbook = null;
+            try (Workbook workbook = XSSFWorkbookFactory.createWorkbook(OPCPackage.open(file, PackageAccess.READ))) {
+                Date dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).getDateCellValue();
+                assertEquals(dateExp, dateAct);
+            }
 
             // now check read/write mode
-            workbook = XSSFWorkbookFactory.createWorkbook(OPCPackage.open(file, PackageAccess.READ_WRITE));
-            dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).getDateCellValue();
-            assertEquals(dateExp, dateAct);
-            workbook.close();
-            workbook = null;
+            try (Workbook workbook = XSSFWorkbookFactory.createWorkbook(OPCPackage.open(file, PackageAccess.READ_WRITE))) {
+                Date dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).getDateCellValue();
+                assertEquals(dateExp, dateAct);
+            }
 
-            workbook = XSSFWorkbookFactory.createWorkbook(OPCPackage.open(file, PackageAccess.READ_WRITE));
-            dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).getDateCellValue();
-            assertEquals(dateExp, dateAct);
-            workbook.close();
-            workbook = null;
+            try (Workbook workbook = XSSFWorkbookFactory.createWorkbook(OPCPackage.open(file, PackageAccess.READ_WRITE))) {
+                Date dateAct = workbook.getSheetAt(0).getRow(0).getCell(0, MissingCellPolicy.CREATE_NULL_AS_BLANK).getDateCellValue();
+                assertEquals(dateExp, dateAct);
+            }
         } finally {
             assertTrue(file.exists());
             assertTrue(file.delete());
@@ -1067,18 +1058,19 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
 
     @Test
     public void testCloseBeforeWrite() throws IOException {
-        Workbook wb = new XSSFWorkbook();
-        wb.createSheet("somesheet");
+        try (Workbook wb = new XSSFWorkbook()) {
+            wb.createSheet("somesheet");
 
-        // test what happens if we close the Workbook before we write it out
-        wb.close();
+            // test what happens if we close the Workbook before we write it out
+            wb.close();
 
-        try {
-            XSSFTestDataSamples.writeOutAndReadBack(wb);
-            fail("Expecting IOException here");
-        } catch (RuntimeException e) {
-            // expected here
-            assertTrue("Had: " + e.getCause(), e.getCause() instanceof IOException);
+            assertThrows(IOException.class, () -> {
+                try {
+                    XSSFTestDataSamples.writeOutAndReadBack(wb);
+                } catch (RuntimeException e) {
+                    throw e.getCause();
+                }
+            });
         }
     }
 
@@ -1089,27 +1081,27 @@ public final class  TestXSSFWorkbook extends BaseTestXWorkbook {
     public void getTable() throws IOException {
        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("WithTable.xlsx");
        XSSFTable table1 = wb.getTable("Tabella1");
-       assertNotNull("Tabella1 was not found in workbook", table1);
-       assertEquals("Table name", "Tabella1", table1.getName());
-       assertEquals("Sheet name", "Foglio1", table1.getSheetName());
+       assertNotNull(table1, "Tabella1 was not found in workbook");
+       assertEquals("Tabella1", table1.getName(), "Table name");
+       assertEquals("Foglio1", table1.getSheetName(), "Sheet name");
 
        // Table lookup should be case-insensitive
-       assertSame("Case insensitive table name lookup", table1, wb.getTable("TABELLA1"));
+       assertSame(table1, wb.getTable("TABELLA1"), "Case insensitive table name lookup");
 
        // If workbook does not contain any data tables matching the provided name, getTable should return null
-       assertNull("Null table name should not throw NPE", wb.getTable(null));
-       assertNull("Should not be able to find non-existent table", wb.getTable("Foglio1"));
+       assertNull(wb.getTable(null), "Null table name should not throw NPE");
+       assertNull(wb.getTable("Foglio1"), "Should not be able to find non-existent table");
 
        // If a table is added after getTable is called it should still be reachable by XSSFWorkbook.getTable
        // This test makes sure that if any caching is done that getTable never uses a stale cache
        XSSFTable table2 = wb.getSheet("Foglio2").createTable(null);
        table2.setName("Table2");
-       assertSame("Did not find Table2", table2, wb.getTable("Table2"));
+       assertSame(table2, wb.getTable("Table2"), "Did not find Table2");
 
        // If table name is modified after getTable is called, the table can only be found by its new name
        // This test makes sure that if any caching is done that getTable never uses a stale cache
        table1.setName("Table1");
-       assertSame("Did not find Tabella1 renamed to Table1", table1, wb.getTable("TABLE1"));
+       assertSame(table1, wb.getTable("TABLE1"), "Did not find Tabella1 renamed to Table1");
 
        wb.close();
     }

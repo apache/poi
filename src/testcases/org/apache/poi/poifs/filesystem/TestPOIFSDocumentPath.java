@@ -17,15 +17,16 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test POIFSDocumentPath functionality
@@ -73,14 +74,8 @@ public final class TestPOIFSDocumentPath {
 
         // test weird variants
         assertEquals(0, new POIFSDocumentPath(null).length());
-        try {
-            new POIFSDocumentPath(new String[]{"fu", ""});
-            fail("should have caught IllegalArgumentException");
-        } catch (IllegalArgumentException ignored) { }
-        try {
-            new POIFSDocumentPath(new String[]{"fu", null});
-            fail("should have caught IllegalArgumentException");
-        } catch (IllegalArgumentException ignored) { }
+        assertThrows(IllegalArgumentException.class, () -> new POIFSDocumentPath(new String[]{"fu", ""}));
+        assertThrows(IllegalArgumentException.class, () -> new POIFSDocumentPath(new String[]{"fu", null}));
     }
 
     /**
@@ -129,16 +124,10 @@ public final class TestPOIFSDocumentPath {
             new POIFSDocumentPath(base, new String[]{"", "fu"});
 
             // This one shouldn't be allowed
-            try {
-                new POIFSDocumentPath(base, new String[]{"fu", null});
-                fail("should have caught IllegalArgumentException");
-            } catch (IllegalArgumentException ignored) { }
+            assertThrows(IllegalArgumentException.class, () -> new POIFSDocumentPath(base, new String[]{"fu", null}));
 
             // Ditto
-            try {
-                new POIFSDocumentPath(base, new String[]{null, "fu"});
-                fail("should have caught IllegalArgumentException");
-            } catch (IllegalArgumentException ignored) { }
+            assertThrows(IllegalArgumentException.class, () -> new POIFSDocumentPath(base, new String[]{null, "fu"}));
         }
     }
 
@@ -157,7 +146,7 @@ public final class TestPOIFSDocumentPath {
 
         for (int j = 0; j < paths.length; j++) {
             for (int k = 0; k < paths.length; k++) {
-                assertEquals(j + "<>" + k, paths[ j ], paths[ k ]);
+                assertEquals(paths[ j ], paths[ k ], j + "<>" + k);
             }
         }
         a2 = new POIFSDocumentPath(a1, new String[]{"foo"});
@@ -178,7 +167,7 @@ public final class TestPOIFSDocumentPath {
         for (int k = 0; k < builtUpPaths.length; k++) {
             for (int j = 0; j < fullPaths.length; j++) {
                 if (k == j) {
-                    assertEquals(j + "<>" + k, fullPaths[ j ], builtUpPaths[ k ]);
+                    assertEquals(fullPaths[ j ], builtUpPaths[ k ], j + "<>" + k);
                 } else {
                     assertNotEquals(fullPaths[j], builtUpPaths[k]);
                 }

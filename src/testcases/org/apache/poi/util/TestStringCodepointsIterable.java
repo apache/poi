@@ -17,11 +17,12 @@
 
 package org.apache.poi.util;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for StringCodepointsIterable
@@ -37,8 +38,8 @@ public class TestStringCodepointsIterable {
         List<String> codePoints2 = new ArrayList<>();
         sci.iterator().forEachRemaining(codePoints::add);
         sci.iterator().forEachRemaining(codePoints2::add);
-        Assert.assertEquals(17, codePoints.size());
-        Assert.assertEquals(codePoints, codePoints2);
+        assertEquals(17, codePoints.size());
+        assertEquals(codePoints, codePoints2);
     }
 
 }

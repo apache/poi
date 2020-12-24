@@ -17,9 +17,9 @@
 
 package org.apache.poi.hslf.record;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
@@ -29,7 +29,7 @@ import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that CurrentUserAtom works properly.
@@ -37,7 +37,7 @@ import org.junit.Test;
  * @author Nick Burch (nick at torchbox dot com)
  */
 public final class TestCurrentUserAtom {
-    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+    private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 	/** Not encrypted */
 	private static final String normalFile = "basic_test_ppt_file.ppt";
 	/** Encrypted */
@@ -57,35 +57,33 @@ public final class TestCurrentUserAtom {
 		// Round trip
 		POIFSFileSystem poifs = new POIFSFileSystem();
 		cu.writeToFS(poifs);
-		
+
 		CurrentUserAtom cu2 = new CurrentUserAtom(poifs.getRoot());
 		assertEquals("Hogwarts", cu2.getLastEditUsername());
 		assertEquals(0x2942, cu2.getCurrentEditOffset());
-		
+
 		poifs.close();
 	}
 
-	@Test(expected = EncryptedPowerPointFileException.class)
+	@Test
 	public void readEnc() throws Exception {
-
         try (POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(encFile))) {
             new CurrentUserAtom(fs.getRoot());
-            assertTrue(true); // not yet failed
-
-            new HSLFSlideShowImpl(fs).close();
+			assertThrows(EncryptedPowerPointFileException.class, () -> new HSLFSlideShowImpl(fs).close());
         }
 	}
 
 	@Test
 	public void writeNormal() throws Exception {
 		// Get raw contents from a known file
-		POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(normalFile));
-		DocumentEntry docProps = (DocumentEntry)fs.getRoot().getEntry("Current User");
-		byte[] contents = new byte[docProps.getSize()];
-		InputStream in = fs.getRoot().createDocumentInputStream("Current User");
-		in.read(contents);
-		in.close();
-		fs.close();
+		byte[] contents;
+		try (POIFSFileSystem fs = new POIFSFileSystem(_slTests.getFile(normalFile))) {
+			DocumentEntry docProps = (DocumentEntry) fs.getRoot().getEntry("Current User");
+			contents = new byte[docProps.getSize()];
+			try (InputStream in = fs.getRoot().createDocumentInputStream("Current User")) {
+				in.read(contents);
+			}
+		}
 
 		// Now build up a new one
 		CurrentUserAtom cu = new CurrentUserAtom();

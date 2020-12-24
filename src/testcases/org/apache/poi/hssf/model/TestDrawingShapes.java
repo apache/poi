@@ -17,13 +17,13 @@
 
 package org.apache.poi.hssf.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -60,12 +60,12 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.HexDump;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 /**
  * Test escher drawing
- * 
+ *
  * optionally the system setting "poi.deserialize.escher" can be set to {@code true}
  */
 public class TestDrawingShapes {
@@ -107,7 +107,7 @@ public class TestDrawingShapes {
         assertEquals(HSSFShape.LINEWIDTH_DEFAULT, shape.getLineWidth());
         assertEquals(HSSFShape.LINESTYLE_SOLID, shape.getLineStyle());
         assertFalse(shape.isNoFill());
-        
+
         EscherOptRecord opt = shape.getOptRecord();
 
         assertEquals(7, opt.getEscherProperties().size());
@@ -284,7 +284,7 @@ public class TestDrawingShapes {
         assertFalse(shape.isNoFill());
         assertEquals(shape.getLineStyle(), HSSFShape.LINESTYLE_DASHDOTGEL);
         assertEquals(shape.getLineStyleColor(), 0x616161);
-        assertEquals(HexDump.toHex(shape.getFillColor()), shape.getFillColor(), 0x2CE03D);
+        assertEquals(shape.getFillColor(), 0x2CE03D, HexDump.toHex(shape.getFillColor()));
         assertEquals(shape.getLineWidth(), HSSFShape.LINEWIDTH_ONE_PT * 2);
         assertEquals(shape.getString().getString(), "POItest");
         assertEquals(shape.getRotationDegree(), 27);
@@ -307,8 +307,8 @@ public class TestDrawingShapes {
 
         EscherAggregate agg1 = HSSFTestHelper.getEscherAggregate(patriarch1);
         // last shape ID cached in EscherDgRecord
-        EscherDgRecord dg1 =
-                agg1.getEscherContainer().getChildById(EscherDgRecord.RECORD_ID);
+        EscherDgRecord dg1 = agg1.getEscherContainer().getChildById(EscherDgRecord.RECORD_ID);
+        assertNotNull(dg1);
         assertEquals(1026, dg1.getLastMSOSPID());
 
         // iterate over shapes and check shapeId
@@ -319,14 +319,17 @@ public class TestDrawingShapes {
 
         EscherSpRecord sp0 =
                 ((EscherContainerRecord) spgrContainer.getChild(0)).getChildById(EscherSpRecord.RECORD_ID);
+        assertNotNull(sp0);
         assertEquals(1024, sp0.getShapeId());
 
         EscherSpRecord sp1 =
                 ((EscherContainerRecord) spgrContainer.getChild(1)).getChildById(EscherSpRecord.RECORD_ID);
+        assertNotNull(sp1);
         assertEquals(1025, sp1.getShapeId());
 
         EscherSpRecord sp2 =
                 ((EscherContainerRecord) spgrContainer.getChild(2)).getChildById(EscherSpRecord.RECORD_ID);
+        assertNotNull(sp2);
         assertEquals(1026, sp2.getShapeId());
         wb2.close();
     }
@@ -380,22 +383,23 @@ public class TestDrawingShapes {
         assertSame(opt1, opt2);
         wb.close();
     }
-    
+
     @Test
     public void testCorrectOrderInOptRecord() throws IOException{
         HSSFWorkbook wb = new HSSFWorkbook();
-        
+
         HSSFSheet sheet = wb.createSheet();
         HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 
         HSSFTextbox textbox = patriarch.createTextbox(new HSSFClientAnchor());
         EscherOptRecord opt = HSSFTestHelper.getOptRecord(textbox);
-        
+
         String opt1Str = opt.toXml();
 
         textbox.setFillColor(textbox.getFillColor());
         EscherContainerRecord container = HSSFTestHelper.getEscherContainer(textbox);
         EscherOptRecord optRecord = container.getChildById(EscherOptRecord.RECORD_ID);
+        assertNotNull(optRecord);
         assertEquals(opt1Str, optRecord.toXml());
         textbox.setLineStyle(textbox.getLineStyle());
         assertEquals(opt1Str, optRecord.toXml());
@@ -689,7 +693,7 @@ public class TestDrawingShapes {
     @Test
     public void testShapeContainerImplementsIterable() throws IOException {
         HSSFWorkbook wb = new HSSFWorkbook();
-        
+
         HSSFSheet sheet = wb.createSheet();
         HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
 
@@ -737,13 +741,13 @@ public class TestDrawingShapes {
         assertEquals(patriarch.getChildren().size(), 0);
         wb2.close();
     }
-    
+
     @Test
     public void testBug45312() throws Exception {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet();
             HSSFPatriarch patriarch = sheet.createDrawingPatriarch();
-    
+
             {
                 HSSFClientAnchor a1 = new HSSFClientAnchor();
                 a1.setAnchor( (short)1, 1, 0, 0, (short) 1, 1, 512, 100);
@@ -771,7 +775,7 @@ public class TestDrawingShapes {
                 shape1.setFlipHorizontal(true);
                 shape1.setShapeType(HSSFSimpleShape.OBJECT_TYPE_LINE);
             }
-            
+
             checkWorkbookBack(wb);
         }
     }
@@ -779,13 +783,13 @@ public class TestDrawingShapes {
     private void checkWorkbookBack(HSSFWorkbook wb) throws IOException {
         HSSFWorkbook wbBack = HSSFTestDataSamples.writeOutAndReadBack(wb);
         assertNotNull(wbBack);
-        
+
         HSSFSheet sheetBack = wbBack.getSheetAt(0);
         assertNotNull(sheetBack);
-        
+
         HSSFPatriarch patriarchBack = sheetBack.getDrawingPatriarch();
         assertNotNull(patriarchBack);
-        
+
         List<HSSFShape> children = patriarchBack.getChildren();
         assertEquals(4, children.size());
         HSSFShape hssfShape = children.get(0);
@@ -843,7 +847,7 @@ public class TestDrawingShapes {
         assertEquals(2, cAnchor.getCol2());
         assertEquals(2, cAnchor.getRow1());
         assertEquals(2, cAnchor.getRow2());
-        
+
         wbBack.close();
     }
 }

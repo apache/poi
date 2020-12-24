@@ -17,15 +17,16 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Stream;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
@@ -36,15 +37,13 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Tests formulas for multi sheet reference (i.e. SUM(Sheet1:Sheet5!A1))
  */
-@RunWith(Parameterized.class)
 public final class TestMultiSheetEval {
 	/**
 	 * This class defines constants for navigating around the test data spreadsheet used for these tests.
@@ -89,27 +88,14 @@ public final class TestMultiSheetEval {
 	private static HSSFFormulaEvaluator evaluator;
 	private static Collection<String> funcs;
 
-	@SuppressWarnings("DefaultAnnotationParam")
-	@Parameter(value = 0)
-	public String testName;
 
-	@Parameter(value = 1)
-	public String functionName;
-
-	@Parameter(value = 2)
-	public Cell expected;
-
-	@Parameter(value = 3)
-	public Row testRow;
-
-	@Parameterized.Parameters(name="{0}")
-	public static Collection<Object[]> data() {
+	public static Stream<Arguments> data() {
 		HSSFWorkbook workbook = HSSFTestDataSamples.openSampleWorkbook(SS.FILENAME);
 		Sheet sheet = workbook.getSheet(SS.TEST_SHEET_NAME);
 		evaluator = new HSSFFormulaEvaluator(workbook);
 		funcs = FunctionEval.getSupportedFunctionNames();
 
-		List<Object[]> data = new ArrayList<>();
+		List<Arguments> data = new ArrayList<>();
 		for (int rowIndex = SS.START_FUNCTIONS_ROW_INDEX;true;rowIndex++) {
 			Row r = sheet.getRow(rowIndex);
 
@@ -119,7 +105,7 @@ public final class TestMultiSheetEval {
 			}
 
 			String targetFunctionName = getTargetFunctionName(r);
-			assertNotNull("Expected function name or '" + SS.FUNCTION_NAMES_END_SENTINEL + "'", targetFunctionName);
+			assertNotNull(targetFunctionName, "Expected function name or '" + SS.FUNCTION_NAMES_END_SENTINEL + "'");
 			if (targetFunctionName.equals(SS.FUNCTION_NAMES_END_SENTINEL)) {
 				// found end of functions list
 				break;
@@ -128,29 +114,30 @@ public final class TestMultiSheetEval {
 
 			// expected results are on the row below
 			Cell expectedValueCell = r.getCell(SS.COLUMN_INDEX_EXPECTED_VALUE);
-			assertNotNull("Missing expected values cell for function '" + targetFunctionName, expectedValueCell);
+			assertNotNull(expectedValueCell, "Missing expected values cell for function '" + targetFunctionName);
 
-			data.add(new Object[]{ targetTestName, targetFunctionName, expectedValueCell, r });
+			data.add(Arguments.of( targetTestName, targetFunctionName, expectedValueCell, r ));
 		}
 
-		return data;
+		return data.stream();
 	}
 
-	@Test
-	public void testFunction() {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void testFunction(String testName, String functionName, Cell expected, Row testRow) {
 
 		Cell c = testRow.getCell(SS.COLUMN_INDEX_ACTUAL_VALUE);
 		if (c == null || c.getCellType() != CellType.FORMULA) {
 			// missing test data
 			assertTrue(testRow.getRowNum() >= SS.START_FUNCTIONS_ROW_INDEX);
-			assertTrue("unsupported function", funcs.contains(functionName.toUpperCase(Locale.ROOT)));
+			assertTrue(funcs.contains(functionName.toUpperCase(Locale.ROOT)), "unsupported function");
 			return;
 		}
 
 		CellValue actual = evaluator.evaluate(c);
 
-		assertNotNull("Bad setup data expected value is null", expected);
-		assertNotNull("actual value was null", actual);
+		assertNotNull(expected, "Bad setup data expected value is null");
+		assertNotNull(actual, "actual value was null");
 
 		final CellType cellType = expected.getCellType();
 
@@ -171,7 +158,7 @@ public final class TestMultiSheetEval {
 				break;
 			case NUMERIC:
 				assertEquals(CellType.NUMERIC, actual.getCellType());
-				TestMathX.assertEquals("", expected.getNumericCellValue(), actual.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
+				TestMathX.assertDouble("", expected.getNumericCellValue(), actual.getNumberValue(), TestMathX.POS_ZERO, TestMathX.DIFF_TOLERANCE_FACTOR);
 				break;
 			case STRING:
 				assertEquals(CellType.STRING, actual.getCellType());
@@ -184,17 +171,17 @@ public final class TestMultiSheetEval {
 	}
 
 	private static String getTargetFunctionName(Row r) {
-		assertNotNull("given null row, can't figure out function name", r);
+		assertNotNull(r, "given null row, can't figure out function name");
 		Cell cell = r.getCell(SS.COLUMN_INDEX_FUNCTION_NAME);
-		assertNotNull("Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name", cell);
+		assertNotNull(cell, "Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name");
 		assertEquals(CellType.STRING, cell.getCellType());
 		return cell.getRichStringCellValue().getString();
 	}
 
 	private static String getTargetTestName(Row r) {
-		assertNotNull("Given null row, can't figure out test name", r);
+		assertNotNull(r, "Given null row, can't figure out test name");
 		Cell cell = r.getCell(SS.COLUMN_INDEX_TEST_NAME);
-		assertNotNull("Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_TEST_NAME + ", can't figure out test name", cell);
+		assertNotNull(cell, "Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_TEST_NAME + ", can't figure out test name");
 		assertEquals(CellType.STRING, cell.getCellType());
 		return cell.getRichStringCellValue().getString();
 	}

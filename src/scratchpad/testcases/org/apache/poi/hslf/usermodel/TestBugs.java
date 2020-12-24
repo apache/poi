@@ -20,11 +20,12 @@ package org.apache.poi.hslf.usermodel;
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertStartsWith;
 import static org.apache.poi.hslf.HSLFTestDataSamples.writeOutAndReadBack;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -85,7 +86,7 @@ import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.util.Units;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testcases for bugs entered in bugzilla
@@ -207,8 +208,6 @@ public final class TestBugs {
     @Test
     public void bug41381() throws IOException {
         try (HSLFSlideShow ppt = open("alterman_security.ppt")) {
-            assertTrue("No Exceptions while reading file", true);
-
             assertEquals(1, ppt.getSlideMasters().size());
             assertEquals(1, ppt.getTitleMasters().size());
             boolean isFirst = true;
@@ -304,7 +303,7 @@ public final class TestBugs {
 
             for (List<HSLFTextParagraph> para : paras) {
                 String text = HSLFTextParagraph.getRawText(para);
-                assertTrue(text, expected.contains(text));
+                assertTrue(expected.contains(text), text);
             }
         }
     }
@@ -397,13 +396,13 @@ public final class TestBugs {
     /**
      * PowerPoint 95 files should throw a more helpful exception
      */
-    @Test(expected=OldPowerPointFormatException.class)
+    @Test
     public void bug41711() throws IOException {
     	// New file is fine
         open("SampleShow.ppt").close();
 
         // PowerPoint 95 gives an old format exception
-        open("PPT95.ppt").close();
+        assertThrows(OldPowerPointFormatException.class, () -> open("PPT95.ppt").close());
     }
 
     /**
@@ -898,11 +897,11 @@ public final class TestBugs {
     public void bug59302() throws IOException {
         //add extraction from PPT
         Map<String, String> macros = getMacrosFromHSLF("59302.ppt");
-        assertNotNull("couldn't find macros", macros);
-        assertNotNull("couldn't find second module", macros.get("Module2"));
+        assertNotNull(macros, "couldn't find macros");
+        assertNotNull(macros.get("Module2"), "couldn't find second module");
         assertContains(macros.get("Module2"), "newMacro in Module2");
 
-        assertNotNull("couldn't find first module", macros.get("Module1"));
+        assertNotNull(macros.get("Module1"), "couldn't find first module");
         assertContains(macros.get("Module1"), "Italicize");
 
         macros = getMacrosFromHSLF("SimpleMacro.ppt");

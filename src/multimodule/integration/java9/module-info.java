@@ -16,12 +16,12 @@
 ==================================================================== */
 
 module org.apache.poi.stress {
-    requires junit;
+    requires org.junit.jupiter.api;
+    requires org.junit.jupiter.params;
     requires net.bytebuddy;
     requires java.desktop;
 
     requires org.apache.poi.examples;
 
     exports org.apache.poi.stress;
-
 }

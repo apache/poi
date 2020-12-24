@@ -18,10 +18,10 @@
  */
 package org.apache.poi.hwpf.sprm;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hwpf.usermodel.TableProperties;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TableSprmUncompressorTest {
     @Test

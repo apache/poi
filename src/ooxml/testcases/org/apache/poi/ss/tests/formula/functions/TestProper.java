@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.tests.formula.functions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -33,7 +33,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFFormulaEvaluator;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestProper {
     private Cell cell11;
@@ -93,7 +93,7 @@ public final class TestProper {
         cell11.setCellFormula(formulaText);
         evaluator.clearAllCachedResultValues();
         CellValue cv = evaluator.evaluate(cell11);
-        assertEquals("Wrong result type", CellType.STRING, cv.getCellType());
+        assertEquals(CellType.STRING, cv.getCellType(), "Wrong result type");
         String actualValue = cv.getStringValue();
         assertEquals(expectedResult, actualValue);
     }
@@ -120,7 +120,7 @@ public final class TestProper {
     @Test
     public void testMicroBenchmark() {
         ValueEval strArg = new StringEval("some longer text that needs a number of replacements to check for runtime of different implementations");
-        long start = System.currentTimeMillis();
+        // long start = System.currentTimeMillis();
         for(int i = 0;i < 300000;i++) {
             final ValueEval ret = TextFunction.PROPER.evaluate(new ValueEval[]{strArg}, 0, 0);
             assertEquals("Some Longer Text That Needs A Number Of Replacements To Check For Runtime Of Different Implementations", ((StringEval)ret).getStringValue());

@@ -17,8 +17,8 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -28,8 +28,8 @@ import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public final class TestListParts {
     private static final POILogger logger = POILogFactory.getLogger(TestListParts.class);
@@ -38,7 +38,7 @@ public final class TestListParts {
 
 	private TreeMap<PackagePartName, String> values;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		values = new TreeMap<>();
 

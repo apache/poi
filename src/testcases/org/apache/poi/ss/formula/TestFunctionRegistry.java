@@ -19,9 +19,9 @@
 
 package org.apache.poi.ss.formula;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -36,13 +36,13 @@ import org.apache.poi.ss.formula.eval.FunctionEval;
 import org.apache.poi.ss.formula.eval.NotImplementedException;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.CellValue;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.FixMethodOrder;
-import org.junit.Test;
-import org.junit.runners.MethodSorters;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 
-@FixMethodOrder(MethodSorters.NAME_ASCENDING)
+@TestMethodOrder(MethodOrderer.MethodName.class)
 public class TestFunctionRegistry {
 
     HSSFWorkbook wb;
@@ -50,7 +50,7 @@ public class TestFunctionRegistry {
     HSSFRow row;
     HSSFFormulaEvaluator fe;
 
-    @Before
+    @BeforeEach
     public void setup() {
         wb = new HSSFWorkbook();
         sheet = wb.createSheet("Sheet1");
@@ -58,7 +58,7 @@ public class TestFunctionRegistry {
         fe = new HSSFFormulaEvaluator(wb);
     }
 
-    @After
+    @AfterEach
     public void teardown() throws IOException {
         wb.close();
         wb = null;
@@ -67,11 +67,11 @@ public class TestFunctionRegistry {
         fe = null;
     }
 
-    @Test(expected = NotImplementedException.class)
+    @Test
 	public void testRegisterInRuntimeA() {
         HSSFCell cellA = row.createCell(0);
         cellA.setCellFormula("FISHER(A5)");
-        fe.evaluate(cellA);
+        assertThrows(NotImplementedException.class, () -> fe.evaluate(cellA));
     }
 
     @Test
@@ -83,11 +83,11 @@ public class TestFunctionRegistry {
         assertEquals(ErrorEval.NA.getErrorCode(), cv.getErrorValue());
     }
 
-    @Test(expected = NotImplementedException.class)
+    @Test
     public void testRegisterInRuntimeC() {
         HSSFCell cellB = row.createCell(1);
         cellB.setCellFormula("CUBEMEMBERPROPERTY(A5)");
-        fe.evaluate(cellB);
+        assertThrows(NotImplementedException.class, () -> fe.evaluate(cellB));
     }
 
     @Test

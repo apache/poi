@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hssf.usermodel.HSSFEvaluationWorkbook;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
@@ -27,7 +27,7 @@ import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link Hex2Dec}
@@ -44,13 +44,13 @@ public final class TestHex2Dec {
     private static void confirmValue(String msg, String number1, String expected) {
 		ValueEval result = invokeValue(number1);
 		assertEquals(NumberEval.class, result.getClass());
-		assertEquals(msg, expected, ((NumberEval) result).getStringValue());
+		assertEquals(expected, ((NumberEval) result).getStringValue(), msg);
 	}
 
     private static void confirmValueError(String msg, String number1, ErrorEval numError) {
         ValueEval result = invokeValue(number1);
         assertEquals(ErrorEval.class, result.getClass());
-        assertEquals(msg, numError, result);
+        assertEquals(numError, result, msg);
     }
 
     @Test
@@ -93,8 +93,7 @@ public final class TestHex2Dec {
         wb.createSheet();
         HSSFEvaluationWorkbook workbook = HSSFEvaluationWorkbook.create(wb);
         WorkbookEvaluator workbookEvaluator = new WorkbookEvaluator(workbook, (sheetIndex, rowIndex, columnIndex) -> true, null);
-        return new OperationEvaluationContext(workbookEvaluator,
-                workbook, 0, 0, 0, null);
+        return new OperationEvaluationContext(workbookEvaluator, workbook, 0, 0, 0, null);
     }
 
     @Test

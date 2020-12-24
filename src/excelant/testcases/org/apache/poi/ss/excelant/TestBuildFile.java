@@ -20,9 +20,9 @@ package org.apache.poi.ss.excelant;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertNotContained;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -30,13 +30,12 @@ import java.io.PrintStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.NullPrintStream;
 import org.apache.tools.ant.BuildEvent;
-import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.BuildListener;
 import org.apache.tools.ant.Project;
 import org.apache.tools.ant.ProjectHelper;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  *  JUnit test for the ExcelAnt tasks.
@@ -48,10 +47,9 @@ public class TestBuildFile {
 
     private StringBuilder logBuffer;
     private StringBuilder fullLogBuffer;
-    private BuildException buildException;
 
 
-    @Before
+    @BeforeEach
     public void setUp() {
         String filename = TestBuildFile.getDataDir() + "/../src/excelant/testcases/org/apache/poi/ss/excelant/tests.xml";
         int logLevel = Project.MSG_DEBUG;
@@ -77,7 +75,7 @@ public class TestBuildFile {
      * is automatically called, since it's trivial to have a
      * test target depend on it.
      */
-    @After
+    @AfterEach
     public void tearDown() {
         if (project == null) {
             /*
@@ -145,7 +143,6 @@ public class TestBuildFile {
             System.setErr(new NullPrintStream());
             logBuffer = new StringBuilder();
             fullLogBuffer = new StringBuilder();
-            buildException = null;
             project.executeTarget(targetName);
         } finally {
             System.setOut(sysOut);
@@ -166,12 +163,9 @@ public class TestBuildFile {
         try {
             executeTarget(target);
         } catch (org.apache.tools.ant.BuildException ex) {
-            buildException = ex;
-            if ((null != msg) && (!ex.getMessage().equals(msg))) {
-                fail("Should throw BuildException because '" + cause
-                        + "' with message '" + msg
-                        + "' (actual message '" + ex.getMessage() + "' instead)");
-            }
+            assertTrue(msg == null || ex.getMessage().equals(msg),
+                "Should throw BuildException because '" + cause + "' with message '" + msg + "' (actual message '" + ex.getMessage() + "' instead)"
+            );
             return;
         }
         fail("Should throw BuildException because: " + cause);
@@ -183,26 +177,10 @@ public class TestBuildFile {
     }
 
     /**
-     * an output stream which saves stuff to our buffer.
-     */
-    protected static class AntOutputStream extends java.io.OutputStream {
-        private StringBuilder buffer;
-
-        public AntOutputStream(StringBuilder buffer) {
-            this.buffer = buffer;
-        }
-
-        @Override
-        public void write(int b) {
-            buffer.append((char) b);
-        }
-    }
-
-    /**
      * Our own personal build listener.
      */
     private class AntTestListener implements BuildListener {
-        private int logLevel;
+        private final int logLevel;
 
         /**
          * Constructs a test listener which will ignore log events
@@ -378,8 +356,8 @@ public class TestBuildFile {
         assertLogContaining("Using input file: " + TestBuildFile.getDataDir() + "/spreadsheet/excelant.xls");
         assertLogContaining("Succeeded when evaluating 'MortgageCalculator'!$B$4.");
 
-        assertNotNull("The workbook should have been passed to the handler", MockExcelAntWorkbookHandler.workbook);
-        assertTrue("The handler should have been executed", MockExcelAntWorkbookHandler.executed);
+        assertNotNull(MockExcelAntWorkbookHandler.workbook, "The workbook should have been passed to the handler");
+        assertTrue(MockExcelAntWorkbookHandler.executed, "The handler should have been executed");
     }
 
     @Test

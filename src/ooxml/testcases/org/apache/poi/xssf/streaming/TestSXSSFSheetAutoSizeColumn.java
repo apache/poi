@@ -16,19 +16,18 @@
 ==================================================================== */
 package org.apache.poi.xssf.streaming;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeFalse;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.stream.Stream;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Font;
@@ -37,35 +36,32 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.SheetUtil;
-import org.junit.After;
-import org.junit.Assume;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 
 /**
  * Tests the auto-sizing behaviour of {@link SXSSFSheet} when not all
  * rows fit into the memory window size etc.
- * 
+ *
  * see Bug #57450 which reported the original misbehaviour
  */
-@RunWith(Parameterized.class)
 public class TestSXSSFSheetAutoSizeColumn {
-    
+
     private static final String SHORT_CELL_VALUE = "Ben";
     private static final String LONG_CELL_VALUE = "B Be Ben Beni Benif Benify Benif Beni Ben Be B";
-    
-    // Approximative threshold to decide whether test is PASS or FAIL:
+
+    // Approximate threshold to decide whether test is PASS or FAIL:
     //  shortCellValue ends up with approx column width 1_000 (on my machine),
     //  longCellValue ends up with approx. column width 10_000 (on my machine)
     //  so shortCellValue can be expected to be < 5000 for all fonts
     //  and longCellValue can be expected to be > 5000 for all fonts
     private static final int COLUMN_WIDTH_THRESHOLD_BETWEEN_SHORT_AND_LONG = 4000;
     private static final int MAX_COLUMN_WIDTH = 255*256;
-    
+
     private static final SortedSet<Integer> columns;
     static {
         SortedSet<Integer>_columns = new TreeSet<>();
@@ -74,23 +70,16 @@ public class TestSXSSFSheetAutoSizeColumn {
         _columns.add(3);
         columns = Collections.unmodifiableSortedSet(_columns);
     }
-    
-    
+
+
     private SXSSFSheet sheet;
     private SXSSFWorkbook workbook;
-    
-    @Parameter
-    public boolean useMergedCells;
-    
-    @Parameters(name="{index}: useMergedCells={0}")
-    public static Collection<Object[]> data() {
-        return Arrays.asList(new Object[][] {     
-                 {false},
-                 {true}, 
-           });
+
+    public static Stream<Arguments> data() {
+        return Stream.of(Arguments.of(false), Arguments.of(true));
     }
-    
-    @After
+
+    @AfterEach
     public void tearDownSheetAndWorkbook() throws IOException {
         if (sheet != null) {
             sheet.dispose();
@@ -99,43 +88,28 @@ public class TestSXSSFSheetAutoSizeColumn {
             workbook.close();
         }
     }
-    
-    @Test
-    public void test_EmptySheet_NoException() {
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void test_EmptySheet_NoException(boolean useMergedCells) {
         workbook = new SXSSFWorkbook();
         sheet = workbook.createSheet();
         sheet.trackAllColumnsForAutoSizing();
-        
+
         for (int i = 0; i < 10; i++) {
             sheet.autoSizeColumn(i, useMergedCells);
         }
     }
-    
-    @Test
-    public void test_WindowSizeDefault_AllRowsFitIntoWindowSize() {
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void test_WindowSizeDefault_AllRowsFitIntoWindowSize(boolean useMergedCells) {
         workbook = new SXSSFWorkbook();
         sheet = workbook.createSheet();
         sheet.trackAllColumnsForAutoSizing();
-        
+
         final Cell cellRow0 = createRowWithCellValues(sheet, 0, LONG_CELL_VALUE);
-        
-        assumeRequiredFontsAreInstalled(workbook, cellRow0);
 
-        createRowWithCellValues(sheet, 1, SHORT_CELL_VALUE);
-
-        sheet.autoSizeColumn(0, useMergedCells);
-
-        assertColumnWidthStrictlyWithinRange(sheet.getColumnWidth(0), COLUMN_WIDTH_THRESHOLD_BETWEEN_SHORT_AND_LONG, MAX_COLUMN_WIDTH);
-    }
-    
-    @Test
-    public void test_WindowSizeEqualsOne_ConsiderFlushedRows() {
-        workbook = new SXSSFWorkbook(null, 1); // Window size 1 so only last row will be in memory
-        sheet = workbook.createSheet();
-        sheet.trackAllColumnsForAutoSizing();
-        
-        final Cell cellRow0 = createRowWithCellValues(sheet, 0, LONG_CELL_VALUE);
-        
         assumeRequiredFontsAreInstalled(workbook, cellRow0);
 
         createRowWithCellValues(sheet, 1, SHORT_CELL_VALUE);
@@ -145,14 +119,15 @@ public class TestSXSSFSheetAutoSizeColumn {
         assertColumnWidthStrictlyWithinRange(sheet.getColumnWidth(0), COLUMN_WIDTH_THRESHOLD_BETWEEN_SHORT_AND_LONG, MAX_COLUMN_WIDTH);
     }
 
-    @Test
-    public void test_WindowSizeEqualsOne_lastRowIsNotWidest() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void test_WindowSizeEqualsOne_ConsiderFlushedRows(boolean useMergedCells) {
         workbook = new SXSSFWorkbook(null, 1); // Window size 1 so only last row will be in memory
         sheet = workbook.createSheet();
         sheet.trackAllColumnsForAutoSizing();
-        
+
         final Cell cellRow0 = createRowWithCellValues(sheet, 0, LONG_CELL_VALUE);
-        
+
         assumeRequiredFontsAreInstalled(workbook, cellRow0);
 
         createRowWithCellValues(sheet, 1, SHORT_CELL_VALUE);
@@ -161,44 +136,64 @@ public class TestSXSSFSheetAutoSizeColumn {
 
         assertColumnWidthStrictlyWithinRange(sheet.getColumnWidth(0), COLUMN_WIDTH_THRESHOLD_BETWEEN_SHORT_AND_LONG, MAX_COLUMN_WIDTH);
     }
-    
-    @Test
-    public void test_WindowSizeEqualsOne_lastRowIsWidest() {
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void test_WindowSizeEqualsOne_lastRowIsNotWidest(boolean useMergedCells) {
         workbook = new SXSSFWorkbook(null, 1); // Window size 1 so only last row will be in memory
         sheet = workbook.createSheet();
         sheet.trackAllColumnsForAutoSizing();
-        
+
+        final Cell cellRow0 = createRowWithCellValues(sheet, 0, LONG_CELL_VALUE);
+
+        assumeRequiredFontsAreInstalled(workbook, cellRow0);
+
+        createRowWithCellValues(sheet, 1, SHORT_CELL_VALUE);
+
+        sheet.autoSizeColumn(0, useMergedCells);
+
+        assertColumnWidthStrictlyWithinRange(sheet.getColumnWidth(0), COLUMN_WIDTH_THRESHOLD_BETWEEN_SHORT_AND_LONG, MAX_COLUMN_WIDTH);
+    }
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void test_WindowSizeEqualsOne_lastRowIsWidest(boolean useMergedCells) {
+        workbook = new SXSSFWorkbook(null, 1); // Window size 1 so only last row will be in memory
+        sheet = workbook.createSheet();
+        sheet.trackAllColumnsForAutoSizing();
+
         final Cell cellRow0 = createRowWithCellValues(sheet, 0, SHORT_CELL_VALUE);
 
         assumeRequiredFontsAreInstalled(workbook, cellRow0);
-        
+
         createRowWithCellValues(sheet, 1, LONG_CELL_VALUE);
 
         sheet.autoSizeColumn(0, useMergedCells);
 
         assertColumnWidthStrictlyWithinRange(sheet.getColumnWidth(0), COLUMN_WIDTH_THRESHOLD_BETWEEN_SHORT_AND_LONG, MAX_COLUMN_WIDTH);
     }
-    
+
     // fails only for useMergedCell=true
-    @Test
-    public void test_WindowSizeEqualsOne_flushedRowHasMergedCell() {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void test_WindowSizeEqualsOne_flushedRowHasMergedCell(boolean useMergedCells) {
         workbook = new SXSSFWorkbook(null, 1); // Window size 1 so only last row will be in memory
         sheet = workbook.createSheet();
         sheet.trackAllColumnsForAutoSizing();
-        
+
         Cell a1 = createRowWithCellValues(sheet, 0, LONG_CELL_VALUE);
 
         assumeRequiredFontsAreInstalled(workbook, a1);
         assertEquals(0, sheet.addMergedRegion(CellRangeAddress.valueOf("A1:B1")));
-        
+
         createRowWithCellValues(sheet, 1, SHORT_CELL_VALUE, SHORT_CELL_VALUE);
-        
+
         /*
          *    A      B
          * 1 LONGMERGED
          * 2 SHORT SHORT
          */
-        
+
         sheet.autoSizeColumn(0, useMergedCells);
         sheet.autoSizeColumn(1, useMergedCells);
 
@@ -217,145 +212,126 @@ public class TestSXSSFSheetAutoSizeColumn {
         }
         assertColumnWidthStrictlyWithinRange(sheet.getColumnWidth(1), 0, COLUMN_WIDTH_THRESHOLD_BETWEEN_SHORT_AND_LONG); //short
     }
-    
-    @Test
-    public void autoSizeColumn_trackColumnForAutoSizing() {
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void autoSizeColumn_trackColumnForAutoSizing(boolean useMergedCells) {
         workbook = new SXSSFWorkbook();
         sheet = workbook.createSheet();
         sheet.trackColumnForAutoSizing(0);
-        
+
         SortedSet<Integer> expected = new TreeSet<>();
         expected.add(0);
         assertEquals(expected, sheet.getTrackedColumnsForAutoSizing());
-        
+
         sheet.autoSizeColumn(0, useMergedCells);
-        try {
-            sheet.autoSizeColumn(1, useMergedCells);
-            fail("Should not be able to auto-size an untracked column");
-        }
-        catch (final IllegalStateException e) {
-            // expected
-        }
+        assertThrows(IllegalStateException.class, () -> sheet.autoSizeColumn(1, useMergedCells),
+            "Should not be able to auto-size an untracked column");
     }
-    
-    @Test
-    public void autoSizeColumn_trackColumnsForAutoSizing() {
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void autoSizeColumn_trackColumnsForAutoSizing(boolean useMergedCells) {
         workbook = new SXSSFWorkbook();
         sheet = workbook.createSheet();
-        
+
         sheet.trackColumnsForAutoSizing(columns);
         SortedSet<Integer> sorted = new TreeSet<>(columns);
         assertEquals(sorted, sheet.getTrackedColumnsForAutoSizing());
-        
+
         sheet.autoSizeColumn(sorted.first(), useMergedCells);
-        try {
-            assumeFalse(columns.contains(5));
-            sheet.autoSizeColumn(5, useMergedCells);
-            fail("Should not be able to auto-size an untracked column");
-        }
-        catch (final IllegalStateException e) {
-            // expected
-        }
+        assumeFalse(columns.contains(5));
+
+        assertThrows(IllegalStateException.class, () -> sheet.autoSizeColumn(5, useMergedCells),
+            "Should not be able to auto-size an untracked column");
     }
-    
-    @Test
-    public void autoSizeColumn_untrackColumnForAutoSizing() {
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void autoSizeColumn_untrackColumnForAutoSizing(boolean useMergedCells) {
         workbook = new SXSSFWorkbook();
         sheet = workbook.createSheet();
-        
+
         sheet.trackColumnsForAutoSizing(columns);
         sheet.untrackColumnForAutoSizing(columns.first());
-        
+
         assumeTrue(sheet.getTrackedColumnsForAutoSizing().contains(columns.last()));
         sheet.autoSizeColumn(columns.last(), useMergedCells);
-        try {
-            assumeFalse(sheet.getTrackedColumnsForAutoSizing().contains(columns.first()));
-            sheet.autoSizeColumn(columns.first(), useMergedCells);
-            fail("Should not be able to auto-size an untracked column");
-        }
-        catch (final IllegalStateException e) {
-            // expected
-        }
+        assumeFalse(sheet.getTrackedColumnsForAutoSizing().contains(columns.first()));
+
+        assertThrows(IllegalStateException.class, () -> sheet.autoSizeColumn(columns.first(), useMergedCells),
+            "Should not be able to auto-size an untracked column");
     }
-    
-    @Test
-    public void autoSizeColumn_untrackColumnsForAutoSizing() {
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void autoSizeColumn_untrackColumnsForAutoSizing(boolean useMergedCells) {
         workbook = new SXSSFWorkbook();
         sheet = workbook.createSheet();
-        
+
         sheet.trackColumnForAutoSizing(15);
         sheet.trackColumnsForAutoSizing(columns);
         sheet.untrackColumnsForAutoSizing(columns);
-        
+
         assumeTrue(sheet.getTrackedColumnsForAutoSizing().contains(15));
         sheet.autoSizeColumn(15, useMergedCells);
-        try {
-            assumeFalse(sheet.getTrackedColumnsForAutoSizing().contains(columns.first()));
-            sheet.autoSizeColumn(columns.first(), useMergedCells);
-            fail("Should not be able to auto-size an untracked column");
-        }
-        catch (final IllegalStateException e) {
-            // expected
-        }
+        assumeFalse(sheet.getTrackedColumnsForAutoSizing().contains(columns.first()));
+
+        assertThrows(IllegalStateException.class, () -> sheet.autoSizeColumn(columns.first(), useMergedCells),
+            "Should not be able to auto-size an untracked column");
     }
-    
+
     @Test
     public void autoSizeColumn_isColumnTrackedForAutoSizing() {
         workbook = new SXSSFWorkbook();
         sheet = workbook.createSheet();
-        
+
         sheet.trackColumnsForAutoSizing(columns);
         for (int column : columns) {
             assertTrue(sheet.isColumnTrackedForAutoSizing(column));
-            
+
             assumeFalse(columns.contains(column+10));
             assertFalse(sheet.isColumnTrackedForAutoSizing(column+10));
         }
     }
-    
-    @Test
-    public void autoSizeColumn_trackAllColumns() {
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void autoSizeColumn_trackAllColumns(boolean useMergedCells) {
         workbook = new SXSSFWorkbook();
         sheet = workbook.createSheet();
-        
+
         sheet.trackAllColumnsForAutoSizing();
         sheet.autoSizeColumn(0, useMergedCells);
-        
+
         sheet.untrackAllColumnsForAutoSizing();
-        try {
-            sheet.autoSizeColumn(0, useMergedCells);
-            fail("Should not be able to auto-size an implicitly untracked column");
-        } catch (final IllegalStateException e) {
-            // expected
-        }
+        assertThrows(IllegalStateException.class, () -> sheet.autoSizeColumn(0, useMergedCells),
+            "Should not be able to auto-size an implicitly untracked column");
     }
-    
-    @Test
-    public void autoSizeColumn_trackAllColumns_explicitUntrackColumn() {
+
+    @ParameterizedTest
+    @MethodSource("data")
+    public void autoSizeColumn_trackAllColumns_explicitUntrackColumn(boolean useMergedCells) {
         workbook = new SXSSFWorkbook();
         sheet = workbook.createSheet();
-        
+
         sheet.trackColumnsForAutoSizing(columns);
         sheet.trackAllColumnsForAutoSizing();
 
         boolean untracked = sheet.untrackColumnForAutoSizing(0);
         assertTrue(untracked);
-        try {
-            sheet.autoSizeColumn(0, useMergedCells);
-            fail("Should not be able to auto-size an explicitly untracked column");
-        } catch (final IllegalStateException e) {
-            // expected
-        }
+        assertThrows(IllegalStateException.class, () -> sheet.autoSizeColumn(0, useMergedCells),
+            "Should not be able to auto-size an explicitly untracked column");
     }
-    
-    
+
+
     private static void assumeRequiredFontsAreInstalled(final Workbook workbook, final Cell cell) {
         // autoSize will fail if required fonts are not installed, skip this test then
         Font font = workbook.getFontAt(cell.getCellStyle().getFontIndex());
-        Assume.assumeTrue("Cannot verify autoSizeColumn() because the necessary Fonts are not installed on this machine: " + font,
-                          SheetUtil.canComputeColumnWidth(font));
+        assumeTrue(SheetUtil.canComputeColumnWidth(font),
+            "Cannot verify autoSizeColumn() because the necessary Fonts are not installed on this machine: " + font);
     }
-    
+
     private static Cell createRowWithCellValues(final Sheet sheet, final int rowNumber, final String... cellValues) {
         Row row = sheet.createRow(rowNumber);
         int cellIndex = 0;
@@ -369,12 +345,12 @@ public class TestSXSSFSheetAutoSizeColumn {
         }
         return firstCell;
     }
-    
+
     private static void assertColumnWidthStrictlyWithinRange(final int actualColumnWidth, final int lowerBoundExclusive, final int upperBoundExclusive) {
-        assertTrue("Expected a column width greater than " + lowerBoundExclusive + " but found " + actualColumnWidth,
-                actualColumnWidth > lowerBoundExclusive);
-        assertTrue("Expected column width less than " + upperBoundExclusive + " but found " + actualColumnWidth, actualColumnWidth < upperBoundExclusive);
-       
+        assertTrue(actualColumnWidth > lowerBoundExclusive,
+            "Expected a column width greater than " + lowerBoundExclusive + " but found " + actualColumnWidth);
+        assertTrue(actualColumnWidth < upperBoundExclusive,
+            "Expected column width less than " + upperBoundExclusive + " but found " + actualColumnWidth);
     }
-    
+
 }

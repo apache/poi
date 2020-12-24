@@ -16,17 +16,17 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import org.apache.poi.ss.formula.EvaluationSheet;
-import org.apache.poi.ss.usermodel.BaseTestXEvaluationSheet;
-import org.apache.poi.ss.usermodel.Sheet;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.util.AbstractMap;
 import java.util.Map;
 
-import static org.junit.Assert.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import org.apache.poi.ss.formula.EvaluationSheet;
+import org.apache.poi.ss.usermodel.BaseTestXEvaluationSheet;
+import org.apache.poi.ss.usermodel.Sheet;
+import org.junit.jupiter.api.Test;
 
 public class TestXSSFEvaluationSheet extends BaseTestXEvaluationSheet {
 
@@ -38,24 +38,24 @@ public class TestXSSFEvaluationSheet extends BaseTestXEvaluationSheet {
         row.createCell(0);
         XSSFEvaluationSheet evalsheet = new XSSFEvaluationSheet(sheet);
 
-        assertNotNull("Cell 0,0 is found", evalsheet.getCell(0, 0));
-        assertNull("Cell 0,1 is not found", evalsheet.getCell(0, 1));
-        assertNull("Cell 1,0 is not found", evalsheet.getCell(1, 0));
+        assertNotNull(evalsheet.getCell(0, 0), "Cell 0,0 is found");
+        assertNull(evalsheet.getCell(0, 1), "Cell 0,1 is not found");
+        assertNull(evalsheet.getCell(1, 0), "Cell 1,0 is not found");
 
         // now add Cell 0,1
         row.createCell(1);
 
-        assertNotNull("Cell 0,0 is found", evalsheet.getCell(0, 0));
-        assertNotNull("Cell 0,1 is now also found", evalsheet.getCell(0, 1));
-        assertNull("Cell 1,0 is not found", evalsheet.getCell(1, 0));
+        assertNotNull(evalsheet.getCell(0, 0), "Cell 0,0 is found");
+        assertNotNull(evalsheet.getCell(0, 1), "Cell 0,1 is now also found");
+        assertNull(evalsheet.getCell(1, 0), "Cell 1,0 is not found");
 
         // after clearing all values it also works
         row.createCell(2);
         evalsheet.clearAllCachedResultValues();
 
-        assertNotNull("Cell 0,0 is found", evalsheet.getCell(0, 0));
-        assertNotNull("Cell 0,2 is now also found", evalsheet.getCell(0, 2));
-        assertNull("Cell 1,0 is not found", evalsheet.getCell(1, 0));
+        assertNotNull(evalsheet.getCell(0, 0), "Cell 0,0 is found");
+        assertNotNull(evalsheet.getCell(0, 2), "Cell 0,2 is now also found");
+        assertNull(evalsheet.getCell(1, 0), "Cell 1,0 is not found");
 
         // other things
         assertEquals(sheet, evalsheet.getXSSFSheet());

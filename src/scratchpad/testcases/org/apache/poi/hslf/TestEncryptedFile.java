@@ -18,7 +18,8 @@
 package org.apache.poi.hslf;
 
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +27,7 @@ import java.io.InputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that HSLFSlideShow does the right thing with an encrypted file
@@ -43,24 +44,24 @@ public final class TestEncryptedFile {
 		is.close();
 	}
 
-    @Test(expected=EncryptedPowerPointFileException.class)
+    @Test
 	public void testLoadEncrypted1() throws IOException {
         try (InputStream is = slTests.openResourceAsStream("Password_Protected-hello.ppt")) {
-            new HSLFSlideShowImpl(is).close();
+            assertThrows(EncryptedPowerPointFileException.class, () -> new HSLFSlideShowImpl(is).close());
         }
     }
-    
-    @Test(expected=EncryptedPowerPointFileException.class)
+
+    @Test
     public void testLoadEncrypted2() throws IOException {
         try (InputStream is = slTests.openResourceAsStream("Password_Protected-np-hello.ppt")) {
-            new HSLFSlideShowImpl(is).close();
+            assertThrows(EncryptedPowerPointFileException.class, () -> new HSLFSlideShowImpl(is).close());
         }
     }
-    
-    @Test(expected=EncryptedPowerPointFileException.class)
+
+    @Test
     public void testLoadEncrypted3() throws IOException {
         try (InputStream is = slTests.openResourceAsStream("Password_Protected-56-hello.ppt")) {
-            new HSLFSlideShowImpl(is).close();
+            assertThrows(EncryptedPowerPointFileException.class, () -> new HSLFSlideShowImpl(is).close());
         }
 	}
 }

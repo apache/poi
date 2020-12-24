@@ -17,12 +17,13 @@
 
 package org.apache.poi.hssf.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -44,7 +45,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.formula.FormulaShifter;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.HexRead;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Unit test for the {@link InternalSheet} class.
@@ -112,7 +113,7 @@ public final class TestSheet {
 		for (int n = 0; n < regionsToAdd; n++)
 		{
 			int index = sheet.addMergedRegion(0, (short) 0, 1, (short) 1);
-            assertEquals("Merged region index expected to be " + n + " got " + index, index, n);
+            assertEquals(index, n, "Merged region index expected to be " + n + " got " + index);
 		}
 
 		//test all the regions were indeed added
@@ -127,23 +128,16 @@ public final class TestSheet {
 		if ((regionsToAdd % 1027) != 0) {
 			recordsExpected++;
 		}
-        assertEquals("The " + regionsToAdd + " merged regions should have been spread out over "
-                + recordsExpected + " records, not " + recordsAdded, recordsAdded, recordsExpected);
+        assertEquals(recordsAdded, recordsExpected,
+			"The " + regionsToAdd + " merged regions should have been spread out over "
+			+ recordsExpected + " records, not " + recordsAdded);
 		// Check we can't add one with invalid date
-		try {
-			sheet.addMergedRegion(10, (short)10, 9, (short)12);
-			fail("Expected an exception to occur");
-		} catch(IllegalArgumentException e) {
-			// occurs during successful test
-			assertEquals("The 'to' row (9) must not be less than the 'from' row (10)", e.getMessage());
-		}
-		try {
-			sheet.addMergedRegion(10, (short)10, 12, (short)9);
-			fail("Expected an exception to occur");
-		} catch(IllegalArgumentException e) {
-			// occurs during successful test
-			assertEquals("The 'to' col (9) must not be less than the 'from' col (10)", e.getMessage());
-		}
+		IllegalArgumentException e;
+		e = assertThrows(IllegalArgumentException.class, () -> sheet.addMergedRegion(10, (short)10, 9, (short)12));
+		assertEquals("The 'to' row (9) must not be less than the 'from' row (10)", e.getMessage());
+
+		e = assertThrows(IllegalArgumentException.class, () -> sheet.addMergedRegion(10, (short)10, 12, (short)9));
+		assertEquals("The 'to' col (9) must not be less than the 'from' col (10)", e.getMessage());
 	}
 
     @Test
@@ -162,12 +156,12 @@ public final class TestSheet {
 		{
 			sheet.removeMergedRegion(0);
 			//assert they have been deleted
-			assertEquals("Num of regions", regionsToAdd - n - 1, sheet.getNumMergedRegions());
+			assertEquals(regionsToAdd - n - 1, sheet.getNumMergedRegions(), "Num of regions");
 		}
 
 		// merge records are removed from within the MergedCellsTable,
 		// so the sheet record count should not change
-		assertEquals("Sheet Records", nSheetRecords, sheet.getRecords().size());
+		assertEquals(nSheetRecords, sheet.getRecords().size(), "Sheet Records");
 	}
 
 	/**
@@ -199,7 +193,7 @@ public final class TestSheet {
 
 		//stub object to throw off list INDEX operations
 		sheet.removeMergedRegion(0);
-		assertEquals("Should be no more merged regions", 0, sheet.getNumMergedRegions());
+		assertEquals(0, sheet.getNumMergedRegions(), "Should be no more merged regions");
 	}
 
     // @Test
@@ -233,7 +227,7 @@ public final class TestSheet {
 		records.add(EOFRecord.instance);
 
 		InternalSheet sheet = createSheet(records);
-		assertNotNull("Row [2] was skipped", sheet.getRow(2));
+		assertNotNull(sheet.getRow(2), "Row [2] was skipped");
 	}
 
 	/**
@@ -249,21 +243,21 @@ public final class TestSheet {
 		PageSettingsBlock sheet = worksheet.getPageSettings();
 		sheet.setRowBreak(0, colFrom, colTo);
 
-		assertTrue("no row break at 0", sheet.isRowBroken(0));
-		assertEquals("1 row break available", 1, sheet.getNumRowBreaks());
+		assertTrue(sheet.isRowBroken(0), "no row break at 0");
+		assertEquals(1, sheet.getNumRowBreaks(), "1 row break available");
 
 		sheet.setRowBreak(0, colFrom, colTo);
 		sheet.setRowBreak(0, colFrom, colTo);
 
-		assertTrue("no row break at 0", sheet.isRowBroken(0));
-		assertEquals("1 row break available", 1, sheet.getNumRowBreaks());
+		assertTrue(sheet.isRowBroken(0), "no row break at 0");
+		assertEquals(1, sheet.getNumRowBreaks(), "1 row break available");
 
 		sheet.setRowBreak(10, colFrom, colTo);
 		sheet.setRowBreak(11, colFrom, colTo);
 
-		assertTrue("no row break at 10", sheet.isRowBroken(10));
-		assertTrue("no row break at 11", sheet.isRowBroken(11));
-		assertEquals("3 row break available", 3, sheet.getNumRowBreaks());
+		assertTrue(sheet.isRowBroken(10), "no row break at 10");
+		assertTrue(sheet.isRowBroken(11), "no row break at 11");
+		assertEquals(3, sheet.getNumRowBreaks(), "3 row break available");
 
 
 		boolean is10 = false;
@@ -272,24 +266,24 @@ public final class TestSheet {
 
 		int[] rowBreaks = sheet.getRowBreaks();
 		for (int main : rowBreaks) {
-			if (main != 0 && main != 10 && main != 11) fail("Invalid page break");
+			assertTrue(main == 0 || main == 10 || main == 11, "Invalid page break");
 			if (main == 0)	 is0 = true;
-			if (main == 10) is10= true;
+			if (main == 10) is10 = true;
 			if (main == 11) is11 = true;
 		}
 
-		assertTrue("one of the breaks didnt make it", is0 && is10 && is11);
+		assertTrue(is0 && is10 && is11, "one of the breaks didnt make it");
 
 		sheet.removeRowBreak(11);
-		assertFalse("row should be removed", sheet.isRowBroken(11));
+		assertFalse(sheet.isRowBroken(11), "row should be removed");
 
 		sheet.removeRowBreak(0);
-		assertFalse("row should be removed", sheet.isRowBroken(0));
+		assertFalse(sheet.isRowBroken(0), "row should be removed");
 
 		sheet.removeRowBreak(10);
-		assertFalse("row should be removed", sheet.isRowBroken(10));
+		assertFalse(sheet.isRowBroken(10), "row should be removed");
 
-		assertEquals("no more breaks", 0, sheet.getNumRowBreaks());
+		assertEquals(0, sheet.getNumRowBreaks(), "no more breaks");
 	}
 
 	/**
@@ -305,22 +299,22 @@ public final class TestSheet {
 		PageSettingsBlock sheet = worksheet.getPageSettings();
 		sheet.setColumnBreak((short)0, rowFrom, rowTo);
 
-		assertTrue("no col break at 0", sheet.isColumnBroken(0));
-		assertEquals("1 col break available", 1, sheet.getNumColumnBreaks());
+		assertTrue(sheet.isColumnBroken(0), "no col break at 0");
+		assertEquals(1, sheet.getNumColumnBreaks(), "1 col break available");
 
 		sheet.setColumnBreak((short)0, rowFrom, rowTo);
 
-		assertTrue("no col break at 0", sheet.isColumnBroken(0));
-		assertEquals("1 col break available", 1, sheet.getNumColumnBreaks());
+		assertTrue(sheet.isColumnBroken(0), "no col break at 0");
+		assertEquals(1, sheet.getNumColumnBreaks(), "1 col break available");
 
 		sheet.setColumnBreak((short)1, rowFrom, rowTo);
 		sheet.setColumnBreak((short)10, rowFrom, rowTo);
 		sheet.setColumnBreak((short)15, rowFrom, rowTo);
 
-		assertTrue("no col break at 1", sheet.isColumnBroken(1));
-		assertTrue("no col break at 10", sheet.isColumnBroken(10));
-		assertTrue("no col break at 15", sheet.isColumnBroken(15));
-		assertEquals("4 col break available", 4, sheet.getNumColumnBreaks());
+		assertTrue(sheet.isColumnBroken(1), "no col break at 1");
+		assertTrue(sheet.isColumnBroken(10), "no col break at 10");
+		assertTrue(sheet.isColumnBroken(15), "no col break at 15");
+		assertEquals(4, sheet.getNumColumnBreaks(), "4 col break available");
 
 		boolean is10 = false;
 		boolean is0 = false;
@@ -329,28 +323,28 @@ public final class TestSheet {
 
 		int[] colBreaks = sheet.getColumnBreaks();
 		for (int main : colBreaks) {
-			if (main != 0 && main != 1 && main != 10 && main != 15) fail("Invalid page break");
+			assertTrue(main == 0 || main == 1 || main == 10 || main == 15, "Invalid page break");
 			if (main == 0)  is0 = true;
 			if (main == 1)  is1 = true;
 			if (main == 10) is10= true;
 			if (main == 15) is15 = true;
 		}
 
-		assertTrue("one of the breaks didnt make it", is0 && is1 && is10 && is15);
+		assertTrue(is0 && is1 && is10 && is15, "one of the breaks didnt make it");
 
 		sheet.removeColumnBreak(15);
-		assertFalse("column break should not be there", sheet.isColumnBroken(15));
+		assertFalse(sheet.isColumnBroken(15), "column break should not be there");
 
 		sheet.removeColumnBreak(0);
-		assertFalse("column break should not be there", sheet.isColumnBroken(0));
+		assertFalse(sheet.isColumnBroken(0), "column break should not be there");
 
 		sheet.removeColumnBreak(1);
-		assertFalse("column break should not be there", sheet.isColumnBroken(1));
+		assertFalse(sheet.isColumnBroken(1), "column break should not be there");
 
 		sheet.removeColumnBreak(10);
-		assertFalse("column break should not be there", sheet.isColumnBroken(10));
+		assertFalse(sheet.isColumnBroken(10), "column break should not be there");
 
-		assertEquals("no more breaks", 0, sheet.getNumColumnBreaks());
+		assertEquals(0, sheet.getNumColumnBreaks(), "no more breaks");
 	}
 
 	/**
@@ -447,7 +441,7 @@ public final class TestSheet {
 		sheet.visitContainedRecords(r -> {
 			int estimatedSize = r.getRecordSize();
 			int serializedSize = r.serialize(0, buf);
-			assertEquals("serialized size mismatch for record (" + r.getClass().getName() + ")", estimatedSize, serializedSize);
+			assertEquals(estimatedSize, serializedSize, "serialized size mismatch for record (" + r.getClass().getName() + ")");
 			totalSize[0] += estimatedSize;
 		}, 0);
 		assertEquals(90, totalSize[0]);
@@ -540,17 +534,13 @@ public final class TestSheet {
 
     @Test
 	public void testMisplacedMergedCellsRecords_bug45699() throws Exception {
-		HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45698-22488.xls");
-
-		HSSFSheet sheet = wb.getSheetAt(0);
-		HSSFRow row = sheet.getRow(3);
-		HSSFCell cell = row.getCell(4);
-		if (cell == null) {
-			fail("Identified bug 45699");
+		try (HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("ex45698-22488.xls")) {
+			HSSFSheet sheet = wb.getSheetAt(0);
+			HSSFRow row = sheet.getRow(3);
+			HSSFCell cell = row.getCell(4);
+			assertNotNull(cell, "Identified bug 45699");
+			assertEquals("Informations", cell.getRichStringCellValue().getString());
 		}
-		assertEquals("Informations", cell.getRichStringCellValue().getString());
-
-		wb.close();
 	}
 	/**
 	 * In 3.1, setting margins between creating first row and first cell caused an exception.

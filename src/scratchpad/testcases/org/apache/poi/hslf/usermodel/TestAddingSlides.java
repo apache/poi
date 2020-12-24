@@ -17,12 +17,12 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -32,9 +32,9 @@ import org.apache.poi.hslf.record.Document;
 import org.apache.poi.hslf.record.Record;
 import org.apache.poi.hslf.record.RecordTypes;
 import org.apache.poi.hslf.record.UserEditAtom;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that SlideShow adds additional sheets properly
@@ -52,14 +52,14 @@ public final class TestAddingSlides {
     /**
      * Create/open the slideshows
      */
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         ss_empty = new HSLFSlideShow();
         ss_one = HSLFTestDataSamples.getSlideShow("Single_Coloured_Page.ppt");
         ss_two = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws IOException {
         ss_two.close();
         ss_one.close();
@@ -230,17 +230,8 @@ public final class TestAddingSlides {
 
         List<HSLFSlide> s1 = ss_empty.getSlides();
         assertEquals(2, s1.size());
-        try {
-            ss_empty.removeSlide(-1);
-            fail("expected exception");
-        } catch (Exception e) {
-        }
-
-        try {
-            ss_empty.removeSlide(2);
-            fail("expected exception");
-        } catch (Exception e) {
-        }
+        assertThrows(Exception.class, () -> ss_empty.removeSlide(-1));
+        assertThrows(Exception.class, () -> ss_empty.removeSlide(2));
 
         assertEquals(1, slide1.getSlideNumber());
 
@@ -252,12 +243,9 @@ public final class TestAddingSlides {
 
         assertEquals(0, slide2.getSlideNumber());
 
-        HSLFSlideShow ss_read = HSLFTestDataSamples
-                .writeOutAndReadBack(ss_empty);
-
-        List<HSLFSlide> s3 = ss_read.getSlides();
-        assertEquals(1, s3.size());
-        ss_read.close();
+        try (HSLFSlideShow ss_read = HSLFTestDataSamples.writeOutAndReadBack(ss_empty)) {
+            assertEquals(1, ss_read.getSlides().size());
+        }
     }
 
     @Test

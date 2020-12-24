@@ -17,10 +17,10 @@
 
 package org.apache.poi.util;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -28,21 +28,21 @@ import java.io.OutputStream;
 import java.io.PrintStream;
 import java.io.UnsupportedEncodingException;
 
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class TestHexDump {
 
     private static PrintStream SYSTEM_OUT;
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws UnsupportedEncodingException {
         SYSTEM_OUT = System.out;
         System.setOut(new PrintStream(new OutputStream() {public void write(int b) {}}, false, "UTF-8"));
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() {
         System.setOut(SYSTEM_OUT);
     }
@@ -55,8 +55,8 @@ public class TestHexDump {
         byte[] bytesAct = streamAct.toByteArray();
         byte[] bytesExp = toHexDump(0, 0);
 
-        assertEquals("array size mismatch", bytesExp.length, bytesAct.length);
-        assertArrayEquals("array mismatch", bytesExp, bytesAct);
+        assertEquals(bytesExp.length, bytesAct.length, "array size mismatch");
+        assertArrayEquals(bytesExp, bytesAct, "array mismatch");
 
         // verify proper behavior with non-zero offset
         streamAct.reset();
@@ -64,8 +64,8 @@ public class TestHexDump {
         bytesAct = streamAct.toByteArray();
         bytesExp = toHexDump(0x10000000L,0);
 
-        assertEquals("array size mismatch", bytesExp.length, bytesAct.length);
-        assertArrayEquals("array mismatch", bytesExp, bytesAct);
+        assertEquals(bytesExp.length, bytesAct.length, "array size mismatch");
+        assertArrayEquals(bytesExp, bytesAct, "array mismatch");
 
         // verify proper behavior with negative offset
         streamAct.reset();
@@ -73,8 +73,8 @@ public class TestHexDump {
         bytesAct = streamAct.toByteArray();
         bytesExp = toHexDump(0xFF000000L,0);
 
-        assertEquals("array size mismatch", bytesExp.length, bytesAct.length);
-        assertArrayEquals("array mismatch", bytesExp, bytesAct);
+        assertEquals(bytesExp.length, bytesAct.length, "array size mismatch");
+        assertArrayEquals(bytesExp, bytesAct, "array mismatch");
 
         // verify proper behavior with non-zero index
         streamAct.reset();
@@ -82,36 +82,20 @@ public class TestHexDump {
         bytesAct = streamAct.toByteArray();
         bytesExp = toHexDump(0xFF000000L,0x81);
 
-        assertEquals("array size mismatch", bytesExp.length, bytesAct.length);
-        assertArrayEquals("array mismatch", bytesExp, bytesAct);
+        assertEquals(bytesExp.length, bytesAct.length, "array size mismatch");
+        assertArrayEquals(bytesExp, bytesAct, "array mismatch");
 
 
         // verify proper behavior with negative index
-        try {
-            streamAct.reset();
-            HexDump.dump(testArray, 0x10000000L, streamAct, -1);
-            fail("should have caught ArrayIndexOutOfBoundsException on negative index");
-        } catch (ArrayIndexOutOfBoundsException ignored_exception) {
-            // as expected
-        }
+        streamAct.reset();
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> HexDump.dump(testArray, 0x10000000L, streamAct, -1));
 
         // verify proper behavior with index that is too large
-        try {
-            streamAct.reset();
-            HexDump.dump(testArray, 0x10000000L, streamAct, testArray.length);
-            fail("should have caught ArrayIndexOutOfBoundsException on large index");
-        } catch (ArrayIndexOutOfBoundsException ignored_exception) {
-            // as expected
-        }
+        streamAct.reset();
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> HexDump.dump(testArray, 0x10000000L, streamAct, testArray.length));
 
         // verify proper behavior with null stream
-        try {
-            HexDump.dump(testArray, 0x10000000L, null, 0);
-            fail("should have caught IllegalArgumentException on negative index");
-        } catch (IllegalArgumentException ignored_exception) {
-
-            // as expected
-        }
+        assertThrows(IllegalArgumentException.class, () -> HexDump.dump(testArray, 0x10000000L, null, 0));
 
         // verify proper behaviour with empty byte array
         streamAct.reset();
@@ -178,28 +162,18 @@ public class TestHexDump {
         byte[] testArray = testArray();
         String dump = HexDump.dump(testArray, 0, 0);
         //System.out.println("Hex: \n" + dump);
-        assertTrue("Had: \n" + dump,
-                dump.contains("0123456789:;<=>?"));
+        assertTrue(dump.contains("0123456789:;<=>?"), "Had: \n" + dump);
 
         dump = HexDump.dump(testArray, 2, 1);
         //System.out.println("Hex: \n" + dump);
-        assertTrue("Had: \n" + dump,
-                dump.contains("123456789:;<=>?@"));
+        assertTrue(dump.contains("123456789:;<=>?@"), "Had: \n" + dump);
     }
 
-    @Test(expected=ArrayIndexOutOfBoundsException.class)
+    @Test
     public void testDumpToStringOutOfIndex1() {
-        HexDump.dump(new byte[1], 0, -1);
-    }
-
-    @Test(expected=ArrayIndexOutOfBoundsException.class)
-    public void testDumpToStringOutOfIndex2() {
-        HexDump.dump(new byte[1], 0, 2);
-    }
-
-    @Test(expected=ArrayIndexOutOfBoundsException.class)
-    public void testDumpToStringOutOfIndex3() {
-        HexDump.dump(new byte[1], 0, 1);
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> HexDump.dump(new byte[1], 0, -1));
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> HexDump.dump(new byte[1], 0, 2));
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> HexDump.dump(new byte[1], 0, 1));
     }
 
     @Test

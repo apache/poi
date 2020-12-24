@@ -17,8 +17,9 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 
@@ -28,7 +29,7 @@ import org.apache.poi.hwpf.HWPFTestCase;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.extractor.WordExtractor;
 import org.apache.poi.hwpf.model.StyleSheet;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test various problem documents
@@ -49,7 +50,7 @@ public final class TestProblems extends HWPFTestCase {
                 s.getParagraph(y);
             }
         }
-        
+
         doc.close();
     }
 
@@ -62,7 +63,7 @@ public final class TestProblems extends HWPFTestCase {
 
         StyleSheet styleSheet = doc.getStyleSheet();
         assertNotNull(styleSheet);
-        
+
         Range r = doc.getRange();
         for (int x = 0; x < r.numSections(); x++) {
             Section s = r.getSection(x);
@@ -144,7 +145,7 @@ public final class TestProblems extends HWPFTestCase {
         assertEquals(4, cell._parEnd);
         assertEquals(65, cell.getStartOffset());
         assertEquals(85, cell.getEndOffset());
-        
+
         doc.close();
     }
 
@@ -181,16 +182,17 @@ public final class TestProblems extends HWPFTestCase {
         }
 
         assertEquals(newLength, totalLength - deletedLength);
-        
+
         doc.close();
     }
 
     /**
      * With an encrypted file, we should give a suitable exception, and not OOM
      */
-    @Test(expected=EncryptedDocumentException.class)
-    public void testEncryptedFile() throws IOException {
-        HWPFTestDataSamples.openSampleFile("PasswordProtected.doc");
+    @Test
+    public void testEncryptedFile() {
+        assertThrows(EncryptedDocumentException.class, () -> HWPFTestDataSamples.openSampleFile("PasswordProtected.doc"));
+
     }
 
     @Test
@@ -240,7 +242,7 @@ public final class TestProblems extends HWPFTestCase {
                 assertEquals(offset, para.text().indexOf(shorter));
             }
         }
-        
+
         doc.close();
     }
 
@@ -280,7 +282,7 @@ public final class TestProblems extends HWPFTestCase {
                 doc.getRange().getParagraph(0).text());
         assertEquals("After Crashing Part\r",
                 doc.getRange().getParagraph(13).text());
-        
+
         doc.close();
     }
 
@@ -428,7 +430,7 @@ public final class TestProblems extends HWPFTestCase {
         assertEquals(106, cell.getStartOffset());
         assertEquals(119, cell.getEndOffset());
         assertEquals("Row 3/Cell 3\u0007", cell.text());
-        
+
         doc.close();
     }
 }

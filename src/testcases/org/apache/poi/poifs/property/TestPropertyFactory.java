@@ -17,10 +17,10 @@
 
 package org.apache.poi.poifs.property;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.poifs.storage.RawDataUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test PropertyFactory functionality
@@ -145,21 +145,19 @@ public final class TestPropertyFactory {
 
 		for (int j = 0; j < 64; j++) {
 			if (isNull[j]) {
-				assertNull("Checking property " + j, properties.get(j));
+				assertNull(properties.get(j), "Checking property " + j);
 			} else {
-				assertNotNull("Checking property " + j, properties.get(j));
+				assertNotNull(properties.get(j), "Checking property " + j);
 				if (isRoot[j]) {
-					assertTrue("Checking property " + j, properties.get(j) instanceof RootProperty);
+					assertTrue(properties.get(j) instanceof RootProperty, "Checking property " + j);
 				}
 				if (isDirectory[j]) {
-					assertTrue("Checking property " + j,
-							properties.get(j) instanceof DirectoryProperty);
+					assertTrue(properties.get(j) instanceof DirectoryProperty, "Checking property " + j);
 				}
 				if (isDocument[j]) {
-					assertTrue("Checking property " + j,
-							properties.get(j) instanceof DocumentProperty);
+					assertTrue(properties.get(j) instanceof DocumentProperty, "Checking property " + j);
 				}
-				assertEquals("Checking property " + j, names[j], properties.get(j).getName());
+				assertEquals(names[j], properties.get(j).getName(), "Checking property " + j);
 			}
 		}
 	}

@@ -20,8 +20,8 @@
 package org.apache.poi.sl.tests;
 
 import static org.apache.poi.sl.tests.SLCommonUtils.openSampleSlideshow;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -31,7 +31,7 @@ import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextShape;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestHeadersFooters {
     @Test

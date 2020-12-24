@@ -19,11 +19,11 @@
 
 package org.apache.poi.ss.formula;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -35,9 +35,9 @@ import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class BaseTestMissingWorkbook {
     protected Workbook mainWorkbook;
@@ -58,7 +58,7 @@ public class BaseTestMissingWorkbook {
         this.SOURCE_WORKBOOK_FILENAME = SOURCE_WORKBOOK_FILENAME;
     }
 
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
 		mainWorkbook = HSSFTestDataSamples.openSampleWorkbook(MAIN_WORKBOOK_FILENAME);
 		sourceWorkbook = HSSFTestDataSamples.openSampleWorkbook(SOURCE_WORKBOOK_FILENAME);
@@ -67,7 +67,7 @@ public class BaseTestMissingWorkbook {
 		assertNotNull(sourceWorkbook);
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws Exception {
 		if(mainWorkbook != null) {
 			mainWorkbook.close();
@@ -87,12 +87,9 @@ public class BaseTestMissingWorkbook {
 		Cell lA1Cell = lARow.getCell(0);
 
 		assertEquals(CellType.FORMULA, lA1Cell.getCellType());
-		try {
-			evaluator.evaluateFormulaCell(lA1Cell);
-			fail("Missing external workbook reference exception expected!");
-		} catch(RuntimeException re) {
-			assertTrue("Unexpected exception: " + re, re.getMessage().contains(SOURCE_DUMMY_WORKBOOK_FILENAME));
-		}
+		RuntimeException re = assertThrows(RuntimeException.class, () -> evaluator.evaluateFormulaCell(lA1Cell),
+										   "Missing external workbook reference exception expected!");
+		assertTrue(re.getMessage().contains(SOURCE_DUMMY_WORKBOOK_FILENAME));
 	}
 
 	@Test

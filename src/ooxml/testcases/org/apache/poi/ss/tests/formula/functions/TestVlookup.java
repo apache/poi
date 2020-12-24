@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.tests.formula.functions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 import java.io.IOException;
 
@@ -32,7 +32,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the VLOOKUP function
@@ -44,10 +44,10 @@ public class TestVlookup {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("VLookupFullColumn.xlsx")) {
             FormulaEvaluator feval = wb.getCreationHelper().createFormulaEvaluator();
             feval.evaluateAll();
-            assertEquals("Wrong lookup value", "Value1",
-                    feval.evaluate(wb.getSheetAt(0).getRow(3).getCell(1)).getStringValue());
-            assertEquals("Lookup should return #N/A",
-                    CellType.ERROR, feval.evaluate(wb.getSheetAt(0).getRow(4).getCell(1)).getCellType());
+            assertEquals("Value1", feval.evaluate(wb.getSheetAt(0).getRow(3).getCell(1)).getStringValue(),
+                "Wrong lookup value");
+            assertEquals(CellType.ERROR, feval.evaluate(wb.getSheetAt(0).getRow(4).getCell(1)).getCellType(),
+                "Lookup should return #N/A");
         }
     }
 

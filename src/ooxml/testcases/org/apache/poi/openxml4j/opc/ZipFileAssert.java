@@ -17,11 +17,12 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayOutputStream;
@@ -34,7 +35,7 @@ import java.util.TreeMap;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveInputStream;
 import org.apache.poi.util.IOUtils;
-import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.xmlunit.builder.DiffBuilder;
 import org.xmlunit.builder.Input;
 import org.xmlunit.diff.Comparison;
@@ -55,14 +56,14 @@ public final class ZipFileAssert {
             TreeMap<String, ByteArrayOutputStream> file1,
             TreeMap<String, ByteArrayOutputStream> file2) {
         Set<String> listFile1 = file1.keySet();
-        Assert.assertEquals("not the same number of files in zip:", listFile1.size(), file2.keySet().size());
+        Assertions.assertEquals(listFile1.size(), file2.keySet().size(), "not the same number of files in zip:");
 
         for (String fileName : listFile1) {
             // extract the contents for both
             ByteArrayOutputStream contain1 = file1.get(fileName);
             ByteArrayOutputStream contain2 = file2.get(fileName);
 
-            assertNotNull(fileName + " not found in 2nd zip", contain2);
+            assertNotNull(contain2, fileName + " not found in 2nd zip");
             // no need to check for contain1. The key come from it
 
             if (fileName.matches(".*\\.(xml|rels)$")) {
@@ -75,11 +76,11 @@ public final class ZipFileAssert {
                         withDifferenceEvaluator(new IgnoreXMLDeclEvaluator()).
                         withNodeMatcher(new DefaultNodeMatcher(ElementSelectors.byNameAndAllAttributes, ElementSelectors.byNameAndText)).
                         build();
-                assertFalse(fileName+": "+diff.toString(), diff.hasDifferences());
+                assertFalse(diff.hasDifferences(), fileName+": "+diff.toString());
             } else {
                 // not xml, may be an image or other binary format
-                Assert.assertEquals(fileName + " does not have the same size in both zip:", contain1.size(), contain2.size());
-                assertArrayEquals("contents differ", contain1.toByteArray(), contain2.toByteArray());
+                Assertions.assertEquals(contain1.size(), contain2.size(), fileName + " does not have the same size in both zip:");
+                assertArrayEquals(contain1.toByteArray(), contain2.toByteArray(), "contents differ");
             }
         }
     }
@@ -126,21 +127,12 @@ public final class ZipFileAssert {
         assertNotNull(expected);
         assertNotNull(actual);
 
-        assertTrue("File does not exist [" + expected.getAbsolutePath()
-                + "]", expected.exists());
-        assertTrue("File does not exist [" + actual.getAbsolutePath()
-                + "]", actual.exists());
+        assertTrue(expected.exists(), "File does not exist [" + expected.getAbsolutePath() + "]");
+        assertTrue(actual.exists(), "File does not exist [" + actual.getAbsolutePath() + "]");
+        assertTrue(expected.canRead(), "Expected file not readable");
+        assertTrue(actual.canRead(), "Actual file not readable");
 
-        assertTrue("Expected file not readable", expected.canRead());
-        assertTrue("Actual file not readable", actual.canRead());
-
-        try {
-            TreeMap<String, ByteArrayOutputStream> file1 = decompress(expected);
-            TreeMap<String, ByteArrayOutputStream> file2 = decompress(actual);
-            equals(file1, file2);
-        } catch (IOException e) {
-            fail(e.toString());
-        }
+        assertDoesNotThrow(() -> equals(decompress(expected), decompress(actual)));
     }
 
     private static class IgnoreXMLDeclEvaluator implements DifferenceEvaluator {

@@ -16,11 +16,11 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -35,9 +35,9 @@ import org.apache.poi.util.Units;
 import org.apache.poi.wp.usermodel.HeaderFooterType;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlip;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTBlipFillProperties;
 import org.openxmlformats.schemas.drawingml.x2006.picture.CTPicture;
@@ -64,7 +64,7 @@ public class TestXWPFRun {
     private IRunBody irb;
     private XWPFDocument doc;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         doc = new XWPFDocument();
         p = doc.createParagraph();
@@ -73,7 +73,7 @@ public class TestXWPFRun {
         this.ctRun = CTR.Factory.newInstance();
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         doc.close();
     }
@@ -788,7 +788,7 @@ public class TestXWPFRun {
         String styleId = "bolditalic";
         run.setStyle(styleId);
         String candStyleId = run.getCTR().getRPr().getRStyleArray(0).getVal();
-        assertNotNull("Expected to find a run style ID", candStyleId);
+        assertNotNull( candStyleId, "Expected to find a run style ID" );
         assertEquals(styleId, candStyleId);
 
         assertEquals(styleId, run.getStyle());

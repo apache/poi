@@ -23,13 +23,12 @@ import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.hssf.record.BackupRecord;
 import org.apache.poi.hssf.record.LabelSSTRecord;
-import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Class to test Workbook functionality
@@ -62,23 +61,22 @@ public final class TestWorkbook {
      */
     @Test
     public void testWriteSheetSimple() throws IOException {
-        HSSFWorkbook wb1  = new HSSFWorkbook();
-        HSSFSheet s = wb1.createSheet();
+        try (HSSFWorkbook wb1  = new HSSFWorkbook()) {
+            HSSFSheet s = wb1.createSheet();
 
-        populateSheet(s);
+            populateSheet(s);
 
-        HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
-        
-        sanityChecker.checkHSSFWorkbook(wb1);
-        assertEquals("LAST ROW == 99", 99, s.getLastRowNum());
-        assertEquals("FIRST ROW == 0", 0, s.getFirstRowNum());
+            try (HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1)) {
+                sanityChecker.checkHSSFWorkbook(wb1);
+                assertEquals(99, s.getLastRowNum(), "LAST ROW == 99");
+                assertEquals(0, s.getFirstRowNum(), "FIRST ROW == 0");
 
-        sanityChecker.checkHSSFWorkbook(wb2);
-        s = wb2.getSheetAt(0);
-        assertEquals("LAST ROW == 99", 99, s.getLastRowNum());
-        assertEquals("FIRST ROW == 0", 0, s.getFirstRowNum());
-        wb2.close();
-        wb1.close();
+                sanityChecker.checkHSSFWorkbook(wb2);
+                s = wb2.getSheetAt(0);
+                assertEquals(99, s.getLastRowNum(), "LAST ROW == 99");
+                assertEquals(0, s.getFirstRowNum(), "FIRST ROW == 0");
+            }
+        }
     }
 
     /**
@@ -107,16 +105,16 @@ public final class TestWorkbook {
         }
 
         HSSFWorkbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
-        
+
         sanityChecker.checkHSSFWorkbook(wb1);
-        assertEquals("LAST ROW == 74", 74, s.getLastRowNum());
-        assertEquals("FIRST ROW == 25", 25, s.getFirstRowNum());
+        assertEquals(74, s.getLastRowNum(), "LAST ROW == 74");
+        assertEquals(25, s.getFirstRowNum(), "FIRST ROW == 25");
 
         sanityChecker.checkHSSFWorkbook(wb2);
         s = wb2.getSheetAt(0);
-        assertEquals("LAST ROW == 74", 74, s.getLastRowNum());
-        assertEquals("FIRST ROW == 25", 25, s.getFirstRowNum());
-    
+        assertEquals(74, s.getLastRowNum(), "LAST ROW == 74");
+        assertEquals(25, s.getFirstRowNum(), "FIRST ROW == 25");
+
         wb2.close();
         wb1.close();
     }
@@ -155,7 +153,7 @@ public final class TestWorkbook {
         assertEquals(1.25,cell.getNumericCellValue(), 1e-10);
 
         assertEquals(format.getFormat(cell.getCellStyle().getDataFormat()), "0.0");
-        
+
         wb.close();
     }
 
@@ -214,7 +212,7 @@ public final class TestWorkbook {
         assertEquals(LAST_NAME_KEY, sheet.getRow(3).getCell(2).getRichStringCellValue().getString());
         assertEquals(FIRST_NAME_KEY, sheet.getRow(4).getCell(2).getRichStringCellValue().getString());
         assertEquals(SSN_KEY, sheet.getRow(5).getCell(2).getRichStringCellValue().getString());
-        
+
         wb.close();
     }
 
@@ -241,7 +239,7 @@ public final class TestWorkbook {
         sheet    = wb2.getSheetAt(0);
         cell     = sheet.getRow(0).getCell(0);
         assertEquals(REPLACED, cell.getRichStringCellValue().getString());
-        
+
         wb2.close();
         wb1.close();
     }
@@ -279,7 +277,7 @@ public final class TestWorkbook {
         assertEquals(REPLACED, cell.getRichStringCellValue().getString());
         cell = sheet.getRow(1).getCell(1);
         assertEquals(DO_NOT_REPLACE, cell.getRichStringCellValue().getString());
-        
+
         wb2.close();
         wb1.close();
     }
@@ -312,7 +310,7 @@ public final class TestWorkbook {
             HSSFCell cell = sheet.getRow(k).getCell(0);
             assertEquals(REPLACED, cell.getRichStringCellValue().getString());
         }
-        
+
         wb2.close();
         wb1.close();
     }
@@ -347,7 +345,7 @@ public final class TestWorkbook {
         assertEquals(LAST_NAME_VALUE, sheet.getRow(3).getCell(2).getRichStringCellValue().getString());
         assertEquals(FIRST_NAME_VALUE, sheet.getRow(4).getCell(2).getRichStringCellValue().getString());
         assertEquals(SSN_VALUE, sheet.getRow(5).getCell(2).getRichStringCellValue().getString());
-        
+
         wb2.close();
         wb1.close();
     }
@@ -366,7 +364,7 @@ public final class TestWorkbook {
         HSSFCell     c  = s.getRow(0).getCell(0);
 
         assertEquals(CellType.NUMERIC, c.getCellType());
-        
+
         wb.close();
     }
 
@@ -442,7 +440,7 @@ public final class TestWorkbook {
         wb.setBackupFlag(false);
         assertEquals(0, record.getBackup());
         assertFalse(wb.getBackupFlag());
-        
+
         wb.close();
     }
 
@@ -482,7 +480,7 @@ public final class TestWorkbook {
         RecordCounter rc = new RecordCounter();
         sheet.getSheet().visitContainedRecords(rc, 0);
         assertEquals(1, rc.getCount());
-        
+
         workbook.close();
     }
 
@@ -503,7 +501,7 @@ public final class TestWorkbook {
             cell.setCellValue(i);
         }
         sanityChecker.checkHSSFWorkbook(wb1);
-        assertEquals("LAST ROW == 32770", 32770, sheet.getLastRowNum());
+        assertEquals(32770, sheet.getLastRowNum(), "LAST ROW == 32770");
         cell = sheet.getRow(32770).getCell(0);
         double lastVal = cell.getNumericCellValue();
 
@@ -511,9 +509,9 @@ public final class TestWorkbook {
         HSSFSheet       s    = wb2.getSheetAt(0);
         row = s.getRow(32770);
         cell = row.getCell(0);
-        assertEquals("Value from last row == 32770", lastVal, cell.getNumericCellValue(), 0);
-        assertEquals("LAST ROW == 32770", 32770, s.getLastRowNum());
-        
+        assertEquals(lastVal, cell.getNumericCellValue(), 0, "Value from last row == 32770");
+        assertEquals(32770, s.getLastRowNum(), "LAST ROW == 32770");
+
         wb2.close();
         wb1.close();
     }
@@ -539,7 +537,7 @@ public final class TestWorkbook {
         sheet = wb2.getSheetAt(0);
         assertEquals("A:B", sheet.getRepeatingColumns().formatAsString());
         assertEquals("1:1", sheet.getRepeatingRows().formatAsString());
-        
+
         wb2.close();
         wb1.close();
     }
@@ -558,25 +556,14 @@ public final class TestWorkbook {
         HSSFCell cell = row.createCell(1);
         cell.setCellValue(new HSSFRichTextString("hi"));
         CellRangeAddress cra = new CellRangeAddress(-1, 1, -1, 1);
-        try {
-            sheet.setRepeatingColumns(cra);
-            fail("invalid start index is ignored");
-        } catch (IllegalArgumentException e) {
-            // expected here
-        }
-        
-        try {
-            sheet.setRepeatingRows(cra);
-            fail("invalid start index is ignored");
-        } catch (IllegalArgumentException e) {
-            // expected here
-        }
+        assertThrows(IllegalArgumentException.class, () -> sheet.setRepeatingColumns(cra), "invalid start index is ignored");
+        assertThrows(IllegalArgumentException.class, () -> sheet.setRepeatingRows(cra), "invalid start index is ignored");
 
         sheet.setRepeatingColumns(null);
         sheet.setRepeatingRows(null);
-        
+
         HSSFTestDataSamples.writeOutAndReadBack(workbook).close();
-        
+
         workbook.close();
     }
 
@@ -590,12 +577,12 @@ public final class TestWorkbook {
         sheet1.createRow(0).createCell((short) 0).setCellValue("val1");
         sheet2.createRow(0).createCell((short) 0).setCellValue("val2");
         sheet3.createRow(0).createCell((short) 0).setCellValue("val3");
-        
+
         Name namedCell1 = wb1.createName();
         namedCell1.setNameName("name1");
         String reference1 = "sheet1!$A$1";
         namedCell1.setRefersToFormula(reference1);
-        
+
         Name namedCell2= wb1.createName();
         namedCell2.setNameName("name2");
         String reference2 = "sheet2!$A$1";
@@ -608,23 +595,29 @@ public final class TestWorkbook {
 
         Workbook wb2 = HSSFTestDataSamples.writeOutAndReadBack(wb1);
         wb1.close();
-        
+
         Name nameCell = wb2.getName("name1");
+        assertNotNull(nameCell);
         assertEquals("sheet1!$A$1", nameCell.getRefersToFormula());
         nameCell = wb2.getName("name2");
+        assertNotNull(nameCell);
         assertEquals("sheet2!$A$1", nameCell.getRefersToFormula());
         nameCell = wb2.getName("name3");
+        assertNotNull(nameCell);
         assertEquals("sheet3!$A$1", nameCell.getRefersToFormula());
-        
+
         wb2.removeSheetAt(wb2.getSheetIndex("sheet1"));
-        
+
         nameCell = wb2.getName("name1");
+        assertNotNull(nameCell);
         assertEquals("#REF!$A$1", nameCell.getRefersToFormula());
         nameCell = wb2.getName("name2");
+        assertNotNull(nameCell);
         assertEquals("sheet2!$A$1", nameCell.getRefersToFormula());
         nameCell = wb2.getName("name3");
+        assertNotNull(nameCell);
         assertEquals("sheet3!$A$1", nameCell.getRefersToFormula());
-        
+
         wb2.close();
     }
 }

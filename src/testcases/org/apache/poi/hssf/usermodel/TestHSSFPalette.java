@@ -17,15 +17,14 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.awt.Color;
 import java.io.IOException;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
@@ -34,17 +33,16 @@ import org.apache.poi.hssf.util.HSSFColor;
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
 import org.apache.poi.ss.usermodel.FillPatternType;
 import org.apache.poi.ss.usermodel.Font;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public final class TestHSSFPalette {
-    private PaletteRecord _palette;
     private HSSFPalette _hssfPalette;
 
 
-    @Before
+    @BeforeEach
     public void setUp() {
-        _palette = new PaletteRecord();
+        PaletteRecord _palette = new PaletteRecord();
         _hssfPalette = new HSSFPalette(_palette);
     }
 
@@ -66,27 +64,27 @@ public final class TestHSSFPalette {
 
         palette = book.getCustomPalette();
         HSSFColor color = palette.getColor(HSSFColorPredefined.CORAL.getIndex());  //unmodified
-        assertNotNull("Unexpected null in custom palette (unmodified index)", color);
+        assertNotNull(color, "Unexpected null in custom palette (unmodified index)");
         short[] expectedRGB = HSSFColorPredefined.CORAL.getTriplet();
         short[] actualRGB = color.getTriplet();
         String msg = "Expected palette position to remain unmodified";
-        assertEquals(msg, expectedRGB[0], actualRGB[0]);
-        assertEquals(msg, expectedRGB[1], actualRGB[1]);
-        assertEquals(msg, expectedRGB[2], actualRGB[2]);
+        assertEquals(expectedRGB[0], actualRGB[0], msg);
+        assertEquals(expectedRGB[1], actualRGB[1], msg);
+        assertEquals(expectedRGB[2], actualRGB[2], msg);
 
         color = palette.getColor((short) 0x12);
-        assertNotNull("Unexpected null in custom palette (modified)", color);
+        assertNotNull(color, "Unexpected null in custom palette (modified)");
         actualRGB = color.getTriplet();
         msg = "Expected palette modification to be preserved across save";
-        assertEquals(msg, (short) 101, actualRGB[0]);
-        assertEquals(msg, (short) 230, actualRGB[1]);
-        assertEquals(msg, (short) 100, actualRGB[2]);
+        assertEquals((short) 101, actualRGB[0], msg);
+        assertEquals((short) 230, actualRGB[1], msg);
+        assertEquals((short) 100, actualRGB[2], msg);
     }
 
     /**
      * Uses the palette from cell stylings
      */
-    @SuppressWarnings("deprecation")
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void testPaletteFromCellColours() {
         HSSFWorkbook book = HSSFTestDataSamples.openSampleWorkbook("SimpleWithColours.xls");
@@ -105,6 +103,7 @@ public final class TestHSSFPalette {
         assertEquals(64, cellA.getCellStyle().getFillBackgroundColor());
         assertEquals(Font.COLOR_NORMAL, cellA.getCellStyle().getFont(book).getColor());
         assertEquals(FillPatternType.NO_FILL, cellA.getCellStyle().getFillPattern());
+        assertNotNull(p.getColor((short)64));
         assertEquals("0:0:0", p.getColor((short)64).getHexString());
         assertNull(p.getColor((short) 32767));
 
@@ -145,11 +144,12 @@ public final class TestHSSFPalette {
         assertEquals("FFFF:0:FFFF", p.getColor((short)14).getHexString());
     }
 
+    @SuppressWarnings("ConstantConditions")
     @Test
     public void testFindSimilar() throws IOException {
         HSSFWorkbook book = new HSSFWorkbook();
         HSSFPalette p = book.getCustomPalette();
-        
+
         /* first test the defaults */
         assertArrayEquals(
         				new short[] {(short) 255, (short) 255, (short) 0}, // not [204, 255, 255]
@@ -218,7 +218,7 @@ public final class TestHSSFPalette {
                 p.getColor((short)12).getHexString(),
                 p.findSimilarColor((byte)-1, (byte)2, (byte)10).getHexString()
         );
-        
+
         // And with ints not bytes
         assertEquals(
                 p.getColor((short)11).getHexString(),
@@ -228,23 +228,17 @@ public final class TestHSSFPalette {
                 p.getColor((short)12).getHexString(),
                 p.findSimilarColor(255, 2, 10).getHexString()
         );
-        
+
         book.close();
     }
-    
+
     /**
      * Verifies that the generated gnumeric-format string values match the
      * hardcoded values in the HSSFColor default color palette
      */
     @Test
     public void testGnumericStrings() {
-        compareToDefaults(new ColorComparator() {
-            @Override
-            public void compare(HSSFColor expected, HSSFColor palette)
-            {
-                assertEquals(expected.getHexString(), palette.getHexString());
-            }
-        });
+        compareToDefaults((expected, palette) -> assertEquals(expected.getHexString(), palette.getHexString()));
     }
 
     /**
@@ -258,25 +252,18 @@ public final class TestHSSFPalette {
         _hssfPalette.setColorAtIndex((short) 0x45, (byte) 255, (byte) 255, (byte) 255);
 
         //should still match defaults;
-        compareToDefaults(new ColorComparator() {
-            @Override
-            public void compare(HSSFColor expected, HSSFColor palette)
-            {
-                short[] s1 = expected.getTriplet();
-                short[] s2 = palette.getTriplet();
-                assertEquals(s1[0], s2[0]);
-                assertEquals(s1[1], s2[1]);
-                assertEquals(s1[2], s2[2]);
-            }
+        compareToDefaults((expected, palette) -> {
+            short[] s1 = expected.getTriplet();
+            short[] s2 = palette.getTriplet();
+            assertEquals(s1[0], s2[0]);
+            assertEquals(s1[1], s2[1]);
+            assertEquals(s1[2], s2[2]);
         });
     }
 
     private void compareToDefaults(ColorComparator c) {
         Map<Integer,HSSFColor> colors = HSSFColor.getIndexHash();
-        Iterator<Integer> it = colors.keySet().iterator();
-        while (it.hasNext())
-        {
-            Number index = it.next();
+        for (Integer index : colors.keySet()) {
             HSSFColor expectedColor = colors.get(index);
             HSSFColor paletteColor = _hssfPalette.getColor(index.shortValue());
             c.compare(expectedColor, paletteColor);
@@ -285,16 +272,11 @@ public final class TestHSSFPalette {
 
     @Test
     public void testAddColor() {
-        try
-        {
-            _hssfPalette.addColor((byte)10,(byte)10,(byte)10);
-            fail();
-        } catch (RuntimeException e) {
-            // Failing because by default there are no colours left in the palette.
-        }
+        assertThrows(RuntimeException.class, () -> _hssfPalette.addColor((byte)10,(byte)10,(byte)10),
+            "Failing because by default there are no colours left in the palette.");
     }
 
-    private static interface ColorComparator {
+    private interface ColorComparator {
         void compare(HSSFColor expected, HSSFColor palette);
     }
 
@@ -304,7 +286,7 @@ public final class TestHSSFPalette {
 
         Color color = Color.decode("#006B6B");
         HSSFPalette palette = wb.getCustomPalette();
-        
+
         HSSFColor hssfColor = palette.findColor((byte) color.getRed(),
                 (byte) color.getGreen(), (byte) color.getBlue());
         assertNull(hssfColor);
@@ -317,7 +299,7 @@ public final class TestHSSFPalette {
         assertNotNull(hssfColor);
         assertEquals(55, hssfColor.getIndex());
         assertArrayEquals(new short[] {0, 107, 107}, hssfColor.getTriplet());
-        
+
         wb.close();
     }
 }

@@ -17,14 +17,14 @@
 
 package org.apache.poi.hsmf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests to verify if code page for general properties like subject,
@@ -40,7 +40,7 @@ public final class Test7BitCodepage {
    /**
     * Initialize this test, load up the messages.
     */
-   @Before
+   @BeforeEach
    public void setup() throws IOException {
        POIDataSamples samples = POIDataSamples.getHSMFInstance();
        ascii_cp1251_lcid1049 = new MAPIMessage(samples.openResourceAsStream("ASCII_CP1251_LCID1049.msg"));

@@ -17,17 +17,17 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
 import org.apache.poi.ss.ITestDataProvider;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public abstract class BaseTestSheetHiding {
 
@@ -47,61 +47,50 @@ public abstract class BaseTestSheetHiding {
         _file2 = file2;
     }
 
-	@Before
+	@BeforeEach
     public void setUp() {
         wbH = _testDataProvider.openSampleWorkbook(_file1);
         wbU = _testDataProvider.openSampleWorkbook(_file2);
     }
 
-	@After
+	@AfterEach
 	public void teadDown() throws IOException {
 	    wbH.close();
 	    wbU.close();
 	}
-	
+
     @Test
     public final void testSheetVisibility() throws IOException {
-        Workbook wb = _testDataProvider.createWorkbook();
-        wb.createSheet("MySheet");
-    
-        assertFalse(wb.isSheetHidden(0));
-        assertFalse(wb.isSheetVeryHidden(0));
-        assertEquals(SheetVisibility.VISIBLE, wb.getSheetVisibility(0));
-    
-        wb.setSheetVisibility(0, SheetVisibility.HIDDEN);
-        assertTrue(wb.isSheetHidden(0));
-        assertFalse(wb.isSheetVeryHidden(0));
-        assertEquals(SheetVisibility.HIDDEN, wb.getSheetVisibility(0));
-    
-        wb.setSheetVisibility(0, SheetVisibility.VERY_HIDDEN);
-        assertFalse(wb.isSheetHidden(0));
-        assertTrue(wb.isSheetVeryHidden(0));
-        assertEquals(SheetVisibility.VERY_HIDDEN, wb.getSheetVisibility(0));
-    
-        wb.setSheetVisibility(0, SheetVisibility.VISIBLE);
-        assertFalse(wb.isSheetHidden(0));
-        assertFalse(wb.isSheetVeryHidden(0));
-        assertEquals(SheetVisibility.VISIBLE, wb.getSheetVisibility(0));
+        try (Workbook wb = _testDataProvider.createWorkbook()) {
+            wb.createSheet("MySheet");
 
-        // verify limits-check
+            assertFalse(wb.isSheetHidden(0));
+            assertFalse(wb.isSheetVeryHidden(0));
+            assertEquals(SheetVisibility.VISIBLE, wb.getSheetVisibility(0));
 
-        // check sheet-index with one more => throws exception
-        try {
-            wb.setSheetVisibility(1, SheetVisibility.HIDDEN);
-            fail("Should catch exception here");
-        } catch (IllegalArgumentException e) {
-            // expected here
+            wb.setSheetVisibility(0, SheetVisibility.HIDDEN);
+            assertTrue(wb.isSheetHidden(0));
+            assertFalse(wb.isSheetVeryHidden(0));
+            assertEquals(SheetVisibility.HIDDEN, wb.getSheetVisibility(0));
+
+            wb.setSheetVisibility(0, SheetVisibility.VERY_HIDDEN);
+            assertFalse(wb.isSheetHidden(0));
+            assertTrue(wb.isSheetVeryHidden(0));
+            assertEquals(SheetVisibility.VERY_HIDDEN, wb.getSheetVisibility(0));
+
+            wb.setSheetVisibility(0, SheetVisibility.VISIBLE);
+            assertFalse(wb.isSheetHidden(0));
+            assertFalse(wb.isSheetVeryHidden(0));
+            assertEquals(SheetVisibility.VISIBLE, wb.getSheetVisibility(0));
+
+            // verify limits-check
+
+            // check sheet-index with one more => throws exception
+            assertThrows(IllegalArgumentException.class, () -> wb.setSheetVisibility(1, SheetVisibility.HIDDEN));
+
+            // check sheet-index with index out of bounds => throws exception
+            assertThrows(IllegalArgumentException.class, () -> wb.setSheetVisibility(10, SheetVisibility.HIDDEN));
         }
-
-        // check sheet-index with index out of bounds => throws exception
-        try {
-            wb.setSheetVisibility(10, SheetVisibility.HIDDEN);
-            fail("Should catch exception here");
-        } catch (IllegalArgumentException e) {
-            // expected here
-        }
-
-        wb.close();
     }
 
     /**

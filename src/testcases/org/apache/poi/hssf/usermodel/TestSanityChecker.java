@@ -17,7 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -30,7 +31,7 @@ import org.apache.poi.hssf.record.InterfaceHdrRecord;
 import org.apache.poi.hssf.record.NameRecord;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.usermodel.SanityChecker.CheckRecord;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * A Test case for a test utility class.<br>
@@ -43,7 +44,7 @@ public final class TestSanityChecker {
 	private static BoundSheetRecord createBoundSheetRec() {
 		return new BoundSheetRecord("Sheet1");
 	}
-	
+
 	@Test
 	public void testCheckRecordOrder() {
 		final SanityChecker c = new SanityChecker();
@@ -119,20 +120,10 @@ public final class TestSanityChecker {
 				EOFRecord.instance,
 		});
 	}
+
 	private static void confirmBadRecordOrder(final SanityChecker.CheckRecord[] check, Record[] recs) {
 		final SanityChecker c = new SanityChecker();
 		final List<org.apache.poi.hssf.record.Record> records = Arrays.asList(recs);
-		try {
-			new Runnable() {
-				@Override
-                public void run() {
-					c.checkRecordOrder(records, check);
-				}
-			}.run();
-		} catch (AssertionError pass) {
-			// expected during normal test
-			return;
-		}
-		fail("Did not get failure exception as expected");
+		assertThrows(AssertionError.class, () -> c.checkRecordOrder(records, check));
 	}
 }

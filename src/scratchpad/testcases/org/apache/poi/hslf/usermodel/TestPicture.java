@@ -17,10 +17,10 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
@@ -36,8 +36,8 @@ import javax.imageio.ImageIO;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.ddf.EscherBSERecord;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test Picture shape.
@@ -45,7 +45,7 @@ import org.junit.Test;
 public final class TestPicture {
     private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
-    @BeforeClass
+    @BeforeAll
     public static void disableImageIOCache() {
         ImageIO.setUseCache(false);
     }

@@ -19,11 +19,12 @@ package org.apache.poi.openxml4j.opc.compliance;
 
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.openComplianceSampleStream;
 import static org.apache.poi.openxml4j.OpenXML4JTestDataSamples.openSampleStream;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -44,7 +45,7 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.TempFile;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test core properties Open Packaging Convention compliance.
@@ -90,20 +91,12 @@ public final class TestOPCComplianceCoreProperties {
         pkg.revert();
     }
 
-    private static String extractInvalidFormatMessage(String sampleNameSuffix) {
-        InputStream is = openComplianceSampleStream("OPCCompliance_CoreProperties_" + sampleNameSuffix);
-        OPCPackage pkg;
-        try {
-            pkg = OPCPackage.open(is);
-        } catch (InvalidFormatException e) {
-            // no longer required for successful test
+    private static String extractInvalidFormatMessage(String sampleNameSuffix) throws IOException {
+        try (InputStream is = openComplianceSampleStream("OPCCompliance_CoreProperties_" + sampleNameSuffix)) {
+            InvalidFormatException e = assertThrows(InvalidFormatException.class,
+                () -> OPCPackage.open(is).revert(), "expected OPC compliance exception was not thrown");
             return e.getMessage();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
         }
-        pkg.revert();
-        fail("expected OPC compliance exception was not thrown");
-        return null;
     }
 
     /**
@@ -112,12 +105,12 @@ public final class TestOPCComplianceCoreProperties {
     @Test
     public void testOnlyOneCorePropertiesPart() throws Exception {
        // We have relaxed this check, so we can read the file anyway
-        try (InputStream is = openSampleStream("OPCCompliance_CoreProperties_" + "OnlyOneCorePropertiesPartFAIL.docx");
-             OPCPackage pkg = OPCPackage.open(is)) {
-            assertNotNull(pkg);
-        } catch (Exception e) {
-            fail("M4.1 should be being relaxed");
-        }
+        assertDoesNotThrow(() -> {
+            try (InputStream is = openSampleStream("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPartFAIL.docx");
+                 OPCPackage pkg = OPCPackage.open(is)) {
+                assertNotNull(pkg);
+            }
+        }, "M4.1 should be being relaxed");
 
        // We will use the first core properties, and ignore the others
 
@@ -148,55 +141,41 @@ public final class TestOPCComplianceCoreProperties {
      * Test M4.1 rule.
      */
     @Test
-    public void testOnlyOneCorePropertiesPart_AddRelationship() {
-        InputStream is = openComplianceSampleStream("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx");
-        OPCPackage pkg;
-        try {
-            pkg = OPCPackage.open(is);
-        } catch (InvalidFormatException | IOException e) {
-            throw new RuntimeException(e);
-        }
-        URI partUri = createURI("/docProps/core2.xml");
-        try {
-            pkg.addRelationship(PackagingURIHelper.createPartName(partUri), TargetMode.INTERNAL,
-                    PackageRelationshipTypes.CORE_PROPERTIES);
-            // no longer fail on compliance error
-            //fail("expected OPC compliance exception was not thrown");
-        } catch (InvalidFormatException e) {
-            throw new RuntimeException(e);
-        } catch (InvalidOperationException e) {
-            // expected during successful test
+    public void testOnlyOneCorePropertiesPart_AddRelationship() throws IOException, InvalidFormatException {
+        try (InputStream is = openComplianceSampleStream("OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx")) {
+            OPCPackage pkg = OPCPackage.open(is);
+            URI partUri = createURI("/docProps/core2.xml");
+            InvalidOperationException e = assertThrows(InvalidOperationException.class, () ->
+                    pkg.addRelationship(PackagingURIHelper.createPartName(partUri), TargetMode.INTERNAL, PackageRelationshipTypes.CORE_PROPERTIES),
+                "expected OPC compliance exception was not thrown"
+            );
             assertEquals("OPC Compliance error [M4.1]: can't add another core properties part ! Use the built-in package method instead.", e.getMessage());
+            pkg.revert();
         }
-        pkg.revert();
     }
 
     /**
      * Test M4.1 rule.
      */
     @Test
-    public void testOnlyOneCorePropertiesPart_AddPart() throws InvalidFormatException {
+    public void testOnlyOneCorePropertiesPart_AddPart() throws InvalidFormatException, IOException {
         String sampleFileName = "OPCCompliance_CoreProperties_OnlyOneCorePropertiesPart.docx";
-        OPCPackage pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath());
+        try (OPCPackage pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath())) {
 
-        URI partUri = createURI("/docProps/core2.xml");
-        try {
-            pkg.createPart(PackagingURIHelper.createPartName(partUri),
-                    ContentTypes.CORE_PROPERTIES_PART);
-            // no longer fail on compliance error
-            //fail("expected OPC compliance exception was not thrown");
-        } catch (InvalidOperationException e) {
-            // expected during successful test
+            URI partUri = createURI("/docProps/core2.xml");
+            InvalidOperationException e = assertThrows(InvalidOperationException.class, () ->
+                    pkg.createPart(PackagingURIHelper.createPartName(partUri), ContentTypes.CORE_PROPERTIES_PART),
+                "expected OPC compliance exception was not thrown");
             assertEquals("OPC Compliance error [M4.1]: you try to add more than one core properties relationship in the package !", e.getMessage());
+            pkg.revert();
         }
-        pkg.revert();
     }
 
     /**
      * Test M4.2 rule.
      */
     @Test
-    public void testDoNotUseCompatibilityMarkup() {
+    public void testDoNotUseCompatibilityMarkup() throws IOException {
         String msg = extractInvalidFormatMessage("DoNotUseCompatibilityMarkupFAIL.docx");
         assertEquals("OPC Compliance error [M4.2]: A format consumer shall consider the use of the Markup Compatibility namespace to be an error.", msg);
     }
@@ -205,7 +184,7 @@ public final class TestOPCComplianceCoreProperties {
      * Test M4.3 rule.
      */
     @Test
-    public void testDCTermsNamespaceLimitedUse() {
+    public void testDCTermsNamespaceLimitedUse() throws IOException {
         String msg = extractInvalidFormatMessage("DCTermsNamespaceLimitedUseFAIL.docx");
         assertEquals("OPC Compliance error [M4.3]: Producers shall not create a document element that contains refinements to the Dublin Core elements, except for the two specified in the schema: <dcterms:created> and <dcterms:modified> Consumers shall consider a document element that violates this constraint to be an error.", msg);
     }
@@ -214,7 +193,7 @@ public final class TestOPCComplianceCoreProperties {
      * Test M4.4 rule.
      */
     @Test
-    public void testUnauthorizedXMLLangAttribute() {
+    public void testUnauthorizedXMLLangAttribute() throws IOException {
         String msg = extractInvalidFormatMessage("UnauthorizedXMLLangAttributeFAIL.docx");
         assertEquals("OPC Compliance error [M4.4]: Producers shall not create a document element that contains the xml:lang attribute. Consumers shall consider a document element that violates this constraint to be an error.", msg);
     }
@@ -223,7 +202,7 @@ public final class TestOPCComplianceCoreProperties {
      * Test M4.5 rule.
      */
     @Test
-    public void testLimitedXSITypeAttribute_NotPresent() {
+    public void testLimitedXSITypeAttribute_NotPresent() throws IOException {
         String msg = extractInvalidFormatMessage("LimitedXSITypeAttribute_NotPresentFAIL.docx");
         assertEquals("The element 'created' must have the 'xsi:type' attribute present !", msg);
     }
@@ -232,7 +211,7 @@ public final class TestOPCComplianceCoreProperties {
      * Test M4.5 rule.
      */
     @Test
-    public void testLimitedXSITypeAttribute_PresentWithUnauthorizedValue() {
+    public void testLimitedXSITypeAttribute_PresentWithUnauthorizedValue() throws IOException {
         String msg = extractInvalidFormatMessage("LimitedXSITypeAttribute_PresentWithUnauthorizedValueFAIL.docx");
         assertEquals("The element 'modified' must have the 'xsi:type' attribute with the value 'dcterms:W3CDTF', but had 'W3CDTF' !", msg);
     }
@@ -244,45 +223,43 @@ public final class TestOPCComplianceCoreProperties {
     @Test
     public void testNoCoreProperties_saveNew() throws Exception {
         String sampleFileName = "OPCCompliance_NoCoreProperties.xlsx";
-        OPCPackage pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath());
-
-        // Verify it has empty properties
-        assertEquals(0, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
-        assertNotNull(pkg.getPackageProperties());
-        assertNotNull(pkg.getPackageProperties().getLanguageProperty());
-        assertFalse(pkg.getPackageProperties().getLanguageProperty().isPresent());
-
-        // Save and re-load
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        pkg.save(baos);
-        ByteArrayInputStream bais = new ByteArrayInputStream(baos.toByteArray());
-        pkg.revert();
 
-        pkg = OPCPackage.open(bais);
+        try (OPCPackage pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath())) {
+            // Verify it has empty properties
+            assertEquals(0, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
+            assertNotNull(pkg.getPackageProperties());
+            assertNotNull(pkg.getPackageProperties().getLanguageProperty());
+            assertFalse(pkg.getPackageProperties().getLanguageProperty().isPresent());
 
-        // An Empty Properties part has been added in the save/load
-        assertEquals(1, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
-        assertNotNull(pkg.getPackageProperties());
-        assertNotNull(pkg.getPackageProperties().getLanguageProperty());
-        assertFalse(pkg.getPackageProperties().getLanguageProperty().isPresent());
-        pkg.close();
+            // Save and re-load
+            pkg.save(baos);
+            pkg.revert();
+        }
+
+        try (OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(baos.toByteArray()))) {
+            // An Empty Properties part has been added in the save/load
+            assertEquals(1, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
+            assertNotNull(pkg.getPackageProperties());
+            assertNotNull(pkg.getPackageProperties().getLanguageProperty());
+            assertFalse(pkg.getPackageProperties().getLanguageProperty().isPresent());
+        }
 
         // Open a new copy of it
-        pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath());
+        try (OPCPackage pkg = OPCPackage.open(POIDataSamples.getOpenXML4JInstance().getFile(sampleFileName).getPath())) {
+            // Save and re-load, without having touched the properties yet
+            baos.reset();
+            pkg.save(baos);
+            pkg.revert();
+        }
 
-        // Save and re-load, without having touched the properties yet
-        baos = new ByteArrayOutputStream();
-        pkg.save(baos);
-        pkg.revert();
-
-        bais = new ByteArrayInputStream(baos.toByteArray());
-        pkg = OPCPackage.open(bais);
-
-        // Check that this too added empty properties without error
-        assertEquals(1, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
-        assertNotNull(pkg.getPackageProperties());
-        assertNotNull(pkg.getPackageProperties().getLanguageProperty());
-        assertFalse(pkg.getPackageProperties().getLanguageProperty().isPresent());
+        try (OPCPackage pkg = OPCPackage.open(new ByteArrayInputStream(baos.toByteArray()))) {
+            // Check that this too added empty properties without error
+            assertEquals(1, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
+            assertNotNull(pkg.getPackageProperties());
+            assertNotNull(pkg.getPackageProperties().getLanguageProperty());
+            assertFalse(pkg.getPackageProperties().getLanguageProperty().isPresent());
+        }
     }
 
     /**
@@ -295,37 +272,34 @@ public final class TestOPCComplianceCoreProperties {
 
         // Copy this into a temp file, so we can play with it
         File tmp = TempFile.createTempFile("poi-test", ".opc");
-        FileOutputStream out = new FileOutputStream(tmp);
-        InputStream in = POIDataSamples.getOpenXML4JInstance().openResourceAsStream(sampleFileName);
-        IOUtils.copy(
-                in,
-                out);
-        out.close();
-        in.close();
+        try (FileOutputStream out = new FileOutputStream(tmp);
+            InputStream in = POIDataSamples.getOpenXML4JInstance().openResourceAsStream(sampleFileName)) {
+            IOUtils.copy(in, out);
+        }
 
         // Open it from that temp file
-        OPCPackage pkg = OPCPackage.open(tmp);
+        try (OPCPackage pkg = OPCPackage.open(tmp)) {
 
-        // Empty properties
-        assertEquals(0, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
-        assertNotNull(pkg.getPackageProperties());
-        assertNotNull(pkg.getPackageProperties().getLanguageProperty());
-        assertFalse(pkg.getPackageProperties().getLanguageProperty().isPresent());
+            // Empty properties
+            assertEquals(0, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
+            assertNotNull(pkg.getPackageProperties());
+            assertNotNull(pkg.getPackageProperties().getLanguageProperty());
+            assertFalse(pkg.getPackageProperties().getLanguageProperty().isPresent());
 
-        // Save and close
-        pkg.close();
+            // Save and close
+        }
 
         // Re-open and check
-        pkg = OPCPackage.open(tmp);
+        try (OPCPackage pkg = OPCPackage.open(tmp)) {
+            // An Empty Properties part has been added in the save/load
+            assertEquals(1, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
+            assertNotNull(pkg.getPackageProperties());
+            assertNotNull(pkg.getPackageProperties().getLanguageProperty());
+            assertFalse(pkg.getPackageProperties().getLanguageProperty().isPresent());
 
-        // An Empty Properties part has been added in the save/load
-        assertEquals(1, pkg.getPartsByContentType(ContentTypes.CORE_PROPERTIES_PART).size());
-        assertNotNull(pkg.getPackageProperties());
-        assertNotNull(pkg.getPackageProperties().getLanguageProperty());
-        assertFalse(pkg.getPackageProperties().getLanguageProperty().isPresent());
-
-        // Finish and tidy
-        pkg.revert();
+            // Finish and tidy
+            pkg.revert();
+        }
         assertTrue(tmp.delete());
     }
 }

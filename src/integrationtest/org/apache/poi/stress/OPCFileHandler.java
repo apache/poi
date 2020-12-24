@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -28,7 +28,7 @@ import org.apache.poi.openxml4j.opc.ContentTypes;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.xwpf.usermodel.XWPFRelation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class OPCFileHandler extends AbstractFileHandler {
 	@Override
@@ -43,11 +43,10 @@ public class OPCFileHandler extends AbstractFileHandler {
                 assertEquals(ContentTypes.CORE_PROPERTIES_PART, part.getContentType());
             }
             if (part.getPartName().toString().equals("/word/document.xml")) {
-                assertTrue("Expected one of " + XWPFRelation.MACRO_DOCUMENT + ", " + XWPFRelation.DOCUMENT + ", " + XWPFRelation.TEMPLATE +
-                        ", but had " + part.getContentType(),
-                        XWPFRelation.DOCUMENT.getContentType().equals(part.getContentType()) ||
+                assertTrue( XWPFRelation.DOCUMENT.getContentType().equals(part.getContentType()) ||
                         XWPFRelation.MACRO_DOCUMENT.getContentType().equals(part.getContentType()) ||
-                        XWPFRelation.TEMPLATE.getContentType().equals(part.getContentType()));
+                        XWPFRelation.TEMPLATE.getContentType().equals(part.getContentType()), "Expected one of " + XWPFRelation.MACRO_DOCUMENT + ", " + XWPFRelation.DOCUMENT + ", " + XWPFRelation.TEMPLATE +
+                        ", but had " + part.getContentType() );
             }
             if (part.getPartName().toString().equals("/word/theme/theme1.xml")) {
                 assertEquals(XWPFRelation.THEME.getContentType(), part.getContentType());

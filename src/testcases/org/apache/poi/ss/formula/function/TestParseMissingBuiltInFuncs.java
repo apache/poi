@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.formula.function;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.IOException;
 
@@ -28,7 +28,7 @@ import org.apache.poi.ss.formula.ptg.AbstractFunctionPtg;
 import org.apache.poi.ss.formula.ptg.FuncPtg;
 import org.apache.poi.ss.formula.ptg.FuncVarPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests parsing of some built-in functions that were not properly
@@ -53,7 +53,7 @@ public final class TestParseMissingBuiltInFuncs {
 		    throw new RuntimeException("function token missing");
 		}
 		AbstractFunctionPtg func = (AbstractFunctionPtg) ptgF;
-		assertNotEquals("Failed to recognise built-in function in formula", 255, func.getFunctionIndex());
+		assertNotEquals(255, func.getFunctionIndex(), "Failed to recognise built-in function in formula");
 		assertEquals(expPtgArraySize, ptgs.length);
 		assertEquals(funcIx, func.getFunctionIndex());
 		Class<? extends AbstractFunctionPtg> expCls = isVarArgFunc ? FuncVarPtg.class : FuncPtg.class;

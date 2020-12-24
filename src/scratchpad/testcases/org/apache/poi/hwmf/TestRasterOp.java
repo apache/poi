@@ -17,10 +17,10 @@
 
 package org.apache.poi.hwmf;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hwmf.record.HwmfTernaryRasterOp;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestRasterOp {
     @Test

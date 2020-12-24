@@ -17,10 +17,11 @@
 
 package org.apache.poi.hssf.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.Arrays;
 
@@ -31,7 +32,7 @@ import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.pivottable.ViewDefinitionRecord;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link RowBlocksReader}
@@ -51,10 +52,9 @@ public final class TestRowBlocksReader {
 		};
 		RecordStream rs = new RecordStream(Arrays.asList(inRecs), 0);
 		RowBlocksReader rbr = new RowBlocksReader(rs);
-		if (rs.peekNextClass() == WindowTwoRecord.class) {
-			// Should have stopped at the SXVIEW record
-			fail("Identified bug 46280b");
-		}
+		assertNotEquals(WindowTwoRecord.class, rs.peekNextClass(),
+			"Should have stopped at the SXVIEW record - Identified bug 46280b");
+
 		RecordStream rbStream = rbr.getPlainRecordStream();
 		assertEquals(inRecs[0], rbStream.getNext());
 		assertEquals(inRecs[1], rbStream.getNext());

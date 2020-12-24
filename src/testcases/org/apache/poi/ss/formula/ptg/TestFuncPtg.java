@@ -17,10 +17,10 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Make sure the FuncPtg performs as expected
@@ -33,10 +33,10 @@ public final class TestFuncPtg {
         byte[] fakeData = { 0x20, 0x00,};
 
         FuncPtg ptg = FuncPtg.create(TestcaseRecordInputStream.createLittleEndian(fakeData) );
-        assertEquals( "Len formula index is not 32(20H)", 0x20, ptg.getFunctionIndex() );
-        assertEquals( "Number of operands in the len formula", 1, ptg.getNumberOfOperands() );
-        assertEquals( "Function Name", "LEN", ptg.getName() );
-        assertEquals( "Ptg Size", 3, ptg.getSize() );
+        assertEquals( 0x20, ptg.getFunctionIndex(), "Len formula index is not 32(20H)" );
+        assertEquals( 1, ptg.getNumberOfOperands(), "Number of operands in the len formula" );
+        assertEquals( "LEN", ptg.getName(), "Function Name" );
+        assertEquals( 3, ptg.getSize(), "Ptg Size" );
     }
 
     @Test

@@ -17,13 +17,13 @@
 
 package org.apache.poi.ddf;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestEscherPropertyFactory {
     @Test

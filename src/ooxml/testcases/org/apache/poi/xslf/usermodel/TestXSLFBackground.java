@@ -17,14 +17,14 @@
 package org.apache.poi.xslf.usermodel;
 
 import org.apache.poi.xslf.XSLFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTBackgroundProperties;
 import org.openxmlformats.schemas.presentationml.x2006.main.impl.CTBackgroundImpl;
 
 import java.awt.*;
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class TestXSLFBackground {
     @Test

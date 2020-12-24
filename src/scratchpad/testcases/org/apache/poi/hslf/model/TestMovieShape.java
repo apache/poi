@@ -17,9 +17,9 @@
 
 package org.apache.poi.hslf.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
@@ -30,7 +30,7 @@ import org.apache.poi.hslf.usermodel.HSLFPictureData;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test <code>MovieShape</code> object.

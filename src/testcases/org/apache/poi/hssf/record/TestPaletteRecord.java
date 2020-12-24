@@ -17,13 +17,14 @@
 
 package org.apache.poi.hssf.record;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.poi.hssf.util.HSSFColor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Verifies that custom palette editing works correctly
@@ -46,9 +47,10 @@ public final class TestPaletteRecord {
             byte[] paletteTriplet = palette.getColor((short) index);
             String msg = "Expected HSSFColor constant to match PaletteRecord at index" + (index == c.getIndex2() ? "2" : "") + " 0x"
                 + Integer.toHexString(index);
-            assertEquals(msg, rgbTriplet[0], paletteTriplet[0] & 0xff);
-            assertEquals(msg, rgbTriplet[1], paletteTriplet[1] & 0xff);
-            assertEquals(msg, rgbTriplet[2], paletteTriplet[2] & 0xff);
+            assertNotNull(paletteTriplet);
+            assertEquals(rgbTriplet[0], paletteTriplet[0] & 0xff, msg);
+            assertEquals(rgbTriplet[1], paletteTriplet[1] & 0xff, msg);
+            assertEquals(rgbTriplet[2], paletteTriplet[2] & 0xff, msg);
         }
     }
 }

@@ -17,6 +17,7 @@
 
 package org.apache.poi.poifs.nio;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -35,7 +36,7 @@ import org.apache.poi.util.POILogger;
 /**
  * A POIFS {@link DataSource} backed by a File
  */
-public class FileBackedDataSource extends DataSource {
+public class FileBackedDataSource extends DataSource implements Closeable {
     private final static POILogger logger = POILogFactory.getLogger(FileBackedDataSource.class);
 
     private final FileChannel channel;

@@ -17,9 +17,9 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
@@ -28,7 +28,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases for SUMPRODUCT()
@@ -44,7 +44,7 @@ public final class TestSumif {
 	}
 
 	private static void confirmDouble(double expected, ValueEval actualEval) {
-		assertTrue("Expected numeric result", actualEval instanceof NumericValueEval);
+		assertTrue(actualEval instanceof NumericValueEval, "Expected numeric result");
 		NumericValueEval nve = (NumericValueEval)actualEval;
 		assertEquals(expected, nve.getNumberValue(), 0);
 	}
@@ -96,7 +96,7 @@ public final class TestSumif {
 		ve = invokeSumif(0, 2, arg0, arg1);  // invoking from cell C1
 		if (ve instanceof NumberEval) {
 			NumberEval ne = (NumberEval) ve;
-			assertNotEquals("identified error in SUMIF - criteria arg not evaluated properly", 30.0, ne.getNumberValue());
+			assertNotEquals(30.0, ne.getNumberValue(), "identified error in SUMIF - criteria arg not evaluated properly");
 		}
 
 		confirmDouble(200, ve);

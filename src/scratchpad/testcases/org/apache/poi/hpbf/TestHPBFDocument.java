@@ -17,15 +17,15 @@
 
 package org.apache.poi.hpbf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestHPBFDocument {
     private static final POIDataSamples _samples = POIDataSamples.getPublisherInstance();

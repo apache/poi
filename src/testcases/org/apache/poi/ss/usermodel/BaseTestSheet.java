@@ -18,15 +18,15 @@
 package org.apache.poi.ss.usermodel;
 
 import static org.apache.poi.POITestCase.assertBetween;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -44,7 +44,7 @@ import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.PaneInformation;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Common superclass for testing {@link org.apache.poi.hssf.usermodel.HSSFCell},
@@ -105,24 +105,24 @@ public abstract class BaseTestSheet {
         }
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test
     public void createRowBeforeFirstRow() throws IOException {
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             final Sheet sh = workbook.createSheet();
             sh.createRow(0);
             // Negative rows not allowed
-            sh.createRow(-1);
+            assertThrows(IllegalArgumentException.class, () -> sh.createRow(-1));
         }
     }
 
-    @Test(expected=IllegalArgumentException.class)
+    @Test
     public void createRowAfterLastRow() throws IOException {
         final SpreadsheetVersion version = _testDataProvider.getSpreadsheetVersion();
         try (Workbook workbook = _testDataProvider.createWorkbook()) {
             final Sheet sh = workbook.createSheet();
             sh.createRow(version.getLastRowIndex());
             // Row number must be between 0 and last row
-            sh.createRow(version.getLastRowIndex() + 1);
+            assertThrows(IllegalArgumentException.class, () -> sh.createRow(version.getLastRowIndex() + 1));
         }
     }
 
@@ -189,12 +189,12 @@ public abstract class BaseTestSheet {
             //Check that the cells are not somehow linked
             cell.setCellValue(factory.createRichTextString("Difference Check"));
             cell2.setCellFormula("cos(2)");
-            if ("Difference Check".equals(clonedRow.getCell(0).getRichStringCellValue().getString())) {
-                fail("string cell not properly cloned");
-            }
-            if ("COS(2)".equals(clonedRow.getCell(1).getCellFormula())) {
-                fail("formula cell not properly cloned");
-            }
+
+            assertNotEquals("Difference Check", clonedRow.getCell(0).getRichStringCellValue().getString(),
+                "string cell not properly cloned");
+
+            assertNotEquals("COS(2)", clonedRow.getCell(1).getCellFormula(), "formula cell not properly cloned");
+
             assertEquals(clonedRow.getCell(0).getRichStringCellValue().getString(), "clone_test");
             assertEquals(clonedRow.getCell(1).getCellFormula(), "SIN(1)");
         }
@@ -281,34 +281,34 @@ public abstract class BaseTestSheet {
 
             final CellRangeAddress duplicateRegion = new CellRangeAddress(0, 1, 0, 1); //A1:B2
             assertThrows(
-                "Should not be able to add a merged region (" + duplicateRegion.formatAsString() + ") " +
-                "if sheet already contains the same merged region (" + baseRegion.formatAsString() + ")",
                 IllegalStateException.class,
-                () -> sheet.addMergedRegion(duplicateRegion)
+                () -> sheet.addMergedRegion(duplicateRegion),
+                "Should not be able to add a merged region (" + duplicateRegion.formatAsString() + ") " +
+                "if sheet already contains the same merged region (" + baseRegion.formatAsString() + ")"
             );
 
             final CellRangeAddress partiallyOverlappingRegion = new CellRangeAddress(1, 2, 1, 2); //B2:C3
             assertThrows(
-                "Should not be able to add a merged region (" + partiallyOverlappingRegion.formatAsString() + ") " +
-                "if it partially overlaps with an existing merged region (" + baseRegion.formatAsString() + ")",
                 IllegalStateException.class,
-                () -> sheet.addMergedRegion(partiallyOverlappingRegion)
+                () -> sheet.addMergedRegion(partiallyOverlappingRegion),
+                "Should not be able to add a merged region (" + partiallyOverlappingRegion.formatAsString() + ") " +
+                "if it partially overlaps with an existing merged region (" + baseRegion.formatAsString() + ")"
             );
 
             final CellRangeAddress subsetRegion = new CellRangeAddress(0, 1, 0, 0); //A1:A2
             assertThrows(
-                "Should not be able to add a merged region (" + subsetRegion.formatAsString() + ") " +
-                "if it is a formal subset of an existing merged region (" + baseRegion.formatAsString() + ")",
                 IllegalStateException.class,
-                () -> sheet.addMergedRegion(subsetRegion)
+                () -> sheet.addMergedRegion(subsetRegion),
+                "Should not be able to add a merged region (" + subsetRegion.formatAsString() + ") " +
+                "if it is a formal subset of an existing merged region (" + baseRegion.formatAsString() + ")"
             );
 
             final CellRangeAddress supersetRegion = new CellRangeAddress(0, 2, 0, 2); //A1:C3
             assertThrows(
-                "Should not be able to add a merged region (" + supersetRegion.formatAsString() + ") " +
-                "if it is a formal superset of an existing merged region (" + baseRegion.formatAsString() + ")",
                 IllegalStateException.class,
-                () -> sheet.addMergedRegion(supersetRegion)
+                () -> sheet.addMergedRegion(supersetRegion),
+                "Should not be able to add a merged region (" + supersetRegion.formatAsString() + ") " +
+                "if it is a formal superset of an existing merged region (" + baseRegion.formatAsString() + ")"
             );
 
             final CellRangeAddress disjointRegion = new CellRangeAddress(10, 11, 10, 11);
@@ -326,9 +326,9 @@ public abstract class BaseTestSheet {
             final Sheet sheet = wb.createSheet();
             final CellRangeAddress region = CellRangeAddress.valueOf("A1:A1");
             assertThrows(
-                "Should not be able to add a single-cell merged region (" + region.formatAsString() + ")",
                 IllegalArgumentException.class,
-                () -> sheet.addMergedRegion(region)
+                () -> sheet.addMergedRegion(region),
+                "Should not be able to add a single-cell merged region (" + region.formatAsString() + ")"
             );
         }
     }
@@ -387,27 +387,27 @@ public abstract class BaseTestSheet {
             sheet.removeMergedRegion(0);
 
             region = sheet.getMergedRegion(0);
-            assertEquals("Left over region should be starting at row 2", 2, region.getFirstRow());
+            assertEquals(2, region.getFirstRow(), "Left over region should be starting at row 2");
 
             sheet.removeMergedRegion(0);
 
-            assertEquals("there should be no merged regions left!", 0, sheet.getNumMergedRegions());
+            assertEquals(0, sheet.getNumMergedRegions(), "there should be no merged regions left!");
 
             //an, add, remove, get(0) would null pointer
             assertEquals(0, sheet.addMergedRegion(region));
-            assertEquals("there should now be one merged region!", 1, sheet.getNumMergedRegions());
+            assertEquals(1, sheet.getNumMergedRegions(), "there should now be one merged region!");
             sheet.removeMergedRegion(0);
-            assertEquals("there should now be zero merged regions!", 0, sheet.getNumMergedRegions());
+            assertEquals(0, sheet.getNumMergedRegions(), "there should now be zero merged regions!");
             //add it again!
             region.setLastRow(4);
 
             assertEquals(0, sheet.addMergedRegion(region));
-            assertEquals("there should now be one merged region!", 1, sheet.getNumMergedRegions());
+            assertEquals(1, sheet.getNumMergedRegions(), "there should now be one merged region!");
 
             //should exist now!
-            assertTrue("there isn't more than one merged region in there", 1 <= sheet.getNumMergedRegions());
+            assertTrue(1 <= sheet.getNumMergedRegions(), "there isn't more than one merged region in there");
             region = sheet.getMergedRegion(0);
-            assertEquals("the merged row to doesn't match the one we put in ", 4, region.getLastRow());
+            assertEquals(4, region.getLastRow(), "the merged row to doesn't match the one we put in ");
         }
     }
 
@@ -461,7 +461,7 @@ public abstract class BaseTestSheet {
             region = sheet.getMergedRegion(0);
 
             CellRangeAddress expectedRegion = CellRangeAddress.valueOf("A3:B3");
-            assertEquals("Merged region should shift down a row", expectedRegion, region);
+            assertEquals(expectedRegion, region, "Merged region should shift down a row");
         }
     }
 
@@ -493,9 +493,9 @@ public abstract class BaseTestSheet {
             // the safe version of addMergedRegion should throw when trying to add a merged region that overlaps an existing region
             assertTrue(sh.getMergedRegions().contains(region2));
             assertThrows(
-                "region3 overlaps already added merged region2.",
                 IllegalStateException.class,
-                () -> sh.addMergedRegion(region3)
+                () -> sh.addMergedRegion(region3),
+                "region3 overlaps already added merged region2."
             );
             assertFalse(sh.getMergedRegions().contains(region3));
 
@@ -504,9 +504,9 @@ public abstract class BaseTestSheet {
 
             // validation methods should detect a problem with previously added merged regions (runs in O(n^2) time)
             assertThrows(
-                "Sheet contains merged regions A1:B2 and B2:C3, which overlap at B2.",
                 IllegalStateException.class,
-                sh::validateMergedRegions
+                sh::validateMergedRegions,
+                "Sheet contains merged regions A1:B2 and B2:C3, which overlap at B2."
             );
         }
     }
@@ -640,9 +640,10 @@ public abstract class BaseTestSheet {
             r.createCell(1).setCellFormula("A1*2");
             Sheet s1 = wb.cloneSheet(0);
             r = s1.getRow(0);
-            assertEquals("double", r.getCell(0).getNumericCellValue(), 1, 0); // sanity check
+            // sanity check
+            assertEquals(r.getCell(0).getNumericCellValue(), 1, 0, "double");
             assertNotNull(r.getCell(1));
-            assertEquals("formula", r.getCell(1).getCellFormula(), "A1*2");
+            assertEquals(r.getCell(1).getCellFormula(), "A1*2", "formula");
         }
     }
 
@@ -660,7 +661,7 @@ public abstract class BaseTestSheet {
             Cell cell = row.createCell(0);
             CellStyle style2 = cell.getCellStyle();
             assertNotNull(style2);
-            assertEquals("style should match", style.getIndex(), style2.getIndex());
+            assertEquals(style.getIndex(), style2.getIndex(), "style should match");
         }
     }
 
@@ -1187,15 +1188,15 @@ public abstract class BaseTestSheet {
             Sheet sheet = workbook.createSheet();
             Cell cell = sheet.createRow(5).createCell(1);
 
-            assertEquals("list size before add", 0, sheet.getHyperlinkList().size());
+            assertEquals(0, sheet.getHyperlinkList().size(), "list size before add");
             cell.setHyperlink(hyperlink);
-            assertEquals("list size after add", 1, sheet.getHyperlinkList().size());
+            assertEquals(1, sheet.getHyperlinkList().size(), "list size after add");
 
-            assertEquals("list", hyperlink, sheet.getHyperlinkList().get(0));
+            assertEquals(hyperlink, sheet.getHyperlinkList().get(0), "list");
             CellAddress B6 = new CellAddress(5, 1);
-            assertEquals("row, col", hyperlink, sheet.getHyperlink(5, 1));
-            assertEquals("addr", hyperlink, sheet.getHyperlink(B6));
-            assertNull("no hyperlink at A1", sheet.getHyperlink(CellAddress.A1));
+            assertEquals(hyperlink, sheet.getHyperlink(5, 1), "row, col");
+            assertEquals(hyperlink, sheet.getHyperlink(B6), "addr");
+            assertNull(sheet.getHyperlink(CellAddress.A1), "no hyperlink at A1");
         }
     }
 
@@ -1302,9 +1303,8 @@ public abstract class BaseTestSheet {
 
             // active cell behavior is undefined if not set.
             // HSSFSheet defaults to A1 active cell, while XSSFSheet defaults to null.
-            if (sheet.getActiveCell() != null && !sheet.getActiveCell().equals(CellAddress.A1)) {
-                fail("If not set, active cell should default to null or A1");
-            }
+            CellAddress ac = sheet.getActiveCell();
+            assertTrue(ac == null || CellAddress.A1.equals(ac), "If not set, active cell should default to null or A1");
 
             sheet.setActiveCell(B42);
 

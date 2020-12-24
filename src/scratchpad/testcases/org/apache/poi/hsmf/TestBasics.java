@@ -19,18 +19,18 @@ package org.apache.poi.hsmf;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertStartsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests to verify that we can perform basic opperations on
@@ -49,7 +49,7 @@ public final class TestBasics {
    /**
     * Initialize this test, load up the blank.msg mapi message.
     */
-   @Before
+   @BeforeEach
    public void setup() throws IOException {
        POIDataSamples samples = POIDataSamples.getHSMFInstance();
        simple = new MAPIMessage(samples.openResourceAsStream("simple_test_msg.msg"));
@@ -105,16 +105,10 @@ public final class TestBasics {
       assertStartsWith(simple.getHeaders()[25], "X-Antivirus-Scanner: Clean");
 
       // Quick doesn't have them
-      try {
-         quick.getHeaders();
-         fail("expected ChunkNotFoundException");
-      } catch(ChunkNotFoundException e) {}
+      assertThrows(ChunkNotFoundException.class, quick::getHeaders);
 
       // Attachments doesn't have them
-      try {
-         attachments.getHeaders();
-         fail("expected ChunkNotFoundException");
-      } catch(ChunkNotFoundException e) {}
+      assertThrows(ChunkNotFoundException.class, attachments::getHeaders);
 
       // Outlook30 has some
       assertEquals(33, outlook30.getHeaders().length);
@@ -165,26 +159,14 @@ public final class TestBasics {
    @Test
    public void testMissingChunks() throws Exception {
       assertFalse(attachments.isReturnNullOnMissingChunk());
-
-      try {
-          attachments.getHtmlBody();
-         fail("expected ChunkNotFoundException");
-      } catch(ChunkNotFoundException e) {
-          // Good
-      }
+      assertThrows(ChunkNotFoundException.class, attachments::getHtmlBody);
 
       attachments.setReturnNullOnMissingChunk(true);
 
       assertNull(attachments.getHtmlBody());
 
       attachments.setReturnNullOnMissingChunk(false);
-
-      try {
-         attachments.getHtmlBody();
-         fail("expected ChunkNotFoundException");
-      } catch(ChunkNotFoundException e) {
-         // Good
-      }
+      assertThrows(ChunkNotFoundException.class, attachments::getHtmlBody);
    }
 
    /**
@@ -194,19 +176,8 @@ public final class TestBasics {
    @Test
    public void testMissingAddressChunk() throws Exception {
       assertFalse(noRecipientAddress.isReturnNullOnMissingChunk());
-
-      try {
-         noRecipientAddress.getRecipientEmailAddress();
-         fail("expected ChunkNotFoundException");
-      } catch(ChunkNotFoundException e) {
-         // Good
-      }
-      try {
-         noRecipientAddress.getRecipientEmailAddressList();
-         fail("expected ChunkNotFoundException");
-      } catch(ChunkNotFoundException e) {
-         // Good
-      }
+      assertThrows(ChunkNotFoundException.class, noRecipientAddress::getRecipientEmailAddress);
+      assertThrows(ChunkNotFoundException.class, noRecipientAddress::getRecipientEmailAddressList);
 
       noRecipientAddress.setReturnNullOnMissingChunk(true);
 
@@ -258,13 +229,10 @@ public final class TestBasics {
 
 
       // Check with a file that has no headers
-      try {
-         chinese.getHeaders();
-         fail("File doesn't have headers!");
-      } catch(ChunkNotFoundException e) {}
+      assertThrows(ChunkNotFoundException.class, chinese::getHeaders, "File doesn't have headers!");
 
       String html = chinese.getHtmlBody();
-      assertTrue("Charset not found:\n" + html, html.contains("text/html; charset=big5"));
+      assertTrue(html.contains("text/html; charset=big5"), "Charset not found:\n" + html);
 
       // Defaults to CP1251
       assertEquals("CP1252", chinese.getRecipientDetailsChunks()[0].recipientDisplayNameChunk.get7BitEncoding());

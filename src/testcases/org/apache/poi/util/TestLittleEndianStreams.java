@@ -17,17 +17,17 @@
 
 package org.apache.poi.util;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test {@link LittleEndianInputStream} and {@link LittleEndianOutputStream}
@@ -74,8 +74,8 @@ public final class TestLittleEndianStreams {
 		byte[] actBuf = new byte[4];
 		lei.readFully(actBuf);
 
-		assertFalse("Identified bug in readFully() - source buffer was modified",
-					actBuf[0] == 0x00 && srcBuf[0] == 0x77 && srcBuf[3] == 0x44);
+		assertFalse(actBuf[0] == 0x00 && srcBuf[0] == 0x77 && srcBuf[3] == 0x44,
+			"Identified bug in readFully() - source buffer was modified");
 
 		byte[] expBuf = HexRead.readFromString("77 66 55 44");
 		assertArrayEquals(actBuf, expBuf);

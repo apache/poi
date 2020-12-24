@@ -18,9 +18,9 @@
  */
 package org.apache.poi.sl.tests.draw;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.awt.Dimension;
 import java.awt.geom.Rectangle2D;
@@ -37,15 +37,15 @@ import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.util.Units;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class TestDrawPictureShape {
     final static POIDataSamples ssSamples = POIDataSamples.getSlideShowInstance();
 
     private static boolean xslfOnly;
 
-    @BeforeClass
+    @BeforeAll
     public static void checkHslf() {
         try {
             Class.forName("org.apache.poi.hslf.usermodel.HSLFSlideShow");

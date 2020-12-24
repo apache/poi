@@ -17,8 +17,9 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
@@ -27,7 +28,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases for MATCH()
@@ -52,9 +53,7 @@ public final class TestMatch {
     }
 
     private static void confirmInt(int expected, ValueEval actualEval) {
-		if(!(actualEval instanceof NumericValueEval)) {
-			fail("Expected numeric result but had " + actualEval);
-		}
+		assertTrue(actualEval instanceof NumericValueEval, "Expected numeric result but had " + actualEval);
 		NumericValueEval nve = (NumericValueEval)actualEval;
 		assertEquals(expected, nve.getNumberValue(), 0);
 	}
@@ -283,7 +282,7 @@ public final class TestMatch {
 
         confirmInt(2, invokeMatch(new NumberEval(5), ae, MATCH_LARGEST_LTE));
 
-        assertEquals("Should return #REF! for invalid match type",
-                ErrorEval.REF_INVALID, invokeMatch(new StringEval("Ben"), ae, MATCH_INVALID));
+        assertEquals(ErrorEval.REF_INVALID, invokeMatch(new StringEval("Ben"), ae, MATCH_INVALID),
+			 "Should return #REF! for invalid match type");
 	}
 }

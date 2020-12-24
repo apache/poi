@@ -17,10 +17,10 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileOutputStream;
 import java.io.OutputStream;
@@ -30,8 +30,8 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.model.PicturesTable;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the picture handling
@@ -165,23 +165,23 @@ public final class TestPictures {
        // This file has two embeded excel files, an embeded powerpoint
        //   file and an embeded word file, in that order
        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("word_with_embeded.doc");
-       
+
        // Check we don't break loading the pictures
        doc.getPicturesTable().getAllPictures();
        PicturesTable pictureTable = doc.getPicturesTable();
-       
+
        // Check the text, and its embeded images
        Paragraph p;
        Range r = doc.getRange();
        assertEquals(1, r.numSections());
        assertEquals(5, r.numParagraphs());
-       
+
        p = r.getParagraph(0);
        assertEquals(2, p.numCharacterRuns());
        assertEquals("I have lots of embedded files in me\r", p.text());
         assertFalse(pictureTable.hasPicture(p.getCharacterRun(0)));
         assertFalse(pictureTable.hasPicture(p.getCharacterRun(1)));
-       
+
        p = r.getParagraph(1);
        assertEquals(5, p.numCharacterRuns());
        assertEquals("\u0013 EMBED Excel.Sheet.8  \u0014\u0001\u0015\r", p.text());
@@ -190,7 +190,7 @@ public final class TestPictures {
         assertFalse(pictureTable.hasPicture(p.getCharacterRun(2)));
         assertTrue(pictureTable.hasPicture(p.getCharacterRun(3)));
         assertFalse(pictureTable.hasPicture(p.getCharacterRun(4)));
-       
+
        p = r.getParagraph(2);
        assertEquals(6, p.numCharacterRuns());
        assertEquals("\u0013 EMBED Excel.Sheet.8  \u0014\u0001\u0015\r", p.text());
@@ -200,7 +200,7 @@ public final class TestPictures {
         assertTrue(pictureTable.hasPicture(p.getCharacterRun(3)));
         assertFalse(pictureTable.hasPicture(p.getCharacterRun(4)));
         assertFalse(pictureTable.hasPicture(p.getCharacterRun(5)));
-       
+
        p = r.getParagraph(3);
        assertEquals(6, p.numCharacterRuns());
        assertEquals("\u0013 EMBED PowerPoint.Show.8  \u0014\u0001\u0015\r", p.text());
@@ -210,7 +210,7 @@ public final class TestPictures {
         assertTrue(pictureTable.hasPicture(p.getCharacterRun(3)));
         assertFalse(pictureTable.hasPicture(p.getCharacterRun(4)));
         assertFalse(pictureTable.hasPicture(p.getCharacterRun(5)));
-       
+
        p = r.getParagraph(4);
        assertEquals(6, p.numCharacterRuns());
        assertEquals("\u0013 EMBED Word.Document.8 \\s \u0014\u0001\u0015\r", p.text());
@@ -276,15 +276,15 @@ public final class TestPictures {
     public void testFloatingPictures() {
        HWPFDocument doc = HWPFTestDataSamples.openSampleFile("FloatingPictures.doc");
        PicturesTable pictures = doc.getPicturesTable();
-       
+
        // There are 19 images in the picture, but some are
        //  duplicate floating ones
        assertEquals(17, pictures.getAllPictures().size());
-       
+
        int plain8s = 0;
        int escher8s = 0;
        int image1s = 0;
-       
+
        Range r = doc.getRange();
        for(int np=0; np < r.numParagraphs(); np++) {
           Paragraph p = r.getParagraph(np);
@@ -316,7 +316,7 @@ public final class TestPictures {
         assertEquals(2, pics.size());
 
         Picture pic1 = pics.get(0);
-        assertEquals("FIXME: unable to get image width", -1, pic1.getWidth());
+        assertEquals( -1, pic1.getWidth(), "FIXME: unable to get image width" );
         assertEquals(270, pic1.getHorizontalScalingFactor());
         assertEquals(271, pic1.getVerticalScalingFactor());
         assertEquals(12000, pic1.getDxaGoal());       // 21.17 cm / 2.54 cm/inch * 72dpi * 20 = 12000
@@ -327,7 +327,7 @@ public final class TestPictures {
         assertEquals(0, pic1.getDyaCropBottom());
 
         Picture pic2 = pics.get(1);
-        assertEquals("FIXME: unable to get image width", -1, pic2.getWidth());
+        assertEquals( -1, pic2.getWidth(), "FIXME: unable to get image width" );
         assertEquals(764, pic2.getHorizontalScalingFactor());
         assertEquals(685, pic2.getVerticalScalingFactor());
         assertEquals(12000, pic2.getDxaGoal());       // 21.17 cm / 2.54 cm/inch * 72dpi * 20 = 12000
@@ -342,14 +342,14 @@ public final class TestPictures {
     public void testPictureDetectionWithPNG() {
         HWPFDocument document = HWPFTestDataSamples.openSampleFile("PngPicture.doc");
         PicturesTable pictureTable = document.getPicturesTable();
-        
+
         assertEquals(1, pictureTable.getAllPictures().size());
-        
+
         Picture p = pictureTable.getAllPictures().get(0);
         assertEquals(PictureType.PNG, p.suggestPictureType());
         assertEquals("png", p.suggestFileExtension());
     }
-    
+
     @Test
     public void testPictureWithAlternativeText() {
         HWPFDocument document = HWPFTestDataSamples.openSampleFile("Picture_Alternative_Text.doc");
@@ -358,12 +358,12 @@ public final class TestPictures {
 
         assertEquals("This is the alternative text for the picture.", picture.getDescription());
     }
-    
-    @Ignore("This bug is not fixed yet")
+
+    @Disabled("This bug is not fixed yet")
     @Test
     public void test58804_1() throws Exception {
         HWPFDocument docA = HWPFTestDataSamples.openSampleFile("58804_1.doc");
-        
+
         expectImages(docA, 1);
 
         HWPFDocument docB = HWPFTestDataSamples.writeOutAndReadBack(docA);
@@ -375,11 +375,11 @@ public final class TestPictures {
         expectImages(docB, 1);
     }
 
-    @Ignore("This bug is not fixed yet")
+    @Disabled("This bug is not fixed yet")
     @Test
     public void test58804() throws Exception {
         HWPFDocument docA = HWPFTestDataSamples.openSampleFile("58804.doc");
-        
+
         expectImages(docA, 7);
 
         HWPFDocument docB = HWPFTestDataSamples.writeOutAndReadBack(docA);

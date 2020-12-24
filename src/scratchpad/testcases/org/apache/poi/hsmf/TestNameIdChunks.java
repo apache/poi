@@ -19,17 +19,17 @@ package org.apache.poi.hsmf;
 
 import static org.apache.poi.hsmf.datatypes.NameIdChunks.PredefinedPropertySet.PSETID_COMMON;
 import static org.apache.poi.hsmf.datatypes.NameIdChunks.PropertySetType.PS_PUBLIC_STRINGS;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.datatypes.StringChunk;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests to verify that we can read properties identified by name or id in property sets.
@@ -40,7 +40,7 @@ public class TestNameIdChunks {
     /**
      * Initialize this test, load up the keywords.msg mapi message.
      */
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws IOException {
         POIDataSamples samples = POIDataSamples.getHSMFInstance();
         try (InputStream is = samples.openResourceAsStream("keywords.msg")) {
@@ -48,7 +48,7 @@ public class TestNameIdChunks {
         }
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() throws IOException {
         keywordsMsg.close();
     }

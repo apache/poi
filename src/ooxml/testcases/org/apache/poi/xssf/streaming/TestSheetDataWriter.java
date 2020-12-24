@@ -19,9 +19,9 @@
 
 package org.apache.poi.xssf.streaming;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,7 +29,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 import org.apache.poi.util.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestSheetDataWriter {
 
@@ -53,7 +53,7 @@ public final class TestSheetDataWriter {
         assertTrue(SheetDataWriter.replaceWithQuestionMark('\u000F'));
         assertTrue(SheetDataWriter.replaceWithQuestionMark('\u001F'));
 	}
-    
+
     @Test
     public void testWriteUnicodeSurrogates() throws IOException {
         SheetDataWriter writer = new SheetDataWriter();

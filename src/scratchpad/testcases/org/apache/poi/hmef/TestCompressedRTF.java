@@ -17,10 +17,10 @@
 
 package org.apache.poi.hmef;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -34,7 +34,7 @@ import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.StringUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestCompressedRTF {
     private static final POIDataSamples _samples = POIDataSamples.getHMEFInstance();

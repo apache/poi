@@ -17,13 +17,14 @@
 
 package org.apache.poi.ss.util;
 
-import org.junit.Test;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.util.Arrays;
+
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the common CellAddress works as we need it to.
@@ -57,7 +58,7 @@ public final class TestCellAddress {
         assertEquals(new CellReference(6, 4), new CellReference(6, 4));
         assertNotEquals(new CellReference(4, 6), new CellReference(6, 4));
     }
-    
+
     @SuppressWarnings("EqualsWithItself")
     @Test
     public void testCompareTo() {
@@ -65,27 +66,27 @@ public final class TestCellAddress {
         final CellAddress A2 = new CellAddress(1, 0);
         final CellAddress B1 = new CellAddress(0, 1);
         final CellAddress B2 = new CellAddress(1, 1);
-        
+
         assertEquals(0,  A1.compareTo(A1));
         assertEquals(-1, A1.compareTo(B1));
         assertEquals(-1, A1.compareTo(A2));
         assertEquals(-1, A1.compareTo(B2));
-        
+
         assertEquals(1,  B1.compareTo(A1));
         assertEquals(0,  B1.compareTo(B1));
         assertEquals(-1, B1.compareTo(A2));
         assertEquals(-1, B1.compareTo(B2));
-        
+
         assertEquals(1,  A2.compareTo(A1));
         assertEquals(1,  A2.compareTo(B1));
         assertEquals(0,  A2.compareTo(A2));
         assertEquals(-1, A2.compareTo(B2));
-        
+
         assertEquals(1,  B2.compareTo(A1));
         assertEquals(1,  B2.compareTo(B1));
         assertEquals(1,  B2.compareTo(A2));
         assertEquals(0,  B2.compareTo(B2));
-        
+
         CellAddress[] sorted = {A1, B1, A2, B2};
         CellAddress[] unsorted = {B1, B2, A1, A2};
         assumeTrue(!Arrays.equals(sorted, unsorted));
@@ -98,7 +99,7 @@ public final class TestCellAddress {
         final CellAddress addr = new CellAddress(6, 4);
         assertEquals(6, addr.getRow());
     }
-    
+
     @Test
     public void testGetColumn() {
         final CellAddress addr = new CellAddress(6, 4);

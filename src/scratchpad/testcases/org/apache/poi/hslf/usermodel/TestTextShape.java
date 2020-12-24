@@ -17,11 +17,11 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -34,7 +34,7 @@ import java.util.Map;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.sl.usermodel.ShapeType;
 import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Verify behavior of <code>TextShape</code> and its sub-classes
@@ -77,7 +77,7 @@ public final class TestTextShape {
         List<String> lst1 = new ArrayList<>();
         HSLFSlide slide = ppt.getSlides().get(0);
         for (HSLFShape shape : slide.getShapes()) {
-            assertTrue("Expected TextShape but found " + shape.getClass().getName(), shape instanceof HSLFTextShape);
+            assertTrue(shape instanceof HSLFTextShape, "Expected TextShape but found " + shape.getClass().getName());
             HSLFTextShape tx = (HSLFTextShape)shape;
             List<HSLFTextParagraph> paras = tx.getTextParagraphs();
             assertNotNull(paras);
@@ -196,7 +196,7 @@ public final class TestTextShape {
         assertEquals(28.34, tx.getRightInset(), 0.01);
         assertEquals(3.6, tx.getTopInset(), 0);
         assertEquals(3.6, tx.getBottomInset(), 0);
-        
+
         ppt.close();
     }
 

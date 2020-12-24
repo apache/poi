@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -27,7 +27,7 @@ import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.sl.extractor.SlideShowExtractor;
 import org.apache.poi.xslf.usermodel.XMLSlideShow;
 import org.apache.poi.xslf.usermodel.XSLFSlideShow;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class XSLFFileHandler extends SlideShowHandler {
 	@Override
@@ -64,7 +64,7 @@ public class XSLFFileHandler extends SlideShowHandler {
 			extractor.setNotesByDefault(false);
 			extractor.setMasterByDefault(false);
 
-			assertEquals("With all options disabled we should not get text", "", extractor.getText());
+			assertEquals("", extractor.getText(), "With all options disabled we should not get text");
 		}
     }
 

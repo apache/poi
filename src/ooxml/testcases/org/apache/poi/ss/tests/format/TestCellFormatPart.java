@@ -17,8 +17,8 @@
 package org.apache.poi.ss.tests.format;
 
 import static java.awt.Color.ORANGE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -39,9 +39,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class for spreadsheet-based tests, such as are used for cell formatting.
@@ -63,13 +63,13 @@ public class TestCellFormatPart {
 
 
 
-    @BeforeClass
+    @BeforeAll
     public static void setLocale() {
         userLocale = LocaleUtil.getUserLocale();
         LocaleUtil.setUserLocale(Locale.UK);
     }
 
-    @AfterClass
+    @AfterAll
     public static void unsetLocale() {
         LocaleUtil.setUserLocale(userLocale);
     }
@@ -80,8 +80,7 @@ public class TestCellFormatPart {
         Object getValue(Cell cell);
 
         default void equivalent(String expected, String actual, CellFormatPart format) {
-            assertEquals("format \"" + format + "\"", '"' + expected + '"',
-                         '"' + actual + '"');
+            assertEquals('"' + expected + '"', '"' + actual + '"', "format \"" + format + "\"");
         }
     }
 
@@ -120,8 +119,7 @@ public class TestCellFormatPart {
                 double actualVal = extractNumber(actual);
                 // equal within 1%
                 double delta = expectedVal / 100;
-                assertEquals("format \"" + format + "\"," + expected + " ~= " +
-                        actual, expectedVal, actualVal, delta);
+                assertEquals(expectedVal, actualVal, delta, "format \"" + format + "\"," + expected + " ~= " + actual);
             }
         });
     }
@@ -204,7 +202,7 @@ public class TestCellFormatPart {
                 String actualText = label.getText();
                 Color actualColor = label.getForeground();
                 valueGetter.equivalent(expectedText, actualText, cellFormatPart);
-                assertEquals("no color", expectedColor, actualColor);
+                assertEquals(expectedColor, actualColor, "no color");
             }
         }
     }

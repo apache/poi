@@ -17,13 +17,13 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link org.apache.poi.ss.formula.functions.Oct2Dec}
@@ -40,13 +40,13 @@ public final class TestOct2Dec {
     private static void confirmValue(String msg, String number1, String expected) {
 		ValueEval result = invokeValue(number1);
 		assertEquals(NumberEval.class, result.getClass());
-		assertEquals(msg, expected, ((NumberEval) result).getStringValue());
+		assertEquals(expected, ((NumberEval) result).getStringValue(), msg);
 	}
 
     private static void confirmValueError(String msg, String number1, ErrorEval numError) {
         ValueEval result = invokeValue(number1);
         assertEquals(ErrorEval.class, result.getClass());
-        assertEquals(msg, numError, result);
+        assertEquals(numError, result, msg);
     }
 
 	@Test

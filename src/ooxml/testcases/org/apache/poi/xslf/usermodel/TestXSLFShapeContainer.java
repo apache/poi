@@ -18,11 +18,11 @@
  */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * test common operations on containers of shapes (sheets and groups of shapes)

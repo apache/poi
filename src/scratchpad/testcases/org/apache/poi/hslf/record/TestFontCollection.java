@@ -17,9 +17,9 @@
 
 package org.apache.poi.hslf.record;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -30,19 +30,19 @@ import org.apache.poi.hslf.usermodel.HSLFFontInfo;
 import org.apache.poi.hslf.usermodel.HSLFFontInfoPredefined;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.poifs.storage.RawDataUtil;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests {@code FontCollection} and {@code FontEntityAtom} records
  */
 public final class TestFontCollection {
     private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
-    
+
     // From a real file
     private static byte[] data;
-    
-    @BeforeClass
+
+    @BeforeAll
     public static void init() throws IOException {
         data = RawDataUtil.decompress(
             "H4sIAAAAAAAAAONnuMruwwAC2/ldgGQIQyZDLkMqQzGDAoMfkC4H0kEM+U"+
@@ -92,7 +92,7 @@ public final class TestFontCollection {
         byte[] recdata = out.toByteArray();
         assertArrayEquals(recdata, data);
     }
-    
+
     @Test
     public void bug61881() throws IOException {
         try (InputStream is = _slTests.openResourceAsStream("bug61881.ppt")) {

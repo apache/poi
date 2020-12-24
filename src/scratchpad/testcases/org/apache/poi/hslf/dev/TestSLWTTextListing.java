@@ -17,24 +17,19 @@
 package org.apache.poi.hslf.dev;
 
 import org.apache.poi.EmptyFileException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class TestSLWTTextListing extends BasePPTIteratingTest {
     @Test
     public void testMain() throws IOException {
         // calls System.exit(): SLWTTextListing.main(new String[0]);
-
-        try {
-            SLWTTextListing.main(new String[]{"invalidfile"});
-            fail("Should catch exception here");
-        } catch (EmptyFileException e) {
-            // expected here
-        }
+        assertThrows(EmptyFileException.class, () -> SLWTTextListing.main(new String[]{"invalidfile"}));
     }
 
     @Override

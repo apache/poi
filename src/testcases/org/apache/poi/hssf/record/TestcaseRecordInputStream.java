@@ -17,8 +17,8 @@
 
 package org.apache.poi.hssf.record;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -85,7 +85,7 @@ public final class TestcaseRecordInputStream {
 	 */
 	public static void confirmRecordEncoding(String msgPrefix, int expectedSid, byte[] expectedData, byte[] actualRecordBytes) {
 		int expectedDataSize = expectedData.length;
-		assertEquals("Size of encode data mismatch", actualRecordBytes.length - 4, expectedDataSize);
+		assertEquals(actualRecordBytes.length - 4, expectedDataSize, "Size of encode data mismatch");
 		assertEquals(expectedSid, LittleEndian.getShort(actualRecordBytes, 0));
 		assertEquals(expectedDataSize, LittleEndian.getShort(actualRecordBytes, 2));
 		assertArrayEquals(expectedData, cut(actualRecordBytes, 4));

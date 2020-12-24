@@ -17,15 +17,15 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.hslf.HSLFTestDataSamples;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that SlideShow returns Sheets which have the right text in them
@@ -34,16 +34,16 @@ public final class TestSheetText {
 	// SlideShow primed on the test data
 	private HSLFSlideShow ss;
 
-	@Before
+	@BeforeEach
 	public void init() throws IOException {
 		ss = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws IOException {
 	    ss.close();
 	}
-	
+
 	@Test
 	public void testSheetOne() {
 		HSLFSheet slideOne = ss.getSlides().get(0);

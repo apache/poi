@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.hslf.dev;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -29,19 +29,19 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.hslf.exceptions.OldPowerPointFormatException;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.NullPrintStream;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
 public abstract class BasePPTIteratingTest {
     protected static final Set<String> OLD_FILES = new HashSet<>();
     static {
@@ -60,22 +60,21 @@ public abstract class BasePPTIteratingTest {
     protected static final Map<String,Class<? extends Throwable>> EXCLUDED =
             new HashMap<>();
 
-    @Parameterized.Parameters(name="{index}: {0}")
-    public static Iterable<Object[]> files() {
+    public static Stream<Arguments> files() {
         String dataDirName = System.getProperty(POIDataSamples.TEST_PROPERTY);
         if(dataDirName == null) {
             dataDirName = "test-data";
         }
 
-        List<Object[]> files = new ArrayList<>();
+        List<Arguments> files = new ArrayList<>();
         findFile(files, dataDirName + "/slideshow");
 
-        return files;
+        return files.stream();
     }
 
     private final PrintStream save = System.out;
 
-    @Before
+    @BeforeEach
     public void setUpBase() throws UnsupportedEncodingException {
         // set a higher max allocation limit as some test-files require more
         IOUtils.setByteArrayMaxOverride(5*1024*1024);
@@ -84,7 +83,7 @@ public abstract class BasePPTIteratingTest {
         System.setOut(new NullPrintStream());
     }
 
-    @After
+    @AfterEach
     public void tearDownBase() {
         System.setOut(save);
 
@@ -92,21 +91,19 @@ public abstract class BasePPTIteratingTest {
         IOUtils.setByteArrayMaxOverride(-1);
     }
 
-    private static void findFile(List<Object[]> list, String dir) {
+    private static void findFile(List<Arguments> list, String dir) {
         String[] files = new File(dir).list((arg0, arg1) -> arg1.toLowerCase(Locale.ROOT).endsWith(".ppt"));
 
-        assertNotNull("Did not find any ppt files in directory " + dir, files);
+        assertNotNull(files, "Did not find any ppt files in directory " + dir);
 
         for(String file : files) {
-            list.add(new Object[] { new File(dir, file) });
+            list.add(Arguments.of(new File(dir, file)));
         }
     }
 
-    @Parameterized.Parameter
-    public File file;
-
-    @Test
-    public void testAllFiles() throws Exception {
+    @ParameterizedTest
+    @MethodSource("files")
+    public void testAllFiles(File file) throws Exception {
         String fileName = file.getName();
         Class<? extends Throwable> t = null;
         if (EXCLUDED.containsKey(fileName)) {

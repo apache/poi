@@ -18,18 +18,18 @@
 package org.apache.poi.hslf.record;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that the helper methods on RecordContainer work properly
@@ -39,7 +39,7 @@ public final class TestRecordContainer {
 	private RecordContainer recordContainer;
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         // Find a real RecordContainer record
         InputStream is = slTests.openResourceAsStream("basic_test_ppt_file.ppt");
@@ -54,12 +54,12 @@ public final class TestRecordContainer {
             }
         }
     }
-    
-    @After
+
+    @AfterEach
     public void closeResources() throws IOException {
         hss.close();
     }
-	
+
 	@Test
 	public void testIsAnAtom() {
 		assertFalse( recordContainer.isAnAtom() );

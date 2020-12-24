@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
@@ -25,9 +25,9 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Pavel Krupets (pkrupets at palmtreebusiness dot com)
@@ -37,7 +37,7 @@ public final class TestDate {
     private HSSFCell cell11;
     private HSSFFormulaEvaluator evaluator;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         HSSFWorkbook wb = new HSSFWorkbook();
         HSSFSheet sheet = wb.createSheet("new sheet");
@@ -50,7 +50,7 @@ public final class TestDate {
      * TODO - create MissingArgEval and modify the formula evaluator to handle this
      */
     @Test
-    @Ignore
+    @Disabled
     public void testSomeArgumentsMissing() {
         confirm("DATE(, 1, 0)", 0.0);
         confirm("DATE(, 1, 1)", 1.0);
@@ -87,7 +87,7 @@ public final class TestDate {
         cell11.setCellFormula(formulaText);
         evaluator.clearAllCachedResultValues();
         CellValue cv = evaluator.evaluate(cell11);
-        assertEquals("Wrong result type", CellType.NUMERIC, cv.getCellType());
+        assertEquals(CellType.NUMERIC, cv.getCellType(), "Wrong result type");
         double actualValue = cv.getNumberValue();
         assertEquals(expectedResult, actualValue, 0);
     }

@@ -17,14 +17,15 @@
 package org.apache.poi.hslf.dev;
 
 import org.apache.poi.EmptyFileException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public class TestTextStyleListing extends BasePPTIteratingTest {
     private static Set<String> FAILING = new HashSet<>();
@@ -35,12 +36,7 @@ public class TestTextStyleListing extends BasePPTIteratingTest {
     @Test
     public void testMain() throws IOException {
         // calls System.exit(): TextStyleListing.main(new String[0]);
-        try {
-            TextStyleListing.main(new String[]{"invalidfile"});
-            fail("Should catch exception here");
-        } catch (EmptyFileException e) {
-            // expected here
-        }
+        assertThrows(EmptyFileException.class, () -> TextStyleListing.main(new String[]{"invalidfile"}));
     }
 
     @Override
@@ -48,7 +44,7 @@ public class TestTextStyleListing extends BasePPTIteratingTest {
         try {
             TextStyleListing.main(new String[]{pFile.getAbsolutePath()});
         } catch (ArrayIndexOutOfBoundsException e) {
-            // some corrupted documents currently can cause this excpetion
+            // some corrupted documents currently can cause this exception
             if (!FAILING.contains(pFile.getName())) {
                 throw e;
             }

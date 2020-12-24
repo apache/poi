@@ -17,14 +17,16 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.FormulaError;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestPmt {
 
@@ -40,9 +42,7 @@ public final class TestPmt {
 	 */
 	private static NumberEval invokeNormal(ValueEval[] args) {
 		ValueEval ev = invoke(args);
-		if(ev instanceof ErrorEval) {
-			fail("Normal evaluation failed with error code: " + ev);
-		}
+		assertFalse(ev instanceof ErrorEval, "Normal evaluation failed with error code: " + ev);
 		return (NumberEval) ev;
 	}
 
@@ -74,9 +74,7 @@ public final class TestPmt {
 		ValueEval ev = invoke(args);
 		if(ev instanceof ErrorEval) {
 			ErrorEval err = (ErrorEval) ev;
-			if(err.getErrorCode() == FormulaError.VALUE.getCode()) {
-				fail("Identified bug 44691");
-			}
+			assertNotEquals(FormulaError.VALUE.getCode(), err.getErrorCode(), "Identified bug 44691");
 		}
 
 		confirm(-44.3206, invokeNormal(args));

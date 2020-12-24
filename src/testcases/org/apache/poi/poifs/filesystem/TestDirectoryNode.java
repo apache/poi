@@ -18,11 +18,11 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -31,7 +31,7 @@ import java.util.Iterator;
 
 import org.apache.poi.poifs.property.DirectoryProperty;
 import org.apache.poi.poifs.property.DocumentProperty;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test DirectoryNode functionality
@@ -70,13 +70,7 @@ public final class TestDirectoryNode {
             assertEquals(0, node.getEntryCount());
 
             // verify behavior of getEntry
-            try {
-                node.getEntry("foo");
-                fail("should have caught FileNotFoundException");
-            } catch (FileNotFoundException ignored) {
-
-                // as expected
-            }
+            assertThrows(FileNotFoundException.class, () -> node.getEntry("foo"));
 
             // verify behavior of isDirectoryEntry
             assertTrue(node.isDirectoryEntry());
@@ -128,13 +122,7 @@ public final class TestDirectoryNode {
 
             child1.getEntry("child3");
             node.getEntry("child2");
-            try {
-                node.getEntry("child3");
-                fail("should have caught FileNotFoundException");
-            } catch (FileNotFoundException ignored) {
-
-                // as expected
-            }
+            assertThrows(FileNotFoundException.class, () -> node.getEntry("child3"));
 
             // verify behavior of isDirectoryEntry
             assertTrue(node.isDirectoryEntry());

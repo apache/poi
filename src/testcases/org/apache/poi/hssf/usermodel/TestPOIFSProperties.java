@@ -17,8 +17,8 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,7 +29,7 @@ import org.apache.poi.hpsf.*;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexDump;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Old-style setting of POIFS properties doesn't work with POI 3.0.2
@@ -103,7 +103,7 @@ public class TestPOIFSProperties {
     private void checkFromByteArray(byte[] bytes) throws IOException, NoPropertySetStreamException, MarkUnsupportedException {
         // on some environments in CI we see strange failures, let's verify that the size is exactly right
         // this can be removed again after the problem is identified
-        assertEquals("Had: " + HexDump.toHex(bytes), 5120, bytes.length);
+        assertEquals(5120, bytes.length, "Had: " + HexDump.toHex(bytes));
 
         POIFSFileSystem fs2 = new POIFSFileSystem(new ByteArrayInputStream(bytes));
         SummaryInformation summary2 = (SummaryInformation) PropertySetFactory.create(fs2.createDocumentInputStream(SummaryInformation.DEFAULT_STREAM_NAME));

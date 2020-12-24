@@ -21,13 +21,13 @@ import org.apache.poi.POIDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.StringUtil;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -52,7 +52,7 @@ public class TestVBAMacroReader {
         }
 
         String testMacroContents = new String(bytes, StringUtil.UTF8);
-        
+
         if (! testMacroContents.startsWith("Sub ")) {
             throw new IllegalArgumentException("Not a macro");
         }
@@ -73,7 +73,7 @@ public class TestVBAMacroReader {
         }
         expectedMacroContents = Collections.unmodifiableMap(_expectedMacroContents);
     }
-    
+
     //////////////////////////////// From Stream /////////////////////////////
     @Test
     public void HSSFFromStream() throws Exception {
@@ -83,7 +83,7 @@ public class TestVBAMacroReader {
     public void XSSFFromStream() throws Exception {
         fromStream(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xlsm");
     }
-    @Ignore("bug 59302: Found 0 macros; See org.apache.poi.hslf.usermodel.TestBugs.getMacrosFromHSLF()" +
+    @Disabled("bug 59302: Found 0 macros; See org.apache.poi.hslf.usermodel.TestBugs.getMacrosFromHSLF()" +
             "for an example of how to get macros out of ppt. TODO: make integration across file formats more elegant")
     @Test
     public void HSLFFromStream() throws Exception {
@@ -101,7 +101,7 @@ public class TestVBAMacroReader {
     public void XWPFFromStream() throws Exception {
         fromStream(POIDataSamples.getDocumentInstance(), "SimpleMacro.docm");
     }
-    @Ignore("Found 0 macros")
+    @Disabled("Found 0 macros")
     @Test
     public void HDGFFromStream() throws Exception {
         fromStream(POIDataSamples.getDiagramInstance(), "SimpleMacro.vsd");
@@ -120,7 +120,7 @@ public class TestVBAMacroReader {
     public void XSSFFromFile() throws Exception {
         fromFile(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xlsm");
     }
-    @Ignore("bug 59302: Found 0 macros; See org.apache.poi.hslf.usermodel.TestBugs.getMacrosFromHSLF()" +
+    @Disabled("bug 59302: Found 0 macros; See org.apache.poi.hslf.usermodel.TestBugs.getMacrosFromHSLF()" +
             "for an example of how to get macros out of ppt. TODO: make integration across file formats more elegant")
     @Test
     public void HSLFFromFile() throws Exception {
@@ -138,7 +138,7 @@ public class TestVBAMacroReader {
     public void XWPFFromFile() throws Exception {
         fromFile(POIDataSamples.getDocumentInstance(), "SimpleMacro.docm");
     }
-    @Ignore("Found 0 macros")
+    @Disabled("Found 0 macros")
     @Test
     public void HDGFFromFile() throws Exception {
         fromFile(POIDataSamples.getDiagramInstance(), "SimpleMacro.vsd");
@@ -153,7 +153,7 @@ public class TestVBAMacroReader {
     public void HSSFFromPOIFS() throws Exception {
         fromPOIFS(POIDataSamples.getSpreadSheetInstance(), "SimpleMacro.xls");
     }
-    @Ignore("bug 59302: Found 0 macros")
+    @Disabled("bug 59302: Found 0 macros")
     @Test
     public void HSLFFromPOIFS() throws Exception {
         fromPOIFS(POIDataSamples.getSlideShowInstance(), "SimpleMacro.ppt");
@@ -162,7 +162,7 @@ public class TestVBAMacroReader {
     public void HWPFFromPOIFS() throws Exception {
         fromPOIFS(POIDataSamples.getDocumentInstance(), "SimpleMacro.doc");
     }
-    @Ignore("Found 0 macros")
+    @Disabled("Found 0 macros")
     @Test
     public void HDGFFromPOIFS() throws Exception {
         fromPOIFS(POIDataSamples.getDiagramInstance(), "SimpleMacro.vsd");
@@ -191,21 +191,21 @@ public class TestVBAMacroReader {
             }
         }
     }
-    
+
     private void assertMacroContents(POIDataSamples samples, VBAMacroReader r) throws IOException {
         assertNotNull(r);
         Map<String,Module> contents = r.readMacroModules();
         assertNotNull(contents);
-        assertFalse("Found 0 macros", contents.isEmpty());
+        assertFalse(contents.isEmpty(), "Found 0 macros");
         /*
         assertEquals(5, contents.size());
-        
+
         // Check the ones without scripts
         String[] noScripts = new String[] { "ThisWorkbook",
                 "Sheet1", "Sheet2", "Sheet3" };
         for (String entry : noScripts) {
             assertTrue(entry, contents.containsKey(entry));
-            
+
             String content = contents.get(entry);
             assertContains(content, "Attribute VB_Exposed = True");
             assertContains(content, "Attribute VB_Customizable = True");
@@ -214,7 +214,7 @@ public class TestVBAMacroReader {
             assertContains(content, "Attribute VB_Exposed = True");
         }
         */
-        
+
         // Check the script one
         assertContains(contents, "Module1");
         Module module = contents.get("Module1");

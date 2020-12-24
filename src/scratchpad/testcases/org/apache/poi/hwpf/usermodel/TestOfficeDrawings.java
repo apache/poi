@@ -17,14 +17,14 @@
 package org.apache.poi.hwpf.usermodel;
 
 import static org.apache.poi.hwpf.HWPFTestDataSamples.openSampleFile;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.ddf.EscherComplexProperty;
 import org.apache.poi.ddf.EscherContainerRecord;
 import org.apache.poi.ddf.EscherOptRecord;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.util.StringUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases for {@link OfficeDrawing} and {@link OfficeDrawingsImpl} classes.

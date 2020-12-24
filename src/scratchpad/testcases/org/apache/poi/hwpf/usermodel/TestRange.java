@@ -17,8 +17,8 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,7 +27,7 @@ import java.util.List;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.model.SEPX;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for Range which aren't around deletion, insertion, text replacement or
@@ -35,7 +35,7 @@ import org.junit.Test;
  */
 public final class TestRange {
     private static final POIDataSamples SAMPLES = POIDataSamples.getDocumentInstance();
-    
+
     @Test
     public void testFieldStripping() {
         String exp = "This is some text.";

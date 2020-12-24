@@ -17,7 +17,7 @@
 
 package org.apache.poi.hslf.record;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -26,7 +26,7 @@ import java.util.List;
 import org.apache.poi.hslf.exceptions.HSLFException;
 import org.apache.poi.hslf.model.textproperties.*;
 import org.apache.poi.util.HexDump;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that StyleTextPropAtom works properly
@@ -37,17 +37,17 @@ public final class TestStyleTextPropAtom {
     /** From a real file: a paragraph with 4 different styles */
     private static final byte[] data_a = new byte[] {
       0, 0, 0xA1-256, 0x0F, 0x2A, 0, 0, 0,
-      0x36, 00, 00, 00, // paragraph is 54 long
-      00, 00,           // (paragraph reserved field)
-      00, 00, 00, 00,   // it doesn't have any styles
-      0x15, 00, 00, 00, // first char run is 21 long
-      00, 00, 00, 00,   // it doesn't have any styles
-      0x11, 00, 00, 00, // second char run is 17 long
-      00, 00, 0x04, 00, // font.color only
-      00, 00, 00, 0x05, // blue
-      0x10, 00, 00, 00, // third char run is 16 long
-      00, 00, 0x04, 00, // font.color only
-      0xFF-256, 0x33, 00, 0xFE-256 // red
+      0x36, 0, 0, 0, // paragraph is 54 long
+      0, 0,           // (paragraph reserved field)
+      0, 0, 0, 0,   // it doesn't have any styles
+      0x15, 0, 0, 0, // first char run is 21 long
+      0, 0, 0, 0,   // it doesn't have any styles
+      0x11, 0, 0, 0, // second char run is 17 long
+      0, 0, 0x04, 0, // font.color only
+      0, 0, 0, 0x05, // blue
+      0x10, 0, 0, 0, // third char run is 16 long
+      0, 0, 0x04, 0, // font.color only
+      0xFF-256, 0x33, 0, 0xFE-256 // red
     };
     private static final int data_a_text_len = 0x36-1;
 
@@ -61,51 +61,51 @@ public final class TestStyleTextPropAtom {
      */
     private static final byte[] data_b = new byte[] {
         0, 0, 0xA1-256, 0x0F, 0x80-256, 0, 0, 0,
-        0x1E, 00, 00, 00,     // paragraph is 30 long
-        00, 00,               // paragraph reserved field
-        00, 0x18, 00, 00,     // mask is 0x1800
-        00, 00,               // left aligned
-        0x50, 00,             // line spacing 80
-        0x1C, 00, 00, 00,     // paragprah is 28 long
-        00, 00,               // paragraph reserved field
-        00, 0x10, 00, 00,     // mask is 0x1000
-        0x50, 00,             // line spacing 80
-        0x19, 00, 00, 00,     // paragraph is 25 long
-        00, 00,               // paragraph reserved field
-        00, 0x18, 00, 00,     // mask is 0x1800
-        02, 00,               // right aligned
-        0x50, 00,             // line spacing 80
-        0x61, 00, 00, 00,     // paragraph is 97 long
-        00, 00,               // paragraph reserved field
-        00, 0x18, 00, 00,     // mask is 0x1800
-        00, 00,               // left aligned
-        0x50, 00,             // line spacing 80
+        0x1E, 0, 0, 0,     // paragraph is 30 long
+        0, 0,               // paragraph reserved field
+        0, 0x18, 0, 0,     // mask is 0x1800
+        0, 0,               // left aligned
+        0x50, 0,             // line spacing 80
+        0x1C, 0, 0, 0,     // paragprah is 28 long
+        0, 0,               // paragraph reserved field
+        0, 0x10, 0, 0,     // mask is 0x1000
+        0x50, 0,             // line spacing 80
+        0x19, 0, 0, 0,     // paragraph is 25 long
+        0, 0,               // paragraph reserved field
+        0, 0x18, 0, 0,     // mask is 0x1800
+        0x02, 0,               // right aligned
+        0x50, 0,             // line spacing 80
+        0x61, 0, 0, 0,     // paragraph is 97 long
+        0, 0,               // paragraph reserved field
+        0, 0x18, 0, 0,     // mask is 0x1800
+        0, 0,               // left aligned
+        0x50, 0,             // line spacing 80
 
-        0x1E, 00, 00, 00,     // character run is 30 long
-        01, 00, 02, 00,       // mask is 0x020001
-        01, 00,               // char flags 0x0001 = bold
-        0x14, 00,             // font size 20
-        0x1C, 00, 00, 00,     // character run is 28 long
-        02, 00, 06, 00,       // mask is 0x060002
-        02, 00,               // char flags 0x0002 = italic
-        0x14, 00,             // font size 20
-        00, 00, 00, 05,       // colour blue
-        0x19, 00, 00, 00,     // character run is 25 long
-        00, 00, 06, 00,       // char flags 0x060000
-        0x14, 00,             // font size 20
-        0xFF-256, 0x33, 00, 0xFE-256, // colour red
-        0x60, 00, 00, 00,     // character run is 96 long
-        04, 00, 03, 00,       // mask is 0x030004
-        04, 00,               // char flags 0x0004 = underlined
-        01, 00,               // font index is 1
-        0x18, 00,             // font size 24
+        0x1E, 0, 0, 0,     // character run is 30 long
+        0x01, 0, 0x02, 0,       // mask is 0x020001
+        0x01, 0,               // char flags 0x0001 = bold
+        0x14, 0,             // font size 20
+        0x1C, 0, 0, 0,     // character run is 28 long
+        0x02, 0, 0x06, 0,       // mask is 0x060002
+        0x02, 0,               // char flags 0x0002 = italic
+        0x14, 0,             // font size 20
+        0, 0, 0, 0x05,       // colour blue
+        0x19, 0, 0, 0,     // character run is 25 long
+        0, 0, 0x06, 0,       // char flags 0x060000
+        0x14, 0,             // font size 20
+        0xFF-256, 0x33, 0, 0xFE-256, // colour red
+        0x60, 0, 0, 0,     // character run is 96 long
+        0x04, 0, 0x03, 0,       // mask is 0x030004
+        0x04, 0,               // char flags 0x0004 = underlined
+        0x01, 0,               // font index is 1
+        0x18, 0,             // font size 24
 
-        01, 00, 00, 00,       // character run is 1 long
-        04, 00, 07, 00,       // mask is 0x070004
-        04, 00,               // char flags 0x0004 = underlined
-        01, 00,               // font index is 1
-        0x18, 00,             // font size 24
-        0xFF-256, 0x33, 00, 0xFE-256 // colour red
+        0x01, 0, 0, 0,       // character run is 1 long
+        0x04, 0, 0x07, 0,       // mask is 0x070004
+        0x04, 0,               // char flags 0x0004 = underlined
+        0x01, 0,               // font index is 1
+        0x18, 0,             // font size 24
+        0xFF-256, 0x33, 0, 0xFE-256 // colour red
     };
     private static final int data_b_text_len = 0xB3;
 
@@ -376,7 +376,7 @@ public final class TestStyleTextPropAtom {
         assertEquals(0x0003, cf_4_1.getValue());
     }
 
-    @Test(expected=HSLFException.class)
+    @Test
     public void testFindAddTextProp() {
         StyleTextPropAtom stpb = new StyleTextPropAtom(data_b,0,data_b.length);
         stpb.setParentTextSize(data_b_text_len);
@@ -429,7 +429,7 @@ public final class TestStyleTextPropAtom {
         assertEquals(new_sa, b_p_2.getTextPropList().get(2));
 
         // Check we get an error with a made up one
-        b_p_2.addWithName("madeUpOne");
+        assertThrows(HSLFException.class, () -> b_p_2.addWithName("madeUpOne"));
     }
 
     /**
@@ -692,8 +692,8 @@ public final class TestStyleTextPropAtom {
         byte[] bytes = out.toByteArray();
 
         assertEquals(expected.length, bytes.length);
-        assertArrayEquals("Had: " + HexDump.toHex(expected) + "\nand: " + HexDump.toHex(bytes),
-                expected, bytes);
+        assertArrayEquals(expected, bytes,
+            "Had: " + HexDump.toHex(expected) + "\nand: " + HexDump.toHex(bytes));
     }
 
     @Test

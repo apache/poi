@@ -17,8 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 
@@ -27,7 +27,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestXSSFSheetRowGrouping {
 
@@ -310,20 +310,20 @@ public final class TestXSSFSheetRowGrouping {
 
         assertEquals(collapsed.length, hidden.length);
         assertEquals(collapsed.length, outlineLevel.length);
-        assertEquals("Expected " + collapsed.length + " rows with collapsed state, but had " + (sheet.getLastRowNum()-sheet.getFirstRowNum()+1) + " rows ("
-                + sheet.getFirstRowNum() + "-" + sheet.getLastRowNum() + ")",
-                collapsed.length, sheet.getLastRowNum()-sheet.getFirstRowNum()+1);
+        assertEquals(collapsed.length, sheet.getLastRowNum()-sheet.getFirstRowNum()+1,
+            "Expected " + collapsed.length + " rows with collapsed state, but had " + (sheet.getLastRowNum()-sheet.getFirstRowNum()+1) + " rows ("
+                + sheet.getFirstRowNum() + "-" + sheet.getLastRowNum() + ")");
         for(int i = sheet.getFirstRowNum(); i < sheet.getLastRowNum();i++) {
             if(collapsed[i-sheet.getFirstRowNum()] == null) {
                 continue;
             }
             XSSFRow row = (XSSFRow) sheet.getRow(i);
-            assertNotNull("Could not read row " + i, row);
-            assertNotNull("Could not read row " + i, row.getCTRow());
-            assertEquals("Row: " + i + ": collapsed", collapsed[i - sheet.getFirstRowNum()], row.getCTRow().getCollapsed());
-            assertEquals("Row: " + i + ": hidden", hidden[i-sheet.getFirstRowNum()], row.getCTRow().getHidden());
+            assertNotNull(row, "Could not read row " + i);
+            assertNotNull(row.getCTRow(), "Could not read row " + i);
+            assertEquals(collapsed[i - sheet.getFirstRowNum()], row.getCTRow().getCollapsed(), "Row: " + i + ": collapsed");
+            assertEquals(hidden[i-sheet.getFirstRowNum()], row.getCTRow().getHidden(), "Row: " + i + ": hidden");
 
-            assertEquals("Row: " + i + ": level", outlineLevel[i-sheet.getFirstRowNum()], row.getCTRow().getOutlineLevel());
+            assertEquals(outlineLevel[i-sheet.getFirstRowNum()], row.getCTRow().getOutlineLevel(), "Row: " + i + ": level");
         }
 
         writeToFile(wb);

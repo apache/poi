@@ -17,12 +17,12 @@
 
 package org.apache.poi.hssf.record.aggregates;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,7 +55,7 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.RecordFormatException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tess for {@link PageSettingsBlock}
@@ -228,7 +228,7 @@ public final class TestPageSettingsBlock {
 		List<org.apache.poi.hssf.record.Record> outRecs = new ArrayList<>();
 		psb.visitContainedRecords(outRecs::add);
 
-		assertNotEquals("PageSettingsBlock didn't add missing header/footer records", 2, outRecs.size());
+		assertNotEquals(2, outRecs.size(), "PageSettingsBlock didn't add missing header/footer records");
 
 		Class<?>[] act = outRecs.stream().map(Object::getClass).toArray(Class[]::new);
 		Class<?>[] exp = { HeaderRecord.class, FooterRecord.class, HCenterRecord.class, VCenterRecord.class};

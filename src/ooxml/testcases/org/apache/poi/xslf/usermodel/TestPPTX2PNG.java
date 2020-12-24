@@ -20,32 +20,27 @@
 package org.apache.poi.xslf.usermodel;
 
 import static java.util.Arrays.asList;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.xslf.util.PPTX2PNG;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Test class for testing PPTX2PNG utility which renders .ppt and .pptx slideshows
  */
 @SuppressWarnings("ConstantConditions")
-@RunWith(Parameterized.class)
 public class TestPPTX2PNG {
     private static boolean xslfOnly;
     private static final POIDataSamples samples = POIDataSamples.getSlideShowInstance();
@@ -63,7 +58,7 @@ public class TestPPTX2PNG {
     private static final String pdfFiles =
         "alterman_security.ppt";
 
-    @BeforeClass
+    @BeforeAll
     public static void checkHslf() {
         try {
             Class.forName("org.apache.poi.hslf.usermodel.HSLFSlideShow");
@@ -72,33 +67,29 @@ public class TestPPTX2PNG {
         }
     }
 
-    // use filename instead of File object to omit full pathname in test name
-    @Parameter
-    public String pptFile;
+    public static Stream<Arguments> data() {
+        Function<String, Stream<Arguments>> fun = (basedir == null)
+            ? (f) -> Stream.of(Arguments.of(f))
+            : (f) -> Stream.of(basedir.listFiles(p -> p.getName().matches(f))).map(File::getName).map(Arguments::of);
 
-
-
-    @Parameters(name="{0}")
-    public static Collection<String> data() {
-        Function<String, Stream<String>> fun = (basedir == null) ? Stream::of :
-            (f) -> Stream.of(basedir.listFiles(p -> p.getName().matches(f))).map(File::getName);
-
-        return Stream.of(files.split(", ?")).flatMap(fun).collect(Collectors.toList());
+        return Stream.of(files.split(", ?")).flatMap(fun);
     }
 
-    @Test
-    public void render() throws Exception {
-        assumeFalse("ignore HSLF (.ppt) / HEMF (.emf) / HWMF (.wmf) files in no-scratchpad run", xslfOnly && pptFile.matches(".*\\.(ppt|emf|wmf)$"));
-        PPTX2PNG.main(getArgs("null"));
+    // use filename instead of File object to omit full pathname in test name
+    @ParameterizedTest
+    @MethodSource("data")
+    public void render(String pptFile) throws Exception {
+        assumeFalse(xslfOnly && pptFile.matches(".*\\.(ppt|emf|wmf)$"), "ignore HSLF (.ppt) / HEMF (.emf) / HWMF (.wmf) files in no-scratchpad run");
+        PPTX2PNG.main(getArgs(pptFile, "null"));
         if (svgFiles.contains(pptFile)) {
-            PPTX2PNG.main(getArgs("svg"));
+            PPTX2PNG.main(getArgs(pptFile, "svg"));
         }
         if (pdfFiles.contains(pptFile)) {
-            PPTX2PNG.main(getArgs("pdf"));
+            PPTX2PNG.main(getArgs(pptFile, "pdf"));
         }
     }
 
-    private String[] getArgs(String format) throws IOException {
+    private String[] getArgs(String pptFile, String format) throws IOException {
         File tmpDir = new File("build/tmp/");
 
         // fix maven build errors

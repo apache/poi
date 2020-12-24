@@ -18,11 +18,10 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
@@ -32,177 +31,134 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test FilteringDirectoryNode functionality
  */
 public final class TestFilteringDirectoryNode {
-   private POIFSFileSystem fs;
-   private DirectoryEntry dirA;
-   private DirectoryEntry dirAA;
-   private DirectoryEntry dirB;
-   private DocumentEntry eRoot;
-   private DocumentEntry eA;
-   private DocumentEntry eAA;
+    private POIFSFileSystem fs;
+    private DirectoryEntry dirA;
+    private DirectoryEntry dirAA;
+    private DirectoryEntry dirB;
+    private DocumentEntry eRoot;
+    private DocumentEntry eA;
+    private DocumentEntry eAA;
 
-   @Before
-   public void setUp() throws Exception {
-      fs = new POIFSFileSystem();
-      dirA = fs.createDirectory("DirA");
-      dirB = fs.createDirectory("DirB");
-      dirAA = dirA.createDirectory("DirAA");
-      eRoot = fs.getRoot().createDocument("Root", new ByteArrayInputStream(new byte[]{}));
-      eA = dirA.createDocument("NA", new ByteArrayInputStream(new byte[]{}));
-      eAA = dirAA.createDocument("NAA", new ByteArrayInputStream(new byte[]{}));
-   }
+    @BeforeEach
+    public void setUp() throws Exception {
+        fs = new POIFSFileSystem();
+        dirA = fs.createDirectory("DirA");
+        dirB = fs.createDirectory("DirB");
+        dirAA = dirA.createDirectory("DirAA");
+        eRoot = fs.getRoot().createDocument("Root", new ByteArrayInputStream(new byte[]{}));
+        eA = dirA.createDocument("NA", new ByteArrayInputStream(new byte[]{}));
+        eAA = dirAA.createDocument("NAA", new ByteArrayInputStream(new byte[]{}));
+    }
 
-   @Test
-   public void testNoFiltering() throws Exception {
-      FilteringDirectoryNode d = new FilteringDirectoryNode(fs.getRoot(), new HashSet<>());
-      assertEquals(3, d.getEntryCount());
-      assertEquals(dirA.getName(), d.getEntry(dirA.getName()).getName());
+    @Test
+    public void testNoFiltering() throws Exception {
+        FilteringDirectoryNode d = new FilteringDirectoryNode(fs.getRoot(), new HashSet<>());
+        assertEquals(3, d.getEntryCount());
+        assertEquals(dirA.getName(), d.getEntry(dirA.getName()).getName());
 
-       assertTrue(d.getEntry(dirA.getName()).isDirectoryEntry());
-       assertFalse(d.getEntry(dirA.getName()).isDocumentEntry());
+        assertTrue(d.getEntry(dirA.getName()).isDirectoryEntry());
+        assertFalse(d.getEntry(dirA.getName()).isDocumentEntry());
 
-       assertTrue(d.getEntry(dirB.getName()).isDirectoryEntry());
-       assertFalse(d.getEntry(dirB.getName()).isDocumentEntry());
+        assertTrue(d.getEntry(dirB.getName()).isDirectoryEntry());
+        assertFalse(d.getEntry(dirB.getName()).isDocumentEntry());
 
-       assertFalse(d.getEntry(eRoot.getName()).isDirectoryEntry());
-       assertTrue(d.getEntry(eRoot.getName()).isDocumentEntry());
+        assertFalse(d.getEntry(eRoot.getName()).isDirectoryEntry());
+        assertTrue(d.getEntry(eRoot.getName()).isDocumentEntry());
 
-       Iterator<Entry> i = d.getEntries();
-       assertEquals(dirA, i.next());
-       assertEquals(dirB, i.next());
-       assertEquals(eRoot, i.next());
-       try {
-           assertNull(i.next());
-           fail("Should throw NoSuchElementException when depleted");
-       } catch (NoSuchElementException ignored) {
-       }
-   }
+        Iterator<Entry> i = d.getEntries();
+        assertEquals(dirA, i.next());
+        assertEquals(dirB, i.next());
+        assertEquals(eRoot, i.next());
+        assertThrows(NoSuchElementException.class, i::next, "Should throw NoSuchElementException when depleted");
+    }
 
-   @Test
-   public void testChildFiltering() throws Exception {
-      List<String> excl = Arrays.asList("NotThere", "AlsoNotThere", eRoot.getName());
-      FilteringDirectoryNode d = new FilteringDirectoryNode(fs.getRoot(), excl);
+    @Test
+    public void testChildFiltering() throws Exception {
+        List<String> excl = Arrays.asList("NotThere", "AlsoNotThere", eRoot.getName());
+        FilteringDirectoryNode d1 = new FilteringDirectoryNode(fs.getRoot(), excl);
 
-      assertEquals(2, d.getEntryCount());
-       assertTrue(d.hasEntry(dirA.getName()));
-       assertTrue(d.hasEntry(dirB.getName()));
-       assertFalse(d.hasEntry(eRoot.getName()));
+        assertEquals(2, d1.getEntryCount());
+        assertTrue(d1.hasEntry(dirA.getName()));
+        assertTrue(d1.hasEntry(dirB.getName()));
+        assertFalse(d1.hasEntry(eRoot.getName()));
 
-      assertEquals(dirA, d.getEntry(dirA.getName()));
-      assertEquals(dirB, d.getEntry(dirB.getName()));
-      try {
-         d.getEntry(eRoot.getName());
-         fail("Should be filtered");
-      } catch (FileNotFoundException e) {
-      }
+        assertEquals(dirA, d1.getEntry(dirA.getName()));
+        assertEquals(dirB, d1.getEntry(dirB.getName()));
+        assertThrows(FileNotFoundException.class, () -> d1.getEntry(eRoot.getName()));
 
-      Iterator<Entry> i = d.getEntries();
-      assertEquals(dirA, i.next());
-      assertEquals(dirB, i.next());
-      try {
-          assertNull(i.next());
-          fail("Should throw NoSuchElementException when depleted");
-      } catch (NoSuchElementException ignored) {
-      }
+        Iterator<Entry> i = d1.getEntries();
+        assertEquals(dirA, i.next());
+        assertEquals(dirB, i.next());
+        assertThrows(NoSuchElementException.class, i::next, "Should throw NoSuchElementException when depleted");
 
 
-      // Filter more
-      excl = Arrays.asList("NotThere", "AlsoNotThere", eRoot.getName(), dirA.getName());
-      d = new FilteringDirectoryNode(fs.getRoot(), excl);
+        // Filter more
+        excl = Arrays.asList("NotThere", "AlsoNotThere", eRoot.getName(), dirA.getName());
+        FilteringDirectoryNode d2 = new FilteringDirectoryNode(fs.getRoot(), excl);
 
-      assertEquals(1, d.getEntryCount());
-       assertFalse(d.hasEntry(dirA.getName()));
-       assertTrue(d.hasEntry(dirB.getName()));
-       assertFalse(d.hasEntry(eRoot.getName()));
+        assertEquals(1, d2.getEntryCount());
+        assertFalse(d2.hasEntry(dirA.getName()));
+        assertTrue(d2.hasEntry(dirB.getName()));
+        assertFalse(d2.hasEntry(eRoot.getName()));
+        assertThrows(FileNotFoundException.class, () -> d2.getEntry(dirA.getName()), "Should be filtered");
+        assertEquals(dirB, d2.getEntry(dirB.getName()));
+        assertThrows(FileNotFoundException.class, () -> d2.getEntry(eRoot.getName()), "Should be filtered");
 
-      try {
-         d.getEntry(dirA.getName());
-         fail("Should be filtered");
-      } catch (FileNotFoundException e) {
-      }
-      assertEquals(dirB, d.getEntry(dirB.getName()));
-      try {
-         d.getEntry(eRoot.getName());
-         fail("Should be filtered");
-      } catch (FileNotFoundException e) {
-      }
+        i = d2.getEntries();
+        assertEquals(dirB, i.next());
+        assertThrows(NoSuchElementException.class, i::next, "Should throw NoSuchElementException when depleted");
 
-      i = d.getEntries();
-      assertEquals(dirB, i.next());
-       try {
-           assertNull(i.next());
-           fail("Should throw NoSuchElementException when depleted");
-       } catch (NoSuchElementException ignored) {
-       }
+        // Filter everything
+        excl = Arrays.asList("NotThere", eRoot.getName(), dirA.getName(), dirB.getName());
+        FilteringDirectoryNode d3 = new FilteringDirectoryNode(fs.getRoot(), excl);
 
+        assertEquals(0, d3.getEntryCount());
+        assertFalse(d3.hasEntry(dirA.getName()));
+        assertFalse(d3.hasEntry(dirB.getName()));
+        assertFalse(d3.hasEntry(eRoot.getName()));
+        assertThrows(FileNotFoundException.class, () -> d3.getEntry(dirA.getName()), "Should be filtered");
+        assertThrows(FileNotFoundException.class, () -> d3.getEntry(dirB.getName()), "Should be filtered");
+        assertThrows(FileNotFoundException.class, () -> d3.getEntry(eRoot.getName()), "Should be filtered");
 
-      // Filter everything
-      excl = Arrays.asList("NotThere", eRoot.getName(), dirA.getName(), dirB.getName());
-      d = new FilteringDirectoryNode(fs.getRoot(), excl);
+        i = d3.getEntries();
+        assertThrows(NoSuchElementException.class, i::next, "Should throw NoSuchElementException when depleted");
+    }
 
-      assertEquals(0, d.getEntryCount());
-       assertFalse(d.hasEntry(dirA.getName()));
-       assertFalse(d.hasEntry(dirB.getName()));
-       assertFalse(d.hasEntry(eRoot.getName()));
+    @Test
+    public void testNestedFiltering() throws Exception {
+        List<String> excl = Arrays.asList(dirA.getName() + "/" + "MadeUp",
+            dirA.getName() + "/" + eA.getName(),
+            dirA.getName() + "/" + dirAA.getName() + "/Test",
+            eRoot.getName());
+        FilteringDirectoryNode d = new FilteringDirectoryNode(fs.getRoot(), excl);
 
-      try {
-         d.getEntry(dirA.getName());
-         fail("Should be filtered");
-      } catch (FileNotFoundException e) {
-      }
-      try {
-         d.getEntry(dirB.getName());
-         fail("Should be filtered");
-      } catch (FileNotFoundException e) {
-      }
-      try {
-         d.getEntry(eRoot.getName());
-         fail("Should be filtered");
-      } catch (FileNotFoundException e) {
-      }
+        // Check main
+        assertEquals(2, d.getEntryCount());
+        assertTrue(d.hasEntry(dirA.getName()));
+        assertTrue(d.hasEntry(dirB.getName()));
+        assertFalse(d.hasEntry(eRoot.getName()));
 
-      i = d.getEntries();
-       try {
-           assertNull(i.next());
-           fail("Should throw NoSuchElementException when depleted");
-       } catch (NoSuchElementException ignored) {
-       }
-   }
+        // Check filtering down
+        assertTrue(d.getEntry(dirA.getName()) instanceof FilteringDirectoryNode);
+        assertFalse(d.getEntry(dirB.getName()) instanceof FilteringDirectoryNode);
 
-   @Test
-   public void testNestedFiltering() throws Exception {
-      List<String> excl = Arrays.asList(dirA.getName() + "/" + "MadeUp",
-                                        dirA.getName() + "/" + eA.getName(),
-                                        dirA.getName() + "/" + dirAA.getName() + "/Test",
-                                        eRoot.getName());
-      FilteringDirectoryNode d = new FilteringDirectoryNode(fs.getRoot(), excl);
+        DirectoryEntry fdA = (DirectoryEntry) d.getEntry(dirA.getName());
+        assertFalse(fdA.hasEntry(eA.getName()));
+        assertTrue(fdA.hasEntry(dirAA.getName()));
 
-      // Check main
-      assertEquals(2, d.getEntryCount());
-       assertTrue(d.hasEntry(dirA.getName()));
-       assertTrue(d.hasEntry(dirB.getName()));
-       assertFalse(d.hasEntry(eRoot.getName()));
+        DirectoryEntry fdAA = (DirectoryEntry) fdA.getEntry(dirAA.getName());
+        assertTrue(fdAA.hasEntry(eAA.getName()));
+    }
 
-      // Check filtering down
-       assertTrue(d.getEntry(dirA.getName()) instanceof FilteringDirectoryNode);
-       assertFalse(d.getEntry(dirB.getName()) instanceof FilteringDirectoryNode);
-
-      DirectoryEntry fdA = (DirectoryEntry) d.getEntry(dirA.getName());
-       assertFalse(fdA.hasEntry(eA.getName()));
-       assertTrue(fdA.hasEntry(dirAA.getName()));
-
-      DirectoryEntry fdAA = (DirectoryEntry) fdA.getEntry(dirAA.getName());
-       assertTrue(fdAA.hasEntry(eAA.getName()));
-   }
-
-   @Test(expected = IllegalArgumentException.class)
-   public void testNullDirectory() {
-      new FilteringDirectoryNode(null, null);
-   }
+    @Test
+    public void testNullDirectory() {
+        assertThrows(IllegalArgumentException.class, () -> new FilteringDirectoryNode(null, null));
+    }
 }

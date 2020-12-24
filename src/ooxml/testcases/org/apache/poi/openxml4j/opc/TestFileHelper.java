@@ -17,13 +17,13 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.util.TreeMap;
 
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test TestFileHelper class.

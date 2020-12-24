@@ -16,18 +16,18 @@
 ==================================================================== */
 package org.apache.poi.hwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.HWPFDocument;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestTableRow {
     private static final POIDataSamples SAMPLES = POIDataSamples.getDocumentInstance();
-    
+
     @Test
     public void testInnerTableCellsDetection() throws IOException {
         InputStream is = SAMPLES.openResourceAsStream( "innertable.doc" );
@@ -62,7 +62,7 @@ public class TestTableRow {
         assertEquals( 3, outerTable.getRow( 0 ).numCells() );
         assertEquals( 3, outerTable.getRow( 1 ).numCells() );
         assertEquals( 3, outerTable.getRow( 2 ).numCells() );
-        
+
         hwpfDocument.close();
     }
 

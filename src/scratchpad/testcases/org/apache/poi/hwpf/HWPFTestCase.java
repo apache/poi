@@ -21,13 +21,13 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
-import org.junit.After;
-import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 
 public abstract class HWPFTestCase {
     protected HWPFDocFixture _hWPFDocFixture;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         /** @todo verify the constructors */
         _hWPFDocFixture = new HWPFDocFixture(this, getTestFile());
@@ -39,7 +39,7 @@ public abstract class HWPFTestCase {
         return HWPFDocFixture.DEFAULT_TEST_FILE;
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws Exception {
         if (_hWPFDocFixture != null) {
             _hWPFDocFixture.tearDown();

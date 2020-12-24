@@ -17,7 +17,7 @@
 
 package org.apache.poi.hssf.record;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,7 +27,7 @@ import java.util.List;
 
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexRead;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the record factory
@@ -123,25 +123,19 @@ public final class TestRecordFactory {
 
 		ByteArrayInputStream bois = new ByteArrayInputStream(data);
 		Record[] records = RecordFactory.createRecords(bois).toArray(new Record[0]);
-		assertEquals("Created record count", 3, records.length);
-		assertEquals("1st record's type",
-					 UnknownRecord.class.getName(),
-					 records[ 0 ].getClass().getName());
-		assertEquals("1st record's sid", (short)-256, records[0].getSid());
-		assertEquals("2nd record's type",
-					 ContinueRecord.class.getName(),
-					 records[ 1 ].getClass().getName());
+		assertEquals(3, records.length, "Created record count");
+		assertEquals(UnknownRecord.class.getName(), records[ 0 ].getClass().getName(), "1st record's type");
+		assertEquals((short)-256, records[0].getSid(), "1st record's sid");
+		assertEquals(ContinueRecord.class.getName(), records[ 1 ].getClass().getName(), "2nd record's type");
 		ContinueRecord record = (ContinueRecord) records[1];
-		assertEquals("2nd record's sid", 0x3C, record.getSid());
-		assertEquals("1st data byte", 1, record.getData()[ 0 ]);
-		assertEquals("2nd data byte", 2, record.getData()[ 1 ]);
-		assertEquals("3rd data byte", 3, record.getData()[ 2 ]);
-		assertEquals("3rd record's type",
-					 ContinueRecord.class.getName(),
-					 records[ 2 ].getClass().getName());
+		assertEquals(0x3C, record.getSid(), "2nd record's sid");
+		assertEquals(1, record.getData()[ 0 ], "1st data byte");
+		assertEquals(2, record.getData()[ 1 ], "2nd data byte");
+		assertEquals(3, record.getData()[ 2 ], "3rd data byte");
+		assertEquals(ContinueRecord.class.getName(), records[ 2 ].getClass().getName(), "3rd record's type");
 		record = (ContinueRecord) records[2];
-		assertEquals("3nd record's sid", 0x3C, record.getSid());
-		assertEquals("4th data byte", 4, record.getData()[ 0 ]);
+		assertEquals(0x3C, record.getSid(), "3nd record's sid");
+		assertEquals(4, record.getData()[ 0 ], "4th data byte");
 	}
 
 	/**
@@ -151,10 +145,8 @@ public final class TestRecordFactory {
 	 */
     @Test
 	public void testMixedContinue() throws IOException {
-		/**
-		 *  Adapted from a real test sample file 39512.xls (Offset 0x4854).
-		 *  See Bug 39512 for details.
-		 */
+		// Adapted from a real test sample file 39512.xls (Offset 0x4854).
+		// See Bug 39512 for details.
 		String dump =
 				//OBJ
 				"5D 00 48 00 15 00 12 00 0C 00 3C 00 11 00 A0 2E 03 01 CC 42 " +

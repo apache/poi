@@ -18,12 +18,12 @@
 package org.apache.poi.hssf.record;
 
 import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -42,7 +42,7 @@ import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.util.LittleEndian;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the serialization and deserialization of the TestCFRuleRecord
@@ -387,8 +387,9 @@ public final class TestCFRuleRecord {
             assertEquals(3, LittleEndian.getShort(data, 8));
 
             int flags = LittleEndian.getInt(data, 10);
-            assertEquals("unused flags should be 111", 0x00380000, flags & 0x00380000);
-            assertEquals("undocumented flags should be 0000", 0, flags & 0x03C00000); // Otherwise Excel gets unhappy
+            assertEquals(0x00380000, flags & 0x00380000, "unused flags should be 111");
+            // Otherwise Excel gets unhappy
+            assertEquals(0, flags & 0x03C00000, "undocumented flags should be 0000");
             // check all remaining flag bits (some are not well understood yet)
             assertEquals(0x203FFFFF, flags);
         }
@@ -415,7 +416,7 @@ public final class TestCFRuleRecord {
         CFRuleRecord rr = new CFRuleRecord(is);
         Ptg[] ptgs = rr.getParsedExpression1();
         assertEquals(3, ptgs.length);
-        assertFalse("Identified bug 45234", ptgs[0] instanceof RefPtg);
+        assertFalse(ptgs[0] instanceof RefPtg, "Identified bug 45234");
         assertEquals(RefNPtg.class, ptgs[0].getClass());
         RefNPtg refNPtg = (RefNPtg) ptgs[0];
         assertTrue(refNPtg.isColRelative());

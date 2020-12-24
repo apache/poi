@@ -20,7 +20,7 @@ package org.apache.poi.hssf.usermodel;
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleWorkbook;
 import static org.apache.poi.hssf.HSSFTestDataSamples.writeOutAndReadBack;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -88,11 +88,11 @@ import org.apache.poi.ss.usermodel.SheetVisibility;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.AfterClass;
-import org.junit.Assume;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testcases for bugs entered in bugzilla
@@ -110,7 +110,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     private static final Map<String,HSSFFormulaEvaluator> SIMPLE_REFS = new LinkedHashMap<>();
 
     // References used for the simpleTest convenience method
-    @BeforeClass
+    @BeforeAll
     public static void initSimpleRefs() {
         String[] refs = {
             "Calculations",
@@ -138,7 +138,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         LocaleUtil.setUserLocale(Locale.US);
     }
 
-    @AfterClass
+    @AfterAll
     public static void cleanUpRefs() {
         SIMPLE_REFS.clear();
     }
@@ -837,7 +837,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * Problems with extracting check boxes from
      * HSSFObjectData
      */
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void bug44840() throws Exception {
         try (HSSFWorkbook wb = openSampleWorkbook("WithCheckBoxes.xls")) {
 
@@ -863,7 +863,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             assertEquals(12, obj.getObjectData().length);
             assertEquals("Forms.CheckBox.1", obj.getOLE2ClassName());
 
-            obj.getDirectory();
+            assertThrows(IllegalArgumentException.class, obj::getDirectory);
         }
     }
 
@@ -1001,13 +1001,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             //  formula cells, so we can see it updates properly
             c3.setCellValue(new HSSFRichTextString("test"));
             confirmCachedValue("test", c3);
-            try {
-                c3.getNumericCellValue();
-                fail("exception should have been thrown");
-            } catch (IllegalStateException e) {
-                assertEquals("Cannot get a NUMERIC value from a STRING formula cell", e.getMessage());
-            }
-
+            IllegalStateException e = assertThrows(IllegalStateException.class, c3::getNumericCellValue);
+            assertEquals("Cannot get a NUMERIC value from a STRING formula cell", e.getMessage());
 
             // Now evaluate, they should all be changed
             HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb1);
@@ -1082,7 +1077,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * <p>
      * Expected ExpPtg to be converted from Shared to Non-Shared...
      */
-    @Ignore("For now, blows up with an exception from ExtPtg")
+    @Disabled("For now, blows up with an exception from ExtPtg")
     @Test
     public void test43623() throws Exception {
         try (HSSFWorkbook wb1 = openSampleWorkbook("43623.xls")) {
@@ -1913,12 +1908,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
             // Will show as the center, as that is what excel does
             //  with an invalid footer lacking left/right/center details
-            assertEquals("Left text should be empty", "", f.getLeft());
-            assertEquals("Right text should be empty", "", f.getRight());
-            assertEquals(
-                    "Center text should contain the illegal value",
-                    "BlahBlah blah blah  ", f.getCenter()
-            );
+            assertEquals("", f.getLeft(), "Left text should be empty");
+            assertEquals("", f.getRight(), "Right text should be empty");
+            assertEquals("BlahBlah blah blah  ", f.getCenter(),
+                "Center text should contain the illegal value");
         }
     }
 
@@ -2226,9 +2219,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      * Normally encrypted files have BOF then FILEPASS, but
      * some may squeeze a WRITEPROTECT in the middle
      */
-    @Test(expected = EncryptedDocumentException.class)
-    public void bug51832() throws IOException {
-        simpleTest("51832.xls");
+    @Test
+    public void bug51832() {
+        assertThrows(EncryptedDocumentException.class, () -> simpleTest("51832.xls"));
     }
 
     @Test
@@ -2265,9 +2258,9 @@ public final class TestBugs extends BaseTestBugzillaIssues {
 
             // Problem 3: These used to fail, now pass
             HSSFFormulaEvaluator eval = new HSSFFormulaEvaluator(wb);
-            assertEquals("evaluating c1", 30.0, eval.evaluate(c1).getNumberValue(), 0.001);
-            assertEquals("evaluating d1", 30.0, eval.evaluate(d1).getNumberValue(), 0.001);
-            assertEquals("evaluating e1", 30.0, eval.evaluate(e1).getNumberValue(), 0.001);
+            assertEquals(30.0, eval.evaluate(c1).getNumberValue(), 0.001, "evaluating c1");
+            assertEquals(30.0, eval.evaluate(d1).getNumberValue(), 0.001, "evaluating d1");
+            assertEquals(30.0, eval.evaluate(e1).getNumberValue(), 0.001, "evaluating e1");
         }
     }
 
@@ -2697,7 +2690,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             try {
                 bimage = ImageIO.read(structURL);
             } catch (IOException e) {
-                Assume.assumeNoException("Downloading a jpg from poi.apache.org should work", e);
+                Assumptions.assumeFalse(true, "Downloading a jpg from poi.apache.org should work");
                 return;
             }
 
@@ -2711,7 +2704,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             // Pop structure into Structure HSSFSheet
             int pict = wb.addPicture(imageBytes, HSSFWorkbook.PICTURE_TYPE_JPEG);
             Sheet sheet = wb.getSheet("Structure");
-            assertNotNull("Did not find sheet", sheet);
+            assertNotNull(sheet, "Did not find sheet");
             HSSFPatriarch patriarch = (HSSFPatriarch) sheet.createDrawingPatriarch();
             HSSFClientAnchor anchor = new HSSFClientAnchor(0, 0, 0, 0, (short) 1, 1, (short) 10, 22);
             anchor.setAnchorType(AnchorType.MOVE_DONT_RESIZE);

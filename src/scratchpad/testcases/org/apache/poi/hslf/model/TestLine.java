@@ -25,7 +25,7 @@ import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineCompound;
 import org.apache.poi.sl.usermodel.StrokeStyle.LineDash;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test Line shape.
@@ -126,7 +126,7 @@ public final class TestLine {
         line.setLineCompound(LineCompound.DOUBLE);
         line.setLineWidth(8.0);
         slide.addShape(line);
-        
+
         ppt.close();
     }
 }

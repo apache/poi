@@ -16,57 +16,57 @@
 ==================================================================== */
 package org.apache.poi.ss.excelant.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestExcelAntEvaluationResult {
 	private ExcelAntEvaluationResult fixture;
-	
+
 	private boolean completedWithError;
     private boolean passed;
-    private double retValue  = 1.1; 
-    private String errMessage = "error message";  
-    private double delta = 2.2; 
+    private double retValue  = 1.1;
+    private String errMessage = "error message";
+    private double delta = 2.2;
     private String cellId = "testCell!$F$1";
-    
-    @Before
+
+    @BeforeEach
 	public void setUp() {
 		fixture = new ExcelAntEvaluationResult(completedWithError,
-				                                passed, 
+				                                passed,
 				                                retValue,
-				                                errMessage, 
+				                                errMessage,
 				                                delta,
 				                                cellId);
 	}
-	
-    @After
+
+    @AfterEach
 	public void tearDown() {
 		fixture = null;
 	}
-	
+
     @Test
 	public void testCompletedWithErrorMessage() {
 		String errMsg = fixture.getErrorMessage();
  		assertNotNull(errMsg);
  		assertEquals(errMsg, errMessage);
 	}
-	
+
     @Test
 	public void testPassed() {
 		boolean passedValue = fixture.didTestPass();
 		assertEquals(passedValue, passed);
 	}
-	
+
     @Test
 	public void testDelta() {
 		double deltaValue = fixture.getDelta();
 		assertEquals(deltaValue, delta, 0.0);
 	}
-	
+
     @Test
 	public void testCellId() {
 		String cellIdValue = fixture.getCellName();

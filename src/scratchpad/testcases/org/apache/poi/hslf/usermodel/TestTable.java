@@ -19,10 +19,10 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
@@ -34,7 +34,7 @@ import java.util.List;
 import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.sl.draw.DrawTableShape;
 import org.apache.poi.sl.usermodel.StrokeStyle;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 /**
@@ -50,6 +50,7 @@ public class TestTable {
         for (int row=0; row<rows; row++) {
             for (int col=0; col<cols; col++) {
                 HSLFTableCell c = table.getCell(row, col);
+                assertNotNull(c);
                 c.setText("r"+row+"c"+col);
             }
         }
@@ -59,20 +60,20 @@ public class TestTable {
         table.setAnchor(new Rectangle2D.Double(100, 100, 400, 400));
 
         Rectangle2D rectExp = new Rectangle2D.Double(420,366.625,80,133.375);
-        Rectangle2D rectAct = table.getCell(rows-1, cols-1).getAnchor();
+        HSLFTableCell c = table.getCell(rows - 1, cols - 1);
+        assertNotNull(c);
+        Rectangle2D rectAct = c.getAnchor();
         assertEquals(rectExp, rectAct);
         ppt.close();
     }
 
     @Test
     public void testTable() throws IOException {
-		HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("54111.ppt");
-		assertTrue("No Exceptions while reading file", true);
-
-		List<HSLFSlide> slides = ppt.getSlides();
-		assertEquals(1, slides.size());
-		checkSlide(slides.get(0));
-		ppt.close();
+		try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("54111.ppt")) {
+            List<HSLFSlide> slides = ppt.getSlides();
+            assertEquals(1, slides.size());
+            checkSlide(slides.get(0));
+        }
 	}
 
 	private void checkSlide(final HSLFSlide s) {
@@ -94,9 +95,13 @@ public class TestTable {
 		assertEquals(4, table.getNumberOfColumns());
 		assertEquals(6, table.getNumberOfRows());
 		for (int x = 0; x < 4; x ++) {
-			assertEquals("TH Cell " + (x + 1), HSLFTextParagraph.getRawText(table.getCell(0, x).getTextParagraphs()));
+            HSLFTableCell c = table.getCell(0, x);
+            assertNotNull(c);
+			assertEquals("TH Cell " + (x + 1), HSLFTextParagraph.getRawText(c.getTextParagraphs()));
 			for (int y = 1; y < 6; y++) {
-				assertEquals("Row " + y + ", Cell " + (x + 1), table.getCell(y, x).getText());
+			    c = table.getCell(y, x);
+			    assertNotNull(c);
+				assertEquals("Row " + y + ", Cell " + (x + 1), c.getText());
 			}
 		}
 	}
@@ -112,6 +117,7 @@ public class TestTable {
         for (int row=0; row<rows; row++) {
             for (int col=0; col<cols; col++) {
                 HSLFTableCell c = tab.getCell(row, col);
+                assertNotNull(c);
                 c.setText("r"+(row+1)+"c"+(col+1));
             }
         }
@@ -130,6 +136,7 @@ public class TestTable {
         for (int row=0; row<rows; row++) {
             for (int col=0; col<cols; col++) {
                 HSLFTableCell c = tab.getCell(row, col);
+                assertNotNull(c);
                 c.setText(c.getText()+"...");
             }
         }
@@ -148,6 +155,7 @@ public class TestTable {
         for (int row=0; row<rows; row++) {
             for (int col=0; col<cols; col++) {
                 HSLFTableCell c = tab.getCell(row, col);
+                assertNotNull(c);
                 assertEquals("r"+(row+1)+"c"+(col+1)+"...", c.getText());
             }
         }

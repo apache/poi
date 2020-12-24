@@ -21,26 +21,26 @@ import java.io.PrintStream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.NullPrintStream;
-import org.junit.After;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 public class TestHWPFLister {
     private static PrintStream oldStdOut;
 
-    @BeforeClass
+    @BeforeAll
     public static void muteStdout() {
         oldStdOut = System.out;
         System.setOut(new NullPrintStream());
     }
 
-    @AfterClass
+    @AfterAll
     public static void restoreStdout() {
         System.setOut(oldStdOut);
     }
 
-    @After
+    @AfterEach
     public void tearDown() {
         // the main-method sets these properties, we need to revert them here to not affect other tests
         System.clearProperty("org.apache.poi.hwpf.preserveBinTables");

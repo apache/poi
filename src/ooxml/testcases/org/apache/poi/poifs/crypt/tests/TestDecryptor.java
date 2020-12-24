@@ -16,10 +16,10 @@
 ==================================================================== */
 package org.apache.poi.poifs.crypt.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,7 +27,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.GeneralSecurityException;
-import java.util.stream.IntStream;
 
 import javax.crypto.Cipher;
 
@@ -39,8 +38,7 @@ import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestDecryptor {
     private static final POIDataSamples samples = POIDataSamples.getPOIFSInstance();
@@ -94,7 +92,7 @@ public class TestDecryptor {
                 byte[] buf = new byte[10];
                 int readBytes = zin.read(buf);
                 // zin.available() doesn't work for entries
-                assertEquals("size failed for " + entry.getName(), 1, readBytes);
+                assertEquals(1, readBytes, "size failed for " + entry.getName());
             }
         }
     }
@@ -142,17 +140,14 @@ public class TestDecryptor {
 
             final ByteArrayOutputStream bos = new ByteArrayOutputStream(10000);
             try (final ZipArchiveInputStream zis = new ZipArchiveInputStream(d.getDataStream(fs))) {
-                IntStream.of(3711, 1155, 445, 9376, 450, 588, 1337, 2593, 304, 7910).forEach(size -> {
-                    try {
-                        final ZipArchiveEntry ze = zis.getNextZipEntry();
-                        assertNotNull(ze);
-                        IOUtils.copy(zis, bos);
-                        assertEquals(size, bos.size());
-                        bos.reset();
-                    } catch (IOException e) {
-                        fail(e.getMessage());
-                    }
-                });
+                int[] sizes = { 3711, 1155, 445, 9376, 450, 588, 1337, 2593, 304, 7910 };
+                for (int size : sizes) {
+                    final ZipArchiveEntry ze = zis.getNextZipEntry();
+                    assertNotNull(ze);
+                    IOUtils.copy(zis, bos);
+                    assertEquals(size, bos.size());
+                    bos.reset();
+                }
             }
         }
     }
@@ -170,7 +165,7 @@ public class TestDecryptor {
     @Test
     public void bug60320() throws IOException, GeneralSecurityException {
         int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
-        Assume.assumeTrue("Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256", maxKeyLen == 2147483647);
+        assumeTrue(maxKeyLen == 0x7FFFFFFF, "Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256");
 
         try (InputStream is = samples.openResourceAsStream("60320-protected.xlsx");
             POIFSFileSystem fs = new POIFSFileSystem(is)) {

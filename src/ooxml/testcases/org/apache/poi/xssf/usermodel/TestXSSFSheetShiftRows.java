@@ -23,11 +23,11 @@ import org.apache.poi.ss.util.CellUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
@@ -61,34 +61,34 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
     /**  negative row shift causes corrupted data or throws exception */
     @Test
     public void testBug53798() throws IOException {
-        // NOTE that for HSSF (.xls) negative shifts combined with positive ones do work as expected  
+        // NOTE that for HSSF (.xls) negative shifts combined with positive ones do work as expected
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("53798.xlsx");
 
         Sheet testSheet    = wb.getSheetAt(0);
-        // 1) corrupted xlsx (unreadable data in the first row of a shifted group) already comes about  
+        // 1) corrupted xlsx (unreadable data in the first row of a shifted group) already comes about
         // when shifted by less than -1 negative amount (try -2)
         testSheet.shiftRows(3, 3, -2);
-        
+
         // 2) attempt to create a new row IN PLACE of a removed row by a negative shift causes corrupted
-        // xlsx file with  unreadable data in the negative shifted row. 
+        // xlsx file with  unreadable data in the negative shifted row.
         // NOTE it's ok to create any other row.
         Row newRow = testSheet.createRow(3);
         Cell newCell = newRow.createCell(0);
         newCell.setCellValue("new Cell in row "+newRow.getRowNum());
-        
-        // 3) once a negative shift has been made any attempt to shift another group of rows 
-        // (note: outside of previously negative shifted rows) by a POSITIVE amount causes POI exception: 
+
+        // 3) once a negative shift has been made any attempt to shift another group of rows
+        // (note: outside of previously negative shifted rows) by a POSITIVE amount causes POI exception:
         // org.apache.xmlbeans.impl.values.XmlValueDisconnectedException.
-        // NOTE: another negative shift on another group of rows is successful, provided no new rows in  
+        // NOTE: another negative shift on another group of rows is successful, provided no new rows in
         // place of previously shifted rows were attempted to be created as explained above.
 
         // -- CHANGE the shift to positive once the behaviour of the above has been tested
-        testSheet.shiftRows(6, 7, 1); 
-        
+        testSheet.shiftRows(6, 7, 1);
+
         Workbook read = XSSFTestDataSamples.writeOutAndReadBack(wb);
         wb.close();
         assertNotNull(read);
-        
+
         Sheet readSheet = read.getSheetAt(0);
         verifyCellContent(readSheet, 0, "0.0");
         verifyCellContent(readSheet, 1, "3.0");
@@ -115,7 +115,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
             assertEquals(expect, readCell.getStringCellValue());
         }
     }
-    
+
     /** negative row shift causes corrupted data or throws exception */
     @Test
     public void testBug53798a() throws IOException {
@@ -127,11 +127,11 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
             r.getRowNum();
         }
         testSheet.shiftRows(6, 6, 1);
-        
+
         Workbook read = XSSFTestDataSamples.writeOutAndReadBack(wb);
         wb.close();
         assertNotNull(read);
-        
+
         Sheet readSheet = read.getSheetAt(0);
         verifyCellContent(readSheet, 0, "0.0");
         verifyCellContent(readSheet, 1, "1.0");
@@ -144,7 +144,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         verifyCellContent(readSheet, 8, "8.0");
         read.close();
     }
-    
+
     /** Shifting rows with comment result - Unreadable content error and comment deletion */
     @Test
     public void testBug56017() throws IOException {
@@ -156,19 +156,19 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         assertNotNull(comment);
         assertEquals("Amdocs", comment.getAuthor());
         assertEquals("Amdocs:\ntest\n", comment.getString().getString());
-        
+
         sheet.shiftRows(0, 1, 1);
 
         // comment in row 0 is gone
         comment = sheet.getCellComment(new CellAddress(0, 0));
         assertNull(comment);
-        
+
         // comment is now in row 1
         comment = sheet.getCellComment(new CellAddress(1, 0));
         assertNotNull(comment);
         assertEquals("Amdocs", comment.getAuthor());
         assertEquals("Amdocs:\ntest\n", comment.getString().getString());
-        
+
         Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);
         wb.close();
         assertNotNull(wbBack);
@@ -219,14 +219,14 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
     @Test
     public void testSetSheetOrderAndAdjustActiveSheet() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx");
-        
+
         assertEquals(5, wb.getActiveSheetIndex());
 
         // move the sheets around in all possible combinations to check that the active sheet
         // is set correctly in all cases
         wb.setSheetOrder(wb.getSheetName(5), 4);
         assertEquals(4, wb.getActiveSheetIndex());
-        
+
         wb.setSheetOrder(wb.getSheetName(5), 5);
         assertEquals(4, wb.getActiveSheetIndex());
 
@@ -262,22 +262,22 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
         wb.setSheetOrder(wb.getSheetName(0), 5);
         assertEquals(5, wb.getActiveSheetIndex());
-        
+
         wb.close();
-    }   
+    }
 
     @Test
     public void testRemoveSheetAndAdjustActiveSheet() throws IOException {
         Workbook wb = XSSFTestDataSamples.openSampleWorkbook("57171_57163_57165.xlsx");
-        
+
         assertEquals(5, wb.getActiveSheetIndex());
-        
+
         wb.removeSheetAt(0);
         assertEquals(4, wb.getActiveSheetIndex());
-        
+
         wb.setActiveSheet(3);
         assertEquals(3, wb.getActiveSheetIndex());
-        
+
         wb.removeSheetAt(4);
         assertEquals(3, wb.getActiveSheetIndex());
 
@@ -292,21 +292,16 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
         wb.removeSheetAt(0);
         assertEquals(0, wb.getActiveSheetIndex());
-
-        try {
-            wb.removeSheetAt(0);
-            fail("Should catch exception as no more sheets are there");
-        } catch (IllegalArgumentException e) {
-            // expected
-        }
+        assertThrows(IllegalArgumentException.class, () -> wb.removeSheetAt(0),
+            "Should catch exception as no more sheets are there");
         assertEquals(0, wb.getActiveSheetIndex());
-        
+
         wb.createSheet();
         assertEquals(0, wb.getActiveSheetIndex());
-        
+
         wb.removeSheetAt(0);
         assertEquals(0, wb.getActiveSheetIndex());
-        
+
         wb.close();
     }
 
@@ -341,32 +336,31 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
     /** Shifting rows with cell comments only shifts comments from first such cell. Other cell comments not shifted */
     @Test
     public void testBug57828_OnlyOneCommentShiftedInRow() throws IOException {
-        XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57828.xlsx");
-        XSSFSheet sheet = wb.getSheetAt(0);
+        try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("57828.xlsx")) {
+            XSSFSheet sheet = wb.getSheetAt(0);
 
-        Comment comment1 = sheet.getCellComment(new CellAddress(2, 1));
-        assertNotNull(comment1);
+            Comment comment1 = sheet.getCellComment(new CellAddress(2, 1));
+            assertNotNull(comment1);
 
-        Comment comment2 = sheet.getCellComment(new CellAddress(2, 2));
-        assertNotNull(comment2);
+            Comment comment2 = sheet.getCellComment(new CellAddress(2, 2));
+            assertNotNull(comment2);
 
-        Comment comment3 = sheet.getCellComment(new CellAddress(1, 1));
-        assertNull("NO comment in (1,1) and it should be null", comment3);
+            Comment comment3 = sheet.getCellComment(new CellAddress(1, 1));
+            assertNull(comment3, "NO comment in (1,1) and it should be null");
 
-        sheet.shiftRows(2, 2, -1);
+            sheet.shiftRows(2, 2, -1);
 
-        comment3 = sheet.getCellComment(new CellAddress(1, 1));
-        assertNotNull("Comment in (2,1) moved to (1,1) so its not null now.", comment3);
+            comment3 = sheet.getCellComment(new CellAddress(1, 1));
+            assertNotNull(comment3, "Comment in (2,1) moved to (1,1) so its not null now.");
 
-        comment1 = sheet.getCellComment(new CellAddress(2, 1));
-        assertNull("No comment currently in (2,1) and hence it is null", comment1);
+            comment1 = sheet.getCellComment(new CellAddress(2, 1));
+            assertNull(comment1, "No comment currently in (2,1) and hence it is null");
 
-        comment2 = sheet.getCellComment(new CellAddress(1, 2));
-        assertNotNull("Comment in (2,2) should have moved as well because of shift rows. But its not", comment2);
-        
-        wb.close();
+            comment2 = sheet.getCellComment(new CellAddress(1, 2));
+            assertNotNull(comment2, "Comment in (2,2) should have moved as well because of shift rows. But its not");
+        }
     }
-    
+
     @Test
     public void bug59733() throws IOException {
         Workbook workbook = new XSSFWorkbook();
@@ -377,7 +371,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
 
         // Shift the 2nd row on top of the 0th row
         sheet.shiftRows(2, 2, -2);
-        
+
         sheet.removeRow(sheet.getRow(0));
         assertEquals(1, sheet.getRow(1).getRowNum());
 
@@ -443,7 +437,7 @@ public final class TestXSSFSheetShiftRows extends BaseTestSheetShiftRows {
         assertEquals("SUM(E2:E4)", getCellFormula(sheet, "E6"));
         wb.close();
     }
-    
+
     // bug 60260: shift rows or rename a sheet containing a named range
     // that refers to formula with a unicode (non-ASCII) sheet name formula
     @Test

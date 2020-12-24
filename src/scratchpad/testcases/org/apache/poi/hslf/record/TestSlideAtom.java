@@ -17,10 +17,10 @@
 
 package org.apache.poi.hslf.record;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,7 +29,7 @@ import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.record.SlideAtomLayout.SlideLayoutType;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that SlideAtom works properly
@@ -45,7 +45,7 @@ public final class TestSlideAtom {
 		SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
 		assertEquals(1007l, sa.getRecordType());
 	}
-	
+
     @Test
 	public void testFlags() {
 		SlideAtom sa = new SlideAtom(data_a, 0, data_a.length);
@@ -79,7 +79,7 @@ public final class TestSlideAtom {
 		sa.writeOut(baos);
 		assertArrayEquals(data_a, baos.toByteArray());
 	}
-	
+
     @Test
 	public void testSSSlideInfoAtom() throws IOException {
 		HSLFSlideShow ss1 = new HSLFSlideShow();

@@ -76,13 +76,14 @@ module org.apache.poi.scratchpad {
 
 
     // test specific exports
-    requires junit;
+    requires org.junit.jupiter.api;
+    requires org.junit.jupiter.params;
     requires org.mockito;
 
-    exports org.apache.poi.hemf.hemfplus.extractor to junit;
-    exports org.apache.poi.hslf to junit;
-    exports org.apache.poi.hwmf to junit;
-    exports org.apache.poi.hwpf.util to junit;
+    exports org.apache.poi.hemf.hemfplus.extractor to org.junit.platform.commons;
+    exports org.apache.poi.hslf to org.junit.platform.commons;
+    exports org.apache.poi.hwmf to org.junit.platform.commons;
+    exports org.apache.poi.hwpf.util to org.junit.platform.commons;
 
     opens org.apache.poi.hwpf.model to org.mockito;
     opens org.apache.poi.hwpf.model.types to org.mockito;

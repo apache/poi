@@ -21,8 +21,8 @@ import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertEndsWith;
 import static org.apache.poi.POITestCase.assertNotContained;
 import static org.apache.poi.POITestCase.assertStartsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -35,7 +35,7 @@ import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link XSSFExcelExtractor}
@@ -149,7 +149,7 @@ public class TestXSSFExcelExtractor {
 			assertStartsWith(filename, text, "First Sheet\nTest spreadsheet\n2nd row2nd row 2nd column\n");
 			Pattern pattern = Pattern.compile(".*13(\\.0+)?\\s+Sheet3.*", Pattern.DOTALL);
 			Matcher m = pattern.matcher(text);
-			assertTrue(filename, m.matches());
+			assertTrue(m.matches(), filename);
 		}
 
 		ole2Extractor.close();

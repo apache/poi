@@ -17,20 +17,21 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Iterator;
 
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * A base class for testing implementations of
@@ -139,76 +140,56 @@ public abstract class BaseTestRow {
             assertEquals(-1, row.getFirstCellNum());
             assertEquals(0, row.getPhysicalNumberOfCells());
         }
-        
+
         wb2.close();
     }
 
     protected void baseTestRowBounds(int maxRowNum) throws IOException {
-        Workbook workbook = _testDataProvider.createWorkbook();
-        Sheet sheet = workbook.createSheet();
-        //Test low row bound
-        sheet.createRow(0);
-        //Test low row bound exception
-        try {
-            sheet.createRow(-1);
-            fail("expected exception");
-        } catch (IllegalArgumentException e) {
-            // expected during successful test
-            assertTrue("Did not find expected error message, had: " + e, 
-                    e.getMessage().startsWith("Invalid row number (-1)"));
-        }
+        try (Workbook workbook = _testDataProvider.createWorkbook()) {
+            Sheet sheet = workbook.createSheet();
+            //Test low row bound
+            sheet.createRow(0);
+            //Test low row bound exception
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> sheet.createRow(-1));
+            assertTrue(e.getMessage().startsWith("Invalid row number (-1)"));
 
-        //Test high row bound
-        sheet.createRow(maxRowNum);
-        //Test high row bound exception
-        try {
-            sheet.createRow(maxRowNum + 1);
-            fail("expected exception");
-        } catch (IllegalArgumentException e) {
-            // expected during successful test
-            assertEquals("Invalid row number ("+(maxRowNum + 1)+") outside allowable range (0.."+maxRowNum+")", e.getMessage());
+            //Test high row bound
+            sheet.createRow(maxRowNum);
+            //Test high row bound exception
+            e = assertThrows(IllegalArgumentException.class, () -> sheet.createRow(maxRowNum + 1));
+            assertEquals("Invalid row number (" + (maxRowNum + 1) + ") outside allowable range (0.." + maxRowNum + ")", e.getMessage());
         }
-        
-        workbook.close();
     }
 
     protected void baseTestCellBounds(int maxCellNum) throws IOException {
-        Workbook wb1 = _testDataProvider.createWorkbook();
-        Sheet sheet = wb1.createSheet();
+        try (Workbook wb1 = _testDataProvider.createWorkbook()) {
+            Sheet sheet = wb1.createSheet();
 
-        Row row = sheet.createRow(0);
-        //Test low cell bound
-        try {
-            row.createCell(-1);
-            fail("expected exception");
-        } catch (IllegalArgumentException e) {
-            // expected during successful test
+            Row row1 = sheet.createRow(0);
+            //Test low cell bound
+            IllegalArgumentException e;
+            e = assertThrows(IllegalArgumentException.class, () -> row1.createCell(-1));
             assertTrue(e.getMessage().startsWith("Invalid column index (-1)"));
-        }
 
-        //Test high cell bound
-        try {
-            row.createCell(maxCellNum + 1);
-            fail("expected exception");
-        } catch (IllegalArgumentException e) {
-            // expected during successful test
-            assertTrue(e.getMessage().startsWith("Invalid column index ("+(maxCellNum+1)+")"));
+            //Test high cell bound
+            e = assertThrows(IllegalArgumentException.class, () -> row1.createCell(maxCellNum + 1));
+            assertTrue(e.getMessage().startsWith("Invalid column index (" + (maxCellNum + 1) + ")"));
+
+            for (int i = 0; i < maxCellNum; i++) {
+                row1.createCell(i);
+            }
+            assertEquals(maxCellNum, row1.getPhysicalNumberOfCells());
+
+            try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1)) {
+                sheet = wb2.getSheetAt(0);
+                Row row2 = sheet.getRow(0);
+                assertEquals(maxCellNum, row2.getPhysicalNumberOfCells());
+                for (int i = 0; i < maxCellNum; i++) {
+                    Cell cell = row2.getCell(i);
+                    assertEquals(i, cell.getColumnIndex());
+                }
+            }
         }
-        for(int i=0; i < maxCellNum; i++){
-            row.createCell(i);
-        }
-        assertEquals(maxCellNum, row.getPhysicalNumberOfCells());
-        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
-        wb1.close();
-        
-        sheet = wb2.getSheetAt(0);
-        row = sheet.getRow(0);
-        assertEquals(maxCellNum, row.getPhysicalNumberOfCells());
-        for(int i=0; i < maxCellNum; i++){
-            Cell cell = row.getCell(i);
-            assertEquals(i, cell.getColumnIndex());
-        }
-        wb2.close();
     }
 
     /**
@@ -223,9 +204,7 @@ public abstract class BaseTestRow {
 
         // New row has last col -1
         assertEquals(-1, row.getLastCellNum());
-        if(row.getLastCellNum() == 0) {
-            fail("Identified bug 43901");
-        }
+        assertNotEquals(0, row.getLastCellNum(), "Identified bug 43901");
 
         // Create two cells, will return one higher
         //  than that for the last number
@@ -307,7 +286,7 @@ public abstract class BaseTestRow {
         assertNull(row.getCell(3));
         assertNull(row.getCell(4));
         assertEquals(CellType.NUMERIC, row.getCell(5).getCellType());
-        
+
         workbook.close();
     }
 
@@ -452,7 +431,7 @@ public abstract class BaseTestRow {
        // Save, load and re-check
        Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1);
        wb1.close();
-       
+
        sheet = wb2.getSheetAt(0);
 
        row1 = sheet.getRow(0);
@@ -464,10 +443,10 @@ public abstract class BaseTestRow {
         assertNull(row1.getRowStyle());
        assertEquals(style, row2.getRowStyle());
        assertEquals(4, style.getDataFormat());
-       
+
        wb2.close();
     }
-    
+
     @Test
     public void testCellShiftingRight() {
         Workbook wb = _testDataProvider.createWorkbook();
@@ -480,26 +459,23 @@ public abstract class BaseTestRow {
         row.createCell(4, CellType.NUMERIC).setCellValue(4);//E
         row.createCell(5, CellType.NUMERIC).setCellValue(5);//F
         row.createCell(6, CellType.NUMERIC).setCellValue(6);//G
-        try {
-            row.shiftCellsLeft(6, 4, 2); // range [6-4] is illegal
-            fail("expected shiftLeft to fail");
-        } catch (IllegalArgumentException e){
-            row.shiftCellsRight(2, 4, 1);
-            //should be [0.0, 1.0, null, 2.0, 3.0, 4.0, 6.0, null]
-            
-            Cell h1 = row.getCell(7);
-            assertNull(h1);
-            Cell g1 = row.getCell(6);
-            assertEquals(6, g1.getNumericCellValue(), 0.01);
-            Cell f1 = row.getCell(5);
-            assertEquals(4, f1.getNumericCellValue(), 0.01);
-            Cell e1 = row.getCell(4);
-            assertEquals(3, e1.getNumericCellValue(), 0.01);
-            Cell d1 = row.getCell(3);
-            assertEquals(2, d1.getNumericCellValue(), 0.01);
-            Cell c1 = row.getCell(2);
-            assertNull(c1);
-        }
+
+        assertThrows(IllegalArgumentException.class, () -> row.shiftCellsLeft(6, 4, 2),  "range [6-4] is illegal");
+        row.shiftCellsRight(2, 4, 1);
+        //should be [0.0, 1.0, null, 2.0, 3.0, 4.0, 6.0, null]
+
+        Cell h1 = row.getCell(7);
+        assertNull(h1);
+        Cell g1 = row.getCell(6);
+        assertEquals(6, g1.getNumericCellValue(), 0.01);
+        Cell f1 = row.getCell(5);
+        assertEquals(4, f1.getNumericCellValue(), 0.01);
+        Cell e1 = row.getCell(4);
+        assertEquals(3, e1.getNumericCellValue(), 0.01);
+        Cell d1 = row.getCell(3);
+        assertEquals(2, d1.getNumericCellValue(), 0.01);
+        Cell c1 = row.getCell(2);
+        assertNull(c1);
     }
     @Test
     public void testCellShiftingLeft() {
@@ -513,24 +489,21 @@ public abstract class BaseTestRow {
         row.createCell(4, CellType.NUMERIC).setCellValue(4);//E
         row.createCell(5, CellType.NUMERIC).setCellValue(5);//F
         row.createCell(6, CellType.NUMERIC).setCellValue(6);//G
-        try {
-            row.shiftCellsLeft(4, 6, -2); // step = -1 is illegal
-            fail("expected shiftLeft to fail");
-        } catch (IllegalArgumentException e){
-            row.shiftCellsLeft(4, 6, 2);
-            //should be [0.0, 1.0, 4.0, 5.0, 6.0, null, null, null]
-            
-            Cell b1 = row.getCell(1);
-            assertEquals(1, b1.getNumericCellValue(), 0.01);
-            Cell c1 = row.getCell(2);
-            assertEquals(4, c1.getNumericCellValue(), 0.01);
-            Cell d1 = row.getCell(3);
-            assertEquals(5, d1.getNumericCellValue(), 0.01);
-            Cell e1 = row.getCell(4);
-            assertEquals(6, e1.getNumericCellValue(), 0.01);
-            Cell f1 = row.getCell(5);
-            assertNull(f1);
-        }
+
+        assertThrows(IllegalArgumentException.class, () -> row.shiftCellsLeft(4, 6, -2), "step = -1 is illegal");
+        row.shiftCellsLeft(4, 6, 2);
+        //should be [0.0, 1.0, 4.0, 5.0, 6.0, null, null, null]
+
+        Cell b1 = row.getCell(1);
+        assertEquals(1, b1.getNumericCellValue(), 0.01);
+        Cell c1 = row.getCell(2);
+        assertEquals(4, c1.getNumericCellValue(), 0.01);
+        Cell d1 = row.getCell(3);
+        assertEquals(5, d1.getNumericCellValue(), 0.01);
+        Cell e1 = row.getCell(4);
+        assertEquals(6, e1.getNumericCellValue(), 0.01);
+        Cell f1 = row.getCell(5);
+        assertNull(f1);
     }
 
     @Test
@@ -538,13 +511,11 @@ public abstract class BaseTestRow {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("sheet1");
 
-        assertEquals("Sheet without rows should return -1 as lastRowNum",
-                -1, sheet.getLastRowNum());
+        assertEquals(-1, sheet.getLastRowNum(), "Sheet without rows should return -1 as lastRowNum");
         Row row = sheet.createRow(0);
         assertNotNull(row);
 
-        assertEquals("Sheet with one row should return 0 as lastRowNum",
-                0, sheet.getLastRowNum());
+        assertEquals(0, sheet.getLastRowNum(), "Sheet with one row should return 0 as lastRowNum");
     }
 
     @Test
@@ -552,12 +523,10 @@ public abstract class BaseTestRow {
         Workbook wb = _testDataProvider.createWorkbook();
         Sheet sheet = wb.createSheet("sheet1");
 
-        assertEquals("Sheet without rows should return -1 as firstRowNum",
-                -1, sheet.getFirstRowNum());
+        assertEquals(-1, sheet.getFirstRowNum(), "Sheet without rows should return -1 as firstRowNum");
         Row row = sheet.createRow(0);
         assertNotNull(row);
 
-        assertEquals("Sheet with one row should return 0 as firstRowNum",
-                0, sheet.getFirstRowNum());
+        assertEquals(0, sheet.getFirstRowNum(), "Sheet with one row should return 0 as firstRowNum");
     }
 }

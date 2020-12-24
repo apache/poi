@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -29,7 +29,7 @@ import org.apache.poi.hdgf.extractor.VisioTextExtractor;
 import org.apache.poi.hdgf.streams.Stream;
 import org.apache.poi.hdgf.streams.TrailerStream;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class HDGFFileHandler extends POIFSFileHandler {
 	@Override
@@ -41,16 +41,16 @@ public class HDGFFileHandler extends POIFSFileHandler {
 		for(Stream str : topLevelStreams) {
 			assertTrue(str.getPointer().getLength() >= 0);
 		}
-		
+
 		TrailerStream trailerStream = diagram.getTrailerStream();
 		assertNotNull(trailerStream);
 		assertTrue(trailerStream.getPointer().getLength() >= 0);
 		diagram.close();
 		poifs.close();
-		
+
 		// writing is not yet implemented... handlePOIDocument(diagram);
 	}
-	
+
 	// a test-case to test this locally without executing the full TestAllFiles
 	@Override
     @Test
@@ -63,9 +63,9 @@ public class HDGFFileHandler extends POIFSFileHandler {
 		} finally {
 			stream.close();
 		}
-		
+
 		handleExtracting(file);
-		
+
 		stream = new FileInputStream(file);
 		try {
 			try (VisioTextExtractor extractor = new VisioTextExtractor(stream)) {

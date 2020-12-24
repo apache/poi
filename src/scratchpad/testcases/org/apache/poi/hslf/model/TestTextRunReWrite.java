@@ -17,8 +17,8 @@
 
 package org.apache.poi.hslf.model;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -32,8 +32,8 @@ import org.apache.poi.hslf.usermodel.HSLFTextRun;
 import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.DocumentEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that if we load something up, get a TextRun, set the text
@@ -47,7 +47,7 @@ public final class TestTextRunReWrite {
 	/**
 	 * Load up a test PPT file with rich data
 	 */
-	@Before
+	@BeforeEach
     public void setUp() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 		String filename = "Single_Coloured_Page_With_Fonts_and_Alignments.ppt";
@@ -63,8 +63,8 @@ public final class TestTextRunReWrite {
         // Grab the first text run on the first sheet
         List<HSLFTextParagraph> tr1 = ss.getSlides().get(0).getTextParagraphs().get(0);
         List<HSLFTextParagraph> tr2 = ss.getSlides().get(0).getTextParagraphs().get(1);
-    	
-    	
+
+
     	assertEquals(30, HSLFTextParagraph.getRawText(tr1).length());
     	assertEquals(179, HSLFTextParagraph.getRawText(tr2).length());
 
@@ -112,7 +112,7 @@ public final class TestTextRunReWrite {
 		oDir.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT).read(_oData);
 		npfs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT).read(_nData);
 		assertArrayEquals(_oData, _nData);
-		
+
 		npfs.close();
 	}
 
@@ -159,7 +159,7 @@ public final class TestTextRunReWrite {
 
 		// Check that the "PowerPoint Document" sections have the same size
         DirectoryNode oDir = ss.getSlideShowImpl().getDirectory();
-		
+
 		DocumentEntry oProps = (DocumentEntry)oDir.getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
 		DocumentEntry nProps = (DocumentEntry)npfs.getRoot().getEntry(HSLFSlideShow.POWERPOINT_DOCUMENT);
 		assertEquals(oProps.getSize(),nProps.getSize());
@@ -171,7 +171,7 @@ public final class TestTextRunReWrite {
 		oDir.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT).read(_oData);
 		npfs.createDocumentInputStream(HSLFSlideShow.POWERPOINT_DOCUMENT).read(_nData);
 		assertArrayEquals(_oData, _nData);
-		
+
 		npfs.close();
 	}
 }

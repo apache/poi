@@ -17,7 +17,7 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 
@@ -34,7 +34,7 @@ import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STVerticalAlignRun;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBooleanProperty;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
@@ -107,29 +107,24 @@ public final class TestXSSFFont extends BaseTestFont{
 
         // This one isn't allowed
         assertNull(org.apache.poi.ss.usermodel.FontCharset.valueOf(9999));
-        try {
-           xssfFont.setCharSet(9999);
-           fail("Shouldn't be able to set an invalid charset");
-        } catch(POIXMLException e) {
-        	// expected here
-		}
-
+        assertThrows(POIXMLException.class, () -> xssfFont.setCharSet(9999),
+			"Shouldn't be able to set an invalid charset");
 
 		// Now try with a few sample files
 
 		// Normal charset
-        XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("Formatting.xlsx");
-        assertEquals(0,
-              wb1.getSheetAt(0).getRow(0).getCell(0).getCellStyle().getFont().getCharSet()
-        );
-        wb1.close();
+        try (XSSFWorkbook wb1 = XSSFTestDataSamples.openSampleWorkbook("Formatting.xlsx")) {
+			assertEquals(0,
+				wb1.getSheetAt(0).getRow(0).getCell(0).getCellStyle().getFont().getCharSet()
+			);
+		}
 
 		// GB2312 charset
-        XSSFWorkbook wb2 = XSSFTestDataSamples.openSampleWorkbook("49273.xlsx");
-        assertEquals(134,
-              wb2.getSheetAt(0).getRow(0).getCell(0).getCellStyle().getFont().getCharSet()
-        );
-        wb2.close();
+        try (XSSFWorkbook wb2 = XSSFTestDataSamples.openSampleWorkbook("49273.xlsx")) {
+			assertEquals(134,
+				wb2.getSheetAt(0).getRow(0).getCell(0).getCellStyle().getFont().getCharSet()
+			);
+		}
 	}
 
 	@Test
@@ -157,12 +152,7 @@ public final class TestXSSFFont extends BaseTestFont{
 
 		// This one isn't allowed
 		assertNull(FontCharset.valueOf(9999));
-		try {
-			xssfFont.setCharSet(9999);
-			fail("Shouldn't be able to set an invalid charset");
-		} catch(POIXMLException e) {
-			// expected here
-		}
+		assertThrows(POIXMLException.class, () -> xssfFont.setCharSet(9999), "Shouldn't be able to set an invalid charset");
 
 		// Now try with a few sample files
 

@@ -18,7 +18,10 @@
 package org.apache.poi.hwpf.usermodel;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.assertEquals;
+import static org.apache.poi.hwpf.HWPFTestDataSamples.openOldSampleFile;
+import static org.apache.poi.hwpf.HWPFTestDataSamples.openSampleFile;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -27,10 +30,9 @@ import org.apache.poi.OldFileFormatException;
 import org.apache.poi.common.usermodel.fonts.FontCharset;
 import org.apache.poi.hwpf.HWPFOldDocument;
 import org.apache.poi.hwpf.HWPFTestCase;
-import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.hwpf.extractor.Word6Extractor;
 import org.apache.poi.hwpf.model.OldFontTable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for Word 6 and Word 95 support
@@ -39,16 +41,16 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
     /**
      * Test a simple Word 6 document
      */
-    @Test(expected=OldFileFormatException.class)
-    public void testWord6hwpf() throws IOException {
+    @Test
+    public void testWord6hwpf() {
         // Can't open as HWPFDocument
-        HWPFTestDataSamples.openSampleFile("Word6.doc");
+        assertThrows(OldFileFormatException.class, () -> openSampleFile("Word6.doc"));
     }
 
     @Test
     public void testWord6hwpfOld() throws IOException {
         // Open
-        HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile("Word6.doc");
+        HWPFOldDocument doc = openOldSampleFile("Word6.doc");
 
         // Check
         assertEquals(1, doc.getRange().numSections());
@@ -63,32 +65,31 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
     /**
      * Test a simple Word 2 document
      */
-    @Test(expected=IllegalArgumentException.class)
-    public void testWord2hwpf() throws IOException {
+    @Test
+    public void testWord2hwpf() {
         // Can't open as HWPFDocument
-        HWPFTestDataSamples.openSampleFile("word2.doc");
+        assertThrows(IllegalArgumentException.class, () -> openSampleFile("word2.doc"));
     }
 
-    @Test(expected=RuntimeException.class)
-    public void testWord2hwpfOld() throws IOException {
+    @Test
+    public void testWord2hwpfOld() {
         // Open
-        HWPFTestDataSamples.openOldSampleFile("word2.doc");
+        assertThrows(RuntimeException.class, () -> openOldSampleFile("word2.doc"));
     }
 
     /**
      * Test a simple Word 95 document
      */
-    @Test(expected=OldFileFormatException.class)
-    public void testWord95hwpf() throws IOException {
+    @Test
+    public void testWord95hwpf() {
         // Can't open as HWPFDocument
-        HWPFTestDataSamples.openSampleFile("Word95.doc");
+        assertThrows(OldFileFormatException.class, () -> openSampleFile("Word95.doc"));
     }
-    
+
     @Test
     public void testWord95hwpfOld() throws IOException {
         // Open
-        HWPFOldDocument doc = HWPFTestDataSamples
-                .openOldSampleFile("Word95.doc");
+        HWPFOldDocument doc = openOldSampleFile("Word95.doc");
 
         // Check
         assertEquals(1, doc.getRange().numSections());
@@ -126,7 +127,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
      */
     @Test
     public void testWord6Sections() throws IOException {
-        HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile("Word6_sections.doc");
+        HWPFOldDocument doc = openOldSampleFile("Word6_sections.doc");
 
         assertEquals(3, doc.getRange().numSections());
         assertEquals(6, doc.getRange().numParagraphs());
@@ -135,7 +136,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
                 doc.getRange().getParagraph(0).text());
         assertEquals("\r", doc.getRange().getParagraph(1).text());
         // Section / line?
-        assertEquals("\u000c", doc.getRange().getParagraph(2).text()); 
+        assertEquals("\u000c", doc.getRange().getParagraph(2).text());
         assertEquals("This is a new section.\r",
                 doc.getRange().getParagraph(3).text());
         // Section / line?
@@ -150,8 +151,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
      */
     @Test
     public void testWord6Sections2() throws IOException {
-        HWPFOldDocument doc = HWPFTestDataSamples
-                .openOldSampleFile("Word6_sections2.doc");
+        HWPFOldDocument doc = openOldSampleFile("Word6_sections2.doc");
 
         assertEquals(1, doc.getRange().numSections());
         assertEquals(57, doc.getRange().numParagraphs());
@@ -164,7 +164,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
 
     @Test
     public void testDefaultCodePageEncoding() throws IOException {
-        HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile("Bug60942.doc");
+        HWPFOldDocument doc = openOldSampleFile("Bug60942.doc");
         Word6Extractor ex = new Word6Extractor(doc);
         String txt = ex.getText();
         assertContains(txt, "BERTHOD");
@@ -179,7 +179,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
     @Test
     public void testCodePageBug50955() throws IOException {
         //windows 1251
-        HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile("Bug50955.doc");
+        HWPFOldDocument doc = openOldSampleFile("Bug50955.doc");
         Word6Extractor ex = new Word6Extractor(doc);
 
         StringBuilder sb = new StringBuilder();
@@ -197,7 +197,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
         //see https://bz.apache.org/ooo/show_bug.cgi?id=12445 for the inspiration
 
 
-        HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile("Bug60936.doc");
+        HWPFOldDocument doc = openOldSampleFile("Bug60936.doc");
         Word6Extractor ex = new Word6Extractor(doc);
         StringBuilder sb = new StringBuilder();
         for (String p : ex.getParagraphText()) {
@@ -210,7 +210,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
 
     @Test
     public void testOldFontTableEncoding() throws IOException {
-        HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile("Bug51944.doc");
+        HWPFOldDocument doc = openOldSampleFile("Bug51944.doc");
         OldFontTable oldFontTable = doc.getOldFontTable();
         assertEquals(5, oldFontTable.getFontNames().length);
         assertEquals("\u7D30\u660E\u9AD4", oldFontTable.getFontNames()[0].getMainFontName());
@@ -221,8 +221,8 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
     }
 
     @Test
-    public void testOldFontTableAltName() throws IOException {
-        HWPFOldDocument doc  = HWPFTestDataSamples.openOldSampleFile("Bug60942b.doc");
+    public void testOldFontTableAltName() {
+        HWPFOldDocument doc  = openOldSampleFile("Bug60942b.doc");
         OldFontTable oldFontTable = doc.getOldFontTable();
         assertEquals(5, oldFontTable.getFontNames().length);
         assertEquals("Roboto", oldFontTable.getFontNames()[3].getMainFontName());
@@ -234,7 +234,7 @@ public final class TestHWPFOldDocument extends HWPFTestCase {
 
     @Test
     public void test51944() throws IOException {
-        HWPFOldDocument doc = HWPFTestDataSamples.openOldSampleFile("Bug51944.doc");
+        HWPFOldDocument doc = openOldSampleFile("Bug51944.doc");
         Word6Extractor ex = new Word6Extractor(doc);
         StringBuilder sb = new StringBuilder();
         for (String p : ex.getParagraphText()) {

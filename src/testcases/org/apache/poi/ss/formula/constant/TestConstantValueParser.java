@@ -18,17 +18,16 @@
 package org.apache.poi.ss.formula.constant;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import java.util.Arrays;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.ss.usermodel.FormulaError;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInput;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestConstantValueParser {
 	private static final Object[] SAMPLE_VALUES = {
@@ -58,9 +57,7 @@ public final class TestConstantValueParser {
 
 		ConstantValueParser.encode(new LittleEndianByteArrayOutputStream(data, 0), SAMPLE_VALUES);
 
-		if (!Arrays.equals(data, SAMPLE_ENCODING)) {
-			fail("Encoding differs");
-		}
+		assertArrayEquals(SAMPLE_ENCODING, data, "Encoding differs");
 	}
 
 	@Test
@@ -69,9 +66,7 @@ public final class TestConstantValueParser {
 
 		Object[] values = ConstantValueParser.parse(in, 4);
 		for (int i = 0; i < values.length; i++) {
-			if(!isEqual(SAMPLE_VALUES[i], values[i])) {
-				fail("Decoded result differs");
-			}
+			assertTrue(isEqual(SAMPLE_VALUES[i], values[i]), "Decoded result differs");
 		}
 	}
 	private static boolean isEqual(Object a, Object b) {

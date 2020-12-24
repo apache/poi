@@ -17,7 +17,7 @@
 
 package org.apache.poi.xssf.binary;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 import java.util.regex.Pattern;
@@ -25,7 +25,7 @@ import java.util.regex.Pattern;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestXSSFBSharedStringsTable {
     private static POIDataSamples _ssTests = POIDataSamples.getSpreadSheetInstance();

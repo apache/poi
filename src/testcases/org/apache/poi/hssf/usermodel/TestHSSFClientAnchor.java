@@ -17,13 +17,14 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 
 import org.apache.poi.ddf.EscherClientAnchorRecord;
 import org.apache.poi.hssf.model.ConvertAnchor;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Various tests for HSSFClientAnchor.
@@ -128,9 +129,10 @@ public final class TestHSSFClientAnchor {
         assertEquals(65535, anchor.getRow2());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCannotHaveRowGreaterThan65535() {
-        new HSSFClientAnchor(0, 0, 0, 0, (short) 0, 65536, (short) 0, 65536);
+        assertThrows(IllegalArgumentException.class, () ->
+            new HSSFClientAnchor(0, 0, 0, 0, (short) 0, 65536, (short) 0, 65536));
     }
 
     /**
@@ -146,13 +148,15 @@ public final class TestHSSFClientAnchor {
         assertEquals(65535, anchor.getRow2());
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCannotSetRow1GreaterThan65535() {
-        new HSSFClientAnchor().setRow1(65536);
+        assertThrows(IllegalArgumentException.class, () ->
+            new HSSFClientAnchor().setRow1(65536));
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testCannotSetRow2GreaterThan65535() {
-        new HSSFClientAnchor().setRow2(65536);
+        assertThrows(IllegalArgumentException.class, () ->
+            new HSSFClientAnchor().setRow2(65536));
     }
 }

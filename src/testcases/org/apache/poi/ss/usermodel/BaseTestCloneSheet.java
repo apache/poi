@@ -17,13 +17,15 @@
 
 package org.apache.poi.ss.usermodel;
 
-import org.apache.poi.ss.ITestDataProvider;
-import org.apache.poi.ss.util.CellRangeAddress;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
-import static org.junit.Assert.*;
+import org.apache.poi.ss.ITestDataProvider;
+import org.apache.poi.ss.util.CellRangeAddress;
+import org.junit.jupiter.api.Test;
 
 /**
  * Common superclass for testing implementations of
@@ -44,7 +46,7 @@ public abstract class BaseTestCloneSheet {
         assertEquals(0, s.addMergedRegion(new CellRangeAddress(0, 1, 0, 1)));
         Sheet clonedSheet = b.cloneSheet(0);
 
-        assertEquals("One merged area", 1, clonedSheet.getNumMergedRegions());
+        assertEquals(1, clonedSheet.getNumMergedRegions(), "One merged area");
 
         b.close();
     }
@@ -60,12 +62,12 @@ public abstract class BaseTestCloneSheet {
         s.setColumnBreak((short) 6);
 
         Sheet clone = b.cloneSheet(0);
-        assertTrue("Row 3 not broken", clone.isRowBroken(3));
-        assertTrue("Column 6 not broken", clone.isColumnBroken((short) 6));
+        assertTrue(clone.isRowBroken(3), "Row 3 not broken");
+        assertTrue(clone.isColumnBroken((short) 6), "Column 6 not broken");
 
         s.removeRowBreak(3);
 
-        assertTrue("Row 3 still should be broken", clone.isRowBroken(3));
+        assertTrue(clone.isRowBroken(3), "Row 3 still should be broken");
 
         b.close();
     }
@@ -76,24 +78,14 @@ public abstract class BaseTestCloneSheet {
         wb.createSheet("Sheet01");
         wb.cloneSheet(0);
         assertEquals(2, wb.getNumberOfSheets());
-        try {
-            wb.cloneSheet(2);
-            fail("ShouldFail");
-        } catch (IllegalArgumentException e) {
-            // expected here
-        }
+        assertThrows(IllegalArgumentException.class, () -> wb.cloneSheet(2));
     }
 
     @Test
     public void testCloneSheetIntInvalid() {
         Workbook wb = _testDataProvider.createWorkbook();
         wb.createSheet("Sheet01");
-        try {
-            wb.cloneSheet(1);
-            fail("Should Fail");
-        } catch (IllegalArgumentException e) {
-            // expected here
-        }
+        assertThrows(IllegalArgumentException.class, () -> wb.cloneSheet(1));
         assertEquals(1, wb.getNumberOfSheets());
     }
 }

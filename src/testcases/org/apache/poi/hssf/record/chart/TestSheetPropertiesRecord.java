@@ -19,14 +19,14 @@ package org.apache.poi.hssf.record.chart;
 
 
 import static org.apache.poi.hssf.record.TestcaseRecordInputStream.confirmRecordEncoding;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link SheetPropertiesRecord}
@@ -43,7 +43,7 @@ public final class TestSheetPropertiesRecord {
     public void testLoad() {
         RecordInputStream in = TestcaseRecordInputStream.create(0x1044, data);
         SheetPropertiesRecord record = new SheetPropertiesRecord(in);
-        assertNotEquals("Identified bug 44693c", 1, in.remaining());
+        assertNotEquals(1, in.remaining(), "Identified bug 44693c");
         assertEquals(0, in.remaining());
         assertEquals( 10, record.getFlags());
         assertFalse(record.isChartTypeManuallyFormatted());

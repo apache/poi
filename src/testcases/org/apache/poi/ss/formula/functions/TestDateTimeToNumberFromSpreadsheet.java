@@ -17,13 +17,12 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import org.junit.runners.Parameterized.Parameters;
+import java.util.stream.Stream;
 
-import java.util.Collection;
+import org.junit.jupiter.params.provider.Arguments;
 
 public class TestDateTimeToNumberFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
-    @Parameters(name="{0}")
-    public static Collection<Object[]> data() throws Exception {
+    public static Stream<Arguments> data() throws Exception {
         return data(TestDateTimeToNumberFromSpreadsheet.class, "DateTimeToNumberTestCases.xls");
     }
 }

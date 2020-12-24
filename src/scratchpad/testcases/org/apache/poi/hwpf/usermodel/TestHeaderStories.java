@@ -18,13 +18,13 @@
 package org.apache.poi.hwpf.usermodel;
 
 import static org.apache.poi.hwpf.HWPFTestDataSamples.openSampleFile;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import org.apache.poi.hwpf.HWPFDocument;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the handling of header stories into headers, footers etc
@@ -40,7 +40,7 @@ public final class TestHeaderStories {
 	private HWPFDocument unicode;
 	private HWPFDocument withFields;
 
-	@Before
+	@BeforeEach
     public void setUp() {
 
 		none = openSampleFile("NoHeadFoot.doc");

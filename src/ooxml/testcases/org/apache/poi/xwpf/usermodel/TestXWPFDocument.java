@@ -17,13 +17,14 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -43,8 +44,8 @@ import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.xmlbeans.XmlCursor;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTP;
 
 public final class TestXWPFDocument {
@@ -329,12 +330,7 @@ public final class TestXWPFDocument {
                 assertTrue(allPackagePictures.contains(xwpfPictureData));
             }
 
-            try {
-                allPictures.add(allPictures.get(0));
-                fail("This list must be unmodifiable!");
-            } catch (UnsupportedOperationException e) {
-                // all ok
-            }
+            assertThrows(UnsupportedOperationException.class, () -> allPictures.add(allPictures.get(0)), "This list must be unmodifiable!");
 
             doc.getPackage().revert();
         }
@@ -348,12 +344,7 @@ public final class TestXWPFDocument {
             assertNotNull(allPackagePictures);
             assertEquals(5, allPackagePictures.size());
 
-            try {
-                allPackagePictures.add(allPackagePictures.get(0));
-                fail("This list must be unmodifiable!");
-            } catch (UnsupportedOperationException e) {
-                // all ok
-            }
+            assertThrows(UnsupportedOperationException.class, () -> allPackagePictures.add(allPackagePictures.get(0)), "This list must be unmodifiable!");
 
             doc.getPackage().revert();
         }
@@ -472,7 +463,7 @@ public final class TestXWPFDocument {
     }
 
 	@Test
-	@Ignore("XWPF should be able to write to a new Stream when opened Read-Only")
+	@Disabled("XWPF should be able to write to a new Stream when opened Read-Only")
 	public void testWriteFromReadOnlyOPC() throws Exception {
 	    OPCPackage opc = OPCPackage.open(
 	            POIDataSamples.getDocumentInstance().getFile("SampleDoc.docx"),

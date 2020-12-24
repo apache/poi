@@ -17,10 +17,10 @@
 
 package org.apache.poi.hssf.record;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
@@ -39,7 +39,7 @@ import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.util.HexRead;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestSSTRecord {
 
@@ -339,9 +339,9 @@ public final class TestSSTRecord {
      * deep comparison of two SST records
      */
     private static void assertRecordEquals(SSTRecord expected, SSTRecord actual){
-        assertEquals("number of strings", expected.getNumStrings(), actual.getNumStrings());
-        assertEquals("number of unique strings", expected.getNumUniqueStrings(), actual.getNumUniqueStrings());
-        assertEquals("count of strings", expected.countStrings(), actual.countStrings());
+        assertEquals(expected.getNumStrings(), actual.getNumStrings(), "number of strings");
+        assertEquals(expected.getNumUniqueStrings(), actual.getNumUniqueStrings(), "number of unique strings");
+        assertEquals(expected.countStrings(), actual.countStrings(), "count of strings");
 
         Iterator<UnicodeString> iterA = expected.getStrings();
         Iterator<UnicodeString> iterB = actual.getStrings();

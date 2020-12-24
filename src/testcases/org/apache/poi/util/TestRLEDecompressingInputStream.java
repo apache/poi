@@ -17,8 +17,8 @@
 
 package org.apache.poi.util;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -26,33 +26,33 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestRLEDecompressingInputStream {
-    
+
     /**
      * Section 3.2.1 No Compression Example
-     * 
+     *
      * The following string illustrates an ASCII text string with a set of characters that cannot be compressed
      * by the compression algorithm specified in section 2.4.1.
-     * 
+     *
      * abcdefghijklmnopqrstuv.
-     * 
+     *
      * This example is provided to demonstrate the results of compressing and decompressing the string
      * using an interoperable implementation of the algorithm specified in section 2.4.1.
-     * 
+     *
      * The following hex array represents the compressed byte array of the example string as compressed by
      * the compression algorithm.
-     * 
+     *
      * 01 19 B0 00 61 62 63 64 65 66 67 68 00 69 6A 6B 6C
      * 6D 6E 6F 70 00 71 72 73 74 75 76 2E
-     * 
+     *
      * The following hex array represents the decompressed byte array of the example string as
      * decompressed by the decompression algorithm.
-     * 
+     *
      * 61 62 63 64 65 66 67 68 69 6A 6B 6C 6D 6E 6F 70 71
      * 72 73 74 75 76 2E
-     * 
+     *
      */
     @Test
     public void noCompressionExample() {
@@ -66,23 +66,23 @@ public class TestRLEDecompressingInputStream {
 
     /**
      * Section 3.2.2 Normal Compression Example
-     * 
+     *
      * The following string illustrates an ASCII text string with a typical set of characters that can be
      * compressed by the compression algorithm.
-     * 
+     *
      *     #aaabcdefaaaaghijaaaaaklaaamnopqaaaaaaaaaaaarstuvwxyzaaa
-     * 
+     *
      * This example is provided to demonstrate the results of compressing and decompressing the example
      * string using an interoperable implementation of the algorithm specified in section 2.4.1.
-     * 
+     *
      * The following hex array represents the compressed byte array of the example string as compressed by
      * the compression algorithm:
-     * 
+     *
      *     01 2F B0 00 23 61 61 61 62 63 64 65 82 66 00 70
      *     61 67 68 69 6A 01 38 08 61 6B 6C 00 30 6D 6E 6F
      *     70 06 71 02 70 04 10 72 73 74 75 76 10 77 78 79
      *     7A 00 3C
-     * 
+     *
      * The following hex array represents the decompressed byte array of the example string as
      * decompressed by the decompression algorithm:
      *
@@ -102,23 +102,23 @@ public class TestRLEDecompressingInputStream {
         final String expected = "#aaabcdefaaaaghijaaaaaklaaamnopqaaaaaaaaaaaarstuvwxyzaaa";
         checkRLEDecompression(expected, compressed);
     }
-    
+
     /**
      * Section 3.2.3 Maximum Compression Example
-     * 
+     *
      * The following string illustrates an ASCII text string with a typical set of characters that can be
      * compressed by the compression algorithm.
-     * 
+     *
      *     aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
-     * 
+     *
      * This example is provided to demonstrate the results of compressing and decompressing the example
      * string using an interoperable implementation of the algorithm specified in section 2.4.1.
-     * 
+     *
      * The following hex array represents the compressed byte array of the example string as compressed by
      * the compression algorithm:
-     * 
+     *
      *     01 03 B0 02 61 45 00
-     * 
+     *
      * The following hex array represents the decompressed byte array of the example string as
      * decompressed by the decompression algorithm:
      *
@@ -136,7 +136,7 @@ public class TestRLEDecompressingInputStream {
         final String expected = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
         checkRLEDecompression(expected, compressed);
     }
-    
+
     @Test
     public void decompress() throws IOException {
         final byte[] compressed = {
@@ -146,7 +146,7 @@ public class TestRLEDecompressingInputStream {
         final byte[] expected = "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa".getBytes(StringUtil.UTF8);
         assertArrayEquals(expected, expanded);
     }
-    
+
     private static void checkRLEDecompression(String expected, byte[] runLengthEncodedData) {
         InputStream compressedStream = new ByteArrayInputStream(runLengthEncodedData);
         ByteArrayOutputStream out = new ByteArrayOutputStream();

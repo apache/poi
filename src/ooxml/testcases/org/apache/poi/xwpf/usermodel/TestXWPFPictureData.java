@@ -17,11 +17,12 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -32,8 +33,8 @@ import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.xssf.usermodel.XSSFRelation;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.model.XWPFHeaderFooterPolicy;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 public class TestXWPFPictureData {
 
@@ -127,9 +128,7 @@ public class TestXWPFPictureData {
             // Document shouldn't have any image relationships
             assertEquals(13, doc.getPackagePart().getRelationships().size());
             for (PackageRelationship rel : doc.getPackagePart().getRelationships()) {
-                if (rel.getRelationshipType().equals(XSSFRelation.IMAGE_JPEG.getRelation())) {
-                    fail("Shouldn't have JPEG yet");
-                }
+                assertNotEquals(XSSFRelation.IMAGE_JPEG.getRelation(), rel.getRelationshipType(), "Shouldn't have JPEG yet");
             }
 
             // Add the image
@@ -145,12 +144,11 @@ public class TestXWPFPictureData {
             PackageRelationship jpegRel = null;
             for (PackageRelationship rel : doc.getPackagePart().getRelationships()) {
                 if (rel.getRelationshipType().equals(XWPFRelation.IMAGE_JPEG.getRelation())) {
-                    if (jpegRel != null)
-                        fail("Found 2 jpegs!");
+                    assertNull(jpegRel, "Found 2 jpegs!");
                     jpegRel = rel;
                 }
             }
-            assertNotNull("JPEG Relationship not found", jpegRel);
+            assertNotNull(jpegRel, "JPEG Relationship not found");
 
             // Check the details
             assertNotNull(jpegRel);
@@ -185,7 +183,7 @@ public class TestXWPFPictureData {
                 .map(XWPFRun::getEmbeddedPictures)
                 .flatMap(List::stream)
                 .map(XWPFPicture::getPictureData)
-                .forEach(Assert::assertNull);
+                .forEach(Assertions::assertNull);
         }
     }
 }

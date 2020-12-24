@@ -17,10 +17,10 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -41,7 +41,7 @@ import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.util.CellReference;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases for COUNT(), COUNTA() COUNTIF(), COUNTBLANK()
@@ -151,7 +151,7 @@ public final class TestCountFuncs {
 		assertNotNull(mp);
 		StringEval seA = new StringEval("aa"); // this should not match the criteria '<>aa'
 		StringEval seB = new StringEval("bb"); // this should match
-		assertFalse("Identified bug 46647", mp.matches(seA) && !mp.matches(seB));
+		assertFalse(mp.matches(seA) && !mp.matches(seB), "Identified bug 46647");
 		assertFalse(mp.matches(seA));
 		assertTrue(mp.matches(seB));
 
@@ -420,10 +420,8 @@ public final class TestCountFuncs {
             double expectedValue = cellRef.getNumericCellValue();
             double actualValue = evaluator.evaluate(cellFmla).getNumberValue();
 
-            assertEquals(
-                    "Problem with a formula at " +
-                            new CellReference(cellFmla).formatAsString() + "[" + cellFmla.getCellFormula()+"] ",
-                    expectedValue, actualValue, 0.0001);
+            assertEquals(expectedValue, actualValue, 0.0001,
+				"Problem with a formula at " + new CellReference(cellFmla).formatAsString() + "[" + cellFmla.getCellFormula()+"] ");
         }
 
         // string criteria
@@ -434,10 +432,8 @@ public final class TestCountFuncs {
             double expectedValue = cellRef.getNumericCellValue();
             double actualValue = evaluator.evaluate(cellFmla).getNumberValue();
 
-            assertEquals(
-                    "Problem with a formula at " +
-                            new CellReference(cellFmla).formatAsString() + "[" + cellFmla.getCellFormula()+"] ",
-                    expectedValue, actualValue, 0.0001);
+            assertEquals(expectedValue, actualValue, 0.0001,
+				"Problem with a formula at " + new CellReference(cellFmla).formatAsString() + "[" + cellFmla.getCellFormula()+"] ");
         }
 	}
 
@@ -533,11 +529,8 @@ public final class TestCountFuncs {
             CellValue cv = fe.evaluate(cellA);
             double actualValue = cv.getNumberValue();
             double expectedValue = cellC.getNumericCellValue();
-            assertEquals(
-                    "Problem with a formula at  " + new CellReference(cellA).formatAsString()
-                            + ": " + cellA.getCellFormula() + " :"
-                    + "Expected = (" + expectedValue + ") Actual=(" + actualValue + ") ",
-                    expectedValue, actualValue, 0.0001);
+            assertEquals(expectedValue, actualValue, 0.0001,
+				"Problem with a formula at  " + new CellReference(cellA).formatAsString() + ": " + cellA.getCellFormula() + " :Expected = (" + expectedValue + ") Actual=(" + actualValue + ") ");
         }
 
         HSSFSheet sheet2 = wb.getSheet("MSDN Example 2");
@@ -552,12 +545,9 @@ public final class TestCountFuncs {
             double actualValue = cv.getNumberValue();
             double expectedValue = cellC.getNumericCellValue();
 
-            assertEquals(
-                    "Problem with a formula at " +
-                            new CellReference(cellA).formatAsString() + "[" + cellA.getCellFormula()+"]: "
-                            + "Expected = (" + expectedValue + ") Actual=(" + actualValue + ") ",
-                    expectedValue, actualValue, 0.0001);
-
+            assertEquals(expectedValue, actualValue, 0.0001,
+				 "Problem with a formula at " + new CellReference(cellA).formatAsString() + "[" +
+				 cellA.getCellFormula()+"]: Expected = (" + expectedValue + ") Actual=(" + actualValue + ") ");
         }
     }
 
@@ -589,6 +579,6 @@ public final class TestCountFuncs {
 			}
 		}
 
-		assertEquals(failureCount + " " + functionName + " evaluations failed.", 0, failureCount);
+		assertEquals(0, failureCount, failureCount + " " + functionName + " evaluations failed.");
 	}
 }

@@ -21,9 +21,9 @@ import static org.apache.poi.sl.usermodel.TextShape.TextPlaceholder.BODY;
 import static org.apache.poi.sl.usermodel.TextShape.TextPlaceholder.CENTER_BODY;
 import static org.apache.poi.sl.usermodel.TextShape.TextPlaceholder.CENTER_TITLE;
 import static org.apache.poi.sl.usermodel.TextShape.TextPlaceholder.TITLE;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -43,7 +43,7 @@ import org.apache.poi.hslf.usermodel.HSLFTextParagraph;
 import org.apache.poi.hslf.usermodel.HSLFTextRun;
 import org.apache.poi.hslf.usermodel.HSLFTitleMaster;
 import org.apache.poi.sl.usermodel.TextShape.TextPlaceholder;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for SlideMaster
@@ -103,7 +103,7 @@ public final class TestSlideMaster {
         return getMasterProp(ppt, masterIdx, txtype, propName, isCharacter).getValue();
     }
 
-    
+
     /**
      * Test we can read default text attributes for a title master sheet
      */

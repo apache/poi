@@ -16,49 +16,44 @@
 ==================================================================== */
 package org.apache.poi.hwpf.usermodel;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.util.HexDump;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Bug 47563 - Exception when working with table
  */
-@RunWith(Parameterized.class)
 public class TestBug47563 {
 
-	@Parameterized.Parameter()
-	public int rows;
-	@Parameterized.Parameter(1)
-	public int columns;
 
-	@Parameterized.Parameters(name="rows: {0}, columns: {1}")
-	public static Collection<Object[]> data() {
-		List<Object[]> data = new ArrayList<>();
+	public static Stream<Arguments> data() {
+		List<Arguments> data = new ArrayList<>();
 
-		data.add(new Object[] {1, 5});
-		data.add(new Object[] {1, 6});
-		data.add(new Object[] {5, 1});
-		data.add(new Object[] {6, 1});
-		data.add(new Object[] {2, 2});
-		data.add(new Object[] {3, 2});
-		data.add(new Object[] {2, 3});	//
-		data.add(new Object[] {3, 3});
+		data.add(Arguments.of( 1, 5 ));
+		data.add(Arguments.of( 1, 6 ));
+		data.add(Arguments.of( 5, 1 ));
+		data.add(Arguments.of( 6, 1 ));
+		data.add(Arguments.of( 2, 2 ));
+		data.add(Arguments.of( 3, 2 ));
+		data.add(Arguments.of( 2, 3 ));
+		data.add(Arguments.of( 3, 3 ));
 
-		return data;
+		return data.stream();
 	}
 
-	@Test
-	public void test() throws Exception {
+	@ParameterizedTest
+	@MethodSource("data")
+	public void test(int rows, int columns) throws Exception {
 		// POI apparently can't create a document from scratch,
 		// so we need an existing empty dummy document
 		try (HWPFDocument doc = HWPFTestDataSamples.openSampleFile("empty.doc")) {
@@ -93,10 +88,8 @@ public class TestBug47563 {
 			int mustBeAfter = 0;
 			for (int i = 0; i < rows * columns; i++) {
 				int next = text.indexOf(Integer.toString(i), mustBeAfter);
-				assertTrue("Test with " + rows + "/" + columns + ": Should find " + i +
-								" but did not find it (" + next + ") with " + mustBeAfter + " in " + textBytes + "\n" +
-								text.indexOf(Integer.toString(i), mustBeAfter),
-						next != -1);
+				assertTrue( next != -1, "Test with " + rows + "/" + columns + ": Should find " + i +
+					" but did not find it (" + next + ") with " + mustBeAfter + " in " + textBytes + "\n" + next);
 				mustBeAfter = next;
 			}
 		}

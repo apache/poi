@@ -17,11 +17,12 @@
 
 package org.apache.poi.hdgf.pointers;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the pointer factory, and the pointers themselves
@@ -50,10 +51,10 @@ public final class TestPointerFactory {
 		-1, 0, 0, 0, -84, -1, 79, 1, 0, 0, 0, 0, 0, 0, 0, 0, 96, 0
 	};
 
-	@Test(expected = IllegalArgumentException.class)
+	@Test
 	public void testCreateV4() {
 		PointerFactory pf = new PointerFactory(4);
-		pf.createPointer(new byte[]{}, 0);
+		assertThrows(IllegalArgumentException.class, () -> pf.createPointer(new byte[]{}, 0));
 	}
 
 	@Test

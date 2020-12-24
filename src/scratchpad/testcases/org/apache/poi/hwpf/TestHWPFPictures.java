@@ -17,10 +17,10 @@
 
 package org.apache.poi.hwpf;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
@@ -32,8 +32,8 @@ import javax.imageio.ImageIO;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hwpf.model.PicturesTable;
 import org.apache.poi.hwpf.usermodel.Picture;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test picture support in HWPF
@@ -49,7 +49,7 @@ public final class TestHWPFPictures {
 	private String imgCFile;
 	private String imgDFile;
 
-	@Before
+	@BeforeEach
     public void setUp() {
 		docAFile = "testPictures.doc";
 		docBFile = "two_images.doc";
@@ -63,8 +63,7 @@ public final class TestHWPFPictures {
 
 		// we use ImageIO in one of the tests here so we should ensure that the temporary directory is created correctly
 		File tempDir = new File(System.getProperty("java.io.tmpdir"));
-		assertTrue("Could not create temporary directory " + tempDir.getAbsolutePath() + ": " + tempDir.exists() + "/" + tempDir.isDirectory(),
-				tempDir.exists() || tempDir.mkdirs());
+		assertTrue( tempDir.exists() || tempDir.mkdirs(), "Could not create temporary directory " + tempDir.getAbsolutePath() + ": " + tempDir.exists() + "/" + tempDir.isDirectory() );
 	}
 
 	/**

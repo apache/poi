@@ -17,9 +17,9 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Dimension;
 import java.io.ByteArrayInputStream;
@@ -41,8 +41,8 @@ import org.apache.poi.sl.image.ImageHeaderPICT;
 import org.apache.poi.sl.image.ImageHeaderWMF;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.Units;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test adding/reading pictures
@@ -459,7 +459,7 @@ public final class TestPictures {
      * See "Please remove my file from your svn" on @poi-dev from Dec 12, 2013
      */
     @Test
-    @Ignore("requires an internet connection to a 3rd party site")
+    @Disabled("requires an internet connection to a 3rd party site")
     // As of 2017-06-20, the file still exists at the specified URL and the test passes.
 	public void testZeroPictureLength() throws IOException {
         // take the data from www instead of test directory

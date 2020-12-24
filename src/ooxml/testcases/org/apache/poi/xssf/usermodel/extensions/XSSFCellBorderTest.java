@@ -25,21 +25,21 @@ import org.apache.poi.xssf.model.ThemesTable;
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFColor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorder;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTBorderPr;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTXf;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STBorderStyle;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class XSSFCellBorderTest {
     private final XSSFWorkbook wb = new XSSFWorkbook();
     private final StylesTable stylesSource = wb.getStylesSource();
     private final XSSFCellBorder empty = new XSSFCellBorder();
 
-    @Before
+    @BeforeEach
     public void setUp() {
         assertNotNull(stylesSource);
         assertEquals(1, stylesSource.getBorders().size());

@@ -17,12 +17,12 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.formula.BaseTestMissingWorkbook;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * XSSF Specific version of the Missing Workbooks test
@@ -33,7 +33,7 @@ public final class TestMissingWorkbookOnXSSF extends BaseTestMissingWorkbook {
     }
 
     @Override
-    @Before
+    @BeforeEach
     public void setUp() {
         mainWorkbook = XSSFTestDataSamples.openSampleWorkbook(MAIN_WORKBOOK_FILENAME);
         sourceWorkbook = HSSFTestDataSamples.openSampleWorkbook(SOURCE_WORKBOOK_FILENAME);

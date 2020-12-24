@@ -16,7 +16,8 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -28,7 +29,6 @@ import java.util.zip.ZipException;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.OldFileFormatException;
 import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
-import org.junit.Assume;
 
 /**
  * This class is used for mass-regression testing via a
@@ -49,7 +49,7 @@ public class BaseIntegrationTest {
 	}
 
 	public void test() throws Exception {
-        assertNotNull("Unknown file extension for file: " + file + ": " + TestAllFiles.getExtension(file), handler);
+        assertNotNull( handler, "Unknown file extension for file: " + file + ": " + TestAllFiles.getExtension(file) );
 		testOneFile(new File(rootDir, file));
 	}
 
@@ -61,14 +61,14 @@ public class BaseIntegrationTest {
 			handleWrongOLE2XMLExtension(inputFile, e);
 		} catch (OldFileFormatException e) {
 			// Not even text extraction is supported for these: handler.handleExtracting(inputFile);
-			Assume.assumeFalse("File " + file + " excluded because it is unsupported old Excel format", true);
+			assumeFalse( true, "File " + file + " excluded because it is unsupported old Excel format" );
 		} catch (EncryptedDocumentException e) {
 			// Do not try to read encrypted files
-			Assume.assumeFalse("File " + file + " excluded because it is password-encrypted", true);
+			assumeFalse( true, "File " + file + " excluded because it is password-encrypted" );
 		} catch (ZipException e) {
 			// some files are corrupted
 			if (e.getMessage().equals("unexpected EOF") || e.getMessage().equals("Truncated ZIP file")) {
-				Assume.assumeFalse("File " + file + " excluded because the Zip file is incomplete", true);
+				assumeFalse( true, "File " + file + " excluded because the Zip file is incomplete" );
 			}
 
 			throw e;
@@ -76,7 +76,7 @@ public class BaseIntegrationTest {
 			// ignore some other ways of corrupted files
 			String message = e.getMessage();
 			if(message != null && message.contains("Truncated ZIP file")) {
-				Assume.assumeFalse("File " + file + " excluded because the Zip file is incomplete", true);
+				assumeFalse( true, "File " + file + " excluded because the Zip file is incomplete" );
 			}
 
 			// sometimes binary format has XML-format-extension...
@@ -92,7 +92,7 @@ public class BaseIntegrationTest {
 			if(message != null && (message.equals("The document is really a RTF file") ||
 					message.equals("The document is really a PDF file") ||
 					message.equals("The document is really a HTML file"))) {
-				Assume.assumeFalse("File " + file + " excluded because it is actually a PDF/RTF/HTML file", true);
+				assumeFalse( true, "File " + file + " excluded because it is actually a PDF/RTF/HTML file" );
 			}
 
 			if(message != null && message.equals("The document is really a OOXML file")) {
@@ -107,7 +107,7 @@ public class BaseIntegrationTest {
 			handler.handleExtracting(inputFile);
 		} catch (EncryptedDocumentException e) {
 			// Do not try to read encrypted files
-			Assume.assumeFalse("File " + file + " excluded because it is password-encrypted", true);
+			assumeFalse( true, "File " + file + " excluded because it is password-encrypted" );
 		}
 	}
 
@@ -117,10 +117,9 @@ public class BaseIntegrationTest {
 		String message = e.getMessage();
 
 		// ignore some file-types that we do not want to handle here
-		Assume.assumeFalse("File " + file + " excluded because it is actually a PDF/RTF/HTML file",
-				message != null && (message.equals("The document is really a RTF file") ||
+		assumeFalse( message != null && (message.equals("The document is really a RTF file") ||
 					message.equals("The document is really a PDF file") ||
-					message.equals("The document is really a HTML file")));
+					message.equals("The document is really a HTML file")), "File " + file + " excluded because it is actually a PDF/RTF/HTML file" );
 
 		if(message != null && (message.equals("The document is really a XLS file"))) {
 			handler = TestAllFiles.HANDLERS.get(".xls");

@@ -17,8 +17,8 @@
 
 package org.apache.poi.hssf.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ss.formula.ptg.AddPtg;
 import org.apache.poi.ss.formula.ptg.AttrPtg;
@@ -33,7 +33,7 @@ import org.apache.poi.ss.formula.ptg.NotEqualPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.formula.ptg.StringPtg;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests <tt>FormulaParser</tt> specifically with respect to IF() functions
@@ -49,7 +49,7 @@ public final class TestFormulaParserIf {
 
 	private static void confirmAttrData(Ptg[] ptgs, int i, int expectedData) {
 		Ptg ptg = ptgs[i];
-		assertTrue("Token[" + i + "] was not AttrPtg as expected", ptg instanceof AttrPtg);
+		assertTrue(ptg instanceof AttrPtg, "Token[" + i + "] was not AttrPtg as expected");
 		AttrPtg attrPtg = (AttrPtg) ptg;
 		assertEquals(expectedData, attrPtg.getData());
 	}
@@ -164,24 +164,24 @@ public final class TestFormulaParserIf {
 		Ptg[] ptgs = parseFormula("IF(3>=1,\"*\",IF(4<>1,\"first\",\"second\"))");
 		assertEquals(17, ptgs.length);
 
-		assertEquals("6th Ptg is not a goto (Attr) ptg",AttrPtg.class,ptgs[5].getClass());
-		assertEquals("9th Ptg is not a not equal ptg",NotEqualPtg.class,ptgs[8].getClass());
-		assertEquals("15th Ptg is not the inner IF variable function ptg",FuncVarPtg.class,ptgs[14].getClass());
+		assertEquals(AttrPtg.class, ptgs[5].getClass(), "6th Ptg is not a goto (Attr) ptg");
+		assertEquals(NotEqualPtg.class, ptgs[8].getClass(), "9th Ptg is not a not equal ptg");
+		assertEquals(FuncVarPtg.class, ptgs[14].getClass(), "15th Ptg is not the inner IF variable function ptg");
 	}
 
 	@Test
 	public void testSimpleLogical() {
 	 Ptg[] ptgs = parseFormula("IF(A1<A2,B1,B2)");
 	 assertEquals(9, ptgs.length);
-	 assertEquals("3rd Ptg is less than", LessThanPtg.class, ptgs[2].getClass());
+	 assertEquals(LessThanPtg.class, ptgs[2].getClass(), "3rd Ptg is less than");
 	}
 
 	@Test
 	public void testParenIf() {
 		Ptg[] ptgs = parseFormula("IF((A1+A2)<=3,\"yes\",\"no\")");
 		assertEquals(12, ptgs.length);
-		assertEquals("6th Ptg is less than equal",LessEqualPtg.class,ptgs[5].getClass());
-		assertEquals("11th Ptg is not a goto (Attr) ptg",AttrPtg.class,ptgs[10].getClass());
+		assertEquals(LessEqualPtg.class, ptgs[5].getClass(), "6th Ptg is less than equal");
+		assertEquals(AttrPtg.class, ptgs[10].getClass(), "11th Ptg is not a goto (Attr) ptg");
 	}
 
 	@Test
@@ -200,7 +200,7 @@ public final class TestFormulaParserIf {
 		assertEquals("Y", y.getValue());
 		assertEquals("N", n.getValue());
 		assertEquals("IF", funif.toFormulaString());
-		assertTrue("tAttrSkip ptg exists", goto1.isSkip());
+		assertTrue(goto1.isSkip(), "tAttrSkip ptg exists");
 	}
 
 	/**
@@ -211,11 +211,11 @@ public final class TestFormulaParserIf {
 		Ptg[] ptgs = parseFormula("IF(A1=B1,AVERAGE(A1:B1),AVERAGE(A2:B2))");
 		assertEquals(11, ptgs.length);
 
-		assertTrue("IF Attr set correctly", (ptgs[3] instanceof AttrPtg));
+		assertTrue((ptgs[3] instanceof AttrPtg), "IF Attr set correctly");
 		AttrPtg ifFunc = (AttrPtg)ptgs[3];
-		assertTrue("It is not an if", ifFunc.isOptimizedIf());
+		assertTrue(ifFunc.isOptimizedIf(), "It is not an if");
 
-		assertTrue("Average Function set correctly", (ptgs[5] instanceof FuncVarPtg));
+		assertTrue((ptgs[5] instanceof FuncVarPtg), "Average Function set correctly");
 	}
 
 	@Test
@@ -223,16 +223,16 @@ public final class TestFormulaParserIf {
 		Ptg[] ptgs = parseFormula("IF(1=1,10)");
 		assertEquals(7, ptgs.length);
 
-		assertTrue("IF Attr set correctly", (ptgs[3] instanceof AttrPtg));
+		assertTrue((ptgs[3] instanceof AttrPtg), "IF Attr set correctly");
 		AttrPtg ifFunc = (AttrPtg)ptgs[3];
-		assertTrue("It is not an if", ifFunc.isOptimizedIf());
+		assertTrue(ifFunc.isOptimizedIf(), "It is not an if");
 
-		assertTrue("Single Value is not an IntPtg", (ptgs[4] instanceof IntPtg));
+		assertTrue((ptgs[4] instanceof IntPtg), "Single Value is not an IntPtg");
 		IntPtg intPtg = (IntPtg)ptgs[4];
-		assertEquals("Result", (short)10, intPtg.getValue());
+		assertEquals((short)10, intPtg.getValue(), "Result");
 
-		assertTrue("Ptg is not a Variable Function", (ptgs[6] instanceof FuncVarPtg));
+		assertTrue((ptgs[6] instanceof FuncVarPtg), "Ptg is not a Variable Function");
 		FuncVarPtg funcPtg = (FuncVarPtg)ptgs[6];
-		assertEquals("Arguments", 2, funcPtg.getNumberOfOperands());
+		assertEquals(2, funcPtg.getNumberOfOperands(), "Arguments");
 	}
 }

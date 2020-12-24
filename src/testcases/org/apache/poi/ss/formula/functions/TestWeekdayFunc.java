@@ -19,9 +19,9 @@ package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.formula.eval.*;
 import org.apache.poi.util.StringUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 /**
  * Tests WEEKDAY(serial_number[, return_type]) excep function
@@ -29,58 +29,58 @@ import static org.junit.Assert.*;
  */
 public class TestWeekdayFunc {
     private static final double TOLERANCE = 0.001;
-    
+
     private void assertEvaluateEquals(double expected, double serial_number) {
         String formula = "WEEKDAY(" + serial_number + ")";
         ValueEval[] args = new ValueEval[] { new NumberEval(serial_number) };
         NumberEval result = (NumberEval) WeekdayFunc.instance.evaluate(args, 0, 0);
-        assertEquals(formula, expected, result.getNumberValue(), TOLERANCE);
+        assertEquals(expected, result.getNumberValue(), TOLERANCE, formula);
     }
     private void assertEvaluateEquals(double expected, double serial_number, double return_type) {
         String formula = "WEEKDAY(" + serial_number + ", " + return_type + ")";
         ValueEval[] args = new ValueEval[] { new NumberEval(serial_number), new NumberEval(return_type) };
         NumberEval result = (NumberEval) WeekdayFunc.instance.evaluate(args, 0, 0);
-        assertEquals(formula, expected, result.getNumberValue(), TOLERANCE);
+        assertEquals(expected, result.getNumberValue(), TOLERANCE, formula);
     }
-    
+
 
     @Test
-    public void testEvaluate() throws Exception {
+    public void testEvaluate() {
         assertEvaluateEquals(2.0,  1.0);
         assertEvaluateEquals(2.0,  1.0, 1.0);
         assertEvaluateEquals(1.0,  1.0, 2.0);
         assertEvaluateEquals(0.0,  1.0, 3.0);
         assertEvaluateEquals(1.0, 1.0, 11.0);
-        assertEvaluateEquals(7.0, 1.0, 12.0); 
-        assertEvaluateEquals(6.0, 1.0, 13.0); 
-        assertEvaluateEquals(5.0, 1.0, 14.0); 
-        assertEvaluateEquals(4.0, 1.0, 15.0); 
-        assertEvaluateEquals(3.0, 1.0, 16.0); 
-        assertEvaluateEquals(2.0, 1.0, 17.0); 
+        assertEvaluateEquals(7.0, 1.0, 12.0);
+        assertEvaluateEquals(6.0, 1.0, 13.0);
+        assertEvaluateEquals(5.0, 1.0, 14.0);
+        assertEvaluateEquals(4.0, 1.0, 15.0);
+        assertEvaluateEquals(3.0, 1.0, 16.0);
+        assertEvaluateEquals(2.0, 1.0, 17.0);
 
-        
-        assertEvaluateEquals(3.0, 39448.0); 
-        assertEvaluateEquals(3.0, 39448.0, 1.0); 
-        assertEvaluateEquals(2.0, 39448.0, 2.0); 
-        assertEvaluateEquals(1.0, 39448.0, 3.0); 
-        assertEvaluateEquals(2.0, 39448.0, 11.0); 
-        assertEvaluateEquals(1.0, 39448.0, 12.0); 
-        assertEvaluateEquals(7.0, 39448.0, 13.0); 
-        assertEvaluateEquals(6.0, 39448.0, 14.0); 
-        assertEvaluateEquals(5.0, 39448.0, 15.0); 
-        assertEvaluateEquals(4.0, 39448.0, 16.0); 
-        assertEvaluateEquals(3.0, 39448.0, 17.0); 
+
+        assertEvaluateEquals(3.0, 39448.0);
+        assertEvaluateEquals(3.0, 39448.0, 1.0);
+        assertEvaluateEquals(2.0, 39448.0, 2.0);
+        assertEvaluateEquals(1.0, 39448.0, 3.0);
+        assertEvaluateEquals(2.0, 39448.0, 11.0);
+        assertEvaluateEquals(1.0, 39448.0, 12.0);
+        assertEvaluateEquals(7.0, 39448.0, 13.0);
+        assertEvaluateEquals(6.0, 39448.0, 14.0);
+        assertEvaluateEquals(5.0, 39448.0, 15.0);
+        assertEvaluateEquals(4.0, 39448.0, 16.0);
+        assertEvaluateEquals(3.0, 39448.0, 17.0);
     }
 
     // for testing invalid invocations
     private void assertEvaluateEquals(String message, ErrorEval expected, ValueEval... args) {
         String formula = "WEEKDAY(" + StringUtil.join(args, ", ") + ")";
         ValueEval result = WeekdayFunc.instance.evaluate(args, 0, 0);
-        assertEquals(formula + ": " + message, expected, result);
+        assertEquals(expected, result, formula + ": " + message);
     }
 
     @Test
-    public void testEvaluateInvalid() throws Exception {
+    public void testEvaluateInvalid() {
         assertEvaluateEquals("no args",       ErrorEval.VALUE_INVALID);
         assertEvaluateEquals("too many args", ErrorEval.VALUE_INVALID, new NumberEval(1.0), new NumberEval(1.0), new NumberEval(1.0));
         assertEvaluateEquals("negative date", ErrorEval.NUM_ERROR, new NumberEval(-1.0));

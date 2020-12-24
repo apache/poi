@@ -17,10 +17,12 @@
 package org.apache.poi.xslf.usermodel;
 
 import static org.apache.poi.sl.usermodel.BaseTestSlideShow.getColor;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
@@ -34,8 +36,7 @@ import org.apache.poi.sl.draw.DrawTextParagraph;
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
 import org.apache.poi.sl.usermodel.TextParagraph.TextAlign;
 import org.apache.poi.xslf.XSLFTestDataSamples;
-import org.junit.Assume;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * @author Yegor Kozlov
@@ -159,7 +160,7 @@ public class TestXSLFTextParagraph {
     @Test
     public void testBreakLines() throws IOException {
         String os = System.getProperty("os.name");
-        Assume.assumeTrue("Skipping testBreakLines(), it is executed only on Windows machines", (os != null && os.contains("Windows")));
+        assumeTrue((os != null && os.contains("Windows")), "Skipping testBreakLines(), it is executed only on Windows machines");
 
         XMLSlideShow ppt = new XMLSlideShow();
         XSLFSlide slide = ppt.createSlide();
@@ -363,7 +364,7 @@ public class TestXSLFTextParagraph {
         ppt.close();
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testLineBreak() throws IOException {
         try (XMLSlideShow ppt = new XMLSlideShow()) {
             XSLFSlide slide = ppt.createSlide();
@@ -385,7 +386,7 @@ public class TestXSLFTextParagraph {
             assertEquals("Hello,\nWorld!\n", sh.getText());
 
             // "You cannot change text of a line break, it is always '\\n'"
-            r2.setText("aaa");
+            assertThrows(IllegalStateException.class, () -> r2.setText("aaa"));
         }
     }
 }

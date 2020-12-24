@@ -17,16 +17,16 @@
 
 package org.apache.poi.hwpf.model;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayOutputStream;
 import java.util.List;
 
 import org.apache.poi.hwpf.HWPFDocFixture;
 import org.apache.poi.hwpf.model.io.HWPFFileSystem;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public final class TestSectionTable {
   private HWPFDocFixture _hWPFDocFixture;
@@ -85,7 +85,7 @@ public final class TestSectionTable {
     }
   }
 
-  @Before
+  @BeforeEach
   public void setUp() throws Exception {
     /*@todo verify the constructors*/
     _hWPFDocFixture = new HWPFDocFixture(this, HWPFDocFixture.DEFAULT_TEST_FILE);
@@ -93,7 +93,7 @@ public final class TestSectionTable {
     _hWPFDocFixture.setUp();
   }
 
-  @After
+  @AfterEach
   public void tearDown()  {
     _hWPFDocFixture.tearDown();
 

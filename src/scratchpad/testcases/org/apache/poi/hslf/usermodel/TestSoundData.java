@@ -17,11 +17,11 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hslf.HSLFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test reading sound data from a ppt
@@ -38,7 +38,7 @@ public final class TestSoundData {
         HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("sound.ppt");
 
         HSLFSoundData[] sound = ppt.getSoundData();
-        assertEquals("Expected 1 sound", 1, sound.length);
+        assertEquals(1, sound.length, "Expected 1 sound");
 
         assertArrayEquals(ref_data, sound[0].getData());
         ppt.close();

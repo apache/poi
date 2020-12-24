@@ -17,7 +17,8 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -27,8 +28,8 @@ import java.io.InputStreamReader;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.Row.MissingCellPolicy;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the Fraction Formatting part of DataFormatter.
@@ -43,15 +44,12 @@ public final class TestFractionFormat {
         assertEquals("26027/81", ret);
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void testInvalid() {
-        FractionFormat f = new FractionFormat("", "9999999999999999999999999999");
-        double val = 321.321;
-        String ret = f.format(val);
-        assertEquals("26027/81", ret);
+        assertThrows(IllegalStateException.class, () -> new FractionFormat("", "9999999999999999999999999999"));
     }
 
-    @Ignore("Runs for some longer time")
+    @Disabled("Runs for some longer time")
     @Test
     public void microBenchmark() {
         FractionFormat f = new FractionFormat("", "##");
@@ -105,7 +103,7 @@ public final class TestFractionFormat {
 
                     String truth = clean(truths[j]);
                     String testKey = truths[0] + ":" + truths[1] + ":" + headers[j];
-                    assertEquals(testKey, truth, formatted);
+                    assertEquals(truth, formatted, testKey);
                 }
                 truthLine = reader.readLine();
             }

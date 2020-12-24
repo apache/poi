@@ -18,16 +18,14 @@
 package org.apache.poi.hslf.usermodel;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.HSLFTestDataSamples;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that SlideShow can re-order slides properly
@@ -48,7 +46,7 @@ public final class TestReOrderingSlides {
 	/**
 	 * Create/open the slideshows
 	 */
-	@Before
+	@BeforeEach
 	public void setUp() throws Exception {
         POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
@@ -90,7 +88,7 @@ public final class TestReOrderingSlides {
 		assertEquals(256, s1._getSheetNumber());
 		assertEquals(3, s1._getSheetRefId());
 		assertEquals(1, s1.getSlideNumber());
-		
+
 		ss_read.close();
 	}
 
@@ -261,11 +259,11 @@ public final class TestReOrderingSlides {
 		s1 = ss_three.getSlides().get(0);
         s2 = ss_three.getSlides().get(1);
         s3 = ss_three.getSlides().get(2);
-		
+
 		assertEquals(1, s1.getSlideNumber());
         assertEquals(2, s2.getSlideNumber());
         assertEquals(3, s3.getSlideNumber());
-        
+
         assertEquals("Slide 3", ((HSLFTextShape)s1.getShapes().get(0)).getText());
         assertEquals("Slide 1", ((HSLFTextShape)s3.getShapes().get(0)).getText());
 
@@ -294,7 +292,7 @@ public final class TestReOrderingSlides {
         assertEquals(s3._getSheetNumber(), _s3._getSheetNumber());
         assertEquals(s3._getSheetRefId(), _s3._getSheetRefId());
 		assertEquals(3, s3.getSlideNumber());
-		
+
 		ss_read.close();
 	}
 }

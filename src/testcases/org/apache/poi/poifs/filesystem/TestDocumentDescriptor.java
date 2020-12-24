@@ -17,10 +17,10 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test DocumentDescriptor functionality
@@ -50,7 +50,7 @@ public final class TestDocumentDescriptor {
                         DocumentDescriptor d2 = new DocumentDescriptor(paths[ k ], names[ n ]);
 
                         if (m == n) {
-                            assertEquals("" + j + "," + k + "," + m + "," + n, d1, d2);
+                            assertEquals(d1, d2, "" + j + "," + k + "," + m + "," + n);
                         } else {
                             assertNotEquals(d1, d2);
                         }
@@ -80,7 +80,7 @@ public final class TestDocumentDescriptor {
                         DocumentDescriptor d2 = new DocumentDescriptor(builtUpPaths[ k ], names[ n ]);
 
                         if ((k == j) && (m == n)) {
-                            assertEquals("" + j + "," + k + "," + m + "," + n, d1, d2);
+                            assertEquals(d1, d2, "" + j + "," + k + "," + m + "," + n);
                         } else {
                             assertNotEquals(d1, d2);
                         }

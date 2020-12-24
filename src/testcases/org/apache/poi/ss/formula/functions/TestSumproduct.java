@@ -17,8 +17,9 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -26,7 +27,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.RefEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases for SUMPRODUCT()
@@ -41,9 +42,7 @@ public final class TestSumproduct {
 	}
 
 	private static void confirmDouble(double expected, ValueEval actualEval) {
-		if(!(actualEval instanceof NumericValueEval)) {
-			fail("Expected numeric result");
-		}
+		assertTrue(actualEval instanceof NumericValueEval, "Expected numeric result");
 		NumericValueEval nve = (NumericValueEval)actualEval;
 		assertEquals(expected, nve.getNumberValue(), 0);
 	}

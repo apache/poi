@@ -16,15 +16,15 @@
 ==================================================================== */
 package org.apache.poi.util.tests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ooxml.util.IdentifierManager;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestIdentifierManager {
     @Test
@@ -43,8 +43,8 @@ public class TestIdentifierManager {
         long min = IdentifierManager.MIN_ID;
         long max = IdentifierManager.MAX_ID;
         IdentifierManager manager = new IdentifierManager(min,max);
-        assertTrue("Limits lead to a long variable overflow", max - min + 1 > 0);
-        assertTrue("Limits lead to a long variable overflow", manager.getRemainingIdentifiers() > 0);
+        assertTrue(max - min + 1 > 0, "Limits lead to a long variable overflow");
+        assertTrue(manager.getRemainingIdentifiers() > 0, "Limits lead to a long variable overflow");
         assertEquals(min,manager.reserveNew());
         assertEquals(max,manager.reserve(max));
         assertEquals(max - min -1, manager.getRemainingIdentifiers());
@@ -54,37 +54,22 @@ public class TestIdentifierManager {
 
     @Test
     public void testReserve() {
-        IdentifierManager manager = new IdentifierManager(10L,30L);
-        assertEquals(12L,manager.reserve(12L));
-        long reserve = manager.reserve(12L);
-        assertNotEquals("Same id must be reserved twice!", 12L, reserve);
-        assertTrue(manager.release(12L));
-        assertTrue(manager.release(reserve));
-        assertFalse(manager.release(12L));
-        assertFalse(manager.release(reserve));
+        IdentifierManager manager1 = new IdentifierManager(10L, 30L);
+        assertEquals(12L, manager1.reserve(12L));
+        long reserve = manager1.reserve(12L);
+        assertNotEquals(12L, reserve, "Same id must be reserved twice!");
+        assertTrue(manager1.release(12L));
+        assertTrue(manager1.release(reserve));
+        assertFalse(manager1.release(12L));
+        assertFalse(manager1.release(reserve));
 
-        manager = new IdentifierManager(0L,2L);
-        assertEquals(0L,manager.reserve(0L));
-        assertEquals(1L,manager.reserve(1L));
-        assertEquals(2L,manager.reserve(2L));
-        try {
-            manager.reserve(0L);
-            fail("Exception expected");
-        } catch(IllegalStateException e) {
-            // expected
-        }
-        try {
-            manager.reserve(1L);
-            fail("Exception expected");
-        } catch(IllegalStateException e) {
-            // expected
-        }
-        try {
-            manager.reserve(2L);
-            fail("Exception expected");
-        } catch(IllegalStateException e) {
-            // expected
-        }
+        IdentifierManager manager2 = new IdentifierManager(0L, 2L);
+        assertEquals(0L, manager2.reserve(0L));
+        assertEquals(1L, manager2.reserve(1L));
+        assertEquals(2L, manager2.reserve(2L));
+        assertThrows(IllegalStateException.class, () -> manager2.reserve(0L));
+        assertThrows(IllegalStateException.class, () -> manager2.reserve(1L));
+        assertThrows(IllegalStateException.class, () -> manager2.reserve(2L));
     }
 
     @Test
@@ -93,12 +78,7 @@ public class TestIdentifierManager {
         assertSame(10L,manager.reserveNew());
         assertSame(11L,manager.reserveNew());
         assertSame(12L,manager.reserveNew());
-        try {
-            manager.reserveNew();
-            fail("IllegalStateException expected");
-        } catch (IllegalStateException e) {
-            // expected
-        }
+        assertThrows(IllegalStateException.class, manager::reserveNew);
     }
 
     @Test

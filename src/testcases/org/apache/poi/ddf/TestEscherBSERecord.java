@@ -17,8 +17,8 @@
 
 package org.apache.poi.ddf;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
@@ -26,7 +26,7 @@ import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.sl.usermodel.PictureData;
 import org.apache.poi.util.HexDump;
 import org.apache.poi.util.HexRead;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestEscherBSERecord {
     @Test
@@ -56,7 +56,7 @@ public final class TestEscherBSERecord {
         EscherBSERecord r = createRecord();
         String exp64 = "H4sIAAAAAAAAAGNkYP+gwsDAwMrKyMTMwsrGzsHJxc3Dy8fPwMgAAkxAzAzEICkAgs9OoSwAAAA=";
         byte[] expected = RawDataUtil.decompress(exp64);
-        
+
         byte[] data = new byte[8 + 36];
         int bytesWritten = r.serialize( 0, data, new NullEscherSerializationListener() );
         assertEquals(data.length, bytesWritten);

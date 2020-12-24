@@ -17,8 +17,8 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -27,7 +27,7 @@ import java.io.IOException;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestEmptyDocument {
     private static final POILogger LOG = POILogFactory.getLogger(TestEmptyDocument.class);
@@ -48,12 +48,7 @@ public final class TestEmptyDocument {
 	public void testSingleEmptyDocumentEvent() throws IOException {
 		POIFSFileSystem fs = new POIFSFileSystem();
 		DirectoryEntry dir = fs.getRoot();
-		dir.createDocument("Foo", 0, new POIFSWriterListener() {
-			@Override
-            public void processPOIFSWriterEvent(POIFSWriterEvent event) {
-				LOG.log(POILogger.WARN, "written");
-			}
-		});
+		dir.createDocument("Foo", 0, event -> LOG.log(POILogger.WARN, "written"));
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		fs.writeFilesystem(out);
@@ -78,21 +73,14 @@ public final class TestEmptyDocument {
 	public void testEmptyDocumentEventWithFriend() throws IOException {
 		POIFSFileSystem fs = new POIFSFileSystem();
 		DirectoryEntry dir = fs.getRoot();
-		dir.createDocument("Bar", 1, new POIFSWriterListener() {
-			@Override
-            public void processPOIFSWriterEvent(POIFSWriterEvent event) {
-				try {
-					event.getStream().write(0);
-				} catch (IOException exception) {
-					throw new RuntimeException("exception on write: " + exception);
-				}
+		dir.createDocument("Bar", 1, event -> {
+			try {
+				event.getStream().write(0);
+			} catch (IOException exception) {
+				throw new RuntimeException("exception on write: " + exception);
 			}
 		});
-		dir.createDocument("Foo", 0, new POIFSWriterListener() {
-			@Override
-            public void processPOIFSWriterEvent(POIFSWriterEvent event) {
-			}
-		});
+		dir.createDocument("Foo", 0, event -> {});
 
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		fs.writeFilesystem(out);
@@ -116,15 +104,15 @@ public final class TestEmptyDocument {
 		fs = new POIFSFileSystem(new ByteArrayInputStream(out.toByteArray()));
 
 		DocumentEntry entry = (DocumentEntry) fs.getRoot().getEntry("Empty");
-		assertEquals("Expected zero size", 0, entry.getSize());
+		assertEquals(0, entry.getSize(), "Expected zero size");
 		byte[] actualReadbackData;
 		actualReadbackData = IOUtils.toByteArray(new DocumentInputStream(entry));
-		assertEquals("Expected zero read from stream", 0, actualReadbackData.length);
+		assertEquals(0, actualReadbackData.length, "Expected zero read from stream");
 
 		entry = (DocumentEntry) fs.getRoot().getEntry("NotEmpty");
 		actualReadbackData = IOUtils.toByteArray(new DocumentInputStream(entry));
-		assertEquals("Expected size was wrong", testData.length, entry.getSize());
-		assertArrayEquals("Expected same data read from stream", testData, actualReadbackData);
+		assertEquals(testData.length, entry.getSize(), "Expected size was wrong");
+		assertArrayEquals(testData, actualReadbackData, "Expected same data read from stream");
 		fs.close();
 	}
 }

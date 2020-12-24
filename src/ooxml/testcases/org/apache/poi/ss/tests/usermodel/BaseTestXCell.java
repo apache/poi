@@ -17,7 +17,7 @@
 
 package org.apache.poi.ss.tests.usermodel;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
@@ -30,7 +30,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.streaming.SXSSFCell;
 import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class for combined testing of XML-specific functionality of

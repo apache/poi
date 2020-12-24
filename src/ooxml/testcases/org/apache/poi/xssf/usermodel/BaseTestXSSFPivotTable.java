@@ -16,9 +16,10 @@
 ==================================================================== */
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 
@@ -28,9 +29,9 @@ import org.apache.poi.ss.usermodel.DataConsolidateFunction;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
 import org.apache.poi.xssf.XSSFITestDataProvider;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageField;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPageFields;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTPivotFields;
@@ -47,10 +48,10 @@ public abstract class BaseTestXSSFPivotTable {
     /**
      * required to set up the test pivot tables and cell reference, either by name or reference.
      */
-    @Before
+    @BeforeEach
     public abstract void setUp();
 
-    @After
+    @AfterEach
     public void tearDown() throws IOException {
         if (wb != null) {
             XSSFWorkbook wb2 = _testDataProvider.writeOutAndReadBack(wb);
@@ -87,9 +88,9 @@ public abstract class BaseTestXSSFPivotTable {
     /**
      * Verify that it's not possible to create a row label outside of the referenced area.
      */
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void testAddRowLabelOutOfRangeThrowsException() {
-        pivotTable.addRowLabel(5);
+        assertThrows(IndexOutOfBoundsException.class, () -> pivotTable.addRowLabel(5));
     }
 
     /**
@@ -208,9 +209,9 @@ public abstract class BaseTestXSSFPivotTable {
     /**
      * Verify that it's not possible to create a column label outside of the referenced area.
      */
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void testAddColumnLabelOutOfRangeThrowsException() {
-        pivotTable.addColumnLabel(DataConsolidateFunction.SUM, 5);
+        assertThrows(IndexOutOfBoundsException.class, () -> pivotTable.addColumnLabel(DataConsolidateFunction.SUM, 5));
     }
 
      /**
@@ -230,9 +231,9 @@ public abstract class BaseTestXSSFPivotTable {
     /**
      * Verify that it's not possible to create a data column outside of the referenced area.
      */
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void testAddDataColumnOutOfRangeThrowsException() {
-        pivotTable.addDataColumn(5, true);
+        assertThrows(IndexOutOfBoundsException.class, () -> pivotTable.addDataColumn(5, true));
     }
 
      /**
@@ -253,9 +254,9 @@ public abstract class BaseTestXSSFPivotTable {
      /**
      * Verify that it's not possible to create a new filter outside of the referenced area.
      */
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void testAddReportFilterOutOfRangeThrowsException() {
-        pivotTable.addReportFilter(5);
+        assertThrows(IndexOutOfBoundsException.class, () -> pivotTable.addReportFilter(5));
     }
 
     /**
@@ -316,8 +317,8 @@ public abstract class BaseTestXSSFPivotTable {
     /**
      * Verify that it's not possible to create a col label outside of the referenced area.
      */
-    @Test(expected = IndexOutOfBoundsException.class)
+    @Test
     public void testAddColLabelOutOfRangeThrowsException() {
-        pivotTable.addColLabel(5);
+        assertThrows(IndexOutOfBoundsException.class, () -> pivotTable.addColLabel(5));
     }
 }

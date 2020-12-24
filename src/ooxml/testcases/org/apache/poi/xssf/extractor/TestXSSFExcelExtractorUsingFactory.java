@@ -19,7 +19,7 @@ package org.apache.poi.xssf.extractor;
 
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 
 /**
  * Tests for {@link XSSFExcelExtractor}
@@ -36,7 +36,7 @@ public final class TestXSSFExcelExtractorUsingFactory extends TestXSSFExcelExtra
 		}
 	}
 
-    @After
+    @AfterEach
     public void tearDown() {
         // reset setting to not affect other tests
         ExtractorFactory.setAllThreadsPreferEventExtractors(null);

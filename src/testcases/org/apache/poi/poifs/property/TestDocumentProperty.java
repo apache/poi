@@ -17,9 +17,9 @@
 
 package org.apache.poi.poifs.property;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -29,7 +29,7 @@ import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.poifs.storage.RawDataUtil;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test DocumentProperty functionality
@@ -88,10 +88,8 @@ public final class TestDocumentProperty {
         byte[] output = stream.toByteArray();
 
         assertEquals(128, output.length);
-        for (int j = 0; j < 128; j++)
-        {
-            assertEquals("mismatch at offset " + j, expected[ j ],
-                         output[ j ]);
+        for (int j = 0; j < 128; j++) {
+            assertEquals(expected[ j ], output[ j ], "mismatch at offset " + j);
         }
         assertEquals(index, property.getIndex());
         assertEquals(name, property.getName());
@@ -156,8 +154,7 @@ public final class TestDocumentProperty {
         assertEquals(testblock.length, output.length);
         for (int j = 0; j < testblock.length; j++)
         {
-            assertEquals("mismatch at offset " + j, testblock[ j ],
-                         output[ j ]);
+            assertEquals(testblock[ j ], output[ j ], "mismatch at offset " + j);
         }
     }
 }

@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -37,10 +37,10 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 	public void handleWorkbook(Workbook wb) throws IOException {
 		// try to access some of the content
 		readContent(wb);
-		
+
 		// write out the file
 		writeToArray(wb);
-		
+
 		// access some more content (we had cases where writing corrupts the data in memory)
 		readContent(wb);
 
@@ -51,11 +51,11 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 		Workbook read = WorkbookFactory.create(new ByteArrayInputStream(out.toByteArray()));
 
 		assertNotNull(read);
-		
+
 		readContent(read);
-		
+
 		extractEmbedded(read);
-		
+
 		modifyContent(read);
 
 		read.close();
@@ -68,7 +68,7 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 		} finally {
 			stream.close();
 		}
-		
+
 		return stream;
 	}
 
@@ -84,7 +84,7 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 			if(sheet.getPhysicalNumberOfRows() > 1000) {
 			    continue;
 			}
-			
+
 			for(Row row : sheet) {
 			    for(Cell cell : row) {
 			        assertNotNull(cell.toString());
@@ -111,7 +111,7 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
             }
         }
 	}
-	
+
 	private void modifyContent(Workbook wb) {
 		/* a number of file fail because of various things: udf, unimplemented functions, ...
 		we would need quite a list of excludes and the large regression tests would probably

@@ -17,14 +17,14 @@
 
 package org.apache.poi.xslf;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Supplier;
 
 import org.apache.xmlbeans.XmlObject;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 // aim is to get these classes loaded and included in poi-ooxml-lite.jar
 public class TestNecessaryOOXMLClasses {

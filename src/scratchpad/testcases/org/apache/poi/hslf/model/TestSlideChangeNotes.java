@@ -18,13 +18,13 @@
 package org.apache.poi.hslf.model;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.record.SlideAtom;
 import org.apache.poi.hslf.usermodel.*;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that changing a slide's idea of what notes sheet is its works right
@@ -35,7 +35,7 @@ public final class TestSlideChangeNotes {
 	// SlideShow primed on the test data
 	private HSLFSlideShow ss;
 
-	@Before
+	@BeforeEach
 	public void init() throws Exception {
         POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(_slTests.openResourceAsStream("basic_test_ppt_file.ppt"));

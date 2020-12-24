@@ -17,24 +17,24 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestXSSFFirstHeader {
-    
+
     private XSSFWorkbook wb;
     private XSSFSheet sheet;
-    
-    @Before
+
+    @BeforeEach
     public void before() {
         wb = new XSSFWorkbook();
         sheet = wb.createSheet();
     }
-    
-    @After
+
+    @AfterEach
     public void after() throws Exception {
         wb.close();
     }

@@ -21,8 +21,8 @@
 package org.apache.poi.hslf;
 
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -36,8 +36,8 @@ import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that POIDocument correctly loads and saves the common
@@ -55,7 +55,7 @@ public final class TestPOIDocumentScratchpad {
 	 * Set things up, using a PowerPoint document and
 	 *  a Word Document for our testing
 	 */
-	@Before
+	@BeforeEach
     public void setUp() throws IOException {
 		doc = new HSLFSlideShowImpl(POIDataSamples.getSlideShowInstance().openResourceAsStream("basic_test_ppt_file.ppt"));
 		doc2 = HWPFTestDataSamples.openSampleFile("test2.doc");

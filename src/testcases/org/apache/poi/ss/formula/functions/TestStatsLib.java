@@ -20,13 +20,14 @@
  */
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertNotNull;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
-import org.junit.Assert;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 
 public class TestStatsLib extends BaseTestNumeric {
@@ -39,32 +40,32 @@ public class TestStatsLib extends BaseTestNumeric {
         v = new double[] {1,2,3,4,5,6,7,8,9,10};
         d = StatsLib.devsq(v);
         x = 82.5;
-        assertEquals("devsq ", x, d);
+        assertDouble("devsq ", x, d);
 
         v = new double[] {1,1,1,1,1,1,1,1,1,1};
         d = StatsLib.devsq(v);
         x = 0;
-        assertEquals("devsq ", x, d);
+        assertDouble("devsq ", x, d);
 
         v = new double[] {0,0,0,0,0,0,0,0,0,0};
         d = StatsLib.devsq(v);
         x = 0;
-        assertEquals("devsq ", x, d);
+        assertDouble("devsq ", x, d);
 
         v = new double[] {1,2,1,2,1,2,1,2,1,2};
         d = StatsLib.devsq(v);
         x = 2.5;
-        assertEquals("devsq ", x, d);
+        assertDouble("devsq ", x, d);
 
         v = new double[] {123.12,33.3333,2d/3d,5.37828,0.999};
         d = StatsLib.devsq(v);
         x = 10953.7416965767;
-        assertEquals("devsq ", x, d);
+        assertDouble("devsq ", x, d);
 
         v = new double[] {-1,-2,-3,-4,-5,-6,-7,-8,-9,-10};
         d = StatsLib.devsq(v);
         x = 82.5;
-        assertEquals("devsq ", x, d);
+        assertDouble("devsq ", x, d);
     }
 
     @Test
@@ -75,36 +76,36 @@ public class TestStatsLib extends BaseTestNumeric {
         v = new double[] {1,2,3,4,5,6,7,8,9,10};
         d = StatsLib.kthLargest(v, 3);
         x = 8;
-        assertEquals("kthLargest ", x, d);
+        assertDouble("kthLargest ", x, d);
 
         v = new double[] {1,1,1,1,1,1,1,1,1,1};
         d = StatsLib.kthLargest(v, 3);
         x = 1;
-        assertEquals("kthLargest ", x, d);
+        assertDouble("kthLargest ", x, d);
 
         v = new double[] {0,0,0,0,0,0,0,0,0,0};
         d = StatsLib.kthLargest(v, 3);
         x = 0;
-        assertEquals("kthLargest ", x, d);
+        assertDouble("kthLargest ", x, d);
 
         v = new double[] {1,2,1,2,1,2,1,2,1,2};
         d = StatsLib.kthLargest(v, 3);
         x = 2;
-        assertEquals("kthLargest ", x, d);
+        assertDouble("kthLargest ", x, d);
 
         v = new double[] {123.12,33.3333,2d/3d,5.37828,0.999};
         d = StatsLib.kthLargest(v, 3);
         x = 5.37828;
-        assertEquals("kthLargest ", x, d);
+        assertDouble("kthLargest ", x, d);
 
         v = new double[] {-1,-2,-3,-4,-5,-6,-7,-8,-9,-10};
         d = StatsLib.kthLargest(v, 3);
         x = -3;
-        assertEquals("kthLargest ", x, d);
+        assertDouble("kthLargest ", x, d);
     }
 
     @Test
-    @Ignore("... implement ...")
+    @Disabled("... implement ...")
     public void testKthSmallest() {
     }
 
@@ -116,32 +117,32 @@ public class TestStatsLib extends BaseTestNumeric {
         v = new double[] {1,2,3,4,5,6,7,8,9,10};
         d = StatsLib.avedev(v);
         x = 2.5;
-        assertEquals("avedev ", x, d);
+        assertDouble("avedev ", x, d);
 
         v = new double[] {1,1,1,1,1,1,1,1,1,1};
         d = StatsLib.avedev(v);
         x = 0;
-        assertEquals("avedev ", x, d);
+        assertDouble("avedev ", x, d);
 
         v = new double[] {0,0,0,0,0,0,0,0,0,0};
         d = StatsLib.avedev(v);
         x = 0;
-        assertEquals("avedev ", x, d);
+        assertDouble("avedev ", x, d);
 
         v = new double[] {1,2,1,2,1,2,1,2,1,2};
         d = StatsLib.avedev(v);
         x = 0.5;
-        assertEquals("avedev ", x, d);
+        assertDouble("avedev ", x, d);
 
         v = new double[] {123.12,33.3333,2d/3d,5.37828,0.999};
         d = StatsLib.avedev(v);
         x = 36.42176053333;
-        assertEquals("avedev ", x, d);
+        assertDouble("avedev ", x, d);
 
         v = new double[] {-1,-2,-3,-4,-5,-6,-7,-8,-9,-10};
         d = StatsLib.avedev(v);
         x = 2.5;
-        assertEquals("avedev ", x, d);
+        assertDouble("avedev ", x, d);
     }
 
     @Test
@@ -152,42 +153,42 @@ public class TestStatsLib extends BaseTestNumeric {
         v = new double[] {1,2,3,4,5,6,7,8,9,10};
         d = StatsLib.median(v);
         x = 5.5;
-        assertEquals("median ", x, d);
+        assertDouble("median ", x, d);
 
         v = new double[] {1,1,1,1,1,1,1,1,1,1};
         d = StatsLib.median(v);
         x = 1;
-        assertEquals("median ", x, d);
+        assertDouble("median ", x, d);
 
         v = new double[] {0,0,0,0,0,0,0,0,0,0};
         d = StatsLib.median(v);
         x = 0;
-        assertEquals("median ", x, d);
+        assertDouble("median ", x, d);
 
         v = new double[] {1,2,1,2,1,2,1,2,1,2};
         d = StatsLib.median(v);
         x = 1.5;
-        assertEquals("median ", x, d);
+        assertDouble("median ", x, d);
 
         v = new double[] {123.12,33.3333,2d/3d,5.37828,0.999};
         d = StatsLib.median(v);
         x = 5.37828;
-        assertEquals("median ", x, d);
+        assertDouble("median ", x, d);
 
         v = new double[] {-1,-2,-3,-4,-5,-6,-7,-8,-9,-10};
         d = StatsLib.median(v);
         x = -5.5;
-        assertEquals("median ", x, d);
+        assertDouble("median ", x, d);
 
         v = new double[] {-2,-3,-4,-5,-6,-7,-8,-9,-10};
         d = StatsLib.median(v);
         x = -6;
-        assertEquals("median ", x, d);
+        assertDouble("median ", x, d);
 
         v = new double[] {1,2,3,4,5,6,7,8,9};
         d = StatsLib.median(v);
         x = 5;
-        assertEquals("median ", x, d);
+        assertDouble("median ", x, d);
     }
 
     @Test
@@ -227,15 +228,15 @@ public class TestStatsLib extends BaseTestNumeric {
     	double actual;
 		try {
 			actual = Mode.evaluate(v);
-			assertNotNull("Expected N/A exception was not thrown", expectedResult);
+			assertNotNull(expectedResult, "Expected N/A exception was not thrown");
 		} catch (EvaluationException e) {
 			if (expectedResult == null) {
-				Assert.assertEquals(ErrorEval.NA, e.getErrorEval());
+				assertEquals(ErrorEval.NA, e.getErrorEval());
 				return;
 			}
 			throw new RuntimeException(e);
 		}
-    	assertEquals("mode", expectedResult.doubleValue(), actual);
+    	assertDouble("mode", expectedResult, actual);
     }
 
     @Test
@@ -246,32 +247,32 @@ public class TestStatsLib extends BaseTestNumeric {
         v = new double[] {1,2,3,4,5,6,7,8,9,10};
         d = StatsLib.stdev(v);
         x = 3.02765035410;
-        assertEquals("stdev ", x, d);
+        assertDouble("stdev ", x, d);
 
         v = new double[] {1,1,1,1,1,1,1,1,1,1};
         d = StatsLib.stdev(v);
         x = 0;
-        assertEquals("stdev ", x, d);
+        assertDouble("stdev ", x, d);
 
         v = new double[] {0,0,0,0,0,0,0,0,0,0};
         d = StatsLib.stdev(v);
         x = 0;
-        assertEquals("stdev ", x, d);
+        assertDouble("stdev ", x, d);
 
         v = new double[] {1,2,1,2,1,2,1,2,1,2};
         d = StatsLib.stdev(v);
         x = 0.52704627669;
-        assertEquals("stdev ", x, d);
+        assertDouble("stdev ", x, d);
 
         v = new double[] {123.12,33.3333,2d/3d,5.37828,0.999};
         d = StatsLib.stdev(v);
         x = 52.33006233652;
-        assertEquals("stdev ", x, d);
+        assertDouble("stdev ", x, d);
 
         v = new double[] {-1,-2,-3,-4,-5,-6,-7,-8,-9,-10};
         d = StatsLib.stdev(v);
         x = 3.02765035410;
-        assertEquals("stdev ", x, d);
+        assertDouble("stdev ", x, d);
     }
 
     @Test
@@ -282,22 +283,22 @@ public class TestStatsLib extends BaseTestNumeric {
         v = new double[] {3.50, 5.00, 7.23, 2.99};
         d = StatsLib.var(v);
         x = 3.6178;
-        assertEquals("var ", x, d);
+        assertDouble("var ", x, d);
 
         v = new double[] {34.5, 2.0, 8.9, -4.0};
         d = StatsLib.var(v);
         x = 286.99;
-        assertEquals("var ", x, d);
+        assertDouble("var ", x, d);
 
         v = new double[] {7.0, 25.0, 21.69};
         d = StatsLib.var(v);
         x = 91.79203333;
-        assertEquals("var ", x, d);
+        assertDouble("var ", x, d);
 
         v = new double[] {1345,1301,1368,1322,1310,1370,1318,1350,1303,1299};
         d = StatsLib.var(v);
         x = 754.2666667;
-        assertEquals("var ", x, d);
+        assertDouble("var ", x, d);
     }
 
     @Test
@@ -308,21 +309,21 @@ public class TestStatsLib extends BaseTestNumeric {
         v = new double[] {3.50, 5.00, 7.23, 2.99};
         d = StatsLib.varp(v);
         x = 2.71335;
-        assertEquals("varp ", x, d);
+        assertDouble("varp ", x, d);
 
         v = new double[] {34.5, 2.0, 8.9, -4.0};
         d = StatsLib.varp(v);
         x = 215.2425;
-        assertEquals("varp ", x, d);
+        assertDouble("varp ", x, d);
 
         v = new double[] {7.0, 25.0, 21.69};
         d = StatsLib.varp(v);
         x = 61.19468889;
-        assertEquals("varp ", x, d);
+        assertDouble("varp ", x, d);
 
         v = new double[] {1345,1301,1368,1322,1310,1370,1318,1350,1303,1299};
         d = StatsLib.varp(v);
         x = 678.84;
-        assertEquals("varp ", x, d);
+        assertDouble("varp ", x, d);
     }
 }

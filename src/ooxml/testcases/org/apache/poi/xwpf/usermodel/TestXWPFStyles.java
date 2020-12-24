@@ -17,19 +17,19 @@
 
 package org.apache.poi.xwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.poi.xwpf.XWPFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTFonts;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLatentStyles;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTLsdException;
@@ -214,18 +214,14 @@ public final class TestXWPFStyles {
             XWPFStyles styles = doc.getStyles();
             // Styles exist in the test document in this order, EmptyCellLayoutStyle
             // is missing a StyleId
-            try {
-                assertNotNull(styles.getStyle("NoList"));
-                assertNull(styles.getStyle("EmptyCellLayoutStyle"));
-                assertNotNull(styles.getStyle("BalloonText"));
+            assertNotNull(styles.getStyle("NoList"));
+            assertNull(styles.getStyle("EmptyCellLayoutStyle"));
+            assertNotNull(styles.getStyle("BalloonText"));
 
-                // Bug 64600: styleExist throws NPE
-                assertTrue(styles.styleExist("NoList"));
-                assertFalse(styles.styleExist("EmptyCellLayoutStyle"));
-                assertTrue(styles.styleExist("BalloonText"));
-            } catch (NullPointerException e) {
-                fail(e.toString());
-            }
+            // Bug 64600: styleExist throws NPE
+            assertTrue(styles.styleExist("NoList"));
+            assertFalse(styles.styleExist("EmptyCellLayoutStyle"));
+            assertTrue(styles.styleExist("BalloonText"));
         }
     }
 
@@ -237,7 +233,7 @@ public final class TestXWPFStyles {
 
             String styleName = "Normal Table";
             XWPFStyle style = styles.getStyleWithName(styleName);
-            assertNotNull("Expected to find style \"" + styleName + "\"", style);
+            assertNotNull(style, "Expected to find style \"" + styleName + "\"");
             assertEquals(styleName, style.getName());
         }
     }

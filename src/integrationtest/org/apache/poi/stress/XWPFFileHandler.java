@@ -22,7 +22,7 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class XWPFFileHandler extends AbstractFileHandler {
     @Override

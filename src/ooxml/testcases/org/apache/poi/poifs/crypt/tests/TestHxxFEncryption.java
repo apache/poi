@@ -20,18 +20,17 @@ package org.apache.poi.poifs.crypt.tests;
 import static org.apache.poi.POIDataSamples.getDocumentInstance;
 import static org.apache.poi.POIDataSamples.getSlideShowInstance;
 import static org.apache.poi.POIDataSamples.getSpreadSheetInstance;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.Collection;
+import java.util.stream.Stream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POIDocument;
@@ -41,28 +40,12 @@ import org.apache.poi.hssf.record.crypto.Biff8EncryptionKey;
 import org.apache.poi.poifs.crypt.EncryptionInfo;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionHeader;
 import org.apache.poi.poifs.storage.RawDataUtil;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
-@RunWith(Parameterized.class)
 public class TestHxxFEncryption {
-    @Parameter
-    public POIDataSamples sampleDir;
-
-    @Parameter(value = 1)
-    public String file;
-
-    @Parameter(value = 2)
-    public String password;
-
-    @Parameter(value = 3)
-    public String expected;
-
-    @Parameters(name="{1}")
-    public static Collection<Object[]> data() throws IOException {
+    public static Stream<Arguments> data() throws IOException {
         final String base64 =
             "H4sIAAAAAAAAAF1Uu24bMRDs/RULVwkgCUhSpHaZwkDgpHJH8fZ0G/Nx4ZI6y13yG/mRfIb9R5mlZFlIpdPtcnZmdnjPf57/vvx6+f3h6obuv3"+
             "ylbY5bEiVHe1fEpUp5pOgkrK0iabehm7FyoZi1ks8xcvHiQu8h5bLnorTlnUvkJ/YPOHKsLVInAqCs91KakuaxLq4w3g00SgCo9Xou1UnCmSBe"+
@@ -74,22 +57,23 @@ public class TestHxxFEncryption {
             "VZw8Pm6vn0afh4fvr0D5P/+cMuBAAA";
         final String x = new String(RawDataUtil.decompress(base64), StandardCharsets.UTF_8);
 
-        return Arrays.asList(
+        return Stream.of(
             // binary rc4
-            new Object[]{ getDocumentInstance(), "password_tika_binaryrc4.doc", "tika", "This is an encrypted Word 2007 File." },
+            Arguments.of( getDocumentInstance(), "password_tika_binaryrc4.doc", "tika", "This is an encrypted Word 2007 File." ),
             // cryptoapi
-            new Object[]{ getDocumentInstance(), "password_password_cryptoapi.doc", "password", "This is a test" },
+            Arguments.of( getDocumentInstance(), "password_password_cryptoapi.doc", "password", "This is a test" ),
             // binary rc4
-            new Object[]{ getSpreadSheetInstance(), "password.xls", "password", x },
+            Arguments.of( getSpreadSheetInstance(), "password.xls", "password", x ),
             // cryptoapi
-            new Object[]{ getSpreadSheetInstance(), "35897-type4.xls", "freedom", "Sheet1\nhello there!" },
+            Arguments.of( getSpreadSheetInstance(), "35897-type4.xls", "freedom", "Sheet1\nhello there!" ),
             // cryptoapi (PPT only supports cryptoapi...)
-            new Object[]{ getSlideShowInstance(), "cryptoapi-proc2356.ppt", "crypto", "Dominic Salemno" }
+            Arguments.of( getSlideShowInstance(), "cryptoapi-proc2356.ppt", "crypto", "Dominic Salemno" )
         );
     }
 
-    @Test
-    public void extract() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void extract(POIDataSamples sampleDir, String file, String password, String expected) throws IOException {
         File f = sampleDir.getFile(file);
         Biff8EncryptionKey.setCurrentUserPassword(password);
         try (POITextExtractor te = ExtractorFactory.createExtractor(f)) {
@@ -100,17 +84,19 @@ public class TestHxxFEncryption {
         }
     }
 
-    @Test
-    public void changePassword() throws IOException {
-        newPassword("test");
+    @ParameterizedTest
+    @MethodSource("data")
+    public void changePassword(POIDataSamples sampleDir, String file, String password, String expected) throws IOException {
+        newPassword("test", sampleDir, file, password, expected);
     }
 
-    @Test
-    public void removePassword() throws IOException {
-        newPassword(null);
+    @ParameterizedTest
+    @MethodSource("data")
+    public void removePassword(POIDataSamples sampleDir, String file, String password, String expected) throws IOException {
+        newPassword(null, sampleDir, file, password, expected);
     }
 
-    private void newPassword(String newPass) throws IOException {
+    private void newPassword(String newPass, POIDataSamples sampleDir, String file, String password, String expected) throws IOException {
         File f = sampleDir.getFile(file);
         Biff8EncryptionKey.setCurrentUserPassword(password);
         try (POITextExtractor te1 = ExtractorFactory.createExtractor(f)) {
@@ -130,8 +116,9 @@ public class TestHxxFEncryption {
     }
 
     /** changing the encryption mode and key size in poor mans style - see comments below */
-    @Test
-    public void changeEncryption() throws IOException {
+    @ParameterizedTest
+    @MethodSource("data")
+    public void changeEncryption(POIDataSamples sampleDir, String file, String password, String expected) throws IOException {
         File f = sampleDir.getFile(file);
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         Biff8EncryptionKey.setCurrentUserPassword(password);
@@ -156,11 +143,8 @@ public class TestHxxFEncryption {
                 // need to cache data (i.e. read all data) before changing the key size
                 Class<?> clazz = doc.getClass();
                 if ("HSLFSlideShow".equals(clazz.getSimpleName())) {
-                    try {
-                        clazz.getDeclaredMethod("getPictureData").invoke(doc);
-                    } catch (ReflectiveOperationException e) {
-                        fail("either scratchpad jar is included and this should work or the clazz should be != HSLFSlideShowImpl");
-                    }
+                    assertDoesNotThrow(() -> clazz.getDeclaredMethod("getPictureData").invoke(doc),
+                        "either scratchpad jar is included and this should work or the clazz should be != HSLFSlideShowImpl");
                     doc.getDocumentSummaryInformation();
                 }
                 EncryptionInfo ei = doc.getEncryptionInfo();

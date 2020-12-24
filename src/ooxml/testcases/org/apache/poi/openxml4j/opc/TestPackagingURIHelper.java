@@ -16,13 +16,13 @@
 ==================================================================== */
 package org.apache.poi.openxml4j.opc;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.net.URI;
 
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestPackagingURIHelper {
 
@@ -92,8 +92,7 @@ public class TestPackagingURIHelper {
         // Relative part name
         PackagePartName relativeName = PackagingURIHelper.createPartName(
                 "media/image1.gif", partBase);
-        assertEquals("The part name must be equal to "
-                + partNameToValid.getName(), partNameToValid, relativeName);
+        assertEquals(partNameToValid, relativeName, "The part name must be equal to " + partNameToValid.getName());
         pkg.revert();
     }
 
@@ -113,8 +112,7 @@ public class TestPackagingURIHelper {
         // Relative part name
         PackagePartName relativeName = PackagingURIHelper.createPartName(
                 new URI("media/image1.gif"), partBase);
-        assertEquals("The part name must be equal to "
-                + partNameToValid.getName(), partNameToValid, relativeName);
+        assertEquals(partNameToValid, relativeName, "The part name must be equal to " + partNameToValid.getName());
         pkg.revert();
     }
 

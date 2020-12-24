@@ -19,7 +19,7 @@
 
 package org.apache.poi.stress;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,8 +39,8 @@ import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.apache.poi.util.SuppressForbidden;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.tools.ant.DirectoryScanner;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Helper class to scan a folder for files and return a collection of
@@ -191,7 +191,7 @@ public class POIFileScanner {
         return TestAllFiles.NullFileHandler.instance;
     }
 
-    @Ignore
+    @Disabled
     @Test
     @SuppressForbidden("Just an ignored test")
     public void testInvalidFile() throws IOException, InterruptedException {

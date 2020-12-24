@@ -17,16 +17,16 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
-import static org.junit.Assume.assumeNotNull;
-import static org.junit.Assume.assumeTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
+import java.util.stream.Stream;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.opc.OPCPackage;
@@ -40,17 +40,14 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.junit.AfterClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Tests formulas for multi sheet reference (i.e. SUM(Sheet1:Sheet5!A1))
  */
-@RunWith(Parameterized.class)
 public final class TestMultiSheetFormulaEvaluatorOnXSSF {
     private static final POILogger logger = POILogFactory.getLogger(TestMultiSheetFormulaEvaluatorOnXSSF.class);
 
@@ -98,29 +95,22 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
 		String TEST_SHEET_NAME = "test";
 	}
 
-    @Parameter(value = 0)
-	public String targetTestName;
-	@Parameter(value = 1)
-    public String targetFunctionName;
-    @Parameter(value = 2)
-    public int formulasRowIdx;
 
-    @AfterClass
+    @AfterAll
     public static void closeResource() throws Exception {
         workbook.close();
     }
 
-    @Parameters(name="{0}")
-    public static Collection<Object[]> data() throws Exception {
+    public static Stream<Arguments> data() throws Exception {
         workbook = new XSSFWorkbook( OPCPackage.open(HSSFTestDataSamples.getSampleFile(SS.FILENAME), PackageAccess.READ) );
         sheet = workbook.getSheet( SS.TEST_SHEET_NAME );
         evaluator = new XSSFFormulaEvaluator(workbook);
 
-        List<Object[]> data = new ArrayList<>();
+        List<Arguments> data = new ArrayList<>();
 
         processFunctionGroup(data, SS.START_FUNCTIONS_ROW_INDEX, null);
 
-        return data;
+        return data.stream();
     }
 
     /**
@@ -128,7 +118,7 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
      * @param testFocusFunctionName name of a single function/operator to test alone.
      * Typically pass <code>null</code> to test all functions
      */
-    private static void processFunctionGroup(List<Object[]> data, int startRowIndex, String testFocusFunctionName) {
+    private static void processFunctionGroup(List<Arguments> data, int startRowIndex, String testFocusFunctionName) {
         for (int rowIndex = startRowIndex; true; rowIndex++) {
             Row r = sheet.getRow(rowIndex);
 
@@ -136,9 +126,10 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
             if(r == null) continue;
 
             String targetFunctionName = getTargetFunctionName(r);
-            assertNotNull("Test spreadsheet cell empty on row ("
+            assertNotNull(targetFunctionName,
+				"Test spreadsheet cell empty on row ("
                 + (rowIndex+1) + "). Expected function name or '"
-                + SS.FUNCTION_NAMES_END_SENTINEL + "'", targetFunctionName);
+                + SS.FUNCTION_NAMES_END_SENTINEL + "'");
 
             if(targetFunctionName.equals(SS.FUNCTION_NAMES_END_SENTINEL)) {
                 // found end of functions list
@@ -150,31 +141,29 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
 
                 // expected results are on the row below
                 Cell expectedValueCell = r.getCell(SS.COLUMN_INDEX_EXPECTED_VALUE);
-                assertNotNull("Missing expected values cell for function '"
+                assertNotNull(expectedValueCell,
+					"Missing expected values cell for function '"
                     + targetFunctionName + ", test" + targetTestName + " (row " +
-                    rowIndex + 1 + ")", expectedValueCell);
+                    rowIndex + 1 + ")");
 
-                data.add(new Object[]{targetTestName, targetFunctionName, rowIndex});
+                data.add(Arguments.of(targetTestName, targetFunctionName, rowIndex));
             }
         }
     }
 
-    /**
-    *
-    * @return a constant from the local Result class denoting whether there were any evaluation
-    * cases, and whether they all succeeded.
-    */
-    @Test
-    public void processFunctionRow() {
+    @ParameterizedTest
+	@MethodSource("data")
+    public void processFunctionRow(String targetTestName, String targetFunctionName, int formulasRowIdx) {
         Row r = sheet.getRow(formulasRowIdx);
 
         Cell expValue = r.getCell(SS.COLUMN_INDEX_EXPECTED_VALUE);
-        assertNotNull("Missing expected values cell for function '"
+        assertNotNull(expValue,
+			"Missing expected values cell for function '"
             + targetFunctionName + ", test" + targetTestName + " (row " +
-            formulasRowIdx + 1 + ")", expValue);
+            formulasRowIdx + 1 + ")");
 
         Cell c = r.getCell(SS.COLUMN_INDEX_ACTUAL_VALUE);
-        assumeNotNull(c);
+        assumeTrue(c != null);
         assumeTrue(c.getCellType() == CellType.FORMULA);
 
         CellValue actValue = evaluator.evaluate(c);
@@ -182,19 +171,19 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
         String msg = String.format(Locale.ROOT, "Function '%s': Test: '%s': Formula: %s @ %d:%d",
             targetFunctionName, targetTestName, c.getCellFormula(), formulasRowIdx, SS.COLUMN_INDEX_ACTUAL_VALUE);
 
-        assertNotNull(msg + " - actual value was null", actValue);
+        assertNotNull(actValue, msg + " - actual value was null");
 
         final CellType expectedCellType = expValue.getCellType();
         switch (expectedCellType) {
             case BLANK:
-                assertEquals(msg, CellType.BLANK, actValue.getCellType());
+                assertEquals(CellType.BLANK, actValue.getCellType(), msg);
                 break;
             case BOOLEAN:
-                assertEquals(msg, CellType.BOOLEAN, actValue.getCellType());
-                assertEquals(msg, expValue.getBooleanCellValue(), actValue.getBooleanValue());
+                assertEquals(CellType.BOOLEAN, actValue.getCellType(), msg);
+                assertEquals(expValue.getBooleanCellValue(), actValue.getBooleanValue(), msg);
                 break;
             case ERROR:
-                assertEquals(msg, CellType.ERROR, actValue.getCellType());
+                assertEquals(CellType.ERROR, actValue.getCellType(), msg);
 //              if(false) { // TODO: fix ~45 functions which are currently returning incorrect error values
 //                  assertEquals(msg, expected.getErrorCellValue(), actual.getErrorValue());
 //              }
@@ -202,15 +191,15 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
             case FORMULA: // will never be used, since we will call method after formula evaluation
                 fail("Cannot expect formula as result of formula evaluation: " + msg);
             case NUMERIC:
-                assertEquals(msg, CellType.NUMERIC, actValue.getCellType());
-				BaseTestNumeric.assertEquals(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), BaseTestNumeric.POS_ZERO, BaseTestNumeric.DIFF_TOLERANCE_FACTOR);
+                assertEquals(CellType.NUMERIC, actValue.getCellType(), msg);
+				BaseTestNumeric.assertDouble(msg, expValue.getNumericCellValue(), actValue.getNumberValue(), BaseTestNumeric.POS_ZERO, BaseTestNumeric.DIFF_TOLERANCE_FACTOR);
 //              double delta = Math.abs(expected.getNumericCellValue()-actual.getNumberValue());
 //              double pctExpected = Math.abs(0.00001*expected.getNumericCellValue());
 //              assertTrue(msg, delta <= pctExpected);
                 break;
             case STRING:
-                assertEquals(msg, CellType.STRING, actValue.getCellType());
-                assertEquals(msg, expValue.getRichStringCellValue().getString(), actValue.getStringValue());
+                assertEquals(CellType.STRING, actValue.getCellType(), msg);
+                assertEquals(expValue.getRichStringCellValue().getString(), actValue.getStringValue(), msg);
                 break;
             default:
                 fail("Unexpected cell type: " + expectedCellType);
@@ -230,17 +219,14 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
             logger.log(POILogger.WARN, "Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_FUNCTION_NAME + ", can't figure out function name");
 			return null;
 		}
-		if(cell.getCellType() == CellType.BLANK) {
-			return null;
-		}
-		if(cell.getCellType() == CellType.STRING) {
-			return cell.getRichStringCellValue().getString();
-		}
 
-		fail("Bad cell type for 'function name' column: ("
-			+ cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
-		return "";
+		CellType ct = cell.getCellType();
+		assertTrue(ct == CellType.BLANK || ct == CellType.STRING,
+			"Bad cell type for 'function name' column: (" + cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
+
+		return (ct == CellType.STRING) ? cell.getRichStringCellValue().getString() : null;
 	}
+
 	/**
 	 * @return <code>null</code> if cell is missing, empty or blank
 	 */
@@ -254,16 +240,10 @@ public final class TestMultiSheetFormulaEvaluatorOnXSSF {
 		    logger.log(POILogger.WARN, "Warning - Row " + r.getRowNum() + " has no cell " + SS.COLUMN_INDEX_TEST_NAME + ", can't figure out test name");
 			return null;
 		}
-		if(cell.getCellType() == CellType.BLANK) {
-			return null;
-		}
-		if(cell.getCellType() == CellType.STRING) {
-			return cell.getRichStringCellValue().getString();
-		}
+		CellType ct = cell.getCellType();
+		assertTrue(ct == CellType.BLANK || ct == CellType.STRING,
+			"Bad cell type for 'test name' column: (" + cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
 
-		fail("Bad cell type for 'test name' column: ("
-			+ cell.getCellType() + ") row (" + (r.getRowNum() +1) + ")");
-		return "";
+		return (ct == CellType.STRING) ? cell.getRichStringCellValue().getString() : null;
 	}
-
 }

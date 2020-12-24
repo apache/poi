@@ -16,11 +16,11 @@
 ==================================================================== */
 package org.apache.poi.xwpf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,7 +30,7 @@ import java.math.BigInteger;
 import org.apache.poi.util.Units;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFRun.FontCharRange;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.wordprocessingml.x2006.main.CTAbstractNum;
 
 public class TestXWPFBugs {
@@ -202,9 +202,9 @@ public class TestXWPFBugs {
 
                 // we removed id "2", so this one should be empty, all others not
                 if (i == 2) {
-                    assertNull("Failed for " + i, abstractNum);
+                    assertNull(abstractNum, "Failed for " + i);
                 } else {
-                    assertNotNull("Failed for " + i, abstractNum);
+                    assertNotNull(abstractNum, "Failed for " + i);
                     assertEquals(i, abstractNum.getAbstractNum().getAbstractNumId().longValue());
                 }
             }

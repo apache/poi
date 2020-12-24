@@ -21,9 +21,9 @@ import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertEndsWith;
 import static org.apache.poi.POITestCase.assertNotContained;
 import static org.apache.poi.POITestCase.assertStartsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -33,7 +33,7 @@ import java.util.regex.Pattern;
 import org.apache.poi.util.StringUtil;
 import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for HXFWordExtractor
@@ -342,9 +342,9 @@ public class TestXWPFWordExtractor {
                     hit = true;
                     hits++;
                 }
-                assertTrue("controlled content loading-" + targ, hit);
+                assertTrue(hit, "controlled content loading-" + targ);
             }
-            assertEquals("controlled content loading hit count", targs.length, hits);
+            assertEquals(targs.length, hits, "controlled content loading hit count");
         }
 
         try (XWPFDocument doc2 = XWPFTestDataSamples.openSampleDocument("Bug54771a.docx");
@@ -365,7 +365,7 @@ public class TestXWPFWordExtractor {
                 while (m.find()) {
                     hit++;
                 }
-                assertEquals("controlled content loading-" + targ, 1, hit);
+                assertEquals(1, hit, "controlled content loading-" + targ);
             }
             //"test\n" appears twice: once as the "title" and once in the text.
             //This also happens when you save this document as text from MSWord.
@@ -374,7 +374,7 @@ public class TestXWPFWordExtractor {
             while (m.find()) {
                 hit++;
             }
-            assertEquals("test<N>", 2, hit);
+            assertEquals(2, hit, "test<N>");
         }
     }
 

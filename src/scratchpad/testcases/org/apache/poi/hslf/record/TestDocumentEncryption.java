@@ -18,11 +18,10 @@
 package org.apache.poi.hslf.record;
 
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -35,7 +34,6 @@ import org.apache.poi.hpsf.DocumentSummaryInformation;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.hpsf.SummaryInformation;
-import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
@@ -48,7 +46,9 @@ import org.apache.poi.poifs.crypt.HashAlgorithm;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIDecryptor;
 import org.apache.poi.poifs.crypt.cryptoapi.CryptoAPIEncryptionHeader;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Tests that DocumentEncryption works properly.
@@ -56,23 +56,18 @@ import org.junit.Test;
 public class TestDocumentEncryption {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
-    @Test
-    public void cryptoAPIDecryptionOther() throws Exception {
-        String[] encPpts = {
-                "Password_Protected-56-hello.ppt",
-                "Password_Protected-hello.ppt",
-                "Password_Protected-np-hello.ppt",
-        };
-
+    @ParameterizedTest
+    @ValueSource(strings = {
+        "Password_Protected-56-hello.ppt",
+        "Password_Protected-hello.ppt",
+        "Password_Protected-np-hello.ppt"
+    })
+    public void cryptoAPIDecryptionOther(String pptFile) throws Exception {
         Biff8EncryptionKey.setCurrentUserPassword("hello");
         try {
-            for (String pptFile : encPpts) {
-                try (POIFSFileSystem fs = new POIFSFileSystem(slTests.getFile(pptFile), true);
-                     HSLFSlideShow ppt = new HSLFSlideShow(fs)) {
-                    assertTrue(ppt.getSlides().size() > 0);
-                } catch (EncryptedPowerPointFileException e) {
-                    fail(pptFile + " can't be decrypted");
-                }
+            try (POIFSFileSystem fs = new POIFSFileSystem(slTests.getFile(pptFile), true);
+                 HSLFSlideShow ppt = new HSLFSlideShow(fs)) {
+                assertTrue(ppt.getSlides().size() > 0);
             }
         } finally {
             Biff8EncryptionKey.setCurrentUserPassword(null);
@@ -140,10 +135,10 @@ public class TestDocumentEncryption {
         } finally {
             Biff8EncryptionKey.setCurrentUserPassword(null);
         }
-        
+
         assertArrayEquals(expected.toByteArray(), actual.toByteArray());
-    }    
-    
+    }
+
     @Test
     public void cryptoAPIDecryption() throws Exception {
         // taken from a msdn blog:

@@ -17,8 +17,8 @@
 
 package org.apache.poi.hslf.model;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.List;
 
@@ -27,7 +27,7 @@ import org.apache.poi.hslf.exceptions.EncryptedPowerPointFileException;
 import org.apache.poi.hslf.record.ColorSchemeAtom;
 import org.apache.poi.hslf.record.PPDrawing;
 import org.apache.poi.hslf.usermodel.*;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test common functionality of the <code>Sheet</code> object.
@@ -36,7 +36,7 @@ import org.junit.Test;
  * @author Yegor Kozlov
  */
 public final class TestSheet {
-    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+    private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     /**
      * For each ppt in the test directory check that all sheets are properly initialized
@@ -92,7 +92,7 @@ public final class TestSheet {
         }
 
         List<HSLFShape> shape = sheet.getShapes();
-        assertTrue("no shapes", shape != null && !shape.isEmpty());
+        assertTrue(shape != null && !shape.isEmpty(), "no shapes");
         for (HSLFShape s : shape) {
             assertNotNull(s.getSpContainer());
             assertNotNull(s.getSheet());

@@ -17,8 +17,8 @@
 
 package org.apache.poi.hmef.attribute;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -31,14 +31,14 @@ import org.apache.poi.hmef.HMEFMessage;
 import org.apache.poi.hsmf.datatypes.MAPIProperty;
 import org.apache.poi.util.LittleEndian;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public final class TestMAPIAttributes {
     private static final POIDataSamples _samples = POIDataSamples.getHMEFInstance();
     private HMEFMessage quick;
 
-    @Before
+    @BeforeEach
     public void setUp() throws Exception {
         try (InputStream stream = _samples.openResourceAsStream("quick-winmail.dat")) {
             quick = new HMEFMessage(stream);

@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.atp;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.formula.eval.ErrorEval;
@@ -24,7 +24,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testcase for 'Analysis Toolpak' function MROUND()
@@ -56,19 +56,19 @@ public class TestMRound {
 
         FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
-        assertEquals("Rounds 10 to a nearest multiple of 3 (9)",
-                9.0, evaluator.evaluate(cell1).getNumberValue(), accuracy);
+        assertEquals(9.0, evaluator.evaluate(cell1).getNumberValue(), accuracy,
+                     "Rounds 10 to a nearest multiple of 3 (9)");
 
-        assertEquals("Rounds -10 to a nearest multiple of -3 (-9)",
-                -9.0, evaluator.evaluate(cell2).getNumberValue(), accuracy);
+        assertEquals(-9.0, evaluator.evaluate(cell2).getNumberValue(), accuracy,
+                     "Rounds -10 to a nearest multiple of -3 (-9)");
 
-        assertEquals("Rounds 1.3 to a nearest multiple of 0.2 (1.4)",
-                1.4, evaluator.evaluate(cell3).getNumberValue(), accuracy);
+        assertEquals(1.4, evaluator.evaluate(cell3).getNumberValue(), accuracy,
+                     "Rounds 1.3 to a nearest multiple of 0.2 (1.4)");
 
-        assertEquals("Returns an error, because -2 and 5 have different signs (#NUM!)",
-                ErrorEval.NUM_ERROR.getErrorCode(), evaluator.evaluate(cell4).getErrorValue());
+        assertEquals(ErrorEval.NUM_ERROR.getErrorCode(), evaluator.evaluate(cell4).getErrorValue(),
+                     "Returns an error, because -2 and 5 have different signs (#NUM!)");
 
-        assertEquals("Returns 0 because the multiple is 0",
-                0.0, evaluator.evaluate(cell5).getNumberValue(), 0);
+        assertEquals(0.0, evaluator.evaluate(cell5).getNumberValue(), 0,
+                     "Returns 0 because the multiple is 0");
     }
 }

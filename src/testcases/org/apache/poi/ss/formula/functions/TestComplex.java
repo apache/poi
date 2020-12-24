@@ -16,12 +16,12 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link Complex}
@@ -37,13 +37,13 @@ public class TestComplex {
     private static void confirmValue(String msg, String real_num, String i_num, String suffix, String expected) {
         ValueEval result = invokeValue(real_num, i_num, suffix);
         assertEquals(StringEval.class, result.getClass());
-        assertEquals(msg, expected, ((StringEval) result).getStringValue());
+        assertEquals(expected, ((StringEval) result).getStringValue(), msg);
     }
 
     private static void confirmValueError(String msg, String real_num, String i_num, String suffix, ErrorEval numError) {
         ValueEval result = invokeValue(real_num, i_num, suffix);
         assertEquals(ErrorEval.class, result.getClass());
-        assertEquals(msg, numError, result);
+        assertEquals(numError, result, msg);
     }
 
     @Test

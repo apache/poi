@@ -17,14 +17,15 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.util.List;
@@ -56,7 +57,7 @@ import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.SharedStringsTable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCellFormula;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.STCellFormulaType;
@@ -140,19 +141,19 @@ public final class TestXSSFCell extends BaseTestXCell {
         assertNull(str.getString());
         cell_0.setCellValue(str);
         assertEquals(0, sst.getCount());
-        assertEquals("Having: " + cell_0, CellType.BLANK, cell_0.getCellType());
+        assertEquals(CellType.BLANK, cell_0.getCellType(), "Having: " + cell_0);
 
         //case 2. cell.setCellValue((String)null);
         Cell cell_1 = row.createCell(1);
         cell_1.setCellValue((String)null);
         assertEquals(0, sst.getCount());
-        assertEquals("Having: " + cell_1, CellType.BLANK, cell_1.getCellType());
+        assertEquals(CellType.BLANK, cell_1.getCellType(), "Having: " + cell_1);
 
         //case 3. cell.setCellValue((RichTextString)null);
         Cell cell_2 = row.createCell(2);
         cell_2.setCellValue((RichTextString) null);
         assertEquals(0, sst.getCount());
-        assertEquals("Having: " + cell_2, CellType.BLANK, cell_2.getCellType());
+        assertEquals(CellType.BLANK, cell_2.getCellType(), "Having: " + cell_2);
 
         wb.close();
     }
@@ -201,12 +202,7 @@ public final class TestXSSFCell extends BaseTestXCell {
             cell.setCellFormula(validFormula);
 
             // check that invalid formula does throw exception
-            try {
-                cell.setCellFormula(invalidFormula);
-                fail("Should catch exception here");
-            } catch (FormulaParseException e) {
-                // expected here
-            }
+            assertThrows(FormulaParseException.class, () -> cell.setCellFormula(invalidFormula));
 
             // set cell formula validation to false
             wb.setCellFormulaValidation(false);
@@ -322,8 +318,8 @@ public final class TestXSSFCell extends BaseTestXCell {
             XSSFRow rowRef = (XSSFRow)r;
             XSSFRow row = sheet.getRow(rowRef.getRowNum());
 
-            assertEquals("number of cells in row["+row.getRowNum()+"]",
-                    rowRef.getPhysicalNumberOfCells(), row.getPhysicalNumberOfCells());
+            assertEquals(rowRef.getPhysicalNumberOfCells(), row.getPhysicalNumberOfCells(),
+                "number of cells in row["+row.getRowNum()+"]");
 
             for(Cell c :  rowRef){
                 XSSFCell cellRef = (XSSFCell)c;
@@ -333,7 +329,7 @@ public final class TestXSSFCell extends BaseTestXCell {
                 assertEquals(cellRef.getReference(), cell.getReference());
 
                 if(!cell.getCTCell().isSetR()){
-                    assertTrue("R must e set in cellRef", cellRef.getCTCell().isSetR());
+                    assertTrue(cellRef.getCTCell().isSetR(), "R must e set in cellRef");
 
                     String valRef = formater.formatCellValue(cellRef);
                     String val = formater.formatCellValue(cell);
@@ -423,12 +419,7 @@ public final class TestXSSFCell extends BaseTestXCell {
             validateRow(row);
 
             // once again with removing the same cell, this throws an exception
-            try {
-                row.removeCell(cell1);
-                fail("Should catch an exception");
-            } catch (IllegalArgumentException e) {
-                // expected here
-            }
+            assertThrows(IllegalArgumentException.class, () -> row.removeCell(cell1));
 
             // now check again
             validateRow(row);
@@ -605,15 +596,13 @@ public final class TestXSSFCell extends BaseTestXCell {
         destCell.copyCellFrom(srcCell, policy);
         assertNotNull(destCell.getHyperlink());
 
-        assertSame("unit test assumes srcCell and destCell are on the same sheet",
-                srcCell.getSheet(), destCell.getSheet());
+        assertSame(srcCell.getSheet(), destCell.getSheet(),
+            "unit test assumes srcCell and destCell are on the same sheet");
 
         final List<XSSFHyperlink> links = srcCell.getSheet().getHyperlinkList();
-        assertEquals("number of hyperlinks on sheet", 2, links.size());
-        assertEquals("source hyperlink",
-                new CellAddress(srcCell).formatAsString(), links.get(0).getCellRef());
-        assertEquals("destination hyperlink",
-                new CellAddress(destCell).formatAsString(), links.get(1).getCellRef());
+        assertEquals(2, links.size(), "number of hyperlinks on sheet");
+        assertEquals(new CellAddress(srcCell).formatAsString(), links.get(0).getCellRef(), "source hyperlink");
+        assertEquals(new CellAddress(destCell).formatAsString(), links.get(1).getCellRef(), "destination hyperlink");
 
         wb.close();
     }
@@ -642,8 +631,8 @@ public final class TestXSSFCell extends BaseTestXCell {
         setLinkCellStyle(wb, destCell);
 
         // Pre-condition assumptions. This test is broken if either of these fail.
-        assertSame("unit test assumes srcCell and destCell are on the same sheet",
-                srcCell.getSheet(), destCell.getSheet());
+        assertSame(srcCell.getSheet(), destCell.getSheet(),
+            "unit test assumes srcCell and destCell are on the same sheet");
         assertNull(srcCell.getHyperlink());
 
         // Merge hyperlink - since srcCell doesn't have a hyperlink, destCell's hyperlink is not overwritten (cleared).
@@ -655,9 +644,8 @@ public final class TestXSSFCell extends BaseTestXCell {
 
         List<XSSFHyperlink> links;
         links = srcCell.getSheet().getHyperlinkList();
-        assertEquals("number of hyperlinks on sheet", 1, links.size());
-        assertEquals("source hyperlink",
-                new CellAddress(destCell).formatAsString(), links.get(0).getCellRef());
+        assertEquals(1, links.size(), "number of hyperlinks on sheet");
+        assertEquals(new CellAddress(destCell).formatAsString(), links.get(0).getCellRef(), "source hyperlink");
 
         // Merge destCell's hyperlink to srcCell. Since destCell does have a hyperlink, this should copy destCell's hyperlink to srcCell.
         srcCell.copyCellFrom(destCell, policy);
@@ -665,11 +653,9 @@ public final class TestXSSFCell extends BaseTestXCell {
         assertNotNull(destCell.getHyperlink());
 
         links = srcCell.getSheet().getHyperlinkList();
-        assertEquals("number of hyperlinks on sheet", 2, links.size());
-        assertEquals("dest hyperlink",
-                new CellAddress(destCell).formatAsString(), links.get(0).getCellRef());
-        assertEquals("source hyperlink",
-                new CellAddress(srcCell).formatAsString(), links.get(1).getCellRef());
+        assertEquals(2, links.size(), "number of hyperlinks on sheet");
+        assertEquals(new CellAddress(destCell).formatAsString(), links.get(0).getCellRef(), "dest hyperlink");
+        assertEquals(new CellAddress(srcCell).formatAsString(), links.get(1).getCellRef(), "source hyperlink");
 
         wb.close();
     }
@@ -763,9 +749,9 @@ public final class TestXSSFCell extends BaseTestXCell {
         }
     }
 
-    @Test(expected = IllegalStateException.class)
+    @Test
     public void getErrorCellValue_returns0_onABlankCell() {
         Cell cell = new XSSFWorkbook().createSheet().createRow(0).createCell(0);
-        cell.getErrorCellValue();
+        assertThrows(IllegalStateException.class, cell::getErrorCellValue);
     }
 }

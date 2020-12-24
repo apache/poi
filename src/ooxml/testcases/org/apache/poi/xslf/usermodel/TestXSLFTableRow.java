@@ -16,26 +16,26 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.xslf.XSLFTestDataSamples;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableCell;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTTableRow;
 
 public class TestXSLFTableRow {
-    
+
     private static XMLSlideShow ppt;
     private static XSLFTable tbl;
     private static XSLFTableRow row;
-    
+
     /** Copied from {@link TestXSLFTable#testRead()} */
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         ppt = XSLFTestDataSamples.openSampleDocument("shapes.pptx");
 
@@ -45,8 +45,8 @@ public class TestXSLFTableRow {
         List<XSLFTableRow> rows = tbl.getRows();
         row = rows.get(0);
     }
-    
-    @After
+
+    @AfterEach
     public void tearDown() throws IOException {
         ppt.getPackage().revert();
         ppt.close();
@@ -59,14 +59,14 @@ public class TestXSLFTableRow {
         assertSame(row.getXmlObject(), row2.getXmlObject());
         assertEquals(row.getHeight(), row2.getHeight(), 1e-16);
     }
-    
+
     @Test
     public void testHeight() {
         final double h = 10.0;
         row.setHeight(h);
         assertEquals(h, row.getHeight(), 1e-16);
     }
-    
+
     /** copied from {@link TestXSLFTable#testCreate()} */
     @Test
     public void getCells() {
@@ -74,7 +74,7 @@ public class TestXSLFTableRow {
         assertNotNull(cells);
         assertEquals(3, cells.size());
     }
-    
+
     @Test
     public void testIterator() {
         int i = 0;
@@ -84,13 +84,13 @@ public class TestXSLFTableRow {
         }
         assertEquals(3, i);
     }
-    
+
     /** copied from {@link TestXSLFTable#testCreate()} */
     @Test
     public void addCell() {
         XSLFTableCell cell = row.addCell();
         assertNotNull(cell);
-        
+
         assertNotNull(cell.getXmlObject());
         // by default table cell has no borders
         CTTableCell tc = (CTTableCell)cell.getXmlObject();
@@ -99,24 +99,20 @@ public class TestXSLFTableRow {
         assertTrue(tc.getTcPr().getLnL().isSetNoFill());
         assertTrue(tc.getTcPr().getLnR().isSetNoFill());
     }
-    
+
     @Test
     public void mergeCells() {
-        try {
-            row.mergeCells(0, 0);
-            fail("expected IllegalArgumentException when merging fewer than 2 columns");
-        } catch (final IllegalArgumentException e) {
-            // expected
-        }
-        
+        assertThrows(IllegalArgumentException.class, () -> row.mergeCells(0, 0),
+            "expected IllegalArgumentException when merging fewer than 2 columns");
+
         row.mergeCells(0, 1);
         List<XSLFTableCell> cells = row.getCells();
         //the top-left cell of a merged region is not regarded as merged
-        assertFalse("top-left cell of merged region", cells.get(0).isMerged());
-        assertTrue("inside merged region", cells.get(1).isMerged());
-        assertFalse("outside merged region", cells.get(2).isMerged());
+        assertFalse(cells.get(0).isMerged(), "top-left cell of merged region");
+        assertTrue(cells.get(1).isMerged(), "inside merged region");
+        assertFalse(cells.get(2).isMerged(), "outside merged region");
     }
-    
+
     @Test
     public void getXmlObject() {
         CTTableRow ctrow = row.getXmlObject();
@@ -134,12 +130,7 @@ public class TestXSLFTableRow {
                         for (XSLFTableRow row : ((XSLFTable) shape).getRows()) {
                             for (XSLFTableCell cell : row.getCells()) {
                                 assertNull(cell.getShapeName()); // Do not throw NPE
-                                try {
-                                    cell.getShapeId();
-                                    fail("expected getShapeId to fail");
-                                } catch (IllegalStateException ise) {
-                                    // expected
-                                }
+                                assertThrows(IllegalStateException.class, cell::getShapeId);
                             }
                         }
                     }

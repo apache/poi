@@ -16,9 +16,9 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
@@ -27,7 +27,7 @@ import java.util.List;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Needs to be implemented in this package to have access to
@@ -50,14 +50,12 @@ public class HSSFRecordsStresser {
             try {
                 Record newRecord = record.copy();
 
-                assertEquals("Expecting the same class back from clone(), but had Record of type " + record.getClass() + " and got back a " + newRecord.getClass() + " from clone()",
-                        record.getClass(), newRecord.getClass());
+                assertEquals( record.getClass(), newRecord.getClass(), "Expecting the same class back from clone(), but had Record of type " + record.getClass() + " and got back a " + newRecord.getClass() + " from clone()" );
 
                 byte[] origBytes = record.serialize();
                 byte[] newBytes = newRecord.serialize();
 
-                assertArrayEquals("Record of type " + record.getClass() + " should return the same byte array via the clone() method, but did return a different array",
-                        origBytes, newBytes);
+                assertArrayEquals( origBytes, newBytes, "Record of type " + record.getClass() + " should return the same byte array via the clone() method, but did return a different array" );
             } catch (RuntimeException e) {
                 // some Records do not implement clone, ignore those for now
                 assertTrue(e.getMessage().contains("needs to define a clone method"));

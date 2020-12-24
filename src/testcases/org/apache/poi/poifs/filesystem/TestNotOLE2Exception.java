@@ -18,7 +18,7 @@
 package org.apache.poi.poifs.filesystem;
 
 import static org.apache.poi.POITestCase.assertContains;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -26,7 +26,7 @@ import java.io.InputStream;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.OldExcelFormatException;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test that POIFS complains when given older non-OLE2
@@ -44,10 +44,7 @@ public class TestNotOLE2Exception {
     @Test
 	public void testRawXMLException() throws IOException {
         try (InputStream in = openXLSSampleStream("SampleSS.xml")) {
-            new POIFSFileSystem(in).close();
-            fail("expected exception was not thrown");
-        } catch(NotOLE2FileException e) {
-            // expected during successful test
+            NotOLE2FileException e = assertThrows(NotOLE2FileException.class, () -> new POIFSFileSystem(in));
             assertContains(e.getMessage(), "The supplied data appears to be a raw XML file");
             assertContains(e.getMessage(), "Formats such as Office 2003 XML");
         }
@@ -56,10 +53,7 @@ public class TestNotOLE2Exception {
     @Test
     public void testMSWriteException() throws IOException {
         try (InputStream in = openDOCSampleStream("MSWriteOld.wri")) {
-            new POIFSFileSystem(in).close();
-            fail("expected exception was not thrown");
-        } catch(NotOLE2FileException e) {
-            // expected during successful test
+            NotOLE2FileException e = assertThrows(NotOLE2FileException.class, () -> new POIFSFileSystem(in));
             assertContains(e.getMessage(), "The supplied data appears to be in the old MS Write");
             assertContains(e.getMessage(), "doesn't currently support");
         }
@@ -68,10 +62,7 @@ public class TestNotOLE2Exception {
     @Test
 	public void testBiff3Exception() throws IOException {
         try (InputStream in = openXLSSampleStream("testEXCEL_3.xls")) {
-            new POIFSFileSystem(in).close();
-            fail("expected exception was not thrown");
-        } catch(OldExcelFormatException e) {
-            // expected during successful test
+            OldExcelFormatException e = assertThrows(OldExcelFormatException.class, () -> new POIFSFileSystem(in));
             assertContains(e.getMessage(), "The supplied data appears to be in BIFF3 format");
             assertContains(e.getMessage(), "try OldExcelExtractor");
         }
@@ -80,10 +71,7 @@ public class TestNotOLE2Exception {
     @Test
     public void testBiff4Exception() throws IOException {
         try (InputStream in = openXLSSampleStream("testEXCEL_4.xls")) {
-            new POIFSFileSystem(in).close();
-            fail("expected exception was not thrown");
-        } catch(OldExcelFormatException e) {
-            // expected during successful test
+            OldExcelFormatException e = assertThrows(OldExcelFormatException.class, () -> new POIFSFileSystem(in));
             assertContains(e.getMessage(), "The supplied data appears to be in BIFF4 format");
             assertContains(e.getMessage(), "try OldExcelExtractor");
         }

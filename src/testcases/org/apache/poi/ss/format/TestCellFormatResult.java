@@ -16,20 +16,20 @@
 ==================================================================== */
 package org.apache.poi.ss.format;
 
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.awt.Color;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestCellFormatResult {
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testNullTextRaisesException() {
         final boolean applies = true;
         final String text = null;
         final Color textColor = Color.BLACK;
-        final CellFormatResult result = new CellFormatResult(applies, text, textColor);
-        fail("Cannot initialize CellFormatResult with null text parameter");
+        assertThrows(IllegalArgumentException.class, () -> new CellFormatResult(applies, text, textColor),
+                     "Cannot initialize CellFormatResult with null text parameter");
     }
 }

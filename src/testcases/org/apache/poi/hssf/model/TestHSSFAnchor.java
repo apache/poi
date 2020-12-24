@@ -17,11 +17,11 @@
 
 package org.apache.poi.hssf.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ddf.EscherChildAnchorRecord;
 import org.apache.poi.ddf.EscherClientAnchorRecord;
@@ -39,7 +39,7 @@ import org.apache.poi.hssf.usermodel.HSSFSimpleShape;
 import org.apache.poi.hssf.usermodel.HSSFTestHelper;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.ClientAnchor.AnchorType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestHSSFAnchor {
 
@@ -326,10 +326,10 @@ public class TestHSSFAnchor {
     @Test
     public void testNullReferenceIsFalse() {
         HSSFClientAnchor clientAnchor = new HSSFClientAnchor(0, 1, 2, 3, (short)4, 5, (short)6, 7);
-        assertNotNull("Passing null to equals should return false", clientAnchor);
+        assertNotNull(clientAnchor, "Passing null to equals should return false");
 
         HSSFChildAnchor childAnchor = new HSSFChildAnchor(0, 1, 2, 3);
-        assertNotNull("Passing null to equals should return false", childAnchor);
+        assertNotNull(childAnchor, "Passing null to equals should return false");
     }
 
     @Test

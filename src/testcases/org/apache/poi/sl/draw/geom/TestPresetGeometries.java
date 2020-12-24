@@ -18,17 +18,17 @@
  */
 package org.apache.poi.sl.draw.geom;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 import java.net.URL;
 import java.util.Enumeration;
 
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class TestPresetGeometries {
     @Test
@@ -50,7 +50,7 @@ public class TestPresetGeometries {
         assertSame(shapes, PresetGeometries.getInstance());
     }
 
-    @Ignore("problem solved? Turn back on if this debugging is still in process.")
+    @Disabled("problem solved? Turn back on if this debugging is still in process.")
     @Test
     public void testCheckXMLParser() throws Exception{
         // Gump reports a strange error because of an unavailable XML Parser, let's try to find out where

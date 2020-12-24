@@ -17,14 +17,14 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.util.List;
 
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for XSSFShape
@@ -64,8 +64,7 @@ public final class TestXSSFShape {
             str.append(", Row1:").append(((XSSFClientAnchor) shape.getAnchor()).getRow1());
             str.append(", Row2:").append(((XSSFClientAnchor) shape.getAnchor()).getRow2());
         }
-        
-        assertEquals("Having shapes: " + str, 
-                expectedShapes, shapes.size());
+
+        assertEquals(expectedShapes, shapes.size(), "Having shapes: " + str);
     }
 }

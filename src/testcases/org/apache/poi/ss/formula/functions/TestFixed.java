@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -34,15 +34,15 @@ import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaError;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public final class TestFixed {
 
     private HSSFCell cell11;
     private HSSFFormulaEvaluator evaluator;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         try (HSSFWorkbook wb = new HSSFWorkbook()) {
             HSSFSheet sheet = wb.createSheet("new sheet");
@@ -86,14 +86,14 @@ public final class TestFixed {
         // rounding propagation
         confirm("FIXED(99.9,0,TRUE)", "100");
     }
-    
+
     @Test
     public void testOptionalParams() {
         Fixed fixed = new Fixed();
         ValueEval evaluate = fixed.evaluate(0, 0, new NumberEval(1234.56789));
         assertTrue(evaluate instanceof StringEval);
         assertEquals("1,234.57", ((StringEval)evaluate).getStringValue());
-        
+
         evaluate = fixed.evaluate(0, 0, new NumberEval(1234.56789), new NumberEval(1));
         assertTrue(evaluate instanceof StringEval);
         assertEquals("1,234.6", ((StringEval)evaluate).getStringValue());
@@ -113,17 +113,17 @@ public final class TestFixed {
         cell11.setCellFormula(formulaText);
         evaluator.clearAllCachedResultValues();
         CellValue cv = evaluator.evaluate(cell11);
-        assertEquals("Wrong result type: " + cv.formatAsString(), CellType.STRING, cv.getCellType());
+        assertEquals(CellType.STRING, cv.getCellType(), "Wrong result type: " + cv.formatAsString());
         String actualValue = cv.getStringValue();
         assertEquals(expectedResult, actualValue);
     }
-    
+
     private void confirmValueError(String formulaText) {
         cell11.setCellFormula(formulaText);
         evaluator.clearAllCachedResultValues();
         CellValue cv = evaluator.evaluate(cell11);
-        assertTrue("Wrong result type: " + cv.formatAsString(), 
-                cv.getCellType() == CellType.ERROR
-                && cv.getErrorValue() == FormulaError.VALUE.getCode());
+        assertTrue(cv.getCellType() == CellType.ERROR
+                && cv.getErrorValue() == FormulaError.VALUE.getCode(),
+               "Wrong result type: " + cv.formatAsString());
     }
 }

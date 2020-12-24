@@ -17,11 +17,11 @@
 
 package org.apache.poi.hdgf.streams;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -33,8 +33,8 @@ import org.apache.poi.hdgf.pointers.Pointer;
 import org.apache.poi.hdgf.pointers.PointerFactory;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.IOUtils;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public final class TestStreamComplex extends StreamTest {
 	private byte[] contents;
@@ -43,7 +43,7 @@ public final class TestStreamComplex extends StreamTest {
 	private ChunkFactory chunkFactory;
 	private PointerFactory ptrFactory;
 
-	@Before
+	@BeforeEach
     public void setUp() throws IOException {
 		ptrFactory = new PointerFactory(11);
 		chunkFactory = new ChunkFactory(11);
@@ -56,7 +56,7 @@ public final class TestStreamComplex extends StreamTest {
 		InputStream is2 = filesystem.createDocumentInputStream("VisioDocument");
 		contents = IOUtils.toByteArray(is2);
 		is2.close();
-		
+
 		filesystem.close();
 	}
 

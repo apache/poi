@@ -18,11 +18,11 @@
 package org.apache.poi.hslf.usermodel;
 
 
-import static org.junit.Assert.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 
 import org.apache.poi.POIDataSamples;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that SlideShow returns MetaSheets which have the right text in them
@@ -31,7 +31,7 @@ public final class TestNotesText {
 	// SlideShow primed on the test data
 	private HSLFSlideShow ss;
 
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
 		POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 		HSLFSlideShowImpl hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));

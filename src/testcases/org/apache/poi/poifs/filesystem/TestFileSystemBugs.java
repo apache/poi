@@ -17,8 +17,8 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -30,8 +30,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.poi.POIDataSamples;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests bugs for POIFSFileSystem
@@ -42,7 +42,7 @@ public final class TestFileSystemBugs {
 
     private List<POIFSFileSystem> openedFSs;
 
-    @After
+    @AfterEach
     public void tearDown() {
         if (openedFSs != null && !openedFSs.isEmpty()) {
             for (POIFSFileSystem fs : openedFSs) {

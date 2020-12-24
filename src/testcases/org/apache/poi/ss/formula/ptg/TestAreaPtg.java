@@ -18,14 +18,13 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hssf.model.HSSFFormulaParser;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.AreaReference;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link AreaPtg}.
@@ -35,7 +34,7 @@ public final class TestAreaPtg {
 	AreaPtg relative;
 	AreaPtg absolute;
 
-	@Before
+	@BeforeEach
 	public void setUp() {
 		short firstRow=5;
 		short lastRow=13;
@@ -50,11 +49,11 @@ public final class TestAreaPtg {
 	    AreaPtg ptg = new AreaPtg(new AreaReference("A$1:$B5", SpreadsheetVersion.EXCEL2007));
 	    assertEquals("A$1:$B5", ptg.toFormulaString());
 	    ptg.setFirstColumn(3);
-	    assertEquals("Area Ptg should not implicitly re-sort itself (except during construction)",
-	            "D$1:$B5", ptg.toFormulaString());
+	    assertEquals("D$1:$B5", ptg.toFormulaString(),
+			"Area Ptg should not implicitly re-sort itself (except during construction)");
 	    ptg.sortTopLeftToBottomRight();
-	    assertEquals("Area Ptg should restore itself to top-left to lower-right order when explicitly asked",
-	            "$B$1:D5", ptg.toFormulaString());
+	    assertEquals("$B$1:D5", ptg.toFormulaString(),
+			"Area Ptg should restore itself to top-left to lower-right order when explicitly asked");
 	}
 
 	@Test
@@ -70,10 +69,11 @@ public final class TestAreaPtg {
 	}
 
 	private void validateReference(boolean abs, AreaPtg ref) {
-		assertEquals("First column reference is not "+(abs?"absolute":"relative"),abs,!ref.isFirstColRelative());
-		assertEquals("Last column reference is not "+(abs?"absolute":"relative"),abs,!ref.isLastColRelative());
-		assertEquals("First row reference is not "+(abs?"absolute":"relative"),abs,!ref.isFirstRowRelative());
-		assertEquals("Last row reference is not "+(abs?"absolute":"relative"),abs,!ref.isLastRowRelative());
+		String isWrong = " reference is not "+(abs?"absolute":"relative");
+		assertEquals(abs,!ref.isFirstColRelative(),"First column" + isWrong);
+		assertEquals(abs,!ref.isLastColRelative(), "Last column" + isWrong);
+		assertEquals(abs,!ref.isFirstRowRelative(),"First row" + isWrong);
+		assertEquals(abs,!ref.isLastRowRelative(), "Last row" + isWrong);
 	}
 
 
@@ -93,20 +93,20 @@ public final class TestAreaPtg {
         AreaPtg sca3 = new AreaPtg(5, 5, 7, 7, true, false, true, false);
         AreaPtg sca4 = new AreaPtg(5, 5, 7, 7, false, true, false, true);
 
-        assertEquals("first rel., last abs.", "G5:$H$6", sca1.toFormulaString());
-        assertEquals("first abs., last rel.", "$G$5:H6", sca2.toFormulaString());
-        assertEquals("first rel., last abs.", "H6:$H$6", sca3.toFormulaString());
-        assertEquals("first abs., last rel.", "$H$6:H6", sca4.toFormulaString());
+        assertEquals("G5:$H$6", sca1.toFormulaString(), "first rel., last abs.");
+        assertEquals("$G$5:H6", sca2.toFormulaString(), "first abs., last rel.");
+        assertEquals("H6:$H$6", sca3.toFormulaString(), "first rel., last abs.");
+        assertEquals("$H$6:H6", sca4.toFormulaString(), "first abs., last rel.");
 
         AreaPtg cla1 = cloneArea(sca1);
         AreaPtg cla2 = cloneArea(sca2);
         AreaPtg cla3 = cloneArea(sca3);
         AreaPtg cla4 = cloneArea(sca4);
 
-        assertEquals("first rel., last abs.", "G5:$H$6", cla1.toFormulaString());
-        assertEquals("first abs., last rel.", "$G$5:H6", cla2.toFormulaString());
-        assertEquals("first rel., last abs.", "H6:$H$6", cla3.toFormulaString());
-        assertEquals("first abs., last rel.", "$H$6:H6", cla4.toFormulaString());
+        assertEquals("G5:$H$6", cla1.toFormulaString(), "first rel., last abs.");
+        assertEquals("$G$5:H6", cla2.toFormulaString(), "first abs., last rel.");
+        assertEquals("H6:$H$6", cla3.toFormulaString(), "first rel., last abs.");
+        assertEquals("$H$6:H6", cla4.toFormulaString(), "first abs., last rel.");
     }
 
     private AreaPtg cloneArea(AreaPtg a) {
@@ -121,18 +121,17 @@ public final class TestAreaPtg {
 		String formula1="SUM($E$5:$E$6)";
 		String expectedFormula1="SUM($F$5:$F$6)";
 		String newFormula1 = shiftAllColumnsBy1(formula1);
-		assertEquals("Absolute references changed", expectedFormula1, newFormula1);
+		assertEquals(expectedFormula1, newFormula1, "Absolute references changed");
 
 		String formula2="SUM(E5:E6)";
 		String expectedFormula2="SUM(F5:F6)";
 		String newFormula2 = shiftAllColumnsBy1(formula2);
-		assertEquals("Relative references changed", expectedFormula2, newFormula2);
+		assertEquals(expectedFormula2, newFormula2, "Relative references changed");
 	}
 
 	private static String shiftAllColumnsBy1(String  formula) {
 		int letUsShiftColumn1By1Column=1;
-		HSSFWorkbook wb = null;
-		Ptg[] ptgs = HSSFFormulaParser.parse(formula, wb);
+		Ptg[] ptgs = HSSFFormulaParser.parse(formula, null);
 		for (Ptg ptg : ptgs) {
 			if (ptg instanceof AreaPtg )
 			{
@@ -141,6 +140,6 @@ public final class TestAreaPtg {
 				aptg.setLastColumn((short)(aptg.getLastColumn()+letUsShiftColumn1By1Column));
 			}
 		}
-        return HSSFFormulaParser.toFormulaString(wb, ptgs);
+        return HSSFFormulaParser.toFormulaString(null, ptgs);
 	}
 }

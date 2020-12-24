@@ -21,12 +21,13 @@ import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.model.InternalWorkbook;
 import org.apache.poi.ss.usermodel.BaseTestSheetHiding;
 import org.apache.poi.ss.usermodel.SheetVisibility;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 public final class TestSheetHiding extends BaseTestSheetHiding {
     public TestSheetHiding() {
@@ -60,11 +61,6 @@ public final class TestSheetHiding extends BaseTestSheetHiding {
         assertEquals(SheetVisibility.HIDDEN, intWb.getSheetVisibility(1));
 
         // check sheet-index with index out of bounds => throws exception
-        try {
-            wb.setSheetVisibility(10, SheetVisibility.HIDDEN);
-            fail("Should catch exception here");
-        } catch (RuntimeException e) {
-            // expected here
-        }
+        assertThrows(RuntimeException.class, () -> wb.setSheetVisibility(10, SheetVisibility.HIDDEN));
     }
 }

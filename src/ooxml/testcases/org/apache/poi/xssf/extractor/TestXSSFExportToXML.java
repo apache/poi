@@ -17,10 +17,11 @@
 
 package org.apache.poi.xssf.extractor;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -44,8 +45,8 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.MapInfo;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -218,7 +219,7 @@ public final class TestXSSFExportToXML {
     }
 
     @Test
-    @Ignore(value="Fails, but I don't know if it is ok or not...")
+    @Disabled(value="Fails, but I don't know if it is ok or not...")
     public void testExportToXMLSingleAttributeNamespace() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("CustomXMLMapping-singleattributenamespace.xlsx")) {
 
@@ -245,7 +246,7 @@ public final class TestXSSFExportToXML {
 
                 XSSFMap map = mapInfo.getXSSFMapById(2);
 
-                assertNotNull("XSSFMap is null", map);
+                assertNotNull(map, "XSSFMap is null");
 
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -289,7 +290,7 @@ public final class TestXSSFExportToXML {
 
                 XSSFMap map = mapInfo.getXSSFMapById(1);
 
-                assertNotNull("XSSFMap is null", map);
+                assertNotNull(map, "XSSFMap is null");
 
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -324,7 +325,7 @@ public final class TestXSSFExportToXML {
 
                 XSSFMap map = mapInfo.getXSSFMapById(1);
 
-                assertNotNull("XSSFMap is null", map);
+                assertNotNull(map, "XSSFMap is null");
 
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -363,7 +364,7 @@ public final class TestXSSFExportToXML {
 
                 XSSFMap map = mapInfo.getXSSFMapById(1);
 
-                assertNotNull("XSSFMap is null", map);
+                assertNotNull(map, "XSSFMap is null");
 
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -421,6 +422,7 @@ public final class TestXSSFExportToXML {
         }
     }
 
+    @SuppressWarnings("EqualsWithItself")
     @Test
     public void testXmlExportCompare_Bug_55923() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("55923.xlsx")) {
@@ -435,7 +437,7 @@ public final class TestXSSFExportToXML {
 
                 XSSFMap map = mapInfo.getXSSFMapById(4);
 
-                assertNotNull("XSSFMap is null", map);
+                assertNotNull(map, "XSSFMap is null");
 
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 assertEquals(0, exporter.compare("", ""));
@@ -466,7 +468,7 @@ public final class TestXSSFExportToXML {
 
                 XSSFMap map = mapInfo.getXSSFMapById(4);
 
-                assertNotNull("XSSFMap is null", map);
+                assertNotNull(map, "XSSFMap is null");
 
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -544,7 +546,7 @@ public final class TestXSSFExportToXML {
 
                 XSSFMap map = mapInfo.getXSSFMapById(4);
 
-                assertNotNull("XSSFMap is null", map);
+                assertNotNull(map, "XSSFMap is null");
 
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -575,7 +577,7 @@ public final class TestXSSFExportToXML {
 
                 XSSFMap map = mapInfo.getXSSFMapById(4);
 
-                assertNotNull("XSSFMap is null", map);
+                assertNotNull(map, "XSSFMap is null");
 
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -607,7 +609,7 @@ public final class TestXSSFExportToXML {
 
                 XSSFMap map = mapInfo.getXSSFMapById(1);
 
-                assertNotNull("XSSFMap is null", map);
+                assertNotNull(map, "XSSFMap is null");
 
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 ByteArrayOutputStream os = new ByteArrayOutputStream();
@@ -657,13 +659,13 @@ public final class TestXSSFExportToXML {
         }
     }
 
-    @Test(expected = SAXParseException.class)
+    @Test
     public void testXXEInSchema() throws Exception {
         try (XSSFWorkbook wb = XSSFTestDataSamples.openSampleWorkbook("xxe_in_schema.xlsx")) {
             for (XSSFMap map : wb.getCustomXMLMappings()) {
                 XSSFExportToXml exporter = new XSSFExportToXml(map);
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                exporter.exportToXML(bos, true);
+                assertThrows(SAXParseException.class, () -> exporter.exportToXML(bos, true));
             }
         }
     }

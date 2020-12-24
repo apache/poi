@@ -17,9 +17,8 @@
 
 package org.apache.poi.openxml4j.opc.internal;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -47,8 +46,8 @@ import org.apache.poi.xssf.usermodel.XSSFPictureData;
 import org.apache.poi.xssf.usermodel.XSSFShape;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTMarker;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTTwoCellAnchor;
 
@@ -127,11 +126,10 @@ public final class TestContentTypeManager {
     /**
      * Test the addition then removal of content types in a package.
      */
-    @Ignore
+    @Disabled
     @Test
     public void testContentTypeRemovalPackage() {
         // TODO
-        fail("test not written");
     }
 
     protected byte[] toByteArray(Workbook wb) {

@@ -16,8 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -25,29 +24,24 @@ import java.io.IOException;
 
 import org.apache.poi.sl.usermodel.BaseTestSlideShow;
 import org.apache.poi.sl.usermodel.SlideShow;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
-public class TestHSLFSlideShow extends BaseTestSlideShow<HSLFShape,HSLFTextParagraph> {
+public class TestHSLFSlideShow extends BaseTestSlideShow<HSLFShape, HSLFTextParagraph> {
     @Override
     public HSLFSlideShow createSlideShow() {
         return new HSLFSlideShow();
     }
-    
+
     // make sure junit4 executes this test class
     @Test
     public void dummy() {
         assertNotNull(createSlideShow());
     }
 
-    public HSLFSlideShow reopen(SlideShow<HSLFShape,HSLFTextParagraph> show) {
-        try {
-            BufAccessBAOS bos = new BufAccessBAOS();
-            show.write(bos);
-            return new HSLFSlideShow(new ByteArrayInputStream(bos.getBuf()));
-        } catch (IOException e) {
-            fail(e.getMessage());
-            return null;
-        }
+    public HSLFSlideShow reopen(SlideShow<HSLFShape, HSLFTextParagraph> show) throws IOException {
+        BufAccessBAOS bos = new BufAccessBAOS();
+        show.write(bos);
+        return new HSLFSlideShow(new ByteArrayInputStream(bos.getBuf()));
     }
 
     private static class BufAccessBAOS extends ByteArrayOutputStream {

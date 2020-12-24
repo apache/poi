@@ -17,11 +17,12 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -45,7 +46,7 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class for testing Excel's data validation mechanism
@@ -164,9 +165,7 @@ public final class TestDataValidation extends BaseTestDataValidation {
             // nextSid should be for a DVRecord.  If anything comes between the DV header record
             // and the DV records, Excel will not be able to open the workbook without error.
 
-            if (nextSid == 0x0867) {
-                fail("Identified bug 45519");
-            }
+            assertNotEquals(0x0867, nextSid, "Identified bug 45519");
             assertEquals(DVRecord.sid, nextSid);
         }
 	}

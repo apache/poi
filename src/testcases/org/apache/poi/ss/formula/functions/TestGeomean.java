@@ -16,11 +16,17 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.functions;
 
-import org.apache.poi.ss.formula.eval.*;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import org.apache.poi.ss.formula.eval.BlankEval;
+import org.apache.poi.ss.formula.eval.BoolEval;
+import org.apache.poi.ss.formula.eval.ErrorEval;
+import org.apache.poi.ss.formula.eval.MissingArgEval;
+import org.apache.poi.ss.formula.eval.NumberEval;
+import org.apache.poi.ss.formula.eval.StringEval;
+import org.apache.poi.ss.formula.eval.ValueEval;
+import org.junit.jupiter.api.Test;
 
 /**
  * From Excel documentation at https://support.office.com/en-us/article/geomean-function-db1ac48d-25a5-40a0-ab83-0b38980e40d5:

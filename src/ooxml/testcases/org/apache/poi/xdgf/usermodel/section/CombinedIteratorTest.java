@@ -17,12 +17,15 @@
 
 package org.apache.poi.xdgf.usermodel.section;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import java.util.Iterator;
 import java.util.SortedMap;
 import java.util.TreeMap;
 
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class CombinedIteratorTest {
 
@@ -31,11 +34,11 @@ public class CombinedIteratorTest {
         Iterator<String> iter = iterable.iterator();
 
         for (String element : expected) {
-            Assert.assertTrue(iter.hasNext());
-            Assert.assertEquals(element, iter.next());
+            assertTrue(iter.hasNext());
+            assertEquals(element, iter.next());
         }
 
-        Assert.assertFalse(iter.hasNext());
+        assertFalse(iter.hasNext());
     }
 
     @Test

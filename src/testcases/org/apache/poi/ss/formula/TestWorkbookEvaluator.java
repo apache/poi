@@ -17,11 +17,13 @@
 
 package org.apache.poi.ss.formula;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 
@@ -47,8 +49,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests {@link WorkbookEvaluator}.
@@ -194,12 +196,9 @@ public class TestWorkbookEvaluator {
         HSSFCell cell = row.createCell(0);
         cell.setCellFormula("1+IF(1,,)");
         HSSFFormulaEvaluator fe = new HSSFFormulaEvaluator(wb);
-        CellValue cv = null;
-        try {
-            cv = fe.evaluate(cell);
-        } catch (RuntimeException e) {
-            fail("Missing arg result not being handled correctly.");
-        }
+        assertDoesNotThrow(() -> fe.evaluate(cell), "Missing arg result not being handled correctly.");
+
+        CellValue cv = fe.evaluate(cell);
         assertEquals(CellType.NUMERIC, cv.getCellType());
         // adding blank to 1.0 gives 1.0
         assertEquals(1.0, cv.getNumberValue(), 0.0);
@@ -260,7 +259,7 @@ public class TestWorkbookEvaluator {
     public void testNamesInFormulas() throws IOException {
         Workbook wb = new HSSFWorkbook();
         Sheet sheet = wb.createSheet("Sheet1");
-        
+
         Name name1 = wb.createName();
         name1.setNameName("aConstant");
         name1.setRefersToFormula("3.14");
@@ -272,27 +271,27 @@ public class TestWorkbookEvaluator {
         Name name3 = wb.createName();
         name3.setNameName("aSet");
         name3.setRefersToFormula("Sheet1!$A$2:$A$4");
-        
+
         Name name4 = wb.createName();
         name4.setNameName("offsetFormula");
         name4.setRefersToFormula("OFFSET(Sheet1!$A$1:$A$4,2,0,2,1)");
-        
+
         Name name5 = wb.createName();
         name5.setNameName("rowFormula");
         name5.setRefersToFormula("ROW()");
-        
+
         Row row0 = sheet.createRow(0);
         Row row1 = sheet.createRow(1);
         Row row2 = sheet.createRow(2);
         Row row3 = sheet.createRow(3);
         Row row4 = sheet.createRow(4);
         Row row5 = sheet.createRow(5);
-        
+
         row0.createCell(0).setCellValue(2);
         row1.createCell(0).setCellValue(5);
         row2.createCell(0).setCellValue(3);
         row3.createCell(0).setCellValue(7);
-        
+
         row0.createCell(2).setCellFormula("aConstant");
         row1.createCell(2).setCellFormula("aFormula");
         row2.createCell(2).setCellFormula("SUM(aSet)");
@@ -307,10 +306,10 @@ public class TestWorkbookEvaluator {
         assertEquals(28.14, fe.evaluate(row3.getCell(2)).getNumberValue(), EPSILON);
         assertEquals(10.0, fe.evaluate(row4.getCell(2)).getNumberValue(), EPSILON);
         assertEquals(6.0, fe.evaluate(row5.getCell(2)).getNumberValue(), EPSILON);
-        
+
         wb.close();
     }
-    
+
     @Test
     public void testIgnoreMissingWorkbooks() {
         // TODO: update this test for meaningful functional behavior
@@ -336,9 +335,9 @@ public class TestWorkbookEvaluator {
         evaluator.setDebugEvaluationOutputForNextEval(false);
         assertFalse(evaluator.isDebugEvaluationOutputForNextEval());
     }
-    
+
 // Test IF-Equals Formula Evaluation (bug 58591)
-    
+
     private Workbook testIFEqualsFormulaEvaluation_setup(String formula, CellType a1CellType) {
         Workbook wb = new HSSFWorkbook();
         Sheet sheet = wb.createSheet("IFEquals");
@@ -347,7 +346,7 @@ public class TestWorkbookEvaluator {
         Cell B1 = row.createCell(1);
         Cell C1 = row.createCell(2);
         Cell D1 = row.createCell(3);
-        
+
         switch (a1CellType) {
             case NUMERIC:
                 A1.setCellValue(1.0);
@@ -376,38 +375,34 @@ public class TestWorkbookEvaluator {
         B1.setCellValue(2.0);
         C1.setCellValue(3.0);
         D1.setCellFormula(formula);
-        
+
         return wb;
     }
-    
+
     private void testIFEqualsFormulaEvaluation_teardown(Workbook wb) {
-        try {
-            wb.close();
-        } catch (final IOException e) {
-            fail("Unable to close workbook");
-        }
+        assertDoesNotThrow(wb::close, "Unable to close workbook");
     }
-    
-    
-    
+
+
+
     private void testIFEqualsFormulaEvaluation_evaluate(
         String formula, CellType cellType, String expectedFormula, double expectedResult) {
         Workbook wb = testIFEqualsFormulaEvaluation_setup(formula, cellType);
         Cell D1 = wb.getSheet("IFEquals").getRow(0).getCell(3);
-        
+
         FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
         CellValue result = eval.evaluate(D1);
-        
+
         // Call should not modify the contents
         assertEquals(CellType.FORMULA, D1.getCellType());
         assertEquals(expectedFormula, D1.getCellFormula());
-        
+
         assertEquals(CellType.NUMERIC, result.getCellType());
         assertEquals(expectedResult, result.getNumberValue(), EPSILON);
-        
+
         testIFEqualsFormulaEvaluation_teardown(wb);
     }
-    
+
     private void testIFEqualsFormulaEvaluation_eval(
             final String formula, final CellType cellType, final String expectedFormula, final double expectedValue) {
         testIFEqualsFormulaEvaluation_evaluate(formula, cellType, expectedFormula, expectedValue);
@@ -416,7 +411,7 @@ public class TestWorkbookEvaluator {
         testIFEqualsFormulaEvaluation_evaluateAll(formula, cellType, expectedFormula, expectedValue);
         testIFEqualsFormulaEvaluation_evaluateAllFormulaCells(formula, cellType, expectedFormula, expectedValue);
     }
-    
+
     @Test
     public void testIFEqualsFormulaEvaluation_NumericLiteral() {
         final String formula = "IF(A1=1, 2, 3)";
@@ -425,7 +420,7 @@ public class TestWorkbookEvaluator {
         final double expectedValue = 2.0;
         testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
     }
-    
+
     @Test
     public void testIFEqualsFormulaEvaluation_Numeric() {
         final String formula = "IF(A1=1, B1, C1)";
@@ -434,7 +429,7 @@ public class TestWorkbookEvaluator {
         final double expectedValue = 2.0;
         testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
     }
-    
+
     @Test
     public void testIFEqualsFormulaEvaluation_NumericCoerceToString() {
         final String formula = "IF(A1&\"\"=\"1\", B1, C1)";
@@ -443,7 +438,7 @@ public class TestWorkbookEvaluator {
         final double expectedValue = 2.0;
         testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
     }
-    
+
     @Test
     public void testIFEqualsFormulaEvaluation_String() {
         final String formula = "IF(A1=1, B1, C1)";
@@ -452,7 +447,7 @@ public class TestWorkbookEvaluator {
         final double expectedValue = 3.0;
         testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
     }
-    
+
     @Test
     public void testIFEqualsFormulaEvaluation_StringCompareToString() {
         final String formula = "IF(A1=\"1\", B1, C1)";
@@ -461,7 +456,7 @@ public class TestWorkbookEvaluator {
         final double expectedValue = 2.0;
         testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
     }
-    
+
     @Test
     public void testIFEqualsFormulaEvaluation_StringCoerceToNumeric() {
         final String formula = "IF(A1+0=1, B1, C1)";
@@ -470,8 +465,8 @@ public class TestWorkbookEvaluator {
         final double expectedValue = 2.0;
         testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
     }
-    
-    @Ignore("Bug 58591: this test currently fails")
+
+    @Disabled("Bug 58591: this test currently fails")
     @Test
     public void testIFEqualsFormulaEvaluation_Boolean() {
         final String formula = "IF(A1=1, B1, C1)";
@@ -480,8 +475,8 @@ public class TestWorkbookEvaluator {
         final double expectedValue = 2.0;
         testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
     }
-    
-    @Ignore("Bug 58591: this test currently fails")
+
+    @Disabled("Bug 58591: this test currently fails")
     @Test
     public void testIFEqualsFormulaEvaluation_BooleanSimple() {
         final String formula = "3-(A1=1)";
@@ -490,7 +485,7 @@ public class TestWorkbookEvaluator {
         final double expectedValue = 2.0;
         testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
     }
-    
+
     @Test
     public void testIFEqualsFormulaEvaluation_Formula() {
         final String formula = "IF(A1=1, B1, C1)";
@@ -499,7 +494,7 @@ public class TestWorkbookEvaluator {
         final double expectedValue = 2.0;
         testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
     }
-    
+
     @Test
     public void testIFEqualsFormulaEvaluation_Blank() {
         final String formula = "IF(A1=1, B1, C1)";
@@ -508,7 +503,7 @@ public class TestWorkbookEvaluator {
         final double expectedValue = 3.0;
         testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
     }
-    
+
     @Test
     public void testIFEqualsFormulaEvaluation_BlankCompareToZero() {
         final String formula = "IF(A1=0, B1, C1)";
@@ -517,8 +512,8 @@ public class TestWorkbookEvaluator {
         final double expectedValue = 2.0;
         testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
     }
-    
-    @Ignore("Bug 58591: this test currently fails")
+
+    @Disabled("Bug 58591: this test currently fails")
     @Test
     public void testIFEqualsFormulaEvaluation_BlankInverted() {
         final String formula = "IF(NOT(A1)=1, B1, C1)";
@@ -527,8 +522,8 @@ public class TestWorkbookEvaluator {
         final double expectedValue = 2.0;
         testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
     }
-    
-    @Ignore("Bug 58591: this test currently fails")
+
+    @Disabled("Bug 58591: this test currently fails")
     @Test
     public void testIFEqualsFormulaEvaluation_BlankInvertedSimple() {
         final String formula = "3-(NOT(A1)=1)";
@@ -537,81 +532,77 @@ public class TestWorkbookEvaluator {
         final double expectedValue = 2.0;
         testIFEqualsFormulaEvaluation_eval(formula, cellType, expectedFormula, expectedValue);
     }
-    
-    
+
+
     private void testIFEqualsFormulaEvaluation_evaluateFormulaCell(
             String formula, CellType cellType, String expectedFormula, double expectedResult) {
         Workbook wb = testIFEqualsFormulaEvaluation_setup(formula, cellType);
         Cell D1 = wb.getSheet("IFEquals").getRow(0).getCell(3);
-        
+
         FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
         CellType resultCellType = eval.evaluateFormulaCell(D1);
-        
+
         // Call should modify the contents, but leave the formula intact
         assertEquals(CellType.FORMULA, D1.getCellType());
         assertEquals(expectedFormula, D1.getCellFormula());
         assertEquals(CellType.NUMERIC, resultCellType);
         assertEquals(CellType.NUMERIC, D1.getCachedFormulaResultType());
         assertEquals(expectedResult, D1.getNumericCellValue(), EPSILON);
-        
+
         testIFEqualsFormulaEvaluation_teardown(wb);
     }
-    
+
     private void testIFEqualsFormulaEvaluation_evaluateInCell(
             String formula, CellType cellType, double expectedResult) {
         Workbook wb = testIFEqualsFormulaEvaluation_setup(formula, cellType);
         Cell D1 = wb.getSheet("IFEquals").getRow(0).getCell(3);
-        
+
         FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
         Cell result = eval.evaluateInCell(D1);
-        
+
         // Call should modify the contents and replace the formula with the result
-        assertSame(D1, result); // returns the same cell that was provided as an argument so that calls can be chained.
-        try {
-            D1.getCellFormula();
-            fail("cell formula should be overwritten with formula result");
-        } catch (final IllegalStateException expected) {
-            // expected here
-        }
+        // returns the same cell that was provided as an argument so that calls can be chained.
+        assertSame(D1, result);
+        assertThrows(IllegalStateException.class, D1::getCellFormula, "cell formula should be overwritten with formula result");
         assertEquals(CellType.NUMERIC, D1.getCellType());
         assertEquals(expectedResult, D1.getNumericCellValue(), EPSILON);
-        
+
         testIFEqualsFormulaEvaluation_teardown(wb);
     }
-    
+
     private void testIFEqualsFormulaEvaluation_evaluateAll(
             String formula, CellType cellType, String expectedFormula, double expectedResult) {
         Workbook wb = testIFEqualsFormulaEvaluation_setup(formula, cellType);
         Cell D1 = wb.getSheet("IFEquals").getRow(0).getCell(3);
-        
+
         FormulaEvaluator eval = wb.getCreationHelper().createFormulaEvaluator();
         eval.evaluateAll();
-        
+
         // Call should modify the contents
         assertEquals(CellType.FORMULA, D1.getCellType());
         assertEquals(expectedFormula, D1.getCellFormula());
-        
+
         assertEquals(CellType.NUMERIC, D1.getCachedFormulaResultType());
         assertEquals(expectedResult, D1.getNumericCellValue(), EPSILON);
-        
+
         testIFEqualsFormulaEvaluation_teardown(wb);
     }
-    
+
     private void testIFEqualsFormulaEvaluation_evaluateAllFormulaCells(
             String formula, CellType cellType, String expectedFormula, double expectedResult) {
         Workbook wb = testIFEqualsFormulaEvaluation_setup(formula, cellType);
         Cell D1 = wb.getSheet("IFEquals").getRow(0).getCell(3);
-        
+
         HSSFFormulaEvaluator.evaluateAllFormulaCells(wb);
-        
+
         // Call should modify the contents
         assertEquals(CellType.FORMULA, D1.getCellType());
         // whitespace gets deleted because formula is parsed and re-rendered
         assertEquals(expectedFormula, D1.getCellFormula());
-        
+
         assertEquals(CellType.NUMERIC, D1.getCachedFormulaResultType());
         assertEquals(expectedResult, D1.getNumericCellValue(), EPSILON);
-        
+
         testIFEqualsFormulaEvaluation_teardown(wb);
     }
 

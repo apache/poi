@@ -17,7 +17,7 @@
 package org.apache.poi.ss.formula.udf;
 
 import org.apache.poi.ss.formula.functions.FreeRefFunction;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestDefaultUDFFinder extends BaseTestUDFFinder {
 

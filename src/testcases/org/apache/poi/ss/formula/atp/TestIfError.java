@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.atp;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
@@ -28,7 +28,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.CellReference;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testcase for 'Analysis Toolpak' function IFERROR()
@@ -79,21 +79,20 @@ public class TestIfError {
 
             FormulaEvaluator evaluator = wb.getCreationHelper().createFormulaEvaluator();
 
-            assertEquals("Checks that the cell is numeric",
-                         CellType.NUMERIC, evaluator.evaluate(cell1).getCellType());
-            assertEquals("Divides 210 by 35 and returns 6.0",
-                         6.0, evaluator.evaluate(cell1).getNumberValue(), accuracy);
+            assertEquals(CellType.NUMERIC, evaluator.evaluate(cell1).getCellType(),
+                         "Checks that the cell is numeric");
+            assertEquals(6.0, evaluator.evaluate(cell1).getNumberValue(), accuracy,
+                         "Divides 210 by 35 and returns 6.0");
 
+            assertEquals(CellType.STRING, evaluator.evaluate(cell2).getCellType(),
+                         "Checks that the cell is numeric");
+            assertEquals("Error in calculation", evaluator.evaluate(cell2).getStringValue(),
+                         "Rounds -10 to a nearest multiple of -3 (-9)");
 
-            assertEquals("Checks that the cell is numeric",
-                         CellType.STRING, evaluator.evaluate(cell2).getCellType());
-            assertEquals("Rounds -10 to a nearest multiple of -3 (-9)",
-                         "Error in calculation", evaluator.evaluate(cell2).getStringValue());
-
-            assertEquals("Check that C1 returns string",
-                         CellType.STRING, evaluator.evaluate(cell3).getCellType());
-            assertEquals("Check that C1 returns string \"error\"",
-                         "error", evaluator.evaluate(cell3).getStringValue());
+            assertEquals(CellType.STRING, evaluator.evaluate(cell3).getCellType(),
+                         "Check that C1 returns string");
+            assertEquals("error", evaluator.evaluate(cell3).getStringValue(),
+                         "Check that C1 returns string \"error\"");
         }
     }
 }

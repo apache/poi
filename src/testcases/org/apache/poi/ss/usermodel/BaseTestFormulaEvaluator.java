@@ -17,15 +17,20 @@
 
 package org.apache.poi.ss.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
+
 import java.io.IOException;
 import java.util.Locale;
 
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.SpreadsheetVersion;
 import org.apache.poi.ss.util.CellRangeAddressList;
-import org.junit.Test;
-
-import static org.junit.Assert.*;
+import org.junit.jupiter.api.Test;
 
 /**
  * Common superclass for testing implementation of {@link FormulaEvaluator}
@@ -62,7 +67,7 @@ public abstract class BaseTestFormulaEvaluator {
 
         assertEquals(6.0, c1.getNumericCellValue(), 0.0001);
         assertEquals(5.0, c2.getNumericCellValue(), 0.0001);
-        
+
         wb.close();
     }
 
@@ -107,7 +112,7 @@ public abstract class BaseTestFormulaEvaluator {
         assertEquals(17.5, c2.getNumericCellValue(), 0.0001);
         assertEquals(1, c3.getNumericCellValue(), 0.0001);
         assertEquals(4, c4.getNumericCellValue(), 0.0001);
-        
+
         wb.close();
     }
 
@@ -134,7 +139,7 @@ public abstract class BaseTestFormulaEvaluator {
         cell = sheet.getRow(4).getCell(0);
         assertEquals("B5", cell.getCellFormula());
         assertEquals("UniqueDocumentNumberID", evaluator.evaluate(cell).getStringValue());
-        
+
         wb.close();
     }
 
@@ -173,7 +178,7 @@ public abstract class BaseTestFormulaEvaluator {
 
         assertEquals(5.0, evaluator.evaluate(sh2.getRow(0).getCell(1)).getNumberValue(), 0.0);
         assertEquals(15.0, evaluator.evaluate(sh2.getRow(0).getCell(2)).getNumberValue(), 0.0);
-        
+
         wb.close();
     }
 
@@ -207,10 +212,10 @@ public abstract class BaseTestFormulaEvaluator {
         FormulaEvaluator fe = wb.getCreationHelper().createFormulaEvaluator();
         assertEquals(26.0, fe.evaluate(cell0).getNumberValue(), 0.0);
         assertEquals(56.0, fe.evaluate(cell1).getNumberValue(), 0.0);
-        
+
         wb.close();
     }
-    
+
 	@Test
     public void testRepeatedEvaluation() throws IOException {
        Workbook wb = _testDataProvider.createWorkbook();
@@ -218,37 +223,37 @@ public abstract class BaseTestFormulaEvaluator {
        Sheet sheet = wb.createSheet("Sheet1");
        Row r = sheet.createRow(0);
        Cell c = r.createCell(0, CellType.FORMULA);
-       
+
        // Create a value and check it
        c.setCellFormula("Date(2011,10,6)");
        CellValue cellValue = fe.evaluate(c);
        assertEquals(40822.0, cellValue.getNumberValue(), 0.0);
        cellValue = fe.evaluate(c);
        assertEquals(40822.0, cellValue.getNumberValue(), 0.0);
-       
+
        // Change it
        c.setCellFormula("Date(2011,10,4)");
-       
+
        // Evaluate it, no change as the formula evaluator
        //  won't know to clear the cache
        cellValue = fe.evaluate(c);
        assertEquals(40822.0, cellValue.getNumberValue(), 0.0);
-       
+
        // Manually flush for this cell, and check
        fe.notifySetFormula(c);
        cellValue = fe.evaluate(c);
        assertEquals(40820.0, cellValue.getNumberValue(), 0.0);
-       
+
        // Change again, without notifying
        c.setCellFormula("Date(2010,10,4)");
        cellValue = fe.evaluate(c);
        assertEquals(40820.0, cellValue.getNumberValue(), 0.0);
-       
+
        // Now manually clear all, will see the new value
        fe.clearAllCachedResultValues();
        cellValue = fe.evaluate(c);
        assertEquals(40455.0, cellValue.getNumberValue(), 0.0);
-       
+
        wb.close();
     }
 
@@ -323,10 +328,10 @@ public abstract class BaseTestFormulaEvaluator {
         assertEquals(2162.62, fe.evaluateInCell(cellB1).getNumericCellValue(), 0.0);
         assertEquals(2162.62, fe.evaluateInCell(cellC1).getNumericCellValue(), 0.0);
         assertEquals(2162.61, fe.evaluateInCell(cellD1).getNumericCellValue(), 0.0);
-        
+
         wb.close();
     }
-    
+
     @Test
     public void evaluateInCellReturnsSameCell() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
@@ -638,8 +643,8 @@ public abstract class BaseTestFormulaEvaluator {
 
             double result = a3.getNumericCellValue();
             // result is correct
-            assertTrue(String.format(Locale.ROOT, "Expected %f to be greater than %f", result, 2.0), result > 2.0);
-            assertTrue(String.format(Locale.ROOT, "Expected %f to be less than %f", result, 4.0), result < 4.0);
+            assertTrue(result > 2.0, String.format(Locale.ROOT, "Expected %f to be greater than %f", result, 2.0));
+            assertTrue(result < 4.0, String.format(Locale.ROOT, "Expected %f to be less than %f", result, 4.0));
 
             // ensure that this works for SUM
             assertEquals(CellType.FORMULA, a3.getCellType());

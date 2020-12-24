@@ -17,24 +17,21 @@
 
 package org.apache.poi.xssf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestCloneSheet;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
-import org.apache.poi.util.TempFile;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 
 public class TestXSSFCloneSheet  extends BaseTestCloneSheet {
     public TestXSSFCloneSheet() {
@@ -45,10 +42,10 @@ public class TestXSSFCloneSheet  extends BaseTestCloneSheet {
     private static final String VALID_SHEET_NAME = "Sheet01";
     private XSSFWorkbook wb;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         wb = new XSSFWorkbook();
-        wb.createSheet(VALID_SHEET_NAME);  
+        wb.createSheet(VALID_SHEET_NAME);
     }
 
     @Test
@@ -57,15 +54,10 @@ public class TestXSSFCloneSheet  extends BaseTestCloneSheet {
         assertEquals(OTHER_SHEET_NAME, cloned.getSheetName());
         assertEquals(2, wb.getNumberOfSheets());
     }
-    
+
     @Test
     public void testCloneSheetIntStringInvalidName() {
-        try {
-            wb.cloneSheet(0, VALID_SHEET_NAME);
-            fail("Should fail");
-        } catch (IllegalArgumentException e) {
-            // expected here
-        }
+        assertThrows(IllegalArgumentException.class, () -> wb.cloneSheet(0, VALID_SHEET_NAME));
         assertEquals(1, wb.getNumberOfSheets());
     }
 

@@ -17,8 +17,7 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFFormulaEvaluator;
@@ -32,7 +31,7 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.ss.usermodel.FormulaEvaluator;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for the INDIRECT() function.</p>
@@ -175,35 +174,26 @@ public final class TestIndirect {
         // 2 level recursion
         confirm(feB, cellB, "INDIRECT(\"[MyBook]Sheet2!A1\")", 50); // set up (and check) first level
         confirm(feA, cellA, "INDIRECT(\"'[Figures for January]Sheet1'!A11\")", 50); // points to cellB
-        
+
         wbB.close();
         wbA.close();
     }
 
-    private static void confirm(FormulaEvaluator fe, Cell cell, String formula,
-            double expectedResult) {
+    private static void confirm(FormulaEvaluator fe, Cell cell, String formula, double expectedResult) {
         fe.clearAllCachedResultValues();
         cell.setCellFormula(formula);
         CellValue cv = fe.evaluate(cell);
-        if (cv.getCellType() != CellType.NUMERIC) {
-            fail("expected numeric cell type but got " + cv.formatAsString());
-        }
+        assertEquals(CellType.NUMERIC, cv.getCellType(), "expected numeric cell type but got " + cv.formatAsString());
         assertEquals(expectedResult, cv.getNumberValue(), 0.0);
     }
-    
-    private static void confirm(FormulaEvaluator fe, Cell cell, String formula,
-            ErrorEval expectedResult) {
+
+    private static void confirm(FormulaEvaluator fe, Cell cell, String formula, ErrorEval expectedResult) {
         fe.clearAllCachedResultValues();
         cell.setCellFormula(formula);
         CellValue cv = fe.evaluate(cell);
-        if (cv.getCellType() != CellType.ERROR) {
-            fail("expected error cell type but got " + cv.formatAsString());
-        }
+        assertEquals(CellType.ERROR, cv.getCellType(), "expected error cell type but got " + cv.formatAsString());
         int expCode = expectedResult.getErrorCode();
-        if (cv.getErrorValue() != expCode) {
-            fail("Expected error '" + ErrorEval.getText(expCode)
-                    + "' but got '" + cv.formatAsString() + "'.");
-        }
+        assertEquals(expCode, cv.getErrorValue(), "Expected error '" + ErrorEval.getText(expCode) + "' but got '" + cv.formatAsString() + "'.");
     }
 
     @Test

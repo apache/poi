@@ -17,12 +17,12 @@
 
 package org.apache.poi.util;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -38,19 +38,19 @@ import java.nio.charset.StandardCharsets;
 import java.util.Random;
 
 import org.apache.poi.EmptyFileException;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class to test IOUtils
  */
 public final class TestIOUtils {
 
-    static File TMP;
-    static final long LENGTH = 300+new Random().nextInt(9000);
+    private static File TMP;
+    private static final long LENGTH = 300+new Random().nextInt(9000);
 
-    @BeforeClass
+    @BeforeAll
     public static void setUp() throws IOException {
         TMP = File.createTempFile("poi-ioutils-", "");
         OutputStream os = new FileOutputStream(TMP);
@@ -62,9 +62,13 @@ public final class TestIOUtils {
 
     }
 
-    @AfterClass
+    @AfterAll
     public static void tearDown() {
         if (TMP != null) assertTrue(TMP.delete());
+    }
+
+    private static InputStream data123() {
+        return new ByteArrayInputStream(new byte[]{1,2,3});
     }
 
     @Test
@@ -81,43 +85,38 @@ public final class TestIOUtils {
 
     @Test
     public void testPeekFirst8BytesTooLessAvailable() throws Exception {
-        assertArrayEquals(new byte[] { 1, 2, 3, 0, 0, 0, 0, 0},
-                IOUtils.peekFirst8Bytes(new ByteArrayInputStream(new byte[] { 1, 2, 3})));
+        assertArrayEquals(new byte[] { 1, 2, 3, 0, 0, 0, 0, 0}, IOUtils.peekFirst8Bytes(data123()));
     }
 
-    @Test(expected = EmptyFileException.class)
-    public void testPeekFirst8BytesEmpty() throws Exception {
-        IOUtils.peekFirst8Bytes(new ByteArrayInputStream(new byte[] {}));
+    @Test
+    public void testPeekFirst8BytesEmpty() {
+        assertThrows(EmptyFileException.class, () ->
+            IOUtils.peekFirst8Bytes(new ByteArrayInputStream(new byte[0])));
     }
 
     @Test
     public void testToByteArray() throws Exception {
-        assertArrayEquals(new byte[] { 1, 2, 3},
-                IOUtils.toByteArray(new ByteArrayInputStream(new byte[] { 1, 2, 3})));
+        assertArrayEquals(new byte[] { 1, 2, 3}, IOUtils.toByteArray(data123()));
     }
 
-    @Test(expected = IOException.class)
-    public void testToByteArrayToSmall() throws Exception {
-        assertArrayEquals(new byte[] { 1, 2, 3},
-                IOUtils.toByteArray(new ByteArrayInputStream(new byte[] { 1, 2, 3}), 10));
+    @Test
+    public void testToByteArrayToSmall() {
+        assertThrows(IOException.class, () -> IOUtils.toByteArray(data123(), 10));
     }
 
-    @Test(expected = IOException.class)
-    public void testToByteArrayMaxLengthToSmall() throws Exception {
-        assertArrayEquals(new byte[] { 1, 2, 3},
-                IOUtils.toByteArray(new ByteArrayInputStream(new byte[] { 1, 2, 3}), 10, 10));
+    @Test
+    public void testToByteArrayMaxLengthToSmall() {
+        assertThrows(IOException.class, () -> IOUtils.toByteArray(data123(), 10, 10));
     }
 
-    @Test(expected = RecordFormatException.class)
-    public void testToByteArrayNegativeLength() throws Exception {
-        assertArrayEquals(new byte[] { 1, 2, 3},
-                IOUtils.toByteArray(new ByteArrayInputStream(new byte[] { 1, 2, 3}), -1));
+    @Test
+    public void testToByteArrayNegativeLength() {
+        assertThrows(RecordFormatException.class, () -> IOUtils.toByteArray(data123(), -1));
     }
 
-    @Test(expected = RecordFormatException.class)
-    public void testToByteArrayNegativeMaxLength() throws Exception {
-        assertArrayEquals(new byte[] { 1, 2, 3},
-                IOUtils.toByteArray(new ByteArrayInputStream(new byte[] { 1, 2, 3}), 10, -1));
+    @Test
+    public void testToByteArrayNegativeMaxLength() {
+        assertThrows(RecordFormatException.class,  () -> IOUtils.toByteArray(data123(), 10, -1));
     }
 
     @Test
@@ -148,7 +147,7 @@ public final class TestIOUtils {
     public void testSkipFully() throws IOException {
         try (InputStream is =  new FileInputStream(TMP)) {
             long skipped = IOUtils.skipFully(is, 20000L);
-            assertEquals("length: " + LENGTH, LENGTH, skipped);
+            assertEquals(LENGTH, skipped);
         }
     }
 
@@ -156,7 +155,7 @@ public final class TestIOUtils {
     public void testSkipFullyGtIntMax() throws IOException {
         try (InputStream is =  new FileInputStream(TMP)) {
             long skipped = IOUtils.skipFully(is, Integer.MAX_VALUE + 20000L);
-            assertEquals("length: " + LENGTH, LENGTH, skipped);
+            assertEquals(LENGTH, skipped);
         }
     }
 
@@ -166,7 +165,7 @@ public final class TestIOUtils {
         try (InputStream is = new FileInputStream(TMP)) {
             IOUtils.copy(is, bos);
             long skipped = IOUtils.skipFully(new ByteArrayInputStream(bos.toByteArray()), 20000L);
-            assertEquals("length: " + LENGTH, LENGTH, skipped);
+            assertEquals(LENGTH, skipped);
         }
     }
 
@@ -176,7 +175,7 @@ public final class TestIOUtils {
         try (InputStream is = new FileInputStream(TMP)) {
             IOUtils.copy(is, bos);
             long skipped = IOUtils.skipFully(new ByteArrayInputStream(bos.toByteArray()), Integer.MAX_VALUE + 20000L);
-            assertEquals("length: " + LENGTH, LENGTH, skipped);
+            assertEquals(LENGTH, skipped);
         }
     }
 
@@ -188,28 +187,28 @@ public final class TestIOUtils {
     @Test
     public void testZeroByte() throws IOException {
         long skipped = IOUtils.skipFully((new ByteArrayInputStream(new byte[0])), 100);
-        assertEquals("zero byte", -1L, skipped);
+        assertEquals(-1L, skipped);
     }
 
     @Test
     public void testSkipZero() throws IOException {
         try (InputStream is =  new FileInputStream(TMP)) {
             long skipped = IOUtils.skipFully(is, 0);
-            assertEquals("zero length", 0, skipped);
+            assertEquals(0, skipped);
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testSkipNegative() throws IOException {
         try (InputStream is =  new FileInputStream(TMP)) {
-            IOUtils.skipFully(is, -1);
+            assertThrows(IllegalArgumentException.class, () -> IOUtils.skipFully(is, -1));
         }
     }
 
-    @Test(expected = RecordFormatException.class)
+    @Test
     public void testMaxLengthTooLong() throws IOException {
         try (InputStream is = new FileInputStream(TMP)) {
-            IOUtils.toByteArray(is, Integer.MAX_VALUE, 100);
+            assertThrows(RecordFormatException.class, () -> IOUtils.toByteArray(is, Integer.MAX_VALUE, 100));
         }
     }
 
@@ -222,17 +221,17 @@ public final class TestIOUtils {
         }
     }
 
-    @Test(expected = RecordFormatException.class)
+    @Test
     public void testMaxLengthInvalid() throws IOException {
         try (InputStream is = new FileInputStream(TMP)) {
-            IOUtils.toByteArray(is, 90, 80);
+            assertThrows(RecordFormatException.class, () -> IOUtils.toByteArray(is, 90, 80));
         }
     }
 
     @Test
     public void testWonkyInputStream() throws IOException {
         long skipped = IOUtils.skipFully(new WonkyInputStream(), 10000);
-        assertEquals("length: "+LENGTH, 10000, skipped);
+        assertEquals(10000, skipped);
     }
 
     @Test
@@ -257,16 +256,11 @@ public final class TestIOUtils {
     }
 
     @Test
-    public void testSetMaxOverrideOverLimit() throws IOException {
+    public void testSetMaxOverrideOverLimit() {
         IOUtils.setByteArrayMaxOverride(2);
         try {
             ByteArrayInputStream stream = new ByteArrayInputStream("abc".getBytes(StandardCharsets.UTF_8));
-            try {
-                IOUtils.toByteArray(stream);
-                fail("Should have caught an Exception here");
-            } catch (RecordFormatException e) {
-                // expected
-            }
+            assertThrows(RecordFormatException.class, () -> IOUtils.toByteArray(stream));
         } finally {
             IOUtils.setByteArrayMaxOverride(-1);
         }
@@ -298,12 +292,7 @@ public final class TestIOUtils {
         IOUtils.setByteArrayMaxOverride(2);
         try {
             ByteArrayInputStream stream = new ByteArrayInputStream("abc".getBytes(StandardCharsets.UTF_8));
-            try {
-                IOUtils.toByteArray(stream, 3, 100);
-                fail("Should have caught an Exception here");
-            } catch (RecordFormatException e) {
-                // expected
-            }
+            assertThrows(RecordFormatException.class, () -> IOUtils.toByteArray(stream, 3, 100));
         } finally {
             IOUtils.setByteArrayMaxOverride(-1);
         }

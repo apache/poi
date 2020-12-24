@@ -17,10 +17,10 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import org.junit.Test;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
@@ -35,7 +35,7 @@ import org.apache.poi.ss.formula.eval.StringEval;
 public final class TestRoundFuncs {
 	// github-43
 	// https://github.com/apache/poi/pull/43
-    @Ignore("ROUNDUP(3987*0.2, 2) currently fails by returning 797.41")
+    @Disabled("ROUNDUP(3987*0.2, 2) currently fails by returning 797.41")
 	@Test
 	public void testRoundUp() {
 		assertRoundUpEquals(797.40, 3987*0.2, 2, 1e-10);

@@ -21,15 +21,15 @@ import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 /**
  * Test pivot tables created by area reference
  */
 public class TestXSSFPivotTableRef extends BaseTestXSSFPivotTable {
-    
+
     @Override
-    @Before
+    @BeforeEach
     public void setUp(){
         wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
@@ -67,9 +67,9 @@ public class TestXSSFPivotTableRef extends BaseTestXSSFPivotTable {
 
         AreaReference source = wb.getCreationHelper().createAreaReference("A1:C2");
         pivotTable = sheet.createPivotTable(source, new CellReference("H5"));
-        
+
         XSSFSheet offsetSheet = wb.createSheet();
-        
+
         Row tableRow_1 = offsetSheet.createRow(1);
         offsetOuterCell = tableRow_1.createCell(1);
         offsetOuterCell.setCellValue(-1);
@@ -79,7 +79,7 @@ public class TestXSSFPivotTableRef extends BaseTestXSSFPivotTable {
         tableCell_1_2.setCellValue("Exponent");
         Cell tableCell_1_3 = tableRow_1.createCell(4);
         tableCell_1_3.setCellValue("10^Exponent");
-        
+
         Row tableRow_2 = offsetSheet.createRow(2);
         Cell tableCell_2_1 = tableRow_2.createCell(2);
         tableCell_2_1.setCellValue(0);
@@ -87,7 +87,7 @@ public class TestXSSFPivotTableRef extends BaseTestXSSFPivotTable {
         tableCell_2_2.setCellValue(0);
         Cell tableCell_2_3 = tableRow_2.createCell(4);
         tableCell_2_3.setCellValue(1);
-        
+
         Row tableRow_3= offsetSheet.createRow(3);
         Cell tableCell_3_1 = tableRow_3.createCell(2);
         tableCell_3_1.setCellValue(1);
@@ -95,7 +95,7 @@ public class TestXSSFPivotTableRef extends BaseTestXSSFPivotTable {
         tableCell_3_2.setCellValue(1);
         Cell tableCell_3_3 = tableRow_3.createCell(4);
         tableCell_3_3.setCellValue(10);
-        
+
         Row tableRow_4 = offsetSheet.createRow(4);
         Cell tableCell_4_1 = tableRow_4.createCell(2);
         tableCell_4_1.setCellValue(2);
@@ -103,7 +103,7 @@ public class TestXSSFPivotTableRef extends BaseTestXSSFPivotTable {
         tableCell_4_2.setCellValue(2);
         Cell tableCell_4_3 = tableRow_4.createCell(4);
         tableCell_4_3.setCellValue(100);
-        
+
         AreaReference offsetSource = wb.getCreationHelper().createAreaReference(
                 new CellReference("C2"), new CellReference("E4"));
         offsetPivotTable = offsetSheet.createPivotTable(offsetSource, new CellReference("C6"));

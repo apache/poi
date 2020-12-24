@@ -18,13 +18,14 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -49,8 +50,8 @@ import org.apache.poi.xssf.XSSFTestDataSamples;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.streaming.SXSSFWorkbook;
 import org.apache.xmlbeans.XmlObject;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTComment;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTRPrElt;
 
@@ -131,12 +132,9 @@ public final class TestXSSFComment extends BaseTestCellComment  {
         XSSFComment comment = sh.createDrawingPatriarch().createCellComment(new XSSFClientAnchor());
 
         //passing HSSFRichTextString is incorrect
-        try {
-            comment.setString(new HSSFRichTextString(TEST_RICHTEXTSTRING));
-            fail("expected exception");
-        } catch (IllegalArgumentException e){
-            assertEquals("Only XSSFRichTextString argument is supported", e.getMessage());
-        }
+        IllegalArgumentException e = assertThrows(IllegalArgumentException.class,
+            () -> comment.setString(new HSSFRichTextString(TEST_RICHTEXTSTRING)));
+        assertEquals("Only XSSFRichTextString argument is supported", e.getMessage());
 
         //simple string argument
         comment.setString(TEST_RICHTEXTSTRING);
@@ -174,7 +172,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
         assertEquals(8.5, rPr.getSzArray(0).getVal(), 0);
         assertEquals(IndexedColors.BLUE_GREY.getIndex(), rPr.getColorArray(0).getIndexed());
         assertEquals("Tahoma", rPr.getRFontArray(0).getVal());
-        
+
         assertNotNull(XSSFTestDataSamples.writeOutAndReadBack(wb));
     }
 
@@ -198,7 +196,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
 
     @Test
     public void testBug58175() throws IOException {
-        try (Workbook wb = new SXSSFWorkbook()) {
+        try (SXSSFWorkbook wb = new SXSSFWorkbook()) {
             Sheet sheet = wb.createSheet();
 
             Row row = sheet.createRow(1);
@@ -218,9 +216,9 @@ public final class TestXSSFComment extends BaseTestCellComment  {
             XSSFClientAnchor ca = (XSSFClientAnchor) anchor;
 
             // create comments and vmlDrawing parts if they don't exist
-            CommentsTable comments = ((SXSSFWorkbook) wb).getXSSFWorkbook()
+            CommentsTable comments = wb.getXSSFWorkbook()
                     .getSheetAt(0).getCommentsTable(true);
-            XSSFVMLDrawing vml = ((SXSSFWorkbook) wb).getXSSFWorkbook()
+            XSSFVMLDrawing vml = wb.getXSSFWorkbook()
                     .getSheetAt(0).getVMLDrawing(true);
             CTShape vmlShape1 = vml.newCommentShape();
             if (ca.isSet()) {
@@ -259,12 +257,12 @@ public final class TestXSSFComment extends BaseTestCellComment  {
             assertEquals(table1.getNumberOfComments(), table2.getNumberOfComments());
             assertEquals(table1.getRelations(), table2.getRelations());*/
 
-            assertEquals("The vmlShapes should have equal content afterwards",
-                    vmlShape1.toString().replaceAll("_x0000_s\\d+", "_x0000_s0000"), vmlShape2.toString().replaceAll("_x0000_s\\d+", "_x0000_s0000"));
+            assertEquals(vmlShape1.toString().replaceAll("_x0000_s\\d+", "_x0000_s0000"), vmlShape2.toString().replaceAll("_x0000_s\\d+", "_x0000_s0000"),
+                "The vmlShapes should have equal content afterwards");
         }
     }
 
-    @Ignore("Used for manual testing with opening the resulting Workbook in Excel")
+    @Disabled("Used for manual testing with opening the resulting Workbook in Excel")
     @Test
     public void testBug58175a() throws IOException {
         try (Workbook wb = new SXSSFWorkbook()) {
@@ -323,7 +321,7 @@ public final class TestXSSFComment extends BaseTestCellComment  {
             //wb.write(new FileOutputStream("/tmp/outnocomment.xlsx"));
 
             comment = newsheet.getRow(0).getCell(0).getCellComment();
-            assertNotNull("Should have a comment on A1 in the new sheet", comment);
+            assertNotNull(comment, "Should have a comment on A1 in the new sheet");
             assertEquals("Comment Here\n", comment.getString().getString());
 
             Workbook wbBack = XSSFTestDataSamples.writeOutAndReadBack(wb);

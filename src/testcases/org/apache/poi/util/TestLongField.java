@@ -17,13 +17,14 @@
 
 package org.apache.poi.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test LongField code
@@ -37,33 +38,21 @@ public final class TestLongField {
 
     @Test
     public void testConstructors() {
-        try {
-            new LongField(-1);
-            fail("Should have caught ArrayIndexOutOfBoundsException");
-        } catch (ArrayIndexOutOfBoundsException ignored_e) {
-            // as expected
-        }
-        LongField field = new LongField(2);
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> new LongField(-1));
 
-        assertEquals(0L, field.get());
-        try {
-            new LongField(-1, 1L);
-            fail("Should have caught ArrayIndexOutOfBoundsException");
-        } catch (ArrayIndexOutOfBoundsException ignored_e) {
-            // as expected
-        }
-        field = new LongField(2, 0x123456789ABCDEF0L);
-        assertEquals(0x123456789ABCDEF0L, field.get());
+        LongField field1 = new LongField(2);
+        assertEquals(0L, field1.get());
+
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> new LongField(-1, 1L));
+
+        LongField  field2 = new LongField(2, 0x123456789ABCDEF0L);
+        assertEquals(0x123456789ABCDEF0L, field2.get());
+
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> new LongField(-1, 1L, new byte[ 10 ]));
+
+
         byte[] array = new byte[ 10 ];
-
-        try {
-            new LongField(-1, 1L, array);
-            fail("Should have caught ArrayIndexOutOfBoundsException");
-        }
-        catch (ArrayIndexOutOfBoundsException ignored_e) {
-            // as expected
-        }
-        field = new LongField(2, 0x123456789ABCDEF0L, array);
+        LongField field = new LongField(2, 0x123456789ABCDEF0L, array);
         assertEquals(0x123456789ABCDEF0L, field.get());
         assertEquals(( byte ) 0xF0, array[ 2 ]);
         assertEquals(( byte ) 0xDE, array[ 3 ]);
@@ -73,13 +62,9 @@ public final class TestLongField {
         assertEquals(( byte ) 0x56, array[ 7 ]);
         assertEquals(( byte ) 0x34, array[ 8 ]);
         assertEquals(( byte ) 0x12, array[ 9 ]);
-        array = new byte[ 9 ];
-        try {
-            new LongField(2, 5L, array);
-            fail("should have gotten ArrayIndexOutOfBoundsException");
-        } catch (ArrayIndexOutOfBoundsException ignored_e) {
-            // as expected
-        }
+
+        assertThrows(ArrayIndexOutOfBoundsException.class, () -> new LongField(2, 5L, new byte[ 9 ]));
+
         for (long element : _test_array) {
             array = new byte[ 8 ];
             new LongField(0, element, array);
@@ -94,33 +79,18 @@ public final class TestLongField {
 
         for (int j = 0; j < _test_array.length; j++) {
             field.set(_test_array[ j ]);
-            assertEquals("testing _1 " + j, _test_array[ j ], field.get());
+            assertEquals(_test_array[ j ], field.get(), "testing _1 " + j);
             field = new LongField(0);
             field.set(_test_array[ j ], array);
-            assertEquals("testing _2 ", _test_array[ j ], field.get());
-            assertEquals("testing _3.0 " + _test_array[ j ],
-                         ( byte ) (_test_array[ j ] % 256), array[ 0 ]);
-            assertEquals("testing _3.1 " + _test_array[ j ],
-                         ( byte ) ((_test_array[ j ] >> 8) % 256),
-                         array[ 1 ]);
-            assertEquals("testing _3.2 " + _test_array[ j ],
-                         ( byte ) ((_test_array[ j ] >> 16) % 256),
-                         array[ 2 ]);
-            assertEquals("testing _3.3 " + _test_array[ j ],
-                         ( byte ) ((_test_array[ j ] >> 24) % 256),
-                         array[ 3 ]);
-            assertEquals("testing _3.4 " + _test_array[ j ],
-                         ( byte ) ((_test_array[ j ] >> 32) % 256),
-                         array[ 4 ]);
-            assertEquals("testing _3.5 " + _test_array[ j ],
-                         ( byte ) ((_test_array[ j ] >> 40) % 256),
-                         array[ 5 ]);
-            assertEquals("testing _3.6 " + _test_array[ j ],
-                         ( byte ) ((_test_array[ j ] >> 48) % 256),
-                         array[ 6 ]);
-            assertEquals("testing _3.7 " + _test_array[ j ],
-                         ( byte ) ((_test_array[ j ] >> 56) % 256),
-                         array[ 7 ]);
+            assertEquals(_test_array[ j ], field.get(), "testing _2 ");
+            assertEquals(( byte ) (_test_array[ j ] % 256), array[ 0 ], "testing _3.0 " + _test_array[ j ]);
+            assertEquals(( byte ) ((_test_array[ j ] >> 8) % 256), array[ 1 ], "testing _3.1 " + _test_array[ j ]);
+            assertEquals(( byte ) ((_test_array[ j ] >> 16) % 256), array[ 2 ], "testing _3.2 " + _test_array[ j ]);
+            assertEquals(( byte ) ((_test_array[ j ] >> 24) % 256), array[ 3 ], "testing _3.3 " + _test_array[ j ]);
+            assertEquals(( byte ) ((_test_array[ j ] >> 32) % 256), array[ 4 ], "testing _3.4 " + _test_array[ j ]);
+            assertEquals(( byte ) ((_test_array[ j ] >> 40) % 256), array[ 5 ], "testing _3.5 " + _test_array[ j ]);
+            assertEquals(( byte ) ((_test_array[ j ] >> 48) % 256), array[ 6 ], "testing _3.6 " + _test_array[ j ]);
+            assertEquals(( byte ) ((_test_array[ j ] >> 56) % 256), array[ 7 ], "testing _3.7 " + _test_array[ j ]);
         }
     }
 
@@ -146,7 +116,7 @@ public final class TestLongField {
             array[ 6 ] = ( byte ) ((_test_array[ j ] >> 48) % 256);
             array[ 7 ] = ( byte ) ((_test_array[ j ] >> 56) % 256);
             field.readFromBytes(array);
-            assertEquals("testing " + j, _test_array[ j ], field.get());
+            assertEquals(_test_array[ j ], field.get(), "testing " + j);
         }
     }
 
@@ -169,7 +139,7 @@ public final class TestLongField {
 
         for (int j = 0; j < buffer.length / 8; j++) {
             field.readFromStream(stream);
-            assertEquals("Testing " + j, _test_array[ j ], field.get());
+            assertEquals(_test_array[ j ], field.get(), "Testing " + j);
         }
     }
 
@@ -191,7 +161,7 @@ public final class TestLongField {
             val += ((( long ) array[ 2 ]) << 16) & 0x0000000000FF0000L;
             val += ((( long ) array[ 1 ]) << 8) & 0x000000000000FF00L;
             val += (array[ 0 ] & 0x00000000000000FFL);
-            assertEquals("testing ", element, val);
+            assertEquals(element, val, "testing ");
         }
     }
 }

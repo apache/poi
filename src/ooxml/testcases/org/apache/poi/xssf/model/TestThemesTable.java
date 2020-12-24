@@ -17,11 +17,11 @@
 
 package org.apache.poi.xssf.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -41,7 +41,7 @@ import org.apache.poi.xssf.usermodel.XSSFFont;
 import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTColor;
 
 public class TestThemesTable {
@@ -101,17 +101,15 @@ public class TestThemesTable {
 
             for (int rn=startRN; rn<rgbExpected.length+startRN; rn++) {
                 XSSFRow row = sheet.getRow(rn);
-                assertNotNull("Missing row " + rn + " in " + whatWorkbook, row);
+                assertNotNull(row, "Missing row " + rn + " in " + whatWorkbook);
                 String ref = (new CellReference(rn, 0)).formatAsString();
                 XSSFCell cell = row.getCell(0);
-                assertNotNull(
-                        "Missing cell " + ref + " in " + whatWorkbook, cell);
+                assertNotNull(cell, "Missing cell " + ref + " in " + whatWorkbook);
 
                 int expectedThemeIdx = rn-startRN;
                 ThemeElement themeElem = ThemeElement.byId(expectedThemeIdx);
-                assertEquals(
-                        "Wrong theme at " + ref + " in " + whatWorkbook,
-                        themeElem.name.toLowerCase(Locale.ROOT), cell.getStringCellValue());
+                assertEquals(themeElem.name.toLowerCase(Locale.ROOT), cell.getStringCellValue(),
+                    "Wrong theme at " + ref + " in " + whatWorkbook);
 
                 // Fonts are theme-based in their colours
                 XSSFFont font = cell.getCellStyle().getFont();
@@ -125,13 +123,11 @@ public class TestThemesTable {
                 // Theme colours aren't tinted
                 assertFalse(color.hasTint());
                 // Check the RGB part (no tint)
-                assertEquals(
-                        "Wrong theme colour " + themeElem.name + " on " + whatWorkbook,
-                        rgbExpected[expectedThemeIdx], Hex.encodeHexString(color.getRGB()));
+                assertEquals(rgbExpected[expectedThemeIdx], Hex.encodeHexString(color.getRGB()),
+                    "Wrong theme colour " + themeElem.name + " on " + whatWorkbook);
                 long themeIdx = font.getCTFont().getColorArray(0).getTheme();
-                assertEquals(
-                        "Wrong theme index " + expectedThemeIdx + " on " + whatWorkbook,
-                        expectedThemeIdx, themeIdx);
+                assertEquals(expectedThemeIdx, themeIdx,
+                    "Wrong theme index " + expectedThemeIdx + " on " + whatWorkbook);
 
                 if (createFiles) {
                     XSSFCellStyle cs = row.getSheet().getWorkbook().createCellStyle();
@@ -181,7 +177,7 @@ public class TestThemesTable {
             for (int rn = 1; rn < 8; rn++) {
                 int idx = rn - 1;
                 XSSFRow row = sheet.getRow(rn);
-                assertNotNull("Missing row " + rn, row);
+                assertNotNull(row, "Missing row " + rn);
 
                 // Theme cells come first
                 XSSFCell themeCell = row.getCell(0);

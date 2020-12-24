@@ -17,13 +17,13 @@
 
 package org.apache.poi.hssf.record;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.hssf.record.common.UnicodeString;
 import org.apache.poi.hssf.record.cont.ContinuableRecordOutput;
 import org.apache.poi.util.IntMapper;
 import org.apache.poi.util.LittleEndianConsts;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that records size calculates correctly.

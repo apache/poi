@@ -17,9 +17,9 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.io.IOException;
 
@@ -28,7 +28,7 @@ import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.LittleEndianInput;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link RefPtg}.
@@ -43,42 +43,29 @@ public final class TestReferencePtg {
         HSSFSheet sheet = workbook.getSheetAt(0);
 
         // First row
-        assertEquals("Wrong numeric value for original number", 55.0,
-                     sheet.getRow(0).getCell(0).getNumericCellValue(), 0.0);
-        assertEquals("Wrong numeric value for referemce", 55.0,
-                     sheet.getRow(0).getCell(1).getNumericCellValue(), 0.0);
-        assertEquals("Wrong formula string for reference", "A1",
-                     sheet.getRow(0).getCell(1).getCellFormula());
+        assertEquals(55.0, sheet.getRow(0).getCell(0).getNumericCellValue(), 0.0,
+                     "Wrong numeric value for original number");
+        assertEquals(55.0, sheet.getRow(0).getCell(1).getNumericCellValue(), 0.0,
+                     "Wrong numeric value for referemce");
+        assertEquals("A1", sheet.getRow(0).getCell(1).getCellFormula(), "Wrong formula string for reference");
 
         // Now moving over the 2**15 boundary
         // (Remember that excel row (n) is poi row (n-1)
-        assertEquals("Wrong numeric value for original number", 32767.0,
-                sheet.getRow(32766).getCell(0).getNumericCellValue(), 0.0);
-        assertEquals("Wrong numeric value for referemce", 32767.0,
-                sheet.getRow(32766).getCell(1).getNumericCellValue(), 0.0);
-        assertEquals("Wrong formula string for reference", "A32767",
-                sheet.getRow(32766).getCell(1).getCellFormula());
+        assertEquals(32767.0, sheet.getRow(32766).getCell(0).getNumericCellValue(), 0.0, "Wrong numeric value for original number");
+        assertEquals(32767.0, sheet.getRow(32766).getCell(1).getNumericCellValue(), 0.0, "Wrong numeric value for referemce");
+        assertEquals("A32767", sheet.getRow(32766).getCell(1).getCellFormula(), "Wrong formula string for reference");
 
-        assertEquals("Wrong numeric value for original number", 32768.0,
-                sheet.getRow(32767).getCell(0).getNumericCellValue(), 0.0);
-        assertEquals("Wrong numeric value for referemce", 32768.0,
-                sheet.getRow(32767).getCell(1).getNumericCellValue(), 0.0);
-        assertEquals("Wrong formula string for reference", "A32768",
-                sheet.getRow(32767).getCell(1).getCellFormula());
+        assertEquals(32768.0, sheet.getRow(32767).getCell(0).getNumericCellValue(), 0.0, "Wrong numeric value for original number");
+        assertEquals(32768.0, sheet.getRow(32767).getCell(1).getNumericCellValue(), 0.0, "Wrong numeric value for referemce");
+        assertEquals("A32768", sheet.getRow(32767).getCell(1).getCellFormula(), "Wrong formula string for reference");
 
-        assertEquals("Wrong numeric value for original number", 32769.0,
-                sheet.getRow(32768).getCell(0).getNumericCellValue(), 0.0);
-        assertEquals("Wrong numeric value for referemce", 32769.0,
-                sheet.getRow(32768).getCell(1).getNumericCellValue(), 0.0);
-        assertEquals("Wrong formula string for reference", "A32769",
-                sheet.getRow(32768).getCell(1).getCellFormula());
+        assertEquals(32769.0, sheet.getRow(32768).getCell(0).getNumericCellValue(), 0.0, "Wrong numeric value for original number");
+        assertEquals(32769.0, sheet.getRow(32768).getCell(1).getNumericCellValue(), 0.0, "Wrong numeric value for referemce");
+        assertEquals("A32769", sheet.getRow(32768).getCell(1).getCellFormula(), "Wrong formula string for reference");
 
-        assertEquals("Wrong numeric value for original number", 32770.0,
-                sheet.getRow(32769).getCell(0).getNumericCellValue(), 0.0);
-        assertEquals("Wrong numeric value for referemce", 32770.0,
-                sheet.getRow(32769).getCell(1).getNumericCellValue(), 0.0);
-        assertEquals("Wrong formula string for reference", "A32770",
-                sheet.getRow(32769).getCell(1).getCellFormula());
+        assertEquals(32770.0, sheet.getRow(32769).getCell(0).getNumericCellValue(), 0.0, "Wrong numeric value for original number");
+        assertEquals(32770.0, sheet.getRow(32769).getCell(1).getNumericCellValue(), 0.0, "Wrong numeric value for referemce");
+        assertEquals("A32770", sheet.getRow(32769).getCell(1).getCellFormula(), "Wrong formula string for reference");
     }
 
     @Test
@@ -98,7 +85,7 @@ public final class TestReferencePtg {
         Ptg[] ptgs = Ptg.readTokens(tRefN_data.length, in);
         byte[] outData = new byte[5];
         Ptg.serializePtgs(ptgs, outData, 0);
-        assertNotEquals("Identified bug 45091", 0x24, outData[0]);
+        assertNotEquals(0x24, outData[0], "Identified bug 45091");
         assertArrayEquals(tRefN_data, outData);
     }
 

@@ -18,12 +18,12 @@
 package org.apache.poi.hssf.usermodel;
 
 import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleWorkbook;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link HSSFHeader} / {@link HSSFFooter}
@@ -156,14 +156,14 @@ public final class TestHSSFHeaderFooter {
 		try (HSSFWorkbook wb = openSampleWorkbook("DBCSHeader.xls")) {
 			HSSFSheet s = wb.getSheetAt(0);
 			HSSFHeader h = s.getHeader();
-			assertEquals("Header Left ", h.getLeft(), "\u090f\u0915");
-			assertEquals("Header Center ", h.getCenter(), "\u0939\u094b\u0917\u093e");
-			assertEquals("Header Right ", h.getRight(), "\u091c\u093e");
+			assertEquals(h.getLeft(), "\u090f\u0915", "Header Left");
+			assertEquals(h.getCenter(), "\u0939\u094b\u0917\u093e", "Header Center");
+			assertEquals(h.getRight(), "\u091c\u093e", "Header Right");
 
 			HSSFFooter f = s.getFooter();
-			assertEquals("Footer Left ", f.getLeft(), "\u091c\u093e");
-			assertEquals("Footer Center ", f.getCenter(), "\u091c\u093e");
-			assertEquals("Footer Right ", f.getRight(), "\u091c\u093e");
+			assertEquals(f.getLeft(), "\u091c\u093e", "Footer Left");
+			assertEquals(f.getCenter(), "\u091c\u093e", "Footer Center");
+			assertEquals(f.getRight(), "\u091c\u093e", "Footer Right");
 		}
 	}
 

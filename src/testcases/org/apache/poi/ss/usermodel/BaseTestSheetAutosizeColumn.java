@@ -17,8 +17,8 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -27,9 +27,9 @@ import java.util.Locale;
 import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Common superclass for testing automatic sizing of sheet columns
@@ -42,13 +42,13 @@ public abstract class BaseTestSheetAutosizeColumn {
 
     private static Locale userLocale;
 
-    @BeforeClass
+    @BeforeAll
     public static void initLocale() {
         userLocale = LocaleUtil.getUserLocale();
         LocaleUtil.setUserLocale(Locale.ROOT);
     }
 
-    @AfterClass
+    @AfterAll
     public static void resetLocale() {
         LocaleUtil.setUserLocale(userLocale);
     }

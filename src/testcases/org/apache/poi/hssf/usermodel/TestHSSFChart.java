@@ -17,9 +17,9 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 import java.io.IOException;
 
@@ -29,7 +29,7 @@ import org.apache.poi.hssf.record.chart.SeriesRecord;
 import org.apache.poi.hssf.usermodel.HSSFChart.HSSFSeries;
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressBase;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link HSSFChart}
@@ -139,26 +139,26 @@ public final class TestHSSFChart {
 		assertEquals("Base Numbers", charts[0].getSeries()[1].getSeriesTitle());
 		assertEquals("Sheet 3 Chart with Title", charts[0].getChartTitle());
 	}
-	
+
     @Test
     public void testExistingSheet3() throws Exception {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49581.xls");
-        
+
         HSSFSheet sheet = wb.getSheetAt( 2 ) ;
         HSSFChart[] charts = HSSFChart.getSheetCharts( sheet ) ;
         assertEquals(1, charts.length);
-        
+
         for ( HSSFChart chart : charts ) {
             for ( HSSFSeries series : chart.getSeries() ) {
                 chart.removeSeries( series ) ;
             }
         }
-        
+
         // Save and re-check
         wb = HSSFITestDataProvider.instance.writeOutAndReadBack(wb);
         sheet = wb.getSheetAt( 2 ) ;
         assertEquals(1, HSSFChart.getSheetCharts(sheet).length);
-        
+
         HSSFChart c = HSSFChart.getSheetCharts(sheet)[0];
         assertEquals(0, c.getSeries().length);
     }
@@ -168,11 +168,11 @@ public final class TestHSSFChart {
         HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49581.xls");
         HSSFSheet sheet = wb.getSheetAt( 1 ) ;
         HSSFChart[] charts = HSSFChart.getSheetCharts( sheet ) ;
-        
+
         assertEquals(1, charts.length);
         for ( HSSFChart chart : charts ) {
             HSSFSeries series ;
-            
+
             // Starts with one
             assertEquals(1, chart.getSeries().length);
 
@@ -185,12 +185,12 @@ public final class TestHSSFChart {
             series.setCategoryLabelsCellRange( new CellRangeAddress( 6, 7, 0, 0 ) ) ;
             series.setValuesCellRange( new CellRangeAddress( 6, 7, 1, 1 ) ) ;
         }
-        
+
         // Save and re-check
         wb = HSSFITestDataProvider.instance.writeOutAndReadBack(wb);
         sheet = wb.getSheetAt( 1 ) ;
         assertEquals(1, HSSFChart.getSheetCharts(sheet).length);
-        
+
         HSSFChart c = HSSFChart.getSheetCharts(sheet)[0];
         assertEquals(3, c.getSeries().length);
     }
@@ -200,7 +200,7 @@ public final class TestHSSFChart {
        HSSFWorkbook wb = HSSFTestDataSamples.openSampleWorkbook("49581.xls");
         HSSFSheet sheet = wb.getSheetAt( 0 ) ;
         HSSFChart[] charts = HSSFChart.getSheetCharts( sheet ) ;
-        
+
         for ( HSSFChart chart : charts ) {
             //System.out.println( chart.getType() ) ;
             HSSFSeries[] seriesArray = chart.getSeries() ;
@@ -237,7 +237,7 @@ public final class TestHSSFChart {
         HSSFChart chart = charts[ 2 ] ;
         chart.removeSeries( chart.getSeries()[ 0 ] ) ;
     }
-    
+
     /**
      * Bug 26862: HSSFWorkbook.cloneSheet copies charts
      */
@@ -248,10 +248,10 @@ public final class TestHSSFChart {
         HSSFChart[] srcCharts = HSSFChart.getSheetCharts(srcSheet);
         assertEquals(1, srcCharts.length);
         HSSFChart srcChart = srcCharts[0];
-        
+
         // Clone the sheet
         HSSFSheet clonedSheet = wb.cloneSheet(0);
-        
+
         // Verify the chart was copied
         HSSFChart[] clonedCharts = HSSFChart.getSheetCharts(clonedSheet);
         assertEquals(1, clonedCharts.length);
@@ -263,11 +263,11 @@ public final class TestHSSFChart {
         assertEquals(srcChart.getChartHeight(), clonedChart.getChartHeight());
         assertEquals(srcChart.getChartX(), clonedChart.getChartX());
         assertEquals(srcChart.getChartY(), clonedChart.getChartY());
-        
+
         // Check if chart was shallow copied or deep copied
         clonedChart.setChartWidth(clonedChart.getChartWidth()+10);
         assertEquals(srcChart.getChartWidth()+10, clonedChart.getChartWidth());
-        
+
         wb.close();
     }
 }

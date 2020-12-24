@@ -18,15 +18,15 @@
 package org.apache.poi.hslf.util;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 import org.apache.poi.util.LocaleUtil;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that SystemTimeUtils works properly.
@@ -49,8 +49,8 @@ public final class TestSystemTimeUtils {
 	};
 
     private static SimpleDateFormat sdf;
-    
-    @BeforeClass
+
+    @BeforeAll
     public static void initDateFormat() {
         sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSS", Locale.ROOT);
         sdf.setTimeZone(LocaleUtil.getUserTimeZone());

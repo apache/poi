@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.atp;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.ss.formula.eval.AreaEval;
 import org.apache.poi.ss.formula.eval.BlankEval;
@@ -26,7 +26,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.formula.functions.AggregateFunction;
 import org.apache.poi.ss.formula.functions.EvalFactory;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Testcase for Excel function PERCENTILE()

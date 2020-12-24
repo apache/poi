@@ -17,63 +17,50 @@
 
 package org.apache.poi.ss.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.util.Calendar;
 
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 
 public class TestDateParser {
-    @Test
-    public void testFailWhenNoDate() {
-        try {
-            DateParser.parseDate("potato");
-            fail("Shouldn't parse potato!");
-        } catch (EvaluationException e) {
-            assertEquals(ErrorEval.VALUE_INVALID, e.getErrorEval());
-        }
-    }
-
-    @Test
-    public void testFailWhenLooksLikeDateButItIsnt() {
-        try {
-            DateParser.parseDate("potato/cucumber/banana");
-            fail("Shouldn't parse this thing!");
-        } catch (EvaluationException e) {
-            assertEquals(ErrorEval.VALUE_INVALID, e.getErrorEval());
-        }
-    }
-
-    @Test
-    public void testFailWhenIsInvalidDate() {
-        try {
-            DateParser.parseDate("13/13/13");
-            fail("Shouldn't parse this thing!");
-        } catch (EvaluationException e) {
-            assertEquals(ErrorEval.VALUE_INVALID, e.getErrorEval());
-        }
+    @ParameterizedTest
+    @ValueSource(strings = {
+        // no date
+        "potato",
+        // fail when looks like date but it isnt
+        "potato/cucumber/banana",
+        // fail when is invalid date
+        "13/13/13"
+    })
+    public void testFailWhenInvalidDate(String invalidDate) {
+        EvaluationException e = assertThrows(EvaluationException.class,
+            () -> DateParser.parseDate(invalidDate), "Shouldn't parse " + invalidDate);
+        assertEquals(ErrorEval.VALUE_INVALID, e.getErrorEval());
     }
 
     @Test
     public void testShouldParseValidDate() throws EvaluationException {
         Calendar expDate = LocaleUtil.getLocaleCalendar(1984, Calendar.OCTOBER, 20);
         Calendar actDate = DateParser.parseDate("1984/10/20");
-        assertEquals("Had: " + expDate.getTime() + " and " + actDate.getTime() + "/" + 
-                expDate.getTimeInMillis() + "ms and " + actDate.getTimeInMillis() + "ms", 
-                expDate, actDate);
+        assertEquals(expDate, actDate,
+            "Had: " + expDate.getTime() + " and " + actDate.getTime() + "/" +
+            expDate.getTimeInMillis() + "ms and " + actDate.getTimeInMillis() + "ms");
     }
 
     @Test
     public void testShouldIgnoreTimestamp() throws EvaluationException {
         Calendar expDate = LocaleUtil.getLocaleCalendar(1984, Calendar.OCTOBER, 20);
         Calendar actDate = DateParser.parseDate("1984/10/20 12:34:56");
-        assertEquals("Had: " + expDate.getTime() + " and " + actDate.getTime() + "/" + 
-                expDate.getTimeInMillis() + "ms and " + actDate.getTimeInMillis() + "ms", 
-                expDate, actDate);
+        assertEquals(expDate, actDate,
+            "Had: " + expDate.getTime() + " and " + actDate.getTime() + "/" +
+            expDate.getTimeInMillis() + "ms and " + actDate.getTimeInMillis() + "ms");
     }
 
 }

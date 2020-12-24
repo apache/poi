@@ -22,7 +22,7 @@ import java.io.IOException;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.ss.usermodel.BaseTestFont;
 import org.apache.poi.ss.usermodel.Font;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests various functionality having to do with {@link org.apache.poi.ss.usermodel.Name}.

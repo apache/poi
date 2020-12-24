@@ -17,10 +17,10 @@
 
 package org.apache.poi.hslf.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -36,7 +36,7 @@ import org.apache.poi.sl.usermodel.Slide;
 import org.apache.poi.sl.usermodel.SlideShow;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextShape;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test {@link org.apache.poi.hslf.model.HeadersFooters} object
@@ -127,7 +127,7 @@ public final class TestHeadersFooters
             assertFalse(hd1.isUserDateVisible());
             assertNull(hd1.getDateTimeText());
         }
-        
+
         ppt.close();
     }
 
@@ -210,7 +210,7 @@ public final class TestHeadersFooters
         assertTrue(hdd2.isSlideNumberVisible());
         assertTrue(hdd2.isFooterVisible());
         assertEquals("My slide footer", hdd2.getFooterText());
-        
+
         ppt2.close();
         ppt1.close();
     }
@@ -230,7 +230,7 @@ public final class TestHeadersFooters
         assertEquals("My notes footer", hdd2.getFooterText());
         assertTrue(hdd2.isHeaderVisible());
         assertEquals("My notes header", hdd2.getHeaderText());
-        
+
         ppt2.close();
         ppt1.close();
     }

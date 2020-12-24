@@ -19,10 +19,10 @@
 
 package org.apache.poi.hslf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 import java.util.List;
@@ -34,7 +34,7 @@ import org.apache.poi.hslf.record.EscherTextboxWrapper;
 import org.apache.poi.hslf.record.StyleTextProp9Atom;
 import org.apache.poi.hslf.record.StyleTextPropAtom;
 import org.apache.poi.sl.usermodel.AutoNumberingScheme;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 /**
@@ -44,19 +44,16 @@ import org.junit.Test;
  *     PPT: Missing TextAutoNumberScheme structure providing the style of the number bullets</a>
  */
 public final class TestNumberedList2 {
-    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+    private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
 
     @Test
 	public void testNumberedList() throws IOException {
-		HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("numbers2.ppt"));
-		assertTrue("No Exceptions while reading file", true);
-
-		final List<HSLFSlide> slides = ppt.getSlides();
-		assertEquals(2, slides.size());
-		checkSlide0(slides.get(0));
-		checkSlide1(slides.get(1));
-
-		ppt.close();
+		try (HSLFSlideShow ppt = new HSLFSlideShow(_slTests.openResourceAsStream("numbers2.ppt"))) {
+			final List<HSLFSlide> slides = ppt.getSlides();
+			assertEquals(2, slides.size());
+			checkSlide0(slides.get(0));
+			checkSlide1(slides.get(1));
+		}
     }
 
     private void checkSlide0(final HSLFSlide s) {
@@ -69,14 +66,14 @@ public final class TestNumberedList2 {
 		assertNotNull(numberedListInfoForTextBox1);
 		final TextPFException9[] autoNumbersOfTextBox0 = numberedListInfoForTextBox0.getAutoNumberTypes();
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox0[0].getfBulletHasAutoNumber());
-		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox0[0].getAutoNumberStartNumber());//Default value = 1 will be used 
+		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox0[0].getAutoNumberStartNumber());//Default value = 1 will be used
         assertSame(AutoNumberingScheme.arabicPeriod, autoNumbersOfTextBox0[0].getAutoNumberScheme());
 		final TextPFException9[] autoNumbersOfTextBox1 = numberedListInfoForTextBox1.getAutoNumberTypes();
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox1[0].getfBulletHasAutoNumber());
-		assertEquals(Short.valueOf((short)6), autoNumbersOfTextBox1[0].getAutoNumberStartNumber());//Default value = 1 will be used 
+		assertEquals(Short.valueOf((short)6), autoNumbersOfTextBox1[0].getAutoNumberStartNumber());//Default value = 1 will be used
         assertSame(AutoNumberingScheme.arabicPeriod, autoNumbersOfTextBox1[0].getAutoNumberScheme());
 
-		
+
 		List<List<HSLFTextParagraph>> textParass = s.getTextParagraphs();
 		assertEquals(2, textParass.size());
 
@@ -90,13 +87,13 @@ public final class TestNumberedList2 {
 	        "This would be used as a continuation list on another page\r" +
             "This list should start with #6";
 		assertEquals(expected, HSLFTextParagraph.getRawText(textParass.get(1)));
-		
+
 		final EscherTextboxWrapper[] styleAtoms = s.getTextboxWrappers();
 		assertEquals(textParass.size(), styleAtoms.length);
 		checkSingleRunWrapper(44, styleAtoms[0]);
 		checkSingleRunWrapper(130, styleAtoms[1]);
 	}
-    
+
 	private void checkSlide1(final HSLFSlide s) {
 		final StyleTextProp9Atom[] numberedListArray = s.getNumberedListInfo();
 		assertNotNull(numberedListArray);
@@ -105,9 +102,9 @@ public final class TestNumberedList2 {
 		assertNotNull(numberedListInfoForTextBox);
 		final TextPFException9[] autoNumbersOfTextBox = numberedListInfoForTextBox.getAutoNumberTypes();
 		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox[0].getfBulletHasAutoNumber());
-		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox[0].getAutoNumberStartNumber());//Default value = 1 will be used 
+		assertEquals(Short.valueOf((short)1), autoNumbersOfTextBox[0].getAutoNumberStartNumber());//Default value = 1 will be used
         assertSame(AutoNumberingScheme.arabicPeriod, autoNumbersOfTextBox[0].getAutoNumberScheme());
-			
+
 		List<List<HSLFTextParagraph>> textParass = s.getTextParagraphs();
 		assertEquals(3, textParass.size());
 
@@ -120,14 +117,14 @@ public final class TestNumberedList2 {
 		assertEquals(expected, HSLFTextParagraph.getRawText(textParass.get(1)));
 		expected = "Second bulleted list \u2013 should appear after numbered list\rMore bullets";
 		assertEquals(expected, HSLFTextParagraph.getRawText(textParass.get(2)));
-		
+
 		final EscherTextboxWrapper[] styleAtoms = s.getTextboxWrappers();
 		assertEquals(textParass.size(), styleAtoms.length);
 		checkSingleRunWrapper(27, styleAtoms[0]);
 		checkSingleRunWrapper(67, styleAtoms[1]);
 		checkSingleRunWrapper(70, styleAtoms[2]);
 	}
-	
+
 	private void checkSingleRunWrapper(final int exceptedLength, final EscherTextboxWrapper wrapper) {
 		final StyleTextPropAtom styleTextPropAtom = wrapper.getStyleTextPropAtom();
 		final List<TextPropCollection> textProps = styleTextPropAtom.getCharacterStyles();

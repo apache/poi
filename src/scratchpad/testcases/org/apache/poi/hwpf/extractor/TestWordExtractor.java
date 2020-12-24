@@ -19,9 +19,10 @@ package org.apache.poi.hwpf.extractor;
 
 import static org.apache.poi.POITestCase.assertContains;
 import static org.apache.poi.POITestCase.assertStartsWith;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,15 +37,15 @@ import org.apache.poi.poifs.filesystem.DirectoryNode;
 import org.apache.poi.poifs.filesystem.Entry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.StringUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the different routes to extracting text
  */
 public final class TestWordExtractor {
 
-    private static POIDataSamples docTests = POIDataSamples.getDocumentInstance();
-    
+    private static final POIDataSamples docTests = POIDataSamples.getDocumentInstance();
+
     private static void assertEqualsTrim( String expected, String actual )
     {
         String newExpected = expected.replaceAll( "\r\n", "\n" )
@@ -53,7 +54,7 @@ public final class TestWordExtractor {
                 .replaceAll( "\r", "\n" ).trim();
         assertEquals( newExpected, newActual );
     }
-    
+
     private static void assertExtractedContains(String[] extracted, String needle) {
         String endnote = StringUtil.join(extracted, "");
         assertContains(endnote, needle);
@@ -175,7 +176,7 @@ public final class TestWordExtractor {
 
 		extractorB.close();
 		docB.close();
-		
+
 		fs.close();
 	}
 
@@ -233,7 +234,7 @@ public final class TestWordExtractor {
 		assertExtractedContains(extractor.getFootnoteText(), "TestFootnote");
 		assertEquals(0x00, doc.getRange().getSection(0).getFootnoteNumberingFormat()); // msonfcArabic
 		assertEquals(0x00, doc.getRange().getSection(0).getFootnoteRestartQualifier()); // rncCont
-		assertEquals(0, doc.getRange().getSection(0).getFootnoteNumberingOffset());	    
+		assertEquals(0, doc.getRange().getSection(0).getFootnoteNumberingOffset());
 		assertEquals(1, doc.getFootnotes().getNotesCount());
 		extractor.close();
 		doc.close();
@@ -247,7 +248,7 @@ public final class TestWordExtractor {
 		assertExtractedContains(extractor.getEndnoteText(), "TestEndnote");
 		assertEquals(0x02, doc.getRange().getSection(0).getEndnoteNumberingFormat()); // msonfcLCRoman
 		assertEquals(0x00, doc.getRange().getSection(0).getEndnoteRestartQualifier()); // rncCont
-		assertEquals(0, doc.getRange().getSection(0).getEndnoteNumberingOffset()); 	   
+		assertEquals(0, doc.getRange().getSection(0).getEndnoteNumberingOffset());
 		assertEquals(1, doc.getEndnotes().getNotesCount());
 		extractor.close();
 		doc.close();
@@ -259,13 +260,13 @@ public final class TestWordExtractor {
 		assertExtractedContains(extractor.getCommentsText(), "TestComment");
 		extractor.close();
 	}
-	
-    @Test(expected=OldWordFileFormatException.class)
-    public void testWord95_WordExtractor() throws Exception {
+
+    @Test
+    public void testWord95_WordExtractor() {
         // Too old for the default
-        openExtractor("Word95.doc").close();
+        assertThrows(OldWordFileFormatException.class, () -> openExtractor("Word95.doc"));
     }
-    
+
     @Test
     public void testWord95() throws Exception {
         // Can work with the special one
@@ -279,7 +280,7 @@ public final class TestWordExtractor {
         assertContains(text, "Paragraph 2");
         assertContains(text, "Paragraph 3. Has some RED text and some BLUE BOLD text in it");
         assertContains(text, "Last (4th) paragraph");
-        
+
         @SuppressWarnings("deprecation")
         String[] tp = w6e.getParagraphText();
         assertEquals(7, tp.length);
@@ -293,12 +294,12 @@ public final class TestWordExtractor {
         w6e.close();
     }
 
-    @Test(expected=OldWordFileFormatException.class)
-    public void testWord6_WordExtractor() throws IOException {
+    @Test
+    public void testWord6_WordExtractor() {
         // Too old for the default
-        openExtractor("Word6.doc").close();
+        assertThrows(OldWordFileFormatException.class, () -> openExtractor("Word6.doc"));
     }
-    
+
     @Test
     public void testWord6() throws Exception {
         try (InputStream is = docTests.openResourceAsStream("Word6.doc");
@@ -321,7 +322,7 @@ public final class TestWordExtractor {
         String text = extractor.getText();
         assertContains(text, "\u0425\u0425\u0425\u0425\u0425");
         assertContains(text, "\u0423\u0423\u0423\u0423\u0423");
-        
+
         extractor.close();
     }
 
@@ -334,7 +335,7 @@ public final class TestWordExtractor {
         assertStartsWith(text, "\u041f\u0440\u0438\u043b\u043e\u0436\u0435\u043d\u0438\u0435");
         extractor.close();
     }
-    
+
     /**
      * Tests that we can work with both {@link POIFSFileSystem}
      *  and {@link POIFSFileSystem}
@@ -400,7 +401,7 @@ public final class TestWordExtractor {
             assertContains(text, "COMPANY = sample company");
         }
     }
-    
+
     private WordExtractor openExtractor(String fileName) throws IOException {
         try (InputStream is = docTests.openResourceAsStream(fileName)) {
             return new WordExtractor(is);

@@ -18,7 +18,8 @@
 package org.apache.poi.openxml4j.opc.internal.marshallers;
 
 import static org.apache.poi.openxml4j.opc.PackagingURIHelper.PACKAGE_RELATIONSHIPS_ROOT_URI;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -27,40 +28,45 @@ import java.io.OutputStream;
 import org.apache.commons.compress.archivers.ArchiveEntry;
 import org.apache.commons.compress.archivers.zip.ZipArchiveOutputStream;
 import org.apache.poi.openxml4j.exceptions.OpenXML4JException;
+import org.apache.poi.openxml4j.opc.PackagePartName;
 import org.apache.poi.openxml4j.opc.PackagingURIHelper;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
 import org.apache.poi.openxml4j.opc.internal.PartMarshaller;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestZipPackagePropertiesMarshaller {
-    private PartMarshaller marshaller = new ZipPackagePropertiesMarshaller();
+    private final PartMarshaller marshaller = new ZipPackagePropertiesMarshaller();
 
-    @Test(expected=IllegalArgumentException.class)
-    public void nonZipOutputStream() throws OpenXML4JException {
+    private boolean marshall() throws OpenXML4JException {
+        return marshall(new ZipArchiveOutputStream(new ByteArrayOutputStream()));
+    }
+
+    private boolean marshall(OutputStream zos) throws OpenXML4JException {
+        PackagePartName rootUri = PackagingURIHelper.createPartName(PACKAGE_RELATIONSHIPS_ROOT_URI);
+        PackagePropertiesPart part = new PackagePropertiesPart(null, rootUri);
+        return marshaller.marshall(part, zos);
+    }
+
+
+    @Test
+    public void nonZipOutputStream() {
         OutputStream notAZipOutputStream = new ByteArrayOutputStream(0);
-        marshaller.marshall(null, notAZipOutputStream);
+        assertThrows(IllegalArgumentException.class, () -> marshall(notAZipOutputStream));
     }
 
     @Test
     public void withZipOutputStream() throws Exception {
-        assertTrue(marshaller.marshall(new PackagePropertiesPart(null, PackagingURIHelper.createPartName(PACKAGE_RELATIONSHIPS_ROOT_URI)),
-                new ZipArchiveOutputStream(new ByteArrayOutputStream())));
+        assertTrue(marshall());
     }
 
     @Test
-    public void writingFails() throws Exception {
-        assertTrue(marshaller.marshall(new PackagePropertiesPart(null, PackagingURIHelper.createPartName(PACKAGE_RELATIONSHIPS_ROOT_URI)),
-                new ZipArchiveOutputStream(new ByteArrayOutputStream())));
-    }
-
-    @Test(expected=OpenXML4JException.class)
     public void ioException() throws Exception {
-        marshaller.marshall(new PackagePropertiesPart(null, PackagingURIHelper.createPartName(PACKAGE_RELATIONSHIPS_ROOT_URI)),
-                new ZipArchiveOutputStream(new ByteArrayOutputStream()) {
-                    @Override
-                    public void putArchiveEntry(final ArchiveEntry archiveEntry) throws IOException {
-                        throw new IOException("TestException");
-                    }
-                });
+        ZipArchiveOutputStream zos = new ZipArchiveOutputStream(new ByteArrayOutputStream()) {
+            @Override
+            public void putArchiveEntry(final ArchiveEntry archiveEntry) throws IOException {
+                throw new IOException("TestException");
+            }
+        };
+        assertThrows(OpenXML4JException.class, () -> marshall(zos));
     }
 }

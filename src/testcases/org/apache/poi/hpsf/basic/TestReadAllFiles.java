@@ -17,8 +17,8 @@
 
 package org.apache.poi.hpsf.basic;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -29,7 +29,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hpsf.CustomProperties;
@@ -42,43 +42,35 @@ import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.PropertySetFactory;
 import org.apache.poi.poifs.filesystem.DirectoryEntry;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Tests some HPSF functionality by reading all property sets from all files
  * in the "data" directory. If you want to ensure HPSF can deal with a certain
  * OLE2 file, just add it to the "data" directory and run this test case.
  */
-@RunWith(Parameterized.class)
 public class TestReadAllFiles {
     private static final POIDataSamples _samples = POIDataSamples.getHPSFInstance();
 
-    @Parameters(name="{index}: {0} using {1}")
-    public static Iterable<Object[]> files() {
+    public static Stream<Arguments> files() {
         File hpsfTestDir = _samples.getFile("");
 
         File[] files = hpsfTestDir.listFiles(f -> true);
         Objects.requireNonNull(files, "Could not find directory " + hpsfTestDir.getAbsolutePath());
 
         // convert to list of object-arrays for @Parameterized
-        return Arrays.stream(files).
-                map(file1 -> new Object[] {file1}).
-                collect(Collectors.toList());
+        return Arrays.stream(files).map(Arguments::of);
     }
-
-    @Parameter()
-    public File file;
 
     /**
      * This test methods reads all property set streams from all POI
      * filesystems in the "data" directory.
      */
-    @Test
-    public void read() throws IOException, NoPropertySetStreamException, MarkUnsupportedException {
+    @ParameterizedTest
+    @MethodSource("files")
+    public void read(File file) throws IOException, NoPropertySetStreamException, MarkUnsupportedException {
         /* Read the POI filesystem's property set streams: */
         for (POIFile pf : Util.readPropertySets(file)) {
             try (InputStream in = new ByteArrayInputStream(pf.getBytes())) {
@@ -102,8 +94,9 @@ public class TestReadAllFiles {
      * the origin file and check whether they are equal.
      * </ul>
      */
-    @Test
-    public void recreate() throws IOException, HPSFException {
+    @ParameterizedTest
+    @MethodSource("files")
+    public void recreate(File file) throws IOException, HPSFException {
         /* Read the POI filesystem's property set streams: */
         Map<String,PropertySet> psMap = new HashMap<>();
 
@@ -135,7 +128,7 @@ public class TestReadAllFiles {
             String ps1str = ps1.toString().replace(" 00", "   ").replace(".", " ").replaceAll("(?m)( +$|(size|offset): [0-9]+)","");
             String ps2str = ps2.toString().replace(" 00", "   ").replace(".", " ").replaceAll("(?m)( +$|(size|offset): [0-9]+)","");
 
-            assertEquals("Equality for file " + file.getName(), ps1str, ps2str);
+            assertEquals(ps1str, ps2str, "Equality for file " + file.getName());
         }
         poiFs.close();
     }
@@ -147,8 +140,9 @@ public class TestReadAllFiles {
      * the document summary information stream in the root directory and calling
      * its get... methods.
      */
-    @Test
-    public void readDocumentSummaryInformation() throws Exception {
+    @ParameterizedTest
+    @MethodSource("files")
+    public void readDocumentSummaryInformation(File file) throws Exception {
         /* Read a test document <em>doc</em> into a POI filesystem. */
         try (POIFSFileSystem poifs = new POIFSFileSystem(file, true)) {
             final DirectoryEntry dir = poifs.getRoot();
@@ -189,8 +183,9 @@ public class TestReadAllFiles {
      *
      * @throws Exception if anything goes wrong.
      */
-    @Test
-    public void readCustomPropertiesFromFiles() throws Exception {
+    @ParameterizedTest
+    @MethodSource("files")
+    public void readCustomPropertiesFromFiles(File file) throws Exception {
         /* Read a test document <em>doc</em> into a POI filesystem. */
         try (POIFSFileSystem poifs = new POIFSFileSystem(file)) {
             /*

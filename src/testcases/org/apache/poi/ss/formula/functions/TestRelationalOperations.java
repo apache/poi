@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.ss.formula.CacheAreaEval;
 import org.apache.poi.ss.formula.eval.BoolEval;
@@ -25,7 +25,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.RelationalOperationEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestRelationalOperations {
 
@@ -50,7 +50,7 @@ public class TestRelationalOperations {
         RelationalOperationEval eq = (RelationalOperationEval)RelationalOperationEval.EqualEval;
         ValueEval result = eq.evaluateArray(new ValueEval[]{ arg1, arg2}, 2, 5);
 
-        assertEquals("expected CacheAreaEval", CacheAreaEval.class, result.getClass());
+        assertEquals(CacheAreaEval.class, result.getClass(), "expected CacheAreaEval");
         CacheAreaEval ce = (CacheAreaEval)result;
         assertEquals(2, ce.getWidth());
         assertEquals(2, ce.getHeight());
@@ -73,7 +73,7 @@ public class TestRelationalOperations {
         RelationalOperationEval eq = (RelationalOperationEval)RelationalOperationEval.EqualEval;
         ValueEval result = eq.evaluateArray(new ValueEval[]{ arg1, arg2}, 2, 5);
 
-        assertEquals("expected CacheAreaEval", CacheAreaEval.class, result.getClass());
+        assertEquals(CacheAreaEval.class, result.getClass(), "expected CacheAreaEval");
         CacheAreaEval ce = (CacheAreaEval)result;
         assertEquals(2, ce.getWidth());
         assertEquals(2, ce.getHeight());
@@ -106,14 +106,14 @@ public class TestRelationalOperations {
         RelationalOperationEval eq = (RelationalOperationEval)RelationalOperationEval.EqualEval;
         ValueEval result = eq.evaluateArray(new ValueEval[]{ arg1, arg2}, 4, 5);
 
-        assertEquals("expected CacheAreaEval", CacheAreaEval.class, result.getClass());
+        assertEquals(CacheAreaEval.class, result.getClass(), "expected CacheAreaEval");
         CacheAreaEval ce = (CacheAreaEval)result;
         assertEquals(3, ce.getWidth());
         assertEquals(2, ce.getHeight());
         int idx = 0;
         for(int i =0; i < ce.getHeight(); i++){
             for(int j = 0; j < ce.getWidth(); j++){
-                assertEquals("[" + i + "," + j + "]", expected[idx++], ce.getRelativeValue(i, j));
+                assertEquals(expected[idx++], ce.getRelativeValue(i, j), "[" + i + "," + j + "]");
             }
         }
     }
@@ -143,14 +143,14 @@ public class TestRelationalOperations {
         RelationalOperationEval eq = (RelationalOperationEval)RelationalOperationEval.EqualEval;
         ValueEval result = eq.evaluateArray(new ValueEval[]{ arg1, arg2}, 4, 6);
 
-        assertEquals("expected CacheAreaEval", CacheAreaEval.class, result.getClass());
+        assertEquals(CacheAreaEval.class, result.getClass(), "expected CacheAreaEval");
         CacheAreaEval ce = (CacheAreaEval)result;
         assertEquals(2, ce.getWidth());
         assertEquals(3, ce.getHeight());
         int idx = 0;
         for(int i =0; i < ce.getHeight(); i++){
             for(int j = 0; j < ce.getWidth(); j++){
-                assertEquals("[" + i + "," + j + "]", expected[idx++], ce.getRelativeValue(i, j));
+                assertEquals(expected[idx++], ce.getRelativeValue(i, j), "[" + i + "," + j + "]");
             }
         }
     }
@@ -181,14 +181,14 @@ public class TestRelationalOperations {
         RelationalOperationEval eq = (RelationalOperationEval)RelationalOperationEval.EqualEval;
         ValueEval result = eq.evaluateArray(new ValueEval[]{ arg1, arg2}, 4, 6);
 
-        assertEquals("expected CacheAreaEval", CacheAreaEval.class, result.getClass());
+        assertEquals(CacheAreaEval.class, result.getClass(), "expected CacheAreaEval");
         CacheAreaEval ce = (CacheAreaEval)result;
         assertEquals(3, ce.getWidth());
         assertEquals(3, ce.getHeight());
         int idx = 0;
         for(int i =0; i < ce.getHeight(); i++){
             for(int j = 0; j < ce.getWidth(); j++){
-                assertEquals("[" + i + "," + j + "]", expected[idx++], ce.getRelativeValue(i, j));
+                assertEquals(expected[idx++], ce.getRelativeValue(i, j), "[" + i + "," + j + "]");
             }
         }
     }

@@ -17,8 +17,8 @@
 
 package org.apache.poi.hslf.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.geom.Area;
 import java.awt.geom.Line2D;
@@ -26,7 +26,7 @@ import java.awt.geom.Path2D;
 import java.awt.geom.Rectangle2D;
 
 import org.apache.poi.hslf.usermodel.HSLFFreeformShape;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test Freeform object.

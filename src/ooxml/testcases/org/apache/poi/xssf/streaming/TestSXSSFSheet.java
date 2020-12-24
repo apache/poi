@@ -19,9 +19,9 @@
 
 package org.apache.poi.xssf.streaming;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 
@@ -30,8 +30,8 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.SXSSFITestDataProvider;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.After;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 
 public final class TestSXSSFSheet extends BaseTestXSheet {
@@ -41,7 +41,7 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
     }
 
 
-    @After
+    @AfterEach
     public void tearDown(){
         SXSSFITestDataProvider.instance.cleanup();
     }
@@ -123,29 +123,19 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
 
     @Test
     public void overrideRowsInTemplate() throws IOException {
-        XSSFWorkbook template = new XSSFWorkbook();
-        template.createSheet().createRow(1);
-
-        Workbook wb = new SXSSFWorkbook(template);
-        try {
-            Sheet sheet = wb.getSheetAt(0);
-
-            try {
-                sheet.createRow(1);
-                fail("expected exception");
-            } catch (Throwable e){
+        try (XSSFWorkbook template = new XSSFWorkbook()) {
+            template.createSheet().createRow(1);
+            try (Workbook wb = new SXSSFWorkbook(template);) {
+                Sheet sheet = wb.getSheetAt(0);
+                Throwable e;
+                e = assertThrows(Throwable.class, () -> sheet.createRow(1));
                 assertEquals("Attempting to write a row[1] in the range [0,1] that is already written to disk.", e.getMessage());
-            }
-            try {
-                sheet.createRow(0);
-                fail("expected exception");
-            } catch (Throwable e){
+
+                e = assertThrows(Throwable.class, () -> sheet.createRow(0));
                 assertEquals("Attempting to write a row[0] in the range [0,1] that is already written to disk.", e.getMessage());
+
+                sheet.createRow(2);
             }
-            sheet.createRow(2);
-        } finally {
-            wb.close();
-            template.close();
         }
     }
 
@@ -157,11 +147,11 @@ public final class TestSXSSFSheet extends BaseTestXSheet {
         SXSSFRow row1 = sheet.createRow(1);
         sheet.changeRowNum(row0, 2);
 
-        assertEquals("Row 1 knows its row number", 1, row1.getRowNum());
-        assertEquals("Row 2 knows its row number", 2, row0.getRowNum());
-        assertEquals("Sheet knows Row 1's row number", 1, sheet.getRowNum(row1));
-        assertEquals("Sheet knows Row 2's row number", 2, sheet.getRowNum(row0));
-        assertEquals("Sheet row iteratation order should be ascending", row1, sheet.iterator().next());
+        assertEquals(1, row1.getRowNum(), "Row 1 knows its row number");
+        assertEquals(2, row0.getRowNum(), "Row 2 knows its row number");
+        assertEquals(1, sheet.getRowNum(row1), "Sheet knows Row 1's row number");
+        assertEquals(2, sheet.getRowNum(row0), "Sheet knows Row 2's row number");
+        assertEquals(row1, sheet.iterator().next(), "Sheet row iteratation order should be ascending");
 
         wb.close();
     }

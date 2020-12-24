@@ -17,8 +17,8 @@
 
 package org.apache.poi.hslf.model;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.awt.geom.Rectangle2D;
 import java.io.ByteArrayInputStream;
@@ -30,37 +30,34 @@ import java.util.List;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hslf.usermodel.HSLFObjectData;
+import org.apache.poi.hslf.usermodel.HSLFObjectShape;
 import org.apache.poi.hslf.usermodel.HSLFPictureData;
 import org.apache.poi.hslf.usermodel.HSLFShape;
 import org.apache.poi.hslf.usermodel.HSLFSlide;
 import org.apache.poi.hslf.usermodel.HSLFSlideShow;
 import org.apache.poi.hslf.usermodel.HSLFSlideShowImpl;
-import org.apache.poi.hslf.usermodel.HSLFObjectShape;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.sl.usermodel.PictureData.PictureType;
 import org.apache.poi.util.IOUtils;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
+/** Tests support for OLE objects. */
 public final class TestOleEmbedding {
-    private static POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
-    /**
-     * Tests support for OLE objects.
-     *
-     * @throws Exception if an error occurs.
-     */
+    private static final POIDataSamples _slTests = POIDataSamples.getSlideShowInstance();
+
     @Test
     public void testOleEmbedding2003() throws IOException {
         HSLFSlideShowImpl slideShow = new HSLFSlideShowImpl(_slTests.openResourceAsStream("ole2-embedding-2003.ppt"));
         // Placeholder EMFs for clients that don't support the OLE components.
         List<HSLFPictureData> pictures = slideShow.getPictureData();
-        assertEquals("Should be two pictures", 2, pictures.size());
+        assertEquals(2, pictures.size(), "Should be two pictures");
 
-        long[] checkSums = {0xD37A4204l, 0x26A62F68l, 0x82853169l, 0xE0E45D2Bl};
+        long[] checkSums = {0xD37A4204L, 0x26A62F68L, 0x82853169L, 0xE0E45D2BL};
         int checkId = 0;
-        
+
         // check for checksum to be uptodate
         for (HSLFPictureData pd : pictures) {
             long checkEMF = IOUtils.calculateChecksum(pd.getData());
@@ -69,16 +66,16 @@ public final class TestOleEmbedding {
 
         // Actual embedded objects.
         HSLFObjectData[] objects = slideShow.getEmbeddedObjects();
-        assertEquals("Should be two objects", 2, objects.length);
+        assertEquals(2, objects.length, "Should be two objects");
         for (HSLFObjectData od : objects) {
             long checkEMF = IOUtils.calculateChecksum(od.getInputStream());
             assertEquals(checkSums[checkId++], checkEMF);
         }
-        
+
         slideShow.close();
     }
-    
-    
+
+
 
     @Test
     public void testOLEShape() throws IOException {
@@ -112,29 +109,29 @@ public final class TestOleEmbedding {
             }
 
         }
-        assertEquals("Expected 2 OLE shapes", 2, cnt);
+        assertEquals(2, cnt, "Expected 2 OLE shapes");
         ppt.close();
     }
-    
+
     @Test
     public void testEmbedding() throws IOException {
     	HSLFSlideShow ppt = new HSLFSlideShow();
-    	
+
     	File pict = POIDataSamples.getSlideShowInstance().getFile("clock.jpg");
     	HSLFPictureData pictData = ppt.addPicture(pict, PictureType.JPEG);
-    	
+
     	InputStream is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("Employee.xls");
     	POIFSFileSystem poiData1 = new POIFSFileSystem(is);
     	is.close();
-    	
+
     	int oleObjectId1 = ppt.addEmbed(poiData1);
-    	
+
     	HSLFSlide slide1 = ppt.createSlide();
     	HSLFObjectShape oleShape1 = new HSLFObjectShape(pictData);
     	oleShape1.setObjectID(oleObjectId1);
     	slide1.addShape(oleShape1);
     	oleShape1.setAnchor(new Rectangle2D.Double(100,100,100,100));
-    	
+
     	// add second slide with different order in object creation
     	HSLFSlide slide2 = ppt.createSlide();
     	HSLFObjectShape oleShape2 = new HSLFObjectShape(pictData);
@@ -142,30 +139,30 @@ public final class TestOleEmbedding {
         is = POIDataSamples.getSpreadSheetInstance().openResourceAsStream("SimpleWithImages.xls");
         POIFSFileSystem poiData2 = new POIFSFileSystem(is);
         is.close();
-    	
+
         int oleObjectId2 = ppt.addEmbed(poiData2);
 
         oleShape2.setObjectID(oleObjectId2);
         slide2.addShape(oleShape2);
         oleShape2.setAnchor(new Rectangle2D.Double(100,100,100,100));
-        
+
     	ByteArrayOutputStream bos = new ByteArrayOutputStream();
     	ppt.write(bos);
-    	
+
     	ppt = new HSLFSlideShow(new ByteArrayInputStream(bos.toByteArray()));
     	HSLFObjectShape comp = (HSLFObjectShape)ppt.getSlides().get(0).getShapes().get(0);
         byte[] compData = IOUtils.toByteArray(comp.getObjectData().getInputStream());
-    	
+
     	bos.reset();
     	poiData1.writeFilesystem(bos);
         byte[] expData = bos.toByteArray();
-    	
+
     	assertArrayEquals(expData, compData);
-    	
+
     	poiData1.close();
     	poiData2.close();
     	ppt.close();
     }
 
-    
+
 }

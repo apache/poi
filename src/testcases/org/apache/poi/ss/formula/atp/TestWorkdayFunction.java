@@ -20,7 +20,7 @@ package org.apache.poi.ss.formula.atp;
 
 
 import static org.apache.poi.ss.formula.eval.ErrorEval.VALUE_INVALID;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -36,7 +36,7 @@ import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.util.LocaleUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestWorkdayFunction {
 
@@ -89,7 +89,7 @@ public class TestWorkdayFunction {
         ValueEval[] ve = {new StringEval("2013/09/30"), new NumberEval(-1)};
 		double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(ve, EC)).getNumberValue();
 		assertEquals(41544.0, numberValue, 0);
-		
+
 		Date actDate = DateUtil.getJavaDate(numberValue);
         assertEquals(expDate, actDate);
     }
@@ -140,7 +140,7 @@ public class TestWorkdayFunction {
 
         ValueEval[] ve = {new StringEval(STARTING_DATE), new NumberEval(151.99999)};
         double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(ve, EC)).getNumberValue();
-        
+
         Date actDate = DateUtil.getJavaDate(numberValue);
         assertEquals(expDate, actDate);
     }
@@ -152,7 +152,7 @@ public class TestWorkdayFunction {
 
         ValueEval[] ve = {new StringEval(STARTING_DATE), new NumberEval(-5), new StringEval(RETROATIVE_HOLIDAY)};
         double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(ve, EC)).getNumberValue();
-        
+
         Date actDate = DateUtil.getJavaDate(numberValue);
         assertEquals(expDate, actDate);
     }
@@ -166,7 +166,7 @@ public class TestWorkdayFunction {
                 new StringEval(STARTING_DATE), new NumberEval(151),
                 new MockAreaEval(FIRST_HOLIDAY, SECOND_HOLIDAY, THIRD_HOLIDAY)};
         double numberValue = ((NumberEval) WorkdayFunction.instance.evaluate(ve, EC)).getNumberValue();
-        
+
         Date actDate = DateUtil.getJavaDate(numberValue);
         assertEquals(expDate, actDate);
     }

@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.InputStream;
 
 /**
- * Base interface for the various file types that are 
+ * Base interface for the various file types that are
  * used in the stress testing.
  */
 public interface FileHandler {
@@ -28,7 +28,7 @@ public interface FileHandler {
 	 * The FileHandler receives a stream ready for reading the
 	 * file and should handle the content that is provided and
 	 * try to read and interpret the data.
-	 * 
+	 *
 	 * Closing is handled by the framework outside this call.
 	 *
 	 * @param stream The input stream to read the file from.
@@ -36,10 +36,10 @@ public interface FileHandler {
 	 * @throws Exception If an error happens in the file-specific handler
 	 */
 	void handleFile(InputStream stream, String path) throws Exception;
-	
+
 	/**
 	 * Ensures that extracting text from the given file
-	 * is returning some text. 
+	 * is returning some text.
 	 */
 	void handleExtracting(File file) throws Exception;
 

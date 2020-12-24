@@ -24,7 +24,7 @@ import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XLSBUnsupportedException;
 import org.apache.poi.xssf.extractor.XSSFBEventBasedExcelExtractor;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class XSSFBFileHandler extends AbstractFileHandler {
 

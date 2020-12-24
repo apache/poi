@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hssf.dev;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.PrintStream;
@@ -27,12 +27,12 @@ import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.NullPrintStream;
 import org.apache.poi.util.RecordFormatException;
-import org.junit.BeforeClass;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class TestReSave extends BaseTestIteratingXLS {
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         EXCLUDED.clear();
         EXCLUDED.put("35897-type4.xls", EncryptedDocumentException.class); // unsupported crypto api header
@@ -84,7 +84,7 @@ public class TestReSave extends BaseTestIteratingXLS {
 		}
 	}
 
-    @Ignore("Only used for local testing")
+    @Disabled("Only used for local testing")
     @Test
     public void testOneFile() throws Exception {
         String dataDirName = System.getProperty(POIDataSamples.TEST_PROPERTY);

@@ -17,13 +17,13 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNotSame;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -37,7 +37,7 @@ import java.util.Random;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.util.TempFile;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestFileMagic {
     @Test
@@ -62,12 +62,7 @@ public class TestFileMagic {
         assertEquals(FileMagic.UNKNOWN, FileMagic.valueOf("something".getBytes(StandardCharsets.UTF_8)));
         assertEquals(FileMagic.UNKNOWN, FileMagic.valueOf(new byte[0]));
 
-        try {
-            FileMagic.valueOf("some string");
-            fail("Should catch exception here");
-        } catch (IllegalArgumentException e) {
-            // expected here
-        }
+        assertThrows(IllegalArgumentException.class, () -> FileMagic.valueOf("some string"));
     }
 
     @Test
@@ -134,7 +129,7 @@ public class TestFileMagic {
         }
     }
 
-    @Test(expected = IOException.class)
+    @Test
     public void testMarkRequired() throws IOException {
         byte[] data = new byte[] { -1, -40, -1, -32, 0 };
 
@@ -148,7 +143,7 @@ public class TestFileMagic {
             try (FileInputStream str = new FileInputStream(file)) {
                 assertFalse(str.markSupported());
 
-                FileMagic.valueOf(str);
+                assertThrows(IOException.class, () -> FileMagic.valueOf(str));
             }
         } finally {
             assertTrue(file.delete());

@@ -17,13 +17,12 @@
 
 package org.apache.poi.hwpf.usermodel;
 
-import static org.junit.Assert.assertNotNull;
 import static org.apache.poi.POITestCase.assertContains;
-
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.poi.hwpf.HWPFDocument;
 import org.apache.poi.hwpf.HWPFTestDataSamples;
+import org.junit.jupiter.api.Test;
 
 public final class TestBug46610 {
 

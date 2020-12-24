@@ -17,10 +17,10 @@
 
 package org.apache.poi.hssf.eventmodel;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -40,8 +40,8 @@ import org.apache.poi.hssf.record.StandardRecord;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.record.UnknownRecord;
 import org.apache.poi.util.NotImplemented;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 /**
  * enclosing_type describe the purpose here
@@ -65,7 +65,7 @@ public final class TestEventRecordFactory {
 
         ERFListener listener = rec -> {
             wascalled[0] = true;
-            assertEquals("must be BOFRecord got SID=" + rec.getSid(), rec.getSid(), BOFRecord.sid);
+            assertEquals(rec.getSid(), BOFRecord.sid, "must be BOFRecord got SID=" + rec.getSid());
             return true;
         };
     	EventRecordFactory factory = new EventRecordFactory(listener, new short[] {BOFRecord.sid});
@@ -85,7 +85,7 @@ public final class TestEventRecordFactory {
         eof.serialize(offset,bytes);
 
         factory.processRecords(new ByteArrayInputStream(bytes));
-        assertTrue("The record listener must be called", wascalled[0]);
+        assertTrue(wascalled[0], "The record listener must be called");
     }
 
 
@@ -107,7 +107,7 @@ public final class TestEventRecordFactory {
 
         Record[] records = RecordFactory.createRecord(TestcaseRecordInputStream.create(bytes));
 
-        assertEquals("record.length must be 1, was =" + records.length, 1, records.length);
+        assertEquals(1, records.length, "record.length must be 1, was =" + records.length);
 
         byte[] rec1 = bof.serialize();
         byte[] rec2 = records[0].serialize();
@@ -121,9 +121,8 @@ public final class TestEventRecordFactory {
      */
     @NotImplemented
     @Test
-    @Ignore
+    @Disabled
     public void testCreateContinuedRecord() {
-      //  fail("not implemented");
     }
 
 
@@ -145,7 +144,7 @@ public final class TestEventRecordFactory {
     }
 
     @Test
-    @Ignore("same as testContinuedUnknownRecord but with SequenceInputStream which causes the available() bug 59893")
+    @Disabled("same as testContinuedUnknownRecord but with SequenceInputStream which causes the available() bug 59893")
     public void bug59893() {
         Iterator<ByteArrayInputStream> iter = Stream.of(CONTINUE_DATA).map(ByteArrayInputStream::new).iterator();
         SequenceInputStream sis = new SequenceInputStream(IteratorUtils.asEnumeration(iter));
@@ -164,6 +163,6 @@ public final class TestEventRecordFactory {
         };
         EventRecordFactory factory = new EventRecordFactory(listener, new short[] {-256, 0x3C});
         factory.processRecords(data);
-        assertFalse("left over input data", expectedData.hasNext());
+        assertFalse(expectedData.hasNext(), "left over input data");
     }
 }

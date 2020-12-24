@@ -17,13 +17,14 @@
 
 package org.apache.poi.openxml4j.opc;
 
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.File;
 
 import org.apache.poi.openxml4j.OpenXML4JTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the addition of thumbnail in a package.
@@ -42,25 +43,19 @@ public final class TestPackageThumbnail {
 		File outputFile = OpenXML4JTestDataSamples.getOutputFile("TestPackageThumbnailOUTPUT.docx");
 
 		// Open package
-		OPCPackage p = OPCPackage.open(inputPath, PackageAccess.READ_WRITE);
-		try {
+		try (OPCPackage p = OPCPackage.open(inputPath, PackageAccess.READ_WRITE)) {
     		p.addThumbnail(imagePath);
     		// Save the package in the output directory
     		p.save(outputFile);
 
     		// Open the newly created file to check core properties saved values.
-    		OPCPackage p2 = OPCPackage.open(outputFile.getAbsolutePath(), PackageAccess.READ);
-    		try {
-        		if (p2.getRelationshipsByType(PackageRelationshipTypes.THUMBNAIL)
-        				.size() == 0)
-        			fail("Thumbnail not added to the package !");
-    		} finally {
-    		    p2.revert();
-    		    p2.close();
+    		try (OPCPackage p2 = OPCPackage.open(outputFile.getAbsolutePath(), PackageAccess.READ)) {
+    			assertNotEquals(0, p2.getRelationshipsByType(PackageRelationshipTypes.THUMBNAIL).size(),
+					"Thumbnail not added to the package !");
+				p2.revert();
     		}
-		} finally {
-		    p.revert();
-		    assertTrue(outputFile.delete());
+			p.revert();
 		}
+		assertTrue(outputFile.delete());
 	}
 }

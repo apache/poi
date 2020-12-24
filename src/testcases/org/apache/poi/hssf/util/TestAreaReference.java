@@ -17,12 +17,12 @@
 
 package org.apache.poi.hssf.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.InputStream;
 
@@ -44,27 +44,27 @@ import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.formula.ptg.UnionPtg;
 import org.apache.poi.ss.util.AreaReference;
 import org.apache.poi.ss.util.CellReference;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestAreaReference {
 
     @Test
     public void testAreaRef1() {
         AreaReference ar = new AreaReference("$A$1:$B$2", SpreadsheetVersion.EXCEL97);
-        assertFalse("Two cells expected", ar.isSingleCell());
+        assertFalse(ar.isSingleCell(), "Two cells expected");
         CellReference cf = ar.getFirstCell();
-        assertEquals("row is 4", 0, cf.getRow());
-        assertEquals("col is 1", 0, cf.getCol());
-        assertTrue("row is abs", cf.isRowAbsolute());
-        assertTrue("col is abs", cf.isColAbsolute());
-        assertEquals("string is $A$1", "$A$1", cf.formatAsString());
+        assertEquals(0, cf.getRow(), "row is 4");
+        assertEquals(0, cf.getCol(), "col is 1");
+        assertTrue(cf.isRowAbsolute(), "row is abs");
+        assertTrue(cf.isColAbsolute(), "col is abs");
+        assertEquals("$A$1", cf.formatAsString(), "string is $A$1");
 
         cf = ar.getLastCell();
-        assertEquals("row is 4", 1, cf.getRow());
-        assertEquals("col is 1", 1, cf.getCol());
-        assertTrue("row is abs", cf.isRowAbsolute());
-        assertTrue("col is abs", cf.isColAbsolute());
-        assertEquals("string is $B$2", "$B$2", cf.formatAsString());
+        assertEquals(1, cf.getRow(), "row is 4");
+        assertEquals(1, cf.getCol(), "col is 1");
+        assertTrue(cf.isRowAbsolute(), "row is abs");
+        assertTrue(cf.isColAbsolute(), "col is abs");
+        assertEquals("$B$2", cf.formatAsString(), "string is $B$2");
 
         CellReference[] refs = ar.getAllReferencedCells();
         assertEquals(4, refs.length);
@@ -136,24 +136,9 @@ public final class TestAreaReference {
         // Check we can only create contiguous entries
         new AreaReference(refSimple, SpreadsheetVersion.EXCEL97);
         new AreaReference(ref2D, SpreadsheetVersion.EXCEL97);
-        try {
-            new AreaReference(refDCSimple, SpreadsheetVersion.EXCEL97);
-            fail("expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            // expected during successful test
-        }
-        try {
-            new AreaReference(refDC2D, SpreadsheetVersion.EXCEL97);
-            fail("expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            // expected during successful test
-        }
-        try {
-            new AreaReference(refDC3D, SpreadsheetVersion.EXCEL97);
-            fail("expected IllegalArgumentException");
-        } catch (IllegalArgumentException e) {
-            // expected during successful test
-        }
+        assertThrows(IllegalArgumentException.class, () -> new AreaReference(refDCSimple, SpreadsheetVersion.EXCEL97));
+        assertThrows(IllegalArgumentException.class, () -> new AreaReference(refDC2D, SpreadsheetVersion.EXCEL97));
+        assertThrows(IllegalArgumentException.class, () -> new AreaReference(refDC3D, SpreadsheetVersion.EXCEL97));
 
         // Test that we split as expected
         AreaReference[] refs;
@@ -251,6 +236,7 @@ public final class TestAreaReference {
             HSSFName aNamedCell = wb.getName("test");
 
             // Should have 2 references
+            assertNotNull(aNamedCell);
             String formulaRefs = aNamedCell.getRefersToFormula();
             assertNotNull(formulaRefs);
             assertEquals(ref, formulaRefs);

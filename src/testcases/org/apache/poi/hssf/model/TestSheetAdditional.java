@@ -17,11 +17,11 @@
 
 package org.apache.poi.hssf.model;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.apache.poi.hssf.record.ColumnInfoRecord;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestSheetAdditional {
 	@Test

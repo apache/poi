@@ -16,10 +16,10 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assume.assumeFalse;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
@@ -54,7 +54,7 @@ import org.apache.poi.xssf.eventusermodel.XSSFReader;
 import org.apache.poi.xssf.extractor.XSSFExportToXml;
 import org.apache.poi.xssf.usermodel.XSSFMap;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.xml.sax.SAXException;
 
 public class XSSFFileHandler extends SpreadsheetHandler {
@@ -78,7 +78,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
                 Decryptor dec = ei.getDecryptor();
                 try {
                     boolean b = dec.verifyPassword(pass);
-                    assertTrue("password mismatch", b);
+                    assertTrue( b, "password mismatch" );
                 } catch (EncryptedDocumentException e) {
                     String msg = "Export Restrictions in place - please install JCE Unlimited Strength Jurisdiction Policy files";
                     assumeFalse(msg.equals(e.getMessage()));
@@ -190,8 +190,7 @@ public class XSSFFileHandler extends SpreadsheetHandler {
             XLSX2CSV.main(new String[]{file.getAbsolutePath()});
             ExcelComparator.main(new String[]{file.getAbsolutePath(), file.getAbsolutePath()});
 
-            assertFalse("Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!",
-                    EXPECTED_ADDITIONAL_FAILURES.contains(testFile));
+            assertFalse( EXPECTED_ADDITIONAL_FAILURES.contains(testFile), "Expected Extraction to fail for file " + file + " and handler " + this + ", but did not fail!" );
 
         } catch (OLE2NotOfficeXmlFileException e) {
             // we have some files that are not actually OOXML and thus cannot be tested here

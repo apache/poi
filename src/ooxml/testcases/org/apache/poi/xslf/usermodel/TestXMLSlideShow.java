@@ -16,12 +16,11 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -31,177 +30,172 @@ import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.sl.usermodel.BaseTestSlideShow;
 import org.apache.poi.sl.usermodel.SlideShow;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTNotesMasterIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideIdListEntry;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTSlideMasterIdListEntry;
 
-public class TestXMLSlideShow extends BaseTestSlideShow<XSLFShape,XSLFTextParagraph> {
-   private OPCPackage pack;
+public class TestXMLSlideShow extends BaseTestSlideShow<XSLFShape, XSLFTextParagraph> {
+    private OPCPackage pack;
 
-   @Override
-   public XMLSlideShow createSlideShow() {
-       return new XMLSlideShow();
-   }
+    @Override
+    public XMLSlideShow createSlideShow() {
+        return new XMLSlideShow();
+    }
 
-   @Before
-   public void setUp() throws Exception {
-      pack = OPCPackage.open(slTests.openResourceAsStream("sample.pptx"));
-   }
+    @BeforeEach
+    public void setUp() throws Exception {
+        pack = OPCPackage.open(slTests.openResourceAsStream("sample.pptx"));
+    }
 
-   @After
-   public void tearDown() {
-       pack.revert();
-   }
+    @AfterEach
+    public void tearDown() {
+        pack.revert();
+    }
 
-   @Test
-   public void testContainsMainContentType() throws Exception {
-      boolean found = false;
-      for(PackagePart part : pack.getParts()) {
-         if(part.getContentType().equals(XSLFRelation.MAIN.getContentType())) {
-            found = true;
-         }
-      }
-      assertTrue(found);
-   }
+    @Test
+    public void testContainsMainContentType() throws Exception {
+        boolean found = false;
+        for (PackagePart part : pack.getParts()) {
+            if (part.getContentType().equals(XSLFRelation.MAIN.getContentType())) {
+                found = true;
+            }
+        }
+        assertTrue(found);
+    }
 
-   @Test
-   public void testOpen() throws Exception {
-      // With the finalised uri, should be fine
-       XMLSlideShow xml = new XMLSlideShow(pack);
-      // Check the core
-      assertNotNull(xml.getCTPresentation());
+    @Test
+    public void testOpen() throws Exception {
+        // With the finalised uri, should be fine
+        XMLSlideShow xml = new XMLSlideShow(pack);
+        // Check the core
+        assertNotNull(xml.getCTPresentation());
 
-      // Check it has some slides
-      assertFalse(xml.getSlides().isEmpty());
-      assertFalse(xml.getSlideMasters().isEmpty());
+        // Check it has some slides
+        assertFalse(xml.getSlides().isEmpty());
+        assertFalse(xml.getSlideMasters().isEmpty());
 
-      xml.close();
-   }
+        xml.close();
+    }
 
-   @SuppressWarnings("deprecation")
-   @Test
-   public void testSlideBasics() throws IOException {
-      XMLSlideShow xml = new XMLSlideShow(pack);
+    @SuppressWarnings("deprecation")
+    @Test
+    public void testSlideBasics() throws IOException {
+        XMLSlideShow xml = new XMLSlideShow(pack);
 
-      // Should have 1 master
-      assertEquals(1, xml.getSlideMasters().size());
+        // Should have 1 master
+        assertEquals(1, xml.getSlideMasters().size());
 
-      // Should have two sheets
-      assertEquals(2, xml.getSlides().size());
+        // Should have two sheets
+        assertEquals(2, xml.getSlides().size());
 
-      // Check they're as expected
-      CTSlideIdListEntry[] slides = xml.getCTPresentation().getSldIdLst().getSldIdArray();
+        // Check they're as expected
+        CTSlideIdListEntry[] slides = xml.getCTPresentation().getSldIdLst().getSldIdArray();
 
-      assertEquals(256, slides[0].getId());
-      assertEquals(257, slides[1].getId());
-      assertEquals("rId2", slides[0].getId2());
-      assertEquals("rId3", slides[1].getId2());
+        assertEquals(256, slides[0].getId());
+        assertEquals(257, slides[1].getId());
+        assertEquals("rId2", slides[0].getId2());
+        assertEquals("rId3", slides[1].getId2());
 
-      // Now get those objects
-      assertNotNull(xml.getSlides().get(0));
-      assertNotNull(xml.getSlides().get(1));
+        // Now get those objects
+        assertNotNull(xml.getSlides().get(0));
+        assertNotNull(xml.getSlides().get(1));
 
-      // And check they have notes as expected
-      assertNotNull(xml.getSlides().get(0).getNotes());
-      assertNotNull(xml.getSlides().get(1).getNotes());
+        // And check they have notes as expected
+        assertNotNull(xml.getSlides().get(0).getNotes());
+        assertNotNull(xml.getSlides().get(1).getNotes());
 
-      // Next up look for the slide master
-      CTSlideMasterIdListEntry[] masters = xml.getCTPresentation().getSldMasterIdLst().getSldMasterIdArray();
+        // Next up look for the slide master
+        CTSlideMasterIdListEntry[] masters = xml.getCTPresentation().getSldMasterIdLst().getSldMasterIdArray();
 
-      // see SlideAtom.USES_MASTER_SLIDE_ID
-      assertEquals(0x80000000L, masters[0].getId());
-      assertEquals("rId1", masters[0].getId2());
-      assertNotNull(xml.getSlideMasters().get(0));
+        // see SlideAtom.USES_MASTER_SLIDE_ID
+        assertEquals(0x80000000L, masters[0].getId());
+        assertEquals("rId1", masters[0].getId2());
+        assertNotNull(xml.getSlideMasters().get(0));
 
-      // Finally look for the notes master
-      CTNotesMasterIdListEntry notesMaster =
-         xml.getCTPresentation().getNotesMasterIdLst().getNotesMasterId();
-      assertNotNull(notesMaster);
+        // Finally look for the notes master
+        CTNotesMasterIdListEntry notesMaster =
+            xml.getCTPresentation().getNotesMasterIdLst().getNotesMasterId();
+        assertNotNull(notesMaster);
 
-      assertNotNull(xml.getNotesMaster());
+        assertNotNull(xml.getNotesMaster());
 
-      xml.close();
-   }
+        xml.close();
+    }
 
-   @Test
-   public void testMetadataBasics() throws IOException {
-      XMLSlideShow xml = new XMLSlideShow(pack);
+    @Test
+    public void testMetadataBasics() throws IOException {
+        XMLSlideShow xml = new XMLSlideShow(pack);
 
-      assertNotNull(xml.getProperties().getCoreProperties());
-      assertNotNull(xml.getProperties().getExtendedProperties());
+        assertNotNull(xml.getProperties().getCoreProperties());
+        assertNotNull(xml.getProperties().getExtendedProperties());
 
-      assertEquals("Microsoft Office PowerPoint", xml.getProperties().getExtendedProperties().getUnderlyingProperties().getApplication());
-      assertEquals(0, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getCharacters());
-      assertEquals(0, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getLines());
+        assertEquals("Microsoft Office PowerPoint", xml.getProperties().getExtendedProperties().getUnderlyingProperties().getApplication());
+        assertEquals(0, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getCharacters());
+        assertEquals(0, xml.getProperties().getExtendedProperties().getUnderlyingProperties().getLines());
 
-      assertNull(xml.getProperties().getCoreProperties().getTitle());
-      assertFalse(xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().isPresent());
+        assertNull(xml.getProperties().getCoreProperties().getTitle());
+        assertFalse(xml.getProperties().getCoreProperties().getUnderlyingProperties().getSubjectProperty().isPresent());
 
-      xml.close();
-   }
+        xml.close();
+    }
 
-   @Test
-   public void testComments() throws Exception {
-      // Default sample file has none
-      XMLSlideShow xml = new XMLSlideShow(pack);
+    @Test
+    public void testComments() throws Exception {
+        // Default sample file has none
+        XMLSlideShow xml = new XMLSlideShow(pack);
 
-      assertNull(xml.getCommentAuthors());
+        assertNull(xml.getCommentAuthors());
 
-      for (XSLFSlide slide : xml.getSlides()) {
-         assertTrue(slide.getComments().isEmpty());
-      }
-
-      // Try another with comments
-      XMLSlideShow xmlComments = new XMLSlideShow(slTests.openResourceAsStream("45545_Comment.pptx"));
-
-      // Has one author
-      assertNotNull(xmlComments.getCommentAuthors());
-      assertEquals(1, xmlComments.getCommentAuthors().getCTCommentAuthorsList().sizeOfCmAuthorArray());
-      assertEquals("XPVMWARE01", xmlComments.getCommentAuthors().getAuthorById(0).getName());
-
-      // First two slides have comments
-      int i = -1;
-      for (XSLFSlide slide : xmlComments.getSlides()) {
-         i++;
-
-         if(i == 0) {
-            assertNotNull(slide.getCommentsPart());
-            assertEquals(1, slide.getCommentsPart().getNumberOfComments());
-            assertEquals("testdoc", slide.getCommentsPart().getCommentAt(0).getText());
-            assertEquals(0, slide.getCommentsPart().getCommentAt(0).getAuthorId());
-         } else if (i == 1) {
-            assertNotNull(slide.getComments());
-            assertEquals(1, slide.getCommentsPart().getNumberOfComments());
-            assertEquals("test phrase", slide.getCommentsPart().getCommentAt(0).getText());
-            assertEquals(0, slide.getCommentsPart().getCommentAt(0).getAuthorId());
-         } else {
-            assertNull(slide.getCommentsPart());
+        for (XSLFSlide slide : xml.getSlides()) {
             assertTrue(slide.getComments().isEmpty());
-         }
-      }
+        }
 
-      xmlComments.close();
-      xml.close();
-   }
+        // Try another with comments
+        XMLSlideShow xmlComments = new XMLSlideShow(slTests.openResourceAsStream("45545_Comment.pptx"));
 
-   @Override
-   public XMLSlideShow reopen(SlideShow<XSLFShape,XSLFTextParagraph> show) {
-      try {
-         BufAccessBAOS bos = new BufAccessBAOS();
-         show.write(bos);
-         return new XMLSlideShow(new ByteArrayInputStream(bos.getBuf()));
-      } catch (IOException e) {
-         fail(e.getMessage());
-         return null;
-      }
-   }
+        // Has one author
+        assertNotNull(xmlComments.getCommentAuthors());
+        assertEquals(1, xmlComments.getCommentAuthors().getCTCommentAuthorsList().sizeOfCmAuthorArray());
+        assertEquals("XPVMWARE01", xmlComments.getCommentAuthors().getAuthorById(0).getName());
 
-   private static class BufAccessBAOS extends ByteArrayOutputStream {
-       byte[] getBuf() {
-           return buf;
-       }
-   }
+        // First two slides have comments
+        int i = -1;
+        for (XSLFSlide slide : xmlComments.getSlides()) {
+            i++;
+
+            if (i == 0) {
+                assertNotNull(slide.getCommentsPart());
+                assertEquals(1, slide.getCommentsPart().getNumberOfComments());
+                assertEquals("testdoc", slide.getCommentsPart().getCommentAt(0).getText());
+                assertEquals(0, slide.getCommentsPart().getCommentAt(0).getAuthorId());
+            } else if (i == 1) {
+                assertNotNull(slide.getComments());
+                assertEquals(1, slide.getCommentsPart().getNumberOfComments());
+                assertEquals("test phrase", slide.getCommentsPart().getCommentAt(0).getText());
+                assertEquals(0, slide.getCommentsPart().getCommentAt(0).getAuthorId());
+            } else {
+                assertNull(slide.getCommentsPart());
+                assertTrue(slide.getComments().isEmpty());
+            }
+        }
+
+        xmlComments.close();
+        xml.close();
+    }
+
+    @Override
+    public XMLSlideShow reopen(SlideShow<XSLFShape, XSLFTextParagraph> show) throws IOException {
+        BufAccessBAOS bos = new BufAccessBAOS();
+        show.write(bos);
+        return new XMLSlideShow(new ByteArrayInputStream(bos.getBuf()));
+    }
+
+    private static class BufAccessBAOS extends ByteArrayOutputStream {
+        byte[] getBuf() {
+            return buf;
+        }
+    }
 }

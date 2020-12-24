@@ -17,16 +17,16 @@
 
 package org.apache.poi.hsmf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.hsmf.exceptions.ChunkNotFoundException;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests to verify that we can still work on the newer Outlook 3.0 files.
@@ -37,7 +37,7 @@ public final class TestOutlook30FileRead {
     /**
      * Initialize this test, load up the blank.msg mapi message.
      */
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         POIDataSamples samples = POIDataSamples.getHSMFInstance();
         this.mapiMessage = new MAPIMessage(samples.openResourceAsStream("outlook_30_msg.msg"));
@@ -135,7 +135,7 @@ public final class TestOutlook30FileRead {
         assertNotNull(html);
         assertNotNull(rtf);
 
-        assertTrue("Wrong text:\n" + html, html.startsWith("<!DOCTYPE"));
-        assertTrue("Wrong text:\n" + rtf,  rtf.startsWith("{\\rtf1"));
+        assertTrue( html.startsWith("<!DOCTYPE"), "Wrong text:\n" + html );
+        assertTrue( rtf.startsWith("{\\rtf1"), "Wrong text:\n" + rtf );
     }
 }

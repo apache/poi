@@ -19,7 +19,7 @@ package org.apache.poi.poifs.crypt;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.IsEqual.equalTo;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -33,8 +33,8 @@ import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.util.HexRead;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class TestXorEncryption {
 
@@ -73,7 +73,7 @@ public class TestXorEncryption {
     }
 
     @Test
-    @Ignore("currently not supported")
+    @Disabled("currently not supported")
     public void encrypt() throws IOException {
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         try {

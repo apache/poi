@@ -17,9 +17,9 @@
 
 package org.apache.poi.hssf.record;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import java.util.stream.Stream;
 
@@ -39,7 +39,7 @@ import org.apache.poi.ss.formula.ptg.RefPtg;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.CellValue;
 import org.apache.poi.util.LittleEndianInput;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestSharedFormulaRecord {
 
@@ -87,14 +87,14 @@ public final class TestSharedFormulaRecord {
 
         RefPtg refPtg = (RefPtg) convertedFormula[1];
         assertEquals("$C101", refPtg.toFormulaString());
-        assertNotEquals("Identified bug 45123", Ptg.CLASS_REF, refPtg.getPtgClass());
+        assertNotEquals(Ptg.CLASS_REF, refPtg.getPtgClass(), "Identified bug 45123");
         confirmOperandClasses(sharedFormula, convertedFormula);
     }
 
     private static void confirmOperandClasses(Ptg[] originalPtgs, Ptg[] convertedPtgs) {
         int[] exp = Stream.of(originalPtgs).map(Ptg::getPtgClass).mapToInt(Byte::intValue).toArray();
         int[] act = Stream.of(convertedPtgs).map(Ptg::getPtgClass).mapToInt(Byte::intValue).toArray();
-        assertArrayEquals("Different operand class", exp, act);
+        assertArrayEquals(exp, act, "Different operand class");
     }
 
     @Test

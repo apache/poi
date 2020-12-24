@@ -18,8 +18,8 @@
 
 package org.apache.poi.ss.tests.formula.functions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.Cell;
@@ -32,9 +32,9 @@ import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.util.SheetUtil;
 import org.apache.poi.util.IOUtils;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test the COUNTIFS() function
@@ -46,7 +46,7 @@ public class CountifsTests {
     /**
      * initialize a workbook
      */
-    @Before
+    @BeforeEach
     public void before() {
         // not sure why we allow this, COUNTIFS() is only available
         // in OOXML, it was introduced with Office 2007
@@ -56,7 +56,7 @@ public class CountifsTests {
     /**
      * Close the workbook if needed
      */
-    @After
+    @AfterEach
     public void after() {
         IOUtils.closeQuietly(workbook);
     }
@@ -108,14 +108,13 @@ public class CountifsTests {
 
     /**
      * the bug returned the wrong count, this verifies the fix
-     * @throws Exception if the file can't be read
      */
     @Test
-    public void testBug56822() throws Exception {
+    public void testBug56822() {
         workbook = XSSFTestDataSamples.openSampleWorkbook("56822-Countifs.xlsx");
         FormulaEvaluator evaluator = workbook.getCreationHelper().createFormulaEvaluator();
         Cell cell = SheetUtil.getCell(workbook.getSheetAt(0), 0, 3);
-        assertNotNull("Test workbook missing cell D1", cell);
+        assertNotNull(cell, "Test workbook missing cell D1");
         CellValue evaluate = evaluator.evaluate(cell);
         assertEquals(2.0d, evaluate.getNumberValue(), 0.00000000000001);
     }

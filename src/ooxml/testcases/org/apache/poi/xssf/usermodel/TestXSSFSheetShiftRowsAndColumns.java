@@ -17,8 +17,8 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -29,9 +29,9 @@ import java.util.Locale;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.util.CellAddress;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCell;
 
 public class TestXSSFSheetShiftRowsAndColumns {
@@ -52,15 +52,14 @@ public class TestXSSFSheetShiftRowsAndColumns {
     private String fileName = null;
 
     public TestXSSFSheetShiftRowsAndColumns() {
-        assertTrue("Failed to create directory " + resultDir,
-                resultDir.exists() || resultDir.mkdirs());
+        assertTrue(resultDir.exists() || resultDir.mkdirs(), "Failed to create directory " + resultDir);
     }
 
     /**
      * This creates a workbook with one worksheet.  It then puts data in rows 0 to numRows-1 and colulmns
      * 0 to numCols-1.
      */
-    @Before
+    @BeforeEach
     public void setup() throws IOException {
         final String procName = "TestXSSFSheetShiftRowsAndColumns.setup";
         fileName = procName+".xlsx";
@@ -88,7 +87,7 @@ public class TestXSSFSheetShiftRowsAndColumns {
     /**
      * This method writes the workbook to resultDir/fileName.
      */
-    @After
+    @AfterEach
     public void cleanup() throws IOException {
         final String procName = "TestXSSFSheetRemoveTable.cleanup";
         if (workbook == null) {
@@ -184,8 +183,8 @@ public class TestXSSFSheetShiftRowsAndColumns {
                 final Object cellAddress = cell.getAddress().formatAsString();
                 final Object r = ctCell.getR();
 
-                assertEquals(String.format(Locale.US, "%s: Testing cell.getAddress",procName),address,cellAddress);
-                assertEquals(String.format(Locale.US, "%s: Testing ctCell.getR",procName),address,r);
+                assertEquals(address,cellAddress,String.format(Locale.US, "%s: Testing cell.getAddress",procName));
+                assertEquals(address,r,String.format(Locale.US, "%s: Testing ctCell.getR",procName));
             }
         }
 
@@ -196,9 +195,8 @@ public class TestXSSFSheetShiftRowsAndColumns {
      */
     private void testMergeRegion(String procName,int nRowsToShift,int nColsToShift) {
         final CellRangeAddress range = sheet.getMergedRegion(0);
-        assertEquals(String.format(Locale.US, "%s: Testing merge area %s", procName, range),
-                new CellRangeAddress(FIRST_MERGE_ROW + nRowsToShift, LAST_MERGE_ROW + nRowsToShift,
-                        FIRST_MERGE_COL + nColsToShift, LAST_MERGE_COL + nColsToShift),
-                range);
+        assertEquals(new CellRangeAddress(FIRST_MERGE_ROW + nRowsToShift, LAST_MERGE_ROW + nRowsToShift,
+            FIRST_MERGE_COL + nColsToShift, LAST_MERGE_COL + nColsToShift), range,
+            String.format(Locale.US, "%s: Testing merge area %s", procName, range));
     }
 }

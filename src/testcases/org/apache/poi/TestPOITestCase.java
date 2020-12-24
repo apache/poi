@@ -17,7 +17,7 @@
 
 package org.apache.poi;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.IOException;
 import java.util.Collections;
@@ -26,7 +26,7 @@ import java.util.Map;
 
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.poifs.property.PropertyTable;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * A class for testing the POI Junit TestCase utility class

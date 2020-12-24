@@ -17,13 +17,14 @@
 
 package org.apache.poi.ss.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ss.util.NumberComparisonExamples.ComparisonExample;
 import org.apache.poi.util.HexDump;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+
 /**
  * Tests for {@link NumberComparer}
  */
@@ -42,7 +43,7 @@ public final class TestNumberComparer {
 			success &= confirm(i, ce.getNegB(), ce.getNegA(), +ce.getExpectedResult());
 		}
 
-		assertTrue("One or more cases failed.  See stderr", success);
+		assertTrue(success, "One or more cases failed.  See stderr");
 	}
 
     @Test
@@ -68,7 +69,6 @@ public final class TestNumberComparer {
 	public void testSpecificExampleA() {
 		double a = 0.06-0.01;
 		double b = 0.05;
-		//noinspection ConstantConditions
         assertNotEquals(a, b, 0.0);
 		assertEquals(0, NumberComparer.compare(a, b));
 	}
@@ -80,7 +80,6 @@ public final class TestNumberComparer {
 	public void testSpecificExampleB() {
 		double a = 1+1.0028-0.9973;
 		double b = 1.0055;
-		//noinspection ConstantConditions
         assertNotEquals(a, b, 0.0);
 		assertEquals(0, NumberComparer.compare(a, b));
 	}

@@ -17,13 +17,13 @@
 
 package org.apache.poi.ss.formula.eval;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.ss.formula.functions.EvalFactory;
 import org.apache.poi.ss.formula.functions.Function;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test for EqualEval
@@ -42,7 +42,7 @@ public final class TestEqualEval {
 			BoolEval.FALSE,
 		};
 		ValueEval result = evaluate(EvalInstances.Equal, args, 10, 10);
-		assertNotEquals("Identified bug in evaluation of 1x1 area", ErrorEval.VALUE_INVALID, result);
+		assertNotEquals(ErrorEval.VALUE_INVALID, result, "Identified bug in evaluation of 1x1 area");
 		assertTrue(result instanceof BoolEval);
 		assertTrue(((BoolEval)result).getBooleanValue());
 	}
@@ -60,7 +60,7 @@ public final class TestEqualEval {
 		ValueEval result = evaluate(EvalInstances.Equal, args, 10, 10);
 		assertEquals(BoolEval.class, result.getClass());
 		BoolEval be = (BoolEval) result;
-		assertTrue("Identified bug blank/empty string equality", be.getBooleanValue());
+		assertTrue(be.getBooleanValue(), "Identified bug blank/empty string equality");
 	}
 
 	/**
@@ -133,11 +133,11 @@ public final class TestEqualEval {
 	public void testZeroEquality_bug47198() {
 		NumberEval zero = new NumberEval(0.0);
 		NumberEval mZero = (NumberEval) evaluate(UnaryMinusEval.instance, new ValueEval[] { zero, }, 0, 0);
-		assertNotEquals("Identified bug 47198: unary minus should convert -0.0 to 0.0",
-						0x8000000000000000L, Double.doubleToLongBits(mZero.getNumberValue()));
+		assertNotEquals(0x8000000000000000L, Double.doubleToLongBits(mZero.getNumberValue()),
+						"Identified bug 47198: unary minus should convert -0.0 to 0.0");
 		ValueEval[] args = { zero, mZero, };
 		BoolEval result = (BoolEval) evaluate(EvalInstances.Equal, args, 0, 0);
-		assertTrue("Identified bug 47198: -0.0 != 0.0", result.getBooleanValue());
+		assertTrue(result.getBooleanValue(), "Identified bug 47198: -0.0 != 0.0");
 	}
 
 	@Test
@@ -151,7 +151,7 @@ public final class TestEqualEval {
 
 		ValueEval[] args = { a, b, };
 		BoolEval result = (BoolEval) evaluate(EvalInstances.Equal, args, 0, 0);
-		assertTrue("Identified bug 47598: 1+1.0028-0.9973 != 1.0055", result.getBooleanValue());
+		assertTrue(result.getBooleanValue(), "Identified bug 47598: 1+1.0028-0.9973 != 1.0055");
 	}
 
 	private static ValueEval evaluate(Function oper, ValueEval[] args, int srcRowIx, int srcColIx) {

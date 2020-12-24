@@ -16,7 +16,7 @@
 ==================================================================== */
 package org.apache.poi.hslf.dev;
 
-import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import java.io.File;
 import java.util.Collections;
@@ -24,7 +24,7 @@ import java.util.Set;
 
 import org.apache.poi.EmptyFileException;
 import org.apache.poi.hslf.HSLFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestPPTXMLDump extends BasePPTIteratingTest {
     @Test

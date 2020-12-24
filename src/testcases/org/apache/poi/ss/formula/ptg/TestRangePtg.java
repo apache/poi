@@ -17,13 +17,13 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.IOException;
 
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for {@link RangePtg}.
@@ -36,8 +36,8 @@ public final class TestRangePtg extends BaseTestPtg {
     public void testReading() throws IOException {
         try (HSSFWorkbook workbook = loadWorkbook("RangePtg.xls")) {
             HSSFCell cell = workbook.getSheetAt(0).getRow(3).getCell(1);
-            assertEquals("Wrong cell value", 10.0, cell.getNumericCellValue(), 0.0);
-            assertEquals("Wrong cell formula", "SUM(pineapple:B2)", cell.getCellFormula());
+            assertEquals(10.0, cell.getNumericCellValue(), 0.0, "Wrong cell value");
+            assertEquals("SUM(pineapple:B2)", cell.getCellFormula(), "Wrong cell formula");
         }
     }
 }

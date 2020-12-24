@@ -17,12 +17,13 @@
 
 package org.apache.poi.hssf.model;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
+import java.util.stream.Stream;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.FormulaExtractor;
@@ -34,19 +35,16 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.ss.formula.ptg.AttrPtg;
 import org.apache.poi.ss.formula.ptg.Ptg;
 import org.apache.poi.ss.usermodel.CellType;
-import org.junit.AfterClass;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-import org.junit.runners.Parameterized.Parameter;
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 
 /**
  * Tests 'operand class' transformation performed by
  * <tt>OperandClassTransformer</tt> by comparing its results with those
  * directly produced by Excel (in a sample spreadsheet).
  */
-@RunWith(Parameterized.class)
 public final class TestRVA {
 
 	private static final String NEW_LINE = System.getProperty("line.separator");
@@ -54,25 +52,19 @@ public final class TestRVA {
     private static HSSFWorkbook workbook;
 
 
-	@Parameter(value = 0)
-    public HSSFCell formulaCell;
-    @Parameter(value = 1)
-    public String formula;
-
-    @AfterClass
+    @AfterAll
     public static void closeResource() throws Exception {
         workbook.close();
         poifs.close();
     }
 
-    @Parameters(name="{1}")
-    public static Collection<Object[]> data() throws Exception {
+    public static Stream<Arguments> data() throws Exception {
         poifs = new POIFSFileSystem(HSSFTestDataSamples.getSampleFile("testRVA.xls"), true);
         workbook = new HSSFWorkbook(poifs);
 		HSSFSheet sheet = workbook.getSheetAt(0);
 
-        List<Object[]> data = new ArrayList<>();
-        
+        List<Arguments> data = new ArrayList<>();
+
         for (int rowIdx = 0; true; rowIdx++) {
             HSSFRow row = sheet.getRow(rowIdx);
             if (row == null) {
@@ -84,29 +76,29 @@ public final class TestRVA {
             }
 
             String formula = cell.getCellFormula();
-            data.add(new Object[]{cell,formula});
+            data.add(Arguments.of(cell,formula));
         }
-        
-        return data;
+
+        return data.stream();
     }
-	
-    @Test
-	public void confirmCell() {
+
+	@ParameterizedTest
+	@MethodSource("data")
+	public void confirmCell(HSSFCell formulaCell, String formula) {
 		Ptg[] excelPtgs = FormulaExtractor.getPtgs(formulaCell);
 		Ptg[] poiPtgs = HSSFFormulaParser.parse(formula, workbook);
 		int nExcelTokens = excelPtgs.length;
 		int nPoiTokens = poiPtgs.length;
 		if (nExcelTokens != nPoiTokens) {
-			if (nExcelTokens == nPoiTokens + 1 && excelPtgs[0].getClass() == AttrPtg.class) {
-				// compensate for missing tAttrVolatile, which belongs in any formula 
-				// involving OFFSET() et al. POI currently does not insert where required
-				Ptg[] temp = new Ptg[nExcelTokens];
-				temp[0] = excelPtgs[0];
-				System.arraycopy(poiPtgs, 0, temp, 1, nPoiTokens);
-				poiPtgs = temp;
-			} else {
-				fail("Expected " + nExcelTokens + " tokens but got " + nPoiTokens);
-			}
+			assertTrue(nExcelTokens == nPoiTokens + 1 && excelPtgs[0].getClass() == AttrPtg.class,
+				"Expected " + nExcelTokens + " tokens but got " + nPoiTokens);
+
+			// compensate for missing tAttrVolatile, which belongs in any formula
+			// involving OFFSET() et al. POI currently does not insert where required
+			Ptg[] temp = new Ptg[nExcelTokens];
+			temp[0] = excelPtgs[0];
+			System.arraycopy(poiPtgs, 0, temp, 1, nPoiTokens);
+			poiPtgs = temp;
 		}
 		boolean hasMismatch = false;
 		StringBuilder sb = new StringBuilder();

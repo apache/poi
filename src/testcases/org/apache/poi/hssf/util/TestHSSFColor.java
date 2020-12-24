@@ -17,13 +17,13 @@
 
 package org.apache.poi.hssf.util;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Map;
 
 import org.apache.poi.hssf.util.HSSFColor.HSSFColorPredefined;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public final class TestHSSFColor {
     @Test
@@ -31,7 +31,7 @@ public final class TestHSSFColor {
 		assertTrue(HSSFColorPredefined.YELLOW.getIndex() > 0);
 		assertTrue(HSSFColorPredefined.YELLOW.getIndex2() > 0);
 	}
-	
+
     @Test
 	public void testContents() {
 	    short[] triplet = HSSFColorPredefined.YELLOW.getTriplet();
@@ -39,14 +39,14 @@ public final class TestHSSFColor {
 		assertEquals(255, triplet[0]);
 		assertEquals(255, triplet[1]);
 		assertEquals(0, triplet[2]);
-		
+
 		assertEquals("FFFF:FFFF:0", HSSFColorPredefined.YELLOW.getHexString());
 	}
-	
+
     @Test
 	public void testTripletHash() {
 		Map<String, HSSFColor> triplets = HSSFColor.getTripletHash();
-		
+
 		assertEquals(
 				HSSFColorPredefined.MAROON.getColor(),
 				triplets.get(HSSFColorPredefined.MAROON.getHexString())

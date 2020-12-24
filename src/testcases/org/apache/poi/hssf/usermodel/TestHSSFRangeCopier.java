@@ -22,7 +22,7 @@ package org.apache.poi.hssf.usermodel;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.ss.usermodel.BaseTestRangeCopier;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 
 public class TestHSSFRangeCopier extends BaseTestRangeCopier {
 
@@ -32,7 +32,7 @@ public class TestHSSFRangeCopier extends BaseTestRangeCopier {
         testDataProvider = HSSFITestDataProvider.instance;
     }
 
-    @Before
+    @BeforeEach
     public void init() {
         workbook = HSSFTestDataSamples.openSampleWorkbook("tile-range-test.xls");
         initSheets();

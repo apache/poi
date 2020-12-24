@@ -17,10 +17,10 @@
 package org.apache.poi.hwpf.converter;
 
 import static org.apache.poi.hwpf.HWPFTestDataSamples.openSampleFile;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.hwpf.HWPFDocument;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class TestWordToTextConverter {
 

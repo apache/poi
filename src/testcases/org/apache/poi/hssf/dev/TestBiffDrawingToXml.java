@@ -25,10 +25,10 @@ import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.record.RecordInputStream;
 import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.util.RecordFormatException;
-import org.junit.BeforeClass;
+import org.junit.jupiter.api.BeforeAll;
 
 public class TestBiffDrawingToXml extends BaseTestIteratingXLS {
-    @BeforeClass
+    @BeforeAll
     public static void setup() {
         EXCLUDED.clear();
         EXCLUDED.put("35897-type4.xls", EncryptedDocumentException.class); // unsupported crypto api header

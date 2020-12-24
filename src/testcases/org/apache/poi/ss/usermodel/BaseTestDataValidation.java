@@ -25,7 +25,7 @@ import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeAddressList;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Class for testing Excel's data validation mechanism
@@ -492,7 +492,7 @@ public abstract class BaseTestDataValidation {
 		log("done !");
 
         _testDataProvider.writeOutAndReadBack(wb).close();
-        
+
         wb.close();
 	}
 

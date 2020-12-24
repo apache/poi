@@ -16,16 +16,15 @@
 ==================================================================== */
 package org.apache.poi.ss.formula.functions;
 
-import java.util.Collection;
+import java.util.stream.Stream;
 
-import org.junit.runners.Parameterized.Parameters;
+import org.junit.jupiter.params.provider.Arguments;
 
 /**
 * Tests TREND() as loaded from a test data spreadsheet.
 */
 public class TestTrendFunctionsFromSpreadsheet extends BaseTestFunctionsFromSpreadsheet {
-    @Parameters(name="{0}")
-    public static Collection<Object[]> data() throws Exception {
+    public static Stream<Arguments> data() throws Exception {
         return data(TestTrendFunctionsFromSpreadsheet.class, "Trend.xls");
     }
 }

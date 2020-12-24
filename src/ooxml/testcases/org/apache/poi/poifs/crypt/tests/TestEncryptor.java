@@ -17,11 +17,12 @@
 package org.apache.poi.poifs.crypt.tests;
 
 import static org.apache.poi.poifs.crypt.CryptoFunctions.getMessageDigest;
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assumptions.assumeTrue;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -62,9 +63,8 @@ import org.apache.poi.util.NullOutputStream;
 import org.apache.poi.util.TempFile;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.junit.Assume;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 public class TestEncryptor {
     @Test
@@ -146,7 +146,7 @@ public class TestEncryptor {
     @Test
     public void agileEncryption() throws Exception {
         int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
-        Assume.assumeTrue("Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256", maxKeyLen == 2147483647);
+        assumeTrue(maxKeyLen == 0x7FFFFFFF, "Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256");
 
         File file = POIDataSamples.getDocumentInstance().getFile("bug53475-password-is-pass.docx");
         String pass = "pass";
@@ -162,7 +162,7 @@ public class TestEncryptor {
             infoExpected = new EncryptionInfo(nfs);
             decExpected = Decryptor.getInstance(infoExpected);
             boolean passed = decExpected.verifyPassword(pass);
-            assertTrue("Unable to process: document is encrypted", passed);
+            assertTrue(passed, "Unable to process: document is encrypted");
 
             // extract the payload
             try (InputStream is = decExpected.getDataStream(nfs)) {
@@ -217,7 +217,7 @@ public class TestEncryptor {
             infoActual2 = new EncryptionInfo(nfs.getRoot());
             Decryptor decActual = Decryptor.getInstance(infoActual2);
             boolean passed = decActual.verifyPassword(pass);
-            assertTrue("Unable to process: document is encrypted", passed);
+            assertTrue(passed, "Unable to process: document is encrypted");
 
             // extract the payload
             try (InputStream is = decActual.getDataStream(nfs)) {
@@ -256,7 +256,7 @@ public class TestEncryptor {
             infoExpected = new EncryptionInfo(nfs);
             d = Decryptor.getInstance(infoExpected);
             boolean passed = d.verifyPassword(pass);
-            assertTrue("Unable to process: document is encrypted", passed);
+            assertTrue(passed, "Unable to process: document is encrypted");
 
             // extract the payload
             try (InputStream is = d.getDataStream(nfs)) {
@@ -317,7 +317,7 @@ public class TestEncryptor {
         try (POIFSFileSystem nfs = new POIFSFileSystem(new ByteArrayInputStream(encBytes))) {
             final EncryptionInfo ei = new EncryptionInfo(nfs);
             Decryptor d2 = Decryptor.getInstance(ei);
-            assertTrue("Unable to process: document is encrypted", d2.verifyPassword(pass));
+            assertTrue(d2.verifyPassword(pass), "Unable to process: document is encrypted");
 
             try (InputStream is = d2.getDataStream(nfs)) {
                 payloadActual = IOUtils.toByteArray(is);
@@ -383,7 +383,7 @@ public class TestEncryptor {
     }
 
     @Test
-    @Ignore
+    @Disabled
     public void inPlaceRewrite() throws Exception {
         File f = TempFile.createTempFile("protected_agile", ".docx");
 
@@ -462,7 +462,7 @@ public class TestEncryptor {
     @Test
     public void bug60320CustomEncrypt() throws Exception {
         int maxKeyLen = Cipher.getMaxAllowedKeyLength("AES");
-        Assume.assumeTrue("Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256", maxKeyLen == 2147483647);
+        assumeTrue(maxKeyLen == 0x7FFFFFFF, "Please install JCE Unlimited Strength Jurisdiction Policy files for AES 256");
 
         // --- src/java/org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.java  (revision 1766745)
         // +++ src/java/org/apache/poi/poifs/crypt/ChunkedCipherOutputStream.java  (working copy)

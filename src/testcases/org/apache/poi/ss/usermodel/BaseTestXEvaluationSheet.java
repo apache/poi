@@ -17,12 +17,12 @@
 
 package org.apache.poi.ss.usermodel;
 
-import org.apache.poi.ss.formula.EvaluationSheet;
-import org.junit.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Map;
 
-import static org.junit.Assert.assertEquals;
+import org.apache.poi.ss.formula.EvaluationSheet;
+import org.junit.jupiter.api.Test;
 
 public abstract class BaseTestXEvaluationSheet {
     /**

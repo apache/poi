@@ -25,7 +25,7 @@ import org.apache.poi.hssf.usermodel.HSSFDataValidation;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.apache.poi.ss.util.CellRangeAddressList;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Verify that presence of PLV record doesn't break data

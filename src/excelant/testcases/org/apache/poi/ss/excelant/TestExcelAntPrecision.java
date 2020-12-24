@@ -16,23 +16,23 @@
 ==================================================================== */
 package org.apache.poi.ss.excelant;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public class TestExcelAntPrecision {
 
 	private ExcelAntPrecision fixture ;
 
-    @Before
+    @BeforeEach
 	public void setUp() {
 		fixture = new ExcelAntPrecision() ;
 	}
 
-    @After
+    @AfterEach
 	public void tearDown() {
 		fixture = null ;
 	}

@@ -17,12 +17,12 @@
 
 package org.apache.poi.hssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.Properties;
 
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests the implementation of the FontDetails class.
@@ -30,7 +30,7 @@ import org.junit.Test;
 public final class TestFontDetails {
     private FontDetails fontDetails;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         Properties properties = new Properties();
         properties.setProperty("font.Arial.height", "13");

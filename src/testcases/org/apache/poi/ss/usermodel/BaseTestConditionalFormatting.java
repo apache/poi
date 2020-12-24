@@ -19,12 +19,12 @@
 
 package org.apache.poi.ss.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.IOException;
 
@@ -34,7 +34,8 @@ import org.apache.poi.ss.ITestDataProvider;
 import org.apache.poi.ss.usermodel.ConditionalFormattingThreshold.RangeType;
 import org.apache.poi.ss.usermodel.IconMultiStateFormatting.IconSet;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.Executable;
 
 /**
  * Base tests for Conditional Formatting, for both HSSF and XSSF
@@ -50,70 +51,47 @@ public abstract class BaseTestConditionalFormatting {
         return true;
     }
 
-    protected abstract void assertColour(String hexExpected, Color actual);
+    protected abstract void assertColor(String hexExpected, Color actual);
 
     @Test
-    public void testBasic() throws IOException {
+    public void testBasic() throws Throwable {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             Sheet sh = wb.createSheet();
             SheetConditionalFormatting sheetCF = sh.getSheetConditionalFormatting();
 
             assertEquals(0, sheetCF.getNumConditionalFormattings());
-            try {
-                assertNull(sheetCF.getConditionalFormattingAt(0));
-                fail("expected exception");
-            } catch (IllegalArgumentException e) {
-                assertTrue(e.getMessage().startsWith("Specified CF index 0 is outside the allowable range"));
-            }
+            IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> sheetCF.getConditionalFormattingAt(0));
+            assertTrue(e.getMessage().startsWith("Specified CF index 0 is outside the allowable range"));
 
-            try {
-                sheetCF.removeConditionalFormatting(0);
-                fail("expected exception");
-            } catch (IllegalArgumentException e) {
-                assertTrue(e.getMessage().startsWith("Specified CF index 0 is outside the allowable range"));
-            }
+            e = assertThrows(IllegalArgumentException.class, () -> sheetCF.removeConditionalFormatting(0));
+            assertTrue(e.getMessage().startsWith("Specified CF index 0 is outside the allowable range"));
 
             ConditionalFormattingRule rule1 = sheetCF.createConditionalFormattingRule("1");
             ConditionalFormattingRule rule2 = sheetCF.createConditionalFormattingRule("2");
             ConditionalFormattingRule rule3 = sheetCF.createConditionalFormattingRule("3");
             ConditionalFormattingRule rule4 = sheetCF.createConditionalFormattingRule("4");
-            try {
-                sheetCF.addConditionalFormatting(null, rule1);
-                fail("expected exception");
-            } catch (IllegalArgumentException e) {
-                assertTrue(e.getMessage().startsWith("regions must not be null"));
-            }
-            try {
-                sheetCF.addConditionalFormatting(
-                        new CellRangeAddress[]{CellRangeAddress.valueOf("A1:A3")},
-                        (ConditionalFormattingRule) null);
-                fail("expected exception");
-            } catch (IllegalArgumentException e) {
-                assertTrue(e.getMessage().startsWith("cfRules must not be null"));
-            }
 
-            try {
+            e = assertThrows(IllegalArgumentException.class, () -> sheetCF.addConditionalFormatting(null, rule1));
+            assertTrue(e.getMessage().startsWith("regions must not be null"));
+
+            e = assertThrows(IllegalArgumentException.class, () -> sheetCF.addConditionalFormatting(
+                new CellRangeAddress[]{CellRangeAddress.valueOf("A1:A3")}, (ConditionalFormattingRule) null));
+            assertTrue(e.getMessage().startsWith("cfRules must not be null"));
+
+            e = assertThrows(IllegalArgumentException.class, () -> sheetCF.addConditionalFormatting(
+                new CellRangeAddress[]{CellRangeAddress.valueOf("A1:A3")}, new ConditionalFormattingRule[0]));
+            assertTrue(e.getMessage().startsWith("cfRules must not be empty"));
+
+            Executable exec = () ->
                 sheetCF.addConditionalFormatting(
-                        new CellRangeAddress[]{CellRangeAddress.valueOf("A1:A3")},
-                        new ConditionalFormattingRule[0]);
-                fail("expected exception");
-            } catch (IllegalArgumentException e) {
-                assertTrue(e.getMessage().startsWith("cfRules must not be empty"));
-            }
+                    new CellRangeAddress[]{CellRangeAddress.valueOf("A1:A3")},
+                    new ConditionalFormattingRule[]{rule1, rule2, rule3, rule4});
 
             if (applyLimitOf3()) {
-                try {
-                    sheetCF.addConditionalFormatting(
-                            new CellRangeAddress[]{CellRangeAddress.valueOf("A1:A3")},
-                            new ConditionalFormattingRule[]{rule1, rule2, rule3, rule4});
-                    fail("expected exception");
-                } catch (IllegalArgumentException e) {
-                    assertTrue(e.getMessage().startsWith("Number of rules must not exceed 3"));
-                }
+                e = assertThrows(IllegalArgumentException.class, exec);
+                assertTrue(e.getMessage().startsWith("Number of rules must not exceed 3"));
             } else {
-                sheetCF.addConditionalFormatting(
-                        new CellRangeAddress[]{CellRangeAddress.valueOf("A1:A3")},
-                        new ConditionalFormattingRule[]{rule1, rule2, rule3, rule4});
+                exec.execute();
             }
         }
     }
@@ -273,34 +251,25 @@ public abstract class BaseTestConditionalFormatting {
 
             // adjacent address are merged
             int formatIndex = sheetCF.addConditionalFormatting(
-                    new CellRangeAddress[]{
-                            CellRangeAddress.valueOf("A1:A5")
-                    }, rule1);
+                new CellRangeAddress[]{CellRangeAddress.valueOf("A1:A5")}, rule1);
             assertEquals(0, formatIndex);
             assertEquals(1, sheetCF.getNumConditionalFormattings());
             sheetCF.removeConditionalFormatting(0);
             assertEquals(0, sheetCF.getNumConditionalFormattings());
-            try {
-                assertNull(sheetCF.getConditionalFormattingAt(0));
-                fail("expected exception");
-            } catch (IllegalArgumentException e) {
-                assertTrue(e.getMessage().startsWith("Specified CF index 0 is outside the allowable range"));
-            }
+
+            IllegalArgumentException e;
+            e = assertThrows(IllegalArgumentException.class, () -> sheetCF.getConditionalFormattingAt(0));
+            assertTrue(e.getMessage().startsWith("Specified CF index 0 is outside the allowable range"));
 
             formatIndex = sheetCF.addConditionalFormatting(
-                    new CellRangeAddress[]{
-                            CellRangeAddress.valueOf("A1:A5")
-                    }, rule1);
+                new CellRangeAddress[]{CellRangeAddress.valueOf("A1:A5")}, rule1);
             assertEquals(0, formatIndex);
             assertEquals(1, sheetCF.getNumConditionalFormattings());
             sheetCF.removeConditionalFormatting(0);
             assertEquals(0, sheetCF.getNumConditionalFormattings());
-            try {
-                assertNull(sheetCF.getConditionalFormattingAt(0));
-                fail("expected exception");
-            } catch (IllegalArgumentException e) {
-                assertTrue(e.getMessage().startsWith("Specified CF index 0 is outside the allowable range"));
-            }
+
+            e = assertThrows(IllegalArgumentException.class, () -> sheetCF.getConditionalFormattingAt(0));
+            assertTrue(e.getMessage().startsWith("Specified CF index 0 is outside the allowable range"));
         }
     }
 
@@ -611,11 +580,11 @@ public abstract class BaseTestConditionalFormatting {
             //   Sets the background colour to lighter green
             // TODO Should the colours be slightly different between formats? Would CFEX support help for HSSF?
             if (cr instanceof HSSFConditionalFormattingRule) {
-                assertColour("0:8080:0", cr.getFontFormatting().getFontColor());
-                assertColour("CCCC:FFFF:CCCC", cr.getPatternFormatting().getFillBackgroundColorColor());
+                assertColor("0:8080:0", cr.getFontFormatting().getFontColor());
+                assertColor("CCCC:FFFF:CCCC", cr.getPatternFormatting().getFillBackgroundColorColor());
             } else {
-                assertColour("006100", cr.getFontFormatting().getFontColor());
-                assertColour("C6EFCE", cr.getPatternFormatting().getFillBackgroundColorColor());
+                assertColor("006100", cr.getFontFormatting().getFontColor());
+                assertColor("C6EFCE", cr.getPatternFormatting().getFillBackgroundColorColor());
             }
 
 
@@ -635,11 +604,11 @@ public abstract class BaseTestConditionalFormatting {
             //   Sets the background colour to lighter red
             // TODO Should the colours be slightly different between formats? Would CFEX support help for HSSF?
             if (cr instanceof HSSFConditionalFormattingRule) {
-                assertColour("8080:0:8080", cr.getFontFormatting().getFontColor());
-                assertColour("FFFF:9999:CCCC", cr.getPatternFormatting().getFillBackgroundColorColor());
+                assertColor("8080:0:8080", cr.getFontFormatting().getFontColor());
+                assertColor("FFFF:9999:CCCC", cr.getPatternFormatting().getFillBackgroundColorColor());
             } else {
-                assertColour("9C0006", cr.getFontFormatting().getFontColor());
-                assertColour("FFC7CE", cr.getPatternFormatting().getFillBackgroundColorColor());
+                assertColor("9C0006", cr.getFontFormatting().getFontColor());
+                assertColor("FFC7CE", cr.getPatternFormatting().getFillBackgroundColorColor());
             }
 
 
@@ -798,7 +767,7 @@ public abstract class BaseTestConditionalFormatting {
         assertEquals(0, databar.getWidthMin());
         assertEquals(100, databar.getWidthMax());
 
-        assertColour(color, databar.getColor());
+        assertColor(color, databar.getColor());
 
         ConditionalFormattingThreshold th;
         th = databar.getMinThreshold();
@@ -877,7 +846,7 @@ public abstract class BaseTestConditionalFormatting {
 
         // Colors should match
         for (int i=0; i<colors.length; i++) {
-            assertColour(colors[i], color.getColors()[i]);
+            assertColor(colors[i], color.getColors()[i]);
         }
     }
 
@@ -1210,7 +1179,7 @@ public abstract class BaseTestConditionalFormatting {
             assertTrue(dbFmt.isLeftToRight());
             assertEquals(0, dbFmt.getWidthMin());
             assertEquals(100, dbFmt.getWidthMax());
-            assertColour(colorHex, dbFmt.getColor());
+            assertColor(colorHex, dbFmt.getColor());
 
             dbFmt.getMinThreshold().setRangeType(RangeType.MIN);
             dbFmt.getMaxThreshold().setRangeType(RangeType.MAX);
@@ -1234,7 +1203,7 @@ public abstract class BaseTestConditionalFormatting {
                 assertTrue(dbFmt.isLeftToRight());
                 assertEquals(0, dbFmt.getWidthMin());
                 assertEquals(100, dbFmt.getWidthMax());
-                assertColour(colorHex, dbFmt.getColor());
+                assertColor(colorHex, dbFmt.getColor());
 
                 assertEquals(RangeType.MIN, dbFmt.getMinThreshold().getRangeType());
                 assertEquals(RangeType.MAX, dbFmt.getMaxThreshold().getRangeType());
@@ -1319,7 +1288,7 @@ public abstract class BaseTestConditionalFormatting {
         }
     }
 
-    @Test(expected = IllegalArgumentException.class)
+    @Test
     public void testSetCellRangeAddressWithNullRanges() throws IOException {
         try (Workbook wb = _testDataProvider.createWorkbook()) {
             final Sheet sheet = wb.createSheet("S1");
@@ -1332,7 +1301,7 @@ public abstract class BaseTestConditionalFormatting {
 
             assertEquals(1, cf.getNumConditionalFormattings());
             ConditionalFormatting readCf = cf.getConditionalFormattingAt(0);
-            readCf.setFormattingRanges(null);
+            assertThrows(IllegalArgumentException.class, () -> readCf.setFormattingRanges(null));
         }
     }
 

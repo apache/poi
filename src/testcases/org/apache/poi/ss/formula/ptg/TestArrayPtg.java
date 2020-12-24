@@ -17,16 +17,16 @@
 
 package org.apache.poi.ss.formula.ptg;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.record.TestcaseRecordInputStream;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.LittleEndianByteArrayOutputStream;
 import org.apache.poi.util.LittleEndianInput;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for <tt>ArrayPtg</tt>
@@ -74,7 +74,7 @@ public final class TestArrayPtg {
 		byte[] outBuf = new byte[ENCODED_CONSTANT_DATA.length];
 		ptg.writeTokenValueBytes(new LittleEndianByteArrayOutputStream(outBuf, 0));
 
-		assertNotEquals("Identified bug 42564b", 4, outBuf[0]);
+		assertNotEquals(4, outBuf[0], "Identified bug 42564b");
 		assertArrayEquals(ENCODED_CONSTANT_DATA, outBuf);
 	}
 

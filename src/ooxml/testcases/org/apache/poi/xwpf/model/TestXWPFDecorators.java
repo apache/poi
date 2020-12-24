@@ -23,13 +23,13 @@ import org.apache.poi.xwpf.XWPFTestDataSamples;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.apache.poi.xwpf.usermodel.XWPFHyperlinkRun;
 import org.apache.poi.xwpf.usermodel.XWPFParagraph;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * Tests for the various XWPF decorators
@@ -39,14 +39,14 @@ public class TestXWPFDecorators {
     private XWPFDocument hyperlink;
     private XWPFDocument comments;
 
-    @Before
+    @BeforeEach
     public void setUp() throws IOException {
         simple = XWPFTestDataSamples.openSampleDocument("SampleDoc.docx");
         hyperlink = XWPFTestDataSamples.openSampleDocument("TestDocument.docx");
         comments = XWPFTestDataSamples.openSampleDocument("WordWithAttachments.docx");
     }
 
-    @After
+    @AfterEach
     public void tearDown() throws IOException {
         simple.close();
         hyperlink.close();

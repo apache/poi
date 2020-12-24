@@ -17,9 +17,9 @@
 
 package org.apache.poi.xssf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 import java.io.IOException;
 
@@ -32,7 +32,7 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.xssf.XSSFITestDataProvider;
 import org.apache.poi.xssf.XSSFTestDataSamples;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for XSSFRow
@@ -96,38 +96,38 @@ public final class TestXSSFRow extends BaseTestXRow {
         col = 0;
         Cell cell = destRow.getCell(col++);
         assertNotNull(cell);
-        assertEquals("RefPtg", "B6", cell.getCellFormula());
+        assertEquals("B6", cell.getCellFormula(), "RefPtg");
 
         cell = destRow.getCell(col++);
         assertNotNull(cell);
-        assertEquals("Ref3DPtg", "src!B6", cell.getCellFormula());
+        assertEquals("src!B6", cell.getCellFormula(), "Ref3DPtg");
 
         cell = destRow.getCell(col++);
         assertNotNull(cell);
-        assertEquals("Ref3DPtg", "dest!B6", cell.getCellFormula());
+        assertEquals("dest!B6", cell.getCellFormula(), "Ref3DPtg");
 
         cell = destRow.getCell(col++);
         assertNotNull(cell);
-        assertEquals("Ref3DPtg", "other!B6", cell.getCellFormula());
+        assertEquals("other!B6", cell.getCellFormula(), "Ref3DPtg");
 
         /////////////////////////////////////////////
 
         //Test 2D and 3D Ref Ptgs with absolute row (Ptg row number shouldn't change)
         cell = destRow.getCell(col++);
         assertNotNull(cell);
-        assertEquals("RefPtg", "B$5", cell.getCellFormula());
+        assertEquals("B$5", cell.getCellFormula(), "RefPtg");
 
         cell = destRow.getCell(col++);
         assertNotNull(cell);
-        assertEquals("Ref3DPtg", "src!B$5", cell.getCellFormula());
+        assertEquals("src!B$5", cell.getCellFormula(), "Ref3DPtg");
 
         cell = destRow.getCell(col++);
         assertNotNull(cell);
-        assertEquals("Ref3DPtg", "dest!B$5", cell.getCellFormula());
+        assertEquals("dest!B$5", cell.getCellFormula(), "Ref3DPtg");
 
         cell = destRow.getCell(col++);
         assertNotNull(cell);
-        assertEquals("Ref3DPtg", "other!B$5", cell.getCellFormula());
+        assertEquals("other!B$5", cell.getCellFormula(), "Ref3DPtg");
 
         //////////////////////////////////////////
 
@@ -136,19 +136,19 @@ public final class TestXSSFRow extends BaseTestXRow {
         // to maintain topLeft:bottomRight order
         cell = destRow.getCell(col++);
         assertNotNull(cell);
-        assertEquals("Area2DPtg", "SUM(B$5:D6)", cell.getCellFormula());
+        assertEquals("SUM(B$5:D6)", cell.getCellFormula(), "Area2DPtg");
 
         cell = destRow.getCell(col++);
         assertNotNull(cell);
-        assertEquals("Area3DPtg", "SUM(src!B$5:D6)", cell.getCellFormula());
+        assertEquals("SUM(src!B$5:D6)", cell.getCellFormula(), "Area3DPtg");
 
         cell = destRow.getCell(col++);
         assertNotNull(destRow.getCell(6));
-        assertEquals("Area3DPtg", "SUM(dest!B$5:D6)", cell.getCellFormula());
+        assertEquals("SUM(dest!B$5:D6)", cell.getCellFormula(), "Area3DPtg");
 
         cell = destRow.getCell(col++);
         assertNotNull(destRow.getCell(7));
-        assertEquals("Area3DPtg", "SUM(other!B$5:D6)", cell.getCellFormula());
+        assertEquals("SUM(other!B$5:D6)", cell.getCellFormula(), "Area3DPtg");
 
         workbook.close();
     }
@@ -179,19 +179,19 @@ public final class TestXSSFRow extends BaseTestXRow {
         // to the new row (and allow the old row to be garbage collected)
         // this is mostly so existing references to rows that are overwritten are updated
         // rather than allowing users to continue updating rows that are no longer part of the sheet
-        assertSame("existing references to srcRow are still valid", srcRow, sheet1.getRow(0));
-        assertSame("existing references to destRow are still valid", destRow, sheet1.getRow(1));
-        assertSame("existing references to observerRow are still valid", observerRow, sheet1.getRow(2));
-        assertSame("existing references to externObserverRow are still valid", externObserverRow, sheet2.getRow(0));
+        assertSame(srcRow, sheet1.getRow(0), "existing references to srcRow are still valid");
+        assertSame(destRow, sheet1.getRow(1), "existing references to destRow are still valid");
+        assertSame(observerRow, sheet1.getRow(2), "existing references to observerRow are still valid");
+        assertSame(externObserverRow, sheet2.getRow(0), "existing references to externObserverRow are still valid");
 
         // Make sure copyRowFrom actually copied row (this is tested elsewhere)
         assertEquals(CellType.STRING, destRow.getCell(0).getCellType());
         assertEquals("hello", destRow.getCell(0).getStringCellValue());
 
         // We don't want #REF! errors if we copy a row that contains cells that are referred to by other cells outside of copied region
-        assertEquals("references to overwritten cells are unmodified", "A2", observerRow.getCell(0).getCellFormula());
-        assertEquals("references to overwritten cells are unmodified", "B2", observerRow.getCell(1).getCellFormula());
-        assertEquals("references to overwritten cells are unmodified", "Sheet1!A2", externObserverRow.getCell(0).getCellFormula());
+        assertEquals("A2", observerRow.getCell(0).getCellFormula(), "references to overwritten cells are unmodified");
+        assertEquals("B2", observerRow.getCell(1).getCellFormula(), "references to overwritten cells are unmodified");
+        assertEquals("Sheet1!A2", externObserverRow.getCell(0).getCellFormula(), "references to overwritten cells are unmodified");
 
         workbook.close();
     }
@@ -220,19 +220,15 @@ public final class TestXSSFRow extends BaseTestXRow {
         XSSFTestDataSamples.writeOutAndReadBack(wb1);
 
         assertEquals("hello", srcRow.getCell(0).getStringCellValue());
-        assertEquals("hello",
-                wb1.getSheet("Sheet1").getRow(0).getCell(0).getStringCellValue());
+        assertEquals("hello", wb1.getSheet("Sheet1").getRow(0).getCell(0).getStringCellValue());
         assertEquals("cruel", srcRow.getCell(1).getStringCellValue());
-        assertEquals("cruel",
-                wb1.getSheet("Sheet1").getRow(0).getCell(1).getStringCellValue());
+        assertEquals("cruel", wb1.getSheet("Sheet1").getRow(0).getCell(1).getStringCellValue());
         assertEquals("world", srcRow.getCell(3).getStringCellValue());
-        assertEquals("world",
-                wb1.getSheet("Sheet1").getRow(0).getCell(3).getStringCellValue());
+        assertEquals("world", wb1.getSheet("Sheet1").getRow(0).getCell(3).getStringCellValue());
 
         srcRow.getCell(1).setCellValue((RichTextString) null);
 
         XSSFWorkbook wb3 = XSSFTestDataSamples.writeOutAndReadBack(wb1);
-        assertEquals("Cell should be blank", CellType.BLANK,
-                wb3.getSheet("Sheet1").getRow(0).getCell(1).getCellType());
+        assertEquals(CellType.BLANK, wb3.getSheet("Sheet1").getRow(0).getCell(1).getCellType(), "Cell should be blank");
     }
 }

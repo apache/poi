@@ -17,7 +17,7 @@
 
 package org.apache.poi.xssf.usermodel.charts;
 
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 import java.io.IOException;
 
@@ -30,16 +30,16 @@ import org.apache.poi.xssf.usermodel.XSSFClientAnchor;
 import org.apache.poi.xssf.usermodel.XSSFDrawing;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 public final class TestXDDFManualLayout {
 
     private XSSFWorkbook wb;
     private XDDFManualLayout layout;
 
-    @Before
+    @BeforeEach
     public void createEmptyLayout() {
         wb = new XSSFWorkbook();
         XSSFSheet sheet = wb.createSheet();
@@ -50,7 +50,7 @@ public final class TestXDDFManualLayout {
         layout = legend.getOrAddManualLayout();
     }
 
-    @After
+    @AfterEach
     public void closeWB() throws IOException {
         wb.close();
     }

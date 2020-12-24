@@ -18,12 +18,11 @@
 package org.apache.poi.hslf.usermodel;
 
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.POIDataSamples;
-import org.apache.poi.hslf.record.Record;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests that SlideShow finds the right records as its most recent ones
@@ -34,7 +33,7 @@ public final class TestMostRecentRecords {
 	// SlideShow primed on the test data
 	private HSLFSlideShow ss;
 
-	@Before
+	@BeforeEach
 	public void setup() throws Exception {
 		POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 		hss = new HSLFSlideShowImpl(slTests.openResourceAsStream("basic_test_ppt_file.ppt"));

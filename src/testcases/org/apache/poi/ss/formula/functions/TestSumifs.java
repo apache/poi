@@ -19,8 +19,8 @@
 
 package org.apache.poi.ss.formula.functions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.HSSFCell;
@@ -33,7 +33,7 @@ import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.StringEval;
 import org.apache.poi.ss.formula.eval.ValueEval;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Test cases for SUMIFS()
@@ -47,7 +47,7 @@ public final class TestSumifs {
 	}
 
 	private static void confirmDouble(double expected, ValueEval actualEval) {
-	    assertTrue("Expected numeric result", actualEval instanceof NumericValueEval);
+	    assertTrue(actualEval instanceof NumericValueEval, "Expected numeric result");
 		NumericValueEval nve = (NumericValueEval)actualEval;
 		assertEquals(expected, nve.getNumberValue(), 0);
 	}
@@ -297,7 +297,7 @@ public final class TestSumifs {
         };
 
         ValueEval result = invokeSumifs(args);
-        assertTrue("Expect to have an error when an input is an invalid value, but had: " + result.getClass(), result instanceof ErrorEval);
+        assertTrue(result instanceof ErrorEval, "Expect to have an error when an input is an invalid value, but had: " + result.getClass());
 
         args = new ValueEval[]{
                 EvalFactory.createAreaEval("A2:A9", a2a9),
@@ -306,7 +306,7 @@ public final class TestSumifs {
         };
 
         result = invokeSumifs(args);
-        assertTrue("Expect to have an error when an input is an invalid value, but had: " + result.getClass(), result instanceof ErrorEval);
+        assertTrue(result instanceof ErrorEval, "Expect to have an error when an input is an invalid value, but had: " + result.getClass());
     }
 
     @Test
@@ -330,7 +330,7 @@ public final class TestSumifs {
         };
 
         ValueEval result = invokeSumifs(args);
-        assertTrue("Expect to have an error when an input is an invalid value, but had: " + result.getClass(), result instanceof ErrorEval);
+        assertTrue(result instanceof ErrorEval, "Expect to have an error when an input is an invalid value, but had: " + result.getClass());
         assertEquals(ErrorEval.VALUE_INVALID, result);
     }
 
@@ -355,7 +355,7 @@ public final class TestSumifs {
         };
 
         ValueEval result = invokeSumifs(args);
-        assertTrue("Expect to have an error when an input is an invalid value, but had: " + result.getClass(), result instanceof ErrorEval);
+        assertTrue(result instanceof ErrorEval, "Expect to have an error when an input is an invalid value, but had: " + result.getClass());
         assertEquals(ErrorEval.NAME_INVALID, result);
     }
 }

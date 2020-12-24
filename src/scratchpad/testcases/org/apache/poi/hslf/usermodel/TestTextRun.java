@@ -18,12 +18,12 @@
 package org.apache.poi.hslf.usermodel;
 
 import static org.apache.poi.sl.usermodel.BaseTestSlideShow.getColor;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertSame;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Color;
 import java.io.IOException;
@@ -34,9 +34,9 @@ import org.apache.poi.hslf.model.textproperties.TextPropCollection;
 import org.apache.poi.hslf.record.TextBytesAtom;
 import org.apache.poi.hslf.record.TextCharsAtom;
 import org.apache.poi.hslf.record.TextHeaderAtom;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests for TextRuns
@@ -47,7 +47,7 @@ public final class TestTextRun {
 	private HSLFSlideShow ss;
 	private HSLFSlideShow ssRich;
 
-	@Before
+	@BeforeEach
 	public void setUp() throws IOException {
 		// Basic (non rich) test file
 		ss = HSLFTestDataSamples.getSlideShow("basic_test_ppt_file.ppt");
@@ -56,7 +56,7 @@ public final class TestTextRun {
 		ssRich = HSLFTestDataSamples.getSlideShow("Single_Coloured_Page.ppt");
 	}
 
-	@After
+	@AfterEach
 	public void tearDown() throws IOException {
 	    ssRich.close();
 	    ss.close();

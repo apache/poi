@@ -17,9 +17,9 @@
 
 package org.apache.poi.sl.usermodel;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -54,22 +54,20 @@ public abstract class BaseTestSlideShowFactory {
 
     @SuppressWarnings("resource")
     protected static void testFactoryFromNative(String file) throws Exception {
+        assertNotNull(file);
+        assertTrue(file.endsWith(".ppt") || file.endsWith(".pptx"), "Unexpected file extension: " + file);
+
         SlideShow<?,?> ss;
-        // from POIFS
         if (file.endsWith(".ppt")) {
-            POIFSFileSystem poifs = new POIFSFileSystem(fromFile(file));
-            ss = SlideShowFactory.create(poifs);
-            assertNotNull(ss);
-            poifs.close();
+            // from POIFS
+            try (POIFSFileSystem poifs = new POIFSFileSystem(fromFile(file))) {
+                ss = SlideShowFactory.create(poifs);
+                assertNotNull(ss);
+            }
             assertCloseDoesNotModifyFile(file, ss);
-        }
-        // from OPCPackage
-        else if (file.endsWith(".pptx")) {
-            // not implemented
+        } else  {
+            // from OPCPackage ... not implemented
             throw new UnsupportedOperationException("Test not implemented");
-        }
-        else {
-            fail("Unexpected file extension: " + file);
         }
     }
 
@@ -91,21 +89,19 @@ public abstract class BaseTestSlideShowFactory {
 
     @SuppressWarnings("resource")
     protected static void testFactoryFromProtectedNative(String protectedFile, String password) throws Exception {
+        assertTrue(protectedFile.endsWith(".ppt") || protectedFile.endsWith(".pptx"),
+            "Unrecognized file extension: " + protectedFile);
+
         SlideShow<?,?> ss;
         // Encryption layer is a BIFF8 binary format that can be read by POIFSFileSystem,
         // used for both HSLF and XSLF
 
         // from protected POIFS
-        if (protectedFile.endsWith(".ppt") || protectedFile.endsWith(".pptx")) {
-            POIFSFileSystem poifs = new POIFSFileSystem(fromFile(protectedFile));
+        try (POIFSFileSystem poifs = new POIFSFileSystem(fromFile(protectedFile))) {
             ss = SlideShowFactory.create(poifs.getRoot(), password);
             assertNotNull(ss);
-            poifs.close();
-            assertCloseDoesNotModifyFile(protectedFile, ss);
         }
-        else {
-            fail("Unrecognized file extension: " + protectedFile);
-        }
+        assertCloseDoesNotModifyFile(protectedFile, ss);
     }
 
     @SuppressWarnings("SameParameterValue")
@@ -169,8 +165,7 @@ public abstract class BaseTestSlideShowFactory {
         final byte[] after = readFile(filename);
 
         try {
-            assertArrayEquals(filename + " sample file was modified as a result of closing the slideshow",
-                    before, after);
+            assertArrayEquals(before, after, filename + " sample file was modified as a result of closing the slideshow");
         } catch (AssertionError e) {
             // if the file after closing is different, then re-set
             // the file to the state before in order to not have a dirty SCM

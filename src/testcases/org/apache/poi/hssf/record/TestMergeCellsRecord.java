@@ -17,8 +17,8 @@
 
 package org.apache.poi.hssf.record;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotSame;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,7 +26,7 @@ import java.util.List;
 import org.apache.poi.hssf.model.RecordStream;
 import org.apache.poi.hssf.record.aggregates.MergedCellsTable;
 import org.apache.poi.ss.util.CellRangeAddress;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 
 /**
@@ -43,15 +43,15 @@ public final class TestMergeCellsRecord {
 		MergeCellsRecord merge = new MergeCellsRecord(cras, 0, cras.length);
 		MergeCellsRecord clone = merge.copy();
 
-		assertNotSame("Merged and cloned objects are the same", merge, clone);
+		assertNotSame(merge, clone, "Merged and cloned objects are the same");
 
 		CellRangeAddress mergeRegion = merge.getAreaAt(0);
 		CellRangeAddress cloneRegion = clone.getAreaAt(0);
-		assertNotSame("Should not point to same objects when cloning", mergeRegion, cloneRegion);
-		assertEquals("New Clone Row From doesnt match", mergeRegion.getFirstRow(), cloneRegion.getFirstRow());
-		assertEquals("New Clone Row To doesnt match", mergeRegion.getLastRow(), cloneRegion.getLastRow());
-		assertEquals("New Clone Col From doesnt match", mergeRegion.getFirstColumn(), cloneRegion.getFirstColumn());
-		assertEquals("New Clone Col To doesnt match", mergeRegion.getLastColumn(), cloneRegion.getLastColumn());
+		assertNotSame(mergeRegion, cloneRegion, "Should not point to same objects when cloning");
+		assertEquals(mergeRegion.getFirstRow(), cloneRegion.getFirstRow(), "New Clone Row From doesnt match");
+		assertEquals(mergeRegion.getLastRow(), cloneRegion.getLastRow(), "New Clone Row To doesnt match");
+		assertEquals(mergeRegion.getFirstColumn(), cloneRegion.getFirstColumn(), "New Clone Col From doesnt match");
+		assertEquals(mergeRegion.getLastColumn(), cloneRegion.getLastColumn(), "New Clone Col To doesnt match");
 
         assertNotSame(merge.getAreaAt(0), clone.getAreaAt(0));
 	}

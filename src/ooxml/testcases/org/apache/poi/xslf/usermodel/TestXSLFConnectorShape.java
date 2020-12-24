@@ -16,8 +16,8 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.apache.poi.xslf.usermodel.TestXSLFSimpleShape.getSpPr;
 
 import java.awt.Color;
@@ -27,7 +27,7 @@ import java.io.IOException;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationShape;
 import org.apache.poi.sl.usermodel.LineDecoration.DecorationSize;
 import org.apache.poi.sl.usermodel.ShapeType;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTConnection;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTNonVisualConnectorProperties;
 import org.openxmlformats.schemas.drawingml.x2006.main.STLineEndLength;
@@ -152,7 +152,7 @@ public class TestXSLFConnectorShape {
         end.setId(rect2.getShapeId());
         // side of the rectangle to attach the connector: left=1, bottom=2,right=3, top=4
         end.setIdx(3);
-        
+
         pptx.close();
     }
 

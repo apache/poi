@@ -17,15 +17,15 @@ limitations under the License.
 
 package org.apache.poi.hssf.record.cf;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.Arrays;
 
 import org.apache.poi.ss.util.CellRangeAddress;
 import org.apache.poi.ss.util.CellRangeUtil;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 /**
  * Tests CellRange operations.
@@ -78,7 +78,7 @@ public final class TestCellRange {
 			for(int j=0; j!=ranges.length;j++)
 			{
 				boolean expectedResult = containsExpectedResults[i][j];
-				assertEquals("("+i+","+j+"): ", expectedResult, CellRangeUtil.contains(ranges[i], ranges[j]));
+				assertEquals(expectedResult, CellRangeUtil.contains(ranges[i], ranges[j]), "("+i+","+j+"): ");
 			}
 		}
 	}
@@ -169,8 +169,8 @@ public final class TestCellRange {
 	public void testCreate() {
 		CellRangeAddress cr = createCR(0, -1, 2, 255); // $C:$IV
 
-		assertFalse("isFullRowRange", cr.isFullRowRange());
-		assertTrue("isFullColumnRange", cr.isFullColumnRange());
+		assertFalse(cr.isFullRowRange(), "isFullRowRange");
+		assertTrue(cr.isFullColumnRange(), "isFullColumnRange");
 
 		createCR(0, 7, 1, 1); // $B$1:$B$8
 
@@ -249,11 +249,11 @@ public final class TestCellRange {
 //    }
 
     private void verifyExpectedResult(CellRangeAddress[] result, String... expectedOutput) {
-        assertEquals("\nExpected: " + Arrays.toString(expectedOutput) + "\nHad: " + Arrays.toString(result),
-                expectedOutput.length, result.length);
+        assertEquals(expectedOutput.length, result.length,
+			"\nExpected: " + Arrays.toString(expectedOutput) + "\nHad: " + Arrays.toString(result));
         for(int i = 0;i < expectedOutput.length;i++) {
-            assertEquals("\nExpected: " + Arrays.toString(expectedOutput) + "\nHad: " + Arrays.toString(result),
-                    expectedOutput[i], result[i].formatAsString());
+            assertEquals(expectedOutput[i], result[i].formatAsString(),
+				"\nExpected: " + Arrays.toString(expectedOutput) + "\nHad: " + Arrays.toString(result));
         }
     }
 
