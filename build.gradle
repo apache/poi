@@ -277,8 +277,12 @@ project('ooxml') {
 
     // we need to ensure that the custom ant tasks are compiled before we import the build.xml file
     ant.mkdir(dir: "../../build/poi-ant-contrib")
-    ant.javac(srcdir: "../../src/excelant/poi-ant-contrib", destdir: "../../build/poi-ant-contrib",
-        classpath: configurations.antdep.asPath)
+    ant.javac(srcdir: "../../src/excelant/poi-ant-contrib"
+            , destdir: "../../build/poi-ant-contrib"
+            , classpath: configurations.antdep.asPath
+            , includeantruntime: "true"
+            , excludes: "Junit5Progress.java"
+    )
 
     // for now import the ant-task for building the jars from build.xml
     // we need to rename the tasks as e.g. task "jar" conflicts with :ooxml:jar
