@@ -40,17 +40,20 @@ if (project.hasProperty('enableSonar')) {
 // https://docs.gradle.org/current/userguide/ant.html
 
 configurations {
-    antLibs
+    antLibs {
+        attributes {
+            attribute(Bundling.BUNDLING_ATTRIBUTE, objects.named(Bundling, Bundling.EXTERNAL))
+        }
+    }
 }
 
 dependencies {
-    antLibs("junit:junit:4.13.1")
-    antLibs("org.apache.ant:ant-junit:1.10.9")
-    antLibs("org.apache.ant:ant-junit4:1.10.9")
+    antLibs("org.junit.jupiter:junit-jupiter:5.7.0")
+    antLibs("org.apache.ant:ant-junitlauncher:1.10.9")
 }
 
 ant.taskdef(name: "junit",
-        classname: "org.apache.tools.ant.taskdefs.optional.junit.JUnitTask",
+        classname: "org.apache.tools.ant.taskdefs.optional.junitlauncher.confined.JUnitLauncherTask",
         classpath: configurations.antLibs.asPath)
 
 wrapper {
@@ -112,7 +115,7 @@ subprojects {
         commonsCompressVersion = '1.20'
         commonsMathVersion = '3.6.1'
         japicmpversion = '4.1.2'
-        junitVersion = '4.13.1'
+        junitVersion = '5.7.0'
         mockitoVersion = '3.6.0'
         slf4jVersion = '1.7.30'
         xmlbeansVersion = '4.0.0'
@@ -123,6 +126,7 @@ subprojects {
     }
 
     sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
     repositories {
         mavenCentral()
@@ -225,10 +229,12 @@ project('main') {
         compile 'javax.activation:activation:1.1.1'
         compile 'com.zaxxer:SparseBitSet:1.2'
 
-        testCompile "junit:junit:${junitVersion}"
+        testCompile "org.junit.jupiter:junit-jupiter:${junitVersion}"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
         testCompile 'org.reflections:reflections:0.9.12'
         testRuntime "org.slf4j:slf4j-simple:${slf4jVersion}"
+
+        testCompile 'org.hamcrest:hamcrest:2.2'
     }
 
     jar {
@@ -301,13 +307,13 @@ project('ooxml') {
         compile 'de.rototor.pdfbox:graphics2d:0.30'
 
         // for ooxml-lite, should we move this somewhere else?
-        compile "junit:junit:${junitVersion}"
+        compile "org.junit.jupiter:junit-jupiter:${junitVersion}"
 
         compile project(':main')
         compile project(':scratchpad')		// TODO: get rid of this dependency!
         compile files("../../build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version}.jar")
 
-        testCompile "junit:junit:${junitVersion}"
+        testCompile "org.junit.jupiter:junit-jupiter:${junitVersion}"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
         testCompile 'org.xmlunit:xmlunit-core:2.8.0'
         testCompile 'org.reflections:reflections:0.9.12'
@@ -361,7 +367,7 @@ project('excelant') {
         compile project(':ooxml')
 
         testCompile project(path: ':main', configuration: 'tests')
-        testCompile "junit:junit:${junitVersion}"
+        testCompile "org.junit.jupiter:junit-jupiter:${junitVersion}"
     }
 
     jar {
@@ -384,7 +390,7 @@ project('integrationtest') {
         compile project(':scratchpad')
         compile project(':examples')
 
-        testCompile "junit:junit:${junitVersion}"
+        testCompile "org.junit.jupiter:junit-jupiter:${junitVersion}"
 
         testCompile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
 
@@ -426,7 +432,7 @@ project('scratchpad') {
 
         // cyclic-dependency here: compile project(':ooxml')
 
-        testCompile "junit:junit:${junitVersion}"
+        testCompile "org.junit.jupiter:junit-jupiter:${junitVersion}"
         testCompile "org.mockito:mockito-core:${mockitoVersion}"
         testCompile project(path: ':main', configuration: 'tests')
     }
