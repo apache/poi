@@ -305,9 +305,9 @@ under the License.
     <dependency prefix="svg.xml-apis-ext" artifact="xml-apis:xml-apis-ext:1.3.04" usage="ooxml-provided"/>
     <dependency prefix="svg.xmlgraphics-commons" artifact="org.apache.xmlgraphics:xmlgraphics-commons:2.4" usage="ooxml-provided"/>
     <dependency prefix="svg.batik-all" artifact="org.apache.xmlgraphics:batik-all:1.13" usage="ooxml-provided"/>
-    <dependency prefix="pdf.pdfbox" artifact="org.apache.pdfbox:pdfbox:2.0.21" usage="ooxml-provided"/>
-    <dependency prefix="pdf.fontbox" artifact="org.apache.pdfbox:fontbox:2.0.21" usage="ooxml-provided"/>
-    <dependency prefix="pdf.graphics2d" artifact="de.rototor.pdfbox:graphics2d:0.29" usage="ooxml-provided"/>
+    <dependency prefix="pdf.pdfbox" artifact="org.apache.pdfbox:pdfbox:2.0.22" usage="ooxml-provided"/>
+    <dependency prefix="pdf.fontbox" artifact="org.apache.pdfbox:fontbox:2.0.22" usage="ooxml-provided"/>
+    <dependency prefix="pdf.graphics2d" artifact="de.rototor.pdfbox:graphics2d:0.30" usage="ooxml-provided"/>
 
     <!-- jars in the ooxml-lib directory, see the fetch-ooxml-jars target-->
     <dependency prefix="ooxml.curvesapi" artifact="com.github.virtuald:curvesapi:1.06" usage="ooxml"/>
