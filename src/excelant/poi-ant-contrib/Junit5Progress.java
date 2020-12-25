@@ -36,7 +36,7 @@ import org.junit.platform.launcher.TestPlan;
  **/
 public class Junit5Progress implements TestExecutionListener {
 
-    private StringWriter inMemoryWriter = new StringWriter();
+    private final StringWriter inMemoryWriter = new StringWriter();
 
     private int numSkippedInCurrentClass;
     private int numAbortedInCurrentClass;
@@ -97,10 +97,14 @@ public class Junit5Progress implements TestExecutionListener {
     }
 
     /*
-     * Append to file on disk since listener can't write to System.out (becuase legacy listeners enabled)
+     * Append to file on disk since listener can't write to System.out (because legacy listeners enabled)
+     *
+     * Implementing/using the TestResultFormatter - mentioned in the junitlauncher ant manual -
+     * doesn't work currently, because the output is truncated/overwritten with every test
      */
     private void flushToDisk() {
-        try (FileWriter writer = new FileWriter("build/status-as-tests-run.txt", true)) {
+        String outFile = System.getProperty("junit5.progress.file", "build/status-as-tests-run.txt");
+        try (FileWriter writer = new FileWriter(outFile, true)) {
             writer.write(inMemoryWriter.toString());
         } catch (IOException e) {
             throw new UncheckedIOException(e);
