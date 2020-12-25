@@ -235,15 +235,16 @@ public class XWPFTable implements IBodyElement, ISDTContents {
     }
 
     /**
-     * add a new column for each row in this table
+     * Add a new cell at the end of each row in this table, creating a new column.
+     * If rows have different numbers of columns, will still append a cell to each row.
+     * Currently does not match the width of existing columns.
      */
     public void addNewCol() {
-        if (ctTbl.sizeOfTrArray() == 0) {
+        if (tableRows.size() == 0) {
             createRow();
         }
-        for (int i = 0; i < ctTbl.sizeOfTrArray(); i++) {
-            XWPFTableRow tabRow = new XWPFTableRow(ctTbl.getTrArray(i), this);
-            tabRow.createCell();
+        for (int i = 0; i < tableRows.size(); i++) {
+            tableRows.get(i).createCell();
         }
     }
 
