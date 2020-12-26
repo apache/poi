@@ -72,8 +72,8 @@ public final class TestSorters {
             new RecipientChunks("__recip_version1.0_#00000000"),
       };
       Arrays.sort(chunks, new RecipientChunksSorter());
-      assertEquals(0, chunks[0].recipientNumber);
-      assertEquals(1, chunks[1].recipientNumber);
+      assertEquals(0, chunks[0].getRecipientNumber());
+      assertEquals(1, chunks[1].getRecipientNumber());
 
       // Lots, with gaps
       chunks = new RecipientChunks[] {
@@ -87,13 +87,13 @@ public final class TestSorters {
             new RecipientChunks("__recip_version1.0_#00000000"),
       };
       Arrays.sort(chunks, new RecipientChunksSorter());
-      assertEquals(0, chunks[0].recipientNumber);
-      assertEquals(1, chunks[1].recipientNumber);
-      assertEquals(5, chunks[2].recipientNumber);
-      assertEquals(9, chunks[3].recipientNumber);
-      assertEquals(0xFF, chunks[4].recipientNumber);
-      assertEquals(0x205, chunks[5].recipientNumber);
-      assertEquals(0x404, chunks[6].recipientNumber);
-      assertEquals(0x20001, chunks[7].recipientNumber);
+      assertEquals(0, chunks[0].getRecipientNumber());
+      assertEquals(1, chunks[1].getRecipientNumber());
+      assertEquals(5, chunks[2].getRecipientNumber());
+      assertEquals(9, chunks[3].getRecipientNumber());
+      assertEquals(0xFF, chunks[4].getRecipientNumber());
+      assertEquals(0x205, chunks[5].getRecipientNumber());
+      assertEquals(0x404, chunks[6].getRecipientNumber());
+      assertEquals(0x20001, chunks[7].getRecipientNumber());
    }
 }

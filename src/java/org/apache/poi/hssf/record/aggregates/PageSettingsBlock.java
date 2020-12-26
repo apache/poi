@@ -121,7 +121,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 
     /**
      * @param sid the record sid
-     * 
+     *
      * @return <code>true</code> if the specified Record sid is one belonging to the
      * 'Page Settings Block'.
      */
@@ -486,7 +486,7 @@ public final class PageSettingsBlock extends RecordAggregate {
         while(iterator.hasNext())
         {
             PageBreakRecord.Break breakItem = iterator.next();
-            int breakLocation = breakItem.main;
+            int breakLocation = breakItem.getMain();
             boolean inStart = (breakLocation >= start);
             boolean inEnd = (breakLocation <= stop);
             if(inStart && inEnd) {
@@ -497,8 +497,8 @@ public final class PageSettingsBlock extends RecordAggregate {
         iterator = shiftedBreak.iterator();
         while (iterator.hasNext()) {
             PageBreakRecord.Break breakItem = iterator.next();
-            breaks.removeBreak(breakItem.main);
-            breaks.addBreak((short)(breakItem.main+count), breakItem.subFrom, breakItem.subTo);
+            breaks.removeBreak(breakItem.getMain());
+            breaks.addBreak((short)(breakItem.getMain()+count), breakItem.getSubFrom(), breakItem.getSubTo());
         }
     }
 
@@ -526,9 +526,9 @@ public final class PageSettingsBlock extends RecordAggregate {
 
     /**
      * Queries if the specified row has a page break
-     * 
+     *
      * @param row the row to check for
-     * 
+     *
      * @return true if the specified row has a page break
      */
     public boolean isRowBroken(int row) {
@@ -538,7 +538,7 @@ public final class PageSettingsBlock extends RecordAggregate {
 
     /**
      * Queries if the specified column has a page break
-     * 
+     *
      * @param column the column to check for
      *
      * @return <code>true</code> if the specified column has a page break
@@ -606,7 +606,7 @@ public final class PageSettingsBlock extends RecordAggregate {
     /**
      * HEADERFOOTER is new in 2007.  Some apps seem to have scattered this record long after
      * the {@link PageSettingsBlock} where it belongs.
-     * 
+     *
      * @param rec the HeaderFooterRecord to set
      */
     public void addLateHeaderFooter(HeaderFooterRecord rec) {
@@ -623,10 +623,10 @@ public final class PageSettingsBlock extends RecordAggregate {
      * This method reads PageSettingsBlock records from the supplied RecordStream until the first
      * non-PageSettingsBlock record is encountered.  As each record is read, it is incorporated
      * into this PageSettingsBlock.<p>
-     * 
+     *
      * The latest Excel version seems to write the PageSettingsBlock uninterrupted. However there
      * are several examples (that Excel reads OK) where these records are not written together:
-     * 
+     *
      * <ul>
      * <li><b>HEADER_FOOTER(0x089C) after WINDOW2</b> - This record is new in 2007.  Some apps
      * seem to have scattered this record long after the PageSettingsBlock where it belongs
@@ -635,7 +635,7 @@ public final class PageSettingsBlock extends RecordAggregate {
      * This happens in the test sample file "NoGutsRecords.xls" and "WORKBOOK_in_capitals.xls"</li>
      * <li><b>Margins after DIMENSION</b> - All of PSB should be before DIMENSION. (Bug-47199)</li>
      * </ul>
-     * 
+     *
      * These were probably written by other applications (or earlier versions of Excel). It was
      * decided to not write specific code for detecting each of these cases.  POI now tolerates
      * PageSettingsBlock records scattered all over the sheet record stream, and in any order, but
@@ -646,7 +646,7 @@ public final class PageSettingsBlock extends RecordAggregate {
      * were when they were originally read.
      *
      * @param rs the RecordStream to read from
-     * 
+     *
      * @throws  org.apache.poi.util.RecordFormatException if any PSB record encountered has the same type (sid) as
      * a record that is already part of this PageSettingsBlock
      */

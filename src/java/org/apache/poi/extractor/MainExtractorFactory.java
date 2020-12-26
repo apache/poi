@@ -41,6 +41,7 @@ public class MainExtractorFactory implements ExtractorProvider {
         return FileMagic.OLE2 == fm;
     }
 
+    @SuppressWarnings({"java:S2095"})
     @Override
     public POITextExtractor create(File file, String password) throws IOException {
         return create(new POIFSFileSystem(file, true).getRoot(), password);

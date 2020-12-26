@@ -129,6 +129,7 @@ public class HwmfPenStyle implements Duplicatable, GenericRecord {
 
         public final int wmfFlag;
         public final float[] dashes;
+
         HwmfLineDash(int wmfFlag, float... dashes) {
             this.wmfFlag = wmfFlag;
             this.dashes = dashes;

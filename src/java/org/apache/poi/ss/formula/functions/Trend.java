@@ -60,11 +60,10 @@ import org.apache.poi.ss.formula.eval.ValueEval;
  */
 
 public final class Trend implements Function {
-    MatrixFunction.MutableValueCollector collector = new MatrixFunction.MutableValueCollector(false, false);
     private static final class TrendResults {
-        public double[] vals;
-        public int resultWidth;
-        public int resultHeight;
+        private final double[] vals;
+        private final int resultWidth;
+        private final int resultHeight;
 
         public TrendResults(double[] vals, int resultWidth, int resultHeight) {
             this.vals = vals;
@@ -149,7 +148,7 @@ public final class Trend implements Function {
         }
         double[] oneD = new double[twoD.length * twoD[0].length];
         for (int i = 0; i < twoD.length; i++) {
-            System.arraycopy(twoD[i], 0, oneD, i * twoD[0].length + 0, twoD[0].length);
+            System.arraycopy(twoD[i], 0, oneD, i * twoD[0].length, twoD[0].length);
         }
         return oneD;
     }
@@ -335,7 +334,7 @@ public final class Trend implements Function {
         if(isAllColumnsSame(x)){
             double[] result = new double[newX.length];
             double avg = Arrays.stream(y).average().orElse(0);
-            for(int i = 0; i < result.length; i++) result[i] = avg;
+            Arrays.fill(result, avg);
             return new TrendResults(result, resultWidth, resultHeight);
         }
 

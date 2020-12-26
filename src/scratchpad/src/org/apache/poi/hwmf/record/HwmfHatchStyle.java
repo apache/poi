@@ -47,12 +47,20 @@ public enum HwmfHatchStyle {
     HS_DITHEREDBKCLR(0x000B, 0xAA55AA55AA55AA55L)
     ;
 
-    int flag;
-    public long pattern;
+    private final int flag;
+    private final long pattern;
 
     HwmfHatchStyle(int flag, long pattern) {
         this.flag = flag;
         this.pattern = pattern;
+    }
+
+    public int getFlag() {
+        return flag;
+    }
+
+    public long getPattern() {
+        return pattern;
     }
 
     public static HwmfHatchStyle valueOf(int flag) {

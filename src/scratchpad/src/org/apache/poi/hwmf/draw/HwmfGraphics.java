@@ -256,7 +256,7 @@ public class HwmfGraphics implements HwmfCharsetAware {
     protected Paint getHatchedFill() {
         HwmfDrawProperties prop = getProperties();
         BufferedImage pattern = getPatternFromLong(
-            prop.getBrushHatch().pattern,
+            prop.getBrushHatch().getPattern(),
             prop.getBackgroundColor().getColor(),
             prop.getBrushColor().getColor(),
             prop.getBkMode() == HwmfBkMode.TRANSPARENT

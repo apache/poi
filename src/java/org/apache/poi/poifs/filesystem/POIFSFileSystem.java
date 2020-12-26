@@ -204,6 +204,7 @@ public class POIFSFileSystem extends BlockStore
         this(channel, null, readOnly, false);
     }
 
+    @SuppressWarnings("java:S2095")
     private POIFSFileSystem(FileChannel channel, File srcFile, boolean readOnly, boolean closeChannelOnError)
             throws IOException {
         this(false);

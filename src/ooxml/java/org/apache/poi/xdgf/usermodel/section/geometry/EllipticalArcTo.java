@@ -126,8 +126,6 @@ public class EllipticalArcTo implements GeometryRow {
         _master = (EllipticalArcTo) row;
     }
 
-    public static int draw;
-
     @Override
     public void addToPath(java.awt.geom.Path2D.Double path, XDGFShape parent) {
 

@@ -50,8 +50,8 @@ enum XDGFSectionTypes {
     ANNOTATION("Annotation", GenericSection::new),
     ACTION_TAG("ActionTag", GenericSection::new);
 
-    public String sectionType;
-    public BiFunction<SectionType, XDGFSheet, ? extends XDGFSection> constructor;
+    private final String sectionType;
+    private final BiFunction<SectionType, XDGFSheet, ? extends XDGFSection> constructor;
 
     XDGFSectionTypes(String sectionType, BiFunction<SectionType, XDGFSheet, ? extends XDGFSection> constructor) {
         this.sectionType = sectionType;

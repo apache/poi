@@ -29,7 +29,7 @@ import org.apache.poi.util.POILogger;
 
 /**
  * Collection of convenience chunks for the Recip(ient) part of an outlook file.
- * 
+ *
  * If a message has multiple recipients, there will be several of these.
  */
 public final class RecipientChunks implements ChunkGroupWithProperties {
@@ -45,35 +45,35 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
     public static final MAPIProperty RECIPIENT_DISPLAY_NAME = MAPIProperty.RECIPIENT_DISPLAY_NAME;
 
     /** Our 0 based position in the list of recipients */
-    public int recipientNumber;
+    private int recipientNumber;
 
     /** TODO */
-    public ByteChunk recipientSearchChunk;
+    private ByteChunk recipientSearchChunk;
     /**
      * The "name", which could be their name if an internal person, or their
      * email address if an external person
      */
-    public StringChunk recipientNameChunk;
+    private StringChunk recipientNameChunk;
     /**
      * The email address of the recipient, which could be in SMTP or SEARCH
      * format, but isn't always present...
      */
-    public StringChunk recipientEmailChunk;
+    private StringChunk recipientEmailChunk;
     /**
      * The smtp destination email address of the recipient, but isn't always
      * present...
      */
-    public StringChunk recipientSMTPChunk;
+    private StringChunk recipientSMTPChunk;
     /**
      * Normally EX or SMTP. Will generally affect where the email address ends
      * up.
      */
-    public StringChunk deliveryTypeChunk;
+    private StringChunk deliveryTypeChunk;
     /**
      * The display name of the recipient. Normally seems to hold the same value
      * as in recipientNameChunk
      */
-    public StringChunk recipientDisplayNameChunk;
+    private StringChunk recipientDisplayNameChunk;
     /**
      * Holds the fixed sized properties, and the pointers to the data of
      * variable sized ones
@@ -91,6 +91,34 @@ public final class RecipientChunks implements ChunkGroupWithProperties {
                 LOG.log(POILogger.ERROR, "Invalid recipient number in name ", name);
             }
         }
+    }
+
+    public int getRecipientNumber() {
+        return recipientNumber;
+    }
+
+    public ByteChunk getRecipientSearchChunk() {
+        return recipientSearchChunk;
+    }
+
+    public StringChunk getRecipientNameChunk() {
+        return recipientNameChunk;
+    }
+
+    public StringChunk getRecipientEmailChunk() {
+        return recipientEmailChunk;
+    }
+
+    public StringChunk getRecipientSMTPChunk() {
+        return recipientSMTPChunk;
+    }
+
+    public StringChunk getDeliveryTypeChunk() {
+        return deliveryTypeChunk;
+    }
+
+    public StringChunk getRecipientDisplayNameChunk() {
+        return recipientDisplayNameChunk;
     }
 
     /**

@@ -39,9 +39,13 @@ public final class NameIdChunks implements ChunkGroup {
         PS_PUBLIC_STRINGS("00020329-0000-0000-C000-000000000046"),
         PS_INTERNET_HEADERS("00020386-0000-0000-C000-000000000046");
 
-        public ClassID classID;
+        private final ClassID classID;
         PropertySetType(String uuid) {
             classID = new ClassID(uuid);
+        }
+
+        public ClassID getClassID() {
+            return classID;
         }
     }
 
@@ -61,9 +65,13 @@ public final class NameIdChunks implements ChunkGroup {
         PSETID_XML_EXTRACTED_ENTITIES("23239608-685D-4732-9C55-4C95CB4E8E33"),
         PSETID_ATTACHMENT("96357F7F-59E1-47D0-99A7-46515C183B54");
 
-        public ClassID classID;
+        private final ClassID classID;
         PredefinedPropertySet(String uuid) {
             classID = new ClassID(uuid);
+        }
+
+        public ClassID getClassID() {
+            return classID;
         }
     }
 

@@ -32,7 +32,7 @@ import org.apache.poi.util.LittleEndianOutput;
 public final class PrecisionRecord extends StandardRecord {
     public static final short sid = 0xE;
 
-    public short field_1_precision;
+    private short field_1_precision;
 
     public PrecisionRecord() {}
 

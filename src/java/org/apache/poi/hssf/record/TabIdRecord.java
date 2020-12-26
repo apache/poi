@@ -30,7 +30,7 @@ public final class TabIdRecord extends StandardRecord {
     public static final short sid = 0x013D;
     private static final short[] EMPTY_SHORT_ARRAY = { };
 
-    public short[] _tabids;
+    private short[] _tabids;
 
     public TabIdRecord() {
         _tabids = EMPTY_SHORT_ARRAY;
@@ -61,6 +61,14 @@ public final class TabIdRecord extends StandardRecord {
         for (short tabid : _tabids) {
             out.writeShort(tabid);
         }
+    }
+
+    public int getTabIdSize() {
+        return _tabids.length;
+    }
+
+    public short getTabIdAt(int index) {
+        return _tabids[index];
     }
 
     protected int getDataSize() {

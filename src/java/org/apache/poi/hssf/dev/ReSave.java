@@ -37,7 +37,6 @@ public class ReSave {
     public static void main(String[] args) throws Exception {
         boolean initDrawing = false;
         boolean saveToMemory = false;
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
         for(String filename : args) {
             if(filename.equals("-dg")) {
                 initDrawing = true;
@@ -45,11 +44,10 @@ public class ReSave {
                 saveToMemory = true;
             } else {
                 System.out.print("reading " + filename + "...");
-                FileInputStream is = new FileInputStream(filename);
-                HSSFWorkbook wb = new HSSFWorkbook(is);
-                try {
+                try (FileInputStream is = new FileInputStream(filename);
+                     HSSFWorkbook wb = new HSSFWorkbook(is)) {
                     System.out.println("done");
-    
+
                     for(int i = 0; i < wb.getNumberOfSheets(); i++){
                         HSSFSheet sheet = wb.getSheetAt(i);
                         if(initDrawing) {
@@ -57,25 +55,15 @@ public class ReSave {
                         }
                     }
 
-                    OutputStream os;
-                    if (saveToMemory) {
-                        bos.reset();
-                        os = bos;
-                    } else {
-                        String outputFile = filename.replace(".xls", "-saved.xls");
+                    String outputFile = filename.replace(".xls", "-saved.xls");
+                    if (!saveToMemory) {
                         System.out.print("saving to " + outputFile + "...");
-                        os = new FileOutputStream(outputFile);
                     }
-                    
-                    try {
+
+                    try (OutputStream os = saveToMemory ? new ByteArrayOutputStream() : new FileOutputStream(outputFile)) {
                         wb.write(os);
-                    } finally {
-                        os.close();
                     }
                     System.out.println("done");
-                } finally {
-                    wb.close();
-                    is.close();
                 }
             }
         }

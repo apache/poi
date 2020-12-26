@@ -305,6 +305,6 @@ public final class WorkbookFactory {
     }
 
     public static void removeProvider(Class<? extends WorkbookProvider> provider){
-        Singleton.INSTANCE.provider.removeIf(p -> p.getClass().getName().equals(provider.getName()));
+        Singleton.INSTANCE.provider.removeIf(p -> p.getClass().isAssignableFrom(provider));
     }
 }

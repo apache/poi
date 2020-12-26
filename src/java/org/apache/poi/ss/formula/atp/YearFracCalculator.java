@@ -324,7 +324,7 @@ final class YearFracCalculator {
 		/** day of month */
 		public final int day;
 		/** milliseconds since 1970 */
-		public long tsMilliseconds;
+		public final long tsMilliseconds;
 
 		public SimpleDate(Calendar cal) {
 			year = cal.get(Calendar.YEAR);

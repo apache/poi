@@ -19,28 +19,12 @@ package org.apache.poi.ooxml.util;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
-/**
- * <p>
- * 24.08.2009<br>
- * </p>
- * 
- * @author Stefan Stern<br>
- */
-
 public class IdentifierManager {
 
     public static final long MAX_ID = Long.MAX_VALUE - 1;
-
     public static final long MIN_ID = 0L;
 
-    /**
-	 * 
-	 */
     private final long upperbound;
-
-    /**
-	 * 
-	 */
     private final long lowerbound;
 
     /**
@@ -56,7 +40,7 @@ public class IdentifierManager {
         if (lowerbound > upperbound) {
             throw new IllegalArgumentException("lowerbound must not be greater than upperbound, had " + lowerbound + " and " + upperbound);
         }
-        else if (lowerbound < MIN_ID) { 
+        else if (lowerbound < MIN_ID) {
             String message = "lowerbound must be greater than or equal to " + Long.toString(MIN_ID);
             throw new IllegalArgumentException(message);
         }
@@ -78,7 +62,7 @@ public class IdentifierManager {
             throw new IllegalArgumentException("Value for parameter 'id' was out of bounds, had " + id + ", but should be within [" + lowerbound + ":" + upperbound + "]");
         }
         verifyIdentifiersLeft();
-        
+
         if (id == upperbound) {
             Segment lastSegment = segments.getLast();
             if (lastSegment.end == upperbound) {
@@ -136,7 +120,7 @@ public class IdentifierManager {
     }
 
     /**
-     * @return a new identifier. 
+     * @return a new identifier.
      * @throws IllegalStateException if no more identifiers are available, then an Exception is raised.
      */
     public long reserveNew() {
@@ -236,7 +220,7 @@ public class IdentifierManager {
     }
 
     /**
-	 * 
+	 *
 	 */
     private void verifyIdentifiersLeft() {
         if (segments.isEmpty()) {
@@ -245,20 +229,14 @@ public class IdentifierManager {
     }
 
     private static class Segment {
+        private long start;
+        private long end;
 
         public Segment(long start, long end) {
             this.start = start;
             this.end = end;
         }
 
-        public long start;
-        public long end;
-
-        /*
-         * (non-Javadoc)
-         * 
-         * @see java.lang.Object#toString()
-         */
         public String toString() {
             return "[" + start + "; " + end + "]";
         }

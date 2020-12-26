@@ -370,7 +370,7 @@ public enum HwmfTernaryRasterOp {
 
     private static final String OPS = "nxoa";
 
-    public int opValue;
+    private final int opValue;
 
     HwmfTernaryRasterOp(int opValue) {
         this.opValue=opValue;

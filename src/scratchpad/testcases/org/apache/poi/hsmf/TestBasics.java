@@ -214,18 +214,18 @@ public final class TestBasics {
    @Test
    public void testEncoding() throws Exception {
       assertEquals(2, cyrillic.getRecipientDetailsChunks().length);
-      assertEquals("CP1252", cyrillic.getRecipientDetailsChunks()[0].recipientDisplayNameChunk.get7BitEncoding());
-      assertEquals("CP1252", cyrillic.getRecipientDetailsChunks()[1].recipientDisplayNameChunk.get7BitEncoding());
+      assertEquals("CP1252", cyrillic.getRecipientDetailsChunks()[0].getRecipientDisplayNameChunk().get7BitEncoding());
+      assertEquals("CP1252", cyrillic.getRecipientDetailsChunks()[1].getRecipientDisplayNameChunk().get7BitEncoding());
 
       cyrillic.guess7BitEncoding();
 
-      assertEquals("Cp1251", cyrillic.getRecipientDetailsChunks()[0].recipientDisplayNameChunk.get7BitEncoding());
-      assertEquals("Cp1251", cyrillic.getRecipientDetailsChunks()[1].recipientDisplayNameChunk.get7BitEncoding());
+      assertEquals("Cp1251", cyrillic.getRecipientDetailsChunks()[0].getRecipientDisplayNameChunk().get7BitEncoding());
+      assertEquals("Cp1251", cyrillic.getRecipientDetailsChunks()[1].getRecipientDisplayNameChunk().get7BitEncoding());
 
       // Override it, check it's taken
       cyrillic.set7BitEncoding("UTF-8");
-      assertEquals("UTF-8", cyrillic.getRecipientDetailsChunks()[0].recipientDisplayNameChunk.get7BitEncoding());
-      assertEquals("UTF-8", cyrillic.getRecipientDetailsChunks()[1].recipientDisplayNameChunk.get7BitEncoding());
+      assertEquals("UTF-8", cyrillic.getRecipientDetailsChunks()[0].getRecipientDisplayNameChunk().get7BitEncoding());
+      assertEquals("UTF-8", cyrillic.getRecipientDetailsChunks()[1].getRecipientDisplayNameChunk().get7BitEncoding());
 
 
       // Check with a file that has no headers
@@ -235,10 +235,10 @@ public final class TestBasics {
       assertTrue(html.contains("text/html; charset=big5"), "Charset not found:\n" + html);
 
       // Defaults to CP1251
-      assertEquals("CP1252", chinese.getRecipientDetailsChunks()[0].recipientDisplayNameChunk.get7BitEncoding());
+      assertEquals("CP1252", chinese.getRecipientDetailsChunks()[0].getRecipientDisplayNameChunk().get7BitEncoding());
 
       // But after guessing goes to the correct one, cp950 (Windows Traditional Chinese)
       chinese.guess7BitEncoding();
-      assertEquals("cp950", chinese.getRecipientDetailsChunks()[0].recipientDisplayNameChunk.get7BitEncoding());
+      assertEquals("cp950", chinese.getRecipientDetailsChunks()[0].getRecipientDisplayNameChunk().get7BitEncoding());
    }
 }

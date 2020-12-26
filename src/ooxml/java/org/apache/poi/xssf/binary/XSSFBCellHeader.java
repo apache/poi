@@ -30,7 +30,7 @@ import org.apache.poi.util.LittleEndianConsts;
  */
 @Internal
 class XSSFBCellHeader {
-    public static int length = 8;
+    public static final int length = 8;
 
     /**
      *

@@ -90,11 +90,11 @@ public final class TestPOIFSChunkParser {
       assertTrue(groups[2] instanceof NameIdChunks);
 
       RecipientChunks recips = (RecipientChunks)groups[1];
-      assertEquals("kevin.roast@alfresco.org", recips.recipientSMTPChunk.getValue());
+      assertEquals("kevin.roast@alfresco.org", recips.getRecipientSMTPChunk().getValue());
       assertEquals("/O=HOSTEDSERVICE2/OU=FIRST ADMINISTRATIVE GROUP/CN=RECIPIENTS/CN=Kevin.roast@ben",
-            recips.recipientEmailChunk.getValue());
+            recips.getRecipientEmailChunk().getValue());
 
-      String search = new String(recips.recipientSearchChunk.getValue(), StandardCharsets.US_ASCII);
+      String search = new String(recips.getRecipientSearchChunk().getValue(), StandardCharsets.US_ASCII);
       assertEquals("CN=KEVIN.ROAST@BEN\0", search.substring(search.length()-19));
 
       // Now via MAPIMessage
@@ -102,17 +102,17 @@ public final class TestPOIFSChunkParser {
       assertNotNull(msg.getRecipientDetailsChunks());
       assertEquals(1, msg.getRecipientDetailsChunks().length);
 
-      assertEquals("kevin.roast@alfresco.org", msg.getRecipientDetailsChunks()[0].recipientSMTPChunk.getValue());
+      assertEquals("kevin.roast@alfresco.org", msg.getRecipientDetailsChunks()[0].getRecipientSMTPChunk().getValue());
       assertEquals("kevin.roast@alfresco.org", msg.getRecipientDetailsChunks()[0].getRecipientEmailAddress());
       assertEquals("Kevin Roast", msg.getRecipientDetailsChunks()[0].getRecipientName());
       assertEquals("kevin.roast@alfresco.org", msg.getRecipientEmailAddress());
 
 
       // Try both SMTP and EX files for recipient
-      assertEquals("EX", msg.getRecipientDetailsChunks()[0].deliveryTypeChunk.getValue());
-      assertEquals("kevin.roast@alfresco.org", msg.getRecipientDetailsChunks()[0].recipientSMTPChunk.getValue());
+      assertEquals("EX", msg.getRecipientDetailsChunks()[0].getDeliveryTypeChunk().getValue());
+      assertEquals("kevin.roast@alfresco.org", msg.getRecipientDetailsChunks()[0].getRecipientSMTPChunk().getValue());
       assertEquals("/O=HOSTEDSERVICE2/OU=FIRST ADMINISTRATIVE GROUP/CN=RECIPIENTS/CN=Kevin.roast@ben",
-            msg.getRecipientDetailsChunks()[0].recipientEmailChunk.getValue());
+            msg.getRecipientDetailsChunks()[0].getRecipientEmailChunk().getValue());
       msg.close();
       simple.close();
 
@@ -123,10 +123,10 @@ public final class TestPOIFSChunkParser {
       assertNotNull(msg.getRecipientDetailsChunks());
       assertEquals(1, msg.getRecipientDetailsChunks().length);
 
-      assertEquals("SMTP", msg.getRecipientDetailsChunks()[0].deliveryTypeChunk.getValue());
-      assertNull(msg.getRecipientDetailsChunks()[0].recipientSMTPChunk);
-      assertNull(msg.getRecipientDetailsChunks()[0].recipientNameChunk);
-      assertEquals("travis@overwrittenstack.com", msg.getRecipientDetailsChunks()[0].recipientEmailChunk.getValue());
+      assertEquals("SMTP", msg.getRecipientDetailsChunks()[0].getDeliveryTypeChunk().getValue());
+      assertNull(msg.getRecipientDetailsChunks()[0].getRecipientSMTPChunk());
+      assertNull(msg.getRecipientDetailsChunks()[0].getRecipientNameChunk());
+      assertEquals("travis@overwrittenstack.com", msg.getRecipientDetailsChunks()[0].getRecipientEmailChunk().getValue());
       assertEquals("travis@overwrittenstack.com", msg.getRecipientEmailAddress());
 
       msg.close();
@@ -166,12 +166,12 @@ public final class TestPOIFSChunkParser {
             (RecipientChunks)groups[7],
       };
       assertEquals(6, chunks.length);
-      assertEquals(0, chunks[0].recipientNumber);
-      assertEquals(2, chunks[1].recipientNumber);
-      assertEquals(4, chunks[2].recipientNumber);
-      assertEquals(5, chunks[3].recipientNumber);
-      assertEquals(3, chunks[4].recipientNumber);
-      assertEquals(1, chunks[5].recipientNumber);
+      assertEquals(0, chunks[0].getRecipientNumber());
+      assertEquals(2, chunks[1].getRecipientNumber());
+      assertEquals(4, chunks[2].getRecipientNumber());
+      assertEquals(5, chunks[3].getRecipientNumber());
+      assertEquals(3, chunks[4].getRecipientNumber());
+      assertEquals(1, chunks[5].getRecipientNumber());
 
       // Check
       assertEquals("'Ashutosh Dandavate'", chunks[0].getRecipientName());

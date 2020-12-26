@@ -18,8 +18,8 @@
 package org.apache.poi.ss.formula;
 
 public class SheetIdentifier {
-    public String _bookName;
-    public NameIdentifier _sheetIdentifier;
+    private final String _bookName;
+    private final NameIdentifier _sheetIdentifier;
 
     public SheetIdentifier(String bookName, NameIdentifier sheetIdentifier) {
         _bookName = bookName;

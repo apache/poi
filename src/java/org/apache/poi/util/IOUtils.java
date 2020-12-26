@@ -162,13 +162,13 @@ public final class IOUtils {
      * @return A byte array with the read bytes.
      * @throws IOException If reading data fails or EOF is encountered too early for the given length.
      */
-    public static byte[] toByteArray(InputStream stream, final long length, final int maxLength) throws IOException {
+    public static byte[] toByteArray(InputStream stream, final int length, final int maxLength) throws IOException {
         if (length < 0L || maxLength < 0L) {
             throw new RecordFormatException("Can't allocate an array of length < 0");
         }
-        if (length > (long)Integer.MAX_VALUE) {
-            throw new RecordFormatException("Can't allocate an array > "+Integer.MAX_VALUE);
-        }
+        // if (length > (long)Integer.MAX_VALUE) {
+        //     throw new RecordFormatException("Can't allocate an array > "+Integer.MAX_VALUE);
+        // }
         if ((length != Integer.MAX_VALUE) || (maxLength != Integer.MAX_VALUE)) {
             checkLength(length, maxLength);
         }

@@ -35,7 +35,7 @@ public class ExEmbed extends RecordContainer {
     private final byte[] _header;
 
     // Links to our more interesting children
-    public org.apache.poi.hslf.record.RecordAtom embedAtom;
+    private org.apache.poi.hslf.record.RecordAtom embedAtom;
     private ExOleObjAtom oleObjAtom;
     private CString menuName;
     private CString progId;

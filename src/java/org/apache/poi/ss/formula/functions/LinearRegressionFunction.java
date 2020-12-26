@@ -107,7 +107,7 @@ public final class LinearRegressionFunction extends Fixed2ArgFunction {
 	}
 
 	public enum FUNCTION {INTERCEPT, SLOPE}
-	public FUNCTION function;
+	private final FUNCTION function;
 
 	public LinearRegressionFunction(FUNCTION function) {
 		this.function = function;

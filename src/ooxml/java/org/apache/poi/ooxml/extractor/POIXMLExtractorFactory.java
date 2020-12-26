@@ -124,7 +124,6 @@ public final class POIXMLExtractorFactory implements ExtractorProvider {
             return ExtractorFactory.createExtractor(f, password);
         }
 
-
         OPCPackage pkg = null;
         try {
             pkg = OPCPackage.open(f.toString(), PackageAccess.READ);
@@ -136,7 +135,9 @@ public final class POIXMLExtractorFactory implements ExtractorProvider {
         } catch (InvalidFormatException ife) {
             throw new IOException(ife);
         } catch (IOException e) {
-            pkg.revert();
+            if (pkg != null) {
+                pkg.revert();
+            }
             throw e;
         }
     }

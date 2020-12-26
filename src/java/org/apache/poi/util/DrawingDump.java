@@ -15,7 +15,7 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-        
+
 package org.apache.poi.util;
 
 import java.io.File;
@@ -37,23 +37,20 @@ public final class DrawingDump {
     }
 
     public static void main( String[] args ) throws IOException {
-        OutputStreamWriter osw = new OutputStreamWriter(System.out, Charset.defaultCharset());
-        PrintWriter pw = new PrintWriter(osw);
-        POIFSFileSystem fs = new POIFSFileSystem(new File(args[0]));
-        HSSFWorkbook wb = new HSSFWorkbook(fs);
-        try {
+        try (OutputStreamWriter osw = new OutputStreamWriter(System.out, Charset.defaultCharset());
+            PrintWriter pw = new PrintWriter(osw);
+            POIFSFileSystem fs = new POIFSFileSystem(new File(args[0]));
+            HSSFWorkbook wb = new HSSFWorkbook(fs)) {
+
             pw.println( "Drawing group:" );
             wb.dumpDrawingGroupRecords(true);
-    
+
             int i = 1;
             for (Sheet sheet : wb)
             {
                 pw.println( "Sheet " + i + "(" + sheet.getSheetName() + "):" );
                 ((HSSFSheet) sheet).dumpDrawingRecords(true, pw);
             }
-        } finally {
-            wb.close();
-            fs.close();
         }
     }
 }

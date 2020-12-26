@@ -46,11 +46,11 @@ public final class Picture {
     private static final POILogger log = POILogFactory
             .getLogger( Picture.class );
 
-    public static final byte[] COMPRESSED1 = { (byte) 0xFE, 0x78, (byte) 0xDA };
+    private static final byte[] COMPRESSED1 = { (byte) 0xFE, 0x78, (byte) 0xDA };
 
-    public static final byte[] COMPRESSED2 = { (byte) 0xFE, 0x78, (byte) 0x9C };
+    private static final byte[] COMPRESSED2 = { (byte) 0xFE, 0x78, (byte) 0x9C };
 
-    public static final byte[] IHDR = new byte[] { 'I', 'H', 'D', 'R' };
+    private static final byte[] IHDR = new byte[] { 'I', 'H', 'D', 'R' };
 
     @Deprecated
     private static final byte[] PNG = new byte[] { (byte) 0x89, 0x50, 0x4E,
@@ -119,7 +119,7 @@ public final class Picture {
         } else {
             _blipRecords = Collections.emptyList();
         }
-        
+
         if ( fillBytes ) {
             fillImageContent();
         }
@@ -177,16 +177,16 @@ public final class Picture {
     {
         /*
          * http://www.codecomments.com/archive281-2004-3-158083.html
-         * 
+         *
          * Algorithm proposed by Patrick TJ McPhee:
-         * 
+         *
          * read 2 bytes make sure they are 'ffd8'x repeatedly: read 2 bytes make
          * sure the first one is 'ff'x if the second one is 'd9'x stop else if
          * the second one is c0 or c2 (or possibly other values ...) skip 2
          * bytes read one byte into depth read two bytes into height read two
          * bytes into width else read two bytes into length skip forward
          * length-2 bytes
-         * 
+         *
          * Also used Ruby code snippet from:
          * http://www.bigbold.com/snippets/posts/show/805 for reference
          */
@@ -321,7 +321,7 @@ public final class Picture {
     /**
      * Gets the initial width of the picture, in twips, prior to cropping or
      * scaling.
-     * 
+     *
      * @return the initial width of the picture in twips
      */
     public int getDxaGoal()
@@ -352,7 +352,7 @@ public final class Picture {
     /**
      * Gets the initial height of the picture, in twips, prior to cropping or
      * scaling.
-     * 
+     *
      * @return the initial width of the picture in twips
      */
     public int getDyaGoal()
@@ -384,7 +384,7 @@ public final class Picture {
 
     /**
      * Returns the MIME type for the image
-     * 
+     *
      * @return MIME-type for known types of image or "image/unknown" if unknown
      */
     public String getMimeType()
@@ -395,7 +395,7 @@ public final class Picture {
     /**
      * Returns picture's content as stored in the Word file, i.e. possibly in
      * compressed form.
-     * 
+     *
      * @return picture's content as it stored in Word file or an empty byte array
      *      if it cannot be read.
      */
@@ -416,14 +416,14 @@ public final class Picture {
             EscherBlipRecord blip = ( (EscherBSERecord) escherRecord ).getBlipRecord();
             if (blip != null) {
                 return blip.getPicturedata();
-            
+
             }
         }
         return new byte[0];
     }
 
     /**
-     * 
+     *
      * @return size in bytes of the picture
      */
     public int getSize()
@@ -460,10 +460,10 @@ public final class Picture {
         }
         return width;
     }
-    
+
     /**
      * returns the description stored in the alternative text
-     * 
+     *
      * @return pictue description
      */
     public String getDescription()
@@ -486,7 +486,7 @@ public final class Picture {
     /**
      * tries to suggest extension for picture's file by matching signatures of
      * popular image formats to first bytes of picture's contents
-     * 
+     *
      * @return suggested file extension
      */
     public String suggestFileExtension()
@@ -498,7 +498,7 @@ public final class Picture {
      * Tries to suggest a filename: hex representation of picture structure
      * offset in "Data" stream plus extension that is tried to determine from
      * first byte of picture's content.
-     * 
+     *
      * @return suggested file name
      */
     public String suggestFullFileName()
@@ -571,7 +571,7 @@ public final class Picture {
      * Writes Picture's content bytes to specified OutputStream. Is useful when
      * there is need to write picture bytes directly to stream, omitting its
      * representation in memory as distinct byte array.
-     * 
+     *
      * @param out
      *            a stream to write to
      * @throws IOException

@@ -54,15 +54,15 @@ public class AttachmentChunks implements ChunkGroup {
      * This is in WMF Format. You'll probably want to pass it to Apache Batik to
      * turn it into a SVG that you can then display.
      */
-    public ByteChunk attachRenderingWMF;
+    private ByteChunk attachRenderingWMF;
 
     /**
      * What the POIFS name of this attachment is.
      */
-    private String poifsName;
+    private final String poifsName;
 
     /** Holds all the chunks that were found. */
-    private List<Chunk> allChunks = new ArrayList<>();
+    private final List<Chunk> allChunks = new ArrayList<>();
 
     public AttachmentChunks(String poifsName) {
         this.poifsName = poifsName;

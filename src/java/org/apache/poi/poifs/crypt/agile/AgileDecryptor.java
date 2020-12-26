@@ -205,6 +205,7 @@ public class AgileDecryptor extends Decryptor {
         }
     }
 
+    @SuppressWarnings({"java:S2095"})
     @Override
     public InputStream getDataStream(DirectoryNode dir) throws IOException, GeneralSecurityException {
         DocumentInputStream dis = dir.createDocumentInputStream(DEFAULT_POIFS_ENTRY);

@@ -53,9 +53,9 @@ public abstract class PageBreakRecord extends StandardRecord {
     public static final class Break implements GenericRecord {
 
         public static final int ENCODED_SIZE = 6;
-        public int main;
-        public int subFrom;
-        public int subTo;
+        private int main;
+        private int subFrom;
+        private int subTo;
 
         public Break(Break other) {
             main = other.main;
@@ -73,6 +73,18 @@ public abstract class PageBreakRecord extends StandardRecord {
             main = in.readUShort() - 1;
             subFrom = in.readUShort();
             subTo = in.readUShort();
+        }
+
+        public int getMain() {
+            return main;
+        }
+
+        public int getSubFrom() {
+            return subFrom;
+        }
+
+        public int getSubTo() {
+            return subTo;
         }
 
         public void serialize(LittleEndianOutput out) {

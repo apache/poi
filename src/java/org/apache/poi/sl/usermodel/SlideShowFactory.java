@@ -298,7 +298,7 @@ public final class SlideShowFactory {
         Singleton.INSTANCE.provider.add(provider);
     }
 
-    public static void removeProvider(Class<? extends SlideShowProvider> provider){
-        Singleton.INSTANCE.provider.removeIf(p -> p.getClass().getName().equals(provider.getName()));
+    public static void removeProvider(Class<? extends SlideShowProvider<?,?>> provider){
+        Singleton.INSTANCE.provider.removeIf(p -> p.getClass().isAssignableFrom(provider));
     }
 }

@@ -1640,8 +1640,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
                     }
                 }
                 assertNotNull(tr);
-                assertEquals(1, tr._tabids.length);
-                assertEquals(0, tr._tabids[0]);
+                assertEquals(1, tr.getTabIdSize());
+                assertEquals(0, tr.getTabIdAt(0));
 
                 // Ensure the print setup
                 assertEquals("new_sheet!$A$1:$C$1", wb2.getPrintArea(0));

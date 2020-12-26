@@ -809,6 +809,7 @@ public class DummyGraphics2d extends Graphics2D {
         log.println( "finalize():" );
         g2D.dispose();
         dispose();
+        super.finalize();
     }
 
     public Shape getClip() {

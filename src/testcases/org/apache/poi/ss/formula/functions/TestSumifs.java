@@ -263,7 +263,7 @@ public final class TestSumifs {
         HSSFSheet example3 = wb.getSheet("Example 3");
         HSSFCell ex3cell = example3.getRow(5).getCell(2);
         fe.evaluate(ex3cell);
-        assertEquals(8,8, ex3cell.getNumericCellValue());
+        assertEquals(8.8, ex3cell.getNumericCellValue(), 0);
 
         HSSFSheet example4 = wb.getSheet("Example 4");
         HSSFCell ex4cell = example4.getRow(8).getCell(2);

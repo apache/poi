@@ -62,8 +62,8 @@ enum GeometryRowTypes {
     SPLINE_START("SplineStart", SplineStart::new)
     ;
 
-    public String rowType;
-    public Function<RowType, ? extends GeometryRow> constructor;
+    private final String rowType;
+    private final Function<RowType, ? extends GeometryRow> constructor;
 
     GeometryRowTypes(String rowType, Function<RowType, ? extends GeometryRow> constructor) {
         this.rowType = rowType;

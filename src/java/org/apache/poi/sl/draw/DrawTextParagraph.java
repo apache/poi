@@ -177,7 +177,7 @@ public class DrawTextParagraph implements Drawable {
                 penY -= line.getLayout().getAscent();
             }
 
-            penX = x + (isHSLF ? leftMargin : leftMargin);
+            penX = x + leftMargin;
             if (lastLine == null) {
                 if (!isEmptyParagraph()) {
                     // TODO: find out character style for empty, but bulleted/numbered lines

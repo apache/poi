@@ -17,6 +17,10 @@
 
 package org.apache.poi.ss.util.cellwalk;
 
+import static org.apache.commons.math3.util.ArithmeticUtils.addAndCheck;
+import static org.apache.commons.math3.util.ArithmeticUtils.mulAndCheck;
+import static org.apache.commons.math3.util.ArithmeticUtils.subAndCheck;
+
 import org.apache.commons.math3.util.ArithmeticUtils;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -26,13 +30,11 @@ import org.apache.poi.ss.util.CellRangeAddress;
 
 /**
  * Traverse cell range.
- *
- * @author Roman Kashitsyn
  */
 public class CellWalk {
 
-    private Sheet sheet;
-    private CellRangeAddress range;
+    private final Sheet sheet;
+    private final CellRangeAddress range;
     private boolean traverseEmptyCells;
 
 
@@ -74,8 +76,8 @@ public class CellWalk {
         int lastColumn = range.getLastColumn();
         final int width = lastColumn - firstColumn + 1;
         SimpleCellWalkContext ctx = new SimpleCellWalkContext();
-        Row currentRow = null;
-        Cell currentCell = null;
+        Row currentRow;
+        Cell currentCell;
 
         for (ctx.rowNumber = firstRow; ctx.rowNumber <= lastRow; ++ctx.rowNumber) {
             currentRow = sheet.getRow(ctx.rowNumber);
@@ -92,10 +94,9 @@ public class CellWalk {
                     continue;
                 }
 
-                long rowSize = ArithmeticUtils.mulAndCheck(
-                        (long)ArithmeticUtils.subAndCheck(ctx.rowNumber, firstRow), (long)width);
+                long rowSize = mulAndCheck(subAndCheck(ctx.rowNumber, firstRow), (long)width);
 
-                ctx.ordinalNumber = ArithmeticUtils.addAndCheck(rowSize, (ctx.colNumber - firstColumn + 1));
+                ctx.ordinalNumber = addAndCheck(rowSize, (ctx.colNumber - firstColumn + 1));
 
                 handler.onCell(currentCell, ctx);
             }
@@ -108,13 +109,11 @@ public class CellWalk {
 
     /**
      * Inner class to hold walk context.
-     *
-     * @author Roman Kashitsyn
      */
     private static class SimpleCellWalkContext implements CellWalkContext {
-        public long ordinalNumber;
-        public int rowNumber;
-        public int colNumber;
+        private long ordinalNumber;
+        private int rowNumber;
+        private int colNumber;
 
         @Override
         public long getOrdinalNumber() {

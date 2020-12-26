@@ -163,14 +163,22 @@ public class HwmfEscape implements HwmfRecord {
         MXDC_ESCAPE(0x101A, WmfEscapeUnknownData::new),
         /** Enables applications to include private procedures and other arbitrary data in documents. */
         SPCLPASSTHROUGH2(0x11D8, WmfEscapeUnknownData::new);
-        
-        public int flag;
-        public final Supplier<? extends HwmfEscape.HwmfEscapeData> constructor;
+
+        private final int flag;
+        private final Supplier<? extends HwmfEscape.HwmfEscapeData> constructor;
 
 
         EscapeFunction(int flag, Supplier<? extends HwmfEscape.HwmfEscapeData> constructor) {
             this.flag = flag;
             this.constructor = constructor;
+        }
+
+        public int getFlag() {
+            return flag;
+        }
+
+        public Supplier<? extends HwmfEscapeData> getConstructor() {
+            return constructor;
         }
 
         static EscapeFunction valueOf(int flag) {
@@ -180,14 +188,14 @@ public class HwmfEscape implements HwmfRecord {
             return null;
         }
     }
-    
+
     public interface HwmfEscapeData {
         public int init(LittleEndianInputStream leis, long recordSize, EscapeFunction escapeFunction) throws IOException;
     }
 
 
     /**
-     * A 16-bit unsigned integer that defines the escape function. The 
+     * A 16-bit unsigned integer that defines the escape function. The
      * value MUST be from the MetafileEscapes enumeration.
      */
     private EscapeFunction escapeFunction;
@@ -197,7 +205,7 @@ public class HwmfEscape implements HwmfRecord {
     public HwmfRecordType getWmfRecordType() {
         return HwmfRecordType.escape;
     }
-    
+
     @Override
     public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
         escapeFunction = EscapeFunction.valueOf(leis.readUShort());
@@ -221,9 +229,9 @@ public class HwmfEscape implements HwmfRecord {
 
     @Override
     public void draw(HwmfGraphics ctx) {
-        
+
     }
-    
+
     public String toString() {
         return GenericRecordJsonWriter.marshal(this);
     }
@@ -247,7 +255,7 @@ public class HwmfEscape implements HwmfRecord {
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, EscapeFunction escapeFunction) throws IOException {
             this.escapeFunction = escapeFunction;
-            escapeDataBytes = IOUtils.toByteArray(leis,recordSize,MAX_OBJECT_SIZE);
+            escapeDataBytes = IOUtils.toByteArray(leis,(int)recordSize,MAX_OBJECT_SIZE);
             return (int)recordSize;
         }
 
@@ -290,7 +298,7 @@ public class HwmfEscape implements HwmfRecord {
             if (commentIdentifier != EMF_COMMENT_IDENTIFIER) {
                 // there are some WMF implementation using this record as a MFCOMMENT or similar
                 // if the commentIdentifier doesn't match, then return immediately
-                emfData = IOUtils.toByteArray(leis, recordSize-LittleEndianConsts.INT_SIZE, MAX_OBJECT_SIZE);
+                emfData = IOUtils.toByteArray(leis, (int)(recordSize-LittleEndianConsts.INT_SIZE), MAX_OBJECT_SIZE);
                 remainingBytes = emfData.length;
                 return (int)recordSize;
             }

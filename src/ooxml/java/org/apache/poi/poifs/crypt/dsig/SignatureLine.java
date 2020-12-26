@@ -386,7 +386,7 @@ public abstract class SignatureLine {
             int mpos = measurer.getPosition();
             int limit = text.indexOf('\n', mpos);
             limit = (limit == -1) ? text.length() : limit+1;
-            TextLayout textLayout = measurer.nextLayout(bi.getWidth()-10, limit, false);
+            TextLayout textLayout = measurer.nextLayout(bi.getWidth()-10f, limit, false);
             if (lineNr != 1) {
                 y += textLayout.getAscent();
             }

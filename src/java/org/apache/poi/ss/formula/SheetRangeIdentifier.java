@@ -18,7 +18,7 @@
 package org.apache.poi.ss.formula;
 
 public class SheetRangeIdentifier extends SheetIdentifier {
-    public NameIdentifier _lastSheetIdentifier;
+    private final NameIdentifier _lastSheetIdentifier;
 
     public SheetRangeIdentifier(String bookName, NameIdentifier firstSheetIdentifier, NameIdentifier lastSheetIdentifier) {
         super(bookName, firstSheetIdentifier);

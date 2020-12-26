@@ -1052,7 +1052,7 @@ public final class InternalWorkbook {
         // Can be a few short if new sheets were added
         if(records.getTabpos() > 0) {
             TabIdRecord tir = ( TabIdRecord ) records.get(records.getTabpos());
-            if(tir._tabids.length < boundsheets.size()) {
+            if(tir.getTabIdSize() < boundsheets.size()) {
                 fixTabIdRecord();
             }
         }

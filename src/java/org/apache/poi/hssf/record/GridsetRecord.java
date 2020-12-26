@@ -30,7 +30,7 @@ import org.apache.poi.util.LittleEndianOutput;
  */
 public final class GridsetRecord extends StandardRecord {
     public static final short sid = 0x82;
-    public short              field_1_gridset_flag;
+    private short field_1_gridset_flag;
 
     public GridsetRecord() {}
 

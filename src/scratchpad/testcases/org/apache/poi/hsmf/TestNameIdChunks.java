@@ -59,7 +59,7 @@ public class TestNameIdChunks {
      */
     @Test
     public void testReadKeywords() {
-        long keywordsPropTag = keywordsMsg.getNameIdChunks().getPropertyTag(PS_PUBLIC_STRINGS.classID, "Keywords", 0);
+        long keywordsPropTag = keywordsMsg.getNameIdChunks().getPropertyTag(PS_PUBLIC_STRINGS.getClassID(), "Keywords", 0);
         assertEquals(0x8003, keywordsPropTag);
         String[] exp = { "TODO", "Currently Important", "Currently To Do", "Test" };
         String[] act = getValues(keywordsPropTag);
@@ -72,7 +72,7 @@ public class TestNameIdChunks {
      */
     @Test
     public void testCurrentVersionName() {
-        long testPropTag = keywordsMsg.getNameIdChunks().getPropertyTag(PSETID_COMMON.classID, null, 0x8554);
+        long testPropTag = keywordsMsg.getNameIdChunks().getPropertyTag(PSETID_COMMON.getClassID(), null, 0x8554);
         assertEquals(0x8006, testPropTag);
         String[] exp = { "16.0" };
         String[] act = getValues(testPropTag);

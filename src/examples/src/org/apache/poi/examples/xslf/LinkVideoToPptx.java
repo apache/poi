@@ -52,66 +52,69 @@ import org.openxmlformats.schemas.presentationml.x2006.main.STTLTimeNodeFillType
 import org.openxmlformats.schemas.presentationml.x2006.main.STTLTimeNodeRestartType;
 import org.openxmlformats.schemas.presentationml.x2006.main.STTLTimeNodeType;
 
-public class LinkVideoToPptx {
+public final class LinkVideoToPptx {
+    private LinkVideoToPptx() {}
+
     public static void main(String[] args) throws IOException, URISyntaxException {
-        XMLSlideShow pptx = new XMLSlideShow();
+        try (XMLSlideShow pptx = new XMLSlideShow()) {
 
-        String videoFileName = "file_example_MP4_640_3MG.mp4";
-        XSLFSlide slide1 = pptx.createSlide();
+            String videoFileName = "file_example_MP4_640_3MG.mp4";
+            XSLFSlide slide1 = pptx.createSlide();
 
-        PackagePart pp = slide1.getPackagePart();
-        URI mp4uri = new URI("./"+videoFileName);
-        PackageRelationship prsEmbed1 = pp.addRelationship(mp4uri, TargetMode.EXTERNAL, "http://schemas.microsoft.com/office/2007/relationships/media");
-        PackageRelationship prsExec1 = pp.addRelationship(mp4uri, TargetMode.EXTERNAL, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/video");
-
-
-        File previewJpg = new File("preview.jpg");
-        XSLFPictureData snap = pptx.addPicture(previewJpg, PictureData.PictureType.JPEG);
-        XSLFPictureShape pic1 = slide1.createPicture(snap);
-        pic1.setAnchor(new Rectangle(100, 100, 500, 400));
-
-        CTPicture xpic1 = (CTPicture)pic1.getXmlObject();
-        CTHyperlink link1 = xpic1.getNvPicPr().getCNvPr().addNewHlinkClick();
-        link1.setId("");
-        link1.setAction("ppaction://media");
+            PackagePart pp = slide1.getPackagePart();
+            URI mp4uri = new URI("./" + videoFileName);
+            PackageRelationship prsEmbed1 = pp.addRelationship(mp4uri, TargetMode.EXTERNAL, "http://schemas.microsoft.com/office/2007/relationships/media");
+            PackageRelationship prsExec1 = pp.addRelationship(mp4uri, TargetMode.EXTERNAL, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/video");
 
 
-        CTApplicationNonVisualDrawingProps nvPr = xpic1.getNvPicPr().getNvPr();
-        nvPr.addNewVideoFile().setLink(prsExec1.getId());
-        CTExtension ext = nvPr.addNewExtLst().addNewExt();
-        ext.setUri("{DAA4B4D4-6D71-4841-9C94-3DE7FCFB9230}");
+            File previewJpg = new File("preview.jpg");
+            XSLFPictureData snap = pptx.addPicture(previewJpg, PictureData.PictureType.JPEG);
+            XSLFPictureShape pic1 = slide1.createPicture(snap);
+            pic1.setAnchor(new Rectangle(100, 100, 500, 400));
 
-        String p14Ns = "http://schemas.microsoft.com/office/powerpoint/2010/main";
-        XmlCursor cur = ext.newCursor();
-        cur.toEndToken();
-        cur.beginElement(new QName(p14Ns, "media", "p14"));
-        cur.insertNamespace("p14", p14Ns);
-        cur.insertAttributeWithValue(new QName(CORE_PROPERTIES_ECMA376_NS, "link"), prsEmbed1.getId());
-        cur.dispose();
+            CTPicture xpic1 = (CTPicture) pic1.getXmlObject();
+            CTHyperlink link1 = xpic1.getNvPicPr().getCNvPr().addNewHlinkClick();
+            link1.setId("");
+            link1.setAction("ppaction://media");
 
 
-        CTSlide xslide = slide1.getXmlObject();
-        CTTimeNodeList ctnl;
-        if (!xslide.isSetTiming()) {
-            CTTLCommonTimeNodeData ctn = xslide.addNewTiming().addNewTnLst().addNewPar().addNewCTn();
-            ctn.setDur(STTLTimeIndefinite.INDEFINITE);
-            ctn.setRestart(STTLTimeNodeRestartType.NEVER);
-            ctn.setNodeType(STTLTimeNodeType.TM_ROOT);
-            ctnl = ctn.addNewChildTnLst();
-        } else {
-            ctnl = xslide.getTiming().getTnLst().getParArray(0).getCTn().getChildTnLst();
-        }
-        CTTLCommonMediaNodeData cmedia = ctnl.addNewVideo().addNewCMediaNode();
-        cmedia.setVol(80000);
-        CTTLCommonTimeNodeData ctn = cmedia.addNewCTn();
-        ctn.setFill(STTLTimeNodeFillType.HOLD);
-        ctn.setDisplay(false);
-        ctn.addNewStCondLst().addNewCond().setDelay(STTLTimeIndefinite.INDEFINITE);
-        cmedia.addNewTgtEl().addNewSpTgt().setSpid(pic1.getShapeId());
+            CTApplicationNonVisualDrawingProps nvPr = xpic1.getNvPicPr().getNvPr();
+            nvPr.addNewVideoFile().setLink(prsExec1.getId());
+            CTExtension ext = nvPr.addNewExtLst().addNewExt();
+            ext.setUri("{DAA4B4D4-6D71-4841-9C94-3DE7FCFB9230}");
+
+            String p14Ns = "http://schemas.microsoft.com/office/powerpoint/2010/main";
+            XmlCursor cur = ext.newCursor();
+            cur.toEndToken();
+            cur.beginElement(new QName(p14Ns, "media", "p14"));
+            cur.insertNamespace("p14", p14Ns);
+            cur.insertAttributeWithValue(new QName(CORE_PROPERTIES_ECMA376_NS, "link"), prsEmbed1.getId());
+            cur.dispose();
 
 
-        try (FileOutputStream fos = new FileOutputStream("mp4test/mp4test-poi.pptx")) {
-            pptx.write(fos);
+            CTSlide xslide = slide1.getXmlObject();
+            CTTimeNodeList ctnl;
+            if (!xslide.isSetTiming()) {
+                CTTLCommonTimeNodeData ctn = xslide.addNewTiming().addNewTnLst().addNewPar().addNewCTn();
+                ctn.setDur(STTLTimeIndefinite.INDEFINITE);
+                ctn.setRestart(STTLTimeNodeRestartType.NEVER);
+                ctn.setNodeType(STTLTimeNodeType.TM_ROOT);
+                ctnl = ctn.addNewChildTnLst();
+            } else {
+                ctnl = xslide.getTiming().getTnLst().getParArray(0).getCTn().getChildTnLst();
+            }
+            CTTLCommonMediaNodeData cmedia = ctnl.addNewVideo().addNewCMediaNode();
+            cmedia.setVol(80000);
+            CTTLCommonTimeNodeData ctn = cmedia.addNewCTn();
+            ctn.setFill(STTLTimeNodeFillType.HOLD);
+            ctn.setDisplay(false);
+            ctn.addNewStCondLst().addNewCond().setDelay(STTLTimeIndefinite.INDEFINITE);
+            cmedia.addNewTgtEl().addNewSpTgt().setSpid(pic1.getShapeId());
+
+
+            try (FileOutputStream fos = new FileOutputStream("mp4test/mp4test-poi.pptx")) {
+                pptx.write(fos);
+            }
         }
     }
 }

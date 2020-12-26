@@ -59,4 +59,14 @@ public class PhRun {
     public int hashCode() {
         return Objects.hash(phoneticTextFirstCharacterOffset, realTextFirstCharacterOffset, realTextLength);
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        PhRun phRun = (PhRun) o;
+        return phoneticTextFirstCharacterOffset == phRun.phoneticTextFirstCharacterOffset
+            && realTextFirstCharacterOffset == phRun.realTextFirstCharacterOffset
+            && realTextLength == phRun.realTextLength;
+    }
 }

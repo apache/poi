@@ -97,12 +97,16 @@ public enum HwmfBinaryRasterOp {
     /** 1, Pixel is always 1 */
     R2_WHITE(0x0010, HwmfBinaryRasterOp::R2_WHITE);
 
-    public int opIndex;
-    private BiConsumer<int[],int[]> op;
+    private final int opIndex;
+    private final BiConsumer<int[],int[]> op;
 
     HwmfBinaryRasterOp(int opIndex, BiConsumer<int[],int[]> op) {
         this.opIndex = opIndex;
         this.op = op;
+    }
+
+    public int getOpIndex() {
+        return opIndex;
     }
 
     public static HwmfBinaryRasterOp valueOf(int opIndex) {

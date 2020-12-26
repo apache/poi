@@ -140,7 +140,7 @@ public class BinaryRC4Decryptor extends Decryptor {
     }
 
     @Override
-    @SuppressWarnings("resource")
+    @SuppressWarnings({"java:S2095","resource"})
     public ChunkedCipherInputStream getDataStream(DirectoryNode dir) throws IOException,
             GeneralSecurityException {
         DocumentInputStream dis = dir.createDocumentInputStream(DEFAULT_POIFS_ENTRY);

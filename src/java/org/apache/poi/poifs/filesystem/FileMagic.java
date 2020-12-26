@@ -17,9 +17,6 @@
 
 package org.apache.poi.poifs.filesystem;
 
-import static org.apache.poi.poifs.common.POIFSConstants.OOXML_FILE_HEADER;
-import static org.apache.poi.poifs.common.POIFSConstants.RAW_XML_FILE_HEADER;
-
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
@@ -39,24 +36,24 @@ import org.apache.poi.util.LocaleUtil;
 public enum FileMagic {
     /** OLE2 / BIFF8+ stream used for Office 97 and higher documents */
     OLE2(HeaderBlockConstants._signature),
-    /** OOXML / ZIP stream */
-    OOXML(OOXML_FILE_HEADER),
-    /** XML file */
-    XML(RAW_XML_FILE_HEADER),
+    /** OOXML / ZIP stream - The first 4 bytes of an OOXML file, used in detection */
+    OOXML(0x50, 0x4b, 0x03, 0x04),
+    /** XML file - The first 5 bytes of a raw XML file, used in detection */
+    XML(0x3c, 0x3f, 0x78, 0x6d, 0x6c),
     /** BIFF2 raw stream - for Excel 2 */
-    BIFF2(new byte[]{
+    BIFF2(
         0x09, 0x00, // sid=0x0009
         0x04, 0x00, // size=0x0004
         0x00, 0x00, // unused
         '?', 0x00  // '?' = multiple values
-    }),
+    ),
     /** BIFF3 raw stream - for Excel 3 */
-    BIFF3(new byte[]{
+    BIFF3(
         0x09, 0x02, // sid=0x0209
         0x06, 0x00, // size=0x0006
         0x00, 0x00, // unused
         '?', 0x00  // '?' = multiple values
-    }),
+    ),
     /** BIFF4 raw stream - for Excel 4 */
     BIFF4(new byte[]{
         0x09, 0x04, // sid=0x0409
@@ -81,7 +78,7 @@ public enum FileMagic {
     HTML("<!DOCTYP",
          "<html","\n\r<html","\r\n<html","\r<html","\n<html",
          "<HTML","\r\n<HTML","\n\r<HTML","\r<HTML","\n<HTML"),
-    WORD2(new byte[]{ (byte)0xdb, (byte)0xa5, 0x2d, 0x00}),
+    WORD2(0xdb, 0xa5, 0x2d, 0x00),
     /** JPEG image */
     JPEG(
         new byte[]{ (byte)0xFF, (byte)0xD8, (byte)0xFF, (byte)0xDB },
@@ -91,20 +88,18 @@ public enum FileMagic {
     /** GIF image */
     GIF("GIF87a","GIF89a"),
     /** PNG Image */
-    PNG(new byte[]{ (byte)0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A }),
+    PNG(0x89, 'P', 'N', 'G', 0x0D, 0x0A, 0x1A, 0x0A),
     /** TIFF Image */
     TIFF("II*\u0000", "MM\u0000*" ),
     /** WMF image with a placeable header */
-    WMF(new byte[]{ (byte)0xD7, (byte)0xCD, (byte)0xC6, (byte)0x9A }),
+    WMF(0xD7, 0xCD, 0xC6, 0x9A),
     /** EMF image */
-    EMF(new byte[]{
-        1, 0, 0, 0,
+    EMF(1, 0, 0, 0,
         '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?',
         '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?', '?',
-        ' ', 'E', 'M', 'F'
-    }),
+        ' ', 'E', 'M', 'F'),
     /** BMP image */
-    BMP(new byte[]{'B','M'}),
+    BMP('B','M'),
     // keep UNKNOWN always as last enum!
     /** UNKNOWN magic */
     UNKNOWN(new byte[0]);
@@ -117,6 +112,14 @@ public enum FileMagic {
     FileMagic(long magic) {
         this.magic = new byte[1][8];
         LittleEndian.putLong(this.magic[0], 0, magic);
+    }
+
+    FileMagic(int... magic) {
+        byte[] one = new byte[magic.length];
+        for (int i=0; i<magic.length; i++) {
+            one[i] = (byte)(magic[i] & 0xFF);
+        }
+        this.magic = new byte[][]{ one };
     }
 
     FileMagic(byte[]... magic) {

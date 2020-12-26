@@ -178,6 +178,7 @@ public final class ExtractorFactory {
         return createExtractor(file, getCurrentUserPassword());
     }
 
+    @SuppressWarnings({"java:S2095"})
     public static POITextExtractor createExtractor(File file, String password) throws IOException {
         if (file.length() == 0) {
             throw new EmptyFileException();
@@ -318,6 +319,6 @@ public final class ExtractorFactory {
     }
 
     public static void removeProvider(Class<? extends ExtractorProvider> provider){
-        Singleton.INSTANCE.provider.removeIf(p -> p.getClass().getName().equals(provider.getName()));
+        Singleton.INSTANCE.provider.removeIf(p -> p.getClass().isAssignableFrom(provider));
     }
 }
