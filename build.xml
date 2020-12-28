@@ -157,7 +157,7 @@ under the License.
     <property name="ooxml.testokfile" location="build/ooxml-testokfile.txt"/>
 
     <property name="ooxml.lite.agent" location="lib/ooxml-tests/ooxml-lite-agent.jar"/>
-    <property name="ooxml.lite.report" location="build/ooxml-lite-report.txt"/>
+    <property name="ooxml.lite.report" location="build/ooxml-lite-report"/>
     <property name="ooxml.lite.jar" location="build/dist/maven/poi-ooxml-lite/poi-ooxml-lite-${version.id}.jar"/>
     <property name="ooxml.lite.includes" value="^(com/microsoft/schemas|org/(etsi|openxmlformats|w3/)|org/apache/poi/schemas)"/>
 
@@ -1157,6 +1157,7 @@ under the License.
                destdir="${basedir}/src/multimodule/ooxml-lite-agent/java9"
                includeantruntime="false"
                fork="true"
+               modulepath="${basedir}/lib/main-tests"
                unless:true="${isJava8}">
             <compilerarg line="--patch-module org.apache.poi.ooxml_lite=${ooxml.output.test.dir}"/>
         </javac>
@@ -1168,6 +1169,7 @@ under the License.
                 <attribute name="Multi-Release" value="true"/>
                 <attribute name="Automatic-Module-Name" value="org.apache.poi.ooxml_lite"/>
                 <attribute name="Premain-Class" value="org.apache.poi.ooxml.lite.OOXMLLiteAgent"/>
+                <!-- attribute name="Can-Retransform-Classes" value="true"/ -->
             </manifest>
         </jar>
     </target>
@@ -1711,7 +1713,7 @@ under the License.
         <echo message="Create ooxml-lite schemas"/>
         <local name="lite.exports"/>
         <loadresource property="lite.exports">
-            <file file="${ooxml.lite.report}"/>
+            <file file="${ooxml.lite.report}.clazz"/>
             <filterchain>
                 <tokenfilter>
                     <replaceregex pattern="[/\\][^/\\]+$" replace=""/>
@@ -1750,7 +1752,7 @@ under the License.
             </modulepath>
         </javac>
 
-        <copy file="${ooxml.lite.report}" tofile="build/ooxml-lite-classes.txt" overwrite="true">
+        <copy file="${ooxml.lite.report}.clazz" tofile="${ooxml.lite.report}.clazz2" overwrite="true">
             <filterchain>
                 <tokenfilter>
                     <replaceregex pattern="(.*)" replace="\1.class${line.separator}\1$*.class "/>
@@ -1758,62 +1760,22 @@ under the License.
             </filterchain>
         </copy>
 
-        <local name="ooxml.lite.xsbs"/>
-        <loadresource property="ooxml.lite.xsbs">
-            <file file="${ooxml.lite.report}"/>
+        <copy file="${ooxml.lite.report}.xsb" tofile="${ooxml.lite.report}.xsb2" overwrite="true">
             <filterchain>
-                <linecontains negate="true" matchany="true">
-                    <contains value="$"/>
-                    <contains value="TypeSystemHolder"/>
-                </linecontains>
-                <suffixlines suffix=".java"/>
+                <prefixlines prefix="org/apache/poi/schemas/ooxml/system/ooxml/"/>
+                <suffixlines suffix=".xsb"/>
             </filterchain>
-        </loadresource>
-
-        <concat dest="build/ooxml-lite-classes.txt" append="true">
-            <filelist dir="build/xmlbean-sources" files="${ooxml.lite.xsbs}"/>
-            <filterchain>
-                <linecontains>
-                    <contains value="resolveHandle"/>
-                </linecontains>
-                <replaceregex pattern='.*"([^"]+)".*' replace="org/apache/poi/schemas/ooxml/system/ooxml/\1.xsb"/>
-            </filterchain>
-        </concat>
-
-        <!-- the following xsb files aren't detected, i.e. not directly loaded by XmlBeans interface classes -->
-        <echo file="build/ooxml-lite-classes.txt" append="true">
-org/apache/poi/schemas/ooxml/system/ooxml/index.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/picelement.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/groupelement.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/group7d3fdoctype.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/shapelayoutelement.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/shapetypeelement.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/shapetypeb89bdoctype.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/shapeelement.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/shapeaee1doctype.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/tblelement.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/tbleb1bdoctype.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/relationshipreferenceelement.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/qualifyingpropertieselement.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/oleobjelement.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/oleobj8482doctype.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/stcellspans60f6type.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/stcellspanf3a5type.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/alternatecontentelement.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/chartelement.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/chartf85cdoctype.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/rectelement.xsb
-org/apache/poi/schemas/ooxml/system/ooxml/rectaf36doctype.xsb
-        </echo>
+        </copy>
 
         <mkdir dir="build/dist/maven/poi-ooxml-lite"/>
 
         <jar destfile="${ooxml.lite.jar}" duplicate="preserve">
             <zipfileset dir="${basedir}/src/multimodule/ooxml-lite/java9" prefix="META-INF/versions/9" excludes="*.java"/>
             <zipfileset src="${ooxml.xsds.jar}">
-                <patternset includesfile="build/ooxml-lite-classes.txt">
+                <patternset includesfile="${ooxml.lite.report}.clazz2">
                     <include name="org/apache/poi/schemas/ooxml/element/**/*.xsb"/>
                 </patternset>
+                <patternset includesfile="${ooxml.lite.report}.xsb2"/>
             </zipfileset>
             <zipfileset dir="src/multimodule/ooxml-full/java9" prefix="META-INF/versions/9" excludes="*.java"/>
             <manifest>

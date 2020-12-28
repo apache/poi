@@ -17,6 +17,7 @@
 
 module org.apache.poi.ooxml_lite {
     requires java.instrument;
+    requires static net.bytebuddy.agent;
 
     exports org.apache.poi.ooxml.lite;
 }
