@@ -64,7 +64,7 @@ def poijobs = [
         ],
         [ name: 'POI-DSL-no-scratchpad', trigger: triggerSundays, noScratchpad: true
         ],
-        [ name: 'POI-DSL-SonarQube', trigger: 'H 7 * * *', maven: true, sonar: true, skipcigame: true,
+        [ name: 'POI-DSL-SonarQube', jdk: '1.11', trigger: 'H 7 * * *', maven: true, sonar: true, skipcigame: true,
           email: 'kiwiwings@apache.org'
         ],
         // set trigger empty as it is not stable yet, we can remove the Sonar Maven run when this is fully working
