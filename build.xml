@@ -281,13 +281,13 @@ under the License.
     <dependency prefix="main.junit-plauncher" artifact="org.junit.platform:junit-platform-launcher:1.7.0" usage="main-tests"/>
 
 
-    <dependency prefix="main.jmh" artifact="org.openjdk.jmh:jmh-core:1.26" usage="main-tests"/>
-    <dependency prefix="main.jmhAnnotation" artifact="org.openjdk.jmh:jmh-generator-annprocess:1.26" usage="main-tests"/>
+    <dependency prefix="main.jmh" artifact="org.openjdk.jmh:jmh-core:1.27" usage="main-tests"/>
+    <dependency prefix="main.jmhAnnotation" artifact="org.openjdk.jmh:jmh-generator-annprocess:1.27" usage="main-tests"/>
     <dependency prefix="main.hamcrest" artifact="org.hamcrest:hamcrest:2.2" usage="main-tests"/>
-    <dependency prefix="main.xmlunit" artifact="org.xmlunit:xmlunit-core:2.8.0" usage="main-tests"/>
-    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:3.6.0" usage="main-tests"/>
-    <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.10.18" usage="main-tests"/>
-    <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.10.18" usage="main-tests"/>
+    <dependency prefix="main.xmlunit" artifact="org.xmlunit:xmlunit-core:2.8.2" usage="main-tests"/>
+    <dependency prefix="main.mockito" artifact="org.mockito:mockito-core:3.6.28" usage="main-tests"/>
+    <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.10.19" usage="main-tests"/>
+    <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.10.19" usage="main-tests"/>
     <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:3.1" usage="main-tests"/>
     <dependency prefix="main.slf4j-simple" artifact="org.slf4j:slf4j-simple:1.7.30" usage="main-tests"/>
 
@@ -295,11 +295,11 @@ under the License.
     <dependency prefix="main.antlauncher" artifact="org.apache.ant:ant-launcher:1.10.9" usage="excelant"/>
 
     <!-- xml signature libs - not part of the distribution -->
-    <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:2.2.0" usage="ooxml-provided"/>
-    <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-jdk15on:1.67" usage="ooxml-provided"/>
-    <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk15on:1.67" usage="ooxml-provided"/>
+    <dependency prefix="dsig.xmlsec" artifact="org.apache.santuario:xmlsec:2.2.1" usage="ooxml-provided"/>
+    <dependency prefix="dsig.bouncycastle-prov" artifact="org.bouncycastle:bcprov-jdk15on:1.68" usage="ooxml-provided"/>
+    <dependency prefix="dsig.bouncycastle-pkix" artifact="org.bouncycastle:bcpkix-jdk15on:1.68" usage="ooxml-provided"/>
     <!-- only used for signing the release - not used with the ooxml signatures -->
-    <dependency prefix="dsig.bouncycastle-bcpg" artifact="org.bouncycastle:bcpg-jdk15on:1.67" usage="util"/>
+    <dependency prefix="dsig.bouncycastle-bcpg" artifact="org.bouncycastle:bcpg-jdk15on:1.68" usage="util"/>
 
     <!-- svg/batik/pdf libs - not part of the distribution -->
     <dependency prefix="svg.xml-apis-ext" artifact="xml-apis:xml-apis-ext:1.3.04" usage="ooxml-provided"/>
@@ -316,7 +316,7 @@ under the License.
 
     <!-- jars in the ooxml-test-lib directory, see the fetch-ooxml-jars target-->
     <dependency prefix="ooxml.test.reflections" artifact="org.reflections:reflections:0.9.12" usage="ooxml-tests"/>
-    <dependency prefix="ooxml.test.guava" artifact="com.google.guava:guava:30.0-jre" usage="ooxml-tests"/>
+    <dependency prefix="ooxml.test.guava" artifact="com.google.guava:guava:30.1-jre" usage="ooxml-tests"/>
     <dependency prefix="ooxml.test.javassist" artifact="org.javassist:javassist:3.27.0-GA" usage="ooxml-tests"/>
 
     <!-- coverage libs -->
@@ -328,8 +328,6 @@ under the License.
     <!-- license and api checks -->
     <dependency prefix="rat" artifact="org.apache.rat:apache-rat:0.13" usage="util"/>
     <dependency prefix="forbidden" artifact="de.thetaphi:forbiddenapis:3.1" usage="util"/>
-
-    <property name="maven.ooxml.xsds.version.id" value="1.5"/>
 
     <!-- See https://www.ecma-international.org/publications/standards/Ecma-376.htm -->
     <!-- "Copy these file(s), free of charge" -->
@@ -644,6 +642,7 @@ under the License.
             </fileset>
             <fileset dir="${basedir}/lib/util">
                 <include name="asm*7.2.jar"/>
+                <include name="org.jacoco.*-0.8.5.*.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/util">
                 <include name="jacoco-0.8.5.zip"/>
@@ -909,7 +908,7 @@ under the License.
                 <attribute name="Automatic-Module-Name" value="org.apache.poi.ooxml.schemas"/>
                 <attribute name="Built-By" value="${user.name}"/>
                 <attribute name="Specification-Title" value="Apache POI OOXML Schemas"/>
-                <attribute name="Specification-Version" value="${maven.ooxml.xsds.version.id}"/>
+                <attribute name="Specification-Version" value="${version.id}"/>
                 <attribute name="Specification-Vendor" value="The Apache Software Foundation"/>
                 <attribute name="Implementation-Title" value="Apache POI OOXML Schemas"/>
                 <attribute name="Implementation-Version" value="${version.id}"/>
@@ -2452,9 +2451,9 @@ under the License.
 
         <!-- findbugs successor, spotbugs ... need to use the dependencies used in the spotbugs release. -->
         <!-- compare with the entries found in the MANIFEST.MF of spotbugs.jar -->
-        <dependency prefix="spotbugs" artifact="com.github.spotbugs:spotbugs:4.1.4" usage="${spotbugs.lib}" target="spotbugs.jar"/>
-        <dependency prefix="spotbugs-ant" artifact="com.github.spotbugs:spotbugs-ant:4.1.4" usage="${spotbugs.lib}" target="spotbugs-ant.jar"/>
-        <dependency prefix="spotbugs-anno" artifact="com.github.spotbugs:spotbugs-annotations:4.1.4" usage="${spotbugs.lib}" target="spotbugs-annotations.jar"/>
+        <dependency prefix="spotbugs" artifact="com.github.spotbugs:spotbugs:4.2.0" usage="${spotbugs.lib}" target="spotbugs.jar"/>
+        <dependency prefix="spotbugs-ant" artifact="com.github.spotbugs:spotbugs-ant:4.2.0" usage="${spotbugs.lib}" target="spotbugs-ant.jar"/>
+        <dependency prefix="spotbugs-anno" artifact="com.github.spotbugs:spotbugs-annotations:4.2.0" usage="${spotbugs.lib}" target="spotbugs-annotations.jar"/>
         <dependency prefix="spotbugs.asm" artifact="org.ow2.asm:asm:9.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.asm-analysis" artifact="org.ow2.asm:asm-analysis:9.0" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.asm-commons" artifact="org.ow2.asm:asm-commons:9.0" usage="${spotbugs.lib}"/>
@@ -2468,11 +2467,11 @@ under the License.
         <dependency prefix="spotbugs.commons-lang3" artifact="org.apache.commons:commons-lang3:3.11" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.commons-text" artifact="org.apache.commons:commons-text:1.9" usage="${spotbugs.lib}"/>
         <dependency prefix="spotbugs.jcip-annotations" artifact="net.jcip:jcip-annotations:1.0" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.icu4j" artifact="com.ibm.icu:icu4j:63.2" usage="${spotbugs.lib}" target="icu4j-63.1.jar"/>
-        <dependency prefix="spotbugs.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.13.1" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.13.1" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.log4j-slf4j18-impl" artifact="org.apache.logging.log4j:log4j-slf4j18-impl:2.13.1" usage="${spotbugs.lib}"/>
-        <dependency prefix="spotbugs.saxon" artifact="net.sf.saxon:Saxon-HE:9.9.1-2" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.icu4j" artifact="com.ibm.icu:icu4j:68.2" usage="${spotbugs.lib}" target="icu4j-63.1.jar"/>
+        <dependency prefix="spotbugs.log4j-api" artifact="org.apache.logging.log4j:log4j-api:2.14.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.log4j-core" artifact="org.apache.logging.log4j:log4j-core:2.14.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.log4j-slf4j18-impl" artifact="org.apache.logging.log4j:log4j-slf4j18-impl:2.14.0" usage="${spotbugs.lib}"/>
+        <dependency prefix="spotbugs.saxon" artifact="net.sf.saxon:Saxon-HE:9.9.1-8" usage="${spotbugs.lib}"/>
 
         <mkdir dir="${basedir}${spotbugs.lib}/config"/>
 
