@@ -19,6 +19,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import static org.apache.poi.sl.usermodel.BaseTestSlideShow.getColor;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
@@ -108,18 +109,19 @@ public class TestXSLFTextRun {
     }
 
     @Test
-    public void testCopyNullFontSize() {
-        XMLSlideShow ppt = new XMLSlideShow();
-        XSLFSlide slide = ppt.createSlide();
-        XSLFTextShape sh = slide.createAutoShape();
+    public void testCopyNullFontSize() throws IOException {
+        try (XMLSlideShow ppt = new XMLSlideShow()) {
+            XSLFSlide slide = ppt.createSlide();
+            XSLFTextShape sh = slide.createAutoShape();
 
-        XSLFTextRun r = sh.addNewTextParagraph().addNewTextRun();
+            XSLFTextRun r = sh.addNewTextParagraph().addNewTextRun();
 
-        XSLFTextRun s = new XSLFTextRun(CTTextLineBreak.Factory.newInstance(),
+            XSLFTextRun s = new XSLFTextRun(CTTextLineBreak.Factory.newInstance(),
                 new XSLFTextParagraph(CTTextParagraph.Factory.newInstance(),
-                        new XSLFTextBox(CTShape.Factory.newInstance(), slide)));
+                    new XSLFTextBox(CTShape.Factory.newInstance(), slide)));
 
-        r.copy(s);
+            assertDoesNotThrow(() -> r.copy(s));
+        }
     }
 
     @Test

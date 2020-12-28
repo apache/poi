@@ -17,6 +17,8 @@
 
 package org.apache.poi;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.font.TextLayout;
@@ -38,16 +40,18 @@ import org.junit.jupiter.api.Test;
  */
 public class TestJDK12 {
     @Test
-    public void test() throws Exception {
-        BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D graphics = img.createGraphics();
-        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        graphics.scale(200, 1);
+    public void test() {
+        assertDoesNotThrow(() -> {
+            BufferedImage img = new BufferedImage(100, 100, BufferedImage.TYPE_INT_ARGB);
+            Graphics2D graphics = img.createGraphics();
+            graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+            graphics.scale(200, 1);
 
-        new TextLayout(new AttributedString("agriculture").getIterator(), graphics.getFontRenderContext());
+            new TextLayout(new AttributedString("agriculture").getIterator(), graphics.getFontRenderContext());
 
-        graphics.dispose();
-        img.flush();
+            graphics.dispose();
+            img.flush();
+        });
     }
 
 }

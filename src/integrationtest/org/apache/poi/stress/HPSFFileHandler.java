@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assumptions.assumeFalse;
 
@@ -108,7 +109,7 @@ public class HPSFFileHandler extends POIFSFileHandler {
         try {
             System.setOut(psNew);
             CopyCompare.main(new String[]{file.getAbsolutePath(), copyOutput.getAbsolutePath()});
-            assertEquals("Equal" + NL, new String(bos.toByteArray(), StandardCharsets.UTF_8));
+            assertEquals("Equal" + NL, bos.toString(StandardCharsets.UTF_8.name()));
         } finally {
             System.setOut(ps);
         }
@@ -128,7 +129,8 @@ public class HPSFFileHandler extends POIFSFileHandler {
 
     // a test-case to test this locally without executing the full TestAllFiles
     @Test
-    public void testExtractor() throws Exception {
-        handleExtracting(new File("test-data/hpsf/TestBug44375.xls"));
+    public void testExtractor() {
+        File file = new File("test-data/hpsf/TestBug44375.xls");
+        assertDoesNotThrow(() -> handleExtracting(file));
     }
 }

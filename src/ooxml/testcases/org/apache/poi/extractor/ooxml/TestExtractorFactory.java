@@ -17,6 +17,7 @@
 package org.apache.poi.extractor.ooxml;
 
 import static org.apache.poi.POITestCase.assertContains;
+import static org.apache.poi.extractor.ExtractorFactory.createExtractor;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -28,6 +29,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.Locale;
+import java.util.stream.Stream;
 
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.extractor.ExtractorFactory;
@@ -46,7 +48,12 @@ import org.apache.poi.poifs.filesystem.POIFSFileSystem;
 import org.apache.poi.xssf.extractor.XSSFEventBasedExcelExtractor;
 import org.apache.poi.xssf.extractor.XSSFExcelExtractor;
 import org.apache.xmlbeans.XmlException;
+import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 
 /**
  * Test that the extractor factory plays nicely
@@ -100,67 +107,92 @@ public class TestExtractorFactory {
         return file;
     }
 
-    private static final Object[] TEST_SET = {
-        "Excel", xls, "ExcelExtractor", 200,
-        "Excel - xlsx", xlsx, "XSSFExcelExtractor", 200,
-        "Excel - xltx", xltx, "XSSFExcelExtractor", -1,
-        "Excel - xlsb", xlsb, "XSSFBEventBasedExcelExtractor", -1,
-        "Word", doc, "WordExtractor", 120,
-        "Word - docx", docx, "XWPFWordExtractor", 120,
-        "Word - dotx", dotx, "XWPFWordExtractor", -1,
-        "Word 6", doc6, "Word6Extractor", 20,
-        "Word 95", doc95, "Word6Extractor", 120,
-        "PowerPoint", ppt, "SlideShowExtractor", 120,
-        "PowerPoint - pptx", pptx, "XSLFExtractor", 120,
-        "Visio", vsd, "VisioTextExtractor", 50,
-        "Visio - vsdx", vsdx, "XDGFVisioExtractor", 20,
-        "Publisher", pub, "PublisherTextExtractor", 50,
-        "Outlook msg", msg, "OutlookTextExtractor", 50,
-
-        // TODO Support OOXML-Strict, see bug #57699
-        // xlsxStrict
+    public static Stream<Arguments> testOOXMLData() {
+        return Stream.of(
+            Arguments.of("Excel - xlsx", xlsx, "XSSFExcelExtractor", 200),
+            Arguments.of("Excel - xltx", xltx, "XSSFExcelExtractor", -1),
+            Arguments.of("Excel - xlsb", xlsb, "XSSFBEventBasedExcelExtractor", -1),
+            Arguments.of("Word - docx", docx, "XWPFWordExtractor", 120),
+            Arguments.of("Word - dotx", dotx, "XWPFWordExtractor", -1),
+            Arguments.of("PowerPoint - pptx", pptx, "XSLFExtractor", 120),
+            Arguments.of("Visio - vsdx", vsdx, "XDGFVisioExtractor", 20)
+        );
     };
 
-    @FunctionalInterface
-    interface FunctionEx<T, R> {
-        R apply(T t) throws IOException, OpenXML4JException, XmlException;
+    public static Stream<Arguments> testScratchData() {
+        return Stream.of(
+            Arguments.of("Excel", xls, "ExcelExtractor", 200),
+            Arguments.of("Word", doc, "WordExtractor", 120),
+            Arguments.of("Word 6", doc6, "Word6Extractor", 20),
+            Arguments.of("Word 95", doc95, "Word6Extractor", 120),
+            Arguments.of("PowerPoint", ppt, "SlideShowExtractor", 120),
+            Arguments.of("Visio", vsd, "VisioTextExtractor", 50),
+            Arguments.of("Publisher", pub, "PublisherTextExtractor", 50),
+            Arguments.of("Outlook msg", msg, "OutlookTextExtractor", 50)
+        );
+    };
+
+    public static Stream<Arguments> testFileData() {
+        return Stream.concat(testOOXMLData(), testScratchData());
+        // TODO Support OOXML-Strict / xlsxStrict, see bug #57699
+    };
+
+
+    @ParameterizedTest
+    @MethodSource("testFileData")
+    public void testFile(String testcase, File file, String extractor, int count) throws Exception {
+        try (POITextExtractor ext = createExtractor(file)) {
+            assertNotNull(ext);
+            testExtractor(ext, testcase, extractor, count);
+        }
     }
 
-    @SuppressWarnings("ConstantConditions")
-    @Test
-    public void testFile() throws Exception {
-        for (int i = 0; i < TEST_SET.length; i += 4) {
-            try (POITextExtractor ext = ExtractorFactory.createExtractor((File) TEST_SET[i + 1])) {
-                testExtractor(ext, (String) TEST_SET[i], (String) TEST_SET[i + 2], (Integer) TEST_SET[i + 3]);
-            }
+    @ParameterizedTest
+    @MethodSource("testScratchData")
+    public void testPOIFS(String testcase, File testFile, String extractor, int count) throws Exception {
+        // test processing of InputStream
+        try (FileInputStream fis = new FileInputStream(testFile);
+             POIFSFileSystem poifs = new POIFSFileSystem(fis);
+             POITextExtractor ext = createExtractor(poifs)) {
+            assertNotNull(ext);
+            testExtractor(ext, testcase, extractor, count);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("testFileData")
+    public void testOOXML(String testcase, File testFile, String extractor, int count) throws Exception {
+        // test processing of InputStream
+        try (FileInputStream fis = new FileInputStream(testFile);
+             POITextExtractor ext = createExtractor(fis)) {
+            assertNotNull(ext);
+            testExtractor(ext, testcase, extractor, count);
+        }
+    }
+
+    @ParameterizedTest
+    @MethodSource("testOOXMLData")
+    public void testPackage(String testcase, File testFile, String extractor, int count) throws Exception {
+        try (final OPCPackage pkg = OPCPackage.open(testFile, PackageAccess.READ);
+             final POITextExtractor ext = xmlFactory.create(pkg)) {
+            assertNotNull(ext);
+            testExtractor(ext, testcase, extractor, count);
+            pkg.revert();
         }
     }
 
     @Test
     public void testFileInvalid() {
-        IOException ex = assertThrows(
-            IOException.class,
-            () -> ExtractorFactory.createExtractor(txt)
-        );
+        IOException ex = assertThrows(IOException.class, () -> createExtractor(txt));
         assertEquals("Can't create extractor - unsupported file type: UNKNOWN", ex.getMessage());
-    }
-
-    @Test
-    public void testInputStream() throws Exception {
-        testStream(ExtractorFactory::createExtractor, true);
     }
 
     @Test
     public void testInputStreamInvalid() throws IOException {
         try (FileInputStream fis = new FileInputStream(txt)) {
-            IOException ex = assertThrows(IOException.class, () -> ExtractorFactory.createExtractor(fis));
+            IOException ex = assertThrows(IOException.class, () -> createExtractor(fis));
             assertTrue(ex.getMessage().contains(FileMagic.UNKNOWN.name()));
         }
-    }
-
-    @Test
-    public void testPOIFS() throws Exception {
-        testStream((f) -> ExtractorFactory.createExtractor(new POIFSFileSystem(f)), false);
     }
 
     @Test
@@ -168,21 +200,6 @@ public class TestExtractorFactory {
         // Not really an Extractor test, but we'll leave it to test POIFS reaction anyway ...
         IOException ex = assertThrows(IOException.class, () -> new POIFSFileSystem(txt));
         assertTrue(ex.getMessage().contains("Invalid header signature; read 0x3D20726F68747541, expected 0xE11AB1A1E011CFD0"));
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    private void testStream(final FunctionEx<FileInputStream, POITextExtractor> poifsIS, final boolean loadOOXML)
-    throws IOException, OpenXML4JException, XmlException {
-        for (int i = 0; i < TEST_SET.length; i += 4) {
-            File testFile = (File) TEST_SET[i + 1];
-            if (!loadOOXML && (testFile.getName().endsWith("x") || testFile.getName().endsWith("xlsb"))) {
-                continue;
-            }
-            try (FileInputStream fis = new FileInputStream(testFile);
-                 POITextExtractor ext = poifsIS.apply(fis)) {
-                testExtractor(ext, (String) TEST_SET[i], (String) TEST_SET[i + 2], (Integer) TEST_SET[i + 3]);
-            }
-        }
     }
 
     private void testExtractor(final POITextExtractor ext, final String testcase, final String extrClass, final Integer minLength) {
@@ -194,25 +211,6 @@ public class TestExtractorFactory {
             assertTrue(actual.length() > minLength, "extracted content too short for " + testcase);
         }
     }
-
-    @SuppressWarnings("ConstantConditions")
-    @Test
-    public void testPackage() throws Exception {
-        for (int i = 0; i < TEST_SET.length; i += 4) {
-            final File testFile = (File) TEST_SET[i + 1];
-            if (!testFile.getName().endsWith("x")) {
-                continue;
-            }
-
-            try (final OPCPackage pkg = OPCPackage.open(testFile, PackageAccess.READ);
-                 final POITextExtractor ext = xmlFactory.create(pkg)) {
-                assertNotNull(ext);
-                testExtractor(ext, (String) TEST_SET[i], (String) TEST_SET[i + 2], (Integer) TEST_SET[i + 3]);
-                pkg.revert();
-            }
-        }
-    }
-
     @Test
     public void testPackageInvalid() {
         // Text
@@ -245,19 +243,13 @@ public class TestExtractorFactory {
 
         try {
             // Check we get the right extractors now
-            try (POITextExtractor extractor = ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls)))) {
+            try (POITextExtractor extractor = createExtractor(new POIFSFileSystem(new FileInputStream(xls)))) {
                 assertTrue(extractor instanceof EventBasedExcelExtractor);
-            }
-            try (POITextExtractor extractor = ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls)))) {
                 assertTrue(extractor.getText().length() > 200);
             }
-
-            try (POITextExtractor extractor = xmlFactory.create(OPCPackage.open(xlsx.toString(), PackageAccess.READ))) {
-                assertTrue(extractor instanceof XSSFEventBasedExcelExtractor);
-            }
-
             try (POITextExtractor extractor = xmlFactory.create(OPCPackage.open(xlsx.toString(), PackageAccess.READ))) {
                 assertNotNull(extractor);
+                assertTrue(extractor instanceof XSSFEventBasedExcelExtractor);
                 assertTrue(extractor.getText().length() > 200);
             }
         } finally {
@@ -270,20 +262,33 @@ public class TestExtractorFactory {
         assertNull(ExtractorFactory.getAllThreadsPreferEventExtractors());
 
         // And back
-        try (POITextExtractor extractor = ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls)))) {
+        try (POITextExtractor extractor = createExtractor(new POIFSFileSystem(new FileInputStream(xls)))) {
             assertTrue(extractor instanceof ExcelExtractor);
-        }
-        try (POITextExtractor extractor = ExtractorFactory.createExtractor(new POIFSFileSystem(new FileInputStream(xls)))) {
             assertTrue(extractor.getText().length() > 200);
         }
 
         try (POITextExtractor extractor = xmlFactory.create(OPCPackage.open(xlsx.toString(), PackageAccess.READ))) {
             assertTrue(extractor instanceof XSSFExcelExtractor);
         }
+
         try (POITextExtractor extractor = xmlFactory.create(OPCPackage.open(xlsx.toString()))) {
             assertNotNull(extractor);
             assertTrue(extractor.getText().length() > 200);
         }
+    }
+
+    public static Stream<Arguments> testEmbeddedData() {
+        return Stream.of(
+            Arguments.of("No embeddings", xls, "0-0-0-0-0-0"),
+            Arguments.of("Excel", xlsEmb, "6-2-2-2-0-0"),
+            Arguments.of("Word", docEmb, "4-1-2-1-0-0"),
+            Arguments.of("Word which contains an OOXML file", docEmbOOXML, "3-0-1-1-0-1"),
+            Arguments.of("Outlook", msgEmb, "1-1-0-0-0-0"),
+            Arguments.of("Outlook with another outlook file in it", msgEmbMsg, "1-0-0-0-1-0")
+            // TODO - PowerPoint
+            // TODO - Publisher
+            // TODO - Visio
+        );
     }
 
     /**
@@ -291,55 +296,44 @@ public class TestExtractorFactory {
      *  does poifs embedded, but will do ooxml ones
      *  at some point.
      */
-    @Test
-    public void testEmbedded() throws Exception {
-        final Object[] testObj = {
-            "No embeddings", xls, "0-0-0-0-0-0",
-            "Excel", xlsEmb, "6-2-2-2-0-0",
-            "Word", docEmb, "4-1-2-1-0-0",
-            "Word which contains an OOXML file", docEmbOOXML, "3-0-1-1-0-1",
-            "Outlook", msgEmb, "1-1-0-0-0-0",
-            "Outlook with another outlook file in it", msgEmbMsg, "1-0-0-0-1-0",
-        };
+    @ParameterizedTest
+    @MethodSource("testEmbeddedData")
+    public void testEmbedded(String format, File file, String expected) throws Exception {
+        int numWord = 0, numXls = 0, numPpt = 0, numMsg = 0, numWordX = 0;
 
-        for (int i=0; i<testObj.length; i+=3) {
-            try (final POIOLE2TextExtractor ext = (POIOLE2TextExtractor)ExtractorFactory.createExtractor((File)testObj[i+1])) {
-                final POITextExtractor[] embeds = ExtractorFactory.getEmbeddedDocsTextExtractors(ext);
+        try (final POIOLE2TextExtractor ext = (POIOLE2TextExtractor) createExtractor(file)) {
+            final POITextExtractor[] embeds = ExtractorFactory.getEmbeddedDocsTextExtractors(ext);
 
-                int numWord = 0, numXls = 0, numPpt = 0, numMsg = 0, numWordX = 0;
-                for (POITextExtractor embed : embeds) {
-                    assertTrue(embed.getText().length() > 20);
-                    switch (embed.getClass().getSimpleName()) {
-                        case "SlideShowExtractor":
-                            numPpt++;
-                            break;
-                        case "ExcelExtractor":
-                            numXls++;
-                            break;
-                        case "WordExtractor":
-                            numWord++;
-                            break;
-                        case "OutlookTextExtractor":
-                            numMsg++;
-                            break;
-                        case "XWPFWordExtractor":
-                            numWordX++;
-                            break;
-                    }
+            for (POITextExtractor embed : embeds) {
+                assertTrue(embed.getText().length() > 20);
+                switch (embed.getClass().getSimpleName()) {
+                    case "SlideShowExtractor":
+                        numPpt++;
+                        break;
+                    case "ExcelExtractor":
+                        numXls++;
+                        break;
+                    case "WordExtractor":
+                        numWord++;
+                        break;
+                    case "OutlookTextExtractor":
+                        numMsg++;
+                        break;
+                    case "XWPFWordExtractor":
+                        numWordX++;
+                        break;
                 }
-
-                final String actual = embeds.length+"-"+numWord+"-"+numXls+"-"+numPpt+"-"+numMsg+"-"+numWordX;
-                final String expected = (String)testObj[i+2];
-                assertEquals(expected, actual, "invalid number of embeddings - "+testObj[i]);
             }
+
+            final String actual = embeds.length+"-"+numWord+"-"+numXls+"-"+numPpt+"-"+numMsg+"-"+numWordX;
+            assertEquals(expected, actual, "invalid number of embeddings - "+format);
         }
 
-        // TODO - PowerPoint
-        // TODO - Publisher
-        // TODO - Visio
+
     }
 
-    private static final String[] EXPECTED_FAILURES = {
+    @ParameterizedTest
+    @ValueSource(strings = {
         // password protected files
         "spreadsheet/password.xls",
         "spreadsheet/protected_passtika.xlsx",
@@ -419,22 +413,13 @@ public class TestExtractorFactory {
         "spreadsheet/57231_MixedGasReport.xls",
         "spreadsheet/OddStyleRecord.xls",
         "spreadsheet/WithChartSheet.xlsx",
-        "spreadsheet/chart_sheet.xlsx",
-    };
-
-    @Test
-    public void testFileLeak() {
+        "spreadsheet/chart_sheet.xlsx"
+    })
+    public void testFileLeak(String file) {
         // run a number of files that might fail in order to catch
         // leaked file resources when using file-leak-detector while
         // running the test
-
-        for(String file : EXPECTED_FAILURES) {
-            try {
-                ExtractorFactory.createExtractor(POIDataSamples.getSpreadSheetInstance().getFile(file));
-            } catch (Exception e) {
-                // catch all exceptions here as we are only interested in file-handle leaks
-            }
-        }
+        assertThrows(Exception.class, () -> ex(file));
     }
 
     /**
@@ -443,7 +428,7 @@ public class TestExtractorFactory {
      */
     @Test
     public void bug59074() throws Exception {
-        try (POITextExtractor extractor = ExtractorFactory.createExtractor(POIDataSamples.getSpreadSheetInstance().getFile("59074.xls"))) {
+        try (POITextExtractor extractor = ex("59074.xls")) {
             String text = extractor.getText();
             assertContains(text, "Exotic warrant");
         }
@@ -460,12 +445,16 @@ public class TestExtractorFactory {
     // bug 45565: text within TextBoxes is extracted by ExcelExtractor and WordExtractor
     @Test
     public void test45565() throws Exception {
-        try (POITextExtractor extractor = ExtractorFactory.createExtractor(HSSFTestDataSamples.getSampleFile("45565.xls"))) {
+        try (POITextExtractor extractor = ex("45565.xls")) {
             String text = extractor.getText();
             assertThrows(AssertionError.class, () -> {
                 assertContains(text, "testdoc");
                 assertContains(text, "test phrase");
             });
         }
+    }
+
+    private static POITextExtractor ex(String filename) throws IOException {
+        return createExtractor(ssTests.getFile(filename));
     }
 }

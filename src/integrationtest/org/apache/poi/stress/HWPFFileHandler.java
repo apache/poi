@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.stress;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.File;
@@ -64,8 +65,8 @@ public class HWPFFileHandler extends POIFSFileHandler {
     }
 
     @Test
-    public void testExtractingOld() throws Exception {
+    public void testExtractingOld() {
         File file = new File("test-data/document/52117.doc");
-        handleExtracting(file);
+        assertDoesNotThrow(() -> handleExtracting(file));
     }
 }

@@ -17,10 +17,13 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import org.apache.poi.util.HexRead;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * Tests for {@link RecordInputStream}
@@ -91,13 +94,10 @@ public final class TestRecordInputStream {
 		assertEquals("Multilingual - \u591A\u8A00\u8A9E", actual);
 	}
 
-	@SuppressWarnings("ThrowableNotThrown")
-	@Test
-	public void testLeftoverDataException() {
+	@ParameterizedTest
+	@CsvSource({"1, 200", "0, 200", "999999999, 200", HeaderRecord.sid+", 200"})
+	public void testLeftoverDataException(int sid, int remainingByteCount) {
 	    // just ensure that the exception is created correctly, even with unknown sids
-	    new RecordInputStream.LeftoverDataException(1, 200);
-	    new RecordInputStream.LeftoverDataException(0, 200);
-        new RecordInputStream.LeftoverDataException(999999999, 200);
-	    new RecordInputStream.LeftoverDataException(HeaderRecord.sid, 200);
+		assertDoesNotThrow(() -> new RecordInputStream.LeftoverDataException(sid, remainingByteCount));
 	}
 }

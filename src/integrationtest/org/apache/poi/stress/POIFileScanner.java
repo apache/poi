@@ -19,6 +19,7 @@
 
 package org.apache.poi.stress;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.File;
@@ -210,11 +211,12 @@ public class POIFileScanner {
 
     @Test
     public void testDetectUnnamedFile() throws IOException {
-        POIFileScanner.detectUnnamedFile(new File(ROOT_DIR, "spreadsheet"), "49156.xlsx");
+        File root = new File(ROOT_DIR, "spreadsheet");
+        assertDoesNotThrow(() -> POIFileScanner.detectUnnamedFile(root, "49156.xlsx"));
     }
 
     @Test
     public void test() throws IOException {
-        POIFileScanner.scan(ROOT_DIR);
+        assertDoesNotThrow(() -> POIFileScanner.scan(ROOT_DIR));
     }
 }

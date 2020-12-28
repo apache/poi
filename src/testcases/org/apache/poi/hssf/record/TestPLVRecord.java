@@ -17,11 +17,14 @@
 
 package org.apache.poi.hssf.record;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
 import java.io.InputStream;
 
 import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.hssf.usermodel.DVConstraint;
 import org.apache.poi.hssf.usermodel.HSSFDataValidation;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.ss.usermodel.DataValidationConstraint;
 import org.apache.poi.ss.util.CellRangeAddressList;
@@ -49,7 +52,8 @@ public final class TestPLVRecord {
 
             // This used to throw an IllegalStateException before
             // Identified bug 53972, PLV record breaks addDataValidation()
-            workbook.getSheet(SHEET_NAME).addValidationData(dataValidation);
+            HSSFSheet sheet = workbook.getSheet(SHEET_NAME);
+            assertDoesNotThrow(() -> sheet.addValidationData(dataValidation));
         }
     }
 }

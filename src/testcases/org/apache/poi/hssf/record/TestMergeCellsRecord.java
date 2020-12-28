@@ -19,8 +19,11 @@ package org.apache.poi.hssf.record;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotSame;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.apache.poi.hssf.model.RecordStream;
@@ -59,13 +62,15 @@ public final class TestMergeCellsRecord {
 	@Test
 	public void testMCTable_bug46009() {
 		MergedCellsTable mct = new MergedCellsTable();
-		List<org.apache.poi.hssf.record.Record> recList = new ArrayList<>();
-		CellRangeAddress[] cras = new CellRangeAddress[] {
-				new CellRangeAddress(0, 0, 0, 3),
-		};
-		recList.add(new MergeCellsRecord(cras, 0, 1));
-		RecordStream rs = new RecordStream(recList, 0);
+		CellRangeAddress[] cras = { new CellRangeAddress(0, 0, 0, 3) };
+		MergeCellsRecord mcr1 = new MergeCellsRecord(cras, 0, 1);
+		RecordStream rs = new RecordStream(Collections.singletonList(mcr1), 0);
 		mct.read(rs);
-		mct.visitContainedRecords(r -> {});
+		mct.visitContainedRecords(r -> {
+			assertTrue(r instanceof MergeCellsRecord);
+			MergeCellsRecord mcr2 = (MergeCellsRecord)r;
+			assertEquals(mcr1.getNumAreas(), mcr2.getNumAreas());
+			assertEquals(mcr1.getAreaAt(0), mcr2.getAreaAt(0));
+		});
 	}
 }

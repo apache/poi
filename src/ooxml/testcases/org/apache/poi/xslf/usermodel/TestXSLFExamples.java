@@ -18,6 +18,7 @@
 package org.apache.poi.xslf.usermodel;
 
 import static org.apache.poi.openxml4j.opc.PackageRelationshipTypes.CORE_PROPERTIES_ECMA376_NS;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.awt.Rectangle;
 import java.io.ByteArrayOutputStream;
@@ -25,6 +26,7 @@ import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.List;
 
 import javax.xml.namespace.QName;
 
@@ -33,6 +35,7 @@ import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.openxml4j.opc.PackageRelationship;
 import org.apache.poi.openxml4j.opc.TargetMode;
 import org.apache.poi.sl.usermodel.PictureData;
+import org.apache.poi.xslf.XSLFTestDataSamples;
 import org.apache.xmlbeans.XmlCursor;
 import org.junit.jupiter.api.Test;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTHyperlink;
@@ -55,15 +58,14 @@ import org.openxmlformats.schemas.presentationml.x2006.main.STTLTimeNodeType;
 public class TestXSLFExamples {
     @Test
     public void LinkVideoToPptx() throws IOException, URISyntaxException {
-            String videoFileName = "file_example_MP4_640_3MG.mp4";
-            File previewJpg = POIDataSamples.getDocumentInstance().getFile("abstract1.jpg");
+        String videoFileName = "file_example_MP4_640_3MG.mp4";
+        File previewJpg = POIDataSamples.getDocumentInstance().getFile("abstract1.jpg");
 
-            XMLSlideShow pptx = new XMLSlideShow();
-
+        try (XMLSlideShow pptx = new XMLSlideShow()) {
             XSLFSlide slide1 = pptx.createSlide();
 
             PackagePart pp = slide1.getPackagePart();
-            URI mp4uri = new URI("./"+videoFileName);
+            URI mp4uri = new URI("./" + videoFileName);
             PackageRelationship prsEmbed1 = pp.addRelationship(mp4uri, TargetMode.EXTERNAL, "http://schemas.microsoft.com/office/2007/relationships/media");
             PackageRelationship prsExec1 = pp.addRelationship(mp4uri, TargetMode.EXTERNAL, "http://schemas.openxmlformats.org/officeDocument/2006/relationships/video");
 
@@ -72,7 +74,7 @@ public class TestXSLFExamples {
             XSLFPictureShape pic1 = slide1.createPicture(snap);
             pic1.setAnchor(new Rectangle(100, 100, 500, 400));
 
-            CTPicture xpic1 = (CTPicture)pic1.getXmlObject();
+            CTPicture xpic1 = (CTPicture) pic1.getXmlObject();
             CTHyperlink link1 = xpic1.getNvPicPr().getCNvPr().addNewHlinkClick();
             link1.setId("");
             link1.setAction("ppaction://media");
@@ -111,10 +113,10 @@ public class TestXSLFExamples {
             ctn.addNewStCondLst().addNewCond().setDelay(STTLTimeIndefinite.INDEFINITE);
             cmedia.addNewTgtEl().addNewSpTgt().setSpid(pic1.getShapeId());
 
-
-            // write to file - use FileOutputStream instead
-            try (ByteArrayOutputStream bos = new ByteArrayOutputStream()) {
-                pptx.write(bos);
+            try (XMLSlideShow ppt2 = XSLFTestDataSamples.writeOutAndReadBack(pptx)) {
+                XSLFShape sh = ppt2.getSlides().get(0).getShapes().get(0);
+                assertTrue(sh instanceof XSLFPictureShape);
             }
+        }
     }
 }

@@ -21,6 +21,7 @@ import static org.apache.poi.sl.draw.DrawTextParagraph.HYPERLINK_HREF;
 import static org.apache.poi.sl.draw.DrawTextParagraph.HYPERLINK_LABEL;
 import static org.apache.poi.xslf.XSLFTestDataSamples.openSampleDocument;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -107,6 +108,7 @@ import org.apache.poi.xslf.util.DummyGraphics2d;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.function.ThrowingSupplier;
 import org.openxmlformats.schemas.drawingml.x2006.main.CTOuterShadowEffect;
 import org.openxmlformats.schemas.presentationml.x2006.main.CTShape;
 
@@ -513,35 +515,6 @@ public class TestXSLFBugs {
         ppt.close();
     }
 
-    @Test
-    @Disabled("Similar to TestFontRendering it doesn't make sense to compare images because of tiny rendering differences in windows/unix")
-    public void bug54542() throws Exception {
-        XMLSlideShow ss = openSampleDocument("54542_cropped_bitmap.pptx");
-
-        Dimension pgsize = ss.getPageSize();
-
-        XSLFSlide slide = ss.getSlides().get(0);
-
-        // render it
-        double zoom = 1;
-        AffineTransform at = new AffineTransform();
-        at.setToScale(zoom, zoom);
-
-        BufferedImage imgActual = new BufferedImage((int) Math.ceil(pgsize.width * zoom), (int) Math.ceil(pgsize.height * zoom), BufferedImage.TYPE_3BYTE_BGR);
-        Graphics2D graphics = imgActual.createGraphics();
-        graphics.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-        graphics.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        graphics.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
-        graphics.setTransform(at);
-        graphics.setPaint(Color.white);
-        graphics.fill(new Rectangle2D.Float(0, 0, pgsize.width, pgsize.height));
-        slide.draw(graphics);
-
-        ImageIO.write(imgActual, "PNG", new File("bug54542.png"));
-        ss.close();
-    }
-
     private String getSlideText(XMLSlideShow ppt, XSLFSlide slide) throws IOException {
         try (SlideShowExtractor<XSLFShape, XSLFTextParagraph> extr = new SlideShowExtractor<>(ppt)) {
             // do not auto-close the slideshow
@@ -880,9 +853,9 @@ public class TestXSLFBugs {
 
     @Test
     public void bug60715() throws IOException {
-        XMLSlideShow ppt = openSampleDocument("bug60715.pptx");
-        ppt.createSlide();
-        ppt.close();
+        try (XMLSlideShow ppt = openSampleDocument("bug60715.pptx")) {
+            assertDoesNotThrow((ThrowingSupplier<XSLFSlide>) ppt::createSlide);
+        }
     }
 
     @Test
@@ -927,10 +900,11 @@ public class TestXSLFBugs {
 
     @Test
     public void test60042() throws IOException {
-        XMLSlideShow ppt = openSampleDocument("60042.pptx");
-        ppt.removeSlide(0);
-        ppt.createSlide();
-        ppt.close();
+        try (XMLSlideShow ppt = openSampleDocument("60042.pptx")) {
+            ppt.removeSlide(0);
+            ppt.createSlide();
+            assertEquals(2, ppt.getSlides().size());
+        }
     }
 
     @Test

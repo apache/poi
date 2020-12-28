@@ -18,10 +18,12 @@
 package org.apache.poi.hssf.record.aggregates;
 
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -41,6 +43,7 @@ import org.apache.poi.hssf.record.Record;
 import org.apache.poi.hssf.record.SharedFormulaRecord;
 import org.apache.poi.hssf.record.WindowTwoRecord;
 import org.apache.poi.hssf.record.aggregates.RecordAggregate.RecordVisitor;
+import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.util.HexRead;
@@ -314,28 +317,23 @@ public final class TestValueRecordsAggregate {
 	}
 
     @Test
-	public void testRemoveNewRow_bug46312() {
+	public void testRemoveNewRow_bug46312() throws IOException {
 		// To make bug occur, rowIndex needs to be >= ValueRecordsAggregate.records.length
 		int rowIndex = 30;
 
 		ValueRecordsAggregate vra = new ValueRecordsAggregate();
 		// bug 46312 - Specified rowIndex 30 is outside the allowable range (0..30)
-		vra.removeAllCellsValuesForRow(rowIndex);
+		assertDoesNotThrow(() -> vra.removeAllCellsValuesForRow(rowIndex));
 
-//		if (false) { // same bug as demonstrated through usermodel API
-//
-//			HSSFWorkbook wb = new HSSFWorkbook();
-//			HSSFSheet sheet = wb.createSheet();
-//			HSSFRow row = sheet.createRow(rowIndex);
-//			if (false) { // must not add any cells to the new row if we want to see the bug
-//				row.createCell(0); // this causes ValueRecordsAggregate.records to auto-extend
-//			}
-//			try {
-//				sheet.createRow(rowIndex);
-//			} catch (IllegalArgumentException e) {
-//				throw new AssertionFailedError("Identified bug 46312");
-//			}
-//		}
+		// same bug as demonstrated through usermodel API
+		try (HSSFWorkbook wb = new HSSFWorkbook()) {
+			HSSFSheet sheet = wb.createSheet();
+			HSSFRow row = sheet.createRow(rowIndex);
+
+			// must not add any cells to the new row if we want to see the bug
+			// row.createCell(0); // this causes ValueRecordsAggregate.records to auto-extend
+			assertDoesNotThrow(() -> sheet.createRow(rowIndex));
+		}
 	}
 
 	/**

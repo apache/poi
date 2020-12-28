@@ -16,6 +16,7 @@
 ==================================================================== */
 package org.apache.poi.xslf.usermodel;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -316,18 +317,20 @@ public class TestXSLFTable {
     }
 
     @Test
-    public void checkNullPointerException() {
-        XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument("au.asn.aes.www_conferences_2011_presentations_Fri_20Room4Level4_20930_20Maloney.pptx");
-        Dimension pgsize = ss.getPageSize();
-        for (Slide<?, ?> s : ss.getSlides()) {
-            BufferedImage img = new BufferedImage(pgsize.width, pgsize.height, BufferedImage.TYPE_INT_ARGB);
-            Graphics2D graphics = img.createGraphics();
+    public void checkNullPointerException() throws IOException {
+        String file = "au.asn.aes.www_conferences_2011_presentations_Fri_20Room4Level4_20930_20Maloney.pptx";
+        try (XMLSlideShow ss = XSLFTestDataSamples.openSampleDocument(file)) {
+            Dimension pgsize = ss.getPageSize();
+            for (Slide<?, ?> s : ss.getSlides()) {
+                BufferedImage img = new BufferedImage(pgsize.width, pgsize.height, BufferedImage.TYPE_INT_ARGB);
+                Graphics2D graphics = img.createGraphics();
 
-            // draw stuff
-            s.draw(graphics);
+                // draw stuff
+                assertDoesNotThrow(() -> s.draw(graphics));
 
-            graphics.dispose();
-            img.flush();
+                graphics.dispose();
+                img.flush();
+            }
         }
     }
 }

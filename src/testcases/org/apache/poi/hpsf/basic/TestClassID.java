@@ -17,6 +17,7 @@
 
 package org.apache.poi.hpsf.basic;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -66,8 +67,8 @@ public final class TestClassID {
     @Test
     public void testWriteArrayStoreException3() {
         ClassID clsidTest = new ClassID(BUF16, 0);
-        clsidTest.write(new byte[16], 0);
-        clsidTest.write(new byte[17], 1);
+        assertDoesNotThrow(() -> clsidTest.write(new byte[16], 0));
+        assertDoesNotThrow(() -> clsidTest.write(new byte[17], 1));
     }
 
     @Test
