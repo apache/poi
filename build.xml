@@ -264,7 +264,7 @@ under the License.
 
 
     <!-- jars in the /lib directory, see the fetch-jars target-->
-    <dependency prefix="main.commons-logging" artifact="commons-logging:commons-logging:1.2" usage="main"/>
+    <dependency prefix="main.commons-logging" artifact="org.slf4j:jcl-over-slf4j:1.7.30" usage="main"/>
     <dependency prefix="main.commons-codec" artifact="commons-codec:commons-codec:1.15" usage="main"/>
     <dependency prefix="main.commons-collections4" artifact="org.apache.commons:commons-collections4:4.4" usage="main"/>
     <dependency prefix="main.commons-math3" artifact="org.apache.commons:commons-math3:3.6.1" usage="main"/>
@@ -289,7 +289,7 @@ under the License.
     <dependency prefix="main.byte-buddy" artifact="net.bytebuddy:byte-buddy:1.10.18" usage="main-tests"/>
     <dependency prefix="main.byte-buddy-agent" artifact="net.bytebuddy:byte-buddy-agent:1.10.18" usage="main-tests"/>
     <dependency prefix="main.objenesis" artifact="org.objenesis:objenesis:3.1" usage="main-tests"/>
-    <dependency prefix="main.slf4j-simple" artifact="org.slf4j:slf4j-api:1.7.30" usage="main-tests"/>
+    <dependency prefix="main.slf4j-simple" artifact="org.slf4j:slf4j-simple:1.7.30" usage="main-tests"/>
 
     <dependency prefix="main.ant" artifact="org.apache.ant:ant:1.10.9" usage="excelant"/>
     <dependency prefix="main.antlauncher" artifact="org.apache.ant:ant-launcher:1.10.9" usage="excelant"/>
@@ -622,6 +622,7 @@ under the License.
             </fileset>
             <fileset dir="${basedir}/lib/main">
                 <include name="log4j-1.2*.jar"/>
+                <include name="commons-logging-1.2.jar"/>
             </fileset>
             <fileset dir="${basedir}/lib/main-tests">
                 <include name="mockito-core-3.2*.jar"/>

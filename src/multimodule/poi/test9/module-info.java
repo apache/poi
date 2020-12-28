@@ -20,7 +20,7 @@ module org.apache.poi.poi {
     requires org.apache.commons.codec;
     requires commons.math3;
     requires SparseBitSet;
-    requires commons.logging;
+    requires org.slf4j;
     requires java.logging;
     requires java.desktop;
 
