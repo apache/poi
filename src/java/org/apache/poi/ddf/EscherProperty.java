@@ -43,7 +43,7 @@ public abstract class EscherProperty implements GenericRecord {
     /**
      * The id is distinct from the actual property number.  The id includes the property number the blip id
      * flag and an indicator whether the property is complex or not.
-     * 
+     *
      * @param id the combined id
      */
     protected EscherProperty(short id) {
@@ -53,7 +53,7 @@ public abstract class EscherProperty implements GenericRecord {
     /**
      * Constructs a new escher property.  The three parameters are combined to form a property
      * id.
-     * 
+     *
      * @param propertyNumber the property number
      * @param isComplex true, if this is a complex property
      * @param isBlipId true, if this property is a blip id
@@ -68,7 +68,7 @@ public abstract class EscherProperty implements GenericRecord {
      * Constructs a new escher property.  The three parameters are combined to form a property
      * id.
      *
-     * @param propertyNumber the property number
+     * @param type one of the defined property types
      * @param isComplex true, if this is a complex property
      * @param isBlipId true, if this property is a blip id
      */
@@ -101,31 +101,31 @@ public abstract class EscherProperty implements GenericRecord {
     /**
      * Most properties are just 6 bytes in length.  Override this if we're
      * dealing with complex properties.
-     * 
+     *
      * @return size of this property (in bytes)
      */
     public int getPropertySize() {
         return 6;
     }
-    
+
     /**
      * Escher properties consist of a simple fixed length part and a complex variable length part.
      * The fixed length part is serialized first.
-     * 
+     *
      * @param data the buffer to write to
      * @param pos the starting position
-     * 
+     *
      * @return the length of the part
      */
     abstract public int serializeSimplePart( byte[] data, int pos );
-    
+
     /**
      * Escher properties consist of a simple fixed length part and a complex variable length part.
      * The fixed length part is serialized first.
-     * 
+     *
      * @param data the buffer to write to
      * @param pos the starting position
-     * 
+     *
      * @return the length of the part
      */
     abstract public int serializeComplexPart( byte[] data, int pos );

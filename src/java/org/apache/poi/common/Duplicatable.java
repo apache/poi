@@ -24,8 +24,6 @@ package org.apache.poi.common;
  * References to child objects are duplicated - references to parents are kept as-is and
  * might need to be replaced by the parent copy operation.
  *
- * @param <T> the implementing class itself
- *
  * @see <a href="https://www.artima.com/intv/bloch.html#part13">Copy Constructor versus Cloning</a>
  */
 public interface Duplicatable {

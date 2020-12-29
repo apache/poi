@@ -37,7 +37,7 @@ public class EscherRGBProperty
     /**
      * Create an instance of an escher boolean property.
      *
-     * @param propertyNumber The property type
+     * @param propertyType one of the defined property types
      * @param rgbColor      The 24 bit value of this rgb property
      */
     public EscherRGBProperty( EscherPropertyTypes propertyType, int rgbColor ) {

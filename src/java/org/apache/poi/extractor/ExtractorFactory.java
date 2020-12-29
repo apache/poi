@@ -46,7 +46,7 @@ import org.apache.poi.util.POILogger;
  * <p>Note 1 - will fail for many file formats if the POI Scratchpad jar is
  *  not present on the runtime classpath</p>
  * <p>Note 2 - for text extractor creation across all formats, use
- *  {@link org.apache.poi.ooxml.extractor.ExtractorFactory} contained within
+ *  {@link org.apache.poi.ooxml.extractor.POIXMLExtractorFactory} contained within
  *  the OOXML jar.</p>
  * <p>Note 3 - rather than using this, for most cases you would be better
  *  off switching to <a href="http://tika.apache.org">Apache Tika</a> instead!</p>
@@ -208,7 +208,7 @@ public final class ExtractorFactory {
     /**
      * Create the Extractor, if possible. Generally needs the Scratchpad jar.
      * Note that this won't check for embedded OOXML resources either, use
-     *  {@link org.apache.poi.ooxml.extractor.ExtractorFactory} for that.
+     *  {@link org.apache.poi.ooxml.extractor.POIXMLExtractorFactory} for that.
      *
      * @param root The {@link DirectoryNode} pointing to a document.
      *

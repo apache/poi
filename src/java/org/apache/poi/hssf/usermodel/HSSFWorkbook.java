@@ -1756,8 +1756,7 @@ public final class HSSFWorkbook extends POIDocument implements org.apache.poi.ss
     }
 
     /**
-     * As {@link #removeName(String)} is not necessarily unique
-     * (name + sheet index is unique), this method is more accurate.
+     * Remove a name.
      *
      * @param name the name to remove.
      */

@@ -29,9 +29,8 @@ import org.apache.poi.util.LittleEndian;
  * to a 32-bit value.  Properties that can't be stored in only 32-bits are
  * stored as EscherComplexProperty objects.
  */
-public class EscherSimpleProperty extends EscherProperty
-{
-    private int propertyValue;
+public class EscherSimpleProperty extends EscherProperty {
+    private final int propertyValue;
 
     /**
      * The id is distinct from the actual property number.  The id includes the property number the blip id
@@ -72,7 +71,7 @@ public class EscherSimpleProperty extends EscherProperty
     /**
      * Constructs a new escher property.  The three parameters are combined to form a property id.
      *
-     * @param propertyNumber the property number
+     * @param type one of the defined property types
      * @param isComplex true, if its a complex property
      * @param isBlipId true, if its a blip
      * @param propertyValue the property value
