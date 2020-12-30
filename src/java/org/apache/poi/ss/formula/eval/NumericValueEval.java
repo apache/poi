@@ -22,9 +22,9 @@ package org.apache.poi.ss.formula.eval;
 
 /**
  * @author Amol S. Deshmukh &lt; amolweb at ya hoo dot com &gt;
- *  
+ *
  */
 public interface NumericValueEval extends ValueEval {
 
-    public abstract double getNumberValue();
+    double getNumberValue();
 }

@@ -119,7 +119,6 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCalcCell;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTCols;
 import org.openxmlformats.schemas.spreadsheetml.x2006.main.CTDefinedName;
@@ -3637,5 +3636,29 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
                 assertEquals(1, wb.getNumberOfSheets());
             }
         }
+    }
+
+    @Test
+    public void test64986() throws IOException {
+        XSSFWorkbook w = new XSSFWorkbook();
+        XSSFSheet s = w.createSheet();
+        XSSFRow r = s.createRow(0);
+        XSSFCell c = r.createCell(0);
+        c.setCellFormula("MATCH(\"VAL\",B1:B11,)");
+
+        FormulaEvaluator evaluator = w.getCreationHelper().createFormulaEvaluator();
+        CellValue value = evaluator.evaluate(c);
+        assertEquals(CellType.ERROR, value.getCellType());
+        assertEquals(ErrorEval.NA.getErrorCode(), value.getErrorValue());
+
+        // put a value in place so the match should find something
+        Cell val = r.createCell(1);
+        val.setCellValue("VAL");
+
+        // clear and check that now we find a match
+        evaluator.clearAllCachedResultValues();
+        value = evaluator.evaluate(c);
+        assertEquals(CellType.NUMERIC, value.getCellType());
+        assertEquals(1, value.getNumberValue(), 0.01);
     }
 }

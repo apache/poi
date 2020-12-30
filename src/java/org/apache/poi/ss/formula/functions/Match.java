@@ -18,8 +18,10 @@
 package org.apache.poi.ss.formula.functions;
 
 import org.apache.poi.ss.formula.TwoDEval;
+import org.apache.poi.ss.formula.eval.BlankEval;
 import org.apache.poi.ss.formula.eval.ErrorEval;
 import org.apache.poi.ss.formula.eval.EvaluationException;
+import org.apache.poi.ss.formula.eval.MissingArgEval;
 import org.apache.poi.ss.formula.eval.NumberEval;
 import org.apache.poi.ss.formula.eval.NumericValueEval;
 import org.apache.poi.ss.formula.eval.OperandResolver;
@@ -177,7 +179,12 @@ public final class Match extends Var2or3ArgFunction {
 				throw new EvaluationException(ErrorEval.VALUE_INVALID);
 			}
 			// if the string parses as a number, it is OK
-			return d.doubleValue();
+			return d;
+		}
+		if (match_type instanceof MissingArgEval || match_type instanceof BlankEval) {
+			// Excel-Online ignores a missing match-type and
+			// uses the default-value instead
+			return 1;
 		}
 		throw new RuntimeException("Unexpected match_type type (" + match_type.getClass().getName() + ")");
 	}
