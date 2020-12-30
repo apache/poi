@@ -39,7 +39,7 @@ import org.apache.poi.poifs.filesystem.OfficeXmlFileException;
  */
 public class BaseIntegrationTest {
 	private final File rootDir;
-	private String file;
+	private final String file;
 	private FileHandler handler;
 
 	public BaseIntegrationTest(File rootDir, String file, FileHandler handler) {
@@ -61,7 +61,7 @@ public class BaseIntegrationTest {
 			handleWrongOLE2XMLExtension(inputFile, e);
 		} catch (OldFileFormatException e) {
 			// Not even text extraction is supported for these: handler.handleExtracting(inputFile);
-			assumeFalse( true, "File " + file + " excluded because it is unsupported old Excel format" );
+			assumeFalse( true, "File " + file + " excluded because it is an unsupported old format" );
 		} catch (EncryptedDocumentException e) {
 			// Do not try to read encrypted files
 			assumeFalse( true, "File " + file + " excluded because it is password-encrypted" );
@@ -123,42 +123,35 @@ public class BaseIntegrationTest {
 
 		if(message != null && (message.equals("The document is really a XLS file"))) {
 			handler = TestAllFiles.HANDLERS.get(".xls");
-			handleFile(inputFile);
 		} else if(message != null && (message.equals("The document is really a PPT file"))) {
 			handler = TestAllFiles.HANDLERS.get(".ppt");
-			handleFile(inputFile);
 		} else if(message != null && (message.equals("The document is really a DOC file"))) {
 			handler = TestAllFiles.HANDLERS.get(".doc");
-			handleFile(inputFile);
 		} else if(message != null && (message.equals("The document is really a VSD file"))) {
 			handler = TestAllFiles.HANDLERS.get(".vsd");
-			handleFile(inputFile);
 
 		// use XWPF instead of HWPF and XSSF instead of HSSF as the file seems to have the wrong extension
 		} else if (handler instanceof HWPFFileHandler) {
             handler = TestAllFiles.HANDLERS.get(".docx");
-            handleFile(inputFile);
         } else if (handler instanceof HSSFFileHandler) {
             handler = TestAllFiles.HANDLERS.get(".xlsx");
-            handleFile(inputFile);
         } else if (handler instanceof HSLFFileHandler) {
 			handler = TestAllFiles.HANDLERS.get(".pptx");
-			handleFile(inputFile);
 
 		// and the other way around, use HWPF instead of XWPF and so forth
 		} else if(handler instanceof XWPFFileHandler) {
 			handler = TestAllFiles.HANDLERS.get(".doc");
-			handleFile(inputFile);
 		} else if(handler instanceof XSSFFileHandler) {
 			handler = TestAllFiles.HANDLERS.get(".xls");
-			handleFile(inputFile);
 		} else if(handler instanceof XSLFFileHandler) {
 			handler = TestAllFiles.HANDLERS.get(".ppt");
-			handleFile(inputFile);
         } else {
 			// nothing matched => throw the exception to the outside
-            throw e;
-        }
+			throw e;
+		}
+
+		// we found a different handler to try processing again
+		handleFile(inputFile);
 	}
 
 	private void handleFile(File inputFile) throws Exception {
