@@ -51,7 +51,7 @@ import org.junit.jupiter.api.Test;
 public class TestFontRendering {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
 
-    // @Ignore2("This fails on some systems because fonts are rendered slightly different")
+    // @Disabled2("This fails on some systems because fonts are rendered slightly different")
     @Test
     public void bug55902mixedFontWithChineseCharacters() throws IOException, FontFormatException {
         // font files need to be downloaded first via

@@ -297,7 +297,7 @@ public abstract class BaseTestSheetShiftRows {
         wb.close();
     }
 
-    //@Ignore("bug 56454: Incorrectly handles merged regions that do not contain column 0")
+    //@Disabled("bug 56454: Incorrectly handles merged regions that do not contain column 0")
     @Test
     public final void shiftWithMergedRegions_bug56454() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();
@@ -597,7 +597,7 @@ public abstract class BaseTestSheetShiftRows {
         read.close();
     }
 
-    //@Ignore("bug 56454: Incorrectly handles merged regions that do not contain column 0")
+    //@Disabled("bug 56454: Incorrectly handles merged regions that do not contain column 0")
     @Test
     public void shiftRowsWithMergedRegionsThatDoNotContainColumnZero() throws IOException {
         Workbook wb = _testDataProvider.createWorkbook();

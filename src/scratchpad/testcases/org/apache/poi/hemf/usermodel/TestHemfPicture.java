@@ -60,7 +60,7 @@ public class TestHemfPicture {
 
 /*
     @Test
-    @Ignore("Only for manual tests")
+    @Disabled("Only for manual tests")
     public void paintSingle() throws Exception {
         File fileIn = new File("tmp/emfs/govdocs1/844/844795.ppt_2.emf");
 
@@ -82,7 +82,7 @@ public class TestHemfPicture {
 
 /*
     @Test
-    @Ignore("Only for manual tests - need to add org.tukaani:xz:1.8 for this to work")
+    @Disabled("Only for manual tests - need to add org.tukaani:xz:1.8 for this to work")
     public void paintMultiple() throws Exception {
         Pattern fileExt = Pattern.compile("(?i)^(.+/)*(.+)\\.(emf|wmf)$");
         final byte[] buf = new byte[50_000_000];
