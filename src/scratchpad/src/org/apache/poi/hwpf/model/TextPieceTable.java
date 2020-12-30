@@ -241,17 +241,16 @@ public class TextPieceTable implements CharIndexTranslator {
         for (TextPiece textPiece : _textPiecesFCOrder) {
             final int tpStart = textPiece.getPieceDescriptor()
                     .getFilePosition();
+            if (endBytePosExclusive <= tpStart)
+                break;
+
             final int tpEnd = textPiece.getPieceDescriptor().getFilePosition()
                     + textPiece.bytesLength();
             if (startBytePosInclusive > tpEnd)
                 continue;
-            if (endBytePosExclusive <= tpStart)
-                break;
 
-            final int rangeStartBytes = Math.max(tpStart,
-                    startBytePosInclusive);
+            final int rangeStartBytes = Math.max(tpStart, startBytePosInclusive);
             final int rangeEndBytes = Math.min(tpEnd, endBytePosExclusive);
-            final int rangeLengthBytes = rangeEndBytes - rangeStartBytes;
 
             if (rangeStartBytes > rangeEndBytes)
                 continue;
@@ -260,6 +259,7 @@ public class TextPieceTable implements CharIndexTranslator {
 
             final int rangeStartCp = textPiece.getStart()
                     + (rangeStartBytes - tpStart) / encodingMultiplier;
+            final int rangeLengthBytes = rangeEndBytes - rangeStartBytes;
             final int rangeEndCp = rangeStartCp + rangeLengthBytes
                     / encodingMultiplier;
 
@@ -290,12 +290,11 @@ public class TextPieceTable implements CharIndexTranslator {
                 logger.log(
                         POILogger.WARN,
                         "Text piece has boundaries [",
-                        Integer.valueOf(textPiece.getStart()),
+                        textPiece.getStart(),
                         "; ",
-                        Integer.valueOf(textPiece.getEnd()),
+                        textPiece.getEnd(),
                         ") but length ",
-                        Integer.valueOf(textPiece.getEnd()
-                                - textPiece.getStart()));
+                        textPiece.getEnd() - textPiece.getStart());
             }
 
             docText.replace(textPiece.getStart(), textPiece.getStart()
@@ -303,8 +302,8 @@ public class TextPieceTable implements CharIndexTranslator {
         }
 
         logger.log(POILogger.DEBUG, "Document text were rebuilded in ",
-                Long.valueOf(System.currentTimeMillis() - start), " ms (",
-                Integer.valueOf(docText.length()), " chars)");
+                System.currentTimeMillis() - start, " ms (",
+                docText.length(), " chars)");
 
         return docText;
     }
@@ -326,11 +325,7 @@ public class TextPieceTable implements CharIndexTranslator {
                 continue;
             }
 
-            if (pieceStart > bytePos) {
-                return false;
-            }
-
-            return true;
+            return pieceStart <= bytePos;
         }
 
         return false;
@@ -347,10 +342,7 @@ public class TextPieceTable implements CharIndexTranslator {
             int left = Math.max(startBytePos, pieceStart);
             int right = Math.min(endBytePos, pieceStart + tp.bytesLength());
 
-            if (left >= right)
-                return false;
-
-            return true;
+            return left < right;
         }
 
         return false;
