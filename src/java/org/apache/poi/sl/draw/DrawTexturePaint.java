@@ -102,7 +102,7 @@ import org.apache.poi.util.Dimension2DDouble;
         final Insets2D insets = fill.getInsets();
         final Insets2D stretch = fill.getStretch();
 
-        if ((insets == null || INSETS_EMPTY.equals(insets)) && (stretch == null)) {
+        if ((insets == null || INSETS_EMPTY.equals(insets)) && (stretch == null) || userBounds == null || userBounds.isEmpty()) {
             return bi;
         }
 
