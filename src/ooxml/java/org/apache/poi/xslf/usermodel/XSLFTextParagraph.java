@@ -858,7 +858,8 @@ public class XSLFTextParagraph implements TextParagraph<XSLFShape,XSLFTextParagr
 
     @Override
     public String getDefaultFontFamily() {
-        return (_runs.isEmpty() ? "Arial" : _runs.get(0).getFontFamily());
+        String family = (_runs.isEmpty() ? null : _runs.get(0).getFontFamily());
+        return (family == null) ? "Arial" : family;
     }
 
     @Override
