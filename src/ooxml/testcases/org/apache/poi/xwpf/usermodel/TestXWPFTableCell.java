@@ -22,6 +22,8 @@ package org.apache.poi.xwpf.usermodel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertSame;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
@@ -170,16 +172,15 @@ public class TestXWPFTableCell {
         XWPFTableRow tr = table.createRow();
         XWPFTableCell cell = tr.addNewTableCell();
 
-        // cell have at least one paragraph by default
-        assertEquals(1, cell.getParagraphs().size());
-        assertEquals(1, cell.getBodyElements().size());
-        assertEquals(cell.getParagraphArray(0), cell.getBodyElements().get(0));
+        // now paragraph or body element initially
+        assertEquals(0, cell.getParagraphs().size());
+        assertEquals(0, cell.getBodyElements().size());
 
         XWPFParagraph p = cell.addParagraph();
-        assertEquals(2, cell.getParagraphs().size());
-        assertEquals(2, cell.getBodyElements().size());
-        assertEquals(p, cell.getParagraphArray(1));
-        assertEquals(cell.getParagraphArray(1), cell.getBodyElements().get(1));
+        assertEquals(1, cell.getParagraphs().size());
+        assertEquals(1, cell.getBodyElements().size());
+        assertSame(p, cell.getParagraphArray(0));
+        assertEquals(cell.getParagraphArray(0), cell.getBodyElements().get(0));
 
         doc.close();
     }
@@ -191,8 +192,10 @@ public class TestXWPFTableCell {
         XWPFTableRow tr = table.createRow();
         XWPFTableCell cell = tr.addNewTableCell();
 
-        // cell have at least one paragraph by default
-        XWPFParagraph p0 = cell.getParagraphArray(0);
+        // cell have no paragraph by default
+        assertNull(cell.getParagraphArray(0));
+
+        XWPFParagraph p0 = cell.addParagraph();
         XWPFParagraph p1 = cell.addParagraph();
         cell.addParagraph();
 
@@ -222,7 +225,12 @@ public class TestXWPFTableCell {
         XWPFTableRow tr = table.createRow();
         XWPFTableCell cell = tr.addNewTableCell();
 
-        // cell have at least one paragraph by default
+        // cell should not have any elements by default
+        assertTrue(cell.getParagraphs().isEmpty());
+
+        XWPFParagraph p = cell.addParagraph();
+        assertNotNull(p);
+
         XWPFParagraph p0 = cell.getParagraphArray(0);
         XmlCursor newCursor = p0.getCTP().newCursor();
         cell.insertNewTbl(newCursor);

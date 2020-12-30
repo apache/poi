@@ -82,9 +82,7 @@ public class XWPFTableCell implements IBody, ICell {
         this.ctTc = cell;
         this.part = part;
         this.tableRow = tableRow;
-        // NB: If a table cell does not include at least one block-level element, then this document shall be considered corrupt.
-        if (cell.sizeOfPArray() < 1)
-            cell.addNewP();
+
         bodyElements = new ArrayList<>();
         paragraphs = new ArrayList<>();
         tables = new ArrayList<>();
