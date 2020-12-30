@@ -21,6 +21,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.fail;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -217,6 +218,8 @@ public final class TestUnfixedBugs {
             // write to file for manual inspection
             XSSFTestDataSamples.writeOut(wb, "bug 55752 for review");
         }
+
+        fail("Test runs ok, but the resulting file is incorrectly formatted");
     }
 
     @Test
@@ -248,6 +251,8 @@ public final class TestUnfixedBugs {
         checkRows57423(wbBack.getSheetAt(0));
 
         wbBack.close();
+
+        fail("Excel reports that the workbook is corrupt");
     }
 
     private void checkRows57423(Sheet testSheet) throws IOException {
@@ -326,6 +331,8 @@ public final class TestUnfixedBugs {
             // LibreOffice doesn't complain when rows are not in ascending order
 
             wbBack.close();
+
+            fail("Excel reports that the workbook is corrupt, LibreOffice can read it");
         }
     }
 
@@ -386,5 +393,13 @@ public final class TestUnfixedBugs {
             return new NumberEval( Double.parseDouble(value) );
         }
 
+    }
+
+    @Test
+    public void testBug64759() throws IOException {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("64759.xlsx")) {
+            Sheet cloned = wb.cloneSheet(0);
+            assertNotNull(cloned);
+        }
     }
 }

@@ -251,6 +251,7 @@ public class TestAllFiles {
     private static final Set<String> EXPECTED_FAILURES = unmodifiableHashSet(
         // password protected files without known password
         "spreadsheet/51832.xls",
+        "spreadsheet/64759.xlsx",
         "document/PasswordProtected.doc",
 
         // TODO: fails XMLExportTest, is this ok?
