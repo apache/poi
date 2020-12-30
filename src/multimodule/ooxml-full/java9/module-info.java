@@ -21,6 +21,9 @@ open module org.apache.poi.ooxml.schemas {
     // see https://bugs.openjdk.java.net/browse/JDK-8240847
     requires transitive org.apache.xmlbeans;
     requires java.xml;
+
+    exports org.apache.poi.schemas.ooxml.system.ooxml;
+
     exports com.microsoft.schemas.compatibility;
     exports com.microsoft.schemas.office.excel;
     exports com.microsoft.schemas.office.office;

@@ -78,6 +78,7 @@ public final class HSLFSlideShow extends POIDocument implements SlideShow<HSLFSh
 
 	/** Powerpoint document entry/stream name */
     public static final String POWERPOINT_DOCUMENT = "PowerPoint Document";
+	public static final String PP97_DOCUMENT = "PP97_DUALSTORAGE";
 	public static final String PP95_DOCUMENT = "PP40";
 
     enum LoadSavePhase {

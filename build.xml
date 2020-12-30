@@ -1753,16 +1753,23 @@ under the License.
             </modulepath>
         </javac>
 
+        <copy file="${ooxml.lite.report}.clazz" tofile="${ooxml.lite.report}.clazz1" overwrite="true">
+            <filterchain>
+                <sortfilter/>
+                <suffixlines suffix="$*.class"/>
+            </filterchain>
+        </copy>
+
         <copy file="${ooxml.lite.report}.clazz" tofile="${ooxml.lite.report}.clazz2" overwrite="true">
             <filterchain>
-                <tokenfilter>
-                    <replaceregex pattern="(.*)" replace="\1.class${line.separator}\1$*.class "/>
-                </tokenfilter>
+                <sortfilter/>
+                <suffixlines suffix=".class"/>
             </filterchain>
         </copy>
 
         <copy file="${ooxml.lite.report}.xsb" tofile="${ooxml.lite.report}.xsb2" overwrite="true">
             <filterchain>
+                <sortfilter/>
                 <prefixlines prefix="org/apache/poi/schemas/ooxml/system/ooxml/"/>
                 <suffixlines suffix=".xsb"/>
             </filterchain>
@@ -1770,15 +1777,17 @@ under the License.
 
         <mkdir dir="build/dist/maven/poi-ooxml-lite"/>
 
-        <jar destfile="${ooxml.lite.jar}" duplicate="preserve">
+        <jar destfile="${ooxml.lite.jar}" duplicate="fail">
             <zipfileset dir="${basedir}/src/multimodule/ooxml-lite/java9" prefix="META-INF/versions/9" excludes="*.java"/>
             <zipfileset src="${ooxml.xsds.jar}">
-                <patternset includesfile="${ooxml.lite.report}.clazz2">
+                <patternset>
+                    <includesfile name="${ooxml.lite.report}.clazz1"/>
+                    <includesfile name="${ooxml.lite.report}.clazz2"/>
+                    <includesfile name="${ooxml.lite.report}.xsb2"/>
+<!--                    <include name="org/apache/poi/schemas/ooxml/system/ooxml/*.xsb"/>-->
                     <include name="org/apache/poi/schemas/ooxml/element/**/*.xsb"/>
                 </patternset>
-                <patternset includesfile="${ooxml.lite.report}.xsb2"/>
             </zipfileset>
-            <zipfileset dir="src/multimodule/ooxml-full/java9" prefix="META-INF/versions/9" excludes="*.java"/>
             <manifest>
                 <attribute name="Multi-Release" value="true"/>
                 <attribute name="Automatic-Module-Name" value="org.apache.poi.ooxml.schemas"/>

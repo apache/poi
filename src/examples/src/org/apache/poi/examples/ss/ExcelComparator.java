@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Objects;
 
 import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
@@ -477,7 +478,7 @@ public class ExcelComparator {
 
         String col1 = getCellFillBackground(loc1);
         String col2 = getCellFillBackground(loc2);
-        if (!col1.equals(col2)) {
+        if (!Objects.equals(col1, col2)) {
             addMessage(loc1, loc2, "Cell Fill Color does not Match ::", col1, col2);
         }
     }

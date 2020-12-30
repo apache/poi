@@ -81,6 +81,7 @@ public class TestExtractorFactory {
     private static final POIDataSamples slTests = POIDataSamples.getSlideShowInstance();
     private static final File ppt = getFileAndCheck(slTests, "SampleShow.ppt");
     private static final File pptx = getFileAndCheck(slTests, "SampleShow.pptx");
+    private static final File ppt97 = getFileAndCheck(slTests, "bug56240.ppt");
     private static final File txt = getFileAndCheck(slTests, "SampleShow.txt");
 
     private static final POIDataSamples olTests = POIDataSamples.getHSMFInstance();
@@ -126,6 +127,7 @@ public class TestExtractorFactory {
             Arguments.of("Word 6", doc6, "Word6Extractor", 20),
             Arguments.of("Word 95", doc95, "Word6Extractor", 120),
             Arguments.of("PowerPoint", ppt, "SlideShowExtractor", 120),
+            Arguments.of("PowerPoint 97 Dual", ppt97, "SlideShowExtractor", 120),
             Arguments.of("Visio", vsd, "VisioTextExtractor", 50),
             Arguments.of("Publisher", pub, "PublisherTextExtractor", 50),
             Arguments.of("Outlook msg", msg, "OutlookTextExtractor", 50)

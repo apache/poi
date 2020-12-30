@@ -23,6 +23,8 @@ open module org.apache.poi.ooxml.schemas {
     requires java.xml;
 
 
+
+
     exports com.microsoft.schemas.compatibility;
     exports com.microsoft.schemas.office.excel;
     exports com.microsoft.schemas.office.office;
@@ -40,6 +42,7 @@ open module org.apache.poi.ooxml.schemas {
     exports org.openxmlformats.schemas.officeDocument.x2006.customProperties;
     exports org.openxmlformats.schemas.officeDocument.x2006.docPropsVTypes;
     exports org.openxmlformats.schemas.officeDocument.x2006.extendedProperties;
+    exports org.openxmlformats.schemas.officeDocument.x2006.math;
     exports org.openxmlformats.schemas.officeDocument.x2006.relationships;
     exports org.openxmlformats.schemas.officeDocument.x2006.sharedTypes;
     exports org.openxmlformats.schemas.presentationml.x2006.main;

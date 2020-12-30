@@ -19,6 +19,7 @@ package org.apache.poi.hslf.usermodel;
 
 import static org.apache.poi.hslf.usermodel.HSLFSlideShow.POWERPOINT_DOCUMENT;
 import static org.apache.poi.hslf.usermodel.HSLFSlideShow.PP95_DOCUMENT;
+import static org.apache.poi.hslf.usermodel.HSLFSlideShow.PP97_DOCUMENT;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -73,8 +74,6 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
     //arbitrarily selected; may need to increase
     private static final int MAX_RECORD_LENGTH = 200_000_000;
-
-    private static final String DUAL_STORAGE_NAME = "PP97_DUALSTORAGE";
 
     // Holds metadata on where things are in our document
     private CurrentUserAtom currentUser;
@@ -163,10 +162,10 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
 
     private static DirectoryNode handleDualStorage(DirectoryNode dir) throws IOException {
         // when there's a dual storage entry, use it, as the outer document can't be read quite probably ...
-        if (!dir.hasEntry(DUAL_STORAGE_NAME)) {
+        if (!dir.hasEntry(PP97_DOCUMENT)) {
             return dir;
         }
-        return (DirectoryNode) dir.getEntry(DUAL_STORAGE_NAME);
+        return (DirectoryNode) dir.getEntry(PP97_DOCUMENT);
     }
 
     /**
@@ -831,7 +830,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
         // only close the filesystem, if we are based on the root node.
         // embedded documents/slideshows shouldn't close the parent container
         if (getDirectory().getParent() == null ||
-                getDirectory().getName().equals(DUAL_STORAGE_NAME)) {
+            PP97_DOCUMENT.equals(getDirectory().getName())) {
             POIFSFileSystem fs = getDirectory().getFileSystem();
             if (fs != null) {
                 fs.close();

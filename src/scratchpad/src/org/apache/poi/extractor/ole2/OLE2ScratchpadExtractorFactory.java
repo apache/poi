@@ -100,7 +100,7 @@ public class OLE2ScratchpadExtractorFactory implements ExtractorProvider {
                 }
             }
 
-            if (poifsDir.hasEntry(HSLFSlideShow.POWERPOINT_DOCUMENT)) {
+            if (poifsDir.hasEntry(HSLFSlideShow.POWERPOINT_DOCUMENT) || poifsDir.hasEntry(HSLFSlideShow.PP97_DOCUMENT)) {
                 return new SlideShowExtractor<>((HSLFSlideShow)SlideShowFactory.create(poifsDir));
             }
 
