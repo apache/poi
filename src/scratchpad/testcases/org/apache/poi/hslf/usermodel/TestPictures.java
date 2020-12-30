@@ -30,6 +30,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.apache.poi.POIDataSamples;
+import org.apache.poi.hslf.HSLFTestDataSamples;
 import org.apache.poi.hslf.blip.DIB;
 import org.apache.poi.hslf.blip.EMF;
 import org.apache.poi.hslf.blip.JPEG;
@@ -361,7 +362,7 @@ public final class TestPictures {
         HSLFPictureShape pict;
         HSLFPictureData pdata;
 
-        HSLFSlideShow ppt = new HSLFSlideShow(slTests.openResourceAsStream("pictures.ppt"));
+        HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("pictures.ppt");
         List<HSLFSlide> slides = ppt.getSlides();
         List<HSLFPictureData> pictures = ppt.getPictureData();
         assertEquals(5, pictures.size());
@@ -522,7 +523,7 @@ public final class TestPictures {
 
     @Test
     public void testGetPictureName() throws IOException {
-        HSLFSlideShow ppt = new HSLFSlideShow(slTests.openResourceAsStream("ppt_with_png.ppt"));
+        HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("ppt_with_png.ppt");
         HSLFSlide slide = ppt.getSlides().get(0);
 
         HSLFPictureShape p = (HSLFPictureShape)slide.getShapes().get(0); //the first slide contains JPEG
@@ -550,5 +551,13 @@ public final class TestPictures {
 
         HSLFPictureShape p = (HSLFPictureShape)ppt.getSlides().get(0).getShapes().get(0);
         assertEquals("tomcat.png", p.getPictureName());
+    }
+
+    @Test
+    public void testPictureIndexIsOneBased() throws IOException {
+        try (HSLFSlideShow ppt = HSLFTestDataSamples.getSlideShow("ppt_with_png.ppt")) {
+            HSLFPictureData picture = ppt.getPictureData().get(0);
+            assertEquals(1, picture.getIndex());
+        }
     }
 }

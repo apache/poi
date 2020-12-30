@@ -415,7 +415,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
                         pict.setRawData(imgdata);
 
                         pict.setOffset(offset);
-                        pict.setIndex(_pictures.size());
+                        pict.setIndex(_pictures.size() + 1);        // index is 1-based
                         _pictures.add(pict);
                     } catch (IllegalArgumentException e) {
                         logger.log(POILogger.ERROR, "Problem reading picture: ", e, "\nYour document will probably become corrupted if you save it!");
@@ -760,7 +760,7 @@ public final class HSLFSlideShowImpl extends POIDocument implements Closeable {
             offset = prev.getOffset() + prev.getRawData().length + 8;
         }
         img.setOffset(offset);
-        img.setIndex(_pictures.size() + 1);
+        img.setIndex(_pictures.size() + 1);        // index is 1-based
         _pictures.add(img);
         return offset;
     }
