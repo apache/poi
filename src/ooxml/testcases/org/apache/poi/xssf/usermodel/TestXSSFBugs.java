@@ -3661,4 +3661,12 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
         assertEquals(CellType.NUMERIC, value.getCellType());
         assertEquals(1, value.getNumberValue(), 0.01);
     }
+
+    @Test
+    public void test64750() throws IOException {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("64750.xlsx")) {
+            Sheet sheet = wb.getSheet("Sheet1");
+            assertEquals(1, sheet.getDataValidations().size());
+        }
+    }
 }

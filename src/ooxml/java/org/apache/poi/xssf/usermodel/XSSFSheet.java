@@ -80,7 +80,6 @@ import org.apache.poi.util.Beta;
 import org.apache.poi.util.Internal;
 import org.apache.poi.util.POILogFactory;
 import org.apache.poi.util.POILogger;
-import org.apache.poi.util.Removal;
 import org.apache.poi.util.Units;
 import org.apache.poi.xssf.model.CommentsTable;
 import org.apache.poi.xssf.usermodel.XSSFPivotTable.PivotTableReferenceConfigurator;
@@ -4011,7 +4010,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
     public List<XSSFDataValidation> getDataValidations() {
         List<XSSFDataValidation> xssfValidations = new ArrayList<>();
         CTDataValidations dataValidations = this.worksheet.getDataValidations();
-        if( dataValidations!=null && dataValidations.getCount() > 0 ) {
+        if (dataValidations != null) {
             for (CTDataValidation ctDataValidation : dataValidations.getDataValidationArray()) {
                 CellRangeAddressList addressList = new CellRangeAddressList();
 
@@ -4031,6 +4030,7 @@ public class XSSFSheet extends POIXMLDocumentPart implements Sheet  {
                 xssfValidations.add(xssfDataValidation);
             }
         }
+
         return xssfValidations;
     }
 
