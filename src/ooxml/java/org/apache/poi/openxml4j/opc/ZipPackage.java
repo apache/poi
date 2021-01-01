@@ -379,7 +379,7 @@ public final class ZipPackage extends OPCPackage {
      * Delete a part from the package
      *
      * @throws IllegalArgumentException
-     *             Throws if the part URI is nulll or invalid.
+     *             Throws if the part URI is null or invalid.
      */
     @Override
     protected void removePartImpl(PackagePartName partName) {

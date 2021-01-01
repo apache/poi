@@ -32,7 +32,7 @@ import org.apache.poi.ss.usermodel.Cell;
  * calls to evaluate~ methods on this class.
  */
 public final class XSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
-    private XSSFWorkbook _book;
+    private final XSSFWorkbook _book;
 
     public XSSFFormulaEvaluator(XSSFWorkbook workbook) {
         this(workbook, null, null);
@@ -79,12 +79,12 @@ public final class XSSFFormulaEvaluator extends BaseXSSFFormulaEvaluator {
     public static void evaluateAllFormulaCells(XSSFWorkbook wb) {
         BaseFormulaEvaluator.evaluateAllFormulaCells(wb);
     }
-    
+
     @Override
     public XSSFCell evaluateInCell(Cell cell) {
         return (XSSFCell) super.evaluateInCell(cell);
     }
-    
+
     /**
      * Loops over all cells in all sheets of the supplied
      *  workbook.

@@ -57,7 +57,7 @@ public class POIXMLDocumentPart {
     private String coreDocumentRel = PackageRelationshipTypes.CORE_DOCUMENT;
     private PackagePart packagePart;
     private POIXMLDocumentPart parent;
-    private Map<String, RelationPart> relations = new LinkedHashMap<>();
+    private final Map<String, RelationPart> relations = new LinkedHashMap<>();
     private boolean isCommitted = false;
 
     /**
@@ -361,7 +361,7 @@ public class POIXMLDocumentPart {
      * <p>
      * If there are multiple relationships to the same part, this will only
      * remove the first relationship in the order of creation. The removal
-     * via the part id ({@link #removeRelation(String)} is preferred.
+     * via the part id ({@link #removeRelation(POIXMLDocumentPart)} is preferred.
      *
      * @param partId the part id which relation is to be removed from this document
      * @since 4.0.0
@@ -380,7 +380,7 @@ public class POIXMLDocumentPart {
      * @return true, if the relation was removed
      * @since 4.0.0
      */
-    private final boolean removeRelation(String partId, boolean removeUnusedParts) {
+    private boolean removeRelation(String partId, boolean removeUnusedParts) {
         RelationPart rp = relations.get(partId);
         if (rp == null) {
             // part is not related with this POIXMLDocumentPart

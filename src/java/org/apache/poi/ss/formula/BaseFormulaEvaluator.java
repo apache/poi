@@ -70,7 +70,7 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
     protected EvaluationWorkbook getEvaluationWorkbook() {
         return _bookEvaluator.getWorkbook();
     }
-    
+
     /**
      * Should be called whenever there are major changes (e.g. moving sheets) to input cells
      * in the evaluated workbook.  If performance is not critical, a single call to this method
@@ -117,7 +117,7 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
                 throw new IllegalStateException("Bad cell type (" + cell.getCellType() + ")");
         }
     }
-    
+
     /**
      * If cell contains formula, it evaluates the formula, and
      *  puts the formula result back into the cell, in place
@@ -188,9 +188,11 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
     }
 
     /**
-     * set the cell type
-     * @param cell
-     * @param cv
+     * Set the cell type based on the computed cell type as
+     * part of a formula evaluation.
+     *
+     * @param cell The Cell to populate
+     * @param cv The CellValue to read the result type from
      */
     protected void setCellType(Cell cell, CellValue cv) {
         CellType cellType = cv.getCellType();
@@ -214,15 +216,17 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
 
     /**
      * Override if a different variation is needed, e.g. passing the evaluator to the cell method
-     * @param cell
-     * @param cellType
+     *
+     * @param cell The Cell to populate
+     * @param cellType The wanted type for this Cell
      */
     protected void setCellType(Cell cell, CellType cellType) {
+        //noinspection deprecation
         cell.setCellType(cellType);
     }
-    
+
     protected abstract RichTextString createRichTextString(String str);
-    
+
     protected void setCellValue(Cell cell, CellValue cv) {
         CellType cellType = cv.getCellType();
         switch (cellType) {
@@ -246,7 +250,7 @@ public abstract class BaseFormulaEvaluator implements FormulaEvaluator, Workbook
                 throw new IllegalStateException("Unexpected cell value type (" + cellType + ")");
         }
     }
-    
+
 
     /**
      * Loops over all cells in all sheets of the supplied

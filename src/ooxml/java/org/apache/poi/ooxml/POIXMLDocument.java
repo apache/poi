@@ -60,15 +60,15 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
         super(pkg);
         init(pkg);
     }
-    
+
     protected POIXMLDocument(OPCPackage pkg, String coreDocumentRel) {
         super(pkg, coreDocumentRel);
         init(pkg);
     }
-    
+
     private void init(OPCPackage p) {
         this.pkg = p;
-        
+
         // Workaround for XMLBEANS-512 - ensure that when we parse
         //  the file, we start with a fresh XML Parser each time,
         //  and avoid the risk of getting a SaxHandler that's in error
@@ -77,10 +77,10 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
 
     /**
      * Wrapper to open a package, which works around shortcomings in java's this() constructor calls
-     * 
+     *
      * @param path the path to the document
      * @return the new OPCPackage
-     * 
+     *
      * @exception IOException if there was a problem opening the document
      */
     public static OPCPackage openPackage(String path) throws IOException {
@@ -107,13 +107,13 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
     /**
      * Retrieves all the PackageParts which are defined as relationships of the base document with the
      * specified content type.
-     * 
+     *
      * @param contentType the content type
-     * 
+     *
      * @return all the base document PackageParts which match the content type
-     * 
+     *
      * @throws InvalidFormatException when the relationships or the parts contain errors
-     * 
+     *
      * @see org.apache.poi.xssf.usermodel.XSSFRelation
      * @see org.apache.poi.xslf.usermodel.XSLFRelation
      * @see org.apache.poi.xwpf.usermodel.XWPFRelation
@@ -135,7 +135,7 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
     /**
      * Get the document properties. This gives you access to the
      *  core ooxml properties, and the extended ooxml properties.
-     *  
+     *
      * @return the document properties
      */
     public POIXMLProperties getProperties() {
@@ -169,7 +169,7 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
         onDocumentRead();
         context.clear();
     }
-    
+
     /**
      * Closes the underlying {@link OPCPackage} from which this
      *  document was read, if there is one
@@ -193,17 +193,17 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
     }
 
     /**
-     * Write out this document to an Outputstream.
+     * Write out this document to an {@link OutputStream}.
      *
      * Note - if the Document was opened from a {@link File} rather
      *  than an {@link InputStream}, you <b>must</b> write out to
      *  a different file, overwriting via an OutputStream isn't possible.
-     *  
+     *
      * If {@code stream} is a {@link java.io.FileOutputStream} on a networked drive
      * or has a high cost/latency associated with each written byte,
      * consider wrapping the OutputStream in a {@link java.io.BufferedOutputStream}
      * to improve write performance.
-     * 
+     *
      * @param stream - the java OutputStream you wish to write the file to
      *
      * @exception IOException if anything can't be written.
@@ -214,7 +214,7 @@ public abstract class POIXMLDocument extends POIXMLDocumentPart implements Close
         if(p == null) {
             throw new IOException("Cannot write data, document seems to have been closed already");
         }
-        
+
         //force all children to commit their changes into the underlying OOXML Package
         // TODO Shouldn't they be committing to the new one instead?
         Set<PackagePart> context = new HashSet<>();

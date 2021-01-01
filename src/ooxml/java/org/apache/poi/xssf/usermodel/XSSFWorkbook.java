@@ -172,7 +172,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * The locator of user-defined functions.
      * By default includes functions from the Excel Analysis Toolpack
      */
-    private IndexedUDFFinder _udfFinder = new IndexedUDFFinder(AggregatingUDFFinder.DEFAULT);
+    private final IndexedUDFFinder _udfFinder = new IndexedUDFFinder(AggregatingUDFFinder.DEFAULT);
 
     /**
      * TODO
@@ -214,7 +214,7 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      */
     private List<XSSFPictureData> pictures;
 
-    private static POILogger logger = POILogFactory.getLogger(XSSFWorkbook.class);
+    private static final POILogger logger = POILogFactory.getLogger(XSSFWorkbook.class);
 
     /**
      * cached instance of XSSFCreationHelper for this workbook
@@ -404,7 +404,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
             // Load individual sheets. The order of sheets is defined by the order
             //  of CTSheet elements in the workbook
             sheets = new ArrayList<>(shIdMap.size());
-            //noinspection deprecation
             for (CTSheet ctSheet : this.workbook.getSheets().getSheetArray()) {
                 parseSheet(shIdMap, ctSheet);
             }
@@ -1604,7 +1603,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
         newcts.set(cts);
 
         //notify sheets
-        //noinspection deprecation
         CTSheet[] sheetArray = ct.getSheetArray();
         for(int i=0; i < sheetArray.length; i++) {
             sheets.get(i).sheet = sheetArray[i];
@@ -1773,7 +1771,6 @@ public class XSSFWorkbook extends POIXMLDocument implements Workbook, Date1904Su
      * @return true if the sheet contains the name, false otherwise.
      */
     private boolean containsSheet(String name, int excludeSheetIdx) {
-        //noinspection deprecation
         CTSheet[] ctSheetArray = workbook.getSheets().getSheetArray();
 
         if (name.length() > MAX_SENSITIVE_SHEET_NAME_LEN) {
