@@ -58,7 +58,7 @@ public final class TestDateValue {
         try {
             int days1900 = (int)ChronoUnit.DAYS.between(
                 LocalDate.of(1899, Month.DECEMBER, 31),
-                LocalDate.of(Year.now().getValue(), Month.FEBRUARY, 1)
+                LocalDate.of(Year.now(LocaleUtil.getUserTimeZone().toZoneId()).getValue(), Month.FEBRUARY, 1)
             )+1;
             confirmDateValue(new StringEval("2020-02-01"), 43862);
             confirmDateValue(new StringEval("01-02-2020"), 43862);
