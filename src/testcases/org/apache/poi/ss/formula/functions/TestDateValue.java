@@ -19,6 +19,10 @@ package org.apache.poi.ss.formula.functions;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.time.LocalDate;
+import java.time.Month;
+import java.time.Year;
+import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 
 import org.apache.poi.ss.formula.eval.BlankEval;
@@ -52,14 +56,18 @@ public final class TestDateValue {
     public void testDateValue() {
         LocaleUtil.setUserLocale(Locale.ENGLISH);
         try {
+            int days1900 = (int)ChronoUnit.DAYS.between(
+                LocalDate.of(1899, Month.DECEMBER, 31),
+                LocalDate.of(Year.now().getValue(), Month.FEBRUARY, 1)
+            )+1;
             confirmDateValue(new StringEval("2020-02-01"), 43862);
             confirmDateValue(new StringEval("01-02-2020"), 43862);
             confirmDateValue(new StringEval("2020-FEB-01"), 43862);
             confirmDateValue(new StringEval("2020-Feb-01"), 43862);
             confirmDateValue(new StringEval("2020-FEBRUARY-01"), 43862);
-            confirmDateValue(new StringEval("FEB-01"), 43862);
+            confirmDateValue(new StringEval("FEB-01"), days1900);
             confirmDateValue(new StringEval("2/1/2020"), 43862);
-            confirmDateValue(new StringEval("2/1"), 43862);
+            confirmDateValue(new StringEval("2/1"), days1900);
             confirmDateValue(new StringEval("2020/2/1"), 43862);
             confirmDateValue(new StringEval("2020/FEB/1"), 43862);
             confirmDateValue(new StringEval("FEB/1/2020"), 43862);
