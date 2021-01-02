@@ -114,16 +114,16 @@ public final class TestEventRecordFactory {
         assertArrayEquals(rec1, rec2);
     }
 
-    /**
+    /*
      * tests that the create record function returns a properly
      * constructed record in the case of a continued record.
      * TODO - need a real world example to put in a unit test
      */
-    @NotImplemented
-    @Test
-    @Disabled
-    public void testCreateContinuedRecord() {
-    }
+    // @NotImplemented
+    // @Test
+    // @Disabled
+    // public void testCreateContinuedRecord() {
+    // }
 
 
     /**

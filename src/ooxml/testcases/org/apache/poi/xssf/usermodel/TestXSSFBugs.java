@@ -139,15 +139,6 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     /**
-     * test writing a file with large number of unique strings,
-     * open resulting file in Excel to check results!
-     */
-    @Test
-    public void bug15375_2() throws IOException {
-        bug15375(1000);
-    }
-
-    /**
      * Named ranges had the right reference, but
      * the wrong sheet name
      */

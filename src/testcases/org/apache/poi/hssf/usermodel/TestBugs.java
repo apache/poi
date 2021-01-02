@@ -46,12 +46,10 @@ import java.util.stream.IntStream;
 
 import javax.imageio.ImageIO;
 
-import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.hpsf.PropertySet;
 import org.apache.poi.hpsf.SummaryInformation;
 import org.apache.poi.hssf.HSSFITestDataProvider;
 import org.apache.poi.hssf.HSSFTestDataSamples;
-import org.apache.poi.hssf.OldExcelFormatException;
 import org.apache.poi.hssf.extractor.ExcelExtractor;
 import org.apache.poi.hssf.model.InternalSheet;
 import org.apache.poi.hssf.model.InternalWorkbook;
@@ -93,6 +91,8 @@ import org.junit.jupiter.api.Assumptions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * Testcases for bugs entered in bugzilla
@@ -144,34 +144,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
 
-    /**
-     * Test reading AND writing a complicated workbook
-     * Test opening resulting sheet in excel
-     */
-    @Test
-    public void bug15228() throws Exception {
-        simpleTest("15228.xls");
-    }
-
-    @Test
-    public void bug13796() throws Exception {
-        simpleTest("13796.xls");
-    }
-
-    /**
-     * test reading of a formula with a name and a cell ref in one
-     **/
-    @Test
-    public void bug14460() throws Exception {
-        simpleTest("14460.xls");
-    }
-
-    @Test
-    public void bug14330() throws Exception {
-        simpleTest("14330-1.xls");
-        simpleTest("14330-2.xls");
-    }
-
     private static void setCellText(HSSFCell cell, String text) {
         cell.setCellValue(new HSSFRichTextString(text));
     }
@@ -182,8 +154,8 @@ public final class TestBugs extends BaseTestBugzillaIssues {
      */
     @Test
     public void bug15375() throws Exception {
-        try (HSSFWorkbook wb = openSampleWorkbook("15375.xls")) {
-            HSSFSheet sheet = wb.getSheetAt(0);
+        try (HSSFWorkbook wb1 = openSampleWorkbook("15375.xls")) {
+            HSSFSheet sheet = wb1.getSheetAt(0);
 
             HSSFRow row = sheet.getRow(5);
             HSSFCell cell = row.getCell(3);
@@ -197,22 +169,15 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             // change existing numeric cell value
 
             HSSFRow oRow = sheet.getRow(14);
-            HSSFCell oCell = oRow.getCell(4);
-            oCell.setCellValue(75);
-            oCell = oRow.getCell(5);
-            setCellText(oCell, "0.3");
+            oRow.getCell(4).setCellValue(75);
+            setCellText(oRow.getCell(5), "0.3");
 
-            writeOutAndReadBack(wb).close();
+            try (HSSFWorkbook wb2 = writeOutAndReadBack(wb1)) {
+                HSSFRow oRow2 = wb2.getSheetAt(0).getRow(14);
+                assertEquals(75, oRow2.getCell(4).getNumericCellValue());
+                assertEquals("0.3", oRow2.getCell(5).getStringCellValue());
+            }
         }
-    }
-
-    /**
-     * test writing a file with large number of unique strings,
-     * open resulting file in Excel to check results!
-     */
-    @Test
-    public void bug15375_2() throws Exception {
-        bug15375(6000);
     }
 
     /**
@@ -223,75 +188,18 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         simpleTest("15556.xls", wb -> assertNotNull(wb.getSheetAt(0).getRow(45)));
     }
 
-    /**
-     * Double byte strings
-     */
-    @Test
-    public void bug22742() throws IOException {
-        simpleTest("22742.xls");
-    }
-
-    /**
-     * Double byte strings
-     */
-    @Test
-    public void bug12561_1() throws IOException {
-        simpleTest("12561-1.xls");
-    }
-
-    /**
-     * Double byte strings
-     */
-    @Test
-    public void bug12561_2() throws IOException {
-        simpleTest("12561-2.xls");
-    }
-
-    /**
-     * Double byte strings
-     * File supplied by jubeson
-     */
-    @Test
-    public void bug12843_1() throws IOException {
-        simpleTest("12843-1.xls");
-    }
-
-    /**
-     * Double byte strings
-     * File supplied by Paul Chung
-     */
-    @Test
-    public void bug12843_2() throws IOException {
-        simpleTest("12843-2.xls");
-    }
-
-    /**
-     * Reference to Name
-     */
-    @Test
-    public void bug13224() throws IOException {
-        simpleTest("13224.xls");
-    }
-
-    /**
-     * Illegal argument exception - cannot store duplicate value in Map
-     */
-    @Test
-    public void bug19599() throws IOException {
-        simpleTest("19599-1.xls");
-        simpleTest("19599-2.xls");
-    }
-
     @Test
     public void bug24215() throws Exception {
         try (HSSFWorkbook wb = openSampleWorkbook("24215.xls")) {
 
             for (int sheetIndex = 0; sheetIndex < wb.getNumberOfSheets(); sheetIndex++) {
                 HSSFSheet sheet = wb.getSheetAt(sheetIndex);
+                assertNotNull(sheet);
                 int rows = sheet.getLastRowNum();
 
                 for (int rowIndex = 0; rowIndex < rows; rowIndex++) {
                     HSSFRow row = sheet.getRow(rowIndex);
+                    assertNotNull(row);
                     int cells = row.getLastCellNum();
 
                     for (int cellIndex = 0; cellIndex < cells; cellIndex++) {
@@ -370,22 +278,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     /**
-     * Error in opening wb
-     */
-    @Test
-    public void bug32822() throws IOException {
-        simpleTest("32822.xls");
-    }
-
-    /**
-     * fail to read wb with chart
-     */
-    @Test
-    public void bug15573() throws IOException {
-        simpleTest("15573.xls");
-    }
-
-    /**
      * names and macros
      */
     @Test
@@ -403,49 +295,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         }
     }
 
-    @Test
-    public void bug33082() throws IOException {
-        simpleTest("33082.xls");
-    }
-
-    @Test
-    public void bug34775() throws IOException {
-        // NullPointerException -> identified bug 34775
-        simpleTest("34775.xls");
-    }
-
-    /**
-     * Error when reading then writing ArrayValues in NameRecord's
-     */
-    @Test
-    public void bug37630() throws IOException {
-        simpleTest("37630.xls");
-    }
-
-    /**
-     * Bug 25183: org.apache.poi.hssf.usermodel.HSSFSheet.setPropertiesFromSheet
-     */
-    @Test
-    public void bug25183() throws IOException {
-        simpleTest("25183.xls");
-    }
-
-    /**
-     * Bug 26100: 128-character message in IF statement cell causes HSSFWorkbook open failure
-     */
-    @Test
-    public void bug26100() throws IOException {
-        simpleTest("26100.xls");
-    }
-
-    /**
-     * Bug 27933: Unable to use a template (xls) file containing a wmf graphic
-     */
-    @Test
-    public void bug27933() throws IOException {
-        simpleTest("27933.xls");
-    }
-
     /**
      * Bug 29206: NPE on HSSFSheet.getRow for blank rows
      */
@@ -461,14 +310,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
                 }
             }
         }
-    }
-
-    /**
-     * Bug 29675: POI 2.5 final corrupts output when starting workbook has a graphic
-     */
-    @Test
-    public void bug29675() throws IOException {
-        simpleTest("29675.xls");
     }
 
     /**
@@ -490,17 +331,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             }
             assertEquals(85, count); //should read 85 rows
 
-            writeOutAndReadBack(wb).close();
+            try (HSSFWorkbook wb2 = writeOutAndReadBack(wb)) {
+                assertNotNull(wb2.getSheetAt(0));
+            }
         }
-    }
-
-    /**
-     * Bug 29982: Unable to read spreadsheet when dropdown list cell is selected -
-     * Unable to construct record instance
-     */
-    @Test
-    public void bug29982() throws Exception {
-        simpleTest("29982.xls");
     }
 
     /**
@@ -522,22 +356,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     /**
-     * Bug 31749: {Need help urgently}[This is critical] workbook.write() corrupts the file......?
-     */
-    @Test
-    public void bug31749() throws IOException {
-        simpleTest("31749.xls");
-    }
-
-    /**
-     * Bug 31979: {urgent help needed .....}poi library does not support form objects properly.
-     */
-    @Test
-    public void bug31979() throws IOException {
-        simpleTest("31979.xls");
-    }
-
-    /**
      * Bug 35564: HSSFCell.java: NullPtrExc in isGridsPrinted() and getProtect()
      * when HSSFWorkbook is created from file
      */
@@ -556,14 +374,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     @Test
     public void bug35565() throws Exception {
         simpleTest("35565.xls", wb -> assertNotNull(wb.getSheetAt(0)));
-    }
-
-    /**
-     * Bug 37376: Cannot open the saved Excel file if checkbox controls exceed certain limit
-     */
-    @Test
-    public void bug37376() throws Exception {
-        simpleTest("37376.xls");
     }
 
     /**
@@ -615,42 +425,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         }
     }
 
-    @Test
-    public void bug40738() throws Exception {
-        simpleTest("SimpleWithAutofilter.xls");
-    }
-
     /**
      * Bug 44200: Sheet not cloneable when Note added to excel cell
      */
     @Test
     public void bug44200() throws Exception {
-        simpleTest("44200.xls", wb -> wb.cloneSheet(0));
-    }
-
-    /**
-     * Bug 44201: Sheet not cloneable when validation added to excel cell
-     */
-    @Test
-    public void bug44201() throws Exception {
-        simpleTest("44201.xls");
-    }
-
-    /**
-     * Bug 37684  : Unhandled Continue Record Error
-     */
-    @Test
-    public void bug37684() throws Exception {
-        simpleTest("37684-1.xls");
-        simpleTest("37684-2.xls");
-    }
-
-    /**
-     * Bug 41139: Constructing HSSFWorkbook is failed,threw threw ArrayIndexOutOfBoundsException for creating UnknownRecord
-     */
-    @Test
-    public void bug41139() throws Exception {
-        simpleTest("41139.xls");
+        simpleTest("44200.xls", wb -> assertDoesNotThrow(() -> wb.cloneSheet(0)));
     }
 
     /**
@@ -660,25 +440,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     @Test
     public void bug41546() throws Exception {
         simpleTest("41546.xls", wb -> assertEquals(1, wb.getNumberOfSheets()));
-    }
-
-    /**
-     * Bug 42564: Some files from Access were giving a RecordFormatException
-     * when reading the BOFRecord
-     */
-    @Test
-    public void bug42564() throws Exception {
-        simpleTest("ex42564-21435.xls");
-    }
-
-    /**
-     * Bug 42564: Some files from Access also have issues
-     * with the NameRecord, once you get past the BOFRecord
-     * issue.
-     */
-    @Test
-    public void bug42564Alt() throws Exception {
-        simpleTest("ex42564-21503.xls");
     }
 
     /**
@@ -794,43 +555,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             }
             assertEquals(713, rowsSeen);
         }
-    }
-
-    /**
-     * Bug 28774: Excel will crash when opening xls-files with images.
-     */
-    @Test
-    public void bug28774() throws Exception {
-        simpleTest("28774.xls");
-    }
-
-    /**
-     * Had a problem apparently, not sure what as it
-     * works just fine...
-     */
-    @Test
-    public void bug44891() throws Exception {
-        simpleTest("44891.xls");
-    }
-
-    /**
-     * Bug 44235: Ms Excel can't open save as excel file
-     * <p>
-     * Works fine with poi-3.1-beta1.
-     */
-    @Test
-    public void bug44235() throws Exception {
-        simpleTest("44235.xls");
-    }
-
-    @Test
-    public void bug36947() throws Exception {
-        simpleTest("36947.xls");
-    }
-
-    @Test
-    public void bug39634() throws Exception {
-        simpleTest("39634.xls");
     }
 
     /**
@@ -1468,19 +1192,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     /**
-     * java.io.IOException: block[ 0 ] already removed
-     * (is an excel 95 file though)
-     */
-    @Test
-    public void bug46904a() {
-        OldExcelFormatException ex = assertThrows(
-            OldExcelFormatException.class,
-            () -> simpleTest("46904.xls")
-        );
-        assertTrue(ex.getMessage().contains("The supplied spreadsheet seems to be Excel"));
-    }
-
-    /**
      * java.lang.NegativeArraySizeException reading long
      * non-unicode data for a name record
      */
@@ -1522,28 +1233,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             HSSFCell cell2 = s.getRow(0).getCell(1);
             assertEquals(1.0, cell2.getNumericCellValue(), 0.0);
         }
-    }
-
-    /**
-     * POI 3.5 beta 7 can not read excel file contain list box (Form Control)
-     */
-    @Test
-    public void bug47701() throws IOException {
-        simpleTest("47701.xls");
-    }
-
-    @Test
-    public void bug48026() throws IOException {
-        simpleTest("48026.xls");
-    }
-
-    @Test
-    public void bug47251() throws IOException {
-        // Firstly, try with one that triggers on InterfaceHdrRecord
-        simpleTest("47251.xls");
-
-        // Now with one that triggers on NoteRecord
-        simpleTest("47251_1.xls");
     }
 
     /**
@@ -1916,19 +1605,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     /**
-     * IllegalStateException received when creating Data validation in sheet with macro
-     */
-    @Test
-    public void bug50020() throws Exception {
-        simpleTest("50020.xls");
-    }
-
-    @Test
-    public void bug50426() throws Exception {
-        simpleTest("50426.xls");
-    }
-
-    /**
      * Last row number when shifting rows
      */
     @Test
@@ -2056,13 +1732,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         wb2.close();
     }
 
-    @Test
-    public void bug50779() throws Exception {
-        simpleTest("50779_1.xls");
-
-        simpleTest("50779_2.xls");
-    }
-
     /**
      * The spec says that ChartEndObjectRecord has 6 reserved
      * bytes on the end, but we sometimes find files without...
@@ -2186,11 +1855,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         }
     }
 
-    @Test
-    public void bug51670() throws Exception {
-        simpleTest("51670.xls");
-    }
-
     /**
      * Sum across multiple workbooks
      * eg =SUM($Sheet2.A1:$Sheet3.A1)
@@ -2213,15 +1877,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             eval.evaluateFormulaCell(c);
             assertEquals(4.0, c.getNumericCellValue(), 0);
         }
-    }
-
-    /**
-     * Normally encrypted files have BOF then FILEPASS, but
-     * some may squeeze a WRITEPROTECT in the middle
-     */
-    @Test
-    public void bug51832() {
-        assertThrows(EncryptedDocumentException.class, () -> simpleTest("51832.xls"));
     }
 
     @Test
@@ -2348,11 +2003,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         }
     }
 
-    @Test
-    public void bug54016() throws Exception {
-        simpleTest("54016.xls");
-    }
-
     /**
      * Row style information is 12 not 16 bits
      */
@@ -2370,20 +2020,17 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     /**
      * POI does now support the RC4 CryptoAPI encryption header structure
      */
-    @Test
-    public void bug35897() throws Exception {
-        String[] encrypted = {
-            "xor-encryption-abc.xls", "abc",
-            "35897-type4.xls", "freedom"
-        };
-
-        for (int i=0; i<encrypted.length; i+=2) {
-            Biff8EncryptionKey.setCurrentUserPassword(encrypted[i+1]);
-            try {
-                simpleTest(encrypted[i]);
-            } finally {
-                Biff8EncryptionKey.setCurrentUserPassword(null);
-            }
+    @ParameterizedTest
+    @CsvSource({
+        "xor-encryption-abc.xls, abc",
+        "35897-type4.xls, freedom"
+    })
+    public void bug35897(String file, String pass) throws Exception {
+        Biff8EncryptionKey.setCurrentUserPassword(pass);
+        try {
+            simpleTest(file, null);
+        } finally {
+            Biff8EncryptionKey.setCurrentUserPassword(null);
         }
     }
 
@@ -2614,27 +2261,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test57456() throws IOException {
-        simpleTest("57456.xls");
-    }
-
-    @Test
     public void test57163() throws IOException {
         simpleTest("57163.xls", wb -> {
             while (wb.getNumberOfSheets() > 1) {
                 wb.removeSheetAt(1);
             }
         });
-    }
-
-    @Test
-    public void test53109() throws IOException {
-        simpleTest("53109.xls");
-    }
-
-    @Test
-    public void test53109a() throws IOException {
-        simpleTest("com.aida-tour.www_SPO_files_maldives%20august%20october.xls");
     }
 
     @Test
@@ -2802,16 +2434,6 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test45353a() throws IOException {
-        simpleTest("named-cell-in-formula-test.xls");
-    }
-
-    @Test
-    public void test45353b() throws IOException {
-        simpleTest("named-cell-test.xls");
-    }
-
-    @Test
     public void test61287() throws IOException {
         try (HSSFWorkbook wb = openSampleWorkbook("61287.xls");
             ExcelExtractor ex = new ExcelExtractor(wb)) {
@@ -2881,23 +2503,10 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test55505() throws IOException {
-        simpleTest("bug55505.xls");
-    }
-
-    @Test
-    public void test63940() throws IOException {
-        simpleTest("SUBSTITUTE.xls");
-    }
-    @Test
-    public void test64261() throws IOException {
-        simpleTest("64261.xls");
-    }
-    @Test
     public void test63819() throws IOException {
         LocaleUtil.setUserLocale(Locale.UK);
         try {
-            simpleTest("63819.xls");
+            simpleTest("63819.xls", null);
         } finally {
             LocaleUtil.resetUserLocale();
         }
@@ -2918,8 +2527,31 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     }
 
     // a simple test which rewrites the file once and evaluates its formulas
-    private void simpleTest(String fileName) throws IOException {
+    @ParameterizedTest
+    @CsvSource({
+        "15228.xls", "13796.xls", "14460.xls", "14330-1.xls", "14330-2.xls", "22742.xls", "12561-1.xls", "12561-2.xls",
+        "12843-1.xls", "12843-2.xls", "13224.xls", "19599-1.xls", "19599-2.xls", "32822.xls", "15573.xls",
+        "33082.xls", "34775.xls", "37630.xls", "25183.xls", "26100.xls", "27933.xls", "29675.xls", "29982.xls",
+        "31749.xls", "37376.xls", "SimpleWithAutofilter.xls", "44201.xls", "37684-1.xls", "37684-2.xls",
+        "41139.xls", "ex42564-21435.xls", "ex42564-21503.xls", "28774.xls", "44891.xls", "44235.xls", "36947.xls",
+        "39634.xls", "47701.xls", "48026.xls", "47251.xls", "47251_1.xls", "50020.xls", "50426.xls", "50779_1.xls",
+        "50779_2.xls", "51670.xls", "54016.xls", "57456.xls", "53109.xls", "com.aida-tour.www_SPO_files_maldives%20august%20october.xls",
+        "named-cell-in-formula-test.xls", "named-cell-test.xls", "bug55505.xls", "SUBSTITUTE.xls", "64261.xls"
+    })
+    public void simpleTest(String fileName) throws IOException {
         simpleTest(fileName, null);
+    }
+
+    @SuppressWarnings("unchecked")
+    @ParameterizedTest
+    @CsvSource({
+        "46904.xls, org.apache.poi.hssf.OldExcelFormatException, The supplied spreadsheet seems to be Excel",
+        "51832.xls, org.apache.poi.EncryptedDocumentException, Default password is invalid for salt/verifier/verifierHash"
+    })
+    public void simpleTest(String fileName, String exClazz, String exMessage) throws IOException, ClassNotFoundException {
+        Class<? extends Exception> ex = (Class<? extends Exception>)Class.forName(exClazz);
+        Exception e = assertThrows(ex, () -> simpleTest(fileName, null));
+        assertTrue(e.getMessage().startsWith(exMessage));
     }
 
     private void simpleTest(String fileName, Consumer<HSSFWorkbook> addTest) throws IOException {

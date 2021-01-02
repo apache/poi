@@ -107,38 +107,33 @@ public abstract class BaseTestBugzillaIssues {
      * open resulting file in Excel to check results!
      * @param  num the number of strings to generate
      */
-    public final void bug15375(int num) throws IOException {
+    @Test
+    public final void bug15375_2() throws IOException {
         try (Workbook wb1 = _testDataProvider.createWorkbook()) {
             Sheet sheet = wb1.createSheet();
             CreationHelper factory = wb1.getCreationHelper();
 
-            for (int i = 0; i < num; i++) {
-                String tmp1 = "Test1" + i;
-                String tmp2 = "Test2" + i;
-                String tmp3 = "Test3" + i;
+            final int num = wb1 instanceof HSSFWorkbook ? 6000 : 1000;
 
+            for (int i = 0; i < num; i++) {
                 Row row = sheet.createRow(i);
 
                 Cell cell = row.createCell(0);
-                cell.setCellValue(factory.createRichTextString(tmp1));
+                cell.setCellValue(factory.createRichTextString("Test1" + i));
                 cell = row.createCell(1);
-                cell.setCellValue(factory.createRichTextString(tmp2));
+                cell.setCellValue(factory.createRichTextString("Test2" + i));
                 cell = row.createCell(2);
-                cell.setCellValue(factory.createRichTextString(tmp3));
+                cell.setCellValue(factory.createRichTextString("Test3" + i));
             }
 
             try (Workbook wb2 = _testDataProvider.writeOutAndReadBack(wb1)) {
                 sheet = wb2.getSheetAt(0);
                 for (int i = 0; i < num; i++) {
-                    String tmp1 = "Test1" + i;
-                    String tmp2 = "Test2" + i;
-                    String tmp3 = "Test3" + i;
-
                     Row row = sheet.getRow(i);
 
-                    assertEquals(tmp1, row.getCell(0).getStringCellValue());
-                    assertEquals(tmp2, row.getCell(1).getStringCellValue());
-                    assertEquals(tmp3, row.getCell(2).getStringCellValue());
+                    assertEquals("Test1" + i, row.getCell(0).getStringCellValue());
+                    assertEquals("Test2" + i, row.getCell(1).getStringCellValue());
+                    assertEquals("Test3" + i, row.getCell(2).getStringCellValue());
                 }
             }
         }
