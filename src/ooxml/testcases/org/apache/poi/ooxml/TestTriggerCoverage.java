@@ -45,10 +45,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.ref.WeakReference;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
@@ -64,7 +62,7 @@ public class TestTriggerCoverage {
         FAILING.add("stress025.docx");
     }
 
-    private static Stream<Arguments> files() {
+    public static Stream<Arguments> files() {
         String dataDirName = System.getProperty(POIDataSamples.TEST_PROPERTY);
         if(dataDirName == null) {
             dataDirName = "test-data";
