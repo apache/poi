@@ -222,6 +222,8 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
 
     @Override
     public HorizontalAlignment getAlignment() {
+        if(!_cellXf.getApplyAlignment()) return HorizontalAlignment.GENERAL;
+
         CTCellAlignment align = _cellXf.getAlignment();
         if(align != null && align.isSetHorizontal()) {
             return HorizontalAlignment.forInt(align.getHorizontal().intValue()-1);
@@ -629,6 +631,8 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
 
     @Override
     public VerticalAlignment getVerticalAlignment() {
+        if(!_cellXf.getApplyAlignment()) return VerticalAlignment.BOTTOM;
+
         CTCellAlignment align = _cellXf.getAlignment();
         if(align != null && align.isSetVertical()) {
             return VerticalAlignment.forInt(align.getVertical().intValue()-1);
@@ -654,6 +658,8 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      */
     @Override
     public void setAlignment(HorizontalAlignment align) {
+        _cellXf.setApplyAlignment(true);
+
         getCellAlignment().setHorizontal(align);
     }
 
@@ -1155,6 +1161,8 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      * @param align - the type of alignment
      */
     public void setVerticalAlignment(VerticalAlignment align) {
+        _cellXf.setApplyAlignment(true);
+
         getCellAlignment().setVertical(align);
     }
 

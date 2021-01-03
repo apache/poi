@@ -3630,7 +3630,7 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     }
 
     @Test
-    public void test64986() throws IOException {
+    public void test64986() {
         XSSFWorkbook w = new XSSFWorkbook();
         XSSFSheet s = w.createSheet();
         XSSFRow r = s.createRow(0);
@@ -3665,6 +3665,39 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
     public void test64450() throws IOException {
         try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("64450.xlsx")) {
             assertNotNull(wb);
+        }
+    }
+
+    @Test
+    public void test64494() throws IOException {
+        try (Workbook wb = new XSSFWorkbook()) {
+            CellStyle styleRight = wb.createCellStyle();
+            CellStyle styleLeft = wb.createCellStyle();
+            styleRight.setAlignment(HorizontalAlignment.RIGHT);
+            //styleRight.setBorderBottom(BorderStyle.DASH_DOT);
+            styleLeft.setAlignment(HorizontalAlignment.LEFT);
+            //styleLeft.setBorderRight(BorderStyle.MEDIUM);
+
+            assertEquals(HorizontalAlignment.RIGHT, styleRight.getAlignment());
+            assertEquals(HorizontalAlignment.LEFT, styleLeft.getAlignment());
+
+            Sheet sheet = wb.createSheet("test");
+            Row row = sheet.createRow(0);
+
+            Cell cellRight = row.createCell(0);
+            cellRight.setCellValue("R");
+            cellRight.setCellStyle(styleRight);
+
+            Cell cellLeft = row.createCell(1);
+            cellLeft.setCellValue("L");
+            cellLeft.setCellStyle(styleLeft);
+
+            /*try (OutputStream out = new FileOutputStream("/tmp/64494.xlsx")) {
+                wb.write(out);
+            }*/
+
+            assertEquals(HorizontalAlignment.RIGHT, cellRight.getCellStyle().getAlignment());
+            assertEquals(HorizontalAlignment.LEFT, cellLeft.getCellStyle().getAlignment());
         }
     }
 }
