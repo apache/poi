@@ -68,5 +68,5 @@ sun.java2d.SunGraphicsEnvironment.<init>
 org.kohsuke.file_leak_detector.AgentMain.runHttpServer
 org.apache.log4j.FileAppender.setFile
 sun.launcher.LauncherHelper.validateMainClass
-sun.util.locale.provider.RuleBasedBreakIterator$1.run2
+sun.util.locale.provider.RuleBasedBreakIterator$1.run
 java.util.ServiceLoader$LazyIterator.hasNextService
