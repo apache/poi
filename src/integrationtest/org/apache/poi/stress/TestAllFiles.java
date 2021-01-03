@@ -299,6 +299,7 @@ public class TestAllFiles {
         "document/61612a.docx",
         "document/word2.doc",
         "spreadsheet/xlsx-corrupted.xlsx",
+        "integration/stress025.docx",
 
         // old Excel files, which we only support simple text extraction of
         "spreadsheet/testEXCEL_2.xls",
