@@ -194,7 +194,8 @@ public final class PackageRelationshipCollection implements
      */
     public void addRelationship(PackageRelationship relPart) {
         if (relPart == null || relPart.getId() == null || relPart.getId().isEmpty()) {
-            throw new IllegalArgumentException("invalid relationship part/id");
+            throw new IllegalArgumentException("invalid relationship part/id: " +
+                    (relPart == null ? "<null>" : relPart.getId()) + " for relationship: " + relPart);
         }
         relationshipsByID.put(relPart.getId(), relPart);
         relationshipsByType.put(relPart.getRelationshipType(), relPart);
@@ -216,7 +217,7 @@ public final class PackageRelationshipCollection implements
      */
     public PackageRelationship addRelationship(URI targetUri,
             TargetMode targetMode, String relationshipType, String id) {
-      if (id == null) {
+      if (id == null || id.length() == 0) {
          // Generate a unique ID is id parameter is null.
          if (nextRelationshipId == -1) {
             nextRelationshipId = size() + 1;
@@ -354,8 +355,7 @@ public final class PackageRelationshipCollection implements
                 addRelationship(target, targetMode, type, id);
             }
         } catch (Exception e) {
-            logger.log(POILogger.ERROR, e);
-            throw new InvalidFormatException(e.getMessage());
+            throw new InvalidFormatException("Failed to parse relationships", e);
         }
     }
 

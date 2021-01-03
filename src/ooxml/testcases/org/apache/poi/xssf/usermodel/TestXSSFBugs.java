@@ -3660,4 +3660,11 @@ public final class TestXSSFBugs extends BaseTestBugzillaIssues {
             assertEquals(1, sheet.getDataValidations().size());
         }
     }
+
+    @Test
+    public void test64450() throws IOException {
+        try (Workbook wb = XSSFTestDataSamples.openSampleWorkbook("64450.xlsx")) {
+            assertNotNull(wb);
+        }
+    }
 }
