@@ -61,11 +61,11 @@ import org.openxmlformats.schemas.presentationml.x2006.main.SldMasterDocument;
  */
 public class XSLFSlideShow extends POIXMLDocument {
 
-	private PresentationDocument presentationDoc;
+	private final PresentationDocument presentationDoc;
 	/**
 	 * The embedded OLE2 files in the OPC package
 	 */
-	private List<PackagePart> embedds;
+	private final List<PackagePart> embedds;
 
 	public XSLFSlideShow(OPCPackage container) throws OpenXML4JException, IOException, XmlException {
 		super(container);

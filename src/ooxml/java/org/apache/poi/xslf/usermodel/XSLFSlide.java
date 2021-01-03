@@ -213,7 +213,6 @@ implements Slide<XSLFShape,XSLFTextParagraph> {
         final XSLFComments xComments = getCommentsPart();
         final XSLFCommentAuthors xAuthors = getCommentAuthorsPart();
         if (xComments != null) {
-            //noinspection deprecation
             for (final CTComment xc : xComments.getCTCommentsList().getCmArray()) {
                 comments.add(new XSLFComment(xc, xAuthors));
             }

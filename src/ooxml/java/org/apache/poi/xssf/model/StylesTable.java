@@ -66,16 +66,16 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
 
     private final List<CTDxf> dxfs = new ArrayList<>();
     private final Map<String, TableStyle> tableStyles = new HashMap<>();
-    
+
     private IndexedColorMap indexedColors = new DefaultIndexedColorMap();
-    
+
     /**
      * The first style id available for use as a custom style
      */
     public static final int FIRST_CUSTOM_STYLE_ID = BuiltinFormats.FIRST_USER_DEFINED_FORMAT_INDEX + 1;
     // Is this right? Number formats (XSSFDataFormat) and cell styles (XSSFCellStyle) are different. What's up with the plus 1?
     private static final int MAXIMUM_STYLE_ID = SpreadsheetVersion.EXCEL2007.getMaxCellStyles();
-    
+
     private static final short FIRST_USER_DEFINED_NUMBER_FORMAT_ID = BuiltinFormats.FIRST_USER_DEFINED_FORMAT_INDEX;
     /**
      * Depending on the version of Excel, the maximum number of number formats in a workbook is between 200 and 250
@@ -84,7 +84,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
      * {@link #setMaxNumberOfDataFormats(int)} if needed.
      */
     private int MAXIMUM_NUMBER_OF_DATA_FORMATS = 250;
-    
+
     /**
      * Changes the maximum number of data formats that may be in a style table
      *
@@ -104,7 +104,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
         }
         MAXIMUM_NUMBER_OF_DATA_FORMATS = num;
     }
-    
+
     /**
      * Get the upper limit on the number of data formats that has been set for the style table.
      * To get the current number of data formats in use, use {@link #getNumDataFormats()}.
@@ -137,7 +137,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
         super(part);
         readFrom(part.getInputStream());
     }
-    
+
     public void setWorkbook(XSSFWorkbook wb) {
         this.workbook = wb;
     }
@@ -156,8 +156,8 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
         this.theme = theme;
 
         if (theme != null) theme.setColorMap(getIndexedColors());
-        
-        // Pass the themes table along to things which need to 
+
+        // Pass the themes table along to things which need to
         //  know about it, but have already been created by now
         for(XSSFFont font : fonts) {
             font.setThemesTable(theme);
@@ -166,7 +166,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
             border.setThemesTable(theme);
         }
     }
-    
+
     /**
      * If there isn't currently a {@link ThemesTable} for the
      *  current Workbook, then creates one and sets it up.
@@ -184,7 +184,6 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
      * @param is The input stream containing the XML document.
      * @throws IOException if an error occurs while reading.
      */
-    @SuppressWarnings("deprecation")
     public void readFrom(InputStream is) throws IOException {
         try {
             doc = StyleSheetDocument.Factory.parse(is, DEFAULT_XML_OPTIONS);
@@ -192,11 +191,11 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
             CTStylesheet styleSheet = doc.getStyleSheet();
 
             // Grab all the different bits we care about
-            
+
             // keep this first, as some constructors below want it
             IndexedColorMap customColors = CustomIndexedColorMap.fromColors(styleSheet.getColors());
             if (customColors != null) indexedColors = customColors;
-            
+
             CTNumFmts ctfmts = styleSheet.getNumFmts();
             if( ctfmts != null){
                 for (CTNumFmt nfmt : ctfmts.getNumFmtArray()) {
@@ -246,7 +245,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
                     idx++;
                 }
             }
-            
+
         } catch (XmlException e) {
             throw new IOException(e.getLocalizedMessage());
         }
@@ -258,7 +257,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
 
     /**
      * Get number format string given its id
-     * 
+     *
      * @param fmtId number format id
      * @return number format code
      */
@@ -266,7 +265,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
     public String getNumberFormatAt(short fmtId) {
         return numberFormats.get(fmtId);
     }
-    
+
     private short getNumberFormatId(String fmt) {
         // Find the key, and return that
         for (Entry<Short,String> numFmt : numberFormats.entrySet()) {
@@ -297,8 +296,8 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
                 throw new IllegalStateException("Found the format, but couldn't figure out where - should never happen!");
             }
         }
-        
-        
+
+
         if (numberFormats.size() >= MAXIMUM_NUMBER_OF_DATA_FORMATS) {
             throw new IllegalStateException("The maximum number of Data Formats was exceeded. " +
                     "You can define up to " + MAXIMUM_NUMBER_OF_DATA_FORMATS + " formats in a .xlsx Workbook.");
@@ -322,12 +321,12 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
             }
             formatIndex = (short) Math.max(nextKey, FIRST_USER_DEFINED_NUMBER_FORMAT_ID);
         }
-        
+
         numberFormats.put(formatIndex, fmt);
         return formatIndex;
     }
-    
-    
+
+
     /**
      * Add a number format with a specific ID into the numberFormats map.
      * If a format with the same ID already exists, overwrite the format code
@@ -341,11 +340,11 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
     public void putNumberFormat(short index, String fmt) {
         numberFormats.put(index, fmt);
     }
-    
+
     /**
      * Remove a number format from the style table if it exists.
      * All cell styles with this number format will be modified to use the default number format.
-     * 
+     *
      * @param index the number format id to remove
      * @return true if the number format was removed
      */
@@ -363,11 +362,11 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
         }
         return removed;
     }
-    
+
     /**
      * Remove a number format from the style table if it exists
      * All cell styles with this number format will be modified to use the default number format
-     * 
+     *
      * @param fmt the number format to remove
      * @return true if the number format was removed
      */
@@ -509,11 +508,11 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
     public CTXf getCellXfAt(int idx) {
         return xfs.get(idx);
     }
-    
+
     /**
      * Adds a cell to the styles table.
      * Does not check for duplicates.
-     * 
+     *
      * @param cellXf the cell to add to the styles table
      * @return the added cell ID in the style table
      */
@@ -522,7 +521,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
         xfs.add(cellXf);
         return xfs.size();
     }
-    
+
     @Internal
     public void replaceCellXfAt(int idx, CTXf cellXf) {
         xfs.set(idx, cellXf);
@@ -537,11 +536,11 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
             return null;
         }
     }
-    
+
     /**
      * Adds a cell style to the styles table.
      * Does not check for duplicates.
-     * 
+     *
      * @param cellStyleXf the cell style to add to the styles table
      * @return the cell style ID in the style table
      */
@@ -551,7 +550,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
         // TODO: check for duplicate
         return styleXfs.size();
     }
-    
+
     @Internal
     protected void replaceCellStyleXfAt(int idx, CTXf cellStyleXf) {
         styleXfs.set(idx, cellStyleXf);
@@ -589,7 +588,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
     public int _getStyleXfsSize() {
         return styleXfs.size();
     }
-    
+
     /**
      * For unit testing only!
      */
@@ -597,7 +596,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
     public CTStylesheet getCTStylesheet() {
         return doc.getStyleSheet();
     }
-    
+
     @Internal
     public int _getDXfsSize() {
         return dxfs.size();
@@ -785,18 +784,18 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
         this.dxfs.add(dxf);
         return this.dxfs.size();
     }
-    
+
     /**
      * NOTE: this only returns explicitly defined styles
      * @param name of the table style
      * @return defined style, or null if not explicitly defined
-     * 
+     *
      * @since 3.17 beta 1
      */
     public TableStyle getExplicitTableStyle(String name) {
         return tableStyles.get(name);
     }
-    
+
     /**
      * @return names of all explicitly defined table styles in the workbook
      * @since 3.17 beta 1
@@ -804,11 +803,11 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
     public Set<String> getExplicitTableStyleNames() {
         return tableStyles.keySet();
     }
-    
+
     /**
      * @param name of the table style
      * @return defined style, either explicit or built-in, or null if not found
-     * 
+     *
      * @since 3.17 beta 1
      */
     public TableStyle getTableStyle(String name) {
@@ -819,12 +818,12 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
             return getExplicitTableStyle(name);
         }
     }
-    
+
     /**
      * Create a cell style in this style table.
      * Note - End users probably want to call {@link XSSFWorkbook#createCellStyle()}
      * rather than working with the styles table directly.
-     * @throws IllegalStateException if the maximum number of cell styles has been reached. 
+     * @throws IllegalStateException if the maximum number of cell styles has been reached.
      */
     public XSSFCellStyle createCellStyle() {
         if (getNumCellStyles() > MAXIMUM_STYLE_ID) {
@@ -842,7 +841,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
         int indexXf = putCellXf(xf);
         return new XSSFCellStyle(indexXf - 1, xfSize - 1, this, theme);
     }
-    
+
     /**
      * Finds a font that matches the one with the supplied attributes,
      * where color is the indexed-value, not the actual color.
@@ -863,7 +862,7 @@ public class StylesTable extends POIXMLDocumentPart implements Styles {
         }
         return null;
     }
-    
+
     /**
      * Finds a font that matches the one with the supplied attributes,
      * where color is the actual Color-value, not the indexed color

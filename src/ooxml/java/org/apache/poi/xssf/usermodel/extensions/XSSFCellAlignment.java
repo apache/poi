@@ -36,7 +36,7 @@ public class XSSFCellAlignment {
     /**
      * Creates a Cell Alignment from the supplied XML definition
      *
-     * @param cellAlignment
+     * @param cellAlignment The low-level XML definition of the cell alignment
      */
     public XSSFCellAlignment(CTCellAlignment cellAlignment) {
         this.cellAlignement = cellAlignment;

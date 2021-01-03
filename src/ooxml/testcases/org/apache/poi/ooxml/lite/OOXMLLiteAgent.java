@@ -133,7 +133,7 @@ public class OOXMLLiteAgent {
                 // TODO: check if this is atomic ... as transform() is probably called synchronized, it doesn't matter anyway
                 Files.write(path, (item+"\n").getBytes(StandardCharsets.ISO_8859_1), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
                 hashes.add(item.hashCode());
-            } catch (IOException ignroed) {
+            } catch (IOException ignored) {
             }
         }
     }

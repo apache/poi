@@ -975,12 +975,12 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      *
      * @param font  a font object created or retrieved from the XSSFWorkbook object
      * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#createFont()
-     * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getFontAt(short)
+     * @see org.apache.poi.xssf.usermodel.XSSFWorkbook#getFontAt(int)
      */
     @Override
     public void setFont(Font font) {
         if(font != null){
-            long index = font.getIndexAsInt();
+            long index = font.getIndex();
             this._cellXf.setFontId(index);
             this._cellXf.setApplyFont(true);
         } else {
@@ -1170,7 +1170,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      * Set whether the text should be wrapped.
      * <p>
      * Setting this flag to <code>true</code> make all content visible
-     * whithin a cell by displaying it on multiple lines
+     * within a cell by displaying it on multiple lines
      * </p>
      *
      * @param wrapped a boolean value indicating if the text in a cell should be line-wrapped within the cell.
@@ -1277,7 +1277,7 @@ public class XSSFCellStyle implements CellStyle, Duplicatable {
      */
     @Override
     public boolean equals(Object o){
-        if(o == null || !(o instanceof XSSFCellStyle)) return false;
+        if(!(o instanceof XSSFCellStyle)) return false;
 
         XSSFCellStyle cf = (XSSFCellStyle)o;
         return _cellXf.toString().equals(cf.getCoreXf().toString());
