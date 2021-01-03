@@ -40,6 +40,8 @@ import org.apache.poi.sl.usermodel.SlideShowFactory;
 import org.apache.poi.sl.usermodel.TextParagraph;
 import org.apache.poi.sl.usermodel.TextRun;
 import org.apache.poi.sl.usermodel.TextShape;
+import org.junit.jupiter.api.Assumptions;
+import org.junit.platform.commons.util.ExceptionUtils;
 
 public abstract class SlideShowHandler extends POIFSFileHandler {
     public void handleSlideShow(SlideShow<?,?> ss) throws IOException {
@@ -146,8 +148,19 @@ public abstract class SlideShowHandler extends POIFSFileHandler {
             graphics.setRenderingHint(RenderingHints.KEY_FRACTIONALMETRICS, RenderingHints.VALUE_FRACTIONALMETRICS_ON);
             graphics.setRenderingHint(Drawable.BUFFERED_IMAGE, new WeakReference<>(img));
 
-            // draw stuff
-            s.draw(graphics);
+            try {
+                // draw stuff
+                s.draw(graphics);
+            } catch (ArrayIndexOutOfBoundsException e) {
+                // We saw exceptions with JDK 8 on Windows in the Jenkins CI which
+                // seem to only be triggered by some font (maybe Calibri?!)
+                // We cannot avoid this, so let's try to not make the tests fail in this case
+                Assumptions.assumeTrue(
+                        e.getMessage().equals("-1") &&
+                        ExceptionUtils.readStackTrace(e).contains("ExtendedTextSourceLabel.getJustificationInfos"),
+                        "JDK sometimes fails at this point on some fonts on Windows machines, but we" +
+                                "should not fail the build because of this");
+            }
 
             graphics.dispose();
             img.flush();
