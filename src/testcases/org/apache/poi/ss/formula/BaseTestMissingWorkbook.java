@@ -39,17 +39,13 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-public class BaseTestMissingWorkbook {
+public abstract class BaseTestMissingWorkbook {
     protected Workbook mainWorkbook;
     protected Workbook sourceWorkbook;
 
     protected final String MAIN_WORKBOOK_FILENAME;
     protected final String SOURCE_DUMMY_WORKBOOK_FILENAME;
     protected final String SOURCE_WORKBOOK_FILENAME;
-
-    public BaseTestMissingWorkbook() {
-        this("52575_main.xls", "source_dummy.xls", "52575_source.xls");
-    }
 
     protected BaseTestMissingWorkbook(String MAIN_WORKBOOK_FILENAME,
 									  String SOURCE_DUMMY_WORKBOOK_FILENAME, String SOURCE_WORKBOOK_FILENAME) {

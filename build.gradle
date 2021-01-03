@@ -117,6 +117,7 @@ subprojects {
         japicmpversion = '4.1.2'
         junitVersion = '5.7.0'
         mockitoVersion = '3.6.0'
+        hamcrestVersion = '2.2'
         slf4jVersion = '1.7.30'
         xmlbeansVersion = '4.0.0'
     }
@@ -133,6 +134,12 @@ subprojects {
         maven {
             url 'https://repository.apache.org/content/repositories/releases'
         }
+    }
+
+    dependencies {
+        testCompile "org.junit.jupiter:junit-jupiter:${junitVersion}"
+        testCompile "org.mockito:mockito-core:${mockitoVersion}"
+        testCompile "org.hamcrest:hamcrest:${hamcrestVersion}"
     }
 
     jar {
@@ -235,12 +242,8 @@ project('main') {
         compile 'javax.activation:activation:1.1.1'
         compile 'com.zaxxer:SparseBitSet:1.2'
 
-        testCompile "org.junit.jupiter:junit-jupiter:${junitVersion}"
-        testCompile "org.mockito:mockito-core:${mockitoVersion}"
         testCompile 'org.reflections:reflections:0.9.12'
         testRuntime "org.slf4j:slf4j-simple:${slf4jVersion}"
-
-        testCompile 'org.hamcrest:hamcrest:2.2'
     }
 
     jar {
@@ -323,8 +326,6 @@ project('ooxml') {
         compile project(':scratchpad')		// TODO: get rid of this dependency!
         compile files("../../build/dist/maven/poi-ooxml-full/poi-ooxml-full-${version}.jar")
 
-        testCompile "org.junit.jupiter:junit-jupiter:${junitVersion}"
-        testCompile "org.mockito:mockito-core:${mockitoVersion}"
         testCompile 'org.xmlunit:xmlunit-core:2.8.0'
         testCompile 'org.reflections:reflections:0.9.12'
         testCompile project(path: ':main', configuration: 'tests')
@@ -377,8 +378,6 @@ project('excelant') {
         compile project(':ooxml')
 
         testCompile project(path: ':main', configuration: 'tests')
-        testCompile "org.junit.jupiter:junit-jupiter:${junitVersion}"
-        testCompile 'org.hamcrest:hamcrest:2.2'
     }
 
     jar {
@@ -400,8 +399,6 @@ project('integrationtest') {
         compile project(':ooxml')
         compile project(':scratchpad')
         compile project(':examples')
-
-        testCompile "org.junit.jupiter:junit-jupiter:${junitVersion}"
 
         testCompile "org.apache.xmlbeans:xmlbeans:${xmlbeansVersion}"
 
@@ -443,8 +440,6 @@ project('scratchpad') {
 
         // cyclic-dependency here: compile project(':ooxml')
 
-        testCompile "org.junit.jupiter:junit-jupiter:${junitVersion}"
-        testCompile "org.mockito:mockito-core:${mockitoVersion}"
         testCompile project(path: ':main', configuration: 'tests')
     }
 
