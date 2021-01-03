@@ -142,6 +142,12 @@ subprojects {
     }
 
     test {
+        // make XML test-results available for Jenkins CI
+        useJUnitPlatform()
+        reports {
+            junitXml.enabled = true
+        }
+
         // Exclude some tests that are not actually tests or do not run cleanly on purpose
         exclude '**/BaseTestBorderStyle.class'
         exclude '**/BaseTestCellUtil.class'
@@ -372,6 +378,7 @@ project('excelant') {
 
         testCompile project(path: ':main', configuration: 'tests')
         testCompile "org.junit.jupiter:junit-jupiter:${junitVersion}"
+        testCompile 'org.hamcrest:hamcrest:2.2'
     }
 
     jar {
