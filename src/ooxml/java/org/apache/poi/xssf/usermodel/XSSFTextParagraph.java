@@ -28,6 +28,7 @@ import org.apache.poi.util.Units;
 import org.apache.poi.xssf.model.ParagraphPropertyFetcher;
 import org.apache.xmlbeans.XmlObject;
 import org.openxmlformats.schemas.drawingml.x2006.main.*;
+import org.openxmlformats.schemas.drawingml.x2006.main.impl.STPositiveFixedPercentageImpl;
 import org.openxmlformats.schemas.drawingml.x2006.spreadsheetDrawing.CTShape;
 
 /**
@@ -861,6 +862,41 @@ public class XSSFTextParagraph implements Iterable<XSSFTextRun>{
         }
 
         return ok;
+    }
+
+    public void setTextFillColor(XSSFColor color) {
+        if (getTextRuns().isEmpty()) {
+            addNewTextRun();
+        }
+        XSSFTextRun run = getTextRuns().get(getTextRuns().size() - 1);
+        if (!run.getRPr().isSetSolidFill()) {
+            run.getRPr().addNewSolidFill();
+        } else if (run.getRPr().getSolidFill().isSetSrgbClr()){
+            run.getRPr().getSolidFill().unsetSrgbClr();
+        } else if (run.getRPr().getSolidFill().isSetScrgbClr()){
+            run.getRPr().getSolidFill().unsetScrgbClr();
+        } else if (run.getRPr().getSolidFill().isSetSchemeClr()){
+            run.getRPr().getSolidFill().unsetSchemeClr();
+        } else if (run.getRPr().getSolidFill().isSetSysClr()){
+            run.getRPr().getSolidFill().unsetSysClr();
+        } else if (run.getRPr().getSolidFill().isSetHslClr()){
+            run.getRPr().getSolidFill().unsetHslClr();
+        } else if (run.getRPr().getSolidFill().isSetPrstClr()){
+            run.getRPr().getSolidFill().unsetPrstClr();
+        }
+        CTSRgbColor srgbClr = run.getRPr().getSolidFill().addNewSrgbClr();
+        srgbClr.setVal(color.getRGB());
+        byte[] argbArray = color.getARGB();
+        if (argbArray[0] != -1) {
+            int unsignedTransparency;
+            if (argbArray[0] >= 0) {
+                unsignedTransparency = argbArray[0];
+            } else {
+                unsignedTransparency = 255 & argbArray[0];
+            }
+            int alphaInTenthOfPercent = 100_000 * unsignedTransparency / 255;
+            srgbClr.addNewAlpha().setVal(alphaInTenthOfPercent);
+        }
     }
 
     @Override
