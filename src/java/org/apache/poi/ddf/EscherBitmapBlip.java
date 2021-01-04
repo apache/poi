@@ -74,7 +74,7 @@ public class EscherBitmapBlip extends EscherBlipRecord {
 
     @Override
     public int getRecordSize() {
-        return 8 + 16 + 1 + getPicturedata().length;
+        return 8 + 16 + 1 + (getPicturedata() == null ? 0 : getPicturedata().length);
     }
 
     /**

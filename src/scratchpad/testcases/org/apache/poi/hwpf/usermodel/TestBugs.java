@@ -892,4 +892,14 @@ public class TestBugs{
             assertNotNull(document);
         }
     }
+
+    @Test
+    public void test64132() throws IOException {
+        try(HWPFDocument doc = HWPFTestDataSamples.openSampleFile("64132.doc")) {
+            assertNotNull(doc);
+            PicturesTable picturesTable = doc.getPicturesTable();
+            List<Picture> pictures = picturesTable.getAllPictures();
+            assertNotNull(pictures);
+        }
+    }
 }

@@ -61,7 +61,7 @@ public class DefaultEscherRecordFactory implements EscherRecordFactory {
             return EscherContainerRecord::new;
         }
 
-        if (recordTypes.constructor != null) {
+        if (recordTypes.constructor != null && recordTypes != EscherRecordTypes.UNKNOWN) {
             return recordTypes.constructor;
         }
 
