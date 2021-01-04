@@ -19,10 +19,12 @@ package org.apache.poi.xssf.usermodel;
 import static org.junit.Assert.*;
 
 import java.awt.Color;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
 import org.junit.Test;
+import org.openxmlformats.schemas.drawingml.x2006.main.CTSolidColorFillProperties;
 
 public class TestXSSFTextParagraph {
     @Test
@@ -190,6 +192,107 @@ public class TestXSSFTextParagraph {
             assertNotNull(text.toString());
 
             new XSSFTextParagraph(text.getXmlObject(), shape.getCTShape());
+        }
+    }
+    @Test
+    public void testXSSFTextParagraphWithAlpha() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
+            XSSFTextBox shape = drawing.createTextbox(new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 4));
+            XSSFRichTextString rt = new XSSFRichTextString("Test String");
+
+            XSSFFont font = wb.createFont();
+            Color color = new Color(0, 255, 255, 10);
+            XSSFColor textColor = new XSSFColor(color, wb.getStylesSource().getIndexedColors());
+            textColor.setARGBHex("0A00FFFF");
+            font.setColor(textColor);
+            font.setFontName("Arial");
+            rt.applyFont(font);
+            shape.setText(rt);
+
+            List<XSSFTextParagraph> paras = shape.getTextParagraphs();
+            assertEquals(1, paras.size());
+            paras.get(0).setTextFillColor(textColor);
+            XSSFTextParagraph testedParagraph = paras.get(0);
+            CTSolidColorFillProperties properties = testedParagraph.getTextRuns()
+                    .get(testedParagraph.getTextRuns().size() - 1)
+                    .getRPr()
+                    .getSolidFill();
+            assertNotNull(properties);
+            assertNotNull(properties.getSrgbClr());
+            assertEquals(textColor.getRGB()[0], properties.getSrgbClr().getVal()[0]);
+            assertEquals(textColor.getRGB()[1], properties.getSrgbClr().getVal()[1]);
+            assertEquals(textColor.getRGB()[2], properties.getSrgbClr().getVal()[2]);
+            // 10 is 3.921% of transparency therefore 3912 1000th% of transparency
+            assertEquals(3921, properties.getSrgbClr().getAlphaArray()[0].getVal());
+        }
+    }
+    @Test
+    public void testXSSFTextParagraphWithoutAlpha() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
+            XSSFTextBox shape = drawing.createTextbox(new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 4));
+            XSSFRichTextString rt = new XSSFRichTextString("Test String");
+
+            XSSFFont font = wb.createFont();
+            Color color = new Color(0, 255, 255, 10);
+            XSSFColor textColor = new XSSFColor(color, wb.getStylesSource().getIndexedColors());
+            font.setColor(textColor);
+            font.setFontName("Arial");
+            rt.applyFont(font);
+            shape.setText(rt);
+
+            List<XSSFTextParagraph> paras = shape.getTextParagraphs();
+            assertEquals(1, paras.size());
+            paras.get(0).setTextFillColor(textColor);
+            XSSFTextParagraph testedParagraph = paras.get(0);
+            CTSolidColorFillProperties properties = testedParagraph.getTextRuns()
+                    .get(testedParagraph.getTextRuns().size() - 1)
+                    .getRPr()
+                    .getSolidFill();
+            assertNotNull(properties);
+            assertNotNull(properties.getSrgbClr());
+            assertEquals(textColor.getRGB()[0], properties.getSrgbClr().getVal()[0]);
+            assertEquals(textColor.getRGB()[1], properties.getSrgbClr().getVal()[1]);
+            assertEquals(textColor.getRGB()[2], properties.getSrgbClr().getVal()[2]);
+            // 10 is 3.921% of transparency therefore 3912 1000th% of transparency
+            assertEquals(0, properties.getSrgbClr().getAlphaArray().length);
+        }
+    }
+    @Test
+    public void testXSSFTextParagraphNegativeByteAlpha() throws IOException {
+        try (XSSFWorkbook wb = new XSSFWorkbook()) {
+            XSSFSheet sheet = wb.createSheet();
+            XSSFDrawing drawing = sheet.createDrawingPatriarch();
+            XSSFTextBox shape = drawing.createTextbox(new XSSFClientAnchor(0, 0, 0, 0, 2, 2, 3, 4));
+            XSSFRichTextString rt = new XSSFRichTextString("Test String");
+
+            XSSFFont font = wb.createFont();
+            Color color = new Color(0, 255, 255, 10);
+            XSSFColor textColor = new XSSFColor(color, wb.getStylesSource().getIndexedColors());
+            textColor.setARGBHex("FA00FFFF");
+            //font.setColor(textColor);
+            font.setFontName("Arial");
+            rt.applyFont(font);
+            shape.setText(rt);
+
+            List<XSSFTextParagraph> paras = shape.getTextParagraphs();
+            assertEquals(1, paras.size());
+            paras.get(0).setTextFillColor(textColor);
+            XSSFTextParagraph testedParagraph = paras.get(0);
+            CTSolidColorFillProperties properties = testedParagraph.getTextRuns()
+                    .get(testedParagraph.getTextRuns().size() - 1)
+                    .getRPr()
+                    .getSolidFill();
+            assertNotNull(properties);
+            assertNotNull(properties.getSrgbClr());
+            assertEquals(textColor.getRGB()[0], properties.getSrgbClr().getVal()[0]);
+            assertEquals(textColor.getRGB()[1], properties.getSrgbClr().getVal()[1]);
+            assertEquals(textColor.getRGB()[2], properties.getSrgbClr().getVal()[2]);
+            // 250 is 3.921% of transparency therefore 3912 1000th% of transparency
+            assertEquals(98039, properties.getSrgbClr().getAlphaArray()[0].getVal());
         }
     }
 }
