@@ -283,14 +283,11 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     @Test
     public void bug27852() throws Exception {
         try (HSSFWorkbook wb = openSampleWorkbook("27852.xls")) {
-
-            for (int i = 0; i < wb.getNumberOfNames(); i++) {
-                HSSFName name = wb.getNameAt(i);
-                name.getNameName();
-                if (name.isFunctionName()) {
-                    continue;
+            for (HSSFName name : wb.getAllNames()) {
+                assertNotNull(name.getNameName());
+                if (!name.isFunctionName()) {
+                    assertNotNull(name.getRefersToFormula());
                 }
-                name.getRefersToFormula();
             }
         }
     }
@@ -305,9 +302,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             HSSFSheet sheet = wb.createSheet();
             for (int i = 1; i < 400; i++) {
                 HSSFRow row = sheet.getRow(i);
-                if (row != null) {
-                    row.getCell(0);
-                }
+                assertNull(row);
             }
         }
     }
@@ -1970,6 +1965,7 @@ public final class TestBugs extends BaseTestBugzillaIssues {
         try (HSSFWorkbook wb = openSampleWorkbook("46250.xls")) {
             Sheet sh = wb.getSheet("Template");
             Sheet cSh = wb.cloneSheet(wb.getSheetIndex(sh));
+            int sIdx = wb.getSheetIndex(cSh);
 
             HSSFPatriarch patriarch = (HSSFPatriarch) cSh.createDrawingPatriarch();
             HSSFTextbox tb = (HSSFTextbox) patriarch.getChildren().get(2);
@@ -1977,7 +1973,11 @@ public final class TestBugs extends BaseTestBugzillaIssues {
             tb.setString(new HSSFRichTextString("POI test"));
             tb.setAnchor(new HSSFClientAnchor(0, 0, 0, 0, (short) 0, 0, (short) 10, 10));
 
-            writeOutAndReadBack(wb).close();
+            try (HSSFWorkbook wb2 = writeOutAndReadBack(wb)) {
+                HSSFSheet sh2 = wb2.getSheetAt(sIdx);
+                assertNotNull(sh2);
+                assertNotNull(sh2.getDrawingPatriarch());
+            }
         }
     }
 
@@ -1999,7 +1999,12 @@ public final class TestBugs extends BaseTestBugzillaIssues {
                 row.createCell(6).setCellValue("added cells.");
             }
 
-            writeOutAndReadBack(wb).close();
+            try (HSSFWorkbook wb2 = writeOutAndReadBack(wb)) {
+                Sheet sheet2 = wb2.getSheet("test-sheet");
+                Row row2 = sheet2.getRow(5);
+                assertNotNull(row2);
+                assertEquals(cal.getTime(),row2.getCell(2).getDateCellValue());
+            }
         }
     }
 
@@ -2299,12 +2304,11 @@ public final class TestBugs extends BaseTestBugzillaIssues {
     public void test57925() throws IOException {
         try (Workbook wb = openSampleWorkbook("57925.xls")) {
             wb.getCreationHelper().createFormulaEvaluator().evaluateAll();
-
-            for (int i = 0; i < wb.getNumberOfSheets(); i++) {
-                Sheet sheet = wb.getSheetAt(i);
+            DataFormatter df = new DataFormatter();
+            for (Sheet sheet : wb) {
                 for (Row row : sheet) {
                     for (Cell cell : row) {
-                        new DataFormatter().formatCellValue(cell);
+                        assertNotNull(df.formatCellValue(cell));
                     }
                 }
             }

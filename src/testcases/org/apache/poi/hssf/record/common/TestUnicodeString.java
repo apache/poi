@@ -17,6 +17,7 @@
 
 package org.apache.poi.hssf.record.common;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.io.ByteArrayInputStream;
@@ -350,21 +351,20 @@ public final class TestUnicodeString {
 
     @Test
     public void unicodeStringsNullPointer() throws IOException {
-        HSSFWorkbook wb = new HSSFWorkbook();
+        try (HSSFWorkbook wb = new HSSFWorkbook()) {
 
-        Sheet sheet = wb.createSheet("styles");
-        Row row = sheet.createRow(0);
-        Cell cell = row.createCell(0);
+            Sheet sheet = wb.createSheet("styles");
+            Row row = sheet.createRow(0);
+            Cell cell = row.createCell(0);
 
-        CellStyle style = wb.createCellStyle();
-        style.setFont(wb.createFont());
-        cell.setCellStyle(style);
+            CellStyle style = wb.createCellStyle();
+            style.setFont(wb.createFont());
+            cell.setCellStyle(style);
 
-        cell.setCellValue("test");
+            cell.setCellValue("test");
 
-        HSSFOptimiser.optimiseFonts(wb);
-
-        wb.close();
+            assertDoesNotThrow(() -> HSSFOptimiser.optimiseFonts(wb));
+        }
     }
 
     @Test
