@@ -32,7 +32,7 @@ import org.junit.platform.launcher.TestPlan;
 /**
  * Custom listener class for Ants junitlauncher, because it chomps the important running details
  *
- * @see <a href="https://www.selikoff.net/2018/07/28/ant-and-junit-5-outputting-test-duration-and-failure-to-the-log/">ant and junit 5 – outputting test duration and failure to the log</a>
+ * @see <a href="https://www.selikoff.net/2018/07/28/ant-and-junit-5-outputting-test-duration-and-failure-to-the-log/">ant and junit 5 - outputting test duration and failure to the log</a>
  **/
 public class Junit5Progress implements TestExecutionListener {
 
