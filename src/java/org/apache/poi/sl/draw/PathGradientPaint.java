@@ -173,7 +173,9 @@ public class PathGradientPaint implements Paint {
                     lower = mid;
                 }
             }
-            return upper;
+
+            // always report at least one gradient step
+            return Math.max(upper, 1);
         }
 
         public WritableRaster createRaster() {
