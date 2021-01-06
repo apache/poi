@@ -18,6 +18,7 @@
 package org.apache.poi.xssf.usermodel;
 
 import static org.apache.poi.ooxml.POIXMLTypeLoader.DEFAULT_XML_OPTIONS;
+import static org.apache.poi.xssf.usermodel.XSSFRelation.NS_SPREADSHEETML;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -46,7 +47,6 @@ import com.microsoft.schemas.vml.CTShapetype;
 import com.microsoft.schemas.vml.STExt;
 import com.microsoft.schemas.vml.STStrokeJoinStyle;
 import org.apache.poi.ooxml.POIXMLDocumentPart;
-import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.openxml4j.opc.PackagePart;
 import org.apache.poi.schemas.vmldrawing.XmlDocument;
 import org.apache.poi.util.ReplacingInputStream;
@@ -55,8 +55,6 @@ import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
 import org.apache.xmlbeans.XmlOptions;
 import org.openxmlformats.schemas.officeDocument.x2006.sharedTypes.STTrueFalse;
-import org.w3c.dom.Document;
-import org.xml.sax.SAXException;
 
 /**
  * Represents a SpreadsheetML VML drawing.
@@ -129,23 +127,26 @@ public final class XSSFVMLDrawing extends POIXMLDocumentPart {
 
 
     protected void read(InputStream is) throws IOException, XmlException {
-        Document doc;
-        try {
-            /*
-             * This is a seriously sick fix for the fact that some .xlsx files contain raw bits
-             * of HTML, without being escaped or properly turned into XML.
-             * The result is that they contain things like &gt;br&lt;, which breaks the XML parsing.
-             * This very sick InputStream wrapper attempts to spot these go past, and fix them.
-             */
-            doc = DocumentHelper.readDocument(new ReplacingInputStream(is, "<br>", "<br/>"));
-        } catch (SAXException e) {
-            throw new XmlException(e.getMessage(), e);
-        }
-
         XmlOptions xopt = new XmlOptions(DEFAULT_XML_OPTIONS);
         xopt.setLoadSubstituteNamespaces(Collections.singletonMap("", QNAME_VMLDRAWING.getNamespaceURI()));
+        xopt.setDocumentType(XmlDocument.type);
 
-        root = XmlDocument.Factory.parse(doc, xopt);
+        /*
+         * This is a seriously sick fix for the fact that some .xlsx files contain raw bits
+         * of HTML, without being escaped or properly turned into XML.
+         * The result is that they contain things like &gt;br&lt;, which breaks the XML parsing.
+         * This very sick InputStream wrapper attempts to spot these go past, and fix them.
+         *
+         * Furthermore some documents contain a default namespace of
+         * http://schemas.openxmlformats.org/spreadsheetml/2006/main for the namespace-less "xml" document type.
+         * this definition is wrong and removed.
+         */
+        root = XmlDocument.Factory.parse(
+            new ReplacingInputStream(
+            new ReplacingInputStream(is, "<br>", "<br/>"),
+            " xmlns=\""+NS_SPREADSHEETML+"\"", "")
+            , xopt);
+
         XmlCursor cur = root.getXml().newCursor();
 
         try {

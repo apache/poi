@@ -29,6 +29,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
 import java.util.Collections;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -42,6 +43,8 @@ import com.microsoft.schemas.vml.CTShadow;
 import com.microsoft.schemas.vml.CTShape;
 import com.microsoft.schemas.vml.CTShapetype;
 import com.microsoft.schemas.vml.STExt;
+import com.microsoft.schemas.vml.STStrokeJoinStyle;
+import com.microsoft.schemas.vml.impl.CTShapetypeImpl;
 import org.apache.poi.POIDataSamples;
 import org.apache.xmlbeans.XmlException;
 import org.apache.xmlbeans.XmlObject;
@@ -180,5 +183,31 @@ public class TestXSSFVMLDrawing {
             count += split.length-1;
         }
         assertEquals(16, count);
+    }
+
+    @Test
+    public void bug65061_InvalidXmlns() throws IOException, XmlException {
+        // input hasn't no <?xml... declaration - as in the sample file
+        String input =
+            "<xml xmlns=\"http://schemas.openxmlformats.org/spreadsheetml/2006/main\" xmlns:o=\"urn:schemas-microsoft-com:office:office\" xmlns:v=\"urn:schemas-microsoft-com:vml\" xmlns:x=\"urn:schemas-microsoft-com:office:excel\">\n" +
+            "<v:shapetype id=\"_x0000_t202\" coordsize=\"21600,21600\" path=\"m,l,21600r21600,l21600,xe\" o:spt=\"202\">\n" +
+            "<v:stroke joinstyle=\"miter\"/>\n" +
+            "<v:path o:connecttype=\"rect\" gradientshapeok=\"t\"/>\n" +
+            "</v:shapetype>\n" +
+            "</xml>";
+
+        XSSFVMLDrawing vml = new XSSFVMLDrawing();
+        vml.read(new ByteArrayInputStream(input.getBytes(StandardCharsets.UTF_8)));
+
+        // check that the xml beans parsed correctly
+        assertNotNull(vml.getDocument().getXml());
+
+        // check the parsed child
+        List<XmlObject> objs = vml.getItems();
+        assertEquals(1, objs.size());
+        XmlObject xst = objs.get(0);
+        assertTrue(xst instanceof CTShapetypeImpl);
+        CTShapetype st = (CTShapetype)xst;
+        assertEquals(STStrokeJoinStyle.MITER, st.getStrokeArray(0).getJoinstyle());
     }
 }
