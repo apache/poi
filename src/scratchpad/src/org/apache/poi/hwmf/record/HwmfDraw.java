@@ -143,10 +143,10 @@ public final class HwmfDraw {
         @Override
         public int init(LittleEndianInputStream leis, long recordSize, int recordFunction) throws IOException {
             //A 16-bit signed integer that defines the number of points in the array.
-            int numberofPoints = leis.readShort();
+            int numberOfPoints = leis.readShort();
 
-            poly = new Path2D.Double(Path2D.WIND_EVEN_ODD, numberofPoints);
-            for (int i=0; i<numberofPoints; i++) {
+            poly = new Path2D.Double(Path2D.WIND_EVEN_ODD, numberOfPoints);
+            for (int i=0; i<numberOfPoints; i++) {
                 // A 16-bit signed integer that defines the horizontal (x) coordinate of the point.
                 int x = leis.readShort();
                 // A 16-bit signed integer that defines the vertical (y) coordinate of the point.
@@ -158,12 +158,12 @@ public final class HwmfDraw {
                 }
             }
 
-            if (addClose()) {
+            if (numberOfPoints > 0 && addClose()) {
                 // polygons are closed / polylines not
                 poly.closePath();
             }
 
-            return LittleEndianConsts.SHORT_SIZE+numberofPoints*LittleEndianConsts.INT_SIZE;
+            return LittleEndianConsts.SHORT_SIZE+numberOfPoints*LittleEndianConsts.INT_SIZE;
         }
 
         @Override

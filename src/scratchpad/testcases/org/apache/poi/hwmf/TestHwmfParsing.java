@@ -39,6 +39,8 @@ import org.apache.poi.util.LocaleUtil;
 import org.apache.poi.util.RecordFormatException;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 public class TestHwmfParsing {
 
@@ -48,12 +50,17 @@ public class TestHwmfParsing {
     // for manual mass parsing and rendering tests of .wmfs use HemfPictureTest.paint() !
     // ******************************************************************************
 
-    @Test
-    public void parse() throws IOException {
-        try (InputStream fis = samples.openResourceAsStream("santa.wmf")) {
+    @ParameterizedTest
+    @CsvSource({
+        "santa.wmf, 581",
+        /* Bug 65063 */
+        "empty-polygon-close.wmf, 272"
+    })
+    public void parse(String file, int recordCnt) throws IOException {
+        try (InputStream fis = samples.openResourceAsStream(file)) {
             HwmfPicture wmf = new HwmfPicture(fis);
             List<HwmfRecord> records = wmf.getRecords();
-            assertEquals(581, records.size());
+            assertEquals(recordCnt, records.size());
         }
     }
 
