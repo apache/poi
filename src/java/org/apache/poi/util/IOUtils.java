@@ -29,6 +29,7 @@ import java.io.PushbackInputStream;
 import java.nio.ByteBuffer;
 import java.nio.channels.ReadableByteChannel;
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.zip.CRC32;
 import java.util.zip.Checksum;
 
@@ -173,7 +174,7 @@ public final class IOUtils {
             checkLength(length, maxLength);
         }
 
-        final int len = Math.min((int)length, maxLength);
+        final int len = Math.min(length, maxLength);
         ByteArrayOutputStream baos = new ByteArrayOutputStream(len == Integer.MAX_VALUE ? 4096 : len);
 
         byte[] buffer = new byte[4096];
@@ -508,12 +509,13 @@ public final class IOUtils {
     }
 
     private static void throwRFE(long length, int maxLength) {
-        throw new RecordFormatException("Tried to allocate an array of length "+length +
-                ", but "+ maxLength+" is the maximum for this record type.\n" +
+        throw new RecordFormatException(String.format(Locale.ROOT, "Tried to allocate an array of length %,d" +
+                ", but the maximum lenght for this record type is %,d.\n" +
                 "If the file is not corrupt, please open an issue on bugzilla to request \n" +
                 "increasing the maximum allowable size for this record type.\n"+
                 "As a temporary workaround, consider setting a higher override value with " +
-                "IOUtils.setByteArrayMaxOverride()");
+                "IOUtils.setByteArrayMaxOverride()",
+                length, maxLength));
 
     }
 }
