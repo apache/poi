@@ -263,7 +263,7 @@ public final class SlideShowFactory {
         }
 
         if (file.length() == 0) {
-            throw new EmptyFileException();
+            throw new EmptyFileException(file);
         }
 
         FileMagic fm = FileMagic.valueOf(file);

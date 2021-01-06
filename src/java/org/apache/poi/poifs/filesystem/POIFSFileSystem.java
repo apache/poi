@@ -1,4 +1,3 @@
-
 /* ====================================================================
    Licensed to the Apache Software Foundation (ASF) under one or more
    contributor license agreements.  See the NOTICE file distributed with
@@ -15,8 +14,6 @@
    See the License for the specific language governing permissions and
    limitations under the License.
 ==================================================================== */
-
-
 package org.apache.poi.poifs.filesystem;
 
 import java.io.ByteArrayOutputStream;
@@ -213,7 +210,7 @@ public class POIFSFileSystem extends BlockStore
             // Initialize the datasource
             if (srcFile != null) {
                 if (srcFile.length() == 0)
-                    throw new EmptyFileException();
+                    throw new EmptyFileException(srcFile);
 
                 FileBackedDataSource d = new FileBackedDataSource(srcFile, readOnly);
                 channel = d.getChannel();

@@ -181,7 +181,7 @@ public final class ExtractorFactory {
     @SuppressWarnings({"java:S2095"})
     public static POITextExtractor createExtractor(File file, String password) throws IOException {
         if (file.length() == 0) {
-            throw new EmptyFileException();
+            throw new EmptyFileException(file);
         }
 
         final FileMagic fm = FileMagic.valueOf(file);

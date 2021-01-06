@@ -269,7 +269,7 @@ public final class WorkbookFactory {
         }
 
         if (file.length() == 0) {
-            throw new EmptyFileException();
+            throw new EmptyFileException(file);
         }
 
         FileMagic fm = FileMagic.valueOf(file);
