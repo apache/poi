@@ -112,6 +112,10 @@ public class HSSFFileHandler extends SpreadsheetHandler {
 		try (InputStream stream = new FileInputStream(file)) {
 			handleFile(stream, file.getPath());
 		}
+
+		handleExtracting(file);
+
+		handleAdditional(file);
 	}
 
 	// a test-case to test this locally without executing the full TestAllFiles
