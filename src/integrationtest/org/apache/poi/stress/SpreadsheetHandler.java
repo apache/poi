@@ -145,6 +145,7 @@ public abstract class SpreadsheetHandler extends AbstractFileHandler {
 	        } catch (RuntimeException e) {
 	            if ("Could not find 'internal references' EXTERNALBOOK".equals(e.getMessage()) ||
 	                    "CountryRecord not found".equals(e.getMessage()) ||
+	                    "CountryRecord or SSTRecord not found".equals(e.getMessage()) ||
 	                    "Cannot add more than 65535 shapes".equals(e.getMessage()) ) {
 	                // ignore these here for now
 	                continue;
