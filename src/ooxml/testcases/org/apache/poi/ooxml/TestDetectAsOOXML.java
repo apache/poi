@@ -16,21 +16,24 @@
 ==================================================================== */
 package org.apache.poi.ooxml;
 
+import static org.apache.poi.hssf.HSSFTestDataSamples.openSampleFileStream;
 import static org.junit.jupiter.api.Assertions.assertArrayEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
-import org.apache.poi.hssf.HSSFTestDataSamples;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.opc.OPCPackage;
 import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
 import org.apache.poi.poifs.filesystem.FileMagic;
 import org.apache.poi.util.IOUtils;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 
 /**
  * Class to test that HXF correctly detects OOXML
@@ -40,27 +43,23 @@ import org.junit.jupiter.api.Test;
 public class TestDetectAsOOXML {
     @Test
 	public void testOpensProperly() throws IOException, InvalidFormatException {
-		OPCPackage.open(HSSFTestDataSamples.openSampleFileStream("sample.xlsx")).close();
+    	try (InputStream is = openSampleFileStream("sample.xlsx");
+			 OPCPackage pkg = OPCPackage.open(is)) {
+    		assertNotNull(pkg);
+		}
 	}
 
-    @Test
-	public void testDetectAsPOIFS() throws IOException {
-        Object[][] fileAndMagic = {
-                {"SampleSS.xlsx", FileMagic.OOXML},
-                {"SampleSS.xls", FileMagic.OLE2},
-                {"SampleSS.txt", FileMagic.UNKNOWN}
-        };
+    @ParameterizedTest
+	@CsvSource({"SampleSS.xlsx, OOXML", "SampleSS.xls, OLE2", "SampleSS.txt, UNKNOWN"})
+	public void testDetectAsPOIFS(String file, FileMagic fm) throws IOException {
+		try (InputStream is = FileMagic.prepareToCheckMagic(openSampleFileStream(file))) {
+			FileMagic act = FileMagic.valueOf(is);
 
-	    for (Object[] fm : fileAndMagic) {
-	        try (InputStream is = FileMagic.prepareToCheckMagic(HSSFTestDataSamples.openSampleFileStream((String)fm[0]))) {
-				FileMagic act = FileMagic.valueOf(is);
+			assertEquals(act == FileMagic.OOXML, DocumentFactoryHelper.hasOOXMLHeader(is),
+				"OOXML files should be detected, others not");
 
-				assertEquals(act == FileMagic.OOXML, DocumentFactoryHelper.hasOOXMLHeader(is),
-					"OOXML files should be detected, others not");
-
-				assertEquals(fm[1], act, "file magic failed for " + fm[0]);
-			}
-	    }
+			assertEquals(fm, act, "file magic failed for " + file);
+		}
 	}
 
     @Test

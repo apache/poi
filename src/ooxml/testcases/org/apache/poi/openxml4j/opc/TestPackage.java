@@ -61,7 +61,6 @@ import org.apache.commons.compress.archivers.zip.ZipFile;
 import org.apache.poi.EncryptedDocumentException;
 import org.apache.poi.POIDataSamples;
 import org.apache.poi.POITestCase;
-import org.apache.poi.UnsupportedFileFormatException;
 import org.apache.poi.extractor.ExtractorFactory;
 import org.apache.poi.extractor.POITextExtractor;
 import org.apache.poi.ooxml.POIXMLException;
@@ -69,8 +68,6 @@ import org.apache.poi.ooxml.util.DocumentHelper;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.apache.poi.openxml4j.exceptions.InvalidOperationException;
 import org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException;
-import org.apache.poi.openxml4j.exceptions.ODFNotOfficeXmlFileException;
-import org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException;
 import org.apache.poi.openxml4j.opc.internal.ContentTypeManager;
 import org.apache.poi.openxml4j.opc.internal.FileHelper;
 import org.apache.poi.openxml4j.opc.internal.PackagePropertiesPart;
@@ -92,6 +89,8 @@ import org.apache.poi.xwpf.usermodel.XWPFRelation;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.function.Executable;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
@@ -631,46 +630,28 @@ public final class TestPackage {
 		}
     }
 
-	@Test
-	public void NonOOXML_File() throws Exception {
-    	handleNonOOXML(
-			"SampleSS.xls", OLE2NotOfficeXmlFileException.class,
-			"The supplied data appears to be in the OLE2 Format",
-			"You are calling the part of POI that deals with OOXML"
-		);
+	@SuppressWarnings("unchecked")
+	@ParameterizedTest
+	@CsvSource({
+		"SampleSS.xls, org.apache.poi.openxml4j.exceptions.OLE2NotOfficeXmlFileException, The supplied data appears to be in the OLE2 Format, You are calling the part of POI that deals with OOXML",
+		"SampleSS.xml, org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException, The supplied data appears to be a raw XML file, Formats such as Office 2003 XML",
+		"SampleSS.ods, org.apache.poi.openxml4j.exceptions.ODFNotOfficeXmlFileException, The supplied data appears to be in ODF, Formats like these (eg ODS",
+		"SampleSS.txt, org.apache.poi.openxml4j.exceptions.NotOfficeXmlFileException, No valid entries or contents found, not a valid OOXML"
+	})
+	public void NonOOXML_File(String file, String exClazzStr, String msg1, String msg2) throws Exception {
+    	Class<? extends Exception> exClazz = (Class<? extends Exception>)Class.forName(exClazzStr);
 
-    	handleNonOOXML(
-			"SampleSS.xml", NotOfficeXmlFileException.class,
-			"The supplied data appears to be a raw XML file",
-			"Formats such as Office 2003 XML"
-		);
-
-    	handleNonOOXML(
-			"SampleSS.ods", ODFNotOfficeXmlFileException.class,
-			"The supplied data appears to be in ODF",
-			"Formats like these (eg ODS"
-		);
-
-    	handleNonOOXML(
-			"SampleSS.txt", NotOfficeXmlFileException.class,
-			"No valid entries or contents found",
-			"not a valid OOXML"
-		);
-	}
-
-	private void handleNonOOXML(String file, Class<? extends UnsupportedFileFormatException> exception, String... messageParts) throws IOException {
 		try (InputStream stream = xlsSamples.openResourceAsStream(file)) {
 			Executable[] trs = {
 				() -> OPCPackage.open(stream),
 				() -> OPCPackage.open(xlsSamples.getFile(file))
 			};
 			for (Executable tr : trs) {
-				Exception ex = assertThrows(exception, tr, "Shouldn't be able to open "+file);
-				Stream.of(messageParts).forEach(mp -> assertTrue(ex.getMessage().contains(mp)));
+				Exception ex = assertThrows(exClazz, tr, "Shouldn't be able to open "+file);
+				Stream.of(msg1, msg2).forEach(mp -> assertTrue(ex.getMessage().contains(mp)));
 			}
 		}
 	}
-
 
 	/**
 	 * Zip bomb handling test
@@ -1009,8 +990,8 @@ public final class TestPackage {
 		//make absolutely certain that sequential calls don't throw InvalidFormatExceptions
 		String originalFile = getSampleFileName("TestPackageCommon.docx");
 		try (OPCPackage p2 = OPCPackage.open(originalFile, PackageAccess.READ)) {
-			p2.getParts();
-			p2.getParts();
+			assertDoesNotThrow(p2::getParts);
+			assertDoesNotThrow(p2::getParts);
 		}
 	}
 
@@ -1026,7 +1007,7 @@ public final class TestPackage {
 
 			@Override
 			public void close() {
-				throw new IllegalStateException("close should not be called here");
+				fail("close should not be called here");
 			}
 		};
 
@@ -1074,7 +1055,6 @@ public final class TestPackage {
 		int numPartsBefore = 0;
 		String md5Before = Files.asByteSource(tmpFile).hash(Hashing.sha256()).toString();
 
-		RuntimeException ex = null;
 		try(OPCPackage pkg = OPCPackage.open(tmpFile, PackageAccess.READ_WRITE))
 		{
 			numPartsBefore = pkg.getParts().size();
@@ -1083,13 +1063,13 @@ public final class TestPackage {
 			pkg.addMarshaller("poi/junit", (part, out) -> {
 				throw new RuntimeException("Bugzilla 63029");
 			});
+
 			pkg.createPart(createPartName("/poi/test.xml"), "poi/junit");
-		} catch (RuntimeException e){
-			ex = e;
+
+			RuntimeException ex = assertThrows(RuntimeException.class, pkg::close);
+			// verify there was an exception while closing the file
+			assertEquals("Fail to save: an error occurs while saving the package : Bugzilla 63029", ex.getMessage());
 		}
-		// verify there was an exception while closing the file
-		assertNotNull(ex, "Fail to save: an error occurs while saving the package : Bugzilla 63029");
-		assertEquals("Fail to save: an error occurs while saving the package : Bugzilla 63029", ex.getMessage());
 
 		// assert that md5 after closing is the same, i.e. the source is left intact
 		String md5After = Files.asByteSource(tmpFile).hash(Hashing.sha256()).toString();
