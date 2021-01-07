@@ -29,6 +29,8 @@ public class EmptyFileException extends IllegalArgumentException {
 	}
 
     public EmptyFileException(File file) {
-		super("The supplied file '" + file.getAbsolutePath() + "' was empty (zero bytes long)");
+		super(file.exists() ?
+				"The supplied file '" + file.getAbsolutePath() + "' was empty (zero bytes long)" :
+				"The file '" + file.getAbsolutePath() + "' does not exist");
 	}
 }
