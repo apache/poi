@@ -240,8 +240,6 @@ public final class POIXMLExtractorFactory implements ExtractorProvider {
             }
 
             return null;
-        } catch (IOException e) {
-            throw e;
         } catch (Error | RuntimeException | XmlException | OpenXML4JException e) { // NOSONAR
             throw new IOException(e);
         }
@@ -271,6 +269,13 @@ public final class POIXMLExtractorFactory implements ExtractorProvider {
                 }
                 try (InputStream is = dec.getDataStream(poifsDir)) {
                     return create(is, password);
+                } finally {
+                    // we should close the underlying file-system as all information
+                    // is read now and we should make sure that resources are freed
+                    POIFSFileSystem fs = poifsDir.getFileSystem();
+                    if (fs != null) {
+                        fs.close();
+                    }
                 }
             } catch (IOException | RuntimeException e) {
                 throw e;

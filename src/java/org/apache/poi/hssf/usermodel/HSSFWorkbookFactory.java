@@ -100,7 +100,17 @@ public class HSSFWorkbookFactory implements WorkbookProvider {
             passwordSet = true;
         }
         try {
-            return new HSSFWorkbook(new POIFSFileSystem(file, readOnly), true);
+            POIFSFileSystem fs = new POIFSFileSystem(file, readOnly);
+            try {
+                return new HSSFWorkbook(fs, true);
+            } catch (RuntimeException e) {
+                // we need to close the filesystem
+                // if we encounter an exception to
+                // not leak file handles
+                fs.close();
+
+                throw e;
+            }
         } finally {
             if (passwordSet) {
                 Biff8EncryptionKey.setCurrentUserPassword(null);

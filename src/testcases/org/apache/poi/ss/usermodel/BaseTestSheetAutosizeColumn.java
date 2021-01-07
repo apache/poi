@@ -20,6 +20,7 @@ package org.apache.poi.ss.usermodel;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -345,19 +346,20 @@ public abstract class BaseTestSheetAutosizeColumn {
 
 
     @Test
-    public void testExcelExporter() {
-        final Workbook wb = _testDataProvider.createWorkbook();
-        final Sheet sheet = wb.createSheet("test");
-        trackColumnsForAutoSizingIfSXSSF(sheet);
-        final Row row = sheet.createRow(0);
-        final Cell cell = row.createCell(0);
+    public void testExcelExporter() throws IOException {
+        try (final Workbook wb = _testDataProvider.createWorkbook()) {
+            final Sheet sheet = wb.createSheet("test");
+            trackColumnsForAutoSizingIfSXSSF(sheet);
+            final Row row = sheet.createRow(0);
+            final Cell cell = row.createCell(0);
 
-        CellStyle csDateTime = wb.createCellStyle();
-        csDateTime.setAlignment(HorizontalAlignment.LEFT);
+            CellStyle csDateTime = wb.createCellStyle();
+            csDateTime.setAlignment(HorizontalAlignment.LEFT);
 
-        cell.setCellValue(new Date(Long.parseLong("1439800763994")));
-        cell.setCellStyle(csDateTime);
+            cell.setCellValue(new Date(Long.parseLong("1439800763994")));
+            cell.setCellStyle(csDateTime);
 
-        sheet.autoSizeColumn(0);
+            sheet.autoSizeColumn(0);
+        }
     }
 }

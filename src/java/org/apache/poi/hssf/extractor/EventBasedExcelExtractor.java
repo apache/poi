@@ -291,4 +291,20 @@ public class EventBasedExcelExtractor implements POIOLE2TextExtractor, org.apach
     public DirectoryEntry getRoot() {
         return _dir;
     }
+
+    @Override
+    public void close() throws IOException {
+        // first perform the default close
+        POIOLE2TextExtractor.super.close();
+
+        // also ensure that an underlying DirectoryNode
+        // is closed properly to avoid leaking file-handles
+        DirectoryEntry root = getRoot();
+        if (root instanceof DirectoryNode) {
+            Closeable fs = ((DirectoryNode) root).getFileSystem();
+            if (isCloseFilesystem() && fs != null) {
+                fs.close();
+            }
+        }
+    }
 }

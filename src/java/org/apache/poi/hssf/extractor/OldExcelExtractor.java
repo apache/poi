@@ -101,15 +101,22 @@ public class OldExcelExtractor implements POITextExtractor {
             // ensure that the stream is properly closed here if an Exception
             // is thrown while opening
             biffStream.close();
+
+            toClose.close();
+
             throw e;
         }
     }
 
     public OldExcelExtractor(POIFSFileSystem fs) throws IOException {
+        toClose = fs;
+
         open(fs);
     }
 
     public OldExcelExtractor(DirectoryNode directory) throws IOException {
+        toClose = directory.getFileSystem();
+
         open(directory);
     }
 
